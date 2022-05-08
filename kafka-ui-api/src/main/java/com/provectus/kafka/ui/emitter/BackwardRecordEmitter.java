@@ -3,6 +3,8 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -12,9 +14,9 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.utils.Bytes;
@@ -51,65 +53,42 @@ public class BackwardRecordEmitter
       ) {
         sendPhase(sink, "Created consumer");
 
-        SortedMap<TopicPartition, Long> partitionsOffsets =
+        SortedMap<TopicPartition, Long> readUntilOffsets =
             new TreeMap<>(Comparator.comparingInt(TopicPartition::partition));
-        partitionsOffsets.putAll(offsetsSeek.getPartitionsOffsets(consumer));
+        readUntilOffsets.putAll(offsetsSeek.getPartitionsOffsets(consumer));
 
         sendPhase(sink, "Requested partitions offsets");
-        log.debug("partition offsets: {}", partitionsOffsets);
+        log.debug("partition offsets: {}", readUntilOffsets);
         var waitingOffsets =
-            offsetsSeek.waitingOffsets(consumer, partitionsOffsets.keySet());
+            offsetsSeek.waitingOffsets(consumer, readUntilOffsets.keySet());
         log.debug("waiting offsets {} {}",
             waitingOffsets.getBeginOffsets(),
             waitingOffsets.getEndOffsets()
         );
 
         while (!sink.isCancelled() && !waitingOffsets.beginReached()) {
-          for (Map.Entry<TopicPartition, Long> entry : partitionsOffsets.entrySet()) {
-            final Long lowest = waitingOffsets.getBeginOffsets().get(entry.getKey().partition());
-            if (lowest != null) {
-              consumer.assign(Collections.singleton(entry.getKey()));
-              final long offset = Math.max(lowest, entry.getValue() - msgsPerPartition);
-              log.debug("Polling {} from {}", entry.getKey(), offset);
-              consumer.seek(entry.getKey(), offset);
-              sendPhase(sink,
-                  String.format("Consuming partition: %s from %s", entry.getKey(), offset)
-              );
-              final ConsumerRecords<Bytes, Bytes> records = poll(sink, consumer);
-              final List<ConsumerRecord<Bytes, Bytes>> partitionRecords =
-                  records.records(entry.getKey()).stream()
-                      .filter(r -> r.offset() < partitionsOffsets.get(entry.getKey()))
-                      .collect(Collectors.toList());
-              Collections.reverse(partitionRecords);
+          new TreeMap<>(readUntilOffsets).forEach((tp, readToOffset) -> {
+            long lowestOffset = waitingOffsets.getBeginOffsets().get(tp.partition());
+            long readFromOffset = Math.max(lowestOffset, readToOffset - msgsPerPartition);
 
-              log.debug("{} records polled", records.count());
-              log.debug("{} records sent", partitionRecords.size());
+            partitionPollIteration(tp, readFromOffset, readToOffset, consumer, sink)
+                .stream()
+                .filter(r -> !sink.isCancelled())
+                .forEach(r -> sendMessage(sink, r));
 
-              // This is workaround for case when partition begin offset is less than
-              // real minimal offset, usually appear in compcated topics
-              if (records.count() > 0 && partitionRecords.isEmpty()) {
-                waitingOffsets.markPolled(entry.getKey().partition());
-              }
-
-              for (ConsumerRecord<Bytes, Bytes> msg : partitionRecords) {
-                if (!sink.isCancelled() && !waitingOffsets.beginReached()) {
-                  sendMessage(sink, msg);
-                  waitingOffsets.markPolled(msg);
-                } else {
-                  log.info("Begin reached");
-                  break;
-                }
-              }
-              partitionsOffsets.put(
-                  entry.getKey(),
-                  Math.max(offset, entry.getValue() - msgsPerPartition)
-              );
+            waitingOffsets.markPolled(tp.partition(), readFromOffset);
+            if (waitingOffsets.getBeginOffsets().get(tp.partition()) == null) {
+              // we fully read this partition -> removing it from polling iterations
+              readUntilOffsets.remove(tp);
+            } else {
+              readUntilOffsets.put(tp, readFromOffset);
             }
-          }
+          });
+
           if (waitingOffsets.beginReached()) {
-            log.info("begin reached after partitions");
+            log.info("begin reached after partitions poll iteration");
           } else if (sink.isCancelled()) {
-            log.info("sink is cancelled after partitions");
+            log.info("sink is cancelled after partitions poll iteration");
           }
         }
         sink.complete();
@@ -119,5 +98,41 @@ public class BackwardRecordEmitter
       log.error("Error occurred while consuming records", e);
       sink.error(e);
     }
+  }
+
+
+  private List<ConsumerRecord<Bytes, Bytes>> partitionPollIteration(
+      TopicPartition tp,
+      long from,
+      long to,
+      Consumer<Bytes, Bytes> consumer,
+      FluxSink<TopicMessageEventDTO> sink
+  ) {
+    consumer.assign(Collections.singleton(tp));
+    consumer.seek(tp, from);
+    sendPhase(sink, String.format("Polling partition: %s from offset %s", tp, from));
+    int desiredMsgsToPoll = (int) (to - from); //todo think
+
+    var recordsToSend = new ArrayList<ConsumerRecord<Bytes, Bytes>>();
+    for (int emptyPolls = 0; recordsToSend.size() < desiredMsgsToPoll || emptyPolls < 3; ) {
+      var polledRecords = poll(sink, consumer, Duration.ofMillis(200));
+      log.debug("{} records polled", polledRecords.count());
+
+      // counting subsequent empty polls
+      emptyPolls = polledRecords.isEmpty() ? emptyPolls + 1 : 0;
+
+      var filteredRecords = polledRecords.records(tp).stream()
+          .filter(r -> r.offset() < to)
+          .collect(Collectors.toList());
+
+      if (!polledRecords.isEmpty() && filteredRecords.isEmpty()) {
+        // we already read messages that we are interested in
+        break;
+      }
+      recordsToSend.addAll(filteredRecords);
+    }
+    log.debug("{} records to sent", recordsToSend);
+    Collections.reverse(recordsToSend);
+    return recordsToSend;
   }
 }
