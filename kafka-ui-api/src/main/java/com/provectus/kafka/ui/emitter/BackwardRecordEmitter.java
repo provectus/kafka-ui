@@ -27,6 +27,8 @@ public class BackwardRecordEmitter
     extends AbstractEmitter
     implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
 
+  private static final Duration POLL_TIMEOUT = Duration.ofMillis(200);
+
   private final Function<Map<String, Object>, KafkaConsumer<Bytes, Bytes>> consumerSupplier;
   private final OffsetsSeekBackward offsetsSeek;
 
@@ -86,13 +88,13 @@ public class BackwardRecordEmitter
           });
 
           if (waitingOffsets.beginReached()) {
-            log.info("begin reached after partitions poll iteration");
+            log.debug("begin reached after partitions poll iteration");
           } else if (sink.isCancelled()) {
-            log.info("sink is cancelled after partitions poll iteration");
+            log.debug("sink is cancelled after partitions poll iteration");
           }
         }
         sink.complete();
-        log.info("Polling finished");
+        log.debug("Polling finished");
       }
     } catch (Exception e) {
       log.error("Error occurred while consuming records", e);
@@ -103,35 +105,37 @@ public class BackwardRecordEmitter
 
   private List<ConsumerRecord<Bytes, Bytes>> partitionPollIteration(
       TopicPartition tp,
-      long from,
-      long to,
+      long fromOffset,
+      long toOffset,
       Consumer<Bytes, Bytes> consumer,
       FluxSink<TopicMessageEventDTO> sink
   ) {
     consumer.assign(Collections.singleton(tp));
-    consumer.seek(tp, from);
-    sendPhase(sink, String.format("Polling partition: %s from offset %s", tp, from));
-    int desiredMsgsToPoll = (int) (to - from);
+    consumer.seek(tp, fromOffset);
+    sendPhase(sink, String.format("Polling partition: %s from offset %s", tp, fromOffset));
+    int desiredMsgsToPoll = (int) (toOffset - fromOffset);
 
     var recordsToSend = new ArrayList<ConsumerRecord<Bytes, Bytes>>();
-    for (int emptyPolls = 0; recordsToSend.size() < desiredMsgsToPoll && emptyPolls < 3; ) {
-      var polledRecords = poll(sink, consumer, Duration.ofMillis(200));
-      log.debug("{} records polled", polledRecords.count());
 
-      // counting subsequent empty polls
+    // we use empty polls counting to verify that partition was fully read
+    for (int emptyPolls = 0; recordsToSend.size() < desiredMsgsToPoll && emptyPolls < 3; ) {
+      var polledRecords = poll(sink, consumer, POLL_TIMEOUT);
+      log.debug("{} records polled from {}", polledRecords.count(), tp);
+
+      // counting sequential empty polls
       emptyPolls = polledRecords.isEmpty() ? emptyPolls + 1 : 0;
 
       var filteredRecords = polledRecords.records(tp).stream()
-          .filter(r -> r.offset() < to)
+          .filter(r -> r.offset() < toOffset)
           .collect(Collectors.toList());
 
       if (!polledRecords.isEmpty() && filteredRecords.isEmpty()) {
-        // we already read messages that we are interested in
+        // we already read all messages in target offsets interval
         break;
       }
       recordsToSend.addAll(filteredRecords);
     }
-    log.debug("{} records to sent", recordsToSend);
+    log.debug("{} records to send", recordsToSend);
     Collections.reverse(recordsToSend);
     return recordsToSend;
   }
