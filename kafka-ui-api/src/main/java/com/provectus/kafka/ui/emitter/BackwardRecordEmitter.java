@@ -111,10 +111,10 @@ public class BackwardRecordEmitter
     consumer.assign(Collections.singleton(tp));
     consumer.seek(tp, from);
     sendPhase(sink, String.format("Polling partition: %s from offset %s", tp, from));
-    int desiredMsgsToPoll = (int) (to - from); //todo think
+    int desiredMsgsToPoll = (int) (to - from);
 
     var recordsToSend = new ArrayList<ConsumerRecord<Bytes, Bytes>>();
-    for (int emptyPolls = 0; recordsToSend.size() < desiredMsgsToPoll || emptyPolls < 3; ) {
+    for (int emptyPolls = 0; recordsToSend.size() < desiredMsgsToPoll && emptyPolls < 3; ) {
       var polledRecords = poll(sink, consumer, Duration.ofMillis(200));
       log.debug("{} records polled", polledRecords.count());
 
