@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -207,6 +208,7 @@ class SchemaRegistryServiceTests extends AbstractIntegrationTest {
   }
 
   @Test
+  @Ignore
   public void shouldReturnNotEmptyResponseWhenGetAllSchemas() {
     createNewSubjectAndAssert(subject);
 
