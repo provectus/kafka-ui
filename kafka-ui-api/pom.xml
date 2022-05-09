@@ -15,7 +15,6 @@
         <jacoco.version>0.8.8</jacoco.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.language>java</sonar.language>
     </properties>
@@ -330,9 +329,9 @@
                             <goal>report</goal>
                         </goals>
                         <configuration>
-                            <formats>
-                                <format>XML</format>
-                            </formats>
+<!--                            <formats>-->
+<!--                                <format>XML</format>-->
+<!--                            </formats>-->
                         </configuration>
                     </execution>
                 </executions>
