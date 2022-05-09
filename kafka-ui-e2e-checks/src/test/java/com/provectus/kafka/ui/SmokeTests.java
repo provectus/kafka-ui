@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Disabled // TODO #1480
 public class SmokeTests extends BaseTest {
     @Test
     @SneakyThrows
