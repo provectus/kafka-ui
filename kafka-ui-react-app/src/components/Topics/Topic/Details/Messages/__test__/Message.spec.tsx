@@ -60,6 +60,15 @@ describe('Message component', () => {
     ).toBeInTheDocument();
   });
 
+  it('check the useDataSaver functionality', () => {
+    const props = { message: { ...mockMessage } };
+    delete props.message.content;
+    renderComponent(props);
+    expect(
+      screen.queryByText(mockMessage.content as string)
+    ).not.toBeInTheDocument();
+  });
+
   it('should check the dropdown being visible during hover', () => {
     renderComponent();
     const text = 'Save as a file';
