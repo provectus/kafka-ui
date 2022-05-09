@@ -140,31 +140,31 @@ class MessageFiltersTest {
     }
 
 
-    @Test
-    @Ignore
-    void filterSpeedIsAtLeast10kPerSec() {
-      var f = groovyScriptFilter("value.name.first == 'user1' && keyAsText.startsWith('a') ");
-
-      List<TopicMessageDTO> toFilter = new ArrayList<>();
-      for (int i = 0; i < 5_000; i++) {
-        String name = i % 2 == 0 ? "user1" : RandomStringUtils.randomAlphabetic(10);
-        String randString = RandomStringUtils.randomAlphabetic(30);
-        String jsonContent = String.format(
-            "{ \"name\" : {  \"randomStr\": \"%s\", \"first\" : \"%s\"} }",
-            randString, name);
-        toFilter.add(msg().content(jsonContent).key(randString));
-      }
-      // first iteration for warmup
-      toFilter.stream().filter(f).count();
-
-      long before = System.currentTimeMillis();
-      long matched = toFilter.stream().filter(f).count();
-      long took = System.currentTimeMillis() - before;
-
-      assertThat(took).isLessThan(500);
-      assertThat(matched).isGreaterThan(0);
-    }
-  }
+//    @Test
+//    @Ignore
+//    void filterSpeedIsAtLeast10kPerSec() {
+//      var f = groovyScriptFilter("value.name.first == 'user1' && keyAsText.startsWith('a') ");
+//
+//      List<TopicMessageDTO> toFilter = new ArrayList<>();
+//      for (int i = 0; i < 5_000; i++) {
+//        String name = i % 2 == 0 ? "user1" : RandomStringUtils.randomAlphabetic(10);
+//        String randString = RandomStringUtils.randomAlphabetic(30);
+//        String jsonContent = String.format(
+//            "{ \"name\" : {  \"randomStr\": \"%s\", \"first\" : \"%s\"} }",
+//            randString, name);
+//        toFilter.add(msg().content(jsonContent).key(randString));
+//      }
+//      // first iteration for warmup
+//      toFilter.stream().filter(f).count();
+//
+//      long before = System.currentTimeMillis();
+//      long matched = toFilter.stream().filter(f).count();
+//      long took = System.currentTimeMillis() - before;
+//
+//      assertThat(took).isLessThan(500);
+//      assertThat(matched).isGreaterThan(0);
+//    }
+//  }
 
   private TopicMessageDTO msg() {
     return new TopicMessageDTO()
