@@ -17,10 +17,11 @@ describe('ClusterMenu', () => {
   const getTopics = () => screen.getByTitle('Brokers');
   const getConsumers = () => screen.getByTitle('Brokers');
   const getKafkaConnect = () => screen.getByTitle('Kafka Connect');
+  const getCluster = () => screen.getByText(onlineClusterPayload.name);
 
   it('renders cluster menu with default set of features', () => {
     render(setupComponent(onlineClusterPayload));
-    expect(screen.getByText(onlineClusterPayload.name)).toBeInTheDocument();
+    expect(getCluster()).toBeInTheDocument();
 
     expect(getMenuItems().length).toEqual(1);
     userEvent.click(getMenuItem());
@@ -58,7 +59,7 @@ describe('ClusterMenu', () => {
     });
 
     expect(getMenuItems().length).toEqual(4);
-    expect(screen.getByText(onlineClusterPayload.name)).toBeInTheDocument();
+    expect(getCluster()).toBeInTheDocument();
     expect(getBrokers()).toBeInTheDocument();
     expect(getTopics()).toBeInTheDocument();
     expect(getConsumers()).toBeInTheDocument();
