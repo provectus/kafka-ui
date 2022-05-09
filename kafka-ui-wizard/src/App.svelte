@@ -2,18 +2,23 @@
   import "./app.css";
   import Form from "./lib/components/Form.svelte";
   import H1 from "./lib/components/H1.svelte";
-  import H2 from "./lib/components/H2.svelte";
+  import ClustersBoard from "./lib/components/ClustersBoard/ClustersBoard.svelte";
+  import { editableConfigID } from "./stores";
 </script>
 
 <main class="container mx-auto px-5 py-10">
   <H1>Kafka UI Wizard</H1>
-  <H2>New cluster</H2>
+  <ClustersBoard />
 
-  <div class="rounded-lg bg-gray-100 ring-1 ring-gray-300">
-    <div class="max-w-7xl mx-auto md:pt-6 md:py-6 md:px-6 lg:px-8">
-      <Form />
-    </div>
-  </div>
+  {#if $editableConfigID > -1}
+    <Form />
+  {/if}
+  <pre>
+    TODO:
+      1. Custom validation of names
+      2. status -> isValid
+  </pre>
+
 </main>
 
 <style>

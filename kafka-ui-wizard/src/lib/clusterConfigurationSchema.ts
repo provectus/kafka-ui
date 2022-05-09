@@ -1,14 +1,14 @@
-import { array, boolean, number, object, string } from 'yup';
+import { array, boolean, InferType, number, object, string } from 'yup';
 
-export const bootstrapServersSchema = object({
+export const bootstrapServerSchema = object({
   host: string().label('host').required('required'),
   port: number().max(65535, '65535 is the max').positive('positive only').required('required'),
 })
 
-export default object({
+const clusterConfigurationSchema = object({
   clusterName: string().label('Cluster name').required().min(3),
   readonly: boolean().required().default(false),
-  bootstrapServers: array().of(bootstrapServersSchema).min(1).required(),
+  bootstrapServers: array().of(bootstrapServerSchema).min(1).required(),
   sharedConfluentCloudCluster: boolean().required().default(false),
   securedWithSSL: boolean().required().default(false),
   selfSignedCA: boolean().required().default(false),
@@ -157,3 +157,8 @@ export default object({
       then: (s) => s.required(),
     }),
 });
+
+export default clusterConfigurationSchema;
+
+export type BootstrapServer = InferType<typeof bootstrapServerSchema>
+export type ClusterConfiguration = InferType<typeof clusterConfigurationSchema>

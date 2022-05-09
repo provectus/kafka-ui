@@ -25,7 +25,8 @@
     {placeholder}
     type="number"
     bind:value
-    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block text-sm border border-gray-300 rounded-md w-20 {errors && 'border-red-500'}"
+    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block text-sm border border-gray-300 rounded-md w-20"
+    class:border-red-500={errors}
   />
   {#if errors}
     <p class="mt-1 text-xs text-red-700 block">{errors}</p>

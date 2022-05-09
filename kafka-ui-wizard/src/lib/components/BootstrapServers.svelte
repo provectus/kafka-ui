@@ -1,5 +1,10 @@
 <script type="ts">
-  import type { BootstrapServer, BootstrapServerError } from "src/lib/types";
+  import type { BootstrapServer } from "lib/clusterConfigurationSchema";
+  interface BootstrapServerError {
+    host: string;
+    port: string;
+  }
+
   export let value: BootstrapServer[];
   export let errors: BootstrapServerError[];
 
@@ -12,7 +17,7 @@
   };
 </script>
 
-{#each value as server, index}
+{#each value as { host, port }, index}
   <div class="grid grid-cols-6 gap-3">
     <div class="col-span-3">
       <input
@@ -21,8 +26,9 @@
         placeholder="Host"
         type="text"
         on:change
-        bind:value={server[index].host}
-        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md {errors[index]?.host && 'border-red-500'}"
+        bind:value={host}
+        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md"
+        class:border-red-500={errors[index]?.host}
       />
       {#if errors[index]?.host}
         <p class="mt-1 text-xs text-red-700 block">{errors[index]?.host}</p>
@@ -35,8 +41,9 @@
         type="number"
         placeholder="Port"
         on:change
-        bind:value={server[index].port}
-        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md {errors[index]?.port && 'border-red-500'}"
+        bind:value={port}
+        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md"
+        class:border-red-500={errors[index]?.port}
       />
       {#if errors[index]?.port}
         <p class="mt-1 text-xs text-red-700 block">{errors[index]?.port}</p>

@@ -26,7 +26,8 @@
     type="text"
     bind:value
     on:change
-    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md {errors && 'border-red-500'}"
+    class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md"
+    class:border-red-500={errors}
   />
   {#if errors}
     <p class="mt-1 text-xs text-red-700 block">{errors}</p>
