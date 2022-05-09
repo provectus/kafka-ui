@@ -4,7 +4,7 @@ import Select, {
 } from 'components/common/Select/Select';
 import React from 'react';
 import { render } from 'lib/testHelpers';
-import { getAllByRole, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 jest.mock('react-hook-form', () => ({
