@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.TopicPartition;
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -418,6 +419,7 @@ public class SendAndReadTests extends AbstractIntegrationTest {
   }
 
   @Test
+  @Ignore
   void topicMessageMetadataProtobuf() {
     new SendAndReadSpec()
         .withKeySchema(PROTOBUF_SCHEMA)
