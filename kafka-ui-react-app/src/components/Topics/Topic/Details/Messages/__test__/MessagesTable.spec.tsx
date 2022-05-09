@@ -4,11 +4,17 @@ import { render } from 'lib/testHelpers';
 import MessagesTable from 'components/Topics/Topic/Details/Messages/MessagesTable';
 import { Router } from 'react-router';
 import { createMemoryHistory } from 'history';
-import { SeekDirection, SeekType } from 'generated-sources';
+import { SeekDirection, SeekType, TopicMessage } from 'generated-sources';
 import userEvent from '@testing-library/user-event';
 import TopicMessagesContext, {
   ContextProps,
 } from 'components/contexts/TopicMessagesContext';
+import {
+  topicMessagePayload,
+  topicMessagesMetaPayload,
+} from 'redux/reducers/topicMessages/__test__/fixtures';
+
+const mockTopicsMessages: TopicMessage[] = [{ ...topicMessagePayload }];
 
 describe('MessagesTable', () => {
   const searchParams = new URLSearchParams(
@@ -23,7 +29,8 @@ describe('MessagesTable', () => {
 
   const setUpComponent = (
     params: URLSearchParams = searchParams,
-    ctx: ContextProps = contextValue
+    ctx: ContextProps = contextValue,
+    messages: TopicMessage[] = []
   ) => {
     const history = createMemoryHistory();
     history.push({
@@ -34,7 +41,18 @@ describe('MessagesTable', () => {
         <TopicMessagesContext.Provider value={ctx}>
           <MessagesTable />
         </TopicMessagesContext.Provider>
-      </Router>
+      </Router>,
+      {
+        preloadedState: {
+          topicMessages: {
+            messages,
+            meta: {
+              ...topicMessagesMetaPayload,
+            },
+            isFetching: false,
+          },
+        },
+      }
     );
   };
 
@@ -68,6 +86,19 @@ describe('MessagesTable', () => {
     it('should check the display of the loader element', () => {
       setUpComponent(searchParams, { ...contextValue, isLive: true });
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
+  });
+
+  describe('should render Messages table with data', () => {
+    beforeEach(() => {
+      setUpComponent(searchParams, { ...contextValue }, mockTopicsMessages);
+    });
+
+    it('should check the rendering of the messages', () => {
+      expect(screen.queryByText(/No messages found/i)).not.toBeInTheDocument();
+      expect(
+        screen.getByText(mockTopicsMessages[0].content as string)
+      ).toBeInTheDocument();
     });
   });
 });
