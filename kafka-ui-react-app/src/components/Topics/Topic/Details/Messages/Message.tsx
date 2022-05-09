@@ -20,7 +20,11 @@ const StyledDataCell = styled.td`
   min-width: 350px;
 `;
 
-const Message: React.FC<{ message: TopicMessage }> = ({
+export interface Props {
+  message: TopicMessage;
+}
+
+const Message: React.FC<Props> = ({
   message: {
     timestamp,
     timestampType,
