@@ -4,6 +4,7 @@ import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters
 import { FilterEdit } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
 import SavedFilters from 'components/Topics/Topic/Details/Messages/Filters/SavedFilters';
 import SavedIcon from 'components/common/Icons/SavedIcon';
+import QuestionIcon from 'components/common/Icons/QuestionIcon';
 
 import AddEditFilterContainer from './AddEditFilterContainer';
 
@@ -52,7 +53,9 @@ const AddFilter: React.FC<FilterModalProps> = ({
   );
   return (
     <>
-      <S.FilterTitle>Add filter</S.FilterTitle>
+      <S.FilterTitle>
+        Add filter <QuestionIcon />
+      </S.FilterTitle>
       {savedFilterState ? (
         <SavedFilters
           deleteFilter={deleteFilter}

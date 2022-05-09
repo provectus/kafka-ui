@@ -120,6 +120,9 @@ export const FilterTitle = styled.h3`
   font-size: 20px;
   margin-bottom: 40px;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   &:after {
     content: '';
     width: calc(100% + 32px);
