@@ -1,5 +1,7 @@
 import type { ClusterConfiguration } from './lib/clusterConfigurationSchema';
 import { derived, writable } from 'svelte/store';
+
+const LOCAL_STORAGE_KEY = 'uiForApacheKafkaWizard';
 export interface State {
   isValid: boolean;
   isEditing: boolean;
@@ -55,7 +57,7 @@ const newClusterValue: State = {
     },
   };
 
-const store = (initialValue: State[] = []) => {
+const store = (initialValue: State[]) => {
   const { update, subscribe } = writable<State[]>(initialValue);
 
   return {
@@ -91,6 +93,13 @@ const store = (initialValue: State[] = []) => {
   };
 };
 
-export const appStore = store();
+
+const stored: State[] = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+export const appStore = store(stored);
+
+appStore.subscribe((value) => {
+  localStorage[LOCAL_STORAGE_KEY] = JSON.stringify(value);
+});
+
 export const allValid = derived(appStore, (items) => !items.find(({ isValid }) => !isValid));
 export const editableConfigID = derived(appStore, (items) => items.findIndex(({ isEditing }) => isEditing));
