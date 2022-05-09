@@ -3,7 +3,6 @@ import { render } from 'lib/testHelpers';
 import {
   clusterConnectConnectorPath,
   clusterConnectorNewPath,
-  clusterConnectorsPath,
 } from 'lib/paths';
 import New, { NewProps } from 'components/Connect/New/New';
 import { connects, connector } from 'redux/reducers/connect/__test__/fixtures';
