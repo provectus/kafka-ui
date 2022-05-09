@@ -8,7 +8,7 @@ describe('Filters Styled components', () => {
   describe('MessageLoading component', () => {
     it('should check the styling during live', () => {
       render(<S.MessageLoading isLive />);
-      expect(screen.getByRole('loader')).toHaveStyle({
+      expect(screen.getByRole('contentLoader')).toHaveStyle({
         color: theme.heading.h3.color,
         'font-size': theme.heading.h3.fontSize,
         display: 'flex',
@@ -17,7 +17,7 @@ describe('Filters Styled components', () => {
 
     it('should check the styling during not live', () => {
       render(<S.MessageLoading isLive={false} />);
-      expect(screen.getByRole('loader', { hidden: true })).toHaveStyle({
+      expect(screen.getByRole('contentLoader', { hidden: true })).toHaveStyle({
         color: theme.heading.h3.color,
         'font-size': theme.heading.h3.fontSize,
         display: 'none',

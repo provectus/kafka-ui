@@ -258,7 +258,7 @@ export const ConfirmDeletionText = styled.h3`
 `;
 
 export const MessageLoading = styled.div.attrs({
-  role: 'loader',
+  role: 'contentLoader',
 })<MessageLoadingProps>`
   color: ${({ theme }) => theme.heading.h3.color};
   font-size: ${({ theme }) => theme.heading.h3.fontSize};
