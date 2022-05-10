@@ -3,7 +3,12 @@
   import Form from "./lib/components/Form.svelte";
   import H1 from "./lib/components/H1.svelte";
   import ClustersBoard from "./lib/components/ClustersBoard/ClustersBoard.svelte";
-  import { editableConfigID } from "./stores";
+  import { appStore, editableConfigID } from "./stores";
+
+  $: {
+    console.log('editableConfigID', $editableConfigID);
+    console.log('Store', $appStore);
+  }
 </script>
 
 <main class="container mx-auto px-5 py-10">

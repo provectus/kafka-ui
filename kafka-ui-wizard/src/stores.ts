@@ -57,49 +57,47 @@ const newClusterValue: State = {
     },
   };
 
-const store = (initialValue: State[]) => {
-  const { update, subscribe } = writable<State[]>(initialValue);
-
-  return {
-    subscribe,
-    addNew: () => update((items) => [
-      ...items.map((val) => ({ ...val, isEditing: false })),
-      newClusterValue,
-    ]),
-    copy: (id: number) => update((items) => {
-      const copiedItem: State = {
-        ...items[id],
-        isEditing: true,
-        isValid: false,
-      };
-
-      return [
-        ...items.map((item) => ({ ...item, isEditing: false })),
-        copiedItem
-      ];
-    }),
-    review: (id: number) =>
-      update((items) => items.map((item, index) => ({ ...item, isEditing: index === id }))),
-    remove: (id: number) =>
-      update((items) => items.filter((_, index) => index !== id)),
-    submit: (id: number, config: State['config']) => update((items) => {
-      items[id] = {
-        isValid: true,
-        isEditing: false,
-        config,
-      }
-      return [...items];
-    }),
-  };
-};
-
-
 const stored: State[] = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
-export const appStore = store(stored);
+const { update, subscribe } = writable<State[]>(stored);
+
+export const appStore = {
+  subscribe,
+  addNew: () => update((items) => [
+    ...items.map((val) => ({ ...val, isEditing: false })),
+    newClusterValue,
+  ]),
+  copy: (id: number) => update((items) => {
+    const copiedItem: State = {
+      ...items[id],
+      isEditing: true,
+      isValid: false,
+    };
+
+    return [
+      ...items.map((item) => ({ ...item, isEditing: false })),
+      copiedItem
+    ];
+  }),
+  review: (id: number) => {
+    console.log('ID: ', id);
+    update((items) => {
+      console.log('Before: ', items);
+      const a = items.map((item, index) => ({ ...item, isEditing: index == id }));
+      console.log('After', a);
+      return a;
+    });
+  },
+  remove: (id: number) =>
+    update((items) => items.filter((_, index) => index !== id)),
+  submit: (id: number, config: State['config']) =>
+    update((items) => items.map((item, index) => {
+      if (index !== id) return item;
+      return ({ isEditing: false, isValid: true, config  });
+    })),
+};
 
 appStore.subscribe((value) => {
   localStorage[LOCAL_STORAGE_KEY] = JSON.stringify(value);
 });
 
-export const allValid = derived(appStore, (items) => !items.find(({ isValid }) => !isValid));
-export const editableConfigID = derived(appStore, (items) => items.findIndex(({ isEditing }) => isEditing));
+export const editableConfigID = derived(appStore, ($items) => $items.findIndex(({ isEditing }) => isEditing));

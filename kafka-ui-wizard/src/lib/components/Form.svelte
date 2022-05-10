@@ -14,7 +14,7 @@
     ClusterConfiguration,
   } from "../clusterConfigurationSchema";
 
-  const { form, errors, isValid, handleSubmit, handleChange } =
+  const { form, errors, isValid, handleSubmit, handleChange, updateInitialValues } =
     createForm<ClusterConfiguration>({
       initialValues: $appStore[$editableConfigID].config,
       validationSchema: clusterConfigurationSchema,
@@ -22,6 +22,11 @@
         appStore.submit($editableConfigID, config);
       },
     });
+
+  editableConfigID.subscribe((value) => {
+    updateInitialValues($appStore[$editableConfigID].config);
+  });
+
 </script>
 
 <div class="rounded-lg bg-gray-100 ring-1 ring-gray-300 mt-10">

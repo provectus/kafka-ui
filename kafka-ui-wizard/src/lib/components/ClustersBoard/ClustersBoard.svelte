@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { appStore, editableConfigID, allValid } from "../../../stores";
+  import { appStore, editableConfigID } from "../../../stores";
+
+  let allValid = false;
+  $: {
+    allValid = !$appStore.find(({ isValid }) => !isValid)
+    console.log($appStore);
+  }
 </script>
 
 <div class="grid sm:grid-flow-col sm:auto-cols-max gap-4">
@@ -27,7 +33,7 @@
         <button
           class="bg-gray-100 hover:bg-gray-100 py-1 px-2 rounded disabled:opacity-30"
           on:click={() => appStore.copy(index)}
-          disabled={!$allValid}
+          disabled={!allValid}
         >
           Copy
         </button>
@@ -40,7 +46,7 @@
       </div>
     </div>
   {/each}
-  {#if $allValid}
+  {#if allValid}
     <div
       on:click={appStore.addNew}
       title="Configure new cluster"
