@@ -1,5 +1,4 @@
 import React from 'react';
-import { StaticRouter } from 'react-router-dom';
 import { connectors } from 'redux/reducers/connect/__test__/fixtures';
 import ClusterContext, {
   ContextProps,
@@ -13,12 +12,7 @@ import { render } from 'lib/testHelpers';
 describe('Connectors List', () => {
   describe('Container', () => {
     it('renders view with initial state of storage', () => {
-      render(
-        <StaticRouter>
-          <ListContainer />
-        </StaticRouter>
-      );
-
+      render(<ListContainer />);
       expect(screen.getByRole('heading')).toHaveTextContent('Connectors');
     });
   });
@@ -31,32 +25,30 @@ describe('Connectors List', () => {
       props: Partial<ListProps> = {},
       contextValue: ContextProps = initialValue
     ) => (
-      <StaticRouter>
-        <ClusterContext.Provider value={contextValue}>
-          <List
-            areConnectorsFetching
-            areConnectsFetching
-            connectors={[]}
-            connects={[]}
-            fetchConnects={fetchConnects}
-            fetchConnectors={fetchConnectors}
-            search=""
-            setConnectorSearch={setConnectorSearch}
-            {...props}
-          />
-        </ClusterContext.Provider>
-      </StaticRouter>
+      <ClusterContext.Provider value={contextValue}>
+        <List
+          areConnectorsFetching
+          areConnectsFetching
+          connectors={[]}
+          connects={[]}
+          fetchConnects={fetchConnects}
+          fetchConnectors={fetchConnectors}
+          search=""
+          setConnectorSearch={setConnectorSearch}
+          {...props}
+        />
+      </ClusterContext.Provider>
     );
 
     it('renders PageLoader', () => {
       render(setupComponent({ areConnectorsFetching: true }));
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
-      expect(screen.queryAllByRole('row').length).toBeFalsy();
+      expect(screen.queryByRole('row')).not.toBeInTheDocument();
     });
 
     it('renders table', () => {
       render(setupComponent({ areConnectorsFetching: false }));
-      expect(screen.queryAllByRole('progressbar').length).toBeFalsy();
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
       expect(screen.getByRole('table')).toBeInTheDocument();
     });
 
@@ -67,7 +59,7 @@ describe('Connectors List', () => {
           connectors,
         })
       );
-      expect(screen.queryAllByRole('progressbar').length).toBeFalsy();
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
       expect(screen.getByRole('table')).toBeInTheDocument();
       expect(screen.getAllByRole('row').length).toEqual(3);
     });
@@ -86,7 +78,7 @@ describe('Connectors List', () => {
     describe('readonly cluster', () => {
       it('does not render actions if cluster is readonly', () => {
         render(setupComponent({}, { ...initialValue, isReadOnly: true }));
-        expect(screen.queryAllByRole('button').length).toBeFalsy();
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
       });
     });
   });

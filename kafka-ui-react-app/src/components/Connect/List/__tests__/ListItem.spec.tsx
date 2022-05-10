@@ -1,5 +1,4 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { connectors } from 'redux/reducers/connect/__test__/fixtures';
 import ListItem, { ListItemProps } from 'components/Connect/List/ListItem';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -22,13 +21,11 @@ jest.mock(
 describe('Connectors ListItem', () => {
   const connector = connectors[0];
   const setupWrapper = (props: Partial<ListItemProps> = {}) => (
-    <BrowserRouter>
-      <table>
-        <tbody>
-          <ListItem clusterName="local" connector={connector} {...props} />
-        </tbody>
-      </table>
-    </BrowserRouter>
+    <table>
+      <tbody>
+        <ListItem clusterName="local" connector={connector} {...props} />
+      </tbody>
+    </table>
   );
 
   const onCancel = jest.fn();

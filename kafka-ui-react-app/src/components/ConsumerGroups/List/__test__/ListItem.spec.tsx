@@ -1,10 +1,8 @@
 import React from 'react';
 import ListItem from 'components/ConsumerGroups/List/ListItem';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
-import { StaticRouter } from 'react-router';
 import { ConsumerGroupState, ConsumerGroup } from 'generated-sources';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 describe('List', () => {
   const mockConsumerGroup = {
@@ -29,34 +27,19 @@ describe('List', () => {
       },
     ],
   };
-  const component = render(
-    <StaticRouter>
-      <ThemeProvider theme={theme}>
-        <table>
-          <tbody>
-            <ListItem consumerGroup={mockConsumerGroup} />
-          </tbody>
-        </table>
-      </ThemeProvider>
-    </StaticRouter>
-  );
-
   const setupWrapper = (consumerGroup: ConsumerGroup) => (
-    <StaticRouter>
-      <ThemeProvider theme={theme}>
-        <table>
-          <tbody>
-            <ListItem consumerGroup={consumerGroup} />
-          </tbody>
-        </table>
-      </ThemeProvider>
-    </StaticRouter>
+    <table>
+      <tbody>
+        <ListItem consumerGroup={consumerGroup} />
+      </tbody>
+    </table>
   );
 
   const getCell = () => screen.getAllByRole('cell')[5];
 
   it('render empty ListItem', () => {
-    expect(component.getByRole('row')).toBeInTheDocument();
+    render(setupWrapper(mockConsumerGroup));
+    expect(screen.getByRole('row')).toBeInTheDocument();
   });
 
   it('renders item with stable status', () => {
