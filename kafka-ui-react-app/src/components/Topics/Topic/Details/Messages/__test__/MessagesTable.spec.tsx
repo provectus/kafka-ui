@@ -90,7 +90,7 @@ describe('MessagesTable', () => {
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
 
-    it('should check the seekTo parameter in the url if no seekTo is found should change the history', () => {
+    it('should check the seekTo parameter in the url if no seekTo is found should noy change the history', () => {
       const customSearchParam = new URLSearchParams(searchParamsValue);
 
       const mockedHistory = createMemoryHistory({
