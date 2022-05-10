@@ -1,14 +1,12 @@
 import React from 'react';
-import { StaticRouter } from 'react-router';
 import {
   externalTopicPayload,
   internalTopicPayload,
 } from 'redux/reducers/topics/__test__/fixtures';
 import ListItem, { ListItemProps } from 'components/Topics/List/ListItem';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
 
 const mockDelete = jest.fn();
 const clusterName = 'local';
@@ -27,24 +25,20 @@ jest.mock('react-redux', () => ({
 
 describe('ListItem', () => {
   const setupComponent = (props: Partial<ListItemProps> = {}) => (
-    <StaticRouter>
-      <ThemeProvider theme={theme}>
-        <table>
-          <tbody>
-            <ListItem
-              topic={internalTopicPayload}
-              deleteTopic={mockDelete}
-              clusterName={clusterName}
-              clearTopicMessages={mockDeleteMessages}
-              recreateTopic={mockRecreateTopic}
-              selected={false}
-              toggleTopicSelected={mockToggleTopicSelected}
-              {...props}
-            />
-          </tbody>
-        </table>
-      </ThemeProvider>
-    </StaticRouter>
+    <table>
+      <tbody>
+        <ListItem
+          topic={internalTopicPayload}
+          deleteTopic={mockDelete}
+          clusterName={clusterName}
+          clearTopicMessages={mockDeleteMessages}
+          recreateTopic={mockRecreateTopic}
+          selected={false}
+          toggleTopicSelected={mockToggleTopicSelected}
+          {...props}
+        />
+      </tbody>
+    </table>
   );
 
   const getCheckbox = () => screen.getByRole('checkbox');

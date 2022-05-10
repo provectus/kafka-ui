@@ -2,35 +2,28 @@ import React from 'react';
 import ConfirmationModal, {
   ConfirmationModalProps,
 } from 'components/common/ConfirmationModal/ConfirmationModal';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
-import { render, screen } from '@testing-library/react';
+import { screen, prettyDOM } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
 
 const confirmMock = jest.fn();
 const cancelMock = jest.fn();
 const body = 'Please Confirm the action!';
+
 describe('ConfirmationModal', () => {
   const setupWrapper = (props: Partial<ConfirmationModalProps> = {}) => (
-    <ThemeProvider theme={theme}>
-      <ConfirmationModal
-        onCancel={cancelMock}
-        onConfirm={confirmMock}
-        {...props}
-      >
-        {body}
-      </ConfirmationModal>
-    </ThemeProvider>
+    <ConfirmationModal onCancel={cancelMock} onConfirm={confirmMock} {...props}>
+      {body}
+    </ConfirmationModal>
   );
 
   it('renders nothing', () => {
     render(setupWrapper({ isOpen: false }));
-    expect(screen.queryAllByText(body).length).toBeFalsy();
+    expect(screen.queryByText(body)).not.toBeInTheDocument();
   });
 
   it('renders modal', () => {
     render(setupWrapper({ isOpen: true }));
-    expect(screen.getAllByText(body).length).toBeTruthy();
     expect(screen.getByRole('dialog')).toHaveTextContent(body);
     expect(screen.getAllByRole('button').length).toEqual(2);
   });
@@ -73,8 +66,8 @@ describe('ConfirmationModal', () => {
 
       it('handles onCancel when user clicks on modal-background', () => {
         const { container } = render(setupWrapper({ isOpen: true }));
-
         userEvent.click(container.children[0].children[0]);
+
         expect(cancelMock).toHaveBeenCalledTimes(1);
         expect(confirmMock).toHaveBeenCalledTimes(0);
       });

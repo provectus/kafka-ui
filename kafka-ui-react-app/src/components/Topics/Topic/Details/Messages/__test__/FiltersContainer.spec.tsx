@@ -1,24 +1,16 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { StaticRouter } from 'react-router-dom';
-import { store } from 'redux/store';
 import FiltersContainer from 'components/Topics/Topic/Details/Messages/Filters/FiltersContainer';
-import { render } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 jest.mock(
   'components/Topics/Topic/Details/Messages/Filters/Filters',
-  () => 'mock-Filters'
+  () => () => <div>mock-Filters</div>
 );
 
 describe('FiltersContainer', () => {
-  it('renders view with initial state of storage', () => {
-    const { container } = render(
-      <Provider store={store}>
-        <StaticRouter>
-          <FiltersContainer />
-        </StaticRouter>
-      </Provider>
-    );
-    expect(container.innerHTML.toString().indexOf('mock-filters')).toBeTruthy();
+  it('renders Filters component', () => {
+    render(<FiltersContainer />);
+    expect(screen.getByText('mock-Filters')).toBeInTheDocument();
   });
 });

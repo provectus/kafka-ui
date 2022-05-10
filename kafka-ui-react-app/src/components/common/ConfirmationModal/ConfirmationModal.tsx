@@ -29,7 +29,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
   return isOpen ? (
     <ConfirmationModalWrapper>
-      <div onClick={cancelHandler} aria-hidden="true" />
+      <div onClick={cancelHandler} aria-hidden="true" role="button" />
       <div>
         <header>
           <p>{title}</p>

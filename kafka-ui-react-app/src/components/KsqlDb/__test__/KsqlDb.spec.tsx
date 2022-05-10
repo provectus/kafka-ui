@@ -1,21 +1,15 @@
 import React from 'react';
 import KsqlDb from 'components/KsqlDb/KsqlDb';
-import { StaticRouter } from 'react-router';
-import { render } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
+import { screen } from '@testing-library/dom';
+import { clusterKsqlDbPath } from 'lib/paths';
 
 describe('KsqlDb Component', () => {
-  const pathname = `ui/clusters/local/ksql-db`;
-
   describe('KsqlDb', () => {
-    const setupComponent = () => (
-      <StaticRouter location={{ pathname }} context={{}}>
-        <KsqlDb />
-      </StaticRouter>
-    );
-
     it('to be in the document', () => {
-      const { container } = render(setupComponent());
-      expect(container).toBeInTheDocument();
+      render(<KsqlDb />, { pathname: clusterKsqlDbPath() });
+      expect(screen.getByText('KSQL DB')).toBeInTheDocument();
+      expect(screen.getByText('Execute KSQL Request')).toBeInTheDocument();
     });
   });
 });

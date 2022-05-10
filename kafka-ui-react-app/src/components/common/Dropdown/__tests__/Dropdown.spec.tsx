@@ -67,7 +67,7 @@ describe('Dropdown', () => {
   });
 
   it('to be in the document', () => {
-    const { baseElement } = render(
+    render(
       setupWrapper(
         {
           right: true,
@@ -76,6 +76,6 @@ describe('Dropdown', () => {
         dummyChildren
       )
     );
-    expect(baseElement).toBeInTheDocument();
+    expect(screen.getByRole('menu')).toBeInTheDocument();
   });
 });

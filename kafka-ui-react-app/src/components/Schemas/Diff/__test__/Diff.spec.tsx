@@ -1,5 +1,4 @@
 import React from 'react';
-import { StaticRouter } from 'react-router';
 import Diff, { DiffProps } from 'components/Schemas/Diff/Diff';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
@@ -9,21 +8,21 @@ import { versions } from './fixtures';
 describe('Diff', () => {
   const setupComponent = (props: DiffProps) =>
     render(
-      <StaticRouter>
-        <Diff
-          versions={props.versions}
-          leftVersionInPath={props.leftVersionInPath}
-          rightVersionInPath={props.rightVersionInPath}
-          areVersionsFetched={props.areVersionsFetched}
-        />
-      </StaticRouter>
+      <Diff
+        versions={props.versions}
+        leftVersionInPath={props.leftVersionInPath}
+        rightVersionInPath={props.rightVersionInPath}
+        areVersionsFetched={props.areVersionsFetched}
+      />
     );
+
   describe('Container', () => {
     it('renders view', () => {
       setupComponent({
         areVersionsFetched: true,
         versions,
       });
+      expect(screen.getAllByText('Version 3').length).toEqual(4);
     });
   });
 
@@ -54,8 +53,7 @@ describe('Diff', () => {
     });
 
     it('renders all options', () => {
-      const selectedOption = screen.getAllByRole('option');
-      expect(selectedOption.length).toEqual(2);
+      expect(screen.getAllByRole('option').length).toEqual(2);
     });
     it('renders left select with empty value', () => {
       const select = screen.getAllByRole('listbox')[0];

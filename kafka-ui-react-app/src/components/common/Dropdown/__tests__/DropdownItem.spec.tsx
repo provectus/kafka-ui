@@ -8,19 +8,13 @@ const onClick = jest.fn();
 
 describe('DropdownItem', () => {
   it('to be in the document', () => {
-    const { baseElement } = render(
-      <DropdownItem onClick={jest.fn()}>Item 1</DropdownItem>
-    );
-    expect(onClick).not.toHaveBeenCalled();
-    expect(baseElement).toBeInTheDocument();
+    render(<DropdownItem onClick={jest.fn()}>Item 1</DropdownItem>);
+    expect(screen.getByText('Item 1')).toBeInTheDocument();
   });
 
   it('handles Click', () => {
     render(<DropdownItem onClick={onClick}>Item 1</DropdownItem>);
-
-    const dropDown = screen.getByText('Item 1');
-
-    userEvent.click(dropDown);
+    userEvent.click(screen.getByText('Item 1'));
     expect(onClick).toHaveBeenCalled();
   });
 });
