@@ -19,7 +19,6 @@ describe('TopicMessages reducer', () => {
       addTopicMessage({ message: topicMessagePayload })
     );
     expect(state.messages.length).toEqual(1);
-    expect(state).toMatchSnapshot();
   });
 
   it('Adds new message with live tailing one', () => {

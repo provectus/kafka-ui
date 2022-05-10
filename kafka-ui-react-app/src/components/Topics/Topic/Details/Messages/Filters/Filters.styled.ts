@@ -181,7 +181,7 @@ export const ActiveSmartFilterWrapper = styled.div`
   justify-content: flex-start;
 `;
 
-export const DeleteSavedFilter = styled.div`
+export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
   color: ${({ theme }) => theme.breadcrumb};
   cursor: pointer;
 `;

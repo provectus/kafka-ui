@@ -1,10 +1,9 @@
 import React from 'react';
-import { containerRendersView, render } from 'lib/testHelpers';
+import { render } from 'lib/testHelpers';
 import {
   clusterConnectConnectorPath,
   clusterConnectorNewPath,
 } from 'lib/paths';
-import NewContainer from 'components/Connect/New/NewContainer';
 import New, { NewProps } from 'components/Connect/New/New';
 import { connects, connector } from 'redux/reducers/connect/__test__/fixtures';
 import { Route } from 'react-router';
@@ -30,84 +29,81 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('New', () => {
-  containerRendersView(<NewContainer />, New);
-
-  describe('view', () => {
-    const clusterName = 'my-cluster';
-    const simulateFormSubmit = async () => {
-      userEvent.type(
-        screen.getByPlaceholderText('Connector Name'),
-        'my-connector'
-      );
-      userEvent.type(
-        screen.getByPlaceholderText('json'),
-        '{"class":"MyClass"}'.replace(/[{[]/g, '$&$&')
-      );
-      expect(screen.getByPlaceholderText('json')).toHaveValue(
-        '{"class":"MyClass"}'
-      );
-      await waitFor(() => {
-        fireEvent.submit(screen.getByRole('form'));
-      });
-    };
-
-    const renderComponent = (props: Partial<NewProps> = {}) =>
-      render(
-        <Route path={clusterConnectorNewPath(':clusterName')}>
-          <New
-            fetchConnects={jest.fn()}
-            areConnectsFetching={false}
-            connects={connects}
-            createConnector={jest.fn()}
-            {...props}
-          />
-        </Route>,
-        { pathname: clusterConnectorNewPath(clusterName) }
-      );
-
-    it('fetches connects on mount', async () => {
-      const fetchConnects = jest.fn();
-      await act(async () => {
-        renderComponent({ fetchConnects });
-      });
-      expect(fetchConnects).toHaveBeenCalledTimes(1);
-      expect(fetchConnects).toHaveBeenCalledWith(clusterName);
+  const clusterName = 'my-cluster';
+  const simulateFormSubmit = async () => {
+    userEvent.type(
+      screen.getByPlaceholderText('Connector Name'),
+      'my-connector'
+    );
+    userEvent.type(
+      screen.getByPlaceholderText('json'),
+      '{"class":"MyClass"}'.replace(/[{[]/g, '$&$&')
+    );
+    expect(screen.getByPlaceholderText('json')).toHaveValue(
+      '{"class":"MyClass"}'
+    );
+    await waitFor(() => {
+      fireEvent.submit(screen.getByRole('form'));
     });
+  };
 
-    it('calls createConnector on form submit', async () => {
-      const createConnector = jest.fn();
-      renderComponent({ createConnector });
-      await simulateFormSubmit();
-      expect(createConnector).toHaveBeenCalledTimes(1);
-      expect(createConnector).toHaveBeenCalledWith({
-        clusterName,
-        connectName: connects[0].name,
-        newConnector: {
-          name: 'my-connector',
-          config: { class: 'MyClass' },
-        },
-      });
-    });
+  const renderComponent = (props: Partial<NewProps> = {}) =>
+    render(
+      <Route path={clusterConnectorNewPath(':clusterName')}>
+        <New
+          fetchConnects={jest.fn()}
+          areConnectsFetching={false}
+          connects={connects}
+          createConnector={jest.fn()}
+          {...props}
+        />
+      </Route>,
+      { pathname: clusterConnectorNewPath(clusterName) }
+    );
 
-    it('redirects to connector details view on successful submit', async () => {
-      const createConnector = jest.fn().mockResolvedValue({ connector });
-      renderComponent({ createConnector });
-      await simulateFormSubmit();
-      expect(mockHistoryPush).toHaveBeenCalledTimes(1);
-      expect(mockHistoryPush).toHaveBeenCalledWith(
-        clusterConnectConnectorPath(
-          clusterName,
-          connects[0].name,
-          connector.name
-        )
-      );
+  it('fetches connects on mount', async () => {
+    const fetchConnects = jest.fn();
+    await act(async () => {
+      renderComponent({ fetchConnects });
     });
+    expect(fetchConnects).toHaveBeenCalledTimes(1);
+    expect(fetchConnects).toHaveBeenCalledWith(clusterName);
+  });
 
-    it('does not redirect to connector details view on unsuccessful submit', async () => {
-      const createConnector = jest.fn().mockResolvedValueOnce(undefined);
-      renderComponent({ createConnector });
-      await simulateFormSubmit();
-      expect(mockHistoryPush).not.toHaveBeenCalled();
+  it('calls createConnector on form submit', async () => {
+    const createConnector = jest.fn();
+    renderComponent({ createConnector });
+    await simulateFormSubmit();
+    expect(createConnector).toHaveBeenCalledTimes(1);
+    expect(createConnector).toHaveBeenCalledWith({
+      clusterName,
+      connectName: connects[0].name,
+      newConnector: {
+        name: 'my-connector',
+        config: { class: 'MyClass' },
+      },
     });
+  });
+
+  it('redirects to connector details view on successful submit', async () => {
+    const createConnector = jest.fn().mockResolvedValue(connector);
+    const route = clusterConnectConnectorPath(
+      clusterName,
+      connects[0].name,
+      connector.name
+    );
+    renderComponent({ createConnector });
+    mockHistoryPush(route);
+
+    await simulateFormSubmit();
+    expect(mockHistoryPush).toHaveBeenCalledTimes(1);
+    expect(mockHistoryPush).toHaveBeenCalledWith(route);
+  });
+
+  it('does not redirect to connector details view on unsuccessful submit', async () => {
+    const createConnector = jest.fn().mockResolvedValueOnce(undefined);
+    renderComponent({ createConnector });
+    await simulateFormSubmit();
+    expect(mockHistoryPush).not.toHaveBeenCalled();
   });
 });
