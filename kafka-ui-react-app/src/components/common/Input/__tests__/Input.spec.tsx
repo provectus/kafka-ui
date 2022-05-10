@@ -12,14 +12,14 @@ jest.mock('react-hook-form', () => ({
 }));
 describe('Custom Input', () => {
   describe('with no icons', () => {
-    it('matches the snapshot', () => {
+    it('to be in the document', () => {
       const component = render(setupWrapper());
       expect(component.baseElement).toBeInTheDocument();
     });
   });
 
   describe('with icons', () => {
-    it('matches the snapshot', () => {
+    it('to be in the document', () => {
       const component = render(
         setupWrapper({
           leftIcon: 'fas fa-address-book',

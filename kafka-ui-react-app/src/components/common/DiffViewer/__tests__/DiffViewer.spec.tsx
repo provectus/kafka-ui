@@ -1,5 +1,4 @@
 import React from 'react';
-// import { render } from 'lib/testHelpers';
 import DiffViewer from 'components/common/DiffViewer/DiffViewer';
 import { render } from '@testing-library/react';
 

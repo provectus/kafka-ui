@@ -6,8 +6,6 @@ import Actions, {
   ActionsProps,
 } from 'components/Connect/Details/Actions/Actions';
 import { ConnectorState } from 'generated-sources';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ConfirmationModal, {
@@ -63,54 +61,50 @@ describe('Actions', () => {
     const connectorName = 'my-connector';
 
     const confirmationModal = (props: Partial<ConfirmationModalProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <TestRouterWrapper
-          pathname={pathname}
-          urlParams={{ clusterName, connectName, connectorName }}
+      <TestRouterWrapper
+        pathname={pathname}
+        urlParams={{ clusterName, connectName, connectorName }}
+      >
+        <ConfirmationModal
+          onCancel={cancelMock}
+          onConfirm={() =>
+            deleteConnector(clusterName, connectName, connectorName)
+          }
+          {...props}
         >
-          <ConfirmationModal
-            onCancel={cancelMock}
-            onConfirm={() =>
-              deleteConnector(clusterName, connectName, connectorName)
-            }
-            {...props}
+          <button type="button" onClick={cancelMock}>
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              deleteConnector(clusterName, connectName, connectorName);
+              mockHistoryPush(clusterConnectorsPath(clusterName));
+            }}
           >
-            <button type="button" onClick={cancelMock}>
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                deleteConnector(clusterName, connectName, connectorName);
-                mockHistoryPush(clusterConnectorsPath(clusterName));
-              }}
-            >
-              Confirm
-            </button>
-          </ConfirmationModal>
-        </TestRouterWrapper>
-      </ThemeProvider>
+            Confirm
+          </button>
+        </ConfirmationModal>
+      </TestRouterWrapper>
     );
 
     const component = (props: Partial<ActionsProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <TestRouterWrapper
-          pathname={pathname}
-          urlParams={{ clusterName, connectName, connectorName }}
-        >
-          <Actions
-            deleteConnector={jest.fn()}
-            isConnectorDeleting={false}
-            connectorStatus={ConnectorState.RUNNING}
-            restartConnector={jest.fn()}
-            restartTasks={jest.fn()}
-            pauseConnector={jest.fn()}
-            resumeConnector={jest.fn()}
-            isConnectorActionRunning={false}
-            {...props}
-          />
-        </TestRouterWrapper>
-      </ThemeProvider>
+      <TestRouterWrapper
+        pathname={pathname}
+        urlParams={{ clusterName, connectName, connectorName }}
+      >
+        <Actions
+          deleteConnector={jest.fn()}
+          isConnectorDeleting={false}
+          connectorStatus={ConnectorState.RUNNING}
+          restartConnector={jest.fn()}
+          restartTasks={jest.fn()}
+          pauseConnector={jest.fn()}
+          resumeConnector={jest.fn()}
+          isConnectorActionRunning={false}
+          {...props}
+        />
+      </TestRouterWrapper>
     );
 
     it('to be in the document when paused', () => {

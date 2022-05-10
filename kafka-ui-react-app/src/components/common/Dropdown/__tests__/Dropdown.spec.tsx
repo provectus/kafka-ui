@@ -66,7 +66,7 @@ describe('Dropdown', () => {
     expect(wrapper.querySelector('.dropdown.is-active')).toBeTruthy();
   });
 
-  it('matches snapshot', () => {
+  it('to be in the document', () => {
     const { baseElement } = render(
       setupWrapper(
         {

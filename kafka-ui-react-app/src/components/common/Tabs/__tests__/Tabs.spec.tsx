@@ -26,13 +26,13 @@ describe('Tabs component', () => {
       expect(link).toHaveTextContent(tabs[idx]);
     });
   });
-  it('renders the children', () => {
+  it('expects list items to be in the document', () => {
     screen.queryAllByRole('button').forEach((link, idx) => {
       userEvent.click(link);
       expect(screen.getByTestId(`.child_${idx + 1}`)).toBeInTheDocument();
     });
   });
-  it('matches the snapshot', () => {
+  it('to be in the document', () => {
     const { container } = render(
       <Tabs tabs={tabs}>
         {child1}

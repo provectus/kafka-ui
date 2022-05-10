@@ -13,7 +13,7 @@ describe('KsqlDb Component', () => {
       </StaticRouter>
     );
 
-    it('matches snapshot', () => {
+    it('to be in the document', () => {
       const { container } = render(setupComponent());
       expect(container).toBeInTheDocument();
     });

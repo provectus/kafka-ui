@@ -76,7 +76,7 @@ describe('Custom Select', () => {
       const { container } = render(
         <Select name="test" {...{ isLive: true }} />
       );
-      expect(container).toBeInTheDocument();
+      expect(screen.getByRole('listbox')).toBeInTheDocument();
     });
   });
 });

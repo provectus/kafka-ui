@@ -148,7 +148,6 @@ describe('SavedFilter Component', () => {
       const { container } = setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
       const deleteIcons = container.getElementsByTagName('i');
-      // const deleteIcons = screen.getAllByTestId('deleteIcon');
 
       userEvent.hover(savedFilters[0]);
       userEvent.click(deleteIcons[0]);

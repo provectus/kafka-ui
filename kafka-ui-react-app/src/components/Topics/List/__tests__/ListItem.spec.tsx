@@ -50,9 +50,8 @@ describe('ListItem', () => {
   const getCheckbox = () => screen.getByRole('checkbox');
 
   it('renders without checkbox for internal topic', () => {
-    render(setupComponent());
-
-    expect(screen.getAllByRole('cell').length).toBeTruthy();
+    render(setupComponent({ topic: internalTopicPayload }));
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
   });
 
   it('renders with checkbox for external topic', () => {

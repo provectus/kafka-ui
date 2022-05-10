@@ -7,7 +7,7 @@ import { screen } from '@testing-library/react';
 const onClick = jest.fn();
 
 describe('DropdownItem', () => {
-  it('matches snapshot', () => {
+  it('to be in the document', () => {
     const { baseElement } = render(
       <DropdownItem onClick={jest.fn()}>Item 1</DropdownItem>
     );
