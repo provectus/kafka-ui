@@ -3,13 +3,13 @@ import EditFilter, {
   EditFilterProps,
 } from 'components/Topics/Topic/Details/Messages/Filters/EditFilter';
 import { render } from 'lib/testHelpers';
-import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { screen, waitFor, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FilterEdit } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
 
 const editFilter: FilterEdit = {
   index: 0,
-  filter: { name: 'name', code: 'code' },
+  filter: { name: 'name', code: '' },
 };
 
 const setupComponent = (props?: Partial<EditFilterProps>) =>
@@ -39,6 +39,11 @@ describe('EditFilter component', () => {
     const toggleEditModal = jest.fn();
     const editSavedFilter = jest.fn();
     setupComponent({ toggleEditModal, editSavedFilter });
+    const inputs = screen.getAllByRole('textbox');
+    const textAreaElement = inputs[0] as HTMLTextAreaElement;
+    const inputNameElement = inputs[1];
+    userEvent.paste(textAreaElement, 'edited code');
+    userEvent.type(inputNameElement, 'edited name');
     await waitFor(() => fireEvent.submit(screen.getByRole('form')));
     expect(toggleEditModal).toHaveBeenCalledTimes(1);
     expect(editSavedFilter).toHaveBeenCalledTimes(1);
@@ -46,11 +51,11 @@ describe('EditFilter component', () => {
 
   it('checks input values to match', () => {
     setupComponent();
-    expect(screen.getAllByRole('textbox')[0]).toHaveValue(
-      editFilter.filter.code
-    );
-    expect(screen.getAllByRole('textbox')[1]).toHaveValue(
-      editFilter.filter.name
-    );
+    const inputs = screen.getAllByRole('textbox');
+    const textAreaElement = inputs[0] as HTMLTextAreaElement;
+    const inputNameElement = inputs[1];
+    const span = within(textAreaElement).getByText(editFilter.filter.code);
+    expect(span).toHaveValue(editFilter.filter.code);
+    expect(inputNameElement).toHaveValue(editFilter.filter.name);
   });
 });

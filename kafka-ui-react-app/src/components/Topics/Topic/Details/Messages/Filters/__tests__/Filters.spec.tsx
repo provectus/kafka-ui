@@ -171,16 +171,18 @@ describe('Filters component', () => {
 
       const messageFilterModal = screen.getByTestId('messageFilterModal');
 
-      await waitFor(() => {
-        const textBoxElements =
-          within(messageFilterModal).getAllByRole('textbox');
-        userEvent.type(textBoxElements[0], filterName);
-        userEvent.type(textBoxElements[1], filterCode);
-      });
       const textBoxElements =
         within(messageFilterModal).getAllByRole('textbox');
-      expect(textBoxElements[0]).toHaveValue(filterName);
-      expect(textBoxElements[1]).toHaveValue(filterCode);
+
+      const textAreaElement = textBoxElements[0] as HTMLTextAreaElement;
+      const inputNameElement = textBoxElements[1];
+      await waitFor(() => {
+        userEvent.paste(textAreaElement, filterName);
+        userEvent.type(inputNameElement, filterCode);
+      });
+
+      expect(textAreaElement.value).toEqual(`${filterName}\n\n`);
+      expect(inputNameElement).toHaveValue(filterCode);
 
       await waitFor(() => {
         return userEvent.click(
