@@ -2,7 +2,7 @@ import React from 'react';
 import ConfirmationModal, {
   ConfirmationModalProps,
 } from 'components/common/ConfirmationModal/ConfirmationModal';
-import { screen, prettyDOM } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 
