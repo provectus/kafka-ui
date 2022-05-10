@@ -1,12 +1,11 @@
 import React from 'react';
-import { TestRouterWrapper } from 'lib/testHelpers';
+import { render, TestRouterWrapper } from 'lib/testHelpers';
 import { clusterConnectConnectorTasksPath } from 'lib/paths';
 import TasksContainer from 'components/Connect/Details/Tasks/TasksContainer';
 import Tasks, { TasksProps } from 'components/Connect/Details/Tasks/Tasks';
 import { tasks } from 'redux/reducers/connect/__test__/fixtures';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { store } from 'redux/store';
 import { Router } from 'react-router';
@@ -23,15 +22,11 @@ const history = createMemoryHistory();
 
 describe('Tasks', () => {
   const tasksContainer = (props: Partial<TasksProps> = {}) => (
-    <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <Router history={history}>
-          <TasksContainer>
-            <Tasks areTasksFetching={false} tasks={tasks} {...props} />
-          </TasksContainer>
-        </Router>
-      </Provider>
-    </ThemeProvider>
+    <Router history={history}>
+      <TasksContainer>
+        <Tasks areTasksFetching={false} tasks={tasks} {...props} />
+      </TasksContainer>
+    </Router>
   );
 
   it('container renders view', () => {
@@ -50,14 +45,12 @@ describe('Tasks', () => {
     const connectorName = 'my-connector';
 
     const setupWrapper = (props: Partial<TasksProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <TestRouterWrapper
-          pathname={pathname}
-          urlParams={{ clusterName, connectName, connectorName }}
-        >
-          <Tasks areTasksFetching={false} tasks={tasks} {...props} />
-        </TestRouterWrapper>
-      </ThemeProvider>
+      <TestRouterWrapper
+        pathname={pathname}
+        urlParams={{ clusterName, connectName, connectorName }}
+      >
+        <Tasks areTasksFetching={false} tasks={tasks} {...props} />
+      </TestRouterWrapper>
     );
 
     it('to be in the document when fetching tasks', () => {

@@ -1,14 +1,11 @@
 import React from 'react';
-import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { connectors } from 'redux/reducers/connect/__test__/fixtures';
-import { store } from 'redux/store';
 import ListItem, { ListItemProps } from 'components/Connect/List/ListItem';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
 
 const mockDeleteConnector = jest.fn(() => ({ type: 'test' }));
 
@@ -25,17 +22,13 @@ jest.mock(
 describe('Connectors ListItem', () => {
   const connector = connectors[0];
   const setupWrapper = (props: Partial<ListItemProps> = {}) => (
-    <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <BrowserRouter>
-          <table>
-            <tbody>
-              <ListItem clusterName="local" connector={connector} {...props} />
-            </tbody>
-          </table>
-        </BrowserRouter>
-      </Provider>
-    </ThemeProvider>
+    <BrowserRouter>
+      <table>
+        <tbody>
+          <ListItem clusterName="local" connector={connector} {...props} />
+        </tbody>
+      </table>
+    </BrowserRouter>
   );
 
   const onCancel = jest.fn();

@@ -1,7 +1,5 @@
 import React from 'react';
-import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router-dom';
-import { store } from 'redux/store';
 import { connectors } from 'redux/reducers/connect/__test__/fixtures';
 import ClusterContext, {
   ContextProps,
@@ -9,21 +7,16 @@ import ClusterContext, {
 } from 'components/contexts/ClusterContext';
 import ListContainer from 'components/Connect/List/ListContainer';
 import List, { ListProps } from 'components/Connect/List/List';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 describe('Connectors List', () => {
   describe('Container', () => {
     it('renders view with initial state of storage', () => {
       render(
-        <ThemeProvider theme={theme}>
-          <Provider store={store}>
-            <StaticRouter>
-              <ListContainer />
-            </StaticRouter>
-          </Provider>
-        </ThemeProvider>
+        <StaticRouter>
+          <ListContainer />
+        </StaticRouter>
       );
 
       expect(screen.getByRole('heading')).toHaveTextContent('Connectors');
@@ -38,25 +31,21 @@ describe('Connectors List', () => {
       props: Partial<ListProps> = {},
       contextValue: ContextProps = initialValue
     ) => (
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <StaticRouter>
-            <ClusterContext.Provider value={contextValue}>
-              <List
-                areConnectorsFetching
-                areConnectsFetching
-                connectors={[]}
-                connects={[]}
-                fetchConnects={fetchConnects}
-                fetchConnectors={fetchConnectors}
-                search=""
-                setConnectorSearch={setConnectorSearch}
-                {...props}
-              />
-            </ClusterContext.Provider>
-          </StaticRouter>
-        </Provider>
-      </ThemeProvider>
+      <StaticRouter>
+        <ClusterContext.Provider value={contextValue}>
+          <List
+            areConnectorsFetching
+            areConnectsFetching
+            connectors={[]}
+            connects={[]}
+            fetchConnects={fetchConnects}
+            fetchConnectors={fetchConnectors}
+            search=""
+            setConnectorSearch={setConnectorSearch}
+            {...props}
+          />
+        </ClusterContext.Provider>
+      </StaticRouter>
     );
 
     it('renders PageLoader', () => {
