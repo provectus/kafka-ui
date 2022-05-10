@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { MemoryRouter, Route, StaticRouter } from 'react-router-dom';
+import { StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
@@ -9,33 +9,6 @@ import { RootState } from 'redux/interfaces';
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from 'redux/reducers';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
-
-interface TestRouterWrapperProps {
-  pathname: string;
-  urlParams: {
-    [key: string]: string;
-  };
-}
-
-export const TestRouterWrapper: React.FC<TestRouterWrapperProps> = ({
-  children,
-  pathname,
-  urlParams,
-}) => (
-  <MemoryRouter
-    initialEntries={[
-      {
-        key: 'test',
-        pathname: Object.keys(urlParams).reduce(
-          (acc, param) => acc.replace(`:${param}`, urlParams[param]),
-          pathname
-        ),
-      },
-    ]}
-  >
-    <Route path={pathname}>{children}</Route>
-  </MemoryRouter>
-);
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;

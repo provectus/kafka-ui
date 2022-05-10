@@ -1,12 +1,10 @@
 import React from 'react';
-import { TestRouterWrapper, render } from 'lib/testHelpers';
+import { Route } from 'react-router-dom';
+import { render } from 'lib/testHelpers';
 import { clusterConnectConnectorPath } from 'lib/paths';
 import Details, { DetailsProps } from 'components/Connect/Details/Details';
 import { connector, tasks } from 'redux/reducers/connect/__test__/fixtures';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
-
-jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
+import { screen } from '@testing-library/dom';
 
 jest.mock(
   'components/Connect/Details/Overview/OverviewContainer',
@@ -39,42 +37,64 @@ describe('Details', () => {
   const connectorName = 'my-connector';
 
   const setupWrapper = (props: Partial<DetailsProps> = {}) => (
-    <ThemeProvider theme={theme}>
-      <TestRouterWrapper
-        pathname={pathname}
-        urlParams={{ clusterName, connectName, connectorName }}
-      >
-        <Details
-          fetchConnector={jest.fn()}
-          fetchTasks={jest.fn()}
-          isConnectorFetching={false}
-          areTasksFetching={false}
-          connector={connector}
-          tasks={tasks}
-          {...props}
-        />
-      </TestRouterWrapper>
-    </ThemeProvider>
+    <Route path={pathname}>
+      <Details
+        fetchConnector={jest.fn()}
+        fetchTasks={jest.fn()}
+        isConnectorFetching={false}
+        areTasksFetching={false}
+        connector={connector}
+        tasks={tasks}
+        {...props}
+      />
+    </Route>
   );
 
-  it('to be in the document when fetching connector', () => {
-    const { container } = render(setupWrapper({ isConnectorFetching: true }));
-    expect(container).toBeInTheDocument();
+  it('renders progressbar when fetching connector', () => {
+    render(setupWrapper({ isConnectorFetching: true }), {
+      pathname: clusterConnectConnectorPath(
+        clusterName,
+        connectName,
+        connectorName
+      ),
+    });
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
   });
 
-  it('to be in the document when fetching tasks', () => {
-    const { container } = render(setupWrapper({ areTasksFetching: true }));
-    expect(container).toBeInTheDocument();
+  it('renders progressbar when fetching tasks', () => {
+    render(setupWrapper({ areTasksFetching: true }), {
+      pathname: clusterConnectConnectorPath(
+        clusterName,
+        connectName,
+        connectorName
+      ),
+    });
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
   });
 
   it('is empty when no connector', () => {
-    const wrapper = render(setupWrapper({ connector: null })).baseElement;
-    expect(wrapper.querySelector('div')).toBeEmptyDOMElement();
+    const { container } = render(setupWrapper({ connector: null }), {
+      pathname: clusterConnectConnectorPath(
+        clusterName,
+        connectName,
+        connectorName
+      ),
+    });
+    expect(container).toBeEmptyDOMElement();
   });
 
   it('fetches connector on mount', () => {
     const fetchConnector = jest.fn();
-    render(setupWrapper({ fetchConnector }));
+    render(setupWrapper({ fetchConnector }), {
+      pathname: clusterConnectConnectorPath(
+        clusterName,
+        connectName,
+        connectorName
+      ),
+    });
     expect(fetchConnector).toHaveBeenCalledTimes(1);
     expect(fetchConnector).toHaveBeenCalledWith({
       clusterName,
@@ -85,7 +105,13 @@ describe('Details', () => {
 
   it('fetches tasks on mount', () => {
     const fetchTasks = jest.fn();
-    render(setupWrapper({ fetchTasks }));
+    render(setupWrapper({ fetchTasks }), {
+      pathname: clusterConnectConnectorPath(
+        clusterName,
+        connectName,
+        connectorName
+      ),
+    });
     expect(fetchTasks).toHaveBeenCalledTimes(1);
     expect(fetchTasks).toHaveBeenCalledWith({
       clusterName,

@@ -1,13 +1,10 @@
 import React from 'react';
-import { TestRouterWrapper } from 'lib/testHelpers';
+import { render } from 'lib/testHelpers';
+import { Route } from 'react-router-dom';
 import { clusterConnectConnectorConfigPath } from 'lib/paths';
 import Config, { ConfigProps } from 'components/Connect/Details/Config/Config';
 import { connector } from 'redux/reducers/connect/__test__/fixtures';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
-import { render } from '@testing-library/react';
-
-jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
+import { screen } from '@testing-library/dom';
 
 jest.mock('components/common/Editor/Editor', () => 'mock-Editor');
 
@@ -22,34 +19,47 @@ describe('Config', () => {
   const connectorName = 'my-connector';
 
   const component = (props: Partial<ConfigProps> = {}) => (
-    <TestRouterWrapper
-      pathname={pathname}
-      urlParams={{ clusterName, connectName, connectorName }}
-    >
-      <ThemeProvider theme={theme}>
-        <Config
-          fetchConfig={jest.fn()}
-          isConfigFetching={false}
-          config={connector.config}
-          {...props}
-        />
-      </ThemeProvider>
-    </TestRouterWrapper>
+    <Route path={pathname}>
+      <Config
+        fetchConfig={jest.fn()}
+        isConfigFetching={false}
+        config={connector.config}
+        {...props}
+      />
+    </Route>
   );
 
   it('to be in the document when fetching config', () => {
-    const { container } = render(component({ isConfigFetching: true }));
-    expect(container).toBeInTheDocument();
+    render(component({ isConfigFetching: true }), {
+      pathname: clusterConnectConnectorConfigPath(
+        clusterName,
+        connectName,
+        connectorName
+      ),
+    });
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
   it('is empty when no config', () => {
-    const { container } = render(component({ config: null }));
+    const { container } = render(component({ config: null }), {
+      pathname: clusterConnectConnectorConfigPath(
+        clusterName,
+        connectName,
+        connectorName
+      ),
+    });
     expect(container).toBeEmptyDOMElement();
   });
 
   it('fetches config on mount', () => {
     const fetchConfig = jest.fn();
-    render(component({ fetchConfig }));
+    render(component({ fetchConfig }), {
+      pathname: clusterConnectConnectorConfigPath(
+        clusterName,
+        connectName,
+        connectorName
+      ),
+    });
     expect(fetchConfig).toHaveBeenCalledTimes(1);
     expect(fetchConfig).toHaveBeenCalledWith({
       clusterName,
