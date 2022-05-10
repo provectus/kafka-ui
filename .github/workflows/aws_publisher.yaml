@@ -10,6 +10,10 @@ on:
         description: 'Version of KafkaUI'
         required: true
         default: '0.3.2'
+      PublishOnMarketplace:
+        description: 'If set to true, the request to update AWS Server product version will be raised'
+        required: true
+        default: false
 
 jobs:
   build-ami:
@@ -53,6 +57,7 @@ jobs:
 
       # add fresh AMI to AWS Marketplace
       - name: Publish Artifact at Marketplace
+        if: ${{ github.event.inputs.PublishOnMarketplace == true }}
         env:
           PRODUCT_ID: ${{ secrets.AWS_SERVER_PRODUCT_ID }}
           RELEASE_VERSION: "${{ github.event.inputs.KafkaUIReleaseVersion }}"
