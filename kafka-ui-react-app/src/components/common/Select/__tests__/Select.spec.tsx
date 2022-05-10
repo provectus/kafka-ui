@@ -73,9 +73,7 @@ describe('Custom Select', () => {
 
   describe('when live', () => {
     it('there is live icon', () => {
-      const { container } = render(
-        <Select name="test" {...{ isLive: true }} />
-      );
+      render(<Select name="test" {...{ isLive: true }} />);
       expect(screen.getByRole('listbox')).toBeInTheDocument();
     });
   });

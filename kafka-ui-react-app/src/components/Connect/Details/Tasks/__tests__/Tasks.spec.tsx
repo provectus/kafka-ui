@@ -4,10 +4,6 @@ import { clusterConnectConnectorTasksPath } from 'lib/paths';
 import TasksContainer from 'components/Connect/Details/Tasks/TasksContainer';
 import Tasks, { TasksProps } from 'components/Connect/Details/Tasks/Tasks';
 import { tasks } from 'redux/reducers/connect/__test__/fixtures';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
-import { Provider } from 'react-redux';
-import { store } from 'redux/store';
 import { Router } from 'react-router';
 import { createMemoryHistory } from 'history';
 
