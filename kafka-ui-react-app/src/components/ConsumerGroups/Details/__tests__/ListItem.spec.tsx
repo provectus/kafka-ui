@@ -41,8 +41,7 @@ describe('ListItem', () => {
   });
 
   it('should renders list item with topic content open', () => {
-    userEvent.click(screen.getByTestId('consumer-group-list-item-toggle'));
-
+    userEvent.click(screen.getAllByRole('cell')[0].children[0]);
     expect(screen.getByText('Consumer ID')).toBeInTheDocument();
   });
 });

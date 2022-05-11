@@ -46,7 +46,7 @@ const EditWrapperStyled = styled.div`
   }
 `;
 
-const DEFAULTS = {
+export const DEFAULTS = {
   partitions: 1,
   replicationFactor: 1,
   minInSyncReplicas: 1,

@@ -11,6 +11,10 @@ describe('Brokers Component', () => {
   afterEach(() => fetchMock.reset());
 
   const clusterName = 'local';
+
+  const testInSyncReplicasCount = 798;
+  const testOutOfSyncReplicasCount = 1;
+
   const renderComponent = () =>
     render(
       <Route path={clusterBrokersPath(':clusterName')}>
@@ -48,7 +52,6 @@ describe('Brokers Component', () => {
       const rows = screen.getAllByRole('row');
       expect(rows.length).toEqual(3);
     });
-
     it('shows warning when offlinePartitionCount > 0', async () => {
       const fetchStatsMock = fetchMock.getOnce(fetchStatsUrl, {
         ...clusterStatsPayload,
@@ -66,6 +69,53 @@ describe('Brokers Component', () => {
       );
       expect(onlineWidget).toBeInTheDocument();
       expect(onlineWidget).toHaveStyle({ color: '#E51A1A' });
+    });
+    it('shows right count when offlinePartitionCount > 0', async () => {
+      const fetchStatsMock = fetchMock.getOnce(fetchStatsUrl, {
+        ...clusterStatsPayload,
+        inSyncReplicasCount: testInSyncReplicasCount,
+        outOfSyncReplicasCount: testOutOfSyncReplicasCount,
+      });
+      renderComponent();
+      await waitFor(() => {
+        expect(fetchStatsMock.called()).toBeTruthy();
+      });
+
+      const onlineWidgetDef = screen.getByText(testInSyncReplicasCount);
+      const onlineWidget = screen.getByText(
+        `of ${testInSyncReplicasCount + testOutOfSyncReplicasCount}`
+      );
+      expect(onlineWidgetDef).toBeInTheDocument();
+      expect(onlineWidget).toBeInTheDocument();
+    });
+    it('shows right count when inSyncReplicasCount: undefined outOfSyncReplicasCount: 1', async () => {
+      const fetchStatsMock = fetchMock.getOnce(fetchStatsUrl, {
+        ...clusterStatsPayload,
+        inSyncReplicasCount: undefined,
+        outOfSyncReplicasCount: testOutOfSyncReplicasCount,
+      });
+      renderComponent();
+      await waitFor(() => {
+        expect(fetchStatsMock.called()).toBeTruthy();
+      });
+
+      const onlineWidget = screen.getByText(`of ${testOutOfSyncReplicasCount}`);
+      expect(onlineWidget).toBeInTheDocument();
+    });
+    it(`shows right count when inSyncReplicasCount: ${testInSyncReplicasCount} outOfSyncReplicasCount: undefined`, async () => {
+      const fetchStatsMock = fetchMock.getOnce(fetchStatsUrl, {
+        ...clusterStatsPayload,
+        inSyncReplicasCount: testInSyncReplicasCount,
+        outOfSyncReplicasCount: undefined,
+      });
+      renderComponent();
+      await waitFor(() => {
+        expect(fetchStatsMock.called()).toBeTruthy();
+      });
+      const onlineWidgetDef = screen.getByText(testInSyncReplicasCount);
+      const onlineWidget = screen.getByText(`of ${testInSyncReplicasCount}`);
+      expect(onlineWidgetDef).toBeInTheDocument();
+      expect(onlineWidget).toBeInTheDocument();
     });
   });
 });

@@ -80,14 +80,14 @@ describe('CustomParams', () => {
   });
 
   describe('works with user inputs correctly', () => {
-    beforeEach(() => {
+    let button: HTMLButtonElement;
+    beforeEach(async () => {
       renderComponent({ isSubmitting: false });
+      button = screen.getByRole('button');
+      await waitFor(() => userEvent.click(button));
     });
 
     it('button click creates custom param fieldset', async () => {
-      const button = screen.getByRole('button');
-      await waitFor(() => userEvent.click(button));
-
       const listbox = screen.getByRole('listbox');
       expect(listbox).toBeInTheDocument();
 
@@ -96,8 +96,6 @@ describe('CustomParams', () => {
     });
 
     it('can select option', async () => {
-      const button = screen.getByRole('button');
-      await waitFor(() => userEvent.click(button));
       const listbox = screen.getByRole('listbox');
 
       await selectOption(listbox, 'compression.type');
@@ -109,9 +107,6 @@ describe('CustomParams', () => {
     });
 
     it('when selected option changes disabled options update correctly', async () => {
-      const button = screen.getByRole('button');
-      await waitFor(() => userEvent.click(button));
-
       const listbox = screen.getByRole('listbox');
 
       await selectOption(listbox, 'compression.type');
@@ -124,8 +119,6 @@ describe('CustomParams', () => {
     });
 
     it('multiple button clicks create multiple fieldsets', async () => {
-      const button = screen.getByRole('button');
-      await waitFor(() => userEvent.click(button));
       await waitFor(() => userEvent.click(button));
       await waitFor(() => userEvent.click(button));
 
@@ -137,8 +130,6 @@ describe('CustomParams', () => {
     });
 
     it("can't select already selected option", async () => {
-      const button = screen.getByRole('button');
-      await waitFor(() => userEvent.click(button));
       await waitFor(() => userEvent.click(button));
 
       const listboxes = screen.getAllByRole('listbox');
@@ -152,8 +143,6 @@ describe('CustomParams', () => {
     });
 
     it('when fieldset with selected custom property type is deleted disabled options update correctly', async () => {
-      const button = screen.getByRole('button');
-      await waitFor(() => userEvent.click(button));
       await waitFor(() => userEvent.click(button));
       await waitFor(() => userEvent.click(button));
 

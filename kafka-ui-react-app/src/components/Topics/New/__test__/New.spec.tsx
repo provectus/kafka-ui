@@ -122,4 +122,29 @@ describe('New', () => {
     expect(mockedHistory.push).toBeCalledTimes(1);
     expect(createTopicAPIPathMock.called()).toBeTruthy();
   });
+
+  it('submits valid form that result in an error', async () => {
+    const createTopicAPIPathMock = fetchMock.postOnce(
+      createTopicAPIPath,
+      { throws: new Error('Something went wrong') },
+      {
+        body: createTopicPayload,
+      }
+    );
+
+    const mocked = createMemoryHistory({
+      initialEntries: [clusterTopicNewPath(clusterName)],
+    });
+
+    jest.spyOn(mocked, 'push');
+    renderComponent(mocked);
+
+    await waitFor(() => {
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+      userEvent.click(screen.getByText(/submit/i));
+    });
+
+    expect(createTopicAPIPathMock.called()).toBeTruthy();
+    expect(mocked.push).toBeCalledTimes(0);
+  });
 });
