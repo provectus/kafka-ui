@@ -15,20 +15,18 @@ describe('AddEditFilterContainer component', () => {
     code: 'mockCode',
   };
 
-  const setupComponent = (props: Partial<AddEditFilterContainerProps> = {}) => {
-    const { submitBtnText } = props;
-    return render(
+  const setupComponent = (props: Partial<AddEditFilterContainerProps> = {}) =>
+    render(
       <AddEditFilterContainer
         cancelBtnHandler={jest.fn()}
-        submitBtnText={submitBtnText || defaultSubmitBtn}
+        submitBtnText={props.submitBtnText || defaultSubmitBtn}
         {...props}
       />
     );
-  };
 
   describe('default Component Parameters', () => {
-    beforeEach(() => {
-      setupComponent();
+    beforeEach(async () => {
+      await waitFor(() => setupComponent());
     });
 
     it('should check the default Button text', () => {
@@ -47,15 +45,11 @@ describe('AddEditFilterContainer component', () => {
       const inputNameElement = inputs[1];
       userEvent.type(inputNameElement, 'Hello World!');
 
-      await waitFor(() => {
-        expect(submitButtonElem).toBeEnabled();
-      });
+      await waitFor(() => expect(submitButtonElem).toBeEnabled());
 
       userEvent.clear(inputNameElement);
 
-      await waitFor(() => {
-        expect(submitButtonElem).toBeDisabled();
-      });
+      await waitFor(() => expect(submitButtonElem).toBeDisabled());
     });
 
     it('should view the error message after typing and clearing the input', async () => {
@@ -70,10 +64,9 @@ describe('AddEditFilterContainer component', () => {
       userEvent.clear(inputNameElement);
       userEvent.clear(textAreaElement);
 
-      await waitFor(() => {
-        const requiredFieldTextElements = screen.getByText(/required field/i);
-        expect(requiredFieldTextElements).toBeInTheDocument();
-      });
+      await waitFor(() =>
+        expect(screen.getByText(/required field/i)).toBeInTheDocument()
+      );
     });
   });
 
@@ -83,13 +76,12 @@ describe('AddEditFilterContainer component', () => {
         inputDisplayNameDefaultValue: mockData.name,
         inputCodeDefaultValue: mockData.code,
       });
+
       const inputs = screen.getAllByRole('textbox');
       const textAreaElement = inputs[0] as HTMLTextAreaElement;
       const inputNameElement = inputs[1];
-      await waitFor(() => {
-        expect(inputNameElement).toHaveValue(mockData.name);
-        expect(textAreaElement.value).toEqual('');
-      });
+      await waitFor(() => expect(inputNameElement).toHaveValue(mockData.name));
+      expect(textAreaElement.value).toEqual('');
     });
 
     it('should test whether the cancel callback is being called', async () => {
@@ -99,7 +91,7 @@ describe('AddEditFilterContainer component', () => {
       });
       const cancelBtnElement = screen.getByText(/cancel/i);
       userEvent.click(cancelBtnElement);
-      expect(cancelCallback).toBeCalled();
+      await waitFor(() => expect(cancelCallback).toBeCalled());
     });
 
     it('should test whether the submit Callback is being called', async () => {
@@ -118,31 +110,29 @@ describe('AddEditFilterContainer component', () => {
 
       const submitBtnElement = screen.getByText(defaultSubmitBtn);
 
-      await waitFor(() => {
-        expect(submitBtnElement).toBeEnabled();
-      });
+      await waitFor(() => expect(submitBtnElement).toBeEnabled());
 
       userEvent.click(submitBtnElement);
 
-      await waitFor(() => {
-        expect(submitCallback).toBeCalled();
-      });
+      await waitFor(() => expect(submitCallback).toBeCalled());
     });
 
-    it('should display the checkbox if the props is passed and initially check state', () => {
+    it('should display the checkbox if the props is passed and initially check state', async () => {
       setupComponent({ isAdd: true });
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).toBeInTheDocument();
       expect(checkbox).not.toBeChecked();
-      userEvent.click(checkbox);
+      await waitFor(() => userEvent.click(checkbox));
       expect(checkbox).toBeChecked();
     });
 
-    it('should pass and render the correct button text', () => {
+    it('should pass and render the correct button text', async () => {
       const submitBtnText = 'submitBtnTextTest';
-      setupComponent({
-        submitBtnText,
-      });
+      await waitFor(() =>
+        setupComponent({
+          submitBtnText,
+        })
+      );
       expect(screen.getByText(submitBtnText)).toBeInTheDocument();
     });
   });

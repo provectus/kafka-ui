@@ -21,7 +21,11 @@ describe('Cluster Styled Components', () => {
   describe('StatusIcon Component', () => {
     const getStatusCircle = () => screen.getByRole('status-circle');
     it('should check the rendering and correct Styling when it is online', () => {
-      render(<S.StatusIcon status={ServerStatus.ONLINE} />);
+      render(
+        <svg>
+          <S.StatusIcon status={ServerStatus.ONLINE} />
+        </svg>
+      );
 
       expect(getStatusCircle()).toHaveStyle(
         `fill:${theme.menu.statusIconColor.online}`
@@ -29,14 +33,22 @@ describe('Cluster Styled Components', () => {
     });
 
     it('should check the rendering and correct Styling when it is offline', () => {
-      render(<S.StatusIcon status={ServerStatus.OFFLINE} />);
+      render(
+        <svg>
+          <S.StatusIcon status={ServerStatus.OFFLINE} />
+        </svg>
+      );
       expect(getStatusCircle()).toHaveStyle(
         `fill:${theme.menu.statusIconColor.offline}`
       );
     });
 
     it('should check the rendering and correct Styling when it is Initializing', () => {
-      render(<S.StatusIcon status={ServerStatus.INITIALIZING} />);
+      render(
+        <svg>
+          <S.StatusIcon status={ServerStatus.INITIALIZING} />
+        </svg>
+      );
       expect(getStatusCircle()).toHaveStyle(
         `fill:${theme.menu.statusIconColor.initializing}`
       );

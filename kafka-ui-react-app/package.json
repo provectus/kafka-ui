@@ -85,7 +85,6 @@
     "@testing-library/react-hooks": "^7.0.2",
     "@testing-library/user-event": "^13.5.0",
     "@types/classnames": "^2.2.11",
-    "@types/enzyme": "^3.10.9",
     "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.172",
     "@types/node": "^16.4.13",
@@ -101,10 +100,7 @@
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.10.0",
-    "@wojtekmaj/enzyme-adapter-react-17": "^0.6.3",
     "dotenv": "^15.0.0",
-    "enzyme": "^3.11.0",
-    "enzyme-to-json": "^3.6.1",
     "eslint": "^8.7.0",
     "eslint-config-airbnb": "^19.0.0",
     "eslint-config-airbnb-typescript": "^16.1.0",
@@ -135,10 +131,5 @@
   "engines": {
     "node": "14.17.1",
     "npm": "6.14.13"
-  },
-  "jest": {
-    "snapshotSerializers": [
-      "enzyme-to-json/serializer"
-    ]
   }
 }

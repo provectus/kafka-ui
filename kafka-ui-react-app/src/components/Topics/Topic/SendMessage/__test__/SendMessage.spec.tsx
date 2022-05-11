@@ -107,7 +107,6 @@ describe('SendMessage', () => {
     it('calls sendTopicMessage on submit', async () => {
       const sendTopicMessageMock = fetchMock.postOnce(url, 200);
       await renderAndSubmitData();
-
       await waitFor(() =>
         expect(sendTopicMessageMock.called(url)).toBeTruthy()
       );
@@ -135,7 +134,6 @@ describe('SendMessage', () => {
     it('should check and view validation error message when is not valid', async () => {
       const sendTopicMessageMock = fetchMock.postOnce(url, 200);
       await renderAndSubmitData(['error']);
-
       await waitFor(() => expect(sendTopicMessageMock.called(url)).toBeFalsy());
       expect(history.location.pathname).not.toEqual(
         clusterTopicMessagesPath(clusterName, topicName)

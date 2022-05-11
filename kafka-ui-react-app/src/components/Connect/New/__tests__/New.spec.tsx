@@ -7,9 +7,8 @@ import {
 import New, { NewProps } from 'components/Connect/New/New';
 import { connects, connector } from 'redux/reducers/connect/__test__/fixtures';
 import { Route } from 'react-router';
-import { act, fireEvent, screen } from '@testing-library/react';
+import { waitFor, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { waitFor } from '@testing-library/dom';
 import { ControllerRenderProps } from 'react-hook-form';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
@@ -63,9 +62,7 @@ describe('New', () => {
 
   it('fetches connects on mount', async () => {
     const fetchConnects = jest.fn();
-    await act(async () => {
-      renderComponent({ fetchConnects });
-    });
+    await waitFor(() => renderComponent({ fetchConnects }));
     expect(fetchConnects).toHaveBeenCalledTimes(1);
     expect(fetchConnects).toHaveBeenCalledWith(clusterName);
   });
