@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'lib/testHelpers';
 import { screen, waitFor, within } from '@testing-library/react';
-import { Route, Router, StaticRouter } from 'react-router';
+import { Route, Router, StaticRouter } from 'react-router-dom';
 import ClusterContext, {
   ContextProps,
 } from 'components/contexts/ClusterContext';

@@ -6,7 +6,7 @@ import {
 } from 'lib/paths';
 import New, { NewProps } from 'components/Connect/New/New';
 import { connects, connector } from 'redux/reducers/connect/__test__/fixtures';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 import { waitFor, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ControllerRenderProps } from 'react-hook-form';

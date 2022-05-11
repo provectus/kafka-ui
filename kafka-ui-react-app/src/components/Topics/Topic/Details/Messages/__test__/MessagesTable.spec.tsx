@@ -2,7 +2,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import MessagesTable from 'components/Topics/Topic/Details/Messages/MessagesTable';
-import { Router } from 'react-router';
+import { Router } from 'react-router-dom';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { SeekDirection, SeekType, TopicMessage } from 'generated-sources';
 import userEvent from '@testing-library/user-event';

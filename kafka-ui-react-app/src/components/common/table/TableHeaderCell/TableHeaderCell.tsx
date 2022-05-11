@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { SortOrder, TopicColumnsToSort } from 'generated-sources';
 import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
 
@@ -12,7 +12,9 @@ export interface TableHeaderCellProps {
   handleOrderBy?: (orderBy: TopicColumnsToSort | null) => void;
 }
 
-const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
+const TableHeaderCell: React.FC<PropsWithChildren<TableHeaderCellProps>> = (
+  props
+) => {
   const {
     title,
     previewText,

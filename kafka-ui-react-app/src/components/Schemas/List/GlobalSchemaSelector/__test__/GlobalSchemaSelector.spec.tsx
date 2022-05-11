@@ -5,7 +5,7 @@ import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import GlobalSchemaSelector from 'components/Schemas/List/GlobalSchemaSelector/GlobalSchemaSelector';
 import userEvent from '@testing-library/user-event';
 import { clusterSchemasPath } from 'lib/paths';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 import fetchMock from 'fetch-mock';
 
 const clusterName = 'testClusterName';

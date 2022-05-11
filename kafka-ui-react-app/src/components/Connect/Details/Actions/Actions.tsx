@@ -85,7 +85,7 @@ const Actions: React.FC<ActionsProps> = ({
   }, [restartConnector, clusterName, connectName, connectorName]);
 
   const restartTasksHandler = React.useCallback(
-    (actionType) => {
+    (actionType: ConnectorAction) => {
       restartTasks({
         clusterName,
         connectName,

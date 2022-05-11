@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { screen, waitFor, within } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import CustomParams, {
@@ -47,7 +47,7 @@ const expectOptionAvailability = async (
 };
 
 const renderComponent = (props: CustomParamsProps, defaults = {}) => {
-  const Wrapper: React.FC = ({ children }) => {
+  const Wrapper: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
     const methods = useForm({ defaultValues: defaults });
     return <FormProvider {...methods}>{children}</FormProvider>;
   };
