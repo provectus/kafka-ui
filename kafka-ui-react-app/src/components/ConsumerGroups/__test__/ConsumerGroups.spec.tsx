@@ -1,6 +1,7 @@
 import React from 'react';
 import { clusterConsumerGroupsPath } from 'lib/paths';
 import {
+  act,
   screen,
   waitFor,
   waitForElementToBeRemoved,
@@ -37,7 +38,6 @@ const renderComponent = (history = historyMock) =>
 describe('ConsumerGroups', () => {
   it('renders with initial state', async () => {
     renderComponent();
-
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
@@ -54,10 +54,10 @@ describe('ConsumerGroups', () => {
           sortOrder: SortOrder.ASC,
         },
       });
-
-      renderComponent();
-      await waitFor(() => expect(fetchMock.calls().length).toBe(1));
-
+      await act(() => {
+        renderComponent();
+      });
+      expect(fetchMock.calls().length).toBe(1);
       expect(screen.getByRole('table')).toBeInTheDocument();
       expect(screen.getByText('No active consumer groups')).toBeInTheDocument();
     });

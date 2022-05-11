@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import GlobalSchemaSelector from 'components/Schemas/List/GlobalSchemaSelector/GlobalSchemaSelector';
@@ -42,7 +42,9 @@ describe('GlobalSchemaSelector', () => {
       `api/clusters/${clusterName}/schemas/compatibility`,
       { compatibility: CompatibilityLevelCompatibilityEnum.FULL }
     );
-    renderComponent();
+    await act(() => {
+      renderComponent();
+    });
     await waitFor(() =>
       expect(fetchGlobalCompatibilityLevelMock.called()).toBeTruthy()
     );
@@ -89,7 +91,10 @@ describe('GlobalSchemaSelector', () => {
     });
     await waitFor(() => expect(putNewCompatibilityMock.called()).toBeTruthy());
     await waitFor(() => expect(getSchemasMock.called()).toBeTruthy());
-    expect(screen.queryByText('Confirm the action')).not.toBeInTheDocument();
+
+    await waitFor(() =>
+      expect(screen.queryByText('Confirm the action')).not.toBeInTheDocument()
+    );
     expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FORWARD);
   });
 });

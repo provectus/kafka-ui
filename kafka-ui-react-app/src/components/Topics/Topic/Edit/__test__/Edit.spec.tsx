@@ -1,6 +1,6 @@
 import React from 'react';
 import Edit, { DEFAULTS, Props } from 'components/Topics/Topic/Edit/Edit';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
 import { Router } from 'react-router-dom';
@@ -109,7 +109,7 @@ describe('Edit Component', () => {
       const btn = screen.getAllByText(/submit/i)[0];
       expect(btn).toBeEnabled();
 
-      await waitFor(() => {
+      await act(() => {
         userEvent.type(
           screen.getByPlaceholderText('Min In Sync Replicas'),
           '1'
@@ -117,9 +117,7 @@ describe('Edit Component', () => {
         userEvent.click(btn);
       });
       expect(updateTopicMock).toHaveBeenCalledTimes(1);
-      await waitFor(() => {
-        expect(mocked.push).not.toHaveBeenCalled();
-      });
+      expect(mocked.push).not.toHaveBeenCalled();
     });
 
     it('should check the submit functionality when topic updated is true', async () => {
@@ -135,7 +133,7 @@ describe('Edit Component', () => {
 
       const btn = screen.getAllByText(/submit/i)[0];
 
-      await waitFor(() => {
+      await act(() => {
         userEvent.type(
           screen.getByPlaceholderText('Min In Sync Replicas'),
           '1'
@@ -143,12 +141,10 @@ describe('Edit Component', () => {
         userEvent.click(btn);
       });
       expect(updateTopicMock).toHaveBeenCalledTimes(1);
-      await waitFor(() => {
-        expect(mocked.push).toHaveBeenCalled();
-        expect(mocked.location.pathname).toBe(
-          clusterTopicPath(clusterName, topicName)
-        );
-      });
+      expect(mocked.push).toHaveBeenCalled();
+      expect(mocked.location.pathname).toBe(
+        clusterTopicPath(clusterName, topicName)
+      );
     });
   });
 });

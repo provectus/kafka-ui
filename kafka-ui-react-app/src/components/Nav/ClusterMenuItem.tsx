@@ -11,7 +11,9 @@ export interface ClusterMenuItemProps {
   isActive?: NavLinkProps['isActive'];
 }
 
-const ClusterMenuItem: React.FC<PropsWithChildren<ClusterMenuItemProps>> = (props) => {
+const ClusterMenuItem: React.FC<PropsWithChildren<ClusterMenuItemProps>> = (
+  props
+) => {
   const { to, title, children, exact, isTopLevel, isActive } = props;
 
   if (to) {
