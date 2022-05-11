@@ -106,13 +106,7 @@ const SendMessage: React.FC = () => {
             id: `${clusterName}-${topicName}-createTopicMessageError`,
             type: 'error',
             title: 'Validation Error',
-            message: (
-              <ul>
-                {errors.map((e) => (
-                  <li>{e}</li>
-                ))}
-              </ul>
-            ),
+            message: `<ul>${errors.map((e) => `<li>${e}</li>`)}</ul>`,
             createdAt: now(),
           })
         );

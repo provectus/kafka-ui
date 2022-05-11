@@ -7,7 +7,7 @@ import {
 export const topicMessagePayload: TopicMessage = {
   partition: 29,
   offset: 14,
-  timestamp: new Date('2021-07-21T23:25:14.865Z'),
+  timestamp: new Date('2021-07-21T23:25:14.865Z').toString(),
   timestampType: TopicMessageTimestampTypeEnum.CREATE_TIME,
   key: 'schema-registry',
   headers: {},

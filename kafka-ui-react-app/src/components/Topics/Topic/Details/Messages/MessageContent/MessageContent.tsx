@@ -15,7 +15,7 @@ export interface MessageContentProps {
   messageContent?: string;
   messageContentFormat?: string;
   headers?: { [key: string]: string | undefined };
-  timestamp?: Date;
+  timestamp?: string;
   timestampType?: TopicMessageTimestampTypeEnum;
 }
 

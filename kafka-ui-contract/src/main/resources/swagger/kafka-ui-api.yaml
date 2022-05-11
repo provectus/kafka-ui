@@ -2138,7 +2138,6 @@ components:
           format: int64
         timestamp:
           type: string
-          format: date-time
         timestampType:
           type: string
           enum:

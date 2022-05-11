@@ -19,7 +19,7 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
           messageContent='{"data": "test"}'
           messageContentFormat="AVRO"
           headers={{ header: 'test' }}
-          timestamp={new Date(0)}
+          timestamp={new Date(0).toString()}
           timestampType={TopicMessageTimestampTypeEnum.CREATE_TIME}
           {...props}
         />

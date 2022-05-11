@@ -23,14 +23,14 @@ const setupComponent = (props?: Partial<EditFilterProps>) =>
   );
 
 describe('EditFilter component', () => {
-  it('renders component', () => {
-    setupComponent();
+  it('renders component', async () => {
+    await waitFor(() => setupComponent());
     expect(screen.getByText(/edit saved filter/i)).toBeInTheDocument();
   });
 
-  it('closes editFilter modal', () => {
+  it('closes editFilter modal', async () => {
     const toggleEditModal = jest.fn();
-    setupComponent({ toggleEditModal });
+    await waitFor(() => setupComponent({ toggleEditModal }));
     userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
     expect(toggleEditModal).toHaveBeenCalledTimes(1);
   });
@@ -38,7 +38,7 @@ describe('EditFilter component', () => {
   it('save edited fields and close modal', async () => {
     const toggleEditModal = jest.fn();
     const editSavedFilter = jest.fn();
-    setupComponent({ toggleEditModal, editSavedFilter });
+    await waitFor(() => setupComponent({ toggleEditModal, editSavedFilter }));
     const inputs = screen.getAllByRole('textbox');
     const textAreaElement = inputs[0] as HTMLTextAreaElement;
     const inputNameElement = inputs[1];
@@ -49,8 +49,8 @@ describe('EditFilter component', () => {
     expect(editSavedFilter).toHaveBeenCalledTimes(1);
   });
 
-  it('checks input values to match', () => {
-    setupComponent();
+  it('checks input values to match', async () => {
+    await waitFor(() => setupComponent());
     const inputs = screen.getAllByRole('textbox');
     const textAreaElement = inputs[0] as HTMLTextAreaElement;
     const inputNameElement = inputs[1];

@@ -44,29 +44,22 @@ const setupWrapper = (
 const getSubmit = () => screen.getByText('Submit');
 
 describe('Filters component', () => {
-  it('renders component', () => {
+  it('shows cancel button while fetching', () => {
+    setupWrapper({ isFetching: true });
+    expect(screen.getByText('Cancel')).toBeInTheDocument();
+  });
+
+  it('shows submit button while fetching is over', () => {
     setupWrapper();
-  });
-
-  describe('when fetching', () => {
-    it('shows cancel button while fetching', () => {
-      setupWrapper({ isFetching: true });
-      expect(screen.getByText('Cancel')).toBeInTheDocument();
-    });
-  });
-
-  describe('when fetching is over', () => {
-    it('shows submit button while fetching is over', () => {
-      setupWrapper();
-      expect(getSubmit()).toBeInTheDocument();
-    });
+    expect(getSubmit()).toBeInTheDocument();
   });
 
   describe('Input elements', () => {
     const inputValue = 'Hello World!';
 
+    beforeEach(() => setupWrapper());
+
     it('search input', () => {
-      setupWrapper();
       const SearchInput = screen.getByPlaceholderText('Search');
       expect(SearchInput).toBeInTheDocument();
       expect(SearchInput).toHaveValue('');
@@ -75,7 +68,6 @@ describe('Filters component', () => {
     });
 
     it('offset input', () => {
-      setupWrapper();
       const OffsetInput = screen.getByPlaceholderText('Offset');
       expect(OffsetInput).toBeInTheDocument();
       expect(OffsetInput).toHaveValue('');
@@ -83,18 +75,18 @@ describe('Filters component', () => {
       expect(OffsetInput).toHaveValue(inputValue);
     });
 
-    it('timestamp input', () => {
-      setupWrapper();
+    it('timestamp input', async () => {
       const seekTypeSelect = screen.getAllByRole('listbox');
       const option = screen.getAllByRole('option');
+
       userEvent.click(seekTypeSelect[0]);
       userEvent.selectOptions(seekTypeSelect[0], ['Timestamp']);
       expect(option[0]).toHaveTextContent('Timestamp');
-      const TimestampInput = screen.getByPlaceholderText('Select timestamp');
-      expect(TimestampInput).toBeInTheDocument();
-      expect(TimestampInput).toHaveValue('');
-      userEvent.type(TimestampInput, inputValue);
-      expect(TimestampInput).toHaveValue(inputValue);
+      const timestampInput = screen.getByPlaceholderText('Select timestamp');
+      expect(timestampInput).toBeInTheDocument();
+      expect(timestampInput).toHaveValue('');
+      userEvent.type(timestampInput, inputValue);
+      await waitFor(() => expect(timestampInput).toHaveValue(inputValue));
       expect(screen.getByText('Submit')).toBeInTheDocument();
     });
   });
@@ -102,12 +94,10 @@ describe('Filters component', () => {
   describe('Select elements', () => {
     let seekTypeSelects: HTMLElement[];
     let options: HTMLElement[];
+
     const selectedDirectionOptionValue = SeekDirectionOptions[0];
-
     const mockDirectionOptionSelectLabel = selectedDirectionOptionValue.label;
-
     const selectTypeOptionValue = SeekTypeOptions[0];
-
     const mockTypeOptionSelectLabel = selectTypeOptionValue.label;
 
     beforeEach(() => {
@@ -123,6 +113,7 @@ describe('Filters component', () => {
       expect(options[0]).toHaveTextContent(mockTypeOptionSelectLabel);
       expect(screen.getByText('Submit')).toBeInTheDocument();
     });
+
     it('seekDirection select', () => {
       userEvent.click(seekTypeSelects[1]);
       userEvent.selectOptions(seekTypeSelects[1], [
@@ -132,28 +123,24 @@ describe('Filters component', () => {
     });
   });
 
-  describe('when live mode is active', () => {
-    it('stop loading', () => {
-      setupWrapper();
-      const StopLoading = screen.getByText('Stop loading');
-      expect(StopLoading).toBeInTheDocument();
-      userEvent.click(StopLoading);
-      const option = screen.getAllByRole('option');
-      expect(option[1]).toHaveTextContent('Oldest First');
-      expect(getSubmit()).toBeInTheDocument();
-    });
+  it('stop loading when live mode is active', () => {
+    setupWrapper();
+    userEvent.click(screen.getByText('Stop loading'));
+    const option = screen.getAllByRole('option');
+    expect(option[1]).toHaveTextContent('Oldest First');
+    expect(getSubmit()).toBeInTheDocument();
   });
 
-  describe('add new filter modal', () => {
-    it('renders addFilter modal', () => {
-      setupWrapper();
+  it('renders addFilter modal', async () => {
+    setupWrapper();
+    await waitFor(() =>
       userEvent.click(
         screen.getByRole('button', {
           name: /add filters/i,
         })
-      );
-      expect(screen.getByTestId('messageFilterModal')).toBeInTheDocument();
-    });
+      )
+    );
+    expect(screen.getByTestId('messageFilterModal')).toBeInTheDocument();
   });
 
   describe('when there is active smart filter', () => {
@@ -186,13 +173,13 @@ describe('Filters component', () => {
       expect(textAreaElement.value).toEqual(`${filterName}\n\n`);
       expect(inputNameElement).toHaveValue(filterCode);
 
-      await waitFor(() => {
-        return userEvent.click(
+      await waitFor(() =>
+        userEvent.click(
           within(messageFilterModal).getByRole('button', {
             name: /add filter/i,
           })
-        );
-      });
+        )
+      );
     });
 
     it('shows saved smart filter', () => {
@@ -204,9 +191,7 @@ describe('Filters component', () => {
       const deleteIcon = within(smartFilterElement).getByTestId(
         'activeSmartFilterCloseIcon'
       );
-      await waitFor(() => {
-        userEvent.click(deleteIcon);
-      });
+      await waitFor(() => userEvent.click(deleteIcon));
 
       const anotherSmartFilterElement =
         screen.queryByTestId('activeSmartFilter');

@@ -22,7 +22,7 @@ jest.mock(
 
 describe('Message component', () => {
   const mockMessage: TopicMessage = {
-    timestamp: new Date(),
+    timestamp: new Date().toString(),
     timestampType: TopicMessageTimestampTypeEnum.CREATE_TIME,
     offset: 0,
     key: 'test-key',
