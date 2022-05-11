@@ -8,7 +8,7 @@ export interface InfoModalProps {
 
 const InfoModal: React.FC<InfoModalProps> = ({ toggleIsOpen }) => {
   return (
-    <S.QuestionModal>
+    <S.InfoModal>
       <S.P>
         <b>Variables bound to groovy context:</b> partition, timestampMs,
         keyAsText, valueAsText, header, key (json if possible), value (json if
@@ -53,7 +53,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ toggleIsOpen }) => {
           Ok
         </Button>
       </S.ButtonContainer>
-    </S.QuestionModal>
+    </S.InfoModal>
   );
 };
 

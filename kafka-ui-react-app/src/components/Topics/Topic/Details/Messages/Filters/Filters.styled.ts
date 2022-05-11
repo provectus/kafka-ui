@@ -138,7 +138,7 @@ export const MessageFilterModal = styled.div`
   z-index: 1;
 `;
 
-export const QuestionModal = styled.div`
+export const InfoModal = styled.div`
   height: auto;
   width: 560px;
   border-radius: 8px;
