@@ -67,18 +67,20 @@ export const TableRow = <T, TId extends IdType, OT = never>({
         const Cell = cell as React.FC<TableCellProps<T, TId, OT>> | undefined;
         const TdComponent = customTd || Td;
 
+        const content = Cell ? (
+          <Cell
+            tableState={tableState}
+            hovered={hovered}
+            rowIndex={index}
+            dataItem={dataItem}
+          />
+        ) : (
+          field && propertyLookup(field, dataItem)
+        );
+
         return (
           <TdComponent maxWidth={maxWidth}>
-            {Cell ? (
-              <Cell
-                tableState={tableState}
-                hovered={hovered}
-                rowIndex={index}
-                dataItem={dataItem}
-              />
-            ) : (
-              field && propertyLookup(field, dataItem)
-            )}
+            {content as React.ReactNode}
           </TdComponent>
         );
       })}

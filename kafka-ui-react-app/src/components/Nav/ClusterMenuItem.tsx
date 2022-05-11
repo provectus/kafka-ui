@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { NavLinkProps } from 'react-router-dom';
 
 import * as S from './Nav.styled';
@@ -11,7 +11,9 @@ export interface ClusterMenuItemProps {
   isActive?: NavLinkProps['isActive'];
 }
 
-const ClusterMenuItem: React.FC<ClusterMenuItemProps> = (props) => {
+const ClusterMenuItem: React.FC<PropsWithChildren<ClusterMenuItemProps>> = (
+  props
+) => {
   const { to, title, children, exact, isTopLevel, isActive } = props;
 
   if (to) {

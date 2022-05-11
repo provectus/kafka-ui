@@ -1,15 +1,11 @@
 import React from 'react';
 import SendMessage from 'components/Topics/Topic/SendMessage/SendMessage';
-import {
-  screen,
-  waitFor,
-  waitForElementToBeRemoved,
-} from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock';
 import { createMemoryHistory } from 'history';
 import { render } from 'lib/testHelpers';
-import { Route, Router } from 'react-router';
+import { Route, Router } from 'react-router-dom';
 import {
   clusterTopicMessagesPath,
   clusterTopicSendMessagePath,
@@ -43,31 +39,35 @@ const clusterName = 'testCluster';
 const topicName = externalTopicPayload.name;
 const history = createMemoryHistory();
 
-const renderComponent = () => {
+const renderComponent = async () => {
   history.push(clusterTopicSendMessagePath(clusterName, topicName));
-  render(
-    <>
-      <Router history={history}>
-        <Route path={clusterTopicSendMessagePath(':clusterName', ':topicName')}>
-          <SendMessage />
-        </Route>
-      </Router>
-      <S.AlertsContainer role="toolbar">
-        <Alerts />
-      </S.AlertsContainer>
-    </>,
-    { store }
-  );
+  await act(() => {
+    render(
+      <>
+        <Router history={history}>
+          <Route
+            path={clusterTopicSendMessagePath(':clusterName', ':topicName')}
+          >
+            <SendMessage />
+          </Route>
+        </Router>
+        <S.AlertsContainer role="toolbar">
+          <Alerts />
+        </S.AlertsContainer>
+      </>,
+      { store }
+    );
+  });
 };
 
 const renderAndSubmitData = async (error: string[] = []) => {
-  renderComponent();
-  await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
-
-  userEvent.selectOptions(screen.getByLabelText('Partition'), '0');
-  const sendBtn = await screen.findByText('Send');
-  (validateMessage as Mock).mockImplementation(() => error);
-  userEvent.click(sendBtn);
+  await renderComponent();
+  expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  await act(() => {
+    userEvent.selectOptions(screen.getByLabelText('Partition'), '0');
+    (validateMessage as Mock).mockImplementation(() => error);
+    userEvent.click(screen.getByText('Send'));
+  });
 };
 
 describe('SendMessage', () => {
@@ -85,12 +85,14 @@ describe('SendMessage', () => {
     fetchMock.reset();
   });
 
-  it('fetches schema on first render', () => {
+  it('fetches schema on first render', async () => {
     const fetchTopicMessageSchemaMock = fetchMock.getOnce(
       `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
       testSchema
     );
-    renderComponent();
+    await act(() => {
+      renderComponent();
+    });
     expect(fetchTopicMessageSchemaMock.called()).toBeTruthy();
   });
 
@@ -107,9 +109,7 @@ describe('SendMessage', () => {
     it('calls sendTopicMessage on submit', async () => {
       const sendTopicMessageMock = fetchMock.postOnce(url, 200);
       await renderAndSubmitData();
-      await waitFor(() =>
-        expect(sendTopicMessageMock.called(url)).toBeTruthy()
-      );
+      expect(sendTopicMessageMock.called(url)).toBeTruthy();
       expect(history.location.pathname).toEqual(
         clusterTopicMessagesPath(clusterName, topicName)
       );
@@ -120,12 +120,8 @@ describe('SendMessage', () => {
         throws: 'Error',
       });
       await renderAndSubmitData();
-      await waitFor(() => {
-        expect(sendTopicMessageMock.called(url)).toBeTruthy();
-      });
-      await waitFor(() => {
-        expect(screen.getByRole('alert')).toBeInTheDocument();
-      });
+      expect(sendTopicMessageMock.called(url)).toBeTruthy();
+      expect(screen.getByRole('alert')).toBeInTheDocument();
       expect(history.location.pathname).toEqual(
         clusterTopicMessagesPath(clusterName, topicName)
       );
@@ -134,7 +130,7 @@ describe('SendMessage', () => {
     it('should check and view validation error message when is not valid', async () => {
       const sendTopicMessageMock = fetchMock.postOnce(url, 200);
       await renderAndSubmitData(['error']);
-      await waitFor(() => expect(sendTopicMessageMock.called(url)).toBeFalsy());
+      expect(sendTopicMessageMock.called(url)).toBeFalsy();
       expect(history.location.pathname).not.toEqual(
         clusterTopicMessagesPath(clusterName, topicName)
       );

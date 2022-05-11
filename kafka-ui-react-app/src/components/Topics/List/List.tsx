@@ -1,11 +1,10 @@
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import {
   TopicWithDetailedInfo,
   ClusterName,
   TopicName,
 } from 'redux/interfaces';
-import { useParams } from 'react-router-dom';
 import { clusterTopicCopyPath, clusterTopicNewPath } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
 import useModal from 'lib/hooks/useModal';
