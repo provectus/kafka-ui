@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPath } from 'history';
 import { useHistory, useParams } from 'react-router-dom';
 import {
   clusterSchemasPath,
@@ -87,18 +88,16 @@ const Details: React.FC = () => {
         {!isReadOnly && (
           <>
             <Button
-              isLink
               buttonSize="M"
               buttonType="primary"
-              to={{
+              to={createPath({
                 pathname: clusterSchemaSchemaDiffPath(clusterName, subject),
                 search: `leftVersion=${versions[0]?.version}&rightVersion=${versions[0]?.version}`,
-              }}
+              })}
             >
               Compare Versions
             </Button>
             <Button
-              isLink
               buttonSize="M"
               buttonType="primary"
               to={clusterSchemaEditPath(clusterName, subject)}

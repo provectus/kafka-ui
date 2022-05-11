@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPath } from 'history';
 import { useHistory, useParams } from 'react-router-dom';
 import {
   TopicWithDetailedInfo,
@@ -290,7 +291,6 @@ const List: React.FC<TopicsListProps> = ({
             <Button
               buttonType="primary"
               buttonSize="M"
-              isLink
               to={clusterTopicNewPath(clusterName)}
             >
               <i className="fas fa-plus" /> Add a Topic
@@ -338,11 +338,10 @@ const List: React.FC<TopicsListProps> = ({
                   <Button
                     buttonSize="M"
                     buttonType="secondary"
-                    isLink
-                    to={{
+                    to={createPath({
                       pathname: clusterTopicCopyPath(clusterName),
                       search: `?${getSelectedTopic()}`,
-                    }}
+                    })}
                   >
                     Copy selected topic
                   </Button>

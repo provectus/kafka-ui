@@ -101,7 +101,6 @@ const Details: React.FC<Props> = ({
             <Button
               buttonSize="M"
               buttonType="primary"
-              isLink
               to={clusterTopicSendMessagePath(clusterName, topicName)}
             >
               Produce Message

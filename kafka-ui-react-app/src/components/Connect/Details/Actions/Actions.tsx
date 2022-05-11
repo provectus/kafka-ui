@@ -178,7 +178,6 @@ const Actions: React.FC<ActionsProps> = ({
         buttonSize="M"
         buttonType="primary"
         type="button"
-        isLink
         disabled={isConnectorActionRunning}
         to={clusterConnectConnectorEditPath(
           clusterName,
