@@ -9,7 +9,7 @@ import {
   clusterTopicSendMessagePath,
 } from 'lib/paths';
 
-const TopicText = {
+const topicText = {
   edit: 'Edit Container',
   send: 'Send Message',
   detail: 'Details Container',
@@ -17,16 +17,16 @@ const TopicText = {
 };
 
 jest.mock('components/Topics/Topic/Edit/EditContainer', () => () => (
-  <div>{TopicText.edit}</div>
+  <div>{topicText.edit}</div>
 ));
 jest.mock('components/Topics/Topic/SendMessage/SendMessage', () => () => (
-  <div>{TopicText.send}</div>
+  <div>{topicText.send}</div>
 ));
 jest.mock('components/Topics/Topic/Details/DetailsContainer', () => () => (
-  <div>{TopicText.detail}</div>
+  <div>{topicText.detail}</div>
 ));
 jest.mock('components/common/PageLoader/PageLoader', () => () => (
-  <div>{TopicText.loading}</div>
+  <div>{topicText.loading}</div>
 ));
 
 describe('Topic Component', () => {
@@ -52,22 +52,22 @@ describe('Topic Component', () => {
 
   it('renders Edit page', () => {
     renderComponent(clusterTopicEditPath('local', 'myTopicName'), false);
-    expect(screen.getByText(TopicText.edit)).toBeInTheDocument();
+    expect(screen.getByText(topicText.edit)).toBeInTheDocument();
   });
 
   it('renders Send Message page', () => {
     renderComponent(clusterTopicSendMessagePath('local', 'myTopicName'), false);
-    expect(screen.getByText(TopicText.send)).toBeInTheDocument();
+    expect(screen.getByText(topicText.send)).toBeInTheDocument();
   });
 
   it('renders Details Container page', () => {
     renderComponent(clusterTopicPath('local', 'myTopicName'), false);
-    expect(screen.getByText(TopicText.detail)).toBeInTheDocument();
+    expect(screen.getByText(topicText.detail)).toBeInTheDocument();
   });
 
   it('renders Page loader', () => {
     renderComponent(clusterTopicPath('local', 'myTopicName'), true);
-    expect(screen.getByText(TopicText.loading)).toBeInTheDocument();
+    expect(screen.getByText(topicText.loading)).toBeInTheDocument();
   });
 
   it('fetches topicDetails', () => {

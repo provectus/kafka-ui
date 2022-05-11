@@ -60,7 +60,7 @@ const renderComponent = () => {
   );
 };
 
-const RenderAndSubmitData = async (error: string[] = []) => {
+const renderAndSubmitData = async (error: string[] = []) => {
   renderComponent();
   await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
 
@@ -106,7 +106,7 @@ describe('SendMessage', () => {
 
     it('calls sendTopicMessage on submit', async () => {
       const sendTopicMessageMock = fetchMock.postOnce(url, 200);
-      await RenderAndSubmitData();
+      await renderAndSubmitData();
 
       await waitFor(() =>
         expect(sendTopicMessageMock.called(url)).toBeTruthy()
@@ -120,7 +120,7 @@ describe('SendMessage', () => {
       const sendTopicMessageMock = fetchMock.postOnce(url, {
         throws: 'Error',
       });
-      await RenderAndSubmitData();
+      await renderAndSubmitData();
       await waitFor(() => {
         expect(sendTopicMessageMock.called(url)).toBeTruthy();
       });
@@ -134,7 +134,7 @@ describe('SendMessage', () => {
 
     it('should check and view validation error message when is not valid', async () => {
       const sendTopicMessageMock = fetchMock.postOnce(url, 200);
-      await RenderAndSubmitData(['error']);
+      await renderAndSubmitData(['error']);
 
       await waitFor(() => expect(sendTopicMessageMock.called(url)).toBeFalsy());
       expect(history.location.pathname).not.toEqual(
