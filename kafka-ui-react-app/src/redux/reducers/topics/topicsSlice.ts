@@ -3,7 +3,6 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
   Configuration,
   TopicsApi,
-  MessagesApi,
   ConsumerGroupsApi,
   TopicsResponse,
   TopicDetails,
@@ -17,7 +16,6 @@ import {
   TopicUpdate,
   DeleteTopicRequest,
   RecreateTopicRequest,
-  CreateTopicRequest,
   SortOrder,
   TopicColumnsToSort,
 } from 'generated-sources';
@@ -31,14 +29,10 @@ import {
 } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
-import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-export const topicsApiClient = new TopicsApi(apiClientConf);
-export const messagesApiClient = new MessagesApi(apiClientConf);
-export const topicConsumerGroupsApiClient = new ConsumerGroupsApi(
-  apiClientConf
-);
+const topicsApiClient = new TopicsApi(apiClientConf);
+const topicConsumerGroupsApiClient = new ConsumerGroupsApi(apiClientConf);
 
 export const fetchTopicsList = createAsyncThunk<
   TopicsResponse,

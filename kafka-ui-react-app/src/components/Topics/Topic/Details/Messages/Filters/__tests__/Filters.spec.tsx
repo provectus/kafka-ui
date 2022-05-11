@@ -41,6 +41,8 @@ const setupWrapper = (
     </TopicMessagesContext.Provider>
   );
 };
+const getSubmit = () => screen.getByText('Submit');
+
 describe('Filters component', () => {
   it('renders component', () => {
     setupWrapper();
@@ -56,7 +58,7 @@ describe('Filters component', () => {
   describe('when fetching is over', () => {
     it('shows submit button while fetching is over', () => {
       setupWrapper();
-      expect(screen.getByText('Submit')).toBeInTheDocument();
+      expect(getSubmit()).toBeInTheDocument();
     });
   });
 
@@ -138,7 +140,7 @@ describe('Filters component', () => {
       userEvent.click(StopLoading);
       const option = screen.getAllByRole('option');
       expect(option[1]).toHaveTextContent('Oldest First');
-      expect(screen.getByText('Submit')).toBeInTheDocument();
+      expect(getSubmit()).toBeInTheDocument();
     });
   });
 

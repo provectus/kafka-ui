@@ -6,8 +6,8 @@ interface HeadingBaseProps {
   $level: HeadingLevel;
 }
 const HeadingBase = styled.h1<HeadingBaseProps>`
-  ${({ theme }) => theme.heading.base}
-  ${({ theme, $level }) => theme.heading.variants[$level]}
+  ${({ theme }) => theme.heading?.base}
+  ${({ theme, $level }) => theme.heading?.variants[$level]}
 `;
 
 export interface Props {

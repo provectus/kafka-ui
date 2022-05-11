@@ -72,10 +72,7 @@ const SavedFilters: FC<Props> = ({
               <S.FilterEdit onClick={() => onEdit(index, filter)}>
                 Edit
               </S.FilterEdit>
-              <S.DeleteSavedFilter
-                data-testid="deleteIcon"
-                onClick={() => deleteFilterHandler(index)}
-              >
+              <S.DeleteSavedFilter onClick={() => deleteFilterHandler(index)}>
                 <i className="fas fa-times" />
               </S.DeleteSavedFilter>
             </S.FilterOptions>

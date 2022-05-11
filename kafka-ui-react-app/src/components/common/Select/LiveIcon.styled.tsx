@@ -12,7 +12,7 @@ const SVGWrapper = styled.i`
 const LiveIcon: React.FC<Props> = () => {
   const theme = useTheme();
   return (
-    <SVGWrapper data-testid="liveIcon">
+    <SVGWrapper>
       <svg
         width="16"
         height="16"
