@@ -1,23 +1,19 @@
 import React from 'react';
 import List from 'components/KsqlDb/List/List';
-import { Route, Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
+import { Route } from 'react-router-dom';
 import { clusterKsqlDbPath } from 'lib/paths';
 import { render } from 'lib/testHelpers';
 import fetchMock from 'fetch-mock';
 import { screen, waitForElementToBeRemoved } from '@testing-library/dom';
 
-const history = createMemoryHistory();
 const clusterName = 'local';
 
 const renderComponent = () => {
-  history.push(clusterKsqlDbPath(clusterName));
   render(
-    <Router history={history}>
-      <Route path={clusterKsqlDbPath(':clusterName')}>
-        <List />
-      </Route>
-    </Router>
+    <Route path={clusterKsqlDbPath(':clusterName')}>
+      <List />
+    </Route>,
+    { pathname: clusterKsqlDbPath(clusterName) }
   );
 };
 
