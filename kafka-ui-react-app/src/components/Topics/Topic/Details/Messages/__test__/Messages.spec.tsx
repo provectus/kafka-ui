@@ -70,7 +70,7 @@ describe('Messages', () => {
       expect(seekDirectionOption).toHaveTextContent(labelValue2);
 
       await waitFor(() => {
-        expect(screen.getByTestId('liveIcon')).toBeInTheDocument();
+        expect(screen.getByRole('contentLoader')).toBeInTheDocument();
       });
     });
   });
