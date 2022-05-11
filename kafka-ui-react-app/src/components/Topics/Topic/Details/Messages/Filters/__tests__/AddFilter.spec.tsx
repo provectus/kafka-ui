@@ -36,6 +36,11 @@ describe('AddFilter component', () => {
     expect(screen.getAllByRole('savedFilter')).toHaveLength(2);
   });
 
+  it('info button to be in the document', () => {
+    setupComponent();
+    expect(screen.getByRole('button', { name: 'info' })).toBeInTheDocument();
+  });
+
   it('should test click on return to custom filter redirects to Add filters', () => {
     setupComponent();
     userEvent.click(screen.getByRole('savedFilterText'));
@@ -160,7 +165,7 @@ describe('AddFilter component', () => {
       it('OnSubmit condition with checkbox on functionality', async () => {
         userEvent.click(screen.getByRole('checkbox'));
 
-        userEvent.click(screen.getAllByRole('button')[1]);
+        userEvent.click(screen.getAllByRole('button')[2]);
         await waitFor(() => {
           expect(activeFilterHandlerMock).not.toHaveBeenCalled();
           expect(addFilterMock).toHaveBeenCalled();
