@@ -41,6 +41,13 @@ describe('AddFilter component', () => {
     expect(screen.getByRole('button', { name: 'info' })).toBeInTheDocument();
   });
 
+  it('renders InfoModal', () => {
+    setupComponent();
+    userEvent.click(screen.getByRole('button', { name: 'info' }));
+    expect(screen.getByRole('button', { name: 'Ok' })).toBeInTheDocument();
+    expect(screen.getByRole('list', { name: 'info-list' })).toBeInTheDocument();
+  });
+
   it('should test click on return to custom filter redirects to Add filters', () => {
     setupComponent();
     userEvent.click(screen.getByRole('savedFilterText'));
