@@ -22,17 +22,17 @@ const setupWrapper = (props?: Partial<FilterModalProps>) =>
     />
   );
 describe('FilterModal component', () => {
-  beforeEach(() => {
-    setupWrapper();
+  beforeEach(async () => {
+    await waitFor(() => setupWrapper());
   });
   it('renders component with add filter modal', () => {
     expect(
       screen.getByRole('heading', { name: /add filter/i, level: 3 })
     ).toBeInTheDocument();
   });
-  it('renders component with edit filter modal', async () => {
-    await waitFor(() => userEvent.click(screen.getByRole('savedFilterText')));
-    await waitFor(() => userEvent.click(screen.getByText('Edit')));
+  it('renders component with edit filter modal', () => {
+    userEvent.click(screen.getByRole('savedFilterText'));
+    userEvent.click(screen.getByText('Edit'));
     expect(
       screen.getByRole('heading', { name: /edit saved filter/i, level: 3 })
     ).toBeInTheDocument();

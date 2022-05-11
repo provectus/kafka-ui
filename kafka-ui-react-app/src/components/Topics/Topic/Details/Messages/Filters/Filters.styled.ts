@@ -227,7 +227,7 @@ export const ActiveSmartFilterWrapper = styled.div`
   justify-content: flex-start;
 `;
 
-export const DeleteSavedFilter = styled.div`
+export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
   color: ${({ theme }) => theme.breadcrumb};
   cursor: pointer;
 `;
@@ -303,7 +303,9 @@ export const ConfirmDeletionText = styled.h3`
   padding: 16px 0;
 `;
 
-export const MessageLoading = styled.div<MessageLoadingProps>`
+export const MessageLoading = styled.div.attrs({
+  role: 'contentLoader',
+})<MessageLoadingProps>`
   color: ${({ theme }) => theme.heading.h3.color};
   font-size: ${({ theme }) => theme.heading.h3.fontSize};
   display: ${(props) => (props.isLive ? 'flex' : 'none')};

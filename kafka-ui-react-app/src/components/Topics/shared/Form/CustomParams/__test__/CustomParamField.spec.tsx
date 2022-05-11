@@ -12,8 +12,6 @@ const isDisabled = false;
 const index = 0;
 const existingFields: string[] = [];
 const field = { name: 'name', value: 'value', id: 'id' };
-const remove = jest.fn();
-const setExistingFields = jest.fn();
 
 const SPACE_KEY = ' ';
 
@@ -23,6 +21,9 @@ const selectOption = async (listbox: HTMLElement, option: string) => {
 };
 
 describe('CustomParamsField', () => {
+  const remove = jest.fn();
+  const setExistingFields = jest.fn();
+
   const setupComponent = (props: Props) => {
     const Wrapper: React.FC = ({ children }) => {
       const methods = useForm();
@@ -36,7 +37,12 @@ describe('CustomParamsField', () => {
     );
   };
 
-  it('renders with props', () => {
+  afterEach(() => {
+    remove.mockClear();
+    setExistingFields.mockClear();
+  });
+
+  it('renders the component with its view correctly', () => {
     setupComponent({
       field,
       isDisabled,
@@ -61,7 +67,7 @@ describe('CustomParamsField', () => {
         setExistingFields,
       });
       userEvent.click(screen.getByRole('button'));
-      expect(remove.mock.calls.length).toBe(1);
+      expect(remove).toHaveBeenCalledTimes(1);
     });
 
     it('pressing space on button triggers remove', () => {
@@ -75,7 +81,7 @@ describe('CustomParamsField', () => {
       });
       userEvent.type(screen.getByRole('button'), SPACE_KEY);
       // userEvent.type triggers remove two times as at first it clicks on element and then presses space
-      expect(remove.mock.calls.length).toBe(2);
+      expect(remove).toHaveBeenCalledTimes(2);
     });
 
     it('can select option', async () => {
@@ -123,7 +129,7 @@ describe('CustomParamsField', () => {
       const listbox = screen.getByRole('listbox');
       await selectOption(listbox, 'compression.type');
 
-      expect(setExistingFields.mock.calls.length).toBe(1);
+      expect(setExistingFields).toHaveBeenCalledTimes(1);
     });
   });
 });

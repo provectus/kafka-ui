@@ -101,18 +101,13 @@ const SendMessage: React.FC = () => {
       const headers = data.headers ? JSON.parse(data.headers) : undefined;
       const errors = validateMessage(key, content, messageSchema);
       if (errors.length > 0) {
+        const errorsHtml = errors.map((e) => `<li>${e}</li>`).join('');
         dispatch(
           alertAdded({
             id: `${clusterName}-${topicName}-createTopicMessageError`,
             type: 'error',
             title: 'Validation Error',
-            message: (
-              <ul>
-                {errors.map((e) => (
-                  <li>{e}</li>
-                ))}
-              </ul>
-            ),
+            message: `<ul>${errorsHtml}</ul>`,
             createdAt: now(),
           })
         );

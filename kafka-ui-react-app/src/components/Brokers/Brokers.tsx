@@ -30,7 +30,7 @@ const Brokers: React.FC = () => {
     items,
   } = useAppSelector(selectStats);
 
-  const replicas = inSyncReplicasCount ?? 0 + (outOfSyncReplicasCount ?? 0);
+  const replicas = (inSyncReplicasCount ?? 0) + (outOfSyncReplicasCount ?? 0);
   const areAllInSync = inSyncReplicasCount && replicas === inSyncReplicasCount;
   const partitionIsOffline = offlinePartitionCount && offlinePartitionCount > 0;
   React.useEffect(() => {
