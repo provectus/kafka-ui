@@ -4,12 +4,12 @@ import FilterModal, {
 } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
 import { render } from 'lib/testHelpers';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const filters: MessageFilters[] = [{ name: 'name', code: 'code' }];
 
-const setupWrapper = (props?: Partial<FilterModalProps>) =>
+const renderComponent = (props?: Partial<FilterModalProps>) =>
   render(
     <FilterModal
       toggleIsOpen={jest.fn()}
@@ -23,7 +23,9 @@ const setupWrapper = (props?: Partial<FilterModalProps>) =>
   );
 describe('FilterModal component', () => {
   beforeEach(async () => {
-    await waitFor(() => setupWrapper());
+    await act(() => {
+      renderComponent();
+    });
   });
   it('renders component with add filter modal', () => {
     expect(

@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { screen, waitFor, within } from '@testing-library/react';
+import { act, screen, within } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import CustomParamsField, {
   Props,
@@ -16,8 +16,8 @@ const field = { name: 'name', value: 'value', id: 'id' };
 const SPACE_KEY = ' ';
 
 const selectOption = async (listbox: HTMLElement, option: string) => {
-  await waitFor(() => userEvent.click(listbox));
-  await waitFor(() => userEvent.click(screen.getByText(option)));
+  await act(() => userEvent.click(listbox));
+  await act(() => userEvent.click(screen.getByText(option)));
 };
 
 describe('CustomParamsField', () => {
