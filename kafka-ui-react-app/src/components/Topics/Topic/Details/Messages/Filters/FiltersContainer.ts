@@ -7,7 +7,7 @@ import {
   updateTopicMessagesMeta,
   updateTopicMessagesPhase,
   setTopicMessagesFetchingStatus,
-} from 'redux/actions';
+} from 'redux/reducers/topicMessages/topicMessagesSlice';
 import {
   getTopicMessgesMeta,
   getTopicMessgesPhase,
