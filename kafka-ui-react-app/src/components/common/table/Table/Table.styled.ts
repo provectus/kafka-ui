@@ -14,7 +14,7 @@ export const Table = styled.table<Props>`
     padding: 8px 8px 8px 24px;
     color: ${({ theme }) => theme.table.td.color.normal};
     vertical-align: middle;
-    width: 350px;
+    max-width: 350px;
     word-wrap: break-word;
   }
 
