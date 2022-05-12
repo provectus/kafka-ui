@@ -6,7 +6,7 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as C from 'components/common/Tag/Tag.styled';
-import getTagColor from 'components/Connect/Utils/TagColor';
+import getTagColor from 'components/common/Tag/getTagColor';
 
 interface RouterParams {
   clusterName: ClusterName;
@@ -16,19 +16,24 @@ interface RouterParams {
 
 export interface ListItemProps {
   task: Task;
-  restartTask(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName,
-    taskId: TaskId['task']
-  ): Promise<void>;
+  restartTask(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+    taskId: TaskId['task'];
+  }): Promise<unknown>;
 }
 
 const ListItem: React.FC<ListItemProps> = ({ task, restartTask }) => {
   const { clusterName, connectName, connectorName } = useParams<RouterParams>();
 
   const restartTaskHandler = React.useCallback(async () => {
-    await restartTask(clusterName, connectName, connectorName, task.id?.task);
+    await restartTask({
+      clusterName,
+      connectName,
+      connectorName,
+      taskId: task.id?.task,
+    });
   }, [restartTask, clusterName, connectName, connectorName, task.id?.task]);
 
   return (

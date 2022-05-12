@@ -15,7 +15,9 @@ describe('Paths', () => {
     );
   });
   it('clusterPath', () => {
-    expect(paths.clusterPath(clusterName)).toEqual(`/clusters/${clusterName}`);
+    expect(paths.clusterPath(clusterName)).toEqual(
+      `/ui/clusters/${clusterName}`
+    );
   });
   it('clusterBrokersPath', () => {
     expect(paths.clusterBrokersPath(clusterName)).toEqual(
@@ -177,12 +179,12 @@ describe('Paths', () => {
 
   it('clusterKsqlDbPath', () => {
     expect(paths.clusterKsqlDbPath(clusterName)).toEqual(
-      `${paths.clusterPath(clusterName)}/ksql-db`
+      `${paths.clusterPath(clusterName)}/ksqldb`
     );
   });
   it('clusterKsqlDbPath with default value', () => {
     expect(paths.clusterKsqlDbPath()).toEqual(
-      `${paths.clusterPath(':clusterName')}/ksql-db`
+      `${paths.clusterPath(':clusterName')}/ksqldb`
     );
   });
   it('clusterKsqlDbQueryPath', () => {

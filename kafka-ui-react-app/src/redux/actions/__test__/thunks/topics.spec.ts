@@ -6,6 +6,8 @@ import { mockTopicsState } from 'redux/actions/__test__/fixtures';
 import { MessageSchemaSourceEnum, TopicMessageSchema } from 'generated-sources';
 import { FailurePayload } from 'redux/interfaces';
 import { getResponse } from 'lib/errorHandling';
+import { internalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
+import { getAlertActions, getTypeAndPayload } from 'lib/testHelpers';
 
 const store = mockStoreCreator;
 
@@ -49,6 +51,38 @@ describe('Thunks', () => {
     });
   });
 
+  describe('recreateTopic', () => {
+    it('creates RECREATE_TOPIC__SUCCESS when recreating existing topic', async () => {
+      fetchMock.postOnce(
+        `/api/clusters/${clusterName}/topics/${topicName}`,
+        internalTopicPayload
+      );
+      await store.dispatch(thunks.recreateTopic(clusterName, topicName));
+      expect(getTypeAndPayload(store)).toEqual([
+        actions.recreateTopicAction.request(),
+        actions.recreateTopicAction.success(internalTopicPayload),
+        ...getAlertActions(store),
+      ]);
+    });
+
+    it('creates RECREATE_TOPIC__FAILURE when recreating existing topic', async () => {
+      fetchMock.postOnce(
+        `/api/clusters/${clusterName}/topics/${topicName}`,
+        404
+      );
+      try {
+        await store.dispatch(thunks.recreateTopic(clusterName, topicName));
+      } catch (error) {
+        const err = error as Response;
+        expect(err.status).toEqual(404);
+        expect(store.getActions()).toEqual([
+          actions.recreateTopicAction.request(),
+          actions.recreateTopicAction.failure(),
+        ]);
+      }
+    });
+  });
+
   describe('clearTopicMessages', () => {
     it('creates CLEAR_TOPIC_MESSAGES__SUCCESS when deleting existing messages', async () => {
       fetchMock.deleteOnce(
@@ -56,9 +90,10 @@ describe('Thunks', () => {
         200
       );
       await store.dispatch(thunks.clearTopicMessages(clusterName, topicName));
-      expect(store.getActions()).toEqual([
+      expect(getTypeAndPayload(store)).toEqual([
         actions.clearMessagesTopicAction.request(),
         actions.clearMessagesTopicAction.success(),
+        ...getAlertActions(store),
       ]);
     });
 

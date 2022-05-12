@@ -11,4 +11,6 @@ import lombok.Data;
 public class KafkaConnectCluster {
   private final String name;
   private final String address;
+  private final String userName;
+  private final String password;
 }

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import dayjs from 'dayjs';
 import { TopicMessage } from 'generated-sources';
 import Dropdown from 'components/common/Dropdown/Dropdown';
@@ -10,6 +10,7 @@ import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import styled from 'styled-components';
 
 import MessageContent from './MessageContent/MessageContent';
+import * as S from './MessageContent/MessageContent.styled';
 
 const StyledDataCell = styled.td`
   overflow: hidden;
@@ -19,7 +20,11 @@ const StyledDataCell = styled.td`
   min-width: 350px;
 `;
 
-const Message: React.FC<{ message: TopicMessage }> = ({
+export interface Props {
+  message: TopicMessage;
+}
+
+const Message: React.FC<Props> = ({
   message: {
     timestamp,
     timestampType,
@@ -59,7 +64,11 @@ const Message: React.FC<{ message: TopicMessage }> = ({
           <div>{dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}</div>
         </td>
         <StyledDataCell title={key}>{key}</StyledDataCell>
-        <StyledDataCell>{content}</StyledDataCell>
+        <StyledDataCell>
+          <S.Metadata>
+            <S.MetadataValue>{content}</S.MetadataValue>
+          </S.Metadata>
+        </StyledDataCell>
         <td style={{ width: '5%' }}>
           {vEllipsisOpen && (
             <Dropdown label={<VerticalElipsisIcon />} right>

@@ -1,10 +1,8 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import ListItem from 'components/ConsumerGroups/List/ListItem';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
-import { StaticRouter } from 'react-router';
 import { ConsumerGroupState, ConsumerGroup } from 'generated-sources';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 describe('List', () => {
   const mockConsumerGroup = {
@@ -29,75 +27,60 @@ describe('List', () => {
       },
     ],
   };
-  const component = mount(
-    <StaticRouter>
-      <ThemeProvider theme={theme}>
-        <table>
-          <tbody>
-            <ListItem consumerGroup={mockConsumerGroup} />
-          </tbody>
-        </table>
-      </ThemeProvider>
-    </StaticRouter>
+  const setupWrapper = (consumerGroup: ConsumerGroup) => (
+    <table>
+      <tbody>
+        <ListItem consumerGroup={consumerGroup} />
+      </tbody>
+    </table>
   );
 
-  const setupWrapper = (consumerGroup: ConsumerGroup) => (
-    <StaticRouter>
-      <ThemeProvider theme={theme}>
-        <table>
-          <tbody>
-            <ListItem consumerGroup={consumerGroup} />
-          </tbody>
-        </table>
-      </ThemeProvider>
-    </StaticRouter>
-  );
+  const getCell = () => screen.getAllByRole('cell')[5];
 
   it('render empty ListItem', () => {
-    expect(component.exists('tr')).toBeTruthy();
+    render(setupWrapper(mockConsumerGroup));
+    expect(screen.getByRole('row')).toBeInTheDocument();
   });
 
   it('renders item with stable status', () => {
-    const wrapper = mount(
+    render(
       setupWrapper({
         ...mockConsumerGroup,
         state: ConsumerGroupState.STABLE,
       })
     );
-
-    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.STABLE);
+    expect(screen.getByRole('row')).toHaveTextContent(
+      ConsumerGroupState.STABLE
+    );
   });
 
   it('renders item with dead status', () => {
-    const wrapper = mount(
+    render(
       setupWrapper({
         ...mockConsumerGroup,
         state: ConsumerGroupState.DEAD,
       })
     );
-
-    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.DEAD);
+    expect(getCell()).toHaveTextContent(ConsumerGroupState.DEAD);
   });
 
   it('renders item with empty status', () => {
-    const wrapper = mount(
+    render(
       setupWrapper({
         ...mockConsumerGroup,
         state: ConsumerGroupState.EMPTY,
       })
     );
-
-    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.EMPTY);
+    expect(getCell()).toHaveTextContent(ConsumerGroupState.EMPTY);
   });
 
   it('renders item with empty-string status', () => {
-    const wrapper = mount(
+    render(
       setupWrapper({
         ...mockConsumerGroup,
         state: ConsumerGroupState.UNKNOWN,
       })
     );
-
-    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.UNKNOWN);
+    expect(getCell()).toHaveTextContent(ConsumerGroupState.UNKNOWN);
   });
 });

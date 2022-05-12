@@ -1,105 +1,207 @@
 import React from 'react';
+import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
 import Filters, {
   FiltersProps,
+  SeekTypeOptions,
 } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 import { render } from 'lib/testHelpers';
-import { screen } from '@testing-library/react';
+import { act, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import TopicMessagesContext, {
+  ContextProps,
+} from 'components/contexts/TopicMessagesContext';
+import { SeekDirection } from 'generated-sources';
 
-const setupWrapper = (props?: Partial<FiltersProps>) =>
+const defaultContextValue: ContextProps = {
+  isLive: false,
+  seekDirection: SeekDirection.FORWARD,
+  searchParams: new URLSearchParams(''),
+  changeSeekDirection: jest.fn(),
+};
+
+const renderComponent = (
+  props: Partial<FiltersProps> = {},
+  ctx: ContextProps = defaultContextValue
+) => {
   render(
-    <Filters
-      clusterName="test-cluster"
-      topicName="test-topic"
-      partitions={[{ partition: 0, offsetMin: 0, offsetMax: 100 }]}
-      meta={{}}
-      isFetching={false}
-      addMessage={jest.fn()}
-      resetMessages={jest.fn()}
-      updatePhase={jest.fn()}
-      updateMeta={jest.fn()}
-      setIsFetching={jest.fn()}
-      {...props}
-    />
+    <TopicMessagesContext.Provider value={ctx}>
+      <Filters
+        clusterName="test-cluster"
+        topicName="test-topic"
+        partitions={[{ partition: 0, offsetMin: 0, offsetMax: 100 }]}
+        meta={{}}
+        isFetching={false}
+        addMessage={jest.fn()}
+        resetMessages={jest.fn()}
+        updatePhase={jest.fn()}
+        updateMeta={jest.fn()}
+        setIsFetching={jest.fn()}
+        {...props}
+      />
+    </TopicMessagesContext.Provider>
   );
+};
+
 describe('Filters component', () => {
-  it('renders component', () => {
-    setupWrapper();
+  it('shows cancel button while fetching', () => {
+    renderComponent({ isFetching: true });
+    expect(screen.getByText('Cancel')).toBeInTheDocument();
   });
-  describe('when fetching', () => {
-    it('shows cancel button while fetching', () => {
-      setupWrapper({ isFetching: true });
-      expect(screen.getByText('Cancel')).toBeInTheDocument();
-    });
+
+  it('shows submit button while fetching is over', () => {
+    renderComponent();
+    expect(screen.getByText('Submit')).toBeInTheDocument();
   });
-  describe('when fetching is over', () => {
-    it('shows submit button while fetching is over', () => {
-      setupWrapper();
-      expect(screen.getByText('Submit')).toBeInTheDocument();
-    });
-  });
+
   describe('Input elements', () => {
+    const inputValue = 'Hello World!';
+
+    beforeEach(async () => {
+      await act(() => {
+        renderComponent();
+      });
+    });
+
     it('search input', () => {
-      setupWrapper();
-      const SearchInput = screen.getByPlaceholderText('Search');
-      expect(SearchInput).toBeInTheDocument();
-      expect(SearchInput).toHaveValue('');
-      userEvent.type(SearchInput, 'Hello World!');
-      expect(SearchInput).toHaveValue('Hello World!');
+      const searchInput = screen.getByPlaceholderText('Search');
+      expect(searchInput).toHaveValue('');
+      userEvent.type(searchInput, inputValue);
+      expect(searchInput).toHaveValue(inputValue);
     });
+
     it('offset input', () => {
-      setupWrapper();
-      const OffsetInput = screen.getByPlaceholderText('Offset');
-      expect(OffsetInput).toBeInTheDocument();
-      expect(OffsetInput).toHaveValue('');
-      userEvent.type(OffsetInput, 'Hello World!');
-      expect(OffsetInput).toHaveValue('Hello World!');
+      const offsetInput = screen.getByPlaceholderText('Offset');
+      expect(offsetInput).toHaveValue('');
+      userEvent.type(offsetInput, inputValue);
+      expect(offsetInput).toHaveValue(inputValue);
     });
-    it('timestamp input', () => {
-      setupWrapper();
+
+    it('timestamp input', async () => {
       const seekTypeSelect = screen.getAllByRole('listbox');
       const option = screen.getAllByRole('option');
-      userEvent.click(seekTypeSelect[0]);
-      userEvent.selectOptions(seekTypeSelect[0], ['Timestamp']);
+
+      await act(() => userEvent.click(seekTypeSelect[0]));
+
+      await act(() => {
+        userEvent.selectOptions(seekTypeSelect[0], ['Timestamp']);
+      });
+
       expect(option[0]).toHaveTextContent('Timestamp');
-      const TimestampInput = screen.getByPlaceholderText('Select timestamp');
-      expect(TimestampInput).toBeInTheDocument();
-      expect(TimestampInput).toHaveValue('');
-      userEvent.type(TimestampInput, 'Hello World!');
-      expect(TimestampInput).toHaveValue('Hello World!');
+      const timestampInput = screen.getByPlaceholderText('Select timestamp');
+      expect(timestampInput).toHaveValue('');
+
+      await waitFor(() => userEvent.type(timestampInput, inputValue));
+
+      expect(timestampInput).toHaveValue(inputValue);
       expect(screen.getByText('Submit')).toBeInTheDocument();
-    });
-  });
-  describe('Select elements', () => {
-    it('seekType select', () => {
-      setupWrapper();
-      const seekTypeSelect = screen.getAllByRole('listbox');
-      const option = screen.getAllByRole('option');
-      expect(option[0]).toHaveTextContent('Offset');
-      userEvent.click(seekTypeSelect[0]);
-      userEvent.selectOptions(seekTypeSelect[0], ['Timestamp']);
-      expect(option[0]).toHaveTextContent('Timestamp');
-      expect(screen.getByText('Submit')).toBeInTheDocument();
-    });
-    it('seekDirection select', () => {
-      setupWrapper();
-      const seekDirectionSelect = screen.getAllByRole('listbox');
-      const option = screen.getAllByRole('option');
-      userEvent.click(seekDirectionSelect[1]);
-      userEvent.selectOptions(seekDirectionSelect[1], ['Newest First']);
-      expect(option[1]).toHaveTextContent('Newest First');
     });
   });
 
-  describe('when live mode is active', () => {
-    it('stop loading', () => {
-      setupWrapper();
-      const StopLoading = screen.getByText('Stop loading');
-      expect(StopLoading).toBeInTheDocument();
-      userEvent.click(StopLoading);
-      const option = screen.getAllByRole('option');
-      expect(option[1]).toHaveTextContent('Oldest First');
+  describe('Select elements', () => {
+    let seekTypeSelects: HTMLElement[];
+    let options: HTMLElement[];
+
+    const selectedDirectionOptionValue = SeekDirectionOptions[0];
+    const mockDirectionOptionSelectLabel = selectedDirectionOptionValue.label;
+    const selectTypeOptionValue = SeekTypeOptions[0];
+    const mockTypeOptionSelectLabel = selectTypeOptionValue.label;
+
+    beforeEach(() => {
+      renderComponent();
+      seekTypeSelects = screen.getAllByRole('listbox');
+      options = screen.getAllByRole('option');
+    });
+
+    it('seekType select', () => {
+      expect(options[0]).toHaveTextContent('Offset');
+      userEvent.click(seekTypeSelects[0]);
+      userEvent.selectOptions(seekTypeSelects[0], [mockTypeOptionSelectLabel]);
+      expect(options[0]).toHaveTextContent(mockTypeOptionSelectLabel);
       expect(screen.getByText('Submit')).toBeInTheDocument();
+    });
+
+    it('seekDirection select', () => {
+      userEvent.click(seekTypeSelects[1]);
+      userEvent.selectOptions(seekTypeSelects[1], [
+        mockDirectionOptionSelectLabel,
+      ]);
+      expect(options[1]).toHaveTextContent(mockDirectionOptionSelectLabel);
+    });
+  });
+
+  it('stop loading when live mode is active', () => {
+    renderComponent();
+    userEvent.click(screen.getByText('Stop loading'));
+    const option = screen.getAllByRole('option');
+    expect(option[1]).toHaveTextContent('Oldest First');
+    expect(screen.getByText('Submit')).toBeInTheDocument();
+  });
+
+  it('renders addFilter modal', async () => {
+    renderComponent();
+    await act(() =>
+      userEvent.click(
+        screen.getByRole('button', {
+          name: /add filters/i,
+        })
+      )
+    );
+    expect(screen.getByTestId('messageFilterModal')).toBeInTheDocument();
+  });
+
+  describe('when there is active smart filter', () => {
+    beforeEach(async () => {
+      renderComponent();
+
+      await act(() =>
+        userEvent.click(
+          screen.getByRole('button', {
+            name: /add filters/i,
+          })
+        )
+      );
+
+      const filterName = 'filter name';
+      const filterCode = 'filter code';
+
+      const messageFilterModal = screen.getByTestId('messageFilterModal');
+
+      const textBoxElements =
+        within(messageFilterModal).getAllByRole('textbox');
+
+      const textAreaElement = textBoxElements[0] as HTMLTextAreaElement;
+      const inputNameElement = textBoxElements[1];
+      await act(() => {
+        userEvent.paste(textAreaElement, filterName);
+        userEvent.type(inputNameElement, filterCode);
+      });
+
+      expect(textAreaElement.value).toEqual(`${filterName}\n\n`);
+      expect(inputNameElement).toHaveValue(filterCode);
+
+      await act(() =>
+        userEvent.click(
+          within(messageFilterModal).getByRole('button', {
+            name: /add filter/i,
+          })
+        )
+      );
+    });
+
+    it('shows saved smart filter', () => {
+      expect(screen.getByTestId('activeSmartFilter')).toBeInTheDocument();
+    });
+
+    it('delete the active smart Filter', async () => {
+      const smartFilterElement = screen.getByTestId('activeSmartFilter');
+      const deleteIcon = within(smartFilterElement).getByTestId(
+        'activeSmartFilterCloseIcon'
+      );
+      await act(() => userEvent.click(deleteIcon));
+
+      const anotherSmartFilterElement =
+        screen.queryByTestId('activeSmartFilter');
+      expect(anotherSmartFilterElement).not.toBeInTheDocument();
     });
   });
 });

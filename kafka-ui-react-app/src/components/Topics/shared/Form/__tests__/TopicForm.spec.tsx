@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/dom';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -9,7 +9,7 @@ const isSubmitting = false;
 const onSubmit = jest.fn();
 
 const renderComponent = (props: Props = { isSubmitting, onSubmit }) => {
-  const Wrapper: React.FC = ({ children }) => {
+  const Wrapper: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
     const methods = useForm();
     return <FormProvider {...methods}>{children}</FormProvider>;
   };
@@ -57,7 +57,7 @@ describe('TopicForm', () => {
 
     expectByRoleAndNameToBeInDocument('heading', 'Custom parameters');
 
-    expectByRoleAndNameToBeInDocument('button', 'Send');
+    expectByRoleAndNameToBeInDocument('button', 'Submit');
   });
 
   it('submits', () => {
@@ -66,7 +66,7 @@ describe('TopicForm', () => {
       onSubmit: onSubmit.mockImplementation((e) => e.preventDefault()),
     });
 
-    userEvent.click(screen.getByRole('button', { name: 'Send' }));
+    userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     expect(onSubmit).toBeCalledTimes(1);
   });
 });

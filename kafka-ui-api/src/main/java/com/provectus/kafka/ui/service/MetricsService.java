@@ -19,7 +19,6 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class MetricsService {
 
-  private final ZookeeperService zookeeperService;
   private final JmxClusterUtil jmxClusterUtil;
   private final AdminClientService adminClientService;
   private final FeatureService featureService;
@@ -35,7 +34,6 @@ public class MetricsService {
                 Mono.zip(
                     List.of(
                         jmxClusterUtil.getBrokerMetrics(cluster, description.getNodes()),
-                        zookeeperService.getZkStatus(cluster),
                         getLogDirInfo(cluster, ac),
                         featureService.getAvailableFeatures(cluster, description.getController()),
                         loadTopicConfigs(cluster),
@@ -46,11 +44,10 @@ public class MetricsService {
                             .clusterDescription(description)
                             .version(ac.getVersion())
                             .jmxMetrics((JmxClusterUtil.JmxMetrics) results[0])
-                            .zkStatus((ZookeeperService.ZkStatus) results[1])
-                            .logDirInfo((InternalLogDirStats) results[2])
-                            .features((List<Feature>) results[3])
-                            .topicConfigs((Map<String, List<ConfigEntry>>) results[4])
-                            .topicDescriptions((Map<String, TopicDescription>) results[5])
+                            .logDirInfo((InternalLogDirStats) results[1])
+                            .features((List<Feature>) results[2])
+                            .topicConfigs((Map<String, List<ConfigEntry>>) results[3])
+                            .topicDescriptions((Map<String, TopicDescription>) results[4])
                             .build()
                 )))
         .doOnError(e ->

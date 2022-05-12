@@ -7,7 +7,7 @@ import {
 import { ConsumerGroupID } from 'redux/interfaces/consumerGroup';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
@@ -26,7 +26,7 @@ import {
   getIsConsumerGroupDeleted,
   getAreConsumerGroupDetailsFulfilled,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
-import getTagColor from 'components/ConsumerGroups/Utils/TagColor';
+import getTagColor from 'components/common/Tag/getTagColor';
 
 import ListItem from './ListItem';
 

@@ -23,7 +23,7 @@ const EditorViewer: React.FC<FullMessageProps> = ({
 }) => {
   try {
     return (
-      <StyledWrapper data-testid="json-viewer">
+      <StyledWrapper>
         <Editor
           isFixedHeight
           schemaType={schemaType}
@@ -40,7 +40,7 @@ const EditorViewer: React.FC<FullMessageProps> = ({
     );
   } catch (e) {
     return (
-      <StyledWrapper data-testid="json-viewer">
+      <StyledWrapper>
         <p>{data}</p>
       </StyledWrapper>
     );

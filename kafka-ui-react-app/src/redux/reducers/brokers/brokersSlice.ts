@@ -1,10 +1,5 @@
 import { BrokersApi, ClustersApi, Configuration } from 'generated-sources';
-import {
-  BrokersState,
-  ClusterName,
-  RootState,
-  ZooKeeperStatus,
-} from 'redux/interfaces';
+import { BrokersState, ClusterName, RootState } from 'redux/interfaces';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { BASE_PARAMS } from 'lib/constants';
 
@@ -26,7 +21,6 @@ export const fetchClusterStats = createAsyncThunk(
 export const initialState: BrokersState = {
   items: [],
   brokerCount: 0,
-  zooKeeperStatus: ZooKeeperStatus.offline,
   activeControllers: 0,
   onlinePartitionCount: 0,
   offlinePartitionCount: 0,

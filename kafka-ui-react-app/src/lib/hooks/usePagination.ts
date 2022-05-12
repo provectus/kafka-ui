@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 const usePagination = () => {
   const { search, pathname } = useLocation();

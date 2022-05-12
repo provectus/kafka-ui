@@ -23,7 +23,6 @@ public class ClustersProperties {
   public static class Cluster {
     String name;
     String bootstrapServers;
-    String zookeeper;
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
     String ksqldbServer;
@@ -32,6 +31,8 @@ public class ClustersProperties {
     String protobufFile;
     String protobufMessageName;
     Map<String, String> protobufMessageNameByTopic;
+    String protobufMessageNameForKey;
+    Map<String, String> protobufMessageNameForKeyByTopic;
     List<ConnectCluster> kafkaConnect;
     int jmxPort;
     boolean jmxSsl;
@@ -46,6 +47,8 @@ public class ClustersProperties {
   public static class ConnectCluster {
     String name;
     String address;
+    String userName;
+    String password;
   }
 
   @Data

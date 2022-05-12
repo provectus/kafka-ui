@@ -2,11 +2,13 @@
 export const Colors = {
   neutral: {
     '0': '#FFFFFF',
-    '3': '#F9FAFA',
+    '3': '#f9fafa',
+    '4': '#f0f0f0',
     '5': '#F1F2F3',
     '10': '#E3E6E8',
     '15': '#D5DADD',
     '20': '#C7CED1',
+    '25': '#C4C4C4',
     '30': '#ABB5BA',
     '40': '#8F9CA3',
     '50': '#73848C',
@@ -14,6 +16,7 @@ export const Colors = {
     '70': '#454F54',
     '80': '#2F3639',
     '90': '#171A1C',
+    '100': '#000',
   },
   transparency: {
     '10': 'rgba(10, 10, 10, 0.1)',
@@ -71,6 +74,21 @@ const theme = {
   dropdown: {
     color: Colors.red[50],
   },
+  ksqlDb: {
+    query: {
+      editor: {
+        readonly: {
+          background: Colors.neutral[3],
+          selection: {
+            backgroundColor: 'transparent',
+          },
+          cursor: {
+            color: 'transparent',
+          },
+        },
+      },
+    },
+  },
   heading: {
     h1: {
       color: Colors.neutral[90],
@@ -78,6 +96,43 @@ const theme = {
     h3: {
       color: Colors.neutral[50],
       fontSize: '14px',
+    },
+    base: {
+      fontFamily: 'Inter, sans-serif',
+      fontStyle: 'normal',
+      fontWeight: 500,
+      color: Colors.neutral[100],
+    },
+    variants: {
+      1: {
+        fontSize: '24px',
+        lineHeight: '32px',
+      },
+      2: {
+        fontSize: '20px',
+        lineHeight: '32px',
+      },
+      3: {
+        fontSize: '16px',
+        lineHeight: '24px',
+      },
+      4: {
+        fontSize: '14px',
+        lineHeight: '20px',
+      },
+      5: {
+        fontSize: '12px',
+        lineHeight: '16px',
+      },
+      6: {
+        fontSize: '12px',
+        lineHeight: '16px',
+      },
+    },
+  },
+  lastestVersionItem: {
+    metaDataLabel: {
+      color: Colors.neutral[50],
     },
   },
   alert: {
@@ -170,6 +225,7 @@ const theme = {
     statusIconColor: {
       online: Colors.green[40],
       offline: Colors.red[50],
+      initializing: Colors.yellow[20],
     },
     chevronIconColor: Colors.neutral[50],
   },
@@ -195,6 +251,7 @@ const theme = {
     },
     overlay: Colors.transparency[10],
     shadow: Colors.transparency[20],
+    deletionTextColor: Colors.neutral[70],
   },
   table: {
     th: {
@@ -430,9 +487,18 @@ const theme = {
       circleBig: Colors.red[10],
       circleSmall: Colors.red[50],
     },
+    newFilterIcon: Colors.brand[50],
+    closeModalIcon: Colors.neutral[25],
+    savedIcon: Colors.brand[50],
   },
   viewer: {
     wrapper: Colors.neutral[3],
+  },
+  savedFilterDivider: {
+    color: Colors.neutral[15],
+  },
+  editFilterText: {
+    color: Colors.brand[50],
   },
 };
 

@@ -30,7 +30,7 @@ export const Button = styled.button<{ isActive: boolean }>`
   background-color: ${({ theme, ...props }) =>
     props.isActive
       ? theme.button.primary.backgroundColor.active
-      : theme.button.primary.color};
+      : theme.button.primary.backgroundColor.normal};
   height: 32px;
   width: 46px;
   border: 1px solid

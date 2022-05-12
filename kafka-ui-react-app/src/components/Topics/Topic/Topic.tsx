@@ -14,18 +14,26 @@ interface RouterParams {
 
 interface TopicProps {
   isTopicFetching: boolean;
+  resetTopicMessages: () => void;
   fetchTopicDetails: (clusterName: ClusterName, topicName: TopicName) => void;
 }
 
 const Topic: React.FC<TopicProps> = ({
   isTopicFetching,
   fetchTopicDetails,
+  resetTopicMessages,
 }) => {
   const { clusterName, topicName } = useParams<RouterParams>();
 
   React.useEffect(() => {
     fetchTopicDetails(clusterName, topicName);
   }, [fetchTopicDetails, clusterName, topicName]);
+
+  React.useEffect(() => {
+    return () => {
+      resetTopicMessages();
+    };
+  }, []);
 
   if (isTopicFetching) {
     return <PageLoader />;
@@ -35,16 +43,16 @@ const Topic: React.FC<TopicProps> = ({
     <Switch>
       <Route
         exact
-        path="/clusters/:clusterName/topics/:topicName/edit"
+        path="/ui/clusters/:clusterName/topics/:topicName/edit"
         component={EditContainer}
       />
       <Route
         exact
-        path="/clusters/:clusterName/topics/:topicName/message"
+        path="/ui/clusters/:clusterName/topics/:topicName/message"
         component={SendMessage}
       />
       <Route
-        path="/clusters/:clusterName/topics/:topicName"
+        path="/ui/clusters/:clusterName/topics/:topicName"
         component={DetailsContainer}
       />
     </Switch>

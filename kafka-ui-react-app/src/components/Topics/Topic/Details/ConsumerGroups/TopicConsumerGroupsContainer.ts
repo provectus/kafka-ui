@@ -3,7 +3,10 @@ import { RootState, TopicName, ClusterName } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { fetchTopicConsumerGroups } from 'redux/actions';
 import TopicConsumerGroups from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
-import { getTopicConsumerGroups } from 'redux/reducers/topics/selectors';
+import {
+  getTopicConsumerGroups,
+  getTopicsConsumerGroupsFetched,
+} from 'redux/reducers/topics/selectors';
 
 interface RouteProps {
   clusterName: ClusterName;
@@ -23,6 +26,7 @@ const mapStateToProps = (
   consumerGroups: getTopicConsumerGroups(state, topicName),
   topicName,
   clusterName,
+  isFetched: getTopicsConsumerGroupsFetched(state),
 });
 
 const mapDispatchToProps = {

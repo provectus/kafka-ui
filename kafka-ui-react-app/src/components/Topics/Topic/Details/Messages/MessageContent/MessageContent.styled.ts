@@ -43,13 +43,13 @@ export const MetadataWrapper = styled.div`
 
 export const Metadata = styled.span`
   display: flex;
-  gap: 16px;
+  gap: 35px;
 `;
 
 export const MetadataLabel = styled.p`
   color: ${({ theme }) => theme.topicMetaData.color.label};
   font-size: 14px;
-  width: 80px;
+  width: 50px;
 `;
 
 export const MetadataValue = styled.p`
@@ -60,4 +60,20 @@ export const MetadataValue = styled.p`
 export const MetadataMeta = styled.p`
   color: ${({ theme }) => theme.topicMetaData.color.meta};
   font-size: 12px;
+`;
+
+export const PaginationButton = styled.button`
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  height: 32px;
+  border: 1px solid ${({ theme }) => theme.pagination.borderColor.normal};
+  box-sizing: border-box;
+  border-radius: 4px;
+  color: ${({ theme }) => theme.pagination.color.normal};
+  background: none;
+  font-family: Inter;
+  margin-right: 13px;
+  cursor: pointer;
+  font-size: 14px;
 `;

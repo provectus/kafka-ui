@@ -27,7 +27,6 @@ public class MetricsCache {
     Throwable lastKafkaException;
     String version;
     List<Feature> features;
-    ZookeeperService.ZkStatus zkStatus;
     ReactiveAdminClient.ClusterDescription clusterDescription;
     JmxClusterUtil.JmxMetrics jmxMetrics;
     InternalLogDirStats logDirInfo;
@@ -39,7 +38,6 @@ public class MetricsCache {
           .status(ServerStatusDTO.OFFLINE)
           .version("Unknown")
           .features(List.of())
-          .zkStatus(new ZookeeperService.ZkStatus(ServerStatusDTO.OFFLINE, null))
           .clusterDescription(
               new ReactiveAdminClient.ClusterDescription(null, null, List.of(), Set.of()))
           .jmxMetrics(JmxClusterUtil.JmxMetrics.empty())

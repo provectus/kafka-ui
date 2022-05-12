@@ -12,7 +12,7 @@ export const gitCommitPath = (commit: string) =>
   `${GIT_REPO_LINK}/commit/${commit}`;
 
 export const clusterPath = (clusterName: ClusterName) =>
-  `/clusters/${clusterName}`;
+  `/ui/clusters/${clusterName}`;
 
 // Brokers
 export const clusterBrokersPath = (clusterName: ClusterName) =>
@@ -53,6 +53,8 @@ export const clusterTopicsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/topics`;
 export const clusterTopicNewPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/topics/create-new`;
+export const clusterTopicCopyPath = (clusterName: ClusterName) =>
+  `${clusterPath(clusterName)}/topics/copy`;
 export const clusterTopicPath = (
   clusterName: ClusterName,
   topicName: TopicName
@@ -85,7 +87,7 @@ export const clusterConnectorsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/connectors`;
 export const clusterConnectorNewPath = (clusterName: ClusterName) =>
   `${clusterConnectorsPath(clusterName)}/create-new`;
-const clusterConnectConnectorsPath = (
+export const clusterConnectConnectorsPath = (
   clusterName: ClusterName,
   connectName: ConnectName
 ) => `${clusterConnectsPath(clusterName)}/${connectName}/connectors`;
@@ -127,8 +129,8 @@ export const clusterConnectConnectorConfigPath = (
 
 // KsqlDb
 export const clusterKsqlDbPath = (clusterName: ClusterName = ':clusterName') =>
-  `${clusterPath(clusterName)}/ksql-db`;
+  `${clusterPath(clusterName)}/ksqldb`;
 
 export const clusterKsqlDbQueryPath = (
   clusterName: ClusterName = ':clusterName'
-) => `${clusterPath(clusterName)}/ksql-db/query`;
+) => `${clusterPath(clusterName)}/ksqldb/query`;

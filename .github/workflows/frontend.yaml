@@ -15,17 +15,17 @@ jobs:
       NODE_ENV: dev
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Use Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3.1.1
         with:
           node-version: "14"
       - name: Cache node dependency
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: kafka-ui-react-app/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
