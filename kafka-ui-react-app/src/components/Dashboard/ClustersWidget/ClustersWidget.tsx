@@ -51,11 +51,11 @@ const ClustersWidget: React.FC<Props> = ({
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label={<Tag color="green">Online</Tag>}>
-            <span data-testid="onlineCount">{onlineClusters.length}</span>{' '}
+            <span>{onlineClusters.length}</span>{' '}
             <Metrics.LightText>clusters</Metrics.LightText>
           </Metrics.Indicator>
           <Metrics.Indicator label={<Tag color="gray">Offline</Tag>}>
-            <span data-testid="offlineCount">{offlineClusters.length}</span>{' '}
+            <span>{offlineClusters.length}</span>{' '}
             <Metrics.LightText>clusters</Metrics.LightText>
           </Metrics.Indicator>
         </Metrics.Section>

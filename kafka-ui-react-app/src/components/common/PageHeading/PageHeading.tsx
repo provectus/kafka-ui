@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import Heading from 'components/common/heading/Heading.styled';
 
 interface Props {
@@ -7,7 +7,11 @@ interface Props {
   className?: string;
 }
 
-const PageHeading: React.FC<Props> = ({ text, className, children }) => {
+const PageHeading: React.FC<PropsWithChildren<Props>> = ({
+  text,
+  className,
+  children,
+}) => {
   return (
     <div className={className}>
       <Heading>{text}</Heading>

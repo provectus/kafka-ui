@@ -66,8 +66,8 @@ describe('Dropdown', () => {
     expect(wrapper.querySelector('.dropdown.is-active')).toBeTruthy();
   });
 
-  it('matches snapshot', () => {
-    const { baseElement } = render(
+  it('to be in the document', () => {
+    render(
       setupWrapper(
         {
           right: true,
@@ -76,6 +76,6 @@ describe('Dropdown', () => {
         dummyChildren
       )
     );
-    expect(baseElement).toMatchSnapshot();
+    expect(screen.getByRole('menu')).toBeInTheDocument();
   });
 });
