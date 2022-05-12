@@ -2,7 +2,7 @@ import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import { clusterTopicMessagesPath } from 'lib/paths';
 import jsf from 'json-schema-faker';
 import { fetchTopicMessageSchema, messagesApiClient } from 'redux/actions';
@@ -101,18 +101,13 @@ const SendMessage: React.FC = () => {
       const headers = data.headers ? JSON.parse(data.headers) : undefined;
       const errors = validateMessage(key, content, messageSchema);
       if (errors.length > 0) {
+        const errorsHtml = errors.map((e) => `<li>${e}</li>`).join('');
         dispatch(
           alertAdded({
             id: `${clusterName}-${topicName}-createTopicMessageError`,
             type: 'error',
             title: 'Validation Error',
-            message: (
-              <ul>
-                {errors.map((e) => (
-                  <li>{e}</li>
-                ))}
-              </ul>
-            ),
+            message: `<ul>${errorsHtml}</ul>`,
             createdAt: now(),
           })
         );

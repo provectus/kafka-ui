@@ -6,9 +6,9 @@ import {
 } from 'lib/paths';
 import Edit, { EditProps } from 'components/Connect/Edit/Edit';
 import { connector } from 'redux/reducers/connect/__test__/fixtures';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 import { waitFor } from '@testing-library/dom';
-import { fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
@@ -52,9 +52,9 @@ describe('Edit', () => {
       }
     );
 
-  it('fetches config on mount', () => {
+  it('fetches config on mount', async () => {
     const fetchConfig = jest.fn();
-    renderComponent({ fetchConfig });
+    await waitFor(() => renderComponent({ fetchConfig }));
     expect(fetchConfig).toHaveBeenCalledTimes(1);
     expect(fetchConfig).toHaveBeenCalledWith({
       clusterName,
@@ -65,9 +65,9 @@ describe('Edit', () => {
 
   it('calls updateConfig on form submit', async () => {
     const updateConfig = jest.fn();
-    renderComponent({ updateConfig });
-    await waitFor(() => fireEvent.submit(screen.getByRole('form')));
-    expect(updateConfig).toHaveBeenCalledTimes(1);
+    await waitFor(() => renderComponent({ updateConfig }));
+    fireEvent.submit(screen.getByRole('form'));
+    await waitFor(() => expect(updateConfig).toHaveBeenCalledTimes(1));
     expect(updateConfig).toHaveBeenCalledWith({
       clusterName,
       connectName,
@@ -78,9 +78,10 @@ describe('Edit', () => {
 
   it('redirects to connector config view on successful submit', async () => {
     const updateConfig = jest.fn().mockResolvedValueOnce(connector);
-    renderComponent({ updateConfig });
-    await waitFor(() => fireEvent.submit(screen.getByRole('form')));
-    expect(mockHistoryPush).toHaveBeenCalledTimes(1);
+    await waitFor(() => renderComponent({ updateConfig }));
+    fireEvent.submit(screen.getByRole('form'));
+
+    await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledTimes(1));
     expect(mockHistoryPush).toHaveBeenCalledWith(
       clusterConnectConnectorConfigPath(clusterName, connectName, connectorName)
     );
@@ -88,8 +89,10 @@ describe('Edit', () => {
 
   it('does not redirect to connector config view on unsuccessful submit', async () => {
     const updateConfig = jest.fn().mockResolvedValueOnce(undefined);
-    renderComponent({ updateConfig });
-    await waitFor(() => fireEvent.submit(screen.getByRole('form')));
+    await waitFor(() => renderComponent({ updateConfig }));
+    await act(() => {
+      fireEvent.submit(screen.getByRole('form'));
+    });
     expect(mockHistoryPush).not.toHaveBeenCalled();
   });
 });

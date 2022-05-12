@@ -1,11 +1,10 @@
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import {
   TopicWithDetailedInfo,
   ClusterName,
   TopicName,
 } from 'redux/interfaces';
-import { useParams } from 'react-router-dom';
 import { clusterTopicCopyPath, clusterTopicNewPath } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
 import useModal from 'lib/hooks/useModal';
@@ -51,11 +50,11 @@ export interface TopicsListProps {
   deleteTopics(topicName: TopicName, clusterNames: ClusterName[]): void;
   recreateTopic(topicName: TopicName, clusterName: ClusterName): void;
   clearTopicsMessages(topicName: TopicName, clusterNames: ClusterName[]): void;
-  clearTopicMessages(
-    topicName: TopicName,
-    clusterName: ClusterName,
-    partitions?: number[]
-  ): void;
+  clearTopicMessages(params: {
+    topicName: TopicName;
+    clusterName: ClusterName;
+    partitions?: number[];
+  }): void;
   search: string;
   orderBy: TopicColumnsToSort | null;
   sortOrder: SortOrder;
@@ -226,7 +225,7 @@ const List: React.FC<TopicsListProps> = ({
       }, [name]);
 
       const clearTopicMessagesHandler = React.useCallback(() => {
-        clearTopicMessages(clusterName, name);
+        clearTopicMessages({ clusterName, topicName: name });
         fetchTopicsList(topicsListParams);
         closeClearMessagesModal();
       }, [name, fetchTopicsList, topicsListParams]);

@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { PropsWithChildren, ReactElement } from 'react';
 import { StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
@@ -40,7 +40,9 @@ const customRender = (
   }: CustomRenderOptions = {}
 ) => {
   // overrides @testing-library/react render.
-  const AllTheProviders: React.FC = ({ children }) => {
+  const AllTheProviders: React.FC<PropsWithChildren<unknown>> = ({
+    children,
+  }) => {
     return (
       <ThemeProvider theme={theme}>
         <Provider store={store}>
