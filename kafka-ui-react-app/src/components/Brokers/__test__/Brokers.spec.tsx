@@ -2,10 +2,11 @@ import React from 'react';
 import Brokers from 'components/Brokers/Brokers';
 import { render } from 'lib/testHelpers';
 import { screen, waitFor } from '@testing-library/dom';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 import { clusterBrokersPath } from 'lib/paths';
 import fetchMock from 'fetch-mock';
 import { clusterStatsPayload } from 'redux/reducers/brokers/__test__/fixtures';
+import { act } from '@testing-library/react';
 
 describe('Brokers Component', () => {
   afterEach(() => fetchMock.reset());
@@ -41,23 +42,26 @@ describe('Brokers Component', () => {
         fetchStatsUrl,
         clusterStatsPayload
       );
-      renderComponent();
-      await waitFor(() => {
-        expect(fetchStatsMock.called()).toBeTruthy();
+      await act(() => {
+        renderComponent();
       });
-      await waitFor(() => {
-        expect(fetchBrokersMock.called()).toBeTruthy();
-      });
+
+      await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
+      await waitFor(() => expect(fetchBrokersMock.called()).toBeTruthy());
+
       expect(screen.getByRole('table')).toBeInTheDocument();
       const rows = screen.getAllByRole('row');
       expect(rows.length).toEqual(3);
     });
+
     it('shows warning when offlinePartitionCount > 0', async () => {
       const fetchStatsMock = fetchMock.getOnce(fetchStatsUrl, {
         ...clusterStatsPayload,
         offlinePartitionCount: 1345,
       });
-      renderComponent();
+      await act(() => {
+        renderComponent();
+      });
       await waitFor(() => {
         expect(fetchStatsMock.called()).toBeTruthy();
       });
@@ -76,7 +80,9 @@ describe('Brokers Component', () => {
         inSyncReplicasCount: testInSyncReplicasCount,
         outOfSyncReplicasCount: testOutOfSyncReplicasCount,
       });
-      renderComponent();
+      await act(() => {
+        renderComponent();
+      });
       await waitFor(() => {
         expect(fetchStatsMock.called()).toBeTruthy();
       });
@@ -94,7 +100,9 @@ describe('Brokers Component', () => {
         inSyncReplicasCount: undefined,
         outOfSyncReplicasCount: testOutOfSyncReplicasCount,
       });
-      renderComponent();
+      await act(() => {
+        renderComponent();
+      });
       await waitFor(() => {
         expect(fetchStatsMock.called()).toBeTruthy();
       });
@@ -108,7 +116,9 @@ describe('Brokers Component', () => {
         inSyncReplicasCount: testInSyncReplicasCount,
         outOfSyncReplicasCount: undefined,
       });
-      renderComponent();
+      await act(() => {
+        renderComponent();
+      });
       await waitFor(() => {
         expect(fetchStatsMock.called()).toBeTruthy();
       });

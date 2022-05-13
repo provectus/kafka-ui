@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
   CompatibilityLevelCompatibilityEnum,

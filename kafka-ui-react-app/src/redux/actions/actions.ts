@@ -3,8 +3,6 @@ import { FailurePayload, TopicName, TopicsState } from 'redux/interfaces';
 import {
   TopicColumnsToSort,
   Topic,
-  TopicMessage,
-  TopicMessageConsuming,
   TopicMessageSchema,
 } from 'generated-sources';
 
@@ -72,25 +70,6 @@ export const fetchTopicConsumerGroupsAction = createAsyncAction(
   'GET_TOPIC_CONSUMER_GROUPS__SUCCESS',
   'GET_TOPIC_CONSUMER_GROUPS__FAILURE'
 )<undefined, TopicsState, undefined>();
-
-export const addTopicMessage = createAction('ADD_TOPIC_MESSAGE')<{
-  message: TopicMessage;
-  prepend?: boolean;
-}>();
-
-export const resetTopicMessages = createAction('RESET_TOPIC_MESSAGES')();
-
-export const setTopicMessagesFetchingStatus = createAction(
-  'SET_TOPIC_MESSAGES_FETCHING_STATUS'
-)<boolean>();
-
-export const updateTopicMessagesPhase = createAction(
-  'UPDATE_TOPIC_MESSAGES_PHASE'
-)<string>();
-
-export const updateTopicMessagesMeta = createAction(
-  'UPDATE_TOPIC_MESSAGES_META'
-)<TopicMessageConsuming>();
 
 export const fetchTopicMessageSchemaAction = createAsyncAction(
   'GET_TOPIC_SCHEMA__REQUEST',

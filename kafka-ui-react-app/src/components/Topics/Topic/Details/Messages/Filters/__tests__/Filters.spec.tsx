@@ -5,7 +5,7 @@ import Filters, {
   SeekTypeOptions,
 } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 import { render } from 'lib/testHelpers';
-import { screen, waitFor, within } from '@testing-library/react';
+import { act, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TopicMessagesContext, {
   ContextProps,
@@ -19,7 +19,7 @@ const defaultContextValue: ContextProps = {
   changeSeekDirection: jest.fn(),
 };
 
-const setupWrapper = (
+const renderComponent = (
   props: Partial<FiltersProps> = {},
   ctx: ContextProps = defaultContextValue
 ) => {
@@ -41,52 +41,58 @@ const setupWrapper = (
     </TopicMessagesContext.Provider>
   );
 };
-const getSubmit = () => screen.getByText('Submit');
 
 describe('Filters component', () => {
   it('shows cancel button while fetching', () => {
-    setupWrapper({ isFetching: true });
+    renderComponent({ isFetching: true });
     expect(screen.getByText('Cancel')).toBeInTheDocument();
   });
 
   it('shows submit button while fetching is over', () => {
-    setupWrapper();
-    expect(getSubmit()).toBeInTheDocument();
+    renderComponent();
+    expect(screen.getByText('Submit')).toBeInTheDocument();
   });
 
   describe('Input elements', () => {
     const inputValue = 'Hello World!';
 
-    beforeEach(() => setupWrapper());
+    beforeEach(async () => {
+      await act(() => {
+        renderComponent();
+      });
+    });
 
     it('search input', () => {
-      const SearchInput = screen.getByPlaceholderText('Search');
-      expect(SearchInput).toBeInTheDocument();
-      expect(SearchInput).toHaveValue('');
-      userEvent.type(SearchInput, inputValue);
-      expect(SearchInput).toHaveValue(inputValue);
+      const searchInput = screen.getByPlaceholderText('Search');
+      expect(searchInput).toHaveValue('');
+      userEvent.type(searchInput, inputValue);
+      expect(searchInput).toHaveValue(inputValue);
     });
 
     it('offset input', () => {
-      const OffsetInput = screen.getByPlaceholderText('Offset');
-      expect(OffsetInput).toBeInTheDocument();
-      expect(OffsetInput).toHaveValue('');
-      userEvent.type(OffsetInput, inputValue);
-      expect(OffsetInput).toHaveValue(inputValue);
+      const offsetInput = screen.getByPlaceholderText('Offset');
+      expect(offsetInput).toHaveValue('');
+      userEvent.type(offsetInput, inputValue);
+      expect(offsetInput).toHaveValue(inputValue);
     });
 
     it('timestamp input', async () => {
       const seekTypeSelect = screen.getAllByRole('listbox');
       const option = screen.getAllByRole('option');
 
-      userEvent.click(seekTypeSelect[0]);
-      userEvent.selectOptions(seekTypeSelect[0], ['Timestamp']);
+      await act(() => userEvent.click(seekTypeSelect[0]));
+
+      await act(() => {
+        userEvent.selectOptions(seekTypeSelect[0], ['Timestamp']);
+      });
+
       expect(option[0]).toHaveTextContent('Timestamp');
       const timestampInput = screen.getByPlaceholderText('Select timestamp');
-      expect(timestampInput).toBeInTheDocument();
       expect(timestampInput).toHaveValue('');
-      userEvent.type(timestampInput, inputValue);
-      await waitFor(() => expect(timestampInput).toHaveValue(inputValue));
+
+      await waitFor(() => userEvent.type(timestampInput, inputValue));
+
+      expect(timestampInput).toHaveValue(inputValue);
       expect(screen.getByText('Submit')).toBeInTheDocument();
     });
   });
@@ -101,7 +107,7 @@ describe('Filters component', () => {
     const mockTypeOptionSelectLabel = selectTypeOptionValue.label;
 
     beforeEach(() => {
-      setupWrapper();
+      renderComponent();
       seekTypeSelects = screen.getAllByRole('listbox');
       options = screen.getAllByRole('option');
     });
@@ -124,16 +130,16 @@ describe('Filters component', () => {
   });
 
   it('stop loading when live mode is active', () => {
-    setupWrapper();
+    renderComponent();
     userEvent.click(screen.getByText('Stop loading'));
     const option = screen.getAllByRole('option');
     expect(option[1]).toHaveTextContent('Oldest First');
-    expect(getSubmit()).toBeInTheDocument();
+    expect(screen.getByText('Submit')).toBeInTheDocument();
   });
 
   it('renders addFilter modal', async () => {
-    setupWrapper();
-    await waitFor(() =>
+    renderComponent();
+    await act(() =>
       userEvent.click(
         screen.getByRole('button', {
           name: /add filters/i,
@@ -145,9 +151,9 @@ describe('Filters component', () => {
 
   describe('when there is active smart filter', () => {
     beforeEach(async () => {
-      setupWrapper();
+      renderComponent();
 
-      await waitFor(() =>
+      await act(() =>
         userEvent.click(
           screen.getByRole('button', {
             name: /add filters/i,
@@ -165,7 +171,7 @@ describe('Filters component', () => {
 
       const textAreaElement = textBoxElements[0] as HTMLTextAreaElement;
       const inputNameElement = textBoxElements[1];
-      await waitFor(() => {
+      await act(() => {
         userEvent.paste(textAreaElement, filterName);
         userEvent.type(inputNameElement, filterCode);
       });
@@ -173,7 +179,7 @@ describe('Filters component', () => {
       expect(textAreaElement.value).toEqual(`${filterName}\n\n`);
       expect(inputNameElement).toHaveValue(filterCode);
 
-      await waitFor(() =>
+      await act(() =>
         userEvent.click(
           within(messageFilterModal).getByRole('button', {
             name: /add filter/i,
@@ -191,7 +197,7 @@ describe('Filters component', () => {
       const deleteIcon = within(smartFilterElement).getByTestId(
         'activeSmartFilterCloseIcon'
       );
-      await waitFor(() => userEvent.click(deleteIcon));
+      await act(() => userEvent.click(deleteIcon));
 
       const anotherSmartFilterElement =
         screen.queryByTestId('activeSmartFilter');

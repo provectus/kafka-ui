@@ -1,10 +1,10 @@
 import React from 'react';
 import New from 'components/Topics/New/New';
-import { Route, Router } from 'react-router';
+import { Route, Router } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import { RootState } from 'redux/interfaces';
 import { Provider } from 'react-redux';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import fetchMock from 'fetch-mock-jest';
 import {
@@ -139,7 +139,7 @@ describe('New', () => {
     jest.spyOn(mocked, 'push');
     renderComponent(mocked);
 
-    await waitFor(() => {
+    await act(() => {
       userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
       userEvent.click(screen.getByText(/submit/i));
     });
