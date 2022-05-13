@@ -6,7 +6,7 @@ import com.provectus.kafka.ui.model.TopicAnalyzeStateDTO;
 import com.provectus.kafka.ui.model.TopicAnalyzeStatsDTO;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
 import com.provectus.kafka.ui.service.TopicsService;
-import com.provectus.kafka.ui.util.OffsetsSeek;
+import com.provectus.kafka.ui.util.OffsetsSeek.WaitingOffsets;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +62,7 @@ public class TopicAnalyzeService {
                                          int partitionsCnt,
                                          long approxNumberOfMsgs) {
     var topicId = new TopicIdentity(cluster, topic);
-    if (analyzeTasksStore.getTopicAnalyzeState(topicId).isPresent()) {
+    if (analyzeTasksStore.analyzeInProgress(topicId)) {
       throw new IllegalStateException("Topic is already analyzing");
     }
     var task = new AnalyzingTask(cluster, topicId, partitionsCnt, approxNumberOfMsgs);
@@ -84,7 +84,6 @@ public class TopicAnalyzeService {
 
   class AnalyzingTask implements Runnable {
 
-    private final KafkaCluster cluster;
     private final TopicIdentity topicId;
     private final int partitionsCnt;
     private final long approxNumberOfMsgs;
@@ -92,36 +91,35 @@ public class TopicAnalyzeService {
     private final TopicAnalyzeStats totalStats = new TopicAnalyzeStats();
     private final Map<Integer, TopicAnalyzeStats> partitionStats = new HashMap<>();
 
-    private volatile KafkaConsumer<Bytes, Bytes> consumer;
+    private final KafkaConsumer<Bytes, Bytes> consumer;
 
     AnalyzingTask(KafkaCluster cluster, TopicIdentity topicId, int partitionsCnt, long approxNumberOfMsgs) {
-      this.cluster = cluster;
       this.topicId = topicId;
       this.approxNumberOfMsgs = approxNumberOfMsgs;
       this.partitionsCnt = partitionsCnt;
+      this.consumer = consumerGroupService.createConsumer(
+          cluster,
+          Map.of(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "100000")// for polling speed improve
+      );
     }
 
     Runnable cancelHook() {
-      return () -> Optional.ofNullable(consumer).ifPresent(KafkaConsumer::wakeup);
+      return consumer::wakeup;
     }
 
     @Override
     public void run() {
       try {
         log.info("Starting {} topic analyze", topicId);
-
-        consumer = consumerGroupService.createConsumer(cluster,
-            Map.of(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "100000"));
-
-        var tps = IntStream.range(0, partitionsCnt)
+        var topicPartitions = IntStream.range(0, partitionsCnt)
             .peek(i -> partitionStats.put(i, new TopicAnalyzeStats()))
             .mapToObj(i -> new TopicPartition(topicId.topicName, i))
             .collect(Collectors.toList());
 
-        consumer.assign(tps);
-        consumer.seekToBeginning(tps);
+        consumer.assign(topicPartitions);
+        consumer.seekToBeginning(topicPartitions);
 
-        var waitingOffsets = new OffsetsSeek.WaitingOffsets(topicId.topicName, consumer, tps);
+        var waitingOffsets = new WaitingOffsets(topicId.topicName, consumer, topicPartitions);
         for (int emptyPolls = 0; !waitingOffsets.endReached() && emptyPolls < 3; ) {
           var polled = consumer.poll(Duration.ofSeconds(3));
           emptyPolls = polled.isEmpty() ? emptyPolls + 1 : 0;
@@ -140,7 +138,7 @@ public class TopicAnalyzeService {
         log.info("Error analyzing topic {}", topicId, th);
         reportError(th);
       } finally {
-        Optional.ofNullable(consumer).ifPresent(KafkaConsumer::close);
+        consumer.close();
       }
     }
 
@@ -196,10 +194,6 @@ public class TopicAnalyzeService {
         min = minNullable(min, len);
         max = maxNullable(max, len);
         sizeSketch.update(len);
-      }
-
-      private long quantile(double fraction) {
-        return (long) sizeSketch.getQuantile(fraction);
       }
 
       TopicAnalyzeSizeStatsDTO toDto() {

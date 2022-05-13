@@ -86,6 +86,10 @@ class AnalyzeTasksStore {
         .ifPresent(s -> s.stopHook.run());
   }
 
+  boolean analyzeInProgress(TopicIdentity id) {
+    return running.containsKey(id);
+  }
+
   Optional<TopicAnalyzeStateDTO> getTopicAnalyzeState(TopicIdentity id) {
     var runningState = running.get(id);
     var completedState = completed.get(id);
