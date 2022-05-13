@@ -363,6 +363,100 @@ paths:
         404:
           description: Not found
 
+  /api/clusters/{clusterName}/topics/analyzes:
+    get:
+      tags:
+        - Topics
+      summary: getAllTopicAnalyzes
+      operationId: getAllTopicAnalyzeStates
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: List of all analyzes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicAnalyzeState'
+        404:
+          description: Not found
+
+  /api/clusters/{clusterName}/topics/{topicName}/analyze:
+    get:
+      tags:
+        - Topics
+      summary: getTopicAnalyzeState
+      operationId: getTopicAnalyzeState
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicAnalyzeState'
+        404:
+          description: Not found
+    post:
+      tags:
+        - Topics
+      summary: analyzeTopic
+      operationId: analyzeTopic
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: Analyze started
+        404:
+          description: Not found
+    delete:
+      tags:
+        - Topics
+      summary: analyzeTopic
+      operationId: cancelTopicAnalyze
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: Analyze cancelled
+        404:
+          description: Not found
+
+
   /api/clusters/{clusterName}/topics/{topicName}:
     get:
       tags:
@@ -1866,6 +1960,117 @@ components:
             $ref: "#/components/schemas/Partition"
       required:
         - name
+
+    TopicAnalyzeState:
+      type: object
+      properties:
+        topicName:
+          type: string
+        inProgress:
+          $ref: '#/components/schemas/InProgressTopicAnalyze'
+        completed:
+          $ref: '#/components/schemas/CompletedTopicAnalyze'
+
+    InProgressTopicAnalyze:
+      type: object
+      properties:
+        startedAt:
+          type: integer
+          format: int64
+        completenessPercent:
+          type: number
+        msgsScanned:
+          type: integer
+          format: int64
+        bytesScanned:
+          type: integer
+          format: int64
+
+    CompletedTopicAnalyze:
+      type: object
+      properties:
+        finishedAt:
+          type: integer
+          format: int64
+        error:
+          type: string
+        totalStats:
+          $ref: '#/components/schemas/TopicAnalyzeStats'
+        partitionStats:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopicAnalyzeStats"
+
+    TopicAnalyzeStats:
+      type: object
+      properties:
+        partition:
+          type: integer
+          format: int32
+          description: "null if this is total stats"
+        totalMsgs:
+          type: integer
+          format: int64
+        minOffset:
+          type: integer
+          format: int64
+        maxOffset:
+          type: integer
+          format: int64
+        minTimestamp:
+          type: integer
+          format: int64
+        maxTimestamp:
+          type: integer
+          format: int64
+        nullKeys:
+          type: integer
+          format: int64
+        nullValues:
+          type: integer
+          format: int64
+        approxUniqKeys:
+          type: integer
+          format: int64
+        approxUniqValues:
+          type: integer
+          format: int64
+        keySize:
+          $ref: "#/components/schemas/TopicAnalyzeSizeStats"
+        valueSize:
+          $ref: "#/components/schemas/TopicAnalyzeSizeStats"
+
+    TopicAnalyzeSizeStats:
+      type: object
+      description: "All sizes in bytes"
+      properties:
+        sum:
+          type: integer
+          format: int64
+        min:
+          type: integer
+          format: int64
+        max:
+          type: integer
+          format: int64
+        avg:
+          type: integer
+          format: int64
+        prctl50:
+          type: integer
+          format: int64
+        prctl75:
+          type: integer
+          format: int64
+        prctl95:
+          type: integer
+          format: int64
+        prctl99:
+          type: integer
+          format: int64
+        prctl999:
+          type: integer
+          format: int64
 
     Replica:
       type: object
