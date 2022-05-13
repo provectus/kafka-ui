@@ -33,7 +33,7 @@
         <springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
         <avro.version>1.11.0</avro.version>
         <confluent.version>7.0.1</confluent.version>
-        <apache.commons.version>2.2</apache.commons.version>
+        <apache.commons.version>2.11.1</apache.commons.version>
         <test.containers.version>1.16.2</test.containers.version>
         <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
         <mockito.version>2.21.0</mockito.version>
