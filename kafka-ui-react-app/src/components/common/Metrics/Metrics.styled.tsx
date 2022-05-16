@@ -36,7 +36,7 @@ export const IndicatorTitle = styled.div`
 
 export const IndicatorsWrapper = styled.div`
   display: flex;
-  gap: 2px;
+  gap: 1px;
   flex-wrap: wrap;
 
   > ${IndicatorWrapper} {
