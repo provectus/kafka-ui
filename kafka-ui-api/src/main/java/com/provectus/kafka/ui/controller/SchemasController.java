@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.SchemasApi;
 import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.CompatibilityCheckResponseDTO;
 import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -29,6 +30,8 @@ public class SchemasController extends AbstractController implements SchemasApi 
 
   private static final Integer DEFAULT_PAGE_SIZE = 25;
 
+  private final ClusterMapper mapper;
+
   private final SchemaRegistryService schemaRegistryService;
 
   @Override
@@ -46,6 +49,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
       ServerWebExchange exchange) {
     return schemaRegistryService.checksSchemaCompatibility(
             getCluster(clusterName), subject, newSchemaSubject)
+        .map(mapper::toCompatibilityCheckResponse)
         .map(ResponseEntity::ok);
   }
 
@@ -91,6 +95,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
   public Mono<ResponseEntity<CompatibilityLevelDTO>> getGlobalSchemaCompatibilityLevel(
       String clusterName, ServerWebExchange exchange) {
     return schemaRegistryService.getGlobalSchemaCompatibilityLevel(getCluster(clusterName))
+        .map(mapper::toCompatibilityLevelDto)
         .map(ResponseEntity::ok)
         .defaultIfEmpty(ResponseEntity.notFound().build());
   }
