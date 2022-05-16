@@ -62,7 +62,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
           <S.QuestionIconContainer
             type="button"
             aria-label="info"
-            onClick={() => toggle()}
+            onClick={toggle}
           >
             <QuestionIcon />
           </S.QuestionIconContainer>

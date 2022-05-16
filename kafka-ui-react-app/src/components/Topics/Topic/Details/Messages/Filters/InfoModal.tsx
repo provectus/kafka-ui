@@ -9,21 +9,21 @@ export interface InfoModalProps {
 const InfoModal: React.FC<InfoModalProps> = ({ toggleIsOpen }) => {
   return (
     <S.InfoModal>
-      <S.P>
+      <S.InfoParagraph>
         <b>Variables bound to groovy context:</b> partition, timestampMs,
         keyAsText, valueAsText, header, key (json if possible), value (json if
         possible).
-      </S.P>
-      <S.P>
+      </S.InfoParagraph>
+      <S.InfoParagraph>
         <b>JSON parsing logic:</b>
-      </S.P>
-      <S.P>
+      </S.InfoParagraph>
+      <S.InfoParagraph>
         Key and Value (if they can be parsed to JSON) they are bound as JSON
         objects, otherwise bound as nulls.
-      </S.P>
-      <S.P>
+      </S.InfoParagraph>
+      <S.InfoParagraph>
         <b>Sample filters:</b>
-      </S.P>
+      </S.InfoParagraph>
       <ol aria-label="info-list">
         <S.ListItem>
           `keyAsText != null && keyAsText ~&quot;([Gg])roovy&quot;` - regex for
