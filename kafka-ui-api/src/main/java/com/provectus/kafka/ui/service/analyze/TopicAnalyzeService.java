@@ -44,7 +44,7 @@ public class TopicAnalyzeService {
                 cluster,
                 topicName,
                 topic.getPartitionCount(),
-                topic.getPartitions()
+                topic.getPartitions().values()
                     .stream()
                     .mapToLong(p -> p.getOffsetMax() - p.getOffsetMin())
                     .sum()
