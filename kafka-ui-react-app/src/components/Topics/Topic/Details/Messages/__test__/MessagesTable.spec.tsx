@@ -52,7 +52,7 @@ describe('MessagesTable', () => {
             meta: {
               ...topicMessagesMetaPayload,
             },
-            isFetching: isFetching || false,
+            isFetching: !!isFetching,
           },
         },
       }
