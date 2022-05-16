@@ -26,9 +26,6 @@ const renderComponent = (
   render(
     <TopicMessagesContext.Provider value={ctx}>
       <Filters
-        clusterName="test-cluster"
-        topicName="test-topic"
-        partitions={[{ partition: 0, offsetMin: 0, offsetMax: 100 }]}
         meta={{}}
         isFetching={false}
         addMessage={jest.fn()}

@@ -12,7 +12,7 @@ import {
 } from 'generated-sources';
 import React, { useContext } from 'react';
 import { omitBy } from 'lodash';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
@@ -29,6 +29,8 @@ import FilterModal, {
 import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 import useModal from 'lib/hooks/useModal';
+import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
+import { useAppSelector } from 'lib/hooks/redux';
 
 import * as S from './Filters.styled';
 import {
@@ -41,10 +43,7 @@ import {
 type Query = Record<string, string | string[] | number>;
 
 export interface FiltersProps {
-  clusterName: ClusterName;
-  topicName: TopicName;
   phaseMessage?: string;
-  partitions: Partition[];
   meta: TopicMessageConsuming;
   isFetching: boolean;
   addMessage(content: { message: TopicMessage; prepend: boolean }): void;
@@ -73,9 +72,6 @@ export const SeekTypeOptions = [
 ];
 
 const Filters: React.FC<FiltersProps> = ({
-  clusterName,
-  topicName,
-  partitions,
   phaseMessage,
   meta: { elapsedMs, bytesConsumed, messagesConsumed },
   isFetching,
@@ -85,8 +81,14 @@ const Filters: React.FC<FiltersProps> = ({
   updateMeta,
   setIsFetching,
 }) => {
+  const { clusterName, topicName } =
+    useParams<{ clusterName: ClusterName; topicName: TopicName }>();
   const location = useLocation();
   const history = useHistory();
+
+  const partitions = useAppSelector((state) =>
+    getPartitionsByTopicName(state, topicName)
+  );
 
   const { searchParams, seekDirection, isLive, changeSeekDirection } =
     useContext(TopicMessagesContext);
