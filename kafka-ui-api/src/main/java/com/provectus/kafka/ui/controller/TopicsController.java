@@ -21,7 +21,6 @@ import com.provectus.kafka.ui.model.TopicUpdateDTO;
 import com.provectus.kafka.ui.model.TopicsResponseDTO;
 import com.provectus.kafka.ui.service.TopicsService;
 import com.provectus.kafka.ui.service.analyze.TopicAnalyzeService;
-import java.util.Optional;
 import java.util.Comparator;
 import java.util.List;
 import javax.validation.Valid;
