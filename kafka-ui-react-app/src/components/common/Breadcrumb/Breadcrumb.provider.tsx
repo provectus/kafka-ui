@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { PropsWithChildren, useState } from 'react';
 import capitalize from 'lodash/capitalize';
 
 import { BreadcrumbContext, BreadcrumbEntry } from './Breadcrumb.context';
@@ -13,7 +13,9 @@ const mapLocationToPath = (
       : item
   );
 
-export const BreadcrumbProvider: React.FC = ({ children }) => {
+export const BreadcrumbProvider: React.FC<PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const [state, setState] = useState<BreadcrumbEntry>({
     link: '',
     path: [],

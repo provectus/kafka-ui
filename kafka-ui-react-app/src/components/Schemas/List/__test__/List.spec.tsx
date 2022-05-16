@@ -1,9 +1,9 @@
 import React from 'react';
 import List from 'components/Schemas/List/List';
 import { render } from 'lib/testHelpers';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 import { clusterSchemasPath } from 'lib/paths';
-import { screen, waitFor } from '@testing-library/dom';
+import { act, screen } from '@testing-library/react';
 import {
   schemasFulfilledState,
   schemasInitialState,
@@ -52,9 +52,11 @@ describe('List', () => {
         schemasAPICompabilityUrl,
         404
       );
-      renderComponent();
-      await waitFor(() => expect(fetchSchemasMock.called()).toBeTruthy());
-      await waitFor(() => expect(fetchCompabilityMock.called()).toBeTruthy());
+      await act(() => {
+        renderComponent();
+      });
+      expect(fetchSchemasMock.called()).toBeTruthy();
+      expect(fetchCompabilityMock.called()).toBeTruthy();
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
   });
@@ -70,9 +72,11 @@ describe('List', () => {
           schemasAPICompabilityUrl,
           200
         );
-        renderComponent();
-        await waitFor(() => expect(fetchSchemasMock.called()).toBeTruthy());
-        await waitFor(() => expect(fetchCompabilityMock.called()).toBeTruthy());
+        await act(() => {
+          renderComponent();
+        });
+        expect(fetchSchemasMock.called()).toBeTruthy();
+        expect(fetchCompabilityMock.called()).toBeTruthy();
       });
       it('renders empty table', () => {
         expect(screen.getByText('No schemas found')).toBeInTheDocument();
@@ -88,9 +92,11 @@ describe('List', () => {
           schemasAPICompabilityUrl,
           200
         );
-        renderComponent(schemasFulfilledState);
-        await waitFor(() => expect(fetchSchemasMock.called()).toBeTruthy());
-        await waitFor(() => expect(fetchCompabilityMock.called()).toBeTruthy());
+        await act(() => {
+          renderComponent(schemasFulfilledState);
+        });
+        expect(fetchSchemasMock.called()).toBeTruthy();
+        expect(fetchCompabilityMock.called()).toBeTruthy();
       });
       it('renders list', () => {
         expect(screen.getByText(schemaVersion1.subject)).toBeInTheDocument();
@@ -104,12 +110,13 @@ describe('List', () => {
           schemasAPIUrl,
           schemasPayload
         );
-
-        renderComponent(schemasFulfilledState, {
-          ...contextInitialValue,
-          isReadOnly: true,
+        await act(() => {
+          renderComponent(schemasFulfilledState, {
+            ...contextInitialValue,
+            isReadOnly: true,
+          });
         });
-        await waitFor(() => expect(fetchSchemasMock.called()).toBeTruthy());
+        expect(fetchSchemasMock.called()).toBeTruthy();
       });
       it('does not render Create Schema button', () => {
         expect(screen.queryByText('Create Schema')).not.toBeInTheDocument();

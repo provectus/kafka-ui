@@ -10,7 +10,7 @@ import {
 } from 'redux/actions';
 import { useDispatch } from 'react-redux';
 import { getResponse } from 'lib/errorHandling';
-import { useHistory, useLocation, useParams } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import PageHeading from 'components/common/PageHeading/PageHeading';

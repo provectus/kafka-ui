@@ -1,16 +1,19 @@
-import {
+import reducer, {
   addTopicMessage,
+  clearTopicMessages,
   resetTopicMessages,
   updateTopicMessagesMeta,
   updateTopicMessagesPhase,
-} from 'redux/actions';
-import reducer from 'redux/reducers/topicMessages/reducer';
+} from 'redux/reducers/topicMessages/topicMessagesSlice';
 
 import {
   topicMessagePayload,
   topicMessagePayloadV2,
   topicMessagesMetaPayload,
 } from './fixtures';
+
+const clusterName = 'local';
+const topicName = 'localTopic';
 
 describe('TopicMessages reducer', () => {
   it('Adds new message', () => {
@@ -19,7 +22,6 @@ describe('TopicMessages reducer', () => {
       addTopicMessage({ message: topicMessagePayload })
     );
     expect(state.messages.length).toEqual(1);
-    expect(state).toMatchSnapshot();
   });
 
   it('Adds new message with live tailing one', () => {
@@ -54,7 +56,7 @@ describe('TopicMessages reducer', () => {
     ]);
   });
 
-  it('Clears messages', () => {
+  it('reset messages', () => {
     const state = reducer(
       undefined,
       addTopicMessage({ message: topicMessagePayload })
@@ -64,6 +66,25 @@ describe('TopicMessages reducer', () => {
     const newState = reducer(state, resetTopicMessages());
     expect(newState.messages.length).toEqual(0);
   });
+
+  it('clear messages', () => {
+    const state = reducer(
+      undefined,
+      addTopicMessage({ message: topicMessagePayload })
+    );
+    expect(state.messages.length).toEqual(1);
+
+    expect(
+      reducer(state, {
+        type: clearTopicMessages.fulfilled,
+        payload: { clusterName, topicName },
+      })
+    ).toEqual({
+      ...state,
+      messages: [],
+    });
+  });
+
   it('Updates Topic Messages Phase', () => {
     const phase = 'Polling';
 

@@ -15,6 +15,9 @@ const setupComponent = (props: ListItemProps) => {
   );
 };
 
+const getName = () => screen.getByText('someName');
+const getValue = () => screen.getByText('someValue');
+
 it('renders with CustomValue', () => {
   setupComponent({
     config: {
@@ -23,10 +26,10 @@ it('renders with CustomValue', () => {
       defaultValue: 'someDefaultValue',
     },
   });
-  expect(screen.getByText('someName')).toBeInTheDocument();
-  expect(screen.getByText('someName')).toHaveStyle('font-weight: 500');
-  expect(screen.getByText('someValue')).toBeInTheDocument();
-  expect(screen.getByText('someValue')).toHaveStyle('font-weight: 500');
+  expect(getName()).toBeInTheDocument();
+  expect(getName()).toHaveStyle('font-weight: 500');
+  expect(getValue()).toBeInTheDocument();
+  expect(getValue()).toHaveStyle('font-weight: 500');
   expect(screen.getByText('someDefaultValue')).toBeInTheDocument();
 });
 
@@ -34,9 +37,9 @@ it('renders without CustomValue', () => {
   setupComponent({
     config: { name: 'someName', value: 'someValue', defaultValue: 'someValue' },
   });
-  expect(screen.getByText('someName')).toBeInTheDocument();
-  expect(screen.getByText('someName')).toHaveStyle('font-weight: 400');
-  expect(screen.getByText('someValue')).toBeInTheDocument();
-  expect(screen.getByText('someValue')).toHaveStyle('font-weight: 400');
+  expect(getName()).toBeInTheDocument();
+  expect(getName()).toHaveStyle('font-weight: 400');
+  expect(getValue()).toBeInTheDocument();
+  expect(getValue()).toHaveStyle('font-weight: 400');
   expect(screen.getByTitle('Default Value')).toHaveTextContent('');
 });

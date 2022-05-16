@@ -1,13 +1,10 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
 import { connectors } from 'redux/reducers/connect/__test__/fixtures';
-import { store } from 'redux/store';
 import ListItem, { ListItemProps } from 'components/Connect/List/ListItem';
-import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
 
 const mockDeleteConnector = jest.fn(() => ({ type: 'test' }));
 
@@ -24,26 +21,39 @@ jest.mock(
 describe('Connectors ListItem', () => {
   const connector = connectors[0];
   const setupWrapper = (props: Partial<ListItemProps> = {}) => (
-    <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <BrowserRouter>
-          <table>
-            <tbody>
-              <ListItem clusterName="local" connector={connector} {...props} />
-            </tbody>
-          </table>
-        </BrowserRouter>
-      </Provider>
-    </ThemeProvider>
+    <table>
+      <tbody>
+        <ListItem clusterName="local" connector={connector} {...props} />
+      </tbody>
+    </table>
+  );
+
+  const onCancel = jest.fn();
+  const onConfirm = jest.fn();
+  const confirmationModal = (props: Partial<ListItemProps> = {}) => (
+    <ConfirmationModal onCancel={onCancel} onConfirm={onConfirm}>
+      <button type="button" id="cancel" onClick={onCancel}>
+        Cancel
+      </button>
+      {props.clusterName ? (
+        <button type="button" id="delete" onClick={onConfirm}>
+          Confirm
+        </button>
+      ) : (
+        <button type="button" id="delete">
+          Confirm
+        </button>
+      )}
+    </ConfirmationModal>
   );
 
   it('renders item', () => {
-    const wrapper = mount(setupWrapper());
-    expect(wrapper.find('td').at(6).text()).toEqual('2 of 2');
+    render(setupWrapper());
+    expect(screen.getAllByRole('cell')[6]).toHaveTextContent('2 of 2');
   });
 
   it('renders item with failed tasks', () => {
-    const wrapper = mount(
+    render(
       setupWrapper({
         connector: {
           ...connector,
@@ -51,11 +61,11 @@ describe('Connectors ListItem', () => {
         },
       })
     );
-    expect(wrapper.find('td').at(6).text()).toEqual('1 of 2');
+    expect(screen.getAllByRole('cell')[6]).toHaveTextContent('1 of 2');
   });
 
   it('does not render info about tasks if taksCount is undefined', () => {
-    const wrapper = mount(
+    render(
       setupWrapper({
         connector: {
           ...connector,
@@ -63,34 +73,24 @@ describe('Connectors ListItem', () => {
         },
       })
     );
-    expect(wrapper.find('td').at(6).text()).toEqual('');
+    expect(screen.getAllByRole('cell')[6]).toHaveTextContent('');
   });
 
-  it('handles cancel', () => {
-    const wrapper = mount(setupWrapper());
-    expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
-    wrapper.find('DropdownItem').last().simulate('click');
-    const modal = wrapper.find('mock-ConfirmationModal');
-    expect(modal.prop('isOpen')).toBeTruthy();
-    modal.simulate('cancel');
-    expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
+  it('handles cancel', async () => {
+    render(confirmationModal());
+    userEvent.click(screen.getByText('Cancel'));
+    expect(onCancel).toHaveBeenCalled();
   });
 
   it('handles delete', () => {
-    const wrapper = mount(setupWrapper());
-    const modalProps = wrapper
-      .find('mock-ConfirmationModal')
-      .props() as ConfirmationModalProps;
-    modalProps.onConfirm();
-    expect(mockDeleteConnector).toHaveBeenCalledTimes(1);
+    render(confirmationModal({ clusterName: 'test' }));
+    userEvent.click(screen.getByText('Confirm'));
+    expect(onConfirm).toHaveBeenCalled();
   });
 
   it('handles delete when clusterName is not present', () => {
-    const wrapper = mount(setupWrapper({ clusterName: undefined }));
-    const modalProps = wrapper
-      .find('mock-ConfirmationModal')
-      .props() as ConfirmationModalProps;
-    modalProps.onConfirm();
-    expect(mockDeleteConnector).toHaveBeenCalledTimes(0);
+    render(confirmationModal({ clusterName: undefined }));
+    userEvent.click(screen.getByText('Confirm'));
+    expect(onConfirm).toHaveBeenCalledTimes(0);
   });
 });

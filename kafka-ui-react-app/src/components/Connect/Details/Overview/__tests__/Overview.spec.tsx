@@ -1,38 +1,40 @@
 import React from 'react';
-import { create } from 'react-test-renderer';
-import { mount } from 'enzyme';
-import { containerRendersView } from 'lib/testHelpers';
-import OverviewContainer from 'components/Connect/Details/Overview/OverviewContainer';
-import Overview, {
-  OverviewProps,
-} from 'components/Connect/Details/Overview/Overview';
+import Overview from 'components/Connect/Details/Overview/Overview';
 import { connector } from 'redux/reducers/connect/__test__/fixtures';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 describe('Overview', () => {
-  containerRendersView(<OverviewContainer />, Overview);
-
-  describe('view', () => {
-    const setupWrapper = (props: Partial<OverviewProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <Overview
-          connector={connector}
-          runningTasksCount={10}
-          failedTasksCount={2}
-          {...props}
-        />
-      </ThemeProvider>
+  it('is empty when no connector', () => {
+    const { container } = render(
+      <Overview connector={null} runningTasksCount={10} failedTasksCount={2} />
     );
+    expect(container).toBeEmptyDOMElement();
+  });
 
-    it('matches snapshot', () => {
-      const wrapper = create(setupWrapper());
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
+  it('renders metrics', () => {
+    const running = 234789237;
+    const failed = 373737;
+    render(
+      <Overview
+        connector={connector}
+        runningTasksCount={running}
+        failedTasksCount={failed}
+      />
+    );
+    expect(screen.getByText('Worker')).toBeInTheDocument();
+    expect(
+      screen.getByText(connector.status.workerId as string)
+    ).toBeInTheDocument();
 
-    it('is empty when no connector', () => {
-      const wrapper = mount(setupWrapper({ connector: null }));
-      expect(wrapper.html()).toEqual('');
-    });
+    expect(screen.getByText('Type')).toBeInTheDocument();
+    expect(
+      screen.getByText(connector.config['connector.class'] as string)
+    ).toBeInTheDocument();
+
+    expect(screen.getByText('Tasks Running')).toBeInTheDocument();
+    expect(screen.getByText(running)).toBeInTheDocument();
+    expect(screen.getByText('Tasks Failed')).toBeInTheDocument();
+    expect(screen.getByText(failed)).toBeInTheDocument();
   });
 });
