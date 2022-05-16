@@ -1989,6 +1989,9 @@ components:
     CompletedTopicAnalyze:
       type: object
       properties:
+        startedAt:
+          type: integer
+          format: int64
         finishedAt:
           type: integer
           format: int64
@@ -2039,6 +2042,17 @@ components:
           $ref: "#/components/schemas/TopicAnalyzeSizeStats"
         valueSize:
           $ref: "#/components/schemas/TopicAnalyzeSizeStats"
+        hourlyMsgCounts:
+          type: array
+          items:
+            type: object
+            properties:
+              hourStart:
+                type: integer
+                format: int64
+              count:
+                type: integer
+                format: int64
 
     TopicAnalyzeSizeStats:
       type: object

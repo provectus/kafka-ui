@@ -6,7 +6,7 @@ import com.provectus.kafka.ui.model.CompletedTopicAnalyzeDTO;
 import com.provectus.kafka.ui.model.InProgressTopicAnalyzeDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.TopicAnalyzeStateDTO;
-import com.provectus.kafka.ui.service.analyze.TopicAnalyzeService.TopicAnalyzeStats;
+import java.io.Closeable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.Builder;
+import lombok.SneakyThrows;
 import lombok.Value;
 
 class AnalyzeTasksStore {
@@ -23,25 +24,7 @@ class AnalyzeTasksStore {
   private final Map<TopicIdentity, RunningAnalyze> running = new ConcurrentHashMap<>();
   private final Map<TopicIdentity, CompletedTopicAnalyzeDTO> completed = new ConcurrentHashMap<>();
 
-  @Value
-  @Builder(toBuilder = true)
-  private static class RunningAnalyze {
-    Instant startedAt;
-    double completenessPercent;
-    long msgsScanned;
-    long bytesScanned;
-    Runnable stopHook;
-
-    InProgressTopicAnalyzeDTO toDto() {
-      return new InProgressTopicAnalyzeDTO()
-          .startedAt(startedAt.toEpochMilli())
-          .bytesScanned(bytesScanned)
-          .msgsScanned(msgsScanned)
-          .completenessPercent(BigDecimal.valueOf(completenessPercent));
-    }
-  }
-
-  void analyzeError(TopicIdentity topicId, Throwable th) {
+  void setAnalyzeError(TopicIdentity topicId, Throwable th) {
     running.remove(topicId);
     completed.put(
         topicId,
@@ -51,17 +34,20 @@ class AnalyzeTasksStore {
     );
   }
 
-  void setResult(TopicIdentity topicId,
-                 TopicAnalyzeStats totalStats,
-                 Map<Integer, TopicAnalyzeStats> partitionStats) {
+  void setAnalyzeResult(TopicIdentity topicId,
+                        Instant collectionStartedAt,
+                        TopicAnalyzeStats totalStats,
+                        Map<Integer, TopicAnalyzeStats> partitionStats) {
     running.remove(topicId);
     completed.put(topicId,
         new CompletedTopicAnalyzeDTO()
+            .startedAt(collectionStartedAt.toEpochMilli())
             .finishedAt(System.currentTimeMillis())
-            .totalStats(totalStats.toDto())
-            .partitionStats(partitionStats.entrySet().stream()
-                .map(e -> e.getValue().toDto().partition(e.getKey()))
-                .collect(Collectors.toList())
+            .totalStats(totalStats.toDto(null))
+            .partitionStats(
+                partitionStats.entrySet().stream()
+                    .map(e -> e.getValue().toDto(e.getKey()))
+                    .collect(Collectors.toList())
             ));
   }
 
@@ -77,16 +63,16 @@ class AnalyzeTasksStore {
             .build());
   }
 
-  void registerNewAnalyze(TopicIdentity topicId, Runnable cancelHook) {
-    running.put(topicId, new RunningAnalyze(Instant.now(), 0.0, 0, 0, cancelHook));
+  void registerNewTask(TopicIdentity topicId, Closeable task) {
+    running.put(topicId, new RunningAnalyze(Instant.now(), 0.0, 0, 0, task));
   }
 
   void cancelAnalyze(TopicIdentity topicId) {
     Optional.ofNullable(running.remove(topicId))
-        .ifPresent(s -> s.stopHook.run());
+        .ifPresent(RunningAnalyze::stopTask);
   }
 
-  boolean analyzeInProgress(TopicIdentity id) {
+  boolean isAnalyzeInProgress(TopicIdentity id) {
     return running.containsKey(id);
   }
 
@@ -102,15 +88,10 @@ class AnalyzeTasksStore {
   private TopicAnalyzeStateDTO createAnalyzeStateDto(String topic,
                                                      @Nullable RunningAnalyze runningState,
                                                      @Nullable CompletedTopicAnalyzeDTO completedState) {
-    var result = new TopicAnalyzeStateDTO();
-    result.setTopicName(topic);
-    if (runningState != null) {
-      result.setInProgress(runningState.toDto());
-    }
-    if (completedState != null) {
-      result.setCompleted(completedState);
-    }
-    return result;
+    return new TopicAnalyzeStateDTO()
+        .topicName(topic)
+        .inProgress(runningState != null ? runningState.toDto() : null)
+        .completed(completedState);
   }
 
   List<TopicAnalyzeStateDTO> getAllTopicAnalyzeStates(KafkaCluster cluster) {
@@ -123,4 +104,26 @@ class AnalyzeTasksStore {
         .collect(Collectors.toList());
   }
 
+  @Value
+  @Builder(toBuilder = true)
+  private static class RunningAnalyze {
+    Instant startedAt;
+    double completenessPercent;
+    long msgsScanned;
+    long bytesScanned;
+    Closeable task;
+
+    InProgressTopicAnalyzeDTO toDto() {
+      return new InProgressTopicAnalyzeDTO()
+          .startedAt(startedAt.toEpochMilli())
+          .bytesScanned(bytesScanned)
+          .msgsScanned(msgsScanned)
+          .completenessPercent(BigDecimal.valueOf(completenessPercent));
+    }
+
+    @SneakyThrows
+    void stopTask() {
+      task.close();
+    }
+  }
 }

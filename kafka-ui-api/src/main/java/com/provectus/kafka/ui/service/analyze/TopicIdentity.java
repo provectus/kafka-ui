@@ -10,8 +10,8 @@ class TopicIdentity {
   final String clusterName;
   final String topicName;
 
-  public TopicIdentity(KafkaCluster clusterName, String topic) {
-    this.clusterName = clusterName.getName();
+  public TopicIdentity(KafkaCluster cluster, String topic) {
+    this.clusterName = cluster.getName();
     this.topicName = topic;
   }
 }

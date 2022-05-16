@@ -1,27 +1,22 @@
 package com.provectus.kafka.ui.service.analyze;
 
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.TopicAnalyzeSizeStatsDTO;
 import com.provectus.kafka.ui.model.TopicAnalyzeStateDTO;
-import com.provectus.kafka.ui.model.TopicAnalyzeStatsDTO;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
 import com.provectus.kafka.ui.service.TopicsService;
 import com.provectus.kafka.ui.util.OffsetsSeek.WaitingOffsets;
+import java.io.Closeable;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.datasketches.hll.HllSketch;
-import org.apache.datasketches.quantiles.DoublesSketch;
-import org.apache.datasketches.quantiles.UpdateDoublesSketch;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
@@ -62,11 +57,11 @@ public class TopicAnalyzeService {
                                          int partitionsCnt,
                                          long approxNumberOfMsgs) {
     var topicId = new TopicIdentity(cluster, topic);
-    if (analyzeTasksStore.analyzeInProgress(topicId)) {
+    if (analyzeTasksStore.isAnalyzeInProgress(topicId)) {
       throw new IllegalStateException("Topic is already analyzing");
     }
     var task = new AnalyzingTask(cluster, topicId, partitionsCnt, approxNumberOfMsgs);
-    analyzeTasksStore.registerNewAnalyze(topicId, task.cancelHook());
+    analyzeTasksStore.registerNewTask(topicId, task);
     Schedulers.boundedElastic().schedule(task);
   }
 
@@ -82,7 +77,9 @@ public class TopicAnalyzeService {
     return analyzeTasksStore.getAllTopicAnalyzeStates(cluster);
   }
 
-  class AnalyzingTask implements Runnable {
+  class AnalyzingTask implements Runnable, Closeable {
+
+    private final Instant startedAt = Instant.now();
 
     private final TopicIdentity topicId;
     private final int partitionsCnt;
@@ -99,12 +96,17 @@ public class TopicAnalyzeService {
       this.partitionsCnt = partitionsCnt;
       this.consumer = consumerGroupService.createConsumer(
           cluster,
-          Map.of(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "100000")// for polling speed improve
+          // to improve polling throughput
+          Map.of(
+              ConsumerConfig.RECEIVE_BUFFER_CONFIG, "-1", //let OS tune buffer size
+              ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "100000"
+          )
       );
     }
 
-    Runnable cancelHook() {
-      return consumer::wakeup;
+    @Override
+    public void close() {
+      consumer.wakeup();
     }
 
     @Override
@@ -130,24 +132,16 @@ public class TopicAnalyzeService {
           });
           updateProgress();
         }
-        reportResult();
+        analyzeTasksStore.setAnalyzeResult(topicId, startedAt, totalStats, partitionStats);
         log.info("{} topic analyze finished", topicId);
       } catch (WakeupException | InterruptException cancelException) {
         log.info("{} topic analyze stopped", topicId);
       } catch (Throwable th) {
         log.info("Error analyzing topic {}", topicId, th);
-        reportError(th);
+        analyzeTasksStore.setAnalyzeError(topicId, th);
       } finally {
         consumer.close();
       }
-    }
-
-    private void reportError(Throwable th) {
-      analyzeTasksStore.analyzeError(topicId, th);
-    }
-
-    private void reportResult() {
-      analyzeTasksStore.setResult(topicId, totalStats, partitionStats);
     }
 
     private void updateProgress() {
@@ -159,115 +153,6 @@ public class TopicAnalyzeService {
             Math.min(100.0, (((double) totalStats.totalMsgs) / approxNumberOfMsgs) * 100)
         );
       }
-    }
-  }
-
-  //-----------------------------------------------
-
-  static class TopicAnalyzeStats {
-
-    Long totalMsgs = 0L;
-    Long minOffset;
-    Long maxOffset;
-
-    Long minTimestamp;
-    Long maxTimestamp;
-
-    long nullKeys = 0L;
-    long nullValues = 0L;
-
-    final SizeStats keysSize = new SizeStats();
-    final SizeStats valuesSize = new SizeStats();
-
-    final UniqCounter uniqKeys = new UniqCounter();
-    final UniqCounter uniqValues = new UniqCounter();
-
-    static class SizeStats {
-      long sum = 0;
-      Long min;
-      Long max;
-      final UpdateDoublesSketch sizeSketch = DoublesSketch.builder().build();
-
-      void apply(byte[] bytes) {
-        int len = bytes.length;
-        sum += len;
-        min = minNullable(min, len);
-        max = maxNullable(max, len);
-        sizeSketch.update(len);
-      }
-
-      TopicAnalyzeSizeStatsDTO toDto() {
-        return new TopicAnalyzeSizeStatsDTO()
-            .sum(sum)
-            .min(min)
-            .max(max)
-            .avg((long) (((double) sum) / sizeSketch.getN()))
-            .prctl50((long) sizeSketch.getQuantile(0.5))
-            .prctl75((long) sizeSketch.getQuantile(0.75))
-            .prctl95((long) sizeSketch.getQuantile(0.95))
-            .prctl99((long) sizeSketch.getQuantile(0.99))
-            .prctl999((long) sizeSketch.getQuantile(0.999));
-      }
-    }
-
-    static class UniqCounter {
-
-      final HllSketch hll = new HllSketch();
-
-      void apply(byte[] bytes) {
-        hll.update(bytes);
-      }
-
-      long uniqCnt() {
-        return (long) hll.getEstimate();
-      }
-    }
-
-    void apply(ConsumerRecord<Bytes, Bytes> rec) {
-      totalMsgs++;
-      minTimestamp = minNullable(minTimestamp, rec.timestamp());
-      maxTimestamp = maxNullable(maxTimestamp, rec.timestamp());
-      minOffset = minNullable(minOffset, rec.offset());
-      maxOffset = maxNullable(maxOffset, rec.offset());
-
-      if (rec.key() != null) {
-        byte[] keyBytes = rec.key().get();
-        keysSize.apply(keyBytes);
-        uniqKeys.apply(keyBytes);
-      } else {
-        nullKeys++;
-      }
-
-      if (rec.value() != null) {
-        byte[] valueBytes = rec.value().get();
-        valuesSize.apply(valueBytes);
-        uniqValues.apply(valueBytes);
-      } else {
-        nullValues++;
-      }
-    }
-
-    TopicAnalyzeStatsDTO toDto() {
-      return new TopicAnalyzeStatsDTO()
-          .totalMsgs(totalMsgs)
-          .minOffset(minOffset)
-          .maxOffset(maxOffset)
-          .minTimestamp(minTimestamp)
-          .maxTimestamp(maxTimestamp)
-          .nullKeys(nullKeys)
-          .nullValues(nullValues)
-          .approxUniqKeys(uniqKeys.uniqCnt())
-          .approxUniqValues(uniqValues.uniqCnt())
-          .keySize(keysSize.toDto())
-          .valueSize(valuesSize.toDto());
-    }
-
-    private static Long maxNullable(@Nullable Long v1, long v2) {
-      return v1 == null ? v2 : Math.max(v1, v2);
-    }
-
-    private static Long minNullable(@Nullable Long v1, long v2) {
-      return v1 == null ? v2 : Math.min(v1, v2);
     }
   }
 }
