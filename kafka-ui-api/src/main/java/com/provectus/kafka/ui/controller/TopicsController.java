@@ -192,7 +192,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
   }
 
   @Override
-  public Mono<ResponseEntity<Void>> cancelTopicAnalyze(String clusterName, String topicName,
+  public Mono<ResponseEntity<Void>> cancelTopicAnalysis(String clusterName, String topicName,
                                                        ServerWebExchange exchange) {
     topicAnalysisService.cancelAnalysis(getCluster(clusterName), topicName);
     return Mono.just(ResponseEntity.ok().build());

@@ -16,14 +16,14 @@ import lombok.Builder;
 import lombok.SneakyThrows;
 import lombok.Value;
 
-class AnalyzeTasksStore {
+class AnalysisTasksStore {
 
   private final Map<TopicIdentity, RunningAnalysis> running = new ConcurrentHashMap<>();
   private final Map<TopicIdentity, TopicAnalysisResultDTO> completed = new ConcurrentHashMap<>();
 
-  void setAnalyzeError(TopicIdentity topicId,
-                       Instant collectionStartedAt,
-                       Throwable th) {
+  void setAnalysisError(TopicIdentity topicId,
+                        Instant collectionStartedAt,
+                        Throwable th) {
     running.remove(topicId);
     completed.put(
         topicId,
@@ -34,10 +34,10 @@ class AnalyzeTasksStore {
     );
   }
 
-  void setAnalyzeResult(TopicIdentity topicId,
-                        Instant collectionStartedAt,
-                        TopicAnalysisStats totalStats,
-                        Map<Integer, TopicAnalysisStats> partitionStats) {
+  void setAnalysisResult(TopicIdentity topicId,
+                         Instant collectionStartedAt,
+                         TopicAnalysisStats totalStats,
+                         Map<Integer, TopicAnalysisStats> partitionStats) {
     running.remove(topicId);
     completed.put(topicId,
         new TopicAnalysisResultDTO()
@@ -67,7 +67,7 @@ class AnalyzeTasksStore {
     running.put(topicId, new RunningAnalysis(Instant.now(), 0.0, 0, 0, task));
   }
 
-  void cancelAnalyze(TopicIdentity topicId) {
+  void cancelAnalysis(TopicIdentity topicId) {
     Optional.ofNullable(running.remove(topicId))
         .ifPresent(RunningAnalysis::stopTask);
   }

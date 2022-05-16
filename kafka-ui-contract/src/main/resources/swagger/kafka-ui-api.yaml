@@ -407,14 +407,14 @@ paths:
             type: string
       responses:
         200:
-          description: Analyze started
+          description: Analysis started
         404:
           description: Not found
     delete:
       tags:
         - Topics
-      summary: cancelTopicAnalyze
-      operationId: cancelTopicAnalyze
+      summary: cancelTopicAnalysis
+      operationId: cancelTopicAnalysis
       parameters:
         - name: clusterName
           in: path
@@ -428,7 +428,7 @@ paths:
             type: string
       responses:
         200:
-          description: Analyze cancelled
+          description: Analysis cancelled
         404:
           description: Not found
 

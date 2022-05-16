@@ -17,7 +17,6 @@ import org.apache.datasketches.quantiles.UpdateDoublesSketch;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
 
-
 class TopicAnalysisStats {
 
   Long totalMsgs = 0L;

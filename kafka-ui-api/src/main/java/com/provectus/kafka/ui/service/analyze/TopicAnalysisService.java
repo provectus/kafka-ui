@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.service.analyze;
 
-import com.provectus.kafka.ui.exception.TopicAnalyzeException;
+import com.provectus.kafka.ui.exception.TopicAnalysisException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.TopicAnalysisDTO;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
@@ -32,7 +32,7 @@ import reactor.core.scheduler.Schedulers;
 @RequiredArgsConstructor
 public class TopicAnalysisService {
 
-  private final AnalyzeTasksStore analyzeTasksStore = new AnalyzeTasksStore();
+  private final AnalysisTasksStore analysisTasksStore = new AnalysisTasksStore();
 
   private final TopicsService topicsService;
   private final ConsumerGroupService consumerGroupService;
@@ -57,23 +57,23 @@ public class TopicAnalysisService {
                                           int partitionsCnt,
                                           long approxNumberOfMsgs) {
     var topicId = new TopicIdentity(cluster, topic);
-    if (analyzeTasksStore.isAnalysisInProgress(topicId)) {
-      throw new TopicAnalyzeException("Topic is already analyzing");
+    if (analysisTasksStore.isAnalysisInProgress(topicId)) {
+      throw new TopicAnalysisException("Topic is already analyzing");
     }
-    var task = new AnalyzeTask(cluster, topicId, partitionsCnt, approxNumberOfMsgs);
-    analyzeTasksStore.registerNewTask(topicId, task);
+    var task = new AnalysisTask(cluster, topicId, partitionsCnt, approxNumberOfMsgs);
+    analysisTasksStore.registerNewTask(topicId, task);
     Schedulers.boundedElastic().schedule(task);
   }
 
   public void cancelAnalysis(KafkaCluster cluster, String topicName) {
-    analyzeTasksStore.cancelAnalyze(new TopicIdentity(cluster, topicName));
+    analysisTasksStore.cancelAnalysis(new TopicIdentity(cluster, topicName));
   }
 
   public Optional<TopicAnalysisDTO> getTopicAnalysis(KafkaCluster cluster, String topicName) {
-    return analyzeTasksStore.getTopicAnalysis(new TopicIdentity(cluster, topicName));
+    return analysisTasksStore.getTopicAnalysis(new TopicIdentity(cluster, topicName));
   }
 
-  class AnalyzeTask implements Runnable, Closeable {
+  class AnalysisTask implements Runnable, Closeable {
 
     private final Instant startedAt = Instant.now();
 
@@ -86,7 +86,7 @@ public class TopicAnalysisService {
 
     private final KafkaConsumer<Bytes, Bytes> consumer;
 
-    AnalyzeTask(KafkaCluster cluster, TopicIdentity topicId, int partitionsCnt, long approxNumberOfMsgs) {
+    AnalysisTask(KafkaCluster cluster, TopicIdentity topicId, int partitionsCnt, long approxNumberOfMsgs) {
       this.topicId = topicId;
       this.approxNumberOfMsgs = approxNumberOfMsgs;
       this.partitionsCnt = partitionsCnt;
@@ -108,7 +108,7 @@ public class TopicAnalysisService {
     @Override
     public void run() {
       try {
-        log.info("Starting {} topic analyze", topicId);
+        log.info("Starting {} topic analysis", topicId);
         var topicPartitions = IntStream.range(0, partitionsCnt)
             .peek(i -> partitionStats.put(i, new TopicAnalysisStats()))
             .mapToObj(i -> new TopicPartition(topicId.topicName, i))
@@ -128,15 +128,15 @@ public class TopicAnalysisService {
           });
           updateProgress();
         }
-        analyzeTasksStore.setAnalyzeResult(topicId, startedAt, totalStats, partitionStats);
-        log.info("{} topic analyze finished", topicId);
+        analysisTasksStore.setAnalysisResult(topicId, startedAt, totalStats, partitionStats);
+        log.info("{} topic analysis finished", topicId);
       } catch (WakeupException | InterruptException cancelException) {
-        log.info("{} topic analyze stopped", topicId);
+        log.info("{} topic analysis stopped", topicId);
         // calling cancel for cases when our thread was interrupted by some non-user cancellation reason
-        analyzeTasksStore.cancelAnalyze(topicId);
+        analysisTasksStore.cancelAnalysis(topicId);
       } catch (Throwable th) {
         log.error("Error analyzing topic {}", topicId, th);
-        analyzeTasksStore.setAnalyzeError(topicId, startedAt, th);
+        analysisTasksStore.setAnalysisError(topicId, startedAt, th);
       } finally {
         consumer.close();
       }
@@ -144,7 +144,7 @@ public class TopicAnalysisService {
 
     private void updateProgress() {
       if (totalStats.totalMsgs > 0 && approxNumberOfMsgs != 0) {
-        analyzeTasksStore.updateProgress(
+        analysisTasksStore.updateProgress(
             topicId,
             totalStats.totalMsgs,
             totalStats.keysSize.sum + totalStats.valuesSize.sum,
