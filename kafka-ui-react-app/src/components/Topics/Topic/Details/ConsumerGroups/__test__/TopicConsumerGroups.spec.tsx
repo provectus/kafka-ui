@@ -9,6 +9,7 @@ import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
 import { TopicWithDetailedInfo } from 'redux/interfaces';
+import { clusterTopicConsumerGroupsPath } from 'lib/paths';
 
 describe('TopicConsumerGroups', () => {
   const mockClusterName = 'localClusterName';
@@ -40,14 +41,14 @@ describe('TopicConsumerGroups', () => {
     name: mockTopicName,
   };
 
-  const defaultPathName =
-    '/ui/clusters/:clusterName/topics/:topicName/consumer-groups';
+  const defaultPathName = clusterTopicConsumerGroupsPath(
+    ':clusterName',
+    ':topicName'
+  );
 
   const defaultHistory = createMemoryHistory({
     initialEntries: [
-      defaultPathName
-        .replace(':clusterName', mockClusterName)
-        .replace(':topicName', mockTopicName),
+      clusterTopicConsumerGroupsPath(mockClusterName, mockTopicName),
     ],
   });
 
