@@ -41,7 +41,18 @@ const InfoModal: React.FC<InfoModalProps> = ({ toggleIsOpen }) => {
           `headers.sentBy == &quot;some system&quot; &&
           headers[&quot;sentAt&quot;] == &quot;2020-01-01&quot;`
         </S.ListItem>
-        <S.ListItem>multiS.ListItemne filters are also allowed:</S.ListItem>
+        <S.ListItem>multiline filters are also allowed:</S.ListItem>
+        <S.InfoParagraph>
+          ```
+          <br />
+          def name = value.name
+          <br />
+          def age = value.age
+          <br />
+          name == &quot;iliax&quot; && age == 30
+          <br />
+          ```
+        </S.InfoParagraph>
       </ol>
       <S.ButtonContainer>
         <Button
