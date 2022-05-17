@@ -8,6 +8,7 @@ import { ConsumerGroupState } from 'generated-sources';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
+import { TopicWithDetailedInfo } from 'redux/interfaces';
 
 describe('TopicConsumerGroups', () => {
   const mockClusterName = 'localClusterName';
@@ -35,11 +36,9 @@ describe('TopicConsumerGroups', () => {
     },
   ];
 
-  const topic = {
+  const mockTopic: TopicWithDetailedInfo = {
     name: mockTopicName,
   };
-
-  const topicsState = getTopicStateFixtures([topic], mockWithConsumerGroup);
 
   const defaultPathName =
     '/ui/clusters/:clusterName/topics/:topicName/consumer-groups';
@@ -54,15 +53,16 @@ describe('TopicConsumerGroups', () => {
 
   const setUpComponent = (
     props: Partial<Props> = {},
+    topic = mockTopic,
     history = defaultHistory
   ) => {
-    const { name, consumerGroups, isFetched } = props;
+    const { name, isFetched } = props;
+    const topicsState = getTopicStateFixtures([topic]);
 
     return render(
       <Router history={history}>
         <Route path={defaultPathName}>
           <ConsumerGroups
-            consumerGroups={consumerGroups?.length ? consumerGroups : []}
             name={name || mockTopicName}
             fetchTopicConsumerGroups={jest.fn()}
             isFetched={'isFetched' in props ? !!isFetched : false}
@@ -93,10 +93,18 @@ describe('TopicConsumerGroups', () => {
   });
 
   it('render ConsumerGroups in Topic', () => {
-    setUpComponent({
-      consumerGroups: mockWithConsumerGroup,
-      isFetched: true,
-    });
+    setUpComponent(
+      {
+        isFetched: true,
+      },
+      { ...mockTopic, consumerGroups: mockWithConsumerGroup }
+    );
     expect(screen.getAllByRole('rowgroup')).toHaveLength(2);
+    expect(
+      screen.getByText(mockWithConsumerGroup[0].groupId)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(mockWithConsumerGroup[1].groupId)
+    ).toBeInTheDocument();
   });
 });

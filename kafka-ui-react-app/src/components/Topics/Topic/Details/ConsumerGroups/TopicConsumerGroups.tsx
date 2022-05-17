@@ -1,5 +1,5 @@
 import React from 'react';
-import { Topic, TopicDetails, ConsumerGroup } from 'generated-sources';
+import { Topic, TopicDetails } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import { clusterConsumerGroupsPath } from 'lib/paths';
 import { Table } from 'components/common/table/Table/Table.styled';
@@ -13,7 +13,6 @@ import { useAppSelector } from 'lib/hooks/redux';
 import { getTopicConsumerGroups } from 'redux/reducers/topics/selectors';
 
 export interface Props extends Topic, TopicDetails {
-  consumerGroups: ConsumerGroup[];
   isFetched: boolean;
   fetchTopicConsumerGroups(payload: {
     clusterName: ClusterName;
