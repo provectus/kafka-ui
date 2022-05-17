@@ -3,7 +3,10 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ClusterContext from 'components/contexts/ClusterContext';
 import Details from 'components/Topics/Topic/Details/Details';
-import { internalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
+import {
+  getTopicStateFixtures,
+  internalTopicPayload,
+} from 'redux/reducers/topics/__test__/fixtures';
 import { render } from 'lib/testHelpers';
 import {
   clusterTopicEditPath,
@@ -12,7 +15,7 @@ import {
 } from 'lib/paths';
 import { Route, Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import { CleanUpPolicy, SortOrder, Topic } from 'generated-sources';
+import { CleanUpPolicy, Topic } from 'generated-sources';
 
 describe('Details', () => {
   const mockDelete = jest.fn();
@@ -34,18 +37,7 @@ describe('Details', () => {
     internal: false,
   };
 
-  const mockTopicsState = {
-    byName: {
-      [topic.name]: topic,
-    },
-    allNames: [topic.name],
-    messages: [],
-    totalPages: 1,
-    search: '',
-    orderBy: null,
-    sortOrder: SortOrder.ASC,
-    consumerGroups: [],
-  };
+  const mockTopicsState = getTopicStateFixtures([topic]);
 
   const setupComponent = (
     pathname = defaultPathname,
