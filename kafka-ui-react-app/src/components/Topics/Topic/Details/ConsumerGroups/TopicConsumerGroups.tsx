@@ -6,13 +6,13 @@ import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import getTagColor from 'components/common/Tag/getTagColor';
+import { useAppSelector } from 'lib/hooks/redux';
+import { getTopicConsumerGroups } from 'redux/reducers/topics/selectors';
 
 export interface Props extends Topic, TopicDetails {
-  clusterName: ClusterName;
-  topicName: TopicName;
   consumerGroups: ConsumerGroup[];
   isFetched: boolean;
   fetchTopicConsumerGroups(payload: {
@@ -22,12 +22,16 @@ export interface Props extends Topic, TopicDetails {
 }
 
 const TopicConsumerGroups: React.FC<Props> = ({
-  consumerGroups,
   fetchTopicConsumerGroups,
-  clusterName,
-  topicName,
   isFetched,
 }) => {
+  const { clusterName, topicName } =
+    useParams<{ clusterName: ClusterName; topicName: TopicName }>();
+
+  const consumerGroups = useAppSelector((state) =>
+    getTopicConsumerGroups(state, topicName)
+  );
+
   React.useEffect(() => {
     fetchTopicConsumerGroups({ clusterName, topicName });
   }, [clusterName, fetchTopicConsumerGroups, topicName]);

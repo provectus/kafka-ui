@@ -5,6 +5,9 @@ import ConsumerGroups, {
   Props,
 } from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
 import { ConsumerGroupState } from 'generated-sources';
+import { Router, Route } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
+import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
 
 describe('TopicConsumerGroups', () => {
   const mockClusterName = 'localClusterName';
@@ -32,18 +35,46 @@ describe('TopicConsumerGroups', () => {
     },
   ];
 
-  const setUpComponent = (props: Partial<Props> = {}) => {
-    const { name, topicName, consumerGroups, isFetched } = props;
+  const topic = {
+    name: mockTopicName,
+  };
+
+  const topicsState = getTopicStateFixtures([topic], mockWithConsumerGroup);
+
+  const defaultPathName =
+    '/ui/clusters/:clusterName/topics/:topicName/consumer-groups';
+
+  const defaultHistory = createMemoryHistory({
+    initialEntries: [
+      defaultPathName
+        .replace(':clusterName', mockClusterName)
+        .replace(':topicName', mockTopicName),
+    ],
+  });
+
+  const setUpComponent = (
+    props: Partial<Props> = {},
+    history = defaultHistory
+  ) => {
+    const { name, consumerGroups, isFetched } = props;
 
     return render(
-      <ConsumerGroups
-        clusterName={mockClusterName}
-        consumerGroups={consumerGroups?.length ? consumerGroups : []}
-        name={name || mockTopicName}
-        fetchTopicConsumerGroups={jest.fn()}
-        topicName={topicName || mockTopicName}
-        isFetched={'isFetched' in props ? !!isFetched : false}
-      />
+      <Router history={history}>
+        <Route path={defaultPathName}>
+          <ConsumerGroups
+            consumerGroups={consumerGroups?.length ? consumerGroups : []}
+            name={name || mockTopicName}
+            fetchTopicConsumerGroups={jest.fn()}
+            isFetched={'isFetched' in props ? !!isFetched : false}
+          />
+        </Route>
+      </Router>,
+      {
+        pathname: defaultPathName,
+        preloadedState: {
+          topics: topicsState,
+        },
+      }
     );
   };
 
