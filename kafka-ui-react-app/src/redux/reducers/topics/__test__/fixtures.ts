@@ -1,5 +1,5 @@
 import { SortOrder, Topic, ConsumerGroup } from 'generated-sources';
-import { TopicsState } from 'redux/interfaces';
+import { TopicsState, TopicWithDetailedInfo } from 'redux/interfaces';
 
 export const internalTopicPayload = {
   name: '__internal.topic',
@@ -49,7 +49,7 @@ export const topicsPayload: Topic[] = [
 ];
 
 export const getTopicStateFixtures = (
-  topics: Topic[],
+  topics: TopicWithDetailedInfo[],
   consumerGroups?: ConsumerGroup[]
 ): TopicsState => {
   const byName = topics.reduce((acc: { [i in string]: Topic }, curr) => {

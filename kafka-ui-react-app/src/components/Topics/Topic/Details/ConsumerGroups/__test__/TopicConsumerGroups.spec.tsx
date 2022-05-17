@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react';
 import ConsumerGroups, {
   Props,
 } from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
-import { ConsumerGroupState } from 'generated-sources';
+import { ConsumerGroup, ConsumerGroupState } from 'generated-sources';
 import { Router, Route } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
@@ -37,10 +37,6 @@ describe('TopicConsumerGroups', () => {
     },
   ];
 
-  const mockTopic: TopicWithDetailedInfo = {
-    name: mockTopicName,
-  };
-
   const defaultPathName = clusterTopicConsumerGroupsPath(
     ':clusterName',
     ':topicName'
@@ -54,19 +50,22 @@ describe('TopicConsumerGroups', () => {
 
   const setUpComponent = (
     props: Partial<Props> = {},
-    topic = mockTopic,
-    history = defaultHistory
+    consumerGroups?: ConsumerGroup[]
   ) => {
-    const { name, isFetched } = props;
+    const topic: TopicWithDetailedInfo = {
+      name: mockTopicName,
+      consumerGroups,
+    };
     const topicsState = getTopicStateFixtures([topic]);
 
     return render(
-      <Router history={history}>
+      <Router history={defaultHistory}>
         <Route path={defaultPathName}>
           <ConsumerGroups
-            name={name || mockTopicName}
+            name={mockTopicName}
             fetchTopicConsumerGroups={jest.fn()}
-            isFetched={'isFetched' in props ? !!isFetched : false}
+            isFetched={false}
+            {...props}
           />
         </Route>
       </Router>,
@@ -98,7 +97,7 @@ describe('TopicConsumerGroups', () => {
       {
         isFetched: true,
       },
-      { ...mockTopic, consumerGroups: mockWithConsumerGroup }
+      mockWithConsumerGroup
     );
     expect(screen.getAllByRole('rowgroup')).toHaveLength(2);
     expect(
