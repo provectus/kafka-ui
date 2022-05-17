@@ -135,7 +135,7 @@ public class BackwardRecordEmitter
       }
       recordsToSend.addAll(filteredRecords);
     }
-    log.debug("{} records to send", recordsToSend);
+    log.debug("{} records to send", recordsToSend.size());
     Collections.reverse(recordsToSend);
     return recordsToSend;
   }
