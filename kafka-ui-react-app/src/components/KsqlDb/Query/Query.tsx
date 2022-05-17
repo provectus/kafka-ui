@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, FC, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import TableRenderer from 'components/KsqlDb/Query/renderer/TableRenderer/TableRenderer';
 import {
   executeKsql,
@@ -124,10 +124,6 @@ const Query: FC = () => {
                   createdAt: now(),
                 })
               );
-
-              setTimeout(() => {
-                dispatch(alertDissmissed(id));
-              }, AUTO_DISMISS_TIME);
               break;
             }
             case 'Schema': {

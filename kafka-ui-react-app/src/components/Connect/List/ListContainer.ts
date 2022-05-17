@@ -4,7 +4,7 @@ import {
   fetchConnects,
   fetchConnectors,
   setConnectorSearch,
-} from 'redux/actions/thunks/connectors';
+} from 'redux/reducers/connect/connectSlice';
 import {
   getConnects,
   getConnectors,

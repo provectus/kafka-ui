@@ -14,11 +14,11 @@ import { Tag } from 'components/common/Tag/Tag.styled';
 export interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
-  clearTopicMessages(
-    clusterName: ClusterName,
-    topicName: TopicName,
-    partitions?: number[]
-  ): void;
+  clearTopicMessages(params: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+    partitions?: number[];
+  }): void;
 }
 
 const Overview: React.FC<Props> = ({
@@ -120,9 +120,11 @@ const Overview: React.FC<Props> = ({
                     <Dropdown label={<VerticalElipsisIcon />} right>
                       <DropdownItem
                         onClick={() =>
-                          clearTopicMessages(clusterName, topicName, [
-                            partition,
-                          ])
+                          clearTopicMessages({
+                            clusterName,
+                            topicName,
+                            partitions: [partition],
+                          })
                         }
                         danger
                       >

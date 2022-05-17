@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { compact, concat, groupBy, map, maxBy, minBy } from 'lodash';
 import React, { useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import {
   getTopicMessges,
   getIsTopicMessagesFetching,
@@ -39,10 +39,11 @@ const MessagesTable: React.FC = () => {
         return { offset: 0, partition: parseInt(partition, 10) };
       });
 
+      const seekDirection = searchParams.get('seekDirection');
+      const isBackward = seekDirection === SeekDirection.BACKWARD;
+
       const messageUniqs = map(groupBy(messages, 'partition'), (v) =>
-        searchParams.get('seekDirection') === SeekDirection.BACKWARD
-          ? minBy(v, 'offset')
-          : maxBy(v, 'offset')
+        isBackward ? minBy(v, 'offset') : maxBy(v, 'offset')
       ).map((message) => ({
         offset: message?.offset || 0,
         partition: message?.partition || 0,
@@ -54,7 +55,11 @@ const MessagesTable: React.FC = () => {
           (v) => maxBy(v, 'offset')
         )
       )
-        .map(({ offset, partition }) => `${partition}::${offset}`)
+        .map(({ offset, partition }) => {
+          const offsetQuery = isBackward ? offset : offset + 1;
+
+          return `${partition}::${offsetQuery}`;
+        })
         .join(',');
 
       searchParams.set('seekTo', nextSeekTo);
@@ -74,8 +79,8 @@ const MessagesTable: React.FC = () => {
             <TableHeaderCell title="Offset" />
             <TableHeaderCell title="Partition" />
             <TableHeaderCell title="Timestamp" />
-            <TableHeaderCell title="Key" previewText="Preview" />
-            <TableHeaderCell title="Content" previewText="Preview" />
+            <TableHeaderCell title="Key" />
+            <TableHeaderCell title="Content" />
             <TableHeaderCell> </TableHeaderCell>
           </tr>
         </thead>

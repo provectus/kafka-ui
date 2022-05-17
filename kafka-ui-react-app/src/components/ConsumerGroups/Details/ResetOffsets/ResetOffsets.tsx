@@ -15,7 +15,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { groupBy } from 'lodash';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ErrorMessage } from '@hookform/error-message';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import Select from 'components/common/Select/Select';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { Button } from 'components/common/Button/Button';

@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import ListItem from 'components/ConsumerGroups/Details/ListItem';
 import { consumerGroupPayload } from 'redux/reducers/consumerGroups/__test__/fixtures';
 import { render } from 'lib/testHelpers';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 import { ConsumerGroupTopicPartition } from 'generated-sources';
 
 const clusterName = 'cluster1';
@@ -41,8 +41,7 @@ describe('ListItem', () => {
   });
 
   it('should renders list item with topic content open', () => {
-    userEvent.click(screen.getByTestId('consumer-group-list-item-toggle'));
-
+    userEvent.click(screen.getAllByRole('cell')[0].children[0]);
     expect(screen.getByText('Consumer ID')).toBeInTheDocument();
   });
 });

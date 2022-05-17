@@ -2,7 +2,7 @@ import React from 'react';
 import { ClusterName } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -30,9 +30,9 @@ const Brokers: React.FC = () => {
     items,
   } = useAppSelector(selectStats);
 
-  const replicas = inSyncReplicasCount ?? 0 + (outOfSyncReplicasCount ?? 0);
+  const replicas = (inSyncReplicasCount ?? 0) + (outOfSyncReplicasCount ?? 0);
   const areAllInSync = inSyncReplicasCount && replicas === inSyncReplicasCount;
-
+  const partitionIsOffline = offlinePartitionCount && offlinePartitionCount > 0;
   React.useEffect(() => {
     dispatch(fetchClusterStats(clusterName));
     dispatch(fetchBrokers(clusterName));
@@ -60,13 +60,9 @@ const Brokers: React.FC = () => {
           <Metrics.Indicator
             label="Online"
             isAlert
-            alertType={
-              offlinePartitionCount && offlinePartitionCount > 0
-                ? 'error'
-                : 'success'
-            }
+            alertType={partitionIsOffline ? 'error' : 'success'}
           >
-            {offlinePartitionCount && offlinePartitionCount > 0 ? (
+            {partitionIsOffline ? (
               <Metrics.RedText>{onlinePartitionCount}</Metrics.RedText>
             ) : (
               onlinePartitionCount
@@ -80,11 +76,9 @@ const Brokers: React.FC = () => {
             label="URP"
             title="Under replicated partitions"
             isAlert
-            alertType={
-              underReplicatedPartitionCount === 0 ? 'success' : 'error'
-            }
+            alertType={!underReplicatedPartitionCount ? 'success' : 'error'}
           >
-            {underReplicatedPartitionCount === 0 ? (
+            {!underReplicatedPartitionCount ? (
               <Metrics.LightText>
                 {underReplicatedPartitionCount}
               </Metrics.LightText>
@@ -128,17 +122,21 @@ const Brokers: React.FC = () => {
 
           {diskUsage &&
             diskUsage.length !== 0 &&
-            diskUsage.map(({ brokerId, segmentSize, segmentCount }) => (
-              <tr key={brokerId}>
-                <td>{brokerId}</td>
-                <td>
-                  <BytesFormatted value={segmentSize} />
-                </td>
-                <td>{segmentCount}</td>
-                <td>{items && items[brokerId]?.port}</td>
-                <td>{items && items[brokerId]?.host}</td>
-              </tr>
-            ))}
+            diskUsage.map(({ brokerId, segmentSize, segmentCount }) => {
+              const brokerItem = items?.find((item) => item.id === brokerId);
+
+              return (
+                <tr key={brokerId}>
+                  <td>{brokerId}</td>
+                  <td>
+                    <BytesFormatted value={segmentSize} />
+                  </td>
+                  <td>{segmentCount}</td>
+                  <td>{brokerItem?.port}</td>
+                  <td>{brokerItem?.host}</td>
+                </tr>
+              );
+            })}
         </tbody>
       </Table>
     </>

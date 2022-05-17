@@ -20,7 +20,11 @@ const StyledDataCell = styled.td`
   min-width: 350px;
 `;
 
-const Message: React.FC<{ message: TopicMessage }> = ({
+export interface Props {
+  message: TopicMessage;
+}
+
+const Message: React.FC<Props> = ({
   message: {
     timestamp,
     timestampType,
@@ -62,12 +66,7 @@ const Message: React.FC<{ message: TopicMessage }> = ({
         <StyledDataCell title={key}>{key}</StyledDataCell>
         <StyledDataCell>
           <S.Metadata>
-            <S.MetadataLabel>Range:</S.MetadataLabel>
             <S.MetadataValue>{content}</S.MetadataValue>
-          </S.Metadata>
-          <S.Metadata>
-            <S.MetadataLabel>Version:</S.MetadataLabel>
-            <S.MetadataValue>3</S.MetadataValue>
           </S.Metadata>
         </StyledDataCell>
         <td style={{ width: '5%' }}>

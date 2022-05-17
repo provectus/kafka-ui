@@ -4,11 +4,17 @@ import AddFilter, {
 } from 'components/Topics/Topic/Details/Messages/Filters/AddFilter';
 import { render } from 'lib/testHelpers';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-const filters: MessageFilters[] = [{ name: 'name', code: 'code' }];
-const setupComponent = (props?: Partial<FilterModalProps>) =>
+const filters: MessageFilters[] = [
+  { name: 'name', code: 'code' },
+  { name: 'name2', code: 'code2' },
+];
+
+const editFilterMock = jest.fn();
+
+const renderComponent = (props: Partial<FilterModalProps> = {}) =>
   render(
     <AddFilter
       toggleIsOpen={jest.fn()}
@@ -16,166 +22,230 @@ const setupComponent = (props?: Partial<FilterModalProps>) =>
       deleteFilter={jest.fn()}
       activeFilterHandler={jest.fn()}
       toggleEditModal={jest.fn()}
-      editFilter={jest.fn()}
-      filters={filters}
+      editFilter={editFilterMock}
+      filters={props.filters || filters}
       {...props}
     />
   );
 
 describe('AddFilter component', () => {
-  it('renders component with filters', () => {
-    setupComponent({ filters });
-    expect(screen.getByRole('savedFilter')).toBeInTheDocument();
+  it('should test click on Saved Filters redirects to Saved components', () => {
+    renderComponent();
+    userEvent.click(screen.getByRole('savedFilterText'));
+    expect(screen.getByText('Saved filters')).toBeInTheDocument();
+    expect(screen.getAllByRole('savedFilter')).toHaveLength(2);
   });
-  it('renders component without filters', () => {
-    setupComponent({ filters: [] });
-    expect(screen.getByText('no saved filter(s)')).toBeInTheDocument();
+
+  it('should test click on return to custom filter redirects to Add filters', async () => {
+    renderComponent();
+    userEvent.click(screen.getByRole('savedFilterText'));
+
+    expect(screen.getByText('Saved filters')).toBeInTheDocument();
+    expect(screen.queryByRole('savedFilterText')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('savedFilter')).toHaveLength(2);
+
+    await act(() =>
+      userEvent.click(screen.getByText(/back to custom filters/i))
+    );
+    expect(screen.queryByText('Saved filters')).not.toBeInTheDocument();
+    expect(screen.getByRole('savedFilterText')).toBeInTheDocument();
   });
-  it('renders add filter modal with saved filters', () => {
-    setupComponent();
-    expect(screen.getByText('Created filters')).toBeInTheDocument();
-  });
-  describe('Filter deletion', () => {
-    it('open deletion modal', () => {
-      setupComponent();
-      userEvent.hover(screen.getByRole('savedFilter'));
-      userEvent.click(screen.getByTestId('deleteIcon'));
-      expect(screen.getByRole('deletionModal')).toBeInTheDocument();
-    });
-    it('close deletion modal with button', () => {
-      setupComponent();
-      userEvent.hover(screen.getByRole('savedFilter'));
-      userEvent.click(screen.getByTestId('deleteIcon'));
-      expect(screen.getByRole('deletionModal')).toBeInTheDocument();
-      const cancelButton = screen.getAllByRole('button', { name: /Cancel/i });
-      userEvent.click(cancelButton[0]);
-      expect(screen.getByText('Created filters')).toBeInTheDocument();
-    });
-    it('close deletion modal with close icon', () => {
-      setupComponent();
-      userEvent.hover(screen.getByRole('savedFilter'));
-      userEvent.click(screen.getByTestId('deleteIcon'));
-      expect(screen.getByRole('deletionModal')).toBeInTheDocument();
-      userEvent.click(screen.getByTestId('closeDeletionModalIcon'));
-      expect(screen.getByText('Created filters')).toBeInTheDocument();
-    });
-    it('delete filter', () => {
-      const deleteFilter = jest.fn();
-      setupComponent({ filters, deleteFilter });
-      userEvent.hover(screen.getByRole('savedFilter'));
-      userEvent.click(screen.getByTestId('deleteIcon'));
-      userEvent.click(screen.getByRole('button', { name: /Delete/i }));
-      expect(deleteFilter).toHaveBeenCalledTimes(1);
-      expect(screen.getByText('Created filters')).toBeInTheDocument();
-    });
-  });
+
   describe('Add new filter', () => {
-    beforeEach(() => {
-      setupComponent();
-    });
-    it('renders add new filter modal', async () => {
-      await waitFor(() => {
-        userEvent.click(screen.getByText('New filter'));
-      });
-      expect(screen.getByText('Create a new filter')).toBeInTheDocument();
-    });
-    it('adding new filter', async () => {
-      await waitFor(() => {
-        userEvent.click(screen.getByText('New filter'));
-      });
-      expect(
-        screen.getByRole('button', { name: /Add filter/i })
-      ).toBeDisabled();
-      expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
-      await waitFor(() => {
-        userEvent.type(screen.getAllByRole('textbox')[0], 'filter name');
-        userEvent.type(screen.getAllByRole('textbox')[1], 'filter code');
-      });
-      expect(screen.getAllByRole('textbox')[0]).toHaveValue('filter name');
-      expect(screen.getAllByRole('textbox')[1]).toHaveValue('filter code');
-    });
-    it('close add new filter modal', () => {
-      userEvent.click(screen.getByText('New filter'));
-      expect(screen.getByText('Save this filter')).toBeInTheDocument();
-      userEvent.click(screen.getByText('Cancel'));
-      expect(screen.getByText('Created filters')).toBeInTheDocument();
-    });
-  });
-  describe('Edit filter', () => {
-    it('opens editFilter modal', () => {
-      const editFilter = jest.fn();
-      const toggleEditModal = jest.fn();
-      setupComponent({ editFilter, toggleEditModal });
-      userEvent.click(screen.getByText('Edit'));
-      expect(editFilter).toHaveBeenCalledTimes(1);
-      expect(toggleEditModal).toHaveBeenCalledTimes(1);
-    });
-  });
-  describe('Selecting a filter', () => {
-    it('should mock the select function if the filter is check no otherwise', () => {
-      const toggleOpenMock = jest.fn();
-      const activeFilterMock = jest.fn() as (
-        activeFilter: MessageFilters,
-        index: number
-      ) => void;
-      setupComponent({
-        filters,
-        toggleIsOpen: toggleOpenMock,
-        activeFilterHandler: activeFilterMock,
-      });
-      const selectFilterButton = screen.getByText(/Select filter/i);
-
-      userEvent.click(selectFilterButton);
-      expect(activeFilterMock).not.toHaveBeenCalled();
-      expect(toggleOpenMock).not.toHaveBeenCalled();
-
-      const savedFilterElement = screen.getByRole('savedFilter');
-      userEvent.click(savedFilterElement);
-      userEvent.click(selectFilterButton);
-
-      expect(activeFilterMock).toHaveBeenCalled();
-      expect(toggleOpenMock).toHaveBeenCalled();
-    });
-  });
-  describe('onSubmit with Filter being saved', () => {
-    let addFilterMock: (values: MessageFilters) => void;
-    let activeFilterHandlerMock: (
-      activeFilter: MessageFilters,
-      index: number
-    ) => void;
     beforeEach(async () => {
-      addFilterMock = jest.fn() as (values: MessageFilters) => void;
-      activeFilterHandlerMock = jest.fn() as (
-        activeFilter: MessageFilters,
-        index: number
-      ) => void;
-      setupComponent({
-        addFilter: addFilterMock,
-        activeFilterHandler: activeFilterHandlerMock,
-      });
-      userEvent.click(screen.getByText(/New filter/i));
-      await waitFor(() => {
-        userEvent.type(screen.getAllByRole('textbox')[0], 'filter name');
-        userEvent.type(screen.getAllByRole('textbox')[1], 'filter code');
+      await act(() => {
+        renderComponent();
       });
     });
 
-    it('OnSubmit condition with checkbox off functionality', async () => {
-      userEvent.click(screen.getAllByRole('button')[1]);
-      await waitFor(() => {
+    it('adding new filter', async () => {
+      const codeValue = 'filter code';
+      const nameValue = 'filter name';
+      const textBoxes = screen.getAllByRole('textbox');
+
+      const codeTextBox = textBoxes[0] as HTMLTextAreaElement;
+      const nameTextBox = textBoxes[1];
+
+      const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
+      expect(addFilterBtn).toBeDisabled();
+      expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
+
+      await act(() => {
+        userEvent.paste(codeTextBox, codeValue);
+        userEvent.type(nameTextBox, nameValue);
+      });
+
+      expect(addFilterBtn).toBeEnabled();
+      expect(codeTextBox.value).toEqual(`${codeValue}\n\n`);
+      expect(nameTextBox).toHaveValue(nameValue);
+    });
+
+    it('should check unSaved filter without name', async () => {
+      const codeTextBox = screen.getAllByRole(
+        'textbox'
+      )[0] as HTMLTextAreaElement;
+      const code = 'filter code';
+      const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
+      expect(addFilterBtn).toBeDisabled();
+      expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
+      await act(() => userEvent.paste(codeTextBox, code));
+      expect(addFilterBtn).toBeEnabled();
+      expect(codeTextBox).toHaveValue(`${code}\n\n`);
+    });
+
+    it('calls editFilter when edit button is clicked in saved filters', async () => {
+      userEvent.click(screen.getByText('Saved Filters'));
+      const index = 0;
+      const editButton = screen.getAllByText('Edit')[index];
+      userEvent.click(editButton);
+      const { code, name } = filters[index];
+      expect(editFilterMock).toHaveBeenCalledTimes(1);
+      expect(editFilterMock).toHaveBeenCalledWith({
+        index,
+        filter: { code, name },
+      });
+    });
+  });
+
+  describe('onSubmit with Filter being saved', () => {
+    const addFilterMock = jest.fn();
+    const activeFilterHandlerMock = jest.fn();
+    const toggleModelMock = jest.fn();
+
+    const codeValue = 'filter code';
+    const longCodeValue = 'a long filter code';
+    const nameValue = 'filter name';
+
+    beforeEach(async () => {
+      await act(() => {
+        renderComponent({
+          addFilter: addFilterMock,
+          activeFilterHandler: activeFilterHandlerMock,
+          toggleIsOpen: toggleModelMock,
+        });
+      });
+    });
+
+    afterEach(() => {
+      addFilterMock.mockClear();
+      activeFilterHandlerMock.mockClear();
+      toggleModelMock.mockClear();
+    });
+
+    describe('OnSubmit conditions with codeValue and nameValue in fields', () => {
+      beforeEach(async () => {
+        await act(() => {
+          userEvent.paste(
+            screen.getAllByRole('textbox')[0] as HTMLTextAreaElement,
+            codeValue
+          );
+          userEvent.type(screen.getAllByRole('textbox')[1], nameValue);
+        });
+      });
+
+      it('OnSubmit condition with checkbox off functionality', async () => {
+        // since both values are in it
+        const addFilterBtn = screen.getByRole('button', {
+          name: /Add filter/i,
+        });
+        expect(addFilterBtn).toBeEnabled();
+
+        await act(() => userEvent.click(addFilterBtn));
+
         expect(activeFilterHandlerMock).toHaveBeenCalled();
         expect(addFilterMock).not.toHaveBeenCalled();
       });
-    });
 
-    it('OnSubmit condition with checkbox on functionality', async () => {
-      userEvent.click(screen.getByRole('checkbox'));
+      it('OnSubmit condition with checkbox on functionality', async () => {
+        await act(() => {
+          userEvent.click(screen.getByRole('checkbox'));
+          userEvent.click(screen.getAllByRole('button')[1]);
+        });
 
-      userEvent.click(screen.getAllByRole('button')[1]);
-      await waitFor(() => {
         expect(activeFilterHandlerMock).not.toHaveBeenCalled();
         expect(addFilterMock).toHaveBeenCalled();
+        expect(toggleModelMock).not.toHaveBeenCalled();
       });
+
+      it('should check the state submit button when checkbox state changes so is name input value', async () => {
+        const checkbox = screen.getByRole('checkbox');
+        const codeTextBox = screen.getAllByRole(
+          'textbox'
+        )[0] as HTMLTextAreaElement;
+        const nameTextBox = screen.getAllByRole('textbox')[1];
+        const addFilterBtn = screen.getByRole('button', {
+          name: /Add filter/i,
+        });
+
+        await act(() => userEvent.clear(nameTextBox));
+
+        expect(nameTextBox).toHaveValue('');
+
+        await act(() => userEvent.click(addFilterBtn));
+        expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
+
+        expect(activeFilterHandlerMock).toHaveBeenCalledWith(
+          {
+            name: codeValue,
+            code: codeValue,
+            saveFilter: false,
+          },
+          -1
+        );
+        // get reset-ed
+        expect(codeTextBox).toHaveValue(``);
+        expect(toggleModelMock).toHaveBeenCalled();
+
+        await act(() => userEvent.paste(codeTextBox, codeValue));
+        expect(codeTextBox).toHaveValue(`${codeValue}\n\n`);
+
+        await act(() => userEvent.click(checkbox));
+        expect(addFilterBtn).toBeDisabled();
+
+        await act(() => userEvent.type(nameTextBox, nameValue));
+        expect(nameTextBox).toHaveValue(nameValue);
+        expect(addFilterBtn).toBeEnabled();
+        await act(() => userEvent.click(addFilterBtn));
+
+        expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
+        expect(addFilterMock).toHaveBeenCalledWith({
+          name: nameValue,
+          code: codeValue,
+          saveFilter: true,
+        });
+      });
+    });
+
+    it('should use sliced code as the filter name if filter name is empty', async () => {
+      const codeTextBox = screen.getAllByRole(
+        'textbox'
+      )[0] as HTMLTextAreaElement;
+      const nameTextBox = screen.getAllByRole('textbox')[1];
+      const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
+      await act(() => {
+        userEvent.clear(nameTextBox);
+        userEvent.clear(codeTextBox);
+        userEvent.paste(codeTextBox, longCodeValue);
+      });
+
+      expect(nameTextBox).toHaveValue('');
+      expect(codeTextBox).toHaveValue(`${longCodeValue}\n\n`);
+
+      await act(() => userEvent.click(addFilterBtn));
+
+      const filterName = `${longCodeValue.slice(0, 16)}...`;
+
+      expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
+      expect(activeFilterHandlerMock).toHaveBeenCalledWith(
+        {
+          name: filterName,
+          code: longCodeValue,
+          saveFilter: false,
+        },
+        -1
+      );
+      expect(codeTextBox).toHaveValue('');
+      expect(toggleModelMock).toHaveBeenCalled();
     });
   });
 });

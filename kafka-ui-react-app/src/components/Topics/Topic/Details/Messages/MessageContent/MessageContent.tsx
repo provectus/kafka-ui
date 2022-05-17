@@ -3,6 +3,7 @@ import React from 'react';
 import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 import { SecondaryTabs } from 'components/common/Tabs/SecondaryTabs.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import dayjs from 'dayjs';
 
 import * as S from './MessageContent.styled';
 
@@ -94,7 +95,9 @@ const MessageContent: React.FC<MessageContentProps> = ({
             <S.Metadata>
               <S.MetadataLabel>Timestamp</S.MetadataLabel>
               <span>
-                <S.MetadataValue>{timestamp?.toLocaleString()}</S.MetadataValue>
+                <S.MetadataValue>
+                  {dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}
+                </S.MetadataValue>
                 <S.MetadataMeta>Timestamp type: {timestampType}</S.MetadataMeta>
               </span>
             </S.Metadata>
@@ -106,7 +109,6 @@ const MessageContent: React.FC<MessageContentProps> = ({
                 <S.MetadataMeta>
                   Size: <BytesFormatted value={contentSize} />
                 </S.MetadataMeta>
-                <S.SchemaLink to="/">SchemaLink</S.SchemaLink>
               </span>
             </S.Metadata>
 
@@ -117,7 +119,6 @@ const MessageContent: React.FC<MessageContentProps> = ({
                 <S.MetadataMeta>
                   Size: <BytesFormatted value={keySize} />
                 </S.MetadataMeta>
-                <S.SchemaLink to="/">SchemaLink</S.SchemaLink>
               </span>
             </S.Metadata>
           </S.MetadataWrapper>

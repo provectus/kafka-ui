@@ -1,5 +1,4 @@
 import { ErrorResponse } from 'generated-sources';
-import React from 'react';
 
 export interface ServerResponse {
   status: number;
@@ -21,7 +20,7 @@ export interface Alert {
   id: string;
   type: AlertType;
   title: string;
-  message: React.ReactNode;
+  message: string;
   response?: ServerResponse;
   createdAt: number;
 }

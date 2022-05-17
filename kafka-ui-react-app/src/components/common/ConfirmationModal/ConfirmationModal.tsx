@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { Button } from 'components/common/Button/Button';
 
 import { ConfirmationModalWrapper } from './ConfirmationModal.styled';
@@ -9,15 +9,19 @@ export interface ConfirmationModalProps {
   onConfirm(): void;
   onCancel(): void;
   isConfirming?: boolean;
+  submitBtnText?: string;
 }
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+const ConfirmationModal: React.FC<
+  PropsWithChildren<ConfirmationModalProps>
+> = ({
   isOpen,
   children,
-  title,
+  title = 'Confirm the action',
   onCancel,
   onConfirm,
   isConfirming = false,
+  submitBtnText = 'Submit',
 }) => {
   const cancelHandler = React.useCallback(() => {
     if (!isConfirming) {
@@ -27,10 +31,10 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
   return isOpen ? (
     <ConfirmationModalWrapper>
-      <div onClick={cancelHandler} aria-hidden="true" />
+      <div onClick={cancelHandler} aria-hidden="true" role="button" />
       <div>
         <header>
-          <p>{title || 'Confirm the action'}</p>
+          <p>{title}</p>
         </header>
         <section>{children}</section>
         <footer>
@@ -51,7 +55,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             type="button"
             disabled={isConfirming}
           >
-            Submit
+            {submitBtnText}
           </Button>
         </footer>
       </div>
