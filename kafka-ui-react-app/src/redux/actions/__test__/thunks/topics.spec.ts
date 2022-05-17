@@ -83,38 +83,6 @@ describe('Thunks', () => {
     });
   });
 
-  describe('clearTopicMessages', () => {
-    it('creates CLEAR_TOPIC_MESSAGES__SUCCESS when deleting existing messages', async () => {
-      fetchMock.deleteOnce(
-        `/api/clusters/${clusterName}/topics/${topicName}/messages`,
-        200
-      );
-      await store.dispatch(thunks.clearTopicMessages(clusterName, topicName));
-      expect(getTypeAndPayload(store)).toEqual([
-        actions.clearMessagesTopicAction.request(),
-        actions.clearMessagesTopicAction.success(),
-        ...getAlertActions(store),
-      ]);
-    });
-
-    it('creates CLEAR_TOPIC_MESSAGES__FAILURE when deleting existing messages', async () => {
-      fetchMock.deleteOnce(
-        `/api/clusters/${clusterName}/topics/${topicName}/messages`,
-        404
-      );
-      try {
-        await store.dispatch(thunks.clearTopicMessages(clusterName, topicName));
-      } catch (error) {
-        const err = error as Response;
-        expect(err.status).toEqual(404);
-        expect(store.getActions()).toEqual([
-          actions.clearMessagesTopicAction.request(),
-          actions.clearMessagesTopicAction.failure({}),
-        ]);
-      }
-    });
-  });
-
   describe('fetchTopicConsumerGroups', () => {
     it('GET_TOPIC_CONSUMER_GROUPS__FAILURE', async () => {
       fetchMock.getOnce(

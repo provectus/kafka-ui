@@ -37,7 +37,10 @@ interface Props extends Topic, TopicDetails {
   isDeletePolicy: boolean;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   recreateTopic: (clusterName: ClusterName, topicName: TopicName) => void;
-  clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
+  clearTopicMessages(params: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }): void;
 }
 
 const HeaderControlsWrapper = styled.div`
@@ -81,7 +84,7 @@ const Details: React.FC<Props> = ({
   }, [isDeleted, clusterName, dispatch, history]);
 
   const clearTopicMessagesHandler = React.useCallback(() => {
-    clearTopicMessages(clusterName, topicName);
+    clearTopicMessages({ clusterName, topicName });
     setClearTopicConfirmationVisible(false);
   }, [clusterName, topicName, clearTopicMessages]);
 

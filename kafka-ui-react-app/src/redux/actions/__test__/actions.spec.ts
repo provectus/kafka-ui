@@ -5,10 +5,6 @@ import {
   TopicMessageSchema,
 } from 'generated-sources';
 import { FailurePayload } from 'redux/interfaces';
-import {
-  topicMessagePayload,
-  topicMessagesMetaPayload,
-} from 'redux/reducers/topicMessages/__test__/fixtures';
 
 import { mockTopicsState } from './fixtures';
 
@@ -82,39 +78,6 @@ describe('Actions', () => {
         type: 'SET_TOPICS_ORDER_BY',
         payload: TopicColumnsToSort.NAME,
       });
-    });
-  });
-
-  describe('topic messages', () => {
-    it('creates ADD_TOPIC_MESSAGE', () => {
-      expect(actions.addTopicMessage({ message: topicMessagePayload })).toEqual(
-        {
-          type: 'ADD_TOPIC_MESSAGE',
-          payload: { message: topicMessagePayload },
-        }
-      );
-    });
-
-    it('creates RESET_TOPIC_MESSAGES', () => {
-      expect(actions.resetTopicMessages()).toEqual({
-        type: 'RESET_TOPIC_MESSAGES',
-      });
-    });
-
-    it('creates UPDATE_TOPIC_MESSAGES_PHASE', () => {
-      expect(actions.updateTopicMessagesPhase('Polling')).toEqual({
-        type: 'UPDATE_TOPIC_MESSAGES_PHASE',
-        payload: 'Polling',
-      });
-    });
-
-    it('creates UPDATE_TOPIC_MESSAGES_META', () => {
-      expect(actions.updateTopicMessagesMeta(topicMessagesMetaPayload)).toEqual(
-        {
-          type: 'UPDATE_TOPIC_MESSAGES_META',
-          payload: topicMessagesMetaPayload,
-        }
-      );
     });
   });
 

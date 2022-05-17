@@ -2,7 +2,7 @@ import React from 'react';
 import { ClusterName } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -30,7 +30,7 @@ const Brokers: React.FC = () => {
     items,
   } = useAppSelector(selectStats);
 
-  const replicas = inSyncReplicasCount ?? 0 + (outOfSyncReplicasCount ?? 0);
+  const replicas = (inSyncReplicasCount ?? 0) + (outOfSyncReplicasCount ?? 0);
   const areAllInSync = inSyncReplicasCount && replicas === inSyncReplicasCount;
   const partitionIsOffline = offlinePartitionCount && offlinePartitionCount > 0;
   React.useEffect(() => {

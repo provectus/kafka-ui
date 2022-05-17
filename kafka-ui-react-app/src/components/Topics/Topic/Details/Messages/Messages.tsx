@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 import { SeekDirection } from 'generated-sources';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 import FiltersContainer from './Filters/FiltersContainer';
 import MessagesTable from './MessagesTable';

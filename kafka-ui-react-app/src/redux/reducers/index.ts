@@ -7,7 +7,7 @@ import schemas from 'redux/reducers/schemas/schemasSlice';
 import connect from 'redux/reducers/connect/connectSlice';
 
 import topics from './topics/reducer';
-import topicMessages from './topicMessages/reducer';
+import topicMessages from './topicMessages/topicMessagesSlice';
 import consumerGroups from './consumerGroups/consumerGroupsSlice';
 import ksqlDb from './ksqlDb/ksqlDbSlice';
 import legacyLoader from './loader/reducer';

@@ -1,11 +1,11 @@
 import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/topicMessages/selectors';
-import { initialState } from 'redux/reducers/topicMessages/reducer';
 import {
+  initialState,
   addTopicMessage,
   updateTopicMessagesMeta,
   updateTopicMessagesPhase,
-} from 'redux/actions';
+} from 'redux/reducers/topicMessages/topicMessagesSlice';
 
 import { topicMessagePayload, topicMessagesMetaPayload } from './fixtures';
 
