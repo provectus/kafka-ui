@@ -1,7 +1,13 @@
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import { Topic, TopicDetails } from 'generated-sources';
-import { NavLink, Switch, Route, useHistory } from 'react-router-dom';
+import {
+  NavLink,
+  Switch,
+  Route,
+  useHistory,
+  useParams,
+} from 'react-router-dom';
 import {
   clusterTopicSettingsPath,
   clusterTopicPath,
@@ -22,6 +28,11 @@ import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import styled from 'styled-components';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import * as S from 'components/Topics/Topic/Details/Details.styled';
+import { useAppSelector } from 'lib/hooks/redux';
+import {
+  getIsTopicDeletePolicy,
+  getIsTopicInternal,
+} from 'redux/reducers/topics/selectors';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
@@ -29,9 +40,6 @@ import SettingsContainer from './Settings/SettingsContainer';
 import Messages from './Messages/Messages';
 
 interface Props extends Topic, TopicDetails {
-  clusterName: ClusterName;
-  topicName: TopicName;
-  isInternal: boolean;
   isDeleted: boolean;
   isDeletePolicy: boolean;
   deleteTopic: (payload: {
@@ -56,15 +64,22 @@ const HeaderControlsWrapper = styled.div`
 `;
 
 const Details: React.FC<Props> = ({
-  clusterName,
-  topicName,
-  isInternal,
   isDeleted,
-  isDeletePolicy,
   deleteTopic,
   recreateTopic,
   clearTopicMessages,
 }) => {
+  const { clusterName, topicName } =
+    useParams<{ clusterName: ClusterName; topicName: TopicName }>();
+
+  const isInternal = useAppSelector((state) =>
+    getIsTopicInternal(state, topicName)
+  );
+
+  const isDeletePolicy = useAppSelector((state) =>
+    getIsTopicDeletePolicy(state, topicName)
+  );
+
   const history = useHistory();
   const dispatch = useDispatch();
   const { isReadOnly, isTopicDeletionAllowed } =

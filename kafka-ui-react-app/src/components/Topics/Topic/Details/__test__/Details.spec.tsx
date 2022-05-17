@@ -10,14 +10,14 @@ import {
   clusterTopicPath,
   clusterTopicsPath,
 } from 'lib/paths';
-import { Router } from 'react-router-dom';
+import { Route, Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
+import { CleanUpPolicy, SortOrder, Topic } from 'generated-sources';
 
 describe('Details', () => {
   const mockDelete = jest.fn();
   const mockClusterName = 'local';
   const mockClearTopicMessages = jest.fn();
-  const mockInternalTopicPayload = internalTopicPayload.internal;
   const mockRecreateTopic = jest.fn();
   const defaultPathname = clusterTopicPath(
     mockClusterName,
@@ -27,6 +27,25 @@ describe('Details', () => {
     initialEntries: [defaultPathname],
   });
   jest.spyOn(mockHistory, 'push');
+
+  const topic: Topic = {
+    ...internalTopicPayload,
+    cleanUpPolicy: CleanUpPolicy.DELETE,
+    internal: false,
+  };
+
+  const mockTopicsState = {
+    byName: {
+      [topic.name]: topic,
+    },
+    allNames: [topic.name],
+    messages: [],
+    totalPages: 1,
+    search: '',
+    orderBy: null,
+    sortOrder: SortOrder.ASC,
+    consumerGroups: [],
+  };
 
   const setupComponent = (
     pathname = defaultPathname,
@@ -43,21 +62,24 @@ describe('Details', () => {
         }}
       >
         <Router history={history}>
-          <Details
-            clusterName={mockClusterName}
-            topicName={internalTopicPayload.name}
-            name={internalTopicPayload.name}
-            isInternal={false}
-            deleteTopic={mockDelete}
-            recreateTopic={mockRecreateTopic}
-            clearTopicMessages={mockClearTopicMessages}
-            isDeleted={false}
-            isDeletePolicy
-            {...props}
-          />
+          <Route path={clusterTopicPath(':clusterName', ':topicName')}>
+            <Details
+              name={internalTopicPayload.name}
+              deleteTopic={mockDelete}
+              recreateTopic={mockRecreateTopic}
+              clearTopicMessages={mockClearTopicMessages}
+              isDeleted={false}
+              {...props}
+            />
+          </Route>
         </Router>
       </ClusterContext.Provider>,
-      { pathname }
+      {
+        pathname,
+        preloadedState: {
+          topics: mockTopicsState,
+        },
+      }
     );
 
   describe('when it has readonly flag', () => {
@@ -72,15 +94,11 @@ describe('Details', () => {
           }}
         >
           <Details
-            clusterName={mockClusterName}
-            topicName={internalTopicPayload.name}
             name={internalTopicPayload.name}
-            isInternal={mockInternalTopicPayload}
             deleteTopic={mockDelete}
             recreateTopic={mockRecreateTopic}
             clearTopicMessages={mockClearTopicMessages}
             isDeleted={false}
-            isDeletePolicy
           />
         </ClusterContext.Provider>
       );
@@ -166,12 +184,11 @@ describe('Details', () => {
 
   it('shows a confirmation popup on deleting topic messages', () => {
     setupComponent();
-    const { getByText } = screen;
-    const clearMessagesButton = getByText(/Clear messages/i);
+    const clearMessagesButton = screen.getAllByText(/Clear messages/i)[0];
     userEvent.click(clearMessagesButton);
 
     expect(
-      getByText(/Are you sure want to clear topic messages?/i)
+      screen.getByText(/Are you sure want to clear topic messages?/i)
     ).toBeInTheDocument();
   });
 
