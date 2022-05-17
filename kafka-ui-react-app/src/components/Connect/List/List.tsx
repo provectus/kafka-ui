@@ -20,6 +20,7 @@ export interface ListProps {
   areConnectorsFetching: boolean;
   connectors: FullConnectorInfo[];
   connects: Connect[];
+  failedConnectors: FullConnectorInfo[];
   fetchConnects(clusterName: ClusterName): void;
   fetchConnectors({ clusterName }: { clusterName: ClusterName }): void;
   search: string;
@@ -30,6 +31,7 @@ const List: React.FC<ListProps> = ({
   connectors,
   areConnectsFetching,
   areConnectorsFetching,
+  failedConnectors,
   fetchConnects,
   fetchConnectors,
   search,
@@ -71,6 +73,13 @@ const List: React.FC<ListProps> = ({
             fetching={areConnectsFetching}
           >
             {connectors.length}
+          </Metrics.Indicator>
+          <Metrics.Indicator
+            label="Failed"
+            title="Failed Connectors"
+            fetching={areConnectsFetching}
+          >
+            {failedConnectors?.length}
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>

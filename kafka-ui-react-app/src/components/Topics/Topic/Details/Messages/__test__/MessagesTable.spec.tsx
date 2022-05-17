@@ -31,6 +31,7 @@ describe('MessagesTable', () => {
     params: URLSearchParams = searchParams,
     ctx: ContextProps = contextValue,
     messages: TopicMessage[] = [],
+    isFetching?: boolean,
     customHistory?: MemoryHistory
   ) => {
     const history =
@@ -51,7 +52,7 @@ describe('MessagesTable', () => {
             meta: {
               ...topicMessagesMetaPayload,
             },
-            isFetching: false,
+            isFetching: !!isFetching,
           },
         },
       }
@@ -86,7 +87,7 @@ describe('MessagesTable', () => {
     });
 
     it('should check the display of the loader element', () => {
-      setUpComponent(searchParams, { ...contextValue, isLive: true });
+      setUpComponent(searchParams, { ...contextValue, isLive: true }, [], true);
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
 
@@ -98,7 +99,7 @@ describe('MessagesTable', () => {
       });
       jest.spyOn(mockedHistory, 'push');
 
-      setUpComponent(customSearchParam, contextValue, [], mockedHistory);
+      setUpComponent(customSearchParam, contextValue, [], false, mockedHistory);
 
       userEvent.click(screen.getByRole('button', { name: 'Next' }));
       expect(mockedHistory.push).toHaveBeenCalledWith({
@@ -120,6 +121,7 @@ describe('MessagesTable', () => {
         customSearchParam,
         { ...contextValue, searchParams: customSearchParam },
         [],
+        false,
         mockedHistory
       );
 
