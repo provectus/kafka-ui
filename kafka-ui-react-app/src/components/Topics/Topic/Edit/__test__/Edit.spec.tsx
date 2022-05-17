@@ -3,34 +3,56 @@ import Edit, { DEFAULTS, Props } from 'components/Topics/Topic/Edit/Edit';
 import { act, screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
-import { Router } from 'react-router-dom';
+import { Route, Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import { clusterTopicPath, clusterTopicsPath } from 'lib/paths';
+import {
+  clusterTopicEditPath,
+  clusterTopicPath,
+  clusterTopicsPath,
+} from 'lib/paths';
+import { TopicsState, TopicWithDetailedInfo } from 'redux/interfaces';
+import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
 
 import { topicName, clusterName, topicWithInfo } from './fixtures';
 
-const historyMock = createMemoryHistory();
+const defaultPathName = clusterTopicEditPath(clusterName, topicName);
 
-const renderComponent = (props: Partial<Props> = {}, history = historyMock) =>
-  render(
+const historyMock = createMemoryHistory({
+  initialEntries: [defaultPathName],
+});
+
+const renderComponent = (
+  props: Partial<Props> = {},
+  topic: TopicWithDetailedInfo | null = topicWithInfo,
+  history = historyMock
+) => {
+  let topics: TopicsState | undefined;
+
+  if (topic === null) {
+    topics = undefined;
+  } else {
+    topics = getTopicStateFixtures([topic]);
+  }
+
+  return render(
     <Router history={history}>
-      <Edit
-        clusterName={props.clusterName || clusterName}
-        topicName={props.topicName || topicName}
-        topic={'topic' in props ? props.topic : topicWithInfo}
-        isFetched={'isFetched' in props ? !!props.isFetched : true}
-        isTopicUpdated={
-          'isTopicUpdated' in props ? !!props.isTopicUpdated : false
-        }
-        fetchTopicConfig={jest.fn()}
-        updateTopic={props.updateTopic || jest.fn()}
-        updateTopicPartitionsCount={
-          props.updateTopicPartitionsCount || jest.fn()
-        }
-        {...props}
-      />
-    </Router>
+      <Route path={clusterTopicEditPath(':clusterName', ':topicName')}>
+        <Edit
+          isFetched
+          isTopicUpdated={false}
+          fetchTopicConfig={jest.fn()}
+          updateTopic={jest.fn()}
+          updateTopicPartitionsCount={jest.fn()}
+          {...props}
+        />
+      </Route>
+    </Router>,
+    {
+      pathname: defaultPathName,
+      preloadedState: { topics },
+    }
   );
+};
 
 describe('Edit Component', () => {
   it('renders the Edit Component', () => {
@@ -45,7 +67,7 @@ describe('Edit Component', () => {
   });
 
   it('should check Edit component renders null is not rendered when topic is not passed', () => {
-    renderComponent({ topic: undefined });
+    renderComponent({}, { ...topicWithInfo, config: undefined });
     expect(
       screen.queryByRole('heading', { name: `Edit ${topicName}` })
     ).not.toBeInTheDocument();
@@ -67,7 +89,7 @@ describe('Edit Component', () => {
   it('should check Edit component renders null is not topic config is not passed is false', () => {
     const modifiedTopic = { ...topicWithInfo };
     modifiedTopic.config = undefined;
-    renderComponent({ topic: modifiedTopic });
+    renderComponent({}, modifiedTopic);
     expect(
       screen.queryByRole('heading', { name: `Edit ${topicName}` })
     ).not.toBeInTheDocument();
@@ -77,19 +99,19 @@ describe('Edit Component', () => {
   });
 
   describe('Edit Component with its topic default and modified values', () => {
-    it('should check the default partitions value in the DangerZone', () => {
-      renderComponent({
-        topic: { ...topicWithInfo, partitionCount: undefined },
-      });
-      expect(screen.getByPlaceholderText('Number of partitions')).toHaveValue(
-        DEFAULTS.partitions
-      );
+    it('should check the default partitions value in the DangerZone', async () => {
+      renderComponent({}, { ...topicWithInfo, partitionCount: 0 });
+      // cause topic selector will return falsy
+      expect(
+        screen.queryByRole('heading', { name: `Edit ${topicName}` })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('heading', { name: `Danger Zone` })
+      ).not.toBeInTheDocument();
     });
 
-    it('should check the default partitions value in the DangerZone', () => {
-      renderComponent({
-        topic: { ...topicWithInfo, replicationFactor: undefined },
-      });
+    it('should check the default partitions value in the DangerZone', async () => {
+      renderComponent({}, { ...topicWithInfo, replicationFactor: undefined });
       expect(screen.getByPlaceholderText('Replication Factor')).toHaveValue(
         DEFAULTS.replicationFactor
       );
@@ -100,11 +122,11 @@ describe('Edit Component', () => {
     it('should check the submit functionality when topic updated is false', async () => {
       const updateTopicMock = jest.fn();
       const mocked = createMemoryHistory({
-        initialEntries: [`${clusterTopicsPath(clusterName)}/${topicName}/edit`],
+        initialEntries: [clusterTopicEditPath(clusterName, topicName)],
       });
 
       jest.spyOn(mocked, 'push');
-      renderComponent({ updateTopic: updateTopicMock }, mocked);
+      renderComponent({ updateTopic: updateTopicMock }, undefined, mocked);
 
       const btn = screen.getAllByText(/submit/i)[0];
       expect(btn).toBeEnabled();
@@ -128,6 +150,7 @@ describe('Edit Component', () => {
       jest.spyOn(mocked, 'push');
       renderComponent(
         { updateTopic: updateTopicMock, isTopicUpdated: true },
+        undefined,
         mocked
       );
 

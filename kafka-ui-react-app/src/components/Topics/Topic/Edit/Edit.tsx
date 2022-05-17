@@ -10,19 +10,18 @@ import {
 import { useForm, FormProvider } from 'react-hook-form';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { clusterTopicPath } from 'lib/paths';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import { TOPIC_CUSTOM_PARAMS_PREFIX, TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import styled from 'styled-components';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+import { useAppSelector } from 'lib/hooks/redux';
+import { getFullTopic } from 'redux/reducers/topics/selectors';
 
 import DangerZoneContainer from './DangerZone/DangerZoneContainer';
 
 export interface Props {
-  clusterName: ClusterName;
-  topicName: TopicName;
-  topic?: TopicWithDetailedInfo;
   isFetched: boolean;
   isTopicUpdated: boolean;
   fetchTopicConfig: (payload: {
@@ -83,15 +82,18 @@ const topicParams = (topic: TopicWithDetailedInfo | undefined) => {
 let formInit = false;
 
 const Edit: React.FC<Props> = ({
-  clusterName,
-  topicName,
-  topic,
   isFetched,
   isTopicUpdated,
   fetchTopicConfig,
   updateTopic,
 }) => {
+  const { clusterName, topicName } =
+    useParams<{ clusterName: ClusterName; topicName: TopicName }>();
+
+  const topic = useAppSelector((state) => getFullTopic(state, topicName));
+
   const defaultValues = React.useMemo(() => topicParams(topic), [topic]);
+
   const methods = useForm<TopicFormData>({
     defaultValues,
     resolver: yupResolver(topicFormValidationSchema),
