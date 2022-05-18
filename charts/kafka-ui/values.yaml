@@ -21,6 +21,7 @@ serviceAccount:
   name: ""
 
 existingConfigMap: ""
+yamlApplicationConfig: ""
 existingSecret: ""
 envs:
   secret: {}
