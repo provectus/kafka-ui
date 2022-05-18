@@ -7,6 +7,7 @@ import TableHeaderCell, {
 import { SortOrder, TopicColumnsToSort } from 'generated-sources';
 import theme from 'theme/theme';
 import userEvent from '@testing-library/user-event';
+import { ReplicaCell } from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
 
 const SPACE_KEY = ' ';
 
@@ -33,6 +34,15 @@ describe('TableHeaderCell', () => {
   it('renders without props', () => {
     setupComponent();
     expect(getColumnHeader()).toBeInTheDocument();
+  });
+
+  it('renders replica cell with props', () => {
+    render(<ReplicaCell leader />);
+    expect(screen.getByLabelText('replica-info')).toBeInTheDocument();
+    expect(screen.getByLabelText('replica-info')).toHaveStyleRule(
+      'color',
+      'orange'
+    );
   });
 
   it('renders with title & preview text', () => {

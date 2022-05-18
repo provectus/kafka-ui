@@ -66,6 +66,16 @@ describe('Overview', () => {
     mockClearTopicMessages.mockClear();
   });
 
+  it('at least one replica was rendered', () => {
+    setupComponent({
+      ...defaultProps,
+      underReplicatedPartitions: 0,
+      inSyncReplicas: 1,
+      replicas: 2,
+    });
+    expect(screen.getByLabelText('replica-info')).toBeInTheDocument();
+  });
+
   describe('when it has internal flag', () => {
     it('does not render the Action button a Topic', () => {
       setupComponent({

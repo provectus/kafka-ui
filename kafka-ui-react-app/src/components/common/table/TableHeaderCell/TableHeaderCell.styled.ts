@@ -111,7 +111,9 @@ export const Preview = styled.span`
   cursor: pointer;
 `;
 
-export const ReplicaCell = styled.span<{ leader: boolean | undefined }>`
+export const ReplicaCell = styled.span.attrs({ 'aria-label': 'replica-info' })<{
+  leader: boolean | undefined;
+}>`
   color: ${(props) => (props.leader ? 'orange' : null)};
 `;
 
