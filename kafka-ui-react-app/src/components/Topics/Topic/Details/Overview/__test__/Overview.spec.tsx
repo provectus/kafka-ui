@@ -69,11 +69,12 @@ describe('Overview', () => {
   it('at least one replica was rendered', () => {
     setupComponent({
       ...defaultProps,
+      partitions: mockPartitions,
       underReplicatedPartitions: 0,
       inSyncReplicas: 1,
       replicas: 2,
     });
-    expect(screen.getByLabelText('replica-info')).toBeInTheDocument();
+    expect(screen.getAllByLabelText('replica-info')).toHaveLength(2);
   });
 
   describe('when it has internal flag', () => {
