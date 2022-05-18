@@ -1,5 +1,8 @@
 import React from 'react';
-import { connectors } from 'redux/reducers/connect/__test__/fixtures';
+import {
+  connectors,
+  failedConnectors,
+} from 'redux/reducers/connect/__test__/fixtures';
 import ClusterContext, {
   ContextProps,
   initialValue,
@@ -33,6 +36,7 @@ describe('Connectors List', () => {
             areConnectorsFetching
             areConnectsFetching
             connectors={[]}
+            failedConnectors={[]}
             connects={[]}
             fetchConnects={fetchConnects}
             fetchConnectors={fetchConnectors}
@@ -64,6 +68,15 @@ describe('Connectors List', () => {
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
       expect(screen.getByRole('table')).toBeInTheDocument();
       expect(screen.getAllByRole('row').length).toEqual(3);
+    });
+
+    it('renders failed connectors list', () => {
+      renderComponent({
+        areConnectorsFetching: false,
+        failedConnectors,
+      });
+      expect(screen.queryByRole('PageLoader')).not.toBeInTheDocument();
+      expect(screen.getByTitle('Failed Connectors')).toBeInTheDocument();
     });
 
     it('handles fetchConnects and fetchConnectors', () => {
