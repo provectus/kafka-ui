@@ -8,14 +8,10 @@ import {
   clusterTopicEditPath,
   clusterTopicPath,
   clusterTopicSendMessagePath,
+  RouteParamsClusterTopic,
 } from 'lib/paths';
 
 import SendMessage from './SendMessage/SendMessage';
-
-interface RouterParams {
-  clusterName: ClusterName;
-  topicName: TopicName;
-}
 
 interface TopicProps {
   isTopicFetching: boolean;
@@ -31,7 +27,7 @@ const Topic: React.FC<TopicProps> = ({
   fetchTopicDetails,
   resetTopicMessages,
 }) => {
-  const { clusterName, topicName } = useParams<RouterParams>();
+  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
 
   React.useEffect(() => {
     fetchTopicDetails({ clusterName, topicName });

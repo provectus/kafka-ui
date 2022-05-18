@@ -17,7 +17,6 @@ import DatePicker from 'react-datepicker';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { ClusterName, TopicName } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
@@ -31,6 +30,7 @@ import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 import useModal from 'lib/hooks/useModal';
 import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
 import { useAppSelector } from 'lib/hooks/redux';
+import { RouteParamsClusterTopic } from 'lib/paths';
 
 import * as S from './Filters.styled';
 import {
@@ -81,8 +81,7 @@ const Filters: React.FC<FiltersProps> = ({
   updateMeta,
   setIsFetching,
 }) => {
-  const { clusterName, topicName } =
-    useParams<{ clusterName: ClusterName; topicName: TopicName }>();
+  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
   const location = useLocation();
   const history = useHistory();
 

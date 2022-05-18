@@ -16,6 +16,7 @@ import {
   clusterTopicConsumerGroupsPath,
   clusterTopicEditPath,
   clusterTopicSendMessagePath,
+  RouteParamsClusterTopic,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -69,8 +70,7 @@ const Details: React.FC<Props> = ({
   recreateTopic,
   clearTopicMessages,
 }) => {
-  const { clusterName, topicName } =
-    useParams<{ clusterName: ClusterName; topicName: TopicName }>();
+  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
 
   const isInternal = useAppSelector((state) =>
     getIsTopicInternal(state, topicName)

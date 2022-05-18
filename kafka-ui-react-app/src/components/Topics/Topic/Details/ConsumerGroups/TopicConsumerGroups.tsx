@@ -1,12 +1,12 @@
 import React from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { Topic, TopicDetails } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import { clusterConsumerGroupsPath } from 'lib/paths';
+import { clusterConsumerGroupsPath, RouteParamsClusterTopic } from 'lib/paths';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
-import { Link, useParams } from 'react-router-dom';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import getTagColor from 'components/common/Tag/getTagColor';
 import { useAppSelector } from 'lib/hooks/redux';
@@ -24,8 +24,7 @@ const TopicConsumerGroups: React.FC<Props> = ({
   fetchTopicConsumerGroups,
   isFetched,
 }) => {
-  const { clusterName, topicName } =
-    useParams<{ clusterName: ClusterName; topicName: TopicName }>();
+  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
 
   const consumerGroups = useAppSelector((state) =>
     getTopicConsumerGroups(state, topicName)

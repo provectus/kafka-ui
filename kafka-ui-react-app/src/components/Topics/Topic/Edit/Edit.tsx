@@ -9,7 +9,7 @@ import {
 } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
-import { clusterTopicPath } from 'lib/paths';
+import { clusterTopicPath, RouteParamsClusterTopic } from 'lib/paths';
 import { useHistory, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
@@ -87,8 +87,7 @@ const Edit: React.FC<Props> = ({
   fetchTopicConfig,
   updateTopic,
 }) => {
-  const { clusterName, topicName } =
-    useParams<{ clusterName: ClusterName; topicName: TopicName }>();
+  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
 
   const topic = useAppSelector((state) => getFullTopic(state, topicName));
 

@@ -1,11 +1,12 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import { useParams } from 'react-router-dom';
 import { useAppSelector } from 'lib/hooks/redux';
 import { getTopicConfig } from 'redux/reducers/topics/selectors';
+import { RouteParamsClusterTopic } from 'lib/paths';
 
 import ConfigListItem from './ConfigListItem';
 
@@ -18,8 +19,7 @@ export interface Props {
 }
 
 const Settings: React.FC<Props> = ({ isFetched, fetchTopicConfig }) => {
-  const { clusterName, topicName } =
-    useParams<{ clusterName: ClusterName; topicName: TopicName }>();
+  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
 
   const config = useAppSelector((state) => getTopicConfig(state, topicName));
 
