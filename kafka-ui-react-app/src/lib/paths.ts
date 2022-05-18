@@ -79,6 +79,10 @@ export const clusterTopicSendMessagePath = (
   clusterName: ClusterName,
   topicName: TopicName
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/message`;
+export interface RouteParamsClusterTopic {
+  clusterName: ClusterName;
+  topicName: TopicName;
+}
 
 // Kafka Connect
 export const clusterConnectsPath = (clusterName: ClusterName) =>
