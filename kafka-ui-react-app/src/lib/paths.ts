@@ -130,6 +130,11 @@ export const clusterConnectConnectorConfigPath = (
     connectName,
     connectorName
   )}/config`;
+export interface RouterParamsClusterConnectConnector {
+  clusterName: ClusterName;
+  connectName: ConnectName;
+  connectorName: ConnectorName;
+}
 
 // KsqlDb
 export const clusterKsqlDbPath = (clusterName: ClusterName = ':clusterName') =>

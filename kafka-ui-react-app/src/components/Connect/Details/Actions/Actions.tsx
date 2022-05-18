@@ -5,16 +5,11 @@ import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
   clusterConnectConnectorEditPath,
   clusterConnectorsPath,
+  RouterParamsClusterConnectConnector,
 } from 'lib/paths';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import styled from 'styled-components';
 import { Button } from 'components/common/Button/Button';
-
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
 
 const ConnectorActionsWrapperStyled = styled.div`
   display: flex;
@@ -63,7 +58,8 @@ const Actions: React.FC<ActionsProps> = ({
   resumeConnector,
   isConnectorActionRunning,
 }) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
+  const { clusterName, connectName, connectorName } =
+    useParams<RouterParamsClusterConnectConnector>();
 
   const history = useHistory();
   const [

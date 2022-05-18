@@ -6,6 +6,7 @@ import {
   clusterConnectConnectorConfigPath,
   clusterConnectConnectorPath,
   clusterConnectConnectorTasksPath,
+  RouterParamsClusterConnectConnector,
 } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Navbar from 'components/common/Navigation/Navbar.styled';
@@ -15,12 +16,6 @@ import OverviewContainer from './Overview/OverviewContainer';
 import TasksContainer from './Tasks/TasksContainer';
 import ConfigContainer from './Config/ConfigContainer';
 import ActionsContainer from './Actions/ActionsContainer';
-
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
 
 export interface DetailsProps {
   fetchConnector(payload: {
@@ -46,7 +41,8 @@ const Details: React.FC<DetailsProps> = ({
   areTasksFetching,
   connector,
 }) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
+  const { clusterName, connectName, connectorName } =
+    useParams<RouterParamsClusterConnectConnector>();
 
   React.useEffect(() => {
     fetchConnector({ clusterName, connectName, connectorName });

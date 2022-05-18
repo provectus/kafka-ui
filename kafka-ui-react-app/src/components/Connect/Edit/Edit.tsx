@@ -9,7 +9,10 @@ import {
   ConnectorConfig,
   ConnectorName,
 } from 'redux/interfaces';
-import { clusterConnectConnectorConfigPath } from 'lib/paths';
+import {
+  clusterConnectConnectorConfigPath,
+  RouterParamsClusterConnectConnector,
+} from 'lib/paths';
 import yup from 'lib/yupExtended';
 import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -23,12 +26,6 @@ import {
 const validationSchema = yup.object().shape({
   config: yup.string().required().isJsonObject(),
 });
-
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
 
 interface FormValues {
   config: string;
@@ -56,7 +53,8 @@ const Edit: React.FC<EditProps> = ({
   config,
   updateConfig,
 }) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
+  const { clusterName, connectName, connectorName } =
+    useParams<RouterParamsClusterConnectConnector>();
   const history = useHistory();
   const {
     handleSubmit,
