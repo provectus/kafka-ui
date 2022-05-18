@@ -4,6 +4,11 @@ import { ClusterName, TopicName } from 'redux/interfaces';
 import EditContainer from 'components/Topics/Topic/Edit/EditContainer';
 import DetailsContainer from 'components/Topics/Topic/Details/DetailsContainer';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import {
+  clusterTopicEditPath,
+  clusterTopicPath,
+  clusterTopicSendMessagePath,
+} from 'lib/paths';
 
 import SendMessage from './SendMessage/SendMessage';
 
@@ -46,16 +51,16 @@ const Topic: React.FC<TopicProps> = ({
     <Switch>
       <Route
         exact
-        path="/ui/clusters/:clusterName/topics/:topicName/edit"
+        path={clusterTopicEditPath(':clusterName', ':topicName')}
         component={EditContainer}
       />
       <Route
         exact
-        path="/ui/clusters/:clusterName/topics/:topicName/message"
+        path={clusterTopicSendMessagePath(':clusterName', ':topicName')}
         component={SendMessage}
       />
       <Route
-        path="/ui/clusters/:clusterName/topics/:topicName"
+        path={clusterTopicPath(':clusterName', ':topicName')}
         component={DetailsContainer}
       />
     </Switch>
