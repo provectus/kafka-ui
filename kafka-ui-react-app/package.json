@@ -30,7 +30,7 @@
     "react-dom": "^18.1.0",
     "react-hook-form": "7.6.9",
     "react-multi-select-component": "^4.0.6",
-    "react-redux": "^7.2.6",
+    "react-redux": "^8.0.1",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.3.1",
     "redux": "^4.1.1",
