@@ -12,6 +12,12 @@ export const fetchBrokers = createAsyncThunk(
   (clusterName: ClusterName) => brokersApiClient.getBrokers({ clusterName })
 );
 
+export const fetchBroker = createAsyncThunk(
+  'brokersLogdir/fetchBroker',
+  (clusterName: ClusterName) =>
+    brokersApiClient.getAllBrokersLogdirsRaw({ clusterName })
+);
+
 export const fetchClusterStats = createAsyncThunk(
   'brokers/fetchClusterStats',
   (clusterName: ClusterName) =>
@@ -44,6 +50,10 @@ export const brokersSlice = createSlice({
       ...state,
       ...payload,
     }));
+    builder.addCase(fetchBroker.fulfilled, (state, { payload }) => {
+      console.log(payload);
+      return state;
+    });
   },
 });
 
