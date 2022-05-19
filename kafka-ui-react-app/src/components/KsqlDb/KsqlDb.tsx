@@ -8,12 +8,12 @@ import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 const KsqlDb: React.FC = () => {
   return (
     <Switch>
-      <BreadcrumbRoute exact path={clusterKsqlDbPath()} component={List} />
-      <BreadcrumbRoute
-        exact
-        path={clusterKsqlDbQueryPath()}
-        component={Query}
-      />
+      <BreadcrumbRoute exact path={clusterKsqlDbPath()}>
+        <List />
+      </BreadcrumbRoute>
+      <BreadcrumbRoute exact path={clusterKsqlDbQueryPath()}>
+        <Query />
+      </BreadcrumbRoute>
     </Switch>
   );
 };
