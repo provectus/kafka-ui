@@ -106,8 +106,9 @@ const Details: React.FC<DetailsProps> = ({
             ':connectName',
             ':connectorName'
           )}
-          component={TasksContainer}
-        />
+        >
+          <TasksContainer />
+        </Route>
         <Route
           exact
           path={clusterConnectConnectorConfigPath(
@@ -115,8 +116,9 @@ const Details: React.FC<DetailsProps> = ({
             ':connectName',
             ':connectorName'
           )}
-          component={ConfigContainer}
-        />
+        >
+          <ConfigContainer />
+        </Route>
         <Route
           exact
           path={clusterConnectConnectorPath(
@@ -124,8 +126,9 @@ const Details: React.FC<DetailsProps> = ({
             ':connectName',
             ':connectorName'
           )}
-          component={OverviewContainer}
-        />
+        >
+          <OverviewContainer />
+        </Route>
       </Switch>
     </div>
   );
