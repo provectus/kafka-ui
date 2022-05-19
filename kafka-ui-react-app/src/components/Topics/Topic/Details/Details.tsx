@@ -1,6 +1,5 @@
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import { Topic, TopicDetails } from 'generated-sources';
 import {
   NavLink,
   Switch,
@@ -40,7 +39,7 @@ import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsCo
 import SettingsContainer from './Settings/SettingsContainer';
 import Messages from './Messages/Messages';
 
-interface Props extends Topic, TopicDetails {
+interface Props {
   isDeleted: boolean;
   isDeletePolicy: boolean;
   deleteTopic: (payload: {

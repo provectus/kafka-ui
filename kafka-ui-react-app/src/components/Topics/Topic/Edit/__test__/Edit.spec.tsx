@@ -42,7 +42,6 @@ const renderComponent = (
           isTopicUpdated={false}
           fetchTopicConfig={jest.fn()}
           updateTopic={jest.fn()}
-          updateTopicPartitionsCount={jest.fn()}
           {...props}
         />
       </Route>

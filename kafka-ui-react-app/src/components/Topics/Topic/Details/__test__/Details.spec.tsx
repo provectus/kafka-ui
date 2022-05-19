@@ -56,7 +56,6 @@ describe('Details', () => {
         <Router history={history}>
           <Route path={clusterTopicPath(':clusterName', ':topicName')}>
             <Details
-              name={internalTopicPayload.name}
               deleteTopic={mockDelete}
               recreateTopic={mockRecreateTopic}
               clearTopicMessages={mockClearTopicMessages}
@@ -86,7 +85,6 @@ describe('Details', () => {
           }}
         >
           <Details
-            name={internalTopicPayload.name}
             deleteTopic={mockDelete}
             recreateTopic={mockRecreateTopic}
             clearTopicMessages={mockClearTopicMessages}
