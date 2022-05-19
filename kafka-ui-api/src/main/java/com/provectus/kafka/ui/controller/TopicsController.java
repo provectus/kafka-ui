@@ -200,9 +200,11 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
 
   @Override
-  public Mono<ResponseEntity<TopicAnalyzeStateDTO>> getTopicAnalyzeState(String clusterName, String topicName,
-                                                                         ServerWebExchange exchange) {
-    return Mono.justOrEmpty(topicAnalyzeService.getTopicAnalyzeState(getCluster(clusterName), topicName))
-        .map(ResponseEntity::ok);
+  public Mono<ResponseEntity<TopicAnalyzeStateDTO>> getTopicAnalyzeState(String clusterName, String topicName, ServerWebExchange exchange) {
+    return Mono.just(
+        topicAnalyzeService.getTopicAnalyzeState(getCluster(clusterName), topicName)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build())
+    );
   }
 }
