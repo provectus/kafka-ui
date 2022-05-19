@@ -38,7 +38,10 @@ const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
     segmentSize,
     segmentCount,
     cleanUpPolicy,
-  } = useAppSelector((state) => getTopicByName(state, topicName));
+  } = useAppSelector((state) => {
+    const res = getTopicByName(state, topicName);
+    return res || {};
+  });
 
   const { isReadOnly } = React.useContext(ClusterContext);
 
