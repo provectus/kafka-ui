@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
+import { clusterPath } from 'lib/paths';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
@@ -82,12 +83,12 @@ const App: React.FC = () => {
           />
           {areClustersFulfilled ? (
             <Switch>
-              <Route
-                exact
-                path={['/', '/ui', '/ui/clusters']}
-                component={Dashboard}
-              />
-              <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
+              <Route exact path={['/', '/ui', '/ui/clusters']}>
+                <Dashboard />
+              </Route>
+              <Route path={clusterPath(':clusterName')}>
+                <ClusterPage />
+              </Route>
             </Switch>
           ) : (
             <PageLoader />
