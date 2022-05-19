@@ -19,7 +19,7 @@ export const connectorsServerPayload = [
     name: 'hdfs-source-connector',
     connector_class: 'FileStreamSource',
     type: ConnectorType.SOURCE,
-    topics: ['test-topic'],
+    topics: ['a', 'b', 'c'],
     status: {
       state: ConnectorTaskStatus.RUNNING,
       workerId: 1,
@@ -48,7 +48,7 @@ export const connectors: FullConnectorInfo[] = [
     name: 'hdfs-source-connector',
     connectorClass: 'FileStreamSource',
     type: ConnectorType.SOURCE,
-    topics: ['test-topic'],
+    topics: ['a', 'b', 'c'],
     status: {
       state: ConnectorState.RUNNING,
     },
@@ -75,7 +75,7 @@ export const failedConnectors: FullConnectorInfo[] = [
     name: 'hdfs-source-connector',
     connectorClass: 'FileStreamSource',
     type: ConnectorType.SOURCE,
-    topics: ['test-topic'],
+    topics: ['a', 'b', 'c'],
     status: {
       state: ConnectorState.FAILED,
     },
@@ -87,7 +87,7 @@ export const failedConnectors: FullConnectorInfo[] = [
     name: 'hdfs2-source-connector',
     connectorClass: 'FileStreamSource',
     type: ConnectorType.SINK,
-    topics: ['test-topic'],
+    topics: ['a', 'b', 'c'],
     status: {
       state: ConnectorState.FAILED,
     },

@@ -52,6 +52,13 @@ describe('Connectors ListItem', () => {
     expect(screen.getAllByRole('cell')[6]).toHaveTextContent('2 of 2');
   });
 
+  it('topics tags are sorted', () => {
+    render(setupWrapper());
+    expect(screen.getAllByRole('link')[1]).toHaveTextContent('a');
+    expect(screen.getAllByRole('link')[2]).toHaveTextContent('b');
+    expect(screen.getAllByRole('link')[3]).toHaveTextContent('c');
+  });
+
   it('renders item with failed tasks', () => {
     render(
       setupWrapper({
