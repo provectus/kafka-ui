@@ -198,13 +198,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
     return Mono.just(ResponseEntity.ok().build());
   }
 
-  @Override
-  public Mono<ResponseEntity<Flux<TopicAnalyzeStateDTO>>> getAllTopicAnalyzeStates(String clusterName,
-                                                                                   ServerWebExchange exchange) {
-    return Mono.just(topicAnalyzeService.getAllTopicAnalyzeStates(getCluster(clusterName)))
-        .map(Flux::fromIterable)
-        .map(ResponseEntity::ok);
-  }
 
   @Override
   public Mono<ResponseEntity<TopicAnalyzeStateDTO>> getTopicAnalyzeState(String clusterName, String topicName,

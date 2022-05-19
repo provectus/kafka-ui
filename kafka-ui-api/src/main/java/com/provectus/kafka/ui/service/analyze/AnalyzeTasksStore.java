@@ -1,15 +1,12 @@
 package com.provectus.kafka.ui.service.analyze;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.model.CompletedTopicAnalyzeDTO;
 import com.provectus.kafka.ui.model.InProgressTopicAnalyzeDTO;
-import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.TopicAnalyzeStateDTO;
 import java.io.Closeable;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,11 +21,14 @@ class AnalyzeTasksStore {
   private final Map<TopicIdentity, RunningAnalyze> running = new ConcurrentHashMap<>();
   private final Map<TopicIdentity, CompletedTopicAnalyzeDTO> completed = new ConcurrentHashMap<>();
 
-  void setAnalyzeError(TopicIdentity topicId, Throwable th) {
+  void setAnalyzeError(TopicIdentity topicId,
+                       Instant collectionStartedAt,
+                       Throwable th) {
     running.remove(topicId);
     completed.put(
         topicId,
         new CompletedTopicAnalyzeDTO()
+            .startedAt(collectionStartedAt.toEpochMilli())
             .finishedAt(System.currentTimeMillis())
             .error(Throwables.getStackTraceAsString(th))
     );
@@ -82,26 +82,14 @@ class AnalyzeTasksStore {
     if (runningState == null && completedState == null) {
       return Optional.empty();
     }
-    return Optional.of(createAnalyzeStateDto(id.topicName, runningState, completedState));
+    return Optional.of(createAnalyzeStateDto(runningState, completedState));
   }
 
-  private TopicAnalyzeStateDTO createAnalyzeStateDto(String topic,
-                                                     @Nullable RunningAnalyze runningState,
+  private TopicAnalyzeStateDTO createAnalyzeStateDto(@Nullable RunningAnalyze runningState,
                                                      @Nullable CompletedTopicAnalyzeDTO completedState) {
     return new TopicAnalyzeStateDTO()
-        .topicName(topic)
         .inProgress(runningState != null ? runningState.toDto() : null)
         .completed(completedState);
-  }
-
-  List<TopicAnalyzeStateDTO> getAllTopicAnalyzeStates(KafkaCluster cluster) {
-    return Sets.union(running.keySet(), completed.keySet())
-        .stream()
-        .filter(topicId -> topicId.clusterName.equals(cluster.getName()))
-        .map(this::getTopicAnalyzeState)
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .collect(Collectors.toList());
   }
 
   @Value

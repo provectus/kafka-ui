@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service.analyze;
 
+import com.provectus.kafka.ui.exception.TopicAnalyzeException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.TopicAnalyzeStateDTO;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
@@ -9,7 +10,6 @@ import java.io.Closeable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,7 +58,7 @@ public class TopicAnalyzeService {
                                          long approxNumberOfMsgs) {
     var topicId = new TopicIdentity(cluster, topic);
     if (analyzeTasksStore.isAnalyzeInProgress(topicId)) {
-      throw new IllegalStateException("Topic is already analyzing");
+      throw new TopicAnalyzeException("Topic is already analyzing");
     }
     var task = new AnalyzingTask(cluster, topicId, partitionsCnt, approxNumberOfMsgs);
     analyzeTasksStore.registerNewTask(topicId, task);
@@ -71,10 +71,6 @@ public class TopicAnalyzeService {
 
   public Optional<TopicAnalyzeStateDTO> getTopicAnalyzeState(KafkaCluster cluster, String topicName) {
     return analyzeTasksStore.getTopicAnalyzeState(new TopicIdentity(cluster, topicName));
-  }
-
-  public List<TopicAnalyzeStateDTO> getAllTopicAnalyzeStates(KafkaCluster cluster) {
-    return analyzeTasksStore.getAllTopicAnalyzeStates(cluster);
   }
 
   class AnalyzingTask implements Runnable, Closeable {
@@ -136,9 +132,11 @@ public class TopicAnalyzeService {
         log.info("{} topic analyze finished", topicId);
       } catch (WakeupException | InterruptException cancelException) {
         log.info("{} topic analyze stopped", topicId);
+        // calling cancel for cases when our thread was interrupted by some non-user cancellation reason
+        analyzeTasksStore.cancelAnalyze(topicId);
       } catch (Throwable th) {
-        log.info("Error analyzing topic {}", topicId, th);
-        analyzeTasksStore.setAnalyzeError(topicId, th);
+        log.error("Error analyzing topic {}", topicId, th);
+        analyzeTasksStore.setAnalyzeError(topicId, startedAt, th);
       } finally {
         consumer.close();
       }

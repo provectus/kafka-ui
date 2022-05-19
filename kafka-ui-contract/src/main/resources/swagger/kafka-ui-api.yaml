@@ -363,31 +363,7 @@ paths:
         404:
           description: Not found
 
-  /api/clusters/{clusterName}/topics/analyzes:
-    get:
-      tags:
-        - Topics
-      summary: getAllTopicAnalyzes
-      operationId: getAllTopicAnalyzeStates
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: List of all analyzes
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TopicAnalyzeState'
-        404:
-          description: Not found
-
-  /api/clusters/{clusterName}/topics/{topicName}/analyze:
+  /api/clusters/{clusterName}/topics/{topicName}/analysis:
     get:
       tags:
         - Topics
@@ -437,7 +413,7 @@ paths:
     delete:
       tags:
         - Topics
-      summary: analyzeTopic
+      summary: cancelTopicAnalyze
       operationId: cancelTopicAnalyze
       parameters:
         - name: clusterName
@@ -1963,9 +1939,8 @@ components:
 
     TopicAnalyzeState:
       type: object
+      description: "Represents analysis state. Note: 'inProgress' and 'completed' fields are set exclusively depending on analysis state."
       properties:
-        topicName:
-          type: string
         inProgress:
           $ref: '#/components/schemas/InProgressTopicAnalyze'
         completed:
