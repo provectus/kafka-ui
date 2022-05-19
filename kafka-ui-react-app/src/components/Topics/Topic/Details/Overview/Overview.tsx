@@ -113,7 +113,7 @@ const Overview: React.FC<Props> = ({
               <tr key={`partition-list-item-key-${partition.partition}`}>
                 <td>{partition.partition}</td>
                 <td>
-                  {partition.replicas?.map((replica: Replica, i: number) => (
+                  {partition.replicas?.map((replica: Replica) => (
                     <ReplicaCell
                       leader={replica.leader}
                       key={`replica-list-item-key-${replica.broker}`}
