@@ -1,5 +1,5 @@
 import React from 'react';
-import { Topic, TopicDetails } from 'generated-sources';
+import { Partition, Replica, Topic, TopicDetails } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
@@ -10,6 +10,7 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
+import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
 
 export interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -100,7 +101,7 @@ const Overview: React.FC<Props> = ({
           <thead>
             <tr>
               <TableHeaderCell title="Partition ID" />
-              <TableHeaderCell title="Broker Leader" />
+              <TableHeaderCell title="Replicas" />
               <TableHeaderCell title="First Offset" />
               <TableHeaderCell title="Next Offset" />
               <TableHeaderCell title="Message Count" />
@@ -108,13 +109,22 @@ const Overview: React.FC<Props> = ({
             </tr>
           </thead>
           <tbody>
-            {partitions?.map(({ partition, leader, offsetMin, offsetMax }) => (
-              <tr key={`partition-list-item-key-${partition}`}>
-                <td>{partition}</td>
-                <td>{leader}</td>
-                <td>{offsetMin}</td>
-                <td>{offsetMax}</td>
-                <td>{offsetMax - offsetMin}</td>
+            {partitions?.map((partition: Partition) => (
+              <tr key={`partition-list-item-key-${partition.partition}`}>
+                <td>{partition.partition}</td>
+                <td>
+                  {partition.replicas?.map((replica: Replica) => (
+                    <ReplicaCell
+                      leader={replica.leader}
+                      key={`replica-list-item-key-${replica.broker}`}
+                    >
+                      {replica.broker}
+                    </ReplicaCell>
+                  ))}
+                </td>
+                <td>{partition.offsetMin}</td>
+                <td>{partition.offsetMax}</td>
+                <td>{partition.offsetMax - partition.offsetMin}</td>
                 <td style={{ width: '5%' }}>
                   {!internal && !isReadOnly && cleanUpPolicy === 'DELETE' ? (
                     <Dropdown label={<VerticalElipsisIcon />} right>
@@ -123,7 +133,7 @@ const Overview: React.FC<Props> = ({
                           clearTopicMessages({
                             clusterName,
                             topicName,
-                            partitions: [partition],
+                            partitions: [partition.partition],
                           })
                         }
                         danger
