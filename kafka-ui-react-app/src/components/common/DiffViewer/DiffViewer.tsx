@@ -22,7 +22,7 @@ const DiffViewer = React.forwardRef<DiffEditor | null, DiffViewerProps>(
           ) * 16
         : 500;
     return (
-      <div data-testid="diffviewer">
+      <div>
         <DiffEditor
           name="diff-editor"
           ref={ref}
