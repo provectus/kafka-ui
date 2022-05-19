@@ -15,28 +15,33 @@ import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 
 import * as S from './Diff.styled';
 
+export interface RouteParams {
+  clusterName: string;
+  subject: string;
+}
+
 export interface DiffProps {
-  leftVersionInPath?: string;
-  rightVersionInPath?: string;
   versions: SchemaSubject[];
   areVersionsFetched: boolean;
 }
 
-const Diff: React.FC<DiffProps> = ({
-  leftVersionInPath,
-  rightVersionInPath,
-  versions,
-  areVersionsFetched,
-}) => {
-  const [leftVersion, setLeftVersion] = React.useState(leftVersionInPath || '');
-  const [rightVersion, setRightVersion] = React.useState(
-    rightVersionInPath || ''
-  );
+const Diff: React.FC<DiffProps> = ({ versions, areVersionsFetched }) => {
+  const { clusterName, subject } = useParams<RouteParams>();
   const history = useHistory();
   const location = useLocation();
 
-  const { clusterName, subject } =
-    useParams<{ clusterName: string; subject: string }>();
+  const searchParams = React.useMemo(
+    () => new URLSearchParams(location.search),
+    [location]
+  );
+
+  const [leftVersion, setLeftVersion] = React.useState(
+    searchParams.get('leftVersion') || ''
+  );
+  const [rightVersion, setRightVersion] = React.useState(
+    searchParams.get('rightVersion') || ''
+  );
+
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
@@ -63,11 +68,6 @@ const Diff: React.FC<DiffProps> = ({
     formState: { isSubmitting },
     control,
   } = methods;
-
-  const searchParams = React.useMemo(
-    () => new URLSearchParams(location.search),
-    [location]
-  );
 
   return (
     <S.Section>

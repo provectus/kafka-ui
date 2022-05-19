@@ -1,20 +1,54 @@
 import React from 'react';
+import { Route, Router } from 'react-router-dom';
 import Diff, { DiffProps } from 'components/Schemas/Diff/Diff';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
+import { clusterSchemaSchemaDiffPath } from 'lib/paths';
+import { createMemoryHistory } from 'history';
 
 import { versions } from './fixtures';
 
+const defaultClusterName = 'defaultClusterName';
+const defaultSubject = 'defaultSubject';
+const defaultPathName = clusterSchemaSchemaDiffPath(
+  defaultClusterName,
+  defaultSubject
+);
+
 describe('Diff', () => {
-  const setupComponent = (props: DiffProps) =>
-    render(
-      <Diff
-        versions={props.versions}
-        leftVersionInPath={props.leftVersionInPath}
-        rightVersionInPath={props.rightVersionInPath}
-        areVersionsFetched={props.areVersionsFetched}
-      />
+  const setupComponent = (
+    props: DiffProps,
+    searchQuery: { rightVersion?: string; leftVersion?: string } = {}
+  ) => {
+    let pathname = defaultPathName;
+    const searchParams = new URLSearchParams(pathname);
+    if (searchQuery.rightVersion) {
+      searchParams.set('rightVersion', searchQuery.rightVersion);
+    }
+    if (searchQuery.leftVersion) {
+      searchParams.set('leftVersion', searchQuery.leftVersion);
+    }
+
+    pathname = `${pathname}?${searchParams.toString()}`;
+
+    const history = createMemoryHistory({
+      initialEntries: [pathname],
+    });
+
+    return render(
+      <Router history={history}>
+        <Route path={clusterSchemaSchemaDiffPath(':clusterName', ':subject')}>
+          <Diff
+            versions={props.versions}
+            areVersionsFetched={props.areVersionsFetched}
+          />
+        </Route>
+      </Router>,
+      {
+        pathname,
+      }
     );
+  };
 
   describe('Container', () => {
     it('renders view', () => {
@@ -69,12 +103,13 @@ describe('Diff', () => {
   });
   describe('when schema versions are loaded and two versions in path', () => {
     beforeEach(() => {
-      setupComponent({
-        areVersionsFetched: true,
-        versions,
-        leftVersionInPath: '1',
-        rightVersionInPath: '2',
-      });
+      setupComponent(
+        {
+          areVersionsFetched: true,
+          versions,
+        },
+        { leftVersion: '1', rightVersion: '2' }
+      );
     });
 
     it('renders left select with version 1', () => {
@@ -92,11 +127,15 @@ describe('Diff', () => {
 
   describe('when schema versions are loaded and only one versions in path', () => {
     beforeEach(() => {
-      setupComponent({
-        areVersionsFetched: true,
-        versions,
-        leftVersionInPath: '1',
-      });
+      setupComponent(
+        {
+          areVersionsFetched: true,
+          versions,
+        },
+        {
+          leftVersion: '1',
+        }
+      );
     });
 
     it('renders left select with version 1', () => {
