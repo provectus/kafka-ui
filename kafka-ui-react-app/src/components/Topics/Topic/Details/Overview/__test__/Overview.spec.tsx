@@ -15,7 +15,6 @@ import { Route, Router } from 'react-router-dom';
 import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
 
 describe('Overview', () => {
-  const getReplicaCell = () => screen.getByLabelText('replica-info');
   const mockClusterName = 'local';
   const mockTopicName = 'topic';
   const mockTopic = { name: mockTopicName };
@@ -71,18 +70,20 @@ describe('Overview', () => {
     setupComponent(
       {},
       {
-      ...mockTopic,
-      partitions: mockPartitions,
-      internal: false,
-      cleanUpPolicy: CleanUpPolicy.DELETE,
-    });
-    expect(getReplicaCell()).toBeInTheDocument();
+        ...mockTopic,
+        partitions: mockPartitions,
+        internal: false,
+        cleanUpPolicy: CleanUpPolicy.DELETE,
+      }
+    );
+    expect(screen.getByLabelText('replica-info')).toBeInTheDocument();
   });
 
   it('renders replica cell with props', () => {
     render(<ReplicaCell leader />);
-    expect(getReplicaCell()).toBeInTheDocument();
-    expect(getReplicaCell()).toHaveStyleRule('color', 'orange');
+    const element = screen.getByLabelText('replica-info');
+    expect(element).toBeInTheDocument();
+    expect(element).toHaveStyleRule('color', 'orange');
   });
 
   describe('when it has internal flag', () => {
