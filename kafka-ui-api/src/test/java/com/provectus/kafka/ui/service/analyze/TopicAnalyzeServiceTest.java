@@ -37,9 +37,9 @@ class TopicAnalyzeServiceTest extends AbstractIntegrationTest {
         .untilAsserted(() -> {
           assertThat(topicAnalyzeService.getTopicAnalyzeState(cluster, topic))
               .hasValueSatisfying(state -> {
-                assertThat(state.getInProgress()).isNull();
-                assertThat(state.getCompleted()).isNotNull();
-                var completedAnalyze = state.getCompleted();
+                assertThat(state.getProgress()).isNull();
+                assertThat(state.getResult()).isNotNull();
+                var completedAnalyze = state.getResult();
                 assertThat(completedAnalyze.getTotalStats().getTotalMsgs()).isEqualTo(1_000);
                 assertThat(completedAnalyze.getPartitionStats().size()).isEqualTo(2);
               });
