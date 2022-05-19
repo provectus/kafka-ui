@@ -11,6 +11,7 @@ import userEvent from '@testing-library/user-event';
 import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
 
 describe('Overview', () => {
+  const getReplicaCell = () => screen.getByLabelText('replica-info');
   const mockClusterName = 'local';
   const mockTopicName = 'topic';
   const mockClearTopicMessages = jest.fn();
@@ -74,16 +75,13 @@ describe('Overview', () => {
       inSyncReplicas: 1,
       replicas: 1,
     });
-    expect(screen.getByLabelText('replica-info')).toBeInTheDocument();
+    expect(getReplicaCell()).toBeInTheDocument();
   });
 
   it('renders replica cell with props', () => {
     render(<ReplicaCell leader />);
-    expect(screen.getByLabelText('replica-info')).toBeInTheDocument();
-    expect(screen.getByLabelText('replica-info')).toHaveStyleRule(
-      'color',
-      'orange'
-    );
+    expect(getReplicaCell()).toBeInTheDocument();
+    expect(getReplicaCell()).toHaveStyleRule('color', 'orange');
   });
 
   describe('when it has internal flag', () => {
