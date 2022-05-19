@@ -1939,14 +1939,14 @@ components:
 
     TopicAnalyzeState:
       type: object
-      description: "Represents analysis state. Note: 'inProgress' and 'completed' fields are set exclusively depending on analysis state."
+      description: "Represents analysis state. Note: 'progress' and 'result' fields are set exclusively depending on analysis state."
       properties:
-        inProgress:
-          $ref: '#/components/schemas/InProgressTopicAnalyze'
-        completed:
-          $ref: '#/components/schemas/CompletedTopicAnalyze'
+        progress:
+          $ref: '#/components/schemas/TopicAnalyzeProgress'
+        result:
+          $ref: '#/components/schemas/TopicAnalyzeResult'
 
-    InProgressTopicAnalyze:
+    TopicAnalyzeProgress:
       type: object
       properties:
         startedAt:
@@ -1961,7 +1961,7 @@ components:
           type: integer
           format: int64
 
-    CompletedTopicAnalyze:
+    TopicAnalyzeResult:
       type: object
       properties:
         startedAt:
