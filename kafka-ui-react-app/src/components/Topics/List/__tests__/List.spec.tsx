@@ -10,6 +10,7 @@ import { createMemoryHistory } from 'history';
 import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import { CleanUpPolicy, SortOrder } from 'generated-sources';
 import userEvent from '@testing-library/user-event';
+import { clusterTopicsPath } from 'lib/paths';
 
 describe('List', () => {
   const setupComponent = (props: Partial<TopicsListProps> = {}) => (
@@ -173,12 +174,12 @@ describe('List', () => {
     const fetchTopicsList = jest.fn();
 
     jest.useFakeTimers();
-    const pathname = '/ui/clusters/local/topics';
+    const pathname = clusterTopicsPath('local');
 
     beforeEach(() => {
       render(
         <StaticRouter location={{ pathname }}>
-          <Route path="/ui/clusters/:clusterName">
+          <Route path={clusterTopicsPath(':clusterName')}>
             <ClusterContext.Provider
               value={{
                 isReadOnly: false,

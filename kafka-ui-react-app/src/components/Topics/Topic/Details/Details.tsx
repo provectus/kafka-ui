@@ -115,7 +115,7 @@ const Details: React.FC<Props> = ({
         <HeaderControlsWrapper>
           <Route
             exact
-            path="/ui/clusters/:clusterName/topics/:topicName/messages"
+            path={clusterTopicMessagesPath(':clusterName', ':topicName')}
           >
             <Button
               buttonSize="M"
@@ -127,7 +127,7 @@ const Details: React.FC<Props> = ({
             </Button>
           </Route>
           {!isReadOnly && !isInternal && (
-            <Route path="/ui/clusters/:clusterName/topics/:topicName">
+            <Route path={clusterTopicPath(':clusterName', ':topicName')}>
               <Dropdown label={<VerticalElipsisIcon />} right>
                 <DropdownItem
                   onClick={() =>
