@@ -14,25 +14,18 @@ import New from './New/New';
 
 const Topics: React.FC = () => (
   <Switch>
-    <BreadcrumbRoute
-      exact
-      path={clusterTopicsPath(':clusterName')}
-      component={ListContainer}
-    />
-    <BreadcrumbRoute
-      exact
-      path={clusterTopicNewPath(':clusterName')}
-      component={New}
-    />
-    <BreadcrumbRoute
-      exact
-      path={clusterTopicCopyPath(':clusterName')}
-      component={New}
-    />
-    <BreadcrumbRoute
-      path={clusterTopicPath(':clusterName', ':topicName')}
-      component={TopicContainer}
-    />
+    <BreadcrumbRoute exact path={clusterTopicsPath(':clusterName')}>
+      <ListContainer />
+    </BreadcrumbRoute>
+    <BreadcrumbRoute exact path={clusterTopicNewPath(':clusterName')}>
+      <New />
+    </BreadcrumbRoute>
+    <BreadcrumbRoute exact path={clusterTopicCopyPath(':clusterName')}>
+      <New />
+    </BreadcrumbRoute>
+    <BreadcrumbRoute path={clusterTopicPath(':clusterName', ':topicName')}>
+      <TopicContainer />
+    </BreadcrumbRoute>
   </Switch>
 );
 
