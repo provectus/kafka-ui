@@ -223,23 +223,24 @@ const Details: React.FC<Props> = ({
         <Route
           exact
           path={clusterTopicMessagesPath(':clusterName', ':topicName')}
-          component={Messages}
-        />
+        >
+          <Messages />
+        </Route>
         <Route
           exact
           path={clusterTopicSettingsPath(':clusterName', ':topicName')}
-          component={SettingsContainer}
-        />
-        <Route
-          exact
-          path={clusterTopicPath(':clusterName', ':topicName')}
-          component={OverviewContainer}
-        />
+        >
+          <SettingsContainer />
+        </Route>
+        <Route exact path={clusterTopicPath(':clusterName', ':topicName')}>
+          <OverviewContainer />
+        </Route>
         <Route
           exact
           path={clusterTopicConsumerGroupsPath(':clusterName', ':topicName')}
-          component={TopicConsumerGroupsContainer}
-        />
+        >
+          <TopicConsumerGroupsContainer />
+        </Route>
       </Switch>
     </div>
   );

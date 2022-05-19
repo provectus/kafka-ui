@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Topic, TopicDetails } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import { clusterConsumerGroupsPath, RouteParamsClusterTopic } from 'lib/paths';
 import { Table } from 'components/common/table/Table/Table.styled';
@@ -12,7 +11,7 @@ import getTagColor from 'components/common/Tag/getTagColor';
 import { useAppSelector } from 'lib/hooks/redux';
 import { getTopicConsumerGroups } from 'redux/reducers/topics/selectors';
 
-export interface Props extends Topic, TopicDetails {
+export interface Props {
   isFetched: boolean;
   fetchTopicConsumerGroups(payload: {
     clusterName: ClusterName;

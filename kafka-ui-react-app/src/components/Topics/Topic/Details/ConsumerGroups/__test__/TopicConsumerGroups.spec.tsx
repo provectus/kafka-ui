@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
-import ConsumerGroups, {
+import TopicConsumerGroups, {
   Props,
 } from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
 import { ConsumerGroup, ConsumerGroupState } from 'generated-sources';
@@ -61,8 +61,7 @@ describe('TopicConsumerGroups', () => {
     return render(
       <Router history={defaultHistory}>
         <Route path={defaultPathName}>
-          <ConsumerGroups
-            name={mockTopicName}
+          <TopicConsumerGroups
             fetchTopicConsumerGroups={jest.fn()}
             isFetched={false}
             {...props}
