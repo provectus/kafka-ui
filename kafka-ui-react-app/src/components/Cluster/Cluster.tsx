@@ -62,41 +62,34 @@ const Cluster: React.FC = () => {
       <Breadcrumb />
       <ClusterContext.Provider value={contextValue}>
         <Switch>
-          <BreadcrumbRoute
-            path={clusterBrokersPath(':clusterName')}
-            component={Brokers}
-          />
-          <BreadcrumbRoute
-            path={clusterTopicsPath(':clusterName')}
-            component={Topics}
-          />
-          <BreadcrumbRoute
-            path={clusterConsumerGroupsPath(':clusterName')}
-            component={ConsumersGroups}
-          />
+          <BreadcrumbRoute path={clusterBrokersPath(':clusterName')}>
+            <Brokers />
+          </BreadcrumbRoute>
+          <BreadcrumbRoute path={clusterTopicsPath(':clusterName')}>
+            <Topics />
+          </BreadcrumbRoute>
+          <BreadcrumbRoute path={clusterConsumerGroupsPath(':clusterName')}>
+            <ConsumersGroups />
+          </BreadcrumbRoute>
           {hasSchemaRegistryConfigured && (
-            <BreadcrumbRoute
-              path={clusterSchemasPath(':clusterName')}
-              component={Schemas}
-            />
+            <BreadcrumbRoute path={clusterSchemasPath(':clusterName')}>
+              <Schemas />
+            </BreadcrumbRoute>
           )}
           {hasKafkaConnectConfigured && (
-            <BreadcrumbRoute
-              path={clusterConnectsPath(':clusterName')}
-              component={Connect}
-            />
+            <BreadcrumbRoute path={clusterConnectsPath(':clusterName')}>
+              <Connect />
+            </BreadcrumbRoute>
           )}
           {hasKafkaConnectConfigured && (
-            <BreadcrumbRoute
-              path={clusterConnectorsPath(':clusterName')}
-              component={Connect}
-            />
+            <BreadcrumbRoute path={clusterConnectorsPath(':clusterName')}>
+              <Connect />
+            </BreadcrumbRoute>
           )}
           {hasKsqlDbConfigured && (
-            <BreadcrumbRoute
-              path={clusterKsqlDbPath(':clusterName')}
-              component={KsqlDb}
-            />
+            <BreadcrumbRoute path={clusterKsqlDbPath(':clusterName')}>
+              <KsqlDb />
+            </BreadcrumbRoute>
           )}
           <Redirect
             from="/ui/clusters/:clusterName"
