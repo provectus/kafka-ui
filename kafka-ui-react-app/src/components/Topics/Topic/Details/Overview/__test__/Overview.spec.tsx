@@ -8,6 +8,7 @@ import theme from 'theme/theme';
 import { CleanUpPolicy } from 'generated-sources';
 import ClusterContext from 'components/contexts/ClusterContext';
 import userEvent from '@testing-library/user-event';
+import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
 
 describe('Overview', () => {
   const mockClusterName = 'local';
@@ -20,7 +21,7 @@ describe('Overview', () => {
       replicas: [
         {
           broker: 1,
-          leader: false,
+          leader: true,
           inSync: true,
         },
       ],
@@ -69,12 +70,20 @@ describe('Overview', () => {
   it('at least one replica was rendered', () => {
     setupComponent({
       ...defaultProps,
-      partitions: mockPartitions,
       underReplicatedPartitions: 0,
       inSyncReplicas: 1,
-      replicas: 2,
+      replicas: 1,
     });
-    expect(screen.getAllByLabelText('replica-info')).toHaveLength(2);
+    expect(screen.getByLabelText('replica-info')).toBeInTheDocument();
+  });
+
+  it('renders replica cell with props', () => {
+    render(<ReplicaCell leader />);
+    expect(screen.getByLabelText('replica-info')).toBeInTheDocument();
+    expect(screen.getByLabelText('replica-info')).toHaveStyleRule(
+      'color',
+      'orange'
+    );
   });
 
   describe('when it has internal flag', () => {

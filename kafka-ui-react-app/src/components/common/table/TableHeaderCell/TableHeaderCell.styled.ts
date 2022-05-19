@@ -111,12 +111,6 @@ export const Preview = styled.span`
   cursor: pointer;
 `;
 
-export const ReplicaCell = styled.span.attrs({ 'aria-label': 'replica-info' })<{
-  leader: boolean | undefined;
-}>`
-  color: ${(props) => (props.leader ? 'orange' : null)};
-`;
-
 export const TableHeaderCell = styled.th`
   padding: 4px 0 4px 24px;
   border-bottom-width: 1px;

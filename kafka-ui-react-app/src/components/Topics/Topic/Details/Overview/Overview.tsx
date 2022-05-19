@@ -10,7 +10,7 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
-import { ReplicaCell } from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
+import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
 
 export interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -118,9 +118,7 @@ const Overview: React.FC<Props> = ({
                       leader={replica.leader}
                       key={`replica-list-item-key-${replica.broker}`}
                     >
-                      {i + 1 !== partition.replicas?.length
-                        ? `${replica.broker}, `
-                        : replica.broker}
+                      {replica.broker}
                     </ReplicaCell>
                   ))}
                 </td>
