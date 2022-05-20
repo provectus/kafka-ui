@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterName, TopicFormData, FailurePayload } from 'redux/interfaces';
+import { ClusterName, TopicFormData } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import { clusterTopicPath } from 'lib/paths';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';

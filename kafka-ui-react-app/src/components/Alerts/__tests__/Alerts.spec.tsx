@@ -26,11 +26,6 @@ const action: UnknownAsyncThunkRejectedWithValueAction = {
   },
   error: { message: 'Rejected' },
 };
-const alert: FailurePayload = {
-  title: '404 - Not Found',
-  message: 'Item is not found',
-  subject: 'subject',
-};
 
 describe('Alerts', () => {
   it('renders alerts', async () => {
