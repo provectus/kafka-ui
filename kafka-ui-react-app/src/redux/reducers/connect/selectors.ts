@@ -52,6 +52,19 @@ export const getFailedConnectors = createSelector(
   }
 );
 
+export const getSortedTopics = createSelector(
+  connectState,
+  ({ connectors }) => {
+    return connectors.map((connector) => {
+      return connector.topics?.length
+        ? [...connector.topics].sort((a: string, b: string) =>
+            a.localeCompare(b)
+          )
+        : connector.topics;
+    });
+  }
+);
+
 const getConnectorFetchingStatus = createFetchingSelector(
   fetchConnector.typePrefix
 );

@@ -54,9 +54,10 @@ describe('Connectors ListItem', () => {
 
   it('topics tags are sorted', () => {
     render(setupWrapper());
-    expect(screen.getAllByRole('link')[1]).toHaveTextContent('a');
-    expect(screen.getAllByRole('link')[2]).toHaveTextContent('b');
-    expect(screen.getAllByRole('link')[3]).toHaveTextContent('c');
+    const getLink = screen.getAllByRole('link');
+    expect(getLink[1]).toHaveTextContent('a');
+    expect(getLink[2]).toHaveTextContent('b');
+    expect(getLink[3]).toHaveTextContent('c');
   });
 
   it('renders item with failed tasks', () => {

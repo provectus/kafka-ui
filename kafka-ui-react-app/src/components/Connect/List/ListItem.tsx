@@ -52,10 +52,6 @@ const ListItem: React.FC<ListItemProps> = ({
     setDeleteConnectorConfirmationVisible(false);
   }, [clusterName, connect, dispatch, name]);
 
-  const sortedTopics = topics?.length
-    ? [...topics].sort((a: string, b: string) => a.localeCompare(b))
-    : [];
-
   const runningTasks = React.useMemo(() => {
     if (!tasksCount) return null;
     return tasksCount - (failedTasksCount || 0);
@@ -76,7 +72,7 @@ const ListItem: React.FC<ListItemProps> = ({
       <td>{connectorClass}</td>
       <td>
         <S.TagsWrapper>
-          {sortedTopics?.map((t: string) => (
+          {topics?.map((t: string) => (
             <Tag key={t} color="gray">
               <Link to={clusterTopicPath(clusterName, t)}>{t}</Link>
             </Tag>

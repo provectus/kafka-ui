@@ -74,6 +74,17 @@ describe('Connect selectors', () => {
       expect(selectors.getFailedConnectors(store.getState()).length).toEqual(1);
     });
 
+    it('returns sorted topics', () => {
+      store.dispatch({
+        type: fetchConnectors.fulfilled.type,
+        payload: { connectors },
+      });
+      const sortedTopics = selectors.getSortedTopics(store.getState());
+      if (sortedTopics[0] && sortedTopics[0].length > 1) {
+        expect(sortedTopics[0]).toEqual(['a', 'b', 'c']);
+      }
+    });
+
     it('returns connector', () => {
       store.dispatch({
         type: fetchConnector.fulfilled.type,
