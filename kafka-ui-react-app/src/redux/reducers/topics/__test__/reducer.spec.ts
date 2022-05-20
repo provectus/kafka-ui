@@ -3,16 +3,17 @@ import {
   SortOrder,
   TopicColumnsToSort,
 } from 'generated-sources';
-import {
-  deleteTopicAction,
-  clearMessagesTopicAction,
-  setTopicsSearchAction,
-  setTopicsOrderByAction,
-  fetchTopicConsumerGroupsAction,
-  fetchTopicMessageSchemaAction,
-  recreateTopicAction,
-} from 'redux/actions';
-import reducer from 'redux/reducers/topics/reducer';
+import reducer, {
+  clearTopicsMessages,
+  setTopicsSearch,
+  setTopicsOrderBy,
+  fetchTopicConsumerGroups,
+  fetchTopicMessageSchema,
+  recreateTopic,
+  createTopic,
+  deleteTopic,
+} from 'redux/reducers/topics/topicsSlice';
+import { createTopicPayload } from 'components/Topics/New/__test__/fixtures';
 
 const topic = {
   name: 'topic',
@@ -82,22 +83,41 @@ let state = {
 };
 
 describe('topics reducer', () => {
+  const clusterName = 'local';
+
   describe('delete topic', () => {
-    it('deletes the topic from the list on DELETE_TOPIC__SUCCESS', () => {
-      expect(reducer(state, deleteTopicAction.success(topic.name))).toEqual({
+    it('deleteTopic/fulfilled', () => {
+      expect(
+        reducer(state, {
+          type: deleteTopic.fulfilled,
+          payload: { clusterName, topicName: topic.name },
+        })
+      ).toEqual({
         ...state,
         byName: {},
         allNames: [],
-        consumerGroups: [],
       });
     });
 
-    it('delete topic messages on CLEAR_TOPIC_MESSAGES__SUCCESS', () => {
-      expect(reducer(state, clearMessagesTopicAction.success())).toEqual(state);
+    it('clearTopicsMessages/fulfilled', () => {
+      expect(
+        reducer(state, {
+          type: clearTopicsMessages.fulfilled,
+          payload: { clusterName, topicName: topic.name },
+        })
+      ).toEqual({
+        ...state,
+        messages: [],
+      });
     });
 
-    it('recreate topic', () => {
-      expect(reducer(state, recreateTopicAction.success(topic))).toEqual({
+    it('recreateTopic/fulfilled', () => {
+      expect(
+        reducer(state, {
+          type: recreateTopic.fulfilled,
+          payload: { topic, topicName: topic.name },
+        })
+      ).toEqual({
         ...state,
         byName: {
           [topic.name]: topic,
@@ -106,9 +126,27 @@ describe('topics reducer', () => {
     });
   });
 
+  describe('create topics', () => {
+    it('createTopic/fulfilled', () => {
+      expect(
+        reducer(state, {
+          type: createTopic.fulfilled,
+          payload: { clusterName, data: createTopicPayload },
+        })
+      ).toEqual({
+        ...state,
+      });
+    });
+  });
+
   describe('search topics', () => {
-    it('sets the search string', () => {
-      expect(reducer(state, setTopicsSearchAction('test'))).toEqual({
+    it('setTopicsSearch', () => {
+      expect(
+        reducer(state, {
+          type: setTopicsSearch,
+          payload: 'test',
+        })
+      ).toEqual({
         ...state,
         search: 'test',
       });
@@ -116,9 +154,12 @@ describe('topics reducer', () => {
   });
 
   describe('order topics', () => {
-    it('sets the orderBy', () => {
+    it('setTopicsOrderBy', () => {
       expect(
-        reducer(state, setTopicsOrderByAction(TopicColumnsToSort.NAME))
+        reducer(state, {
+          type: setTopicsOrderBy,
+          payload: TopicColumnsToSort.NAME,
+        })
       ).toEqual({
         ...state,
         orderBy: TopicColumnsToSort.NAME,
@@ -127,15 +168,18 @@ describe('topics reducer', () => {
   });
 
   describe('topic consumer groups', () => {
-    it('GET_TOPIC_CONSUMER_GROUPS__SUCCESS', () => {
+    it('fetchTopicConsumerGroups/fulfilled', () => {
       expect(
-        reducer(state, fetchTopicConsumerGroupsAction.success(state))
+        reducer(state, {
+          type: fetchTopicConsumerGroups.fulfilled,
+          payload: { clusterName, topicName: topic.name },
+        })
       ).toEqual(state);
     });
   });
 
   describe('message sending', () => {
-    it('adds message shema after fetching it', () => {
+    it('fetchTopicMessageSchema/fulfilled', () => {
       state = {
         byName: {
           [topic.name]: topic,
@@ -149,13 +193,10 @@ describe('topics reducer', () => {
         consumerGroups: [],
       };
       expect(
-        reducer(
-          state,
-          fetchTopicMessageSchemaAction.success({
-            topicName: 'topic',
-            schema: messageSchema,
-          })
-        ).byName
+        reducer(state, {
+          type: fetchTopicMessageSchema.fulfilled,
+          payload: { topicName: topic.name, schema: messageSchema },
+        }).byName
       ).toEqual({
         [topic.name]: { ...topic, messageSchema },
       });

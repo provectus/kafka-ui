@@ -35,8 +35,14 @@ interface Props extends Topic, TopicDetails {
   isInternal: boolean;
   isDeleted: boolean;
   isDeletePolicy: boolean;
-  deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
-  recreateTopic: (clusterName: ClusterName, topicName: TopicName) => void;
+  deleteTopic: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }) => void;
+  recreateTopic: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }) => void;
   clearTopicMessages(params: {
     clusterName: ClusterName;
     topicName: TopicName;
@@ -73,7 +79,7 @@ const Details: React.FC<Props> = ({
     setRecreateTopicConfirmationVisible,
   ] = React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
-    deleteTopic(clusterName, topicName);
+    deleteTopic({ clusterName, topicName });
   }, [clusterName, topicName, deleteTopic]);
 
   React.useEffect(() => {
@@ -89,7 +95,7 @@ const Details: React.FC<Props> = ({
   }, [clusterName, topicName, clearTopicMessages]);
 
   const recreateTopicHandler = React.useCallback(() => {
-    recreateTopic(clusterName, topicName);
+    recreateTopic({ clusterName, topicName });
     setRecreateTopicConfirmationVisible(false);
   }, [recreateTopic, clusterName, topicName]);
 

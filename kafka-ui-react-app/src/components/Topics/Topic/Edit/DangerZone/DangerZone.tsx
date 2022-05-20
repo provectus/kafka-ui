@@ -6,6 +6,7 @@ import { FormError } from 'components/common/Input/Input.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { ClusterName, TopicName } from 'redux/interfaces';
 
 import * as S from './DangerZone.styled';
 
@@ -16,16 +17,16 @@ export interface Props {
   defaultReplicationFactor: number;
   partitionsCountIncreased: boolean;
   replicationFactorUpdated: boolean;
-  updateTopicPartitionsCount: (
-    clusterName: string,
-    topicname: string,
-    partitions: number
-  ) => void;
-  updateTopicReplicationFactor: (
-    clusterName: string,
-    topicname: string,
-    replicationFactor: number
-  ) => void;
+  updateTopicPartitionsCount: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+    partitions: number;
+  }) => void;
+  updateTopicReplicationFactor: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+    replicationFactor: number;
+  }) => void;
 }
 
 const DangerZone: React.FC<Props> = ({
@@ -91,18 +92,19 @@ const DangerZone: React.FC<Props> = ({
   }, [replicationFactorUpdated]);
 
   const partitionsSubmit = () => {
-    updateTopicPartitionsCount(
+    updateTopicPartitionsCount({
       clusterName,
       topicName,
-      partitionsMethods.getValues('partitions')
-    );
+      partitions: partitionsMethods.getValues('partitions'),
+    });
   };
   const replicationFactorSubmit = () => {
-    updateTopicReplicationFactor(
+    updateTopicReplicationFactor({
       clusterName,
       topicName,
-      replicationFactorMethods.getValues('replicationFactor')
-    );
+      replicationFactor:
+        replicationFactorMethods.getValues('replicationFactor'),
+    });
   };
   return (
     <S.Wrapper>

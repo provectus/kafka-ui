@@ -5,7 +5,8 @@ import { useForm, Controller } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
 import { clusterTopicMessagesPath } from 'lib/paths';
 import jsf from 'json-schema-faker';
-import { fetchTopicMessageSchema, messagesApiClient } from 'redux/actions';
+import { messagesApiClient } from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { fetchTopicMessageSchema } from 'redux/reducers/topics/topicsSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { now } from 'lodash';
@@ -34,7 +35,7 @@ const SendMessage: React.FC = () => {
   jsf.option('alwaysFakeOptionals', true);
 
   React.useEffect(() => {
-    dispatch(fetchTopicMessageSchema(clusterName, topicName));
+    dispatch(fetchTopicMessageSchema({ clusterName, topicName }));
   }, [clusterName, dispatch, topicName]);
 
   const messageSchema = useAppSelector((state) =>

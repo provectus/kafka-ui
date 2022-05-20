@@ -6,12 +6,11 @@ import alerts from 'redux/reducers/alerts/alertsSlice';
 import schemas from 'redux/reducers/schemas/schemasSlice';
 import connect from 'redux/reducers/connect/connectSlice';
 
-import topics from './topics/reducer';
 import topicMessages from './topicMessages/topicMessagesSlice';
+import topics from './topics/topicsSlice';
 import consumerGroups from './consumerGroups/consumerGroupsSlice';
 import ksqlDb from './ksqlDb/ksqlDbSlice';
 import legacyLoader from './loader/reducer';
-import legacyAlerts from './alerts/reducer';
 
 export default combineReducers({
   loader,
@@ -25,5 +24,4 @@ export default combineReducers({
   connect,
   ksqlDb,
   legacyLoader,
-  legacyAlerts,
 });

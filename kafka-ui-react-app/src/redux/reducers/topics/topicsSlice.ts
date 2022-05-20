@@ -18,6 +18,9 @@ import {
   RecreateTopicRequest,
   SortOrder,
   TopicColumnsToSort,
+  MessagesApi,
+  GetTopicSchemaRequest,
+  TopicMessageSchema,
 } from 'generated-sources';
 import {
   TopicsState,
@@ -29,10 +32,12 @@ import {
 } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
+import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const topicsApiClient = new TopicsApi(apiClientConf);
 const topicConsumerGroupsApiClient = new ConsumerGroupsApi(apiClientConf);
+const messagesApiClient = new MessagesApi(apiClientConf);
 
 export const fetchTopicsList = createAsyncThunk<
   TopicsResponse,
@@ -111,20 +116,21 @@ export const formatTopicCreation = (form: TopicFormData): TopicCreation => {
   };
 };
 
-// is not completed
 export const createTopic = createAsyncThunk<
-  { topic: Topic },
+  undefined,
   {
     clusterName: ClusterName;
     data: TopicFormData;
   }
->('topic/createTopic', async ({ clusterName, data }, { rejectWithValue }) => {
+>('topic/createTopic', async (payload, { rejectWithValue }) => {
   try {
-    const topic = await topicsApiClient.createTopic({
+    const { data, clusterName } = payload;
+    await topicsApiClient.createTopic({
       clusterName,
       topicCreation: formatTopicCreation(data),
     });
-    return { topic };
+
+    return undefined;
   } catch (err) {
     return rejectWithValue(await getResponse(err as Response));
   }
@@ -217,6 +223,108 @@ export const recreateTopic = createAsyncThunk<
   }
 });
 
+export const fetchTopicMessageSchema = createAsyncThunk<
+  { schema: TopicMessageSchema; topicName: TopicName },
+  GetTopicSchemaRequest
+>('topic/fetchTopicMessageSchema', async (payload, { rejectWithValue }) => {
+  try {
+    const { topicName } = payload;
+    const schema = await messagesApiClient.getTopicSchema(payload);
+    return { schema, topicName };
+  } catch (err) {
+    return rejectWithValue(await getResponse(err as Response));
+  }
+});
+
+export const updateTopicPartitionsCount = createAsyncThunk<
+  undefined,
+  {
+    clusterName: ClusterName;
+    topicName: TopicName;
+    partitions: number;
+  }
+>('topic/updateTopicPartitionsCount', async (payload, { rejectWithValue }) => {
+  try {
+    const { clusterName, topicName, partitions } = payload;
+
+    await topicsApiClient.increaseTopicPartitions({
+      clusterName,
+      topicName,
+      partitionsIncrease: { totalPartitionsCount: partitions },
+    });
+
+    return undefined;
+  } catch (err) {
+    return rejectWithValue(await getResponse(err as Response));
+  }
+});
+
+export const updateTopicReplicationFactor = createAsyncThunk<
+  undefined,
+  {
+    clusterName: ClusterName;
+    topicName: TopicName;
+    replicationFactor: number;
+  }
+>(
+  'topic/updateTopicReplicationFactor',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { clusterName, topicName, replicationFactor } = payload;
+
+      await topicsApiClient.changeReplicationFactor({
+        clusterName,
+        topicName,
+        replicationFactorChange: { totalReplicationFactor: replicationFactor },
+      });
+
+      return undefined;
+    } catch (err) {
+      return rejectWithValue(await getResponse(err as Response));
+    }
+  }
+);
+
+export const deleteTopics = createAsyncThunk<
+  undefined,
+  {
+    clusterName: ClusterName;
+    topicNames: TopicName[];
+  }
+>('topic/deleteTopics', async (payload, { rejectWithValue }) => {
+  try {
+    const { clusterName, topicNames } = payload;
+
+    topicNames.forEach((topicName) => {
+      deleteTopic({ clusterName, topicName });
+    });
+
+    return undefined;
+  } catch (err) {
+    return rejectWithValue(await getResponse(err as Response));
+  }
+});
+
+export const clearTopicsMessages = createAsyncThunk<
+  undefined,
+  {
+    clusterName: ClusterName;
+    topicNames: TopicName[];
+  }
+>('topic/clearTopicsMessages', async (payload, { rejectWithValue }) => {
+  try {
+    const { clusterName, topicNames } = payload;
+
+    topicNames.forEach((topicName) => {
+      clearTopicMessages({ clusterName, topicName });
+    });
+
+    return undefined;
+  } catch (err) {
+    return rejectWithValue(await getResponse(err as Response));
+  }
+});
+
 export const initialState: TopicsState = {
   byName: {},
   allNames: [],
@@ -230,7 +338,18 @@ export const initialState: TopicsState = {
 const topicsSlice = createSlice({
   name: 'topics',
   initialState,
-  reducers: {},
+  reducers: {
+    setTopicsSearch: (state, action) => {
+      state.search = action.payload;
+    },
+    setTopicsOrderBy: (state, action) => {
+      state.sortOrder =
+        state.orderBy === action.payload && state.sortOrder === SortOrder.ASC
+          ? SortOrder.DESC
+          : SortOrder.ASC;
+      state.orderBy = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchTopicsList.fulfilled, (state, { payload }) => {
       if (payload.topics) {
@@ -275,10 +394,10 @@ const topicsSlice = createSlice({
       };
     });
     builder.addCase(deleteTopic.fulfilled, (state, { payload }) => {
+      delete state.byName[payload.topicName];
       state.allNames = state.allNames.filter(
         (name) => name !== payload.topicName
       );
-      delete state.byName[payload.topicName];
     });
     builder.addCase(recreateTopic.fulfilled, (state, { payload }) => {
       state.byName = {
@@ -286,7 +405,15 @@ const topicsSlice = createSlice({
         [payload.topic.name]: { ...payload.topic },
       };
     });
+    builder.addCase(fetchTopicMessageSchema.fulfilled, (state, { payload }) => {
+      state.byName[payload.topicName] = {
+        ...state.byName[payload.topicName],
+        messageSchema: payload.schema,
+      };
+    });
   },
 });
+
+export const { setTopicsSearch, setTopicsOrderBy } = topicsSlice.actions;
 
 export default topicsSlice.reducer;

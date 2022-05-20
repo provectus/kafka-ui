@@ -11,8 +11,7 @@ import {
   clusterTopicSendMessagePath,
 } from 'lib/paths';
 import { store } from 'redux/store';
-import { fetchTopicDetailsAction } from 'redux/actions';
-import { initialState } from 'redux/reducers/topics/reducer';
+import { fetchTopicDetails } from 'redux/reducers/topics/topicsSlice';
 import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import validateMessage from 'components/Topics/Topic/SendMessage/validateMessage';
 import Alerts from 'components/Alerts/Alerts';
@@ -73,12 +72,17 @@ const renderAndSubmitData = async (error: string[] = []) => {
 describe('SendMessage', () => {
   beforeAll(() => {
     store.dispatch(
-      fetchTopicDetailsAction.success({
-        ...initialState,
-        byName: {
-          [externalTopicPayload.name]: externalTopicPayload,
+      fetchTopicDetails.fulfilled(
+        {
+          topicDetails: externalTopicPayload,
+          topicName,
         },
-      })
+        'topic',
+        {
+          clusterName,
+          topicName,
+        }
+      )
     );
   });
   afterEach(() => {
