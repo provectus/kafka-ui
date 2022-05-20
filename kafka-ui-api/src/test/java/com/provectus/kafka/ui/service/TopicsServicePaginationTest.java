@@ -1,17 +1,31 @@
 package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.provectus.kafka.ui.controller.TopicsController;
+import com.provectus.kafka.ui.mapper.ClusterMapper;
+import com.provectus.kafka.ui.mapper.ClusterMapperImpl;
+import com.provectus.kafka.ui.model.InternalLogDirStats;
+import com.provectus.kafka.ui.model.InternalPartitionsOffsets;
+import com.provectus.kafka.ui.model.InternalSchemaRegistry;
+import com.provectus.kafka.ui.model.InternalTopic;
+import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
-import java.util.Collection;
+import com.provectus.kafka.ui.model.TopicDTO;
+import com.provectus.kafka.ui.util.JmxClusterUtil;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.kafka.clients.admin.TopicDescription;
@@ -21,20 +35,26 @@ import reactor.core.publisher.Mono;
 
 class TopicsServicePaginationTest {
 
-  private TopicsService.Pagination pagination;
+  private static final String LOCAL_KAFKA_CLUSTER_NAME = "local";
 
-  private void init(Collection<TopicDescription> topicsInCache) {
-    ReactiveAdminClient adminClient = when(mock(ReactiveAdminClient.class).listTopics(true))
-        .thenReturn(Mono.just(topicsInCache.stream().map(TopicDescription::name)
-            .collect(Collectors.toSet())))
-        .getMock();
+  private final TopicsService topicsService = mock(TopicsService.class);
+  private final ClustersStorage clustersStorage = mock(ClustersStorage.class);
+  private final ClusterMapper clusterMapper = new ClusterMapperImpl();
 
-    MetricsCache.Metrics metricsCache = MetricsCache.Metrics.empty().toBuilder()
-        .topicDescriptions(
-            topicsInCache.stream().collect(Collectors.toMap(TopicDescription::name, d -> d)))
-        .build();
+  private final TopicsController topicsController  = new TopicsController(topicsService, clusterMapper);
 
-    pagination = new TopicsService.Pagination(adminClient, metricsCache);
+  private void init(Map<String, InternalTopic> topicsInCache) {
+
+    when(clustersStorage.getClusterByName(isA(String.class)))
+        .thenReturn(Optional.of(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME)));
+    when(topicsService.getTopicsForPagination(isA(KafkaCluster.class)))
+        .thenReturn(Mono.just(new ArrayList<>(topicsInCache.values())));
+    when(topicsService.loadTopics(isA(KafkaCluster.class), anyList()))
+        .thenAnswer(a -> {
+          List<String> lst = a.getArgument(1);
+          return Mono.just(lst.stream().map(topicsInCache::get).collect(Collectors.toList()));
+        });
+    this.topicsController.setClustersStorage(clustersStorage);
   }
 
   @Test
@@ -43,35 +63,49 @@ class TopicsServicePaginationTest {
         IntStream.rangeClosed(1, 100).boxed()
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, false, List.of()))
-            .collect(Collectors.toList())
+            .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
+                JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+            .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
-    var topics = pagination.getPage(
-        Optional.empty(), Optional.empty(), Optional.empty(),
-        Optional.empty(), Optional.empty(), Optional.empty()).block();
-    assertThat(topics.getTotalPages()).isEqualTo(4);
-    assertThat(topics.getTopics()).hasSize(25);
-    assertThat(topics.getTopics()).isSorted();
+    var topics = topicsController
+        .getTopics(LOCAL_KAFKA_CLUSTER_NAME, null, null, null, null,
+            null, null, null).block();
+
+    assertThat(topics.getBody().getPageCount()).isEqualTo(4);
+    assertThat(topics.getBody().getTopics()).hasSize(25);
+    assertThat(topics.getBody().getTopics())
+        .isSortedAccordingTo(Comparator.comparing(TopicDTO::getName));
+  }
+
+  private KafkaCluster buildKafkaCluster(String clusterName) {
+    return KafkaCluster.builder()
+        .name(clusterName)
+        .schemaRegistry(InternalSchemaRegistry.builder().build())
+        .build();
   }
 
   @Test
   public void shouldListFirst25TopicsSortedByNameDescendingOrder() {
-    var topicDescriptions = IntStream.rangeClosed(1, 100).boxed()
+    var internalTopics = IntStream.rangeClosed(1, 100).boxed()
         .map(Objects::toString)
         .map(name -> new TopicDescription(name, false, List.of()))
-        .collect(Collectors.toList());
-    init(topicDescriptions);
+        .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
+            JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+        .collect(Collectors.toMap(InternalTopic::getName, Function.identity()));
+    init(internalTopics);
 
-    var topics = pagination.getPage(
-        Optional.empty(), Optional.empty(), Optional.empty(),
-        Optional.empty(), Optional.of(TopicColumnsToSortDTO.NAME), Optional.of(SortOrderDTO.DESC)).block();
-    assertThat(topics.getTotalPages()).isEqualTo(4);
-    assertThat(topics.getTopics()).hasSize(25);
-    assertThat(topics.getTopics()).isSortedAccordingTo(Comparator.reverseOrder());
-    assertThat(topics.getTopics()).containsExactlyElementsOf(
-        topicDescriptions.stream()
-            .map(TopicDescription::name)
-            .sorted(Comparator.reverseOrder())
+    var topics = topicsController
+        .getTopics(LOCAL_KAFKA_CLUSTER_NAME, null, null, null, null,
+            TopicColumnsToSortDTO.NAME, SortOrderDTO.DESC, null).block();
+
+    assertThat(topics.getBody().getPageCount()).isEqualTo(4);
+    assertThat(topics.getBody().getTopics()).hasSize(25);
+    assertThat(topics.getBody().getTopics()).isSortedAccordingTo(Comparator.comparing(TopicDTO::getName).reversed());
+    assertThat(topics.getBody().getTopics()).containsExactlyElementsOf(
+        internalTopics.values().stream()
+            .map(clusterMapper::toTopic)
+            .sorted(Comparator.comparing(TopicDTO::getName).reversed())
             .limit(25)
             .collect(Collectors.toList())
     );
@@ -83,14 +117,17 @@ class TopicsServicePaginationTest {
         IntStream.rangeClosed(1, 100).boxed()
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, false, List.of()))
-            .collect(Collectors.toList())
+            .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
+                JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+            .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
-    var topics = pagination.getPage(Optional.of(4), Optional.of(33),
-        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()).block();
-    assertThat(topics.getTotalPages()).isEqualTo(4);
-    assertThat(topics.getTopics()).hasSize(1)
-        .first().isEqualTo("99");
+    var topics = topicsController
+        .getTopics(LOCAL_KAFKA_CLUSTER_NAME, 4, 33, null, null, null, null, null).block();
+
+    assertThat(topics.getBody().getPageCount()).isEqualTo(4);
+    assertThat(topics.getBody().getTopics()).hasSize(1);
+    assertThat(topics.getBody().getTopics().get(0).getName().equals("99"));
   }
 
   @Test
@@ -99,14 +136,17 @@ class TopicsServicePaginationTest {
         IntStream.rangeClosed(1, 100).boxed()
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, false, List.of()))
-            .collect(Collectors.toList())
+            .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
+                JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+            .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
-    var topics = pagination.getPage(Optional.of(0), Optional.of(-1),
-        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()).block();
-    assertThat(topics.getTotalPages()).isEqualTo(4);
-    assertThat(topics.getTopics()).hasSize(25);
-    assertThat(topics.getTopics()).isSorted();
+    var topics = topicsController
+        .getTopics(LOCAL_KAFKA_CLUSTER_NAME, 0, -1, null, null, null, null, null).block();
+
+    assertThat(topics.getBody().getPageCount()).isEqualTo(4);
+    assertThat(topics.getBody().getTopics()).hasSize(25);
+    assertThat(topics.getBody().getTopics()).isSortedAccordingTo(Comparator.comparing(TopicDTO::getName));
   }
 
   @Test
@@ -115,87 +155,103 @@ class TopicsServicePaginationTest {
         IntStream.rangeClosed(1, 100).boxed()
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, Integer.parseInt(name) % 10 == 0, List.of()))
-            .collect(Collectors.toList())
+            .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
+                JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+            .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
-    var topics = pagination.getPage(
-        Optional.empty(), Optional.empty(), Optional.of(true),
-        Optional.empty(), Optional.empty(), Optional.empty()).block();
-    assertThat(topics.getTotalPages()).isEqualTo(4);
-    assertThat(topics.getTopics()).hasSize(25);
-    assertThat(topics.getTopics()).isSorted();
-  }
+    var topics = topicsController
+        .getTopics(LOCAL_KAFKA_CLUSTER_NAME, 0, -1, true, null,
+            null, null, null).block();
 
+    assertThat(topics.getBody().getPageCount()).isEqualTo(4);
+    assertThat(topics.getBody().getTopics()).hasSize(25);
+    assertThat(topics.getBody().getTopics()).isSortedAccordingTo(Comparator.comparing(TopicDTO::getName));
+  }
 
   @Test
   public void shouldListOnlyNonInternalTopics() {
+
     init(
         IntStream.rangeClosed(1, 100).boxed()
             .map(Objects::toString)
-            .map(name -> new TopicDescription(name, false, List.of()))
-            .collect(Collectors.toList())
+            .map(name -> new TopicDescription(name, Integer.parseInt(name) % 5 == 0, List.of()))
+            .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
+                JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+            .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
-    var topics = pagination.getPage(
-        Optional.empty(), Optional.empty(), Optional.of(true),
-        Optional.empty(), Optional.empty(), Optional.empty()).block();
-    assertThat(topics.getTotalPages()).isEqualTo(4);
-    assertThat(topics.getTopics()).hasSize(25);
-    assertThat(topics.getTopics()).isSorted();
-  }
+    var topics = topicsController
+        .getTopics(LOCAL_KAFKA_CLUSTER_NAME, 4, -1, false, null,
+            null, null, null).block();
 
+    assertThat(topics.getBody().getPageCount()).isEqualTo(4);
+    assertThat(topics.getBody().getTopics()).hasSize(5);
+    assertThat(topics.getBody().getTopics()).isSortedAccordingTo(Comparator.comparing(TopicDTO::getName));
+  }
 
   @Test
   public void shouldListOnlyTopicsContainingOne() {
+
     init(
         IntStream.rangeClosed(1, 100).boxed()
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, false, List.of()))
-            .collect(Collectors.toList())
+            .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
+                JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+            .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
-    var topics = pagination.getPage(
-        Optional.empty(), Optional.empty(), Optional.empty(),
-        Optional.of("1"), Optional.empty(), Optional.empty()).block();
-    assertThat(topics.getTotalPages()).isEqualTo(1);
-    assertThat(topics.getTopics()).hasSize(20);
-    assertThat(topics.getTopics()).isSorted();
+    var topics = topicsController
+        .getTopics(LOCAL_KAFKA_CLUSTER_NAME, null, null, null, "1",
+            null, null, null).block();
+
+    assertThat(topics.getBody().getPageCount()).isEqualTo(1);
+    assertThat(topics.getBody().getTopics()).hasSize(20);
+    assertThat(topics.getBody().getTopics()).isSortedAccordingTo(Comparator.comparing(TopicDTO::getName));
   }
 
   @Test
   public void shouldListTopicsOrderedByPartitionsCount() {
-    List<TopicDescription> topicDescriptions = IntStream.rangeClosed(1, 100).boxed()
+    Map<String, InternalTopic> internalTopics = IntStream.rangeClosed(1, 100).boxed()
         .map(i -> new TopicDescription(UUID.randomUUID().toString(), false,
             IntStream.range(0, i)
                 .mapToObj(p ->
                     new TopicPartitionInfo(p, null, List.of(), List.of()))
                 .collect(Collectors.toList())))
-        .collect(Collectors.toList());
+        .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), InternalPartitionsOffsets.empty(),
+            JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+        .collect(Collectors.toMap(InternalTopic::getName, Function.identity()));
 
-    init(topicDescriptions);
+    init(internalTopics);
 
-    var topics = pagination.getPage(
-        Optional.empty(), Optional.empty(), Optional.empty(),
-        Optional.empty(), Optional.of(TopicColumnsToSortDTO.TOTAL_PARTITIONS), Optional.empty()).block();
-    assertThat(topics.getTotalPages()).isEqualTo(4);
-    assertThat(topics.getTopics()).hasSize(25);
-    assertThat(topics.getTopics()).containsExactlyElementsOf(
-        topicDescriptions.stream()
-            .map(TopicDescription::name)
+    var topicsSortedAsc = topicsController
+        .getTopics(LOCAL_KAFKA_CLUSTER_NAME, null, null, null,
+            null, TopicColumnsToSortDTO.TOTAL_PARTITIONS, null, null).block();
+
+    assertThat(topicsSortedAsc.getBody().getPageCount()).isEqualTo(4);
+    assertThat(topicsSortedAsc.getBody().getTopics()).hasSize(25);
+    assertThat(topicsSortedAsc.getBody().getTopics()).containsExactlyElementsOf(
+        internalTopics.values().stream()
+            .map(clusterMapper::toTopic)
+            .sorted(Comparator.comparing(TopicDTO::getPartitionCount))
             .limit(25)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList())
+    );
 
-    var topicsSortedDesc = pagination.getPage(
-        Optional.empty(), Optional.empty(), Optional.empty(),
-        Optional.empty(), Optional.of(TopicColumnsToSortDTO.TOTAL_PARTITIONS), Optional.of(SortOrderDTO.DESC)).block();
-    assertThat(topicsSortedDesc.getTotalPages()).isEqualTo(4);
-    assertThat(topicsSortedDesc.getTopics()).hasSize(25);
-    assertThat(topicsSortedDesc.getTopics()).containsExactlyElementsOf(
-        topicDescriptions.stream()
-            .sorted((a, b) -> b.partitions().size() - a.partitions().size())
-            .map(TopicDescription::name)
+    var topicsSortedDesc = topicsController
+        .getTopics(LOCAL_KAFKA_CLUSTER_NAME, null, null, null,
+            null, TopicColumnsToSortDTO.TOTAL_PARTITIONS, SortOrderDTO.DESC, null).block();
+
+    assertThat(topicsSortedDesc.getBody().getPageCount()).isEqualTo(4);
+    assertThat(topicsSortedDesc.getBody().getTopics()).hasSize(25);
+    assertThat(topicsSortedDesc.getBody().getTopics()).containsExactlyElementsOf(
+        internalTopics.values().stream()
+            .map(clusterMapper::toTopic)
+            .sorted(Comparator.comparing(TopicDTO::getPartitionCount).reversed())
             .limit(25)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList())
+    );
   }
 
 }
