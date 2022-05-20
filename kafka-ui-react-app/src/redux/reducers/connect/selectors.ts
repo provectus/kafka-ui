@@ -57,9 +57,7 @@ export const getSortedTopics = createSelector(
   ({ connectors }) => {
     return connectors.map((connector) => {
       return connector.topics?.length
-        ? [...connector.topics].sort((a: string, b: string) =>
-            a.localeCompare(b)
-          )
+        ? [...connector.topics].sort()
         : connector.topics;
     });
   }
