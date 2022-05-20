@@ -60,7 +60,7 @@ export const getFailedConnectors = createSelector(
 export const getFailedTasks = createSelector(connectState, ({ connectors }) => {
   return connectors
     .map((connector: FullConnectorInfo) => connector.failedTasksCount || 0)
-    .reduce((a: number, b: number) => {
+    .reduce(acc, value) => {
       return a + b;
     }, 0);
 });
