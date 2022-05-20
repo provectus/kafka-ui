@@ -1,5 +1,5 @@
 import React from 'react';
-import { FailurePayload, ServerResponse } from 'redux/interfaces';
+import { ServerResponse } from 'redux/interfaces';
 import { act, screen } from '@testing-library/react';
 import Alerts from 'components/Alerts/Alerts';
 import { render } from 'lib/testHelpers';
