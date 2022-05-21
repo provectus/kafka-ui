@@ -1,7 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { ConnectState, RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
-import { ConnectorTaskStatus, ConnectorState } from 'generated-sources';
+import {
+  ConnectorTaskStatus,
+  ConnectorState,
+  FullConnectorInfo,
+} from 'generated-sources';
 
 import {
   deleteConnector,
@@ -47,10 +51,17 @@ export const getFailedConnectors = createSelector(
   connectState,
   ({ connectors }) => {
     return connectors.filter(
-      (connector) => connector.status.state === ConnectorState.FAILED
+      (connector: FullConnectorInfo) =>
+        connector.status.state === ConnectorState.FAILED
     );
   }
 );
+
+export const getFailedTasks = createSelector(connectState, ({ connectors }) => {
+  return connectors
+    .map((connector: FullConnectorInfo) => connector.failedTasksCount || 0)
+    .reduce((acc: number, value: number) => acc + value, 0);
+});
 
 const getConnectorFetchingStatus = createFetchingSelector(
   fetchConnector.typePrefix
