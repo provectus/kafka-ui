@@ -9,11 +9,7 @@ import { Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-const pathname = clusterConnectConnectorTasksPath(
-  ':clusterName',
-  ':connectName',
-  ':connectorName'
-);
+const pathname = clusterConnectConnectorTasksPath();
 const clusterName = 'my-cluster';
 const connectName = 'my-connect';
 const connectorName = 'my-connector';

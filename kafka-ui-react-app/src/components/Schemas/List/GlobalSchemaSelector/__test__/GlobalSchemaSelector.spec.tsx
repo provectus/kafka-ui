@@ -29,7 +29,7 @@ const expectOptionIsSelected = (option: string) => {
 describe('GlobalSchemaSelector', () => {
   const renderComponent = () =>
     render(
-      <Route path={clusterSchemasPath(':clusterName')}>
+      <Route path={clusterSchemasPath()}>
         <GlobalSchemaSelector />
       </Route>,
       {

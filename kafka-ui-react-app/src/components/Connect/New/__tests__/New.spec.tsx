@@ -51,7 +51,7 @@ describe('New', () => {
 
   const renderComponent = (props: Partial<NewProps> = {}) =>
     render(
-      <Route path={clusterConnectorNewPath(':clusterName')}>
+      <Route path={clusterConnectorNewPath()}>
         <New
           fetchConnects={jest.fn()}
           areConnectsFetching={false}

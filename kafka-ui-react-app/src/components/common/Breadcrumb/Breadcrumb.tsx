@@ -7,7 +7,7 @@ import { BREADCRUMB_DEFINITIONS } from 'lib/constants';
 import { BreadcrumbWrapper } from './Breadcrumb.styled';
 import { BreadcrumbContext } from './Breadcrumb.context';
 
-const basePathEntriesLength = clusterPath(':clusterName').split('/').length;
+const basePathEntriesLength = clusterPath().split('/').length;
 
 export interface BreadcrumbDefinitions {
   [key: string]: string;

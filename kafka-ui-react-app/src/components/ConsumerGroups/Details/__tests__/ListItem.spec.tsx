@@ -12,9 +12,7 @@ const clusterName = 'cluster1';
 
 const renderComponent = (consumers: ConsumerGroupTopicPartition[] = []) =>
   render(
-    <Route
-      path={clusterConsumerGroupDetailsPath(':clusterName', ':consumerGroupID')}
-    >
+    <Route path={clusterConsumerGroupDetailsPath()}>
       <table>
         <tbody>
           <ListItem

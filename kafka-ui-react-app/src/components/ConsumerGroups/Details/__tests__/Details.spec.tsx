@@ -26,12 +26,7 @@ const renderComponent = () => {
   history.push(clusterConsumerGroupDetailsPath(clusterName, groupId));
   render(
     <Router history={history}>
-      <Route
-        path={clusterConsumerGroupDetailsPath(
-          ':clusterName',
-          ':consumerGroupID'
-        )}
-      >
+      <Route path={clusterConsumerGroupDetailsPath()}>
         <Details />
       </Route>
     </Router>

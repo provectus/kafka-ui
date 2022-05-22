@@ -37,10 +37,7 @@ describe('TopicConsumerGroups', () => {
     },
   ];
 
-  const defaultPathName = clusterTopicConsumerGroupsPath(
-    ':clusterName',
-    ':topicName'
-  );
+  const defaultPathName = clusterTopicConsumerGroupsPath();
 
   const defaultHistory = createMemoryHistory({
     initialEntries: [

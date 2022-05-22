@@ -23,11 +23,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('Edit', () => {
-  const pathname = clusterConnectConnectorEditPath(
-    ':clusterName',
-    ':connectName',
-    ':connectorName'
-  );
+  const pathname = clusterConnectConnectorEditPath();
   const clusterName = 'my-cluster';
   const connectName = 'my-connect';
   const connectorName = 'my-connector';

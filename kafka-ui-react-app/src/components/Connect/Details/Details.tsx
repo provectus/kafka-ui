@@ -99,34 +99,13 @@ const Details: React.FC<DetailsProps> = ({
         </NavLink>
       </Navbar>
       <Switch>
-        <Route
-          exact
-          path={clusterConnectConnectorTasksPath(
-            ':clusterName',
-            ':connectName',
-            ':connectorName'
-          )}
-        >
+        <Route exact path={clusterConnectConnectorTasksPath()}>
           <TasksContainer />
         </Route>
-        <Route
-          exact
-          path={clusterConnectConnectorConfigPath(
-            ':clusterName',
-            ':connectName',
-            ':connectorName'
-          )}
-        >
+        <Route exact path={clusterConnectConnectorConfigPath()}>
           <ConfigContainer />
         </Route>
-        <Route
-          exact
-          path={clusterConnectConnectorPath(
-            ':clusterName',
-            ':connectName',
-            ':connectorName'
-          )}
-        >
+        <Route exact path={clusterConnectConnectorPath()}>
           <OverviewContainer />
         </Route>
       </Switch>

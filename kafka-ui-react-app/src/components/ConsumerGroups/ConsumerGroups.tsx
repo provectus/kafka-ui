@@ -13,24 +13,13 @@ import {
 const ConsumerGroups: React.FC = () => {
   return (
     <Switch>
-      <BreadcrumbRoute exact path={clusterConsumerGroupsPath(':clusterName')}>
+      <BreadcrumbRoute exact path={clusterConsumerGroupsPath()}>
         <ListContainer />
       </BreadcrumbRoute>
-      <BreadcrumbRoute
-        exact
-        path={clusterConsumerGroupDetailsPath(
-          ':clusterName',
-          ':consumerGroupID'
-        )}
-      >
+      <BreadcrumbRoute exact path={clusterConsumerGroupDetailsPath()}>
         <Details />
       </BreadcrumbRoute>
-      <BreadcrumbRoute
-        path={clusterConsumerGroupResetOffsetsPath(
-          ':clusterName',
-          ':consumerGroupID'
-        )}
-      >
+      <BreadcrumbRoute path={clusterConsumerGroupResetOffsetsPath()}>
         <ResetOffsets />
       </BreadcrumbRoute>
     </Switch>

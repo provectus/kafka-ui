@@ -62,32 +62,32 @@ const Cluster: React.FC = () => {
       <Breadcrumb />
       <ClusterContext.Provider value={contextValue}>
         <Switch>
-          <BreadcrumbRoute path={clusterBrokersPath(':clusterName')}>
+          <BreadcrumbRoute path={clusterBrokersPath()}>
             <Brokers />
           </BreadcrumbRoute>
-          <BreadcrumbRoute path={clusterTopicsPath(':clusterName')}>
+          <BreadcrumbRoute path={clusterTopicsPath()}>
             <Topics />
           </BreadcrumbRoute>
-          <BreadcrumbRoute path={clusterConsumerGroupsPath(':clusterName')}>
+          <BreadcrumbRoute path={clusterConsumerGroupsPath()}>
             <ConsumersGroups />
           </BreadcrumbRoute>
           {hasSchemaRegistryConfigured && (
-            <BreadcrumbRoute path={clusterSchemasPath(':clusterName')}>
+            <BreadcrumbRoute path={clusterSchemasPath()}>
               <Schemas />
             </BreadcrumbRoute>
           )}
           {hasKafkaConnectConfigured && (
-            <BreadcrumbRoute path={clusterConnectsPath(':clusterName')}>
+            <BreadcrumbRoute path={clusterConnectsPath()}>
               <Connect />
             </BreadcrumbRoute>
           )}
           {hasKafkaConnectConfigured && (
-            <BreadcrumbRoute path={clusterConnectorsPath(':clusterName')}>
+            <BreadcrumbRoute path={clusterConnectorsPath()}>
               <Connect />
             </BreadcrumbRoute>
           )}
           {hasKsqlDbConfigured && (
-            <BreadcrumbRoute path={clusterKsqlDbPath(':clusterName')}>
+            <BreadcrumbRoute path={clusterKsqlDbPath()}>
               <KsqlDb />
             </BreadcrumbRoute>
           )}

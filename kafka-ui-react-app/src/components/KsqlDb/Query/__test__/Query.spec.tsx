@@ -13,7 +13,7 @@ import { act } from '@testing-library/react';
 const clusterName = 'testLocal';
 const renderComponent = () =>
   render(
-    <Route path={clusterKsqlDbQueryPath(':clusterName')}>
+    <Route path={clusterKsqlDbQueryPath()}>
       <Query />
     </Route>,
     {

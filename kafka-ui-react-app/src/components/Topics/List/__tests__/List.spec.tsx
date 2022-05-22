@@ -179,7 +179,7 @@ describe('List', () => {
     beforeEach(() => {
       render(
         <StaticRouter location={{ pathname }}>
-          <Route path={clusterTopicsPath(':clusterName')}>
+          <Route path={clusterTopicsPath()}>
             <ClusterContext.Provider
               value={{
                 isReadOnly: false,

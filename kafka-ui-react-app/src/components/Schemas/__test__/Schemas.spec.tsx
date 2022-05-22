@@ -15,7 +15,7 @@ import { schemaVersion } from 'redux/reducers/schemas/__test__/fixtures';
 
 const renderComponent = (pathname: string) =>
   render(
-    <Route path={clusterPath(':clusterName')}>
+    <Route path={clusterPath()}>
       <Schemas />
     </Route>,
     { pathname }

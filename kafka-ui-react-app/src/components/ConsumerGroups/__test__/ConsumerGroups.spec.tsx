@@ -26,7 +26,7 @@ const historyMock = createMemoryHistory({
 const renderComponent = (history = historyMock) =>
   render(
     <Router history={history}>
-      <Route path={clusterConsumerGroupsPath(':clusterName')}>
+      <Route path={clusterConsumerGroupsPath()}>
         <ConsumerGroups />
       </Route>
     </Router>,

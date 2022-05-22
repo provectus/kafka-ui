@@ -18,38 +18,25 @@ import EditContainer from './Edit/EditContainer';
 const Connect: React.FC = () => (
   <div>
     <Switch>
-      <BreadcrumbRoute exact path={clusterConnectorsPath(':clusterName')}>
+      <BreadcrumbRoute exact path={clusterConnectorsPath()}>
         <ListContainer />
       </BreadcrumbRoute>
-      <BreadcrumbRoute exact path={clusterConnectorNewPath(':clusterName')}>
+      <BreadcrumbRoute exact path={clusterConnectorNewPath()}>
         <NewContainer />
       </BreadcrumbRoute>
-      <BreadcrumbRoute
-        exact
-        path={clusterConnectConnectorEditPath(
-          ':clusterName',
-          ':connectName',
-          ':connectorName'
-        )}
-      >
+      <BreadcrumbRoute exact path={clusterConnectConnectorEditPath()}>
         <EditContainer />
       </BreadcrumbRoute>
-      <BreadcrumbRoute
-        path={clusterConnectConnectorPath(
-          ':clusterName',
-          ':connectName',
-          ':connectorName'
-        )}
-      >
+      <BreadcrumbRoute path={clusterConnectConnectorPath()}>
         <DetailsContainer />
       </BreadcrumbRoute>
       <Redirect
-        from={clusterConnectConnectorsPath(':clusterName', ':connectName')}
-        to={clusterConnectorsPath(':clusterName')}
+        from={clusterConnectConnectorsPath()}
+        to={clusterConnectorsPath()}
       />
       <Redirect
-        from={`${clusterConnectsPath(':clusterName')}/:connectName`}
-        to={clusterConnectorsPath(':clusterName')}
+        from={`${clusterConnectsPath()}/:connectName`}
+        to={clusterConnectorsPath()}
       />
     </Switch>
   </div>

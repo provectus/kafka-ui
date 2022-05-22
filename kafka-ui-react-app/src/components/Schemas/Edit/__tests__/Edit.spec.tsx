@@ -24,7 +24,7 @@ const renderComponent = (
   context: ContextProps = contextInitialValue
 ) =>
   render(
-    <Route path={clusterSchemaEditPath(':clusterName', ':subject')}>
+    <Route path={clusterSchemaEditPath()}>
       <ClusterContext.Provider value={context}>
         <Edit />
       </ClusterContext.Provider>

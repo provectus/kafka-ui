@@ -35,7 +35,7 @@ describe('Topic Component', () => {
 
   const renderComponent = (pathname: string, topicFetching: boolean) =>
     render(
-      <Route path={clusterTopicPath(':clusterName', ':topicName')}>
+      <Route path={clusterTopicPath()}>
         <Topic
           isTopicFetching={topicFetching}
           resetTopicMessages={resetTopicMessages}

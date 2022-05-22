@@ -10,7 +10,7 @@ const clusterName = 'local';
 describe('New Component', () => {
   beforeEach(() => {
     render(
-      <Route path={clusterSchemaNewPath(':clusterName')}>
+      <Route path={clusterSchemaNewPath()}>
         <New />
       </Route>,
       {

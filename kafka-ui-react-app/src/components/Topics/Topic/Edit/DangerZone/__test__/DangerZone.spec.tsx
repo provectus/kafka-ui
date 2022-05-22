@@ -22,7 +22,7 @@ const defaultHistory = createMemoryHistory({ initialEntries: [defaultPath] });
 const renderComponent = (props?: Partial<Props>) =>
   render(
     <Router history={defaultHistory}>
-      <Route path={clusterTopicSendMessagePath(':clusterName', ':topicName')}>
+      <Route path={clusterTopicSendMessagePath()}>
         <DangerZone
           defaultPartitions={defaultPartitions}
           defaultReplicationFactor={defaultReplicationFactor}

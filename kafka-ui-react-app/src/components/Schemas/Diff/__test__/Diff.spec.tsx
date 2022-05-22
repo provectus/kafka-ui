@@ -37,7 +37,7 @@ describe('Diff', () => {
 
     return render(
       <Router history={history}>
-        <Route path={clusterSchemaSchemaDiffPath(':clusterName', ':subject')}>
+        <Route path={clusterSchemaSchemaDiffPath()}>
           <Diff
             versions={props.versions}
             areVersionsFetched={props.areVersionsFetched}

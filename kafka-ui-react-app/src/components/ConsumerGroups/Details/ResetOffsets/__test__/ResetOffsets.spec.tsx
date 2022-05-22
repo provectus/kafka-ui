@@ -13,12 +13,7 @@ const { groupId } = consumerGroupPayload;
 
 const renderComponent = () =>
   render(
-    <Route
-      path={clusterConsumerGroupResetOffsetsPath(
-        ':clusterName',
-        ':consumerGroupID'
-      )}
-    >
+    <Route path={clusterConsumerGroupResetOffsetsPath()}>
       <ResetOffsets />
     </Route>,
     {

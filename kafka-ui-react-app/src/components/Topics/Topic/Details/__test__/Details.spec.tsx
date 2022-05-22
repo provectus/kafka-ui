@@ -54,7 +54,7 @@ describe('Details', () => {
         }}
       >
         <Router history={history}>
-          <Route path={clusterTopicPath(':clusterName', ':topicName')}>
+          <Route path={clusterTopicPath()}>
             <Details
               deleteTopic={mockDelete}
               recreateTopic={mockRecreateTopic}

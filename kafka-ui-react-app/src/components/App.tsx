@@ -86,7 +86,7 @@ const App: React.FC = () => {
               <Route exact path={['/', '/ui', '/ui/clusters']}>
                 <Dashboard />
               </Route>
-              <Route path={clusterPath(':clusterName')}>
+              <Route path={clusterPath()}>
                 <ClusterPage />
               </Route>
             </Switch>

@@ -27,7 +27,7 @@ const renderComponent = (
   context: ContextProps = contextInitialValue
 ) =>
   render(
-    <Route path={clusterSchemaPath(':clusterName', ':subject')}>
+    <Route path={clusterSchemaPath()}>
       <ClusterContext.Provider value={context}>
         <Details />
       </ClusterContext.Provider>

@@ -60,11 +60,7 @@ describe('Actions', () => {
   });
 
   describe('view', () => {
-    const pathname = clusterConnectConnectorPath(
-      ':clusterName',
-      ':connectName',
-      ':connectorName'
-    );
+    const pathname = clusterConnectConnectorPath();
     const clusterName = 'my-cluster';
     const connectName = 'my-connect';
     const connectorName = 'my-connector';

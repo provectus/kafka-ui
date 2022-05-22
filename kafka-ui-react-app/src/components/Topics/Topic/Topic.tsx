@@ -45,16 +45,13 @@ const Topic: React.FC<TopicProps> = ({
 
   return (
     <Switch>
-      <Route exact path={clusterTopicEditPath(':clusterName', ':topicName')}>
+      <Route exact path={clusterTopicEditPath()}>
         <EditContainer />
       </Route>
-      <Route
-        exact
-        path={clusterTopicSendMessagePath(':clusterName', ':topicName')}
-      >
+      <Route exact path={clusterTopicSendMessagePath()}>
         <SendMessage />
       </Route>
-      <Route path={clusterTopicPath(':clusterName', ':topicName')}>
+      <Route path={clusterTopicPath()}>
         <DetailsContainer />
       </Route>
     </Switch>

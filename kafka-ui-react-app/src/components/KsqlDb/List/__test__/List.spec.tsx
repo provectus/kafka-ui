@@ -14,7 +14,7 @@ const renderComponent = () => {
   history.push(clusterKsqlDbPath(clusterName));
   render(
     <Router history={history}>
-      <Route path={clusterKsqlDbPath(':clusterName')}>
+      <Route path={clusterKsqlDbPath()}>
         <List />
       </Route>
     </Router>

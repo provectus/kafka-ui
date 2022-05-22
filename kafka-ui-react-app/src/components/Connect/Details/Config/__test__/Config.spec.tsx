@@ -9,11 +9,7 @@ import { screen } from '@testing-library/dom';
 jest.mock('components/common/Editor/Editor', () => 'mock-Editor');
 
 describe('Config', () => {
-  const pathname = clusterConnectConnectorConfigPath(
-    ':clusterName',
-    ':connectName',
-    ':connectorName'
-  );
+  const pathname = clusterConnectConnectorConfigPath();
   const clusterName = 'my-cluster';
   const connectName = 'my-connect';
   const connectorName = 'my-connector';

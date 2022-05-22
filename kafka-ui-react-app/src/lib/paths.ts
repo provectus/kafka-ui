@@ -11,73 +11,84 @@ import { GIT_REPO_LINK } from './constants';
 export const gitCommitPath = (commit: string) =>
   `${GIT_REPO_LINK}/commit/${commit}`;
 
-export const clusterPath = (clusterName: ClusterName) =>
+export const clusterNameParam: ClusterName = ':clusterName';
+export const clusterPath = (clusterName: ClusterName = clusterNameParam) =>
   `/ui/clusters/${clusterName}`;
 
 // Brokers
-export const clusterBrokersPath = (clusterName: ClusterName) =>
-  `${clusterPath(clusterName)}/brokers`;
+export const clusterBrokersPath = (
+  clusterName: ClusterName = clusterNameParam
+) => `${clusterPath(clusterName)}/brokers`;
 
 // Consumer Groups
-export const clusterConsumerGroupsPath = (clusterName: ClusterName) =>
-  `${clusterPath(clusterName)}/consumer-groups`;
+export const consumerGroupIDParam = ':consumerGroupID';
+export const clusterConsumerGroupsPath = (
+  clusterName: ClusterName = clusterNameParam
+) => `${clusterPath(clusterName)}/consumer-groups`;
 export const clusterConsumerGroupDetailsPath = (
-  clusterName: ClusterName,
-  groupId: string
+  clusterName: ClusterName = clusterNameParam,
+  groupId: string = consumerGroupIDParam
 ) => `${clusterPath(clusterName)}/consumer-groups/${groupId}`;
 export const clusterConsumerGroupResetOffsetsPath = (
-  clusterName: ClusterName,
-  groupId: string
+  clusterName: ClusterName = clusterNameParam,
+  groupId: string = consumerGroupIDParam
 ) => `${clusterPath(clusterName)}/consumer-groups/${groupId}/reset-offsets`;
 
 // Schemas
-export const clusterSchemasPath = (clusterName: ClusterName) =>
-  `${clusterPath(clusterName)}/schemas`;
-export const clusterSchemaNewPath = (clusterName: ClusterName) =>
-  `${clusterPath(clusterName)}/schemas/create-new`;
+export const schemaSubjectParams = ':subject';
+export const clusterSchemasPath = (
+  clusterName: ClusterName = clusterNameParam
+) => `${clusterPath(clusterName)}/schemas`;
+export const clusterSchemaNewPath = (
+  clusterName: ClusterName = clusterNameParam
+) => `${clusterPath(clusterName)}/schemas/create-new`;
 export const clusterSchemaPath = (
-  clusterName: ClusterName,
-  subject: SchemaName
+  clusterName: ClusterName = clusterNameParam,
+  subject: SchemaName = schemaSubjectParams
 ) => `${clusterSchemasPath(clusterName)}/${subject}`;
 export const clusterSchemaEditPath = (
-  clusterName: ClusterName,
-  subject: SchemaName
+  clusterName: ClusterName = clusterNameParam,
+  subject: SchemaName = schemaSubjectParams
 ) => `${clusterSchemasPath(clusterName)}/${subject}/edit`;
 export const clusterSchemaSchemaDiffPath = (
-  clusterName: ClusterName,
-  subject: SchemaName
+  clusterName: ClusterName = clusterNameParam,
+  subject: SchemaName = schemaSubjectParams
 ) => `${clusterSchemaPath(clusterName, subject)}/diff`;
 
 // Topics
-export const clusterTopicsPath = (clusterName: ClusterName) =>
-  `${clusterPath(clusterName)}/topics`;
-export const clusterTopicNewPath = (clusterName: ClusterName) =>
-  `${clusterPath(clusterName)}/topics/create-new`;
-export const clusterTopicCopyPath = (clusterName: ClusterName) =>
-  `${clusterPath(clusterName)}/topics/copy`;
+export const topicNameParam = ':topicName';
+export const clusterTopicsPath = (
+  clusterName: ClusterName = clusterNameParam
+) => `${clusterPath(clusterName)}/topics`;
+export const clusterTopicNewPath = (
+  clusterName: ClusterName = clusterNameParam
+) => `${clusterPath(clusterName)}/topics/create-new`;
+export const clusterTopicCopyPath = (
+  clusterName: ClusterName = clusterNameParam
+) => `${clusterPath(clusterName)}/topics/copy`;
 export const clusterTopicPath = (
-  clusterName: ClusterName,
-  topicName: TopicName
+  clusterName: ClusterName = clusterNameParam,
+  topicName: TopicName = topicNameParam
 ) => `${clusterTopicsPath(clusterName)}/${topicName}`;
 export const clusterTopicSettingsPath = (
-  clusterName: ClusterName,
-  topicName: TopicName
+  clusterName: ClusterName = clusterNameParam,
+  topicName: TopicName = topicNameParam
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/settings`;
 export const clusterTopicMessagesPath = (
-  clusterName: ClusterName,
-  topicName: TopicName
+  clusterName: ClusterName = clusterNameParam,
+  topicName: TopicName = topicNameParam
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/messages`;
 export const clusterTopicEditPath = (
-  clusterName: ClusterName,
-  topicName: TopicName
+  clusterName: ClusterName = clusterNameParam,
+  topicName: TopicName = topicNameParam
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/edit`;
 export const clusterTopicConsumerGroupsPath = (
-  clusterName: ClusterName,
-  topicName: TopicName
+  clusterName: ClusterName = clusterNameParam,
+  topicName: TopicName = topicNameParam
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/consumer-groups`;
 export const clusterTopicSendMessagePath = (
-  clusterName: ClusterName,
-  topicName: TopicName
+  clusterName: ClusterName = clusterNameParam,
+  topicName: TopicName = topicNameParam
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/message`;
 export interface RouteParamsClusterTopic {
   clusterName: ClusterName;
@@ -85,35 +96,40 @@ export interface RouteParamsClusterTopic {
 }
 
 // Kafka Connect
-export const clusterConnectsPath = (clusterName: ClusterName) =>
-  `${clusterPath(clusterName)}/connects`;
-export const clusterConnectorsPath = (clusterName: ClusterName) =>
-  `${clusterPath(clusterName)}/connectors`;
-export const clusterConnectorNewPath = (clusterName: ClusterName) =>
-  `${clusterConnectorsPath(clusterName)}/create-new`;
+export const connectNameParam = ':connectName';
+export const connectorNameParam = ':connectorName';
+export const clusterConnectsPath = (
+  clusterName: ClusterName = clusterNameParam
+) => `${clusterPath(clusterName)}/connects`;
+export const clusterConnectorsPath = (
+  clusterName: ClusterName = clusterNameParam
+) => `${clusterPath(clusterName)}/connectors`;
+export const clusterConnectorNewPath = (
+  clusterName: ClusterName = clusterNameParam
+) => `${clusterConnectorsPath(clusterName)}/create-new`;
 export const clusterConnectConnectorsPath = (
-  clusterName: ClusterName,
-  connectName: ConnectName
+  clusterName: ClusterName = clusterNameParam,
+  connectName: ConnectName = connectNameParam
 ) => `${clusterConnectsPath(clusterName)}/${connectName}/connectors`;
 export const clusterConnectConnectorPath = (
-  clusterName: ClusterName,
-  connectName: ConnectName,
-  connectorName: ConnectorName
+  clusterName: ClusterName = clusterNameParam,
+  connectName: ConnectName = connectNameParam,
+  connectorName: ConnectorName = connectorNameParam
 ) =>
   `${clusterConnectConnectorsPath(clusterName, connectName)}/${connectorName}`;
 export const clusterConnectConnectorEditPath = (
-  clusterName: ClusterName,
-  connectName: ConnectName,
-  connectorName: ConnectorName
+  clusterName: ClusterName = clusterNameParam,
+  connectName: ConnectName = connectNameParam,
+  connectorName: ConnectorName = connectorNameParam
 ) =>
   `${clusterConnectConnectorsPath(
     clusterName,
     connectName
   )}/${connectorName}/edit`;
 export const clusterConnectConnectorTasksPath = (
-  clusterName: ClusterName,
-  connectName: ConnectName,
-  connectorName: ConnectorName
+  clusterName: ClusterName = clusterNameParam,
+  connectName: ConnectName = connectNameParam,
+  connectorName: ConnectorName = connectorNameParam
 ) =>
   `${clusterConnectConnectorPath(
     clusterName,
@@ -121,9 +137,9 @@ export const clusterConnectConnectorTasksPath = (
     connectorName
   )}/tasks`;
 export const clusterConnectConnectorConfigPath = (
-  clusterName: ClusterName,
-  connectName: ConnectName,
-  connectorName: ConnectorName
+  clusterName: ClusterName = clusterNameParam,
+  connectName: ConnectName = connectNameParam,
+  connectorName: ConnectorName = connectorNameParam
 ) =>
   `${clusterConnectConnectorPath(
     clusterName,
@@ -137,9 +153,10 @@ export interface RouterParamsClusterConnectConnector {
 }
 
 // KsqlDb
-export const clusterKsqlDbPath = (clusterName: ClusterName = ':clusterName') =>
-  `${clusterPath(clusterName)}/ksqldb`;
+export const clusterKsqlDbPath = (
+  clusterName: ClusterName = clusterNameParam
+) => `${clusterPath(clusterName)}/ksqldb`;
 
 export const clusterKsqlDbQueryPath = (
-  clusterName: ClusterName = ':clusterName'
+  clusterName: ClusterName = clusterNameParam
 ) => `${clusterPath(clusterName)}/ksqldb/query`;

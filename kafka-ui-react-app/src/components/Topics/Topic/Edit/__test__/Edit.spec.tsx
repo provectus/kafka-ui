@@ -36,7 +36,7 @@ const renderComponent = (
 
   return render(
     <Router history={history}>
-      <Route path={clusterTopicEditPath(':clusterName', ':topicName')}>
+      <Route path={clusterTopicEditPath()}>
         <Edit
           isFetched
           isTopicUpdated={false}

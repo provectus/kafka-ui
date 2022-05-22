@@ -19,7 +19,7 @@ describe('Overview', () => {
   const mockTopicName = 'topic';
   const mockTopic = { name: mockTopicName };
 
-  const defaultPathName = clusterTopicPath(':clusterName', ':topicName');
+  const defaultPathName = clusterTopicPath();
 
   const defaultHistory = createMemoryHistory({
     initialEntries: [clusterTopicPath(mockClusterName, mockTopicName)],
