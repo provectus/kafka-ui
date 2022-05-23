@@ -5,11 +5,6 @@ import {
   TopicMessageSchema,
 } from 'generated-sources';
 import { FailurePayload } from 'redux/interfaces';
-import {
-  topicMessagePayload,
-  topicMessagesMetaPayload,
-} from 'redux/reducers/topicMessages/__test__/fixtures';
-import { fetchKsqlDbTablesPayload } from 'redux/reducers/ksqlDb/__test__/fixtures';
 
 import { mockTopicsState } from './fixtures';
 
@@ -69,7 +64,7 @@ describe('Actions', () => {
   });
 
   describe('setTopicsSearchAction', () => {
-    it('creartes SET_TOPICS_SEARCH', () => {
+    it('creates SET_TOPICS_SEARCH', () => {
       expect(actions.setTopicsSearchAction('test')).toEqual({
         type: 'SET_TOPICS_SEARCH',
         payload: 'test',
@@ -78,42 +73,11 @@ describe('Actions', () => {
   });
 
   describe('setTopicsOrderByAction', () => {
-    it('creartes SET_TOPICS_ORDER_BY', () => {
+    it('creates SET_TOPICS_ORDER_BY', () => {
       expect(actions.setTopicsOrderByAction(TopicColumnsToSort.NAME)).toEqual({
         type: 'SET_TOPICS_ORDER_BY',
         payload: TopicColumnsToSort.NAME,
       });
-    });
-  });
-
-  describe('topic messages', () => {
-    it('creates ADD_TOPIC_MESSAGE', () => {
-      expect(actions.addTopicMessage(topicMessagePayload)).toEqual({
-        type: 'ADD_TOPIC_MESSAGE',
-        payload: topicMessagePayload,
-      });
-    });
-
-    it('creates RESET_TOPIC_MESSAGES', () => {
-      expect(actions.resetTopicMessages()).toEqual({
-        type: 'RESET_TOPIC_MESSAGES',
-      });
-    });
-
-    it('creates UPDATE_TOPIC_MESSAGES_PHASE', () => {
-      expect(actions.updateTopicMessagesPhase('Polling')).toEqual({
-        type: 'UPDATE_TOPIC_MESSAGES_PHASE',
-        payload: 'Polling',
-      });
-    });
-
-    it('creates UPDATE_TOPIC_MESSAGES_META', () => {
-      expect(actions.updateTopicMessagesMeta(topicMessagesMetaPayload)).toEqual(
-        {
-          type: 'UPDATE_TOPIC_MESSAGES_META',
-          payload: topicMessagesMetaPayload,
-        }
-      );
     });
   });
 
@@ -199,28 +163,6 @@ describe('Actions', () => {
           payload: { alert },
         });
       });
-    });
-  });
-});
-
-describe('ksqlDb', () => {
-  it('creates GET_KSQL_DB_TABLES_AND_STREAMS__REQUEST', () => {
-    expect(actions.fetchKsqlDbTablesAction.request()).toEqual({
-      type: 'GET_KSQL_DB_TABLES_AND_STREAMS__REQUEST',
-    });
-  });
-  it('creates GET_KSQL_DB_TABLES_AND_STREAMS__SUCCESS', () => {
-    expect(
-      actions.fetchKsqlDbTablesAction.success(fetchKsqlDbTablesPayload)
-    ).toEqual({
-      type: 'GET_KSQL_DB_TABLES_AND_STREAMS__SUCCESS',
-      payload: fetchKsqlDbTablesPayload,
-    });
-  });
-  it('creates GET_KSQL_DB_TABLES_AND_STREAMS__FAILURE', () => {
-    expect(actions.fetchKsqlDbTablesAction.failure({})).toEqual({
-      type: 'GET_KSQL_DB_TABLES_AND_STREAMS__FAILURE',
-      payload: {},
     });
   });
 });

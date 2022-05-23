@@ -1,4 +1,8 @@
-import { MessageSchemaSourceEnum, TopicColumnsToSort } from 'generated-sources';
+import {
+  MessageSchemaSourceEnum,
+  SortOrder,
+  TopicColumnsToSort,
+} from 'generated-sources';
 import {
   deleteTopicAction,
   clearMessagesTopicAction,
@@ -6,6 +10,7 @@ import {
   setTopicsOrderByAction,
   fetchTopicConsumerGroupsAction,
   fetchTopicMessageSchemaAction,
+  recreateTopicAction,
 } from 'redux/actions';
 import reducer from 'redux/reducers/topics/reducer';
 
@@ -72,6 +77,7 @@ let state = {
   totalPages: 1,
   search: '',
   orderBy: null,
+  sortOrder: SortOrder.ASC,
   consumerGroups: [],
 };
 
@@ -88,6 +94,15 @@ describe('topics reducer', () => {
 
     it('delete topic messages on CLEAR_TOPIC_MESSAGES__SUCCESS', () => {
       expect(reducer(state, clearMessagesTopicAction.success())).toEqual(state);
+    });
+
+    it('recreate topic', () => {
+      expect(reducer(state, recreateTopicAction.success(topic))).toEqual({
+        ...state,
+        byName: {
+          [topic.name]: topic,
+        },
+      });
     });
   });
 
@@ -130,6 +145,7 @@ describe('topics reducer', () => {
         totalPages: 1,
         search: '',
         orderBy: null,
+        sortOrder: SortOrder.ASC,
         consumerGroups: [],
       };
       expect(

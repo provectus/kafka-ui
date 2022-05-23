@@ -4,9 +4,10 @@ import { RootState } from 'redux/interfaces';
 import {
   deleteConnector,
   restartConnector,
+  restartTasks,
   pauseConnector,
   resumeConnector,
-} from 'redux/actions';
+} from 'redux/reducers/connect/connectSlice';
 import {
   getIsConnectorDeleting,
   getConnectorStatus,
@@ -24,6 +25,7 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = {
   deleteConnector,
   restartConnector,
+  restartTasks,
   pauseConnector,
   resumeConnector,
 };

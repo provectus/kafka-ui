@@ -3,7 +3,7 @@ import React from 'react';
 import fetchMock from 'fetch-mock';
 import { createMemoryHistory } from 'history';
 import { render } from 'lib/testHelpers';
-import { Route, Router } from 'react-router';
+import { Route, Router } from 'react-router-dom';
 import {
   clusterConsumerGroupDetailsPath,
   clusterConsumerGroupResetOffsetsPath,
@@ -16,6 +16,7 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
+import { act } from '@testing-library/react';
 
 const clusterName = 'cluster1';
 const { groupId } = consumerGroupPayload;
@@ -92,20 +93,18 @@ describe('Details component', () => {
 
     it('handles [Delete consumer group] click', async () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-      userEvent.click(screen.getByText('Delete consumer group'));
-
-      await waitFor(() =>
-        expect(screen.queryByRole('dialog')).toBeInTheDocument()
-      );
-
+      await act(() => {
+        userEvent.click(screen.getByText('Delete consumer group'));
+      });
+      expect(screen.queryByRole('dialog')).toBeInTheDocument();
       const deleteConsumerGroupMock = fetchMock.deleteOnce(
         `/api/clusters/${clusterName}/consumer-groups/${groupId}`,
         200
       );
-      userEvent.click(screen.getByText('Submit'));
-      await waitFor(() =>
-        expect(deleteConsumerGroupMock.called()).toBeTruthy()
-      );
+      await act(() => {
+        userEvent.click(screen.getByText('Submit'));
+      });
+      expect(deleteConsumerGroupMock.called()).toBeTruthy();
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       expect(history.location.pathname).toEqual(
         clusterConsumerGroupsPath(clusterName)

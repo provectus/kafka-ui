@@ -4,12 +4,12 @@ import loader from 'redux/reducers/loader/loaderSlice';
 import brokers from 'redux/reducers/brokers/brokersSlice';
 import alerts from 'redux/reducers/alerts/alertsSlice';
 import schemas from 'redux/reducers/schemas/schemasSlice';
+import connect from 'redux/reducers/connect/connectSlice';
 
 import topics from './topics/reducer';
-import topicMessages from './topicMessages/reducer';
+import topicMessages from './topicMessages/topicMessagesSlice';
 import consumerGroups from './consumerGroups/consumerGroupsSlice';
-import connect from './connect/reducer';
-import ksqlDb from './ksqlDb/reducer';
+import ksqlDb from './ksqlDb/ksqlDbSlice';
 import legacyLoader from './loader/reducer';
 import legacyAlerts from './alerts/reducer';
 

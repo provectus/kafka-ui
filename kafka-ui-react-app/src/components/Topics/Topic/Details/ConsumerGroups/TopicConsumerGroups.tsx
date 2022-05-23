@@ -7,11 +7,14 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 import { Link } from 'react-router-dom';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import getTagColor from 'components/common/Tag/getTagColor';
 
-interface Props extends Topic, TopicDetails {
+export interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
   consumerGroups: ConsumerGroup[];
+  isFetched: boolean;
   fetchTopicConsumerGroups(
     clusterName: ClusterName,
     topicName: TopicName
@@ -23,10 +26,15 @@ const TopicConsumerGroups: React.FC<Props> = ({
   fetchTopicConsumerGroups,
   clusterName,
   topicName,
+  isFetched,
 }) => {
   React.useEffect(() => {
     fetchTopicConsumerGroups(clusterName, topicName);
-  }, []);
+  }, [clusterName, fetchTopicConsumerGroups, topicName]);
+
+  if (!isFetched) {
+    return <PageLoader />;
+  }
 
   return (
     <div>
@@ -57,7 +65,7 @@ const TopicConsumerGroups: React.FC<Props> = ({
               <td>{consumer.coordinator?.id}</td>
               <td>
                 {consumer.state && (
-                  <Tag color="yellow">{`${consumer.state
+                  <Tag color={getTagColor(consumer)}>{`${consumer.state
                     .charAt(0)
                     .toUpperCase()}${consumer.state
                     .slice(1)

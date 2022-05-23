@@ -19,10 +19,13 @@ import {
   TopicsState,
   FailurePayload,
   TopicFormData,
+  AppDispatch,
 } from 'redux/interfaces';
+import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions/actions';
 import { getResponse } from 'lib/errorHandling';
+import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const topicsApiClient = new TopicsApi(apiClientConf);
@@ -61,37 +64,12 @@ export const fetchTopicsList =
       dispatch(actions.fetchTopicsListAction.failure());
     }
   };
-export const clearTopicMessages =
-  (
-    clusterName: ClusterName,
-    topicName: TopicName,
-    partitions?: number[]
-  ): PromiseThunkResult =>
-  async (dispatch) => {
-    dispatch(actions.clearMessagesTopicAction.request());
-    try {
-      await messagesApiClient.deleteTopicMessages({
-        clusterName,
-        topicName,
-        partitions,
-      });
-      dispatch(actions.clearMessagesTopicAction.success());
-    } catch (e) {
-      const response = await getResponse(e);
-      const alert: FailurePayload = {
-        subject: [clusterName, topicName, partitions].join('-'),
-        title: `Clear Topic Messages`,
-        response,
-      };
-      dispatch(actions.clearMessagesTopicAction.failure({ alert }));
-    }
-  };
 
 export const clearTopicsMessages =
   (clusterName: ClusterName, topicsName: TopicName[]): PromiseThunkResult =>
   async (dispatch) => {
     topicsName.forEach((topicName) => {
-      dispatch(clearTopicMessages(clusterName, topicName));
+      dispatch(clearTopicMessages({ clusterName, topicName }));
     });
   };
 
@@ -256,6 +234,28 @@ export const deleteTopic =
       dispatch(actions.deleteTopicAction.success(topicName));
     } catch (e) {
       dispatch(actions.deleteTopicAction.failure());
+    }
+  };
+
+export const recreateTopic =
+  (clusterName: ClusterName, topicName: TopicName): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.recreateTopicAction.request());
+    try {
+      const topic = await topicsApiClient.recreateTopic({
+        clusterName,
+        topicName,
+      });
+      dispatch(actions.recreateTopicAction.success(topic));
+
+      (dispatch as AppDispatch)(
+        showSuccessAlert({
+          id: topicName,
+          message: 'Topic successfully recreated!',
+        })
+      );
+    } catch (e) {
+      dispatch(actions.recreateTopicAction.failure());
     }
   };
 

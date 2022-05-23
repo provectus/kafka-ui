@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
   CompatibilityLevelCompatibilityEnum,
@@ -16,11 +16,16 @@ import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
   schemaAdded,
   schemasApiClient,
+  fetchLatestSchema,
+  getSchemaLatest,
+  SCHEMA_LATEST_FETCH_ACTION,
+  getAreSchemaLatestFulfilled,
   schemaUpdated,
-  selectSchemaById,
 } from 'redux/reducers/schemas/schemasSlice';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 
 import * as S from './Edit.styled';
 
@@ -37,7 +42,15 @@ const Edit: React.FC = () => {
     handleSubmit,
   } = methods;
 
-  const schema = useAppSelector((state) => selectSchemaById(state, subject));
+  React.useEffect(() => {
+    dispatch(fetchLatestSchema({ clusterName, subject }));
+    return () => {
+      dispatch(resetLoaderById(SCHEMA_LATEST_FETCH_ACTION));
+    };
+  }, [clusterName, dispatch, subject]);
+
+  const schema = useAppSelector((state) => getSchemaLatest(state));
+  const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
 
   const formatedSchema = React.useMemo(() => {
     return schema?.schemaType === SchemaType.PROTOBUF
@@ -45,47 +58,60 @@ const Edit: React.FC = () => {
       : JSON.stringify(JSON.parse(schema?.schema || '{}'), null, '\t');
   }, [schema]);
 
-  const onSubmit = React.useCallback(async (props: NewSchemaSubjectRaw) => {
-    if (!schema) return;
+  const onSubmit = React.useCallback(
+    async (props: NewSchemaSubjectRaw) => {
+      if (!schema) return;
 
-    try {
-      if (dirtyFields.newSchema || dirtyFields.schemaType) {
-        const resp = await schemasApiClient.createNewSchema({
-          clusterName,
-          newSchemaSubject: {
-            ...schema,
-            schema: props.newSchema || schema.schema,
-            schemaType: props.schemaType || schema.schemaType,
-          },
-        });
-        dispatch(schemaAdded(resp));
+      try {
+        if (dirtyFields.newSchema || dirtyFields.schemaType) {
+          const resp = await schemasApiClient.createNewSchema({
+            clusterName,
+            newSchemaSubject: {
+              ...schema,
+              schema: props.newSchema || schema.schema,
+              schemaType: props.schemaType || schema.schemaType,
+            },
+          });
+          dispatch(schemaAdded(resp));
+        }
+
+        if (dirtyFields.compatibilityLevel) {
+          await schemasApiClient.updateSchemaCompatibilityLevel({
+            clusterName,
+            subject,
+            compatibilityLevel: {
+              compatibility: props.compatibilityLevel,
+            },
+          });
+          dispatch(
+            schemaUpdated({
+              ...schema,
+              compatibilityLevel: props.compatibilityLevel,
+            })
+          );
+        }
+
+        history.push(clusterSchemaPath(clusterName, subject));
+      } catch (e) {
+        const err = await getResponse(e as Response);
+        dispatch(serverErrorAlertAdded(err));
       }
+    },
+    [
+      clusterName,
+      dirtyFields.compatibilityLevel,
+      dirtyFields.newSchema,
+      dirtyFields.schemaType,
+      dispatch,
+      history,
+      schema,
+      subject,
+    ]
+  );
 
-      if (dirtyFields.compatibilityLevel) {
-        await schemasApiClient.updateSchemaCompatibilityLevel({
-          clusterName,
-          subject,
-          compatibilityLevel: {
-            compatibility: props.compatibilityLevel,
-          },
-        });
-        dispatch(
-          schemaUpdated({
-            ...schema,
-            compatibilityLevel: props.compatibilityLevel,
-          })
-        );
-      }
-
-      history.push(clusterSchemaPath(clusterName, subject));
-    } catch (e) {
-      const err = await getResponse(e as Response);
-      dispatch(serverErrorAlertAdded(err));
-    }
-  }, []);
-
-  if (!schema) return null;
-
+  if (!isFetched || !schema) {
+    return <PageLoader />;
+  }
   return (
     <FormProvider {...methods}>
       <PageHeading text="Edit schema" />

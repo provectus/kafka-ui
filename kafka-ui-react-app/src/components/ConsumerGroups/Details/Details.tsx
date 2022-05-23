@@ -7,7 +7,7 @@ import {
 import { ConsumerGroupID } from 'redux/interfaces/consumerGroup';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
@@ -15,7 +15,6 @@ import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import { Colors } from 'theme/theme';
 import { groupBy } from 'lodash';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
@@ -27,6 +26,7 @@ import {
   getIsConsumerGroupDeleted,
   getAreConsumerGroupDetailsFulfilled,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
+import getTagColor from 'components/common/Tag/getTagColor';
 
 import ListItem from './ListItem';
 
@@ -47,7 +47,7 @@ const Details: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
-  }, [fetchConsumerGroupDetails, clusterName, consumerGroupID]);
+  }, [clusterName, consumerGroupID, dispatch]);
 
   const onDelete = () => {
     setIsConfirmationModalVisible(false);
@@ -57,7 +57,7 @@ const Details: React.FC = () => {
     if (isDeleted) {
       history.push(clusterConsumerGroupsPath(clusterName));
     }
-  }, [isDeleted]);
+  }, [clusterName, history, isDeleted]);
 
   const onResetOffsets = () => {
     history.push(
@@ -79,8 +79,8 @@ const Details: React.FC = () => {
             <Dropdown label={<VerticalElipsisIcon />} right>
               <DropdownItem onClick={onResetOffsets}>Reset offset</DropdownItem>
               <DropdownItem
-                style={{ color: Colors.red[50] }}
                 onClick={() => setIsConfirmationModalVisible(true)}
+                danger
               >
                 Delete consumer group
               </DropdownItem>
@@ -91,7 +91,7 @@ const Details: React.FC = () => {
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="State">
-            <Tag color="yellow">{consumerGroup.state}</Tag>
+            <Tag color={getTagColor(consumerGroup)}>{consumerGroup.state}</Tag>
           </Metrics.Indicator>
           <Metrics.Indicator label="Members">
             {consumerGroup.members}

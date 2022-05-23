@@ -22,7 +22,8 @@
   },
   "plugins": [
     "@typescript-eslint",
-    "prettier"
+    "prettier",
+    "react-hooks"
   ],
   "extends": [
     "airbnb",
@@ -40,6 +41,9 @@
     "jsx-a11y/label-has-associated-control": "off",
     "import/prefer-default-export": "off",
     "@typescript-eslint/no-explicit-any": "error",
+    "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+    // breaks builds as we still have those warns
+    "react-hooks/exhaustive-deps": "off", // Checks effect dependencies
     "import/no-extraneous-dependencies": [
       "error",
       {

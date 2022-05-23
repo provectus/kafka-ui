@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { Link } from 'react-router-dom';
 
 export const Layout = styled.div`
   min-width: 1200px;
@@ -35,7 +36,7 @@ export const Sidebar = styled.div<{ $visible: boolean }>(
     overflow-y: scroll;
     transition: width 0.25s, opacity 0.25s, transform 0.25s,
       -webkit-transform 0.25s;
-    background: ${theme.menuStyles.backgroundColor.normal};
+    background: ${theme.menu.backgroundColor.normal};
     @media screen and (max-width: 1023px) {
       ${$visible &&
       `transform: translate3d(${theme.layout.navBarWidth}, 0, 0)`};
@@ -99,7 +100,7 @@ export const Navbar = styled.nav(
     left: 0;
     right: 0;
     z-index: 30;
-    background-color: ${theme.menuStyles.backgroundColor.normal};
+    background-color: ${theme.menu.backgroundColor.normal};
     min-height: 3.25rem;
   `
 );
@@ -132,7 +133,7 @@ export const NavbarBurger = styled.div(
     padding: 0;
 
     &:hover {
-      background-color: ${theme.menuStyles.backgroundColor.hover};
+      background-color: ${theme.menu.backgroundColor.hover};
     }
 
     @media screen and (min-width: 1024px) {
@@ -145,7 +146,7 @@ export const Span = styled.span(
   ({ theme }) => css`
     display: block;
     position: absolute;
-    background: ${theme.menuStyles.color.active};
+    background: ${theme.menu.color.active};
     height: 1px;
     left: calc(50% - 8px);
     transform-origin: center;
@@ -166,22 +167,28 @@ export const Span = styled.span(
   `
 );
 
-export const Hyperlink = styled.a(
+export const Hyperlink = styled(Link)(
   ({ theme }) => css`
-    display: flex;
     position: relative;
+
+    display: flex;
     flex-grow: 0;
     flex-shrink: 0;
     align-items: center;
+    gap: 8px;
+
     margin: 0;
-    color: ${theme.menuStyles.color.active};
-    font-size: 1.25rem;
-    font-weight: 600;
-    cursor: pointer;
-    line-height: 1.5;
     padding: 0.5rem 0.75rem;
+
+    font-family: Inter, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 16px;
+    color: ${theme.menu.color.active};
     text-decoration: none;
     word-break: break-word;
+    cursor: pointer;
   `
 );
 

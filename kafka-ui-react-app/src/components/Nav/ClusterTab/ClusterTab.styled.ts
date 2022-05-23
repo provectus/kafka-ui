@@ -1,8 +1,10 @@
 import styled, { css } from 'styled-components';
 import { ServerStatus } from 'generated-sources';
 
-export const Wrapper = styled.li.attrs({ role: 'menuitem' })(
-  ({ theme }) => css`
+export const Wrapper = styled.li.attrs({ role: 'menuitem' })<{
+  isOpen: boolean;
+}>(
+  ({ theme, isOpen }) => css`
     font-size: 14px;
     font-weight: 500;
     user-select: none;
@@ -10,7 +12,7 @@ export const Wrapper = styled.li.attrs({ role: 'menuitem' })(
     display: grid;
     grid-template-columns: min-content min-content auto min-content;
     grid-template-areas: 'title status . chevron';
-    gap: 0px 5px;
+    gap: 0 5px;
 
     padding: 0.5em 0.75em;
     cursor: pointer;
@@ -18,18 +20,22 @@ export const Wrapper = styled.li.attrs({ role: 'menuitem' })(
     margin: 0;
     line-height: 20px;
     align-items: center;
-    color: ${theme.menuStyles.color.normal};
-    background-color: ${theme.menuStyles.backgroundColor.normal};
+    color: ${isOpen ? theme.menu.color.isOpen : theme.menu.color.normal};
+    background-color: ${theme.menu.backgroundColor.normal};
 
     &:hover {
-      background-color: ${theme.menuStyles.backgroundColor.hover};
-      color: ${theme.menuStyles.color.hover};
+      background-color: ${theme.menu.backgroundColor.hover};
+      color: ${theme.menu.color.hover};
     }
   `
 );
 
-export const Title = styled.span`
+export const Title = styled.div`
   grid-area: title;
+  white-space: nowrap;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const StatusIconWrapper = styled.svg.attrs({
@@ -46,13 +52,20 @@ export const StatusIcon = styled.circle.attrs({
   cx: 2,
   cy: 2,
   r: 2,
-})<{ status: ServerStatus }>(
-  ({ theme, status }) => css`
-    fill: ${status === ServerStatus.ONLINE
-      ? theme.menuStyles.statusIconColor.online
-      : theme.menuStyles.statusIconColor.offline};
-  `
-);
+  role: 'status-circle',
+})<{ status: ServerStatus }>(({ theme, status }) => {
+  const statusColor: {
+    [k in ServerStatus]: string;
+  } = {
+    [ServerStatus.ONLINE]: theme.menu.statusIconColor.online,
+    [ServerStatus.OFFLINE]: theme.menu.statusIconColor.offline,
+    [ServerStatus.INITIALIZING]: theme.menu.statusIconColor.initializing,
+  };
+
+  return css`
+    fill: ${statusColor[status]};
+  `;
+});
 
 export const ChevronWrapper = styled.svg.attrs({
   viewBox: '0 0 10 6',
@@ -69,5 +82,5 @@ type ChevronIconProps = { $open: boolean };
 export const ChevronIcon = styled.path.attrs<ChevronIconProps>(({ $open }) => ({
   d: $open ? 'M8.99988 5L4.99988 1L0.999878 5' : 'M1 1L5 5L9 1',
 }))<ChevronIconProps>`
-  stroke: ${({ theme }) => theme.menuStyles.chevronIconColor};
+  stroke: ${({ theme }) => theme.menu.chevronIconColor};
 `;

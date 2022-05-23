@@ -15,7 +15,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { groupBy } from 'lodash';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ErrorMessage } from '@hookform/error-message';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import Select from 'components/common/Select/Select';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { Button } from 'components/common/Button/Button';
@@ -59,7 +59,7 @@ const ResetOffsets: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
-  }, [clusterName, consumerGroupID]);
+  }, [clusterName, consumerGroupID, dispatch]);
 
   const [uniqueTopics, setUniqueTopics] = React.useState<string[]>([]);
   const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
@@ -96,7 +96,7 @@ const ResetOffsets: React.FC = () => {
       setValue('topic', consumerGroup.partitions[0].topic);
       setUniqueTopics(Object.keys(groupBy(consumerGroup.partitions, 'topic')));
     }
-  }, [isFetched]);
+  }, [consumerGroup?.partitions, isFetched, setValue]);
 
   const onSelectedPartitionsChange = (value: Option[]) => {
     clearErrors();
@@ -117,6 +117,7 @@ const ResetOffsets: React.FC = () => {
 
   React.useEffect(() => {
     onSelectedPartitionsChange([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topicValue]);
 
   const onSubmit = (data: FormType) => {
@@ -169,7 +170,7 @@ const ResetOffsets: React.FC = () => {
         clusterConsumerGroupDetailsPath(clusterName, consumerGroupID)
       );
     }
-  }, [isOffsetReseted]);
+  }, [clusterName, consumerGroupID, dispatch, history, isOffsetReseted]);
 
   if (!isFetched || !consumerGroup) {
     return <PageLoader />;

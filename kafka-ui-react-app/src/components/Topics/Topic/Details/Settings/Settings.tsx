@@ -1,3 +1,4 @@
+import PageLoader from 'components/common/PageLoader/PageLoader';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { TopicConfig } from 'generated-sources';
@@ -25,7 +26,11 @@ const Settings: React.FC<Props> = ({
     fetchTopicConfig(clusterName, topicName);
   }, [fetchTopicConfig, clusterName, topicName]);
 
-  if (!isFetched || !config) {
+  if (!isFetched) {
+    return <PageLoader />;
+  }
+
+  if (!config) {
     return null;
   }
 

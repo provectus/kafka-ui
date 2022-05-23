@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.service;
 import com.provectus.kafka.ui.model.ConsumerGroupOrderingDTO;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.SortOrderDTO;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.function.Function;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -113,13 +114,18 @@ public class ConsumerGroupService {
       int page,
       int perPage,
       @Nullable String search,
-      ConsumerGroupOrderingDTO orderBy) {
+      ConsumerGroupOrderingDTO orderBy,
+      SortOrderDTO sortOrderDto
+  ) {
+    var comparator = sortOrderDto.equals(SortOrderDTO.ASC)
+        ? getPaginationComparator(orderBy)
+        : getPaginationComparator(orderBy).reversed();
     return adminClientService.get(cluster).flatMap(ac ->
         describeConsumerGroups(ac, search).flatMap(descriptions ->
             getConsumerGroups(
                 ac,
                 descriptions.stream()
-                    .sorted(getPaginationComparator(orderBy))
+                    .sorted(comparator)
                     .skip((long) (page - 1) * perPage)
                     .limit(perPage)
                     .collect(Collectors.toList())
@@ -135,18 +141,25 @@ public class ConsumerGroupService {
       case NAME:
         return Comparator.comparing(ConsumerGroupDescription::groupId);
       case STATE:
-        Function<ConsumerGroupDescription, Integer> statesPriorities = cg -> {
+        ToIntFunction<ConsumerGroupDescription> statesPriorities = cg -> {
           switch (cg.state()) {
-            case STABLE: return 0;
-            case COMPLETING_REBALANCE: return 1;
-            case PREPARING_REBALANCE: return 2;
-            case EMPTY: return 3;
-            case DEAD: return 4;
-            case UNKNOWN: return 5;
-            default: return 100;
+            case STABLE:
+              return 0;
+            case COMPLETING_REBALANCE:
+              return 1;
+            case PREPARING_REBALANCE:
+              return 2;
+            case EMPTY:
+              return 3;
+            case DEAD:
+              return 4;
+            case UNKNOWN:
+              return 5;
+            default:
+              return 100;
           }
         };
-        return Comparator.comparingInt(statesPriorities::apply);
+        return Comparator.comparingInt(statesPriorities);
       case MEMBERS:
         return Comparator.comparingInt(cg -> -cg.members().size());
       default:
@@ -196,6 +209,8 @@ public class ConsumerGroupService {
     props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
     props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+    props.put(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG, "false");
     props.putAll(properties);
 
     return new KafkaConsumer<>(props);

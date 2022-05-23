@@ -1,10 +1,12 @@
 import React from 'react';
-import { Switch } from 'react-router-dom';
+import { Switch, Redirect } from 'react-router-dom';
 import {
   clusterConnectorsPath,
+  clusterConnectsPath,
   clusterConnectorNewPath,
   clusterConnectConnectorPath,
   clusterConnectConnectorEditPath,
+  clusterConnectConnectorsPath,
 } from 'lib/paths';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
@@ -42,6 +44,14 @@ const Connect: React.FC = () => (
           ':connectorName'
         )}
         component={DetailsContainer}
+      />
+      <Redirect
+        from={clusterConnectConnectorsPath(':clusterName', ':connectName')}
+        to={clusterConnectorsPath(':clusterName')}
+      />
+      <Redirect
+        from={`${clusterConnectsPath(':clusterName')}/:connectName`}
+        to={clusterConnectorsPath(':clusterName')}
       />
     </Switch>
   </div>

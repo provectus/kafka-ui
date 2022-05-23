@@ -49,7 +49,12 @@ const Cluster: React.FC = () => {
       hasSchemaRegistryConfigured,
       isTopicDeletionAllowed,
     }),
-    [features]
+    [
+      hasKafkaConnectConfigured,
+      hasSchemaRegistryConfigured,
+      isReadOnly,
+      isTopicDeletionAllowed,
+    ]
   );
 
   return (

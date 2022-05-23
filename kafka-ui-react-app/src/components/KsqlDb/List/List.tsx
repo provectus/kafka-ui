@@ -3,8 +3,8 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import ListItem from 'components/KsqlDb/List/ListItem';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router';
-import { fetchKsqlDbTables } from 'redux/actions/thunks/ksqlDb';
+import { useParams } from 'react-router-dom';
+import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
 import { clusterKsqlDbQueryPath } from 'lib/paths';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -32,7 +32,7 @@ const List: FC = () => {
 
   useEffect(() => {
     dispatch(fetchKsqlDbTables(clusterName));
-  }, []);
+  }, [clusterName, dispatch]);
 
   return (
     <>
@@ -67,7 +67,7 @@ const List: FC = () => {
           <Table isFullwidth>
             <thead>
               <tr>
-                <th> </th>
+                <TableHeaderCell title={' '} key="empty cell" />
                 {headers.map(({ Header, accessor }) => (
                   <TableHeaderCell title={Header} key={accessor} />
                 ))}
