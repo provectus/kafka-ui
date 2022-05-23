@@ -1,7 +1,6 @@
 import React from 'react';
 import * as S from 'components/Topics/Topic/Details/Messages/Filters/Filters.styled';
 import { Button } from 'components/common/Button/Button';
-import { InfoCodeSample } from 'components/Topics/Topic/Details/Messages/Filters/Filters.styled';
 
 export interface InfoModalProps {
   toggleIsOpen(): void;
