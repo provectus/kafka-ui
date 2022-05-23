@@ -52,9 +52,10 @@ const Message: React.FC<Props> = ({
       <tr
         onMouseEnter={() => setVEllipsisOpen(true)}
         onMouseLeave={() => setVEllipsisOpen(false)}
+        onClick={toggleIsOpen}
       >
         <td>
-          <IconButtonWrapper onClick={toggleIsOpen} aria-hidden>
+          <IconButtonWrapper aria-hidden>
             <MessageToggleIcon isOpen={isOpen} />
           </IconButtonWrapper>
         </td>
