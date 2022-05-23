@@ -14,7 +14,6 @@ import {
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { useDispatch } from 'react-redux';
-import { deleteTopicAction } from 'redux/actions';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
 import Dropdown from 'components/common/Dropdown/Dropdown';
@@ -84,7 +83,6 @@ const Details: React.FC<Props> = ({
 
   React.useEffect(() => {
     if (isDeleted) {
-      dispatch(deleteTopicAction.cancel());
       history.push(clusterTopicsPath(clusterName));
     }
   }, [isDeleted, clusterName, dispatch, history]);

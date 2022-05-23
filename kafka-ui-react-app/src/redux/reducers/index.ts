@@ -10,7 +10,6 @@ import topicMessages from './topicMessages/topicMessagesSlice';
 import topics from './topics/topicsSlice';
 import consumerGroups from './consumerGroups/consumerGroupsSlice';
 import ksqlDb from './ksqlDb/ksqlDbSlice';
-import legacyLoader from './loader/reducer';
 
 export default combineReducers({
   loader,
@@ -23,5 +22,4 @@ export default combineReducers({
   schemas,
   connect,
   ksqlDb,
-  legacyLoader,
 });
