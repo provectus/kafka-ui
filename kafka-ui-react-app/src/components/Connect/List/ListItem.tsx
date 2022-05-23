@@ -72,7 +72,7 @@ const ListItem: React.FC<ListItemProps> = ({
       <td>{connectorClass}</td>
       <td>
         <S.TagsWrapper>
-          {topics?.map((t: string) => (
+          {topics?.map((t) => (
             <Tag key={t} color="gray">
               <Link to={clusterTopicPath(clusterName, t)}>{t}</Link>
             </Tag>
