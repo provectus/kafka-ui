@@ -126,6 +126,35 @@ describe('New', () => {
     expect(mockedHistory.push).toBeCalledTimes(1);
   });
 
+  it('not to redirect if request is not fulffiled', async () => {
+    const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
+    const useDispatchMock = jest.fn(() => ({
+      meta: { requestStatus: 'pending' },
+    })) as jest.Mock;
+    useDispatchSpy.mockReturnValue(useDispatchMock);
+
+    const mockedHistory = createMemoryHistory({
+      initialEntries: [clusterTopicNewPath(clusterName)],
+    });
+
+    jest.spyOn(mockedHistory, 'push');
+
+    await act(() => {
+      renderComponent(mockedHistory);
+    });
+
+    await waitFor(() => {
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+      userEvent.click(screen.getByText(/submit/i));
+    });
+
+    await waitFor(() =>
+      expect(mockedHistory.location.pathname).toBe(
+        clusterTopicNewPath(clusterName)
+      )
+    );
+  });
+
   it('submits valid form that result in an error', async () => {
     const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
     const useDispatchMock = jest.fn();
