@@ -12,6 +12,7 @@ import {
   clusterConnectsPath,
   clusterConsumerGroupsPath,
   clusterKsqlDbPath,
+  clusterPath,
   clusterSchemasPath,
   clusterTopicsPath,
 } from 'lib/paths';
@@ -105,10 +106,9 @@ const Cluster: React.FC = () => {
               </BreadcrumbRoute>
             </Route>
           )}
-          <Redirect
-            from="/ui/clusters/:clusterName"
-            to="/ui/clusters/:clusterName/brokers"
-          />
+          <Route path={clusterPath()}>
+            <Redirect to="/ui/clusters/:clusterName/brokers" />
+          </Route>
         </Switch>
       </ClusterContext.Provider>
     </BreadcrumbProvider>

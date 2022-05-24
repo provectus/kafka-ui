@@ -38,14 +38,12 @@ const Connect: React.FC = () => (
           <DetailsContainer />
         </BreadcrumbRoute>
       </Route>
-      <Redirect
-        from={clusterConnectConnectorsPath()}
-        to={clusterConnectorsPath()}
-      />
-      <Redirect
-        from={`${clusterConnectsPath()}/:connectName`}
-        to={clusterConnectorsPath()}
-      />
+      <Route path={clusterConnectConnectorsPath()}>
+        <Redirect to={clusterConnectorsPath()} />
+      </Route>
+      <Route path={`${clusterConnectsPath()}/:connectName`}>
+        <Redirect to={clusterConnectorsPath()} />
+      </Route>
     </Switch>
   </div>
 );
