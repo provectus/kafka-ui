@@ -1,5 +1,5 @@
 ---
-version: '2'
+version: '3.5'
 services:
 
   kafka-ui:
@@ -7,6 +7,8 @@ services:
     image: provectuslabs/kafka-ui:latest
     ports:
       - 8080:8080
+    networks:
+      - kafka-ui
     extra_hosts:
       - host.docker.internal:host-gateway
     depends_on:
@@ -33,6 +35,8 @@ services:
 
   zookeeper0:
     image: confluentinc/cp-zookeeper:5.2.4
+    networks:
+      - kafka-ui
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -41,6 +45,8 @@ services:
 
   kafka0:
     image: confluentinc/cp-kafka:5.3.1
+    networks:
+      - kafka-ui
     depends_on:
       - zookeeper0
     ports:
@@ -60,12 +66,16 @@ services:
 
   zookeeper1:
     image: confluentinc/cp-zookeeper:5.2.4
+    networks:
+      - kafka-ui
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka1:
     image: confluentinc/cp-kafka:5.3.1
+    networks:
+      - kafka-ui
     depends_on:
       - zookeeper1
     ports:
@@ -85,6 +95,8 @@ services:
 
   schemaregistry0:
     image: confluentinc/cp-schema-registry:5.5.0
+    networks:
+      - kafka-ui
     ports:
       - 8085:8085
     depends_on:
@@ -103,6 +115,8 @@ services:
 
   schemaregistry1:
     image: confluentinc/cp-schema-registry:5.5.0
+    networks:
+      - kafka-ui
     ports:
       - 18085:8085
     depends_on:
@@ -126,6 +140,8 @@ services:
         image: confluentinc/cp-kafka-connect:6.0.1
     ports:
       - 8083:8083
+    networks:
+      - kafka-ui
     depends_on:
       - kafka0
       - schemaregistry0
@@ -151,6 +167,8 @@ services:
 
   kafka-init-topics:
     image: confluentinc/cp-kafka:5.3.1
+    networks:
+      - kafka-ui
     volumes:
       - ./message.json:/data/message.json
     depends_on:
@@ -167,6 +185,8 @@ services:
       context: ./postgres
       args:
         image: postgres:9.6.22
+    networks:
+      - kafka-ui
     ports:
       - 5432:5432
     environment:
@@ -175,6 +195,8 @@ services:
 
   create-connectors:
     image: ellerbrock/alpine-bash-curl-ssl
+    networks:
+      - kafka-ui
     depends_on:
       - postgres-db
       - kafka-connect0
@@ -184,6 +206,8 @@ services:
 
   ksqldb:
     image: confluentinc/ksqldb-server:0.18.0
+    networks:
+      - kafka-ui
     depends_on:
       - kafka0
       - kafka-connect0
@@ -201,3 +225,8 @@ services:
       KSQL_KSQL_SERVICE_ID: my_ksql_1
       KSQL_KSQL_HIDDEN_TOPICS: '^_.*'
       KSQL_CACHE_MAX_BYTES_BUFFERING: 0
+
+networks:
+  kafka-ui:
+    driver: bridge
+    name: kafka-ui
