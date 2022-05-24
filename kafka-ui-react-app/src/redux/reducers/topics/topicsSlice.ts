@@ -291,12 +291,12 @@ export const deleteTopics = createAsyncThunk<
     clusterName: ClusterName;
     topicNames: TopicName[];
   }
->('topic/deleteTopics', async (payload, { rejectWithValue }) => {
+>('topic/deleteTopics', async (payload, { rejectWithValue, dispatch }) => {
   try {
     const { clusterName, topicNames } = payload;
 
     topicNames.forEach((topicName) => {
-      deleteTopic({ clusterName, topicName });
+      dispatch(deleteTopic({ clusterName, topicName }));
     });
 
     return undefined;
@@ -375,7 +375,7 @@ const topicsSlice = createSlice({
     builder.addCase(fetchTopicConfig.fulfilled, (state, { payload }) => {
       state.byName[payload.topicName] = {
         ...state.byName[payload.topicName],
-        config: payload.topicConfig.map((config) => ({ ...config })),
+        config: payload.topicConfig,
       };
     });
     builder.addCase(

@@ -2,6 +2,7 @@ import {
   MessageSchemaSourceEnum,
   SortOrder,
   TopicColumnsToSort,
+  ConfigSource,
 } from 'generated-sources';
 import reducer, {
   clearTopicsMessages,
@@ -16,12 +17,18 @@ import reducer, {
   fetchTopicDetails,
   fetchTopicConfig,
   updateTopic,
+  updateTopicPartitionsCount,
+  updateTopicReplicationFactor,
+  deleteTopics,
 } from 'redux/reducers/topics/topicsSlice';
 import {
   createTopicPayload,
   createTopicResponsePayload,
 } from 'components/Topics/New/__test__/fixtures';
 import { consumerGroupPayload } from 'redux/reducers/consumerGroups/__test__/fixtures';
+import fetchMock from 'fetch-mock-jest';
+import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
+import { getTypeAndPayload } from 'lib/testHelpers';
 
 const topic = {
   name: 'topic',
@@ -78,12 +85,49 @@ const messageSchema = {
 };
 
 const config = [
-  { 'cleanup.policy': 'delete' },
-  { 'retention.ms': '604800000' },
-  { 'retention.bytes': '-1' },
-  { 'max.message.bytes': '1000012' },
-  { 'min.insync.replicas': '1' },
+  {
+    name: 'compression.type',
+    value: 'producer',
+    defaultValue: 'producer',
+    source: ConfigSource.DYNAMIC_TOPIC_CONFIG,
+    isSensitive: false,
+    isReadOnly: false,
+    synonyms: [
+      {
+        name: 'compression.type',
+        value: 'producer',
+        source: ConfigSource.DYNAMIC_TOPIC_CONFIG,
+      },
+      {
+        name: 'compression.type',
+        value: 'producer',
+        source: ConfigSource.DEFAULT_CONFIG,
+      },
+    ],
+  },
 ];
+const details = {
+  name: 'local',
+  internal: false,
+  partitionCount: 1,
+  replicationFactor: 1,
+  replicas: 1,
+  inSyncReplicas: 1,
+  segmentSize: 0,
+  segmentCount: 0,
+  cleanUpPolicy: 'DELETE',
+  partitions: [
+    {
+      partition: 0,
+      leader: 1,
+      replicas: [{ broker: 1, leader: false, inSync: true }],
+      offsetMax: 0,
+      offsetMin: 0,
+    },
+  ],
+  bytesInPerSec: 0.1,
+  bytesOutPerSec: 0.1,
+};
 
 let state = {
   byName: {
@@ -97,217 +141,616 @@ let state = {
   sortOrder: SortOrder.ASC,
   consumerGroups: [],
 };
+const clusterName = 'local';
 
-describe('topics reducer', () => {
-  const clusterName = 'local';
-  describe('fetch topic details', () => {
-    it('fetchTopicDetails/fulfilled', () => {
-      expect(
-        reducer(state, {
-          type: fetchTopicDetails.fulfilled,
-          payload: {
-            clusterName,
-            topicName: topic.name,
-            topicDetails: createTopicResponsePayload,
+describe('topics Slice', () => {
+  describe('topics reducer', () => {
+    describe('fetch topic details', () => {
+      it('fetchTopicDetails/fulfilled', () => {
+        expect(
+          reducer(state, {
+            type: fetchTopicDetails.fulfilled,
+            payload: {
+              clusterName,
+              topicName: topic.name,
+              topicDetails: details,
+            },
+          })
+        ).toEqual({
+          ...state,
+          byName: {
+            [topic.name]: {
+              ...topic,
+              ...details,
+            },
           },
-        })
-      ).toEqual({
-        ...state,
-        byName: {
-          [topic.name]: {
-            ...topic,
-            ...createTopicResponsePayload,
+          allNames: [topic.name],
+        });
+      });
+    });
+    describe('fetch topics', () => {
+      it('fetchTopicsList/fulfilled', () => {
+        expect(
+          reducer(state, {
+            type: fetchTopicsList.fulfilled,
+            payload: { clusterName, topicName: topic.name },
+          })
+        ).toEqual({
+          ...state,
+          byName: { topic },
+          allNames: [topic.name],
+        });
+      });
+    });
+    describe('fetch topic config', () => {
+      it('fetchTopicConfig/fulfilled', () => {
+        expect(
+          reducer(state, {
+            type: fetchTopicConfig.fulfilled,
+            payload: {
+              clusterName,
+              topicName: topic.name,
+              topicConfig: config,
+            },
+          })
+        ).toEqual({
+          ...state,
+          byName: {
+            [topic.name]: {
+              ...topic,
+              config: config.map((conf) => ({ ...conf })),
+            },
           },
-        },
-        allNames: [topic.name],
+          allNames: [topic.name],
+        });
+      });
+    });
+    describe('update topic', () => {
+      it('updateTopic/fulfilled', () => {
+        const updatedTopic = {
+          name: 'topic',
+          id: 'id',
+          partitions: 1,
+        };
+        expect(
+          reducer(state, {
+            type: updateTopic.fulfilled,
+            payload: {
+              clusterName,
+              topicName: topic.name,
+              topic: updatedTopic,
+            },
+          })
+        ).toEqual({
+          ...state,
+          byName: {
+            [topic.name]: {
+              ...updatedTopic,
+            },
+          },
+        });
+      });
+    });
+    describe('delete topic', () => {
+      it('deleteTopic/fulfilled', () => {
+        expect(
+          reducer(state, {
+            type: deleteTopic.fulfilled,
+            payload: { clusterName, topicName: topic.name },
+          })
+        ).toEqual({
+          ...state,
+          byName: {},
+          allNames: [],
+        });
+      });
+
+      it('clearTopicsMessages/fulfilled', () => {
+        expect(
+          reducer(state, {
+            type: clearTopicsMessages.fulfilled,
+            payload: { clusterName, topicName: topic.name },
+          })
+        ).toEqual({
+          ...state,
+          messages: [],
+        });
+      });
+
+      it('recreateTopic/fulfilled', () => {
+        expect(
+          reducer(state, {
+            type: recreateTopic.fulfilled,
+            payload: { topic, topicName: topic.name },
+          })
+        ).toEqual({
+          ...state,
+          byName: {
+            [topic.name]: topic,
+          },
+        });
+      });
+    });
+
+    describe('create topics', () => {
+      it('createTopic/fulfilled', () => {
+        expect(
+          reducer(state, {
+            type: createTopic.fulfilled,
+            payload: { clusterName, data: createTopicPayload },
+          })
+        ).toEqual({
+          ...state,
+        });
+      });
+    });
+
+    describe('search topics', () => {
+      it('setTopicsSearch', () => {
+        expect(
+          reducer(state, {
+            type: setTopicsSearch,
+            payload: 'test',
+          })
+        ).toEqual({
+          ...state,
+          search: 'test',
+        });
+      });
+    });
+
+    describe('order topics', () => {
+      it('setTopicsOrderBy', () => {
+        expect(
+          reducer(state, {
+            type: setTopicsOrderBy,
+            payload: TopicColumnsToSort.NAME,
+          })
+        ).toEqual({
+          ...state,
+          orderBy: TopicColumnsToSort.NAME,
+        });
+      });
+    });
+
+    describe('topic consumer groups', () => {
+      it('fetchTopicConsumerGroups/fulfilled', () => {
+        expect(
+          reducer(state, {
+            type: fetchTopicConsumerGroups.fulfilled,
+            payload: {
+              clusterName,
+              topicName: topic.name,
+              consumerGroups: consumerGroupPayload,
+            },
+          })
+        ).toEqual({
+          ...state,
+          byName: {
+            [topic.name]: {
+              ...topic,
+              ...consumerGroupPayload,
+            },
+          },
+        });
+      });
+    });
+
+    describe('message sending', () => {
+      it('fetchTopicMessageSchema/fulfilled', () => {
+        state = {
+          byName: {
+            [topic.name]: topic,
+          },
+          allNames: [topic.name],
+          messages: [],
+          totalPages: 1,
+          search: '',
+          orderBy: null,
+          sortOrder: SortOrder.ASC,
+          consumerGroups: [],
+        };
+        expect(
+          reducer(state, {
+            type: fetchTopicMessageSchema.fulfilled,
+            payload: { topicName: topic.name, schema: messageSchema },
+          }).byName
+        ).toEqual({
+          [topic.name]: { ...topic, messageSchema },
+        });
       });
     });
   });
-  describe('fetch topics', () => {
-    it('fetchTopicsList/fulfilled', () => {
-      expect(
-        reducer(state, {
-          type: fetchTopicsList.fulfilled,
-          payload: { clusterName, topicName: topic.name },
-        })
-      ).toEqual({
-        ...state,
-        byName: { topic },
-        allNames: [topic.name],
+  describe('Thunks', () => {
+    const store = mockStoreCreator;
+    const topicName = topic.name;
+
+    afterEach(() => {
+      fetchMock.restore();
+      store.clearActions();
+    });
+    describe('fetchTopicsList', () => {
+      const topicResponse = {
+        pageCount: 1,
+        topics: [createTopicResponsePayload],
+      };
+      it('fetchTopicsList/fulfilled', async () => {
+        fetchMock.getOnce(`/api/clusters/${clusterName}/topics`, topicResponse);
+        await store.dispatch(fetchTopicsList({ clusterName }));
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: fetchTopicsList.pending.type },
+          {
+            type: fetchTopicsList.fulfilled.type,
+            payload: { ...topicResponse },
+          },
+        ]);
+      });
+      it('fetchTopicsList/rejected', async () => {
+        fetchMock.getOnce(`/api/clusters/${clusterName}/topics`, 404);
+        await store.dispatch(fetchTopicsList({ clusterName }));
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: fetchTopicsList.pending.type },
+          {
+            type: fetchTopicsList.rejected.type,
+            payload: {
+              status: 404,
+              statusText: 'Not Found',
+              url: `/api/clusters/${clusterName}/topics`,
+              message: undefined,
+            },
+          },
+        ]);
       });
     });
-  });
-  describe('fetch topic config', () => {
-    it('fetchTopicConfig/fulfilled', () => {
-      expect(
-        reducer(state, {
-          type: fetchTopicConfig.fulfilled,
-          payload: {
-            clusterName,
-            topicName: topic.name,
-            topicConfig: config,
+    describe('fetchTopicDetails', () => {
+      it('fetchTopicDetails/fulfilled', async () => {
+        fetchMock.getOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}`,
+          details
+        );
+        await store.dispatch(fetchTopicDetails({ clusterName, topicName }));
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: fetchTopicDetails.pending.type },
+          {
+            type: fetchTopicDetails.fulfilled.type,
+            payload: { topicDetails: { ...details }, topicName },
           },
-        })
-      ).toEqual({
-        ...state,
-        byName: {
-          [topic.name]: {
-            ...topic,
-            config: config.map((conf) => ({ ...conf })),
+        ]);
+      });
+      it('fetchTopicDetails/rejected', async () => {
+        fetchMock.getOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}`,
+          404
+        );
+        await store.dispatch(fetchTopicDetails({ clusterName, topicName }));
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: fetchTopicDetails.pending.type },
+          {
+            type: fetchTopicDetails.rejected.type,
+            payload: {
+              status: 404,
+              statusText: 'Not Found',
+              url: `/api/clusters/${clusterName}/topics/${topicName}`,
+              message: undefined,
+            },
           },
-        },
-        allNames: [topic.name],
+        ]);
       });
     });
-  });
-  describe('update topic', () => {
-    it('updateTopic/fulfilled', () => {
-      const updatedTopic = {
+    describe('fetchTopicConfig', () => {
+      it('fetchTopicConfig/fulfilled', async () => {
+        fetchMock.getOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}/config`,
+          config
+        );
+        await store.dispatch(fetchTopicConfig({ clusterName, topicName }));
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: fetchTopicConfig.pending.type },
+          {
+            type: fetchTopicConfig.fulfilled.type,
+            payload: {
+              topicConfig: config,
+              topicName,
+            },
+          },
+        ]);
+      });
+      it('fetchTopicConfig/rejected', async () => {
+        fetchMock.getOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}/config`,
+          404
+        );
+        await store.dispatch(fetchTopicConfig({ clusterName, topicName }));
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: fetchTopicConfig.pending.type },
+          {
+            type: fetchTopicConfig.rejected.type,
+            payload: {
+              status: 404,
+              statusText: 'Not Found',
+              url: `/api/clusters/${clusterName}/topics/${topicName}/config`,
+              message: undefined,
+            },
+          },
+        ]);
+      });
+    });
+    describe('deleteTopic', () => {
+      it('deleteTopic/fulfilled', async () => {
+        fetchMock.deleteOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}`,
+          topicName
+        );
+        await store.dispatch(deleteTopic({ clusterName, topicName }));
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: deleteTopic.pending.type },
+          {
+            type: deleteTopic.fulfilled.type,
+            payload: { topicName },
+          },
+        ]);
+      });
+      it('deleteTopic/rejected', async () => {
+        fetchMock.deleteOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}`,
+          404
+        );
+        await store.dispatch(deleteTopic({ clusterName, topicName }));
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: deleteTopic.pending.type },
+          {
+            type: deleteTopic.rejected.type,
+            payload: {
+              status: 404,
+              statusText: 'Not Found',
+              url: `/api/clusters/${clusterName}/topics/${topicName}`,
+              message: undefined,
+            },
+          },
+        ]);
+      });
+    });
+    describe('deleteTopics', () => {
+      it('deleteTopics/fulfilled', async () => {
+        fetchMock.delete(`/api/clusters/${clusterName}/topics/${topicName}`, [
+          topicName,
+          'topic2',
+        ]);
+        await store.dispatch(
+          deleteTopics({ clusterName, topicNames: [topicName, 'topic2'] })
+        );
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: deleteTopics.pending.type },
+          { type: deleteTopic.pending.type },
+          { type: deleteTopic.pending.type },
+          { type: deleteTopics.fulfilled.type },
+        ]);
+      });
+    });
+    describe('recreateTopic', () => {
+      const recreateResponse = {
+        cleanUpPolicy: 'DELETE',
+        inSyncReplicas: 1,
+        internal: false,
         name: 'topic',
-        id: 'id',
-        partitions: 1,
+        partitionCount: 1,
+        partitions: undefined,
+        replicas: 1,
+        replicationFactor: 1,
+        segmentCount: 0,
+        segmentSize: 0,
+        underReplicatedPartitions: undefined,
       };
-      expect(
-        reducer(state, {
-          type: updateTopic.fulfilled,
-          payload: { clusterName, topicName: topic.name, topic: updatedTopic },
-        })
-      ).toEqual({
-        ...state,
-        byName: {
-          [topic.name]: {
-            ...updatedTopic,
+      it('recreateTopic/fulfilled', async () => {
+        fetchMock.postOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}`,
+          recreateResponse
+        );
+        await store.dispatch(recreateTopic({ clusterName, topicName }));
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: recreateTopic.pending.type },
+          {
+            type: recreateTopic.fulfilled.type,
+            payload: { topic: { ...recreateResponse } },
           },
+        ]);
+      });
+      it('recreateTopic/rejected', async () => {
+        fetchMock.postOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}`,
+          404
+        );
+        await store.dispatch(recreateTopic({ clusterName, topicName }));
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: recreateTopic.pending.type },
+          {
+            type: recreateTopic.rejected.type,
+            payload: {
+              status: 404,
+              statusText: 'Not Found',
+              url: `/api/clusters/${clusterName}/topics/${topicName}`,
+              message: undefined,
+            },
+          },
+        ]);
+      });
+    });
+    describe('fetchTopicConsumerGroups', () => {
+      const consumerGroups = [
+        {
+          groupId: 'groupId1',
+          members: 0,
+          topics: 1,
+          simple: false,
+          partitionAssignor: '',
+          coordinator: {
+            id: 1,
+            port: undefined,
+            host: 'host',
+          },
+          messagesBehind: undefined,
+          state: undefined,
         },
-      });
-    });
-  });
-  describe('delete topic', () => {
-    it('deleteTopic/fulfilled', () => {
-      expect(
-        reducer(state, {
-          type: deleteTopic.fulfilled,
-          payload: { clusterName, topicName: topic.name },
-        })
-      ).toEqual({
-        ...state,
-        byName: {},
-        allNames: [],
-      });
-    });
-
-    it('clearTopicsMessages/fulfilled', () => {
-      expect(
-        reducer(state, {
-          type: clearTopicsMessages.fulfilled,
-          payload: { clusterName, topicName: topic.name },
-        })
-      ).toEqual({
-        ...state,
-        messages: [],
-      });
-    });
-
-    it('recreateTopic/fulfilled', () => {
-      expect(
-        reducer(state, {
-          type: recreateTopic.fulfilled,
-          payload: { topic, topicName: topic.name },
-        })
-      ).toEqual({
-        ...state,
-        byName: {
-          [topic.name]: topic,
+        {
+          groupId: 'groupId2',
+          members: 0,
+          topics: 1,
+          simple: false,
+          partitionAssignor: '',
+          coordinator: {
+            id: 1,
+            port: undefined,
+            host: 'host',
+          },
+          messagesBehind: undefined,
+          state: undefined,
         },
+      ];
+      it('fetchTopicConsumerGroups/fulfilled', async () => {
+        fetchMock.getOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}/consumer-groups`,
+          consumerGroups
+        );
+        await store.dispatch(
+          fetchTopicConsumerGroups({ clusterName, topicName })
+        );
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: fetchTopicConsumerGroups.pending.type },
+          {
+            type: fetchTopicConsumerGroups.fulfilled.type,
+            payload: { consumerGroups, topicName },
+          },
+        ]);
+      });
+      it('fetchTopicConsumerGroups/rejected', async () => {
+        fetchMock.getOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}/consumer-groups`,
+          404
+        );
+        await store.dispatch(
+          fetchTopicConsumerGroups({ clusterName, topicName })
+        );
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: fetchTopicConsumerGroups.pending.type },
+          {
+            type: fetchTopicConsumerGroups.rejected.type,
+            payload: {
+              status: 404,
+              statusText: 'Not Found',
+              url: `/api/clusters/${clusterName}/topics/${topicName}/consumer-groups`,
+              message: undefined,
+            },
+          },
+        ]);
       });
     });
-  });
-
-  describe('create topics', () => {
-    it('createTopic/fulfilled', () => {
-      expect(
-        reducer(state, {
-          type: createTopic.fulfilled,
-          payload: { clusterName, data: createTopicPayload },
-        })
-      ).toEqual({
-        ...state,
-      });
-    });
-  });
-
-  describe('search topics', () => {
-    it('setTopicsSearch', () => {
-      expect(
-        reducer(state, {
-          type: setTopicsSearch,
-          payload: 'test',
-        })
-      ).toEqual({
-        ...state,
-        search: 'test',
-      });
-    });
-  });
-
-  describe('order topics', () => {
-    it('setTopicsOrderBy', () => {
-      expect(
-        reducer(state, {
-          type: setTopicsOrderBy,
-          payload: TopicColumnsToSort.NAME,
-        })
-      ).toEqual({
-        ...state,
-        orderBy: TopicColumnsToSort.NAME,
-      });
-    });
-  });
-
-  describe('topic consumer groups', () => {
-    it('fetchTopicConsumerGroups/fulfilled', () => {
-      expect(
-        reducer(state, {
-          type: fetchTopicConsumerGroups.fulfilled,
-          payload: {
+    describe('updateTopicPartitionsCount', () => {
+      it('updateTopicPartitionsCount/fulfilled', async () => {
+        fetchMock.patchOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}/partitions`,
+          { message: 'success' }
+        );
+        await store.dispatch(
+          updateTopicPartitionsCount({
             clusterName,
-            topicName: topic.name,
-            consumerGroups: consumerGroupPayload,
+            topicName,
+            partitions: 1,
+          })
+        );
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: updateTopicPartitionsCount.pending.type },
+          {
+            type: updateTopicPartitionsCount.fulfilled.type,
           },
-        })
-      ).toEqual({
-        ...state,
-        byName: {
-          [topic.name]: {
-            ...topic,
-            ...consumerGroupPayload,
+        ]);
+      });
+      it('updateTopicPartitionsCount/rejected', async () => {
+        fetchMock.patchOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}/partitions`,
+          404
+        );
+        await store.dispatch(
+          updateTopicPartitionsCount({
+            clusterName,
+            topicName,
+            partitions: 1,
+          })
+        );
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: updateTopicPartitionsCount.pending.type },
+          {
+            type: updateTopicPartitionsCount.rejected.type,
+            payload: {
+              status: 404,
+              statusText: 'Not Found',
+              url: `/api/clusters/${clusterName}/topics/${topicName}/partitions`,
+              message: undefined,
+            },
           },
-        },
+        ]);
       });
     });
-  });
+    describe('updateTopicReplicationFactor', () => {
+      it('updateTopicReplicationFactor/fulfilled', async () => {
+        fetchMock.patchOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}/replications`,
+          { message: 'success' }
+        );
+        await store.dispatch(
+          updateTopicReplicationFactor({
+            clusterName,
+            topicName,
+            replicationFactor: 1,
+          })
+        );
 
-  describe('message sending', () => {
-    it('fetchTopicMessageSchema/fulfilled', () => {
-      state = {
-        byName: {
-          [topic.name]: topic,
-        },
-        allNames: [topic.name],
-        messages: [],
-        totalPages: 1,
-        search: '',
-        orderBy: null,
-        sortOrder: SortOrder.ASC,
-        consumerGroups: [],
-      };
-      expect(
-        reducer(state, {
-          type: fetchTopicMessageSchema.fulfilled,
-          payload: { topicName: topic.name, schema: messageSchema },
-        }).byName
-      ).toEqual({
-        [topic.name]: { ...topic, messageSchema },
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: updateTopicReplicationFactor.pending.type },
+          {
+            type: updateTopicReplicationFactor.fulfilled.type,
+          },
+        ]);
+      });
+      it('updateTopicReplicationFactor/rejected', async () => {
+        fetchMock.patchOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}/replications`,
+          404
+        );
+        await store.dispatch(
+          updateTopicReplicationFactor({
+            clusterName,
+            topicName,
+            replicationFactor: 1,
+          })
+        );
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: updateTopicReplicationFactor.pending.type },
+          {
+            type: updateTopicReplicationFactor.rejected.type,
+            payload: {
+              status: 404,
+              statusText: 'Not Found',
+              url: `/api/clusters/${clusterName}/topics/${topicName}/replications`,
+              message: undefined,
+            },
+          },
+        ]);
       });
     });
   });
