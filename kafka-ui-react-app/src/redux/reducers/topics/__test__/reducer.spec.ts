@@ -85,8 +85,6 @@ const config = [
   { 'min.insync.replicas': '1' },
 ];
 
-const topics = [topic];
-
 let state = {
   byName: {
     [topic.name]: topic,
