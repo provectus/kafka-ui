@@ -874,5 +874,24 @@ describe('topics Slice', () => {
         ]);
       });
     });
+    describe('clearTopicsMessages', () => {
+      it('clearTopicsMessages/fulfilled', async () => {
+        fetchMock.deleteOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}/messages`,
+          [topicName, 'topic2']
+        );
+        await store.dispatch(
+          clearTopicsMessages({
+            clusterName,
+            topicNames: [topicName, 'topic2'],
+          })
+        );
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: clearTopicsMessages.pending.type },
+          { type: clearTopicsMessages.fulfilled.type },
+        ]);
+      });
+    });
   });
 });
