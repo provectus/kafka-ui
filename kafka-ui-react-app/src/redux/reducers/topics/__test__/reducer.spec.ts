@@ -12,8 +12,16 @@ import reducer, {
   recreateTopic,
   createTopic,
   deleteTopic,
+  fetchTopicsList,
+  fetchTopicDetails,
+  fetchTopicConfig,
+  updateTopic,
 } from 'redux/reducers/topics/topicsSlice';
-import { createTopicPayload } from 'components/Topics/New/__test__/fixtures';
+import {
+  createTopicPayload,
+  createTopicResponsePayload,
+} from 'components/Topics/New/__test__/fixtures';
+import { consumerGroupPayload } from 'redux/reducers/consumerGroups/__test__/fixtures';
 
 const topic = {
   name: 'topic',
@@ -69,6 +77,16 @@ const messageSchema = {
   },
 };
 
+const config = [
+  { 'cleanup.policy': 'delete' },
+  { 'retention.ms': '604800000' },
+  { 'retention.bytes': '-1' },
+  { 'max.message.bytes': '1000012' },
+  { 'min.insync.replicas': '1' },
+];
+
+const topics = [topic];
+
 let state = {
   byName: {
     [topic.name]: topic,
@@ -84,7 +102,88 @@ let state = {
 
 describe('topics reducer', () => {
   const clusterName = 'local';
-
+  describe('fetch topic details', () => {
+    it('fetchTopicDetails/fulfilled', () => {
+      expect(
+        reducer(state, {
+          type: fetchTopicDetails.fulfilled,
+          payload: {
+            clusterName,
+            topicName: topic.name,
+            topicDetails: createTopicResponsePayload,
+          },
+        })
+      ).toEqual({
+        ...state,
+        byName: {
+          [topic.name]: {
+            ...topic,
+            ...createTopicResponsePayload,
+          },
+        },
+        allNames: [topic.name],
+      });
+    });
+  });
+  describe('fetch topics', () => {
+    it('fetchTopicsList/fulfilled', () => {
+      expect(
+        reducer(state, {
+          type: fetchTopicsList.fulfilled,
+          payload: { clusterName, topicName: topic.name },
+        })
+      ).toEqual({
+        ...state,
+        byName: { topic },
+        allNames: [topic.name],
+      });
+    });
+  });
+  describe('fetch topic config', () => {
+    it('fetchTopicConfig/fulfilled', () => {
+      expect(
+        reducer(state, {
+          type: fetchTopicConfig.fulfilled,
+          payload: {
+            clusterName,
+            topicName: topic.name,
+            topicConfig: config,
+          },
+        })
+      ).toEqual({
+        ...state,
+        byName: {
+          [topic.name]: {
+            ...topic,
+            config: config.map((conf) => ({ ...conf })),
+          },
+        },
+        allNames: [topic.name],
+      });
+    });
+  });
+  describe('update topic', () => {
+    it('updateTopic/fulfilled', () => {
+      const updatedTopic = {
+        name: 'topic',
+        id: 'id',
+        partitions: 1,
+      };
+      expect(
+        reducer(state, {
+          type: updateTopic.fulfilled,
+          payload: { clusterName, topicName: topic.name, topic: updatedTopic },
+        })
+      ).toEqual({
+        ...state,
+        byName: {
+          [topic.name]: {
+            ...updatedTopic,
+          },
+        },
+      });
+    });
+  });
   describe('delete topic', () => {
     it('deleteTopic/fulfilled', () => {
       expect(
@@ -172,9 +271,21 @@ describe('topics reducer', () => {
       expect(
         reducer(state, {
           type: fetchTopicConsumerGroups.fulfilled,
-          payload: { clusterName, topicName: topic.name },
+          payload: {
+            clusterName,
+            topicName: topic.name,
+            consumerGroups: consumerGroupPayload,
+          },
         })
-      ).toEqual(state);
+      ).toEqual({
+        ...state,
+        byName: {
+          [topic.name]: {
+            ...topic,
+            ...consumerGroupPayload,
+          },
+        },
+      });
     });
   });
 
