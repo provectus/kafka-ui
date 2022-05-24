@@ -1,4 +1,5 @@
 import {
+  BrokerId,
   ClusterName,
   ConnectName,
   ConnectorName,
@@ -17,6 +18,11 @@ export const clusterPath = (clusterName: ClusterName) =>
 // Brokers
 export const clusterBrokersPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/brokers`;
+
+export const clusterBrokerPath = (
+  clusterName: ClusterName,
+  brokerId: BrokerId | string
+) => `${clusterBrokersPath(clusterName)}/${brokerId}`;
 
 // Consumer Groups
 export const clusterConsumerGroupsPath = (clusterName: ClusterName) =>

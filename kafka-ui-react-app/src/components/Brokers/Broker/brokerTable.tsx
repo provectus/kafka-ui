@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Table } from 'components/common/table/Table/Table.styled';
 import { Broker, BrokerDiskUsage } from 'generated-sources';
-import { BrokersTableRow } from 'components/Brokers/brokerTableRow';
+import { BrokersTableRow } from 'components/Brokers/Broker/brokerTableRow';
 
 interface IProps {
   diskUsage?: BrokerDiskUsage[];
