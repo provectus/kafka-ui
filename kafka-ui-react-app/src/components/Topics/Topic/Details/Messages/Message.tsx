@@ -20,6 +20,10 @@ const StyledDataCell = styled.td`
   min-width: 350px;
 `;
 
+const ClickableRow = styled.tr`
+  cursor: pointer;
+`;
+
 export interface Props {
   message: TopicMessage;
 }
@@ -49,7 +53,7 @@ const Message: React.FC<Props> = ({
 
   return (
     <>
-      <tr
+      <ClickableRow
         onMouseEnter={() => setVEllipsisOpen(true)}
         onMouseLeave={() => setVEllipsisOpen(false)}
         onClick={toggleIsOpen}
@@ -80,7 +84,7 @@ const Message: React.FC<Props> = ({
             </Dropdown>
           )}
         </td>
-      </tr>
+      </ClickableRow>
       {isOpen && (
         <MessageContent
           messageKey={key}
