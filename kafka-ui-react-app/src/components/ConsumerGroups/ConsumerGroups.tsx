@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import Details from 'components/ConsumerGroups/Details/Details';
 import ListContainer from 'components/ConsumerGroups/List/ListContainer';
 import ResetOffsets from 'components/ConsumerGroups/Details/ResetOffsets/ResetOffsets';
@@ -13,15 +13,21 @@ import {
 const ConsumerGroups: React.FC = () => {
   return (
     <Switch>
-      <BreadcrumbRoute exact path={clusterConsumerGroupsPath()}>
-        <ListContainer />
-      </BreadcrumbRoute>
-      <BreadcrumbRoute exact path={clusterConsumerGroupDetailsPath()}>
-        <Details />
-      </BreadcrumbRoute>
-      <BreadcrumbRoute path={clusterConsumerGroupResetOffsetsPath()}>
-        <ResetOffsets />
-      </BreadcrumbRoute>
+      <Route exact path={clusterConsumerGroupsPath()}>
+        <BreadcrumbRoute>
+          <ListContainer />
+        </BreadcrumbRoute>
+      </Route>
+      <Route exact path={clusterConsumerGroupDetailsPath()}>
+        <BreadcrumbRoute>
+          <Details />
+        </BreadcrumbRoute>
+      </Route>
+      <Route path={clusterConsumerGroupResetOffsetsPath()}>
+        <BreadcrumbRoute>
+          <ResetOffsets />
+        </BreadcrumbRoute>
+      </Route>
     </Switch>
   );
 };

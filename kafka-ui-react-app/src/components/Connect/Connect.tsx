@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Redirect } from 'react-router-dom';
+import { Switch, Redirect, Route } from 'react-router-dom';
 import {
   clusterConnectorsPath,
   clusterConnectsPath,
@@ -18,18 +18,26 @@ import EditContainer from './Edit/EditContainer';
 const Connect: React.FC = () => (
   <div>
     <Switch>
-      <BreadcrumbRoute exact path={clusterConnectorsPath()}>
-        <ListContainer />
-      </BreadcrumbRoute>
-      <BreadcrumbRoute exact path={clusterConnectorNewPath()}>
-        <NewContainer />
-      </BreadcrumbRoute>
-      <BreadcrumbRoute exact path={clusterConnectConnectorEditPath()}>
-        <EditContainer />
-      </BreadcrumbRoute>
-      <BreadcrumbRoute path={clusterConnectConnectorPath()}>
-        <DetailsContainer />
-      </BreadcrumbRoute>
+      <Route exact path={clusterConnectorsPath()}>
+        <BreadcrumbRoute>
+          <ListContainer />
+        </BreadcrumbRoute>
+      </Route>
+      <Route exact path={clusterConnectorNewPath()}>
+        <BreadcrumbRoute>
+          <NewContainer />
+        </BreadcrumbRoute>
+      </Route>
+      <Route exact path={clusterConnectConnectorEditPath()}>
+        <BreadcrumbRoute>
+          <EditContainer />
+        </BreadcrumbRoute>
+      </Route>
+      <Route path={clusterConnectConnectorPath()}>
+        <BreadcrumbRoute>
+          <DetailsContainer />
+        </BreadcrumbRoute>
+      </Route>
       <Redirect
         from={clusterConnectConnectorsPath()}
         to={clusterConnectorsPath()}

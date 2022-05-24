@@ -1,10 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import {
-  Route,
-  RouteProps,
-  useLocation,
-  useRouteMatch,
-} from 'react-router-dom';
+import { useLocation, useRouteMatch } from 'react-router-dom';
 
 import { BreadcrumbContext } from './Breadcrumb.context';
 
@@ -21,40 +16,17 @@ const BreadcrumbRouteInternal: React.FC = () => {
   return null;
 };
 
-export const BreadcrumbRoute: React.FC<RouteProps> = ({
+interface BreadcrumbRoutProps {
+  children: React.ReactNode;
+}
+
+export const BreadcrumbRoute: React.FC<BreadcrumbRoutProps> = ({
   children,
-  render,
-  component,
-  ...props
 }) => {
   return (
-    <Route
-      {...props}
-      render={(routeParams) => {
-        if (component) {
-          return (
-            <>
-              {React.createElement(component)}
-              <BreadcrumbRouteInternal />
-            </>
-          );
-        }
-        if (render) {
-          return (
-            <>
-              {render(routeParams)}
-              <BreadcrumbRouteInternal />
-            </>
-          );
-        }
-
-        return (
-          <>
-            {children}
-            <BreadcrumbRouteInternal />
-          </>
-        );
-      }}
-    />
+    <>
+      {children}
+      <BreadcrumbRouteInternal />
+    </>
   );
 };

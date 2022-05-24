@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import {
   clusterSchemaNewPath,
   clusterSchemaPath,
@@ -17,21 +17,31 @@ import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 const Schemas: React.FC = () => {
   return (
     <Switch>
-      <BreadcrumbRoute exact path={clusterSchemasPath()}>
-        <List />
-      </BreadcrumbRoute>
-      <BreadcrumbRoute exact path={clusterSchemaNewPath()}>
-        <New />
-      </BreadcrumbRoute>
-      <BreadcrumbRoute exact path={clusterSchemaPath()}>
-        <Details />
-      </BreadcrumbRoute>
-      <BreadcrumbRoute exact path={clusterSchemaEditPath()}>
-        <Edit />
-      </BreadcrumbRoute>
-      <BreadcrumbRoute exact path={clusterSchemaSchemaDiffPath()}>
-        <DiffContainer />
-      </BreadcrumbRoute>
+      <Route exact path={clusterSchemasPath()}>
+        <BreadcrumbRoute>
+          <List />
+        </BreadcrumbRoute>
+      </Route>
+      <Route exact path={clusterSchemaNewPath()}>
+        <BreadcrumbRoute>
+          <New />
+        </BreadcrumbRoute>
+      </Route>
+      <Route exact path={clusterSchemaPath()}>
+        <BreadcrumbRoute>
+          <Details />
+        </BreadcrumbRoute>
+      </Route>
+      <Route exact path={clusterSchemaEditPath()}>
+        <BreadcrumbRoute>
+          <Edit />
+        </BreadcrumbRoute>
+      </Route>
+      <Route exact path={clusterSchemaSchemaDiffPath()}>
+        <BreadcrumbRoute>
+          <DiffContainer />
+        </BreadcrumbRoute>
+      </Route>
     </Switch>
   );
 };

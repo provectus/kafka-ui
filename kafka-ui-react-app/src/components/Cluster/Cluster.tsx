@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Switch, Redirect, useParams } from 'react-router-dom';
+import { Switch, Redirect, useParams, Route } from 'react-router-dom';
 import { ClusterFeaturesEnum } from 'generated-sources';
 import {
   getClustersFeatures,
@@ -62,34 +62,48 @@ const Cluster: React.FC = () => {
       <Breadcrumb />
       <ClusterContext.Provider value={contextValue}>
         <Switch>
-          <BreadcrumbRoute path={clusterBrokersPath()}>
-            <Brokers />
-          </BreadcrumbRoute>
-          <BreadcrumbRoute path={clusterTopicsPath()}>
-            <Topics />
-          </BreadcrumbRoute>
-          <BreadcrumbRoute path={clusterConsumerGroupsPath()}>
-            <ConsumersGroups />
-          </BreadcrumbRoute>
+          <Route path={clusterBrokersPath()}>
+            <BreadcrumbRoute>
+              <Brokers />
+            </BreadcrumbRoute>
+          </Route>
+          <Route path={clusterTopicsPath()}>
+            <BreadcrumbRoute>
+              <Topics />
+            </BreadcrumbRoute>
+          </Route>
+          <Route path={clusterConsumerGroupsPath()}>
+            <BreadcrumbRoute>
+              <ConsumersGroups />
+            </BreadcrumbRoute>
+          </Route>
           {hasSchemaRegistryConfigured && (
-            <BreadcrumbRoute path={clusterSchemasPath()}>
-              <Schemas />
-            </BreadcrumbRoute>
+            <Route path={clusterSchemasPath()}>
+              <BreadcrumbRoute>
+                <Schemas />
+              </BreadcrumbRoute>
+            </Route>
           )}
           {hasKafkaConnectConfigured && (
-            <BreadcrumbRoute path={clusterConnectsPath()}>
-              <Connect />
-            </BreadcrumbRoute>
+            <Route path={clusterConnectsPath()}>
+              <BreadcrumbRoute>
+                <Connect />
+              </BreadcrumbRoute>
+            </Route>
           )}
           {hasKafkaConnectConfigured && (
-            <BreadcrumbRoute path={clusterConnectorsPath()}>
-              <Connect />
-            </BreadcrumbRoute>
+            <Route path={clusterConnectorsPath()}>
+              <BreadcrumbRoute>
+                <Connect />
+              </BreadcrumbRoute>
+            </Route>
           )}
           {hasKsqlDbConfigured && (
-            <BreadcrumbRoute path={clusterKsqlDbPath()}>
-              <KsqlDb />
-            </BreadcrumbRoute>
+            <Route path={clusterKsqlDbPath()}>
+              <BreadcrumbRoute>
+                <KsqlDb />
+              </BreadcrumbRoute>
+            </Route>
           )}
           <Redirect
             from="/ui/clusters/:clusterName"
