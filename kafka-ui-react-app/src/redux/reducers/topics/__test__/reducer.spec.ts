@@ -541,7 +541,7 @@ describe('topics Slice', () => {
         cleanUpPolicy: 'DELETE',
         inSyncReplicas: 1,
         internal: false,
-        name: 'topic',
+        name: topicName,
         partitionCount: 1,
         partitions: undefined,
         replicas: 1,
@@ -561,7 +561,7 @@ describe('topics Slice', () => {
           { type: recreateTopic.pending.type },
           {
             type: recreateTopic.fulfilled.type,
-            payload: { topic: { ...recreateResponse } },
+            payload: { [topicName]: { ...recreateResponse } },
           },
         ]);
       });
@@ -747,6 +747,127 @@ describe('topics Slice', () => {
               status: 404,
               statusText: 'Not Found',
               url: `/api/clusters/${clusterName}/topics/${topicName}/replications`,
+              message: undefined,
+            },
+          },
+        ]);
+      });
+    });
+    describe('createTopic', () => {
+      const newTopic = {
+        name: 'newTopic',
+        partitions: 0,
+        replicationFactor: 0,
+        minInsyncReplicas: 0,
+        cleanupPolicy: 'DELETE',
+        retentionMs: 1,
+        retentionBytes: 1,
+        maxMessageBytes: 1,
+        customParams: [
+          {
+            name: '',
+            value: '',
+          },
+        ],
+      };
+      it('createTopic/fulfilled', async () => {
+        fetchMock.postOnce(`/api/clusters/${clusterName}/topics`, {
+          message: 'success',
+        });
+        await store.dispatch(
+          createTopic({
+            clusterName,
+            data: newTopic,
+          })
+        );
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: createTopic.pending.type },
+          {
+            type: createTopic.fulfilled.type,
+          },
+        ]);
+      });
+      it('createTopic/rejected', async () => {
+        fetchMock.postOnce(`/api/clusters/${clusterName}/topics`, 404);
+        await store.dispatch(
+          createTopic({
+            clusterName,
+            data: newTopic,
+          })
+        );
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: createTopic.pending.type },
+          {
+            type: createTopic.rejected.type,
+            payload: {
+              status: 404,
+              statusText: 'Not Found',
+              url: `/api/clusters/${clusterName}/topics`,
+              message: undefined,
+            },
+          },
+        ]);
+      });
+    });
+    describe('updateTopic', () => {
+      const updateTopicResponse = {
+        name: topicName,
+        partitions: 0,
+        replicationFactor: 0,
+        minInsyncReplicas: 0,
+        cleanupPolicy: 'DELETE',
+        retentionMs: 0,
+        retentionBytes: 0,
+        maxMessageBytes: 0,
+        customParams: {
+          byIndex: {},
+          allIndexes: [],
+        },
+      };
+      it('updateTopic/fulfilled', async () => {
+        fetchMock.patchOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}`,
+          createTopicResponsePayload
+        );
+        await store.dispatch(
+          updateTopic({
+            clusterName,
+            topicName,
+            form: updateTopicResponse,
+          })
+        );
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: updateTopic.pending.type },
+          {
+            type: updateTopic.fulfilled.type,
+            payload: { [topicName]: { ...createTopicResponsePayload } },
+          },
+        ]);
+      });
+      it('updateTopic/rejected', async () => {
+        fetchMock.patchOnce(
+          `/api/clusters/${clusterName}/topics/${topicName}`,
+          404
+        );
+        await store.dispatch(
+          updateTopic({
+            clusterName,
+            topicName,
+            form: updateTopicResponse,
+          })
+        );
+
+        expect(getTypeAndPayload(store)).toEqual([
+          { type: updateTopic.pending.type },
+          {
+            type: updateTopic.rejected.type,
+            payload: {
+              status: 404,
+              statusText: 'Not Found',
+              url: `/api/clusters/${clusterName}/topics/${topicName}`,
               message: undefined,
             },
           },
