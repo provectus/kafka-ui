@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
   updateTopicPartitionsCount,
   updateTopicReplicationFactor,
-} from 'redux/actions';
+} from 'redux/reducers/topics/topicsSlice';
 import {
   getTopicPartitionsCountIncreased,
   getTopicReplicationFactorUpdated,
