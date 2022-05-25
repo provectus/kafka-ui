@@ -11,6 +11,8 @@ import {
   getAreConnectsFetching,
   getAreConnectorsFetching,
   getConnectorSearch,
+  getFailedConnectors,
+  getFailedTasks,
 } from 'redux/reducers/connect/selectors';
 import List from 'components/Connect/List/List';
 
@@ -18,6 +20,8 @@ const mapStateToProps = (state: RootState) => ({
   areConnectsFetching: getAreConnectsFetching(state),
   areConnectorsFetching: getAreConnectorsFetching(state),
   connects: getConnects(state),
+  failedConnectors: getFailedConnectors(state),
+  failedTasks: getFailedTasks(state),
   connectors: getConnectors(state),
   search: getConnectorSearch(state),
 });

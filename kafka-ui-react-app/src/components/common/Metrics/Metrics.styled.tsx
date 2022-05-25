@@ -38,27 +38,8 @@ export const IndicatorsWrapper = styled.div`
   display: flex;
   gap: 1px;
   flex-wrap: wrap;
-
-  > ${IndicatorWrapper} {
-    &:first-child {
-      border-top-left-radius: 8px;
-      border-bottom-left-radius: 8px;
-    }
-
-    &:last-child {
-      border-top-right-radius: 8px;
-      border-bottom-right-radius: 8px;
-    }
-  }
-
-  @media screen and (max-width: 1023px) {
-    > ${IndicatorWrapper} {
-      &:first-child,
-      &:last-child {
-        border-radius: 0;
-      }
-    }
-  }
+  border-radius: 8px;
+  overflow: auto;
 `;
 
 export const SectionTitle = styled.h5`

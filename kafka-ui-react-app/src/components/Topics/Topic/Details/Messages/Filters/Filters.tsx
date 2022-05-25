@@ -229,7 +229,6 @@ const Filters: React.FC<FiltersProps> = ({
 
   const handleSSECancel = () => {
     if (!source.current) return;
-
     setIsFetching(false);
     source.current.close();
   };
@@ -304,7 +303,6 @@ const Filters: React.FC<FiltersProps> = ({
       sse.onmessage = ({ data }) => {
         const { type, message, phase, consuming }: TopicMessageEvent =
           JSON.parse(data);
-
         switch (type) {
           case TopicMessageEventTypeEnum.MESSAGE:
             if (message) {
@@ -317,7 +315,6 @@ const Filters: React.FC<FiltersProps> = ({
           case TopicMessageEventTypeEnum.PHASE:
             if (phase?.name) {
               updatePhase(phase.name);
-              setIsFetching(false);
             }
             break;
           case TopicMessageEventTypeEnum.CONSUMING:

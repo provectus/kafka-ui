@@ -8,8 +8,10 @@ import theme from 'theme/theme';
 import { CleanUpPolicy } from 'generated-sources';
 import ClusterContext from 'components/contexts/ClusterContext';
 import userEvent from '@testing-library/user-event';
+import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
 
 describe('Overview', () => {
+  const getReplicaCell = () => screen.getByLabelText('replica-info');
   const mockClusterName = 'local';
   const mockTopicName = 'topic';
   const mockClearTopicMessages = jest.fn();
@@ -20,7 +22,7 @@ describe('Overview', () => {
       replicas: [
         {
           broker: 1,
-          leader: false,
+          leader: true,
           inSync: true,
         },
       ],
@@ -64,6 +66,22 @@ describe('Overview', () => {
 
   afterEach(() => {
     mockClearTopicMessages.mockClear();
+  });
+
+  it('at least one replica was rendered', () => {
+    setupComponent({
+      ...defaultProps,
+      underReplicatedPartitions: 0,
+      inSyncReplicas: 1,
+      replicas: 1,
+    });
+    expect(getReplicaCell()).toBeInTheDocument();
+  });
+
+  it('renders replica cell with props', () => {
+    render(<ReplicaCell leader />);
+    expect(getReplicaCell()).toBeInTheDocument();
+    expect(getReplicaCell()).toHaveStyleRule('color', 'orange');
   });
 
   describe('when it has internal flag', () => {
