@@ -6,6 +6,7 @@ import {
   ConnectorState,
   FullConnectorInfo,
 } from 'generated-sources';
+import { sortBy } from 'lodash';
 
 import {
   deleteConnector,
@@ -62,6 +63,10 @@ export const getFailedTasks = createSelector(connectState, ({ connectors }) => {
     .map((connector: FullConnectorInfo) => connector.failedTasksCount || 0)
     .reduce((acc: number, value: number) => acc + value, 0);
 });
+
+export const getSortedTopics = createSelector(connectState, ({ connectors }) =>
+  connectors.map(({ topics }) => sortBy(topics || []))
+);
 
 const getConnectorFetchingStatus = createFetchingSelector(
   fetchConnector.typePrefix
