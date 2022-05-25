@@ -1,6 +1,4 @@
 import React from 'react';
-import { dismissAlert } from 'redux/actions';
-import { getAlerts } from 'redux/reducers/alerts/selectors';
 import { alertDissmissed, selectAll } from 'redux/reducers/alerts/alertsSlice';
 import { useAppSelector, useAppDispatch } from 'lib/hooks/redux';
 import Alert from 'components/Alerts/Alert';
@@ -15,14 +13,6 @@ const Alerts: React.FC = () => {
     [dispatch]
   );
 
-  const legacyAlerts = useAppSelector(getAlerts);
-  const dismissLegacy = React.useCallback(
-    (id: string) => {
-      dispatch(dismissAlert(id));
-    },
-    [dispatch]
-  );
-
   return (
     <>
       {alerts.map(({ id, type, title, message }) => (
@@ -32,15 +22,6 @@ const Alerts: React.FC = () => {
           title={title}
           message={message}
           onDissmiss={() => dismiss(id)}
-        />
-      ))}
-      {legacyAlerts.map(({ id, type, title, message }) => (
-        <Alert
-          key={id}
-          type={type}
-          title={title}
-          message={message}
-          onDissmiss={() => dismissLegacy(id)}
         />
       ))}
     </>

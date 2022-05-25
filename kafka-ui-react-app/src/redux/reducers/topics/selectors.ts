@@ -6,7 +6,19 @@ import {
   TopicConfigByName,
 } from 'redux/interfaces';
 import { CleanUpPolicy } from 'generated-sources';
-import { createLeagcyFetchingSelector } from 'redux/reducers/loader/selectors';
+import { createFetchingSelector } from 'redux/reducers/loader/selectors';
+import {
+  fetchTopicsList,
+  fetchTopicDetails,
+  fetchTopicConfig,
+  updateTopic,
+  fetchTopicMessageSchema,
+  fetchTopicConsumerGroups,
+  createTopic,
+  deleteTopic,
+  updateTopicPartitionsCount,
+  updateTopicReplicationFactor,
+} from 'redux/reducers/topics/topicsSlice';
 
 const topicsState = ({ topics }: RootState): TopicsState => topics;
 
@@ -16,85 +28,97 @@ const getTopicMap = (state: RootState) => topicsState(state).byName;
 export const getTopicListTotalPages = (state: RootState) =>
   topicsState(state).totalPages;
 
-const getTopicListFetchingStatus = createLeagcyFetchingSelector('GET_TOPICS');
-const getTopicDetailsFetchingStatus =
-  createLeagcyFetchingSelector('GET_TOPIC_DETAILS');
-
-const getTopicConfigFetchingStatus =
-  createLeagcyFetchingSelector('GET_TOPIC_CONFIG');
-const getTopicCreationStatus = createLeagcyFetchingSelector('POST_TOPIC');
-const getTopicUpdateStatus = createLeagcyFetchingSelector('PATCH_TOPIC');
-const getTopicMessageSchemaFetchingStatus =
-  createLeagcyFetchingSelector('GET_TOPIC_SCHEMA');
-const getPartitionsCountIncreaseStatus =
-  createLeagcyFetchingSelector('UPDATE_PARTITIONS');
-const getReplicationFactorUpdateStatus = createLeagcyFetchingSelector(
-  'UPDATE_REPLICATION_FACTOR'
-);
-const getTopicDeletingStatus = createLeagcyFetchingSelector('DELETE_TOPIC');
-
-const getTopicConsumerGroupsStatus = createLeagcyFetchingSelector(
-  'GET_TOPIC_CONSUMER_GROUPS'
-);
+const getTopicDeletingStatus = createFetchingSelector(deleteTopic.typePrefix);
 
 export const getIsTopicDeleted = createSelector(
   getTopicDeletingStatus,
-  (status) => status === 'fetched'
+  (status) => status === 'fulfilled'
+);
+
+const getAreTopicsFetchingStatus = createFetchingSelector(
+  fetchTopicsList.typePrefix
 );
 
 export const getAreTopicsFetching = createSelector(
-  getTopicListFetchingStatus,
-  (status) => status === 'fetching' || status === 'notFetched'
+  getAreTopicsFetchingStatus,
+  (status) => status === 'pending'
+);
+export const getAreTopicsFetched = createSelector(
+  getAreTopicsFetchingStatus,
+  (status) => status === 'fulfilled'
 );
 
-export const getAreTopicsFetched = createSelector(
-  getTopicListFetchingStatus,
-  (status) => status === 'fetched'
+const getTopicDetailsFetchingStatus = createFetchingSelector(
+  fetchTopicDetails.typePrefix
 );
 
 export const getIsTopicDetailsFetching = createSelector(
   getTopicDetailsFetchingStatus,
-  (status) => status === 'notFetched' || status === 'fetching'
+  (status) => status === 'pending'
 );
 
 export const getIsTopicDetailsFetched = createSelector(
   getTopicDetailsFetchingStatus,
-  (status) => status === 'fetched'
+  (status) => status === 'fulfilled'
+);
+
+const getTopicConfigFetchingStatus = createFetchingSelector(
+  fetchTopicConfig.typePrefix
 );
 
 export const getTopicConfigFetched = createSelector(
   getTopicConfigFetchingStatus,
-  (status) => status === 'fetched'
+  (status) => status === 'fulfilled'
 );
+
+const getTopicCreationStatus = createFetchingSelector(createTopic.typePrefix);
 
 export const getTopicCreated = createSelector(
   getTopicCreationStatus,
-  (status) => status === 'fetched'
+  (status) => status === 'fulfilled'
 );
+
+const getTopicUpdateStatus = createFetchingSelector(updateTopic.typePrefix);
 
 export const getTopicUpdated = createSelector(
   getTopicUpdateStatus,
-  (status) => status === 'fetched'
+  (status) => status === 'fulfilled'
+);
+
+const getTopicMessageSchemaFetchingStatus = createFetchingSelector(
+  fetchTopicMessageSchema.typePrefix
 );
 
 export const getTopicMessageSchemaFetched = createSelector(
   getTopicMessageSchemaFetchingStatus,
-  (status) => status === 'fetched'
+  (status) => status === 'fulfilled'
+);
+
+const getPartitionsCountIncreaseStatus = createFetchingSelector(
+  updateTopicPartitionsCount.typePrefix
 );
 
 export const getTopicPartitionsCountIncreased = createSelector(
   getPartitionsCountIncreaseStatus,
-  (status) => status === 'fetched'
+  (status) => status === 'fulfilled'
+);
+
+const getReplicationFactorUpdateStatus = createFetchingSelector(
+  updateTopicReplicationFactor.typePrefix
 );
 
 export const getTopicReplicationFactorUpdated = createSelector(
   getReplicationFactorUpdateStatus,
-  (status) => status === 'fetched'
+  (status) => status === 'fulfilled'
+);
+
+const getTopicConsumerGroupsStatus = createFetchingSelector(
+  fetchTopicConsumerGroups.typePrefix
 );
 
 export const getTopicsConsumerGroupsFetched = createSelector(
   getTopicConsumerGroupsStatus,
-  (status) => status === 'fetched'
+  (status) => status === 'fulfilled'
 );
 
 export const getTopicList = createSelector(
@@ -184,5 +208,5 @@ export const getTopicConsumerGroups = createSelector(
 
 export const getMessageSchemaByTopicName = createSelector(
   getTopicByName,
-  (topic) => topic.messageSchema
+  (topic) => topic?.messageSchema
 );

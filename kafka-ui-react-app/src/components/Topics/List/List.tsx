@@ -13,7 +13,9 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import {
   CleanUpPolicy,
+  DeleteTopicRequest,
   GetTopicsRequest,
+  RecreateTopicRequest,
   SortOrder,
   TopicColumnsToSort,
 } from 'generated-sources';
@@ -45,12 +47,18 @@ export interface TopicsListProps {
   areTopicsFetching: boolean;
   topics: TopicWithDetailedInfo[];
   totalPages: number;
-  fetchTopicsList(props: GetTopicsRequest): void;
-  deleteTopic(topicName: TopicName, clusterName: ClusterName): void;
-  deleteTopics(topicName: TopicName, clusterNames: ClusterName[]): void;
-  recreateTopic(topicName: TopicName, clusterName: ClusterName): void;
-  clearTopicsMessages(topicName: TopicName, clusterNames: ClusterName[]): void;
-  clearTopicMessages(params: {
+  fetchTopicsList(payload: GetTopicsRequest): void;
+  deleteTopic(payload: DeleteTopicRequest): void;
+  deleteTopics(payload: {
+    clusterName: ClusterName;
+    topicNames: TopicName[];
+  }): void;
+  recreateTopic(payload: RecreateTopicRequest): void;
+  clearTopicsMessages(payload: {
+    clusterName: ClusterName;
+    topicNames: TopicName[];
+  }): void;
+  clearTopicMessages(payload: {
     topicName: TopicName;
     clusterName: ClusterName;
     partitions?: number[];
@@ -180,9 +188,9 @@ const List: React.FC<TopicsListProps> = ({
   const deleteOrPurgeConfirmationHandler = React.useCallback(() => {
     const selectedIds = Array.from(tableState.selectedIds);
     if (confirmationModal === 'deleteTopics') {
-      deleteTopics(clusterName, selectedIds);
+      deleteTopics({ clusterName, topicNames: selectedIds });
     } else {
-      clearTopicsMessages(clusterName, selectedIds);
+      clearTopicsMessages({ clusterName, topicNames: selectedIds });
     }
     closeConfirmationModal();
     clearSelectedTopics();
@@ -221,7 +229,7 @@ const List: React.FC<TopicsListProps> = ({
       const isHidden = internal || isReadOnly || !hovered;
 
       const deleteTopicHandler = React.useCallback(() => {
-        deleteTopic(clusterName, name);
+        deleteTopic({ clusterName, topicName: name });
       }, [name]);
 
       const clearTopicMessagesHandler = React.useCallback(() => {
@@ -231,7 +239,7 @@ const List: React.FC<TopicsListProps> = ({
       }, [name, fetchTopicsList, topicsListParams]);
 
       const recreateTopicHandler = React.useCallback(() => {
-        recreateTopic(clusterName, name);
+        recreateTopic({ clusterName, topicName: name });
         closeRecreateTopicModal();
       }, [name]);
 
