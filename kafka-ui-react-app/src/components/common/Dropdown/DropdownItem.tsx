@@ -14,6 +14,7 @@ const DropdownItem: React.FC<PropsWithChildren<DropdownItemProps>> = ({
 }) => {
   const onClickHandler = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     onClick();
   };
 
