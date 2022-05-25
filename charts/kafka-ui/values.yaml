@@ -23,9 +23,23 @@ serviceAccount:
 existingConfigMap: ""
 yamlApplicationConfig:
   {}
+  # kafka:
+  #   clusters:
+  #     - name: yaml
+  #       bootstrapServers: kafka-service:9092
+  # spring:
+  #   security:
+  #     oauth2:
+  # auth:
+  #   type: disabled
+  # management:
+  #   health:
+  #     ldap:
+  #       enabled: false
+yamlApplicationConfigConfigMap:
+  {}
   # keyName: config.yml
   # name: configMapName
-yamlApplicationConfigFilePath: ""
 existingSecret: ""
 envs:
   secret: {}
