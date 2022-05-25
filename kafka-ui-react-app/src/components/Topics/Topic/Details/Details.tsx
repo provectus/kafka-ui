@@ -14,7 +14,6 @@ import {
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { useDispatch } from 'react-redux';
-import { deleteTopicAction } from 'redux/actions';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
 import Dropdown from 'components/common/Dropdown/Dropdown';
@@ -35,8 +34,14 @@ interface Props extends Topic, TopicDetails {
   isInternal: boolean;
   isDeleted: boolean;
   isDeletePolicy: boolean;
-  deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
-  recreateTopic: (clusterName: ClusterName, topicName: TopicName) => void;
+  deleteTopic: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }) => void;
+  recreateTopic: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }) => void;
   clearTopicMessages(params: {
     clusterName: ClusterName;
     topicName: TopicName;
@@ -73,12 +78,11 @@ const Details: React.FC<Props> = ({
     setRecreateTopicConfirmationVisible,
   ] = React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
-    deleteTopic(clusterName, topicName);
+    deleteTopic({ clusterName, topicName });
   }, [clusterName, topicName, deleteTopic]);
 
   React.useEffect(() => {
     if (isDeleted) {
-      dispatch(deleteTopicAction.cancel());
       history.push(clusterTopicsPath(clusterName));
     }
   }, [isDeleted, clusterName, dispatch, history]);
@@ -89,7 +93,7 @@ const Details: React.FC<Props> = ({
   }, [clusterName, topicName, clearTopicMessages]);
 
   const recreateTopicHandler = React.useCallback(() => {
-    recreateTopic(clusterName, topicName);
+    recreateTopic({ clusterName, topicName });
     setRecreateTopicConfirmationVisible(false);
   }, [recreateTopic, clusterName, topicName]);
 

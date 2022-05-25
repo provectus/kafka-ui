@@ -23,7 +23,13 @@ const Dropdown: React.FC<PropsWithChildren<DropdownProps>> = ({
 }) => {
   const [active, setActive] = useState<boolean>(false);
   const [wrapperRef] = useOutsideClickRef(() => setActive(false));
-  const onClick = useCallback(() => setActive(!active), [active]);
+  const onClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setActive(!active);
+    },
+    [active]
+  );
 
   const classNames = useMemo(
     () =>

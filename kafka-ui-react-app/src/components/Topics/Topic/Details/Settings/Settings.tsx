@@ -12,7 +12,10 @@ interface Props {
   topicName: TopicName;
   config?: TopicConfig[];
   isFetched: boolean;
-  fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => void;
+  fetchTopicConfig: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }) => void;
 }
 
 const Settings: React.FC<Props> = ({
@@ -23,7 +26,7 @@ const Settings: React.FC<Props> = ({
   config,
 }) => {
   React.useEffect(() => {
-    fetchTopicConfig(clusterName, topicName);
+    fetchTopicConfig({ clusterName, topicName });
   }, [fetchTopicConfig, clusterName, topicName]);
 
   if (!isFetched) {

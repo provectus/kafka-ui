@@ -1,7 +1,10 @@
 import { connect } from 'react-redux';
 import { RootState, ClusterName, TopicName } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { updateTopic, fetchTopicConfig } from 'redux/actions';
+import {
+  updateTopic,
+  fetchTopicConfig,
+} from 'redux/reducers/topics/topicsSlice';
 import {
   getTopicConfigFetched,
   getTopicUpdated,

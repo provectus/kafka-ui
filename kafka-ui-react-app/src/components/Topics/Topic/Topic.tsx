@@ -15,7 +15,10 @@ interface RouterParams {
 interface TopicProps {
   isTopicFetching: boolean;
   resetTopicMessages: () => void;
-  fetchTopicDetails: (clusterName: ClusterName, topicName: TopicName) => void;
+  fetchTopicDetails: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }) => void;
 }
 
 const Topic: React.FC<TopicProps> = ({
@@ -26,7 +29,7 @@ const Topic: React.FC<TopicProps> = ({
   const { clusterName, topicName } = useParams<RouterParams>();
 
   React.useEffect(() => {
-    fetchTopicDetails(clusterName, topicName);
+    fetchTopicDetails({ clusterName, topicName });
   }, [fetchTopicDetails, clusterName, topicName]);
 
   React.useEffect(() => {

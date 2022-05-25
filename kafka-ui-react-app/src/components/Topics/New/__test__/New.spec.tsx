@@ -3,7 +3,7 @@ import New from 'components/Topics/New/New';
 import { Route, Router } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import { RootState } from 'redux/interfaces';
-import { Provider } from 'react-redux';
+import * as redux from 'react-redux';
 import { act, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import fetchMock from 'fetch-mock-jest';
@@ -15,7 +15,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 
-import { createTopicPayload, createTopicResponsePayload } from './fixtures';
+const { Provider } = redux;
 
 const mockStore = configureStore();
 
@@ -25,7 +25,6 @@ const topicName = 'test-topic';
 const initialState: Partial<RootState> = {};
 const storeMock = mockStore(initialState);
 const historyMock = createMemoryHistory();
-const createTopicAPIPath = `/api/clusters/${clusterName}/topics`;
 
 const renderComponent = (history = historyMock, store = storeMock) =>
   render(
@@ -96,18 +95,21 @@ describe('New', () => {
   });
 
   it('submits valid form', async () => {
-    const createTopicAPIPathMock = fetchMock.postOnce(
-      createTopicAPIPath,
-      createTopicResponsePayload,
-      {
-        body: createTopicPayload,
-      }
-    );
+    const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
+    const useDispatchMock = jest.fn(() => ({
+      meta: { requestStatus: 'fulfilled' },
+    })) as jest.Mock;
+    useDispatchSpy.mockReturnValue(useDispatchMock);
+
     const mockedHistory = createMemoryHistory({
       initialEntries: [clusterTopicNewPath(clusterName)],
     });
+
     jest.spyOn(mockedHistory, 'push');
-    renderComponent(mockedHistory);
+
+    await act(() => {
+      renderComponent(mockedHistory);
+    });
 
     await waitFor(() => {
       userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
@@ -119,32 +121,58 @@ describe('New', () => {
         clusterTopicPath(clusterName, topicName)
       )
     );
+
+    expect(useDispatchMock).toHaveBeenCalledTimes(1);
     expect(mockedHistory.push).toBeCalledTimes(1);
-    expect(createTopicAPIPathMock.called()).toBeTruthy();
   });
 
-  it('submits valid form that result in an error', async () => {
-    const createTopicAPIPathMock = fetchMock.postOnce(
-      createTopicAPIPath,
-      { throws: new Error('Something went wrong') },
-      {
-        body: createTopicPayload,
-      }
-    );
+  it('does not redirect page when request is not fulfilled', async () => {
+    const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
+    const useDispatchMock = jest.fn(() => ({
+      meta: { requestStatus: 'pending' },
+    })) as jest.Mock;
+    useDispatchSpy.mockReturnValue(useDispatchMock);
 
-    const mocked = createMemoryHistory({
+    const mockedHistory = createMemoryHistory({
       initialEntries: [clusterTopicNewPath(clusterName)],
     });
 
-    jest.spyOn(mocked, 'push');
-    renderComponent(mocked);
+    jest.spyOn(mockedHistory, 'push');
+
+    await act(() => {
+      renderComponent(mockedHistory);
+    });
+
+    await waitFor(() => {
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+      userEvent.click(screen.getByText(/submit/i));
+    });
+
+    await waitFor(() =>
+      expect(mockedHistory.location.pathname).toBe(
+        clusterTopicNewPath(clusterName)
+      )
+    );
+  });
+
+  it('submits valid form that result in an error', async () => {
+    const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
+    const useDispatchMock = jest.fn();
+    useDispatchSpy.mockReturnValue(useDispatchMock);
+
+    const mockedHistory = createMemoryHistory({
+      initialEntries: [clusterTopicNewPath(clusterName)],
+    });
+
+    jest.spyOn(mockedHistory, 'push');
+    renderComponent(mockedHistory);
 
     await act(() => {
       userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
       userEvent.click(screen.getByText(/submit/i));
     });
 
-    expect(createTopicAPIPathMock.called()).toBeTruthy();
-    expect(mocked.push).toBeCalledTimes(0);
+    expect(useDispatchMock).toHaveBeenCalledTimes(1);
+    expect(mockedHistory.push).toBeCalledTimes(0);
   });
 });
