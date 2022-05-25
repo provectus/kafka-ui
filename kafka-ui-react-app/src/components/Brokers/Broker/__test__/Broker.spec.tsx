@@ -3,7 +3,7 @@ import { render } from 'lib/testHelpers';
 import { screen, waitFor } from '@testing-library/dom';
 import { Route } from 'react-router-dom';
 import { clusterBrokerPath } from 'lib/paths';
-import fetchMock, { MockResponse } from 'fetch-mock';
+import fetchMock from 'fetch-mock';
 import {
   clusterStatsPayload,
   clusterStatsPayloadBroker,
