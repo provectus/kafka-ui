@@ -25,17 +25,20 @@ export interface Props {
   topic?: TopicWithDetailedInfo;
   isFetched: boolean;
   isTopicUpdated: boolean;
-  fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => void;
-  updateTopic: (
-    clusterName: ClusterName,
-    topicName: TopicName,
-    form: TopicFormDataRaw
-  ) => void;
-  updateTopicPartitionsCount: (
-    clusterName: string,
-    topicname: string,
-    partitions: number
-  ) => void;
+  fetchTopicConfig: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }) => void;
+  updateTopic: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+    form: TopicFormDataRaw;
+  }) => void;
+  updateTopicPartitionsCount: (payload: {
+    clusterName: string;
+    topicname: string;
+    partitions: number;
+  }) => void;
 }
 
 const EditWrapperStyled = styled.div`
@@ -98,7 +101,7 @@ const Edit: React.FC<Props> = ({
   const history = useHistory();
 
   React.useEffect(() => {
-    fetchTopicConfig(clusterName, topicName);
+    fetchTopicConfig({ clusterName, topicName });
   }, [fetchTopicConfig, clusterName, topicName]);
 
   React.useEffect(() => {
@@ -126,7 +129,7 @@ const Edit: React.FC<Props> = ({
   });
 
   const onSubmit = async (data: TopicFormDataRaw) => {
-    updateTopic(clusterName, topicName, data);
+    updateTopic({ clusterName, topicName, form: data });
     setIsSubmitting(true); // Keep this action after updateTopic to prevent redirect before update.
   };
 

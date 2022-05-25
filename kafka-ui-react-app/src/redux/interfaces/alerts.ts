@@ -7,13 +7,6 @@ export interface ServerResponse {
   message?: ErrorResponse['message'];
 }
 
-export interface FailurePayload {
-  title: string;
-  message?: string;
-  subject: string;
-  response?: ServerResponse;
-}
-
 export type AlertType = 'error' | 'success' | 'warning' | 'info';
 
 export interface Alert {

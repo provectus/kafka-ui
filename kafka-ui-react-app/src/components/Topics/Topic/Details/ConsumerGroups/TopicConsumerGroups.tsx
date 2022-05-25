@@ -15,10 +15,10 @@ export interface Props extends Topic, TopicDetails {
   topicName: TopicName;
   consumerGroups: ConsumerGroup[];
   isFetched: boolean;
-  fetchTopicConsumerGroups(
-    clusterName: ClusterName,
-    topicName: TopicName
-  ): void;
+  fetchTopicConsumerGroups(payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }): void;
 }
 
 const TopicConsumerGroups: React.FC<Props> = ({
@@ -29,7 +29,7 @@ const TopicConsumerGroups: React.FC<Props> = ({
   isFetched,
 }) => {
   React.useEffect(() => {
-    fetchTopicConsumerGroups(clusterName, topicName);
+    fetchTopicConsumerGroups({ clusterName, topicName });
   }, [clusterName, fetchTopicConsumerGroups, topicName]);
 
   if (!isFetched) {

@@ -43,6 +43,7 @@ export interface TopicFormCustomParams {
 }
 
 export interface TopicWithDetailedInfo extends Topic, TopicDetails {
+  id?: string;
   config?: TopicConfig[];
   consumerGroups?: ConsumerGroup[];
   messageSchema?: TopicMessageSchema;
