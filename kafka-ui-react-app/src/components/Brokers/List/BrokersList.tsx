@@ -42,7 +42,6 @@ const BrokersList: React.FC = () => {
     fetchClusterStats(clusterName);
     fetchBrokers(clusterName);
   }, 5000);
-  console.log({ diskUsage });
   return (
     <>
       <PageHeading text="Broker" />
@@ -124,7 +123,6 @@ const BrokersList: React.FC = () => {
             diskUsage.length !== 0 &&
             diskUsage.map(({ brokerId, segmentSize, segmentCount }) => {
               const brokerItem = items?.find((item) => item.id === brokerId);
-              console.log({ brokerItem });
               return (
                 <tr key={brokerId}>
                   <td>

@@ -19,10 +19,7 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const brokersApiClient = new BrokersApi(apiClientConf);
 
-export const fetchBroker = (clusterName: ClusterName, brokerId: string) =>
-  brokersApiClient.getAllBrokersLogdirs({ clusterName, broker: [+brokerId] });
-
-interface IBrokerLogdir {
+interface BrokerLogdirState {
   name: string;
   error: string;
   topics: number;
@@ -33,12 +30,15 @@ const Broker: React.FC = () => {
   const dispatch = useAppDispatch();
   const { clusterName, brokerId } =
     useParams<{ clusterName: ClusterName; brokerId: string }>();
-  const [logdirs, setLogdirs] = useState<IBrokerLogdir[]>([]);
+  const [logdirs, setLogdirs] = useState<BrokerLogdirState[]>([]);
   const { diskUsage, items } = useAppSelector(selectStats);
 
   const fetchData = React.useCallback(() => {
     (async () => {
-      const res = await fetchBroker(clusterName, brokerId);
+      const res = await brokersApiClient.getAllBrokersLogdirs({
+        clusterName,
+        broker: [Number(brokerId)],
+      });
       if (res) {
         setLogdirs(
           res.map((r) => ({
@@ -61,7 +61,7 @@ const Broker: React.FC = () => {
 
   React.useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   const brokerItem = items?.find((item) => +item.id === +brokerId);
   const brokerDiskUsage = diskUsage?.find(
