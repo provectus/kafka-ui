@@ -3,7 +3,7 @@ import { render } from 'lib/testHelpers';
 import { screen, waitFor } from '@testing-library/dom';
 import { Route } from 'react-router-dom';
 import { clusterBrokerPath } from 'lib/paths';
-import fetchMock from 'fetch-mock';
+import fetchMock, { MockResponse } from 'fetch-mock';
 import {
   clusterStatsPayload,
   clusterStatsPayloadBroker,
@@ -79,8 +79,9 @@ describe('Broker Component', () => {
       const rows = screen.getAllByRole('row');
       expect(rows.length).toEqual(2);
 
-      const online = screen.getByText('Log dir data not available');
-      expect(online).toBeInTheDocument();
+      expect(
+        screen.getByText('Log dir data not available')
+      ).toBeInTheDocument();
     });
     it('shows  broker  found', async () => {
       const fetchStatsMock = fetchMock.getOnce(
@@ -110,6 +111,56 @@ describe('Broker Component', () => {
       );
       expect(topicCount).toBeInTheDocument();
       expect(partitionsCount).toBeInTheDocument();
+    });
+    it('shows  broker  has not topics', async () => {
+      const fetchStatsMock = fetchMock.getOnce(
+        fetchStatsUrl,
+        clusterStatsPayload
+      );
+      const fetchBrokerMock = fetchMock.getOnce(fetchBrokerMockUrl, [
+        { ...clusterStatsPayloadBroker[0], topics: undefined },
+      ]);
+      await act(() => {
+        renderComponent();
+      });
+      await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
+      await waitFor(() => expect(fetchBrokersMock.called()).toBeTruthy());
+      await waitFor(() => expect(fetchBrokerMock.called()).toBeTruthy());
+
+      expect(screen.getAllByText(0).length).toEqual(2);
+    });
+    it('shows  broker  has not name', async () => {
+      const fetchStatsMock = fetchMock.getOnce(
+        fetchStatsUrl,
+        clusterStatsPayload
+      );
+      const fetchBrokerMock = fetchMock.getOnce(fetchBrokerMockUrl, [
+        { ...clusterStatsPayloadBroker[0], name: undefined },
+      ]);
+      await act(() => {
+        renderComponent();
+      });
+      await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
+      await waitFor(() => expect(fetchBrokersMock.called()).toBeTruthy());
+      await waitFor(() => expect(fetchBrokerMock.called()).toBeTruthy());
+
+      expect(screen.getByText('-')).toBeInTheDocument();
+    });
+    it('shows  broker  has not error', async () => {
+      const fetchStatsMock = fetchMock.getOnce(
+        fetchStatsUrl,
+        clusterStatsPayload
+      );
+      const fetchBrokerMock = fetchMock.getOnce(fetchBrokerMockUrl, [
+        { ...clusterStatsPayloadBroker[0], error: undefined },
+      ]);
+      await act(() => {
+        renderComponent();
+      });
+      await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
+      await waitFor(() => expect(fetchBrokersMock.called()).toBeTruthy());
+      await waitFor(() => expect(fetchBrokerMock.called()).toBeTruthy());
+      expect(screen.getByText('-')).toBeInTheDocument();
     });
   });
 });
