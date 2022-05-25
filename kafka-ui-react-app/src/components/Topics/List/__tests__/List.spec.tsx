@@ -290,10 +290,6 @@ describe('List', () => {
       });
 
       expect(mockFn).toBeCalledTimes(1);
-      // expect(mockFn).toBeCalledWith('local', [
-      //   externalTopicPayload.name,
-      //   'external.topic2',
-      // ]);
       expect(mockFn).toBeCalledWith({
         clusterName: 'local',
         topicNames: [externalTopicPayload.name, 'external.topic2'],

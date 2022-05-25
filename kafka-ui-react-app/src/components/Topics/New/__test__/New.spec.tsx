@@ -126,7 +126,7 @@ describe('New', () => {
     expect(mockedHistory.push).toBeCalledTimes(1);
   });
 
-  it('not to redirect if request is not fulfilled', async () => {
+  it('does not redirect page when request is not fulfilled', async () => {
     const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
     const useDispatchMock = jest.fn(() => ({
       meta: { requestStatus: 'pending' },
