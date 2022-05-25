@@ -490,6 +490,7 @@ const theme = {
     newFilterIcon: Colors.brand[50],
     closeModalIcon: Colors.neutral[25],
     savedIcon: Colors.brand[50],
+    dropdownArrowIcon: Colors.neutral[30],
   },
   viewer: {
     wrapper: Colors.neutral[3],
