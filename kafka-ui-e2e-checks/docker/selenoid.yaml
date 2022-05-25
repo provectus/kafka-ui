@@ -28,4 +28,4 @@ services:
     network_mode: bridge
     image: selenoid/vnc:chrome_96.0
     extra_hosts:
-      - host.docker.internal:host-gateway
+      - "host.docker.internal:host-gateway"
