@@ -117,7 +117,7 @@ spec:
         {{- if .Values.yamlApplicationConfig }}
         - name: kafka-ui-yaml-conf
           configMap: 
-            name: {{ include "kafka-ui.fullname" . }}-fromValues
+            name: {{ include "kafka-ui.fullname" . }}-fromvalues
         {{- end }}
         {{- if .Values.yamlApplicationConfigConfigMap}}
         - name: kafka-ui-yaml-conf-configmap
