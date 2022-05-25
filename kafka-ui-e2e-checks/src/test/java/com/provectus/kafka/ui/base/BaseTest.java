@@ -73,7 +73,10 @@ public class BaseTest {
                     .withEnv("OVERRIDE_VIDEO_OUTPUT_DIR", "/opt/selenoid/video")
                 .withNetwork(appNetwork)
                     .withCommand(
-                            "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs");
+                            "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs")
+                    .withCommand("docker run --add-host host.docker.internal:host-gateway");
+
+
 
     static {
         if (!new File("./.env").exists()) {
