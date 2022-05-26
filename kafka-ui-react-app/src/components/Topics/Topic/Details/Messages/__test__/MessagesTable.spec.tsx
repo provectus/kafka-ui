@@ -71,13 +71,6 @@ describe('MessagesTable', () => {
     it('should check the if no elements is rendered in the table', () => {
       expect(screen.getByText(/No messages found/i)).toBeInTheDocument();
     });
-
-    it('should check if next button exist and check the click after next click', () => {
-      const nextBtnElement = screen.getByText(/next/i);
-      expect(nextBtnElement).toBeInTheDocument();
-      userEvent.click(nextBtnElement);
-      expect(screen.getByText(/No messages found/i)).toBeInTheDocument();
-    });
   });
 
   describe('Custom Setup with different props value', () => {
@@ -89,44 +82,6 @@ describe('MessagesTable', () => {
     it('should check the display of the loader element', () => {
       setUpComponent(searchParams, { ...contextValue, isLive: true }, [], true);
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
-    });
-
-    it('should check the seekTo parameter in the url if no seekTo is found should noy change the history', () => {
-      const customSearchParam = new URLSearchParams(searchParamsValue);
-
-      const mockedHistory = createMemoryHistory({
-        initialEntries: [customSearchParam.toString()],
-      });
-      jest.spyOn(mockedHistory, 'push');
-
-      setUpComponent(customSearchParam, contextValue, [], false, mockedHistory);
-
-      userEvent.click(screen.getByRole('button', { name: 'Next' }));
-      expect(mockedHistory.push).toHaveBeenCalledWith({
-        search: searchParamsValue.replace(seekToResult, '&seekTo=0%3A%3A1'),
-      });
-    });
-
-    it('should check the seekTo parameter in the url if no seekTo is found should change the history', () => {
-      const customSearchParam = new URLSearchParams(
-        searchParamsValue.replace(seekToResult, '')
-      );
-
-      const mockedHistory = createMemoryHistory({
-        initialEntries: [customSearchParam.toString()],
-      });
-      jest.spyOn(mockedHistory, 'push');
-
-      setUpComponent(
-        customSearchParam,
-        { ...contextValue, searchParams: customSearchParam },
-        [],
-        false,
-        mockedHistory
-      );
-
-      userEvent.click(screen.getByRole('button', { name: 'Next' }));
-      expect(mockedHistory.push).not.toHaveBeenCalled();
     });
   });
 

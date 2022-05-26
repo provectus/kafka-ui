@@ -71,53 +71,44 @@ const MessagesTable: React.FC = () => {
   }, [searchParams, history, messages]);
 
   return (
-    <>
-      <Table isFullwidth>
-        <thead>
+    <Table isFullwidth>
+      <thead>
+        <tr>
+          <TableHeaderCell> </TableHeaderCell>
+          <TableHeaderCell title="Offset" />
+          <TableHeaderCell title="Partition" />
+          <TableHeaderCell title="Timestamp" />
+          <TableHeaderCell title="Key" />
+          <TableHeaderCell title="Content" />
+          <TableHeaderCell> </TableHeaderCell>
+        </tr>
+      </thead>
+      <tbody>
+        {messages.map((message: TopicMessage) => (
+          <Message
+            key={[
+              message.offset,
+              message.timestamp,
+              message.key,
+              message.partition,
+            ].join('-')}
+            message={message}
+          />
+        ))}
+        {isFetching && isLive && !messages.length && (
           <tr>
-            <TableHeaderCell> </TableHeaderCell>
-            <TableHeaderCell title="Offset" />
-            <TableHeaderCell title="Partition" />
-            <TableHeaderCell title="Timestamp" />
-            <TableHeaderCell title="Key" />
-            <TableHeaderCell title="Content" />
-            <TableHeaderCell> </TableHeaderCell>
+            <td colSpan={10}>
+              <PageLoader />
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {messages.map((message: TopicMessage) => (
-            <Message
-              key={[
-                message.offset,
-                message.timestamp,
-                message.key,
-                message.partition,
-              ].join('-')}
-              message={message}
-            />
-          ))}
-          {isFetching && isLive && !messages.length && (
-            <tr>
-              <td colSpan={10}>
-                <PageLoader />
-              </td>
-            </tr>
-          )}
-          {messages.length === 0 && !isFetching && (
-            <tr>
-              <td colSpan={10}>No messages found</td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
-      {!isLive && (
-        <MessagesPaginationWrapperStyled>
-          <S.PaginationButton onClick={handleNextClick}>
-            Next
-          </S.PaginationButton>
-        </MessagesPaginationWrapperStyled>
-      )}
-    </>
+        )}
+        {messages.length === 0 && !isFetching && (
+          <tr>
+            <td colSpan={10}>No messages found</td>
+          </tr>
+        )}
+      </tbody>
+    </Table>
   );
 };
 
