@@ -8,9 +8,6 @@ const MultiSelect = styled(ReactMultiSelect)<{ minWidth?: string }>`
 
   & > .dropdown-container {
     height: 32px;
-    & > .dropdown-heading > .clear-selected-button {
-      display: none;
-    }
     * {
       cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
     }
@@ -19,10 +16,13 @@ const MultiSelect = styled(ReactMultiSelect)<{ minWidth?: string }>`
       height: 32px;
       color: ${({ disabled, theme }) =>
         disabled ? theme.select.color.disabled : theme.select.color.active};
-    }
-    &:hover {
-      & > .dropdown-heading > .clear-selected-button {
-        display: block;
+      & > .clear-selected-button {
+        display: none;
+      }
+      &:hover {
+        & > .clear-selected-button {
+          display: block;
+        }
       }
     }
   }
