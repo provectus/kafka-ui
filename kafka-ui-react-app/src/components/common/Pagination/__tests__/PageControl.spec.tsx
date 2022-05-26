@@ -12,22 +12,24 @@ describe('PageControl', () => {
   const setupComponent = (props: Partial<PageControlProps> = {}) =>
     render(<PageControl url="/test" page={page} current {...props} />);
 
+  const getButton = () => screen.getByRole('button');
+
   it('renders current page', () => {
     setupComponent({ current: true });
-    expect(screen.getByRole('button')).toHaveStyle(
+    expect(getButton()).toHaveStyle(
       `background-color: ${theme.pagination.currentPage}`
     );
   });
 
   it('renders non-current page', () => {
     setupComponent({ current: false });
-    expect(screen.getByRole('button')).toHaveStyle(
+    expect(getButton()).toHaveStyle(
       `background-color: ${theme.pagination.backgroundColor}`
     );
   });
 
   it('renders page number', () => {
     setupComponent({ current: false });
-    expect(screen.getByRole('button')).toHaveTextContent(String(page));
+    expect(getButton()).toHaveTextContent(String(page));
   });
 });

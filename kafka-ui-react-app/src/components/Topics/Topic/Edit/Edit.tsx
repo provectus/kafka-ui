@@ -10,7 +10,7 @@ import {
 import { useForm, FormProvider } from 'react-hook-form';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { clusterTopicPath } from 'lib/paths';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import { TOPIC_CUSTOM_PARAMS_PREFIX, TOPIC_CUSTOM_PARAMS } from 'lib/constants';
@@ -25,17 +25,20 @@ export interface Props {
   topic?: TopicWithDetailedInfo;
   isFetched: boolean;
   isTopicUpdated: boolean;
-  fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => void;
-  updateTopic: (
-    clusterName: ClusterName,
-    topicName: TopicName,
-    form: TopicFormDataRaw
-  ) => void;
-  updateTopicPartitionsCount: (
-    clusterName: string,
-    topicname: string,
-    partitions: number
-  ) => void;
+  fetchTopicConfig: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }) => void;
+  updateTopic: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+    form: TopicFormDataRaw;
+  }) => void;
+  updateTopicPartitionsCount: (payload: {
+    clusterName: string;
+    topicname: string;
+    partitions: number;
+  }) => void;
 }
 
 const EditWrapperStyled = styled.div`
@@ -46,7 +49,7 @@ const EditWrapperStyled = styled.div`
   }
 `;
 
-const DEFAULTS = {
+export const DEFAULTS = {
   partitions: 1,
   replicationFactor: 1,
   minInSyncReplicas: 1,
@@ -98,7 +101,7 @@ const Edit: React.FC<Props> = ({
   const history = useHistory();
 
   React.useEffect(() => {
-    fetchTopicConfig(clusterName, topicName);
+    fetchTopicConfig({ clusterName, topicName });
   }, [fetchTopicConfig, clusterName, topicName]);
 
   React.useEffect(() => {
@@ -126,7 +129,7 @@ const Edit: React.FC<Props> = ({
   });
 
   const onSubmit = async (data: TopicFormDataRaw) => {
-    updateTopic(clusterName, topicName, data);
+    updateTopic({ clusterName, topicName, form: data });
     setIsSubmitting(true); // Keep this action after updateTopic to prevent redirect before update.
   };
 

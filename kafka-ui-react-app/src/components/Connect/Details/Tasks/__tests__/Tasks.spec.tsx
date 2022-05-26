@@ -1,22 +1,22 @@
 import React from 'react';
-import { create } from 'react-test-renderer';
-import { containerRendersView, TestRouterWrapper } from 'lib/testHelpers';
+import { render } from 'lib/testHelpers';
 import { clusterConnectConnectorTasksPath } from 'lib/paths';
 import TasksContainer from 'components/Connect/Details/Tasks/TasksContainer';
 import Tasks, { TasksProps } from 'components/Connect/Details/Tasks/Tasks';
 import { tasks } from 'redux/reducers/connect/__test__/fixtures';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
-
-jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
+import { Route } from 'react-router-dom';
+import { screen } from '@testing-library/dom';
 
 jest.mock(
   'components/Connect/Details/Tasks/ListItem/ListItemContainer',
-  () => 'tr' // need to mock as `tr` to let dom validtion pass
+  () => 'tr'
 );
 
 describe('Tasks', () => {
-  containerRendersView(<TasksContainer />, Tasks);
+  it('container renders view', () => {
+    render(<TasksContainer />);
+    expect(screen.getByRole('table')).toBeInTheDocument();
+  });
 
   describe('view', () => {
     const pathname = clusterConnectConnectorTasksPath(
@@ -29,29 +29,33 @@ describe('Tasks', () => {
     const connectorName = 'my-connector';
 
     const setupWrapper = (props: Partial<TasksProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <TestRouterWrapper
-          pathname={pathname}
-          urlParams={{ clusterName, connectName, connectorName }}
-        >
-          <Tasks areTasksFetching={false} tasks={tasks} {...props} />
-        </TestRouterWrapper>
-      </ThemeProvider>
+      <Route path={pathname}>
+        <Tasks areTasksFetching={false} tasks={tasks} {...props} />
+      </Route>
     );
 
-    it('matches snapshot', () => {
-      const wrapper = create(setupWrapper());
-      expect(wrapper.toJSON()).toMatchSnapshot();
+    it('to be in the document when fetching tasks', () => {
+      render(setupWrapper({ areTasksFetching: true }), {
+        pathname: clusterConnectConnectorTasksPath(
+          clusterName,
+          connectName,
+          connectorName
+        ),
+      });
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      expect(screen.queryByRole('table')).not.toBeInTheDocument();
     });
 
-    it('matches snapshot when fetching tasks', () => {
-      const wrapper = create(setupWrapper({ areTasksFetching: true }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
-
-    it('matches snapshot when no tasks', () => {
-      const wrapper = create(setupWrapper({ tasks: [] }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
+    it('to be in the document when no tasks', () => {
+      render(setupWrapper({ tasks: [] }), {
+        pathname: clusterConnectConnectorTasksPath(
+          clusterName,
+          connectName,
+          connectorName
+        ),
+      });
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      expect(screen.getByText('No tasks found')).toBeInTheDocument();
     });
   });
 });

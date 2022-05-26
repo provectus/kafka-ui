@@ -54,21 +54,12 @@ describe('MessageContent screen', () => {
       userEvent.click(keyTab[0]);
       expect(keyTab[0]).toHaveClass('is-active');
     });
-    it('displays the key in the EditorViewer', () => {
-      const keyTab = screen.getAllByText('Key');
-      userEvent.click(keyTab[0]);
-      expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
-    });
   });
 
   describe('when switched to display the headers', () => {
     it('has a tab with is-active classname', () => {
       userEvent.click(screen.getByText('Headers'));
       expect(screen.getByText('Headers')).toHaveClass('is-active');
-    });
-    it('displays the key in the EditorViewer', () => {
-      userEvent.click(screen.getByText('Headers'));
-      expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
     });
   });
 

@@ -16,7 +16,10 @@ const Alert: React.FC<AlertProps> = ({ title, type, message, onDissmiss }) => (
   <S.Alert $type={type} role="alert">
     <div>
       <S.Title role="heading">{title}</S.Title>
-      <S.Message role="contentinfo">{message}</S.Message>
+      <S.Message
+        role="contentinfo"
+        dangerouslySetInnerHTML={{ __html: message }}
+      />
     </div>
 
     <IconButtonWrapper role="button" onClick={onDissmiss}>

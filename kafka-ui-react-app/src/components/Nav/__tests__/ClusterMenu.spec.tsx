@@ -11,18 +11,25 @@ describe('ClusterMenu', () => {
   const setupComponent = (cluster: Cluster, singleMode?: boolean) => (
     <ClusterMenu cluster={cluster} singleMode={singleMode} />
   );
+  const getMenuItems = () => screen.getAllByRole('menuitem');
+  const getMenuItem = () => screen.getByRole('menuitem');
+  const getBrokers = () => screen.getByTitle('Brokers');
+  const getTopics = () => screen.getByTitle('Brokers');
+  const getConsumers = () => screen.getByTitle('Brokers');
+  const getKafkaConnect = () => screen.getByTitle('Kafka Connect');
+  const getCluster = () => screen.getByText(onlineClusterPayload.name);
 
   it('renders cluster menu with default set of features', () => {
     render(setupComponent(onlineClusterPayload));
-    expect(screen.getByText(onlineClusterPayload.name)).toBeInTheDocument();
+    expect(getCluster()).toBeInTheDocument();
 
-    expect(screen.getAllByRole('menuitem').length).toEqual(1);
-    userEvent.click(screen.getByRole('menuitem'));
-    expect(screen.getAllByRole('menuitem').length).toEqual(4);
+    expect(getMenuItems().length).toEqual(1);
+    userEvent.click(getMenuItem());
+    expect(getMenuItems().length).toEqual(4);
 
-    expect(screen.getByTitle('Brokers')).toBeInTheDocument();
-    expect(screen.getByTitle('Topics')).toBeInTheDocument();
-    expect(screen.getByTitle('Consumers')).toBeInTheDocument();
+    expect(getBrokers()).toBeInTheDocument();
+    expect(getTopics()).toBeInTheDocument();
+    expect(getConsumers()).toBeInTheDocument();
   });
   it('renders cluster menu with correct set of features', () => {
     render(
@@ -35,15 +42,15 @@ describe('ClusterMenu', () => {
         ],
       })
     );
-    expect(screen.getAllByRole('menuitem').length).toEqual(1);
-    userEvent.click(screen.getByRole('menuitem'));
-    expect(screen.getAllByRole('menuitem').length).toEqual(7);
+    expect(getMenuItems().length).toEqual(1);
+    userEvent.click(getMenuItem());
+    expect(getMenuItems().length).toEqual(7);
 
-    expect(screen.getByTitle('Brokers')).toBeInTheDocument();
-    expect(screen.getByTitle('Topics')).toBeInTheDocument();
-    expect(screen.getByTitle('Consumers')).toBeInTheDocument();
+    expect(getBrokers()).toBeInTheDocument();
+    expect(getTopics()).toBeInTheDocument();
+    expect(getConsumers()).toBeInTheDocument();
     expect(screen.getByTitle('Schema Registry')).toBeInTheDocument();
-    expect(screen.getByTitle('Kafka Connect')).toBeInTheDocument();
+    expect(getKafkaConnect()).toBeInTheDocument();
     expect(screen.getByTitle('KSQL DB')).toBeInTheDocument();
   });
   it('renders open cluster menu', () => {
@@ -51,11 +58,11 @@ describe('ClusterMenu', () => {
       pathname: clusterConnectorsPath(onlineClusterPayload.name),
     });
 
-    expect(screen.getAllByRole('menuitem').length).toEqual(4);
-    expect(screen.getByText(onlineClusterPayload.name)).toBeInTheDocument();
-    expect(screen.getByTitle('Brokers')).toBeInTheDocument();
-    expect(screen.getByTitle('Topics')).toBeInTheDocument();
-    expect(screen.getByTitle('Consumers')).toBeInTheDocument();
+    expect(getMenuItems().length).toEqual(4);
+    expect(getCluster()).toBeInTheDocument();
+    expect(getBrokers()).toBeInTheDocument();
+    expect(getTopics()).toBeInTheDocument();
+    expect(getConsumers()).toBeInTheDocument();
   });
   it('makes Kafka Connect link active', () => {
     render(
@@ -65,12 +72,12 @@ describe('ClusterMenu', () => {
       }),
       { pathname: clusterConnectorsPath(onlineClusterPayload.name) }
     );
-    expect(screen.getAllByRole('menuitem').length).toEqual(1);
-    userEvent.click(screen.getByRole('menuitem'));
-    expect(screen.getAllByRole('menuitem').length).toEqual(5);
+    expect(getMenuItems().length).toEqual(1);
+    userEvent.click(getMenuItem());
+    expect(getMenuItems().length).toEqual(5);
 
-    expect(screen.getByText('Kafka Connect')).toBeInTheDocument();
-    expect(screen.getByText('Kafka Connect')).toHaveClass('is-active');
+    expect(getKafkaConnect()).toBeInTheDocument();
+    expect(getKafkaConnect()).toHaveClass('is-active');
   });
   it('makes Kafka Connect link active', () => {
     render(
@@ -80,11 +87,11 @@ describe('ClusterMenu', () => {
       }),
       { pathname: clusterConnectsPath(onlineClusterPayload.name) }
     );
-    expect(screen.getAllByRole('menuitem').length).toEqual(1);
-    userEvent.click(screen.getByRole('menuitem'));
-    expect(screen.getAllByRole('menuitem').length).toEqual(5);
+    expect(getMenuItems().length).toEqual(1);
+    userEvent.click(getMenuItem());
+    expect(getMenuItems().length).toEqual(5);
 
-    expect(screen.getByText('Kafka Connect')).toBeInTheDocument();
-    expect(screen.getByText('Kafka Connect')).toHaveClass('is-active');
+    expect(getKafkaConnect()).toBeInTheDocument();
+    expect(getKafkaConnect()).toHaveClass('is-active');
   });
 });

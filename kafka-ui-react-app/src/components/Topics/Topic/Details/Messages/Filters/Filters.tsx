@@ -12,7 +12,7 @@ import {
 } from 'generated-sources';
 import React, { useContext } from 'react';
 import { omitBy } from 'lodash';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
@@ -229,7 +229,6 @@ const Filters: React.FC<FiltersProps> = ({
 
   const handleSSECancel = () => {
     if (!source.current) return;
-
     setIsFetching(false);
     source.current.close();
   };
@@ -304,7 +303,6 @@ const Filters: React.FC<FiltersProps> = ({
       sse.onmessage = ({ data }) => {
         const { type, message, phase, consuming }: TopicMessageEvent =
           JSON.parse(data);
-
         switch (type) {
           case TopicMessageEventTypeEnum.MESSAGE:
             if (message) {
@@ -317,7 +315,6 @@ const Filters: React.FC<FiltersProps> = ({
           case TopicMessageEventTypeEnum.PHASE:
             if (phase?.name) {
               updatePhase(phase.name);
-              setIsFetching(false);
             }
             break;
           case TopicMessageEventTypeEnum.CONSUMING:
@@ -527,7 +524,7 @@ const Filters: React.FC<FiltersProps> = ({
           <S.MetricsIcon>
             <i className="far fa-file-alt" />
           </S.MetricsIcon>
-          <span>{messagesConsumed} messages</span>
+          <span>{messagesConsumed} messages consumed</span>
         </S.Metric>
       </S.FiltersMetrics>
     </S.FiltersWrapper>

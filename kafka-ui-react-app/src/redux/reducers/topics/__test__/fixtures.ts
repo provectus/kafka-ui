@@ -1,3 +1,5 @@
+import { Topic } from 'generated-sources';
+
 export const internalTopicPayload = {
   name: '__internal.topic',
   internal: true,
@@ -40,4 +42,7 @@ export const externalTopicPayload = {
   ],
 };
 
-export const topicsPayload = [internalTopicPayload, externalTopicPayload];
+export const topicsPayload: Topic[] = [
+  internalTopicPayload,
+  externalTopicPayload,
+];

@@ -32,7 +32,7 @@
         <maven.surefire-plugin.version>2.22.2</maven.surefire-plugin.version>
         <allure-maven.version>2.10.0</allure-maven.version>
         <kafka.version>3.0.0</kafka.version>
-        <netty.version>4.1.75.Final</netty.version>
+        <netty.version>4.1.77.Final</netty.version>
     </properties>
 
     <dependencies>

@@ -2,10 +2,11 @@ import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import { clusterTopicMessagesPath } from 'lib/paths';
 import jsf from 'json-schema-faker';
-import { fetchTopicMessageSchema, messagesApiClient } from 'redux/actions';
+import { messagesApiClient } from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { fetchTopicMessageSchema } from 'redux/reducers/topics/topicsSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { now } from 'lodash';
@@ -34,7 +35,7 @@ const SendMessage: React.FC = () => {
   jsf.option('alwaysFakeOptionals', true);
 
   React.useEffect(() => {
-    dispatch(fetchTopicMessageSchema(clusterName, topicName));
+    dispatch(fetchTopicMessageSchema({ clusterName, topicName }));
   }, [clusterName, dispatch, topicName]);
 
   const messageSchema = useAppSelector((state) =>
@@ -101,18 +102,13 @@ const SendMessage: React.FC = () => {
       const headers = data.headers ? JSON.parse(data.headers) : undefined;
       const errors = validateMessage(key, content, messageSchema);
       if (errors.length > 0) {
+        const errorsHtml = errors.map((e) => `<li>${e}</li>`).join('');
         dispatch(
           alertAdded({
             id: `${clusterName}-${topicName}-createTopicMessageError`,
             type: 'error',
             title: 'Validation Error',
-            message: (
-              <ul>
-                {errors.map((e) => (
-                  <li>{e}</li>
-                ))}
-              </ul>
-            ),
+            message: `<ul>${errorsHtml}</ul>`,
             createdAt: now(),
           })
         );

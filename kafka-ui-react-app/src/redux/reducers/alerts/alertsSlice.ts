@@ -26,7 +26,7 @@ const transformResponseToAlert = (payload: ServerResponse) => {
     id: url || nanoid(),
     type: 'error',
     title: `${status} ${statusText}`,
-    message,
+    message: message || '',
     response: payload,
     createdAt: now(),
   };

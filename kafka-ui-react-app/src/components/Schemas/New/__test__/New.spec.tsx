@@ -2,7 +2,7 @@ import React from 'react';
 import New from 'components/Schemas/New/New';
 import { render } from 'lib/testHelpers';
 import { clusterSchemaNewPath } from 'lib/paths';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 import { screen } from '@testing-library/dom';
 
 const clusterName = 'local';

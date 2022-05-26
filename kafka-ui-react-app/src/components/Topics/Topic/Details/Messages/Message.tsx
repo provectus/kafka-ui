@@ -20,7 +20,15 @@ const StyledDataCell = styled.td`
   min-width: 350px;
 `;
 
-const Message: React.FC<{ message: TopicMessage }> = ({
+const ClickableRow = styled.tr`
+  cursor: pointer;
+`;
+
+export interface Props {
+  message: TopicMessage;
+}
+
+const Message: React.FC<Props> = ({
   message: {
     timestamp,
     timestampType,
@@ -45,12 +53,13 @@ const Message: React.FC<{ message: TopicMessage }> = ({
 
   return (
     <>
-      <tr
+      <ClickableRow
         onMouseEnter={() => setVEllipsisOpen(true)}
         onMouseLeave={() => setVEllipsisOpen(false)}
+        onClick={toggleIsOpen}
       >
         <td>
-          <IconButtonWrapper onClick={toggleIsOpen} aria-hidden>
+          <IconButtonWrapper aria-hidden>
             <MessageToggleIcon isOpen={isOpen} />
           </IconButtonWrapper>
         </td>
@@ -75,7 +84,7 @@ const Message: React.FC<{ message: TopicMessage }> = ({
             </Dropdown>
           )}
         </td>
-      </tr>
+      </ClickableRow>
       {isOpen && (
         <MessageContent
           messageKey={key}

@@ -3,7 +3,7 @@ import { SchemaSubject } from 'generated-sources';
 import { clusterSchemaSchemaDiffPath } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import DiffViewer from 'components/common/DiffViewer/DiffViewer';
-import { useHistory, useParams, useLocation } from 'react-router';
+import { useHistory, useParams, useLocation } from 'react-router-dom';
 import {
   fetchSchemaVersions,
   SCHEMAS_VERSIONS_FETCH_ACTION,

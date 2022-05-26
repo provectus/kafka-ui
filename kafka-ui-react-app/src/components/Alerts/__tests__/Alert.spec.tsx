@@ -22,15 +22,16 @@ describe('Alert', () => {
         {...props}
       />
     );
+  const getButton = () => screen.getByRole('button');
   it('renders with initial props', () => {
     setupComponent();
     expect(screen.getByRole('heading')).toHaveTextContent(title);
     expect(screen.getByRole('contentinfo')).toHaveTextContent(message);
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(getButton()).toBeInTheDocument();
   });
   it('handles dismiss callback', () => {
     setupComponent();
-    userEvent.click(screen.getByRole('button'));
+    userEvent.click(getButton());
     expect(dismiss).toHaveBeenCalled();
   });
 });

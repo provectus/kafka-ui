@@ -1,7 +1,7 @@
 import React from 'react';
 import fetchMock from 'fetch-mock';
-import { Route } from 'react-router';
-import { screen, waitFor } from '@testing-library/react';
+import { Route } from 'react-router-dom';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 import { clusterConsumerGroupResetOffsetsPath } from 'lib/paths';
@@ -77,12 +77,12 @@ describe('ResetOffsets', () => {
     fetchMock.reset();
   });
 
-  it('renders progress bar for initial state', () => {
+  it('renders progress bar for initial state', async () => {
     fetchMock.getOnce(
       `/api/clusters/${clusterName}/consumer-groups/${groupId}`,
       404
     );
-    renderComponent();
+    await waitFor(() => renderComponent());
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
@@ -93,11 +93,10 @@ describe('ResetOffsets', () => {
           `/api/clusters/${clusterName}/consumer-groups/${groupId}`,
           consumerGroupPayload
         );
-        renderComponent();
-        await waitFor(() =>
-          expect(fetchConsumerGroupMock.called()).toBeTruthy()
-        );
-        await waitFor(() => screen.queryByRole('form'));
+        await act(() => {
+          renderComponent();
+        });
+        expect(fetchConsumerGroupMock.called()).toBeTruthy();
       });
 
       it('calls resetConsumerGroupOffsets with EARLIEST', async () => {

@@ -1,7 +1,12 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { ConnectState, RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
-import { ConnectorTaskStatus } from 'generated-sources';
+import {
+  ConnectorTaskStatus,
+  ConnectorState,
+  FullConnectorInfo,
+} from 'generated-sources';
+import { sortBy } from 'lodash';
 
 import {
   deleteConnector,
@@ -41,6 +46,26 @@ export const getAreConnectorsFetching = createSelector(
 export const getConnectors = createSelector(
   connectState,
   ({ connectors }) => connectors
+);
+
+export const getFailedConnectors = createSelector(
+  connectState,
+  ({ connectors }) => {
+    return connectors.filter(
+      (connector: FullConnectorInfo) =>
+        connector.status.state === ConnectorState.FAILED
+    );
+  }
+);
+
+export const getFailedTasks = createSelector(connectState, ({ connectors }) => {
+  return connectors
+    .map((connector: FullConnectorInfo) => connector.failedTasksCount || 0)
+    .reduce((acc: number, value: number) => acc + value, 0);
+});
+
+export const getSortedTopics = createSelector(connectState, ({ connectors }) =>
+  connectors.map(({ topics }) => sortBy(topics || []))
 );
 
 const getConnectorFetchingStatus = createFetchingSelector(

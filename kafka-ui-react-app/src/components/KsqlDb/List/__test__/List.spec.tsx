@@ -1,6 +1,6 @@
 import React from 'react';
 import List from 'components/KsqlDb/List/List';
-import { Route, Router } from 'react-router';
+import { Route, Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { clusterKsqlDbPath } from 'lib/paths';
 import { render } from 'lib/testHelpers';

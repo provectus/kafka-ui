@@ -9,7 +9,7 @@ import {
   clusterSchemasPath,
 } from 'lib/paths';
 import { screen, waitFor } from '@testing-library/dom';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 import fetchMock from 'fetch-mock';
 import { schemaVersion } from 'redux/reducers/schemas/__test__/fixtures';
 

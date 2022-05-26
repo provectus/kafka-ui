@@ -126,7 +126,7 @@ public interface ClusterMapper {
   CompatibilityCheckResponseDTO toCompatibilityCheckResponse(InternalCompatibilityCheck dto);
 
   @Mapping(target = "compatibility", source = "compatibilityLevel")
-  CompatibilityLevelDTO toCompatibilityLevel(InternalCompatibilityLevel dto);
+  CompatibilityLevelDTO toCompatibilityLevelDto(InternalCompatibilityLevel dto);
 
   default List<PartitionDTO> map(Map<Integer, InternalPartition> map) {
     return map.values().stream().map(this::toPartition).collect(Collectors.toList());
