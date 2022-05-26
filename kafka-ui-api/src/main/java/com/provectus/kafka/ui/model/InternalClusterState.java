@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.model;
 
 import com.google.common.base.Throwables;
 import com.provectus.kafka.ui.service.MetricsCache;
+import com.provectus.kafka.ui.util.JmxMetricsName;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -52,11 +53,22 @@ public class InternalClusterState {
 
     features = metrics.getFeatures();
 
-    bytesInPerSec = metrics.getJmxMetrics().getBytesInPerSec().values().stream()
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    bytesInPerSec = metrics
+        .getPrometheusMetricsDto()
+        .getBigDecimalMetric(JmxMetricsName.BYTES_IN_PER_SEC.getPrometheusName())
+        .orElse(metrics
+                .getJmxMetrics()
+                .getBytesInPerSec()
+                .values().stream()
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-    bytesOutPerSec = metrics.getJmxMetrics().getBytesOutPerSec().values().stream()
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    bytesOutPerSec = metrics.getPrometheusMetricsDto()
+        .getBigDecimalMetric(JmxMetricsName.BYTES_OUT_PER_SEC.getPrometheusName())
+        .orElse(
+            metrics.getJmxMetrics()
+                .getBytesOutPerSec()
+                .values().stream()
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
 
     var partitionsStats = new PartitionsStats(metrics.getTopicDescriptions().values());
     onlinePartitionCount = partitionsStats.getOnlinePartitionCount();

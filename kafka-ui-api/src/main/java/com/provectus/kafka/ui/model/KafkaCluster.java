@@ -21,6 +21,7 @@ public class KafkaCluster {
   private final String jmxPassword;
   private final String bootstrapServers;
   private final InternalSchemaRegistry schemaRegistry;
+  private final String prometheus;
   private final InternalKsqlServer ksqldbServer;
   private final List<KafkaConnectCluster> kafkaConnect;
   private final String schemaNameTemplate;
