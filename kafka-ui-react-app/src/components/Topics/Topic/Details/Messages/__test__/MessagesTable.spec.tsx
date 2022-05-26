@@ -5,7 +5,6 @@ import MessagesTable from 'components/Topics/Topic/Details/Messages/MessagesTabl
 import { Router } from 'react-router-dom';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { SeekDirection, SeekType, TopicMessage } from 'generated-sources';
-import userEvent from '@testing-library/user-event';
 import TopicMessagesContext, {
   ContextProps,
 } from 'components/contexts/TopicMessagesContext';
