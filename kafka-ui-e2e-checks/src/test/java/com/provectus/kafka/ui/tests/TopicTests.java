@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.tests;
 
+import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import lombok.SneakyThrows;
@@ -8,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class TopicTests extends com.provectus.kafka.ui.base.Test {
+public class TopicTests extends BaseTest {
 
     public static final String NEW_TOPIC = "new-topic";
     public static final String TOPIC_TO_UPDATE = "topic-to-update";

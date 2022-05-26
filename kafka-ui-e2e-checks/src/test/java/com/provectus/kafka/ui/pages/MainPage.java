@@ -22,7 +22,6 @@ public class MainPage {
     @Step
     public MainPage goTo() {
         Selenide.open(TestConfiguration.BASE_DOCKER_URL + path);
-        System.out.println("Go to =================== " + TestConfiguration.BASE_DOCKER_URL + path);
         return this;
     }
 

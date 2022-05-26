@@ -1,8 +1,8 @@
 package com.provectus.kafka.ui.base;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
-import com.github.dockerjava.api.DockerClient;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.screenshots.Screenshooter;
@@ -13,15 +13,12 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
-import org.testcontainers.DockerClientFactory;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.Testcontainers;
-import org.testcontainers.containers.BindMode;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.Network;
-import org.testcontainers.utility.DockerImageName;
+import org.testcontainers.containers.BrowserWebDriverContainer;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +34,12 @@ public class BaseTest {
 
     private Screenshooter screenshooter = new Screenshooter();
 
+    public static BrowserWebDriverContainer<?> webDriverContainer =
+            new BrowserWebDriverContainer<>()
+                    .withCapabilities(new ChromeOptions()
+                            .addArguments("--no-sandbox")
+                            .addArguments("--disable-dev-shm-usage"));
+
     public void compareScreenshots(String name) {
         screenshooter.compareScreenshots(name);
     }
@@ -45,38 +48,13 @@ public class BaseTest {
         screenshooter.compareScreenshots(name, shouldUpdateScreenshots);
     }
 
-    public static Network appNetwork = new Network() {
-        @Override
-        public String getId() {
-            return "kafka-ui";
-        }
-
-        @Override
-        public void close() {
-
-        }
-
-        @Override
-        public Statement apply(Statement base, Description description) {
-            return null;
-        }
-    };
-
-
-    public static GenericContainer selenoid =
-            new GenericContainer(DockerImageName.parse("aerokube/selenoid:latest-release"))
-                    .withExposedPorts(4444)
-                    .withFileSystemBind("selenoid/config/", "/etc/selenoid", BindMode.READ_WRITE)
-                    .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_WRITE)
-                    .withFileSystemBind("selenoid/video", "/opt/selenoid/video", BindMode.READ_WRITE)
-                    .withFileSystemBind("selenoid/logs", "/opt/selenoid/logs", BindMode.READ_WRITE)
-                    .withEnv("OVERRIDE_VIDEO_OUTPUT_DIR", "/opt/selenoid/video")
-                .withNetwork(appNetwork)
-                    .withCommand(
-                            "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs")
-                    .withCommand("docker run --add-host host.docker.internal:host-gateway");
-
-
+    @BeforeAll
+    public static void start() {
+        Testcontainers.exposeHostPorts(8678);
+        webDriverContainer.start();
+        RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
+        WebDriverRunner.setWebDriver(remoteWebDriver);
+    }
 
     static {
         if (!new File("./.env").exists()) {
@@ -91,8 +69,9 @@ public class BaseTest {
         if (TestConfiguration.CLEAR_REPORTS_DIR) {
             clearReports();
         }
-        setupSelenoid();
+        setup();
     }
+
 
     @AfterAll
     public static void afterAll() {
@@ -101,26 +80,9 @@ public class BaseTest {
     }
 
     @SneakyThrows
-    private static void setupSelenoid() {
-        String remote = TestConfiguration.SELENOID_URL;
-        if (TestConfiguration.SHOULD_START_SELENOID) {
-            DockerClient client = DockerClientFactory.instance().client();
-            DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
-            selenoid.withAccessToHost(true);
-            selenoid.start();
-            Testcontainers.exposeHostPorts(8080);
-            remote =
-                    "http://%s:%s/wd/hub"
-                            .formatted(selenoid.getContainerIpAddress(), selenoid.getMappedPort(4444));
-
-        }
+    private static void setup() {
 
         Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
-        if (!TestConfiguration.USE_LOCAL_BROWSER) {
-            Configuration.remote = remote;
-//            TestConfiguration.BASE_URL =
-//                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
-        }
         Configuration.screenshots = TestConfiguration.SCREENSHOTS;
         Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;
         Configuration.reopenBrowserOnFail = TestConfiguration.REOPEN_BROWSER_ON_FAIL;
