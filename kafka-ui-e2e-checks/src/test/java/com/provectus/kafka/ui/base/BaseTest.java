@@ -50,7 +50,7 @@ public class BaseTest {
 
     @BeforeAll
     public static void start() {
-        Testcontainers.exposeHostPorts(8678);
+        Testcontainers.exposeHostPorts(8080);
         webDriverContainer.start();
         RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
         WebDriverRunner.setWebDriver(remoteWebDriver);
