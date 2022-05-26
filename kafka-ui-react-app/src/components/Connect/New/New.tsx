@@ -85,29 +85,26 @@ const New: React.FC<NewProps> = ({
     [connects]
   );
 
-  const onSubmit = React.useCallback(
-    async (values: FormValues) => {
-      const { connector } = await createConnector({
-        clusterName,
-        connectName: values.connectName,
-        newConnector: {
-          name: values.name,
-          config: JSON.parse(values.config.trim()),
-        },
-      });
+  const onSubmit = async (values: FormValues) => {
+    const { connector } = await createConnector({
+      clusterName,
+      connectName: values.connectName,
+      newConnector: {
+        name: values.name,
+        config: JSON.parse(values.config.trim()),
+      },
+    });
 
-      if (connector) {
-        history.push(
-          clusterConnectConnectorPath(
-            clusterName,
-            connector.connect,
-            connector.name
-          )
-        );
-      }
-    },
-    [createConnector, clusterName, history]
-  );
+    if (connector) {
+      history.push(
+        clusterConnectConnectorPath(
+          clusterName,
+          connector.connect,
+          connector.name
+        )
+      );
+    }
+  };
 
   if (areConnectsFetching) {
     return <PageLoader />;

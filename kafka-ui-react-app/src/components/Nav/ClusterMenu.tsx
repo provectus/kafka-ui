@@ -23,10 +23,8 @@ const ClusterMenu: React.FC<Props> = ({
   cluster: { name, status, features },
   singleMode,
 }) => {
-  const hasFeatureConfigured = React.useCallback(
-    (key: ClusterFeaturesEnum) => features?.includes(key),
-    [features]
-  );
+  const hasFeatureConfigured = (key: ClusterFeaturesEnum) =>
+    features?.includes(key);
   const [isOpen, setIsOpen] = React.useState(!!singleMode);
   return (
     <S.List>

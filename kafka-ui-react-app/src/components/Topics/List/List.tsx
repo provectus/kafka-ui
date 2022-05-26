@@ -146,7 +146,7 @@ const List: React.FC<TopicsListProps> = ({
       .join('&');
   };
 
-  const handleSwitch = React.useCallback(() => {
+  const handleSwitch = () => {
     if (showInternal) {
       localStorage.setItem('hideInternalTopics', 'true');
     } else {
@@ -155,7 +155,7 @@ const List: React.FC<TopicsListProps> = ({
 
     setShowInternal(!showInternal);
     history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
-  }, [history, pathname, perPage, showInternal]);
+  };
 
   const [confirmationModal, setConfirmationModal] = React.useState<
     '' | 'deleteTopics' | 'purgeMessages'
@@ -167,25 +167,20 @@ const List: React.FC<TopicsListProps> = ({
     setConfirmationModal('');
   };
 
-  const clearSelectedTopics = React.useCallback(() => {
-    tableState.toggleSelection(false);
-  }, [tableState]);
+  const clearSelectedTopics = () => tableState.toggleSelection(false);
 
-  const searchHandler = React.useCallback(
-    (searchString: string) => {
-      setTopicsSearch(searchString);
+  const searchHandler = (searchString: string) => {
+    setTopicsSearch(searchString);
 
-      setCachedPage(page || null);
+    setCachedPage(page || null);
 
-      const newPageQuery = !searchString && cachedPage ? cachedPage : 1;
+    const newPageQuery = !searchString && cachedPage ? cachedPage : 1;
 
-      history.push(
-        `${pathname}?page=${newPageQuery}&perPage=${perPage || PER_PAGE}`
-      );
-    },
-    [setTopicsSearch, history, pathname, perPage, page]
-  );
-  const deleteOrPurgeConfirmationHandler = React.useCallback(() => {
+    history.push(
+      `${pathname}?page=${newPageQuery}&perPage=${perPage || PER_PAGE}`
+    );
+  };
+  const deleteOrPurgeConfirmationHandler = () => {
     const selectedIds = Array.from(tableState.selectedIds);
     if (confirmationModal === 'deleteTopics') {
       deleteTopics({ clusterName, topicNames: selectedIds });
@@ -195,16 +190,7 @@ const List: React.FC<TopicsListProps> = ({
     closeConfirmationModal();
     clearSelectedTopics();
     fetchTopicsList(topicsListParams);
-  }, [
-    confirmationModal,
-    clearSelectedTopics,
-    clusterName,
-    deleteTopics,
-    clearTopicsMessages,
-    tableState.selectedIds,
-    fetchTopicsList,
-    topicsListParams,
-  ]);
+  };
 
   const ActionsCell = React.memo<TableCellProps<TopicWithDetailedInfo, string>>(
     ({ hovered, dataItem: { internal, cleanUpPolicy, name } }) => {
@@ -228,20 +214,19 @@ const List: React.FC<TopicsListProps> = ({
 
       const isHidden = internal || isReadOnly || !hovered;
 
-      const deleteTopicHandler = React.useCallback(() => {
+      const deleteTopicHandler = () =>
         deleteTopic({ clusterName, topicName: name });
-      }, [name]);
 
-      const clearTopicMessagesHandler = React.useCallback(() => {
+      const clearTopicMessagesHandler = () => {
         clearTopicMessages({ clusterName, topicName: name });
         fetchTopicsList(topicsListParams);
         closeClearMessagesModal();
-      }, [name, fetchTopicsList, topicsListParams]);
+      };
 
-      const recreateTopicHandler = React.useCallback(() => {
+      const recreateTopicHandler = () => {
         recreateTopic({ clusterName, topicName: name });
         closeRecreateTopicModal();
-      }, [name]);
+      };
 
       return (
         <>
