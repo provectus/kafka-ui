@@ -8,7 +8,7 @@ public class TestConfiguration {
       Boolean.parseBoolean(System.getProperty("SHOULD_START_SELENOID", "true"));
 
   public static String BASE_URL = System.getProperty("BASE_URL", "http://localhost:8080");
-  public static String BASE_DOCKER_URL = System.getProperty("BASE_DOCKER_URL", "http://host.docker.internal:8080");
+  public static String BASE_DOCKER_URL = System.getProperty("BASE_DOCKER_URL", "http://host.testcontainers.internal:8080");
 
   public static boolean USE_LOCAL_BROWSER =
       Boolean.parseBoolean(System.getProperty("USE_LOCAL_BROWSER", "true"));

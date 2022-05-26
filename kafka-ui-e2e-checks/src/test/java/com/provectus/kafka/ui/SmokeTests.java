@@ -1,14 +1,11 @@
 package com.provectus.kafka.ui;
 
-import com.provectus.kafka.ui.base.BaseTest;
 import io.qameta.allure.Issue;
 import lombok.SneakyThrows;
-import org.junit.Ignore;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class SmokeTests extends BaseTest {
+public class SmokeTests extends com.provectus.kafka.ui.base.Test {
     @Test
     @SneakyThrows
     @DisplayName("main page should load")

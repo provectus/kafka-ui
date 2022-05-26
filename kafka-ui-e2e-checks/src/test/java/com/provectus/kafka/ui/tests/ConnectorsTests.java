@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.tests;
 
-import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.extensions.FileUtils;
 import com.provectus.kafka.ui.helpers.ApiHelper;
 import com.provectus.kafka.ui.helpers.Helpers;
@@ -10,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ConnectorsTests extends BaseTest {
+public class ConnectorsTests extends com.provectus.kafka.ui.base.Test {
 
     public static final String LOCAL_CLUSTER = "local";
     public static final String SINK_CONNECTOR = "sink_postgres_activities_e2e_checks";

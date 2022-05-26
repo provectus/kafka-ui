@@ -11,8 +11,8 @@ import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Selenide.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
 
 @ExtensionMethod({WaitUtils.class})
 public class MainPage {
@@ -22,6 +22,7 @@ public class MainPage {
     @Step
     public MainPage goTo() {
         Selenide.open(TestConfiguration.BASE_DOCKER_URL + path);
+        System.out.println("Go to =================== " + TestConfiguration.BASE_DOCKER_URL + path);
         return this;
     }
 
