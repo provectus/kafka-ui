@@ -26,6 +26,7 @@ public class ClustersProperties {
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
     String ksqldbServer;
+    String prometheus;
     String schemaNameTemplate = "%s-value";
     String keySchemaNameTemplate = "%s-key";
     String protobufFile;
