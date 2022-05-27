@@ -157,6 +157,9 @@ export const clusterConnectorNewRelativePath = 'create-new';
 export const clusterConnectConnectorsRelativePath = `${RouteParams.connectName}/connectors`;
 export const clusterConnectConnectorRelativePath = `${clusterConnectConnectorsRelativePath}/${RouteParams.connectorName}`;
 export const clusterConnectConnectorEditRelativePath = `${clusterConnectConnectorRelativePath}/edit`;
+export const clusterConnectConnectorTasksRelativePath = 'tasks';
+export const clusterConnectConnectorConfigRelativePath = 'config';
+
 export const clusterConnectsPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/connects`;
@@ -194,7 +197,7 @@ export const clusterConnectConnectorTasksPath = (
     clusterName,
     connectName,
     connectorName
-  )}/tasks`;
+  )}/${clusterConnectConnectorTasksRelativePath}`;
 export const clusterConnectConnectorConfigPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   connectName: ConnectName = RouteParams.connectName,
@@ -204,7 +207,7 @@ export const clusterConnectConnectorConfigPath = (
     clusterName,
     connectName,
     connectorName
-  )}/config`;
+  )}/${clusterConnectConnectorConfigRelativePath}`;
 export type RouterParamsClusterConnectConnector = {
   clusterName: ClusterName;
   connectName: ConnectName;

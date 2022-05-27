@@ -6,6 +6,7 @@ import {
   clusterConnectConnectorRelativePath,
   clusterConnectConnectorsRelativePath,
   clusterConnectorNewRelativePath,
+  getNonExactPath,
 } from 'lib/paths';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
@@ -41,7 +42,7 @@ const Connect: React.FC = () => (
       }
     />
     <Route
-      path={clusterConnectConnectorRelativePath}
+      path={getNonExactPath(clusterConnectConnectorRelativePath)}
       element={
         <BreadcrumbRoute>
           <DetailsContainer />

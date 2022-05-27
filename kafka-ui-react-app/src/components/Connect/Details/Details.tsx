@@ -4,8 +4,10 @@ import { Connector, Task } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
   clusterConnectConnectorConfigPath,
+  clusterConnectConnectorConfigRelativePath,
   clusterConnectConnectorPath,
   clusterConnectConnectorTasksPath,
+  clusterConnectConnectorTasksRelativePath,
   RouterParamsClusterConnectConnector,
 } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -96,17 +98,14 @@ const Details: React.FC<DetailsProps> = ({
         </NavLink>
       </Navbar>
       <Routes>
+        <Route index element={<OverviewContainer />} />
         <Route
-          path={clusterConnectConnectorTasksPath()}
+          path={clusterConnectConnectorTasksRelativePath}
           element={<TasksContainer />}
         />
         <Route
-          path={clusterConnectConnectorConfigPath()}
+          path={clusterConnectConnectorConfigRelativePath}
           element={<ConfigContainer />}
-        />
-        <Route
-          path={clusterConnectConnectorPath()}
-          element={<OverviewContainer />}
         />
       </Routes>
     </div>
