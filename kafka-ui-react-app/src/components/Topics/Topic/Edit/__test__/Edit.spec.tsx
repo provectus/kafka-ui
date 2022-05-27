@@ -3,23 +3,21 @@ import Edit, { DEFAULTS, Props } from 'components/Topics/Topic/Edit/Edit';
 import { act, screen } from '@testing-library/react';
 import { render, WithRoute } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
-import { createMemoryHistory } from 'history';
-import {
-  clusterTopicEditPath,
-  clusterTopicPath,
-  clusterTopicsPath,
-} from 'lib/paths';
+import { clusterTopicEditPath, clusterTopicPath } from 'lib/paths';
 import { TopicsState, TopicWithDetailedInfo } from 'redux/interfaces';
 import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
 
 import { topicName, clusterName, topicWithInfo } from './fixtures';
 
-const defaultPathName = clusterTopicEditPath(clusterName, topicName);
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 const renderComponent = (
   props: Partial<Props> = {},
-  topic: TopicWithDetailedInfo | null = topicWithInfo,
-  path = defaultPathName
+  topic: TopicWithDetailedInfo | null = topicWithInfo
 ) => {
   let topics: TopicsState | undefined;
 
@@ -40,13 +38,15 @@ const renderComponent = (
       />
     </WithRoute>,
     {
-      initialEntries: [path],
+      initialEntries: [clusterTopicEditPath(clusterName, topicName)],
       preloadedState: { topics },
     }
   );
 };
 
 describe('Edit Component', () => {
+  afterEach(() => {});
+
   it('renders the Edit Component', () => {
     renderComponent();
 
@@ -113,16 +113,8 @@ describe('Edit Component', () => {
   describe('Submit Case of the Edit Component', () => {
     it('should check the submit functionality when topic updated is false', async () => {
       const updateTopicMock = jest.fn();
-      const mocked = createMemoryHistory({
-        initialEntries: [clusterTopicEditPath(clusterName, topicName)],
-      });
 
-      jest.spyOn(mocked, 'push');
-      renderComponent(
-        { updateTopic: updateTopicMock },
-        undefined,
-        clusterTopicEditPath(clusterName, topicName)
-      );
+      renderComponent({ updateTopic: updateTopicMock }, undefined);
 
       const btn = screen.getAllByText(/submit/i)[0];
       expect(btn).toBeEnabled();
@@ -135,19 +127,15 @@ describe('Edit Component', () => {
         userEvent.click(btn);
       });
       expect(updateTopicMock).toHaveBeenCalledTimes(1);
-      expect(mocked.push).not.toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
 
     it('should check the submit functionality when topic updated is true', async () => {
       const updateTopicMock = jest.fn();
-      const mocked = createMemoryHistory({
-        initialEntries: [`${clusterTopicsPath(clusterName)}/${topicName}/edit`],
-      });
-      jest.spyOn(mocked, 'push');
+
       renderComponent(
         { updateTopic: updateTopicMock, isTopicUpdated: true },
-        undefined,
-        `${clusterTopicsPath(clusterName)}/${topicName}/edit`
+        undefined
       );
 
       const btn = screen.getAllByText(/submit/i)[0];
@@ -160,10 +148,7 @@ describe('Edit Component', () => {
         userEvent.click(btn);
       });
       expect(updateTopicMock).toHaveBeenCalledTimes(1);
-      expect(mocked.push).toHaveBeenCalled();
-      expect(mocked.location.pathname).toBe(
-        clusterTopicPath(clusterName, topicName)
-      );
+      expect(mockNavigate).toHaveBeenLastCalledWith('../');
     });
   });
 });

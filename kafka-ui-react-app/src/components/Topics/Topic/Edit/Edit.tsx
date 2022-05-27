@@ -108,10 +108,9 @@ const Edit: React.FC<Props> = ({
 
   React.useEffect(() => {
     if (isSubmitting && isTopicUpdated) {
-      const { name } = methods.getValues();
-      navigate(clusterTopicPath(clusterName, name));
+      navigate('../');
     }
-  }, [isSubmitting, isTopicUpdated, clusterName, methods, navigate]);
+  }, [isSubmitting, isTopicUpdated, clusterName, navigate]);
 
   if (!isFetched || !topic || !topic.config) {
     return null;
