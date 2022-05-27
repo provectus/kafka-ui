@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import Topics from 'components/Topics/Topics';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
@@ -9,6 +9,7 @@ import {
   clusterTopicNewPath,
   clusterTopicPath,
   clusterTopicsPath,
+  getNonExactPath,
 } from 'lib/paths';
 
 const listContainer = 'listContainer';
@@ -29,7 +30,12 @@ describe('Topics Component', () => {
   const clusterName = 'clusterName';
   const topicName = 'topicName';
   const setUpComponent = (path: string) => {
-    return render(<Topics />, { initialEntries: [path] });
+    return render(
+      <WithRoute path={getNonExactPath(clusterTopicsPath())}>
+        <Topics />
+      </WithRoute>,
+      { initialEntries: [path] }
+    );
   };
 
   it('should check if the page is Topics List rendered', () => {

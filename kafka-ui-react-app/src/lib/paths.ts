@@ -85,6 +85,8 @@ export type ClusterSubjectParam = {
 
 // Topics
 export const clusterTopicsRelativePath = 'topics';
+export const clusterTopicNewRelativePath = 'create-new';
+export const clusterTopicCopyRelativePath = 'copy';
 export const clusterTopicsPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterTopicsRelativePath}`;

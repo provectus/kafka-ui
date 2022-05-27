@@ -1,10 +1,10 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import {
-  clusterTopicCopyPath,
-  clusterTopicNewPath,
-  clusterTopicPath,
-  clusterTopicsPath,
+  clusterTopicCopyRelativePath,
+  clusterTopicNewRelativePath,
+  getNonExactPath,
+  RouteParams,
 } from 'lib/paths';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
@@ -15,7 +15,7 @@ import New from './New/New';
 const Topics: React.FC = () => (
   <Routes>
     <Route
-      path={clusterTopicsPath()}
+      index
       element={
         <BreadcrumbRoute>
           <ListContainer />
@@ -23,7 +23,7 @@ const Topics: React.FC = () => (
       }
     />
     <Route
-      path={clusterTopicNewPath()}
+      path={clusterTopicNewRelativePath}
       element={
         <BreadcrumbRoute>
           <New />
@@ -31,7 +31,7 @@ const Topics: React.FC = () => (
       }
     />
     <Route
-      path={clusterTopicCopyPath()}
+      path={clusterTopicCopyRelativePath}
       element={
         <BreadcrumbRoute>
           <New />
@@ -39,7 +39,7 @@ const Topics: React.FC = () => (
       }
     />
     <Route
-      path={clusterTopicPath()}
+      path={getNonExactPath(RouteParams.topicName)}
       element={
         <BreadcrumbRoute>
           <TopicContainer />
