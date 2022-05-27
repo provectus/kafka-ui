@@ -52,7 +52,7 @@ public class TopicTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should update a topic")
-    @Issue("https://github.com/provectus/kafka-ui/issues/2023")
+    @Issue("1500")
     @Test
     public void updateTopic() {
         pages.openTopicsList(SECOND_LOCAL)
