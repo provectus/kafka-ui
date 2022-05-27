@@ -44,7 +44,8 @@ jobs:
           -Dsonar.projectKey=com.provectus:kafka-ui_backend \
           -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
           -Dsonar.pullrequest.branch=${{ github.head_ref }} \
-          -Dsonar.pullrequest.base=${{ github.base_ref }}
+          -Dsonar.pullrequest.base=${{ github.base_ref }} \
+          -Pcoverage
       - name: Build and analyze push master
         if: ${{ github.event_name == 'push' }}
         env:
@@ -53,4 +54,5 @@ jobs:
         run: |
           mvn versions:set -DnewVersion=$GITHUB_SHA
           mvn -B jacoco:prepare-agent verify jacoco:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-          -Dsonar.projectKey=com.provectus:kafka-ui_backend
+          -Dsonar.projectKey=com.provectus:kafka-ui_backend \
+          -Pcoverage
