@@ -3,10 +3,9 @@ import SendMessage from 'components/Topics/Topic/SendMessage/SendMessage';
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock';
-import { createMemoryHistory } from 'history';
 import { render, WithRoute } from 'lib/testHelpers';
 import {
-  clusterTopicMessagesPath,
+  clusterTopicMessagesRelativePath,
   clusterTopicSendMessagePath,
 } from 'lib/paths';
 import { store } from 'redux/store';
@@ -33,11 +32,14 @@ jest.mock('components/Topics/Topic/SendMessage/validateMessage', () =>
   jest.fn()
 );
 
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
 const clusterName = 'testCluster';
 const topicName = externalTopicPayload.name;
-const history = createMemoryHistory({
-  initialEntries: [clusterTopicSendMessagePath(clusterName, topicName)],
-});
 
 const renderComponent = async () => {
   await act(() => {
@@ -86,6 +88,7 @@ describe('SendMessage', () => {
   });
   afterEach(() => {
     fetchMock.reset();
+    mockNavigate.mockClear();
   });
 
   it('fetches schema on first render', async () => {
@@ -113,8 +116,8 @@ describe('SendMessage', () => {
       const sendTopicMessageMock = fetchMock.postOnce(url, 200);
       await renderAndSubmitData();
       expect(sendTopicMessageMock.called(url)).toBeTruthy();
-      expect(history.location.pathname).toEqual(
-        clusterTopicMessagesPath(clusterName, topicName)
+      expect(mockNavigate).toHaveBeenLastCalledWith(
+        `../${clusterTopicMessagesRelativePath}`
       );
     });
 
@@ -125,8 +128,8 @@ describe('SendMessage', () => {
       await renderAndSubmitData();
       expect(sendTopicMessageMock.called(url)).toBeTruthy();
       expect(screen.getByRole('alert')).toBeInTheDocument();
-      expect(history.location.pathname).toEqual(
-        clusterTopicMessagesPath(clusterName, topicName)
+      expect(mockNavigate).toHaveBeenLastCalledWith(
+        `../${clusterTopicMessagesRelativePath}`
       );
     });
 
@@ -134,9 +137,7 @@ describe('SendMessage', () => {
       const sendTopicMessageMock = fetchMock.postOnce(url, 200);
       await renderAndSubmitData(['error']);
       expect(sendTopicMessageMock.called(url)).toBeFalsy();
-      expect(history.location.pathname).not.toEqual(
-        clusterTopicMessagesPath(clusterName, topicName)
-      );
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 });

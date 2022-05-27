@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { clusterTopicMessagesPath, RouteParamsClusterTopic } from 'lib/paths';
+import {
+  clusterTopicMessagesPath,
+  clusterTopicMessagesRelativePath,
+  RouteParamsClusterTopic,
+} from 'lib/paths';
 import jsf from 'json-schema-faker';
 import { messagesApiClient } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import {
@@ -142,7 +146,7 @@ const SendMessage: React.FC = () => {
           })
         );
       }
-      navigate(clusterTopicMessagesPath(clusterName, topicName));
+      navigate(`../${clusterTopicMessagesRelativePath}`);
     }
   };
 
