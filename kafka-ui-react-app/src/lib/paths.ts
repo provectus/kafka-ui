@@ -33,13 +33,13 @@ export type ClusterNameRoute = { clusterName: ClusterName };
 export const clusterBrokerRelativePath = 'brokers';
 export const clusterBrokersPath = (
   clusterName: ClusterName = RouteParams.clusterName
-) => `${clusterPath(clusterName)}/brokers`;
+) => `${clusterPath(clusterName)}/${clusterBrokerRelativePath}`;
 
 // Consumer Groups
 export const clusterConsumerGroupsRelativePath = 'consumer-groups';
 export const clusterConsumerGroupsPath = (
   clusterName: ClusterName = RouteParams.clusterName
-) => `${clusterPath(clusterName)}/consumer-groups`;
+) => `${clusterPath(clusterName)}/${clusterConsumerGroupsRelativePath}`;
 export const clusterConsumerGroupDetailsPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   groupId: string = RouteParams.consumerGroupID
@@ -55,6 +55,9 @@ export type ClusterGroupParam = {
 
 // Schemas
 export const clusterSchemasRelativePath = 'schemas';
+export const clusterSchemaNewRelativePath = 'create-new';
+export const clusterSchemaEditRelativePath = `${RouteParams.subject}/edit`;
+export const clusterSchemaSchemaDiffRelativePath = `${RouteParams.subject}/diff`;
 export const clusterSchemasPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/schemas`;
@@ -187,6 +190,7 @@ export type RouterParamsClusterConnectConnector = {
 
 // KsqlDb
 export const clusterKsqlDbRelativePath = 'ksqldb';
+export const clusterKsqlDbQueryRelativePath = 'query';
 export const clusterKsqlDbPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/ksqldb`;

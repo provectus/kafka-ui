@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { clusterKsqlDbPath, clusterKsqlDbQueryPath } from 'lib/paths';
+import { clusterKsqlDbQueryRelativePath } from 'lib/paths';
 import List from 'components/KsqlDb/List/List';
 import Query from 'components/KsqlDb/Query/Query';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
@@ -9,7 +9,7 @@ const KsqlDb: React.FC = () => {
   return (
     <Routes>
       <Route
-        path={clusterKsqlDbPath()}
+        index
         element={
           <BreadcrumbRoute>
             <List />
@@ -17,7 +17,7 @@ const KsqlDb: React.FC = () => {
         }
       />
       <Route
-        path={clusterKsqlDbQueryPath()}
+        path={clusterKsqlDbQueryRelativePath}
         element={
           <BreadcrumbRoute>
             <Query />

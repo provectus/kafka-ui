@@ -1,6 +1,10 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { RouteParams } from 'lib/paths';
+import {
+  clusterSchemaEditRelativePath,
+  clusterSchemaNewRelativePath,
+  RouteParams,
+} from 'lib/paths';
 import List from 'components/Schemas/List/List';
 import Details from 'components/Schemas/Details/Details';
 import New from 'components/Schemas/New/New';
@@ -20,7 +24,7 @@ const Schemas: React.FC = () => {
         }
       />
       <Route
-        path="create-new"
+        path={clusterSchemaNewRelativePath}
         element={
           <BreadcrumbRoute>
             <New />
@@ -36,7 +40,7 @@ const Schemas: React.FC = () => {
         }
       />
       <Route
-        path={`${RouteParams.subject}/edit`}
+        path={clusterSchemaEditRelativePath}
         element={
           <BreadcrumbRoute>
             <Edit />
@@ -44,7 +48,7 @@ const Schemas: React.FC = () => {
         }
       />
       <Route
-        path={`${RouteParams.subject}/diff`}
+        path={clusterSchemaEditRelativePath}
         element={
           <BreadcrumbRoute>
             <DiffContainer />
