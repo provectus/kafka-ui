@@ -16,11 +16,7 @@ const ClusterMenuItem: React.FC<PropsWithChildren<ClusterMenuItemProps>> = (
   if (to) {
     return (
       <S.ListItem $isTopLevel={isTopLevel}>
-        <S.Link
-          to={to}
-          title={title}
-          className={({ isActive }) => (isActive ? 'is-active' : '')}
-        >
+        <S.Link to={to} title={title}>
           {title}
         </S.Link>
         {children}

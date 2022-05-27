@@ -6,7 +6,6 @@ import {
   clusterConsumerGroupsPath,
   clusterSchemasPath,
   clusterConnectorsPath,
-  clusterConnectsPath,
   clusterKsqlDbPath,
 } from 'lib/paths';
 
