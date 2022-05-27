@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Connect, FullConnectorInfo } from 'generated-sources';
 import { ClusterName, ConnectorSearch } from 'redux/interfaces';
-import { clusterConnectorNewPath, ClusterNameRoute } from 'lib/paths';
+import { clusterConnectorNewRelativePath, ClusterNameRoute } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Search from 'components/common/Search/Search';
@@ -61,7 +61,7 @@ const List: React.FC<ListProps> = ({
             isLink
             buttonType="primary"
             buttonSize="M"
-            to={clusterConnectorNewPath(clusterName)}
+            to={clusterConnectorNewRelativePath}
           >
             Create Connector
           </Button>

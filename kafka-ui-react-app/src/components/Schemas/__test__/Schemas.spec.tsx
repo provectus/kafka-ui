@@ -1,18 +1,24 @@
 import React from 'react';
 import Schemas from 'components/Schemas/Schemas';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterSchemaEditPath,
   clusterSchemaNewPath,
   clusterSchemaPath,
   clusterSchemasPath,
+  getNonExactPath,
 } from 'lib/paths';
 import { screen, waitFor } from '@testing-library/dom';
 import fetchMock from 'fetch-mock';
 import { schemaVersion } from 'redux/reducers/schemas/__test__/fixtures';
 
 const renderComponent = (pathname: string) =>
-  render(<Schemas />, { initialEntries: [pathname] });
+  render(
+    <WithRoute path={getNonExactPath(clusterSchemasPath())}>
+      <Schemas />
+    </WithRoute>,
+    { initialEntries: [pathname] }
+  );
 
 const clusterName = 'secondLocal';
 

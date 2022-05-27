@@ -1,12 +1,11 @@
 import React from 'react';
 import { Navigate, Routes, Route } from 'react-router-dom';
 import {
-  clusterConnectorsPath,
-  clusterConnectsPath,
-  clusterConnectorNewPath,
-  clusterConnectConnectorPath,
-  clusterConnectConnectorEditPath,
-  clusterConnectConnectorsPath,
+  RouteParams,
+  clusterConnectConnectorEditRelativePath,
+  clusterConnectConnectorRelativePath,
+  clusterConnectConnectorsRelativePath,
+  clusterConnectorNewRelativePath,
 } from 'lib/paths';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
@@ -18,7 +17,7 @@ import EditContainer from './Edit/EditContainer';
 const Connect: React.FC = () => (
   <Routes>
     <Route
-      path={clusterConnectorsPath()}
+      index
       element={
         <BreadcrumbRoute>
           <ListContainer />
@@ -26,7 +25,7 @@ const Connect: React.FC = () => (
       }
     />
     <Route
-      path={clusterConnectorNewPath()}
+      path={clusterConnectorNewRelativePath}
       element={
         <BreadcrumbRoute>
           <NewContainer />
@@ -34,7 +33,7 @@ const Connect: React.FC = () => (
       }
     />
     <Route
-      path={clusterConnectConnectorEditPath()}
+      path={clusterConnectConnectorEditRelativePath}
       element={
         <BreadcrumbRoute>
           <EditContainer />
@@ -42,7 +41,7 @@ const Connect: React.FC = () => (
       }
     />
     <Route
-      path={clusterConnectConnectorPath()}
+      path={clusterConnectConnectorRelativePath}
       element={
         <BreadcrumbRoute>
           <DetailsContainer />
@@ -50,12 +49,12 @@ const Connect: React.FC = () => (
       }
     />
     <Route
-      path={clusterConnectConnectorsPath()}
-      element={<Navigate to={clusterConnectorsPath()} replace />}
+      path={clusterConnectConnectorsRelativePath}
+      element={<Navigate to="/" replace />}
     />
     <Route
-      path={`${clusterConnectsPath()}/:connectName`}
-      element={<Navigate to={clusterConnectorsPath()} replace />}
+      path={RouteParams.connectName}
+      element={<Navigate to="/" replace />}
     />
   </Routes>
 );
