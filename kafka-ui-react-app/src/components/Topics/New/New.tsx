@@ -24,7 +24,7 @@ enum Filters {
 
 const New: React.FC = () => {
   const methods = useForm<TopicFormData>({
-    mode: 'all',
+    mode: 'onChange',
     resolver: yupResolver(topicFormValidationSchema),
   });
 
