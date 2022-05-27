@@ -41,7 +41,7 @@ const New: React.FC = () => {
     const { meta } = await dispatch(createTopic({ clusterName, data }));
 
     if (meta.requestStatus === 'fulfilled') {
-      navigate(clusterTopicPath(clusterName, data.name));
+      navigate(`../${data.name}`);
     }
   };
 
