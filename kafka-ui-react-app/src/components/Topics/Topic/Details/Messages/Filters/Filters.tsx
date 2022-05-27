@@ -12,7 +12,7 @@ import {
 } from 'generated-sources';
 import React, { useContext } from 'react';
 import { omitBy } from 'lodash';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
@@ -81,9 +81,10 @@ const Filters: React.FC<FiltersProps> = ({
   updateMeta,
   setIsFetching,
 }) => {
-  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
+  const { clusterName, topicName } =
+    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const partitions = useAppSelector((state) =>
     getPartitionsByTopicName(state, topicName)
@@ -213,7 +214,8 @@ const Filters: React.FC<FiltersProps> = ({
         .map((key) => `${key}=${newProps[key]}`)
         .join('&');
 
-      history.push({
+      navigate({
+        // TODO check if work
         search: `?${qs}`,
       });
     },
@@ -225,6 +227,7 @@ const Filters: React.FC<FiltersProps> = ({
       timestamp,
       query,
       selectedPartitions,
+      navigate,
     ]
   );
 

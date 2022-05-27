@@ -1,9 +1,10 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   clusterSchemasPath,
   clusterSchemaSchemaDiffPath,
   clusterSchemaEditPath,
+  ClusterSubjectParam,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -36,11 +37,11 @@ import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
 
 const Details: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName, subject } =
-    useParams<{ clusterName: string; subject: string }>();
+    useParams<ClusterSubjectParam>() as ClusterSubjectParam;
   const [
     isDeleteSchemaConfirmationVisible,
     setDeleteSchemaConfirmationVisible,
@@ -71,7 +72,7 @@ const Details: React.FC = () => {
         clusterName,
         subject,
       });
-      history.push(clusterSchemasPath(clusterName));
+      navigate(clusterSchemasPath(clusterName));
     } catch (e) {
       const err = await getResponse(e as Response);
       dispatch(serverErrorAlertAdded(err));

@@ -1,24 +1,16 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 import Settings, {
   Props,
 } from 'components/Topics/Topic/Details/Settings/Settings';
 import { TopicConfig } from 'generated-sources';
 import { clusterTopicSettingsPath } from 'lib/paths';
-import { createMemoryHistory } from 'history';
-import { Route, Router } from 'react-router-dom';
 import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
 
 describe('Settings', () => {
   const mockClusterName = 'Cluster_Name';
   const mockTopicName = 'Topic_Name';
-
-  const defaultPathName = clusterTopicSettingsPath();
-
-  const history = createMemoryHistory({
-    initialEntries: [clusterTopicSettingsPath(mockClusterName, mockTopicName)],
-  });
 
   let expectedResult: number;
   const mockFn = jest.fn();
@@ -45,13 +37,13 @@ describe('Settings', () => {
     const topics = getTopicStateFixtures([topic]);
 
     return render(
-      <Router history={history}>
-        <Route path={defaultPathName}>
-          <Settings isFetched fetchTopicConfig={mockFn} {...props} />
-        </Route>
-      </Router>,
+      <WithRoute path={clusterTopicSettingsPath()}>
+        <Settings isFetched fetchTopicConfig={mockFn} {...props} />
+      </WithRoute>,
       {
-        pathname: defaultPathName,
+        initialEntries: [
+          clusterTopicSettingsPath(mockClusterName, mockTopicName),
+        ],
         preloadedState: {
           topics,
         },

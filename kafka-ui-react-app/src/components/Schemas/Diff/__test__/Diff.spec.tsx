@@ -1,10 +1,8 @@
 import React from 'react';
-import { Route, Router } from 'react-router-dom';
 import Diff, { DiffProps } from 'components/Schemas/Diff/Diff';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 import { clusterSchemaSchemaDiffPath } from 'lib/paths';
-import { createMemoryHistory } from 'history';
 
 import { versions } from './fixtures';
 
@@ -31,21 +29,15 @@ describe('Diff', () => {
 
     pathname = `${pathname}?${searchParams.toString()}`;
 
-    const history = createMemoryHistory({
-      initialEntries: [pathname],
-    });
-
     return render(
-      <Router history={history}>
-        <Route path={clusterSchemaSchemaDiffPath()}>
-          <Diff
-            versions={props.versions}
-            areVersionsFetched={props.areVersionsFetched}
-          />
-        </Route>
-      </Router>,
+      <WithRoute path={clusterSchemaSchemaDiffPath()}>
+        <Diff
+          versions={props.versions}
+          areVersionsFetched={props.areVersionsFetched}
+        />
+      </WithRoute>,
       {
-        pathname,
+        initialEntries: [pathname],
       }
     );
   };

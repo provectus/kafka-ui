@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Redirect, Route } from 'react-router-dom';
+import { Navigate, Routes, Route } from 'react-router-dom';
 import {
   clusterConnectorsPath,
   clusterConnectsPath,
@@ -16,36 +16,48 @@ import DetailsContainer from './Details/DetailsContainer';
 import EditContainer from './Edit/EditContainer';
 
 const Connect: React.FC = () => (
-  <div>
-    <Switch>
-      <Route exact path={clusterConnectorsPath()}>
+  <Routes>
+    <Route
+      path={clusterConnectorsPath()}
+      element={
         <BreadcrumbRoute>
           <ListContainer />
         </BreadcrumbRoute>
-      </Route>
-      <Route exact path={clusterConnectorNewPath()}>
+      }
+    />
+    <Route
+      path={clusterConnectorNewPath()}
+      element={
         <BreadcrumbRoute>
           <NewContainer />
         </BreadcrumbRoute>
-      </Route>
-      <Route exact path={clusterConnectConnectorEditPath()}>
+      }
+    />
+    <Route
+      path={clusterConnectConnectorEditPath()}
+      element={
         <BreadcrumbRoute>
           <EditContainer />
         </BreadcrumbRoute>
-      </Route>
-      <Route path={clusterConnectConnectorPath()}>
+      }
+    />
+    <Route
+      path={clusterConnectConnectorPath()}
+      element={
         <BreadcrumbRoute>
           <DetailsContainer />
         </BreadcrumbRoute>
-      </Route>
-      <Route path={clusterConnectConnectorsPath()}>
-        <Redirect to={clusterConnectorsPath()} />
-      </Route>
-      <Route path={`${clusterConnectsPath()}/:connectName`}>
-        <Redirect to={clusterConnectorsPath()} />
-      </Route>
-    </Switch>
-  </div>
+      }
+    />
+    <Route
+      path={clusterConnectConnectorsPath()}
+      element={<Navigate to={clusterConnectorsPath()} replace />}
+    />
+    <Route
+      path={`${clusterConnectsPath()}/:connectName`}
+      element={<Navigate to={clusterConnectorsPath()} replace />}
+    />
+  </Routes>
 );
 
 export default Connect;

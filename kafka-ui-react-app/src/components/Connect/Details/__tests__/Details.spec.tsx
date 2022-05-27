@@ -1,6 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorPath } from 'lib/paths';
 import Details, { DetailsProps } from 'components/Connect/Details/Details';
 import { connector, tasks } from 'redux/reducers/connect/__test__/fixtures';
@@ -33,7 +32,7 @@ describe('Details', () => {
   const connectorName = 'my-connector';
 
   const setupWrapper = (props: Partial<DetailsProps> = {}) => (
-    <Route path={pathname}>
+    <WithRoute path={pathname}>
       <Details
         fetchConnector={jest.fn()}
         fetchTasks={jest.fn()}
@@ -43,16 +42,14 @@ describe('Details', () => {
         tasks={tasks}
         {...props}
       />
-    </Route>
+    </WithRoute>
   );
 
   it('renders progressbar when fetching connector', () => {
     render(setupWrapper({ isConnectorFetching: true }), {
-      pathname: clusterConnectConnectorPath(
-        clusterName,
-        connectName,
-        connectorName
-      ),
+      initialEntries: [
+        clusterConnectConnectorPath(clusterName, connectName, connectorName),
+      ],
     });
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
@@ -61,11 +58,9 @@ describe('Details', () => {
 
   it('renders progressbar when fetching tasks', () => {
     render(setupWrapper({ areTasksFetching: true }), {
-      pathname: clusterConnectConnectorPath(
-        clusterName,
-        connectName,
-        connectorName
-      ),
+      initialEntries: [
+        clusterConnectConnectorPath(clusterName, connectName, connectorName),
+      ],
     });
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
     expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
@@ -73,11 +68,9 @@ describe('Details', () => {
 
   it('is empty when no connector', () => {
     const { container } = render(setupWrapper({ connector: null }), {
-      pathname: clusterConnectConnectorPath(
-        clusterName,
-        connectName,
-        connectorName
-      ),
+      initialEntries: [
+        clusterConnectConnectorPath(clusterName, connectName, connectorName),
+      ],
     });
     expect(container).toBeEmptyDOMElement();
   });
@@ -85,11 +78,9 @@ describe('Details', () => {
   it('fetches connector on mount', () => {
     const fetchConnector = jest.fn();
     render(setupWrapper({ fetchConnector }), {
-      pathname: clusterConnectConnectorPath(
-        clusterName,
-        connectName,
-        connectorName
-      ),
+      initialEntries: [
+        clusterConnectConnectorPath(clusterName, connectName, connectorName),
+      ],
     });
     expect(fetchConnector).toHaveBeenCalledTimes(1);
     expect(fetchConnector).toHaveBeenCalledWith({
@@ -102,11 +93,9 @@ describe('Details', () => {
   it('fetches tasks on mount', () => {
     const fetchTasks = jest.fn();
     render(setupWrapper({ fetchTasks }), {
-      pathname: clusterConnectConnectorPath(
-        clusterName,
-        connectName,
-        connectorName
-      ),
+      initialEntries: [
+        clusterConnectConnectorPath(clusterName, connectName, connectorName),
+      ],
     });
     expect(fetchTasks).toHaveBeenCalledTimes(1);
     expect(fetchTasks).toHaveBeenCalledWith({

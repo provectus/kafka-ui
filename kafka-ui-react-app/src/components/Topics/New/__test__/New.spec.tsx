@@ -1,6 +1,6 @@
 import React from 'react';
 import New from 'components/Topics/New/New';
-import { Route, Router } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import { RootState } from 'redux/interfaces';
 import * as redux from 'react-redux';
@@ -26,21 +26,30 @@ const initialState: Partial<RootState> = {};
 const storeMock = mockStore(initialState);
 const historyMock = createMemoryHistory();
 
-const renderComponent = (history = historyMock, store = storeMock) =>
+const renderComponent = (path: string, store = storeMock) =>
   render(
-    <Router history={history}>
-      <Route path={clusterTopicNewPath()}>
-        <Provider store={store}>
-          <New />
-        </Provider>
-      </Route>
-      <Route path={clusterTopicCopyPath()}>
-        <Provider store={store}>
-          <New />
-        </Provider>
-      </Route>
-      <Route path={clusterTopicPath()}>New topic path</Route>
-    </Router>
+    <Routes>
+      <Route
+        path={clusterTopicNewPath()}
+        element={
+          <Provider store={store}>
+            <New />
+          </Provider>
+        }
+      />
+
+      <Route
+        path={clusterTopicCopyPath()}
+        element={
+          <Provider store={store}>
+            <New />
+          </Provider>
+        }
+      />
+
+      <Route path={clusterTopicPath()} element="New topic path" />
+    </Routes>,
+    { initialEntries: [path] }
   );
 
 describe('New', () => {
@@ -49,26 +58,14 @@ describe('New', () => {
   });
 
   it('checks header for create new', async () => {
-    const mockedHistory = createMemoryHistory({
-      initialEntries: [clusterTopicNewPath(clusterName)],
-    });
-    renderComponent(mockedHistory);
+    renderComponent(clusterTopicNewPath(clusterName));
     expect(
       screen.getByRole('heading', { name: 'Create new Topic' })
     ).toHaveTextContent('Create new Topic');
   });
 
   it('checks header for copy', async () => {
-    const mockedHistory = createMemoryHistory({
-      initialEntries: [
-        {
-          pathname: clusterTopicCopyPath(clusterName),
-          search: `?name=test`,
-        },
-      ],
-    });
-
-    renderComponent(mockedHistory);
+    renderComponent(`${clusterTopicCopyPath(clusterName)}?name=test`);
     expect(
       screen.getByRole('heading', { name: 'Copy Topic' })
     ).toHaveTextContent('Copy Topic');
@@ -79,7 +76,7 @@ describe('New', () => {
       initialEntries: [clusterTopicNewPath(clusterName)],
     });
     jest.spyOn(mockedHistory, 'push');
-    renderComponent(mockedHistory);
+    renderComponent(clusterTopicNewPath(clusterName));
 
     await waitFor(() => {
       userEvent.click(screen.getByText(/submit/i));
@@ -106,7 +103,7 @@ describe('New', () => {
     jest.spyOn(mockedHistory, 'push');
 
     await act(() => {
-      renderComponent(mockedHistory);
+      renderComponent(clusterTopicNewPath(clusterName));
     });
 
     await waitFor(() => {
@@ -130,15 +127,8 @@ describe('New', () => {
       meta: { requestStatus: 'pending' },
     })) as jest.Mock;
     useDispatchSpy.mockReturnValue(useDispatchMock);
-
-    const mockedHistory = createMemoryHistory({
-      initialEntries: [clusterTopicNewPath(clusterName)],
-    });
-
-    jest.spyOn(mockedHistory, 'push');
-
     await act(() => {
-      renderComponent(mockedHistory);
+      renderComponent(clusterTopicNewPath(clusterName));
     });
 
     await waitFor(() => {
@@ -163,7 +153,7 @@ describe('New', () => {
     });
 
     jest.spyOn(mockedHistory, 'push');
-    renderComponent(mockedHistory);
+    renderComponent(clusterTopicNewPath(clusterName));
 
     await act(() => {
       userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);

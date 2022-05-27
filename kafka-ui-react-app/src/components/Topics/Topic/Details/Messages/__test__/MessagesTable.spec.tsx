@@ -31,20 +31,15 @@ describe('MessagesTable', () => {
     ctx: ContextProps = contextValue,
     messages: TopicMessage[] = [],
     isFetching?: boolean,
-    customHistory?: MemoryHistory
+    path?: string
   ) => {
-    const history =
-      customHistory ||
-      createMemoryHistory({
-        initialEntries: [params.toString()],
-      });
+    const customPath = path || params.toString();
     return render(
-      <Router history={history}>
-        <TopicMessagesContext.Provider value={ctx}>
-          <MessagesTable />
-        </TopicMessagesContext.Provider>
-      </Router>,
+      <TopicMessagesContext.Provider value={ctx}>
+        <MessagesTable />
+      </TopicMessagesContext.Provider>,
       {
+        initialEntries: [customPath],
         preloadedState: {
           topicMessages: {
             messages,

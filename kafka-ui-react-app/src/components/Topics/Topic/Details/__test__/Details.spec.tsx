@@ -7,15 +7,14 @@ import {
   getTopicStateFixtures,
   internalTopicPayload,
 } from 'redux/reducers/topics/__test__/fixtures';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterTopicEditPath,
   clusterTopicPath,
   clusterTopicsPath,
 } from 'lib/paths';
-import { Route, Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
 import { CleanUpPolicy, Topic } from 'generated-sources';
+import { createMemoryHistory } from 'history';
 
 describe('Details', () => {
   const mockDelete = jest.fn();
@@ -39,11 +38,7 @@ describe('Details', () => {
 
   const mockTopicsState = getTopicStateFixtures([topic]);
 
-  const setupComponent = (
-    pathname = defaultPathname,
-    history = mockHistory,
-    props = {}
-  ) =>
+  const setupComponent = (pathname = defaultPathname, props = {}) =>
     render(
       <ClusterContext.Provider
         value={{
@@ -53,20 +48,18 @@ describe('Details', () => {
           isTopicDeletionAllowed: true,
         }}
       >
-        <Router history={history}>
-          <Route path={clusterTopicPath()}>
-            <Details
-              deleteTopic={mockDelete}
-              recreateTopic={mockRecreateTopic}
-              clearTopicMessages={mockClearTopicMessages}
-              isDeleted={false}
-              {...props}
-            />
-          </Route>
-        </Router>
+        <WithRoute path={clusterTopicPath()}>
+          <Details
+            deleteTopic={mockDelete}
+            recreateTopic={mockRecreateTopic}
+            clearTopicMessages={mockClearTopicMessages}
+            isDeleted={false}
+            {...props}
+          />
+        </WithRoute>
       </ClusterContext.Provider>,
       {
-        pathname,
+        initialEntries: [pathname],
         preloadedState: {
           topics: mockTopicsState,
         },
@@ -166,7 +159,7 @@ describe('Details', () => {
   });
 
   it('redirects to the correct route if topic is deleted', () => {
-    setupComponent(defaultPathname, mockHistory, { isDeleted: true });
+    setupComponent(defaultPathname, { isDeleted: true });
     const redirectRoute = clusterTopicsPath(mockClusterName);
 
     expect(mockHistory.push).toHaveBeenCalledWith(redirectRoute);

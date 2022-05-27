@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ConnectorState, ConnectorAction } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
@@ -59,9 +59,10 @@ const Actions: React.FC<ActionsProps> = ({
   isConnectorActionRunning,
 }) => {
   const { clusterName, connectName, connectorName } =
-    useParams<RouterParamsClusterConnectConnector>();
+    useParams<RouterParamsClusterConnectConnector>() as RouterParamsClusterConnectConnector;
 
-  const history = useHistory();
+  const navigate = useNavigate();
+
   const [
     isDeleteConnectorConfirmationVisible,
     setIsDeleteConnectorConfirmationVisible,
@@ -70,7 +71,7 @@ const Actions: React.FC<ActionsProps> = ({
   const deleteConnectorHandler = async () => {
     try {
       await deleteConnector({ clusterName, connectName, connectorName });
-      history.push(clusterConnectorsPath(clusterName));
+      navigate(clusterConnectorsPath(clusterName));
     } catch {
       // do not redirect
     }

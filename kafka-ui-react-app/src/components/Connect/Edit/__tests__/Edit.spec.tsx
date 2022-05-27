@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterConnectConnectorConfigPath,
   clusterConnectConnectorEditPath,
@@ -17,9 +17,7 @@ jest.mock('components/common/Editor/Editor', () => 'mock-Editor');
 const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
+  useNavigate: () => mockHistoryPush,
 }));
 
 describe('Edit', () => {
@@ -30,7 +28,7 @@ describe('Edit', () => {
 
   const renderComponent = (props: Partial<EditProps> = {}) =>
     render(
-      <Route path={pathname}>
+      <WithRoute path={pathname}>
         <Edit
           fetchConfig={jest.fn()}
           isConfigFetching={false}
@@ -38,13 +36,15 @@ describe('Edit', () => {
           updateConfig={jest.fn()}
           {...props}
         />
-      </Route>,
+      </WithRoute>,
       {
-        pathname: clusterConnectConnectorEditPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
+        initialEntries: [
+          clusterConnectConnectorEditPath(
+            clusterName,
+            connectName,
+            connectorName
+          ),
+        ],
       }
     );
 

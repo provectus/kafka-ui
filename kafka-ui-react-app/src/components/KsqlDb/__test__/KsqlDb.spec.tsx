@@ -7,7 +7,7 @@ import { clusterKsqlDbPath } from 'lib/paths';
 describe('KsqlDb Component', () => {
   describe('KsqlDb', () => {
     it('to be in the document', () => {
-      render(<KsqlDb />, { pathname: clusterKsqlDbPath() });
+      render(<KsqlDb />, { initialEntries: [clusterKsqlDbPath()] });
       expect(screen.getByText('KSQL DB')).toBeInTheDocument();
       expect(screen.getByText('Execute KSQL Request')).toBeInTheDocument();
     });

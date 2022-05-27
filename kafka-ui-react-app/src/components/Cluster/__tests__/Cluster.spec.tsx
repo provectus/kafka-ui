@@ -1,17 +1,17 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
 import { ClusterFeaturesEnum } from 'generated-sources';
 import { store } from 'redux/store';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
 import Cluster from 'components/Cluster/Cluster';
 import { fetchClusters } from 'redux/reducers/clusters/clustersSlice';
 import { screen } from '@testing-library/react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterBrokersPath,
   clusterConnectsPath,
   clusterConsumerGroupsPath,
   clusterKsqlDbPath,
+  clusterPath,
   clusterSchemasPath,
   clusterTopicsPath,
 } from 'lib/paths';
@@ -29,10 +29,10 @@ jest.mock('components/KsqlDb/KsqlDb', () => () => <div>KsqlDb</div>);
 describe('Cluster', () => {
   const renderComponent = (pathname: string) =>
     render(
-      <Route path="/ui/clusters/:clusterName">
+      <WithRoute path={`${clusterPath()}/*`}>
         <Cluster />
-      </Route>,
-      { pathname, store }
+      </WithRoute>,
+      { initialEntries: [pathname], store }
     );
 
   it('renders Brokers', () => {

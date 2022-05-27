@@ -2,24 +2,17 @@ import React from 'react';
 import Schemas from 'components/Schemas/Schemas';
 import { render } from 'lib/testHelpers';
 import {
-  clusterPath,
   clusterSchemaEditPath,
   clusterSchemaNewPath,
   clusterSchemaPath,
   clusterSchemasPath,
 } from 'lib/paths';
 import { screen, waitFor } from '@testing-library/dom';
-import { Route } from 'react-router-dom';
 import fetchMock from 'fetch-mock';
 import { schemaVersion } from 'redux/reducers/schemas/__test__/fixtures';
 
 const renderComponent = (pathname: string) =>
-  render(
-    <Route path={clusterPath()}>
-      <Schemas />
-    </Route>,
-    { pathname }
-  );
+  render(<Schemas />, { initialEntries: [pathname] });
 
 const clusterName = 'secondLocal';
 

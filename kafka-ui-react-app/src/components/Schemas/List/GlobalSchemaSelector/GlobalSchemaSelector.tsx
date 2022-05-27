@@ -12,11 +12,12 @@ import {
   fetchSchemas,
   schemasApiClient,
 } from 'redux/reducers/schemas/schemasSlice';
+import { ClusterNameRoute } from 'lib/paths';
 
 import * as S from './GlobalSchemaSelector.styled';
 
 const GlobalSchemaSelector: React.FC = () => {
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
   const dispatch = useAppDispatch();
   const [searchText] = useSearch();
   const { page, perPage } = usePagination();

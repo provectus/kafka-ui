@@ -23,7 +23,8 @@ const TopicConsumerGroups: React.FC<Props> = ({
   fetchTopicConsumerGroups,
   isFetched,
 }) => {
-  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
+  const { clusterName, topicName } =
+    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
 
   const consumerGroups = useAppSelector((state) =>
     getTopicConsumerGroups(state, topicName)

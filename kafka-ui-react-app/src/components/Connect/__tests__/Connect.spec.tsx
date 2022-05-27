@@ -26,12 +26,7 @@ jest.mock('components/Connect/Edit/EditContainer', () => () => (
 
 describe('Connect', () => {
   const renderComponent = (pathname: string) =>
-    render(
-      <Route path="/ui/clusters/:clusterName">
-        <Connect />
-      </Route>,
-      { pathname, store }
-    );
+    render(<Connect />, { initialEntries: [pathname], store });
 
   it('renders ListContainer', () => {
     renderComponent(clusterConnectorsPath('my-cluster'));

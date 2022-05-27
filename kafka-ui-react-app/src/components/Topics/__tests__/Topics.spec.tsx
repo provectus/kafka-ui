@@ -29,14 +29,7 @@ describe('Topics Component', () => {
   const clusterName = 'clusterName';
   const topicName = 'topicName';
   const setUpComponent = (path: string) => {
-    const history = createMemoryHistory({
-      initialEntries: [path],
-    });
-    return render(
-      <Router history={history}>
-        <Topics />
-      </Router>
-    );
+    return render(<Topics />, { initialEntries: [path] });
   };
 
   it('should check if the page is Topics List rendered', () => {

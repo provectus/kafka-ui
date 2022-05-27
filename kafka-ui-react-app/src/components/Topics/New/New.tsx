@@ -1,18 +1,14 @@
 import React from 'react';
-import { ClusterName, TopicFormData } from 'redux/interfaces';
+import { TopicFormData } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
-import { clusterTopicPath } from 'lib/paths';
+import { ClusterNameRoute, clusterTopicPath } from 'lib/paths';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { createTopic } from 'redux/reducers/topics/topicsSlice';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch } from 'lib/hooks/redux';
-
-interface RouterParams {
-  clusterName: ClusterName;
-}
 
 enum Filters {
   NAME = 'name',
@@ -28,8 +24,9 @@ const New: React.FC = () => {
     resolver: yupResolver(topicFormValidationSchema),
   });
 
-  const { clusterName } = useParams<RouterParams>();
-  const history = useHistory();
+  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
+  const navigate = useNavigate();
+
   const { search } = useLocation();
   const dispatch = useAppDispatch();
   const params = new URLSearchParams(search);
@@ -44,7 +41,7 @@ const New: React.FC = () => {
     const { meta } = await dispatch(createTopic({ clusterName, data }));
 
     if (meta.requestStatus === 'fulfilled') {
-      history.push(clusterTopicPath(clusterName, data.name));
+      navigate(clusterTopicPath(clusterName, data.name));
     }
   };
 

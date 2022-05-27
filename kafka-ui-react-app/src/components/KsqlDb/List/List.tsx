@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
-import { clusterKsqlDbQueryPath } from 'lib/paths';
+import { clusterKsqlDbQueryPath, ClusterNameRoute } from 'lib/paths';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
@@ -25,7 +25,7 @@ const accessors = headers.map((header) => header.accessor);
 const List: FC = () => {
   const dispatch = useDispatch();
 
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
 
   const { rows, fetching, tablesCount, streamsCount } =
     useSelector(getKsqlDbTables);

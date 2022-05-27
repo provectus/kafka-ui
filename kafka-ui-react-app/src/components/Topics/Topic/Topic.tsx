@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, useParams } from 'react-router-dom';
+import { Routes, Route, useParams } from 'react-router-dom';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import EditContainer from 'components/Topics/Topic/Edit/EditContainer';
 import DetailsContainer from 'components/Topics/Topic/Details/DetailsContainer';
@@ -27,7 +27,8 @@ const Topic: React.FC<TopicProps> = ({
   fetchTopicDetails,
   resetTopicMessages,
 }) => {
-  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
+  const { clusterName, topicName } =
+    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
 
   React.useEffect(() => {
     fetchTopicDetails({ clusterName, topicName });
@@ -44,17 +45,11 @@ const Topic: React.FC<TopicProps> = ({
   }
 
   return (
-    <Switch>
-      <Route exact path={clusterTopicEditPath()}>
-        <EditContainer />
-      </Route>
-      <Route exact path={clusterTopicSendMessagePath()}>
-        <SendMessage />
-      </Route>
-      <Route path={clusterTopicPath()}>
-        <DetailsContainer />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route path={clusterTopicEditPath()} element={<EditContainer />} />
+      <Route path={clusterTopicSendMessagePath()} element={<SendMessage />} />
+      <Route path={clusterTopicPath()} element={<DetailsContainer />} />
+    </Routes>
   );
 };
 

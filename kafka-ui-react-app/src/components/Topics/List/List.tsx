@@ -1,11 +1,15 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   TopicWithDetailedInfo,
   ClusterName,
   TopicName,
 } from 'redux/interfaces';
-import { clusterTopicCopyPath, clusterTopicNewPath } from 'lib/paths';
+import {
+  ClusterNameRoute,
+  clusterTopicCopyPath,
+  clusterTopicNewPath,
+} from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
 import useModal from 'lib/hooks/useModal';
 import ClusterContext from 'components/contexts/ClusterContext';
@@ -88,13 +92,13 @@ const List: React.FC<TopicsListProps> = ({
 }) => {
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
-  const { clusterName } = useParams<{ clusterName: ClusterName }>();
+  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
   const { page, perPage, pathname } = usePagination();
   const [showInternal, setShowInternal] = React.useState<boolean>(
     !localStorage.getItem('hideInternalTopics') && true
   );
   const [cachedPage, setCachedPage] = React.useState<number | null>(null);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const topicsListParams = React.useMemo(
     () => ({
@@ -154,7 +158,7 @@ const List: React.FC<TopicsListProps> = ({
     }
 
     setShowInternal(!showInternal);
-    history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
+    navigate(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
   };
 
   const [confirmationModal, setConfirmationModal] = React.useState<
@@ -176,7 +180,7 @@ const List: React.FC<TopicsListProps> = ({
 
     const newPageQuery = !searchString && cachedPage ? cachedPage : 1;
 
-    history.push(
+    navigate(
       `${pathname}?page=${newPageQuery}&perPage=${perPage || PER_PAGE}`
     );
   };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, Route, Switch, useParams } from 'react-router-dom';
+import { NavLink, Route, Routes, useParams } from 'react-router-dom';
 import { Connector, Task } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
@@ -42,7 +42,7 @@ const Details: React.FC<DetailsProps> = ({
   connector,
 }) => {
   const { clusterName, connectName, connectorName } =
-    useParams<RouterParamsClusterConnectConnector>();
+    useParams<RouterParamsClusterConnectConnector>() as RouterParamsClusterConnectConnector;
 
   React.useEffect(() => {
     fetchConnector({ clusterName, connectName, connectorName });
@@ -65,50 +65,50 @@ const Details: React.FC<DetailsProps> = ({
       </PageHeading>
       <Navbar role="navigation">
         <NavLink
-          exact
           to={clusterConnectConnectorPath(
             clusterName,
             connectName,
             connectorName
           )}
-          activeClassName="is-active"
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
         >
           Overview
         </NavLink>
         <NavLink
-          exact
           to={clusterConnectConnectorTasksPath(
             clusterName,
             connectName,
             connectorName
           )}
-          activeClassName="is-active"
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
         >
           Tasks
         </NavLink>
         <NavLink
-          exact
           to={clusterConnectConnectorConfigPath(
             clusterName,
             connectName,
             connectorName
           )}
-          activeClassName="is-active"
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
         >
           Config
         </NavLink>
       </Navbar>
-      <Switch>
-        <Route exact path={clusterConnectConnectorTasksPath()}>
-          <TasksContainer />
-        </Route>
-        <Route exact path={clusterConnectConnectorConfigPath()}>
-          <ConfigContainer />
-        </Route>
-        <Route exact path={clusterConnectConnectorPath()}>
-          <OverviewContainer />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route
+          path={clusterConnectConnectorTasksPath()}
+          element={<TasksContainer />}
+        />
+        <Route
+          path={clusterConnectConnectorConfigPath()}
+          element={<ConfigContainer />}
+        />
+        <Route
+          path={clusterConnectConnectorPath()}
+          element={<OverviewContainer />}
+        />
+      </Routes>
     </div>
   );
 };

@@ -12,7 +12,7 @@ interface Props
 }
 
 export const Button: React.FC<Props> = ({ isLink, to, ...props }) => {
-  if (isLink) {
+  if (to) {
     return (
       <Link to={to}>
         <StyledButton {...props}>{props.children}</StyledButton>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 import Topic from 'components/Topics/Topic/Topic';
 import {
@@ -35,14 +35,12 @@ describe('Topic Component', () => {
 
   const renderComponent = (pathname: string, topicFetching: boolean) =>
     render(
-      <Route path={clusterTopicPath()}>
-        <Topic
-          isTopicFetching={topicFetching}
-          resetTopicMessages={resetTopicMessages}
-          fetchTopicDetails={fetchTopicDetailsMock}
-        />
-      </Route>,
-      { pathname }
+      <Topic
+        isTopicFetching={topicFetching}
+        resetTopicMessages={resetTopicMessages}
+        fetchTopicDetails={fetchTopicDetailsMock}
+      />,
+      { initialEntries: [pathname] }
     );
 
   afterEach(() => {

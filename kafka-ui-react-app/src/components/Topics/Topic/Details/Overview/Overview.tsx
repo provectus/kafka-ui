@@ -25,7 +25,8 @@ export interface Props {
 }
 
 const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
-  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
+  const { clusterName, topicName } =
+    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
 
   const {
     partitions,

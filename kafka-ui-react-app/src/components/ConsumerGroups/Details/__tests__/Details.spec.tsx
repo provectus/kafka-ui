@@ -2,8 +2,7 @@ import Details from 'components/ConsumerGroups/Details/Details';
 import React from 'react';
 import fetchMock from 'fetch-mock';
 import { createMemoryHistory } from 'history';
-import { render } from 'lib/testHelpers';
-import { Route, Router } from 'react-router-dom';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterConsumerGroupDetailsPath,
   clusterConsumerGroupResetOffsetsPath,
@@ -23,13 +22,11 @@ const { groupId } = consumerGroupPayload;
 const history = createMemoryHistory();
 
 const renderComponent = () => {
-  history.push(clusterConsumerGroupDetailsPath(clusterName, groupId));
   render(
-    <Router history={history}>
-      <Route path={clusterConsumerGroupDetailsPath()}>
-        <Details />
-      </Route>
-    </Router>
+    <WithRoute path={clusterConsumerGroupDetailsPath()}>
+      <Details />
+    </WithRoute>,
+    { initialEntries: [clusterConsumerGroupDetailsPath(clusterName, groupId)] }
   );
 };
 describe('Details component', () => {

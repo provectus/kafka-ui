@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 import TopicConsumerGroups, {
   Props,
@@ -37,14 +37,6 @@ describe('TopicConsumerGroups', () => {
     },
   ];
 
-  const defaultPathName = clusterTopicConsumerGroupsPath();
-
-  const defaultHistory = createMemoryHistory({
-    initialEntries: [
-      clusterTopicConsumerGroupsPath(mockClusterName, mockTopicName),
-    ],
-  });
-
   const setUpComponent = (
     props: Partial<Props> = {},
     consumerGroups?: ConsumerGroup[]
@@ -56,17 +48,17 @@ describe('TopicConsumerGroups', () => {
     const topicsState = getTopicStateFixtures([topic]);
 
     return render(
-      <Router history={defaultHistory}>
-        <Route path={defaultPathName}>
-          <TopicConsumerGroups
-            fetchTopicConsumerGroups={jest.fn()}
-            isFetched={false}
-            {...props}
-          />
-        </Route>
-      </Router>,
+      <WithRoute path={clusterTopicConsumerGroupsPath()}>
+        <TopicConsumerGroups
+          fetchTopicConsumerGroups={jest.fn()}
+          isFetched={false}
+          {...props}
+        />
+      </WithRoute>,
       {
-        pathname: defaultPathName,
+        initialEntries: [
+          clusterTopicConsumerGroupsPath(mockClusterName, mockTopicName),
+        ],
         preloadedState: {
           topics: topicsState,
         },

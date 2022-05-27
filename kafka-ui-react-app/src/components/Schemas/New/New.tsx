@@ -2,10 +2,10 @@ import React from 'react';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
 import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import { clusterSchemaPath } from 'lib/paths';
+import { ClusterNameRoute, clusterSchemaPath } from 'lib/paths';
 import { SchemaType } from 'generated-sources';
 import { SCHEMA_NAME_VALIDATION_PATTERN } from 'lib/constants';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
@@ -30,8 +30,8 @@ const SchemaTypeOptions: Array<SelectOption> = [
 ];
 
 const New: React.FC = () => {
-  const { clusterName } = useParams<{ clusterName: string }>();
-  const history = useHistory();
+  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const methods = useForm<NewSchemaSubjectRaw>();
   const {
@@ -52,7 +52,7 @@ const New: React.FC = () => {
         newSchemaSubject: { subject, schema, schemaType },
       });
       dispatch(schemaAdded(resp));
-      history.push(clusterSchemaPath(clusterName, subject));
+      navigate(clusterSchemaPath(clusterName, subject));
     } catch (e) {
       const err = await getResponse(e as Response);
       dispatch(serverErrorAlertAdded(err));

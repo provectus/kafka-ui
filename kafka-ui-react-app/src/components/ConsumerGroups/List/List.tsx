@@ -18,7 +18,7 @@ import {
 import usePagination from 'lib/hooks/usePagination';
 import useSearch from 'lib/hooks/useSearch';
 import { useAppDispatch } from 'lib/hooks/redux';
-import { ClusterName } from 'redux/interfaces';
+import { ClusterNameRoute } from 'lib/paths';
 import { fetchConsumerGroupsPaged } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 
@@ -42,7 +42,7 @@ const List: React.FC<Props> = ({
   const { page, perPage } = usePagination();
   const [searchText, handleSearchText] = useSearch();
   const dispatch = useAppDispatch();
-  const { clusterName } = useParams<{ clusterName: ClusterName }>();
+  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
 
   React.useEffect(() => {
     dispatch(

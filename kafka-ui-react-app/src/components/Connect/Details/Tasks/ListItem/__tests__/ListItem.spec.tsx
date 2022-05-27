@@ -1,11 +1,10 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorTasksPath } from 'lib/paths';
 import ListItem, {
   ListItemProps,
 } from 'components/Connect/Details/Tasks/ListItem/ListItem';
 import { tasks } from 'redux/reducers/connect/__test__/fixtures';
-import { Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -18,19 +17,21 @@ const task = tasks[0];
 
 const renderComponent = (props: ListItemProps = { task, restartTask }) => {
   return render(
-    <Route path={pathname}>
+    <WithRoute path={pathname}>
       <table>
         <tbody>
           <ListItem {...props} />
         </tbody>
       </table>
-    </Route>,
+    </WithRoute>,
     {
-      pathname: clusterConnectConnectorTasksPath(
-        clusterName,
-        connectName,
-        connectorName
-      ),
+      initialEntries: [
+        clusterConnectConnectorTasksPath(
+          clusterName,
+          connectName,
+          connectorName
+        ),
+      ],
     }
   );
 };

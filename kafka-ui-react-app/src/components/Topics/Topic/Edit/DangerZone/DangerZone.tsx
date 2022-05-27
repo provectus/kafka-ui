@@ -37,7 +37,8 @@ const DangerZone: React.FC<Props> = ({
   updateTopicPartitionsCount,
   updateTopicReplicationFactor,
 }) => {
-  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
+  const { clusterName, topicName } =
+    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
 
   const [isPartitionsConfirmationVisible, setIsPartitionsConfirmationVisible] =
     React.useState<boolean>(false);

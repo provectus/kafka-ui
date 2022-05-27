@@ -11,6 +11,7 @@ import { BASE_PARAMS } from 'lib/constants';
 import { KsqlResponse, KsqlTableResponse } from 'generated-sources';
 import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
 import { now } from 'lodash';
+import { ClusterNameRoute } from 'lib/paths';
 
 import type { FormValues } from './QueryForm/QueryForm';
 import * as S from './Query.styled';
@@ -61,7 +62,7 @@ export const getFormattedErrorFromTableData = (
 };
 
 const Query: FC = () => {
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
 
   const sseRef = React.useRef<{ sse: EventSource | null; isOpen: boolean }>({
     sse: null,

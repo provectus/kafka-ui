@@ -55,7 +55,7 @@ describe('ClusterMenu', () => {
   });
   it('renders open cluster menu', () => {
     render(setupComponent(onlineClusterPayload, true), {
-      pathname: clusterConnectorsPath(onlineClusterPayload.name),
+      initialEntries: [clusterConnectorsPath(onlineClusterPayload.name)],
     });
 
     expect(getMenuItems().length).toEqual(4);
@@ -70,7 +70,7 @@ describe('ClusterMenu', () => {
         ...onlineClusterPayload,
         features: [ClusterFeaturesEnum.KAFKA_CONNECT],
       }),
-      { pathname: clusterConnectorsPath(onlineClusterPayload.name) }
+      { initialEntries: [clusterConnectorsPath(onlineClusterPayload.name)] }
     );
     expect(getMenuItems().length).toEqual(1);
     userEvent.click(getMenuItem());
@@ -85,7 +85,7 @@ describe('ClusterMenu', () => {
         ...onlineClusterPayload,
         features: [ClusterFeaturesEnum.KAFKA_CONNECT],
       }),
-      { pathname: clusterConnectsPath(onlineClusterPayload.name) }
+      { initialEntries: [clusterConnectsPath(onlineClusterPayload.name)] }
     );
     expect(getMenuItems().length).toEqual(1);
     userEvent.click(getMenuItem());

@@ -1,9 +1,8 @@
 import React from 'react';
 import Edit, { DEFAULTS, Props } from 'components/Topics/Topic/Edit/Edit';
 import { act, screen } from '@testing-library/react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
-import { Route, Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import {
   clusterTopicEditPath,
@@ -17,14 +16,10 @@ import { topicName, clusterName, topicWithInfo } from './fixtures';
 
 const defaultPathName = clusterTopicEditPath(clusterName, topicName);
 
-const historyMock = createMemoryHistory({
-  initialEntries: [defaultPathName],
-});
-
 const renderComponent = (
   props: Partial<Props> = {},
   topic: TopicWithDetailedInfo | null = topicWithInfo,
-  history = historyMock
+  path = defaultPathName
 ) => {
   let topics: TopicsState | undefined;
 
@@ -35,19 +30,17 @@ const renderComponent = (
   }
 
   return render(
-    <Router history={history}>
-      <Route path={clusterTopicEditPath()}>
-        <Edit
-          isFetched
-          isTopicUpdated={false}
-          fetchTopicConfig={jest.fn()}
-          updateTopic={jest.fn()}
-          {...props}
-        />
-      </Route>
-    </Router>,
+    <WithRoute path={clusterTopicEditPath()}>
+      <Edit
+        isFetched
+        isTopicUpdated={false}
+        fetchTopicConfig={jest.fn()}
+        updateTopic={jest.fn()}
+        {...props}
+      />
+    </WithRoute>,
     {
-      pathname: defaultPathName,
+      initialEntries: [path],
       preloadedState: { topics },
     }
   );
@@ -125,7 +118,11 @@ describe('Edit Component', () => {
       });
 
       jest.spyOn(mocked, 'push');
-      renderComponent({ updateTopic: updateTopicMock }, undefined, mocked);
+      renderComponent(
+        { updateTopic: updateTopicMock },
+        undefined,
+        clusterTopicEditPath(clusterName, topicName)
+      );
 
       const btn = screen.getAllByText(/submit/i)[0];
       expect(btn).toBeEnabled();
@@ -150,7 +147,7 @@ describe('Edit Component', () => {
       renderComponent(
         { updateTopic: updateTopicMock, isTopicUpdated: true },
         undefined,
-        mocked
+        `${clusterTopicsPath(clusterName)}/${topicName}/edit`
       );
 
       const btn = screen.getAllByText(/submit/i)[0];

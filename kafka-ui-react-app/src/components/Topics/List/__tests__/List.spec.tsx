@@ -1,7 +1,6 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { screen, waitFor, within } from '@testing-library/react';
-import { Route, Router, StaticRouter } from 'react-router-dom';
 import ClusterContext, {
   ContextProps,
 } from 'components/contexts/ClusterContext';
@@ -33,15 +32,12 @@ describe('List', () => {
     />
   );
 
-  const historyMock = createMemoryHistory();
-
   const renderComponentWithProviders = (
     contextProps: Partial<ContextProps> = {},
-    props: Partial<TopicsListProps> = {},
-    history = historyMock
+    props: Partial<TopicsListProps> = {}
   ) =>
     render(
-      <Router history={history}>
+      <WithRoute path={clusterTopicsPath()}>
         <ClusterContext.Provider
           value={{
             isReadOnly: true,
@@ -53,7 +49,8 @@ describe('List', () => {
         >
           {setupComponent(props)}
         </ClusterContext.Provider>
-      </Router>
+      </WithRoute>,
+      { initialEntries: [clusterTopicsPath('test')] }
     );
 
   describe('when it has readonly flag', () => {
@@ -123,11 +120,7 @@ describe('List', () => {
     it('should reset page query param on show internal toggle change', () => {
       const mockedHistory = createMemoryHistory();
       jest.spyOn(mockedHistory, 'push');
-      renderComponentWithProviders(
-        { isReadOnly: false },
-        { fetchTopicsList },
-        mockedHistory
-      );
+      renderComponentWithProviders({ isReadOnly: false }, { fetchTopicsList });
 
       const internalCheckBox: HTMLInputElement = screen.getByRole('checkbox');
       userEvent.click(internalCheckBox);
@@ -144,8 +137,7 @@ describe('List', () => {
 
       renderComponentWithProviders(
         { isReadOnly: false },
-        { fetchTopicsList, totalPages: 10 },
-        mockedHistory
+        { fetchTopicsList, totalPages: 10 }
       );
 
       const searchInput = screen.getByPlaceholderText('Search by Topic Name');
@@ -178,34 +170,33 @@ describe('List', () => {
 
     beforeEach(() => {
       render(
-        <StaticRouter location={{ pathname }}>
-          <Route path={clusterTopicsPath()}>
-            <ClusterContext.Provider
-              value={{
-                isReadOnly: false,
-                hasKafkaConnectConfigured: true,
-                hasSchemaRegistryConfigured: true,
-                isTopicDeletionAllowed: true,
-              }}
-            >
-              {setupComponent({
-                topics: [
-                  {
-                    ...externalTopicPayload,
-                    cleanUpPolicy: CleanUpPolicy.DELETE,
-                  },
-                  { ...externalTopicPayload, name: 'external.topic2' },
-                ],
-                deleteTopics: mockDeleteTopics,
-                clearTopicsMessages: mockClearTopicsMessages,
-                recreateTopic: mockRecreate,
-                deleteTopic: mockDeleteTopic,
-                clearTopicMessages: mockClearTopic,
-                fetchTopicsList,
-              })}
-            </ClusterContext.Provider>
-          </Route>
-        </StaticRouter>
+        <WithRoute path={clusterTopicsPath()}>
+          <ClusterContext.Provider
+            value={{
+              isReadOnly: false,
+              hasKafkaConnectConfigured: true,
+              hasSchemaRegistryConfigured: true,
+              isTopicDeletionAllowed: true,
+            }}
+          >
+            {setupComponent({
+              topics: [
+                {
+                  ...externalTopicPayload,
+                  cleanUpPolicy: CleanUpPolicy.DELETE,
+                },
+                { ...externalTopicPayload, name: 'external.topic2' },
+              ],
+              deleteTopics: mockDeleteTopics,
+              clearTopicsMessages: mockClearTopicsMessages,
+              recreateTopic: mockRecreate,
+              deleteTopic: mockDeleteTopic,
+              clearTopicMessages: mockClearTopic,
+              fetchTopicsList,
+            })}
+          </ClusterContext.Provider>
+        </WithRoute>,
+        { initialEntries: [pathname] }
       );
     });
 

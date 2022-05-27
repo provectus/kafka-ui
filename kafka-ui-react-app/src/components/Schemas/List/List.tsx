@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { clusterSchemaNewPath } from 'lib/paths';
+import { ClusterNameRoute, clusterSchemaNewPath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import * as C from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
@@ -27,7 +27,7 @@ import GlobalSchemaSelector from './GlobalSchemaSelector/GlobalSchemaSelector';
 const List: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
 
   const schemas = useAppSelector(selectAllSchemas);
   const isFetched = useAppSelector(getAreSchemasFulfilled);

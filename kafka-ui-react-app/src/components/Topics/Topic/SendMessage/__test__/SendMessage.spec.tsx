@@ -4,8 +4,7 @@ import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock';
 import { createMemoryHistory } from 'history';
-import { render } from 'lib/testHelpers';
-import { Route, Router } from 'react-router-dom';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterTopicMessagesPath,
   clusterTopicSendMessagePath,
@@ -36,23 +35,25 @@ jest.mock('components/Topics/Topic/SendMessage/validateMessage', () =>
 
 const clusterName = 'testCluster';
 const topicName = externalTopicPayload.name;
-const history = createMemoryHistory();
+const history = createMemoryHistory({
+  initialEntries: [clusterTopicSendMessagePath(clusterName, topicName)],
+});
 
 const renderComponent = async () => {
-  history.push(clusterTopicSendMessagePath(clusterName, topicName));
   await act(() => {
     render(
       <>
-        <Router history={history}>
-          <Route path={clusterTopicSendMessagePath()}>
-            <SendMessage />
-          </Route>
-        </Router>
+        <WithRoute path={clusterTopicSendMessagePath()}>
+          <SendMessage />
+        </WithRoute>
         <S.AlertsContainer role="toolbar">
           <Alerts />
         </S.AlertsContainer>
       </>,
-      { store }
+      {
+        initialEntries: [clusterTopicSendMessagePath(clusterName, topicName)],
+        store,
+      }
     );
   });
 };

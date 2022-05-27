@@ -31,7 +31,7 @@ const Config: React.FC<ConfigProps> = ({
   config,
 }) => {
   const { clusterName, connectName, connectorName } =
-    useParams<RouterParamsClusterConnectConnector>();
+    useParams<RouterParamsClusterConnectConnector>() as RouterParamsClusterConnectConnector;
 
   React.useEffect(() => {
     fetchConfig({ clusterName, connectName, connectorName });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -54,8 +54,8 @@ const Edit: React.FC<EditProps> = ({
   updateConfig,
 }) => {
   const { clusterName, connectName, connectorName } =
-    useParams<RouterParamsClusterConnectConnector>();
-  const history = useHistory();
+    useParams<RouterParamsClusterConnectConnector>() as RouterParamsClusterConnectConnector;
+  const navigate = useNavigate();
   const {
     handleSubmit,
     control,
@@ -87,7 +87,7 @@ const Edit: React.FC<EditProps> = ({
       connectorConfig: JSON.parse(values.config.trim()),
     });
     if (connector) {
-      history.push(
+      navigate(
         clusterConnectConnectorConfigPath(
           clusterName,
           connectName,

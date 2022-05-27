@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { clusterTopicMessagesPath, RouteParamsClusterTopic } from 'lib/paths';
 import jsf from 'json-schema-faker';
 import { messagesApiClient } from 'redux/reducers/topicMessages/topicMessagesSlice';
@@ -25,8 +25,9 @@ import * as S from './SendMessage.styled';
 
 const SendMessage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
-  const history = useHistory();
+  const { clusterName, topicName } =
+    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
+  const navigate = useNavigate();
 
   jsf.option('fillProperties', false);
   jsf.option('alwaysFakeOptionals', true);
@@ -141,7 +142,7 @@ const SendMessage: React.FC = () => {
           })
         );
       }
-      history.push(clusterTopicMessagesPath(clusterName, topicName));
+      navigate(clusterTopicMessagesPath(clusterName, topicName));
     }
   };
 

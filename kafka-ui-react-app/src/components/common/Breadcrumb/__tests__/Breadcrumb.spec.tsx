@@ -2,8 +2,7 @@ import React from 'react';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { BreadcrumbProvider } from 'components/common/Breadcrumb/Breadcrumb.provider';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
-import { render } from 'lib/testHelpers';
-import { Route } from 'react-router-dom';
+import { render, WithRoute } from 'lib/testHelpers';
 import { clusterTopicNewPath, clusterTopicPath } from 'lib/paths';
 
 const createTopicPath = clusterTopicNewPath('local');
@@ -19,13 +18,13 @@ describe('Breadcrumb component', () => {
     render(
       <BreadcrumbProvider>
         <Breadcrumb />
-        <Route path={routePath}>
+        <WithRoute path={routePath}>
           <BreadcrumbRoute>
             <div />
           </BreadcrumbRoute>
-        </Route>
+        </WithRoute>
       </BreadcrumbProvider>,
-      { pathname }
+      { initialEntries: [pathname] }
     );
 
   it('renders the list of links', async () => {

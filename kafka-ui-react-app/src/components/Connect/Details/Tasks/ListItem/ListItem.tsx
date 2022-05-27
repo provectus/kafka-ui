@@ -21,7 +21,7 @@ export interface ListItemProps {
 
 const ListItem: React.FC<ListItemProps> = ({ task, restartTask }) => {
   const { clusterName, connectName, connectorName } =
-    useParams<RouterParamsClusterConnectConnector>();
+    useParams<RouterParamsClusterConnectConnector>() as RouterParamsClusterConnectConnector;
 
   const restartTaskHandler = async () => {
     await restartTask({

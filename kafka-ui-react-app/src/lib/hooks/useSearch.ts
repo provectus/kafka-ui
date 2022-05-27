@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const SEARCH_QUERY_ARG = 'q';
 
 // meant for use with <Search> component
 // returns value of Q search param (?q='something') and callback to change it
 const useSearch = (initValue = ''): [string, (value: string) => void] => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { search, pathname } = useLocation();
   const queryParams = useMemo(() => new URLSearchParams(search), [search]);
   const q = useMemo(
@@ -19,9 +19,9 @@ const useSearch = (initValue = ''): [string, (value: string) => void] => {
   useEffect(() => {
     if (initValue.trim() !== '' && !q) {
       queryParams.set(SEARCH_QUERY_ARG, initValue.trim());
-      history.push({ pathname, search: queryParams.toString() });
+      navigate({ pathname, search: queryParams.toString() });
     }
-  }, [history, initValue, pathname, q, queryParams]);
+  }, [navigate, initValue, pathname, q, queryParams]);
 
   const handleChange = useCallback(
     (value: string) => {
@@ -36,10 +36,16 @@ const useSearch = (initValue = ''): [string, (value: string) => void] => {
         if (page) {
           queryParams.delete('page');
         }
-        history.replace({ pathname, search: queryParams.toString() });
+        navigate(
+          {
+            pathname,
+            search: queryParams.toString(),
+          },
+          { replace: true }
+        );
       }
     },
-    [q, page, history, pathname, queryParams]
+    [q, page, navigate, pathname, queryParams]
   );
 
   return [q || initValue.trim() || '', handleChange];

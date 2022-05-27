@@ -1,7 +1,13 @@
 import React from 'react';
-import { Switch, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
-import { clusterPath } from 'lib/paths';
+import {
+  clusterBrokersPath,
+  clusterConsumerGroupsPath,
+  clusterPath,
+  clusterTopicsPath,
+  getNonExactPath,
+} from 'lib/paths';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
@@ -19,6 +25,10 @@ import {
 
 import * as S from './App.styled';
 import Logo from './common/Logo/Logo';
+import { BreadcrumbRoute } from './common/Breadcrumb/Breadcrumb.route';
+import Brokers from './Brokers/Brokers';
+import Topics from './Topics/Topics';
+import ConsumersGroups from './ConsumerGroups/ConsumerGroups';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -82,14 +92,19 @@ const App: React.FC = () => {
             aria-label="Overlay"
           />
           {areClustersFulfilled ? (
-            <Switch>
-              <Route exact path={['/', '/ui', '/ui/clusters']}>
-                <Dashboard />
-              </Route>
-              <Route path={clusterPath()}>
-                <ClusterPage />
-              </Route>
-            </Switch>
+            <Routes>
+              {['/', '/ui', '/ui/clusters'].map((path) => (
+                <Route
+                  key="Home" // optional: avoid full re-renders on route changes
+                  path={path}
+                  element={<Dashboard />}
+                />
+              ))}
+              <Route
+                path={getNonExactPath(clusterPath())}
+                element={<ClusterPage />}
+              />
+            </Routes>
           ) : (
             <PageLoader />
           )}

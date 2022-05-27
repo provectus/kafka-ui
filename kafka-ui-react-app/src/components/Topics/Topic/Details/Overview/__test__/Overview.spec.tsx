@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import Overview, {
   Props as OverviewProps,
 } from 'components/Topics/Topic/Details/Overview/Overview';
@@ -10,20 +10,12 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import userEvent from '@testing-library/user-event';
 import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
 import { clusterTopicPath } from 'lib/paths';
-import { createMemoryHistory } from 'history';
-import { Route, Router } from 'react-router-dom';
 import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
 
 describe('Overview', () => {
   const mockClusterName = 'local';
   const mockTopicName = 'topic';
   const mockTopic = { name: mockTopicName };
-
-  const defaultPathName = clusterTopicPath();
-
-  const defaultHistory = createMemoryHistory({
-    initialEntries: [clusterTopicPath(mockClusterName, mockTopicName)],
-  });
 
   const mockPartitions = [
     {
@@ -55,14 +47,15 @@ describe('Overview', () => {
     const topics = getTopicStateFixtures([topicState]);
 
     return render(
-      <Router history={defaultHistory}>
-        <Route path={defaultPathName}>
-          <ClusterContext.Provider value={contextValues}>
-            <Overview clearTopicMessages={jest.fn()} {...props} />
-          </ClusterContext.Provider>
-        </Route>
-      </Router>,
-      { pathname: defaultPathName, preloadedState: { topics } }
+      <WithRoute path={clusterTopicPath()}>
+        <ClusterContext.Provider value={contextValues}>
+          <Overview clearTopicMessages={jest.fn()} {...props} />
+        </ClusterContext.Provider>
+      </WithRoute>,
+      {
+        initialEntries: [clusterTopicPath(mockClusterName, mockTopicName)],
+        preloadedState: { topics },
+      }
     );
   };
 

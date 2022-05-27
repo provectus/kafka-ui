@@ -1,11 +1,11 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Connect, Connector, NewConnector } from 'generated-sources';
 import { ClusterName, ConnectName } from 'redux/interfaces';
-import { clusterConnectConnectorPath } from 'lib/paths';
+import { clusterConnectConnectorPath, ClusterNameRoute } from 'lib/paths';
 import yup from 'lib/yupExtended';
 import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -22,10 +22,6 @@ const validationSchema = yup.object().shape({
   name: yup.string().required(),
   config: yup.string().required().isJsonObject(),
 });
-
-interface RouterParams {
-  clusterName: ClusterName;
-}
 
 export interface NewProps {
   fetchConnects(clusterName: ClusterName): unknown;
@@ -50,8 +46,8 @@ const New: React.FC<NewProps> = ({
   connects,
   createConnector,
 }) => {
-  const { clusterName } = useParams<RouterParams>();
-  const history = useHistory();
+  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
+  const navigate = useNavigate();
 
   const methods = useForm<FormValues>({
     mode: 'onTouched',
@@ -96,7 +92,7 @@ const New: React.FC<NewProps> = ({
     });
 
     if (connector) {
-      history.push(
+      navigate(
         clusterConnectConnectorPath(
           clusterName,
           connector.connect,

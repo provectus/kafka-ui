@@ -1,9 +1,9 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
-import { clusterSchemaSchemaDiffPath } from 'lib/paths';
+import { clusterSchemaSchemaDiffPath, ClusterSubjectParam } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import DiffViewer from 'components/common/DiffViewer/DiffViewer';
-import { useHistory, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   fetchSchemaVersions,
   SCHEMAS_VERSIONS_FETCH_ACTION,
@@ -15,19 +15,15 @@ import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 
 import * as S from './Diff.styled';
 
-export interface RouteParams {
-  clusterName: string;
-  subject: string;
-}
-
 export interface DiffProps {
   versions: SchemaSubject[];
   areVersionsFetched: boolean;
 }
 
 const Diff: React.FC<DiffProps> = ({ versions, areVersionsFetched }) => {
-  const { clusterName, subject } = useParams<RouteParams>();
-  const history = useHistory();
+  const { clusterName, subject } =
+    useParams<ClusterSubjectParam>() as ClusterSubjectParam;
+  const navigate = useNavigate();
   const location = useLocation();
 
   const searchParams = React.useMemo(
@@ -89,7 +85,7 @@ const Diff: React.FC<DiffProps> = ({ versions, areVersionsFetched }) => {
                         leftVersion === '' ? versions[0].version : leftVersion
                       }
                       onChange={(event) => {
-                        history.push(
+                        navigate(
                           clusterSchemaSchemaDiffPath(clusterName, subject)
                         );
                         searchParams.set('leftVersion', event.toString());
@@ -99,7 +95,8 @@ const Diff: React.FC<DiffProps> = ({ versions, areVersionsFetched }) => {
                             ? versions[0].version
                             : rightVersion
                         );
-                        history.push({
+                        navigate({
+                          // TODO check if work
                           search: `?${searchParams.toString()}`,
                         });
                         setLeftVersion(event.toString());
@@ -130,7 +127,7 @@ const Diff: React.FC<DiffProps> = ({ versions, areVersionsFetched }) => {
                         rightVersion === '' ? versions[0].version : rightVersion
                       }
                       onChange={(event) => {
-                        history.push(
+                        navigate(
                           clusterSchemaSchemaDiffPath(clusterName, subject)
                         );
                         searchParams.set(
@@ -138,7 +135,7 @@ const Diff: React.FC<DiffProps> = ({ versions, areVersionsFetched }) => {
                           leftVersion === '' ? versions[0].version : leftVersion
                         );
                         searchParams.set('rightVersion', event.toString());
-                        history.push({
+                        navigate({
                           search: `?${searchParams.toString()}`,
                         });
                         setRightVersion(event.toString());

@@ -10,7 +10,7 @@ import {
 import { useForm, FormProvider } from 'react-hook-form';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { clusterTopicPath, RouteParamsClusterTopic } from 'lib/paths';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import { TOPIC_CUSTOM_PARAMS_PREFIX, TOPIC_CUSTOM_PARAMS } from 'lib/constants';
@@ -87,7 +87,8 @@ const Edit: React.FC<Props> = ({
   fetchTopicConfig,
   updateTopic,
 }) => {
-  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
+  const { clusterName, topicName } =
+    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
 
   const topic = useAppSelector((state) => getFullTopic(state, topicName));
 
@@ -99,7 +100,7 @@ const Edit: React.FC<Props> = ({
   });
 
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     fetchTopicConfig({ clusterName, topicName });
@@ -108,9 +109,9 @@ const Edit: React.FC<Props> = ({
   React.useEffect(() => {
     if (isSubmitting && isTopicUpdated) {
       const { name } = methods.getValues();
-      history.push(clusterTopicPath(clusterName, name));
+      navigate(clusterTopicPath(clusterName, name));
     }
-  }, [isSubmitting, isTopicUpdated, clusterName, methods, history]);
+  }, [isSubmitting, isTopicUpdated, clusterName, methods, navigate]);
 
   if (!isFetched || !topic || !topic.config) {
     return null;

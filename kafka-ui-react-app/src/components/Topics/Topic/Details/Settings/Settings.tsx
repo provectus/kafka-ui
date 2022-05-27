@@ -19,7 +19,8 @@ export interface Props {
 }
 
 const Settings: React.FC<Props> = ({ isFetched, fetchTopicConfig }) => {
-  const { clusterName, topicName } = useParams<RouteParamsClusterTopic>();
+  const { clusterName, topicName } =
+    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
 
   const config = useAppSelector((state) => getTopicConfig(state, topicName));
 

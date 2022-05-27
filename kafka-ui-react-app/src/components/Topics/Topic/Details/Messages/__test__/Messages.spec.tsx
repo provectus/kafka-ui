@@ -5,8 +5,6 @@ import Messages, {
   SeekDirectionOptions,
   SeekDirectionOptionsObj,
 } from 'components/Topics/Topic/Details/Messages/Messages';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
 import { SeekDirection, SeekType } from 'generated-sources';
 import userEvent from '@testing-library/user-event';
 
@@ -14,15 +12,9 @@ describe('Messages', () => {
   const searchParams = `?filterQueryType=STRING_CONTAINS&attempt=0&limit=100&seekDirection=${SeekDirection.FORWARD}&seekType=${SeekType.OFFSET}&seekTo=0::9`;
 
   const setUpComponent = (param: string = searchParams) => {
-    const history = createMemoryHistory();
-    history.push({
-      search: new URLSearchParams(param).toString(),
+    return render(<Messages />, {
+      initialEntries: [`/?${new URLSearchParams(param).toString()}`],
     });
-    return render(
-      <Router history={history}>
-        <Messages />
-      </Router>
-    );
   };
 
   beforeEach(() => {

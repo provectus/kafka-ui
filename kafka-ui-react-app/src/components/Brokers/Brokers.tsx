@@ -1,5 +1,4 @@
 import React from 'react';
-import { ClusterName } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useParams } from 'react-router-dom';
@@ -8,6 +7,7 @@ import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import * as Metrics from 'components/common/Metrics';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import { ClusterNameRoute } from 'lib/paths';
 import {
   fetchBrokers,
   fetchClusterStats,
@@ -16,7 +16,7 @@ import {
 
 const Brokers: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { clusterName } = useParams<{ clusterName: ClusterName }>();
+  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
   const {
     brokerCount,
     activeControllers,

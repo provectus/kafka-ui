@@ -1,40 +1,33 @@
 import React from 'react';
-import { Route, Router } from 'react-router-dom';
 import DangerZone, {
   Props,
 } from 'components/Topics/Topic/Edit/DangerZone/DangerZone';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
   topicName,
   clusterName,
 } from 'components/Topics/Topic/Edit/__test__/fixtures';
-import { createMemoryHistory } from 'history';
 import { clusterTopicSendMessagePath } from 'lib/paths';
 
 const defaultPartitions = 3;
 const defaultReplicationFactor = 3;
 
-const defaultPath = clusterTopicSendMessagePath(clusterName, topicName);
-const defaultHistory = createMemoryHistory({ initialEntries: [defaultPath] });
-
 const renderComponent = (props?: Partial<Props>) =>
   render(
-    <Router history={defaultHistory}>
-      <Route path={clusterTopicSendMessagePath()}>
-        <DangerZone
-          defaultPartitions={defaultPartitions}
-          defaultReplicationFactor={defaultReplicationFactor}
-          partitionsCountIncreased={false}
-          replicationFactorUpdated={false}
-          updateTopicPartitionsCount={jest.fn()}
-          updateTopicReplicationFactor={jest.fn()}
-          {...props}
-        />
-      </Route>
-    </Router>,
-    { pathname: defaultPath }
+    <WithRoute path={clusterTopicSendMessagePath()}>
+      <DangerZone
+        defaultPartitions={defaultPartitions}
+        defaultReplicationFactor={defaultReplicationFactor}
+        partitionsCountIncreased={false}
+        replicationFactorUpdated={false}
+        updateTopicPartitionsCount={jest.fn()}
+        updateTopicReplicationFactor={jest.fn()}
+        {...props}
+      />
+    </WithRoute>,
+    { initialEntries: [clusterTopicSendMessagePath(clusterName, topicName)] }
   );
 
 const clickOnDialogSubmitButton = () => {

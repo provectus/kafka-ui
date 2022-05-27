@@ -14,8 +14,8 @@ export const Divider = styled.hr`
   height: 1px;
 `;
 
-export const Link = styled(NavLink).attrs({ activeClassName: 'is-active' })(
-  ({ theme, activeClassName }) => css`
+export const Link = styled(NavLink)(
+  ({ theme }) => css`
     width: 100%;
     padding: 0.5em 0.75em;
     cursor: pointer;
@@ -27,11 +27,6 @@ export const Link = styled(NavLink).attrs({ activeClassName: 'is-active' })(
     &:hover {
       background-color: ${theme.menu.backgroundColor.hover};
       color: ${theme.menu.color.hover};
-    }
-
-    &.${activeClassName} {
-      background-color: ${theme.menu.backgroundColor.active};
-      color: ${theme.menu.color.active};
     }
   `
 );
