@@ -87,7 +87,7 @@ public class BaseTest {
         Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;
         Configuration.reopenBrowserOnFail = TestConfiguration.REOPEN_BROWSER_ON_FAIL;
         Configuration.browser = TestConfiguration.BROWSER;
-        Configuration.baseUrl = TestConfiguration.BASE_DOCKER_URL;
+        Configuration.baseUrl = TestConfiguration.BASE_WEB_URL;
         Configuration.timeout = 10000;
         Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
         SelenideLogger.addListener("allure", new AllureSelenide().savePageSource(false));

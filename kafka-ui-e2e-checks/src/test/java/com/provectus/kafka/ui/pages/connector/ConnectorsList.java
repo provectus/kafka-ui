@@ -19,7 +19,7 @@ public class ConnectorsList {
 
     @Step
     public ConnectorsList goTo(String cluster) {
-        Selenide.open(TestConfiguration.BASE_DOCKER_URL + String.format(path, cluster));
+        Selenide.open(TestConfiguration.BASE_WEB_URL + String.format(path, cluster));
         return this;
     }
 

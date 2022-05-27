@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.helpers;
 
-import static com.codeborne.selenide.Selenide.sleep;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.provectus.kafka.ui.api.ApiClient;
@@ -13,11 +11,14 @@ import com.provectus.kafka.ui.api.model.ErrorResponse;
 import com.provectus.kafka.ui.api.model.NewConnector;
 import com.provectus.kafka.ui.api.model.TopicCreation;
 import com.provectus.kafka.ui.base.TestConfiguration;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.codeborne.selenide.Selenide.sleep;
 
 
 @Slf4j
@@ -26,7 +27,7 @@ public class ApiHelper {
     int partitions = 1;
     int replicationFactor = 1;
     String newTopic = "new-topic";
-    String baseURL = TestConfiguration.BASE_URL;
+    String baseURL = TestConfiguration.BASE_API_URL;
 
 
     @SneakyThrows

@@ -9,11 +9,13 @@ import com.codeborne.selenide.ClickOptions;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.utils.BrowserUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 
 public class TopicEditSettingsView {
 
-    private final SelenideElement timeToRetain = $(By.id("timeToRetain"));
+    private final SelenideElement timeToRetain = $(By.cssSelector("input#timeToRetain"));
     private final SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
 
     private TopicEditSettingsView selectFromDropDownByOptionValue(String dropDownElementName,
@@ -30,8 +32,8 @@ public class TopicEditSettingsView {
         return this;
     }
 
-    public TopicEditSettingsView setMinInsyncReplicas(Integer minInsyncReplicas) {
-        $("input[name=%s]".formatted("minInsyncReplicas")).setValue(minInsyncReplicas.toString());
+    public TopicEditSettingsView setMinInsyncReplicas(Integer minInsyncReplicas, WebDriver driver) {
+        $("input[name=minInsyncReplicas]").setValue(minInsyncReplicas.toString());
         return this;
     }
 
@@ -77,8 +79,11 @@ public class TopicEditSettingsView {
                 cleanupPolicyValue.getOptionValue());
     }
 
-    public TopicEditSettingsView selectCleanupPolicy(String cleanupPolicyOptionValue) {
-        return selectFromDropDownByVisibleText("cleanupPolicy", cleanupPolicyOptionValue);
+    public TopicEditSettingsView selectCleanupPolicy(String cleanupPolicyOptionValue, WebDriver driver) {
+        BrowserUtils.clickAction(driver, driver.findElement(By.cssSelector("ul#topicFormCleanupPolicy")));
+        BrowserUtils.waitForVisibility(driver,
+                driver.findElement(By.xpath("//li[text()='" + cleanupPolicyOptionValue +"']")), 10).click();
+        return this;
     }
 
 
@@ -90,8 +95,9 @@ public class TopicEditSettingsView {
         return selectFromDropDownByOptionValue("retentionBytes", optionValue.toString());
     }
 
-    public TopicView sendData() {
-        $x("//button[text()=\"Send\"]").click();
+    public TopicView sendData(WebDriver driver) {
+        BrowserUtils.javaExecutorClick(driver,
+                driver.findElement(By.cssSelector(".ezTgzA")));
         return new TopicView();
     }
 
@@ -167,7 +173,7 @@ public class TopicEditSettingsView {
         private SelenideElement selectElement;
 
         public KafkaUISelectElement(String selectElementName) {
-            this.selectElement = $("ul[role=listbox][name=%s]".formatted(selectElementName));
+            this.selectElement = $("ul[role=listbox][name="+selectElementName+"]");
         }
 
         public KafkaUISelectElement(SelenideElement selectElement) {

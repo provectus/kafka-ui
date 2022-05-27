@@ -5,9 +5,10 @@ import com.codeborne.selenide.Selenide;
 import com.provectus.kafka.ui.base.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
 import io.qameta.allure.Step;
-import java.time.Duration;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
+
+import java.time.Duration;
 
 import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selenide.$;
@@ -18,7 +19,7 @@ public class ConnectorsView {
 
     @Step
     public ConnectorsView goTo(String cluster, String connector) {
-        Selenide.open(TestConfiguration.BASE_DOCKER_URL + path.formatted(cluster, connector));
+        Selenide.open(TestConfiguration.BASE_WEB_URL + path.formatted(cluster, connector));
         return this;
     }
 

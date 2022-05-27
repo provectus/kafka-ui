@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.tests;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
+import io.qameta.allure.Issue;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -51,20 +52,25 @@ public class TopicTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should update a topic")
+    @Issue("https://github.com/provectus/kafka-ui/issues/2023")
     @Test
     public void updateTopic() {
         pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage()
-                .openTopic(TOPIC_TO_UPDATE)
-                .openEditSettings()
-                .selectCleanupPolicy(COMPACT_POLICY_VALUE)
+                .isOnPage();
+        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
+                .openEditSettings(webDriverContainer.getWebDriver())
+                .selectCleanupPolicy(COMPACT_POLICY_VALUE, webDriverContainer.getWebDriver())
+                .setMinInsyncReplicas(10, webDriverContainer.getWebDriver())
                 .setTimeToRetainDataInMs(UPDATED_TIME_TO_RETAIN_VALUE)
                 .setMaxSizeOnDiskInGB(UPDATED_MAX_SIZE_ON_DISK)
                 .setMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
-                .sendData()
+                .sendData(webDriverContainer.getWebDriver())
                 .isOnTopicViewPage();
+
+        pages.openTopicsList(SECOND_LOCAL)
+                .isOnPage();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
-                .openEditSettings()
+                .openEditSettings(webDriverContainer.getWebDriver())
                 // Assertions
                 .cleanupPolicyIs(COMPACT_POLICY_VALUE)
                 .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
@@ -78,7 +84,7 @@ public class TopicTests extends BaseTest {
     public void deleteTopic() {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
-                .openTopic(TOPIC_TO_DELETE);
+                .openTopic(TOPIC_TO_DELETE, webDriverContainer.getWebDriver());
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_DELETE)
                 .deleteTopic();
         pages.openTopicsList(SECOND_LOCAL)
