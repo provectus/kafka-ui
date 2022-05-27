@@ -158,8 +158,6 @@ const Filters: React.FC<FiltersProps> = ({
     [partitions]
   );
 
-  console.log(partitions);
-
   const props: Query = React.useMemo(() => {
     return {
       q:
@@ -375,8 +373,6 @@ const Filters: React.FC<FiltersProps> = ({
   React.useEffect(() => {
     setIsTailing(isLive);
   }, [isLive]);
-
-  console.log(selectedPartitions);
 
   return (
     <S.FiltersWrapper>
