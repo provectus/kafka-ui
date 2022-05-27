@@ -136,9 +136,10 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames) {
+    // we need to partition calls, because it can lead to AdminClient timeouts in case of large topics count
     return partitionCalls(
         topicNames,
-        100,
+        200,
         this::getTopicsConfigImpl,
         (m1, m2) -> ImmutableMap.<String, List<ConfigEntry>>builder().putAll(m1).putAll(m2).build()
     );
@@ -176,9 +177,10 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<Map<String, TopicDescription>> describeTopics(Collection<String> topics) {
+    // we need to partition calls, because it can lead to AdminClient timeouts in case of large topics count
     return partitionCalls(
         topics,
-        100,
+        200,
         this::describeTopicsImpl,
         (m1, m2) -> ImmutableMap.<String, TopicDescription>builder().putAll(m1).putAll(m2).build()
     );
@@ -425,19 +427,23 @@ public class ReactiveAdminClient implements Closeable {
     return toMono(client.alterConfigs(Map.of(topicResource, config)).all());
   }
 
+  /**
+   * Splits input collection into batches, applies each batch sequentially to function
+   * and merges output Monos into one Mono.
+   */
   private static <R, I> Mono<R> partitionCalls(Collection<I> items,
                                                int partitionSize,
-                                               Function<Collection<I>, Mono<R>> f,
+                                               Function<Collection<I>, Mono<R>> call,
                                                BiFunction<R, R, R> merger) {
     if (items.isEmpty()) {
-      return f.apply(items);
+      return call.apply(items);
     }
     Iterator<List<I>> parts = Iterators.partition(items.iterator(), partitionSize);
-    Mono<R> mono = f.apply(parts.next());
+    Mono<R> mono = call.apply(parts.next());
     while (parts.hasNext()) {
       var nextPart = parts.next();
       // calls will be executed sequentially
-      mono = mono.flatMap(res1 -> f.apply(nextPart).map(res2 -> merger.apply(res1, res2)));
+      mono = mono.flatMap(res1 -> call.apply(nextPart).map(res2 -> merger.apply(res1, res2)));
     }
     return mono;
   }
