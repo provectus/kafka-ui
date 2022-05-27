@@ -1,14 +1,15 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 import Connect from 'components/Connect/Connect';
 import { store } from 'redux/store';
-import { Route } from 'react-router-dom';
 import {
   clusterConnectorsPath,
   clusterConnectorNewPath,
   clusterConnectConnectorPath,
   clusterConnectConnectorEditPath,
+  getNonExactPath,
+  clusterConnectsPath,
 } from 'lib/paths';
 
 jest.mock('components/Connect/New/NewContainer', () => () => (
@@ -26,7 +27,12 @@ jest.mock('components/Connect/Edit/EditContainer', () => () => (
 
 describe('Connect', () => {
   const renderComponent = (pathname: string) =>
-    render(<Connect />, { initialEntries: [pathname], store });
+    render(
+      <WithRoute path={getNonExactPath(clusterConnectsPath())}>
+        <Connect />
+      </WithRoute>,
+      { initialEntries: [pathname], store }
+    );
 
   it('renders ListContainer', () => {
     renderComponent(clusterConnectorsPath('my-cluster'));
