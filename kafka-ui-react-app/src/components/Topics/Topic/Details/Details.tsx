@@ -8,19 +8,14 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import {
-  clusterTopicSettingsPath,
-  clusterTopicPath,
-  clusterTopicMessagesPath,
   clusterTopicsPath,
-  clusterTopicConsumerGroupsPath,
-  clusterTopicEditPath,
   clusterTopicSendMessagePath,
   RouteParamsClusterTopic,
   clusterTopicMessagesRelativePath,
   clusterTopicSettingsRelativePath,
-  RouteParams,
   clusterTopicConsumerGroupsRelativePath,
-  getNonExactPath,
+  clusterTopicEditRelativePath,
+  clusterTopicSendMessageRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -126,7 +121,7 @@ const Details: React.FC<Props> = ({
                   buttonSize="M"
                   buttonType="primary"
                   isLink
-                  to={clusterTopicSendMessagePath(clusterName, topicName)}
+                  to={`../${clusterTopicSendMessageRelativePath}`}
                 >
                   Produce Message
                 </Button>
@@ -140,9 +135,7 @@ const Details: React.FC<Props> = ({
                 element={
                   <Dropdown label={<VerticalElipsisIcon />} right>
                     <DropdownItem
-                      onClick={() =>
-                        navigate(clusterTopicEditPath(clusterName, topicName))
-                      }
+                      onClick={() => navigate(clusterTopicEditRelativePath)}
                     >
                       Edit settings
                       <S.DropdownExtraMessage>
