@@ -1,7 +1,6 @@
 import React from 'react';
 import {
-  clusterConsumerGroupResetOffsetsPath,
-  clusterConsumerGroupsPath,
+  clusterConsumerGroupResetRelativePath,
   ClusterGroupParam,
 } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -54,14 +53,12 @@ const Details: React.FC = () => {
   };
   React.useEffect(() => {
     if (isDeleted) {
-      navigate(clusterConsumerGroupsPath(clusterName));
+      navigate('../');
     }
   }, [clusterName, navigate, isDeleted]);
 
   const onResetOffsets = () => {
-    navigate(
-      clusterConsumerGroupResetOffsetsPath(clusterName, consumerGroupID)
-    );
+    navigate(clusterConsumerGroupResetRelativePath);
   };
 
   if (!isFetched || !consumerGroup) {

@@ -37,7 +37,8 @@ export const clusterBrokersPath = (
 
 // Consumer Groups
 export const clusterConsumerGroupsRelativePath = 'consumer-groups';
-export const clusterConsumerGroupResetOffsetsRelativePath = `${RouteParams.consumerGroupID}/reset-offsets`;
+export const clusterConsumerGroupResetRelativePath = 'reset-offsets';
+export const clusterConsumerGroupResetOffsetsRelativePath = `${RouteParams.consumerGroupID}/${clusterConsumerGroupResetRelativePath}`;
 export const clusterConsumerGroupsPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterConsumerGroupsRelativePath}`;
@@ -48,7 +49,11 @@ export const clusterConsumerGroupDetailsPath = (
 export const clusterConsumerGroupResetOffsetsPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   groupId: string = RouteParams.consumerGroupID
-) => `${clusterConsumerGroupDetailsPath(clusterName, groupId)}/reset-offsets`;
+) =>
+  `${clusterConsumerGroupDetailsPath(
+    clusterName,
+    groupId
+  )}/${clusterConsumerGroupResetRelativePath}`;
 export type ClusterGroupParam = {
   consumerGroupID: ConsumerGroupID;
   clusterName: ClusterName;

@@ -165,7 +165,7 @@ const ResetOffsets: React.FC = () => {
   React.useEffect(() => {
     if (isOffsetReseted) {
       dispatch(resetLoaderById('consumerGroups/resetConsumerGroupOffsets'));
-      navigate(clusterConsumerGroupDetailsPath(clusterName, consumerGroupID));
+      navigate('../');
     }
   }, [clusterName, consumerGroupID, dispatch, navigate, isOffsetReseted]);
 
