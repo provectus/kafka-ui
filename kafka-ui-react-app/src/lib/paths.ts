@@ -90,44 +90,60 @@ export const clusterTopicCopyRelativePath = 'copy';
 export const clusterTopicsPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterTopicsRelativePath}`;
-
 export const clusterTopicNewPath = (
   clusterName: ClusterName = RouteParams.clusterName
-) => `${clusterPath(clusterName)}/${clusterTopicsRelativePath}/create-new`;
-
+) => `${clusterTopicsPath(clusterName)}/${clusterTopicNewRelativePath}`;
 export const clusterTopicCopyPath = (
   clusterName: ClusterName = RouteParams.clusterName
-) => `${clusterPath(clusterName)}/${clusterTopicsRelativePath}/copy`;
+) => `${clusterTopicsPath(clusterName)}/${clusterTopicCopyRelativePath}`;
 
+// Topics topic
+export const clusterTopicSettingsRelativePath = 'settings';
+export const clusterTopicMessagesRelativePath = 'messages';
+export const clusterTopicConsumerGroupsRelativePath = 'consumer-groups';
+export const clusterTopicEditRelativePath = 'edit';
+export const clusterTopicSendMessageRelativePath = 'message';
 export const clusterTopicPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   topicName: TopicName = RouteParams.topicName
 ) => `${clusterTopicsPath(clusterName)}/${topicName}`;
-
 export const clusterTopicSettingsPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   topicName: TopicName = RouteParams.topicName
-) => `${clusterTopicsPath(clusterName)}/${topicName}/settings`;
-
+) =>
+  `${clusterTopicPath(
+    clusterName,
+    topicName
+  )}/${clusterTopicSettingsRelativePath}`;
 export const clusterTopicMessagesPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   topicName: TopicName = RouteParams.topicName
-) => `${clusterTopicsPath(clusterName)}/${topicName}/messages`;
-
+) =>
+  `${clusterTopicPath(
+    clusterName,
+    topicName
+  )}/${clusterTopicMessagesRelativePath}`;
 export const clusterTopicEditPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   topicName: TopicName = RouteParams.topicName
-) => `${clusterTopicsPath(clusterName)}/${topicName}/edit`;
-
+) =>
+  `${clusterTopicPath(clusterName, topicName)}/${clusterTopicEditRelativePath}`;
 export const clusterTopicConsumerGroupsPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   topicName: TopicName = RouteParams.topicName
-) => `${clusterTopicsPath(clusterName)}/${topicName}/consumer-groups`;
-
+) =>
+  `${clusterTopicPath(
+    clusterName,
+    topicName
+  )}/${clusterTopicConsumerGroupsRelativePath}`;
 export const clusterTopicSendMessagePath = (
   clusterName: ClusterName = RouteParams.clusterName,
   topicName: TopicName = RouteParams.topicName
-) => `${clusterTopicsPath(clusterName)}/${topicName}/message`;
+) =>
+  `${clusterTopicPath(
+    clusterName,
+    topicName
+  )}/${clusterTopicSendMessageRelativePath}`;
 
 export type RouteParamsClusterTopic = {
   clusterName: ClusterName;
@@ -200,8 +216,7 @@ export const clusterKsqlDbRelativePath = 'ksqldb';
 export const clusterKsqlDbQueryRelativePath = 'query';
 export const clusterKsqlDbPath = (
   clusterName: ClusterName = RouteParams.clusterName
-) => `${clusterPath(clusterName)}/ksqldb`;
-
+) => `${clusterPath(clusterName)}/${clusterKsqlDbRelativePath}`;
 export const clusterKsqlDbQueryPath = (
   clusterName: ClusterName = RouteParams.clusterName
-) => `${clusterPath(clusterName)}/ksqldb/query`;
+) => `${clusterKsqlDbPath(clusterName)}/${clusterKsqlDbQueryRelativePath}`;

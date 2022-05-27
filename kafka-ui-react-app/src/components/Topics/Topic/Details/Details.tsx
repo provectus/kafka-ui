@@ -16,6 +16,11 @@ import {
   clusterTopicEditPath,
   clusterTopicSendMessagePath,
   RouteParamsClusterTopic,
+  clusterTopicMessagesRelativePath,
+  clusterTopicSettingsRelativePath,
+  RouteParams,
+  clusterTopicConsumerGroupsRelativePath,
+  getNonExactPath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -115,7 +120,7 @@ const Details: React.FC<Props> = ({
         <HeaderControlsWrapper>
           <Routes>
             <Route
-              path={clusterTopicMessagesPath()}
+              path={clusterTopicMessagesRelativePath}
               element={
                 <Button
                   buttonSize="M"
@@ -131,7 +136,7 @@ const Details: React.FC<Props> = ({
           {!isReadOnly && !isInternal && (
             <Routes>
               <Route
-                path={clusterTopicPath()}
+                index
                 element={
                   <Dropdown label={<VerticalElipsisIcon />} right>
                     <DropdownItem
@@ -198,42 +203,42 @@ const Details: React.FC<Props> = ({
       </ConfirmationModal>
       <Navbar role="navigation">
         <NavLink
-          to={clusterTopicPath(clusterName, topicName)}
+          to="."
           className={({ isActive }) => (isActive ? 'is-active is-primary' : '')}
         >
           Overview
         </NavLink>
         <NavLink
-          to={clusterTopicMessagesPath(clusterName, topicName)}
+          to={clusterTopicMessagesRelativePath}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
         >
           Messages
         </NavLink>
         <NavLink
-          to={clusterTopicConsumerGroupsPath(clusterName, topicName)}
+          to={clusterTopicConsumerGroupsRelativePath}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
         >
           Consumers
         </NavLink>
         <NavLink
-          to={clusterTopicSettingsPath(clusterName, topicName)}
+          to={clusterTopicSettingsRelativePath}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
         >
           Settings
         </NavLink>
       </Navbar>
       <Routes>
-        <Route path={clusterTopicMessagesPath()} element={<Messages />} />
+        <Route index element={<OverviewContainer />} />
+
+        <Route path={clusterTopicMessagesRelativePath} element={<Messages />} />
 
         <Route
-          path={clusterTopicSettingsPath()}
+          path={clusterTopicSettingsRelativePath}
           element={<SettingsContainer />}
         />
 
-        <Route path={clusterTopicPath()} element={<OverviewContainer />} />
-
         <Route
-          path={clusterTopicConsumerGroupsPath()}
+          path={clusterTopicConsumerGroupsRelativePath}
           element={<TopicConsumerGroupsContainer />}
         />
       </Routes>

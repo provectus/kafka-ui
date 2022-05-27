@@ -5,9 +5,10 @@ import EditContainer from 'components/Topics/Topic/Edit/EditContainer';
 import DetailsContainer from 'components/Topics/Topic/Details/DetailsContainer';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import {
-  clusterTopicEditPath,
+  clusterTopicEditRelativePath,
   clusterTopicPath,
   clusterTopicSendMessagePath,
+  clusterTopicSendMessageRelativePath,
   RouteParamsClusterTopic,
 } from 'lib/paths';
 
@@ -46,9 +47,12 @@ const Topic: React.FC<TopicProps> = ({
 
   return (
     <Routes>
-      <Route path={clusterTopicEditPath()} element={<EditContainer />} />
-      <Route path={clusterTopicSendMessagePath()} element={<SendMessage />} />
-      <Route path={clusterTopicPath()} element={<DetailsContainer />} />
+      <Route path="*" element={<DetailsContainer />} />
+      <Route path={clusterTopicEditRelativePath} element={<EditContainer />} />
+      <Route
+        path={clusterTopicSendMessageRelativePath}
+        element={<SendMessage />}
+      />
     </Routes>
   );
 };

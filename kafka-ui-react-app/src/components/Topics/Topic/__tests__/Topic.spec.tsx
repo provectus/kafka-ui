@@ -1,5 +1,4 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
 import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 import Topic from 'components/Topics/Topic/Topic';
@@ -7,6 +6,7 @@ import {
   clusterTopicPath,
   clusterTopicEditPath,
   clusterTopicSendMessagePath,
+  getNonExactPath,
 } from 'lib/paths';
 
 const topicText = {
@@ -35,11 +35,13 @@ describe('Topic Component', () => {
 
   const renderComponent = (pathname: string, topicFetching: boolean) =>
     render(
-      <Topic
-        isTopicFetching={topicFetching}
-        resetTopicMessages={resetTopicMessages}
-        fetchTopicDetails={fetchTopicDetailsMock}
-      />,
+      <WithRoute path={getNonExactPath(clusterTopicPath())}>
+        <Topic
+          isTopicFetching={topicFetching}
+          resetTopicMessages={resetTopicMessages}
+          fetchTopicDetails={fetchTopicDetailsMock}
+        />
+      </WithRoute>,
       { initialEntries: [pathname] }
     );
 
