@@ -35,6 +35,12 @@ const expectActionButtonsExists = () => {
 };
 
 describe('Actions', () => {
+  afterEach(() => {
+    mockHistoryPush.mockClear();
+    deleteConnector.mockClear();
+    cancelMock.mockClear();
+  });
+
   const actionsContainer = (props: Partial<ActionsProps> = {}) => (
     <ActionsContainer>
       <Actions

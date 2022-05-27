@@ -97,7 +97,9 @@ const List: React.FC<TopicsListProps> = ({
   const [showInternal, setShowInternal] = React.useState<boolean>(
     !localStorage.getItem('hideInternalTopics') && true
   );
-  const [cachedPage, setCachedPage] = React.useState<number | null>(null);
+  const [cachedPage, setCachedPage] = React.useState<number | null>(
+    page || null
+  );
   const navigate = useNavigate();
 
   const topicsListParams = React.useMemo(
@@ -158,7 +160,9 @@ const List: React.FC<TopicsListProps> = ({
     }
 
     setShowInternal(!showInternal);
-    navigate(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
+    navigate({
+      search: `?page=1&perPage=${perPage || PER_PAGE}`,
+    });
   };
 
   const [confirmationModal, setConfirmationModal] = React.useState<
@@ -180,9 +184,9 @@ const List: React.FC<TopicsListProps> = ({
 
     const newPageQuery = !searchString && cachedPage ? cachedPage : 1;
 
-    navigate(
-      `${pathname}?page=${newPageQuery}&perPage=${perPage || PER_PAGE}`
-    );
+    navigate({
+      search: `?page=${newPageQuery}&perPage=${perPage || PER_PAGE}`,
+    });
   };
   const deleteOrPurgeConfirmationHandler = () => {
     const selectedIds = Array.from(tableState.selectedIds);
