@@ -1,13 +1,7 @@
 import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
-import {
-  clusterBrokersPath,
-  clusterConsumerGroupsPath,
-  clusterPath,
-  clusterTopicsPath,
-  getNonExactPath,
-} from 'lib/paths';
+import { clusterPath, getNonExactPath } from 'lib/paths';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
@@ -25,10 +19,6 @@ import {
 
 import * as S from './App.styled';
 import Logo from './common/Logo/Logo';
-import { BreadcrumbRoute } from './common/Breadcrumb/Breadcrumb.route';
-import Brokers from './Brokers/Brokers';
-import Topics from './Topics/Topics';
-import ConsumersGroups from './ConsumerGroups/ConsumerGroups';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();

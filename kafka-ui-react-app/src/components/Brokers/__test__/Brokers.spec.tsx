@@ -2,7 +2,6 @@ import React from 'react';
 import Brokers from 'components/Brokers/Brokers';
 import { render, WithRoute } from 'lib/testHelpers';
 import { screen, waitFor } from '@testing-library/dom';
-import { Route, Routes } from 'react-router-dom';
 import { clusterBrokersPath } from 'lib/paths';
 import fetchMock from 'fetch-mock';
 import { clusterStatsPayload } from 'redux/reducers/brokers/__test__/fixtures';

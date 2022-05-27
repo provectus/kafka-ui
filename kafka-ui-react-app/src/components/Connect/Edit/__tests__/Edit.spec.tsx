@@ -6,7 +6,6 @@ import {
 } from 'lib/paths';
 import Edit, { EditProps } from 'components/Connect/Edit/Edit';
 import { connector } from 'redux/reducers/connect/__test__/fixtures';
-import { Route } from 'react-router-dom';
 import { waitFor } from '@testing-library/dom';
 import { act, fireEvent, screen } from '@testing-library/react';
 
