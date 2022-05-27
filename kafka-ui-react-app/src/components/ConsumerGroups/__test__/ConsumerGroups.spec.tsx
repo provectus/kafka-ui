@@ -1,5 +1,5 @@
 import React from 'react';
-import { clusterConsumerGroupsPath } from 'lib/paths';
+import { clusterConsumerGroupsPath, getNonExactPath } from 'lib/paths';
 import {
   act,
   screen,
@@ -19,7 +19,7 @@ const clusterName = 'cluster1';
 
 const renderComponent = (path?: string) =>
   render(
-    <WithRoute path={clusterConsumerGroupsPath()}>
+    <WithRoute path={getNonExactPath(clusterConsumerGroupsPath())}>
       <ConsumerGroups />
     </WithRoute>,
     {

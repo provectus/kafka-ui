@@ -37,6 +37,7 @@ export const clusterBrokersPath = (
 
 // Consumer Groups
 export const clusterConsumerGroupsRelativePath = 'consumer-groups';
+export const clusterConsumerGroupResetOffsetsRelativePath = `${RouteParams.consumerGroupID}/reset-offsets`;
 export const clusterConsumerGroupsPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterConsumerGroupsRelativePath}`;
@@ -63,7 +64,7 @@ export const clusterSchemasPath = (
 ) => `${clusterPath(clusterName)}/schemas`;
 export const clusterSchemaNewPath = (
   clusterName: ClusterName = RouteParams.clusterName
-) => `${clusterSchemasPath(clusterName)}/create-new`;
+) => `${clusterSchemasPath(clusterName)}/${clusterSchemaNewRelativePath}`;
 export const clusterSchemaPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
@@ -90,11 +91,11 @@ export const clusterTopicsPath = (
 
 export const clusterTopicNewPath = (
   clusterName: ClusterName = RouteParams.clusterName
-) => `${clusterPath(clusterName)}/topics/create-new`;
+) => `${clusterPath(clusterName)}/${clusterTopicsRelativePath}/create-new`;
 
 export const clusterTopicCopyPath = (
   clusterName: ClusterName = RouteParams.clusterName
-) => `${clusterPath(clusterName)}/topics/copy`;
+) => `${clusterPath(clusterName)}/${clusterTopicsRelativePath}/copy`;
 
 export const clusterTopicPath = (
   clusterName: ClusterName = RouteParams.clusterName,

@@ -5,16 +5,15 @@ import ListContainer from 'components/ConsumerGroups/List/ListContainer';
 import ResetOffsets from 'components/ConsumerGroups/Details/ResetOffsets/ResetOffsets';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import {
-  clusterConsumerGroupDetailsPath,
-  clusterConsumerGroupResetOffsetsPath,
-  clusterConsumerGroupsPath,
+  clusterConsumerGroupResetOffsetsRelativePath,
+  RouteParams,
 } from 'lib/paths';
 
 const ConsumerGroups: React.FC = () => {
   return (
     <Routes>
       <Route
-        path={clusterConsumerGroupsPath()}
+        index
         element={
           <BreadcrumbRoute>
             <ListContainer />
@@ -22,7 +21,7 @@ const ConsumerGroups: React.FC = () => {
         }
       />
       <Route
-        path={clusterConsumerGroupDetailsPath()}
+        path={RouteParams.consumerGroupID}
         element={
           <BreadcrumbRoute>
             <Details />
@@ -30,7 +29,7 @@ const ConsumerGroups: React.FC = () => {
         }
       />
       <Route
-        path={clusterConsumerGroupResetOffsetsPath()}
+        path={clusterConsumerGroupResetOffsetsRelativePath}
         element={
           <BreadcrumbRoute>
             <ResetOffsets />
