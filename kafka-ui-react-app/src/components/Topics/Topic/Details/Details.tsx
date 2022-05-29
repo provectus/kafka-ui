@@ -9,7 +9,6 @@ import {
 } from 'react-router-dom';
 import {
   clusterTopicsPath,
-  clusterTopicSendMessagePath,
   RouteParamsClusterTopic,
   clusterTopicMessagesRelativePath,
   clusterTopicSettingsRelativePath,
@@ -95,7 +94,7 @@ const Details: React.FC<Props> = ({
 
   React.useEffect(() => {
     if (isDeleted) {
-       navigate(clusterTopicsPath(clusterName));
+      navigate(clusterTopicsPath(clusterName));
     }
   }, [isDeleted, clusterName, dispatch, navigate]);
 

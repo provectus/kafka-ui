@@ -1,5 +1,5 @@
 import { ConsumerGroupOffsetsResetType } from 'generated-sources';
-import { clusterConsumerGroupDetailsPath, ClusterGroupParam } from 'lib/paths';
+import { ClusterGroupParam } from 'lib/paths';
 import React from 'react';
 import {
   Controller,

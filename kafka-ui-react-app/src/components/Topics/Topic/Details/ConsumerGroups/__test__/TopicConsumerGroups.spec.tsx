@@ -5,8 +5,6 @@ import TopicConsumerGroups, {
   Props,
 } from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
 import { ConsumerGroup, ConsumerGroupState } from 'generated-sources';
-import { Router, Route } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
 import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
 import { TopicWithDetailedInfo } from 'redux/interfaces';
 import { clusterTopicConsumerGroupsPath } from 'lib/paths';

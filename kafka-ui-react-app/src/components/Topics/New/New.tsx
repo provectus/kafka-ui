@@ -1,7 +1,7 @@
 import React from 'react';
 import { TopicFormData } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
-import { ClusterNameRoute, clusterTopicPath } from 'lib/paths';
+import { ClusterNameRoute } from 'lib/paths';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { createTopic } from 'redux/reducers/topics/topicsSlice';

@@ -6,8 +6,6 @@ import DetailsContainer from 'components/Topics/Topic/Details/DetailsContainer';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import {
   clusterTopicEditRelativePath,
-  clusterTopicPath,
-  clusterTopicSendMessagePath,
   clusterTopicSendMessageRelativePath,
   RouteParamsClusterTopic,
 } from 'lib/paths';

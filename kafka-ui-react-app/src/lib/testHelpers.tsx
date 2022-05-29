@@ -11,8 +11,6 @@ import rootReducer from 'redux/reducers';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
 import { MemoryRouterProps } from 'react-router';
 
-import { clusterBrokersPath } from './paths';
-
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
   store?: Store<Partial<RootState>, AnyAction>;
