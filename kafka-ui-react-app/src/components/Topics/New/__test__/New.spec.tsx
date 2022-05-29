@@ -124,6 +124,7 @@ describe('New', () => {
     })) as jest.Mock;
 
     useDispatchSpy.mockReturnValue(useDispatchMock);
+
     await act(() => {
       renderComponent(clusterTopicNewPath(clusterName));
     });
@@ -134,8 +135,7 @@ describe('New', () => {
     });
 
     await waitFor(() => {
-      expect(mockNavigate).toBeCalledTimes(1);
-      expect(mockNavigate).toHaveBeenLastCalledWith(`../${topicName}`);
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 

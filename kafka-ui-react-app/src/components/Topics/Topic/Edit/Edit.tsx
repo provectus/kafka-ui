@@ -9,7 +9,7 @@ import {
 } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
-import { clusterTopicPath, RouteParamsClusterTopic } from 'lib/paths';
+import { RouteParamsClusterTopic } from 'lib/paths';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
@@ -32,11 +32,6 @@ export interface Props {
     clusterName: ClusterName;
     topicName: TopicName;
     form: TopicFormDataRaw;
-  }) => void;
-  updateTopicPartitionsCount: (payload: {
-    clusterName: string;
-    topicname: string;
-    partitions: number;
   }) => void;
 }
 

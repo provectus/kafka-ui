@@ -3,7 +3,7 @@ import Edit, { DEFAULTS, Props } from 'components/Topics/Topic/Edit/Edit';
 import { act, screen } from '@testing-library/react';
 import { render, WithRoute } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
-import { clusterTopicEditPath, clusterTopicPath } from 'lib/paths';
+import { clusterTopicEditPath } from 'lib/paths';
 import { TopicsState, TopicWithDetailedInfo } from 'redux/interfaces';
 import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
 
