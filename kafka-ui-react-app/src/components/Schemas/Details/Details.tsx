@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  clusterSchemaSchemaDiffPath,
-  clusterSchemaEditPath,
   ClusterSubjectParam,
+  clusterSchemaEditPageRelativePath,
+  clusterSchemaSchemaDiffRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -87,21 +87,19 @@ const Details: React.FC = () => {
         {!isReadOnly && (
           <>
             <Button
-              isLink
               buttonSize="M"
               buttonType="primary"
               to={{
-                pathname: clusterSchemaSchemaDiffPath(clusterName, subject),
+                pathname: clusterSchemaSchemaDiffRelativePath,
                 search: `leftVersion=${versions[0]?.version}&rightVersion=${versions[0]?.version}`,
               }}
             >
               Compare Versions
             </Button>
             <Button
-              isLink
               buttonSize="M"
               buttonType="primary"
-              to={clusterSchemaEditPath(clusterName, subject)}
+              to={clusterSchemaEditPageRelativePath}
             >
               Edit Schema
             </Button>

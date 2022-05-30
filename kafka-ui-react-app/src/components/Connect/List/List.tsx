@@ -58,7 +58,6 @@ const List: React.FC<ListProps> = ({
       <PageHeading text="Connectors">
         {!isReadOnly && (
           <Button
-            isLink
             buttonType="primary"
             buttonSize="M"
             to={clusterConnectorNewRelativePath}

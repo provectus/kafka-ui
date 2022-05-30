@@ -62,8 +62,10 @@ export type ClusterGroupParam = {
 // Schemas
 export const clusterSchemasRelativePath = 'schemas';
 export const clusterSchemaNewRelativePath = 'create-new';
-export const clusterSchemaEditRelativePath = `${RouteParams.subject}/edit`;
-export const clusterSchemaSchemaDiffRelativePath = `${RouteParams.subject}/diff`;
+export const clusterSchemaEditPageRelativePath = `edit`;
+export const clusterSchemaSchemaDiffPageRelativePath = `diff`;
+export const clusterSchemaEditRelativePath = `${RouteParams.subject}/${clusterSchemaEditPageRelativePath}`;
+export const clusterSchemaSchemaDiffRelativePath = `${RouteParams.subject}/${clusterSchemaSchemaDiffPageRelativePath}`;
 export const clusterSchemasPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/schemas`;

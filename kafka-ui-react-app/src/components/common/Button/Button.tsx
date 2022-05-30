@@ -7,11 +7,10 @@ import { Link } from 'react-router-dom';
 interface Props
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     ButtonProps {
-  isLink?: boolean;
   to?: string | object;
 }
 
-export const Button: React.FC<Props> = ({ isLink, to, ...props }) => {
+export const Button: React.FC<Props> = ({ to, ...props }) => {
   if (to) {
     return (
       <Link to={to}>

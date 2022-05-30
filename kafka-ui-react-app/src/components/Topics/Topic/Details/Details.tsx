@@ -112,7 +112,6 @@ const Details: React.FC<Props> = ({
                 <Button
                   buttonSize="M"
                   buttonType="primary"
-                  isLink
                   to={`../${clusterTopicSendMessageRelativePath}`}
                 >
                   Produce Message

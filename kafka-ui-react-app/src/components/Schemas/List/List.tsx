@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterNameRoute, clusterSchemaNewPath } from 'lib/paths';
+import { ClusterNameRoute, clusterSchemaNewRelativePath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import * as C from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
@@ -52,8 +52,7 @@ const List: React.FC = () => {
             <Button
               buttonSize="M"
               buttonType="primary"
-              isLink
-              to={clusterSchemaNewPath(clusterName)}
+              to={clusterSchemaNewRelativePath}
             >
               <i className="fas fa-plus" /> Create Schema
             </Button>

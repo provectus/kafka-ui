@@ -8,8 +8,8 @@ import {
 } from 'redux/interfaces';
 import {
   ClusterNameRoute,
-  clusterTopicCopyPath,
-  clusterTopicNewPath,
+  clusterTopicCopyRelativePath,
+  clusterTopicNewRelativePath,
 } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
 import useModal from 'lib/hooks/useModal';
@@ -292,8 +292,7 @@ const List: React.FC<TopicsListProps> = ({
             <Button
               buttonType="primary"
               buttonSize="M"
-              isLink
-              to={clusterTopicNewPath(clusterName)}
+              to={clusterTopicNewRelativePath}
             >
               <i className="fas fa-plus" /> Add a Topic
             </Button>
@@ -340,9 +339,8 @@ const List: React.FC<TopicsListProps> = ({
                   <Button
                     buttonSize="M"
                     buttonType="secondary"
-                    isLink
                     to={{
-                      pathname: clusterTopicCopyPath(clusterName),
+                      pathname: clusterTopicCopyRelativePath,
                       search: `?${getSelectedTopic()}`,
                     }}
                   >

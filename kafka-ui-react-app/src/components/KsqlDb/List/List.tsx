@@ -6,7 +6,7 @@ import ListItem from 'components/KsqlDb/List/ListItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
-import { clusterKsqlDbQueryPath, ClusterNameRoute } from 'lib/paths';
+import { clusterKsqlDbQueryRelativePath, ClusterNameRoute } from 'lib/paths';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
@@ -38,8 +38,7 @@ const List: FC = () => {
     <>
       <PageHeading text="KSQL DB">
         <Button
-          isLink
-          to={clusterKsqlDbQueryPath(clusterName)}
+          to={clusterKsqlDbQueryRelativePath}
           buttonType="primary"
           buttonSize="M"
         >
