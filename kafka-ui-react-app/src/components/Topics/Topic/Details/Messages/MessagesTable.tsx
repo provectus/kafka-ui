@@ -30,7 +30,7 @@ const MessagesTable: React.FC = () => {
   const messages = useSelector(getTopicMessges);
   const isFetching = useSelector(getIsTopicMessagesFetching);
 
-  const handleNextClick = React.useCallback(() => {
+  const handleNextClick = () => {
     const seekTo = searchParams.get('seekTo');
 
     if (seekTo) {
@@ -68,7 +68,7 @@ const MessagesTable: React.FC = () => {
         search: `?${searchParams.toString()}`,
       });
     }
-  }, [searchParams, history, messages]);
+  };
 
   return (
     <>

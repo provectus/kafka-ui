@@ -71,38 +71,35 @@ const Actions: React.FC<ActionsProps> = ({
     setIsDeleteConnectorConfirmationVisible,
   ] = React.useState(false);
 
-  const deleteConnectorHandler = React.useCallback(async () => {
+  const deleteConnectorHandler = async () => {
     try {
       await deleteConnector({ clusterName, connectName, connectorName });
       history.push(clusterConnectorsPath(clusterName));
     } catch {
       // do not redirect
     }
-  }, [deleteConnector, clusterName, connectName, connectorName, history]);
+  };
 
-  const restartConnectorHandler = React.useCallback(() => {
+  const restartConnectorHandler = () => {
     restartConnector({ clusterName, connectName, connectorName });
-  }, [restartConnector, clusterName, connectName, connectorName]);
+  };
 
-  const restartTasksHandler = React.useCallback(
-    (actionType: ConnectorAction) => {
-      restartTasks({
-        clusterName,
-        connectName,
-        connectorName,
-        action: actionType,
-      });
-    },
-    [restartTasks, clusterName, connectName, connectorName]
-  );
+  const restartTasksHandler = (actionType: ConnectorAction) => {
+    restartTasks({
+      clusterName,
+      connectName,
+      connectorName,
+      action: actionType,
+    });
+  };
 
-  const pauseConnectorHandler = React.useCallback(() => {
+  const pauseConnectorHandler = () => {
     pauseConnector({ clusterName, connectName, connectorName });
-  }, [pauseConnector, clusterName, connectName, connectorName]);
+  };
 
-  const resumeConnectorHandler = React.useCallback(() => {
+  const resumeConnectorHandler = () => {
     resumeConnector({ clusterName, connectName, connectorName });
-  }, [resumeConnector, clusterName, connectName, connectorName]);
+  };
 
   return (
     <ConnectorActionsWrapperStyled>
