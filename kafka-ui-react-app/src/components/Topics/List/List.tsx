@@ -94,7 +94,7 @@ const List: React.FC<TopicsListProps> = ({
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
   const { clusterName } = useAppParams<ClusterNameRoute>();
-  const { page, perPage, pathname } = usePagination();
+  const { page, perPage } = usePagination();
   const [showInternal, setShowInternal] = React.useState<boolean>(
     !localStorage.getItem('hideInternalTopics') && true
   );
