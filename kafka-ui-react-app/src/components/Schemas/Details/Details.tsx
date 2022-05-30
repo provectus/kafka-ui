@@ -65,7 +65,7 @@ const Details: React.FC = () => {
   const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
   const areVersionsFetched = useAppSelector(getAreSchemaVersionsFulfilled);
 
-  const onDelete = React.useCallback(async () => {
+  const onDelete = async () => {
     try {
       await schemasApiClient.deleteSchema({
         clusterName,
@@ -76,7 +76,7 @@ const Details: React.FC = () => {
       const err = await getResponse(e as Response);
       dispatch(serverErrorAlertAdded(err));
     }
-  }, [clusterName, dispatch, history, subject]);
+  };
 
   if (!isFetched || !schema) {
     return <PageLoader />;

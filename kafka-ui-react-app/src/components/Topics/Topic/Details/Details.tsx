@@ -77,9 +77,7 @@ const Details: React.FC<Props> = ({
     isRecreateTopicConfirmationVisible,
     setRecreateTopicConfirmationVisible,
   ] = React.useState(false);
-  const deleteTopicHandler = React.useCallback(() => {
-    deleteTopic({ clusterName, topicName });
-  }, [clusterName, topicName, deleteTopic]);
+  const deleteTopicHandler = () => deleteTopic({ clusterName, topicName });
 
   React.useEffect(() => {
     if (isDeleted) {
@@ -87,15 +85,15 @@ const Details: React.FC<Props> = ({
     }
   }, [isDeleted, clusterName, dispatch, history]);
 
-  const clearTopicMessagesHandler = React.useCallback(() => {
+  const clearTopicMessagesHandler = () => {
     clearTopicMessages({ clusterName, topicName });
     setClearTopicConfirmationVisible(false);
-  }, [clusterName, topicName, clearTopicMessages]);
+  };
 
-  const recreateTopicHandler = React.useCallback(() => {
+  const recreateTopicHandler = () => {
     recreateTopic({ clusterName, topicName });
     setRecreateTopicConfirmationVisible(false);
-  }, [recreateTopic, clusterName, topicName]);
+  };
 
   return (
     <div>
