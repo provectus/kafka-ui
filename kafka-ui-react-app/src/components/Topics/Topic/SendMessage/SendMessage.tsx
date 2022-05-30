@@ -6,7 +6,10 @@ import { useHistory, useParams } from 'react-router-dom';
 import { clusterTopicMessagesPath } from 'lib/paths';
 import jsf from 'json-schema-faker';
 import { messagesApiClient } from 'redux/reducers/topicMessages/topicMessagesSlice';
-import { fetchTopicMessageSchema } from 'redux/reducers/topics/topicsSlice';
+import {
+  fetchTopicMessageSchema,
+  fetchTopicDetails,
+} from 'redux/reducers/topics/topicsSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { now } from 'lodash';
@@ -126,6 +129,7 @@ const SendMessage: React.FC = () => {
             partition,
           },
         });
+        dispatch(fetchTopicDetails({ clusterName, topicName }));
       } catch (e) {
         dispatch(
           alertAdded({
