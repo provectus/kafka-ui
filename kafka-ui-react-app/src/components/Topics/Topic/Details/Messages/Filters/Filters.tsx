@@ -215,7 +215,6 @@ const Filters: React.FC<FiltersProps> = ({
         .join('&');
 
       navigate({
-        // TODO check if work
         search: `?${qs}`,
       });
     },

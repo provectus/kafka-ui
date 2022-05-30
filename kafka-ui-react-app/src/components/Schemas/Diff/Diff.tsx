@@ -96,7 +96,6 @@ const Diff: React.FC<DiffProps> = ({ versions, areVersionsFetched }) => {
                             : rightVersion
                         );
                         navigate({
-                          // TODO check if work
                           search: `?${searchParams.toString()}`,
                         });
                         setLeftVersion(event.toString());
