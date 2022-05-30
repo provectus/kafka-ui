@@ -1,11 +1,6 @@
 import useOutsideClickRef from '@rooks/use-outside-click-ref';
 import cx from 'classnames';
-import React, {
-  PropsWithChildren,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import React, { PropsWithChildren, useMemo, useState } from 'react';
 
 import * as S from './Dropdown.styled';
 
@@ -23,13 +18,10 @@ const Dropdown: React.FC<PropsWithChildren<DropdownProps>> = ({
 }) => {
   const [active, setActive] = useState<boolean>(false);
   const [wrapperRef] = useOutsideClickRef(() => setActive(false));
-  const onClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setActive(!active);
-    },
-    [active]
-  );
+  const onClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActive(!active);
+  };
 
   const classNames = useMemo(
     () =>

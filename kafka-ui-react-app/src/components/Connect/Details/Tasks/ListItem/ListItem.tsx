@@ -27,14 +27,14 @@ export interface ListItemProps {
 const ListItem: React.FC<ListItemProps> = ({ task, restartTask }) => {
   const { clusterName, connectName, connectorName } = useParams<RouterParams>();
 
-  const restartTaskHandler = React.useCallback(async () => {
+  const restartTaskHandler = async () => {
     await restartTask({
       clusterName,
       connectName,
       connectorName,
       taskId: task.id?.task,
     });
-  }, [restartTask, clusterName, connectName, connectorName, task.id?.task]);
+  };
 
   return (
     <tr>

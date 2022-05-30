@@ -27,20 +27,17 @@ export const TableRow = <T, TId extends IdType, OT = never>({
 }: React.PropsWithChildren<TableRowProps<T, TId, OT>>): React.ReactElement => {
   const [hovered, setHovered] = React.useState(false);
 
-  const handleMouseEnter = React.useCallback(() => {
+  const handleMouseEnter = () => {
     setHovered(true);
-  }, []);
+  };
 
-  const handleMouseLeave = React.useCallback(() => {
+  const handleMouseLeave = () => {
     setHovered(false);
-  }, []);
+  };
 
-  const handleSelectChange = React.useCallback(
-    (checked: boolean) => {
-      onSelectChange?.(dataItem, checked);
-    },
-    [dataItem, onSelectChange]
-  );
+  const handleSelectChange = (checked: boolean) => {
+    onSelectChange?.(dataItem, checked);
+  };
 
   return (
     <tr

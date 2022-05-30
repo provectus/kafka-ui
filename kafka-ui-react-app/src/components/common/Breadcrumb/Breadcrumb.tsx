@@ -21,14 +21,11 @@ const Breadcrumb: React.FC = () => {
     [breadcrumbContext.path]
   );
 
-  const getPathPredicate = React.useCallback(
-    (index: number) =>
-      `${breadcrumbContext.link
-        .split('/')
-        .slice(0, basePathEntriesLength + index + 1)
-        .join('/')}`,
-    [breadcrumbContext.link]
-  );
+  const getPathPredicate = (index: number) =>
+    `${breadcrumbContext.link
+      .split('/')
+      .slice(0, basePathEntriesLength + index + 1)
+      .join('/')}`;
 
   if (links.length < 2) {
     return null;
