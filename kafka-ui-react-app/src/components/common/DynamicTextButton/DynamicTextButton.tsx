@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useRef } from 'react';
 import cx from 'classnames';
 
 interface DynamicTextButtonProps {
@@ -20,11 +20,11 @@ const DynamicTextButton: React.FC<DynamicTextButtonProps> = ({
 
   const timeout = useRef(0);
 
-  const clickHandler = useCallback(() => {
+  const clickHandler = () => {
     onClick();
     setClicked(true);
     timeout.current = window.setTimeout(() => setClicked(false), delay);
-  }, [delay, onClick]);
+  };
 
   React.useEffect(() => () => window.clearTimeout(timeout.current));
 

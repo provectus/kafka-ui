@@ -181,7 +181,7 @@ const Filters: React.FC<FiltersProps> = ({
       partitions.map((partition: Partition) => {
         return {
           value: partition.partition,
-          label: String(partition.partition),
+          label: `Partition #${partition.partition.toString()}`,
         };
       })
     );
