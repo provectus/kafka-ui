@@ -50,152 +50,43 @@ export const updatedBrokersReducerState = {
   version: '2.2.1',
 };
 
+const partitions = {
+  broker: 2,
+  offsetLag: 0,
+  partition: 2,
+  size: 0,
+};
+const topics = {
+  name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
+  partitions: [partitions],
+};
+
 export const clusterStatsPayloadBroker = [
   {
     error: 'NONE',
     name: '/opt/kafka/data-0/logs',
     topics: [
       {
-        name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
+        ...topics,
         partitions: [
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
+          partitions,
+          partitions,
+          partitions,
+          partitions,
+          partitions,
+          partitions,
         ],
       },
-      {
-        name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
-        partitions: [
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-        ],
-      },
-      {
-        name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
-        partitions: [
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-        ],
-      },
-      {
-        name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
-        partitions: [
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-        ],
-      },
-      {
-        name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
-        partitions: [
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-        ],
-      },
-
-      {
-        name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
-        partitions: [
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-        ],
-      },
-      {
-        name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
-        partitions: [
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-        ],
-      },
-      {
-        name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
-        partitions: [
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-        ],
-      },
-      {
-        name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
-        partitions: [
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-        ],
-      },
-      {
-        name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
-        partitions: [
-          {
-            broker: 2,
-            offsetLag: 0,
-            partition: 2,
-            size: 0,
-          },
-        ],
-      },
+      topics,
+      topics,
+      topics,
+      topics,
+      topics,
+      topics,
+      topics,
+      topics,
+      topics,
+      topics,
     ],
   },
 ];

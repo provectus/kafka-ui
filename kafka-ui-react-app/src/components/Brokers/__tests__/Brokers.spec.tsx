@@ -14,10 +14,10 @@ jest.mock('components/Brokers/List/BrokersList', () => () => (
 ));
 jest.mock('components/Brokers/Broker/Broker', () => () => <div>{broker}</div>);
 
-describe('Topics Component', () => {
+describe('Brokers Component', () => {
   const clusterName = 'clusterName';
   const brokerId = '1';
-  const setUpComponent = (path: string) => {
+  const renderComponent = (path: string) => {
     const history = createMemoryHistory({
       initialEntries: [path],
     });
@@ -28,13 +28,13 @@ describe('Topics Component', () => {
     );
   };
 
-  it('should check if the page is Brokers page', () => {
-    setUpComponent(clusterBrokersPath(clusterName));
+  it('renders BrokersList', () => {
+    renderComponent(clusterBrokersPath(clusterName));
     expect(screen.getByText(brokersList)).toBeInTheDocument();
   });
 
-  it('should check if the page is Broker page', () => {
-    setUpComponent(clusterBrokerPath(clusterName, brokerId));
+  it('renders Broker', () => {
+    renderComponent(clusterBrokerPath(clusterName, brokerId));
     expect(screen.getByText(broker)).toBeInTheDocument();
   });
 });

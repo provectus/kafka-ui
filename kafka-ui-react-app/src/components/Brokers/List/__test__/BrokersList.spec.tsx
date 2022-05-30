@@ -8,7 +8,7 @@ import { clusterStatsPayload } from 'redux/reducers/brokers/__test__/fixtures';
 import { act } from '@testing-library/react';
 import BrokersList from 'components/Brokers/List/BrokersList';
 
-describe('Broker Component', () => {
+describe('BrokersList Component', () => {
   afterEach(() => fetchMock.reset());
 
   const clusterName = 'local';

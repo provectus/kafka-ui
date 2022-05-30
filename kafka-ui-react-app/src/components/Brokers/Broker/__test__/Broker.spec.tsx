@@ -62,7 +62,7 @@ describe('Broker Component', () => {
       expect(rows.length).toEqual(2);
     });
 
-    it('shows warning when broker not found', async () => {
+    it('show warning when broker not found', async () => {
       const fetchStatsMock = fetchMock.getOnce(
         fetchStatsUrl,
         clusterStatsPayload
@@ -75,15 +75,11 @@ describe('Broker Component', () => {
       await waitFor(() => expect(fetchBrokersMock.called()).toBeTruthy());
       await waitFor(() => expect(fetchBrokerMock.called()).toBeTruthy());
 
-      expect(screen.getByRole('table')).toBeInTheDocument();
-      const rows = screen.getAllByRole('row');
-      expect(rows.length).toEqual(2);
-
       expect(
         screen.getByText('Log dir data not available')
       ).toBeInTheDocument();
     });
-    it('shows  broker  found', async () => {
+    it('show broker found', async () => {
       const fetchStatsMock = fetchMock.getOnce(
         fetchStatsUrl,
         clusterStatsPayload
@@ -112,7 +108,7 @@ describe('Broker Component', () => {
       expect(topicCount).toBeInTheDocument();
       expect(partitionsCount).toBeInTheDocument();
     });
-    it('shows  broker  has not topics', async () => {
+    it('show 0 when broker has not topics', async () => {
       const fetchStatsMock = fetchMock.getOnce(
         fetchStatsUrl,
         clusterStatsPayload
@@ -129,7 +125,7 @@ describe('Broker Component', () => {
 
       expect(screen.getAllByText(0).length).toEqual(2);
     });
-    it('shows  broker  has not name', async () => {
+    it('show - when broker has not name', async () => {
       const fetchStatsMock = fetchMock.getOnce(
         fetchStatsUrl,
         clusterStatsPayload
@@ -146,7 +142,7 @@ describe('Broker Component', () => {
 
       expect(screen.getByText('-')).toBeInTheDocument();
     });
-    it('shows  broker  has not error', async () => {
+    it('show - when broker has not error', async () => {
       const fetchStatsMock = fetchMock.getOnce(
         fetchStatsUrl,
         clusterStatsPayload

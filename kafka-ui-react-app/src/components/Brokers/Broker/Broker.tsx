@@ -30,42 +30,43 @@ const Broker: React.FC = () => {
   const dispatch = useAppDispatch();
   const { clusterName, brokerId } =
     useParams<{ clusterName: ClusterName; brokerId: string }>();
-  const [logdirs, setLogdirs] = useState<BrokerLogdirState[]>([]);
+  const [logdirs, setLogdirs] = useState<BrokerLogdirState>();
   const { diskUsage, items } = useAppSelector(selectStats);
 
-  const fetchData = React.useCallback(() => {
-    (async () => {
-      const res = await brokersApiClient.getAllBrokersLogdirs({
-        clusterName,
-        broker: [Number(brokerId)],
-      });
-      if (res) {
-        setLogdirs(
-          res.map((r) => ({
-            name: r.name || '-',
-            error: r.error || '-',
-            topics: r.topics?.length || 0,
-            partitions:
-              r.topics?.reduce(
-                (previousValue, currentValue) =>
-                  previousValue + (currentValue.partitions?.length || 0),
-                0
-              ) || 0,
-          }))
-        );
-      }
-    })();
+  const fetchData = React.useCallback(async () => {
+    const res = await brokersApiClient.getAllBrokersLogdirs({
+      clusterName,
+      broker: [Number(brokerId)],
+    });
+    if (res && res[0]) {
+      const partitionsCount =
+        res[0].topics?.reduce(
+          (prevValue, value) => prevValue + (value.partitions?.length || 0),
+          0
+        ) || 0;
+
+      const brokerLogdir = {
+        name: res[0].name || '-',
+        error: res[0].error || '-',
+        topics: res[0].topics?.length || 0,
+        partitions: partitionsCount,
+      };
+      setLogdirs(brokerLogdir);
+    }
+
     dispatch(fetchClusterStats(clusterName));
     dispatch(fetchBrokers(clusterName));
   }, [clusterName, brokerId, dispatch]);
 
   React.useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData().then();
+  }, [fetchData]);
 
-  const brokerItem = items?.find((item) => +item.id === +brokerId);
+  const brokerItem = items?.find(
+    (item) => Number(item.id) === Number(brokerId)
+  );
   const brokerDiskUsage = diskUsage?.find(
-    (item) => +item.brokerId === +brokerId
+    (item) => Number(item.brokerId) === Number(brokerId)
   );
 
   useInterval(() => {
@@ -81,7 +82,6 @@ const Broker: React.FC = () => {
             <BytesFormatted value={brokerDiskUsage?.segmentSize} />
           </Metrics.Indicator>
           <Metrics.Indicator label="Segment Count">
-            {' '}
             {brokerDiskUsage?.segmentCount}
           </Metrics.Indicator>
           <Metrics.Indicator label="Port">{brokerItem?.port}</Metrics.Indicator>
@@ -98,20 +98,18 @@ const Broker: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {!logdirs.length && (
+          {!logdirs ? (
             <tr>
               <td colSpan={8}>Log dir data not available</td>
             </tr>
-          )}
-
-          {logdirs.map(({ name, error, topics, partitions }) => (
-            <tr key={brokerId}>
-              <td>{name}</td>
-              <td>{error}</td>
-              <td>{topics}</td>
-              <td>{partitions}</td>
+          ) : (
+            <tr>
+              <td>{logdirs.name}</td>
+              <td>{logdirs.error}</td>
+              <td>{logdirs.topics}</td>
+              <td>{logdirs.partitions}</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </Table>
     </>
