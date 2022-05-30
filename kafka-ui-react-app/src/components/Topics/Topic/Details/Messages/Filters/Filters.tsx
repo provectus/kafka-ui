@@ -524,7 +524,7 @@ const Filters: React.FC<FiltersProps> = ({
           <S.MetricsIcon>
             <i className="far fa-file-alt" />
           </S.MetricsIcon>
-          <span>{messagesConsumed} messages</span>
+          <span>{messagesConsumed} messages consumed</span>
         </S.Metric>
       </S.FiltersMetrics>
     </S.FiltersWrapper>
