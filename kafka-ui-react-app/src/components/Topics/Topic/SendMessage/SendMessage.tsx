@@ -102,8 +102,14 @@ const SendMessage: React.FC = () => {
   }) => {
     if (messageSchema) {
       const { partition, key, content } = data;
-      const headers = data.headers ? JSON.parse(data.headers) : undefined;
       const errors = validateMessage(key, content, messageSchema);
+      if (data.headers) {
+        try {
+          JSON.parse(data.headers);
+        } catch (error) {
+          errors.push('Wrong header format');
+        }
+      }
       if (errors.length > 0) {
         const errorsHtml = errors.map((e) => `<li>${e}</li>`).join('');
         dispatch(
@@ -117,7 +123,7 @@ const SendMessage: React.FC = () => {
         );
         return;
       }
-
+      const headers = data.headers ? JSON.parse(data.headers) : undefined;
       try {
         await messagesApiClient.sendTopicMessages({
           clusterName,
