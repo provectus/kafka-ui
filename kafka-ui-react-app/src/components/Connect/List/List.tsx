@@ -70,8 +70,8 @@ const List: React.FC<ListProps> = ({
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator
-            label="Connects"
-            title="Connects"
+            label="Connectors"
+            title="Connectors"
             fetching={areConnectsFetching}
           >
             {connectors.length}
