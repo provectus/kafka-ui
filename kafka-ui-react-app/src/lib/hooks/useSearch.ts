@@ -7,7 +7,7 @@ const SEARCH_QUERY_ARG = 'q';
 // returns value of Q search param (?q='something') and callback to change it
 const useSearch = (initValue = ''): [string, (value: string) => void] => {
   const navigate = useNavigate();
-  const { search, pathname } = useLocation();
+  const { search } = useLocation();
   const queryParams = useMemo(() => new URLSearchParams(search), [search]);
   const q = useMemo(
     () => queryParams.get(SEARCH_QUERY_ARG)?.trim(),
@@ -19,9 +19,9 @@ const useSearch = (initValue = ''): [string, (value: string) => void] => {
   useEffect(() => {
     if (initValue.trim() !== '' && !q) {
       queryParams.set(SEARCH_QUERY_ARG, initValue.trim());
-      navigate({ pathname, search: queryParams.toString() });
+      navigate({ search: queryParams.toString() });
     }
-  }, [navigate, initValue, pathname, q, queryParams]);
+  }, [navigate, initValue, q, queryParams]);
 
   const handleChange = useCallback(
     (value: string) => {
@@ -38,14 +38,13 @@ const useSearch = (initValue = ''): [string, (value: string) => void] => {
         }
         navigate(
           {
-            pathname,
             search: queryParams.toString(),
           },
           { replace: true }
         );
       }
     },
-    [q, page, navigate, pathname, queryParams]
+    [q, page, navigate, queryParams]
   );
 
   return [q || initValue.trim() || '', handleChange];

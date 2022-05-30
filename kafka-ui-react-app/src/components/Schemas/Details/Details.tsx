@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  clusterSchemasPath,
   clusterSchemaSchemaDiffPath,
   clusterSchemaEditPath,
   ClusterSubjectParam,
@@ -72,7 +71,7 @@ const Details: React.FC = () => {
         clusterName,
         subject,
       });
-      navigate(clusterSchemasPath(clusterName));
+      navigate('../');
     } catch (e) {
       const err = await getResponse(e as Response);
       dispatch(serverErrorAlertAdded(err));

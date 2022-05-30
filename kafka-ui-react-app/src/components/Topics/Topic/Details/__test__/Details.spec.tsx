@@ -8,11 +8,7 @@ import {
   internalTopicPayload,
 } from 'redux/reducers/topics/__test__/fixtures';
 import { render, WithRoute } from 'lib/testHelpers';
-import {
-  clusterTopicEditRelativePath,
-  clusterTopicPath,
-  clusterTopicsPath,
-} from 'lib/paths';
+import { clusterTopicEditRelativePath, clusterTopicPath } from 'lib/paths';
 import { CleanUpPolicy, Topic } from 'generated-sources';
 
 const mockNavigate = jest.fn();
@@ -161,9 +157,8 @@ describe('Details', () => {
 
   it('redirects to the correct route if topic is deleted', () => {
     setupComponent({ isDeleted: true });
-    const redirectRoute = clusterTopicsPath(mockClusterName);
 
-    expect(mockNavigate).toHaveBeenCalledWith(redirectRoute);
+    expect(mockNavigate).toHaveBeenCalledWith('../..');
   });
 
   it('shows a confirmation popup on deleting topic messages', () => {

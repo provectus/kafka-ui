@@ -2,7 +2,6 @@ import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import {
-  clusterTopicsPath,
   RouteParamsClusterTopic,
   clusterTopicMessagesRelativePath,
   clusterTopicSettingsRelativePath,
@@ -88,7 +87,7 @@ const Details: React.FC<Props> = ({
 
   React.useEffect(() => {
     if (isDeleted) {
-      navigate(clusterTopicsPath(clusterName));
+      navigate('../..');
     }
   }, [isDeleted, clusterName, dispatch, navigate]);
 
