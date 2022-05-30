@@ -105,25 +105,27 @@ describe('New', () => {
       initialEntries: [clusterTopicNewPath(clusterName)],
     });
 
-    jest.spyOn(mockedHistory, 'push');
-
     await act(() => {
       renderComponent(mockedHistory);
     });
 
+    jest.spyOn(mockedHistory, 'push');
+
     await waitFor(() => {
       userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+      userEvent.type(screen.getByPlaceholderText('Number of partitions'), '1');
+      expect(screen.getByText(/submit/i)).toBeEnabled();
       userEvent.click(screen.getByText(/submit/i));
     });
 
-    await waitFor(() =>
-      expect(mockedHistory.location.pathname).toBe(
-        clusterTopicPath(clusterName, topicName)
-      )
+    expect(mockedHistory.location.pathname).toBe(
+      clusterTopicNewPath(clusterName)
     );
 
-    expect(useDispatchMock).toHaveBeenCalledTimes(1);
-    expect(mockedHistory.push).toBeCalledTimes(1);
+    await waitFor(() => {
+      expect(useDispatchMock).toHaveBeenCalledTimes(1);
+      expect(mockedHistory.push).toBeCalledTimes(1);
+    });
   });
 
   it('does not redirect page when request is not fulfilled', async () => {

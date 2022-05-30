@@ -63,7 +63,7 @@ describe('TopicForm', () => {
   it('submits', () => {
     renderComponent({
       isSubmitting,
-      onSubmit: onSubmit.mockImplementation((e) => e.preventDefault()),
+      onSubmit: onSubmit(),
     });
 
     userEvent.click(screen.getByRole('button', { name: 'Submit' }));

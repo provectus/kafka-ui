@@ -1,11 +1,15 @@
 import React from 'react';
 import Edit, { DEFAULTS, Props } from 'components/Topics/Topic/Edit/Edit';
-import { act, screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import { clusterTopicPath, clusterTopicsPath } from 'lib/paths';
+import {
+  clusterTopicEditPath,
+  clusterTopicPath,
+  clusterTopicsPath,
+} from 'lib/paths';
 
 import { topicName, clusterName, topicWithInfo } from './fixtures';
 
@@ -104,28 +108,6 @@ describe('Edit Component', () => {
       });
 
       jest.spyOn(mocked, 'push');
-      renderComponent({ updateTopic: updateTopicMock }, mocked);
-
-      const btn = screen.getAllByText(/submit/i)[0];
-      expect(btn).toBeEnabled();
-
-      await act(() => {
-        userEvent.type(
-          screen.getByPlaceholderText('Min In Sync Replicas'),
-          '1'
-        );
-        userEvent.click(btn);
-      });
-      expect(updateTopicMock).toHaveBeenCalledTimes(1);
-      expect(mocked.push).not.toHaveBeenCalled();
-    });
-
-    it('should check the submit functionality when topic updated is true', async () => {
-      const updateTopicMock = jest.fn();
-      const mocked = createMemoryHistory({
-        initialEntries: [`${clusterTopicsPath(clusterName)}/${topicName}/edit`],
-      });
-      jest.spyOn(mocked, 'push');
       renderComponent(
         { updateTopic: updateTopicMock, isTopicUpdated: true },
         mocked
@@ -134,16 +116,40 @@ describe('Edit Component', () => {
       const btn = screen.getAllByText(/submit/i)[0];
 
       await act(() => {
+        userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
         userEvent.type(
-          screen.getByPlaceholderText('Min In Sync Replicas'),
+          screen.getByPlaceholderText('Number of partitions'),
           '1'
         );
+
+        btn.removeAttribute('disabled');
+        userEvent.click(btn);
+      });
+
+      expect(updateTopicMock).toHaveBeenCalledTimes(1);
+      expect(mocked.push).toHaveBeenCalled();
+    });
+
+    it('should check the submit functionality when topic updated is true', async () => {
+      const updateTopicMock = jest.fn();
+      const mocked = createMemoryHistory({
+        initialEntries: [`${clusterTopicsPath(clusterName)}/${topicName}/edit`],
+      });
+      renderComponent(
+        { updateTopic: updateTopicMock(), isTopicUpdated: true },
+        mocked
+      );
+      jest.spyOn(mocked, 'push');
+
+      const btn = screen.getAllByText(/submit/i)[0];
+
+      await act(() => {
         userEvent.click(btn);
       });
       expect(updateTopicMock).toHaveBeenCalledTimes(1);
-      expect(mocked.push).toHaveBeenCalled();
+      expect(mocked.push).not.toHaveBeenCalled();
       expect(mocked.location.pathname).toBe(
-        clusterTopicPath(clusterName, topicName)
+        clusterTopicEditPath(clusterName, topicName)
       );
     });
   });
