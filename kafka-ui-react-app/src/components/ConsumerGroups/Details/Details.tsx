@@ -1,11 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
   clusterConsumerGroupResetRelativePath,
   ClusterGroupParam,
 } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { useNavigate, useParams } from 'react-router-dom';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
@@ -31,8 +32,7 @@ import ListItem from './ListItem';
 const Details: React.FC = () => {
   const navigate = useNavigate();
   const { isReadOnly } = React.useContext(ClusterContext);
-  const { consumerGroupID, clusterName } =
-    useParams<ClusterGroupParam>() as ClusterGroupParam;
+  const { consumerGroupID, clusterName } = useAppParams<ClusterGroupParam>();
   const dispatch = useAppDispatch();
   const consumerGroup = useAppSelector((state) =>
     selectById(state, consumerGroupID)

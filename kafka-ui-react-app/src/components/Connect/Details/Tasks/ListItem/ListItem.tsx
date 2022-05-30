@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { Task, TaskId } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import Dropdown from 'components/common/Dropdown/Dropdown';
@@ -21,7 +21,7 @@ export interface ListItemProps {
 
 const ListItem: React.FC<ListItemProps> = ({ task, restartTask }) => {
   const { clusterName, connectName, connectorName } =
-    useParams<RouterParamsClusterConnectConnector>() as RouterParamsClusterConnectConnector;
+    useAppParams<RouterParamsClusterConnectConnector>();
 
   const restartTaskHandler = async () => {
     await restartTask({

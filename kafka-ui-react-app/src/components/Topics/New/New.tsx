@@ -3,12 +3,13 @@ import { TopicFormData } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import { ClusterNameRoute } from 'lib/paths';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { createTopic } from 'redux/reducers/topics/topicsSlice';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch } from 'lib/hooks/redux';
+import useAppParams from 'lib/hooks/useAppParams';
 
 enum Filters {
   NAME = 'name',
@@ -24,7 +25,7 @@ const New: React.FC = () => {
     resolver: yupResolver(topicFormValidationSchema),
   });
 
-  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
+  const { clusterName } = useAppParams<ClusterNameRoute>();
   const navigate = useNavigate();
 
   const { search } = useLocation();

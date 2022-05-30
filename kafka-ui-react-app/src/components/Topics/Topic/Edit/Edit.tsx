@@ -10,7 +10,7 @@ import {
 import { useForm, FormProvider } from 'react-hook-form';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { RouteParamsClusterTopic } from 'lib/paths';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import { TOPIC_CUSTOM_PARAMS_PREFIX, TOPIC_CUSTOM_PARAMS } from 'lib/constants';
@@ -18,6 +18,7 @@ import styled from 'styled-components';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppSelector } from 'lib/hooks/redux';
 import { getFullTopic } from 'redux/reducers/topics/selectors';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import DangerZoneContainer from './DangerZone/DangerZoneContainer';
 
@@ -82,8 +83,7 @@ const Edit: React.FC<Props> = ({
   fetchTopicConfig,
   updateTopic,
 }) => {
-  const { clusterName, topicName } =
-    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
 
   const topic = useAppSelector((state) => getFullTopic(state, topicName));
 

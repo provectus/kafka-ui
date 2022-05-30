@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import { clusterConsumerGroupsPath, RouteParamsClusterTopic } from 'lib/paths';
 import { Table } from 'components/common/table/Table/Table.styled';
@@ -10,6 +10,7 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import getTagColor from 'components/common/Tag/getTagColor';
 import { useAppSelector } from 'lib/hooks/redux';
 import { getTopicConsumerGroups } from 'redux/reducers/topics/selectors';
+import useAppParams from 'lib/hooks/useAppParams';
 
 export interface Props {
   isFetched: boolean;
@@ -23,8 +24,7 @@ const TopicConsumerGroups: React.FC<Props> = ({
   fetchTopicConsumerGroups,
   isFetched,
 }) => {
-  const { clusterName, topicName } =
-    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
 
   const consumerGroups = useAppSelector((state) =>
     getTopicConsumerGroups(state, topicName)

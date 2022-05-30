@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
   ClusterName,
   ConnectName,
@@ -31,7 +31,7 @@ const Config: React.FC<ConfigProps> = ({
   config,
 }) => {
   const { clusterName, connectName, connectorName } =
-    useParams<RouterParamsClusterConnectConnector>() as RouterParamsClusterConnectConnector;
+    useAppParams<RouterParamsClusterConnectConnector>();
 
   React.useEffect(() => {
     fetchConfig({ clusterName, connectName, connectorName });

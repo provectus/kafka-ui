@@ -5,7 +5,7 @@ import { ErrorMessage } from '@hookform/error-message';
 import { ClusterNameRoute, clusterSchemaPath } from 'lib/paths';
 import { SchemaType } from 'generated-sources';
 import { SCHEMA_NAME_VALIDATION_PATTERN } from 'lib/constants';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
@@ -18,6 +18,7 @@ import {
   schemasApiClient,
 } from 'redux/reducers/schemas/schemasSlice';
 import { useAppDispatch } from 'lib/hooks/redux';
+import useAppParams from 'lib/hooks/useAppParams';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
 
@@ -30,7 +31,7 @@ const SchemaTypeOptions: Array<SelectOption> = [
 ];
 
 const New: React.FC = () => {
-  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
+  const { clusterName } = useAppParams<ClusterNameRoute>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const methods = useForm<NewSchemaSubjectRaw>();

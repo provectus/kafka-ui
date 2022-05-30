@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Routes, Navigate, useParams, Route, Outlet } from 'react-router-dom';
+import { Routes, Navigate, Route, Outlet } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { ClusterFeaturesEnum } from 'generated-sources';
 import {
   getClustersFeatures,
@@ -29,7 +30,7 @@ import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import { BreadcrumbProvider } from 'components/common/Breadcrumb/Breadcrumb.provider';
 
 const Cluster: React.FC = () => {
-  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
+  const { clusterName } = useAppParams<ClusterNameRoute>();
   const isReadOnly = useSelector(getClustersReadonlyStatus(clusterName));
   const features = useSelector(getClustersFeatures(clusterName));
 

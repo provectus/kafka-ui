@@ -6,9 +6,9 @@ import { FormError } from 'components/common/Input/Input.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import { ClusterName, TopicName } from 'redux/interfaces';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import * as S from './DangerZone.styled';
 
@@ -37,8 +37,7 @@ const DangerZone: React.FC<Props> = ({
   updateTopicPartitionsCount,
   updateTopicReplicationFactor,
 }) => {
-  const { clusterName, topicName } =
-    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
 
   const [isPartitionsConfirmationVisible, setIsPartitionsConfirmationVisible] =
     React.useState<boolean>(false);

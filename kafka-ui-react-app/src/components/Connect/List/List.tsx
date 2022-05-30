@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { Connect, FullConnectorInfo } from 'generated-sources';
 import { ClusterName, ConnectorSearch } from 'redux/interfaces';
 import { clusterConnectorNewRelativePath, ClusterNameRoute } from 'lib/paths';
@@ -40,7 +40,7 @@ const List: React.FC<ListProps> = ({
   setConnectorSearch,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
-  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
+  const { clusterName } = useAppParams<ClusterNameRoute>();
 
   React.useEffect(() => {
     fetchConnects(clusterName);

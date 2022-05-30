@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   clusterTopicMessagesRelativePath,
   RouteParamsClusterTopic,
@@ -22,14 +22,14 @@ import {
   getPartitionsByTopicName,
   getTopicMessageSchemaFetched,
 } from 'redux/reducers/topics/selectors';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import validateMessage from './validateMessage';
 import * as S from './SendMessage.styled';
 
 const SendMessage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { clusterName, topicName } =
-    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const navigate = useNavigate();
 
   jsf.option('fillProperties', false);

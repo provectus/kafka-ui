@@ -3,7 +3,7 @@ import { SchemaSubject } from 'generated-sources';
 import { clusterSchemaSchemaDiffPath, ClusterSubjectParam } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import DiffViewer from 'components/common/DiffViewer/DiffViewer';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   fetchSchemaVersions,
   SCHEMAS_VERSIONS_FETCH_ACTION,
@@ -12,6 +12,7 @@ import { useForm, Controller } from 'react-hook-form';
 import Select from 'components/common/Select/Select';
 import { useAppDispatch } from 'lib/hooks/redux';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import * as S from './Diff.styled';
 
@@ -21,8 +22,7 @@ export interface DiffProps {
 }
 
 const Diff: React.FC<DiffProps> = ({ versions, areVersionsFetched }) => {
-  const { clusterName, subject } =
-    useParams<ClusterSubjectParam>() as ClusterSubjectParam;
+  const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
   const navigate = useNavigate();
   const location = useLocation();
 

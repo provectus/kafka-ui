@@ -1,12 +1,6 @@
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import {
-  NavLink,
-  Route,
-  Routes,
-  useParams,
-  useNavigate,
-} from 'react-router-dom';
+import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import {
   clusterTopicsPath,
   RouteParamsClusterTopic,
@@ -32,6 +26,7 @@ import {
   getIsTopicDeletePolicy,
   getIsTopicInternal,
 } from 'redux/reducers/topics/selectors';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
@@ -67,8 +62,7 @@ const Details: React.FC<Props> = ({
   recreateTopic,
   clearTopicMessages,
 }) => {
-  const { clusterName, topicName } =
-    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
 
   const isInternal = useAppSelector((state) =>
     getIsTopicInternal(state, topicName)

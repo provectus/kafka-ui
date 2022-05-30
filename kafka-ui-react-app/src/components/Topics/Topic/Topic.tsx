@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, useParams } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import EditContainer from 'components/Topics/Topic/Edit/EditContainer';
 import DetailsContainer from 'components/Topics/Topic/Details/DetailsContainer';
@@ -9,6 +9,7 @@ import {
   clusterTopicSendMessageRelativePath,
   RouteParamsClusterTopic,
 } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import SendMessage from './SendMessage/SendMessage';
 
@@ -26,8 +27,7 @@ const Topic: React.FC<TopicProps> = ({
   fetchTopicDetails,
   resetTopicMessages,
 }) => {
-  const { clusterName, topicName } =
-    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
 
   React.useEffect(() => {
     fetchTopicDetails({ clusterName, topicName });

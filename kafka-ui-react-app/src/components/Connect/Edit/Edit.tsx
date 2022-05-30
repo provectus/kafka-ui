@@ -1,5 +1,6 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { Controller, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -54,7 +55,7 @@ const Edit: React.FC<EditProps> = ({
   updateConfig,
 }) => {
   const { clusterName, connectName, connectorName } =
-    useParams<RouterParamsClusterConnectConnector>() as RouterParamsClusterConnectConnector;
+    useAppParams<RouterParamsClusterConnectConnector>();
   const navigate = useNavigate();
   const {
     handleSubmit,

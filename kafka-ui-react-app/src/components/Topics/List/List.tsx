@@ -1,5 +1,6 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
   TopicWithDetailedInfo,
   ClusterName,
@@ -92,7 +93,7 @@ const List: React.FC<TopicsListProps> = ({
 }) => {
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
-  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
+  const { clusterName } = useAppParams<ClusterNameRoute>();
   const { page, perPage, pathname } = usePagination();
   const [showInternal, setShowInternal] = React.useState<boolean>(
     !localStorage.getItem('hideInternalTopics') && true

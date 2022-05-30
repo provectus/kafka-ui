@@ -1,5 +1,4 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import { Partition, Replica } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import Dropdown from 'components/common/Dropdown/Dropdown';
@@ -15,6 +14,7 @@ import { useAppSelector } from 'lib/hooks/redux';
 import { getTopicByName } from 'redux/reducers/topics/selectors';
 import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
 import { RouteParamsClusterTopic } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
 
 export interface Props {
   clearTopicMessages(params: {
@@ -25,8 +25,7 @@ export interface Props {
 }
 
 const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
-  const { clusterName, topicName } =
-    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
 
   const {
     partitions,

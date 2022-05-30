@@ -1,5 +1,6 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { ConnectorState, ConnectorAction } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
@@ -59,7 +60,7 @@ const Actions: React.FC<ActionsProps> = ({
   isConnectorActionRunning,
 }) => {
   const { clusterName, connectName, connectorName } =
-    useParams<RouterParamsClusterConnectConnector>() as RouterParamsClusterConnectConnector;
+    useAppParams<RouterParamsClusterConnectConnector>();
 
   const navigate = useNavigate();
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -46,7 +47,7 @@ const New: React.FC<NewProps> = ({
   connects,
   createConnector,
 }) => {
-  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
+  const { clusterName } = useAppParams<ClusterNameRoute>();
   const navigate = useNavigate();
 
   const methods = useForm<FormValues>({

@@ -1,9 +1,9 @@
+import React, { FC, useEffect } from 'react';
+import useAppParams from 'lib/hooks/useAppParams';
 import * as Metrics from 'components/common/Metrics';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ListItem from 'components/KsqlDb/List/ListItem';
-import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
 import { clusterKsqlDbQueryPath, ClusterNameRoute } from 'lib/paths';
@@ -25,7 +25,7 @@ const accessors = headers.map((header) => header.accessor);
 const List: FC = () => {
   const dispatch = useDispatch();
 
-  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
+  const { clusterName } = useAppParams<ClusterNameRoute>();
 
   const { rows, fetching, tablesCount, streamsCount } =
     useSelector(getKsqlDbTables);

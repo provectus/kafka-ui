@@ -12,7 +12,7 @@ import {
 } from 'generated-sources';
 import React, { useContext } from 'react';
 import { omitBy } from 'lodash';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
@@ -31,6 +31,7 @@ import useModal from 'lib/hooks/useModal';
 import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
 import { useAppSelector } from 'lib/hooks/redux';
 import { RouteParamsClusterTopic } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import * as S from './Filters.styled';
 import {
@@ -81,8 +82,7 @@ const Filters: React.FC<FiltersProps> = ({
   updateMeta,
   setIsFetching,
 }) => {
-  const { clusterName, topicName } =
-    useParams<RouteParamsClusterTopic>() as RouteParamsClusterTopic;
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const location = useLocation();
   const navigate = useNavigate();
 

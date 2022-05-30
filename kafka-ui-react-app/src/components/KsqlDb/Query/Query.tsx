@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, FC, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import TableRenderer from 'components/KsqlDb/Query/renderer/TableRenderer/TableRenderer';
 import {
   executeKsql,
@@ -62,7 +62,7 @@ export const getFormattedErrorFromTableData = (
 };
 
 const Query: FC = () => {
-  const { clusterName } = useParams<ClusterNameRoute>() as ClusterNameRoute;
+  const { clusterName } = useAppParams<ClusterNameRoute>();
 
   const sseRef = React.useRef<{ sse: EventSource | null; isOpen: boolean }>({
     sse: null,

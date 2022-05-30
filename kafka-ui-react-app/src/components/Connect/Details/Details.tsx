@@ -1,5 +1,6 @@
 import React from 'react';
-import { NavLink, Route, Routes, useParams } from 'react-router-dom';
+import { NavLink, Route, Routes } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { Connector, Task } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
@@ -44,7 +45,7 @@ const Details: React.FC<DetailsProps> = ({
   connector,
 }) => {
   const { clusterName, connectName, connectorName } =
-    useParams<RouterParamsClusterConnectConnector>() as RouterParamsClusterConnectConnector;
+    useAppParams<RouterParamsClusterConnectConnector>();
 
   React.useEffect(() => {
     fetchConnector({ clusterName, connectName, connectorName });

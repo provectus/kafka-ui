@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   clusterSchemasPath,
   clusterSchemaSchemaDiffPath,
@@ -32,6 +32,7 @@ import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
@@ -40,8 +41,7 @@ const Details: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
-  const { clusterName, subject } =
-    useParams<ClusterSubjectParam>() as ClusterSubjectParam;
+  const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
   const [
     isDeleteSchemaConfirmationVisible,
     setDeleteSchemaConfirmationVisible,

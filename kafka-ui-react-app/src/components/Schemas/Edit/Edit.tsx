@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
   CompatibilityLevelCompatibilityEnum,
@@ -13,6 +13,7 @@ import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
   schemaAdded,
   schemasApiClient,
@@ -33,8 +34,7 @@ const Edit: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { clusterName, subject } =
-    useParams<ClusterSubjectParam>() as ClusterSubjectParam;
+  const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
   const methods = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
   const {
     formState: { isDirty, isSubmitting, dirtyFields },
