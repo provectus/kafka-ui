@@ -24,6 +24,11 @@ export const clusterBrokerPath = (
   brokerId: BrokerId | string
 ) => `${clusterBrokersPath(clusterName)}/${brokerId}`;
 
+export const clusterBrokerMetricsPath = (
+  clusterName: ClusterName,
+  brokerId: BrokerId | string
+) => `${clusterBrokersPath(clusterName)}/${brokerId}/metrics`;
+
 // Consumer Groups
 export const clusterConsumerGroupsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/consumer-groups`;
