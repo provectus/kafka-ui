@@ -217,6 +217,19 @@ describe('Paths', () => {
       )
     );
   });
+  it('clusterConnectConnectorsPath', () => {
+    expect(
+      paths.clusterConnectConnectorsPath(clusterName, connectName)
+    ).toEqual(
+      `${paths.clusterConnectsPath(clusterName)}/${connectName}/connectors`
+    );
+    expect(paths.clusterConnectConnectorsPath()).toEqual(
+      paths.clusterConnectConnectorsPath(
+        RouteParams.clusterName,
+        RouteParams.connectName
+      )
+    );
+  });
   it('clusterConnectConnectorEditPath', () => {
     expect(
       paths.clusterConnectConnectorEditPath(
