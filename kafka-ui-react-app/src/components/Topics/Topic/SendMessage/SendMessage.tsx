@@ -1,7 +1,7 @@
 import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import React, { useEffect, useState } from 'react';
-import { useForm, Controller, Control, FieldValues } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
 import { clusterTopicMessagesPath } from 'lib/paths';
 import jsf from 'json-schema-faker';
@@ -69,7 +69,6 @@ const SendMessage: React.FC = () => {
   }, [messageSchema, schemaIsFetched]);
 
   const {
-    register,
     handleSubmit,
     formState: { isSubmitting },
     control,
@@ -157,9 +156,6 @@ const SendMessage: React.FC = () => {
         break;
     }
   };
-  //
-  // console.log(isValid);
-  // console.log(control.fieldsRef.current);
 
   return (
     <S.Wrapper>
