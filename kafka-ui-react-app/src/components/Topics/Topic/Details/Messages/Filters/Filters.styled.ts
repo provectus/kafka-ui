@@ -117,7 +117,7 @@ export const ListItem = styled.li`
   color: ${({ theme }) => theme.table.td.color.normal};
 `;
 
-export const InfoParagraph = styled.p`
+export const InfoParagraph = styled.div`
   font-size: 12px;
   font-weight: 400;
   line-height: 1.5;
