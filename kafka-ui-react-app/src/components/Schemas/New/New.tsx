@@ -41,22 +41,23 @@ const New: React.FC = () => {
     formState: { isDirty, isSubmitting, errors },
   } = methods;
 
-  const onSubmit = React.useCallback(
-    async ({ subject, schema, schemaType }: NewSchemaSubjectRaw) => {
-      try {
-        const resp = await schemasApiClient.createNewSchema({
-          clusterName,
-          newSchemaSubject: { subject, schema, schemaType },
-        });
-        dispatch(schemaAdded(resp));
-        history.push(clusterSchemaPath(clusterName, subject));
-      } catch (e) {
-        const err = await getResponse(e as Response);
-        dispatch(serverErrorAlertAdded(err));
-      }
-    },
-    [clusterName, dispatch, history]
-  );
+  const onSubmit = async ({
+    subject,
+    schema,
+    schemaType,
+  }: NewSchemaSubjectRaw) => {
+    try {
+      const resp = await schemasApiClient.createNewSchema({
+        clusterName,
+        newSchemaSubject: { subject, schema, schemaType },
+      });
+      dispatch(schemaAdded(resp));
+      history.push(clusterSchemaPath(clusterName, subject));
+    } catch (e) {
+      const err = await getResponse(e as Response);
+      dispatch(serverErrorAlertAdded(err));
+    }
+  };
 
   return (
     <FormProvider {...methods}>

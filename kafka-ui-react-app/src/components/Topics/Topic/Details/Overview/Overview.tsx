@@ -39,11 +39,13 @@ const Overview: React.FC<Props> = ({
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
 
-  const messageCount = React.useMemo(() => {
-    return (partitions || []).reduce((memo, partition) => {
-      return memo + partition.offsetMax - partition.offsetMin;
-    }, 0);
-  }, [partitions]);
+  const messageCount = React.useMemo(
+    () =>
+      (partitions || []).reduce((memo, partition) => {
+        return memo + partition.offsetMax - partition.offsetMin;
+      }, 0),
+    [partitions]
+  );
 
   return (
     <>

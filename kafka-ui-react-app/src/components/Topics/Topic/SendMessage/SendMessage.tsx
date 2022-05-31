@@ -6,7 +6,10 @@ import { useHistory, useParams } from 'react-router-dom';
 import { clusterTopicMessagesPath } from 'lib/paths';
 import jsf from 'json-schema-faker';
 import { messagesApiClient } from 'redux/reducers/topicMessages/topicMessagesSlice';
-import { fetchTopicMessageSchema } from 'redux/reducers/topics/topicsSlice';
+import {
+  fetchTopicMessageSchema,
+  fetchTopicDetails,
+} from 'redux/reducers/topics/topicsSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { now } from 'lodash';
@@ -99,8 +102,14 @@ const SendMessage: React.FC = () => {
   }) => {
     if (messageSchema) {
       const { partition, key, content } = data;
-      const headers = data.headers ? JSON.parse(data.headers) : undefined;
       const errors = validateMessage(key, content, messageSchema);
+      if (data.headers) {
+        try {
+          JSON.parse(data.headers);
+        } catch (error) {
+          errors.push('Wrong header format');
+        }
+      }
       if (errors.length > 0) {
         const errorsHtml = errors.map((e) => `<li>${e}</li>`).join('');
         dispatch(
@@ -114,7 +123,7 @@ const SendMessage: React.FC = () => {
         );
         return;
       }
-
+      const headers = data.headers ? JSON.parse(data.headers) : undefined;
       try {
         await messagesApiClient.sendTopicMessages({
           clusterName,
@@ -126,6 +135,7 @@ const SendMessage: React.FC = () => {
             partition,
           },
         });
+        dispatch(fetchTopicDetails({ clusterName, topicName }));
       } catch (e) {
         dispatch(
           alertAdded({

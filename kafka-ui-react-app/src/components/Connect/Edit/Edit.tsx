@@ -81,26 +81,23 @@ const Edit: React.FC<EditProps> = ({
     }
   }, [config, setValue]);
 
-  const onSubmit = React.useCallback(
-    async (values: FormValues) => {
-      const connector = await updateConfig({
-        clusterName,
-        connectName,
-        connectorName,
-        connectorConfig: JSON.parse(values.config.trim()),
-      });
-      if (connector) {
-        history.push(
-          clusterConnectConnectorConfigPath(
-            clusterName,
-            connectName,
-            connectorName
-          )
-        );
-      }
-    },
-    [updateConfig, clusterName, connectName, connectorName, history]
-  );
+  const onSubmit = async (values: FormValues) => {
+    const connector = await updateConfig({
+      clusterName,
+      connectName,
+      connectorName,
+      connectorConfig: JSON.parse(values.config.trim()),
+    });
+    if (connector) {
+      history.push(
+        clusterConnectConnectorConfigPath(
+          clusterName,
+          connectName,
+          connectorName
+        )
+      );
+    }
+  };
 
   if (isConfigFetching) return <PageLoader />;
 
