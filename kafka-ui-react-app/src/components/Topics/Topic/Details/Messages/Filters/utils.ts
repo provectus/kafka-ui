@@ -53,7 +53,7 @@ export const getSelectedPartitionsFromSeekToParam = (
         if (selectedPartitionIds?.includes(partition)) {
           return {
             value: partition,
-            label: partition.toString(),
+            label: `Partition #${partition.toString()}`,
           };
         }
 
@@ -64,6 +64,6 @@ export const getSelectedPartitionsFromSeekToParam = (
 
   return partitions.map(({ partition }) => ({
     value: partition,
-    label: partition.toString(),
+    label: `Partition #${partition.toString()}`,
   }));
 };
