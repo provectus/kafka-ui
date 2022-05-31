@@ -1,12 +1,11 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterConnectConnectorPath,
   clusterConnectorNewPath,
 } from 'lib/paths';
 import New, { NewProps } from 'components/Connect/New/New';
 import { connects, connector } from 'redux/reducers/connect/__test__/fixtures';
-import { Route } from 'react-router-dom';
 import { fireEvent, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ControllerRenderProps } from 'react-hook-form';
@@ -22,9 +21,7 @@ jest.mock(
 const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
+  useNavigate: () => mockHistoryPush,
 }));
 
 describe('New', () => {
@@ -51,7 +48,7 @@ describe('New', () => {
 
   const renderComponent = (props: Partial<NewProps> = {}) =>
     render(
-      <Route path={clusterConnectorNewPath(':clusterName')}>
+      <WithRoute path={clusterConnectorNewPath()}>
         <New
           fetchConnects={jest.fn()}
           areConnectsFetching={false}
@@ -59,8 +56,8 @@ describe('New', () => {
           createConnector={jest.fn()}
           {...props}
         />
-      </Route>,
-      { pathname: clusterConnectorNewPath(clusterName) }
+      </WithRoute>,
+      { initialEntries: [clusterConnectorNewPath(clusterName)] }
     );
 
   it('fetches connects on mount', async () => {

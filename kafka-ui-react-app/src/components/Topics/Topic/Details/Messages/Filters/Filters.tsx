@@ -12,12 +12,11 @@ import {
 } from 'generated-sources';
 import React, { useContext } from 'react';
 import { omitBy } from 'lodash';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { ClusterName, TopicName } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
@@ -29,6 +28,10 @@ import FilterModal, {
 import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 import useModal from 'lib/hooks/useModal';
+import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
+import { useAppSelector } from 'lib/hooks/redux';
+import { RouteParamsClusterTopic } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import * as S from './Filters.styled';
 import {
@@ -41,10 +44,7 @@ import {
 type Query = Record<string, string | string[] | number>;
 
 export interface FiltersProps {
-  clusterName: ClusterName;
-  topicName: TopicName;
   phaseMessage?: string;
-  partitions: Partition[];
   meta: TopicMessageConsuming;
   isFetching: boolean;
   addMessage(content: { message: TopicMessage; prepend: boolean }): void;
@@ -73,9 +73,6 @@ export const SeekTypeOptions = [
 ];
 
 const Filters: React.FC<FiltersProps> = ({
-  clusterName,
-  topicName,
-  partitions,
   phaseMessage,
   meta: { elapsedMs, bytesConsumed, messagesConsumed },
   isFetching,
@@ -85,8 +82,13 @@ const Filters: React.FC<FiltersProps> = ({
   updateMeta,
   setIsFetching,
 }) => {
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
+
+  const partitions = useAppSelector((state) =>
+    getPartitionsByTopicName(state, topicName)
+  );
 
   const { searchParams, seekDirection, isLive, changeSeekDirection } =
     useContext(TopicMessagesContext);
@@ -212,7 +214,7 @@ const Filters: React.FC<FiltersProps> = ({
         .map((key) => `${key}=${newProps[key]}`)
         .join('&');
 
-      history.push({
+      navigate({
         search: `?${qs}`,
       });
     },
@@ -224,6 +226,7 @@ const Filters: React.FC<FiltersProps> = ({
       timestamp,
       query,
       selectedPartitions,
+      navigate,
     ]
   );
 

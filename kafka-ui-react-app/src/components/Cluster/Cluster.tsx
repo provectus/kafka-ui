@@ -1,19 +1,22 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Switch, Redirect, useParams } from 'react-router-dom';
+import { Routes, Navigate, Route, Outlet } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { ClusterFeaturesEnum } from 'generated-sources';
 import {
   getClustersFeatures,
   getClustersReadonlyStatus,
 } from 'redux/reducers/clusters/clustersSlice';
 import {
-  clusterBrokersPath,
-  clusterConnectorsPath,
-  clusterConnectsPath,
-  clusterConsumerGroupsPath,
-  clusterKsqlDbPath,
-  clusterSchemasPath,
-  clusterTopicsPath,
+  clusterBrokerRelativePath,
+  clusterConnectorsRelativePath,
+  clusterConnectsRelativePath,
+  clusterConsumerGroupsRelativePath,
+  clusterKsqlDbRelativePath,
+  ClusterNameRoute,
+  clusterSchemasRelativePath,
+  clusterTopicsRelativePath,
+  getNonExactPath,
 } from 'lib/paths';
 import Topics from 'components/Topics/Topics';
 import Schemas from 'components/Schemas/Schemas';
@@ -27,7 +30,7 @@ import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import { BreadcrumbProvider } from 'components/common/Breadcrumb/Breadcrumb.provider';
 
 const Cluster: React.FC = () => {
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
   const isReadOnly = useSelector(getClustersReadonlyStatus(clusterName));
   const features = useSelector(getClustersFeatures(clusterName));
 
@@ -61,48 +64,77 @@ const Cluster: React.FC = () => {
     <BreadcrumbProvider>
       <Breadcrumb />
       <ClusterContext.Provider value={contextValue}>
-        <Switch>
-          <BreadcrumbRoute
-            path={clusterBrokersPath(':clusterName')}
-            component={Brokers}
+        <Routes>
+          <Route
+            path={getNonExactPath(clusterBrokerRelativePath)}
+            element={
+              <BreadcrumbRoute>
+                <Brokers />
+              </BreadcrumbRoute>
+            }
           />
-          <BreadcrumbRoute
-            path={clusterTopicsPath(':clusterName')}
-            component={Topics}
+          <Route
+            path={getNonExactPath(clusterTopicsRelativePath)}
+            element={
+              <BreadcrumbRoute>
+                <Topics />
+              </BreadcrumbRoute>
+            }
           />
-          <BreadcrumbRoute
-            path={clusterConsumerGroupsPath(':clusterName')}
-            component={ConsumersGroups}
+          <Route
+            path={getNonExactPath(clusterConsumerGroupsRelativePath)}
+            element={
+              <BreadcrumbRoute>
+                <ConsumersGroups />
+              </BreadcrumbRoute>
+            }
           />
           {hasSchemaRegistryConfigured && (
-            <BreadcrumbRoute
-              path={clusterSchemasPath(':clusterName')}
-              component={Schemas}
+            <Route
+              path={getNonExactPath(clusterSchemasRelativePath)}
+              element={
+                <BreadcrumbRoute>
+                  <Schemas />
+                </BreadcrumbRoute>
+              }
             />
           )}
           {hasKafkaConnectConfigured && (
-            <BreadcrumbRoute
-              path={clusterConnectsPath(':clusterName')}
-              component={Connect}
+            <Route
+              path={getNonExactPath(clusterConnectsRelativePath)}
+              element={
+                <BreadcrumbRoute>
+                  <Connect />
+                </BreadcrumbRoute>
+              }
             />
           )}
           {hasKafkaConnectConfigured && (
-            <BreadcrumbRoute
-              path={clusterConnectorsPath(':clusterName')}
-              component={Connect}
+            <Route
+              path={getNonExactPath(clusterConnectorsRelativePath)}
+              element={
+                <BreadcrumbRoute>
+                  <Connect />
+                </BreadcrumbRoute>
+              }
             />
           )}
           {hasKsqlDbConfigured && (
-            <BreadcrumbRoute
-              path={clusterKsqlDbPath(':clusterName')}
-              component={KsqlDb}
+            <Route
+              path={getNonExactPath(clusterKsqlDbRelativePath)}
+              element={
+                <BreadcrumbRoute>
+                  <KsqlDb />
+                </BreadcrumbRoute>
+              }
             />
           )}
-          <Redirect
-            from="/ui/clusters/:clusterName"
-            to="/ui/clusters/:clusterName/brokers"
+          <Route
+            path="/"
+            element={<Navigate to={clusterBrokerRelativePath} replace />}
           />
-        </Switch>
+        </Routes>
+        <Outlet />
       </ClusterContext.Provider>
     </BreadcrumbProvider>
   );

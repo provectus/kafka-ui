@@ -1,6 +1,7 @@
 import React from 'react';
-import { Switch, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
+import { clusterPath, getNonExactPath } from 'lib/paths';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
@@ -81,14 +82,19 @@ const App: React.FC = () => {
             aria-label="Overlay"
           />
           {areClustersFulfilled ? (
-            <Switch>
+            <Routes>
+              {['/', '/ui', '/ui/clusters'].map((path) => (
+                <Route
+                  key="Home" // optional: avoid full re-renders on route changes
+                  path={path}
+                  element={<Dashboard />}
+                />
+              ))}
               <Route
-                exact
-                path={['/', '/ui', '/ui/clusters']}
-                component={Dashboard}
+                path={getNonExactPath(clusterPath())}
+                element={<ClusterPage />}
               />
-              <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
-            </Switch>
+            </Routes>
           ) : (
             <PageLoader />
           )}

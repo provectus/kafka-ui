@@ -1,5 +1,5 @@
 import React from 'react';
-import { Partition, Replica, Topic, TopicDetails } from 'generated-sources';
+import { Partition, Replica } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
@@ -10,11 +10,13 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
+import { useAppSelector } from 'lib/hooks/redux';
+import { getTopicByName } from 'redux/reducers/topics/selectors';
 import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
+import { RouteParamsClusterTopic } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
 
-export interface Props extends Topic, TopicDetails {
-  clusterName: ClusterName;
-  topicName: TopicName;
+export interface Props {
   clearTopicMessages(params: {
     clusterName: ClusterName;
     topicName: TopicName;
@@ -22,21 +24,25 @@ export interface Props extends Topic, TopicDetails {
   }): void;
 }
 
-const Overview: React.FC<Props> = ({
-  partitions,
-  underReplicatedPartitions,
-  inSyncReplicas,
-  replicas,
-  partitionCount,
-  internal,
-  replicationFactor,
-  segmentSize,
-  segmentCount,
-  clusterName,
-  topicName,
-  cleanUpPolicy,
-  clearTopicMessages,
-}) => {
+const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+
+  const {
+    partitions,
+    underReplicatedPartitions,
+    inSyncReplicas,
+    replicas,
+    partitionCount,
+    internal,
+    replicationFactor,
+    segmentSize,
+    segmentCount,
+    cleanUpPolicy,
+  } = useAppSelector((state) => {
+    const res = getTopicByName(state, topicName);
+    return res || {};
+  });
+
   const { isReadOnly } = React.useContext(ClusterContext);
 
   const messageCount = React.useMemo(

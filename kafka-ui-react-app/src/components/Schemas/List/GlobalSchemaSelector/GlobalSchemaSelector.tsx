@@ -1,3 +1,4 @@
+import React from 'react';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import Select from 'components/common/Select/Select';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
@@ -5,18 +6,18 @@ import { getResponse } from 'lib/errorHandling';
 import { useAppDispatch } from 'lib/hooks/redux';
 import usePagination from 'lib/hooks/usePagination';
 import useSearch from 'lib/hooks/useSearch';
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import {
   fetchSchemas,
   schemasApiClient,
 } from 'redux/reducers/schemas/schemasSlice';
+import { ClusterNameRoute } from 'lib/paths';
 
 import * as S from './GlobalSchemaSelector.styled';
 
 const GlobalSchemaSelector: React.FC = () => {
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
   const dispatch = useAppDispatch();
   const [searchText] = useSearch();
   const { page, perPage } = usePagination();
