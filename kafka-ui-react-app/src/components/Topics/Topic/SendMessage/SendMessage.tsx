@@ -1,7 +1,7 @@
 import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import React, { useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { useForm, Controller, Control, FieldValues } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
 import { clusterTopicMessagesPath } from 'lib/paths';
 import jsf from 'json-schema-faker';
@@ -71,17 +71,12 @@ const SendMessage: React.FC = () => {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, isDirty },
+    formState: { isSubmitting },
     control,
     reset,
   } = useForm({
-    mode: 'onChange',
-    defaultValues: {
-      key: keyDefaultValue,
-      content: contentDefaultValue,
-      headers: undefined,
-      partition: undefined,
-    },
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
   });
 
   useEffect(() => {
@@ -91,18 +86,18 @@ const SendMessage: React.FC = () => {
     });
   }, [keyDefaultValue, contentDefaultValue, reset]);
 
-  const onSubmit = async (data: {
-    key: string;
-    content: string;
-    headers: string;
-    partition: number;
-  }) => {
+  const [key, setKey] = useState(keyDefaultValue);
+  const [content, setContent] = useState(contentDefaultValue);
+  const [headers, setHeaders] = useState({});
+  const [partition, setPartition] = useState(0);
+
+  const isValid = key && content && headers;
+
+  const onSubmit = async () => {
     if (messageSchema) {
-      const { partition, key, content } = data;
-      const headers = data.headers ? JSON.parse(data.headers) : undefined;
-      const errors = validateMessage(key, content, messageSchema);
-      if (errors.length > 0) {
-        const errorsHtml = errors.map((e) => `<li>${e}</li>`).join('');
+      const submitErrors = validateMessage(key, content, messageSchema);
+      if (submitErrors.length > 0) {
+        const errorsHtml = submitErrors.map((e) => `<li>${e}</li>`).join('');
         dispatch(
           alertAdded({
             id: `${clusterName}-${topicName}-createTopicMessageError`,
@@ -144,6 +139,28 @@ const SendMessage: React.FC = () => {
   if (!schemaIsFetched) {
     return <PageLoader />;
   }
+
+  const onUserSelect = (e: string) => {
+    setPartition(Number(e));
+  };
+
+  const onUserTyping = (e: string, name: string) => {
+    switch (name) {
+      case 'key':
+        setKey(e);
+        break;
+      case 'content':
+        setContent(e);
+        break;
+      default:
+        setHeaders(e);
+        break;
+    }
+  };
+  //
+  // console.log(isValid);
+  // console.log(control.fieldsRef.current);
+
   return (
     <S.Wrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -155,13 +172,13 @@ const SendMessage: React.FC = () => {
             <div className="select is-block">
               <select
                 id="select"
-                defaultValue={partitions[0].partition}
+                onChange={(e) => onUserSelect(e.target.value)}
                 disabled={isSubmitting}
-                {...register('partition')}
+                value={partition}
               >
-                {partitions.map((partition) => (
-                  <option key={partition.partition} value={partition.partition}>
-                    {partition.partition}
+                {partitions.map((p) => (
+                  <option key={p.partition} value={p.partition}>
+                    {p.partition}
                   </option>
                 ))}
               </select>
@@ -175,12 +192,12 @@ const SendMessage: React.FC = () => {
             <Controller
               control={control}
               name="key"
-              render={({ field: { name, onChange, value } }) => (
+              render={({ field: { name } }) => (
                 <Editor
                   readOnly={isSubmitting}
                   name={name}
-                  onChange={onChange}
-                  value={value}
+                  onChange={(e) => onUserTyping(e, name)}
+                  value={key}
                 />
               )}
             />
@@ -190,12 +207,12 @@ const SendMessage: React.FC = () => {
             <Controller
               control={control}
               name="content"
-              render={({ field: { name, onChange, value } }) => (
+              render={({ field: { name } }) => (
                 <Editor
                   readOnly={isSubmitting}
                   name={name}
-                  onChange={onChange}
-                  value={value}
+                  onChange={(e) => onUserTyping(e, name)}
+                  value={content}
                 />
               )}
             />
@@ -207,12 +224,12 @@ const SendMessage: React.FC = () => {
             <Controller
               control={control}
               name="headers"
-              render={({ field: { name, onChange } }) => (
+              render={({ field: { name } }) => (
                 <Editor
                   readOnly={isSubmitting}
                   defaultValue="{}"
                   name={name}
-                  onChange={onChange}
+                  onChange={(e) => onUserTyping(e, name)}
                   height="200px"
                 />
               )}
@@ -223,7 +240,7 @@ const SendMessage: React.FC = () => {
           buttonSize="M"
           buttonType="primary"
           type="submit"
-          disabled={!isDirty || isSubmitting}
+          disabled={!isValid || isSubmitting}
         >
           Send
         </Button>

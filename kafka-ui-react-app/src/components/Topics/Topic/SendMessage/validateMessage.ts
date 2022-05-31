@@ -3,7 +3,7 @@ import Ajv from 'ajv/dist/2020';
 import { upperFirst } from 'lodash';
 
 const validateBySchema = (
-  value: string,
+  value: string | undefined,
   schema: string | undefined,
   type: 'key' | 'content'
 ) => {
@@ -46,8 +46,8 @@ const validateBySchema = (
 };
 
 const validateMessage = (
-  key: string,
-  content: string,
+  key: undefined | string,
+  content: undefined | string,
   messageSchema: TopicMessageSchema | undefined
 ): string[] => [
   ...validateBySchema(key, messageSchema?.key?.schema, 'key'),
