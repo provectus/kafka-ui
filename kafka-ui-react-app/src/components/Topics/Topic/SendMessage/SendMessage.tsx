@@ -20,6 +20,7 @@ import {
   getPartitionsByTopicName,
   getTopicMessageSchemaFetched,
 } from 'redux/reducers/topics/selectors';
+import Select, { SelectOption } from 'components/common/Select/Select';
 
 import validateMessage from './validateMessage';
 import * as S from './SendMessage.styled';
@@ -28,6 +29,13 @@ interface RouterParams {
   clusterName: ClusterName;
   topicName: TopicName;
 }
+
+type FieldValues = Partial<{
+  key: string;
+  content: string;
+  headers: string;
+  partition: number | string;
+}>;
 
 const SendMessage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -48,6 +56,10 @@ const SendMessage: React.FC = () => {
     getPartitionsByTopicName(state, topicName)
   );
   const schemaIsFetched = useAppSelector(getTopicMessageSchemaFetched);
+  const selectPartitionOptions: Array<SelectOption> = partitions.map((p) => {
+    const value = String(p.partition);
+    return { value, label: value };
+  });
 
   const keyDefaultValue = React.useMemo(() => {
     if (!schemaIsFetched || !messageSchema) {
@@ -72,12 +84,11 @@ const SendMessage: React.FC = () => {
   }, [messageSchema, schemaIsFetched]);
 
   const {
-    register,
     handleSubmit,
     formState: { isSubmitting, isDirty },
     control,
     reset,
-  } = useForm({
+  } = useForm<FieldValues>({
     mode: 'onChange',
     defaultValues: {
       key: keyDefaultValue,
@@ -152,24 +163,30 @@ const SendMessage: React.FC = () => {
     <S.Wrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="columns">
-          <div className="column is-one-third">
-            <label className="label" htmlFor="select">
+          <div>
+            <label
+              className="label"
+              id="selectPartitionOptions"
+              htmlFor="selectPartitionOptions"
+            >
               Partition
             </label>
-            <div className="select is-block">
-              <select
-                id="select"
-                defaultValue={partitions[0].partition}
-                disabled={isSubmitting}
-                {...register('partition')}
-              >
-                {partitions.map((partition) => (
-                  <option key={partition.partition} value={partition.partition}>
-                    {partition.partition}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Controller
+              control={control}
+              name="partition"
+              defaultValue={selectPartitionOptions[0].value}
+              render={({ field: { name, onChange } }) => (
+                <Select
+                  id="selectPartitionOptions"
+                  aria-labelledby="selectPartitionOptions"
+                  name={name}
+                  onChange={onChange}
+                  minWidth="100%"
+                  options={selectPartitionOptions}
+                  value={selectPartitionOptions[0].value}
+                />
+              )}
+            />
           </div>
         </div>
 
