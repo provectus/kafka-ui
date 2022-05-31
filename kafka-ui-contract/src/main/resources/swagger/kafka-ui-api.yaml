@@ -4,7 +4,7 @@ info:
   version: 0.1.0
   title: Api Documentation
   termsOfService: urn:tos
-  contact: {}
+  contact: { }
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0
@@ -523,6 +523,88 @@ paths:
         404:
           description: Not found
 
+  /api/clusters/{clusterName}/serdes:
+    get:
+      tags:
+        - Messages
+      summary: getSerdes
+      operationId: getSerdes
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SerdeDescription'
+
+  /api/clusters/{clusterName}/topics/{topicName}/messages/v2:
+    post:
+      tags:
+        - Messages
+      summary: registerMessagesPipe
+      operationId: registerMessagesPipe
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessagesRequest'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessagesPipe'
+    get:
+      tags:
+        - Messages
+      summary: readMessagesFromPipe
+      operationId: readMessagesFromPipe
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pipeId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/event-stream:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicMessageEvent'
+
   /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
       tags:
@@ -567,6 +649,14 @@ paths:
           in: query
           schema:
             $ref: "#/components/schemas/SeekDirection"
+        - name: keySerde
+          in: query
+          schema:
+            type: string
+        - name: valueSerde
+          in: query
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -1637,6 +1727,76 @@ paths:
 
 components:
   schemas:
+    SerdeDescription:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        isCustom:
+          type: boolean
+
+    MessagesRequest:
+      type: object
+      properties:
+        seekType:
+          $ref: "#/components/schemas/SeekType"
+        seekTo:
+          type: array
+          items:
+            $ref: "#/components/schemas/SeekTo"
+        limit:
+          type: integer
+        filters:
+          $ref: "#/components/schemas/FiltersExpression"
+        keySerde:
+          type: string
+        valueSerde:
+          type: string
+
+    FiltersExpression:
+      type: object
+      required: [ expression, filters ]
+      properties:
+        expression: # think about better name
+          type: string
+          enum:
+            - OR
+            - AND
+          default: OR
+        filters:
+          type: array
+          items:
+            type: object
+            required: [ type, query ]
+            properties:
+              type:
+                $ref: "#/components/schemas/MessageFilterType"
+              query:
+                type: string
+
+    SeekTo:
+      type: object
+      description: "timestamp & offset fields should be filled exclusively"
+      required: [ partition ]
+      properties:
+        partition:
+          type: integer
+        timestamp:
+          type: integer
+          format: int64
+        offset:
+          type: integer
+          format: int64
+
+    MessagesPipe:
+      type: object
+      required: [ id ]
+      properties:
+        id:
+          type: string
+
     ErrorResponse:
       description: Error object that will be returned with 4XX and 5XX HTTP statuses
       type: object
@@ -1909,6 +2069,10 @@ components:
           type: integer
         cleanUpPolicy:
           $ref: '#/components/schemas/CleanUpPolicy'
+        keySerde:
+          type: string
+        valueSerde:
+          type: string
       required:
         - name
 
@@ -2057,6 +2221,12 @@ components:
         content:
           type: string
           nullable: true
+        keySerde:
+          type: string
+          nullable: true
+        valueSerde:
+          type: string
+          nullable: true
       required:
         - partition
 
@@ -2170,6 +2340,12 @@ components:
         headersSize:
           type: integer
           format: int64
+        keyDeserializeProperties:
+          additionalProperties:
+            type: object
+        valueDeserializeProperties:
+          additionalProperties:
+            type: object
       required:
         - partition
         - offset

@@ -3,19 +3,15 @@ package com.provectus.kafka.ui.controller;
 import static java.util.stream.Collectors.toMap;
 
 import com.provectus.kafka.ui.api.MessagesApi;
-import com.provectus.kafka.ui.model.ConsumerPosition;
-import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
-import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
-import com.provectus.kafka.ui.model.SeekDirectionDTO;
-import com.provectus.kafka.ui.model.SeekTypeDTO;
-import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
+import com.provectus.kafka.ui.model.*;
 import com.provectus.kafka.ui.service.MessagesService;
 import com.provectus.kafka.ui.service.TopicsService;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -49,10 +45,17 @@ public class MessagesController extends AbstractController implements MessagesAp
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> getTopicMessages(
-      String clusterName, String topicName, SeekTypeDTO seekType, List<String> seekTo,
-      Integer limit, String q, MessageFilterTypeDTO filterQueryType,
-      SeekDirectionDTO seekDirection, ServerWebExchange exchange) {
+  public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> getTopicMessages(String clusterName,
+                                                                           String topicName,
+                                                                           SeekTypeDTO seekType,
+                                                                           List<String> seekTo,
+                                                                           Integer limit,
+                                                                           String q,
+                                                                           MessageFilterTypeDTO filterQueryType,
+                                                                           SeekDirectionDTO seekDirection,
+                                                                           String keySerde,
+                                                                           String valueSerde,
+                                                                           ServerWebExchange exchange) {
     var positions = new ConsumerPosition(
         seekType != null ? seekType : SeekTypeDTO.BEGINNING,
         parseSeekTo(topicName, seekTo),
@@ -64,7 +67,7 @@ public class MessagesController extends AbstractController implements MessagesAp
     return Mono.just(
         ResponseEntity.ok(
             messagesService.loadMessages(
-                getCluster(clusterName), topicName, positions, q, filterQueryType, recordsLimit)
+                getCluster(clusterName), topicName, positions, q, filterQueryType, recordsLimit, keySerde, valueSerde)
         )
     );
   }
@@ -109,4 +112,19 @@ public class MessagesController extends AbstractController implements MessagesAp
         .collect(toMap(Pair::getKey, Pair::getValue));
   }
 
+  @Override
+  public Mono<ResponseEntity<Flux<SerdeDescriptionDTO>>> getSerdes(String clusterName,
+                                                                   ServerWebExchange exchange) {
+    return null;
+  }
+
+  @Override
+  public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> readMessagesFromPipe(String clusterName, String topicName, String pipeId, ServerWebExchange exchange) {
+    return null;
+  }
+
+  @Override
+  public Mono<ResponseEntity<MessagesPipeDTO>> registerMessagesPipe(String clusterName, String topicName, Mono<MessagesRequestDTO> messagesRequestDTO, ServerWebExchange exchange) {
+    return null;
+  }
 }

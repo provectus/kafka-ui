@@ -144,16 +144,19 @@ public class MessagesService {
   public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic,
                                                  ConsumerPosition consumerPosition, String query,
                                                  MessageFilterTypeDTO filterQueryType,
-                                                 int limit) {
+                                                 int limit,
+                                                 @Nullable String keySerde,
+                                                 @Nullable String valueSerde) {
     return withExistingTopic(cluster, topic)
         .flux()
-        .flatMap(td -> loadMessagesImpl(cluster, topic, consumerPosition, query, filterQueryType, limit));
+        .flatMap(td -> loadMessagesImpl(cluster, topic, consumerPosition, query,
+            filterQueryType, limit, keySerde, valueSerde));
   }
 
   private Flux<TopicMessageEventDTO> loadMessagesImpl(KafkaCluster cluster, String topic,
                                                  ConsumerPosition consumerPosition, String query,
                                                  MessageFilterTypeDTO filterQueryType,
-                                                 int limit) {
+                                                 int limit, @Nullable String keySerde, @Nullable String valueSerde) {
 
     java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
     RecordSerDe recordDeserializer =

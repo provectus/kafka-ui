@@ -1,11 +1,6 @@
 package com.provectus.kafka.ui.config;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -41,6 +36,9 @@ public class ClustersProperties {
     Properties properties;
     boolean readOnly = false;
     boolean disableLogDirsCollection = false;
+    List<SerdeConfig> serde;
+    String defaultKeySerde;
+    String defaultValueSerde;
   }
 
   @Data
@@ -55,6 +53,16 @@ public class ClustersProperties {
   public static class SchemaRegistryAuth {
     String username;
     String password;
+  }
+
+  @Data
+  public static class SerdeConfig {
+    String name;
+    String className;
+    String location;
+    Map<String, Object> properties = new HashMap<>();
+    String topicKeysPattern;
+    String topicValuesPattern;
   }
 
   @PostConstruct
