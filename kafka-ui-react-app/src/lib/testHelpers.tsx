@@ -1,5 +1,10 @@
 import React, { PropsWithChildren, ReactElement } from 'react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import {
+  MemoryRouter,
+  MemoryRouterProps,
+  Route,
+  Routes,
+} from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
@@ -9,7 +14,6 @@ import { RootState } from 'redux/interfaces';
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from 'redux/reducers';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
-import { MemoryRouterProps } from 'react-router';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;

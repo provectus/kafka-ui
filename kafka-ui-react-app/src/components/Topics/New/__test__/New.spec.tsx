@@ -30,7 +30,7 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-const renderComponent = (path: string, store = storeMock) =>
+const renderComponent = (path: string, store = storeMock) => {
   render(
     <Routes>
       <Route
@@ -55,6 +55,7 @@ const renderComponent = (path: string, store = storeMock) =>
     </Routes>,
     { initialEntries: [path] }
   );
+};
 
 describe('New', () => {
   beforeEach(() => {
@@ -66,31 +67,29 @@ describe('New', () => {
   });
 
   it('checks header for create new', async () => {
-    renderComponent(clusterTopicNewPath(clusterName));
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
+
     expect(
       screen.getByRole('heading', { name: 'Create new Topic' })
     ).toHaveTextContent('Create new Topic');
   });
 
   it('checks header for copy', async () => {
-    renderComponent(`${clusterTopicCopyPath(clusterName)}?name=test`);
+    await act(() =>
+      renderComponent(`${clusterTopicCopyPath(clusterName)}?name=test`)
+    );
     expect(
       screen.getByRole('heading', { name: 'Copy Topic' })
     ).toHaveTextContent('Copy Topic');
   });
 
   it('validates form', async () => {
-    renderComponent(clusterTopicNewPath(clusterName));
-
-    await waitFor(() => {
-      userEvent.click(screen.getByText(/submit/i));
-    });
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
+    userEvent.click(screen.getByText(/submit/i));
     await waitFor(() => {
       expect(screen.getByText('name is a required field')).toBeInTheDocument();
     });
-    await waitFor(() => {
-      expect(mockNavigate).not.toHaveBeenCalled();
-    });
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it('submits valid form', async () => {
@@ -100,20 +99,13 @@ describe('New', () => {
     })) as jest.Mock;
     useDispatchSpy.mockReturnValue(useDispatchMock);
 
-    await act(() => {
-      renderComponent(clusterTopicNewPath(clusterName));
-    });
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
 
-    await waitFor(() => {
-      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
-      userEvent.click(screen.getByText(/submit/i));
-    });
+    userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+    userEvent.click(screen.getByText(/submit/i));
 
-    await waitFor(() => {
-      expect(mockNavigate).toBeCalledTimes(1);
-      expect(mockNavigate).toHaveBeenLastCalledWith(`../${topicName}`);
-    });
-
+    await waitFor(() => expect(mockNavigate).toBeCalledTimes(1));
+    expect(mockNavigate).toHaveBeenLastCalledWith(`../${topicName}`);
     expect(useDispatchMock).toHaveBeenCalledTimes(1);
   });
 
@@ -124,27 +116,20 @@ describe('New', () => {
     })) as jest.Mock;
 
     useDispatchSpy.mockReturnValue(useDispatchMock);
-
-    await act(() => {
-      renderComponent(clusterTopicNewPath(clusterName));
-    });
-
-    await waitFor(() => {
-      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
-      userEvent.click(screen.getByText(/submit/i));
-    });
-
-    await waitFor(() => {
-      expect(mockNavigate).not.toHaveBeenCalled();
-    });
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
+    await act(() =>
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName)
+    );
+    await act(() => userEvent.click(screen.getByText(/submit/i)));
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it('submits valid form that result in an error', async () => {
     const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
     const useDispatchMock = jest.fn();
     useDispatchSpy.mockReturnValue(useDispatchMock);
-    renderComponent(clusterTopicNewPath(clusterName));
 
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
     await act(() => {
       userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
       userEvent.click(screen.getByText(/submit/i));
