@@ -1,14 +1,20 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
-import Settings from 'components/Topics/Topic/Details/Settings/Settings';
+import Settings, {
+  Props,
+} from 'components/Topics/Topic/Details/Settings/Settings';
 import { TopicConfig } from 'generated-sources';
+import { clusterTopicSettingsPath } from 'lib/paths';
+import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
 
 describe('Settings', () => {
+  const mockClusterName = 'Cluster_Name';
+  const mockTopicName = 'Topic_Name';
+
   let expectedResult: number;
   const mockFn = jest.fn();
-  const mockClusterName = 'Cluster Name';
-  const mockTopicName = 'Topic Name';
+
   const mockConfig: TopicConfig[] = [
     {
       name: 'first',
@@ -20,43 +26,50 @@ describe('Settings', () => {
     },
   ];
 
-  it('should check it returns null if no config is passed', () => {
-    render(
-      <Settings
-        clusterName={mockClusterName}
-        topicName={mockTopicName}
-        isFetched
-        fetchTopicConfig={mockFn}
-      />
+  const setUpComponent = (
+    props: Partial<Props> = {},
+    config?: TopicConfig[]
+  ) => {
+    const topic = {
+      name: mockTopicName,
+      config,
+    };
+    const topics = getTopicStateFixtures([topic]);
+
+    return render(
+      <WithRoute path={clusterTopicSettingsPath()}>
+        <Settings isFetched fetchTopicConfig={mockFn} {...props} />
+      </WithRoute>,
+      {
+        initialEntries: [
+          clusterTopicSettingsPath(mockClusterName, mockTopicName),
+        ],
+        preloadedState: {
+          topics,
+        },
+      }
     );
+  };
+
+  afterEach(() => {
+    mockFn.mockClear();
+  });
+
+  it('should check it returns null if no config is passed', () => {
+    setUpComponent();
 
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
 
   it('should show Page loader when it is in fetching state and config is given', () => {
-    render(
-      <Settings
-        clusterName={mockClusterName}
-        topicName={mockTopicName}
-        isFetched={false}
-        fetchTopicConfig={mockFn}
-        config={mockConfig}
-      />
-    );
+    setUpComponent({ isFetched: false }, mockConfig);
 
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
   it('should check and return null if it is not fetched and config is not given', () => {
-    render(
-      <Settings
-        clusterName={mockClusterName}
-        topicName={mockTopicName}
-        isFetched={false}
-        fetchTopicConfig={mockFn}
-      />
-    );
+    setUpComponent({ isFetched: false });
 
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
@@ -64,15 +77,7 @@ describe('Settings', () => {
   describe('Settings Component with Data', () => {
     beforeEach(() => {
       expectedResult = mockConfig.length + 1; // include the header table row as well
-      render(
-        <Settings
-          clusterName={mockClusterName}
-          topicName={mockTopicName}
-          isFetched
-          fetchTopicConfig={mockFn}
-          config={mockConfig}
-        />
-      );
+      setUpComponent({ isFetched: true }, mockConfig);
     });
 
     it('should view the correct number of table row with header included elements after config fetching', () => {

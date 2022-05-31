@@ -1,17 +1,26 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
-import { screen, waitFor, within } from '@testing-library/react';
-import { Route, Router, StaticRouter } from 'react-router-dom';
+import { render, WithRoute } from 'lib/testHelpers';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import ClusterContext, {
   ContextProps,
 } from 'components/contexts/ClusterContext';
 import List, { TopicsListProps } from 'components/Topics/List/List';
-import { createMemoryHistory } from 'history';
 import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import { CleanUpPolicy, SortOrder } from 'generated-sources';
 import userEvent from '@testing-library/user-event';
+import { clusterTopicsPath } from 'lib/paths';
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 describe('List', () => {
+  afterEach(() => {
+    mockNavigate.mockClear();
+  });
+
   const setupComponent = (props: Partial<TopicsListProps> = {}) => (
     <List
       areTopicsFetching={false}
@@ -32,15 +41,13 @@ describe('List', () => {
     />
   );
 
-  const historyMock = createMemoryHistory();
-
   const renderComponentWithProviders = (
     contextProps: Partial<ContextProps> = {},
     props: Partial<TopicsListProps> = {},
-    history = historyMock
+    queryParams = ''
   ) =>
     render(
-      <Router history={history}>
+      <WithRoute path={clusterTopicsPath()}>
         <ClusterContext.Provider
           value={{
             isReadOnly: true,
@@ -52,7 +59,8 @@ describe('List', () => {
         >
           {setupComponent(props)}
         </ClusterContext.Provider>
-      </Router>
+      </WithRoute>,
+      { initialEntries: [`${clusterTopicsPath('test')}${queryParams}`] }
     );
 
   describe('when it has readonly flag', () => {
@@ -112,6 +120,10 @@ describe('List', () => {
 
       await waitFor(() => {
         expect(fetchTopicsList).toHaveBeenLastCalledWith({
+          clusterName: 'test',
+          orderBy: undefined,
+          page: undefined,
+          perPage: undefined,
           search: '',
           showInternal: value === 'on',
           sortOrder: SortOrder.ASC,
@@ -119,47 +131,43 @@ describe('List', () => {
       });
     });
 
-    it('should reset page query param on show internal toggle change', () => {
-      const mockedHistory = createMemoryHistory();
-      jest.spyOn(mockedHistory, 'push');
-      renderComponentWithProviders(
-        { isReadOnly: false },
-        { fetchTopicsList },
-        mockedHistory
-      );
+    it('should reset page query param on show internal toggle change', async () => {
+      renderComponentWithProviders({ isReadOnly: false }, { fetchTopicsList });
 
       const internalCheckBox: HTMLInputElement = screen.getByRole('checkbox');
       userEvent.click(internalCheckBox);
 
-      expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');
+      expect(mockNavigate).toHaveBeenCalledWith({
+        search: '?page=1&perPage=25',
+      });
     });
 
     it('should set cached page query param on show internal toggle change', async () => {
-      const mockedHistory = createMemoryHistory();
-      jest.spyOn(mockedHistory, 'push');
-
       const cachedPage = 5;
-      mockedHistory.push(`/?page=${cachedPage}&perPage=25`);
 
       renderComponentWithProviders(
         { isReadOnly: false },
         { fetchTopicsList, totalPages: 10 },
-        mockedHistory
+        `?page=${cachedPage}&perPage=25`
       );
 
       const searchInput = screen.getByPlaceholderText('Search by Topic Name');
       userEvent.type(searchInput, 'nonEmptyString');
 
       await waitFor(() => {
-        expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');
+        expect(mockNavigate).toHaveBeenCalledWith({
+          search: '?page=1&perPage=25',
+        });
       });
 
-      userEvent.clear(searchInput);
+      await act(() => {
+        userEvent.clear(searchInput);
+      });
 
       await waitFor(() => {
-        expect(mockedHistory.push).toHaveBeenCalledWith(
-          `/?page=${cachedPage}&perPage=25`
-        );
+        expect(mockNavigate).toHaveBeenLastCalledWith({
+          search: `?page=${cachedPage}&perPage=25`,
+        });
       });
     });
   });
@@ -173,38 +181,37 @@ describe('List', () => {
     const fetchTopicsList = jest.fn();
 
     jest.useFakeTimers();
-    const pathname = '/ui/clusters/local/topics';
+    const pathname = clusterTopicsPath('local');
 
     beforeEach(() => {
       render(
-        <StaticRouter location={{ pathname }}>
-          <Route path="/ui/clusters/:clusterName">
-            <ClusterContext.Provider
-              value={{
-                isReadOnly: false,
-                hasKafkaConnectConfigured: true,
-                hasSchemaRegistryConfigured: true,
-                isTopicDeletionAllowed: true,
-              }}
-            >
-              {setupComponent({
-                topics: [
-                  {
-                    ...externalTopicPayload,
-                    cleanUpPolicy: CleanUpPolicy.DELETE,
-                  },
-                  { ...externalTopicPayload, name: 'external.topic2' },
-                ],
-                deleteTopics: mockDeleteTopics,
-                clearTopicsMessages: mockClearTopicsMessages,
-                recreateTopic: mockRecreate,
-                deleteTopic: mockDeleteTopic,
-                clearTopicMessages: mockClearTopic,
-                fetchTopicsList,
-              })}
-            </ClusterContext.Provider>
-          </Route>
-        </StaticRouter>
+        <WithRoute path={clusterTopicsPath()}>
+          <ClusterContext.Provider
+            value={{
+              isReadOnly: false,
+              hasKafkaConnectConfigured: true,
+              hasSchemaRegistryConfigured: true,
+              isTopicDeletionAllowed: true,
+            }}
+          >
+            {setupComponent({
+              topics: [
+                {
+                  ...externalTopicPayload,
+                  cleanUpPolicy: CleanUpPolicy.DELETE,
+                },
+                { ...externalTopicPayload, name: 'external.topic2' },
+              ],
+              deleteTopics: mockDeleteTopics,
+              clearTopicsMessages: mockClearTopicsMessages,
+              recreateTopic: mockRecreate,
+              deleteTopic: mockDeleteTopic,
+              clearTopicMessages: mockClearTopic,
+              fetchTopicsList,
+            })}
+          </ClusterContext.Provider>
+        </WithRoute>,
+        { initialEntries: [pathname] }
       );
     });
 

@@ -2,8 +2,6 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import MessagesTable from 'components/Topics/Topic/Details/Messages/MessagesTable';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory, MemoryHistory } from 'history';
 import { SeekDirection, SeekType, TopicMessage } from 'generated-sources';
 import TopicMessagesContext, {
   ContextProps,
@@ -14,6 +12,12 @@ import {
 } from 'redux/reducers/topicMessages/__test__/fixtures';
 
 const mockTopicsMessages: TopicMessage[] = [{ ...topicMessagePayload }];
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 describe('MessagesTable', () => {
   const seekToResult = '&seekTo=0::9';
@@ -31,20 +35,15 @@ describe('MessagesTable', () => {
     ctx: ContextProps = contextValue,
     messages: TopicMessage[] = [],
     isFetching?: boolean,
-    customHistory?: MemoryHistory
+    path?: string
   ) => {
-    const history =
-      customHistory ||
-      createMemoryHistory({
-        initialEntries: [params.toString()],
-      });
+    const customPath = path || params.toString();
     return render(
-      <Router history={history}>
-        <TopicMessagesContext.Provider value={ctx}>
-          <MessagesTable />
-        </TopicMessagesContext.Provider>
-      </Router>,
+      <TopicMessagesContext.Provider value={ctx}>
+        <MessagesTable />
+      </TopicMessagesContext.Provider>,
       {
+        initialEntries: [customPath],
         preloadedState: {
           topicMessages: {
             messages,

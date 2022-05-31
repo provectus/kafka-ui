@@ -1,5 +1,6 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { Controller, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -9,7 +10,10 @@ import {
   ConnectorConfig,
   ConnectorName,
 } from 'redux/interfaces';
-import { clusterConnectConnectorConfigPath } from 'lib/paths';
+import {
+  clusterConnectConnectorConfigPath,
+  RouterParamsClusterConnectConnector,
+} from 'lib/paths';
 import yup from 'lib/yupExtended';
 import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -23,12 +27,6 @@ import {
 const validationSchema = yup.object().shape({
   config: yup.string().required().isJsonObject(),
 });
-
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
 
 interface FormValues {
   config: string;
@@ -56,8 +54,9 @@ const Edit: React.FC<EditProps> = ({
   config,
   updateConfig,
 }) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
-  const history = useHistory();
+  const { clusterName, connectName, connectorName } =
+    useAppParams<RouterParamsClusterConnectConnector>();
+  const navigate = useNavigate();
   const {
     handleSubmit,
     control,
@@ -89,7 +88,7 @@ const Edit: React.FC<EditProps> = ({
       connectorConfig: JSON.parse(values.config.trim()),
     });
     if (connector) {
-      history.push(
+      navigate(
         clusterConnectConnectorConfigPath(
           clusterName,
           connectName,

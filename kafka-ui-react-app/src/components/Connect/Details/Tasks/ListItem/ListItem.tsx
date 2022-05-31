@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { Task, TaskId } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import Dropdown from 'components/common/Dropdown/Dropdown';
@@ -7,12 +7,7 @@ import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as C from 'components/common/Tag/Tag.styled';
 import getTagColor from 'components/common/Tag/getTagColor';
-
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
+import { RouterParamsClusterConnectConnector } from 'lib/paths';
 
 export interface ListItemProps {
   task: Task;
@@ -25,7 +20,8 @@ export interface ListItemProps {
 }
 
 const ListItem: React.FC<ListItemProps> = ({ task, restartTask }) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
+  const { clusterName, connectName, connectorName } =
+    useAppParams<RouterParamsClusterConnectConnector>();
 
   const restartTaskHandler = async () => {
     await restartTask({

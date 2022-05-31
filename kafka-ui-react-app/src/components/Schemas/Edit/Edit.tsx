@@ -1,11 +1,11 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
   CompatibilityLevelCompatibilityEnum,
   SchemaType,
 } from 'generated-sources';
-import { clusterSchemaPath } from 'lib/paths';
+import { clusterSchemaPath, ClusterSubjectParam } from 'lib/paths';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
 import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
@@ -13,6 +13,7 @@ import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
   schemaAdded,
   schemasApiClient,
@@ -30,11 +31,10 @@ import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import * as S from './Edit.styled';
 
 const Edit: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { clusterName, subject } =
-    useParams<{ clusterName: string; subject: string }>();
+  const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
   const methods = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
   const {
     formState: { isDirty, isSubmitting, dirtyFields },
@@ -90,7 +90,7 @@ const Edit: React.FC = () => {
         );
       }
 
-      history.push(clusterSchemaPath(clusterName, subject));
+      navigate(clusterSchemaPath(clusterName, subject));
     } catch (e) {
       const err = await getResponse(e as Response);
       dispatch(serverErrorAlertAdded(err));

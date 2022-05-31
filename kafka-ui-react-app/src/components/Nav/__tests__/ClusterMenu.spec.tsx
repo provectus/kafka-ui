@@ -4,7 +4,7 @@ import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
 import ClusterMenu from 'components/Nav/ClusterMenu';
 import userEvent from '@testing-library/user-event';
-import { clusterConnectorsPath, clusterConnectsPath } from 'lib/paths';
+import { clusterConnectorsPath } from 'lib/paths';
 import { render } from 'lib/testHelpers';
 
 describe('ClusterMenu', () => {
@@ -55,7 +55,7 @@ describe('ClusterMenu', () => {
   });
   it('renders open cluster menu', () => {
     render(setupComponent(onlineClusterPayload, true), {
-      pathname: clusterConnectorsPath(onlineClusterPayload.name),
+      initialEntries: [clusterConnectorsPath(onlineClusterPayload.name)],
     });
 
     expect(getMenuItems().length).toEqual(4);
@@ -70,28 +70,15 @@ describe('ClusterMenu', () => {
         ...onlineClusterPayload,
         features: [ClusterFeaturesEnum.KAFKA_CONNECT],
       }),
-      { pathname: clusterConnectorsPath(onlineClusterPayload.name) }
+      { initialEntries: [clusterConnectorsPath(onlineClusterPayload.name)] }
     );
     expect(getMenuItems().length).toEqual(1);
     userEvent.click(getMenuItem());
     expect(getMenuItems().length).toEqual(5);
 
-    expect(getKafkaConnect()).toBeInTheDocument();
-    expect(getKafkaConnect()).toHaveClass('is-active');
-  });
-  it('makes Kafka Connect link active', () => {
-    render(
-      setupComponent({
-        ...onlineClusterPayload,
-        features: [ClusterFeaturesEnum.KAFKA_CONNECT],
-      }),
-      { pathname: clusterConnectsPath(onlineClusterPayload.name) }
-    );
-    expect(getMenuItems().length).toEqual(1);
-    userEvent.click(getMenuItem());
-    expect(getMenuItems().length).toEqual(5);
+    const kafkaConnect = getKafkaConnect();
+    expect(kafkaConnect).toBeInTheDocument();
 
-    expect(getKafkaConnect()).toBeInTheDocument();
-    expect(getKafkaConnect()).toHaveClass('is-active');
+    expect(getKafkaConnect()).toHaveClass('active');
   });
 });

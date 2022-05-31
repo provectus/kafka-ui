@@ -1,8 +1,8 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { Connect, FullConnectorInfo } from 'generated-sources';
 import { ClusterName, ConnectorSearch } from 'redux/interfaces';
-import { clusterConnectorNewPath } from 'lib/paths';
+import { clusterConnectorNewRelativePath, ClusterNameRoute } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Search from 'components/common/Search/Search';
@@ -40,7 +40,7 @@ const List: React.FC<ListProps> = ({
   setConnectorSearch,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
 
   React.useEffect(() => {
     fetchConnects(clusterName);
@@ -58,10 +58,9 @@ const List: React.FC<ListProps> = ({
       <PageHeading text="Connectors">
         {!isReadOnly && (
           <Button
-            isLink
             buttonType="primary"
             buttonSize="M"
-            to={clusterConnectorNewPath(clusterName)}
+            to={clusterConnectorNewRelativePath}
           >
             Create Connector
           </Button>

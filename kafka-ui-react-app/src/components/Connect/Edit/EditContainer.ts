@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
 import {
   fetchConnectorConfig,
@@ -22,4 +21,4 @@ const mapDispatchToProps = {
   updateConfig: updateConnectorConfig,
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Edit));
+export default connect(mapStateToProps, mapDispatchToProps)(Edit);

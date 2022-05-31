@@ -1,20 +1,16 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { ConnectorState, ConnectorAction } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
   clusterConnectConnectorEditPath,
   clusterConnectorsPath,
+  RouterParamsClusterConnectConnector,
 } from 'lib/paths';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import styled from 'styled-components';
 import { Button } from 'components/common/Button/Button';
-
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
 
 const ConnectorActionsWrapperStyled = styled.div`
   display: flex;
@@ -63,9 +59,11 @@ const Actions: React.FC<ActionsProps> = ({
   resumeConnector,
   isConnectorActionRunning,
 }) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
+  const { clusterName, connectName, connectorName } =
+    useAppParams<RouterParamsClusterConnectConnector>();
 
-  const history = useHistory();
+  const navigate = useNavigate();
+
   const [
     isDeleteConnectorConfirmationVisible,
     setIsDeleteConnectorConfirmationVisible,
@@ -74,7 +72,7 @@ const Actions: React.FC<ActionsProps> = ({
   const deleteConnectorHandler = async () => {
     try {
       await deleteConnector({ clusterName, connectName, connectorName });
-      history.push(clusterConnectorsPath(clusterName));
+      navigate(clusterConnectorsPath(clusterName));
     } catch {
       // do not redirect
     }
@@ -175,7 +173,6 @@ const Actions: React.FC<ActionsProps> = ({
         buttonSize="M"
         buttonType="primary"
         type="button"
-        isLink
         disabled={isConnectorActionRunning}
         to={clusterConnectConnectorEditPath(
           clusterName,
