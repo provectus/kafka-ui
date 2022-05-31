@@ -4,7 +4,7 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Connect, Connector, NewConnector } from 'generated-sources';
+import { Connect } from 'generated-sources';
 import { ClusterName, ConnectName } from 'redux/interfaces';
 import { clusterConnectConnectorPath, ClusterNameRoute } from 'lib/paths';
 import yup from 'lib/yupExtended';
@@ -16,6 +16,8 @@ import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+import { createConnector } from 'redux/reducers/connect/connectSlice';
+import { useAppDispatch } from 'lib/hooks/redux';
 
 import * as S from './New.styled';
 
@@ -28,11 +30,6 @@ export interface NewProps {
   fetchConnects(clusterName: ClusterName): unknown;
   areConnectsFetching: boolean;
   connects: Connect[];
-  createConnector(payload: {
-    clusterName: ClusterName;
-    connectName: ConnectName;
-    newConnector: NewConnector;
-  }): Promise<{ connector: Connector | undefined }>;
 }
 
 interface FormValues {
@@ -45,9 +42,9 @@ const New: React.FC<NewProps> = ({
   fetchConnects,
   areConnectsFetching,
   connects,
-  createConnector,
 }) => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const methods = useForm<FormValues>({
@@ -83,15 +80,16 @@ const New: React.FC<NewProps> = ({
   );
 
   const onSubmit = async (values: FormValues) => {
-    const { connector } = await createConnector({
-      clusterName,
-      connectName: values.connectName,
-      newConnector: {
-        name: values.name,
-        config: JSON.parse(values.config.trim()),
-      },
-    });
-
+    const { connector } = await dispatch(
+      createConnector({
+        clusterName,
+        connectName: values.connectName,
+        newConnector: {
+          name: values.name,
+          config: JSON.parse(values.config.trim()),
+        },
+      })
+    ).unwrap();
     if (connector) {
       navigate(
         clusterConnectConnectorPath(
