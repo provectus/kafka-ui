@@ -1,8 +1,7 @@
 import React from 'react';
 import New from 'components/Schemas/New/New';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { clusterSchemaNewPath } from 'lib/paths';
-import { Route } from 'react-router-dom';
 import { screen } from '@testing-library/dom';
 
 const clusterName = 'local';
@@ -10,11 +9,11 @@ const clusterName = 'local';
 describe('New Component', () => {
   beforeEach(() => {
     render(
-      <Route path={clusterSchemaNewPath(':clusterName')}>
+      <WithRoute path={clusterSchemaNewPath()}>
         <New />
-      </Route>,
+      </WithRoute>,
       {
-        pathname: clusterSchemaNewPath(clusterName),
+        initialEntries: [clusterSchemaNewPath(clusterName)],
       }
     );
   });

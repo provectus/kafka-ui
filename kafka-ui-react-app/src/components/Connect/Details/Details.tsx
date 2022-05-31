@@ -1,11 +1,15 @@
 import React from 'react';
-import { NavLink, Route, Switch, useParams } from 'react-router-dom';
+import { NavLink, Route, Routes } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { Connector, Task } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
   clusterConnectConnectorConfigPath,
+  clusterConnectConnectorConfigRelativePath,
   clusterConnectConnectorPath,
   clusterConnectConnectorTasksPath,
+  clusterConnectConnectorTasksRelativePath,
+  RouterParamsClusterConnectConnector,
 } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Navbar from 'components/common/Navigation/Navbar.styled';
@@ -15,12 +19,6 @@ import OverviewContainer from './Overview/OverviewContainer';
 import TasksContainer from './Tasks/TasksContainer';
 import ConfigContainer from './Config/ConfigContainer';
 import ActionsContainer from './Actions/ActionsContainer';
-
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
 
 export interface DetailsProps {
   fetchConnector(payload: {
@@ -46,7 +44,8 @@ const Details: React.FC<DetailsProps> = ({
   areTasksFetching,
   connector,
 }) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
+  const { clusterName, connectName, connectorName } =
+    useAppParams<RouterParamsClusterConnectConnector>();
 
   React.useEffect(() => {
     fetchConnector({ clusterName, connectName, connectorName });
@@ -69,68 +68,47 @@ const Details: React.FC<DetailsProps> = ({
       </PageHeading>
       <Navbar role="navigation">
         <NavLink
-          exact
           to={clusterConnectConnectorPath(
             clusterName,
             connectName,
             connectorName
           )}
-          activeClassName="is-active"
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
         >
           Overview
         </NavLink>
         <NavLink
-          exact
           to={clusterConnectConnectorTasksPath(
             clusterName,
             connectName,
             connectorName
           )}
-          activeClassName="is-active"
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
         >
           Tasks
         </NavLink>
         <NavLink
-          exact
           to={clusterConnectConnectorConfigPath(
             clusterName,
             connectName,
             connectorName
           )}
-          activeClassName="is-active"
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
         >
           Config
         </NavLink>
       </Navbar>
-      <Switch>
+      <Routes>
+        <Route index element={<OverviewContainer />} />
         <Route
-          exact
-          path={clusterConnectConnectorTasksPath(
-            ':clusterName',
-            ':connectName',
-            ':connectorName'
-          )}
-          component={TasksContainer}
+          path={clusterConnectConnectorTasksRelativePath}
+          element={<TasksContainer />}
         />
         <Route
-          exact
-          path={clusterConnectConnectorConfigPath(
-            ':clusterName',
-            ':connectName',
-            ':connectorName'
-          )}
-          component={ConfigContainer}
+          path={clusterConnectConnectorConfigRelativePath}
+          element={<ConfigContainer />}
         />
-        <Route
-          exact
-          path={clusterConnectConnectorPath(
-            ':clusterName',
-            ':connectName',
-            ':connectorName'
-          )}
-          component={OverviewContainer}
-        />
-      </Switch>
+      </Routes>
     </div>
   );
 };

@@ -3,36 +3,35 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ClusterContext from 'components/contexts/ClusterContext';
 import Details from 'components/Topics/Topic/Details/Details';
-import { internalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
-import { render } from 'lib/testHelpers';
 import {
-  clusterTopicEditPath,
-  clusterTopicPath,
-  clusterTopicsPath,
-} from 'lib/paths';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
+  getTopicStateFixtures,
+  internalTopicPayload,
+} from 'redux/reducers/topics/__test__/fixtures';
+import { render, WithRoute } from 'lib/testHelpers';
+import { clusterTopicEditRelativePath, clusterTopicPath } from 'lib/paths';
+import { CleanUpPolicy, Topic } from 'generated-sources';
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 describe('Details', () => {
   const mockDelete = jest.fn();
   const mockClusterName = 'local';
   const mockClearTopicMessages = jest.fn();
-  const mockInternalTopicPayload = internalTopicPayload.internal;
   const mockRecreateTopic = jest.fn();
-  const defaultPathname = clusterTopicPath(
-    mockClusterName,
-    internalTopicPayload.name
-  );
-  const mockHistory = createMemoryHistory({
-    initialEntries: [defaultPathname],
-  });
-  jest.spyOn(mockHistory, 'push');
 
-  const setupComponent = (
-    pathname = defaultPathname,
-    history = mockHistory,
-    props = {}
-  ) =>
+  const topic: Topic = {
+    ...internalTopicPayload,
+    cleanUpPolicy: CleanUpPolicy.DELETE,
+    internal: false,
+  };
+
+  const mockTopicsState = getTopicStateFixtures([topic]);
+
+  const setupComponent = (props = {}) =>
     render(
       <ClusterContext.Provider
         value={{
@@ -42,23 +41,32 @@ describe('Details', () => {
           isTopicDeletionAllowed: true,
         }}
       >
-        <Router history={history}>
+        <WithRoute path={clusterTopicPath()}>
           <Details
-            clusterName={mockClusterName}
-            topicName={internalTopicPayload.name}
-            name={internalTopicPayload.name}
-            isInternal={false}
             deleteTopic={mockDelete}
             recreateTopic={mockRecreateTopic}
             clearTopicMessages={mockClearTopicMessages}
             isDeleted={false}
-            isDeletePolicy
             {...props}
           />
-        </Router>
+        </WithRoute>
       </ClusterContext.Provider>,
-      { pathname }
+      {
+        initialEntries: [
+          clusterTopicPath(mockClusterName, internalTopicPayload.name),
+        ],
+        preloadedState: {
+          topics: mockTopicsState,
+        },
+      }
     );
+
+  afterEach(() => {
+    mockNavigate.mockClear();
+    mockDelete.mockClear();
+    mockClearTopicMessages.mockClear();
+    mockRecreateTopic.mockClear();
+  });
 
   describe('when it has readonly flag', () => {
     it('does not render the Action button a Topic', () => {
@@ -72,15 +80,10 @@ describe('Details', () => {
           }}
         >
           <Details
-            clusterName={mockClusterName}
-            topicName={internalTopicPayload.name}
-            name={internalTopicPayload.name}
-            isInternal={mockInternalTopicPayload}
             deleteTopic={mockDelete}
             recreateTopic={mockRecreateTopic}
             clearTopicMessages={mockClearTopicMessages}
             isDeleted={false}
-            isDeletePolicy
           />
         </ClusterContext.Provider>
       );
@@ -148,30 +151,23 @@ describe('Details', () => {
       const button = screen.getAllByText('Edit settings')[0];
       userEvent.click(button);
 
-      const redirectRoute = clusterTopicEditPath(
-        mockClusterName,
-        internalTopicPayload.name
-      );
-
-      expect(mockHistory.push).toHaveBeenCalledWith(redirectRoute);
+      expect(mockNavigate).toHaveBeenCalledWith(clusterTopicEditRelativePath);
     });
   });
 
   it('redirects to the correct route if topic is deleted', () => {
-    setupComponent(defaultPathname, mockHistory, { isDeleted: true });
-    const redirectRoute = clusterTopicsPath(mockClusterName);
+    setupComponent({ isDeleted: true });
 
-    expect(mockHistory.push).toHaveBeenCalledWith(redirectRoute);
+    expect(mockNavigate).toHaveBeenCalledWith('../..');
   });
 
   it('shows a confirmation popup on deleting topic messages', () => {
     setupComponent();
-    const { getByText } = screen;
-    const clearMessagesButton = getByText(/Clear messages/i);
+    const clearMessagesButton = screen.getAllByText(/Clear messages/i)[0];
     userEvent.click(clearMessagesButton);
 
     expect(
-      getByText(/Are you sure want to clear topic messages?/i)
+      screen.getByText(/Are you sure want to clear topic messages?/i)
     ).toBeInTheDocument();
   });
 

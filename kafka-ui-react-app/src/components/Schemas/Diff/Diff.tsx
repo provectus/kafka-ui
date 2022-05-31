@@ -1,9 +1,9 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
-import { clusterSchemaSchemaDiffPath } from 'lib/paths';
+import { clusterSchemaSchemaDiffPath, ClusterSubjectParam } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import DiffViewer from 'components/common/DiffViewer/DiffViewer';
-import { useHistory, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   fetchSchemaVersions,
   SCHEMAS_VERSIONS_FETCH_ACTION,
@@ -12,31 +12,32 @@ import { useForm, Controller } from 'react-hook-form';
 import Select from 'components/common/Select/Select';
 import { useAppDispatch } from 'lib/hooks/redux';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import * as S from './Diff.styled';
 
 export interface DiffProps {
-  leftVersionInPath?: string;
-  rightVersionInPath?: string;
   versions: SchemaSubject[];
   areVersionsFetched: boolean;
 }
 
-const Diff: React.FC<DiffProps> = ({
-  leftVersionInPath,
-  rightVersionInPath,
-  versions,
-  areVersionsFetched,
-}) => {
-  const [leftVersion, setLeftVersion] = React.useState(leftVersionInPath || '');
-  const [rightVersion, setRightVersion] = React.useState(
-    rightVersionInPath || ''
-  );
-  const history = useHistory();
+const Diff: React.FC<DiffProps> = ({ versions, areVersionsFetched }) => {
+  const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
+  const navigate = useNavigate();
   const location = useLocation();
 
-  const { clusterName, subject } =
-    useParams<{ clusterName: string; subject: string }>();
+  const searchParams = React.useMemo(
+    () => new URLSearchParams(location.search),
+    [location]
+  );
+
+  const [leftVersion, setLeftVersion] = React.useState(
+    searchParams.get('leftVersion') || ''
+  );
+  const [rightVersion, setRightVersion] = React.useState(
+    searchParams.get('rightVersion') || ''
+  );
+
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
@@ -64,11 +65,6 @@ const Diff: React.FC<DiffProps> = ({
     control,
   } = methods;
 
-  const searchParams = React.useMemo(
-    () => new URLSearchParams(location.search),
-    [location]
-  );
-
   return (
     <S.Section>
       {areVersionsFetched ? (
@@ -89,7 +85,7 @@ const Diff: React.FC<DiffProps> = ({
                         leftVersion === '' ? versions[0].version : leftVersion
                       }
                       onChange={(event) => {
-                        history.push(
+                        navigate(
                           clusterSchemaSchemaDiffPath(clusterName, subject)
                         );
                         searchParams.set('leftVersion', event.toString());
@@ -99,7 +95,7 @@ const Diff: React.FC<DiffProps> = ({
                             ? versions[0].version
                             : rightVersion
                         );
-                        history.push({
+                        navigate({
                           search: `?${searchParams.toString()}`,
                         });
                         setLeftVersion(event.toString());
@@ -130,7 +126,7 @@ const Diff: React.FC<DiffProps> = ({
                         rightVersion === '' ? versions[0].version : rightVersion
                       }
                       onChange={(event) => {
-                        history.push(
+                        navigate(
                           clusterSchemaSchemaDiffPath(clusterName, subject)
                         );
                         searchParams.set(
@@ -138,7 +134,7 @@ const Diff: React.FC<DiffProps> = ({
                           leftVersion === '' ? versions[0].version : leftVersion
                         );
                         searchParams.set('rightVersion', event.toString());
-                        history.push({
+                        navigate({
                           search: `?${searchParams.toString()}`,
                         });
                         setRightVersion(event.toString());

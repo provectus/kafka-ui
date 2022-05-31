@@ -16,13 +16,10 @@ const EditFilter: React.FC<EditFilterProps> = ({
   toggleEditModal,
   editSavedFilter,
 }) => {
-  const onSubmit = React.useCallback(
-    (values: MessageFilters) => {
-      editSavedFilter({ index: editFilter.index, filter: values });
-      toggleEditModal();
-    },
-    [editSavedFilter, editFilter.index, toggleEditModal]
-  );
+  const onSubmit = (values: MessageFilters) => {
+    editSavedFilter({ index: editFilter.index, filter: values });
+    toggleEditModal();
+  };
   return (
     <>
       <S.FilterTitle>Edit saved filter</S.FilterTitle>

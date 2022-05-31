@@ -61,7 +61,7 @@ export const topicFormValidationSchema = yup.object().shape({
   maxMessageBytes: yup.number().min(1).required(),
   customParams: yup.array().of(
     yup.object().shape({
-      name: yup.string().required(),
+      name: yup.string().required('Custom parameter is required'),
       value: yup.string().required('Value is required'),
     })
   ),

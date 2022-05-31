@@ -1,7 +1,6 @@
 import React from 'react';
 import Details from 'components/Schemas/Details/Details';
-import { render } from 'lib/testHelpers';
-import { Route } from 'react-router-dom';
+import { render, WithRoute } from 'lib/testHelpers';
 import { clusterSchemaPath } from 'lib/paths';
 import { screen, waitFor } from '@testing-library/dom';
 import {
@@ -27,13 +26,13 @@ const renderComponent = (
   context: ContextProps = contextInitialValue
 ) =>
   render(
-    <Route path={clusterSchemaPath(':clusterName', ':subject')}>
+    <WithRoute path={clusterSchemaPath()}>
       <ClusterContext.Provider value={context}>
         <Details />
       </ClusterContext.Provider>
-    </Route>,
+    </WithRoute>,
     {
-      pathname: clusterSchemaPath(clusterName, schemaVersion.subject),
+      initialEntries: [clusterSchemaPath(clusterName, schemaVersion.subject)],
       preloadedState: {
         schemas: initialState,
       },

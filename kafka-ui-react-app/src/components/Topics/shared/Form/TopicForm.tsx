@@ -10,7 +10,7 @@ import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import { StyledForm } from 'components/common/Form/Form.styled';
 
-import CustomParamsContainer from './CustomParams/CustomParamsContainer';
+import CustomParams from './CustomParams/CustomParams';
 import TimeToRetain from './TimeToRetain';
 import * as S from './TopicForm.styled';
 
@@ -208,7 +208,7 @@ const TopicForm: React.FC<Props> = ({
         </S.Column>
 
         <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>
-        <CustomParamsContainer isSubmitting={isSubmitting} />
+        <CustomParams isSubmitting={isSubmitting} />
 
         <Button
           disabled={!isValid}

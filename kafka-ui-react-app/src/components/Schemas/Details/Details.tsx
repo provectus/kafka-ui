@@ -1,9 +1,9 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
-  clusterSchemasPath,
-  clusterSchemaSchemaDiffPath,
-  clusterSchemaEditPath,
+  ClusterSubjectParam,
+  clusterSchemaEditPageRelativePath,
+  clusterSchemaSchemaDiffRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -31,16 +31,16 @@ import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
 
 const Details: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
-  const { clusterName, subject } =
-    useParams<{ clusterName: string; subject: string }>();
+  const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
   const [
     isDeleteSchemaConfirmationVisible,
     setDeleteSchemaConfirmationVisible,
@@ -65,18 +65,18 @@ const Details: React.FC = () => {
   const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
   const areVersionsFetched = useAppSelector(getAreSchemaVersionsFulfilled);
 
-  const onDelete = React.useCallback(async () => {
+  const onDelete = async () => {
     try {
       await schemasApiClient.deleteSchema({
         clusterName,
         subject,
       });
-      history.push(clusterSchemasPath(clusterName));
+      navigate('../');
     } catch (e) {
       const err = await getResponse(e as Response);
       dispatch(serverErrorAlertAdded(err));
     }
-  }, [clusterName, dispatch, history, subject]);
+  };
 
   if (!isFetched || !schema) {
     return <PageLoader />;
@@ -87,21 +87,19 @@ const Details: React.FC = () => {
         {!isReadOnly && (
           <>
             <Button
-              isLink
               buttonSize="M"
               buttonType="primary"
               to={{
-                pathname: clusterSchemaSchemaDiffPath(clusterName, subject),
+                pathname: clusterSchemaSchemaDiffRelativePath,
                 search: `leftVersion=${versions[0]?.version}&rightVersion=${versions[0]?.version}`,
               }}
             >
               Compare Versions
             </Button>
             <Button
-              isLink
               buttonSize="M"
               buttonType="primary"
-              to={clusterSchemaEditPath(clusterName, subject)}
+              to={clusterSchemaEditPageRelativePath}
             >
               Edit Schema
             </Button>
