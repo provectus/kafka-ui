@@ -138,7 +138,7 @@ const getTopicName = (_: RootState, topicName: TopicName) => topicName;
 export const getTopicByName = createSelector(
   getTopicMap,
   getTopicName,
-  (topics, topicName) => topics[topicName]
+  (topics, topicName) => topics[topicName] || {}
 );
 
 export const getPartitionsByTopicName = createSelector(
@@ -201,9 +201,8 @@ export const getIsTopicInternal = createSelector(
 );
 
 export const getTopicConsumerGroups = createSelector(
-  getTopicMap,
-  getTopicName,
-  (topics, topicName) => topics[topicName].consumerGroups || []
+  getTopicByName,
+  ({ consumerGroups }) => consumerGroups || []
 );
 
 export const getMessageSchemaByTopicName = createSelector(
