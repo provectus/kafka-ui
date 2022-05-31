@@ -9,6 +9,7 @@ import { connects, connector } from 'redux/reducers/connect/__test__/fixtures';
 import { fireEvent, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ControllerRenderProps } from 'react-hook-form';
+import * as redux from 'react-redux';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 jest.mock(
@@ -53,7 +54,6 @@ describe('New', () => {
           fetchConnects={jest.fn()}
           areConnectsFetching={false}
           connects={connects}
-          createConnector={jest.fn()}
           {...props}
         />
       </WithRoute>,
@@ -70,30 +70,32 @@ describe('New', () => {
   });
 
   it('calls createConnector on form submit', async () => {
-    const createConnector = jest.fn();
-    renderComponent({ createConnector });
+    const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
+    const useDispatchMock = jest.fn(() => ({
+      unwrap: () => ({ connector }),
+    })) as jest.Mock;
+    useDispatchSpy.mockReturnValue(useDispatchMock);
+
+    renderComponent();
     await simulateFormSubmit();
 
-    expect(createConnector).toHaveBeenCalledTimes(1);
-    expect(createConnector).toHaveBeenCalledWith({
-      clusterName,
-      connectName: connects[0].name,
-      newConnector: {
-        name: 'my-connector',
-        config: { class: 'MyClass' },
-      },
-    });
+    expect(useDispatchMock).toHaveBeenCalledTimes(1);
   });
 
   it('redirects to connector details view on successful submit', async () => {
-    const createConnector = jest.fn().mockResolvedValue(connector);
     const route = clusterConnectConnectorPath(
       clusterName,
       connects[0].name,
       connector.name
     );
-    renderComponent({ createConnector });
-    mockHistoryPush(route);
+
+    const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
+    const useDispatchMock = jest.fn(() => ({
+      unwrap: () => ({ connector }),
+    })) as jest.Mock;
+    useDispatchSpy.mockReturnValue(useDispatchMock);
+
+    renderComponent();
 
     await simulateFormSubmit();
     expect(mockHistoryPush).toHaveBeenCalledTimes(1);
@@ -101,8 +103,13 @@ describe('New', () => {
   });
 
   it('does not redirect to connector details view on unsuccessful submit', async () => {
-    const createConnector = jest.fn().mockResolvedValueOnce(undefined);
-    renderComponent({ createConnector });
+    const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
+    const useDispatchMock = jest.fn(async () => ({
+      unwrap: () => ({}),
+    })) as jest.Mock;
+    useDispatchSpy.mockReturnValue(useDispatchMock);
+
+    renderComponent();
     await simulateFormSubmit();
     expect(mockHistoryPush).not.toHaveBeenCalled();
   });
