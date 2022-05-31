@@ -6,12 +6,9 @@ import Alert from 'components/Alerts/Alert';
 const Alerts: React.FC = () => {
   const alerts = useAppSelector(selectAll);
   const dispatch = useAppDispatch();
-  const dismiss = React.useCallback(
-    (id: string) => {
-      dispatch(alertDissmissed(id));
-    },
-    [dispatch]
-  );
+  const dismiss = (id: string) => () => {
+    dispatch(alertDissmissed(id));
+  };
 
   return (
     <>
@@ -21,7 +18,7 @@ const Alerts: React.FC = () => {
           type={type}
           title={title}
           message={message}
-          onDissmiss={() => dismiss(id)}
+          onDissmiss={dismiss(id)}
         />
       ))}
     </>

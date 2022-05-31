@@ -10,7 +10,7 @@ describe('App', () => {
   describe('initial state', () => {
     beforeEach(() => {
       render(<App />, {
-        pathname: '/',
+        initialEntries: ['/'],
       });
     });
     it('shows PageLoader until clusters are fulfilled', () => {
@@ -45,7 +45,7 @@ describe('App', () => {
       const mock = fetchMock.getOnce('/api/clusters', clustersPayload);
       await act(() => {
         render(<App />, {
-          pathname: '/',
+          initialEntries: ['/'],
         });
       });
 

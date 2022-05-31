@@ -1,16 +1,16 @@
+import React from 'react';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
-import { TopicConfig } from 'generated-sources';
-import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
+import { useAppSelector } from 'lib/hooks/redux';
+import { getTopicConfig } from 'redux/reducers/topics/selectors';
+import { RouteParamsClusterTopic } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import ConfigListItem from './ConfigListItem';
 
-interface Props {
-  clusterName: ClusterName;
-  topicName: TopicName;
-  config?: TopicConfig[];
+export interface Props {
   isFetched: boolean;
   fetchTopicConfig: (payload: {
     clusterName: ClusterName;
@@ -18,13 +18,11 @@ interface Props {
   }) => void;
 }
 
-const Settings: React.FC<Props> = ({
-  clusterName,
-  topicName,
-  isFetched,
-  fetchTopicConfig,
-  config,
-}) => {
+const Settings: React.FC<Props> = ({ isFetched, fetchTopicConfig }) => {
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+
+  const config = useAppSelector((state) => getTopicConfig(state, topicName));
+
   React.useEffect(() => {
     fetchTopicConfig({ clusterName, topicName });
   }, [fetchTopicConfig, clusterName, topicName]);

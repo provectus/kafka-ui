@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import {
   createConnector,
   fetchConnects,
@@ -22,4 +21,4 @@ const mapDispatchToProps = {
   createConnector: createConnector as unknown as NewProps['createConnector'],
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(New));
+export default connect(mapStateToProps, mapDispatchToProps)(New);

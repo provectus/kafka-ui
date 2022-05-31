@@ -1,12 +1,12 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { clusterSchemaNewPath } from 'lib/paths';
+import { ClusterNameRoute, clusterSchemaNewRelativePath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import * as C from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
   selectAllSchemas,
   fetchSchemas,
@@ -27,7 +27,7 @@ import GlobalSchemaSelector from './GlobalSchemaSelector/GlobalSchemaSelector';
 const List: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
 
   const schemas = useAppSelector(selectAllSchemas);
   const isFetched = useAppSelector(getAreSchemasFulfilled);
@@ -52,8 +52,7 @@ const List: React.FC = () => {
             <Button
               buttonSize="M"
               buttonType="primary"
-              isLink
-              to={clusterSchemaNewPath(clusterName)}
+              to={clusterSchemaNewRelativePath}
             >
               <i className="fas fa-plus" /> Create Schema
             </Button>

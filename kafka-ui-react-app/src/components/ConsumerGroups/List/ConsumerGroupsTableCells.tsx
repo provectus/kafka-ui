@@ -17,7 +17,7 @@ export const GroupIDCell: React.FC<TableCellProps<ConsumerGroup, string>> = ({
 }) => {
   return (
     <SmartTableKeyLink>
-      <Link to={`consumer-groups/${groupId}`}>{groupId}</Link>
+      <Link to={groupId}>{groupId}</Link>
     </SmartTableKeyLink>
   );
 };

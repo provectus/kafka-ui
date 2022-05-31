@@ -1,5 +1,10 @@
 import React, { PropsWithChildren, ReactElement } from 'react';
-import { StaticRouter } from 'react-router-dom';
+import {
+  MemoryRouter,
+  MemoryRouterProps,
+  Route,
+  Routes,
+} from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
@@ -13,7 +18,7 @@ import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
   store?: Store<Partial<RootState>, AnyAction>;
-  pathname?: string;
+  initialEntries?: MemoryRouterProps['initialEntries'];
 }
 
 export function getByTextContent(textMatch: string | RegExp): HTMLElement {
@@ -27,6 +32,19 @@ export function getByTextContent(textMatch: string | RegExp): HTMLElement {
   });
 }
 
+interface WithRouterProps {
+  children: React.ReactNode;
+  path: string;
+}
+
+export const WithRoute: React.FC<WithRouterProps> = ({ children, path }) => {
+  return (
+    <Routes>
+      <Route path={path} element={children} />
+    </Routes>
+  );
+};
+
 const customRender = (
   ui: ReactElement,
   {
@@ -35,7 +53,7 @@ const customRender = (
       reducer: rootReducer,
       preloadedState,
     }),
-    pathname,
+    initialEntries,
     ...renderOptions
   }: CustomRenderOptions = {}
 ) => {
@@ -46,7 +64,9 @@ const customRender = (
     return (
       <ThemeProvider theme={theme}>
         <Provider store={store}>
-          <StaticRouter location={{ pathname }}>{children}</StaticRouter>
+          <MemoryRouter initialEntries={initialEntries}>
+            {children}
+          </MemoryRouter>
         </Provider>
       </ThemeProvider>
     );

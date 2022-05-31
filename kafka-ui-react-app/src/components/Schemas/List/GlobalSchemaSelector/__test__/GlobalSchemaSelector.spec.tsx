@@ -1,11 +1,10 @@
 import React from 'react';
 import { act, screen, waitFor, within } from '@testing-library/react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import GlobalSchemaSelector from 'components/Schemas/List/GlobalSchemaSelector/GlobalSchemaSelector';
 import userEvent from '@testing-library/user-event';
 import { clusterSchemasPath } from 'lib/paths';
-import { Route } from 'react-router-dom';
 import fetchMock from 'fetch-mock';
 
 const clusterName = 'testClusterName';
@@ -29,11 +28,11 @@ const expectOptionIsSelected = (option: string) => {
 describe('GlobalSchemaSelector', () => {
   const renderComponent = () =>
     render(
-      <Route path={clusterSchemasPath(':clusterName')}>
+      <WithRoute path={clusterSchemasPath()}>
         <GlobalSchemaSelector />
-      </Route>,
+      </WithRoute>,
       {
-        pathname: clusterSchemasPath(clusterName),
+        initialEntries: [clusterSchemasPath(clusterName)],
       }
     );
 
