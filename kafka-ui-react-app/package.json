@@ -15,7 +15,7 @@
     "ajv": "^8.6.3",
     "bulma": "^0.9.3",
     "classnames": "^2.2.6",
-    "dayjs": "^1.10.6",
+    "dayjs": "^1.11.2",
     "eslint-import-resolver-node": "^0.3.6",
     "eslint-import-resolver-typescript": "^2.7.1",
     "fetch-mock": "^9.11.0",
@@ -35,7 +35,7 @@
     "redux-thunk": "^2.3.0",
     "sass": "^1.43.4",
     "styled-components": "^5.3.1",
-    "use-debounce": "^7.0.0",
+    "use-debounce": "^8.0.1",
     "uuid": "^8.3.1",
     "yup": "^0.32.9"
   },
