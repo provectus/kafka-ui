@@ -7,13 +7,13 @@ import com.provectus.kafka.ui.container.KsqlDbContainer;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KsqlStreamDescriptionDTO;
 import com.provectus.kafka.ui.model.KsqlTableDescriptionDTO;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.utility.DockerImageName;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 class KsqlServiceV2Test extends AbstractIntegrationTest {
 
