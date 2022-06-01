@@ -33,6 +33,7 @@ import {
 import { BASE_PARAMS } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const topicsApiClient = new TopicsApi(apiClientConf);
@@ -243,21 +244,30 @@ export const updateTopicPartitionsCount = createAsyncThunk<
     topicName: TopicName;
     partitions: number;
   }
->('topic/updateTopicPartitionsCount', async (payload, { rejectWithValue }) => {
-  try {
-    const { clusterName, topicName, partitions } = payload;
+>(
+  'topic/updateTopicPartitionsCount',
+  async (payload, { rejectWithValue, dispatch }) => {
+    try {
+      const { clusterName, topicName, partitions } = payload;
 
-    await topicsApiClient.increaseTopicPartitions({
-      clusterName,
-      topicName,
-      partitionsIncrease: { totalPartitionsCount: partitions },
-    });
-
-    return undefined;
-  } catch (err) {
-    return rejectWithValue(await getResponse(err as Response));
+      await topicsApiClient.increaseTopicPartitions({
+        clusterName,
+        topicName,
+        partitionsIncrease: { totalPartitionsCount: partitions },
+      });
+      dispatch(
+        showSuccessAlert({
+          id: `message-${topicName}-${clusterName}-${partitions}`,
+          message: 'Number of partitions successfully increased!',
+        })
+      );
+      dispatch(fetchTopicDetails({ clusterName, topicName }));
+      return undefined;
+    } catch (err) {
+      return rejectWithValue(await getResponse(err as Response));
+    }
   }
-});
+);
 
 export const updateTopicReplicationFactor = createAsyncThunk<
   undefined,

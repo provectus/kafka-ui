@@ -9,13 +9,18 @@ export const clustersApiClient = new ClustersApi(apiClientConf);
 
 export const fetchBrokers = createAsyncThunk(
   'brokers/fetchBrokers',
-  (clusterName: ClusterName) => brokersApiClient.getBrokers({ clusterName })
+  (clusterName: ClusterName | undefined) =>
+    brokersApiClient.getBrokers({
+      clusterName: clusterName as string,
+    })
 );
 
 export const fetchClusterStats = createAsyncThunk(
   'brokers/fetchClusterStats',
-  (clusterName: ClusterName) =>
-    clustersApiClient.getClusterStats({ clusterName })
+  (clusterName: ClusterName | undefined) =>
+    clustersApiClient.getClusterStats({
+      clusterName: clusterName as string,
+    })
 );
 
 export const initialState: BrokersState = {

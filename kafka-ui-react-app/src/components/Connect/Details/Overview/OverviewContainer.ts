@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
 import {
   getConnector,
@@ -15,4 +14,4 @@ const mapStateToProps = (state: RootState) => ({
   failedTasksCount: getConnectorFailedTasksCount(state),
 });
 
-export default withRouter(connect(mapStateToProps)(Overview));
+export default connect(mapStateToProps)(Overview);

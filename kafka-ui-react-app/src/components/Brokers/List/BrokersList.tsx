@@ -126,7 +126,7 @@ const BrokersList: React.FC = () => {
               return (
                 <tr key={brokerId}>
                   <td>
-                    <NavLink exact to={`brokers/${brokerId}`} role="link">
+                    <NavLink to={`${brokerId}`} role="link">
                       {brokerId}
                     </NavLink>
                   </td>

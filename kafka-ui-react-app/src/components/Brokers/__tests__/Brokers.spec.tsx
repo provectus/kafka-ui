@@ -1,9 +1,7 @@
 import React from 'react';
 import { render } from 'lib/testHelpers';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
 import { screen } from '@testing-library/react';
-import { clusterBrokerPath, clusterBrokersPath } from 'lib/paths';
+import { clusterBrokerPath } from 'lib/paths';
 import Brokers from 'components/Brokers/Brokers';
 
 const brokersList = 'brokersList';
@@ -17,19 +15,14 @@ jest.mock('components/Brokers/Broker/Broker', () => () => <div>{broker}</div>);
 describe('Brokers Component', () => {
   const clusterName = 'clusterName';
   const brokerId = '1';
-  const renderComponent = (path: string) => {
-    const history = createMemoryHistory({
-      initialEntries: [path],
+  const renderComponent = (path?: string) => {
+    return render(<Brokers />, {
+      initialEntries: path ? [path] : undefined,
     });
-    return render(
-      <Router history={history}>
-        <Brokers />
-      </Router>
-    );
   };
 
   it('renders BrokersList', () => {
-    renderComponent(clusterBrokersPath(clusterName));
+    renderComponent();
     expect(screen.getByText(brokersList)).toBeInTheDocument();
   });
 

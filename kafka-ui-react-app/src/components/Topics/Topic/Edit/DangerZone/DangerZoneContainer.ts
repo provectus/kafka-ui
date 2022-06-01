@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
-import { RootState, ClusterName, TopicName } from 'redux/interfaces';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { RootState } from 'redux/interfaces';
 import {
   updateTopicPartitionsCount,
   updateTopicReplicationFactor,
@@ -12,11 +11,6 @@ import {
 
 import DangerZone from './DangerZone';
 
-interface RouteProps {
-  clusterName: ClusterName;
-  topicName: TopicName;
-}
-
 type OwnProps = {
   defaultPartitions: number;
   defaultReplicationFactor: number;
@@ -24,16 +18,8 @@ type OwnProps = {
 
 const mapStateToProps = (
   state: RootState,
-  {
-    match: {
-      params: { topicName, clusterName },
-    },
-    defaultPartitions,
-    defaultReplicationFactor,
-  }: OwnProps & RouteComponentProps<RouteProps>
+  { defaultPartitions, defaultReplicationFactor }: OwnProps
 ) => ({
-  clusterName,
-  topicName,
   defaultPartitions,
   defaultReplicationFactor,
   partitionsCountIncreased: getTopicPartitionsCountIncreased(state),
@@ -45,6 +31,4 @@ const mapDispatchToProps = {
   updateTopicReplicationFactor,
 };
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(DangerZone)
-);
+export default connect(mapStateToProps, mapDispatchToProps)(DangerZone);

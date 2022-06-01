@@ -1,12 +1,11 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterConnectConnectorConfigPath,
   clusterConnectConnectorEditPath,
 } from 'lib/paths';
 import Edit, { EditProps } from 'components/Connect/Edit/Edit';
 import { connector } from 'redux/reducers/connect/__test__/fixtures';
-import { Route } from 'react-router-dom';
 import { waitFor } from '@testing-library/dom';
 import { act, fireEvent, screen } from '@testing-library/react';
 
@@ -17,24 +16,18 @@ jest.mock('components/common/Editor/Editor', () => 'mock-Editor');
 const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
+  useNavigate: () => mockHistoryPush,
 }));
 
 describe('Edit', () => {
-  const pathname = clusterConnectConnectorEditPath(
-    ':clusterName',
-    ':connectName',
-    ':connectorName'
-  );
+  const pathname = clusterConnectConnectorEditPath();
   const clusterName = 'my-cluster';
   const connectName = 'my-connect';
   const connectorName = 'my-connector';
 
   const renderComponent = (props: Partial<EditProps> = {}) =>
     render(
-      <Route path={pathname}>
+      <WithRoute path={pathname}>
         <Edit
           fetchConfig={jest.fn()}
           isConfigFetching={false}
@@ -42,13 +35,15 @@ describe('Edit', () => {
           updateConfig={jest.fn()}
           {...props}
         />
-      </Route>,
+      </WithRoute>,
       {
-        pathname: clusterConnectConnectorEditPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
+        initialEntries: [
+          clusterConnectConnectorEditPath(
+            clusterName,
+            connectName,
+            connectorName
+          ),
+        ],
       }
     );
 

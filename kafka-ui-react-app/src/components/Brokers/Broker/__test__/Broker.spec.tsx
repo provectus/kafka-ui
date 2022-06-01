@@ -1,7 +1,6 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { screen, waitFor } from '@testing-library/dom';
-import { Route } from 'react-router-dom';
 import { clusterBrokerPath } from 'lib/paths';
 import fetchMock from 'fetch-mock';
 import {
@@ -19,11 +18,11 @@ describe('Broker Component', () => {
 
   const renderComponent = () =>
     render(
-      <Route path={clusterBrokerPath(':clusterName', ':brokerId')}>
+      <WithRoute path={clusterBrokerPath(':clusterName', ':brokerId')}>
         <Broker />
-      </Route>,
+      </WithRoute>,
       {
-        pathname: clusterBrokerPath(clusterName, brokerId),
+        initialEntries: [clusterBrokerPath(clusterName, brokerId)],
       }
     );
 
