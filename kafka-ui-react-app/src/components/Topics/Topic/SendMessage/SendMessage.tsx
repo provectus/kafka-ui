@@ -86,8 +86,6 @@ const SendMessage: React.FC = () => {
     });
   }, [keyDefaultValue, contentDefaultValue, reset]);
 
-  console.log(keyDefaultValue);
-
   const [key, setKey] = useState(keyDefaultValue);
   const [content, setContent] = useState(contentDefaultValue);
   const [headers, setHeaders] = useState({});
