@@ -8,20 +8,27 @@ import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.screenshots.Screenshooter;
 import com.provectus.kafka.ui.steps.Steps;
 import io.github.cdimascio.dotenv.Dotenv;
+import io.qameta.allure.Allure;
 import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayNameGeneration;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Arrays;
 
 @Slf4j
@@ -38,7 +45,8 @@ public class BaseTest {
             new BrowserWebDriverContainer<>()
                     .withCapabilities(new ChromeOptions()
                             .addArguments("--no-sandbox")
-                            .addArguments("--disable-dev-shm-usage"));
+                            .addArguments("--disable-dev-shm-usage"))
+                    .waitingFor(Wait.defaultWaitStrategy().withStartupTimeout(Duration.ofSeconds(15)));
 
     public void compareScreenshots(String name) {
         screenshooter.compareScreenshots(name);
@@ -52,6 +60,7 @@ public class BaseTest {
     public static void start() {
         Testcontainers.exposeHostPorts(8080);
         webDriverContainer.start();
+        webDriverContainer.isRunning();
         RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
         WebDriverRunner.setWebDriver(remoteWebDriver);
     }
@@ -73,11 +82,18 @@ public class BaseTest {
     }
 
 
-    @AfterAll
-    public static void afterAll() {
-//        closeWebDriver();
-//        selenoid.close();
+    @AfterEach
+    public void afterMethod() {
+        webDriverContainer.getWebDriver().manage().deleteAllCookies();
+        Allure.addAttachment("Screenshot",
+                new ByteArrayInputStream(((TakesScreenshot) webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
     }
+
+    @AfterAll
+    public static void closeAll(){
+        webDriverContainer.getWebDriver().close();
+    }
+
 
     @SneakyThrows
     private static void setup() {

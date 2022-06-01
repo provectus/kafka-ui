@@ -52,6 +52,7 @@ public class ConnectorsTests extends BaseTest {
         apiHelper.deleteTopic(LOCAL_CLUSTER, TOPIC_FOR_CONNECTOR);
         apiHelper.deleteTopic(LOCAL_CLUSTER, TOPIC_FOR_DELETE_CONNECTOR);
         apiHelper.deleteTopic(LOCAL_CLUSTER, TOPIC_FOR_UPDATE_CONNECTOR);
+        apiHelper.deleteTopic(LOCAL_CLUSTER, CONNECTOR_FOR_DELETE);
     }
 
     @SneakyThrows
@@ -66,7 +67,9 @@ public class ConnectorsTests extends BaseTest {
                         SINK_CONNECTOR,
                         FileUtils.getResourceAsString("config_for_create_connector.json")
                 );
-        pages.openConnectorsList(LOCAL_CLUSTER).connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
+        pages.openConnectorsList(LOCAL_CLUSTER)
+                .isOnPage()
+                .connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
     }
 
     //disable test due 500 error during create connector via api
@@ -77,9 +80,8 @@ public class ConnectorsTests extends BaseTest {
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .isOnPage()
                 .openConnector(CONNECTOR_FOR_UPDATE);
-        pages.openConnectorsView(LOCAL_CLUSTER, CONNECTOR_FOR_UPDATE)
-                .openEditConfig()
-                .updateConnectorConfig(
+                pages.connectorsView.openEditConfig()
+                        .updateConnectorConfig(
                         FileUtils.getResourceAsString("config_for_update_connector.json"));
         pages.openConnectorsList(LOCAL_CLUSTER).connectorIsVisibleInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
     }
@@ -91,8 +93,8 @@ public class ConnectorsTests extends BaseTest {
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .isOnPage()
                 .openConnector(CONNECTOR_FOR_DELETE);
-        pages.openConnectorsView(LOCAL_CLUSTER, CONNECTOR_FOR_DELETE)
-                .clickDeleteButton();
-        pages.openConnectorsList(LOCAL_CLUSTER).isNotVisible(CONNECTOR_FOR_DELETE);
+                pages.connectorsView.clickDeleteButton();
+        pages.openConnectorsList(LOCAL_CLUSTER)
+                .isNotVisible(CONNECTOR_FOR_DELETE);
     }
 }

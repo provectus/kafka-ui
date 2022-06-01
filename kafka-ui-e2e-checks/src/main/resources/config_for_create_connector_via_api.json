@@ -9,7 +9,7 @@
   "key.converter.schema.registry.url": "http://schemaregistry0:8085",
   "value.converter": "org.apache.kafka.connect.json.JsonConverter",
   "value.converter.schema.registry.url": "http://schemaregistry0:8085",
-  "auto.create": "true",
+  "auto.create": "false",
   "pk.mode": "record_value",
   "pk.fields": "id",
   "insert.mode": "upsert",

@@ -58,19 +58,19 @@ public class TopicTests extends BaseTest {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
-                .openEditSettings(webDriverContainer.getWebDriver())
-                .selectCleanupPolicy(COMPACT_POLICY_VALUE, webDriverContainer.getWebDriver())
-                .setMinInsyncReplicas(10, webDriverContainer.getWebDriver())
+                .openEditSettings()
+                .selectCleanupPolicy(COMPACT_POLICY_VALUE)
+                .setMinInsyncReplicas(10)
                 .setTimeToRetainDataInMs(UPDATED_TIME_TO_RETAIN_VALUE)
                 .setMaxSizeOnDiskInGB(UPDATED_MAX_SIZE_ON_DISK)
                 .setMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
-                .sendData(webDriverContainer.getWebDriver())
+                .sendData()
                 .isOnTopicViewPage();
 
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
-                .openEditSettings(webDriverContainer.getWebDriver())
+                .openEditSettings()
                 // Assertions
                 .cleanupPolicyIs(COMPACT_POLICY_VALUE)
                 .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
@@ -84,7 +84,7 @@ public class TopicTests extends BaseTest {
     public void deleteTopic() {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
-                .openTopic(TOPIC_TO_DELETE, webDriverContainer.getWebDriver());
+                .openTopic(TOPIC_TO_DELETE);
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_DELETE)
                 .deleteTopic();
         pages.openTopicsList(SECOND_LOCAL)

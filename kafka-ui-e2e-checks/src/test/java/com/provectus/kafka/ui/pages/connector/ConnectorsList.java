@@ -4,20 +4,20 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.provectus.kafka.ui.base.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
+import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.*;
 
 @ExtensionMethod(WaitUtils.class)
 public class ConnectorsList {
 
     private static final String path = "/ui/clusters/%s/connectors";
 
-    @Step
+    @Step("Open URL to {cluster}")
     public ConnectorsList goTo(String cluster) {
         Selenide.open(TestConfiguration.BASE_WEB_URL + String.format(path, cluster));
         return this;
@@ -29,16 +29,15 @@ public class ConnectorsList {
         return this;
     }
 
-    @Step
+    @Step("Click on button 'Create Connector'")
     public ConnectorCreateView clickCreateConnectorButton() {
-        $(By.xpath("//button[text()='Create Connector']")).click();
+        BrowserUtils.javaExecutorClick($x("//button[text()='Create Connector']"));
         return new ConnectorCreateView();
     }
 
     @SneakyThrows
     public ConnectorsList openConnector(String connectorName) {
-        $(By.xpath("//*/tr/td[1]/a[text()='%s']".formatted(connectorName)))
-                .click();
+        $(By.linkText(connectorName)).click();
         return this;
     }
 
@@ -49,10 +48,10 @@ public class ConnectorsList {
         return this;
     }
 
-    @Step
+    @Step("Verify that connector {connectorName} is visible in the list")
     public ConnectorsList connectorIsVisibleInList(String connectorName, String topicName) {
-        $x("//tbody//td[1]//a[text()='" + connectorName + "']").shouldBe(Condition.visible);
-        $x("//tbody//td[5]//a[text()='" + topicName + "']").shouldBe(Condition.visible);
+        $x("//table//a[@href='/ui/clusters/local/connects/first/connectors/" + connectorName +"']").shouldBe(Condition.visible);
+       $$(By.linkText(topicName));
         return this;
     }
 

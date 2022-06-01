@@ -5,13 +5,9 @@ import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.$x;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.codeborne.selenide.ClickOptions;
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.*;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 
 public class TopicEditSettingsView {
 
@@ -32,7 +28,7 @@ public class TopicEditSettingsView {
         return this;
     }
 
-    public TopicEditSettingsView setMinInsyncReplicas(Integer minInsyncReplicas, WebDriver driver) {
+    public TopicEditSettingsView setMinInsyncReplicas(Integer minInsyncReplicas) {
         $("input[name=minInsyncReplicas]").setValue(minInsyncReplicas.toString());
         return this;
     }
@@ -79,10 +75,9 @@ public class TopicEditSettingsView {
                 cleanupPolicyValue.getOptionValue());
     }
 
-    public TopicEditSettingsView selectCleanupPolicy(String cleanupPolicyOptionValue, WebDriver driver) {
-        BrowserUtils.clickAction(driver, driver.findElement(By.cssSelector("ul#topicFormCleanupPolicy")));
-        BrowserUtils.waitForVisibility(driver,
-                driver.findElement(By.xpath("//li[text()='" + cleanupPolicyOptionValue +"']")), 10).click();
+    public TopicEditSettingsView selectCleanupPolicy(String cleanupPolicyOptionValue) {
+        $("ul#topicFormCleanupPolicy").click();
+        $x("//li[text()='" + cleanupPolicyOptionValue +"']").click();
         return this;
     }
 
@@ -95,9 +90,8 @@ public class TopicEditSettingsView {
         return selectFromDropDownByOptionValue("retentionBytes", optionValue.toString());
     }
 
-    public TopicView sendData(WebDriver driver) {
-        BrowserUtils.javaExecutorClick(driver,
-                driver.findElement(By.cssSelector(".ezTgzA")));
+    public TopicView sendData() {
+        BrowserUtils.javaExecutorClick($(".ezTgzA.sc-bYEvvW"));
         return new TopicView();
     }
 

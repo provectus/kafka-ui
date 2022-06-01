@@ -5,12 +5,10 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.provectus.kafka.ui.base.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
-import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 
 import static com.codeborne.selenide.Selenide.*;
 
@@ -42,8 +40,8 @@ public class TopicsList {
     }
 
     @SneakyThrows
-    public TopicView openTopic(String topicName, WebDriver driver) {
-        BrowserUtils.waitForVisibility(driver, driver.findElement(By.linkText(topicName)), 15).click();
+    public TopicView openTopic(String topicName) {
+        $(By.linkText(topicName)).click();
         return new TopicView();
     }
 

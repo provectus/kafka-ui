@@ -5,16 +5,12 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.base.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
-import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 
 import static com.codeborne.selenide.Selectors.byLinkText;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$$;
+import static com.codeborne.selenide.Selenide.*;
 
 @ExtensionMethod({WaitUtils.class})
 public class TopicView {
@@ -36,10 +32,11 @@ public class TopicView {
     }
 
     @SneakyThrows
-    public TopicEditSettingsView openEditSettings(WebDriver driver) {
+    public TopicEditSettingsView openEditSettings() {
         dotMenuHeader.click();
-        BrowserUtils.javaExecutorClick(driver,
-                driver.findElement(By.xpath("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() +"']")));
+        $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() +"']").click();
+       /* BrowserUtils.javaExecutorClick(driver,
+                driver.findElement(By.xpath("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() +"']")));*/
         return new TopicEditSettingsView();
     }
 
