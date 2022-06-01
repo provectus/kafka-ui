@@ -34,7 +34,7 @@ const Broker: React.FC = () => {
   const [logdirs, setLogdirs] = useState<BrokerLogdirState>();
   const { diskUsage, items } = useAppSelector(selectStats);
 
-  const fetchData = React.useCallback(async () => {
+  const fetchData = async () => {
     const res = await brokersApiClient.getAllBrokersLogdirs({
       clusterName: clusterName as string,
       broker: [Number(brokerId)],
@@ -57,11 +57,11 @@ const Broker: React.FC = () => {
 
     dispatch(fetchClusterStats(clusterName));
     dispatch(fetchBrokers(clusterName));
-  }, [clusterName, brokerId, dispatch]);
+  };
 
   React.useEffect(() => {
     fetchData().then();
-  }, [fetchData]);
+  }, [clusterName, brokerId, dispatch]);
 
   const brokerItem = items?.find(
     (item) => Number(item.id) === Number(brokerId)

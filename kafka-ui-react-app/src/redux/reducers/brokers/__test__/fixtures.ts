@@ -68,25 +68,13 @@ export const clusterStatsPayloadBroker = [
     topics: [
       {
         ...topics,
-        partitions: [
-          partitions,
-          partitions,
-          partitions,
-          partitions,
-          partitions,
-          partitions,
-        ],
+        partitions: [partitions, partitions, partitions],
       },
       topics,
-      topics,
-      topics,
-      topics,
-      topics,
-      topics,
-      topics,
-      topics,
-      topics,
-      topics,
+      {
+        ...topics,
+        partitions: [],
+      },
     ],
   },
 ];

@@ -107,7 +107,7 @@ describe('Broker Component', () => {
       expect(topicCount).toBeInTheDocument();
       expect(partitionsCount).toBeInTheDocument();
     });
-    it('show 0 when broker has not topics', async () => {
+    it('show 0s when broker has not topics', async () => {
       const fetchStatsMock = fetchMock.getOnce(
         fetchStatsUrl,
         clusterStatsPayload
