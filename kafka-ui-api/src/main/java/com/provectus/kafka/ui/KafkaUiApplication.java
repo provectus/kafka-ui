@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAsync
 public class KafkaUiApplication {
 
+  //for PR test
   public static void main(String[] args) {
     SpringApplication.run(KafkaUiApplication.class, args);
   }
