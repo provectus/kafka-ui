@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service.ksql;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.provectus.kafka.ui.exception.KsqlApiException;
@@ -62,13 +63,13 @@ public class KsqlServiceV2 {
           }
           return Flux.fromIterable(resp.getValues()
               .stream()
-              .map(columns ->
+              .map(row ->
                   new KsqlTableDescriptionDTO()
-                      .name(columns.get(1).asText())
-                      .topic(columns.get(2).asText())
-                      .keyFormat(columns.get(3).asText())
-                      .valueFormat(columns.get(4).asText())
-                      .isWindowed(columns.get(5).asBoolean(false)))
+                      .name(resp.getColumnValue(row, "name").map(JsonNode::asText).orElse(null))
+                      .topic(resp.getColumnValue(row, "topic").map(JsonNode::asText).orElse(null))
+                      .keyFormat(resp.getColumnValue(row, "keyFormat").map(JsonNode::asText).orElse(null))
+                      .valueFormat(resp.getColumnValue(row, "valueFormat").map(JsonNode::asText).orElse(null))
+                      .isWindowed(resp.getColumnValue(row, "isWindowed").map(JsonNode::asBoolean).orElse(null)))
               .collect(Collectors.toList()));
         });
   }
@@ -84,12 +85,12 @@ public class KsqlServiceV2 {
           }
           return Flux.fromIterable(resp.getValues()
               .stream()
-              .map(columns ->
+              .map(row ->
                   new KsqlStreamDescriptionDTO()
-                      .name(columns.get(1).asText())
-                      .topic(columns.get(2).asText())
-                      .keyFormat(columns.get(3).asText())
-                      .valueFormat(columns.get(4).asText()))
+                      .name(resp.getColumnValue(row, "name").map(JsonNode::asText).orElse(null))
+                      .topic(resp.getColumnValue(row, "topic").map(JsonNode::asText).orElse(null))
+                      .keyFormat(resp.getColumnValue(row, "keyFormat").map(JsonNode::asText).orElse(null))
+                      .valueFormat(resp.getColumnValue(row, "valueFormat").map(JsonNode::asText).orElse(null)))
               .collect(Collectors.toList()));
         });
   }
