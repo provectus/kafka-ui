@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { ClusterName } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
-import { useParams } from 'react-router-dom';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { BrokersApi, Configuration } from 'generated-sources';
+import { BrokersApi, BrokersLogdirs, Configuration } from 'generated-sources';
 import { BASE_PARAMS } from 'lib/constants';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
@@ -15,6 +14,7 @@ import {
   selectStats,
 } from 'redux/reducers/brokers/brokersSlice';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import useAppParams from 'lib/hooks/useAppParams';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const brokersApiClient = new BrokersApi(apiClientConf);
@@ -26,10 +26,25 @@ interface BrokerLogdirState {
   partitions: number;
 }
 
+const translateLogdir = (data: BrokersLogdirs): BrokerLogdirState => {
+  const partitionsCount =
+    data.topics?.reduce(
+      (prevValue, value) => prevValue + (value.partitions?.length || 0),
+      0
+    ) || 0;
+
+  return {
+    name: data.name || '-',
+    error: data.error || '-',
+    topics: data.topics?.length || 0,
+    partitions: partitionsCount,
+  };
+};
+
 const Broker: React.FC = () => {
   const dispatch = useAppDispatch();
   const { clusterName, brokerId } =
-    useParams<{ clusterName: ClusterName; brokerId: string }>();
+    useAppParams<{ clusterName: ClusterName; brokerId: string }>();
 
   const [logdirs, setLogdirs] = useState<BrokerLogdirState>();
   const { diskUsage, items } = useAppSelector(selectStats);
@@ -40,19 +55,7 @@ const Broker: React.FC = () => {
       broker: [Number(brokerId)],
     });
     if (res && res[0]) {
-      const partitionsCount =
-        res[0].topics?.reduce(
-          (prevValue, value) => prevValue + (value.partitions?.length || 0),
-          0
-        ) || 0;
-
-      const brokerLogdir = {
-        name: res[0].name || '-',
-        error: res[0].error || '-',
-        topics: res[0].topics?.length || 0,
-        partitions: partitionsCount,
-      };
-      setLogdirs(brokerLogdir);
+      setLogdirs(translateLogdir(res[0]));
     }
 
     dispatch(fetchClusterStats(clusterName));
@@ -60,14 +63,12 @@ const Broker: React.FC = () => {
   };
 
   React.useEffect(() => {
-    fetchData().then();
+    fetchData();
   }, [clusterName, brokerId, dispatch]);
 
-  const brokerItem = items?.find(
-    (item) => Number(item.id) === Number(brokerId)
-  );
+  const brokerItem = items?.find((item) => item.id === Number(brokerId));
   const brokerDiskUsage = diskUsage?.find(
-    (item) => Number(item.brokerId) === Number(brokerId)
+    (item) => item.brokerId === Number(brokerId)
   );
 
   useInterval(() => {

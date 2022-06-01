@@ -3,10 +3,7 @@ import { render, WithRoute } from 'lib/testHelpers';
 import { screen, waitFor } from '@testing-library/dom';
 import { clusterBrokerPath } from 'lib/paths';
 import fetchMock from 'fetch-mock';
-import {
-  clusterStatsPayload,
-  clusterStatsPayloadBroker,
-} from 'redux/reducers/brokers/__test__/fixtures';
+import { clusterStatsPayloadBroker } from 'redux/reducers/brokers/__test__/fixtures';
 import { act } from '@testing-library/react';
 import Broker from 'components/Brokers/Broker/Broker';
 
@@ -27,33 +24,19 @@ describe('Broker Component', () => {
     );
 
   describe('Broker', () => {
-    let fetchBrokersMock: fetchMock.FetchMockStatic;
-    const fetchStatsUrl = `/api/clusters/${clusterName}/stats`;
     const fetchBrokerMockUrl = `/api/clusters/${clusterName}/brokers/logdirs?broker=${brokerId}`;
 
-    beforeEach(() => {
-      fetchBrokersMock = fetchMock.getOnce(
-        `/api/clusters/${clusterName}/brokers/${brokerId}`,
-        clusterStatsPayload
-      );
-    });
+    beforeEach(() => {});
 
     it('renders', async () => {
-      const fetchStatsMock = fetchMock.getOnce(
-        fetchStatsUrl,
-        clusterStatsPayload
-      );
       const fetchBrokerMock = fetchMock.getOnce(
-        `/api/clusters/${clusterName}/brokers/logdirs?broker=${brokerId}`,
+        fetchBrokerMockUrl,
         clusterStatsPayloadBroker
       );
 
       await act(() => {
         renderComponent();
       });
-
-      await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
-      await waitFor(() => expect(fetchBrokersMock.called()).toBeTruthy());
       await waitFor(() => expect(fetchBrokerMock.called()).toBeTruthy());
 
       expect(screen.getByRole('table')).toBeInTheDocument();
@@ -62,16 +45,12 @@ describe('Broker Component', () => {
     });
 
     it('show warning when broker not found', async () => {
-      const fetchStatsMock = fetchMock.getOnce(
-        fetchStatsUrl,
-        clusterStatsPayload
-      );
       const fetchBrokerMock = fetchMock.getOnce(fetchBrokerMockUrl, []);
+
       await act(() => {
         renderComponent();
       });
-      await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
-      await waitFor(() => expect(fetchBrokersMock.called()).toBeTruthy());
+
       await waitFor(() => expect(fetchBrokerMock.called()).toBeTruthy());
 
       expect(
@@ -79,10 +58,6 @@ describe('Broker Component', () => {
       ).toBeInTheDocument();
     });
     it('show broker found', async () => {
-      const fetchStatsMock = fetchMock.getOnce(
-        fetchStatsUrl,
-        clusterStatsPayload
-      );
       const fetchBrokerMock = fetchMock.getOnce(
         fetchBrokerMockUrl,
         clusterStatsPayloadBroker
@@ -90,8 +65,7 @@ describe('Broker Component', () => {
       await act(() => {
         renderComponent();
       });
-      await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
-      await waitFor(() => expect(fetchBrokersMock.called()).toBeTruthy());
+
       await waitFor(() => expect(fetchBrokerMock.called()).toBeTruthy());
 
       const topicCount = screen.getByText(
@@ -108,52 +82,36 @@ describe('Broker Component', () => {
       expect(partitionsCount).toBeInTheDocument();
     });
     it('show 0s when broker has not topics', async () => {
-      const fetchStatsMock = fetchMock.getOnce(
-        fetchStatsUrl,
-        clusterStatsPayload
-      );
       const fetchBrokerMock = fetchMock.getOnce(fetchBrokerMockUrl, [
         { ...clusterStatsPayloadBroker[0], topics: undefined },
       ]);
       await act(() => {
         renderComponent();
       });
-      await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
-      await waitFor(() => expect(fetchBrokersMock.called()).toBeTruthy());
       await waitFor(() => expect(fetchBrokerMock.called()).toBeTruthy());
 
       expect(screen.getAllByText(0).length).toEqual(2);
     });
     it('show - when broker has not name', async () => {
-      const fetchStatsMock = fetchMock.getOnce(
-        fetchStatsUrl,
-        clusterStatsPayload
-      );
       const fetchBrokerMock = fetchMock.getOnce(fetchBrokerMockUrl, [
         { ...clusterStatsPayloadBroker[0], name: undefined },
       ]);
       await act(() => {
         renderComponent();
       });
-      await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
-      await waitFor(() => expect(fetchBrokersMock.called()).toBeTruthy());
+
       await waitFor(() => expect(fetchBrokerMock.called()).toBeTruthy());
 
       expect(screen.getByText('-')).toBeInTheDocument();
     });
     it('show - when broker has not error', async () => {
-      const fetchStatsMock = fetchMock.getOnce(
-        fetchStatsUrl,
-        clusterStatsPayload
-      );
       const fetchBrokerMock = fetchMock.getOnce(fetchBrokerMockUrl, [
         { ...clusterStatsPayloadBroker[0], error: undefined },
       ]);
       await act(() => {
         renderComponent();
       });
-      await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
-      await waitFor(() => expect(fetchBrokersMock.called()).toBeTruthy());
+
       await waitFor(() => expect(fetchBrokerMock.called()).toBeTruthy());
       expect(screen.getByText('-')).toBeInTheDocument();
     });

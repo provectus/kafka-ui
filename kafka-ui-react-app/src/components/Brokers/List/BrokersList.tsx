@@ -2,7 +2,7 @@ import React from 'react';
 import { ClusterName } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -13,10 +13,11 @@ import {
   fetchClusterStats,
   selectStats,
 } from 'redux/reducers/brokers/brokersSlice';
+import useAppParams from 'lib/hooks/useAppParams';
 
 const BrokersList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { clusterName } = useParams<{ clusterName: ClusterName }>();
+  const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
   const {
     brokerCount,
     activeControllers,
