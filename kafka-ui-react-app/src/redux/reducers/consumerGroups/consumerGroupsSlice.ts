@@ -13,7 +13,7 @@ import {
   ConsumerGroupsPageResponse,
   SortOrder,
 } from 'generated-sources';
-import { BASE_PARAMS } from 'lib/constants';
+import { BASE_PARAMS, AsyncRequestStatus } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
 import {
   ClusterName,
@@ -184,22 +184,22 @@ export const { selectAll, selectById } =
 
 export const getAreConsumerGroupsPagedFulfilled = createSelector(
   createFetchingSelector('consumerGroups/fetchConsumerGroupsPaged'),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export const getIsConsumerGroupDeleted = createSelector(
   createFetchingSelector('consumerGroups/deleteConsumerGroup'),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export const getAreConsumerGroupDetailsFulfilled = createSelector(
   createFetchingSelector('consumerGroups/fetchConsumerGroupDetails'),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export const getIsOffsetReseted = createSelector(
   createFetchingSelector('consumerGroups/resetConsumerGroupOffsets'),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export const getConsumerGroupsOrderBy = createSelector(
