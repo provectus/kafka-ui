@@ -119,13 +119,13 @@ describe('Edit Component', () => {
       const btn = screen.getAllByText(/submit/i)[0];
 
       await act(() => {
-        userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
-        userEvent.type(
-          screen.getByPlaceholderText('Number of partitions'),
-          '1'
+        userEvent.click(
+          screen.getByRole('spinbutton', { name: 'Min In Sync Replicas *' })
         );
+      });
+      expect(btn).toBeEnabled();
 
-        btn.removeAttribute('disabled');
+      await act(() => {
         userEvent.click(btn);
       });
 
@@ -142,9 +142,13 @@ describe('Edit Component', () => {
       );
 
       const btn = screen.getAllByText(/submit/i)[0];
-
       await act(() => {
-        btn.removeAttribute('disabled');
+        userEvent.click(
+          screen.getByRole('spinbutton', { name: 'Min In Sync Replicas *' })
+        );
+      });
+      expect(btn).toBeEnabled();
+      await act(() => {
         userEvent.click(btn);
       });
       expect(updateTopicMock).toHaveBeenCalledTimes(1);
