@@ -1,3 +1,5 @@
+import { BrokersLogdirs } from 'generated-sources';
+
 export const brokersPayload = [
   { id: 1, host: 'b-1.test.kafka.amazonaws.com' },
   { id: 2, host: 'b-2.test.kafka.amazonaws.com' },
@@ -61,7 +63,7 @@ const topics = {
   partitions: [partitions],
 };
 
-export const clusterStatsPayloadBroker = [
+export const clusterStatsPayloadBroker: BrokersLogdirs[] = [
   {
     error: 'NONE',
     name: '/opt/kafka/data-0/logs',

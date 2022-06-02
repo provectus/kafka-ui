@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ClusterName } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { BrokersApi, BrokersLogdirs, Configuration } from 'generated-sources';
+import { BrokersApi, Configuration } from 'generated-sources';
 import { BASE_PARAMS } from 'lib/constants';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
@@ -15,31 +15,17 @@ import {
 } from 'redux/reducers/brokers/brokersSlice';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import useAppParams from 'lib/hooks/useAppParams';
+import { translateLogdir } from 'components/Brokers/utils/translateLogdir';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const brokersApiClient = new BrokersApi(apiClientConf);
 
-interface BrokerLogdirState {
+export interface BrokerLogdirState {
   name: string;
   error: string;
   topics: number;
   partitions: number;
 }
-
-const translateLogdir = (data: BrokersLogdirs): BrokerLogdirState => {
-  const partitionsCount =
-    data.topics?.reduce(
-      (prevValue, value) => prevValue + (value.partitions?.length || 0),
-      0
-    ) || 0;
-
-  return {
-    name: data.name || '-',
-    error: data.error || '-',
-    topics: data.topics?.length || 0,
-    partitions: partitionsCount,
-  };
-};
 
 const Broker: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -49,21 +35,19 @@ const Broker: React.FC = () => {
   const [logdirs, setLogdirs] = useState<BrokerLogdirState>();
   const { diskUsage, items } = useAppSelector(selectStats);
 
-  const fetchData = async () => {
-    const res = await brokersApiClient.getAllBrokersLogdirs({
-      clusterName: clusterName as string,
-      broker: [Number(brokerId)],
-    });
-    if (res && res[0]) {
-      setLogdirs(translateLogdir(res[0]));
-    }
-
+  React.useEffect(() => {
+    brokersApiClient
+      .getAllBrokersLogdirs({
+        clusterName,
+        broker: [Number(brokerId)],
+      })
+      .then((res) => {
+        if (res && res[0]) {
+          setLogdirs(translateLogdir(res[0]));
+        }
+      });
     dispatch(fetchClusterStats(clusterName));
     dispatch(fetchBrokers(clusterName));
-  };
-
-  React.useEffect(() => {
-    fetchData();
   }, [clusterName, brokerId, dispatch]);
 
   const brokerItem = items?.find((item) => item.id === Number(brokerId));
