@@ -64,7 +64,12 @@ const renderAndSubmitData = async (error: string[] = []) => {
   await renderComponent();
   expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   await act(() => {
-    userEvent.selectOptions(screen.getByLabelText('Partition'), '0');
+    userEvent.click(screen.getByLabelText('Partition'));
+  });
+  await act(() => {
+    userEvent.click(screen.getAllByRole('option')[1]);
+  });
+  await act(() => {
     (validateMessage as Mock).mockImplementation(() => error);
     userEvent.click(screen.getByText('Send'));
   });
