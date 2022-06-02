@@ -113,6 +113,7 @@ const Details: React.FC<Props> = ({
                   buttonSize="M"
                   buttonType="primary"
                   to={`../${clusterTopicSendMessageRelativePath}`}
+                  disabled={isReadOnly}
                 >
                   Produce Message
                 </Button>
