@@ -1,5 +1,4 @@
-import Editor from 'components/common/Editor/Editor';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -16,6 +15,7 @@ import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { now } from 'lodash';
 import { Button } from 'components/common/Button/Button';
+import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import {
   getMessageSchemaByTopicName,
@@ -70,13 +70,19 @@ const SendMessage: React.FC = () => {
   }, [messageSchema, schemaIsFetched]);
 
   const {
+    register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty, isValid },
     control,
     reset,
   } = useForm({
-    mode: 'onSubmit',
-    reValidateMode: 'onChange',
+    mode: 'onChange',
+    defaultValues: {
+      key: keyDefaultValue,
+      content: contentDefaultValue,
+      headers: undefined,
+      partition: undefined,
+    },
   });
 
   useEffect(() => {
@@ -86,17 +92,22 @@ const SendMessage: React.FC = () => {
     });
   }, [keyDefaultValue, contentDefaultValue, reset]);
 
-  const [key, setKey] = useState(keyDefaultValue);
-  const [content, setContent] = useState(contentDefaultValue);
-  const [headers, setHeaders] = useState({});
-  const [partition, setPartition] = useState(0);
-
-  const isValid = key && content && headers;
-
-  const onSubmit = async () => {
+  const onSubmit = async (data: {
+    key: string;
+    content: string;
+    headers: string;
+    partition: number;
+  }) => {
     if (messageSchema) {
+      const { partition, key, content } = data;
       const errors = validateMessage(key, content, messageSchema);
-
+      if (data.headers) {
+        try {
+          JSON.parse(data.headers);
+        } catch (error) {
+          errors.push('Wrong header format');
+        }
+      }
       if (errors.length > 0) {
         const errorsHtml = errors.map((e) => `<li>${e}</li>`).join('');
         dispatch(
@@ -110,6 +121,7 @@ const SendMessage: React.FC = () => {
         );
         return;
       }
+      const headers = data.headers ? JSON.parse(data.headers) : undefined;
       try {
         await messagesApiClient.sendTopicMessages({
           clusterName,
@@ -140,25 +152,6 @@ const SendMessage: React.FC = () => {
   if (!schemaIsFetched) {
     return <PageLoader />;
   }
-
-  const onUserSelect = (e: string) => {
-    setPartition(Number(e));
-  };
-
-  const onUserTyping = (e: string, name: string) => {
-    switch (name) {
-      case 'key':
-        setKey(e);
-        break;
-      case 'content':
-        setContent(e);
-        break;
-      default:
-        setHeaders(e);
-        break;
-    }
-  };
-
   return (
     <S.Wrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -170,13 +163,13 @@ const SendMessage: React.FC = () => {
             <div className="select is-block">
               <select
                 id="select"
-                onChange={(e) => onUserSelect(e.target.value)}
+                defaultValue={partitions[0].partition}
                 disabled={isSubmitting}
-                value={partition}
+                {...register('partition')}
               >
-                {partitions.map((p) => (
-                  <option key={p.partition} value={p.partition}>
-                    {p.partition}
+                {partitions.map((partition) => (
+                  <option key={partition.partition} value={partition.partition}>
+                    {partition.partition}
                   </option>
                 ))}
               </select>
@@ -190,12 +183,12 @@ const SendMessage: React.FC = () => {
             <Controller
               control={control}
               name="key"
-              render={({ field: { name } }) => (
+              render={({ field: { name, onChange, value } }) => (
                 <Editor
+                  {...register(name, { required: true })}
                   readOnly={isSubmitting}
-                  name={name}
-                  onChange={(e) => onUserTyping(e, name)}
-                  value={key}
+                  onChange={onChange}
+                  value={value}
                 />
               )}
             />
@@ -205,12 +198,12 @@ const SendMessage: React.FC = () => {
             <Controller
               control={control}
               name="content"
-              render={({ field: { name } }) => (
+              render={({ field: { name, onChange, value } }) => (
                 <Editor
                   readOnly={isSubmitting}
-                  name={name}
-                  onChange={(e) => onUserTyping(e, name)}
-                  value={content}
+                  {...register(name, { required: true })}
+                  onChange={onChange}
+                  value={value}
                 />
               )}
             />
@@ -222,12 +215,15 @@ const SendMessage: React.FC = () => {
             <Controller
               control={control}
               name="headers"
-              render={({ field: { name } }) => (
+              render={({ field: { name, onChange } }) => (
                 <Editor
                   readOnly={isSubmitting}
                   defaultValue="{}"
-                  name={name}
-                  onChange={(e) => onUserTyping(e, name)}
+                  {...register(name, {
+                    required: true,
+                    pattern: /(?<j>\{(?:[^{}]|(\?&j))*\})/i,
+                  })}
+                  onChange={onChange}
                   height="200px"
                 />
               )}
@@ -238,7 +234,7 @@ const SendMessage: React.FC = () => {
           buttonSize="M"
           buttonType="primary"
           type="submit"
-          disabled={!isValid || isSubmitting}
+          disabled={!isValid || !isDirty || isSubmitting}
         >
           Send
         </Button>
