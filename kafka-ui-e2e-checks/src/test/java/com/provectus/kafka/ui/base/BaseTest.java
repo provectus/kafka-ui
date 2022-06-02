@@ -45,7 +45,7 @@ public class BaseTest {
                     .withCapabilities(new ChromeOptions()
                             .addArguments("--no-sandbox")
                             .addArguments("--disable-dev-shm-usage"))
-                    .waitingFor(Wait.defaultWaitStrategy().withStartupTimeout(Duration.ofSeconds(15)));
+                    .waitingFor(Wait.defaultWaitStrategy().withStartupTimeout(Duration.ofSeconds(90)));
 
     public void compareScreenshots(String name) {
         screenshooter.compareScreenshots(name);

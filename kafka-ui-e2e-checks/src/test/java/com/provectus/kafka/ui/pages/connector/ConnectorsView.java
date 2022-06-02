@@ -9,8 +9,6 @@ import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
-import java.time.Duration;
-
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 
@@ -38,8 +36,8 @@ public class ConnectorsView {
 
     @Step
     public void connectorIsVisibleOnOverview() {
-        $(By.xpath("//a[text() ='Tasks']")).click();
-        $(By.xpath("//a[text() ='Config']")).click();
-        $(By.xpath("//span[text()='Edit config']")).shouldBe(Condition.visible, Duration.ofMillis(300));
+        $(By.xpath("//a[text() ='Tasks']")).shouldBe(Condition.visible);
+        $(By.xpath("//a[text() ='Config']")).shouldBe(Condition.visible);
+        $(By.xpath("//a[text() ='Overview']")).shouldBe(Condition.visible);
     }
 }

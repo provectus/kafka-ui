@@ -28,8 +28,10 @@ public class ConnectorsTests extends BaseTest {
 
         String connectorToDelete = FileUtils.getResourceAsString("delete_connector_config.json");
         String connectorToUpdate = FileUtils.getResourceAsString("config_for_create_connector_via_api.json");
-
         String message = FileUtils.getResourceAsString("message_content_create_topic.json");
+
+        apiHelper.deleteTopic(LOCAL_CLUSTER, CONNECTOR_FOR_DELETE);
+
         apiHelper.createTopic(LOCAL_CLUSTER, TOPIC_FOR_CONNECTOR);
         apiHelper.sendMessage(LOCAL_CLUSTER, TOPIC_FOR_CONNECTOR, message, " ");
 
@@ -52,7 +54,6 @@ public class ConnectorsTests extends BaseTest {
         apiHelper.deleteTopic(LOCAL_CLUSTER, TOPIC_FOR_CONNECTOR);
         apiHelper.deleteTopic(LOCAL_CLUSTER, TOPIC_FOR_DELETE_CONNECTOR);
         apiHelper.deleteTopic(LOCAL_CLUSTER, TOPIC_FOR_UPDATE_CONNECTOR);
-        apiHelper.deleteTopic(LOCAL_CLUSTER, CONNECTOR_FOR_DELETE);
     }
 
     @SneakyThrows
@@ -65,8 +66,7 @@ public class ConnectorsTests extends BaseTest {
                 .isOnConnectorCreatePage()
                 .setConnectorConfig(
                         SINK_CONNECTOR,
-                        FileUtils.getResourceAsString("config_for_create_connector.json")
-                );
+                        FileUtils.getResourceAsString("config_for_create_connector.json"));
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .isOnPage()
                 .connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
@@ -80,9 +80,9 @@ public class ConnectorsTests extends BaseTest {
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .isOnPage()
                 .openConnector(CONNECTOR_FOR_UPDATE);
-                pages.connectorsView.openEditConfig()
-                        .updateConnectorConfig(
-                        FileUtils.getResourceAsString("config_for_update_connector.json"));
+                pages.connectorsView.connectorIsVisibleOnOverview();
+        pages.connectorsView.openEditConfig()
+                        .updConnectorConfig(FileUtils.getResourceAsString("config_for_update_connector.json"));
         pages.openConnectorsList(LOCAL_CLUSTER).connectorIsVisibleInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
     }
 
