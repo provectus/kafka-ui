@@ -19,6 +19,7 @@ import {
   updateTopicPartitionsCount,
   updateTopicReplicationFactor,
 } from 'redux/reducers/topics/topicsSlice';
+import { AsyncRequestStatus } from 'lib/constants';
 
 const topicsState = ({ topics }: RootState): TopicsState => topics;
 
@@ -32,7 +33,7 @@ const getTopicDeletingStatus = createFetchingSelector(deleteTopic.typePrefix);
 
 export const getIsTopicDeleted = createSelector(
   getTopicDeletingStatus,
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 const getAreTopicsFetchingStatus = createFetchingSelector(
@@ -41,11 +42,11 @@ const getAreTopicsFetchingStatus = createFetchingSelector(
 
 export const getAreTopicsFetching = createSelector(
   getAreTopicsFetchingStatus,
-  (status) => status === 'pending'
+  (status) => status === AsyncRequestStatus.pending
 );
 export const getAreTopicsFetched = createSelector(
   getAreTopicsFetchingStatus,
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 const getTopicDetailsFetchingStatus = createFetchingSelector(
@@ -54,12 +55,12 @@ const getTopicDetailsFetchingStatus = createFetchingSelector(
 
 export const getIsTopicDetailsFetching = createSelector(
   getTopicDetailsFetchingStatus,
-  (status) => status === 'pending'
+  (status) => status === AsyncRequestStatus.pending
 );
 
 export const getIsTopicDetailsFetched = createSelector(
   getTopicDetailsFetchingStatus,
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 const getTopicConfigFetchingStatus = createFetchingSelector(
@@ -68,21 +69,21 @@ const getTopicConfigFetchingStatus = createFetchingSelector(
 
 export const getTopicConfigFetched = createSelector(
   getTopicConfigFetchingStatus,
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 const getTopicCreationStatus = createFetchingSelector(createTopic.typePrefix);
 
 export const getTopicCreated = createSelector(
   getTopicCreationStatus,
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 const getTopicUpdateStatus = createFetchingSelector(updateTopic.typePrefix);
 
 export const getTopicUpdated = createSelector(
   getTopicUpdateStatus,
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 const getTopicMessageSchemaFetchingStatus = createFetchingSelector(
@@ -91,7 +92,7 @@ const getTopicMessageSchemaFetchingStatus = createFetchingSelector(
 
 export const getTopicMessageSchemaFetched = createSelector(
   getTopicMessageSchemaFetchingStatus,
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 const getPartitionsCountIncreaseStatus = createFetchingSelector(
@@ -100,7 +101,7 @@ const getPartitionsCountIncreaseStatus = createFetchingSelector(
 
 export const getTopicPartitionsCountIncreased = createSelector(
   getPartitionsCountIncreaseStatus,
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 const getReplicationFactorUpdateStatus = createFetchingSelector(
@@ -109,7 +110,7 @@ const getReplicationFactorUpdateStatus = createFetchingSelector(
 
 export const getTopicReplicationFactorUpdated = createSelector(
   getReplicationFactorUpdateStatus,
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 const getTopicConsumerGroupsStatus = createFetchingSelector(
@@ -118,7 +119,7 @@ const getTopicConsumerGroupsStatus = createFetchingSelector(
 
 export const getTopicsConsumerGroupsFetched = createSelector(
   getTopicConsumerGroupsStatus,
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export const getTopicList = createSelector(
