@@ -1514,6 +1514,50 @@ paths:
               schema:
                 $ref: '#/components/schemas/KsqlCommandV2Response'
 
+  /api/clusters/{clusterName}/ksql/tables:
+    get:
+      tags:
+        - Ksql
+      summary: listTables
+      operationId: listTables
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KsqlTableDescription'
+
+  /api/clusters/{clusterName}/ksql/streams:
+    get:
+      tags:
+        - Ksql
+      summary: listStreams
+      operationId: listStreams
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KsqlStreamDescription'
+
   /api/clusters/{clusterName}/ksql/response:
     get:
       tags:
@@ -2689,6 +2733,32 @@ components:
           type: string
       required:
         - pipeId
+
+    KsqlTableDescription:
+      type: object
+      properties:
+        name:
+          type: string
+        topic:
+          type: string
+        keyFormat:
+          type: string
+        valueFormat:
+          type: string
+        isWindowed:
+          type: boolean
+
+    KsqlStreamDescription:
+      type: object
+      properties:
+        name:
+          type: string
+        topic:
+          type: string
+        keyFormat:
+          type: string
+        valueFormat:
+          type: string
 
     KsqlCommandResponse:
       type: object

@@ -12,7 +12,7 @@ import {
   GetSchemasRequest,
   GetLatestSchemaRequest,
 } from 'generated-sources';
-import { BASE_PARAMS } from 'lib/constants';
+import { BASE_PARAMS, AsyncRequestStatus } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
 import { ClusterName, RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
@@ -130,16 +130,16 @@ export const { schemaAdded, schemaUpdated } = schemasSlice.actions;
 
 export const getAreSchemasFulfilled = createSelector(
   createFetchingSelector(SCHEMAS_FETCH_ACTION),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export const getAreSchemaLatestFulfilled = createSelector(
   createFetchingSelector(SCHEMA_LATEST_FETCH_ACTION),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 export const getAreSchemaVersionsFulfilled = createSelector(
   createFetchingSelector(SCHEMAS_VERSIONS_FETCH_ACTION),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export default schemasSlice.reducer;

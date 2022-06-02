@@ -62,3 +62,10 @@ export const GIT_COMMIT = process.env.REACT_APP_COMMIT;
 export const BREADCRUMB_DEFINITIONS: BreadcrumbDefinitions = {
   Ksqldb: 'ksqlDB',
 };
+
+export enum AsyncRequestStatus {
+  initial = 'initial',
+  pending = 'pending',
+  fulfilled = 'fulfilled',
+  rejected = 'rejected',
+}

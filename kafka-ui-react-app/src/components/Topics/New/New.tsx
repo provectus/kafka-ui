@@ -10,6 +10,7 @@ import { topicFormValidationSchema } from 'lib/yupExtended';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
+import { AsyncRequestStatus } from 'lib/constants';
 
 enum Filters {
   NAME = 'name',
@@ -41,7 +42,7 @@ const New: React.FC = () => {
   const onSubmit = async (data: TopicFormData) => {
     const { meta } = await dispatch(createTopic({ clusterName, data }));
 
-    if (meta.requestStatus === 'fulfilled') {
+    if (meta.requestStatus === AsyncRequestStatus.fulfilled) {
       navigate(`../${data.name}`);
     }
   };
