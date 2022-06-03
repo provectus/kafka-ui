@@ -11,8 +11,6 @@
 
     <artifactId>kafka-ui-e2e-checks</artifactId>
     <properties>
-        <maven.compiler.source>15</maven.compiler.source>
-        <maven.compiler.target>15</maven.compiler.target>
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
         <junit.version>5.8.2</junit.version>
         <aspectj.version>1.9.8</aspectj.version>
