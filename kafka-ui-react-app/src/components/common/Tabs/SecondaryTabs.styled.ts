@@ -1,30 +1,19 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const SecondaryTabs = styled.nav`
-  & button {
-    background-color: ${(props) =>
-      props.theme.secondaryTab.backgroundColor.normal};
-    color: ${(props) => props.theme.secondaryTab.color.normal};
-    padding: 6px;
+export const Tab = styled.button<{ $active?: boolean }>(
+  ({ theme, $active }) => css`
+    background-color: ${theme.secondaryTab.backgroundColor[
+      $active ? 'active' : 'normal'
+    ]};
+    color: ${theme.secondaryTab.color[$active ? 'active' : 'normal']};
+    padding: 6px 16px;
     height: 32px;
-    min-width: 57px;
-    border: 1px solid ${(props) => props.theme.layout.stuffBorderColor};
+    border: 1px solid ${theme.layout.stuffBorderColor};
     cursor: pointer;
-
     &:hover {
-      background-color: ${(props) =>
-        props.theme.secondaryTab.backgroundColor.hover};
-      color: ${(props) => props.theme.secondaryTab.color.hover};
+      background-color: ${theme.secondaryTab.backgroundColor.hover};
+      color: ${theme.secondaryTab.color.hover};
     }
-
-    &.is-active {
-      background-color: ${(props) =>
-        props.theme.secondaryTab.backgroundColor.active};
-      color: ${(props) => props.theme.secondaryTab.color.active};
-    }
-  }
-
-  & > * {
     &:first-child {
       border-radius: 4px 0 0 4px;
     }
@@ -34,5 +23,7 @@ export const SecondaryTabs = styled.nav`
     &:not(:last-child) {
       border-right: 0px;
     }
-  }
-`;
+  `
+);
+
+export const Tabs = styled.nav``;
