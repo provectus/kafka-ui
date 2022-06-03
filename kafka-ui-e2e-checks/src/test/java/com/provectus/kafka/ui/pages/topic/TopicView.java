@@ -26,27 +26,27 @@ public class TopicView {
     }
 
     @Step
-    public TopicsList isOnTopicViewPage() {
+    public TopicView isOnTopicViewPage() {
        $("nav[role=navigation] a.is-active.is-primary").shouldBe(Condition.visible);
-        return new TopicsList();
+        return this;
     }
 
     @SneakyThrows
-    public TopicEditSettingsView openEditSettings() {
+    public TopicCreateEditSettingsView openEditSettings() {
         dotMenuHeader.click();
         $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() +"']").click();
        /* BrowserUtils.javaExecutorClick(driver,
                 driver.findElement(By.xpath("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() +"']")));*/
-        return new TopicEditSettingsView();
+        return new TopicCreateEditSettingsView();
     }
 
 
     @SneakyThrows
-    public TopicView deleteTopic() {
+    public TopicsList deleteTopic() {
         dotMenuHeader.click();
         $("#dropdown-menu").$(byLinkText(DotMenuHeaderItems.REMOVE_TOPIC.getValue())).click();
         $$("div[role=\"dialog\"] button").find(Condition.exactText("Submit")).click();
-        return new TopicView();
+        return new TopicsList();
     }
 
     private enum DotMenuHeaderItems {

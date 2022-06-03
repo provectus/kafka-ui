@@ -5,6 +5,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.provectus.kafka.ui.base.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
+import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
@@ -28,6 +29,12 @@ public class TopicsList {
         $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
         $(By.xpath("//h1[text()='All Topics']")).shouldBe(Condition.visible);
         return this;
+    }
+
+    @Step
+    public TopicCreateEditSettingsView pressCreateNewTopic(){
+        BrowserUtils.javaExecutorClick($(".qEXNn.sc-bYEvvW"));
+        return new TopicCreateEditSettingsView();
     }
 
     @Step

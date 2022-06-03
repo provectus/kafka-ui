@@ -40,7 +40,12 @@ public class TopicTests extends BaseTest {
     @DisplayName("should create a topic")
     @Test
     public void createTopic() {
-        helpers.apiHelper.createTopic(SECOND_LOCAL, NEW_TOPIC);
+        pages.open()
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
+        pages.topicsList.pressCreateNewTopic()
+                .setTopicName(NEW_TOPIC)
+                .sendData()
+                .isOnTopicViewPage();
         pages.open()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
                 .topicIsVisible(NEW_TOPIC);
@@ -84,10 +89,10 @@ public class TopicTests extends BaseTest {
     public void deleteTopic() {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
-                .openTopic(TOPIC_TO_DELETE);
-        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_DELETE)
-                .deleteTopic();
-        pages.openTopicsList(SECOND_LOCAL)
+                .openTopic(TOPIC_TO_DELETE)
+                .isOnTopicViewPage()
+                .deleteTopic()
+                .isOnPage()
                 .isTopicNotVisible(TOPIC_TO_DELETE);
     }
 }
