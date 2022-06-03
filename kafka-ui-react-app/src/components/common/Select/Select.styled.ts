@@ -17,6 +17,7 @@ export const Select = styled.ul<Props>`
   display: flex;
   gap: ${(props) => (props.isLive ? '5px' : '0')};
   align-items: center;
+  justify-content: space-between;
   height: ${(props) => (props.selectSize === 'M' ? '32px' : '40px')};
   border: 1px
     ${({ theme, disabled }) =>

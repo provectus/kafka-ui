@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
 import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
@@ -39,8 +39,25 @@ const New: React.FC = () => {
     register,
     handleSubmit,
     control,
-    formState: { isDirty, isSubmitting, errors },
-  } = methods;
+    reset,
+    formState: { isDirty, isSubmitting, errors, isValid },
+  } = useForm<NewSchemaSubjectRaw>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      subject: undefined,
+      schema: undefined,
+      schemaType: undefined,
+    },
+  });
+
+  useEffect(() => {
+    reset({
+      subject: undefined,
+      schema: undefined,
+      schemaType: undefined,
+    });
+  }, [reset]);
 
   const onSubmit = async ({
     subject,
@@ -69,9 +86,8 @@ const New: React.FC = () => {
           <Input
             inputSize="M"
             placeholder="Schema Name"
-            name="subject"
             hookFormOptions={{
-              required: 'Schema Name is required.',
+              required: true,
               pattern: {
                 value: SCHEMA_NAME_VALIDATION_PATTERN,
                 message: 'Only alphanumeric, _, -, and . allowed',
@@ -89,7 +105,7 @@ const New: React.FC = () => {
           <InputLabel>Schema *</InputLabel>
           <Textarea
             {...register('schema', {
-              required: 'Schema is required.',
+              required: true,
             })}
             disabled={isSubmitting}
           />
@@ -101,15 +117,13 @@ const New: React.FC = () => {
         <div>
           <InputLabel>Schema Type *</InputLabel>
           <Controller
-            defaultValue={SchemaTypeOptions[0].value as SchemaType}
             control={control}
-            rules={{ required: 'Schema Type is required.' }}
+            rules={{ required: true }}
             name="schemaType"
             render={({ field: { name, onChange } }) => (
               <Select
                 selectSize="M"
                 name={name}
-                value={SchemaTypeOptions[0].value}
                 onChange={onChange}
                 minWidth="50%"
                 disabled={isSubmitting}
@@ -126,7 +140,7 @@ const New: React.FC = () => {
           buttonSize="M"
           buttonType="primary"
           type="submit"
-          disabled={isSubmitting || !isDirty}
+          disabled={!isValid || isSubmitting || !isDirty}
         >
           Submit
         </Button>
