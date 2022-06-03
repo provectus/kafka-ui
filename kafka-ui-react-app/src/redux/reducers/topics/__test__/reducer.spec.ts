@@ -29,6 +29,10 @@ import { consumerGroupPayload } from 'redux/reducers/consumerGroups/__test__/fix
 import fetchMock from 'fetch-mock-jest';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
 import { getTypeAndPayload } from 'lib/testHelpers';
+import {
+  alertAdded,
+  showSuccessAlert,
+} from 'redux/reducers/alerts/alertsSlice';
 
 const topic = {
   name: 'topic',
@@ -364,7 +368,16 @@ describe('topics Slice', () => {
   describe('Thunks', () => {
     const store = mockStoreCreator;
     const topicName = topic.name;
+    const RealDate = Date.now;
 
+    beforeAll(() => {
+      global.Date.now = jest.fn(() =>
+        new Date('2019-04-07T10:20:30Z').getTime()
+      );
+    });
+    afterAll(() => {
+      global.Date.now = RealDate;
+    });
     afterEach(() => {
       fetchMock.restore();
       store.clearActions();
@@ -491,6 +504,18 @@ describe('topics Slice', () => {
 
         expect(getTypeAndPayload(store)).toEqual([
           { type: deleteTopic.pending.type },
+          { type: showSuccessAlert.pending.type },
+          {
+            type: alertAdded.type,
+            payload: {
+              id: 'message-topic-local',
+              title: '',
+              type: 'success',
+              createdAt: global.Date.now(),
+              message: 'Topic successfully deleted!',
+            },
+          },
+          { type: showSuccessAlert.fulfilled.type },
           {
             type: deleteTopic.fulfilled.type,
             payload: { topicName },
@@ -670,9 +695,21 @@ describe('topics Slice', () => {
             partitions: 1,
           })
         );
-
         expect(getTypeAndPayload(store)).toEqual([
           { type: updateTopicPartitionsCount.pending.type },
+          { type: showSuccessAlert.pending.type },
+          {
+            type: alertAdded.type,
+            payload: {
+              id: 'message-topic-local-1',
+              title: '',
+              type: 'success',
+              createdAt: global.Date.now(),
+              message: 'Number of partitions successfully increased!',
+            },
+          },
+          { type: fetchTopicDetails.pending.type },
+          { type: showSuccessAlert.fulfilled.type },
           {
             type: updateTopicPartitionsCount.fulfilled.type,
           },

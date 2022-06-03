@@ -33,12 +33,9 @@ export const SmartTable = <T, TId extends IdType, OT = never>({
   paginated = false,
   hoverable = false,
 }: React.PropsWithChildren<SmartTableProps<T, TId, OT>>) => {
-  const handleRowSelection = React.useCallback(
-    (row: T, checked: boolean) => {
-      tableState.setRowsSelection([row], checked);
-    },
-    [tableState]
-  );
+  const handleRowSelection = (row: T, checked: boolean) => {
+    tableState.setRowsSelection([row], checked);
+  };
 
   const headerRow = React.useMemo(() => {
     const headerCells = React.Children.map(children, (child) => {

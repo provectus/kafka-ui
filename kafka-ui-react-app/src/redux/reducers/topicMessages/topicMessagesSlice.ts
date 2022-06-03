@@ -4,6 +4,7 @@ import { TopicMessage, Configuration, MessagesApi } from 'generated-sources';
 import { BASE_PARAMS } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
 import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
+import { fetchTopicDetails } from 'redux/reducers/topics/topicsSlice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const messagesApiClient = new MessagesApi(apiClientConf);
@@ -23,7 +24,7 @@ export const clearTopicMessages = createAsyncThunk<
         topicName,
         partitions,
       });
-
+      dispatch(fetchTopicDetails({ clusterName, topicName }));
       dispatch(
         showSuccessAlert({
           id: `message-${topicName}-${clusterName}-${partitions}`,

@@ -86,5 +86,5 @@
     <artifactId>kafka-ui</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>kafka-ui</name>
-    <description>Kafka metrics for UI panel</description>
+    <description>Web UI for Apache Kafka</description>
 </project>

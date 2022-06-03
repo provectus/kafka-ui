@@ -1,10 +1,13 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
-import ConsumerGroups, {
+import TopicConsumerGroups, {
   Props,
 } from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
-import { ConsumerGroupState } from 'generated-sources';
+import { ConsumerGroup, ConsumerGroupState } from 'generated-sources';
+import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
+import { TopicWithDetailedInfo } from 'redux/interfaces';
+import { clusterTopicConsumerGroupsPath } from 'lib/paths';
 
 describe('TopicConsumerGroups', () => {
   const mockClusterName = 'localClusterName';
@@ -32,18 +35,32 @@ describe('TopicConsumerGroups', () => {
     },
   ];
 
-  const setUpComponent = (props: Partial<Props> = {}) => {
-    const { name, topicName, consumerGroups, isFetched } = props;
+  const setUpComponent = (
+    props: Partial<Props> = {},
+    consumerGroups?: ConsumerGroup[]
+  ) => {
+    const topic: TopicWithDetailedInfo = {
+      name: mockTopicName,
+      consumerGroups,
+    };
+    const topicsState = getTopicStateFixtures([topic]);
 
     return render(
-      <ConsumerGroups
-        clusterName={mockClusterName}
-        consumerGroups={consumerGroups?.length ? consumerGroups : []}
-        name={name || mockTopicName}
-        fetchTopicConsumerGroups={jest.fn()}
-        topicName={topicName || mockTopicName}
-        isFetched={'isFetched' in props ? !!isFetched : false}
-      />
+      <WithRoute path={clusterTopicConsumerGroupsPath()}>
+        <TopicConsumerGroups
+          fetchTopicConsumerGroups={jest.fn()}
+          isFetched={false}
+          {...props}
+        />
+      </WithRoute>,
+      {
+        initialEntries: [
+          clusterTopicConsumerGroupsPath(mockClusterName, mockTopicName),
+        ],
+        preloadedState: {
+          topics: topicsState,
+        },
+      }
     );
   };
 
@@ -62,10 +79,18 @@ describe('TopicConsumerGroups', () => {
   });
 
   it('render ConsumerGroups in Topic', () => {
-    setUpComponent({
-      consumerGroups: mockWithConsumerGroup,
-      isFetched: true,
-    });
+    setUpComponent(
+      {
+        isFetched: true,
+      },
+      mockWithConsumerGroup
+    );
     expect(screen.getAllByRole('rowgroup')).toHaveLength(2);
+    expect(
+      screen.getByText(mockWithConsumerGroup[0].groupId)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(mockWithConsumerGroup[1].groupId)
+    ).toBeInTheDocument();
   });
 });

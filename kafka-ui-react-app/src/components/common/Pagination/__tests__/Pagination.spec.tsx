@@ -1,5 +1,4 @@
 import React from 'react';
-import { StaticRouter } from 'react-router-dom';
 import Pagination, {
   PaginationProps,
 } from 'components/common/Pagination/Pagination';
@@ -8,12 +7,16 @@ import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 
 describe('Pagination', () => {
-  const setupComponent = (search = '', props: Partial<PaginationProps> = {}) =>
-    render(
-      <StaticRouter location={{ pathname: '/my/test/path/23', search }}>
-        <Pagination totalPages={11} {...props} />
-      </StaticRouter>
-    );
+  const setupComponent = (
+    search = '',
+    props: Partial<PaginationProps> = {}
+  ) => {
+    const defaultPath = '/my/test/path/23';
+    const pathName = search ? `${defaultPath}${search}` : defaultPath;
+    return render(<Pagination totalPages={11} {...props} />, {
+      initialEntries: [pathName],
+    });
+  };
 
   describe('next & prev buttons', () => {
     it('renders disable prev button and enabled next link', () => {
