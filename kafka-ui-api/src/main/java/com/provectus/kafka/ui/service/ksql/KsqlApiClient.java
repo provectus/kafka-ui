@@ -42,6 +42,10 @@ public class KsqlApiClient {
     String header;
     List<String> columnNames;
     List<List<JsonNode>> values;
+
+    public Optional<JsonNode> getColumnValue(List<JsonNode> row, String column) {
+      return Optional.ofNullable(row.get(columnNames.indexOf(column)));
+    }
   }
 
   @Value

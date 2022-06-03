@@ -201,11 +201,16 @@ export const updateTopic = createAsyncThunk<
 export const deleteTopic = createAsyncThunk<
   { topicName: TopicName },
   DeleteTopicRequest
->('topic/deleteTopic', async (payload, { rejectWithValue }) => {
+>('topic/deleteTopic', async (payload, { rejectWithValue, dispatch }) => {
   try {
-    const { topicName } = payload;
+    const { topicName, clusterName } = payload;
     await topicsApiClient.deleteTopic(payload);
-
+    dispatch(
+      showSuccessAlert({
+        id: `message-${topicName}-${clusterName}`,
+        message: 'Topic successfully deleted!',
+      })
+    );
     return { topicName };
   } catch (err) {
     return rejectWithValue(await getResponse(err as Response));
