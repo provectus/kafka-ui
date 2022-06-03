@@ -7,6 +7,7 @@ import {
   FullConnectorInfo,
 } from 'generated-sources';
 import { sortBy } from 'lodash';
+import { AsyncRequestStatus } from 'lib/constants';
 
 import {
   deleteConnector,
@@ -27,7 +28,7 @@ const getConnectsFetchingStatus = createFetchingSelector(
 );
 export const getAreConnectsFetching = createSelector(
   getConnectsFetchingStatus,
-  (status) => status === 'pending'
+  (status) => status === AsyncRequestStatus.pending
 );
 
 export const getConnects = createSelector(
@@ -40,7 +41,7 @@ const getConnectorsFetchingStatus = createFetchingSelector(
 );
 export const getAreConnectorsFetching = createSelector(
   getConnectorsFetchingStatus,
-  (status) => status === 'pending'
+  (status) => status === AsyncRequestStatus.pending
 );
 
 export const getConnectors = createSelector(
@@ -73,7 +74,7 @@ const getConnectorFetchingStatus = createFetchingSelector(
 );
 export const getIsConnectorFetching = createSelector(
   getConnectorFetchingStatus,
-  (status) => status === 'pending'
+  (status) => status === AsyncRequestStatus.pending
 );
 
 const getCurrentConnector = createSelector(
@@ -96,7 +97,7 @@ const getConnectorDeletingStatus = createFetchingSelector(
 );
 export const getIsConnectorDeleting = createSelector(
   getConnectorDeletingStatus,
-  (status) => status === 'pending'
+  (status) => status === AsyncRequestStatus.pending
 );
 
 const getConnectorRestartingStatus = createFetchingSelector(
@@ -104,7 +105,7 @@ const getConnectorRestartingStatus = createFetchingSelector(
 );
 export const getIsConnectorRestarting = createSelector(
   getConnectorRestartingStatus,
-  (status) => status === 'pending'
+  (status) => status === AsyncRequestStatus.pending
 );
 
 const getConnectorPausingStatus = createFetchingSelector(
@@ -112,7 +113,7 @@ const getConnectorPausingStatus = createFetchingSelector(
 );
 export const getIsConnectorPausing = createSelector(
   getConnectorPausingStatus,
-  (status) => status === 'pending'
+  (status) => status === AsyncRequestStatus.pending
 );
 
 const getConnectorResumingStatus = createFetchingSelector(
@@ -120,7 +121,7 @@ const getConnectorResumingStatus = createFetchingSelector(
 );
 export const getIsConnectorResuming = createSelector(
   getConnectorResumingStatus,
-  (status) => status === 'pending'
+  (status) => status === AsyncRequestStatus.pending
 );
 
 export const getIsConnectorActionRunning = createSelector(
@@ -135,7 +136,7 @@ const getConnectorTasksFetchingStatus = createFetchingSelector(
 );
 export const getAreConnectorTasksFetching = createSelector(
   getConnectorTasksFetchingStatus,
-  (status) => status === 'pending'
+  (status) => status === AsyncRequestStatus.pending
 );
 
 export const getConnectorTasks = createSelector(
@@ -162,7 +163,7 @@ const getConnectorConfigFetchingStatus = createFetchingSelector(
 );
 export const getIsConnectorConfigFetching = createSelector(
   getConnectorConfigFetchingStatus,
-  (status) => status === 'pending'
+  (status) => status === AsyncRequestStatus.pending
 );
 
 export const getConnectorConfig = createSelector(
