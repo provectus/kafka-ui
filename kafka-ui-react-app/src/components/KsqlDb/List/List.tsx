@@ -13,7 +13,13 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import { Button } from 'components/common/Button/Button';
 import { KsqlDescription } from 'redux/interfaces/ksqlDb';
 
-const headers = [
+export type KsqlDescriptionAccessor = keyof KsqlDescription;
+
+interface HeadersType {
+  Header: string;
+  accessor: KsqlDescriptionAccessor;
+}
+const headers: HeadersType[] = [
   { Header: 'Type', accessor: 'type' },
   { Header: 'Name', accessor: 'name' },
   { Header: 'Topic', accessor: 'topic' },
@@ -21,9 +27,7 @@ const headers = [
   { Header: 'Value Format', accessor: 'valueFormat' },
 ];
 
-const accessors = headers.map(
-  (header) => header.accessor
-) as (keyof KsqlDescription)[];
+const accessors = headers.map((header) => header.accessor);
 
 const List: FC = () => {
   const dispatch = useDispatch();

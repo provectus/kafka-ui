@@ -1,8 +1,9 @@
 import React from 'react';
 import { KsqlDescription } from 'redux/interfaces/ksqlDb';
+import { KsqlDescriptionAccessor } from 'components/KsqlDb/List/List';
 
 interface Props {
-  accessors: (keyof KsqlDescription)[];
+  accessors: KsqlDescriptionAccessor[];
   data: KsqlDescription;
 }
 
