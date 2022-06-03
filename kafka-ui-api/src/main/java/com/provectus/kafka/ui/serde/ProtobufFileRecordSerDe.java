@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.serde;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
+import com.provectus.kafka.ui.exception.KafkaUiRuntimeException;
 import com.provectus.kafka.ui.model.MessageSchemaDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
@@ -18,7 +19,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
@@ -95,7 +95,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
         try {
           builder.key(parse(msg.key().get(), descriptor));
           builder.keyFormat(MessageFormat.PROTOBUF);
-        } catch (Throwable e) {
+        } catch (Exception e) {
           log.debug("Failed to deserialize key as protobuf, falling back to string formatter", e);
           builder.key(FALLBACK_FORMATTER.format(msg.topic(), msg.key().get()));
           builder.keyFormat(FALLBACK_FORMATTER.getFormat());
@@ -107,7 +107,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
       try {
         builder.value(parse(msg.value().get(), getDescriptor(msg.topic())));
         builder.valueFormat(MessageFormat.PROTOBUF);
-      } catch (Throwable e) {
+      } catch (Exception e) {
         log.debug("Failed to deserialize value as protobuf, falling back to string formatter", e);
         builder.key(FALLBACK_FORMATTER.format(msg.topic(), msg.value().get()));
         builder.keyFormat(FALLBACK_FORMATTER.getFormat());
@@ -153,8 +153,8 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
         try {
           JsonFormat.parser().merge(key, builder);
           keyPayload = builder.build().toByteArray();
-        } catch (Throwable e) {
-          throw new RuntimeException("Failed to merge record key for topic " + topic, e);
+        } catch (Exception e) {
+          throw new KafkaUiRuntimeException("Failed to merge record key for topic " + topic, e);
         }
       }
     }
@@ -164,8 +164,8 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
       try {
         JsonFormat.parser().merge(data, builder);
         valuePayload = builder.build().toByteArray();
-      } catch (Throwable e) {
-        throw new RuntimeException("Failed to merge record value for topic " + topic, e);
+      } catch (Exception e) {
+        throw new KafkaUiRuntimeException("Failed to merge record value for topic " + topic, e);
       }
     }
 

@@ -16,15 +16,15 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public abstract class BaseStrategy {
-  protected static final String KSQL_REQUEST_PATH = "/ksql";
-  protected static final String QUERY_REQUEST_PATH = "/query";
+  protected static final String KSQL_REQUEST_PATH = "ksql";
+  protected static final String QUERY_REQUEST_PATH = "query";
   private static final String MAPPING_EXCEPTION_ERROR = "KSQL DB response mapping error";
   protected String host = null;
   protected KsqlCommandDTO ksqlCommand = null;
 
   public String getUri() {
     if (this.host != null) {
-      return this.host + this.getRequestPath();
+      return this.host + "/" + this.getRequestPath();
     }
     throw new UnprocessableEntityException("Strategy doesn't have host");
   }

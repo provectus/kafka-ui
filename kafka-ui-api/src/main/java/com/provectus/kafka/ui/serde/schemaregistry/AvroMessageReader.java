@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.serde.schemaregistry;
 
+import com.provectus.kafka.ui.exception.KafkaUiRuntimeException;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
@@ -39,8 +40,8 @@ public class AvroMessageReader extends MessageReader<Object> {
   protected Object read(String value, ParsedSchema schema) {
     try {
       return AvroSchemaUtils.toObject(value, (AvroSchema) schema);
-    } catch (Throwable e) {
-      throw new RuntimeException("Failed to serialize record for topic " + topic, e);
+    } catch (Exception e) {
+      throw new KafkaUiRuntimeException("Failed to serialize record for topic " + topic, e);
     }
 
   }

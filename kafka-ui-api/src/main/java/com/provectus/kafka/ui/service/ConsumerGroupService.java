@@ -64,7 +64,10 @@ public class ConsumerGroupService {
         });
   }
 
-  @Deprecated // need to migrate to pagination
+  /**Deprecated method.
+   * @deprecated (need to migrate to pagination)
+   **/
+  @Deprecated(forRemoval = true)
   public Mono<List<InternalConsumerGroup>> getAllConsumerGroups(KafkaCluster cluster) {
     return adminClientService.get(cluster)
         .flatMap(ac -> describeConsumerGroups(ac, null)
@@ -101,12 +104,6 @@ public class ConsumerGroupService {
                                   )
                                   .collect(Collectors.toList())));
             }));
-  }
-
-  @Value
-  public static class ConsumerGroupsPage {
-    List<InternalConsumerGroup> consumerGroups;
-    int totalPages;
   }
 
   public Mono<ConsumerGroupsPage> getConsumerGroupsPage(
@@ -214,6 +211,12 @@ public class ConsumerGroupService {
     props.putAll(properties);
 
     return new KafkaConsumer<>(props);
+  }
+
+  @Value
+  public static class ConsumerGroupsPage {
+    List<InternalConsumerGroup> consumerGroups;
+    int totalPages;
   }
 
 }

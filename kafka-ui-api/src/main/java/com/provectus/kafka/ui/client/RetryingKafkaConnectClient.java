@@ -31,23 +31,6 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
     super(new RetryingApiClient(config));
   }
 
-  private static Retry conflictCodeRetry() {
-    return Retry
-        .fixedDelay(MAX_RETRIES, RETRIES_DELAY)
-        .filter(e -> e instanceof WebClientResponseException.Conflict)
-        .onRetryExhaustedThrow((spec, signal) ->
-            new KafkaConnectConflictReponseException(
-                (WebClientResponseException.Conflict) signal.failure()));
-  }
-
-  private static <T> Mono<T> withRetryOnConflict(Mono<T> publisher) {
-    return publisher.retryWhen(conflictCodeRetry());
-  }
-
-  private static <T> Flux<T> withRetryOnConflict(Flux<T> publisher) {
-    return publisher.retryWhen(conflictCodeRetry());
-  }
-
   private static <T> Mono<T> withBadRequestErrorHandling(Mono<T> publisher) {
     return publisher
         .onErrorResume(WebClientResponseException.BadRequest.class, e ->
@@ -78,6 +61,23 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
       setBasePath(config.getAddress());
       setUsername(config.getUserName());
       setPassword(config.getPassword());
+    }
+
+    private static <T> Mono<T> withRetryOnConflict(Mono<T> publisher) {
+      return publisher.retryWhen(conflictCodeRetry());
+    }
+
+    private static <T> Flux<T> withRetryOnConflict(Flux<T> publisher) {
+      return publisher.retryWhen(conflictCodeRetry());
+    }
+
+    private static Retry conflictCodeRetry() {
+      return Retry
+          .fixedDelay(MAX_RETRIES, RETRIES_DELAY)
+          .filter(e -> e instanceof WebClientResponseException.Conflict)
+          .onRetryExhaustedThrow((spec, signal) ->
+              new KafkaConnectConflictReponseException(
+                  (WebClientResponseException.Conflict) signal.failure()));
     }
 
     @Override

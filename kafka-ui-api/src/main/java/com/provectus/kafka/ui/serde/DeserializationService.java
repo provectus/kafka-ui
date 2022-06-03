@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.serde;
 
+import com.provectus.kafka.ui.exception.KafkaUiRuntimeException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.serde.schemaregistry.SchemaRegistryAwareRecordSerDe;
 import com.provectus.kafka.ui.service.ClustersStorage;
@@ -42,7 +43,7 @@ public class DeserializationService {
         return new SimpleRecordSerDe();
       }
     } catch (Throwable e) {
-      throw new RuntimeException("Can't init deserializer", e);
+      throw new KafkaUiRuntimeException("Can't init deserializer", e);
     }
   }
 

@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.util;
 
 import com.provectus.kafka.ui.model.MessageFormatDTO;
-import com.provectus.kafka.ui.model.ServerStatusDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import java.time.Instant;

@@ -5,6 +5,7 @@ import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.BASI
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.provectus.kafka.ui.exception.KafkaUiRuntimeException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageSchemaDTO;
@@ -110,8 +111,8 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
         fillDeserializedKvBuilder(msg, false, builder);
       }
       return builder.build();
-    } catch (Throwable e) {
-      throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
+    } catch (Exception e) {
+      throw new KafkaUiRuntimeException("Failed to parse record from topic " + msg.topic(), e);
     }
   }
 
@@ -284,7 +285,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
       if (restClientException.getStatus() == 404) {
         return Optional.empty();
       } else {
-        throw new RuntimeException("Error calling SchemaRegistryClient", restClientException);
+        throw new KafkaUiRuntimeException("Error calling SchemaRegistryClient", restClientException);
       }
     }
   }

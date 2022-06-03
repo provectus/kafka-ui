@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+@SuppressWarnings("squid:S1192")
 public class ResponseParser {
 
   private ResponseParser() {

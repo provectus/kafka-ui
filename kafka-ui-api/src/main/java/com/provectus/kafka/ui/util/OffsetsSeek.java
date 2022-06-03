@@ -107,7 +107,7 @@ public abstract class OffsetsSeek {
           .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
 
       this.beginOffsets = this.endOffsets.keySet().stream()
-          .map(p -> Tuples.of(p, allBeginningOffsets.get(new TopicPartition(topic, p))))
+          .map(p -> Tuples.of(p, allBeginningOffsets.get(new TopicPartition(this.topic, p))))
           .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
     }
 

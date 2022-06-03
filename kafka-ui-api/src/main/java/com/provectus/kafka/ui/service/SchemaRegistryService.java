@@ -403,11 +403,11 @@ public class SchemaRegistryService {
 
   private abstract static class Failover<E> {
     private final InternalSchemaRegistry schemaRegistry;
-    private final Supplier<E> failover;
+    private final Supplier<E> failoverSupplier;
 
-    private Failover(InternalSchemaRegistry schemaRegistry, Supplier<E> failover) {
+    private Failover(InternalSchemaRegistry schemaRegistry, Supplier<E> failoverSupplier) {
       this.schemaRegistry = Objects.requireNonNull(schemaRegistry);
-      this.failover = Objects.requireNonNull(failover);
+      this.failoverSupplier = Objects.requireNonNull(failoverSupplier);
     }
 
     abstract E error(Throwable error);
@@ -418,7 +418,7 @@ public class SchemaRegistryService {
           && schemaRegistry.isFailoverAvailable()) {
         var uri = ((WebClientRequestException) error).getUri();
         schemaRegistry.markAsUnavailable(String.format("%s://%s", uri.getScheme(), uri.getAuthority()));
-        return failover.get();
+        return failoverSupplier.get();
       }
       return error(error);
     }

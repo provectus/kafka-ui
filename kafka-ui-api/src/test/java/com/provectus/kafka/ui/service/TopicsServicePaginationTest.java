@@ -41,7 +41,7 @@ class TopicsServicePaginationTest {
   private final ClustersStorage clustersStorage = mock(ClustersStorage.class);
   private final ClusterMapper clusterMapper = new ClusterMapperImpl();
 
-  private final TopicsController topicsController  = new TopicsController(topicsService, clusterMapper);
+  private final TopicsController topicsController = new TopicsController(topicsService, clusterMapper);
 
   private void init(Map<String, InternalTopic> topicsInCache) {
 
@@ -127,7 +127,7 @@ class TopicsServicePaginationTest {
 
     assertThat(topics.getBody().getPageCount()).isEqualTo(4);
     assertThat(topics.getBody().getTopics()).hasSize(1);
-    assertThat(topics.getBody().getTopics().get(0).getName().equals("99"));
+    assertThat(topics.getBody().getTopics().get(0).getName()).isEqualTo("99");
   }
 
   @Test

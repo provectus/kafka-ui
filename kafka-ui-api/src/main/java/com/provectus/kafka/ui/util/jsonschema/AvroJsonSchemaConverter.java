@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.util.jsonschema;
 
+import com.provectus.kafka.ui.exception.KafkaUiRuntimeException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,12 +56,12 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
           if (schema.getType().equals(Schema.Type.MAP)) {
             return new MapFieldSchema(convertSchema(name, schema.getValueType(), definitions, ref));
           } else {
-            return createObjectSchema(name, schema, definitions, ref);
+            return createObjectSchema(schema, definitions, ref);
           }
         case ARRAY:
           return createArraySchema(name, schema, definitions);
         default:
-          throw new RuntimeException("Unknown type");
+          throw new KafkaUiRuntimeException("Unknown json type");
       }
     } else {
       return createUnionSchema(schema, definitions);
@@ -97,7 +98,7 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
     }
   }
 
-  private FieldSchema createObjectSchema(String name, Schema schema,
+  private FieldSchema createObjectSchema(Schema schema,
                                          Map<String, FieldSchema> definitions, boolean ref) {
     final Map<String, FieldSchema> fields = schema.getFields().stream()
         .map(f -> Tuples.of(f.name(), convertField(f, definitions)))

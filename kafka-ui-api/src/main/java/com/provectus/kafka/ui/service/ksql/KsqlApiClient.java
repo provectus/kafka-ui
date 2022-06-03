@@ -35,6 +35,7 @@ public class KsqlApiClient {
       DefineVariableContext.class,
       UndefineVariableContext.class
   );
+  private static final String MEDIA_TYPE = "application/vnd.ksql.v1+json";
 
   @Builder
   @Value
@@ -64,15 +65,14 @@ public class KsqlApiClient {
 
   private WebClient webClient() {
     var exchangeStrategies = ExchangeStrategies.builder()
-        .codecs(configurer -> {
+        .codecs(configurer ->
           configurer.customCodecs()
               .register(
                   new Jackson2JsonDecoder(
                       new ObjectMapper(),
                       // some ksqldb versions do not set content-type header in response,
                       // but we still need to use JsonDecoder for it
-                      MimeTypeUtils.APPLICATION_OCTET_STREAM));
-        })
+                      MimeTypeUtils.APPLICATION_OCTET_STREAM)))
         .build();
     return WebClient.builder()
         .exchangeStrategies(exchangeStrategies)
@@ -91,8 +91,8 @@ public class KsqlApiClient {
     return webClient()
         .post()
         .uri(baseKsqlDbUri() + "/query")
-        .accept(MediaType.parseMediaType("application/vnd.ksql.v1+json"))
-        .contentType(MediaType.parseMediaType("application/vnd.ksql.v1+json"))
+        .accept(MediaType.parseMediaType(MEDIA_TYPE))
+        .contentType(MediaType.parseMediaType(MEDIA_TYPE))
         .bodyValue(ksqlRequest(ksql, streamProperties))
         .retrieve()
         .bodyToFlux(JsonNode.class)
@@ -121,7 +121,7 @@ public class KsqlApiClient {
     return webClient()
         .post()
         .uri(baseKsqlDbUri() + "/ksql")
-        .accept(MediaType.parseMediaType("application/vnd.ksql.v1+json"))
+        .accept(MediaType.parseMediaType(MEDIA_TYPE))
         .contentType(MediaType.parseMediaType("application/json"))
         .bodyValue(ksqlRequest(ksql, streamProperties))
         .exchangeToFlux(
@@ -154,7 +154,7 @@ public class KsqlApiClient {
     if (statements.size() > 1) {
       return errorTableFlux("Only single statement supported now");
     }
-    if (statements.size() == 0) {
+    if (statements.isEmpty()) {
       return errorTableFlux("No valid ksql statement found");
     }
     if (isUnsupportedStatementType(statements.get(0))) {

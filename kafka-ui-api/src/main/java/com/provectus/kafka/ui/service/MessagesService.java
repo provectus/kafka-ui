@@ -92,8 +92,7 @@ public class MessagesService {
   private Mono<RecordMetadata> sendMessageImpl(KafkaCluster cluster,
                                                TopicDescription topicDescription,
                                                CreateTopicMessageDTO msg) {
-    if (msg.getPartition() != null
-        && msg.getPartition() > topicDescription.partitions().size() - 1) {
+    if (msg.getPartition() > topicDescription.partitions().size() - 1) {
       return Mono.error(new ValidationException("Invalid partition"));
     }
     RecordSerDe serde =
@@ -127,7 +126,7 @@ public class MessagesService {
         }
       });
       return Mono.fromFuture(cf);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       return Mono.error(e);
     }
   }

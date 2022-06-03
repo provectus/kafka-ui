@@ -14,9 +14,9 @@ import org.apache.avro.generic.GenericData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class AvroJsonSchemaConverterTest {
+class AvroJsonSchemaConverterTest {
   @Test
-  public void avroConvertTest() throws URISyntaxException, JsonProcessingException {
+  void avroConvertTest() throws URISyntaxException, JsonProcessingException {
     final AvroJsonSchemaConverter converter = new AvroJsonSchemaConverter();
     URI basePath = new URI("http://example.com/");
 
@@ -109,7 +109,7 @@ public class AvroJsonSchemaConverterTest {
   }
 
   @Test
-  public void testNullableUnions() throws URISyntaxException, IOException, ProcessingException {
+  void testNullableUnions() throws URISyntaxException, IOException, ProcessingException {
     final AvroJsonSchemaConverter converter = new AvroJsonSchemaConverter();
     URI basePath = new URI("http://example.com/");
     final ObjectMapper objectMapper = new ObjectMapper();

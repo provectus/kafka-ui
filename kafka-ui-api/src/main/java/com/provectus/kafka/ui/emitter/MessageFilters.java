@@ -16,7 +16,7 @@ import org.codehaus.groovy.jsr223.GroovyScriptEngineImpl;
 @Slf4j
 public class MessageFilters {
 
-  private static GroovyScriptEngineImpl GROOVY_ENGINE;
+  private static GroovyScriptEngineImpl groovyEngine;
 
   private MessageFilters() {
   }
@@ -76,11 +76,11 @@ public class MessageFilters {
 
   private static synchronized GroovyScriptEngineImpl getGroovyEngine() {
     // it is pretty heavy object, so initializing it on-demand
-    if (GROOVY_ENGINE == null) {
-      GROOVY_ENGINE = (GroovyScriptEngineImpl)
+    if (groovyEngine == null) {
+      groovyEngine = (GroovyScriptEngineImpl)
           new ScriptEngineManager().getEngineByName("groovy");
     }
-    return GROOVY_ENGINE;
+    return groovyEngine;
   }
 
   private static CompiledScript compileScript(String script) {

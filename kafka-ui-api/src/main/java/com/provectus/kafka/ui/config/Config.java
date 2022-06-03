@@ -57,8 +57,8 @@ public class Config {
     return pool;
   }
 
-  private GenericKeyedObjectPoolConfig poolConfig() {
-    final var poolConfig = new GenericKeyedObjectPoolConfig();
+  private GenericKeyedObjectPoolConfig<JMXConnector> poolConfig() {
+    final var poolConfig = new GenericKeyedObjectPoolConfig<JMXConnector>();
     poolConfig.setMaxIdlePerKey(3);
     poolConfig.setMaxTotalPerKey(3);
     return poolConfig;

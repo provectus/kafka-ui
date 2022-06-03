@@ -10,7 +10,6 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MetricDTO;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -204,14 +203,5 @@ public class JmxClusterUtil {
     result.setParams(metric1.getParams());
     result.setValue(value);
     return result;
-  }
-
-  private boolean isWellKnownMetric(MetricDTO metric) {
-    final Optional<String> param =
-        Optional.ofNullable(metric.getParams().get(NAME_METRIC_FIELD)).filter(p ->
-            Arrays.stream(JmxMetricsName.values()).map(JmxMetricsName::getValue)
-                .anyMatch(n -> n.equals(p))
-        );
-    return metric.getCanonicalName().contains(KAFKA_SERVER_PARAM) && param.isPresent();
   }
 }

@@ -118,7 +118,8 @@ public class BackwardRecordEmitter
     var recordsToSend = new ArrayList<ConsumerRecord<Bytes, Bytes>>();
 
     // we use empty polls counting to verify that partition was fully read
-    for (int emptyPolls = 0; recordsToSend.size() < desiredMsgsToPoll && emptyPolls < 3; ) {
+    int emptyPolls = 0;
+    while (recordsToSend.size() < desiredMsgsToPoll && emptyPolls < 3) {
       var polledRecords = poll(sink, consumer, POLL_TIMEOUT);
       log.debug("{} records polled from {}", polledRecords.count(), tp);
 
