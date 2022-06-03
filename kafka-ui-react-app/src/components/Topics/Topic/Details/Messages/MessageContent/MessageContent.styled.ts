@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import * as SEditorViewer from 'components/common/EditorViewer/EditorViewer.styled';
 
 export const Wrapper = styled.tr`
   background-color: ${({ theme }) => theme.topicMetaData.backgroundColor};
@@ -25,8 +26,14 @@ export const ContentBox = styled.div`
   padding: 24px;
   border-radius: 8px 0 0 8px;
   flex-grow: 3;
+  display: flex;
+  flex-direction: column;
   & nav {
     padding-bottom: 16px;
+  }
+
+  ${SEditorViewer.Wrapper} {
+    flex-grow: 1;
   }
 `;
 
