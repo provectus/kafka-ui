@@ -48,6 +48,7 @@ import reactor.core.scheduler.Schedulers;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@SuppressWarnings("squid:S2589")
 public class MessagesService {
   private final AdminClientService adminClientService;
   private final DeserializationService deserializationService;
@@ -92,7 +93,8 @@ public class MessagesService {
   private Mono<RecordMetadata> sendMessageImpl(KafkaCluster cluster,
                                                TopicDescription topicDescription,
                                                CreateTopicMessageDTO msg) {
-    if (msg.getPartition() > topicDescription.partitions().size() - 1) {
+    if (msg.getPartition() != null
+        && msg.getPartition() > topicDescription.partitions().size() - 1) {
       return Mono.error(new ValidationException("Invalid partition"));
     }
     RecordSerDe serde =
