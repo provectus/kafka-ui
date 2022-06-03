@@ -27,42 +27,12 @@
   }
 }
 
-.breadcrumb li {
-  &.is-active > span {
-    padding: 0 0.75em;
-  }
-
-  &:first-child > span {
-    padding-left: 0;
-  }
-}
-
 .section {
   animation: fadein 0.5s;
 }
 
 .select.is-block select {
   width: 100%;
-}
-
-.notification {
-  &.is-light {
-    &.is-primary {
-      background-color: #ebfffc;
-      color: #00947e;
-    }
-
-    &.is-danger {
-      background-color: #feecf0;
-      color: #cc0f35;
-    }
-  }
-}
-
-.is-family-code {
-  font-family: 'Roboto Mono', sans-serif !important;
-  font-size: 0.9rem;
-  line-height: 1.5em;
 }
 
 @keyframes fadein {
@@ -72,20 +42,6 @@
   to {
     opacity: 1;
   }
-}
-
-.level.level-multiline {
-  flex-wrap: wrap;
-  .level-item.is-one-third {
-    flex-basis: 26%;
-  }
-  .level-item.is-one-third:nth-child(n + 4) {
-    margin-top: 10px;
-  }
-}
-
-.is-size-8 {
-  font-size: $size-8;
 }
 
 .tag:not(body) {
