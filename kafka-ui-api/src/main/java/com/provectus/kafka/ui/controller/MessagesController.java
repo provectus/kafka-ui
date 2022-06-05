@@ -4,12 +4,15 @@ import static java.util.stream.Collectors.toMap;
 
 import com.provectus.kafka.ui.api.MessagesApi;
 import com.provectus.kafka.ui.model.*;
+import com.provectus.kafka.ui.service.DeserializationService;
 import com.provectus.kafka.ui.service.MessagesService;
 import com.provectus.kafka.ui.service.TopicsService;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
@@ -32,6 +35,7 @@ public class MessagesController extends AbstractController implements MessagesAp
 
   private final MessagesService messagesService;
   private final TopicsService topicsService;
+  private final DeserializationService deserializationService;
 
   @Override
   public Mono<ResponseEntity<Void>> deleteTopicMessages(
@@ -74,8 +78,9 @@ public class MessagesController extends AbstractController implements MessagesAp
 
   @Override
   public Mono<ResponseEntity<TopicMessageSchemaDTO>> getTopicSchema(
-      String clusterName, String topicName, ServerWebExchange exchange) {
-    return Mono.just(topicsService.getTopicSchema(getCluster(clusterName), topicName))
+      String clusterName, String topicName, @Nullable String keySerde, @Nullable String valueSerde,
+      ServerWebExchange exchange) {
+    return Mono.just(topicsService.getTopicSchema(getCluster(clusterName), topicName, keySerde, valueSerde))
         .map(ResponseEntity::ok);
   }
 
@@ -115,16 +120,16 @@ public class MessagesController extends AbstractController implements MessagesAp
   @Override
   public Mono<ResponseEntity<Flux<SerdeDescriptionDTO>>> getSerdes(String clusterName,
                                                                    ServerWebExchange exchange) {
-    return null;
+    return Mono.just(
+        ResponseEntity.ok(
+            Flux.fromIterable(
+                deserializationService.getAllSerdes(getCluster(clusterName))
+                    .stream()
+                    .map(s ->
+                        new SerdeDescriptionDTO()
+                            .name(s.getName())
+                            .description(s.description().orElse(null)))
+                    .collect(Collectors.toList()))));
   }
 
-  @Override
-  public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> readMessagesFromPipe(String clusterName, String topicName, String pipeId, ServerWebExchange exchange) {
-    return null;
-  }
-
-  @Override
-  public Mono<ResponseEntity<MessagesPipeDTO>> registerMessagesPipe(String clusterName, String topicName, Mono<MessagesRequestDTO> messagesRequestDTO, ServerWebExchange exchange) {
-    return null;
-  }
 }

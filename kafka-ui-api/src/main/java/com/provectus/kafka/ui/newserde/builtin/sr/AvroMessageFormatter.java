@@ -1,11 +1,11 @@
-package com.provectus.kafka.ui.serde.schemaregistry;
+package com.provectus.kafka.ui.newserde.builtin.sr;
 
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import lombok.SneakyThrows;
 
-public class AvroMessageFormatter implements MessageFormatter {
+class AvroMessageFormatter implements MessageFormatter {
   private final KafkaAvroDeserializer avroDeserializer;
 
   public AvroMessageFormatter(SchemaRegistryClient client) {
@@ -22,8 +22,4 @@ public class AvroMessageFormatter implements MessageFormatter {
     return new String(jsonBytes);
   }
 
-  @Override
-  public MessageFormat getFormat() {
-    return MessageFormat.AVRO;
-  }
 }

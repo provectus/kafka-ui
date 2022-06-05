@@ -140,7 +140,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key("testKey")
+                .keySerde("String")
                 .content("testValue")
+                .valueSerde("String")
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isEqualTo("testKey");
@@ -168,7 +170,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key("123")
+                .keySerde("String")
                 .content("234.56")
+                .valueSerde("String")
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isEqualTo("123");
@@ -182,7 +186,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key(null)
+                .keySerde("String")
                 .content("testValue")
+                .valueSerde("String")
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isNull();
@@ -228,7 +234,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key(AVRO_SCHEMA_1_JSON_RECORD)
+                .keySerde("SchemaRegistry")
                 .content(AVRO_SCHEMA_2_JSON_RECORD)
+                .valueSerde("SchemaRegistry")
         )
         .doAssert(polled -> {
           assertJsonEqual(polled.getKey(), AVRO_SCHEMA_1_JSON_RECORD);
@@ -303,8 +311,10 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withValueSchema(AVRO_SCHEMA_2)
         .withMsgToSend(
             new CreateTopicMessageDTO()
+                .keySerde("String")
                 // f2 has type object instead of string
                 .content("{ \"f1\": 111, \"f2\": {} }")
+                .valueSerde("SchemaRegistry")
         )
         .assertSendThrowsException();
   }
@@ -333,7 +343,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key(AVRO_SCHEMA_1_JSON_RECORD)
+                .keySerde("SchemaRegistry")
                 .content(PROTOBUF_SCHEMA_JSON_RECORD)
+                .valueSerde("SchemaRegistry")
         )
         .doAssert(polled -> {
           assertJsonEqual(polled.getKey(), AVRO_SCHEMA_1_JSON_RECORD);
@@ -514,10 +526,6 @@ public class SendAndReadTests extends AbstractIntegrationTest {
       if (valueSchema != null) {
         schemaRegistry.schemaRegistryClient().register(topic + "-value", valueSchema);
       }
-
-      // need to update to see new topic & schemas
-      clustersMetricsScheduler.updateMetrics();
-
       return topic;
     }
 
@@ -547,7 +555,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
                 ),
                 null,
                 null,
-                1
+                1,
+                msgToSend.getKeySerde().get(),
+                msgToSend.getValueSerde().get()
             ).filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
             .map(TopicMessageEventDTO::getMessage)
             .blockLast(Duration.ofSeconds(5000));

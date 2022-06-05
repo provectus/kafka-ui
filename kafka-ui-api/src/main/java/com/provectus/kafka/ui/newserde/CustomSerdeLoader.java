@@ -97,12 +97,18 @@ class CustomSerdeLoader {
   // search is propagated to parent (this is opposite to how usual classloaders work)
   private static class ChildFirstClassloader extends URLClassLoader {
 
+    private static final String JAVA_PACKAGE_PREFIX = "java.";
+
     ChildFirstClassloader(URL[] urls, ClassLoader parent) {
       super(urls, parent);
     }
 
     @Override
     protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+      // first check whether it's a system class, delegate to the system loader
+      if (name.startsWith(JAVA_PACKAGE_PREFIX)) {
+        return findSystemClass(name);
+      }
       Class<?> loadedClass = findLoadedClass(name);
       if (loadedClass == null) {
         try {

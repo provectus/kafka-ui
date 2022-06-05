@@ -3,8 +3,7 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicMessagePhaseDTO;
-import com.provectus.kafka.ui.serde.RecordSerDe;
-import com.provectus.kafka.ui.util.ClusterUtil;
+import com.provectus.kafka.ui.newserde.ConsumerRecordDeserializer;
 import java.time.Duration;
 import java.time.Instant;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -16,10 +15,10 @@ import reactor.core.publisher.FluxSink;
 public abstract class AbstractEmitter {
   private static final Duration DEFAULT_POLL_TIMEOUT_MS = Duration.ofMillis(1000L);
 
-  private final RecordSerDe recordDeserializer;
+  private final ConsumerRecordDeserializer recordDeserializer;
   private final ConsumingStats consumingStats = new ConsumingStats();
 
-  protected AbstractEmitter(RecordSerDe recordDeserializer) {
+  protected AbstractEmitter(ConsumerRecordDeserializer recordDeserializer) {
     this.recordDeserializer = recordDeserializer;
   }
 
@@ -39,7 +38,7 @@ public abstract class AbstractEmitter {
 
   protected void sendMessage(FluxSink<TopicMessageEventDTO> sink,
                                                        ConsumerRecord<Bytes, Bytes> msg) {
-    final TopicMessageDTO topicMessage = ClusterUtil.mapToTopicMessage(msg, recordDeserializer);
+    final TopicMessageDTO topicMessage = recordDeserializer.deserialize(msg);
     sink.next(
         new TopicMessageEventDTO()
             .type(TopicMessageEventDTO.TypeEnum.MESSAGE)

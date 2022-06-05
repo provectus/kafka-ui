@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.config;
 
 import java.util.*;
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -58,6 +59,7 @@ public class ClustersProperties {
   @Data
   public static class SerdeConfig {
     String name;
+    @NotNull
     String className;
     String location;
     Map<String, Object> properties = new HashMap<>();

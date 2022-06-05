@@ -32,21 +32,28 @@ public final class DeserializeResult {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
     DeserializeResult that = (DeserializeResult) o;
-
-    if (!result.equals(that.result)) return false;
-    if (type != that.type) return false;
+    if (!result.equals(that.result)) {
+      return false;
+    }
+    if (type != that.type) {
+      return false;
+    }
     return additionalProperties.equals(that.additionalProperties);
   }
 
   @Override
   public int hashCode() {
-    int result1 = result.hashCode();
-    result1 = 31 * result1 + type.hashCode();
-    result1 = 31 * result1 + additionalProperties.hashCode();
-    return result1;
+    int result = this.result.hashCode();
+    result = 31 * result + type.hashCode();
+    result = 31 * result + additionalProperties.hashCode();
+    return result;
   }
 }

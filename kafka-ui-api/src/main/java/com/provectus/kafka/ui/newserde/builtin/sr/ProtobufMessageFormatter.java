@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.serde.schemaregistry;
+package com.provectus.kafka.ui.newserde.builtin.sr;
 
 import com.google.protobuf.Message;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
@@ -6,7 +6,7 @@ import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaUtils;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer;
 import lombok.SneakyThrows;
 
-public class ProtobufMessageFormatter implements MessageFormatter {
+class ProtobufMessageFormatter implements MessageFormatter {
   private final KafkaProtobufDeserializer<?> protobufDeserializer;
 
   public ProtobufMessageFormatter(SchemaRegistryClient client) {
@@ -21,8 +21,4 @@ public class ProtobufMessageFormatter implements MessageFormatter {
     return new String(jsonBytes);
   }
 
-  @Override
-  public MessageFormat getFormat() {
-    return MessageFormat.PROTOBUF;
-  }
 }

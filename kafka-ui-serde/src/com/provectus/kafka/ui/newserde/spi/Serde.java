@@ -20,20 +20,20 @@ public interface Serde {
 
   Optional<String> description();
 
-  Optional<SchemaDescription> getSchema(String topic, Type isKey);
+  Optional<SchemaDescription> getSchema(String topic, Type type);
 
-  boolean canDeserialize(String topic, Type isKey);
+  boolean canDeserialize(String topic, Type type);
 
-  boolean canSerialize(String topic, Type isKey);
+  boolean canSerialize(String topic, Type type);
 
   //----------------------------------------------------------------------------
 
-  Serializer serializer(String topic, Type isKey);
+  Serializer serializer(String topic, Type type);
 
-  Deserializer deserializer(String topic, Type isKey);
+  Deserializer deserializer(String topic, Type type);
 
   interface Serializer {
-    byte[] serialize(String topic, Headers headers, String input);
+    byte[] serialize(String topic, String input);
   }
 
   interface Deserializer {

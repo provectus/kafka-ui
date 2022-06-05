@@ -545,65 +545,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/SerdeDescription'
 
-  /api/clusters/{clusterName}/topics/{topicName}/messages/v2:
-    post:
-      tags:
-        - Messages
-      summary: registerMessagesPipe
-      operationId: registerMessagesPipe
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: topicName
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MessagesRequest'
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessagesPipe'
-    get:
-      tags:
-        - Messages
-      summary: readMessagesFromPipe
-      operationId: readMessagesFromPipe
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: topicName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: pipeId
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            text/event-stream:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TopicMessageEvent'
 
   /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
@@ -736,6 +677,16 @@ paths:
         - name: topicName
           in: path
           required: true
+          schema:
+            type: string
+        - name: keySerde
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: valueSerde
+          in: query
+          required: false
           schema:
             type: string
       responses:
@@ -1734,68 +1685,6 @@ components:
           type: string
         description:
           type: string
-        isCustom:
-          type: boolean
-
-    MessagesRequest:
-      type: object
-      properties:
-        seekType:
-          $ref: "#/components/schemas/SeekType"
-        seekTo:
-          type: array
-          items:
-            $ref: "#/components/schemas/SeekTo"
-        limit:
-          type: integer
-        filters:
-          $ref: "#/components/schemas/FiltersExpression"
-        keySerde:
-          type: string
-        valueSerde:
-          type: string
-
-    FiltersExpression:
-      type: object
-      required: [ expression, filters ]
-      properties:
-        expression: # think about better name
-          type: string
-          enum:
-            - OR
-            - AND
-          default: OR
-        filters:
-          type: array
-          items:
-            type: object
-            required: [ type, query ]
-            properties:
-              type:
-                $ref: "#/components/schemas/MessageFilterType"
-              query:
-                type: string
-
-    SeekTo:
-      type: object
-      description: "timestamp & offset fields should be filled exclusively"
-      required: [ partition ]
-      properties:
-        partition:
-          type: integer
-        timestamp:
-          type: integer
-          format: int64
-        offset:
-          type: integer
-          format: int64
-
-    MessagesPipe:
-      type: object
-      required: [ id ]
-      properties:
-        id:
-          type: string
 
     ErrorResponse:
       description: Error object that will be returned with 4XX and 5XX HTTP statuses
@@ -2247,6 +2136,7 @@ components:
         name:
           type: string
         source:
+          deprecated: true
           type: string
           enum:
             - SOURCE_SCHEMA_REGISTRY
@@ -2254,10 +2144,12 @@ components:
             - SOURCE_UNKNOWN
         schema:
           type: string
+        additionalProperties:
+          type: object
+          additionalProperties:
+            type: object
       required:
         - name
-        - source
-        - schema
 
     TopicMessageEvent:
       type: object
@@ -2340,6 +2232,10 @@ components:
         headersSize:
           type: integer
           format: int64
+        keySerde:
+          type: string
+        valueSerde:
+          type: string
         keyDeserializeProperties:
           additionalProperties:
             type: object

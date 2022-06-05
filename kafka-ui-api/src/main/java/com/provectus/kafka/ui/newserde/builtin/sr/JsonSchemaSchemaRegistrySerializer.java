@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.serde.schemaregistry;
+package com.provectus.kafka.ui.newserde.builtin.sr;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -8,22 +8,23 @@ import com.provectus.kafka.ui.util.annotations.KafkaClientInternalsDependant;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
-import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.kafka.schemaregistry.json.JsonSchema;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer;
-import java.io.IOException;
+
 import java.util.Map;
+
+import lombok.SneakyThrows;
 import org.apache.kafka.common.serialization.Serializer;
 
-public class JsonSchemaMessageReader extends MessageReader<JsonNode> {
+class JsonSchemaSchemaRegistrySerializer extends SchemaRegistrySerializer<JsonNode> {
 
   private static final ObjectMapper MAPPER = new ObjectMapper();
 
-  public JsonSchemaMessageReader(String topic,
-                                 boolean isKey,
-                                 SchemaRegistryClient client,
-                                 SchemaMetadata schema) throws IOException, RestClientException {
+  public JsonSchemaSchemaRegistrySerializer(String topic,
+                                            boolean isKey,
+                                            SchemaRegistryClient client,
+                                            SchemaMetadata schema) {
     super(topic, isKey, client, schema);
   }
 
@@ -42,7 +43,7 @@ public class JsonSchemaMessageReader extends MessageReader<JsonNode> {
   }
 
   @Override
-  protected JsonNode read(String value, ParsedSchema schema) {
+  protected JsonNode serialize(String value, ParsedSchema schema) {
     try {
       JsonNode json = MAPPER.readTree(value);
       ((JsonSchema) schema).validate(json);

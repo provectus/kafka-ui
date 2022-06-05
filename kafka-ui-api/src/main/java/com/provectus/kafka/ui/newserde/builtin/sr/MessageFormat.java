@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.serde.schemaregistry;
+package com.provectus.kafka.ui.newserde.builtin.sr;
 
 import java.util.Optional;
 import org.apache.commons.lang3.EnumUtils;

@@ -1,14 +1,14 @@
-package com.provectus.kafka.ui.newserde.impl;
+package com.provectus.kafka.ui.newserde.builtin;
 
 import com.provectus.kafka.ui.newserde.spi.DeserializeResult;
 import com.provectus.kafka.ui.newserde.spi.PropertyResolver;
 import com.provectus.kafka.ui.newserde.spi.SchemaDescription;
-import com.provectus.kafka.ui.newserde.spi.Serde;
+
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Optional;
 
-public class StringSerde implements Serde {
+public class StringSerde implements BuiltInSerde {
 
   private Charset keyEncoding;
   private Charset valueEncoding;
@@ -33,31 +33,33 @@ public class StringSerde implements Serde {
   }
 
   @Override
-  public Optional<SchemaDescription> getSchema(String topic, boolean isKey) {
+  public Optional<SchemaDescription> getSchema(String topic, Type type) {
     return Optional.empty();
   }
 
   @Override
-  public boolean canDeserialize(String topic, boolean isKey) {
+  public boolean canDeserialize(String topic, Type type) {
     return true;
   }
 
   @Override
-  public boolean canSerialize(String topic, boolean isKey) {
+  public boolean canSerialize(String topic, Type type) {
     return true;
   }
 
   @Override
-  public Serializer serializer(String topic, boolean isKey) {
-    return (topic1, headers, input) -> input.getBytes(isKey ? keyEncoding : valueEncoding);
+  public Serializer serializer(String topic, Type type) {
+    return (topic1, input) -> input.getBytes(type == Type.KEY ? keyEncoding : valueEncoding);
   }
 
   @Override
-  public Deserializer deserializer(String topic, boolean isKey) {
+  public Deserializer deserializer(String topic, Type type) {
     return (topic1, headers, data) ->
         new DeserializeResult(
-            new String(data, isKey ? keyEncoding : valueEncoding),
+            new String(data, type == Type.KEY ? keyEncoding : valueEncoding),
+            DeserializeResult.Type.STRING,
             Map.of()
         );
   }
+
 }

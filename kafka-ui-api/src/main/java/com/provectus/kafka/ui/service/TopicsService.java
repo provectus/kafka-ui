@@ -22,7 +22,6 @@ import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.model.TopicUpdateDTO;
-import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.time.Duration;
 import java.util.Collection;
@@ -46,6 +45,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
+
+import javax.annotation.Nullable;
 
 @Service
 @RequiredArgsConstructor
@@ -418,13 +419,14 @@ public class TopicsService {
     }
   }
 
-  public TopicMessageSchemaDTO getTopicSchema(KafkaCluster cluster, String topicName) {
+  public TopicMessageSchemaDTO getTopicSchema(KafkaCluster cluster,
+                                              String topicName,
+                                              @Nullable String keySerde,
+                                              @Nullable String valueSerde) {
     if (!metricsCache.get(cluster).getTopicDescriptions().containsKey(topicName)) {
       throw new TopicNotFoundException();
     }
-    return deserializationService
-        .getRecordDeserializerForCluster(cluster)
-        .getTopicSchema(topicName);
+    return deserializationService.schemaForTopic(cluster, topicName, keySerde, valueSerde);
   }
 
   public Mono<InternalTopic> cloneTopic(
