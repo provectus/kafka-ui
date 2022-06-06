@@ -585,6 +585,18 @@ describe('topics Slice', () => {
 
         expect(getTypeAndPayload(store)).toEqual([
           { type: recreateTopic.pending.type },
+          { type: showSuccessAlert.pending.type },
+          {
+            type: alertAdded.type,
+            payload: {
+              id: 'message-topic-local',
+              title: '',
+              type: 'success',
+              createdAt: global.Date.now(),
+              message: 'Topic successfully recreated!',
+            },
+          },
+          { type: showSuccessAlert.fulfilled.type },
           {
             type: recreateTopic.fulfilled.type,
             payload: { [topicName]: { ...recreateResponse } },
