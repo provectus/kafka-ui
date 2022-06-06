@@ -220,9 +220,17 @@ export const deleteTopic = createAsyncThunk<
 export const recreateTopic = createAsyncThunk<
   { topic: Topic },
   RecreateTopicRequest
->('topic/recreateTopic', async (payload, { rejectWithValue }) => {
+>('topic/recreateTopic', async (payload, { rejectWithValue, dispatch }) => {
   try {
+    const { topicName, clusterName } = payload;
     const topic = await topicsApiClient.recreateTopic(payload);
+    dispatch(
+      showSuccessAlert({
+        id: `message-${topicName}-${clusterName}`,
+        message: 'Topic successfully recreated!',
+      })
+    );
+
     return { topic };
   } catch (err) {
     return rejectWithValue(await getResponse(err as Response));
@@ -313,6 +321,7 @@ export const deleteTopics = createAsyncThunk<
     topicNames.forEach((topicName) => {
       dispatch(deleteTopic({ clusterName, topicName }));
     });
+    dispatch(fetchTopicsList({ clusterName }));
 
     return undefined;
   } catch (err) {
