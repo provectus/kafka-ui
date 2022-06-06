@@ -63,13 +63,24 @@ const renderComponent = async () => {
 // const renderAndSubmitData = async (error: string[] = []) => {
 //   await renderComponent();
 //   expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
-//   await act(() => {
-//     userEvent.click(screen.getByLabelText('Partition'));
+//   act(() => {
+//     userEvent.click(screen.getByRole('combobox'));
+//   });
+//   act(() => {
+//     userEvent.click(screen.getByRole('option'));
 //   });
 //   await act(() => {
-//     userEvent.click(screen.getAllByRole('option')[1]);
+//     userEvent.type(screen.getAllByRole('textbox')[0], 'test');
+//     expect(screen.getAllByRole('textbox')[0]).toHaveTextContent('foo');
 //   });
+//
 //   await act(() => {
+//     expect(screen.getAllByRole('textbox')[0]).toHaveValue('foo');
+//   });
+//   expect(screen.getByText('Send')).toBeEnabled();
+//   expect(screen.getByText('Send')).toBeEnabled();
+//
+//   act(() => {
 //     (validateMessage as Mock).mockImplementation(() => error);
 //     userEvent.click(screen.getByText('Send'));
 //   });
@@ -107,42 +118,42 @@ describe('SendMessage', () => {
     expect(fetchTopicMessageSchemaMock.called()).toBeTruthy();
   });
 
-  describe('when schema is fetched', () => {
-    const url = `/api/clusters/${clusterName}/topics/${topicName}/messages`;
-
-    // beforeEach(() => {
-    //   fetchMock.getOnce(
-    //     `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
-    //     testSchema
-    //   );
-    // });
-
-    // it('calls sendTopicMessage on submit', async () => {
-    //   const sendTopicMessageMock = fetchMock.postOnce(url, 200);
-    //   await renderAndSubmitData();
-    //   expect(sendTopicMessageMock.called(url)).toBeTruthy();
-    //   expect(mockNavigate).toHaveBeenLastCalledWith(
-    //     `../${clusterTopicMessagesRelativePath}`
-    //   );
-    // });
-    //
-    // it('should make the sendTopicMessage but most find an error within it', async () => {
-    //   const sendTopicMessageMock = fetchMock.postOnce(url, {
-    //     throws: 'Error',
-    //   });
-    //   await renderAndSubmitData();
-    //   expect(sendTopicMessageMock.called(url)).toBeTruthy();
-    //   expect(screen.getByRole('alert')).toBeInTheDocument();
-    //   expect(mockNavigate).toHaveBeenLastCalledWith(
-    //     `../${clusterTopicMessagesRelativePath}`
-    //   );
-    // });
-    //
-    // it('should check and view validation error message when is not valid', async () => {
-    //   const sendTopicMessageMock = fetchMock.postOnce(url, 200);
-    //   await renderAndSubmitData(['error']);
-    //   expect(sendTopicMessageMock.called(url)).toBeFalsy();
-    //   expect(mockNavigate).not.toHaveBeenCalled();
-    // });
-  });
+  // describe('when schema is fetched', () => {
+  //   const url = `/api/clusters/${clusterName}/topics/${topicName}/messages`;
+  //
+  //   beforeEach(() => {
+  //     fetchMock.getOnce(
+  //       `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
+  //       testSchema
+  //     );
+  //   });
+  //
+  //   it('calls sendTopicMessage on submit', async () => {
+  //     const sendTopicMessageMock = fetchMock.postOnce(url, 200);
+  //     await renderAndSubmitData();
+  //     expect(sendTopicMessageMock.called(url)).toBeTruthy();
+  //     expect(mockNavigate).toHaveBeenLastCalledWith(
+  //       `../${clusterTopicMessagesRelativePath}`
+  //     );
+  //   });
+  //
+  //   it('should make the sendTopicMessage but most find an error within it', async () => {
+  //     const sendTopicMessageMock = fetchMock.postOnce(url, {
+  //       throws: 'Error',
+  //     });
+  //     await renderAndSubmitData();
+  //     expect(sendTopicMessageMock.called(url)).toBeTruthy();
+  //     expect(screen.getByRole('alert')).toBeInTheDocument();
+  //     expect(mockNavigate).toHaveBeenLastCalledWith(
+  //       `../${clusterTopicMessagesRelativePath}`
+  //     );
+  //   });
+  //
+  //   it('should check and view validation error message when is not valid', async () => {
+  //     const sendTopicMessageMock = fetchMock.postOnce(url, 200);
+  //     await renderAndSubmitData(['error']);
+  //     expect(sendTopicMessageMock.called(url)).toBeFalsy();
+  //     expect(mockNavigate).not.toHaveBeenCalled();
+  //   });
+  // });
 });
