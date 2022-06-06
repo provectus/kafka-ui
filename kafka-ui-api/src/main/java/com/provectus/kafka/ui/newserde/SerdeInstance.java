@@ -2,15 +2,15 @@ package com.provectus.kafka.ui.newserde;
 
 import com.provectus.kafka.ui.newserde.spi.SchemaDescription;
 import com.provectus.kafka.ui.newserde.spi.Serde;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SerdeInstance {
 
   @Getter

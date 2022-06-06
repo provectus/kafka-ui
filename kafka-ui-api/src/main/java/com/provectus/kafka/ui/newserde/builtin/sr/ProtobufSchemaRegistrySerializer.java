@@ -13,7 +13,7 @@ import java.util.Map;
 import lombok.SneakyThrows;
 import org.apache.kafka.common.serialization.Serializer;
 
-public class ProtobufSchemaRegistrySerializer extends SchemaRegistrySerializer<Message> {
+class ProtobufSchemaRegistrySerializer extends SchemaRegistrySerializer<Message> {
 
   @SneakyThrows
   public ProtobufSchemaRegistrySerializer(String topic, boolean isKey,

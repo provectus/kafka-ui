@@ -18,6 +18,8 @@ import org.springframework.core.env.StandardEnvironment;
 public class PropertyResolverImpl implements PropertyResolver {
 
   private final Binder binder;
+
+  @Nullable
   private final String prefix;
 
   public static PropertyResolverImpl empty() {
@@ -30,13 +32,13 @@ public class PropertyResolverImpl implements PropertyResolver {
 
   public PropertyResolverImpl(Environment env, @Nullable String prefix) {
     this.binder = Binder.get(env);
-    this.prefix = prefix == null ? "" : prefix;
+    this.prefix = prefix;
   }
 
   private ConfigurationPropertyName targetPropertyName(String key) {
     Preconditions.checkNotNull(key);
     Preconditions.checkState(!key.isBlank());
-    String propertyName = prefix.isEmpty() ? key : prefix + "." + key;
+    String propertyName = prefix == null ? key : prefix + "." + key;
     return ConfigurationPropertyName.adapt(propertyName, '.');
   }
 

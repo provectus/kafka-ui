@@ -59,7 +59,6 @@ public class ClustersProperties {
   @Data
   public static class SerdeConfig {
     String name;
-    @NotNull
     String className;
     String location;
     Map<String, Object> properties = new HashMap<>();

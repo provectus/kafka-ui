@@ -10,7 +10,6 @@ import com.provectus.kafka.ui.newserde.SerdeInstance;
 import com.provectus.kafka.ui.newserde.SerdeRegistry;
 import com.provectus.kafka.ui.newserde.spi.SchemaDescription;
 import com.provectus.kafka.ui.newserde.spi.Serde;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,17 +42,16 @@ public class DeserializationService {
                                                              String topic,
                                                              Serde.Type type,
                                                              @Nullable String serdeName) {
+    // TODO discuss: depending on future serde use (for ser/deser) different serdes can be found
+    // currently we just dont check canSerialize/canDeserialize and just return first serde
+    // that matches topic pattern (or default if it is set)
     var serdeRegistry = serdes.get(cluster);
     if (serdeName != null) {
       var serde = serdeRegistry.serdeForName(serdeName)
           .orElseThrow(() -> new ValidationException(String.format("Serde '%s' not found", serdeName)));
-      if (!serde.canSerialize(topic, type)) {
-        throw new ValidationException(
-            String.format("Serde '%s' can't be applied to '%s' topic %s", serdeName, topic, type));
-      }
       return Optional.of(serde);
     } else {
-      return serdeRegistry.findSerdeForTopic(topic, type);
+      return serdeRegistry.findSerdeFor(topic, type);
     }
   }
 
@@ -75,16 +73,20 @@ public class DeserializationService {
   private SerdeInstance getSerdeForDeserialize(KafkaCluster cluster,
                                                String topic,
                                                Serde.Type type,
-                                               String serdeName) {
+                                               @Nullable String serdeName) {
     var serdeRegistry = serdes.get(cluster);
-    var serde = serdeRegistry.serdeForName(serdeName)
-        .orElseThrow(() -> new ValidationException(
-            String.format("Serde %s not found", serdeName)));
-    if (!serde.canDeserialize(topic, Serde.Type.KEY)) {
-      throw new ValidationException(
-          String.format("Serde %s can't be applied for '%s' topic's %s deserialization", serde, topic, type));
+    if (serdeName != null) {
+      var serde = serdeRegistry.serdeForName(serdeName)
+          .orElseThrow(() -> new ValidationException(String.format("Serde '%s' not found", serdeName)));
+      if (!serde.canDeserialize(topic, type)) {
+        throw new ValidationException(
+            String.format("Serde '%s' can't be applied to '%s' topic %s", serdeName, topic, type));
+      }
+      return serde;
+    } else {
+      return serdeRegistry.findSerdeForDeserialize(topic, type)
+          .orElse(serdeRegistry.getFallbackSerde());
     }
-    return serde;
   }
 
   public TopicMessageSchemaDTO schemaForTopic(KafkaCluster cluster,
@@ -130,14 +132,14 @@ public class DeserializationService {
 
   public ConsumerRecordDeserializer deserializerFor(KafkaCluster cluster,
                                                     String topic,
-                                                    String keySerdeName,
-                                                    String valueSerdeName) {
+                                                    @Nullable String keySerdeName,
+                                                    @Nullable String valueSerdeName) {
     var keySerde = getSerdeForDeserialize(cluster, topic, Serde.Type.KEY, keySerdeName);
     var valueSerde = getSerdeForDeserialize(cluster, topic, Serde.Type.VALUE, valueSerdeName);
     return new ConsumerRecordDeserializer(
-        keySerdeName,
+        keySerde.getName(),
         keySerde.deserializer(topic, Serde.Type.KEY),
-        valueSerdeName,
+        valueSerde.getName(),
         valueSerde.deserializer(topic, Serde.Type.VALUE),
         serdes.get(cluster).getFallbackSerde().deserializer(topic, Serde.Type.KEY),
         serdes.get(cluster).getFallbackSerde().deserializer(topic, Serde.Type.VALUE)

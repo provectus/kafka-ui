@@ -13,6 +13,7 @@ import com.provectus.kafka.ui.newserde.spi.Serde;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -46,10 +47,29 @@ public class SerdeRegistry {
     var globalPropertiesResolver = new PropertyResolverImpl(env);
     var clusterPropertiesResolver = new PropertyResolverImpl(env, "kafka.clusters." + clusterIndex);
 
-    // initializing built-in serdes
+    // initializing serdes from config
+    ClustersProperties.Cluster clusterProp = clustersProperties.getClusters().get(clusterIndex);
+    if (clusterProp.getSerde() != null) {
+      for (int i = 0; i < clusterProp.getSerde().size(); i++) {
+        var sendeConf = clusterProp.getSerde().get(i);
+        if (serdes.containsKey(sendeConf.getName())) {
+          throw new ValidationException("Multiple serdes with same name: " + sendeConf.getName());
+        }
+        var instance = initSerdeFromConfig(
+            sendeConf,
+            new PropertyResolverImpl(env, "kafka.clusters." + clusterIndex + ".serde." + i + ".properties"),
+            clusterPropertiesResolver,
+            globalPropertiesResolver
+        );
+        serdes.put(sendeConf.getName(), instance);
+      }
+    }
+
+    // initializing built-in serdes if they haven't been already initialized
     BUILT_IN_SERDES.forEach((name, clazz) -> {
       var serde = createSerdeInstance(clazz);
-      if (serde.initOnStartup(clusterPropertiesResolver, globalPropertiesResolver)) {
+      if (!serdes.containsKey(name)
+          && serde.initOnStartup(clusterPropertiesResolver, globalPropertiesResolver)) {
         serde.configure(
             PropertyResolverImpl.empty(),
             clusterPropertiesResolver,
@@ -59,30 +79,9 @@ public class SerdeRegistry {
       }
     });
 
-    // initializing serdes from config
-    ClustersProperties.Cluster clusterProp = clustersProperties.getClusters().get(clusterIndex);
-    if (clusterProp.getSerde() != null) {
-      for (int i = 0; i < clusterProp.getSerde().size(); i++) {
-        var sendeConf = clusterProp.getSerde().get(i);
-        if (BUILT_IN_SERDES.containsKey(sendeConf.getName())) {
-          throw new ValidationException("Custom serde's name should not mach BuiltIn serde's name");
-        }
-        if (serdes.containsKey(sendeConf.getName())) {
-          throw new ValidationException("Multiple serdes with same name: " + sendeConf.getName());
-        }
-        var instance = init(
-            sendeConf,
-            new PropertyResolverImpl(env, "kafka.clusters." + clusterIndex + ".serde." + i),
-            clusterPropertiesResolver,
-            globalPropertiesResolver
-        );
-        serdes.put(sendeConf.getName(), instance);
-      }
-    }
-
     defaultKeySerde = Optional.ofNullable(clusterProp.getDefaultKeySerde())
         .map(name -> Preconditions.checkNotNull(serdes.get(name), "Default key serde not found"))
-        // TODO: discuss this is done for configs backward-compatibility
+        // TODO: discuss: this is done for configs backward-compatibility
         // but current SR, Protobuf serde impls not fill well for this
         .or(() -> Optional.ofNullable(serdes.get("ProtobufFile")))
         .or(() -> Optional.ofNullable(serdes.get("SchemaRegistry")))
@@ -98,15 +97,17 @@ public class SerdeRegistry {
   }
 
   @SneakyThrows
-  private SerdeInstance init(ClustersProperties.SerdeConfig serdeConfig,
-                             PropertyResolver serdeProps,
-                             PropertyResolver clusterProps,
-                             PropertyResolver globalProps) {
+  private SerdeInstance initSerdeFromConfig(ClustersProperties.SerdeConfig serdeConfig,
+                                            PropertyResolver serdeProps,
+                                            PropertyResolver clusterProps,
+                                            PropertyResolver globalProps) {
     String name = serdeConfig.getName();
-    String className = serdeConfig.getClassName();
-    Class<? extends Serde> clazz = (Class<? extends Serde>) Class.forName(className);
     // configuring one of prebuilt serdes with custom params
-    if (BUILT_IN_SERDES.containsValue(clazz)) {
+    if (BUILT_IN_SERDES.containsKey(name)) {
+      if (serdeConfig.getClassName() != null) {
+        throw new ValidationException("className can't be set for built-in serde");
+      }
+      var clazz = BUILT_IN_SERDES.get(name);
       Serde serde = createSerdeInstance(clazz);
       serde.configure(serdeProps, clusterProps, globalProps);
       return new SerdeInstance(
@@ -144,30 +145,43 @@ public class SerdeRegistry {
     );
   }
 
+  @Nullable
   private Pattern nullablePattern(@Nullable String pattern) {
     return pattern == null ? null : Pattern.compile(pattern);
   }
 
-  public Optional<SerdeInstance> findSerdeForTopic(String topic, Serde.Type type) {
-    // iterating over serder in the same order they were added in config
+  // canSerialize()/canDeserialize() checks not applied
+  public Optional<SerdeInstance> findSerdeFor(String topic, Serde.Type type) {
+    return findSerdeByPatternsOrDefault(topic, type, s -> true);
+  }
+
+  // searchs by pattern and applies canDeserialize() check
+  public Optional<SerdeInstance> findSerdeForDeserialize(String topic, Serde.Type type) {
+    return findSerdeByPatternsOrDefault(topic, type, s -> s.canDeserialize(topic, type));
+  }
+
+  private Optional<SerdeInstance> findSerdeByPatternsOrDefault(String topic,
+                                                               Serde.Type type,
+                                                               Predicate<SerdeInstance> additionalCheck) {
+    // iterating over serdes in the same order they were added in config
     for (SerdeInstance serdeInstance : serdes.values()) {
       var pattern = type == Serde.Type.KEY
           ? serdeInstance.topicKeyPattern
           : serdeInstance.topicValuePattern;
       if (pattern != null
           && pattern.matcher(topic).matches()
-          && serdeInstance.canSerialize(topic, type)) {
+          && additionalCheck.test(serdeInstance)) {
         return Optional.of(serdeInstance);
       }
     }
     if (type == Serde.Type.KEY
         && defaultKeySerde != null
-        && defaultKeySerde.canSerialize(topic, type)) {
+        && additionalCheck.test(defaultKeySerde)) {
       return Optional.of(defaultKeySerde);
     }
     if (type == Serde.Type.VALUE
         && defaultValueSerde != null
-        && defaultValueSerde.canSerialize(topic, type)) {
+        && additionalCheck.test(defaultValueSerde)) {
       return Optional.of(defaultValueSerde);
     }
     return Optional.empty();
