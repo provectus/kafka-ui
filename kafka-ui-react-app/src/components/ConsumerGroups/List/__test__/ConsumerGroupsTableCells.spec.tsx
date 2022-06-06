@@ -40,10 +40,7 @@ describe('Consumer Groups Table Cells', () => {
       );
       const linkElement = screen.getByRole('link');
       expect(linkElement).toBeInTheDocument();
-      expect(linkElement).toHaveAttribute(
-        'href',
-        `/consumer-groups/${consumerGroup.groupId}`
-      );
+      expect(linkElement).toHaveAttribute('href', `/${consumerGroup.groupId}`);
     });
   });
 

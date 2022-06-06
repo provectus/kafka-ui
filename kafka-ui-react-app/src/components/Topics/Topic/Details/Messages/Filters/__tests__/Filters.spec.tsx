@@ -4,7 +4,7 @@ import Filters, {
   FiltersProps,
   SeekTypeOptions,
 } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
-import { render } from 'lib/testHelpers';
+import { EventSourceMock, render } from 'lib/testHelpers';
 import { act, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TopicMessagesContext, {
@@ -26,9 +26,6 @@ const renderComponent = (
   render(
     <TopicMessagesContext.Provider value={ctx}>
       <Filters
-        clusterName="test-cluster"
-        topicName="test-topic"
-        partitions={[{ partition: 0, offsetMin: 0, offsetMax: 100 }]}
         meta={{}}
         isFetching={false}
         addMessage={jest.fn()}
@@ -43,6 +40,10 @@ const renderComponent = (
 };
 
 describe('Filters component', () => {
+  Object.defineProperty(window, 'EventSource', {
+    value: EventSourceMock,
+  });
+
   it('shows cancel button while fetching', () => {
     renderComponent({ isFetching: true });
     expect(screen.getByText('Cancel')).toBeInTheDocument();

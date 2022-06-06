@@ -20,6 +20,7 @@ describe('Connect selectors', () => {
       );
       expect(selectors.getConnectors(store.getState())).toEqual([]);
       expect(selectors.getFailedConnectors(store.getState())).toEqual([]);
+      expect(selectors.getFailedTasks(store.getState())).toEqual(0);
       expect(selectors.getIsConnectorFetching(store.getState())).toEqual(false);
       expect(selectors.getConnector(store.getState())).toEqual(null);
       expect(selectors.getConnectorStatus(store.getState())).toEqual(undefined);
@@ -72,6 +73,25 @@ describe('Connect selectors', () => {
         payload: { connectors },
       });
       expect(selectors.getFailedConnectors(store.getState()).length).toEqual(1);
+    });
+
+    it('returns failed tasks', () => {
+      store.dispatch({
+        type: fetchConnectors.fulfilled.type,
+        payload: { connectors },
+      });
+      expect(selectors.getFailedTasks(store.getState())).toEqual(1);
+    });
+
+    it('returns sorted topics', () => {
+      store.dispatch({
+        type: fetchConnectors.fulfilled.type,
+        payload: { connectors },
+      });
+      const sortedTopics = selectors.getSortedTopics(store.getState());
+      if (sortedTopics[0] && sortedTopics[0].length > 1) {
+        expect(sortedTopics[0]).toEqual(['a', 'b', 'c']);
+      }
     });
 
     it('returns connector', () => {

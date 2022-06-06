@@ -2,10 +2,10 @@ import { Td } from 'components/common/table/TableHeaderCell/TableHeaderCell.styl
 import { NavLink } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-export const Link = styled(NavLink).attrs({ activeClassName: 'is-active' })<{
+export const Link = styled(NavLink)<{
   $isInternal?: boolean;
 }>(
-  ({ theme, activeClassName, $isInternal }) => css`
+  ({ theme, $isInternal }) => css`
     color: ${theme.topicsList.color.normal};
     font-weight: 500;
     padding-left: ${$isInternal ? '5px' : 0};
@@ -15,7 +15,7 @@ export const Link = styled(NavLink).attrs({ activeClassName: 'is-active' })<{
       color: ${theme.topicsList.color.hover};
     }
 
-    &.${activeClassName} {
+    &.active {
       background-color: ${theme.topicsList.backgroundColor.active};
       color: ${theme.topicsList.color.active};
     }

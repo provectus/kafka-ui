@@ -1,40 +1,50 @@
-import Editor from 'components/common/Editor/Editor';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router-dom';
-import { clusterTopicMessagesPath } from 'lib/paths';
+import { useNavigate } from 'react-router-dom';
+import {
+  clusterTopicMessagesRelativePath,
+  RouteParamsClusterTopic,
+} from 'lib/paths';
 import jsf from 'json-schema-faker';
-import { fetchTopicMessageSchema, messagesApiClient } from 'redux/actions';
+import { messagesApiClient } from 'redux/reducers/topicMessages/topicMessagesSlice';
+import {
+  fetchTopicMessageSchema,
+  fetchTopicDetails,
+} from 'redux/reducers/topics/topicsSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { now } from 'lodash';
 import { Button } from 'components/common/Button/Button';
-import { ClusterName, TopicName } from 'redux/interfaces';
+import Editor from 'components/common/Editor/Editor';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 import {
   getMessageSchemaByTopicName,
   getPartitionsByTopicName,
   getTopicMessageSchemaFetched,
 } from 'redux/reducers/topics/selectors';
+import Select, { SelectOption } from 'components/common/Select/Select';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import validateMessage from './validateMessage';
 import * as S from './SendMessage.styled';
 
-interface RouterParams {
-  clusterName: ClusterName;
-  topicName: TopicName;
-}
+type FieldValues = Partial<{
+  key: string;
+  content: string;
+  headers: string;
+  partition: number | string;
+}>;
 
 const SendMessage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { clusterName, topicName } = useParams<RouterParams>();
-  const history = useHistory();
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+  const navigate = useNavigate();
 
   jsf.option('fillProperties', false);
   jsf.option('alwaysFakeOptionals', true);
 
   React.useEffect(() => {
-    dispatch(fetchTopicMessageSchema(clusterName, topicName));
+    dispatch(fetchTopicMessageSchema({ clusterName, topicName }));
   }, [clusterName, dispatch, topicName]);
 
   const messageSchema = useAppSelector((state) =>
@@ -44,6 +54,10 @@ const SendMessage: React.FC = () => {
     getPartitionsByTopicName(state, topicName)
   );
   const schemaIsFetched = useAppSelector(getTopicMessageSchemaFetched);
+  const selectPartitionOptions: Array<SelectOption> = partitions.map((p) => {
+    const value = String(p.partition);
+    return { value, label: value };
+  });
 
   const keyDefaultValue = React.useMemo(() => {
     if (!schemaIsFetched || !messageSchema) {
@@ -68,12 +82,11 @@ const SendMessage: React.FC = () => {
   }, [messageSchema, schemaIsFetched]);
 
   const {
-    register,
     handleSubmit,
     formState: { isSubmitting, isDirty },
     control,
     reset,
-  } = useForm({
+  } = useForm<FieldValues>({
     mode: 'onChange',
     defaultValues: {
       key: keyDefaultValue,
@@ -98,8 +111,14 @@ const SendMessage: React.FC = () => {
   }) => {
     if (messageSchema) {
       const { partition, key, content } = data;
-      const headers = data.headers ? JSON.parse(data.headers) : undefined;
       const errors = validateMessage(key, content, messageSchema);
+      if (data.headers) {
+        try {
+          JSON.parse(data.headers);
+        } catch (error) {
+          errors.push('Wrong header format');
+        }
+      }
       if (errors.length > 0) {
         const errorsHtml = errors.map((e) => `<li>${e}</li>`).join('');
         dispatch(
@@ -113,7 +132,7 @@ const SendMessage: React.FC = () => {
         );
         return;
       }
-
+      const headers = data.headers ? JSON.parse(data.headers) : undefined;
       try {
         await messagesApiClient.sendTopicMessages({
           clusterName,
@@ -125,6 +144,7 @@ const SendMessage: React.FC = () => {
             partition,
           },
         });
+        dispatch(fetchTopicDetails({ clusterName, topicName }));
       } catch (e) {
         dispatch(
           alertAdded({
@@ -136,7 +156,7 @@ const SendMessage: React.FC = () => {
           })
         );
       }
-      history.push(clusterTopicMessagesPath(clusterName, topicName));
+      navigate(`../${clusterTopicMessagesRelativePath}`);
     }
   };
 
@@ -147,24 +167,30 @@ const SendMessage: React.FC = () => {
     <S.Wrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="columns">
-          <div className="column is-one-third">
-            <label className="label" htmlFor="select">
+          <div>
+            <label
+              className="label"
+              id="selectPartitionOptions"
+              htmlFor="selectPartitionOptions"
+            >
               Partition
             </label>
-            <div className="select is-block">
-              <select
-                id="select"
-                defaultValue={partitions[0].partition}
-                disabled={isSubmitting}
-                {...register('partition')}
-              >
-                {partitions.map((partition) => (
-                  <option key={partition.partition} value={partition.partition}>
-                    {partition.partition}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Controller
+              control={control}
+              name="partition"
+              defaultValue={selectPartitionOptions[0].value}
+              render={({ field: { name, onChange } }) => (
+                <Select
+                  id="selectPartitionOptions"
+                  aria-labelledby="selectPartitionOptions"
+                  name={name}
+                  onChange={onChange}
+                  minWidth="100%"
+                  options={selectPartitionOptions}
+                  value={selectPartitionOptions[0].value}
+                />
+              )}
+            />
           </div>
         </div>
 

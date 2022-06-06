@@ -41,7 +41,7 @@ describe('Button', () => {
   });
 
   it('renders link with large primary button inside', () => {
-    render(<Button isLink to="/my-link" buttonType="primary" buttonSize="L" />);
+    render(<Button to="/my-link" buttonType="primary" buttonSize="L" />);
     expect(screen.getByRole('link')).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeInTheDocument();
     expect(screen.getByRole('button')).toHaveStyleRule(
