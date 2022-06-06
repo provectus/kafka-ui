@@ -313,6 +313,7 @@ export const deleteTopics = createAsyncThunk<
     topicNames.forEach((topicName) => {
       dispatch(deleteTopic({ clusterName, topicName }));
     });
+    dispatch(fetchTopicsList({ clusterName }));
 
     return undefined;
   } catch (err) {
