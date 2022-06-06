@@ -5,10 +5,7 @@ import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import io.qameta.allure.Issue;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 public class TopicTests extends BaseTest {
 
@@ -55,6 +52,7 @@ public class TopicTests extends BaseTest {
                 .topicIsNotVisible(NEW_TOPIC);
     }
 
+    @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
     @SneakyThrows
     @DisplayName("should update a topic")
     @Issue("1500")
