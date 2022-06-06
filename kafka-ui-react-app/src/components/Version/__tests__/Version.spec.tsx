@@ -9,14 +9,8 @@ const commit = '123sdf34';
 describe('Version', () => {
   const setupComponent = (props: VesionProps) => render(<Version {...props} />);
 
-  it('renders', () => {
-    setupComponent({ tag });
-    expect(screen.getByText(tag)).toBeInTheDocument();
-  });
-
-  it('shows current tag and commit', () => {
+  it('shows current commit', () => {
     setupComponent({ tag, commit });
-    expect(screen.getByText(tag)).toBeInTheDocument();
     expect(screen.getByText(commit)).toBeInTheDocument();
   });
 });

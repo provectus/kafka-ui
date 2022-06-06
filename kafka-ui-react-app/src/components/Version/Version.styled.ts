@@ -13,14 +13,6 @@ const textStyle = css`
   line-height: 16px;
 `;
 
-export const CurrentVersion = styled.span(
-  ({ theme }) => css`
-    ${textStyle}
-    color: ${theme.version.currentVersion.color};
-    margin-right: 0.25rem;
-  `
-);
-
 export const OutdatedWarning = styled.span`
   ${textStyle}
 `;
@@ -28,7 +20,7 @@ export const OutdatedWarning = styled.span`
 export const SymbolWrapper = styled.span(
   ({ theme }) => css`
     ${textStyle}
-    color: ${theme.version.symbolWrapper.color};
+    color: ${theme.version.currentVersion.color};
   `
 );
 

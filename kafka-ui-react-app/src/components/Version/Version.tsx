@@ -31,8 +31,6 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
   const { outdated, latestTag } = latestVersionInfo;
   return (
     <S.Wrapper>
-      <S.CurrentVersion>{tag}</S.CurrentVersion>
-
       {outdated && (
         <S.OutdatedWarning
           title={`Your app version is outdated. Current latest version is ${latestTag}`}
@@ -42,17 +40,13 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
       )}
 
       {commit && (
-        <>
-          <S.SymbolWrapper>&#40;</S.SymbolWrapper>
-          <S.CurrentCommitLink
-            title="Current commit"
-            target="__blank"
-            href={gitCommitPath(commit)}
-          >
-            {commit}
-          </S.CurrentCommitLink>
-          <S.SymbolWrapper>&#41;</S.SymbolWrapper>
-        </>
+        <S.CurrentCommitLink
+          title="Current commit"
+          target="__blank"
+          href={gitCommitPath(commit)}
+        >
+          {commit}
+        </S.CurrentCommitLink>
       )}
     </S.Wrapper>
   );
