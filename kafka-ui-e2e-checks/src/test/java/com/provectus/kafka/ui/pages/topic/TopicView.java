@@ -35,8 +35,6 @@ public class TopicView {
     public TopicCreateEditSettingsView openEditSettings() {
         dotMenuHeader.click();
         $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() +"']").click();
-       /* BrowserUtils.javaExecutorClick(driver,
-                driver.findElement(By.xpath("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() +"']")));*/
         return new TopicCreateEditSettingsView();
     }
 
