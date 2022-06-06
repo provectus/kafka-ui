@@ -26,32 +26,37 @@ const InfoModal: React.FC<InfoModalProps> = ({ toggleIsOpen }) => {
       </S.InfoParagraph>
       <ol aria-label="info-list">
         <S.ListItem>
-          `keyAsText != null && keyAsText ~&quot;([Gg])roovy&quot;` - regex for
-          key as a string
+          <code>keyAsText != null && keyAsText ~&quot;([Gg])roovy&quot;</code> -
+          regex for key as a string
         </S.ListItem>
         <S.ListItem>
-          `value.name == &quot;iS.ListItemax&quot; && value.age &gt; 30` - in
-          case value is json
+          <code>
+            value.name == &quot;iS.ListItemax&quot; && value.age &gt; 30
+          </code>{' '}
+          - in case value is json
         </S.ListItem>
         <S.ListItem>
-          `value == null && valueAsText != null` - search for values that are
-          not nulls and are not json
+          <code>value == null && valueAsText != null</code> - search for values
+          that are not nulls and are not json
         </S.ListItem>
         <S.ListItem>
-          `headers.sentBy == &quot;some system&quot; &&
-          headers[&quot;sentAt&quot;] == &quot;2020-01-01&quot;`
+          <code>
+            headers.sentBy == &quot;some system&quot; &&
+            headers[&quot;sentAt&quot;] == &quot;2020-01-01&quot;
+          </code>
         </S.ListItem>
         <S.ListItem>multiline filters are also allowed:</S.ListItem>
         <S.InfoParagraph>
-          ```
-          <br />
-          def name = value.name
-          <br />
-          def age = value.age
-          <br />
-          name == &quot;iliax&quot; && age == 30
-          <br />
-          ```
+          <S.InfoCodeSample>
+            <code>
+              def name = value.name
+              <br />
+              def age = value.age
+              <br />
+              name == &quot;iliax&quot; && age == 30
+              <br />
+            </code>
+          </S.InfoCodeSample>
         </S.InfoParagraph>
       </ol>
       <S.ButtonContainer>

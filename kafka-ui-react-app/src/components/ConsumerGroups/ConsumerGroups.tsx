@@ -1,28 +1,42 @@
 import React from 'react';
-import { Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Details from 'components/ConsumerGroups/Details/Details';
 import ListContainer from 'components/ConsumerGroups/List/ListContainer';
 import ResetOffsets from 'components/ConsumerGroups/Details/ResetOffsets/ResetOffsets';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
+import {
+  clusterConsumerGroupResetOffsetsRelativePath,
+  RouteParams,
+} from 'lib/paths';
 
 const ConsumerGroups: React.FC = () => {
   return (
-    <Switch>
-      <BreadcrumbRoute
-        exact
-        path="/ui/clusters/:clusterName/consumer-groups"
-        component={ListContainer}
+    <Routes>
+      <Route
+        index
+        element={
+          <BreadcrumbRoute>
+            <ListContainer />
+          </BreadcrumbRoute>
+        }
       />
-      <BreadcrumbRoute
-        exact
-        path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID"
-        component={Details}
+      <Route
+        path={RouteParams.consumerGroupID}
+        element={
+          <BreadcrumbRoute>
+            <Details />
+          </BreadcrumbRoute>
+        }
       />
-      <BreadcrumbRoute
-        path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID/reset-offsets"
-        component={ResetOffsets}
+      <Route
+        path={clusterConsumerGroupResetOffsetsRelativePath}
+        element={
+          <BreadcrumbRoute>
+            <ResetOffsets />
+          </BreadcrumbRoute>
+        }
       />
-    </Switch>
+    </Routes>
   );
 };
 

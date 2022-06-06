@@ -1,13 +1,10 @@
 import Details from 'components/ConsumerGroups/Details/Details';
 import React from 'react';
 import fetchMock from 'fetch-mock';
-import { createMemoryHistory } from 'history';
-import { render } from 'lib/testHelpers';
-import { Route, Router } from 'react-router-dom';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterConsumerGroupDetailsPath,
-  clusterConsumerGroupResetOffsetsPath,
-  clusterConsumerGroupsPath,
+  clusterConsumerGroupResetRelativePath,
 } from 'lib/paths';
 import { consumerGroupPayload } from 'redux/reducers/consumerGroups/__test__/fixtures';
 import {
@@ -20,26 +17,25 @@ import { act } from '@testing-library/react';
 
 const clusterName = 'cluster1';
 const { groupId } = consumerGroupPayload;
-const history = createMemoryHistory();
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 const renderComponent = () => {
-  history.push(clusterConsumerGroupDetailsPath(clusterName, groupId));
   render(
-    <Router history={history}>
-      <Route
-        path={clusterConsumerGroupDetailsPath(
-          ':clusterName',
-          ':consumerGroupID'
-        )}
-      >
-        <Details />
-      </Route>
-    </Router>
+    <WithRoute path={clusterConsumerGroupDetailsPath()}>
+      <Details />
+    </WithRoute>,
+    { initialEntries: [clusterConsumerGroupDetailsPath(clusterName, groupId)] }
   );
 };
 describe('Details component', () => {
   afterEach(() => {
     fetchMock.reset();
+    mockNavigate.mockClear();
   });
 
   describe('when consumer groups are NOT fetched', () => {
@@ -76,8 +72,8 @@ describe('Details component', () => {
 
     it('handles [Reset offset] click', async () => {
       userEvent.click(screen.getByText('Reset offset'));
-      expect(history.location.pathname).toEqual(
-        clusterConsumerGroupResetOffsetsPath(clusterName, groupId)
+      expect(mockNavigate).toHaveBeenLastCalledWith(
+        clusterConsumerGroupResetRelativePath
       );
     });
 
@@ -106,9 +102,7 @@ describe('Details component', () => {
       });
       expect(deleteConsumerGroupMock.called()).toBeTruthy();
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-      expect(history.location.pathname).toEqual(
-        clusterConsumerGroupsPath(clusterName)
-      );
+      expect(mockNavigate).toHaveBeenLastCalledWith('../');
     });
   });
 });

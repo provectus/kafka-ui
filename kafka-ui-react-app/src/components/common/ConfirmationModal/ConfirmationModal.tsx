@@ -23,11 +23,9 @@ const ConfirmationModal: React.FC<
   isConfirming = false,
   submitBtnText = 'Submit',
 }) => {
-  const cancelHandler = React.useCallback(() => {
-    if (!isConfirming) {
-      onCancel();
-    }
-  }, [isConfirming, onCancel]);
+  const cancelHandler = () => {
+    if (!isConfirming) onCancel();
+  };
 
   return isOpen ? (
     <ConfirmationModalWrapper>

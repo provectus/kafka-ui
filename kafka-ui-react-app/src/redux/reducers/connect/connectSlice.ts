@@ -322,7 +322,7 @@ export const updateConnectorConfig = createAsyncThunk<
         connectorName,
         requestBody: connectorConfig,
       });
-
+      dispatch(fetchConnector({ clusterName, connectName, connectorName }));
       dispatch(
         showSuccessAlert({
           id: `connector-${connectorName}-${clusterName}`,

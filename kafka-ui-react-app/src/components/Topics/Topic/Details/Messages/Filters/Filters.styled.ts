@@ -117,12 +117,22 @@ export const ListItem = styled.li`
   color: ${({ theme }) => theme.table.td.color.normal};
 `;
 
-export const InfoParagraph = styled.p`
+export const InfoParagraph = styled.div`
   font-size: 12px;
   font-weight: 400;
   line-height: 1.5;
   margin-bottom: 10px;
   color: ${({ theme }) => theme.table.td.color.normal};
+`;
+
+export const InfoCodeSample = styled.pre`
+  background: #f5f5f5;
+  padding: 5px;
+  border: 1px solid #e1e1e1;
+  border-radius: 5px;
+  width: fit-content;
+  margin: 5px 20px;
+  color: #cc0f35;
 `;
 
 export const MessageFilterModal = styled.div`

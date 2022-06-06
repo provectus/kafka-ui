@@ -2,10 +2,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import MessagesTable from 'components/Topics/Topic/Details/Messages/MessagesTable';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory, MemoryHistory } from 'history';
 import { SeekDirection, SeekType, TopicMessage } from 'generated-sources';
-import userEvent from '@testing-library/user-event';
 import TopicMessagesContext, {
   ContextProps,
 } from 'components/contexts/TopicMessagesContext';
@@ -15,6 +12,12 @@ import {
 } from 'redux/reducers/topicMessages/__test__/fixtures';
 
 const mockTopicsMessages: TopicMessage[] = [{ ...topicMessagePayload }];
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 describe('MessagesTable', () => {
   const seekToResult = '&seekTo=0::9';
@@ -32,20 +35,15 @@ describe('MessagesTable', () => {
     ctx: ContextProps = contextValue,
     messages: TopicMessage[] = [],
     isFetching?: boolean,
-    customHistory?: MemoryHistory
+    path?: string
   ) => {
-    const history =
-      customHistory ||
-      createMemoryHistory({
-        initialEntries: [params.toString()],
-      });
+    const customPath = path || params.toString();
     return render(
-      <Router history={history}>
-        <TopicMessagesContext.Provider value={ctx}>
-          <MessagesTable />
-        </TopicMessagesContext.Provider>
-      </Router>,
+      <TopicMessagesContext.Provider value={ctx}>
+        <MessagesTable />
+      </TopicMessagesContext.Provider>,
       {
+        initialEntries: [customPath],
         preloadedState: {
           topicMessages: {
             messages,
@@ -71,13 +69,6 @@ describe('MessagesTable', () => {
     it('should check the if no elements is rendered in the table', () => {
       expect(screen.getByText(/No messages found/i)).toBeInTheDocument();
     });
-
-    it('should check if next button exist and check the click after next click', () => {
-      const nextBtnElement = screen.getByText(/next/i);
-      expect(nextBtnElement).toBeInTheDocument();
-      userEvent.click(nextBtnElement);
-      expect(screen.getByText(/No messages found/i)).toBeInTheDocument();
-    });
   });
 
   describe('Custom Setup with different props value', () => {
@@ -89,44 +80,6 @@ describe('MessagesTable', () => {
     it('should check the display of the loader element', () => {
       setUpComponent(searchParams, { ...contextValue, isLive: true }, [], true);
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
-    });
-
-    it('should check the seekTo parameter in the url if no seekTo is found should noy change the history', () => {
-      const customSearchParam = new URLSearchParams(searchParamsValue);
-
-      const mockedHistory = createMemoryHistory({
-        initialEntries: [customSearchParam.toString()],
-      });
-      jest.spyOn(mockedHistory, 'push');
-
-      setUpComponent(customSearchParam, contextValue, [], false, mockedHistory);
-
-      userEvent.click(screen.getByRole('button', { name: 'Next' }));
-      expect(mockedHistory.push).toHaveBeenCalledWith({
-        search: searchParamsValue.replace(seekToResult, '&seekTo=0%3A%3A1'),
-      });
-    });
-
-    it('should check the seekTo parameter in the url if no seekTo is found should change the history', () => {
-      const customSearchParam = new URLSearchParams(
-        searchParamsValue.replace(seekToResult, '')
-      );
-
-      const mockedHistory = createMemoryHistory({
-        initialEntries: [customSearchParam.toString()],
-      });
-      jest.spyOn(mockedHistory, 'push');
-
-      setUpComponent(
-        customSearchParam,
-        { ...contextValue, searchParams: customSearchParam },
-        [],
-        false,
-        mockedHistory
-      );
-
-      userEvent.click(screen.getByRole('button', { name: 'Next' }));
-      expect(mockedHistory.push).not.toHaveBeenCalled();
     });
   });
 
