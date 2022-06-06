@@ -557,6 +557,7 @@ describe('topics Slice', () => {
           { type: deleteTopics.pending.type },
           { type: deleteTopic.pending.type },
           { type: deleteTopic.pending.type },
+          { type: fetchTopicsList.pending.type },
           { type: deleteTopics.fulfilled.type },
         ]);
       });
