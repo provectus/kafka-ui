@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import {
   clusterSchemaEditRelativePath,
   clusterSchemaNewRelativePath,
+  clusterSchemaSchemaDiffRelativePath,
   RouteParams,
 } from 'lib/paths';
 import List from 'components/Schemas/List/List';
@@ -48,7 +49,7 @@ const Schemas: React.FC = () => {
         }
       />
       <Route
-        path={clusterSchemaEditRelativePath}
+        path={clusterSchemaSchemaDiffRelativePath}
         element={
           <BreadcrumbRoute>
             <DiffContainer />
