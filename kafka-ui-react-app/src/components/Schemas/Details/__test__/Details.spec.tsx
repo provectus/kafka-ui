@@ -1,7 +1,6 @@
 import React from 'react';
 import Details from 'components/Schemas/Details/Details';
-import { render } from 'lib/testHelpers';
-import { Route } from 'react-router';
+import { render, WithRoute } from 'lib/testHelpers';
 import { clusterSchemaPath } from 'lib/paths';
 import { screen, waitFor } from '@testing-library/dom';
 import {
@@ -14,6 +13,7 @@ import ClusterContext, {
   initialValue as contextInitialValue,
 } from 'components/contexts/ClusterContext';
 import { RootState } from 'redux/interfaces';
+import { act } from '@testing-library/react';
 
 import { versionPayload, versionEmptyPayload } from './fixtures';
 
@@ -24,21 +24,20 @@ const schemasAPIVersionsUrl = `/api/clusters/${clusterName}/schemas/${schemaVers
 const renderComponent = (
   initialState: RootState['schemas'] = schemasInitialState,
   context: ContextProps = contextInitialValue
-) => {
-  return render(
-    <Route path={clusterSchemaPath(':clusterName', ':subject')}>
+) =>
+  render(
+    <WithRoute path={clusterSchemaPath()}>
       <ClusterContext.Provider value={context}>
         <Details />
       </ClusterContext.Provider>
-    </Route>,
+    </WithRoute>,
     {
-      pathname: clusterSchemaPath(clusterName, schemaVersion.subject),
+      initialEntries: [clusterSchemaPath(clusterName, schemaVersion.subject)],
       preloadedState: {
         schemas: initialState,
       },
     }
   );
-};
 
 describe('Details', () => {
   afterEach(() => fetchMock.reset());
@@ -50,7 +49,10 @@ describe('Details', () => {
         schemasAPIVersionsUrl,
         404
       );
-      renderComponent();
+      await act(() => {
+        renderComponent();
+      });
+
       await waitFor(() => {
         expect(schemasAPILatestMock.called()).toBeTruthy();
       });
@@ -78,7 +80,9 @@ describe('Details', () => {
           schemasAPIVersionsUrl,
           versionPayload
         );
-        renderComponent();
+        await act(() => {
+          renderComponent();
+        });
         await waitFor(() => {
           expect(schemasAPILatestMock.called()).toBeTruthy();
         });
@@ -104,7 +108,9 @@ describe('Details', () => {
           schemasAPIVersionsUrl,
           versionEmptyPayload
         );
-        renderComponent();
+        await act(() => {
+          renderComponent();
+        });
         await waitFor(() => {
           expect(schemasAPILatestMock.called()).toBeTruthy();
         });

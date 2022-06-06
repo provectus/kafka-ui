@@ -1,55 +1,53 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { ConnectorState, ConnectorAction } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
   clusterConnectConnectorEditPath,
   clusterConnectorsPath,
+  RouterParamsClusterConnectConnector,
 } from 'lib/paths';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import styled from 'styled-components';
 import { Button } from 'components/common/Button/Button';
 
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
-
 const ConnectorActionsWrapperStyled = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
 `;
 
 export interface ActionsProps {
-  deleteConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): Promise<void>;
+  deleteConnector(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): Promise<unknown>;
   isConnectorDeleting: boolean;
   connectorStatus?: ConnectorState;
-  restartConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): void;
-  restartTasks(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName,
-    action: ConnectorAction
-  ): void;
-  pauseConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): void;
-  resumeConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): void;
+  restartConnector(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): void;
+  restartTasks(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+    action: ConnectorAction;
+  }): void;
+  pauseConnector(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): void;
+  resumeConnector(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): void;
   isConnectorActionRunning: boolean;
 }
 
@@ -63,41 +61,45 @@ const Actions: React.FC<ActionsProps> = ({
   resumeConnector,
   isConnectorActionRunning,
 }) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
+  const { clusterName, connectName, connectorName } =
+    useAppParams<RouterParamsClusterConnectConnector>();
 
-  const history = useHistory();
+  const navigate = useNavigate();
+
   const [
     isDeleteConnectorConfirmationVisible,
     setIsDeleteConnectorConfirmationVisible,
   ] = React.useState(false);
 
-  const deleteConnectorHandler = React.useCallback(async () => {
+  const deleteConnectorHandler = async () => {
     try {
-      await deleteConnector(clusterName, connectName, connectorName);
-      history.push(clusterConnectorsPath(clusterName));
+      await deleteConnector({ clusterName, connectName, connectorName });
+      navigate(clusterConnectorsPath(clusterName));
     } catch {
       // do not redirect
     }
-  }, [deleteConnector, clusterName, connectName, connectorName, history]);
+  };
 
-  const restartConnectorHandler = React.useCallback(() => {
-    restartConnector(clusterName, connectName, connectorName);
-  }, [restartConnector, clusterName, connectName, connectorName]);
+  const restartConnectorHandler = () => {
+    restartConnector({ clusterName, connectName, connectorName });
+  };
 
-  const restartTasksHandler = React.useCallback(
-    (actionType) => {
-      restartTasks(clusterName, connectName, connectorName, actionType);
-    },
-    [restartTasks, clusterName, connectName, connectorName]
-  );
+  const restartTasksHandler = (actionType: ConnectorAction) => {
+    restartTasks({
+      clusterName,
+      connectName,
+      connectorName,
+      action: actionType,
+    });
+  };
 
-  const pauseConnectorHandler = React.useCallback(() => {
-    pauseConnector(clusterName, connectName, connectorName);
-  }, [pauseConnector, clusterName, connectName, connectorName]);
+  const pauseConnectorHandler = () => {
+    pauseConnector({ clusterName, connectName, connectorName });
+  };
 
-  const resumeConnectorHandler = React.useCallback(() => {
-    resumeConnector(clusterName, connectName, connectorName);
-  }, [resumeConnector, clusterName, connectName, connectorName]);
+  const resumeConnectorHandler = () => {
+    resumeConnector({ clusterName, connectName, connectorName });
+  };
 
   return (
     <ConnectorActionsWrapperStyled>
@@ -173,7 +175,6 @@ const Actions: React.FC<ActionsProps> = ({
         buttonSize="M"
         buttonType="primary"
         type="button"
-        isLink
         disabled={isConnectorActionRunning}
         to={clusterConnectConnectorEditPath(
           clusterName,

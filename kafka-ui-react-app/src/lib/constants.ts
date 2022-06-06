@@ -16,7 +16,7 @@ export const BASE_PARAMS: ConfigurationParameters = {
 };
 
 export const TOPIC_NAME_VALIDATION_PATTERN = /^[.,A-Za-z0-9_-]+$/;
-export const SCHEMA_NAME_VALIDATION_PATTERN = /^[.,A-Za-z0-9_-]+$/;
+export const SCHEMA_NAME_VALIDATION_PATTERN = /^[.,A-Za-z0-9_/-]+$/;
 
 export const TOPIC_CUSTOM_PARAMS_PREFIX = 'customParams';
 export const TOPIC_CUSTOM_PARAMS: Record<string, string> = {
@@ -62,3 +62,10 @@ export const GIT_COMMIT = process.env.REACT_APP_COMMIT;
 export const BREADCRUMB_DEFINITIONS: BreadcrumbDefinitions = {
   Ksqldb: 'ksqlDB',
 };
+
+export enum AsyncRequestStatus {
+  initial = 'initial',
+  pending = 'pending',
+  fulfilled = 'fulfilled',
+  rejected = 'rejected',
+}

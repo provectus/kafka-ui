@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import useClickOutside from 'lib/hooks/useClickOutside';
+import DropdownArrowIcon from 'components/common/Icons/DropdownArrowIcon';
 
 import * as S from './Select.styled';
 import LiveIcon from './LiveIcon.styled';
@@ -97,6 +98,7 @@ const Select: React.FC<SelectProps> = ({
             ))}
           </S.OptionList>
         )}
+        <DropdownArrowIcon isOpen={showOptions} />
       </S.Select>
     </div>
   );

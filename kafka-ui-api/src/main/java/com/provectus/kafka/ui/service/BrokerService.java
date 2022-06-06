@@ -4,14 +4,12 @@ import com.provectus.kafka.ui.exception.InvalidRequestApiException;
 import com.provectus.kafka.ui.exception.LogDirNotFoundApiException;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicOrPartitionNotFoundException;
-import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.mapper.DescribeLogDirsMapper;
-import com.provectus.kafka.ui.model.BrokerConfigDTO;
 import com.provectus.kafka.ui.model.BrokerDTO;
 import com.provectus.kafka.ui.model.BrokerLogdirUpdateDTO;
-import com.provectus.kafka.ui.model.BrokerMetricsDTO;
 import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
+import com.provectus.kafka.ui.model.JmxBrokerMetrics;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,7 +38,6 @@ public class BrokerService {
   private final MetricsCache metricsCache;
   private final AdminClientService adminClientService;
   private final DescribeLogDirsMapper describeLogDirsMapper;
-  private final ClusterMapper clusterMapper;
 
   private Mono<Map<Integer, List<ConfigEntry>>> loadBrokersConfig(
       KafkaCluster cluster, List<Integer> brokersIds) {
@@ -149,15 +146,13 @@ public class BrokerService {
         .flatMapMany(Flux::fromIterable);
   }
 
-  public Flux<BrokerConfigDTO> getBrokerConfig(KafkaCluster cluster, Integer brokerId) {
-    return getBrokersConfig(cluster, brokerId)
-        .map(clusterMapper::toBrokerConfig);
+  public Flux<InternalBrokerConfig> getBrokerConfig(KafkaCluster cluster, Integer brokerId) {
+    return getBrokersConfig(cluster, brokerId);
   }
 
-  public Mono<BrokerMetricsDTO> getBrokerMetrics(KafkaCluster cluster, Integer brokerId) {
+  public Mono<JmxBrokerMetrics> getBrokerMetrics(KafkaCluster cluster, Integer brokerId) {
     return Mono.justOrEmpty(
-            metricsCache.get(cluster).getJmxMetrics().getInternalBrokerMetrics().get(brokerId))
-        .map(clusterMapper::toBrokerMetrics);
+            metricsCache.get(cluster).getJmxMetrics().getInternalBrokerMetrics().get(brokerId));
   }
 
 }

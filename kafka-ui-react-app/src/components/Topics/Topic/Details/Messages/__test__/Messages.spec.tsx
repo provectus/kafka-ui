@@ -1,12 +1,10 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { render, EventSourceMock } from 'lib/testHelpers';
 import Messages, {
   SeekDirectionOptions,
   SeekDirectionOptionsObj,
 } from 'components/Topics/Topic/Details/Messages/Messages';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
 import { SeekDirection, SeekType } from 'generated-sources';
 import userEvent from '@testing-library/user-event';
 
@@ -14,15 +12,9 @@ describe('Messages', () => {
   const searchParams = `?filterQueryType=STRING_CONTAINS&attempt=0&limit=100&seekDirection=${SeekDirection.FORWARD}&seekType=${SeekType.OFFSET}&seekTo=0::9`;
 
   const setUpComponent = (param: string = searchParams) => {
-    const history = createMemoryHistory();
-    history.push({
-      search: new URLSearchParams(param).toString(),
+    return render(<Messages />, {
+      initialEntries: [`/?${new URLSearchParams(param).toString()}`],
     });
-    return render(
-      <Router history={history}>
-        <Messages />
-      </Router>
-    );
   };
 
   beforeEach(() => {
@@ -40,7 +32,7 @@ describe('Messages', () => {
       );
     });
 
-    it('should check the SeekDirection select changes', () => {
+    it('should check the SeekDirection select changes with live option', async () => {
       const seekDirectionSelect = screen.getAllByRole('listbox')[1];
       const seekDirectionOption = screen.getAllByRole('option')[1];
 
@@ -50,17 +42,28 @@ describe('Messages', () => {
 
       const labelValue1 = SeekDirectionOptions[1].label;
       userEvent.click(seekDirectionSelect);
-      userEvent.selectOptions(seekDirectionSelect, [
-        SeekDirectionOptions[1].label,
-      ]);
+      userEvent.selectOptions(seekDirectionSelect, [labelValue1]);
       expect(seekDirectionOption).toHaveTextContent(labelValue1);
 
       const labelValue0 = SeekDirectionOptions[0].label;
       userEvent.click(seekDirectionSelect);
-      userEvent.selectOptions(seekDirectionSelect, [
-        SeekDirectionOptions[0].label,
-      ]);
+      userEvent.selectOptions(seekDirectionSelect, [labelValue0]);
       expect(seekDirectionOption).toHaveTextContent(labelValue0);
+
+      const liveOptionConf = SeekDirectionOptions[2];
+      const labelValue2 = liveOptionConf.label;
+      userEvent.click(seekDirectionSelect);
+      const liveModeLi = screen.getByRole(
+        (role, element) =>
+          role === 'option' &&
+          element?.getAttribute('value') === liveOptionConf.value
+      );
+      userEvent.selectOptions(seekDirectionSelect, [liveModeLi]);
+      expect(seekDirectionOption).toHaveTextContent(labelValue2);
+
+      await waitFor(() => {
+        expect(screen.getByRole('contentLoader')).toBeInTheDocument();
+      });
     });
   });
 

@@ -4,7 +4,7 @@ import { clusterConnectConnectorPath, clusterTopicPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import { Link, NavLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { deleteConnector } from 'redux/actions';
+import { deleteConnector } from 'redux/reducers/connect/connectSlice';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -39,12 +39,18 @@ const ListItem: React.FC<ListItemProps> = ({
     setDeleteConnectorConfirmationVisible,
   ] = React.useState(false);
 
-  const handleDelete = React.useCallback(() => {
+  const handleDelete = () => {
     if (clusterName && connect && name) {
-      dispatch(deleteConnector(clusterName, connect, name));
+      dispatch(
+        deleteConnector({
+          clusterName,
+          connectName: connect,
+          connectorName: name,
+        })
+      );
     }
     setDeleteConnectorConfirmationVisible(false);
-  }, [clusterName, connect, dispatch, name]);
+  };
 
   const runningTasks = React.useMemo(() => {
     if (!tasksCount) return null;
@@ -54,10 +60,7 @@ const ListItem: React.FC<ListItemProps> = ({
   return (
     <tr>
       <TableKeyLink>
-        <NavLink
-          exact
-          to={clusterConnectConnectorPath(clusterName, connect, name)}
-        >
+        <NavLink to={clusterConnectConnectorPath(clusterName, connect, name)}>
           {name}
         </NavLink>
       </TableKeyLink>

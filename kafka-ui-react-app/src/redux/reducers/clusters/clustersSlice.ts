@@ -10,7 +10,7 @@ import {
   ServerStatus,
   ClusterFeaturesEnum,
 } from 'generated-sources';
-import { BASE_PARAMS } from 'lib/constants';
+import { BASE_PARAMS, AsyncRequestStatus } from 'lib/constants';
 import { RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
@@ -41,7 +41,7 @@ const getClusterListFetchingStatus = createFetchingSelector(
 );
 export const getAreClustersFulfilled = createSelector(
   getClusterListFetchingStatus,
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 export const getClusterList = createSelector(
   clustersState,

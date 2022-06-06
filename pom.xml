@@ -14,26 +14,26 @@
         <maven.compiler.target>13</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring-boot.version>2.6.3</spring-boot.version>
+        <spring-boot.version>2.6.7</spring-boot.version>
         <jackson-databind-nullable.version>0.2.2</jackson-databind-nullable.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.20</org.projectlombok.version>
         <org.projectlombok.e2e-checks.version>1.18.20</org.projectlombok.e2e-checks.version>
         <git.revision>latest</git.revision>
         <kafka-clients.version>2.8.0</kafka-clients.version>
-        <node.version>v14.17.1</node.version>
+        <node.version>v16.15.0</node.version>
         <dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
-        <frontend-maven-plugin.version>1.12.0</frontend-maven-plugin.version>
+        <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
-        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
-        <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
+        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <openapi-generator-maven-plugin.version>4.3.0</openapi-generator-maven-plugin.version>
         <swagger-annotations.version>1.6.0</swagger-annotations.version>
         <springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
         <avro.version>1.11.0</avro.version>
         <confluent.version>7.0.1</confluent.version>
-        <apache.commons.version>2.2</apache.commons.version>
+        <apache.commons.version>2.11.1</apache.commons.version>
         <test.containers.version>1.17.1</test.containers.version>
         <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
         <mockito.version>2.21.0</mockito.version>
@@ -86,5 +86,5 @@
     <artifactId>kafka-ui</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>kafka-ui</name>
-    <description>Kafka metrics for UI panel</description>
+    <description>Web UI for Apache Kafka</description>
 </project>

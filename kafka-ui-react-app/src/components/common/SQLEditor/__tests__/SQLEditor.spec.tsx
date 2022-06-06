@@ -1,22 +1,22 @@
 import React from 'react';
 import SQLEditor from 'components/common/SQLEditor/SQLEditor';
 import { render } from 'lib/testHelpers';
+import { screen } from '@testing-library/react';
 
 describe('SQLEditor component', () => {
-  it('matches the snapshot', () => {
-    const { baseElement } = render(<SQLEditor value="" name="name" />);
-    expect(baseElement).toMatchSnapshot();
-  });
-
-  it('matches the snapshot with fixed height', () => {
-    const { baseElement } = render(
-      <SQLEditor value="" name="name" isFixedHeight />
+  it('to be in the document with fixed height', () => {
+    render(<SQLEditor value="" name="name" isFixedHeight />);
+    expect(
+      screen.getByRole('textbox').parentElement?.getAttribute('style') !==
+        '16px'
     );
-    expect(baseElement).toMatchSnapshot();
   });
 
-  it('matches the snapshot with fixed height with no value', () => {
-    const { baseElement } = render(<SQLEditor name="name" isFixedHeight />);
-    expect(baseElement).toMatchSnapshot();
+  it('to be in the document with fixed height with no value', () => {
+    render(<SQLEditor value="" name="name" />);
+    expect(
+      screen.getByRole('textbox').parentElement?.getAttribute('style') ===
+        '16px'
+    );
   });
 });

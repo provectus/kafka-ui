@@ -1,22 +1,22 @@
 import React from 'react';
-import { ClusterName } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { useParams } from 'react-router';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import * as Metrics from 'components/common/Metrics';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import { ClusterNameRoute } from 'lib/paths';
 import {
   fetchBrokers,
   fetchClusterStats,
   selectStats,
 } from 'redux/reducers/brokers/brokersSlice';
+import useAppParams from 'lib/hooks/useAppParams';
 
 const Brokers: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { clusterName } = useParams<{ clusterName: ClusterName }>();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
   const {
     brokerCount,
     activeControllers,
@@ -30,7 +30,7 @@ const Brokers: React.FC = () => {
     items,
   } = useAppSelector(selectStats);
 
-  const replicas = inSyncReplicasCount ?? 0 + (outOfSyncReplicasCount ?? 0);
+  const replicas = (inSyncReplicasCount ?? 0) + (outOfSyncReplicasCount ?? 0);
   const areAllInSync = inSyncReplicasCount && replicas === inSyncReplicasCount;
   const partitionIsOffline = offlinePartitionCount && offlinePartitionCount > 0;
   React.useEffect(() => {

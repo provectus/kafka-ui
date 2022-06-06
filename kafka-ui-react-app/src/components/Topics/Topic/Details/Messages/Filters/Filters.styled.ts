@@ -1,3 +1,4 @@
+import Select from 'components/common/Select/Select';
 import styled, { css } from 'styled-components';
 
 interface SavedFilterProps {
@@ -101,6 +102,39 @@ export const ClearAll = styled.span`
   cursor: pointer;
 `;
 
+export const ButtonContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+export const ListItem = styled.li`
+  font-size: 12px;
+  font-weight: 400;
+  margin-left: 20px;
+  line-height: 1.5;
+  color: ${({ theme }) => theme.table.td.color.normal};
+`;
+
+export const InfoParagraph = styled.div`
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  color: ${({ theme }) => theme.table.td.color.normal};
+`;
+
+export const InfoCodeSample = styled.pre`
+  background: #f5f5f5;
+  padding: 5px;
+  border: 1px solid #e1e1e1;
+  border-radius: 5px;
+  width: fit-content;
+  margin: 5px 20px;
+  color: #cc0f35;
+`;
+
 export const MessageFilterModal = styled.div`
   height: auto;
   width: 560px;
@@ -114,11 +148,34 @@ export const MessageFilterModal = styled.div`
   z-index: 1;
 `;
 
+export const InfoModal = styled.div`
+  height: auto;
+  width: 560px;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.modal.backgroundColor};
+  position: absolute;
+  left: 25%;
+  border: 1px solid ${({ theme }) => theme.breadcrumb};
+  box-shadow: ${({ theme }) => theme.modal.shadow};
+  padding: 32px;
+  z-index: 1;
+`;
+
+export const QuestionIconContainer = styled.button`
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  border: none;
+`;
+
 export const FilterTitle = styled.h3`
   line-height: 32px;
   font-size: 20px;
   margin-bottom: 40px;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   &:after {
     content: '';
     width: calc(100% + 32px);
@@ -180,7 +237,7 @@ export const ActiveSmartFilterWrapper = styled.div`
   justify-content: flex-start;
 `;
 
-export const DeleteSavedFilter = styled.div`
+export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
   color: ${({ theme }) => theme.breadcrumb};
   cursor: pointer;
 `;
@@ -256,7 +313,9 @@ export const ConfirmDeletionText = styled.h3`
   padding: 16px 0;
 `;
 
-export const MessageLoading = styled.div<MessageLoadingProps>`
+export const MessageLoading = styled.div.attrs({
+  role: 'contentLoader',
+})<MessageLoadingProps>`
   color: ${({ theme }) => theme.heading.h3.color};
   font-size: ${({ theme }) => theme.heading.h3.fontSize};
   display: ${(props) => (props.isLive ? 'flex' : 'none')};
@@ -312,4 +371,10 @@ export const SavedFiltersText = styled.div`
 export const BackToCustomText = styled.div`
   ${textStyle};
   cursor: pointer;
+`;
+
+export const SeekTypeSelect = styled(Select)`
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  user-select: none;
 `;

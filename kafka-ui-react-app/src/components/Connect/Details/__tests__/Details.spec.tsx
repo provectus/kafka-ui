@@ -1,111 +1,136 @@
 import React from 'react';
-import { create } from 'react-test-renderer';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
-  containerRendersView,
-  TestRouterWrapper,
-  render,
-} from 'lib/testHelpers';
-import { clusterConnectConnectorPath } from 'lib/paths';
-import DetailsContainer from 'components/Connect/Details/DetailsContainer';
+  clusterConnectConnectorConfigPath,
+  clusterConnectConnectorPath,
+  clusterConnectConnectorTasksPath,
+  getNonExactPath,
+} from 'lib/paths';
 import Details, { DetailsProps } from 'components/Connect/Details/Details';
 import { connector, tasks } from 'redux/reducers/connect/__test__/fixtures';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { screen } from '@testing-library/dom';
 
-jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
+const DetailsCompText = {
+  overview: 'OverviewContainer',
+  tasks: 'TasksContainer',
+  config: 'ConfigContainer',
+  actions: 'ActionsContainer',
+};
 
-jest.mock(
-  'components/Connect/Details/Overview/OverviewContainer',
-  () => 'mock-OverviewContainer'
-);
+jest.mock('components/Connect/Details/Overview/OverviewContainer', () => () => (
+  <div>{DetailsCompText.overview}</div>
+));
 
-jest.mock(
-  'components/Connect/Details/Tasks/TasksContainer',
-  () => 'mock-TasksContainer'
-);
+jest.mock('components/Connect/Details/Tasks/TasksContainer', () => () => (
+  <div>{DetailsCompText.tasks}</div>
+));
 
-jest.mock(
-  'components/Connect/Details/Config/ConfigContainer',
-  () => 'mock-ConfigContainer'
-);
+jest.mock('components/Connect/Details/Config/ConfigContainer', () => () => (
+  <div>{DetailsCompText.config}</div>
+));
 
-jest.mock(
-  'components/Connect/Details/Actions/ActionsContainer',
-  () => 'mock-ActionsContainer'
-);
+jest.mock('components/Connect/Details/Actions/ActionsContainer', () => () => (
+  <div>{DetailsCompText.actions}</div>
+));
 
 describe('Details', () => {
-  containerRendersView(<DetailsContainer />, Details);
+  const clusterName = 'my-cluster';
+  const connectName = 'my-connect';
+  const connectorName = 'my-connector';
+  const defaultPath = clusterConnectConnectorPath(
+    clusterName,
+    connectName,
+    connectorName
+  );
 
-  describe('view', () => {
-    const pathname = clusterConnectConnectorPath(
-      ':clusterName',
-      ':connectName',
-      ':connectorName'
-    );
-    const clusterName = 'my-cluster';
-    const connectName = 'my-connect';
-    const connectorName = 'my-connector';
-
-    const setupWrapper = (props: Partial<DetailsProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <TestRouterWrapper
-          pathname={pathname}
-          urlParams={{ clusterName, connectName, connectorName }}
-        >
-          <Details
-            fetchConnector={jest.fn()}
-            fetchTasks={jest.fn()}
-            isConnectorFetching={false}
-            areTasksFetching={false}
-            connector={connector}
-            tasks={tasks}
-            {...props}
-          />
-        </TestRouterWrapper>
-      </ThemeProvider>
+  const setupWrapper = (
+    props: Partial<DetailsProps> = {},
+    path: string = defaultPath
+  ) =>
+    render(
+      <WithRoute path={getNonExactPath(clusterConnectConnectorPath())}>
+        <Details
+          fetchConnector={jest.fn()}
+          fetchTasks={jest.fn()}
+          isConnectorFetching={false}
+          areTasksFetching={false}
+          connector={connector}
+          tasks={tasks}
+          {...props}
+        />
+      </WithRoute>,
+      { initialEntries: [path] }
     );
 
-    it('matches snapshot', () => {
-      const wrapper = create(setupWrapper());
-      expect(wrapper.toJSON()).toMatchSnapshot();
+  it('renders progressbar when fetching connector', () => {
+    setupWrapper({ isConnectorFetching: true });
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+  });
+
+  it('renders progressbar when fetching tasks', () => {
+    setupWrapper({ areTasksFetching: true });
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+  });
+
+  it('is empty when no connector', () => {
+    const { container } = setupWrapper({ connector: null });
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('fetches connector on mount', () => {
+    const fetchConnector = jest.fn();
+    setupWrapper({ fetchConnector });
+    expect(fetchConnector).toHaveBeenCalledTimes(1);
+    expect(fetchConnector).toHaveBeenCalledWith({
+      clusterName,
+      connectName,
+      connectorName,
+    });
+  });
+
+  it('fetches tasks on mount', () => {
+    const fetchTasks = jest.fn();
+    setupWrapper({ fetchTasks });
+    expect(fetchTasks).toHaveBeenCalledTimes(1);
+    expect(fetchTasks).toHaveBeenCalledWith({
+      clusterName,
+      connectName,
+      connectorName,
+    });
+  });
+
+  describe('Router component tests', () => {
+    it('should test if overview is rendering', () => {
+      setupWrapper({});
+      expect(screen.getByText(DetailsCompText.overview));
     });
 
-    it('matches snapshot when fetching connector', () => {
-      const wrapper = create(setupWrapper({ isConnectorFetching: true }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
-
-    it('matches snapshot when fetching tasks', () => {
-      const wrapper = create(setupWrapper({ areTasksFetching: true }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
-
-    it('is empty when no connector', () => {
-      const wrapper = render(setupWrapper({ connector: null })).baseElement;
-      expect(wrapper.querySelector('div')).toBeEmptyDOMElement();
-    });
-
-    it('fetches connector on mount', () => {
-      const fetchConnector = jest.fn();
-      render(setupWrapper({ fetchConnector }));
-      expect(fetchConnector).toHaveBeenCalledTimes(1);
-      expect(fetchConnector).toHaveBeenCalledWith(
-        clusterName,
-        connectName,
-        connectorName
+    it('should test if tasks is rendering', () => {
+      setupWrapper(
+        {},
+        clusterConnectConnectorTasksPath(
+          clusterName,
+          connectName,
+          connectorName
+        )
       );
+      expect(screen.getByText(DetailsCompText.tasks));
     });
 
-    it('fetches tasks on mount', () => {
-      const fetchTasks = jest.fn();
-      render(setupWrapper({ fetchTasks }));
-      expect(fetchTasks).toHaveBeenCalledTimes(1);
-      expect(fetchTasks).toHaveBeenCalledWith(
-        clusterName,
-        connectName,
-        connectorName
+    it('should test if list is rendering', () => {
+      setupWrapper(
+        {},
+        clusterConnectConnectorConfigPath(
+          clusterName,
+          connectName,
+          connectorName
+        )
       );
+      expect(screen.getByText(DetailsCompText.config));
     });
   });
 });

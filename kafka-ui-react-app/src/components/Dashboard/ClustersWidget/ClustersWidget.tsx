@@ -51,11 +51,11 @@ const ClustersWidget: React.FC<Props> = ({
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label={<Tag color="green">Online</Tag>}>
-            <span data-testid="onlineCount">{onlineClusters.length}</span>{' '}
+            <span>{onlineClusters.length}</span>{' '}
             <Metrics.LightText>clusters</Metrics.LightText>
           </Metrics.Indicator>
           <Metrics.Indicator label={<Tag color="gray">Offline</Tag>}>
-            <span data-testid="offlineCount">{offlineClusters.length}</span>{' '}
+            <span>{offlineClusters.length}</span>{' '}
             <Metrics.LightText>clusters</Metrics.LightText>
           </Metrics.Indicator>
         </Metrics.Section>
@@ -84,7 +84,7 @@ const ClustersWidget: React.FC<Props> = ({
           <tbody>
             {chunkItem.data.map((cluster) => (
               <tr key={cluster.name}>
-                <S.TableCell maxWidth="99px">
+                <S.TableCell maxWidth="99px" width="350">
                   {cluster.readOnly && <Tag color="blue">readonly</Tag>}{' '}
                   {cluster.name}
                 </S.TableCell>

@@ -1,11 +1,12 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Connect, Connector, NewConnector } from 'generated-sources';
+import { Connect } from 'generated-sources';
 import { ClusterName, ConnectName } from 'redux/interfaces';
-import { clusterConnectConnectorPath } from 'lib/paths';
+import { clusterConnectConnectorPath, ClusterNameRoute } from 'lib/paths';
 import yup from 'lib/yupExtended';
 import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -15,6 +16,8 @@ import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+import { createConnector } from 'redux/reducers/connect/connectSlice';
+import { useAppDispatch } from 'lib/hooks/redux';
 
 import * as S from './New.styled';
 
@@ -23,19 +26,10 @@ const validationSchema = yup.object().shape({
   config: yup.string().required().isJsonObject(),
 });
 
-interface RouterParams {
-  clusterName: ClusterName;
-}
-
 export interface NewProps {
-  fetchConnects(clusterName: ClusterName): void;
+  fetchConnects(clusterName: ClusterName): unknown;
   areConnectsFetching: boolean;
   connects: Connect[];
-  createConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    newConnector: NewConnector
-  ): Promise<Connector | undefined>;
 }
 
 interface FormValues {
@@ -48,10 +42,10 @@ const New: React.FC<NewProps> = ({
   fetchConnects,
   areConnectsFetching,
   connects,
-  createConnector,
 }) => {
-  const { clusterName } = useParams<RouterParams>();
-  const history = useHistory();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const methods = useForm<FormValues>({
     mode: 'onTouched',
@@ -85,24 +79,27 @@ const New: React.FC<NewProps> = ({
     [connects]
   );
 
-  const onSubmit = React.useCallback(
-    async (values: FormValues) => {
-      const connector = await createConnector(clusterName, values.connectName, {
-        name: values.name,
-        config: JSON.parse(values.config.trim()),
-      });
-      if (connector) {
-        history.push(
-          clusterConnectConnectorPath(
-            clusterName,
-            connector.connect,
-            connector.name
-          )
-        );
-      }
-    },
-    [createConnector, clusterName, history]
-  );
+  const onSubmit = async (values: FormValues) => {
+    const { connector } = await dispatch(
+      createConnector({
+        clusterName,
+        connectName: values.connectName,
+        newConnector: {
+          name: values.name,
+          config: JSON.parse(values.config.trim()),
+        },
+      })
+    ).unwrap();
+    if (connector) {
+      navigate(
+        clusterConnectConnectorPath(
+          clusterName,
+          connector.connect,
+          connector.name
+        )
+      );
+    }
+  };
 
   if (areConnectsFetching) {
     return <PageLoader />;

@@ -14,7 +14,7 @@ import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
 public abstract class AbstractEmitter {
-  private static final Duration POLL_TIMEOUT_MS = Duration.ofMillis(1000L);
+  private static final Duration DEFAULT_POLL_TIMEOUT_MS = Duration.ofMillis(1000L);
 
   private final RecordSerDe recordDeserializer;
   private final ConsumingStats consumingStats = new ConsumingStats();
@@ -25,8 +25,13 @@ public abstract class AbstractEmitter {
 
   protected ConsumerRecords<Bytes, Bytes> poll(
       FluxSink<TopicMessageEventDTO> sink, Consumer<Bytes, Bytes> consumer) {
+    return poll(sink, consumer, DEFAULT_POLL_TIMEOUT_MS);
+  }
+
+  protected ConsumerRecords<Bytes, Bytes> poll(
+      FluxSink<TopicMessageEventDTO> sink, Consumer<Bytes, Bytes> consumer, Duration timeout) {
     Instant start = Instant.now();
-    ConsumerRecords<Bytes, Bytes> records = consumer.poll(POLL_TIMEOUT_MS);
+    ConsumerRecords<Bytes, Bytes> records = consumer.poll(timeout);
     Instant finish = Instant.now();
     sendConsuming(sink, records, Duration.between(start, finish).toMillis());
     return records;

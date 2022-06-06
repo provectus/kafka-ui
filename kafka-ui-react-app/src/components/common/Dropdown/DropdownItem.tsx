@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 
 import * as S from './Dropdown.styled';
 
@@ -7,13 +7,14 @@ export interface DropdownItemProps {
   danger?: boolean;
 }
 
-const DropdownItem: React.FC<DropdownItemProps> = ({
+const DropdownItem: React.FC<PropsWithChildren<DropdownItemProps>> = ({
   onClick,
   danger,
   children,
 }) => {
   const onClickHandler = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     onClick();
   };
 

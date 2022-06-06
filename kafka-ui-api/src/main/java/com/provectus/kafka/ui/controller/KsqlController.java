@@ -6,6 +6,8 @@ import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
 import com.provectus.kafka.ui.model.KsqlCommandV2DTO;
 import com.provectus.kafka.ui.model.KsqlCommandV2ResponseDTO;
 import com.provectus.kafka.ui.model.KsqlResponseDTO;
+import com.provectus.kafka.ui.model.KsqlStreamDescriptionDTO;
+import com.provectus.kafka.ui.model.KsqlTableDescriptionDTO;
 import com.provectus.kafka.ui.model.KsqlTableResponseDTO;
 import com.provectus.kafka.ui.service.KsqlService;
 import com.provectus.kafka.ui.service.ksql.KsqlServiceV2;
@@ -63,5 +65,17 @@ public class KsqlController extends AbstractController implements KsqlApi {
                         .header(table.getHeader())
                         .columnNames(table.getColumnNames())
                         .values((List<List<Object>>) ((List<?>) (table.getValues())))))));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Flux<KsqlStreamDescriptionDTO>>> listStreams(String clusterName,
+                                                                         ServerWebExchange exchange) {
+    return Mono.just(ResponseEntity.ok(ksqlServiceV2.listStreams(getCluster(clusterName))));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Flux<KsqlTableDescriptionDTO>>> listTables(String clusterName,
+                                                                        ServerWebExchange exchange) {
+    return Mono.just(ResponseEntity.ok(ksqlServiceV2.listTables(getCluster(clusterName))));
   }
 }

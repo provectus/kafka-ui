@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import classNames from 'classnames';
 
 interface TabsProps {
@@ -8,7 +8,7 @@ interface TabsProps {
   onChange?(index: number): void;
 }
 
-const Tabs: React.FC<TabsProps> = ({
+const Tabs: React.FC<PropsWithChildren<TabsProps>> = ({
   tabs,
   defaultSelectedIndex = 0,
   onChange,
@@ -21,13 +21,10 @@ const Tabs: React.FC<TabsProps> = ({
     setSelectedIndex(defaultSelectedIndex);
   }, [defaultSelectedIndex]);
 
-  const handleChange = React.useCallback(
-    (index: number) => {
-      setSelectedIndex(index);
-      onChange?.(index);
-    },
-    [onChange]
-  );
+  const handleChange = (index: number) => {
+    setSelectedIndex(index);
+    onChange?.(index);
+  };
 
   return (
     <>

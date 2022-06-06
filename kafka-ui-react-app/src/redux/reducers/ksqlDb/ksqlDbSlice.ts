@@ -26,15 +26,13 @@ export const transformKsqlResponse = (
   );
 
 const getTables = (clusterName: ClusterName) =>
-  ksqlDbApiClient.executeKsqlCommand({
+  ksqlDbApiClient.listTables({
     clusterName,
-    ksqlCommand: { ksql: 'SHOW TABLES;' },
   });
 
 const getStreams = (clusterName: ClusterName) =>
-  ksqlDbApiClient.executeKsqlCommand({
+  ksqlDbApiClient.listStreams({
     clusterName,
-    ksqlCommand: { ksql: 'SHOW STREAMS;' },
   });
 
 export const fetchKsqlDbTables = createAsyncThunk(
@@ -45,9 +43,18 @@ export const fetchKsqlDbTables = createAsyncThunk(
       getStreams(clusterName),
     ]);
 
+    const processedTables = tables.map((table) => ({
+      type: 'TABLE',
+      ...table,
+    }));
+    const processedStreams = streams.map((stream) => ({
+      type: 'STREAM',
+      ...stream,
+    }));
+
     return {
-      tables: tables.data ? transformKsqlResponse(tables.data) : [],
-      streams: streams.data ? transformKsqlResponse(streams.data) : [],
+      tables: processedTables,
+      streams: processedStreams,
     };
   }
 );

@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import { createConnector, fetchConnects } from 'redux/actions';
+import { fetchConnects } from 'redux/reducers/connect/connectSlice';
 import { RootState } from 'redux/interfaces';
 import {
   getAreConnectsFetching,
@@ -16,7 +15,6 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   fetchConnects,
-  createConnector,
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(New));
+export default connect(mapStateToProps, mapDispatchToProps)(New);

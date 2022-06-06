@@ -1,19 +1,26 @@
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
   TopicWithDetailedInfo,
   ClusterName,
   TopicName,
 } from 'redux/interfaces';
-import { useParams } from 'react-router-dom';
-import { clusterTopicCopyPath, clusterTopicNewPath } from 'lib/paths';
+import {
+  ClusterNameRoute,
+  clusterTopicCopyRelativePath,
+  clusterTopicNewRelativePath,
+} from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
+import useModal from 'lib/hooks/useModal';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import {
   CleanUpPolicy,
+  DeleteTopicRequest,
   GetTopicsRequest,
+  RecreateTopicRequest,
   SortOrder,
   TopicColumnsToSort,
 } from 'generated-sources';
@@ -45,16 +52,22 @@ export interface TopicsListProps {
   areTopicsFetching: boolean;
   topics: TopicWithDetailedInfo[];
   totalPages: number;
-  fetchTopicsList(props: GetTopicsRequest): void;
-  deleteTopic(topicName: TopicName, clusterName: ClusterName): void;
-  deleteTopics(topicName: TopicName, clusterNames: ClusterName[]): void;
-  recreateTopic(topicName: TopicName, clusterName: ClusterName): void;
-  clearTopicsMessages(topicName: TopicName, clusterNames: ClusterName[]): void;
-  clearTopicMessages(
-    topicName: TopicName,
-    clusterName: ClusterName,
-    partitions?: number[]
-  ): void;
+  fetchTopicsList(payload: GetTopicsRequest): void;
+  deleteTopic(payload: DeleteTopicRequest): void;
+  deleteTopics(payload: {
+    clusterName: ClusterName;
+    topicNames: TopicName[];
+  }): void;
+  recreateTopic(payload: RecreateTopicRequest): void;
+  clearTopicsMessages(payload: {
+    clusterName: ClusterName;
+    topicNames: TopicName[];
+  }): void;
+  clearTopicMessages(payload: {
+    topicName: TopicName;
+    clusterName: ClusterName;
+    partitions?: number[];
+  }): void;
   search: string;
   orderBy: TopicColumnsToSort | null;
   sortOrder: SortOrder;
@@ -80,14 +93,18 @@ const List: React.FC<TopicsListProps> = ({
 }) => {
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
-  const { clusterName } = useParams<{ clusterName: ClusterName }>();
-  const { page, perPage, pathname } = usePagination();
-  const [showInternal, setShowInternal] = React.useState<boolean>(true);
-  const [cachedPage, setCachedPage] = React.useState<number | null>(null);
-  const history = useHistory();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
+  const { page, perPage } = usePagination();
+  const [showInternal, setShowInternal] = React.useState<boolean>(
+    !localStorage.getItem('hideInternalTopics') && true
+  );
+  const [cachedPage, setCachedPage] = React.useState<number | null>(
+    page || null
+  );
+  const navigate = useNavigate();
 
-  React.useEffect(() => {
-    fetchTopicsList({
+  const topicsListParams = React.useMemo(
+    () => ({
       clusterName,
       page,
       perPage,
@@ -95,17 +112,13 @@ const List: React.FC<TopicsListProps> = ({
       sortOrder,
       search,
       showInternal,
-    });
-  }, [
-    fetchTopicsList,
-    clusterName,
-    page,
-    perPage,
-    orderBy,
-    sortOrder,
-    search,
-    showInternal,
-  ]);
+    }),
+    [clusterName, page, perPage, orderBy, sortOrder, search, showInternal]
+  );
+
+  React.useEffect(() => {
+    fetchTopicsList(topicsListParams);
+  }, [fetchTopicsList, topicsListParams]);
 
   const tableState = useTableState<
     TopicWithDetailedInfo,
@@ -140,10 +153,18 @@ const List: React.FC<TopicsListProps> = ({
       .join('&');
   };
 
-  const handleSwitch = React.useCallback(() => {
+  const handleSwitch = () => {
+    if (showInternal) {
+      localStorage.setItem('hideInternalTopics', 'true');
+    } else {
+      localStorage.removeItem('hideInternalTopics');
+    }
+
     setShowInternal(!showInternal);
-    history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
-  }, [history, pathname, perPage, showInternal]);
+    navigate({
+      search: `?page=1&perPage=${perPage || PER_PAGE}`,
+    });
+  };
 
   const [confirmationModal, setConfirmationModal] = React.useState<
     '' | 'deleteTopics' | 'purgeMessages'
@@ -155,68 +176,66 @@ const List: React.FC<TopicsListProps> = ({
     setConfirmationModal('');
   };
 
-  const clearSelectedTopics = React.useCallback(() => {
-    tableState.toggleSelection(false);
-  }, [tableState]);
+  const clearSelectedTopics = () => tableState.toggleSelection(false);
 
-  const searchHandler = React.useCallback(
-    (searchString: string) => {
-      setTopicsSearch(searchString);
+  const searchHandler = (searchString: string) => {
+    setTopicsSearch(searchString);
 
-      setCachedPage(page || null);
+    setCachedPage(page || null);
 
-      const newPageQuery = !searchString && cachedPage ? cachedPage : 1;
+    const newPageQuery = !searchString && cachedPage ? cachedPage : 1;
 
-      history.push(
-        `${pathname}?page=${newPageQuery}&perPage=${perPage || PER_PAGE}`
-      );
-    },
-    [setTopicsSearch, history, pathname, perPage, page]
-  );
-  const deleteOrPurgeConfirmationHandler = React.useCallback(() => {
+    navigate({
+      search: `?page=${newPageQuery}&perPage=${perPage || PER_PAGE}`,
+    });
+  };
+  const deleteOrPurgeConfirmationHandler = () => {
     const selectedIds = Array.from(tableState.selectedIds);
     if (confirmationModal === 'deleteTopics') {
-      deleteTopics(clusterName, selectedIds);
+      deleteTopics({ clusterName, topicNames: selectedIds });
     } else {
-      clearTopicsMessages(clusterName, selectedIds);
+      clearTopicsMessages({ clusterName, topicNames: selectedIds });
     }
     closeConfirmationModal();
     clearSelectedTopics();
-  }, [
-    confirmationModal,
-    clearSelectedTopics,
-    clusterName,
-    deleteTopics,
-    clearTopicsMessages,
-    tableState.selectedIds,
-  ]);
+    fetchTopicsList(topicsListParams);
+  };
 
   const ActionsCell = React.memo<TableCellProps<TopicWithDetailedInfo, string>>(
     ({ hovered, dataItem: { internal, cleanUpPolicy, name } }) => {
-      const [
-        isDeleteTopicConfirmationVisible,
-        setDeleteTopicConfirmationVisible,
-      ] = React.useState(false);
+      const {
+        isOpen: isDeleteTopicModalOpen,
+        setClose: closeDeleteTopicModal,
+        setOpen: openDeleteTopicModal,
+      } = useModal(false);
 
-      const [
-        isRecreateTopicConfirmationVisible,
-        setRecreateTopicConfirmationVisible,
-      ] = React.useState(false);
+      const {
+        isOpen: isRecreateTopicModalOpen,
+        setClose: closeRecreateTopicModal,
+        setOpen: openRecreateTopicModal,
+      } = useModal(false);
+
+      const {
+        isOpen: isClearMessagesModalOpen,
+        setClose: closeClearMessagesModal,
+        setOpen: openClearMessagesModal,
+      } = useModal(false);
 
       const isHidden = internal || isReadOnly || !hovered;
 
-      const deleteTopicHandler = React.useCallback(() => {
-        deleteTopic(clusterName, name);
-      }, [name]);
+      const deleteTopicHandler = () =>
+        deleteTopic({ clusterName, topicName: name });
 
-      const clearTopicMessagesHandler = React.useCallback(() => {
-        clearTopicMessages(clusterName, name);
-      }, [name]);
+      const clearTopicMessagesHandler = () => {
+        clearTopicMessages({ clusterName, topicName: name });
+        fetchTopicsList(topicsListParams);
+        closeClearMessagesModal();
+      };
 
-      const recreateTopicHandler = React.useCallback(() => {
-        recreateTopic(clusterName, name);
-        setRecreateTopicConfirmationVisible(false);
-      }, [name]);
+      const recreateTopicHandler = () => {
+        recreateTopic({ clusterName, topicName: name });
+        closeRecreateTopicModal();
+      };
 
       return (
         <>
@@ -224,37 +243,38 @@ const List: React.FC<TopicsListProps> = ({
             {!isHidden && (
               <Dropdown label={<VerticalElipsisIcon />} right>
                 {cleanUpPolicy === CleanUpPolicy.DELETE && (
-                  <DropdownItem onClick={clearTopicMessagesHandler} danger>
+                  <DropdownItem onClick={openClearMessagesModal} danger>
                     Clear Messages
                   </DropdownItem>
                 )}
                 {isTopicDeletionAllowed && (
-                  <DropdownItem
-                    onClick={() => setDeleteTopicConfirmationVisible(true)}
-                    danger
-                  >
+                  <DropdownItem onClick={openDeleteTopicModal} danger>
                     Remove Topic
                   </DropdownItem>
                 )}
-                <DropdownItem
-                  onClick={() => setRecreateTopicConfirmationVisible(true)}
-                  danger
-                >
+                <DropdownItem onClick={openRecreateTopicModal} danger>
                   Recreate Topic
                 </DropdownItem>
               </Dropdown>
             )}
           </div>
           <ConfirmationModal
-            isOpen={isDeleteTopicConfirmationVisible}
-            onCancel={() => setDeleteTopicConfirmationVisible(false)}
+            isOpen={isClearMessagesModalOpen}
+            onCancel={closeClearMessagesModal}
+            onConfirm={clearTopicMessagesHandler}
+          >
+            Are you sure want to clear topic messages?
+          </ConfirmationModal>
+          <ConfirmationModal
+            isOpen={isDeleteTopicModalOpen}
+            onCancel={closeDeleteTopicModal}
             onConfirm={deleteTopicHandler}
           >
             Are you sure want to remove <b>{name}</b> topic?
           </ConfirmationModal>
           <ConfirmationModal
-            isOpen={isRecreateTopicConfirmationVisible}
-            onCancel={() => setRecreateTopicConfirmationVisible(false)}
+            isOpen={isRecreateTopicModalOpen}
+            onCancel={closeRecreateTopicModal}
             onConfirm={recreateTopicHandler}
           >
             Are you sure to recreate <b>{name}</b> topic?
@@ -272,8 +292,7 @@ const List: React.FC<TopicsListProps> = ({
             <Button
               buttonType="primary"
               buttonSize="M"
-              isLink
-              to={clusterTopicNewPath(clusterName)}
+              to={clusterTopicNewRelativePath}
             >
               <i className="fas fa-plus" /> Add a Topic
             </Button>
@@ -320,9 +339,8 @@ const List: React.FC<TopicsListProps> = ({
                   <Button
                     buttonSize="M"
                     buttonType="secondary"
-                    isLink
                     to={{
-                      pathname: clusterTopicCopyPath(clusterName),
+                      pathname: clusterTopicCopyRelativePath,
                       search: `?${getSelectedTopic()}`,
                     }}
                   >

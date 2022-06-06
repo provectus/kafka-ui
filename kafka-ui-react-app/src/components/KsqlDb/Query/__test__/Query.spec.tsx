@@ -1,22 +1,22 @@
-import { render, EventSourceMock } from 'lib/testHelpers';
+import { render, EventSourceMock, WithRoute } from 'lib/testHelpers';
 import React from 'react';
 import Query, {
   getFormattedErrorFromTableData,
 } from 'components/KsqlDb/Query/Query';
-import { screen, waitFor, within } from '@testing-library/dom';
+import { screen, within } from '@testing-library/dom';
 import fetchMock from 'fetch-mock';
 import userEvent from '@testing-library/user-event';
-import { Route } from 'react-router-dom';
 import { clusterKsqlDbQueryPath } from 'lib/paths';
+import { act } from '@testing-library/react';
 
 const clusterName = 'testLocal';
 const renderComponent = () =>
   render(
-    <Route path={clusterKsqlDbQueryPath(':clusterName')}>
+    <WithRoute path={clusterKsqlDbQueryPath()}>
       <Query />
-    </Route>,
+    </WithRoute>,
     {
-      pathname: clusterKsqlDbQueryPath(clusterName),
+      initialEntries: [clusterKsqlDbQueryPath(clusterName)],
     }
   );
 
@@ -42,16 +42,14 @@ describe('Query', () => {
       value: EventSourceMock,
     });
 
-    await waitFor(() =>
+    await act(() => {
       userEvent.paste(
         within(screen.getByLabelText('KSQL')).getByRole('textbox'),
         'show tables;'
-      )
-    );
+      );
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
+    });
 
-    await waitFor(() =>
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }))
-    );
     expect(mock.calls().length).toBe(1);
   });
 
@@ -66,25 +64,19 @@ describe('Query', () => {
       value: EventSourceMock,
     });
 
-    await waitFor(() =>
+    await act(() => {
       userEvent.paste(
         within(screen.getByLabelText('KSQL')).getByRole('textbox'),
         'show tables;'
-      )
-    );
-
-    await waitFor(() =>
+      );
       userEvent.paste(
         within(
           screen.getByLabelText('Stream properties (JSON format)')
         ).getByRole('textbox'),
         '{"some":"json"}'
-      )
-    );
-
-    await waitFor(() =>
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }))
-    );
+      );
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
+    });
     expect(mock.calls().length).toBe(1);
   });
 
@@ -99,25 +91,19 @@ describe('Query', () => {
       value: EventSourceMock,
     });
 
-    await waitFor(() =>
+    await act(() => {
       userEvent.paste(
         within(screen.getByLabelText('KSQL')).getByRole('textbox'),
         'show tables;'
-      )
-    );
-
-    await waitFor(() =>
+      );
       userEvent.paste(
         within(
           screen.getByLabelText('Stream properties (JSON format)')
         ).getByRole('textbox'),
         '{"some":"json"}'
-      )
-    );
-
-    await waitFor(() =>
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }))
-    );
+      );
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
+    });
     expect(mock.calls().length).toBe(1);
   });
 });
