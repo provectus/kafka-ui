@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.springframework.core.env.Environment;
 
-public class SerdeRegistry {
+public class ClusterSerdes {
 
   private static final CustomSerdeLoader CUSTOM_SERDE_LOADER = new CustomSerdeLoader();
 
@@ -33,7 +33,7 @@ public class SerdeRegistry {
       );
 
   // using linked map to keep order of serdes added to it
-  private final Map<String, SerdeInstance> serdes = Collections.synchronizedMap(new LinkedHashMap<>());
+  private final Map<String, SerdeInstance> serdes = new LinkedHashMap<>();
 
   @Nullable
   private final SerdeInstance defaultKeySerde;
@@ -41,7 +41,7 @@ public class SerdeRegistry {
   @Nullable
   private final SerdeInstance defaultValueSerde;
 
-  public SerdeRegistry(Environment env,
+  public ClusterSerdes(Environment env,
                        ClustersProperties clustersProperties,
                        int clusterIndex) {
     var globalPropertiesResolver = new PropertyResolverImpl(env);
@@ -68,7 +68,7 @@ public class SerdeRegistry {
     // initializing built-in serdes if they haven't been already initialized
     BUILT_IN_SERDES.forEach((name, clazz) -> {
       var serde = createSerdeInstance(clazz);
-      if (!serdes.containsKey(name)
+      if (!serdes.containsKey(name) // serde can be already initialized with custom config
           && serde.initOnStartup(clusterPropertiesResolver, globalPropertiesResolver)) {
         serde.configure(
             PropertyResolverImpl.empty(),

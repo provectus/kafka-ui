@@ -23,13 +23,15 @@ public class KafkaCluster {
   private final InternalSchemaRegistry schemaRegistry;
   private final String ksqldbServer;
   private final List<KafkaConnectCluster> kafkaConnect;
-  private final String schemaNameTemplate;
-  private final String keySchemaNameTemplate;
+  private final String schemaNameTemplate; //TODO rm (used only in SRSerde)
+  private final String keySchemaNameTemplate; //TODO rm (used only in SRSerde)
+  //TODO:Start rm protobufFileSerde-related properties -->>
   private final Path protobufFile;
   private final String protobufMessageName;
   private final Map<String, String> protobufMessageNameByTopic;
   private final String protobufMessageNameForKey;
   private final Map<String, String> protobufMessageNameForKeyByTopic;
+  //TODO:End <<---
   private final Properties properties;
   private final boolean readOnly;
   private final boolean disableLogDirsCollection;
