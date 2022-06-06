@@ -41,7 +41,6 @@ public class ApiHelper {
         topic.setName(topicName);
         topic.setPartitions(partitions);
         topic.setReplicationFactor(replicationFactor);
-       // topic.setConfigs(new HashMap<>());
         deleteTopic(clusterName, topicName);
         sleep(2000);
         try {

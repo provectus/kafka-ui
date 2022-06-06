@@ -17,7 +17,7 @@ public class ConnectorsTests extends BaseTest {
     public static final String TOPIC_FOR_CONNECTOR = "topic_for_connector";
     public static final String TOPIC_FOR_DELETE_CONNECTOR = "topic_for_delete_connector";
     public static final String TOPIC_FOR_UPDATE_CONNECTOR = "topic_for_update_connector";
-    public static final String FIRST_CONNECT = "first";
+    public static final String FIRST_CONNECTOR = "first";
     public static final String CONNECTOR_FOR_DELETE = "sink_postgres_activities_e2e_checks_for_delete";
     public static final String CONNECTOR_FOR_UPDATE = "sink_postgres_activities_e2e_checks_for_update";
 
@@ -41,16 +41,16 @@ public class ConnectorsTests extends BaseTest {
         apiHelper.createTopic(LOCAL_CLUSTER, TOPIC_FOR_UPDATE_CONNECTOR);
         apiHelper.sendMessage(LOCAL_CLUSTER, TOPIC_FOR_UPDATE_CONNECTOR, message, " ");
 
-        apiHelper.createConnector(LOCAL_CLUSTER, FIRST_CONNECT, CONNECTOR_FOR_DELETE, connectorToDelete);
-        apiHelper.createConnector(LOCAL_CLUSTER, FIRST_CONNECT, CONNECTOR_FOR_UPDATE, connectorToUpdate);
+        apiHelper.createConnector(LOCAL_CLUSTER, FIRST_CONNECTOR, CONNECTOR_FOR_DELETE, connectorToDelete);
+        apiHelper.createConnector(LOCAL_CLUSTER, FIRST_CONNECTOR, CONNECTOR_FOR_UPDATE, connectorToUpdate);
     }
 
     @AfterAll
     @SneakyThrows
     public static void afterAll() {
         ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
-        apiHelper.deleteConnector(LOCAL_CLUSTER, FIRST_CONNECT, SINK_CONNECTOR);
-        apiHelper.deleteConnector(LOCAL_CLUSTER, FIRST_CONNECT, CONNECTOR_FOR_UPDATE);
+        apiHelper.deleteConnector(LOCAL_CLUSTER, FIRST_CONNECTOR, SINK_CONNECTOR);
+        apiHelper.deleteConnector(LOCAL_CLUSTER, FIRST_CONNECTOR, CONNECTOR_FOR_UPDATE);
         apiHelper.deleteTopic(LOCAL_CLUSTER, TOPIC_FOR_CONNECTOR);
         apiHelper.deleteTopic(LOCAL_CLUSTER, TOPIC_FOR_DELETE_CONNECTOR);
         apiHelper.deleteTopic(LOCAL_CLUSTER, TOPIC_FOR_UPDATE_CONNECTOR);
