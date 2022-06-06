@@ -32,13 +32,12 @@ const App: React.FC = () => {
   const location = useLocation();
 
   React.useEffect(() => {
-    closeSidebar();
-  }, [closeSidebar, location]);
+    setIsSidebarVisible(false);
+  }, [location]);
 
   React.useEffect(() => {
     dispatch(fetchClusters());
   }, [dispatch]);
-
   return (
     <ThemeProvider theme={theme}>
       <S.Layout>
