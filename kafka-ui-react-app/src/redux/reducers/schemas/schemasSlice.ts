@@ -5,20 +5,16 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import {
-  Configuration,
-  SchemasApi,
   SchemaSubject,
   SchemaSubjectsResponse,
   GetSchemasRequest,
   GetLatestSchemaRequest,
 } from 'generated-sources';
-import { BASE_PARAMS, AsyncRequestStatus } from 'lib/constants';
+import { schemasApiClient } from 'lib/api';
+import { AsyncRequestStatus } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
 import { ClusterName, RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const schemasApiClient = new SchemasApi(apiClientConf);
 
 export const SCHEMA_LATEST_FETCH_ACTION = 'schemas/latest/fetch';
 export const fetchLatestSchema = createAsyncThunk<

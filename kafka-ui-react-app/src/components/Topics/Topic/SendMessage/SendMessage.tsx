@@ -6,7 +6,6 @@ import {
   RouteParamsClusterTopic,
 } from 'lib/paths';
 import jsf from 'json-schema-faker';
-import { messagesApiClient } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import {
   fetchTopicMessageSchema,
   fetchTopicDetails,
@@ -25,6 +24,7 @@ import {
 import Select, { SelectOption } from 'components/common/Select/Select';
 import useAppParams from 'lib/hooks/useAppParams';
 import Heading from 'components/common/heading/Heading.styled';
+import { messagesApiClient } from 'lib/api';
 
 import validateMessage from './validateMessage';
 import * as S from './SendMessage.styled';

@@ -1,15 +1,7 @@
-import React, { useState } from 'react';
-import useInterval from 'lib/hooks/useInterval';
+import React from 'react';
+import { useQuery } from 'react-query';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { BrokersApi, Configuration } from 'generated-sources';
-import { BASE_PARAMS } from 'lib/constants';
 import * as Metrics from 'components/common/Metrics';
-import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
-import {
-  fetchBrokers,
-  fetchClusterStats,
-  selectStats,
-} from 'redux/reducers/brokers/brokersSlice';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import useAppParams from 'lib/hooks/useAppParams';
 import { translateLogdir } from 'components/Brokers/utils/translateLogdir';
@@ -17,9 +9,7 @@ import { SmartTable } from 'components/common/SmartTable/SmartTable';
 import { TableColumn } from 'components/common/SmartTable/TableColumn';
 import { useTableState } from 'lib/hooks/useTableState';
 import { ClusterBrokerParam } from 'lib/paths';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const brokersApiClient = new BrokersApi(apiClientConf);
+import { brokersApiClient, clustersApiClient } from 'lib/api';
 
 export interface BrokerLogdirState {
   name: string;
@@ -29,41 +19,40 @@ export interface BrokerLogdirState {
 }
 
 const Broker: React.FC = () => {
-  const dispatch = useAppDispatch();
   const { clusterName, brokerId } = useAppParams<ClusterBrokerParam>();
 
-  const [logdirs, setLogdirs] = useState<BrokerLogdirState[]>([]);
-  const { diskUsage, items } = useAppSelector(selectStats);
-
-  React.useEffect(() => {
-    brokersApiClient
-      .getAllBrokersLogdirs({
+  const { data: clusterStats } = useQuery(
+    ['clusterStats', clusterName],
+    () => clustersApiClient.getClusterStats({ clusterName }),
+    { suspense: true, refetchInterval: 5000 }
+  );
+  const { data: brokers } = useQuery(
+    ['brokers', clusterName],
+    () => brokersApiClient.getBrokers({ clusterName }),
+    { suspense: true, refetchInterval: 5000 }
+  );
+  const { data: logDirs } = useQuery(
+    ['brokerLogDirs', clusterName, brokerId],
+    () =>
+      brokersApiClient.getAllBrokersLogdirs({
         clusterName,
         broker: [Number(brokerId)],
-      })
-      .then((res) => {
-        if (res && res[0]) {
-          setLogdirs([translateLogdir(res[0])]);
-        }
-      });
-    dispatch(fetchClusterStats(clusterName));
-    dispatch(fetchBrokers(clusterName));
-  }, [clusterName, brokerId, dispatch]);
+      }),
+    { suspense: true, refetchInterval: 5000 }
+  );
 
-  const tableState = useTableState<BrokerLogdirState, string>(logdirs, {
-    idSelector: (logdir) => logdir.name,
+  const preparedRows = logDirs?.map(translateLogdir) || [];
+  const tableState = useTableState<BrokerLogdirState, string>(preparedRows, {
+    idSelector: ({ name }) => name,
     totalPages: 0,
   });
 
-  const brokerItem = items?.find((item) => item.id === Number(brokerId));
-  const brokerDiskUsage = diskUsage?.find(
+  if (!clusterStats) return null;
+
+  const brokerItem = brokers?.find(({ id }) => id === Number(brokerId));
+  const brokerDiskUsage = clusterStats.diskUsage?.find(
     (item) => item.brokerId === Number(brokerId)
   );
-
-  useInterval(() => {
-    fetchClusterStats(clusterName);
-    fetchBrokers(clusterName);
-  }, 5000);
   return (
     <>
       <PageHeading text={`Broker ${brokerId}`} />

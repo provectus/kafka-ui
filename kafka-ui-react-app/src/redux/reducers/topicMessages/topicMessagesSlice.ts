@@ -1,13 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TopicMessagesState, ClusterName, TopicName } from 'redux/interfaces';
-import { TopicMessage, Configuration, MessagesApi } from 'generated-sources';
-import { BASE_PARAMS } from 'lib/constants';
+import { TopicMessage } from 'generated-sources';
 import { getResponse } from 'lib/errorHandling';
 import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
 import { fetchTopicDetails } from 'redux/reducers/topics/topicsSlice';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const messagesApiClient = new MessagesApi(apiClientConf);
+import { messagesApiClient } from 'lib/api';
 
 export const clearTopicMessages = createAsyncThunk<
   undefined,
