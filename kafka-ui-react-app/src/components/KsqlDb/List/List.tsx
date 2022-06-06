@@ -11,8 +11,15 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Button } from 'components/common/Button/Button';
+import { KsqlDescription } from 'redux/interfaces/ksqlDb';
 
-const headers = [
+export type KsqlDescriptionAccessor = keyof KsqlDescription;
+
+interface HeadersType {
+  Header: string;
+  accessor: KsqlDescriptionAccessor;
+}
+const headers: HeadersType[] = [
   { Header: 'Type', accessor: 'type' },
   { Header: 'Name', accessor: 'name' },
   { Header: 'Topic', accessor: 'topic' },
