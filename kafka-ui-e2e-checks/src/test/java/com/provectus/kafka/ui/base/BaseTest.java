@@ -32,7 +32,6 @@ import java.util.Arrays;
 
 @Slf4j
 @DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
-@SuppressWarnings("squid:S2187")
 public class BaseTest {
 
     protected Steps steps = Steps.INSTANCE;
