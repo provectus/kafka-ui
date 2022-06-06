@@ -3,6 +3,7 @@ import { clusterKsqlDbPath } from 'lib/paths';
 import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/dom';
 import ListItem from 'components/KsqlDb/List/ListItem';
+import { KsqlDescription } from 'redux/interfaces/ksqlDb';
 
 const clusterName = 'local';
 
@@ -10,7 +11,7 @@ const renderComponent = ({
   accessors,
   data,
 }: {
-  accessors: string[];
+  accessors: (keyof KsqlDescription)[];
   data: Record<string, string>;
 }) => {
   render(
@@ -24,7 +25,7 @@ const renderComponent = ({
 describe('KsqlDb List Item', () => {
   it('renders placeholder on one data', async () => {
     renderComponent({
-      accessors: ['accessors'],
+      accessors: ['accessors' as keyof KsqlDescription],
       data: { accessors: 'accessors text' },
     });
 
