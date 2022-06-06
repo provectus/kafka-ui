@@ -38,9 +38,11 @@ export const clusterBrokersPath = (
 ) => `${clusterPath(clusterName)}/${clusterBrokerRelativePath}`;
 
 export const clusterBrokerPath = (
-  clusterName: ClusterName,
-  brokerId: BrokerId | string
+  clusterName: ClusterName = RouteParams.clusterName,
+  brokerId: BrokerId | string = RouteParams.brokerId
 ) => `${clusterBrokersPath(clusterName)}/${brokerId}`;
+
+export type ClusterBrokerParam = { clusterName: ClusterName; brokerId: string };
 
 // Consumer Groups
 export const clusterConsumerGroupsRelativePath = 'consumer-groups';

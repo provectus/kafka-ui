@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { ClusterName } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { BrokersApi, Configuration } from 'generated-sources';
 import { BASE_PARAMS } from 'lib/constants';
-import { Table } from 'components/common/table/Table/Table.styled';
-import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import * as Metrics from 'components/common/Metrics';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
@@ -16,6 +13,10 @@ import {
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import useAppParams from 'lib/hooks/useAppParams';
 import { translateLogdir } from 'components/Brokers/utils/translateLogdir';
+import { SmartTable } from 'components/common/SmartTable/SmartTable';
+import { TableColumn } from 'components/common/SmartTable/TableColumn';
+import { useTableState } from 'lib/hooks/useTableState';
+import { ClusterBrokerParam } from 'lib/paths';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const brokersApiClient = new BrokersApi(apiClientConf);
@@ -29,10 +30,9 @@ export interface BrokerLogdirState {
 
 const Broker: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { clusterName, brokerId } =
-    useAppParams<{ clusterName: ClusterName; brokerId: string }>();
+  const { clusterName, brokerId } = useAppParams<ClusterBrokerParam>();
 
-  const [logdirs, setLogdirs] = useState<BrokerLogdirState>();
+  const [logdirs, setLogdirs] = useState<BrokerLogdirState[]>([]);
   const { diskUsage, items } = useAppSelector(selectStats);
 
   React.useEffect(() => {
@@ -43,12 +43,17 @@ const Broker: React.FC = () => {
       })
       .then((res) => {
         if (res && res[0]) {
-          setLogdirs(translateLogdir(res[0]));
+          setLogdirs([translateLogdir(res[0])]);
         }
       });
     dispatch(fetchClusterStats(clusterName));
     dispatch(fetchBrokers(clusterName));
   }, [clusterName, brokerId, dispatch]);
+
+  const tableState = useTableState<BrokerLogdirState, string>(logdirs, {
+    idSelector: (logdir) => logdir.name,
+    totalPages: 0,
+  });
 
   const brokerItem = items?.find((item) => item.id === Number(brokerId));
   const brokerDiskUsage = diskUsage?.find(
@@ -74,30 +79,16 @@ const Broker: React.FC = () => {
           <Metrics.Indicator label="Host">{brokerItem?.host}</Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
-      <Table isFullwidth>
-        <thead>
-          <tr>
-            <TableHeaderCell title="Name" />
-            <TableHeaderCell title="Error" />
-            <TableHeaderCell title="Topics" />
-            <TableHeaderCell title="Partitions" />
-          </tr>
-        </thead>
-        <tbody>
-          {!logdirs ? (
-            <tr>
-              <td colSpan={8}>Log dir data not available</td>
-            </tr>
-          ) : (
-            <tr>
-              <td>{logdirs.name}</td>
-              <td>{logdirs.error}</td>
-              <td>{logdirs.topics}</td>
-              <td>{logdirs.partitions}</td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
+      <SmartTable
+        tableState={tableState}
+        placeholder="Log dir data not available"
+        isFullwidth
+      >
+        <TableColumn title="Name" field="name" />
+        <TableColumn title="Error" field="error" />
+        <TableColumn title="Topics" field="topics" />
+        <TableColumn title="Partitions" field="partitions" />
+      </SmartTable>
     </>
   );
 };

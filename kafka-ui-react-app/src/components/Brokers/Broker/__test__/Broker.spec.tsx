@@ -16,7 +16,7 @@ describe('Broker Component', () => {
 
   const renderComponent = () =>
     render(
-      <WithRoute path={clusterBrokerPath(':clusterName', ':brokerId')}>
+      <WithRoute path={clusterBrokerPath()}>
         <Broker />
       </WithRoute>,
       {
