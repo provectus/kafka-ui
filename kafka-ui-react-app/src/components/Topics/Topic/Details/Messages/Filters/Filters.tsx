@@ -13,12 +13,10 @@ import {
 import React, { useContext } from 'react';
 import { omitBy } from 'lodash';
 import { useNavigate, useLocation } from 'react-router-dom';
-import DatePicker from 'react-datepicker';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { BASE_PARAMS } from 'lib/constants';
-import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 import Search from 'components/common/Search/Search';
@@ -398,24 +396,22 @@ const Filters: React.FC<FiltersProps> = ({
               disabled={isTailing}
             />
             {currentSeekType === SeekType.OFFSET ? (
-              <Input
+              <S.OffsetSelector
                 id="offset"
                 type="text"
                 inputSize="M"
                 value={offset}
-                className="offset-selector"
                 placeholder="Offset"
                 onChange={({ target: { value } }) => setOffset(value)}
                 disabled={isTailing}
               />
             ) : (
-              <DatePicker
+              <S.DatePickerInput
                 selected={timestamp}
                 onChange={(date: Date | null) => setTimestamp(date)}
                 showTimeInput
                 timeInputLabel="Time:"
                 dateFormat="MMMM d, yyyy HH:mm"
-                className="date-picker"
                 placeholderText="Select timestamp"
                 disabled={isTailing}
               />

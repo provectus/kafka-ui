@@ -1,54 +1,71 @@
 package com.provectus.kafka.ui.helpers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.provectus.kafka.ui.api.ApiClient;
 import com.provectus.kafka.ui.api.api.KafkaConnectApi;
 import com.provectus.kafka.ui.api.api.MessagesApi;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.provectus.kafka.ui.api.ApiClient;
 import com.provectus.kafka.ui.api.api.TopicsApi;
 import com.provectus.kafka.ui.api.model.CreateTopicMessage;
+import com.provectus.kafka.ui.api.model.ErrorResponse;
 import com.provectus.kafka.ui.api.model.NewConnector;
 import com.provectus.kafka.ui.api.model.TopicCreation;
+import com.provectus.kafka.ui.base.TestConfiguration;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.codeborne.selenide.Selenide.sleep;
+
+
+@Slf4j
 public class ApiHelper {
+
     int partitions = 1;
     int replicationFactor = 1;
     String newTopic = "new-topic";
-    String baseURL = "http://localhost:8080/";
+    String baseURL = TestConfiguration.BASE_API_URL;
+
 
     @SneakyThrows
     private TopicsApi topicApi() {
-        ApiClient defaultClient = new ApiClient();
-        defaultClient.setBasePath(baseURL);
-        TopicsApi topicsApi = new TopicsApi(defaultClient);
-        return topicsApi;
+        return new TopicsApi(new ApiClient().setBasePath(baseURL));
     }
 
-    @SneakyThrows
+
     public void createTopic(String clusterName, String topicName) {
         TopicCreation topic = new TopicCreation();
         topic.setName(topicName);
         topic.setPartitions(partitions);
         topic.setReplicationFactor(replicationFactor);
-        topicApi().createTopic(clusterName,topic).block();
+        deleteTopic(clusterName, topicName);
+        sleep(2000);
+        try {
+            topicApi().createTopic(clusterName, topic).block();
+        } catch (WebClientResponseException ex) {
+            ex.printStackTrace();
+        }
     }
 
-    @SneakyThrows
+
     public void deleteTopic(String clusterName, String topicName) {
         try {
             topicApi().deleteTopic(clusterName, topicName).block();
         } catch (WebClientResponseException ex) {
-            if (ex.getRawStatusCode() != 404)  // except already deleted
+            ErrorResponse errorResponse = new Gson().fromJson(ex.getResponseBodyAsString(), ErrorResponse.class);
+            if (errorResponse.getMessage().startsWith("This server does not host this")) {
+                log.info("This server does not host this " + topicName);
+            } else {
                 throw ex;
+            }
         }
     }
 
     @SneakyThrows
-    private KafkaConnectApi connectorApi(){
+    private KafkaConnectApi connectorApi() {
         ApiClient defaultClient = new ApiClient();
         defaultClient.setBasePath(baseURL);
         KafkaConnectApi connectorsApi = new KafkaConnectApi(defaultClient);
@@ -59,9 +76,7 @@ public class ApiHelper {
     public void deleteConnector(String clusterName, String connectName, String connectorName) {
         try {
             connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
-        } catch (WebClientResponseException ex) {
-            if (ex.getRawStatusCode() != 404)
-                throw ex;
+        } catch (WebClientResponseException ignore) {
         }
     }
 
@@ -71,7 +86,15 @@ public class ApiHelper {
         connector.setName(connectorName);
         Map<String, Object> configMap = new ObjectMapper().readValue(configJson, HashMap.class);
         connector.setConfig(configMap);
+        try {
+            connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
+        } catch (WebClientResponseException ignored){
+        }
         connectorApi().createConnector(clusterName, connectName, connector).block();
+    }
+
+    public String getFirstConnectName(String clusterName) {
+        return connectorApi().getConnects(clusterName).blockFirst().getName();
     }
 
     @SneakyThrows
@@ -83,10 +106,16 @@ public class ApiHelper {
     }
 
     @SneakyThrows
-    public void sendMessage(String clusterName, String topicName, String messageContentJson, String messageKey){
+    public void sendMessage(String clusterName, String topicName, String messageContentJson,
+            String messageKey) {
         CreateTopicMessage createMessage = new CreateTopicMessage();
+        createMessage.partition(0);
         createMessage.setContent(messageContentJson);
         createMessage.setKey(messageKey);
-        messageApi().sendTopicMessages(clusterName, topicName, createMessage).block();
+        try {
+            messageApi().sendTopicMessages(clusterName, topicName, createMessage).block();
+        } catch (WebClientResponseException ex) {
+            ex.getRawStatusCode();
+        }
     }
 }
