@@ -37,7 +37,6 @@ const List: FC = () => {
 
   const { rows, fetching, tablesCount, streamsCount } =
     useSelector(getKsqlDbTables);
-  console.log(rows);
 
   useEffect(() => {
     dispatch(fetchKsqlDbTables(clusterName));
