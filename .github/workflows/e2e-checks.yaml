@@ -27,9 +27,9 @@ jobs:
         run: |
           cat "./kafka-ui-e2e-checks/.env.ci" >> "./kafka-ui-e2e-checks/.env"
       - name: pull docker
-        id: pull_selenoid
+        id: pull_chrome
         run: |
-          docker pull selenoid/vnc:chrome_86.0
+          docker pull selenium/standalone-chrome
       - name: Set up JDK 1.13
         uses: actions/setup-java@v1
         with:
@@ -38,7 +38,7 @@ jobs:
         id: build_app
         run: |
           mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
-          mvn clean package -DskipTests ${{ github.event.inputs.extraMavenOptions }}
+          mvn clean package -Dmaven.test.skip=true ${{ github.event.inputs.extraMavenOptions }}
       - name: compose app
         id: compose_app
         # use the following command until #819 will be fixed

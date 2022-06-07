@@ -3,17 +3,10 @@ package com.provectus.kafka.ui.base;
 public class TestConfiguration {
   public static boolean CLEAR_REPORTS_DIR =
       Boolean.parseBoolean(System.getProperty("CLEAR_REPORTS_DIR", "true"));
-
-  public static boolean SHOULD_START_SELENOID =
-      Boolean.parseBoolean(System.getProperty("SHOULD_START_SELENOID", "false"));
-
-  public static String BASE_URL = System.getProperty("BASE_URL", "http://localhost:8080/");
-
+  public static String BASE_API_URL = System.getProperty("BASE_URL", "http://localhost:8080");
+  public static String BASE_WEB_URL = System.getProperty("BASE_DOCKER_URL", "http://host.testcontainers.internal:8080");
   public static boolean USE_LOCAL_BROWSER =
       Boolean.parseBoolean(System.getProperty("USE_LOCAL_BROWSER", "true"));
-
-  public static String SELENOID_URL =
-      System.getProperty("SELENOID_URL", "http://localhost:4444/wd/hub");
   public static String REPORTS_FOLDER = System.getProperty("REPORTS_FOLDER", "allure-results");
   public static Boolean SCREENSHOTS =
       Boolean.parseBoolean(System.getProperty("SCREENSHOTS", "false"));
