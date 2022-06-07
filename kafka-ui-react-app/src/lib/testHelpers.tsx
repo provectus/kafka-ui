@@ -14,6 +14,7 @@ import { RootState } from 'redux/interfaces';
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from 'redux/reducers';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
@@ -57,6 +58,10 @@ const customRender = (
     ...renderOptions
   }: CustomRenderOptions = {}
 ) => {
+  // use new QueryClient instance for each test run to avoid issues with cache
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
   // overrides @testing-library/react render.
   const AllTheProviders: React.FC<PropsWithChildren<unknown>> = ({
     children,
@@ -64,9 +69,11 @@ const customRender = (
     return (
       <ThemeProvider theme={theme}>
         <Provider store={store}>
-          <MemoryRouter initialEntries={initialEntries}>
-            {children}
-          </MemoryRouter>
+          <QueryClientProvider client={queryClient}>
+            <MemoryRouter initialEntries={initialEntries}>
+              {children}
+            </MemoryRouter>
+          </QueryClientProvider>
         </Provider>
       </ThemeProvider>
     );

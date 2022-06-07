@@ -6,14 +6,12 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import {
-  Configuration,
   ConsumerGroupDetails,
   ConsumerGroupOrdering,
-  ConsumerGroupsApi,
   ConsumerGroupsPageResponse,
   SortOrder,
 } from 'generated-sources';
-import { BASE_PARAMS, AsyncRequestStatus } from 'lib/constants';
+import { AsyncRequestStatus } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
 import {
   ClusterName,
@@ -23,9 +21,7 @@ import {
 } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 import { EntityState } from '@reduxjs/toolkit/src/entities/models';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const api = new ConsumerGroupsApi(apiClientConf);
+import { consumerGroupsApiClient } from 'lib/api';
 
 export const fetchConsumerGroupsPaged = createAsyncThunk<
   ConsumerGroupsPageResponse,
@@ -44,7 +40,7 @@ export const fetchConsumerGroupsPaged = createAsyncThunk<
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.getConsumerGroupsPageRaw({
+      const response = await consumerGroupsApiClient.getConsumerGroupsPageRaw({
         clusterName,
         orderBy,
         sortOrder,
@@ -66,7 +62,7 @@ export const fetchConsumerGroupDetails = createAsyncThunk<
   'consumerGroups/fetchConsumerGroupDetails',
   async ({ clusterName, consumerGroupID }, { rejectWithValue }) => {
     try {
-      return await api.getConsumerGroup({
+      return await consumerGroupsApiClient.getConsumerGroup({
         clusterName,
         id: consumerGroupID,
       });
@@ -83,7 +79,7 @@ export const deleteConsumerGroup = createAsyncThunk<
   'consumerGroups/deleteConsumerGroup',
   async ({ clusterName, consumerGroupID }, { rejectWithValue }) => {
     try {
-      await api.deleteConsumerGroup({
+      await consumerGroupsApiClient.deleteConsumerGroup({
         clusterName,
         id: consumerGroupID,
       });
@@ -105,7 +101,7 @@ export const resetConsumerGroupOffsets = createAsyncThunk<
     { rejectWithValue }
   ) => {
     try {
-      await api.resetConsumerGroupOffsets({
+      await consumerGroupsApiClient.resetConsumerGroupOffsets({
         clusterName,
         id: consumerGroupID,
         consumerGroupOffsetsReset: {
