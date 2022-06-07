@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-@SuppressWarnings("squid:S1192")
 public class ResponseParser {
 
   private ResponseParser() {
@@ -21,7 +20,7 @@ public class ResponseParser {
 
   public static Optional<KsqlApiClient.KsqlResponseTable> parseSelectResponse(JsonNode jsonNode) {
     // in response, we're getting either header record or row data
-    if (arrayFieldNonEmpty(jsonNode, "header")) {
+    if (isArrayFieldNonEmpty(jsonNode, "header")) {
       return Optional.of(
           KsqlApiClient.KsqlResponseTable.builder()
               .header("Schema")
@@ -32,7 +31,7 @@ public class ResponseParser {
               )
               .build());
     }
-    if (arrayFieldNonEmpty(jsonNode, "row")) {
+    if (isArrayFieldNonEmpty(jsonNode, "row")) {
       return Optional.of(
           KsqlApiClient.KsqlResponseTable.builder()
               .header("Row")
@@ -150,12 +149,15 @@ public class ResponseParser {
 
   private static List<KsqlApiClient.KsqlResponseTable> parseProperties(JsonNode jsonNode) {
     var tables = new ArrayList<KsqlApiClient.KsqlResponseTable>();
-    if (arrayFieldNonEmpty(jsonNode, "properties")) {
-      tables.add(DynamicParser.parseArray("properties", jsonNode.get("properties")));
+    final var properties = "properties";
+    final var overwrittenProperties = "overwrittenProperties";
+    if (isArrayFieldNonEmpty(jsonNode, properties)) {
+      tables.add(DynamicParser.parseArray(properties,
+          jsonNode.get(properties)));
     }
-    if (arrayFieldNonEmpty(jsonNode, "overwrittenProperties")) {
-      tables.add(DynamicParser.parseArray("overwrittenProperties",
-          jsonNode.get("overwrittenProperties")));
+    if (isArrayFieldNonEmpty(jsonNode, overwrittenProperties)) {
+      tables.add(DynamicParser.parseArray(overwrittenProperties,
+          jsonNode.get(overwrittenProperties)));
     }
     return tables;
   }
@@ -164,7 +166,7 @@ public class ResponseParser {
     return List.of(DynamicParser.parseObject("Ksql Response", jsonNode));
   }
 
-  private static boolean arrayFieldNonEmpty(JsonNode json, String field) {
+  private static boolean isArrayFieldNonEmpty(JsonNode json, String field) {
     return json.hasNonNull(field) && !json.get(field).isEmpty();
   }
 
