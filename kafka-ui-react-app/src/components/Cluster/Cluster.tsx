@@ -18,6 +18,7 @@ import {
   clusterTopicsRelativePath,
   getNonExactPath,
 } from 'lib/paths';
+import Brokers from 'components/Brokers/Brokers';
 import Topics from 'components/Topics/Topics';
 import Schemas from 'components/Schemas/Schemas';
 import Connect from 'components/Connect/Connect';
@@ -28,8 +29,6 @@ import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import { BreadcrumbProvider } from 'components/common/Breadcrumb/Breadcrumb.provider';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-
-const Brokers = React.lazy(() => import('components/Brokers/Brokers'));
 
 const Cluster: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
