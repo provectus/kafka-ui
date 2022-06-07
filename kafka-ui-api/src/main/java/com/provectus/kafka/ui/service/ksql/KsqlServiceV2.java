@@ -16,11 +16,15 @@ import java.util.stream.Collectors;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.unit.DataSize;
 import reactor.core.publisher.Flux;
 
 @Slf4j
 @Service
 public class KsqlServiceV2 {
+
+  @org.springframework.beans.factory.annotation.Value("${webclient.max-in-memory-buffer-size:20MB}")
+  private DataSize maxBuffSize;
 
   @Value
   private static class KsqlExecuteCommand {
@@ -48,12 +52,12 @@ public class KsqlServiceV2 {
       throw new ValidationException("No command registered with id " + commandId);
     }
     registeredCommands.invalidate(commandId);
-    return new KsqlApiClient(cmd.cluster)
+    return new KsqlApiClient(cmd.cluster, maxBuffSize)
         .execute(cmd.ksql, cmd.streamProperties);
   }
 
   public Flux<KsqlTableDescriptionDTO> listTables(KafkaCluster cluster) {
-    return new KsqlApiClient(cluster)
+    return new KsqlApiClient(cluster, maxBuffSize)
         .execute("LIST TABLES;", Map.of())
         .flatMap(resp -> {
           if (!resp.getHeader().equals("Tables")) {
@@ -75,7 +79,7 @@ public class KsqlServiceV2 {
   }
 
   public Flux<KsqlStreamDescriptionDTO> listStreams(KafkaCluster cluster) {
-    return new KsqlApiClient(cluster)
+    return new KsqlApiClient(cluster, maxBuffSize)
         .execute("LIST STREAMS;", Map.of())
         .flatMap(resp -> {
           if (!resp.getHeader().equals("Streams")) {
