@@ -1,13 +1,13 @@
 import React from 'react';
-import Brokers from 'components/Brokers/Brokers';
 import { render, WithRoute } from 'lib/testHelpers';
 import { screen, waitFor } from '@testing-library/dom';
 import { clusterBrokersPath } from 'lib/paths';
 import fetchMock from 'fetch-mock';
 import { clusterStatsPayload } from 'redux/reducers/brokers/__test__/fixtures';
 import { act } from '@testing-library/react';
+import BrokersList from 'components/Brokers/List/BrokersList';
 
-describe('Brokers Component', () => {
+describe('BrokersList Component', () => {
   afterEach(() => fetchMock.reset());
 
   const clusterName = 'local';
@@ -18,14 +18,14 @@ describe('Brokers Component', () => {
   const renderComponent = () =>
     render(
       <WithRoute path={clusterBrokersPath()}>
-        <Brokers />
+        <BrokersList />
       </WithRoute>,
       {
         initialEntries: [clusterBrokersPath(clusterName)],
       }
     );
 
-  describe('Brokers', () => {
+  describe('BrokersList', () => {
     let fetchBrokersMock: fetchMock.FetchMockStatic;
     const fetchStatsUrl = `/api/clusters/${clusterName}/stats`;
 
