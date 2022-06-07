@@ -1,5 +1,4 @@
 import React from 'react';
-import { useQuery } from 'react-query';
 import { ClusterName } from 'redux/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { NavLink } from 'react-router-dom';
@@ -8,20 +7,13 @@ import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import * as Metrics from 'components/common/Metrics';
 import useAppParams from 'lib/hooks/useAppParams';
-import { brokersApiClient, clustersApiClient } from 'lib/api';
+import useBrokers from 'lib/hooks/useBrokers';
+import useClusterStats from 'lib/hooks/useClusterStats';
 
 const BrokersList: React.FC = () => {
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
-  const { data: clusterStats } = useQuery(
-    ['clusterStats', clusterName],
-    () => clustersApiClient.getClusterStats({ clusterName }),
-    { suspense: true, refetchInterval: 5000 }
-  );
-  const { data: brokers } = useQuery(
-    ['brokers', clusterName],
-    () => brokersApiClient.getBrokers({ clusterName }),
-    { suspense: true, refetchInterval: 5000 }
-  );
+  const { data: clusterStats } = useClusterStats(clusterName);
+  const { data: brokers } = useBrokers(clusterName);
 
   if (!clusterStats) return null;
 
