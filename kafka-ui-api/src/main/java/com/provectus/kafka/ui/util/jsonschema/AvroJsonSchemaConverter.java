@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.util.jsonschema;
 
-import com.provectus.kafka.ui.exception.KafkaUiRuntimeException;
+import com.provectus.kafka.ui.exception.SchemaConverterException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,7 +61,7 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
         case ARRAY:
           return createArraySchema(name, schema, definitions);
         default:
-          throw new KafkaUiRuntimeException("Unknown json type");
+          throw new SchemaConverterException("Unknown json type: " + type.getType().getName());
       }
     } else {
       return createUnionSchema(schema, definitions);

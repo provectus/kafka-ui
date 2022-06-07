@@ -3,7 +3,7 @@ package com.provectus.kafka.ui.serde.schemaregistry;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.Message;
 import com.google.protobuf.util.JsonFormat;
-import com.provectus.kafka.ui.exception.KafkaUiRuntimeException;
+import com.provectus.kafka.ui.exception.SerDeException;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
@@ -45,7 +45,7 @@ public class ProtobufMessageReader extends MessageReader<Message> {
       JsonFormat.parser().merge(value, builder);
       return builder.build();
     } catch (Exception e) {
-      throw new KafkaUiRuntimeException("Failed to serialize record for topic " + topic, e);
+      throw new SerDeException("Failed to serialize record for topic " + topic, e);
     }
   }
 
