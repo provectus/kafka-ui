@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { getNonExactPath, RouteParams } from 'lib/paths';
-import BrokersList from 'components/Brokers/List/BrokersList';
+import BrokersList from 'components/Brokers/BrokersList/BrokersList';
 import Broker from 'components/Brokers/Broker/Broker';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
