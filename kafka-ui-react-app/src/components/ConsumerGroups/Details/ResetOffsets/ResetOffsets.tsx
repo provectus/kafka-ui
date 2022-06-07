@@ -32,12 +32,7 @@ import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 
-import {
-  MainSelectorsWrapperStyled,
-  OffsetsWrapperStyled,
-  ResetOffsetsStyledWrapper,
-  OffsetsTitleStyled,
-} from './ResetOffsets.styled';
+import * as S from './ResetOffsets.styled';
 
 interface FormType {
   topic: string;
@@ -176,9 +171,9 @@ const ResetOffsets: React.FC = () => {
   return (
     <FormProvider {...methods}>
       <PageHeading text="Reset offsets" />
-      <ResetOffsetsStyledWrapper>
+      <S.Wrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <MainSelectorsWrapperStyled>
+          <S.MainSelectors>
             <div>
               <InputLabel id="topicLabel">Topic</InputLabel>
               <Controller
@@ -239,7 +234,7 @@ const ResetOffsets: React.FC = () => {
                 labelledBy="Select partitions"
               />
             </div>
-          </MainSelectorsWrapperStyled>
+          </S.MainSelectors>
           {resetTypeValue === ConsumerGroupOffsetsResetType.TIMESTAMP &&
             selectedPartitions.length > 0 && (
               <div>
@@ -256,7 +251,6 @@ const ResetOffsets: React.FC = () => {
                       showTimeInput
                       timeInputLabel="Time:"
                       dateFormat="MMMM d, yyyy h:mm aa"
-                      className="date-picker"
                     />
                   )}
                 />
@@ -270,8 +264,8 @@ const ResetOffsets: React.FC = () => {
           {resetTypeValue === ConsumerGroupOffsetsResetType.OFFSET &&
             selectedPartitions.length > 0 && (
               <div>
-                <OffsetsTitleStyled>Offsets</OffsetsTitleStyled>
-                <OffsetsWrapperStyled>
+                <S.OffsetsTitle>Offsets</S.OffsetsTitle>
+                <S.OffsetsWrapper>
                   {fields.map((field, index) => (
                     <div key={field.id}>
                       <InputLabel htmlFor={`partitionsOffsets.${index}.offset`}>
@@ -299,7 +293,7 @@ const ResetOffsets: React.FC = () => {
                       />
                     </div>
                   ))}
-                </OffsetsWrapperStyled>
+                </S.OffsetsWrapper>
               </div>
             )}
           <Button
@@ -311,7 +305,7 @@ const ResetOffsets: React.FC = () => {
             Submit
           </Button>
         </form>
-      </ResetOffsetsStyledWrapper>
+      </S.Wrapper>
     </FormProvider>
   );
 };

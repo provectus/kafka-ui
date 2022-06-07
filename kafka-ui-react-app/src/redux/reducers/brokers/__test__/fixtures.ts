@@ -1,3 +1,5 @@
+import { BrokersLogdirs } from 'generated-sources';
+
 export const brokersPayload = [
   { id: 1, host: 'b-1.test.kafka.amazonaws.com' },
   { id: 2, host: 'b-2.test.kafka.amazonaws.com' },
@@ -49,3 +51,32 @@ export const updatedBrokersReducerState = {
   ],
   version: '2.2.1',
 };
+
+const partitions = {
+  broker: 2,
+  offsetLag: 0,
+  partition: 2,
+  size: 0,
+};
+const topics = {
+  name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
+  partitions: [partitions],
+};
+
+export const clusterStatsPayloadBroker: BrokersLogdirs[] = [
+  {
+    error: 'NONE',
+    name: '/opt/kafka/data-0/logs',
+    topics: [
+      {
+        ...topics,
+        partitions: [partitions, partitions, partitions],
+      },
+      topics,
+      {
+        ...topics,
+        partitions: [],
+      },
+    ],
+  },
+];

@@ -2,7 +2,7 @@ import React from 'react';
 import Editor from 'components/common/Editor/Editor';
 import { SchemaType } from 'generated-sources';
 
-import { StyledWrapper } from './StyledWrapper.styled';
+import * as S from './EditorViewer.styled';
 
 export interface FullMessageProps {
   data: string;
@@ -23,7 +23,7 @@ const EditorViewer: React.FC<FullMessageProps> = ({
 }) => {
   try {
     return (
-      <StyledWrapper>
+      <S.Wrapper>
         <Editor
           isFixedHeight
           schemaType={schemaType}
@@ -36,13 +36,13 @@ const EditorViewer: React.FC<FullMessageProps> = ({
           }}
           readOnly
         />
-      </StyledWrapper>
+      </S.Wrapper>
     );
   } catch (e) {
     return (
-      <StyledWrapper>
+      <S.Wrapper>
         <p>{data}</p>
-      </StyledWrapper>
+      </S.Wrapper>
     );
   }
 };
