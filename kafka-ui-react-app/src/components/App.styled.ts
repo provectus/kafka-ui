@@ -214,6 +214,11 @@ export const LogoutButton = styled(Button)(
     color: ${theme.button.primary.invertedColors.normal};
     background: none !important;
     padding: 0 8px;
+  `
+);
+
+export const LogoutLink = styled(Link)(
+  () => css`
     margin-right: 16px;
   `
 );

@@ -69,9 +69,11 @@ const App: React.FC = () => {
                 {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
               </S.NavbarItem>
             </S.NavbarBrand>
-            <S.LogoutButton buttonType="primary" buttonSize="M">
-              Log out
-            </S.LogoutButton>
+            <S.LogoutLink to="/logout">
+              <S.LogoutButton buttonType="primary" buttonSize="M">
+                Log out
+              </S.LogoutButton>
+            </S.LogoutLink>
           </S.NavbarBrand>
         </S.Navbar>
 
