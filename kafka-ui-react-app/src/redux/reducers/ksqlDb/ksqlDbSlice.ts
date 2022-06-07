@@ -1,16 +1,8 @@
 import { KsqlState } from 'redux/interfaces/ksqlDb';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { BASE_PARAMS } from 'lib/constants';
-import {
-  Configuration,
-  ExecuteKsqlRequest,
-  KsqlApi,
-  Table as KsqlTable,
-} from 'generated-sources';
+import { ExecuteKsqlRequest, Table as KsqlTable } from 'generated-sources';
 import { ClusterName } from 'redux/interfaces';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const ksqlDbApiClient = new KsqlApi(apiClientConf);
+import { ksqlDbApiClient } from 'lib/api';
 
 export const transformKsqlResponse = (
   rawTable: Required<KsqlTable>

@@ -13,14 +13,12 @@ import Select, { SelectOption } from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 import { Textarea } from 'components/common/Textbox/Textarea.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import {
-  schemaAdded,
-  schemasApiClient,
-} from 'redux/reducers/schemas/schemasSlice';
+import { schemaAdded } from 'redux/reducers/schemas/schemasSlice';
 import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
+import { schemasApiClient } from 'lib/api';
 
 import * as S from './New.styled';
 

@@ -1,9 +1,6 @@
 import { v4 } from 'uuid';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
-  Configuration,
-  TopicsApi,
-  ConsumerGroupsApi,
   TopicsResponse,
   TopicDetails,
   GetTopicsRequest,
@@ -18,7 +15,6 @@ import {
   RecreateTopicRequest,
   SortOrder,
   TopicColumnsToSort,
-  MessagesApi,
   GetTopicSchemaRequest,
   TopicMessageSchema,
 } from 'generated-sources';
@@ -30,15 +26,14 @@ import {
   TopicFormDataRaw,
   ClusterName,
 } from 'redux/interfaces';
-import { BASE_PARAMS } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const topicsApiClient = new TopicsApi(apiClientConf);
-const topicConsumerGroupsApiClient = new ConsumerGroupsApi(apiClientConf);
-const messagesApiClient = new MessagesApi(apiClientConf);
+import {
+  consumerGroupsApiClient,
+  messagesApiClient,
+  topicsApiClient,
+} from 'lib/api';
 
 export const fetchTopicsList = createAsyncThunk<
   TopicsResponse,
@@ -143,8 +138,9 @@ export const fetchTopicConsumerGroups = createAsyncThunk<
 >('topic/fetchTopicConsumerGroups', async (payload, { rejectWithValue }) => {
   try {
     const { topicName } = payload;
-    const consumerGroups =
-      await topicConsumerGroupsApiClient.getTopicConsumerGroups(payload);
+    const consumerGroups = await consumerGroupsApiClient.getTopicConsumerGroups(
+      payload
+    );
 
     return { consumerGroups, topicName };
   } catch (err) {
