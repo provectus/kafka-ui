@@ -1,23 +1,22 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
-import useInterval from 'lib/hooks/useInterval';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { NavLink } from 'react-router-dom';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import * as Metrics from 'components/common/Metrics';
-import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
-import {
-  fetchBrokers,
-  fetchClusterStats,
-  selectStats,
-} from 'redux/reducers/brokers/brokersSlice';
 import useAppParams from 'lib/hooks/useAppParams';
+import useBrokers from 'lib/hooks/useBrokers';
+import useClusterStats from 'lib/hooks/useClusterStats';
 
 const BrokersList: React.FC = () => {
-  const dispatch = useAppDispatch();
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
+  const { data: clusterStats } = useClusterStats(clusterName);
+  const { data: brokers } = useBrokers(clusterName);
+
+  if (!clusterStats) return null;
+
   const {
     brokerCount,
     activeControllers,
@@ -28,21 +27,12 @@ const BrokersList: React.FC = () => {
     underReplicatedPartitionCount,
     diskUsage,
     version,
-    items,
-  } = useAppSelector(selectStats);
+  } = clusterStats;
 
   const replicas = (inSyncReplicasCount ?? 0) + (outOfSyncReplicasCount ?? 0);
   const areAllInSync = inSyncReplicasCount && replicas === inSyncReplicasCount;
   const partitionIsOffline = offlinePartitionCount && offlinePartitionCount > 0;
-  React.useEffect(() => {
-    dispatch(fetchClusterStats(clusterName));
-    dispatch(fetchBrokers(clusterName));
-  }, [clusterName, dispatch]);
 
-  useInterval(() => {
-    fetchClusterStats(clusterName);
-    fetchBrokers(clusterName);
-  }, 5000);
   return (
     <>
       <PageHeading text="Broker" />
@@ -123,7 +113,7 @@ const BrokersList: React.FC = () => {
           {diskUsage &&
             diskUsage.length !== 0 &&
             diskUsage.map(({ brokerId, segmentSize, segmentCount }) => {
-              const brokerItem = items?.find((item) => item.id === brokerId);
+              const brokerItem = brokers?.find(({ id }) => id === brokerId);
               return (
                 <tr key={brokerId}>
                   <td>

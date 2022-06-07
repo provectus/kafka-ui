@@ -1,7 +1,6 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import clusters from 'redux/reducers/clusters/clustersSlice';
 import loader from 'redux/reducers/loader/loaderSlice';
-import brokers from 'redux/reducers/brokers/brokersSlice';
 import alerts from 'redux/reducers/alerts/alertsSlice';
 import schemas from 'redux/reducers/schemas/schemasSlice';
 import connect from 'redux/reducers/connect/connectSlice';
@@ -16,7 +15,6 @@ export default combineReducers({
   topics,
   topicMessages,
   clusters,
-  brokers,
   consumerGroups,
   schemas,
   connect,

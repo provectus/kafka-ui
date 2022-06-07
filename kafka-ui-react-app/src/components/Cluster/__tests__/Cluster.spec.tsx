@@ -15,6 +15,7 @@ import {
   clusterSchemasPath,
   clusterTopicsPath,
 } from 'lib/paths';
+import { act } from 'react-dom/test-utils';
 
 const CLusterCompText = {
   Topics: 'Topics',
@@ -45,16 +46,17 @@ jest.mock('components/KsqlDb/KsqlDb', () => () => (
 ));
 
 describe('Cluster', () => {
-  const renderComponent = (pathname: string) =>
+  const renderComponent = (pathname: string) => {
     render(
       <WithRoute path={`${clusterPath()}/*`}>
         <Cluster />
       </WithRoute>,
       { initialEntries: [pathname], store }
     );
+  };
 
-  it('renders Brokers', () => {
-    renderComponent(clusterBrokersPath('second'));
+  it('renders Brokers', async () => {
+    await act(() => renderComponent(clusterBrokersPath('second')));
     expect(screen.getByText(CLusterCompText.Brokers)).toBeInTheDocument();
   });
   it('renders Topics', () => {
