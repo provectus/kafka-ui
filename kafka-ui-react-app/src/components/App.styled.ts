@@ -1,6 +1,8 @@
 import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
 
+import { Button } from './common/Button/Button';
+
 export const Layout = styled.div`
   min-width: 1200px;
 
@@ -108,6 +110,8 @@ export const Navbar = styled.nav(
 
 export const NavbarBrand = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center !important;
   flex-shrink: 0;
   align-items: stretch;
   min-height: 3.25rem;
@@ -205,3 +209,17 @@ export const AlertsContainer = styled.div`
     max-width: initial;
   }
 `;
+
+export const LogoutButton = styled(Button)(
+  ({ theme }) => css`
+    color: ${theme.button.primary.invertedColors.normal};
+    background: none !important;
+    padding: 0 8px;
+  `
+);
+
+export const LogoutLink = styled(Link)(
+  () => css`
+    margin-right: 16px;
+  `
+);
