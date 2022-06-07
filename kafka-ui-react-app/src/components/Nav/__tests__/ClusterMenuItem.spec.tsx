@@ -12,6 +12,9 @@ describe('ClusterMenuItem', () => {
     </ul>
   );
 
+  const getMenuItem = () => screen.getByRole('menuitem');
+  const getLink = () => screen.queryByRole('link');
+
   it('renders component with correct title', () => {
     const testTitle = 'My Test Title';
     render(setupComponent({ title: testTitle }));
@@ -20,24 +23,24 @@ describe('ClusterMenuItem', () => {
 
   it('renders top level component with correct styles', () => {
     render(setupComponent({ isTopLevel: true }));
-    expect(screen.getByRole('menuitem')).toHaveStyle({ fontWeight: '500' });
+    expect(getMenuItem()).toHaveStyle({ fontWeight: '500' });
   });
 
   it('renders non-top level component with correct styles', () => {
     render(setupComponent({ isTopLevel: false }));
-    expect(screen.getByRole('menuitem')).toHaveStyle({ fontWeight: 'normal' });
+    expect(getMenuItem()).toHaveStyle({ fontWeight: 'normal' });
   });
 
   it('renders list item with link inside', () => {
     render(setupComponent({ to: '/my-cluster' }));
-    expect(screen.getByRole('menuitem')).toBeInTheDocument();
-    expect(screen.queryByRole('link')).toBeInTheDocument();
+    expect(getMenuItem()).toBeInTheDocument();
+    expect(getLink()).toBeInTheDocument();
   });
 
   it('renders list item without link inside', () => {
     render(setupComponent({ to: '' }));
-    expect(screen.getByRole('menuitem')).toBeInTheDocument();
-    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(getMenuItem()).toBeInTheDocument();
+    expect(getLink()).not.toBeInTheDocument();
   });
 
   it('renders list item with children', () => {
@@ -46,8 +49,8 @@ describe('ClusterMenuItem', () => {
         <ClusterMenuItem to="/test">Test Text Box</ClusterMenuItem>
       </ul>
     );
-    expect(screen.getByRole('menuitem')).toBeInTheDocument();
-    expect(screen.queryByRole('link')).toBeInTheDocument();
+    expect(getMenuItem()).toBeInTheDocument();
+    expect(getLink()).toBeInTheDocument();
     expect(screen.getByText('Test Text Box')).toBeInTheDocument();
   });
 });

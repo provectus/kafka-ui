@@ -3,20 +3,17 @@ package com.provectus.kafka.ui.tests;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
+import io.qameta.allure.Issue;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
 
-@Disabled // TODO #1480
 public class TopicTests extends BaseTest {
 
     public static final String NEW_TOPIC = "new-topic";
     public static final String TOPIC_TO_UPDATE = "topic-to-update";
     public static final String TOPIC_TO_DELETE = "topic-to-delete";
     public static final String SECOND_LOCAL = "secondLocal";
-    public static final String COMPACT_POLICY_VALUE = "compact";
+    public static final String COMPACT_POLICY_VALUE = "Compact";
     public static final String UPDATED_TIME_TO_RETAIN_VALUE = "604800001";
     public static final String UPDATED_MAX_SIZE_ON_DISK = "20 GB";
     public static final String UPDATED_MAX_MESSAGE_BYTES = "1000020";
@@ -33,41 +30,51 @@ public class TopicTests extends BaseTest {
     public static void afterAll() {
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_UPDATE);
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
+        Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
     }
 
     @SneakyThrows
     @DisplayName("should create a topic")
     @Test
-    void createTopic() {
-        try {
-            helpers.apiHelper.createTopic(SECOND_LOCAL, NEW_TOPIC);
-            pages.open()
-                    .isOnPage()
-                    .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
-                    .topicIsVisible(NEW_TOPIC);
-        } finally {
-            helpers.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
-        }
+    public void createTopic() {
+        pages.open()
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
+        pages.topicsList.pressCreateNewTopic()
+                .setTopicName(NEW_TOPIC)
+                .sendData()
+                .isOnTopicViewPage();
+        pages.open()
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
+                .topicIsVisible(NEW_TOPIC);
+        helpers.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
+        pages.open()
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
+                .topicIsNotVisible(NEW_TOPIC);
     }
 
+    @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
     @SneakyThrows
     @DisplayName("should update a topic")
+    @Issue("1500")
     @Test
-    void updateTopic() {
+    public void updateTopic() {
         pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage()
-                .openTopic(TOPIC_TO_UPDATE);
+                .isOnPage();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
                 .openEditSettings()
-                .changeCleanupPolicy(COMPACT_POLICY_VALUE)
-                .changeTimeToRetainValue(UPDATED_TIME_TO_RETAIN_VALUE)
-                .changeMaxSizeOnDisk(UPDATED_MAX_SIZE_ON_DISK)
-                .changeMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
-                .submitSettingChanges()
+                .selectCleanupPolicy(COMPACT_POLICY_VALUE)
+                .setMinInsyncReplicas(10)
+                .setTimeToRetainDataInMs(UPDATED_TIME_TO_RETAIN_VALUE)
+                .setMaxSizeOnDiskInGB(UPDATED_MAX_SIZE_ON_DISK)
+                .setMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
+                .sendData()
                 .isOnTopicViewPage();
+
+        pages.openTopicsList(SECOND_LOCAL)
+                .isOnPage();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
                 .openEditSettings()
-        // Assertions
+                // Assertions
                 .cleanupPolicyIs(COMPACT_POLICY_VALUE)
                 .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
                 .maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK)
@@ -77,13 +84,13 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete topic")
     @Test
-    void deleteTopic() {
+    public void deleteTopic() {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
-                .openTopic(TOPIC_TO_DELETE);
-        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_DELETE)
-                .clickDeleteTopicButton()
-                .isOnTopicListPage()
-                .isNotVisible(TOPIC_TO_DELETE);
+                .openTopic(TOPIC_TO_DELETE)
+                .isOnTopicViewPage()
+                .deleteTopic()
+                .isOnPage()
+                .isTopicNotVisible(TOPIC_TO_DELETE);
     }
 }

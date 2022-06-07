@@ -5,20 +5,16 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import {
-  Configuration,
-  SchemasApi,
   SchemaSubject,
   SchemaSubjectsResponse,
   GetSchemasRequest,
   GetLatestSchemaRequest,
 } from 'generated-sources';
-import { BASE_PARAMS } from 'lib/constants';
+import { schemasApiClient } from 'lib/api';
+import { AsyncRequestStatus } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
 import { ClusterName, RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const schemasApiClient = new SchemasApi(apiClientConf);
 
 export const SCHEMA_LATEST_FETCH_ACTION = 'schemas/latest/fetch';
 export const fetchLatestSchema = createAsyncThunk<
@@ -130,16 +126,16 @@ export const { schemaAdded, schemaUpdated } = schemasSlice.actions;
 
 export const getAreSchemasFulfilled = createSelector(
   createFetchingSelector(SCHEMAS_FETCH_ACTION),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export const getAreSchemaLatestFulfilled = createSelector(
   createFetchingSelector(SCHEMA_LATEST_FETCH_ACTION),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 export const getAreSchemaVersionsFulfilled = createSelector(
   createFetchingSelector(SCHEMAS_VERSIONS_FETCH_ACTION),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export default schemasSlice.reducer;

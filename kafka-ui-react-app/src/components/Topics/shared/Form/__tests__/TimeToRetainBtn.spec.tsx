@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 import TimeToRetainBtn, {
@@ -14,7 +14,7 @@ describe('TimeToRetainBtn', () => {
     text: 'defaultPropsText',
     value: 0,
   };
-  const Wrapper: React.FC = ({ children }) => {
+  const Wrapper: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
     const methods = useForm();
     return <FormProvider {...methods}>{children}</FormProvider>;
   };

@@ -21,7 +21,6 @@ export const IndicatorWrapper = styled.div`
   align-items: flex-start;
   padding: 12px 16px;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.08);
-  margin: 0 0 3px 0;
   flex-grow: 1;
 `;
 
@@ -38,27 +37,9 @@ export const IndicatorsWrapper = styled.div`
   display: flex;
   gap: 2px;
   flex-wrap: wrap;
-
-  > ${IndicatorWrapper} {
-    &:first-child {
-      border-top-left-radius: 8px;
-      border-bottom-left-radius: 8px;
-    }
-
-    &:last-child {
-      border-top-right-radius: 8px;
-      border-bottom-right-radius: 8px;
-    }
-  }
-
-  @media screen and (max-width: 1023px) {
-    > ${IndicatorWrapper} {
-      &:first-child,
-      &:last-child {
-        border-radius: 0;
-      }
-    }
-  }
+  border-radius: 8px;
+  overflow: auto;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.08);
 `;
 
 export const SectionTitle = styled.h5`

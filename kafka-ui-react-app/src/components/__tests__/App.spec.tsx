@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, within, waitFor } from '@testing-library/react';
+import { screen, within, act } from '@testing-library/react';
 import App from 'components/App';
 import { render } from 'lib/testHelpers';
 import { clustersPayload } from 'redux/reducers/clusters/__test__/fixtures';
@@ -13,7 +13,7 @@ describe('App', () => {
   describe('initial state', () => {
     beforeEach(() => {
       render(<App />, {
-        pathname: '/',
+        initialEntries: ['/'],
       });
     });
     it('shows PageLoader until clusters are fulfilled', () => {
@@ -51,10 +51,14 @@ describe('App', () => {
   describe('with clusters list fetched', () => {
     it('shows Cluster list', async () => {
       const mock = fetchMock.getOnce('/api/clusters', clustersPayload);
-      render(<App />, {
-        pathname: '/',
+      await act(() => {
+        render(<App />, {
+          initialEntries: ['/'],
+        });
       });
-      await waitFor(() => expect(mock.called()).toBeTruthy());
+
+      expect(mock.called()).toBeTruthy();
+
       const menuContainer = screen.getByLabelText('Sidebar Menu');
       expect(menuContainer).toBeInTheDocument();
       expect(within(menuContainer).getByText('Dashboard')).toBeInTheDocument();

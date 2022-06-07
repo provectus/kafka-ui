@@ -1,10 +1,13 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const ConfigList = styled.tr`
-  & > td:last-child {
-    color: ${({ theme }) => theme.configList.color};
-  }
-`;
-export const ConfigItemCell = styled.td<{ $hasCustomValue: boolean }>`
-  font-weight: ${(props) => (props.$hasCustomValue ? 500 : 400)} !important;
-`;
+export const Row = styled.tr<{ $hasCustomValue?: boolean }>(
+  ({ theme, $hasCustomValue }) => css`
+    & > td {
+      font-weight: ${$hasCustomValue ? 500 : 400};
+      &:last-child {
+        color: ${theme.configList.color};
+        font-weight: 400;
+      }
+    }
+  `
+);

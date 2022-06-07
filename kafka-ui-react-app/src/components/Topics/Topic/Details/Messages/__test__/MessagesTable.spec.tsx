@@ -2,18 +2,27 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import MessagesTable from 'components/Topics/Topic/Details/Messages/MessagesTable';
-import { Router } from 'react-router';
-import { createMemoryHistory } from 'history';
-import { SeekDirection, SeekType } from 'generated-sources';
-import userEvent from '@testing-library/user-event';
+import { SeekDirection, SeekType, TopicMessage } from 'generated-sources';
 import TopicMessagesContext, {
   ContextProps,
 } from 'components/contexts/TopicMessagesContext';
+import {
+  topicMessagePayload,
+  topicMessagesMetaPayload,
+} from 'redux/reducers/topicMessages/__test__/fixtures';
+
+const mockTopicsMessages: TopicMessage[] = [{ ...topicMessagePayload }];
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 describe('MessagesTable', () => {
-  const searchParams = new URLSearchParams(
-    `?filterQueryType=STRING_CONTAINS&attempt=0&limit=100&seekDirection=${SeekDirection.FORWARD}&seekType=${SeekType.OFFSET}&seekTo=0::9`
-  );
+  const seekToResult = '&seekTo=0::9';
+  const searchParamsValue = `?filterQueryType=STRING_CONTAINS&attempt=0&limit=100&seekDirection=${SeekDirection.FORWARD}&seekType=${SeekType.OFFSET}${seekToResult}`;
+  const searchParams = new URLSearchParams(searchParamsValue);
   const contextValue: ContextProps = {
     isLive: false,
     seekDirection: SeekDirection.FORWARD,
@@ -23,18 +32,28 @@ describe('MessagesTable', () => {
 
   const setUpComponent = (
     params: URLSearchParams = searchParams,
-    ctx: ContextProps = contextValue
+    ctx: ContextProps = contextValue,
+    messages: TopicMessage[] = [],
+    isFetching?: boolean,
+    path?: string
   ) => {
-    const history = createMemoryHistory();
-    history.push({
-      search: params.toString(),
-    });
+    const customPath = path || params.toString();
     return render(
-      <Router history={history}>
-        <TopicMessagesContext.Provider value={ctx}>
-          <MessagesTable />
-        </TopicMessagesContext.Provider>
-      </Router>
+      <TopicMessagesContext.Provider value={ctx}>
+        <MessagesTable />
+      </TopicMessagesContext.Provider>,
+      {
+        initialEntries: [customPath],
+        preloadedState: {
+          topicMessages: {
+            messages,
+            meta: {
+              ...topicMessagesMetaPayload,
+            },
+            isFetching: !!isFetching,
+          },
+        },
+      }
     );
   };
 
@@ -50,13 +69,6 @@ describe('MessagesTable', () => {
     it('should check the if no elements is rendered in the table', () => {
       expect(screen.getByText(/No messages found/i)).toBeInTheDocument();
     });
-
-    it('should check if next button exist and check the click after next click', () => {
-      const nextBtnElement = screen.getByText(/next/i);
-      expect(nextBtnElement).toBeInTheDocument();
-      userEvent.click(nextBtnElement);
-      expect(screen.getByText(/No messages found/i)).toBeInTheDocument();
-    });
   });
 
   describe('Custom Setup with different props value', () => {
@@ -66,8 +78,21 @@ describe('MessagesTable', () => {
     });
 
     it('should check the display of the loader element', () => {
-      setUpComponent(searchParams, { ...contextValue, isLive: true });
+      setUpComponent(searchParams, { ...contextValue, isLive: true }, [], true);
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
+  });
+
+  describe('should render Messages table with data', () => {
+    beforeEach(() => {
+      setUpComponent(searchParams, { ...contextValue }, mockTopicsMessages);
+    });
+
+    it('should check the rendering of the messages', () => {
+      expect(screen.queryByText(/No messages found/i)).not.toBeInTheDocument();
+      expect(
+        screen.getByText(mockTopicsMessages[0].content as string)
+      ).toBeInTheDocument();
     });
   });
 });

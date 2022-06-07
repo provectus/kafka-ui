@@ -16,6 +16,7 @@ export const Container = styled.main(
     margin-top: ${theme.layout.navBarHeight};
     margin-left: ${theme.layout.navBarWidth};
     position: relative;
+    padding-bottom: 30px;
     z-index: 20;
 
     @media screen and (max-width: 1023px) {

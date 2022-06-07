@@ -29,37 +29,38 @@ describe('Custom Select', () => {
       });
     });
 
+    const getListbox = () => screen.getByRole('listbox');
+    const getOption = () => screen.getByRole('option');
+
     it('renders component', () => {
-      expect(screen.getByRole('listbox')).toBeInTheDocument();
+      expect(getListbox()).toBeInTheDocument();
     });
 
     it('show select options when select is being clicked', () => {
-      expect(screen.getByRole('option')).toBeInTheDocument();
-      userEvent.click(screen.getByRole('listbox'));
+      expect(getOption()).toBeInTheDocument();
+      userEvent.click(getListbox());
       expect(screen.getAllByRole('option')).toHaveLength(3);
     });
 
     it('checking select option change', () => {
-      const listbox = screen.getByRole('listbox');
       const optionLabel = 'test-label1';
 
-      userEvent.click(listbox);
-      userEvent.selectOptions(listbox, [optionLabel]);
+      userEvent.click(getListbox());
+      userEvent.selectOptions(getListbox(), [optionLabel]);
 
-      expect(screen.getByRole('option')).toHaveTextContent(optionLabel);
+      expect(getOption()).toHaveTextContent(optionLabel);
     });
 
     it('trying to select disabled option does not trigger change', () => {
-      const listbox = screen.getByRole('listbox');
       const normalOptionLabel = 'test-label1';
       const disabledOptionLabel = 'test-label2';
 
-      userEvent.click(listbox);
-      userEvent.selectOptions(listbox, [normalOptionLabel]);
-      userEvent.click(listbox);
-      userEvent.selectOptions(listbox, [disabledOptionLabel]);
+      userEvent.click(getListbox());
+      userEvent.selectOptions(getListbox(), [normalOptionLabel]);
+      userEvent.click(getListbox());
+      userEvent.selectOptions(getListbox(), [disabledOptionLabel]);
 
-      expect(screen.getByRole('option')).toHaveTextContent(normalOptionLabel);
+      expect(getOption()).toHaveTextContent(normalOptionLabel);
     });
   });
 
@@ -72,8 +73,8 @@ describe('Custom Select', () => {
 
   describe('when live', () => {
     it('there is live icon', () => {
-      renderComponent({ isLive: true });
-      expect(screen.getByTestId('liveIcon')).toBeInTheDocument();
+      render(<Select name="test" {...{ isLive: true }} />);
+      expect(screen.getByRole('listbox')).toBeInTheDocument();
     });
   });
 });

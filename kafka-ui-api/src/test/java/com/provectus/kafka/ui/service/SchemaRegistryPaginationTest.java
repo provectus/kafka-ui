@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.provectus.kafka.ui.controller.SchemasController;
+import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
@@ -22,8 +23,9 @@ public class SchemaRegistryPaginationTest {
 
   private final SchemaRegistryService schemaRegistryService = mock(SchemaRegistryService.class);
   private final ClustersStorage clustersStorage = mock(ClustersStorage.class);
+  private final ClusterMapper clusterMapper = mock(ClusterMapper.class);
 
-  private SchemasController controller;
+  private final SchemasController controller = new SchemasController(clusterMapper, schemaRegistryService);
 
   private void init(String[] subjects) {
     when(schemaRegistryService.getAllSubjectNames(isA(KafkaCluster.class)))
@@ -34,7 +36,6 @@ public class SchemaRegistryPaginationTest {
             .thenReturn(Optional.of(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME)));
     when(schemaRegistryService.getLatestSchemaVersionBySubject(isA(KafkaCluster.class), isA(String.class)))
             .thenAnswer(a -> Mono.just(new SchemaSubjectDTO().subject(a.getArgument(1))));
-    this.controller = new SchemasController(schemaRegistryService);
     this.controller.setClustersStorage(clustersStorage);
   }
 
