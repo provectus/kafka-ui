@@ -1,14 +1,34 @@
-import * as React from 'react';
+import React from 'react';
 import dayjs from 'dayjs';
 import { TopicMessage } from 'generated-sources';
-import JSONViewer from 'components/common/JSONViewer/JSONViewer';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import useDataSaver from 'lib/hooks/useDataSaver';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
+import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
+import styled from 'styled-components';
 
-type Tab = 'key' | 'content' | 'headers';
+import MessageContent from './MessageContent/MessageContent';
+import * as S from './MessageContent/MessageContent.styled';
 
-const Message: React.FC<{ message: TopicMessage }> = ({
+const StyledDataCell = styled.td`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 350px;
+  min-width: 350px;
+`;
+
+const ClickableRow = styled.tr`
+  cursor: pointer;
+`;
+
+export interface Props {
+  message: TopicMessage;
+}
+
+const Message: React.FC<Props> = ({
   message: {
     timestamp,
     timestampType,
@@ -16,129 +36,65 @@ const Message: React.FC<{ message: TopicMessage }> = ({
     key,
     partition,
     content,
+    valueFormat,
+    keyFormat,
     headers,
   },
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [activeTab, setActiveTab] = React.useState<Tab>('content');
   const { copyToClipboard, saveFile } = useDataSaver(
     'topic-message',
     content || ''
   );
 
   const toggleIsOpen = () => setIsOpen(!isOpen);
-  const handleKeyTabClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setActiveTab('key');
-  };
-  const handleContentTabClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setActiveTab('content');
-  };
-  const handleHeadersTabClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setActiveTab('headers');
-  };
 
-  const activeTabContent = () => {
-    switch (activeTab) {
-      case 'content':
-        return content;
-      case 'key':
-        return key;
-      default:
-        return JSON.stringify(headers);
-    }
-  };
+  const [vEllipsisOpen, setVEllipsisOpen] = React.useState(false);
 
   return (
     <>
-      <tr>
+      <ClickableRow
+        onMouseEnter={() => setVEllipsisOpen(true)}
+        onMouseLeave={() => setVEllipsisOpen(false)}
+        onClick={toggleIsOpen}
+      >
         <td>
-          <span
-            className="icon has-text-link is-size-7 is-small is-clickable"
-            onClick={toggleIsOpen}
-            aria-hidden
-          >
-            <i className={`fas fa-${isOpen ? 'minus' : 'plus'}`} />
-          </span>
+          <IconButtonWrapper aria-hidden>
+            <MessageToggleIcon isOpen={isOpen} />
+          </IconButtonWrapper>
         </td>
         <td>{offset}</td>
         <td>{partition}</td>
-        <td
-          className="has-text-overflow-ellipsis is-family-code"
-          style={{ width: 80, maxWidth: 250 }}
-          title={key}
-        >
-          {key}
-        </td>
         <td>
-          <div className="tag">
-            {dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}
-          </div>
+          <div>{dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}</div>
         </td>
-        <td
-          className="has-text-overflow-ellipsis is-family-code"
-          style={{ width: '100%', maxWidth: 0 }}
-        >
-          {content}
+        <StyledDataCell title={key}>{key}</StyledDataCell>
+        <StyledDataCell>
+          <S.Metadata>
+            <S.MetadataValue>{content}</S.MetadataValue>
+          </S.Metadata>
+        </StyledDataCell>
+        <td style={{ width: '5%' }}>
+          {vEllipsisOpen && (
+            <Dropdown label={<VerticalElipsisIcon />} right>
+              <DropdownItem onClick={copyToClipboard}>
+                Copy to clipboard
+              </DropdownItem>
+              <DropdownItem onClick={saveFile}>Save as a file</DropdownItem>
+            </Dropdown>
+          )}
         </td>
-        <td className="has-text-right">
-          <Dropdown
-            label={
-              <span className="icon">
-                <i className="fas fa-cog" />
-              </span>
-            }
-            right
-          >
-            <DropdownItem onClick={copyToClipboard}>
-              Copy to clipboard
-            </DropdownItem>
-            <DropdownItem onClick={saveFile}>Save as a file</DropdownItem>
-          </Dropdown>
-        </td>
-      </tr>
+      </ClickableRow>
       {isOpen && (
-        <tr className="has-background-light">
-          <td />
-          <td colSpan={3}>
-            <div className="title is-7">Timestamp Type</div>
-            <div className="subtitle is-7 is-spaced">{timestampType}</div>
-            <div className="title is-7">Timestamp</div>
-            <div className="subtitle is-7">{timestamp}</div>
-          </td>
-          <td colSpan={3} style={{ wordBreak: 'break-word' }}>
-            <nav className="panel has-background-white">
-              <p className="panel-tabs is-justify-content-start pl-5">
-                <a
-                  href="key"
-                  onClick={handleKeyTabClick}
-                  className={activeTab === 'key' ? 'is-active' : ''}
-                >
-                  Key
-                </a>
-                <a
-                  href="content"
-                  className={activeTab === 'content' ? 'is-active' : ''}
-                  onClick={handleContentTabClick}
-                >
-                  Content
-                </a>
-                <a
-                  href="headers"
-                  className={activeTab === 'headers' ? 'is-active' : ''}
-                  onClick={handleHeadersTabClick}
-                >
-                  Headers
-                </a>
-              </p>
-              <div className="panel-block is-family-code">
-                <JSONViewer data={activeTabContent() || ''} />
-              </div>
-            </nav>
-          </td>
-        </tr>
+        <MessageContent
+          messageKey={key}
+          messageKeyFormat={keyFormat}
+          messageContent={content}
+          messageContentFormat={valueFormat}
+          headers={headers}
+          timestamp={timestamp}
+          timestampType={timestampType}
+        />
       )}
     </>
   );

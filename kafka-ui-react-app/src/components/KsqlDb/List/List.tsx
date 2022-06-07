@@ -1,16 +1,25 @@
-import Indicator from 'components/common/Dashboard/Indicator';
-import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
+import React, { FC, useEffect } from 'react';
+import useAppParams from 'lib/hooks/useAppParams';
+import * as Metrics from 'components/common/Metrics';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ListItem from 'components/KsqlDb/List/ListItem';
-import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router';
-import { fetchKsqlDbTables } from 'redux/actions/thunks/ksqlDb';
+import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
-import { Link } from 'react-router-dom';
-import { clusterKsqlDbQueryPath } from 'lib/paths';
+import { clusterKsqlDbQueryRelativePath, ClusterNameRoute } from 'lib/paths';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import { Table } from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import { Button } from 'components/common/Button/Button';
+import { KsqlDescription } from 'redux/interfaces/ksqlDb';
 
-const headers = [
+export type KsqlDescriptionAccessor = keyof KsqlDescription;
+
+interface HeadersType {
+  Header: string;
+  accessor: KsqlDescriptionAccessor;
+}
+const headers: HeadersType[] = [
   { Header: 'Type', accessor: 'type' },
   { Header: 'Name', accessor: 'name' },
   { Header: 'Topic', accessor: 'topic' },
@@ -23,53 +32,49 @@ const accessors = headers.map((header) => header.accessor);
 const List: FC = () => {
   const dispatch = useDispatch();
 
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
 
   const { rows, fetching, tablesCount, streamsCount } =
     useSelector(getKsqlDbTables);
 
   useEffect(() => {
     dispatch(fetchKsqlDbTables(clusterName));
-  }, []);
+  }, [clusterName, dispatch]);
 
   return (
     <>
-      <MetricsWrapper wrapperClassName="is-justify-content-space-between">
-        <div className="column is-flex m-0 p-0">
-          <Indicator
-            className="level-left is-one-third mr-3"
-            label="Tables"
-            title="Tables"
-            fetching={fetching}
-          >
+      <PageHeading text="KSQL DB">
+        <Button
+          to={clusterKsqlDbQueryRelativePath}
+          buttonType="primary"
+          buttonSize="M"
+        >
+          Execute KSQL Request
+        </Button>
+      </PageHeading>
+      <Metrics.Wrapper>
+        <Metrics.Section>
+          <Metrics.Indicator label="Tables" title="Tables" fetching={fetching}>
             {tablesCount}
-          </Indicator>
-          <Indicator
-            className="level-left is-one-third ml-3"
+          </Metrics.Indicator>
+          <Metrics.Indicator
             label="Streams"
             title="Streams"
             fetching={fetching}
           >
             {streamsCount}
-          </Indicator>
-        </div>
-        <Link
-          to={clusterKsqlDbQueryPath(clusterName)}
-          className="button is-primary"
-        >
-          Execute ksql
-        </Link>
-      </MetricsWrapper>
-      <div className="box">
+          </Metrics.Indicator>
+        </Metrics.Section>
+      </Metrics.Wrapper>
+      <div>
         {fetching ? (
           <PageLoader />
         ) : (
-          <table className="table is-fullwidth">
+          <Table isFullwidth>
             <thead>
               <tr>
-                <th> </th>
                 {headers.map(({ Header, accessor }) => (
-                  <th key={accessor}>{Header}</th>
+                  <TableHeaderCell title={Header} key={accessor} />
                 ))}
               </tr>
             </thead>
@@ -79,11 +84,13 @@ const List: FC = () => {
               ))}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={headers.length}>No tables or streams found</td>
+                  <td colSpan={headers.length + 1}>
+                    No tables or streams found
+                  </td>
                 </tr>
               )}
             </tbody>
-          </table>
+          </Table>
         )}
       </div>
     </>

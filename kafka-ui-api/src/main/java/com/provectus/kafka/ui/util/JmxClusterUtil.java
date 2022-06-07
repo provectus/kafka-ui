@@ -28,18 +28,19 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.Value;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.KeyedObjectPool;
 import org.apache.kafka.common.Node;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 @Component
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class JmxClusterUtil {
 
@@ -56,12 +57,25 @@ public class JmxClusterUtil {
     Map<String, BigDecimal> bytesOutPerSec;
     Map<Integer, JmxBrokerMetrics> internalBrokerMetrics;
     List<MetricDTO> metrics;
+
+    public static JmxMetrics empty() {
+      return JmxClusterUtil.JmxMetrics.builder()
+          .bytesInPerSec(Map.of())
+          .bytesOutPerSec(Map.of())
+          .internalBrokerMetrics(Map.of())
+          .metrics(List.of())
+          .build();
+    }
   }
 
   public Mono<JmxMetrics> getBrokerMetrics(KafkaCluster cluster, Collection<Node> nodes) {
     return Flux.fromIterable(nodes)
+        // jmx is a blocking api, so we trying to parallelize its execution on boundedElastic scheduler
+        .parallel()
+        .runOn(Schedulers.boundedElastic())
         .map(n -> Map.entry(n.id(),
             JmxBrokerMetrics.builder().metrics(getJmxMetric(cluster, n)).build()))
+        .sequential()
         .collectMap(Map.Entry::getKey, Map.Entry::getValue)
         .map(this::collectMetrics);
   }
@@ -77,14 +91,14 @@ public class JmxClusterUtil {
 
   @SneakyThrows
   private List<MetricDTO> getJmxMetrics(String host, int port, boolean jmxSsl,
-                                    @Nullable String username, @Nullable String password) {
+                                        @Nullable String username, @Nullable String password) {
     String jmxUrl = JMX_URL + host + ":" + port + "/" + JMX_SERVICE_TYPE;
     final var connectionInfo = JmxConnectionInfo.builder()
-            .url(jmxUrl)
-            .ssl(jmxSsl)
-            .username(username)
-            .password(password)
-            .build();
+        .url(jmxUrl)
+        .ssl(jmxSsl)
+        .username(username)
+        .password(password)
+        .build();
     JMXConnector srv;
     try {
       srv = pool.borrowObject(connectionInfo);
@@ -147,21 +161,21 @@ public class JmxClusterUtil {
         .metrics(metrics)
         .internalBrokerMetrics(perBrokerJmxMetrics)
         .bytesInPerSec(findTopicMetrics(
-            metrics, JmxMetricsName.BytesInPerSec, JmxMetricsValueName.FiveMinuteRate))
+            metrics, JmxMetricsName.BYTES_IN_PER_SEC, JmxMetricsValueName.FIFTEEN_MINUTE_RATE))
         .bytesOutPerSec(findTopicMetrics(
-            metrics, JmxMetricsName.BytesOutPerSec, JmxMetricsValueName.FiveMinuteRate))
+            metrics, JmxMetricsName.BYTES_OUT_PER_SEC, JmxMetricsValueName.FIFTEEN_MINUTE_RATE))
         .build();
   }
 
   private Map<String, BigDecimal> findTopicMetrics(List<MetricDTO> metrics,
                                                    JmxMetricsName metricsName,
                                                    JmxMetricsValueName valueName) {
-    return metrics.stream().filter(m -> metricsName.name().equals(m.getName()))
+    return metrics.stream().filter(m -> metricsName.getValue().equals(m.getName()))
         .filter(m -> m.getParams().containsKey("topic"))
-        .filter(m -> m.getValue().containsKey(valueName.name()))
+        .filter(m -> m.getValue().containsKey(valueName.getValue()))
         .map(m -> Tuples.of(
             m.getParams().get("topic"),
-            m.getValue().get(valueName.name())
+            m.getValue().get(valueName.getValue())
         )).collect(groupingBy(
             Tuple2::getT1,
             reducing(BigDecimal.ZERO, Tuple2::getT2, BigDecimal::add)
@@ -195,7 +209,7 @@ public class JmxClusterUtil {
   private boolean isWellKnownMetric(MetricDTO metric) {
     final Optional<String> param =
         Optional.ofNullable(metric.getParams().get(NAME_METRIC_FIELD)).filter(p ->
-            Arrays.stream(JmxMetricsName.values()).map(Enum::name)
+            Arrays.stream(JmxMetricsName.values()).map(JmxMetricsName::getValue)
                 .anyMatch(n -> n.equals(p))
         );
     return metric.getCanonicalName().contains(KAFKA_SERVER_PARAM) && param.isPresent();

@@ -1,10 +1,11 @@
 replicaCount: 1
 
 image:
+  registry: docker.io
   repository: provectuslabs/kafka-ui
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: ""
 
 imagePullSecrets: []
 nameOverride: ""
@@ -20,17 +21,60 @@ serviceAccount:
   name: ""
 
 existingConfigMap: ""
+yamlApplicationConfig:
+  {}
+  # kafka:
+  #   clusters:
+  #     - name: yaml
+  #       bootstrapServers: kafka-service:9092
+  # spring:
+  #   security:
+  #     oauth2:
+  # auth:
+  #   type: disabled
+  # management:
+  #   health:
+  #     ldap:
+  #       enabled: false
+yamlApplicationConfigConfigMap:
+  {}
+  # keyName: config.yml
+  # name: configMapName
 existingSecret: ""
 envs:
   secret: {}
   config: {}
 
-podAnnotations: {}
+networkPolicy:
+  enabled: false
+  egressRules:
+    ## Additional custom egress rules
+    ## e.g:
+    ## customRules:
+    ##   - to:
+    ##       - namespaceSelector:
+    ##           matchLabels:
+    ##             label: example
+    customRules: []
+  ingressRules:
+    ## Additional custom ingress rules
+    ## e.g:
+    ## customRules:
+    ##   - from:
+    ##       - namespaceSelector:
+    ##           matchLabels:
+    ##             label: example
+    customRules: []
 
-podSecurityContext: {}
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  {}
   # fsGroup: 2000
 
-securityContext: {}
+securityContext:
+  {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -52,6 +96,9 @@ ingress:
   # Annotations for the Ingress
   annotations: {}
 
+  # ingressClassName for the Ingress
+  ingressClassName: ""
+
   # The path for the Ingress
   path: ""
 
@@ -71,7 +118,8 @@ ingress:
   # Http paths to add to the Ingress after the default path
   succeedingPaths: []
 
-resources: {}
+resources:
+  {}
   # limits:
   #   cpu: 200m
   #   memory: 512Mi
@@ -91,3 +139,11 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+env: {}
+
+initContainers: {}
+
+volumeMounts: {}
+
+volumes: {}

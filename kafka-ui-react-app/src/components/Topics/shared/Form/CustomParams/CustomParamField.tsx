@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ErrorMessage } from '@hookform/error-message';
 import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
-import { FieldArrayWithId, useFormContext } from 'react-hook-form';
-import { remove as _remove } from 'lodash';
+import { FieldArrayWithId, useFormContext, Controller } from 'react-hook-form';
 import { TopicFormData } from 'redux/interfaces';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
+import { FormError } from 'components/common/Input/Input.styled';
+import Select from 'components/common/Select/Select';
+import Input from 'components/common/Input/Input';
+import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
+import CloseIcon from 'components/common/Icons/CloseIcon';
+import * as C from 'components/Topics/shared/Form/TopicForm.styled';
 
-import CustomParamButton from './CustomParamButton';
+import * as S from './CustomParams.styled';
 
-interface Props {
+export interface Props {
   isDisabled: boolean;
   index: number;
   existingFields: string[];
@@ -25,88 +31,98 @@ const CustomParamField: React.FC<Props> = ({
   setExistingFields,
 }) => {
   const {
-    register,
     formState: { errors },
     setValue,
     watch,
+    control,
   } = useFormContext<TopicFormData>();
   const nameValue = watch(`customParams.${index}.name`);
-  let prevName = '';
+  const prevName = useRef(nameValue);
+
+  const options = Object.keys(TOPIC_CUSTOM_PARAMS)
+    .sort()
+    .map((option) => ({
+      value: option,
+      label: option,
+      disabled: existingFields.includes(option),
+    }));
 
   React.useEffect(() => {
-    prevName = nameValue;
-  }, []);
-
-  React.useEffect(() => {
-    if (nameValue !== prevName) {
+    if (nameValue !== prevName.current) {
       let newExistingFields = [...existingFields];
-      if (prevName) {
-        newExistingFields = _remove(newExistingFields, (el) => el === prevName);
+      if (prevName.current) {
+        newExistingFields = newExistingFields.filter(
+          (name) => name !== prevName.current
+        );
       }
-      prevName = nameValue;
+      prevName.current = nameValue;
       newExistingFields.push(nameValue);
       setExistingFields(newExistingFields);
-      setValue(`customParams.${index}.value`, TOPIC_CUSTOM_PARAMS[nameValue]);
+      setValue(`customParams.${index}.value`, TOPIC_CUSTOM_PARAMS[nameValue], {
+        shouldValidate: !!TOPIC_CUSTOM_PARAMS[nameValue],
+      });
     }
-  }, [nameValue]);
+  }, [existingFields, index, nameValue, setExistingFields, setValue]);
 
   return (
-    <div className="columns is-centered">
-      <div className="column">
-        <label className="label">Custom Parameter</label>
-        <div className="select is-block">
-          <select
-            {...register(`customParams.${index}.name` as const, {
-              required: 'Custom Parameter is required.',
-            })}
-            disabled={isDisabled}
-            defaultValue={field.name}
-          >
-            <option value="">Select</option>
-            {Object.keys(TOPIC_CUSTOM_PARAMS)
-              .sort()
-              .map((opt) => (
-                <option
-                  key={opt}
-                  value={opt}
-                  disabled={existingFields.includes(opt)}
-                >
-                  {opt}
-                </option>
-              ))}
-          </select>
-          <p className="help is-danger">
-            <ErrorMessage errors={errors} name={`customParams.${index}.name`} />
-          </p>
-        </div>
+    <C.Column>
+      <div>
+        <InputLabel>Custom Parameter</InputLabel>
+        <Controller
+          control={control}
+          rules={{ required: 'Custom Parameter is required.' }}
+          name={`customParams.${index}.name`}
+          render={({ field: { value, name, onChange } }) => (
+            <Select
+              name={name}
+              placeholder="Select"
+              disabled={isDisabled}
+              minWidth="270px"
+              onChange={onChange}
+              value={value}
+              options={options}
+            />
+          )}
+        />
+        <FormError>
+          <ErrorMessage
+            errors={errors}
+            name={`customParams.${index}.name` as const}
+          />
+        </FormError>
       </div>
-
-      <div className="column">
-        <label className="label">Value</label>
-        <input
-          className="input"
-          placeholder="Value"
-          {...register(`customParams.${index}.value` as const, {
+      <div>
+        <InputLabel>Value *</InputLabel>
+        <Input
+          name={`customParams.${index}.value` as const}
+          hookFormOptions={{
             required: 'Value is required.',
-          })}
+          }}
+          placeholder="Value"
           defaultValue={field.value}
           autoComplete="off"
           disabled={isDisabled}
         />
-        <p className="help is-danger">
-          <ErrorMessage errors={errors} name={`customParams.${index}.value`} />
-        </p>
+        <FormError>
+          <ErrorMessage
+            errors={errors}
+            name={`customParams.${index}.value` as const}
+          />
+        </FormError>
       </div>
 
-      <div className="column is-narrow">
-        <label className="label">&nbsp;</label>
-        <CustomParamButton
-          className="is-danger"
-          type="fa-minus"
+      <S.DeleteButtonWrapper>
+        <IconButtonWrapper
           onClick={() => remove(index)}
-        />
-      </div>
-    </div>
+          onKeyDown={(e: React.KeyboardEvent) =>
+            e.code === 'Space' && remove(index)
+          }
+          title={`Delete customParam field ${index}`}
+        >
+          <CloseIcon aria-hidden />
+        </IconButtonWrapper>
+      </S.DeleteButtonWrapper>
+    </C.Column>
   );
 };
 

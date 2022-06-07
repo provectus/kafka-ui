@@ -12,10 +12,11 @@ import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
 import com.provectus.kafka.ui.model.ConfigSourceDTO;
 import com.provectus.kafka.ui.model.ConfigSynonymDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
+import com.provectus.kafka.ui.model.FailoverUrlList;
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
-import com.provectus.kafka.ui.model.InternalClusterMetrics;
+import com.provectus.kafka.ui.model.InternalClusterState;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
@@ -31,6 +32,7 @@ import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
+import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,26 +48,18 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface ClusterMapper {
 
-  @Mapping(target = "brokerCount", source = "metrics.brokerCount")
-  @Mapping(target = "status", source = "metrics.status")
-  @Mapping(target = "version", source = "metrics.version")
-  @Mapping(target = "onlinePartitionCount", source = "metrics.onlinePartitionCount")
-  @Mapping(target = "topicCount", source = "metrics.topicCount")
-  @Mapping(target = "bytesInPerSec", source = "metrics.bytesInPerSec")
-  @Mapping(target = "bytesOutPerSec", source = "metrics.bytesOutPerSec")
-  ClusterDTO toCluster(KafkaCluster cluster);
+  ClusterDTO toCluster(InternalClusterState clusterState);
 
   @Mapping(target = "protobufFile", source = "protobufFile", qualifiedByName = "resolvePath")
   @Mapping(target = "properties", source = "properties", qualifiedByName = "setProperties")
   @Mapping(target = "schemaRegistry", source = ".", qualifiedByName = "setSchemaRegistry")
   KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
 
-  @Mapping(target = "diskUsage", source = "internalBrokerDiskUsage",
-      qualifiedByName = "mapDiskUsage")
-  ClusterStatsDTO toClusterStats(InternalClusterMetrics metrics);
+  ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
 
-  @Mapping(target = "items", source = "metrics")
-  ClusterMetricsDTO toClusterMetrics(InternalClusterMetrics metrics);
+  default ClusterMetricsDTO toClusterMetrics(JmxClusterUtil.JmxMetrics jmxMetrics) {
+    return new ClusterMetricsDTO().items(jmxMetrics.getMetrics());
+  }
 
   BrokerMetricsDTO toBrokerMetrics(JmxBrokerMetrics metrics);
 
@@ -104,8 +98,8 @@ public interface ClusterMapper {
 
     internalSchemaRegistry.url(
         clusterProperties.getSchemaRegistry() != null
-            ? Arrays.asList(clusterProperties.getSchemaRegistry().split(","))
-            : Collections.emptyList()
+            ? new FailoverUrlList(Arrays.asList(clusterProperties.getSchemaRegistry().split(",")))
+            : new FailoverUrlList(Collections.emptyList())
     );
 
     if (clusterProperties.getSchemaRegistryAuth() != null) {
@@ -132,7 +126,7 @@ public interface ClusterMapper {
   CompatibilityCheckResponseDTO toCompatibilityCheckResponse(InternalCompatibilityCheck dto);
 
   @Mapping(target = "compatibility", source = "compatibilityLevel")
-  CompatibilityLevelDTO toCompatibilityLevel(InternalCompatibilityLevel dto);
+  CompatibilityLevelDTO toCompatibilityLevelDto(InternalCompatibilityLevel dto);
 
   default List<PartitionDTO> map(Map<Integer, InternalPartition> map) {
     return map.values().stream().map(this::toPartition).collect(Collectors.toList());
@@ -144,15 +138,6 @@ public interface ClusterMapper {
     brokerDiskUsage.segmentCount((int) internalBrokerDiskUsage.getSegmentCount());
     brokerDiskUsage.segmentSize(internalBrokerDiskUsage.getSegmentSize());
     return brokerDiskUsage;
-  }
-
-  @Named("mapDiskUsage")
-  default List<BrokerDiskUsageDTO> mapDiskUsage(Map<Integer, InternalBrokerDiskUsage> brokers) {
-    if (brokers == null) {
-      return null;
-    }
-    return brokers.entrySet().stream().map(e -> this.map(e.getKey(), e.getValue()))
-        .collect(Collectors.toList());
   }
 
   @Named("resolvePath")

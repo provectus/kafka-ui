@@ -1,71 +1,67 @@
 import React from 'react';
-import { ClusterName, TopicFormData, FailurePayload } from 'redux/interfaces';
+import { TopicFormData } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { clusterTopicPath, clusterTopicsPath } from 'lib/paths';
+import { ClusterNameRoute } from 'lib/paths';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
-import {
-  formatTopicCreation,
-  topicsApiClient,
-  createTopicAction,
-} from 'redux/actions';
-import { useDispatch } from 'react-redux';
-import { getResponse } from 'lib/errorHandling';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { createTopic } from 'redux/reducers/topics/topicsSlice';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { topicFormValidationSchema } from 'lib/yupExtended';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import { useAppDispatch } from 'lib/hooks/redux';
+import useAppParams from 'lib/hooks/useAppParams';
+import { AsyncRequestStatus } from 'lib/constants';
 
-interface RouterParams {
-  clusterName: ClusterName;
+enum Filters {
+  NAME = 'name',
+  PARTITION_COUNT = 'partitionCount',
+  REPLICATION_FACTOR = 'replicationFactor',
+  INSYNC_REPLICAS = 'inSyncReplicas',
+  CLEANUP_POLICY = 'Delete',
 }
 
 const New: React.FC = () => {
-  const methods = useForm<TopicFormData>();
-  const { clusterName } = useParams<RouterParams>();
-  const history = useHistory();
-  const dispatch = useDispatch();
+  const methods = useForm<TopicFormData>({
+    mode: 'onChange',
+    resolver: yupResolver(topicFormValidationSchema),
+  });
+
+  const { clusterName } = useAppParams<ClusterNameRoute>();
+  const navigate = useNavigate();
+
+  const { search } = useLocation();
+  const dispatch = useAppDispatch();
+  const params = new URLSearchParams(search);
+
+  const name = params.get(Filters.NAME) || '';
+  const partitionCount = params.get(Filters.PARTITION_COUNT) || 1;
+  const replicationFactor = params.get(Filters.REPLICATION_FACTOR) || 1;
+  const inSyncReplicas = params.get(Filters.INSYNC_REPLICAS) || 1;
+  const cleanUpPolicy = params.get(Filters.CLEANUP_POLICY) || 'Delete';
 
   const onSubmit = async (data: TopicFormData) => {
-    try {
-      await topicsApiClient.createTopic({
-        clusterName,
-        topicCreation: formatTopicCreation(data),
-      });
+    const { meta } = await dispatch(createTopic({ clusterName, data }));
 
-      history.push(clusterTopicPath(clusterName, data.name));
-    } catch (error) {
-      const response = await getResponse(error);
-      const alert: FailurePayload = {
-        subject: ['schema', data.name].join('-'),
-        title: `Schema ${data.name}`,
-        response,
-      };
-
-      dispatch(createTopicAction.failure({ alert }));
+    if (meta.requestStatus === AsyncRequestStatus.fulfilled) {
+      navigate(`../${data.name}`);
     }
   };
 
   return (
-    <div className="section">
-      <div className="level">
-        <div className="level-item level-left">
-          <Breadcrumb
-            links={[
-              { href: clusterTopicsPath(clusterName), label: 'All Topics' },
-            ]}
-          >
-            New Topic
-          </Breadcrumb>
-        </div>
-      </div>
-
-      <div className="box">
-        <FormProvider {...methods}>
-          <TopicForm
-            isSubmitting={methods.formState.isSubmitting}
-            onSubmit={methods.handleSubmit(onSubmit)}
-          />
-        </FormProvider>
-      </div>
-    </div>
+    <>
+      <PageHeading text={search ? 'Copy Topic' : 'Create new Topic'} />
+      <FormProvider {...methods}>
+        <TopicForm
+          topicName={name}
+          cleanUpPolicy={cleanUpPolicy}
+          partitionCount={Number(partitionCount)}
+          replicationFactor={Number(replicationFactor)}
+          inSyncReplicas={Number(inSyncReplicas)}
+          isSubmitting={methods.formState.isSubmitting}
+          onSubmit={methods.handleSubmit(onSubmit)}
+        />
+      </FormProvider>
+    </>
   );
 };
 

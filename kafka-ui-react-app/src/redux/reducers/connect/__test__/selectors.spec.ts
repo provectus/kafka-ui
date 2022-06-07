@@ -1,16 +1,14 @@
 import {
-  fetchConnectorAction,
-  fetchConnectorConfigAction,
-  fetchConnectorsAction,
-  fetchConnectorTasksAction,
-  fetchConnectsAction,
-} from 'redux/actions';
-import configureStore from 'redux/store/configureStore';
+  fetchConnector,
+  fetchConnectorConfig,
+  fetchConnectors,
+  fetchConnectorTasks,
+  fetchConnects,
+} from 'redux/reducers/connect/connectSlice';
+import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/connect/selectors';
 
 import { connects, connectors, connector, tasks } from './fixtures';
-
-const store = configureStore();
 
 describe('Connect selectors', () => {
   describe('Initial State', () => {
@@ -21,6 +19,8 @@ describe('Connect selectors', () => {
         false
       );
       expect(selectors.getConnectors(store.getState())).toEqual([]);
+      expect(selectors.getFailedConnectors(store.getState())).toEqual([]);
+      expect(selectors.getFailedTasks(store.getState())).toEqual(0);
       expect(selectors.getIsConnectorFetching(store.getState())).toEqual(false);
       expect(selectors.getConnector(store.getState())).toEqual(null);
       expect(selectors.getConnectorStatus(store.getState())).toEqual(undefined);
@@ -52,17 +52,53 @@ describe('Connect selectors', () => {
 
   describe('state', () => {
     it('returns connects', () => {
-      store.dispatch(fetchConnectsAction.success({ connects }));
+      store.dispatch({
+        type: fetchConnects.fulfilled.type,
+        payload: { connects },
+      });
       expect(selectors.getConnects(store.getState())).toEqual(connects);
     });
 
     it('returns connectors', () => {
-      store.dispatch(fetchConnectorsAction.success({ connectors }));
+      store.dispatch({
+        type: fetchConnectors.fulfilled.type,
+        payload: { connectors },
+      });
       expect(selectors.getConnectors(store.getState())).toEqual(connectors);
     });
 
+    it('returns failed connectors', () => {
+      store.dispatch({
+        type: fetchConnectors.fulfilled.type,
+        payload: { connectors },
+      });
+      expect(selectors.getFailedConnectors(store.getState()).length).toEqual(1);
+    });
+
+    it('returns failed tasks', () => {
+      store.dispatch({
+        type: fetchConnectors.fulfilled.type,
+        payload: { connectors },
+      });
+      expect(selectors.getFailedTasks(store.getState())).toEqual(1);
+    });
+
+    it('returns sorted topics', () => {
+      store.dispatch({
+        type: fetchConnectors.fulfilled.type,
+        payload: { connectors },
+      });
+      const sortedTopics = selectors.getSortedTopics(store.getState());
+      if (sortedTopics[0] && sortedTopics[0].length > 1) {
+        expect(sortedTopics[0]).toEqual(['a', 'b', 'c']);
+      }
+    });
+
     it('returns connector', () => {
-      store.dispatch(fetchConnectorAction.success({ connector }));
+      store.dispatch({
+        type: fetchConnector.fulfilled.type,
+        payload: { connector },
+      });
       expect(selectors.getConnector(store.getState())).toEqual(connector);
       expect(selectors.getConnectorStatus(store.getState())).toEqual(
         connector.status.state
@@ -70,7 +106,10 @@ describe('Connect selectors', () => {
     });
 
     it('returns connector tasks', () => {
-      store.dispatch(fetchConnectorTasksAction.success({ tasks }));
+      store.dispatch({
+        type: fetchConnectorTasks.fulfilled.type,
+        payload: { tasks },
+      });
       expect(selectors.getConnectorTasks(store.getState())).toEqual(tasks);
       expect(selectors.getConnectorRunningTasksCount(store.getState())).toEqual(
         2
@@ -81,9 +120,10 @@ describe('Connect selectors', () => {
     });
 
     it('returns connector config', () => {
-      store.dispatch(
-        fetchConnectorConfigAction.success({ config: connector.config })
-      );
+      store.dispatch({
+        type: fetchConnectorConfig.fulfilled.type,
+        payload: { config: connector.config },
+      });
       expect(selectors.getConnectorConfig(store.getState())).toEqual(
         connector.config
       );

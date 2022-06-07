@@ -1,18 +1,18 @@
-import { combineReducers } from 'redux';
-import { RootState } from 'redux/interfaces';
+import { combineReducers } from '@reduxjs/toolkit';
+import clusters from 'redux/reducers/clusters/clustersSlice';
+import loader from 'redux/reducers/loader/loaderSlice';
+import brokers from 'redux/reducers/brokers/brokersSlice';
+import alerts from 'redux/reducers/alerts/alertsSlice';
+import schemas from 'redux/reducers/schemas/schemasSlice';
+import connect from 'redux/reducers/connect/connectSlice';
+import topicMessages from 'redux/reducers/topicMessages/topicMessagesSlice';
+import topics from 'redux/reducers/topics/topicsSlice';
+import consumerGroups from 'redux/reducers/consumerGroups/consumerGroupsSlice';
+import ksqlDb from 'redux/reducers/ksqlDb/ksqlDbSlice';
 
-import topics from './topics/reducer';
-import topicMessages from './topicMessages/reducer';
-import clusters from './clusters/reducer';
-import brokers from './brokers/reducer';
-import consumerGroups from './consumerGroups/reducer';
-import schemas from './schemas/reducer';
-import connect from './connect/reducer';
-import loader from './loader/reducer';
-import alerts from './alerts/reducer';
-import ksqlDb from './ksqlDb/reducer';
-
-export default combineReducers<RootState>({
+export default combineReducers({
+  loader,
+  alerts,
   topics,
   topicMessages,
   clusters,
@@ -20,7 +20,5 @@ export default combineReducers<RootState>({
   consumerGroups,
   schemas,
   connect,
-  loader,
-  alerts,
   ksqlDb,
 });

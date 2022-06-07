@@ -1,16 +1,5 @@
-kafka:
-  clusters:
-    -
-      name: local
-      bootstrapServers: localhost:9093
-      zookeeper: localhost:2181
-      schemaRegistry: http://localhost:8081
-      jmxPort: 9997
-  admin-client-timeout: 5000
-zookeeper:
-  connection-timeout: 1000
 spring:
   jmx:
     enabled: true
 auth:
-  enabled: false
+  type: DISABLED

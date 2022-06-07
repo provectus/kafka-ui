@@ -1,6 +1,8 @@
 import * as yup from 'yup';
 import { AnyObject, Maybe } from 'yup/lib/types';
 
+import { TOPIC_NAME_VALIDATION_PATTERN } from './constants';
+
 declare module 'yup' {
   interface StringSchema<
     TType extends Maybe<string> = string | undefined,
@@ -14,11 +16,13 @@ declare module 'yup' {
 export const isValidJsonObject = (value?: string) => {
   try {
     if (!value) return false;
+
+    const trimmedValue = value.trim();
     if (
-      value.indexOf('{') === 0 &&
-      value.lastIndexOf('}') === value.length - 1
+      trimmedValue.indexOf('{') === 0 &&
+      trimmedValue.lastIndexOf('}') === trimmedValue.length - 1
     ) {
-      JSON.parse(value);
+      JSON.parse(trimmedValue);
       return true;
     }
   } catch {
@@ -39,3 +43,45 @@ const isJsonObject = () => {
 yup.addMethod(yup.string, 'isJsonObject', isJsonObject);
 
 export default yup;
+
+export const topicFormValidationSchema = yup.object().shape({
+  name: yup
+    .string()
+    .required()
+    .matches(
+      TOPIC_NAME_VALIDATION_PATTERN,
+      'Only alphanumeric, _, -, and . allowed'
+    ),
+  partitions: yup
+    .number()
+    .min(1)
+    .required()
+    .typeError('Number of partitions is required and must be a number'),
+  replicationFactor: yup
+    .number()
+    .min(1)
+    .required()
+    .typeError('Replication factor is required and must be a number'),
+  minInsyncReplicas: yup
+    .number()
+    .min(1)
+    .required()
+    .typeError('Min in sync replicas is required and must be a number'),
+  cleanupPolicy: yup.string().required(),
+  retentionMs: yup
+    .number()
+    .min(-1, 'Must be greater than or equal to -1')
+    .typeError('Time to retain data is required and must be a number'),
+  retentionBytes: yup.number(),
+  maxMessageBytes: yup
+    .number()
+    .min(1)
+    .required()
+    .typeError('Maximum message size is required and must be a number'),
+  customParams: yup.array().of(
+    yup.object().shape({
+      name: yup.string().required('Custom parameter is required'),
+      value: yup.string().required('Value is required'),
+    })
+  ),
+});

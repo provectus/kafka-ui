@@ -1,6 +1,6 @@
-import cx from 'classnames';
 import React from 'react';
-import { Link } from 'react-router-dom';
+
+import { PaginationLink } from './Pagination.styled';
 
 export interface PageControlProps {
   current: boolean;
@@ -9,15 +9,16 @@ export interface PageControlProps {
 }
 
 const PageControl: React.FC<PageControlProps> = ({ current, url, page }) => {
-  const classNames = cx('pagination-link', {
-    'is-current': current,
-  });
-
   return (
     <li>
-      <Link className={classNames} to={url} aria-label={`Goto page ${page}`}>
+      <PaginationLink
+        to={url}
+        aria-label={`Goto page ${page}`}
+        $isCurrent={current}
+        role="button"
+      >
         {page}
-      </Link>
+      </PaginationLink>
     </li>
   );
 };

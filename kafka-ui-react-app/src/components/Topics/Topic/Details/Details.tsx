@@ -1,175 +1,233 @@
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import { Topic, TopicDetails } from 'generated-sources';
-import { NavLink, Switch, Route, Link, useHistory } from 'react-router-dom';
+import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import {
-  clusterTopicSettingsPath,
-  clusterTopicPath,
-  clusterTopicMessagesPath,
-  clusterTopicsPath,
-  clusterTopicConsumerGroupsPath,
-  clusterTopicEditPath,
-  clusterTopicSendMessagePath,
+  RouteParamsClusterTopic,
+  clusterTopicMessagesRelativePath,
+  clusterTopicSettingsRelativePath,
+  clusterTopicConsumerGroupsRelativePath,
+  clusterTopicEditRelativePath,
+  clusterTopicSendMessageRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { useDispatch } from 'react-redux';
-import { deleteTopicAction } from 'redux/actions';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import { Button } from 'components/common/Button/Button';
+import Dropdown from 'components/common/Dropdown/Dropdown';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
+import styled from 'styled-components';
+import Navbar from 'components/common/Navigation/Navbar.styled';
+import * as S from 'components/Topics/Topic/Details/Details.styled';
+import { useAppSelector } from 'lib/hooks/redux';
+import {
+  getIsTopicDeletePolicy,
+  getIsTopicInternal,
+} from 'redux/reducers/topics/selectors';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
 import SettingsContainer from './Settings/SettingsContainer';
 import Messages from './Messages/Messages';
 
-export interface DetailsProps extends Topic, TopicDetails {
-  clusterName: ClusterName;
-  topicName: TopicName;
-  isInternal: boolean;
+interface Props {
   isDeleted: boolean;
-  isDeletePolicy: boolean;
-  deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
-  clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
+  deleteTopic: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }) => void;
+  recreateTopic: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }) => void;
+  clearTopicMessages(params: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }): void;
 }
 
-const Details: React.FC<DetailsProps> = ({
-  clusterName,
-  topicName,
-  isInternal,
+const HeaderControlsWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-self: center;
+  gap: 26px;
+`;
+
+const Details: React.FC<Props> = ({
   isDeleted,
-  isDeletePolicy,
   deleteTopic,
+  recreateTopic,
   clearTopicMessages,
 }) => {
-  const history = useHistory();
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+
+  const isInternal = useAppSelector((state) =>
+    getIsTopicInternal(state, topicName)
+  );
+
+  const isDeletePolicy = useAppSelector((state) =>
+    getIsTopicDeletePolicy(state, topicName)
+  );
+
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
-  const deleteTopicHandler = React.useCallback(() => {
-    deleteTopic(clusterName, topicName);
-  }, [clusterName, topicName]);
+  const [isClearTopicConfirmationVisible, setClearTopicConfirmationVisible] =
+    React.useState(false);
+  const [
+    isRecreateTopicConfirmationVisible,
+    setRecreateTopicConfirmationVisible,
+  ] = React.useState(false);
+  const deleteTopicHandler = () => deleteTopic({ clusterName, topicName });
 
   React.useEffect(() => {
     if (isDeleted) {
-      dispatch(deleteTopicAction.cancel());
-      history.push(clusterTopicsPath(clusterName));
+      navigate('../..');
     }
-  }, [isDeleted]);
+  }, [isDeleted, clusterName, dispatch, navigate]);
 
-  const clearTopicMessagesHandler = React.useCallback(() => {
-    clearTopicMessages(clusterName, topicName);
-  }, [clusterName, topicName]);
+  const clearTopicMessagesHandler = () => {
+    clearTopicMessages({ clusterName, topicName });
+    setClearTopicConfirmationVisible(false);
+  };
+
+  const recreateTopicHandler = () => {
+    recreateTopic({ clusterName, topicName });
+    setRecreateTopicConfirmationVisible(false);
+  };
 
   return (
-    <div className="box">
-      <nav className="navbar" role="navigation">
-        <div className="navbar-start">
-          <NavLink
-            exact
-            to={clusterTopicPath(clusterName, topicName)}
-            className="navbar-item is-tab"
-            activeClassName="is-active is-primary"
-          >
-            Overview
-          </NavLink>
-          <NavLink
-            exact
-            to={clusterTopicMessagesPath(clusterName, topicName)}
-            className="navbar-item is-tab"
-            activeClassName="is-active"
-          >
-            Messages
-          </NavLink>
-          <NavLink
-            exact
-            to={clusterTopicConsumerGroupsPath(clusterName, topicName)}
-            className="navbar-item is-tab"
-            activeClassName="is-active"
-          >
-            Consumers
-          </NavLink>
-          <NavLink
-            exact
-            to={clusterTopicSettingsPath(clusterName, topicName)}
-            className="navbar-item is-tab"
-            activeClassName="is-active"
-          >
-            Settings
-          </NavLink>
-        </div>
-        <div className="navbar-end">
-          {!isReadOnly && !isInternal ? (
-            <div className="buttons">
-              <>
-                {isDeletePolicy && (
-                  <button
-                    type="button"
-                    className="button is-danger"
-                    onClick={clearTopicMessagesHandler}
-                  >
-                    Clear All Messages
-                  </button>
-                )}
-                {isTopicDeletionAllowed && (
-                  <button
-                    className="button is-danger"
-                    type="button"
-                    onClick={() => setDeleteTopicConfirmationVisible(true)}
-                  >
-                    Delete Topic
-                  </button>
-                )}
-
-                <Link
-                  to={clusterTopicSendMessagePath(clusterName, topicName)}
-                  className="button"
+    <div>
+      <PageHeading text={topicName}>
+        <HeaderControlsWrapper>
+          <Routes>
+            <Route
+              path={clusterTopicMessagesRelativePath}
+              element={
+                <Button
+                  buttonSize="M"
+                  buttonType="primary"
+                  to={`../${clusterTopicSendMessageRelativePath}`}
+                  disabled={isReadOnly}
                 >
-                  Produce message
-                </Link>
+                  Produce Message
+                </Button>
+              }
+            />
+          </Routes>
+          {!isReadOnly && !isInternal && (
+            <Routes>
+              <Route
+                index
+                element={
+                  <Dropdown label={<VerticalElipsisIcon />} right>
+                    <DropdownItem
+                      onClick={() => navigate(clusterTopicEditRelativePath)}
+                    >
+                      Edit settings
+                      <S.DropdownExtraMessage>
+                        Pay attention! This operation has
+                        <br />
+                        especially important consequences.
+                      </S.DropdownExtraMessage>
+                    </DropdownItem>
+                    {isDeletePolicy && (
+                      <DropdownItem
+                        onClick={() => setClearTopicConfirmationVisible(true)}
+                        danger
+                      >
+                        Clear messages
+                      </DropdownItem>
+                    )}
+                    <DropdownItem
+                      onClick={() => setRecreateTopicConfirmationVisible(true)}
+                      danger
+                    >
+                      Recreate Topic
+                    </DropdownItem>
+                    {isTopicDeletionAllowed && (
+                      <DropdownItem
+                        onClick={() => setDeleteTopicConfirmationVisible(true)}
+                        danger
+                      >
+                        Remove topic
+                      </DropdownItem>
+                    )}
+                  </Dropdown>
+                }
+              />
+            </Routes>
+          )}
+        </HeaderControlsWrapper>
+      </PageHeading>
+      <ConfirmationModal
+        isOpen={isDeleteTopicConfirmationVisible}
+        onCancel={() => setDeleteTopicConfirmationVisible(false)}
+        onConfirm={deleteTopicHandler}
+      >
+        Are you sure want to remove <b>{topicName}</b> topic?
+      </ConfirmationModal>
+      <ConfirmationModal
+        isOpen={isClearTopicConfirmationVisible}
+        onCancel={() => setClearTopicConfirmationVisible(false)}
+        onConfirm={clearTopicMessagesHandler}
+      >
+        Are you sure want to clear topic messages?
+      </ConfirmationModal>
+      <ConfirmationModal
+        isOpen={isRecreateTopicConfirmationVisible}
+        onCancel={() => setRecreateTopicConfirmationVisible(false)}
+        onConfirm={recreateTopicHandler}
+      >
+        Are you sure want to recreate <b>{topicName}</b> topic?
+      </ConfirmationModal>
+      <Navbar role="navigation">
+        <NavLink
+          to="."
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
+          end
+        >
+          Overview
+        </NavLink>
+        <NavLink
+          to={clusterTopicMessagesRelativePath}
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
+        >
+          Messages
+        </NavLink>
+        <NavLink
+          to={clusterTopicConsumerGroupsRelativePath}
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
+        >
+          Consumers
+        </NavLink>
+        <NavLink
+          to={clusterTopicSettingsRelativePath}
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
+        >
+          Settings
+        </NavLink>
+      </Navbar>
+      <Routes>
+        <Route index element={<OverviewContainer />} />
 
-                <Link
-                  to={clusterTopicEditPath(clusterName, topicName)}
-                  className="button"
-                >
-                  Edit settings
-                </Link>
+        <Route path={clusterTopicMessagesRelativePath} element={<Messages />} />
 
-                <ConfirmationModal
-                  isOpen={isDeleteTopicConfirmationVisible}
-                  onCancel={() => setDeleteTopicConfirmationVisible(false)}
-                  onConfirm={deleteTopicHandler}
-                >
-                  Are you sure want to remove <b>{topicName}</b> topic?
-                </ConfirmationModal>
-              </>
-            </div>
-          ) : null}
-        </div>
-      </nav>
-      <br />
-      <Switch>
         <Route
-          exact
-          path="/ui/clusters/:clusterName/topics/:topicName/messages"
-          component={Messages}
+          path={clusterTopicSettingsRelativePath}
+          element={<SettingsContainer />}
         />
+
         <Route
-          exact
-          path="/ui/clusters/:clusterName/topics/:topicName/settings"
-          component={SettingsContainer}
+          path={clusterTopicConsumerGroupsRelativePath}
+          element={<TopicConsumerGroupsContainer />}
         />
-        <Route
-          exact
-          path="/ui/clusters/:clusterName/topics/:topicName"
-          component={OverviewContainer}
-        />
-        <Route
-          exact
-          path="/ui/clusters/:clusterName/topics/:topicName/consumergroups"
-          component={TopicConsumerGroupsContainer}
-        />
-      </Switch>
+      </Routes>
     </div>
   );
 };

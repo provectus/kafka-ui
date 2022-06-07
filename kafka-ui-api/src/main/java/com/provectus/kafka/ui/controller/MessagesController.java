@@ -1,21 +1,23 @@
 package com.provectus.kafka.ui.controller;
 
+import static java.util.stream.Collectors.toMap;
+
 import com.provectus.kafka.ui.api.MessagesApi;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
+import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.service.MessagesService;
 import com.provectus.kafka.ui.service.TopicsService;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +28,12 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class MessagesController extends AbstractController implements MessagesApi {
+
+  private static final int MAX_LOAD_RECORD_LIMIT = 100;
+  private static final int DEFAULT_LOAD_RECORD_LIMIT = 20;
+
   private final MessagesService messagesService;
   private final TopicsService topicsService;
 
@@ -39,21 +45,28 @@ public class MessagesController extends AbstractController implements MessagesAp
         getCluster(clusterName),
         topicName,
         Optional.ofNullable(partitions).orElse(List.of())
-    ).map(ResponseEntity::ok);
+    ).thenReturn(ResponseEntity.ok().build());
   }
 
   @Override
   public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> getTopicMessages(
-      String clusterName, String topicName, @Valid SeekTypeDTO seekType, @Valid List<String> seekTo,
-      @Valid Integer limit, @Valid String q, @Valid SeekDirectionDTO seekDirection,
-      ServerWebExchange exchange) {
-    return parseConsumerPosition(topicName, seekType, seekTo, seekDirection)
-        .map(position ->
-            ResponseEntity.ok(
-                messagesService.loadMessages(
-                    getCluster(clusterName), topicName, position, q, limit)
-            )
-        );
+      String clusterName, String topicName, SeekTypeDTO seekType, List<String> seekTo,
+      Integer limit, String q, MessageFilterTypeDTO filterQueryType,
+      SeekDirectionDTO seekDirection, ServerWebExchange exchange) {
+    var positions = new ConsumerPosition(
+        seekType != null ? seekType : SeekTypeDTO.BEGINNING,
+        parseSeekTo(topicName, seekTo),
+        seekDirection
+    );
+    int recordsLimit = Optional.ofNullable(limit)
+        .map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT))
+        .orElse(DEFAULT_LOAD_RECORD_LIMIT);
+    return Mono.just(
+        ResponseEntity.ok(
+            messagesService.loadMessages(
+                getCluster(clusterName), topicName, positions, q, filterQueryType, recordsLimit)
+        )
+    );
   }
 
   @Override
@@ -72,13 +85,15 @@ public class MessagesController extends AbstractController implements MessagesAp
     ).map(ResponseEntity::ok);
   }
 
-
-  private Mono<ConsumerPosition> parseConsumerPosition(
-      String topicName, SeekTypeDTO seekType, List<String> seekTo,
-      SeekDirectionDTO seekDirection) {
-    return Mono.justOrEmpty(seekTo)
-        .defaultIfEmpty(Collections.emptyList())
-        .flatMapIterable(Function.identity())
+  /**
+   * The format is [partition]::[offset] for specifying offsets
+   * or [partition]::[timestamp in millis] for specifying timestamps.
+   */
+  private Map<TopicPartition, Long> parseSeekTo(String topic, List<String> seekTo) {
+    if (seekTo == null || seekTo.isEmpty()) {
+      return Map.of();
+    }
+    return seekTo.stream()
         .map(p -> {
           String[] split = p.split("::");
           if (split.length != 2) {
@@ -87,13 +102,11 @@ public class MessagesController extends AbstractController implements MessagesAp
           }
 
           return Pair.of(
-              new TopicPartition(topicName, Integer.parseInt(split[0])),
+              new TopicPartition(topic, Integer.parseInt(split[0])),
               Long.parseLong(split[1])
           );
         })
-        .collectMap(Pair::getKey, Pair::getValue)
-        .map(positions -> new ConsumerPosition(seekType != null ? seekType : SeekTypeDTO.BEGINNING,
-            positions, seekDirection));
+        .collect(toMap(Pair::getKey, Pair::getValue));
   }
 
 }

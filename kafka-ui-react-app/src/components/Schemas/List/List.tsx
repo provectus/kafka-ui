@@ -1,84 +1,79 @@
 import React from 'react';
-import {
-  CompatibilityLevelCompatibilityEnum,
-  SchemaSubject,
-} from 'generated-sources';
-import { Link, useParams } from 'react-router-dom';
-import { clusterSchemaNewPath } from 'lib/paths';
-import { ClusterName } from 'redux/interfaces';
-import PageLoader from 'components/common/PageLoader/PageLoader';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import { ClusterNameRoute, clusterSchemaNewRelativePath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
+import * as C from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import { Button } from 'components/common/Button/Button';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import useAppParams from 'lib/hooks/useAppParams';
+import {
+  selectAllSchemas,
+  fetchSchemas,
+  getAreSchemasFulfilled,
+  SCHEMAS_FETCH_ACTION,
+} from 'redux/reducers/schemas/schemasSlice';
+import usePagination from 'lib/hooks/usePagination';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import Pagination from 'components/common/Pagination/Pagination';
+import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
+import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
+import Search from 'components/common/Search/Search';
+import useSearch from 'lib/hooks/useSearch';
 
 import ListItem from './ListItem';
-import GlobalSchemaSelector from './GlobalSchemaSelector';
+import GlobalSchemaSelector from './GlobalSchemaSelector/GlobalSchemaSelector';
 
-export interface ListProps {
-  schemas: SchemaSubject[];
-  isFetching: boolean;
-  isGlobalSchemaCompatibilityLevelFetched: boolean;
-  globalSchemaCompatibilityLevel?: CompatibilityLevelCompatibilityEnum;
-  fetchSchemasByClusterName: (clusterName: ClusterName) => void;
-  fetchGlobalSchemaCompatibilityLevel: (
-    clusterName: ClusterName
-  ) => Promise<void>;
-  updateGlobalSchemaCompatibilityLevel: (
-    clusterName: ClusterName,
-    compatibilityLevel: CompatibilityLevelCompatibilityEnum
-  ) => Promise<void>;
-}
-
-const List: React.FC<ListProps> = ({
-  schemas,
-  isFetching,
-  globalSchemaCompatibilityLevel,
-  isGlobalSchemaCompatibilityLevelFetched,
-  fetchSchemasByClusterName,
-  fetchGlobalSchemaCompatibilityLevel,
-  updateGlobalSchemaCompatibilityLevel,
-}) => {
+const List: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
+
+  const schemas = useAppSelector(selectAllSchemas);
+  const isFetched = useAppSelector(getAreSchemasFulfilled);
+  const totalPages = useAppSelector((state) => state.schemas.totalPages);
+
+  const [searchText, handleSearchText] = useSearch();
+  const { page, perPage } = usePagination();
 
   React.useEffect(() => {
-    fetchSchemasByClusterName(clusterName);
-    fetchGlobalSchemaCompatibilityLevel(clusterName);
-  }, [fetchSchemasByClusterName, clusterName]);
+    dispatch(fetchSchemas({ clusterName, page, perPage, search: searchText }));
+    return () => {
+      dispatch(resetLoaderById(SCHEMAS_FETCH_ACTION));
+    };
+  }, [clusterName, dispatch, page, perPage, searchText]);
 
   return (
-    <div className="section">
-      <Breadcrumb>Schema Registry</Breadcrumb>
-      <div className="box">
-        <div className="level">
-          {!isReadOnly && isGlobalSchemaCompatibilityLevelFetched && (
-            <div className="level-item level-right">
-              <GlobalSchemaSelector
-                globalSchemaCompatibilityLevel={globalSchemaCompatibilityLevel}
-                updateGlobalSchemaCompatibilityLevel={
-                  updateGlobalSchemaCompatibilityLevel
-                }
-              />
-              <Link
-                className="button is-primary"
-                to={clusterSchemaNewPath(clusterName)}
-              >
-                Create Schema
-              </Link>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {isFetching ? (
-        <PageLoader />
-      ) : (
-        <div className="box">
-          <table className="table is-striped is-fullwidth">
+    <>
+      <PageHeading text="Schema Registry">
+        {!isReadOnly && (
+          <>
+            <GlobalSchemaSelector />
+            <Button
+              buttonSize="M"
+              buttonType="primary"
+              to={clusterSchemaNewRelativePath}
+            >
+              <i className="fas fa-plus" /> Create Schema
+            </Button>
+          </>
+        )}
+      </PageHeading>
+      <ControlPanelWrapper hasInput>
+        <Search
+          placeholder="Search by Schema Name"
+          value={searchText}
+          handleSearch={handleSearchText}
+        />
+      </ControlPanelWrapper>
+      {isFetched ? (
+        <>
+          <C.Table isFullwidth>
             <thead>
               <tr>
-                <th>Schema Name</th>
-                <th>Version</th>
-                <th>Compatibility</th>
+                <TableHeaderCell title="Schema Name" />
+                <TableHeaderCell title="Version" />
+                <TableHeaderCell title="Compatibility" />
               </tr>
             </thead>
             <tbody>
@@ -94,10 +89,13 @@ const List: React.FC<ListProps> = ({
                 />
               ))}
             </tbody>
-          </table>
-        </div>
+          </C.Table>
+          <Pagination totalPages={totalPages} />
+        </>
+      ) : (
+        <PageLoader />
       )}
-    </div>
+    </>
   );
 };
 

@@ -1,31 +1,48 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { clusterPath } from 'lib/paths';
+import { BREADCRUMB_DEFINITIONS } from 'lib/constants';
 
-export interface BreadcrumbItem {
-  label: string;
-  href: string;
+import { BreadcrumbWrapper } from './Breadcrumb.styled';
+import { BreadcrumbContext } from './Breadcrumb.context';
+
+const basePathEntriesLength = clusterPath().split('/').length;
+
+export interface BreadcrumbDefinitions {
+  [key: string]: string;
 }
 
-interface Props {
-  links?: BreadcrumbItem[];
-}
+const Breadcrumb: React.FC = () => {
+  const breadcrumbContext = useContext(BreadcrumbContext);
 
-const Breadcrumb: React.FC<Props> = ({ links, children }) => {
+  const links = React.useMemo(
+    () => breadcrumbContext.path.slice(basePathEntriesLength),
+    [breadcrumbContext.path]
+  );
+
+  const getPathPredicate = (index: number) =>
+    `${breadcrumbContext.link
+      .split('/')
+      .slice(0, basePathEntriesLength + index + 1)
+      .join('/')}`;
+
+  if (links.length < 2) {
+    return null;
+  }
+
   return (
-    <nav className="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        {links &&
-          links.map(({ label, href }) => (
-            <li key={href}>
-              <Link to={href}>{label}</Link>
-            </li>
-          ))}
-
-        <li className="is-active">
-          <span className="">{children}</span>
+    <BreadcrumbWrapper role="list">
+      {links.slice(0, links.length - 1).map((link, index) => (
+        <li key={link}>
+          <Link to={getPathPredicate(index)}>
+            {BREADCRUMB_DEFINITIONS[link] || link}
+          </Link>
         </li>
-      </ul>
-    </nav>
+      ))}
+      <li>
+        <span>{links[links.length - 1]}</span>
+      </li>
+    </BreadcrumbWrapper>
   );
 };
 

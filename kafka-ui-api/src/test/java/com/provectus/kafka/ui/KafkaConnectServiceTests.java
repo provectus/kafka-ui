@@ -16,20 +16,16 @@ import com.provectus.kafka.ui.model.TaskIdDTO;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-@Log4j2
-@AutoConfigureWebTestClient(timeout = "60000")
-public class KafkaConnectServiceTests extends AbstractBaseTest {
+@Slf4j
+public class KafkaConnectServiceTests extends AbstractIntegrationTest {
   private final String connectName = "kafka-connect";
   private final String connectorName = UUID.randomUUID().toString();
   private final Map<String, Object> config = Map.of(

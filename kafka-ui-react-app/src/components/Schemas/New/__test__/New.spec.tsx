@@ -1,37 +1,24 @@
 import React from 'react';
-import configureStore from 'redux/store/configureStore';
-import { mount, shallow } from 'enzyme';
-import { Provider } from 'react-redux';
-import { StaticRouter } from 'react-router-dom';
-import NewContainer from 'components/Schemas/New/NewContainer';
-import New, { NewProps } from 'components/Schemas/New/New';
+import New from 'components/Schemas/New/New';
+import { render, WithRoute } from 'lib/testHelpers';
+import { clusterSchemaNewPath } from 'lib/paths';
+import { screen } from '@testing-library/dom';
 
-describe('New', () => {
-  describe('Container', () => {
-    const store = configureStore();
+const clusterName = 'local';
 
-    it('renders view', () => {
-      const component = shallow(
-        <Provider store={store}>
-          <NewContainer />
-        </Provider>
-      );
-
-      expect(component.exists()).toBeTruthy();
-    });
+describe('New Component', () => {
+  beforeEach(() => {
+    render(
+      <WithRoute path={clusterSchemaNewPath()}>
+        <New />
+      </WithRoute>,
+      {
+        initialEntries: [clusterSchemaNewPath(clusterName)],
+      }
+    );
   });
 
-  describe('View', () => {
-    const pathname = '/ui/clusters/clusterName/schemas/create_new';
-
-    const setupWrapper = (props: Partial<NewProps> = {}) => (
-      <StaticRouter location={{ pathname }} context={{}}>
-        <New createSchema={jest.fn()} {...props} />
-      </StaticRouter>
-    );
-
-    it('matches snapshot', () => {
-      expect(mount(setupWrapper())).toMatchSnapshot();
-    });
+  it('renders component', () => {
+    expect(screen.getByText('Create new schema')).toBeInTheDocument();
   });
 });

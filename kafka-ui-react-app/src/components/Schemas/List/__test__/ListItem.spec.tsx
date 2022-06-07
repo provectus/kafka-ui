@@ -1,27 +1,23 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import { BrowserRouter as Router } from 'react-router-dom';
-import ListItem from 'components/Schemas/List/ListItem';
+import ListItem, { ListItemProps } from 'components/Schemas/List/ListItem';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 import { schemas } from './fixtures';
 
 describe('ListItem', () => {
-  const wrapper = mount(
-    <Router>
+  const setupComponent = (props: ListItemProps = { subject: schemas[0] }) =>
+    render(
       <table>
         <tbody>
-          <ListItem subject={schemas[0]} />
+          <ListItem {...props} />
         </tbody>
       </table>
-    </Router>
-  );
+    );
 
   it('renders schemas', () => {
-    expect(wrapper.find('NavLink').length).toEqual(1);
-    expect(wrapper.find('td').length).toEqual(3);
-  });
-
-  it('matches snapshot', () => {
-    expect(wrapper).toMatchSnapshot();
+    setupComponent();
+    expect(screen.getAllByRole('link').length).toEqual(1);
+    expect(screen.getAllByRole('cell').length).toEqual(3);
   });
 });

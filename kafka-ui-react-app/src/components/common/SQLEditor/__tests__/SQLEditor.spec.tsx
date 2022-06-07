@@ -1,20 +1,22 @@
-import { shallow } from 'enzyme';
 import React from 'react';
 import SQLEditor from 'components/common/SQLEditor/SQLEditor';
+import { render } from 'lib/testHelpers';
+import { screen } from '@testing-library/react';
 
-describe('JSONEditor component', () => {
-  it('matches the snapshot', () => {
-    const component = shallow(<SQLEditor value="" name="name" />);
-    expect(component).toMatchSnapshot();
+describe('SQLEditor component', () => {
+  it('to be in the document with fixed height', () => {
+    render(<SQLEditor value="" name="name" isFixedHeight />);
+    expect(
+      screen.getByRole('textbox').parentElement?.getAttribute('style') !==
+        '16px'
+    );
   });
 
-  it('matches the snapshot with fixed height', () => {
-    const component = shallow(<SQLEditor value="" name="name" isFixedHeight />);
-    expect(component).toMatchSnapshot();
-  });
-
-  it('matches the snapshot with fixed height with no value', () => {
-    const component = shallow(<SQLEditor name="name" isFixedHeight />);
-    expect(component).toMatchSnapshot();
+  it('to be in the document with fixed height with no value', () => {
+    render(<SQLEditor value="" name="name" />);
+    expect(
+      screen.getByRole('textbox').parentElement?.getAttribute('style') ===
+        '16px'
+    );
   });
 });

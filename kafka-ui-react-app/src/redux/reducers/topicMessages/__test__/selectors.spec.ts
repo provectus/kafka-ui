@@ -1,15 +1,13 @@
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/topicMessages/selectors';
-import { initialState } from 'redux/reducers/topicMessages/reducer';
 import {
+  initialState,
   addTopicMessage,
   updateTopicMessagesMeta,
   updateTopicMessagesPhase,
-} from 'redux/actions';
+} from 'redux/reducers/topicMessages/topicMessagesSlice';
 
 import { topicMessagePayload, topicMessagesMetaPayload } from './fixtures';
-
-const store = configureStore();
 
 describe('TopicMessages selectors', () => {
   describe('Initial state', () => {
@@ -30,7 +28,7 @@ describe('TopicMessages selectors', () => {
 
   describe('state', () => {
     beforeAll(() => {
-      store.dispatch(addTopicMessage(topicMessagePayload));
+      store.dispatch(addTopicMessage({ message: topicMessagePayload }));
       store.dispatch(updateTopicMessagesPhase('consuming'));
       store.dispatch(updateTopicMessagesMeta(topicMessagesMetaPayload));
     });

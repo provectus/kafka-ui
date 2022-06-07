@@ -1,9 +1,10 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import cx from 'classnames';
 import { MILLISECONDS_IN_WEEK } from 'lib/constants';
 
-interface Props {
+import * as S from './TopicForm.styled';
+
+export interface Props {
   inputName: string;
   text: string;
   value: number;
@@ -14,15 +15,13 @@ const TimeToRetainBtn: React.FC<Props> = ({ inputName, text, value }) => {
   const watchedValue = watch(inputName, MILLISECONDS_IN_WEEK.toString());
 
   return (
-    <button
+    <S.Button
+      isActive={parseFloat(watchedValue) === value}
       type="button"
-      className={cx('button', {
-        'is-info': watchedValue === value.toString(),
-      })}
       onClick={() => setValue(inputName, value)}
     >
       {text}
-    </button>
+    </S.Button>
   );
 };
 

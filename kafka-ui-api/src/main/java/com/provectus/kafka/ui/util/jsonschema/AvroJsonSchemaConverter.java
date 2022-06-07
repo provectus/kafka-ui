@@ -59,7 +59,8 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
           }
         case ARRAY:
           return createArraySchema(name, schema, definitions);
-        default: throw new RuntimeException("Unknown type");
+        default:
+          throw new RuntimeException("Unknown type");
       }
     } else {
       return createUnionSchema(schema, definitions);
@@ -87,9 +88,9 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
     if (nullable) {
       return new OneOfFieldSchema(
           List.of(
-             new SimpleFieldSchema(new SimpleJsonType(JsonType.Type.NULL)),
-             new ObjectFieldSchema(fields, Collections.emptyList())
-         )
+              new SimpleFieldSchema(new SimpleJsonType(JsonType.Type.NULL)),
+              new ObjectFieldSchema(fields, Collections.emptyList())
+          )
       );
     } else {
       return new ObjectFieldSchema(fields, Collections.emptyList());
@@ -138,14 +139,18 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
       case BYTES:
       case STRING:
         return new SimpleJsonType(JsonType.Type.STRING);
-      case NULL: return new SimpleJsonType(JsonType.Type.NULL);
-      case ARRAY: return new SimpleJsonType(JsonType.Type.ARRAY);
+      case NULL:
+        return new SimpleJsonType(JsonType.Type.NULL);
+      case ARRAY:
+        return new SimpleJsonType(JsonType.Type.ARRAY);
       case FIXED:
       case FLOAT:
       case DOUBLE:
         return new SimpleJsonType(JsonType.Type.NUMBER);
-      case BOOLEAN: return new SimpleJsonType(JsonType.Type.BOOLEAN);
-      default: return new SimpleJsonType(JsonType.Type.STRING);
+      case BOOLEAN:
+        return new SimpleJsonType(JsonType.Type.BOOLEAN);
+      default:
+        return new SimpleJsonType(JsonType.Type.STRING);
     }
   }
 }

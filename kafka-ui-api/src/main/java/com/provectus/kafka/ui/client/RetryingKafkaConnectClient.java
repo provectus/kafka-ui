@@ -6,10 +6,11 @@ import com.provectus.kafka.ui.connect.model.Connector;
 import com.provectus.kafka.ui.connect.model.NewConnector;
 import com.provectus.kafka.ui.exception.KafkaConnectConflictReponseException;
 import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.model.KafkaConnectCluster;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,19 +21,18 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
-import reactor.util.retry.RetryBackoffSpec;
 
-@Log4j2
+@Slf4j
 public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   private static final int MAX_RETRIES = 5;
   private static final Duration RETRIES_DELAY = Duration.ofMillis(200);
 
-  public RetryingKafkaConnectClient(String basePath) {
-    super(new RetryingApiClient().setBasePath(basePath));
+  public RetryingKafkaConnectClient(KafkaConnectCluster config) {
+    super(new RetryingApiClient(config));
   }
 
   private static Retry conflictCodeRetry() {
-    return RetryBackoffSpec
+    return Retry
         .fixedDelay(MAX_RETRIES, RETRIES_DELAY)
         .filter(e -> e instanceof WebClientResponseException.Conflict)
         .onRetryExhaustedThrow((spec, signal) ->
@@ -72,6 +72,14 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   }
 
   private static class RetryingApiClient extends ApiClient {
+
+    public RetryingApiClient(KafkaConnectCluster config) {
+      super();
+      setBasePath(config.getAddress());
+      setUsername(config.getUserName());
+      setPassword(config.getPassword());
+    }
+
     @Override
     public <T> Mono<T> invokeAPI(String path, HttpMethod method, Map<String, Object> pathParams,
                                  MultiValueMap<String, String> queryParams, Object body,

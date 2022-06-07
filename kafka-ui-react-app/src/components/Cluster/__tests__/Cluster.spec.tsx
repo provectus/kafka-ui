@@ -1,85 +1,135 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { Route, StaticRouter } from 'react-router-dom';
 import { ClusterFeaturesEnum } from 'generated-sources';
-import { fetchClusterListAction } from 'redux/actions';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
 import Cluster from 'components/Cluster/Cluster';
+import { fetchClusters } from 'redux/reducers/clusters/clustersSlice';
+import { screen } from '@testing-library/react';
+import { render, WithRoute } from 'lib/testHelpers';
+import {
+  clusterBrokersPath,
+  clusterConnectsPath,
+  clusterConsumerGroupsPath,
+  clusterKsqlDbPath,
+  clusterPath,
+  clusterSchemasPath,
+  clusterTopicsPath,
+} from 'lib/paths';
 
-const store = configureStore();
+const CLusterCompText = {
+  Topics: 'Topics',
+  Schemas: 'Schemas',
+  Connect: 'Connect',
+  Brokers: 'Brokers',
+  ConsumerGroups: 'ConsumerGroups',
+  KsqlDb: 'KsqlDb',
+};
 
-jest.mock('components/Topics/Topics', () => 'mock-Topics');
-jest.mock('components/Schemas/Schemas', () => 'mock-Schemas');
-jest.mock('components/Connect/Connect', () => 'mock-Connect');
-jest.mock('components/Brokers/BrokersContainer', () => 'mock-Brokers');
-jest.mock(
-  'components/ConsumerGroups/ConsumersGroupsContainer',
-  () => 'mock-ConsumerGroups'
-);
+jest.mock('components/Topics/Topics', () => () => (
+  <div>{CLusterCompText.Topics}</div>
+));
+jest.mock('components/Schemas/Schemas', () => () => (
+  <div>{CLusterCompText.Schemas}</div>
+));
+jest.mock('components/Connect/Connect', () => () => (
+  <div>{CLusterCompText.Connect}</div>
+));
+jest.mock('components/Brokers/Brokers', () => () => (
+  <div>{CLusterCompText.Brokers}</div>
+));
+jest.mock('components/ConsumerGroups/ConsumerGroups', () => () => (
+  <div>{CLusterCompText.ConsumerGroups}</div>
+));
+jest.mock('components/KsqlDb/KsqlDb', () => () => (
+  <div>{CLusterCompText.KsqlDb}</div>
+));
 
 describe('Cluster', () => {
-  const setupComponent = (pathname: string) => (
-    <Provider store={store}>
-      <StaticRouter location={{ pathname }}>
-        <Route path="/ui/clusters/:clusterName">
-          <Cluster />
-        </Route>
-      </StaticRouter>
-    </Provider>
-  );
+  const renderComponent = (pathname: string) =>
+    render(
+      <WithRoute path={`${clusterPath()}/*`}>
+        <Cluster />
+      </WithRoute>,
+      { initialEntries: [pathname], store }
+    );
+
   it('renders Brokers', () => {
-    const wrapper = mount(setupComponent('/ui/clusters/secondLocal/brokers'));
-    expect(wrapper.exists('mock-Brokers')).toBeTruthy();
+    renderComponent(clusterBrokersPath('second'));
+    expect(screen.getByText(CLusterCompText.Brokers)).toBeInTheDocument();
   });
   it('renders Topics', () => {
-    const wrapper = mount(setupComponent('/ui/clusters/secondLocal/topics'));
-    expect(wrapper.exists('mock-Topics')).toBeTruthy();
+    renderComponent(clusterTopicsPath('second'));
+    expect(screen.getByText(CLusterCompText.Topics)).toBeInTheDocument();
   });
   it('renders ConsumerGroups', () => {
-    const wrapper = mount(
-      setupComponent('/ui/clusters/secondLocal/consumer-groups')
-    );
-    expect(wrapper.exists('mock-ConsumerGroups')).toBeTruthy();
+    renderComponent(clusterConsumerGroupsPath('second'));
+    expect(
+      screen.getByText(CLusterCompText.ConsumerGroups)
+    ).toBeInTheDocument();
   });
 
   describe('configured features', () => {
     it('does not render Schemas if SCHEMA_REGISTRY is not configured', () => {
-      const wrapper = mount(setupComponent('/ui/clusters/secondLocal/schemas'));
-      expect(wrapper.exists('mock-Schemas')).toBeFalsy();
-    });
-    it('renders Schemas if SCHEMA_REGISTRY is configured', () => {
       store.dispatch(
-        fetchClusterListAction.success([
-          {
-            ...onlineClusterPayload,
-            features: [ClusterFeaturesEnum.SCHEMA_REGISTRY],
-          },
-        ])
+        fetchClusters.fulfilled(
+          [
+            {
+              ...onlineClusterPayload,
+              features: [],
+            },
+          ],
+          '123'
+        )
       );
-      const wrapper = mount(setupComponent('/ui/clusters/secondLocal/schemas'));
-      expect(wrapper.exists('mock-Schemas')).toBeTruthy();
+      renderComponent(clusterSchemasPath('second'));
+      expect(
+        screen.queryByText(CLusterCompText.Schemas)
+      ).not.toBeInTheDocument();
     });
-    it('does not render Connect if KAFKA_CONNECT is not configured', () => {
-      const wrapper = mount(
-        setupComponent('/ui/clusters/secondLocal/connectors')
-      );
-      expect(wrapper.exists('mock-Connect')).toBeFalsy();
-    });
-    it('renders Schemas if KAFKA_CONNECT is configured', async () => {
+    it('renders Schemas if SCHEMA_REGISTRY is configured', async () => {
       store.dispatch(
-        fetchClusterListAction.success([
-          {
-            ...onlineClusterPayload,
-            features: [ClusterFeaturesEnum.KAFKA_CONNECT],
-          },
-        ])
+        fetchClusters.fulfilled(
+          [
+            {
+              ...onlineClusterPayload,
+              features: [ClusterFeaturesEnum.SCHEMA_REGISTRY],
+            },
+          ],
+          '123'
+        )
       );
-      const wrapper = mount(
-        setupComponent('/ui/clusters/secondLocal/connectors')
+      renderComponent(clusterSchemasPath(onlineClusterPayload.name));
+      expect(screen.getByText(CLusterCompText.Schemas)).toBeInTheDocument();
+    });
+    it('renders Connect if KAFKA_CONNECT is configured', async () => {
+      store.dispatch(
+        fetchClusters.fulfilled(
+          [
+            {
+              ...onlineClusterPayload,
+              features: [ClusterFeaturesEnum.KAFKA_CONNECT],
+            },
+          ],
+          'requestId'
+        )
       );
-      expect(wrapper.exists('mock-Connect')).toBeTruthy();
+      renderComponent(clusterConnectsPath(onlineClusterPayload.name));
+      expect(screen.getByText(CLusterCompText.Connect)).toBeInTheDocument();
+    });
+    it('renders KSQL if KSQL_DB is configured', async () => {
+      store.dispatch(
+        fetchClusters.fulfilled(
+          [
+            {
+              ...onlineClusterPayload,
+              features: [ClusterFeaturesEnum.KSQL_DB],
+            },
+          ],
+          'requestId'
+        )
+      );
+      renderComponent(clusterKsqlDbPath(onlineClusterPayload.name));
+      expect(screen.getByText(CLusterCompText.KsqlDb)).toBeInTheDocument();
     });
   });
 });

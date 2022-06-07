@@ -1,58 +1,48 @@
-import { TopicConfig } from 'generated-sources';
 import React from 'react';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import { Table } from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { ClusterName, TopicName } from 'redux/interfaces';
+import { useAppSelector } from 'lib/hooks/redux';
+import { getTopicConfig } from 'redux/reducers/topics/selectors';
+import { RouteParamsClusterTopic } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
 
-interface Props {
-  clusterName: ClusterName;
-  topicName: TopicName;
-  config?: TopicConfig[];
+import ConfigListItem from './ConfigListItem';
+
+export interface Props {
   isFetched: boolean;
-  fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => void;
+  fetchTopicConfig: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }) => void;
 }
 
-interface ListItemProps {
-  config: TopicConfig;
-}
+const Settings: React.FC<Props> = ({ isFetched, fetchTopicConfig }) => {
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
 
-const ConfigListItem: React.FC<ListItemProps> = ({
-  config: { name, value, defaultValue },
-}) => {
-  const hasCustomValue = value !== defaultValue;
+  const config = useAppSelector((state) => getTopicConfig(state, topicName));
 
-  return (
-    <tr>
-      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>{name}</td>
-      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>{value}</td>
-      <td className="has-text-grey" title="Default Value">
-        {hasCustomValue && defaultValue}
-      </td>
-    </tr>
-  );
-};
-
-const Settings: React.FC<Props> = ({
-  clusterName,
-  topicName,
-  isFetched,
-  fetchTopicConfig,
-  config,
-}) => {
   React.useEffect(() => {
-    fetchTopicConfig(clusterName, topicName);
+    fetchTopicConfig({ clusterName, topicName });
   }, [fetchTopicConfig, clusterName, topicName]);
 
-  if (!isFetched || !config) {
+  if (!isFetched) {
+    return <PageLoader />;
+  }
+
+  if (!config) {
     return null;
   }
 
   return (
-    <div className="box">
-      <table className="table is-striped is-fullwidth">
+    <div>
+      <Table isFullwidth>
         <thead>
           <tr>
-            <th>Key</th>
-            <th>Value</th>
-            <th>Default Value</th>
+            <TableHeaderCell title="Key" />
+            <TableHeaderCell title="Value" />
+            <TableHeaderCell title="Default Value" />
           </tr>
         </thead>
         <tbody>
@@ -60,7 +50,7 @@ const Settings: React.FC<Props> = ({
             <ConfigListItem key={item.name} config={item} />
           ))}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };

@@ -1,67 +1,147 @@
+import { render, EventSourceMock, WithRoute } from 'lib/testHelpers';
 import React from 'react';
-import { mount } from 'enzyme';
-import Query from 'components/KsqlDb/Query/Query';
-import { StaticRouter } from 'react-router';
-import configureStore from 'redux-mock-store';
-import { RootState } from 'redux/interfaces';
-import { ksqlCommandResponse } from 'redux/reducers/ksqlDb/__test__/fixtures';
-import { Provider } from 'react-redux';
+import Query, {
+  getFormattedErrorFromTableData,
+} from 'components/KsqlDb/Query/Query';
+import { screen, within } from '@testing-library/dom';
+import fetchMock from 'fetch-mock';
+import userEvent from '@testing-library/user-event';
+import { clusterKsqlDbQueryPath } from 'lib/paths';
+import { act } from '@testing-library/react';
 
-const mockStore = configureStore();
+const clusterName = 'testLocal';
+const renderComponent = () =>
+  render(
+    <WithRoute path={clusterKsqlDbQueryPath()}>
+      <Query />
+    </WithRoute>,
+    {
+      initialEntries: [clusterKsqlDbQueryPath(clusterName)],
+    }
+  );
 
-describe('KsqlDb Query Component', () => {
-  const pathname = `ui/clusters/local/ksql-db/query`;
+describe('Query', () => {
+  it('renders', () => {
+    renderComponent();
 
-  it('Renders result', () => {
-    const initialState: Partial<RootState> = {
-      ksqlDb: {
-        streams: [],
-        tables: [],
-        executionResult: ksqlCommandResponse,
-      },
-      loader: {
-        EXECUTE_KSQL: 'fetched',
-      },
-    };
-    const store = mockStore(initialState);
-
-    const component = mount(
-      <StaticRouter location={{ pathname }} context={{}}>
-        <Provider store={store}>
-          <Query />
-        </Provider>
-      </StaticRouter>
-    );
-
-    // 2 streams and 1 head tr
-    expect(component.find('tr').length).toEqual(3);
+    expect(screen.getByLabelText('KSQL')).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('Stream properties (JSON format)')
+    ).toBeInTheDocument();
   });
 
-  it('Renders result message', () => {
-    const initialState: Partial<RootState> = {
-      ksqlDb: {
-        streams: [],
-        tables: [],
-        executionResult: {
-          message: 'No available data',
-        },
-      },
-      loader: {
-        EXECUTE_KSQL: 'fetched',
-      },
-    };
-    const store = mockStore(initialState);
+  afterEach(() => fetchMock.reset());
+  it('fetch on execute', async () => {
+    renderComponent();
 
-    const component = mount(
-      <StaticRouter location={{ pathname }} context={{}}>
-        <Provider store={store}>
-          <Query />
-        </Provider>
-      </StaticRouter>
-    );
+    const mock = fetchMock.postOnce(`/api/clusters/${clusterName}/ksql/v2`, {
+      pipeId: 'testPipeID',
+    });
+
+    Object.defineProperty(window, 'EventSource', {
+      value: EventSourceMock,
+    });
+
+    await act(() => {
+      userEvent.paste(
+        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
+        'show tables;'
+      );
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
+    });
+
+    expect(mock.calls().length).toBe(1);
+  });
+
+  it('fetch on execute with streamParams', async () => {
+    renderComponent();
+
+    const mock = fetchMock.postOnce(`/api/clusters/${clusterName}/ksql/v2`, {
+      pipeId: 'testPipeID',
+    });
+
+    Object.defineProperty(window, 'EventSource', {
+      value: EventSourceMock,
+    });
+
+    await act(() => {
+      userEvent.paste(
+        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
+        'show tables;'
+      );
+      userEvent.paste(
+        within(
+          screen.getByLabelText('Stream properties (JSON format)')
+        ).getByRole('textbox'),
+        '{"some":"json"}'
+      );
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
+    });
+    expect(mock.calls().length).toBe(1);
+  });
+
+  it('fetch on execute with streamParams', async () => {
+    renderComponent();
+
+    const mock = fetchMock.postOnce(`/api/clusters/${clusterName}/ksql/v2`, {
+      pipeId: 'testPipeID',
+    });
+
+    Object.defineProperty(window, 'EventSource', {
+      value: EventSourceMock,
+    });
+
+    await act(() => {
+      userEvent.paste(
+        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
+        'show tables;'
+      );
+      userEvent.paste(
+        within(
+          screen.getByLabelText('Stream properties (JSON format)')
+        ).getByRole('textbox'),
+        '{"some":"json"}'
+      );
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
+    });
+    expect(mock.calls().length).toBe(1);
+  });
+});
+
+describe('getFormattedErrorFromTableData', () => {
+  it('works', () => {
+    expect(getFormattedErrorFromTableData([['Test Error']])).toStrictEqual({
+      title: 'Test Error',
+      message: '',
+    });
 
     expect(
-      component.find({ children: 'No available data' }).exists()
-    ).toBeTruthy();
+      getFormattedErrorFromTableData([
+        ['some_type', 'errorCode', 'messageText'],
+      ])
+    ).toStrictEqual({
+      title: '[Error #errorCode] some_type',
+      message: 'messageText',
+    });
+
+    expect(
+      getFormattedErrorFromTableData([
+        [
+          'some_type',
+          'errorCode',
+          'messageText',
+          'statementText',
+          ['test1', 'test2'],
+        ],
+      ])
+    ).toStrictEqual({
+      title: '[Error #errorCode] some_type',
+      message: '[test1, test2] "statementText" messageText',
+    });
+
+    expect(getFormattedErrorFromTableData([])).toStrictEqual({
+      title: 'Unknown error',
+      message: 'Recieved empty response',
+    });
   });
 });

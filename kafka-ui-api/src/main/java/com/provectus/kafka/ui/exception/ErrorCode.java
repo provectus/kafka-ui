@@ -1,16 +1,16 @@
 package com.provectus.kafka.ui.exception;
 
 import java.util.HashSet;
-import org.apache.logging.log4j.LogManager;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 
 public enum ErrorCode {
 
   UNEXPECTED(5000, HttpStatus.INTERNAL_SERVER_ERROR),
+  KSQL_API_ERROR(5001, HttpStatus.INTERNAL_SERVER_ERROR),
   BINDING_FAIL(4001, HttpStatus.BAD_REQUEST),
   NOT_FOUND(404, HttpStatus.NOT_FOUND),
-  INVALID_ENTITY_STATE(4001, HttpStatus.BAD_REQUEST),
   VALIDATION_FAIL(4002, HttpStatus.BAD_REQUEST),
   READ_ONLY_MODE_ENABLE(4003, HttpStatus.METHOD_NOT_ALLOWED),
   CONNECT_CONFLICT_RESPONSE(4004, HttpStatus.CONFLICT),
@@ -23,14 +23,17 @@ public enum ErrorCode {
   KSQLDB_NOT_FOUND(4011, HttpStatus.NOT_FOUND),
   DIR_NOT_FOUND(4012, HttpStatus.BAD_REQUEST),
   TOPIC_OR_PARTITION_NOT_FOUND(4013, HttpStatus.BAD_REQUEST),
-  INVALID_REQUEST(4014, HttpStatus.BAD_REQUEST);
+  INVALID_REQUEST(4014, HttpStatus.BAD_REQUEST),
+  RECREATE_TOPIC_TIMEOUT(4015, HttpStatus.REQUEST_TIMEOUT),
+  INVALID_ENTITY_STATE(4016, HttpStatus.BAD_REQUEST),
+  SCHEMA_NOT_DELETED(4017, HttpStatus.INTERNAL_SERVER_ERROR);
 
   static {
     // codes uniqueness check
     var codes = new HashSet<Integer>();
     for (ErrorCode value : ErrorCode.values()) {
       if (!codes.add(value.code())) {
-        LogManager.getLogger()
+        LoggerFactory.getLogger(ErrorCode.class)
             .warn("Multiple {} values refer to code {}", ErrorCode.class, value.code);
       }
     }

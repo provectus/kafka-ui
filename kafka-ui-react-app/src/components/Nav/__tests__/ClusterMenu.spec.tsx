@@ -1,36 +1,84 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import { StaticRouter } from 'react-router';
+import { screen } from '@testing-library/react';
 import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
 import ClusterMenu from 'components/Nav/ClusterMenu';
+import userEvent from '@testing-library/user-event';
+import { clusterConnectorsPath } from 'lib/paths';
+import { render } from 'lib/testHelpers';
 
 describe('ClusterMenu', () => {
-  const setupComponent = (cluster: Cluster) => (
-    <StaticRouter>
-      <ClusterMenu cluster={cluster} />
-    </StaticRouter>
+  const setupComponent = (cluster: Cluster, singleMode?: boolean) => (
+    <ClusterMenu cluster={cluster} singleMode={singleMode} />
   );
+  const getMenuItems = () => screen.getAllByRole('menuitem');
+  const getMenuItem = () => screen.getByRole('menuitem');
+  const getBrokers = () => screen.getByTitle('Brokers');
+  const getTopics = () => screen.getByTitle('Brokers');
+  const getConsumers = () => screen.getByTitle('Brokers');
+  const getKafkaConnect = () => screen.getByTitle('Kafka Connect');
+  const getCluster = () => screen.getByText(onlineClusterPayload.name);
 
-  it('renders cluster menu without Kafka Connect & Schema Registry', () => {
-    const wrapper = mount(setupComponent(onlineClusterPayload));
-    expect(wrapper.find('ul.menu-list > li > NavLink').text()).toEqual(
-      onlineClusterPayload.name
-    );
+  it('renders cluster menu with default set of features', () => {
+    render(setupComponent(onlineClusterPayload));
+    expect(getCluster()).toBeInTheDocument();
 
-    expect(wrapper.find('ul.menu-list ul > li').length).toEqual(3);
+    expect(getMenuItems().length).toEqual(1);
+    userEvent.click(getMenuItem());
+    expect(getMenuItems().length).toEqual(4);
+
+    expect(getBrokers()).toBeInTheDocument();
+    expect(getTopics()).toBeInTheDocument();
+    expect(getConsumers()).toBeInTheDocument();
   });
-
-  it('renders cluster menu with all enabled features', () => {
-    const wrapper = mount(
+  it('renders cluster menu with correct set of features', () => {
+    render(
       setupComponent({
         ...onlineClusterPayload,
         features: [
-          ClusterFeaturesEnum.KAFKA_CONNECT,
           ClusterFeaturesEnum.SCHEMA_REGISTRY,
+          ClusterFeaturesEnum.KAFKA_CONNECT,
+          ClusterFeaturesEnum.KSQL_DB,
         ],
       })
     );
-    expect(wrapper.find('ul.menu-list ul > li').length).toEqual(5);
+    expect(getMenuItems().length).toEqual(1);
+    userEvent.click(getMenuItem());
+    expect(getMenuItems().length).toEqual(7);
+
+    expect(getBrokers()).toBeInTheDocument();
+    expect(getTopics()).toBeInTheDocument();
+    expect(getConsumers()).toBeInTheDocument();
+    expect(screen.getByTitle('Schema Registry')).toBeInTheDocument();
+    expect(getKafkaConnect()).toBeInTheDocument();
+    expect(screen.getByTitle('KSQL DB')).toBeInTheDocument();
+  });
+  it('renders open cluster menu', () => {
+    render(setupComponent(onlineClusterPayload, true), {
+      initialEntries: [clusterConnectorsPath(onlineClusterPayload.name)],
+    });
+
+    expect(getMenuItems().length).toEqual(4);
+    expect(getCluster()).toBeInTheDocument();
+    expect(getBrokers()).toBeInTheDocument();
+    expect(getTopics()).toBeInTheDocument();
+    expect(getConsumers()).toBeInTheDocument();
+  });
+  it('makes Kafka Connect link active', () => {
+    render(
+      setupComponent({
+        ...onlineClusterPayload,
+        features: [ClusterFeaturesEnum.KAFKA_CONNECT],
+      }),
+      { initialEntries: [clusterConnectorsPath(onlineClusterPayload.name)] }
+    );
+    expect(getMenuItems().length).toEqual(1);
+    userEvent.click(getMenuItem());
+    expect(getMenuItems().length).toEqual(5);
+
+    const kafkaConnect = getKafkaConnect();
+    expect(kafkaConnect).toBeInTheDocument();
+
+    expect(getKafkaConnect()).toHaveClass('active');
   });
 });

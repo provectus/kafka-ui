@@ -31,7 +31,6 @@ export const getTimestampFromSeekToParam = (params: URLSearchParams) => {
       .get('seekTo')
       ?.split(',')
       .map((item) => Number(item.split('::')[1]));
-
     return new Date(Math.max(...(offsets || []), 0));
   }
 
@@ -54,7 +53,7 @@ export const getSelectedPartitionsFromSeekToParam = (
         if (selectedPartitionIds?.includes(partition)) {
           return {
             value: partition,
-            label: partition.toString(),
+            label: `Partition #${partition.toString()}`,
           };
         }
 
@@ -65,6 +64,6 @@ export const getSelectedPartitionsFromSeekToParam = (
 
   return partitions.map(({ partition }) => ({
     value: partition,
-    label: partition.toString(),
+    label: `Partition #${partition.toString()}`,
   }));
 };

@@ -1,54 +1,53 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import { Task, TaskId } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
-import StatusTag from 'components/Connect/StatusTag';
-
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
+import Dropdown from 'components/common/Dropdown/Dropdown';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import * as C from 'components/common/Tag/Tag.styled';
+import getTagColor from 'components/common/Tag/getTagColor';
+import { RouterParamsClusterConnectConnector } from 'lib/paths';
 
 export interface ListItemProps {
   task: Task;
-  restartTask(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName,
-    taskId: TaskId['task']
-  ): Promise<void>;
+  restartTask(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+    taskId: TaskId['task'];
+  }): Promise<unknown>;
 }
 
 const ListItem: React.FC<ListItemProps> = ({ task, restartTask }) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
-  const [restarting, setRestarting] = React.useState(false);
+  const { clusterName, connectName, connectorName } =
+    useAppParams<RouterParamsClusterConnectConnector>();
 
-  const restartTaskHandler = React.useCallback(async () => {
-    setRestarting(true);
-    await restartTask(clusterName, connectName, connectorName, task.id?.task);
-    setRestarting(false);
-  }, [restartTask, clusterName, connectName, connectorName, task.id?.task]);
+  const restartTaskHandler = async () => {
+    await restartTask({
+      clusterName,
+      connectName,
+      connectorName,
+      taskId: task.id?.task,
+    });
+  };
 
   return (
     <tr>
-      <td className="has-text-overflow-ellipsis">{task.status?.id}</td>
+      <td>{task.status?.id}</td>
       <td>{task.status?.workerId}</td>
       <td>
-        <StatusTag status={task.status.state} />
+        <C.Tag color={getTagColor(task.status)}>{task.status.state}</C.Tag>
       </td>
-      <td>{task.status.trace}</td>
-      <td>
-        <button
-          type="button"
-          className="button is-small is-pulled-right"
-          onClick={restartTaskHandler}
-          disabled={restarting}
-        >
-          <span className="icon">
-            <i className="fas fa-sync-alt" />
-          </span>
-        </button>
+      <td>{task.status.trace || 'null'}</td>
+      <td style={{ width: '5%' }}>
+        <div>
+          <Dropdown label={<VerticalElipsisIcon />} right>
+            <DropdownItem onClick={restartTaskHandler} danger>
+              <span>Restart task</span>
+            </DropdownItem>
+          </Dropdown>
+        </div>
       </td>
     </tr>
   );

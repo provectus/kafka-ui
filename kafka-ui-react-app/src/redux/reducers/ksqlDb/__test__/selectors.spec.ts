@@ -1,13 +1,18 @@
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/ksqlDb/selectors';
-import { fetchKsqlDbTablesAction } from 'redux/actions';
+import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
 
 import { fetchKsqlDbTablesPayload } from './fixtures';
 
-const store = configureStore();
-
 describe('TopicMessages selectors', () => {
   describe('Initial state', () => {
+    beforeAll(() => {
+      store.dispatch({
+        type: fetchKsqlDbTables.pending.type,
+        payload: fetchKsqlDbTablesPayload,
+      });
+    });
+
     it('Returns empty state', () => {
       expect(selectors.getKsqlDbTables(store.getState())).toEqual({
         rows: [],
@@ -21,7 +26,10 @@ describe('TopicMessages selectors', () => {
 
   describe('State', () => {
     beforeAll(() => {
-      store.dispatch(fetchKsqlDbTablesAction.success(fetchKsqlDbTablesPayload));
+      store.dispatch({
+        type: fetchKsqlDbTables.fulfilled.type,
+        payload: fetchKsqlDbTablesPayload,
+      });
     });
 
     it('Returns tables and streams', () => {

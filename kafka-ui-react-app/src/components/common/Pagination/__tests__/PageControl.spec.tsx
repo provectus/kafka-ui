@@ -1,36 +1,35 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
-import { StaticRouter } from 'react-router';
 import PageControl, {
   PageControlProps,
 } from 'components/common/Pagination/PageControl';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
+import theme from 'theme/theme';
 
 const page = 138;
 
 describe('PageControl', () => {
-  const setupWrapper = (props: Partial<PageControlProps> = {}) => (
-    <StaticRouter>
-      <PageControl url="/test" page={page} current {...props} />
-    </StaticRouter>
-  );
+  const setupComponent = (props: Partial<PageControlProps> = {}) =>
+    render(<PageControl url="/test" page={page} current {...props} />);
+
+  const getButton = () => screen.getByRole('button');
 
   it('renders current page', () => {
-    const wrapper = mount(setupWrapper({ current: true }));
-    expect(wrapper.exists('.pagination-link.is-current')).toBeTruthy();
+    setupComponent({ current: true });
+    expect(getButton()).toHaveStyle(
+      `background-color: ${theme.pagination.currentPage}`
+    );
   });
 
   it('renders non-current page', () => {
-    const wrapper = mount(setupWrapper({ current: false }));
-    expect(wrapper.exists('.pagination-link.is-current')).toBeFalsy();
+    setupComponent({ current: false });
+    expect(getButton()).toHaveStyle(
+      `background-color: ${theme.pagination.backgroundColor}`
+    );
   });
 
   it('renders page number', () => {
-    const wrapper = mount(setupWrapper({ current: false }));
-    expect(wrapper.text()).toEqual(String(page));
-  });
-
-  it('matches snapshot', () => {
-    const wrapper = shallow(<PageControl url="/test" page={page} current />);
-    expect(wrapper).toMatchSnapshot();
+    setupComponent({ current: false });
+    expect(getButton()).toHaveTextContent(String(page));
   });
 });

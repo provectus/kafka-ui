@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.utils.Bytes;
 
-@Log4j2
+@Slf4j
 public class OffsetsSeekForward extends OffsetsSeek {
 
   public OffsetsSeekForward(String topic, ConsumerPosition consumerPosition) {
@@ -19,7 +19,7 @@ public class OffsetsSeekForward extends OffsetsSeek {
   }
 
   protected Map<TopicPartition, Long> offsetsFromPositions(Consumer<Bytes, Bytes> consumer,
-                                        List<TopicPartition> partitions) {
+                                                           List<TopicPartition> partitions) {
     final Map<TopicPartition, Long> offsets =
         offsetsFromBeginning(consumer, partitions);
 
@@ -54,7 +54,7 @@ public class OffsetsSeekForward extends OffsetsSeek {
   }
 
   protected Map<TopicPartition, Long> offsetsFromBeginning(Consumer<Bytes, Bytes> consumer,
-                                            List<TopicPartition> partitions) {
+                                                           List<TopicPartition> partitions) {
     return consumer.beginningOffsets(partitions);
   }
 
