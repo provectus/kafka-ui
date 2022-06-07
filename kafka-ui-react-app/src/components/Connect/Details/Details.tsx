@@ -74,6 +74,7 @@ const Details: React.FC<DetailsProps> = ({
             connectorName
           )}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
+          end
         >
           Overview
         </NavLink>

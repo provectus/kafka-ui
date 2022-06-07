@@ -24,6 +24,7 @@ import {
 } from 'redux/reducers/topics/selectors';
 import Select, { SelectOption } from 'components/common/Select/Select';
 import useAppParams from 'lib/hooks/useAppParams';
+import Heading from 'components/common/heading/Heading.styled';
 
 import validateMessage from './validateMessage';
 import * as S from './SendMessage.styled';
@@ -166,15 +167,9 @@ const SendMessage: React.FC = () => {
   return (
     <S.Wrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="columns">
-          <div>
-            <label
-              className="label"
-              id="selectPartitionOptions"
-              htmlFor="selectPartitionOptions"
-            >
-              Partition
-            </label>
+        <S.Columns>
+          <S.Column>
+            <Heading level={3}>Partition</Heading>
             <Controller
               control={control}
               name="partition"
@@ -191,12 +186,12 @@ const SendMessage: React.FC = () => {
                 />
               )}
             />
-          </div>
-        </div>
+          </S.Column>
+        </S.Columns>
 
-        <div className="columns">
-          <div className="column is-one-half">
-            <label className="label">Key</label>
+        <S.Columns>
+          <S.Column>
+            <Heading level={3}>Key</Heading>
             <Controller
               control={control}
               name="key"
@@ -209,9 +204,9 @@ const SendMessage: React.FC = () => {
                 />
               )}
             />
-          </div>
-          <div className="column is-one-half">
-            <label className="label">Content</label>
+          </S.Column>
+          <S.Column>
+            <Heading level={3}>Content</Heading>
             <Controller
               control={control}
               name="content"
@@ -224,11 +219,11 @@ const SendMessage: React.FC = () => {
                 />
               )}
             />
-          </div>
-        </div>
-        <div className="columns">
-          <div className="column">
-            <label className="label">Headers</label>
+          </S.Column>
+        </S.Columns>
+        <S.Columns>
+          <S.Column>
+            <Heading level={3}>Headers</Heading>
             <Controller
               control={control}
               name="headers"
@@ -242,8 +237,8 @@ const SendMessage: React.FC = () => {
                 />
               )}
             />
-          </div>
-        </div>
+          </S.Column>
+        </S.Columns>
         <Button
           buttonSize="M"
           buttonType="primary"

@@ -26,3 +26,7 @@ export const ActionsTd = styled(Td)`
   overflow: visible;
   width: 50px;
 `;
+
+export const ActionsContainer = styled.div`
+  text-align: right !important;
+`;

@@ -64,7 +64,7 @@ const renderAndSubmitData = async (error: string[] = []) => {
   await renderComponent();
   expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   await act(() => {
-    userEvent.click(screen.getByLabelText('Partition'));
+    userEvent.click(screen.getByRole('listbox'));
   });
   await act(() => {
     userEvent.click(screen.getAllByRole('option')[1]);
@@ -108,7 +108,8 @@ describe('SendMessage', () => {
   });
 
   describe('when schema is fetched', () => {
-    const url = `/api/clusters/${clusterName}/topics/${topicName}/messages`;
+    const messagesUrl = `/api/clusters/${clusterName}/topics/${topicName}/messages`;
+    const detailsUrl = `/api/clusters/${clusterName}/topics/${topicName}`;
 
     beforeEach(() => {
       fetchMock.getOnce(
@@ -118,20 +119,25 @@ describe('SendMessage', () => {
     });
 
     it('calls sendTopicMessage on submit', async () => {
-      const sendTopicMessageMock = fetchMock.postOnce(url, 200);
+      const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, 200);
+      const fetchTopicDetailsMock = fetchMock.getOnce(detailsUrl, 200);
+
       await renderAndSubmitData();
-      expect(sendTopicMessageMock.called(url)).toBeTruthy();
+      expect(sendTopicMessageMock.called(messagesUrl)).toBeTruthy();
+      expect(fetchTopicDetailsMock.called(detailsUrl)).toBeTruthy();
       expect(mockNavigate).toHaveBeenLastCalledWith(
         `../${clusterTopicMessagesRelativePath}`
       );
     });
 
     it('should make the sendTopicMessage but most find an error within it', async () => {
-      const sendTopicMessageMock = fetchMock.postOnce(url, {
+      const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, {
         throws: 'Error',
       });
+      const fetchTopicDetailsMock = fetchMock.getOnce(detailsUrl, 200);
       await renderAndSubmitData();
-      expect(sendTopicMessageMock.called(url)).toBeTruthy();
+      expect(sendTopicMessageMock.called()).toBeTruthy();
+      expect(fetchTopicDetailsMock.called(detailsUrl)).toBeFalsy();
       expect(screen.getByRole('alert')).toBeInTheDocument();
       expect(mockNavigate).toHaveBeenLastCalledWith(
         `../${clusterTopicMessagesRelativePath}`
@@ -139,9 +145,9 @@ describe('SendMessage', () => {
     });
 
     it('should check and view validation error message when is not valid', async () => {
-      const sendTopicMessageMock = fetchMock.postOnce(url, 200);
+      const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, 200);
       await renderAndSubmitData(['error']);
-      expect(sendTopicMessageMock.called(url)).toBeFalsy();
+      expect(sendTopicMessageMock.called(messagesUrl)).toBeFalsy();
       expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
