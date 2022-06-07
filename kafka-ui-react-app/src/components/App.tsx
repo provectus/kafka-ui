@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
 import { clusterPath, getNonExactPath } from 'lib/paths';
 import Nav from 'components/Nav/Nav';
@@ -19,6 +19,8 @@ import {
 
 import * as S from './App.styled';
 import Logo from './common/Logo/Logo';
+import GitIcon from './common/Icons/GitIcon';
+import DiscordIcon from './common/Icons/DiscordIcon';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -64,6 +66,26 @@ const App: React.FC = () => {
               {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
             </S.NavbarItem>
           </S.NavbarBrand>
+          <S.NavbarSocial>
+            <S.SocialIconWrapper
+              onClick={() =>
+                window.open('https://github.com/provectus/kafka-ui', 'blank')
+              }
+              $hoverColor="#2F3639"
+              $clickColor="#171A1C"
+            >
+              <GitIcon />
+            </S.SocialIconWrapper>
+            <S.SocialIconWrapper
+              onClick={() =>
+                window.open('https://discord.com/invite/4DWzD7pGE5', 'blank')
+              }
+              $hoverColor="#858EEA"
+              $clickColor="#5B67E3"
+            >
+              <DiscordIcon />
+            </S.SocialIconWrapper>
+          </S.NavbarSocial>
         </S.Navbar>
 
         <S.Container>

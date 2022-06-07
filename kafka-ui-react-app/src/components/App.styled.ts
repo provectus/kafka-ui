@@ -95,6 +95,9 @@ export const Overlay = styled.div<{ $visible: boolean }>(
 
 export const Navbar = styled.nav(
   ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     border-bottom: 1px solid ${theme.layout.stuffBorderColor};
     position: fixed;
     top: 0;
@@ -111,6 +114,30 @@ export const NavbarBrand = styled.div`
   flex-shrink: 0;
   align-items: stretch;
   min-height: 3.25rem;
+`;
+
+export const SocialIconWrapper = styled.div<{
+  $hoverColor: string;
+  $clickColor: string;
+}>`
+  &:hover {
+    cursor: pointer;
+    svg {
+      fill: ${(p) => p.$hoverColor};
+    }
+  }
+  &:active {
+    cursor: pointer;
+    svg {
+      fill: ${(p) => p.$clickColor};
+    }
+  }
+`;
+
+export const NavbarSocial = styled.div`
+  display: flex;
+  gap: 10px;
+  margin: 10px;
 `;
 
 export const NavbarItem = styled.div`
