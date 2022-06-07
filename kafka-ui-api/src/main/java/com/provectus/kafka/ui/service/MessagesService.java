@@ -48,7 +48,7 @@ import reactor.core.scheduler.Schedulers;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@SuppressWarnings("squid:S2589")
+@SuppressWarnings("squid:S2589") //False positive. Generated CreateTopicMessageDTO.getPartition() can return null
 public class MessagesService {
   private final AdminClientService adminClientService;
   private final DeserializationService deserializationService;
