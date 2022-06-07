@@ -46,7 +46,7 @@ import {
   TitleCell,
   TopicSizeCell,
 } from './TopicsTableCells';
-import { ActionsTd } from './List.styled';
+import * as S from './List.styled';
 
 export interface TopicsListProps {
   areTopicsFetching: boolean;
@@ -239,7 +239,7 @@ const List: React.FC<TopicsListProps> = ({
 
       return (
         <>
-          <div className="has-text-right">
+          <S.ActionsContainer>
             {!isHidden && (
               <Dropdown label={<VerticalElipsisIcon />} right>
                 {cleanUpPolicy === CleanUpPolicy.DELETE && (
@@ -257,7 +257,7 @@ const List: React.FC<TopicsListProps> = ({
                 </DropdownItem>
               </Dropdown>
             )}
-          </div>
+          </S.ActionsContainer>
           <ConfirmationModal
             isOpen={isClearMessagesModalOpen}
             onCancel={closeClearMessagesModal}
@@ -404,7 +404,7 @@ const List: React.FC<TopicsListProps> = ({
             <TableColumn
               maxWidth="4%"
               cell={ActionsCell}
-              customTd={ActionsTd}
+              customTd={S.ActionsTd}
             />
           </SmartTable>
         </div>

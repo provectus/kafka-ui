@@ -8,11 +8,9 @@ import usePagination from 'lib/hooks/usePagination';
 import useSearch from 'lib/hooks/useSearch';
 import useAppParams from 'lib/hooks/useAppParams';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
-import {
-  fetchSchemas,
-  schemasApiClient,
-} from 'redux/reducers/schemas/schemasSlice';
+import { fetchSchemas } from 'redux/reducers/schemas/schemasSlice';
 import { ClusterNameRoute } from 'lib/paths';
+import { schemasApiClient } from 'lib/api';
 
 import * as S from './GlobalSchemaSelector.styled';
 

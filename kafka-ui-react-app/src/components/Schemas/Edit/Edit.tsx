@@ -16,7 +16,6 @@ import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import {
   schemaAdded,
-  schemasApiClient,
   fetchLatestSchema,
   getSchemaLatest,
   SCHEMA_LATEST_FETCH_ACTION,
@@ -27,6 +26,7 @@ import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
+import { schemasApiClient } from 'lib/api';
 
 import * as S from './Edit.styled';
 

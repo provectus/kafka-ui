@@ -90,7 +90,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
           )}
           {!pages.includes(2) && (
             <li>
-              <span className="pagination-ellipsis">&hellip;</span>
+              <span>&hellip;</span>
             </li>
           )}
           {pages.map((p) => (
@@ -103,7 +103,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
           ))}
           {!pages.includes(totalPages - 1) && (
             <li>
-              <span className="pagination-ellipsis">&hellip;</span>
+              <span>&hellip;</span>
             </li>
           )}
           {!pages.includes(totalPages) && (
