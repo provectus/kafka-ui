@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.unit.DataSize;
 import reactor.core.publisher.Flux;
@@ -23,10 +23,13 @@ import reactor.core.publisher.Flux;
 @Service
 public class KsqlServiceV2 {
 
-  @org.springframework.beans.factory.annotation.Value("${webclient.max-in-memory-buffer-size:20MB}")
-  private DataSize maxBuffSize;
+  private final DataSize maxBuffSize;
 
-  @Value
+  public KsqlServiceV2(@Value("${webclient.max-in-memory-buffer-size:20MB}") DataSize maxBuffSize) {
+    this.maxBuffSize = maxBuffSize;
+  }
+
+  @lombok.Value
   private static class KsqlExecuteCommand {
     KafkaCluster cluster;
     String ksql;

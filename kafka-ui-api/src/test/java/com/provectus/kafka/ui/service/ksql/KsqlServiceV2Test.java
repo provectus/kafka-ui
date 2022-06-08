@@ -47,7 +47,7 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
     KSQL_DB.stop();
   }
 
-  private final KsqlServiceV2 ksqlService = new KsqlServiceV2();
+  private final KsqlServiceV2 ksqlService = new KsqlServiceV2(maxBuffSize);
 
   @Test
   void listStreamsReturnsAllKsqlStreams() {
