@@ -1,15 +1,13 @@
 package com.provectus.kafka.ui.tests;
 
-import com.codeborne.selenide.Selenide;
 import com.provectus.kafka.ui.api.model.SchemaType;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
+import com.provectus.kafka.ui.pages.topic.TopicView;
 import io.qameta.allure.Issue;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 import static org.apache.kafka.common.utils.Utils.readFileAsString;
 
@@ -84,6 +82,7 @@ public class TopicTests extends BaseTest {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
+                .isOnTopicViewPage()
                 .openEditSettings()
                 .selectCleanupPolicy(COMPACT_POLICY_VALUE)
                 .setMinInsyncReplicas(10)
@@ -117,19 +116,22 @@ public class TopicTests extends BaseTest {
                 .isTopicNotVisible(TOPIC_TO_DELETE);
     }
 
+    @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/2140 ignore this test")
+    @Issue("2140")
     @SneakyThrows
     @DisplayName("produce message")
     @Test
     void produceMessage(){
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
-                .openTopic(TOPIC_TO_UPDATE);
-        Selenide.refresh();
-        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
-                .clickOnButton("Produce message")
+                .openTopic(TOPIC_TO_UPDATE)
+                .isOnTopicViewPage()
+                .openTopicMenu(TopicView.TopicMenu.MESSAGES)
+                .clickOnButton("Produce Message")
                 .setContentFiled(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE))
                 .setKeyField(readFileAsString(KEY_TO_PRODUCE_MESSAGE))
-                .submitProduceMessage()
-                .isMessageOnPage(readFileAsString(KEY_TO_PRODUCE_MESSAGE));
+                .submitProduceMessage();
+                Assertions.assertTrue(pages.topicView.isKeyMessageVisible(readFileAsString(KEY_TO_PRODUCE_MESSAGE)));
+                Assertions.assertTrue(pages.topicView.isContentMessageVisible(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE)));
     }
 }

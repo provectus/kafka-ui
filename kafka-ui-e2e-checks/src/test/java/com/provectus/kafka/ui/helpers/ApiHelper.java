@@ -38,13 +38,19 @@ public class ApiHelper {
         return new TopicsApi(new ApiClient().setBasePath(baseURL));
     }
 
-
     @SneakyThrows
     private SchemasApi schemaApi(){
-        ApiClient defaultClient = new ApiClient();
-        defaultClient.setBasePath(baseURL);
-        SchemasApi schemasApi = new SchemasApi(defaultClient);
-        return schemasApi;
+        return new SchemasApi(new ApiClient().setBasePath(baseURL));
+    }
+
+    @SneakyThrows
+    private KafkaConnectApi connectorApi() {
+        return new KafkaConnectApi(new ApiClient().setBasePath(baseURL));
+    }
+
+    @SneakyThrows
+    private MessagesApi messageApi() {
+        return new MessagesApi(new ApiClient().setBasePath(baseURL));
     }
 
     @SneakyThrows
@@ -62,7 +68,6 @@ public class ApiHelper {
         }
     }
 
-
     public void deleteTopic(String clusterName, String topicName) {
         try {
             topicApi().deleteTopic(clusterName, topicName).block();
@@ -77,13 +82,6 @@ public class ApiHelper {
     }
 
     @SneakyThrows
-    private KafkaConnectApi connectorApi() {
-        ApiClient defaultClient = new ApiClient();
-        defaultClient.setBasePath(baseURL);
-        KafkaConnectApi connectorsApi = new KafkaConnectApi(defaultClient);
-        return connectorsApi;
-    }
-    @SneakyThrows
     public void createSchema(String clusterName, String schemaName, SchemaType type, String schemaValue){
         NewSchemaSubject schemaSubject = new NewSchemaSubject();
         schemaSubject.setSubject(schemaName);
@@ -94,9 +92,8 @@ public class ApiHelper {
 
     @SneakyThrows
     public void deleteSchema(String clusterName, String schemaName){
-        schemaApi().deleteSchema(clusterName, schemaName);
+        schemaApi().deleteSchema(clusterName, schemaName).block();
     }
-
 
     @SneakyThrows
     public void deleteConnector(String clusterName, String connectName, String connectorName) {
@@ -121,14 +118,6 @@ public class ApiHelper {
 
     public String getFirstConnectName(String clusterName) {
         return connectorApi().getConnects(clusterName).blockFirst().getName();
-    }
-
-    @SneakyThrows
-    private MessagesApi messageApi() {
-        ApiClient defaultClient = new ApiClient();
-        defaultClient.setBasePath(baseURL);
-        MessagesApi messagesApi = new MessagesApi(defaultClient);
-        return messagesApi;
     }
 
     @SneakyThrows

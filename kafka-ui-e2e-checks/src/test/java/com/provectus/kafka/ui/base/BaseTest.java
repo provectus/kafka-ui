@@ -22,12 +22,11 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.utility.DockerImageName;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Arrays;
 
 @Slf4j
@@ -40,12 +39,9 @@ public class BaseTest {
 
     private Screenshooter screenshooter = new Screenshooter();
 
-    public static BrowserWebDriverContainer<?> webDriverContainer =
-            new BrowserWebDriverContainer<>()
-                    .withCapabilities(new ChromeOptions()
-                            .addArguments("--no-sandbox")
-                            .addArguments("--disable-dev-shm-usage"))
-                    .waitingFor(Wait.defaultWaitStrategy().withStartupTimeout(Duration.ofSeconds(90)));
+    private static final String IMAGE_NAME = TestConfiguration.IMAGE_NAME;
+    private static final String IMAGE_TAG = TestConfiguration.IMAGE_TAG;
+    protected static BrowserWebDriverContainer<?> webDriverContainer = null;
 
     public void compareScreenshots(String name) {
         screenshooter.compareScreenshots(name);
@@ -57,6 +53,8 @@ public class BaseTest {
 
     @BeforeAll
     public static void start() {
+        DockerImageName image = DockerImageName.parse(IMAGE_NAME).withTag(IMAGE_TAG);
+        webDriverContainer = new BrowserWebDriverContainer<>(image).withCapabilities(new ChromeOptions().addArguments("--disable-dev-shm-usage"));
         Testcontainers.exposeHostPorts(8080);
         webDriverContainer.start();
         webDriverContainer.isRunning();
