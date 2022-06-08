@@ -52,7 +52,7 @@ export const updatedBrokersReducerState = {
   version: '2.2.1',
 };
 
-const partitions = {
+const partition = {
   broker: 2,
   offsetLag: 0,
   partition: 2,
@@ -60,17 +60,17 @@ const partitions = {
 };
 const topics = {
   name: '_confluent-ksql-devquery_CTAS_NUMBER_OF_TESTS_59-Aggregate-Aggregate-Materialize-changelog',
-  partitions: [partitions],
+  partitions: [partition],
 };
 
-export const clusterStatsPayloadBroker: BrokersLogdirs[] = [
+export const brokerLogDirsPayload: BrokersLogdirs[] = [
   {
     error: 'NONE',
     name: '/opt/kafka/data-0/logs',
     topics: [
       {
         ...topics,
-        partitions: [partitions, partitions, partitions],
+        partitions: [partition, partition, partition],
       },
       topics,
       {
