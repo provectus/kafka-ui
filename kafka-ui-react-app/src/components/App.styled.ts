@@ -119,24 +119,41 @@ export const NavbarBrand = styled.div`
   min-height: 3.25rem;
 `;
 
-export const SocialIconWrapper = styled.div<{
-  $hoverColor: string;
-  $clickColor: string;
-}>`
-  margin-top: 5px;
-  &:hover {
-    cursor: pointer;
-    svg {
-      fill: ${(p) => p.$hoverColor};
+export const DiscordIconWrapper = styled.div(
+  ({ theme }) => css`
+    margin-top: 5px;
+    &:hover {
+      cursor: pointer;
+      svg {
+        fill: ${theme.discordIcon.hover};
+      }
     }
-  }
-  &:active {
-    cursor: pointer;
-    svg {
-      fill: ${(p) => p.$clickColor};
+    &:active {
+      cursor: pointer;
+      svg {
+        fill: ${theme.discordIcon.active};
+      }
     }
-  }
-`;
+  `
+);
+
+export const GithubIconWrapper = styled.div(
+  ({ theme }) => css`
+    margin-top: 5px;
+    &:hover {
+      cursor: pointer;
+      svg {
+        fill: ${theme.gitIcon.hover};
+      }
+    }
+    &:active {
+      cursor: pointer;
+      svg {
+        fill: ${theme.gitIcon.active};
+      }
+    }
+  `
+);
 
 export const NavbarSocial = styled.div`
   display: flex;

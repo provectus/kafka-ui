@@ -75,24 +75,20 @@ const App: React.FC = () => {
                 Log out
               </S.LogoutButton>
             </S.LogoutLink>
-            <S.SocialIconWrapper
+            <S.GithubIconWrapper
               onClick={() =>
                 window.open('https://github.com/provectus/kafka-ui', 'blank')
               }
-              $hoverColor={theme.gitIcon.hover}
-              $clickColor={theme.gitIcon.active}
             >
               <GitIcon />
-            </S.SocialIconWrapper>
-            <S.SocialIconWrapper
+            </S.GithubIconWrapper>
+            <S.DiscordIconWrapper
               onClick={() =>
                 window.open('https://discord.com/invite/4DWzD7pGE5', 'blank')
               }
-              $hoverColor={theme.discordIcon.hover}
-              $clickColor={theme.discordIcon.active}
             >
               <DiscordIcon />
-            </S.SocialIconWrapper>
+            </S.DiscordIconWrapper>
           </S.NavbarSocial>
         </S.Navbar>
 
