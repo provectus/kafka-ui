@@ -27,13 +27,13 @@ const App: React.FC = () => {
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(false);
 
   const onBurgerClick = () => setIsSidebarVisible(!isSidebarVisible);
-  const closeSidebar = useCallback(() => setIsSidebarVisible(false), [false]);
+  const closeSidebar = useCallback(() => setIsSidebarVisible(false), []);
 
   const location = useLocation();
 
   React.useEffect(() => {
     closeSidebar();
-  }, [location]);
+  }, [location, closeSidebar]);
 
   React.useEffect(() => {
     dispatch(fetchClusters());
