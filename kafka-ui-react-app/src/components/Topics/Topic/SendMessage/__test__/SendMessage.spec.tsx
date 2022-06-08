@@ -1,6 +1,6 @@
 import React from 'react';
 import SendMessage from 'components/Topics/Topic/SendMessage/SendMessage';
-import { act, screen } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock';
 import { render, WithRoute } from 'lib/testHelpers';
@@ -70,8 +70,11 @@ const renderComponent = async () => {
 //     userEvent.click(screen.getByRole('option'));
 //   });
 //   await act(() => {
-//     userEvent.type(screen.getAllByRole('textbox')[0], 'test');
-//     expect(screen.getAllByRole('textbox')[0]).toHaveTextContent('foo');
+//     fireEvent.paste(screen.getAllByRole('textbox')[2], '{test}');
+//   });
+//
+//   await waitFor(() => {
+//     expect(screen.getAllByRole('textbox')[2]).toHaveTextContent('{test}');
 //   });
 //
 //   await act(() => {
