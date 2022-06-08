@@ -113,6 +113,7 @@ const Details: React.FC<Props> = ({
                   buttonSize="M"
                   buttonType="primary"
                   to={`../${clusterTopicSendMessageRelativePath}`}
+                  disabled={isReadOnly}
                 >
                   Produce Message
                 </Button>
@@ -188,7 +189,8 @@ const Details: React.FC<Props> = ({
       <Navbar role="navigation">
         <NavLink
           to="."
-          className={({ isActive }) => (isActive ? 'is-active is-primary' : '')}
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
+          end
         >
           Overview
         </NavLink>

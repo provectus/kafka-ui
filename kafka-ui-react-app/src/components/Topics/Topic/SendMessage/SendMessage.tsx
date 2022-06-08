@@ -6,7 +6,7 @@ import {
   RouteParamsClusterTopic,
 } from 'lib/paths';
 import jsf from 'json-schema-faker';
-import { messagesApiClient } from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { messagesApiClient } from 'lib/api';
 import {
   fetchTopicMessageSchema,
   fetchTopicDetails,

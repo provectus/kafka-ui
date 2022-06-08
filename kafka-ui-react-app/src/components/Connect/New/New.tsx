@@ -4,18 +4,20 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Connect, Connector, NewConnector } from 'generated-sources';
+import { Connect } from 'generated-sources';
 import { ClusterName, ConnectName } from 'redux/interfaces';
 import { clusterConnectConnectorPath, ClusterNameRoute } from 'lib/paths';
 import yup from 'lib/yupExtended';
 import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Select from 'components/common/Select/Select';
 import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+import { createConnector } from 'redux/reducers/connect/connectSlice';
+import { useAppDispatch } from 'lib/hooks/redux';
+import Heading from 'components/common/heading/Heading.styled';
 
 import * as S from './New.styled';
 
@@ -28,11 +30,6 @@ export interface NewProps {
   fetchConnects(clusterName: ClusterName): unknown;
   areConnectsFetching: boolean;
   connects: Connect[];
-  createConnector(payload: {
-    clusterName: ClusterName;
-    connectName: ConnectName;
-    newConnector: NewConnector;
-  }): Promise<{ connector: Connector | undefined }>;
 }
 
 interface FormValues {
@@ -45,9 +42,9 @@ const New: React.FC<NewProps> = ({
   fetchConnects,
   areConnectsFetching,
   connects,
-  createConnector,
 }) => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const methods = useForm<FormValues>({
@@ -77,21 +74,17 @@ const New: React.FC<NewProps> = ({
     }
   }, [connects, getValues, setValue]);
 
-  const connectNameFieldClassName = React.useMemo(
-    () => (connects.length > 1 ? '' : 'is-hidden'),
-    [connects]
-  );
-
   const onSubmit = async (values: FormValues) => {
-    const { connector } = await createConnector({
-      clusterName,
-      connectName: values.connectName,
-      newConnector: {
-        name: values.name,
-        config: JSON.parse(values.config.trim()),
-      },
-    });
-
+    const { connector } = await dispatch(
+      createConnector({
+        clusterName,
+        connectName: values.connectName,
+        newConnector: {
+          name: values.name,
+          config: JSON.parse(values.config.trim()),
+        },
+      })
+    ).unwrap();
     if (connector) {
       navigate(
         clusterConnectConnectorPath(
@@ -123,8 +116,8 @@ const New: React.FC<NewProps> = ({
         onSubmit={handleSubmit(onSubmit)}
         aria-label="Create connect form"
       >
-        <div className={['field', connectNameFieldClassName].join(' ')}>
-          <InputLabel>Connect *</InputLabel>
+        <S.Filed $hidden={connects.length <= 1}>
+          <Heading level={3}>Connect *</Heading>
           <Controller
             defaultValue={connectOptions[0].value}
             control={control}
@@ -144,10 +137,10 @@ const New: React.FC<NewProps> = ({
           <FormError>
             <ErrorMessage errors={errors} name="connectName" />
           </FormError>
-        </div>
+        </S.Filed>
 
         <div>
-          <InputLabel>Name *</InputLabel>
+          <Heading level={3}>Name</Heading>
           <Input
             inputSize="M"
             placeholder="Connector Name"
@@ -161,7 +154,7 @@ const New: React.FC<NewProps> = ({
         </div>
 
         <div>
-          <InputLabel>Config *</InputLabel>
+          <Heading level={3}>Config</Heading>
           <Controller
             control={control}
             name="config"

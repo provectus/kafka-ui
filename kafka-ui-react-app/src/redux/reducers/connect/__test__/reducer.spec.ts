@@ -726,6 +726,7 @@ describe('Connect slice', () => {
           );
           expect(getTypeAndPayload(store)).toEqual([
             { type: updateConnectorConfig.pending.type, payload: undefined },
+            { type: fetchConnector.pending.type },
             ...getAlertActions(store),
             {
               type: updateConnectorConfig.fulfilled.type,

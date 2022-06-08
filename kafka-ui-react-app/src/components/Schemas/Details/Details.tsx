@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   ClusterSubjectParam,
   clusterSchemaEditPageRelativePath,
-  clusterSchemaSchemaDiffRelativePath,
+  clusterSchemaSchemaDiffPageRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -21,7 +21,6 @@ import {
   fetchSchemaVersions,
   getAreSchemaLatestFulfilled,
   getAreSchemaVersionsFulfilled,
-  schemasApiClient,
   SCHEMAS_VERSIONS_FETCH_ACTION,
   SCHEMA_LATEST_FETCH_ACTION,
   selectAllSchemaVersions,
@@ -32,6 +31,7 @@ import { getResponse } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
 import useAppParams from 'lib/hooks/useAppParams';
+import { schemasApiClient } from 'lib/api';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
@@ -90,7 +90,7 @@ const Details: React.FC = () => {
               buttonSize="M"
               buttonType="primary"
               to={{
-                pathname: clusterSchemaSchemaDiffRelativePath,
+                pathname: clusterSchemaSchemaDiffPageRelativePath,
                 search: `leftVersion=${versions[0]?.version}&rightVersion=${versions[0]?.version}`,
               }}
             >

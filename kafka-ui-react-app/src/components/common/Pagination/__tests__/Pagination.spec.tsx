@@ -50,17 +50,11 @@ describe('Pagination', () => {
     it('renders 1 spread element after first page control', () => {
       setupComponent('?page=8');
       expect(screen.getAllByRole('listitem')[1]).toHaveTextContent('…');
-      expect(screen.getAllByRole('listitem')[1].firstChild).toHaveClass(
-        'pagination-ellipsis'
-      );
     });
 
     it('renders 1 spread element before last spread control', () => {
       setupComponent('?page=2');
       expect(screen.getAllByRole('listitem')[7]).toHaveTextContent('…');
-      expect(screen.getAllByRole('listitem')[7].firstChild).toHaveClass(
-        'pagination-ellipsis'
-      );
     });
 
     it('renders 2 spread elements', () => {

@@ -44,25 +44,33 @@ const App: React.FC = () => {
       <S.Layout>
         <S.Navbar role="navigation" aria-label="Page Header">
           <S.NavbarBrand>
-            <S.NavbarBurger
-              onClick={onBurgerClick}
-              onKeyDown={onBurgerClick}
-              role="button"
-              tabIndex={0}
-            >
-              <S.Span role="separator" />
-              <S.Span role="separator" />
-              <S.Span role="separator" />
-            </S.NavbarBurger>
+            <S.NavbarBrand>
+              <S.NavbarBurger
+                onClick={onBurgerClick}
+                onKeyDown={onBurgerClick}
+                role="button"
+                tabIndex={0}
+                aria-label="burger"
+              >
+                <S.Span role="separator" />
+                <S.Span role="separator" />
+                <S.Span role="separator" />
+              </S.NavbarBurger>
 
-            <S.Hyperlink to="/">
-              <Logo />
-              UI for Apache Kafka
-            </S.Hyperlink>
+              <S.Hyperlink to="/">
+                <Logo />
+                UI for Apache Kafka
+              </S.Hyperlink>
 
-            <S.NavbarItem>
-              {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
-            </S.NavbarItem>
+              <S.NavbarItem>
+                {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
+              </S.NavbarItem>
+            </S.NavbarBrand>
+            <S.LogoutLink to="/logout">
+              <S.LogoutButton buttonType="primary" buttonSize="M">
+                Log out
+              </S.LogoutButton>
+            </S.LogoutLink>
           </S.NavbarBrand>
         </S.Navbar>
 
