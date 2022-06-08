@@ -25,10 +25,8 @@ const App: React.FC = () => {
   const areClustersFulfilled = useAppSelector(getAreClustersFulfilled);
   const clusters = useAppSelector(getClusterList);
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(false);
-
   const onBurgerClick = () => setIsSidebarVisible(!isSidebarVisible);
   const closeSidebar = useCallback(() => setIsSidebarVisible(false), []);
-
   const location = useLocation();
 
   React.useEffect(() => {
