@@ -1,6 +1,6 @@
 import React from 'react';
 
-const GitIcon: React.FC = () => {
+const DiscordIcon: React.FC = () => {
   return (
     <svg
       width="20"
@@ -23,4 +23,4 @@ const GitIcon: React.FC = () => {
   );
 };
 
-export default GitIcon;
+export default DiscordIcon;
