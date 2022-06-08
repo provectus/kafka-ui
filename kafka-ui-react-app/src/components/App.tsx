@@ -38,6 +38,7 @@ const App: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchClusters());
   }, [dispatch]);
+
   return (
     <ThemeProvider theme={theme}>
       <S.Layout>
