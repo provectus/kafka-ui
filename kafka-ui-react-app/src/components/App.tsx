@@ -68,19 +68,19 @@ const App: React.FC = () => {
                 {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
               </S.NavbarItem>
             </S.NavbarBrand>
+          </S.NavbarBrand>
+          <S.NavbarSocial>
             <S.LogoutLink to="/logout">
               <S.LogoutButton buttonType="primary" buttonSize="M">
                 Log out
               </S.LogoutButton>
             </S.LogoutLink>
-          </S.NavbarBrand>
-          <S.NavbarSocial>
             <S.SocialIconWrapper
               onClick={() =>
                 window.open('https://github.com/provectus/kafka-ui', 'blank')
               }
-              $hoverColor="#2F3639"
-              $clickColor="#171A1C"
+              $hoverColor={theme.gitIcon.hover}
+              $clickColor={theme.gitIcon.active}
             >
               <GitIcon />
             </S.SocialIconWrapper>
@@ -88,8 +88,8 @@ const App: React.FC = () => {
               onClick={() =>
                 window.open('https://discord.com/invite/4DWzD7pGE5', 'blank')
               }
-              $hoverColor="#858EEA"
-              $clickColor="#5B67E3"
+              $hoverColor={theme.discordIcon.hover}
+              $clickColor={theme.discordIcon.active}
             >
               <DiscordIcon />
             </S.SocialIconWrapper>

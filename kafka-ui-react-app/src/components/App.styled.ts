@@ -75,7 +75,7 @@ export const Overlay = styled.div<{ $visible: boolean }>(
   ({ theme, $visible }) => css`
     height: calc(100vh - ${theme.layout.navBarHeight});
     z-index: 99;
-    visibility: 'hidden';
+    visibility: hidden;
     opacity: 0;
     -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease;
@@ -87,7 +87,7 @@ export const Overlay = styled.div<{ $visible: boolean }>(
       @media screen and (max-width: 1023px) {
         bottom: 0;
         right: 0;
-        visibility: 'visible';
+        visibility: visible;
         opacity: 1;
         background-color: ${theme.layout.overlay.backgroundColor};
       }
@@ -113,10 +113,9 @@ export const Navbar = styled.nav(
 
 export const NavbarBrand = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center !important;
   flex-shrink: 0;
-  align-items: stretch;
   min-height: 3.25rem;
 `;
 
@@ -124,6 +123,7 @@ export const SocialIconWrapper = styled.div<{
   $hoverColor: string;
   $clickColor: string;
 }>`
+  margin-top: 5px;
   &:hover {
     cursor: pointer;
     svg {
@@ -140,6 +140,7 @@ export const SocialIconWrapper = styled.div<{
 
 export const NavbarSocial = styled.div`
   display: flex;
+  align-items: center;
   gap: 10px;
   margin: 10px;
 `;
@@ -247,6 +248,6 @@ export const LogoutButton = styled(Button)(
 
 export const LogoutLink = styled(Link)(
   () => css`
-    margin-right: 16px;
+    margin-right: 2px;
   `
 );

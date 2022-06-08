@@ -503,6 +503,16 @@ const theme = {
   editFilterText: {
     color: Colors.brand[50],
   },
+  gitIcon: {
+    normal: Colors.neutral[20],
+    hover: Colors.neutral[80],
+    active: Colors.neutral[90],
+  },
+  discordIcon: {
+    normal: Colors.neutral[20],
+    hover: Colors.brand[20],
+    active: Colors.brand[60],
+  },
 };
 
 export type ThemeType = typeof theme;

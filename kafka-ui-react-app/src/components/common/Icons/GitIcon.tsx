@@ -1,12 +1,14 @@
 import React from 'react';
+import { useTheme } from 'styled-components';
 
 const GitIcon: React.FC = () => {
+  const theme = useTheme();
   return (
     <svg
       width="20"
       height="20"
       viewBox="0 0 1024 1024"
-      fill="#C7CED1"
+      fill={theme.gitIcon.normal}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

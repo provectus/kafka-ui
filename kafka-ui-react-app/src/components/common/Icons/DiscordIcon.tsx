@@ -1,12 +1,14 @@
 import React from 'react';
+import { useTheme } from 'styled-components';
 
 const DiscordIcon: React.FC = () => {
+  const theme = useTheme();
   return (
     <svg
       width="20"
-      height="22"
+      height="21"
       viewBox="0 0 20 22"
-      fill="#C7CED1"
+      fill={theme.discordIcon.normal}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
