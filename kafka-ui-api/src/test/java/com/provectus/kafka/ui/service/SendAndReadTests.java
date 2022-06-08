@@ -459,16 +459,14 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key(JSON_SCHEMA_RECORD)
+                .keySerde("SchemaRegistry")
                 .content(JSON_SCHEMA_RECORD)
+                .valueSerde("SchemaRegistry")
                 .headers(Map.of("header1", "value1"))
         )
         .doAssert(polled -> {
           assertJsonEqual(polled.getKey(), JSON_SCHEMA_RECORD);
           assertJsonEqual(polled.getContent(), JSON_SCHEMA_RECORD);
-          assertThat(polled.getKeyFormat()).isEqualTo(MessageFormatDTO.JSON);
-          assertThat(polled.getValueFormat()).isEqualTo(MessageFormatDTO.JSON);
-          assertThat(polled.getKeySchemaId()).isNotEmpty();
-          assertThat(polled.getValueSchemaId()).isNotEmpty();
           assertThat(polled.getKeySize()).isEqualTo(57L);
           assertThat(polled.getValueSize()).isEqualTo(57L);
           assertThat(polled.getHeadersSize()).isEqualTo(13L);

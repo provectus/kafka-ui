@@ -131,15 +131,6 @@ public class MessagesService {
     }
   }
 
-  private Iterable<Header> createHeaders(@Nullable Map<String, String> clientHeaders) {
-    if (clientHeaders == null) {
-      return new RecordHeaders();
-    }
-    RecordHeaders headers = new RecordHeaders();
-    clientHeaders.forEach((k, v) -> headers.add(new RecordHeader(k, v.getBytes())));
-    return headers;
-  }
-
   public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic,
                                                  ConsumerPosition consumerPosition, String query,
                                                  MessageFilterTypeDTO filterQueryType,

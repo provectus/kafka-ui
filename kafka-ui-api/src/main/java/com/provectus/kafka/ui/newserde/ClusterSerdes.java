@@ -41,6 +41,8 @@ public class ClusterSerdes {
   @Nullable
   private final SerdeInstance defaultValueSerde;
 
+  private final SerdeInstance fallbackSerde;
+
   public ClusterSerdes(Environment env,
                        ClustersProperties clustersProperties,
                        int clusterIndex) {
@@ -94,6 +96,14 @@ public class ClusterSerdes {
         .or(() -> Optional.ofNullable(serdes.get("ProtobufFile")))
         .or(() -> Optional.ofNullable(serdes.get("SchemaRegistry")))
         .orElse(null);
+
+    fallbackSerde = createFallbackSerde();
+  }
+
+  private SerdeInstance createFallbackSerde() {
+    StringSerde serde = new StringSerde();
+    serde.configure(PropertyResolverImpl.empty(), PropertyResolverImpl.empty(), PropertyResolverImpl.empty());
+    return new SerdeInstance("Fallback", serde, null, null, null);
   }
 
   @SneakyThrows
@@ -106,6 +116,9 @@ public class ClusterSerdes {
     if (BUILT_IN_SERDES.containsKey(name)) {
       if (serdeConfig.getClassName() != null) {
         throw new ValidationException("className can't be set for built-in serde");
+      }
+      if (serdeConfig.getLocation() != null) {
+        throw new ValidationException("location can't be set for built-in serde");
       }
       var clazz = BUILT_IN_SERDES.get(name);
       Serde serde = createSerdeInstance(clazz);
@@ -127,7 +140,7 @@ public class ClusterSerdes {
   }
 
   public SerdeInstance getFallbackSerde() {
-    return serdes.get("String");
+    return fallbackSerde;
   }
 
   private SerdeInstance loadCustom(ClustersProperties.SerdeConfig serdeConfig,
