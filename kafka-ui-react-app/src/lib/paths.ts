@@ -1,4 +1,5 @@
 import {
+  BrokerId,
   ClusterName,
   ConnectName,
   ConnectorName,
@@ -19,6 +20,7 @@ export enum RouteParams {
   topicName = ':topicName',
   connectName = ':connectName',
   connectorName = ':connectorName',
+  brokerId = ':brokerId',
 }
 
 export const getNonExactPath = (path: string) => `${path}/*`;
@@ -34,6 +36,13 @@ export const clusterBrokerRelativePath = 'brokers';
 export const clusterBrokersPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterBrokerRelativePath}`;
+
+export const clusterBrokerPath = (
+  clusterName: ClusterName = RouteParams.clusterName,
+  brokerId: BrokerId | string = RouteParams.brokerId
+) => `${clusterBrokersPath(clusterName)}/${brokerId}`;
+
+export type ClusterBrokerParam = { clusterName: ClusterName; brokerId: string };
 
 // Consumer Groups
 export const clusterConsumerGroupsRelativePath = 'consumer-groups';

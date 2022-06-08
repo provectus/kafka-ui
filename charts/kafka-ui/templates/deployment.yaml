@@ -42,23 +42,37 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- with .Values.env }}
+          {{- if or .Values.env  .Values.yamlApplicationConfig .Values.yamlApplicationConfigConfigMap}}
           env:
-            {{- toYaml . | nindent 12 }}
+            {{- with .Values.env }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- if or .Values.yamlApplicationConfig .Values.yamlApplicationConfigConfigMap}}
+            - name: SPRING_CONFIG_LOCATION
+              {{- if .Values.yamlApplicationConfig }}
+              value: /kafka-ui/config.yml
+              {{- else if .Values.yamlApplicationConfigConfigMap }}
+              value: /kafka-ui/{{ .Values.yamlApplicationConfigConfigMap.keyName | default "config.yml" }}
+              {{- end }}
+            {{- end }}
           {{- end }}
           envFrom:
             {{- if .Values.existingConfigMap }}
             - configMapRef:
                 name: {{ .Values.existingConfigMap }}
             {{- end }}
+            {{- if .Values.envs.config }}
             - configMapRef:
                 name: {{ include "kafka-ui.fullname" . }}
+            {{- end }}
             {{- if .Values.existingSecret }}
             - secretRef:
                 name: {{ .Values.existingSecret }}
             {{- end }}
+            {{- if .Values.envs.secret}}
             - secretRef:
                 name: {{ include "kafka-ui.fullname" . }}
+            {{- end}}    
           ports:
             - name: http
               containerPort: 8080
@@ -81,13 +95,35 @@ spec:
             timeoutSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
+          {{- if or .Values.yamlApplicationConfig .Values.volumeMounts .Values.yamlApplicationConfigConfigMap}}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
+            {{- with .Values.volumeMounts }} 
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- if .Values.yamlApplicationConfig }}
+            - name: kafka-ui-yaml-conf
+              mountPath: /kafka-ui/
+            {{- end }}
+            {{- if .Values.yamlApplicationConfigConfigMap}}
+            - name: kafka-ui-yaml-conf-configmap
+              mountPath: /kafka-ui/
+            {{- end }}
           {{- end }}
-      {{- with .Values.volumes }}
+      {{- if or .Values.yamlApplicationConfig .Values.volumes .Values.yamlApplicationConfigConfigMap}}
       volumes:
-        {{- toYaml . | nindent 8 }}
+        {{- with .Values.volumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.yamlApplicationConfig }}
+        - name: kafka-ui-yaml-conf
+          configMap: 
+            name: {{ include "kafka-ui.fullname" . }}-fromvalues
+        {{- end }}
+        {{- if .Values.yamlApplicationConfigConfigMap}}
+        - name: kafka-ui-yaml-conf-configmap
+          configMap: 
+            name: {{ .Values.yamlApplicationConfigConfigMap.name }}
+        {{- end }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

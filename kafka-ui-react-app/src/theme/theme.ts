@@ -115,6 +115,8 @@ const theme = {
       3: {
         fontSize: '16px',
         lineHeight: '24px',
+        fontWeight: 400,
+        marginBottom: '16px',
       },
       4: {
         fontSize: '14px',
