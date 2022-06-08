@@ -1,24 +1,23 @@
 import React from 'react';
 import List from 'components/KsqlDb/List/List';
-import { clusterKsqlDbPath } from 'lib/paths';
 import { render, WithRoute } from 'lib/testHelpers';
 import fetchMock from 'fetch-mock';
-import { screen, waitForElementToBeRemoved } from '@testing-library/dom';
+import { screen } from '@testing-library/dom';
 
 const clusterName = 'local';
 
 const renderComponent = () => {
   render(
-    <WithRoute path={clusterKsqlDbPath()}>
+    <WithRoute path="/*">
       <List />
     </WithRoute>,
-    { initialEntries: [clusterKsqlDbPath(clusterName)] }
+    { initialEntries: ['/*'] }
   );
 };
 
 describe('KsqlDb List', () => {
   afterEach(() => fetchMock.reset());
-  it('renders placeholder on empty data', async () => {
+  it('renders zeros if no data received for tables and streams', async () => {
     fetchMock.post(
       {
         url: `/api/clusters/${clusterName}/ksql`,
@@ -26,7 +25,15 @@ describe('KsqlDb List', () => {
       { data: [] }
     );
     renderComponent();
-    await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
-    expect(screen.getByText('No tables or streams found')).toBeInTheDocument();
+
+    const StreamsSpan = screen
+      .getByTitle('Streams')
+      .querySelector('span') as HTMLSpanElement;
+    const TablesSpan = screen
+      .getByTitle('Tables')
+      .querySelector('span') as HTMLSpanElement;
+
+    expect(StreamsSpan).toHaveTextContent('0');
+    expect(TablesSpan).toHaveTextContent('0');
   });
 });

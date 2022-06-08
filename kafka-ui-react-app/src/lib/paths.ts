@@ -233,9 +233,18 @@ export type RouterParamsClusterConnectConnector = {
 // KsqlDb
 export const clusterKsqlDbRelativePath = 'ksqldb';
 export const clusterKsqlDbQueryRelativePath = 'query';
+export const clusterKsqlDbTablesRelativePath = 'tables';
+export const clusterKsqlDbStreamsRelativePath = 'streams';
+
 export const clusterKsqlDbPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterKsqlDbRelativePath}`;
 export const clusterKsqlDbQueryPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterKsqlDbPath(clusterName)}/${clusterKsqlDbQueryRelativePath}`;
+export const clusterKsqlDbTablesPath = (
+  clusterName: ClusterName = RouteParams.clusterName
+) => `${clusterKsqlDbPath(clusterName)}/${clusterKsqlDbTablesRelativePath}`;
+export const clusterKsqlDbStreamsPath = (
+  clusterName: ClusterName = RouteParams.clusterName
+) => `${clusterKsqlDbPath(clusterName)}/${clusterKsqlDbStreamsRelativePath}`;
