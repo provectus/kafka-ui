@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
 import { clusterPath, getNonExactPath } from 'lib/paths';
@@ -27,7 +27,7 @@ const App: React.FC = () => {
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(false);
 
   const onBurgerClick = () => setIsSidebarVisible(!isSidebarVisible);
-  const closeSidebar = () => setIsSidebarVisible(false);
+  const closeSidebar = useCallback(() => setIsSidebarVisible(false), [false]);
 
   const location = useLocation();
 
