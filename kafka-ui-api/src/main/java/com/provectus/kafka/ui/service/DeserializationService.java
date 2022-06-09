@@ -89,6 +89,8 @@ public class DeserializationService {
     }
   }
 
+  // todo: schemaForTopicForSerialize
+  // todo: exlicit enpd with all serdes for topic
   public TopicMessageSchemaDTO schemaForTopic(KafkaCluster cluster,
                                               String topic,
                                               @Nullable String keySerdeName,
@@ -136,13 +138,15 @@ public class DeserializationService {
                                                     @Nullable String valueSerdeName) {
     var keySerde = getSerdeForDeserialize(cluster, topic, Serde.Type.KEY, keySerdeName);
     var valueSerde = getSerdeForDeserialize(cluster, topic, Serde.Type.VALUE, valueSerdeName);
+    var fallbackSerde = serdes.get(cluster).getFallbackSerde();
     return new ConsumerRecordDeserializer(
         keySerde.getName(),
         keySerde.deserializer(topic, Serde.Type.KEY),
         valueSerde.getName(),
         valueSerde.deserializer(topic, Serde.Type.VALUE),
-        serdes.get(cluster).getFallbackSerde().deserializer(topic, Serde.Type.KEY),
-        serdes.get(cluster).getFallbackSerde().deserializer(topic, Serde.Type.VALUE)
+        fallbackSerde.getName(),
+        fallbackSerde.deserializer(topic, Serde.Type.KEY),
+        fallbackSerde.deserializer(topic, Serde.Type.VALUE)
     );
   }
 

@@ -28,6 +28,7 @@ public class ConsumerRecordDeserializer {
   private final String valueSerdeName;
   private final Serde.Deserializer valueDeserializer;
 
+  private final String fallbackSerdeName;
   private final Serde.Deserializer fallbackKeyDeserializer;
   private final Serde.Deserializer fallbackValueDeserializer;
 
@@ -87,7 +88,7 @@ public class ConsumerRecordDeserializer {
           rec.topic(), rec.partition(), rec.offset(), keySerdeName, e);
       var deserResult = fallbackKeyDeserializer.deserialize(rec.topic(), rec.headers(), rec.key().get());
       message.setKey(deserResult.getResult());
-      message.setKeySerde("Fallback");
+      message.setKeySerde(fallbackSerdeName);
     }
   }
 
@@ -105,7 +106,7 @@ public class ConsumerRecordDeserializer {
           rec.topic(), rec.partition(), rec.offset(), keySerdeName, e);
       var deserResult = fallbackValueDeserializer.deserialize(rec.topic(), rec.headers(), rec.value().get());
       message.setContent(deserResult.getResult());
-      message.setValueSerde("Fallback");
+      message.setValueSerde(fallbackSerdeName);
     }
   }
 

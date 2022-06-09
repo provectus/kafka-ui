@@ -103,7 +103,7 @@ public class ClusterSerdes {
   private SerdeInstance createFallbackSerde() {
     StringSerde serde = new StringSerde();
     serde.configure(PropertyResolverImpl.empty(), PropertyResolverImpl.empty(), PropertyResolverImpl.empty());
-    return new SerdeInstance("Fallback", serde, null, null, null);
+    return new SerdeInstance("FallbackString", serde, null, null, null);
   }
 
   @SneakyThrows

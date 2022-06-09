@@ -129,9 +129,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
 
   @Override
   public boolean canDeserialize(String topic, Type type) {
-    String subject = schemaSubject(topic, type);
-    //TODO: discuss
-    return getSchemaBySubject(subject).isPresent();
+    return true;
   }
 
   @Override
@@ -149,7 +147,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
                 convertSchema(schemaMetadata),
                 Map.of(
                     "schemaId", schemaMetadata.getId(),
-                    "version", schemaMetadata.getVersion(),
+                    "latestVersion", schemaMetadata.getVersion(),
                     "type", schemaMetadata.getSchemaType() // AVRO / PROTOBUF / JSON
                 )
             ));
