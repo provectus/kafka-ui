@@ -11,7 +11,7 @@ const ListItem: React.FC<Props> = ({ accessors, data }) => {
   return (
     <tr>
       {accessors.map((accessor) => (
-        <td key={accessor}>{data[accessor]}</td>
+        <td key={accessor}>{data[accessor]?.toString()}</td>
       ))}
     </tr>
   );
