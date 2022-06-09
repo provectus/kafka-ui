@@ -88,7 +88,7 @@ export const Overlay = styled.div<{ $visible: boolean }>(
         bottom: 0;
         right: 0;
         visibility: 'visible';
-        opacity: 1;
+        opacity: 0.7;
         background-color: ${theme.layout.overlay.backgroundColor};
       }
     `}
