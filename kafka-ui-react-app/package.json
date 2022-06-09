@@ -47,9 +47,9 @@
     ]
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "export REACT_APP_COMMIT=$(git rev-parse --short HEAD) && export REACT_APP_LAST_COMMIT_DATE=$(git log -1 --format=%cd) && react-scripts start",
     "gen:sources": "rimraf src/generated-sources && openapi-generator-cli generate",
-    "build": "react-scripts build",
+    "build": "export REACT_APP_COMMIT=$(git rev-parse --short HEAD) && export REACT_APP_LAST_COMMIT_DATE=$(git log -1 --format=%cd) && react-scripts build",
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
     "lint:CI": "eslint --ext .tsx,.ts src/ --max-warnings=0",

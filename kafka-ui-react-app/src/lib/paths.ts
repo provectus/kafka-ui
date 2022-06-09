@@ -10,7 +10,7 @@ import {
 
 import { GIT_REPO_LINK } from './constants';
 
-export const gitCommitPath = (commit: string) =>
+export const gitCommitPath = (commit?: string) =>
   `${GIT_REPO_LINK}/commit/${commit}`;
 
 export enum RouteParams {

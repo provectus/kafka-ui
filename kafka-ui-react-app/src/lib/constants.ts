@@ -58,6 +58,7 @@ export const GIT_REPO_LATEST_RELEASE_LINK =
   'https://api.github.com/repos/provectus/kafka-ui/releases/latest';
 export const GIT_TAG = process.env.REACT_APP_TAG;
 export const GIT_COMMIT = process.env.REACT_APP_COMMIT;
+export const GIT_LAST_COMMIT_DATE = process.env.REACT_APP_LAST_COMMIT_DATE;
 
 export const BREADCRUMB_DEFINITIONS: BreadcrumbDefinitions = {
   Ksqldb: 'ksqlDB',

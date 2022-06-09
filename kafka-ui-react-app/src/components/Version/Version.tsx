@@ -8,15 +8,14 @@ import * as S from './Version.styled';
 import compareVersions from './compareVersions';
 
 export interface VesionProps {
-  tag: string;
-  commit?: string;
+  tag?: string;
+  commit?: { hash?: string; date?: string };
 }
 
 const Version: React.FC<VesionProps> = ({ tag, commit }) => {
   const [latestVersionInfo, setLatestVersionInfo] = useState({
     outdated: false,
     latestTag: '',
-    date: '',
   });
 
   useEffect(() => {
@@ -26,15 +25,17 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
         setLatestVersionInfo({
           outdated: compareVersions(tag, data.tag_name) === -1,
           latestTag: data.tag_name,
-          date: dayjs(data.published_at).format('MM.DD.YYYY HH:mm:ss'),
         });
       });
   }, [tag]);
 
-  const { outdated, latestTag, date } = latestVersionInfo;
+  const { outdated, latestTag } = latestVersionInfo;
+
   return (
     <S.Wrapper>
-      <S.CurrentVersion>{date}</S.CurrentVersion>
+      <S.CurrentVersion>
+        {dayjs(commit?.date).format('MM.DD.YYYY HH:mm:ss')}
+      </S.CurrentVersion>
 
       {outdated && (
         <S.OutdatedWarning
@@ -50,9 +51,9 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
           <S.CurrentCommitLink
             title="Current commit"
             target="__blank"
-            href={gitCommitPath(commit)}
+            href={gitCommitPath(commit.hash)}
           >
-            {commit}
+            {commit.hash}
           </S.CurrentCommitLink>
           <S.SymbolWrapper>&#41;</S.SymbolWrapper>
         </>
