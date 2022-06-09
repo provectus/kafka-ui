@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { GIT_TAG, GIT_COMMIT, GIT_LAST_COMMIT_DATE } from 'lib/constants';
+import { GIT_TAG, GIT_COMMIT, BUILD_TIME } from 'lib/constants';
 import { clusterPath, getNonExactPath } from 'lib/paths';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -66,7 +66,8 @@ const App: React.FC = () => {
                 {GIT_TAG && (
                   <Version
                     tag={GIT_TAG}
-                    commit={{ hash: GIT_COMMIT, date: GIT_LAST_COMMIT_DATE }}
+                    commit={GIT_COMMIT}
+                    date={BUILD_TIME}
                   />
                 )}
               </S.NavbarItem>

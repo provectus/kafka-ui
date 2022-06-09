@@ -9,10 +9,11 @@ import compareVersions from './compareVersions';
 
 export interface VesionProps {
   tag?: string;
-  commit?: { hash?: string; date?: string };
+  commit?: string;
+  date?: string;
 }
 
-const Version: React.FC<VesionProps> = ({ tag, commit }) => {
+const Version: React.FC<VesionProps> = ({ tag, commit, date }) => {
   const [latestVersionInfo, setLatestVersionInfo] = useState({
     outdated: false,
     latestTag: '',
@@ -34,7 +35,7 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
   return (
     <S.Wrapper>
       <S.CurrentVersion>
-        {dayjs(commit?.date).format('MM.DD.YYYY HH:mm:ss')}
+        {dayjs(date).format('MM.DD.YYYY HH:mm:ss')}
       </S.CurrentVersion>
 
       {outdated && (
@@ -51,9 +52,9 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
           <S.CurrentCommitLink
             title="Current commit"
             target="__blank"
-            href={gitCommitPath(commit.hash)}
+            href={gitCommitPath(commit)}
           >
-            {commit.hash}
+            {commit}
           </S.CurrentCommitLink>
           <S.SymbolWrapper>&#41;</S.SymbolWrapper>
         </>
