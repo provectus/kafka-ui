@@ -1,39 +1,22 @@
 import React from 'react';
 import List from 'components/KsqlDb/List/List';
-import { render, WithRoute } from 'lib/testHelpers';
+import { render } from 'lib/testHelpers';
 import fetchMock from 'fetch-mock';
 import { screen } from '@testing-library/dom';
 
-const clusterName = 'local';
-
 const renderComponent = () => {
-  render(
-    <WithRoute path="/*">
-      <List />
-    </WithRoute>,
-    { initialEntries: ['/*'] }
-  );
+  render(<List />);
 };
 
 describe('KsqlDb List', () => {
   afterEach(() => fetchMock.reset());
-  it('renders zeros if no data received for tables and streams', async () => {
-    fetchMock.post(
-      {
-        url: `/api/clusters/${clusterName}/ksql`,
-      },
-      { data: [] }
-    );
+  it('renders List component with Tables and Streams tabs', async () => {
     renderComponent();
 
-    const StreamsSpan = screen
-      .getByTitle('Streams')
-      .querySelector('span') as HTMLSpanElement;
-    const TablesSpan = screen
-      .getByTitle('Tables')
-      .querySelector('span') as HTMLSpanElement;
+    const Tables = screen.getByTitle('Tables');
+    const Streams = screen.getByTitle('Streams');
 
-    expect(StreamsSpan).toHaveTextContent('0');
-    expect(TablesSpan).toHaveTextContent('0');
+    expect(Tables).toBeInTheDocument();
+    expect(Streams).toBeInTheDocument();
   });
 });

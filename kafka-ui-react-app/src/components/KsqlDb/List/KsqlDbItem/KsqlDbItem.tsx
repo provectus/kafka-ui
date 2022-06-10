@@ -6,35 +6,33 @@ import {
   KsqlDescriptionAccessor,
   HeadersType,
 } from 'components/KsqlDb/List/List';
-import { ClusterNameRoute } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
-import useAppParams from 'lib/hooks/useAppParams';
+import { KsqlStreamDescription, KsqlTableDescription } from 'generated-sources';
 
 export enum KsqlDbItemType {
   Tables = 'tables',
   Streams = 'streams',
 }
 
-interface TableProps {
+export interface RowsType {
+  tables: KsqlTableDescription[];
+  streams: KsqlStreamDescription[];
+}
+export interface KsqlDbItemProps {
   type: KsqlDbItemType;
   headers: HeadersType[];
   accessors: KsqlDescriptionAccessor[];
+  fetching: boolean;
+  rows: RowsType;
 }
 
-const KsqlDbItem: React.FC<TableProps> = ({ headers, accessors, type }) => {
-  const { clusterName } = useAppParams<ClusterNameRoute>();
-
-  const dispatch = useDispatch();
-
-  const { rows, fetching } = useSelector(getKsqlDbTables);
-
-  React.useEffect(() => {
-    dispatch(fetchKsqlDbTables(clusterName));
-  }, [clusterName, dispatch]);
-
+const KsqlDbItem: React.FC<KsqlDbItemProps> = ({
+  headers,
+  accessors,
+  type,
+  fetching,
+  rows,
+}) => {
   return (
     <div>
       {fetching ? (

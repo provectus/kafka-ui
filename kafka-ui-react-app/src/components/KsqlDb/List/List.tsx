@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import useAppParams from 'lib/hooks/useAppParams';
 import * as Metrics from 'components/common/Metrics';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
 import {
   clusterKsqlDbQueryRelativePath,
@@ -16,6 +16,7 @@ import { Button } from 'components/common/Button/Button';
 import { KsqlDescription } from 'redux/interfaces/ksqlDb';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import { NavLink, Route, Routes, Navigate } from 'react-router-dom';
+import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
 
 import KsqlDbItem, { KsqlDbItemType } from './KsqlDbItem/KsqlDbItem';
 
@@ -25,19 +26,25 @@ export interface HeadersType {
   Header: string;
   accessor: KsqlDescriptionAccessor;
 }
-const headers: HeadersType[] = [
+export const headers: HeadersType[] = [
   { Header: 'Name', accessor: 'name' },
   { Header: 'Topic', accessor: 'topic' },
   { Header: 'Key Format', accessor: 'keyFormat' },
   { Header: 'Value Format', accessor: 'valueFormat' },
 ];
 
-const accessors = headers.map((header) => header.accessor);
+export const accessors = headers.map((header) => header.accessor);
 
 const List: FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
+  const dispatch = useDispatch();
 
-  const { fetching, tablesCount, streamsCount } = useSelector(getKsqlDbTables);
+  const { rows, fetching, tablesCount, streamsCount } =
+    useSelector(getKsqlDbTables);
+
+  React.useEffect(() => {
+    dispatch(fetchKsqlDbTables(clusterName));
+  }, [clusterName, dispatch]);
 
   return (
     <>
@@ -94,6 +101,8 @@ const List: FC = () => {
                   headers={headers}
                   accessors={accessors}
                   type={KsqlDbItemType.Tables}
+                  fetching={fetching}
+                  rows={rows}
                 />
               }
             />
@@ -104,6 +113,8 @@ const List: FC = () => {
                   headers={headers}
                   accessors={accessors}
                   type={KsqlDbItemType.Streams}
+                  fetching={fetching}
+                  rows={rows}
                 />
               }
             />
