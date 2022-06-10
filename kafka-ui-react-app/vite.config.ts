@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => {
               'redux-thunk',
               'react-redux',
               'styled-components',
+              'react-ace',
             ],
             lodash: ['lodash'],
           },
