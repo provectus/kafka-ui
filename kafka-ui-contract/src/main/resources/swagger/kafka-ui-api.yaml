@@ -367,8 +367,8 @@ paths:
     get:
       tags:
         - Topics
-      summary: getTopicAnalyzeState
-      operationId: getTopicAnalyzeState
+      summary: getTopicAnalysis
+      operationId: getTopicAnalysis
       parameters:
         - name: clusterName
           in: path
@@ -386,7 +386,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TopicAnalyzeState'
+                $ref: '#/components/schemas/TopicAnalysis'
         404:
           description: Not found
     post:
@@ -1937,16 +1937,16 @@ components:
       required:
         - name
 
-    TopicAnalyzeState:
+    TopicAnalysis:
       type: object
       description: "Represents analysis state. Note: 'progress' and 'result' fields are set exclusively depending on analysis state."
       properties:
         progress:
-          $ref: '#/components/schemas/TopicAnalyzeProgress'
+          $ref: '#/components/schemas/TopicAnalysisProgress'
         result:
-          $ref: '#/components/schemas/TopicAnalyzeResult'
+          $ref: '#/components/schemas/TopicAnalysisResult'
 
-    TopicAnalyzeProgress:
+    TopicAnalysisProgress:
       type: object
       properties:
         startedAt:
@@ -1961,7 +1961,7 @@ components:
           type: integer
           format: int64
 
-    TopicAnalyzeResult:
+    TopicAnalysisResult:
       type: object
       properties:
         startedAt:
@@ -1973,13 +1973,13 @@ components:
         error:
           type: string
         totalStats:
-          $ref: '#/components/schemas/TopicAnalyzeStats'
+          $ref: '#/components/schemas/TopicAnalysisStats'
         partitionStats:
           type: array
           items:
-            $ref: "#/components/schemas/TopicAnalyzeStats"
+            $ref: "#/components/schemas/TopicAnalysisStats"
 
-    TopicAnalyzeStats:
+    TopicAnalysisStats:
       type: object
       properties:
         partition:
@@ -2014,9 +2014,9 @@ components:
           type: integer
           format: int64
         keySize:
-          $ref: "#/components/schemas/TopicAnalyzeSizeStats"
+          $ref: "#/components/schemas/TopicAnalysisSizeStats"
         valueSize:
-          $ref: "#/components/schemas/TopicAnalyzeSizeStats"
+          $ref: "#/components/schemas/TopicAnalysisSizeStats"
         hourlyMsgCounts:
           type: array
           items:
@@ -2029,7 +2029,7 @@ components:
                 type: integer
                 format: int64
 
-    TopicAnalyzeSizeStats:
+    TopicAnalysisSizeStats:
       type: object
       description: "All sizes in bytes"
       properties:

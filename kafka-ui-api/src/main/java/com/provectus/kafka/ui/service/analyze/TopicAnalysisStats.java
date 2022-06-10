@@ -1,8 +1,8 @@
 package com.provectus.kafka.ui.service.analyze;
 
-import com.provectus.kafka.ui.model.TopicAnalyzeSizeStatsDTO;
-import com.provectus.kafka.ui.model.TopicAnalyzeStatsDTO;
-import com.provectus.kafka.ui.model.TopicAnalyzeStatsHourlyMsgCountsDTO;
+import com.provectus.kafka.ui.model.TopicAnalysisSizeStatsDTO;
+import com.provectus.kafka.ui.model.TopicAnalysisStatsDTO;
+import com.provectus.kafka.ui.model.TopicAnalysisStatsHourlyMsgCountsDTO;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Comparator;
@@ -18,7 +18,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
 
 
-class TopicAnalyzeStats {
+class TopicAnalysisStats {
 
   Long totalMsgs = 0L;
   Long minOffset;
@@ -52,8 +52,8 @@ class TopicAnalyzeStats {
       sizeSketch.update(len);
     }
 
-    TopicAnalyzeSizeStatsDTO toDto() {
-      return new TopicAnalyzeSizeStatsDTO()
+    TopicAnalysisSizeStatsDTO toDto() {
+      return new TopicAnalysisSizeStatsDTO()
           .sum(sum)
           .min(min)
           .max(max)
@@ -79,10 +79,10 @@ class TopicAnalyzeStats {
       }
     }
 
-    List<TopicAnalyzeStatsHourlyMsgCountsDTO> toDto() {
+    List<TopicAnalysisStatsHourlyMsgCountsDTO> toDto() {
       return hourlyStats.entrySet().stream()
           .sorted(Comparator.comparingLong(Map.Entry::getKey))
-          .map(e -> new TopicAnalyzeStatsHourlyMsgCountsDTO()
+          .map(e -> new TopicAnalysisStatsHourlyMsgCountsDTO()
               .hourStart(e.getKey())
               .count(e.getValue()))
           .collect(Collectors.toList());
@@ -114,8 +114,8 @@ class TopicAnalyzeStats {
     }
   }
 
-  TopicAnalyzeStatsDTO toDto(@Nullable Integer partition) {
-    return new TopicAnalyzeStatsDTO()
+  TopicAnalysisStatsDTO toDto(@Nullable Integer partition) {
+    return new TopicAnalysisStatsDTO()
         .partition(partition)
         .totalMsgs(totalMsgs)
         .minOffset(minOffset)

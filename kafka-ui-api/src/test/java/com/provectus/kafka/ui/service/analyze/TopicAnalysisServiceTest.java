@@ -15,27 +15,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 
-class TopicAnalyzeServiceTest extends AbstractIntegrationTest {
+class TopicAnalysisServiceTest extends AbstractIntegrationTest {
 
   @Autowired
   private ClustersStorage clustersStorage;
 
   @Autowired
-  private TopicAnalyzeService topicAnalyzeService;
+  private TopicAnalysisService topicAnalysisService;
 
   @Test
-  void savesResultWhenAnalyzeIsCompleted() {
+  void savesResultWhenAnalysisIsCompleted() {
     String topic = "analyze_test_" + UUID.randomUUID();
     createTopic(new NewTopic(topic, 2, (short) 1));
     fillTopic(topic, 1_000);
 
     var cluster = clustersStorage.getClusterByName(LOCAL).get();
-    topicAnalyzeService.analyze(cluster, topic).block();
+    topicAnalysisService.analyze(cluster, topic).block();
 
     Awaitility.await()
         .atMost(Duration.ofSeconds(20))
         .untilAsserted(() -> {
-          assertThat(topicAnalyzeService.getTopicAnalyzeState(cluster, topic))
+          assertThat(topicAnalysisService.getTopicAnalysis(cluster, topic))
               .hasValueSatisfying(state -> {
                 assertThat(state.getProgress()).isNull();
                 assertThat(state.getResult()).isNotNull();

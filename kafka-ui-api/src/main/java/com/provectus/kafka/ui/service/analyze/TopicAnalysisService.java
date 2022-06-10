@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service.analyze;
 
 import com.provectus.kafka.ui.exception.TopicAnalyzeException;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.TopicAnalyzeStateDTO;
+import com.provectus.kafka.ui.model.TopicAnalysisDTO;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
 import com.provectus.kafka.ui.service.TopicsService;
 import com.provectus.kafka.ui.util.OffsetsSeek.WaitingOffsets;
@@ -30,7 +30,7 @@ import reactor.core.scheduler.Schedulers;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TopicAnalyzeService {
+public class TopicAnalysisService {
 
   private final AnalyzeTasksStore analyzeTasksStore = new AnalyzeTasksStore();
 
@@ -40,7 +40,7 @@ public class TopicAnalyzeService {
   public Mono<Void> analyze(KafkaCluster cluster, String topicName) {
     return topicsService.getTopicDetails(cluster, topicName)
         .doOnNext(topic ->
-            startAnalyze(
+            startAnalysis(
                 cluster,
                 topicName,
                 topic.getPartitionCount(),
@@ -52,28 +52,28 @@ public class TopicAnalyzeService {
         ).then();
   }
 
-  private synchronized void startAnalyze(KafkaCluster cluster,
-                                         String topic,
-                                         int partitionsCnt,
-                                         long approxNumberOfMsgs) {
+  private synchronized void startAnalysis(KafkaCluster cluster,
+                                          String topic,
+                                          int partitionsCnt,
+                                          long approxNumberOfMsgs) {
     var topicId = new TopicIdentity(cluster, topic);
-    if (analyzeTasksStore.isAnalyzeInProgress(topicId)) {
+    if (analyzeTasksStore.isAnalysisInProgress(topicId)) {
       throw new TopicAnalyzeException("Topic is already analyzing");
     }
-    var task = new AnalyzingTask(cluster, topicId, partitionsCnt, approxNumberOfMsgs);
+    var task = new AnalyzeTask(cluster, topicId, partitionsCnt, approxNumberOfMsgs);
     analyzeTasksStore.registerNewTask(topicId, task);
     Schedulers.boundedElastic().schedule(task);
   }
 
-  public void cancelAnalyze(KafkaCluster cluster, String topicName) {
+  public void cancelAnalysis(KafkaCluster cluster, String topicName) {
     analyzeTasksStore.cancelAnalyze(new TopicIdentity(cluster, topicName));
   }
 
-  public Optional<TopicAnalyzeStateDTO> getTopicAnalyzeState(KafkaCluster cluster, String topicName) {
-    return analyzeTasksStore.getTopicAnalyzeState(new TopicIdentity(cluster, topicName));
+  public Optional<TopicAnalysisDTO> getTopicAnalysis(KafkaCluster cluster, String topicName) {
+    return analyzeTasksStore.getTopicAnalysis(new TopicIdentity(cluster, topicName));
   }
 
-  class AnalyzingTask implements Runnable, Closeable {
+  class AnalyzeTask implements Runnable, Closeable {
 
     private final Instant startedAt = Instant.now();
 
@@ -81,12 +81,12 @@ public class TopicAnalyzeService {
     private final int partitionsCnt;
     private final long approxNumberOfMsgs;
 
-    private final TopicAnalyzeStats totalStats = new TopicAnalyzeStats();
-    private final Map<Integer, TopicAnalyzeStats> partitionStats = new HashMap<>();
+    private final TopicAnalysisStats totalStats = new TopicAnalysisStats();
+    private final Map<Integer, TopicAnalysisStats> partitionStats = new HashMap<>();
 
     private final KafkaConsumer<Bytes, Bytes> consumer;
 
-    AnalyzingTask(KafkaCluster cluster, TopicIdentity topicId, int partitionsCnt, long approxNumberOfMsgs) {
+    AnalyzeTask(KafkaCluster cluster, TopicIdentity topicId, int partitionsCnt, long approxNumberOfMsgs) {
       this.topicId = topicId;
       this.approxNumberOfMsgs = approxNumberOfMsgs;
       this.partitionsCnt = partitionsCnt;
@@ -110,7 +110,7 @@ public class TopicAnalyzeService {
       try {
         log.info("Starting {} topic analyze", topicId);
         var topicPartitions = IntStream.range(0, partitionsCnt)
-            .peek(i -> partitionStats.put(i, new TopicAnalyzeStats()))
+            .peek(i -> partitionStats.put(i, new TopicAnalysisStats()))
             .mapToObj(i -> new TopicPartition(topicId.topicName, i))
             .collect(Collectors.toList());
 

@@ -11,7 +11,7 @@ import com.provectus.kafka.ui.model.PartitionsIncreaseResponseDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
 import com.provectus.kafka.ui.model.SortOrderDTO;
-import com.provectus.kafka.ui.model.TopicAnalyzeStateDTO;
+import com.provectus.kafka.ui.model.TopicAnalysisDTO;
 import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
@@ -20,7 +20,7 @@ import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.TopicUpdateDTO;
 import com.provectus.kafka.ui.model.TopicsResponseDTO;
 import com.provectus.kafka.ui.service.TopicsService;
-import com.provectus.kafka.ui.service.analyze.TopicAnalyzeService;
+import com.provectus.kafka.ui.service.analyze.TopicAnalysisService;
 import java.util.Comparator;
 import java.util.List;
 import javax.validation.Valid;
@@ -42,7 +42,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
   private static final Integer DEFAULT_PAGE_SIZE = 25;
 
   private final TopicsService topicsService;
-  private final TopicAnalyzeService topicAnalyzeService;
+  private final TopicAnalysisService topicAnalysisService;
   private final ClusterMapper clusterMapper;
 
   @Override
@@ -187,24 +187,24 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
   @Override
   public Mono<ResponseEntity<Void>> analyzeTopic(String clusterName, String topicName, ServerWebExchange exchange) {
-    return topicAnalyzeService.analyze(getCluster(clusterName), topicName)
+    return topicAnalysisService.analyze(getCluster(clusterName), topicName)
         .thenReturn(ResponseEntity.ok().build());
   }
 
   @Override
   public Mono<ResponseEntity<Void>> cancelTopicAnalyze(String clusterName, String topicName,
                                                        ServerWebExchange exchange) {
-    topicAnalyzeService.cancelAnalyze(getCluster(clusterName), topicName);
+    topicAnalysisService.cancelAnalysis(getCluster(clusterName), topicName);
     return Mono.just(ResponseEntity.ok().build());
   }
 
 
   @Override
-  public Mono<ResponseEntity<TopicAnalyzeStateDTO>> getTopicAnalyzeState(String clusterName,
-                                                                         String topicName,
-                                                                         ServerWebExchange exchange) {
+  public Mono<ResponseEntity<TopicAnalysisDTO>> getTopicAnalysis(String clusterName,
+                                                                 String topicName,
+                                                                 ServerWebExchange exchange) {
     return Mono.just(
-        topicAnalyzeService.getTopicAnalyzeState(getCluster(clusterName), topicName)
+        topicAnalysisService.getTopicAnalysis(getCluster(clusterName), topicName)
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build())
     );

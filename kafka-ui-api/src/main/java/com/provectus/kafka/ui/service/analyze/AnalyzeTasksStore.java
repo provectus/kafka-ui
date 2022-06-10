@@ -1,9 +1,9 @@
 package com.provectus.kafka.ui.service.analyze;
 
 import com.google.common.base.Throwables;
-import com.provectus.kafka.ui.model.TopicAnalyzeProgressDTO;
-import com.provectus.kafka.ui.model.TopicAnalyzeResultDTO;
-import com.provectus.kafka.ui.model.TopicAnalyzeStateDTO;
+import com.provectus.kafka.ui.model.TopicAnalysisDTO;
+import com.provectus.kafka.ui.model.TopicAnalysisProgressDTO;
+import com.provectus.kafka.ui.model.TopicAnalysisResultDTO;
 import java.io.Closeable;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -18,8 +18,8 @@ import lombok.Value;
 
 class AnalyzeTasksStore {
 
-  private final Map<TopicIdentity, RunningAnalyze> running = new ConcurrentHashMap<>();
-  private final Map<TopicIdentity, TopicAnalyzeResultDTO> completed = new ConcurrentHashMap<>();
+  private final Map<TopicIdentity, RunningAnalysis> running = new ConcurrentHashMap<>();
+  private final Map<TopicIdentity, TopicAnalysisResultDTO> completed = new ConcurrentHashMap<>();
 
   void setAnalyzeError(TopicIdentity topicId,
                        Instant collectionStartedAt,
@@ -27,7 +27,7 @@ class AnalyzeTasksStore {
     running.remove(topicId);
     completed.put(
         topicId,
-        new TopicAnalyzeResultDTO()
+        new TopicAnalysisResultDTO()
             .startedAt(collectionStartedAt.toEpochMilli())
             .finishedAt(System.currentTimeMillis())
             .error(Throwables.getStackTraceAsString(th))
@@ -36,11 +36,11 @@ class AnalyzeTasksStore {
 
   void setAnalyzeResult(TopicIdentity topicId,
                         Instant collectionStartedAt,
-                        TopicAnalyzeStats totalStats,
-                        Map<Integer, TopicAnalyzeStats> partitionStats) {
+                        TopicAnalysisStats totalStats,
+                        Map<Integer, TopicAnalysisStats> partitionStats) {
     running.remove(topicId);
     completed.put(topicId,
-        new TopicAnalyzeResultDTO()
+        new TopicAnalysisResultDTO()
             .startedAt(collectionStartedAt.toEpochMilli())
             .finishedAt(System.currentTimeMillis())
             .totalStats(totalStats.toDto(null))
@@ -64,45 +64,45 @@ class AnalyzeTasksStore {
   }
 
   void registerNewTask(TopicIdentity topicId, Closeable task) {
-    running.put(topicId, new RunningAnalyze(Instant.now(), 0.0, 0, 0, task));
+    running.put(topicId, new RunningAnalysis(Instant.now(), 0.0, 0, 0, task));
   }
 
   void cancelAnalyze(TopicIdentity topicId) {
     Optional.ofNullable(running.remove(topicId))
-        .ifPresent(RunningAnalyze::stopTask);
+        .ifPresent(RunningAnalysis::stopTask);
   }
 
-  boolean isAnalyzeInProgress(TopicIdentity id) {
+  boolean isAnalysisInProgress(TopicIdentity id) {
     return running.containsKey(id);
   }
 
-  Optional<TopicAnalyzeStateDTO> getTopicAnalyzeState(TopicIdentity id) {
+  Optional<TopicAnalysisDTO> getTopicAnalysis(TopicIdentity id) {
     var runningState = running.get(id);
     var completedState = completed.get(id);
     if (runningState == null && completedState == null) {
       return Optional.empty();
     }
-    return Optional.of(createAnalyzeStateDto(runningState, completedState));
+    return Optional.of(createAnalysisDto(runningState, completedState));
   }
 
-  private TopicAnalyzeStateDTO createAnalyzeStateDto(@Nullable RunningAnalyze runningState,
-                                                     @Nullable TopicAnalyzeResultDTO completedState) {
-    return new TopicAnalyzeStateDTO()
+  private TopicAnalysisDTO createAnalysisDto(@Nullable RunningAnalysis runningState,
+                                             @Nullable TopicAnalysisResultDTO completedState) {
+    return new TopicAnalysisDTO()
         .progress(runningState != null ? runningState.toDto() : null)
         .result(completedState);
   }
 
   @Value
   @Builder(toBuilder = true)
-  private static class RunningAnalyze {
+  private static class RunningAnalysis {
     Instant startedAt;
     double completenessPercent;
     long msgsScanned;
     long bytesScanned;
     Closeable task;
 
-    TopicAnalyzeProgressDTO toDto() {
-      return new TopicAnalyzeProgressDTO()
+    TopicAnalysisProgressDTO toDto() {
+      return new TopicAnalysisProgressDTO()
           .startedAt(startedAt.toEpochMilli())
           .bytesScanned(bytesScanned)
           .msgsScanned(msgsScanned)
