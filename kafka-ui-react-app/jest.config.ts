@@ -1,6 +1,6 @@
 import type { Config } from '@jest/types';
 
-const config: Config.InitialOptions = {
+export default {
   roots: ['<rootDir>/src'],
   collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
@@ -22,6 +22,4 @@ const config: Config.InitialOptions = {
     'jest-watch-typeahead/testname',
   ],
   resetMocks: true,
-};
-
-export default config;
+} as Config.InitialOptions;
