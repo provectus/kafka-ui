@@ -1,59 +1,11 @@
 @import '@fortawesome/fontawesome-free/css/all.min.css';
-@import 'src/theme/variables';
-
-// utilities
-@import "bulma/sass/utilities/initial-variables";
-@import "bulma/sass/utilities/functions";
-@import "bulma/sass/utilities/derived-variables";
-@import "bulma/sass/utilities/mixins";
-@import "bulma/sass/utilities/controls";
-@import "bulma/sass/utilities/extends";
 
 // Base
 @import "bulma/sass/base/minireset";
 @import "bulma/sass/base/generic";
-@import "bulma/sass/base/animations";
-
-// Elements
-
-// Form
-@import "bulma/sass/form/shared";
-@import "bulma/sass/form/input-textarea";
-@import "bulma/sass/form/checkbox-radio";
-@import "bulma/sass/form/select";
-@import "bulma/sass/form/file";
-@import "bulma/sass/form/tools";
 
 // Components
-@import "bulma/sass/components/breadcrumb";
-@import "bulma/sass/components/card";
 @import "bulma/sass/components/dropdown";
-@import "bulma/sass/components/level";
-@import "bulma/sass/components/media";
-@import "bulma/sass/components/menu";
-@import "bulma/sass/components/message";
-@import "bulma/sass/components/modal";
-@import "bulma/sass/components/navbar";
-@import "bulma/sass/components/pagination";
-@import "bulma/sass/components/panel";
-@import "bulma/sass/components/tabs";
-
-// Grid
-@import "bulma/sass/grid/columns";
-@import "bulma/sass/grid/tiles";
-
-// Helpers
-@import "bulma/sass/helpers/color";
-@import "bulma/sass/helpers/flexbox";
-@import "bulma/sass/helpers/float";
-@import "bulma/sass/helpers/other";
-@import "bulma/sass/helpers/overflow";
-@import "bulma/sass/helpers/position";
-@import "bulma/sass/helpers/spacing";
-@import "bulma/sass/helpers/typography";
-@import "bulma/sass/helpers/visibility";
-
-@import 'src/theme/bulma_overrides';
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
@@ -76,4 +28,13 @@ input, select, textarea, button {
 
 code {
   font-family: 'Roboto Mono', sans-serif;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

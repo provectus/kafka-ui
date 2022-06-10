@@ -1,5 +1,10 @@
 import React, { PropsWithChildren, ReactElement } from 'react';
-import { StaticRouter } from 'react-router-dom';
+import {
+  MemoryRouter,
+  MemoryRouterProps,
+  Route,
+  Routes,
+} from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
@@ -9,11 +14,12 @@ import { RootState } from 'redux/interfaces';
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from 'redux/reducers';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
   store?: Store<Partial<RootState>, AnyAction>;
-  pathname?: string;
+  initialEntries?: MemoryRouterProps['initialEntries'];
 }
 
 export function getByTextContent(textMatch: string | RegExp): HTMLElement {
@@ -27,6 +33,19 @@ export function getByTextContent(textMatch: string | RegExp): HTMLElement {
   });
 }
 
+interface WithRouterProps {
+  children: React.ReactNode;
+  path: string;
+}
+
+export const WithRoute: React.FC<WithRouterProps> = ({ children, path }) => {
+  return (
+    <Routes>
+      <Route path={path} element={children} />
+    </Routes>
+  );
+};
+
 const customRender = (
   ui: ReactElement,
   {
@@ -35,10 +54,14 @@ const customRender = (
       reducer: rootReducer,
       preloadedState,
     }),
-    pathname,
+    initialEntries,
     ...renderOptions
   }: CustomRenderOptions = {}
 ) => {
+  // use new QueryClient instance for each test run to avoid issues with cache
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
   // overrides @testing-library/react render.
   const AllTheProviders: React.FC<PropsWithChildren<unknown>> = ({
     children,
@@ -46,7 +69,11 @@ const customRender = (
     return (
       <ThemeProvider theme={theme}>
         <Provider store={store}>
-          <StaticRouter location={{ pathname }}>{children}</StaticRouter>
+          <QueryClientProvider client={queryClient}>
+            <MemoryRouter initialEntries={initialEntries}>
+              {children}
+            </MemoryRouter>
+          </QueryClientProvider>
         </Provider>
       </ThemeProvider>
     );

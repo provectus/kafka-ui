@@ -4,12 +4,8 @@ import {
   UnknownAsyncThunkPendingAction,
   UnknownAsyncThunkRejectedAction,
 } from '@reduxjs/toolkit/dist/matchers';
-import { ClustersApi, Configuration } from 'generated-sources';
-import { BASE_PARAMS } from 'lib/constants';
+import { AsyncRequestStatus } from 'lib/constants';
 import { LoaderSliceState } from 'redux/interfaces';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const clustersApiClient = new ClustersApi(apiClientConf);
 
 export const initialState: LoaderSliceState = {};
 
@@ -30,21 +26,21 @@ export const loaderSlice = createSlice({
         (action): action is UnknownAsyncThunkPendingAction =>
           action.type.endsWith('/pending'),
         (state, { type }) => {
-          state[type.replace('/pending', '')] = 'pending';
+          state[type.replace('/pending', '')] = AsyncRequestStatus.pending;
         }
       )
       .addMatcher(
         (action): action is UnknownAsyncThunkFulfilledAction =>
           action.type.endsWith('/fulfilled'),
         (state, { type }) => {
-          state[type.replace('/fulfilled', '')] = 'fulfilled';
+          state[type.replace('/fulfilled', '')] = AsyncRequestStatus.fulfilled;
         }
       )
       .addMatcher(
         (action): action is UnknownAsyncThunkRejectedAction =>
           action.type.endsWith('/rejected'),
         (state, { type }) => {
-          state[type.replace('/rejected', '')] = 'rejected';
+          state[type.replace('/rejected', '')] = AsyncRequestStatus.rejected;
         }
       );
   },

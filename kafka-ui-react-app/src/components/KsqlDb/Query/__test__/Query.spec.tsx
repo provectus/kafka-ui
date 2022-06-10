@@ -1,4 +1,4 @@
-import { render, EventSourceMock } from 'lib/testHelpers';
+import { render, EventSourceMock, WithRoute } from 'lib/testHelpers';
 import React from 'react';
 import Query, {
   getFormattedErrorFromTableData,
@@ -6,18 +6,17 @@ import Query, {
 import { screen, within } from '@testing-library/dom';
 import fetchMock from 'fetch-mock';
 import userEvent from '@testing-library/user-event';
-import { Route } from 'react-router-dom';
 import { clusterKsqlDbQueryPath } from 'lib/paths';
 import { act } from '@testing-library/react';
 
 const clusterName = 'testLocal';
 const renderComponent = () =>
   render(
-    <Route path={clusterKsqlDbQueryPath(':clusterName')}>
+    <WithRoute path={clusterKsqlDbQueryPath()}>
       <Query />
-    </Route>,
+    </WithRoute>,
     {
-      pathname: clusterKsqlDbQueryPath(clusterName),
+      initialEntries: [clusterKsqlDbQueryPath(clusterName)],
     }
   );
 

@@ -1,15 +1,17 @@
 import React from 'react';
+import { KsqlDescription } from 'redux/interfaces/ksqlDb';
+import { KsqlDescriptionAccessor } from 'components/KsqlDb/List/List';
 
 interface Props {
-  accessors: string[];
-  data: Record<string, string>;
+  accessors: KsqlDescriptionAccessor[];
+  data: KsqlDescription;
 }
 
 const ListItem: React.FC<Props> = ({ accessors, data }) => {
   return (
     <tr>
-      {accessors.map((accessor: string) => (
-        <td key={accessor}>{data[accessor]}</td>
+      {accessors.map((accessor) => (
+        <td key={accessor}>{data[accessor]?.toString()}</td>
       ))}
     </tr>
   );
