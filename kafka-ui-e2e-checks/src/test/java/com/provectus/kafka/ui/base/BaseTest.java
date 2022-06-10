@@ -16,12 +16,13 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayNameGeneration;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.ByteArrayInputStream;
@@ -54,12 +55,16 @@ public class BaseTest {
     @BeforeAll
     public static void start() {
         DockerImageName image = DockerImageName.parse(IMAGE_NAME).withTag(IMAGE_TAG);
-        webDriverContainer = new BrowserWebDriverContainer<>(image).withCapabilities(new ChromeOptions().addArguments("--disable-dev-shm-usage"));
+        webDriverContainer = new BrowserWebDriverContainer<>(image)
+                .withCapabilities(new ChromeOptions().addArguments("--disable-dev-shm-usage", "--disable-gpu"))
+                .waitingFor(Wait.forHttp("/"))
+                .waitingFor(Wait.forLogMessage(".*Started Selenium Standalone.*", 1));
         Testcontainers.exposeHostPorts(8080);
         webDriverContainer.start();
         webDriverContainer.isRunning();
-        RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
-        WebDriverRunner.setWebDriver(remoteWebDriver);
+        webDriverContainer.isHostAccessible();
+        WebDriverRunner.setWebDriver(webDriverContainer.getWebDriver());
+        webDriverContainer.getWebDriver().manage().window().setSize(new Dimension(1440, 1024));
     }
 
     static {
@@ -78,7 +83,6 @@ public class BaseTest {
         setup();
     }
 
-
     @AfterEach
     public void afterMethod() {
         webDriverContainer.getWebDriver().manage().deleteAllCookies();
@@ -88,7 +92,6 @@ public class BaseTest {
 
     @SneakyThrows
     private static void setup() {
-
         Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
         Configuration.screenshots = TestConfiguration.SCREENSHOTS;
         Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;

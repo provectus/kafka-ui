@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.tests;
 
-import com.provectus.kafka.ui.api.model.SchemaType;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
@@ -22,14 +21,9 @@ public class TopicTests extends BaseTest {
     public static final String UPDATED_TIME_TO_RETAIN_VALUE = "604800001";
     public static final String UPDATED_MAX_SIZE_ON_DISK = "20 GB";
     public static final String UPDATED_MAX_MESSAGE_BYTES = "1000020";
-    private static final String PATH_TO_AVRO = System.getProperty("user.dir") + "/src/test/resources/avro_msg_value.json";
-    private static final String PATH_UNKNOWN_VALUE = System.getProperty("user.dir") + "/src/test/resources/unknown_value.json";
-    private static final String PATH_TO_SCHEMA = System.getProperty("user.dir") + "/src/test/resources/schemaValue.json";
     private static final String KEY_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/producedkey.txt";
     private static final String CONTENT_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/testData.txt";
-    public static final String AVRO_MSG = "avro_msg_value";
-    public static final String UNKNOWN = "unknown_value";
-    public static final String VALUE = "schemaValue";
+
 
 
 
@@ -38,9 +32,6 @@ public class TopicTests extends BaseTest {
     public static void beforeAll() {
         Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, TOPIC_TO_UPDATE);
         Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
-        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, AVRO_MSG, SchemaType.AVRO, readFileAsString(PATH_TO_AVRO));
-        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, UNKNOWN, SchemaType.AVRO, readFileAsString(PATH_UNKNOWN_VALUE));
-        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, VALUE, SchemaType.AVRO, readFileAsString(PATH_TO_SCHEMA));
     }
 
     @AfterAll
@@ -49,9 +40,6 @@ public class TopicTests extends BaseTest {
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_UPDATE);
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
-        Helpers.INSTANCE.apiHelper.deleteSchema(SECOND_LOCAL, AVRO_MSG);
-        Helpers.INSTANCE.apiHelper.deleteSchema(SECOND_LOCAL, UNKNOWN);
-        Helpers.INSTANCE.apiHelper.deleteSchema(SECOND_LOCAL, VALUE);
     }
 
     @SneakyThrows

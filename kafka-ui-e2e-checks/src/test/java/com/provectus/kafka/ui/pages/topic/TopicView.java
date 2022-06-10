@@ -30,14 +30,14 @@ public class TopicView {
 
     @Step
     public TopicView isOnTopicViewPage() {
-       $(By.linkText("Overview")).shouldBe(Condition.visible);
+        $(By.linkText("Overview")).shouldBe(Condition.visible);
         return this;
     }
 
     @SneakyThrows
     public TopicCreateEditSettingsView openEditSettings() {
         BrowserUtils.javaExecutorClick(dotMenuHeader);
-        $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() +"']").click();
+        $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() + "']").click();
         return new TopicCreateEditSettingsView();
     }
 
@@ -46,7 +46,6 @@ public class TopicView {
         $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
-
 
     @SneakyThrows
     public TopicsList deleteTopic() {
@@ -58,8 +57,7 @@ public class TopicView {
 
     @SneakyThrows
     public ProduceMessagePage clickOnButton(String buttonName) {
-        BrowserUtils
-                .javaExecutorClick($(By.xpath("//div//button[text()='%s']".formatted(buttonName))));
+        BrowserUtils.javaExecutorClick($(By.xpath("//div//button[text()='%s']".formatted(buttonName))));
         return new ProduceMessagePage();
     }
 
@@ -72,9 +70,7 @@ public class TopicView {
     }
 
     private enum DotMenuHeaderItems {
-        EDIT_SETTINGS("Edit settings"),
-        CLEAR_MESSAGES("Clear messages"),
-        REMOVE_TOPIC("Remove topic");
+        EDIT_SETTINGS("Edit settings"), CLEAR_MESSAGES("Clear messages"), REMOVE_TOPIC("Remove topic");
 
         private String value;
 
@@ -88,17 +84,12 @@ public class TopicView {
 
         @Override
         public String toString() {
-            return "DotMenuHeaderItems{" +
-                    "value='" + value + '\'' +
-                    '}';
+            return "DotMenuHeaderItems{" + "value='" + value + '\'' + '}';
         }
     }
 
     public enum TopicMenu {
-        OVERVIEW("Overview"),
-        MESSAGES("Messages"),
-        CONSUMERS("Consumers"),
-        SETTINGS("Settings");
+        OVERVIEW("Overview"), MESSAGES("Messages"), CONSUMERS("Consumers"), SETTINGS("Settings");
 
         private String value;
 
@@ -112,9 +103,7 @@ public class TopicView {
 
         @Override
         public String toString() {
-            return "TopicMenu{" +
-                    "value='" + value + '\'' +
-                    '}';
+            return "TopicMenu{" + "value='" + value + '\'' + '}';
         }
     }
 }

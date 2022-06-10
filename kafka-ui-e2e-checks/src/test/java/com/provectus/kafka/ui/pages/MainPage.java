@@ -55,20 +55,7 @@ public class MainPage {
     }
   }
 
-  public enum SchemaType {
-    AVRO("AVRO"),
-    JSON("JSON"),
-    PROTOBUF("PROTOBUF");
 
-    String value;
-
-    SchemaType(String value) {
-      this.value = value;
-    }
-    public String getValue(){
-      return value;
-    }
-  }
 
     @Step
     public MainPage goToSideMenu(String clusterName, SideMenuOptions option) {

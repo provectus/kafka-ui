@@ -87,12 +87,19 @@ public class ApiHelper {
         schemaSubject.setSubject(schemaName);
         schemaSubject.setSchema(schemaValue);
         schemaSubject.setSchemaType(type);
-        schemaApi().createNewSchema(clusterName, schemaSubject).block();
+        try {
+            schemaApi().createNewSchema(clusterName, schemaSubject).block();
+        } catch (WebClientResponseException ex){
+            ex.printStackTrace();
+        }
     }
 
     @SneakyThrows
     public void deleteSchema(String clusterName, String schemaName){
-        schemaApi().deleteSchema(clusterName, schemaName).block();
+        try {
+            schemaApi().deleteSchema(clusterName, schemaName).block();
+        } catch (WebClientResponseException ignore) {
+        }
     }
 
     @SneakyThrows

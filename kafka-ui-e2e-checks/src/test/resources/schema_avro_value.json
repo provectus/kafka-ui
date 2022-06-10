@@ -1,0 +1,5 @@
+{
+  "type": "record",
+  "name": "Message",
+  "namespace": "com.provectus.kafka"
+}
