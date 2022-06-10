@@ -66,14 +66,17 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
         final String allowedDomain = env.getProperty("oauth2.google.allowedDomain");
 
         if (domainAttribute == null) {
+          log.trace("Google domain attribute is not present, skipping domain validation");
           return user;
         }
 
         if (allowedDomain == null) {
+          log.trace("Google allowed domain has not been set, skipping domain validation");
           return user;
         }
 
         if (!allowedDomain.equalsIgnoreCase(domainAttribute)) {
+          log.trace("Google allowed domain doesn't match the domain attribute value, rejecting authentication");
           return Mono.error(new BadCredentialsException("Authentication within this domain is prohibited"));
         }
 
