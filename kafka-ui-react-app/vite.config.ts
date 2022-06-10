@@ -7,6 +7,25 @@ export default defineConfig(({ mode }) => {
 
   const defaultConfig: UserConfigExport = {
     plugins: [react(), tsconfigPaths()],
+    build: {
+      outDir: 'build',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            venod: [
+              'react',
+              'react-router-dom',
+              'react-dom',
+              'redux',
+              'redux-thunk',
+              'react-redux',
+              'styled-components',
+            ],
+            lodash: ['lodash'],
+          },
+        },
+      },
+    },
     define: {
       'process.env.NODE_ENV': `"${mode}"`,
     },
