@@ -2,10 +2,13 @@ import type { Config } from '@jest/types';
 
 export default {
   roots: ['<rootDir>/src'],
-  collectCoverageFrom: [
-    'src/**/*.{js,jsx,ts,tsx}',
-    '!src/**/*.d.ts',
-    '!vite.config.ts',
+  collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts'],
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '<rootDir>/src/generated-sources/',
+    '<rootDir>/vite.config.ts',
+    '<rootDir>/src/index.tsx',
+    '<rootDir>/src/serviceWorker.ts',
   ],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   testMatch: [
