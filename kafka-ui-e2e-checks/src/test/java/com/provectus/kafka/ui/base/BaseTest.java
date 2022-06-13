@@ -13,6 +13,7 @@ import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -65,6 +66,14 @@ public class BaseTest {
         webDriverContainer.isHostAccessible();
         WebDriverRunner.setWebDriver(webDriverContainer.getWebDriver());
         webDriverContainer.getWebDriver().manage().window().setSize(new Dimension(1440, 1024));
+    }
+
+    @AfterAll
+    public static void tearDown(){
+        if(webDriverContainer.isRunning()) {
+            webDriverContainer.close();
+            webDriverContainer.stop();
+        }
     }
 
     static {
