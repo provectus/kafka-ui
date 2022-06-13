@@ -1,1 +1,0 @@
-[{"uid":"f25594ed70469bc6","name":"should update a topic","time":{"start":1655109321626,"stop":1655109321626,"duration":0},"status":"skipped","severity":"normal"},{"uid":"afdb6ff07ada7e80","name":"should delete topic","time":{"start":1655109316295,"stop":1655109321178,"duration":4883},"status":"passed","severity":"normal"}]
