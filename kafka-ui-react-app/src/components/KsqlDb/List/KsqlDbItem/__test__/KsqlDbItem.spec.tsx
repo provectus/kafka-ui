@@ -6,7 +6,7 @@ import KsqlDbItem, {
   KsqlDbItemType,
 } from 'components/KsqlDb/List/KsqlDbItem/KsqlDbItem';
 import { screen } from '@testing-library/dom';
-import { headers, accessors } from 'components/KsqlDb/List/List';
+import { fetchKsqlDbTablesPayload } from 'redux/reducers/ksqlDb/__test__/fixtures';
 
 describe('KsqlDbItem', () => {
   const tablesPathname = clusterKsqlDbTablesPath();
@@ -14,8 +14,6 @@ describe('KsqlDbItem', () => {
   const component = (props: Partial<KsqlDbItemProps> = {}) => (
     <WithRoute path={tablesPathname}>
       <KsqlDbItem
-        headers={headers}
-        accessors={accessors}
         type={KsqlDbItemType.Tables}
         fetching={false}
         rows={{ tables: [], streams: [] }}
@@ -30,21 +28,39 @@ describe('KsqlDbItem', () => {
     });
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  it('show no tables found text if there are no tables', () => {
-    render(component(), {
+  it('show no text if no data found', () => {
+    render(component({}), {
       initialEntries: [clusterKsqlDbTablesPath()],
     });
-    expect(screen.getByText('No tables found')).toBeInTheDocument();
+    expect(screen.getByText('No tables or streams found')).toBeInTheDocument();
   });
-  it('show no streams found text if there are no streams', () => {
+  it('renders with tables', () => {
     render(
       component({
-        type: KsqlDbItemType.Streams,
+        rows: {
+          tables: fetchKsqlDbTablesPayload.tables,
+          streams: [],
+        },
       }),
       {
         initialEntries: [clusterKsqlDbTablesPath()],
       }
     );
-    expect(screen.getByText('No streams found')).toBeInTheDocument();
+    expect(screen.getByRole('table').querySelectorAll('td')).toHaveLength(10);
+  });
+  it('renders with streams', () => {
+    render(
+      component({
+        type: KsqlDbItemType.Streams,
+        rows: {
+          tables: [],
+          streams: fetchKsqlDbTablesPayload.streams,
+        },
+      }),
+      {
+        initialEntries: [clusterKsqlDbTablesPath()],
+      }
+    );
+    expect(screen.getByRole('table').querySelectorAll('td')).toHaveLength(10);
   });
 });

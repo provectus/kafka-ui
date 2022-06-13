@@ -1,13 +1,11 @@
 import React from 'react';
-import { Table } from 'components/common/table/Table/Table.styled';
-import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
-import ListItem from 'components/KsqlDb/List/ListItem';
-import {
-  KsqlDescriptionAccessor,
-  HeadersType,
-} from 'components/KsqlDb/List/List';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { KsqlStreamDescription, KsqlTableDescription } from 'generated-sources';
+import { useTableState } from 'lib/hooks/useTableState';
+import { SmartTable } from 'components/common/SmartTable/SmartTable';
+import { TableColumn } from 'components/common/SmartTable/TableColumn';
+import { KsqlDescription } from 'redux/interfaces/ksqlDb';
+import { ksqlRowData } from 'components/KsqlDb/List/KsqlDbItem/utils/ksqlRowData';
 
 export enum KsqlDbItemType {
   Tables = 'tables',
@@ -20,45 +18,56 @@ export interface RowsType {
 }
 export interface KsqlDbItemProps {
   type: KsqlDbItemType;
-  headers: HeadersType[];
-  accessors: KsqlDescriptionAccessor[];
   fetching: boolean;
   rows: RowsType;
 }
 
-const KsqlDbItem: React.FC<KsqlDbItemProps> = ({
-  headers,
-  accessors,
-  type,
-  fetching,
-  rows,
-}) => {
+export type KsqlDescriptionAccessor = keyof KsqlDescription;
+
+export interface HeadersType {
+  Header: string;
+  accessor: KsqlDescriptionAccessor;
+}
+
+export interface KsqlTableState {
+  name: string;
+  topic: string;
+  keyFormat: string;
+  valueFormat: string;
+  isWindowed: string;
+}
+
+export const headers: HeadersType[] = [
+  { Header: 'Name', accessor: 'name' },
+  { Header: 'Topic', accessor: 'topic' },
+  { Header: 'Key Format', accessor: 'keyFormat' },
+  { Header: 'Value Format', accessor: 'valueFormat' },
+  { Header: 'Is Windowed', accessor: 'isWindowed' },
+];
+
+const KsqlDbItem: React.FC<KsqlDbItemProps> = ({ type, fetching, rows }) => {
+  const preparedRows = rows[type]?.map(ksqlRowData) || [];
+  const tableState = useTableState<KsqlTableState, string>(preparedRows, {
+    idSelector: ({ name }) => name,
+    totalPages: 0,
+  });
+
+  if (fetching) {
+    return <PageLoader />;
+  }
   return (
-    <div>
-      {fetching ? (
-        <PageLoader />
-      ) : (
-        <Table isFullwidth>
-          <thead>
-            <tr>
-              {headers.map(({ Header, accessor }) => (
-                <TableHeaderCell title={Header} key={accessor} />
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows[type].map((row) => (
-              <ListItem key={row.name} accessors={accessors} data={row} />
-            ))}
-            {rows[type].length === 0 && (
-              <tr>
-                <td colSpan={headers.length + 1}>No {type} found</td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
-      )}
-    </div>
+    <SmartTable
+      tableState={tableState}
+      isFullwidth
+      placeholder="No tables or streams found"
+      hoverable
+    >
+      <TableColumn title="Name" field="name" />
+      <TableColumn title="Topic" field="topic" />
+      <TableColumn title="Key Format" field="keyFormat" />
+      <TableColumn title="Value Format" field="valueFormat" />
+      <TableColumn title="Is Windowed" field="isWindowed" />
+    </SmartTable>
   );
 };
 
