@@ -54,6 +54,7 @@ export const Colors = {
     '20': '#bbdefb',
     '30': '#90caf9',
     '40': '#64b5f6',
+    '50': '#5B67E3',
   },
 };
 
@@ -511,7 +512,7 @@ const theme = {
   discordIcon: {
     normal: Colors.neutral[20],
     hover: Colors.brand[20],
-    active: Colors.brand[60],
+    active: Colors.blue[50],
   },
 };
 
