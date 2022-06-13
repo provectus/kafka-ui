@@ -57,7 +57,7 @@ public class BaseTest {
     public static void start() {
         DockerImageName image = DockerImageName.parse(IMAGE_NAME).withTag(IMAGE_TAG);
         webDriverContainer = new BrowserWebDriverContainer<>(image)
-                .withCapabilities(new ChromeOptions().addArguments("--disable-dev-shm-usage", "--disable-gpu"))
+                .withCapabilities(new ChromeOptions().addArguments("--disable-dev-shm-usage"))
                 .waitingFor(Wait.forHttp("/"))
                 .waitingFor(Wait.forLogMessage(".*Started Selenium Standalone.*", 1));
         Testcontainers.exposeHostPorts(8080);
@@ -94,7 +94,6 @@ public class BaseTest {
 
     @AfterEach
     public void afterMethod() {
-        webDriverContainer.getWebDriver().manage().deleteAllCookies();
         Allure.addAttachment("Screenshot",
                 new ByteArrayInputStream(((TakesScreenshot) webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
     }
