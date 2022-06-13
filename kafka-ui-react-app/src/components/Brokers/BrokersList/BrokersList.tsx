@@ -9,11 +9,8 @@ import * as Metrics from 'components/common/Metrics';
 import useAppParams from 'lib/hooks/useAppParams';
 import useBrokers from 'lib/hooks/useBrokers';
 import useClusterStats from 'lib/hooks/useClusterStats';
-import styled from 'styled-components';
 
-const ClickableRow = styled.tr`
-  cursor: pointer;
-`;
+import { ClickableRow } from './BrokersList.style';
 
 const BrokersList: React.FC = () => {
   const navigate = useNavigate();
