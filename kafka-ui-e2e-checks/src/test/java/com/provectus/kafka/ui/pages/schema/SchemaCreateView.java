@@ -14,7 +14,7 @@ public class SchemaCreateView {
     private SelenideElement submitSchemaButton = $(By.xpath("//button[@type='submit']"));
 
     public SchemaCreateView selectSchemaTypeFromDropdown(SchemaType schemaType) {
-        $("ul[role='listbox'] > svg").click();
+        $("ul[role='listbox']").click();
         $x("//li[text()='" + schemaType.getValue() + "']").click();
         return this;
     }
