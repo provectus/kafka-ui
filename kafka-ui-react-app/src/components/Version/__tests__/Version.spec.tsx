@@ -18,4 +18,12 @@ describe('Version', () => {
       screen.getByText(dayjs(date).format('MM.DD.YYYY HH:mm:ss'))
     ).toBeInTheDocument();
   });
+
+  it('do shows any build information when tag, commit, date are undefined', () => {
+    setupComponent({});
+    expect(screen.queryByText(commit)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(dayjs(date).format('MM.DD.YYYY HH:mm:ss'))
+    ).not.toBeInTheDocument();
+  });
 });
