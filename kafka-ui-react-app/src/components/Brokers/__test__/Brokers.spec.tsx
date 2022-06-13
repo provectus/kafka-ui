@@ -25,7 +25,7 @@ describe('Brokers Component', () => {
     expect(screen.getByText(brokersList)).toBeInTheDocument();
   });
 
-  it('renders Broker', () => {
+  it('renders BrokerMetrics', () => {
     renderComponent(clusterBrokerPath(clusterName, brokerId));
     expect(screen.getByText(broker)).toBeInTheDocument();
   });
