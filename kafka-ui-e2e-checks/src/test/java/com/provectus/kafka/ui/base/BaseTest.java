@@ -21,6 +21,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -64,8 +65,9 @@ public class BaseTest {
         webDriverContainer.start();
         webDriverContainer.isRunning();
         webDriverContainer.isHostAccessible();
-        WebDriverRunner.setWebDriver(webDriverContainer.getWebDriver());
-        webDriverContainer.getWebDriver().manage().window().setSize(new Dimension(1440, 1024));
+        RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
+        WebDriverRunner.setWebDriver(remoteWebDriver);
+        remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
     }
 
     @AfterAll
