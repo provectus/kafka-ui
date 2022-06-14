@@ -1,18 +1,16 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
-  Configuration,
   Connect,
   Connector,
   ConnectorAction,
   ConnectorState,
   ConnectorTaskStatus,
   FullConnectorInfo,
-  KafkaConnectApi,
   NewConnector,
   Task,
   TaskId,
 } from 'generated-sources';
-import { BASE_PARAMS } from 'lib/constants';
+import { kafkaConnectApiClient } from 'lib/api';
 import { getResponse } from 'lib/errorHandling';
 import {
   ClusterName,
@@ -23,9 +21,6 @@ import {
   ConnectState,
 } from 'redux/interfaces';
 import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const kafkaConnectApiClient = new KafkaConnectApi(apiClientConf);
 
 export const fetchConnects = createAsyncThunk<
   { connects: Connect[] },

@@ -21,7 +21,6 @@ import {
   fetchSchemaVersions,
   getAreSchemaLatestFulfilled,
   getAreSchemaVersionsFulfilled,
-  schemasApiClient,
   SCHEMAS_VERSIONS_FETCH_ACTION,
   SCHEMA_LATEST_FETCH_ACTION,
   selectAllSchemaVersions,
@@ -32,6 +31,7 @@ import { getResponse } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
 import useAppParams from 'lib/hooks/useAppParams';
+import { schemasApiClient } from 'lib/api';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';

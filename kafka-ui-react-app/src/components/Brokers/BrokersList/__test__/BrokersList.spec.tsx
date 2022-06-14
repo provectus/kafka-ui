@@ -3,9 +3,12 @@ import { render, WithRoute } from 'lib/testHelpers';
 import { screen, waitFor } from '@testing-library/dom';
 import { clusterBrokersPath } from 'lib/paths';
 import fetchMock from 'fetch-mock';
-import { clusterStatsPayload } from 'redux/reducers/brokers/__test__/fixtures';
 import { act } from '@testing-library/react';
-import BrokersList from 'components/Brokers/List/BrokersList';
+import BrokersList from 'components/Brokers/BrokersList/BrokersList';
+import {
+  brokersPayload,
+  clusterStatsPayload,
+} from 'components/Brokers/__test__/fixtures';
 
 describe('BrokersList Component', () => {
   afterEach(() => fetchMock.reset());
@@ -30,17 +33,14 @@ describe('BrokersList Component', () => {
     const fetchStatsUrl = `/api/clusters/${clusterName}/stats`;
 
     beforeEach(() => {
-      fetchBrokersMock = fetchMock.getOnce(
+      fetchBrokersMock = fetchMock.get(
         `/api/clusters/${clusterName}/brokers`,
-        clusterStatsPayload
+        brokersPayload
       );
     });
 
     it('renders', async () => {
-      const fetchStatsMock = fetchMock.getOnce(
-        fetchStatsUrl,
-        clusterStatsPayload
-      );
+      const fetchStatsMock = fetchMock.get(fetchStatsUrl, clusterStatsPayload);
       await act(() => {
         renderComponent();
       });
