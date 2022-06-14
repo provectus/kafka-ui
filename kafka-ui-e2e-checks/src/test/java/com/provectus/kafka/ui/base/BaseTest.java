@@ -13,10 +13,7 @@ import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -54,6 +51,13 @@ public class BaseTest {
         screenshooter.compareScreenshots(name, shouldUpdateScreenshots);
     }
 
+    @BeforeEach
+    public void setWebDriver(){
+        RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
+        WebDriverRunner.setWebDriver(remoteWebDriver);
+        remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
+    }
+
     @BeforeAll
     public static void start() {
         DockerImageName image = DockerImageName.parse(IMAGE_NAME).withTag(IMAGE_TAG);
@@ -65,9 +69,6 @@ public class BaseTest {
         webDriverContainer.start();
         webDriverContainer.isRunning();
         webDriverContainer.isHostAccessible();
-        RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
-        WebDriverRunner.setWebDriver(remoteWebDriver);
-        remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
     }
 
     @AfterAll
