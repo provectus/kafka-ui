@@ -1,0 +1,4 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"broken","Wed Jun 15 14:13:58 GMT 2022","Wed Jun 15 14:13:58 GMT 2022","0","","com.provectus.kafka.ui.tests.TopicTests","","com.provectus.kafka.ui.tests.TopicTests",""," topic tests",""
+"broken","Wed Jun 15 14:13:23 GMT 2022","Wed Jun 15 14:13:23 GMT 2022","1","","com.provectus.kafka.ui.SmokeTests","","com.provectus.kafka.ui.SmokeTests",""," smoke tests",""
+"broken","Wed Jun 15 14:14:28 GMT 2022","Wed Jun 15 14:14:28 GMT 2022","0","","com.provectus.kafka.ui.tests.ConnectorsTests","","com.provectus.kafka.ui.tests.ConnectorsTests",""," connectors tests",""
