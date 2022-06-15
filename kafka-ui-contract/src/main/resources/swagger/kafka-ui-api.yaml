@@ -363,6 +363,76 @@ paths:
         404:
           description: Not found
 
+  /api/clusters/{clusterName}/topics/{topicName}/analysis:
+    get:
+      tags:
+        - Topics
+      summary: getTopicAnalysis
+      operationId: getTopicAnalysis
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicAnalysis'
+        404:
+          description: Not found
+    post:
+      tags:
+        - Topics
+      summary: analyzeTopic
+      operationId: analyzeTopic
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Analysis started
+        404:
+          description: Not found
+    delete:
+      tags:
+        - Topics
+      summary: cancelTopicAnalysis
+      operationId: cancelTopicAnalysis
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Analysis cancelled
+        404:
+          description: Not found
+
+
   /api/clusters/{clusterName}/topics/{topicName}:
     get:
       tags:
@@ -1910,6 +1980,130 @@ components:
             $ref: "#/components/schemas/Partition"
       required:
         - name
+
+    TopicAnalysis:
+      type: object
+      description: "Represents analysis state. Note: 'progress' and 'result' fields are set exclusively depending on analysis state."
+      properties:
+        progress:
+          $ref: '#/components/schemas/TopicAnalysisProgress'
+        result:
+          $ref: '#/components/schemas/TopicAnalysisResult'
+
+    TopicAnalysisProgress:
+      type: object
+      properties:
+        startedAt:
+          type: integer
+          format: int64
+        completenessPercent:
+          type: number
+        msgsScanned:
+          type: integer
+          format: int64
+        bytesScanned:
+          type: integer
+          format: int64
+
+    TopicAnalysisResult:
+      type: object
+      properties:
+        startedAt:
+          type: integer
+          format: int64
+        finishedAt:
+          type: integer
+          format: int64
+        error:
+          type: string
+        totalStats:
+          $ref: '#/components/schemas/TopicAnalysisStats'
+        partitionStats:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopicAnalysisStats"
+
+    TopicAnalysisStats:
+      type: object
+      properties:
+        partition:
+          type: integer
+          format: int32
+          description: "null if this is total stats"
+        totalMsgs:
+          type: integer
+          format: int64
+        minOffset:
+          type: integer
+          format: int64
+        maxOffset:
+          type: integer
+          format: int64
+        minTimestamp:
+          type: integer
+          format: int64
+        maxTimestamp:
+          type: integer
+          format: int64
+        nullKeys:
+          type: integer
+          format: int64
+        nullValues:
+          type: integer
+          format: int64
+        approxUniqKeys:
+          type: integer
+          format: int64
+        approxUniqValues:
+          type: integer
+          format: int64
+        keySize:
+          $ref: "#/components/schemas/TopicAnalysisSizeStats"
+        valueSize:
+          $ref: "#/components/schemas/TopicAnalysisSizeStats"
+        hourlyMsgCounts:
+          type: array
+          items:
+            type: object
+            properties:
+              hourStart:
+                type: integer
+                format: int64
+              count:
+                type: integer
+                format: int64
+
+    TopicAnalysisSizeStats:
+      type: object
+      description: "All sizes in bytes"
+      properties:
+        sum:
+          type: integer
+          format: int64
+        min:
+          type: integer
+          format: int64
+        max:
+          type: integer
+          format: int64
+        avg:
+          type: integer
+          format: int64
+        prctl50:
+          type: integer
+          format: int64
+        prctl75:
+          type: integer
+          format: int64
+        prctl95:
+          type: integer
+          format: int64
+        prctl99:
+          type: integer
+          format: int64
+        prctl999:
+          type: integer
+          format: int64
 
     Replica:
       type: object

@@ -72,7 +72,6 @@ public class ConnectorsTests extends BaseTest {
                 .connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
     }
 
-    //disable test due 500 error during create connector via api
     @SneakyThrows
     @DisplayName("should update a connector")
     @Test
@@ -83,7 +82,8 @@ public class ConnectorsTests extends BaseTest {
                 pages.connectorsView.connectorIsVisibleOnOverview();
         pages.connectorsView.openEditConfig()
                         .updConnectorConfig(FileUtils.getResourceAsString("config_for_update_connector.json"));
-        pages.openConnectorsList(LOCAL_CLUSTER).connectorIsVisibleInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
+        pages.openConnectorsList(LOCAL_CLUSTER)
+                .connectorIsVisibleInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
     }
 
     @SneakyThrows

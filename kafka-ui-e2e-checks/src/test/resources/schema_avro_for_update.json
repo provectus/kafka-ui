@@ -1,0 +1,24 @@
+{
+  "type": "record",
+  "name": "Message",
+  "namespace": "com.provectus.kafka",
+  "fields": [
+    {
+      "name": "text",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "value",
+      "type": [
+        "null",
+        "string",
+        "long"
+      ],
+      "default": null
+    }
+  ]
+}
