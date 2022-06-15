@@ -17,7 +17,7 @@ const fetchStatsUrl = `/api/clusters/${clusterName}/stats`;
 const fetchBrokersUrl = `/api/clusters/${clusterName}/brokers`;
 const fetchLogDirsUrl = `/api/clusters/${clusterName}/brokers/logdirs`;
 
-describe('BrokerMetrics Component', () => {
+describe('BrokerLogdir Component', () => {
   afterEach(() => {
     fetchMock.reset();
   });

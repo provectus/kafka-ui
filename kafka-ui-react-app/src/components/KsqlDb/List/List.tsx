@@ -25,6 +25,7 @@ const headers: HeadersType[] = [
   { Header: 'Topic', accessor: 'topic' },
   { Header: 'Key Format', accessor: 'keyFormat' },
   { Header: 'Value Format', accessor: 'valueFormat' },
+  { Header: 'Is Windowed', accessor: 'isWindowed' },
 ];
 
 const accessors = headers.map((header) => header.accessor);

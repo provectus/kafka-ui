@@ -5,7 +5,6 @@ import { SmartTable } from 'components/common/SmartTable/SmartTable';
 import { TableColumn } from 'components/common/SmartTable/TableColumn';
 import { useTableState } from 'lib/hooks/useTableState';
 import { ClusterBrokerParam } from 'lib/paths';
-import useClusterStats from 'lib/hooks/useClusterStats';
 import useBrokersLogDirs from 'lib/hooks/useBrokersLogDirs';
 
 export interface BrokerLogdirState {
@@ -18,7 +17,6 @@ export interface BrokerLogdirState {
 const BrokerLogdir: React.FC = () => {
   const { clusterName, brokerId } = useAppParams<ClusterBrokerParam>();
 
-  const { data: clusterStats } = useClusterStats(clusterName);
   const { data: logDirs } = useBrokersLogDirs(clusterName, Number(brokerId));
 
   const preparedRows = logDirs?.map(translateLogdir) || [];
@@ -26,8 +24,6 @@ const BrokerLogdir: React.FC = () => {
     idSelector: ({ name }) => name,
     totalPages: 0,
   });
-
-  if (!clusterStats) return null;
 
   return (
     <SmartTable

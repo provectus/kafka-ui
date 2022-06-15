@@ -73,7 +73,7 @@ const TableRenderer: React.FC<Props> = ({ table }) => {
             rows.map((row) => (
               <tr key={row.id}>
                 {row.cells.map((cell) => (
-                  <td key={cell.id}>{cell.value}</td>
+                  <td key={cell.id}>{cell.value.toString()}</td>
                 ))}
               </tr>
             ))

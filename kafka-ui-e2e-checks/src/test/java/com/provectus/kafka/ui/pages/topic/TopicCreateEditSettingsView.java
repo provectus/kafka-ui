@@ -14,7 +14,7 @@ public class TopicCreateEditSettingsView {
     private final SelenideElement timeToRetain = $(By.cssSelector("input#timeToRetain"));
     private final SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
 
-    public TopicCreateEditSettingsView setTopicName(String topicName){
+    public TopicCreateEditSettingsView setTopicName(String topicName) {
         $("input#topicFormName").setValue(topicName);
         return this;
     }
@@ -68,10 +68,9 @@ public class TopicCreateEditSettingsView {
 
     public TopicCreateEditSettingsView selectCleanupPolicy(String cleanupPolicyOptionValue) {
         $("ul#topicFormCleanupPolicy").click();
-        $x("//li[text()='" + cleanupPolicyOptionValue +"']").click();
+        $x("//li[text()='" + cleanupPolicyOptionValue + "']").click();
         return this;
     }
-
 
     public TopicCreateEditSettingsView selectRetentionBytes(String visibleValue) {
         return selectFromDropDownByVisibleText("retentionBytes", visibleValue);
@@ -158,7 +157,7 @@ public class TopicCreateEditSettingsView {
         private SelenideElement selectElement;
 
         public KafkaUISelectElement(String selectElementName) {
-            this.selectElement = $("ul[role=listbox][name="+selectElementName+"]");
+            this.selectElement = $("ul[role=listbox][name=" + selectElementName + "]");
         }
 
         public KafkaUISelectElement(SelenideElement selectElement) {
