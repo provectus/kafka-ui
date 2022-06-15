@@ -1,6 +1,6 @@
 import { GIT_REPO_LINK } from 'lib/constants';
 import * as paths from 'lib/paths';
-import { clusterBrokerMetricsPath, RouteParams } from 'lib/paths';
+import { RouteParams } from 'lib/paths';
 
 const clusterName = 'test-cluster-name';
 const groupId = 'test-group-id';
