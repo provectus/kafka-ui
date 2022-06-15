@@ -100,6 +100,7 @@ const App: React.FC = () => {
                 path={getNonExactPath(clusterPath())}
                 element={<ClusterPage />}
               />
+              <Route path="/logout" element={<>Logout</>} />
             </Routes>
           ) : (
             <PageLoader />
