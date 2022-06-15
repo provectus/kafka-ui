@@ -13,9 +13,8 @@ import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.*;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -23,11 +22,11 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.utility.DockerImageName;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Arrays;
 
 @Slf4j
@@ -40,12 +39,9 @@ public class BaseTest {
 
     private Screenshooter screenshooter = new Screenshooter();
 
-    public static BrowserWebDriverContainer<?> webDriverContainer =
-            new BrowserWebDriverContainer<>()
-                    .withCapabilities(new ChromeOptions()
-                            .addArguments("--no-sandbox")
-                            .addArguments("--disable-dev-shm-usage"))
-                    .waitingFor(Wait.defaultWaitStrategy().withStartupTimeout(Duration.ofSeconds(90)));
+    private static final String IMAGE_NAME = TestConfiguration.IMAGE_NAME;
+    private static final String IMAGE_TAG = TestConfiguration.IMAGE_TAG;
+    protected static BrowserWebDriverContainer<?> webDriverContainer = null;
 
     public void compareScreenshots(String name) {
         screenshooter.compareScreenshots(name);
@@ -55,13 +51,32 @@ public class BaseTest {
         screenshooter.compareScreenshots(name, shouldUpdateScreenshots);
     }
 
+    @BeforeEach
+    public void setWebDriver(){
+        RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
+        WebDriverRunner.setWebDriver(remoteWebDriver);
+        remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
+    }
+
     @BeforeAll
     public static void start() {
+        DockerImageName image = DockerImageName.parse(IMAGE_NAME).withTag(IMAGE_TAG);
+        webDriverContainer = new BrowserWebDriverContainer<>(image)
+                .withCapabilities(new ChromeOptions().addArguments("--disable-dev-shm-usage"))
+                .waitingFor(Wait.forHttp("/"))
+                .waitingFor(Wait.forLogMessage(".*Started Selenium Standalone.*", 1));
         Testcontainers.exposeHostPorts(8080);
         webDriverContainer.start();
         webDriverContainer.isRunning();
-        RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
-        WebDriverRunner.setWebDriver(remoteWebDriver);
+        webDriverContainer.isHostAccessible();
+    }
+
+    @AfterAll
+    public static void tearDown(){
+        if(webDriverContainer.isRunning()) {
+            webDriverContainer.close();
+            webDriverContainer.stop();
+        }
     }
 
     static {
@@ -80,17 +95,14 @@ public class BaseTest {
         setup();
     }
 
-
     @AfterEach
     public void afterMethod() {
-        webDriverContainer.getWebDriver().manage().deleteAllCookies();
         Allure.addAttachment("Screenshot",
                 new ByteArrayInputStream(((TakesScreenshot) webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
     }
 
     @SneakyThrows
     private static void setup() {
-
         Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
         Configuration.screenshots = TestConfiguration.SCREENSHOTS;
         Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;

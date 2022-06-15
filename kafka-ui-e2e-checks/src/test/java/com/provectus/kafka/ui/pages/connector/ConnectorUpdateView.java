@@ -5,6 +5,7 @@ import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selenide.*;
@@ -33,8 +34,9 @@ public class ConnectorUpdateView {
     }
 
     @Step("Set connector config JSON")
-    public ConnectorsView updConnectorConfig(String configJson) throws InterruptedException {
-        contentTextArea.doubleClick();
+    public ConnectorsView updConnectorConfig(String configJson) {
+        $("#config").click();
+        contentTextArea.sendKeys(Keys.LEFT_CONTROL+"a");
         contentTextArea.setValue("");
         contentTextArea.setValue(String.valueOf(configJson.toCharArray()));
         $("#config").click();
