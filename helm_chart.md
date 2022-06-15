@@ -1,0 +1,57 @@
+# Quick Start with Helm Chart
+
+### General
+1. Clone/Copy Chart to your working directory
+2. Execute command ```helm install helm-release-name charts/kafka-ui```
+
+### Passing environment variables as ConfigMap
+Create config map
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-ui-helm-values
+data:
+  KAFKA_CLUSTERS_0_NAME: "kafka-cluster-name"
+  KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka-cluster-broker-endpoints:9092"
+  KAFKA_CLUSTERS_0_ZOOKEEPER: "zookeeper:2181"
+  AUTH_TYPE: "DISABLED"
+  MANAGEMENT_HEALTH_LDAP_ENABLED: "FALSE" 
+```
+Install by executing command
+```helm install helm-release-name charts/kafka-ui --set existingConfigMap="kafka-ui-helm-values"```
+
+### Passing configuration as ConfigMap 
+Create config map
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-ui-config
+data:
+  config.yml:
+    KAFKA_CLUSTERS_0_NAME: "kafka-cluster-name"
+    KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka-cluster-broker-endpoints:9092"
+    KAFKA_CLUSTERS_0_ZOOKEEPER: "zookeeper:2181"
+    AUTH_TYPE: "DISABLED"
+    MANAGEMENT_HEALTH_LDAP_ENABLED: "FALSE" 
+```
+This ConfigMap will be mounted to the Pod
+
+Install by executing command
+```helm install helm-release-name charts/kafka-ui --set yamlApplicationConfigConfigMap.name="kafka-ui-config",yamlApplicationConfigConfigMap.keyName="config.yml"```
+
+### Passing Kafka-UI configuration as Dict
+Create values.yml file
+```
+yamlApplicationConfig:
+  kafka:
+    clusters:
+      - name: yaml
+        bootstrapServers: dev-cp-kafka:9092
+        zookeeper: dev-cp-zookeeper:2181
+  auth:
+    type: disabled
+```
+Install by executing command
+```helm install helm-release-name charts/kafka-ui -f values.yml```
