@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "esnext",
     "lib": [
       "dom",
       "dom.iterable",
@@ -19,7 +19,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "baseUrl": "src",
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "types": ["vite/client"]
   },
   "include": [
     "src",

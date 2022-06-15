@@ -29,17 +29,20 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       'process.env.NODE_ENV': `"${mode}"`,
+      'process.env.VITE_TAG': `"${process.env.VITE_TAG}"`,
+      'process.env.GIT_COMMIT': `"${process.env.VITE_COMMIT}"`,
     },
   };
+  const proxy = process.env.VITE_DEV_PROXY;
 
-  if (mode === 'development' && process.env.VITE_DEV_PROXY) {
+  if (mode === 'development' && proxy) {
     return {
       ...defaultConfig,
       server: {
         open: true,
         proxy: {
           '/api': {
-            target: process.env.VITE_DEV_PROXY,
+            target: proxy,
             changeOrigin: true,
             secure: false,
           },

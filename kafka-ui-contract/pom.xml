@@ -138,7 +138,7 @@
                         <configuration>
                             <workingDirectory>../kafka-ui-react-app</workingDirectory>
                             <environmentVariables>
-                                <REACT_APP_TAG>${project.version}</REACT_APP_TAG>
+                                <VITE_TAG>${project.version}</VITE_TAG>
                             </environmentVariables>
                         </configuration>
                         <executions>
