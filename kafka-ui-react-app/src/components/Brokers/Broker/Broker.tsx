@@ -11,7 +11,7 @@ import {
 import useClusterStats from 'lib/hooks/useClusterStats';
 import useBrokers from 'lib/hooks/useBrokers';
 import { NavLink, Route, Routes } from 'react-router-dom';
-import BrokerLogdir from 'components/Brokers/Broker/BrokerLogdirs/BrokerLogdir';
+import BrokerLogdir from 'components/Brokers/Broker/BrokerLogdir/BrokerLogdir';
 import BrokerMetrics from 'components/Brokers/Broker/BrokerMetrics/BrokerMetrics';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 

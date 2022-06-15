@@ -51,7 +51,10 @@ export const clusterBrokerMetricsPath = (
     brokerId
   )}/${clusterBrokerMetricsRelativePath}`;
 
-export type ClusterBrokerParam = { clusterName: ClusterName; brokerId: string };
+export type ClusterBrokerParam = {
+  clusterName: ClusterName;
+  brokerId: string;
+};
 
 // Consumer Groups
 export const clusterConsumerGroupsRelativePath = 'consumer-groups';
