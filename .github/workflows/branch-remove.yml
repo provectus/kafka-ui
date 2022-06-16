@@ -23,7 +23,7 @@ jobs:
         run: |
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
           echo "Branch:${{ steps.extract_branch.outputs.tag }}"
-          ./delete-env.sh ${{ steps.extract_branch.outputs.tag }}
+          ./delete-env.sh ${{ steps.extract_branch.outputs.tag }} || true
           git config --global user.email "kafka-ui-infra@provectus.com"
           git config --global user.name "kafka-ui-infra"
           git add ../kafka-ui-from-branch/
