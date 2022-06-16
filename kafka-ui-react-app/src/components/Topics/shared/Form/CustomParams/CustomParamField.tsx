@@ -39,6 +39,14 @@ const CustomParamField: React.FC<Props> = ({
   const nameValue = watch(`customParams.${index}.name`);
   const prevName = useRef(nameValue);
 
+  const options = Object.keys(TOPIC_CUSTOM_PARAMS)
+    .sort()
+    .map((option) => ({
+      value: option,
+      label: option,
+      disabled: existingFields.includes(option),
+    }));
+
   React.useEffect(() => {
     if (nameValue !== prevName.current) {
       let newExistingFields = [...existingFields];
@@ -51,10 +59,10 @@ const CustomParamField: React.FC<Props> = ({
       newExistingFields.push(nameValue);
       setExistingFields(newExistingFields);
       setValue(`customParams.${index}.value`, TOPIC_CUSTOM_PARAMS[nameValue], {
-        shouldValidate: true,
+        shouldValidate: !!TOPIC_CUSTOM_PARAMS[nameValue],
       });
     }
-  }, [nameValue]);
+  }, [existingFields, index, nameValue, setExistingFields, setValue]);
 
   return (
     <C.Column>
@@ -64,20 +72,15 @@ const CustomParamField: React.FC<Props> = ({
           control={control}
           rules={{ required: 'Custom Parameter is required.' }}
           name={`customParams.${index}.name`}
-          render={({ field: { name, onChange } }) => (
+          render={({ field: { value, name, onChange } }) => (
             <Select
               name={name}
               placeholder="Select"
               disabled={isDisabled}
               minWidth="270px"
               onChange={onChange}
-              options={Object.keys(TOPIC_CUSTOM_PARAMS)
-                .sort()
-                .map((opt) => ({
-                  value: opt,
-                  label: opt,
-                  disabled: existingFields.includes(opt),
-                }))}
+              value={value}
+              options={options}
             />
           )}
         />
@@ -89,7 +92,7 @@ const CustomParamField: React.FC<Props> = ({
         </FormError>
       </div>
       <div>
-        <InputLabel>Value</InputLabel>
+        <InputLabel>Value *</InputLabel>
         <Input
           name={`customParams.${index}.value` as const}
           hookFormOptions={{

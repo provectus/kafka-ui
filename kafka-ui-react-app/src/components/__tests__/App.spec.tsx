@@ -1,16 +1,19 @@
 import React from 'react';
-import { screen, within, waitFor } from '@testing-library/react';
+import { screen, within, act } from '@testing-library/react';
 import App from 'components/App';
 import { render } from 'lib/testHelpers';
 import { clustersPayload } from 'redux/reducers/clusters/__test__/fixtures';
 import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock';
 
+const burgerButtonOptions = { name: 'burger' };
+const logoutButtonOptions = { name: 'Log out' };
+
 describe('App', () => {
   describe('initial state', () => {
     beforeEach(() => {
       render(<App />, {
-        pathname: '/',
+        initialEntries: ['/'],
       });
     });
     it('shows PageLoader until clusters are fulfilled', () => {
@@ -24,11 +27,16 @@ describe('App', () => {
         within(header).getByText('UI for Apache Kafka')
       ).toBeInTheDocument();
       expect(within(header).getAllByRole('separator').length).toEqual(3);
-      expect(within(header).getByRole('button')).toBeInTheDocument();
+      expect(
+        within(header).getByRole('button', burgerButtonOptions)
+      ).toBeInTheDocument();
+      expect(
+        within(header).getByRole('button', logoutButtonOptions)
+      ).toBeInTheDocument();
     });
     it('handle burger click correctly', () => {
       const header = screen.getByLabelText('Page Header');
-      const burger = within(header).getByRole('button');
+      const burger = within(header).getByRole('button', burgerButtonOptions);
       const sidebar = screen.getByLabelText('Sidebar');
       const overlay = screen.getByLabelText('Overlay');
       expect(sidebar).toBeInTheDocument();
@@ -43,10 +51,14 @@ describe('App', () => {
   describe('with clusters list fetched', () => {
     it('shows Cluster list', async () => {
       const mock = fetchMock.getOnce('/api/clusters', clustersPayload);
-      render(<App />, {
-        pathname: '/',
+      await act(() => {
+        render(<App />, {
+          initialEntries: ['/'],
+        });
       });
-      await waitFor(() => expect(mock.called()).toBeTruthy());
+
+      expect(mock.called()).toBeTruthy();
+
       const menuContainer = screen.getByLabelText('Sidebar Menu');
       expect(menuContainer).toBeInTheDocument();
       expect(within(menuContainer).getByText('Dashboard')).toBeInTheDocument();

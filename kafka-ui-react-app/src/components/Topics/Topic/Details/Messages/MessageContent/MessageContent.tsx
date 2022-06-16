@@ -1,8 +1,8 @@
 import { TopicMessageTimestampTypeEnum, SchemaType } from 'generated-sources';
 import React from 'react';
 import EditorViewer from 'components/common/EditorViewer/EditorViewer';
-import { SecondaryTabs } from 'components/common/Tabs/SecondaryTabs.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import dayjs from 'dayjs';
 
 import * as S from './MessageContent.styled';
 
@@ -61,29 +61,29 @@ const MessageContent: React.FC<MessageContentProps> = ({
       <td colSpan={10}>
         <S.Section>
           <S.ContentBox>
-            <SecondaryTabs>
-              <button
+            <S.Tabs>
+              <S.Tab
                 type="button"
-                className={activeTab === 'key' ? 'is-active' : ''}
+                $active={activeTab === 'key'}
                 onClick={handleKeyTabClick}
               >
                 Key
-              </button>
-              <button
-                className={activeTab === 'content' ? 'is-active' : ''}
+              </S.Tab>
+              <S.Tab
+                $active={activeTab === 'content'}
                 type="button"
                 onClick={handleContentTabClick}
               >
                 Content
-              </button>
-              <button
-                className={activeTab === 'headers' ? 'is-active' : ''}
+              </S.Tab>
+              <S.Tab
+                $active={activeTab === 'headers'}
                 type="button"
                 onClick={handleHeadersTabClick}
               >
                 Headers
-              </button>
-            </SecondaryTabs>
+              </S.Tab>
+            </S.Tabs>
             <EditorViewer
               data={activeTabContent() || ''}
               maxLines={28}
@@ -94,7 +94,9 @@ const MessageContent: React.FC<MessageContentProps> = ({
             <S.Metadata>
               <S.MetadataLabel>Timestamp</S.MetadataLabel>
               <span>
-                <S.MetadataValue>{timestamp?.toLocaleString()}</S.MetadataValue>
+                <S.MetadataValue>
+                  {dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}
+                </S.MetadataValue>
                 <S.MetadataMeta>Timestamp type: {timestampType}</S.MetadataMeta>
               </span>
             </S.Metadata>

@@ -1,36 +1,24 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
 import SchemaVersion from 'components/Schemas/Details/SchemaVersion/SchemaVersion';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { render } from 'lib/testHelpers';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { versions } from './fixtures';
 
+const component = (
+  <table>
+    <tbody>
+      <SchemaVersion version={versions[0]} />
+    </tbody>
+  </table>
+);
+
 describe('SchemaVersion', () => {
   it('renders versions', () => {
-    const wrapper = mount(
-      <ThemeProvider theme={theme}>
-        <table>
-          <tbody>
-            <SchemaVersion version={versions[0]} />
-          </tbody>
-        </table>
-      </ThemeProvider>
-    );
-
-    expect(wrapper.find('td').length).toEqual(3);
-    expect(wrapper.exists('Editor')).toBeFalsy();
-    wrapper.find('span').simulate('click');
-    expect(wrapper.exists('Editor')).toBeTruthy();
-  });
-
-  it('matches snapshot', () => {
-    expect(
-      shallow(
-        <ThemeProvider theme={theme}>
-          <SchemaVersion version={versions[0]} />
-        </ThemeProvider>
-      )
-    ).toMatchSnapshot();
+    render(component);
+    expect(screen.getAllByRole('cell')).toHaveLength(3);
+    expect(screen.queryByTestId('json-viewer')).not.toBeInTheDocument();
+    userEvent.click(screen.getByRole('button'));
   });
 });

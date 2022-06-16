@@ -1,21 +1,25 @@
+import React from 'react';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import Select from 'components/common/Select/Select';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import { getResponse } from 'lib/errorHandling';
 import { useAppDispatch } from 'lib/hooks/redux';
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import usePagination from 'lib/hooks/usePagination';
+import useSearch from 'lib/hooks/useSearch';
+import useAppParams from 'lib/hooks/useAppParams';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
-import {
-  fetchSchemas,
-  schemasApiClient,
-} from 'redux/reducers/schemas/schemasSlice';
+import { fetchSchemas } from 'redux/reducers/schemas/schemasSlice';
+import { ClusterNameRoute } from 'lib/paths';
+import { schemasApiClient } from 'lib/api';
 
 import * as S from './GlobalSchemaSelector.styled';
 
 const GlobalSchemaSelector: React.FC = () => {
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
   const dispatch = useAppDispatch();
+  const [searchText] = useSearch();
+  const { page, perPage } = usePagination();
+
   const [currentCompatibilityLevel, setCurrentCompatibilityLevel] =
     React.useState<CompatibilityLevelCompatibilityEnum | undefined>();
   const [nextCompatibilityLevel, setNextCompatibilityLevel] = React.useState<
@@ -43,7 +47,7 @@ const GlobalSchemaSelector: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [clusterName]);
 
   const handleChangeCompatibilityLevel = (level: string | number) => {
     setNextCompatibilityLevel(level as CompatibilityLevelCompatibilityEnum);
@@ -61,7 +65,9 @@ const GlobalSchemaSelector: React.FC = () => {
         setCurrentCompatibilityLevel(nextCompatibilityLevel);
         setNextCompatibilityLevel(undefined);
         setIsConfirmationVisible(false);
-        dispatch(fetchSchemas(clusterName));
+        dispatch(
+          fetchSchemas({ clusterName, page, perPage, search: searchText })
+        );
       } catch (e) {
         const err = await getResponse(e as Response);
         dispatch(serverErrorAlertAdded(err));

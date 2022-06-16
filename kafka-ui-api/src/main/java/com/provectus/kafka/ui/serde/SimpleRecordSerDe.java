@@ -1,10 +1,8 @@
 package com.provectus.kafka.ui.serde;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.model.MessageSchemaDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
-import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
-import com.provectus.kafka.ui.util.ConsumerRecordUtil;
+import com.provectus.kafka.ui.serde.schemaregistry.StringMessageFormatter;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import javax.annotation.Nullable;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -13,18 +11,18 @@ import org.apache.kafka.common.utils.Bytes;
 
 public class SimpleRecordSerDe implements RecordSerDe {
 
-  private static final ObjectMapper objectMapper = new ObjectMapper();
+  private static final StringMessageFormatter FORMATTER = new StringMessageFormatter();
 
   @Override
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     var builder = DeserializedKeyValue.builder();
     if (msg.key() != null) {
-      builder.key(new String(msg.key().get()))
-          .keyFormat(MessageFormat.UNKNOWN);
+      builder.key(FORMATTER.format(msg.topic(), msg.key().get()));
+      builder.keyFormat(FORMATTER.getFormat());
     }
     if (msg.value() != null) {
-      builder.value(new String(msg.value().get()))
-          .valueFormat(MessageFormat.UNKNOWN);
+      builder.value(FORMATTER.format(msg.topic(), msg.value().get()));
+      builder.valueFormat(FORMATTER.getFormat());
     }
     return builder.build();
   }
@@ -47,7 +45,7 @@ public class SimpleRecordSerDe implements RecordSerDe {
     final MessageSchemaDTO schema = new MessageSchemaDTO()
         .name("unknown")
         .source(MessageSchemaDTO.SourceEnum.UNKNOWN)
-        .schema(JsonSchema.stringSchema().toJson(objectMapper));
+        .schema(JsonSchema.stringSchema().toJson());
     return new TopicMessageSchemaDTO()
         .key(schema)
         .value(schema);

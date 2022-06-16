@@ -3,19 +3,11 @@ import {
   createSlice,
   createSelector,
 } from '@reduxjs/toolkit';
-import {
-  ClustersApi,
-  Configuration,
-  Cluster,
-  ServerStatus,
-  ClusterFeaturesEnum,
-} from 'generated-sources';
-import { BASE_PARAMS } from 'lib/constants';
+import { Cluster, ServerStatus, ClusterFeaturesEnum } from 'generated-sources';
+import { clustersApiClient } from 'lib/api';
+import { AsyncRequestStatus } from 'lib/constants';
 import { RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const clustersApiClient = new ClustersApi(apiClientConf);
 
 export const fetchClusters = createAsyncThunk(
   'clusters/fetchClusters',
@@ -41,7 +33,7 @@ const getClusterListFetchingStatus = createFetchingSelector(
 );
 export const getAreClustersFulfilled = createSelector(
   getClusterListFetchingStatus,
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 export const getClusterList = createSelector(
   clustersState,

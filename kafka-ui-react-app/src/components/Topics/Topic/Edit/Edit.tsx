@@ -7,37 +7,33 @@ import {
   TopicWithDetailedInfo,
   TopicFormData,
 } from 'redux/interfaces';
-import { TopicConfig } from 'generated-sources';
 import { useForm, FormProvider } from 'react-hook-form';
-import { camelCase } from 'lodash';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
-import { clusterTopicPath } from 'lib/paths';
-import { useHistory } from 'react-router';
+import { RouteParamsClusterTopic } from 'lib/paths';
+import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
-import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
+import { TOPIC_CUSTOM_PARAMS_PREFIX, TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import styled from 'styled-components';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+import { useAppSelector } from 'lib/hooks/redux';
+import { getFullTopic } from 'redux/reducers/topics/selectors';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import DangerZoneContainer from './DangerZone/DangerZoneContainer';
 
-interface Props {
-  clusterName: ClusterName;
-  topicName: TopicName;
-  topic?: TopicWithDetailedInfo;
+export interface Props {
   isFetched: boolean;
   isTopicUpdated: boolean;
-  fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => void;
-  updateTopic: (
-    clusterName: ClusterName,
-    topicName: TopicName,
-    form: TopicFormDataRaw
-  ) => void;
-  updateTopicPartitionsCount: (
-    clusterName: string,
-    topicname: string,
-    partitions: number
-  ) => void;
+  fetchTopicConfig: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }) => void;
+  updateTopic: (payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+    form: TopicFormDataRaw;
+  }) => void;
 }
 
 const EditWrapperStyled = styled.div`
@@ -48,7 +44,7 @@ const EditWrapperStyled = styled.div`
   }
 `;
 
-const DEFAULTS = {
+export const DEFAULTS = {
   partitions: 1,
   replicationFactor: 1,
   minInSyncReplicas: 1,
@@ -64,42 +60,34 @@ const topicParams = (topic: TopicWithDetailedInfo | undefined) => {
 
   const { name, replicationFactor } = topic;
 
-  const configs = topic.config?.reduce(
-    (result: { [key: string]: TopicConfig['value'] }, param) => ({
-      ...result,
-      [camelCase(param.name)]: param.value || param.defaultValue,
-    }),
-    {}
-  );
-
   return {
     ...DEFAULTS,
     name,
     partitions: topic.partitionCount || DEFAULTS.partitions,
     replicationFactor,
-    customParams: topic.config
+    [TOPIC_CUSTOM_PARAMS_PREFIX]: topic.config
       ?.filter(
         (el) =>
           el.value !== el.defaultValue &&
           Object.keys(TOPIC_CUSTOM_PARAMS).includes(el.name)
       )
       .map((el) => ({ name: el.name, value: el.value })),
-    ...configs,
   };
 };
 
 let formInit = false;
 
 const Edit: React.FC<Props> = ({
-  clusterName,
-  topicName,
-  topic,
   isFetched,
   isTopicUpdated,
   fetchTopicConfig,
   updateTopic,
 }) => {
-  const defaultValues = topicParams(topic);
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+
+  const topic = useAppSelector((state) => getFullTopic(state, topicName));
+
+  const defaultValues = React.useMemo(() => topicParams(topic), [topic]);
 
   const methods = useForm<TopicFormData>({
     defaultValues,
@@ -107,18 +95,17 @@ const Edit: React.FC<Props> = ({
   });
 
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
-    fetchTopicConfig(clusterName, topicName);
+    fetchTopicConfig({ clusterName, topicName });
   }, [fetchTopicConfig, clusterName, topicName]);
 
   React.useEffect(() => {
     if (isSubmitting && isTopicUpdated) {
-      const { name } = methods.getValues();
-      history.push(clusterTopicPath(clusterName, name));
+      navigate('../');
     }
-  }, [isSubmitting, isTopicUpdated, clusterTopicPath, clusterName, methods]);
+  }, [isSubmitting, isTopicUpdated, clusterName, navigate]);
 
   if (!isFetched || !topic || !topic.config) {
     return null;
@@ -138,7 +125,7 @@ const Edit: React.FC<Props> = ({
   });
 
   const onSubmit = async (data: TopicFormDataRaw) => {
-    updateTopic(clusterName, topicName, data);
+    updateTopic({ clusterName, topicName, form: data });
     setIsSubmitting(true); // Keep this action after updateTopic to prevent redirect before update.
   };
 
@@ -147,17 +134,14 @@ const Edit: React.FC<Props> = ({
       <PageHeading text={`Edit ${topicName}`} />
       <EditWrapperStyled>
         <div>
-          <div>
-            <FormProvider {...methods}>
-              <TopicForm
-                topicName={topicName}
-                config={config}
-                isSubmitting={isSubmitting}
-                isEditing
-                onSubmit={methods.handleSubmit(onSubmit)}
-              />
-            </FormProvider>
-          </div>
+          <FormProvider {...methods}>
+            <TopicForm
+              topicName={topicName}
+              isSubmitting={isSubmitting}
+              isEditing
+              onSubmit={methods.handleSubmit(onSubmit)}
+            />
+          </FormProvider>
           {topic && (
             <DangerZoneContainer
               defaultPartitions={defaultValues.partitions}

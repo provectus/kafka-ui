@@ -1,36 +1,33 @@
-import styled, { css } from 'styled-components';
-import React from 'react';
+import styled from 'styled-components';
+import React, { PropsWithChildren } from 'react';
+import Heading from 'components/common/heading/Heading.styled';
 
 interface Props {
   text: string;
   className?: string;
 }
 
-const PageHeading: React.FC<Props> = ({ text, className, children }) => {
+const PageHeading: React.FC<PropsWithChildren<Props>> = ({
+  text,
+  className,
+  children,
+}) => {
   return (
     <div className={className}>
-      <h1>{text}</h1>
+      <Heading>{text}</Heading>
       <div>{children}</div>
     </div>
   );
 };
 
-export default styled(PageHeading)(
-  ({ theme }) => css`
-    height: 56px;
+export default styled(PageHeading)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+
+  & > div {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0px 16px;
-    & h1 {
-      font-size: 24px;
-      font-weight: 500;
-      line-height: 32px;
-      color: ${theme.headingStyles.h1.color};
-    }
-    & > div {
-      display: flex;
-      gap: 16px;
-    }
-  `
-);
+    gap: 16px;
+  }
+`;

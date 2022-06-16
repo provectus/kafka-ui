@@ -21,7 +21,7 @@ public class JmxPoolFactory extends BaseKeyedPooledObjectFactory<JmxConnectionIn
   public JMXConnector create(JmxConnectionInfo info) throws Exception {
     Map<String, Object> env = new HashMap<>();
     if (StringUtils.isNotEmpty(info.getUsername()) && StringUtils.isNotEmpty(info.getPassword())) {
-      env.put("jmx.remote.credentials", new String[]{info.getUsername(), info.getPassword()});
+      env.put("jmx.remote.credentials", new String[] {info.getUsername(), info.getPassword()});
     }
 
     if (info.isSsl()) {

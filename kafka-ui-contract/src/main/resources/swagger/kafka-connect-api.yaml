@@ -362,6 +362,10 @@ paths:
                 $ref: '#/components/schemas/ConnectorPluginConfigValidationResponse'
 
 components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
   schemas:
     ConnectorConfig:
       type: object
@@ -554,4 +558,8 @@ components:
           type: array
           items:
             type: string
+
+
+security:
+  - basicAuth: []
 

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import TimeToRetainBtn from './TimeToRetainBtn';
 
-interface Props {
+export interface Props {
   name: string;
   value: string;
 }

@@ -1,11 +1,11 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
   CompatibilityLevelCompatibilityEnum,
   SchemaType,
 } from 'generated-sources';
-import { clusterSchemaPath } from 'lib/paths';
+import { clusterSchemaPath, ClusterSubjectParam } from 'lib/paths';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
 import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
@@ -13,21 +13,28 @@ import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
-  schemasApiClient,
-  selectSchemaById,
+  schemaAdded,
+  fetchLatestSchema,
+  getSchemaLatest,
+  SCHEMA_LATEST_FETCH_ACTION,
+  getAreSchemaLatestFulfilled,
+  schemaUpdated,
 } from 'redux/reducers/schemas/schemasSlice';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
+import { schemasApiClient } from 'lib/api';
 
 import * as S from './Edit.styled';
 
 const Edit: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { clusterName, subject } =
-    useParams<{ clusterName: string; subject: string }>();
+  const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
   const methods = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
   const {
     formState: { isDirty, isSubmitting, dirtyFields },
@@ -35,7 +42,15 @@ const Edit: React.FC = () => {
     handleSubmit,
   } = methods;
 
-  const schema = useAppSelector((state) => selectSchemaById(state, subject));
+  React.useEffect(() => {
+    dispatch(fetchLatestSchema({ clusterName, subject }));
+    return () => {
+      dispatch(resetLoaderById(SCHEMA_LATEST_FETCH_ACTION));
+    };
+  }, [clusterName, dispatch, subject]);
+
+  const schema = useAppSelector((state) => getSchemaLatest(state));
+  const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
 
   const formatedSchema = React.useMemo(() => {
     return schema?.schemaType === SchemaType.PROTOBUF
@@ -43,12 +58,12 @@ const Edit: React.FC = () => {
       : JSON.stringify(JSON.parse(schema?.schema || '{}'), null, '\t');
   }, [schema]);
 
-  const onSubmit = React.useCallback(async (props: NewSchemaSubjectRaw) => {
+  const onSubmit = async (props: NewSchemaSubjectRaw) => {
     if (!schema) return;
 
     try {
       if (dirtyFields.newSchema || dirtyFields.schemaType) {
-        await schemasApiClient.createNewSchema({
+        const resp = await schemasApiClient.createNewSchema({
           clusterName,
           newSchemaSubject: {
             ...schema,
@@ -56,6 +71,7 @@ const Edit: React.FC = () => {
             schemaType: props.schemaType || schema.schemaType,
           },
         });
+        dispatch(schemaAdded(resp));
       }
 
       if (dirtyFields.compatibilityLevel) {
@@ -66,17 +82,24 @@ const Edit: React.FC = () => {
             compatibility: props.compatibilityLevel,
           },
         });
+        dispatch(
+          schemaUpdated({
+            ...schema,
+            compatibilityLevel: props.compatibilityLevel,
+          })
+        );
       }
 
-      history.push(clusterSchemaPath(clusterName, subject));
+      navigate(clusterSchemaPath(clusterName, subject));
     } catch (e) {
       const err = await getResponse(e as Response);
       dispatch(serverErrorAlertAdded(err));
     }
-  }, []);
+  };
 
-  if (!schema) return null;
-
+  if (!isFetched || !schema) {
+    return <PageLoader />;
+  }
   return (
     <FormProvider {...methods}>
       <PageHeading text="Edit schema" />

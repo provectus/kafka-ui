@@ -41,9 +41,9 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
         Tuples.of(
             o.getName(),
             new OneOfFieldSchema(
-              o.getFields().stream().map(
-                  Descriptors.FieldDescriptor::getName
-              ).map(fields::get).collect(Collectors.toList())
+                o.getFields().stream().map(
+                    Descriptors.FieldDescriptor::getName
+                ).map(fields::get).collect(Collectors.toList())
             )
         )
     ).collect(Collectors.toMap(
@@ -52,8 +52,8 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
     ));
 
     final List<String> allOneOfFields = schema.getOneofs().stream().flatMap(o ->
-                o.getFields().stream().map(Descriptors.FieldDescriptor::getName)
-        ).collect(Collectors.toList());
+        o.getFields().stream().map(Descriptors.FieldDescriptor::getName)
+    ).collect(Collectors.toList());
 
     final Map<String, FieldSchema> excludedOneOf = fields.entrySet().stream()
         .filter(f -> !allOneOfFields.contains(f.getKey()))
@@ -79,7 +79,7 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
   }
 
   private FieldSchema convertField(Descriptors.FieldDescriptor field,
-                              Map<String, FieldSchema> definitions) {
+                                   Map<String, FieldSchema> definitions) {
     final JsonType jsonType = convertType(field);
 
     FieldSchema fieldSchema;

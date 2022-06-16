@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
-import { BYTES_IN_GB } from 'lib/constants';
-import { TopicName, TopicConfigByName } from 'redux/interfaces';
+import { NOT_SET, BYTES_IN_GB } from 'lib/constants';
+import { TopicName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
 import Select, { SelectOption } from 'components/common/Select/Select';
 import Input from 'components/common/Input/Input';
@@ -10,13 +10,16 @@ import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import { StyledForm } from 'components/common/Form/Form.styled';
 
-import CustomParamsContainer from './CustomParams/CustomParamsContainer';
+import CustomParams from './CustomParams/CustomParams';
 import TimeToRetain from './TimeToRetain';
 import * as S from './TopicForm.styled';
 
-interface Props {
+export interface Props {
   topicName?: TopicName;
-  config?: TopicConfigByName;
+  partitionCount?: number;
+  replicationFactor?: number;
+  inSyncReplicas?: number;
+  cleanUpPolicy?: string;
   isEditing?: boolean;
   isSubmitting: boolean;
   onSubmit: (e: React.BaseSyntheticEvent) => Promise<void>;
@@ -29,7 +32,7 @@ const CleanupPolicyOptions: Array<SelectOption> = [
 ];
 
 const RetentionBytesOptions: Array<SelectOption> = [
-  { value: -1, label: 'Not Set' },
+  { value: NOT_SET, label: 'Not Set' },
   { value: BYTES_IN_GB, label: '1 GB' },
   { value: BYTES_IN_GB * 10, label: '10 GB' },
   { value: BYTES_IN_GB * 20, label: '20 GB' },
@@ -38,24 +41,31 @@ const RetentionBytesOptions: Array<SelectOption> = [
 
 const TopicForm: React.FC<Props> = ({
   topicName,
-  config,
   isEditing,
   isSubmitting,
   onSubmit,
+  partitionCount,
+  replicationFactor,
+  inSyncReplicas,
+  cleanUpPolicy,
 }) => {
   const {
     control,
     formState: { errors },
   } = useFormContext();
-
+  const getCleanUpPolicy =
+    CleanupPolicyOptions.find((option: SelectOption) => {
+      return option.value === cleanUpPolicy?.toLowerCase();
+    })?.value || CleanupPolicyOptions[0].value;
   return (
     <StyledForm onSubmit={onSubmit}>
       <fieldset disabled={isSubmitting}>
         <fieldset disabled={isEditing}>
           <S.Column>
             <S.NameField>
-              <InputLabel>Topic Name *</InputLabel>
+              <InputLabel htmlFor="topicFormName">Topic Name *</InputLabel>
               <Input
+                id="topicFormName"
                 name="name"
                 placeholder="Topic Name"
                 defaultValue={topicName}
@@ -69,12 +79,15 @@ const TopicForm: React.FC<Props> = ({
           {!isEditing && (
             <S.Column>
               <div>
-                <InputLabel>Number of partitions *</InputLabel>
+                <InputLabel htmlFor="topicFormNumberOfPartitions">
+                  Number of partitions *
+                </InputLabel>
                 <Input
+                  id="topicFormNumberOfPartitions"
                   type="number"
                   placeholder="Number of partitions"
                   min="1"
-                  defaultValue="1"
+                  defaultValue={partitionCount}
                   name="partitions"
                 />
                 <FormError>
@@ -82,12 +95,15 @@ const TopicForm: React.FC<Props> = ({
                 </FormError>
               </div>
               <div>
-                <InputLabel>Replication Factor *</InputLabel>
+                <InputLabel htmlFor="topicFormReplicationFactor">
+                  Replication Factor *
+                </InputLabel>
                 <Input
+                  id="topicFormReplicationFactor"
                   type="number"
                   placeholder="Replication Factor"
                   min="1"
-                  defaultValue="1"
+                  defaultValue={replicationFactor}
                   name="replicationFactor"
                 />
                 <FormError>
@@ -100,12 +116,15 @@ const TopicForm: React.FC<Props> = ({
 
         <S.Column>
           <div>
-            <InputLabel>Min In Sync Replicas *</InputLabel>
+            <InputLabel htmlFor="topicFormMinInSyncReplicas">
+              Min In Sync Replicas *
+            </InputLabel>
             <Input
+              id="topicFormMinInSyncReplicas"
               type="number"
               placeholder="Min In Sync Replicas"
               min="1"
-              defaultValue="1"
+              defaultValue={inSyncReplicas}
               name="minInsyncReplicas"
             />
             <FormError>
@@ -113,15 +132,22 @@ const TopicForm: React.FC<Props> = ({
             </FormError>
           </div>
           <div>
-            <InputLabel>Cleanup policy</InputLabel>
+            <InputLabel
+              id="topicFormCleanupPolicyLabel"
+              htmlFor="topicFormCleanupPolicy"
+            >
+              Cleanup policy
+            </InputLabel>
             <Controller
               defaultValue={CleanupPolicyOptions[0].value}
               control={control}
               name="cleanupPolicy"
               render={({ field: { name, onChange } }) => (
                 <Select
+                  id="topicFormCleanupPolicy"
+                  aria-labelledby="topicFormCleanupPolicyLabel"
                   name={name}
-                  value={CleanupPolicyOptions[0].value}
+                  value={getCleanUpPolicy}
                   onChange={onChange}
                   minWidth="250px"
                   options={CleanupPolicyOptions}
@@ -131,52 +157,60 @@ const TopicForm: React.FC<Props> = ({
           </div>
         </S.Column>
 
-        <div>
-          <S.Column>
-            <div>
-              <TimeToRetain isSubmitting={isSubmitting} />
-            </div>
-          </S.Column>
-          <S.Column>
-            <div>
-              <InputLabel>Max size on disk in GB</InputLabel>
-              <Controller
-                control={control}
-                name="retentionBytes"
-                defaultValue={0}
-                render={({ field: { name, onChange } }) => (
-                  <Select
-                    name={name}
-                    value={RetentionBytesOptions[0].value}
-                    onChange={onChange}
-                    minWidth="100%"
-                    options={RetentionBytesOptions}
-                  />
-                )}
-              />
-            </div>
+        <S.Column>
+          <div>
+            <TimeToRetain isSubmitting={isSubmitting} />
+          </div>
+        </S.Column>
 
-            <div>
-              <InputLabel>Maximum message size in bytes *</InputLabel>
-              <Input
-                type="number"
-                min="1"
-                defaultValue="1000012"
-                name="maxMessageBytes"
-              />
-              <FormError>
-                <ErrorMessage errors={errors} name="maxMessageBytes" />
-              </FormError>
-            </div>
-          </S.Column>
-        </div>
+        <S.Column>
+          <div>
+            <InputLabel
+              id="topicFormRetentionBytesLabel"
+              htmlFor="topicFormRetentionBytes"
+            >
+              Max size on disk in GB
+            </InputLabel>
+            <Controller
+              control={control}
+              name="retentionBytes"
+              defaultValue={RetentionBytesOptions[0].value}
+              render={({ field: { name, onChange } }) => (
+                <Select
+                  id="topicFormRetentionBytes"
+                  aria-labelledby="topicFormRetentionBytesLabel"
+                  name={name}
+                  value={RetentionBytesOptions[0].value}
+                  onChange={onChange}
+                  minWidth="100%"
+                  options={RetentionBytesOptions}
+                />
+              )}
+            />
+          </div>
+
+          <div>
+            <InputLabel htmlFor="topicFormMaxMessageBytes">
+              Maximum message size in bytes *
+            </InputLabel>
+            <Input
+              id="topicFormMaxMessageBytes"
+              type="number"
+              min="1"
+              defaultValue="1000012"
+              name="maxMessageBytes"
+            />
+            <FormError>
+              <ErrorMessage errors={errors} name="maxMessageBytes" />
+            </FormError>
+          </div>
+        </S.Column>
 
         <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>
-
-        <CustomParamsContainer isSubmitting={isSubmitting} config={config} />
+        <CustomParams isSubmitting={isSubmitting} />
 
         <Button type="submit" buttonType="primary" buttonSize="L">
-          Send
+          Submit
         </Button>
       </fieldset>
     </StyledForm>

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { gitCommitPath } from 'lib/paths';
 import { GIT_REPO_LATEST_RELEASE_LINK } from 'lib/constants';
+import WarningIcon from 'components/common/Icons/WarningIcon';
 
+import * as S from './Version.styled';
 import compareVersions from './compareVersions';
 
 export interface VesionProps {
@@ -14,6 +16,7 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
     outdated: false,
     latestTag: '',
   });
+
   useEffect(() => {
     fetch(GIT_REPO_LATEST_RELEASE_LINK)
       .then((response) => response.json())
@@ -26,33 +29,32 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
   }, [tag]);
 
   const { outdated, latestTag } = latestVersionInfo;
-
   return (
-    <div className="is-size-8 has-text-grey">
-      <span className="has-text-grey-light mr-1">Version:</span>
-      <span className="mr-1">{tag}</span>
+    <S.Wrapper>
+      <S.CurrentVersion>{tag}</S.CurrentVersion>
+
       {outdated && (
-        <span
-          className="icon has-text-warning"
+        <S.OutdatedWarning
           title={`Your app version is outdated. Current latest version is ${latestTag}`}
         >
-          <i className="fas fa-exclamation-triangle" />
-        </span>
+          <WarningIcon />
+        </S.OutdatedWarning>
       )}
+
       {commit && (
         <>
-          <span>&#40;</span>
-          <a
+          <S.SymbolWrapper>&#40;</S.SymbolWrapper>
+          <S.CurrentCommitLink
             title="Current commit"
             target="__blank"
             href={gitCommitPath(commit)}
           >
             {commit}
-          </a>
-          <span>&#41;</span>
+          </S.CurrentCommitLink>
+          <S.SymbolWrapper>&#41;</S.SymbolWrapper>
         </>
       )}
-    </div>
+    </S.Wrapper>
   );
 };
 

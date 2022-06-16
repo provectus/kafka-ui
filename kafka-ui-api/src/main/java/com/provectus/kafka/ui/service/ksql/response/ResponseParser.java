@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service.ksql.response;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.Lists;
 import com.provectus.kafka.ui.exception.KsqlApiException;
 import com.provectus.kafka.ui.service.ksql.KsqlApiClient;
@@ -14,8 +15,11 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 public class ResponseParser {
 
+  private ResponseParser() {
+  }
+
   public static Optional<KsqlApiClient.KsqlResponseTable> parseSelectResponse(JsonNode jsonNode) {
-    // in response we getting either header record or row data
+    // in response, we're getting either header record or row data
     if (arrayFieldNonEmpty(jsonNode, "header")) {
       return Optional.of(
           KsqlApiClient.KsqlResponseTable.builder()
@@ -42,15 +46,23 @@ public class ResponseParser {
     return Optional.empty();
   }
 
+  public static KsqlApiClient.KsqlResponseTable errorTableWithTextMsg(String errorText) {
+    return KsqlApiClient.KsqlResponseTable.builder()
+        .header("Execution error")
+        .columnNames(List.of("message"))
+        .values(List.of(List.of(new TextNode(errorText))))
+        .build();
+  }
+
   public static KsqlApiClient.KsqlResponseTable parseErrorResponse(WebClientResponseException e) {
     try {
       var errBody = new JsonMapper().readTree(e.getResponseBodyAsString());
       return DynamicParser.parseObject("Execution error", errBody);
     } catch (Exception ex) {
-      throw new KsqlApiException(
+      return errorTableWithTextMsg(
           String.format(
               "Unparsable error response from ksqdb, status:'%s', body: '%s'",
-              e.getStatusCode(), e.getResponseBodyAsString()), e);
+              e.getStatusCode(), e.getResponseBodyAsString()));
     }
   }
 
@@ -74,7 +86,7 @@ public class ResponseParser {
       case "sourceDescription":
         return parseObjectDynamically("Source Description", jsonNode.get("sourceDescription"));
       case "queryDescription":
-        return parseArray("Queries Description", "queryDescription", jsonNode);
+        return parseObjectDynamically("Queries Description", jsonNode.get("queryDescription"));
       case "topicDescription":
         return parseObject(
             "Topic Description",
@@ -143,9 +155,6 @@ public class ResponseParser {
     if (arrayFieldNonEmpty(jsonNode, "overwrittenProperties")) {
       tables.add(DynamicParser.parseArray("overwrittenProperties",
           jsonNode.get("overwrittenProperties")));
-    }
-    if (arrayFieldNonEmpty(jsonNode, "defaultProperties")) {
-      tables.add(DynamicParser.parseArray("defaultProperties", jsonNode.get("defaultProperties")));
     }
     return tables;
   }

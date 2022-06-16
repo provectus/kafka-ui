@@ -8,6 +8,7 @@ import MessageContent, {
 import { TopicMessageTimestampTypeEnum } from 'generated-sources';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
+import theme from 'theme/theme';
 
 const setupWrapper = (props?: Partial<MessageContentProps>) => {
   return (
@@ -28,6 +29,9 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
   );
 };
 
+const proto =
+  'syntax = "proto3";\npackage com.provectus;\n\nmessage TestProtoRecord {\n  string f1 = 1;\n  int32 f2 = 2;\n}\n';
+
 global.TextEncoder = TextEncoder;
 
 describe('MessageContent screen', () => {
@@ -46,35 +50,73 @@ describe('MessageContent screen', () => {
   });
 
   describe('when switched to display the key', () => {
-    it('has a tab with is-active classname', () => {
+    it('makes key tab active', () => {
       const keyTab = screen.getAllByText('Key');
       userEvent.click(keyTab[0]);
-      expect(keyTab[0]).toHaveClass('is-active');
-    });
-    it('displays the key in the EditorViewer', () => {
-      const keyTab = screen.getAllByText('Key');
-      userEvent.click(keyTab[0]);
-      expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
+      expect(keyTab[0]).toHaveStyleRule(
+        'background-color',
+        theme.secondaryTab.backgroundColor.active
+      );
     });
   });
 
   describe('when switched to display the headers', () => {
-    it('has a tab with is-active classname', () => {
+    it('makes Headers tab active', () => {
       userEvent.click(screen.getByText('Headers'));
-      expect(screen.getByText('Headers')).toHaveClass('is-active');
-    });
-    it('displays the key in the EditorViewer', () => {
-      userEvent.click(screen.getByText('Headers'));
-      expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
+      expect(screen.getByText('Headers')).toHaveStyleRule(
+        'background-color',
+        theme.secondaryTab.backgroundColor.active
+      );
     });
   });
 
   describe('when switched to display the content', () => {
-    it('has a tab with is-active classname', () => {
-      userEvent.click(screen.getByText('Headers'));
+    it('makes content tab active', () => {
       const contentTab = screen.getAllByText('Content');
       userEvent.click(contentTab[0]);
-      expect(contentTab[0]).toHaveClass('is-active');
+      expect(contentTab[0]).toHaveStyleRule(
+        'background-color',
+        theme.secondaryTab.backgroundColor.active
+      );
     });
+  });
+});
+
+describe('checking content type depend on message type', () => {
+  it('renders component with message having JSON type', () => {
+    render(
+      setupWrapper({
+        messageContentFormat: 'JSON',
+        messageContent: '{"data": "test"}',
+      })
+    );
+    expect(screen.getAllByText('JSON')[1]).toBeInTheDocument();
+  });
+  it('renders component with message having AVRO type', () => {
+    render(
+      setupWrapper({
+        messageContentFormat: 'AVRO',
+        messageContent: '{"data": "test"}',
+      })
+    );
+    expect(screen.getByText('AVRO')).toBeInTheDocument();
+  });
+  it('renders component with message having PROTOBUF type', () => {
+    render(
+      setupWrapper({
+        messageContentFormat: 'PROTOBUF',
+        messageContent: proto,
+      })
+    );
+    expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
+  });
+  it('renders component with message having no type which is equal to having PROTOBUF type', () => {
+    render(
+      setupWrapper({
+        messageContentFormat: 'PROTOBUF',
+        messageContent: '',
+      })
+    );
+    expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
   });
 });

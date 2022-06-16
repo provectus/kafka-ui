@@ -1,29 +1,24 @@
 import React from 'react';
-import { ConnectorState, FullConnectorInfo } from 'generated-sources';
+import { FullConnectorInfo } from 'generated-sources';
 import { clusterConnectConnectorPath, clusterTopicPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import { Link, NavLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { deleteConnector } from 'redux/actions';
+import { deleteConnector } from 'redux/reducers/connect/connectSlice';
 import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import { Colors } from 'theme/theme';
-import styled from 'styled-components';
+import getTagColor from 'components/common/Tag/getTagColor';
+
+import * as S from './List.styled';
 
 export interface ListItemProps {
   clusterName: ClusterName;
   connector: FullConnectorInfo;
 }
-
-const TopicTagsWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`;
 
 const ListItem: React.FC<ListItemProps> = ({
   clusterName,
@@ -44,39 +39,28 @@ const ListItem: React.FC<ListItemProps> = ({
     setDeleteConnectorConfirmationVisible,
   ] = React.useState(false);
 
-  const handleDelete = React.useCallback(() => {
+  const handleDelete = () => {
     if (clusterName && connect && name) {
-      dispatch(deleteConnector(clusterName, connect, name));
+      dispatch(
+        deleteConnector({
+          clusterName,
+          connectName: connect,
+          connectorName: name,
+        })
+      );
     }
     setDeleteConnectorConfirmationVisible(false);
-  }, [clusterName, connect, name]);
+  };
 
   const runningTasks = React.useMemo(() => {
     if (!tasksCount) return null;
     return tasksCount - (failedTasksCount || 0);
   }, [tasksCount, failedTasksCount]);
 
-  const stateColor = React.useMemo(() => {
-    const { state = '' } = status;
-
-    switch (state) {
-      case ConnectorState.RUNNING:
-        return 'green';
-      case ConnectorState.FAILED:
-      case ConnectorState.TASK_FAILED:
-        return 'red';
-      default:
-        return 'yellow';
-    }
-  }, [status]);
-
   return (
     <tr>
       <TableKeyLink>
-        <NavLink
-          exact
-          to={clusterConnectConnectorPath(clusterName, connect, name)}
-        >
+        <NavLink to={clusterConnectConnectorPath(clusterName, connect, name)}>
           {name}
         </NavLink>
       </TableKeyLink>
@@ -84,15 +68,15 @@ const ListItem: React.FC<ListItemProps> = ({
       <td>{type}</td>
       <td>{connectorClass}</td>
       <td>
-        <TopicTagsWrapper>
+        <S.TagsWrapper>
           {topics?.map((t) => (
             <Tag key={t} color="gray">
               <Link to={clusterTopicPath(clusterName, t)}>{t}</Link>
             </Tag>
           ))}
-        </TopicTagsWrapper>
+        </S.TagsWrapper>
       </td>
-      <td>{status && <Tag color={stateColor}>{status.state}</Tag>}</td>
+      <td>{status && <Tag color={getTagColor(status)}>{status.state}</Tag>}</td>
       <td>
         {runningTasks && (
           <span>
@@ -102,12 +86,12 @@ const ListItem: React.FC<ListItemProps> = ({
       </td>
       <td>
         <div>
-          <Dropdown label={<VerticalElipsisIcon />} right>
-            <DropdownDivider />
+          <Dropdown label={<VerticalElipsisIcon />} right up>
             <DropdownItem
               onClick={() => setDeleteConnectorConfirmationVisible(true)}
+              danger
             >
-              <span style={{ color: Colors.red[50] }}>Remove Connector</span>
+              Remove Connector
             </DropdownItem>
           </Dropdown>
         </div>

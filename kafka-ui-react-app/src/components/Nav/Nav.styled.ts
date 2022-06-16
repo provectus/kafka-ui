@@ -14,24 +14,23 @@ export const Divider = styled.hr`
   height: 1px;
 `;
 
-export const Link = styled(NavLink).attrs({ activeClassName: 'is-active' })(
-  ({ theme, activeClassName }) => css`
+export const Link = styled(NavLink)(
+  ({ theme }) => css`
     width: 100%;
     padding: 0.5em 0.75em;
     cursor: pointer;
     text-decoration: none;
-    margin: 0px 0px;
-    background-color: ${theme.menuStyles.backgroundColor.normal};
-    color: ${theme.menuStyles.color.normal};
+    margin: 0 0;
+    background-color: ${theme.menu.backgroundColor.normal};
+    color: ${theme.menu.color.normal};
 
     &:hover {
-      background-color: ${theme.menuStyles.backgroundColor.hover};
-      color: ${theme.menuStyles.color.hover};
+      background-color: ${theme.menu.backgroundColor.hover};
+      color: ${theme.menu.color.hover};
     }
-
-    &.${activeClassName} {
-      background-color: ${theme.menuStyles.backgroundColor.active};
-      color: ${theme.menuStyles.color.active};
+    &.active {
+      background-color: ${theme.menu.backgroundColor.active};
+      color: ${theme.menu.color.active};
     }
   `
 );

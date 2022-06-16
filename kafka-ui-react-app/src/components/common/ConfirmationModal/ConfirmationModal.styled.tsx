@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })(
   ({ theme }) => css`
@@ -15,7 +14,7 @@ export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })(
     right: 0;
     top: 0;
     & div:first-child {
-      background-color: ${theme.confirmationModal.overlay};
+      background-color: ${theme.modal.overlay};
       bottom: 0;
       left: 0;
       position: absolute;
@@ -30,8 +29,8 @@ export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })(
       width: 560px;
       border-radius: 8px;
 
-      background-color: ${Colors.neutral[0]};
-      filter: drop-shadow(0px 4px 16px ${theme.confirmationModal.shadow});
+      background-color: ${theme.modal.backgroundColor};
+      filter: drop-shadow(0px 4px 16px ${theme.modal.shadow});
 
       & > * {
         padding: 16px;
@@ -45,8 +44,8 @@ export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })(
       }
 
       & > section {
-        border-top: 1px solid ${Colors.neutral[5]};
-        border-bottom: 1px solid ${Colors.neutral[5]};
+        border-top: 1px solid ${theme.modal.border.top};
+        border-bottom: 1px solid ${theme.modal.border.bottom};
       }
 
       & > footer {

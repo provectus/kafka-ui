@@ -21,7 +21,7 @@ const BytesFormatted: React.FC<Props> = ({ value, precision = 0 }) => {
     } catch (e) {
       return `-Bytes`;
     }
-  }, [value]);
+  }, [precision, value]);
 
   return <span>{formatedValue}</span>;
 };

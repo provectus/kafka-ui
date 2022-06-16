@@ -18,11 +18,10 @@ import org.apache.kafka.common.utils.Bytes;
 @Slf4j
 public class ClusterUtil {
 
-  private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
-
-  public static int convertToIntServerStatus(ServerStatusDTO serverStatus) {
-    return serverStatus.equals(ServerStatusDTO.ONLINE) ? 1 : 0;
+  private ClusterUtil() {
   }
+
+  private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
 
   public static TopicMessageDTO mapToTopicMessage(ConsumerRecord<Bytes, Bytes> consumerRecord,
                                                   RecordSerDe recordDeserializer) {

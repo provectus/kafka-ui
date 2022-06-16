@@ -25,36 +25,38 @@ describe('Indicator', () => {
   });
 
   describe('should render circular alert', () => {
+    const getCircle = () => screen.getByRole('circle');
+
     it('should be in document', () => {
       setupComponent({ title, label, isAlert: true });
       expect(screen.getByRole('svg')).toBeInTheDocument();
-      expect(screen.getByRole('circle')).toBeInTheDocument();
+      expect(getCircle()).toBeInTheDocument();
     });
 
     it('success alert', () => {
       setupComponent({ title, label, isAlert: true, alertType: 'success' });
-      expect(screen.getByRole('circle')).toHaveStyle(
+      expect(getCircle()).toHaveStyle(
         `fill: ${theme.circularAlert.color.success}`
       );
     });
 
     it('error alert', () => {
       setupComponent({ title, label, isAlert: true, alertType: 'error' });
-      expect(screen.getByRole('circle')).toHaveStyle(
+      expect(getCircle()).toHaveStyle(
         `fill: ${theme.circularAlert.color.error}`
       );
     });
 
     it('warning alert', () => {
       setupComponent({ title, label, isAlert: true, alertType: 'warning' });
-      expect(screen.getByRole('circle')).toHaveStyle(
+      expect(getCircle()).toHaveStyle(
         `fill: ${theme.circularAlert.color.warning}`
       );
     });
 
     it('info alert', () => {
       setupComponent({ title, label, isAlert: true, alertType: 'info' });
-      expect(screen.getByRole('circle')).toHaveStyle(
+      expect(getCircle()).toHaveStyle(
         `fill: ${theme.circularAlert.color.info}`
       );
     });

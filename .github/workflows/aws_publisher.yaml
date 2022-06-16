@@ -1,0 +1,51 @@
+name: AWS Marketplace Publisher
+on:
+  workflow_dispatch:
+    inputs:
+      KafkaUIInfraBranch:
+        description: 'Branch name of Kafka-UI-Infra repo, build commands will be executed from this branch'
+        required: true
+        default: 'master'
+      KafkaUIReleaseVersion:
+        description: 'Version of KafkaUI'
+        required: true
+        default: '0.3.2'
+
+jobs:
+  build-ami:
+    name: Build AMI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone infra repo
+        run: |
+          echo "Cloning repo..."
+          git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git --branch ${{ github.event.inputs.KafkaUIInfraBranch }}
+          echo "Cd to packer DIR..."
+          cd kafka-ui-infra/ami
+          echo "WORK_DIR=$(pwd)" >> $GITHUB_ENV
+          echo "Packer will be triggered in this dir $WORK_DIR"
+
+      - name: Configure AWS credentials for Kafka-UI account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_AMI_PUBLISH_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_AMI_PUBLISH_KEY_SECRET }}
+          aws-region: us-east-1
+
+      # validate templates
+      - name: Validate Template
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: validate
+          arguments: -syntax-only
+          target: kafka-ui-infra/ami/kafka-ui.pkr.hcl
+
+      # build artifact
+      - name: Build Artifact
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: build
+          arguments: "-color=false -on-error=abort -var=kafka_ui_release_version=${{ github.event.inputs.KafkaUIReleaseVersion }}"
+          target: kafka-ui-infra/ami/kafka-ui.pkr.hcl
+        env:
+          PACKER_LOG: 1

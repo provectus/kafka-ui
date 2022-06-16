@@ -19,35 +19,35 @@ const StyledButton = styled.button<ButtonProps>`
   background: ${(props) =>
     props.isInverted
       ? 'transparent'
-      : props.theme.buttonStyles[props.buttonType].backgroundColor.normal};
+      : props.theme.button[props.buttonType].backgroundColor.normal};
   color: ${(props) =>
     props.isInverted
-      ? props.theme.buttonStyles[props.buttonType].invertedColors.normal
-      : props.theme.buttonStyles[props.buttonType].color};
-  font-size: ${(props) => props.theme.buttonStyles.fontSize[props.buttonSize]};
+      ? props.theme.button[props.buttonType].invertedColors.normal
+      : props.theme.button[props.buttonType].color};
+  font-size: ${(props) => props.theme.button.fontSize[props.buttonSize]};
   font-weight: 500;
-  height: ${(props) => props.theme.buttonStyles.height[props.buttonSize]};
+  height: ${(props) => props.theme.button.height[props.buttonSize]};
 
   &:hover:enabled {
     background: ${(props) =>
       props.isInverted
         ? 'transparent'
-        : props.theme.buttonStyles[props.buttonType].backgroundColor.hover};
+        : props.theme.button[props.buttonType].backgroundColor.hover};
     color: ${(props) =>
       props.isInverted
-        ? props.theme.buttonStyles[props.buttonType].invertedColors.hover
-        : props.theme.buttonStyles[props.buttonType].color};
+        ? props.theme.button[props.buttonType].invertedColors.hover
+        : props.theme.button[props.buttonType].color};
     cursor: pointer;
   }
   &:active:enabled {
     background: ${(props) =>
       props.isInverted
         ? 'transparent'
-        : props.theme.buttonStyles[props.buttonType].backgroundColor.active};
+        : props.theme.button[props.buttonType].backgroundColor.active};
     color: ${(props) =>
       props.isInverted
-        ? props.theme.buttonStyles[props.buttonType].invertedColors.active
-        : props.theme.buttonStyles[props.buttonType].color};
+        ? props.theme.button[props.buttonType].invertedColors.active
+        : props.theme.button[props.buttonType].color};
   }
   &:disabled {
     opacity: 0.5;
@@ -55,7 +55,7 @@ const StyledButton = styled.button<ButtonProps>`
   }
 
   & a {
-    color: ${(props) => props.theme.buttonStyles.primary.color};
+    color: ${(props) => props.theme.button.primary.color};
   }
 
   & i {

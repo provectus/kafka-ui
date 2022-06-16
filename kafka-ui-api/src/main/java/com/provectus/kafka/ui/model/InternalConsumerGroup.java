@@ -36,7 +36,7 @@ public class InternalConsumerGroup {
   }
 
   public static InternalConsumerGroup create(
-      ConsumerGroupDescription description, 
+      ConsumerGroupDescription description,
       Map<TopicPartition, Long> groupOffsets,
       Map<TopicPartition, Long> topicEndOffsets) {
     var builder = InternalConsumerGroup.builder();
@@ -65,21 +65,21 @@ public class InternalConsumerGroup {
 
   // removes data for all partitions that are not fit filter
   public InternalConsumerGroup retainDataForPartitions(Predicate<TopicPartition> partitionsFilter) {
-    var offsets = getOffsets().entrySet().stream()
+    var offsetsMap = getOffsets().entrySet().stream()
         .filter(e -> partitionsFilter.test(e.getKey()))
         .collect(Collectors.toMap(
             Map.Entry::getKey,
             Map.Entry::getValue
         ));
 
-    var members = getMembers().stream()
+    var nonEmptyMembers = getMembers().stream()
         .map(m -> filterConsumerMemberTopic(m, partitionsFilter))
         .filter(m -> !m.getAssignment().isEmpty())
         .collect(Collectors.toList());
 
     return toBuilder()
-        .offsets(offsets)
-        .members(members)
+        .offsets(offsetsMap)
+        .members(nonEmptyMembers)
         .build();
   }
 

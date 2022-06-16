@@ -20,7 +20,6 @@ public class KafkaCluster {
   private final String jmxUsername;
   private final String jmxPassword;
   private final String bootstrapServers;
-  private final String zookeeper;
   private final InternalSchemaRegistry schemaRegistry;
   private final String ksqldbServer;
   private final List<KafkaConnectCluster> kafkaConnect;
@@ -29,7 +28,9 @@ public class KafkaCluster {
   private final Path protobufFile;
   private final String protobufMessageName;
   private final Map<String, String> protobufMessageNameByTopic;
+  private final String protobufMessageNameForKey;
+  private final Map<String, String> protobufMessageNameForKeyByTopic;
   private final Properties properties;
-  private final Boolean readOnly;
-  private final Boolean disableLogDirsCollection;
+  private final boolean readOnly;
+  private final boolean disableLogDirsCollection;
 }

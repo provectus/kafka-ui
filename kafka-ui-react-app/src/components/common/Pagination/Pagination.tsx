@@ -3,6 +3,7 @@ import usePagination from 'lib/hooks/usePagination';
 import { range } from 'lodash';
 import React from 'react';
 import PageControl from 'components/common/Pagination/PageControl';
+import useSearch from 'lib/hooks/useSearch';
 
 import * as S from './Pagination.styled';
 
@@ -14,12 +15,17 @@ const NEIGHBOURS = 2;
 
 const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
   const { page, perPage, pathname } = usePagination();
+  const [searchText] = useSearch();
 
   const currentPage = page || 1;
   const currentPerPage = perPage || PER_PAGE;
 
+  const searchParam = searchText ? `&q=${searchText}` : '';
   const getPath = (newPage: number) =>
-    `${pathname}?page=${Math.max(newPage, 1)}&perPage=${currentPerPage}`;
+    `${pathname}?page=${Math.max(
+      newPage,
+      1
+    )}&perPage=${currentPerPage}${searchParam}`;
 
   const pages = React.useMemo(() => {
     // Total visible numbers: neighbours, current, first & last
@@ -62,7 +68,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
     }
 
     return p;
-  }, []);
+  }, [currentPage, totalPages]);
 
   return (
     <S.Wrapper role="navigation" aria-label="pagination">
@@ -84,7 +90,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
           )}
           {!pages.includes(2) && (
             <li>
-              <span className="pagination-ellipsis">&hellip;</span>
+              <span>&hellip;</span>
             </li>
           )}
           {pages.map((p) => (
@@ -97,7 +103,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
           ))}
           {!pages.includes(totalPages - 1) && (
             <li>
-              <span className="pagination-ellipsis">&hellip;</span>
+              <span>&hellip;</span>
             </li>
           )}
           {!pages.includes(totalPages) && (

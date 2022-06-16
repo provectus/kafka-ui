@@ -15,8 +15,8 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class AuthController {
 
-  @GetMapping(value = "/auth", produces = { "text/html" })
-  private Mono<byte[]> getAuth(ServerWebExchange exchange) {
+  @GetMapping(value = "/auth", produces = {"text/html"})
+  public Mono<byte[]> getAuth(ServerWebExchange exchange) {
     Mono<CsrfToken> token = exchange.getAttributeOrDefault(CsrfToken.class.getName(), Mono.empty());
     return token
         .map(AuthController::csrfToken)
@@ -36,11 +36,10 @@ public class AuthController {
         + "    <meta name=\"description\" content=\"\">\n"
         + "    <meta name=\"author\" content=\"\">\n"
         + "    <title>Please sign in</title>\n"
-        + "    <link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/"
-        + "4.0.0-beta/css/bootstrap.min.css\" rel=\"stylesheet\" "
+        + "    <link href=\"/static/css/bootstrap.min.css\" rel=\"stylesheet\" "
         + "integrity=\"sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M\" "
         + "crossorigin=\"anonymous\">\n"
-        + "    <link href=\"https://getbootstrap.com/docs/4.0/examples/signin/signin.css\" "
+        + "    <link href=\"/static/css/signin.css\" "
         + "rel=\"stylesheet\" crossorigin=\"anonymous\"/>\n"
         + "  </head>\n"
         + "  <body>\n"

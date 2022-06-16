@@ -2,6 +2,7 @@ import React from 'react';
 import { Connector } from 'generated-sources';
 import * as C from 'components/common/Tag/Tag.styled';
 import * as Metrics from 'components/common/Metrics';
+import getTagColor from 'components/common/Tag/getTagColor';
 
 export interface OverviewProps {
   connector: Connector | null;
@@ -31,12 +32,18 @@ const Overview: React.FC<OverviewProps> = ({
           </Metrics.Indicator>
         )}
         <Metrics.Indicator label="State">
-          <C.Tag color="yellow">{connector.status.state}</C.Tag>
+          <C.Tag color={getTagColor(connector.status)}>
+            {connector.status.state}
+          </C.Tag>
         </Metrics.Indicator>
         <Metrics.Indicator label="Tasks Running">
           {runningTasksCount}
         </Metrics.Indicator>
-        <Metrics.Indicator label="Tasks Failed" isAlert>
+        <Metrics.Indicator
+          label="Tasks Failed"
+          isAlert
+          alertType={failedTasksCount > 0 ? 'error' : 'success'}
+        >
           {failedTasksCount}
         </Metrics.Indicator>
       </Metrics.Section>

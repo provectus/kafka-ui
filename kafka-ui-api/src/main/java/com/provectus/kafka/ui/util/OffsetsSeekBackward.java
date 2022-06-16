@@ -36,13 +36,13 @@ public class OffsetsSeekBackward extends OffsetsSeek {
 
 
   protected Map<TopicPartition, Long> offsetsFromPositions(Consumer<Bytes, Bytes> consumer,
-                                        List<TopicPartition> partitions) {
+                                                           List<TopicPartition> partitions) {
 
     return findOffsetsInt(consumer, consumerPosition.getSeekTo(), partitions);
   }
 
   protected Map<TopicPartition, Long> offsetsFromBeginning(Consumer<Bytes, Bytes> consumer,
-                                            List<TopicPartition> partitions) {
+                                                           List<TopicPartition> partitions) {
     return findOffsets(consumer, Map.of(), partitions);
   }
 
@@ -51,7 +51,7 @@ public class OffsetsSeekBackward extends OffsetsSeek {
         consumerPosition.getSeekTo().entrySet().stream()
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
-                e -> e.getValue()
+                Map.Entry::getValue
             ));
     Map<TopicPartition, Long> offsetsForTimestamps = consumer.offsetsForTimes(timestampsToSearch)
         .entrySet().stream()

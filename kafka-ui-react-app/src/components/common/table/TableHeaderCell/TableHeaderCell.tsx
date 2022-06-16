@@ -1,5 +1,5 @@
-import React from 'react';
-import { TopicColumnsToSort } from 'generated-sources';
+import React, { PropsWithChildren } from 'react';
+import { SortOrder, TopicColumnsToSort } from 'generated-sources';
 import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
 
 export interface TableHeaderCellProps {
@@ -7,16 +7,20 @@ export interface TableHeaderCellProps {
   previewText?: string;
   onPreview?: () => void;
   orderBy?: TopicColumnsToSort | null;
+  sortOrder?: SortOrder;
   orderValue?: TopicColumnsToSort | null;
   handleOrderBy?: (orderBy: TopicColumnsToSort | null) => void;
 }
 
-const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
+const TableHeaderCell: React.FC<PropsWithChildren<TableHeaderCellProps>> = (
+  props
+) => {
   const {
     title,
     previewText,
     onPreview,
     orderBy,
+    sortOrder,
     orderValue,
     handleOrderBy,
     ...restProps
@@ -38,6 +42,7 @@ const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
   };
   const orderableProps = isOrderable && {
     isOrderable,
+    sortOrder,
     onClick: handleOnClick,
     onKeyDown: handleOnKeyDown,
     role: 'button',
@@ -47,11 +52,6 @@ const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
     <S.TableHeaderCell {...restProps}>
       <S.Title isOrdered={isOrdered} {...orderableProps}>
         {title}
-        {isOrderable && (
-          <span title="Sort icon" className="icon is-small">
-            <i className="fas fa-sort" />
-          </span>
-        )}
       </S.Title>
 
       {previewText && (

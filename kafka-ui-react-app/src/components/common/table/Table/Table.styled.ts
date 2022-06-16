@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 interface Props {
   isFullwidth?: boolean;
@@ -13,13 +12,15 @@ export const Table = styled.table<Props>`
     font-size: 14px;
     font-weight: 400;
     padding: 8px 8px 8px 24px;
-    color: ${Colors.neutral[90]};
+    color: ${({ theme }) => theme.table.td.color.normal};
     vertical-align: middle;
+    max-width: 350px;
+    word-wrap: break-word;
   }
 
   & tbody > tr {
     &:hover {
-      background-color: ${Colors.neutral[5]};
+      background-color: ${({ theme }) => theme.table.tr.backgroundColor.hover};
     }
   }
 `;

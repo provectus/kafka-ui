@@ -2,10 +2,10 @@ import React from 'react';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
 import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import { clusterSchemaPath } from 'lib/paths';
+import { ClusterNameRoute, clusterSchemaPath } from 'lib/paths';
 import { SchemaType } from 'generated-sources';
 import { SCHEMA_NAME_VALIDATION_PATTERN } from 'lib/constants';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
@@ -13,13 +13,12 @@ import Select, { SelectOption } from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 import { Textarea } from 'components/common/Textbox/Textarea.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import {
-  schemaAdded,
-  schemasApiClient,
-} from 'redux/reducers/schemas/schemasSlice';
+import { schemaAdded } from 'redux/reducers/schemas/schemasSlice';
 import { useAppDispatch } from 'lib/hooks/redux';
+import useAppParams from 'lib/hooks/useAppParams';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
+import { schemasApiClient } from 'lib/api';
 
 import * as S from './New.styled';
 
@@ -30,8 +29,8 @@ const SchemaTypeOptions: Array<SelectOption> = [
 ];
 
 const New: React.FC = () => {
-  const { clusterName } = useParams<{ clusterName: string }>();
-  const history = useHistory();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const methods = useForm<NewSchemaSubjectRaw>();
   const {
@@ -41,22 +40,23 @@ const New: React.FC = () => {
     formState: { isDirty, isSubmitting, errors },
   } = methods;
 
-  const onSubmit = React.useCallback(
-    async ({ subject, schema, schemaType }: NewSchemaSubjectRaw) => {
-      try {
-        const resp = await schemasApiClient.createNewSchema({
-          clusterName,
-          newSchemaSubject: { subject, schema, schemaType },
-        });
-        dispatch(schemaAdded(resp));
-        history.push(clusterSchemaPath(clusterName, subject));
-      } catch (e) {
-        const err = await getResponse(e as Response);
-        dispatch(serverErrorAlertAdded(err));
-      }
-    },
-    [clusterName]
-  );
+  const onSubmit = async ({
+    subject,
+    schema,
+    schemaType,
+  }: NewSchemaSubjectRaw) => {
+    try {
+      const resp = await schemasApiClient.createNewSchema({
+        clusterName,
+        newSchemaSubject: { subject, schema, schemaType },
+      });
+      dispatch(schemaAdded(resp));
+      navigate(clusterSchemaPath(clusterName, subject));
+    } catch (e) {
+      const err = await getResponse(e as Response);
+      dispatch(serverErrorAlertAdded(err));
+    }
+  };
 
   return (
     <FormProvider {...methods}>

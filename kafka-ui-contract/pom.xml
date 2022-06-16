@@ -4,7 +4,7 @@
     <parent>
         <artifactId>kafka-ui</artifactId>
         <groupId>com.provectus</groupId>
-        <version>${buildVersion}</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -138,7 +138,7 @@
                         <configuration>
                             <workingDirectory>../kafka-ui-react-app</workingDirectory>
                             <environmentVariables>
-                                <REACT_APP_TAG>v${project.version}</REACT_APP_TAG>
+                                <VITE_TAG>${project.version}</VITE_TAG>
                             </environmentVariables>
                         </configuration>
                         <executions>

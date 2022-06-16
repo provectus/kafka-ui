@@ -9,6 +9,7 @@ import {
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageSchema,
+  SortOrder,
 } from 'generated-sources';
 
 export type TopicName = Topic['name'];
@@ -42,6 +43,7 @@ export interface TopicFormCustomParams {
 }
 
 export interface TopicWithDetailedInfo extends Topic, TopicDetails {
+  id?: string;
   config?: TopicConfig[];
   consumerGroups?: ConsumerGroup[];
   messageSchema?: TopicMessageSchema;
@@ -53,6 +55,7 @@ export interface TopicsState {
   totalPages: number;
   search: string;
   orderBy: TopicColumnsToSort | null;
+  sortOrder: SortOrder;
   consumerGroups: ConsumerGroup[];
 }
 

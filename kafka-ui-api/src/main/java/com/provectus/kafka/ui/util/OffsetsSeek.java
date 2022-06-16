@@ -43,6 +43,9 @@ public abstract class OffsetsSeek {
       case BEGINNING:
         offsets = offsetsFromBeginning(consumer, partitions);
         break;
+      case LATEST:
+        offsets = endOffsets(consumer, partitions);
+        break;
       default:
         throw new IllegalArgumentException("Unknown seekType: " + seekType);
     }
@@ -73,6 +76,10 @@ public abstract class OffsetsSeek {
         .collect(Collectors.toList());
   }
 
+  protected Map<TopicPartition, Long> endOffsets(
+      Consumer<Bytes, Bytes> consumer, List<TopicPartition> partitions) {
+    return consumer.endOffsets(partitions);
+  }
 
   protected abstract Map<TopicPartition, Long> offsetsFromBeginning(
       Consumer<Bytes, Bytes> consumer, List<TopicPartition> partitions);
@@ -100,31 +107,23 @@ public abstract class OffsetsSeek {
           .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
 
       this.beginOffsets = this.endOffsets.keySet().stream()
-         .map(p -> Tuples.of(p, allBeginningOffsets.get(new TopicPartition(topic, p))))
-         .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
-    }
-
-    public List<TopicPartition> topicPartitions() {
-      return this.endOffsets.keySet().stream()
-          .map(p -> new TopicPartition(topic, p))
-          .collect(Collectors.toList());
-    }
-
-    public void markPolled(int partition) {
-      endOffsets.remove(partition);
-      beginOffsets.remove(partition);
+          .map(p -> Tuples.of(p, allBeginningOffsets.get(new TopicPartition(topic, p))))
+          .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
     }
 
     public void markPolled(ConsumerRecord<?, ?> rec) {
-      Long endWaiting = endOffsets.get(rec.partition());
-      if (endWaiting != null && endWaiting <= rec.offset()) {
-        endOffsets.remove(rec.partition());
-      }
-      Long beginWaiting = beginOffsets.get(rec.partition());
-      if (beginWaiting != null && beginWaiting >= rec.offset()) {
-        beginOffsets.remove(rec.partition());
-      }
+      markPolled(rec.partition(), rec.offset());
+    }
 
+    public void markPolled(int partition, long offset) {
+      Long endWaiting = endOffsets.get(partition);
+      if (endWaiting != null && endWaiting <= offset) {
+        endOffsets.remove(partition);
+      }
+      Long beginWaiting = beginOffsets.get(partition);
+      if (beginWaiting != null && beginWaiting >= offset) {
+        beginOffsets.remove(partition);
+      }
     }
 
     public boolean endReached() {

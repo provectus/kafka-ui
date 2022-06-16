@@ -21,7 +21,7 @@ public class ClustersController extends AbstractController implements ClustersAp
 
   @Override
   public Mono<ResponseEntity<ClusterMetricsDTO>> getClusterMetrics(String clusterName,
-                                                                ServerWebExchange exchange) {
+                                                                   ServerWebExchange exchange) {
     return clusterService.getClusterMetrics(getCluster(clusterName))
         .map(ResponseEntity::ok)
         .onErrorReturn(ResponseEntity.notFound().build());
@@ -29,7 +29,7 @@ public class ClustersController extends AbstractController implements ClustersAp
 
   @Override
   public Mono<ResponseEntity<ClusterStatsDTO>> getClusterStats(String clusterName,
-                                                            ServerWebExchange exchange) {
+                                                               ServerWebExchange exchange) {
     return clusterService.getClusterStats(getCluster(clusterName))
         .map(ResponseEntity::ok)
         .onErrorReturn(ResponseEntity.notFound().build());
@@ -42,7 +42,7 @@ public class ClustersController extends AbstractController implements ClustersAp
 
   @Override
   public Mono<ResponseEntity<ClusterDTO>> updateClusterInfo(String clusterName,
-                                                         ServerWebExchange exchange) {
+                                                            ServerWebExchange exchange) {
     return clusterService.updateCluster(getCluster(clusterName)).map(ResponseEntity::ok);
   }
 }

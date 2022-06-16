@@ -41,25 +41,24 @@ export const fetchKsqlDbTablesPayload: {
 };
 
 export const ksqlCommandResponse = {
-  data: {
-    headers: [
-      'type',
-      'name',
-      'topic',
-      'keyFormat',
-      'valueFormat',
-      'isWindowed',
+  header: 'Test header',
+  columnNames: [
+    'type',
+    'name',
+    'topic',
+    'keyFormat',
+    'valueFormat',
+    'isWindowed',
+  ],
+  rows: [
+    [
+      'STREAM',
+      'KSQL_PROCESSING_LOG',
+      'default_ksql_processing_log',
+      'KAFKA',
+      'JSON',
+      'false',
     ],
-    rows: [
-      [
-        'STREAM',
-        'KSQL_PROCESSING_LOG',
-        'default_ksql_processing_log',
-        'KAFKA',
-        'JSON',
-        'false',
-      ],
-      ['STREAM', 'PAGEVIEWS', 'pageviews', 'KAFKA', 'AVRO', 'false'],
-    ],
-  },
+    ['STREAM', 'PAGEVIEWS', 'pageviews', 'KAFKA', 'AVRO', 'false'],
+  ],
 };

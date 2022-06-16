@@ -44,7 +44,7 @@ public class FeatureService {
     if (controller != null) {
       features.add(
           isTopicDeletionEnabled(cluster, controller)
-              .flatMap(r -> r ? Mono.just(Feature.TOPIC_DELETION) : Mono.empty())
+              .flatMap(r -> Boolean.TRUE.equals(r) ? Mono.just(Feature.TOPIC_DELETION) : Mono.empty())
       );
     }
 

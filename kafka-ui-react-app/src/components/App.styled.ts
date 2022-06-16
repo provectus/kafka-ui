@@ -1,4 +1,7 @@
 import styled, { css } from 'styled-components';
+import { Link } from 'react-router-dom';
+
+import { Button } from './common/Button/Button';
 
 export const Layout = styled.div`
   min-width: 1200px;
@@ -13,6 +16,7 @@ export const Container = styled.main(
     margin-top: ${theme.layout.navBarHeight};
     margin-left: ${theme.layout.navBarWidth};
     position: relative;
+    padding-bottom: 30px;
     z-index: 20;
 
     @media screen and (max-width: 1023px) {
@@ -35,7 +39,7 @@ export const Sidebar = styled.div<{ $visible: boolean }>(
     overflow-y: scroll;
     transition: width 0.25s, opacity 0.25s, transform 0.25s,
       -webkit-transform 0.25s;
-    background: ${theme.menuStyles.backgroundColor.normal};
+    background: ${theme.menu.backgroundColor.normal};
     @media screen and (max-width: 1023px) {
       ${$visible &&
       `transform: translate3d(${theme.layout.navBarWidth}, 0, 0)`};
@@ -84,7 +88,7 @@ export const Overlay = styled.div<{ $visible: boolean }>(
         bottom: 0;
         right: 0;
         visibility: 'visible';
-        opacity: 1;
+        opacity: 0.7;
         background-color: ${theme.layout.overlay.backgroundColor};
       }
     `}
@@ -99,13 +103,15 @@ export const Navbar = styled.nav(
     left: 0;
     right: 0;
     z-index: 30;
-    background-color: ${theme.menuStyles.backgroundColor.normal};
+    background-color: ${theme.menu.backgroundColor.normal};
     min-height: 3.25rem;
   `
 );
 
 export const NavbarBrand = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center !important;
   flex-shrink: 0;
   align-items: stretch;
   min-height: 3.25rem;
@@ -132,7 +138,7 @@ export const NavbarBurger = styled.div(
     padding: 0;
 
     &:hover {
-      background-color: ${theme.menuStyles.backgroundColor.hover};
+      background-color: ${theme.menu.backgroundColor.hover};
     }
 
     @media screen and (min-width: 1024px) {
@@ -145,7 +151,7 @@ export const Span = styled.span(
   ({ theme }) => css`
     display: block;
     position: absolute;
-    background: ${theme.menuStyles.color.active};
+    background: ${theme.menu.color.active};
     height: 1px;
     left: calc(50% - 8px);
     transform-origin: center;
@@ -166,22 +172,28 @@ export const Span = styled.span(
   `
 );
 
-export const Hyperlink = styled.a(
+export const Hyperlink = styled(Link)(
   ({ theme }) => css`
-    display: flex;
     position: relative;
+
+    display: flex;
     flex-grow: 0;
     flex-shrink: 0;
     align-items: center;
+    gap: 8px;
+
     margin: 0;
-    color: ${theme.menuStyles.color.active};
-    font-size: 1.25rem;
-    font-weight: 600;
-    cursor: pointer;
-    line-height: 1.5;
     padding: 0.5rem 0.75rem;
+
+    font-family: Inter, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 16px;
+    color: ${theme.menu.color.active};
     text-decoration: none;
     word-break: break-word;
+    cursor: pointer;
   `
 );
 
@@ -197,3 +209,17 @@ export const AlertsContainer = styled.div`
     max-width: initial;
   }
 `;
+
+export const LogoutButton = styled(Button)(
+  ({ theme }) => css`
+    color: ${theme.button.primary.invertedColors.normal};
+    background: none !important;
+    padding: 0 8px;
+  `
+);
+
+export const LogoutLink = styled(Link)(
+  () => css`
+    margin-right: 16px;
+  `
+);

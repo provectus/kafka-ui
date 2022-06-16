@@ -22,7 +22,7 @@ describe('EditorViewer component', () => {
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
-  it('matches the snapshot with fixed height with no value', () => {
+  it('to be in the document with fixed height with no value', () => {
     setupComponent({
       data: '',
       maxLines,

@@ -1,11 +1,11 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "kafka-ui.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
-{{- if semverCompare ">=1.22-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
 apiVersion: networking.k8s.io/v1
-{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- else if $.Capabilities.APIVersions.Has "networking.k8s.io/v1beta1" }}
 apiVersion: networking.k8s.io/v1beta1
-{{- else -}}
+{{- else }}
 apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
@@ -21,7 +21,7 @@ spec:
   {{- if .Values.ingress.tls.enabled }}
   tls:
     - hosts:
-        - {{ .Values.ingress.host }}
+        - {{ tpl .Values.ingress.host . }}
       secretName: {{ .Values.ingress.tls.secretName }}
   {{- end }}
   {{- if .Values.ingress.ingressClassName }}
@@ -30,7 +30,7 @@ spec:
   rules:
     - http:
         paths:
-{{- if semverCompare ">=1.22-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1" -}}
           {{- range .Values.ingress.precedingPaths }}
           - path: {{ .path }}
             pathType: Prefix
@@ -58,8 +58,8 @@ spec:
                 port:
                   number: {{ .servicePort }}
           {{- end }}
-{{- if .Values.ingress.host }}
-      host: {{ .Values.ingress.host }}
+{{- if tpl .Values.ingress.host . }}
+      host: {{tpl .Values.ingress.host . }}
 {{- end }}
 {{- else -}}
           {{- range .Values.ingress.precedingPaths }}
@@ -80,8 +80,8 @@ spec:
               serviceName: {{ .serviceName }}
               servicePort: {{ .servicePort }}
           {{- end }}
-{{- if .Values.ingress.host }}
-      host: {{ .Values.ingress.host }}
+{{- if tpl .Values.ingress.host . }}
+      host: {{ tpl .Values.ingress.host . }}
 {{- end }}
 {{- end }}
 {{- end }}

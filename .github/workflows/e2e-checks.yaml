@@ -1,32 +1,35 @@
 name: e2e-checks
 on:
-  pull_request:
-    types: [ 'opened', 'edited', 'reopened', 'synchronize' ]
+  pull_request_target:
+    types: ["opened", "edited", "reopened", "synchronize"]
     paths:
-      - 'kafka-ui-api/**'
-      - 'kafka-ui-contract/**'
-      - 'kafka-ui-react-app/**'
-      - 'kafka-ui-e2e-checks/**'
+      - "kafka-ui-api/**"
+      - "kafka-ui-contract/**"
+      - "kafka-ui-react-app/**"
+      - "kafka-ui-e2e-checks/**"
+      - "pom.xml"
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - uses: actions/checkout@v2
       - name: Set the values
         id: set_env_values
         run: |
           cat "./kafka-ui-e2e-checks/.env.ci" >> "./kafka-ui-e2e-checks/.env"
       - name: pull docker
-        id: pull_selenoid
+        id: pull_chrome
         run: |
-          docker pull selenoid/vnc:chrome_86.0
+          docker pull selenium/standalone-chrome
       - name: Set up JDK 1.13
         uses: actions/setup-java@v1
         with:
@@ -34,17 +37,17 @@ jobs:
       - name: Build with Maven
         id: build_app
         run: |
-          mvn clean package -DskipTests ${{ github.event.inputs.extraMavenOptions }}
+          mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
+          mvn clean package -Dmaven.test.skip=true ${{ github.event.inputs.extraMavenOptions }}
       - name: compose app
         id: compose_app
         # use the following command until #819 will be fixed
         run: |
-          docker-compose -f ./docker/kafka-ui-connectors.yaml up -d
+          docker-compose -f ./documentation/compose/kafka-ui-connectors.yaml up -d
       - name: e2e run
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -pl '!kafka-ui-api' test -Pprod
+        run: |
+          mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
+          mvn -pl '!kafka-ui-api' test -Pprod
       - name: Generate allure report
         uses: simple-elf/allure-report-action@master
         if: always()
@@ -67,10 +70,10 @@ jobs:
         uses: Sibz/github-status-action@v1.1.6
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
-          context: 'Test report'
-          state: 'success'
+          context: "Test report"
+          state: "success"
           sha: ${{ github.event.pull_request.head.sha  || github.sha }}
           target_url: https://${{ github.repository_owner }}.github.io/kafka-ui/allure/allure-results/${{ github.run_number }}
       - name: Dump docker logs on failure
         if: failure()
-        uses: jwalton/gh-docker-logs@v2.0.2
+        uses: jwalton/gh-docker-logs@v2.2.0
