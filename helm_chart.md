@@ -19,9 +19,9 @@ data:
   MANAGEMENT_HEALTH_LDAP_ENABLED: "FALSE" 
 ```
 Install by executing command
-```helm install helm-release-name charts/kafka-ui --set existingConfigMap="kafka-ui-helm-values"```
+> helm install helm-release-name charts/kafka-ui --set existingConfigMap="kafka-ui-helm-values"  
 
-### Passing configuration as ConfigMap 
+### Passing configuration file as ConfigMap 
 Create config map
 ```
 apiVersion: v1
@@ -39,7 +39,7 @@ data:
 This ConfigMap will be mounted to the Pod
 
 Install by executing command
-```helm install helm-release-name charts/kafka-ui --set yamlApplicationConfigConfigMap.name="kafka-ui-config",yamlApplicationConfigConfigMap.keyName="config.yml"```
+> helm install helm-release-name charts/kafka-ui --set yamlApplicationConfigConfigMap.name="kafka-ui-config",yamlApplicationConfigConfigMap.keyName="config.yml"
 
 ### Passing Kafka-UI configuration as Dict
 Create values.yml file
@@ -52,6 +52,10 @@ yamlApplicationConfig:
         zookeeper: dev-cp-zookeeper:2181
   auth:
     type: disabled
+  management:
+    health:
+      ldap:
+        enabled: false
 ```
 Install by executing command
-```helm install helm-release-name charts/kafka-ui -f values.yml```
+> helm install helm-release-name charts/kafka-ui -f values.yml
