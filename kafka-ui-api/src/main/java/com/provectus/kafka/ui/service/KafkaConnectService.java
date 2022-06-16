@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.provectus.kafka.ui.client.KafkaConnectClients;
+import com.provectus.kafka.ui.client.KafkaConnectClientsFactory;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
 import com.provectus.kafka.ui.connect.model.ConnectorStatus;
 import com.provectus.kafka.ui.connect.model.ConnectorStatusConnector;
@@ -35,9 +35,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.unit.DataSize;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -52,9 +50,7 @@ public class KafkaConnectService {
   private final KafkaConnectMapper kafkaConnectMapper;
   private final ObjectMapper objectMapper;
   private final KafkaConfigSanitizer kafkaConfigSanitizer;
-
-  @Value("${webclient.max-in-memory-buffer-size:20MB}")
-  private DataSize maxBuffSize;
+  private final KafkaConnectClientsFactory kafkaConnectClientsFactory;
 
   public Mono<Flux<ConnectDTO>> getConnects(KafkaCluster cluster) {
     return Mono.just(
@@ -332,6 +328,6 @@ public class KafkaConnectService {
             .filter(connect -> connect.getName().equals(connectName))
             .findFirst())
         .switchIfEmpty(Mono.error(ConnectNotFoundException::new))
-        .map(config -> KafkaConnectClients.withKafkaConnectConfig(config, maxBuffSize));
+        .map(kafkaConnectClientsFactory::withKafkaConnectConfig);
   }
 }
