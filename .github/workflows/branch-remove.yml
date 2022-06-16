@@ -12,13 +12,7 @@ jobs:
       - name: get branch name
         id: extract_branch
         run: |
-          echo {{ github.event.pull_request.pull_request }}
-          echo {{ github.event.pull_request.pull_request.title }}
-#          hub pr checkout ${{ github.event.pull_request.number }}
-          branch_name={{ github.event.pull_request.pull_request.title }}
-          echo $branch_name
-          echo ::set-output name=branch::${branch_name}
-          tag=$(echo $branch_name |  sed 's/\//-/g' | sed 's/\./-/g' | sed 's/\_/-/g' |  cut -c1-32)
+          tag='${{ github.event.pull_request.number }}'
           echo ::set-output name=tag::${tag}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
