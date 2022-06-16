@@ -12,9 +12,8 @@ jobs:
       - name: get branch name
         id: extract_branch
         run: |
-          echo ${{ toJSON(github.event.pull_request) }}
           echo ${{ github.event.pull_request.title }}
-          branch_name=${{ github.event.pull_request.title }}
+          branch_name='${{ github.event.pull_request.title }}'
           echo $branch_name
           echo ::set-output name=branch::${branch_name}
           tag=$(echo $branch_name |  sed 's/\//-/g' | sed 's/\./-/g' | sed 's/\_/-/g' |  cut -c1-32)
