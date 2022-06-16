@@ -4,6 +4,7 @@
   "homepage": "./",
   "private": true,
   "dependencies": {
+    "@babel/core": "^7.16.0",
     "@fortawesome/fontawesome-free": "^6.1.1",
     "@hookform/error-message": "^2.0.0",
     "@hookform/resolvers": "^2.7.1",
@@ -11,14 +12,16 @@
     "@rooks/use-outside-click-ref": "^4.10.1",
     "@testing-library/react": "^13.2.0",
     "@types/yup": "^0.29.13",
+    "@vitejs/plugin-react": "^1.3.2",
     "ace-builds": "^1.4.12",
     "ajv": "^8.6.3",
+    "babel-jest": "^27.4.2",
     "bulma": "^0.9.3",
     "classnames": "^2.2.6",
     "dayjs": "^1.11.2",
-    "eslint-import-resolver-node": "^0.3.6",
-    "eslint-import-resolver-typescript": "^2.7.1",
     "fetch-mock": "^9.11.0",
+    "jest": "^27.4.3",
+    "jest-watch-typeahead": "^1.0.0",
     "json-schema-faker": "^0.5.0-rcv.39",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
@@ -34,28 +37,31 @@
     "react-router-dom": "^6.3.0",
     "redux": "^4.1.1",
     "redux-thunk": "^2.3.0",
-    "sass": "^1.43.4",
+    "sass": "^1.52.3",
     "styled-components": "^5.3.1",
     "use-debounce": "^8.0.1",
     "uuid": "^8.3.1",
+    "vite": "^2.9.11",
+    "vite-tsconfig-paths": "^3.5.0",
+    "whatwg-fetch": "^3.6.2",
     "yup": "^0.32.9"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [
-      "eslint -c .eslintrc.json --fix",
+      "eslint --fix",
       "npm test -- --bail --findRelatedTests --watchAll=false"
     ]
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "vite",
     "gen:sources": "rimraf src/generated-sources && openapi-generator-cli generate",
-    "build": "react-scripts build",
+    "build": "vite build",
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
     "lint:CI": "eslint --ext .tsx,.ts src/ --max-warnings=0",
-    "test": "react-scripts test",
-    "test:CI": "CI=true npm test  -- --coverage --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
-    "eject": "react-scripts eject",
+    "test": "jest --watch",
+    "test:coverage": "jest --watchAll --coverage",
+    "test:CI": "CI=true npm run test:coverage -- --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
     "tsc": "tsc",
     "prepare": "cd .. && husky install kafka-ui-react-app/.husky",
     "pre-commit": "npm run tsc --noEmit && lint-staged"
@@ -63,19 +69,10 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
   "devDependencies": {
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-react": "^7.17.12",
+    "@babel/preset-typescript": "^7.17.12",
     "@jest/types": "^28.1.0",
     "@openapitools/openapi-generator-cli": "^2.5.1",
     "@testing-library/dom": "^8.11.1",
@@ -96,10 +93,13 @@
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.27.0",
     "dotenv": "^16.0.1",
-    "eslint": "^8.15.0",
+    "eslint": "^8.3.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-import-resolver-node": "^0.3.6",
+    "eslint-import-resolver-typescript": "^2.7.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest-dom": "^4.0.2",
     "eslint-plugin-jsx-a11y": "^6.5.1",
@@ -107,13 +107,11 @@
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.5.0",
     "fetch-mock-jest": "^1.5.1",
-    "http-proxy-middleware": "^2.0.6",
     "husky": "^7.0.1",
     "jest-sonar-reporter": "^2.0.0",
     "jest-styled-components": "^7.0.8",
     "lint-staged": "^12.1.2",
     "prettier": "^2.3.1",
-    "react-scripts": "5.0.1",
     "redux-mock-store": "^1.5.4",
     "rimraf": "^3.0.2",
     "ts-jest": "^28.0.3",
