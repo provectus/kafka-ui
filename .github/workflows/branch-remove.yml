@@ -14,7 +14,6 @@ jobs:
         run: |
           echo {{ github.event.pull_request.pull_request }}
           echo {{ github.event.pull_request.pull_request.title }}
-#          hub pr checkout ${{ github.event.pull_request.number }}
           branch_name={{ github.event.pull_request.pull_request.title }}
           echo $branch_name
           echo ::set-output name=branch::${branch_name}
