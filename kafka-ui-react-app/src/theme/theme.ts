@@ -33,6 +33,7 @@ export const Colors = {
   brand: {
     '5': '#E8E8FC',
     '10': '#D1D1FA',
+    '15': '#B8BEF9',
     '20': '#A3A3F5',
     '50': '#4C4CFF',
     '60': '#1717CF',
@@ -54,6 +55,7 @@ export const Colors = {
     '20': '#bbdefb',
     '30': '#90caf9',
     '40': '#64b5f6',
+    '45': '#5865F2',
     '50': '#5B67E3',
   },
 };
@@ -506,13 +508,13 @@ const theme = {
   },
   gitIcon: {
     normal: Colors.neutral[20],
-    hover: Colors.neutral[80],
+    hover: Colors.neutral[70],
     active: Colors.neutral[90],
   },
   discordIcon: {
     normal: Colors.neutral[20],
-    hover: Colors.brand[20],
-    active: Colors.blue[50],
+    hover: Colors.brand[15],
+    active: Colors.blue[45],
   },
 };
 
