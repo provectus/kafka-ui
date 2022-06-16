@@ -12,7 +12,13 @@ jobs:
       - name: get branch name
         id: extract_branch
         run: |
-          tag='pr${{ github.event.pull_request.number }}'
+          echo {{ github.event.pull_request.pull_request }}
+          echo {{ github.event.pull_request.pull_request.title }}
+#          hub pr checkout ${{ github.event.pull_request.number }}
+          branch_name={{ github.event.pull_request.pull_request.title }}
+          echo $branch_name
+          echo ::set-output name=branch::${branch_name}
+          tag=$(echo $branch_name |  sed 's/\//-/g' | sed 's/\./-/g' | sed 's/\_/-/g' |  cut -c1-32)
           echo ::set-output name=tag::${tag}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -23,7 +29,7 @@ jobs:
         run: |
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
           echo "Branch:${{ steps.extract_branch.outputs.tag }}"
-          ./delete-env.sh ${{ steps.extract_branch.outputs.tag }} || true
+          ./delete-env.sh ${{ steps.extract_branch.outputs.tag }}
           git config --global user.email "kafka-ui-infra@provectus.com"
           git config --global user.name "kafka-ui-infra"
           git add ../kafka-ui-from-branch/
