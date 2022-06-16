@@ -42,18 +42,20 @@ public class MainPage {
     }
 
 
-    public enum SideMenuOptions {
-        BROKERS("Brokers"),
-        TOPICS("Topics"),
-        CONSUMERS("Consumers"),
-        SCHEMA_REGISTRY("Schema registry");
+  public enum SideMenuOptions {
+    BROKERS("Brokers"),
+    TOPICS("Topics"),
+    CONSUMERS("Consumers"),
+    SCHEMA_REGISTRY("Schema Registry");
 
-        String value;
+    String value;
 
-        SideMenuOptions(String value) {
-            this.value = value;
-        }
+    SideMenuOptions(String value) {
+      this.value = value;
     }
+  }
+
+
 
     @Step
     public MainPage goToSideMenu(String clusterName, SideMenuOptions option) {

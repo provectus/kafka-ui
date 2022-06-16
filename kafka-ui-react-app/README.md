@@ -41,8 +41,7 @@ npm run gen:sources
 
 Create or update existing `.env.local` file with
 ```
-HTTPS=true # if needed
-DEV_PROXY= https://api.server # your API server
+VITE_DEV_PROXY= https://api.server # your API server
 ```
 
 Run the application
