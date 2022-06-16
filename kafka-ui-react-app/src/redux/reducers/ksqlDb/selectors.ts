@@ -15,7 +15,7 @@ const getKsqlExecutionStatus = createFetchingSelector('ksqlDb/executeKsql');
 export const getKsqlDbTables = createSelector(
   [ksqlDbState, getKsqlDbFetchTablesAndStreamsFetchingStatus],
   (state, status) => ({
-    rows: [...state.streams, ...state.tables],
+    rows: { streams: [...state.streams], tables: [...state.tables] },
     fetched: status === AsyncRequestStatus.fulfilled,
     fetching: status === AsyncRequestStatus.pending,
     tablesCount: state.tables.length,
