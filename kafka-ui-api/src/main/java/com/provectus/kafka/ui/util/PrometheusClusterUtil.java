@@ -15,16 +15,20 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class PrometheusClusterUtil {
   private final WebClient webClient;
+  private static final String DEFAULT_BYTES_IN_OUT_PER_SEC_ONLY
+      = "{__name__=~\"kafka_server_.*BrokerTopicMetrics_Count.*\","
+      + "topic=~\"\"," // We don't need to summarize each topics metrics
+      + "name=~\"Bytes(In|Out)PerSec\"}";
 
-  public Mono<PrometheusMetricsDto> getBrokerMetrics(KafkaCluster cluster) {
+  public Mono<PrometheusMetrics> getBrokerMetrics(KafkaCluster cluster) {
     return webClient
         .post()
         .uri(cluster.getPrometheus() + "/api/v1/query")
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-        .body(BodyInserters.fromFormData("query", "{__name__=~\"kafka_server.*\"}"))
+        .body(BodyInserters.fromFormData("query", DEFAULT_BYTES_IN_OUT_PER_SEC_ONLY))
         .retrieve()
-        .bodyToMono(PrometheusMetricsDto.class)
-        .onErrorReturn(new PrometheusMetricsDto());
+        .bodyToMono(PrometheusMetrics.class)
+        .onErrorReturn(new PrometheusMetrics());
   }
 
 }

@@ -53,22 +53,27 @@ public class InternalClusterState {
 
     features = metrics.getFeatures();
 
-    bytesInPerSec = metrics
-        .getPrometheusMetricsDto()
-        .getBigDecimalMetric(JmxMetricsName.BYTES_IN_PER_SEC.getPrometheusName())
-        .orElse(metrics
-                .getJmxMetrics()
-                .getBytesInPerSec()
-                .values().stream()
-                .reduce(BigDecimal.ZERO, BigDecimal::add));
+    if (cluster.getPrometheus() == null || "".equals(cluster.getPrometheus())) {
+      bytesInPerSec = metrics
+          .getJmxMetrics()
+          .getBytesInPerSec()
+          .values().stream()
+          .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    bytesOutPerSec = metrics.getPrometheusMetricsDto()
-        .getBigDecimalMetric(JmxMetricsName.BYTES_OUT_PER_SEC.getPrometheusName())
-        .orElse(
-            metrics.getJmxMetrics()
-                .getBytesOutPerSec()
-                .values().stream()
-                .reduce(BigDecimal.ZERO, BigDecimal::add));
+      bytesOutPerSec = metrics
+          .getJmxMetrics()
+          .getBytesOutPerSec()
+          .values().stream()
+          .reduce(BigDecimal.ZERO, BigDecimal::add);
+    } else {
+      bytesInPerSec = metrics.getPrometheusMetrics()
+          .getBigDecimalMetric(JmxMetricsName.BYTES_IN_PER_SEC)
+          .orElse(BigDecimal.ZERO);
+
+      bytesOutPerSec = metrics.getPrometheusMetrics()
+          .getBigDecimalMetric(JmxMetricsName.BYTES_OUT_PER_SEC)
+          .orElse(BigDecimal.ZERO);
+    }
 
     var partitionsStats = new PartitionsStats(metrics.getTopicDescriptions().values());
     onlinePartitionCount = partitionsStats.getOnlinePartitionCount();

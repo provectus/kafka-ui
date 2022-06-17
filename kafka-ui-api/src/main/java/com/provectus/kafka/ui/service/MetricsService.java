@@ -6,7 +6,7 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.ServerStatusDTO;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
 import com.provectus.kafka.ui.util.PrometheusClusterUtil;
-import com.provectus.kafka.ui.util.PrometheusMetricsDto;
+import com.provectus.kafka.ui.util.PrometheusMetrics;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class MetricsService {
                             .features((List<Feature>) results[2])
                             .topicConfigs((Map<String, List<ConfigEntry>>) results[3])
                             .topicDescriptions((Map<String, TopicDescription>) results[4])
-                            .prometheusMetricsDto((PrometheusMetricsDto) results[5])
+                            .prometheusMetrics((PrometheusMetrics) results[5])
                             .build()
                 )))
         .doOnError(e ->
