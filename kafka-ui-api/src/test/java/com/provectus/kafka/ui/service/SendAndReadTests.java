@@ -12,6 +12,8 @@ import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
+import com.provectus.kafka.ui.serdes.builtin.StringSerde;
+import com.provectus.kafka.ui.serdes.builtin.sr.SchemaRegistrySerde;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.json.JsonSchema;
@@ -140,9 +142,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key("testKey")
-                .keySerde("String")
+                .keySerde(StringSerde.name())
                 .content("testValue")
-                .valueSerde("String")
+                .valueSerde(StringSerde.name())
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isEqualTo("testKey");
@@ -170,9 +172,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key("123")
-                .keySerde("String")
+                .keySerde(StringSerde.name())
                 .content("234.56")
-                .valueSerde("String")
+                .valueSerde(StringSerde.name())
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isEqualTo("123");
@@ -186,9 +188,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key(null)
-                .keySerde("String")
+                .keySerde(StringSerde.name())
                 .content("testValue")
-                .valueSerde("String")
+                .valueSerde(StringSerde.name())
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isNull();
@@ -234,9 +236,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key(AVRO_SCHEMA_1_JSON_RECORD)
-                .keySerde("SchemaRegistry")
+                .keySerde(SchemaRegistrySerde.name())
                 .content(AVRO_SCHEMA_2_JSON_RECORD)
-                .valueSerde("SchemaRegistry")
+                .valueSerde(SchemaRegistrySerde.name())
         )
         .doAssert(polled -> {
           assertJsonEqual(polled.getKey(), AVRO_SCHEMA_1_JSON_RECORD);
@@ -314,7 +316,7 @@ public class SendAndReadTests extends AbstractIntegrationTest {
                 .keySerde("String")
                 // f2 has type object instead of string
                 .content("{ \"f1\": 111, \"f2\": {} }")
-                .valueSerde("SchemaRegistry")
+                .valueSerde(SchemaRegistrySerde.name())
         )
         .assertSendThrowsException();
   }
@@ -343,9 +345,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key(AVRO_SCHEMA_1_JSON_RECORD)
-                .keySerde("SchemaRegistry")
+                .keySerde(SchemaRegistrySerde.name())
                 .content(PROTOBUF_SCHEMA_JSON_RECORD)
-                .valueSerde("SchemaRegistry")
+                .valueSerde(SchemaRegistrySerde.name())
         )
         .doAssert(polled -> {
           assertJsonEqual(polled.getKey(), AVRO_SCHEMA_1_JSON_RECORD);
@@ -459,9 +461,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key(JSON_SCHEMA_RECORD)
-                .keySerde("SchemaRegistry")
+                .keySerde(SchemaRegistrySerde.name())
                 .content(JSON_SCHEMA_RECORD)
-                .valueSerde("SchemaRegistry")
+                .valueSerde(SchemaRegistrySerde.name())
                 .headers(Map.of("header1", "value1"))
         )
         .doAssert(polled -> {

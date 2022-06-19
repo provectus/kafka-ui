@@ -4,12 +4,12 @@ import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageSchemaDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
-import com.provectus.kafka.ui.newserde.ConsumerRecordDeserializer;
-import com.provectus.kafka.ui.newserde.ProducerRecordCreator;
-import com.provectus.kafka.ui.newserde.SerdeInstance;
-import com.provectus.kafka.ui.newserde.ClusterSerdes;
-import com.provectus.kafka.ui.newserde.spi.SchemaDescription;
-import com.provectus.kafka.ui.newserde.spi.Serde;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
+import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
+import com.provectus.kafka.ui.serdes.SerdeInstance;
+import com.provectus.kafka.ui.serdes.ClusterSerdes;
+import com.provectus.kafka.ui.serde.api.SchemaDescription;
+import com.provectus.kafka.ui.serde.api.Serde;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 import javax.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +26,6 @@ public class DeserializationService {
 
   private final Map<KafkaCluster, ClusterSerdes> serdes = new ConcurrentHashMap<>();
 
-  @Autowired
   public DeserializationService(Environment env,
                                 ClustersStorage clustersStorage,
                                 ClustersProperties clustersProperties) {
@@ -106,7 +104,7 @@ public class DeserializationService {
             maybeKeySerde.map(
                 serde -> new MessageSchemaDTO()
                     .name(serde.getName())
-                    .schema(maybeKeySchemaDescription.map(SchemaDescription::getJsonSchema).orElse(null))
+                    .schema(maybeKeySchemaDescription.map(SchemaDescription::getSchema).orElse(null))
                     .additionalProperties(maybeKeySchemaDescription
                         .map(SchemaDescription::getAdditionalProperties).orElse(null))
             ).orElse(null)
@@ -115,7 +113,7 @@ public class DeserializationService {
             maybeValueSerde.map(
                 serde -> new MessageSchemaDTO()
                     .name(serde.getName())
-                    .schema(maybeValueSchemaDescription.map(SchemaDescription::getJsonSchema).orElse(null))
+                    .schema(maybeValueSchemaDescription.map(SchemaDescription::getSchema).orElse(null))
                     .additionalProperties(maybeValueSchemaDescription
                         .map(SchemaDescription::getAdditionalProperties).orElse(null))
             ).orElse(null)

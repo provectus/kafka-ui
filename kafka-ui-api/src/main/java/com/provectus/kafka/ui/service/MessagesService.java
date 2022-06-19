@@ -12,8 +12,8 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.newserde.ConsumerRecordDeserializer;
-import com.provectus.kafka.ui.newserde.ProducerRecordCreator;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
+import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import com.provectus.kafka.ui.util.ResultSizeLimiter;
@@ -24,7 +24,7 @@ import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,15 +35,14 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.internals.RecordHeader;
-import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
+import javax.annotation.Nullable;
 
 @Service
 @RequiredArgsConstructor
@@ -135,18 +134,22 @@ public class MessagesService {
                                                  ConsumerPosition consumerPosition, String query,
                                                  MessageFilterTypeDTO filterQueryType,
                                                  int limit,
-                                                 String keySerde,
-                                                 String valueSerde) {
+                                                 @Nullable String keySerde,
+                                                 @Nullable String valueSerde) {
     return withExistingTopic(cluster, topic)
         .flux()
         .flatMap(td -> loadMessagesImpl(cluster, topic, consumerPosition, query,
             filterQueryType, limit, keySerde, valueSerde));
   }
 
-  private Flux<TopicMessageEventDTO> loadMessagesImpl(KafkaCluster cluster, String topic,
-                                                 ConsumerPosition consumerPosition, String query,
-                                                 MessageFilterTypeDTO filterQueryType,
-                                                 int limit, String keySerde, String valueSerde) {
+  private Flux<TopicMessageEventDTO> loadMessagesImpl(KafkaCluster cluster,
+                                                      String topic,
+                                                      ConsumerPosition consumerPosition,
+                                                      String query,
+                                                      MessageFilterTypeDTO filterQueryType,
+                                                      int limit,
+                                                      @Nullable String keySerde,
+                                                      @Nullable String valueSerde) {
 
     java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
     ConsumerRecordDeserializer recordDeserializer =

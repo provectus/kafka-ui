@@ -4,22 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.protobuf.DynamicMessage;
-import com.google.protobuf.util.JsonFormat;
-import com.provectus.kafka.ui.newserde.builtin.sr.MessageFormat;
-import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Map;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.utils.Bytes;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 class ProtobufFileRecordSerDeTest {
 
 //  // Sample message of type `test.Person`

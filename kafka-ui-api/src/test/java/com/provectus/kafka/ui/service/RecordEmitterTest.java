@@ -12,10 +12,10 @@ import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.newserde.ConsumerRecordDeserializer;
-import com.provectus.kafka.ui.newserde.PropertyResolverImpl;
-import com.provectus.kafka.ui.newserde.builtin.StringSerde;
-import com.provectus.kafka.ui.newserde.spi.Serde;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
+import com.provectus.kafka.ui.serdes.PropertyResolverImpl;
+import com.provectus.kafka.ui.serdes.builtin.StringSerde;
+import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
@@ -99,10 +99,11 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     Serde s = new StringSerde();
     s.configure(PropertyResolverImpl.empty(), PropertyResolverImpl.empty(), PropertyResolverImpl.empty());
     return new ConsumerRecordDeserializer(
-        "String",
+        StringSerde.name(),
         s.deserializer(null, Serde.Type.KEY),
-        "String",
+        StringSerde.name(),
         s.deserializer(null, Serde.Type.VALUE),
+        StringSerde.name(),
         s.deserializer(null, Serde.Type.KEY),
         s.deserializer(null, Serde.Type.VALUE)
     );

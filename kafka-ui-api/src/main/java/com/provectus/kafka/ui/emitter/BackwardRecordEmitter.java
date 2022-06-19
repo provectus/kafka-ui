@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.newserde.ConsumerRecordDeserializer;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import java.time.Duration;
 import java.util.ArrayList;

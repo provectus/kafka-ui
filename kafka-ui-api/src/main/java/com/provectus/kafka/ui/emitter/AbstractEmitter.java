@@ -3,7 +3,7 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicMessagePhaseDTO;
-import com.provectus.kafka.ui.newserde.ConsumerRecordDeserializer;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import java.time.Duration;
 import java.time.Instant;
 import org.apache.kafka.clients.consumer.Consumer;

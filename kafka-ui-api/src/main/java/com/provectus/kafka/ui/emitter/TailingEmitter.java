@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.newserde.ConsumerRecordDeserializer;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.util.OffsetsSeek;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
