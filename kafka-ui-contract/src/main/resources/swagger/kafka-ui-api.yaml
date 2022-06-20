@@ -670,10 +670,12 @@ paths:
             $ref: "#/components/schemas/SeekDirection"
         - name: keySerde
           in: query
+          description: "Serde thi should be used for deserialization. Will be chosen automatically if not set."
           schema:
             type: string
         - name: valueSerde
           in: query
+          description: "Serde thi should be used for deserialization. Will be chosen automatically if not set."
           schema:
             type: string
       responses:
@@ -1785,6 +1787,7 @@ components:
         description:
           type: string
         preferred:
+          description: "This serde was automatically chosen by cluster config. This should be enabled in UI by default. Also it will be used for deserialization if no serdes passed."
           type: boolean
         schema:
           type: string
