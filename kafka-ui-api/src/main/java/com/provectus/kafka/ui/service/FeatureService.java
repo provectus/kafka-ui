@@ -48,6 +48,10 @@ public class FeatureService {
       );
     }
 
+    if (cluster.getJmxPort() != null && cluster.getJmxPort() != 0) {
+      features.add(Mono.just(Feature.JMX));
+    }
+
     return Flux.fromIterable(features).flatMap(m -> m).collectList();
   }
 
