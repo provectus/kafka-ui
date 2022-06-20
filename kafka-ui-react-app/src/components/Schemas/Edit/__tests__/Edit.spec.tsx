@@ -1,12 +1,11 @@
 import React from 'react';
 import Edit from 'components/Schemas/Edit/Edit';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { clusterSchemaEditPath } from 'lib/paths';
 import {
   schemasInitialState,
   schemaVersion,
 } from 'redux/reducers/schemas/__test__/fixtures';
-import { Route } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/dom';
 import ClusterContext, {
   ContextProps,
@@ -24,13 +23,15 @@ const renderComponent = (
   context: ContextProps = contextInitialValue
 ) =>
   render(
-    <Route path={clusterSchemaEditPath(':clusterName', ':subject')}>
+    <WithRoute path={clusterSchemaEditPath()}>
       <ClusterContext.Provider value={context}>
         <Edit />
       </ClusterContext.Provider>
-    </Route>,
+    </WithRoute>,
     {
-      pathname: clusterSchemaEditPath(clusterName, schemaVersion.subject),
+      initialEntries: [
+        clusterSchemaEditPath(clusterName, schemaVersion.subject),
+      ],
       preloadedState: {
         schemas: initialState,
       },
@@ -41,7 +42,7 @@ describe('Edit', () => {
   afterEach(() => fetchMock.reset());
 
   describe('fetch failed', () => {
-    it('renders pageloader', async () => {
+    it('renders page loader', async () => {
       const schemasAPILatestMock = fetchMock.getOnce(schemasAPILatestUrl, 404);
       await act(() => {
         renderComponent();

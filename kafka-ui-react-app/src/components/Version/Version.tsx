@@ -29,7 +29,6 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
   }, [tag]);
 
   const { outdated, latestTag } = latestVersionInfo;
-
   return (
     <S.Wrapper>
       <S.CurrentVersion>{tag}</S.CurrentVersion>

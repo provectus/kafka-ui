@@ -1,5 +1,4 @@
 import React from 'react';
-import { StaticRouter } from 'react-router-dom';
 import Pagination, {
   PaginationProps,
 } from 'components/common/Pagination/Pagination';
@@ -8,12 +7,16 @@ import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 
 describe('Pagination', () => {
-  const setupComponent = (search = '', props: Partial<PaginationProps> = {}) =>
-    render(
-      <StaticRouter location={{ pathname: '/my/test/path/23', search }}>
-        <Pagination totalPages={11} {...props} />
-      </StaticRouter>
-    );
+  const setupComponent = (
+    search = '',
+    props: Partial<PaginationProps> = {}
+  ) => {
+    const defaultPath = '/my/test/path/23';
+    const pathName = search ? `${defaultPath}${search}` : defaultPath;
+    return render(<Pagination totalPages={11} {...props} />, {
+      initialEntries: [pathName],
+    });
+  };
 
   describe('next & prev buttons', () => {
     it('renders disable prev button and enabled next link', () => {
@@ -47,17 +50,11 @@ describe('Pagination', () => {
     it('renders 1 spread element after first page control', () => {
       setupComponent('?page=8');
       expect(screen.getAllByRole('listitem')[1]).toHaveTextContent('…');
-      expect(screen.getAllByRole('listitem')[1].firstChild).toHaveClass(
-        'pagination-ellipsis'
-      );
     });
 
     it('renders 1 spread element before last spread control', () => {
       setupComponent('?page=2');
       expect(screen.getAllByRole('listitem')[7]).toHaveTextContent('…');
-      expect(screen.getAllByRole('listitem')[7].firstChild).toHaveClass(
-        'pagination-ellipsis'
-      );
     });
 
     it('renders 2 spread elements', () => {

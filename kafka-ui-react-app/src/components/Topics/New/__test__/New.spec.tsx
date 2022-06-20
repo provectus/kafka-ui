@@ -1,11 +1,10 @@
 import React from 'react';
 import New from 'components/Topics/New/New';
-import { Route, Router } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import { RootState } from 'redux/interfaces';
-import { Provider } from 'react-redux';
+import * as redux from 'react-redux';
 import { act, screen, waitFor } from '@testing-library/react';
-import { createMemoryHistory } from 'history';
 import fetchMock from 'fetch-mock-jest';
 import {
   clusterTopicCopyPath,
@@ -15,7 +14,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 
-import { createTopicPayload, createTopicResponsePayload } from './fixtures';
+const { Provider } = redux;
 
 const mockStore = configureStore();
 
@@ -24,127 +23,119 @@ const topicName = 'test-topic';
 
 const initialState: Partial<RootState> = {};
 const storeMock = mockStore(initialState);
-const historyMock = createMemoryHistory();
-const createTopicAPIPath = `/api/clusters/${clusterName}/topics`;
 
-const renderComponent = (history = historyMock, store = storeMock) =>
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
+const renderComponent = (path: string, store = storeMock) => {
   render(
-    <Router history={history}>
-      <Route path={clusterTopicNewPath(':clusterName')}>
-        <Provider store={store}>
-          <New />
-        </Provider>
-      </Route>
-      <Route path={clusterTopicCopyPath(':clusterName')}>
-        <Provider store={store}>
-          <New />
-        </Provider>
-      </Route>
-      <Route path={clusterTopicPath(':clusterName', ':topicName')}>
-        New topic path
-      </Route>
-    </Router>
+    <Routes>
+      <Route
+        path={clusterTopicNewPath()}
+        element={
+          <Provider store={store}>
+            <New />
+          </Provider>
+        }
+      />
+
+      <Route
+        path={clusterTopicCopyPath()}
+        element={
+          <Provider store={store}>
+            <New />
+          </Provider>
+        }
+      />
+
+      <Route path={clusterTopicPath()} element="New topic path" />
+    </Routes>,
+    { initialEntries: [path] }
   );
+};
 
 describe('New', () => {
   beforeEach(() => {
     fetchMock.reset();
   });
 
+  afterEach(() => {
+    mockNavigate.mockClear();
+  });
+
   it('checks header for create new', async () => {
-    const mockedHistory = createMemoryHistory({
-      initialEntries: [clusterTopicNewPath(clusterName)],
-    });
-    renderComponent(mockedHistory);
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
+
     expect(
       screen.getByRole('heading', { name: 'Create new Topic' })
     ).toHaveTextContent('Create new Topic');
   });
 
   it('checks header for copy', async () => {
-    const mockedHistory = createMemoryHistory({
-      initialEntries: [
-        {
-          pathname: clusterTopicCopyPath(clusterName),
-          search: `?name=test`,
-        },
-      ],
-    });
-
-    renderComponent(mockedHistory);
+    await act(() =>
+      renderComponent(`${clusterTopicCopyPath(clusterName)}?name=test`)
+    );
     expect(
       screen.getByRole('heading', { name: 'Copy Topic' })
     ).toHaveTextContent('Copy Topic');
   });
 
   it('validates form', async () => {
-    const mockedHistory = createMemoryHistory({
-      initialEntries: [clusterTopicNewPath(clusterName)],
-    });
-    jest.spyOn(mockedHistory, 'push');
-    renderComponent(mockedHistory);
-
-    await waitFor(() => {
-      userEvent.click(screen.getByText(/submit/i));
-    });
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
+    userEvent.click(screen.getByText(/submit/i));
     await waitFor(() => {
       expect(screen.getByText('name is a required field')).toBeInTheDocument();
     });
-    await waitFor(() => {
-      expect(mockedHistory.push).toBeCalledTimes(0);
-    });
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it('submits valid form', async () => {
-    const createTopicAPIPathMock = fetchMock.postOnce(
-      createTopicAPIPath,
-      createTopicResponsePayload,
-      {
-        body: createTopicPayload,
-      }
-    );
-    const mockedHistory = createMemoryHistory({
-      initialEntries: [clusterTopicNewPath(clusterName)],
-    });
-    jest.spyOn(mockedHistory, 'push');
-    renderComponent(mockedHistory);
+    const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
+    const useDispatchMock = jest.fn(() => ({
+      meta: { requestStatus: 'fulfilled' },
+    })) as jest.Mock;
+    useDispatchSpy.mockReturnValue(useDispatchMock);
 
-    await waitFor(() => {
-      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
-      userEvent.click(screen.getByText(/submit/i));
-    });
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
 
-    await waitFor(() =>
-      expect(mockedHistory.location.pathname).toBe(
-        clusterTopicPath(clusterName, topicName)
-      )
+    userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+    userEvent.click(screen.getByText(/submit/i));
+
+    await waitFor(() => expect(mockNavigate).toBeCalledTimes(1));
+    expect(mockNavigate).toHaveBeenLastCalledWith(`../${topicName}`);
+    expect(useDispatchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not redirect page when request is not fulfilled', async () => {
+    const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
+    const useDispatchMock = jest.fn(() => ({
+      meta: { requestStatus: 'pending' },
+    })) as jest.Mock;
+
+    useDispatchSpy.mockReturnValue(useDispatchMock);
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
+    await act(() =>
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName)
     );
-    expect(mockedHistory.push).toBeCalledTimes(1);
-    expect(createTopicAPIPathMock.called()).toBeTruthy();
+    await act(() => userEvent.click(screen.getByText(/submit/i)));
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it('submits valid form that result in an error', async () => {
-    const createTopicAPIPathMock = fetchMock.postOnce(
-      createTopicAPIPath,
-      { throws: new Error('Something went wrong') },
-      {
-        body: createTopicPayload,
-      }
-    );
+    const useDispatchSpy = jest.spyOn(redux, 'useDispatch');
+    const useDispatchMock = jest.fn();
+    useDispatchSpy.mockReturnValue(useDispatchMock);
 
-    const mocked = createMemoryHistory({
-      initialEntries: [clusterTopicNewPath(clusterName)],
-    });
-
-    jest.spyOn(mocked, 'push');
-    renderComponent(mocked);
-
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
     await act(() => {
       userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
       userEvent.click(screen.getByText(/submit/i));
     });
 
-    expect(createTopicAPIPathMock.called()).toBeTruthy();
-    expect(mocked.push).toBeCalledTimes(0);
+    expect(useDispatchMock).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

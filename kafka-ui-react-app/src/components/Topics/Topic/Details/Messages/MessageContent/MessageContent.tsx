@@ -1,7 +1,6 @@
 import { TopicMessageTimestampTypeEnum, SchemaType } from 'generated-sources';
 import React from 'react';
 import EditorViewer from 'components/common/EditorViewer/EditorViewer';
-import { SecondaryTabs } from 'components/common/Tabs/SecondaryTabs.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import dayjs from 'dayjs';
 
@@ -62,29 +61,29 @@ const MessageContent: React.FC<MessageContentProps> = ({
       <td colSpan={10}>
         <S.Section>
           <S.ContentBox>
-            <SecondaryTabs>
-              <button
+            <S.Tabs>
+              <S.Tab
                 type="button"
-                className={activeTab === 'key' ? 'is-active' : ''}
+                $active={activeTab === 'key'}
                 onClick={handleKeyTabClick}
               >
                 Key
-              </button>
-              <button
-                className={activeTab === 'content' ? 'is-active' : ''}
+              </S.Tab>
+              <S.Tab
+                $active={activeTab === 'content'}
                 type="button"
                 onClick={handleContentTabClick}
               >
                 Content
-              </button>
-              <button
-                className={activeTab === 'headers' ? 'is-active' : ''}
+              </S.Tab>
+              <S.Tab
+                $active={activeTab === 'headers'}
                 type="button"
                 onClick={handleHeadersTabClick}
               >
                 Headers
-              </button>
-            </SecondaryTabs>
+              </S.Tab>
+            </S.Tabs>
             <EditorViewer
               data={activeTabContent() || ''}
               maxLines={28}

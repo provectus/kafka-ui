@@ -3,7 +3,7 @@ version: '3'
 services:
   selenoid:
     network_mode: bridge
-    image: aerokube/selenoid:1.10.3
+    image: aerokube/selenoid:1.10.7
     volumes:
       - "../selenoid/config:/etc/selenoid"
       - "/var/run/docker.sock:/var/run/docker.sock"
@@ -22,4 +22,10 @@ services:
       - selenoid
     ports:
       - "8081:8080"
-    command: [ "--selenoid-uri", "http://selenoid:4444" ]
+    command: [ "--selenoid-uri", "http://localhost:4444" ]
+
+  selenoid-chrome:
+    network_mode: bridge
+    image: selenoid/vnc:chrome_96.0
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

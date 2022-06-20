@@ -1,6 +1,5 @@
 import React from 'react';
 import { chunk } from 'lodash';
-import { v4 } from 'uuid';
 import * as Metrics from 'components/common/Metrics';
 import { Cluster } from 'generated-sources';
 import { Tag } from 'components/common/Tag/Tag.styled';
@@ -19,11 +18,6 @@ interface Props {
   offlineClusters: Cluster[];
 }
 
-interface ChunkItem {
-  id: string;
-  data: Cluster[];
-}
-
 const ClustersWidget: React.FC<Props> = ({
   clusters,
   onlineClusters,
@@ -31,17 +25,11 @@ const ClustersWidget: React.FC<Props> = ({
 }) => {
   const [showOfflineOnly, setShowOfflineOnly] = React.useState<boolean>(false);
 
-  const clusterList: ChunkItem[] = React.useMemo(() => {
-    let list = clusters;
-
+  const clusterList = React.useMemo(() => {
     if (showOfflineOnly) {
-      list = offlineClusters;
+      return chunk(offlineClusters, 2);
     }
-
-    return chunk(list, 2).map((data) => ({
-      id: v4(),
-      data,
-    }));
+    return chunk(clusters, 2);
   }, [clusters, offlineClusters, showOfflineOnly]);
 
   const handleSwitch = () => setShowOfflineOnly(!showOfflineOnly);
@@ -69,7 +57,7 @@ const ClustersWidget: React.FC<Props> = ({
         <label>Only offline clusters</label>
       </S.SwitchWrapper>
       {clusterList.map((chunkItem) => (
-        <Table key={chunkItem.id} isFullwidth>
+        <Table key={chunkItem.map(({ name }) => name).join('-')} isFullwidth>
           <thead>
             <tr>
               <TableHeaderCell title="Cluster name" />
@@ -82,7 +70,7 @@ const ClustersWidget: React.FC<Props> = ({
             </tr>
           </thead>
           <tbody>
-            {chunkItem.data.map((cluster) => (
+            {chunkItem.map((cluster) => (
               <tr key={cluster.name}>
                 <S.TableCell maxWidth="99px" width="350">
                   {cluster.readOnly && <Tag color="blue">readonly</Tag>}{' '}

@@ -1,53 +1,68 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 import Connect from 'components/Connect/Connect';
 import { store } from 'redux/store';
-import { Route } from 'react-router-dom';
 import {
   clusterConnectorsPath,
   clusterConnectorNewPath,
   clusterConnectConnectorPath,
   clusterConnectConnectorEditPath,
+  getNonExactPath,
+  clusterConnectsPath,
 } from 'lib/paths';
 
+const ConnectCompText = {
+  new: 'NewContainer',
+  list: 'ListContainer',
+  details: 'DetailsContainer',
+  edit: 'EditContainer',
+};
+
 jest.mock('components/Connect/New/NewContainer', () => () => (
-  <div>NewContainer</div>
+  <div>{ConnectCompText.new}</div>
 ));
 jest.mock('components/Connect/List/ListContainer', () => () => (
-  <div>ListContainer</div>
+  <div>{ConnectCompText.list}</div>
 ));
 jest.mock('components/Connect/Details/DetailsContainer', () => () => (
-  <div>DetailsContainer</div>
+  <div>{ConnectCompText.details}</div>
 ));
 jest.mock('components/Connect/Edit/EditContainer', () => () => (
-  <div>EditContainer</div>
+  <div>{ConnectCompText.edit}</div>
 ));
 
 describe('Connect', () => {
-  const renderComponent = (pathname: string) =>
+  const renderComponent = (pathname: string, routePath: string) =>
     render(
-      <Route path="/ui/clusters/:clusterName">
+      <WithRoute path={getNonExactPath(routePath)}>
         <Connect />
-      </Route>,
-      { pathname, store }
+      </WithRoute>,
+      { initialEntries: [pathname], store }
     );
 
   it('renders ListContainer', () => {
-    renderComponent(clusterConnectorsPath('my-cluster'));
-    expect(screen.getByText('ListContainer')).toBeInTheDocument();
+    renderComponent(
+      clusterConnectorsPath('my-cluster'),
+      clusterConnectorsPath()
+    );
+    expect(screen.getByText(ConnectCompText.list)).toBeInTheDocument();
   });
 
   it('renders NewContainer', () => {
-    renderComponent(clusterConnectorNewPath('my-cluster'));
-    expect(screen.getByText('NewContainer')).toBeInTheDocument();
+    renderComponent(
+      clusterConnectorNewPath('my-cluster'),
+      clusterConnectorsPath()
+    );
+    expect(screen.getByText(ConnectCompText.new)).toBeInTheDocument();
   });
 
   it('renders DetailsContainer', () => {
     renderComponent(
-      clusterConnectConnectorPath('my-cluster', 'my-connect', 'my-connector')
+      clusterConnectConnectorPath('my-cluster', 'my-connect', 'my-connector'),
+      clusterConnectsPath()
     );
-    expect(screen.getByText('DetailsContainer')).toBeInTheDocument();
+    expect(screen.getByText(ConnectCompText.details)).toBeInTheDocument();
   });
 
   it('renders EditContainer', () => {
@@ -56,8 +71,9 @@ describe('Connect', () => {
         'my-cluster',
         'my-connect',
         'my-connector'
-      )
+      ),
+      clusterConnectsPath()
     );
-    expect(screen.getByText('EditContainer')).toBeInTheDocument();
+    expect(screen.getByText(ConnectCompText.edit)).toBeInTheDocument();
   });
 });

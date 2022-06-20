@@ -3,16 +3,13 @@ import SendMessage from 'components/Topics/Topic/SendMessage/SendMessage';
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock';
-import { createMemoryHistory } from 'history';
-import { render } from 'lib/testHelpers';
-import { Route, Router } from 'react-router-dom';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
-  clusterTopicMessagesPath,
+  clusterTopicMessagesRelativePath,
   clusterTopicSendMessagePath,
 } from 'lib/paths';
 import { store } from 'redux/store';
-import { fetchTopicDetailsAction } from 'redux/actions';
-import { initialState } from 'redux/reducers/topics/reducer';
+import { fetchTopicDetails } from 'redux/reducers/topics/topicsSlice';
 import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import validateMessage from 'components/Topics/Topic/SendMessage/validateMessage';
 import Alerts from 'components/Alerts/Alerts';
@@ -35,27 +32,30 @@ jest.mock('components/Topics/Topic/SendMessage/validateMessage', () =>
   jest.fn()
 );
 
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
 const clusterName = 'testCluster';
 const topicName = externalTopicPayload.name;
-const history = createMemoryHistory();
 
 const renderComponent = async () => {
-  history.push(clusterTopicSendMessagePath(clusterName, topicName));
   await act(() => {
     render(
       <>
-        <Router history={history}>
-          <Route
-            path={clusterTopicSendMessagePath(':clusterName', ':topicName')}
-          >
-            <SendMessage />
-          </Route>
-        </Router>
+        <WithRoute path={clusterTopicSendMessagePath()}>
+          <SendMessage />
+        </WithRoute>
         <S.AlertsContainer role="toolbar">
           <Alerts />
         </S.AlertsContainer>
       </>,
-      { store }
+      {
+        initialEntries: [clusterTopicSendMessagePath(clusterName, topicName)],
+        store,
+      }
     );
   });
 };
@@ -64,7 +64,12 @@ const renderAndSubmitData = async (error: string[] = []) => {
   await renderComponent();
   expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   await act(() => {
-    userEvent.selectOptions(screen.getByLabelText('Partition'), '0');
+    userEvent.click(screen.getByRole('listbox'));
+  });
+  await act(() => {
+    userEvent.click(screen.getAllByRole('option')[1]);
+  });
+  await act(() => {
     (validateMessage as Mock).mockImplementation(() => error);
     userEvent.click(screen.getByText('Send'));
   });
@@ -73,16 +78,22 @@ const renderAndSubmitData = async (error: string[] = []) => {
 describe('SendMessage', () => {
   beforeAll(() => {
     store.dispatch(
-      fetchTopicDetailsAction.success({
-        ...initialState,
-        byName: {
-          [externalTopicPayload.name]: externalTopicPayload,
+      fetchTopicDetails.fulfilled(
+        {
+          topicDetails: externalTopicPayload,
+          topicName,
         },
-      })
+        'topic',
+        {
+          clusterName,
+          topicName,
+        }
+      )
     );
   });
   afterEach(() => {
     fetchMock.reset();
+    mockNavigate.mockClear();
   });
 
   it('fetches schema on first render', async () => {
@@ -97,7 +108,8 @@ describe('SendMessage', () => {
   });
 
   describe('when schema is fetched', () => {
-    const url = `/api/clusters/${clusterName}/topics/${topicName}/messages`;
+    const messagesUrl = `/api/clusters/${clusterName}/topics/${topicName}/messages`;
+    const detailsUrl = `/api/clusters/${clusterName}/topics/${topicName}`;
 
     beforeEach(() => {
       fetchMock.getOnce(
@@ -107,33 +119,36 @@ describe('SendMessage', () => {
     });
 
     it('calls sendTopicMessage on submit', async () => {
-      const sendTopicMessageMock = fetchMock.postOnce(url, 200);
+      const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, 200);
+      const fetchTopicDetailsMock = fetchMock.getOnce(detailsUrl, 200);
+
       await renderAndSubmitData();
-      expect(sendTopicMessageMock.called(url)).toBeTruthy();
-      expect(history.location.pathname).toEqual(
-        clusterTopicMessagesPath(clusterName, topicName)
+      expect(sendTopicMessageMock.called(messagesUrl)).toBeTruthy();
+      expect(fetchTopicDetailsMock.called(detailsUrl)).toBeTruthy();
+      expect(mockNavigate).toHaveBeenLastCalledWith(
+        `../${clusterTopicMessagesRelativePath}`
       );
     });
 
     it('should make the sendTopicMessage but most find an error within it', async () => {
-      const sendTopicMessageMock = fetchMock.postOnce(url, {
+      const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, {
         throws: 'Error',
       });
+      const fetchTopicDetailsMock = fetchMock.getOnce(detailsUrl, 200);
       await renderAndSubmitData();
-      expect(sendTopicMessageMock.called(url)).toBeTruthy();
+      expect(sendTopicMessageMock.called()).toBeTruthy();
+      expect(fetchTopicDetailsMock.called(detailsUrl)).toBeFalsy();
       expect(screen.getByRole('alert')).toBeInTheDocument();
-      expect(history.location.pathname).toEqual(
-        clusterTopicMessagesPath(clusterName, topicName)
+      expect(mockNavigate).toHaveBeenLastCalledWith(
+        `../${clusterTopicMessagesRelativePath}`
       );
     });
 
     it('should check and view validation error message when is not valid', async () => {
-      const sendTopicMessageMock = fetchMock.postOnce(url, 200);
+      const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, 200);
       await renderAndSubmitData(['error']);
-      expect(sendTopicMessageMock.called(url)).toBeFalsy();
-      expect(history.location.pathname).not.toEqual(
-        clusterTopicMessagesPath(clusterName, topicName)
-      );
+      expect(sendTopicMessageMock.called(messagesUrl)).toBeFalsy();
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 });

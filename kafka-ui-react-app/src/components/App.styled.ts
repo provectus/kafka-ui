@@ -1,6 +1,8 @@
 import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
 
+import { Button } from './common/Button/Button';
+
 export const Layout = styled.div`
   min-width: 1200px;
 
@@ -14,6 +16,7 @@ export const Container = styled.main(
     margin-top: ${theme.layout.navBarHeight};
     margin-left: ${theme.layout.navBarWidth};
     position: relative;
+    padding-bottom: 30px;
     z-index: 20;
 
     @media screen and (max-width: 1023px) {
@@ -85,7 +88,7 @@ export const Overlay = styled.div<{ $visible: boolean }>(
         bottom: 0;
         right: 0;
         visibility: 'visible';
-        opacity: 1;
+        opacity: 0.7;
         background-color: ${theme.layout.overlay.backgroundColor};
       }
     `}
@@ -107,6 +110,8 @@ export const Navbar = styled.nav(
 
 export const NavbarBrand = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center !important;
   flex-shrink: 0;
   align-items: stretch;
   min-height: 3.25rem;
@@ -204,3 +209,17 @@ export const AlertsContainer = styled.div`
     max-width: initial;
   }
 `;
+
+export const LogoutButton = styled(Button)(
+  ({ theme }) => css`
+    color: ${theme.button.primary.invertedColors.normal};
+    background: none !important;
+    padding: 0 8px;
+  `
+);
+
+export const LogoutLink = styled(Link)(
+  () => css`
+    margin-right: 16px;
+  `
+);

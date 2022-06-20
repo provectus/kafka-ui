@@ -115,6 +115,8 @@ const theme = {
       3: {
         fontSize: '16px',
         lineHeight: '24px',
+        fontWeight: 400,
+        marginBottom: '16px',
       },
       4: {
         fontSize: '14px',
@@ -490,6 +492,7 @@ const theme = {
     newFilterIcon: Colors.brand[50],
     closeModalIcon: Colors.neutral[25],
     savedIcon: Colors.brand[50],
+    dropdownArrowIcon: Colors.neutral[30],
   },
   viewer: {
     wrapper: Colors.neutral[3],

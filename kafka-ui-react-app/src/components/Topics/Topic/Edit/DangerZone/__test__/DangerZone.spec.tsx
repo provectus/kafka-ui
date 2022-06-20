@@ -4,28 +4,30 @@ import DangerZone, {
 } from 'components/Topics/Topic/Edit/DangerZone/DangerZone';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import {
   topicName,
   clusterName,
 } from 'components/Topics/Topic/Edit/__test__/fixtures';
+import { clusterTopicSendMessagePath } from 'lib/paths';
 
 const defaultPartitions = 3;
 const defaultReplicationFactor = 3;
 
 const renderComponent = (props?: Partial<Props>) =>
   render(
-    <DangerZone
-      clusterName={clusterName}
-      topicName={topicName}
-      defaultPartitions={defaultPartitions}
-      defaultReplicationFactor={defaultReplicationFactor}
-      partitionsCountIncreased={false}
-      replicationFactorUpdated={false}
-      updateTopicPartitionsCount={jest.fn()}
-      updateTopicReplicationFactor={jest.fn()}
-      {...props}
-    />
+    <WithRoute path={clusterTopicSendMessagePath()}>
+      <DangerZone
+        defaultPartitions={defaultPartitions}
+        defaultReplicationFactor={defaultReplicationFactor}
+        partitionsCountIncreased={false}
+        replicationFactorUpdated={false}
+        updateTopicPartitionsCount={jest.fn()}
+        updateTopicReplicationFactor={jest.fn()}
+        {...props}
+      />
+    </WithRoute>,
+    { initialEntries: [clusterTopicSendMessagePath(clusterName, topicName)] }
   );
 
 const clickOnDialogSubmitButton = () => {
@@ -199,8 +201,6 @@ describe('DangerZone', () => {
     await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
     rerender(
       <DangerZone
-        clusterName={clusterName}
-        topicName={topicName}
         defaultPartitions={defaultPartitions}
         defaultReplicationFactor={defaultReplicationFactor}
         partitionsCountIncreased
@@ -228,8 +228,6 @@ describe('DangerZone', () => {
     await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
     rerender(
       <DangerZone
-        clusterName={clusterName}
-        topicName={topicName}
         defaultPartitions={defaultPartitions}
         defaultReplicationFactor={defaultReplicationFactor}
         partitionsCountIncreased={false}

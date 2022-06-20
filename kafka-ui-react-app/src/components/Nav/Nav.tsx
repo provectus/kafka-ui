@@ -13,7 +13,7 @@ interface Props {
 const Nav: React.FC<Props> = ({ areClustersFulfilled, clusters }) => (
   <aside aria-label="Sidebar Menu">
     <S.List>
-      <ClusterMenuItem exact to="/" title="Dashboard" isTopLevel />
+      <ClusterMenuItem to="/" title="Dashboard" isTopLevel />
     </S.List>
 
     {areClustersFulfilled &&

@@ -217,6 +217,11 @@
             <artifactId>groovy-json</artifactId>
             <version>${groovy.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.datasketches</groupId>
+            <artifactId>datasketches-java</artifactId>
+            <version>${datasketches-java.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -401,8 +406,8 @@
                         <configuration>
                             <workingDirectory>../kafka-ui-react-app</workingDirectory>
                             <environmentVariables>
-                                <REACT_APP_TAG>v${project.version}</REACT_APP_TAG>
-                                <REACT_APP_COMMIT>${git.commit.id.abbrev}</REACT_APP_COMMIT>
+                                <VITE_TAG>${project.version}</VITE_TAG>
+                                <VITE_COMMIT>${git.commit.id.abbrev}</VITE_COMMIT>
                             </environmentVariables>
                         </configuration>
                         <executions>

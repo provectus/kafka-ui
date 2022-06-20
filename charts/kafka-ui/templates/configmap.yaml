@@ -1,3 +1,4 @@
+{{- if .Values.envs.config -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,3 +7,4 @@ metadata:
     {{- include "kafka-ui.labels" . | nindent 4 }}
 data:
   {{- toYaml .Values.envs.config | nindent 2 }}
+{{- end -}}

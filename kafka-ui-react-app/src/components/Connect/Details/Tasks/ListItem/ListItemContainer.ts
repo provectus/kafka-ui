@@ -1,12 +1,11 @@
 import { connect } from 'react-redux';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Task } from 'generated-sources';
 import { RootState } from 'redux/interfaces';
 import { restartConnectorTask } from 'redux/reducers/connect/connectSlice';
 
 import ListItem from './ListItem';
 
-interface OwnProps extends RouteComponentProps {
+interface OwnProps {
   task: Task;
 }
 
@@ -18,6 +17,4 @@ const mapDispatchToProps = {
   restartTask: restartConnectorTask,
 };
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(ListItem)
-);
+export default connect(mapStateToProps, mapDispatchToProps)(ListItem);
