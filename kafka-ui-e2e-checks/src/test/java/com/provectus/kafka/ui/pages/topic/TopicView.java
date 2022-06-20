@@ -5,9 +5,12 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.base.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
+import com.provectus.kafka.ui.pages.ProduceMessagePage;
+import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
+import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selenide.*;
@@ -16,7 +19,7 @@ import static com.codeborne.selenide.Selenide.*;
 public class TopicView {
 
     private static final String path = "/ui/clusters/%s/topics/%s";
-    private final SelenideElement dotMenuHeader = $(".fPWftu.sc-fHYyUA > .dropdown.is-right");
+    private final SelenideElement dotMenuHeader = $$(".dropdown.is-right button").first();
     private final SelenideElement dotMenuFooter = $$(".dropdown.is-right button").get(1);
 
     @Step
@@ -27,30 +30,47 @@ public class TopicView {
 
     @Step
     public TopicView isOnTopicViewPage() {
-       $("nav[role=navigation] a.is-active.is-primary").shouldBe(Condition.visible);
+        $(By.linkText("Overview")).shouldBe(Condition.visible);
         return this;
     }
 
     @SneakyThrows
     public TopicCreateEditSettingsView openEditSettings() {
-        dotMenuHeader.click();
-        $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() +"']").click();
+        BrowserUtils.javaExecutorClick(dotMenuHeader);
+        $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() + "']").click();
         return new TopicCreateEditSettingsView();
     }
 
+    @Step
+    public TopicView openTopicMenu(TopicMenu menu) {
+        $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
+        return this;
+    }
 
     @SneakyThrows
     public TopicsList deleteTopic() {
-        dotMenuHeader.click();
+        BrowserUtils.javaExecutorClick(dotMenuHeader);
         $("#dropdown-menu").$(byLinkText(DotMenuHeaderItems.REMOVE_TOPIC.getValue())).click();
         $$("div[role=\"dialog\"] button").find(Condition.exactText("Submit")).click();
         return new TopicsList();
     }
 
+    @SneakyThrows
+    public ProduceMessagePage clickOnButton(String buttonName) {
+        BrowserUtils.javaExecutorClick($(By.xpath("//div//button[text()='%s']".formatted(buttonName))));
+        return new ProduceMessagePage();
+    }
+
+    public boolean isKeyMessageVisible(String keyMessage) {
+        return keyMessage.equals($("td[title]").getText());
+    }
+
+    public boolean isContentMessageVisible(String contentMessage) {
+        return contentMessage.equals($(".bPpPJI.sc-gkdBiK").getText());
+    }
+
     private enum DotMenuHeaderItems {
-        EDIT_SETTINGS("Edit settings"),
-        CLEAR_MESSAGES("Clear messages"),
-        REMOVE_TOPIC("Remove topic");
+        EDIT_SETTINGS("Edit settings"), CLEAR_MESSAGES("Clear messages"), REMOVE_TOPIC("Remove topic");
 
         private String value;
 
@@ -64,9 +84,26 @@ public class TopicView {
 
         @Override
         public String toString() {
-            return "DotMenuHeaderItems{" +
-                    "value='" + value + '\'' +
-                    '}';
+            return "DotMenuHeaderItems{" + "value='" + value + '\'' + '}';
+        }
+    }
+
+    public enum TopicMenu {
+        OVERVIEW("Overview"), MESSAGES("Messages"), CONSUMERS("Consumers"), SETTINGS("Settings");
+
+        private String value;
+
+        TopicMenu(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return "TopicMenu{" + "value='" + value + '\'' + '}';
         }
     }
 }

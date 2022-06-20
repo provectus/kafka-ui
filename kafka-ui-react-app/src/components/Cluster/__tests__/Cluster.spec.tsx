@@ -59,19 +59,19 @@ describe('Cluster', () => {
     await act(() => renderComponent(clusterBrokersPath('second')));
     expect(screen.getByText(CLusterCompText.Brokers)).toBeInTheDocument();
   });
-  it('renders Topics', () => {
-    renderComponent(clusterTopicsPath('second'));
+  it('renders Topics', async () => {
+    await act(() => renderComponent(clusterTopicsPath('second')));
     expect(screen.getByText(CLusterCompText.Topics)).toBeInTheDocument();
   });
-  it('renders ConsumerGroups', () => {
-    renderComponent(clusterConsumerGroupsPath('second'));
+  it('renders ConsumerGroups', async () => {
+    await act(() => renderComponent(clusterConsumerGroupsPath('second')));
     expect(
       screen.getByText(CLusterCompText.ConsumerGroups)
     ).toBeInTheDocument();
   });
 
   describe('configured features', () => {
-    it('does not render Schemas if SCHEMA_REGISTRY is not configured', () => {
+    it('does not render Schemas if SCHEMA_REGISTRY is not configured', async () => {
       store.dispatch(
         fetchClusters.fulfilled(
           [
@@ -83,7 +83,7 @@ describe('Cluster', () => {
           '123'
         )
       );
-      renderComponent(clusterSchemasPath('second'));
+      await act(() => renderComponent(clusterSchemasPath('second')));
       expect(
         screen.queryByText(CLusterCompText.Schemas)
       ).not.toBeInTheDocument();
@@ -100,7 +100,9 @@ describe('Cluster', () => {
           '123'
         )
       );
-      renderComponent(clusterSchemasPath(onlineClusterPayload.name));
+      await act(() =>
+        renderComponent(clusterSchemasPath(onlineClusterPayload.name))
+      );
       expect(screen.getByText(CLusterCompText.Schemas)).toBeInTheDocument();
     });
     it('renders Connect if KAFKA_CONNECT is configured', async () => {
@@ -115,7 +117,9 @@ describe('Cluster', () => {
           'requestId'
         )
       );
-      renderComponent(clusterConnectsPath(onlineClusterPayload.name));
+      await act(() =>
+        renderComponent(clusterConnectsPath(onlineClusterPayload.name))
+      );
       expect(screen.getByText(CLusterCompText.Connect)).toBeInTheDocument();
     });
     it('renders KSQL if KSQL_DB is configured', async () => {
@@ -130,7 +134,9 @@ describe('Cluster', () => {
           'requestId'
         )
       );
-      renderComponent(clusterKsqlDbPath(onlineClusterPayload.name));
+      await act(() =>
+        renderComponent(clusterKsqlDbPath(onlineClusterPayload.name))
+      );
       expect(screen.getByText(CLusterCompText.KsqlDb)).toBeInTheDocument();
     });
   });
