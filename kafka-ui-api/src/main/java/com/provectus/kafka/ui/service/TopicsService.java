@@ -419,16 +419,6 @@ public class TopicsService {
     }
   }
 
-  public TopicMessageSchemaDTO getTopicSchema(KafkaCluster cluster,
-                                              String topicName,
-                                              @Nullable String keySerde,
-                                              @Nullable String valueSerde) {
-    if (!metricsCache.get(cluster).getTopicDescriptions().containsKey(topicName)) {
-      throw new TopicNotFoundException();
-    }
-    return deserializationService.schemaForTopic(cluster, topicName, keySerde, valueSerde);
-  }
-
   public Mono<InternalTopic> cloneTopic(
       KafkaCluster cluster, String topicName, String newTopicName) {
     return loadTopic(cluster, topicName).flatMap(topic ->

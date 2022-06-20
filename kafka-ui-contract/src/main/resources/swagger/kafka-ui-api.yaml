@@ -523,7 +523,7 @@ paths:
         404:
           description: Not found
 
-  /api/clusters/{clusterName}/serdes:
+  /api/clusters/{clusterName}/topic/{topicName}/serdes:
     get:
       tags:
         - Messages
@@ -535,15 +535,23 @@ paths:
           required: true
           schema:
             type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: use
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/SerdeUsage'
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SerdeDescription'
+                $ref: '#/components/schemas/TopicSerdeSuggestion'
 
 
   /api/clusters/{clusterName}/topics/{topicName}/messages:
@@ -661,41 +669,6 @@ paths:
           description: OK
         404:
           description: Not found
-
-  /api/clusters/{clusterName}/topics/{topicName}/messages/schema:
-    get:
-      tags:
-        - Messages
-      summary: getTopicSchema
-      operationId: getTopicSchema
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: topicName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: keySerde
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: valueSerde
-          in: query
-          required: false
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TopicMessageSchema'
 
   /api/clusters/{clusterName}/topics/{topicName}/consumer-groups:
     get:
@@ -1678,6 +1651,18 @@ paths:
 
 components:
   schemas:
+    TopicSerdeSuggestion:
+      type: object
+      properties:
+        key:
+          type: array
+          items:
+            $ref: '#/components/schemas/SerdeDescription'
+        value:
+          type: array
+          items:
+            $ref: '#/components/schemas/SerdeDescription'
+
     SerdeDescription:
       type: object
       properties:
@@ -1685,6 +1670,20 @@ components:
           type: string
         description:
           type: string
+        preferred:
+          type: boolean
+        schema:
+          type: string
+        additionalProperties:
+          type: object
+          additionalProperties:
+            type: object
+
+    SerdeUsage:
+      type: string
+      enum:
+        - SERIALIZE
+        - DESERIALIZE
 
     ErrorResponse:
       description: Error object that will be returned with 4XX and 5XX HTTP statuses
@@ -2119,38 +2118,6 @@ components:
       required:
         - partition
 
-    TopicMessageSchema:
-      type: object
-      properties:
-        key:
-          $ref: "#/components/schemas/MessageSchema"
-        value:
-          $ref: "#/components/schemas/MessageSchema"
-      required:
-        - key
-        - value
-
-    MessageSchema:
-      type: object
-      properties:
-        name:
-          type: string
-        source:
-          deprecated: true
-          type: string
-          enum:
-            - SOURCE_SCHEMA_REGISTRY
-            - SOURCE_PROTO_FILE
-            - SOURCE_UNKNOWN
-        schema:
-          type: string
-        additionalProperties:
-          type: object
-          additionalProperties:
-            type: object
-      required:
-        - name
-
     TopicMessageEvent:
       type: object
       properties:
@@ -2215,9 +2182,9 @@ components:
             type: string
         content:
           type: string
-        keyFormat:
+        keyFormat: #deprecated - wont be filled - use 'keySerde' field instead
           $ref: "#/components/schemas/MessageFormat"
-        valueFormat:
+        valueFormat: #deprecated - wont be filled - use 'valueSerde' field instead
           $ref: "#/components/schemas/MessageFormat"
         keySize:
           type: integer

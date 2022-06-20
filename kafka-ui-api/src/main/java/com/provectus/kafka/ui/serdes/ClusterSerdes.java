@@ -3,16 +3,22 @@ package com.provectus.kafka.ui.serdes;
 import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.serdes.builtin.*;
+import com.provectus.kafka.ui.serdes.builtin.Base64Serde;
+import com.provectus.kafka.ui.serdes.builtin.IntegerSerde;
+import com.provectus.kafka.ui.serdes.builtin.LongSerde;
+import com.provectus.kafka.ui.serdes.builtin.ProtobufFileSerde;
+import com.provectus.kafka.ui.serdes.builtin.StringSerde;
+import com.provectus.kafka.ui.serdes.builtin.UuidBinary;
 import com.provectus.kafka.ui.serdes.builtin.sr.SchemaRegistrySerde;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.Serde;
-
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import lombok.SneakyThrows;
 import org.springframework.core.env.Environment;
@@ -160,16 +166,6 @@ public class ClusterSerdes {
     return pattern == null ? null : Pattern.compile(pattern);
   }
 
-  // canSerialize()/canDeserialize() checks not applied
-  public Optional<SerdeInstance> findSerdeFor(String topic, Serde.Type type) {
-    return findSerdeByPatternsOrDefault(topic, type, s -> true);
-  }
-
-  // searchs by pattern and applies canDeserialize() check
-  public Optional<SerdeInstance> findSerdeForDeserialize(String topic, Serde.Type type) {
-    return findSerdeByPatternsOrDefault(topic, type, s -> s.canDeserialize(topic, type));
-  }
-
   private Optional<SerdeInstance> findSerdeByPatternsOrDefault(String topic,
                                                                Serde.Type type,
                                                                Predicate<SerdeInstance> additionalCheck) {
@@ -201,8 +197,18 @@ public class ClusterSerdes {
     return Optional.ofNullable(serdes.get(name));
   }
 
-  public List<SerdeInstance> asList() {
-    return serdes.values().stream().collect(Collectors.toList());
+  public Stream<SerdeInstance> all() {
+    return serdes.values().stream();
+  }
+
+  public SerdeInstance suggestSerdeForSerialize(String topic, Serde.Type type) {
+    return findSerdeByPatternsOrDefault(topic, type, s -> s.canSerialize(topic, type))
+        .orElse(serdes.get(StringSerde.name()));
+  }
+
+  public SerdeInstance suggestSerdeForDeserialize(String topic, Serde.Type type) {
+    return findSerdeByPatternsOrDefault(topic, type, s -> s.canDeserialize(topic, type))
+        .orElse(serdes.get(StringSerde.name()));
   }
 
 }
