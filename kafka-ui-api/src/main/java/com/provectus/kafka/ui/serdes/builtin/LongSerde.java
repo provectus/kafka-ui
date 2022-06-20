@@ -1,16 +1,16 @@
 package com.provectus.kafka.ui.serdes.builtin;
 
 import com.google.common.primitives.Longs;
-import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
-import org.apache.kafka.common.header.Headers;
-
+import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.kafka.common.header.Headers;
 
-//TODO: discuss - maybe we should just use Int64, Int32, UInt64, UInt32 naming?
+
+//TODO: discuss - maybe we should use Int64, Int32, UInt64, UInt32 - like naming?
 public class LongSerde implements BuiltInSerde {
 
   public static String name() {

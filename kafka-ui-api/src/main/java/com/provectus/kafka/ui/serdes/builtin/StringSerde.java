@@ -1,10 +1,9 @@
 package com.provectus.kafka.ui.serdes.builtin;
 
-import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
-
+import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Optional;

@@ -2,13 +2,13 @@ package com.provectus.kafka.ui.serdes;
 
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serde.api.Serde;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 
 @RequiredArgsConstructor
 public class SerdeInstance {

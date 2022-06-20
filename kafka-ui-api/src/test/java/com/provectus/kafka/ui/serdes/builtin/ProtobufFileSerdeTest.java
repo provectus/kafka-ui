@@ -6,14 +6,13 @@ import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
 import com.provectus.kafka.ui.serde.api.Serde;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 class ProtobufFileSerdeTest {
 

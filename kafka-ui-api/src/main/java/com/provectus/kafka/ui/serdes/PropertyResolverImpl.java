@@ -2,12 +2,10 @@ package com.provectus.kafka.ui.serdes;
 
 import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nullable;
-
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;

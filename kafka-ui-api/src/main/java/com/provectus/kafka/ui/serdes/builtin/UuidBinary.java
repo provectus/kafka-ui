@@ -1,16 +1,16 @@
 package com.provectus.kafka.ui.serdes.builtin;
 
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
-import org.apache.kafka.common.header.Headers;
-
+import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.apache.kafka.common.header.Headers;
+
 
 public class UuidBinary implements BuiltInSerde {
 

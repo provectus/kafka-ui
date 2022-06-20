@@ -20,7 +20,6 @@ import com.provectus.kafka.ui.model.PartitionsIncreaseResponseDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
-import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.model.TopicUpdateDTO;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.time.Duration;
@@ -45,8 +44,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
-
-import javax.annotation.Nullable;
 
 @Service
 @RequiredArgsConstructor

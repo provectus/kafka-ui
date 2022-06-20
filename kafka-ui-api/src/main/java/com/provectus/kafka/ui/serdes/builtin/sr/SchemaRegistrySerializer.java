@@ -4,7 +4,6 @@ import com.provectus.kafka.ui.serde.api.Serde;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
-
 import lombok.SneakyThrows;
 import org.apache.kafka.common.serialization.Serializer;
 

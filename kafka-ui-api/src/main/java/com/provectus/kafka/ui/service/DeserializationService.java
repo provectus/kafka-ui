@@ -3,19 +3,18 @@ package com.provectus.kafka.ui.service;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SerdeDescriptionDTO;
+import com.provectus.kafka.ui.serde.api.SchemaDescription;
+import com.provectus.kafka.ui.serde.api.Serde;
+import com.provectus.kafka.ui.serdes.ClusterSerdes;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.serdes.SerdeInstance;
-import com.provectus.kafka.ui.serdes.ClusterSerdes;
-import com.provectus.kafka.ui.serde.api.SchemaDescription;
-import com.provectus.kafka.ui.serde.api.Serde;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 import javax.validation.ValidationException;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -128,7 +127,7 @@ public class DeserializationService {
   private SerdeDescriptionDTO toDto(SerdeInstance serdeInstance,
                                     String topic,
                                     Serde.Type serdeType,
-                                    boolean preferred){
+                                    boolean preferred) {
     var schemaOpt = serdeInstance.getSchema(topic, serdeType);
     return new SerdeDescriptionDTO()
         .name(serdeInstance.getName())

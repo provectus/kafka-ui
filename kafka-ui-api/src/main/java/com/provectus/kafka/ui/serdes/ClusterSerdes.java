@@ -3,6 +3,8 @@ package com.provectus.kafka.ui.serdes;
 import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.serde.api.PropertyResolver;
+import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.builtin.Base64Serde;
 import com.provectus.kafka.ui.serdes.builtin.IntegerSerde;
 import com.provectus.kafka.ui.serdes.builtin.LongSerde;
@@ -10,16 +12,13 @@ import com.provectus.kafka.ui.serdes.builtin.ProtobufFileSerde;
 import com.provectus.kafka.ui.serdes.builtin.StringSerde;
 import com.provectus.kafka.ui.serdes.builtin.UuidBinary;
 import com.provectus.kafka.ui.serdes.builtin.sr.SchemaRegistrySerde;
-import com.provectus.kafka.ui.serde.api.PropertyResolver;
-import com.provectus.kafka.ui.serde.api.Serde;
-import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-
+import javax.annotation.Nullable;
 import lombok.SneakyThrows;
 import org.springframework.core.env.Environment;
 

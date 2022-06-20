@@ -11,9 +11,7 @@ import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.json.JsonSchema;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer;
-
 import java.util.Map;
-
 import org.apache.kafka.common.serialization.Serializer;
 
 class JsonSchemaSchemaRegistrySerializer extends SchemaRegistrySerializer<JsonNode> {
