@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FormError } from 'components/common/Input/Input.styled';
 import { ErrorMessage } from '@hookform/error-message';
-import { yupResolver } from '@hookform/resolvers/yup';
-import yup from 'lib/yupExtended';
 import { useForm, Controller } from 'react-hook-form';
 import { Button } from 'components/common/Button/Button';
-import { SchemaType } from 'generated-sources';
+import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
+import CloseIcon from 'components/common/Icons/CloseIcon';
+import { assignIn } from 'lodash';
 
 import * as S from './QueryForm.styled';
 
@@ -22,13 +22,6 @@ export type FormValues = {
   streamsProperties: string;
 };
 
-const validationSchema = yup.object({
-  ksql: yup.string().trim().required(),
-  streamsProperties: yup.lazy((value) =>
-    value === '' ? yup.string().trim() : yup.string().trim().isJsonObject()
-  ),
-});
-
 const QueryForm: React.FC<Props> = ({
   fetching,
   hasResults,
@@ -43,12 +36,49 @@ const QueryForm: React.FC<Props> = ({
     formState: { errors },
   } = useForm<FormValues>({
     mode: 'onTouched',
-    resolver: yupResolver(validationSchema),
+    // resolver: yupResolver(validationSchema),
     defaultValues: {
       ksql: '',
       streamsProperties: '',
     },
   });
+
+  const [properties, setProperties] = useState([{ id: 0, key: '', value: '' }]);
+
+  const onAddProp = () => {
+    const id = properties[properties.length - 1].id + 1;
+    setProperties((p) => [...p, { id, key: '', value: '' }]);
+  };
+
+  const onDelProp = (i?: number) => {
+    setProperties((p) => [...p.filter((item) => item.id !== i)]);
+  };
+
+  const setStreamProperties = () => {
+    setValue(
+      'streamsProperties',
+      JSON.stringify(
+        properties.reduce((acc, cur, i) => {
+          assignIn(acc, { [cur.key]: cur.value });
+          return acc;
+        }, {})
+      )
+    );
+  };
+
+  const onKeyChange = (e: React.BaseSyntheticEvent, i: number) => {
+    const newArr = [...properties];
+    newArr[i].key = e.target.value;
+    setProperties(newArr);
+    setStreamProperties();
+  };
+
+  const onValueChange = (e: React.BaseSyntheticEvent, i: number) => {
+    const newArr = [...properties];
+    newArr[i].value = e.target.value;
+    setProperties(newArr);
+    setStreamProperties();
+  };
 
   return (
     <S.QueryWrapper>
@@ -93,48 +123,45 @@ const QueryForm: React.FC<Props> = ({
               <ErrorMessage errors={errors} name="ksql" />
             </FormError>
           </S.Fieldset>
-          <S.Fieldset aria-labelledby="streamsPropertiesLabel">
-            <S.KSQLInputHeader>
-              <label id="streamsPropertiesLabel">
-                Stream properties (JSON format)
-              </label>
-              <Button
-                onClick={() => setValue('streamsProperties', '')}
-                buttonType="primary"
-                buttonSize="S"
-                isInverted
-              >
-                Clear
-              </Button>
-            </S.KSQLInputHeader>
-            <Controller
-              control={control}
-              name="streamsProperties"
-              render={({ field }) => (
-                <S.Editor
-                  {...field}
-                  commands={[
-                    {
-                      // commands is array of key bindings.
-                      // name for the key binding.
-                      name: 'commandName',
-                      // key combination used for the command.
-                      bindKey: { win: 'Ctrl-Enter', mac: 'Command-Enter' },
-                      // function to execute when keys are pressed.
-                      exec: () => {
-                        handleSubmit(submitHandler)();
-                      },
-                    },
-                  ]}
-                  schemaType={SchemaType.JSON}
-                  readOnly={fetching}
+
+          <S.StreamPropertiesContainer>
+            Stream properties:
+            {properties.map((prop, index) => (
+              <S.InputsContainer key={prop.id}>
+                <input
+                  onChange={(e) => onKeyChange(e, index)}
+                  placeholder="Key"
+                  aria-label="key"
+                  type="text"
+                  name="key"
                 />
-              )}
-            />
-            <FormError>
-              <ErrorMessage errors={errors} name="streamsProperties" />
-            </FormError>
-          </S.Fieldset>
+                <input
+                  onChange={(e) => onValueChange(e, index)}
+                  placeholder="Value"
+                  aria-label="value"
+                  type="text"
+                  name="value"
+                />
+                <S.DeleteButtonWrapper
+                  key={prop.id}
+                  onClick={() => onDelProp(index)}
+                >
+                  <IconButtonWrapper aria-label="deleteProperty">
+                    <CloseIcon aria-hidden />
+                  </IconButtonWrapper>
+                </S.DeleteButtonWrapper>
+              </S.InputsContainer>
+            ))}
+            <Button
+              type="button"
+              buttonSize="M"
+              buttonType="secondary"
+              onClick={() => onAddProp()}
+            >
+              <i className="fas fa-plus" />
+              Add Stream Property
+            </Button>
+          </S.StreamPropertiesContainer>
         </S.KSQLInputsWrapper>
         <S.KSQLButtons>
           <Button

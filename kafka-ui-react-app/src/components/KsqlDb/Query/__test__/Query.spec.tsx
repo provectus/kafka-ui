@@ -3,11 +3,10 @@ import React from 'react';
 import Query, {
   getFormattedErrorFromTableData,
 } from 'components/KsqlDb/Query/Query';
-import { screen, within } from '@testing-library/dom';
+import { screen } from '@testing-library/dom';
 import fetchMock from 'fetch-mock';
-import userEvent from '@testing-library/user-event';
 import { clusterKsqlDbQueryPath } from 'lib/paths';
-import { act } from '@testing-library/react';
+import { act, fireEvent } from '@testing-library/react';
 
 const clusterName = 'testLocal';
 const renderComponent = () =>
@@ -25,9 +24,7 @@ describe('Query', () => {
     renderComponent();
 
     expect(screen.getByLabelText('KSQL')).toBeInTheDocument();
-    expect(
-      screen.getByLabelText('Stream properties (JSON format)')
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText('Stream properties:')).toBeInTheDocument();
   });
 
   afterEach(() => fetchMock.reset());
@@ -43,11 +40,8 @@ describe('Query', () => {
     });
 
     await act(() => {
-      userEvent.paste(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        'show tables;'
-      );
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
+      fireEvent.paste(screen.getByLabelText('KSQL'), 'show tables;');
+      fireEvent.click(screen.getByRole('button', { name: 'Execute' }));
     });
 
     expect(mock.calls().length).toBe(1);
@@ -65,17 +59,9 @@ describe('Query', () => {
     });
 
     await act(() => {
-      userEvent.paste(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        'show tables;'
-      );
-      userEvent.paste(
-        within(
-          screen.getByLabelText('Stream properties (JSON format)')
-        ).getByRole('textbox'),
-        '{"some":"json"}'
-      );
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
+      fireEvent.paste(screen.getByLabelText('KSQL'), 'show tables;');
+      fireEvent.paste(screen.getByLabelText('Stream properties:'), 'test');
+      fireEvent.click(screen.getByRole('button', { name: 'Execute' }));
     });
     expect(mock.calls().length).toBe(1);
   });
@@ -92,17 +78,9 @@ describe('Query', () => {
     });
 
     await act(() => {
-      userEvent.paste(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        'show tables;'
-      );
-      userEvent.paste(
-        within(
-          screen.getByLabelText('Stream properties (JSON format)')
-        ).getByRole('textbox'),
-        '{"some":"json"}'
-      );
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
+      fireEvent.paste(screen.getByLabelText('KSQL'), 'show tables;');
+      fireEvent.paste(screen.getByLabelText('Stream properties:'), 'test');
+      fireEvent.click(screen.getByRole('button', { name: 'Execute' }));
     });
     expect(mock.calls().length).toBe(1);
   });

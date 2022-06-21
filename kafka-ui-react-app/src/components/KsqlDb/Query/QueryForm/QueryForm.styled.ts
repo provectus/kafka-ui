@@ -27,6 +27,37 @@ export const KSQLButtons = styled.div`
   gap: 16px;
 `;
 
+export const StreamPropertiesContainer = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+export const InputsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  & > input {
+    height: 40px;
+    border: 1px solid grey;
+    border-radius: 4px;
+  }
+`;
+export const DeleteButtonWrapper = styled.div`
+  min-height: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: flex-start;
+  margin-top: 10px;
+`;
+
+export const LabelContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 export const Fieldset = styled.fieldset`
   width: 100%;
 `;
