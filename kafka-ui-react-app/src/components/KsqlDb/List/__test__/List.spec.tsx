@@ -1,32 +1,22 @@
 import React from 'react';
 import List from 'components/KsqlDb/List/List';
-import { clusterKsqlDbPath } from 'lib/paths';
-import { render, WithRoute } from 'lib/testHelpers';
+import { render } from 'lib/testHelpers';
 import fetchMock from 'fetch-mock';
-import { screen, waitForElementToBeRemoved } from '@testing-library/dom';
-
-const clusterName = 'local';
+import { screen } from '@testing-library/dom';
 
 const renderComponent = () => {
-  render(
-    <WithRoute path={clusterKsqlDbPath()}>
-      <List />
-    </WithRoute>,
-    { initialEntries: [clusterKsqlDbPath(clusterName)] }
-  );
+  render(<List />);
 };
 
 describe('KsqlDb List', () => {
   afterEach(() => fetchMock.reset());
-  it('renders placeholder on empty data', async () => {
-    fetchMock.post(
-      {
-        url: `/api/clusters/${clusterName}/ksql`,
-      },
-      { data: [] }
-    );
+  it('renders List component with Tables and Streams tabs', async () => {
     renderComponent();
-    await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
-    expect(screen.getByText('No tables or streams found')).toBeInTheDocument();
+
+    const Tables = screen.getByTitle('Tables');
+    const Streams = screen.getByTitle('Streams');
+
+    expect(Tables).toBeInTheDocument();
+    expect(Streams).toBeInTheDocument();
   });
 });
