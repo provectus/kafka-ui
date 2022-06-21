@@ -19,6 +19,8 @@ import {
 
 import * as S from './App.styled';
 import Logo from './common/Logo/Logo';
+import GitIcon from './common/Icons/GitIcon';
+import DiscordIcon from './common/Icons/DiscordIcon';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -64,12 +66,26 @@ const App: React.FC = () => {
                 {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
               </S.NavbarItem>
             </S.NavbarBrand>
+          </S.NavbarBrand>
+          <S.NavbarSocial>
             <S.LogoutLink to="/logout">
               <S.LogoutButton buttonType="primary" buttonSize="M">
                 Log out
               </S.LogoutButton>
             </S.LogoutLink>
-          </S.NavbarBrand>
+            <S.SocialLink
+              href="https://github.com/provectus/kafka-ui"
+              target="_blank"
+            >
+              <GitIcon />
+            </S.SocialLink>
+            <S.SocialLink
+              href="https://discord.com/invite/4DWzD7pGE5"
+              target="_blank"
+            >
+              <DiscordIcon />
+            </S.SocialLink>
+          </S.NavbarSocial>
         </S.Navbar>
 
         <S.Container>
