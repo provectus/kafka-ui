@@ -2,13 +2,13 @@ package com.provectus.kafka.ui.util;
 
 public enum JmxMetricsName {
   MESSAGES_IN_PER_SEC("MessagesInPerSec"),
-  BYTES_IN_PER_SEC("BytesInPerSec", "kafka_server_brokertopicmetrics_bytesinpersec"),
+  BYTES_IN_PER_SEC("BytesInPerSec"),
   REPLICATION_BYTES_IN_PER_SEC("ReplicationBytesInPerSec"),
   REQUESTS_PER_SEC("RequestsPerSec"),
   ERRORS_PER_SEC("ErrorsPerSec"),
   MESSAGE_CONVERSIONS_PER_SEC("MessageConversionsPerSec"),
   BYTES_OUT_PER_SEC("BytesOutPerSec"),
-  REPLICATION_BYTES_OUT_PER_SEC("ReplicationBytesOutPerSec", "kafka_server_brokertopicmetrics_bytesoutpersec"),
+  REPLICATION_BYTES_OUT_PER_SEC("ReplicationBytesOutPerSec"),
   NO_KEY_COMPACTED_TOPIC_RECORDS_PER_SEC("NoKeyCompactedTopicRecordsPerSec"),
   INVALID_MAGIC_NUMBER_RECORDS_PER_SEC("InvalidMagicNumberRecordsPerSec"),
   INVALID_MESSAGE_CRC_RECORDS_PER_SEC("InvalidMessageCrcRecordsPerSec"),
@@ -30,22 +30,11 @@ public enum JmxMetricsName {
   FAILED_PRODUCE_REQUESTS_PER_SEC("FailedProduceRequestsPerSe");
 
   private final String value;
-  private final String prometheusName;
-
   JmxMetricsName(String value) {
-    this(value, "");
-  }
-
-  JmxMetricsName(String value, String prometheusName) {
     this.value = value;
-    this.prometheusName = prometheusName;
   }
 
   public String getValue() {
     return value;
-  }
-
-  public String getPrometheusName() {
-    return prometheusName;
   }
 }
