@@ -58,7 +58,7 @@ const QueryForm: React.FC<Props> = ({
     setValue(
       'streamsProperties',
       JSON.stringify(
-        properties.reduce((acc, cur, i) => {
+        properties.reduce((acc, cur) => {
           assignIn(acc, { [cur.key]: cur.value });
           return acc;
         }, {})
