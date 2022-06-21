@@ -72,9 +72,9 @@ export type ClusterGroupParam = {
 export const clusterSchemasRelativePath = 'schemas';
 export const clusterSchemaNewRelativePath = 'create-new';
 export const clusterSchemaEditPageRelativePath = `edit`;
-export const clusterSchemaSchemaDiffPageRelativePath = `diff`;
+export const clusterSchemaSchemaComparePageRelativePath = `compare`;
 export const clusterSchemaEditRelativePath = `${RouteParams.subject}/${clusterSchemaEditPageRelativePath}`;
-export const clusterSchemaSchemaDiffRelativePath = `${RouteParams.subject}/${clusterSchemaSchemaDiffPageRelativePath}`;
+export const clusterSchemaSchemaDiffRelativePath = `${RouteParams.subject}/${clusterSchemaSchemaComparePageRelativePath}`;
 export const clusterSchemasPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/schemas`;
@@ -89,10 +89,10 @@ export const clusterSchemaEditPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
 ) => `${clusterSchemasPath(clusterName)}/${subject}/edit`;
-export const clusterSchemaSchemaDiffPath = (
+export const clusterSchemaSchemaComparePath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
-) => `${clusterSchemaPath(clusterName, subject)}/diff`;
+) => `${clusterSchemaPath(clusterName, subject)}/compare`;
 
 export type ClusterSubjectParam = {
   subject: string;
