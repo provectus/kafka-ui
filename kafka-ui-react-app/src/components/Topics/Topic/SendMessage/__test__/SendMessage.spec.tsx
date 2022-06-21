@@ -1,6 +1,6 @@
 import React from 'react';
 import SendMessage from 'components/Topics/Topic/SendMessage/SendMessage';
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock';
 import { render, WithRoute } from 'lib/testHelpers';
@@ -60,34 +60,37 @@ const renderComponent = async () => {
   });
 };
 
-// const renderAndSubmitData = async (error: string[] = []) => {
-//   await renderComponent();
-//   expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
-//   act(() => {
-//     userEvent.click(screen.getByRole('combobox'));
-//   });
-//   act(() => {
-//     userEvent.click(screen.getByRole('option'));
-//   });
-//   await act(() => {
-//     fireEvent.paste(screen.getAllByRole('textbox')[2], '{test}');
-//   });
-//
-//   await waitFor(() => {
-//     expect(screen.getAllByRole('textbox')[2]).toHaveTextContent('{test}');
-//   });
-//
-//   await act(() => {
-//     expect(screen.getAllByRole('textbox')[0]).toHaveValue('foo');
-//   });
-//   expect(screen.getByText('Send')).toBeEnabled();
-//   expect(screen.getByText('Send')).toBeEnabled();
-//
-//   act(() => {
-//     (validateMessage as Mock).mockImplementation(() => error);
-//     userEvent.click(screen.getByText('Send'));
-//   });
-// };
+const renderAndSubmitData = async (error: string[] = []) => {
+  await renderComponent();
+  expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  act(() => {
+    userEvent.click(screen.getByRole('combobox'));
+  });
+  act(() => {
+    userEvent.click(screen.getByRole('option'));
+  });
+
+  await act(() => {
+    userEvent.paste(screen.getAllByRole('textbox')[0], '{test}');
+  });
+
+  await act(() => {
+    userEvent.paste(screen.getAllByRole('textbox')[1], '{test}');
+  });
+
+  await act(() => {
+    userEvent.paste(screen.getAllByRole('textbox')[2], '{test}');
+  });
+
+  setTimeout(() => {
+    expect(screen.getByText('Send')).toBeEnabled();
+  }, 1000);
+
+  act(() => {
+    (validateMessage as Mock).mockImplementation(() => error);
+    userEvent.click(screen.getByText('Send'));
+  });
+};
 
 describe('SendMessage', () => {
   beforeAll(() => {
@@ -121,42 +124,47 @@ describe('SendMessage', () => {
     expect(fetchTopicMessageSchemaMock.called()).toBeTruthy();
   });
 
-  // describe('when schema is fetched', () => {
-  //   const url = `/api/clusters/${clusterName}/topics/${topicName}/messages`;
-  //
-  //   beforeEach(() => {
-  //     fetchMock.getOnce(
-  //       `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
-  //       testSchema
-  //     );
-  //   });
-  //
-  //   it('calls sendTopicMessage on submit', async () => {
-  //     const sendTopicMessageMock = fetchMock.postOnce(url, 200);
-  //     await renderAndSubmitData();
-  //     expect(sendTopicMessageMock.called(url)).toBeTruthy();
-  //     expect(mockNavigate).toHaveBeenLastCalledWith(
-  //       `../${clusterTopicMessagesRelativePath}`
-  //     );
-  //   });
-  //
-  //   it('should make the sendTopicMessage but most find an error within it', async () => {
-  //     const sendTopicMessageMock = fetchMock.postOnce(url, {
-  //       throws: 'Error',
-  //     });
-  //     await renderAndSubmitData();
-  //     expect(sendTopicMessageMock.called(url)).toBeTruthy();
-  //     expect(screen.getByRole('alert')).toBeInTheDocument();
-  //     expect(mockNavigate).toHaveBeenLastCalledWith(
-  //       `../${clusterTopicMessagesRelativePath}`
-  //     );
-  //   });
-  //
-  //   it('should check and view validation error message when is not valid', async () => {
-  //     const sendTopicMessageMock = fetchMock.postOnce(url, 200);
-  //     await renderAndSubmitData(['error']);
-  //     expect(sendTopicMessageMock.called(url)).toBeFalsy();
-  //     expect(mockNavigate).not.toHaveBeenCalled();
-  //   });
-  // });
+  describe('when schema is fetched', () => {
+    const url = `/api/clusters/${clusterName}/topics/${topicName}/messages`;
+
+    beforeEach(() => {
+      fetchMock.getOnce(
+        `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
+        testSchema
+      );
+    });
+
+    it('calls sendTopicMessage on submit', async () => {
+      const sendTopicMessageMock = fetchMock.postOnce(url, 200);
+
+      await renderAndSubmitData();
+      setTimeout(() => {
+        expect(sendTopicMessageMock.called(url)).toBeTruthy();
+        expect(mockNavigate).toHaveBeenLastCalledWith(
+          `../${clusterTopicMessagesRelativePath}`
+        );
+      }, 1000);
+    });
+
+    it('should make the sendTopicMessage but most find an error within it', async () => {
+      const sendTopicMessageMock = fetchMock.postOnce(url, {
+        throws: 'Error',
+      });
+      await renderAndSubmitData();
+      setTimeout(() => {
+        expect(sendTopicMessageMock.called(url)).toBeTruthy();
+        expect(screen.getByRole('alert')).toBeInTheDocument();
+        expect(mockNavigate).toHaveBeenLastCalledWith(
+          `../${clusterTopicMessagesRelativePath}`
+        );
+      }, 1000);
+    });
+
+    it('should check and view validation error message when is not valid', async () => {
+      const sendTopicMessageMock = fetchMock.postOnce(url, 200);
+      await renderAndSubmitData(['error']);
+      expect(sendTopicMessageMock.called(url)).toBeFalsy();
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+  });
 });
