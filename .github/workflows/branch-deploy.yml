@@ -13,11 +13,7 @@ jobs:
       - name: get branch name
         id: extract_branch
         run: |
-          hub pr checkout ${{ github.event.pull_request.number }}
-          branch_name=$(hub branch | grep "*" | sed -e 's/^\*//')
-          echo $branch_name
-          echo ::set-output name=branch::${branch_name}
-          tag=$(echo $branch_name |  sed 's/\//-/g' | sed 's/\./-/g' | sed 's/\_/-/g' |  sed -e 's/\(.*\)/\L\1/' | cut -c1-32 | sed -E 's/(^[^a-z0-9])*([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)([^a-z0-9]*)/\2/')
+          tag='pr${{ github.event.pull_request.number }}'
           echo ::set-output name=tag::${tag}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
