@@ -70,6 +70,9 @@ const theme = {
     overlay: {
       backgroundColor: Colors.neutral[50],
     },
+    socialLink: {
+      color: Colors.neutral[20],
+    },
   },
   panelColor: Colors.neutral[0],
   breadcrumb: Colors.neutral[30],
@@ -496,6 +499,14 @@ const theme = {
     closeModalIcon: Colors.neutral[25],
     savedIcon: Colors.brand[50],
     dropdownArrowIcon: Colors.neutral[30],
+    git: {
+      hover: Colors.neutral[70],
+      active: Colors.neutral[90],
+    },
+    discord: {
+      hover: Colors.brand[15],
+      active: Colors.blue[45],
+    },
   },
   viewer: {
     wrapper: Colors.neutral[3],
@@ -505,16 +516,6 @@ const theme = {
   },
   editFilterText: {
     color: Colors.brand[50],
-  },
-  gitIcon: {
-    normal: Colors.neutral[20],
-    hover: Colors.neutral[70],
-    active: Colors.neutral[90],
-  },
-  discordIcon: {
-    normal: Colors.neutral[20],
-    hover: Colors.brand[15],
-    active: Colors.blue[45],
   },
 };
 

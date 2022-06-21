@@ -73,20 +73,18 @@ const App: React.FC = () => {
                 Log out
               </S.LogoutButton>
             </S.LogoutLink>
-            <S.GithubIconWrapper
-              onClick={() =>
-                window.open('https://github.com/provectus/kafka-ui', 'blank')
-              }
+            <S.SocialLink
+              href="https://github.com/provectus/kafka-ui"
+              target="_blank"
             >
               <GitIcon />
-            </S.GithubIconWrapper>
-            <S.DiscordIconWrapper
-              onClick={() =>
-                window.open('https://discord.com/invite/4DWzD7pGE5', 'blank')
-              }
+            </S.SocialLink>
+            <S.SocialLink
+              href="https://discord.com/invite/4DWzD7pGE5"
+              target="_blank"
             >
               <DiscordIcon />
-            </S.DiscordIconWrapper>
+            </S.SocialLink>
           </S.NavbarSocial>
         </S.Navbar>
 

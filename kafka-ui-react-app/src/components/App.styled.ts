@@ -2,6 +2,8 @@ import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
 
 import { Button } from './common/Button/Button';
+import GitIcon from './common/Icons/GitIcon';
+import DiscordIcon from './common/Icons/DiscordIcon';
 
 export const Layout = styled.div`
   min-width: 1200px;
@@ -119,37 +121,27 @@ export const NavbarBrand = styled.div`
   min-height: 3.25rem;
 `;
 
-export const DiscordIconWrapper = styled.div(
-  ({ theme }) => css`
+export const SocialLink = styled.a(
+  ({ theme: { layout, icons } }) => css`
+    display: block;
     margin-top: 5px;
-    &:hover {
-      cursor: pointer;
-      svg {
-        fill: ${theme.discordIcon.hover};
-      }
-    }
-    &:active {
-      cursor: pointer;
-      svg {
-        fill: ${theme.discordIcon.active};
-      }
-    }
-  `
-);
+    cursor: pointer;
+    fill: ${layout.socialLink.color};
 
-export const GithubIconWrapper = styled.div(
-  ({ theme }) => css`
-    margin-top: 5px;
     &:hover {
-      cursor: pointer;
-      svg {
-        fill: ${theme.gitIcon.hover};
+      ${DiscordIcon} {
+        fill: ${icons.discord.hover};
+      }
+      ${GitIcon} {
+        fill: ${icons.git.hover};
       }
     }
     &:active {
-      cursor: pointer;
-      svg {
-        fill: ${theme.gitIcon.active};
+      ${DiscordIcon} {
+        fill: ${icons.discord.active};
+      }
+      ${GitIcon} {
+        fill: ${icons.git.active};
       }
     }
   `
