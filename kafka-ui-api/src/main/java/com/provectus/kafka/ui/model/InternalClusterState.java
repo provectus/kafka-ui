@@ -53,7 +53,9 @@ public class InternalClusterState {
 
     features = metrics.getFeatures();
 
-    if (cluster.getPrometheus() == null || "".equals(cluster.getPrometheus())) {
+    if (cluster.getPrometheus() == null
+        || "".equals(cluster.getPrometheus())
+        || metrics.getPrometheusMetrics() == null) {
       bytesInPerSec = metrics
           .getJmxMetrics()
           .getBytesInPerSec()

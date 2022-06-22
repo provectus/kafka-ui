@@ -23,17 +23,23 @@ public class PrometheusMetrics {
   private String status;
   private Data data;
 
-  private Optional<BigDecimal> getValueWithoutTopic(final String metricsName, BinaryOperator<BigDecimal> reducer) {
+  private Optional<BigDecimal> getValueWithoutTopic(final String metricsName,
+                                                    JmxMetricsValueName rate,
+                                                    BinaryOperator<BigDecimal> reducer) {
     Predicate<Result> nonTopicMetrics = result -> "".equals(result.metric.topic) || result.metric.topic == null;
-    return getValue(metricsName, nonTopicMetrics, reducer);
+    return getValue(metricsName, rate, nonTopicMetrics, reducer);
   }
 
   private Optional<BigDecimal> getValue(final String metricsName,
+                                        final JmxMetricsValueName metricsValueName,
                                         final Predicate<? super Result> filter,
                                         final BinaryOperator<BigDecimal> reducer) {
     if ("success".equals(status) && data != null) {
       return data.result.stream()
-          .filter(result -> result.metric.name.equals(metricsName))
+          .filter(result -> result.metric != null)
+          .filter(result ->
+              result.metric.fullName.matches(String.format(".*_%s$", metricsValueName.getValue())))
+          .filter(result -> metricsName.equals(result.metric.name))
           .filter(filter)
           .map(result -> new BigDecimal(result.value.get(1).toString()))
           .reduce(reducer);
@@ -42,16 +48,20 @@ public class PrometheusMetrics {
   }
 
 
-  private Optional<BigDecimal> getSummarizedValue(final String metricsName) {
-    return getValueWithoutTopic(metricsName, BigDecimal::add);
+  private Optional<BigDecimal> getSummarizedValue(final String metricsName, JmxMetricsValueName rate) {
+    return getValueWithoutTopic(metricsName, rate, BigDecimal::add);
   }
 
   public Optional<BigDecimal> getBigDecimalMetric(JmxMetricsName jmxMetrics) {
+    return getBigDecimalMetric(jmxMetrics, JmxMetricsValueName.FIFTEEN_MINUTE_RATE);
+  }
+
+  public Optional<BigDecimal> getBigDecimalMetric(JmxMetricsName jmxMetrics, JmxMetricsValueName rate) {
     switch (jmxMetrics) {
       case BYTES_IN_PER_SEC:
-        return getSummarizedValue(JmxMetricsName.BYTES_IN_PER_SEC.getValue());
+        return getSummarizedValue(JmxMetricsName.BYTES_IN_PER_SEC.getValue(), rate);
       case BYTES_OUT_PER_SEC:
-        return getSummarizedValue(JmxMetricsName.BYTES_OUT_PER_SEC.getValue());
+        return getSummarizedValue(JmxMetricsName.BYTES_OUT_PER_SEC.getValue(), rate);
       default:
         return Optional.empty();
     }
@@ -60,6 +70,7 @@ public class PrometheusMetrics {
   @lombok.Data
   public static class Metric {
     @JsonProperty("__name__")
+    private String fullName;
     private String name;
     private String env;
     private String instance;

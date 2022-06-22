@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 public class PrometheusClusterUtil {
   private final WebClient webClient;
   private static final String DEFAULT_BYTES_IN_OUT_PER_SEC_ONLY
-      = "{__name__=~\"kafka_server_.*BrokerTopicMetrics_Count.*\","
+      = "{__name__=~\"kafka_server_.*BrokerTopicMetrics_.*\","
       + "topic=~\"\"," // We don't need to summarize each topics metrics
       + "name=~\"Bytes(In|Out)PerSec\"}";
 
@@ -30,5 +30,4 @@ public class PrometheusClusterUtil {
         .bodyToMono(PrometheusMetrics.class)
         .onErrorReturn(new PrometheusMetrics());
   }
-
 }
