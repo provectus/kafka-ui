@@ -67,7 +67,7 @@ const CustomParamField: React.FC<Props> = ({
   return (
     <C.Column>
       <div>
-        <InputLabel>Custom Parameter</InputLabel>
+        <InputLabel>Custom Parameter *</InputLabel>
         <Controller
           control={control}
           rules={{ required: 'Custom Parameter is required.' }}
