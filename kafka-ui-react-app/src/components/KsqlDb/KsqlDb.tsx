@@ -9,7 +9,7 @@ const KsqlDb: React.FC = () => {
   return (
     <Routes>
       <Route
-        index
+        path="/*"
         element={
           <BreadcrumbRoute>
             <List />

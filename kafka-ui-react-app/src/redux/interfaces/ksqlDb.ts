@@ -18,7 +18,6 @@ export interface KsqlState {
 }
 
 export interface KsqlDescription {
-  type?: string;
   name?: string;
   topic?: string;
   keyFormat?: string;

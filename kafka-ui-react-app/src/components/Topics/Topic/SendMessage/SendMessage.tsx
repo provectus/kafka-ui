@@ -142,7 +142,7 @@ const SendMessage: React.FC = () => {
             key: !key ? null : key,
             content: !content ? null : content,
             headers,
-            partition,
+            partition: !partition ? 0 : partition,
           },
         });
         dispatch(fetchTopicDetails({ clusterName, topicName }));
