@@ -68,7 +68,7 @@ const App: React.FC = () => {
             </S.NavbarBrand>
           </S.NavbarBrand>
           <S.NavbarSocial>
-            <S.LogoutLink to="/logout">
+            <S.LogoutLink href="/logout">
               <S.LogoutButton buttonType="primary" buttonSize="M">
                 Log out
               </S.LogoutButton>
