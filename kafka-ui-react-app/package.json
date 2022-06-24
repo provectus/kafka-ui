@@ -47,7 +47,7 @@
     "yup": "^0.32.9"
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": [
+    "*.{ts,tsx}": [
       "eslint --fix",
       "npm test -- --bail --findRelatedTests --watchAll=false"
     ]
@@ -62,9 +62,9 @@
     "test": "jest --watch",
     "test:coverage": "jest --watchAll --coverage",
     "test:CI": "CI=true npm run test:coverage -- --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
-    "tsc": "tsc",
+    "tsc": "tsc --pretty --noEmit",
     "prepare": "cd .. && husky install kafka-ui-react-app/.husky",
-    "pre-commit": "npm run tsc --noEmit && lint-staged"
+    "pre-commit": "npm run tsc && lint-staged"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -107,10 +107,10 @@
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.5.0",
     "fetch-mock-jest": "^1.5.1",
-    "husky": "^7.0.1",
+    "husky": "^8.0.1",
     "jest-sonar-reporter": "^2.0.0",
     "jest-styled-components": "^7.0.8",
-    "lint-staged": "^12.1.2",
+    "lint-staged": "^13.0.2",
     "prettier": "^2.3.1",
     "redux-mock-store": "^1.5.4",
     "rimraf": "^3.0.2",
