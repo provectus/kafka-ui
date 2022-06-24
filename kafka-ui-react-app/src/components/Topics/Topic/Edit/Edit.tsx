@@ -4,7 +4,6 @@ import {
   TopicFormDataRaw,
   TopicName,
   TopicConfigByName,
-  TopicWithDetailedInfo,
   TopicFormData,
 } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -13,12 +12,12 @@ import { RouteParamsClusterTopic } from 'lib/paths';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
-import { TOPIC_CUSTOM_PARAMS_PREFIX, TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import styled from 'styled-components';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppSelector } from 'lib/hooks/redux';
 import { getFullTopic } from 'redux/reducers/topics/selectors';
 import useAppParams from 'lib/hooks/useAppParams';
+import topicParamsTransformer from 'components/Topics/Topic/Edit/topicParamsTransformer';
 
 import DangerZoneContainer from './DangerZone/DangerZoneContainer';
 
@@ -54,46 +53,6 @@ export const DEFAULTS = {
   maxMessageBytes: 1000012,
 };
 
-const topicParams = (topic: TopicWithDetailedInfo | undefined) => {
-  if (!topic) {
-    return DEFAULTS;
-  }
-
-  const { name, replicationFactor } = topic;
-
-  return {
-    ...DEFAULTS,
-    name,
-    replicationFactor,
-    partitions: topic.partitionCount || DEFAULTS.partitions,
-    maxMessageBytes: Number(
-      topic?.config?.find((config) => config.name === 'max.message.bytes')
-        ?.value || '1000012'
-    ),
-    minInsyncReplicas: Number(
-      topic?.config?.find((config) => config.name === 'min.insync.replicas')
-        ?.value || 1
-    ),
-    retentionBytes:
-      Number(
-        topic?.config?.find((config) => config.name === 'retention.bytes')
-          ?.value
-      ) || -1,
-    retentionMs:
-      Number(
-        topic?.config?.find((config) => config.name === 'retention.ms')?.value
-      ) || -1,
-
-    [TOPIC_CUSTOM_PARAMS_PREFIX]: topic.config
-      ?.filter(
-        (el) =>
-          el.value !== el.defaultValue &&
-          Object.keys(TOPIC_CUSTOM_PARAMS).includes(el.name)
-      )
-      .map((el) => ({ name: el.name, value: el.value })),
-  };
-};
-
 let formInit = false;
 
 const Edit: React.FC<Props> = ({
@@ -106,7 +65,7 @@ const Edit: React.FC<Props> = ({
 
   const topic = useAppSelector((state) => getFullTopic(state, topicName));
 
-  const defaultValues = topicParams(topic);
+  const defaultValues = topicParamsTransformer(topic);
   const methods = useForm<TopicFormData>({
     defaultValues,
     resolver: yupResolver(topicFormValidationSchema),
