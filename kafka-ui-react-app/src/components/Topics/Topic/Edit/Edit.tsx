@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   ClusterName,
   TopicFormDataRaw,
@@ -39,6 +39,7 @@ export interface Props {
 const EditWrapperStyled = styled.div`
   display: flex;
   justify-content: center;
+
   & > * {
     width: 800px;
   }
@@ -63,8 +64,26 @@ const topicParams = (topic: TopicWithDetailedInfo | undefined) => {
   return {
     ...DEFAULTS,
     name,
-    partitions: topic.partitionCount || DEFAULTS.partitions,
     replicationFactor,
+    partitions: topic.partitionCount || DEFAULTS.partitions,
+    maxMessageBytes: Number(
+      topic?.config?.find((config) => config.name === 'max.message.bytes')
+        ?.value || '1000012'
+    ),
+    minInsyncReplicas: Number(
+      topic?.config?.find((config) => config.name === 'min.insync.replicas')
+        ?.value || 1
+    ),
+    retentionBytes:
+      Number(
+        topic?.config?.find((config) => config.name === 'retention.bytes')
+          ?.value
+      ) || -1,
+    retentionMs:
+      Number(
+        topic?.config?.find((config) => config.name === 'retention.ms')?.value
+      ) || -1,
+
     [TOPIC_CUSTOM_PARAMS_PREFIX]: topic.config
       ?.filter(
         (el) =>
@@ -87,8 +106,7 @@ const Edit: React.FC<Props> = ({
 
   const topic = useAppSelector((state) => getFullTopic(state, topicName));
 
-  const defaultValues = React.useMemo(() => topicParams(topic), [topic]);
-
+  const defaultValues = topicParams(topic);
   const methods = useForm<TopicFormData>({
     defaultValues,
     resolver: yupResolver(topicFormValidationSchema),
@@ -99,7 +117,8 @@ const Edit: React.FC<Props> = ({
 
   React.useEffect(() => {
     fetchTopicConfig({ clusterName, topicName });
-  }, [fetchTopicConfig, clusterName, topicName]);
+    formInit = false;
+  }, [fetchTopicConfig, clusterName, topicName, isTopicUpdated]);
 
   React.useEffect(() => {
     if (isSubmitting && isTopicUpdated) {
@@ -137,7 +156,9 @@ const Edit: React.FC<Props> = ({
           <FormProvider {...methods}>
             <TopicForm
               topicName={topicName}
+              retentionBytes={defaultValues.retentionBytes}
               isSubmitting={isSubmitting}
+              cleanUpPolicy={topic.cleanUpPolicy}
               isEditing
               onSubmit={methods.handleSubmit(onSubmit)}
             />

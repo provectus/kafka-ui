@@ -160,12 +160,12 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
 
   return {
     configs: {
+      ...Object.values(customParams || {}).reduce(topicReducer, {}),
       'cleanup.policy': cleanupPolicy,
       'retention.ms': retentionMs,
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInsyncReplicas,
-      ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };
 };
