@@ -46,14 +46,14 @@ public class LongSerde implements BuiltInSerde {
 
   @Override
   public Serializer serializer(String topic, Type type) {
-    return (topic1, input) -> Longs.toByteArray(Long.parseLong(input));
+    return input -> Longs.toByteArray(Long.parseLong(input));
   }
 
   @Override
   public Deserializer deserializer(String topic, Type type) {
     return new Deserializer() {
       @Override
-      public DeserializeResult deserialize(String topic, Headers headers, byte[] data) {
+      public DeserializeResult deserialize(Headers headers, byte[] data) {
         return new DeserializeResult(
             String.valueOf(Longs.fromByteArray(data)),
             DeserializeResult.Type.JSON,

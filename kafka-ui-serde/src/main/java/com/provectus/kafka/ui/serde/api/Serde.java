@@ -31,11 +31,11 @@ public interface Serde {
   Deserializer deserializer(String topic, Type type);
 
   interface Serializer {
-    byte[] serialize(String topic, String input);
+    byte[] serialize(String input);
   }
 
   interface Deserializer {
-    DeserializeResult deserialize(String topic, Headers headers, byte[] data);
+    DeserializeResult deserialize(Headers headers, byte[] data);
   }
 
 }

@@ -48,12 +48,12 @@ public class StringSerde implements BuiltInSerde {
 
   @Override
   public Serializer serializer(String topic, Type type) {
-    return (topic1, input) -> input.getBytes(encoding);
+    return input -> input.getBytes(encoding);
   }
 
   @Override
   public Deserializer deserializer(String topic, Type type) {
-    return (topic1, headers, data) ->
+    return (headers, data) ->
         new DeserializeResult(
             new String(data, encoding),
             DeserializeResult.Type.STRING,

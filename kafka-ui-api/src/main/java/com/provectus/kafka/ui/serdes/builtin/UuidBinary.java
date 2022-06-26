@@ -52,7 +52,7 @@ public class UuidBinary implements BuiltInSerde {
   public Serializer serializer(String topic, Type type) {
     return new Serializer() {
       @Override
-      public byte[] serialize(String topic, String input) {
+      public byte[] serialize(String input) {
         UUID uuid = UUID.fromString(input);
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
         if (mostSignificantBitsFirst) {
@@ -71,7 +71,7 @@ public class UuidBinary implements BuiltInSerde {
   public Deserializer deserializer(String topic, Type type) {
     return new Deserializer() {
       @Override
-      public DeserializeResult deserialize(String topic, Headers headers, byte[] data) {
+      public DeserializeResult deserialize(Headers headers, byte[] data) {
         if (data.length != 16) {
           throw new ValidationException("UUID data should be 16 bytes, but it is " + data.length);
         }

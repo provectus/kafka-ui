@@ -74,7 +74,7 @@ class SchemaRegistrySerdeTest {
     String topic = "test";
 
     int schemaId = registryClient.register(topic + "-value", schema);
-    byte[] serialized = serde.serializer(topic, Serde.Type.VALUE).serialize(topic, jsonValueForSchema);
+    byte[] serialized = serde.serializer(topic, Serde.Type.VALUE).serialize(jsonValueForSchema);
     byte[] expected = schemaRegistryBytes(schemaId, jsonValueForSchema, schema);
     assertThat(serialized).isEqualTo(expected);
   }
@@ -103,7 +103,7 @@ class SchemaRegistrySerdeTest {
     int schemaId = registryClient.register(topic + "-value", schema);
 
     byte[] data = schemaRegistryBytes(schemaId, jsonValueForSchema, schema);
-    var result = serde.deserializer(topic, Serde.Type.VALUE).deserialize(topic, null, data);
+    var result = serde.deserializer(topic, Serde.Type.VALUE).deserialize( null, data);
 
     assertJsonsEqual(jsonValueForSchema, result.getResult());
     assertThat(result.getType()).isEqualTo(DeserializeResult.Type.JSON);

@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.kafka.common.header.Headers;
 
@@ -223,7 +224,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
 
   @Override
   public Deserializer deserializer(String topic, Type type) {
-    return new SrDeserializer();
+    return new SrDeserializer(topic);
   }
 
   ///--------------------------------------------------------------
@@ -231,10 +232,13 @@ public class SchemaRegistrySerde implements BuiltInSerde {
   private static final byte SR_RECORD_MAGIC_BYTE = (byte) 0;
   private static final int SR_RECORD_PREFIX_LENGTH = 5;
 
+  @RequiredArgsConstructor
   private class SrDeserializer implements Deserializer {
 
+    private final String topic;
+
     @Override
-    public DeserializeResult deserialize(String topic, Headers headers, byte[] data) {
+    public DeserializeResult deserialize(Headers headers, byte[] data) {
       var schemaId = extractSchemaIdFromMsg(data);
       MessageFormat format = getMessageFormatBySchemaId(schemaId);
       MessageFormatter formatter = schemaRegistryFormatters.get(format);

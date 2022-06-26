@@ -45,7 +45,7 @@ public class Base64Serde implements BuiltInSerde {
   public Serializer serializer(String topic, Type type) {
     return new Serializer() {
       @Override
-      public byte[] serialize(String topic, String input) {
+      public byte[] serialize(String input) {
         input = input.trim();
         // it is actually a hack to provide ability to sent empty array as a key/value
         if (input.length() == 0) {
@@ -61,7 +61,7 @@ public class Base64Serde implements BuiltInSerde {
     var encoder = Base64.getEncoder();
     return new Deserializer() {
       @Override
-      public DeserializeResult deserialize(String topic, Headers headers, byte[] data) {
+      public DeserializeResult deserialize(Headers headers, byte[] data) {
         return new DeserializeResult(
             encoder.encodeToString(data),
             DeserializeResult.Type.STRING,

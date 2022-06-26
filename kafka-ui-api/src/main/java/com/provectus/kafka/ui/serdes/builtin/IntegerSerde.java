@@ -42,12 +42,12 @@ public class IntegerSerde implements BuiltInSerde {
 
   @Override
   public Serializer serializer(String topic, Type type) {
-    return (topic1, input) -> Ints.toByteArray(Integer.parseInt(input));
+    return input -> Ints.toByteArray(Integer.parseInt(input));
   }
 
   @Override
   public Deserializer deserializer(String topic, Type type) {
-    return (topic1, headers, data) ->
+    return (headers, data) ->
         new DeserializeResult(
             String.valueOf(Ints.fromByteArray(data)),
             DeserializeResult.Type.JSON,

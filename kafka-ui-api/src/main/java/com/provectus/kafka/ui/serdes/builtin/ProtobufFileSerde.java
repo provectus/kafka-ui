@@ -140,7 +140,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
     return new Serializer() {
       @SneakyThrows
       @Override
-      public byte[] serialize(String topic, String input) {
+      public byte[] serialize(String input) {
         DynamicMessage.Builder builder = DynamicMessage.newBuilder(descriptor);
         JsonFormat.parser().merge(input, builder);
         return builder.build().toByteArray();
@@ -154,7 +154,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
     return new Deserializer() {
       @SneakyThrows
       @Override
-      public DeserializeResult deserialize(String topic, Headers headers, byte[] data) {
+      public DeserializeResult deserialize(Headers headers, byte[] data) {
         var protoMsg = DynamicMessage.parseFrom(descriptor, new ByteArrayInputStream(data));
         byte[] jsonFromProto = ProtobufSchemaUtils.toJson(protoMsg);
         var result = new String(jsonFromProto);

@@ -23,8 +23,8 @@ public class ProducerRecordCreator {
     return new ProducerRecord<>(
         topic,
         partition,
-        key == null ? null : keySerializer.serialize(topic, key),
-        value == null ? null : valuesSerializer.serialize(topic, value),
+        key == null ? null : keySerializer.serialize(key),
+        value == null ? null : valuesSerializer.serialize(value),
         createHeaders(headers)
     );
   }

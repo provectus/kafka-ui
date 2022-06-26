@@ -25,7 +25,7 @@ abstract class SchemaRegistrySerializer<T> implements Serde.Serializer {
   protected abstract Serializer<T> createSerializer(SchemaRegistryClient client);
 
   @Override
-  public byte[] serialize(String topic, String input) {
+  public byte[] serialize(String input) {
     final T read = this.serialize(input, schema);
     return this.serializer.serialize(topic, read);
   }

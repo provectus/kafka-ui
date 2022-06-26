@@ -61,11 +61,11 @@ class ProtobufFileSerdeTest {
     );
 
     var msg1 = serde.deserializer("topic1", Serde.Type.VALUE)
-        .deserialize("topic1", null, personMessage);
+        .deserialize(null, personMessage);
     assertThat(msg1.getResult().contains("user1@example.com")).isTrue();
 
     var msg2 = serde.deserializer("topic2", Serde.Type.KEY)
-        .deserialize("topic2", null, addressBookMessage);
+        .deserialize( null, addressBookMessage);
     assertThat(msg2.getResult().contains("addrBook@example.com")).isTrue();
   }
 
@@ -81,11 +81,11 @@ class ProtobufFileSerdeTest {
     );
 
     var msg1 = serde.deserializer("topic1", Serde.Type.VALUE)
-        .deserialize("topic1", null, personMessage);
+        .deserialize(null, personMessage);
     assertThat(msg1.getResult().contains("user1@example.com")).isTrue();
 
     var msg2 = serde.deserializer("topic2", Serde.Type.KEY)
-        .deserialize("topic1", null, addressBookMessage);
+        .deserialize(null, addressBookMessage);
     assertThat(msg2.getResult().contains("addrBook@example.com")).isTrue();
   }
 
@@ -109,11 +109,11 @@ class ProtobufFileSerdeTest {
     );
 
     var personBytes = serde.serializer("topic1", Serde.Type.VALUE)
-        .serialize("topic1", "{ \"name\": \"My Name\",\"id\": 101, \"email\": \"user1@example.com\" }");
+        .serialize("{ \"name\": \"My Name\",\"id\": 101, \"email\": \"user1@example.com\" }");
     assertThat(personBytes).isEqualTo(personBytes);
 
     var booksBytes = serde.serializer("topic2", Serde.Type.KEY)
-        .serialize("topic1", "{\"version\": 1, \"people\": ["
+        .serialize("{\"version\": 1, \"people\": ["
             + "{ \"name\": \"My Name\",\"id\": 102, \"email\": \"addrBook@example.com\" }]}");
     assertThat(booksBytes).isEqualTo(addressBookMessage);
   }
@@ -130,11 +130,11 @@ class ProtobufFileSerdeTest {
     );
 
     var personBytes = serde.serializer("topic1", Serde.Type.VALUE)
-        .serialize("topic1", "{ \"name\": \"My Name\",\"id\": 101, \"email\": \"user1@example.com\" }");
+        .serialize("{ \"name\": \"My Name\",\"id\": 101, \"email\": \"user1@example.com\" }");
     assertThat(personBytes).isEqualTo(personBytes);
 
     var booksBytes = serde.serializer("topic2", Serde.Type.KEY)
-        .serialize("topic1", "{\"version\": 1, \"people\": ["
+        .serialize("{\"version\": 1, \"people\": ["
             + "{ \"name\": \"My Name\",\"id\": 102, \"email\": \"addrBook@example.com\" }]}");
     assertThat(booksBytes).isEqualTo(addressBookMessage);
   }

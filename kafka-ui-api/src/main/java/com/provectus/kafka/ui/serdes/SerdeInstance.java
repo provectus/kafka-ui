@@ -58,14 +58,14 @@ public class SerdeInstance {
   public Serde.Serializer serializer(String topic, Serde.Type type) {
     return wrapWithClassloader(() -> {
       var serializer = serde.serializer(topic, type);
-      return (top, input) -> wrapWithClassloader(() -> serializer.serialize(top, input));
+      return input -> wrapWithClassloader(() -> serializer.serialize(input));
     });
   }
 
   public Serde.Deserializer deserializer(String topic, Serde.Type type) {
     return wrapWithClassloader(() -> {
       var deserializer = serde.deserializer(topic, type);
-      return (top, headers, data) -> wrapWithClassloader(() -> deserializer.deserialize(top, headers, data));
+      return (headers, data) -> wrapWithClassloader(() -> deserializer.deserialize(headers, data));
     });
   }
 }
