@@ -15,15 +15,21 @@ describe('topicParamsTransformer', () => {
     expect(topicParamsTransformer(topicWithInfo).partitions).toEqual(
       completedParams.partitions
     );
-    expect(typeof topicParamsTransformer(topicWithInfo).partitions).toEqual(
-      'number'
-    );
+    expect(
+      typeof topicParamsTransformer({
+        ...topicWithInfo,
+        partitionCount: undefined,
+      }).partitions
+    ).toEqual('number');
   });
 
   it('topic  maxMessageBytes', () => {
     expect(topicParamsTransformer(topicWithInfo).maxMessageBytes).toEqual(
       completedParams.maxMessageBytes
     );
+    expect(
+      typeof topicParamsTransformer(topicWithInfo).maxMessageBytes
+    ).toEqual('number');
   });
 
   it('topic  minInsyncReplicas', () => {
