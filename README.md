@@ -124,6 +124,10 @@ Further configuration with environment variables - [see environment variables](#
 
 If you prefer to use `docker-compose` please refer to the [documentation](docker-compose.md).
 
+### Helm chart
+Helm chart could be found under [charts/kafka-ui](https://github.com/provectus/kafka-ui/tree/master/charts/kafka-ui) directory
+
+Quick-start instruction [here](helm_chart.md)
 
 ## Building With Docker
 
