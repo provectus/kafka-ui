@@ -18,17 +18,20 @@ import {
   clusterTopicsRelativePath,
   getNonExactPath,
 } from 'lib/paths';
-import Brokers from 'components/Brokers/Brokers';
-import Topics from 'components/Topics/Topics';
-import Schemas from 'components/Schemas/Schemas';
-import Connect from 'components/Connect/Connect';
 import ClusterContext from 'components/contexts/ClusterContext';
-import ConsumersGroups from 'components/ConsumerGroups/ConsumerGroups';
-import KsqlDb from 'components/KsqlDb/KsqlDb';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import { BreadcrumbProvider } from 'components/common/Breadcrumb/Breadcrumb.provider';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+
+const Brokers = React.lazy(() => import('components/Brokers/Brokers'));
+const Topics = React.lazy(() => import('components/Topics/Topics'));
+const Schemas = React.lazy(() => import('components/Schemas/Schemas'));
+const Connect = React.lazy(() => import('components/Connect/Connect'));
+const KsqlDb = React.lazy(() => import('components/KsqlDb/KsqlDb'));
+const ConsumerGroups = React.lazy(
+  () => import('components/ConsumerGroups/ConsumerGroups')
+);
 
 const Cluster: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
@@ -87,7 +90,7 @@ const Cluster: React.FC = () => {
               path={getNonExactPath(clusterConsumerGroupsRelativePath)}
               element={
                 <BreadcrumbRoute>
-                  <ConsumersGroups />
+                  <ConsumerGroups />
                 </BreadcrumbRoute>
               }
             />

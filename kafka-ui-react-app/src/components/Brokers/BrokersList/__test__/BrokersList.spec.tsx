@@ -9,6 +9,14 @@ import {
   brokersPayload,
   clusterStatsPayload,
 } from 'components/Brokers/__test__/fixtures';
+import userEvent from '@testing-library/user-event';
+
+const mockedUsedNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockedUsedNavigate,
+}));
 
 describe('BrokersList Component', () => {
   afterEach(() => fetchMock.reset());
@@ -53,6 +61,22 @@ describe('BrokersList Component', () => {
       expect(rows.length).toEqual(3);
     });
 
+    it('opens broker when row clicked', async () => {
+      const fetchStatsMock = fetchMock.get(fetchStatsUrl, clusterStatsPayload);
+      await act(() => {
+        renderComponent();
+      });
+      await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
+      await act(() => {
+        userEvent.click(screen.getByRole('cell', { name: '0' }));
+      });
+
+      await waitFor(() => {
+        expect(mockedUsedNavigate).toBeCalled();
+        expect(mockedUsedNavigate).toBeCalledWith('0');
+      });
+    });
+
     it('shows warning when offlinePartitionCount > 0', async () => {
       const fetchStatsMock = fetchMock.getOnce(fetchStatsUrl, {
         ...clusterStatsPayload,
@@ -93,6 +117,7 @@ describe('BrokersList Component', () => {
       expect(onlineWidgetDef).toBeInTheDocument();
       expect(onlineWidget).toBeInTheDocument();
     });
+
     it('shows right count when inSyncReplicasCount: undefined outOfSyncReplicasCount: 1', async () => {
       const fetchStatsMock = fetchMock.getOnce(fetchStatsUrl, {
         ...clusterStatsPayload,
