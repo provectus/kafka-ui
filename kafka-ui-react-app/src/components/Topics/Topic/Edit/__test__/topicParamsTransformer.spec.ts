@@ -1,16 +1,33 @@
-import topicParamsTransformer from 'components/Topics/Topic/Edit/topicParamsTransformer';
+import topicParamsTransformer, {
+  getValue,
+} from 'components/Topics/Topic/Edit/topicParamsTransformer';
 import { DEFAULTS } from 'components/Topics/Topic/Edit/Edit';
 
 import { completedParams, topicWithInfo } from './fixtures';
 
 describe('topicParamsTransformer', () => {
-  it('topic not found', () => {
-    expect(topicParamsTransformer(undefined)).toEqual(DEFAULTS);
+  describe('getValue', () => {
+    it('return value when find field name', () => {
+      expect(
+        getValue(topicWithInfo, 'confluent.tier.segment.hotset.roll.min.bytes')
+      ).toEqual(104857600);
+    });
+    it('return value when not defined field name', () => {
+      expect(getValue(topicWithInfo, 'some.unsupported.fieldName')).toEqual(
+        NaN
+      );
+    });
+  });
+  describe('Topic', () => {
+    it('return default values when topic not defined found', () => {
+      expect(topicParamsTransformer(undefined)).toEqual(DEFAULTS);
+    });
+
+    it('return completed values', () => {
+      expect(topicParamsTransformer(topicWithInfo)).toEqual(completedParams);
+    });
   });
 
-  it('topic  found', () => {
-    expect(topicParamsTransformer(topicWithInfo)).toEqual(completedParams);
-  });
   it('topic  partitions', () => {
     expect(topicParamsTransformer(topicWithInfo).partitions).toEqual(
       completedParams.partitions
