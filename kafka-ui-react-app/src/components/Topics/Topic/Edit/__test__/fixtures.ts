@@ -551,3 +551,19 @@ export const topicWithInfo: TopicWithDetailedInfo = {
   partitions,
   config,
 };
+export const completedParams = {
+  partitions: 1,
+  replicationFactor: 1,
+  cleanupPolicy: 'delete',
+  retentionBytes: -1,
+  maxMessageBytes: 1000012,
+  name: topicName,
+  minInsyncReplicas: 1,
+  retentionMs: 604800000,
+  customParams: [
+    {
+      name: 'delete.retention.ms',
+      value: '86400001',
+    },
+  ],
+};

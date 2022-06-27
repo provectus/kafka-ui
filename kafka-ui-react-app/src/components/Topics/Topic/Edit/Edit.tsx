@@ -47,9 +47,10 @@ const EditWrapperStyled = styled.div`
 export const DEFAULTS = {
   partitions: 1,
   replicationFactor: 1,
-  minInSyncReplicas: 1,
+  minInsyncReplicas: 1,
   cleanupPolicy: 'delete',
   retentionBytes: -1,
+  retentionMs: -1,
   maxMessageBytes: 1000012,
 };
 
@@ -76,7 +77,6 @@ const Edit: React.FC<Props> = ({
 
   React.useEffect(() => {
     fetchTopicConfig({ clusterName, topicName });
-    formInit = false;
   }, [fetchTopicConfig, clusterName, topicName, isTopicUpdated]);
 
   React.useEffect(() => {
