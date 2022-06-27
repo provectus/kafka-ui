@@ -12,8 +12,8 @@ import {
 } from './TableColumn';
 import { TableRow } from './TableRow';
 
-interface SmartTableProps<T, TId extends IdType, OT = never> {
-  tableState: TableState<T, TId, OT>;
+interface SmartTableProps<T, TId extends IdType> {
+  tableState: TableState<T, TId>;
   allSelectable?: boolean;
   selectable?: boolean;
   className?: string;
@@ -23,7 +23,7 @@ interface SmartTableProps<T, TId extends IdType, OT = never> {
   hoverable?: boolean;
 }
 
-export const SmartTable = <T, TId extends IdType, OT = never>({
+export const SmartTable = <T, TId extends IdType>({
   children,
   tableState,
   selectable = false,
@@ -32,22 +32,20 @@ export const SmartTable = <T, TId extends IdType, OT = never>({
   isFullwidth = false,
   paginated = false,
   hoverable = false,
-}: React.PropsWithChildren<SmartTableProps<T, TId, OT>>) => {
+}: React.PropsWithChildren<SmartTableProps<T, TId>>) => {
   const handleRowSelection = (row: T, checked: boolean) => {
     tableState.setRowsSelection([row], checked);
   };
 
   const headerRow = React.useMemo(() => {
     const headerCells = React.Children.map(children, (child) => {
-      if (!isColumnElement<T, TId, OT>(child)) {
+      if (!isColumnElement<T, TId>(child)) {
         return child;
       }
 
       const { headerCell, title, orderValue } = child.props;
 
-      const HeaderCell = headerCell as React.FC<
-        TableHeaderCellProps<T, TId, OT>
-      >;
+      const HeaderCell = headerCell as React.FC<TableHeaderCellProps<T, TId>>;
       return HeaderCell ? (
         <S.TableHeaderCell>
           <HeaderCell
@@ -59,8 +57,8 @@ export const SmartTable = <T, TId extends IdType, OT = never>({
       ) : (
         // TODO types will be changed after fixing TableHeaderCell
         <TableHeaderCell
-          {...(tableState.orderable as never)}
-          orderValue={orderValue as never}
+          {...tableState.orderable}
+          orderValue={orderValue}
           title={title}
         />
       );

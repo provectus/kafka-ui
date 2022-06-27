@@ -255,7 +255,7 @@ export const LogoutButton = styled(Button)(
   `
 );
 
-export const LogoutLink = styled(Link)(
+export const LogoutLink = styled.a(
   () => css`
     margin-right: 2px;
   `

@@ -36,7 +36,6 @@ import {
 
 const topic = {
   name: 'topic',
-  id: 'id',
 };
 
 const messageSchema = {
@@ -213,7 +212,6 @@ describe('topics Slice', () => {
       it('updateTopic/fulfilled', () => {
         const updatedTopic = {
           name: 'topic',
-          id: 'id',
           partitions: 1,
         };
         expect(
