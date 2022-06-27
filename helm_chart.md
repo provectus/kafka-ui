@@ -27,14 +27,20 @@ Create config map
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kafka-ui-config
+  name: kafka-ui-existing-configmap-as-a-configfile
 data:
-  config.yml:
-    KAFKA_CLUSTERS_0_NAME: "kafka-cluster-name"
-    KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka-cluster-broker-endpoints:9092"
-    KAFKA_CLUSTERS_0_ZOOKEEPER: "zookeeper:2181"
-    AUTH_TYPE: "DISABLED"
-    MANAGEMENT_HEALTH_LDAP_ENABLED: "FALSE" 
+  config.yml: |-
+    kafka:
+      clusters:
+        - name: yaml
+          bootstrapServers: kafka-cluster-broker-endpoints:9092
+          zookeeper: zookeeper:2181
+    auth:
+      type: disabled
+    management:
+      health:
+        ldap:
+          enabled: false
 ```
 This ConfigMap will be mounted to the Pod
 
