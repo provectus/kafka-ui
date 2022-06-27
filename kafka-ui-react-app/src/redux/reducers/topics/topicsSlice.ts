@@ -1,4 +1,3 @@
-import { v4 } from 'uuid';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
   TopicsResponse,
@@ -381,7 +380,6 @@ const topicsSlice = createSlice({
           state.byName[topic.name] = {
             ...state.byName[topic.name],
             ...topic,
-            id: v4(),
           };
         });
       }

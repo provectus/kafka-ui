@@ -24,11 +24,11 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 
 export interface Props {
   consumerGroups: ConsumerGroupDetails[];
-  orderBy: ConsumerGroupOrdering | null;
+  orderBy: string | null;
   sortOrder: SortOrder;
   totalPages: number;
   isFetched: boolean;
-  setConsumerGroupsSortOrderBy(orderBy: ConsumerGroupOrdering | null): void;
+  setConsumerGroupsSortOrderBy(orderBy: string | null): void;
 }
 
 const List: React.FC<Props> = ({
@@ -48,7 +48,7 @@ const List: React.FC<Props> = ({
     dispatch(
       fetchConsumerGroupsPaged({
         clusterName,
-        orderBy: orderBy || undefined,
+        orderBy: (orderBy as ConsumerGroupOrdering) || undefined,
         sortOrder,
         page,
         perPage,
@@ -57,11 +57,7 @@ const List: React.FC<Props> = ({
     );
   }, [clusterName, orderBy, searchText, sortOrder, page, perPage, dispatch]);
 
-  const tableState = useTableState<
-    ConsumerGroupDetails,
-    string,
-    ConsumerGroupOrdering
-  >(
+  const tableState = useTableState<ConsumerGroupDetails, string>(
     consumerGroups,
     {
       totalPages,
