@@ -61,11 +61,33 @@ describe('topicParamsTransformer', () => {
     expect(topicParamsTransformer(topicWithInfo).retentionBytes).toEqual(
       completedParams.retentionBytes
     );
+    expect(typeof topicParamsTransformer(topicWithInfo).retentionBytes).toEqual(
+      'number'
+    );
+    expect(
+      topicParamsTransformer({
+        ...topicWithInfo,
+        config: topicWithInfo.config?.filter(
+          (config) => config.name !== 'retention.bytes'
+        ),
+      }).retentionBytes
+    ).toEqual(completedParams.retentionBytes);
   });
 
   it('topic  retentionMs', () => {
     expect(topicParamsTransformer(topicWithInfo).retentionMs).toEqual(
       completedParams.retentionMs
     );
+    expect(typeof topicParamsTransformer(topicWithInfo).retentionMs).toEqual(
+      'number'
+    );
+    expect(
+      topicParamsTransformer({
+        ...topicWithInfo,
+        config: topicWithInfo.config?.filter(
+          (config) => config.name !== 'retention.ms'
+        ),
+      }).retentionMs
+    ).toEqual(-1);
   });
 });
