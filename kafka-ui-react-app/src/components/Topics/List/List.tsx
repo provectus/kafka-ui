@@ -69,10 +69,10 @@ export interface TopicsListProps {
     partitions?: number[];
   }): void;
   search: string;
-  orderBy: TopicColumnsToSort | null;
+  orderBy: string | null;
   sortOrder: SortOrder;
   setTopicsSearch(search: string): void;
-  setTopicsOrderBy(orderBy: TopicColumnsToSort | null): void;
+  setTopicsOrderBy(orderBy: string | null): void;
 }
 
 const List: React.FC<TopicsListProps> = ({
@@ -108,7 +108,7 @@ const List: React.FC<TopicsListProps> = ({
       clusterName,
       page,
       perPage,
-      orderBy: orderBy || undefined,
+      orderBy: (orderBy as TopicColumnsToSort) || undefined,
       sortOrder,
       search,
       showInternal,
@@ -120,11 +120,7 @@ const List: React.FC<TopicsListProps> = ({
     fetchTopicsList(topicsListParams);
   }, [fetchTopicsList, topicsListParams]);
 
-  const tableState = useTableState<
-    TopicWithDetailedInfo,
-    string,
-    TopicColumnsToSort
-  >(
+  const tableState = useTableState<TopicWithDetailedInfo, string>(
     topics,
     {
       idSelector: (topic) => topic.name,
