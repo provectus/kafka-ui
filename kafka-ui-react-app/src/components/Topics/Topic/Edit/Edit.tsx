@@ -52,6 +52,7 @@ export const DEFAULTS = {
   retentionBytes: -1,
   retentionMs: -1,
   maxMessageBytes: 1000012,
+  customParams: [],
 };
 
 let formInit = false;

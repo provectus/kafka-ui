@@ -2,10 +2,36 @@ import topicParamsTransformer, {
   getValue,
 } from 'components/Topics/Topic/Edit/topicParamsTransformer';
 import { DEFAULTS } from 'components/Topics/Topic/Edit/Edit';
+import { TOPIC_CUSTOM_PARAMS_PREFIX } from 'lib/constants';
+import { ConfigSource } from 'generated-sources';
 
 import { completedParams, topicWithInfo } from './fixtures';
 
 describe('topicParamsTransformer', () => {
+  const testField = (name: keyof typeof DEFAULTS, fieldName: string) => {
+    it('return completed values', () => {
+      expect(topicParamsTransformer(topicWithInfo)[name]).toEqual(
+        completedParams[name]
+      );
+    });
+    it(`return default values when ${name} not defined`, () => {
+      expect(
+        topicParamsTransformer({
+          ...topicWithInfo,
+          config: topicWithInfo.config?.filter(
+            (config) => config.name !== fieldName
+          ),
+        })[name]
+      ).toEqual(DEFAULTS[name]);
+    });
+
+    it('typeof return values is number', () => {
+      expect(
+        typeof topicParamsTransformer(topicWithInfo).retentionBytes
+      ).toEqual('number');
+    });
+  };
+
   describe('getValue', () => {
     it('return value when find field name', () => {
       expect(
@@ -28,83 +54,90 @@ describe('topicParamsTransformer', () => {
     });
   });
 
-  it('topic  partitions', () => {
-    expect(topicParamsTransformer(topicWithInfo).partitions).toEqual(
-      completedParams.partitions
-    );
-    expect(
-      typeof topicParamsTransformer({
-        ...topicWithInfo,
-        partitionCount: undefined,
-      }).partitions
-    ).toEqual('number');
+  describe('Topic partitions', () => {
+    it('return completed values', () => {
+      expect(topicParamsTransformer(topicWithInfo).partitions).toEqual(
+        completedParams.partitions
+      );
+    });
+    it('return default values when partitionCount not defined', () => {
+      expect(topicParamsTransformer(topicWithInfo).partitions).toEqual(
+        DEFAULTS.partitions
+      );
+    });
   });
 
-  it('topic  maxMessageBytes', () => {
-    expect(topicParamsTransformer(topicWithInfo).maxMessageBytes).toEqual(
-      completedParams.maxMessageBytes
-    );
-    expect(
-      typeof topicParamsTransformer(topicWithInfo).maxMessageBytes
-    ).toEqual('number');
-    expect(
-      topicParamsTransformer({
-        ...topicWithInfo,
-        config: topicWithInfo.config?.filter(
-          (config) => config.name !== 'max.message.bytes'
-        ),
-      }).maxMessageBytes
-    ).toEqual(completedParams.maxMessageBytes);
-  });
+  describe('maxMessageBytes', () =>
+    testField('maxMessageBytes', 'max.message.bytes'));
 
-  it('topic  minInsyncReplicas', () => {
-    expect(topicParamsTransformer(topicWithInfo).minInsyncReplicas).toEqual(
-      completedParams.minInsyncReplicas
-    );
-    expect(
-      typeof topicParamsTransformer(topicWithInfo).minInsyncReplicas
-    ).toEqual('number');
-    expect(
-      topicParamsTransformer({
-        ...topicWithInfo,
-        config: topicWithInfo.config?.filter(
-          (config) => config.name !== 'min.insync.replicas'
-        ),
-      }).minInsyncReplicas
-    ).toEqual(completedParams.minInsyncReplicas);
-  });
+  describe('minInsyncReplicas', () =>
+    testField('minInsyncReplicas', 'min.insync.replicas'));
 
-  it('topic  retentionBytes', () => {
-    expect(topicParamsTransformer(topicWithInfo).retentionBytes).toEqual(
-      completedParams.retentionBytes
-    );
-    expect(typeof topicParamsTransformer(topicWithInfo).retentionBytes).toEqual(
-      'number'
-    );
-    expect(
-      topicParamsTransformer({
-        ...topicWithInfo,
-        config: topicWithInfo.config?.filter(
-          (config) => config.name !== 'retention.bytes'
-        ),
-      }).retentionBytes
-    ).toEqual(completedParams.retentionBytes);
-  });
+  describe('retentionBytes', () =>
+    testField('retentionBytes', 'retention.bytes'));
 
-  it('topic  retentionMs', () => {
-    expect(topicParamsTransformer(topicWithInfo).retentionMs).toEqual(
-      completedParams.retentionMs
-    );
-    expect(typeof topicParamsTransformer(topicWithInfo).retentionMs).toEqual(
-      'number'
-    );
-    expect(
-      topicParamsTransformer({
-        ...topicWithInfo,
-        config: topicWithInfo.config?.filter(
-          (config) => config.name !== 'retention.ms'
-        ),
-      }).retentionMs
-    ).toEqual(-1);
+  describe('retentionMs', () => testField('retentionMs', 'retention.ms'));
+
+  describe(`${TOPIC_CUSTOM_PARAMS_PREFIX}`, () => {
+    it('return value when configs is empty', () => {
+      expect(
+        topicParamsTransformer({ ...topicWithInfo, config: [] }).customParams
+      ).toEqual([]);
+    });
+
+    it('return value when had a 2 custom configs', () => {
+      expect(
+        topicParamsTransformer({
+          ...topicWithInfo,
+          config: [
+            {
+              name: 'segment.bytes',
+              value: '1',
+              defaultValue: '1073741824',
+              source: ConfigSource.DEFAULT_CONFIG,
+              isSensitive: false,
+              isReadOnly: false,
+              synonyms: [
+                {
+                  name: 'log.segment.bytes',
+                  value: '1073741824',
+                  source: ConfigSource.DEFAULT_CONFIG,
+                },
+              ],
+            },
+            {
+              name: 'retention.ms',
+              value: '604',
+              defaultValue: '604800000',
+              source: ConfigSource.DYNAMIC_TOPIC_CONFIG,
+              isSensitive: false,
+              isReadOnly: false,
+              synonyms: [
+                {
+                  name: 'retention.ms',
+                  value: '604800000',
+                  source: ConfigSource.DYNAMIC_TOPIC_CONFIG,
+                },
+              ],
+            },
+            {
+              name: 'flush.messages',
+              value: '92233',
+              defaultValue: '9223372036854775807',
+              source: ConfigSource.DEFAULT_CONFIG,
+              isSensitive: false,
+              isReadOnly: false,
+              synonyms: [
+                {
+                  name: 'log.flush.interval.messages',
+                  value: '9223372036854775807',
+                  source: ConfigSource.DEFAULT_CONFIG,
+                },
+              ],
+            },
+          ],
+        }).customParams?.length
+      ).toEqual(2);
+    });
   });
 });
