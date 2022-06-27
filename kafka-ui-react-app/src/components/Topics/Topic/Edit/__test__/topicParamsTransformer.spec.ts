@@ -15,6 +15,9 @@ describe('topicParamsTransformer', () => {
     expect(topicParamsTransformer(topicWithInfo).partitions).toEqual(
       completedParams.partitions
     );
+    expect(typeof topicParamsTransformer(topicWithInfo).partitions).toEqual(
+      'number'
+    );
   });
 
   it('topic  maxMessageBytes', () => {
