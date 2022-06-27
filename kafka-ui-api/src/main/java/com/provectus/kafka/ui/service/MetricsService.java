@@ -7,10 +7,12 @@ import com.provectus.kafka.ui.model.ServerStatusDTO;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -50,8 +52,14 @@ public class MetricsService {
                             .topicDescriptions((Map<String, TopicDescription>) results[4])
                             .build()
                 )))
-        .doOnError(e ->
-            log.error("Failed to collect cluster {} info", cluster.getName(), e))
+        .doOnError(e -> {
+          log.error("Failed to collect cluster {} info", cluster.getName(), e);
+
+          if (e instanceof TopicAuthorizationException) {
+            final var unauthorizedTopics = ((TopicAuthorizationException) e).unauthorizedTopics();
+            log.error("Unauthorized topics: {}", unauthorizedTopics);
+          }
+        })
         .onErrorResume(
             e -> Mono.just(MetricsCache.Metrics.empty().toBuilder().lastKafkaException(e).build()));
   }
