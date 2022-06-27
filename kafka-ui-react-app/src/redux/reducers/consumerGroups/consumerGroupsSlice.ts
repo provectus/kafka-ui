@@ -40,7 +40,7 @@ export const fetchConsumerGroupsPaged = createAsyncThunk<
     { rejectWithValue }
   ) => {
     try {
-      const response = await consumerGroupsApiClient.getConsumerGroupsPageRaw({
+      return await consumerGroupsApiClient.getConsumerGroupsPage({
         clusterName,
         orderBy,
         sortOrder,
@@ -48,7 +48,6 @@ export const fetchConsumerGroupsPaged = createAsyncThunk<
         perPage,
         search,
       });
-      return await response.value();
     } catch (error) {
       return rejectWithValue(await getResponse(error as Response));
     }
