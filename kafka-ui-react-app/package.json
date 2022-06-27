@@ -88,8 +88,8 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/redux-mock-store": "^1.0.3",
     "@types/styled-components": "^5.1.13",
-    "@typescript-eslint/eslint-plugin": "^5.10.0",
-    "@typescript-eslint/parser": "^5.27.0",
+    "@typescript-eslint/eslint-plugin": "^5.29.0",
+    "@typescript-eslint/parser": "^5.29.0",
     "dotenv": "^16.0.1",
     "eslint": "^8.3.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -115,7 +115,7 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.8.1",
-    "typescript": "^4.3.5"
+    "typescript": "^4.7.4"
   },
   "engines": {
     "node": "v16.15.0",
