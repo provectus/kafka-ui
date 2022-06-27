@@ -30,12 +30,31 @@ describe('topicParamsTransformer', () => {
     expect(
       typeof topicParamsTransformer(topicWithInfo).maxMessageBytes
     ).toEqual('number');
+    expect(
+      topicParamsTransformer({
+        ...topicWithInfo,
+        config: topicWithInfo.config?.filter(
+          (config) => config.name !== 'max.message.bytes'
+        ),
+      }).maxMessageBytes
+    ).toEqual(completedParams.maxMessageBytes);
   });
 
   it('topic  minInsyncReplicas', () => {
     expect(topicParamsTransformer(topicWithInfo).minInsyncReplicas).toEqual(
       completedParams.minInsyncReplicas
     );
+    expect(
+      typeof topicParamsTransformer(topicWithInfo).minInsyncReplicas
+    ).toEqual('number');
+    expect(
+      topicParamsTransformer({
+        ...topicWithInfo,
+        config: topicWithInfo.config?.filter(
+          (config) => config.name !== 'min.insync.replicas'
+        ),
+      }).minInsyncReplicas
+    ).toEqual(completedParams.minInsyncReplicas);
   });
 
   it('topic  retentionBytes', () => {
