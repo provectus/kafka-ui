@@ -61,9 +61,10 @@ describe('topicParamsTransformer', () => {
       );
     });
     it('return default values when partitionCount not defined', () => {
-      expect(topicParamsTransformer(topicWithInfo).partitions).toEqual(
-        DEFAULTS.partitions
-      );
+      expect(
+        topicParamsTransformer({ ...topicWithInfo, partitions: undefined })
+          .partitions
+      ).toEqual(DEFAULTS.partitions);
     });
   });
 
