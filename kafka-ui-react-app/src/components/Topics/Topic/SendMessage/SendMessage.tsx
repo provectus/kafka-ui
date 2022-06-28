@@ -25,6 +25,7 @@ import Select, { SelectOption } from 'components/common/Select/Select';
 import useAppParams from 'lib/hooks/useAppParams';
 import Heading from 'components/common/heading/Heading.styled';
 import { messagesApiClient } from 'lib/api';
+import { getResponse } from 'lib/errorHandling';
 
 import validateMessage from './validateMessage';
 import * as S from './SendMessage.styled';
@@ -147,12 +148,13 @@ const SendMessage: React.FC = () => {
         });
         dispatch(fetchTopicDetails({ clusterName, topicName }));
       } catch (e) {
+        const err = await getResponse(e as Response);
         dispatch(
           alertAdded({
             id: `${clusterName}-${topicName}-sendTopicMessagesError`,
             type: 'error',
             title: `Error in sending a message to ${topicName}`,
-            message: e?.message,
+            message: err?.message || '',
             createdAt: now(),
           })
         );

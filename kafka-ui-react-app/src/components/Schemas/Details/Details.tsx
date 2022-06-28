@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   ClusterSubjectParam,
   clusterSchemaEditPageRelativePath,
-  clusterSchemaSchemaDiffPageRelativePath,
+  clusterSchemaSchemaComparePageRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -90,7 +90,7 @@ const Details: React.FC = () => {
               buttonSize="M"
               buttonType="primary"
               to={{
-                pathname: clusterSchemaSchemaDiffPageRelativePath,
+                pathname: clusterSchemaSchemaComparePageRelativePath,
                 search: `leftVersion=${versions[0]?.version}&rightVersion=${versions[0]?.version}`,
               }}
             >
