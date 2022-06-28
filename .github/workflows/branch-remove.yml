@@ -16,8 +16,9 @@ jobs:
       - name: get branch name
         id: extract_branch
         run: |
-          tag='${{ github.event.pull_request.number }}'
+          tag='pr${{ github.event.pull_request.number }}'
           echo ::set-output name=tag::${tag}
+          echo ${{ github.event.pull_request }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: clone
@@ -27,7 +28,7 @@ jobs:
         run: |
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
           echo "Branch:${{ steps.extract_branch.outputs.tag }}"
-          ./delete-env.sh ${{ steps.extract_branch.outputs.tag }}
+          ./delete-env.sh ${{ steps.extract_branch.outputs.tag }} || true
           git config --global user.email "kafka-ui-infra@provectus.com"
           git config --global user.name "kafka-ui-infra"
           git add ../kafka-ui-from-branch/
