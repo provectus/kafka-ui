@@ -13,6 +13,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.unit.DataSize;
 import org.testcontainers.utility.DockerImageName;
 
 class KsqlServiceV2Test extends AbstractIntegrationTest {
@@ -24,6 +25,8 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
   private static final Set<String> STREAMS_TO_DELETE = new CopyOnWriteArraySet<>();
   private static final Set<String> TABLES_TO_DELETE = new CopyOnWriteArraySet<>();
 
+  private static final DataSize maxBuffSize = DataSize.ofMegabytes(20);
+
   @BeforeAll
   static void init() {
     KSQL_DB.start();
@@ -31,7 +34,7 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
 
   @AfterAll
   static void cleanup() {
-    var client = new KsqlApiClient(KafkaCluster.builder().ksqldbServer(KSQL_DB.url()).build());
+    var client = new KsqlApiClient(KafkaCluster.builder().ksqldbServer(KSQL_DB.url()).build(), maxBuffSize);
 
     TABLES_TO_DELETE.forEach(t ->
         client.execute(String.format("DROP TABLE IF EXISTS %s DELETE TOPIC;", t), Map.of())
@@ -44,7 +47,7 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
     KSQL_DB.stop();
   }
 
-  private final KsqlServiceV2 ksqlService = new KsqlServiceV2();
+  private final KsqlServiceV2 ksqlService = new KsqlServiceV2(maxBuffSize);
 
   @Test
   void listStreamsReturnsAllKsqlStreams() {
@@ -52,7 +55,7 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
     var streamName = "stream_" + System.currentTimeMillis();
     STREAMS_TO_DELETE.add(streamName);
 
-    new KsqlApiClient(cluster)
+    new KsqlApiClient(cluster, maxBuffSize)
         .execute(
             String.format("CREATE STREAM %s ( "
                 + "  c1 BIGINT KEY, "
@@ -81,7 +84,7 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
     var tableName = "table_" + System.currentTimeMillis();
     TABLES_TO_DELETE.add(tableName);
 
-    new KsqlApiClient(cluster)
+    new KsqlApiClient(cluster, maxBuffSize)
         .execute(
             String.format("CREATE TABLE %s ( "
                 + "   c1 BIGINT PRIMARY KEY, "
