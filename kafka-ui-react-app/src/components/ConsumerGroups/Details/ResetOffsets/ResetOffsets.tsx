@@ -12,7 +12,7 @@ import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { groupBy } from 'lodash';
+import groupBy from 'lodash/groupBy';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ErrorMessage } from '@hookform/error-message';
 import Select from 'components/common/Select/Select';

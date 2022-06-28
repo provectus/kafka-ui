@@ -11,7 +11,7 @@ import {
   TopicMessageEventTypeEnum,
 } from 'generated-sources';
 import React, { useContext } from 'react';
-import { omitBy } from 'lodash';
+import omitBy from 'lodash/omitBy';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
