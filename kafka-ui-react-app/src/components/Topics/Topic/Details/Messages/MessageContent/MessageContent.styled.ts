@@ -56,7 +56,7 @@ export const Metadata = styled.span`
 export const MetadataLabel = styled.p`
   color: ${({ theme }) => theme.topicMetaData.color.label};
   font-size: 14px;
-  width: 50px;
+  width: 80px;
 `;
 
 export const MetadataValue = styled.p`

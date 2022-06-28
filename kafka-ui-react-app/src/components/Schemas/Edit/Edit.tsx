@@ -62,18 +62,6 @@ const Edit: React.FC = () => {
     if (!schema) return;
 
     try {
-      if (dirtyFields.newSchema || dirtyFields.schemaType) {
-        const resp = await schemasApiClient.createNewSchema({
-          clusterName,
-          newSchemaSubject: {
-            ...schema,
-            schema: props.newSchema || schema.schema,
-            schemaType: props.schemaType || schema.schemaType,
-          },
-        });
-        dispatch(schemaAdded(resp));
-      }
-
       if (dirtyFields.compatibilityLevel) {
         await schemasApiClient.updateSchemaCompatibilityLevel({
           clusterName,
@@ -88,6 +76,17 @@ const Edit: React.FC = () => {
             compatibilityLevel: props.compatibilityLevel,
           })
         );
+      }
+      if (dirtyFields.newSchema || dirtyFields.schemaType) {
+        const resp = await schemasApiClient.createNewSchema({
+          clusterName,
+          newSchemaSubject: {
+            ...schema,
+            schema: props.newSchema || schema.schema,
+            schemaType: props.schemaType || schema.schemaType,
+          },
+        });
+        dispatch(schemaAdded(resp));
       }
 
       navigate(clusterSchemaPath(clusterName, subject));

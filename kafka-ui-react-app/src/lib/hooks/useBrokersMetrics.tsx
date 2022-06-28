@@ -9,7 +9,7 @@ export default function useBrokersMetrics(
   return useQuery(
     ['metrics', clusterName, brokerId],
     () =>
-      brokersApiClient.getBrokersMetricsRaw({
+      brokersApiClient.getBrokersMetrics({
         clusterName,
         id: brokerId,
       }),

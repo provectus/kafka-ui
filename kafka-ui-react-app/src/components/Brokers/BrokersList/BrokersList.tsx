@@ -1,7 +1,7 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -10,7 +10,10 @@ import useAppParams from 'lib/hooks/useAppParams';
 import useBrokers from 'lib/hooks/useBrokers';
 import useClusterStats from 'lib/hooks/useClusterStats';
 
+import { ClickableRow } from './BrokersList.style';
+
 const BrokersList: React.FC = () => {
+  const navigate = useNavigate();
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
   const { data: clusterStats } = useClusterStats(clusterName);
   const { data: brokers } = useBrokers(clusterName);
@@ -58,7 +61,6 @@ const BrokersList: React.FC = () => {
               onlinePartitionCount
             )}
             <Metrics.LightText>
-              {' '}
               of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
             </Metrics.LightText>
           </Metrics.Indicator>
@@ -114,8 +116,12 @@ const BrokersList: React.FC = () => {
             diskUsage.length !== 0 &&
             diskUsage.map(({ brokerId, segmentSize, segmentCount }) => {
               const brokerItem = brokers?.find(({ id }) => id === brokerId);
+
               return (
-                <tr key={brokerId}>
+                <ClickableRow
+                  key={brokerId}
+                  onClick={() => navigate(`${brokerId}`)}
+                >
                   <td>
                     <NavLink to={`${brokerId}`} role="link">
                       {brokerId}
@@ -127,7 +133,7 @@ const BrokersList: React.FC = () => {
                   <td>{segmentCount}</td>
                   <td>{brokerItem?.port}</td>
                   <td>{brokerItem?.host}</td>
-                </tr>
+                </ClickableRow>
               );
             })}
         </tbody>
