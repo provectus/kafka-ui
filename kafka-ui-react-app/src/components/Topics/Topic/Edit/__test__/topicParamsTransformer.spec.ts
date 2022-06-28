@@ -7,12 +7,12 @@ import { transformedParams, customConfigs, topicWithInfo } from './fixtures';
 
 describe('topicParamsTransformer', () => {
   const testField = (name: keyof typeof DEFAULTS, fieldName: string) => {
-    it('return completed values', () => {
+    it('return transformed value', () => {
       expect(topicParamsTransformer(topicWithInfo)[name]).toEqual(
         transformedParams[name]
       );
     });
-    it(`return default values when ${name} not defined`, () => {
+    it(`return default value when ${name} not defined`, () => {
       expect(
         topicParamsTransformer({
           ...topicWithInfo,
@@ -23,7 +23,7 @@ describe('topicParamsTransformer', () => {
       ).toEqual(DEFAULTS[name]);
     });
 
-    it('typeof return values is number', () => {
+    it('typeof return value is number', () => {
       expect(
         typeof topicParamsTransformer(topicWithInfo).retentionBytes
       ).toEqual('number');
@@ -46,22 +46,22 @@ describe('topicParamsTransformer', () => {
     });
   });
   describe('Topic', () => {
-    it('return default values when topic not defined found', () => {
+    it('returns default values when topic not defined found', () => {
       expect(topicParamsTransformer(undefined)).toEqual(DEFAULTS);
     });
 
-    it('return completed values', () => {
+    it('returns transformed values', () => {
       expect(topicParamsTransformer(topicWithInfo)).toEqual(transformedParams);
     });
   });
 
   describe('Topic partitions', () => {
-    it('return completed values', () => {
+    it('return transformed value', () => {
       expect(topicParamsTransformer(topicWithInfo).partitions).toEqual(
         transformedParams.partitions
       );
     });
-    it('return default values when partitionCount not defined', () => {
+    it('return default value when partitionCount not defined', () => {
       expect(
         topicParamsTransformer({ ...topicWithInfo, partitionCount: undefined })
           .partitions
