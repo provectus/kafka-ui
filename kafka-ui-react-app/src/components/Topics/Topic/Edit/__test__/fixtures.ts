@@ -551,7 +551,55 @@ export const topicWithInfo: TopicWithDetailedInfo = {
   partitions,
   config,
 };
-export const completedParams = {
+export const customConfigs = [
+  {
+    name: 'segment.bytes',
+    value: '1',
+    defaultValue: '1073741824',
+    source: ConfigSource.DEFAULT_CONFIG,
+    isSensitive: false,
+    isReadOnly: false,
+    synonyms: [
+      {
+        name: 'log.segment.bytes',
+        value: '1073741824',
+        source: ConfigSource.DEFAULT_CONFIG,
+      },
+    ],
+  },
+  {
+    name: 'retention.ms',
+    value: '604',
+    defaultValue: '604800000',
+    source: ConfigSource.DYNAMIC_TOPIC_CONFIG,
+    isSensitive: false,
+    isReadOnly: false,
+    synonyms: [
+      {
+        name: 'retention.ms',
+        value: '604800000',
+        source: ConfigSource.DYNAMIC_TOPIC_CONFIG,
+      },
+    ],
+  },
+  {
+    name: 'flush.messages',
+    value: '92233',
+    defaultValue: '9223372036854775807',
+    source: ConfigSource.DEFAULT_CONFIG,
+    isSensitive: false,
+    isReadOnly: false,
+    synonyms: [
+      {
+        name: 'log.flush.interval.messages',
+        value: '9223372036854775807',
+        source: ConfigSource.DEFAULT_CONFIG,
+      },
+    ],
+  },
+];
+
+export const transformedParams = {
   partitions: 1,
   replicationFactor: 1,
   cleanupPolicy: 'delete',

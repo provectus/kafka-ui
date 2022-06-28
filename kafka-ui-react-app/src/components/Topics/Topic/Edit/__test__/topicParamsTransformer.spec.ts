@@ -2,16 +2,14 @@ import topicParamsTransformer, {
   getValue,
 } from 'components/Topics/Topic/Edit/topicParamsTransformer';
 import { DEFAULTS } from 'components/Topics/Topic/Edit/Edit';
-import { TOPIC_CUSTOM_PARAMS_PREFIX } from 'lib/constants';
-import { ConfigSource } from 'generated-sources';
 
-import { completedParams, topicWithInfo } from './fixtures';
+import { transformedParams, customConfigs, topicWithInfo } from './fixtures';
 
 describe('topicParamsTransformer', () => {
   const testField = (name: keyof typeof DEFAULTS, fieldName: string) => {
     it('return completed values', () => {
       expect(topicParamsTransformer(topicWithInfo)[name]).toEqual(
-        completedParams[name]
+        transformedParams[name]
       );
     });
     it(`return default values when ${name} not defined`, () => {
@@ -39,9 +37,12 @@ describe('topicParamsTransformer', () => {
       ).toEqual(104857600);
     });
     it('return value when not defined field name', () => {
-      expect(getValue(topicWithInfo, 'some.unsupported.fieldName')).toEqual(
-        NaN
-      );
+      expect(getValue(topicWithInfo, 'some.unsupported.fieldName')).toEqual(-1);
+    });
+    it('return value when not defined field name and has a default value', () => {
+      expect(
+        getValue(topicWithInfo, 'some.unsupported.fieldName', 100)
+      ).toEqual(100);
     });
   });
   describe('Topic', () => {
@@ -50,14 +51,14 @@ describe('topicParamsTransformer', () => {
     });
 
     it('return completed values', () => {
-      expect(topicParamsTransformer(topicWithInfo)).toEqual(completedParams);
+      expect(topicParamsTransformer(topicWithInfo)).toEqual(transformedParams);
     });
   });
 
   describe('Topic partitions', () => {
     it('return completed values', () => {
       expect(topicParamsTransformer(topicWithInfo).partitions).toEqual(
-        completedParams.partitions
+        transformedParams.partitions
       );
     });
     it('return default values when partitionCount not defined', () => {
@@ -79,7 +80,7 @@ describe('topicParamsTransformer', () => {
 
   describe('retentionMs', () => testField('retentionMs', 'retention.ms'));
 
-  describe(`${TOPIC_CUSTOM_PARAMS_PREFIX}`, () => {
+  describe(`customParams`, () => {
     it('return value when configs is empty', () => {
       expect(
         topicParamsTransformer({ ...topicWithInfo, config: [] }).customParams
@@ -90,53 +91,7 @@ describe('topicParamsTransformer', () => {
       expect(
         topicParamsTransformer({
           ...topicWithInfo,
-          config: [
-            {
-              name: 'segment.bytes',
-              value: '1',
-              defaultValue: '1073741824',
-              source: ConfigSource.DEFAULT_CONFIG,
-              isSensitive: false,
-              isReadOnly: false,
-              synonyms: [
-                {
-                  name: 'log.segment.bytes',
-                  value: '1073741824',
-                  source: ConfigSource.DEFAULT_CONFIG,
-                },
-              ],
-            },
-            {
-              name: 'retention.ms',
-              value: '604',
-              defaultValue: '604800000',
-              source: ConfigSource.DYNAMIC_TOPIC_CONFIG,
-              isSensitive: false,
-              isReadOnly: false,
-              synonyms: [
-                {
-                  name: 'retention.ms',
-                  value: '604800000',
-                  source: ConfigSource.DYNAMIC_TOPIC_CONFIG,
-                },
-              ],
-            },
-            {
-              name: 'flush.messages',
-              value: '92233',
-              defaultValue: '9223372036854775807',
-              source: ConfigSource.DEFAULT_CONFIG,
-              isSensitive: false,
-              isReadOnly: false,
-              synonyms: [
-                {
-                  name: 'log.flush.interval.messages',
-                  value: '9223372036854775807',
-                  source: ConfigSource.DEFAULT_CONFIG,
-                },
-              ],
-            },
-          ],
+          config: customConfigs,
         }).customParams?.length
       ).toEqual(2);
     });
