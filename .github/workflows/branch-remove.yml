@@ -8,8 +8,8 @@ jobs:
     if: |
       ${{ github.event.label.name == 'status/feature_testing' ||
       github.event.label.name == 'status/feature_testing_public' ||
-      (github.event.action == 'closed' && ( contains(github.event.pull_request.labels, 'status/feature_testing') ||
-      contains(github.event.pull_request.labels, 'status/feature_testing_public')) }}
+      ( github.event.action == 'closed' && ( contains(github.event.pull_request.labels, 'status/feature_testing') ||
+      contains(github.event.pull_request.labels, 'status/feature_testing_public'))) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
