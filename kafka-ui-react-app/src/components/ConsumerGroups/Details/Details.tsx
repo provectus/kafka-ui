@@ -14,7 +14,7 @@ import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import { groupBy } from 'lodash';
+import groupBy from 'lodash/groupBy';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';

@@ -1,13 +1,11 @@
 import React from 'react';
-import { ClusterFeaturesEnum } from 'generated-sources';
-import { store } from 'redux/store';
-import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
-import Cluster from 'components/Cluster/Cluster';
-import { fetchClusters } from 'redux/reducers/clusters/clustersSlice';
-import { screen } from '@testing-library/react';
+import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
+import ClusterComponent from 'components/Cluster/Cluster';
+import { screen, waitFor } from '@testing-library/react';
 import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterBrokersPath,
+  clusterConnectorsPath,
   clusterConnectsPath,
   clusterConsumerGroupsPath,
   clusterKsqlDbPath,
@@ -16,6 +14,9 @@ import {
   clusterTopicsPath,
 } from 'lib/paths';
 import { act } from 'react-dom/test-utils';
+import fetchMock from 'fetch-mock';
+
+import { onlineClusterPayload } from './fixtures';
 
 const CLusterCompText = {
   Topics: 'Topics',
@@ -46,98 +47,79 @@ jest.mock('components/KsqlDb/KsqlDb', () => () => (
 ));
 
 describe('Cluster', () => {
-  const renderComponent = (pathname: string) => {
-    render(
-      <WithRoute path={`${clusterPath()}/*`}>
-        <Cluster />
-      </WithRoute>,
-      { initialEntries: [pathname], store }
-    );
+  afterEach(() => fetchMock.restore());
+
+  const renderComponent = async (pathname: string, payload: Cluster[] = []) => {
+    const mock = fetchMock.get('/api/clusters', payload);
+    await act(() => {
+      render(
+        <WithRoute path={`${clusterPath()}/*`}>
+          <ClusterComponent />
+        </WithRoute>,
+        { initialEntries: [pathname] }
+      );
+    });
+    return waitFor(() => expect(mock.called()).toBeTruthy());
   };
 
   it('renders Brokers', async () => {
-    await act(() => renderComponent(clusterBrokersPath('second')));
+    await renderComponent(clusterBrokersPath('second'));
     expect(screen.getByText(CLusterCompText.Brokers)).toBeInTheDocument();
   });
   it('renders Topics', async () => {
-    await act(() => renderComponent(clusterTopicsPath('second')));
+    await renderComponent(clusterTopicsPath('second'));
     expect(screen.getByText(CLusterCompText.Topics)).toBeInTheDocument();
   });
   it('renders ConsumerGroups', async () => {
-    await act(() => renderComponent(clusterConsumerGroupsPath('second')));
+    await renderComponent(clusterConsumerGroupsPath('second'));
     expect(
       screen.getByText(CLusterCompText.ConsumerGroups)
     ).toBeInTheDocument();
   });
 
   describe('configured features', () => {
-    it('does not render Schemas if SCHEMA_REGISTRY is not configured', async () => {
-      store.dispatch(
-        fetchClusters.fulfilled(
-          [
-            {
-              ...onlineClusterPayload,
-              features: [],
-            },
-          ],
-          '123'
-        )
-      );
-      await act(() => renderComponent(clusterSchemasPath('second')));
-      expect(
-        screen.queryByText(CLusterCompText.Schemas)
-      ).not.toBeInTheDocument();
-    });
-    it('renders Schemas if SCHEMA_REGISTRY is configured', async () => {
-      store.dispatch(
-        fetchClusters.fulfilled(
-          [
-            {
-              ...onlineClusterPayload,
-              features: [ClusterFeaturesEnum.SCHEMA_REGISTRY],
-            },
-          ],
-          '123'
-        )
-      );
-      await act(() =>
-        renderComponent(clusterSchemasPath(onlineClusterPayload.name))
-      );
-      expect(screen.getByText(CLusterCompText.Schemas)).toBeInTheDocument();
-    });
-    it('renders Connect if KAFKA_CONNECT is configured', async () => {
-      store.dispatch(
-        fetchClusters.fulfilled(
-          [
-            {
-              ...onlineClusterPayload,
-              features: [ClusterFeaturesEnum.KAFKA_CONNECT],
-            },
-          ],
-          'requestId'
-        )
-      );
-      await act(() =>
-        renderComponent(clusterConnectsPath(onlineClusterPayload.name))
-      );
-      expect(screen.getByText(CLusterCompText.Connect)).toBeInTheDocument();
-    });
-    it('renders KSQL if KSQL_DB is configured', async () => {
-      store.dispatch(
-        fetchClusters.fulfilled(
-          [
-            {
-              ...onlineClusterPayload,
-              features: [ClusterFeaturesEnum.KSQL_DB],
-            },
-          ],
-          'requestId'
-        )
-      );
-      await act(() =>
-        renderComponent(clusterKsqlDbPath(onlineClusterPayload.name))
-      );
-      expect(screen.getByText(CLusterCompText.KsqlDb)).toBeInTheDocument();
-    });
+    const itCorrectlyHandlesConfiguredSchema = (
+      feature: ClusterFeaturesEnum,
+      text: string,
+      path: string
+    ) => {
+      it(`renders Schemas if ${feature} is configured`, async () => {
+        await renderComponent(path, [
+          {
+            ...onlineClusterPayload,
+            features: [feature],
+          },
+        ]);
+        expect(screen.getByText(text)).toBeInTheDocument();
+      });
+
+      it(`does not render Schemas if ${feature} is not configured`, async () => {
+        await renderComponent(path, [
+          { ...onlineClusterPayload, features: [] },
+        ]);
+        expect(screen.queryByText(text)).not.toBeInTheDocument();
+      });
+    };
+
+    itCorrectlyHandlesConfiguredSchema(
+      ClusterFeaturesEnum.SCHEMA_REGISTRY,
+      CLusterCompText.Schemas,
+      clusterSchemasPath(onlineClusterPayload.name)
+    );
+    itCorrectlyHandlesConfiguredSchema(
+      ClusterFeaturesEnum.KAFKA_CONNECT,
+      CLusterCompText.Connect,
+      clusterConnectsPath(onlineClusterPayload.name)
+    );
+    itCorrectlyHandlesConfiguredSchema(
+      ClusterFeaturesEnum.KAFKA_CONNECT,
+      CLusterCompText.Connect,
+      clusterConnectorsPath(onlineClusterPayload.name)
+    );
+    itCorrectlyHandlesConfiguredSchema(
+      ClusterFeaturesEnum.KSQL_DB,
+      CLusterCompText.KsqlDb,
+      clusterKsqlDbPath(onlineClusterPayload.name)
+    );
   });
 });

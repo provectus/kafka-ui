@@ -6,7 +6,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { UnknownAsyncThunkRejectedWithValueAction } from '@reduxjs/toolkit/dist/matchers';
-import { now } from 'lodash';
+import now from 'lodash/now';
 import { Alert, RootState, ServerResponse } from 'redux/interfaces';
 
 const alertsAdapter = createEntityAdapter<Alert>({

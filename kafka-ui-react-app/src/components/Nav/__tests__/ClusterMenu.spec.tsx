@@ -1,11 +1,11 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
-import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
 import ClusterMenu from 'components/Nav/ClusterMenu';
 import userEvent from '@testing-library/user-event';
 import { clusterConnectorsPath } from 'lib/paths';
 import { render } from 'lib/testHelpers';
+import { onlineClusterPayload } from 'components/Cluster/__tests__/fixtures';
 
 describe('ClusterMenu', () => {
   const setupComponent = (cluster: Cluster, singleMode?: boolean) => (

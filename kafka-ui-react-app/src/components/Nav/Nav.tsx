@@ -1,30 +1,31 @@
+import useClusters from 'lib/hooks/api/useClusters';
 import React from 'react';
-import { Cluster } from 'generated-sources';
 
 import ClusterMenu from './ClusterMenu';
 import ClusterMenuItem from './ClusterMenuItem';
 import * as S from './Nav.styled';
 
-interface Props {
-  areClustersFulfilled?: boolean;
-  clusters: Cluster[];
-}
+const Nav: React.FC = () => {
+  const query = useClusters();
 
-const Nav: React.FC<Props> = ({ areClustersFulfilled, clusters }) => (
-  <aside aria-label="Sidebar Menu">
-    <S.List>
-      <ClusterMenuItem to="/" title="Dashboard" isTopLevel />
-    </S.List>
+  if (!query.isSuccess) {
+    return null;
+  }
 
-    {areClustersFulfilled &&
-      clusters.map((cluster) => (
+  return (
+    <aside aria-label="Sidebar Menu">
+      <S.List>
+        <ClusterMenuItem to="/" title="Dashboard" isTopLevel />
+      </S.List>
+      {query.data.map((cluster) => (
         <ClusterMenu
           cluster={cluster}
           key={cluster.name}
-          singleMode={clusters.length === 1}
+          singleMode={query.data.length === 1}
         />
       ))}
-  </aside>
-);
+    </aside>
+  );
+};
 
 export default Nav;
