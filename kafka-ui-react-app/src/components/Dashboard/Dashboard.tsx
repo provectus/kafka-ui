@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-
-import ClustersWidgetContainer from './ClustersWidget/ClustersWidgetContainer';
+import ClustersWidget from 'components/Dashboard/ClustersWidget/ClustersWidget';
 
 const Dashboard: React.FC = () => (
   <>
     <PageHeading text="Dashboard" />
-    <ClustersWidgetContainer />
+    <Suspense>
+      <ClustersWidget />
+    </Suspense>
   </>
 );
 

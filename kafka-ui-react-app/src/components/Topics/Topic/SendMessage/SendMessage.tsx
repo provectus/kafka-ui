@@ -12,7 +12,7 @@ import {
 } from 'redux/reducers/topics/topicsSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
-import { now } from 'lodash';
+import now from 'lodash/now';
 import { Button } from 'components/common/Button/Button';
 import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
