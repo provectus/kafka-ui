@@ -1,22 +1,34 @@
 package com.provectus.kafka.ui.client;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.provectus.kafka.ui.connect.ApiClient;
+import com.provectus.kafka.ui.connect.RFC3339DateFormat;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
 import com.provectus.kafka.ui.connect.model.Connector;
 import com.provectus.kafka.ui.connect.model.NewConnector;
 import com.provectus.kafka.ui.exception.KafkaConnectConflictReponseException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
+import java.text.DateFormat;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import lombok.extern.slf4j.Slf4j;
+import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.unit.DataSize;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -27,8 +39,8 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   private static final int MAX_RETRIES = 5;
   private static final Duration RETRIES_DELAY = Duration.ofMillis(200);
 
-  public RetryingKafkaConnectClient(KafkaConnectCluster config) {
-    super(new RetryingApiClient(config));
+  public RetryingKafkaConnectClient(KafkaConnectCluster config, DataSize maxBuffSize) {
+    super(new RetryingApiClient(config, maxBuffSize));
   }
 
   private static Retry conflictCodeRetry() {
@@ -73,11 +85,46 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
 
   private static class RetryingApiClient extends ApiClient {
 
-    public RetryingApiClient(KafkaConnectCluster config) {
-      super();
+    private static final DateFormat dateFormat = getDefaultDateFormat();
+    private static final ObjectMapper mapper = buildObjectMapper(dateFormat);
+
+    public RetryingApiClient(KafkaConnectCluster config, DataSize maxBuffSize) {
+      super(buildWebClient(mapper, maxBuffSize), mapper, dateFormat);
       setBasePath(config.getAddress());
       setUsername(config.getUserName());
       setPassword(config.getPassword());
+    }
+
+    public static DateFormat getDefaultDateFormat() {
+      DateFormat dateFormat = new RFC3339DateFormat();
+      dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+      return dateFormat;
+    }
+
+    public static WebClient buildWebClient(ObjectMapper mapper, DataSize maxBuffSize) {
+      ExchangeStrategies strategies = ExchangeStrategies
+              .builder()
+              .codecs(clientDefaultCodecsConfigurer -> {
+                clientDefaultCodecsConfigurer.defaultCodecs()
+                        .jackson2JsonEncoder(new Jackson2JsonEncoder(mapper, MediaType.APPLICATION_JSON));
+                clientDefaultCodecsConfigurer.defaultCodecs()
+                        .jackson2JsonDecoder(new Jackson2JsonDecoder(mapper, MediaType.APPLICATION_JSON));
+                clientDefaultCodecsConfigurer.defaultCodecs()
+                        .maxInMemorySize((int) maxBuffSize.toBytes());
+              })
+              .build();
+      WebClient.Builder webClient = WebClient.builder().exchangeStrategies(strategies);
+      return webClient.build();
+    }
+
+    public static ObjectMapper buildObjectMapper(DateFormat dateFormat) {
+      ObjectMapper mapper = new ObjectMapper();
+      mapper.setDateFormat(dateFormat);
+      mapper.registerModule(new JavaTimeModule());
+      mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+      JsonNullableModule jnm = new JsonNullableModule();
+      mapper.registerModule(jnm);
+      return mapper;
     }
 
     @Override
