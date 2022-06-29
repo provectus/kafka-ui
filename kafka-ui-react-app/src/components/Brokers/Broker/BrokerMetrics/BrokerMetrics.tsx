@@ -10,7 +10,10 @@ const BrokerMetrics: React.FC = () => {
   const { data: metrics } = useBrokersMetrics(clusterName, Number(brokerId));
 
   return (
-    <EditorViewer schemaType={SchemaType.JSON} data={JSON.stringify(metrics)} />
+    <EditorViewer
+      schemaType={SchemaType.JSON}
+      data={metrics ? JSON.stringify(metrics) : 'Metrics data not available'}
+    />
   );
 };
 
