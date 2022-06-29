@@ -117,7 +117,7 @@ describe('Edit Component', () => {
       renderComponent({ updateTopic: updateTopicMock }, undefined);
 
       const btn = screen.getAllByText(/submit/i)[0];
-      expect(btn).toBeEnabled();
+      expect(btn).toBeDisabled();
 
       await act(() => {
         userEvent.type(

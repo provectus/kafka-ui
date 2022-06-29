@@ -51,14 +51,14 @@ const TopicForm: React.FC<Props> = ({
 }) => {
   const {
     control,
-    formState: { errors },
+    formState: { errors, isDirty, isValid },
   } = useFormContext();
   const getCleanUpPolicy =
     CleanupPolicyOptions.find((option: SelectOption) => {
       return option.value === cleanUpPolicy?.toLowerCase();
     })?.value || CleanupPolicyOptions[0].value;
   return (
-    <StyledForm onSubmit={onSubmit}>
+    <StyledForm onSubmit={onSubmit} aria-label="topic form">
       <fieldset disabled={isSubmitting}>
         <fieldset disabled={isEditing}>
           <S.Column>
@@ -209,7 +209,12 @@ const TopicForm: React.FC<Props> = ({
         <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>
         <CustomParams isSubmitting={isSubmitting} />
 
-        <Button type="submit" buttonType="primary" buttonSize="L">
+        <Button
+          type="submit"
+          buttonType="primary"
+          buttonSize="L"
+          disabled={(!isEditing && !isValid) || isSubmitting || !isDirty}
+        >
           Submit
         </Button>
       </fieldset>
