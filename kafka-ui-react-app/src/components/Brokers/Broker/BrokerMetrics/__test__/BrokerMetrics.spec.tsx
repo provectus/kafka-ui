@@ -4,16 +4,10 @@ import { screen, waitFor } from '@testing-library/dom';
 import { clusterBrokerMetricsPath } from 'lib/paths';
 import fetchMock from 'fetch-mock';
 import { act } from '@testing-library/react';
-import {
-  clusterStatsPayload,
-  brokersPayload,
-} from 'components/Brokers/__test__/fixtures';
 import BrokerMetrics from 'components/Brokers/Broker/BrokerMetrics/BrokerMetrics';
 
 const clusterName = 'local';
 const brokerId = 1;
-const fetchStatsUrl = `/api/clusters/${clusterName}/stats`;
-const fetchBrokersUrl = `/api/clusters/${clusterName}/brokers`;
 const fetchMetricsUrl = `/api/clusters/${clusterName}/brokers/${brokerId}/metrics`;
 
 describe('BrokerMetrics Component', () => {
