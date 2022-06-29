@@ -1,5 +1,5 @@
 import { Partition, SeekType } from 'generated-sources';
-import { compact } from 'lodash';
+import compact from 'lodash/compact';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 
 export const filterOptions = (options: Option[], filter: string) => {
