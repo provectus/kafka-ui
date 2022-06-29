@@ -22,8 +22,6 @@ describe('BrokerMetrics Component', () => {
   });
 
   const renderComponent = async () => {
-    const fetchStatsMock = fetchMock.get(fetchStatsUrl, clusterStatsPayload);
-    const fetchBrokersMock = fetchMock.get(fetchBrokersUrl, brokersPayload);
     const fetchMetricsMock = fetchMock.getOnce(fetchMetricsUrl, {});
     await act(() => {
       render(
@@ -35,10 +33,7 @@ describe('BrokerMetrics Component', () => {
         }
       );
     });
-    await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
     await waitFor(() => expect(fetchMetricsMock.called()).toBeTruthy());
-
-    expect(fetchBrokersMock.called()).toBeTruthy();
   };
 
   it("shows warning when server doesn't return metrics response", async () => {

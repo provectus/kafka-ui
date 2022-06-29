@@ -7,6 +7,7 @@ import {
   clusterBrokerMetricsPath,
   clusterBrokerMetricsRelativePath,
   ClusterBrokerParam,
+  clusterBrokerPath,
 } from 'lib/paths';
 import useClusterStats from 'lib/hooks/useClusterStats';
 import useBrokers from 'lib/hooks/useBrokers';
@@ -52,7 +53,7 @@ const Broker: React.FC = () => {
 
       <Navbar role="navigation">
         <NavLink
-          to="."
+          to={clusterBrokerPath(clusterName, brokerId)}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
           end
         >

@@ -48,7 +48,7 @@ describe('BrokerLogdir Component', () => {
     expect(screen.getByText('Log dir data not available')).toBeInTheDocument();
   });
 
-  it('shows broker found', async () => {
+  it('shows broker', async () => {
     const fetchLogDirsMock = fetchMock.getOnce(
       fetchLogDirsUrl,
       brokerLogDirsPayload,

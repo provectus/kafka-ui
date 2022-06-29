@@ -38,10 +38,10 @@ const BrokersList: React.FC = () => {
 
   return (
     <>
-      <PageHeading text="BrokerMetrics" />
+      <PageHeading text="Broker" />
       <Metrics.Wrapper>
         <Metrics.Section title="Uptime">
-          <Metrics.Indicator label="Total BrokerMetrics">
+          <Metrics.Indicator label="Total Broker">
             {brokerCount}
           </Metrics.Indicator>
           <Metrics.Indicator label="Active Controllers">
@@ -98,7 +98,7 @@ const BrokersList: React.FC = () => {
       <Table isFullwidth>
         <thead>
           <tr>
-            <TableHeaderCell title="BrokerMetrics" />
+            <TableHeaderCell title="Broker" />
             <TableHeaderCell title="Segment Size" />
             <TableHeaderCell title="Segment Count" />
             <TableHeaderCell title="Port" />
