@@ -1,6 +1,6 @@
 import React from 'react';
 import useAppParams from 'lib/hooks/useAppParams';
-import { translateLogdir } from 'components/Brokers/utils/translateLogdir';
+import { translateLogdirs } from 'components/Brokers/utils/translateLogdirs';
 import { SmartTable } from 'components/common/SmartTable/SmartTable';
 import { TableColumn } from 'components/common/SmartTable/TableColumn';
 import { useTableState } from 'lib/hooks/useTableState';
@@ -19,7 +19,7 @@ const BrokerLogdir: React.FC = () => {
 
   const { data: logDirs } = useBrokersLogDirs(clusterName, Number(brokerId));
 
-  const preparedRows = logDirs?.map(translateLogdir) || [];
+  const preparedRows = translateLogdirs(logDirs);
   const tableState = useTableState<BrokerLogdirState, string>(preparedRows, {
     idSelector: ({ name }) => name,
     totalPages: 0,

@@ -1,4 +1,5 @@
 import { BrokersLogdirs } from 'generated-sources';
+import { BrokerLogdirState } from 'components/Brokers/Broker/Broker';
 
 export const brokersPayload = [
   { id: 1, host: 'b-1.test.kafka.amazonaws.com', port: 9092 },
@@ -78,5 +79,13 @@ export const brokerLogDirsPayload: BrokersLogdirs[] = [
         partitions: [],
       },
     ],
+  },
+];
+export const transformedBrokerLogDirsPayload: BrokerLogdirState[] = [
+  {
+    error: 'NONE',
+    name: '/opt/kafka/data-0/logs',
+    topics: 3,
+    partitions: 4,
   },
 ];
