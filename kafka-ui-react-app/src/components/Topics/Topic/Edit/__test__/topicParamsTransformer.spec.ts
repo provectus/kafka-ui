@@ -7,12 +7,12 @@ import { transformedParams, customConfigs, topicWithInfo } from './fixtures';
 
 describe('topicParamsTransformer', () => {
   const testField = (name: keyof typeof DEFAULTS, fieldName: string) => {
-    it('return transformed value', () => {
+    it('returns transformed value', () => {
       expect(topicParamsTransformer(topicWithInfo)[name]).toEqual(
         transformedParams[name]
       );
     });
-    it(`return default value when ${name} not defined`, () => {
+    it(`returns default value when ${name} not defined`, () => {
       expect(
         topicParamsTransformer({
           ...topicWithInfo,
@@ -23,7 +23,7 @@ describe('topicParamsTransformer', () => {
       ).toEqual(DEFAULTS[name]);
     });
 
-    it('typeof return value is number', () => {
+    it('returns number value', () => {
       expect(
         typeof topicParamsTransformer(topicWithInfo).retentionBytes
       ).toEqual('number');
@@ -31,15 +31,15 @@ describe('topicParamsTransformer', () => {
   };
 
   describe('getValue', () => {
-    it('return value when find field name', () => {
+    it('returns value when field exists', () => {
       expect(
         getValue(topicWithInfo, 'confluent.tier.segment.hotset.roll.min.bytes')
       ).toEqual(104857600);
     });
-    it('return value when not defined field name', () => {
+    it('returns value when filed name does not exist', () => {
       expect(getValue(topicWithInfo, 'some.unsupported.fieldName')).toEqual(-1);
     });
-    it('return value when not defined field name and has a default value', () => {
+    it('returns default value when field does not exist', () => {
       expect(
         getValue(topicWithInfo, 'some.unsupported.fieldName', 100)
       ).toEqual(100);
@@ -61,7 +61,7 @@ describe('topicParamsTransformer', () => {
         transformedParams.partitions
       );
     });
-    it('return default value when partitionCount not defined', () => {
+    it('returns default value when partitionCount not defined', () => {
       expect(
         topicParamsTransformer({ ...topicWithInfo, partitionCount: undefined })
           .partitions
@@ -80,8 +80,8 @@ describe('topicParamsTransformer', () => {
 
   describe('retentionMs', () => testField('retentionMs', 'retention.ms'));
 
-  describe(`customParams`, () => {
-    it('return value when configs is empty', () => {
+  describe('customParams', () => {
+    it('returns value when configs is empty', () => {
       expect(
         topicParamsTransformer({ ...topicWithInfo, config: [] }).customParams
       ).toEqual([]);
