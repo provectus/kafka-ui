@@ -3,12 +3,6 @@ import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 import { clusterBrokerPath } from 'lib/paths';
 import Brokers from 'components/Brokers/Brokers';
-import { translateLogdirs } from 'components/Brokers/utils/translateLogdirs';
-
-import {
-  brokerLogDirsPayload,
-  transformedBrokerLogDirsPayload,
-} from './fixtures';
 
 const brokersList = 'brokersList';
 const broker = 'brokers';
@@ -25,16 +19,6 @@ describe('Brokers Component', () => {
     render(<Brokers />, {
       initialEntries: path ? [path] : undefined,
     });
-  describe('translateLogdirs', () => {
-    it('returns empty array when broker logdirs is not defined', () => {
-      expect(translateLogdirs(undefined)).toEqual([]);
-    });
-    it('returns transformed  LogDirs  array when broker logdirs defined', () => {
-      expect(translateLogdirs(brokerLogDirsPayload)).toEqual(
-        transformedBrokerLogDirsPayload
-      );
-    });
-  });
 
   it('renders BrokersList', () => {
     renderComponent();
