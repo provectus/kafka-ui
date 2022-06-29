@@ -9,7 +9,7 @@ import {
   transformedBrokerLogDirsPayload,
 } from './fixtures';
 
-describe('Brokers Component', () => {
+describe('translateLogdir and translateLogdirs', () => {
   describe('translateLogdirs', () => {
     it('returns empty array when broker logdirs is not defined', () => {
       expect(translateLogdirs(undefined)).toEqual([]);
