@@ -5,7 +5,7 @@ import { DEFAULTS } from 'components/Topics/Topic/Edit/Edit';
 export const getValue = (
   topic: TopicWithDetailedInfo,
   fieldName: string,
-  defaultValue = -1
+  defaultValue?: number
 ) =>
   Number(topic?.config?.find((config) => config.name === fieldName)?.value) ||
   defaultValue;
@@ -24,8 +24,8 @@ const topicParamsTransformer = (topic: TopicWithDetailedInfo | undefined) => {
     partitions: topic.partitionCount || DEFAULTS.partitions,
     maxMessageBytes: getValue(topic, 'max.message.bytes', 1000012),
     minInsyncReplicas: getValue(topic, 'min.insync.replicas', 1),
-    retentionBytes: getValue(topic, 'retention.bytes'),
-    retentionMs: getValue(topic, 'retention.ms'),
+    retentionBytes: getValue(topic, 'retention.bytes', -1),
+    retentionMs: getValue(topic, 'retention.ms', -1),
 
     [TOPIC_CUSTOM_PARAMS_PREFIX]: topic.config
       ?.filter(

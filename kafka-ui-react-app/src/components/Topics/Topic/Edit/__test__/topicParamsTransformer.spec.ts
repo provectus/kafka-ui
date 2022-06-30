@@ -36,8 +36,10 @@ describe('topicParamsTransformer', () => {
         getValue(topicWithInfo, 'confluent.tier.segment.hotset.roll.min.bytes')
       ).toEqual(104857600);
     });
-    it('returns value when filed name does not exist', () => {
-      expect(getValue(topicWithInfo, 'some.unsupported.fieldName')).toEqual(-1);
+    it('returns undefined when filed name does not exist', () => {
+      expect(getValue(topicWithInfo, 'some.unsupported.fieldName')).toEqual(
+        undefined
+      );
     });
     it('returns default value when field does not exist', () => {
       expect(
