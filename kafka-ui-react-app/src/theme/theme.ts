@@ -498,6 +498,7 @@ const theme = {
     newFilterIcon: Colors.brand[50],
     closeModalIcon: Colors.neutral[25],
     savedIcon: Colors.brand[50],
+    refreshIcon: Colors.brand[50],
     dropdownArrowIcon: Colors.neutral[30],
     git: {
       hover: Colors.neutral[70],

@@ -8,6 +8,7 @@ import {
   clusterTopicConsumerGroupsRelativePath,
   clusterTopicEditRelativePath,
   clusterTopicSendMessageRelativePath,
+  clusterTopicStatisticsRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -30,6 +31,7 @@ import useAppParams from 'lib/hooks/useAppParams';
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
 import SettingsContainer from './Settings/SettingsContainer';
+import StatisticsContainer from './Statistics/StatisticsContainer';
 import Messages from './Messages/Messages';
 
 interface Props {
@@ -212,6 +214,12 @@ const Details: React.FC<Props> = ({
         >
           Settings
         </NavLink>
+        <NavLink
+          to={clusterTopicStatisticsRelativePath}
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
+        >
+          Statistics
+        </NavLink>
       </Navbar>
       <Routes>
         <Route index element={<OverviewContainer />} />
@@ -221,6 +229,10 @@ const Details: React.FC<Props> = ({
         <Route
           path={clusterTopicSettingsRelativePath}
           element={<SettingsContainer />}
+        />
+        <Route
+          path={clusterTopicStatisticsRelativePath}
+          element={<StatisticsContainer />}
         />
 
         <Route
