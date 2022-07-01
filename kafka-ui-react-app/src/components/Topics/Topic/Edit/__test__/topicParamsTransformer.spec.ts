@@ -58,7 +58,7 @@ describe('topicParamsTransformer', () => {
   });
 
   describe('Topic partitions', () => {
-    it('return transformed value', () => {
+    it('returns transformed value', () => {
       expect(topicParamsTransformer(topicWithInfo).partitions).toEqual(
         transformedParams.partitions
       );
@@ -89,7 +89,7 @@ describe('topicParamsTransformer', () => {
       ).toEqual([]);
     });
 
-    it('return value when had a 2 custom configs', () => {
+    it('returns value when had a 2 custom configs', () => {
       expect(
         topicParamsTransformer({
           ...topicWithInfo,
