@@ -3,8 +3,6 @@ import { RootState } from 'redux/interfaces';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import {
   fetchTopicsList,
-  deleteTopic,
-  recreateTopic,
   setTopicsSearch,
   setTopicsOrderBy,
   deleteTopics,
@@ -32,9 +30,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   fetchTopicsList,
-  deleteTopic,
   deleteTopics,
-  recreateTopic,
   clearTopicsMessages,
   clearTopicMessages,
   setTopicsSearch,
