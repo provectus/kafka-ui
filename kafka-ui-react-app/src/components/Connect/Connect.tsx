@@ -12,7 +12,7 @@ import {
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import useAppParams from 'lib/hooks/useAppParams';
 
-import ListContainer from './List/ListContainer';
+import ListPage from './List/ListPage';
 import NewContainer from './New/NewContainer';
 import DetailsContainer from './Details/DetailsContainer';
 import EditContainer from './Edit/EditContainer';
@@ -26,7 +26,7 @@ const Connect: React.FC = () => {
         index
         element={
           <BreadcrumbRoute>
-            <ListContainer />
+            <ListPage />
           </BreadcrumbRoute>
         }
       />
