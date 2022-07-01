@@ -66,7 +66,7 @@ public class TopicView {
     }
 
     public boolean isContentMessageVisible(String contentMessage) {
-        return contentMessage.matches($(".sc-dRPjRY").getText().trim());
+        return contentMessage.matches($(".sc-gHfsNP").getText().trim());
     }
 
     private enum DotMenuHeaderItems {

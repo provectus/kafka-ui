@@ -51,10 +51,9 @@ public class ApiHelper {
         topic.setName(topicName);
         topic.setPartitions(partitions);
         topic.setReplicationFactor(replicationFactor);
-        deleteTopic(clusterName, topicName);
-        sleep(2000);
         try {
             topicApi().createTopic(clusterName, topic).block();
+            sleep(2000);
         } catch (WebClientResponseException ex) {
             ex.printStackTrace();
         }
