@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.provectus.kafka.ui.client.KafkaConnectClients;
+import com.provectus.kafka.ui.client.KafkaConnectClientsFactory;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
 import com.provectus.kafka.ui.connect.model.ConnectorStatus;
 import com.provectus.kafka.ui.connect.model.ConnectorStatusConnector;
@@ -21,7 +21,6 @@ import com.provectus.kafka.ui.model.ConnectorStateDTO;
 import com.provectus.kafka.ui.model.ConnectorTaskStatusDTO;
 import com.provectus.kafka.ui.model.FullConnectorInfoDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.KafkaConnectCluster;
 import com.provectus.kafka.ui.model.NewConnectorDTO;
 import com.provectus.kafka.ui.model.TaskDTO;
 import com.provectus.kafka.ui.model.connect.InternalConnectInfo;
@@ -51,6 +50,7 @@ public class KafkaConnectService {
   private final KafkaConnectMapper kafkaConnectMapper;
   private final ObjectMapper objectMapper;
   private final KafkaConfigSanitizer kafkaConfigSanitizer;
+  private final KafkaConnectClientsFactory kafkaConnectClientsFactory;
 
   public Mono<Flux<ConnectDTO>> getConnects(KafkaCluster cluster) {
     return Mono.just(
@@ -328,6 +328,6 @@ public class KafkaConnectService {
             .filter(connect -> connect.getName().equals(connectName))
             .findFirst())
         .switchIfEmpty(Mono.error(ConnectNotFoundException::new))
-        .map(KafkaConnectClients::withKafkaConnectConfig);
+        .map(kafkaConnectClientsFactory::withKafkaConnectConfig);
   }
 }

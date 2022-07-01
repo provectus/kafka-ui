@@ -22,7 +22,6 @@ export default defineConfig(({ mode }) => {
               'styled-components',
               'react-ace',
             ],
-            lodash: ['lodash'],
           },
         },
       },
