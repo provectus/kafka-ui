@@ -1,6 +1,6 @@
 import { PER_PAGE } from 'lib/constants';
 import usePagination from 'lib/hooks/usePagination';
-import { range } from 'lodash';
+import range from 'lodash/range';
 import React from 'react';
 import PageControl from 'components/common/Pagination/PageControl';
 import useSearch from 'lib/hooks/useSearch';
