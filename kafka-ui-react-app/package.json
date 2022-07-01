@@ -5,12 +5,15 @@
   "private": true,
   "dependencies": {
     "@babel/core": "^7.16.0",
+    "@babel/plugin-syntax-flow": "^7.18.6",
+    "@babel/plugin-transform-react-jsx": "^7.18.6",
     "@fortawesome/fontawesome-free": "^6.1.1",
     "@hookform/error-message": "^2.0.0",
     "@hookform/resolvers": "^2.7.1",
     "@reduxjs/toolkit": "^1.8.2",
     "@rooks/use-outside-click-ref": "^4.10.1",
     "@testing-library/react": "^13.2.0",
+    "@types/testing-library__jest-dom": "^5.14.5",
     "@types/yup": "^0.29.13",
     "@vitejs/plugin-react": "^1.3.2",
     "ace-builds": "^1.4.12",
@@ -31,6 +34,7 @@
     "react-datepicker": "^4.2.0",
     "react-dom": "^18.1.0",
     "react-hook-form": "7.6.9",
+    "react-is": "^18.2.0",
     "react-multi-select-component": "^4.0.6",
     "react-query": "^3.39.1",
     "react-redux": "^7.2.6",
@@ -48,7 +52,7 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "eslint --fix",
-      "npm test -- --bail --findRelatedTests --watchAll=false"
+      "pnpm test -- --bail --findRelatedTests --watchAll=false"
     ]
   },
   "scripts": {
@@ -60,10 +64,10 @@
     "lint:CI": "eslint --ext .tsx,.ts src/ --max-warnings=0",
     "test": "jest --watch",
     "test:coverage": "jest --watchAll --coverage",
-    "test:CI": "CI=true npm run test:coverage -- --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
+    "test:CI": "CI=true pnpm test:coverage --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
     "tsc": "tsc --pretty --noEmit",
     "prepare": "cd .. && husky install kafka-ui-react-app/.husky",
-    "pre-commit": "npm run tsc && lint-staged"
+    "pre-commit": "pnpm tsc && lint-staged"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -119,6 +123,6 @@
   },
   "engines": {
     "node": "v16.15.0",
-    "npm": "8.5.5"
+    "pnpm": "^7.4.0"
   }
 }
