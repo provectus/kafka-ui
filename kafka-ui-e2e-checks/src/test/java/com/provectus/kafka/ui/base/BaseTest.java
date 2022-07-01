@@ -3,10 +3,8 @@ package com.provectus.kafka.ui.base;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
-import com.provectus.kafka.ui.helpers.Helpers;
-import com.provectus.kafka.ui.pages.Pages;
-import com.provectus.kafka.ui.screenshots.Screenshooter;
-import com.provectus.kafka.ui.steps.Steps;
+import helpers.Helpers;
+import helpers.TestConfiguration;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
 import io.qameta.allure.selenide.AllureSelenide;
@@ -23,6 +21,9 @@ import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
+import pages.Pages;
+import screenshots.Screenshooter;
+import utils.CamelCaseToSpacedDisplayNameGenerator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -33,7 +34,6 @@ import java.util.Arrays;
 @DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
 public class BaseTest {
 
-    protected Steps steps = Steps.INSTANCE;
     protected Pages pages = Pages.INSTANCE;
     protected Helpers helpers = Helpers.INSTANCE;
 
@@ -52,7 +52,7 @@ public class BaseTest {
     }
 
     @BeforeEach
-    public void setWebDriver(){
+    public void setWebDriver() {
         RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
         WebDriverRunner.setWebDriver(remoteWebDriver);
         remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
@@ -72,8 +72,8 @@ public class BaseTest {
     }
 
     @AfterAll
-    public static void tearDown(){
-        if(webDriverContainer.isRunning()) {
+    public static void tearDown() {
+        if (webDriverContainer.isRunning()) {
             webDriverContainer.close();
             webDriverContainer.stop();
         }
@@ -115,7 +115,7 @@ public class BaseTest {
     }
 
     public static void clearReports() {
-        log.info("Clearing reports dir [%s]...".formatted(TestConfiguration.REPORTS_FOLDER));
+        log.info(String.format("Clearing reports dir [%s]...", TestConfiguration.REPORTS_FOLDER));
         File allureResults = new File(TestConfiguration.REPORTS_FOLDER);
         if (allureResults.isDirectory()) {
             File[] list = allureResults.listFiles();

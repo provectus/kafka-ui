@@ -1,14 +1,15 @@
 package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.extensions.FileUtils;
-import com.provectus.kafka.ui.helpers.ApiHelper;
-import com.provectus.kafka.ui.helpers.Helpers;
+import extensions.FileUtils;
+import helpers.ApiHelper;
+import helpers.Helpers;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import utils.qaseIO.annotation.Suite;
 
 public class ConnectorsTests extends BaseTest {
 
@@ -58,6 +59,7 @@ public class ConnectorsTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should create a connector")
+    @Suite(suiteId = 10, title = "Kafka Connect")
     @Test
     public void createConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
@@ -74,26 +76,28 @@ public class ConnectorsTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should update a connector")
+    @Suite(suiteId = 10, title = "Kafka Connect")
     @Test
     public void updateConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .isOnPage()
                 .openConnector(CONNECTOR_FOR_UPDATE);
-                pages.connectorsView.connectorIsVisibleOnOverview();
+        pages.connectorsView.connectorIsVisibleOnOverview();
         pages.connectorsView.openEditConfig()
-                        .updConnectorConfig(FileUtils.getResourceAsString("config_for_update_connector.json"));
+                .updConnectorConfig(FileUtils.getResourceAsString("config_for_update_connector.json"));
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .connectorIsVisibleInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
     }
 
     @SneakyThrows
     @DisplayName("should delete connector")
+    @Suite(suiteId = 10, title = "Kafka Connect")
     @Test
     public void deleteConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .isOnPage()
                 .openConnector(CONNECTOR_FOR_DELETE);
-                pages.connectorsView.clickDeleteButton();
+        pages.connectorsView.clickDeleteButton();
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .isNotVisible(CONNECTOR_FOR_DELETE);
     }

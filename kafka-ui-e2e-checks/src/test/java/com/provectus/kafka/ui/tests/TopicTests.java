@@ -1,12 +1,13 @@
 package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.helpers.Helpers;
-import com.provectus.kafka.ui.pages.MainPage;
-import com.provectus.kafka.ui.pages.topic.TopicView;
+import helpers.Helpers;
 import io.qameta.allure.Issue;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
+import pages.MainPage;
+import pages.topic.TopicView;
+import utils.qaseIO.annotation.Suite;
 
 import static org.apache.kafka.common.utils.Utils.readFileAsString;
 
@@ -23,8 +24,6 @@ public class TopicTests extends BaseTest {
     public static final String UPDATED_MAX_MESSAGE_BYTES = "1000020";
     private static final String KEY_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/producedkey.txt";
     private static final String CONTENT_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/testData.txt";
-
-
 
 
     @BeforeAll
@@ -44,6 +43,7 @@ public class TopicTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should create a topic")
+    @Suite(suiteId = 4, title = "Create new Topic")
     @Test
     public void createTopic() {
         pages.open()
@@ -65,6 +65,7 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should update a topic")
     @Issue("1500")
+    @Suite(suiteId = 2, title = "Topics")
     @Test
     public void updateTopic() {
         pages.openTopicsList(SECOND_LOCAL)
@@ -93,6 +94,7 @@ public class TopicTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should delete topic")
+    @Suite(suiteId = 2, title = "Topics")
     @Test
     public void deleteTopic() {
         pages.openTopicsList(SECOND_LOCAL)
@@ -104,12 +106,11 @@ public class TopicTests extends BaseTest {
                 .isTopicNotVisible(TOPIC_TO_DELETE);
     }
 
-    @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/2140 ignore this test")
-    @Issue("2140")
     @SneakyThrows
     @DisplayName("produce message")
+    @Suite(suiteId = 2, title = "Topics")
     @Test
-    void produceMessage(){
+    void produceMessage() {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
                 .openTopic(TOPIC_TO_UPDATE)
@@ -119,7 +120,7 @@ public class TopicTests extends BaseTest {
                 .setContentFiled(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE))
                 .setKeyField(readFileAsString(KEY_TO_PRODUCE_MESSAGE))
                 .submitProduceMessage();
-                Assertions.assertTrue(pages.topicView.isKeyMessageVisible(readFileAsString(KEY_TO_PRODUCE_MESSAGE)));
-                Assertions.assertTrue(pages.topicView.isContentMessageVisible(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE)));
+        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(readFileAsString(KEY_TO_PRODUCE_MESSAGE)));
+        Assertions.assertTrue(pages.topicView.isContentMessageVisible(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE).trim()));
     }
 }

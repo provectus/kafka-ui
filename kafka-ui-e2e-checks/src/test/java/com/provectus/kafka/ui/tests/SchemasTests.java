@@ -3,11 +3,12 @@ package com.provectus.kafka.ui.tests;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.api.model.SchemaType;
 import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.helpers.Helpers;
-import com.provectus.kafka.ui.pages.MainPage;
-import com.provectus.kafka.ui.pages.schema.SchemaCreateView;
+import helpers.Helpers;
+import pages.MainPage;
+import pages.schema.SchemaCreateView;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
+import utils.qaseIO.annotation.Suite;
 
 import static org.apache.kafka.common.utils.Utils.readFileAsString;
 
@@ -51,6 +52,7 @@ public class SchemasTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should create AVRO schema")
+    @Suite(suiteId = 11, title = "Schema Registry")
     @Test
     @Order(1)
     void createSchemaAvro() {
@@ -69,6 +71,7 @@ public class SchemasTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should update AVRO schema")
+    @Suite(suiteId = 11, title = "Schema Registry")
     @Test
     @Order(2)
     void updateSchemaAvro() {
@@ -86,6 +89,7 @@ public class SchemasTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should delete AVRO schema")
+    @Suite(suiteId = 11, title = "Schema Registry")
     @Test
     @Order(3)
     void deleteSchemaAvro() {
@@ -99,6 +103,7 @@ public class SchemasTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should create JSON schema")
+    @Suite(suiteId = 11, title = "Schema Registry")
     @Test
     @Order(4)
     void createSchemaJson() {
@@ -117,6 +122,7 @@ public class SchemasTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should delete JSON schema")
+    @Suite(suiteId = 11, title = "Schema Registry")
     @Test
     @Order(5)
     void deleteSchemaJson() {
@@ -130,6 +136,7 @@ public class SchemasTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should create PROTOBUF schema")
+    @Suite(suiteId = 11, title = "Schema Registry")
     @Test
     @Order(6)
     void createSchemaProtobuf() {
@@ -148,6 +155,7 @@ public class SchemasTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should delete PROTOBUF schema")
+    @Suite(suiteId = 11, title = "Schema Registry")
     @Test
     @Order(7)
     void deleteSchemaProtobuf() {
