@@ -23,11 +23,12 @@ jobs:
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: 7.4.0
-      - name: Use Node.js
+      - name: Install node
         uses: actions/setup-node@v3.1.1
         with:
           node-version: "16.15.0"
           cache: "pnpm"
+          cache-dependency-path: "./kafka-ui-react-app/pnpm-lock.yaml"
       - name: Install Node dependencies
         run: |
           cd kafka-ui-react-app/
