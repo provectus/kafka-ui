@@ -1,9 +1,5 @@
-import { v4 } from 'uuid';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
-  Configuration,
-  TopicsApi,
-  ConsumerGroupsApi,
   TopicsResponse,
   TopicDetails,
   GetTopicsRequest,
@@ -18,7 +14,6 @@ import {
   RecreateTopicRequest,
   SortOrder,
   TopicColumnsToSort,
-  MessagesApi,
   GetTopicSchemaRequest,
   TopicMessageSchema,
 } from 'generated-sources';
@@ -30,15 +25,14 @@ import {
   TopicFormDataRaw,
   ClusterName,
 } from 'redux/interfaces';
-import { BASE_PARAMS } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const topicsApiClient = new TopicsApi(apiClientConf);
-const topicConsumerGroupsApiClient = new ConsumerGroupsApi(apiClientConf);
-const messagesApiClient = new MessagesApi(apiClientConf);
+import {
+  consumerGroupsApiClient,
+  messagesApiClient,
+  topicsApiClient,
+} from 'lib/api';
 
 export const fetchTopicsList = createAsyncThunk<
   TopicsResponse,
@@ -143,8 +137,9 @@ export const fetchTopicConsumerGroups = createAsyncThunk<
 >('topic/fetchTopicConsumerGroups', async (payload, { rejectWithValue }) => {
   try {
     const { topicName } = payload;
-    const consumerGroups =
-      await topicConsumerGroupsApiClient.getTopicConsumerGroups(payload);
+    const consumerGroups = await consumerGroupsApiClient.getTopicConsumerGroups(
+      payload
+    );
 
     return { consumerGroups, topicName };
   } catch (err) {
@@ -220,9 +215,17 @@ export const deleteTopic = createAsyncThunk<
 export const recreateTopic = createAsyncThunk<
   { topic: Topic },
   RecreateTopicRequest
->('topic/recreateTopic', async (payload, { rejectWithValue }) => {
+>('topic/recreateTopic', async (payload, { rejectWithValue, dispatch }) => {
   try {
+    const { topicName, clusterName } = payload;
     const topic = await topicsApiClient.recreateTopic(payload);
+    dispatch(
+      showSuccessAlert({
+        id: `message-${topicName}-${clusterName}`,
+        message: 'Topic successfully recreated!',
+      })
+    );
+
     return { topic };
   } catch (err) {
     return rejectWithValue(await getResponse(err as Response));
@@ -313,6 +316,7 @@ export const deleteTopics = createAsyncThunk<
     topicNames.forEach((topicName) => {
       dispatch(deleteTopic({ clusterName, topicName }));
     });
+    dispatch(fetchTopicsList({ clusterName }));
 
     return undefined;
   } catch (err) {
@@ -376,7 +380,6 @@ const topicsSlice = createSlice({
           state.byName[topic.name] = {
             ...state.byName[topic.name],
             ...topic,
-            id: v4(),
           };
         });
       }

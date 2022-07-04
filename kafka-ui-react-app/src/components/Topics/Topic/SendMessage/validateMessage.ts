@@ -1,6 +1,6 @@
 import { TopicMessageSchema } from 'generated-sources';
-import Ajv from 'ajv/dist/2020';
-import { upperFirst } from 'lodash';
+import Ajv, { DefinedError } from 'ajv/dist/2020';
+import upperFirst from 'lodash/upperFirst';
 
 const validateBySchema = (
   value: string,
@@ -39,7 +39,8 @@ const validateBySchema = (
       );
     }
   } catch (e) {
-    return [`${upperFirst(type)} ${e.message}`];
+    const err = e as DefinedError;
+    return [`${upperFirst(type)} ${err.message}`];
   }
 
   return errors;

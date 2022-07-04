@@ -1,6 +1,7 @@
+import ReactDatePicker from 'react-datepicker';
 import styled from 'styled-components';
 
-export const ResetOffsetsStyledWrapper = styled.div`
+export const Wrapper = styled.div`
   padding: 16px;
   padding-top: 0;
 
@@ -23,32 +24,32 @@ export const ResetOffsetsStyledWrapper = styled.div`
       }
     }
   }
+`;
 
-  & .date-picker {
-    height: 32px;
-    border: 1px ${(props) => props.theme.select.borderColor.normal} solid;
-    border-radius: 4px;
-    font-size: 14px;
-    width: 50%;
-    padding-left: 12px;
-    color: ${(props) => props.theme.select.color.normal};
+export const DatePickerInput = styled(ReactDatePicker)`
+  height: 32px;
+  border: 1px ${(props) => props.theme.select.borderColor.normal} solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 50%;
+  padding-left: 12px;
+  color: ${(props) => props.theme.select.color.normal};
 
-    background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-    background-repeat: no-repeat !important;
-    background-position-x: 96% !important;
-    background-position-y: 55% !important;
-    appearance: none !important;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: 96% !important;
+  background-position-y: 55% !important;
+  appearance: none !important;
 
-    &:hover {
-      cursor: pointer;
-    }
-    &:focus {
-      outline: none;
-    }
+  &:hover {
+    cursor: pointer;
+  }
+  &:focus {
+    outline: none;
   }
 `;
 
-export const MainSelectorsWrapperStyled = styled.div`
+export const MainSelectors = styled.div`
   display: flex;
   gap: 16px;
   & > * {
@@ -56,14 +57,14 @@ export const MainSelectorsWrapperStyled = styled.div`
   }
 `;
 
-export const OffsetsWrapperStyled = styled.div`
+export const OffsetsWrapper = styled.div`
   display: flex;
   width: 100%;
   flex-wrap: wrap;
   gap: 16px;
 `;
 
-export const OffsetsTitleStyled = styled.h1`
+export const OffsetsTitle = styled.h1`
   font-size: 18px;
   font-weight: 500;
 `;

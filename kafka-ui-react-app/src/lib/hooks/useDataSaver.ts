@@ -1,4 +1,4 @@
-import { isObject } from 'lodash';
+import isObject from 'lodash/isObject';
 import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
 import { useAppDispatch } from 'lib/hooks/redux';
 

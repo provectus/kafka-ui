@@ -6,14 +6,13 @@ import {
   RouteParamsClusterTopic,
 } from 'lib/paths';
 import jsf from 'json-schema-faker';
-import { messagesApiClient } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import {
   fetchTopicMessageSchema,
   fetchTopicDetails,
 } from 'redux/reducers/topics/topicsSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
-import { now } from 'lodash';
+import now from 'lodash/now';
 import { Button } from 'components/common/Button/Button';
 import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -24,6 +23,9 @@ import {
 } from 'redux/reducers/topics/selectors';
 import Select, { SelectOption } from 'components/common/Select/Select';
 import useAppParams from 'lib/hooks/useAppParams';
+import Heading from 'components/common/heading/Heading.styled';
+import { messagesApiClient } from 'lib/api';
+import { getResponse } from 'lib/errorHandling';
 
 import validateMessage from './validateMessage';
 import * as S from './SendMessage.styled';
@@ -141,17 +143,18 @@ const SendMessage: React.FC = () => {
             key: !key ? null : key,
             content: !content ? null : content,
             headers,
-            partition,
+            partition: !partition ? 0 : partition,
           },
         });
         dispatch(fetchTopicDetails({ clusterName, topicName }));
       } catch (e) {
+        const err = await getResponse(e as Response);
         dispatch(
           alertAdded({
             id: `${clusterName}-${topicName}-sendTopicMessagesError`,
             type: 'error',
             title: `Error in sending a message to ${topicName}`,
-            message: e?.message,
+            message: err?.message || '',
             createdAt: now(),
           })
         );
@@ -166,15 +169,9 @@ const SendMessage: React.FC = () => {
   return (
     <S.Wrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="columns">
-          <div>
-            <label
-              className="label"
-              id="selectPartitionOptions"
-              htmlFor="selectPartitionOptions"
-            >
-              Partition
-            </label>
+        <S.Columns>
+          <S.Column>
+            <Heading level={3}>Partition</Heading>
             <Controller
               control={control}
               name="partition"
@@ -191,12 +188,12 @@ const SendMessage: React.FC = () => {
                 />
               )}
             />
-          </div>
-        </div>
+          </S.Column>
+        </S.Columns>
 
-        <div className="columns">
-          <div className="column is-one-half">
-            <label className="label">Key</label>
+        <S.Columns>
+          <S.Column>
+            <Heading level={3}>Key</Heading>
             <Controller
               control={control}
               name="key"
@@ -209,9 +206,9 @@ const SendMessage: React.FC = () => {
                 />
               )}
             />
-          </div>
-          <div className="column is-one-half">
-            <label className="label">Content</label>
+          </S.Column>
+          <S.Column>
+            <Heading level={3}>Content</Heading>
             <Controller
               control={control}
               name="content"
@@ -224,11 +221,11 @@ const SendMessage: React.FC = () => {
                 />
               )}
             />
-          </div>
-        </div>
-        <div className="columns">
-          <div className="column">
-            <label className="label">Headers</label>
+          </S.Column>
+        </S.Columns>
+        <S.Columns>
+          <S.Column>
+            <Heading level={3}>Headers</Heading>
             <Controller
               control={control}
               name="headers"
@@ -242,8 +239,8 @@ const SendMessage: React.FC = () => {
                 />
               )}
             />
-          </div>
-        </div>
+          </S.Column>
+        </S.Columns>
         <Button
           buttonSize="M"
           buttonType="primary"

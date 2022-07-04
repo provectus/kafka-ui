@@ -4,12 +4,8 @@ import {
   UnknownAsyncThunkPendingAction,
   UnknownAsyncThunkRejectedAction,
 } from '@reduxjs/toolkit/dist/matchers';
-import { ClustersApi, Configuration } from 'generated-sources';
-import { BASE_PARAMS, AsyncRequestStatus } from 'lib/constants';
+import { AsyncRequestStatus } from 'lib/constants';
 import { LoaderSliceState } from 'redux/interfaces';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const clustersApiClient = new ClustersApi(apiClientConf);
 
 export const initialState: LoaderSliceState = {};
 

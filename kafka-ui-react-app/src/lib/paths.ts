@@ -1,4 +1,5 @@
 import {
+  BrokerId,
   ClusterName,
   ConnectName,
   ConnectorName,
@@ -19,6 +20,7 @@ export enum RouteParams {
   topicName = ':topicName',
   connectName = ':connectName',
   connectorName = ':connectorName',
+  brokerId = ':brokerId',
 }
 
 export const getNonExactPath = (path: string) => `${path}/*`;
@@ -31,9 +33,28 @@ export type ClusterNameRoute = { clusterName: ClusterName };
 
 // Brokers
 export const clusterBrokerRelativePath = 'brokers';
+export const clusterBrokerMetricsRelativePath = 'metrics';
 export const clusterBrokersPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterBrokerRelativePath}`;
+
+export const clusterBrokerPath = (
+  clusterName: ClusterName = RouteParams.clusterName,
+  brokerId: BrokerId | string = RouteParams.brokerId
+) => `${clusterBrokersPath(clusterName)}/${brokerId}`;
+export const clusterBrokerMetricsPath = (
+  clusterName: ClusterName = RouteParams.clusterName,
+  brokerId: BrokerId | string = RouteParams.brokerId
+) =>
+  `${clusterBrokerPath(
+    clusterName,
+    brokerId
+  )}/${clusterBrokerMetricsRelativePath}`;
+
+export type ClusterBrokerParam = {
+  clusterName: ClusterName;
+  brokerId: string;
+};
 
 // Consumer Groups
 export const clusterConsumerGroupsRelativePath = 'consumer-groups';
@@ -63,9 +84,9 @@ export type ClusterGroupParam = {
 export const clusterSchemasRelativePath = 'schemas';
 export const clusterSchemaNewRelativePath = 'create-new';
 export const clusterSchemaEditPageRelativePath = `edit`;
-export const clusterSchemaSchemaDiffPageRelativePath = `diff`;
+export const clusterSchemaSchemaComparePageRelativePath = `compare`;
 export const clusterSchemaEditRelativePath = `${RouteParams.subject}/${clusterSchemaEditPageRelativePath}`;
-export const clusterSchemaSchemaDiffRelativePath = `${RouteParams.subject}/${clusterSchemaSchemaDiffPageRelativePath}`;
+export const clusterSchemaSchemaDiffRelativePath = `${RouteParams.subject}/${clusterSchemaSchemaComparePageRelativePath}`;
 export const clusterSchemasPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/schemas`;
@@ -80,10 +101,10 @@ export const clusterSchemaEditPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
 ) => `${clusterSchemasPath(clusterName)}/${subject}/edit`;
-export const clusterSchemaSchemaDiffPath = (
+export const clusterSchemaSchemaComparePath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
-) => `${clusterSchemaPath(clusterName, subject)}/diff`;
+) => `${clusterSchemaPath(clusterName, subject)}/compare`;
 
 export type ClusterSubjectParam = {
   subject: string;
@@ -224,9 +245,18 @@ export type RouterParamsClusterConnectConnector = {
 // KsqlDb
 export const clusterKsqlDbRelativePath = 'ksqldb';
 export const clusterKsqlDbQueryRelativePath = 'query';
+export const clusterKsqlDbTablesRelativePath = 'tables';
+export const clusterKsqlDbStreamsRelativePath = 'streams';
+
 export const clusterKsqlDbPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterKsqlDbRelativePath}`;
 export const clusterKsqlDbQueryPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterKsqlDbPath(clusterName)}/${clusterKsqlDbQueryRelativePath}`;
+export const clusterKsqlDbTablesPath = (
+  clusterName: ClusterName = RouteParams.clusterName
+) => `${clusterKsqlDbPath(clusterName)}/${clusterKsqlDbTablesRelativePath}`;
+export const clusterKsqlDbStreamsPath = (
+  clusterName: ClusterName = RouteParams.clusterName
+) => `${clusterKsqlDbPath(clusterName)}/${clusterKsqlDbStreamsRelativePath}`;

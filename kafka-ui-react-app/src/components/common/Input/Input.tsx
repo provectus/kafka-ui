@@ -1,8 +1,6 @@
 import React from 'react';
 import { RegisterOptions, useFormContext } from 'react-hook-form';
-import styled from 'styled-components';
 
-import { InputIcon } from './InputIcon.styled';
 import * as S from './Input.styled';
 
 export interface InputProps
@@ -15,7 +13,6 @@ export interface InputProps
 }
 
 const Input: React.FC<InputProps> = ({
-  className,
   name,
   hookFormOptions,
   leftIcon,
@@ -25,39 +22,33 @@ const Input: React.FC<InputProps> = ({
 }) => {
   const methods = useFormContext();
   return (
-    <div className={className}>
+    <S.Wrapper>
       {leftIcon && (
-        <InputIcon className={leftIcon} position="left" inputSize={inputSize} />
+        <S.InputIcon
+          className={leftIcon}
+          position="left"
+          inputSize={inputSize}
+        />
       )}
       {name ? (
         <S.Input
-          className={className}
           inputSize={inputSize}
           {...methods.register(name, { ...hookFormOptions })}
           hasLeftIcon={!!leftIcon}
           {...rest}
         />
       ) : (
-        <S.Input
-          className={className}
-          inputSize={inputSize}
-          hasLeftIcon={!!leftIcon}
-          {...rest}
-        />
+        <S.Input inputSize={inputSize} hasLeftIcon={!!leftIcon} {...rest} />
       )}
       {rightIcon && (
-        <InputIcon
+        <S.InputIcon
           className={rightIcon}
           position="right"
           inputSize={inputSize}
         />
       )}
-    </div>
+    </S.Wrapper>
   );
 };
 
-const InputWrapper = styled(Input)`
-  position: relative;
-`;
-
-export default InputWrapper;
+export default Input;

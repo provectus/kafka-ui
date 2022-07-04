@@ -46,7 +46,7 @@ import {
   TitleCell,
   TopicSizeCell,
 } from './TopicsTableCells';
-import { ActionsTd } from './List.styled';
+import * as S from './List.styled';
 
 export interface TopicsListProps {
   areTopicsFetching: boolean;
@@ -69,10 +69,10 @@ export interface TopicsListProps {
     partitions?: number[];
   }): void;
   search: string;
-  orderBy: TopicColumnsToSort | null;
+  orderBy: string | null;
   sortOrder: SortOrder;
   setTopicsSearch(search: string): void;
-  setTopicsOrderBy(orderBy: TopicColumnsToSort | null): void;
+  setTopicsOrderBy(orderBy: string | null): void;
 }
 
 const List: React.FC<TopicsListProps> = ({
@@ -108,7 +108,7 @@ const List: React.FC<TopicsListProps> = ({
       clusterName,
       page,
       perPage,
-      orderBy: orderBy || undefined,
+      orderBy: (orderBy as TopicColumnsToSort) || undefined,
       sortOrder,
       search,
       showInternal,
@@ -120,11 +120,7 @@ const List: React.FC<TopicsListProps> = ({
     fetchTopicsList(topicsListParams);
   }, [fetchTopicsList, topicsListParams]);
 
-  const tableState = useTableState<
-    TopicWithDetailedInfo,
-    string,
-    TopicColumnsToSort
-  >(
+  const tableState = useTableState<TopicWithDetailedInfo, string>(
     topics,
     {
       idSelector: (topic) => topic.name,
@@ -239,7 +235,7 @@ const List: React.FC<TopicsListProps> = ({
 
       return (
         <>
-          <div className="has-text-right">
+          <S.ActionsContainer>
             {!isHidden && (
               <Dropdown label={<VerticalElipsisIcon />} right>
                 {cleanUpPolicy === CleanUpPolicy.DELETE && (
@@ -257,7 +253,7 @@ const List: React.FC<TopicsListProps> = ({
                 </DropdownItem>
               </Dropdown>
             )}
-          </div>
+          </S.ActionsContainer>
           <ConfirmationModal
             isOpen={isClearMessagesModalOpen}
             onCancel={closeClearMessagesModal}
@@ -404,7 +400,7 @@ const List: React.FC<TopicsListProps> = ({
             <TableColumn
               maxWidth="4%"
               cell={ActionsCell}
-              customTd={ActionsTd}
+              customTd={S.ActionsTd}
             />
           </SmartTable>
         </div>

@@ -36,7 +36,6 @@ import {
 
 const topic = {
   name: 'topic',
-  id: 'id',
 };
 
 const messageSchema = {
@@ -213,7 +212,6 @@ describe('topics Slice', () => {
       it('updateTopic/fulfilled', () => {
         const updatedTopic = {
           name: 'topic',
-          id: 'id',
           partitions: 1,
         };
         expect(
@@ -557,6 +555,7 @@ describe('topics Slice', () => {
           { type: deleteTopics.pending.type },
           { type: deleteTopic.pending.type },
           { type: deleteTopic.pending.type },
+          { type: fetchTopicsList.pending.type },
           { type: deleteTopics.fulfilled.type },
         ]);
       });
@@ -584,6 +583,18 @@ describe('topics Slice', () => {
 
         expect(getTypeAndPayload(store)).toEqual([
           { type: recreateTopic.pending.type },
+          { type: showSuccessAlert.pending.type },
+          {
+            type: alertAdded.type,
+            payload: {
+              id: 'message-topic-local',
+              title: '',
+              type: 'success',
+              createdAt: global.Date.now(),
+              message: 'Topic successfully recreated!',
+            },
+          },
+          { type: showSuccessAlert.fulfilled.type },
           {
             type: recreateTopic.fulfilled.type,
             payload: { [topicName]: { ...recreateResponse } },
