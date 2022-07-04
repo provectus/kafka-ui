@@ -57,7 +57,7 @@ const Broker: React.FC = () => {
           className={({ isActive }) => (isActive ? 'is-active' : '')}
           end
         >
-          Logdir
+          Log directories
         </NavLink>
         <NavLink
           to={clusterBrokerMetricsPath(clusterName, brokerId)}
