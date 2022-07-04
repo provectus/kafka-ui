@@ -27,7 +27,7 @@
     "jest-watch-typeahead": "^1.1.0",
     "json-schema-faker": "^0.5.0-rcv.39",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.2.6",
     "pretty-ms": "^7.0.1",
     "react": "^18.1.0",
     "react-ace": "^9.4.3",
