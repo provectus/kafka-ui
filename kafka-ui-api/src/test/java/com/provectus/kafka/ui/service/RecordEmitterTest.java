@@ -98,12 +98,12 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     s.configure(PropertyResolverImpl.empty(), PropertyResolverImpl.empty(), PropertyResolverImpl.empty());
     return new ConsumerRecordDeserializer(
         StringSerde.name(),
-        s.deserializer(null, Serde.Type.KEY),
+        s.deserializer(null, Serde.Target.KEY),
         StringSerde.name(),
-        s.deserializer(null, Serde.Type.VALUE),
+        s.deserializer(null, Serde.Target.VALUE),
         StringSerde.name(),
-        s.deserializer(null, Serde.Type.KEY),
-        s.deserializer(null, Serde.Type.VALUE)
+        s.deserializer(null, Serde.Target.KEY),
+        s.deserializer(null, Serde.Target.VALUE)
     );
   }
 

@@ -9,12 +9,10 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.kafka.common.header.Headers;
 
-
-//TODO: discuss - maybe we should use Int64, Int32, UInt64, UInt32 - like naming?
-public class LongSerde implements BuiltInSerde {
+public class Int64Serde implements BuiltInSerde {
 
   public static String name() {
-    return "Long";
+    return "Int64";
   }
 
   @Override
@@ -30,27 +28,36 @@ public class LongSerde implements BuiltInSerde {
   }
 
   @Override
-  public Optional<SchemaDescription> getSchema(String topic, Type type) {
-    return Optional.empty();
+  public Optional<SchemaDescription> getSchema(String topic, Target type) {
+    return Optional.of(
+        new SchemaDescription(
+            "{ "
+                + "  \"type\" : \"integer\", "
+                + "  \"minimum\" : -9223372036854775808, "
+                + "  \"maximum\" : 9223372036854775807 "
+                + "}",
+            Map.of()
+        )
+    );
   }
 
   @Override
-  public boolean canDeserialize(String topic, Type type) {
+  public boolean canDeserialize(String topic, Target type) {
     return true;
   }
 
   @Override
-  public boolean canSerialize(String topic, Type type) {
+  public boolean canSerialize(String topic, Target type) {
     return true;
   }
 
   @Override
-  public Serializer serializer(String topic, Type type) {
+  public Serializer serializer(String topic, Target type) {
     return input -> Longs.toByteArray(Long.parseLong(input));
   }
 
   @Override
-  public Deserializer deserializer(String topic, Type type) {
+  public Deserializer deserializer(String topic, Target type) {
     return new Deserializer() {
       @Override
       public DeserializeResult deserialize(Headers headers, byte[] data) {

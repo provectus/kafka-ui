@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -41,15 +40,12 @@ public class SchemaRegistrySerde implements BuiltInSerde {
     return "SchemaRegistry";
   }
 
-  private static final ProtobufSchemaConverter PROTOBUF_SCHEMA_CONVERTER = new ProtobufSchemaConverter();
-  private static final AvroJsonSchemaConverter AVRO_JSON_SCHEMA_CONVERTER = new AvroJsonSchemaConverter();
-
   private SchemaRegistryClient schemaRegistryClient;
   private List<String> schemaRegistryUrls;
   private String valueSchemaNameTemplate;
   private String keySchemaNameTemplate;
 
-  private Map<MessageFormat, MessageFormatter> schemaRegistryFormatters;
+  private Map<SchemaType, MessageFormatter> schemaRegistryFormatters;
 
   @Override
   public boolean initOnStartup(PropertyResolver kafkaClusterProperties,
@@ -97,11 +93,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
     this.schemaRegistryClient = schemaRegistryClient;
     this.keySchemaNameTemplate = keySchemaNameTemplate;
     this.valueSchemaNameTemplate = valueSchemaNameTemplate;
-    this.schemaRegistryFormatters = Map.of(
-        MessageFormat.AVRO, new AvroMessageFormatter(schemaRegistryClient),
-        MessageFormat.JSON, new JsonSchemaMessageFormatter(schemaRegistryClient),
-        MessageFormat.PROTOBUF, new ProtobufMessageFormatter(schemaRegistryClient)
-    );
+    this.schemaRegistryFormatters = MessageFormatter.createMap(schemaRegistryClient);
   }
 
   private static SchemaRegistryClient createSchemaRegistryClient(List<String> urls,
@@ -119,7 +111,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
           "You specified password but do not specified username");
     }
     return new CachedSchemaRegistryClient(
-        urls.stream().collect(Collectors.toUnmodifiableList()),
+        urls,
         1_000,
         List.of(new AvroSchemaProvider(), new ProtobufSchemaProvider(), new JsonSchemaProvider()),
         configs
@@ -132,18 +124,18 @@ public class SchemaRegistrySerde implements BuiltInSerde {
   }
 
   @Override
-  public boolean canDeserialize(String topic, Type type) {
+  public boolean canDeserialize(String topic, Target type) {
     return true;
   }
 
   @Override
-  public boolean canSerialize(String topic, Type type) {
+  public boolean canSerialize(String topic, Target type) {
     String subject = schemaSubject(topic, type);
     return getSchemaBySubject(subject).isPresent();
   }
 
   @Override
-  public Optional<SchemaDescription> getSchema(String topic, Type type) {
+  public Optional<SchemaDescription> getSchema(String topic, Target type) {
     String subject = schemaSubject(topic, type);
     return getSchemaBySubject(subject)
         .map(schemaMetadata ->
@@ -159,29 +151,25 @@ public class SchemaRegistrySerde implements BuiltInSerde {
 
   @SneakyThrows
   private String convertSchema(SchemaMetadata schema) {
-    String jsonSchema;
     URI basePath = new URI(schemaRegistryUrls.get(0))
         .resolve(Integer.toString(schema.getId()));
-
-    final ParsedSchema schemaById = schemaRegistryClient.getSchemaById(schema.getId());
-
-    if (schema.getSchemaType().equals(MessageFormat.PROTOBUF.name())) {
-      final ProtobufSchema protobufSchema = (ProtobufSchema) schemaById;
-      jsonSchema = PROTOBUF_SCHEMA_CONVERTER
-          .convert(basePath, protobufSchema.toDescriptor())
-          .toJson();
-    } else if (schema.getSchemaType().equals(MessageFormat.AVRO.name())) {
-      final AvroSchema avroSchema = (AvroSchema) schemaById;
-      jsonSchema = AVRO_JSON_SCHEMA_CONVERTER
-          .convert(basePath, avroSchema.rawSchema())
-          .toJson();
-    } else if (schema.getSchemaType().equals(MessageFormat.JSON.name())) {
-      jsonSchema = schema.getSchema();
-    } else {
-      throw new IllegalStateException("Unknown schema type: " + schema.getSchemaType());
+    ParsedSchema schemaById = schemaRegistryClient.getSchemaById(schema.getId());
+    SchemaType schemaType = SchemaType.fromString(schema.getSchemaType())
+        .orElseThrow(() -> new IllegalStateException("Unknown schema type: " + schema.getSchemaType()));
+    switch (schemaType) {
+      case PROTOBUF:
+        return new ProtobufSchemaConverter()
+            .convert(basePath, ((ProtobufSchema) schemaById).toDescriptor())
+            .toJson();
+      case AVRO:
+        return new AvroJsonSchemaConverter()
+            .convert(basePath, ((AvroSchema) schemaById).rawSchema())
+            .toJson();
+      case JSON:
+        return schema.getSchema();
+      default:
+        throw new IllegalStateException();
     }
-
-    return jsonSchema;
   }
 
   private Optional<SchemaMetadata> getSchemaBySubject(String subject) {
@@ -201,21 +189,21 @@ public class SchemaRegistrySerde implements BuiltInSerde {
     }
   }
 
-  private String schemaSubject(String topic, Type type) {
-    return String.format(type == Type.KEY ? keySchemaNameTemplate : valueSchemaNameTemplate, topic);
+  private String schemaSubject(String topic, Target type) {
+    return String.format(type == Target.KEY ? keySchemaNameTemplate : valueSchemaNameTemplate, topic);
   }
 
   @Override
-  public Serializer serializer(String topic, Type type) {
+  public Serializer serializer(String topic, Target type) {
     String subject = schemaSubject(topic, type);
     var schema = getSchemaBySubject(subject)
         .orElseThrow(() -> new ValidationException(String.format("No schema for subject '%s' found", subject)));
-    boolean isKey = type == Type.KEY;
-    if (schema.getSchemaType().equals(MessageFormat.PROTOBUF.name())) {
+    boolean isKey = type == Target.KEY;
+    if (schema.getSchemaType().equals(SchemaType.PROTOBUF.name())) {
       return new ProtobufSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
-    } else if (schema.getSchemaType().equals(MessageFormat.AVRO.name())) {
+    } else if (schema.getSchemaType().equals(SchemaType.AVRO.name())) {
       return new AvroSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
-    } else if (schema.getSchemaType().equals(MessageFormat.JSON.name())) {
+    } else if (schema.getSchemaType().equals(SchemaType.JSON.name())) {
       return new JsonSchemaSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
     } else {
       throw new IllegalStateException("Unsupported schema type: " + schema.getSchemaType());
@@ -223,7 +211,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
   }
 
   @Override
-  public Deserializer deserializer(String topic, Type type) {
+  public Deserializer deserializer(String topic, Target type) {
     return new SrDeserializer(topic);
   }
 
@@ -240,7 +228,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
     @Override
     public DeserializeResult deserialize(Headers headers, byte[] data) {
       var schemaId = extractSchemaIdFromMsg(data);
-      MessageFormat format = getMessageFormatBySchemaId(schemaId);
+      SchemaType format = getMessageFormatBySchemaId(schemaId);
       MessageFormatter formatter = schemaRegistryFormatters.get(format);
       return new DeserializeResult(
           formatter.format(topic, data),
@@ -253,10 +241,10 @@ public class SchemaRegistrySerde implements BuiltInSerde {
     }
   }
 
-  private MessageFormat getMessageFormatBySchemaId(int schemaId) {
+  private SchemaType getMessageFormatBySchemaId(int schemaId) {
     return wrapWith404Handler(() -> schemaRegistryClient.getSchemaById(schemaId))
         .map(ParsedSchema::schemaType)
-        .flatMap(MessageFormat::fromString)
+        .flatMap(SchemaType::fromString)
         .orElseThrow(() -> new ValidationException(String.format("Schema for id '%d' not found ", schemaId)));
   }
 

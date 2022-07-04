@@ -8,10 +8,10 @@ import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import java.util.Map;
 import java.util.Optional;
 
-public class IntegerSerde implements BuiltInSerde {
+public class Int32Serde implements BuiltInSerde {
 
   public static String name() {
-    return "Integer";
+    return "Int32";
   }
 
   @Override
@@ -26,27 +26,36 @@ public class IntegerSerde implements BuiltInSerde {
   }
 
   @Override
-  public Optional<SchemaDescription> getSchema(String topic, Type type) {
-    return Optional.empty();
+  public Optional<SchemaDescription> getSchema(String topic, Target type) {
+    return Optional.of(
+        new SchemaDescription(
+            "{ "
+                + "  \"type\" : \"integer\", "
+                + "  \"minimum\" : -2147483648, "
+                + "  \"maximum\" : 2147483647 "
+                + "}",
+            Map.of()
+        )
+    );
   }
 
   @Override
-  public boolean canDeserialize(String topic, Type type) {
+  public boolean canDeserialize(String topic, Target type) {
     return true;
   }
 
   @Override
-  public boolean canSerialize(String topic, Type type) {
+  public boolean canSerialize(String topic, Target type) {
     return true;
   }
 
   @Override
-  public Serializer serializer(String topic, Type type) {
+  public Serializer serializer(String topic, Target type) {
     return input -> Ints.toByteArray(Integer.parseInt(input));
   }
 
   @Override
-  public Deserializer deserializer(String topic, Type type) {
+  public Deserializer deserializer(String topic, Target type) {
     return (headers, data) ->
         new DeserializeResult(
             String.valueOf(Ints.fromByteArray(data)),

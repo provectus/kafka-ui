@@ -11,8 +11,8 @@ import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serdes.builtin.IntegerSerde;
-import com.provectus.kafka.ui.serdes.builtin.LongSerde;
+import com.provectus.kafka.ui.serdes.builtin.Int32Serde;
+import com.provectus.kafka.ui.serdes.builtin.Int64Serde;
 import com.provectus.kafka.ui.serdes.builtin.StringSerde;
 import com.provectus.kafka.ui.serdes.builtin.sr.SchemaRegistrySerde;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
@@ -159,9 +159,9 @@ public class SendAndReadTests extends AbstractIntegrationTest {
         .withMsgToSend(
             new CreateTopicMessageDTO()
                 .key("123")
-                .keySerde(IntegerSerde.name())
+                .keySerde(Int32Serde.name())
                 .content("21474836470")
-                .valueSerde(LongSerde.name())
+                .valueSerde(Int64Serde.name())
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isEqualTo("123");

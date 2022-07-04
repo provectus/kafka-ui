@@ -32,27 +32,27 @@ public class StringSerde implements BuiltInSerde {
   }
 
   @Override
-  public Optional<SchemaDescription> getSchema(String topic, Type type) {
+  public Optional<SchemaDescription> getSchema(String topic, Target type) {
     return Optional.empty();
   }
 
   @Override
-  public boolean canDeserialize(String topic, Type type) {
+  public boolean canDeserialize(String topic, Target type) {
     return true;
   }
 
   @Override
-  public boolean canSerialize(String topic, Type type) {
+  public boolean canSerialize(String topic, Target type) {
     return true;
   }
 
   @Override
-  public Serializer serializer(String topic, Type type) {
+  public Serializer serializer(String topic, Target type) {
     return input -> input.getBytes(encoding);
   }
 
   @Override
-  public Deserializer deserializer(String topic, Type type) {
+  public Deserializer deserializer(String topic, Target type) {
     return (headers, data) ->
         new DeserializeResult(
             new String(data, encoding),

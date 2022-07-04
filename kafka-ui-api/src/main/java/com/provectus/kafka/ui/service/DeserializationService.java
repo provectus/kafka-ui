@@ -37,7 +37,7 @@ public class DeserializationService {
 
   private Serde.Serializer getSerializer(KafkaCluster cluster,
                                          String topic,
-                                         Serde.Type type,
+                                         Serde.Target type,
                                          String serdeName) {
     var serdes = this.clusterSerdes.get(cluster);
     var serde = serdes.serdeForName(serdeName)
@@ -52,7 +52,7 @@ public class DeserializationService {
 
   private SerdeInstance getSerdeForDeserialize(KafkaCluster cluster,
                                                String topic,
-                                               Serde.Type type,
+                                               Serde.Target type,
                                                @Nullable String serdeName) {
     var serdes = this.clusterSerdes.get(cluster);
     if (serdeName != null) {
@@ -73,8 +73,8 @@ public class DeserializationService {
                                                      String keySerdeName,
                                                      String valueSerdeName) {
     return new ProducerRecordCreator(
-        getSerializer(cluster, topic, Serde.Type.KEY, keySerdeName),
-        getSerializer(cluster, topic, Serde.Type.VALUE, valueSerdeName)
+        getSerializer(cluster, topic, Serde.Target.KEY, keySerdeName),
+        getSerializer(cluster, topic, Serde.Target.VALUE, valueSerdeName)
     );
   }
 
@@ -82,23 +82,23 @@ public class DeserializationService {
                                                     String topic,
                                                     @Nullable String keySerdeName,
                                                     @Nullable String valueSerdeName) {
-    var keySerde = getSerdeForDeserialize(cluster, topic, Serde.Type.KEY, keySerdeName);
-    var valueSerde = getSerdeForDeserialize(cluster, topic, Serde.Type.VALUE, valueSerdeName);
+    var keySerde = getSerdeForDeserialize(cluster, topic, Serde.Target.KEY, keySerdeName);
+    var valueSerde = getSerdeForDeserialize(cluster, topic, Serde.Target.VALUE, valueSerdeName);
     var fallbackSerde = clusterSerdes.get(cluster).getFallbackSerde();
     return new ConsumerRecordDeserializer(
         keySerde.getName(),
-        keySerde.deserializer(topic, Serde.Type.KEY),
+        keySerde.deserializer(topic, Serde.Target.KEY),
         valueSerde.getName(),
-        valueSerde.deserializer(topic, Serde.Type.VALUE),
+        valueSerde.deserializer(topic, Serde.Target.VALUE),
         fallbackSerde.getName(),
-        fallbackSerde.deserializer(topic, Serde.Type.KEY),
-        fallbackSerde.deserializer(topic, Serde.Type.VALUE)
+        fallbackSerde.deserializer(topic, Serde.Target.KEY),
+        fallbackSerde.deserializer(topic, Serde.Target.VALUE)
     );
   }
 
   public List<SerdeDescriptionDTO> getSerdesForSerialize(KafkaCluster cluster,
                                                          String topic,
-                                                         Serde.Type serdeType) {
+                                                         Serde.Target serdeType) {
     var serdes = clusterSerdes.get(cluster);
     var preferred = serdes.suggestSerdeForSerialize(topic, serdeType);
     var lst = new ArrayList<SerdeDescriptionDTO>();
@@ -112,7 +112,7 @@ public class DeserializationService {
 
   public List<SerdeDescriptionDTO> getSerdesForDeserialize(KafkaCluster cluster,
                                                            String topic,
-                                                           Serde.Type serdeType) {
+                                                           Serde.Target serdeType) {
     var serdes = clusterSerdes.get(cluster);
     var preferred = serdes.suggestSerdeForDeserialize(topic, serdeType);
     var lst = new ArrayList<SerdeDescriptionDTO>();
@@ -126,7 +126,7 @@ public class DeserializationService {
 
   private SerdeDescriptionDTO toDto(SerdeInstance serdeInstance,
                                     String topic,
-                                    Serde.Type serdeType,
+                                    Serde.Target serdeType,
                                     boolean preferred) {
     var schemaOpt = serdeInstance.getSchema(topic, serdeType);
     return new SerdeDescriptionDTO()

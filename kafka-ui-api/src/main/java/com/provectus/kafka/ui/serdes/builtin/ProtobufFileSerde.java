@@ -114,8 +114,8 @@ public class ProtobufFileSerde implements BuiltInSerde {
     return Optional.empty();
   }
 
-  private Optional<Descriptor> descriptorFor(String topic, Type type) {
-    return type == Type.KEY
+  private Optional<Descriptor> descriptorFor(String topic, Target type) {
+    return type == Target.KEY
         ?
         Optional.ofNullable(keyMessageDescriptorMap.get(topic))
             .or(() -> Optional.ofNullable(defaultKeyMessageDescriptor))
@@ -125,17 +125,17 @@ public class ProtobufFileSerde implements BuiltInSerde {
   }
 
   @Override
-  public boolean canDeserialize(String topic, Type type) {
+  public boolean canDeserialize(String topic, Target type) {
     return descriptorFor(topic, type).isPresent();
   }
 
   @Override
-  public boolean canSerialize(String topic, Type type) {
+  public boolean canSerialize(String topic, Target type) {
     return descriptorFor(topic, type).isPresent();
   }
 
   @Override
-  public Serializer serializer(String topic, Type type) {
+  public Serializer serializer(String topic, Target type) {
     var descriptor = descriptorFor(topic, type).orElseThrow();
     return new Serializer() {
       @SneakyThrows
@@ -149,7 +149,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
   }
 
   @Override
-  public Deserializer deserializer(String topic, Type type) {
+  public Deserializer deserializer(String topic, Target type) {
     var descriptor = descriptorFor(topic, type).orElseThrow();
     return new Deserializer() {
       @SneakyThrows
@@ -168,7 +168,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
   }
 
   @Override
-  public Optional<SchemaDescription> getSchema(String topic, Type type) {
+  public Optional<SchemaDescription> getSchema(String topic, Target type) {
     return descriptorFor(topic, type)
         .map(descriptor ->
             new SchemaDescription(

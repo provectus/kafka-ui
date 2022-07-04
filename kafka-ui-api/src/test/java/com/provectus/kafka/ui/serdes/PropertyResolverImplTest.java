@@ -3,6 +3,8 @@ package com.provectus.kafka.ui.serdes;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
+import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,15 +12,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.bind.BindException;
 import org.springframework.mock.env.MockEnvironment;
-import java.util.List;
-import java.util.Map;
 
 class PropertyResolverImplTest {
 
   private final MockEnvironment env = new MockEnvironment();
 
   @BeforeEach
-  void initEnv(){
+  void initEnv() {
     env.setProperty("prop.0.strProp", "testStr");
     env.setProperty("prop.0.intProp", "123");
     env.setProperty("prop.0.strLst", "v1,v2,v3");
@@ -50,7 +50,7 @@ class PropertyResolverImplTest {
   @Test
   void throwsExceptionWhenPropertyCantBeResolverToRequstedClass() {
     var resolver = new PropertyResolverImpl(env);
-    assertThatCode(() ->resolver.getProperty("prop.0.strProp", Integer.class))
+    assertThatCode(() -> resolver.getProperty("prop.0.strProp", Integer.class))
         .isInstanceOf(BindException.class);
     assertThatCode(() -> resolver.getListProperty("prop.0.strLst", Integer.class))
         .isInstanceOf(BindException.class);

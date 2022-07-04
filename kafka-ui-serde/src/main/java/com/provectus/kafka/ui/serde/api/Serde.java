@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface Serde {
 
-  enum Type {
+  enum Target {
     KEY, VALUE
   }
 
@@ -18,17 +18,17 @@ public interface Serde {
 
   Optional<String> description();
 
-  Optional<SchemaDescription> getSchema(String topic, Type type);
+  Optional<SchemaDescription> getSchema(String topic, Target type);
 
-  boolean canDeserialize(String topic, Type type);
+  boolean canDeserialize(String topic, Target type);
 
-  boolean canSerialize(String topic, Type type);
+  boolean canSerialize(String topic, Target type);
 
   //----------------------------------------------------------------------------
 
-  Serializer serializer(String topic, Type type);
+  Serializer serializer(String topic, Target type);
 
-  Deserializer deserializer(String topic, Type type);
+  Deserializer deserializer(String topic, Target type);
 
   interface Serializer {
     byte[] serialize(String input);

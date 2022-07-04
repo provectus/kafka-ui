@@ -41,15 +41,15 @@ class SchemaRegistrySerdeTest {
     registryClient.register(topic + "-key", new AvroSchema("{ \"type\": \"int\" }"));
     registryClient.register(topic + "-value", new AvroSchema("{ \"type\": \"float\" }"));
 
-    assertThat(serde.getSchema(topic, Serde.Type.KEY)).isPresent();
-    assertThat(serde.getSchema(topic, Serde.Type.VALUE)).isPresent();
+    assertThat(serde.getSchema(topic, Serde.Target.KEY)).isPresent();
+    assertThat(serde.getSchema(topic, Serde.Target.VALUE)).isPresent();
   }
 
   @Test
   void returnsEmptyDescriptorIfSchemaNotRegisteredInSR() {
     String topic = "test";
-    assertThat(serde.getSchema(topic, Serde.Type.KEY)).isEmpty();
-    assertThat(serde.getSchema(topic, Serde.Type.VALUE)).isEmpty();
+    assertThat(serde.getSchema(topic, Serde.Target.KEY)).isEmpty();
+    assertThat(serde.getSchema(topic, Serde.Target.VALUE)).isEmpty();
   }
 
   @Test
@@ -74,7 +74,7 @@ class SchemaRegistrySerdeTest {
     String topic = "test";
 
     int schemaId = registryClient.register(topic + "-value", schema);
-    byte[] serialized = serde.serializer(topic, Serde.Type.VALUE).serialize(jsonValueForSchema);
+    byte[] serialized = serde.serializer(topic, Serde.Target.VALUE).serialize(jsonValueForSchema);
     byte[] expected = schemaRegistryBytes(schemaId, jsonValueForSchema, schema);
     assertThat(serialized).isEqualTo(expected);
   }
@@ -103,7 +103,7 @@ class SchemaRegistrySerdeTest {
     int schemaId = registryClient.register(topic + "-value", schema);
 
     byte[] data = schemaRegistryBytes(schemaId, jsonValueForSchema, schema);
-    var result = serde.deserializer(topic, Serde.Type.VALUE).deserialize( null, data);
+    var result = serde.deserializer(topic, Serde.Target.VALUE).deserialize(null, data);
 
     assertJsonsEqual(jsonValueForSchema, result.getResult());
     assertThat(result.getType()).isEqualTo(DeserializeResult.Type.JSON);
@@ -115,8 +115,8 @@ class SchemaRegistrySerdeTest {
   @Test
   void canDeserializeReturnsTrueAlways() {
     String topic = RandomString.make(10);
-    assertThat(serde.canDeserialize(topic, Serde.Type.KEY)).isTrue();
-    assertThat(serde.canDeserialize(topic, Serde.Type.VALUE)).isTrue();
+    assertThat(serde.canDeserialize(topic, Serde.Target.KEY)).isTrue();
+    assertThat(serde.canDeserialize(topic, Serde.Target.VALUE)).isTrue();
   }
 
   private void assertJsonsEqual(String expected, String actual) throws JsonProcessingException {

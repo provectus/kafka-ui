@@ -103,7 +103,7 @@ public class ConsumerRecordDeserializer {
       message.setValueDeserializeProperties(deserResult.getAdditionalProperties());
     } catch (Exception e) {
       log.trace("Error deserializing key for value topic: {}, partition {}, offset {}, with serde {}",
-          rec.topic(), rec.partition(), rec.offset(), keySerdeName, e);
+          rec.topic(), rec.partition(), rec.offset(), valueSerdeName, e);
       var deserResult = fallbackValueDeserializer.deserialize(rec.headers(), rec.value().get());
       message.setContent(deserResult.getResult());
       message.setValueSerde(fallbackSerdeName);

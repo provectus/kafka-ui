@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.PropertyResolverImpl;
+import java.util.Base64;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import java.util.Base64;
 
 class Base64SerdeTest {
 
@@ -31,7 +31,7 @@ class Base64SerdeTest {
 
   @ParameterizedTest
   @EnumSource
-  void serializesInputAsBase64String(Serde.Type type) {
+  void serializesInputAsBase64String(Serde.Target type) {
     var serializer = base64Serde.serializer("anyTopic", type);
     byte[] bytes = serializer.serialize(TEST_STRING_BASE64);
     assertThat(bytes).isEqualTo(TEST_STRING_BASE64_BYTES);
@@ -39,7 +39,7 @@ class Base64SerdeTest {
 
   @ParameterizedTest
   @EnumSource
-  void deserializesDataAsBase64Bytes(Serde.Type type) {
+  void deserializesDataAsBase64Bytes(Serde.Target type) {
     var deserializer = base64Serde.deserializer("anyTopic", type);
     var result = deserializer.deserialize(new RecordHeaders(), TEST_STRING_BASE64_BYTES);
     assertThat(result.getResult()).isEqualTo(TEST_STRING_BASE64);
@@ -49,19 +49,19 @@ class Base64SerdeTest {
 
   @ParameterizedTest
   @EnumSource
-  void getSchemaReturnsEmpty(Serde.Type type) {
+  void getSchemaReturnsEmpty(Serde.Target type) {
     assertThat(base64Serde.getSchema("anyTopic", type)).isEmpty();
   }
 
   @ParameterizedTest
   @EnumSource
-  void canDeserializeReturnsTrueForAllInputs(Serde.Type type) {
+  void canDeserializeReturnsTrueForAllInputs(Serde.Target type) {
     assertThat(base64Serde.canDeserialize("anyTopic", type)).isTrue();
   }
 
   @ParameterizedTest
   @EnumSource
-  void canSerializeReturnsTrueForAllInput(Serde.Type type) {
+  void canSerializeReturnsTrueForAllInput(Serde.Target type) {
     assertThat(base64Serde.canSerialize("anyTopic", type)).isTrue();
   }
 }

@@ -34,22 +34,22 @@ public class UuidBinary implements BuiltInSerde {
   }
 
   @Override
-  public Optional<SchemaDescription> getSchema(String topic, Type type) {
+  public Optional<SchemaDescription> getSchema(String topic, Target type) {
     return Optional.empty();
   }
 
   @Override
-  public boolean canDeserialize(String topic, Type type) {
+  public boolean canDeserialize(String topic, Target type) {
     return true;
   }
 
   @Override
-  public boolean canSerialize(String topic, Type type) {
+  public boolean canSerialize(String topic, Target type) {
     return true;
   }
 
   @Override
-  public Serializer serializer(String topic, Type type) {
+  public Serializer serializer(String topic, Target type) {
     return new Serializer() {
       @Override
       public byte[] serialize(String input) {
@@ -68,7 +68,7 @@ public class UuidBinary implements BuiltInSerde {
   }
 
   @Override
-  public Deserializer deserializer(String topic, Type type) {
+  public Deserializer deserializer(String topic, Target type) {
     return new Deserializer() {
       @Override
       public DeserializeResult deserialize(Headers headers, byte[] data) {

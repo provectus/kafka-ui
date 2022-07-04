@@ -39,7 +39,7 @@ public class SerdeInstance {
     }
   }
 
-  public Optional<SchemaDescription> getSchema(String topic, Serde.Type type) {
+  public Optional<SchemaDescription> getSchema(String topic, Serde.Target type) {
     return wrapWithClassloader(() -> serde.getSchema(topic, type));
   }
 
@@ -47,22 +47,22 @@ public class SerdeInstance {
     return wrapWithClassloader(serde::description);
   }
 
-  public boolean canSerialize(String topic, Serde.Type type) {
+  public boolean canSerialize(String topic, Serde.Target type) {
     return wrapWithClassloader(() -> serde.canSerialize(topic, type));
   }
 
-  public boolean canDeserialize(String topic, Serde.Type type) {
+  public boolean canDeserialize(String topic, Serde.Target type) {
     return wrapWithClassloader(() -> serde.canDeserialize(topic, type));
   }
 
-  public Serde.Serializer serializer(String topic, Serde.Type type) {
+  public Serde.Serializer serializer(String topic, Serde.Target type) {
     return wrapWithClassloader(() -> {
       var serializer = serde.serializer(topic, type);
       return input -> wrapWithClassloader(() -> serializer.serialize(input));
     });
   }
 
-  public Serde.Deserializer deserializer(String topic, Serde.Type type) {
+  public Serde.Deserializer deserializer(String topic, Serde.Target type) {
     return wrapWithClassloader(() -> {
       var deserializer = serde.deserializer(topic, type);
       return (headers, data) -> wrapWithClassloader(() -> deserializer.deserialize(headers, data));

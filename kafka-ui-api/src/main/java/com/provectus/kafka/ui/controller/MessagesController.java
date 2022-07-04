@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.controller;
 
+import static com.provectus.kafka.ui.serde.api.Serde.Target.KEY;
+import static com.provectus.kafka.ui.serde.api.Serde.Target.VALUE;
 import static java.util.stream.Collectors.toMap;
 
 import com.provectus.kafka.ui.api.MessagesApi;
@@ -11,10 +13,8 @@ import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.SerdeUsageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicSerdeSuggestionDTO;
-import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.service.DeserializationService;
 import com.provectus.kafka.ui.service.MessagesService;
-import com.provectus.kafka.ui.service.TopicsService;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,7 +38,6 @@ public class MessagesController extends AbstractController implements MessagesAp
   private static final int DEFAULT_LOAD_RECORD_LIMIT = 20;
 
   private final MessagesService messagesService;
-  private final TopicsService topicsService;
   private final DeserializationService deserializationService;
 
   @Override
@@ -121,11 +120,11 @@ public class MessagesController extends AbstractController implements MessagesAp
     return Mono.just(
         new TopicSerdeSuggestionDTO()
             .key(use == SerdeUsageDTO.SERIALIZE
-                ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, Serde.Type.KEY)
-                : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, Serde.Type.KEY))
+                ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, KEY)
+                : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, KEY))
             .value(use == SerdeUsageDTO.SERIALIZE
-                ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, Serde.Type.VALUE)
-                : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, Serde.Type.VALUE))
+                ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, VALUE)
+                : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, VALUE))
     ).map(ResponseEntity::ok);
   }
 }

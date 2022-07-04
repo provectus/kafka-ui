@@ -6,8 +6,8 @@ import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.builtin.Base64Serde;
-import com.provectus.kafka.ui.serdes.builtin.IntegerSerde;
-import com.provectus.kafka.ui.serdes.builtin.LongSerde;
+import com.provectus.kafka.ui.serdes.builtin.Int32Serde;
+import com.provectus.kafka.ui.serdes.builtin.Int64Serde;
 import com.provectus.kafka.ui.serdes.builtin.ProtobufFileSerde;
 import com.provectus.kafka.ui.serdes.builtin.StringSerde;
 import com.provectus.kafka.ui.serdes.builtin.UuidBinary;
@@ -20,8 +20,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 
+@Slf4j
 public class ClusterSerdes {
 
   private static final CustomSerdeLoader CUSTOM_SERDE_LOADER = new CustomSerdeLoader();
@@ -29,8 +31,8 @@ public class ClusterSerdes {
   private static final Map<String, Class<? extends BuiltInSerde>> BUILT_IN_SERDES =
       Map.of(
           StringSerde.name(), StringSerde.class,
-          IntegerSerde.name(), IntegerSerde.class,
-          LongSerde.name(), LongSerde.class,
+          Int32Serde.name(), Int32Serde.class,
+          Int64Serde.name(), Int64Serde.class,
           UuidBinary.name(), UuidBinary.class,
           Base64Serde.name(), Base64Serde.class,
           SchemaRegistrySerde.name(), SchemaRegistrySerde.class,
@@ -105,7 +107,7 @@ public class ClusterSerdes {
   private SerdeInstance createFallbackSerde() {
     StringSerde serde = new StringSerde();
     serde.configure(PropertyResolverImpl.empty(), PropertyResolverImpl.empty(), PropertyResolverImpl.empty());
-    return new SerdeInstance("FallbackString", serde, null, null, null);
+    return new SerdeInstance("Fallback", serde, null, null, null);
   }
 
   @SneakyThrows
@@ -133,6 +135,7 @@ public class ClusterSerdes {
           null
       );
     }
+    log.info("Loading custom serde {}", serdeConfig.getName());
     return loadCustom(serdeConfig, serdeProps, clusterProps, globalProps);
   }
 
@@ -166,11 +169,11 @@ public class ClusterSerdes {
   }
 
   private Optional<SerdeInstance> findSerdeByPatternsOrDefault(String topic,
-                                                               Serde.Type type,
+                                                               Serde.Target type,
                                                                Predicate<SerdeInstance> additionalCheck) {
     // iterating over serdes in the same order they were added in config
     for (SerdeInstance serdeInstance : serdes.values()) {
-      var pattern = type == Serde.Type.KEY
+      var pattern = type == Serde.Target.KEY
           ? serdeInstance.topicKeyPattern
           : serdeInstance.topicValuePattern;
       if (pattern != null
@@ -179,12 +182,12 @@ public class ClusterSerdes {
         return Optional.of(serdeInstance);
       }
     }
-    if (type == Serde.Type.KEY
+    if (type == Serde.Target.KEY
         && defaultKeySerde != null
         && additionalCheck.test(defaultKeySerde)) {
       return Optional.of(defaultKeySerde);
     }
-    if (type == Serde.Type.VALUE
+    if (type == Serde.Target.VALUE
         && defaultValueSerde != null
         && additionalCheck.test(defaultValueSerde)) {
       return Optional.of(defaultValueSerde);
@@ -200,12 +203,12 @@ public class ClusterSerdes {
     return serdes.values().stream();
   }
 
-  public SerdeInstance suggestSerdeForSerialize(String topic, Serde.Type type) {
+  public SerdeInstance suggestSerdeForSerialize(String topic, Serde.Target type) {
     return findSerdeByPatternsOrDefault(topic, type, s -> s.canSerialize(topic, type))
         .orElse(serdes.get(StringSerde.name()));
   }
 
-  public SerdeInstance suggestSerdeForDeserialize(String topic, Serde.Type type) {
+  public SerdeInstance suggestSerdeForDeserialize(String topic, Serde.Target type) {
     return findSerdeByPatternsOrDefault(topic, type, s -> s.canDeserialize(topic, type))
         .orElse(serdes.get(StringSerde.name()));
   }
