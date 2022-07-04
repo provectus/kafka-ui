@@ -21,6 +21,7 @@ import org.springframework.core.codec.DecodingException;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.util.MimeTypeUtils;
+import org.springframework.util.unit.DataSize;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -57,9 +58,11 @@ public class KsqlApiClient {
   //--------------------------------------------------------------------------------------------
 
   private final KafkaCluster cluster;
+  private final DataSize maxBuffSize;
 
-  public KsqlApiClient(KafkaCluster cluster) {
+  public KsqlApiClient(KafkaCluster cluster, DataSize maxBuffSize) {
     this.cluster = cluster;
+    this.maxBuffSize = maxBuffSize;
   }
 
   private WebClient webClient() {
@@ -75,6 +78,7 @@ public class KsqlApiClient {
         })
         .build();
     return WebClient.builder()
+        .codecs(c -> c.defaultCodecs().maxInMemorySize((int) maxBuffSize.toBytes()))
         .exchangeStrategies(exchangeStrategies)
         .build();
   }

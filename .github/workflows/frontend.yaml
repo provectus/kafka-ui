@@ -20,33 +20,31 @@ jobs:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
-      - name: Use Node.js
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 7.4.0
+      - name: Install node
         uses: actions/setup-node@v3.1.1
         with:
-          node-version: "14"
-      - name: Cache node dependency
-        uses: actions/cache@v3
-        with:
-          path: kafka-ui-react-app/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: "16.15.0"
+          cache: "pnpm"
+          cache-dependency-path: "./kafka-ui-react-app/pnpm-lock.yaml"
       - name: Install Node dependencies
         run: |
           cd kafka-ui-react-app/
-          npm install
+          pnpm install --frozen-lockfile
       - name: Generate sources
         run: |
           cd kafka-ui-react-app/
-          npm run gen:sources
+          pnpm gen:sources
       - name: Linter
         run: |
           cd kafka-ui-react-app/
-          npm run lint:CI
+          pnpm lint:CI
       - name: Tests
         run: |
           cd kafka-ui-react-app/
-          npm run test:CI
+          pnpm test:CI
       - name: SonarCloud Scan
         uses: workshur/sonarcloud-github-action@improved_basedir
         with:

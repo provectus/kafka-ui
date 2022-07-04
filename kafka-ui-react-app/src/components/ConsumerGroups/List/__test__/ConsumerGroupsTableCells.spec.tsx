@@ -19,7 +19,7 @@ describe('Consumer Groups Table Cells', () => {
       id: 6598,
     },
   };
-  const mockTableState: TableState<ConsumerGroup, string, never> = {
+  const mockTableState: TableState<ConsumerGroup, string> = {
     data: [consumerGroup],
     selectedIds: new Set([]),
     idSelector: jest.fn(),

@@ -6,7 +6,7 @@ import {
   ConnectorState,
   FullConnectorInfo,
 } from 'generated-sources';
-import { sortBy } from 'lodash';
+import sortBy from 'lodash/sortBy';
 import { AsyncRequestStatus } from 'lib/constants';
 
 import {
