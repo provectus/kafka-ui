@@ -26,6 +26,7 @@ public class ClustersProperties {
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
     String ksqldbServer;
+    KsqldbServerAuth ksqldbServerAuth;
     String schemaNameTemplate = "%s-value";
     String keySchemaNameTemplate = "%s-key";
     String protobufFile;
@@ -53,6 +54,12 @@ public class ClustersProperties {
 
   @Data
   public static class SchemaRegistryAuth {
+    String username;
+    String password;
+  }
+
+  @Data
+  public static class KsqldbServerAuth {
     String username;
     String password;
   }

@@ -3,7 +3,9 @@ package com.provectus.kafka.ui.client;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
+import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
+import com.provectus.kafka.ui.service.ksql.KsqlApiClient;
 import com.provectus.kafka.ui.strategy.ksql.statement.BaseStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -23,9 +25,10 @@ public class KsqlClient {
   private final WebClient webClient;
   private final ObjectMapper mapper;
 
-  public Mono<KsqlCommandResponseDTO> execute(BaseStrategy ksqlStatement) {
+  public Mono<KsqlCommandResponseDTO> execute(BaseStrategy ksqlStatement, KafkaCluster cluster) {
     return webClient.post()
         .uri(ksqlStatement.getUri())
+        .headers(httpHeaders -> KsqlApiClient.setBasicAuthIfEnabled(httpHeaders, cluster))
         .accept(new MediaType("application", "vnd.ksql.v1+json"))
         .body(BodyInserters.fromValue(ksqlStatement.getKsqlCommand()))
         .retrieve()
