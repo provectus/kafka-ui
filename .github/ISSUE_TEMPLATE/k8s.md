@@ -7,6 +7,14 @@ assignees: azatsafin
 
 ---
 
+<!--
+
+Don't forget to check for existing issues/discussions regarding your proposal. We might already have it.
+https://github.com/provectus/kafka-ui/issues
+https://github.com/provectus/kafka-ui/discussions
+
+-->
+
 **Describe the bug**
 <!--(A clear and concise description of what the bug is.)-->
 
