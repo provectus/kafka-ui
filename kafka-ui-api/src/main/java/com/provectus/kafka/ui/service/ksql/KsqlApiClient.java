@@ -87,17 +87,14 @@ public class KsqlApiClient {
   }
 
   public static void setBasicAuthIfEnabled(HttpHeaders headers, KafkaCluster cluster) {
-    if (cluster.getKsqldbServer().getUsername() != null && cluster.getKsqldbServer().getPassword() != null) {
-      headers.setBasicAuth(
-              cluster.getKsqldbServer().getUsername(),
-              cluster.getKsqldbServer().getPassword()
-      );
-    } else if (cluster.getKsqldbServer().getUsername() != null) {
-      throw new ValidationException(
-              "You specified username but did not specify password");
-    } else if (cluster.getKsqldbServer().getPassword() != null) {
-      throw new ValidationException(
-              "You specified password but did not specify username");
+    String username = cluster.getKsqldbServer().getUsername();
+    String password = cluster.getKsqldbServer().getPassword();
+    if (username != null && password != null) {
+      headers.setBasicAuth(username, password);
+    } else if (username != null) {
+      throw new ValidationException("You specified username but did not specify password");
+    } else if (password != null) {
+      throw new ValidationException("You specified password but did not specify username");
     }
   }
 

@@ -8,6 +8,7 @@ import java.util.Properties;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -59,6 +60,7 @@ public class ClustersProperties {
   }
 
   @Data
+  @ToString(exclude = "password")
   public static class KsqldbServerAuth {
     String username;
     String password;
