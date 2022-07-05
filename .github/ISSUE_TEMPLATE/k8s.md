@@ -14,7 +14,7 @@ assignees: azatsafin
 **Set up**
 <!--
 How do you run the app? Please provide as much info as possible:
-1. App version (docker image version or check commit hash at the top left corner in UI)
+1. App version (docker image version or check commit hash in the top left corner in UI)
 2. Helm chart version, if you use one
 3. Any IAAC configs
 

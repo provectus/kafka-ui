@@ -7,6 +7,9 @@ assignees: ''
 
 ---
 
+### Which version of the app are you running?
+<!-- Please provide docker image version or check commit hash in the top left corner in UI) -->
+
 ### Is your proposal related to a problem?
 
 <!--
