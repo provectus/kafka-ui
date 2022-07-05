@@ -1,18 +1,20 @@
 package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
-import extensions.FileUtils;
-import helpers.ApiHelper;
-import helpers.Helpers;
+import com.provectus.kafka.ui.extensions.FileUtils;
+import com.provectus.kafka.ui.helpers.ApiHelper;
+import com.provectus.kafka.ui.helpers.Helpers;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import utils.qaseIO.annotation.Suite;
+import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 
 public class ConnectorsTests extends BaseTest {
 
+    private final long suiteId = 10;
+    private final String suiteTitle = "Kafka Connect";
     public static final String LOCAL_CLUSTER = "local";
     public static final String SINK_CONNECTOR = "sink_postgres_activities_e2e_checks";
     public static final String TOPIC_FOR_CONNECTOR = "topic_for_connector";
@@ -59,7 +61,7 @@ public class ConnectorsTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should create a connector")
-    @Suite(suiteId = 10, title = "Kafka Connect")
+    @Suite(suiteId = suiteId, title = suiteTitle)
     @Test
     public void createConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
@@ -76,7 +78,7 @@ public class ConnectorsTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should update a connector")
-    @Suite(suiteId = 10, title = "Kafka Connect")
+    @Suite(suiteId = suiteId, title = suiteTitle)
     @Test
     public void updateConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
@@ -91,7 +93,7 @@ public class ConnectorsTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should delete connector")
-    @Suite(suiteId = 10, title = "Kafka Connect")
+    @Suite(suiteId = suiteId, title = suiteTitle)
     @Test
     public void deleteConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)

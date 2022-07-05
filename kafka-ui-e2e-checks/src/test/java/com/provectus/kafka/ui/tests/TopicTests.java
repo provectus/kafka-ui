@@ -1,16 +1,15 @@
 package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
-import helpers.Helpers;
+import com.provectus.kafka.ui.helpers.Helpers;
+import com.provectus.kafka.ui.pages.MainPage;
+import com.provectus.kafka.ui.pages.topic.TopicView;
+import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qameta.allure.Issue;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
-import pages.MainPage;
-import pages.topic.TopicView;
-import utils.qaseIO.annotation.Suite;
 
 import static org.apache.kafka.common.utils.Utils.readFileAsString;
-
 
 public class TopicTests extends BaseTest {
 
