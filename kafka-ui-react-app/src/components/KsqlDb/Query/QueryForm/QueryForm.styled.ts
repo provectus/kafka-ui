@@ -31,6 +31,7 @@ export const StreamPropertiesContainer = styled.label`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 50%;
 `;
 
 export const InputsContainer = styled.div`
@@ -59,7 +60,7 @@ export const LabelContainer = styled.div`
 `;
 
 export const Fieldset = styled.fieldset`
-  width: 100%;
+  width: 50%;
 `;
 
 export const Editor = styled(BaseEditor)(

@@ -3,10 +3,11 @@ import React from 'react';
 import Query, {
   getFormattedErrorFromTableData,
 } from 'components/KsqlDb/Query/Query';
-import { screen } from '@testing-library/dom';
+import { fireEvent, screen } from '@testing-library/dom';
 import fetchMock from 'fetch-mock';
 import { clusterKsqlDbQueryPath } from 'lib/paths';
-import { act, fireEvent } from '@testing-library/react';
+import { act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 const clusterName = 'testLocal';
 const renderComponent = () =>
@@ -41,7 +42,7 @@ describe('Query', () => {
 
     await act(() => {
       fireEvent.paste(screen.getByLabelText('KSQL'), 'show tables;');
-      fireEvent.click(screen.getByRole('button', { name: 'Execute' }));
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
     });
 
     expect(mock.calls().length).toBe(1);
@@ -61,26 +62,7 @@ describe('Query', () => {
     await act(() => {
       fireEvent.paste(screen.getByLabelText('KSQL'), 'show tables;');
       fireEvent.paste(screen.getByLabelText('Stream properties:'), 'test');
-      fireEvent.click(screen.getByRole('button', { name: 'Execute' }));
-    });
-    expect(mock.calls().length).toBe(1);
-  });
-
-  it('fetch on execute with streamParams', async () => {
-    renderComponent();
-
-    const mock = fetchMock.postOnce(`/api/clusters/${clusterName}/ksql/v2`, {
-      pipeId: 'testPipeID',
-    });
-
-    Object.defineProperty(window, 'EventSource', {
-      value: EventSourceMock,
-    });
-
-    await act(() => {
-      fireEvent.paste(screen.getByLabelText('KSQL'), 'show tables;');
-      fireEvent.paste(screen.getByLabelText('Stream properties:'), 'test');
-      fireEvent.click(screen.getByRole('button', { name: 'Execute' }));
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
     });
     expect(mock.calls().length).toBe(1);
   });

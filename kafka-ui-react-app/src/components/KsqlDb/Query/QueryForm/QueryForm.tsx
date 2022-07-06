@@ -6,6 +6,8 @@ import { Button } from 'components/common/Button/Button';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 import { assignIn } from 'lodash';
+import { yupResolver } from '@hookform/resolvers/yup';
+import yup from 'lib/yupExtended';
 
 import * as S from './QueryForm.styled';
 
@@ -22,6 +24,11 @@ export type FormValues = {
   streamsProperties: string;
 };
 
+const validationSchema = yup.object({
+  ksql: yup.string().trim(),
+  streamsProperties: yup.string().trim(),
+});
+
 const QueryForm: React.FC<Props> = ({
   fetching,
   hasResults,
@@ -36,7 +43,7 @@ const QueryForm: React.FC<Props> = ({
     formState: { errors },
   } = useForm<FormValues>({
     mode: 'onTouched',
-    // resolver: yupResolver(validationSchema),
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       ksql: '',
       streamsProperties: '',
@@ -128,20 +135,33 @@ const QueryForm: React.FC<Props> = ({
             Stream properties:
             {properties.map((prop, index) => (
               <S.InputsContainer key={prop.id}>
-                <input
-                  onChange={(e) => onKeyChange(e, index)}
-                  placeholder="Key"
-                  aria-label="key"
-                  type="text"
-                  name="key"
+                <Controller
+                  control={control}
+                  name="streamsProperties"
+                  render={() => (
+                    <input
+                      onChange={(e) => onKeyChange(e, index)}
+                      placeholder="Key"
+                      aria-label="key"
+                      type="text"
+                      name="key"
+                    />
+                  )}
                 />
-                <input
-                  onChange={(e) => onValueChange(e, index)}
-                  placeholder="Value"
-                  aria-label="value"
-                  type="text"
-                  name="value"
+                <Controller
+                  control={control}
+                  name="streamsProperties"
+                  render={() => (
+                    <input
+                      onChange={(e) => onValueChange(e, index)}
+                      placeholder="Value"
+                      aria-label="value"
+                      type="text"
+                      name="value"
+                    />
+                  )}
                 />
+
                 <S.DeleteButtonWrapper
                   key={prop.id}
                   onClick={() => onDelProp(index)}
@@ -152,6 +172,9 @@ const QueryForm: React.FC<Props> = ({
                 </S.DeleteButtonWrapper>
               </S.InputsContainer>
             ))}
+            <FormError>
+              <ErrorMessage errors={errors} name="streamsProperties" />
+            </FormError>
             <Button
               type="button"
               buttonSize="M"

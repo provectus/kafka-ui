@@ -1,7 +1,7 @@
 import { render } from 'lib/testHelpers';
 import React from 'react';
 import QueryForm, { Props } from 'components/KsqlDb/Query/QueryForm/QueryForm';
-import { screen, within } from '@testing-library/dom';
+import { screen, waitFor, within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { act } from '@testing-library/react';
 
@@ -60,10 +60,10 @@ describe('QueryForm', () => {
     await act(() =>
       userEvent.click(screen.getByRole('button', { name: 'Execute' }))
     );
-    setTimeout(() => {
+    waitFor(() => {
       expect(screen.getByText('ksql is a required field')).toBeInTheDocument();
       expect(submitFn).not.toBeCalled();
-    }, 1000);
+    });
   });
 
   it('submits with correct inputs', async () => {
