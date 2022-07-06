@@ -21,7 +21,7 @@ const fetchStatsUrl = `/api/clusters/${clusterName}/stats`;
 const fetchBrokersUrl = `/api/clusters/${clusterName}/brokers`;
 const brokerLogdir = {
   pageText: 'brokerLogdir',
-  navigationName: 'Logdir',
+  navigationName: 'Log directories',
 };
 const brokerMetrics = {
   pageText: 'brokerMetrics',
