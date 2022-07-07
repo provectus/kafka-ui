@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.container.KsqlDbContainer;
+import com.provectus.kafka.ui.model.InternalKsqlServer;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.time.Duration;
 import java.util.List;
@@ -42,7 +43,8 @@ class KsqlApiClientTest extends AbstractIntegrationTest {
   // Tutorial is here: https://ksqldb.io/quickstart.html
   @Test
   void ksqTutorialQueriesWork() {
-    var client = new KsqlApiClient(KafkaCluster.builder().ksqldbServer(KSQL_DB.url()).build(), maxBuffSize);
+    var client = new KsqlApiClient(KafkaCluster.builder().ksqldbServer(
+            InternalKsqlServer.builder().url(KSQL_DB.url()).build()).build(), maxBuffSize);
     execCommandSync(client,
         "CREATE STREAM riderLocations (profileId VARCHAR, latitude DOUBLE, longitude DOUBLE) "
             + "WITH (kafka_topic='locations', value_format='json', partitions=1);",
