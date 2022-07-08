@@ -95,7 +95,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
               <S.MetadataLabel>Timestamp</S.MetadataLabel>
               <span>
                 <S.MetadataValue>
-                  {dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}
+                  {dayjs(timestamp).format('DD.MM.YYYY HH:mm:ss')}
                 </S.MetadataValue>
                 <S.MetadataMeta>Timestamp type: {timestampType}</S.MetadataMeta>
               </span>

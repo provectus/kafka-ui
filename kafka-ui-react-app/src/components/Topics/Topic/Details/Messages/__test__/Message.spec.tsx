@@ -51,7 +51,7 @@ describe('Message component', () => {
     expect(screen.getByText(mockMessage.key as string)).toBeInTheDocument();
     expect(
       screen.getByText(
-        dayjs(mockMessage.timestamp).format('MM.DD.YYYY HH:mm:ss')
+        dayjs(mockMessage.timestamp).format('DD.MM.YYYY HH:mm:ss')
       )
     ).toBeInTheDocument();
     expect(screen.getByText(mockMessage.offset.toString())).toBeInTheDocument();
