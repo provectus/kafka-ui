@@ -22,4 +22,4 @@ Once you built the app, run the following in `kafka-ui-api/`:
 helm repo add kafka-ui https://provectus.github.io/kafka-ui
 helm install kafka-ui kafka-ui/kafka-ui
 ```
-To read more please follow to [chart documentation](charts/kafka-ui/README.md)
+To read more please follow to [chart documentation](../../../charts/kafka-ui/README.md)

@@ -9,6 +9,7 @@ import java.util.Properties;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -27,6 +28,7 @@ public class ClustersProperties {
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
     String ksqldbServer;
+    KsqldbServerAuth ksqldbServerAuth;
     List<ConnectCluster> kafkaConnect;
     int jmxPort;
     boolean jmxSsl;
@@ -62,6 +64,12 @@ public class ClustersProperties {
     Map<String, Object> properties = new HashMap<>();
     String topicKeysPattern;
     String topicValuesPattern;
+  }
+  
+  @ToString(exclude = "password")
+  public static class KsqldbServerAuth {
+    String username;
+    String password;
   }
 
   @PostConstruct

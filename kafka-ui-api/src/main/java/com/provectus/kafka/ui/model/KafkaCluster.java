@@ -19,7 +19,7 @@ public class KafkaCluster {
   private final String jmxPassword;
   private final String bootstrapServers;
   private final InternalSchemaRegistry schemaRegistry;
-  private final String ksqldbServer;
+  private final InternalKsqlServer ksqldbServer;
   private final List<KafkaConnectCluster> kafkaConnect;
   private final Properties properties;
   private final boolean readOnly;

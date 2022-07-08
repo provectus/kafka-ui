@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.container.KsqlDbContainer;
+import com.provectus.kafka.ui.model.InternalKsqlServer;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KsqlStreamDescriptionDTO;
 import com.provectus.kafka.ui.model.KsqlTableDescriptionDTO;
@@ -34,7 +35,8 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
 
   @AfterAll
   static void cleanup() {
-    var client = new KsqlApiClient(KafkaCluster.builder().ksqldbServer(KSQL_DB.url()).build(), maxBuffSize);
+    var client = new KsqlApiClient(KafkaCluster.builder().ksqldbServer(
+        InternalKsqlServer.builder().url(KSQL_DB.url()).build()).build(), maxBuffSize);
 
     TABLES_TO_DELETE.forEach(t ->
         client.execute(String.format("DROP TABLE IF EXISTS %s DELETE TOPIC;", t), Map.of())
@@ -51,7 +53,7 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
 
   @Test
   void listStreamsReturnsAllKsqlStreams() {
-    var cluster = KafkaCluster.builder().ksqldbServer(KSQL_DB.url()).build();
+    var cluster = KafkaCluster.builder().ksqldbServer(InternalKsqlServer.builder().url(KSQL_DB.url()).build()).build();
     var streamName = "stream_" + System.currentTimeMillis();
     STREAMS_TO_DELETE.add(streamName);
 
@@ -80,7 +82,7 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
 
   @Test
   void listTablesReturnsAllKsqlTables() {
-    var cluster = KafkaCluster.builder().ksqldbServer(KSQL_DB.url()).build();
+    var cluster = KafkaCluster.builder().ksqldbServer(InternalKsqlServer.builder().url(KSQL_DB.url()).build()).build();
     var tableName = "table_" + System.currentTimeMillis();
     TABLES_TO_DELETE.add(tableName);
 
