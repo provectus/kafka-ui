@@ -56,6 +56,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
   static final String TOPIC = RecordEmitterTest.class.getSimpleName() + "_" + UUID.randomUUID();
   static final String EMPTY_TOPIC = TOPIC + "_empty";
   static final List<Record> SENT_RECORDS = new ArrayList<>();
+  static final ConsumerRecordDeserializer RECORD_DESERIALIZER = createRecordsDeserializer();
 
   @BeforeAll
   static void generateMsgs() throws Exception {
@@ -93,7 +94,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     deleteTopic(EMPTY_TOPIC);
   }
 
-  private ConsumerRecordDeserializer recordsDeserializer() {
+  private static ConsumerRecordDeserializer createRecordsDeserializer() {
     Serde s = new StringSerde();
     s.configure(PropertyResolverImpl.empty(), PropertyResolverImpl.empty(), PropertyResolverImpl.empty());
     return new ConsumerRecordDeserializer(
@@ -113,7 +114,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new OffsetsSeekForward(EMPTY_TOPIC,
             new ConsumerPosition(BEGINNING, Map.of(), FORWARD)
-        ), recordsDeserializer()
+        ), RECORD_DESERIALIZER
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
@@ -122,7 +123,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
             EMPTY_TOPIC,
             new ConsumerPosition(BEGINNING, Map.of(), BACKWARD),
             100
-        ), recordsDeserializer()
+        ), RECORD_DESERIALIZER
     );
 
     StepVerifier.create(
@@ -144,7 +145,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new OffsetsSeekForward(TOPIC,
             new ConsumerPosition(BEGINNING, Map.of(), FORWARD)
-        ), recordsDeserializer()
+        ), RECORD_DESERIALIZER
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
@@ -152,7 +153,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new OffsetsSeekBackward(TOPIC,
             new ConsumerPosition(BEGINNING, Map.of(), BACKWARD),
             PARTITIONS * MSGS_PER_PARTITION
-        ), recordsDeserializer()
+        ), RECORD_DESERIALIZER
     );
 
     List<String> expectedValues = SENT_RECORDS.stream().map(Record::getValue).collect(Collectors.toList());
@@ -173,7 +174,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new OffsetsSeekForward(TOPIC,
             new ConsumerPosition(OFFSET, targetOffsets, FORWARD)
-        ), recordsDeserializer()
+        ), RECORD_DESERIALIZER
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
@@ -181,7 +182,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new OffsetsSeekBackward(TOPIC,
             new ConsumerPosition(OFFSET, targetOffsets, BACKWARD),
             PARTITIONS * MSGS_PER_PARTITION
-        ), recordsDeserializer()
+        ), RECORD_DESERIALIZER
     );
 
     var expectedValues = SENT_RECORDS.stream()
@@ -218,7 +219,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new OffsetsSeekForward(TOPIC,
             new ConsumerPosition(TIMESTAMP, targetTimestamps, FORWARD)
-        ), recordsDeserializer()
+        ), RECORD_DESERIALIZER
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
@@ -226,7 +227,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new OffsetsSeekBackward(TOPIC,
             new ConsumerPosition(TIMESTAMP, targetTimestamps, BACKWARD),
             PARTITIONS * MSGS_PER_PARTITION
-        ), recordsDeserializer()
+        ), RECORD_DESERIALIZER
     );
 
     var expectedValues = SENT_RECORDS.stream()
@@ -257,7 +258,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new OffsetsSeekBackward(TOPIC,
             new ConsumerPosition(OFFSET, targetOffsets, BACKWARD),
             numMessages
-        ), recordsDeserializer()
+        ), RECORD_DESERIALIZER
     );
 
     var expectedValues = SENT_RECORDS.stream()
@@ -283,7 +284,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new OffsetsSeekBackward(TOPIC,
             new ConsumerPosition(OFFSET, offsets, BACKWARD),
             100
-        ), recordsDeserializer()
+        ), RECORD_DESERIALIZER
     );
 
     expectEmitter(backwardEmitter,

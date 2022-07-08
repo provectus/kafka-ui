@@ -70,12 +70,12 @@ class SchemaRegistrySerdeTest {
             + "  ]"
             + "}"
     );
-    String jsonValueForSchema = "{ \"field1\":\"testStr\", \"field2\": 123 }";
+    String jsonValue = "{ \"field1\":\"testStr\", \"field2\": 123 }";
     String topic = "test";
 
     int schemaId = registryClient.register(topic + "-value", schema);
-    byte[] serialized = serde.serializer(topic, Serde.Target.VALUE).serialize(jsonValueForSchema);
-    byte[] expected = schemaRegistryBytes(schemaId, jsonValueForSchema, schema);
+    byte[] serialized = serde.serializer(topic, Serde.Target.VALUE).serialize(jsonValue);
+    byte[] expected = toBytesWithMagicByteAndSchemaId(schemaId, jsonValue, schema);
     assertThat(serialized).isEqualTo(expected);
   }
 
@@ -97,15 +97,15 @@ class SchemaRegistrySerdeTest {
             + "  ]"
             + "}"
     );
-    String jsonValueForSchema = "{ \"field1\":\"testStr\", \"field2\": 123 }";
+    String jsonValue = "{ \"field1\":\"testStr\", \"field2\": 123 }";
 
     String topic = "test";
     int schemaId = registryClient.register(topic + "-value", schema);
 
-    byte[] data = schemaRegistryBytes(schemaId, jsonValueForSchema, schema);
+    byte[] data = toBytesWithMagicByteAndSchemaId(schemaId, jsonValue, schema);
     var result = serde.deserializer(topic, Serde.Target.VALUE).deserialize(null, data);
 
-    assertJsonsEqual(jsonValueForSchema, result.getResult());
+    assertJsonsEqual(jsonValue, result.getResult());
     assertThat(result.getType()).isEqualTo(DeserializeResult.Type.JSON);
     assertThat(result.getAdditionalProperties())
         .contains(Map.entry("type", "AVRO"))
@@ -124,11 +124,11 @@ class SchemaRegistrySerdeTest {
     assertThat(mapper.readTree(actual)).isEqualTo(mapper.readTree(expected));
   }
 
-  private byte[] schemaRegistryBytes(int schemaId, String json, AvroSchema schema) {
-    return bytesWithMagicByteAndSchemaId(schemaId, jsonToAvro(json, schema));
+  private byte[] toBytesWithMagicByteAndSchemaId(int schemaId, String json, AvroSchema schema) {
+    return toBytesWithMagicByteAndSchemaId(schemaId, jsonToAvro(json, schema));
   }
 
-  private byte[] bytesWithMagicByteAndSchemaId(int schemaId, byte[] body) {
+  private byte[] toBytesWithMagicByteAndSchemaId(int schemaId, byte[] body) {
     return ByteBuffer.allocate(1 + 4 + body.length)
         .put((byte) 0)
         .putInt(schemaId)

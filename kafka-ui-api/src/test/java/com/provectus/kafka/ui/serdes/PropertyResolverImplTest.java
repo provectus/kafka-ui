@@ -46,7 +46,6 @@ class PropertyResolverImplTest {
     assertThat(resolver.getMapProperty("nonExistingProp", String.class, String.class)).isEmpty();
   }
 
-  //TODO: discuss - maybe we should return Optional.empty() and trace error in this case
   @Test
   void throwsExceptionWhenPropertyCantBeResolverToRequstedClass() {
     var resolver = new PropertyResolverImpl(env);

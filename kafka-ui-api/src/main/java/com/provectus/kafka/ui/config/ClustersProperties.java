@@ -65,7 +65,8 @@ public class ClustersProperties {
     String topicKeysPattern;
     String topicValuesPattern;
   }
-  
+
+  @Data
   @ToString(exclude = "password")
   public static class KsqldbServerAuth {
     String username;
