@@ -110,7 +110,6 @@ public class ProtobufFileSerde implements BuiltInSerde {
 
   @Override
   public Optional<String> description() {
-    //TODO !
     return Optional.empty();
   }
 

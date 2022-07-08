@@ -31,11 +31,15 @@ public class Int64Serde implements BuiltInSerde {
   public Optional<SchemaDescription> getSchema(String topic, Target type) {
     return Optional.of(
         new SchemaDescription(
-            "{ "
-                + "  \"type\" : \"integer\", "
-                + "  \"minimum\" : -9223372036854775808, "
-                + "  \"maximum\" : 9223372036854775807 "
-                + "}",
+            String.format(
+                "{ "
+                    + "  \"type\" : \"integer\", "
+                    + "  \"minimum\" : %s, "
+                    + "  \"maximum\" : %s "
+                    + "}",
+                Long.MIN_VALUE,
+                Long.MAX_VALUE
+            ),
             Map.of()
         )
     );

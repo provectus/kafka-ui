@@ -35,7 +35,7 @@ public class ClustersProperties {
     Properties properties;
     boolean readOnly = false;
     boolean disableLogDirsCollection = false;
-    List<SerdeConfig> serde;
+    List<SerdeConfig> serde = new ArrayList<>();
     String defaultKeySerde;
     String defaultValueSerde;
   }
@@ -58,7 +58,7 @@ public class ClustersProperties {
   public static class SerdeConfig {
     String name;
     String className;
-    String location;
+    String filePath;
     Map<String, Object> properties = new HashMap<>();
     String topicKeysPattern;
     String topicValuesPattern;

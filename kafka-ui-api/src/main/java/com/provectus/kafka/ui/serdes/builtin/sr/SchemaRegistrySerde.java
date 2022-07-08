@@ -199,14 +199,17 @@ public class SchemaRegistrySerde implements BuiltInSerde {
     var schema = getSchemaBySubject(subject)
         .orElseThrow(() -> new ValidationException(String.format("No schema for subject '%s' found", subject)));
     boolean isKey = type == Target.KEY;
-    if (schema.getSchemaType().equals(SchemaType.PROTOBUF.name())) {
-      return new ProtobufSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
-    } else if (schema.getSchemaType().equals(SchemaType.AVRO.name())) {
-      return new AvroSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
-    } else if (schema.getSchemaType().equals(SchemaType.JSON.name())) {
-      return new JsonSchemaSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
-    } else {
-      throw new IllegalStateException("Unsupported schema type: " + schema.getSchemaType());
+    SchemaType schemaType = SchemaType.fromString(schema.getSchemaType())
+        .orElseThrow(() -> new IllegalStateException("Unknown schema type: " + schema.getSchemaType()));
+    switch (schemaType) {
+      case PROTOBUF:
+        return new ProtobufSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
+      case AVRO:
+        return new AvroSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
+      case JSON:
+        return new JsonSchemaSchemaRegistrySerializer(topic, isKey, schemaRegistryClient, schema);
+      default:
+        throw new IllegalStateException();
     }
   }
 
@@ -232,7 +235,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
       MessageFormatter formatter = schemaRegistryFormatters.get(format);
       return new DeserializeResult(
           formatter.format(topic, data),
-          DeserializeResult.Type.JSON, //TODO not always true actually
+          DeserializeResult.Type.JSON,
           Map.of(
               "schemaId", schemaId,
               "type", format.name()

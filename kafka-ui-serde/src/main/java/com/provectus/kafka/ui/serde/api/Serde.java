@@ -1,8 +1,7 @@
 package com.provectus.kafka.ui.serde.api;
 
-import org.apache.kafka.common.header.Headers;
-
 import java.util.Optional;
+import org.apache.kafka.common.header.Headers;
 
 public interface Serde {
 

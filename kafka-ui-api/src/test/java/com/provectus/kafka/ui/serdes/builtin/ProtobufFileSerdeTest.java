@@ -110,7 +110,7 @@ class ProtobufFileSerdeTest {
 
     var personBytes = serde.serializer("topic1", Serde.Target.VALUE)
         .serialize("{ \"name\": \"My Name\",\"id\": 101, \"email\": \"user1@example.com\" }");
-    assertThat(personBytes).isEqualTo(personBytes);
+    assertThat(personBytes).isEqualTo(personMessage);
 
     var booksBytes = serde.serializer("topic2", Serde.Target.KEY)
         .serialize("{\"version\": 1, \"people\": ["
@@ -131,7 +131,7 @@ class ProtobufFileSerdeTest {
 
     var personBytes = serde.serializer("topic1", Serde.Target.VALUE)
         .serialize("{ \"name\": \"My Name\",\"id\": 101, \"email\": \"user1@example.com\" }");
-    assertThat(personBytes).isEqualTo(personBytes);
+    assertThat(personBytes).isEqualTo(personMessage);
 
     var booksBytes = serde.serializer("topic2", Serde.Target.KEY)
         .serialize("{\"version\": 1, \"people\": ["

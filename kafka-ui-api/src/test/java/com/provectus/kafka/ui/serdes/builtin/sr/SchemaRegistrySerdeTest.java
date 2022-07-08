@@ -53,7 +53,7 @@ class SchemaRegistrySerdeTest {
   }
 
   @Test
-  void serialize() throws RestClientException, IOException {
+  void serializeTreatsInputAsJsonAvroSchemaPayload() throws RestClientException, IOException {
     AvroSchema schema = new AvroSchema(
         "{"
             + "  \"type\": \"record\","

@@ -101,13 +101,13 @@ public class DeserializationService {
                                                          Serde.Target serdeType) {
     var serdes = clusterSerdes.get(cluster);
     var preferred = serdes.suggestSerdeForSerialize(topic, serdeType);
-    var lst = new ArrayList<SerdeDescriptionDTO>();
-    lst.add(toDto(preferred, topic, serdeType, true));
+    var result = new ArrayList<SerdeDescriptionDTO>();
+    result.add(toDto(preferred, topic, serdeType, true));
     serdes.all()
         .filter(s -> !s.getName().equals(preferred.getName()))
         .filter(s -> s.canSerialize(topic, serdeType))
-        .forEach(s -> lst.add(toDto(s, topic, serdeType, false)));
-    return lst;
+        .forEach(s -> result.add(toDto(s, topic, serdeType, false)));
+    return result;
   }
 
   public List<SerdeDescriptionDTO> getSerdesForDeserialize(KafkaCluster cluster,
@@ -115,13 +115,13 @@ public class DeserializationService {
                                                            Serde.Target serdeType) {
     var serdes = clusterSerdes.get(cluster);
     var preferred = serdes.suggestSerdeForDeserialize(topic, serdeType);
-    var lst = new ArrayList<SerdeDescriptionDTO>();
-    lst.add(toDto(preferred, topic, serdeType, true));
+    var result = new ArrayList<SerdeDescriptionDTO>();
+    result.add(toDto(preferred, topic, serdeType, true));
     serdes.all()
         .filter(s -> !s.getName().equals(preferred.getName()))
         .filter(s -> s.canDeserialize(topic, serdeType))
-        .forEach(s -> lst.add(toDto(s, topic, serdeType, false)));
-    return lst;
+        .forEach(s -> result.add(toDto(s, topic, serdeType, false)));
+    return result;
   }
 
   private SerdeDescriptionDTO toDto(SerdeInstance serdeInstance,

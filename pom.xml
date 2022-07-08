@@ -6,8 +6,8 @@
     <modules>
         <module>kafka-ui-contract</module>
         <module>kafka-ui-api</module>
-        <module>kafka-ui-e2e-checks</module>
         <module>kafka-ui-serde</module>
+        <module>kafka-ui-e2e-checks</module>
     </modules>
 
     <properties>

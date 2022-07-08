@@ -5,12 +5,7 @@ import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.Serde;
-import com.provectus.kafka.ui.serdes.builtin.Base64Serde;
-import com.provectus.kafka.ui.serdes.builtin.Int32Serde;
-import com.provectus.kafka.ui.serdes.builtin.Int64Serde;
-import com.provectus.kafka.ui.serdes.builtin.ProtobufFileSerde;
-import com.provectus.kafka.ui.serdes.builtin.StringSerde;
-import com.provectus.kafka.ui.serdes.builtin.UuidBinary;
+import com.provectus.kafka.ui.serdes.builtin.*;
 import com.provectus.kafka.ui.serdes.builtin.sr.SchemaRegistrySerde;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,6 +28,8 @@ public class ClusterSerdes {
           StringSerde.name(), StringSerde.class,
           Int32Serde.name(), Int32Serde.class,
           Int64Serde.name(), Int64Serde.class,
+          UInt32Serde.name(), UInt32Serde.class,
+          UInt64Serde.name(), UInt64Serde.class,
           UuidBinary.name(), UuidBinary.class,
           Base64Serde.name(), Base64Serde.class,
           SchemaRegistrySerde.name(), SchemaRegistrySerde.class,
@@ -58,20 +55,18 @@ public class ClusterSerdes {
 
     // initializing serdes from config
     ClustersProperties.Cluster clusterProp = clustersProperties.getClusters().get(clusterIndex);
-    if (clusterProp.getSerde() != null) {
-      for (int i = 0; i < clusterProp.getSerde().size(); i++) {
-        var sendeConf = clusterProp.getSerde().get(i);
-        if (serdes.containsKey(sendeConf.getName())) {
-          throw new ValidationException("Multiple serdes with same name: " + sendeConf.getName());
-        }
-        var instance = initSerdeFromConfig(
-            sendeConf,
-            new PropertyResolverImpl(env, "kafka.clusters." + clusterIndex + ".serde." + i + ".properties"),
-            clusterPropertiesResolver,
-            globalPropertiesResolver
-        );
-        serdes.put(sendeConf.getName(), instance);
+    for (int i = 0; i < clusterProp.getSerde().size(); i++) {
+      var sendeConf = clusterProp.getSerde().get(i);
+      if (serdes.containsKey(sendeConf.getName())) {
+        throw new ValidationException("Multiple serdes with same name: " + sendeConf.getName());
       }
+      var instance = initSerdeFromConfig(
+          sendeConf,
+          new PropertyResolverImpl(env, "kafka.clusters." + clusterIndex + ".serde." + i + ".properties"),
+          clusterPropertiesResolver,
+          globalPropertiesResolver
+      );
+      serdes.put(sendeConf.getName(), instance);
     }
 
     // initializing built-in serdes if they haven't been already initialized
@@ -121,8 +116,8 @@ public class ClusterSerdes {
       if (serdeConfig.getClassName() != null) {
         throw new ValidationException("className can't be set for built-in serde");
       }
-      if (serdeConfig.getLocation() != null) {
-        throw new ValidationException("location can't be set for built-in serde");
+      if (serdeConfig.getFilePath() != null) {
+        throw new ValidationException("filePath can't be set for built-in serde");
       }
       var clazz = BUILT_IN_SERDES.get(name);
       Serde serde = createSerdeInstance(clazz);
@@ -153,7 +148,7 @@ public class ClusterSerdes {
                                    PropertyResolver clusterProps,
                                    PropertyResolver globalProps) {
     var loaded = CUSTOM_SERDE_LOADER.loadAndConfigure(
-        serdeConfig.getClassName(), serdeConfig.getLocation(), serdeProps, clusterProps, globalProps);
+        serdeConfig.getClassName(), serdeConfig.getFilePath(), serdeProps, clusterProps, globalProps);
     return new SerdeInstance(
         serdeConfig.getName(),
         loaded.getSerde(),

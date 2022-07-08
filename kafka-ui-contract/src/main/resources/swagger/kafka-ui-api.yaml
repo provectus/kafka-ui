@@ -670,12 +670,12 @@ paths:
             $ref: "#/components/schemas/SeekDirection"
         - name: keySerde
           in: query
-          description: "Serde thi should be used for deserialization. Will be chosen automatically if not set."
+          description: "Serde that should be used for deserialization. Will be chosen automatically if not set."
           schema:
             type: string
         - name: valueSerde
           in: query
-          description: "Serde thi should be used for deserialization. Will be chosen automatically if not set."
+          description: "Serde that should be used for deserialization. Will be chosen automatically if not set."
           schema:
             type: string
       responses:
@@ -2423,9 +2423,11 @@ components:
             type: string
         content:
           type: string
-        keyFormat: #deprecated - wont be filled - use 'keySerde' field instead
+        keyFormat:
+          #deprecated - wont be filled - use 'keySerde' field instead
           $ref: "#/components/schemas/MessageFormat"
-        valueFormat: #deprecated - wont be filled - use 'valueSerde' field instead
+        valueFormat:
+          #deprecated - wont be filled - use 'valueSerde' field instead
           $ref: "#/components/schemas/MessageFormat"
         keySize:
           type: integer
@@ -2434,8 +2436,12 @@ components:
           type: integer
           format: int64
         keySchemaId:
+          deprecated: true
+          description: deprecated - wont be filled - use 'keyDeserializeProperties' field instead
           type: string
         valueSchemaId:
+          deprecated: true
+          description: deprecated - wont be filled - use 'valueDeserializeProperties' field instead
           type: string
         headersSize:
           type: integer

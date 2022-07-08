@@ -1,30 +1,28 @@
 package com.provectus.kafka.ui.serdes.builtin;
 
+import com.google.common.primitives.Longs;
+import com.google.common.primitives.UnsignedInteger;
+import com.google.common.primitives.UnsignedLong;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serdes.BuiltInSerde;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.kafka.common.header.Headers;
 
-public class StringSerde implements BuiltInSerde {
+
+public class UInt64Serde implements BuiltInSerde {
 
   public static String name() {
-    return "String";
+    return "UInt64";
   }
-
-  private Charset encoding;
 
   @Override
   public void configure(PropertyResolver serdeProperties,
                         PropertyResolver kafkaClusterProperties,
                         PropertyResolver globalProperties) {
-    encoding = Charset.forName(
-        serdeProperties.getProperty("encoding", String.class)
-            .orElse(StandardCharsets.UTF_8.name())
-    );
+
   }
 
   @Override
@@ -34,7 +32,19 @@ public class StringSerde implements BuiltInSerde {
 
   @Override
   public Optional<SchemaDescription> getSchema(String topic, Target type) {
-    return Optional.empty();
+    return Optional.of(
+        new SchemaDescription(
+            String.format(
+                "{ "
+                    + "  \"type\" : \"integer\", "
+                    + "  \"minimum\" : 0, "
+                    + "  \"maximum\" : %s "
+                    + "}",
+                UnsignedInteger.MAX_VALUE
+            ),
+            Map.of()
+        )
+    );
   }
 
   @Override
@@ -49,17 +59,20 @@ public class StringSerde implements BuiltInSerde {
 
   @Override
   public Serializer serializer(String topic, Target type) {
-    return input -> input.getBytes(encoding);
+    return input -> Longs.toByteArray(Long.parseUnsignedLong(input));
   }
 
   @Override
   public Deserializer deserializer(String topic, Target type) {
-    return (headers, data) ->
-        new DeserializeResult(
-            new String(data, encoding),
-            DeserializeResult.Type.STRING,
+    return new Deserializer() {
+      @Override
+      public DeserializeResult deserialize(Headers headers, byte[] data) {
+        return new DeserializeResult(
+            UnsignedLong.fromLongBits(Longs.fromByteArray(data)).toString(),
+            DeserializeResult.Type.JSON,
             Map.of()
         );
+      }
+    };
   }
-
 }
