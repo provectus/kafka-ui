@@ -1,8 +1,7 @@
 package com.provectus.kafka.ui.config.auth;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import com.provectus.kafka.ui.util.EmptyRedirectStrategy;
+import com.provectus.kafka.ui.config.CognitoOidcLogoutSuccessHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
@@ -13,15 +12,13 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.util.ClassUtils;
 
 @Configuration
 @EnableWebFluxSecurity
 @ConditionalOnProperty(value = "auth.type", havingValue = "OAUTH2")
-@AllArgsConstructor
-@Log4j2 // TODO
+@Slf4j
 public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
 
   public static final String REACTIVE_CLIENT_REGISTRATION_REPOSITORY_CLASSNAME =
@@ -56,7 +53,7 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
     final ServerLogoutSuccessHandler logoutHandler = cognitoEnabled
         ? new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId)
         : new OidcClientInitiatedServerLogoutSuccessHandler(repo);
-    
+
     http.authorizeExchange()
         .pathMatchers(AUTH_WHITELIST)
         .permitAll()

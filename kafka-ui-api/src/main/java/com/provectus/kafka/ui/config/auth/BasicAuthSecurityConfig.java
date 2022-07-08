@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.config.auth;
 
 import com.provectus.kafka.ui.util.EmptyRedirectStrategy;
 import java.net.URI;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ import org.springframework.security.web.server.ui.LogoutPageGeneratingWebFilter;
 @Configuration
 @EnableWebFluxSecurity
 @ConditionalOnProperty(value = "auth.type", havingValue = "LOGIN_FORM")
-@Log4j2
+@Slf4j
 public class BasicAuthSecurityConfig extends AbstractAuthSecurityConfig {
 
   public static final String LOGIN_URL = "/auth";

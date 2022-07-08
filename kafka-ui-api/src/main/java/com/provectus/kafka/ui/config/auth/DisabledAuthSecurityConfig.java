@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.config.auth;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
@@ -14,7 +14,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @Configuration
 @EnableWebFluxSecurity
 @ConditionalOnProperty(value = "auth.type", havingValue = "DISABLED")
-@Log4j2
+@Slf4j
 public class DisabledAuthSecurityConfig extends AbstractAuthSecurityConfig {
 
   @Bean
