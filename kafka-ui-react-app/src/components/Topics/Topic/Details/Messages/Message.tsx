@@ -66,7 +66,7 @@ const Message: React.FC<Props> = ({
         <td>{offset}</td>
         <td>{partition}</td>
         <td>
-          <div>{dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}</div>
+          <div>{dayjs(timestamp).format('DD.MM.YYYY HH:mm:ss')}</div>
         </td>
         <StyledDataCell title={key}>{key}</StyledDataCell>
         <StyledDataCell>
