@@ -1,15 +1,16 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 import Dashboard from 'components/Dashboard/Dashboard';
+import { render } from 'lib/testHelpers';
+import { screen } from '@testing-library/dom';
 
-const component = shallow(<Dashboard />);
+jest.mock('components/Dashboard/ClustersWidget/ClustersWidget', () => () => (
+  <div>mock-ClustersWidget</div>
+));
 
 describe('Dashboard', () => {
-  it('renders section', () => {
-    expect(component.exists('.section')).toBe(true);
-  });
-
   it('renders ClustersWidget', () => {
-    expect(component.exists('Connect(ClustersWidget)')).toBe(true);
+    render(<Dashboard />);
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
+    expect(screen.getByText('mock-ClustersWidget')).toBeInTheDocument();
   });
 });

@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
+import { Button } from 'components/common/Button/Button';
+
+import { ConfirmationModalWrapper } from './ConfirmationModal.styled';
 
 export interface ConfirmationModalProps {
   isOpen?: boolean;
@@ -6,64 +9,56 @@ export interface ConfirmationModalProps {
   onConfirm(): void;
   onCancel(): void;
   isConfirming?: boolean;
+  submitBtnText?: string;
 }
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+const ConfirmationModal: React.FC<
+  PropsWithChildren<ConfirmationModalProps>
+> = ({
   isOpen,
   children,
-  title,
+  title = 'Confirm the action',
   onCancel,
   onConfirm,
   isConfirming = false,
+  submitBtnText = 'Submit',
 }) => {
-  if (!isOpen) return null;
+  const cancelHandler = () => {
+    if (!isConfirming) onCancel();
+  };
 
-  const cancelHandler = React.useCallback(() => {
-    if (!isConfirming) {
-      onCancel();
-    }
-  }, [isConfirming, onCancel]);
-
-  return (
-    <div className="modal is-active">
-      <div
-        className="modal-background"
-        onClick={cancelHandler}
-        aria-hidden="true"
-      />
-      <div className="modal-card">
-        <header className="modal-card-head">
-          <p className="modal-card-title">{title || 'Confirm the action'}</p>
-          <button
-            onClick={cancelHandler}
-            type="button"
-            className="delete"
-            aria-label="close"
-            disabled={isConfirming}
-          />
+  return isOpen ? (
+    <ConfirmationModalWrapper>
+      <div onClick={cancelHandler} aria-hidden="true" role="button" />
+      <div>
+        <header>
+          <p>{title}</p>
         </header>
-        <section className="modal-card-body">{children}</section>
-        <footer className="modal-card-foot is-justify-content-flex-end">
-          <button
-            onClick={onConfirm}
-            type="button"
-            className="button is-danger"
-            disabled={isConfirming}
-          >
-            Confirm
-          </button>
-          <button
+        <section>{children}</section>
+        <footer>
+          <Button
+            buttonType="secondary"
+            buttonSize="M"
             onClick={cancelHandler}
             type="button"
-            className="button"
             disabled={isConfirming}
           >
             Cancel
-          </button>
+          </Button>
+
+          <Button
+            buttonType="primary"
+            buttonSize="M"
+            onClick={onConfirm}
+            type="button"
+            disabled={isConfirming}
+          >
+            {submitBtnText}
+          </Button>
         </footer>
       </div>
-    </div>
-  );
+    </ConfirmationModalWrapper>
+  ) : null;
 };
 
 export default ConfirmationModal;

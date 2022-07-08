@@ -6,7 +6,7 @@ import com.provectus.kafka.ui.model.ClusterMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterStatsDTO;
 import com.provectus.kafka.ui.service.ClusterService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -15,22 +15,22 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@Log4j2
-public class ClustersController implements ClustersApi {
+@Slf4j
+public class ClustersController extends AbstractController implements ClustersApi {
   private final ClusterService clusterService;
 
   @Override
   public Mono<ResponseEntity<ClusterMetricsDTO>> getClusterMetrics(String clusterName,
-                                                                ServerWebExchange exchange) {
-    return clusterService.getClusterMetrics(clusterName)
+                                                                   ServerWebExchange exchange) {
+    return clusterService.getClusterMetrics(getCluster(clusterName))
         .map(ResponseEntity::ok)
         .onErrorReturn(ResponseEntity.notFound().build());
   }
 
   @Override
   public Mono<ResponseEntity<ClusterStatsDTO>> getClusterStats(String clusterName,
-                                                            ServerWebExchange exchange) {
-    return clusterService.getClusterStats(clusterName)
+                                                               ServerWebExchange exchange) {
+    return clusterService.getClusterStats(getCluster(clusterName))
         .map(ResponseEntity::ok)
         .onErrorReturn(ResponseEntity.notFound().build());
   }
@@ -42,7 +42,7 @@ public class ClustersController implements ClustersApi {
 
   @Override
   public Mono<ResponseEntity<ClusterDTO>> updateClusterInfo(String clusterName,
-                                                         ServerWebExchange exchange) {
-    return clusterService.updateCluster(clusterName).map(ResponseEntity::ok);
+                                                            ServerWebExchange exchange) {
+    return clusterService.updateCluster(getCluster(clusterName)).map(ResponseEntity::ok);
   }
 }

@@ -4,7 +4,7 @@
     <parent>
         <artifactId>kafka-ui</artifactId>
         <groupId>com.provectus</groupId>
-        <version>0.2.2-SNAPSHOT</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -138,35 +138,36 @@
                         <configuration>
                             <workingDirectory>../kafka-ui-react-app</workingDirectory>
                             <environmentVariables>
-                                <REACT_APP_TAG>v${project.version}</REACT_APP_TAG>
+                                <VITE_TAG>${project.version}</VITE_TAG>
                             </environmentVariables>
                         </configuration>
                         <executions>
                             <execution>
-                                <id>install node and npm</id>
+                                <id>install node and pnpm</id>
                                 <goals>
-                                    <goal>install-node-and-npm</goal>
+                                    <goal>install-node-and-pnpm</goal>
                                 </goals>
                                 <configuration>
                                     <nodeVersion>${node.version}</nodeVersion>
+                                    <pnpmVersion>${pnpm.version}</pnpmVersion>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>npm install</id>
+                                <id>pnpm install</id>
                                 <goals>
-                                    <goal>npm</goal>
+                                    <goal>pnpm</goal>
                                 </goals>
                                 <configuration>
                                     <arguments>install</arguments>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>npm run gen:sources</id>
+                                <id>pnpm gen:sources</id>
                                 <goals>
-                                    <goal>npm</goal>
+                                    <goal>pnpm</goal>
                                 </goals>
                                 <configuration>
-                                    <arguments>run gen:sources</arguments>
+                                    <arguments>gen:sources</arguments>
                                 </configuration>
                             </execution>
                         </executions>

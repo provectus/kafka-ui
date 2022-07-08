@@ -1,30 +1,24 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { StaticRouter } from 'react-router-dom';
-import configureStore from 'redux/store/configureStore';
-import { connectors } from 'redux/reducers/connect/__test__/fixtures';
+import {
+  connectors,
+  failedConnectors,
+} from 'redux/reducers/connect/__test__/fixtures';
 import ClusterContext, {
   ContextProps,
   initialValue,
 } from 'components/contexts/ClusterContext';
 import ListContainer from 'components/Connect/List/ListContainer';
 import List, { ListProps } from 'components/Connect/List/List';
-
-const store = configureStore();
+import { act, screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 describe('Connectors List', () => {
   describe('Container', () => {
-    it('renders view with initial state of storage', () => {
-      const wrapper = mount(
-        <Provider store={store}>
-          <StaticRouter>
-            <ListContainer />
-          </StaticRouter>
-        </Provider>
-      );
-
-      expect(wrapper.exists(List)).toBeTruthy();
+    it('renders view with initial state of storage', async () => {
+      await act(() => {
+        render(<ListContainer />);
+      });
+      expect(screen.getByRole('heading')).toHaveTextContent('Connectors');
     });
   });
 
@@ -32,16 +26,18 @@ describe('Connectors List', () => {
     const fetchConnects = jest.fn();
     const fetchConnectors = jest.fn();
     const setConnectorSearch = jest.fn();
-    const setupComponent = (
+    const renderComponent = (
       props: Partial<ListProps> = {},
       contextValue: ContextProps = initialValue
-    ) => (
-      <StaticRouter>
+    ) => {
+      render(
         <ClusterContext.Provider value={contextValue}>
           <List
             areConnectorsFetching
             areConnectsFetching
             connectors={[]}
+            failedConnectors={[]}
+            failedTasks={0}
             connects={[]}
             fetchConnects={fetchConnects}
             fetchConnectors={fetchConnectors}
@@ -50,56 +46,55 @@ describe('Connectors List', () => {
             {...props}
           />
         </ClusterContext.Provider>
-      </StaticRouter>
-    );
+      );
+    };
 
-    it('renders PageLoader', () => {
-      const wrapper = mount(setupComponent({ areConnectorsFetching: true }));
-      expect(wrapper.exists('PageLoader')).toBeTruthy();
-      expect(wrapper.exists('table')).toBeFalsy();
+    it('renders PageLoader', async () => {
+      await act(() => renderComponent({ areConnectorsFetching: true }));
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      expect(screen.queryByRole('row')).not.toBeInTheDocument();
     });
 
     it('renders table', () => {
-      const wrapper = mount(setupComponent({ areConnectorsFetching: false }));
-      expect(wrapper.exists('PageLoader')).toBeFalsy();
-      expect(wrapper.exists('table')).toBeTruthy();
+      renderComponent({ areConnectorsFetching: false });
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+      expect(screen.getByRole('table')).toBeInTheDocument();
     });
 
     it('renders connectors list', () => {
-      const wrapper = mount(
-        setupComponent({
-          areConnectorsFetching: false,
-          connectors,
-        })
-      );
-      expect(wrapper.exists('PageLoader')).toBeFalsy();
-      expect(wrapper.exists('table')).toBeTruthy();
-      expect(wrapper.find('ListItem').length).toEqual(2);
+      renderComponent({
+        areConnectorsFetching: false,
+        connectors,
+      });
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      expect(screen.getAllByRole('row').length).toEqual(3);
+    });
+
+    it('renders failed connectors list', () => {
+      renderComponent({
+        areConnectorsFetching: false,
+        failedConnectors,
+      });
+      expect(screen.queryByRole('PageLoader')).not.toBeInTheDocument();
+      expect(screen.getByTitle('Failed Connectors')).toBeInTheDocument();
     });
 
     it('handles fetchConnects and fetchConnectors', () => {
-      mount(setupComponent());
+      renderComponent();
       expect(fetchConnects).toHaveBeenCalledTimes(1);
       expect(fetchConnectors).toHaveBeenCalledTimes(1);
     });
 
     it('renders actions if cluster is not readonly', () => {
-      const wrapper = mount(
-        setupComponent({}, { ...initialValue, isReadOnly: false })
-      );
-      expect(
-        wrapper.exists('.level-item.level-right > .button.is-primary')
-      ).toBeTruthy();
+      renderComponent({}, { ...initialValue, isReadOnly: false });
+      expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
     describe('readonly cluster', () => {
       it('does not render actions if cluster is readonly', () => {
-        const wrapper = mount(
-          setupComponent({}, { ...initialValue, isReadOnly: true })
-        );
-        expect(
-          wrapper.exists('.level-item.level-right > .button.is-primary')
-        ).toBeFalsy();
+        renderComponent({}, { ...initialValue, isReadOnly: true });
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
       });
     });
   });

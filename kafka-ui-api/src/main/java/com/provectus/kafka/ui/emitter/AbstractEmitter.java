@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.emitter;
 
-import com.provectus.kafka.ui.model.TopicMessageConsumingDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicMessagePhaseDTO;
@@ -11,35 +10,37 @@ import java.time.Instant;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
 public abstract class AbstractEmitter {
-  private static final Duration POLL_TIMEOUT_MS = Duration.ofMillis(1000L);
+  private static final Duration DEFAULT_POLL_TIMEOUT_MS = Duration.ofMillis(1000L);
 
   private final RecordSerDe recordDeserializer;
-  private long bytes = 0;
-  private int records = 0;
-  private long elapsed = 0;
+  private final ConsumingStats consumingStats = new ConsumingStats();
 
-  public AbstractEmitter(RecordSerDe recordDeserializer) {
+  protected AbstractEmitter(RecordSerDe recordDeserializer) {
     this.recordDeserializer = recordDeserializer;
   }
 
   protected ConsumerRecords<Bytes, Bytes> poll(
       FluxSink<TopicMessageEventDTO> sink, Consumer<Bytes, Bytes> consumer) {
+    return poll(sink, consumer, DEFAULT_POLL_TIMEOUT_MS);
+  }
+
+  protected ConsumerRecords<Bytes, Bytes> poll(
+      FluxSink<TopicMessageEventDTO> sink, Consumer<Bytes, Bytes> consumer, Duration timeout) {
     Instant start = Instant.now();
-    ConsumerRecords<Bytes, Bytes> records = consumer.poll(POLL_TIMEOUT_MS);
+    ConsumerRecords<Bytes, Bytes> records = consumer.poll(timeout);
     Instant finish = Instant.now();
     sendConsuming(sink, records, Duration.between(start, finish).toMillis());
     return records;
   }
 
-  protected FluxSink<TopicMessageEventDTO> sendMessage(FluxSink<TopicMessageEventDTO> sink,
-                             ConsumerRecord<Bytes, Bytes> msg) {
+  protected void sendMessage(FluxSink<TopicMessageEventDTO> sink,
+                                                       ConsumerRecord<Bytes, Bytes> msg) {
     final TopicMessageDTO topicMessage = ClusterUtil.mapToTopicMessage(msg, recordDeserializer);
-    return sink.next(
+    sink.next(
         new TopicMessageEventDTO()
             .type(TopicMessageEventDTO.TypeEnum.MESSAGE)
             .message(topicMessage)
@@ -49,33 +50,14 @@ public abstract class AbstractEmitter {
   protected void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {
     sink.next(
         new TopicMessageEventDTO()
-          .type(TopicMessageEventDTO.TypeEnum.PHASE)
-          .phase(new TopicMessagePhaseDTO().name(name))
+            .type(TopicMessageEventDTO.TypeEnum.PHASE)
+            .phase(new TopicMessagePhaseDTO().name(name))
     );
   }
 
   protected void sendConsuming(FluxSink<TopicMessageEventDTO> sink,
                                ConsumerRecords<Bytes, Bytes> records,
                                long elapsed) {
-    for (ConsumerRecord<Bytes, Bytes> record : records) {
-      for (Header header : record.headers()) {
-        bytes +=
-            (header.key() != null ? header.key().getBytes().length : 0L)
-            + (header.value() != null ? header.value().length : 0L);
-      }
-      bytes += record.serializedKeySize() + record.serializedValueSize();
-    }
-    this.records += records.count();
-    this.elapsed += elapsed;
-    final TopicMessageConsumingDTO consuming = new TopicMessageConsumingDTO()
-        .bytesConsumed(this.bytes)
-        .elapsedMs(this.elapsed)
-        .isCancelled(sink.isCancelled())
-        .messagesConsumed(this.records);
-    sink.next(
-        new TopicMessageEventDTO()
-            .type(TopicMessageEventDTO.TypeEnum.CONSUMING)
-            .consuming(consuming)
-    );
+    consumingStats.sendConsumingEvt(sink, records, elapsed);
   }
 }

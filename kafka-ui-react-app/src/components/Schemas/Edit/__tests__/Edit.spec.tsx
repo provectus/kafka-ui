@@ -1,74 +1,73 @@
-import { mount, shallow } from 'enzyme';
-import { SchemaType } from 'generated-sources';
 import React from 'react';
-import { StaticRouter } from 'react-router-dom';
-import Edit, { EditProps } from 'components/Schemas/Edit/Edit';
+import Edit from 'components/Schemas/Edit/Edit';
+import { render, WithRoute } from 'lib/testHelpers';
+import { clusterSchemaEditPath } from 'lib/paths';
+import {
+  schemasInitialState,
+  schemaVersion,
+} from 'redux/reducers/schemas/__test__/fixtures';
+import { screen, waitFor } from '@testing-library/dom';
+import ClusterContext, {
+  ContextProps,
+  initialValue as contextInitialValue,
+} from 'components/contexts/ClusterContext';
+import { RootState } from 'redux/interfaces';
+import fetchMock from 'fetch-mock';
+import { act } from '@testing-library/react';
 
-jest.mock('react-hook-form', () => ({
-  ...jest.requireActual('react-hook-form'),
-  Controller: () => 'Controller',
-}));
+const clusterName = 'testClusterName';
+const schemasAPILatestUrl = `/api/clusters/${clusterName}/schemas/${schemaVersion.subject}/latest`;
 
-describe('Edit Component', () => {
-  const mockSchema = {
-    subject: 'Subject',
-    version: '1',
-    id: 1,
-    schema: '{"schema": "schema"}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.AVRO,
-  };
-
-  const setupWrapper = (props: Partial<EditProps> = {}) => (
-    <Edit
-      subject="Subject"
-      clusterName="ClusterName"
-      schemasAreFetched
-      fetchSchemasByClusterName={jest.fn()}
-      updateSchema={jest.fn()}
-      schema={mockSchema}
-      {...props}
-    />
+const renderComponent = (
+  initialState: RootState['schemas'] = schemasInitialState,
+  context: ContextProps = contextInitialValue
+) =>
+  render(
+    <WithRoute path={clusterSchemaEditPath()}>
+      <ClusterContext.Provider value={context}>
+        <Edit />
+      </ClusterContext.Provider>
+    </WithRoute>,
+    {
+      initialEntries: [
+        clusterSchemaEditPath(clusterName, schemaVersion.subject),
+      ],
+      preloadedState: {
+        schemas: initialState,
+      },
+    }
   );
 
-  describe('when schemas are not fetched', () => {
-    const component = shallow(setupWrapper({ schemasAreFetched: false }));
-    it('matches the snapshot', () => {
-      expect(component).toMatchSnapshot();
-    });
-    it('shows loader', () => {
-      expect(component.find('PageLoader').exists()).toBeTruthy();
-    });
-    it('fetches them', () => {
-      const mockFetch = jest.fn();
-      mount(
-        <StaticRouter>
-          {setupWrapper({
-            schemasAreFetched: false,
-            fetchSchemasByClusterName: mockFetch,
-          })}
-        </StaticRouter>
-      );
-      expect(mockFetch).toHaveBeenCalledTimes(1);
+describe('Edit', () => {
+  afterEach(() => fetchMock.reset());
+
+  describe('fetch failed', () => {
+    it('renders page loader', async () => {
+      const schemasAPILatestMock = fetchMock.getOnce(schemasAPILatestUrl, 404);
+      await act(() => {
+        renderComponent();
+      });
+      await waitFor(() => expect(schemasAPILatestMock.called()).toBeTruthy());
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      expect(screen.queryByText(schemaVersion.subject)).not.toBeInTheDocument();
+      expect(screen.queryByText('Submit')).not.toBeInTheDocument();
     });
   });
 
-  describe('when schemas are fetched', () => {
-    const component = shallow(setupWrapper());
-    it('matches the snapshot', () => {
-      expect(component).toMatchSnapshot();
-    });
-    it('shows editor', () => {
-      expect(component.find('JSONEditor[name="latestSchema"]').length).toEqual(
-        1
-      );
-      expect(component.find('Controller').length).toEqual(1);
-      expect(component.find('button').exists()).toBeTruthy();
-    });
-    it('does not fetch them', () => {
-      const mockFetch = jest.fn();
-      shallow(setupWrapper());
-      expect(mockFetch).toHaveBeenCalledTimes(0);
+  describe('fetch success', () => {
+    describe('has schema versions', () => {
+      it('renders component with schema info', async () => {
+        const schemasAPILatestMock = fetchMock.getOnce(
+          schemasAPILatestUrl,
+          schemaVersion
+        );
+        await act(() => {
+          renderComponent();
+        });
+        await waitFor(() => expect(schemasAPILatestMock.called()).toBeTruthy());
+        expect(screen.getByText('Submit')).toBeInTheDocument();
+        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+      });
     });
   });
 });

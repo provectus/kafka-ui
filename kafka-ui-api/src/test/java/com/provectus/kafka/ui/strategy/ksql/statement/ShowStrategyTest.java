@@ -13,7 +13,9 @@ import com.provectus.kafka.ui.model.TableDTO;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -53,64 +55,29 @@ class ShowStrategyTest {
     assertFalse(strategy.test("LIST PROPERTIES;"));
   }
 
-  @Test
-  void shouldSerializeStreamsResponse() {
-    JsonNode node = getResponseWithData("streams");
-    strategy.test("show streams;");
-    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
-    TableDTO table = serializedResponse.getData();
-    assertThat(table.getHeaders()).isEqualTo(List.of("header"));
-    assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
+  @TestFactory
+  public Iterable<DynamicTest> shouldSerialize() {
+    return List.of(
+        shouldSerializeGenerate("streams", "show streams;"),
+        shouldSerializeGenerate("tables", "show tables;"),
+        shouldSerializeGenerate("topics", "show topics;"),
+        shouldSerializeGenerate("properties", "show properties;"),
+        shouldSerializeGenerate("functions", "show functions;"),
+        shouldSerializeGenerate("queries", "show queries;")
+    );
   }
 
-  @Test
-  void shouldSerializeTablesResponse() {
-    JsonNode node = getResponseWithData("tables");
-    strategy.test("show tables;");
-    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
-    TableDTO table = serializedResponse.getData();
-    assertThat(table.getHeaders()).isEqualTo(List.of("header"));
-    assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
-  }
-
-  @Test
-  void shouldSerializeTopicsResponse() {
-    JsonNode node = getResponseWithData("topics");
-    strategy.test("show topics;");
-    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
-    TableDTO table = serializedResponse.getData();
-    assertThat(table.getHeaders()).isEqualTo(List.of("header"));
-    assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
-  }
-
-  @Test
-  void shouldSerializePropertiesResponse() {
-    JsonNode node = getResponseWithData("properties");
-    strategy.test("show properties;");
-    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
-    TableDTO table = serializedResponse.getData();
-    assertThat(table.getHeaders()).isEqualTo(List.of("header"));
-    assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
-  }
-
-  @Test
-  void shouldSerializeFunctionsResponse() {
-    JsonNode node = getResponseWithData("functions");
-    strategy.test("show functions;");
-    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
-    TableDTO table = serializedResponse.getData();
-    assertThat(table.getHeaders()).isEqualTo(List.of("header"));
-    assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
-  }
-
-  @Test
-  void shouldSerializeQueriesResponse() {
-    JsonNode node = getResponseWithData("queries");
-    strategy.test("show queries;");
-    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
-    TableDTO table = serializedResponse.getData();
-    assertThat(table.getHeaders()).isEqualTo(List.of("header"));
-    assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
+  public DynamicTest shouldSerializeGenerate(final String key, final String sql) {
+    return DynamicTest.dynamicTest("Should serialize " + key,
+        () -> {
+          JsonNode node = getResponseWithData(key);
+          strategy.test(sql);
+          KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
+          TableDTO table = serializedResponse.getData();
+          assertThat(table.getHeaders()).isEqualTo(List.of("header"));
+          assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
+        }
+    );
   }
 
   @Test

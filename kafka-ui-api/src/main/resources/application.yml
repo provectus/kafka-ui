@@ -1,9 +1,6 @@
-kafka:
-  admin-client-timeout: 5000
-zookeeper:
-  connection-timeout: 1000
 auth:
-  enabled: false
+  type: DISABLED
+
 management:
   endpoint:
     info:
@@ -14,3 +11,15 @@ management:
     web:
       exposure:
         include: "info,health"
+  health:
+    ldap:
+      enabled: false
+
+logging:
+  level:
+    root: INFO
+    com.provectus: DEBUG
+    #org.springframework.http.codec.json.Jackson2JsonEncoder: DEBUG
+    #org.springframework.http.codec.json.Jackson2JsonDecoder: DEBUG
+    reactor.netty.http.server.AccessLog: INFO
+

@@ -1,18 +1,14 @@
-import React from 'react';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-
-import ClustersWidgetContainer from './ClustersWidget/ClustersWidgetContainer';
+import React, { Suspense } from 'react';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import ClustersWidget from 'components/Dashboard/ClustersWidget/ClustersWidget';
 
 const Dashboard: React.FC = () => (
-  <div className="section">
-    <div className="level">
-      <div className="level-item level-left">
-        <Breadcrumb>Dashboard</Breadcrumb>
-      </div>
-    </div>
-
-    <ClustersWidgetContainer />
-  </div>
+  <>
+    <PageHeading text="Dashboard" />
+    <Suspense>
+      <ClustersWidget />
+    </Suspense>
+  </>
 );
 
 export default Dashboard;

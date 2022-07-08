@@ -1,34 +1,18 @@
 import { connect } from 'react-redux';
-import { RootState, TopicName, ClusterName } from 'redux/interfaces';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { fetchTopicConsumerGroups } from 'redux/actions';
+import { RootState } from 'redux/interfaces';
+import { fetchTopicConsumerGroups } from 'redux/reducers/topics/topicsSlice';
 import TopicConsumerGroups from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
-import { getTopicConsumerGroups } from 'redux/reducers/topics/selectors';
+import { getTopicsConsumerGroupsFetched } from 'redux/reducers/topics/selectors';
 
-interface RouteProps {
-  clusterName: ClusterName;
-  topicName: TopicName;
-}
-
-type OwnProps = RouteComponentProps<RouteProps>;
-
-const mapStateToProps = (
-  state: RootState,
-  {
-    match: {
-      params: { topicName, clusterName },
-    },
-  }: OwnProps
-) => ({
-  consumerGroups: getTopicConsumerGroups(state, topicName),
-  topicName,
-  clusterName,
+const mapStateToProps = (state: RootState) => ({
+  isFetched: getTopicsConsumerGroupsFetched(state),
 });
 
 const mapDispatchToProps = {
   fetchTopicConsumerGroups,
 };
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(TopicConsumerGroups)
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TopicConsumerGroups);

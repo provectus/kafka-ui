@@ -1,50 +1,40 @@
-import { mount, shallow } from 'enzyme';
 import React from 'react';
-import { StaticRouter } from 'react-router-dom';
-import Breadcrumb, {
-  BreadcrumbItem,
-} from 'components/common/Breadcrumb/Breadcrumb';
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import { BreadcrumbProvider } from 'components/common/Breadcrumb/Breadcrumb.provider';
+import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
+import { render, WithRoute } from 'lib/testHelpers';
+import { clusterTopicNewPath, clusterTopicPath } from 'lib/paths';
+
+const createTopicPath = clusterTopicNewPath('local');
+const createTopicRoutePath = clusterTopicNewPath();
+
+const topicName = 'topic-name';
+
+const topicPath = clusterTopicPath('secondLocal', topicName);
+const topicRoutePath = clusterTopicPath();
 
 describe('Breadcrumb component', () => {
-  const links: BreadcrumbItem[] = [
-    {
-      label: 'link1',
-      href: 'link1href',
-    },
-    {
-      label: 'link2',
-      href: 'link2href',
-    },
-    {
-      label: 'link3',
-      href: 'link3href',
-    },
-  ];
-
-  const child = <div className="child" />;
-
-  const component = mount(
-    <StaticRouter>
-      <Breadcrumb links={links}>{child}</Breadcrumb>
-    </StaticRouter>
-  );
-
-  it('renders the list of links', () => {
-    component.find(`Link`).forEach((link, idx) => {
-      expect(link.prop('to')).toEqual(links[idx].href);
-      expect(link.contains(links[idx].label)).toBeTruthy();
-    });
-  });
-  it('renders the children', () => {
-    const list = component.find('ul').children();
-    expect(list.last().containsMatchingElement(child)).toBeTruthy();
-  });
-  it('matches the snapshot', () => {
-    const shallowComponent = shallow(
-      <StaticRouter>
-        <Breadcrumb links={links}>{child}</Breadcrumb>
-      </StaticRouter>
+  const setupComponent = (pathname: string, routePath: string) =>
+    render(
+      <BreadcrumbProvider>
+        <Breadcrumb />
+        <WithRoute path={routePath}>
+          <BreadcrumbRoute>
+            <div />
+          </BreadcrumbRoute>
+        </WithRoute>
+      </BreadcrumbProvider>,
+      { initialEntries: [pathname] }
     );
-    expect(shallowComponent).toMatchSnapshot();
+
+  it('renders the list of links', async () => {
+    const { getByText } = setupComponent(createTopicPath, createTopicRoutePath);
+    expect(getByText('Topics')).toBeInTheDocument();
+    expect(getByText('Create New')).toBeInTheDocument();
+  });
+  it('renders the topic overview', async () => {
+    const { getByText } = setupComponent(topicPath, topicRoutePath);
+    expect(getByText('Topics')).toBeInTheDocument();
+    expect(getByText(topicName)).toBeInTheDocument();
   });
 });

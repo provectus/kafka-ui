@@ -3,11 +3,13 @@ package com.provectus.kafka.ui.client;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
+import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
+import com.provectus.kafka.ui.service.ksql.KsqlApiClient;
 import com.provectus.kafka.ui.strategy.ksql.statement.BaseStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -18,14 +20,15 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class KsqlClient {
   private final WebClient webClient;
   private final ObjectMapper mapper;
 
-  public Mono<KsqlCommandResponseDTO> execute(BaseStrategy ksqlStatement) {
+  public Mono<KsqlCommandResponseDTO> execute(BaseStrategy ksqlStatement, KafkaCluster cluster) {
     return webClient.post()
         .uri(ksqlStatement.getUri())
+        .headers(httpHeaders -> KsqlApiClient.setBasicAuthIfEnabled(httpHeaders, cluster))
         .accept(new MediaType("application", "vnd.ksql.v1+json"))
         .body(BodyInserters.fromValue(ksqlStatement.getKsqlCommand()))
         .retrieve()

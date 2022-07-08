@@ -9,6 +9,7 @@ import {
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageSchema,
+  SortOrder,
 } from 'generated-sources';
 
 export type TopicName = Topic['name'];
@@ -53,6 +54,7 @@ export interface TopicsState {
   totalPages: number;
   search: string;
   orderBy: TopicColumnsToSort | null;
+  sortOrder: SortOrder;
   consumerGroups: ConsumerGroup[];
 }
 

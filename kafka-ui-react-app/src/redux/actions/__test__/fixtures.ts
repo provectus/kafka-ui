@@ -4,11 +4,11 @@ import {
   NewSchemaSubject,
   SchemaSubject,
   SchemaType,
+  SortOrder,
 } from 'generated-sources';
 
 export const clusterStats: ClusterStats = {
   brokerCount: 1,
-  zooKeeperStatus: 1,
   activeControllers: 1,
   onlinePartitionCount: 6,
   offlinePartitionCount: 0,
@@ -42,5 +42,6 @@ export const mockTopicsState = {
   messages: [],
   search: '',
   orderBy: null,
+  sortOrder: SortOrder.ASC,
   consumerGroups: [],
 };

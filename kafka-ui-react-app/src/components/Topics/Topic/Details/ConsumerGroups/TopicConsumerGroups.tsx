@@ -1,62 +1,78 @@
 import React from 'react';
-import { Topic, TopicDetails, ConsumerGroup } from 'generated-sources';
+import { Link } from 'react-router-dom';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import ConsumerGroupStateTag from 'components/common/ConsumerGroupState/ConsumerGroupStateTag';
-import { useHistory } from 'react-router';
-import { clusterConsumerGroupsPath } from 'lib/paths';
+import { clusterConsumerGroupsPath, RouteParamsClusterTopic } from 'lib/paths';
+import { Table } from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import { Tag } from 'components/common/Tag/Tag.styled';
+import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import getTagColor from 'components/common/Tag/getTagColor';
+import { useAppSelector } from 'lib/hooks/redux';
+import { getTopicConsumerGroups } from 'redux/reducers/topics/selectors';
+import useAppParams from 'lib/hooks/useAppParams';
 
-interface Props extends Topic, TopicDetails {
-  clusterName: ClusterName;
-  topicName: TopicName;
-  consumerGroups: ConsumerGroup[];
-  fetchTopicConsumerGroups(
-    clusterName: ClusterName,
-    topicName: TopicName
-  ): void;
+export interface Props {
+  isFetched: boolean;
+  fetchTopicConsumerGroups(payload: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+  }): void;
 }
 
 const TopicConsumerGroups: React.FC<Props> = ({
-  consumerGroups,
   fetchTopicConsumerGroups,
-  clusterName,
-  topicName,
+  isFetched,
 }) => {
-  React.useEffect(() => {
-    fetchTopicConsumerGroups(clusterName, topicName);
-  }, []);
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
 
-  const history = useHistory();
-  function goToConsumerGroupDetails(consumer: ConsumerGroup) {
-    history.push(
-      `${clusterConsumerGroupsPath(clusterName)}/${consumer.groupId}`
-    );
+  const consumerGroups = useAppSelector((state) =>
+    getTopicConsumerGroups(state, topicName)
+  );
+
+  React.useEffect(() => {
+    fetchTopicConsumerGroups({ clusterName, topicName });
+  }, [clusterName, fetchTopicConsumerGroups, topicName]);
+
+  if (!isFetched) {
+    return <PageLoader />;
   }
 
   return (
-    <div className="box">
-      <table className="table is-striped is-fullwidth">
+    <div>
+      <Table isFullwidth>
         <thead>
           <tr>
-            <th>Consumer group ID</th>
-            <th>Num of members</th>
-            <th>Messages behind</th>
-            <th>Coordinator</th>
-            <th>State</th>
+            <TableHeaderCell title="Consumer Group ID" />
+            <TableHeaderCell title="Num Of Members" />
+            <TableHeaderCell title="Messages Behind" />
+            <TableHeaderCell title="Coordinator" />
+            <TableHeaderCell title="State" />
           </tr>
         </thead>
         <tbody>
           {consumerGroups.map((consumer) => (
-            <tr
-              key={consumer.groupId}
-              className="is-clickable"
-              onClick={() => goToConsumerGroupDetails(consumer)}
-            >
-              <td>{consumer.groupId}</td>
+            <tr key={consumer.groupId}>
+              <TableKeyLink>
+                <Link
+                  to={`${clusterConsumerGroupsPath(clusterName)}/${
+                    consumer.groupId
+                  }`}
+                >
+                  {consumer.groupId}
+                </Link>
+              </TableKeyLink>
               <td>{consumer.members}</td>
               <td>{consumer.messagesBehind}</td>
               <td>{consumer.coordinator?.id}</td>
               <td>
-                <ConsumerGroupStateTag state={consumer.state} />
+                {consumer.state && (
+                  <Tag color={getTagColor(consumer)}>{`${consumer.state
+                    .charAt(0)
+                    .toUpperCase()}${consumer.state
+                    .slice(1)
+                    .toLowerCase()}`}</Tag>
+                )}
               </td>
             </tr>
           ))}
@@ -66,7 +82,7 @@ const TopicConsumerGroups: React.FC<Props> = ({
             </tr>
           )}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };

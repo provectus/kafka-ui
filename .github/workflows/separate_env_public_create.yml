@@ -1,0 +1,31 @@
+name: Separate environment create
+on:
+  workflow_dispatch:
+    inputs:
+      ENV_NAME:
+        description: 'Will be used as subdomain in the public URL.'
+        required: true
+        default: 'demo'
+
+jobs:
+  separate-env-create:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone
+        run: |
+          git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git
+
+      - name: separate env create
+        run: |
+          cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
+          bash separate_env_create.sh ${{ github.event.inputs.ENV_NAME }} ${{ secrets.FEATURE_TESTING_UI_PASSWORD }}
+          git config --global user.email "kafka-ui-infra@provectus.com"
+          git config --global user.name "kafka-ui-infra"
+          git add -A
+          git commit -m "separate env added: ${{ github.event.inputs.ENV_NAME }}" && git push || true
+
+      - name: echo separate environment public link
+        run: |
+          echo "Please note, separate environment creation takes up to 5-10 minutes."
+          echo "Separate environment will be available at http://${{ github.event.inputs.ENV_NAME }}.kafka-ui.provectus.io"
+          echo "Username: admin"

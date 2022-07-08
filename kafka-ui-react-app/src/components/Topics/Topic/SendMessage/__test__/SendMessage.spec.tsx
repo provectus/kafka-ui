@@ -1,9 +1,23 @@
 import React from 'react';
-import SendMessage, {
-  Props,
-} from 'components/Topics/Topic/SendMessage/SendMessage';
-import { MessageSchemaSourceEnum } from 'generated-sources';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import SendMessage from 'components/Topics/Topic/SendMessage/SendMessage';
+import { act, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import fetchMock from 'fetch-mock';
+import { render, WithRoute } from 'lib/testHelpers';
+import {
+  clusterTopicMessagesRelativePath,
+  clusterTopicSendMessagePath,
+} from 'lib/paths';
+import { store } from 'redux/store';
+import { fetchTopicDetails } from 'redux/reducers/topics/topicsSlice';
+import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
+import validateMessage from 'components/Topics/Topic/SendMessage/validateMessage';
+import Alerts from 'components/Alerts/Alerts';
+import * as S from 'components/App.styled';
+
+import { testSchema } from './fixtures';
+
+import Mock = jest.Mock;
 
 jest.mock('json-schema-faker', () => ({
   generate: () => ({
@@ -14,121 +28,127 @@ jest.mock('json-schema-faker', () => ({
   option: jest.fn(),
 }));
 
-const setupWrapper = (props?: Partial<Props>) => (
-  <SendMessage
-    clusterName="testCluster"
-    topicName="testTopic"
-    fetchTopicMessageSchema={jest.fn()}
-    sendTopicMessage={jest.fn()}
-    messageSchema={{
-      key: {
-        name: 'key',
-        source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
-        schema: `{
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "$id": "http://example.com/myURI.schema.json",
-          "title": "TestRecord",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "f1": {
-              "type": "integer"
-            },
-            "f2": {
-              "type": "string"
-            },
-            "schema": {
-              "type": "string"
-            }
-          }
-        }
-        `,
-      },
-      value: {
-        name: 'value',
-        source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
-        schema: `{
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "$id": "http://example.com/myURI1.schema.json",
-          "title": "TestRecord",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "f1": {
-              "type": "integer"
-            },
-            "f2": {
-              "type": "string"
-            },
-            "schema": {
-              "type": "string"
-            }
-          }
-        }
-        `,
-      },
-    }}
-    schemaIsFetched={false}
-    messageIsSending={false}
-    partitions={[
-      {
-        partition: 0,
-        leader: 2,
-        replicas: [
-          {
-            broker: 2,
-            leader: false,
-            inSync: true,
-          },
-        ],
-        offsetMax: 0,
-        offsetMin: 0,
-      },
-      {
-        partition: 1,
-        leader: 1,
-        replicas: [
-          {
-            broker: 1,
-            leader: false,
-            inSync: true,
-          },
-        ],
-        offsetMax: 0,
-        offsetMin: 0,
-      },
-    ]}
-    {...props}
-  />
+jest.mock('components/Topics/Topic/SendMessage/validateMessage', () =>
+  jest.fn()
 );
 
-describe('SendMessage', () => {
-  it('calls fetchTopicMessageSchema on first render', () => {
-    const fetchTopicMessageSchemaMock = jest.fn();
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
+const clusterName = 'testCluster';
+const topicName = externalTopicPayload.name;
+
+const renderComponent = async () => {
+  await act(() => {
     render(
-      setupWrapper({ fetchTopicMessageSchema: fetchTopicMessageSchemaMock })
+      <>
+        <WithRoute path={clusterTopicSendMessagePath()}>
+          <SendMessage />
+        </WithRoute>
+        <S.AlertsContainer role="toolbar">
+          <Alerts />
+        </S.AlertsContainer>
+      </>,
+      {
+        initialEntries: [clusterTopicSendMessagePath(clusterName, topicName)],
+        store,
+      }
     );
-    expect(fetchTopicMessageSchemaMock).toHaveBeenCalledTimes(1);
+  });
+};
+
+const renderAndSubmitData = async (error: string[] = []) => {
+  await renderComponent();
+  expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  await act(() => {
+    userEvent.click(screen.getByRole('listbox'));
+  });
+  await act(() => {
+    userEvent.click(screen.getAllByRole('option')[1]);
+  });
+  await act(() => {
+    (validateMessage as Mock).mockImplementation(() => error);
+    userEvent.click(screen.getByText('Send'));
+  });
+};
+
+describe('SendMessage', () => {
+  beforeAll(() => {
+    store.dispatch(
+      fetchTopicDetails.fulfilled(
+        {
+          topicDetails: externalTopicPayload,
+          topicName,
+        },
+        'topic',
+        {
+          clusterName,
+          topicName,
+        }
+      )
+    );
+  });
+  afterEach(() => {
+    fetchMock.reset();
+    mockNavigate.mockClear();
+  });
+
+  it('fetches schema on first render', async () => {
+    const fetchTopicMessageSchemaMock = fetchMock.getOnce(
+      `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
+      testSchema
+    );
+    await act(() => {
+      renderComponent();
+    });
+    expect(fetchTopicMessageSchemaMock.called()).toBeTruthy();
   });
 
   describe('when schema is fetched', () => {
-    it('calls sendTopicMessage on submit', async () => {
-      jest.mock('../validateMessage', () => jest.fn().mockReturnValue(true));
-      const mockSendTopicMessage = jest.fn();
-      render(
-        setupWrapper({
-          schemaIsFetched: true,
-          sendTopicMessage: mockSendTopicMessage,
-        })
+    const messagesUrl = `/api/clusters/${clusterName}/topics/${topicName}/messages`;
+    const detailsUrl = `/api/clusters/${clusterName}/topics/${topicName}`;
+
+    beforeEach(() => {
+      fetchMock.getOnce(
+        `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
+        testSchema
       );
-      const select = await screen.findByLabelText('Partition');
-      fireEvent.change(select, {
-        target: { value: 2 },
+    });
+
+    it('calls sendTopicMessage on submit', async () => {
+      const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, 200);
+      const fetchTopicDetailsMock = fetchMock.getOnce(detailsUrl, 200);
+
+      await renderAndSubmitData();
+      expect(sendTopicMessageMock.called(messagesUrl)).toBeTruthy();
+      expect(fetchTopicDetailsMock.called(detailsUrl)).toBeTruthy();
+      expect(mockNavigate).toHaveBeenLastCalledWith(
+        `../${clusterTopicMessagesRelativePath}`
+      );
+    });
+
+    it('should make the sendTopicMessage but most find an error within it', async () => {
+      const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, {
+        throws: 'Error',
       });
-      await waitFor(async () => {
-        fireEvent.click(await screen.findByText('Send'));
-        expect(mockSendTopicMessage).toHaveBeenCalledTimes(1);
-      });
+      const fetchTopicDetailsMock = fetchMock.getOnce(detailsUrl, 200);
+      await renderAndSubmitData();
+      expect(sendTopicMessageMock.called()).toBeTruthy();
+      expect(fetchTopicDetailsMock.called(detailsUrl)).toBeFalsy();
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(mockNavigate).toHaveBeenLastCalledWith(
+        `../${clusterTopicMessagesRelativePath}`
+      );
+    });
+
+    it('should check and view validation error message when is not valid', async () => {
+      const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, 200);
+      await renderAndSubmitData(['error']);
+      expect(sendTopicMessageMock.called(messagesUrl)).toBeFalsy();
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 });

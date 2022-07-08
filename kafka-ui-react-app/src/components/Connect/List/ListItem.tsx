@@ -1,16 +1,19 @@
 import React from 'react';
-import cx from 'classnames';
 import { FullConnectorInfo } from 'generated-sources';
 import { clusterConnectConnectorPath, clusterTopicPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import { Link, NavLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { deleteConnector } from 'redux/actions';
+import { deleteConnector } from 'redux/reducers/connect/connectSlice';
 import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import ConnectorStatusTag from 'components/Connect/ConnectorStatusTag';
+import { Tag } from 'components/common/Tag/Tag.styled';
+import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import getTagColor from 'components/common/Tag/getTagColor';
+
+import * as S from './List.styled';
 
 export interface ListItemProps {
   clusterName: ClusterName;
@@ -36,12 +39,18 @@ const ListItem: React.FC<ListItemProps> = ({
     setDeleteConnectorConfirmationVisible,
   ] = React.useState(false);
 
-  const handleDelete = React.useCallback(() => {
+  const handleDelete = () => {
     if (clusterName && connect && name) {
-      dispatch(deleteConnector(clusterName, connect, name));
+      dispatch(
+        deleteConnector({
+          clusterName,
+          connectName: connect,
+          connectorName: name,
+        })
+      );
     }
     setDeleteConnectorConfirmationVisible(false);
-  }, [clusterName, connect, name]);
+  };
 
   const runningTasks = React.useMemo(() => {
     if (!tasksCount) return null;
@@ -50,55 +59,39 @@ const ListItem: React.FC<ListItemProps> = ({
 
   return (
     <tr>
-      <td className="has-text-overflow-ellipsis">
-        <NavLink
-          exact
-          to={clusterConnectConnectorPath(clusterName, connect, name)}
-          activeClassName="is-active"
-          className="title is-6"
-        >
+      <TableKeyLink>
+        <NavLink to={clusterConnectConnectorPath(clusterName, connect, name)}>
           {name}
         </NavLink>
-      </td>
+      </TableKeyLink>
       <td>{connect}</td>
       <td>{type}</td>
       <td>{connectorClass}</td>
       <td>
-        <div className="is-flex is-flex-wrap-wrap">
+        <S.TagsWrapper>
           {topics?.map((t) => (
-            <span key={t} className="tag is-info is-light mr-1 mb-1">
+            <Tag key={t} color="gray">
               <Link to={clusterTopicPath(clusterName, t)}>{t}</Link>
-            </span>
+            </Tag>
           ))}
-        </div>
+        </S.TagsWrapper>
       </td>
-      <td>{status && <ConnectorStatusTag status={status.state} />}</td>
+      <td>{status && <Tag color={getTagColor(status)}>{status.state}</Tag>}</td>
       <td>
         {runningTasks && (
-          <span
-            className={cx(
-              failedTasksCount ? 'has-text-danger' : 'has-text-success'
-            )}
-          >
+          <span>
             {runningTasks} of {tasksCount}
           </span>
         )}
       </td>
       <td>
-        <div className="has-text-right">
-          <Dropdown
-            label={
-              <span className="icon">
-                <i className="fas fa-cog" />
-              </span>
-            }
-            right
-          >
-            <DropdownDivider />
+        <div>
+          <Dropdown label={<VerticalElipsisIcon />} right up>
             <DropdownItem
               onClick={() => setDeleteConnectorConfirmationVisible(true)}
+              danger
             >
-              <span className="has-text-danger">Remove Connector</span>
+              Remove Connector
             </DropdownItem>
           </Dropdown>
         </div>

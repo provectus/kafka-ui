@@ -169,7 +169,7 @@ paths:
     post:
       tags:
         - KafkaConnectClient
-      summary: restart the connector
+      summary: restart the connector and its tasks
       operationId: restartConnector
       parameters:
         - name: connectorName
@@ -177,6 +177,21 @@ paths:
           required: true
           schema:
             type: string
+        - name: includeTasks
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Specifies whether to restart the connector instance and task instances or just the connector instance
+        - name: onlyFailed
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Specifies whether to restart just the instances with a FAILED status or all instances
+
       responses:
         200:
           description: OK
@@ -347,6 +362,10 @@ paths:
                 $ref: '#/components/schemas/ConnectorPluginConfigValidationResponse'
 
 components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
   schemas:
     ConnectorConfig:
       type: object
@@ -406,6 +425,7 @@ components:
             - RUNNING
             - FAILED
             - PAUSED
+            - RESTARTING
             - UNASSIGNED
         worker_id:
           type: string
@@ -538,4 +558,8 @@ components:
           type: array
           items:
             type: string
+
+
+security:
+  - basicAuth: []
 

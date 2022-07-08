@@ -3,7 +3,11 @@ import prettyMilliseconds from 'pretty-ms';
 import { useFormContext } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { MILLISECONDS_IN_WEEK, MILLISECONDS_IN_SECOND } from 'lib/constants';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
+import Input from 'components/common/Input/Input';
+import { FormError } from 'components/common/Input/Input.styled';
 
+import * as S from './TopicForm.styled';
 import TimeToRetainBtns from './TimeToRetainBtns';
 
 interface Props {
@@ -12,7 +16,6 @@ interface Props {
 
 const TimeToRetain: React.FC<Props> = ({ isSubmitting }) => {
   const {
-    register,
     watch,
     formState: { errors },
   } = useFormContext();
@@ -27,27 +30,26 @@ const TimeToRetain: React.FC<Props> = ({ isSubmitting }) => {
 
   return (
     <>
-      <label
-        className="label is-flex"
-        style={{ justifyContent: 'space-between' }}
-      >
-        <div>Time to retain data (in ms)</div>
-        {valueHint && <span className="has-text-info">{valueHint}</span>}
-      </label>
-      <input
-        className="input"
+      <S.Label>
+        <InputLabel htmlFor="timeToRetain">
+          Time to retain data (in ms)
+        </InputLabel>
+        {valueHint && <span>{valueHint}</span>}
+      </S.Label>
+      <Input
         id="timeToRetain"
         type="number"
         defaultValue={defaultValue}
-        {...register(name, {
+        name={name}
+        hookFormOptions={{
           min: { value: -1, message: 'must be greater than or equal to -1' },
-        })}
+        }}
         disabled={isSubmitting}
       />
 
-      <p className="help is-danger">
+      <FormError>
         <ErrorMessage errors={errors} name={name} />
-      </p>
+      </FormError>
 
       <TimeToRetainBtns name={name} value={watchedValue} />
     </>

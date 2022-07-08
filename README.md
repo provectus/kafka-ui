@@ -1,17 +1,24 @@
-![UI for Apache Kafka logo](images/kafka-ui-logo.png) UI for Apache Kafka – Free Web UI for Apache Kafka &nbsp; 
+![UI for Apache Kafka logo](documentation/images/kafka-ui-logo.png) UI for Apache Kafka&nbsp;
 ------------------
+#### Versatile, fast and lightweight web UI for managing Apache Kafka® clusters. Built by developers, for developers.
 
-![UI for Apache Kafka Price Free](images/free-open-source.svg)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/provectus/kafka-ui/blob/master/LICENSE)
+![UI for Apache Kafka Price Free](documentation/images/free-open-source.svg)
+[![Release version](https://img.shields.io/github/v/release/provectus/kafka-ui)](https://github.com/provectus/kafka-ui/releases)
 [![Chat with us](https://img.shields.io/discord/897805035122077716)](https://discord.gg/4DWzD7pGE5)
 
-<em>UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters. </em> 
+### DISCLAIMER
+<em>UI for Apache Kafka is a free, open-source tool that is curated by Provectus, and is built and supported by the open-source community. It will remain free and open-source in the future. Provectus does not plan to add any paid features or subscription plans so that everyone can have a better experience observing their data. UI for Apache Kafka is a part of the [Provectus NextGen Data Platform](https://provectus.com/nextgen-data-platform/) — Check it out! Also, learn more about [Professional Services for Apache Kafka](https://provectus.com/professional-services-apache-kafka/), to start handling your Kafka clusters and streaming apps with the help of Provectus Kafka experts. </em> 
+
+
+#### UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters. 
 
 UI for Apache Kafka is a simple tool that makes your data flows observable, helps find and troubleshoot issues faster and deliver optimal performance. Its lightweight dashboard makes it easy to track key metrics of your Kafka clusters - Brokers, Topics, Partitions, Production, and Consumption. 
 
-Set up UI for Apache Kafka with just a couple of easy commands to visualize your Kafka data in a comprehensible way. You can run the tool locally or in the cloud. 
+Set up UI for Apache Kafka with just a couple of easy commands to visualize your Kafka data in a comprehensible way. You can run the tool locally or in 
+the cloud. 
 
-![UI for Apache Kafka interface dashboard screenshot](images/apache-kafka-ui-interface-dashboard.png)
-
+![Interface](documentation/images/Interface.gif)
 
 # Features
 * **Multi-Cluster Management** — monitor and manage all your clusters in one place
@@ -23,12 +30,83 @@ Set up UI for Apache Kafka with just a couple of easy commands to visualize your
 * **Dynamic Topic Configuration** — create and configure new topics with dynamic configuration
 * **Configurable Authentification** — secure your installation with optional Github/Gitlab/Google OAuth 2.0
  
+# The Interface
+UI for Apache Kafka wraps major functions of Apache Kafka with an intuitive user interface.
+
+![Interface](documentation/images/Interface.gif)
+
+## Topics
+UI for Apache Kafka makes it easy for you to create topics in your browser by several clicks, 
+pasting your own parameters, and viewing topics in the list.
+
+![Create Topic](documentation/images/Create_topic_kafka-ui.gif)
+
+It's possible to jump from connectors view to corresponding topics and from a topic to consumers (back and forth) for more convenient navigation.
+connectors, overview topic settings. 
+
+![Connector_Topic_Consumer](documentation/images/Connector_Topic_Consumer.gif)
+
+### Messages
+Let's say we want to produce messages for our topic. With the UI for Apache Kafka we can send or write data/messages to the Kafka topics without effort by specifying parameters, and viewing messages in the list.
+
+![Produce Message](documentation/images/Create_message_kafka-ui.gif)
+
+## Schema registry
+There are 3 supported types of schemas: Avro®, JSON Schema, and Protobuf schemas.
+
+![Create Schema Registry](documentation/images/Create_schema.gif)
+
+Before producing avro-encoded messages, you have to add an avro schema for the topic in Schema Registry. Now all these steps are easy to do 
+with a few clicks in a user-friendly interface.
+
+![Avro Schema Topic](documentation/images/Schema_Topic.gif)
 
 # Getting Started
 
 To run UI for Apache Kafka, you can use a pre-built Docker image or build it locally.  
 
-## Running From Docker Image
+## Configuration
+
+We have plenty of [docker-compose files](documentation/compose/DOCKER_COMPOSE.md) as examples. They're built for various configuration stacks.
+
+# Guides
+
+- [SSO configuration](documentation/guides/SSO.md)
+- [AWS IAM configuration](documentation/guides/AWS_IAM.md)
+- [Docker-compose files](documentation/compose/DOCKER_COMPOSE.md)
+- [Connection to a secure broker](documentation/compose/SECURE_BROKER.md)
+
+### Configuration File
+Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
+
+
+```sh
+kafka:
+  clusters:
+    -
+      name: local
+      bootstrapServers: localhost:29091
+      schemaRegistry: http://localhost:8085
+      schemaRegistryAuth:
+        username: username
+        password: password
+#     schemaNameTemplate: "%s-value"
+      jmxPort: 9997
+    -
+```    
+
+* `name`: cluster name
+* `bootstrapServers`: where to connect
+* `schemaRegistry`: schemaRegistry's address
+* `schemaRegistryAuth.username`: schemaRegistry's basic authentication username
+* `schemaRegistryAuth.password`: schemaRegistry's basic authentication password
+* `schemaNameTemplate`: how keys are saved to schemaRegistry
+* `jmxPort`: open jmxPosrts of a broker
+* `readOnly`: enable read only mode
+
+Configure as many clusters as you need by adding their configs below separated with `-`.
+
+## Running a Docker Image
 The official Docker image for UI for Apache Kafka is hosted here: [hub.docker.com/r/provectuslabs/kafka-ui](https://hub.docker.com/r/provectuslabs/kafka-ui).
 
 Launch Docker container in the background:
@@ -47,113 +125,28 @@ Further configuration with environment variables - [see environment variables](#
 
 If you prefer to use `docker-compose` please refer to the [documentation](docker-compose.md).
 
+### Helm chart
+Helm chart could be found under [charts/kafka-ui](https://github.com/provectus/kafka-ui/tree/master/charts/kafka-ui) directory
+
+Quick-start instruction [here](helm_chart.md)
 
 ## Building With Docker
 
-Steps to build UI for Apache Kafka locally with Docker:  
-
-1. Install prerequisites: Java and Docker
-2. Clone this repository and open a terminal in the directory of the project
-3. Build a Docker container with UI for Apache Kafka
-4. Start UI for Apache Kafka with your Kafka clusters
-5. Navigate to UI for Apache Kafka 
-
 ### Prerequisites
 
-* Java 13 or newer
-* Docker 
+Check [software-required.md](documentation/project/contributing/software-required.md)
 
-### Installing Prerequisites on Mac
-1. Install Homebrew Cask:
-```sh
-> brew update
-``` 
-2. Install JAVA 13 with Homebrew Cask:
-```sh
-> brew tap adoptopenjdk/openjdk
-> brew install adoptopenjdk13
-``` 
 ### Building
 
-Once you installed the prerequisites and cloned the repository, run the following commands in your project directory: 
+Check [building.md](documentation/project/contributing/building.md)
 
-Build a Docker container with UI for Apache Kafka: 
-```sh
-./mvnw clean install -Pprod
-``` 
-Start UI for Apache Kafka with your Kafka clusters: 
-```sh
-docker-compose -f ./docker/kafka-ui.yaml up
-``` 
-To see UI for Apache Kafka, navigate to http://localhost:8080.
+### Running
 
-If you want to start only kafka-clusters: 
-```sh
-docker-compose -f ./docker/kafka-clusters-only.yaml up
-``` 
-Then start UI for Apache Kafka with a **local** profile. 
+Check [running.md](documentation/project/contributing/running.md)
 
-## Running Locally Without Docker
-
-```sh
-./mvnw spring-boot:run -Pprod
-``` 
-
-
-## Running in Kubernetes
-``` bash
-helm repo add kafka-ui https://provectus.github.io/kafka-ui
-helm install kafka-ui kafka-ui/kafka-ui
-```
-To read more please follow to [chart documentation](charts/kafka-ui/README.md)
-
-# Guides
-
-- [SSO configuration](guides/SSO.md)
-- [AWS IAM configuration](guides/AWS_IAM.md)
-
-## Connecting to a Secure Broker
-
-UI for Apache Kafka supports TLS (SSL) and SASL connections for [encryption and authentication](http://kafka.apache.org/090/documentation.html#security). This can be configured by providing a combination of the following files (placed into the Kafka root directory):
-
-To be continued
-
-
-# Configuration
-
-We have plenty of docker-compose files as examples. Please check them out in ``docker`` directory.
-
-## Configuration File
-Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
-
-
-```sh
-kafka:
-  clusters:
-    -
-      name: local
-      bootstrapServers: localhost:29091
-      zookeeper: localhost:2183
-      schemaRegistry: http://localhost:8085
-      schemaRegistryAuth:
-        username: username
-        password: password
-#     schemaNameTemplate: "%s-value"
-      jmxPort: 9997
-    -
-```    
-
-* `name`: cluster name
-* `bootstrapServers`: where to connect
-* `zookeeper`: zookeeper service address
-* `schemaRegistry`: schemaRegistry's address
-* `schemaRegistryAuth.username`: schemaRegistry's basic authentication username
-* `schemaRegistryAuth.password`: schemaRegistry's basic authentication password
-* `schemaNameTemplate`: how keys are saved to schemaRegistry
-* `jmxPort`: open jmxPosrts of a broker
-* `readOnly`: enable read only mode
-
-Configure as many clusters as you need by adding their configs below separated with `-`.
+## Liveliness and readiness probes
+Liveliness and readiness endpoint is at `/actuator/health`.
+Info endpoint (build info) is located at `/actuator/info`.
 
 ## <a name="env_variables"></a> Environment Variables
 
@@ -163,23 +156,29 @@ For example, if you want to use an environment variable to set the `name` parame
 |Name               	|Description
 |-----------------------|-------------------------------
 |`SERVER_SERVLET_CONTEXT_PATH` | URI basePath
+|`LOGGING_LEVEL_ROOT`        	| Setting log level (trace, debug, info, warn, error). Default: info
+|`LOGGING_LEVEL_COM_PROVECTUS` |Setting log level (trace, debug, info, warn, error). Default: debug
+|`SERVER_PORT` |Port for the embedded server. Default: `8080`
+|`KAFKA_ADMIN-CLIENT-TIMEOUT` | Kafka API timeout in ms. Default: `30000`
 |`KAFKA_CLUSTERS_0_NAME` | Cluster name
 |`KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS` 	|Address where to connect 
-|`KAFKA_CLUSTERS_0_ZOOKEEPER` 	| Zookeeper service address 
 |`KAFKA_CLUSTERS_0_KSQLDBSERVER` 	| KSQL DB server address 
+|`KAFKA_CLUSTERS_0_KSQLDBSERVERAUTH_USERNAME` 	| KSQL DB server's basic authentication username 
+|`KAFKA_CLUSTERS_0_KSQLDBSERVERAUTH_PASSWORD` 	| KSQL DB server's basic authentication password 
 |`KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL` 	|Security protocol to connect to the brokers. For SSL connection use "SSL", for plaintext connection don't set this environment variable
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRY`   	|SchemaRegistry's address
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_USERNAME`   	|SchemaRegistry's basic authentication username
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_PASSWORD`   	|SchemaRegistry's basic authentication password
-|`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE`  |How keys are saved to schemaRegistry
+|`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE` |How keys are saved to schemaRegistry
 |`KAFKA_CLUSTERS_0_JMXPORT`        	|Open jmxPosrts of a broker
 |`KAFKA_CLUSTERS_0_READONLY`        	|Enable read-only mode. Default: false
 |`KAFKA_CLUSTERS_0_DISABLELOGDIRSCOLLECTION`        	|Disable collecting segments information. It should be true for confluent cloud. Default: false
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME` |Given name for the Kafka Connect cluster
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS` |Address of the Kafka Connect service endpoint 
-|`LOGGING_LEVEL_ROOT`        	| Setting log level (all, debug, info, warn, error, fatal, off). Default: debug
-|`LOGGING_LEVEL_COM_PROVECTUS`        	|Setting log level (all, debug, info, warn, error, fatal, off). Default: debug
-|`SERVER_PORT` |Port for the embedded server. Default `8080`
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_USERNAME`| Kafka Connect cluster's basic authentication username
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_PASSWORD`| Kafka Connect cluster's basic authentication password
 |`KAFKA_CLUSTERS_0_JMXSSL` |Enable SSL for JMX? `true` or `false`. For advanced setup, see `kafka-ui-jmx-secured.yml`
 |`KAFKA_CLUSTERS_0_JMXUSERNAME` |Username for JMX authentication
 |`KAFKA_CLUSTERS_0_JMXPASSWORD` |Password for JMX authentication
+|`TOPIC_RECREATE_DELAY_SECONDS` |Time delay between topic deletion and topic creation attempts for topic recreate functionality. Default: 1
+|`TOPIC_RECREATE_MAXRETRIES`  |Number of attempts of topic creation after topic deletion for topic recreate functionality. Default: 15

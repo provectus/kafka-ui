@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ import reactor.core.publisher.Mono;
  * to works like "kafka-consumer-groups --reset-offsets" console command
  * (see kafka.admin.ConsumerGroupCommand)
  */
-@Log4j2
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OffsetsResetService {

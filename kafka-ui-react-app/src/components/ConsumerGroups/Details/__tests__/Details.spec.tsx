@@ -1,102 +1,108 @@
-import Details, { Props } from 'components/ConsumerGroups/Details/Details';
-import { mount, shallow } from 'enzyme';
+import Details from 'components/ConsumerGroups/Details/Details';
 import React from 'react';
-import { StaticRouter } from 'react-router';
+import fetchMock from 'fetch-mock';
+import { render, WithRoute } from 'lib/testHelpers';
+import {
+  clusterConsumerGroupDetailsPath,
+  clusterConsumerGroupResetRelativePath,
+} from 'lib/paths';
+import { consumerGroupPayload } from 'redux/reducers/consumerGroups/__test__/fixtures';
+import {
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
+import { act } from '@testing-library/react';
 
-const mockHistory = {
-  push: jest.fn(),
-};
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useHistory: () => mockHistory,
+const clusterName = 'cluster1';
+const { groupId } = consumerGroupPayload;
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
 }));
 
-describe('Details component', () => {
-  const setupWrapper = (props?: Partial<Props>) => (
-    <Details
-      clusterName="local"
-      groupId="test"
-      isFetched
-      isDeleted={false}
-      fetchConsumerGroupDetails={jest.fn()}
-      deleteConsumerGroup={jest.fn()}
-      partitions={[
-        {
-          consumerId:
-            'consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d0',
-          topic: 'messages',
-          host: '/172.31.9.153',
-          partition: 6,
-          currentOffset: 394,
-          endOffset: 394,
-          messagesBehind: 0,
-        },
-        {
-          consumerId:
-            'consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d1',
-          topic: 'messages',
-          host: '/172.31.9.153',
-          partition: 7,
-          currentOffset: 384,
-          endOffset: 384,
-          messagesBehind: 0,
-        },
-      ]}
-      {...props}
-    />
+const renderComponent = () => {
+  render(
+    <WithRoute path={clusterConsumerGroupDetailsPath()}>
+      <Details />
+    </WithRoute>,
+    { initialEntries: [clusterConsumerGroupDetailsPath(clusterName, groupId)] }
   );
-  describe('when consumer gruops are NOT fetched', () => {
-    it('Matches the snapshot', () => {
-      expect(shallow(setupWrapper({ isFetched: false }))).toMatchSnapshot();
+};
+describe('Details component', () => {
+  afterEach(() => {
+    fetchMock.reset();
+    mockNavigate.mockClear();
+  });
+
+  describe('when consumer groups are NOT fetched', () => {
+    it('renders progress bar for initial state', () => {
+      fetchMock.getOnce(
+        `/api/clusters/${clusterName}/consumer-groups/${groupId}`,
+        404
+      );
+      renderComponent();
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
   });
 
   describe('when consumer gruops are fetched', () => {
-    it('Matches the snapshot', () => {
-      expect(shallow(setupWrapper())).toMatchSnapshot();
+    beforeEach(async () => {
+      const fetchConsumerGroupMock = fetchMock.getOnce(
+        `/api/clusters/${clusterName}/consumer-groups/${groupId}`,
+        consumerGroupPayload
+      );
+      renderComponent();
+      await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
+      await waitFor(() => expect(fetchConsumerGroupMock.called()).toBeTruthy());
     });
 
-    describe('onDelete', () => {
-      it('calls deleteConsumerGroup', () => {
-        const deleteConsumerGroup = jest.fn();
-        const component = mount(
-          <StaticRouter>{setupWrapper({ deleteConsumerGroup })}</StaticRouter>
-        );
-        component.find('button').at(1).simulate('click');
-        component.update();
-        component
-          .find('ConfirmationModal')
-          .find('button')
-          .at(1)
-          .simulate('click');
-        expect(deleteConsumerGroup).toHaveBeenCalledTimes(1);
-      });
+    it('renders component', () => {
+      expect(screen.getByRole('heading')).toBeInTheDocument();
+      expect(screen.getByText(groupId)).toBeInTheDocument();
 
-      describe('on ConfirmationModal cancel', () => {
-        it('does not call deleteConsumerGroup', () => {
-          const deleteConsumerGroup = jest.fn();
-          const component = mount(
-            <StaticRouter>{setupWrapper({ deleteConsumerGroup })}</StaticRouter>
-          );
-          component.find('button').at(1).simulate('click');
-          component.update();
-          component
-            .find('ConfirmationModal')
-            .find('button')
-            .at(0)
-            .simulate('click');
-          expect(deleteConsumerGroup).toHaveBeenCalledTimes(0);
-        });
-      });
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      expect(screen.getAllByRole('columnheader').length).toEqual(2);
 
-      describe('after deletion', () => {
-        it('calls history.push', () => {
-          mount(
-            <StaticRouter>{setupWrapper({ isDeleted: true })}</StaticRouter>
-          );
-          expect(mockHistory.push).toHaveBeenCalledTimes(1);
-        });
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    it('handles [Reset offset] click', async () => {
+      userEvent.click(screen.getByText('Reset offset'));
+      expect(mockNavigate).toHaveBeenLastCalledWith(
+        clusterConsumerGroupResetRelativePath
+      );
+    });
+
+    it('shows confirmation modal on consumer group delete', async () => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      userEvent.click(screen.getByText('Delete consumer group'));
+      await waitFor(() =>
+        expect(screen.queryByRole('dialog')).toBeInTheDocument()
+      );
+      userEvent.click(screen.getByText('Cancel'));
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    it('handles [Delete consumer group] click', async () => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      await act(() => {
+        userEvent.click(screen.getByText('Delete consumer group'));
       });
+      expect(screen.queryByRole('dialog')).toBeInTheDocument();
+      const deleteConsumerGroupMock = fetchMock.deleteOnce(
+        `/api/clusters/${clusterName}/consumer-groups/${groupId}`,
+        200
+      );
+      await act(() => {
+        userEvent.click(screen.getByText('Submit'));
+      });
+      expect(deleteConsumerGroupMock.called()).toBeTruthy();
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(mockNavigate).toHaveBeenLastCalledWith('../');
     });
   });
 });

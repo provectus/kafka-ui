@@ -1,125 +1,113 @@
-import React from 'react';
-import cx from 'classnames';
-import { Cluster } from 'generated-sources';
-import { Switch, Route, useLocation } from 'react-router-dom';
+import React, { Suspense, useCallback } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
-import { Alerts } from 'redux/interfaces';
+import { clusterPath, getNonExactPath } from 'lib/paths';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/Cluster/Cluster';
 import Version from 'components/Version/Version';
-import Alert from 'components/Alert/Alert';
-import 'components/App.scss';
+import Alerts from 'components/Alerts/Alerts';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
-export interface AppProps {
-  isClusterListFetched?: boolean;
-  alerts: Alerts;
-  clusters: Cluster[];
-  fetchClustersList: () => void;
-}
+import * as S from './App.styled';
+import Logo from './common/Logo/Logo';
+import GitIcon from './common/Icons/GitIcon';
+import DiscordIcon from './common/Icons/DiscordIcon';
 
-const App: React.FC<AppProps> = ({
-  isClusterListFetched,
-  alerts,
-  clusters,
-  fetchClustersList,
-}) => {
+const App: React.FC = () => {
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(false);
-
-  const onBurgerClick = React.useCallback(
-    () => setIsSidebarVisible(!isSidebarVisible),
-    [isSidebarVisible]
-  );
-
-  const closeSidebar = React.useCallback(() => setIsSidebarVisible(false), []);
-
+  const onBurgerClick = () => setIsSidebarVisible(!isSidebarVisible);
+  const closeSidebar = useCallback(() => setIsSidebarVisible(false), []);
   const location = useLocation();
 
   React.useEffect(() => {
     closeSidebar();
-  }, [location]);
-
-  React.useEffect(() => {
-    fetchClustersList();
-  }, [fetchClustersList]);
+  }, [location, closeSidebar]);
 
   return (
-    <div
-      className={cx('Layout', { 'Layout--sidebarVisible': isSidebarVisible })}
-    >
-      <nav
-        className="navbar is-fixed-top is-white Layout__header"
-        role="navigation"
-        aria-label="main navigation"
-      >
-        <div className="navbar-brand">
-          <div
-            className={cx('navbar-burger', 'ml-0', {
-              'is-active': isSidebarVisible,
-            })}
-            onClick={onBurgerClick}
-            onKeyDown={onBurgerClick}
-            role="button"
-            tabIndex={0}
-          >
-            <span />
-            <span />
-            <span />
-          </div>
+    <ThemeProvider theme={theme}>
+      <S.Layout>
+        <S.Navbar role="navigation" aria-label="Page Header">
+          <S.NavbarBrand>
+            <S.NavbarBrand>
+              <S.NavbarBurger
+                onClick={onBurgerClick}
+                onKeyDown={onBurgerClick}
+                role="button"
+                tabIndex={0}
+                aria-label="burger"
+              >
+                <S.Span role="separator" />
+                <S.Span role="separator" />
+                <S.Span role="separator" />
+              </S.NavbarBurger>
 
-          <a className="navbar-item title is-5 is-marginless" href="/ui">
-            UI for Apache Kafka
-          </a>
+              <S.Hyperlink to="/">
+                <Logo />
+                UI for Apache Kafka
+              </S.Hyperlink>
 
-          <div className="navbar-item">
-            <Version tag={GIT_TAG} commit={GIT_COMMIT} />
-          </div>
-        </div>
-      </nav>
+              <S.NavbarItem>
+                {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
+              </S.NavbarItem>
+            </S.NavbarBrand>
+          </S.NavbarBrand>
+          <S.NavbarSocial>
+            <S.LogoutLink href="/logout">
+              <S.LogoutButton buttonType="primary" buttonSize="M">
+                Log out
+              </S.LogoutButton>
+            </S.LogoutLink>
+            <S.SocialLink
+              href="https://github.com/provectus/kafka-ui"
+              target="_blank"
+            >
+              <GitIcon />
+            </S.SocialLink>
+            <S.SocialLink
+              href="https://discord.com/invite/4DWzD7pGE5"
+              target="_blank"
+            >
+              <DiscordIcon />
+            </S.SocialLink>
+          </S.NavbarSocial>
+        </S.Navbar>
 
-      <main className="Layout__container">
-        <div className="Layout__sidebar has-shadow has-background-white">
-          <Nav
-            clusters={clusters}
-            isClusterListFetched={isClusterListFetched}
+        <S.Container>
+          <S.Sidebar aria-label="Sidebar" $visible={isSidebarVisible}>
+            <Suspense fallback={<PageLoader />}>
+              <Nav />
+            </Suspense>
+          </S.Sidebar>
+          <S.Overlay
+            $visible={isSidebarVisible}
+            onClick={closeSidebar}
+            onKeyDown={closeSidebar}
+            tabIndex={-1}
+            aria-hidden="true"
+            aria-label="Overlay"
           />
-        </div>
-        <div
-          className="Layout__sidebarOverlay is-overlay"
-          onClick={closeSidebar}
-          onKeyDown={closeSidebar}
-          tabIndex={-1}
-          aria-hidden="true"
-        />
-        {isClusterListFetched ? (
-          <Switch>
+          <Routes>
+            {['/', '/ui', '/ui/clusters'].map((path) => (
+              <Route
+                key="Home" // optional: avoid full re-renders on route changes
+                path={path}
+                element={<Dashboard />}
+              />
+            ))}
             <Route
-              exact
-              path={['/', '/ui', '/ui/clusters']}
-              component={Dashboard}
+              path={getNonExactPath(clusterPath())}
+              element={<ClusterPage />}
             />
-            <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
-          </Switch>
-        ) : (
-          <PageLoader fullHeight />
-        )}
-      </main>
-
-      <div className="Layout__alerts">
-        {alerts.map(({ id, type, title, message, response, createdAt }) => (
-          <Alert
-            key={id}
-            id={id}
-            type={type}
-            title={title}
-            message={message}
-            response={response}
-            createdAt={createdAt}
-          />
-        ))}
-      </div>
-    </div>
+          </Routes>
+        </S.Container>
+        <S.AlertsContainer role="toolbar">
+          <Alerts />
+        </S.AlertsContainer>
+      </S.Layout>
+    </ThemeProvider>
   );
 };
 

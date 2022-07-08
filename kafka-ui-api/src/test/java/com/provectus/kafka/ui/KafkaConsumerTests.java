@@ -15,18 +15,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-@Log4j2
-@AutoConfigureWebTestClient(timeout = "60000")
-public class KafkaConsumerTests extends AbstractBaseTest {
+@Slf4j
+public class KafkaConsumerTests extends AbstractIntegrationTest {
 
   @Autowired
   private WebTestClient webTestClient;
@@ -48,8 +46,13 @@ public class KafkaConsumerTests extends AbstractBaseTest {
         .isOk();
 
     try (KafkaTestProducer<String, String> producer = KafkaTestProducer.forKafka(kafka)) {
-      Stream.of("one", "two", "three", "four")
-          .forEach(value -> producer.send(topicName, value));
+      Flux.fromStream(
+          Stream.of("one", "two", "three", "four")
+              .map(value -> Mono.fromFuture(producer.send(topicName, value)))
+      ).blockLast();
+    } catch (Throwable e) {
+      log.error("Error on sending", e);
+      throw new RuntimeException(e);
     }
 
     long count = webTestClient.get()

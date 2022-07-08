@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Result Renderer Matches snapshot 1`] = `
-<ResultRenderer
-  result={Object {}}
-/>
-`;

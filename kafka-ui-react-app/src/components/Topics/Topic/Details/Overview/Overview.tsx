@@ -1,105 +1,152 @@
 import React from 'react';
-import { Topic, TopicDetails } from 'generated-sources';
+import { Partition, Replica } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
-import Indicator from 'components/common/Dashboard/Indicator';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import { Table } from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import * as Metrics from 'components/common/Metrics';
+import { Tag } from 'components/common/Tag/Tag.styled';
+import { useAppSelector } from 'lib/hooks/redux';
+import { getTopicByName } from 'redux/reducers/topics/selectors';
+import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
+import { RouteParamsClusterTopic } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
 
-interface Props extends Topic, TopicDetails {
-  clusterName: ClusterName;
-  topicName: TopicName;
-  clearTopicMessages(
-    clusterName: ClusterName,
-    topicName: TopicName,
-    partitions?: number[]
-  ): void;
+export interface Props {
+  clearTopicMessages(params: {
+    clusterName: ClusterName;
+    topicName: TopicName;
+    partitions?: number[];
+  }): void;
 }
 
-const Overview: React.FC<Props> = ({
-  partitions,
-  underReplicatedPartitions,
-  inSyncReplicas,
-  replicas,
-  partitionCount,
-  internal,
-  replicationFactor,
-  segmentSize,
-  segmentCount,
-  clusterName,
-  topicName,
-  cleanUpPolicy,
-  clearTopicMessages,
-}) => {
+const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+
+  const {
+    partitions,
+    underReplicatedPartitions,
+    inSyncReplicas,
+    replicas,
+    partitionCount,
+    internal,
+    replicationFactor,
+    segmentSize,
+    segmentCount,
+    cleanUpPolicy,
+  } = useAppSelector((state) => {
+    const res = getTopicByName(state, topicName);
+    return res || {};
+  });
+
   const { isReadOnly } = React.useContext(ClusterContext);
+
+  const messageCount = React.useMemo(
+    () =>
+      (partitions || []).reduce((memo, partition) => {
+        return memo + partition.offsetMax - partition.offsetMin;
+      }, 0),
+    [partitions]
+  );
 
   return (
     <>
-      <MetricsWrapper>
-        <Indicator label="Partitions">{partitionCount}</Indicator>
-        <Indicator label="Replication Factor">{replicationFactor}</Indicator>
-        <Indicator label="URP" title="Under replicated partitions">
-          {underReplicatedPartitions}
-        </Indicator>
-        <Indicator label="In sync replicas">
-          {inSyncReplicas}
-          <span className="subtitle has-text-weight-light">
-            {' '}
-            of
-            {replicas}
-          </span>
-        </Indicator>
-        <Indicator label="Type">
-          <span className={`tag ${internal ? 'is-light' : 'is-primary'}`}>
-            {internal ? 'Internal' : 'External'}
-          </span>
-        </Indicator>
-        <Indicator label="Segment Size" title="">
-          <BytesFormatted value={segmentSize} />
-        </Indicator>
-        <Indicator label="Segment count">{segmentCount}</Indicator>
-        <Indicator label="Clean Up Policy">
-          <span className="tag is-info">{cleanUpPolicy || 'Unknown'}</span>
-        </Indicator>
-      </MetricsWrapper>
-      <div className="box">
-        <table className="table is-striped is-fullwidth">
+      <Metrics.Wrapper>
+        <Metrics.Section>
+          <Metrics.Indicator label="Partitions">
+            {partitionCount}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Replication Factor">
+            {replicationFactor}
+          </Metrics.Indicator>
+          <Metrics.Indicator
+            label="URP"
+            title="Under replicated partitions"
+            isAlert
+            alertType={underReplicatedPartitions === 0 ? 'success' : 'error'}
+          >
+            {underReplicatedPartitions === 0 ? (
+              <Metrics.LightText>{underReplicatedPartitions}</Metrics.LightText>
+            ) : (
+              <Metrics.RedText>{underReplicatedPartitions}</Metrics.RedText>
+            )}
+          </Metrics.Indicator>
+          <Metrics.Indicator
+            label="In Sync Replicas"
+            isAlert
+            alertType={inSyncReplicas === replicas ? 'success' : 'error'}
+          >
+            {inSyncReplicas && replicas && inSyncReplicas < replicas ? (
+              <Metrics.RedText>{inSyncReplicas}</Metrics.RedText>
+            ) : (
+              inSyncReplicas
+            )}
+            <Metrics.LightText> of {replicas}</Metrics.LightText>
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Type">
+            <Tag color="gray">{internal ? 'Internal' : 'External'}</Tag>
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Segment Size" title="">
+            <BytesFormatted value={segmentSize} />
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Segment Count">
+            {segmentCount}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Clean Up Policy">
+            <Tag color="gray">{cleanUpPolicy || 'Unknown'}</Tag>
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Message Count">
+            {messageCount}
+          </Metrics.Indicator>
+        </Metrics.Section>
+      </Metrics.Wrapper>
+      <div>
+        <Table isFullwidth>
           <thead>
             <tr>
-              <th>Partition ID</th>
-              <th>Broker leader</th>
-              <th>Min offset</th>
-              <th>Max offset</th>
-              <th> </th>
+              <TableHeaderCell title="Partition ID" />
+              <TableHeaderCell title="Replicas" />
+              <TableHeaderCell title="First Offset" />
+              <TableHeaderCell title="Next Offset" />
+              <TableHeaderCell title="Message Count" />
+              <TableHeaderCell title=" " />
             </tr>
           </thead>
           <tbody>
-            {partitions?.map(({ partition, leader, offsetMin, offsetMax }) => (
-              <tr key={`partition-list-item-key-${partition}`}>
-                <td>{partition}</td>
-                <td>{leader}</td>
-                <td>{offsetMin}</td>
-                <td>{offsetMax}</td>
-                <td className="has-text-right">
-                  {!internal && !isReadOnly ? (
-                    <Dropdown
-                      label={
-                        <span className="icon">
-                          <i className="fas fa-cog" />
-                        </span>
-                      }
-                      right
+            {partitions?.map((partition: Partition) => (
+              <tr key={`partition-list-item-key-${partition.partition}`}>
+                <td>{partition.partition}</td>
+                <td>
+                  {partition.replicas?.map((replica: Replica) => (
+                    <ReplicaCell
+                      leader={replica.leader}
+                      key={`replica-list-item-key-${replica.broker}`}
                     >
+                      {replica.broker}
+                    </ReplicaCell>
+                  ))}
+                </td>
+                <td>{partition.offsetMin}</td>
+                <td>{partition.offsetMax}</td>
+                <td>{partition.offsetMax - partition.offsetMin}</td>
+                <td style={{ width: '5%' }}>
+                  {!internal && !isReadOnly && cleanUpPolicy === 'DELETE' ? (
+                    <Dropdown label={<VerticalElipsisIcon />} right>
                       <DropdownItem
                         onClick={() =>
-                          clearTopicMessages(clusterName, topicName, [
-                            partition,
-                          ])
+                          clearTopicMessages({
+                            clusterName,
+                            topicName,
+                            partitions: [partition.partition],
+                          })
                         }
+                        danger
                       >
-                        <span className="has-text-danger">Clear Messages</span>
+                        Clear Messages
                       </DropdownItem>
                     </Dropdown>
                   ) : null}
@@ -112,7 +159,7 @@ const Overview: React.FC<Props> = ({
               </tr>
             )}
           </tbody>
-        </table>
+        </Table>
       </div>
     </>
   );

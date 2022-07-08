@@ -1,194 +1,128 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { shallow, mount, ReactWrapper } from 'enzyme';
-import configureStore from 'redux/store/configureStore';
-import { StaticRouter } from 'react-router';
-import ClusterContext from 'components/contexts/ClusterContext';
-import DetailsContainer from 'components/Schemas/Details/DetailsContainer';
-import Details, { DetailsProps } from 'components/Schemas/Details/Details';
+import Details from 'components/Schemas/Details/Details';
+import { render, WithRoute } from 'lib/testHelpers';
+import { clusterSchemaPath } from 'lib/paths';
+import { screen, waitFor } from '@testing-library/dom';
+import {
+  schemasInitialState,
+  schemaVersion,
+} from 'redux/reducers/schemas/__test__/fixtures';
+import fetchMock from 'fetch-mock';
+import ClusterContext, {
+  ContextProps,
+  initialValue as contextInitialValue,
+} from 'components/contexts/ClusterContext';
+import { RootState } from 'redux/interfaces';
+import { act } from '@testing-library/react';
 
-import { jsonSchema, versions } from './fixtures';
+import { versionPayload, versionEmptyPayload } from './fixtures';
 
-const clusterName = 'testCluster';
-const fetchSchemaVersionsMock = jest.fn();
+const clusterName = 'testClusterName';
+const schemasAPILatestUrl = `/api/clusters/${clusterName}/schemas/${schemaVersion.subject}/latest`;
+const schemasAPIVersionsUrl = `/api/clusters/${clusterName}/schemas/${schemaVersion.subject}/versions`;
 
-jest.mock(
-  'components/common/ConfirmationModal/ConfirmationModal',
-  () => 'mock-ConfirmationModal'
-);
+const renderComponent = (
+  initialState: RootState['schemas'] = schemasInitialState,
+  context: ContextProps = contextInitialValue
+) =>
+  render(
+    <WithRoute path={clusterSchemaPath()}>
+      <ClusterContext.Provider value={context}>
+        <Details />
+      </ClusterContext.Provider>
+    </WithRoute>,
+    {
+      initialEntries: [clusterSchemaPath(clusterName, schemaVersion.subject)],
+      preloadedState: {
+        schemas: initialState,
+      },
+    }
+  );
 
 describe('Details', () => {
-  describe('Container', () => {
-    const store = configureStore();
+  afterEach(() => fetchMock.reset());
 
-    it('renders view', () => {
-      const wrapper = mount(
-        <Provider store={store}>
-          <StaticRouter>
-            <DetailsContainer />
-          </StaticRouter>
-        </Provider>
+  describe('fetch failed', () => {
+    beforeEach(async () => {
+      const schemasAPILatestMock = fetchMock.getOnce(schemasAPILatestUrl, 404);
+      const schemasAPIVersionsMock = fetchMock.getOnce(
+        schemasAPIVersionsUrl,
+        404
       );
+      await act(() => {
+        renderComponent();
+      });
 
-      expect(wrapper.exists(Details)).toBeTruthy();
+      await waitFor(() => {
+        expect(schemasAPILatestMock.called()).toBeTruthy();
+      });
+      await waitFor(() => {
+        expect(schemasAPIVersionsMock.called()).toBeTruthy();
+      });
+    });
+
+    it('renders pageloader', () => {
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      expect(screen.queryByText(schemaVersion.subject)).not.toBeInTheDocument();
+      expect(screen.queryByText('Edit Schema')).not.toBeInTheDocument();
+      expect(screen.queryByText('Remove Schema')).not.toBeInTheDocument();
     });
   });
 
-  describe('View', () => {
-    const setupWrapper = (props: Partial<DetailsProps> = {}) => (
-      <Details
-        subject={jsonSchema.subject}
-        schema={jsonSchema}
-        clusterName={clusterName}
-        fetchSchemaVersions={fetchSchemaVersionsMock}
-        deleteSchema={jest.fn()}
-        fetchSchemasByClusterName={jest.fn()}
-        areSchemasFetched
-        areVersionsFetched
-        versions={[]}
-        {...props}
-      />
-    );
-    describe('empty table', () => {
-      it('render empty table', () => {
-        const component = shallow(setupWrapper());
-        expect(component.find('td').text()).toEqual('No active Schema');
-      });
-    });
-
-    describe('Initial state', () => {
-      it('should call fetchSchemaVersions every render', () => {
-        mount(
-          <StaticRouter>
-            {setupWrapper({ fetchSchemaVersions: fetchSchemaVersionsMock })}
-          </StaticRouter>
+  describe('fetch success', () => {
+    describe('has schema versions', () => {
+      beforeEach(async () => {
+        const schemasAPILatestMock = fetchMock.getOnce(
+          schemasAPILatestUrl,
+          schemaVersion
         );
-
-        expect(fetchSchemaVersionsMock).toHaveBeenCalledWith(
-          clusterName,
-          jsonSchema.subject
+        const schemasAPIVersionsMock = fetchMock.getOnce(
+          schemasAPIVersionsUrl,
+          versionPayload
         );
+        await act(() => {
+          renderComponent();
+        });
+        await waitFor(() => {
+          expect(schemasAPILatestMock.called()).toBeTruthy();
+        });
+        await waitFor(() => {
+          expect(schemasAPIVersionsMock.called()).toBeTruthy();
+        });
       });
 
-      it('matches snapshot', () => {
-        expect(
-          shallow(
-            setupWrapper({ fetchSchemaVersions: fetchSchemaVersionsMock })
-          )
-        ).toMatchSnapshot();
+      it('renders component with schema info', () => {
+        expect(screen.getByText('Edit Schema')).toBeInTheDocument();
+        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+        expect(screen.getByRole('table')).toBeInTheDocument();
       });
     });
 
-    describe('when page with schema versions is loading', () => {
-      const wrapper = shallow(setupWrapper({ areVersionsFetched: false }));
-
-      it('renders PageLoader', () => {
-        expect(wrapper.exists('PageLoader')).toBeTruthy();
-      });
-
-      it('matches snapshot', () => {
-        expect(
-          shallow(setupWrapper({ areVersionsFetched: false }))
-        ).toMatchSnapshot();
-      });
-    });
-
-    describe('when page with schema versions loaded', () => {
-      describe('when versions are empty', () => {
-        it('renders table heading without SchemaVersion', () => {
-          const wrapper = shallow(setupWrapper());
-          expect(wrapper.exists('LatestVersionItem')).toBeTruthy();
-          expect(wrapper.exists('button')).toBeTruthy();
-          expect(wrapper.exists('thead')).toBeTruthy();
-          expect(wrapper.exists('SchemaVersion')).toBeFalsy();
+    describe('empty schema versions', () => {
+      beforeEach(async () => {
+        const schemasAPILatestMock = fetchMock.getOnce(
+          schemasAPILatestUrl,
+          schemaVersion
+        );
+        const schemasAPIVersionsMock = fetchMock.getOnce(
+          schemasAPIVersionsUrl,
+          versionEmptyPayload
+        );
+        await act(() => {
+          renderComponent();
         });
-
-        it('matches snapshot', () => {
-          expect(shallow(setupWrapper())).toMatchSnapshot();
+        await waitFor(() => {
+          expect(schemasAPILatestMock.called()).toBeTruthy();
+        });
+        await waitFor(() => {
+          expect(schemasAPIVersionsMock.called()).toBeTruthy();
         });
       });
 
-      describe('when schema has versions', () => {
-        it('renders table heading with SchemaVersion', () => {
-          const wrapper = shallow(setupWrapper({ versions }));
-          expect(wrapper.exists('LatestVersionItem')).toBeTruthy();
-          expect(wrapper.exists('button')).toBeTruthy();
-          expect(wrapper.exists('thead')).toBeTruthy();
-          expect(wrapper.find('SchemaVersion').length).toEqual(3);
-        });
-
-        it('matches snapshot', () => {
-          expect(shallow(setupWrapper({ versions }))).toMatchSnapshot();
-        });
-
-        describe('confirmation', () => {
-          let wrapper: ReactWrapper;
-          let confirmationModal: ReactWrapper;
-          const mockDelete = jest.fn();
-
-          const findConfirmationModal = () =>
-            wrapper.find('mock-ConfirmationModal');
-
-          beforeEach(() => {
-            wrapper = mount(
-              <StaticRouter>
-                {setupWrapper({ versions, deleteSchema: mockDelete })}
-              </StaticRouter>
-            );
-            confirmationModal = findConfirmationModal();
-          });
-
-          it('calls deleteSchema after confirmation', () => {
-            expect(confirmationModal.prop('isOpen')).toBeFalsy();
-            wrapper.find('button').simulate('click');
-            expect(findConfirmationModal().prop('isOpen')).toBeTruthy();
-            // @ts-expect-error lack of typing of enzyme#invoke
-            confirmationModal.invoke('onConfirm')();
-            expect(mockDelete).toHaveBeenCalledTimes(1);
-          });
-
-          it('calls deleteSchema after confirmation', () => {
-            expect(confirmationModal.prop('isOpen')).toBeFalsy();
-            wrapper.find('button').simulate('click');
-            expect(findConfirmationModal().prop('isOpen')).toBeTruthy();
-            // @ts-expect-error lack of typing of enzyme#invoke
-            wrapper.find('mock-ConfirmationModal').invoke('onCancel')();
-            expect(findConfirmationModal().prop('isOpen')).toBeFalsy();
-          });
-        });
-      });
-
-      describe('when the readonly flag is set', () => {
-        it('does not render update & delete buttons', () => {
-          expect(
-            mount(
-              <StaticRouter>
-                <ClusterContext.Provider
-                  value={{
-                    isReadOnly: true,
-                    hasKafkaConnectConfigured: true,
-                    hasSchemaRegistryConfigured: true,
-                    isTopicDeletionAllowed: true,
-                  }}
-                >
-                  {setupWrapper({ versions })}
-                </ClusterContext.Provider>
-              </StaticRouter>
-            ).exists('.level-right')
-          ).toBeFalsy();
-        });
-      });
-    });
-
-    describe('when page with schemas are loading', () => {
-      const wrapper = shallow(setupWrapper({ areSchemasFetched: false }));
-
-      it('renders PageLoader', () => {
-        expect(wrapper.exists('PageLoader')).toBeTruthy();
-      });
-
-      it('matches snapshot', () => {
-        expect(wrapper).toMatchSnapshot();
+      // seems like incorrect behaviour
+      it('renders versions table with 0 items', () => {
+        expect(screen.getByRole('table')).toBeInTheDocument();
+        expect(screen.getByText('No active Schema')).toBeInTheDocument();
       });
     });
   });

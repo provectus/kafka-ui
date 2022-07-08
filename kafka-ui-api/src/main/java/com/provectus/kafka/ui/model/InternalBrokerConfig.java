@@ -15,4 +15,15 @@ public class InternalBrokerConfig {
   private final boolean isSensitive;
   private final boolean isReadOnly;
   private final List<ConfigEntry.ConfigSynonym> synonyms;
+
+  public static InternalBrokerConfig from(ConfigEntry configEntry) {
+    InternalBrokerConfig.InternalBrokerConfigBuilder builder = InternalBrokerConfig.builder()
+        .name(configEntry.name())
+        .value(configEntry.value())
+        .source(configEntry.source())
+        .isReadOnly(configEntry.isReadOnly())
+        .isSensitive(configEntry.isSensitive())
+        .synonyms(configEntry.synonyms());
+    return builder.build();
+  }
 }

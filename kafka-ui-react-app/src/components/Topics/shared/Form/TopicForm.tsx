@@ -1,165 +1,219 @@
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
-import { TOPIC_NAME_VALIDATION_PATTERN, BYTES_IN_GB } from 'lib/constants';
-import { TopicName, TopicConfigByName } from 'redux/interfaces';
+import { useFormContext, Controller } from 'react-hook-form';
+import { NOT_SET, BYTES_IN_GB } from 'lib/constants';
+import { TopicName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
+import Select, { SelectOption } from 'components/common/Select/Select';
+import Input from 'components/common/Input/Input';
+import { Button } from 'components/common/Button/Button';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
+import { FormError } from 'components/common/Input/Input.styled';
+import { StyledForm } from 'components/common/Form/Form.styled';
 
-import CustomParamsContainer from './CustomParams/CustomParamsContainer';
+import CustomParams from './CustomParams/CustomParams';
 import TimeToRetain from './TimeToRetain';
+import * as S from './TopicForm.styled';
 
-interface Props {
+export interface Props {
   topicName?: TopicName;
-  config?: TopicConfigByName;
+  partitionCount?: number;
+  replicationFactor?: number;
+  inSyncReplicas?: number;
+  cleanUpPolicy?: string;
   isEditing?: boolean;
   isSubmitting: boolean;
   onSubmit: (e: React.BaseSyntheticEvent) => Promise<void>;
 }
 
+const CleanupPolicyOptions: Array<SelectOption> = [
+  { value: 'delete', label: 'Delete' },
+  { value: 'compact', label: 'Compact' },
+  { value: 'compact,delete', label: 'Compact,Delete' },
+];
+
+const RetentionBytesOptions: Array<SelectOption> = [
+  { value: NOT_SET, label: 'Not Set' },
+  { value: BYTES_IN_GB, label: '1 GB' },
+  { value: BYTES_IN_GB * 10, label: '10 GB' },
+  { value: BYTES_IN_GB * 20, label: '20 GB' },
+  { value: BYTES_IN_GB * 50, label: '50 GB' },
+];
+
 const TopicForm: React.FC<Props> = ({
   topicName,
-  config,
   isEditing,
   isSubmitting,
   onSubmit,
+  partitionCount,
+  replicationFactor,
+  inSyncReplicas,
+  cleanUpPolicy,
 }) => {
   const {
-    register,
+    control,
     formState: { errors },
   } = useFormContext();
-
+  const getCleanUpPolicy =
+    CleanupPolicyOptions.find((option: SelectOption) => {
+      return option.value === cleanUpPolicy?.toLowerCase();
+    })?.value || CleanupPolicyOptions[0].value;
   return (
-    <form onSubmit={onSubmit}>
+    <StyledForm onSubmit={onSubmit}>
       <fieldset disabled={isSubmitting}>
         <fieldset disabled={isEditing}>
-          <div className="columns">
-            <div className={`column ${isEditing ? '' : 'is-three-quarters'}`}>
-              <label className="label">Topic Name *</label>
-              <input
-                className="input"
+          <S.Column>
+            <S.NameField>
+              <InputLabel htmlFor="topicFormName">Topic Name *</InputLabel>
+              <Input
+                id="topicFormName"
+                name="name"
                 placeholder="Topic Name"
                 defaultValue={topicName}
-                {...register('name', {
-                  required: 'Topic Name is required.',
-                  pattern: {
-                    value: TOPIC_NAME_VALIDATION_PATTERN,
-                    message: 'Only alphanumeric, _, -, and . allowed',
-                  },
-                })}
-                autoComplete="off"
               />
-              <p className="help is-danger">
+              <FormError>
                 <ErrorMessage errors={errors} name="name" />
-              </p>
-            </div>
+              </FormError>
+            </S.NameField>
+          </S.Column>
 
-            {!isEditing && (
-              <div className="column">
-                <label className="label">Number of partitions *</label>
-                <input
-                  className="input"
+          {!isEditing && (
+            <S.Column>
+              <div>
+                <InputLabel htmlFor="topicFormNumberOfPartitions">
+                  Number of partitions *
+                </InputLabel>
+                <Input
+                  id="topicFormNumberOfPartitions"
                   type="number"
                   placeholder="Number of partitions"
-                  defaultValue="1"
-                  {...register('partitions', {
-                    required: 'Number of partitions is required.',
-                  })}
+                  min="1"
+                  defaultValue={partitionCount}
+                  name="partitions"
                 />
-                <p className="help is-danger">
+                <FormError>
                   <ErrorMessage errors={errors} name="partitions" />
-                </p>
+                </FormError>
               </div>
-            )}
-          </div>
+              <div>
+                <InputLabel htmlFor="topicFormReplicationFactor">
+                  Replication Factor *
+                </InputLabel>
+                <Input
+                  id="topicFormReplicationFactor"
+                  type="number"
+                  placeholder="Replication Factor"
+                  min="1"
+                  defaultValue={replicationFactor}
+                  name="replicationFactor"
+                />
+                <FormError>
+                  <ErrorMessage errors={errors} name="replicationFactor" />
+                </FormError>
+              </div>
+            </S.Column>
+          )}
         </fieldset>
 
-        <div className="columns">
-          {!isEditing && (
-            <div className="column">
-              <label className="label">Replication Factor *</label>
-              <input
-                className="input"
-                type="number"
-                placeholder="Replication Factor"
-                defaultValue="1"
-                {...register('replicationFactor', {
-                  required: 'Replication Factor is required.',
-                })}
-              />
-              <p className="help is-danger">
-                <ErrorMessage errors={errors} name="replicationFactor" />
-              </p>
-            </div>
-          )}
-
-          <div className="column">
-            <label className="label">Min In Sync Replicas *</label>
-            <input
-              className="input"
+        <S.Column>
+          <div>
+            <InputLabel htmlFor="topicFormMinInSyncReplicas">
+              Min In Sync Replicas *
+            </InputLabel>
+            <Input
+              id="topicFormMinInSyncReplicas"
               type="number"
               placeholder="Min In Sync Replicas"
-              defaultValue="1"
-              {...register('minInsyncReplicas', {
-                required: 'Min In Sync Replicas is required.',
-              })}
+              min="1"
+              defaultValue={inSyncReplicas}
+              name="minInsyncReplicas"
             />
-            <p className="help is-danger">
-              <ErrorMessage errors={errors} name="minInSyncReplicas" />
-            </p>
+            <FormError>
+              <ErrorMessage errors={errors} name="minInsyncReplicas" />
+            </FormError>
           </div>
-        </div>
-
-        <div className="columns">
-          <div className="column is-one-third">
-            <label className="label">Cleanup policy</label>
-            <div className="select is-block">
-              <select defaultValue="delete" {...register('cleanupPolicy')}>
-                <option value="delete">Delete</option>
-                <option value="compact">Compact</option>
-                <option value="compact,delete">Compact,Delete</option>
-              </select>
-            </div>
+          <div>
+            <InputLabel
+              id="topicFormCleanupPolicyLabel"
+              htmlFor="topicFormCleanupPolicy"
+            >
+              Cleanup policy
+            </InputLabel>
+            <Controller
+              defaultValue={CleanupPolicyOptions[0].value}
+              control={control}
+              name="cleanupPolicy"
+              render={({ field: { name, onChange } }) => (
+                <Select
+                  id="topicFormCleanupPolicy"
+                  aria-labelledby="topicFormCleanupPolicyLabel"
+                  name={name}
+                  value={getCleanUpPolicy}
+                  onChange={onChange}
+                  minWidth="250px"
+                  options={CleanupPolicyOptions}
+                />
+              )}
+            />
           </div>
+        </S.Column>
 
-          <div className="column is-one-third">
+        <S.Column>
+          <div>
             <TimeToRetain isSubmitting={isSubmitting} />
           </div>
+        </S.Column>
 
-          <div className="column is-one-third">
-            <label className="label">Max size on disk in GB</label>
-            <div className="select is-block">
-              <select defaultValue={-1} {...register('retentionBytes')}>
-                <option value={-1}>Not Set</option>
-                <option value={BYTES_IN_GB}>1 GB</option>
-                <option value={BYTES_IN_GB * 10}>10 GB</option>
-                <option value={BYTES_IN_GB * 20}>20 GB</option>
-                <option value={BYTES_IN_GB * 50}>50 GB</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div className="columns">
-          <div className="column">
-            <label className="label">Maximum message size in bytes *</label>
-            <input
-              className="input"
-              type="number"
-              defaultValue="1000012"
-              {...register('maxMessageBytes', {
-                required: 'Maximum message size in bytes is required',
-              })}
+        <S.Column>
+          <div>
+            <InputLabel
+              id="topicFormRetentionBytesLabel"
+              htmlFor="topicFormRetentionBytes"
+            >
+              Max size on disk in GB
+            </InputLabel>
+            <Controller
+              control={control}
+              name="retentionBytes"
+              defaultValue={RetentionBytesOptions[0].value}
+              render={({ field: { name, onChange } }) => (
+                <Select
+                  id="topicFormRetentionBytes"
+                  aria-labelledby="topicFormRetentionBytesLabel"
+                  name={name}
+                  value={RetentionBytesOptions[0].value}
+                  onChange={onChange}
+                  minWidth="100%"
+                  options={RetentionBytesOptions}
+                />
+              )}
             />
-            <p className="help is-danger">
-              <ErrorMessage errors={errors} name="maxMessageBytes" />
-            </p>
           </div>
-        </div>
 
-        <CustomParamsContainer isSubmitting={isSubmitting} config={config} />
+          <div>
+            <InputLabel htmlFor="topicFormMaxMessageBytes">
+              Maximum message size in bytes *
+            </InputLabel>
+            <Input
+              id="topicFormMaxMessageBytes"
+              type="number"
+              min="1"
+              defaultValue="1000012"
+              name="maxMessageBytes"
+            />
+            <FormError>
+              <ErrorMessage errors={errors} name="maxMessageBytes" />
+            </FormError>
+          </div>
+        </S.Column>
 
-        <input type="submit" className="button is-primary" value="Send" />
+        <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>
+        <CustomParams isSubmitting={isSubmitting} />
+
+        <Button type="submit" buttonType="primary" buttonSize="L">
+          Submit
+        </Button>
       </fieldset>
-    </form>
+    </StyledForm>
   );
 };
 

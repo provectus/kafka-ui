@@ -64,9 +64,7 @@ public class ProtobufSchemaConverterTest {
     ObjectMapper om = new ObjectMapper();
     Assertions.assertEquals(
         om.readTree(expected),
-        om.readTree(
-            convert.toJson(om)
-        )
+        om.readTree(convert.toJson())
     );
   }
 }

@@ -1,63 +1,22 @@
 import React from 'react';
 import List from 'components/KsqlDb/List/List';
-import { mount } from 'enzyme';
-import { StaticRouter } from 'react-router';
-import configureStore from 'redux-mock-store';
-import { Provider } from 'react-redux';
-import { RootState } from 'redux/interfaces';
-import { fetchKsqlDbTablesPayload } from 'redux/reducers/ksqlDb/__test__/fixtures';
+import { render } from 'lib/testHelpers';
+import fetchMock from 'fetch-mock';
+import { screen } from '@testing-library/dom';
 
-const emptyPlaceholder = 'No tables or streams found';
-
-const mockStore = configureStore();
+const renderComponent = () => {
+  render(<List />);
+};
 
 describe('KsqlDb List', () => {
-  const pathname = `ui/clusters/local/ksql-db`;
+  afterEach(() => fetchMock.reset());
+  it('renders List component with Tables and Streams tabs', async () => {
+    renderComponent();
 
-  it('Renders placeholder on empty data', () => {
-    const initialState: Partial<RootState> = {
-      ksqlDb: {
-        tables: [],
-        streams: [],
-        executionResult: null,
-      },
-      loader: {
-        GET_KSQL_DB_TABLES_AND_STREAMS: 'fetched',
-      },
-    };
-    const store = mockStore(initialState);
+    const Tables = screen.getByTitle('Tables');
+    const Streams = screen.getByTitle('Streams');
 
-    const component = mount(
-      <StaticRouter location={{ pathname }} context={{}}>
-        <Provider store={store}>
-          <List />
-        </Provider>
-      </StaticRouter>
-    );
-
-    expect(
-      component.find({ children: emptyPlaceholder }).exists()
-    ).toBeTruthy();
-  });
-
-  it('Renders rows', () => {
-    const initialState: Partial<RootState> = {
-      ksqlDb: { ...fetchKsqlDbTablesPayload, executionResult: null },
-      loader: {
-        GET_KSQL_DB_TABLES_AND_STREAMS: 'fetched',
-      },
-    };
-    const store = mockStore(initialState);
-
-    const component = mount(
-      <StaticRouter location={{ pathname }} context={{}}>
-        <Provider store={store}>
-          <List />
-        </Provider>
-      </StaticRouter>
-    );
-
-    // 2 streams, 2 tables and 1 head tr
-    expect(component.find('tr').length).toEqual(5);
+    expect(Tables).toBeInTheDocument();
+    expect(Streams).toBeInTheDocument();
   });
 });

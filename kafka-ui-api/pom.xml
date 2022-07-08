@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>kafka-ui</artifactId>
         <groupId>com.provectus</groupId>
-        <version>0.2.2-SNAPSHOT</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>kafka-ui-api</artifactId>
+
+    <properties>
+        <jacoco.version>0.8.8</jacoco.version>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.language>java</sonar.language>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -26,12 +36,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -43,7 +47,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>	
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
         <dependency>
             <groupId>com.provectus</groupId>
@@ -59,11 +63,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.zookeeper</groupId>
-            <artifactId>zookeeper</artifactId>
-            <version>${zookeper.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -99,7 +98,7 @@
         <dependency>
             <groupId>software.amazon.msk</groupId>
             <artifactId>aws-msk-iam-auth</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.3</version>
         </dependency>
 
         <dependency>
@@ -110,8 +109,9 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
+            <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
+
         <dependency>
             <groupId>io.projectreactor.addons</groupId>
             <artifactId>reactor-extra</artifactId>
@@ -186,6 +186,38 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>${antlr4-maven-plugin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-ldap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-jsr223</artifactId>
+            <version>${groovy.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-json</artifactId>
+            <version>${groovy.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.datasketches</groupId>
+            <artifactId>datasketches-java</artifactId>
+            <version>${datasketches-java.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -238,8 +270,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <argLine> --illegal-access=permit
-                    </argLine>
+                    <argLine>@{argLine} --illegal-access=permit</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -267,6 +298,46 @@
                             <includeTestSourceDirectory>true</includeTestSourceDirectory>
                             <configLocation>file:${basedir}/../etc/checkstyle/checkstyle.xml</configLocation>
                             <headerLocation>file:${basedir}/../etc/checkstyle/apache-header.txt</headerLocation>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>${antlr4-maven-plugin.version}</version>
+                <configuration>
+                    <visitor>false</visitor>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <formats>
+                                <format>XML</format>
+                            </formats>
                         </configuration>
                     </execution>
                 </executions>
@@ -304,6 +375,7 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
+                        <version>${maven-resources-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
@@ -329,36 +401,37 @@
                         <configuration>
                             <workingDirectory>../kafka-ui-react-app</workingDirectory>
                             <environmentVariables>
-                                <REACT_APP_TAG>v${project.version}</REACT_APP_TAG>
-                                <REACT_APP_COMMIT>${git.commit.id.abbrev}</REACT_APP_COMMIT>
+                                <VITE_TAG>${project.version}</VITE_TAG>
+                                <VITE_COMMIT>${git.commit.id.abbrev}</VITE_COMMIT>
                             </environmentVariables>
                         </configuration>
                         <executions>
                             <execution>
-                                <id>install node and npm</id>
+                                <id>install node and pnpm</id>
                                 <goals>
-                                    <goal>install-node-and-npm</goal>
+                                    <goal>install-node-and-pnpm</goal>
                                 </goals>
                                 <configuration>
                                     <nodeVersion>${node.version}</nodeVersion>
+                                    <pnpmVersion>${pnpm.version}</pnpmVersion>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>npm install</id>
+                                <id>pnpm install</id>
                                 <goals>
-                                    <goal>npm</goal>
+                                    <goal>pnpm</goal>
                                 </goals>
                                 <configuration>
                                     <arguments>install</arguments>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>npm run build</id>
+                                <id>pnpm build</id>
                                 <goals>
-                                    <goal>npm</goal>
+                                    <goal>pnpm</goal>
                                 </goals>
                                 <configuration>
-                                    <arguments>run build</arguments>
+                                    <arguments>build</arguments>
                                 </configuration>
                             </execution>
                         </executions>

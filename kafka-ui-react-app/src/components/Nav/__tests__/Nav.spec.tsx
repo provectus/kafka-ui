@@ -1,21 +1,42 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
 import Nav from 'components/Nav/Nav';
+import { screen, waitFor } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
+import {
+  offlineClusterPayload,
+  onlineClusterPayload,
+} from 'components/Cluster/__tests__/fixtures';
+import fetchMock from 'fetch-mock';
+import { act } from 'react-dom/test-utils';
+import { Cluster } from 'generated-sources';
 
 describe('Nav', () => {
-  it('renders loader', () => {
-    const wrapper = shallow(<Nav clusters={[]} />);
-    expect(wrapper.find('.loader')).toBeTruthy();
-    expect(wrapper.exists('ClusterMenu')).toBeFalsy();
+  afterEach(() => fetchMock.restore());
+
+  const renderComponent = async (payload: Cluster[] = []) => {
+    const mock = fetchMock.get('/api/clusters', payload);
+    await act(() => {
+      render(<Nav />);
+    });
+    return waitFor(() => expect(mock.called()).toBeTruthy());
+  };
+
+  const getDashboard = () => screen.getByText('Dashboard');
+
+  const getMenuItemsCount = () => screen.getAllByRole('menuitem').length;
+  it('renders loader', async () => {
+    await renderComponent();
+
+    expect(getMenuItemsCount()).toEqual(1);
+    expect(getDashboard()).toBeInTheDocument();
   });
 
-  it('renders ClusterMenu', () => {
-    const wrapper = shallow(
-      <Nav clusters={[onlineClusterPayload]} isClusterListFetched />
-    );
-    expect(wrapper.exists('.loader')).toBeFalsy();
-    expect(wrapper.exists('ClusterMenu')).toBeTruthy();
-    expect(wrapper).toMatchSnapshot();
+  it('renders ClusterMenu', async () => {
+    await renderComponent([onlineClusterPayload, offlineClusterPayload]);
+    expect(screen.getAllByRole('menu').length).toEqual(3);
+    expect(getMenuItemsCount()).toEqual(3);
+    expect(getDashboard()).toBeInTheDocument();
+    expect(screen.getByText(onlineClusterPayload.name)).toBeInTheDocument();
+    expect(screen.getByText(offlineClusterPayload.name)).toBeInTheDocument();
   });
 });

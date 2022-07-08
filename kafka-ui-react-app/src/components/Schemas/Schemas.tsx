@@ -1,39 +1,63 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import {
-  clusterSchemaNewPath,
-  clusterSchemaPath,
-  clusterSchemasPath,
+  clusterSchemaEditRelativePath,
+  clusterSchemaNewRelativePath,
+  clusterSchemaSchemaDiffRelativePath,
+  RouteParams,
 } from 'lib/paths';
+import List from 'components/Schemas/List/List';
+import Details from 'components/Schemas/Details/Details';
+import New from 'components/Schemas/New/New';
+import Edit from 'components/Schemas/Edit/Edit';
+import DiffContainer from 'components/Schemas/Diff/DiffContainer';
+import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
-import ListContainer from './List/ListContainer';
-import DetailsContainer from './Details/DetailsContainer';
-import NewContainer from './New/NewContainer';
-import EditContainer from './Edit/EditContainer';
-
-const Schemas: React.FC = () => (
-  <Switch>
-    <Route
-      exact
-      path={clusterSchemasPath(':clusterName')}
-      component={ListContainer}
-    />
-    <Route
-      exact
-      path={clusterSchemaNewPath(':clusterName')}
-      component={NewContainer}
-    />
-    <Route
-      exact
-      path={clusterSchemaPath(':clusterName', ':subject')}
-      component={DetailsContainer}
-    />
-    <Route
-      exact
-      path="/ui/clusters/:clusterName/schemas/:subject/edit"
-      component={EditContainer}
-    />
-  </Switch>
-);
+const Schemas: React.FC = () => {
+  return (
+    <Routes>
+      <Route
+        index
+        element={
+          <BreadcrumbRoute>
+            <List />
+          </BreadcrumbRoute>
+        }
+      />
+      <Route
+        path={clusterSchemaNewRelativePath}
+        element={
+          <BreadcrumbRoute>
+            <New />
+          </BreadcrumbRoute>
+        }
+      />
+      <Route
+        path={RouteParams.subject}
+        element={
+          <BreadcrumbRoute>
+            <Details />
+          </BreadcrumbRoute>
+        }
+      />
+      <Route
+        path={clusterSchemaEditRelativePath}
+        element={
+          <BreadcrumbRoute>
+            <Edit />
+          </BreadcrumbRoute>
+        }
+      />
+      <Route
+        path={clusterSchemaSchemaDiffRelativePath}
+        element={
+          <BreadcrumbRoute>
+            <DiffContainer />
+          </BreadcrumbRoute>
+        }
+      />
+    </Routes>
+  );
+};
 
 export default Schemas;

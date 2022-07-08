@@ -1,64 +1,69 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Navigate, Routes, Route } from 'react-router-dom';
 import {
+  RouteParams,
+  clusterConnectConnectorEditRelativePath,
+  clusterConnectConnectorRelativePath,
+  clusterConnectConnectorsRelativePath,
+  clusterConnectorNewRelativePath,
+  getNonExactPath,
   clusterConnectorsPath,
-  clusterConnectorNewPath,
-  clusterConnectConnectorPath,
-  clusterConnectConnectorEditPath,
 } from 'lib/paths';
+import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
+import useAppParams from 'lib/hooks/useAppParams';
 
-import Breadcrumbs from './Breadcrumbs/Breadcrumbs';
 import ListContainer from './List/ListContainer';
 import NewContainer from './New/NewContainer';
 import DetailsContainer from './Details/DetailsContainer';
 import EditContainer from './Edit/EditContainer';
 
-const Connect: React.FC = () => (
-  <div className="section">
-    <Switch>
+const Connect: React.FC = () => {
+  const { clusterName } = useAppParams();
+
+  return (
+    <Routes>
       <Route
-        path={clusterConnectConnectorPath(
-          ':clusterName',
-          ':connectName',
-          ':connectorName'
-        )}
-        component={Breadcrumbs}
+        index
+        element={
+          <BreadcrumbRoute>
+            <ListContainer />
+          </BreadcrumbRoute>
+        }
       />
       <Route
-        path={clusterConnectorsPath(':clusterName')}
-        component={Breadcrumbs}
-      />
-    </Switch>
-    <Switch>
-      <Route
-        exact
-        path={clusterConnectorsPath(':clusterName')}
-        component={ListContainer}
+        path={clusterConnectorNewRelativePath}
+        element={
+          <BreadcrumbRoute>
+            <NewContainer />
+          </BreadcrumbRoute>
+        }
       />
       <Route
-        exact
-        path={clusterConnectorNewPath(':clusterName')}
-        component={NewContainer}
+        path={clusterConnectConnectorEditRelativePath}
+        element={
+          <BreadcrumbRoute>
+            <EditContainer />
+          </BreadcrumbRoute>
+        }
       />
       <Route
-        exact
-        path={clusterConnectConnectorEditPath(
-          ':clusterName',
-          ':connectName',
-          ':connectorName'
-        )}
-        component={EditContainer}
+        path={getNonExactPath(clusterConnectConnectorRelativePath)}
+        element={
+          <BreadcrumbRoute>
+            <DetailsContainer />
+          </BreadcrumbRoute>
+        }
       />
       <Route
-        path={clusterConnectConnectorPath(
-          ':clusterName',
-          ':connectName',
-          ':connectorName'
-        )}
-        component={DetailsContainer}
+        path={clusterConnectConnectorsRelativePath}
+        element={<Navigate to={clusterConnectorsPath(clusterName)} replace />}
       />
-    </Switch>
-  </div>
-);
+      <Route
+        path={RouteParams.connectName}
+        element={<Navigate to="/" replace />}
+      />
+    </Routes>
+  );
+};
 
 export default Connect;

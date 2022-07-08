@@ -295,6 +295,11 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/TopicColumnsToSort'
+        - name: sortOrder
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/SortOrder'
       responses:
         200:
           description: OK
@@ -326,6 +331,108 @@ paths:
               schema:
                 $ref: '#/components/schemas/Topic'
 
+  /api/clusters/{clusterName}/topics/{topicName}/clone:
+    post:
+      tags:
+        - Topics
+      summary: cloneTopic
+      operationId: cloneTopic
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: newTopicName
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
+        404:
+          description: Not found
+
+  /api/clusters/{clusterName}/topics/{topicName}/analysis:
+    get:
+      tags:
+        - Topics
+      summary: getTopicAnalysis
+      operationId: getTopicAnalysis
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicAnalysis'
+        404:
+          description: Not found
+    post:
+      tags:
+        - Topics
+      summary: analyzeTopic
+      operationId: analyzeTopic
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Analysis started
+        404:
+          description: Not found
+    delete:
+      tags:
+        - Topics
+      summary: cancelTopicAnalysis
+      operationId: cancelTopicAnalysis
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Analysis cancelled
+        404:
+          description: Not found
+
+
   /api/clusters/{clusterName}/topics/{topicName}:
     get:
       tags:
@@ -350,6 +457,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TopicDetails'
+    post:
+      tags:
+        - Topics
+      summary: recreateTopic
+      operationId: recreateTopic
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
+        404:
+          description: Not found
+        408:
+          description: Topic recreation timeout
     patch:
       tags:
         - Topics
@@ -495,6 +629,10 @@ paths:
           in: query
           schema:
             type: string
+        - name: filterQueryType
+          in: query
+          schema:
+            $ref:  "#/components/schemas/MessageFilterType"
         - name: seekDirection
           in: query
           schema:
@@ -614,6 +752,51 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ConsumerGroup'
+
+  /api/clusters/{clusterName}/consumer-groups/paged:
+    get:
+      tags:
+        - Consumer Groups
+      summary: Get consumer croups with paging support
+      operationId: getConsumerGroupsPage
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: orderBy
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ConsumerGroupOrdering'
+        - name: sortOrder
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/SortOrder'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumerGroupsPageResponse'
 
 
   /api/clusters/{clusterName}/consumer-groups/{id}:
@@ -750,15 +933,28 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SchemaSubject'
+                $ref: '#/components/schemas/SchemaSubjectsResponse'
 
   /api/clusters/{clusterName}/schemas/{subject}:
     delete:
@@ -1338,6 +1534,7 @@ paths:
           description: OK
 
   /api/clusters/{clusterName}/ksql:
+    description: Deprecated - use ksql/v2 instead!
     post:
       tags:
         - Ksql
@@ -1361,6 +1558,102 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/KsqlCommandResponse'
+
+  /api/clusters/{clusterName}/ksql/v2:
+    post:
+      tags:
+        - Ksql
+      summary: executeKsql
+      operationId: executeKsql
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KsqlCommandV2'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KsqlCommandV2Response'
+
+  /api/clusters/{clusterName}/ksql/tables:
+    get:
+      tags:
+        - Ksql
+      summary: listTables
+      operationId: listTables
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KsqlTableDescription'
+
+  /api/clusters/{clusterName}/ksql/streams:
+    get:
+      tags:
+        - Ksql
+      summary: listStreams
+      operationId: listStreams
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KsqlStreamDescription'
+
+  /api/clusters/{clusterName}/ksql/response:
+    get:
+      tags:
+        - Ksql
+      summary: Open SSE pipe
+      operationId: openKsqlResponsePipe
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pipeId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/event-stream:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KsqlResponse'
 
   /api/clusters/{clusterName}/connects/{connectName}/plugins:
     get:
@@ -1478,6 +1771,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FieldError'
+        stackTrace:
+          type: string
 
     FieldError:
       type: object
@@ -1491,6 +1786,14 @@ components:
           items:
             type: string
 
+    MetricsCollectionError:
+      type: object
+      properties:
+        message:
+          type: string
+        stackTrace:
+          type: string
+
     Cluster:
       type: object
       properties:
@@ -1500,6 +1803,8 @@ components:
           type: boolean
         status:
           $ref: '#/components/schemas/ServerStatus'
+        lastError:
+          $ref: '#/components/schemas/MetricsCollectionError'
         brokerCount:
           type: integer
         onlinePartitionCount:
@@ -1533,6 +1838,7 @@ components:
       enum:
         - online
         - offline
+        - initializing
 
     ClusterMetrics:
       type: object
@@ -1549,6 +1855,7 @@ components:
           type: integer
         zooKeeperStatus:
           type: integer
+          deprecated: true
         activeControllers:
           type: integer
         onlinePartitionCount:
@@ -1635,6 +1942,13 @@ components:
         - OUT_OF_SYNC_REPLICAS
         - TOTAL_PARTITIONS
         - REPLICATION_FACTOR
+        - SIZE
+
+    SortOrder:
+      type: string
+      enum:
+        - ASC
+        - DESC
 
     Topic:
       type: object
@@ -1659,18 +1973,137 @@ components:
         underReplicatedPartitions:
           type: integer
         cleanUpPolicy:
-          type: string
-          enum:
-            - DELETE
-            - COMPACT
-            - COMPACT_DELETE
-            - UNKNOWN
+          $ref: '#/components/schemas/CleanUpPolicy'
         partitions:
           type: array
           items:
             $ref: "#/components/schemas/Partition"
       required:
         - name
+
+    TopicAnalysis:
+      type: object
+      description: "Represents analysis state. Note: 'progress' and 'result' fields are set exclusively depending on analysis state."
+      properties:
+        progress:
+          $ref: '#/components/schemas/TopicAnalysisProgress'
+        result:
+          $ref: '#/components/schemas/TopicAnalysisResult'
+
+    TopicAnalysisProgress:
+      type: object
+      properties:
+        startedAt:
+          type: integer
+          format: int64
+        completenessPercent:
+          type: number
+        msgsScanned:
+          type: integer
+          format: int64
+        bytesScanned:
+          type: integer
+          format: int64
+
+    TopicAnalysisResult:
+      type: object
+      properties:
+        startedAt:
+          type: integer
+          format: int64
+        finishedAt:
+          type: integer
+          format: int64
+        error:
+          type: string
+        totalStats:
+          $ref: '#/components/schemas/TopicAnalysisStats'
+        partitionStats:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopicAnalysisStats"
+
+    TopicAnalysisStats:
+      type: object
+      properties:
+        partition:
+          type: integer
+          format: int32
+          description: "null if this is total stats"
+        totalMsgs:
+          type: integer
+          format: int64
+        minOffset:
+          type: integer
+          format: int64
+        maxOffset:
+          type: integer
+          format: int64
+        minTimestamp:
+          type: integer
+          format: int64
+        maxTimestamp:
+          type: integer
+          format: int64
+        nullKeys:
+          type: integer
+          format: int64
+        nullValues:
+          type: integer
+          format: int64
+        approxUniqKeys:
+          type: integer
+          format: int64
+        approxUniqValues:
+          type: integer
+          format: int64
+        keySize:
+          $ref: "#/components/schemas/TopicAnalysisSizeStats"
+        valueSize:
+          $ref: "#/components/schemas/TopicAnalysisSizeStats"
+        hourlyMsgCounts:
+          type: array
+          items:
+            type: object
+            properties:
+              hourStart:
+                type: integer
+                format: int64
+              count:
+                type: integer
+                format: int64
+
+    TopicAnalysisSizeStats:
+      type: object
+      description: "All sizes in bytes"
+      properties:
+        sum:
+          type: integer
+          format: int64
+        min:
+          type: integer
+          format: int64
+        max:
+          type: integer
+          format: int64
+        avg:
+          type: integer
+          format: int64
+        prctl50:
+          type: integer
+          format: int64
+        prctl75:
+          type: integer
+          format: int64
+        prctl95:
+          type: integer
+          format: int64
+        prctl99:
+          type: integer
+          format: int64
+        prctl999:
+          type: integer
+          format: int64
 
     Replica:
       type: object
@@ -1707,10 +2140,13 @@ components:
           type: number
         segmentSize:
           type: integer
+          format: int64
         segmentCount:
           type: integer
         underReplicatedPartitions:
           type: integer
+        cleanUpPolicy:
+          $ref: '#/components/schemas/CleanUpPolicy'
       required:
         - name
 
@@ -1771,6 +2207,8 @@ components:
           type: integer
         host:
           type: string
+        port:
+          type: integer
       required:
         - id
 
@@ -1825,6 +2263,23 @@ components:
       required:
         - groupId
 
+    ConsumerGroupOrdering:
+      type: string
+      enum:
+        - NAME
+        - MEMBERS
+        - STATE
+
+    ConsumerGroupsPageResponse:
+      type: object
+      properties:
+        pageCount:
+          type: integer
+        consumerGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumerGroup'
+
     CreateTopicMessage:
       type: object
       properties:
@@ -1832,12 +2287,16 @@ components:
           type: integer
         key:
           type: string
+          nullable: true
         headers:
           type: object
           additionalProperties:
             type: string
         content:
           type: string
+          nullable: true
+      required:
+        - partition
 
     TopicMessageSchema:
       type: object
@@ -1878,6 +2337,7 @@ components:
             - MESSAGE
             - CONSUMING
             - DONE
+            - EMIT_THROTTLING
         message:
           $ref: "#/components/schemas/TopicMessage"
         phase:
@@ -1959,12 +2419,20 @@ components:
         - BEGINNING
         - OFFSET
         - TIMESTAMP
+        - LATEST
+
+    MessageFilterType:
+      type: string
+      enum:
+        - STRING_CONTAINS
+        - GROOVY_SCRIPT
 
     SeekDirection:
       type: string
       enum:
         - FORWARD
         - BACKWARD
+        - TAILING
       default: FORWARD
 
     Partition:
@@ -2149,6 +2617,16 @@ components:
       required:
         - isCompatible
 
+    SchemaSubjectsResponse:
+      type: object
+      properties:
+        pageCount:
+          type: integer
+        schemas:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchemaSubject'
+
     Connect:
       type: object
       properties:
@@ -2297,6 +2775,7 @@ components:
         - RUNNING
         - FAILED
         - PAUSED
+        - RESTARTING
         - UNASSIGNED
 
     ConnectorState:
@@ -2312,6 +2791,8 @@ components:
       type: string
       enum:
         - RESTART
+        - RESTART_ALL_TASKS
+        - RESTART_FAILED_TASKS
         - PAUSE
         - RESUME
 
@@ -2427,6 +2908,52 @@ components:
       required:
         - ksql
 
+    KsqlCommandV2:
+      type: object
+      properties:
+        ksql:
+          type: string
+        streamsProperties:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - ksql
+
+    KsqlCommandV2Response:
+      type: object
+      properties:
+        pipeId:
+          type: string
+      required:
+        - pipeId
+
+    KsqlTableDescription:
+      type: object
+      properties:
+        name:
+          type: string
+        topic:
+          type: string
+        keyFormat:
+          type: string
+        valueFormat:
+          type: string
+        isWindowed:
+          type: boolean
+
+    KsqlStreamDescription:
+      type: object
+      properties:
+        name:
+          type: string
+        topic:
+          type: string
+        keyFormat:
+          type: string
+        valueFormat:
+          type: string
+
     KsqlCommandResponse:
       type: object
       properties:
@@ -2451,6 +2978,28 @@ components:
       required:
         - headers
         - rows
+
+    KsqlResponse:
+      type: object
+      properties:
+        table:
+          $ref: '#/components/schemas/KsqlTableResponse'
+
+    KsqlTableResponse:
+      type: object
+      properties:
+        header:
+          type: string
+        columnNames:
+          type: array
+          items:
+            type: string
+        values:
+          type: array
+          items:
+            type: array
+            items:
+              type: object
 
     FullConnectorInfo:
       type: object
@@ -2568,3 +3117,11 @@ components:
           type: string
         source:
           $ref: '#/components/schemas/ConfigSource'
+
+    CleanUpPolicy:
+      type: string
+      enum:
+        - DELETE
+        - COMPACT
+        - COMPACT_DELETE
+        - UNKNOWN

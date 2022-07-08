@@ -1,30 +1,78 @@
-import React, { useCallback, useEffect, FC } from 'react';
-import { yupResolver } from '@hookform/resolvers/yup';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
-import SQLEditor from 'components/common/SQLEditor/SQLEditor';
-import yup from 'lib/yupExtended';
-import { useForm, Controller } from 'react-hook-form';
-import { useParams } from 'react-router';
-import { executeKsql } from 'redux/actions/thunks/ksqlDb';
-import ResultRenderer from 'components/KsqlDb/Query/ResultRenderer';
+import React, { useCallback, useEffect, FC, useState } from 'react';
+import useAppParams from 'lib/hooks/useAppParams';
+import TableRenderer from 'components/KsqlDb/Query/renderer/TableRenderer/TableRenderer';
+import {
+  executeKsql,
+  resetExecutionResult,
+} from 'redux/reducers/ksqlDb/ksqlDbSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getKsqlExecution } from 'redux/reducers/ksqlDb/selectors';
-import { resetExecutionResult } from 'redux/actions';
+import { BASE_PARAMS } from 'lib/constants';
+import { KsqlResponse, KsqlTableResponse } from 'generated-sources';
+import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
+import now from 'lodash/now';
+import { ClusterNameRoute } from 'lib/paths';
 
-type FormValues = {
-  ksql: string;
-  streamsProperties: string;
+import type { FormValues } from './QueryForm/QueryForm';
+import * as S from './Query.styled';
+import QueryForm from './QueryForm/QueryForm';
+
+const AUTO_DISMISS_TIME = 8_000;
+
+export const getFormattedErrorFromTableData = (
+  responseValues: KsqlTableResponse['values']
+): { title: string; message: string } => {
+  // We expect someting like that
+  // [[
+  //   "@type",
+  //   "error_code",
+  //   "message",
+  //   "statementText"?,
+  //   "entities"?
+  // ]],
+  // or
+  // [["message"]]
+
+  if (!responseValues || !responseValues.length) {
+    return {
+      title: 'Unknown error',
+      message: 'Recieved empty response',
+    };
+  }
+
+  let title = '';
+  let message = '';
+  if (responseValues[0].length < 2) {
+    const [messageText] = responseValues[0];
+    title = messageText;
+  } else {
+    const [type, errorCode, messageText, statementText, entities] =
+      responseValues[0];
+    title = `[Error #${errorCode}] ${type}`;
+    message =
+      (entities?.length ? `[${entities.join(', ')}] ` : '') +
+      (statementText ? `"${statementText}" ` : '') +
+      messageText;
+  }
+
+  return {
+    title,
+    message,
+  };
 };
 
-const validationSchema = yup.object({
-  ksql: yup.string().trim().required(),
-});
-
 const Query: FC = () => {
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
+
+  const sseRef = React.useRef<{ sse: EventSource | null; isOpen: boolean }>({
+    sse: null,
+    isOpen: false,
+  });
+  const [fetching, setFetching] = useState(false);
   const dispatch = useDispatch();
 
-  const { executionResult, fetching } = useSelector(getKsqlExecution);
+  const { executionResult } = useSelector(getKsqlExecution);
+  const [KSQLTable, setKSQLTable] = useState<KsqlTableResponse | null>(null);
 
   const reset = useCallback(() => {
     dispatch(resetExecutionResult());
@@ -32,81 +80,159 @@ const Query: FC = () => {
 
   useEffect(() => {
     return reset;
-  }, []);
+  }, [reset]);
 
-  const { handleSubmit, control } = useForm<FormValues>({
-    mode: 'onTouched',
-    resolver: yupResolver(validationSchema),
-    defaultValues: {
-      ksql: '',
-      streamsProperties: '',
+  const destroySSE = () => {
+    if (sseRef.current?.sse) {
+      sseRef.current.sse.close();
+      setFetching(false);
+      sseRef.current.sse = null;
+      sseRef.current.isOpen = false;
+    }
+  };
+
+  const handleSSECancel = useCallback(() => {
+    reset();
+    destroySSE();
+  }, [reset]);
+
+  const createSSE = useCallback(
+    (pipeId: string) => {
+      const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/ksql/response?pipeId=${pipeId}`;
+      const sse = new EventSource(url);
+      sseRef.current.sse = sse;
+      setFetching(true);
+
+      sse.onopen = () => {
+        sseRef.current.isOpen = true;
+      };
+
+      sse.onmessage = ({ data }) => {
+        const { table }: KsqlResponse = JSON.parse(data);
+        if (table) {
+          switch (table?.header) {
+            case 'Execution error': {
+              const { title, message } = getFormattedErrorFromTableData(
+                table.values
+              );
+              const id = `${url}-executionError`;
+              dispatch(
+                alertAdded({
+                  id,
+                  type: 'error',
+                  title,
+                  message,
+                  createdAt: now(),
+                })
+              );
+              break;
+            }
+            case 'Schema': {
+              setKSQLTable(table);
+              break;
+            }
+            case 'Row': {
+              setKSQLTable((PrevKSQLTable) => {
+                return {
+                  header: PrevKSQLTable?.header,
+                  columnNames: PrevKSQLTable?.columnNames,
+                  values: [
+                    ...(PrevKSQLTable?.values || []),
+                    ...(table?.values || []),
+                  ],
+                };
+              });
+              break;
+            }
+            case 'Query Result': {
+              const id = `${url}-querySuccess`;
+              dispatch(
+                alertAdded({
+                  id,
+                  type: 'success',
+                  title: 'Query succeed',
+                  message: '',
+                  createdAt: now(),
+                })
+              );
+
+              setTimeout(() => {
+                dispatch(alertDissmissed(id));
+              }, AUTO_DISMISS_TIME);
+              break;
+            }
+            case 'Source Description':
+            case 'properties':
+            default: {
+              setKSQLTable(table);
+              break;
+            }
+          }
+        }
+        return sse;
+      };
+
+      sse.onerror = () => {
+        // if it's open - we know that server responded without opening SSE
+        if (!sseRef.current.isOpen) {
+          const id = `${url}-connectionClosedError`;
+          dispatch(
+            alertAdded({
+              id,
+              type: 'error',
+              title: 'SSE connection closed',
+              message: '',
+              createdAt: now(),
+            })
+          );
+
+          setTimeout(() => {
+            dispatch(alertDissmissed(id));
+          }, AUTO_DISMISS_TIME);
+        }
+        destroySSE();
+      };
     },
-  });
+    [clusterName, dispatch]
+  );
 
-  const submitHandler = useCallback(async (values: FormValues) => {
-    dispatch(
-      executeKsql({
-        clusterName,
-        ksqlCommand: {
-          ...values,
-          streamsProperties: values.streamsProperties
-            ? JSON.parse(values.streamsProperties)
-            : undefined,
-        },
-      })
-    );
-  }, []);
+  const submitHandler = useCallback(
+    (values: FormValues) => {
+      setFetching(true);
+      dispatch(
+        executeKsql({
+          clusterName,
+          ksqlCommandV2: {
+            ...values,
+            streamsProperties: values.streamsProperties
+              ? JSON.parse(values.streamsProperties)
+              : undefined,
+          },
+        })
+      );
+    },
+    [dispatch, clusterName]
+  );
+  useEffect(() => {
+    if (executionResult?.pipeId) {
+      createSSE(executionResult.pipeId);
+    }
+    return () => {
+      destroySSE();
+    };
+  }, [createSSE, executionResult]);
 
   return (
     <>
-      <div className="box">
-        <form onSubmit={handleSubmit(submitHandler)}>
-          <div className="columns">
-            <div className="control column m-0">
-              <label className="label">KSQL</label>
-              <Controller
-                control={control}
-                name="ksql"
-                render={({ field }) => (
-                  <SQLEditor {...field} readOnly={fetching} />
-                )}
-              />
-            </div>
-            <div className="control column m-0">
-              <label className="label">Stream properties</label>
-              <Controller
-                control={control}
-                name="streamsProperties"
-                render={({ field }) => (
-                  <JSONEditor {...field} readOnly={fetching} />
-                )}
-              />
-            </div>
-          </div>
-          <div className="columns">
-            <div className="column is-flex-grow-0">
-              <button
-                className="button is-primary"
-                type="submit"
-                disabled={fetching}
-              >
-                Execute
-              </button>
-            </div>
-            <div className="column is-flex-grow-0">
-              <button
-                className="button is-danger"
-                type="button"
-                disabled={!executionResult}
-                onClick={reset}
-              >
-                Clear
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-      <ResultRenderer result={executionResult} />
+      <QueryForm
+        fetching={fetching}
+        hasResults={!!KSQLTable}
+        handleClearResults={() => setKSQLTable(null)}
+        handleSSECancel={handleSSECancel}
+        submitHandler={submitHandler}
+      />
+      {KSQLTable && <TableRenderer table={KSQLTable} />}
+      {fetching && <S.ContinuousLoader />}
     </>
   );
 };

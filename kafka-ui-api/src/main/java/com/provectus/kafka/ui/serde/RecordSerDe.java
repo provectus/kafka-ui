@@ -14,12 +14,18 @@ public interface RecordSerDe {
   @Value
   @Builder
   class DeserializedKeyValue {
-    @Nullable String key;
-    @Nullable String value;
-    @Nullable MessageFormat keyFormat;
-    @Nullable MessageFormat valueFormat;
-    @Nullable String keySchemaId;
-    @Nullable String valueSchemaId;
+    @Nullable
+    String key;
+    @Nullable
+    String value;
+    @Nullable
+    MessageFormat keyFormat;
+    @Nullable
+    MessageFormat valueFormat;
+    @Nullable
+    String keySchemaId;
+    @Nullable
+    String valueSchemaId;
   }
 
   DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg);
