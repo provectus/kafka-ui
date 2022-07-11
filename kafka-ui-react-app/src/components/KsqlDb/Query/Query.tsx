@@ -17,11 +17,6 @@ import type { FormValues } from './QueryForm/QueryForm';
 import * as S from './Query.styled';
 import QueryForm from './QueryForm/QueryForm';
 
-interface StreamProps {
-  key?: string;
-  value?: string;
-}
-
 const AUTO_DISMISS_TIME = 8_000;
 
 export const getFormattedErrorFromTableData = (
