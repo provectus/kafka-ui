@@ -112,7 +112,7 @@ const QueryForm: React.FC<Props> = ({
             Stream properties:
             {fields.map((item, index) => (
               <S.InputsContainer key={item.id}>
-                <S.KeyInputWrapper>
+                <S.StreamPropertiesInputWrapper>
                   <Controller
                     control={control}
                     name={`streamsProperties.${index}.key`}
@@ -131,8 +131,8 @@ const QueryForm: React.FC<Props> = ({
                       name={`streamsProperties.${index}.key`}
                     />
                   </FormError>
-                </S.KeyInputWrapper>
-                <S.ValueInputWrapper>
+                </S.StreamPropertiesInputWrapper>
+                <S.StreamPropertiesInputWrapper>
                   <Controller
                     control={control}
                     name={`streamsProperties.${index}.value`}
@@ -151,7 +151,7 @@ const QueryForm: React.FC<Props> = ({
                       name={`streamsProperties.${index}.value`}
                     />
                   </FormError>
-                </S.ValueInputWrapper>
+                </S.StreamPropertiesInputWrapper>
 
                 <S.DeleteButtonWrapper onClick={() => remove(index)}>
                   <IconButtonWrapper aria-label="deleteProperty">

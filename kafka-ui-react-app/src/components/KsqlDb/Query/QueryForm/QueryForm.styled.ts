@@ -40,21 +40,14 @@ export const InputsContainer = styled.div`
   gap: 10px;
 `;
 
-export const KeyInputWrapper = styled.div`
+export const StreamPropertiesInputWrapper = styled.div`
   & > input {
     height: 40px;
     border: 1px solid grey;
     border-radius: 4px;
     min-width: 300px;
-  }
-`;
-
-export const ValueInputWrapper = styled.div`
-  & > input {
-    height: 40px;
-    border: 1px solid grey;
-    border-radius: 4px;
-    min-width: 300px;
+    font-size: 16px;
+    padding-left: 15px;
   }
 `;
 
