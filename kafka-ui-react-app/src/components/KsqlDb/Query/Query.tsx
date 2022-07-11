@@ -10,7 +10,7 @@ import { getKsqlExecution } from 'redux/reducers/ksqlDb/selectors';
 import { BASE_PARAMS } from 'lib/constants';
 import { KsqlResponse, KsqlTableResponse } from 'generated-sources';
 import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
-import { now } from 'lodash';
+import now from 'lodash/now';
 import { ClusterNameRoute } from 'lib/paths';
 
 import type { FormValues } from './QueryForm/QueryForm';

@@ -10,6 +10,7 @@ export default {
     '<rootDir>/src/index.tsx',
     '<rootDir>/src/serviceWorker.ts',
   ],
+  resolver: '<rootDir>/.jest/resolver.js',
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   testMatch: [
     '<rootDir>/src/**/__{test,tests}__/**/*.{spec,test}.{js,jsx,ts,tsx}',
@@ -17,7 +18,7 @@ export default {
   testEnvironment: 'jsdom',
   transform: {
     '\\.[jt]sx?$': 'babel-jest',
-    '^.+\\.css$': '<rootDir>/config/jest/cssTransform.js',
+    '^.+\\.css$': '<rootDir>/.jest/cssTransform.js',
   },
   transformIgnorePatterns: [
     '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$',

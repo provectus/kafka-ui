@@ -407,30 +407,31 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>install node and npm</id>
+                                <id>install node and pnpm</id>
                                 <goals>
-                                    <goal>install-node-and-npm</goal>
+                                    <goal>install-node-and-pnpm</goal>
                                 </goals>
                                 <configuration>
                                     <nodeVersion>${node.version}</nodeVersion>
+                                    <pnpmVersion>${pnpm.version}</pnpmVersion>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>npm install</id>
+                                <id>pnpm install</id>
                                 <goals>
-                                    <goal>npm</goal>
+                                    <goal>pnpm</goal>
                                 </goals>
                                 <configuration>
                                     <arguments>install</arguments>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>npm run build</id>
+                                <id>pnpm build</id>
                                 <goals>
-                                    <goal>npm</goal>
+                                    <goal>pnpm</goal>
                                 </goals>
                                 <configuration>
-                                    <arguments>run build</arguments>
+                                    <arguments>build</arguments>
                                 </configuration>
                             </execution>
                         </executions>

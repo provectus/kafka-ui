@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { Suspense, useCallback } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
 import { clusterPath, getNonExactPath } from 'lib/paths';
@@ -10,20 +10,13 @@ import Version from 'components/Version/Version';
 import Alerts from 'components/Alerts/Alerts';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
-import {
-  fetchClusters,
-  getClusterList,
-  getAreClustersFulfilled,
-} from 'redux/reducers/clusters/clustersSlice';
 
 import * as S from './App.styled';
 import Logo from './common/Logo/Logo';
+import GitIcon from './common/Icons/GitIcon';
+import DiscordIcon from './common/Icons/DiscordIcon';
 
 const App: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const areClustersFulfilled = useAppSelector(getAreClustersFulfilled);
-  const clusters = useAppSelector(getClusterList);
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(false);
   const onBurgerClick = () => setIsSidebarVisible(!isSidebarVisible);
   const closeSidebar = useCallback(() => setIsSidebarVisible(false), []);
@@ -32,10 +25,6 @@ const App: React.FC = () => {
   React.useEffect(() => {
     closeSidebar();
   }, [location, closeSidebar]);
-
-  React.useEffect(() => {
-    dispatch(fetchClusters());
-  }, [dispatch]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -64,20 +53,33 @@ const App: React.FC = () => {
                 {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
               </S.NavbarItem>
             </S.NavbarBrand>
-            <S.LogoutLink to="/logout">
+          </S.NavbarBrand>
+          <S.NavbarSocial>
+            <S.LogoutLink href="/logout">
               <S.LogoutButton buttonType="primary" buttonSize="M">
                 Log out
               </S.LogoutButton>
             </S.LogoutLink>
-          </S.NavbarBrand>
+            <S.SocialLink
+              href="https://github.com/provectus/kafka-ui"
+              target="_blank"
+            >
+              <GitIcon />
+            </S.SocialLink>
+            <S.SocialLink
+              href="https://discord.com/invite/4DWzD7pGE5"
+              target="_blank"
+            >
+              <DiscordIcon />
+            </S.SocialLink>
+          </S.NavbarSocial>
         </S.Navbar>
 
         <S.Container>
           <S.Sidebar aria-label="Sidebar" $visible={isSidebarVisible}>
-            <Nav
-              clusters={clusters}
-              areClustersFulfilled={areClustersFulfilled}
-            />
+            <Suspense fallback={<PageLoader />}>
+              <Nav />
+            </Suspense>
           </S.Sidebar>
           <S.Overlay
             $visible={isSidebarVisible}
@@ -87,23 +89,19 @@ const App: React.FC = () => {
             aria-hidden="true"
             aria-label="Overlay"
           />
-          {areClustersFulfilled ? (
-            <Routes>
-              {['/', '/ui', '/ui/clusters'].map((path) => (
-                <Route
-                  key="Home" // optional: avoid full re-renders on route changes
-                  path={path}
-                  element={<Dashboard />}
-                />
-              ))}
+          <Routes>
+            {['/', '/ui', '/ui/clusters'].map((path) => (
               <Route
-                path={getNonExactPath(clusterPath())}
-                element={<ClusterPage />}
+                key="Home" // optional: avoid full re-renders on route changes
+                path={path}
+                element={<Dashboard />}
               />
-            </Routes>
-          ) : (
-            <PageLoader />
-          )}
+            ))}
+            <Route
+              path={getNonExactPath(clusterPath())}
+              element={<ClusterPage />}
+            />
+          </Routes>
         </S.Container>
         <S.AlertsContainer role="toolbar">
           <Alerts />

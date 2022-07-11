@@ -1,11 +1,10 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-
 if git diff --cached --name-only | grep --quiet "kafka-ui-react-app"
 then
   cd kafka-ui-react-app && npm run pre-commit
-else 
+else
   echo "Skipping frontend tests"
   exit 0
 fi

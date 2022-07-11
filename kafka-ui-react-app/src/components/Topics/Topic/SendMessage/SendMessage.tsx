@@ -12,7 +12,7 @@ import {
 } from 'redux/reducers/topics/topicsSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
-import { now } from 'lodash';
+import now from 'lodash/now';
 import { Button } from 'components/common/Button/Button';
 import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -25,6 +25,7 @@ import Select, { SelectOption } from 'components/common/Select/Select';
 import useAppParams from 'lib/hooks/useAppParams';
 import Heading from 'components/common/heading/Heading.styled';
 import { messagesApiClient } from 'lib/api';
+import { getResponse } from 'lib/errorHandling';
 
 import validateMessage from './validateMessage';
 import * as S from './SendMessage.styled';
@@ -147,12 +148,13 @@ const SendMessage: React.FC = () => {
         });
         dispatch(fetchTopicDetails({ clusterName, topicName }));
       } catch (e) {
+        const err = await getResponse(e as Response);
         dispatch(
           alertAdded({
             id: `${clusterName}-${topicName}-sendTopicMessagesError`,
             type: 'error',
             title: `Error in sending a message to ${topicName}`,
-            message: e?.message,
+            message: err?.message || '',
             createdAt: now(),
           })
         );
