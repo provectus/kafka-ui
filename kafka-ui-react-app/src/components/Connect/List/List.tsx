@@ -35,7 +35,7 @@ const List: React.FC = () => {
         )}
         {connectors?.map((connector) => (
           <ListItem
-            key={[connector.name, connector.connect, clusterName].join('-')}
+            key={connector.name}
             connector={connector}
             clusterName={clusterName}
           />

@@ -7,8 +7,7 @@ import {
   getNonExactPath,
 } from 'lib/paths';
 import { screen } from '@testing-library/dom';
-
-import DetailsPage from '../DetailsPage';
+import DetailsPage from 'components/Connect/Details/DetailsPage';
 
 const DetailsCompText = {
   overview: 'Overview Page',
@@ -21,7 +20,7 @@ jest.mock('components/Connect/Details/Overview/Overview', () => () => (
   <div>{DetailsCompText.overview}</div>
 ));
 
-jest.mock('components/Connect/Details/Tasks/TasksContainer', () => () => (
+jest.mock('components/Connect/Details/Tasks/Tasks', () => () => (
   <div>{DetailsCompText.tasks}</div>
 ));
 

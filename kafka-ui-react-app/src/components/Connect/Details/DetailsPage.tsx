@@ -14,7 +14,7 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 
 import Overview from './Overview/Overview';
-import TasksContainer from './Tasks/TasksContainer';
+import Tasks from './Tasks/Tasks';
 import Config from './Config/Config';
 import ActionsContainer from './Actions/ActionsContainer';
 
@@ -65,7 +65,7 @@ const DetailsPage: React.FC = () => {
           <Route index element={<Overview />} />
           <Route
             path={clusterConnectConnectorTasksRelativePath}
-            element={<TasksContainer />}
+            element={<Tasks />}
           />
           <Route
             path={clusterConnectConnectorConfigRelativePath}

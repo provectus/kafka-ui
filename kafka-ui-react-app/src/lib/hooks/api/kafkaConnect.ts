@@ -1,5 +1,6 @@
 import { NewConnector } from 'generated-sources';
-import { kafkaConnectApiClient } from 'lib/api';
+import { kafkaConnectApiClient as api } from 'lib/api';
+import sortBy from 'lodash/sortBy';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 
@@ -11,7 +12,7 @@ interface UseConnectorProps {
 interface UseCreateConnectorProps {
   clusterName: ClusterName;
   connectName: ConnectName;
-  connectorName: ConnectorName;
+  newConnector: NewConnector;
 }
 
 const connectsKey = (clusterName: ClusterName) => [
@@ -34,41 +35,60 @@ const connectorKey = (props: UseConnectorProps) => [
   'connectors',
   props.connectorName,
 ];
+const connectorTasksKey = (props: UseConnectorProps) => [
+  ...connectorKey(props),
+  'tasks',
+];
 
 export function useConnects(clusterName: ClusterName) {
   return useQuery(connectsKey(clusterName), () =>
-    kafkaConnectApiClient.getConnects({ clusterName })
+    api.getConnects({ clusterName })
   );
 }
 export function useConnectors(clusterName: ClusterName, search?: string) {
-  return useQuery(connectorsKey(clusterName, search), () =>
-    kafkaConnectApiClient.getAllConnectors({ clusterName, search })
+  return useQuery(
+    connectorsKey(clusterName, search),
+    () => api.getAllConnectors({ clusterName, search }),
+    {
+      select: (data) => sortBy(data, 'name'),
+    }
   );
 }
 export function useConnector(props: UseConnectorProps) {
-  return useQuery(connectorKey(props), () =>
-    kafkaConnectApiClient.getConnector(props)
-  );
+  return useQuery(connectorKey(props), () => api.getConnector(props));
 }
 export function useConnectorTasks(props: UseConnectorProps) {
-  return useQuery([...connectorKey(props), 'tasks'], () =>
-    kafkaConnectApiClient.getConnectorTasks(props)
+  return useQuery(
+    connectorTasksKey(props),
+    () => api.getConnectorTasks(props),
+    {
+      select: (data) => sortBy(data, 'status.id'),
+    }
+  );
+}
+export function useRestartConnectorTask(props: UseConnectorProps) {
+  const client = useQueryClient();
+  return useMutation(
+    (taskId: number) => api.restartConnectorTask({ ...props, taskId }),
+    {
+      onSuccess: () => client.invalidateQueries(connectorTasksKey(props)),
+    }
   );
 }
 export function useConnectorConfig(props: UseConnectorProps) {
   return useQuery([...connectorKey(props), 'config'], () =>
-    kafkaConnectApiClient.getConnectorConfig(props)
+    api.getConnectorConfig(props)
   );
 }
 export function useCreateConnector(props: UseCreateConnectorProps) {
   const client = useQueryClient();
-  return useMutation(() => kafkaConnectApiClient.createConnector(props), {
+  return useMutation(() => api.createConnector(props), {
     onSuccess: () => client.invalidateQueries(connectorsKey(props.clusterName)),
   });
 }
 export function useDeleteConnector(props: UseConnectorProps) {
   const client = useQueryClient();
-  return useMutation(() => kafkaConnectApiClient.deleteConnector(props), {
+  return useMutation(() => api.deleteConnector(props), {
     onSuccess: () => client.invalidateQueries(connectorsKey(props.clusterName)),
   });
 }
