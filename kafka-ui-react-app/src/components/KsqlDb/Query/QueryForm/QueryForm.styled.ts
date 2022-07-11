@@ -38,12 +38,26 @@ export const InputsContainer = styled.div`
   display: flex;
   justify-content: center;
   gap: 10px;
+`;
+
+export const KeyInputWrapper = styled.div`
   & > input {
     height: 40px;
     border: 1px solid grey;
     border-radius: 4px;
+    min-width: 300px;
   }
 `;
+
+export const ValueInputWrapper = styled.div`
+  & > input {
+    height: 40px;
+    border: 1px solid grey;
+    border-radius: 4px;
+    min-width: 300px;
+  }
+`;
+
 export const DeleteButtonWrapper = styled.div`
   min-height: 32px;
   display: flex;

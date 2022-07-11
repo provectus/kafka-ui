@@ -175,7 +175,7 @@ describe('QueryForm', () => {
   });
 
   it('delete stream property', async () => {
-    renderComponent({
+    await renderComponent({
       fetching: false,
       hasResults: false,
       handleClearResults: jest.fn(),
@@ -187,7 +187,9 @@ describe('QueryForm', () => {
       userEvent.click(
         screen.getByRole('button', { name: 'Add Stream Property' })
       );
-      userEvent.click(screen.getByRole('button', { name: 'deleteProperty' }));
+    });
+    await act(() => {
+      userEvent.click(screen.getAllByLabelText('deleteProperty')[0]);
     });
     expect(screen.getAllByRole('textbox', { name: 'key' }).length).toEqual(1);
   });

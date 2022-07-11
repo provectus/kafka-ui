@@ -3,7 +3,7 @@ import React from 'react';
 import Query, {
   getFormattedErrorFromTableData,
 } from 'components/KsqlDb/Query/Query';
-import { fireEvent, screen } from '@testing-library/dom';
+import { screen } from '@testing-library/dom';
 import fetchMock from 'fetch-mock';
 import { clusterKsqlDbQueryPath } from 'lib/paths';
 import { act } from '@testing-library/react';
@@ -39,9 +39,10 @@ describe('Query', () => {
     Object.defineProperty(window, 'EventSource', {
       value: EventSourceMock,
     });
-
+    const inputs = screen.getAllByRole('textbox');
+    const textAreaElement = inputs[0] as HTMLTextAreaElement;
     await act(() => {
-      fireEvent.paste(screen.getByLabelText('KSQL'), 'show tables;');
+      userEvent.paste(textAreaElement, 'show tables;');
       userEvent.click(screen.getByRole('button', { name: 'Execute' }));
     });
 
@@ -58,12 +59,19 @@ describe('Query', () => {
     Object.defineProperty(window, 'EventSource', {
       value: EventSourceMock,
     });
-
     await act(() => {
-      fireEvent.paste(screen.getByLabelText('KSQL'), 'show tables;');
-      fireEvent.paste(screen.getByLabelText('Stream properties:'), 'test');
+      const inputs = screen.getAllByRole('textbox');
+      const textAreaElement = inputs[0] as HTMLTextAreaElement;
+      userEvent.paste(textAreaElement, 'show tables;');
+    });
+    await act(() => {
+      userEvent.paste(screen.getByLabelText('key'), 'key');
+      userEvent.paste(screen.getByLabelText('value'), 'value');
+    });
+    await act(() => {
       userEvent.click(screen.getByRole('button', { name: 'Execute' }));
     });
+
     expect(mock.calls().length).toBe(1);
   });
 });

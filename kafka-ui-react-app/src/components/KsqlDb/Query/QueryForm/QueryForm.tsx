@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FormError } from 'components/common/Input/Input.styled';
 import { ErrorMessage } from '@hookform/error-message';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { Button } from 'components/common/Button/Button';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
-import { assignIn } from 'lodash';
 import { yupResolver } from '@hookform/resolvers/yup';
 import yup from 'lib/yupExtended';
 
@@ -19,14 +18,22 @@ export interface Props {
   submitHandler: (values: FormValues) => void;
 }
 
+export type StreamsPropertiesType = {
+  key: string;
+  value: string;
+};
 export type FormValues = {
   ksql: string;
-  streamsProperties: string;
+  streamsProperties: StreamsPropertiesType[];
 };
 
+const streamsPropertiesSchema = yup.object().shape({
+  key: yup.string().trim(),
+  value: yup.string().trim(),
+});
 const validationSchema = yup.object({
-  ksql: yup.string().trim(),
-  streamsProperties: yup.string().trim(),
+  ksql: yup.string().trim().required(),
+  streamsProperties: yup.array().of(streamsPropertiesSchema),
 });
 
 const QueryForm: React.FC<Props> = ({
@@ -46,46 +53,16 @@ const QueryForm: React.FC<Props> = ({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       ksql: '',
-      streamsProperties: '',
+      streamsProperties: [{ key: '', value: '' }],
     },
   });
-
-  const [properties, setProperties] = useState([{ id: 0, key: '', value: '' }]);
-
-  const onAddProp = () => {
-    const id = properties[properties.length - 1].id + 1;
-    setProperties((p) => [...p, { id, key: '', value: '' }]);
-  };
-
-  const onDelProp = (i?: number) => {
-    setProperties((p) => [...p.filter((item) => item.id !== i)]);
-  };
-
-  const setStreamProperties = () => {
-    setValue(
-      'streamsProperties',
-      JSON.stringify(
-        properties.reduce((acc, cur) => {
-          assignIn(acc, { [cur.key]: cur.value });
-          return acc;
-        }, {})
-      )
-    );
-  };
-
-  const onKeyChange = (e: React.BaseSyntheticEvent, i: number) => {
-    const newArr = [...properties];
-    newArr[i].key = e.target.value;
-    setProperties(newArr);
-    setStreamProperties();
-  };
-
-  const onValueChange = (e: React.BaseSyntheticEvent, i: number) => {
-    const newArr = [...properties];
-    newArr[i].value = e.target.value;
-    setProperties(newArr);
-    setStreamProperties();
-  };
+  const { fields, append, remove } = useFieldArray<
+    FormValues,
+    'streamsProperties'
+  >({
+    control,
+    name: 'streamsProperties',
+  });
 
   return (
     <S.QueryWrapper>
@@ -133,53 +110,61 @@ const QueryForm: React.FC<Props> = ({
 
           <S.StreamPropertiesContainer>
             Stream properties:
-            {properties.map((prop, index) => (
-              <S.InputsContainer key={prop.id}>
-                <Controller
-                  control={control}
-                  name="streamsProperties"
-                  render={() => (
-                    <input
-                      onChange={(e) => onKeyChange(e, index)}
-                      placeholder="Key"
-                      aria-label="key"
-                      type="text"
-                      name="key"
+            {fields.map((item, index) => (
+              <S.InputsContainer key={item.id}>
+                <S.KeyInputWrapper>
+                  <Controller
+                    control={control}
+                    name={`streamsProperties.${index}.key`}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        placeholder="Key"
+                        aria-label="key"
+                        type="text"
+                      />
+                    )}
+                  />
+                  <FormError>
+                    <ErrorMessage
+                      errors={errors}
+                      name={`streamsProperties.${index}.key`}
                     />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="streamsProperties"
-                  render={() => (
-                    <input
-                      onChange={(e) => onValueChange(e, index)}
-                      placeholder="Value"
-                      aria-label="value"
-                      type="text"
-                      name="value"
+                  </FormError>
+                </S.KeyInputWrapper>
+                <S.ValueInputWrapper>
+                  <Controller
+                    control={control}
+                    name={`streamsProperties.${index}.value`}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        placeholder="Value"
+                        aria-label="value"
+                        type="text"
+                      />
+                    )}
+                  />
+                  <FormError>
+                    <ErrorMessage
+                      errors={errors}
+                      name={`streamsProperties.${index}.value`}
                     />
-                  )}
-                />
+                  </FormError>
+                </S.ValueInputWrapper>
 
-                <S.DeleteButtonWrapper
-                  key={prop.id}
-                  onClick={() => onDelProp(index)}
-                >
+                <S.DeleteButtonWrapper onClick={() => remove(index)}>
                   <IconButtonWrapper aria-label="deleteProperty">
                     <CloseIcon aria-hidden />
                   </IconButtonWrapper>
                 </S.DeleteButtonWrapper>
               </S.InputsContainer>
             ))}
-            <FormError>
-              <ErrorMessage errors={errors} name="streamsProperties" />
-            </FormError>
             <Button
               type="button"
               buttonSize="M"
               buttonType="secondary"
-              onClick={() => onAddProp()}
+              onClick={() => append({ key: '', value: '' })}
             >
               <i className="fas fa-plus" />
               Add Stream Property

@@ -17,6 +17,11 @@ import type { FormValues } from './QueryForm/QueryForm';
 import * as S from './Query.styled';
 import QueryForm from './QueryForm/QueryForm';
 
+interface StreamProps {
+  key?: string;
+  value?: string;
+}
+
 const AUTO_DISMISS_TIME = 8_000;
 
 export const getFormattedErrorFromTableData = (
@@ -198,15 +203,23 @@ const Query: FC = () => {
 
   const submitHandler = useCallback(
     (values: FormValues) => {
+      const streamsProperties = values.streamsProperties.reduce(
+        (acc, current) => ({
+          ...acc,
+          [current.key as keyof string]: current.value,
+        }),
+        {} as { [key: string]: string }
+      );
       setFetching(true);
       dispatch(
         executeKsql({
           clusterName,
           ksqlCommandV2: {
             ...values,
-            streamsProperties: values.streamsProperties
-              ? JSON.parse(values.streamsProperties)
-              : undefined,
+            streamsProperties:
+              values.streamsProperties[0].key !== ''
+                ? JSON.parse(JSON.stringify(streamsProperties))
+                : undefined,
           },
         })
       );
