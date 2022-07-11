@@ -14,7 +14,7 @@ import {
 
 const ConnectCompText = {
   new: 'NewContainer',
-  list: 'ListContainer',
+  list: 'ListPage',
   details: 'DetailsContainer',
   edit: 'EditContainer',
 };
@@ -22,7 +22,7 @@ const ConnectCompText = {
 jest.mock('components/Connect/New/NewContainer', () => () => (
   <div>{ConnectCompText.new}</div>
 ));
-jest.mock('components/Connect/List/ListContainer', () => () => (
+jest.mock('components/Connect/List/ListPage', () => () => (
   <div>{ConnectCompText.list}</div>
 ));
 jest.mock('components/Connect/Details/DetailsContainer', () => () => (

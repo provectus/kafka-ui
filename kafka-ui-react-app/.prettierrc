@@ -6,6 +6,5 @@
   "jsxSingleQuote": false,
   "bracketSpacing": true,
   "bracketSameLine": false,
-  "arrowParens": "always",
-  "parser": "babel-eslint"
+  "arrowParens": "always"
 }

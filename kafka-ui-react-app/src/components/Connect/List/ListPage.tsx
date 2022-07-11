@@ -7,10 +7,10 @@ import * as Metrics from 'components/common/Metrics';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
-import useConnectors from 'lib/hooks/api/kafkaConnect/useConnectors';
 import useSearch from 'lib/hooks/useSearch';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ConnectorState } from 'generated-sources';
+import { useConnectors } from 'lib/hooks/api/kafkaConnect';
 
 import List from './List';
 
@@ -19,14 +19,15 @@ const ListPage: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const [search, handleSearch] = useSearch();
 
-  const { data: connectorsMetrics, isFetching } = useConnectors(clusterName);
+  // Fetches all connectors from the API, without search criteria. Used to display general metrics.
+  const { data: connectorsMetrics, isLoading } = useConnectors(clusterName);
 
   const numberOfFailedConnectors = connectorsMetrics?.filter(
     ({ status: { state } }) => state === ConnectorState.FAILED
   ).length;
 
   const numberOfFailedTasks = connectorsMetrics?.reduce(
-    (acc, { failedTasksCount }) => acc + (failedTasksCount || 0),
+    (acc, metric) => acc + (metric.failedTasksCount ?? 0),
     0
   );
 
@@ -47,22 +48,22 @@ const ListPage: React.FC = () => {
         <Metrics.Section>
           <Metrics.Indicator
             label="Connectors"
-            title="Connectors"
-            fetching={isFetching}
+            title="Total number of connectors"
+            fetching={isLoading}
           >
             {connectorsMetrics?.length || '-'}
           </Metrics.Indicator>
           <Metrics.Indicator
             label="Failed Connectors"
-            title="Failed Connectors"
-            fetching={isFetching}
+            title="Number of failed connectors"
+            fetching={isLoading}
           >
             {numberOfFailedConnectors ?? '-'}
           </Metrics.Indicator>
           <Metrics.Indicator
             label="Failed Tasks"
-            title="Failed Tasks"
-            fetching={isFetching}
+            title="Number of failed tasks"
+            fetching={isLoading}
           >
             {numberOfFailedTasks ?? '-'}
           </Metrics.Indicator>

@@ -8,7 +8,11 @@ import { store } from 'redux/store';
 import 'theme/index.scss';
 import 'lib/constants';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { suspense: true },
+  },
+});
 
 const container =
   document.getElementById('root') || document.createElement('div');
