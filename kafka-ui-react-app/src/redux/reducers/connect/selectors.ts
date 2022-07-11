@@ -170,8 +170,3 @@ export const getConnectorConfig = createSelector(
   getCurrentConnector,
   ({ config }) => config
 );
-
-export const getConnectorSearch = createSelector(
-  connectState,
-  (state) => state.search
-);

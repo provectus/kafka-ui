@@ -396,13 +396,13 @@ const connectSlice = createSlice({
 
 export const { setConnectorStatusState } = connectSlice.actions;
 
-export const pauseCurrentConnector = () =>
+const pauseCurrentConnector = () =>
   setConnectorStatusState({
     connectorState: ConnectorState.PAUSED,
     taskState: ConnectorTaskStatus.PAUSED,
   });
 
-export const resumeCurrentConnector = () =>
+const resumeCurrentConnector = () =>
   setConnectorStatusState({
     connectorState: ConnectorState.RUNNING,
     taskState: ConnectorTaskStatus.RUNNING,
@@ -467,12 +467,5 @@ export const resumeConnector = createAsyncThunk<
     }
   }
 );
-
-export const setConnectorSearch = (connectorSearch: ConnectorSearch) => {
-  return fetchConnectors({
-    clusterName: connectorSearch.clusterName,
-    search: connectorSearch.search,
-  });
-};
 
 export default connectSlice.reducer;

@@ -22,17 +22,6 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   initialEntries?: MemoryRouterProps['initialEntries'];
 }
 
-export function getByTextContent(textMatch: string | RegExp): HTMLElement {
-  return screen.getByText((content, node) => {
-    const hasText = (nod: Element) => nod.textContent === textMatch;
-    const nodeHasText = hasText(node as Element);
-    const childrenDontHaveText = Array.from(node?.children || []).every(
-      (child) => !hasText(child)
-    );
-    return nodeHasText && childrenDontHaveText;
-  });
-}
-
 interface WithRouterProps {
   children: React.ReactNode;
   path: string;
