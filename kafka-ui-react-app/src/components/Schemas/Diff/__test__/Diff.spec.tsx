@@ -2,13 +2,13 @@ import React from 'react';
 import Diff, { DiffProps } from 'components/Schemas/Diff/Diff';
 import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
-import { clusterSchemaSchemaDiffPath } from 'lib/paths';
+import { clusterSchemaSchemaComparePath } from 'lib/paths';
 
 import { versions } from './fixtures';
 
 const defaultClusterName = 'defaultClusterName';
 const defaultSubject = 'defaultSubject';
-const defaultPathName = clusterSchemaSchemaDiffPath(
+const defaultPathName = clusterSchemaSchemaComparePath(
   defaultClusterName,
   defaultSubject
 );
@@ -30,7 +30,7 @@ describe('Diff', () => {
     pathname = `${pathname}?${searchParams.toString()}`;
 
     return render(
-      <WithRoute path={clusterSchemaSchemaDiffPath()}>
+      <WithRoute path={clusterSchemaSchemaComparePath()}>
         <Diff
           versions={props.versions}
           areVersionsFetched={props.areVersionsFetched}

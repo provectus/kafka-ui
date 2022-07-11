@@ -15,3 +15,9 @@ export const translateLogdir = (data: BrokersLogdirs): BrokerLogdirState => {
     partitions: partitionsCount,
   };
 };
+
+export const translateLogdirs = (
+  data: BrokersLogdirs[] | undefined
+): BrokerLogdirState[] => {
+  return data?.map(translateLogdir) || [];
+};

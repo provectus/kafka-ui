@@ -6,6 +6,7 @@ const clusterName = 'test-cluster-name';
 const groupId = 'test-group-id';
 const schemaId = 'test-schema-id';
 const topicId = 'test-topic-id';
+const brokerId = 'test-Broker-id';
 const connectName = 'test-connect-name';
 const connectorName = 'test-connector-name';
 
@@ -29,6 +30,23 @@ describe('Paths', () => {
     );
     expect(paths.clusterBrokersPath()).toEqual(
       paths.clusterBrokersPath(RouteParams.clusterName)
+    );
+
+    expect(paths.clusterBrokerPath(clusterName, brokerId)).toEqual(
+      `${paths.clusterPath(clusterName)}/brokers/${brokerId}`
+    );
+    expect(paths.clusterBrokerPath()).toEqual(
+      paths.clusterBrokerPath(RouteParams.clusterName, RouteParams.brokerId)
+    );
+
+    expect(paths.clusterBrokerMetricsPath(clusterName, brokerId)).toEqual(
+      `${paths.clusterPath(clusterName)}/brokers/${brokerId}/metrics`
+    );
+    expect(paths.clusterBrokerMetricsPath()).toEqual(
+      paths.clusterBrokerMetricsPath(
+        RouteParams.clusterName,
+        RouteParams.brokerId
+      )
     );
   });
   it('clusterConsumerGroupsPath', () => {

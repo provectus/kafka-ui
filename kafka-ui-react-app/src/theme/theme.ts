@@ -33,6 +33,7 @@ export const Colors = {
   brand: {
     '5': '#E8E8FC',
     '10': '#D1D1FA',
+    '15': '#B8BEF9',
     '20': '#A3A3F5',
     '50': '#4C4CFF',
     '60': '#1717CF',
@@ -54,6 +55,8 @@ export const Colors = {
     '20': '#bbdefb',
     '30': '#90caf9',
     '40': '#64b5f6',
+    '45': '#5865F2',
+    '50': '#5B67E3',
   },
 };
 
@@ -66,6 +69,9 @@ const theme = {
     stuffBorderColor: Colors.neutral[10],
     overlay: {
       backgroundColor: Colors.neutral[50],
+    },
+    socialLink: {
+      color: Colors.neutral[20],
     },
   },
   panelColor: Colors.neutral[0],
@@ -493,6 +499,14 @@ const theme = {
     closeModalIcon: Colors.neutral[25],
     savedIcon: Colors.brand[50],
     dropdownArrowIcon: Colors.neutral[30],
+    git: {
+      hover: Colors.neutral[70],
+      active: Colors.neutral[90],
+    },
+    discord: {
+      hover: Colors.brand[15],
+      active: Colors.blue[45],
+    },
   },
   viewer: {
     wrapper: Colors.neutral[3],

@@ -7,6 +7,17 @@ assignees: ''
 
 ---
 
+<!--
+
+Don't forget to check for existing issues/discussions regarding your proposal. We might already have it.
+https://github.com/provectus/kafka-ui/issues
+https://github.com/provectus/kafka-ui/discussions
+
+-->
+
+### Which version of the app are you running?
+<!-- Please provide docker image version or check commit hash in the top left corner in UI) -->
+
 ### Is your proposal related to a problem?
 
 <!--
