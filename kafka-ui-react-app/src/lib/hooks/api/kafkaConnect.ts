@@ -1,8 +1,14 @@
+import { NewConnector } from 'generated-sources';
 import { kafkaConnectApiClient } from 'lib/api';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 
-export interface UseConnectorProps {
+interface UseConnectorProps {
+  clusterName: ClusterName;
+  connectName: ConnectName;
+  connectorName: ConnectorName;
+}
+interface UseCreateConnectorProps {
   clusterName: ClusterName;
   connectName: ConnectName;
   connectorName: ConnectorName;
@@ -21,7 +27,9 @@ const connectorsKey = (clusterName: ClusterName, search?: string) => {
   return base;
 };
 const connectorKey = (props: UseConnectorProps) => [
-  ...connectorsKey(props.clusterName),
+  'clusters',
+  props.clusterName,
+  'connects',
   props.connectName,
   'connectors',
   props.connectorName,
@@ -42,10 +50,25 @@ export function useConnector(props: UseConnectorProps) {
     kafkaConnectApiClient.getConnector(props)
   );
 }
+export function useConnectorTasks(props: UseConnectorProps) {
+  return useQuery([...connectorKey(props), 'tasks'], () =>
+    kafkaConnectApiClient.getConnectorTasks(props)
+  );
+}
+export function useConnectorConfig(props: UseConnectorProps) {
+  return useQuery([...connectorKey(props), 'config'], () =>
+    kafkaConnectApiClient.getConnectorConfig(props)
+  );
+}
+export function useCreateConnector(props: UseCreateConnectorProps) {
+  const client = useQueryClient();
+  return useMutation(() => kafkaConnectApiClient.createConnector(props), {
+    onSuccess: () => client.invalidateQueries(connectorsKey(props.clusterName)),
+  });
+}
 export function useDeleteConnector(props: UseConnectorProps) {
-  const queryClient = useQueryClient();
+  const client = useQueryClient();
   return useMutation(() => kafkaConnectApiClient.deleteConnector(props), {
-    onSuccess: () =>
-      queryClient.invalidateQueries(connectorsKey(props.clusterName)),
+    onSuccess: () => client.invalidateQueries(connectorsKey(props.clusterName)),
   });
 }

@@ -14,8 +14,8 @@ import useAppParams from 'lib/hooks/useAppParams';
 
 import ListPage from './List/ListPage';
 import NewContainer from './New/NewContainer';
-import DetailsContainer from './Details/DetailsContainer';
 import EditContainer from './Edit/EditContainer';
+import DetailsPage from './Details/DetailsPage';
 
 const Connect: React.FC = () => {
   const { clusterName } = useAppParams();
@@ -50,7 +50,7 @@ const Connect: React.FC = () => {
         path={getNonExactPath(clusterConnectConnectorRelativePath)}
         element={
           <BreadcrumbRoute>
-            <DetailsContainer />
+            <DetailsPage />
           </BreadcrumbRoute>
         }
       />

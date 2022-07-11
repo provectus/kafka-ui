@@ -236,6 +236,7 @@ export const clusterConnectConnectorConfigPath = (
     connectName,
     connectorName
   )}/${clusterConnectConnectorConfigRelativePath}`;
+
 export type RouterParamsClusterConnectConnector = {
   clusterName: ClusterName;
   connectName: ConnectName;

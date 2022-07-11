@@ -1,21 +1,34 @@
 import React from 'react';
-import { Connector } from 'generated-sources';
 import * as C from 'components/common/Tag/Tag.styled';
 import * as Metrics from 'components/common/Metrics';
 import getTagColor from 'components/common/Tag/getTagColor';
+import { RouterParamsClusterConnectConnector } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
+import { useConnector, useConnectorTasks } from 'lib/hooks/api/kafkaConnect';
+import { ConnectorTaskStatus } from 'generated-sources';
 
-export interface OverviewProps {
-  connector: Connector | null;
-  runningTasksCount: number;
-  failedTasksCount: number;
-}
+const Overview: React.FC = () => {
+  const routerProps = useAppParams<RouterParamsClusterConnectConnector>();
 
-const Overview: React.FC<OverviewProps> = ({
-  connector,
-  runningTasksCount,
-  failedTasksCount,
-}) => {
-  if (!connector) return null;
+  const { data: connector } = useConnector(routerProps);
+  const { data: tasks } = useConnectorTasks(routerProps);
+
+  if (!connector) {
+    return null;
+  }
+
+  const { running, failed } = tasks?.reduce(
+    (acc, { status }) => {
+      if (status?.state === ConnectorTaskStatus.RUNNING) {
+        return { ...acc, running: acc.running + 1 };
+      }
+      if (status?.state === ConnectorTaskStatus.FAILED) {
+        return { ...acc, failed: acc.failed + 1 };
+      }
+      return acc;
+    },
+    { running: 0, failed: 0 }
+  ) || { running: 0, failed: 0 };
 
   return (
     <Metrics.Wrapper>
@@ -36,15 +49,13 @@ const Overview: React.FC<OverviewProps> = ({
             {connector.status.state}
           </C.Tag>
         </Metrics.Indicator>
-        <Metrics.Indicator label="Tasks Running">
-          {runningTasksCount}
-        </Metrics.Indicator>
+        <Metrics.Indicator label="Tasks Running">{running}</Metrics.Indicator>
         <Metrics.Indicator
           label="Tasks Failed"
           isAlert
-          alertType={failedTasksCount > 0 ? 'error' : 'success'}
+          alertType={failed > 0 ? 'error' : 'success'}
         >
-          {failedTasksCount}
+          {failed}
         </Metrics.Indicator>
       </Metrics.Section>
     </Metrics.Wrapper>

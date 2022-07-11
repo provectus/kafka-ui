@@ -1,8 +1,6 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { NavLink, Route, Routes } from 'react-router-dom';
 import useAppParams from 'lib/hooks/useAppParams';
-import { Connector, Task } from 'generated-sources';
-import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
   clusterConnectConnectorConfigPath,
   clusterConnectConnectorConfigRelativePath,
@@ -11,55 +9,18 @@ import {
   clusterConnectConnectorTasksRelativePath,
   RouterParamsClusterConnectConnector,
 } from 'lib/paths';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 
-import OverviewContainer from './Overview/OverviewContainer';
+import Overview from './Overview/Overview';
 import TasksContainer from './Tasks/TasksContainer';
 import ConfigContainer from './Config/ConfigContainer';
 import ActionsContainer from './Actions/ActionsContainer';
 
-export interface DetailsProps {
-  fetchConnector(payload: {
-    clusterName: ClusterName;
-    connectName: ConnectName;
-    connectorName: ConnectorName;
-  }): void;
-  fetchTasks(payload: {
-    clusterName: ClusterName;
-    connectName: ConnectName;
-    connectorName: ConnectorName;
-  }): void;
-  isConnectorFetching: boolean;
-  areTasksFetching: boolean;
-  connector: Connector | null;
-  tasks: Task[];
-}
-
-const Details: React.FC<DetailsProps> = ({
-  fetchConnector,
-  fetchTasks,
-  isConnectorFetching,
-  areTasksFetching,
-  connector,
-}) => {
+const DetailsPage: React.FC = () => {
   const { clusterName, connectName, connectorName } =
     useAppParams<RouterParamsClusterConnectConnector>();
-
-  React.useEffect(() => {
-    fetchConnector({ clusterName, connectName, connectorName });
-  }, [fetchConnector, clusterName, connectName, connectorName]);
-
-  React.useEffect(() => {
-    fetchTasks({ clusterName, connectName, connectorName });
-  }, [fetchTasks, clusterName, connectName, connectorName]);
-
-  if (isConnectorFetching || areTasksFetching) {
-    return <PageLoader />;
-  }
-
-  if (!connector) return null;
 
   return (
     <div>
@@ -99,19 +60,21 @@ const Details: React.FC<DetailsProps> = ({
           Config
         </NavLink>
       </Navbar>
-      <Routes>
-        <Route index element={<OverviewContainer />} />
-        <Route
-          path={clusterConnectConnectorTasksRelativePath}
-          element={<TasksContainer />}
-        />
-        <Route
-          path={clusterConnectConnectorConfigRelativePath}
-          element={<ConfigContainer />}
-        />
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route index element={<Overview />} />
+          <Route
+            path={clusterConnectConnectorTasksRelativePath}
+            element={<TasksContainer />}
+          />
+          <Route
+            path={clusterConnectConnectorConfigRelativePath}
+            element={<ConfigContainer />}
+          />
+        </Routes>
+      </Suspense>
     </div>
   );
 };
 
-export default Details;
+export default DetailsPage;

@@ -14,8 +14,8 @@ import {
 
 const ConnectCompText = {
   new: 'NewContainer',
-  list: 'ListPage',
-  details: 'DetailsContainer',
+  list: 'List Page',
+  details: 'Details Page',
   edit: 'EditContainer',
 };
 
@@ -25,7 +25,7 @@ jest.mock('components/Connect/New/NewContainer', () => () => (
 jest.mock('components/Connect/List/ListPage', () => () => (
   <div>{ConnectCompText.list}</div>
 ));
-jest.mock('components/Connect/Details/DetailsContainer', () => () => (
+jest.mock('components/Connect/Details/DetailsPage', () => () => (
   <div>{ConnectCompText.details}</div>
 ));
 jest.mock('components/Connect/Edit/EditContainer', () => () => (
@@ -41,7 +41,7 @@ describe('Connect', () => {
       { initialEntries: [pathname], store }
     );
 
-  it('renders ListContainer', () => {
+  it('renders ListPage', () => {
     renderComponent(
       clusterConnectorsPath('my-cluster'),
       clusterConnectorsPath()
@@ -57,7 +57,7 @@ describe('Connect', () => {
     expect(screen.getByText(ConnectCompText.new)).toBeInTheDocument();
   });
 
-  it('renders DetailsContainer', () => {
+  it('renders Details Page', () => {
     renderComponent(
       clusterConnectConnectorPath('my-cluster', 'my-connect', 'my-connector'),
       clusterConnectsPath()
