@@ -15,7 +15,7 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 
 import Overview from './Overview/Overview';
 import TasksContainer from './Tasks/TasksContainer';
-import ConfigContainer from './Config/ConfigContainer';
+import Config from './Config/Config';
 import ActionsContainer from './Actions/ActionsContainer';
 
 const DetailsPage: React.FC = () => {
@@ -69,7 +69,7 @@ const DetailsPage: React.FC = () => {
           />
           <Route
             path={clusterConnectConnectorConfigRelativePath}
-            element={<ConfigContainer />}
+            element={<Config />}
           />
         </Routes>
       </Suspense>

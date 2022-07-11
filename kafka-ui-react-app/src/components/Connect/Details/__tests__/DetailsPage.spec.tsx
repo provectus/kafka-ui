@@ -6,8 +6,8 @@ import {
   clusterConnectConnectorTasksPath,
   getNonExactPath,
 } from 'lib/paths';
-import { connector, tasks } from 'redux/reducers/connect/__test__/fixtures';
 import { screen } from '@testing-library/dom';
+
 import DetailsPage from '../DetailsPage';
 
 const DetailsCompText = {
@@ -25,7 +25,7 @@ jest.mock('components/Connect/Details/Tasks/TasksContainer', () => () => (
   <div>{DetailsCompText.tasks}</div>
 ));
 
-jest.mock('components/Connect/Details/Config/ConfigContainer', () => () => (
+jest.mock('components/Connect/Details/Config/Config', () => () => (
   <div>{DetailsCompText.config}</div>
 ));
 
