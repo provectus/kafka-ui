@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.topic.TopicView;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qameta.allure.Issue;
+import io.qase.api.annotation.CaseId;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
@@ -43,6 +44,7 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should create a topic")
     @Suite(suiteId = 4, title = "Create new Topic")
+    @CaseId(199)
     @Test
     public void createTopic() {
         pages.open()
@@ -65,6 +67,7 @@ public class TopicTests extends BaseTest {
     @DisplayName("should update a topic")
     @Issue("1500")
     @Suite(suiteId = 2, title = "Topics")
+    @CaseId(197)
     @Test
     public void updateTopic() {
         pages.openTopicsList(SECOND_LOCAL)
@@ -94,6 +97,7 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete topic")
     @Suite(suiteId = 2, title = "Topics")
+    @CaseId(207)
     @Test
     public void deleteTopic() {
         pages.openTopicsList(SECOND_LOCAL)
@@ -108,6 +112,7 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("produce message")
     @Suite(suiteId = 2, title = "Topics")
+    @CaseId(221)
     @Test
     void produceMessage() {
         pages.openTopicsList(SECOND_LOCAL)

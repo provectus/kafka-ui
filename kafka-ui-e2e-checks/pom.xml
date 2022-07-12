@@ -242,11 +242,6 @@
             <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
-            <dependency>
-                <groupId>io.qase</groupId>
-                <artifactId>qase-junit5</artifactId>
-                <version>${qase.io.version}</version>
-            </dependency>
         <dependency>
             <groupId>io.qase</groupId>
             <artifactId>qase-api</artifactId>

@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.extensions;
 
-import com.provectus.kafka.ui.utils.qaseIO.MethodNameUtils;
 import com.provectus.kafka.ui.utils.qaseIO.TestCaseGenerator;
 import io.qase.api.QaseClient;
 import io.qase.api.StepStorage;
@@ -12,7 +11,6 @@ import io.qase.client.model.ResultCreate.StatusEnum;
 import io.qase.client.model.ResultCreateSteps;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.support.descriptor.MethodSource;
@@ -29,6 +27,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static io.qase.api.QaseClient.getConfig;
+import static io.qase.api.utils.IntegrationUtils.getCaseId;
 import static io.qase.api.utils.IntegrationUtils.getStacktrace;
 import static org.junit.platform.engine.TestExecutionResult.Status.SUCCESSFUL;
 
@@ -62,50 +61,53 @@ public class QaseExtension implements TestExecutionListener{
 
     @Override
     public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
-        if (!QaseClient.isEnabled() || !testIdentifier.isTest()
-                || !startTime.containsKey(testIdentifier)) {
-            return;
-        }
-        Duration duration = Duration.ofMillis(System.currentTimeMillis() - this.startTime.remove(testIdentifier));
         TestSource testSource = testIdentifier.getSource().orElse(null);
         Method testMethod = null;
         if (testSource instanceof MethodSource) {
             testMethod = getMethod((MethodSource) testSource);
         }
+        if (!testIdentifier.isTest() || !QaseClient.isEnabled()
+                || !startTime.containsKey(testIdentifier)) {
+            if (testIdentifier.isTest()) {
+                TestCaseGenerator.createTestCaseIfNotExists(testMethod);
+            }
+            return;
+        }
+        Duration duration = Duration.ofMillis(System.currentTimeMillis() - this.startTime.remove(testIdentifier));
         sendResults(testExecutionResult, duration, testMethod);
     }
 
     private void sendResults(TestExecutionResult testExecutionResult, Duration timeSpent, Method testMethod) {
         if (testMethod != null) {
             ResultCreate resultCreate = getResultItem(testExecutionResult, timeSpent, testMethod);
-
             try {
                 resultsApi.createResult(getConfig().projectCode(),
                         getConfig().runId(),
                         resultCreate);
-                log.info("Results added to test run with Id = {}", getConfig().runId());
+                log.info("Method = " + testMethod.getName() + ": Result added to test run with Id = {}", getConfig().runId());
             } catch (QaseException e) {
-                log.error("Results not added: ", e);
+                log.error("Method = " + testMethod.getName() +": Result not added to test Run because there is no @CaseId annotation or case not found", e);
             }
         }
     }
 
     @SneakyThrows
     private ResultCreate getResultItem(TestExecutionResult testExecutionResult, Duration timeSpent, Method testMethod) {
-        String testCaseTitle = TestCaseGenerator.getClassName(MethodSource.from(testMethod)) + "." + testMethod.getName() + " : " +
-                MethodNameUtils.formatTestCaseTitle(testMethod.getName());
+        String testCaseTitle = TestCaseGenerator.generateTestCaseTitle(testMethod);
         TestCaseGenerator.createTestCaseIfNotExists(testMethod);
+        Long caseId = getCaseId(testMethod);
         Map<Long, String> cases = TestCaseGenerator.getTestCasesTitleAndId();
 
-        long caseId = 0;
-        for (Map.Entry<Long, String> map : cases.entrySet()) {
-            if (map.getValue().matches(testCaseTitle)) {
-                caseId = map.getKey();
-                log.info("Test case '" + MethodNameUtils.formatTestCaseTitle(testMethod.getName()) + "' with id = " + caseId +
-                        " will be added to Test Run with id = " + getConfig().runId());
+        if (caseId == null || !TestCaseGenerator.isCaseIdPresentInQaseIo(testMethod)) {
+            for (Map.Entry<Long, String> map : cases.entrySet()) {
+                if (map.getValue().matches(testCaseTitle)) {
+                    caseId = map.getKey();
+                    log.info("There is no annotation @CaseId but there is test case with title '" + testCaseTitle + "' and with id = " + caseId
+                    + " that will be added to test Run");
+                }
             }
         }
-        Assert.assertTrue(caseId != 0);
+
         StatusEnum status =
                 testExecutionResult.getStatus() == SUCCESSFUL ? StatusEnum.PASSED : StatusEnum.FAILED;
         String comment = testExecutionResult.getThrowable()

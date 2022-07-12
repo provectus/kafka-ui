@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.schema.SchemaCreateView;
+import io.qase.api.annotation.CaseId;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
@@ -55,6 +56,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should create AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @CaseId(43)
     @Test
     @Order(1)
     void createSchemaAvro() {
@@ -74,6 +76,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should update AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @CaseId(186)
     @Test
     @Order(2)
     void updateSchemaAvro() {
@@ -92,6 +95,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @CaseId(187)
     @Test
     @Order(3)
     void deleteSchemaAvro() {
@@ -106,6 +110,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should create JSON schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @CaseId(89)
     @Test
     @Order(4)
     void createSchemaJson() {
@@ -125,6 +130,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete JSON schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @CaseId(189)
     @Test
     @Order(5)
     void deleteSchemaJson() {
@@ -139,6 +145,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should create PROTOBUF schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @CaseId(91)
     @Test
     @Order(6)
     void createSchemaProtobuf() {
@@ -158,6 +165,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete PROTOBUF schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @CaseId(214)
     @Test
     @Order(7)
     void deleteSchemaProtobuf() {

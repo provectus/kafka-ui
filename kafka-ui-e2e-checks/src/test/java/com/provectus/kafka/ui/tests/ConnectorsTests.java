@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.extensions.FileUtils;
 import com.provectus.kafka.ui.helpers.ApiHelper;
 import com.provectus.kafka.ui.helpers.Helpers;
+import io.qase.api.annotation.CaseId;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -62,6 +63,7 @@ public class ConnectorsTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should create a connector")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @CaseId(42)
     @Test
     public void createConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
@@ -79,6 +81,7 @@ public class ConnectorsTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should update a connector")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @CaseId(196)
     @Test
     public void updateConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
@@ -94,6 +97,7 @@ public class ConnectorsTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete connector")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @CaseId(195)
     @Test
     public void deleteConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
