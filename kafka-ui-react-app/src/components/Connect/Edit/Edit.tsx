@@ -5,19 +5,16 @@ import { Controller, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  ClusterName,
-  ConnectName,
-  ConnectorConfig,
-  ConnectorName,
-} from 'redux/interfaces';
-import {
   clusterConnectConnectorConfigPath,
   RouterParamsClusterConnectConnector,
 } from 'lib/paths';
 import yup from 'lib/yupExtended';
 import Editor from 'components/common/Editor/Editor';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 import { Button } from 'components/common/Button/Button';
+import {
+  useConnectorConfig,
+  useUpdateConnectorConfig,
+} from 'lib/hooks/api/kafkaConnect';
 
 import {
   ConnectEditWarningMessageStyled,
@@ -32,31 +29,12 @@ interface FormValues {
   config: string;
 }
 
-export interface EditProps {
-  fetchConfig(payload: {
-    clusterName: ClusterName;
-    connectName: ConnectName;
-    connectorName: ConnectorName;
-  }): Promise<unknown>;
-  isConfigFetching: boolean;
-  config: ConnectorConfig | null;
-  updateConfig(payload: {
-    clusterName: ClusterName;
-    connectName: ConnectName;
-    connectorName: ConnectorName;
-    connectorConfig: ConnectorConfig;
-  }): Promise<unknown>;
-}
-
-const Edit: React.FC<EditProps> = ({
-  fetchConfig,
-  isConfigFetching,
-  config,
-  updateConfig,
-}) => {
-  const { clusterName, connectName, connectorName } =
-    useAppParams<RouterParamsClusterConnectConnector>();
+const Edit: React.FC = () => {
+  const routerParams = useAppParams<RouterParamsClusterConnectConnector>();
   const navigate = useNavigate();
+  const { data: config } = useConnectorConfig(routerParams);
+  const mutation = useUpdateConnectorConfig(routerParams);
+
   const {
     handleSubmit,
     control,
@@ -71,34 +49,25 @@ const Edit: React.FC<EditProps> = ({
   });
 
   React.useEffect(() => {
-    fetchConfig({ clusterName, connectName, connectorName });
-  }, [fetchConfig, clusterName, connectName, connectorName]);
-
-  React.useEffect(() => {
     if (config) {
       setValue('config', JSON.stringify(config, null, '\t'));
     }
   }, [config, setValue]);
 
   const onSubmit = async (values: FormValues) => {
-    const connector = await updateConfig({
-      clusterName,
-      connectName,
-      connectorName,
-      connectorConfig: JSON.parse(values.config.trim()),
-    });
+    const requestBody = JSON.parse(values.config.trim());
+    const connector = await mutation.mutateAsync(requestBody);
+
     if (connector) {
       navigate(
         clusterConnectConnectorConfigPath(
-          clusterName,
-          connectName,
-          connectorName
+          routerParams.clusterName,
+          routerParams.connectName,
+          routerParams.connectorName
         )
       );
     }
   };
-
-  if (isConfigFetching) return <PageLoader />;
 
   const hasCredentials = JSON.stringify(config, null, '\t').includes(
     '"******"'

@@ -4,7 +4,6 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ConnectName } from 'redux/interfaces';
 import { clusterConnectConnectorPath, ClusterNameRoute } from 'lib/paths';
 import yup from 'lib/yupExtended';
 import Editor from 'components/common/Editor/Editor';
@@ -16,6 +15,7 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 import Heading from 'components/common/heading/Heading.styled';
 import { useConnects, useCreateConnector } from 'lib/hooks/api/kafkaConnect';
 import get from 'lodash/get';
+import { Connect } from 'generated-sources';
 
 import * as S from './New.styled';
 
@@ -25,7 +25,7 @@ const validationSchema = yup.object().shape({
 });
 
 interface FormValues {
-  connectName: ConnectName;
+  connectName: Connect['name'];
   name: string;
   config: string;
 }

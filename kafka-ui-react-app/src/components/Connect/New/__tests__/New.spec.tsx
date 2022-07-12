@@ -11,7 +11,6 @@ import userEvent from '@testing-library/user-event';
 import { ControllerRenderProps } from 'react-hook-form';
 import { useConnects, useCreateConnector } from 'lib/hooks/api/kafkaConnect';
 
-jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 jest.mock(
   'components/common/Editor/Editor',
   () => (props: ControllerRenderProps) => {

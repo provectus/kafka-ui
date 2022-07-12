@@ -14,7 +14,7 @@ import useAppParams from 'lib/hooks/useAppParams';
 
 import ListPage from './List/ListPage';
 import New from './New/New';
-import EditContainer from './Edit/EditContainer';
+import Edit from './Edit/Edit';
 import DetailsPage from './Details/DetailsPage';
 
 const Connect: React.FC = () => {
@@ -42,7 +42,7 @@ const Connect: React.FC = () => {
         path={clusterConnectConnectorEditRelativePath}
         element={
           <BreadcrumbRoute>
-            <EditContainer />
+            <Edit />
           </BreadcrumbRoute>
         }
       />

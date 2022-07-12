@@ -6,13 +6,6 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 
-const mockDeleteConnector = jest.fn(() => ({ type: 'test' }));
-
-jest.mock('redux/reducers/connect/connectSlice', () => ({
-  ...jest.requireActual('redux/reducers/connect/connectSlice'),
-  deleteConnector: () => mockDeleteConnector,
-}));
-
 jest.mock(
   'components/common/ConfirmationModal/ConfirmationModal',
   () => 'mock-ConfirmationModal'

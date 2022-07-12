@@ -1,16 +1,21 @@
-import { ConnectorAction, NewConnector } from 'generated-sources';
+import {
+  Connect,
+  Connector,
+  ConnectorAction,
+  NewConnector,
+} from 'generated-sources';
 import { kafkaConnectApiClient as api } from 'lib/api';
 import sortBy from 'lodash/sortBy';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
+import { ClusterName } from 'redux/interfaces';
 
 interface UseConnectorProps {
   clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
+  connectName: Connect['name'];
+  connectorName: Connector['name'];
 }
 interface CreateConnectorProps {
-  connectName: ConnectName;
+  connectName: Connect['name'];
   newConnector: NewConnector;
 }
 
@@ -37,6 +42,10 @@ const connectorKey = (props: UseConnectorProps) => [
 const connectorTasksKey = (props: UseConnectorProps) => [
   ...connectorKey(props),
   'tasks',
+];
+const connectorConfigKey = (props: UseConnectorProps) => [
+  ...connectorKey(props),
+  'config',
 ];
 
 export function useConnects(clusterName: ClusterName) {
@@ -86,6 +95,19 @@ export function useRestartConnectorTask(props: UseConnectorProps) {
 export function useConnectorConfig(props: UseConnectorProps) {
   return useQuery([...connectorKey(props), 'config'], () =>
     api.getConnectorConfig(props)
+  );
+}
+export function useUpdateConnectorConfig(props: UseConnectorProps) {
+  const client = useQueryClient();
+  return useMutation(
+    (requestBody: Connector['config']) =>
+      api.setConnectorConfig({ ...props, requestBody }),
+    {
+      onSuccess: () => {
+        client.invalidateQueries(connectorKey(props));
+        client.invalidateQueries(connectorConfigKey(props));
+      },
+    }
   );
 }
 export function useCreateConnector(clusterName: ClusterName) {

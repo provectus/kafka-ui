@@ -16,7 +16,7 @@ const ConnectCompText = {
   new: 'New Page',
   list: 'List Page',
   details: 'Details Page',
-  edit: 'EditContainer',
+  edit: 'Edit Page',
 };
 
 jest.mock('components/Connect/New/New', () => () => (
@@ -28,7 +28,7 @@ jest.mock('components/Connect/List/ListPage', () => () => (
 jest.mock('components/Connect/Details/DetailsPage', () => () => (
   <div>{ConnectCompText.details}</div>
 ));
-jest.mock('components/Connect/Edit/EditContainer', () => () => (
+jest.mock('components/Connect/Edit/Edit', () => () => (
   <div>{ConnectCompText.edit}</div>
 ));
 

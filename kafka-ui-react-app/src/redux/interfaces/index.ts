@@ -8,7 +8,6 @@ export * from './consumerGroup';
 export * from './schema';
 export * from './loader';
 export * from './alerts';
-export * from './connect';
 
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;
