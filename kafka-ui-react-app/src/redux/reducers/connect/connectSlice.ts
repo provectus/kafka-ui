@@ -17,7 +17,6 @@ import {
   ConnectName,
   ConnectorConfig,
   ConnectorName,
-  ConnectorSearch,
   ConnectState,
 } from 'redux/interfaces';
 import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';

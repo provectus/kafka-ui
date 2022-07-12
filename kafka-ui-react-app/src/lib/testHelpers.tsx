@@ -8,7 +8,7 @@ import {
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { render, RenderOptions, screen } from '@testing-library/react';
+import { render, RenderOptions } from '@testing-library/react';
 import { AnyAction, Store } from 'redux';
 import { RootState } from 'redux/interfaces';
 import { configureStore } from '@reduxjs/toolkit';

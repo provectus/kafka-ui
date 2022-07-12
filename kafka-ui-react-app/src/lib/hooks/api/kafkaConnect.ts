@@ -1,4 +1,4 @@
-import { NewConnector } from 'generated-sources';
+import { ConnectorAction, NewConnector } from 'generated-sources';
 import { kafkaConnectApiClient as api } from 'lib/api';
 import sortBy from 'lodash/sortBy';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -63,6 +63,15 @@ export function useConnectorTasks(props: UseConnectorProps) {
     () => api.getConnectorTasks(props),
     {
       select: (data) => sortBy(data, 'status.id'),
+    }
+  );
+}
+export function useUpdateConnectorState(props: UseConnectorProps) {
+  const client = useQueryClient();
+  return useMutation(
+    (action: ConnectorAction) => api.updateConnectorState({ ...props, action }),
+    {
+      onSuccess: () => client.invalidateQueries(connectorKey(props)),
     }
   );
 }

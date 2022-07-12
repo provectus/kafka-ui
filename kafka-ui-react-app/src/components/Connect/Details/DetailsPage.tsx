@@ -16,7 +16,7 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import Overview from './Overview/Overview';
 import Tasks from './Tasks/Tasks';
 import Config from './Config/Config';
-import ActionsContainer from './Actions/ActionsContainer';
+import Actions from './Actions/Actions';
 
 const DetailsPage: React.FC = () => {
   const { clusterName, connectName, connectorName } =
@@ -25,7 +25,7 @@ const DetailsPage: React.FC = () => {
   return (
     <div>
       <PageHeading text={connectorName}>
-        <ActionsContainer />
+        <Actions />
       </PageHeading>
       <Navbar role="navigation">
         <NavLink
