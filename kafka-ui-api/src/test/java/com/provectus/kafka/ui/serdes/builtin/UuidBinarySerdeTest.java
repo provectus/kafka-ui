@@ -33,7 +33,7 @@ class UuidBinarySerdeTest {
 
     @ParameterizedTest
     @EnumSource
-    void serializerUses16bitUuidBinaryRepresentation(Serde.Target type) {
+    void serializerUses16bytesUuidBinaryRepresentation(Serde.Target type) {
       var serializer = serde.serializer("anyTopic", type);
       var uuid = UUID.randomUUID();
       byte[] bytes = serializer.serialize(uuid.toString());
@@ -44,7 +44,7 @@ class UuidBinarySerdeTest {
 
     @ParameterizedTest
     @EnumSource
-    void deserializerUses16bitUuidBinaryRepresentation(Serde.Target type) {
+    void deserializerUses16bytesUuidBinaryRepresentation(Serde.Target type) {
       var uuid = UUID.randomUUID();
       var bb = ByteBuffer.allocate(16);
       bb.putLong(uuid.getMostSignificantBits());
@@ -74,7 +74,7 @@ class UuidBinarySerdeTest {
 
     @ParameterizedTest
     @EnumSource
-    void serializerUses16bitUuidBinaryRepresentation(Serde.Target type) {
+    void serializerUses16bytesUuidBinaryRepresentation(Serde.Target type) {
       var serializer = serde.serializer("anyTopic", type);
       var uuid = UUID.randomUUID();
       byte[] bytes = serializer.serialize(uuid.toString());
@@ -85,7 +85,7 @@ class UuidBinarySerdeTest {
 
     @ParameterizedTest
     @EnumSource
-    void deserializerUses16bitUuidBinaryRepresentation(Serde.Target type) {
+    void deserializerUses16bytesUuidBinaryRepresentation(Serde.Target type) {
       var uuid = UUID.randomUUID();
       var bb = ByteBuffer.allocate(16);
       bb.putLong(uuid.getLeastSignificantBits());
