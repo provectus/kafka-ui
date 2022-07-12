@@ -112,7 +112,7 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("produce message")
     @Suite(suiteId = 2, title = "Topics")
-    @CaseId(221)
+    @CaseId(222)
     @Test
     void produceMessage() {
         pages.openTopicsList(SECOND_LOCAL)

@@ -38,7 +38,7 @@ public class TestCaseGenerator{
                     long suiteId = testMethod.getAnnotation(Suite.class).suiteId();
                     caseCreate.suiteId(suiteId);
                 }
-                long caseId = casesApi.createCase(getConfig().projectCode(), caseCreate).getResult().getId();
+                Long caseId = Objects.requireNonNull(casesApi.createCase(getConfig().projectCode(), caseCreate).getResult()).getId();
                 log.info("New test case = '" + testCaseTitle + "' created with id " + caseId);
             }
         }
