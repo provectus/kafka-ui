@@ -68,7 +68,7 @@
     "tsc": "tsc --pretty --noEmit",
     "prepare": "cd .. && husky install kafka-ui-react-app/.husky",
     "pre-commit": "pnpm tsc && lint-staged",
-    "deadcode": "ts-prune"
+    "deadcode": "ts-prune -i src/generated-sources"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -8,7 +8,6 @@ import {
   FullConnectorInfo,
   NewConnector,
   Task,
-  TaskId,
 } from 'generated-sources';
 import { kafkaConnectApiClient } from 'lib/api';
 import { getResponse } from 'lib/errorHandling';
@@ -190,87 +189,6 @@ export const restartConnector = createAsyncThunk<
   }
 );
 
-export const restartTasks = createAsyncThunk<
-  undefined,
-  {
-    clusterName: ClusterName;
-    connectName: ConnectName;
-    connectorName: ConnectorName;
-    action: ConnectorAction;
-  }
->(
-  'connect/restartTasks',
-  async (
-    { clusterName, connectName, connectorName, action },
-    { rejectWithValue, dispatch }
-  ) => {
-    try {
-      await kafkaConnectApiClient.updateConnectorState({
-        clusterName,
-        connectName,
-        connectorName,
-        action,
-      });
-
-      dispatch(
-        fetchConnectorTasks({
-          clusterName,
-          connectName,
-          connectorName,
-        })
-      );
-
-      return undefined;
-    } catch (err) {
-      return rejectWithValue(await getResponse(err as Response));
-    }
-  }
-);
-
-export const restartConnectorTask = createAsyncThunk<
-  undefined,
-  {
-    clusterName: ClusterName;
-    connectName: ConnectName;
-    connectorName: ConnectorName;
-    taskId: TaskId['task'];
-  }
->(
-  'connect/restartConnectorTask',
-  async (
-    { clusterName, connectName, connectorName, taskId },
-    { rejectWithValue, dispatch }
-  ) => {
-    try {
-      await kafkaConnectApiClient.restartConnectorTask({
-        clusterName,
-        connectName,
-        connectorName,
-        taskId: Number(taskId),
-      });
-
-      await dispatch(
-        fetchConnectorTasks({
-          clusterName,
-          connectName,
-          connectorName,
-        })
-      );
-
-      dispatch(
-        showSuccessAlert({
-          id: `connect-${connectName}-${clusterName}`,
-          message: 'Tasks successfully restarted.',
-        })
-      );
-
-      return undefined;
-    } catch (err) {
-      return rejectWithValue(await getResponse(err as Response));
-    }
-  }
-);
-
 export const fetchConnectorConfig = createAsyncThunk<
   { config: { [key: string]: unknown } },
   {
@@ -331,7 +249,7 @@ export const updateConnectorConfig = createAsyncThunk<
   }
 );
 
-export const initialState: ConnectState = {
+const initialState: ConnectState = {
   connects: [],
   connectors: [],
   currentConnector: {
@@ -393,7 +311,7 @@ const connectSlice = createSlice({
   },
 });
 
-export const { setConnectorStatusState } = connectSlice.actions;
+const { setConnectorStatusState } = connectSlice.actions;
 
 const pauseCurrentConnector = () =>
   setConnectorStatusState({
