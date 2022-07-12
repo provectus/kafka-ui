@@ -12,7 +12,7 @@ import java.util.UUID;
 import org.apache.kafka.common.header.Headers;
 
 
-public class UuidBinary implements BuiltInSerde {
+public class UuidBinarySerde implements BuiltInSerde {
 
   public static String name() {
     return "UUIDBinary";

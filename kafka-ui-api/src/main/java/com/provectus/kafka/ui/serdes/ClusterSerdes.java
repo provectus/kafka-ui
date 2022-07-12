@@ -12,7 +12,7 @@ import com.provectus.kafka.ui.serdes.builtin.ProtobufFileSerde;
 import com.provectus.kafka.ui.serdes.builtin.StringSerde;
 import com.provectus.kafka.ui.serdes.builtin.UInt32Serde;
 import com.provectus.kafka.ui.serdes.builtin.UInt64Serde;
-import com.provectus.kafka.ui.serdes.builtin.UuidBinary;
+import com.provectus.kafka.ui.serdes.builtin.UuidBinarySerde;
 import com.provectus.kafka.ui.serdes.builtin.sr.SchemaRegistrySerde;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -37,7 +37,7 @@ public class ClusterSerdes {
           Int64Serde.name(), Int64Serde.class,
           UInt32Serde.name(), UInt32Serde.class,
           UInt64Serde.name(), UInt64Serde.class,
-          UuidBinary.name(), UuidBinary.class,
+          UuidBinarySerde.name(), UuidBinarySerde.class,
           Base64Serde.name(), Base64Serde.class,
           SchemaRegistrySerde.name(), SchemaRegistrySerde.class,
           ProtobufFileSerde.name(), ProtobufFileSerde.class
