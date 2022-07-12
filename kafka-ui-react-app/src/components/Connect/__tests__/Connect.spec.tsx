@@ -13,13 +13,13 @@ import {
 } from 'lib/paths';
 
 const ConnectCompText = {
-  new: 'NewContainer',
+  new: 'New Page',
   list: 'List Page',
   details: 'Details Page',
   edit: 'EditContainer',
 };
 
-jest.mock('components/Connect/New/NewContainer', () => () => (
+jest.mock('components/Connect/New/New', () => () => (
   <div>{ConnectCompText.new}</div>
 ));
 jest.mock('components/Connect/List/ListPage', () => () => (
@@ -49,7 +49,7 @@ describe('Connect', () => {
     expect(screen.getByText(ConnectCompText.list)).toBeInTheDocument();
   });
 
-  it('renders NewContainer', () => {
+  it('renders New Page', () => {
     renderComponent(
       clusterConnectorNewPath('my-cluster'),
       clusterConnectorsPath()

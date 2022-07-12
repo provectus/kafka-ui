@@ -13,7 +13,7 @@ import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import useAppParams from 'lib/hooks/useAppParams';
 
 import ListPage from './List/ListPage';
-import NewContainer from './New/NewContainer';
+import New from './New/New';
 import EditContainer from './Edit/EditContainer';
 import DetailsPage from './Details/DetailsPage';
 
@@ -34,7 +34,7 @@ const Connect: React.FC = () => {
         path={clusterConnectorNewRelativePath}
         element={
           <BreadcrumbRoute>
-            <NewContainer />
+            <New />
           </BreadcrumbRoute>
         }
       />

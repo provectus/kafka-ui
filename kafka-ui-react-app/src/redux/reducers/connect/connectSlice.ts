@@ -129,7 +129,7 @@ export const deleteConnector = createAsyncThunk<
   }
 );
 
-export const fetchConnectorTasks = createAsyncThunk<
+const fetchConnectorTasks = createAsyncThunk<
   { tasks: Task[] },
   {
     clusterName: ClusterName;
@@ -147,42 +147,6 @@ export const fetchConnectorTasks = createAsyncThunk<
       });
 
       return { tasks };
-    } catch (err) {
-      return rejectWithValue(await getResponse(err as Response));
-    }
-  }
-);
-
-export const restartConnector = createAsyncThunk<
-  undefined,
-  {
-    clusterName: ClusterName;
-    connectName: ConnectName;
-    connectorName: ConnectorName;
-  }
->(
-  'connect/restartConnector',
-  async (
-    { clusterName, connectName, connectorName },
-    { rejectWithValue, dispatch }
-  ) => {
-    try {
-      await kafkaConnectApiClient.updateConnectorState({
-        clusterName,
-        connectName,
-        connectorName,
-        action: ConnectorAction.RESTART,
-      });
-
-      dispatch(
-        fetchConnectorTasks({
-          clusterName,
-          connectName,
-          connectorName,
-        })
-      );
-
-      return undefined;
     } catch (err) {
       return rejectWithValue(await getResponse(err as Response));
     }
@@ -310,79 +274,5 @@ const connectSlice = createSlice({
     });
   },
 });
-
-const { setConnectorStatusState } = connectSlice.actions;
-
-const pauseCurrentConnector = () =>
-  setConnectorStatusState({
-    connectorState: ConnectorState.PAUSED,
-    taskState: ConnectorTaskStatus.PAUSED,
-  });
-
-const resumeCurrentConnector = () =>
-  setConnectorStatusState({
-    connectorState: ConnectorState.RUNNING,
-    taskState: ConnectorTaskStatus.RUNNING,
-  });
-
-export const pauseConnector = createAsyncThunk<
-  undefined,
-  {
-    clusterName: ClusterName;
-    connectName: ConnectName;
-    connectorName: ConnectorName;
-  }
->(
-  'connect/pauseConnector',
-  async (
-    { clusterName, connectName, connectorName },
-    { rejectWithValue, dispatch }
-  ) => {
-    try {
-      await kafkaConnectApiClient.updateConnectorState({
-        clusterName,
-        connectName,
-        connectorName,
-        action: ConnectorAction.PAUSE,
-      });
-
-      dispatch(pauseCurrentConnector());
-
-      return undefined;
-    } catch (err) {
-      return rejectWithValue(await getResponse(err as Response));
-    }
-  }
-);
-
-export const resumeConnector = createAsyncThunk<
-  undefined,
-  {
-    clusterName: ClusterName;
-    connectName: ConnectName;
-    connectorName: ConnectorName;
-  }
->(
-  'connect/resumeConnector',
-  async (
-    { clusterName, connectName, connectorName },
-    { rejectWithValue, dispatch }
-  ) => {
-    try {
-      await kafkaConnectApiClient.updateConnectorState({
-        clusterName,
-        connectName,
-        connectorName,
-        action: ConnectorAction.RESUME,
-      });
-
-      dispatch(resumeCurrentConnector());
-
-      return undefined;
-    } catch (err) {
-      return rejectWithValue(await getResponse(err as Response));
-    }
-  }
-);
 
 export default connectSlice.reducer;

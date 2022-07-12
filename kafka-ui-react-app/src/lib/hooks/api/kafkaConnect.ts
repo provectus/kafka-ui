@@ -9,8 +9,7 @@ interface UseConnectorProps {
   connectName: ConnectName;
   connectorName: ConnectorName;
 }
-interface UseCreateConnectorProps {
-  clusterName: ClusterName;
+interface CreateConnectorProps {
   connectName: ConnectName;
   newConnector: NewConnector;
 }
@@ -89,11 +88,15 @@ export function useConnectorConfig(props: UseConnectorProps) {
     api.getConnectorConfig(props)
   );
 }
-export function useCreateConnector(props: UseCreateConnectorProps) {
+export function useCreateConnector(clusterName: ClusterName) {
   const client = useQueryClient();
-  return useMutation(() => api.createConnector(props), {
-    onSuccess: () => client.invalidateQueries(connectorsKey(props.clusterName)),
-  });
+  return useMutation(
+    (props: CreateConnectorProps) =>
+      api.createConnector({ ...props, clusterName }),
+    {
+      onSuccess: () => client.invalidateQueries(connectorsKey(clusterName)),
+    }
+  );
 }
 export function useDeleteConnector(props: UseConnectorProps) {
   const client = useQueryClient();
