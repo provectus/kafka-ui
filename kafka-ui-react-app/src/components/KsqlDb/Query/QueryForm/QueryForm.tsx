@@ -1,11 +1,12 @@
 import React from 'react';
 import { FormError } from 'components/common/Input/Input.styled';
 import { ErrorMessage } from '@hookform/error-message';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
+import { Button } from 'components/common/Button/Button';
+import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
+import CloseIcon from 'components/common/Icons/CloseIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import yup from 'lib/yupExtended';
-import { useForm, Controller } from 'react-hook-form';
-import { Button } from 'components/common/Button/Button';
-import { SchemaType } from 'generated-sources';
 
 import * as S from './QueryForm.styled';
 
@@ -17,16 +18,22 @@ export interface Props {
   submitHandler: (values: FormValues) => void;
 }
 
+export type StreamsPropertiesType = {
+  key: string;
+  value: string;
+};
 export type FormValues = {
   ksql: string;
-  streamsProperties: string;
+  streamsProperties: StreamsPropertiesType[];
 };
 
+const streamsPropertiesSchema = yup.object().shape({
+  key: yup.string().trim(),
+  value: yup.string().trim(),
+});
 const validationSchema = yup.object({
   ksql: yup.string().trim().required(),
-  streamsProperties: yup.lazy((value) =>
-    value === '' ? yup.string().trim() : yup.string().trim().isJsonObject()
-  ),
+  streamsProperties: yup.array().of(streamsPropertiesSchema),
 });
 
 const QueryForm: React.FC<Props> = ({
@@ -46,8 +53,15 @@ const QueryForm: React.FC<Props> = ({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       ksql: '',
-      streamsProperties: '',
+      streamsProperties: [{ key: '', value: '' }],
     },
+  });
+  const { fields, append, remove } = useFieldArray<
+    FormValues,
+    'streamsProperties'
+  >({
+    control,
+    name: 'streamsProperties',
   });
 
   return (
@@ -93,48 +107,69 @@ const QueryForm: React.FC<Props> = ({
               <ErrorMessage errors={errors} name="ksql" />
             </FormError>
           </S.Fieldset>
-          <S.Fieldset aria-labelledby="streamsPropertiesLabel">
-            <S.KSQLInputHeader>
-              <label id="streamsPropertiesLabel">
-                Stream properties (JSON format)
-              </label>
-              <Button
-                onClick={() => setValue('streamsProperties', '')}
-                buttonType="primary"
-                buttonSize="S"
-                isInverted
-              >
-                Clear
-              </Button>
-            </S.KSQLInputHeader>
-            <Controller
-              control={control}
-              name="streamsProperties"
-              render={({ field }) => (
-                <S.Editor
-                  {...field}
-                  commands={[
-                    {
-                      // commands is array of key bindings.
-                      // name for the key binding.
-                      name: 'commandName',
-                      // key combination used for the command.
-                      bindKey: { win: 'Ctrl-Enter', mac: 'Command-Enter' },
-                      // function to execute when keys are pressed.
-                      exec: () => {
-                        handleSubmit(submitHandler)();
-                      },
-                    },
-                  ]}
-                  schemaType={SchemaType.JSON}
-                  readOnly={fetching}
-                />
-              )}
-            />
-            <FormError>
-              <ErrorMessage errors={errors} name="streamsProperties" />
-            </FormError>
-          </S.Fieldset>
+
+          <S.StreamPropertiesContainer>
+            Stream properties:
+            {fields.map((item, index) => (
+              <S.InputsContainer key={item.id}>
+                <S.StreamPropertiesInputWrapper>
+                  <Controller
+                    control={control}
+                    name={`streamsProperties.${index}.key`}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        placeholder="Key"
+                        aria-label="key"
+                        type="text"
+                      />
+                    )}
+                  />
+                  <FormError>
+                    <ErrorMessage
+                      errors={errors}
+                      name={`streamsProperties.${index}.key`}
+                    />
+                  </FormError>
+                </S.StreamPropertiesInputWrapper>
+                <S.StreamPropertiesInputWrapper>
+                  <Controller
+                    control={control}
+                    name={`streamsProperties.${index}.value`}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        placeholder="Value"
+                        aria-label="value"
+                        type="text"
+                      />
+                    )}
+                  />
+                  <FormError>
+                    <ErrorMessage
+                      errors={errors}
+                      name={`streamsProperties.${index}.value`}
+                    />
+                  </FormError>
+                </S.StreamPropertiesInputWrapper>
+
+                <S.DeleteButtonWrapper onClick={() => remove(index)}>
+                  <IconButtonWrapper aria-label="deleteProperty">
+                    <CloseIcon aria-hidden />
+                  </IconButtonWrapper>
+                </S.DeleteButtonWrapper>
+              </S.InputsContainer>
+            ))}
+            <Button
+              type="button"
+              buttonSize="M"
+              buttonType="secondary"
+              onClick={() => append({ key: '', value: '' })}
+            >
+              <i className="fas fa-plus" />
+              Add Stream Property
+            </Button>
+          </S.StreamPropertiesContainer>
         </S.KSQLInputsWrapper>
         <S.KSQLButtons>
           <Button

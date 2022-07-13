@@ -8,6 +8,7 @@ import static ksql.KsqlGrammarParser.UndefineVariableContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.ksql.response.ResponseParser;
 import java.util.List;
@@ -18,6 +19,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.codec.DecodingException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.util.MimeTypeUtils;
@@ -79,12 +81,25 @@ public class KsqlApiClient {
         .build();
     return WebClient.builder()
         .codecs(c -> c.defaultCodecs().maxInMemorySize((int) maxBuffSize.toBytes()))
+        .defaultHeaders(httpHeaders -> setBasicAuthIfEnabled(httpHeaders, cluster))
         .exchangeStrategies(exchangeStrategies)
         .build();
   }
 
+  public static void setBasicAuthIfEnabled(HttpHeaders headers, KafkaCluster cluster) {
+    String username = cluster.getKsqldbServer().getUsername();
+    String password = cluster.getKsqldbServer().getPassword();
+    if (username != null && password != null) {
+      headers.setBasicAuth(username, password);
+    } else if (username != null) {
+      throw new ValidationException("You specified username but did not specify password");
+    } else if (password != null) {
+      throw new ValidationException("You specified password but did not specify username");
+    }
+  }
+
   private String baseKsqlDbUri() {
-    return cluster.getKsqldbServer();
+    return cluster.getKsqldbServer().getUrl();
   }
 
   private KsqlRequest ksqlRequest(String ksql, Map<String, String> streamProperties) {
