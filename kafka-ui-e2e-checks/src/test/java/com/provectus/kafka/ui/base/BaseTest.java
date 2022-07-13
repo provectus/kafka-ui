@@ -96,9 +96,8 @@ public class BaseTest {
         setup();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 if (TestCaseGenerator.FAILED) {
-                    log.error("AAA!");
+                    log.error("Tests FAILED because some problem with @CaseId annotation. Verify that all tests annotated with @CaseId and Id is correct!");
                     Runtime.getRuntime().halt(100500);
-//                    System.exit(100500);
                 }
         }));
     }

@@ -11,7 +11,6 @@ import io.qase.client.model.TestCaseCreate;
 import io.qase.client.model.TestCaseListResponse;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 
 import java.lang.reflect.Method;
@@ -65,20 +64,23 @@ public class TestCaseGenerator{
 
     @SneakyThrows
     public static boolean isCaseIdPresentInQaseIo(Method testMethod) {
-        long caseId = testMethod.getAnnotation(CaseId.class).value();
-        HashMap<Long, String> cases = getTestCasesTitleAndId();
-        String title;
-        if (!cases.containsKey(caseId)) {
-          Assert.fail("The method " + testMethod.getName() + " has wrong @CaseId = " + caseId + " that does not exist in Qase.io. " +
-                    "Please put correct @CaseId");
-        }
-        else {
-            for (Map.Entry<Long, String> map : cases.entrySet()) {
-                if (map.getKey().equals(caseId)) {
-                    title = map.getValue();
-                    if (!title.matches(generateTestCaseTitle(testMethod))) {
-                       Assert.fail("This @CaseId = " + caseId + " belong to the test with title = " + title + ". Set correct @CaseId");
+        if (testMethod.isAnnotationPresent(CaseId.class)) {
+            long caseId = testMethod.getAnnotation(CaseId.class).value();
+            HashMap<Long, String> cases = getTestCasesTitleAndId();
+            String title;
+            if (!cases.containsKey(caseId)) {
+                log.error("The method " + testMethod.getName() + " has wrong @CaseId = " + caseId + " that does not exist in Qase.io. " +
+                        "Please put correct @CaseId");
+                FAILED = true;
+            } else {
+                for (Map.Entry<Long, String> map : cases.entrySet()) {
+                    if (map.getKey().equals(caseId)) {
+                        title = map.getValue();
+                        if (!title.matches(generateTestCaseTitle(testMethod))) {
+                            log.error("This @CaseId = " + caseId + " belong to the test with title = " + title + ". Set correct @CaseId");
+                            FAILED = true;
 
+                        }
                     }
                 }
             }
