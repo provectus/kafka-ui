@@ -11,6 +11,8 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 
+import java.io.IOException;
+
 import static org.apache.kafka.common.utils.Utils.readFileAsString;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -53,13 +55,12 @@ public class SchemasTests extends BaseTest {
 
     }
 
-    @SneakyThrows
     @DisplayName("should create AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
-    @CaseId(43)
+  //  @CaseId(43)
     @Test
     @Order(1)
-    void createSchemaAvro() {
+    void createSchemaAvro() throws IOException {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
@@ -76,7 +77,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should update AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
-    @CaseId(186)
+    @CaseId(18600)
     @Test
     @Order(2)
     void updateSchemaAvro() {
@@ -95,7 +96,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
-    @CaseId(187)
+    @CaseId(186)
     @Test
     @Order(3)
     void deleteSchemaAvro() {
@@ -110,7 +111,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should create JSON schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
-    @CaseId(89)
+    @CaseId(8900)
     @Test
     @Order(4)
     void createSchemaJson() {

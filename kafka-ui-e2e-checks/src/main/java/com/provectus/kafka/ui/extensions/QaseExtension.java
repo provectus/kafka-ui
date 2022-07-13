@@ -9,7 +9,6 @@ import io.qase.client.api.ResultsApi;
 import io.qase.client.model.ResultCreate;
 import io.qase.client.model.ResultCreate.StatusEnum;
 import io.qase.client.model.ResultCreateSteps;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.TestSource;
@@ -42,14 +41,14 @@ public class QaseExtension implements TestExecutionListener{
  /*   If you want to run tests with integration Qase.io uncomment static block and set needed parameters
             (TOKEN, RUN_ID for existing Run or RUN_NAME if you want that new test run will be created in qase.io*/
 
-/*    static {
+    static {
         System.setProperty("QASE_ENABLE", "true");
         System.setProperty("QASE_PROJECT_CODE", "KAFKAUI");
-        System.setProperty("QASE_RUN_ID", "");
+        //System.setProperty("QASE_RUN_ID", "");
         //   System.setProperty("QASE_RUN_NAME", "Automation run " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
-        System.setProperty("QASE_API_TOKEN", "");
+        System.setProperty("QASE_API_TOKEN", "7a7646749d7820b0f2e85e27a39271e0b2335fb9");
         System.setProperty("QASE_USE_BULK", "false");
-    }*/
+    }
 
 
     @Override
@@ -91,7 +90,6 @@ public class QaseExtension implements TestExecutionListener{
         }
     }
 
-    @SneakyThrows
     private ResultCreate getResultItem(TestExecutionResult testExecutionResult, Duration timeSpent, Method testMethod) {
         String testCaseTitle = TestCaseGenerator.generateTestCaseTitle(testMethod);
         TestCaseGenerator.createTestCaseIfNotExists(testMethod);

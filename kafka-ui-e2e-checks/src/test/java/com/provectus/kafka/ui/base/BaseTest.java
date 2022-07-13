@@ -5,6 +5,10 @@ import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.helpers.TestConfiguration;
+import com.provectus.kafka.ui.pages.Pages;
+import com.provectus.kafka.ui.screenshots.Screenshooter;
+import com.provectus.kafka.ui.utils.CamelCaseToSpacedDisplayNameGenerator;
+import com.provectus.kafka.ui.utils.qaseIO.TestCaseGenerator;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
 import io.qameta.allure.selenide.AllureSelenide;
@@ -21,9 +25,6 @@ import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
-import com.provectus.kafka.ui.pages.Pages;
-import com.provectus.kafka.ui.screenshots.Screenshooter;
-import com.provectus.kafka.ui.utils.CamelCaseToSpacedDisplayNameGenerator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -93,6 +94,13 @@ public class BaseTest {
             clearReports();
         }
         setup();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                if (TestCaseGenerator.FAILED) {
+                    log.error("AAA!");
+                    Runtime.getRuntime().halt(100500);
+//                    System.exit(100500);
+                }
+        }));
     }
 
     @AfterEach
