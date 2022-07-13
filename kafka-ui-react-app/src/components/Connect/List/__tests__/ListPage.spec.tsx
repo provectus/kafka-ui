@@ -1,5 +1,5 @@
 import React from 'react';
-import { connectors } from 'redux/reducers/connect/__test__/fixtures';
+import { connectors } from 'lib/fixtures/kafkaConnect';
 import ClusterContext, {
   ContextProps,
   initialValue,

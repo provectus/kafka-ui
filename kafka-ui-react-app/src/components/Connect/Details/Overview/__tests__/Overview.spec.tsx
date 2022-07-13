@@ -1,6 +1,6 @@
 import React from 'react';
 import Overview from 'components/Connect/Details/Overview/Overview';
-import { connector, tasks } from 'redux/reducers/connect/__test__/fixtures';
+import { connector, tasks } from 'lib/fixtures/kafkaConnect';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import { useConnector, useConnectorTasks } from 'lib/hooks/api/kafkaConnect';

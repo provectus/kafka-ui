@@ -5,7 +5,7 @@ import {
   clusterConnectorNewPath,
 } from 'lib/paths';
 import New from 'components/Connect/New/New';
-import { connects, connector } from 'redux/reducers/connect/__test__/fixtures';
+import { connects, connector } from 'lib/fixtures/kafkaConnect';
 import { fireEvent, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ControllerRenderProps } from 'react-hook-form';

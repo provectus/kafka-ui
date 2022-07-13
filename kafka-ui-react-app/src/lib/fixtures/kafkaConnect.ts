@@ -101,4 +101,18 @@ export const tasks: Task[] = [
       topic: 'test-topic',
     },
   },
+  {
+    id: { connector: 'first', task: 4 },
+    status: {
+      id: 3,
+      state: ConnectorTaskStatus.PAUSED,
+      workerId: 'kafka-connect0:8083',
+    },
+    config: {
+      'batch.size': '3000',
+      file: '/some/file3',
+      'task.class': 'org.apache.kafka.connect.file.FileStreamSourceTask',
+      topic: 'test-topic',
+    },
+  },
 ];

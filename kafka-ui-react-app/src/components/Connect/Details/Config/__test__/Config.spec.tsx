@@ -4,7 +4,7 @@ import { clusterConnectConnectorConfigPath } from 'lib/paths';
 import Config from 'components/Connect/Details/Config/Config';
 import { screen } from '@testing-library/dom';
 import { useConnectorConfig } from 'lib/hooks/api/kafkaConnect';
-import { connector } from 'redux/reducers/connect/__test__/fixtures';
+import { connector } from 'lib/fixtures/kafkaConnect';
 
 jest.mock('components/common/Editor/Editor', () => () => (
   <div>mock-Editor</div>

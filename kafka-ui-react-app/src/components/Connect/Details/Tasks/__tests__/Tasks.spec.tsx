@@ -2,7 +2,7 @@ import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorTasksPath } from 'lib/paths';
 import Tasks from 'components/Connect/Details/Tasks/Tasks';
-import { tasks } from 'redux/reducers/connect/__test__/fixtures';
+import { tasks } from 'lib/fixtures/kafkaConnect';
 import { screen } from '@testing-library/dom';
 import { useConnectorTasks } from 'lib/hooks/api/kafkaConnect';
 

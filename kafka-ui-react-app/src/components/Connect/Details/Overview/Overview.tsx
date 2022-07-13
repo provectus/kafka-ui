@@ -5,7 +5,8 @@ import getTagColor from 'components/common/Tag/getTagColor';
 import { RouterParamsClusterConnectConnector } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
 import { useConnector, useConnectorTasks } from 'lib/hooks/api/kafkaConnect';
-import { ConnectorTaskStatus } from 'generated-sources';
+
+import getTaskMetrics from './getTaskMetrics';
 
 const Overview: React.FC = () => {
   const routerProps = useAppParams<RouterParamsClusterConnectConnector>();
@@ -17,18 +18,7 @@ const Overview: React.FC = () => {
     return null;
   }
 
-  const { running, failed } = tasks?.reduce(
-    (acc, { status }) => {
-      if (status?.state === ConnectorTaskStatus.RUNNING) {
-        return { ...acc, running: acc.running + 1 };
-      }
-      if (status?.state === ConnectorTaskStatus.FAILED) {
-        return { ...acc, failed: acc.failed + 1 };
-      }
-      return acc;
-    },
-    { running: 0, failed: 0 }
-  ) || { running: 0, failed: 0 };
+  const { running, failed } = getTaskMetrics(tasks);
 
   return (
     <Metrics.Wrapper>

@@ -5,7 +5,7 @@ import {
   clusterConnectConnectorEditPath,
 } from 'lib/paths';
 import Edit from 'components/Connect/Edit/Edit';
-import { connector } from 'redux/reducers/connect/__test__/fixtures';
+import { connector } from 'lib/fixtures/kafkaConnect';
 import { waitFor } from '@testing-library/dom';
 import { act, fireEvent, screen } from '@testing-library/react';
 import {

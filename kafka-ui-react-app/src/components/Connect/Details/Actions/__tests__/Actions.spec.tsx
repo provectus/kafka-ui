@@ -9,7 +9,7 @@ import {
   useConnector,
   useUpdateConnectorState,
 } from 'lib/hooks/api/kafkaConnect';
-import { connector } from 'redux/reducers/connect/__test__/fixtures';
+import { connector } from 'lib/fixtures/kafkaConnect';
 import set from 'lodash/set';
 
 const mockHistoryPush = jest.fn();
