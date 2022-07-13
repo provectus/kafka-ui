@@ -5,13 +5,13 @@ on:
     types: ['unlabeled', 'closed']
 jobs:
   remove:
-    if: |
-      ${{ github.event.label.name == 'status/image_testing' || ( github.event.action == 'closed' && (contains(github.event.pull_request.labels, 'status/image_testing'))) }}
+    if: ${{ github.event.label.name == 'status/image_testing' || ( github.event.action == 'closed' && (contains(github.event.pull_request.labels, 'status/image_testing'))) }}
     runs-on: ubuntu-latest
     steps:
       - name: get branch name
         id: extract_branch
         run: |
+          echo
           tag='${{ github.event.pull_request.number }}'
           echo ::set-output name=tag::${tag}
       - name: Configure AWS credentials for Kafka-UI account
