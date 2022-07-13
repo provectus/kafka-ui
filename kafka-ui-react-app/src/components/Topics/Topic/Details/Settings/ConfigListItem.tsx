@@ -13,17 +13,11 @@ const ConfigListItem: React.FC<ListItemProps> = ({
   const hasCustomValue = !!defaultValue && value !== defaultValue;
 
   return (
-    <S.ConfigList>
-      <S.ConfigItemCell $hasCustomValue={hasCustomValue}>
-        {name}
-      </S.ConfigItemCell>
-      <S.ConfigItemCell $hasCustomValue={hasCustomValue}>
-        {value}
-      </S.ConfigItemCell>
-      <td className="has-text-grey" title="Default Value">
-        {hasCustomValue && defaultValue}
-      </td>
-    </S.ConfigList>
+    <S.Row $hasCustomValue={hasCustomValue}>
+      <td>{name}</td>
+      <td>{value}</td>
+      <td title="Default Value">{hasCustomValue && defaultValue}</td>
+    </S.Row>
   );
 };
 

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorPath, clusterConnectorsPath } from 'lib/paths';
 import ActionsContainer from 'components/Connect/Details/Actions/ActionsContainer';
 import Actions, {
@@ -19,9 +18,7 @@ const cancelMock = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
+  useNavigate: () => mockHistoryPush,
 }));
 
 jest.mock(
@@ -38,6 +35,12 @@ const expectActionButtonsExists = () => {
 };
 
 describe('Actions', () => {
+  afterEach(() => {
+    mockHistoryPush.mockClear();
+    deleteConnector.mockClear();
+    cancelMock.mockClear();
+  });
+
   const actionsContainer = (props: Partial<ActionsProps> = {}) => (
     <ActionsContainer>
       <Actions
@@ -60,17 +63,13 @@ describe('Actions', () => {
   });
 
   describe('view', () => {
-    const pathname = clusterConnectConnectorPath(
-      ':clusterName',
-      ':connectName',
-      ':connectorName'
-    );
+    const pathname = clusterConnectConnectorPath();
     const clusterName = 'my-cluster';
     const connectName = 'my-connect';
     const connectorName = 'my-connector';
 
     const confirmationModal = (props: Partial<ConfirmationModalProps> = {}) => (
-      <Route path={pathname}>
+      <WithRoute path={pathname}>
         <ConfirmationModal
           onCancel={cancelMock}
           onConfirm={() =>
@@ -91,11 +90,11 @@ describe('Actions', () => {
             Confirm
           </button>
         </ConfirmationModal>
-      </Route>
+      </WithRoute>
     );
 
     const component = (props: Partial<ActionsProps> = {}) => (
-      <Route path={pathname}>
+      <WithRoute path={pathname}>
         <Actions
           deleteConnector={jest.fn()}
           isConnectorDeleting={false}
@@ -107,16 +106,14 @@ describe('Actions', () => {
           isConnectorActionRunning={false}
           {...props}
         />
-      </Route>
+      </WithRoute>
     );
 
     it('renders buttons when paused', () => {
       render(component({ connectorStatus: ConnectorState.PAUSED }), {
-        pathname: clusterConnectConnectorPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
+        initialEntries: [
+          clusterConnectConnectorPath(clusterName, connectName, connectorName),
+        ],
       });
       expect(screen.getAllByRole('button').length).toEqual(6);
       expect(screen.getByText('Resume')).toBeInTheDocument();
@@ -127,11 +124,9 @@ describe('Actions', () => {
 
     it('renders buttons when failed', () => {
       render(component({ connectorStatus: ConnectorState.FAILED }), {
-        pathname: clusterConnectConnectorPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
+        initialEntries: [
+          clusterConnectConnectorPath(clusterName, connectName, connectorName),
+        ],
       });
       expect(screen.getAllByRole('button').length).toEqual(5);
 
@@ -143,11 +138,9 @@ describe('Actions', () => {
 
     it('renders buttons when unassigned', () => {
       render(component({ connectorStatus: ConnectorState.UNASSIGNED }), {
-        pathname: clusterConnectConnectorPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
+        initialEntries: [
+          clusterConnectConnectorPath(clusterName, connectName, connectorName),
+        ],
       });
       expect(screen.getAllByRole('button').length).toEqual(5);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
@@ -157,11 +150,9 @@ describe('Actions', () => {
 
     it('renders buttons when running connector action', () => {
       render(component({ connectorStatus: ConnectorState.RUNNING }), {
-        pathname: clusterConnectConnectorPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
+        initialEntries: [
+          clusterConnectConnectorPath(clusterName, connectName, connectorName),
+        ],
       });
       expect(screen.getAllByRole('button').length).toEqual(6);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
@@ -172,11 +163,9 @@ describe('Actions', () => {
 
     it('opens confirmation modal when delete button clicked', () => {
       render(component({ deleteConnector }), {
-        pathname: clusterConnectConnectorPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
+        initialEntries: [
+          clusterConnectConnectorPath(clusterName, connectName, connectorName),
+        ],
       });
       userEvent.click(screen.getByRole('button', { name: 'Delete' }));
 
@@ -187,11 +176,9 @@ describe('Actions', () => {
 
     it('closes when cancel button clicked', () => {
       render(confirmationModal({ isOpen: true }), {
-        pathname: clusterConnectConnectorPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
+        initialEntries: [
+          clusterConnectConnectorPath(clusterName, connectName, connectorName),
+        ],
       });
       const cancelBtn = screen.getByRole('button', { name: 'Cancel' });
       userEvent.click(cancelBtn);
@@ -200,11 +187,9 @@ describe('Actions', () => {
 
     it('calls deleteConnector when confirm button clicked', () => {
       render(confirmationModal({ isOpen: true }), {
-        pathname: clusterConnectConnectorPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
+        initialEntries: [
+          clusterConnectConnectorPath(clusterName, connectName, connectorName),
+        ],
       });
       const confirmBtn = screen.getByRole('button', { name: 'Confirm' });
       userEvent.click(confirmBtn);
@@ -218,11 +203,9 @@ describe('Actions', () => {
 
     it('redirects after delete', async () => {
       render(confirmationModal({ isOpen: true }), {
-        pathname: clusterConnectConnectorPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
+        initialEntries: [
+          clusterConnectConnectorPath(clusterName, connectName, connectorName),
+        ],
       });
       const confirmBtn = screen.getByRole('button', { name: 'Confirm' });
       userEvent.click(confirmBtn);
@@ -235,11 +218,9 @@ describe('Actions', () => {
     it('calls restartConnector when restart button clicked', () => {
       const restartConnector = jest.fn();
       render(component({ restartConnector }), {
-        pathname: clusterConnectConnectorPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
+        initialEntries: [
+          clusterConnectConnectorPath(clusterName, connectName, connectorName),
+        ],
       });
       userEvent.click(
         screen.getByRole('button', { name: 'Restart Connector' })
@@ -260,11 +241,13 @@ describe('Actions', () => {
           pauseConnector,
         }),
         {
-          pathname: clusterConnectConnectorPath(
-            clusterName,
-            connectName,
-            connectorName
-          ),
+          initialEntries: [
+            clusterConnectConnectorPath(
+              clusterName,
+              connectName,
+              connectorName
+            ),
+          ],
         }
       );
       userEvent.click(screen.getByRole('button', { name: 'Pause' }));
@@ -284,11 +267,13 @@ describe('Actions', () => {
           resumeConnector,
         }),
         {
-          pathname: clusterConnectConnectorPath(
-            clusterName,
-            connectName,
-            connectorName
-          ),
+          initialEntries: [
+            clusterConnectConnectorPath(
+              clusterName,
+              connectName,
+              connectorName
+            ),
+          ],
         }
       );
       userEvent.click(screen.getByRole('button', { name: 'Resume' }));

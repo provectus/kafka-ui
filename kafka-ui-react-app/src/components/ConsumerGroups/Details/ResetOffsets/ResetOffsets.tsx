@@ -1,21 +1,20 @@
-import { ConsumerGroupOffsetsResetType } from 'generated-sources';
-import { clusterConsumerGroupDetailsPath } from 'lib/paths';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ConsumerGroupOffsetsResetType } from 'generated-sources';
+import { ClusterGroupParam } from 'lib/paths';
 import {
   Controller,
   FormProvider,
   useFieldArray,
   useForm,
 } from 'react-hook-form';
-import { ClusterName, ConsumerGroupID } from 'redux/interfaces';
 import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { groupBy } from 'lodash';
+import groupBy from 'lodash/groupBy';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ErrorMessage } from '@hookform/error-message';
-import { useHistory, useParams } from 'react-router-dom';
 import Select from 'components/common/Select/Select';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { Button } from 'components/common/Button/Button';
@@ -30,14 +29,10 @@ import {
   resetConsumerGroupOffsets,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import useAppParams from 'lib/hooks/useAppParams';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 
-import {
-  MainSelectorsWrapperStyled,
-  OffsetsWrapperStyled,
-  ResetOffsetsStyledWrapper,
-  OffsetsTitleStyled,
-} from './ResetOffsets.styled';
+import * as S from './ResetOffsets.styled';
 
 interface FormType {
   topic: string;
@@ -48,8 +43,7 @@ interface FormType {
 
 const ResetOffsets: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { consumerGroupID, clusterName } =
-    useParams<{ consumerGroupID: ConsumerGroupID; clusterName: ClusterName }>();
+  const { consumerGroupID, clusterName } = useAppParams<ClusterGroupParam>();
   const consumerGroup = useAppSelector((state) =>
     selectById(state, consumerGroupID)
   );
@@ -162,15 +156,13 @@ const ResetOffsets: React.FC = () => {
     }
   };
 
-  const history = useHistory();
+  const navigate = useNavigate();
   React.useEffect(() => {
     if (isOffsetReseted) {
       dispatch(resetLoaderById('consumerGroups/resetConsumerGroupOffsets'));
-      history.push(
-        clusterConsumerGroupDetailsPath(clusterName, consumerGroupID)
-      );
+      navigate('../');
     }
-  }, [clusterName, consumerGroupID, dispatch, history, isOffsetReseted]);
+  }, [clusterName, consumerGroupID, dispatch, navigate, isOffsetReseted]);
 
   if (!isFetched || !consumerGroup) {
     return <PageLoader />;
@@ -179,9 +171,9 @@ const ResetOffsets: React.FC = () => {
   return (
     <FormProvider {...methods}>
       <PageHeading text="Reset offsets" />
-      <ResetOffsetsStyledWrapper>
+      <S.Wrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <MainSelectorsWrapperStyled>
+          <S.MainSelectors>
             <div>
               <InputLabel id="topicLabel">Topic</InputLabel>
               <Controller
@@ -242,7 +234,7 @@ const ResetOffsets: React.FC = () => {
                 labelledBy="Select partitions"
               />
             </div>
-          </MainSelectorsWrapperStyled>
+          </S.MainSelectors>
           {resetTypeValue === ConsumerGroupOffsetsResetType.TIMESTAMP &&
             selectedPartitions.length > 0 && (
               <div>
@@ -259,7 +251,6 @@ const ResetOffsets: React.FC = () => {
                       showTimeInput
                       timeInputLabel="Time:"
                       dateFormat="MMMM d, yyyy h:mm aa"
-                      className="date-picker"
                     />
                   )}
                 />
@@ -273,8 +264,8 @@ const ResetOffsets: React.FC = () => {
           {resetTypeValue === ConsumerGroupOffsetsResetType.OFFSET &&
             selectedPartitions.length > 0 && (
               <div>
-                <OffsetsTitleStyled>Offsets</OffsetsTitleStyled>
-                <OffsetsWrapperStyled>
+                <S.OffsetsTitle>Offsets</S.OffsetsTitle>
+                <S.OffsetsWrapper>
                   {fields.map((field, index) => (
                     <div key={field.id}>
                       <InputLabel htmlFor={`partitionsOffsets.${index}.offset`}>
@@ -302,7 +293,7 @@ const ResetOffsets: React.FC = () => {
                       />
                     </div>
                   ))}
-                </OffsetsWrapperStyled>
+                </S.OffsetsWrapper>
               </div>
             )}
           <Button
@@ -314,7 +305,7 @@ const ResetOffsets: React.FC = () => {
             Submit
           </Button>
         </form>
-      </ResetOffsetsStyledWrapper>
+      </S.Wrapper>
     </FormProvider>
   );
 };

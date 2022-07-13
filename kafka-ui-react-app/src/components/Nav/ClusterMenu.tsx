@@ -6,7 +6,6 @@ import {
   clusterConsumerGroupsPath,
   clusterSchemasPath,
   clusterConnectorsPath,
-  clusterConnectsPath,
   clusterKsqlDbPath,
 } from 'lib/paths';
 
@@ -54,10 +53,6 @@ const ClusterMenu: React.FC<Props> = ({
             <ClusterMenuItem
               to={clusterConnectorsPath(name)}
               title="Kafka Connect"
-              isActive={(_, location) =>
-                location.pathname.startsWith(clusterConnectsPath(name)) ||
-                location.pathname.startsWith(clusterConnectorsPath(name))
-              }
             />
           )}
           {hasFeatureConfigured(ClusterFeaturesEnum.KSQL_DB) && (

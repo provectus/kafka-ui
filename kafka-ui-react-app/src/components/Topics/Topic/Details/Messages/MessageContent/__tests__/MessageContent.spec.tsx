@@ -8,6 +8,7 @@ import MessageContent, {
 import { TopicMessageTimestampTypeEnum } from 'generated-sources';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
+import theme from 'theme/theme';
 
 const setupWrapper = (props?: Partial<MessageContentProps>) => {
   return (
@@ -49,26 +50,34 @@ describe('MessageContent screen', () => {
   });
 
   describe('when switched to display the key', () => {
-    it('has a tab with is-active classname', () => {
+    it('makes key tab active', () => {
       const keyTab = screen.getAllByText('Key');
       userEvent.click(keyTab[0]);
-      expect(keyTab[0]).toHaveClass('is-active');
+      expect(keyTab[0]).toHaveStyleRule(
+        'background-color',
+        theme.secondaryTab.backgroundColor.active
+      );
     });
   });
 
   describe('when switched to display the headers', () => {
-    it('has a tab with is-active classname', () => {
+    it('makes Headers tab active', () => {
       userEvent.click(screen.getByText('Headers'));
-      expect(screen.getByText('Headers')).toHaveClass('is-active');
+      expect(screen.getByText('Headers')).toHaveStyleRule(
+        'background-color',
+        theme.secondaryTab.backgroundColor.active
+      );
     });
   });
 
   describe('when switched to display the content', () => {
-    it('has a tab with is-active classname', () => {
-      userEvent.click(screen.getByText('Headers'));
+    it('makes content tab active', () => {
       const contentTab = screen.getAllByText('Content');
       userEvent.click(contentTab[0]);
-      expect(contentTab[0]).toHaveClass('is-active');
+      expect(contentTab[0]).toHaveStyleRule(
+        'background-color',
+        theme.secondaryTab.backgroundColor.active
+      );
     });
   });
 });

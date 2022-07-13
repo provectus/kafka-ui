@@ -8,7 +8,8 @@
 [![Chat with us](https://img.shields.io/discord/897805035122077716)](https://discord.gg/4DWzD7pGE5)
 
 ### DISCLAIMER
-<em>UI for Apache Kafka is a free, open-source tool that is curated by Provectus, and is built and supported by the open-source community. The tool will remain free and open-source in the future. Provectus does not plan to add any paid features or subscription plans so that everyone can have a better experience observing their data. UI for Apache Kafka is a part of the [Provectus NextGen Data Platform](https://provectus.com/nextgen-data-platform/). Check it out for more details! </em> 
+<em>UI for Apache Kafka is a free, open-source tool that is curated by Provectus, and is built and supported by the open-source community. It will remain free and open-source in the future. Provectus does not plan to add any paid features or subscription plans so that everyone can have a better experience observing their data. UI for Apache Kafka is a part of the [Provectus NextGen Data Platform](https://provectus.com/nextgen-data-platform/) — Check it out! Also, learn more about [Professional Services for Apache Kafka](https://provectus.com/professional-services-apache-kafka/), to start handling your Kafka clusters and streaming apps with the help of Provectus Kafka experts. </em> 
+
 
 #### UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters. 
 
@@ -124,6 +125,10 @@ Further configuration with environment variables - [see environment variables](#
 
 If you prefer to use `docker-compose` please refer to the [documentation](docker-compose.md).
 
+### Helm chart
+Helm chart could be found under [charts/kafka-ui](https://github.com/provectus/kafka-ui/tree/master/charts/kafka-ui) directory
+
+Quick-start instruction [here](helm_chart.md)
 
 ## Building With Docker
 
@@ -158,6 +163,8 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_NAME` | Cluster name
 |`KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS` 	|Address where to connect 
 |`KAFKA_CLUSTERS_0_KSQLDBSERVER` 	| KSQL DB server address 
+|`KAFKA_CLUSTERS_0_KSQLDBSERVERAUTH_USERNAME` 	| KSQL DB server's basic authentication username 
+|`KAFKA_CLUSTERS_0_KSQLDBSERVERAUTH_PASSWORD` 	| KSQL DB server's basic authentication password 
 |`KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL` 	|Security protocol to connect to the brokers. For SSL connection use "SSL", for plaintext connection don't set this environment variable
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRY`   	|SchemaRegistry's address
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_USERNAME`   	|SchemaRegistry's basic authentication username

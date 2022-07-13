@@ -17,6 +17,7 @@ import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalClusterState;
+import com.provectus.kafka.ui.model.InternalKsqlServer;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
@@ -53,6 +54,7 @@ public interface ClusterMapper {
   @Mapping(target = "protobufFile", source = "protobufFile", qualifiedByName = "resolvePath")
   @Mapping(target = "properties", source = "properties", qualifiedByName = "setProperties")
   @Mapping(target = "schemaRegistry", source = ".", qualifiedByName = "setSchemaRegistry")
+  @Mapping(target = "ksqldbServer", source = ".", qualifiedByName = "setKsqldbServer")
   KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
 
   ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
@@ -108,6 +110,24 @@ public interface ClusterMapper {
     }
 
     return internalSchemaRegistry.build();
+  }
+
+  @Named("setKsqldbServer")
+  default InternalKsqlServer setKsqldbServer(ClustersProperties.Cluster clusterProperties) {
+    if (clusterProperties == null
+            || clusterProperties.getKsqldbServer() == null) {
+      return null;
+    }
+
+    InternalKsqlServer.InternalKsqlServerBuilder internalKsqlServerBuilder =
+            InternalKsqlServer.builder().url(clusterProperties.getKsqldbServer());
+
+    if (clusterProperties.getKsqldbServerAuth() != null) {
+      internalKsqlServerBuilder.username(clusterProperties.getKsqldbServerAuth().getUsername());
+      internalKsqlServerBuilder.password(clusterProperties.getKsqldbServerAuth().getPassword());
+    }
+
+    return internalKsqlServerBuilder.build();
   }
 
   TopicDetailsDTO toTopicDetails(InternalTopic topic);

@@ -1,11 +1,16 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
   TopicWithDetailedInfo,
   ClusterName,
   TopicName,
 } from 'redux/interfaces';
-import { clusterTopicCopyPath, clusterTopicNewPath } from 'lib/paths';
+import {
+  ClusterNameRoute,
+  clusterTopicCopyRelativePath,
+  clusterTopicNewRelativePath,
+} from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
 import useModal from 'lib/hooks/useModal';
 import ClusterContext from 'components/contexts/ClusterContext';
@@ -41,7 +46,7 @@ import {
   TitleCell,
   TopicSizeCell,
 } from './TopicsTableCells';
-import { ActionsTd } from './List.styled';
+import * as S from './List.styled';
 
 export interface TopicsListProps {
   areTopicsFetching: boolean;
@@ -64,10 +69,10 @@ export interface TopicsListProps {
     partitions?: number[];
   }): void;
   search: string;
-  orderBy: TopicColumnsToSort | null;
+  orderBy: string | null;
   sortOrder: SortOrder;
   setTopicsSearch(search: string): void;
-  setTopicsOrderBy(orderBy: TopicColumnsToSort | null): void;
+  setTopicsOrderBy(orderBy: string | null): void;
 }
 
 const List: React.FC<TopicsListProps> = ({
@@ -88,20 +93,22 @@ const List: React.FC<TopicsListProps> = ({
 }) => {
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
-  const { clusterName } = useParams<{ clusterName: ClusterName }>();
-  const { page, perPage, pathname } = usePagination();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
+  const { page, perPage } = usePagination();
   const [showInternal, setShowInternal] = React.useState<boolean>(
     !localStorage.getItem('hideInternalTopics') && true
   );
-  const [cachedPage, setCachedPage] = React.useState<number | null>(null);
-  const history = useHistory();
+  const [cachedPage, setCachedPage] = React.useState<number | null>(
+    page || null
+  );
+  const navigate = useNavigate();
 
   const topicsListParams = React.useMemo(
     () => ({
       clusterName,
       page,
       perPage,
-      orderBy: orderBy || undefined,
+      orderBy: (orderBy as TopicColumnsToSort) || undefined,
       sortOrder,
       search,
       showInternal,
@@ -113,11 +120,7 @@ const List: React.FC<TopicsListProps> = ({
     fetchTopicsList(topicsListParams);
   }, [fetchTopicsList, topicsListParams]);
 
-  const tableState = useTableState<
-    TopicWithDetailedInfo,
-    string,
-    TopicColumnsToSort
-  >(
+  const tableState = useTableState<TopicWithDetailedInfo, string>(
     topics,
     {
       idSelector: (topic) => topic.name,
@@ -154,7 +157,9 @@ const List: React.FC<TopicsListProps> = ({
     }
 
     setShowInternal(!showInternal);
-    history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
+    navigate({
+      search: `?page=1&perPage=${perPage || PER_PAGE}`,
+    });
   };
 
   const [confirmationModal, setConfirmationModal] = React.useState<
@@ -176,9 +181,9 @@ const List: React.FC<TopicsListProps> = ({
 
     const newPageQuery = !searchString && cachedPage ? cachedPage : 1;
 
-    history.push(
-      `${pathname}?page=${newPageQuery}&perPage=${perPage || PER_PAGE}`
-    );
+    navigate({
+      search: `?page=${newPageQuery}&perPage=${perPage || PER_PAGE}`,
+    });
   };
   const deleteOrPurgeConfirmationHandler = () => {
     const selectedIds = Array.from(tableState.selectedIds);
@@ -230,7 +235,7 @@ const List: React.FC<TopicsListProps> = ({
 
       return (
         <>
-          <div className="has-text-right">
+          <S.ActionsContainer>
             {!isHidden && (
               <Dropdown label={<VerticalElipsisIcon />} right>
                 {cleanUpPolicy === CleanUpPolicy.DELETE && (
@@ -248,7 +253,7 @@ const List: React.FC<TopicsListProps> = ({
                 </DropdownItem>
               </Dropdown>
             )}
-          </div>
+          </S.ActionsContainer>
           <ConfirmationModal
             isOpen={isClearMessagesModalOpen}
             onCancel={closeClearMessagesModal}
@@ -283,8 +288,7 @@ const List: React.FC<TopicsListProps> = ({
             <Button
               buttonType="primary"
               buttonSize="M"
-              isLink
-              to={clusterTopicNewPath(clusterName)}
+              to={clusterTopicNewRelativePath}
             >
               <i className="fas fa-plus" /> Add a Topic
             </Button>
@@ -331,9 +335,8 @@ const List: React.FC<TopicsListProps> = ({
                   <Button
                     buttonSize="M"
                     buttonType="secondary"
-                    isLink
                     to={{
-                      pathname: clusterTopicCopyPath(clusterName),
+                      pathname: clusterTopicCopyRelativePath,
                       search: `?${getSelectedTopic()}`,
                     }}
                   >
@@ -397,7 +400,7 @@ const List: React.FC<TopicsListProps> = ({
             <TableColumn
               maxWidth="4%"
               cell={ActionsCell}
-              customTd={ActionsTd}
+              customTd={S.ActionsTd}
             />
           </SmartTable>
         </div>

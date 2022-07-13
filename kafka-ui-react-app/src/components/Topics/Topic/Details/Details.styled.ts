@@ -8,7 +8,7 @@ export const DropdownExtraMessage = styled.div`
 `;
 
 export const ReplicaCell = styled.span.attrs({ 'aria-label': 'replica-info' })<{
-  leader: boolean | undefined;
+  leader?: boolean;
 }>`
   ${this} ~ ${this}::before {
     color: black;

@@ -13,6 +13,7 @@ const DropdownArrowIcon: React.FC<Props> = ({ isOpen }) => {
       width="24"
       height="24"
       fill="none"
+      style={{ position: 'absolute', right: '5px' }}
       stroke="currentColor"
       strokeWidth="2"
       color={theme.icons.dropdownArrowIcon}

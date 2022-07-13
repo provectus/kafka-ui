@@ -4,51 +4,51 @@ import { SortOrder } from 'generated-sources';
 import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
 import { DefaultTheme, StyledComponent } from 'styled-components';
 
-export interface OrderableProps<OT> {
-  orderBy: OT | null;
+export interface OrderableProps {
+  orderBy: string | null;
   sortOrder: SortOrder;
-  handleOrderBy: (orderBy: OT | null) => void;
+  handleOrderBy: (orderBy: string | null) => void;
 }
 
-interface TableCellPropsBase<T, TId extends IdType, OT = never> {
-  tableState: TableState<T, TId, OT>;
+interface TableCellPropsBase<T, TId extends IdType> {
+  tableState: TableState<T, TId>;
 }
 
-export interface TableHeaderCellProps<T, TId extends IdType, OT = never>
-  extends TableCellPropsBase<T, TId, OT> {
-  orderable?: OrderableProps<OT>;
-  orderValue?: OT;
+export interface TableHeaderCellProps<T, TId extends IdType>
+  extends TableCellPropsBase<T, TId> {
+  orderable?: OrderableProps;
+  orderValue?: string;
 }
 
-export interface TableCellProps<T, TId extends IdType, OT = never>
-  extends TableCellPropsBase<T, TId, OT> {
+export interface TableCellProps<T, TId extends IdType>
+  extends TableCellPropsBase<T, TId> {
   rowIndex: number;
   dataItem: T;
   hovered?: boolean;
 }
 
-interface TableColumnProps<T, TId extends IdType, OT = never> {
+interface TableColumnProps<T, TId extends IdType> {
   cell?: React.FC<TableCellProps<T, TId>>;
   children?: React.ReactElement;
-  headerCell?: React.FC<TableHeaderCellProps<T, TId, OT>>;
+  headerCell?: React.FC<TableHeaderCellProps<T, TId>>;
   field?: string;
   title?: string;
   maxWidth?: string;
   className?: string;
-  orderValue?: OT;
+  orderValue?: string;
   customTd?: typeof S.Td;
 }
 
-export const TableColumn = <T, TId extends IdType, OT = never>(
+export const TableColumn = <T, TId extends IdType>(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _props: React.PropsWithChildren<TableColumnProps<T, TId, OT>>
+  _props: React.PropsWithChildren<TableColumnProps<T, TId>>
 ): React.ReactElement => {
   return <td />;
 };
 
-export function isColumnElement<T, TId extends IdType, OT = never>(
+export function isColumnElement<T, TId extends IdType>(
   element: React.ReactNode
-): element is React.ReactElement<TableColumnProps<T, TId, OT>> {
+): element is React.ReactElement<TableColumnProps<T, TId>> {
   if (!React.isValidElement(element)) {
     return false;
   }

@@ -1,14 +1,13 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import Topics from 'components/Topics/Topics';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
 import { screen } from '@testing-library/react';
 import {
   clusterTopicCopyPath,
   clusterTopicNewPath,
   clusterTopicPath,
   clusterTopicsPath,
+  getNonExactPath,
 } from 'lib/paths';
 
 const listContainer = 'listContainer';
@@ -29,13 +28,11 @@ describe('Topics Component', () => {
   const clusterName = 'clusterName';
   const topicName = 'topicName';
   const setUpComponent = (path: string) => {
-    const history = createMemoryHistory({
-      initialEntries: [path],
-    });
     return render(
-      <Router history={history}>
+      <WithRoute path={getNonExactPath(clusterTopicsPath())}>
         <Topics />
-      </Router>
+      </WithRoute>,
+      { initialEntries: [path] }
     );
   };
 

@@ -21,11 +21,10 @@ const PageHeading: React.FC<PropsWithChildren<Props>> = ({
 };
 
 export default styled(PageHeading)`
-  height: 56px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0px 16px;
+  padding: 16px;
 
   & > div {
     display: flex;

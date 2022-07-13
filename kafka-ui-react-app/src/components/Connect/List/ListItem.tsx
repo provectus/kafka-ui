@@ -60,10 +60,7 @@ const ListItem: React.FC<ListItemProps> = ({
   return (
     <tr>
       <TableKeyLink>
-        <NavLink
-          exact
-          to={clusterConnectConnectorPath(clusterName, connect, name)}
-        >
+        <NavLink to={clusterConnectConnectorPath(clusterName, connect, name)}>
           {name}
         </NavLink>
       </TableKeyLink>
