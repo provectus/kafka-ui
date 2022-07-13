@@ -5,7 +5,7 @@ import { SmartTable } from 'components/common/SmartTable/SmartTable';
 import { TableColumn } from 'components/common/SmartTable/TableColumn';
 import { useTableState } from 'lib/hooks/useTableState';
 import { ClusterBrokerParam } from 'lib/paths';
-import useBrokersLogDirs from 'lib/hooks/useBrokersLogDirs';
+import { useBrokerLogDirs } from 'lib/hooks/api/brokers';
 
 export interface BrokerLogdirState {
   name: string;
@@ -17,7 +17,7 @@ export interface BrokerLogdirState {
 const BrokerLogdir: React.FC = () => {
   const { clusterName, brokerId } = useAppParams<ClusterBrokerParam>();
 
-  const { data: logDirs } = useBrokersLogDirs(clusterName, Number(brokerId));
+  const { data: logDirs } = useBrokerLogDirs(clusterName, Number(brokerId));
 
   const preparedRows = translateLogdirs(logDirs);
   const tableState = useTableState<BrokerLogdirState, string>(preparedRows, {

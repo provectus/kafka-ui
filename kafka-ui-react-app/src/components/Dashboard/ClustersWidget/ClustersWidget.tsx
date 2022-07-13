@@ -7,7 +7,7 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { NavLink } from 'react-router-dom';
 import { clusterTopicsPath } from 'lib/paths';
 import Switch from 'components/common/Switch/Switch';
-import useClusters from 'lib/hooks/api/useClusters';
+import { useClusters } from 'lib/hooks/api/clusters';
 import { ServerStatus } from 'generated-sources';
 
 import * as S from './ClustersWidget.styled';

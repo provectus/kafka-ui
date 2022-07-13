@@ -21,9 +21,6 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       suspense: true,
-      onError: (erorr) => {
-        console.log(erorr);
-      },
     },
   },
 });
