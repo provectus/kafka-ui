@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.utils.qaseIO;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qase.api.QaseClient;
 import io.qase.api.annotation.CaseId;
-import io.qase.api.exceptions.QaseException;
 import io.qase.client.ApiClient;
 import io.qase.client.api.CasesApi;
 import io.qase.client.model.Filters;
@@ -27,10 +26,10 @@ public class TestCaseGenerator{
     private static final ApiClient apiClient = QaseClient.getApiClient();
     private static final CasesApi casesApi = new CasesApi(apiClient);
 
+    @SneakyThrows
     public static void createTestCaseIfNotExists(Method testMethod) {
         TestCaseCreate caseCreate = new TestCaseCreate();
         String testCaseTitle = generateTestCaseTitle(testMethod);
-
         if (!isMethodAnnotatedWithCaseId(testMethod) || !TestCaseGenerator.isCaseIdPresentInQaseIo(testMethod)) {
             if (!isCaseTitleExistInQaseIo(testMethod)) {
                 caseCreate.setTitle(testCaseTitle);
@@ -39,12 +38,7 @@ public class TestCaseGenerator{
                     long suiteId = testMethod.getAnnotation(Suite.class).suiteId();
                     caseCreate.suiteId(suiteId);
                 }
-                Long caseId = null;
-                try {
-                    caseId = Objects.requireNonNull(casesApi.createCase(getConfig().projectCode(), caseCreate).getResult()).getId();
-                } catch (QaseException e) {
-                    e.printStackTrace();
-                }
+                Long caseId = Objects.requireNonNull(casesApi.createCase(getConfig().projectCode(), caseCreate).getResult()).getId();
                 log.info("New test case = '" + testCaseTitle + "' created with id " + caseId);
             }
         }
@@ -62,36 +56,36 @@ public class TestCaseGenerator{
         return map;
     }
 
-    @SneakyThrows
     public static boolean isCaseIdPresentInQaseIo(Method testMethod) {
-        if (testMethod.isAnnotationPresent(CaseId.class)) {
+        if(testMethod.isAnnotationPresent(CaseId.class)) {
             long caseId = testMethod.getAnnotation(CaseId.class).value();
             HashMap<Long, String> cases = getTestCasesTitleAndId();
             String title;
             if (!cases.containsKey(caseId)) {
-                log.error("The method " + testMethod.getName() + " has wrong @CaseId = " + caseId + " that does not exist in Qase.io. " +
-                        "Please put correct @CaseId");
                 FAILED = true;
+                log.error("The method " + testMethod.getName() + " has wrong @CaseId =" + caseId + " that does not exist in Qase.io. " +
+                        "Please put correct @CaseId");
+                return false;
             } else {
                 for (Map.Entry<Long, String> map : cases.entrySet()) {
                     if (map.getKey().equals(caseId)) {
                         title = map.getValue();
                         if (!title.matches(generateTestCaseTitle(testMethod))) {
-                            log.error("This @CaseId = " + caseId + " belong to the test with title = " + title + ". Set correct @CaseId");
-                            FAILED = true;
-
+                            log.error("This CaseId =" + caseId + " belong to test with title = " + title);
+                            return false;
                         }
                     }
                 }
             }
         }
-        return true;
-    }
+            return true;
+        }
 
     private static boolean isMethodAnnotatedWithCaseId(Method testMethod) {
         if (!testMethod.isAnnotationPresent(CaseId.class)) {
-            log.error("You must put annotation @CaseId. The method " + testMethod.getName() + " is NOT annotated with @CaseId.");
             FAILED = true;
+            log.error("You must put annotation @CaseId. The method " + testMethod.getName() + " is NOT annotated with @CaseId.");
+            return false;
         }
         return true;
     }
@@ -99,15 +93,14 @@ public class TestCaseGenerator{
     private static boolean isCaseTitleExistInQaseIo(Method testMethod) {
         HashMap<Long, String> cases = getTestCasesTitleAndId();
         String title = generateTestCaseTitle(testMethod);
-
         if (cases.containsValue(title)) {
             for (Map.Entry<Long, String> map : cases.entrySet()) {
                 if (map.getValue().matches(title)) {
                     long caseId = map.getKey();
                     log.info("Test case with title '" + title + "' and id " + caseId + " exist in Qase.io. Verify that annotation @CaseId is correct");
+                    return  true;
                 }
             }
-            return true;
         }
         return false;
     }
