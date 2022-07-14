@@ -15,11 +15,12 @@ class JmxExporterMetricsParserTest {
   @Test
   void correctMetricsTest() {
     MetricDTO metric = parser.parse(
-        "kafka_cluster_Partition_Value{name=\"InSyncReplicasCount\",topic=\"__consumer_offsets\",partition=\"37\",} 13.555");
-    MetricDTO expected = new MetricDTO();
+        "kafka_cluster_Partition_Value{name=\"InSyncReplicasCount\","
+            + "topic=\"__consumer_offsets\",partition=\"37\",} 13.555");
     MatcherAssert.assertThat("should be correct canonical name", metric.getCanonicalName(),
         Matchers.is("kafka_cluster_Partition_Value"));
-    MatcherAssert.assertThat("should be correct name", metric.getName(), Matchers.is("InSyncReplicasCount"));
+    MatcherAssert.assertThat("should be correct name", metric.getName(),
+        Matchers.is("InSyncReplicasCount"));
     MatcherAssert.assertThat("should contain correct value", metric.getValue(),
         Matchers.hasEntry(Matchers.is("value"), Matchers.is(new BigDecimal("13.555"))));
     MatcherAssert.assertThat("should contain all properties", metric.getParams(), Matchers.allOf(
@@ -31,7 +32,8 @@ class JmxExporterMetricsParserTest {
   @Test
   void tabsInsteadOfSpacesTest() {
     MetricDTO metric = parser.parse(
-        "kafka_cluster_Partition_Value  {name=\"InSyncReplicasCount\",  topic=\"__consumer_offsets\", partition=\"37\",}  13.555");
+        "kafka_cluster_Partition_Value  {name=\"InSyncReplicasCount\","
+            + "  topic=\"__consumer_offsets\", partition=\"37\",}  13.555");
     MatcherAssert.assertThat("should be correct canonical name", metric.getCanonicalName(),
         Matchers.is("kafka_cluster_Partition_Value"));
     MatcherAssert.assertThat("should be correct name", metric.getName(), Matchers.is("InSyncReplicasCount"));
@@ -45,9 +47,12 @@ class JmxExporterMetricsParserTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-      "kafka_cluster_Partition_Value{name=\"InSyncReplicasCount\",topic=\"__consumer_offsets\",partition=\"37\",} NaN",
-      "#kafka_cluster_Partition_Value{name=\"InSyncReplicasCount\",topic=\"__consumer_offsets\",partition=\"37\",} 13.555",
-      "kafka_server_socket_server_metrics_connection_creation_total{listener=\"REPLICATION\",networkProcessor=\"8\",} 0.0",
+      "kafka_cluster_Partition_Value{name=\"InSyncReplicasCount\","
+          + "topic=\"__consumer_offsets\",partition=\"37\",} NaN",
+      "#kafka_cluster_Partition_Value{name=\"InSyncReplicasCount\","
+          + "topic=\"__consumer_offsets\",partition=\"37\",} 13.555",
+      "kafka_server_socket_server_metrics_connection_creation_total{listener=\"REPLICATION\","
+          + "networkProcessor=\"8\",} 0.0",
       "kafka_cluster_Partition_Value{name=\"InSyncReplicasCount\",topic=\"__consumer_offsets\",partition=\"37\",}"
   })
   void incorrectMerticsTest(String metric) {
