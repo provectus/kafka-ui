@@ -182,6 +182,7 @@ const theme = {
         active: Colors.neutral[15],
       },
       color: Colors.neutral[90],
+      isActiveColor: Colors.neutral[0],
       invertedColors: {
         normal: Colors.neutral[50],
         hover: Colors.neutral[70],

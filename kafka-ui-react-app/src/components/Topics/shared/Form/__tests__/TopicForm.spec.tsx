@@ -44,10 +44,10 @@ describe('TopicForm', () => {
       'spinbutton',
       'Time to retain data (in ms)'
     );
-    expectByRoleAndNameToBeInDocument('button', '12h');
-    expectByRoleAndNameToBeInDocument('button', '2d');
-    expectByRoleAndNameToBeInDocument('button', '7d');
-    expectByRoleAndNameToBeInDocument('button', '4w');
+    expectByRoleAndNameToBeInDocument('button', '12 hours');
+    expectByRoleAndNameToBeInDocument('button', '2 days');
+    expectByRoleAndNameToBeInDocument('button', '7 days');
+    expectByRoleAndNameToBeInDocument('button', '4 weeks');
 
     expectByRoleAndNameToBeInDocument('listbox', 'Max size on disk in GB');
     expectByRoleAndNameToBeInDocument(
@@ -57,7 +57,7 @@ describe('TopicForm', () => {
 
     expectByRoleAndNameToBeInDocument('heading', 'Custom parameters');
 
-    expectByRoleAndNameToBeInDocument('button', 'Submit');
+    expectByRoleAndNameToBeInDocument('button', 'Create topic');
   });
 
   it('submits', () => {
@@ -66,7 +66,7 @@ describe('TopicForm', () => {
       onSubmit: onSubmit.mockImplementation((e) => e.preventDefault()),
     });
 
-    userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+    userEvent.click(screen.getByRole('button', { name: 'Create topic' }));
     expect(onSubmit).toBeCalledTimes(1);
   });
 });
