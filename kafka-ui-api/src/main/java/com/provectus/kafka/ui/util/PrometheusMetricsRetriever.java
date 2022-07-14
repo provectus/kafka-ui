@@ -1,0 +1,45 @@
+package com.provectus.kafka.ui.util;
+
+import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.MetricDTO;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.Node;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class PrometheusMetricsRetriever implements MetricsRetriever {
+
+  private final WebClient webClient;
+  private final JmxExporterMetricsParser parser;
+
+  @Override
+  public List<MetricDTO> retrieve(KafkaCluster c, Node node) {
+    log.debug(String.format("retrieve metrics from prometheus exporter: %s:%d", node.host(), c.getJmxExporterPort()));
+    WebClient.ResponseSpec responseSpec = webClient.get()
+        .uri(UriComponentsBuilder.newInstance()
+            .scheme("http")
+            .host(node.host())
+            .port(c.getJmxExporterPort())
+            .path("/metrics").build().toUri())
+        .retrieve();
+    return Optional.ofNullable(responseSpec.bodyToMono(String.class).block())
+        .map(body ->
+            Arrays.stream(body.split("\\n"))
+                .parallel()
+                .filter(str -> str != null && !"".equals(str) && !str.startsWith("#"))
+                .map(parser::parse)
+                .filter(metrics -> metrics != null && metrics.getCanonicalName() != null)
+                .collect(Collectors.toList()))
+        .orElse(Collections.emptyList());
+  }
+}

@@ -16,6 +16,7 @@ public class KafkaCluster {
   private final String name;
   private final String version;
   private final Integer jmxPort;
+  private final Integer jmxExporterPort;
   private final boolean jmxSsl;
   private final String jmxUsername;
   private final String jmxPassword;

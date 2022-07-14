@@ -36,9 +36,14 @@ public class JmxExporterMetricsParser {
     Matcher matcher = pattern.matcher(s);
     MetricDTO metricDto = null;
     while (matcher.find()) {
-      metricDto = new MetricDTO();
-      metricDto.setCanonicalName(matcher.group(CANONICAL_NAME));
+      String value = matcher.group(VALUE);
       String name = matcher.group(NAME);
+      String canonicalName = matcher.group(CANONICAL_NAME);
+      if (value == null || name == null || canonicalName == null) {
+        return null;
+      }
+      metricDto = new MetricDTO();
+      metricDto.setCanonicalName(canonicalName);
       metricDto.setName(name);
       metricDto.setParams(
           Arrays.stream(matcher.group(PROPERTIES).split(","))
@@ -47,10 +52,6 @@ public class JmxExporterMetricsParser {
               .collect(Collectors.toMap(
                   str -> str[0].trim(),
                   str -> str[1].trim().replace("\"", ""))));
-      String value = matcher.group(VALUE);
-      if (value == null || name == null) {
-        return null;
-      }
       metricDto.setValue(Collections.singletonMap(
           getMetricsValueName(metricDto.getCanonicalName()), new BigDecimal(value)));
     }
