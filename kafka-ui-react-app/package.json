@@ -101,7 +101,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-import-resolver-node": "^0.3.6",
-    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-import-resolver-typescript": "^3.2.5",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest-dom": "^4.0.2",
     "eslint-plugin-jsx-a11y": "^6.5.1",
