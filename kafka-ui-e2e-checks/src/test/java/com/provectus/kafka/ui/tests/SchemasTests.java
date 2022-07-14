@@ -57,7 +57,7 @@ public class SchemasTests extends BaseTest {
 
     @DisplayName("should create AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
-  //  @CaseId(43)
+    @CaseId(43)
     @Test
     @Order(1)
     void createSchemaAvro() throws IOException {
@@ -77,7 +77,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should update AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
-    @CaseId(18600)
+    @CaseId(186)
     @Test
     @Order(2)
     void updateSchemaAvro() {
@@ -96,7 +96,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
-    @CaseId(186)
+    @CaseId(187)
     @Test
     @Order(3)
     void deleteSchemaAvro() {
@@ -111,7 +111,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should create JSON schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
-    @CaseId(8900)
+    @CaseId(89)
     @Test
     @Order(4)
     void createSchemaJson() {
@@ -166,7 +166,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete PROTOBUF schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
-    @CaseId(214)
+    @CaseId(223)
     @Test
     @Order(7)
     void deleteSchemaProtobuf() {
