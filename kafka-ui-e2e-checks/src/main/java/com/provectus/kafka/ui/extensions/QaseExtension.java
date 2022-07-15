@@ -10,6 +10,7 @@ import io.qase.client.model.ResultCreate;
 import io.qase.client.model.ResultCreate.StatusEnum;
 import io.qase.client.model.ResultCreateSteps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.support.descriptor.MethodSource;
@@ -39,13 +40,19 @@ public class QaseExtension implements TestExecutionListener {
 
 
     static {
+        String qaseApiToken = System.getenv("QASEIO_API_TOKEN");
+
+        if (qaseApiToken == null || StringUtils.isEmpty(qaseApiToken)) {
+            throw new RuntimeException("QaseIO API token should be present");
+        }
+
         if ("true".equalsIgnoreCase(System.getenv("QASEIO_CREATE_TESTRUN"))) {
             System.setProperty("QASE_RUN_NAME", "Automation run " +
                     new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
         }
         System.setProperty("QASE_ENABLE", QASE_ENABLE);
         System.setProperty("QASE_PROJECT_CODE", QASE_PROJECT);
-        System.setProperty("QASE_API_TOKEN", System.getenv("QASEIO_API_TOKEN"));
+        System.setProperty("QASE_API_TOKEN", qaseApiToken);
         System.setProperty("QASE_USE_BULK", "false");
     }
 
