@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.model;
 
 import com.google.common.base.Throwables;
 import com.provectus.kafka.ui.service.MetricsCache;
-import com.provectus.kafka.ui.util.JmxMetricsName;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -53,29 +52,17 @@ public class InternalClusterState {
 
     features = metrics.getFeatures();
 
-    if (cluster.getPrometheus() == null
-        || "".equals(cluster.getPrometheus())
-        || metrics.getPrometheusMetrics() == null) {
-      bytesInPerSec = metrics
-          .getJmxMetrics()
-          .getBytesInPerSec()
-          .values().stream()
-          .reduce(BigDecimal.ZERO, BigDecimal::add);
+    bytesInPerSec = metrics
+        .getJmxMetrics()
+        .getBytesInPerSec()
+        .values().stream()
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-      bytesOutPerSec = metrics
-          .getJmxMetrics()
-          .getBytesOutPerSec()
-          .values().stream()
-          .reduce(BigDecimal.ZERO, BigDecimal::add);
-    } else {
-      bytesInPerSec = metrics.getPrometheusMetrics()
-          .getBigDecimalMetric(JmxMetricsName.BYTES_IN_PER_SEC)
-          .orElse(BigDecimal.ZERO);
-
-      bytesOutPerSec = metrics.getPrometheusMetrics()
-          .getBigDecimalMetric(JmxMetricsName.BYTES_OUT_PER_SEC)
-          .orElse(BigDecimal.ZERO);
-    }
+    bytesOutPerSec = metrics
+        .getJmxMetrics()
+        .getBytesOutPerSec()
+        .values().stream()
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     var partitionsStats = new PartitionsStats(metrics.getTopicDescriptions().values());
     onlinePartitionCount = partitionsStats.getOnlinePartitionCount();

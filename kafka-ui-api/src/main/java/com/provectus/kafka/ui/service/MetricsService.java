@@ -5,8 +5,6 @@ import com.provectus.kafka.ui.model.InternalLogDirStats;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.ServerStatusDTO;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
-import com.provectus.kafka.ui.util.PrometheusClusterUtil;
-import com.provectus.kafka.ui.util.PrometheusMetrics;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,6 @@ import reactor.core.publisher.Mono;
 public class MetricsService {
 
   private final JmxClusterUtil jmxClusterUtil;
-  private final PrometheusClusterUtil prometheusClusterUtil;
   private final AdminClientService adminClientService;
   private final FeatureService featureService;
   private final MetricsCache cache;
@@ -40,8 +37,7 @@ public class MetricsService {
                         getLogDirInfo(cluster, ac),
                         featureService.getAvailableFeatures(cluster, description.getController()),
                         loadTopicConfigs(cluster),
-                        describeTopics(cluster),
-                        prometheusClusterUtil.getBrokerMetrics(cluster)),
+                        describeTopics(cluster)),
                     results ->
                         MetricsCache.Metrics.builder()
                             .status(ServerStatusDTO.ONLINE)
@@ -52,7 +48,6 @@ public class MetricsService {
                             .features((List<Feature>) results[2])
                             .topicConfigs((Map<String, List<ConfigEntry>>) results[3])
                             .topicDescriptions((Map<String, TopicDescription>) results[4])
-                            .prometheusMetrics((PrometheusMetrics) results[5])
                             .build()
                 )))
         .doOnError(e ->

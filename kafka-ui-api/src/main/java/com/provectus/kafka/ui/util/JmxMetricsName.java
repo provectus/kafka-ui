@@ -30,6 +30,7 @@ public enum JmxMetricsName {
   FAILED_PRODUCE_REQUESTS_PER_SEC("FailedProduceRequestsPerSe");
 
   private final String value;
+
   JmxMetricsName(String value) {
     this.value = value;
   }
