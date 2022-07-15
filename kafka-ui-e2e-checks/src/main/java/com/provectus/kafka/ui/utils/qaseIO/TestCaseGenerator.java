@@ -53,13 +53,13 @@ public class TestCaseGenerator {
         while (getCases) {
             getCases = false;
             TestCaseListResponse response =
-                    casesApi.getCases(getConfig().projectCode(), new Filters().status(Filters.SERIALIZED_NAME_STATUS), 10, offSet);
+                    casesApi.getCases(getConfig().projectCode(), new Filters().status(Filters.SERIALIZED_NAME_STATUS), 100, offSet);
             if (Objects.requireNonNull(Objects.requireNonNull(response.getResult()).getEntities()).size() > 0) {
                 for (int i = 0; i < Objects.requireNonNull(Objects.requireNonNull(response.getResult()).getEntities()).size(); i++) {
                     map.put(response.getResult().getEntities().get(i).getId(),
                             response.getResult().getEntities().get(i).getTitle());
                 }
-                offSet = offSet + 10;
+                offSet = offSet + 100;
                 getCases = true;
             }
         }
