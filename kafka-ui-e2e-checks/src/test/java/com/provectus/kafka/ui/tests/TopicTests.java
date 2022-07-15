@@ -4,6 +4,8 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.topic.TopicView;
+import com.provectus.kafka.ui.utils.qaseIO.Status;
+import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
@@ -44,6 +46,7 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should create a topic")
     @Suite(suiteId = 4, title = "Create new Topic")
+    @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(199)
     @Test
     public void createTopic() {
@@ -67,6 +70,7 @@ public class TopicTests extends BaseTest {
     @DisplayName("should update a topic")
     @Issue("1500")
     @Suite(suiteId = 2, title = "Topics")
+    @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(197)
     @Test
     public void updateTopic() {

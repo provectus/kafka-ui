@@ -18,11 +18,9 @@ import org.junit.platform.launcher.TestIdentifier;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static io.qase.api.QaseClient.getConfig;
@@ -31,24 +29,25 @@ import static io.qase.api.utils.IntegrationUtils.getStacktrace;
 import static org.junit.platform.engine.TestExecutionResult.Status.SUCCESSFUL;
 
 @Slf4j
-public class QaseExtension implements TestExecutionListener{
+public class QaseExtension implements TestExecutionListener {
 
     private final ApiClient apiClient = QaseClient.getApiClient();
     private final ResultsApi resultsApi = new ResultsApi(apiClient);
     private final Map<TestIdentifier, Long> startTime = new ConcurrentHashMap<>();
+    private static final String QASE_PROJECT = "KAFKAUI";
+    private static final String QASE_ENABLE = "true";
 
 
- /*   If you want to run tests with integration Qase.io uncomment static block and set needed parameters
-            (TOKEN, RUN_ID for existing Run or RUN_NAME if you want that new test run will be created in qase.io*/
-
-/*    static {
-        System.setProperty("QASE_ENABLE", "true");
-        System.setProperty("QASE_PROJECT_CODE", "KAFKAUI");
-        //System.setProperty("QASE_RUN_ID", "");
-        //   System.setProperty("QASE_RUN_NAME", "Automation run " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
-        System.setProperty("QASE_API_TOKEN", "");
+    static {
+        if ("true".equalsIgnoreCase(System.getenv("QASEIO_CREATE_TESTRUN"))) {
+            System.setProperty("QASE_RUN_NAME", "Automation run " +
+                    new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+        }
+        System.setProperty("QASE_ENABLE", QASE_ENABLE);
+        System.setProperty("QASE_PROJECT_CODE", QASE_PROJECT);
+        System.setProperty("QASE_API_TOKEN", System.getenv("QASEIO_API_TOKEN"));
         System.setProperty("QASE_USE_BULK", "false");
-    }*/
+    }
 
 
     @Override
@@ -85,7 +84,7 @@ public class QaseExtension implements TestExecutionListener{
                         resultCreate);
                 log.info("Method = " + testMethod.getName() + ": Result added to test run with Id = {}", getConfig().runId());
             } catch (QaseException e) {
-                log.error("Method = " + testMethod.getName() +": Result not added to test Run because there is no @CaseId annotation or case not found", e);
+                log.error("Method = " + testMethod.getName() + ": Result not added to test Run because there is no @CaseId annotation or case not found", e);
             }
         }
     }
@@ -95,19 +94,22 @@ public class QaseExtension implements TestExecutionListener{
         TestCaseGenerator.createTestCaseIfNotExists(testMethod);
         Long caseId = getCaseId(testMethod);
         Map<Long, String> cases = TestCaseGenerator.getTestCasesTitleAndId();
+        StatusEnum status = StatusEnum.SKIPPED;
 
-        if (caseId == null || !TestCaseGenerator.isCaseIdPresentInQaseIo(testMethod)) {
+        if (caseId == null) {
             for (Map.Entry<Long, String> map : cases.entrySet()) {
                 if (map.getValue().matches(testCaseTitle)) {
                     caseId = map.getKey();
                     log.info("There is no annotation @CaseId but there is test case with title '" + testCaseTitle + "' and with id = " + caseId
-                    + " that will be added to test Run");
+                            + " that will be added to test Run");
                 }
             }
         }
 
-        StatusEnum status =
-                testExecutionResult.getStatus() == SUCCESSFUL ? StatusEnum.PASSED : StatusEnum.FAILED;
+        if (TestCaseGenerator.getAutomationStatus(testMethod) == 2) {
+            status = testExecutionResult.getStatus() == SUCCESSFUL ? StatusEnum.PASSED : StatusEnum.FAILED;
+        }
+
         String comment = testExecutionResult.getThrowable()
                 .flatMap(throwable -> Optional.of(throwable.toString())).orElse(null);
         Boolean isDefect = testExecutionResult.getThrowable()

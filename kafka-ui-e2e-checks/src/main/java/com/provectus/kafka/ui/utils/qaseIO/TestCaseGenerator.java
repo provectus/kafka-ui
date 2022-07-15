@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.utils.qaseIO;
 
+import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qase.api.QaseClient;
 import io.qase.api.annotation.CaseId;
@@ -20,7 +21,7 @@ import java.util.Objects;
 import static io.qase.api.QaseClient.getConfig;
 
 @Slf4j
-public class TestCaseGenerator{
+public class TestCaseGenerator {
 
     public static boolean FAILED = false;
     private static final ApiClient apiClient = QaseClient.getApiClient();
@@ -33,7 +34,7 @@ public class TestCaseGenerator{
         if (!isMethodAnnotatedWithCaseId(testMethod) || !TestCaseGenerator.isCaseIdPresentInQaseIo(testMethod)) {
             if (!isCaseTitleExistInQaseIo(testMethod)) {
                 caseCreate.setTitle(testCaseTitle);
-                caseCreate.setAutomation(2);
+                caseCreate.setAutomation(getAutomationStatus(testMethod));
                 if (isMethodAnnotatedWithSuite(testMethod)) {
                     long suiteId = testMethod.getAnnotation(Suite.class).suiteId();
                     caseCreate.suiteId(suiteId);
@@ -47,17 +48,26 @@ public class TestCaseGenerator{
     @SneakyThrows
     public static HashMap<Long, String> getTestCasesTitleAndId() {
         HashMap<Long, String> map = new HashMap<>();
-        TestCaseListResponse response =
-                casesApi.getCases(getConfig().projectCode(), new Filters().status(Filters.SERIALIZED_NAME_STATUS), 100, 0);
-        for (int i = 0; i < Objects.requireNonNull(Objects.requireNonNull(response.getResult()).getEntities()).size(); i++) {
-            map.put(response.getResult().getEntities().get(i).getId(),
-                    response.getResult().getEntities().get(i).getTitle());
+        boolean getCases = true;
+        int offSet = 0;
+        while (getCases) {
+            getCases = false;
+            TestCaseListResponse response =
+                    casesApi.getCases(getConfig().projectCode(), new Filters().status(Filters.SERIALIZED_NAME_STATUS), 10, offSet);
+            if (Objects.requireNonNull(Objects.requireNonNull(response.getResult()).getEntities()).size() > 0) {
+                for (int i = 0; i < Objects.requireNonNull(Objects.requireNonNull(response.getResult()).getEntities()).size(); i++) {
+                    map.put(response.getResult().getEntities().get(i).getId(),
+                            response.getResult().getEntities().get(i).getTitle());
+                }
+                offSet = offSet + 10;
+                getCases = true;
+            }
         }
         return map;
     }
 
-    public static boolean isCaseIdPresentInQaseIo(Method testMethod) {
-        if(testMethod.isAnnotationPresent(CaseId.class)) {
+    private static boolean isCaseIdPresentInQaseIo(Method testMethod) {
+        if (testMethod.isAnnotationPresent(CaseId.class)) {
             long caseId = testMethod.getAnnotation(CaseId.class).value();
             HashMap<Long, String> cases = getTestCasesTitleAndId();
             String title;
@@ -78,15 +88,6 @@ public class TestCaseGenerator{
                 }
             }
         }
-            return true;
-        }
-
-    private static boolean isMethodAnnotatedWithCaseId(Method testMethod) {
-        if (!testMethod.isAnnotationPresent(CaseId.class)) {
-            FAILED = true;
-            log.error("You must put annotation @CaseId. The method " + testMethod.getName() + " is NOT annotated with @CaseId.");
-            return false;
-        }
         return true;
     }
 
@@ -98,11 +99,30 @@ public class TestCaseGenerator{
                 if (map.getValue().matches(title)) {
                     long caseId = map.getKey();
                     log.info("Test case with title '" + title + "' and id " + caseId + " exist in Qase.io. Verify that annotation @CaseId is correct");
-                    return  true;
+                    return true;
                 }
             }
         }
         return false;
+    }
+
+    public static int getAutomationStatus(Method testMethod) {
+        if (testMethod.isAnnotationPresent(AutomationStatus.class)) {
+            if (testMethod.getAnnotation(AutomationStatus.class).status().equals(Status.TO_BE_AUTOMATED))
+                return 1;
+            else if (testMethod.getAnnotation(AutomationStatus.class).status().equals(Status.MANUAL))
+                return 0;
+        }
+        return 2;
+    }
+
+    private static boolean isMethodAnnotatedWithCaseId(Method testMethod) {
+        if (!testMethod.isAnnotationPresent(CaseId.class)) {
+            FAILED = true;
+            log.error("You must put annotation @CaseId. The method " + testMethod.getName() + " is NOT annotated with @CaseId.");
+            return false;
+        }
+        return true;
     }
 
     private static boolean isMethodAnnotatedWithSuite(Method testMethod) {
@@ -114,12 +134,20 @@ public class TestCaseGenerator{
         return true;
     }
 
+    private static boolean isMethodAnnotatedWithAutomationStatus(Method testMethod) {
+        if (!testMethod.isAnnotationPresent(AutomationStatus.class)) {
+            log.error("The method " + testMethod.getName() + " is NOT annotated with @AutomationStatus.");
+            return false;
+        }
+        return true;
+    }
+
     public static String generateTestCaseTitle(Method testMethod) {
         return getClassName(MethodSource.from(testMethod)) + "." + testMethod.getName() + " : " +
                 MethodNameUtils.formatTestCaseTitle(testMethod.getName());
     }
 
-    public static String getClassName(MethodSource testSource) {
+    private static String getClassName(MethodSource testSource) {
         Class<?> testClass;
         try {
             testClass = Class.forName(testSource.getClassName());
