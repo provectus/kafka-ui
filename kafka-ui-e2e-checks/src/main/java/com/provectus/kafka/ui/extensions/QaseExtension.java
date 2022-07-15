@@ -40,13 +40,13 @@ public class QaseExtension implements TestExecutionListener {
 
 
     static {
-        String qaseApiToken = System.getenv("QASEIO_API_TOKEN");
+        String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
 
         if (qaseApiToken == null || StringUtils.isEmpty(qaseApiToken)) {
             throw new RuntimeException("QaseIO API token should be present");
         }
 
-        if ("true".equalsIgnoreCase(System.getenv("QASEIO_CREATE_TESTRUN"))) {
+        if ("true".equalsIgnoreCase(System.getProperty("QASEIO_CREATE_TESTRUN"))) {
             System.setProperty("QASE_RUN_NAME", "Automation run " +
                     new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
         }
