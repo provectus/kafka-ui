@@ -14,7 +14,7 @@ To see the app, navigate to http://localhost:8080.
 
 If you want to start only kafka clusters (to run the app via `spring-boot:run`):
 ```sh
-docker-compose -f ./documentation/compose/kafka-ui-with-prometheus.yaml up -d
+docker-compose -f ./documentation/compose/kafka-clusters-only.yaml up -d
 ``` 
 
 Then, start the app.
