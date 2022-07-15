@@ -45,6 +45,8 @@ jobs:
         run: |
           docker-compose -f ./documentation/compose/kafka-ui-connectors.yaml up -d
       - name: e2e run
+        with:
+          QASEIO_API_TOKEN: ${{ secrets.QASEIO_API_TOKEN }}
         run: |
           mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
           mvn -pl '!kafka-ui-api' test -Pprod
