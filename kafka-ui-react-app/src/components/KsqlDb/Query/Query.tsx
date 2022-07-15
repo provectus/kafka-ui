@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, FC, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import TableRenderer from 'components/KsqlDb/Query/renderer/TableRenderer/TableRenderer';
 import {
   executeKsql,
@@ -10,7 +10,8 @@ import { getKsqlExecution } from 'redux/reducers/ksqlDb/selectors';
 import { BASE_PARAMS } from 'lib/constants';
 import { KsqlResponse, KsqlTableResponse } from 'generated-sources';
 import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
-import { now } from 'lodash';
+import now from 'lodash/now';
+import { ClusterNameRoute } from 'lib/paths';
 
 import type { FormValues } from './QueryForm/QueryForm';
 import * as S from './Query.styled';
@@ -61,7 +62,7 @@ export const getFormattedErrorFromTableData = (
 };
 
 const Query: FC = () => {
-  const { clusterName } = useParams<{ clusterName: string }>();
+  const { clusterName } = useAppParams<ClusterNameRoute>();
 
   const sseRef = React.useRef<{ sse: EventSource | null; isOpen: boolean }>({
     sse: null,
@@ -197,15 +198,23 @@ const Query: FC = () => {
 
   const submitHandler = useCallback(
     (values: FormValues) => {
+      const streamsProperties = values.streamsProperties.reduce(
+        (acc, current) => ({
+          ...acc,
+          [current.key as keyof string]: current.value,
+        }),
+        {} as { [key: string]: string }
+      );
       setFetching(true);
       dispatch(
         executeKsql({
           clusterName,
           ksqlCommandV2: {
             ...values,
-            streamsProperties: values.streamsProperties
-              ? JSON.parse(values.streamsProperties)
-              : undefined,
+            streamsProperties:
+              values.streamsProperties[0].key !== ''
+                ? JSON.parse(JSON.stringify(streamsProperties))
+                : undefined,
           },
         })
       );

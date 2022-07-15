@@ -1,0 +1,11 @@
+{{- if .Values.yamlApplicationConfig -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kafka-ui.fullname" . }}-fromvalues
+  labels:
+    {{- include "kafka-ui.labels" . | nindent 4 }}
+data:
+  config.yml: |-
+    {{- toYaml .Values.yamlApplicationConfig | nindent 4}}
+{{ end }}

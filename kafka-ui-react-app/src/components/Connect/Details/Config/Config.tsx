@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
   ClusterName,
   ConnectName,
@@ -9,12 +9,7 @@ import {
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Editor from 'components/common/Editor/Editor';
 import styled from 'styled-components';
-
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
+import { RouterParamsClusterConnectConnector } from 'lib/paths';
 
 export interface ConfigProps {
   fetchConfig(payload: {
@@ -35,7 +30,8 @@ const Config: React.FC<ConfigProps> = ({
   isConfigFetching,
   config,
 }) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
+  const { clusterName, connectName, connectorName } =
+    useAppParams<RouterParamsClusterConnectConnector>();
 
   React.useEffect(() => {
     fetchConfig({ clusterName, connectName, connectorName });

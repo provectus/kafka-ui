@@ -29,38 +29,44 @@ const renderComponent = (props: Partial<FilterModalProps> = {}) =>
   );
 
 describe('AddFilter component', () => {
-  it('should test click on Saved Filters redirects to Saved components', () => {
-    renderComponent();
-    userEvent.click(screen.getByRole('savedFilterText'));
-    expect(screen.getByText('Saved filters')).toBeInTheDocument();
-    expect(screen.getAllByRole('savedFilter')).toHaveLength(2);
-  });
+  describe('', () => {
+    beforeEach(async () => {
+      await act(() => {
+        renderComponent();
+      });
+    });
 
-  it('info button to be in the document', () => {
-    renderComponent();
-    expect(screen.getByRole('button', { name: 'info' })).toBeInTheDocument();
-  });
+    it('should test click on Saved Filters redirects to Saved components', () => {
+      userEvent.click(screen.getByRole('savedFilterText'));
+      expect(screen.getByText('Saved filters')).toBeInTheDocument();
+      expect(screen.getAllByRole('savedFilter')).toHaveLength(2);
+    });
 
-  it('renders InfoModal', () => {
-    renderComponent();
-    userEvent.click(screen.getByRole('button', { name: 'info' }));
-    expect(screen.getByRole('button', { name: 'Ok' })).toBeInTheDocument();
-    expect(screen.getByRole('list', { name: 'info-list' })).toBeInTheDocument();
-  });
+    it('info button to be in the document', () => {
+      expect(screen.getByRole('button', { name: 'info' })).toBeInTheDocument();
+    });
 
-  it('should test click on return to custom filter redirects to Add filters', async () => {
-    renderComponent();
-    userEvent.click(screen.getByRole('savedFilterText'));
+    it('renders InfoModal', () => {
+      userEvent.click(screen.getByRole('button', { name: 'info' }));
+      expect(screen.getByRole('button', { name: 'Ok' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('list', { name: 'info-list' })
+      ).toBeInTheDocument();
+    });
 
-    expect(screen.getByText('Saved filters')).toBeInTheDocument();
-    expect(screen.queryByRole('savedFilterText')).not.toBeInTheDocument();
-    expect(screen.getAllByRole('savedFilter')).toHaveLength(2);
+    it('should test click on return to custom filter redirects to Add filters', async () => {
+      userEvent.click(screen.getByRole('savedFilterText'));
 
-    await act(() =>
-      userEvent.click(screen.getByText(/back to custom filters/i))
-    );
-    expect(screen.queryByText('Saved filters')).not.toBeInTheDocument();
-    expect(screen.getByRole('savedFilterText')).toBeInTheDocument();
+      expect(screen.getByText('Saved filters')).toBeInTheDocument();
+      expect(screen.queryByRole('savedFilterText')).not.toBeInTheDocument();
+      expect(screen.getAllByRole('savedFilter')).toHaveLength(2);
+
+      await act(() =>
+        userEvent.click(screen.getByText(/back to custom filters/i))
+      );
+      expect(screen.queryByText('Saved filters')).not.toBeInTheDocument();
+      expect(screen.getByRole('savedFilterText')).toBeInTheDocument();
+    });
   });
 
   describe('Add new filter', () => {

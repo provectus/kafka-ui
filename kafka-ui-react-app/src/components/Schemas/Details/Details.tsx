@@ -1,9 +1,9 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
-  clusterSchemasPath,
-  clusterSchemaSchemaDiffPath,
-  clusterSchemaEditPath,
+  ClusterSubjectParam,
+  clusterSchemaEditPageRelativePath,
+  clusterSchemaSchemaComparePageRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -21,7 +21,6 @@ import {
   fetchSchemaVersions,
   getAreSchemaLatestFulfilled,
   getAreSchemaVersionsFulfilled,
-  schemasApiClient,
   SCHEMAS_VERSIONS_FETCH_ACTION,
   SCHEMA_LATEST_FETCH_ACTION,
   selectAllSchemaVersions,
@@ -31,16 +30,17 @@ import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
+import useAppParams from 'lib/hooks/useAppParams';
+import { schemasApiClient } from 'lib/api';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
 
 const Details: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
-  const { clusterName, subject } =
-    useParams<{ clusterName: string; subject: string }>();
+  const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
   const [
     isDeleteSchemaConfirmationVisible,
     setDeleteSchemaConfirmationVisible,
@@ -71,7 +71,7 @@ const Details: React.FC = () => {
         clusterName,
         subject,
       });
-      history.push(clusterSchemasPath(clusterName));
+      navigate('../');
     } catch (e) {
       const err = await getResponse(e as Response);
       dispatch(serverErrorAlertAdded(err));
@@ -87,21 +87,19 @@ const Details: React.FC = () => {
         {!isReadOnly && (
           <>
             <Button
-              isLink
               buttonSize="M"
               buttonType="primary"
               to={{
-                pathname: clusterSchemaSchemaDiffPath(clusterName, subject),
+                pathname: clusterSchemaSchemaComparePageRelativePath,
                 search: `leftVersion=${versions[0]?.version}&rightVersion=${versions[0]?.version}`,
               }}
             >
               Compare Versions
             </Button>
             <Button
-              isLink
               buttonSize="M"
               buttonType="primary"
-              to={clusterSchemaEditPath(clusterName, subject)}
+              to={clusterSchemaEditPageRelativePath}
             >
               Edit Schema
             </Button>

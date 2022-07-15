@@ -9,7 +9,7 @@ export const Alert = styled.div<{ $type: AlertType }>`
   padding: 12px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   filter: drop-shadow(0px 4px 16px ${({ theme }) => theme.alert.shadow});
   margin-top: 10px;
   line-height: 20px;

@@ -4,17 +4,14 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ListItem from 'components/ConsumerGroups/Details/ListItem';
 import { consumerGroupPayload } from 'redux/reducers/consumerGroups/__test__/fixtures';
-import { render } from 'lib/testHelpers';
-import { Route } from 'react-router-dom';
+import { render, WithRoute } from 'lib/testHelpers';
 import { ConsumerGroupTopicPartition } from 'generated-sources';
 
 const clusterName = 'cluster1';
 
 const renderComponent = (consumers: ConsumerGroupTopicPartition[] = []) =>
   render(
-    <Route
-      path={clusterConsumerGroupDetailsPath(':clusterName', ':consumerGroupID')}
-    >
+    <WithRoute path={clusterConsumerGroupDetailsPath()}>
       <table>
         <tbody>
           <ListItem
@@ -24,12 +21,14 @@ const renderComponent = (consumers: ConsumerGroupTopicPartition[] = []) =>
           />
         </tbody>
       </table>
-    </Route>,
+    </WithRoute>,
     {
-      pathname: clusterConsumerGroupDetailsPath(
-        clusterName,
-        consumerGroupPayload.groupId
-      ),
+      initialEntries: [
+        clusterConsumerGroupDetailsPath(
+          clusterName,
+          consumerGroupPayload.groupId
+        ),
+      ],
     }
   );
 

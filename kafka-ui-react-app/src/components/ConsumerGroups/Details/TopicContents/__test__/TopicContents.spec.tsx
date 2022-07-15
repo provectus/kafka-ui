@@ -3,28 +3,27 @@ import { clusterConsumerGroupDetailsPath } from 'lib/paths';
 import { screen } from '@testing-library/react';
 import TopicContents from 'components/ConsumerGroups/Details/TopicContents/TopicContents';
 import { consumerGroupPayload } from 'redux/reducers/consumerGroups/__test__/fixtures';
-import { render } from 'lib/testHelpers';
-import { Route } from 'react-router-dom';
+import { render, WithRoute } from 'lib/testHelpers';
 import { ConsumerGroupTopicPartition } from 'generated-sources';
 
 const clusterName = 'cluster1';
 
 const renderComponent = (consumers: ConsumerGroupTopicPartition[] = []) =>
   render(
-    <Route
-      path={clusterConsumerGroupDetailsPath(':clusterName', ':consumerGroupID')}
-    >
+    <WithRoute path={clusterConsumerGroupDetailsPath()}>
       <table>
         <tbody>
           <TopicContents consumers={consumers} />
         </tbody>
       </table>
-    </Route>,
+    </WithRoute>,
     {
-      pathname: clusterConsumerGroupDetailsPath(
-        clusterName,
-        consumerGroupPayload.groupId
-      ),
+      initialEntries: [
+        clusterConsumerGroupDetailsPath(
+          clusterName,
+          consumerGroupPayload.groupId
+        ),
+      ],
     }
   );
 

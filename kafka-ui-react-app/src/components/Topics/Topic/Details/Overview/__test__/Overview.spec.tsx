@@ -1,20 +1,22 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import Overview, {
   Props as OverviewProps,
 } from 'components/Topics/Topic/Details/Overview/Overview';
 import theme from 'theme/theme';
-import { CleanUpPolicy } from 'generated-sources';
+import { CleanUpPolicy, Topic } from 'generated-sources';
 import ClusterContext from 'components/contexts/ClusterContext';
 import userEvent from '@testing-library/user-event';
+import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
+import { clusterTopicPath } from 'lib/paths';
 import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
 
 describe('Overview', () => {
-  const getReplicaCell = () => screen.getByLabelText('replica-info');
   const mockClusterName = 'local';
   const mockTopicName = 'topic';
-  const mockClearTopicMessages = jest.fn();
+  const mockTopic = { name: mockTopicName };
+
   const mockPartitions = [
     {
       partition: 1,
@@ -36,67 +38,63 @@ describe('Overview', () => {
     hasSchemaRegistryConfigured: true,
     isTopicDeletionAllowed: true,
   };
-  const defaultProps: OverviewProps = {
-    name: mockTopicName,
-    partitions: [],
-    internal: true,
-    clusterName: mockClusterName,
-    topicName: mockTopicName,
-    clearTopicMessages: mockClearTopicMessages,
-  };
 
   const setupComponent = (
-    props = defaultProps,
-    contextValues = defaultContextValues,
-    underReplicatedPartitions?: number,
-    inSyncReplicas?: number,
-    replicas?: number
+    props: Partial<OverviewProps> = {},
+    topicState: Topic = mockTopic,
+    contextValues = defaultContextValues
   ) => {
+    const topics = getTopicStateFixtures([topicState]);
+
     return render(
-      <ClusterContext.Provider value={contextValues}>
-        <Overview
-          underReplicatedPartitions={underReplicatedPartitions}
-          inSyncReplicas={inSyncReplicas}
-          replicas={replicas}
-          {...props}
-        />
-      </ClusterContext.Provider>
+      <WithRoute path={clusterTopicPath()}>
+        <ClusterContext.Provider value={contextValues}>
+          <Overview clearTopicMessages={jest.fn()} {...props} />
+        </ClusterContext.Provider>
+      </WithRoute>,
+      {
+        initialEntries: [clusterTopicPath(mockClusterName, mockTopicName)],
+        preloadedState: { topics },
+      }
     );
   };
 
-  afterEach(() => {
-    mockClearTopicMessages.mockClear();
-  });
-
   it('at least one replica was rendered', () => {
-    setupComponent({
-      ...defaultProps,
-      underReplicatedPartitions: 0,
-      inSyncReplicas: 1,
-      replicas: 1,
-    });
-    expect(getReplicaCell()).toBeInTheDocument();
+    setupComponent(
+      {},
+      {
+        ...mockTopic,
+        partitions: mockPartitions,
+        internal: false,
+        cleanUpPolicy: CleanUpPolicy.DELETE,
+      }
+    );
+    expect(screen.getByLabelText('replica-info')).toBeInTheDocument();
   });
 
   it('renders replica cell with props', () => {
     render(<ReplicaCell leader />);
-    expect(getReplicaCell()).toBeInTheDocument();
-    expect(getReplicaCell()).toHaveStyleRule('color', 'orange');
+    const element = screen.getByLabelText('replica-info');
+    expect(element).toBeInTheDocument();
+    expect(element).toHaveStyleRule('color', 'orange');
   });
 
   describe('when it has internal flag', () => {
     it('does not render the Action button a Topic', () => {
-      setupComponent({
-        ...defaultProps,
-        partitions: mockPartitions,
-        internal: false,
-        cleanUpPolicy: CleanUpPolicy.DELETE,
-      });
+      setupComponent(
+        {},
+        {
+          ...mockTopic,
+          partitions: mockPartitions,
+          internal: false,
+          cleanUpPolicy: CleanUpPolicy.DELETE,
+        }
+      );
       expect(screen.getAllByRole('menu')[0]).toBeInTheDocument();
     });
 
     it('does not render Partitions', () => {
-      setupComponent();
+      setupComponent({}, { ...mockTopic, partitions: [] });
 
       expect(screen.getByText('No Partitions found')).toBeInTheDocument();
     });
@@ -110,12 +108,15 @@ describe('Overview', () => {
     });
 
     it('should be the appropriate color', () => {
-      setupComponent({
-        ...defaultProps,
-        underReplicatedPartitions: 0,
-        inSyncReplicas: 1,
-        replicas: 2,
-      });
+      setupComponent(
+        {},
+        {
+          ...mockTopic,
+          underReplicatedPartitions: 0,
+          inSyncReplicas: 1,
+          replicas: 2,
+        }
+      );
       const circles = screen.getAllByRole('circle');
       expect(circles[0]).toHaveStyle(
         `fill: ${theme.circularAlert.color.success}`
@@ -127,24 +128,30 @@ describe('Overview', () => {
   });
 
   describe('when Clear Messages is clicked', () => {
-    setupComponent({
-      ...defaultProps,
-      partitions: mockPartitions,
-      internal: false,
-      cleanUpPolicy: CleanUpPolicy.DELETE,
+    it('should when Clear Messages is clicked', () => {
+      const mockClearTopicMessages = jest.fn();
+      setupComponent(
+        { clearTopicMessages: mockClearTopicMessages },
+        {
+          ...mockTopic,
+          partitions: mockPartitions,
+          internal: false,
+          cleanUpPolicy: CleanUpPolicy.DELETE,
+        }
+      );
+
+      const clearMessagesButton = screen.getByText('Clear Messages');
+      userEvent.click(clearMessagesButton);
+      expect(mockClearTopicMessages).toHaveBeenCalledTimes(1);
     });
-
-    const clearMessagesButton = screen.getByText('Clear Messages');
-    userEvent.click(clearMessagesButton);
-
-    expect(mockClearTopicMessages).toHaveBeenCalledTimes(1);
   });
 
   describe('when the table partition dropdown appearance', () => {
     it('should check if the dropdown is not present when it is readOnly', () => {
       setupComponent(
+        {},
         {
-          ...defaultProps,
+          ...mockTopic,
           partitions: mockPartitions,
           internal: true,
           cleanUpPolicy: CleanUpPolicy.DELETE,
@@ -155,32 +162,41 @@ describe('Overview', () => {
     });
 
     it('should check if the dropdown is not present when it is internal', () => {
-      setupComponent({
-        ...defaultProps,
-        partitions: mockPartitions,
-        internal: true,
-        cleanUpPolicy: CleanUpPolicy.DELETE,
-      });
+      setupComponent(
+        {},
+        {
+          ...mockTopic,
+          partitions: mockPartitions,
+          internal: true,
+          cleanUpPolicy: CleanUpPolicy.DELETE,
+        }
+      );
       expect(screen.queryByText('Clear Messages')).not.toBeInTheDocument();
     });
 
     it('should check if the dropdown is not present when cleanUpPolicy is not DELETE', () => {
-      setupComponent({
-        ...defaultProps,
-        partitions: mockPartitions,
-        internal: false,
-        cleanUpPolicy: CleanUpPolicy.COMPACT,
-      });
+      setupComponent(
+        {},
+        {
+          ...mockTopic,
+          partitions: mockPartitions,
+          internal: false,
+          cleanUpPolicy: CleanUpPolicy.COMPACT,
+        }
+      );
       expect(screen.queryByText('Clear Messages')).not.toBeInTheDocument();
     });
 
     it('should check if the dropdown action to be in visible', () => {
-      setupComponent({
-        ...defaultProps,
-        partitions: mockPartitions,
-        internal: false,
-        cleanUpPolicy: CleanUpPolicy.DELETE,
-      });
+      setupComponent(
+        {},
+        {
+          ...mockTopic,
+          partitions: mockPartitions,
+          internal: false,
+          cleanUpPolicy: CleanUpPolicy.DELETE,
+        }
+      );
       expect(screen.getByText('Clear Messages')).toBeInTheDocument();
     });
   });

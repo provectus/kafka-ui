@@ -8,6 +8,7 @@ import java.util.Properties;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -26,6 +27,7 @@ public class ClustersProperties {
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
     String ksqldbServer;
+    KsqldbServerAuth ksqldbServerAuth;
     String schemaNameTemplate = "%s-value";
     String keySchemaNameTemplate = "%s-key";
     String protobufFile;
@@ -53,6 +55,13 @@ public class ClustersProperties {
 
   @Data
   public static class SchemaRegistryAuth {
+    String username;
+    String password;
+  }
+
+  @Data
+  @ToString(exclude = "password")
+  public static class KsqldbServerAuth {
     String username;
     String password;
   }

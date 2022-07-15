@@ -36,7 +36,6 @@ import {
 
 const topic = {
   name: 'topic',
-  id: 'id',
 };
 
 const messageSchema = {
@@ -213,7 +212,6 @@ describe('topics Slice', () => {
       it('updateTopic/fulfilled', () => {
         const updatedTopic = {
           name: 'topic',
-          id: 'id',
           partitions: 1,
         };
         expect(
@@ -368,7 +366,16 @@ describe('topics Slice', () => {
   describe('Thunks', () => {
     const store = mockStoreCreator;
     const topicName = topic.name;
+    const RealDate = Date.now;
 
+    beforeAll(() => {
+      global.Date.now = jest.fn(() =>
+        new Date('2019-04-07T10:20:30Z').getTime()
+      );
+    });
+    afterAll(() => {
+      global.Date.now = RealDate;
+    });
     afterEach(() => {
       fetchMock.restore();
       store.clearActions();
@@ -495,6 +502,18 @@ describe('topics Slice', () => {
 
         expect(getTypeAndPayload(store)).toEqual([
           { type: deleteTopic.pending.type },
+          { type: showSuccessAlert.pending.type },
+          {
+            type: alertAdded.type,
+            payload: {
+              id: 'message-topic-local',
+              title: '',
+              type: 'success',
+              createdAt: global.Date.now(),
+              message: 'Topic successfully deleted!',
+            },
+          },
+          { type: showSuccessAlert.fulfilled.type },
           {
             type: deleteTopic.fulfilled.type,
             payload: { topicName },
@@ -536,6 +555,7 @@ describe('topics Slice', () => {
           { type: deleteTopics.pending.type },
           { type: deleteTopic.pending.type },
           { type: deleteTopic.pending.type },
+          { type: fetchTopicsList.pending.type },
           { type: deleteTopics.fulfilled.type },
         ]);
       });
@@ -563,6 +583,18 @@ describe('topics Slice', () => {
 
         expect(getTypeAndPayload(store)).toEqual([
           { type: recreateTopic.pending.type },
+          { type: showSuccessAlert.pending.type },
+          {
+            type: alertAdded.type,
+            payload: {
+              id: 'message-topic-local',
+              title: '',
+              type: 'success',
+              createdAt: global.Date.now(),
+              message: 'Topic successfully recreated!',
+            },
+          },
+          { type: showSuccessAlert.fulfilled.type },
           {
             type: recreateTopic.fulfilled.type,
             payload: { [topicName]: { ...recreateResponse } },
@@ -662,17 +694,6 @@ describe('topics Slice', () => {
       });
     });
     describe('updateTopicPartitionsCount', () => {
-      const RealDate = Date.now;
-
-      beforeAll(() => {
-        global.Date.now = jest.fn(() =>
-          new Date('2019-04-07T10:20:30Z').getTime()
-        );
-      });
-
-      afterAll(() => {
-        global.Date.now = RealDate;
-      });
       it('updateTopicPartitionsCount/fulfilled', async () => {
         fetchMock.patchOnce(
           `/api/clusters/${clusterName}/topics/${topicName}/partitions`,
