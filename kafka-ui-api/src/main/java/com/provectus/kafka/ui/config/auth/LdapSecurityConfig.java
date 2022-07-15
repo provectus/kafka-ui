@@ -41,10 +41,10 @@ public class LdapSecurityConfig extends AbstractAuthSecurityConfig {
   @Value("${spring.ldap.userFilter.searchFilter:#{null}}")
   private String userFilterSearchFilter;
 
-  @Value("${oauth2.ldap.ad:false}")
+  @Value("${oauth2.ldap.activeDirectory:false}")
   private boolean isActiveDirectory;
-  @Value("${oauth2.ldap.ad.domain:#{null}}")
-  private String adDomain;
+  @Value("${oauth2.ldap.aсtiveDirectory.domain:#{null}}")
+  private String activeDirectoryDomain;
 
   @Bean
   public ReactiveAuthenticationManager authenticationManager(BaseLdapPathContextSource contextSource) {
@@ -62,7 +62,7 @@ public class LdapSecurityConfig extends AbstractAuthSecurityConfig {
     if (!isActiveDirectory) {
       authenticationProvider = new LdapAuthenticationProvider(ba);
     } else {
-      authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(adDomain, ldapUrls);
+      authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(activeDirectoryDomain, ldapUrls);
       authenticationProvider.setUseAuthenticationRequestCredentials(true);
     }
 
