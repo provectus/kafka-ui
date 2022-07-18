@@ -124,6 +124,8 @@ describe('Edit Component', () => {
           screen.getByPlaceholderText('Min In Sync Replicas'),
           '1'
         );
+      });
+      await act(() => {
         userEvent.click(btn);
       });
       expect(updateTopicMock).toHaveBeenCalledTimes(1);
@@ -145,6 +147,8 @@ describe('Edit Component', () => {
           screen.getByPlaceholderText('Min In Sync Replicas'),
           '1'
         );
+      });
+      await act(() => {
         userEvent.click(btn);
       });
       expect(updateTopicMock).toHaveBeenCalledTimes(1);

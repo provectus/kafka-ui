@@ -125,10 +125,10 @@ const TopicForm: React.FC<Props> = ({
               placeholder="Min In Sync Replicas"
               min="1"
               defaultValue={inSyncReplicas}
-              name="minInsyncReplicas"
+              name="minInSyncReplicas"
             />
             <FormError>
-              <ErrorMessage errors={errors} name="minInsyncReplicas" />
+              <ErrorMessage errors={errors} name="minInSyncReplicas" />
             </FormError>
           </div>
           <div>
@@ -213,7 +213,7 @@ const TopicForm: React.FC<Props> = ({
           type="submit"
           buttonType="primary"
           buttonSize="L"
-          disabled={(!isEditing && !isValid) || isSubmitting || !isDirty}
+          disabled={!isValid || isSubmitting || !isDirty}
         >
           Submit
         </Button>
