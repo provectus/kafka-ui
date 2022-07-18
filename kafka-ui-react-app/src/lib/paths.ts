@@ -1,8 +1,7 @@
+import { Connect, Connector } from 'generated-sources';
 import {
   BrokerId,
   ClusterName,
-  ConnectName,
-  ConnectorName,
   ConsumerGroupID,
   SchemaName,
   TopicName,
@@ -199,18 +198,18 @@ export const clusterConnectorNewPath = (
 ) => `${clusterConnectorsPath(clusterName)}/create-new`;
 export const clusterConnectConnectorsPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  connectName: ConnectName = RouteParams.connectName
+  connectName: Connect['name'] = RouteParams.connectName
 ) => `${clusterConnectsPath(clusterName)}/${connectName}/connectors`;
 export const clusterConnectConnectorPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  connectName: ConnectName = RouteParams.connectName,
-  connectorName: ConnectorName = RouteParams.connectorName
+  connectName: Connect['name'] = RouteParams.connectName,
+  connectorName: Connector['name'] = RouteParams.connectorName
 ) =>
   `${clusterConnectConnectorsPath(clusterName, connectName)}/${connectorName}`;
 export const clusterConnectConnectorEditPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  connectName: ConnectName = RouteParams.connectName,
-  connectorName: ConnectorName = RouteParams.connectorName
+  connectName: Connect['name'] = RouteParams.connectName,
+  connectorName: Connector['name'] = RouteParams.connectorName
 ) =>
   `${clusterConnectConnectorsPath(
     clusterName,
@@ -218,8 +217,8 @@ export const clusterConnectConnectorEditPath = (
   )}/${connectorName}/edit`;
 export const clusterConnectConnectorTasksPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  connectName: ConnectName = RouteParams.connectName,
-  connectorName: ConnectorName = RouteParams.connectorName
+  connectName: Connect['name'] = RouteParams.connectName,
+  connectorName: Connector['name'] = RouteParams.connectorName
 ) =>
   `${clusterConnectConnectorPath(
     clusterName,
@@ -228,18 +227,19 @@ export const clusterConnectConnectorTasksPath = (
   )}/${clusterConnectConnectorTasksRelativePath}`;
 export const clusterConnectConnectorConfigPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  connectName: ConnectName = RouteParams.connectName,
-  connectorName: ConnectorName = RouteParams.connectorName
+  connectName: Connect['name'] = RouteParams.connectName,
+  connectorName: Connector['name'] = RouteParams.connectorName
 ) =>
   `${clusterConnectConnectorPath(
     clusterName,
     connectName,
     connectorName
   )}/${clusterConnectConnectorConfigRelativePath}`;
+
 export type RouterParamsClusterConnectConnector = {
   clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
+  connectName: Connect['name'];
+  connectorName: Connector['name'];
 };
 
 // KsqlDb

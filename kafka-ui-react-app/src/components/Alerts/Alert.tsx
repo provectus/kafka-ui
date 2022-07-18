@@ -5,7 +5,7 @@ import { Alert as AlertType } from 'redux/interfaces';
 
 import * as S from './Alert.styled';
 
-export interface AlertProps {
+interface AlertProps {
   title: AlertType['title'];
   type: AlertType['type'];
   message: AlertType['message'];

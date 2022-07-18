@@ -30,7 +30,15 @@ const Indicator: React.FC<PropsWithChildren<Props>> = ({
         )}
       </S.IndicatorTitle>
       <span>
-        {fetching ? <i className="fas fa-spinner fa-pulse" /> : children}
+        {fetching ? (
+          <i
+            className="fas fa-spinner fa-pulse"
+            role="progressbar"
+            aria-label="Loading"
+          />
+        ) : (
+          children
+        )}
       </span>
     </div>
   </S.IndicatorWrapper>

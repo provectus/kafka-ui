@@ -5,7 +5,6 @@ import configureStore from 'redux-mock-store';
 import { RootState } from 'redux/interfaces';
 import * as redux from 'react-redux';
 import { act, screen, waitFor } from '@testing-library/react';
-import fetchMock from 'fetch-mock-jest';
 import {
   clusterTopicCopyPath,
   clusterTopicNewPath,
@@ -58,10 +57,6 @@ const renderComponent = (path: string, store = storeMock) => {
 };
 
 describe('New', () => {
-  beforeEach(() => {
-    fetchMock.reset();
-  });
-
   afterEach(() => {
     mockNavigate.mockClear();
   });

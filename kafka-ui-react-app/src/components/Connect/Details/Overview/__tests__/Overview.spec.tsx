@@ -1,40 +1,57 @@
 import React from 'react';
 import Overview from 'components/Connect/Details/Overview/Overview';
-import { connector } from 'redux/reducers/connect/__test__/fixtures';
+import { connector, tasks } from 'lib/fixtures/kafkaConnect';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
+import { useConnector, useConnectorTasks } from 'lib/hooks/api/kafkaConnect';
+
+jest.mock('lib/hooks/api/kafkaConnect', () => ({
+  useConnector: jest.fn(),
+  useConnectorTasks: jest.fn(),
+}));
 
 describe('Overview', () => {
   it('is empty when no connector', () => {
-    const { container } = render(
-      <Overview connector={null} runningTasksCount={10} failedTasksCount={2} />
-    );
+    (useConnector as jest.Mock).mockImplementation(() => ({
+      data: undefined,
+    }));
+    (useConnectorTasks as jest.Mock).mockImplementation(() => ({
+      data: undefined,
+    }));
+
+    const { container } = render(<Overview />);
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('renders metrics', () => {
-    const running = 234789237;
-    const failed = 373737;
-    render(
-      <Overview
-        connector={connector}
-        runningTasksCount={running}
-        failedTasksCount={failed}
-      />
-    );
-    expect(screen.getByText('Worker')).toBeInTheDocument();
-    expect(
-      screen.getByText(connector.status.workerId as string)
-    ).toBeInTheDocument();
+  describe('when connector is loaded', () => {
+    beforeEach(() => {
+      (useConnector as jest.Mock).mockImplementation(() => ({
+        data: connector,
+      }));
+    });
+    beforeEach(() => {
+      (useConnectorTasks as jest.Mock).mockImplementation(() => ({
+        data: tasks,
+      }));
+    });
 
-    expect(screen.getByText('Type')).toBeInTheDocument();
-    expect(
-      screen.getByText(connector.config['connector.class'] as string)
-    ).toBeInTheDocument();
+    it('renders metrics', () => {
+      render(<Overview />);
 
-    expect(screen.getByText('Tasks Running')).toBeInTheDocument();
-    expect(screen.getByText(running)).toBeInTheDocument();
-    expect(screen.getByText('Tasks Failed')).toBeInTheDocument();
-    expect(screen.getByText(failed)).toBeInTheDocument();
+      expect(screen.getByText('Worker')).toBeInTheDocument();
+      expect(
+        screen.getByText(connector.status.workerId as string)
+      ).toBeInTheDocument();
+
+      expect(screen.getByText('Type')).toBeInTheDocument();
+      expect(
+        screen.getByText(connector.config['connector.class'] as string)
+      ).toBeInTheDocument();
+
+      expect(screen.getByText('Tasks Running')).toBeInTheDocument();
+      expect(screen.getByText(2)).toBeInTheDocument();
+      expect(screen.getByText('Tasks Failed')).toBeInTheDocument();
+      expect(screen.getByText(1)).toBeInTheDocument();
+    });
   });
 });

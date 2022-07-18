@@ -1,24 +1,22 @@
 import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
-import { screen, waitFor } from '@testing-library/dom';
+import { screen } from '@testing-library/dom';
 import {
   clusterBrokerMetricsPath,
   clusterBrokerPath,
   getNonExactPath,
 } from 'lib/paths';
-import fetchMock from 'fetch-mock';
-import { act } from '@testing-library/react';
 import Broker from 'components/Brokers/Broker/Broker';
 import {
   clusterStatsPayload,
   brokersPayload,
 } from 'components/Brokers/__test__/fixtures';
+import { useBrokers } from 'lib/hooks/api/brokers';
+import { useClusterStats } from 'lib/hooks/api/clusters';
 
 const clusterName = 'local';
 const brokerId = 1;
 const activeClassName = 'is-active';
-const fetchStatsUrl = `/api/clusters/${clusterName}/stats`;
-const fetchBrokersUrl = `/api/clusters/${clusterName}/brokers`;
 const brokerLogdir = {
   pageText: 'brokerLogdir',
   navigationName: 'Log directories',
@@ -34,30 +32,31 @@ jest.mock('components/Brokers/Broker/BrokerLogdir/BrokerLogdir', () => () => (
 jest.mock('components/Brokers/Broker/BrokerMetrics/BrokerMetrics', () => () => (
   <div>{brokerMetrics.pageText}</div>
 ));
+jest.mock('lib/hooks/api/brokers', () => ({
+  useBrokers: jest.fn(),
+}));
+jest.mock('lib/hooks/api/clusters', () => ({
+  useClusterStats: jest.fn(),
+}));
 
 describe('Broker Component', () => {
-  afterEach(() => {
-    fetchMock.reset();
+  beforeEach(() => {
+    (useBrokers as jest.Mock).mockImplementation(() => ({
+      data: brokersPayload,
+    }));
+    (useClusterStats as jest.Mock).mockImplementation(() => ({
+      data: clusterStatsPayload,
+    }));
   });
-
-  const renderComponent = async (
-    path = clusterBrokerPath(clusterName, brokerId)
-  ) => {
-    const fetchStatsMock = fetchMock.get(fetchStatsUrl, clusterStatsPayload);
-    const fetchBrokersMock = fetchMock.get(fetchBrokersUrl, brokersPayload);
-    await act(() => {
-      render(
-        <WithRoute path={getNonExactPath(clusterBrokerPath())}>
-          <Broker />
-        </WithRoute>,
-        {
-          initialEntries: [path],
-        }
-      );
-    });
-    await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
-    expect(fetchBrokersMock.called()).toBeTruthy();
-  };
+  const renderComponent = (path = clusterBrokerPath(clusterName, brokerId)) =>
+    render(
+      <WithRoute path={getNonExactPath(clusterBrokerPath())}>
+        <Broker />
+      </WithRoute>,
+      {
+        initialEntries: [path],
+      }
+    );
 
   it('shows broker found', async () => {
     await renderComponent();
