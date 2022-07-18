@@ -3,9 +3,17 @@ name: "⎈ K8s/Helm problem report"
 about: Report a problem with k8s/helm charts/etc
 title: ''
 labels: scope/k8s, status/triage
-assignees: azatsafin, 5hin0bi
+assignees: azatsafin
 
 ---
+
+<!--
+
+Don't forget to check for existing issues/discussions regarding your proposal. We might already have it.
+https://github.com/provectus/kafka-ui/issues
+https://github.com/provectus/kafka-ui/discussions
+
+-->
 
 **Describe the bug**
 <!--(A clear and concise description of what the bug is.)-->
@@ -13,8 +21,12 @@ assignees: azatsafin, 5hin0bi
 
 **Set up**
 <!--
-(How do you run the app? 
-Which version of the app are you running? Provide either docker image version or check commit hash at the top left corner. We won't be able to help you without this information.)
+How do you run the app? Please provide as much info as possible:
+1. App version (docker image version or check commit hash in the top left corner in UI)
+2. Helm chart version, if you use one
+3. Any IAAC configs
+
+We might close the issue without further explanation if you don't provide such information.
 -->
 
 

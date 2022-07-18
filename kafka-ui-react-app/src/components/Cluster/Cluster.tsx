@@ -18,7 +18,7 @@ import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import { BreadcrumbProvider } from 'components/common/Breadcrumb/Breadcrumb.provider';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import useClusters from 'lib/hooks/api/useClusters';
+import { useClusters } from 'lib/hooks/api/clusters';
 
 const Brokers = React.lazy(() => import('components/Brokers/Brokers'));
 const Topics = React.lazy(() => import('components/Topics/Topics'));
