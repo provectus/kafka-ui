@@ -34,7 +34,7 @@ public class QaseExtension implements TestExecutionListener {
 
     private final ApiClient apiClient = QaseClient.getApiClient();
     private final ResultsApi resultsApi = new ResultsApi(apiClient);
-    private final Map<TestIdentifier, Long> startTime = new ConcurrentHashMap<>();
+    private final Map<TestIdentifier, Long> testStartTimes = new ConcurrentHashMap<>();
     private static final String QASE_PROJECT = "KAFKAUI";
     private static final String QASE_ENABLE = "true";
 
@@ -60,14 +60,14 @@ public class QaseExtension implements TestExecutionListener {
     @Override
     public void executionStarted(TestIdentifier testIdentifier) {
         if (QaseClient.isEnabled() && testIdentifier.isTest()) {
-            startTime.put(testIdentifier, System.currentTimeMillis());
+            testStartTimes.put(testIdentifier, System.currentTimeMillis());
         }
     }
 
     @Override
     public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
         if (!testIdentifier.isTest() || !QaseClient.isEnabled()
-                || !startTime.containsKey(testIdentifier)) {
+                || !testStartTimes.containsKey(testIdentifier)) {
             return;
         }
         TestSource testSource = testIdentifier.getSource().orElse(null);
@@ -76,7 +76,7 @@ public class QaseExtension implements TestExecutionListener {
             testMethod = getMethod((MethodSource) testSource);
         }
         TestCaseGenerator.createTestCaseIfNotExists(testMethod);
-        Duration duration = Duration.ofMillis(System.currentTimeMillis() - this.startTime.remove(testIdentifier));
+        Duration duration = Duration.ofMillis(System.currentTimeMillis() - this.testStartTimes.remove(testIdentifier));
         sendResults(testExecutionResult, duration, testMethod);
     }
 
