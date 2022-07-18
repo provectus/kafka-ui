@@ -106,15 +106,13 @@ const schemasSlice = createSlice({
   },
 });
 
-export const { selectAll: selectAllSchemas, selectById: selectSchemaById } =
+export const { selectAll: selectAllSchemas } =
   schemasAdapter.getSelectors<RootState>((state) => state.schemas);
 
-export const {
-  selectAll: selectAllSchemaVersions,
-  selectById: selectVersionSchemaByID,
-} = schemaVersionsAdapter.getSelectors<RootState>(
-  (state) => state.schemas.versions
-);
+export const { selectAll: selectAllSchemaVersions } =
+  schemaVersionsAdapter.getSelectors<RootState>(
+    (state) => state.schemas.versions
+  );
 
 const getSchemaVersions = (state: RootState) => state.schemas.versions;
 export const getSchemaLatest = createSelector(

@@ -57,7 +57,7 @@ export interface MessageFilters {
   code: string;
 }
 
-export interface ActiveMessageFilter {
+interface ActiveMessageFilter {
   index: number;
   name: string;
   code: string;

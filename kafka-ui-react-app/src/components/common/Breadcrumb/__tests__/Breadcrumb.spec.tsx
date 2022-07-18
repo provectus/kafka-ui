@@ -29,12 +29,12 @@ describe('Breadcrumb component', () => {
 
   it('renders the list of links', async () => {
     const { getByText } = setupComponent(createTopicPath, createTopicRoutePath);
-    expect(getByText('Topics')).toBeInTheDocument();
-    expect(getByText('Create New')).toBeInTheDocument();
+    expect(getByText('All Topics')).toBeInTheDocument();
+    expect(getByText('Create New Topic')).toBeInTheDocument();
   });
   it('renders the topic overview', async () => {
     const { getByText } = setupComponent(topicPath, topicRoutePath);
-    expect(getByText('Topics')).toBeInTheDocument();
+    expect(getByText('All Topics')).toBeInTheDocument();
     expect(getByText(topicName)).toBeInTheDocument();
   });
 });
