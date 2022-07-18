@@ -3,7 +3,7 @@ package com.provectus.kafka.ui.pages.topic;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.base.TestConfiguration;
+import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
 import com.provectus.kafka.ui.pages.ProduceMessagePage;
 import com.provectus.kafka.ui.utils.BrowserUtils;
@@ -57,7 +57,7 @@ public class TopicView {
 
     @SneakyThrows
     public ProduceMessagePage clickOnButton(String buttonName) {
-        BrowserUtils.javaExecutorClick($(By.xpath("//div//button[text()='%s']".formatted(buttonName))));
+        BrowserUtils.javaExecutorClick($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
         return new ProduceMessagePage();
     }
 
@@ -66,13 +66,13 @@ public class TopicView {
     }
 
     public boolean isContentMessageVisible(String contentMessage) {
-        return contentMessage.equals($(".bPpPJI.sc-gkdBiK").getText());
+        return contentMessage.matches($x("//html//div[@id='root']/div/main//table//p").getText().trim());
     }
 
     private enum DotMenuHeaderItems {
         EDIT_SETTINGS("Edit settings"), CLEAR_MESSAGES("Clear messages"), REMOVE_TOPIC("Remove topic");
 
-        private String value;
+        private final String value;
 
         DotMenuHeaderItems(String value) {
             this.value = value;
@@ -91,7 +91,7 @@ public class TopicView {
     public enum TopicMenu {
         OVERVIEW("Overview"), MESSAGES("Messages"), CONSUMERS("Consumers"), SETTINGS("Settings");
 
-        private String value;
+        private final String value;
 
         TopicMenu(String value) {
             this.value = value;

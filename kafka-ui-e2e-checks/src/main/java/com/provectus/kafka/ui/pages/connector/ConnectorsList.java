@@ -2,9 +2,9 @@ package com.provectus.kafka.ui.pages.connector;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
-import com.provectus.kafka.ui.base.TestConfiguration;
-import com.provectus.kafka.ui.extensions.WaitUtils;
+import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.utils.BrowserUtils;
+import com.provectus.kafka.ui.extensions.WaitUtils;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
@@ -56,8 +56,8 @@ public class ConnectorsList {
     }
 
     public ConnectorsList connectorIsUpdatedInList(String connectorName, String topicName) {
-        $(By.xpath("//a[text() = '%s']".formatted(connectorName))).shouldBe(Condition.visible);
-        By.xpath("//a[text() = '%s']".formatted(topicName)).refreshUntil(Condition.visible);
+        $(By.xpath(String.format("//a[text() = '%s']", connectorName))).shouldBe(Condition.visible);
+        By.xpath(String.format("//a[text() = '%s']", topicName)).refreshUntil(Condition.visible);
         return this;
     }
 }

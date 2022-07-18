@@ -7,7 +7,6 @@ import com.provectus.kafka.ui.api.api.MessagesApi;
 import com.provectus.kafka.ui.api.api.SchemasApi;
 import com.provectus.kafka.ui.api.api.TopicsApi;
 import com.provectus.kafka.ui.api.model.*;
-import com.provectus.kafka.ui.base.TestConfiguration;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -23,7 +22,6 @@ public class ApiHelper {
 
     int partitions = 1;
     int replicationFactor = 1;
-    String newTopic = "new-topic";
     String baseURL = TestConfiguration.BASE_API_URL;
 
 
@@ -53,10 +51,9 @@ public class ApiHelper {
         topic.setName(topicName);
         topic.setPartitions(partitions);
         topic.setReplicationFactor(replicationFactor);
-        deleteTopic(clusterName, topicName);
-        sleep(2000);
         try {
             topicApi().createTopic(clusterName, topic).block();
+            sleep(2000);
         } catch (WebClientResponseException ex) {
             ex.printStackTrace();
         }
