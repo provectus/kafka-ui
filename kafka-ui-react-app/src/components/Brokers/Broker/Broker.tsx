@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import * as Metrics from 'components/common/Metrics';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
@@ -15,6 +15,7 @@ import { NavLink, Route, Routes } from 'react-router-dom';
 import BrokerLogdir from 'components/Brokers/Broker/BrokerLogdir/BrokerLogdir';
 import BrokerMetrics from 'components/Brokers/Broker/BrokerMetrics/BrokerMetrics';
 import Navbar from 'components/common/Navigation/Navbar.styled';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 
 export interface BrokerLogdirState {
   name: string;
@@ -67,13 +68,15 @@ const Broker: React.FC = () => {
         </NavLink>
       </Navbar>
 
-      <Routes>
-        <Route index element={<BrokerLogdir />} />
-        <Route
-          path={clusterBrokerMetricsRelativePath}
-          element={<BrokerMetrics />}
-        />
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route index element={<BrokerLogdir />} />
+          <Route
+            path={clusterBrokerMetricsRelativePath}
+            element={<BrokerMetrics />}
+          />
+        </Routes>
+      </Suspense>
     </>
   );
 };
