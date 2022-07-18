@@ -6,6 +6,8 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.schema.SchemaCreateView;
+import com.provectus.kafka.ui.utils.qaseIO.Status;
+import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import io.qase.api.annotation.CaseId;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
@@ -57,6 +59,7 @@ public class SchemasTests extends BaseTest {
 
     @DisplayName("should create AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(43)
     @Test
     @Order(1)
@@ -77,6 +80,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should update AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(186)
     @Test
     @Order(2)
@@ -96,6 +100,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(187)
     @Test
     @Order(3)
@@ -111,6 +116,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should create JSON schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(89)
     @Test
     @Order(4)
@@ -131,6 +137,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete JSON schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(189)
     @Test
     @Order(5)
@@ -146,6 +153,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should create PROTOBUF schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(91)
     @Test
     @Order(6)
@@ -166,6 +174,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete PROTOBUF schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(223)
     @Test
     @Order(7)

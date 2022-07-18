@@ -6,15 +6,15 @@ import io.qase.api.QaseClient;
 import io.qase.api.annotation.CaseId;
 import io.qase.client.ApiClient;
 import io.qase.client.api.CasesApi;
-import io.qase.client.model.Filters;
-import io.qase.client.model.TestCaseCreate;
-import io.qase.client.model.TestCaseListResponse;
+import io.qase.client.model.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -54,10 +54,13 @@ public class TestCaseGenerator {
             getCases = false;
             TestCaseListResponse response =
                     casesApi.getCases(getConfig().projectCode(), new Filters().status(Filters.SERIALIZED_NAME_STATUS), 100, offSet);
-            if (Objects.requireNonNull(Objects.requireNonNull(response.getResult()).getEntities()).size() > 0) {
-                for (int i = 0; i < Objects.requireNonNull(Objects.requireNonNull(response.getResult()).getEntities()).size(); i++) {
-                    map.put(response.getResult().getEntities().get(i).getId(),
-                            response.getResult().getEntities().get(i).getTitle());
+            TestCaseListResponseAllOfResult result = response.getResult();
+            Assert.assertNotNull(result);
+            List<TestCase> entities = result.getEntities();
+            Assert.assertNotNull(entities);
+            if (entities.size() > 0) {
+                for (TestCase test : entities) {
+                    map.put(test.getId(), test.getTitle());
                 }
                 offSet = offSet + 100;
                 getCases = true;
@@ -66,24 +69,25 @@ public class TestCaseGenerator {
         return map;
     }
 
-    private static boolean isCaseIdPresentInQaseIo(Method testMethod) {
-        if (testMethod.isAnnotationPresent(CaseId.class)) {
-            long caseId = testMethod.getAnnotation(CaseId.class).value();
-            HashMap<Long, String> cases = getTestCasesTitleAndId();
-            String title;
-            if (!cases.containsKey(caseId)) {
-                FAILED = true;
-                log.error("The method " + testMethod.getName() + " has wrong @CaseId =" + caseId + " that does not exist in Qase.io. " +
-                        "Please put correct @CaseId");
-                return false;
-            } else {
-                for (Map.Entry<Long, String> map : cases.entrySet()) {
-                    if (map.getKey().equals(caseId)) {
-                        title = map.getValue();
-                        if (!title.matches(generateTestCaseTitle(testMethod))) {
-                            log.error("This CaseId =" + caseId + " belong to test with title = " + title);
-                            return false;
-                        }
+    public static boolean isCaseIdPresentInQaseIo(Method testMethod) {
+        if (!testMethod.isAnnotationPresent(CaseId.class)) {
+            return false;
+        }
+        long caseId = testMethod.getAnnotation(CaseId.class).value();
+        HashMap<Long, String> cases = getTestCasesTitleAndId();
+        String title;
+        if (!cases.containsKey(caseId)) {
+            FAILED = true;
+            log.error("The method " + testMethod.getName() + " has wrong @CaseId =" + caseId + " that does not exist in Qase.io. " +
+                    "Please put correct @CaseId");
+            return false;
+        } else {
+            for (Map.Entry<Long, String> map : cases.entrySet()) {
+                if (map.getKey().equals(caseId)) {
+                    title = map.getValue();
+                    if (!title.matches(generateTestCaseTitle(testMethod))) {
+                        log.error("This CaseId =" + caseId + " belong to test with title = " + title);
+                        return false;
                     }
                 }
             }
@@ -130,7 +134,7 @@ public class TestCaseGenerator {
             log.info("The method " + testMethod.getName() + " is not annotated with @Suite and new test case will be added without suite");
             return false;
         }
-        log.info("The method is annotated with @Suite with id " + testMethod.getAnnotation(Suite.class).suiteId());
+        log.trace("The method is annotated with @Suite with id " + testMethod.getAnnotation(Suite.class).suiteId());
         return true;
     }
 

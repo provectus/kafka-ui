@@ -66,18 +66,16 @@ public class QaseExtension implements TestExecutionListener {
 
     @Override
     public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
+        if (!testIdentifier.isTest() || !QaseClient.isEnabled()
+                || !startTime.containsKey(testIdentifier)) {
+            return;
+        }
         TestSource testSource = testIdentifier.getSource().orElse(null);
         Method testMethod = null;
         if (testSource instanceof MethodSource) {
             testMethod = getMethod((MethodSource) testSource);
         }
-        if (!testIdentifier.isTest() || !QaseClient.isEnabled()
-                || !startTime.containsKey(testIdentifier)) {
-            if (testIdentifier.isTest()) {
-                TestCaseGenerator.createTestCaseIfNotExists(testMethod);
-            }
-            return;
-        }
+        TestCaseGenerator.createTestCaseIfNotExists(testMethod);
         Duration duration = Duration.ofMillis(System.currentTimeMillis() - this.startTime.remove(testIdentifier));
         sendResults(testExecutionResult, duration, testMethod);
     }
@@ -103,7 +101,7 @@ public class QaseExtension implements TestExecutionListener {
         Map<Long, String> cases = TestCaseGenerator.getTestCasesTitleAndId();
         StatusEnum status = StatusEnum.SKIPPED;
 
-        if (caseId == null) {
+        if (caseId == null || !TestCaseGenerator.isCaseIdPresentInQaseIo(testMethod)) {
             for (Map.Entry<Long, String> map : cases.entrySet()) {
                 if (map.getValue().matches(testCaseTitle)) {
                     caseId = map.getKey();

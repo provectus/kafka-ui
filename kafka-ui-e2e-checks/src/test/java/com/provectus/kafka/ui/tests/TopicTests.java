@@ -101,6 +101,7 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete topic")
     @Suite(suiteId = 2, title = "Topics")
+    @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(207)
     @Test
     public void deleteTopic() {
@@ -116,6 +117,7 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("produce message")
     @Suite(suiteId = 2, title = "Topics")
+    @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(222)
     @Test
     void produceMessage() {
