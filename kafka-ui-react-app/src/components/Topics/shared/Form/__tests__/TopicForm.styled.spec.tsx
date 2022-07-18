@@ -10,8 +10,8 @@ describe('TopicForm styled components', () => {
       render(<S.Button isActive />);
       const button = screen.getByRole('button');
       expect(button).toHaveStyle({
-        border: `1px solid ${theme.button.border.active}`,
-        backgroundColor: theme.button.primary.backgroundColor.active,
+        border: `none`,
+        backgroundColor: theme.button.secondary.invertedColors.normal,
       });
     });
 
@@ -19,8 +19,8 @@ describe('TopicForm styled components', () => {
       render(<S.Button isActive={false} />);
       const button = screen.getByRole('button');
       expect(button).toHaveStyle({
-        border: `1px solid ${theme.button.primary.color}`,
-        backgroundColor: theme.button.primary.backgroundColor.normal,
+        border: `none`,
+        backgroundColor: theme.button.secondary.backgroundColor.normal,
       });
     });
   });

@@ -1,6 +1,6 @@
 import { TopicMessageSchema } from 'generated-sources';
 import Ajv, { DefinedError } from 'ajv/dist/2020';
-import { upperFirst } from 'lodash';
+import upperFirst from 'lodash/upperFirst';
 
 const validateBySchema = (
   value: string,

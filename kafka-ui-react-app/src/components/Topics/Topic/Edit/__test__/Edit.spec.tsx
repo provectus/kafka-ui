@@ -116,8 +116,7 @@ describe('Edit Component', () => {
 
       renderComponent({ updateTopic: updateTopicMock }, undefined);
 
-      const btn = screen.getAllByText(/submit/i)[0];
-      expect(btn).toBeDisabled();
+      const btn = screen.getAllByText(/Save/i)[0];
 
       await act(() => {
         userEvent.type(
@@ -125,6 +124,7 @@ describe('Edit Component', () => {
           '1'
         );
       });
+
       await act(() => {
         userEvent.click(btn);
       });
@@ -140,7 +140,7 @@ describe('Edit Component', () => {
         undefined
       );
 
-      const btn = screen.getAllByText(/submit/i)[0];
+      const btn = screen.getAllByText(/Save/i)[0];
 
       await act(() => {
         userEvent.type(
