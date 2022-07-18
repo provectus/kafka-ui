@@ -1,5 +1,4 @@
-/* eslint-disable import/prefer-default-export */
-export const Colors = {
+const Colors = {
   neutral: {
     '0': '#FFFFFF',
     '3': '#f9fafa',

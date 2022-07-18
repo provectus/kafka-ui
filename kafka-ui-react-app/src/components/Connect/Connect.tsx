@@ -12,10 +12,10 @@ import {
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import useAppParams from 'lib/hooks/useAppParams';
 
-import ListContainer from './List/ListContainer';
-import NewContainer from './New/NewContainer';
-import DetailsContainer from './Details/DetailsContainer';
-import EditContainer from './Edit/EditContainer';
+import ListPage from './List/ListPage';
+import New from './New/New';
+import Edit from './Edit/Edit';
+import DetailsPage from './Details/DetailsPage';
 
 const Connect: React.FC = () => {
   const { clusterName } = useAppParams();
@@ -26,7 +26,7 @@ const Connect: React.FC = () => {
         index
         element={
           <BreadcrumbRoute>
-            <ListContainer />
+            <ListPage />
           </BreadcrumbRoute>
         }
       />
@@ -34,7 +34,7 @@ const Connect: React.FC = () => {
         path={clusterConnectorNewRelativePath}
         element={
           <BreadcrumbRoute>
-            <NewContainer />
+            <New />
           </BreadcrumbRoute>
         }
       />
@@ -42,7 +42,7 @@ const Connect: React.FC = () => {
         path={clusterConnectConnectorEditRelativePath}
         element={
           <BreadcrumbRoute>
-            <EditContainer />
+            <Edit />
           </BreadcrumbRoute>
         }
       />
@@ -50,7 +50,7 @@ const Connect: React.FC = () => {
         path={getNonExactPath(clusterConnectConnectorRelativePath)}
         element={
           <BreadcrumbRoute>
-            <DetailsContainer />
+            <DetailsPage />
           </BreadcrumbRoute>
         }
       />

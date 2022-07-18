@@ -1,20 +1,27 @@
 import React from 'react';
-import { Task } from 'generated-sources';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import {
+  useConnectorTasks,
+  useRestartConnectorTask,
+} from 'lib/hooks/api/kafkaConnect';
+import useAppParams from 'lib/hooks/useAppParams';
+import { RouterParamsClusterConnectConnector } from 'lib/paths';
+import Dropdown from 'components/common/Dropdown/Dropdown';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import getTagColor from 'components/common/Tag/getTagColor';
+import { Tag } from 'components/common/Tag/Tag.styled';
 
-import ListItemContainer from './ListItem/ListItemContainer';
+const Tasks: React.FC = () => {
+  const routerProps = useAppParams<RouterParamsClusterConnectConnector>();
+  const { data: tasks } = useConnectorTasks(routerProps);
+  const restartMutation = useRestartConnectorTask(routerProps);
 
-export interface TasksProps {
-  areTasksFetching: boolean;
-  tasks: Task[];
-}
-
-const Tasks: React.FC<TasksProps> = ({ areTasksFetching, tasks }) => {
-  if (areTasksFetching) {
-    return <PageLoader />;
-  }
+  const restartTaskHandler = (taskId?: number) => {
+    if (taskId === undefined) return;
+    restartMutation.mutateAsync(taskId);
+  };
 
   return (
     <Table isFullwidth>
@@ -28,13 +35,32 @@ const Tasks: React.FC<TasksProps> = ({ areTasksFetching, tasks }) => {
         </tr>
       </thead>
       <tbody>
-        {tasks.length === 0 && (
+        {tasks?.length === 0 && (
           <tr>
             <td colSpan={10}>No tasks found</td>
           </tr>
         )}
-        {tasks.map((task) => (
-          <ListItemContainer key={task.status?.id} task={task} />
+        {tasks?.map((task) => (
+          <tr key={task.status?.id}>
+            <td>{task.status?.id}</td>
+            <td>{task.status?.workerId}</td>
+            <td>
+              <Tag color={getTagColor(task.status)}>{task.status.state}</Tag>
+            </td>
+            <td>{task.status.trace || 'null'}</td>
+            <td style={{ width: '5%' }}>
+              <div>
+                <Dropdown label={<VerticalElipsisIcon />} right>
+                  <DropdownItem
+                    onClick={() => restartTaskHandler(task.id?.task)}
+                    danger
+                  >
+                    <span>Restart task</span>
+                  </DropdownItem>
+                </Dropdown>
+              </div>
+            </td>
+          </tr>
         ))}
       </tbody>
     </Table>
