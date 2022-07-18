@@ -116,14 +116,16 @@ describe('Edit Component', () => {
 
       renderComponent({ updateTopic: updateTopicMock }, undefined);
 
-      const btn = screen.getAllByText(/submit/i)[0];
-      expect(btn).toBeEnabled();
+      const btn = screen.getAllByText(/Save/i)[0];
 
       await act(() => {
         userEvent.type(
           screen.getByPlaceholderText('Min In Sync Replicas'),
           '1'
         );
+      });
+
+      await act(() => {
         userEvent.click(btn);
       });
       expect(updateTopicMock).toHaveBeenCalledTimes(1);
@@ -138,13 +140,15 @@ describe('Edit Component', () => {
         undefined
       );
 
-      const btn = screen.getAllByText(/submit/i)[0];
+      const btn = screen.getAllByText(/Save/i)[0];
 
       await act(() => {
         userEvent.type(
           screen.getByPlaceholderText('Min In Sync Replicas'),
           '1'
         );
+      });
+      await act(() => {
         userEvent.click(btn);
       });
       expect(updateTopicMock).toHaveBeenCalledTimes(1);

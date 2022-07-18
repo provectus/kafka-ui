@@ -5,7 +5,6 @@ import configureStore from 'redux-mock-store';
 import { RootState } from 'redux/interfaces';
 import * as redux from 'react-redux';
 import { act, screen, waitFor } from '@testing-library/react';
-import fetchMock from 'fetch-mock-jest';
 import {
   clusterTopicCopyPath,
   clusterTopicNewPath,
@@ -58,10 +57,6 @@ const renderComponent = (path: string, store = storeMock) => {
 };
 
 describe('New', () => {
-  beforeEach(() => {
-    fetchMock.reset();
-  });
-
   afterEach(() => {
     mockNavigate.mockClear();
   });
@@ -85,7 +80,12 @@ describe('New', () => {
 
   it('validates form', async () => {
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
-    userEvent.click(screen.getByText(/submit/i));
+    await waitFor(() => {
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+    });
+    await waitFor(() => {
+      userEvent.clear(screen.getByPlaceholderText('Topic Name'));
+    });
     await waitFor(() => {
       expect(screen.getByText('name is a required field')).toBeInTheDocument();
     });
@@ -101,8 +101,13 @@ describe('New', () => {
 
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
 
-    userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
-    userEvent.click(screen.getByText(/submit/i));
+    await act(() => {
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+    });
+
+    await act(() => {
+      userEvent.click(screen.getByText('Create topic'));
+    });
 
     await waitFor(() => expect(mockNavigate).toBeCalledTimes(1));
     expect(mockNavigate).toHaveBeenLastCalledWith(`../${topicName}`);
@@ -120,7 +125,7 @@ describe('New', () => {
     await act(() =>
       userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName)
     );
-    await act(() => userEvent.click(screen.getByText(/submit/i)));
+    await act(() => userEvent.click(screen.getByText('Create topic')));
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
@@ -132,7 +137,9 @@ describe('New', () => {
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
     await act(() => {
       userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
-      userEvent.click(screen.getByText(/submit/i));
+    });
+    await act(() => {
+      userEvent.click(screen.getByText('Create topic'));
     });
 
     expect(useDispatchMock).toHaveBeenCalledTimes(1);

@@ -9,8 +9,8 @@ import {
   ClusterBrokerParam,
   clusterBrokerPath,
 } from 'lib/paths';
-import useClusterStats from 'lib/hooks/useClusterStats';
-import useBrokers from 'lib/hooks/useBrokers';
+import { useClusterStats } from 'lib/hooks/api/clusters';
+import { useBrokers } from 'lib/hooks/api/brokers';
 import { NavLink, Route, Routes } from 'react-router-dom';
 import BrokerLogdir from 'components/Brokers/Broker/BrokerLogdir/BrokerLogdir';
 import BrokerMetrics from 'components/Brokers/Broker/BrokerMetrics/BrokerMetrics';

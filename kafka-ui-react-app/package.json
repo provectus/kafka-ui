@@ -67,7 +67,8 @@
     "test:CI": "CI=true pnpm test:coverage --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
     "tsc": "tsc --pretty --noEmit",
     "prepare": "cd .. && husky install kafka-ui-react-app/.husky",
-    "pre-commit": "pnpm tsc && lint-staged"
+    "pre-commit": "pnpm tsc && lint-staged",
+    "deadcode": "ts-prune -i src/generated-sources"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -119,6 +120,7 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.8.1",
+    "ts-prune": "^0.10.3",
     "typescript": "^4.7.4"
   },
   "engines": {
