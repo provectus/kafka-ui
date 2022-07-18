@@ -1,9 +1,10 @@
 import React, { PropsWithChildren } from 'react';
 import { render } from 'lib/testHelpers';
-import { screen } from '@testing-library/dom';
+import { fireEvent, screen } from '@testing-library/dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import TopicForm, { Props } from 'components/Topics/shared/Form/TopicForm';
 import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
 
 const isSubmitting = false;
 const onSubmit = jest.fn();
@@ -60,10 +61,17 @@ describe('TopicForm', () => {
     expectByRoleAndNameToBeInDocument('button', 'Create topic');
   });
 
-  it('submits', () => {
+  it('submits', async () => {
     renderComponent({
       isSubmitting,
       onSubmit: onSubmit.mockImplementation((e) => e.preventDefault()),
+    });
+
+    await act(() => {
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), 'topicName');
+    });
+    await act(() => {
+      fireEvent.submit(screen.getByLabelText('topic form'));
     });
 
     userEvent.click(screen.getByRole('button', { name: 'Create topic' }));
