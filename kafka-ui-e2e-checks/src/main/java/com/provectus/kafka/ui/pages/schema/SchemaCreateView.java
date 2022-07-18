@@ -9,9 +9,9 @@ import static com.codeborne.selenide.Selenide.$x;
 
 public class SchemaCreateView {
 
-    private SelenideElement subjectName = $(By.xpath("//input[@name='subject']"));
-    private SelenideElement schemaField = $(By.xpath("//textarea[@name='schema']"));
-    private SelenideElement submitSchemaButton = $(By.xpath("//button[@type='submit']"));
+    private final SelenideElement subjectName = $(By.xpath("//input[@name='subject']"));
+    private final SelenideElement schemaField = $(By.xpath("//textarea[@name='schema']"));
+    private final SelenideElement submitSchemaButton = $(By.xpath("//button[@type='submit']"));
 
     public SchemaCreateView selectSchemaTypeFromDropdown(SchemaType schemaType) {
         $("ul[role='listbox']").click();
@@ -39,7 +39,7 @@ public class SchemaCreateView {
         JSON("JSON"),
         PROTOBUF("PROTOBUF");
 
-        String value;
+        final String value;
 
         SchemaType(String value) {
             this.value = value;

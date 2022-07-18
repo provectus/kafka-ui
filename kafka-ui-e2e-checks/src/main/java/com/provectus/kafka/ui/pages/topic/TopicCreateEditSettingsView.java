@@ -1,13 +1,14 @@
 package com.provectus.kafka.ui.pages.topic;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$$;
-import static com.codeborne.selenide.Selenide.$x;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.codeborne.selenide.*;
-import com.provectus.kafka.ui.utils.BrowserUtils;
+import com.codeborne.selenide.ClickOptions;
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.By;
+import com.provectus.kafka.ui.utils.BrowserUtils;
+
+import static com.codeborne.selenide.Selenide.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TopicCreateEditSettingsView {
 
@@ -81,7 +82,7 @@ public class TopicCreateEditSettingsView {
     }
 
     public TopicView sendData() {
-        BrowserUtils.javaExecutorClick($(".ezTgzA.sc-bYEvvW"));
+        BrowserUtils.javaExecutorClick($x("//button[@type='submit']"));
         return new TopicView();
     }
 
@@ -101,8 +102,10 @@ public class TopicCreateEditSettingsView {
             customParametersElements = $$("ul[role=listbox][name^=customParams][name$=name]");
             kafkaUISelectElement = new KafkaUISelectElement(customParametersElements.last());
         }
-        kafkaUISelectElement.selectByVisibleText(customParameterName);
-        $("input[name=\"customParams.%d.value\"]".formatted(customParametersElements.size() - 1))
+        if (kafkaUISelectElement != null) {
+            kafkaUISelectElement.selectByVisibleText(customParameterName);
+        }
+        $(String.format("input[name=\"customParams.%d.value\"]", customParametersElements.size() - 1))
                 .setValue(customParameterValue);
         return this;
     }
@@ -112,8 +115,10 @@ public class TopicCreateEditSettingsView {
         SelenideElement selenideElement = $$("ul[role=listbox][name^=customParams][name$=name]")
                 .find(Condition.exactText(customParameterName));
         String name = selenideElement.getAttribute("name");
-        name = name.substring(0, name.lastIndexOf("."));
-        $("input[name^=%s]".formatted(name)).setValue(customParameterValue);
+        if (name != null) {
+            name = name.substring(0, name.lastIndexOf("."));
+        }
+        $(String.format("input[name^=%s]", name)).setValue(customParameterValue);
         return this;
     }
 
@@ -154,7 +159,7 @@ public class TopicCreateEditSettingsView {
 
     private static class KafkaUISelectElement {
 
-        private SelenideElement selectElement;
+        private final SelenideElement selectElement;
 
         public KafkaUISelectElement(String selectElementName) {
             this.selectElement = $("ul[role=listbox][name=" + selectElementName + "]");

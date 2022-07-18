@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.pages.connector;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
-import com.provectus.kafka.ui.base.TestConfiguration;
+import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
@@ -18,7 +18,7 @@ public class ConnectorsView {
 
     @Step
     public ConnectorsView goTo(String cluster, String connector) {
-        Selenide.open(TestConfiguration.BASE_WEB_URL + path.format(cluster, connector));
+        Selenide.open(String.format(TestConfiguration.BASE_WEB_URL + path, cluster, connector));
         return this;
     }
 

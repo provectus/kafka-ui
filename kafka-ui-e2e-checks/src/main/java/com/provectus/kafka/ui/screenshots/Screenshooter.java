@@ -20,25 +20,24 @@ import java.nio.file.FileSystems;
 import java.util.List;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class Screenshooter {
 
   public static  Logger log = LoggerFactory.getLogger(Screenshooter.class);
 
-  private static int PIXELS_THRESHOLD =
+  private static final int PIXELS_THRESHOLD =
       Integer.parseInt(System.getProperty("PIXELS_THRESHOLD", "200"));
-  private static String SCREENSHOTS_FOLDER =
-      System.getProperty("SCREENSHOTS_FOLDER", "screenshots/");
-  private static String DIFF_SCREENSHOTS_FOLDER =
+  private static final String SCREENSHOTS_FOLDER =
+      System.getProperty("SCREENSHOTS_FOLDER", "com/provectus/kafka/ui/screenshots/");
+  private static final String DIFF_SCREENSHOTS_FOLDER =
       System.getProperty("DIFF_SCREENSHOTS_FOLDER", "build/__diff__/");
-  private static String ACTUAL_SCREENSHOTS_FOLDER =
+  private static final String ACTUAL_SCREENSHOTS_FOLDER =
       System.getProperty("ACTUAL_SCREENSHOTS_FOLDER", "build/__actual__/");
-  private static boolean SHOULD_SAVE_SCREENSHOTS_IF_NOT_EXIST =
+  private static final boolean SHOULD_SAVE_SCREENSHOTS_IF_NOT_EXIST =
       Boolean.parseBoolean(System.getProperty("SHOULD_SAVE_SCREENSHOTS_IF_NOT_EXIST", "true"));
-  private static boolean TURN_OFF_SCREENSHOTS =
+  private static final boolean TURN_OFF_SCREENSHOTS =
       Boolean.parseBoolean(System.getProperty("TURN_OFF_SCREENSHOTS", "false"));
-  private static boolean USE_LOCAL_BROWSER =
+  private static final boolean USE_LOCAL_BROWSER =
           Boolean.parseBoolean(System.getProperty("USE_LOCAL_BROWSER", "false"));
 
   private File newFile(String name) {
@@ -61,8 +60,8 @@ public class Screenshooter {
   @SneakyThrows
   public void compareScreenshots(String name, boolean shouldUpdateScreenshotIfDiffer) {
     if (TURN_OFF_SCREENSHOTS || USE_LOCAL_BROWSER) {
-      log.warn("compareScreenshots turned off due TURN_OFF_SCREENSHOTS || USE_LOCAL_BROWSER: %b || %b"
-              .formatted(TURN_OFF_SCREENSHOTS,USE_LOCAL_BROWSER));
+      log.warn(String.format("compareScreenshots turned off due TURN_OFF_SCREENSHOTS || USE_LOCAL_BROWSER: %b || %b"
+              , TURN_OFF_SCREENSHOTS,USE_LOCAL_BROWSER));
       return;
     }
     if (!doesScreenshotExist(name)) {
@@ -82,7 +81,7 @@ public class Screenshooter {
         new AShot().coordsProvider(new WebDriverCoordsProvider()).takeScreenshot(getWebDriver());
     File  file=  newFile(SCREENSHOTS_FOLDER + name + ".png");
     ImageIO.write(actual.getImage(), "png", file);
-    log.debug("created screenshot: %s \n at $s".formatted(name,file.getAbsolutePath()));
+    log.debug(String.format("created screenshot: %s \n at %s", name, file.getAbsolutePath()));
   }
 
   private static boolean doesScreenshotExist(String name) {
@@ -120,9 +119,9 @@ public class Screenshooter {
     } else {
       Assertions.assertTrue(
           PIXELS_THRESHOLD >= diff.getDiffSize(),
-              ("Amount of differing pixels should be less or equals than %s, actual %s\n"+
-                  "diff file: %s")
-              .formatted(PIXELS_THRESHOLD, diff.getDiffSize(), FileSystems.getDefault().getPath(fullPathNameDiff).normalize().toAbsolutePath().toString()));
+              String.format("Amount of differing pixels should be less or equals than %s, actual %s\n"+
+                  "diff file: %s",
+              PIXELS_THRESHOLD, diff.getDiffSize(), FileSystems.getDefault().getPath(fullPathNameDiff).normalize().toAbsolutePath()));
     }
   }
 

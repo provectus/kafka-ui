@@ -2,8 +2,8 @@ package com.provectus.kafka.ui.pages.connector;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.extensions.WaitUtils;
 import com.provectus.kafka.ui.utils.BrowserUtils;
+import com.provectus.kafka.ui.extensions.WaitUtils;
 import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
