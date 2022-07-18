@@ -1,21 +1,8 @@
 import { KsqlState } from 'redux/interfaces/ksqlDb';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { ExecuteKsqlRequest, Table as KsqlTable } from 'generated-sources';
+import { ExecuteKsqlRequest } from 'generated-sources';
 import { ClusterName } from 'redux/interfaces';
 import { ksqlDbApiClient } from 'lib/api';
-
-export const transformKsqlResponse = (
-  rawTable: Required<KsqlTable>
-): Dictionary<string>[] =>
-  rawTable.rows.map((row) =>
-    row.reduce(
-      (res, acc, index) => ({
-        ...res,
-        [rawTable.headers[index]]: acc,
-      }),
-      {} as Dictionary<string>
-    )
-  );
 
 const getTables = (clusterName: ClusterName) =>
   ksqlDbApiClient.listTables({
@@ -56,13 +43,13 @@ export const executeKsql = createAsyncThunk(
   (params: ExecuteKsqlRequest) => ksqlDbApiClient.executeKsql(params)
 );
 
-export const initialState: KsqlState = {
+const initialState: KsqlState = {
   streams: [],
   tables: [],
   executionResult: null,
 };
 
-export const ksqlDbSlice = createSlice({
+const ksqlDbSlice = createSlice({
   name: 'ksqlDb',
   initialState,
   reducers: {

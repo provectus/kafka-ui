@@ -4,7 +4,6 @@ import { KsqlStreamDescription, KsqlTableDescription } from 'generated-sources';
 import { useTableState } from 'lib/hooks/useTableState';
 import { SmartTable } from 'components/common/SmartTable/SmartTable';
 import { TableColumn } from 'components/common/SmartTable/TableColumn';
-import { KsqlDescription } from 'redux/interfaces/ksqlDb';
 import { ksqlRowData } from 'components/KsqlDb/List/KsqlDbItem/utils/ksqlRowData';
 
 export enum KsqlDbItemType {
@@ -12,7 +11,7 @@ export enum KsqlDbItemType {
   Streams = 'streams',
 }
 
-export interface RowsType {
+interface RowsType {
   tables: KsqlTableDescription[];
   streams: KsqlStreamDescription[];
 }
@@ -22,13 +21,6 @@ export interface KsqlDbItemProps {
   rows: RowsType;
 }
 
-export type KsqlDescriptionAccessor = keyof KsqlDescription;
-
-export interface HeadersType {
-  Header: string;
-  accessor: KsqlDescriptionAccessor;
-}
-
 export interface KsqlTableState {
   name: string;
   topic: string;
@@ -36,14 +28,6 @@ export interface KsqlTableState {
   valueFormat: string;
   isWindowed: string;
 }
-
-export const headers: HeadersType[] = [
-  { Header: 'Name', accessor: 'name' },
-  { Header: 'Topic', accessor: 'topic' },
-  { Header: 'Key Format', accessor: 'keyFormat' },
-  { Header: 'Value Format', accessor: 'valueFormat' },
-  { Header: 'Is Windowed', accessor: 'isWindowed' },
-];
 
 const KsqlDbItem: React.FC<KsqlDbItemProps> = ({ type, fetching, rows }) => {
   const preparedRows = rows[type]?.map(ksqlRowData) || [];

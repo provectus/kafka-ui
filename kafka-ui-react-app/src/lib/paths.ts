@@ -1,6 +1,5 @@
-import { Connect, Connector } from 'generated-sources';
+import { Broker, Connect, Connector } from 'generated-sources';
 import {
-  BrokerId,
   ClusterName,
   ConsumerGroupID,
   SchemaName,
@@ -39,11 +38,11 @@ export const clusterBrokersPath = (
 
 export const clusterBrokerPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  brokerId: BrokerId | string = RouteParams.brokerId
+  brokerId: Broker['id'] | string = RouteParams.brokerId
 ) => `${clusterBrokersPath(clusterName)}/${brokerId}`;
 export const clusterBrokerMetricsPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  brokerId: BrokerId | string = RouteParams.brokerId
+  brokerId: Broker['id'] | string = RouteParams.brokerId
 ) =>
   `${clusterBrokerPath(
     clusterName,

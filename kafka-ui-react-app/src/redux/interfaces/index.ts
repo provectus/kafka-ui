@@ -3,7 +3,6 @@ import { store } from 'redux/store';
 
 export * from './topic';
 export * from './cluster';
-export * from './broker';
 export * from './consumerGroup';
 export * from './schema';
 export * from './loader';
