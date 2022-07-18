@@ -24,7 +24,7 @@
     "dayjs": "^1.11.2",
     "fetch-mock": "^9.11.0",
     "jest": "^28.1.1",
-    "jest-watch-typeahead": "^1.1.0",
+    "jest-watch-typeahead": "^2.0.0",
     "json-schema-faker": "^0.5.0-rcv.39",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
