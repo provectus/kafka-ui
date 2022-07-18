@@ -92,6 +92,7 @@ const Edit: React.FC<Props> = ({
   const methods = useForm<TopicFormData>({
     defaultValues,
     resolver: yupResolver(topicFormValidationSchema),
+    mode: 'onChange',
   });
 
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);

@@ -48,7 +48,7 @@ export interface TopicFormDataRaw {
   name: string;
   partitions: number;
   replicationFactor: number;
-  minInsyncReplicas: number;
+  minInSyncReplicas: number;
   cleanupPolicy: string;
   retentionMs: number;
   retentionBytes: number;
@@ -60,7 +60,7 @@ export interface TopicFormData {
   name: string;
   partitions: number;
   replicationFactor: number;
-  minInsyncReplicas: number;
+  minInSyncReplicas: number;
   cleanupPolicy: string;
   retentionMs: number;
   retentionBytes: number;
