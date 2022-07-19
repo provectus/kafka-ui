@@ -1748,7 +1748,7 @@ paths:
                 $ref: '#/components/schemas/PartitionsIncreaseResponse'
         404:
           description: Not found
-  /api/timestampformat:
+  /api/info/timestampformat:
     get:
       tags:
         - TimeStampFormat

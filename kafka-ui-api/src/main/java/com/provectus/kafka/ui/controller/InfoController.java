@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class InfoController extends AbstractController implements TimeStampFormatApi {
 
-  @Value("${kafka.timestamp.format:MM.DD.YYYY HH:mm:ss}")
+  @Value("${timestamp.format:dd.MM.YYYY HH:mm:ss}")
   private String timeStampFormat;
 
   @Override
