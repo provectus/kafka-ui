@@ -47,7 +47,7 @@ jobs:
       - name: e2e run
         run: |
           mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
-          mvn -pl '!kafka-ui-api' test -Pprod
+          mvn -DQASEIO_API_TOKEN=${{ secrets.QASEIO_API_TOKEN }} -pl '!kafka-ui-api' test -Pprod
       - name: Generate allure report
         uses: simple-elf/allure-report-action@master
         if: always()

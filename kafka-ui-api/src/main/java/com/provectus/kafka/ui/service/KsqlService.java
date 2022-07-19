@@ -28,10 +28,10 @@ public class KsqlService {
               e instanceof ClusterNotFoundException ? e : new KsqlDbNotFoundException();
           return Mono.error(throwable);
         })
-        .flatMap(host -> getStatementStrategyForKsqlCommand(ksqlCommand)
-            .map(statement -> statement.host(host))
+        .flatMap(ksqlServer -> getStatementStrategyForKsqlCommand(ksqlCommand)
+            .map(statement -> statement.host(ksqlServer.getUrl()))
         )
-        .flatMap(ksqlClient::execute);
+        .flatMap(baseStrategy -> ksqlClient.execute(baseStrategy, cluster));
   }
 
   private Mono<BaseStrategy> getStatementStrategyForKsqlCommand(

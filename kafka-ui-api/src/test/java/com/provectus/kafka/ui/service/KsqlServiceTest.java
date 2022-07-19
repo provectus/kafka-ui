@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.when;
 import com.provectus.kafka.ui.client.KsqlClient;
 import com.provectus.kafka.ui.exception.KsqlDbNotFoundException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
+import com.provectus.kafka.ui.model.InternalKsqlServer;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KsqlCommandDTO;
 import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
@@ -62,7 +64,7 @@ class KsqlServiceTest {
     KsqlCommandDTO command =
         (new KsqlCommandDTO()).ksql("CREATE STREAM users WITH (KAFKA_TOPIC='users');");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
-    when(kafkaCluster.getKsqldbServer()).thenReturn("localhost:8088");
+    when(kafkaCluster.getKsqldbServer()).thenReturn(InternalKsqlServer.builder().url("localhost:8088").build());
 
     StepVerifier.create(ksqlService.executeKsqlCommand(kafkaCluster, Mono.just(command)))
         .verifyError(UnprocessableEntityException.class);
@@ -77,8 +79,8 @@ class KsqlServiceTest {
     KsqlCommandDTO command = (new KsqlCommandDTO()).ksql("describe streams;");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
 
-    when(kafkaCluster.getKsqldbServer()).thenReturn(host);
-    when(ksqlClient.execute(any())).thenReturn(Mono.just(new KsqlCommandResponseDTO()));
+    when(kafkaCluster.getKsqldbServer()).thenReturn(InternalKsqlServer.builder().url(host).build());
+    when(ksqlClient.execute(any(), any())).thenReturn(Mono.just(new KsqlCommandResponseDTO()));
 
     ksqlService.executeKsqlCommand(kafkaCluster, Mono.just(command)).block();
     assertThat(alternativeStrategy.getUri()).isEqualTo(host + "/ksql");
@@ -90,12 +92,12 @@ class KsqlServiceTest {
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
     KsqlCommandResponseDTO response = new KsqlCommandResponseDTO().message("success");
 
-    when(kafkaCluster.getKsqldbServer()).thenReturn("host");
-    when(ksqlClient.execute(any())).thenReturn(Mono.just(response));
+    when(kafkaCluster.getKsqldbServer()).thenReturn(InternalKsqlServer.builder().url("host").build());
+    when(ksqlClient.execute(any(), any())).thenReturn(Mono.just(response));
 
     KsqlCommandResponseDTO receivedResponse =
         ksqlService.executeKsqlCommand(kafkaCluster, Mono.just(command)).block();
-    verify(ksqlClient, times(1)).execute(alternativeStrategy);
+    verify(ksqlClient, times(1)).execute(eq(alternativeStrategy), any());
     assertThat(receivedResponse).isEqualTo(response);
 
   }
