@@ -32,7 +32,7 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^5.29.0
   '@typescript-eslint/parser': ^5.29.0
   '@vitejs/plugin-react': ^2.0.0
-  ace-builds: ^1.4.12
+  ace-builds: ^1.7.1
   ajv: ^8.6.3
   babel-jest: ^28.1.1
   bulma: ^0.9.3
@@ -63,7 +63,6 @@ specifiers:
   json-schema-faker: ^0.5.0-rcv.39
   lint-staged: ^13.0.2
   lodash: ^4.17.21
-  node-fetch: ^2.6.1
   prettier: ^2.3.1
   pretty-ms: 7.0.1
   react: ^18.1.0
@@ -103,18 +102,17 @@ dependencies:
   '@types/testing-library__jest-dom': 5.14.5
   '@types/yup': 0.29.13
   '@vitejs/plugin-react': 2.0.0_vite@3.0.2
-  ace-builds: 1.4.13
+  ace-builds: 1.7.1
   ajv: 8.8.2
   babel-jest: 28.1.1_@babel+core@7.18.2
   bulma: 0.9.3
   classnames: 2.3.1
   dayjs: 1.11.3
-  fetch-mock: 9.11.0_node-fetch@2.6.7
+  fetch-mock: 9.11.0
   jest: 28.1.1_yqiaopbgmqcuvx27p5xxvum6wm
   jest-watch-typeahead: 2.0.0_jest@28.1.1
   json-schema-faker: 0.5.0-rcv.40
   lodash: 4.17.21
-  node-fetch: 2.6.7
   pretty-ms: 7.0.1
   react: 18.1.0
   react-ace: 10.1.0_ef5jwxihqo6n7gxfmzogljlgcm
@@ -169,7 +167,7 @@ devDependencies:
   eslint-plugin-prettier: 4.0.0_q7a4ir2sdihdzpzdlnbgmzjlpq
   eslint-plugin-react: 7.29.4_eslint@8.16.0
   eslint-plugin-react-hooks: 4.5.0_eslint@8.16.0
-  fetch-mock-jest: 1.5.1_node-fetch@2.6.7
+  fetch-mock-jest: 1.5.1
   husky: 8.0.1
   jest-environment-jsdom: 28.1.1
   jest-sonar-reporter: 2.0.0
@@ -2857,10 +2855,6 @@ packages:
     resolution: {integrity: sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==}
     dev: true
 
-  /ace-builds/1.4.13:
-    resolution: {integrity: sha512-SOLzdaQkY6ecPKYRDDg+MY1WoGgXA34cIvYJNNoBMGGUswHmlauU2Hy0UL96vW0Fs/LgFbMUjD+6vqzWTldIYQ==}
-    dev: false
-
   /ace-builds/1.7.1:
     resolution: {integrity: sha512-1mcbP5kXvr729sJ9dA/8tul0pjuvKbma0LF/ZMRwPEwjoNWNpe/x0OXpaPJo36aRpZCjRZMl5zsME3hAKTiaNw==}
     dev: false
@@ -4712,7 +4706,7 @@ packages:
     dependencies:
       bser: 2.1.1
 
-  /fetch-mock-jest/1.5.1_node-fetch@2.6.7:
+  /fetch-mock-jest/1.5.1:
     resolution: {integrity: sha512-+utwzP8C+Pax1GSka3nFXILWMY3Er2L+s090FOgqVNrNCPp0fDqgXnAHAJf12PLHi0z4PhcTaZNTz8e7K3fjqQ==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
@@ -4721,13 +4715,12 @@ packages:
       node-fetch:
         optional: true
     dependencies:
-      fetch-mock: 9.11.0_node-fetch@2.6.7
-      node-fetch: 2.6.7
+      fetch-mock: 9.11.0
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /fetch-mock/9.11.0_node-fetch@2.6.7:
+  /fetch-mock/9.11.0:
     resolution: {integrity: sha512-PG1XUv+x7iag5p/iNHD4/jdpxL9FtVSqRMUQhPab4hVDt80T1MH5ehzVrL2IdXO9Q2iBggArFvPqjUbHFuI58Q==}
     engines: {node: '>=4.0.0'}
     peerDependencies:
@@ -4743,7 +4736,6 @@ packages:
       glob-to-regexp: 0.4.1
       is-subset: 0.1.1
       lodash.isequal: 4.5.0
-      node-fetch: 2.6.7
       path-to-regexp: 2.4.0
       querystring: 0.2.1
       whatwg-url: 6.5.0
@@ -6224,6 +6216,7 @@ packages:
         optional: true
     dependencies:
       whatwg-url: 5.0.0
+    dev: true
 
   /node-int64/0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}
@@ -7424,6 +7417,7 @@ packages:
 
   /tr46/0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
+    dev: true
 
   /tr46/1.0.1:
     resolution: {integrity: sha512-dTpowEjclQ7Kgx5SdBkqRzVhERQXov8/l9Ft9dVM9fmg0W0KQSVaXX9T4i6twCPNtYiZM53lpSSUAwJbFPOHxA==}
@@ -7775,6 +7769,7 @@ packages:
 
   /webidl-conversions/3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
+    dev: true
 
   /webidl-conversions/4.0.2:
     resolution: {integrity: sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==}
@@ -7821,6 +7816,7 @@ packages:
     dependencies:
       tr46: 0.0.3
       webidl-conversions: 3.0.1
+    dev: true
 
   /whatwg-url/6.5.0:
     resolution: {integrity: sha512-rhRZRqx/TLJQWUpQ6bmrt2UV4f0HCQ463yQuONJqC6fO2VoEb1pTYddbe59SkYq87aoM5A3bdhMZiUiVws+fzQ==}
