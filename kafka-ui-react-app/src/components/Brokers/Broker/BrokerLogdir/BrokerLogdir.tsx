@@ -7,7 +7,7 @@ import { useTableState } from 'lib/hooks/useTableState';
 import { ClusterBrokerParam } from 'lib/paths';
 import { useBrokerLogDirs } from 'lib/hooks/api/brokers';
 
-export interface BrokerLogdirState {
+interface BrokerLogdirState {
   name: string;
   error: string;
   topics: number;

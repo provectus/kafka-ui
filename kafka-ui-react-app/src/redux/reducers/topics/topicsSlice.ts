@@ -83,7 +83,7 @@ const topicReducer = (
   };
 };
 
-export const formatTopicCreation = (form: TopicFormData): TopicCreation => {
+const formatTopicCreation = (form: TopicFormData): TopicCreation => {
   const {
     name,
     partitions,
@@ -344,7 +344,7 @@ export const clearTopicsMessages = createAsyncThunk<
   }
 });
 
-export const initialState: TopicsState = {
+const initialState: TopicsState = {
   byName: {},
   allNames: [],
   totalPages: 1,

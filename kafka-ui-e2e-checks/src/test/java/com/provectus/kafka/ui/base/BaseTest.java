@@ -4,9 +4,11 @@ import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.provectus.kafka.ui.helpers.Helpers;
+import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.screenshots.Screenshooter;
-import com.provectus.kafka.ui.steps.Steps;
+import com.provectus.kafka.ui.utils.CamelCaseToSpacedDisplayNameGenerator;
+import com.provectus.kafka.ui.utils.qaseIO.TestCaseGenerator;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
 import io.qameta.allure.selenide.AllureSelenide;
@@ -33,7 +35,6 @@ import java.util.Arrays;
 @DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
 public class BaseTest {
 
-    protected Steps steps = Steps.INSTANCE;
     protected Pages pages = Pages.INSTANCE;
     protected Helpers helpers = Helpers.INSTANCE;
 
@@ -52,7 +53,7 @@ public class BaseTest {
     }
 
     @BeforeEach
-    public void setWebDriver(){
+    public void setWebDriver() {
         RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
         WebDriverRunner.setWebDriver(remoteWebDriver);
         remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
@@ -72,8 +73,8 @@ public class BaseTest {
     }
 
     @AfterAll
-    public static void tearDown(){
-        if(webDriverContainer.isRunning()) {
+    public static void tearDown() {
+        if (webDriverContainer.isRunning()) {
             webDriverContainer.close();
             webDriverContainer.stop();
         }
@@ -93,6 +94,12 @@ public class BaseTest {
             clearReports();
         }
         setup();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                if (TestCaseGenerator.FAILED) {
+                    log.error("Tests FAILED because some problem with @CaseId annotation. Verify that all tests annotated with @CaseId and Id is correct!");
+                    Runtime.getRuntime().halt(100500);
+                }
+        }));
     }
 
     @AfterEach
@@ -115,7 +122,7 @@ public class BaseTest {
     }
 
     public static void clearReports() {
-        log.info("Clearing reports dir [%s]...".formatted(TestConfiguration.REPORTS_FOLDER));
+        log.info(String.format("Clearing reports dir [%s]...", TestConfiguration.REPORTS_FOLDER));
         File allureResults = new File(TestConfiguration.REPORTS_FOLDER);
         if (allureResults.isDirectory()) {
             File[] list = allureResults.listFiles();

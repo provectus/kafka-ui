@@ -17,8 +17,7 @@ export interface Props {
   handleSSECancel: () => void;
   submitHandler: (values: FormValues) => void;
 }
-
-export type StreamsPropertiesType = {
+type StreamsPropertiesType = {
   key: string;
   value: string;
 };

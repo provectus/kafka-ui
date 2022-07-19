@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import useAppParams from 'lib/hooks/useAppParams';
 import * as Metrics from 'components/common/Metrics';
-import { useSelector, useDispatch } from 'react-redux';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
 import {
   clusterKsqlDbQueryRelativePath,
@@ -16,15 +15,16 @@ import { Button } from 'components/common/Button/Button';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import { NavLink, Route, Routes, Navigate } from 'react-router-dom';
 import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 
 import KsqlDbItem, { KsqlDbItemType } from './KsqlDbItem/KsqlDbItem';
 
 const List: FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const { rows, fetching, tablesCount, streamsCount } =
-    useSelector(getKsqlDbTables);
+    useAppSelector(getKsqlDbTables);
 
   React.useEffect(() => {
     dispatch(fetchKsqlDbTables(clusterName));

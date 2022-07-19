@@ -17,8 +17,7 @@ export function useBrokerMetrics(clusterName: ClusterName, brokerId: number) {
       api.getBrokersMetrics({
         clusterName,
         id: brokerId,
-      }),
-    { refetchInterval: 5000 }
+      })
   );
 }
 
@@ -29,7 +28,6 @@ export function useBrokerLogDirs(clusterName: ClusterName, brokerId: number) {
       api.getAllBrokersLogdirs({
         clusterName,
         broker: [brokerId],
-      }),
-    { refetchInterval: 5000 }
+      })
   );
 }
