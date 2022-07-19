@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.base;
+package com.provectus.kafka.ui.utils;
 
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.platform.commons.util.ClassUtils;

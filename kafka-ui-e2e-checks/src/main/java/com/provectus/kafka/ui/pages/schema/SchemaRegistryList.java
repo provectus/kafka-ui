@@ -11,7 +11,7 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class SchemaRegistryList {
 
-    private SelenideElement schemaButton = $(By.xpath("//*[contains(text(),'Create Schema')]"));
+    private final SelenideElement schemaButton = $(By.xpath("//*[contains(text(),'Create Schema')]"));
 
     public SchemaCreateView clickCreateSchema() {
         BrowserUtils.javaExecutorClick(schemaButton);

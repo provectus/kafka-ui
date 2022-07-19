@@ -32,12 +32,12 @@ const New: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const methods = useForm<NewSchemaSubjectRaw>();
+  const methods = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
   const {
     register,
     handleSubmit,
     control,
-    formState: { isDirty, isSubmitting, errors },
+    formState: { isDirty, isSubmitting, errors, isValid },
   } = methods;
 
   const onSubmit = async ({
@@ -99,15 +99,15 @@ const New: React.FC = () => {
         <div>
           <InputLabel>Schema Type *</InputLabel>
           <Controller
-            defaultValue={SchemaTypeOptions[0].value as SchemaType}
             control={control}
             rules={{ required: 'Schema Type is required.' }}
             name="schemaType"
-            render={({ field: { name, onChange } }) => (
+            render={({ field: { name, onChange, value } }) => (
               <Select
                 selectSize="M"
                 name={name}
-                value={SchemaTypeOptions[0].value}
+                defaultValue={SchemaTypeOptions[0].value}
+                value={value}
                 onChange={onChange}
                 minWidth="50%"
                 disabled={isSubmitting}
@@ -124,7 +124,7 @@ const New: React.FC = () => {
           buttonSize="M"
           buttonType="primary"
           type="submit"
-          disabled={isSubmitting || !isDirty}
+          disabled={!isValid || isSubmitting || !isDirty}
         >
           Submit
         </Button>

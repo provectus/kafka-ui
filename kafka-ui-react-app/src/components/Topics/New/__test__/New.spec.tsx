@@ -80,7 +80,12 @@ describe('New', () => {
 
   it('validates form', async () => {
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
-    userEvent.click(screen.getByText('Create topic'));
+    await waitFor(() => {
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+    });
+    await waitFor(() => {
+      userEvent.clear(screen.getByPlaceholderText('Topic Name'));
+    });
     await waitFor(() => {
       expect(screen.getByText('name is a required field')).toBeInTheDocument();
     });
@@ -96,8 +101,13 @@ describe('New', () => {
 
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
 
-    userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
-    userEvent.click(screen.getByText('Create topic'));
+    await act(() => {
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+    });
+
+    await act(() => {
+      userEvent.click(screen.getByText('Create topic'));
+    });
 
     await waitFor(() => expect(mockNavigate).toBeCalledTimes(1));
     expect(mockNavigate).toHaveBeenLastCalledWith(`../${topicName}`);
@@ -127,6 +137,8 @@ describe('New', () => {
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
     await act(() => {
       userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+    });
+    await act(() => {
       userEvent.click(screen.getByText('Create topic'));
     });
 

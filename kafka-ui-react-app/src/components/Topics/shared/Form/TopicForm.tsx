@@ -51,14 +51,14 @@ const TopicForm: React.FC<Props> = ({
 }) => {
   const {
     control,
-    formState: { errors },
+    formState: { errors, isDirty, isValid },
   } = useFormContext();
   const getCleanUpPolicy =
     CleanupPolicyOptions.find((option: SelectOption) => {
       return option.value === cleanUpPolicy?.toLowerCase();
     })?.value || CleanupPolicyOptions[0].value;
   return (
-    <StyledForm onSubmit={onSubmit}>
+    <StyledForm onSubmit={onSubmit} aria-label="topic form">
       <fieldset disabled={isSubmitting}>
         <fieldset disabled={isEditing}>
           <S.Column>
@@ -125,10 +125,10 @@ const TopicForm: React.FC<Props> = ({
               placeholder="Min In Sync Replicas"
               min="1"
               defaultValue={inSyncReplicas}
-              name="minInsyncReplicas"
+              name="minInSyncReplicas"
             />
             <FormError>
-              <ErrorMessage errors={errors} name="minInsyncReplicas" />
+              <ErrorMessage errors={errors} name="minInSyncReplicas" />
             </FormError>
           </div>
           <div>
@@ -209,7 +209,12 @@ const TopicForm: React.FC<Props> = ({
         <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>
         <CustomParams isSubmitting={isSubmitting} />
         <S.ButtonWrapper>
-          <Button type="submit" buttonType="primary" buttonSize="L">
+          <Button
+            type="submit"
+            buttonType="primary"
+            buttonSize="L"
+            disabled={!isValid || isSubmitting || !isDirty}
+          >
             {isEditing ? 'Save' : 'Create topic'}
           </Button>
           <Button type="button" buttonType="primary" buttonSize="L">

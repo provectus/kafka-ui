@@ -3,7 +3,7 @@ package com.provectus.kafka.ui.pages.topic;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
-import com.provectus.kafka.ui.base.TestConfiguration;
+import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
@@ -33,7 +33,7 @@ public class TopicsList {
 
     @Step
     public TopicCreateEditSettingsView pressCreateNewTopic(){
-        BrowserUtils.javaExecutorClick($(".qEXNn.sc-bYEvvW"));
+        BrowserUtils.javaExecutorClick($x("//button[normalize-space(text()) ='Add a Topic']"));
         return new TopicCreateEditSettingsView();
     }
 

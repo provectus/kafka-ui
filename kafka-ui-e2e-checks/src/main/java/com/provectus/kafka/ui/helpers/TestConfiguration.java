@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.base;
+package com.provectus.kafka.ui.helpers;
 
 public class TestConfiguration {
   public static boolean CLEAR_REPORTS_DIR =
@@ -18,6 +18,6 @@ public class TestConfiguration {
   public static String BROWSER_SIZE = System.getProperty("BROWSER_SIZE", "1920x1080");
   public static Boolean ENABLE_VNC = Boolean.parseBoolean(System.getProperty("ENABLE_VNC", "true"));
   public static String IMAGE_NAME = System.getProperty("SELENIUM_DOCKER_IMAGE", "selenium/standalone-chrome");
-  public static String IMAGE_TAG = System.getProperty("SELENIUM_IMAGE_TAG", "102.0");
+  public static String IMAGE_TAG = System.getProperty("SELENIUM_IMAGE_TAG", "103.0");
 
 }

@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react';
 
 import * as S from './Dropdown.styled';
 
-export interface DropdownItemProps {
+interface DropdownItemProps {
   onClick(): void;
   danger?: boolean;
 }

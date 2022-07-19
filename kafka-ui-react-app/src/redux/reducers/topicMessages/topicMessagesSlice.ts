@@ -47,7 +47,7 @@ export const initialState: TopicMessagesState = {
   isFetching: false,
 };
 
-export const topicMessagesSlice = createSlice({
+const topicMessagesSlice = createSlice({
   name: 'topicMessages',
   initialState,
   reducers: {

@@ -3,7 +3,7 @@ package com.provectus.kafka.ui.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.base.TestConfiguration;
+import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
 import com.provectus.kafka.ui.pages.topic.TopicsList;
 import io.qameta.allure.Step;
@@ -48,7 +48,7 @@ public class MainPage {
     CONSUMERS("Consumers"),
     SCHEMA_REGISTRY("Schema Registry");
 
-    String value;
+    final String value;
 
     SideMenuOptions(String value) {
       this.value = value;
