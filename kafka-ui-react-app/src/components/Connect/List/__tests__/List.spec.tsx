@@ -7,7 +7,6 @@ import ClusterContext, {
 import List from 'components/Connect/List/List';
 import { screen } from '@testing-library/react';
 import { render, WithRoute } from 'lib/testHelpers';
-import fetchMock from 'fetch-mock';
 import { clusterConnectorsPath } from 'lib/paths';
 import { useConnectors } from 'lib/hooks/api/kafkaConnect';
 
@@ -23,8 +22,6 @@ jest.mock('lib/hooks/api/kafkaConnect', () => ({
 const clusterName = 'local';
 
 describe('Connectors List', () => {
-  afterEach(() => fetchMock.restore());
-
   const renderComponent = (contextValue: ContextProps = initialValue) =>
     render(
       <ClusterContext.Provider value={contextValue}>

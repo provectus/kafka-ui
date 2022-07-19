@@ -7,12 +7,10 @@ import {
   getNonExactPath,
 } from 'lib/paths';
 import Broker from 'components/Brokers/Broker/Broker';
-import {
-  clusterStatsPayload,
-  brokersPayload,
-} from 'components/Brokers/__test__/fixtures';
 import { useBrokers } from 'lib/hooks/api/brokers';
 import { useClusterStats } from 'lib/hooks/api/clusters';
+import { brokersPayload } from 'lib/fixtures/brokers';
+import { clusterStatsPayload } from 'lib/fixtures/clusters';
 
 const clusterName = 'local';
 const brokerId = 1;

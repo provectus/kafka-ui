@@ -6,7 +6,7 @@ import {
 } from 'generated-sources';
 import { kafkaConnectApiClient as api } from 'lib/api';
 import sortBy from 'lodash/sortBy';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ClusterName } from 'redux/interfaces';
 
 interface UseConnectorProps {

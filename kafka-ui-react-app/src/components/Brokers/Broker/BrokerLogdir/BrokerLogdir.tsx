@@ -16,7 +16,6 @@ interface BrokerLogdirState {
 
 const BrokerLogdir: React.FC = () => {
   const { clusterName, brokerId } = useAppParams<ClusterBrokerParam>();
-
   const { data: logDirs } = useBrokerLogDirs(clusterName, Number(brokerId));
 
   const preparedRows = translateLogdirs(logDirs);
