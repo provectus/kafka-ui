@@ -4,14 +4,20 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.extensions.FileUtils;
 import com.provectus.kafka.ui.helpers.ApiHelper;
 import com.provectus.kafka.ui.helpers.Helpers;
+import com.provectus.kafka.ui.utils.qaseIO.Status;
+import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
+import io.qase.api.annotation.CaseId;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 
 public class ConnectorsTests extends BaseTest {
 
+    private final long suiteId = 10;
+    private final String suiteTitle = "Kafka Connect";
     public static final String LOCAL_CLUSTER = "local";
     public static final String SINK_CONNECTOR = "sink_postgres_activities_e2e_checks";
     public static final String TOPIC_FOR_CONNECTOR = "topic_for_connector";
@@ -58,6 +64,9 @@ public class ConnectorsTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should create a connector")
+    @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(42)
     @Test
     public void createConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
@@ -74,26 +83,32 @@ public class ConnectorsTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should update a connector")
+    @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(196)
     @Test
     public void updateConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .isOnPage()
                 .openConnector(CONNECTOR_FOR_UPDATE);
-                pages.connectorsView.connectorIsVisibleOnOverview();
+        pages.connectorsView.connectorIsVisibleOnOverview();
         pages.connectorsView.openEditConfig()
-                        .updConnectorConfig(FileUtils.getResourceAsString("config_for_update_connector.json"));
+                .updConnectorConfig(FileUtils.getResourceAsString("config_for_update_connector.json"));
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .connectorIsVisibleInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
     }
 
     @SneakyThrows
     @DisplayName("should delete connector")
+    @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(195)
     @Test
     public void deleteConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .isOnPage()
                 .openConnector(CONNECTOR_FOR_DELETE);
-                pages.connectorsView.clickDeleteButton();
+        pages.connectorsView.clickDeleteButton();
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .isNotVisible(CONNECTOR_FOR_DELETE);
     }

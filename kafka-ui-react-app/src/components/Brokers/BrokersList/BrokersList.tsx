@@ -7,8 +7,8 @@ import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import * as Metrics from 'components/common/Metrics';
 import useAppParams from 'lib/hooks/useAppParams';
-import useBrokers from 'lib/hooks/useBrokers';
-import useClusterStats from 'lib/hooks/useClusterStats';
+import { useBrokers } from 'lib/hooks/api/brokers';
+import { useClusterStats } from 'lib/hooks/api/clusters';
 
 import { ClickableRow } from './BrokersList.style';
 

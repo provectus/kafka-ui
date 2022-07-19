@@ -17,7 +17,3 @@ export interface Alert {
   response?: ServerResponse;
   createdAt: number;
 }
-
-export type Alerts = Alert[];
-
-export type AlertsState = Record<Alert['id'], Alert>;
