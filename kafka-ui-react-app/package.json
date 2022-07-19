@@ -57,6 +57,7 @@
     "start": "vite",
     "gen:sources": "rimraf src/generated-sources && openapi-generator-cli generate",
     "build": "vite build",
+    "preview": "vite preview",
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
     "lint:CI": "eslint --ext .tsx,.ts src/ --max-warnings=0",
