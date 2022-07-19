@@ -80,7 +80,6 @@ specifiers:
   react-router-dom: ^6.3.0
   redux: ^4.1.1
   redux-mock-store: ^1.5.4
-  redux-thunk: ^2.3.0
   rimraf: ^3.0.2
   sass: ^1.52.3
   styled-components: ^5.3.1
@@ -131,7 +130,6 @@ dependencies:
   react-redux: 7.2.6_ef5jwxihqo6n7gxfmzogljlgcm
   react-router-dom: 6.3.0_ef5jwxihqo6n7gxfmzogljlgcm
   redux: 4.1.2
-  redux-thunk: 2.4.1_redux@4.1.2
   sass: 1.52.3
   styled-components: 5.3.1_uuaz5p7xzfmtjacf6iqf7idnby
   use-debounce: 8.0.1_react@18.1.0

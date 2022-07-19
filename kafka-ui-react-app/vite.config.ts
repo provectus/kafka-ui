@@ -20,7 +20,6 @@ export default defineConfig(({ mode }) => {
               'react-router-dom',
               'react-dom',
               'redux',
-              'redux-thunk',
               'react-redux',
               'styled-components',
               'react-ace',
