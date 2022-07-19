@@ -16,7 +16,6 @@ import * as S from 'components/Topics/List/List.styled';
 import { ClusterNameRoute } from 'lib/paths';
 import useModal from 'lib/hooks/useModal';
 import useAppParams from 'lib/hooks/useAppParams';
-import usePagination from 'lib/hooks/usePagination';
 import {
   deleteTopic,
   fetchTopicsList,
@@ -24,10 +23,17 @@ import {
 } from 'redux/reducers/topics/topicsSlice';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 
+interface TopicsListParams {
+  clusterName: string;
+  page?: number;
+  perPage?: number;
+  showInternal?: boolean;
+  search?: string;
+  orderBy?: TopicColumnsToSort;
+  sortOrder?: SortOrder;
+}
 export interface ActionsCellProps {
-  search: string;
-  orderBy: string | null;
-  sortOrder: SortOrder;
+  topicsListParams: TopicsListParams;
 }
 
 const ActionsCell: React.FC<
@@ -35,31 +41,13 @@ const ActionsCell: React.FC<
 > = ({
   hovered,
   dataItem: { internal, cleanUpPolicy, name },
-  search,
-  orderBy,
-  sortOrder,
+  topicsListParams,
 }) => {
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
   const dispatch = useDispatch();
-
   const { clusterName } = useAppParams<ClusterNameRoute>();
-  const { page, perPage } = usePagination();
-  const [showInternal, setShowInternal] = React.useState<boolean>(
-    !localStorage.getItem('hideInternalTopics') && true
-  );
-  const topicsListParams = React.useMemo(
-    () => ({
-      clusterName,
-      page,
-      perPage,
-      orderBy: (orderBy as TopicColumnsToSort) || undefined,
-      sortOrder,
-      search,
-      showInternal,
-    }),
-    [clusterName, page, perPage, orderBy, sortOrder, search, showInternal]
-  );
+
   const {
     isOpen: isDeleteTopicModalOpen,
     setClose: closeDeleteTopicModal,
