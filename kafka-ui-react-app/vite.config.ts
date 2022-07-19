@@ -7,6 +7,9 @@ export default defineConfig(({ mode }) => {
 
   const defaultConfig: UserConfigExport = {
     plugins: [react(), tsconfigPaths()],
+    server: {
+      port: 3000,
+    },
     build: {
       outDir: 'build',
       rollupOptions: {
@@ -38,6 +41,7 @@ export default defineConfig(({ mode }) => {
     return {
       ...defaultConfig,
       server: {
+        ...defaultConfig.server,
         open: true,
         proxy: {
           '/api': {

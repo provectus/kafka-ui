@@ -31,4 +31,5 @@ export default {
     'jest-watch-typeahead/testname',
   ],
   resetMocks: true,
+  reporters: ['default', 'github-actions'],
 } as Config.InitialOptions;
