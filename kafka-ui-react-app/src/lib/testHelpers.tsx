@@ -13,7 +13,6 @@ import { AnyAction, Store } from 'redux';
 import { RootState } from 'redux/interfaces';
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from 'redux/reducers';
-import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
 import { QueryClient, QueryClientProvider, UseQueryResult } from 'react-query';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
@@ -100,7 +99,3 @@ export class EventSourceMock {
     this.close = jest.fn();
   }
 }
-
-export const getTypeAndPayload = (store: typeof mockStoreCreator) => {
-  return store.getActions().map(({ type, payload }) => ({ type, payload }));
-};

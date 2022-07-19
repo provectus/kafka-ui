@@ -3,20 +3,20 @@ import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { TopicMessage } from 'generated-sources';
 import React, { useContext } from 'react';
-import { useSelector } from 'react-redux';
 import {
   getTopicMessges,
   getIsTopicMessagesFetching,
 } from 'redux/reducers/topicMessages/selectors';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
+import { useAppSelector } from 'lib/hooks/redux';
 
 import Message from './Message';
 
 const MessagesTable: React.FC = () => {
   const { isLive } = useContext(TopicMessagesContext);
 
-  const messages = useSelector(getTopicMessges);
-  const isFetching = useSelector(getIsTopicMessagesFetching);
+  const messages = useAppSelector(getTopicMessges);
+  const isFetching = useAppSelector(getIsTopicMessagesFetching);
 
   return (
     <Table isFullwidth>
