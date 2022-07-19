@@ -37,7 +37,7 @@
     "react-is": "^18.2.0",
     "react-multi-select-component": "^4.0.6",
     "react-query": "^3.39.1",
-    "react-redux": "^7.2.6",
+    "react-redux": "^8.0.2",
     "react-router-dom": "^6.3.0",
     "redux": "^4.1.1",
     "redux-thunk": "^2.3.0",
