@@ -12,15 +12,11 @@ import {
   clusterTopicNewRelativePath,
 } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
-import useModal from 'lib/hooks/useModal';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import {
-  CleanUpPolicy,
-  DeleteTopicRequest,
   GetTopicsRequest,
-  RecreateTopicRequest,
   SortOrder,
   TopicColumnsToSort,
 } from 'generated-sources';
@@ -31,14 +27,8 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import Switch from 'components/common/Switch/Switch';
 import { SmartTable } from 'components/common/SmartTable/SmartTable';
-import {
-  TableCellProps,
-  TableColumn,
-} from 'components/common/SmartTable/TableColumn';
+import { TableColumn } from 'components/common/SmartTable/TableColumn';
 import { useTableState } from 'lib/hooks/useTableState';
-import Dropdown from 'components/common/Dropdown/Dropdown';
-import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import DropdownItem from 'components/common/Dropdown/DropdownItem';
 
 import {
   MessagesCell,
@@ -47,18 +37,17 @@ import {
   TopicSizeCell,
 } from './TopicsTableCells';
 import * as S from './List.styled';
+import ActionsCell from './ActionsCell/ActionsCell';
 
 export interface TopicsListProps {
   areTopicsFetching: boolean;
   topics: TopicWithDetailedInfo[];
   totalPages: number;
   fetchTopicsList(payload: GetTopicsRequest): void;
-  deleteTopic(payload: DeleteTopicRequest): void;
   deleteTopics(payload: {
     clusterName: ClusterName;
     topicNames: TopicName[];
   }): void;
-  recreateTopic(payload: RecreateTopicRequest): void;
   clearTopicsMessages(payload: {
     clusterName: ClusterName;
     topicNames: TopicName[];
@@ -80,10 +69,7 @@ const List: React.FC<TopicsListProps> = ({
   topics,
   totalPages,
   fetchTopicsList,
-  deleteTopic,
   deleteTopics,
-  recreateTopic,
-  clearTopicMessages,
   clearTopicsMessages,
   search,
   orderBy,
@@ -91,8 +77,7 @@ const List: React.FC<TopicsListProps> = ({
   setTopicsSearch,
   setTopicsOrderBy,
 }) => {
-  const { isReadOnly, isTopicDeletionAllowed } =
-    React.useContext(ClusterContext);
+  const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const { page, perPage } = usePagination();
   const [showInternal, setShowInternal] = React.useState<boolean>(
@@ -196,89 +181,6 @@ const List: React.FC<TopicsListProps> = ({
     clearSelectedTopics();
     fetchTopicsList(topicsListParams);
   };
-
-  const ActionsCell = React.memo<TableCellProps<TopicWithDetailedInfo, string>>(
-    ({ hovered, dataItem: { internal, cleanUpPolicy, name } }) => {
-      const {
-        isOpen: isDeleteTopicModalOpen,
-        setClose: closeDeleteTopicModal,
-        setOpen: openDeleteTopicModal,
-      } = useModal(false);
-
-      const {
-        isOpen: isRecreateTopicModalOpen,
-        setClose: closeRecreateTopicModal,
-        setOpen: openRecreateTopicModal,
-      } = useModal(false);
-
-      const {
-        isOpen: isClearMessagesModalOpen,
-        setClose: closeClearMessagesModal,
-        setOpen: openClearMessagesModal,
-      } = useModal(false);
-
-      const isHidden = internal || isReadOnly || !hovered;
-
-      const deleteTopicHandler = () =>
-        deleteTopic({ clusterName, topicName: name });
-
-      const clearTopicMessagesHandler = () => {
-        clearTopicMessages({ clusterName, topicName: name });
-        fetchTopicsList(topicsListParams);
-        closeClearMessagesModal();
-      };
-
-      const recreateTopicHandler = () => {
-        recreateTopic({ clusterName, topicName: name });
-        closeRecreateTopicModal();
-      };
-
-      return (
-        <>
-          <S.ActionsContainer>
-            {!isHidden && (
-              <Dropdown label={<VerticalElipsisIcon />} right>
-                {cleanUpPolicy === CleanUpPolicy.DELETE && (
-                  <DropdownItem onClick={openClearMessagesModal} danger>
-                    Clear Messages
-                  </DropdownItem>
-                )}
-                {isTopicDeletionAllowed && (
-                  <DropdownItem onClick={openDeleteTopicModal} danger>
-                    Remove Topic
-                  </DropdownItem>
-                )}
-                <DropdownItem onClick={openRecreateTopicModal} danger>
-                  Recreate Topic
-                </DropdownItem>
-              </Dropdown>
-            )}
-          </S.ActionsContainer>
-          <ConfirmationModal
-            isOpen={isClearMessagesModalOpen}
-            onCancel={closeClearMessagesModal}
-            onConfirm={clearTopicMessagesHandler}
-          >
-            Are you sure want to clear topic messages?
-          </ConfirmationModal>
-          <ConfirmationModal
-            isOpen={isDeleteTopicModalOpen}
-            onCancel={closeDeleteTopicModal}
-            onConfirm={deleteTopicHandler}
-          >
-            Are you sure want to remove <b>{name}</b> topic?
-          </ConfirmationModal>
-          <ConfirmationModal
-            isOpen={isRecreateTopicModalOpen}
-            onCancel={closeRecreateTopicModal}
-            onConfirm={recreateTopicHandler}
-          >
-            Are you sure to recreate <b>{name}</b> topic?
-          </ConfirmationModal>
-        </>
-      );
-    }
-  );
 
   return (
     <div>

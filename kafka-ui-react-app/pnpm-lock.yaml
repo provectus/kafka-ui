@@ -50,7 +50,7 @@ specifiers:
   eslint-plugin-jest-dom: ^4.0.2
   eslint-plugin-jsx-a11y: ^6.5.1
   eslint-plugin-prettier: ^4.0.0
-  eslint-plugin-react: ^7.29.4
+  eslint-plugin-react: ^7.30.1
   eslint-plugin-react-hooks: ^4.5.0
   fetch-mock: ^9.11.0
   fetch-mock-jest: ^1.5.1
@@ -155,7 +155,7 @@ devDependencies:
   '@typescript-eslint/parser': 5.29.0_vjep2yp2sits3sqnodefgcbnfi
   dotenv: 16.0.1
   eslint: 8.16.0
-  eslint-config-airbnb: 19.0.4_pamhosqcenlxoxj4ke2dmvzava
+  eslint-config-airbnb: 19.0.4_iayhaebzx3saen2ll7sn5gqmdq
   eslint-config-airbnb-typescript: 17.0.0_l6wia5brkiej5f4nhesunbzj5y
   eslint-config-prettier: 8.5.0_eslint@8.16.0
   eslint-config-react-app: 7.0.1_y3w6q4zxtal6gz5auqli3lo3ny
@@ -165,7 +165,7 @@ devDependencies:
   eslint-plugin-jest-dom: 4.0.2_eslint@8.16.0
   eslint-plugin-jsx-a11y: 6.5.1_eslint@8.16.0
   eslint-plugin-prettier: 4.0.0_q7a4ir2sdihdzpzdlnbgmzjlpq
-  eslint-plugin-react: 7.29.4_eslint@8.16.0
+  eslint-plugin-react: 7.30.1_eslint@8.16.0
   eslint-plugin-react-hooks: 4.5.0_eslint@8.16.0
   fetch-mock-jest: 1.5.1
   husky: 8.0.1
@@ -4208,7 +4208,7 @@ packages:
       eslint-plugin-import: 2.26.0_h5azci6ujakbaa2xblg2jlxooy
     dev: true
 
-  /eslint-config-airbnb/19.0.4_pamhosqcenlxoxj4ke2dmvzava:
+  /eslint-config-airbnb/19.0.4_iayhaebzx3saen2ll7sn5gqmdq:
     resolution: {integrity: sha512-T75QYQVQX57jiNgpF9r1KegMICE94VYwoFQyMGhrvc+lB8YF2E/M/PYDaQe1AJcWaEgqLE+ErXV1Og/+6Vyzew==}
     engines: {node: ^10.12.0 || ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
@@ -4222,7 +4222,7 @@ packages:
       eslint-config-airbnb-base: 15.0.0_btspkuwbqkl4adpiufzbathtpi
       eslint-plugin-import: 2.26.0_h5azci6ujakbaa2xblg2jlxooy
       eslint-plugin-jsx-a11y: 6.5.1_eslint@8.16.0
-      eslint-plugin-react: 7.29.4_eslint@8.16.0
+      eslint-plugin-react: 7.30.1_eslint@8.16.0
       eslint-plugin-react-hooks: 4.5.0_eslint@8.16.0
       object.assign: 4.1.2
       object.entries: 1.1.5
@@ -4259,7 +4259,7 @@ packages:
       eslint-plugin-import: 2.26.0_h5azci6ujakbaa2xblg2jlxooy
       eslint-plugin-jest: 25.7.0_lemdnf4suuyhpl5s2mhp2xyjqi
       eslint-plugin-jsx-a11y: 6.5.1_eslint@8.16.0
-      eslint-plugin-react: 7.29.4_eslint@8.16.0
+      eslint-plugin-react: 7.30.1_eslint@8.16.0
       eslint-plugin-react-hooks: 4.5.0_eslint@8.16.0
       eslint-plugin-testing-library: 5.5.0_vjep2yp2sits3sqnodefgcbnfi
       typescript: 4.7.4
@@ -4455,8 +4455,8 @@ packages:
       eslint: 8.16.0
     dev: true
 
-  /eslint-plugin-react/7.29.4_eslint@8.16.0:
-    resolution: {integrity: sha512-CVCXajliVh509PcZYRFyu/BoUEz452+jtQJq2b3Bae4v3xBUWPLCmtmBM+ZinG4MzwmxJgJ2M5rMqhqLVn7MtQ==}
+  /eslint-plugin-react/7.30.1_eslint@8.16.0:
+    resolution: {integrity: sha512-NbEvI9jtqO46yJA3wcRF9Mo0lF9T/jhdHqhCHXiXtD+Zcb98812wvokjWpU7Q4QH5edo6dmqrukxVvWWXHlsUg==}
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
@@ -4475,7 +4475,7 @@ packages:
       prop-types: 15.8.1
       resolve: 2.0.0-next.3
       semver: 6.3.0
-      string.prototype.matchall: 4.0.6
+      string.prototype.matchall: 4.0.7
     dev: true
 
   /eslint-plugin-testing-library/5.5.0_vjep2yp2sits3sqnodefgcbnfi:
@@ -7206,8 +7206,8 @@ packages:
       strip-ansi: 7.0.1
     dev: true
 
-  /string.prototype.matchall/4.0.6:
-    resolution: {integrity: sha512-6WgDX8HmQqvEd7J+G6VtAahhsQIssiZ8zl7zKh1VDMFyL3hRTJP4FTNA3RbIp2TOQ9AYNDcc7e3fH0Qbup+DBg==}
+  /string.prototype.matchall/4.0.7:
+    resolution: {integrity: sha512-f48okCX7JiwVi1NXCVWcFnZgADDC/n2vePlQ/KUCNqCikLLilQvwjMO8+BHVKvgzH0JB0J9LEPgxOGT02RoETg==}
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.1.4

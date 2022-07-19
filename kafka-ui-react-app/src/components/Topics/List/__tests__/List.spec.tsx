@@ -27,11 +27,9 @@ describe('List', () => {
       topics={[]}
       totalPages={1}
       fetchTopicsList={jest.fn()}
-      deleteTopic={jest.fn()}
       deleteTopics={jest.fn()}
       clearTopicsMessages={jest.fn()}
       clearTopicMessages={jest.fn()}
-      recreateTopic={jest.fn()}
       search=""
       orderBy={null}
       sortOrder={SortOrder.ASC}
@@ -174,10 +172,8 @@ describe('List', () => {
 
   describe('when some list items are selected', () => {
     const mockDeleteTopics = jest.fn();
-    const mockDeleteTopic = jest.fn();
     const mockClearTopic = jest.fn();
     const mockClearTopicsMessages = jest.fn();
-    const mockRecreate = jest.fn();
     const fetchTopicsList = jest.fn();
 
     jest.useFakeTimers();
@@ -204,8 +200,6 @@ describe('List', () => {
               ],
               deleteTopics: mockDeleteTopics,
               clearTopicsMessages: mockClearTopicsMessages,
-              recreateTopic: mockRecreate,
-              deleteTopic: mockDeleteTopic,
               clearTopicMessages: mockClearTopic,
               fetchTopicsList,
             })}
@@ -218,8 +212,6 @@ describe('List', () => {
     afterEach(() => {
       mockDeleteTopics.mockClear();
       mockClearTopicsMessages.mockClear();
-      mockRecreate.mockClear();
-      mockDeleteTopic.mockClear();
     });
 
     const getCheckboxInput = (at: number) => {
@@ -334,64 +326,6 @@ describe('List', () => {
       expect(screen.getByTestId('delete-buttons')).toBeInTheDocument();
 
       expect(mockDeleteTopics).not.toHaveBeenCalled();
-    });
-
-    const tableRowActionClickAndCheck = async (
-      action: 'deleteTopics' | 'clearTopicsMessages' | 'recreate'
-    ) => {
-      const row = screen.getAllByRole('row')[1];
-      userEvent.hover(row);
-      const actionBtn = within(row).getByRole('menu', { hidden: true });
-
-      userEvent.click(actionBtn);
-
-      let textBtn;
-      let mock: jest.Mock;
-
-      if (action === 'clearTopicsMessages') {
-        textBtn = 'Clear Messages';
-        mock = mockClearTopic;
-      } else if (action === 'deleteTopics') {
-        textBtn = 'Remove Topic';
-        mock = mockDeleteTopic;
-      } else {
-        textBtn = 'Recreate Topic';
-        mock = mockRecreate;
-      }
-
-      const ourAction = screen.getByText(textBtn);
-
-      userEvent.click(ourAction);
-
-      let dialog = screen.getByRole('dialog');
-      expect(dialog).toBeInTheDocument();
-      userEvent.click(within(dialog).getByRole('button', { name: 'Submit' }));
-
-      await waitFor(() => {
-        expect(mock).toHaveBeenCalled();
-        if (action === 'clearTopicsMessages') {
-          expect(fetchTopicsList).toHaveBeenCalled();
-        }
-      });
-
-      userEvent.click(ourAction);
-      dialog = screen.getByRole('dialog');
-      expect(dialog).toBeInTheDocument();
-      userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-      expect(mock).toHaveBeenCalledTimes(1);
-    };
-
-    it('should test the actions of the row and their modal and fetching for removing', async () => {
-      await tableRowActionClickAndCheck('deleteTopics');
-    });
-
-    it('should test the actions of the row and their modal and fetching for clear', async () => {
-      await tableRowActionClickAndCheck('clearTopicsMessages');
-    });
-
-    it('should test the actions of the row and their modal and fetching for recreate', async () => {
-      await tableRowActionClickAndCheck('recreate');
     });
   });
 });
