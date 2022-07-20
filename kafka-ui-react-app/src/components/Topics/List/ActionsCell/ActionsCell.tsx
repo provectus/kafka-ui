@@ -1,10 +1,10 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import {
   CleanUpPolicy,
   SortOrder,
   TopicColumnsToSort,
 } from 'generated-sources';
+import { useAppDispatch } from 'lib/hooks/redux';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import { TableCellProps } from 'components/common/SmartTable/TableColumn';
@@ -45,7 +45,7 @@ const ActionsCell: React.FC<
 }) => {
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { clusterName } = useAppParams<ClusterNameRoute>();
 
   const {
