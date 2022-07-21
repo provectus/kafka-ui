@@ -32,7 +32,12 @@ const New: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const methods = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
+  const methods = useForm<NewSchemaSubjectRaw>({
+    mode: 'onChange',
+    defaultValues: {
+      schemaType: SchemaType.AVRO,
+    },
+  });
   const {
     register,
     handleSubmit,
