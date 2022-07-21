@@ -1,5 +1,4 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import {
   CleanUpPolicy,
   SortOrder,
@@ -22,6 +21,7 @@ import {
   recreateTopic,
 } from 'redux/reducers/topics/topicsSlice';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { useAppDispatch } from 'lib/hooks/redux';
 
 interface TopicsListParams {
   clusterName: string;
@@ -45,7 +45,7 @@ const ActionsCell: React.FC<
 }) => {
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { clusterName } = useAppParams<ClusterNameRoute>();
 
   const {

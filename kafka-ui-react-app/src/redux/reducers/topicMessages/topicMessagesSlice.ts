@@ -1,8 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TopicMessagesState, ClusterName, TopicName } from 'redux/interfaces';
 import { TopicMessage } from 'generated-sources';
-import { getResponse } from 'lib/errorHandling';
-import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
+import {
+  getResponse,
+  showServerError,
+  showSuccessAlert,
+} from 'lib/errorHandling';
 import { fetchTopicDetails } from 'redux/reducers/topics/topicsSlice';
 import { messagesApiClient } from 'lib/api';
 
@@ -22,15 +25,14 @@ export const clearTopicMessages = createAsyncThunk<
         partitions,
       });
       dispatch(fetchTopicDetails({ clusterName, topicName }));
-      dispatch(
-        showSuccessAlert({
-          id: `message-${topicName}-${clusterName}-${partitions}`,
-          message: 'Messages successfully cleared!',
-        })
-      );
+      showSuccessAlert({
+        id: `message-${topicName}-${clusterName}-${partitions}`,
+        message: 'Messages successfully cleared!',
+      });
 
       return undefined;
     } catch (err) {
+      showServerError(err as Response);
       return rejectWithValue(await getResponse(err as Response));
     }
   }
