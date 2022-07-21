@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useIsMutating } from 'react-query';
+import { useIsMutating } from '@tanstack/react-query';
 import { ConnectorState, ConnectorAction } from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
 import useModal from 'lib/hooks/useModal';

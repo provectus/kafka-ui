@@ -10,7 +10,7 @@ import Version from 'components/Version/Version';
 import Alerts from 'components/Alerts/Alerts';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import * as S from './App.styled';
 import Logo from './common/Logo/Logo';
