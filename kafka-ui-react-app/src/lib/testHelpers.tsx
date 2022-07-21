@@ -13,7 +13,11 @@ import { AnyAction, Store } from 'redux';
 import { RootState } from 'redux/interfaces';
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from 'redux/reducers';
-import { QueryClient, QueryClientProvider, UseQueryResult } from 'react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  UseQueryResult,
+} from '@tanstack/react-query';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
