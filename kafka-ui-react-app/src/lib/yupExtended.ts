@@ -62,7 +62,7 @@ export const topicFormValidationSchema = yup.object().shape({
     .min(1)
     .required()
     .typeError('Replication factor is required and must be a number'),
-  minInsyncReplicas: yup
+  minInSyncReplicas: yup
     .number()
     .min(1)
     .required()

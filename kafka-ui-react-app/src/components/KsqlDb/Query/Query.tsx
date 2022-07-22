@@ -5,13 +5,13 @@ import {
   executeKsql,
   resetExecutionResult,
 } from 'redux/reducers/ksqlDb/ksqlDbSlice';
-import { useDispatch, useSelector } from 'react-redux';
 import { getKsqlExecution } from 'redux/reducers/ksqlDb/selectors';
 import { BASE_PARAMS } from 'lib/constants';
 import { KsqlResponse, KsqlTableResponse } from 'generated-sources';
 import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
 import now from 'lodash/now';
 import { ClusterNameRoute } from 'lib/paths';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 
 import type { FormValues } from './QueryForm/QueryForm';
 import * as S from './Query.styled';
@@ -69,9 +69,9 @@ const Query: FC = () => {
     isOpen: false,
   });
   const [fetching, setFetching] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const { executionResult } = useSelector(getKsqlExecution);
+  const { executionResult } = useAppSelector(getKsqlExecution);
   const [KSQLTable, setKSQLTable] = useState<KsqlTableResponse | null>(null);
 
   const reset = useCallback(() => {

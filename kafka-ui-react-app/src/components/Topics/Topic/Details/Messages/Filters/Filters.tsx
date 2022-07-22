@@ -57,7 +57,7 @@ export interface MessageFilters {
   code: string;
 }
 
-export interface ActiveMessageFilter {
+interface ActiveMessageFilter {
   index: number;
   name: string;
   code: string;
@@ -192,7 +192,17 @@ const Filters: React.FC<FiltersProps> = ({
       setAttempt(attempt + 1);
 
       if (isSeekTypeControlVisible) {
-        props.seekType = isLive ? SeekType.LATEST : currentSeekType;
+        switch (seekDirection) {
+          case SeekDirection.FORWARD:
+            props.seekType = SeekType.BEGINNING;
+            break;
+          case SeekDirection.BACKWARD:
+          case SeekDirection.TAILING:
+            props.seekType = SeekType.LATEST;
+            break;
+          default:
+            props.seekType = currentSeekType;
+        }
         props.seekTo = selectedPartitions.map(({ value }) => {
           const offsetProperty =
             seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';

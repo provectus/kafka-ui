@@ -4,20 +4,18 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Connect } from 'generated-sources';
-import { ClusterName, ConnectName } from 'redux/interfaces';
 import { clusterConnectConnectorPath, ClusterNameRoute } from 'lib/paths';
 import yup from 'lib/yupExtended';
 import Editor from 'components/common/Editor/Editor';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 import Select from 'components/common/Select/Select';
 import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { createConnector } from 'redux/reducers/connect/connectSlice';
-import { useAppDispatch } from 'lib/hooks/redux';
 import Heading from 'components/common/heading/Heading.styled';
+import { useConnects, useCreateConnector } from 'lib/hooks/api/kafkaConnect';
+import get from 'lodash/get';
+import { Connect } from 'generated-sources';
 
 import * as S from './New.styled';
 
@@ -26,32 +24,24 @@ const validationSchema = yup.object().shape({
   config: yup.string().required().isJsonObject(),
 });
 
-export interface NewProps {
-  fetchConnects(clusterName: ClusterName): unknown;
-  areConnectsFetching: boolean;
-  connects: Connect[];
-}
-
 interface FormValues {
-  connectName: ConnectName;
+  connectName: Connect['name'];
   name: string;
   config: string;
 }
 
-const New: React.FC<NewProps> = ({
-  fetchConnects,
-  areConnectsFetching,
-  connects,
-}) => {
+const New: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const { data: connects } = useConnects(clusterName);
+  const mutation = useCreateConnector(clusterName);
 
   const methods = useForm<FormValues>({
     mode: 'onTouched',
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      connectName: connects[0]?.name || '',
+      connectName: get(connects, '0.name', ''),
       name: '',
       config: '',
     },
@@ -65,26 +55,20 @@ const New: React.FC<NewProps> = ({
   } = methods;
 
   React.useEffect(() => {
-    fetchConnects(clusterName);
-  }, [fetchConnects, clusterName]);
-
-  React.useEffect(() => {
     if (connects && connects.length > 0 && !getValues().connectName) {
       setValue('connectName', connects[0].name);
     }
   }, [connects, getValues, setValue]);
 
   const onSubmit = async (values: FormValues) => {
-    const { connector } = await dispatch(
-      createConnector({
-        clusterName,
-        connectName: values.connectName,
-        newConnector: {
-          name: values.name,
-          config: JSON.parse(values.config.trim()),
-        },
-      })
-    ).unwrap();
+    const connector = await mutation.mutateAsync({
+      connectName: values.connectName,
+      newConnector: {
+        name: values.name,
+        config: JSON.parse(values.config.trim()),
+      },
+    });
+
     if (connector) {
       navigate(
         clusterConnectConnectorPath(
@@ -96,11 +80,7 @@ const New: React.FC<NewProps> = ({
     }
   };
 
-  if (areConnectsFetching) {
-    return <PageLoader />;
-  }
-
-  if (connects.length === 0) {
+  if (!connects || connects.length === 0) {
     return null;
   }
 

@@ -83,7 +83,7 @@ const topicReducer = (
   };
 };
 
-export const formatTopicCreation = (form: TopicFormData): TopicCreation => {
+const formatTopicCreation = (form: TopicFormData): TopicCreation => {
   const {
     name,
     partitions,
@@ -92,7 +92,7 @@ export const formatTopicCreation = (form: TopicFormData): TopicCreation => {
     retentionBytes,
     retentionMs,
     maxMessageBytes,
-    minInsyncReplicas,
+    minInSyncReplicas,
     customParams,
   } = form;
 
@@ -105,7 +105,7 @@ export const formatTopicCreation = (form: TopicFormData): TopicCreation => {
       'retention.ms': retentionMs.toString(),
       'retention.bytes': retentionBytes.toString(),
       'max.message.bytes': maxMessageBytes.toString(),
-      'min.insync.replicas': minInsyncReplicas.toString(),
+      'min.insync.replicas': minInSyncReplicas.toString(),
       ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };
@@ -153,7 +153,7 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
     retentionBytes,
     retentionMs,
     maxMessageBytes,
-    minInsyncReplicas,
+    minInSyncReplicas,
     customParams,
   } = form;
 
@@ -164,7 +164,7 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
       'retention.ms': retentionMs,
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
-      'min.insync.replicas': minInsyncReplicas,
+      'min.insync.replicas': minInSyncReplicas,
     },
   };
 };

@@ -4,7 +4,7 @@ import { TopicWithDetailedInfo } from 'redux/interfaces/topic';
 export const clusterName = 'testCluster';
 export const topicName = 'testTopic';
 
-export const config: TopicConfig[] = [
+const config: TopicConfig[] = [
   {
     name: 'compression.type',
     value: 'producer',
@@ -521,7 +521,7 @@ export const config: TopicConfig[] = [
   },
 ];
 
-export const partitions = [
+const partitions = [
   {
     partition: 0,
     leader: 2,

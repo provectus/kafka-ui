@@ -1,21 +1,24 @@
 import React from 'react';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import ClustersWidget from 'components/Dashboard/ClustersWidget/ClustersWidget';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
-import fetchMock from 'fetch-mock';
-import { clustersPayload } from 'components/Cluster/__tests__/fixtures';
+import { useClusters } from 'lib/hooks/api/clusters';
+import { clustersPayload } from 'lib/fixtures/clusters';
+
+jest.mock('lib/hooks/api/clusters', () => ({
+  useClusters: jest.fn(),
+}));
 
 describe('ClustersWidget', () => {
-  afterEach(() => fetchMock.restore());
-
   beforeEach(async () => {
-    const mock = fetchMock.get('/api/clusters', clustersPayload);
-
+    (useClusters as jest.Mock).mockImplementation(() => ({
+      data: clustersPayload,
+      isSuccess: true,
+    }));
     await act(() => {
       render(<ClustersWidget />);
     });
-    await waitFor(() => expect(mock.called()).toBeTruthy());
   });
 
   it('renders clusterWidget list', () => {

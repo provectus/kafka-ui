@@ -6,6 +6,7 @@ export default {
   coveragePathIgnorePatterns: [
     '/node_modules/',
     '<rootDir>/src/generated-sources/',
+    '<rootDir>/src/lib/fixtures/',
     '<rootDir>/vite.config.ts',
     '<rootDir>/src/index.tsx',
     '<rootDir>/src/serviceWorker.ts',
@@ -30,4 +31,5 @@ export default {
     'jest-watch-typeahead/testname',
   ],
   resetMocks: true,
+  reporters: ['default', 'github-actions'],
 } as Config.InitialOptions;
