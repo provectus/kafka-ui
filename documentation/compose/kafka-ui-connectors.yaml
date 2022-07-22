@@ -7,8 +7,6 @@ services:
     image: provectuslabs/kafka-ui:latest
     ports:
       - 8080:8080
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     depends_on:
       - zookeeper0
       - zookeeper1
