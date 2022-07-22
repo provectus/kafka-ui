@@ -4,6 +4,7 @@ import {
   SortOrder,
   TopicColumnsToSort,
 } from 'generated-sources';
+import { useAppDispatch } from 'lib/hooks/redux';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import { TableCellProps } from 'components/common/SmartTable/TableColumn';
