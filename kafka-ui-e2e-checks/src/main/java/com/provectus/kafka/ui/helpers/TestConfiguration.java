@@ -4,7 +4,7 @@ public class TestConfiguration {
   public static boolean CLEAR_REPORTS_DIR =
       Boolean.parseBoolean(System.getProperty("CLEAR_REPORTS_DIR", "true"));
   public static String BASE_API_URL = System.getProperty("BASE_URL", "http://localhost:8080");
-  public static String BASE_WEB_URL = System.getProperty("BASE_DOCKER_URL", "http://host.docker.internal:8080");
+  public static String BASE_WEB_URL = System.getProperty("BASE_DOCKER_URL", "https://google.com");
   public static boolean USE_LOCAL_BROWSER =
       Boolean.parseBoolean(System.getProperty("USE_LOCAL_BROWSER", "true"));
   public static String REPORTS_FOLDER = System.getProperty("REPORTS_FOLDER", "allure-results");
