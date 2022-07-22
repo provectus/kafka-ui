@@ -22,7 +22,6 @@ import {
   recreateTopic,
 } from 'redux/reducers/topics/topicsSlice';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
-import { useAppDispatch } from 'lib/hooks/redux';
 
 interface TopicsListParams {
   clusterName: string;
