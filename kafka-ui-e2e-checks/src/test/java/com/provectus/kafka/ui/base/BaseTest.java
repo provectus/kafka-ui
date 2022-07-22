@@ -49,6 +49,8 @@ public class BaseTest {
     private static final GenericContainer<?> chrome;
 
     static {
+        chrome = new GenericContainer<>(DockerImageName.parse(String.format("selenoid/vnc_chrome:%s", CHROME_TAG)));
+        chrome.start();
         selenoid = new GenericContainer<>(DockerImageName.parse(SELENOID_IMAGE_NAME + ":" + SELENOID_IMAGE_TAG))
                 .withExposedPorts(4444)
                 .withFileSystemBind("selenoid/config/", "/etc/selenoid", BindMode.READ_WRITE)
@@ -58,9 +60,7 @@ public class BaseTest {
                 .withEnv("OVERRIDE_VIDEO_OUTPUT_DIR", "/opt/selenoid/video")
                 .withCommand(
                         "-conf /etc/selenoid/browsers.json -log-output-dir /opt/selenoid/logs");
-        chrome = new GenericContainer<>(DockerImageName.parse(String.format("selenoid/vnc_chrome:%s", CHROME_TAG)));
         selenoid.start();
-        chrome.start();
     }
 
     public void compareScreenshots(String name) {
