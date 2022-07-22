@@ -49,7 +49,8 @@ public class BaseTest {
     private static final GenericContainer<?> chrome;
 
     static {
-        chrome = new GenericContainer<>(DockerImageName.parse(String.format("selenoid/vnc_chrome:%s", CHROME_TAG)));
+        chrome = new GenericContainer<>(DockerImageName.parse(String.format("selenoid/vnc_chrome:%s", CHROME_TAG)))
+                .withExposedPorts(8080);
         chrome.start();
         selenoid = new GenericContainer<>(DockerImageName.parse(SELENOID_IMAGE_NAME + ":" + SELENOID_IMAGE_TAG))
                 .withExposedPorts(4444)
