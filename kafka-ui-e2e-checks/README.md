@@ -18,18 +18,17 @@ This repository is for E2E UI automation.
 
 ### Prerequisites
 - Docker & Docker-compose
-- Java
+- Java 13+
 - Maven
   
 ### How to install
 ```
 git clone https://github.com/provectus/kafka-ui.git
-cd  kafka-ui-e2e-checks
-docker pull selenoid/vnc:chrome_86.0  
+cd  kafka-ui-e2e-checks 
 ```
 ### Environment variables
 
-|Name               	                |   Default   | Description
+|`Name`               	                |   `Default`   | `Description`
 |---------------------------------------|-------------|---------------------
 |`USE_LOCAL_BROWSER`                    |  `true`     | clear reports dir on startup
 |`CLEAR_REPORTS_DIR`                    |  `true`     | clear reports dir on startup
@@ -45,16 +44,18 @@ docker pull selenoid/vnc:chrome_86.0
 
 ### How to run checks
 
-1. Run `kafka-ui` 
+1. Install kafka-ui
+```
+cd <projectRoot>/kafka-ui
+mvn clean install -Dmaven.test.skip
+```
+
+2. Run `kafka-ui` (from command line or start services from the file kafka-ui-connectors.yaml in IDEA)
 ```
 cd docker
-docker-compose -f kafka-ui.yaml up -d
+docker-compose -f kafka-ui-connectors.yaml up -d
 ```
-2. Run `selenoid-ui` 
-```
-cd kafka-ui-e2e-checks/docker
-docker-compose -f selenoid.yaml up -d
-```
+
 3. Compile `kafka-ui-contract` project
 ```
 cd <projectRoot>/kafka-ui-contract
@@ -65,33 +66,12 @@ mvn clean compile
 cd kafka-ui-e2e-checks
 mvn test
 ```
+Tests will be running in docker in parallel. So, write independent tests.
 
-* There are several ways to run checks
+You just need update a version of selenoid/vnc_chrome:[version]. Use the las stable version, do NOT use [latest]- selenoid/vnc_chrome:latest
 
-1. If you don't have  selenoid run on your machine
-```
- mvn test -DSHOULD_START_SELENOID=true
-```
-⚠️ If you want to run checks in IDE with this approach, you'd need to set up
-environment variable(`SHOULD_START_SELENOID=true`) in `Run/Edit Configurations..`
+If you updated a version of chrome also need to update a version in the browsers.json file kafka-ui-e2e-checks/selenoid/config/browsers.json
 
-2. For development purposes it is better to just start separate selenoid in docker-compose
-Do it in separate window
-```
-cd docker
-docker-compose -f selenoid.yaml up
-```
-Then you can just `mvn test`. By default, `SELENOID_URL` will resolve to `http://localhost:4444/wd/hub`
-
-It's preferred way to run. 
-
-* If you have remote selenoid instance, set 
-
-`SELENOID_URL` environment variable
-
-Example:
-`mvn test -DSELENOID_URL=http://localhost:4444/wd/hub`
-That's the way to run tests in CI with selenoid set up somewhere in cloud
 
 ### Reporting
 
@@ -106,7 +86,24 @@ allure serve
 Reference screenshots are in `SCREENSHOTS_FOLDER`  (default,`kafka-ui-e2e-checks/screenshots`)
 
 ### How to develop
-> ⚠️ todo 
+1. Write independent tests, because all tests run in parallel
+2. Use API for creating some prerequisite
+
+### Qase.io integration
+#### - Creating new test with annotation (manual/to_be_automated/automated)
+
+Set annotation @Suite (test will be created in correct suite in Qase.io)
+
+Set annotation @AutomationStatus for new test: @AutomationStatus(status = Status.MANUAL or Status.TO_BE_AUTOMATED or Status.AUTOMATED)
+
+Run a test 'mvn test' and new test will be created in Qase.io. Get test case id and set annotation @CaseId([id])
+
+#### - Automate test that already exist in Qase.io
+If test already exist in Qase.io set all annotations (@Suite, @AutomationStatus, @CaseId)
+
+Change title in Qase.io <className\>.<methodName\>: <Method name\> if no change a title new test will be created.
+
+
 ### Setting for different environments
 > ⚠️ todo 
 ### Test Data
@@ -116,7 +113,16 @@ Reference screenshots are in `SCREENSHOTS_FOLDER`  (default,`kafka-ui-e2e-checks
 ### Checks
 > ⚠️ todo 
 ### Parallelization
-> ⚠️ todo 
+1. Tests have already run in parallel. 
+
+To change strategy or disable/enable Parallelization change a file src/test/resources/junit-platform.properties.
+
+2. You can set run Classes in parallel instead of tests
+```
+junit.jupiter.execution.parallel.mode.default = same_thread
+junit.jupiter.execution.parallel.mode.classes.default = concurrent
+```
+
 ### Tips
  - install `Selenium UI Testing plugin` in IDEA
 

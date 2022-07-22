@@ -74,8 +74,8 @@ public class TopicTests extends BaseTest {
     @CaseId(197)
     @Test
     public void updateTopic() {
-        pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage();
+        pages.open()
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
                 .isOnTopicViewPage()
                 .openEditSettings()
@@ -87,8 +87,8 @@ public class TopicTests extends BaseTest {
                 .sendData()
                 .isOnTopicViewPage();
 
-        pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage();
+        pages.open()
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
                 .openEditSettings()
                 // Assertions
@@ -105,9 +105,9 @@ public class TopicTests extends BaseTest {
     @CaseId(207)
     @Test
     public void deleteTopic() {
-        pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage()
-                .openTopic(TOPIC_TO_DELETE)
+        pages.open()
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
+                pages.topicsList.openTopic(TOPIC_TO_DELETE)
                 .isOnTopicViewPage()
                 .deleteTopic()
                 .isOnPage()
@@ -121,9 +121,9 @@ public class TopicTests extends BaseTest {
     @CaseId(222)
     @Test
     void produceMessage() {
-        pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage()
-                .openTopic(TOPIC_TO_UPDATE)
+        pages.open()
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
+                pages.topicsList.openTopic(TOPIC_TO_UPDATE)
                 .isOnTopicViewPage()
                 .openTopicMenu(TopicView.TopicMenu.MESSAGES)
                 .clickOnButton("Produce Message")

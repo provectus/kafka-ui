@@ -8,16 +8,15 @@ import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.schema.SchemaCreateView;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
+import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qase.api.annotation.CaseId;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 
 import java.io.IOException;
 
 import static org.apache.kafka.common.utils.Utils.readFileAsString;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SchemasTests extends BaseTest {
 
     private final long suiteId = 11;
@@ -62,7 +61,6 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(43)
     @Test
-    @Order(1)
     void createSchemaAvro() throws IOException {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
@@ -83,7 +81,6 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(186)
     @Test
-    @Order(2)
     void updateSchemaAvro() {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
@@ -103,7 +100,6 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(187)
     @Test
-    @Order(3)
     void deleteSchemaAvro() {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
@@ -119,7 +115,6 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(89)
     @Test
-    @Order(4)
     void createSchemaJson() {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
@@ -140,7 +135,6 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(189)
     @Test
-    @Order(5)
     void deleteSchemaJson() {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
@@ -156,7 +150,6 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(91)
     @Test
-    @Order(6)
     void createSchemaProtobuf() {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
@@ -177,7 +170,6 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(223)
     @Test
-    @Order(7)
     void deleteSchemaProtobuf() {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);

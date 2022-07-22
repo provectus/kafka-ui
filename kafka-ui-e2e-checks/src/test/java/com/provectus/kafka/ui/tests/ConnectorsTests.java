@@ -6,13 +6,13 @@ import com.provectus.kafka.ui.helpers.ApiHelper;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
+import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qase.api.annotation.CaseId;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 
 public class ConnectorsTests extends BaseTest {
 

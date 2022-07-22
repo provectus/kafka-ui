@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.screenshots.Screenshooter;
 import com.provectus.kafka.ui.utils.CamelCaseToSpacedDisplayNameGenerator;
+import com.provectus.kafka.ui.utils.driverSetup.DriverFactory;
 import com.provectus.kafka.ui.utils.qaseIO.TestCaseGenerator;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
@@ -15,15 +16,15 @@ import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.testcontainers.Testcontainers;
-import org.testcontainers.containers.BrowserWebDriverContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.containers.BindMode;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.ByteArrayInputStream;
@@ -38,11 +39,29 @@ public class BaseTest {
     protected Pages pages = Pages.INSTANCE;
     protected Helpers helpers = Helpers.INSTANCE;
 
-    private Screenshooter screenshooter = new Screenshooter();
+    private final Screenshooter screenshooter = new Screenshooter();
 
-    private static final String IMAGE_NAME = TestConfiguration.IMAGE_NAME;
-    private static final String IMAGE_TAG = TestConfiguration.IMAGE_TAG;
-    protected static BrowserWebDriverContainer<?> webDriverContainer = null;
+    private static final String SELENOID_IMAGE_NAME = TestConfiguration.SELENOID_IMAGE_NAME;
+    private static final String SELENOID_IMAGE_TAG = TestConfiguration.SELENOID_IMAGE_TAG;
+    private static final String CHROME_TAG = TestConfiguration.VNC_CHROME_TAG;
+    private RemoteWebDriver remoteWebDriver = null;
+    private static final GenericContainer<?> selenoid;
+    private static final GenericContainer<?> chrome;
+
+    static {
+        selenoid = new GenericContainer<>(DockerImageName.parse(SELENOID_IMAGE_NAME + ":" + SELENOID_IMAGE_TAG))
+                .withExposedPorts(4444)
+                .withFileSystemBind("selenoid/config/", "/etc/selenoid", BindMode.READ_WRITE)
+                .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_WRITE)
+                .withFileSystemBind("selenoid/video", "/opt/selenoid/video", BindMode.READ_WRITE)
+                .withFileSystemBind("selenoid/logs", "/opt/selenoid/logs", BindMode.READ_WRITE)
+                .withEnv("OVERRIDE_VIDEO_OUTPUT_DIR", "/opt/selenoid/video")
+                .withCommand(
+                        "-conf /etc/selenoid/browsers.json -log-output-dir /opt/selenoid/logs");
+        chrome = new GenericContainer<>(DockerImageName.parse(String.format("selenoid/vnc_chrome:%s", CHROME_TAG)));
+        selenoid.start();
+        chrome.start();
+    }
 
     public void compareScreenshots(String name) {
         screenshooter.compareScreenshots(name);
@@ -54,30 +73,19 @@ public class BaseTest {
 
     @BeforeEach
     public void setWebDriver() {
-        RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
-        WebDriverRunner.setWebDriver(remoteWebDriver);
-        remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
-    }
-
-    @BeforeAll
-    public static void start() {
-        DockerImageName image = DockerImageName.parse(IMAGE_NAME).withTag(IMAGE_TAG);
-        webDriverContainer = new BrowserWebDriverContainer<>(image)
-                .withCapabilities(new ChromeOptions().addArguments("--disable-dev-shm-usage"))
-                .waitingFor(Wait.forHttp("/"))
-                .waitingFor(Wait.forLogMessage(".*Started Selenium Standalone.*", 1));
-        Testcontainers.exposeHostPorts(8080);
-        webDriverContainer.start();
-        webDriverContainer.isRunning();
-        webDriverContainer.isHostAccessible();
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        if (webDriverContainer.isRunning()) {
-            webDriverContainer.close();
-            webDriverContainer.stop();
+        if (chrome.isRunning() && selenoid.isRunning()) {
+            remoteWebDriver = DriverFactory.createDriver(selenoid.getFirstMappedPort());
+            WebDriverRunner.setWebDriver(remoteWebDriver);
+            remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
         }
+    }
+
+    @AfterEach
+    public void afterMethod() {
+        Allure.addAttachment("Screenshot",
+                new ByteArrayInputStream(((TakesScreenshot) remoteWebDriver).getScreenshotAs(OutputType.BYTES)));
+        remoteWebDriver.close();
+        remoteWebDriver.quit();
     }
 
     static {
@@ -95,17 +103,11 @@ public class BaseTest {
         }
         setup();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                if (TestCaseGenerator.FAILED) {
-                    log.error("Tests FAILED because some problem with @CaseId annotation. Verify that all tests annotated with @CaseId and Id is correct!");
-                    Runtime.getRuntime().halt(100500);
-                }
+            if (TestCaseGenerator.FAILED) {
+                log.error("Tests FAILED because some problem with @CaseId annotation. Verify that all tests annotated with @CaseId and Id is correct!");
+                Runtime.getRuntime().halt(100500);
+            }
         }));
-    }
-
-    @AfterEach
-    public void afterMethod() {
-        Allure.addAttachment("Screenshot",
-                new ByteArrayInputStream(((TakesScreenshot) webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
     }
 
     @SneakyThrows
