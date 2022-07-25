@@ -65,11 +65,13 @@ export const Fieldset = styled.fieldset`
 
 export const SQLEditor = styled(BaseSQLEditor)(
   ({ readOnly, theme }) =>
-    readOnly &&
     css`
-      background: ${theme.ksqlDb.query.editor.readonly.background};
+      background: ${readOnly && theme.ksqlDb.query.editor.readonly.background};
       .ace-cursor {
-        ${theme.ksqlDb.query.editor.readonly.cursor}
+        ${readOnly && theme.ksqlDb.query.editor.readonly.cursor}
+      }
+      .ace_print-margin {
+        display: none;
       }
     `
 );
