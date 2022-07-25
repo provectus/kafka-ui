@@ -1,5 +1,4 @@
 import React, { PropsWithChildren } from 'react';
-import { AlertType } from 'redux/interfaces';
 
 import * as S from './Metrics.styled';
 
@@ -8,7 +7,7 @@ export interface Props {
   isAlert?: boolean;
   label: React.ReactNode;
   title?: string;
-  alertType?: AlertType;
+  alertType?: 'success' | 'error' | 'warning' | 'info';
 }
 
 const Indicator: React.FC<PropsWithChildren<Props>> = ({

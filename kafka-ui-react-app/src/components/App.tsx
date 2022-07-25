@@ -7,10 +7,11 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/Cluster/Cluster';
 import Version from 'components/Version/Version';
-import Alerts from 'components/Alerts/Alerts';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { showServerError } from 'lib/errorHandling';
+import { Toaster } from 'react-hot-toast';
 
 import * as S from './App.styled';
 import Logo from './common/Logo/Logo';
@@ -21,6 +22,11 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       suspense: true,
+    },
+    mutations: {
+      onError(error) {
+        showServerError(error as Response);
+      },
     },
   },
 });
@@ -113,9 +119,7 @@ const App: React.FC = () => {
               />
             </Routes>
           </S.Container>
-          <S.AlertsContainer role="toolbar">
-            <Alerts />
-          </S.AlertsContainer>
+          <Toaster position="bottom-right" />
         </S.Layout>
       </ThemeProvider>
     </QueryClientProvider>

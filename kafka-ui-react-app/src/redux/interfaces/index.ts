@@ -6,7 +6,6 @@ export * from './cluster';
 export * from './consumerGroup';
 export * from './schema';
 export * from './loader';
-export * from './alerts';
 
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;

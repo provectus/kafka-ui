@@ -8,16 +8,13 @@ import {
 import { getKsqlExecution } from 'redux/reducers/ksqlDb/selectors';
 import { BASE_PARAMS } from 'lib/constants';
 import { KsqlResponse, KsqlTableResponse } from 'generated-sources';
-import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
-import now from 'lodash/now';
 import { ClusterNameRoute } from 'lib/paths';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import { showAlert, showSuccessAlert } from 'lib/errorHandling';
 
 import type { FormValues } from './QueryForm/QueryForm';
 import * as S from './Query.styled';
 import QueryForm from './QueryForm/QueryForm';
-
-const AUTO_DISMISS_TIME = 8_000;
 
 export const getFormattedErrorFromTableData = (
   responseValues: KsqlTableResponse['values']
@@ -116,15 +113,7 @@ const Query: FC = () => {
                 table.values
               );
               const id = `${url}-executionError`;
-              dispatch(
-                alertAdded({
-                  id,
-                  type: 'error',
-                  title,
-                  message,
-                  createdAt: now(),
-                })
-              );
+              showAlert('error', { id, title, message });
               break;
             }
             case 'Schema': {
@@ -146,19 +135,7 @@ const Query: FC = () => {
             }
             case 'Query Result': {
               const id = `${url}-querySuccess`;
-              dispatch(
-                alertAdded({
-                  id,
-                  type: 'success',
-                  title: 'Query succeed',
-                  message: '',
-                  createdAt: now(),
-                })
-              );
-
-              setTimeout(() => {
-                dispatch(alertDissmissed(id));
-              }, AUTO_DISMISS_TIME);
+              showSuccessAlert({ id, title: 'Query succeed', message: '' });
               break;
             }
             case 'Source Description':
@@ -175,20 +152,11 @@ const Query: FC = () => {
       sse.onerror = () => {
         // if it's open - we know that server responded without opening SSE
         if (!sseRef.current.isOpen) {
-          const id = `${url}-connectionClosedError`;
-          dispatch(
-            alertAdded({
-              id,
-              type: 'error',
-              title: 'SSE connection closed',
-              message: '',
-              createdAt: now(),
-            })
-          );
-
-          setTimeout(() => {
-            dispatch(alertDissmissed(id));
-          }, AUTO_DISMISS_TIME);
+          showAlert('error', {
+            id: `${url}-connectionClosedError`,
+            title: '',
+            message: 'SSE connection closed',
+          });
         }
         destroySSE();
       };
