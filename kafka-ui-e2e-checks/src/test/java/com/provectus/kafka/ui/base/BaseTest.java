@@ -23,6 +23,9 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testcontainers.containers.BindMode;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -42,10 +45,10 @@ public class BaseTest {
     private static final String SELENOID_IMAGE_TAG = TestConfiguration.SELENOID_IMAGE_TAG;
     private static final String CHROME_TAG = TestConfiguration.VNC_CHROME_TAG;
     private RemoteWebDriver remoteWebDriver = null;
-   // private static final GenericContainer<?> selenoid;
-   // private static final GenericContainer<?> chrome;
+    private static final GenericContainer<?> selenoid;
+    private static final GenericContainer<?> chrome;
 
- /*   static {
+    static {
         selenoid = new GenericContainer<>(DockerImageName.parse(SELENOID_IMAGE_NAME + ":" + SELENOID_IMAGE_TAG))
                 .withExposedPorts(4444)
                 .withFileSystemBind("selenoid/config/", "/etc/selenoid", BindMode.READ_WRITE)
@@ -57,13 +60,12 @@ public class BaseTest {
                         "-conf /etc/selenoid/browsers.json -log-output-dir /opt/selenoid/logs");
 
         chrome = new GenericContainer<>(DockerImageName.parse(String.format("selenoid/vnc_chrome:%s", CHROME_TAG)))
-                .withExposedPorts(8080)
                 .withCommand("--add-host=host.docker.internal:host-gateway");
         chrome.withAccessToHost(true);
 
         selenoid.start();
         chrome.start();
-    }*/
+    }
 
     public void compareScreenshots(String name) {
         screenshooter.compareScreenshots(name);
@@ -75,11 +77,11 @@ public class BaseTest {
 
     @BeforeEach
     public void setWebDriver() {
-      //  if (chrome.isRunning() && selenoid.isRunning()) {
-            remoteWebDriver = DriverFactory.createDriver(4444);
+        if (chrome.isRunning() && selenoid.isRunning()) {
+            remoteWebDriver = DriverFactory.createDriver(selenoid.getFirstMappedPort());
             WebDriverRunner.setWebDriver(remoteWebDriver);
             remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
-      //  }
+        }
     }
 
     @AfterEach

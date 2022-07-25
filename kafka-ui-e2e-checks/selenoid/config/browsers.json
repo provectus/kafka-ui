@@ -5,7 +5,6 @@
       "103.0": {
         "image": "selenoid/vnc_chrome:103.0",
         "port": "4444",
-        "hosts": ["host.docker.internal:127.0.0.1"],
         "path": "/"
       }
     }
