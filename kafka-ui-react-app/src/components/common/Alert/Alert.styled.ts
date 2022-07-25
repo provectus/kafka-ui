@@ -1,7 +1,7 @@
-import { AlertType } from 'redux/interfaces';
+import { ToastType } from 'react-hot-toast';
 import styled from 'styled-components';
 
-export const Alert = styled.div<{ $type: AlertType }>`
+export const Alert = styled.div<{ $type: ToastType }>`
   background-color: ${({ $type, theme }) => theme.alert.color[$type]};
   min-width: 400px;
   min-height: 64px;
