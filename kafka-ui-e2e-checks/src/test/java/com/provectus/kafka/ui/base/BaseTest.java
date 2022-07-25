@@ -49,15 +49,24 @@ public class BaseTest {
     private static final GenericContainer<?> chrome;
 
     static {
-        selenoid = new GenericContainer<>(DockerImageName.parse(SELENOID_IMAGE_NAME + ":" + SELENOID_IMAGE_TAG))
-                .withExposedPorts(4444)
-                .withFileSystemBind("selenoid/config/", "/etc/selenoid", BindMode.READ_WRITE)
-                .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_WRITE)
-                .withFileSystemBind("selenoid/video", "/opt/selenoid/video", BindMode.READ_WRITE)
-                .withFileSystemBind("selenoid/logs", "/opt/selenoid/logs", BindMode.READ_WRITE)
-                .withEnv("OVERRIDE_VIDEO_OUTPUT_DIR", "/opt/selenoid/video")
-                .withCommand(
-                        "-conf /etc/selenoid/browsers.json -log-output-dir /opt/selenoid/logs");
+        Dotenv dotenv = Dotenv.load();
+        String useLocalBrowser = dotenv.get("USE_LOCAL_BROWSER");
+
+        String BROWSER_JSON_FILE;
+        if (useLocalBrowser.equalsIgnoreCase("true")) {
+            BROWSER_JSON_FILE = "browsersLocal.json";
+        }
+        else BROWSER_JSON_FILE = "browsers.json";
+            selenoid = new GenericContainer<>(DockerImageName.parse(SELENOID_IMAGE_NAME + ":" + SELENOID_IMAGE_TAG))
+                    .withExposedPorts(4444)
+                    .withFileSystemBind("selenoid/config/", "/etc/selenoid", BindMode.READ_WRITE)
+                    .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_WRITE)
+                    .withFileSystemBind("selenoid/video", "/opt/selenoid/video", BindMode.READ_WRITE)
+                    .withFileSystemBind("selenoid/logs", "/opt/selenoid/logs", BindMode.READ_WRITE)
+                    .withEnv("OVERRIDE_VIDEO_OUTPUT_DIR", "/opt/selenoid/video")
+                    .withCommand(
+                            String.format("-conf /etc/selenoid/%s -log-output-dir /opt/selenoid/logs", BROWSER_JSON_FILE));
+
 
         chrome = new GenericContainer<>(DockerImageName.parse(String.format("selenoid/vnc_chrome:%s", CHROME_TAG)))
                 .withCommand("--add-host=host.docker.internal:host-gateway");
