@@ -18,6 +18,7 @@ const Input: React.FC<InputProps> = ({
   leftIcon,
   rightIcon,
   inputSize = 'L',
+  type,
   ...rest
 }) => {
   const methods = useFormContext();
@@ -35,10 +36,21 @@ const Input: React.FC<InputProps> = ({
           inputSize={inputSize}
           {...methods.register(name, { ...hookFormOptions })}
           hasLeftIcon={!!leftIcon}
+          onKeyDown={(e) => {
+            if (e.key === 'e' && type === 'number') {
+              e.preventDefault();
+            }
+          }}
+          type={type}
           {...rest}
         />
       ) : (
-        <S.Input inputSize={inputSize} hasLeftIcon={!!leftIcon} {...rest} />
+        <S.Input
+          inputSize={inputSize}
+          type={type}
+          hasLeftIcon={!!leftIcon}
+          {...rest}
+        />
       )}
       {rightIcon && (
         <S.InputIcon
