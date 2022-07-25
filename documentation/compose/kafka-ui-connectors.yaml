@@ -29,6 +29,26 @@ services:
       KAFKA_CLUSTERS_1_JMXPORT: 9998
       KAFKA_CLUSTERS_1_SCHEMAREGISTRY: http://schemaregistry1:8085
 
+  selenoid:
+    network_mode: bridge
+    image: aerokube/selenoid:1.10.8
+    volumes:
+      - "../selenoid/config:/etc/selenoid"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "../selenoid/video:/video"
+      - "../selenoid/logs:/opt/selenoid/logs"
+    environment:
+      - OVERRIDE_VIDEO_OUTPUT_DIR=video
+    command: [ "-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-log-output-dir", "/opt/selenoid/logs" ]
+    ports:
+      - "4444:4444"
+
+  selenoid-chrome:
+    network_mode: bridge
+    image: selenoid/vnc_chrome:103.0
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   zookeeper0:
     image: confluentinc/cp-zookeeper:5.2.4
     environment:
