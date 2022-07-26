@@ -26,8 +26,7 @@ import {
   selectAllSchemaVersions,
   getSchemaLatest,
 } from 'redux/reducers/schemas/schemasSlice';
-import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
-import { getResponse } from 'lib/errorHandling';
+import { showServerError } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
 import useAppParams from 'lib/hooks/useAppParams';
@@ -73,8 +72,7 @@ const Details: React.FC = () => {
       });
       navigate('../');
     } catch (e) {
-      const err = await getResponse(e as Response);
-      dispatch(serverErrorAlertAdded(err));
+      showServerError(e as Response);
     }
   };
 

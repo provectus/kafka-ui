@@ -22,11 +22,10 @@ import {
   getAreSchemaLatestFulfilled,
   schemaUpdated,
 } from 'redux/reducers/schemas/schemasSlice';
-import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
-import { getResponse } from 'lib/errorHandling';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { schemasApiClient } from 'lib/api';
+import { showServerError } from 'lib/errorHandling';
 
 import * as S from './Edit.styled';
 
@@ -91,8 +90,7 @@ const Edit: React.FC = () => {
 
       navigate(clusterSchemaPath(clusterName, subject));
     } catch (e) {
-      const err = await getResponse(e as Response);
-      dispatch(serverErrorAlertAdded(err));
+      showServerError(e as Response);
     }
   };
 
