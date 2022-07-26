@@ -74,8 +74,8 @@ describe('topicParamsTransformer', () => {
   describe('maxMessageBytes', () =>
     testField('maxMessageBytes', 'max.message.bytes'));
 
-  describe('minInsyncReplicas', () =>
-    testField('minInsyncReplicas', 'min.insync.replicas'));
+  describe('minInSyncReplicas', () =>
+    testField('minInSyncReplicas', 'min.insync.replicas'));
 
   describe('retentionBytes', () =>
     testField('retentionBytes', 'retention.bytes'));

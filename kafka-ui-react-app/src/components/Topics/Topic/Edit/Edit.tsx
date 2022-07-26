@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   ClusterName,
   TopicFormDataRaw,
@@ -18,8 +18,10 @@ import { useAppSelector } from 'lib/hooks/redux';
 import { getFullTopic } from 'redux/reducers/topics/selectors';
 import useAppParams from 'lib/hooks/useAppParams';
 import topicParamsTransformer from 'components/Topics/Topic/Edit/topicParamsTransformer';
+import { MILLISECONDS_IN_WEEK } from 'lib/constants';
 
 import DangerZoneContainer from './DangerZone/DangerZoneContainer';
+import { topicWithInfo } from './__test__/fixtures';
 
 export interface Props {
   isFetched: boolean;
@@ -47,10 +49,10 @@ const EditWrapperStyled = styled.div`
 export const DEFAULTS = {
   partitions: 1,
   replicationFactor: 1,
-  minInsyncReplicas: 1,
+  minInSyncReplicas: 1,
   cleanupPolicy: 'delete',
   retentionBytes: -1,
-  retentionMs: -1,
+  retentionMs: MILLISECONDS_IN_WEEK,
   maxMessageBytes: 1000012,
   customParams: [],
 };
@@ -68,11 +70,16 @@ const Edit: React.FC<Props> = ({
   const topic = useAppSelector((state) => getFullTopic(state, topicName));
 
   const defaultValues = topicParamsTransformer(topic);
+
   const methods = useForm<TopicFormData>({
     defaultValues,
     resolver: yupResolver(topicFormValidationSchema),
     mode: 'onChange',
   });
+
+  useEffect(() => {
+    methods.reset(defaultValues);
+  }, [!topic]);
 
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const navigate = useNavigate();
@@ -118,6 +125,7 @@ const Edit: React.FC<Props> = ({
             <TopicForm
               topicName={topicName}
               retentionBytes={defaultValues.retentionBytes}
+              inSyncReplicas={Number(defaultValues.minInSyncReplicas)}
               isSubmitting={isSubmitting}
               cleanUpPolicy={topic.cleanUpPolicy}
               isEditing

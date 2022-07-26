@@ -606,7 +606,7 @@ export const transformedParams = {
   retentionBytes: -1,
   maxMessageBytes: 1000012,
   name: topicName,
-  minInsyncReplicas: 1,
+  minInSyncReplicas: 1,
   retentionMs: 604800000,
   customParams: [
     {
