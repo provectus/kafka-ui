@@ -36,8 +36,6 @@ public class ConnectorsTests extends BaseTest {
         String connectorToUpdate = FileUtils.getResourceAsString("config_for_create_connector_via_api.json");
         String message = FileUtils.getResourceAsString("message_content_create_topic.json");
 
-        apiHelper.deleteTopic(LOCAL_CLUSTER, CONNECTOR_FOR_DELETE);
-
         apiHelper.createTopic(LOCAL_CLUSTER, TOPIC_FOR_CONNECTOR);
         apiHelper.sendMessage(LOCAL_CLUSTER, TOPIC_FOR_CONNECTOR, message, " ");
 
