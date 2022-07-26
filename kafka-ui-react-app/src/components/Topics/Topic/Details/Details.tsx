@@ -19,7 +19,7 @@ import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import styled from 'styled-components';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import * as S from 'components/Topics/Topic/Details/Details.styled';
-import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import { useAppSelector } from 'lib/hooks/redux';
 import {
   getIsTopicDeletePolicy,
   getIsTopicInternal,
@@ -55,7 +55,6 @@ const HeaderControlsWrapper = styled.div`
 `;
 
 const Details: React.FC<Props> = ({
-  isDeleted,
   deleteTopic,
   recreateTopic,
   clearTopicMessages,
@@ -71,7 +70,6 @@ const Details: React.FC<Props> = ({
   );
 
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
@@ -82,13 +80,11 @@ const Details: React.FC<Props> = ({
     isRecreateTopicConfirmationVisible,
     setRecreateTopicConfirmationVisible,
   ] = React.useState(false);
-  const deleteTopicHandler = () => deleteTopic({ clusterName, topicName });
-
-  React.useEffect(() => {
-    if (isDeleted) {
-      navigate('../..');
-    }
-  }, [isDeleted, clusterName, dispatch, navigate]);
+  const deleteTopicHandler = () => {
+    deleteTopic({ clusterName, topicName });
+    setDeleteTopicConfirmationVisible(false);
+    navigate('../..');
+  };
 
   const clearTopicMessagesHandler = () => {
     clearTopicMessages({ clusterName, topicName });

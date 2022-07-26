@@ -156,7 +156,13 @@ describe('Details', () => {
   });
 
   it('redirects to the correct route if topic is deleted', () => {
-    setupComponent({ isDeleted: true });
+    setupComponent();
+
+    const deleteTopicButton = screen.getByText(/Remove topic/i);
+    userEvent.click(deleteTopicButton);
+
+    const submitDeleteButton = screen.getByText(/Submit/i);
+    userEvent.click(submitDeleteButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('../..');
   });

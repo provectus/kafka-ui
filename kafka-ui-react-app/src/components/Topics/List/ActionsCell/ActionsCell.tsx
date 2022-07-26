@@ -68,9 +68,10 @@ const ActionsCell: React.FC<
 
   const isHidden = internal || isReadOnly || !hovered;
 
-  const deleteTopicHandler = () =>
+  const deleteTopicHandler = () => {
     dispatch(deleteTopic({ clusterName, topicName: name }));
-
+    closeDeleteTopicModal();
+  };
   const clearTopicMessagesHandler = () => {
     dispatch(clearTopicMessages({ clusterName, topicName: name }));
     dispatch(fetchTopicsList(topicsListParams));
