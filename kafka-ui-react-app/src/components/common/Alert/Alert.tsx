@@ -1,14 +1,14 @@
 import React from 'react';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
-import { Alert as AlertType } from 'redux/interfaces';
+import { ToastType } from 'react-hot-toast';
 
 import * as S from './Alert.styled';
 
-interface AlertProps {
-  title: AlertType['title'];
-  type: AlertType['type'];
-  message: AlertType['message'];
+export interface AlertProps {
+  title: string;
+  type: ToastType;
+  message: string;
   onDissmiss(): void;
 }
 
@@ -21,7 +21,6 @@ const Alert: React.FC<AlertProps> = ({ title, type, message, onDissmiss }) => (
         dangerouslySetInnerHTML={{ __html: message }}
       />
     </div>
-
     <IconButtonWrapper role="button" onClick={onDissmiss}>
       <CloseIcon />
     </IconButtonWrapper>

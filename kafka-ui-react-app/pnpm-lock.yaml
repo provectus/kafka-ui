@@ -70,6 +70,7 @@ specifiers:
   react-datepicker: ^4.8.0
   react-dom: ^18.1.0
   react-hook-form: 7.6.9
+  react-hot-toast: ^2.3.0
   react-is: ^18.2.0
   react-multi-select-component: ^4.0.6
   react-redux: ^8.0.2
@@ -119,6 +120,7 @@ dependencies:
   react-datepicker: 4.8.0_ef5jwxihqo6n7gxfmzogljlgcm
   react-dom: 18.1.0_react@18.1.0
   react-hook-form: 7.6.9_react@18.1.0
+  react-hot-toast: 2.3.0_ef5jwxihqo6n7gxfmzogljlgcm
   react-is: 18.2.0
   react-multi-select-component: 4.0.6_react@18.1.0
   react-redux: 8.0.2_nfqigfgwurfoimtkde74cji6ga
@@ -4957,6 +4959,12 @@ packages:
   /globrex/0.1.2:
     resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
 
+  /goober/2.1.10:
+    resolution: {integrity: sha512-7PpuQMH10jaTWm33sQgBQvz45pHR8N4l3Cu3WMGEWmHShAcTuuP7I+5/DwKo39fwti5A80WAjvqgz6SSlgWmGA==}
+    peerDependencies:
+      csstype: ^3.0.10
+    dev: false
+
   /graceful-fs/4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
 
@@ -6630,6 +6638,20 @@ packages:
       react: ^16.8.0 || ^17
     dependencies:
       react: 18.1.0
+    dev: false
+
+  /react-hot-toast/2.3.0_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-/RxV+bfjld7tSJR1SCLzMAXgFuNW7fCpK6+vbYqfmbGSWcqTMz2rizrvfWKvtcPH5HK0NqxmBaC5SrAy1F42zA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      goober: 2.1.10
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+    transitivePeerDependencies:
+      - csstype
     dev: false
 
   /react-is/16.13.1:

@@ -12,7 +12,7 @@ import {
 } from 'generated-sources';
 import { schemasApiClient } from 'lib/api';
 import { AsyncRequestStatus } from 'lib/constants';
-import { getResponse } from 'lib/errorHandling';
+import { getResponse, showServerError } from 'lib/errorHandling';
 import { ClusterName, RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
@@ -24,6 +24,7 @@ export const fetchLatestSchema = createAsyncThunk<
   try {
     return await schemasApiClient.getLatestSchema(schemaParams);
   } catch (error) {
+    showServerError(error as Response);
     return rejectWithValue(await getResponse(error as Response));
   }
 });
@@ -43,6 +44,7 @@ export const fetchSchemas = createAsyncThunk<
         search: search || undefined,
       });
     } catch (error) {
+      showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
     }
   }
@@ -61,6 +63,7 @@ export const fetchSchemaVersions = createAsyncThunk<
         subject,
       });
     } catch (error) {
+      showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
     }
   }

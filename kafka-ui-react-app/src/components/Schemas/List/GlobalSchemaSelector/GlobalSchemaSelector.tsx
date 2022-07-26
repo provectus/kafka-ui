@@ -2,15 +2,14 @@ import React from 'react';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import Select from 'components/common/Select/Select';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
-import { getResponse } from 'lib/errorHandling';
 import { useAppDispatch } from 'lib/hooks/redux';
 import usePagination from 'lib/hooks/usePagination';
 import useSearch from 'lib/hooks/useSearch';
 import useAppParams from 'lib/hooks/useAppParams';
-import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { fetchSchemas } from 'redux/reducers/schemas/schemasSlice';
 import { ClusterNameRoute } from 'lib/paths';
 import { schemasApiClient } from 'lib/api';
+import { showServerError } from 'lib/errorHandling';
 
 import * as S from './GlobalSchemaSelector.styled';
 
@@ -69,8 +68,7 @@ const GlobalSchemaSelector: React.FC = () => {
           fetchSchemas({ clusterName, page, perPage, search: searchText })
         );
       } catch (e) {
-        const err = await getResponse(e as Response);
-        dispatch(serverErrorAlertAdded(err));
+        showServerError(e as Response);
       }
     }
     setIsUpdating(false);
