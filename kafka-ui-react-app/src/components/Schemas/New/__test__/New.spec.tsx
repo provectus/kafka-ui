@@ -31,13 +31,19 @@ describe('New Component', () => {
   it('submit button will be enabled when form fields are filled', async () => {
     const subject = screen.getByPlaceholderText('Schema Name');
     const schema = screen.getAllByRole('textbox')[1];
+    const schemaTypeSelect = screen.getByRole('listbox');
+
     await act(() => {
       userEvent.type(subject, subjectValue);
     });
     await act(() => {
       userEvent.type(schema, schemaValue);
     });
-    const submitBtn = screen.getByRole('button', { name: /submit/i });
+    await act(() => {
+      userEvent.selectOptions(schemaTypeSelect, ['AVRO']);
+    });
+
+    const submitBtn = screen.getByRole('button', { name: /Submit/i });
     expect(submitBtn).toBeEnabled();
   });
 });
