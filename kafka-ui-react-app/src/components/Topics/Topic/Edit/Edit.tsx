@@ -21,7 +21,6 @@ import topicParamsTransformer from 'components/Topics/Topic/Edit/topicParamsTran
 import { MILLISECONDS_IN_WEEK } from 'lib/constants';
 
 import DangerZoneContainer from './DangerZone/DangerZoneContainer';
-import { topicWithInfo } from './__test__/fixtures';
 
 export interface Props {
   isFetched: boolean;
