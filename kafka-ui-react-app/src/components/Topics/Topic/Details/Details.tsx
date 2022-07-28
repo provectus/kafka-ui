@@ -12,7 +12,6 @@ import {
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { useDispatch } from 'react-redux';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
 import Dropdown from 'components/common/Dropdown/Dropdown';
@@ -21,7 +20,7 @@ import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import styled from 'styled-components';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import * as S from 'components/Topics/Topic/Details/Details.styled';
-import { useAppSelector } from 'lib/hooks/redux';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
   getIsTopicDeletePolicy,
   getIsTopicInternal,
@@ -74,7 +73,7 @@ const Details: React.FC<Props> = ({
   );
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =

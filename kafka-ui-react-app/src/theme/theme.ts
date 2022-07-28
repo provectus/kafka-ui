@@ -1,5 +1,4 @@
-/* eslint-disable import/prefer-default-export */
-export const Colors = {
+const Colors = {
   neutral: {
     '0': '#FFFFFF',
     '3': '#f9fafa',
@@ -149,6 +148,9 @@ const theme = {
       success: Colors.green[10],
       warning: Colors.yellow[10],
       info: Colors.neutral[10],
+      loading: Colors.neutral[10],
+      blank: Colors.neutral[10],
+      custom: Colors.neutral[10],
     },
     shadow: Colors.transparency[20],
   },
@@ -182,6 +184,7 @@ const theme = {
         active: Colors.neutral[15],
       },
       color: Colors.neutral[90],
+      isActiveColor: Colors.neutral[0],
       invertedColors: {
         normal: Colors.neutral[50],
         hover: Colors.neutral[70],

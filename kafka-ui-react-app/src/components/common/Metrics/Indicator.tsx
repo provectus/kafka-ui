@@ -1,5 +1,4 @@
 import React, { PropsWithChildren } from 'react';
-import { AlertType } from 'redux/interfaces';
 
 import * as S from './Metrics.styled';
 
@@ -8,7 +7,7 @@ export interface Props {
   isAlert?: boolean;
   label: React.ReactNode;
   title?: string;
-  alertType?: AlertType;
+  alertType?: 'success' | 'error' | 'warning' | 'info';
 }
 
 const Indicator: React.FC<PropsWithChildren<Props>> = ({
@@ -30,7 +29,15 @@ const Indicator: React.FC<PropsWithChildren<Props>> = ({
         )}
       </S.IndicatorTitle>
       <span>
-        {fetching ? <i className="fas fa-spinner fa-pulse" /> : children}
+        {fetching ? (
+          <i
+            className="fas fa-spinner fa-pulse"
+            role="progressbar"
+            aria-label="Loading"
+          />
+        ) : (
+          children
+        )}
       </span>
     </div>
   </S.IndicatorWrapper>

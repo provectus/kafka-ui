@@ -5,12 +5,14 @@ const Navbar = styled.nav`
   border-bottom: 1px ${({ theme }) => theme.primaryTab.borderColor.nav} solid;
   & a {
     height: 40px;
-    width: 96px;
+    min-width: 96px;
+    padding: 0 16px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: 500;
     font-size: 14px;
+    white-space: nowrap;
     color: ${(props) => props.theme.primaryTab.color.normal};
     border-bottom: 1px ${(props) => props.theme.primaryTab.borderColor.normal}
       solid;

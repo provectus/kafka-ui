@@ -30,11 +30,6 @@ export const noConsumerGroupsResponse = {
   consumerGroups: [],
 };
 
-export const consumerGroupsPage = {
-  totalPages: 1,
-  consumerGroups,
-};
-
 export const consumerGroupPayload = {
   groupId: 'amazon.msk.canary.group.broker-1',
   members: 0,

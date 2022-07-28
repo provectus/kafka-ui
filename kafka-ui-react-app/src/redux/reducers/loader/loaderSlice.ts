@@ -7,9 +7,9 @@ import {
 import { AsyncRequestStatus } from 'lib/constants';
 import { LoaderSliceState } from 'redux/interfaces';
 
-export const initialState: LoaderSliceState = {};
+const initialState: LoaderSliceState = {};
 
-export const loaderSlice = createSlice({
+const loaderSlice = createSlice({
   name: 'loader',
   initialState,
   reducers: {
