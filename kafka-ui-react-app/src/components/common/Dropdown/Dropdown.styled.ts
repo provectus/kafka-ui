@@ -19,6 +19,8 @@ export const Dropdown = styled(ControlledMenu)(
   ({ theme: { dropdown } }) => css`
     // container for the menu items
     ${menuSelector.name} {
+      border: 1px solid ${dropdown.borderColor};
+      box-shadow: 0px 4px 16px ${dropdown.shadow};
       padding: 8px 0;
       border-radius: 4px;
       font-size: 14px;

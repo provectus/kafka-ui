@@ -78,6 +78,8 @@ const theme = {
   connectEditWarning: Colors.yellow[10],
   dropdown: {
     backgroundColor: Colors.neutral[0],
+    borderColor: Colors.neutral[5],
+    shadow: Colors.transparency[20],
     item: {
       color: {
         danger: Colors.red[60],
