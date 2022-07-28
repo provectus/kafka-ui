@@ -43,10 +43,10 @@ public class StaticController {
 
   @SneakyThrows
   private String buildIndexFile(String contextPath) {
-    final String staticPath = contextPath + "/static";
+    final String staticPath = contextPath + "/";
     return ResourceUtil.readAsString(indexFile)
-        .replace("href=\"./static", "href=\"" + staticPath)
-        .replace("src=\"./static", "src=\"" + staticPath)
-        .replace("window.basePath=\"\"", "window.basePath=\"" + contextPath + "\"");
+        .replace("href=\"/", "href=\"" + staticPath)
+        .replace("src=\"/", "src=\"" + staticPath)
+        .replace("window.basePath = \"\"", "window.basePath=\"" + contextPath + "\"");
   }
 }

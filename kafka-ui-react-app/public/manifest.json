@@ -2,12 +2,12 @@
   "name": "UI for Apache Kafka",
   "icons": [
     {
-      "src": "/favicon/icon-192.png",
+      "src": "./favicon/icon-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/favicon/icon-512.png",
+      "src": "./favicon/icon-512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
