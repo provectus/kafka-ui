@@ -92,14 +92,14 @@ const ActionsCell: React.FC<
                 Clear Messages
               </DropdownItem>
             )}
+            <DropdownItem onClick={openRecreateTopicModal} danger>
+              Recreate Topic
+            </DropdownItem>
             {isTopicDeletionAllowed && (
               <DropdownItem onClick={openDeleteTopicModal} danger>
                 Remove Topic
               </DropdownItem>
             )}
-            <DropdownItem onClick={openRecreateTopicModal} danger>
-              Recreate Topic
-            </DropdownItem>
           </Dropdown>
         )}
       </S.ActionsContainer>

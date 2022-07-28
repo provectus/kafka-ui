@@ -38,7 +38,7 @@ export const Dropdown = styled(ControlledMenu)(
 
     ${menuItemSelector.name} {
       padding: 6px 16px;
-      min-width: 140px;
+      min-width: 150px;
       background-color: ${dropdown.item.backgroundColor.default};
       white-space: nowrap;
     }

@@ -1,11 +1,11 @@
 import React, { PropsWithChildren } from 'react';
-import { MenuItem, MenuItemProps } from '@szhsin/react-menu';
+import { ClickEvent, MenuItem, MenuItemProps } from '@szhsin/react-menu';
 
 import * as S from './Dropdown.styled';
 
 interface DropdownItemProps extends PropsWithChildren<MenuItemProps> {
   danger?: boolean;
-  onClick(): void;
+  onClick?(): void;
 }
 
 const DropdownItem: React.FC<DropdownItemProps> = ({
@@ -14,8 +14,17 @@ const DropdownItem: React.FC<DropdownItemProps> = ({
   children,
   ...rest
 }) => {
+  const handleClick = (e: ClickEvent) => {
+    if (!onClick) return;
+
+    // eslint-disable-next-line no-param-reassign
+    e.stopPropagation = true;
+    e.syntheticEvent.stopPropagation();
+    onClick();
+  };
+
   return (
-    <MenuItem onClick={onClick} {...rest}>
+    <MenuItem onClick={handleClick} {...rest}>
       {danger ? <S.DangerItem>{children}</S.DangerItem> : children}
     </MenuItem>
   );
