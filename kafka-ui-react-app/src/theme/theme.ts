@@ -77,7 +77,16 @@ const theme = {
   breadcrumb: Colors.neutral[30],
   connectEditWarning: Colors.yellow[10],
   dropdown: {
-    color: Colors.red[50],
+    backgroundColor: Colors.neutral[0],
+    item: {
+      color: {
+        danger: Colors.red[60],
+      },
+      backgroundColor: {
+        default: Colors.neutral[0],
+        hover: Colors.neutral[5],
+      },
+    },
   },
   ksqlDb: {
     query: {

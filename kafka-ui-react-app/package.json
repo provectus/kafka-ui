@@ -11,7 +11,7 @@
     "@hookform/error-message": "^2.0.0",
     "@hookform/resolvers": "^2.7.1",
     "@reduxjs/toolkit": "^1.8.3",
-    "@rooks/use-outside-click-ref": "^4.10.1",
+    "@szhsin/react-menu": "^3.1.1",
     "@tanstack/react-query": "^4.0.5",
     "@testing-library/react": "^13.2.0",
     "@types/testing-library__jest-dom": "^5.14.5",
