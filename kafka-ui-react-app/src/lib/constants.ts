@@ -7,8 +7,10 @@ declare global {
   }
 }
 
+export const BASE_PATH = process.env.VITE_BASE || '';
+
 export const BASE_PARAMS: ConfigurationParameters = {
-  basePath: window.basePath || '',
+  basePath: BASE_PATH,
   credentials: 'include',
   headers: {
     'Content-Type': 'application/json',
