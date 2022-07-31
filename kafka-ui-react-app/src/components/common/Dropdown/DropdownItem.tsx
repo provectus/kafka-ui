@@ -1,31 +1,32 @@
 import React, { PropsWithChildren } from 'react';
+import { ClickEvent, MenuItem, MenuItemProps } from '@szhsin/react-menu';
 
 import * as S from './Dropdown.styled';
 
-interface DropdownItemProps {
-  onClick(): void;
+interface DropdownItemProps extends PropsWithChildren<MenuItemProps> {
   danger?: boolean;
+  onClick?(): void;
 }
 
-const DropdownItem: React.FC<PropsWithChildren<DropdownItemProps>> = ({
+const DropdownItem: React.FC<DropdownItemProps> = ({
   onClick,
   danger,
   children,
+  ...rest
 }) => {
-  const onClickHandler = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleClick = (e: ClickEvent) => {
+    if (!onClick) return;
+
+    // eslint-disable-next-line no-param-reassign
+    e.stopPropagation = true;
+    e.syntheticEvent.stopPropagation();
     onClick();
   };
 
   return (
-    <S.Item
-      $isDanger={!!danger}
-      onClick={onClickHandler}
-      className="dropdown-item is-link"
-    >
-      {children}
-    </S.Item>
+    <MenuItem onClick={handleClick} {...rest}>
+      {danger ? <S.DangerItem>{children}</S.DangerItem> : children}
+    </MenuItem>
   );
 };
 
