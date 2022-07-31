@@ -60,10 +60,22 @@ const Colors = {
 };
 
 const theme = {
+  link: {
+    color: Colors.brand[50],
+    hoverColor: Colors.brand[60],
+  },
+  hr: {
+    backgroundColor: Colors.neutral[5],
+  },
+  code: {
+    backgroundColor: Colors.neutral[5],
+    color: Colors.red[55],
+  },
   layout: {
+    backgroundColor: Colors.neutral[0],
     minWidth: '1200px',
     navBarWidth: '201px',
-    navBarHeight: '3.25rem',
+    navBarHeight: '53px',
     stuffColor: Colors.neutral[5],
     stuffBorderColor: Colors.neutral[10],
     overlay: {
@@ -477,6 +489,9 @@ const theme = {
       value: Colors.neutral[80],
       meta: Colors.neutral[30],
     },
+    liderReplica: {
+      color: Colors.green[60],
+    },
   },
   dangerZone: {
     borderColor: Colors.neutral[10],
@@ -498,6 +513,7 @@ const theme = {
   },
   icons: {
     closeIcon: Colors.neutral[30],
+    deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],
     messageToggleIcon: {
       normal: Colors.brand[50],

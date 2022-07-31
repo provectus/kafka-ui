@@ -9,10 +9,11 @@ import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { useAppSelector } from 'lib/hooks/redux';
 import { getTopicByName } from 'redux/reducers/topics/selectors';
-import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+
+import * as S from './Overview.styled';
 
 export interface Props {
   clearTopicMessages(params: {
@@ -119,13 +120,14 @@ const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
               <tr key={`partition-list-item-key-${partition.partition}`}>
                 <td>{partition.partition}</td>
                 <td>
-                  {partition.replicas?.map((replica: Replica) => (
-                    <ReplicaCell
-                      leader={replica.leader}
-                      key={`replica-list-item-key-${replica.broker}`}
+                  {partition.replicas?.map(({ broker, leader }: Replica) => (
+                    <S.Replica
+                      leader={leader}
+                      key={broker}
+                      title={leader ? 'Leader' : ''}
                     >
-                      {replica.broker}
-                    </ReplicaCell>
+                      {broker}
+                    </S.Replica>
                   ))}
                 </td>
                 <td>{partition.offsetMin}</td>

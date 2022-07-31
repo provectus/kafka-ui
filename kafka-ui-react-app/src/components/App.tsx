@@ -12,11 +12,11 @@ import theme from 'theme/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { showServerError } from 'lib/errorHandling';
 import { Toaster } from 'react-hot-toast';
-
-import * as S from './App.styled';
-import Logo from './common/Logo/Logo';
-import GitIcon from './common/Icons/GitIcon';
-import DiscordIcon from './common/Icons/DiscordIcon';
+import GlobalCSS from 'components/global.css';
+import * as S from 'components/App.styled';
+import Logo from 'components/common/Logo/Logo';
+import GitIcon from 'components/common/Icons/GitIcon';
+import DiscordIcon from 'components/common/Icons/DiscordIcon';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,6 +44,7 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
+        <GlobalCSS />
         <S.Layout>
           <S.Navbar role="navigation" aria-label="Page Header">
             <S.NavbarBrand>

@@ -27,7 +27,7 @@ const ClusterMenu: React.FC<Props> = ({
   const [isOpen, setIsOpen] = React.useState(!!singleMode);
   return (
     <S.List>
-      <S.Divider />
+      <hr />
       <ClusterTab
         title={name}
         status={status}
