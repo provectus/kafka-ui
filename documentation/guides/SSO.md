@@ -70,8 +70,3 @@ docker run -p 8080:8080 \
 
 Note that scope is created by default when Application registration is done in Azure portal.
 You'll need to update application registration manifest to include `"accessTokenAcceptedVersion": 2`
-
-## Step 6 (Google) (Optional)
-
-If you'd like to allow authentication from specific domain (which you'd probably want), then set this env. variable:
-`OAUTH2_GOOGLE_ALLOWEDDOMAIN="https://example.com/"`
