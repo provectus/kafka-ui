@@ -61,3 +61,18 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+
+{{/*
+This allows us to check if the registry of the image is specified or not.
+*/}}
+{{- define "imageName" -}}
+{{- $registryName := .Values.image.registry -}}
+{{- $repository := .Values.image.repository -}}
+{{- $tag := .Values.image.tag | default .Chart.AppVersion -}}
+{{- if $registryName }}
+{{- printf "%s/%s:%s" $registryName $repository $tag -}}
+{{- else }}
+{{- printf "%s:%s" $repository $tag -}}
+{{- end }}
+{{- end -}}
