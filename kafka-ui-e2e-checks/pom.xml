@@ -126,6 +126,12 @@
             <artifactId>netty-transport-native-unix-common</artifactId>
             <version>${netty.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver-dns-native-macos</artifactId>
+            <version>${netty.version}</version>
+            <classifier>osx-aarch_64</classifier>
+        </dependency>
 
         <dependency>
             <groupId>org.testcontainers</groupId>
@@ -208,7 +214,7 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
-           <version>${junit.platform-launcher.version}</version>
+            <version>${junit.platform-launcher.version}</version>
         </dependency>
         <dependency>
             <groupId>ru.yandex.qatools.allure</groupId>
