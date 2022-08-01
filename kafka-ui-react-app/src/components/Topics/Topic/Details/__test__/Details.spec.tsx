@@ -46,7 +46,6 @@ describe('Details', () => {
             deleteTopic={mockDelete}
             recreateTopic={mockRecreateTopic}
             clearTopicMessages={mockClearTopicMessages}
-            isDeleted={false}
             {...props}
           />
         </WithRoute>
@@ -83,7 +82,6 @@ describe('Details', () => {
             deleteTopic={mockDelete}
             recreateTopic={mockRecreateTopic}
             clearTopicMessages={mockClearTopicMessages}
-            isDeleted={false}
           />
         </ClusterContext.Provider>
       );
@@ -95,8 +93,7 @@ describe('Details', () => {
   describe('when remove topic modal is open', () => {
     beforeEach(() => {
       setupComponent();
-
-      const openModalButton = screen.getAllByText('Remove topic')[0];
+      const openModalButton = screen.getAllByText('Remove Topic')[0];
       userEvent.click(openModalButton);
     });
 
@@ -156,7 +153,13 @@ describe('Details', () => {
   });
 
   it('redirects to the correct route if topic is deleted', () => {
-    setupComponent({ isDeleted: true });
+    setupComponent();
+
+    const deleteTopicButton = screen.getByText(/Remove topic/i);
+    userEvent.click(deleteTopicButton);
+
+    const submitDeleteButton = screen.getByText(/Submit/i);
+    userEvent.click(submitDeleteButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('../..');
   });
