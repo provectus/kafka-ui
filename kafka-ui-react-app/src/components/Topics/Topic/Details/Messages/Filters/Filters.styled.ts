@@ -114,7 +114,7 @@ export const ButtonContainer = styled.div`
 export const ListItem = styled.li`
   font-size: 12px;
   font-weight: 400;
-  margin-left: 20px;
+  margin: 4px 0;
   line-height: 1.5;
   color: ${({ theme }) => theme.table.td.color.normal};
 `;
@@ -125,16 +125,6 @@ export const InfoParagraph = styled.div`
   line-height: 1.5;
   margin-bottom: 10px;
   color: ${({ theme }) => theme.table.td.color.normal};
-`;
-
-export const InfoCodeSample = styled.pre`
-  background: #f5f5f5;
-  padding: 5px;
-  border: 1px solid #e1e1e1;
-  border-radius: 5px;
-  width: fit-content;
-  margin: 5px 20px;
-  color: #cc0f35;
 `;
 
 export const MessageFilterModal = styled.div`
@@ -240,8 +230,9 @@ export const ActiveSmartFilterWrapper = styled.div`
 `;
 
 export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
-  color: ${({ theme }) => theme.breadcrumb};
+  margin-top: 2px;
   cursor: pointer;
+  color: ${({ theme }) => theme.icons.deleteIcon};
 `;
 
 export const FilterEdit = styled.div`
@@ -299,7 +290,6 @@ export const ActiveSmartFilter = styled.div`
 
 export const DeleteSavedFilterIcon = styled.div`
   color: ${({ theme }) => theme.icons.closeIcon};
-  border-left: 1px solid ${({ theme }) => theme.savedFilterDivider.color};
   display: flex;
   align-items: center;
   padding-left: 6px;
