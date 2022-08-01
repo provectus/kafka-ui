@@ -66,7 +66,7 @@ Create the name of the service account to use
 {{/*
 This allows us to check if the registry of the image is specified or not.
 */}}
-{{- define "imageName" -}}
+{{- define "kafka-ui.imageName" -}}
 {{- $registryName := .Values.image.registry -}}
 {{- $repository := .Values.image.repository -}}
 {{- $tag := .Values.image.tag | default .Chart.AppVersion -}}
