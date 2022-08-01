@@ -13,7 +13,7 @@ specifiers:
   '@jest/types': ^28.1.1
   '@openapitools/openapi-generator-cli': ^2.5.1
   '@reduxjs/toolkit': ^1.8.3
-  '@rooks/use-outside-click-ref': ^4.10.1
+  '@szhsin/react-menu': ^3.1.1
   '@tanstack/react-query': ^4.0.5
   '@testing-library/dom': ^8.11.1
   '@testing-library/jest-dom': ^5.16.4
@@ -97,7 +97,7 @@ dependencies:
   '@hookform/error-message': 2.0.0_l2dcsysovzdujulgxvsen7vbsm
   '@hookform/resolvers': 2.8.9_react-hook-form@7.6.9
   '@reduxjs/toolkit': 1.8.3_ctm756ikdwcjcvyfxxwskzbr6q
-  '@rooks/use-outside-click-ref': 4.11.2_react@18.1.0
+  '@szhsin/react-menu': 3.1.1_ef5jwxihqo6n7gxfmzogljlgcm
   '@tanstack/react-query': 4.0.5_ef5jwxihqo6n7gxfmzogljlgcm
   '@testing-library/react': 13.2.0_ef5jwxihqo6n7gxfmzogljlgcm
   '@types/testing-library__jest-dom': 5.14.5
@@ -2352,14 +2352,6 @@ packages:
       reselect: 4.1.5
     dev: false
 
-  /@rooks/use-outside-click-ref/4.11.2_react@18.1.0:
-    resolution: {integrity: sha512-w2bCW69zcpLh0KmN/odAuBsQ3sps+73KEu7zMOi0o4YMfDo+tXcqwlTJiLYysd0BEoQC9pNIklzZmI9zZep69g==}
-    peerDependencies:
-      react: '>=16.8.0'
-    dependencies:
-      react: 18.1.0
-    dev: false
-
   /@rushstack/eslint-patch/1.1.3:
     resolution: {integrity: sha512-WiBSI6JBIhC6LRIsB2Kwh8DsGTlbBU+mLRxJmAe3LjHTdkDpwIbEOZgoXBbZilk/vlfjK8i6nKRAvIRn1XaIMw==}
     dev: true
@@ -2376,6 +2368,18 @@ packages:
     resolution: {integrity: sha512-BPS4ynJW/o92PUR4wgriz2Ud5gpST5vz6GQfMixEDK0Z8ZCUv2M7SkBLykH56T++Xs+8ln9zTGbOvNGIe02/jw==}
     dependencies:
       '@sinonjs/commons': 1.8.3
+
+  /@szhsin/react-menu/3.1.1_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-IdHLyH61M+KqjTrvqglKo7JnbC0GIkg4OCtlXBxQPEjx/ecR5g0Iycqm+SG3rObEoniLZEz32iJkefve/LAHMA==}
+    peerDependencies:
+      react: '>=16.14.0'
+      react-dom: '>=16.14.0'
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+      react-transition-state: 1.1.4_ef5jwxihqo6n7gxfmzogljlgcm
+    dev: false
 
   /@tanstack/query-core/4.0.5:
     resolution: {integrity: sha512-QOJ2gLbwlf8p0487pMey6vv8EF5X2ib1zINayaD7mb9/LibUtXmZ12uJgTqcnjgNY/4tWZn5qJnEk2ePG5AVGA==}
@@ -6750,6 +6754,16 @@ packages:
     dependencies:
       history: 5.3.0
       react: 18.1.0
+    dev: false
+
+  /react-transition-state/1.1.4_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-6nQLWWx95gYazCm6OdtD1zGbRiirvVXPrDtHAGsYb4xs9spMM7bA8Vx77KCpjL8PJ8qz1lXFGz2PTboCSvt7iw==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
     dev: false
 
   /react/18.1.0:

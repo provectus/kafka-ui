@@ -80,7 +80,7 @@ describe('Overview', () => {
   });
 
   describe('when it has internal flag', () => {
-    it('does not render the Action button a Topic', () => {
+    it('renders the Action button for Topic', () => {
       setupComponent(
         {},
         {
@@ -90,7 +90,7 @@ describe('Overview', () => {
           cleanUpPolicy: CleanUpPolicy.DELETE,
         }
       );
-      expect(screen.getAllByRole('menu')[0]).toBeInTheDocument();
+      expect(screen.getAllByLabelText('Dropdown Toggle').length).toEqual(1);
     });
 
     it('does not render Partitions', () => {
