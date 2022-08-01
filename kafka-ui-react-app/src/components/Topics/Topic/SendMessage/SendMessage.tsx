@@ -170,7 +170,7 @@ const SendMessage: React.FC = () => {
                   aria-labelledby="selectPartitionOptions"
                   name={name}
                   onChange={onChange}
-                  minWidth="100%"
+                  minWidth="100px"
                   options={selectPartitionOptions}
                   value={selectPartitionOptions[0].value}
                 />

@@ -1,46 +1,46 @@
-import useOutsideClickRef from '@rooks/use-outside-click-ref';
-import cx from 'classnames';
-import React, { PropsWithChildren, useMemo, useState } from 'react';
+import { MenuProps } from '@szhsin/react-menu';
+import React, { PropsWithChildren, useRef } from 'react';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import useModal from 'lib/hooks/useModal';
 
 import * as S from './Dropdown.styled';
 
-export interface DropdownProps {
-  label: React.ReactNode;
-  right?: boolean;
-  up?: boolean;
+interface DropdownProps extends PropsWithChildren<Partial<MenuProps>> {
+  label?: React.ReactNode;
 }
 
-const Dropdown: React.FC<PropsWithChildren<DropdownProps>> = ({
-  label,
-  right,
-  up,
-  children,
-}) => {
-  const [active, setActive] = useState<boolean>(false);
-  const [wrapperRef] = useOutsideClickRef(() => setActive(false));
-  const onClick = (e: React.MouseEvent) => {
+const Dropdown: React.FC<DropdownProps> = ({ label, children }) => {
+  const ref = useRef(null);
+  const { isOpen, setClose, setOpen } = useModal(false);
+
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
     e.stopPropagation();
-    setActive(!active);
+    setOpen();
   };
 
-  const classNames = useMemo(
-    () =>
-      cx('dropdown', {
-        'is-active': active,
-        'is-right': right,
-        'is-up': up,
-      }),
-    [active, right, up]
-  );
   return (
-    <div className={classNames} ref={wrapperRef}>
-      <S.TriggerWrapper>
-        <S.Trigger onClick={onClick}>{label}</S.Trigger>
-      </S.TriggerWrapper>
-      <div className="dropdown-menu" id="dropdown-menu" role="menu">
-        <div className="dropdown-content has-text-left">{children}</div>
-      </div>
-    </div>
+    <>
+      <S.DropdownButton
+        onClick={handleClick}
+        ref={ref}
+        aria-label="Dropdown Toggle"
+      >
+        {label || <VerticalElipsisIcon />}
+      </S.DropdownButton>
+      <S.Dropdown
+        anchorRef={ref}
+        state={isOpen ? 'open' : 'closed'}
+        onMouseLeave={setClose}
+        onClose={setClose}
+        align="end"
+        direction="bottom"
+        offsetY={10}
+        viewScroll="auto"
+      >
+        {children}
+      </S.Dropdown>
+    </>
   );
 };
 

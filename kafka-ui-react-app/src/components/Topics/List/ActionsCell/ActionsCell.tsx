@@ -6,11 +6,8 @@ import {
 } from 'generated-sources';
 import { useAppDispatch } from 'lib/hooks/redux';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import { TableCellProps } from 'components/common/SmartTable/TableColumn';
 import { TopicWithDetailedInfo } from 'redux/interfaces';
-import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import Dropdown from 'components/common/Dropdown/Dropdown';
 import ClusterContext from 'components/contexts/ClusterContext';
 import * as S from 'components/Topics/List/List.styled';
 import { ClusterNameRoute } from 'lib/paths';
@@ -22,6 +19,7 @@ import {
   recreateTopic,
 } from 'redux/reducers/topics/topicsSlice';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
 interface TopicsListParams {
   clusterName: string;
@@ -68,8 +66,10 @@ const ActionsCell: React.FC<
 
   const isHidden = internal || isReadOnly || !hovered;
 
-  const deleteTopicHandler = () =>
+  const deleteTopicHandler = () => {
     dispatch(deleteTopic({ clusterName, topicName: name }));
+    closeDeleteTopicModal();
+  };
 
   const clearTopicMessagesHandler = () => {
     dispatch(clearTopicMessages({ clusterName, topicName: name }));
@@ -86,20 +86,20 @@ const ActionsCell: React.FC<
     <>
       <S.ActionsContainer>
         {!isHidden && (
-          <Dropdown label={<VerticalElipsisIcon />} right>
+          <Dropdown>
             {cleanUpPolicy === CleanUpPolicy.DELETE && (
               <DropdownItem onClick={openClearMessagesModal} danger>
                 Clear Messages
               </DropdownItem>
             )}
+            <DropdownItem onClick={openRecreateTopicModal} danger>
+              Recreate Topic
+            </DropdownItem>
             {isTopicDeletionAllowed && (
               <DropdownItem onClick={openDeleteTopicModal} danger>
                 Remove Topic
               </DropdownItem>
             )}
-            <DropdownItem onClick={openRecreateTopicModal} danger>
-              Recreate Topic
-            </DropdownItem>
           </Dropdown>
         )}
       </S.ActionsContainer>
