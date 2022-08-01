@@ -1,13 +1,10 @@
 import React from 'react';
 import { Partition, Replica } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
-import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { useAppSelector } from 'lib/hooks/redux';
@@ -15,6 +12,7 @@ import { getTopicByName } from 'redux/reducers/topics/selectors';
 import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
+import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
 export interface Props {
   clearTopicMessages(params: {
@@ -135,7 +133,7 @@ const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
                 <td>{partition.offsetMax - partition.offsetMin}</td>
                 <td style={{ width: '5%' }}>
                   {!internal && !isReadOnly && cleanUpPolicy === 'DELETE' ? (
-                    <Dropdown label={<VerticalElipsisIcon />} right>
+                    <Dropdown>
                       <DropdownItem
                         onClick={() =>
                           clearTopicMessages({
