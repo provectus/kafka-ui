@@ -57,7 +57,7 @@ const New: React.FC = () => {
           partitionCount={Number(partitionCount)}
           replicationFactor={Number(replicationFactor)}
           inSyncReplicas={Number(inSyncReplicas)}
-          isSubmitting={methods.formState.isSubmitting}
+          isSubmitting={false}
           onSubmit={methods.handleSubmit(onSubmit)}
         />
       </FormProvider>

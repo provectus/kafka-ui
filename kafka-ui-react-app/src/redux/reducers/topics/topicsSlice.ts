@@ -169,12 +169,12 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
 
   return {
     configs: {
+      ...Object.values(customParams || {}).reduce(topicReducer, {}),
       'cleanup.policy': cleanupPolicy,
       'retention.ms': retentionMs,
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInSyncReplicas,
-      ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };
 };
@@ -355,7 +355,7 @@ export const clearTopicsMessages = createAsyncThunk<
   }
 });
 
-const initialState: TopicsState = {
+export const initialState: TopicsState = {
   byName: {},
   allNames: [],
   totalPages: 1,

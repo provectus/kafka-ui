@@ -29,6 +29,7 @@ import Switch from 'components/common/Switch/Switch';
 import { SmartTable } from 'components/common/SmartTable/SmartTable';
 import { TableColumn } from 'components/common/SmartTable/TableColumn';
 import { useTableState } from 'lib/hooks/useTableState';
+import PlusIcon from 'components/common/Icons/PlusIcon';
 
 import {
   MessagesCell,
@@ -192,7 +193,7 @@ const List: React.FC<TopicsListProps> = ({
               buttonSize="M"
               to={clusterTopicNewRelativePath}
             >
-              <i className="fas fa-plus" /> Add a Topic
+              <PlusIcon /> Add a Topic
             </Button>
           )}
         </PageHeading>

@@ -7,6 +7,8 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 
+jest.mock('components/common/Icons/DeleteIcon', () => () => 'mock-DeleteIcon');
+
 describe('SavedFilter Component', () => {
   const mockFilters: MessageFilters[] = [
     { name: 'name', code: 'code' },
@@ -115,9 +117,9 @@ describe('SavedFilter Component', () => {
     });
 
     it('Open Confirmation for the deletion modal', () => {
-      const { container } = setUpComponent({ deleteFilter: deleteMock });
+      setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
-      const deleteIcons = container.getElementsByTagName('i');
+      const deleteIcons = screen.getAllByText('mock-DeleteIcon');
       userEvent.hover(savedFilters[0]);
       userEvent.click(deleteIcons[0]);
       const modelDialog = screen.getByRole('dialog');
@@ -128,9 +130,9 @@ describe('SavedFilter Component', () => {
     });
 
     it('Close Confirmations deletion modal with button', () => {
-      const { container } = setUpComponent({ deleteFilter: deleteMock });
+      setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
-      const deleteIcons = container.getElementsByTagName('i');
+      const deleteIcons = screen.getAllByText('mock-DeleteIcon');
 
       userEvent.hover(savedFilters[0]);
       userEvent.click(deleteIcons[0]);
@@ -145,9 +147,9 @@ describe('SavedFilter Component', () => {
     });
 
     it('Delete the saved filter', () => {
-      const { container } = setUpComponent({ deleteFilter: deleteMock });
+      setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
-      const deleteIcons = container.getElementsByTagName('i');
+      const deleteIcons = screen.getAllByText('mock-DeleteIcon');
 
       userEvent.hover(savedFilters[0]);
       userEvent.click(deleteIcons[0]);

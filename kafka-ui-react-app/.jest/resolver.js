@@ -16,6 +16,10 @@ module.exports = (path, options) => {
         delete pkg['exports'];
         delete pkg['module'];
       }
+      if (pkg.name === 'jsonpath-plus') {
+        delete pkg['exports'];
+        delete pkg['module'];
+      }
       return pkg;
     },
   });

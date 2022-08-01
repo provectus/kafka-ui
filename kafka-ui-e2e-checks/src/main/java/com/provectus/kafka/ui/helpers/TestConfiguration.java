@@ -14,10 +14,8 @@ public class TestConfiguration {
       Boolean.parseBoolean(System.getProperty("SAVE_PAGE_SOURCE", "false"));
   public static Boolean REOPEN_BROWSER_ON_FAIL =
       Boolean.parseBoolean(System.getProperty("REOPEN_BROWSER_ON_FAIL", "true"));
-  public static String BROWSER = System.getProperty("BROWSER", "chrome");
+  public static String BROWSER = System.getProperty("BROWSER", "chromium");
   public static String BROWSER_SIZE = System.getProperty("BROWSER_SIZE", "1920x1080");
   public static Boolean ENABLE_VNC = Boolean.parseBoolean(System.getProperty("ENABLE_VNC", "true"));
-  public static String IMAGE_NAME = System.getProperty("SELENIUM_DOCKER_IMAGE", "selenium/standalone-chrome");
-  public static String IMAGE_TAG = System.getProperty("SELENIUM_IMAGE_TAG", "103.0");
 
 }

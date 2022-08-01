@@ -18,6 +18,8 @@ jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useConnectors: jest.fn(),
 }));
 
+jest.mock('components/common/Icons/SpinnerIcon', () => () => 'progressbar');
+
 const clusterName = 'local';
 
 describe('Connectors List Page', () => {
@@ -82,7 +84,7 @@ describe('Connectors List Page', () => {
       await renderComponent();
       const metrics = screen.getByRole('group');
       expect(metrics).toBeInTheDocument();
-      expect(within(metrics).getAllByRole('progressbar').length).toEqual(3);
+      expect(within(metrics).getAllByText('progressbar').length).toEqual(3);
     });
 
     it('renders indicators for empty list of connectors', async () => {

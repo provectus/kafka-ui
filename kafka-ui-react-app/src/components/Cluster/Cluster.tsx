@@ -19,15 +19,23 @@ import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import { BreadcrumbProvider } from 'components/common/Breadcrumb/Breadcrumb.provider';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { useClusters } from 'lib/hooks/api/clusters';
+import Brokers from 'components/Brokers/Brokers';
+import Topics from 'components/Topics/Topics';
+import Schemas from 'components/Schemas/Schemas';
+import Connect from 'components/Connect/Connect';
+import KsqlDb from 'components/KsqlDb/KsqlDb';
+import ConsumerGroups from 'components/ConsumerGroups/ConsumerGroups';
 
-const Brokers = React.lazy(() => import('components/Brokers/Brokers'));
-const Topics = React.lazy(() => import('components/Topics/Topics'));
-const Schemas = React.lazy(() => import('components/Schemas/Schemas'));
-const Connect = React.lazy(() => import('components/Connect/Connect'));
-const KsqlDb = React.lazy(() => import('components/KsqlDb/KsqlDb'));
-const ConsumerGroups = React.lazy(
-  () => import('components/ConsumerGroups/ConsumerGroups')
-);
+// We can't use Lazy loading till we have a better way to update publicPath in runtime
+// Now java app replaces paths in builded index.html file.
+// const Brokers = React.lazy(() => import('components/Brokers/Brokers'));
+// const Topics = React.lazy(() => import('components/Topics/Topics'));
+// const Schemas = React.lazy(() => import('components/Schemas/Schemas'));
+// const Connect = React.lazy(() => import('components/Connect/Connect'));
+// const KsqlDb = React.lazy(() => import('components/KsqlDb/KsqlDb'));
+// const ConsumerGroups = React.lazy(
+//   () => import('components/ConsumerGroups/ConsumerGroups')
+// );
 
 const Cluster: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
