@@ -1,28 +1,35 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
-import { screen, waitFor, within } from '@testing-library/react';
-import { Route, Router, StaticRouter } from 'react-router-dom';
+import { render, WithRoute } from 'lib/testHelpers';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import ClusterContext, {
   ContextProps,
 } from 'components/contexts/ClusterContext';
 import List, { TopicsListProps } from 'components/Topics/List/List';
-import { createMemoryHistory } from 'history';
 import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import { CleanUpPolicy, SortOrder } from 'generated-sources';
 import userEvent from '@testing-library/user-event';
+import { clusterTopicsPath } from 'lib/paths';
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 describe('List', () => {
+  afterEach(() => {
+    mockNavigate.mockClear();
+  });
+
   const setupComponent = (props: Partial<TopicsListProps> = {}) => (
     <List
       areTopicsFetching={false}
       topics={[]}
       totalPages={1}
       fetchTopicsList={jest.fn()}
-      deleteTopic={jest.fn()}
       deleteTopics={jest.fn()}
       clearTopicsMessages={jest.fn()}
       clearTopicMessages={jest.fn()}
-      recreateTopic={jest.fn()}
       search=""
       orderBy={null}
       sortOrder={SortOrder.ASC}
@@ -32,15 +39,13 @@ describe('List', () => {
     />
   );
 
-  const historyMock = createMemoryHistory();
-
   const renderComponentWithProviders = (
     contextProps: Partial<ContextProps> = {},
     props: Partial<TopicsListProps> = {},
-    history = historyMock
+    queryParams = ''
   ) =>
     render(
-      <Router history={history}>
+      <WithRoute path={clusterTopicsPath()}>
         <ClusterContext.Provider
           value={{
             isReadOnly: true,
@@ -52,7 +57,8 @@ describe('List', () => {
         >
           {setupComponent(props)}
         </ClusterContext.Provider>
-      </Router>
+      </WithRoute>,
+      { initialEntries: [`${clusterTopicsPath('test')}${queryParams}`] }
     );
 
   describe('when it has readonly flag', () => {
@@ -112,6 +118,10 @@ describe('List', () => {
 
       await waitFor(() => {
         expect(fetchTopicsList).toHaveBeenLastCalledWith({
+          clusterName: 'test',
+          orderBy: undefined,
+          page: undefined,
+          perPage: undefined,
           search: '',
           showInternal: value === 'on',
           sortOrder: SortOrder.ASC,
@@ -119,100 +129,89 @@ describe('List', () => {
       });
     });
 
-    it('should reset page query param on show internal toggle change', () => {
-      const mockedHistory = createMemoryHistory();
-      jest.spyOn(mockedHistory, 'push');
-      renderComponentWithProviders(
-        { isReadOnly: false },
-        { fetchTopicsList },
-        mockedHistory
-      );
+    it('should reset page query param on show internal toggle change', async () => {
+      renderComponentWithProviders({ isReadOnly: false }, { fetchTopicsList });
 
       const internalCheckBox: HTMLInputElement = screen.getByRole('checkbox');
       userEvent.click(internalCheckBox);
 
-      expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');
+      expect(mockNavigate).toHaveBeenCalledWith({
+        search: '?page=1&perPage=25',
+      });
     });
 
     it('should set cached page query param on show internal toggle change', async () => {
-      const mockedHistory = createMemoryHistory();
-      jest.spyOn(mockedHistory, 'push');
-
       const cachedPage = 5;
-      mockedHistory.push(`/?page=${cachedPage}&perPage=25`);
 
       renderComponentWithProviders(
         { isReadOnly: false },
         { fetchTopicsList, totalPages: 10 },
-        mockedHistory
+        `?page=${cachedPage}&perPage=25`
       );
 
       const searchInput = screen.getByPlaceholderText('Search by Topic Name');
       userEvent.type(searchInput, 'nonEmptyString');
 
       await waitFor(() => {
-        expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');
+        expect(mockNavigate).toHaveBeenCalledWith({
+          search: '?page=1&perPage=25',
+        });
       });
 
-      userEvent.clear(searchInput);
+      await act(() => {
+        userEvent.clear(searchInput);
+      });
 
       await waitFor(() => {
-        expect(mockedHistory.push).toHaveBeenCalledWith(
-          `/?page=${cachedPage}&perPage=25`
-        );
+        expect(mockNavigate).toHaveBeenLastCalledWith({
+          search: `?page=${cachedPage}&perPage=25`,
+        });
       });
     });
   });
 
   describe('when some list items are selected', () => {
     const mockDeleteTopics = jest.fn();
-    const mockDeleteTopic = jest.fn();
     const mockClearTopic = jest.fn();
     const mockClearTopicsMessages = jest.fn();
-    const mockRecreate = jest.fn();
     const fetchTopicsList = jest.fn();
 
     jest.useFakeTimers();
-    const pathname = '/ui/clusters/local/topics';
+    const pathname = clusterTopicsPath('local');
 
     beforeEach(() => {
       render(
-        <StaticRouter location={{ pathname }}>
-          <Route path="/ui/clusters/:clusterName">
-            <ClusterContext.Provider
-              value={{
-                isReadOnly: false,
-                hasKafkaConnectConfigured: true,
-                hasSchemaRegistryConfigured: true,
-                isTopicDeletionAllowed: true,
-              }}
-            >
-              {setupComponent({
-                topics: [
-                  {
-                    ...externalTopicPayload,
-                    cleanUpPolicy: CleanUpPolicy.DELETE,
-                  },
-                  { ...externalTopicPayload, name: 'external.topic2' },
-                ],
-                deleteTopics: mockDeleteTopics,
-                clearTopicsMessages: mockClearTopicsMessages,
-                recreateTopic: mockRecreate,
-                deleteTopic: mockDeleteTopic,
-                clearTopicMessages: mockClearTopic,
-                fetchTopicsList,
-              })}
-            </ClusterContext.Provider>
-          </Route>
-        </StaticRouter>
+        <WithRoute path={clusterTopicsPath()}>
+          <ClusterContext.Provider
+            value={{
+              isReadOnly: false,
+              hasKafkaConnectConfigured: true,
+              hasSchemaRegistryConfigured: true,
+              isTopicDeletionAllowed: true,
+            }}
+          >
+            {setupComponent({
+              topics: [
+                {
+                  ...externalTopicPayload,
+                  cleanUpPolicy: CleanUpPolicy.DELETE,
+                },
+                { ...externalTopicPayload, name: 'external.topic2' },
+              ],
+              deleteTopics: mockDeleteTopics,
+              clearTopicsMessages: mockClearTopicsMessages,
+              clearTopicMessages: mockClearTopic,
+              fetchTopicsList,
+            })}
+          </ClusterContext.Provider>
+        </WithRoute>,
+        { initialEntries: [pathname] }
       );
     });
 
     afterEach(() => {
       mockDeleteTopics.mockClear();
       mockClearTopicsMessages.mockClear();
-      mockRecreate.mockClear();
-      mockDeleteTopic.mockClear();
     });
 
     const getCheckboxInput = (at: number) => {
@@ -290,10 +289,10 @@ describe('List', () => {
       });
 
       expect(mockFn).toBeCalledTimes(1);
-      expect(mockFn).toBeCalledWith('local', [
-        externalTopicPayload.name,
-        'external.topic2',
-      ]);
+      expect(mockFn).toBeCalledWith({
+        clusterName: 'local',
+        topicNames: [externalTopicPayload.name, 'external.topic2'],
+      });
     };
 
     it('triggers the deleteTopics when clicked on the delete button', async () => {
@@ -327,64 +326,6 @@ describe('List', () => {
       expect(screen.getByTestId('delete-buttons')).toBeInTheDocument();
 
       expect(mockDeleteTopics).not.toHaveBeenCalled();
-    });
-
-    const tableRowActionClickAndCheck = async (
-      action: 'deleteTopics' | 'clearTopicsMessages' | 'recreate'
-    ) => {
-      const row = screen.getAllByRole('row')[1];
-      userEvent.hover(row);
-      const actionBtn = within(row).getByRole('menu', { hidden: true });
-
-      userEvent.click(actionBtn);
-
-      let textBtn;
-      let mock: jest.Mock;
-
-      if (action === 'clearTopicsMessages') {
-        textBtn = 'Clear Messages';
-        mock = mockClearTopic;
-      } else if (action === 'deleteTopics') {
-        textBtn = 'Remove Topic';
-        mock = mockDeleteTopic;
-      } else {
-        textBtn = 'Recreate Topic';
-        mock = mockRecreate;
-      }
-
-      const ourAction = screen.getByText(textBtn);
-
-      userEvent.click(ourAction);
-
-      let dialog = screen.getByRole('dialog');
-      expect(dialog).toBeInTheDocument();
-      userEvent.click(within(dialog).getByRole('button', { name: 'Submit' }));
-
-      await waitFor(() => {
-        expect(mock).toHaveBeenCalled();
-        if (action === 'clearTopicsMessages') {
-          expect(fetchTopicsList).toHaveBeenCalled();
-        }
-      });
-
-      userEvent.click(ourAction);
-      dialog = screen.getByRole('dialog');
-      expect(dialog).toBeInTheDocument();
-      userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-      expect(mock).toHaveBeenCalledTimes(1);
-    };
-
-    it('should test the actions of the row and their modal and fetching for removing', async () => {
-      await tableRowActionClickAndCheck('deleteTopics');
-    });
-
-    it('should test the actions of the row and their modal and fetching for clear', async () => {
-      await tableRowActionClickAndCheck('clearTopicsMessages');
-    });
-
-    it('should test the actions of the row and their modal and fetching for recreate', async () => {
-      await tableRowActionClickAndCheck('recreate');
     });
   });
 });

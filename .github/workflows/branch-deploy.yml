@@ -13,11 +13,7 @@ jobs:
       - name: get branch name
         id: extract_branch
         run: |
-          hub pr checkout ${{ github.event.pull_request.number }}
-          branch_name=$(hub branch | grep "*" | sed -e 's/^\*//')
-          echo $branch_name
-          echo ::set-output name=branch::${branch_name}
-          tag=$(echo $branch_name |  sed 's/\//-/g' | sed 's/\./-/g' | sed 's/\_/-/g' |  sed -e 's/\(.*\)/\L\1/' | cut -c1-32 | sed -E 's/(^[^a-z0-9])*([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)([^a-z0-9]*)/\2/')
+          tag='pr${{ github.event.pull_request.number }}'
           echo ::set-output name=tag::${tag}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -40,10 +36,10 @@ jobs:
           export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           echo "::set-output name=version::${VERSION}"
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
       - name: Cache Docker layers
         uses: actions/cache@v3
         with:
@@ -62,7 +58,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
       - name: Build and push
         id: docker_build_and_push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: kafka-ui-api

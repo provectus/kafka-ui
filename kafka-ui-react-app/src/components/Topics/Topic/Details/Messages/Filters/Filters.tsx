@@ -11,15 +11,12 @@ import {
   TopicMessageEventTypeEnum,
 } from 'generated-sources';
 import React, { useContext } from 'react';
-import { omitBy } from 'lodash';
-import { useHistory, useLocation } from 'react-router-dom';
-import DatePicker from 'react-datepicker';
+import omitBy from 'lodash/omitBy';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { ClusterName, TopicName } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
-import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 import Search from 'components/common/Search/Search';
@@ -29,6 +26,10 @@ import FilterModal, {
 import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 import useModal from 'lib/hooks/useModal';
+import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
+import { useAppSelector } from 'lib/hooks/redux';
+import { RouteParamsClusterTopic } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import * as S from './Filters.styled';
 import {
@@ -41,10 +42,7 @@ import {
 type Query = Record<string, string | string[] | number>;
 
 export interface FiltersProps {
-  clusterName: ClusterName;
-  topicName: TopicName;
   phaseMessage?: string;
-  partitions: Partition[];
   meta: TopicMessageConsuming;
   isFetching: boolean;
   addMessage(content: { message: TopicMessage; prepend: boolean }): void;
@@ -59,7 +57,7 @@ export interface MessageFilters {
   code: string;
 }
 
-export interface ActiveMessageFilter {
+interface ActiveMessageFilter {
   index: number;
   name: string;
   code: string;
@@ -73,9 +71,6 @@ export const SeekTypeOptions = [
 ];
 
 const Filters: React.FC<FiltersProps> = ({
-  clusterName,
-  topicName,
-  partitions,
   phaseMessage,
   meta: { elapsedMs, bytesConsumed, messagesConsumed },
   isFetching,
@@ -85,8 +80,13 @@ const Filters: React.FC<FiltersProps> = ({
   updateMeta,
   setIsFetching,
 }) => {
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
+
+  const partitions = useAppSelector((state) =>
+    getPartitionsByTopicName(state, topicName)
+  );
 
   const { searchParams, seekDirection, isLive, changeSeekDirection } =
     useContext(TopicMessagesContext);
@@ -181,7 +181,7 @@ const Filters: React.FC<FiltersProps> = ({
       partitions.map((partition: Partition) => {
         return {
           value: partition.partition,
-          label: String(partition.partition),
+          label: `Partition #${partition.partition.toString()}`,
         };
       })
     );
@@ -192,7 +192,17 @@ const Filters: React.FC<FiltersProps> = ({
       setAttempt(attempt + 1);
 
       if (isSeekTypeControlVisible) {
-        props.seekType = isLive ? SeekType.LATEST : currentSeekType;
+        switch (seekDirection) {
+          case SeekDirection.FORWARD:
+            props.seekType = SeekType.BEGINNING;
+            break;
+          case SeekDirection.BACKWARD:
+          case SeekDirection.TAILING:
+            props.seekType = SeekType.LATEST;
+            break;
+          default:
+            props.seekType = currentSeekType;
+        }
         props.seekTo = selectedPartitions.map(({ value }) => {
           const offsetProperty =
             seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
@@ -212,7 +222,7 @@ const Filters: React.FC<FiltersProps> = ({
         .map((key) => `${key}=${newProps[key]}`)
         .join('&');
 
-      history.push({
+      navigate({
         search: `?${qs}`,
       });
     },
@@ -224,6 +234,7 @@ const Filters: React.FC<FiltersProps> = ({
       timestamp,
       query,
       selectedPartitions,
+      navigate,
     ]
   );
 
@@ -395,24 +406,22 @@ const Filters: React.FC<FiltersProps> = ({
               disabled={isTailing}
             />
             {currentSeekType === SeekType.OFFSET ? (
-              <Input
+              <S.OffsetSelector
                 id="offset"
                 type="text"
                 inputSize="M"
                 value={offset}
-                className="offset-selector"
                 placeholder="Offset"
                 onChange={({ target: { value } }) => setOffset(value)}
                 disabled={isTailing}
               />
             ) : (
-              <DatePicker
+              <S.DatePickerInput
                 selected={timestamp}
                 onChange={(date: Date | null) => setTimestamp(date)}
                 showTimeInput
                 timeInputLabel="Time:"
                 dateFormat="MMMM d, yyyy HH:mm"
-                className="date-picker"
                 placeholderText="Select timestamp"
                 disabled={isTailing}
               />
@@ -524,7 +533,7 @@ const Filters: React.FC<FiltersProps> = ({
           <S.MetricsIcon>
             <i className="far fa-file-alt" />
           </S.MetricsIcon>
-          <span>{messagesConsumed} messages</span>
+          <span>{messagesConsumed} messages consumed</span>
         </S.Metric>
       </S.FiltersMetrics>
     </S.FiltersWrapper>

@@ -1,6 +1,6 @@
 import { PER_PAGE } from 'lib/constants';
 import usePagination from 'lib/hooks/usePagination';
-import { range } from 'lodash';
+import range from 'lodash/range';
 import React from 'react';
 import PageControl from 'components/common/Pagination/PageControl';
 import useSearch from 'lib/hooks/useSearch';
@@ -90,7 +90,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
           )}
           {!pages.includes(2) && (
             <li>
-              <span className="pagination-ellipsis">&hellip;</span>
+              <span>&hellip;</span>
             </li>
           )}
           {pages.map((p) => (
@@ -103,7 +103,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
           ))}
           {!pages.includes(totalPages - 1) && (
             <li>
-              <span className="pagination-ellipsis">&hellip;</span>
+              <span>&hellip;</span>
             </li>
           )}
           {!pages.includes(totalPages) && (

@@ -2,7 +2,7 @@ import React from 'react';
 
 import * as S from './Switch.styled';
 
-export interface SwitchProps {
+interface SwitchProps {
   onChange(): void;
   checked: boolean;
   name: string;

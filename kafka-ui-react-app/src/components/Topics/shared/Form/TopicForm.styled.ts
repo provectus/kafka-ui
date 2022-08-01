@@ -29,15 +29,23 @@ export const Label = styled.div`
 export const Button = styled.button<{ isActive: boolean }>`
   background-color: ${({ theme, ...props }) =>
     props.isActive
-      ? theme.button.primary.backgroundColor.active
-      : theme.button.primary.backgroundColor.normal};
-  height: 32px;
-  width: 46px;
-  border: 1px solid
-    ${({ theme, ...props }) =>
-      props.isActive ? theme.button.border.active : theme.button.primary.color};
+      ? theme.button.secondary.invertedColors.normal
+      : theme.button.secondary.backgroundColor.normal};
+  color: ${({ theme, ...props }) =>
+    props.isActive
+      ? theme.button.secondary.isActiveColor
+      : theme.button.primary.color};
+  height: 24px;
+  padding: 0 5px;
+  min-width: 51px;
+  border: none;
   border-radius: 6px;
   &:hover {
     cursor: pointer;
   }
+`;
+
+export const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 10px;
 `;

@@ -101,7 +101,7 @@ describe('utils', () => {
     it('returns parsed partition from params when partition list includes selected partition', () => {
       searchParams.set('seekTo', '42::0');
       expect(getSelectedPartitionsFromSeekToParam(searchParams, part)).toEqual([
-        { label: '42', value: 42 },
+        { label: 'Partition #42', value: 42 },
       ]);
     });
     it('returns parsed partition from params when partition list NOT includes selected partition', () => {
@@ -113,7 +113,7 @@ describe('utils', () => {
     it('returns partitions when param "seekTo" is not defined', () => {
       searchParams.delete('seekTo');
       expect(getSelectedPartitionsFromSeekToParam(searchParams, part)).toEqual([
-        { label: '42', value: 42 },
+        { label: 'Partition #42', value: 42 },
       ]);
     });
   });

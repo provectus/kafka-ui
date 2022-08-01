@@ -59,7 +59,7 @@ const CustomParamField: React.FC<Props> = ({
       newExistingFields.push(nameValue);
       setExistingFields(newExistingFields);
       setValue(`customParams.${index}.value`, TOPIC_CUSTOM_PARAMS[nameValue], {
-        shouldValidate: true,
+        shouldValidate: !!TOPIC_CUSTOM_PARAMS[nameValue],
       });
     }
   }, [existingFields, index, nameValue, setExistingFields, setValue]);
@@ -67,7 +67,7 @@ const CustomParamField: React.FC<Props> = ({
   return (
     <C.Column>
       <div>
-        <InputLabel>Custom Parameter</InputLabel>
+        <InputLabel>Custom Parameter *</InputLabel>
         <Controller
           control={control}
           rules={{ required: 'Custom Parameter is required.' }}
@@ -92,7 +92,7 @@ const CustomParamField: React.FC<Props> = ({
         </FormError>
       </div>
       <div>
-        <InputLabel>Value</InputLabel>
+        <InputLabel>Value *</InputLabel>
         <Input
           name={`customParams.${index}.value` as const}
           hookFormOptions={{

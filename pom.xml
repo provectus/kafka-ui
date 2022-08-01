@@ -22,6 +22,7 @@
         <git.revision>latest</git.revision>
         <kafka-clients.version>2.8.0</kafka-clients.version>
         <node.version>v16.15.0</node.version>
+        <pnpm.version>v7.4.0</pnpm.version>
         <dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
         <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -34,12 +35,13 @@
         <avro.version>1.11.0</avro.version>
         <confluent.version>7.0.1</confluent.version>
         <apache.commons.version>2.11.1</apache.commons.version>
-        <test.containers.version>1.16.2</test.containers.version>
+        <test.containers.version>1.17.1</test.containers.version>
         <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
         <mockito.version>2.21.0</mockito.version>
         <assertj.version>3.19.0</assertj.version>
         <antlr4-maven-plugin.version>4.7.1</antlr4-maven-plugin.version>
         <groovy.version>3.0.9</groovy.version>
+        <datasketches-java.version>3.1.0</datasketches-java.version>
 
         <frontend-generated-sources-directory>..//kafka-ui-react-app/src/generated-sources
         </frontend-generated-sources-directory>
@@ -86,5 +88,5 @@
     <artifactId>kafka-ui</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>kafka-ui</name>
-    <description>Kafka metrics for UI panel</description>
+    <description>Web UI for Apache Kafka</description>
 </project>

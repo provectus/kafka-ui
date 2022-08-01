@@ -1,17 +1,10 @@
 import React from 'react';
-import { connectors } from 'redux/reducers/connect/__test__/fixtures';
+import { connectors } from 'lib/fixtures/kafkaConnect';
 import ListItem, { ListItemProps } from 'components/Connect/List/ListItem';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
-
-const mockDeleteConnector = jest.fn(() => ({ type: 'test' }));
-
-jest.mock('redux/reducers/connect/connectSlice', () => ({
-  ...jest.requireActual('redux/reducers/connect/connectSlice'),
-  deleteConnector: () => mockDeleteConnector,
-}));
 
 jest.mock(
   'components/common/ConfirmationModal/ConfirmationModal',
@@ -50,6 +43,14 @@ describe('Connectors ListItem', () => {
   it('renders item', () => {
     render(setupWrapper());
     expect(screen.getAllByRole('cell')[6]).toHaveTextContent('2 of 2');
+  });
+
+  it('topics tags are sorted', () => {
+    render(setupWrapper());
+    const getLink = screen.getAllByRole('link');
+    expect(getLink[1]).toHaveTextContent('a');
+    expect(getLink[2]).toHaveTextContent('b');
+    expect(getLink[3]).toHaveTextContent('c');
   });
 
   it('renders item with failed tasks', () => {

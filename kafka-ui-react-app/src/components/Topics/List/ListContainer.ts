@@ -1,15 +1,13 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
+import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import {
   fetchTopicsList,
-  deleteTopic,
+  setTopicsSearch,
+  setTopicsOrderBy,
   deleteTopics,
-  recreateTopic,
   clearTopicsMessages,
-  setTopicsSearchAction,
-  setTopicsOrderByAction,
-} from 'redux/actions';
-import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
+} from 'redux/reducers/topics/topicsSlice';
 import {
   getTopicList,
   getAreTopicsFetching,
@@ -32,13 +30,11 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   fetchTopicsList,
-  deleteTopic,
   deleteTopics,
-  recreateTopic,
   clearTopicsMessages,
   clearTopicMessages,
-  setTopicsSearch: setTopicsSearchAction,
-  setTopicsOrderBy: setTopicsOrderByAction,
+  setTopicsSearch,
+  setTopicsOrderBy,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);

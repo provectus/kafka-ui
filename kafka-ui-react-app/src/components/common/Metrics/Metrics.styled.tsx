@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import { AlertType } from 'redux/interfaces';
 
 export const Wrapper = styled.div`
   padding: 1.5rem 1rem;
@@ -21,7 +20,6 @@ export const IndicatorWrapper = styled.div`
   align-items: flex-start;
   padding: 12px 16px;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.08);
-  margin: 0 0 3px 0;
   flex-grow: 1;
 `;
 
@@ -36,10 +34,11 @@ export const IndicatorTitle = styled.div`
 
 export const IndicatorsWrapper = styled.div`
   display: flex;
-  gap: 1px;
+  gap: 2px;
   flex-wrap: wrap;
   border-radius: 8px;
   overflow: auto;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.08);
 `;
 
 export const SectionTitle = styled.h5`
@@ -75,7 +74,7 @@ export const CircularAlert = styled.circle.attrs({
   cy: 2,
   r: 2,
 })<{
-  $type: AlertType;
+  $type: 'error' | 'success' | 'warning' | 'info';
 }>(
   ({ theme, $type }) => css`
     fill: ${theme.circularAlert.color[$type]};

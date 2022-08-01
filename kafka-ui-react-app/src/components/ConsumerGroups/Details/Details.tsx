@@ -1,21 +1,17 @@
 import React from 'react';
-import { ClusterName } from 'redux/interfaces';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
-  clusterConsumerGroupResetOffsetsPath,
-  clusterConsumerGroupsPath,
+  clusterConsumerGroupResetRelativePath,
+  ClusterGroupParam,
 } from 'lib/paths';
-import { ConsumerGroupID } from 'redux/interfaces/consumerGroup';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { useHistory, useParams } from 'react-router-dom';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
-import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import { groupBy } from 'lodash';
+import groupBy from 'lodash/groupBy';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
@@ -27,14 +23,14 @@ import {
   getAreConsumerGroupDetailsFulfilled,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import getTagColor from 'components/common/Tag/getTagColor';
+import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
 import ListItem from './ListItem';
 
 const Details: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { isReadOnly } = React.useContext(ClusterContext);
-  const { consumerGroupID, clusterName } =
-    useParams<{ consumerGroupID: ConsumerGroupID; clusterName: ClusterName }>();
+  const { consumerGroupID, clusterName } = useAppParams<ClusterGroupParam>();
   const dispatch = useAppDispatch();
   const consumerGroup = useAppSelector((state) =>
     selectById(state, consumerGroupID)
@@ -55,14 +51,12 @@ const Details: React.FC = () => {
   };
   React.useEffect(() => {
     if (isDeleted) {
-      history.push(clusterConsumerGroupsPath(clusterName));
+      navigate('../');
     }
-  }, [clusterName, history, isDeleted]);
+  }, [clusterName, navigate, isDeleted]);
 
   const onResetOffsets = () => {
-    history.push(
-      clusterConsumerGroupResetOffsetsPath(clusterName, consumerGroupID)
-    );
+    navigate(clusterConsumerGroupResetRelativePath);
   };
 
   if (!isFetched || !consumerGroup) {
@@ -76,7 +70,7 @@ const Details: React.FC = () => {
       <div>
         <PageHeading text={consumerGroupID}>
           {!isReadOnly && (
-            <Dropdown label={<VerticalElipsisIcon />} right>
+            <Dropdown>
               <DropdownItem onClick={onResetOffsets}>Reset offset</DropdownItem>
               <DropdownItem
                 onClick={() => setIsConfirmationModalVisible(true)}

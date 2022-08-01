@@ -1,61 +1,42 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorTasksPath } from 'lib/paths';
-import TasksContainer from 'components/Connect/Details/Tasks/TasksContainer';
-import Tasks, { TasksProps } from 'components/Connect/Details/Tasks/Tasks';
-import { tasks } from 'redux/reducers/connect/__test__/fixtures';
-import { Route } from 'react-router-dom';
+import Tasks from 'components/Connect/Details/Tasks/Tasks';
+import { tasks } from 'lib/fixtures/kafkaConnect';
 import { screen } from '@testing-library/dom';
+import { useConnectorTasks } from 'lib/hooks/api/kafkaConnect';
 
-jest.mock(
-  'components/Connect/Details/Tasks/ListItem/ListItemContainer',
-  () => 'tr'
-);
+jest.mock('lib/hooks/api/kafkaConnect', () => ({
+  useConnectorTasks: jest.fn(),
+  useRestartConnectorTask: jest.fn(),
+}));
+
+const path = clusterConnectConnectorTasksPath('local', 'ghp', '1');
 
 describe('Tasks', () => {
-  it('container renders view', () => {
-    render(<TasksContainer />);
+  const renderComponent = () =>
+    render(
+      <WithRoute path={clusterConnectConnectorTasksPath()}>
+        <Tasks />
+      </WithRoute>,
+      { initialEntries: [path] }
+    );
+
+  it('renders empty table', () => {
+    (useConnectorTasks as jest.Mock).mockImplementation(() => ({
+      data: [],
+    }));
+
+    renderComponent();
     expect(screen.getByRole('table')).toBeInTheDocument();
+    expect(screen.getByText('No tasks found')).toBeInTheDocument();
   });
 
-  describe('view', () => {
-    const pathname = clusterConnectConnectorTasksPath(
-      ':clusterName',
-      ':connectName',
-      ':connectorName'
-    );
-    const clusterName = 'my-cluster';
-    const connectName = 'my-connect';
-    const connectorName = 'my-connector';
-
-    const setupWrapper = (props: Partial<TasksProps> = {}) => (
-      <Route path={pathname}>
-        <Tasks areTasksFetching={false} tasks={tasks} {...props} />
-      </Route>
-    );
-
-    it('to be in the document when fetching tasks', () => {
-      render(setupWrapper({ areTasksFetching: true }), {
-        pathname: clusterConnectConnectorTasksPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
-      });
-      expect(screen.getByRole('progressbar')).toBeInTheDocument();
-      expect(screen.queryByRole('table')).not.toBeInTheDocument();
-    });
-
-    it('to be in the document when no tasks', () => {
-      render(setupWrapper({ tasks: [] }), {
-        pathname: clusterConnectConnectorTasksPath(
-          clusterName,
-          connectName,
-          connectorName
-        ),
-      });
-      expect(screen.getByRole('table')).toBeInTheDocument();
-      expect(screen.getByText('No tasks found')).toBeInTheDocument();
-    });
+  it('renders tasks table', () => {
+    (useConnectorTasks as jest.Mock).mockImplementation(() => ({
+      data: tasks,
+    }));
+    renderComponent();
+    expect(screen.getAllByRole('row').length).toEqual(tasks.length + 1);
   });
 });

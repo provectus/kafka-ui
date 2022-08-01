@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import { fetchTopicDetails } from 'redux/actions';
+import { fetchTopicDetails } from 'redux/reducers/topics/topicsSlice';
 import { resetTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { getIsTopicDetailsFetching } from 'redux/reducers/topics/selectors';
 

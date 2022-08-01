@@ -1,4 +1,5 @@
-import { Topic } from 'generated-sources';
+import { SortOrder, Topic, ConsumerGroup } from 'generated-sources';
+import { TopicsState, TopicWithDetailedInfo } from 'redux/interfaces';
 
 export const internalTopicPayload = {
   name: '__internal.topic',
@@ -46,3 +47,27 @@ export const topicsPayload: Topic[] = [
   internalTopicPayload,
   externalTopicPayload,
 ];
+
+export const getTopicStateFixtures = (
+  topics: TopicWithDetailedInfo[],
+  consumerGroups?: ConsumerGroup[]
+): TopicsState => {
+  const byName = topics.reduce((acc: { [i in string]: Topic }, curr) => {
+    const obj = { ...acc };
+    obj[curr.name] = curr;
+    return obj;
+  }, {} as { [i in string]: Topic });
+
+  const allNames = Object.keys(byName);
+
+  return {
+    byName,
+    allNames,
+    totalPages: 1,
+    search: '',
+    orderBy: null,
+    sortOrder: SortOrder.ASC,
+    consumerGroups:
+      consumerGroups && consumerGroups.length ? consumerGroups : [],
+  };
+};

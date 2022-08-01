@@ -1,31 +1,54 @@
 import React, { PropsWithChildren, ReactElement } from 'react';
-import { StaticRouter } from 'react-router-dom';
+import {
+  MemoryRouter,
+  MemoryRouterProps,
+  Route,
+  Routes,
+} from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { render, RenderOptions, screen } from '@testing-library/react';
+import { render, renderHook, RenderOptions } from '@testing-library/react';
 import { AnyAction, Store } from 'redux';
 import { RootState } from 'redux/interfaces';
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from 'redux/reducers';
-import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
+import {
+  QueryClient,
+  QueryClientProvider,
+  UseQueryResult,
+} from '@tanstack/react-query';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
   store?: Store<Partial<RootState>, AnyAction>;
-  pathname?: string;
+  initialEntries?: MemoryRouterProps['initialEntries'];
 }
 
-export function getByTextContent(textMatch: string | RegExp): HTMLElement {
-  return screen.getByText((content, node) => {
-    const hasText = (nod: Element) => nod.textContent === textMatch;
-    const nodeHasText = hasText(node as Element);
-    const childrenDontHaveText = Array.from(node?.children || []).every(
-      (child) => !hasText(child)
-    );
-    return nodeHasText && childrenDontHaveText;
-  });
+interface WithRouteProps {
+  children: React.ReactNode;
+  path: string;
 }
+
+export const WithRoute: React.FC<WithRouteProps> = ({ children, path }) => {
+  return (
+    <Routes>
+      <Route path={path} element={children} />
+    </Routes>
+  );
+};
+
+export const TestQueryClientProvider: React.FC<PropsWithChildren<unknown>> = ({
+  children,
+}) => {
+  // use new QueryClient instance for each test run to avoid issues with cache
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
 
 const customRender = (
   ui: ReactElement,
@@ -35,26 +58,31 @@ const customRender = (
       reducer: rootReducer,
       preloadedState,
     }),
-    pathname,
+    initialEntries,
     ...renderOptions
   }: CustomRenderOptions = {}
 ) => {
   // overrides @testing-library/react render.
   const AllTheProviders: React.FC<PropsWithChildren<unknown>> = ({
     children,
-  }) => {
-    return (
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <StaticRouter location={{ pathname }}>{children}</StaticRouter>
-        </Provider>
-      </ThemeProvider>
-    );
-  };
+  }) => (
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>
+        <TestQueryClientProvider>
+          <MemoryRouter initialEntries={initialEntries}>
+            {children}
+          </MemoryRouter>
+        </TestQueryClientProvider>
+      </Provider>
+    </ThemeProvider>
+  );
   return render(ui, { wrapper: AllTheProviders, ...renderOptions });
 };
 
-export { customRender as render };
+const customRenderHook = (hook: () => UseQueryResult<unknown, unknown>) =>
+  renderHook(hook, { wrapper: TestQueryClientProvider });
+
+export { customRender as render, customRenderHook as renderQueryHook };
 
 export class EventSourceMock {
   url: string;
@@ -75,12 +103,3 @@ export class EventSourceMock {
     this.close = jest.fn();
   }
 }
-
-export const getTypeAndPayload = (store: typeof mockStoreCreator) => {
-  return store.getActions().map(({ type, payload }) => ({ type, payload }));
-};
-
-export const getAlertActions = (mockStore: typeof mockStoreCreator) =>
-  getTypeAndPayload(mockStore).filter((currentAction: AnyAction) =>
-    currentAction.type.startsWith('alerts')
-  );

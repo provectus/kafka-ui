@@ -1,40 +1,50 @@
-import Editor from 'components/common/Editor/Editor';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router-dom';
-import { clusterTopicMessagesPath } from 'lib/paths';
+import { useNavigate } from 'react-router-dom';
+import {
+  clusterTopicMessagesRelativePath,
+  RouteParamsClusterTopic,
+} from 'lib/paths';
 import jsf from 'json-schema-faker';
-import { fetchTopicMessageSchema, messagesApiClient } from 'redux/actions';
+import {
+  fetchTopicMessageSchema,
+  fetchTopicDetails,
+} from 'redux/reducers/topics/topicsSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
-import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
-import { now } from 'lodash';
 import { Button } from 'components/common/Button/Button';
-import { ClusterName, TopicName } from 'redux/interfaces';
+import Editor from 'components/common/Editor/Editor';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 import {
   getMessageSchemaByTopicName,
   getPartitionsByTopicName,
   getTopicMessageSchemaFetched,
 } from 'redux/reducers/topics/selectors';
+import Select, { SelectOption } from 'components/common/Select/Select';
+import useAppParams from 'lib/hooks/useAppParams';
+import Heading from 'components/common/heading/Heading.styled';
+import { messagesApiClient } from 'lib/api';
+import { showAlert, showServerError } from 'lib/errorHandling';
 
 import validateMessage from './validateMessage';
 import * as S from './SendMessage.styled';
 
-interface RouterParams {
-  clusterName: ClusterName;
-  topicName: TopicName;
-}
+type FieldValues = Partial<{
+  key: string;
+  content: string;
+  headers: string;
+  partition: number | string;
+}>;
 
 const SendMessage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { clusterName, topicName } = useParams<RouterParams>();
-  const history = useHistory();
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+  const navigate = useNavigate();
 
   jsf.option('fillProperties', false);
   jsf.option('alwaysFakeOptionals', true);
 
   React.useEffect(() => {
-    dispatch(fetchTopicMessageSchema(clusterName, topicName));
+    dispatch(fetchTopicMessageSchema({ clusterName, topicName }));
   }, [clusterName, dispatch, topicName]);
 
   const messageSchema = useAppSelector((state) =>
@@ -44,6 +54,10 @@ const SendMessage: React.FC = () => {
     getPartitionsByTopicName(state, topicName)
   );
   const schemaIsFetched = useAppSelector(getTopicMessageSchemaFetched);
+  const selectPartitionOptions: Array<SelectOption> = partitions.map((p) => {
+    const value = String(p.partition);
+    return { value, label: value };
+  });
 
   const keyDefaultValue = React.useMemo(() => {
     if (!schemaIsFetched || !messageSchema) {
@@ -68,12 +82,11 @@ const SendMessage: React.FC = () => {
   }, [messageSchema, schemaIsFetched]);
 
   const {
-    register,
     handleSubmit,
     formState: { isSubmitting, isDirty },
     control,
     reset,
-  } = useForm({
+  } = useForm<FieldValues>({
     mode: 'onChange',
     defaultValues: {
       key: keyDefaultValue,
@@ -98,22 +111,24 @@ const SendMessage: React.FC = () => {
   }) => {
     if (messageSchema) {
       const { partition, key, content } = data;
-      const headers = data.headers ? JSON.parse(data.headers) : undefined;
       const errors = validateMessage(key, content, messageSchema);
+      if (data.headers) {
+        try {
+          JSON.parse(data.headers);
+        } catch (error) {
+          errors.push('Wrong header format');
+        }
+      }
       if (errors.length > 0) {
         const errorsHtml = errors.map((e) => `<li>${e}</li>`).join('');
-        dispatch(
-          alertAdded({
-            id: `${clusterName}-${topicName}-createTopicMessageError`,
-            type: 'error',
-            title: 'Validation Error',
-            message: `<ul>${errorsHtml}</ul>`,
-            createdAt: now(),
-          })
-        );
+        showAlert('error', {
+          id: `${clusterName}-${topicName}-createTopicMessageError`,
+          title: 'Validation Error',
+          message: `<ul>${errorsHtml}</ul>`,
+        });
         return;
       }
-
+      const headers = data.headers ? JSON.parse(data.headers) : undefined;
       try {
         await messagesApiClient.sendTopicMessages({
           clusterName,
@@ -122,21 +137,17 @@ const SendMessage: React.FC = () => {
             key: !key ? null : key,
             content: !content ? null : content,
             headers,
-            partition,
+            partition: !partition ? 0 : partition,
           },
         });
+        dispatch(fetchTopicDetails({ clusterName, topicName }));
       } catch (e) {
-        dispatch(
-          alertAdded({
-            id: `${clusterName}-${topicName}-sendTopicMessagesError`,
-            type: 'error',
-            title: `Error in sending a message to ${topicName}`,
-            message: e?.message,
-            createdAt: now(),
-          })
-        );
+        showServerError(e as Response, {
+          id: `${clusterName}-${topicName}-sendTopicMessagesError`,
+          message: `Error in sending a message to ${topicName}`,
+        });
       }
-      history.push(clusterTopicMessagesPath(clusterName, topicName));
+      navigate(`../${clusterTopicMessagesRelativePath}`);
     }
   };
 
@@ -146,31 +157,31 @@ const SendMessage: React.FC = () => {
   return (
     <S.Wrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="columns">
-          <div className="column is-one-third">
-            <label className="label" htmlFor="select">
-              Partition
-            </label>
-            <div className="select is-block">
-              <select
-                id="select"
-                defaultValue={partitions[0].partition}
-                disabled={isSubmitting}
-                {...register('partition')}
-              >
-                {partitions.map((partition) => (
-                  <option key={partition.partition} value={partition.partition}>
-                    {partition.partition}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
+        <S.Columns>
+          <S.Column>
+            <Heading level={3}>Partition</Heading>
+            <Controller
+              control={control}
+              name="partition"
+              defaultValue={selectPartitionOptions[0].value}
+              render={({ field: { name, onChange } }) => (
+                <Select
+                  id="selectPartitionOptions"
+                  aria-labelledby="selectPartitionOptions"
+                  name={name}
+                  onChange={onChange}
+                  minWidth="100px"
+                  options={selectPartitionOptions}
+                  value={selectPartitionOptions[0].value}
+                />
+              )}
+            />
+          </S.Column>
+        </S.Columns>
 
-        <div className="columns">
-          <div className="column is-one-half">
-            <label className="label">Key</label>
+        <S.Columns>
+          <S.Column>
+            <Heading level={3}>Key</Heading>
             <Controller
               control={control}
               name="key"
@@ -183,9 +194,9 @@ const SendMessage: React.FC = () => {
                 />
               )}
             />
-          </div>
-          <div className="column is-one-half">
-            <label className="label">Content</label>
+          </S.Column>
+          <S.Column>
+            <Heading level={3}>Content</Heading>
             <Controller
               control={control}
               name="content"
@@ -198,11 +209,11 @@ const SendMessage: React.FC = () => {
                 />
               )}
             />
-          </div>
-        </div>
-        <div className="columns">
-          <div className="column">
-            <label className="label">Headers</label>
+          </S.Column>
+        </S.Columns>
+        <S.Columns>
+          <S.Column>
+            <Heading level={3}>Headers</Heading>
             <Controller
               control={control}
               name="headers"
@@ -216,8 +227,8 @@ const SendMessage: React.FC = () => {
                 />
               )}
             />
-          </div>
-        </div>
+          </S.Column>
+        </S.Columns>
         <Button
           buttonSize="M"
           buttonType="primary"

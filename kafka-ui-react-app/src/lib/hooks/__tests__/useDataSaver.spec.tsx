@@ -9,7 +9,7 @@ describe('useDataSaver hook', () => {
 
   describe('Save as file', () => {
     beforeAll(() => {
-      jest.useFakeTimers('modern');
+      jest.useFakeTimers();
       jest.setSystemTime(new Date('Wed Mar 24 2021 03:19:56 GMT-0700'));
     });
 

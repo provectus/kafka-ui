@@ -1,12 +1,4 @@
-export interface LoaderState {
-  [key: string]: 'notFetched' | 'fetching' | 'fetched' | 'errorFetching';
-}
-
-export type AsyncRequestStatus =
-  | 'initial'
-  | 'pending'
-  | 'fulfilled'
-  | 'rejected';
+import { AsyncRequestStatus } from 'lib/constants';
 
 export interface LoaderSliceState {
   [key: string]: AsyncRequestStatus;

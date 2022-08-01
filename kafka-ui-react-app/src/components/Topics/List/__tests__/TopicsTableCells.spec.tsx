@@ -11,7 +11,7 @@ import { Topic } from 'generated-sources';
 import { topicsPayload } from 'redux/reducers/topics/__test__/fixtures';
 
 describe('TopicsTableCells Components', () => {
-  const mockTableState: TableState<Topic, string, never> = {
+  const mockTableState: TableState<Topic, string> = {
     data: topicsPayload,
     selectedIds: new Set([]),
     idSelector: jest.fn(),

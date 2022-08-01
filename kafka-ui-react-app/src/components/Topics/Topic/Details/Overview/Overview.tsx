@@ -1,20 +1,20 @@
 import React from 'react';
-import { Partition, Replica, Topic, TopicDetails } from 'generated-sources';
+import { Partition, Replica } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
-import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
+import { useAppSelector } from 'lib/hooks/redux';
+import { getTopicByName } from 'redux/reducers/topics/selectors';
 import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
+import { RouteParamsClusterTopic } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
+import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
-export interface Props extends Topic, TopicDetails {
-  clusterName: ClusterName;
-  topicName: TopicName;
+export interface Props {
   clearTopicMessages(params: {
     clusterName: ClusterName;
     topicName: TopicName;
@@ -22,28 +22,34 @@ export interface Props extends Topic, TopicDetails {
   }): void;
 }
 
-const Overview: React.FC<Props> = ({
-  partitions,
-  underReplicatedPartitions,
-  inSyncReplicas,
-  replicas,
-  partitionCount,
-  internal,
-  replicationFactor,
-  segmentSize,
-  segmentCount,
-  clusterName,
-  topicName,
-  cleanUpPolicy,
-  clearTopicMessages,
-}) => {
+const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+
+  const {
+    partitions,
+    underReplicatedPartitions,
+    inSyncReplicas,
+    replicas,
+    partitionCount,
+    internal,
+    replicationFactor,
+    segmentSize,
+    segmentCount,
+    cleanUpPolicy,
+  } = useAppSelector((state) => {
+    const res = getTopicByName(state, topicName);
+    return res || {};
+  });
+
   const { isReadOnly } = React.useContext(ClusterContext);
 
-  const messageCount = React.useMemo(() => {
-    return (partitions || []).reduce((memo, partition) => {
-      return memo + partition.offsetMax - partition.offsetMin;
-    }, 0);
-  }, [partitions]);
+  const messageCount = React.useMemo(
+    () =>
+      (partitions || []).reduce((memo, partition) => {
+        return memo + partition.offsetMax - partition.offsetMin;
+      }, 0),
+    [partitions]
+  );
 
   return (
     <>
@@ -127,7 +133,7 @@ const Overview: React.FC<Props> = ({
                 <td>{partition.offsetMax - partition.offsetMin}</td>
                 <td style={{ width: '5%' }}>
                   {!internal && !isReadOnly && cleanUpPolicy === 'DELETE' ? (
-                    <Dropdown label={<VerticalElipsisIcon />} right>
+                    <Dropdown>
                       <DropdownItem
                         onClick={() =>
                           clearTopicMessages({

@@ -1,9 +1,8 @@
 import React from 'react';
 import fetchMock from 'fetch-mock';
-import { Route } from 'react-router-dom';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConsumerGroupResetOffsetsPath } from 'lib/paths';
 import { consumerGroupPayload } from 'redux/reducers/consumerGroups/__test__/fixtures';
 import ResetOffsets from 'components/ConsumerGroups/Details/ResetOffsets/ResetOffsets';
@@ -13,19 +12,16 @@ const { groupId } = consumerGroupPayload;
 
 const renderComponent = () =>
   render(
-    <Route
-      path={clusterConsumerGroupResetOffsetsPath(
-        ':clusterName',
-        ':consumerGroupID'
-      )}
-    >
+    <WithRoute path={clusterConsumerGroupResetOffsetsPath()}>
       <ResetOffsets />
-    </Route>,
+    </WithRoute>,
     {
-      pathname: clusterConsumerGroupResetOffsetsPath(
-        clusterName,
-        consumerGroupPayload.groupId
-      ),
+      initialEntries: [
+        clusterConsumerGroupResetOffsetsPath(
+          clusterName,
+          consumerGroupPayload.groupId
+        ),
+      ],
     }
   );
 

@@ -15,7 +15,10 @@ describe('TopicMessages selectors', () => {
 
     it('Returns empty state', () => {
       expect(selectors.getKsqlDbTables(store.getState())).toEqual({
-        rows: [],
+        rows: {
+          streams: [],
+          tables: [],
+        },
         fetched: false,
         fetching: true,
         tablesCount: 0,
@@ -34,10 +37,10 @@ describe('TopicMessages selectors', () => {
 
     it('Returns tables and streams', () => {
       expect(selectors.getKsqlDbTables(store.getState())).toEqual({
-        rows: [
-          ...fetchKsqlDbTablesPayload.streams,
-          ...fetchKsqlDbTablesPayload.tables,
-        ],
+        rows: {
+          streams: [...fetchKsqlDbTablesPayload.streams],
+          tables: [...fetchKsqlDbTablesPayload.tables],
+        },
         fetched: true,
         fetching: false,
         tablesCount: 2,
