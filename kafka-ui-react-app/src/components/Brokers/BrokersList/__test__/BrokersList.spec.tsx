@@ -2,16 +2,13 @@ import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
 import { screen, waitFor } from '@testing-library/dom';
 import { clusterBrokersPath } from 'lib/paths';
-import fetchMock from 'fetch-mock';
 import { act } from '@testing-library/react';
 import BrokersList from 'components/Brokers/BrokersList/BrokersList';
-import {
-  brokersPayload,
-  clusterStatsPayload,
-} from 'components/Brokers/__test__/fixtures';
 import userEvent from '@testing-library/user-event';
 import { useBrokers } from 'lib/hooks/api/brokers';
 import { useClusterStats } from 'lib/hooks/api/clusters';
+import { brokersPayload } from 'lib/fixtures/brokers';
+import { clusterStatsPayload } from 'lib/fixtures/clusters';
 
 const mockedUsedNavigate = jest.fn();
 
@@ -28,8 +25,6 @@ jest.mock('lib/hooks/api/clusters', () => ({
 }));
 
 describe('BrokersList Component', () => {
-  afterEach(() => fetchMock.reset());
-
   const clusterName = 'local';
 
   const testInSyncReplicasCount = 798;

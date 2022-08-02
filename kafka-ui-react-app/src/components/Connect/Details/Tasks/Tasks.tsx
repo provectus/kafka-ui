@@ -7,11 +7,9 @@ import {
 } from 'lib/hooks/api/kafkaConnect';
 import useAppParams from 'lib/hooks/useAppParams';
 import { RouterParamsClusterConnectConnector } from 'lib/paths';
-import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import getTagColor from 'components/common/Tag/getTagColor';
 import { Tag } from 'components/common/Tag/Tag.styled';
+import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
 const Tasks: React.FC = () => {
   const routerProps = useAppParams<RouterParamsClusterConnectConnector>();
@@ -50,7 +48,7 @@ const Tasks: React.FC = () => {
             <td>{task.status.trace || 'null'}</td>
             <td style={{ width: '5%' }}>
               <div>
-                <Dropdown label={<VerticalElipsisIcon />} right>
+                <Dropdown>
                   <DropdownItem
                     onClick={() => restartTaskHandler(task.id?.task)}
                     danger

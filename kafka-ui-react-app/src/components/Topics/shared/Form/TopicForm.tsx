@@ -19,6 +19,7 @@ export interface Props {
   partitionCount?: number;
   replicationFactor?: number;
   inSyncReplicas?: number;
+  retentionBytes?: number;
   cleanUpPolicy?: string;
   isEditing?: boolean;
   isSubmitting: boolean;
@@ -40,6 +41,7 @@ const RetentionBytesOptions: Array<SelectOption> = [
 ];
 
 const TopicForm: React.FC<Props> = ({
+  retentionBytes,
   topicName,
   isEditing,
   isSubmitting,
@@ -55,8 +57,17 @@ const TopicForm: React.FC<Props> = ({
   } = useFormContext();
   const getCleanUpPolicy =
     CleanupPolicyOptions.find((option: SelectOption) => {
-      return option.value === cleanUpPolicy?.toLowerCase();
+      return (
+        option.value.toString().replace(/,/g, '_') ===
+        cleanUpPolicy?.toLowerCase()
+      );
     })?.value || CleanupPolicyOptions[0].value;
+
+  const getRetentionBytes =
+    RetentionBytesOptions.find((option: SelectOption) => {
+      return option.value === retentionBytes;
+    })?.value || RetentionBytesOptions[0].value;
+
   return (
     <StyledForm onSubmit={onSubmit} aria-label="topic form">
       <fieldset disabled={isSubmitting}>
@@ -180,7 +191,7 @@ const TopicForm: React.FC<Props> = ({
                   id="topicFormRetentionBytes"
                   aria-labelledby="topicFormRetentionBytesLabel"
                   name={name}
-                  value={RetentionBytesOptions[0].value}
+                  value={getRetentionBytes}
                   onChange={onChange}
                   minWidth="100%"
                   options={RetentionBytesOptions}

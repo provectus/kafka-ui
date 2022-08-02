@@ -2,7 +2,7 @@ import {
   translateLogdir,
   translateLogdirs,
 } from 'components/Brokers/utils/translateLogdirs';
-import { brokerLogDirsPayload } from 'components/Brokers/__test__/fixtures';
+import { brokerLogDirsPayload } from 'lib/fixtures/brokers';
 
 import {
   defaultTransformedBrokerLogDirsPayload,

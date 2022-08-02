@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useIsMutating } from 'react-query';
+import { useIsMutating } from '@tanstack/react-query';
 import { ConnectorState, ConnectorAction } from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
 import useModal from 'lib/hooks/useModal';
@@ -71,9 +71,6 @@ const Actions: React.FC = () => {
           onClick={pauseConnectorHandler}
           disabled={isMutating}
         >
-          <span>
-            <i className="fas fa-pause" />
-          </span>
           <span>Pause</span>
         </Button>
       )}
@@ -86,9 +83,6 @@ const Actions: React.FC = () => {
           onClick={resumeConnectorHandler}
           disabled={isMutating}
         >
-          <span>
-            <i className="fas fa-play" />
-          </span>
           <span>Resume</span>
         </Button>
       )}
@@ -100,9 +94,6 @@ const Actions: React.FC = () => {
         onClick={restartConnectorHandler}
         disabled={isMutating}
       >
-        <span>
-          <i className="fas fa-sync-alt" />
-        </span>
         <span>Restart Connector</span>
       </Button>
       <Button
@@ -112,9 +103,6 @@ const Actions: React.FC = () => {
         onClick={restartAllTasksHandler}
         disabled={isMutating}
       >
-        <span>
-          <i className="fas fa-sync-alt" />
-        </span>
         <span>Restart All Tasks</span>
       </Button>
       <Button
@@ -124,9 +112,6 @@ const Actions: React.FC = () => {
         onClick={restartFailedTasksHandler}
         disabled={isMutating}
       >
-        <span>
-          <i className="fas fa-sync-alt" />
-        </span>
         <span>Restart Failed Tasks</span>
       </Button>
       <Button
@@ -140,9 +125,6 @@ const Actions: React.FC = () => {
           routerProps.connectorName
         )}
       >
-        <span>
-          <i className="fas fa-pencil-alt" />
-        </span>
         <span>Edit Config</span>
       </Button>
 
@@ -153,9 +135,6 @@ const Actions: React.FC = () => {
         onClick={setDeleteConnectorConfirmationOpen}
         disabled={isMutating}
       >
-        <span>
-          <i className="far fa-trash-alt" />
-        </span>
         <span>Delete</span>
       </Button>
       <ConfirmationModal

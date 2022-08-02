@@ -1,7 +1,7 @@
 import React from 'react';
 import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
 import ClusterComponent from 'components/Cluster/Cluster';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterBrokersPath,
@@ -14,9 +14,8 @@ import {
   clusterTopicsPath,
 } from 'lib/paths';
 import { act } from 'react-dom/test-utils';
-import fetchMock from 'fetch-mock';
-
-import { onlineClusterPayload } from './fixtures';
+import { useClusters } from 'lib/hooks/api/clusters';
+import { onlineClusterPayload } from 'lib/fixtures/clusters';
 
 const CLusterCompText = {
   Topics: 'Topics',
@@ -46,11 +45,15 @@ jest.mock('components/KsqlDb/KsqlDb', () => () => (
   <div>{CLusterCompText.KsqlDb}</div>
 ));
 
-describe('Cluster', () => {
-  afterEach(() => fetchMock.restore());
+jest.mock('lib/hooks/api/clusters', () => ({
+  useClusters: jest.fn(),
+}));
 
+describe('Cluster', () => {
   const renderComponent = async (pathname: string, payload: Cluster[] = []) => {
-    const mock = fetchMock.get('/api/clusters', payload);
+    (useClusters as jest.Mock).mockImplementation(() => ({
+      data: payload,
+    }));
     await act(() => {
       render(
         <WithRoute path={`${clusterPath()}/*`}>
@@ -59,7 +62,6 @@ describe('Cluster', () => {
         { initialEntries: [pathname] }
       );
     });
-    return waitFor(() => expect(mock.called()).toBeTruthy());
   };
 
   it('renders Brokers', async () => {

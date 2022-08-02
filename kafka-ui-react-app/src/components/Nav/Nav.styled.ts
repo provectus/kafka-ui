@@ -9,11 +9,6 @@ export const List = styled.ul.attrs({ role: 'menu' })`
   }
 `;
 
-export const Divider = styled.hr`
-  margin: 0;
-  height: 1px;
-`;
-
 export const Link = styled(NavLink)(
   ({ theme }) => css`
     width: 100%;

@@ -1,5 +1,5 @@
 import { brokersApiClient as api } from 'lib/api';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ClusterName } from 'redux/interfaces';
 
 export function useBrokers(clusterName: ClusterName) {
@@ -17,8 +17,7 @@ export function useBrokerMetrics(clusterName: ClusterName, brokerId: number) {
       api.getBrokersMetrics({
         clusterName,
         id: brokerId,
-      }),
-    { refetchInterval: 5000 }
+      })
   );
 }
 
@@ -29,7 +28,6 @@ export function useBrokerLogDirs(clusterName: ClusterName, brokerId: number) {
       api.getAllBrokersLogdirs({
         clusterName,
         broker: [brokerId],
-      }),
-    { refetchInterval: 5000 }
+      })
   );
 }

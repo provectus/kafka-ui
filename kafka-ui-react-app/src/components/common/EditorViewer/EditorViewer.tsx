@@ -4,7 +4,7 @@ import { SchemaType } from 'generated-sources';
 
 import * as S from './EditorViewer.styled';
 
-export interface FullMessageProps {
+export interface EditorViewerProps {
   data: string;
   schemaType?: string;
   maxLines?: number;
@@ -16,7 +16,7 @@ const getSchemaValue = (data: string, schemaType?: string) => {
   }
   return data;
 };
-const EditorViewer: React.FC<FullMessageProps> = ({
+const EditorViewer: React.FC<EditorViewerProps> = ({
   data,
   schemaType,
   maxLines,

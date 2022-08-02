@@ -44,7 +44,9 @@ export const Sidebar = styled.div<{ $visible: boolean }>(
     background: ${theme.menu.backgroundColor.normal};
     @media screen and (max-width: 1023px) {
       ${$visible &&
-      `transform: translate3d(${theme.layout.navBarWidth}, 0, 0)`};
+      css`
+        transform: translate3d(${theme.layout.navBarWidth}, 0, 0);
+      `};
       left: -${theme.layout.navBarWidth};
       z-index: 100;
     }
@@ -233,19 +235,6 @@ export const Hyperlink = styled(Link)(
     cursor: pointer;
   `
 );
-
-export const AlertsContainer = styled.div`
-  max-width: 40%;
-  width: 500px;
-  position: fixed;
-  bottom: 15px;
-  right: 15px;
-  z-index: 1000;
-
-  @media screen and (max-width: 1023px) {
-    max-width: initial;
-  }
-`;
 
 export const LogoutButton = styled(Button)(
   ({ theme }) => css`

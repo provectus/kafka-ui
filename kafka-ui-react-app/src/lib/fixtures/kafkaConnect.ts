@@ -104,7 +104,7 @@ export const tasks: Task[] = [
   {
     id: { connector: 'first', task: 4 },
     status: {
-      id: 3,
+      id: 4,
       state: ConnectorTaskStatus.PAUSED,
       workerId: 'kafka-connect0:8083',
     },

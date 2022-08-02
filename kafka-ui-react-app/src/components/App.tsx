@@ -7,20 +7,26 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/Cluster/Cluster';
 import Version from 'components/Version/Version';
-import Alerts from 'components/Alerts/Alerts';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { QueryClient, QueryClientProvider } from 'react-query';
-
-import * as S from './App.styled';
-import Logo from './common/Logo/Logo';
-import GitIcon from './common/Icons/GitIcon';
-import DiscordIcon from './common/Icons/DiscordIcon';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { showServerError } from 'lib/errorHandling';
+import { Toaster } from 'react-hot-toast';
+import GlobalCSS from 'components/global.css';
+import * as S from 'components/App.styled';
+import Logo from 'components/common/Logo/Logo';
+import GitIcon from 'components/common/Icons/GitIcon';
+import DiscordIcon from 'components/common/Icons/DiscordIcon';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       suspense: true,
+    },
+    mutations: {
+      onError(error) {
+        showServerError(error as Response);
+      },
     },
   },
 });
@@ -38,6 +44,7 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
+        <GlobalCSS />
         <S.Layout>
           <S.Navbar role="navigation" aria-label="Page Header">
             <S.NavbarBrand>
@@ -113,9 +120,7 @@ const App: React.FC = () => {
               />
             </Routes>
           </S.Container>
-          <S.AlertsContainer role="toolbar">
-            <Alerts />
-          </S.AlertsContainer>
+          <Toaster position="bottom-right" />
         </S.Layout>
       </ThemeProvider>
     </QueryClientProvider>
