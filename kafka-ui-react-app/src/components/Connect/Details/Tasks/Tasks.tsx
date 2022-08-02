@@ -11,6 +11,8 @@ import getTagColor from 'components/common/Tag/getTagColor';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
+import TraceCell from './TraceCell';
+
 const Tasks: React.FC = () => {
   const routerProps = useAppParams<RouterParamsClusterConnectConnector>();
   const { data: tasks } = useConnectorTasks(routerProps);
@@ -45,7 +47,9 @@ const Tasks: React.FC = () => {
             <td>
               <Tag color={getTagColor(task.status)}>{task.status.state}</Tag>
             </td>
-            <td>{task.status.trace || 'null'}</td>
+            <td>
+              <TraceCell stackTrace={task.status.trace || ''} />
+            </td>
             <td style={{ width: '5%' }}>
               <div>
                 <Dropdown>
