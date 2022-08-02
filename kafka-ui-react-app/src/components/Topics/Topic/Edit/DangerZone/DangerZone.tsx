@@ -146,6 +146,7 @@ const DangerZone: React.FC<Props> = ({
               </InputLabel>
               <Input
                 id="replicationFactor"
+                inputSize="M"
                 type="number"
                 placeholder="Replication Factor"
                 name="replicationFactor"

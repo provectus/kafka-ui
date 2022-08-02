@@ -274,7 +274,7 @@ export const updateTopicPartitionsCount = createAsyncThunk<
       });
       showSuccessAlert({
         id: `message-${topicName}-${clusterName}-${partitions}`,
-        message: 'Number of partitions successfully increased!',
+        message: 'Number of partitions successfully increased',
       });
       dispatch(fetchTopicDetails({ clusterName, topicName }));
       return undefined;
@@ -294,7 +294,7 @@ export const updateTopicReplicationFactor = createAsyncThunk<
   }
 >(
   'topic/updateTopicReplicationFactor',
-  async (payload, { rejectWithValue }) => {
+  async (payload, { rejectWithValue, dispatch }) => {
     try {
       const { clusterName, topicName, replicationFactor } = payload;
 
@@ -303,7 +303,11 @@ export const updateTopicReplicationFactor = createAsyncThunk<
         topicName,
         replicationFactorChange: { totalReplicationFactor: replicationFactor },
       });
-
+      showSuccessAlert({
+        id: `message-${topicName}-${clusterName}-replicationFactor`,
+        message: 'Replication Factor successfully updated',
+      });
+      dispatch(fetchTopicDetails({ clusterName, topicName }));
       return undefined;
     } catch (err) {
       showServerError(err as Response);

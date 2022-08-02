@@ -102,7 +102,7 @@ describe('Details component', () => {
       });
       expect(deleteConsumerGroupMock.called()).toBeTruthy();
 
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
       await waitFor(() => expect(mockNavigate).toHaveBeenLastCalledWith('../'));
     });
   });

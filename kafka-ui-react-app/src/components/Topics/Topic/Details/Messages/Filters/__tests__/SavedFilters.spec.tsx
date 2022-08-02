@@ -3,7 +3,12 @@ import SavedFilters, {
   Props,
 } from 'components/Topics/Topic/Details/Messages/Filters/SavedFilters';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
-import { screen, waitFor, within } from '@testing-library/react';
+import {
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+  within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 
@@ -158,7 +163,7 @@ describe('SavedFilter Component', () => {
         userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
       );
       expect(deleteMock).toHaveBeenCalledTimes(1);
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
     });
   });
 });
