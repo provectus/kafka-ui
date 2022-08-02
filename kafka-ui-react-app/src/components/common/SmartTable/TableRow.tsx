@@ -5,17 +5,17 @@ import { Td } from 'components/common/table/TableHeaderCell/TableHeaderCell.styl
 
 import { isColumnElement, SelectCell, TableCellProps } from './TableColumn';
 
-interface TableRowProps<T, TId extends IdType = never, OT = never> {
+interface TableRowProps<T, TId extends IdType = never> {
   index: number;
   id?: TId;
   hoverable?: boolean;
-  tableState: TableState<T, TId, OT>;
+  tableState: TableState<T, TId>;
   dataItem: T;
   selectable: boolean;
   onSelectChange?: (row: T, checked: boolean) => void;
 }
 
-export const TableRow = <T, TId extends IdType, OT = never>({
+export const TableRow = <T, TId extends IdType>({
   children,
   hoverable = false,
   id,
@@ -24,23 +24,20 @@ export const TableRow = <T, TId extends IdType, OT = never>({
   selectable,
   tableState,
   onSelectChange,
-}: React.PropsWithChildren<TableRowProps<T, TId, OT>>): React.ReactElement => {
+}: React.PropsWithChildren<TableRowProps<T, TId>>): React.ReactElement => {
   const [hovered, setHovered] = React.useState(false);
 
-  const handleMouseEnter = React.useCallback(() => {
+  const handleMouseEnter = () => {
     setHovered(true);
-  }, []);
+  };
 
-  const handleMouseLeave = React.useCallback(() => {
+  const handleMouseLeave = () => {
     setHovered(false);
-  }, []);
+  };
 
-  const handleSelectChange = React.useCallback(
-    (checked: boolean) => {
-      onSelectChange?.(dataItem, checked);
-    },
-    [dataItem, onSelectChange]
-  );
+  const handleSelectChange = (checked: boolean) => {
+    onSelectChange?.(dataItem, checked);
+  };
 
   return (
     <tr
@@ -62,23 +59,26 @@ export const TableRow = <T, TId extends IdType, OT = never>({
         if (!isColumnElement<T, TId>(child)) {
           return child;
         }
-        const { cell, field, maxWidth, className } = child.props;
+        const { cell, field, maxWidth, customTd } = child.props;
 
-        const Cell = cell as React.FC<TableCellProps<T, TId, OT>> | undefined;
+        const Cell = cell as React.FC<TableCellProps<T, TId>> | undefined;
+        const TdComponent = customTd || Td;
 
-        return Cell ? (
-          <Td className={className} maxWidth={maxWidth}>
-            <Cell
-              tableState={tableState}
-              hovered={hovered}
-              rowIndex={index}
-              dataItem={dataItem}
-            />
-          </Td>
+        const content = Cell ? (
+          <Cell
+            tableState={tableState}
+            hovered={hovered}
+            rowIndex={index}
+            dataItem={dataItem}
+          />
         ) : (
-          <Td className={className} maxWidth={maxWidth}>
-            {field && propertyLookup(field, dataItem)}
-          </Td>
+          field && propertyLookup(field, dataItem)
+        );
+
+        return (
+          <TdComponent maxWidth={maxWidth}>
+            {content as React.ReactNode}
+          </TdComponent>
         );
       })}
     </tr>

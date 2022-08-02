@@ -8,7 +8,8 @@
 [![Chat with us](https://img.shields.io/discord/897805035122077716)](https://discord.gg/4DWzD7pGE5)
 
 ### DISCLAIMER
-<em>UI for Apache Kafka is a free, open-source tool that is curated by Provectus, and is built and supported by the open-source community. The tool will remain free and open-source in the future. Provectus does not plan to add any paid features or subscription plans so that everyone can have a better experience observing their data. UI for Apache Kafka is a part of the [Provectus NextGen Data Platform](https://provectus.com/nextgen-data-platform/). Check it out for more details! </em> 
+<em>UI for Apache Kafka is a free, open-source tool that is curated by Provectus, and is built and supported by the open-source community. It will remain free and open-source in the future. Provectus does not plan to add any paid features or subscription plans so that everyone can have a better experience observing their data. UI for Apache Kafka is a part of the [Provectus NextGen Data Platform](https://provectus.com/nextgen-data-platform/) — Check it out! Also, learn more about [Professional Services for Apache Kafka](https://provectus.com/professional-services-apache-kafka/), to start handling your Kafka clusters and streaming apps with the help of Provectus Kafka experts. </em> 
+
 
 #### UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters. 
 
@@ -73,12 +74,7 @@ We have plenty of [docker-compose files](documentation/compose/DOCKER_COMPOSE.md
 - [SSO configuration](documentation/guides/SSO.md)
 - [AWS IAM configuration](documentation/guides/AWS_IAM.md)
 - [Docker-compose files](documentation/compose/DOCKER_COMPOSE.md)
-- [Connection to a secure broker]()
-
-## Connecting to a Secure Broker
-
-The app supports TLS (SSL) and SASL connections for [encryption and authentication](http://kafka.apache.org/090/documentation.html#security). <br/>
-An example is located [here](documentation/compose/kafka-ssl.yml).
+- [Connection to a secure broker](documentation/compose/SECURE_BROKER.md)
 
 ### Configuration File
 Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
@@ -105,7 +101,7 @@ kafka:
 * `schemaRegistryAuth.username`: schemaRegistry's basic authentication username
 * `schemaRegistryAuth.password`: schemaRegistry's basic authentication password
 * `schemaNameTemplate`: how keys are saved to schemaRegistry
-* `jmxPort`: open jmxPosrts of a broker
+* `jmxPort`: open JMX port of a broker
 * `readOnly`: enable read only mode
 
 Configure as many clusters as you need by adding their configs below separated with `-`.
@@ -129,6 +125,10 @@ Further configuration with environment variables - [see environment variables](#
 
 If you prefer to use `docker-compose` please refer to the [documentation](docker-compose.md).
 
+### Helm chart
+Helm chart could be found under [charts/kafka-ui](https://github.com/provectus/kafka-ui/tree/master/charts/kafka-ui) directory
+
+Quick-start instruction [here](helm_chart.md)
 
 ## Building With Docker
 
@@ -163,12 +163,14 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_NAME` | Cluster name
 |`KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS` 	|Address where to connect 
 |`KAFKA_CLUSTERS_0_KSQLDBSERVER` 	| KSQL DB server address 
+|`KAFKA_CLUSTERS_0_KSQLDBSERVERAUTH_USERNAME` 	| KSQL DB server's basic authentication username 
+|`KAFKA_CLUSTERS_0_KSQLDBSERVERAUTH_PASSWORD` 	| KSQL DB server's basic authentication password 
 |`KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL` 	|Security protocol to connect to the brokers. For SSL connection use "SSL", for plaintext connection don't set this environment variable
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRY`   	|SchemaRegistry's address
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_USERNAME`   	|SchemaRegistry's basic authentication username
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_PASSWORD`   	|SchemaRegistry's basic authentication password
 |`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE` |How keys are saved to schemaRegistry
-|`KAFKA_CLUSTERS_0_JMXPORT`        	|Open jmxPosrts of a broker
+|`KAFKA_CLUSTERS_0_JMXPORT`        	|Open JMX port of a broker
 |`KAFKA_CLUSTERS_0_READONLY`        	|Enable read-only mode. Default: false
 |`KAFKA_CLUSTERS_0_DISABLELOGDIRSCOLLECTION`        	|Disable collecting segments information. It should be true for confluent cloud. Default: false
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME` |Given name for the Kafka Connect cluster

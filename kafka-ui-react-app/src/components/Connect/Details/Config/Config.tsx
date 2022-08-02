@@ -1,61 +1,23 @@
 import React from 'react';
-import { useParams } from 'react-router';
-import {
-  ClusterName,
-  ConnectName,
-  ConnectorConfig,
-  ConnectorName,
-} from 'redux/interfaces';
-import PageLoader from 'components/common/PageLoader/PageLoader';
+import useAppParams from 'lib/hooks/useAppParams';
 import Editor from 'components/common/Editor/Editor';
-import styled from 'styled-components';
+import { RouterParamsClusterConnectConnector } from 'lib/paths';
+import { useConnectorConfig } from 'lib/hooks/api/kafkaConnect';
 
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
-
-export interface ConfigProps {
-  fetchConfig(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName,
-    silent?: boolean
-  ): void;
-  isConfigFetching: boolean;
-  config: ConnectorConfig | null;
-}
-
-const ConnectConfigWrapper = styled.div`
-  margin: 16px;
-`;
-
-const Config: React.FC<ConfigProps> = ({
-  fetchConfig,
-  isConfigFetching,
-  config,
-}) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
-
-  React.useEffect(() => {
-    fetchConfig(clusterName, connectName, connectorName, true);
-  }, [fetchConfig, clusterName, connectName, connectorName]);
-
-  if (isConfigFetching) {
-    return <PageLoader />;
-  }
+const Config: React.FC = () => {
+  const routerProps = useAppParams<RouterParamsClusterConnectConnector>();
+  const { data: config } = useConnectorConfig(routerProps);
 
   if (!config) return null;
+
   return (
-    <ConnectConfigWrapper>
-      <Editor
-        readOnly
-        value={JSON.stringify(config, null, '\t')}
-        highlightActiveLine={false}
-        isFixedHeight
-      />
-    </ConnectConfigWrapper>
+    <Editor
+      readOnly
+      value={JSON.stringify(config, null, '\t')}
+      highlightActiveLine={false}
+      isFixedHeight
+      style={{ margin: '16px' }}
+    />
   );
 };
 

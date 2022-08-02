@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 import TimeToRetainBtn, {
@@ -14,7 +14,7 @@ describe('TimeToRetainBtn', () => {
     text: 'defaultPropsText',
     value: 0,
   };
-  const Wrapper: React.FC = ({ children }) => {
+  const Wrapper: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
     const methods = useForm();
     return <FormProvider {...methods}>{children}</FormProvider>;
   };
@@ -42,21 +42,17 @@ describe('TimeToRetainBtn', () => {
     it('should test the non active state of the button and its styling', () => {
       const buttonElement = screen.getByRole('button');
       expect(buttonElement).toHaveStyle(
-        `background-color:${theme.button.primary.backgroundColor.normal}`
+        `background-color:${theme.button.secondary.backgroundColor.normal}`
       );
-      expect(buttonElement).toHaveStyle(
-        `border:1px solid ${theme.button.primary.color}`
-      );
+      expect(buttonElement).toHaveStyle(`border:none`);
     });
     it('should test the non active state with click becoming active', () => {
       const buttonElement = screen.getByRole('button');
       userEvent.click(buttonElement);
       expect(buttonElement).toHaveStyle(
-        `background-color:${theme.button.primary.backgroundColor.active}`
+        `background-color:${theme.button.secondary.invertedColors.normal}`
       );
-      expect(buttonElement).toHaveStyle(
-        `border:1px solid ${theme.button.border.active}`
-      );
+      expect(buttonElement).toHaveStyle(`border:none`);
     });
   });
 
@@ -65,11 +61,9 @@ describe('TimeToRetainBtn', () => {
       SetUpComponent({ value: 604800000 });
       const buttonElement = screen.getByRole('button');
       expect(buttonElement).toHaveStyle(
-        `background-color:${theme.button.primary.backgroundColor.active}`
+        `background-color:${theme.button.secondary.invertedColors.normal}`
       );
-      expect(buttonElement).toHaveStyle(
-        `border:1px solid ${theme.button.border.active}`
-      );
+      expect(buttonElement).toHaveStyle(`border:none`);
     });
   });
 });

@@ -1,75 +1,42 @@
 import React from 'react';
-import { create } from 'react-test-renderer';
-import { mount } from 'enzyme';
-import { containerRendersView, TestRouterWrapper } from 'lib/testHelpers';
+import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorTasksPath } from 'lib/paths';
-import TasksContainer from 'components/Connect/Details/Tasks/TasksContainer';
-import Tasks, { TasksProps } from 'components/Connect/Details/Tasks/Tasks';
-import { tasks } from 'redux/reducers/connect/__test__/fixtures';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import Tasks from 'components/Connect/Details/Tasks/Tasks';
+import { tasks } from 'lib/fixtures/kafkaConnect';
+import { screen } from '@testing-library/dom';
+import { useConnectorTasks } from 'lib/hooks/api/kafkaConnect';
 
-jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
+jest.mock('lib/hooks/api/kafkaConnect', () => ({
+  useConnectorTasks: jest.fn(),
+  useRestartConnectorTask: jest.fn(),
+}));
 
-jest.mock(
-  'components/Connect/Details/Tasks/ListItem/ListItemContainer',
-  () => 'tr' // need to mock as `tr` to let dom validtion pass
-);
+const path = clusterConnectConnectorTasksPath('local', 'ghp', '1');
 
 describe('Tasks', () => {
-  containerRendersView(<TasksContainer />, Tasks);
-
-  describe('view', () => {
-    const pathname = clusterConnectConnectorTasksPath(
-      ':clusterName',
-      ':connectName',
-      ':connectorName'
-    );
-    const clusterName = 'my-cluster';
-    const connectName = 'my-connect';
-    const connectorName = 'my-connector';
-
-    const setupWrapper = (props: Partial<TasksProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <TestRouterWrapper
-          pathname={pathname}
-          urlParams={{ clusterName, connectName, connectorName }}
-        >
-          <Tasks
-            fetchTasks={jest.fn()}
-            areTasksFetching={false}
-            tasks={tasks}
-            {...props}
-          />
-        </TestRouterWrapper>
-      </ThemeProvider>
+  const renderComponent = () =>
+    render(
+      <WithRoute path={clusterConnectConnectorTasksPath()}>
+        <Tasks />
+      </WithRoute>,
+      { initialEntries: [path] }
     );
 
-    it('matches snapshot', () => {
-      const wrapper = create(setupWrapper());
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
+  it('renders empty table', () => {
+    (useConnectorTasks as jest.Mock).mockImplementation(() => ({
+      data: [],
+    }));
 
-    it('matches snapshot when fetching tasks', () => {
-      const wrapper = create(setupWrapper({ areTasksFetching: true }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
+    renderComponent();
+    expect(screen.getByRole('table')).toBeInTheDocument();
+    expect(screen.getByText('No tasks found')).toBeInTheDocument();
+  });
 
-    it('matches snapshot when no tasks', () => {
-      const wrapper = create(setupWrapper({ tasks: [] }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
-
-    it('fetches tasks on mount', () => {
-      const fetchTasks = jest.fn();
-      mount(setupWrapper({ fetchTasks }));
-      expect(fetchTasks).toHaveBeenCalledTimes(1);
-      expect(fetchTasks).toHaveBeenCalledWith(
-        clusterName,
-        connectName,
-        connectorName,
-        true
-      );
-    });
+  it('renders tasks table', () => {
+    (useConnectorTasks as jest.Mock).mockImplementation(() => ({
+      data: tasks,
+    }));
+    renderComponent();
+    expect(screen.getAllByRole('row').length).toEqual(tasks.length + 1);
   });
 });

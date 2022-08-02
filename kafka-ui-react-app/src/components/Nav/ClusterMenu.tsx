@@ -6,7 +6,6 @@ import {
   clusterConsumerGroupsPath,
   clusterSchemasPath,
   clusterConnectorsPath,
-  clusterConnectsPath,
   clusterKsqlDbPath,
 } from 'lib/paths';
 
@@ -23,14 +22,12 @@ const ClusterMenu: React.FC<Props> = ({
   cluster: { name, status, features },
   singleMode,
 }) => {
-  const hasFeatureConfigured = React.useCallback(
-    (key) => features?.includes(key),
-    [features]
-  );
+  const hasFeatureConfigured = (key: ClusterFeaturesEnum) =>
+    features?.includes(key);
   const [isOpen, setIsOpen] = React.useState(!!singleMode);
   return (
     <S.List>
-      <S.Divider />
+      <hr />
       <ClusterTab
         title={name}
         status={status}
@@ -56,10 +53,6 @@ const ClusterMenu: React.FC<Props> = ({
             <ClusterMenuItem
               to={clusterConnectorsPath(name)}
               title="Kafka Connect"
-              isActive={(_, location) =>
-                location.pathname.startsWith(clusterConnectsPath(name)) ||
-                location.pathname.startsWith(clusterConnectorsPath(name))
-              }
             />
           )}
           {hasFeatureConfigured(ClusterFeaturesEnum.KSQL_DB) && (

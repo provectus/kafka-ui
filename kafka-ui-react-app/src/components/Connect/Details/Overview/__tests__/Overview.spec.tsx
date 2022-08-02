@@ -1,38 +1,57 @@
 import React from 'react';
-import { create } from 'react-test-renderer';
-import { mount } from 'enzyme';
-import { containerRendersView } from 'lib/testHelpers';
-import OverviewContainer from 'components/Connect/Details/Overview/OverviewContainer';
-import Overview, {
-  OverviewProps,
-} from 'components/Connect/Details/Overview/Overview';
-import { connector } from 'redux/reducers/connect/__test__/fixtures';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import Overview from 'components/Connect/Details/Overview/Overview';
+import { connector, tasks } from 'lib/fixtures/kafkaConnect';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
+import { useConnector, useConnectorTasks } from 'lib/hooks/api/kafkaConnect';
+
+jest.mock('lib/hooks/api/kafkaConnect', () => ({
+  useConnector: jest.fn(),
+  useConnectorTasks: jest.fn(),
+}));
 
 describe('Overview', () => {
-  containerRendersView(<OverviewContainer />, Overview);
+  it('is empty when no connector', () => {
+    (useConnector as jest.Mock).mockImplementation(() => ({
+      data: undefined,
+    }));
+    (useConnectorTasks as jest.Mock).mockImplementation(() => ({
+      data: undefined,
+    }));
 
-  describe('view', () => {
-    const setupWrapper = (props: Partial<OverviewProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <Overview
-          connector={connector}
-          runningTasksCount={10}
-          failedTasksCount={2}
-          {...props}
-        />
-      </ThemeProvider>
-    );
+    const { container } = render(<Overview />);
+    expect(container).toBeEmptyDOMElement();
+  });
 
-    it('matches snapshot', () => {
-      const wrapper = create(setupWrapper());
-      expect(wrapper.toJSON()).toMatchSnapshot();
+  describe('when connector is loaded', () => {
+    beforeEach(() => {
+      (useConnector as jest.Mock).mockImplementation(() => ({
+        data: connector,
+      }));
+    });
+    beforeEach(() => {
+      (useConnectorTasks as jest.Mock).mockImplementation(() => ({
+        data: tasks,
+      }));
     });
 
-    it('is empty when no connector', () => {
-      const wrapper = mount(setupWrapper({ connector: null }));
-      expect(wrapper.html()).toEqual('');
+    it('renders metrics', () => {
+      render(<Overview />);
+
+      expect(screen.getByText('Worker')).toBeInTheDocument();
+      expect(
+        screen.getByText(connector.status.workerId as string)
+      ).toBeInTheDocument();
+
+      expect(screen.getByText('Type')).toBeInTheDocument();
+      expect(
+        screen.getByText(connector.config['connector.class'] as string)
+      ).toBeInTheDocument();
+
+      expect(screen.getByText('Tasks Running')).toBeInTheDocument();
+      expect(screen.getByText(2)).toBeInTheDocument();
+      expect(screen.getByText('Tasks Failed')).toBeInTheDocument();
+      expect(screen.getByText(1)).toBeInTheDocument();
     });
   });
 });

@@ -19,7 +19,7 @@ describe('Consumer Groups Table Cells', () => {
       id: 6598,
     },
   };
-  const mockTableState: TableState<ConsumerGroup, string, never> = {
+  const mockTableState: TableState<ConsumerGroup, string> = {
     data: [consumerGroup],
     selectedIds: new Set([]),
     idSelector: jest.fn(),
@@ -40,10 +40,7 @@ describe('Consumer Groups Table Cells', () => {
       );
       const linkElement = screen.getByRole('link');
       expect(linkElement).toBeInTheDocument();
-      expect(linkElement).toHaveAttribute(
-        'href',
-        `/consumer-groups/${consumerGroup.groupId}`
-      );
+      expect(linkElement).toHaveAttribute('href', `/${consumerGroup.groupId}`);
     });
   });
 

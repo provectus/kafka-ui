@@ -1,22 +1,22 @@
-import { render, EventSourceMock } from 'lib/testHelpers';
+import { render, EventSourceMock, WithRoute } from 'lib/testHelpers';
 import React from 'react';
 import Query, {
   getFormattedErrorFromTableData,
 } from 'components/KsqlDb/Query/Query';
-import { screen, waitFor, within } from '@testing-library/dom';
+import { screen } from '@testing-library/dom';
 import fetchMock from 'fetch-mock';
-import userEvent from '@testing-library/user-event';
-import { Route } from 'react-router-dom';
 import { clusterKsqlDbQueryPath } from 'lib/paths';
+import { act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 const clusterName = 'testLocal';
 const renderComponent = () =>
   render(
-    <Route path={clusterKsqlDbQueryPath(':clusterName')}>
+    <WithRoute path={clusterKsqlDbQueryPath()}>
       <Query />
-    </Route>,
+    </WithRoute>,
     {
-      pathname: clusterKsqlDbQueryPath(clusterName),
+      initialEntries: [clusterKsqlDbQueryPath(clusterName)],
     }
   );
 
@@ -25,9 +25,7 @@ describe('Query', () => {
     renderComponent();
 
     expect(screen.getByLabelText('KSQL')).toBeInTheDocument();
-    expect(
-      screen.getByLabelText('Stream properties (JSON format)')
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText('Stream properties:')).toBeInTheDocument();
   });
 
   afterEach(() => fetchMock.reset());
@@ -41,17 +39,13 @@ describe('Query', () => {
     Object.defineProperty(window, 'EventSource', {
       value: EventSourceMock,
     });
+    const inputs = screen.getAllByRole('textbox');
+    const textAreaElement = inputs[0] as HTMLTextAreaElement;
+    await act(() => {
+      userEvent.paste(textAreaElement, 'show tables;');
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
+    });
 
-    await waitFor(() =>
-      userEvent.paste(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        'show tables;'
-      )
-    );
-
-    await waitFor(() =>
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }))
-    );
     expect(mock.calls().length).toBe(1);
   });
 
@@ -65,59 +59,19 @@ describe('Query', () => {
     Object.defineProperty(window, 'EventSource', {
       value: EventSourceMock,
     });
-
-    await waitFor(() =>
-      userEvent.paste(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        'show tables;'
-      )
-    );
-
-    await waitFor(() =>
-      userEvent.paste(
-        within(
-          screen.getByLabelText('Stream properties (JSON format)')
-        ).getByRole('textbox'),
-        '{"some":"json"}'
-      )
-    );
-
-    await waitFor(() =>
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }))
-    );
-    expect(mock.calls().length).toBe(1);
-  });
-
-  it('fetch on execute with streamParams', async () => {
-    renderComponent();
-
-    const mock = fetchMock.postOnce(`/api/clusters/${clusterName}/ksql/v2`, {
-      pipeId: 'testPipeID',
+    await act(() => {
+      const inputs = screen.getAllByRole('textbox');
+      const textAreaElement = inputs[0] as HTMLTextAreaElement;
+      userEvent.paste(textAreaElement, 'show tables;');
+    });
+    await act(() => {
+      userEvent.paste(screen.getByLabelText('key'), 'key');
+      userEvent.paste(screen.getByLabelText('value'), 'value');
+    });
+    await act(() => {
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
     });
 
-    Object.defineProperty(window, 'EventSource', {
-      value: EventSourceMock,
-    });
-
-    await waitFor(() =>
-      userEvent.paste(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        'show tables;'
-      )
-    );
-
-    await waitFor(() =>
-      userEvent.paste(
-        within(
-          screen.getByLabelText('Stream properties (JSON format)')
-        ).getByRole('textbox'),
-        '{"some":"json"}'
-      )
-    );
-
-    await waitFor(() =>
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }))
-    );
     expect(mock.calls().length).toBe(1);
   });
 });

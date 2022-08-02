@@ -12,7 +12,7 @@ export const TitleCell: React.FC<
   return (
     <>
       {internal && <Tag color="gray">IN</Tag>}
-      <S.Link exact to={`topics/${name}`} $isInternal={internal}>
+      <S.Link to={name} $isInternal={internal}>
         {name}
       </S.Link>
     </>

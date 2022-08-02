@@ -1,40 +1,17 @@
 import { KsqlState } from 'redux/interfaces/ksqlDb';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { BASE_PARAMS } from 'lib/constants';
-import {
-  Configuration,
-  ExecuteKsqlRequest,
-  KsqlApi,
-  Table as KsqlTable,
-} from 'generated-sources';
+import { ExecuteKsqlRequest } from 'generated-sources';
 import { ClusterName } from 'redux/interfaces';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const ksqlDbApiClient = new KsqlApi(apiClientConf);
-
-export const transformKsqlResponse = (
-  rawTable: Required<KsqlTable>
-): Dictionary<string>[] =>
-  rawTable.rows.map((row) =>
-    row.reduce(
-      (res, acc, index) => ({
-        ...res,
-        [rawTable.headers[index]]: acc,
-      }),
-      {} as Dictionary<string>
-    )
-  );
+import { ksqlDbApiClient } from 'lib/api';
 
 const getTables = (clusterName: ClusterName) =>
-  ksqlDbApiClient.executeKsqlCommand({
+  ksqlDbApiClient.listTables({
     clusterName,
-    ksqlCommand: { ksql: 'SHOW TABLES;' },
   });
 
 const getStreams = (clusterName: ClusterName) =>
-  ksqlDbApiClient.executeKsqlCommand({
+  ksqlDbApiClient.listStreams({
     clusterName,
-    ksqlCommand: { ksql: 'SHOW STREAMS;' },
   });
 
 export const fetchKsqlDbTables = createAsyncThunk(
@@ -45,9 +22,18 @@ export const fetchKsqlDbTables = createAsyncThunk(
       getStreams(clusterName),
     ]);
 
+    const processedTables = tables.map((table) => ({
+      type: 'TABLE',
+      ...table,
+    }));
+    const processedStreams = streams.map((stream) => ({
+      type: 'STREAM',
+      ...stream,
+    }));
+
     return {
-      tables: tables.data ? transformKsqlResponse(tables.data) : [],
-      streams: streams.data ? transformKsqlResponse(streams.data) : [],
+      tables: processedTables,
+      streams: processedStreams,
     };
   }
 );
@@ -57,13 +43,13 @@ export const executeKsql = createAsyncThunk(
   (params: ExecuteKsqlRequest) => ksqlDbApiClient.executeKsql(params)
 );
 
-export const initialState: KsqlState = {
+const initialState: KsqlState = {
   streams: [],
   tables: [],
   executionResult: null,
 };
 
-export const ksqlDbSlice = createSlice({
+const ksqlDbSlice = createSlice({
   name: 'ksqlDb',
   initialState,
   reducers: {

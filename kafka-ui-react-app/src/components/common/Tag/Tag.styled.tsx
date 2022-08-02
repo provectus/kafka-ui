@@ -16,4 +16,5 @@ export const Tag = styled.p<Props>`
   padding-left: 0.75em;
   padding-right: 0.75em;
   text-align: center;
+  width: max-content;
 `;

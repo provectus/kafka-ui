@@ -10,12 +10,17 @@ import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import { StyledForm } from 'components/common/Form/Form.styled';
 
-import CustomParamsContainer from './CustomParams/CustomParamsContainer';
+import CustomParams from './CustomParams/CustomParams';
 import TimeToRetain from './TimeToRetain';
 import * as S from './TopicForm.styled';
 
 export interface Props {
   topicName?: TopicName;
+  partitionCount?: number;
+  replicationFactor?: number;
+  inSyncReplicas?: number;
+  retentionBytes?: number;
+  cleanUpPolicy?: string;
   isEditing?: boolean;
   isSubmitting: boolean;
   onSubmit: (e: React.BaseSyntheticEvent) => Promise<void>;
@@ -36,17 +41,35 @@ const RetentionBytesOptions: Array<SelectOption> = [
 ];
 
 const TopicForm: React.FC<Props> = ({
+  retentionBytes,
   topicName,
   isEditing,
   isSubmitting,
   onSubmit,
+  partitionCount,
+  replicationFactor,
+  inSyncReplicas,
+  cleanUpPolicy,
 }) => {
   const {
     control,
-    formState: { errors },
+    formState: { errors, isDirty, isValid },
   } = useFormContext();
+  const getCleanUpPolicy =
+    CleanupPolicyOptions.find((option: SelectOption) => {
+      return (
+        option.value.toString().replace(/,/g, '_') ===
+        cleanUpPolicy?.toLowerCase()
+      );
+    })?.value || CleanupPolicyOptions[0].value;
+
+  const getRetentionBytes =
+    RetentionBytesOptions.find((option: SelectOption) => {
+      return option.value === retentionBytes;
+    })?.value || RetentionBytesOptions[0].value;
+
   return (
-    <StyledForm onSubmit={onSubmit}>
+    <StyledForm onSubmit={onSubmit} aria-label="topic form">
       <fieldset disabled={isSubmitting}>
         <fieldset disabled={isEditing}>
           <S.Column>
@@ -75,7 +98,7 @@ const TopicForm: React.FC<Props> = ({
                   type="number"
                   placeholder="Number of partitions"
                   min="1"
-                  defaultValue="1"
+                  defaultValue={partitionCount}
                   name="partitions"
                 />
                 <FormError>
@@ -91,7 +114,7 @@ const TopicForm: React.FC<Props> = ({
                   type="number"
                   placeholder="Replication Factor"
                   min="1"
-                  defaultValue="1"
+                  defaultValue={replicationFactor}
                   name="replicationFactor"
                 />
                 <FormError>
@@ -112,11 +135,11 @@ const TopicForm: React.FC<Props> = ({
               type="number"
               placeholder="Min In Sync Replicas"
               min="1"
-              defaultValue="1"
-              name="minInsyncReplicas"
+              defaultValue={inSyncReplicas}
+              name="minInSyncReplicas"
             />
             <FormError>
-              <ErrorMessage errors={errors} name="minInsyncReplicas" />
+              <ErrorMessage errors={errors} name="minInSyncReplicas" />
             </FormError>
           </div>
           <div>
@@ -135,7 +158,7 @@ const TopicForm: React.FC<Props> = ({
                   id="topicFormCleanupPolicy"
                   aria-labelledby="topicFormCleanupPolicyLabel"
                   name={name}
-                  value={CleanupPolicyOptions[0].value}
+                  value={getCleanUpPolicy}
                   onChange={onChange}
                   minWidth="250px"
                   options={CleanupPolicyOptions}
@@ -168,7 +191,7 @@ const TopicForm: React.FC<Props> = ({
                   id="topicFormRetentionBytes"
                   aria-labelledby="topicFormRetentionBytesLabel"
                   name={name}
-                  value={RetentionBytesOptions[0].value}
+                  value={getRetentionBytes}
                   onChange={onChange}
                   minWidth="100%"
                   options={RetentionBytesOptions}
@@ -195,11 +218,20 @@ const TopicForm: React.FC<Props> = ({
         </S.Column>
 
         <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>
-        <CustomParamsContainer isSubmitting={isSubmitting} />
-
-        <Button type="submit" buttonType="primary" buttonSize="L">
-          Submit
-        </Button>
+        <CustomParams isSubmitting={isSubmitting} />
+        <S.ButtonWrapper>
+          <Button
+            type="submit"
+            buttonType="primary"
+            buttonSize="L"
+            disabled={!isValid || isSubmitting || !isDirty}
+          >
+            {isEditing ? 'Save' : 'Create topic'}
+          </Button>
+          <Button type="button" buttonType="primary" buttonSize="L">
+            Cancel
+          </Button>
+        </S.ButtonWrapper>
       </fieldset>
     </StyledForm>
   );

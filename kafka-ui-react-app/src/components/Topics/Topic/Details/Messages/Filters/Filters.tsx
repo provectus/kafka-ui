@@ -11,23 +11,30 @@ import {
   TopicMessageEventTypeEnum,
 } from 'generated-sources';
 import React, { useContext } from 'react';
-import { omitBy } from 'lodash';
-import { useHistory, useLocation } from 'react-router';
-import DatePicker from 'react-datepicker';
+import omitBy from 'lodash/omitBy';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { ClusterName, TopicName } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
-import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
+import Search from 'components/common/Search/Search';
 import FilterModal, {
   FilterEdit,
 } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
 import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 import useModal from 'lib/hooks/useModal';
+import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
+import { useAppSelector } from 'lib/hooks/redux';
+import { RouteParamsClusterTopic } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
+import PlusIcon from 'components/common/Icons/PlusIcon';
+import CloseIcon from 'components/common/Icons/CloseIcon';
+import ClockIcon from 'components/common/Icons/ClockIcon';
+import ArrowDownIcon from 'components/common/Icons/ArrowDownIcon';
+import FileIcon from 'components/common/Icons/FileIcon';
 
 import * as S from './Filters.styled';
 import {
@@ -40,10 +47,7 @@ import {
 type Query = Record<string, string | string[] | number>;
 
 export interface FiltersProps {
-  clusterName: ClusterName;
-  topicName: TopicName;
   phaseMessage?: string;
-  partitions: Partition[];
   meta: TopicMessageConsuming;
   isFetching: boolean;
   addMessage(content: { message: TopicMessage; prepend: boolean }): void;
@@ -58,7 +62,7 @@ export interface MessageFilters {
   code: string;
 }
 
-export interface ActiveMessageFilter {
+interface ActiveMessageFilter {
   index: number;
   name: string;
   code: string;
@@ -72,9 +76,6 @@ export const SeekTypeOptions = [
 ];
 
 const Filters: React.FC<FiltersProps> = ({
-  clusterName,
-  topicName,
-  partitions,
   phaseMessage,
   meta: { elapsedMs, bytesConsumed, messagesConsumed },
   isFetching,
@@ -84,8 +85,13 @@ const Filters: React.FC<FiltersProps> = ({
   updateMeta,
   setIsFetching,
 }) => {
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
+
+  const partitions = useAppSelector((state) =>
+    getPartitionsByTopicName(state, topicName)
+  );
 
   const { searchParams, seekDirection, isLive, changeSeekDirection } =
     useContext(TopicMessagesContext);
@@ -128,6 +134,8 @@ const Filters: React.FC<FiltersProps> = ({
       : MessageFilterType.STRING_CONTAINS
   );
   const [query, setQuery] = React.useState<string>(searchParams.get('q') || '');
+  const [isTailing, setIsTailing] = React.useState<boolean>(isLive);
+
   const isSeekTypeControlVisible = React.useMemo(
     () => selectedPartitions.length > 0,
     [selectedPartitions]
@@ -135,11 +143,13 @@ const Filters: React.FC<FiltersProps> = ({
 
   const isSubmitDisabled = React.useMemo(() => {
     if (isSeekTypeControlVisible) {
-      return currentSeekType === SeekType.TIMESTAMP && !timestamp;
+      return (
+        (currentSeekType === SeekType.TIMESTAMP && !timestamp) || isTailing
+      );
     }
 
     return false;
-  }, [isSeekTypeControlVisible, currentSeekType, timestamp]);
+  }, [isSeekTypeControlVisible, currentSeekType, timestamp, isTailing]);
 
   const partitionMap = React.useMemo(
     () =>
@@ -168,6 +178,7 @@ const Filters: React.FC<FiltersProps> = ({
 
   const handleClearAllFilters = () => {
     setCurrentSeekType(SeekType.OFFSET);
+    setOffset('');
     setQuery('');
     changeSeekDirection(SeekDirection.FORWARD);
     getSelectedPartitionsFromSeekToParam(searchParams, partitions);
@@ -175,58 +186,65 @@ const Filters: React.FC<FiltersProps> = ({
       partitions.map((partition: Partition) => {
         return {
           value: partition.partition,
-          label: String(partition.partition),
+          label: `Partition #${partition.partition.toString()}`,
         };
       })
     );
   };
 
-  const handleFiltersSubmit = React.useCallback(() => {
-    setAttempt(attempt + 1);
+  const handleFiltersSubmit = React.useCallback(
+    (currentOffset: string) => {
+      setAttempt(attempt + 1);
 
-    if (isSeekTypeControlVisible) {
-      props.seekType = isLive ? SeekType.LATEST : currentSeekType;
-      props.seekTo = selectedPartitions.map(({ value }) => {
-        let seekToOffset;
-
-        if (currentSeekType === SeekType.OFFSET) {
-          if (offset) {
-            seekToOffset = offset;
-          } else {
-            seekToOffset =
-              seekDirection === SeekDirection.FORWARD
-                ? partitionMap[value].offsetMin
-                : partitionMap[value].offsetMax;
-          }
-        } else if (timestamp) {
-          seekToOffset = timestamp.getTime();
+      if (isSeekTypeControlVisible) {
+        switch (seekDirection) {
+          case SeekDirection.FORWARD:
+            props.seekType = SeekType.BEGINNING;
+            break;
+          case SeekDirection.BACKWARD:
+          case SeekDirection.TAILING:
+            props.seekType = SeekType.LATEST;
+            break;
+          default:
+            props.seekType = currentSeekType;
         }
+        props.seekTo = selectedPartitions.map(({ value }) => {
+          const offsetProperty =
+            seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
+          const offsetBasedSeekTo =
+            currentOffset || partitionMap[value][offsetProperty];
+          const seekToOffset =
+            currentSeekType === SeekType.OFFSET
+              ? offsetBasedSeekTo
+              : timestamp?.getTime();
 
-        return `${value}::${seekToOffset || '0'}`;
+          return `${value}::${seekToOffset || '0'}`;
+        });
+      }
+
+      const newProps = omitBy(props, (v) => v === undefined || v === '');
+      const qs = Object.keys(newProps)
+        .map((key) => `${key}=${newProps[key]}`)
+        .join('&');
+
+      navigate({
+        search: `?${qs}`,
       });
-    }
-
-    const newProps = omitBy(props, (v) => v === undefined || v === '');
-    const qs = Object.keys(newProps)
-      .map((key) => `${key}=${newProps[key]}`)
-      .join('&');
-
-    history.push({
-      search: `?${qs}`,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    seekDirection,
-    queryType,
-    activeFilter,
-    currentSeekType,
-    timestamp,
-    query,
-  ]);
+    },
+    [
+      seekDirection,
+      queryType,
+      activeFilter,
+      currentSeekType,
+      timestamp,
+      query,
+      selectedPartitions,
+      navigate,
+    ]
+  );
 
   const handleSSECancel = () => {
     if (!source.current) return;
-
     setIsFetching(false);
     source.current.close();
   };
@@ -301,7 +319,6 @@ const Filters: React.FC<FiltersProps> = ({
       sse.onmessage = ({ data }) => {
         const { type, message, phase, consuming }: TopicMessageEvent =
           JSON.parse(data);
-
         switch (type) {
           case TopicMessageEventTypeEnum.MESSAGE:
             if (message) {
@@ -312,7 +329,9 @@ const Filters: React.FC<FiltersProps> = ({
             }
             break;
           case TopicMessageEventTypeEnum.PHASE:
-            if (phase?.name) updatePhase(phase.name);
+            if (phase?.name) {
+              updatePhase(phase.name);
+            }
             break;
           case TopicMessageEventTypeEnum.CONSUMING:
             if (consuming) updateMeta(consuming);
@@ -344,62 +363,75 @@ const Filters: React.FC<FiltersProps> = ({
   ]);
   React.useEffect(() => {
     if (location.search?.length === 0) {
-      handleFiltersSubmit();
+      handleFiltersSubmit(offset);
     }
-  }, [handleFiltersSubmit, location]);
+  }, [
+    seekDirection,
+    queryType,
+    activeFilter,
+    currentSeekType,
+    timestamp,
+    query,
+    location,
+  ]);
   React.useEffect(() => {
-    handleFiltersSubmit();
-  }, [handleFiltersSubmit, seekDirection]);
+    handleFiltersSubmit(offset);
+  }, [
+    seekDirection,
+    queryType,
+    activeFilter,
+    currentSeekType,
+    timestamp,
+    query,
+    seekDirection,
+  ]);
+
+  React.useEffect(() => {
+    setIsTailing(isLive);
+  }, [isLive]);
 
   return (
     <S.FiltersWrapper>
       <div>
         <S.FilterInputs>
-          <Input
-            inputSize="M"
-            id="searchText"
-            type="text"
-            leftIcon="fas fa-search"
+          <Search
             placeholder="Search"
             value={query}
-            onChange={({ target: { value } }) => setQuery(value)}
+            disabled={isTailing}
+            handleSearch={(value: string) => setQuery(value)}
           />
-          {isSeekTypeControlVisible && (
-            <S.SeekTypeSelectorWrapper>
-              <Select
-                id="selectSeekType"
-                onChange={(option) => setCurrentSeekType(option as SeekType)}
-                value={currentSeekType}
-                selectSize="M"
-                minWidth="100px"
-                options={SeekTypeOptions}
-                disabled={isLive}
+          <S.SeekTypeSelectorWrapper>
+            <S.SeekTypeSelect
+              id="selectSeekType"
+              onChange={(option) => setCurrentSeekType(option as SeekType)}
+              value={currentSeekType}
+              selectSize="M"
+              minWidth="100px"
+              options={SeekTypeOptions}
+              disabled={isTailing}
+            />
+            {currentSeekType === SeekType.OFFSET ? (
+              <S.OffsetSelector
+                id="offset"
+                type="text"
+                inputSize="M"
+                value={offset}
+                placeholder="Offset"
+                onChange={({ target: { value } }) => setOffset(value)}
+                disabled={isTailing}
               />
-              {currentSeekType === SeekType.OFFSET ? (
-                <Input
-                  id="offset"
-                  type="text"
-                  inputSize="M"
-                  value={offset}
-                  className="offset-selector"
-                  placeholder="Offset"
-                  onChange={({ target: { value } }) => setOffset(value)}
-                  disabled={isLive}
-                />
-              ) : (
-                <DatePicker
-                  selected={timestamp}
-                  onChange={(date: Date | null) => setTimestamp(date)}
-                  showTimeInput
-                  timeInputLabel="Time:"
-                  dateFormat="MMMM d, yyyy HH:mm"
-                  className="date-picker"
-                  placeholderText="Select timestamp"
-                  disabled={isLive}
-                />
-              )}
-            </S.SeekTypeSelectorWrapper>
-          )}
+            ) : (
+              <S.DatePickerInput
+                selected={timestamp}
+                onChange={(date: Date | null) => setTimestamp(date)}
+                showTimeInput
+                timeInputLabel="Time:"
+                dateFormat="MMMM d, yyyy HH:mm"
+                placeholderText="Select timestamp"
+                disabled={isTailing}
+              />
+            )}
+          </S.SeekTypeSelectorWrapper>
           <MultiSelect
             options={partitions.map((p) => ({
               label: `Partition #${p.partition.toString()}`,
@@ -409,6 +441,7 @@ const Filters: React.FC<FiltersProps> = ({
             value={selectedPartitions}
             onChange={setSelectedPartitions}
             labelledBy="Select partitions"
+            disabled={isTailing}
           />
           <S.ClearAll onClick={handleClearAllFilters}>Clear all</S.ClearAll>
           {isFetching ? (
@@ -428,7 +461,7 @@ const Filters: React.FC<FiltersProps> = ({
               buttonType="secondary"
               buttonSize="M"
               disabled={isSubmitDisabled}
-              onClick={handleFiltersSubmit}
+              onClick={() => handleFiltersSubmit(offset)}
               style={{ fontWeight: 500 }}
             >
               Submit
@@ -446,17 +479,14 @@ const Filters: React.FC<FiltersProps> = ({
       </div>
       <S.ActiveSmartFilterWrapper>
         <Button buttonType="primary" buttonSize="M" onClick={toggle}>
-          <i className="fas fa-plus fa-sm" />
+          <PlusIcon />
           Add Filters
         </Button>
         {activeFilter.name && (
           <S.ActiveSmartFilter data-testid="activeSmartFilter">
             {activeFilter.name}
             <S.DeleteSavedFilterIcon onClick={deleteActiveFilter}>
-              <i
-                className="fas fa-times"
-                data-testid="activeSmartFilterCloseIcon"
-              />
+              <CloseIcon />
             </S.DeleteSavedFilterIcon>
           </S.ActiveSmartFilter>
         )}
@@ -477,13 +507,13 @@ const Filters: React.FC<FiltersProps> = ({
             isFetching &&
             phaseMessage}
         </p>
-        <S.MessageLoading isLive={isLive}>
+        <S.MessageLoading isLive={isTailing}>
           <S.MessageLoadingSpinner isFetching={isFetching} />
           Loading messages.
           <S.StopLoading
             onClick={() => {
-              changeSeekDirection(SeekDirection.FORWARD);
-              setIsFetching(false);
+              handleSSECancel();
+              setIsTailing(false);
             }}
           >
             Stop loading
@@ -491,21 +521,21 @@ const Filters: React.FC<FiltersProps> = ({
         </S.MessageLoading>
         <S.Metric title="Elapsed Time">
           <S.MetricsIcon>
-            <i className="far fa-clock" />
+            <ClockIcon />
           </S.MetricsIcon>
           <span>{Math.max(elapsedMs || 0, 0)} ms</span>
         </S.Metric>
         <S.Metric title="Bytes Consumed">
           <S.MetricsIcon>
-            <i className="fas fa-arrow-down" />
+            <ArrowDownIcon />
           </S.MetricsIcon>
           <BytesFormatted value={bytesConsumed} />
         </S.Metric>
         <S.Metric title="Messages Consumed">
           <S.MetricsIcon>
-            <i className="far fa-file-alt" />
+            <FileIcon />
           </S.MetricsIcon>
-          <span>{messagesConsumed} messages</span>
+          <span>{messagesConsumed} messages consumed</span>
         </S.Metric>
       </S.FiltersMetrics>
     </S.FiltersWrapper>

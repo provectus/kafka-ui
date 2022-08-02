@@ -1,4 +1,7 @@
+import Input from 'components/common/Input/Input';
+import Select from 'components/common/Select/Select';
 import styled, { css } from 'styled-components';
+import DatePicker from 'react-datepicker';
 
 interface SavedFilterProps {
   selected: boolean;
@@ -43,34 +46,34 @@ export const SeekTypeSelectorWrapper = styled.div`
       border-radius: 4px 0 0 4px !important;
     }
   }
+`;
 
-  & .offset-selector {
-    border-radius: 0 4px 4px 0 !important;
-    border-left: none;
+export const OffsetSelector = styled(Input)`
+  border-radius: 0 4px 4px 0 !important;
+  border-left: none;
+`;
+
+export const DatePickerInput = styled(DatePicker)`
+  height: 32px;
+  border: 1px ${(props) => props.theme.select.borderColor.normal} solid;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  color: ${(props) => props.theme.select.color.normal};
+
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: 96% !important;
+  background-position-y: 55% !important;
+  appearance: none !important;
+
+  &:hover {
+    cursor: pointer;
   }
-
-  & .date-picker {
-    height: 32px;
-    border: 1px ${(props) => props.theme.select.borderColor.normal} solid;
-    border-left: none;
-    border-radius: 0 4px 4px 0;
-    font-size: 14px;
-    width: 100%;
-    padding-left: 12px;
-    color: ${(props) => props.theme.select.color.normal};
-
-    background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-    background-repeat: no-repeat !important;
-    background-position-x: 96% !important;
-    background-position-y: 55% !important;
-    appearance: none !important;
-
-    &:hover {
-      cursor: pointer;
-    }
-    &:focus {
-      outline: none;
-    }
+  &:focus {
+    outline: none;
   }
 `;
 
@@ -101,6 +104,29 @@ export const ClearAll = styled.span`
   cursor: pointer;
 `;
 
+export const ButtonContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+export const ListItem = styled.li`
+  font-size: 12px;
+  font-weight: 400;
+  margin: 4px 0;
+  line-height: 1.5;
+  color: ${({ theme }) => theme.table.td.color.normal};
+`;
+
+export const InfoParagraph = styled.div`
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  color: ${({ theme }) => theme.table.td.color.normal};
+`;
+
 export const MessageFilterModal = styled.div`
   height: auto;
   width: 560px;
@@ -114,11 +140,34 @@ export const MessageFilterModal = styled.div`
   z-index: 1;
 `;
 
+export const InfoModal = styled.div`
+  height: auto;
+  width: 560px;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.modal.backgroundColor};
+  position: absolute;
+  left: 25%;
+  border: 1px solid ${({ theme }) => theme.breadcrumb};
+  box-shadow: ${({ theme }) => theme.modal.shadow};
+  padding: 32px;
+  z-index: 1;
+`;
+
+export const QuestionIconContainer = styled.button`
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  border: none;
+`;
+
 export const FilterTitle = styled.h3`
   line-height: 32px;
   font-size: 20px;
   margin-bottom: 40px;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   &:after {
     content: '';
     width: calc(100% + 32px);
@@ -180,9 +229,10 @@ export const ActiveSmartFilterWrapper = styled.div`
   justify-content: flex-start;
 `;
 
-export const DeleteSavedFilter = styled.div`
-  color: ${({ theme }) => theme.breadcrumb};
+export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
+  margin-top: 2px;
   cursor: pointer;
+  color: ${({ theme }) => theme.icons.deleteIcon};
 `;
 
 export const FilterEdit = styled.div`
@@ -235,17 +285,17 @@ export const ActiveSmartFilter = styled.div`
   align-items: center;
   justify-content: space-between;
   color: ${({ theme }) => theme.input.label.color};
-  padding: 10px 2px;
+  padding: 16px 8px;
 `;
 
 export const DeleteSavedFilterIcon = styled.div`
   color: ${({ theme }) => theme.icons.closeIcon};
-  border-left: 1px solid ${({ theme }) => theme.savedFilterDivider.color};
   display: flex;
   align-items: center;
-  padding-left: 5px;
+  padding-left: 6px;
   height: 24px;
   cursor: pointer;
+  margin-left: 4px;
 `;
 
 export const ConfirmDeletionText = styled.h3`
@@ -255,7 +305,9 @@ export const ConfirmDeletionText = styled.h3`
   padding: 16px 0;
 `;
 
-export const MessageLoading = styled.div<MessageLoadingProps>`
+export const MessageLoading = styled.div.attrs({
+  role: 'contentLoader',
+})<MessageLoadingProps>`
   color: ${({ theme }) => theme.heading.h3.color};
   font-size: ${({ theme }) => theme.heading.h3.fontSize};
   display: ${(props) => (props.isLive ? 'flex' : 'none')};
@@ -311,4 +363,10 @@ export const SavedFiltersText = styled.div`
 export const BackToCustomText = styled.div`
   ${textStyle};
   cursor: pointer;
+`;
+
+export const SeekTypeSelect = styled(Select)`
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  user-select: none;
 `;

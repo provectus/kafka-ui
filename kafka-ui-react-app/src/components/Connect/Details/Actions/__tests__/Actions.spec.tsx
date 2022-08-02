@@ -1,24 +1,30 @@
 import React from 'react';
-import { create } from 'react-test-renderer';
-import { mount } from 'enzyme';
-import { act } from 'react-dom/test-utils';
-import { containerRendersView, TestRouterWrapper } from 'lib/testHelpers';
-import { clusterConnectConnectorPath, clusterConnectorsPath } from 'lib/paths';
-import ActionsContainer from 'components/Connect/Details/Actions/ActionsContainer';
-import Actions, {
-  ActionsProps,
-} from 'components/Connect/Details/Actions/Actions';
-import { ConnectorState } from 'generated-sources';
-import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { render, WithRoute } from 'lib/testHelpers';
+import { clusterConnectConnectorPath } from 'lib/paths';
+import Actions from 'components/Connect/Details/Actions/Actions';
+import { ConnectorAction, ConnectorState } from 'generated-sources';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import {
+  useConnector,
+  useUpdateConnectorState,
+} from 'lib/hooks/api/kafkaConnect';
+import { connector } from 'lib/fixtures/kafkaConnect';
+import set from 'lodash/set';
 
 const mockHistoryPush = jest.fn();
+const deleteConnector = jest.fn();
+const cancelMock = jest.fn();
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
+  useNavigate: () => mockHistoryPush,
+}));
+
+jest.mock('lib/hooks/api/kafkaConnect', () => ({
+  useConnector: jest.fn(),
+  useDeleteConnector: jest.fn(),
+  useUpdateConnectorState: jest.fn(),
 }));
 
 jest.mock(
@@ -26,170 +32,158 @@ jest.mock(
   () => 'mock-ConfirmationModal'
 );
 
+const expectActionButtonsExists = () => {
+  expect(screen.getByText('Restart Connector')).toBeInTheDocument();
+  expect(screen.getByText('Restart All Tasks')).toBeInTheDocument();
+  expect(screen.getByText('Restart Failed Tasks')).toBeInTheDocument();
+  expect(screen.getByText('Edit Config')).toBeInTheDocument();
+  expect(screen.getByText('Delete')).toBeInTheDocument();
+};
+
 describe('Actions', () => {
-  containerRendersView(<ActionsContainer />, Actions);
+  afterEach(() => {
+    mockHistoryPush.mockClear();
+    deleteConnector.mockClear();
+    cancelMock.mockClear();
+  });
 
   describe('view', () => {
-    const pathname = clusterConnectConnectorPath(
-      ':clusterName',
-      ':connectName',
-      ':connectorName'
-    );
-    const clusterName = 'my-cluster';
-    const connectName = 'my-connect';
-    const connectorName = 'my-connector';
-
-    const setupWrapper = (props: Partial<ActionsProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <TestRouterWrapper
-          pathname={pathname}
-          urlParams={{ clusterName, connectName, connectorName }}
-        >
-          <Actions
-            deleteConnector={jest.fn()}
-            isConnectorDeleting={false}
-            connectorStatus={ConnectorState.RUNNING}
-            restartConnector={jest.fn()}
-            restartTasks={jest.fn()}
-            pauseConnector={jest.fn()}
-            resumeConnector={jest.fn()}
-            isConnectorActionRunning={false}
-            {...props}
-          />
-        </TestRouterWrapper>
-      </ThemeProvider>
+    const route = clusterConnectConnectorPath();
+    const path = clusterConnectConnectorPath(
+      'myCluster',
+      'myConnect',
+      'myConnector'
     );
 
-    it('matches snapshot', () => {
-      const wrapper = create(setupWrapper());
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
-
-    it('matches snapshot when paused', () => {
-      const wrapper = create(
-        setupWrapper({ connectorStatus: ConnectorState.PAUSED })
+    const renderComponent = () =>
+      render(
+        <WithRoute path={route}>
+          <Actions />
+        </WithRoute>,
+        { initialEntries: [path] }
       );
-      expect(wrapper.toJSON()).toMatchSnapshot();
+
+    it('renders buttons when paused', () => {
+      (useConnector as jest.Mock).mockImplementation(() => ({
+        data: set({ ...connector }, 'status.state', ConnectorState.PAUSED),
+      }));
+      renderComponent();
+      expect(screen.getAllByRole('button').length).toEqual(6);
+      expect(screen.getByText('Resume')).toBeInTheDocument();
+      expect(screen.queryByText('Pause')).not.toBeInTheDocument();
+      expectActionButtonsExists();
     });
 
-    it('matches snapshot when failed', () => {
-      const wrapper = create(
-        setupWrapper({ connectorStatus: ConnectorState.FAILED })
-      );
-      expect(wrapper.toJSON()).toMatchSnapshot();
+    it('renders buttons when failed', () => {
+      (useConnector as jest.Mock).mockImplementation(() => ({
+        data: set({ ...connector }, 'status.state', ConnectorState.FAILED),
+      }));
+      renderComponent();
+      expect(screen.getAllByRole('button').length).toEqual(5);
+      expect(screen.queryByText('Resume')).not.toBeInTheDocument();
+      expect(screen.queryByText('Pause')).not.toBeInTheDocument();
+      expectActionButtonsExists();
     });
 
-    it('matches snapshot when unassigned', () => {
-      const wrapper = create(
-        setupWrapper({ connectorStatus: ConnectorState.UNASSIGNED })
-      );
-      expect(wrapper.toJSON()).toMatchSnapshot();
+    it('renders buttons when unassigned', () => {
+      (useConnector as jest.Mock).mockImplementation(() => ({
+        data: set({ ...connector }, 'status.state', ConnectorState.UNASSIGNED),
+      }));
+      renderComponent();
+      expect(screen.getAllByRole('button').length).toEqual(5);
+      expect(screen.queryByText('Resume')).not.toBeInTheDocument();
+      expect(screen.queryByText('Pause')).not.toBeInTheDocument();
+      expectActionButtonsExists();
     });
 
-    it('matches snapshot when deleting connector', () => {
-      const wrapper = create(setupWrapper({ isConnectorDeleting: true }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
+    it('renders buttons when running connector action', () => {
+      (useConnector as jest.Mock).mockImplementation(() => ({
+        data: set({ ...connector }, 'status.state', ConnectorState.RUNNING),
+      }));
+      renderComponent();
+      expect(screen.getAllByRole('button').length).toEqual(6);
+      expect(screen.queryByText('Resume')).not.toBeInTheDocument();
+      expect(screen.getByText('Pause')).toBeInTheDocument();
+      expectActionButtonsExists();
     });
 
-    it('matches snapshot when running connector action', () => {
-      const wrapper = create(setupWrapper({ isConnectorActionRunning: true }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
-
-    it('opens confirmation modal when delete button clicked and closes when cancel button clicked', () => {
-      const deleteConnector = jest.fn();
-      const wrapper = mount(setupWrapper({ deleteConnector }));
-      wrapper.find({ children: 'Delete' }).simulate('click');
-      let confirmationModalProps = wrapper
-        .find('mock-ConfirmationModal')
-        .props() as ConfirmationModalProps;
-      expect(confirmationModalProps.isOpen).toBeTruthy();
-      act(() => {
-        confirmationModalProps.onCancel();
+    describe('mutations', () => {
+      beforeEach(() => {
+        (useConnector as jest.Mock).mockImplementation(() => ({
+          data: set({ ...connector }, 'status.state', ConnectorState.RUNNING),
+        }));
       });
-      wrapper.update();
-      confirmationModalProps = wrapper
-        .find('mock-ConfirmationModal')
-        .props() as ConfirmationModalProps;
-      expect(confirmationModalProps.isOpen).toBeFalsy();
-    });
 
-    it('calls deleteConnector when confirm button clicked', () => {
-      const deleteConnector = jest.fn();
-      const wrapper = mount(setupWrapper({ deleteConnector }));
-      (
-        wrapper.find('mock-ConfirmationModal').props() as ConfirmationModalProps
-      ).onConfirm();
-      expect(deleteConnector).toHaveBeenCalledTimes(1);
-      expect(deleteConnector).toHaveBeenCalledWith(
-        clusterName,
-        connectName,
-        connectorName
-      );
-    });
-
-    it('redirects after delete', async () => {
-      const deleteConnector = jest
-        .fn()
-        .mockResolvedValueOnce({ message: 'success' });
-      const wrapper = mount(setupWrapper({ deleteConnector }));
-      await act(async () => {
-        (
-          wrapper
-            .find('mock-ConfirmationModal')
-            .props() as ConfirmationModalProps
-        ).onConfirm();
+      it('opens confirmation modal when delete button clicked', async () => {
+        renderComponent();
+        userEvent.click(screen.getByRole('button', { name: 'Delete' }));
+        expect(
+          screen.getByText(/Are you sure you want to remove/i)
+        ).toHaveAttribute('isopen', 'true');
       });
-      expect(mockHistoryPush).toHaveBeenCalledTimes(1);
-      expect(mockHistoryPush).toHaveBeenCalledWith(
-        clusterConnectorsPath(clusterName)
-      );
-    });
 
-    it('calls restartConnector when restart button clicked', () => {
-      const restartConnector = jest.fn();
-      const wrapper = mount(setupWrapper({ restartConnector }));
-      wrapper.find({ children: 'Restart Connector' }).simulate('click');
-      expect(restartConnector).toHaveBeenCalledTimes(1);
-      expect(restartConnector).toHaveBeenCalledWith(
-        clusterName,
-        connectName,
-        connectorName
-      );
-    });
+      it('calls restartConnector when restart button clicked', () => {
+        const restartConnector = jest.fn();
+        (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
+          mutateAsync: restartConnector,
+        }));
+        renderComponent();
+        userEvent.click(
+          screen.getByRole('button', { name: 'Restart Connector' })
+        );
+        expect(restartConnector).toHaveBeenCalledWith(ConnectorAction.RESTART);
+      });
 
-    it('calls pauseConnector when pause button clicked', () => {
-      const pauseConnector = jest.fn();
-      const wrapper = mount(
-        setupWrapper({
-          connectorStatus: ConnectorState.RUNNING,
-          pauseConnector,
-        })
-      );
-      wrapper.find({ children: 'Pause' }).simulate('click');
-      expect(pauseConnector).toHaveBeenCalledTimes(1);
-      expect(pauseConnector).toHaveBeenCalledWith(
-        clusterName,
-        connectName,
-        connectorName
-      );
-    });
+      it('calls restartAllTasks', () => {
+        const restartAllTasks = jest.fn();
+        (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
+          mutateAsync: restartAllTasks,
+        }));
+        renderComponent();
+        userEvent.click(
+          screen.getByRole('button', { name: 'Restart All Tasks' })
+        );
+        expect(restartAllTasks).toHaveBeenCalledWith(
+          ConnectorAction.RESTART_ALL_TASKS
+        );
+      });
 
-    it('calls resumeConnector when resume button clicked', () => {
-      const resumeConnector = jest.fn();
-      const wrapper = mount(
-        setupWrapper({
-          connectorStatus: ConnectorState.PAUSED,
-          resumeConnector,
-        })
-      );
-      wrapper.find({ children: 'Resume' }).simulate('click');
-      expect(resumeConnector).toHaveBeenCalledTimes(1);
-      expect(resumeConnector).toHaveBeenCalledWith(
-        clusterName,
-        connectName,
-        connectorName
-      );
+      it('calls restartFailedTasks', () => {
+        const restartFailedTasks = jest.fn();
+        (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
+          mutateAsync: restartFailedTasks,
+        }));
+        renderComponent();
+        userEvent.click(
+          screen.getByRole('button', { name: 'Restart Failed Tasks' })
+        );
+        expect(restartFailedTasks).toHaveBeenCalledWith(
+          ConnectorAction.RESTART_FAILED_TASKS
+        );
+      });
+
+      it('calls pauseConnector when pause button clicked', () => {
+        const pauseConnector = jest.fn();
+        (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
+          mutateAsync: pauseConnector,
+        }));
+        renderComponent();
+        userEvent.click(screen.getByRole('button', { name: 'Pause' }));
+        expect(pauseConnector).toHaveBeenCalledWith(ConnectorAction.PAUSE);
+      });
+
+      it('calls resumeConnector when resume button clicked', () => {
+        const resumeConnector = jest.fn();
+        (useConnector as jest.Mock).mockImplementation(() => ({
+          data: set({ ...connector }, 'status.state', ConnectorState.PAUSED),
+        }));
+        (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
+          mutateAsync: resumeConnector,
+        }));
+        renderComponent();
+        userEvent.click(screen.getByRole('button', { name: 'Resume' }));
+        expect(resumeConnector).toHaveBeenCalledWith(ConnectorAction.RESUME);
+      });
     });
   });
 });

@@ -11,7 +11,7 @@ abstract class AbstractAuthSecurityConfig {
       "/js/**",
       "/media/**",
       "/resources/**",
-      "/actuator/health",
+      "/actuator/health/**",
       "/actuator/info",
       "/auth",
       "/login",

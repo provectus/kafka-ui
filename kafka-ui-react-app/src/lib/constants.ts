@@ -1,4 +1,5 @@
 import { ConfigurationParameters } from 'generated-sources';
+import { BreadcrumbDefinitions } from 'components/common/Breadcrumb/Breadcrumb';
 
 declare global {
   interface Window {
@@ -15,7 +16,7 @@ export const BASE_PARAMS: ConfigurationParameters = {
 };
 
 export const TOPIC_NAME_VALIDATION_PATTERN = /^[.,A-Za-z0-9_-]+$/;
-export const SCHEMA_NAME_VALIDATION_PATTERN = /^[.,A-Za-z0-9_-]+$/;
+export const SCHEMA_NAME_VALIDATION_PATTERN = /^[.,A-Za-z0-9_/-]+$/;
 
 export const TOPIC_CUSTOM_PARAMS_PREFIX = 'customParams';
 export const TOPIC_CUSTOM_PARAMS: Record<string, string> = {
@@ -55,5 +56,16 @@ export const PER_PAGE = 25;
 export const GIT_REPO_LINK = 'https://github.com/provectus/kafka-ui';
 export const GIT_REPO_LATEST_RELEASE_LINK =
   'https://api.github.com/repos/provectus/kafka-ui/releases/latest';
-export const GIT_TAG = process.env.REACT_APP_TAG;
-export const GIT_COMMIT = process.env.REACT_APP_COMMIT;
+export const GIT_TAG = process.env.VITE_TAG;
+export const GIT_COMMIT = process.env.VITE_COMMIT;
+
+export const BREADCRUMB_DEFINITIONS: BreadcrumbDefinitions = {
+  Ksqldb: 'ksqlDB',
+};
+
+export enum AsyncRequestStatus {
+  initial = 'initial',
+  pending = 'pending',
+  fulfilled = 'fulfilled',
+  rejected = 'rejected',
+}

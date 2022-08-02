@@ -1,18 +1,15 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import {
-  clusterSchemasPath,
-  clusterSchemaSchemaDiffPath,
-  clusterSchemaEditPath,
+  ClusterSubjectParam,
+  clusterSchemaEditPageRelativePath,
+  clusterSchemaSchemaComparePageRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
-import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
@@ -21,26 +18,26 @@ import {
   fetchSchemaVersions,
   getAreSchemaLatestFulfilled,
   getAreSchemaVersionsFulfilled,
-  schemasApiClient,
   SCHEMAS_VERSIONS_FETCH_ACTION,
   SCHEMA_LATEST_FETCH_ACTION,
   selectAllSchemaVersions,
   getSchemaLatest,
 } from 'redux/reducers/schemas/schemasSlice';
-import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
-import { getResponse } from 'lib/errorHandling';
+import { showServerError } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
+import useAppParams from 'lib/hooks/useAppParams';
+import { schemasApiClient } from 'lib/api';
+import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
 
 const Details: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
-  const { clusterName, subject } =
-    useParams<{ clusterName: string; subject: string }>();
+  const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
   const [
     isDeleteSchemaConfirmationVisible,
     setDeleteSchemaConfirmationVisible,
@@ -65,18 +62,17 @@ const Details: React.FC = () => {
   const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
   const areVersionsFetched = useAppSelector(getAreSchemaVersionsFulfilled);
 
-  const onDelete = React.useCallback(async () => {
+  const onDelete = async () => {
     try {
       await schemasApiClient.deleteSchema({
         clusterName,
         subject,
       });
-      history.push(clusterSchemasPath(clusterName));
+      navigate('../');
     } catch (e) {
-      const err = await getResponse(e as Response);
-      dispatch(serverErrorAlertAdded(err));
+      showServerError(e as Response);
     }
-  }, [clusterName, dispatch, history, subject]);
+  };
 
   if (!isFetched || !schema) {
     return <PageLoader />;
@@ -87,25 +83,23 @@ const Details: React.FC = () => {
         {!isReadOnly && (
           <>
             <Button
-              isLink
               buttonSize="M"
               buttonType="primary"
               to={{
-                pathname: clusterSchemaSchemaDiffPath(clusterName, subject),
+                pathname: clusterSchemaSchemaComparePageRelativePath,
                 search: `leftVersion=${versions[0]?.version}&rightVersion=${versions[0]?.version}`,
               }}
             >
               Compare Versions
             </Button>
             <Button
-              isLink
               buttonSize="M"
               buttonType="primary"
-              to={clusterSchemaEditPath(clusterName, subject)}
+              to={clusterSchemaEditPageRelativePath}
             >
               Edit Schema
             </Button>
-            <Dropdown label={<VerticalElipsisIcon />} right>
+            <Dropdown>
               <DropdownItem
                 onClick={() => setDeleteSchemaConfirmationVisible(true)}
                 danger

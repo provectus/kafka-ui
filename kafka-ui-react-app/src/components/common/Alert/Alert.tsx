@@ -1,0 +1,30 @@
+import React from 'react';
+import CloseIcon from 'components/common/Icons/CloseIcon';
+import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
+import { ToastType } from 'react-hot-toast';
+
+import * as S from './Alert.styled';
+
+export interface AlertProps {
+  title: string;
+  type: ToastType;
+  message: string;
+  onDissmiss(): void;
+}
+
+const Alert: React.FC<AlertProps> = ({ title, type, message, onDissmiss }) => (
+  <S.Alert $type={type} role="alert">
+    <div>
+      <S.Title role="heading">{title}</S.Title>
+      <S.Message
+        role="contentinfo"
+        dangerouslySetInnerHTML={{ __html: message }}
+      />
+    </div>
+    <IconButtonWrapper role="button" onClick={onDissmiss}>
+      <CloseIcon />
+    </IconButtonWrapper>
+  </S.Alert>
+);
+
+export default Alert;

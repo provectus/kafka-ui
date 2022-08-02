@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.BrokersApi;
+import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.BrokerConfigDTO;
 import com.provectus.kafka.ui.model.BrokerConfigItemDTO;
 import com.provectus.kafka.ui.model.BrokerDTO;
@@ -22,11 +23,13 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class BrokersController extends AbstractController implements BrokersApi {
   private final BrokerService brokerService;
+  private final ClusterMapper clusterMapper;
 
   @Override
   public Mono<ResponseEntity<BrokerMetricsDTO>> getBrokersMetrics(String clusterName, Integer id,
                                                                   ServerWebExchange exchange) {
     return brokerService.getBrokerMetrics(getCluster(clusterName), id)
+        .map(clusterMapper::toBrokerMetrics)
         .map(ResponseEntity::ok)
         .onErrorReturn(ResponseEntity.notFound().build());
   }
@@ -50,7 +53,8 @@ public class BrokersController extends AbstractController implements BrokersApi 
   public Mono<ResponseEntity<Flux<BrokerConfigDTO>>> getBrokerConfig(String clusterName, Integer id,
                                                                      ServerWebExchange exchange) {
     return Mono.just(ResponseEntity.ok(
-        brokerService.getBrokerConfig(getCluster(clusterName), id)));
+        brokerService.getBrokerConfig(getCluster(clusterName), id)
+            .map(clusterMapper::toBrokerConfig)));
   }
 
   @Override

@@ -1,132 +1,88 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { useIsMutating } from '@tanstack/react-query';
 import { ConnectorState, ConnectorAction } from 'generated-sources';
-import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
+import useAppParams from 'lib/hooks/useAppParams';
+import useModal from 'lib/hooks/useModal';
+import {
+  useConnector,
+  useDeleteConnector,
+  useUpdateConnectorState,
+} from 'lib/hooks/api/kafkaConnect';
 import {
   clusterConnectConnectorEditPath,
   clusterConnectorsPath,
+  RouterParamsClusterConnectConnector,
 } from 'lib/paths';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import styled from 'styled-components';
 import { Button } from 'components/common/Button/Button';
-
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
 
 const ConnectorActionsWrapperStyled = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
 `;
 
-export interface ActionsProps {
-  deleteConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): Promise<void>;
-  isConnectorDeleting: boolean;
-  connectorStatus?: ConnectorState;
-  restartConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): void;
-  restartTasks(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName,
-    action: ConnectorAction
-  ): void;
-  pauseConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): void;
-  resumeConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): void;
-  isConnectorActionRunning: boolean;
-}
+const Actions: React.FC = () => {
+  const navigate = useNavigate();
+  const routerProps = useAppParams<RouterParamsClusterConnectConnector>();
+  const mutationsNumber = useIsMutating();
+  const isMutating = mutationsNumber > 0;
 
-const Actions: React.FC<ActionsProps> = ({
-  deleteConnector,
-  isConnectorDeleting,
-  connectorStatus,
-  restartConnector,
-  restartTasks,
-  pauseConnector,
-  resumeConnector,
-  isConnectorActionRunning,
-}) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
+  const { data: connector } = useConnector(routerProps);
 
-  const history = useHistory();
-  const [
-    isDeleteConnectorConfirmationVisible,
-    setIsDeleteConnectorConfirmationVisible,
-  ] = React.useState(false);
+  const {
+    isOpen: isDeleteConnectorConfirmationOpen,
+    setClose: setDeleteConnectorConfirmationClose,
+    setOpen: setDeleteConnectorConfirmationOpen,
+  } = useModal();
 
-  const deleteConnectorHandler = React.useCallback(async () => {
+  const deleteConnectorMutation = useDeleteConnector(routerProps);
+  const deleteConnectorHandler = async () => {
     try {
-      await deleteConnector(clusterName, connectName, connectorName);
-      history.push(clusterConnectorsPath(clusterName));
+      await deleteConnectorMutation.mutateAsync();
+      navigate(clusterConnectorsPath(routerProps.clusterName));
     } catch {
       // do not redirect
     }
-  }, [deleteConnector, clusterName, connectName, connectorName, history]);
+  };
 
-  const restartConnectorHandler = React.useCallback(() => {
-    restartConnector(clusterName, connectName, connectorName);
-  }, [restartConnector, clusterName, connectName, connectorName]);
-
-  const restartTasksHandler = React.useCallback(
-    (actionType) => {
-      restartTasks(clusterName, connectName, connectorName, actionType);
-    },
-    [restartTasks, clusterName, connectName, connectorName]
-  );
-
-  const pauseConnectorHandler = React.useCallback(() => {
-    pauseConnector(clusterName, connectName, connectorName);
-  }, [pauseConnector, clusterName, connectName, connectorName]);
-
-  const resumeConnectorHandler = React.useCallback(() => {
-    resumeConnector(clusterName, connectName, connectorName);
-  }, [resumeConnector, clusterName, connectName, connectorName]);
+  const stateMutation = useUpdateConnectorState(routerProps);
+  const restartConnectorHandler = () =>
+    stateMutation.mutateAsync(ConnectorAction.RESTART);
+  const restartAllTasksHandler = () =>
+    stateMutation.mutateAsync(ConnectorAction.RESTART_ALL_TASKS);
+  const restartFailedTasksHandler = () =>
+    stateMutation.mutateAsync(ConnectorAction.RESTART_FAILED_TASKS);
+  const pauseConnectorHandler = () =>
+    stateMutation.mutateAsync(ConnectorAction.PAUSE);
+  const resumeConnectorHandler = () =>
+    stateMutation.mutateAsync(ConnectorAction.RESUME);
 
   return (
     <ConnectorActionsWrapperStyled>
-      {connectorStatus === ConnectorState.RUNNING && (
+      {connector?.status.state === ConnectorState.RUNNING && (
         <Button
           buttonSize="M"
           buttonType="primary"
           type="button"
           onClick={pauseConnectorHandler}
-          disabled={isConnectorActionRunning}
+          disabled={isMutating}
         >
-          <span>
-            <i className="fas fa-pause" />
-          </span>
           <span>Pause</span>
         </Button>
       )}
 
-      {connectorStatus === ConnectorState.PAUSED && (
+      {connector?.status.state === ConnectorState.PAUSED && (
         <Button
           buttonSize="M"
           buttonType="primary"
           type="button"
           onClick={resumeConnectorHandler}
-          disabled={isConnectorActionRunning}
+          disabled={isMutating}
         >
-          <span>
-            <i className="fas fa-play" />
-          </span>
           <span>Resume</span>
         </Button>
       )}
@@ -136,54 +92,39 @@ const Actions: React.FC<ActionsProps> = ({
         buttonType="primary"
         type="button"
         onClick={restartConnectorHandler}
-        disabled={isConnectorActionRunning}
+        disabled={isMutating}
       >
-        <span>
-          <i className="fas fa-sync-alt" />
-        </span>
         <span>Restart Connector</span>
       </Button>
       <Button
         buttonSize="M"
         buttonType="primary"
         type="button"
-        onClick={() => restartTasksHandler(ConnectorAction.RESTART_ALL_TASKS)}
-        disabled={isConnectorActionRunning}
+        onClick={restartAllTasksHandler}
+        disabled={isMutating}
       >
-        <span>
-          <i className="fas fa-sync-alt" />
-        </span>
         <span>Restart All Tasks</span>
       </Button>
       <Button
         buttonSize="M"
         buttonType="primary"
         type="button"
-        onClick={() =>
-          restartTasksHandler(ConnectorAction.RESTART_FAILED_TASKS)
-        }
-        disabled={isConnectorActionRunning}
+        onClick={restartFailedTasksHandler}
+        disabled={isMutating}
       >
-        <span>
-          <i className="fas fa-sync-alt" />
-        </span>
         <span>Restart Failed Tasks</span>
       </Button>
       <Button
         buttonSize="M"
         buttonType="primary"
         type="button"
-        isLink
-        disabled={isConnectorActionRunning}
+        disabled={isMutating}
         to={clusterConnectConnectorEditPath(
-          clusterName,
-          connectName,
-          connectorName
+          routerProps.clusterName,
+          routerProps.connectName,
+          routerProps.connectorName
         )}
       >
-        <span>
-          <i className="fas fa-pencil-alt" />
-        </span>
         <span>Edit Config</span>
       </Button>
 
@@ -191,21 +132,19 @@ const Actions: React.FC<ActionsProps> = ({
         buttonSize="M"
         buttonType="secondary"
         type="button"
-        onClick={() => setIsDeleteConnectorConfirmationVisible(true)}
-        disabled={isConnectorActionRunning}
+        onClick={setDeleteConnectorConfirmationOpen}
+        disabled={isMutating}
       >
-        <span>
-          <i className="far fa-trash-alt" />
-        </span>
         <span>Delete</span>
       </Button>
       <ConfirmationModal
-        isOpen={isDeleteConnectorConfirmationVisible}
-        onCancel={() => setIsDeleteConnectorConfirmationVisible(false)}
+        isOpen={isDeleteConnectorConfirmationOpen}
+        onCancel={setDeleteConnectorConfirmationClose}
         onConfirm={deleteConnectorHandler}
-        isConfirming={isConnectorDeleting}
+        isConfirming={isMutating}
       >
-        Are you sure you want to remove <b>{connectorName}</b> connector?
+        Are you sure you want to remove <b>{routerProps.connectorName}</b>{' '}
+        connector?
       </ConfirmationModal>
     </ConnectorActionsWrapperStyled>
   );

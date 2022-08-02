@@ -1,13 +1,11 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import { TopicMessage } from 'generated-sources';
-import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import useDataSaver from 'lib/hooks/useDataSaver';
-import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import styled from 'styled-components';
+import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
 import MessageContent from './MessageContent/MessageContent';
 import * as S from './MessageContent/MessageContent.styled';
@@ -20,7 +18,15 @@ const StyledDataCell = styled.td`
   min-width: 350px;
 `;
 
-const Message: React.FC<{ message: TopicMessage }> = ({
+const ClickableRow = styled.tr`
+  cursor: pointer;
+`;
+
+export interface Props {
+  message: TopicMessage;
+}
+
+const Message: React.FC<Props> = ({
   message: {
     timestamp,
     timestampType,
@@ -45,12 +51,13 @@ const Message: React.FC<{ message: TopicMessage }> = ({
 
   return (
     <>
-      <tr
+      <ClickableRow
         onMouseEnter={() => setVEllipsisOpen(true)}
         onMouseLeave={() => setVEllipsisOpen(false)}
+        onClick={toggleIsOpen}
       >
         <td>
-          <IconButtonWrapper onClick={toggleIsOpen} aria-hidden>
+          <IconButtonWrapper aria-hidden>
             <MessageToggleIcon isOpen={isOpen} />
           </IconButtonWrapper>
         </td>
@@ -62,17 +69,12 @@ const Message: React.FC<{ message: TopicMessage }> = ({
         <StyledDataCell title={key}>{key}</StyledDataCell>
         <StyledDataCell>
           <S.Metadata>
-            <S.MetadataLabel>Range:</S.MetadataLabel>
             <S.MetadataValue>{content}</S.MetadataValue>
-          </S.Metadata>
-          <S.Metadata>
-            <S.MetadataLabel>Version:</S.MetadataLabel>
-            <S.MetadataValue>3</S.MetadataValue>
           </S.Metadata>
         </StyledDataCell>
         <td style={{ width: '5%' }}>
           {vEllipsisOpen && (
-            <Dropdown label={<VerticalElipsisIcon />} right>
+            <Dropdown>
               <DropdownItem onClick={copyToClipboard}>
                 Copy to clipboard
               </DropdownItem>
@@ -80,7 +82,7 @@ const Message: React.FC<{ message: TopicMessage }> = ({
             </Dropdown>
           )}
         </td>
-      </tr>
+      </ClickableRow>
       {isOpen && (
         <MessageContent
           messageKey={key}

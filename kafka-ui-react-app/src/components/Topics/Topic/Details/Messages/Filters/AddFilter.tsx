@@ -4,8 +4,11 @@ import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters
 import { FilterEdit } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
 import SavedFilters from 'components/Topics/Topic/Details/Messages/Filters/SavedFilters';
 import SavedIcon from 'components/common/Icons/SavedIcon';
+import QuestionIcon from 'components/common/Icons/QuestionIcon';
+import useModal from 'lib/hooks/useModal';
 
 import AddEditFilterContainer from './AddEditFilterContainer';
+import InfoModal from './InfoModal';
 
 export interface FilterModalProps {
   toggleIsOpen(): void;
@@ -32,6 +35,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
 }) => {
   const [savedFilterState, setSavedFilterState] =
     React.useState<boolean>(false);
+  const { isOpen, toggle } = useModal();
 
   const onSubmit = React.useCallback(
     async (values: AddMessageFilters) => {
@@ -40,7 +44,10 @@ const AddFilter: React.FC<FilterModalProps> = ({
         addFilter(data);
       } else {
         // other case is not applying the filter
-        data.name = data.name ? data.name : 'Unsaved filter';
+        const dataCodeLabel =
+          data.code.length > 16 ? `${data.code.slice(0, 16)}...` : data.code;
+        data.name = data.name || dataCodeLabel;
+
         activeFilterHandler(data, -1);
         toggleIsOpen();
       }
@@ -49,7 +56,19 @@ const AddFilter: React.FC<FilterModalProps> = ({
   );
   return (
     <>
-      <S.FilterTitle>Add filter</S.FilterTitle>
+      <S.FilterTitle>
+        Add filter
+        <div>
+          <S.QuestionIconContainer
+            type="button"
+            aria-label="info"
+            onClick={toggle}
+          >
+            <QuestionIcon />
+          </S.QuestionIconContainer>
+          {isOpen && <InfoModal toggleIsOpen={toggle} />}
+        </div>
+      </S.FilterTitle>
       {savedFilterState ? (
         <SavedFilters
           deleteFilter={deleteFilter}

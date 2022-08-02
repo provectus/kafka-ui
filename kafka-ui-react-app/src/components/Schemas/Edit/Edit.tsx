@@ -1,11 +1,11 @@
 import React from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
   CompatibilityLevelCompatibilityEnum,
   SchemaType,
 } from 'generated-sources';
-import { clusterSchemaPath } from 'lib/paths';
+import { clusterSchemaPath, ClusterSubjectParam } from 'lib/paths';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
 import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
@@ -13,28 +13,27 @@ import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
   schemaAdded,
-  schemasApiClient,
   fetchLatestSchema,
   getSchemaLatest,
   SCHEMA_LATEST_FETCH_ACTION,
   getAreSchemaLatestFulfilled,
   schemaUpdated,
 } from 'redux/reducers/schemas/schemasSlice';
-import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
-import { getResponse } from 'lib/errorHandling';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
+import { schemasApiClient } from 'lib/api';
+import { showServerError } from 'lib/errorHandling';
 
 import * as S from './Edit.styled';
 
 const Edit: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { clusterName, subject } =
-    useParams<{ clusterName: string; subject: string }>();
+  const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
   const methods = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
   const {
     formState: { isDirty, isSubmitting, dirtyFields },
@@ -58,56 +57,42 @@ const Edit: React.FC = () => {
       : JSON.stringify(JSON.parse(schema?.schema || '{}'), null, '\t');
   }, [schema]);
 
-  const onSubmit = React.useCallback(
-    async (props: NewSchemaSubjectRaw) => {
-      if (!schema) return;
+  const onSubmit = async (props: NewSchemaSubjectRaw) => {
+    if (!schema) return;
 
-      try {
-        if (dirtyFields.newSchema || dirtyFields.schemaType) {
-          const resp = await schemasApiClient.createNewSchema({
-            clusterName,
-            newSchemaSubject: {
-              ...schema,
-              schema: props.newSchema || schema.schema,
-              schemaType: props.schemaType || schema.schemaType,
-            },
-          });
-          dispatch(schemaAdded(resp));
-        }
-
-        if (dirtyFields.compatibilityLevel) {
-          await schemasApiClient.updateSchemaCompatibilityLevel({
-            clusterName,
-            subject,
-            compatibilityLevel: {
-              compatibility: props.compatibilityLevel,
-            },
-          });
-          dispatch(
-            schemaUpdated({
-              ...schema,
-              compatibilityLevel: props.compatibilityLevel,
-            })
-          );
-        }
-
-        history.push(clusterSchemaPath(clusterName, subject));
-      } catch (e) {
-        const err = await getResponse(e as Response);
-        dispatch(serverErrorAlertAdded(err));
+    try {
+      if (dirtyFields.compatibilityLevel) {
+        await schemasApiClient.updateSchemaCompatibilityLevel({
+          clusterName,
+          subject,
+          compatibilityLevel: {
+            compatibility: props.compatibilityLevel,
+          },
+        });
+        dispatch(
+          schemaUpdated({
+            ...schema,
+            compatibilityLevel: props.compatibilityLevel,
+          })
+        );
       }
-    },
-    [
-      clusterName,
-      dirtyFields.compatibilityLevel,
-      dirtyFields.newSchema,
-      dirtyFields.schemaType,
-      dispatch,
-      history,
-      schema,
-      subject,
-    ]
-  );
+      if (dirtyFields.newSchema || dirtyFields.schemaType) {
+        const resp = await schemasApiClient.createNewSchema({
+          clusterName,
+          newSchemaSubject: {
+            ...schema,
+            schema: props.newSchema || schema.schema,
+            schemaType: props.schemaType || schema.schemaType,
+          },
+        });
+        dispatch(schemaAdded(resp));
+      }
+
+      navigate(clusterSchemaPath(clusterName, subject));
+    } catch (e) {
+      showServerError(e as Response);
+    }
+  };
 
   if (!isFetched || !schema) {
     return <PageLoader />;

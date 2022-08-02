@@ -4,7 +4,7 @@ import { TopicWithDetailedInfo } from 'redux/interfaces/topic';
 export const clusterName = 'testCluster';
 export const topicName = 'testTopic';
 
-export const config: TopicConfig[] = [
+const config: TopicConfig[] = [
   {
     name: 'compression.type',
     value: 'producer',
@@ -521,7 +521,7 @@ export const config: TopicConfig[] = [
   },
 ];
 
-export const partitions = [
+const partitions = [
   {
     partition: 0,
     leader: 2,
@@ -550,4 +550,68 @@ export const topicWithInfo: TopicWithDetailedInfo = {
   cleanUpPolicy: CleanUpPolicy.DELETE,
   partitions,
   config,
+};
+export const customConfigs = [
+  {
+    name: 'segment.bytes',
+    value: '1',
+    defaultValue: '1073741824',
+    source: ConfigSource.DEFAULT_CONFIG,
+    isSensitive: false,
+    isReadOnly: false,
+    synonyms: [
+      {
+        name: 'log.segment.bytes',
+        value: '1073741824',
+        source: ConfigSource.DEFAULT_CONFIG,
+      },
+    ],
+  },
+  {
+    name: 'retention.ms',
+    value: '604',
+    defaultValue: '604800000',
+    source: ConfigSource.DYNAMIC_TOPIC_CONFIG,
+    isSensitive: false,
+    isReadOnly: false,
+    synonyms: [
+      {
+        name: 'retention.ms',
+        value: '604800000',
+        source: ConfigSource.DYNAMIC_TOPIC_CONFIG,
+      },
+    ],
+  },
+  {
+    name: 'flush.messages',
+    value: '92233',
+    defaultValue: '9223372036854775807',
+    source: ConfigSource.DEFAULT_CONFIG,
+    isSensitive: false,
+    isReadOnly: false,
+    synonyms: [
+      {
+        name: 'log.flush.interval.messages',
+        value: '9223372036854775807',
+        source: ConfigSource.DEFAULT_CONFIG,
+      },
+    ],
+  },
+];
+
+export const transformedParams = {
+  partitions: 1,
+  replicationFactor: 1,
+  cleanupPolicy: 'delete',
+  retentionBytes: -1,
+  maxMessageBytes: 1000012,
+  name: topicName,
+  minInSyncReplicas: 1,
+  retentionMs: 604800000,
+  customParams: [
+    {
+      name: 'delete.retention.ms',
+      value: '86400001',
+    },
+  ],
 };

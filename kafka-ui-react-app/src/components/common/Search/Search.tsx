@@ -6,12 +6,14 @@ interface SearchProps {
   handleSearch: (value: string) => void;
   placeholder?: string;
   value: string;
+  disabled?: boolean;
 }
 
 const Search: React.FC<SearchProps> = ({
   handleSearch,
   placeholder = 'Search',
   value,
+  disabled = false,
 }) => {
   const onChange = useDebouncedCallback(
     (e) => handleSearch(e.target.value),
@@ -24,8 +26,9 @@ const Search: React.FC<SearchProps> = ({
       placeholder={placeholder}
       onChange={onChange}
       defaultValue={value}
-      leftIcon="fas fa-search"
       inputSize="M"
+      disabled={disabled}
+      search
     />
   );
 };

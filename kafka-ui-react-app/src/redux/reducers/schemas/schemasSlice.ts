@@ -5,20 +5,16 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import {
-  Configuration,
-  SchemasApi,
   SchemaSubject,
   SchemaSubjectsResponse,
   GetSchemasRequest,
   GetLatestSchemaRequest,
 } from 'generated-sources';
-import { BASE_PARAMS } from 'lib/constants';
-import { getResponse } from 'lib/errorHandling';
+import { schemasApiClient } from 'lib/api';
+import { AsyncRequestStatus } from 'lib/constants';
+import { getResponse, showServerError } from 'lib/errorHandling';
 import { ClusterName, RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const schemasApiClient = new SchemasApi(apiClientConf);
 
 export const SCHEMA_LATEST_FETCH_ACTION = 'schemas/latest/fetch';
 export const fetchLatestSchema = createAsyncThunk<
@@ -28,6 +24,7 @@ export const fetchLatestSchema = createAsyncThunk<
   try {
     return await schemasApiClient.getLatestSchema(schemaParams);
   } catch (error) {
+    showServerError(error as Response);
     return rejectWithValue(await getResponse(error as Response));
   }
 });
@@ -47,6 +44,7 @@ export const fetchSchemas = createAsyncThunk<
         search: search || undefined,
       });
     } catch (error) {
+      showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
     }
   }
@@ -65,6 +63,7 @@ export const fetchSchemaVersions = createAsyncThunk<
         subject,
       });
     } catch (error) {
+      showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
     }
   }
@@ -110,15 +109,13 @@ const schemasSlice = createSlice({
   },
 });
 
-export const { selectAll: selectAllSchemas, selectById: selectSchemaById } =
+export const { selectAll: selectAllSchemas } =
   schemasAdapter.getSelectors<RootState>((state) => state.schemas);
 
-export const {
-  selectAll: selectAllSchemaVersions,
-  selectById: selectVersionSchemaByID,
-} = schemaVersionsAdapter.getSelectors<RootState>(
-  (state) => state.schemas.versions
-);
+export const { selectAll: selectAllSchemaVersions } =
+  schemaVersionsAdapter.getSelectors<RootState>(
+    (state) => state.schemas.versions
+  );
 
 const getSchemaVersions = (state: RootState) => state.schemas.versions;
 export const getSchemaLatest = createSelector(
@@ -130,16 +127,16 @@ export const { schemaAdded, schemaUpdated } = schemasSlice.actions;
 
 export const getAreSchemasFulfilled = createSelector(
   createFetchingSelector(SCHEMAS_FETCH_ACTION),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export const getAreSchemaLatestFulfilled = createSelector(
   createFetchingSelector(SCHEMA_LATEST_FETCH_ACTION),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 export const getAreSchemaVersionsFulfilled = createSelector(
   createFetchingSelector(SCHEMAS_VERSIONS_FETCH_ACTION),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export default schemasSlice.reducer;

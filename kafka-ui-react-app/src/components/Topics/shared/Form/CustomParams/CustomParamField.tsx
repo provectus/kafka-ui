@@ -39,6 +39,14 @@ const CustomParamField: React.FC<Props> = ({
   const nameValue = watch(`customParams.${index}.name`);
   const prevName = useRef(nameValue);
 
+  const options = Object.keys(TOPIC_CUSTOM_PARAMS)
+    .sort()
+    .map((option) => ({
+      value: option,
+      label: option,
+      disabled: existingFields.includes(option),
+    }));
+
   React.useEffect(() => {
     if (nameValue !== prevName.current) {
       let newExistingFields = [...existingFields];
@@ -51,7 +59,7 @@ const CustomParamField: React.FC<Props> = ({
       newExistingFields.push(nameValue);
       setExistingFields(newExistingFields);
       setValue(`customParams.${index}.value`, TOPIC_CUSTOM_PARAMS[nameValue], {
-        shouldValidate: true,
+        shouldValidate: !!TOPIC_CUSTOM_PARAMS[nameValue],
       });
     }
   }, [existingFields, index, nameValue, setExistingFields, setValue]);
@@ -59,7 +67,7 @@ const CustomParamField: React.FC<Props> = ({
   return (
     <C.Column>
       <div>
-        <InputLabel>Custom Parameter</InputLabel>
+        <InputLabel>Custom Parameter *</InputLabel>
         <Controller
           control={control}
           rules={{ required: 'Custom Parameter is required.' }}
@@ -72,13 +80,7 @@ const CustomParamField: React.FC<Props> = ({
               minWidth="270px"
               onChange={onChange}
               value={value}
-              options={Object.keys(TOPIC_CUSTOM_PARAMS)
-                .sort()
-                .map((opt) => ({
-                  value: opt,
-                  label: opt,
-                  disabled: existingFields.includes(opt),
-                }))}
+              options={options}
             />
           )}
         />
@@ -90,7 +92,7 @@ const CustomParamField: React.FC<Props> = ({
         </FormError>
       </div>
       <div>
-        <InputLabel>Value</InputLabel>
+        <InputLabel>Value *</InputLabel>
         <Input
           name={`customParams.${index}.value` as const}
           hookFormOptions={{

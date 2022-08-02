@@ -1,9 +1,10 @@
 import React from 'react';
-import { Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import {
-  clusterTopicNewPath,
-  clusterTopicPath,
-  clusterTopicsPath,
+  clusterTopicCopyRelativePath,
+  clusterTopicNewRelativePath,
+  getNonExactPath,
+  RouteParams,
 } from 'lib/paths';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
@@ -12,22 +13,40 @@ import TopicContainer from './Topic/TopicContainer';
 import New from './New/New';
 
 const Topics: React.FC = () => (
-  <Switch>
-    <BreadcrumbRoute
-      exact
-      path={clusterTopicsPath(':clusterName')}
-      component={ListContainer}
+  <Routes>
+    <Route
+      index
+      element={
+        <BreadcrumbRoute>
+          <ListContainer />
+        </BreadcrumbRoute>
+      }
     />
-    <BreadcrumbRoute
-      exact
-      path={clusterTopicNewPath(':clusterName')}
-      component={New}
+    <Route
+      path={clusterTopicNewRelativePath}
+      element={
+        <BreadcrumbRoute>
+          <New />
+        </BreadcrumbRoute>
+      }
     />
-    <BreadcrumbRoute
-      path={clusterTopicPath(':clusterName', ':topicName')}
-      component={TopicContainer}
+    <Route
+      path={clusterTopicCopyRelativePath}
+      element={
+        <BreadcrumbRoute>
+          <New />
+        </BreadcrumbRoute>
+      }
     />
-  </Switch>
+    <Route
+      path={getNonExactPath(RouteParams.topicName)}
+      element={
+        <BreadcrumbRoute>
+          <TopicContainer />
+        </BreadcrumbRoute>
+      }
+    />
+  </Routes>
 );
 
 export default Topics;

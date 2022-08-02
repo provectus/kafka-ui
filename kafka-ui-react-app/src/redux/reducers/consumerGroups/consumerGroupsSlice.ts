@@ -6,15 +6,17 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import {
-  Configuration,
   ConsumerGroupDetails,
   ConsumerGroupOrdering,
-  ConsumerGroupsApi,
   ConsumerGroupsPageResponse,
   SortOrder,
 } from 'generated-sources';
-import { BASE_PARAMS } from 'lib/constants';
-import { getResponse } from 'lib/errorHandling';
+import { AsyncRequestStatus } from 'lib/constants';
+import {
+  getResponse,
+  showServerError,
+  showSuccessAlert,
+} from 'lib/errorHandling';
 import {
   ClusterName,
   ConsumerGroupID,
@@ -23,9 +25,7 @@ import {
 } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 import { EntityState } from '@reduxjs/toolkit/src/entities/models';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-export const api = new ConsumerGroupsApi(apiClientConf);
+import { consumerGroupsApiClient } from 'lib/api';
 
 export const fetchConsumerGroupsPaged = createAsyncThunk<
   ConsumerGroupsPageResponse,
@@ -44,7 +44,7 @@ export const fetchConsumerGroupsPaged = createAsyncThunk<
     { rejectWithValue }
   ) => {
     try {
-      const response = await api.getConsumerGroupsPageRaw({
+      return await consumerGroupsApiClient.getConsumerGroupsPage({
         clusterName,
         orderBy,
         sortOrder,
@@ -52,8 +52,8 @@ export const fetchConsumerGroupsPaged = createAsyncThunk<
         perPage,
         search,
       });
-      return await response.value();
     } catch (error) {
+      showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
     }
   }
@@ -66,11 +66,12 @@ export const fetchConsumerGroupDetails = createAsyncThunk<
   'consumerGroups/fetchConsumerGroupDetails',
   async ({ clusterName, consumerGroupID }, { rejectWithValue }) => {
     try {
-      return await api.getConsumerGroup({
+      return await consumerGroupsApiClient.getConsumerGroup({
         clusterName,
         id: consumerGroupID,
       });
     } catch (error) {
+      showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
     }
   }
@@ -83,13 +84,16 @@ export const deleteConsumerGroup = createAsyncThunk<
   'consumerGroups/deleteConsumerGroup',
   async ({ clusterName, consumerGroupID }, { rejectWithValue }) => {
     try {
-      await api.deleteConsumerGroup({
+      await consumerGroupsApiClient.deleteConsumerGroup({
         clusterName,
         id: consumerGroupID,
       });
-
+      showSuccessAlert({
+        message: `Consumer ${consumerGroupID} group deleted`,
+      });
       return consumerGroupID;
     } catch (error) {
+      showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
     }
   }
@@ -105,7 +109,7 @@ export const resetConsumerGroupOffsets = createAsyncThunk<
     { rejectWithValue }
   ) => {
     try {
-      await api.resetConsumerGroupOffsets({
+      await consumerGroupsApiClient.resetConsumerGroupOffsets({
         clusterName,
         id: consumerGroupID,
         consumerGroupOffsetsReset: {
@@ -119,8 +123,12 @@ export const resetConsumerGroupOffsets = createAsyncThunk<
           resetToTimestamp: requestBody.resetToTimestamp?.getTime(),
         },
       });
+      showSuccessAlert({
+        message: `Consumer ${consumerGroupID} group offsets reset`,
+      });
       return consumerGroupID;
     } catch (error) {
+      showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
     }
   }
@@ -144,7 +152,7 @@ const initialState: ConsumerGroupState = {
   ...consumerGroupsAdapter.getInitialState(),
 };
 
-export const consumerGroupsSlice = createSlice({
+const consumerGroupsSlice = createSlice({
   name: 'consumerGroups',
   initialState,
   reducers: {
@@ -184,22 +192,22 @@ export const { selectAll, selectById } =
 
 export const getAreConsumerGroupsPagedFulfilled = createSelector(
   createFetchingSelector('consumerGroups/fetchConsumerGroupsPaged'),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export const getIsConsumerGroupDeleted = createSelector(
   createFetchingSelector('consumerGroups/deleteConsumerGroup'),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export const getAreConsumerGroupDetailsFulfilled = createSelector(
   createFetchingSelector('consumerGroups/fetchConsumerGroupDetails'),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export const getIsOffsetReseted = createSelector(
   createFetchingSelector('consumerGroups/resetConsumerGroupOffsets'),
-  (status) => status === 'fulfilled'
+  (status) => status === AsyncRequestStatus.fulfilled
 );
 
 export const getConsumerGroupsOrderBy = createSelector(

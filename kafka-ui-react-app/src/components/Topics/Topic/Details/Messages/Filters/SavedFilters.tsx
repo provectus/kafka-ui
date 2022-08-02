@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { Button } from 'components/common/Button/Button';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import useModal from 'lib/hooks/useModal';
+import DeleteIcon from 'components/common/Icons/DeleteIcon';
 
 import * as S from './Filters.styled';
 import { MessageFilters } from './Filters';
@@ -72,11 +73,8 @@ const SavedFilters: FC<Props> = ({
               <S.FilterEdit onClick={() => onEdit(index, filter)}>
                 Edit
               </S.FilterEdit>
-              <S.DeleteSavedFilter
-                data-testid="deleteIcon"
-                onClick={() => deleteFilterHandler(index)}
-              >
-                <i className="fas fa-times" />
+              <S.DeleteSavedFilter onClick={() => deleteFilterHandler(index)}>
+                <DeleteIcon />
               </S.DeleteSavedFilter>
             </S.FilterOptions>
           </S.SavedFilter>

@@ -1,5 +1,4 @@
-/* eslint-disable import/prefer-default-export */
-export const Colors = {
+const Colors = {
   neutral: {
     '0': '#FFFFFF',
     '3': '#f9fafa',
@@ -33,6 +32,7 @@ export const Colors = {
   brand: {
     '5': '#E8E8FC',
     '10': '#D1D1FA',
+    '15': '#B8BEF9',
     '20': '#A3A3F5',
     '50': '#4C4CFF',
     '60': '#1717CF',
@@ -54,25 +54,53 @@ export const Colors = {
     '20': '#bbdefb',
     '30': '#90caf9',
     '40': '#64b5f6',
+    '45': '#5865F2',
+    '50': '#5B67E3',
   },
 };
 
 const theme = {
+  link: {
+    color: Colors.brand[50],
+    hoverColor: Colors.brand[60],
+  },
+  hr: {
+    backgroundColor: Colors.neutral[5],
+  },
+  code: {
+    backgroundColor: Colors.neutral[5],
+    color: Colors.red[55],
+  },
   layout: {
+    backgroundColor: Colors.neutral[0],
     minWidth: '1200px',
     navBarWidth: '201px',
-    navBarHeight: '3.25rem',
+    navBarHeight: '53px',
     stuffColor: Colors.neutral[5],
     stuffBorderColor: Colors.neutral[10],
     overlay: {
       backgroundColor: Colors.neutral[50],
+    },
+    socialLink: {
+      color: Colors.neutral[20],
     },
   },
   panelColor: Colors.neutral[0],
   breadcrumb: Colors.neutral[30],
   connectEditWarning: Colors.yellow[10],
   dropdown: {
-    color: Colors.red[50],
+    backgroundColor: Colors.neutral[0],
+    borderColor: Colors.neutral[5],
+    shadow: Colors.transparency[20],
+    item: {
+      color: {
+        danger: Colors.red[60],
+      },
+      backgroundColor: {
+        default: Colors.neutral[0],
+        hover: Colors.neutral[5],
+      },
+    },
   },
   ksqlDb: {
     query: {
@@ -115,6 +143,8 @@ const theme = {
       3: {
         fontSize: '16px',
         lineHeight: '24px',
+        fontWeight: 400,
+        marginBottom: '16px',
       },
       4: {
         fontSize: '14px',
@@ -141,6 +171,9 @@ const theme = {
       success: Colors.green[10],
       warning: Colors.yellow[10],
       info: Colors.neutral[10],
+      loading: Colors.neutral[10],
+      blank: Colors.neutral[10],
+      custom: Colors.neutral[10],
     },
     shadow: Colors.transparency[20],
   },
@@ -174,6 +207,7 @@ const theme = {
         active: Colors.neutral[15],
       },
       color: Colors.neutral[90],
+      isActiveColor: Colors.neutral[0],
       invertedColors: {
         normal: Colors.neutral[50],
         hover: Colors.neutral[70],
@@ -455,6 +489,9 @@ const theme = {
       value: Colors.neutral[80],
       meta: Colors.neutral[30],
     },
+    liderReplica: {
+      color: Colors.green[60],
+    },
   },
   dangerZone: {
     borderColor: Colors.neutral[10],
@@ -476,6 +513,7 @@ const theme = {
   },
   icons: {
     closeIcon: Colors.neutral[30],
+    deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],
     messageToggleIcon: {
       normal: Colors.brand[50],
@@ -490,6 +528,15 @@ const theme = {
     newFilterIcon: Colors.brand[50],
     closeModalIcon: Colors.neutral[25],
     savedIcon: Colors.brand[50],
+    dropdownArrowIcon: Colors.neutral[30],
+    git: {
+      hover: Colors.neutral[70],
+      active: Colors.neutral[90],
+    },
+    discord: {
+      hover: Colors.brand[15],
+      active: Colors.blue[45],
+    },
   },
   viewer: {
     wrapper: Colors.neutral[3],

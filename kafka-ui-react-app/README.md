@@ -1,7 +1,9 @@
 # UI for Apache Kafka
 UI for Apache Kafka management
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=provectus_kafka-ui_frontend&metric=alert_status)](https://sonarcloud.io/dashboard?id=provectus_kafka-ui_frontend)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.provectus%3Akafka-ui_frontend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=com.provectus%3Akafka-ui_frontend)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=com.provectus%3Akafka-ui_frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=com.provectus%3Akafka-ui_frontend)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.provectus%3Akafka-ui_frontend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=com.provectus%3Akafka-ui_frontend)
 
 ## Table of contents
 - [Requirements](#requirements)
@@ -19,19 +21,19 @@ Go to react app folder
 cd ./kafka-ui-react-app
 ```
 
-Install Husky
+Install [pnpm](https://pnpm.io/installation)
 ```
-npm install -g husky
+npm install -g pnpm
 ```
 
 Install dependencies
 ```
-npm install
+pnpm install
 ```
 
 Generate API clients from OpenAPI document
 ```sh
-npm run gen:sources
+pnpm gen:sources
 ```
 
 ## Start application
@@ -39,13 +41,12 @@ npm run gen:sources
 
 Create or update existing `.env.local` file with
 ```
-HTTPS=true # if needed
-DEV_PROXY= https://api.server # your API server
+VITE_DEV_PROXY= https://api.server # your API server
 ```
 
 Run the application
 ```sh
-npm start
+pnpm start
 ```
 
 ### Docker way
@@ -61,9 +62,8 @@ Make sure that none of the `.env*` files contain `DEV_PROXY` variable
 
 Run the application
 ```sh
-npm start
+pnpm start
 ```
 ## Links
 
-* [Bulma](https://bulma.io/documentation/) - free, open source CSS framework based on Flexbox
 * [Create React App](https://github.com/facebook/create-react-app)

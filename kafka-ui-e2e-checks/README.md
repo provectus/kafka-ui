@@ -18,7 +18,7 @@ This repository is for E2E UI automation.
 
 ### Prerequisites
 - Docker & Docker-compose
-- Java
+- Java (install aarch64 jdk if you have M1/arm chip)
 - Maven
   
 ### How to install
@@ -55,7 +55,12 @@ docker-compose -f kafka-ui.yaml up -d
 cd kafka-ui-e2e-checks/docker
 docker-compose -f selenoid.yaml up -d
 ```
-3. Run checks 
+3. Compile `kafka-ui-contract` project
+```
+cd <projectRoot>/kafka-ui-contract
+mvn clean compile
+```
+4. Run checks 
 ```
 cd kafka-ui-e2e-checks
 mvn test

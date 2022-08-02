@@ -1,51 +1,32 @@
 import React from 'react';
-import Brokers from 'components/Brokers/Brokers';
 import { render } from 'lib/testHelpers';
-import { screen, waitFor } from '@testing-library/dom';
-import { Route } from 'react-router';
-import { clusterBrokersPath } from 'lib/paths';
-import fetchMock from 'fetch-mock';
-import { clusterStatsPayload } from 'redux/reducers/brokers/__test__/fixtures';
+import { screen } from '@testing-library/react';
+import { clusterBrokerPath } from 'lib/paths';
+import Brokers from 'components/Brokers/Brokers';
+
+const brokersList = 'brokersList';
+const broker = 'brokers';
+
+jest.mock('components/Brokers/BrokersList/BrokersList', () => () => (
+  <div>{brokersList}</div>
+));
+jest.mock('components/Brokers/Broker/Broker', () => () => <div>{broker}</div>);
 
 describe('Brokers Component', () => {
-  afterEach(() => fetchMock.reset());
-
-  const clusterName = 'local';
-  const renderComponent = () =>
-    render(
-      <Route path={clusterBrokersPath(':clusterName')}>
-        <Brokers />
-      </Route>,
-      {
-        pathname: clusterBrokersPath(clusterName),
-      }
-    );
-
-  describe('Brokers', () => {
-    it('renders', async () => {
-      const mock = fetchMock.getOnce(
-        `/api/clusters/${clusterName}/stats`,
-        clusterStatsPayload
-      );
-      renderComponent();
-      await waitFor(() => expect(mock.called()).toBeTruthy());
-      expect(screen.getByRole('table')).toBeInTheDocument();
-      const rows = screen.getAllByRole('row');
-      expect(rows.length).toEqual(3);
+  const clusterName = 'clusterName';
+  const brokerId = '1';
+  const renderComponent = (path?: string) =>
+    render(<Brokers />, {
+      initialEntries: path ? [path] : undefined,
     });
 
-    it('shows warning when offlinePartitionCount > 0', async () => {
-      const mock = fetchMock.getOnce(`/api/clusters/${clusterName}/stats`, {
-        ...clusterStatsPayload,
-        offlinePartitionCount: 1345,
-      });
-      renderComponent();
-      await waitFor(() => expect(mock.called()).toBeTruthy());
-      const onlineWidget = screen.getByText(
-        clusterStatsPayload.onlinePartitionCount
-      );
-      expect(onlineWidget).toBeInTheDocument();
-      expect(onlineWidget).toHaveStyle({ color: '#E51A1A' });
-    });
+  it('renders BrokersList', () => {
+    renderComponent();
+    expect(screen.getByText(brokersList)).toBeInTheDocument();
+  });
+
+  it('renders Broker', () => {
+    renderComponent(clusterBrokerPath(clusterName, brokerId));
+    expect(screen.getByText(broker)).toBeInTheDocument();
   });
 });

@@ -1,107 +1,129 @@
-import React from 'react';
-import { Switch, Route, useLocation } from 'react-router-dom';
+import React, { Suspense, useCallback } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
+import { clusterPath, getNonExactPath } from 'lib/paths';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/Cluster/Cluster';
 import Version from 'components/Version/Version';
-import Alerts from 'components/Alerts/Alerts';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
-import {
-  fetchClusters,
-  getClusterList,
-  getAreClustersFulfilled,
-} from 'redux/reducers/clusters/clustersSlice';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { showServerError } from 'lib/errorHandling';
+import { Toaster } from 'react-hot-toast';
+import GlobalCSS from 'components/global.css';
+import * as S from 'components/App.styled';
+import Logo from 'components/common/Logo/Logo';
+import GitIcon from 'components/common/Icons/GitIcon';
+import DiscordIcon from 'components/common/Icons/DiscordIcon';
 
-import * as S from './App.styled';
-import Logo from './common/Logo/Logo';
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      suspense: true,
+    },
+    mutations: {
+      onError(error) {
+        showServerError(error as Response);
+      },
+    },
+  },
+});
 
 const App: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const areClustersFulfilled = useAppSelector(getAreClustersFulfilled);
-  const clusters = useAppSelector(getClusterList);
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(false);
-
-  const onBurgerClick = React.useCallback(
-    () => setIsSidebarVisible(!isSidebarVisible),
-    [isSidebarVisible]
-  );
-
-  const closeSidebar = React.useCallback(() => setIsSidebarVisible(false), []);
-
+  const onBurgerClick = () => setIsSidebarVisible(!isSidebarVisible);
+  const closeSidebar = useCallback(() => setIsSidebarVisible(false), []);
   const location = useLocation();
 
   React.useEffect(() => {
     closeSidebar();
-  }, [closeSidebar, location]);
-
-  React.useEffect(() => {
-    dispatch(fetchClusters());
-  }, [dispatch]);
+  }, [location, closeSidebar]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <S.Layout>
-        <S.Navbar role="navigation" aria-label="Page Header">
-          <S.NavbarBrand>
-            <S.NavbarBurger
-              onClick={onBurgerClick}
-              onKeyDown={onBurgerClick}
-              role="button"
-              tabIndex={0}
-            >
-              <S.Span role="separator" />
-              <S.Span role="separator" />
-              <S.Span role="separator" />
-            </S.NavbarBurger>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <GlobalCSS />
+        <S.Layout>
+          <S.Navbar role="navigation" aria-label="Page Header">
+            <S.NavbarBrand>
+              <S.NavbarBrand>
+                <S.NavbarBurger
+                  onClick={onBurgerClick}
+                  onKeyDown={onBurgerClick}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="burger"
+                >
+                  <S.Span role="separator" />
+                  <S.Span role="separator" />
+                  <S.Span role="separator" />
+                </S.NavbarBurger>
 
-            <S.Hyperlink to="/">
-              <Logo />
-              UI for Apache Kafka
-            </S.Hyperlink>
+                <S.Hyperlink to="/">
+                  <Logo />
+                  UI for Apache Kafka
+                </S.Hyperlink>
 
-            <S.NavbarItem>
-              {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
-            </S.NavbarItem>
-          </S.NavbarBrand>
-        </S.Navbar>
+                <S.NavbarItem>
+                  {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
+                </S.NavbarItem>
+              </S.NavbarBrand>
+            </S.NavbarBrand>
+            <S.NavbarSocial>
+              <S.LogoutLink href="/logout">
+                <S.LogoutButton buttonType="primary" buttonSize="M">
+                  Log out
+                </S.LogoutButton>
+              </S.LogoutLink>
+              <S.SocialLink
+                href="https://github.com/provectus/kafka-ui"
+                target="_blank"
+              >
+                <GitIcon />
+              </S.SocialLink>
+              <S.SocialLink
+                href="https://discord.com/invite/4DWzD7pGE5"
+                target="_blank"
+              >
+                <DiscordIcon />
+              </S.SocialLink>
+            </S.NavbarSocial>
+          </S.Navbar>
 
-        <S.Container>
-          <S.Sidebar aria-label="Sidebar" $visible={isSidebarVisible}>
-            <Nav
-              clusters={clusters}
-              areClustersFulfilled={areClustersFulfilled}
+          <S.Container>
+            <S.Sidebar aria-label="Sidebar" $visible={isSidebarVisible}>
+              <Suspense fallback={<PageLoader />}>
+                <Nav />
+              </Suspense>
+            </S.Sidebar>
+            <S.Overlay
+              $visible={isSidebarVisible}
+              onClick={closeSidebar}
+              onKeyDown={closeSidebar}
+              tabIndex={-1}
+              aria-hidden="true"
+              aria-label="Overlay"
             />
-          </S.Sidebar>
-          <S.Overlay
-            $visible={isSidebarVisible}
-            onClick={closeSidebar}
-            onKeyDown={closeSidebar}
-            tabIndex={-1}
-            aria-hidden="true"
-            aria-label="Overlay"
-          />
-          {areClustersFulfilled ? (
-            <Switch>
+            <Routes>
+              {['/', '/ui', '/ui/clusters'].map((path) => (
+                <Route
+                  key="Home" // optional: avoid full re-renders on route changes
+                  path={path}
+                  element={<Dashboard />}
+                />
+              ))}
               <Route
-                exact
-                path={['/', '/ui', '/ui/clusters']}
-                component={Dashboard}
+                path={getNonExactPath(clusterPath())}
+                element={<ClusterPage />}
               />
-              <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
-            </Switch>
-          ) : (
-            <PageLoader />
-          )}
-        </S.Container>
-        <S.AlertsContainer role="toolbar">
-          <Alerts />
-        </S.AlertsContainer>
-      </S.Layout>
-    </ThemeProvider>
+            </Routes>
+          </S.Container>
+          <Toaster position="bottom-right" />
+        </S.Layout>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 };
 

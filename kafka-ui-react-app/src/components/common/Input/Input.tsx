@@ -1,8 +1,7 @@
 import React from 'react';
 import { RegisterOptions, useFormContext } from 'react-hook-form';
-import styled from 'styled-components';
+import SearchIcon from 'components/common/Icons/SearchIcon';
 
-import { InputIcon } from './InputIcon.styled';
 import * as S from './Input.styled';
 
 export interface InputProps
@@ -10,54 +9,32 @@ export interface InputProps
     Omit<S.InputProps, 'hasLeftIcon'> {
   name?: string;
   hookFormOptions?: RegisterOptions;
-  leftIcon?: string;
-  rightIcon?: string;
+  search?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
-  className,
   name,
   hookFormOptions,
-  leftIcon,
-  rightIcon,
+  search,
   inputSize = 'L',
   ...rest
 }) => {
   const methods = useFormContext();
   return (
-    <div className={className}>
-      {leftIcon && (
-        <InputIcon className={leftIcon} position="left" inputSize={inputSize} />
-      )}
+    <S.Wrapper>
+      {search && <SearchIcon />}
       {name ? (
         <S.Input
-          className={className}
           inputSize={inputSize}
           {...methods.register(name, { ...hookFormOptions })}
-          hasLeftIcon={!!leftIcon}
+          hasLeftIcon={!!search}
           {...rest}
         />
       ) : (
-        <S.Input
-          className={className}
-          inputSize={inputSize}
-          hasLeftIcon={!!leftIcon}
-          {...rest}
-        />
+        <S.Input inputSize={inputSize} hasLeftIcon={!!search} {...rest} />
       )}
-      {rightIcon && (
-        <InputIcon
-          className={rightIcon}
-          position="right"
-          inputSize={inputSize}
-        />
-      )}
-    </div>
+    </S.Wrapper>
   );
 };
 
-const InputWrapper = styled(Input)`
-  position: relative;
-`;
-
-export default InputWrapper;
+export default Input;
