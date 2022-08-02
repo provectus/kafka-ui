@@ -344,20 +344,22 @@ export const clearTopicsMessages = createAsyncThunk<
     clusterName: ClusterName;
     topicNames: TopicName[];
   }
->('topic/clearTopicsMessages', async (payload, { rejectWithValue }) => {
-  try {
-    const { clusterName, topicNames } = payload;
+>(
+  'topic/clearTopicsMessages',
+  async (payload, { rejectWithValue, dispatch }) => {
+    try {
+      const { clusterName, topicNames } = payload;
+      topicNames.forEach((topicName) => {
+        dispatch(clearTopicMessages({ clusterName, topicName }));
+      });
 
-    topicNames.forEach((topicName) => {
-      clearTopicMessages({ clusterName, topicName });
-    });
-
-    return undefined;
-  } catch (err) {
-    showServerError(err as Response);
-    return rejectWithValue(await getResponse(err as Response));
+      return undefined;
+    } catch (err) {
+      showServerError(err as Response);
+      return rejectWithValue(await getResponse(err as Response));
+    }
   }
-});
+);
 
 const initialState: TopicsState = {
   byName: {},
