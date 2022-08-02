@@ -3,7 +3,12 @@ import SavedFilters, {
   Props,
 } from 'components/Topics/Topic/Details/Messages/Filters/SavedFilters';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
-import { screen, within } from '@testing-library/react';
+import {
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+  within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 
@@ -11,8 +16,8 @@ jest.mock('components/common/Icons/DeleteIcon', () => () => 'mock-DeleteIcon');
 
 describe('SavedFilter Component', () => {
   const mockFilters: MessageFilters[] = [
-    { name: 'name', code: 'code' },
-    { name: 'name1', code: 'code1' },
+    { name: 'My Filter', code: 'code' },
+    { name: 'One More Filter', code: 'code1' },
   ];
 
   const setUpComponent = (props: Partial<Props> = {}) => {
@@ -125,11 +130,11 @@ describe('SavedFilter Component', () => {
       const modelDialog = screen.getByRole('dialog');
       expect(modelDialog).toBeInTheDocument();
       expect(
-        within(modelDialog).getByText(/Confirm deletion/i)
+        within(modelDialog).getByText('Are you sure want to remove My Filter?')
       ).toBeInTheDocument();
     });
 
-    it('Close Confirmations deletion modal with button', () => {
+    it('Close Confirmations deletion modal with button', async () => {
       setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
       const deleteIcons = screen.getAllByText('mock-DeleteIcon');
@@ -142,11 +147,11 @@ describe('SavedFilter Component', () => {
       const cancelButton = within(modelDialog).getByRole('button', {
         name: /Cancel/i,
       });
-      userEvent.click(cancelButton);
+      await waitFor(() => userEvent.click(cancelButton));
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
-    it('Delete the saved filter', () => {
+    it('Delete the saved filter', async () => {
       setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
       const deleteIcons = screen.getAllByText('mock-DeleteIcon');
@@ -154,9 +159,11 @@ describe('SavedFilter Component', () => {
       userEvent.hover(savedFilters[0]);
       userEvent.click(deleteIcons[0]);
 
-      userEvent.click(screen.getByRole('button', { name: /Delete/i }));
+      await waitFor(() =>
+        userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+      );
       expect(deleteMock).toHaveBeenCalledTimes(1);
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
     });
   });
 });

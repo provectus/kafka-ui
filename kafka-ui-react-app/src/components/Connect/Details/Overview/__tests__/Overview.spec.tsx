@@ -19,8 +19,8 @@ describe('Overview', () => {
       data: undefined,
     }));
 
-    const { container } = render(<Overview />);
-    expect(container).toBeEmptyDOMElement();
+    render(<Overview />);
+    expect(screen.queryByText('Worker')).not.toBeInTheDocument();
   });
 
   describe('when connector is loaded', () => {

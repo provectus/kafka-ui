@@ -355,7 +355,7 @@ export const clearTopicsMessages = createAsyncThunk<
   }
 });
 
-export const initialState: TopicsState = {
+const initialState: TopicsState = {
   byName: {},
   allNames: [],
   totalPages: 1,

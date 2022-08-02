@@ -86,7 +86,7 @@ describe('GlobalSchemaSelector', () => {
       200
     );
     await waitFor(() => {
-      userEvent.click(screen.getByText('Submit'));
+      userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
     });
     await waitFor(() => expect(putNewCompatibilityMock.called()).toBeTruthy());
     await waitFor(() => expect(getSchemasMock.called()).toBeTruthy());
