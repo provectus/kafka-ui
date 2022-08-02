@@ -102,8 +102,8 @@ describe('Details component', () => {
       });
       expect(deleteConsumerGroupMock.called()).toBeTruthy();
 
-      await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
-      expect(mockNavigate).toHaveBeenLastCalledWith('../');
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      await waitFor(() => expect(mockNavigate).toHaveBeenLastCalledWith('../'));
     });
   });
 });

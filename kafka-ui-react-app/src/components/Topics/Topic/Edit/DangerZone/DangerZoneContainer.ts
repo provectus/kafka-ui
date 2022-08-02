@@ -13,7 +13,7 @@ type OwnProps = {
 };
 
 const mapStateToProps = (
-  state: RootState,
+  _: RootState,
   { defaultPartitions, defaultReplicationFactor }: OwnProps
 ) => ({
   defaultPartitions,

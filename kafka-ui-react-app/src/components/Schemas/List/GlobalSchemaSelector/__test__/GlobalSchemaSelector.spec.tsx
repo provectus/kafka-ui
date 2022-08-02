@@ -94,6 +94,9 @@ describe('GlobalSchemaSelector', () => {
     await waitFor(() =>
       expect(screen.queryByText('Confirm the action')).not.toBeInTheDocument()
     );
-    expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FORWARD);
+
+    await waitFor(() =>
+      expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FORWARD)
+    );
   });
 });
