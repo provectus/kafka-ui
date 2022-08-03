@@ -6,24 +6,17 @@ import {
   RouteParamsClusterTopic,
 } from 'lib/paths';
 import jsf from 'json-schema-faker';
-import {
-  fetchTopicMessageSchema,
-  fetchTopicDetails,
-} from 'redux/reducers/topics/topicsSlice';
-import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import { Button } from 'components/common/Button/Button';
 import Editor from 'components/common/Editor/Editor';
-import PageLoader from 'components/common/PageLoader/PageLoader';
-import {
-  getMessageSchemaByTopicName,
-  getPartitionsByTopicName,
-  getTopicMessageSchemaFetched,
-} from 'redux/reducers/topics/selectors';
 import Select, { SelectOption } from 'components/common/Select/Select';
 import useAppParams from 'lib/hooks/useAppParams';
 import Heading from 'components/common/heading/Heading.styled';
-import { messagesApiClient } from 'lib/api';
-import { showAlert, showServerError } from 'lib/errorHandling';
+import { showAlert } from 'lib/errorHandling';
+import {
+  useSendMessage,
+  useTopicDetails,
+  useTopicMessageSchema,
+} from 'lib/hooks/api/topics';
 
 import validateMessage from './validateMessage';
 import * as S from './SendMessage.styled';
@@ -36,31 +29,27 @@ type FieldValues = Partial<{
 }>;
 
 const SendMessage: React.FC = () => {
-  const dispatch = useAppDispatch();
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const navigate = useNavigate();
+  const { data: topic } = useTopicDetails({ clusterName, topicName });
+  const { data: messageSchema } = useTopicMessageSchema({
+    clusterName,
+    topicName,
+  });
+  const sendMessage = useSendMessage({ clusterName, topicName });
 
   jsf.option('fillProperties', false);
   jsf.option('alwaysFakeOptionals', true);
 
-  React.useEffect(() => {
-    dispatch(fetchTopicMessageSchema({ clusterName, topicName }));
-  }, [clusterName, dispatch, topicName]);
+  const partitions = topic?.partitions || [];
 
-  const messageSchema = useAppSelector((state) =>
-    getMessageSchemaByTopicName(state, topicName)
-  );
-  const partitions = useAppSelector((state) =>
-    getPartitionsByTopicName(state, topicName)
-  );
-  const schemaIsFetched = useAppSelector(getTopicMessageSchemaFetched);
   const selectPartitionOptions: Array<SelectOption> = partitions.map((p) => {
     const value = String(p.partition);
     return { value, label: value };
   });
 
   const keyDefaultValue = React.useMemo(() => {
-    if (!schemaIsFetched || !messageSchema) {
+    if (!messageSchema) {
       return undefined;
     }
     return JSON.stringify(
@@ -68,10 +57,10 @@ const SendMessage: React.FC = () => {
       null,
       '\t'
     );
-  }, [messageSchema, schemaIsFetched]);
+  }, [messageSchema]);
 
   const contentDefaultValue = React.useMemo(() => {
-    if (!schemaIsFetched || !messageSchema) {
+    if (!messageSchema) {
       return undefined;
     }
     return JSON.stringify(
@@ -79,7 +68,7 @@ const SendMessage: React.FC = () => {
       null,
       '\t'
     );
-  }, [messageSchema, schemaIsFetched]);
+  }, [messageSchema]);
 
   const {
     handleSubmit,
@@ -129,31 +118,16 @@ const SendMessage: React.FC = () => {
         return;
       }
       const headers = data.headers ? JSON.parse(data.headers) : undefined;
-      try {
-        await messagesApiClient.sendTopicMessages({
-          clusterName,
-          topicName,
-          createTopicMessage: {
-            key: !key ? null : key,
-            content: !content ? null : content,
-            headers,
-            partition: !partition ? 0 : partition,
-          },
-        });
-        dispatch(fetchTopicDetails({ clusterName, topicName }));
-      } catch (e) {
-        showServerError(e as Response, {
-          id: `${clusterName}-${topicName}-sendTopicMessagesError`,
-          message: `Error in sending a message to ${topicName}`,
-        });
-      }
+      await sendMessage.mutateAsync({
+        key: !key ? null : key,
+        content: !content ? null : content,
+        headers,
+        partition: !partition ? 0 : partition,
+      });
       navigate(`../${clusterTopicMessagesRelativePath}`);
     }
   };
 
-  if (!schemaIsFetched) {
-    return <PageLoader />;
-  }
   return (
     <S.Wrapper>
       <form onSubmit={handleSubmit(onSubmit)}>

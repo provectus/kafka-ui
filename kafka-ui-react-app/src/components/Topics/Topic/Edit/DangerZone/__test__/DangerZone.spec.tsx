@@ -1,27 +1,33 @@
 import React from 'react';
 import DangerZone, {
-  Props,
+  DangerZoneProps,
 } from 'components/Topics/Topic/Edit/DangerZone/DangerZone';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
-import {
-  topicName,
-  clusterName,
-} from 'components/Topics/Topic/Edit/__test__/fixtures';
 import { clusterTopicSendMessagePath } from 'lib/paths';
+import {
+  useIncreaseTopicPartitionsCount,
+  useUpdateTopicReplicationFactor,
+} from 'lib/hooks/api/topics';
 
 const defaultPartitions = 3;
 const defaultReplicationFactor = 3;
 
-const renderComponent = (props?: Partial<Props>) =>
+const clusterName = 'testCluster';
+const topicName = 'testTopic';
+
+jest.mock('lib/hooks/api/topics', () => ({
+  useIncreaseTopicPartitionsCount: jest.fn(),
+  useUpdateTopicReplicationFactor: jest.fn(),
+}));
+
+const renderComponent = (props?: Partial<DangerZoneProps>) =>
   render(
     <WithRoute path={clusterTopicSendMessagePath()}>
       <DangerZone
         defaultPartitions={defaultPartitions}
         defaultReplicationFactor={defaultReplicationFactor}
-        updateTopicPartitionsCount={jest.fn()}
-        updateTopicReplicationFactor={jest.fn()}
         {...props}
       />
     </WithRoute>,
@@ -76,33 +82,31 @@ describe('DangerZone', () => {
     ).toBeInTheDocument();
   });
 
-  it('calls updateTopicPartitionsCount', async () => {
-    const mockUpdateTopicPartitionsCount = jest.fn();
-    renderComponent({
-      updateTopicPartitionsCount: mockUpdateTopicPartitionsCount,
-    });
+  it('calls increaseTopicPartitionsCount mutation', async () => {
+    const mockIncreaseTopicPartitionsCount = jest.fn();
+    (useIncreaseTopicPartitionsCount as jest.Mock).mockImplementation(() => ({
+      mutateAsync: mockIncreaseTopicPartitionsCount,
+    }));
+    renderComponent();
     const numberOfPartitionsEditForm = screen.getByRole('form', {
       name: 'Edit number of partitions',
     });
-
     userEvent.type(
       within(numberOfPartitionsEditForm).getByRole('spinbutton'),
       '4'
     );
     userEvent.click(within(numberOfPartitionsEditForm).getByRole('button'));
-
     await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
     await waitFor(() => clickOnDialogSubmitButton());
-
-    expect(mockUpdateTopicPartitionsCount).toHaveBeenCalledTimes(1);
+    expect(mockIncreaseTopicPartitionsCount).toHaveBeenCalledTimes(1);
   });
 
   it('calls updateTopicReplicationFactor', async () => {
     const mockUpdateTopicReplicationFactor = jest.fn();
-    renderComponent({
-      updateTopicReplicationFactor: mockUpdateTopicReplicationFactor,
-    });
-
+    (useUpdateTopicReplicationFactor as jest.Mock).mockImplementation(() => ({
+      mutateAsync: mockUpdateTopicReplicationFactor,
+    }));
+    renderComponent();
     const replicationFactorEditForm = screen.getByRole('form', {
       name: 'Edit replication factor',
     });

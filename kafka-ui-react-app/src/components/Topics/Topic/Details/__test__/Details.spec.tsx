@@ -1,98 +1,89 @@
 import React from 'react';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ClusterContext from 'components/contexts/ClusterContext';
 import Details from 'components/Topics/Topic/Details/Details';
-import {
-  getTopicStateFixtures,
-  internalTopicPayload,
-} from 'redux/reducers/topics/__test__/fixtures';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterTopicEditRelativePath, clusterTopicPath } from 'lib/paths';
 import { CleanUpPolicy, Topic } from 'generated-sources';
+import { externalTopicPayload } from 'lib/fixtures/topics';
+import {
+  useDeleteTopic,
+  useRecreateTopic,
+  useTopicDetails,
+} from 'lib/hooks/api/topics';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }));
+jest.mock('lib/hooks/api/topics', () => ({
+  useTopicDetails: jest.fn(),
+  useDeleteTopic: jest.fn(),
+  useRecreateTopic: jest.fn(),
+}));
+
+const mockUnwrap = jest.fn();
+const useDispatchMock = () => jest.fn(() => ({ unwrap: mockUnwrap }));
+
+jest.mock('lib/hooks/redux', () => ({
+  ...jest.requireActual('lib/hooks/redux'),
+  useAppDispatch: useDispatchMock,
+}));
+
+const mockDelete = jest.fn();
+const mockRecreate = jest.fn();
 
 describe('Details', () => {
-  const mockDelete = jest.fn();
   const mockClusterName = 'local';
-  const mockClearTopicMessages = jest.fn();
-  const mockRecreateTopic = jest.fn();
 
   const topic: Topic = {
-    ...internalTopicPayload,
+    ...externalTopicPayload,
     cleanUpPolicy: CleanUpPolicy.DELETE,
-    internal: false,
   };
 
-  const mockTopicsState = getTopicStateFixtures([topic]);
-
-  const setupComponent = (props = {}) =>
+  const renderComponent = (isReadOnly = false) => {
+    const path = clusterTopicPath(mockClusterName, topic.name);
     render(
       <ClusterContext.Provider
         value={{
-          isReadOnly: false,
+          isReadOnly,
           hasKafkaConnectConfigured: true,
           hasSchemaRegistryConfigured: true,
           isTopicDeletionAllowed: true,
         }}
       >
         <WithRoute path={clusterTopicPath()}>
-          <Details
-            deleteTopic={mockDelete}
-            recreateTopic={mockRecreateTopic}
-            clearTopicMessages={mockClearTopicMessages}
-            {...props}
-          />
+          <Details />
         </WithRoute>
       </ClusterContext.Provider>,
-      {
-        initialEntries: [
-          clusterTopicPath(mockClusterName, internalTopicPayload.name),
-        ],
-        preloadedState: {
-          topics: mockTopicsState,
-        },
-      }
+      { initialEntries: [path] }
     );
+  };
 
-  afterEach(() => {
-    mockNavigate.mockClear();
-    mockDelete.mockClear();
-    mockClearTopicMessages.mockClear();
-    mockRecreateTopic.mockClear();
+  beforeEach(async () => {
+    (useTopicDetails as jest.Mock).mockImplementation(() => ({
+      data: topic,
+    }));
+    (useDeleteTopic as jest.Mock).mockImplementation(() => ({
+      mutateAsync: mockDelete,
+    }));
+    (useRecreateTopic as jest.Mock).mockImplementation(() => ({
+      mutateAsync: mockRecreate,
+    }));
   });
 
   describe('when it has readonly flag', () => {
     it('does not render the Action button a Topic', () => {
-      render(
-        <ClusterContext.Provider
-          value={{
-            isReadOnly: true,
-            hasKafkaConnectConfigured: true,
-            hasSchemaRegistryConfigured: true,
-            isTopicDeletionAllowed: true,
-          }}
-        >
-          <Details
-            deleteTopic={mockDelete}
-            recreateTopic={mockRecreateTopic}
-            clearTopicMessages={mockClearTopicMessages}
-          />
-        </ClusterContext.Provider>
-      );
-
+      renderComponent(true);
       expect(screen.queryByText('Produce Message')).not.toBeInTheDocument();
     });
   });
 
   describe('when remove topic modal is open', () => {
     beforeEach(() => {
-      setupComponent();
+      renderComponent();
       const openModalButton = screen.getAllByText('Remove Topic')[0];
       userEvent.click(openModalButton);
     });
@@ -101,15 +92,9 @@ describe('Details', () => {
       const submitButton = screen.getAllByRole('button', {
         name: 'Confirm',
       })[0];
-
-      await waitFor(() => userEvent.click(submitButton));
-
-      expect(mockDelete).toHaveBeenCalledWith({
-        clusterName: mockClusterName,
-        topicName: internalTopicPayload.name,
-      });
+      await act(() => userEvent.click(submitButton));
+      expect(mockDelete).toHaveBeenCalledWith(topic.name);
     });
-
     it('closes the modal when cancel button is clicked', async () => {
       const cancelButton = screen.getAllByText('Cancel')[0];
       await waitFor(() => userEvent.click(cancelButton));
@@ -118,11 +103,10 @@ describe('Details', () => {
   });
 
   describe('when clear messages modal is open', () => {
-    beforeEach(() => {
-      setupComponent();
-
+    beforeEach(async () => {
+      await renderComponent();
       const confirmButton = screen.getAllByText('Clear messages')[0];
-      userEvent.click(confirmButton);
+      await act(() => userEvent.click(confirmButton));
     });
 
     it('it calls clearTopicMessages on confirm', async () => {
@@ -130,11 +114,7 @@ describe('Details', () => {
         name: 'Confirm',
       })[0];
       await waitFor(() => userEvent.click(submitButton));
-
-      expect(mockClearTopicMessages).toHaveBeenCalledWith({
-        clusterName: mockClusterName,
-        topicName: internalTopicPayload.name,
-      });
+      expect(mockUnwrap).toHaveBeenCalledTimes(1);
     });
 
     it('closes the modal when cancel button is clicked', async () => {
@@ -147,29 +127,24 @@ describe('Details', () => {
 
   describe('when edit settings is clicked', () => {
     it('redirects to the edit page', () => {
-      setupComponent();
-
+      renderComponent();
       const button = screen.getAllByText('Edit settings')[0];
       userEvent.click(button);
-
       expect(mockNavigate).toHaveBeenCalledWith(clusterTopicEditRelativePath);
     });
   });
 
   it('redirects to the correct route if topic is deleted', async () => {
-    setupComponent();
-
+    renderComponent();
     const deleteTopicButton = screen.getByText(/Remove topic/i);
-    userEvent.click(deleteTopicButton);
-
+    await waitFor(() => userEvent.click(deleteTopicButton));
     const submitDeleteButton = screen.getByRole('button', { name: 'Confirm' });
-    await waitFor(() => userEvent.click(submitDeleteButton));
-
+    await act(() => userEvent.click(submitDeleteButton));
     expect(mockNavigate).toHaveBeenCalledWith('../..');
   });
 
   it('shows a confirmation popup on deleting topic messages', () => {
-    setupComponent();
+    renderComponent();
     const clearMessagesButton = screen.getAllByText(/Clear messages/i)[0];
     userEvent.click(clearMessagesButton);
 
@@ -179,27 +154,26 @@ describe('Details', () => {
   });
 
   it('shows a confirmation popup on recreating topic', () => {
-    setupComponent();
+    renderComponent();
     const recreateTopicButton = screen.getByText(/Recreate topic/i);
     userEvent.click(recreateTopicButton);
-
     expect(
       screen.getByText(/Are you sure want to recreate topic?/i)
     ).toBeInTheDocument();
   });
 
   it('calling recreation function after click on Submit button', async () => {
-    setupComponent();
+    renderComponent();
     const recreateTopicButton = screen.getByText(/Recreate topic/i);
     userEvent.click(recreateTopicButton);
     const confirmBtn = screen.getByRole('button', { name: /Confirm/i });
 
     await waitFor(() => userEvent.click(confirmBtn));
-    expect(mockRecreateTopic).toBeCalledTimes(1);
+    expect(mockRecreate).toBeCalledTimes(1);
   });
 
   it('close popup confirmation window after click on Cancel button', () => {
-    setupComponent();
+    renderComponent();
     const recreateTopicButton = screen.getByText(/Recreate topic/i);
     userEvent.click(recreateTopicButton);
     const cancelBtn = screen.getByRole('button', { name: /cancel/i });
