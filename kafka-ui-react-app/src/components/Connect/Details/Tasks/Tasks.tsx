@@ -7,11 +7,8 @@ import {
 } from 'lib/hooks/api/kafkaConnect';
 import useAppParams from 'lib/hooks/useAppParams';
 import { RouterParamsClusterConnectConnector } from 'lib/paths';
-import getTagColor from 'components/common/Tag/getTagColor';
-import { Tag } from 'components/common/Tag/Tag.styled';
-import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
-import TraceCell from './TraceCell';
+import TaskRow from './TaskRow';
 
 const Tasks: React.FC = () => {
   const routerProps = useAppParams<RouterParamsClusterConnectConnector>();
@@ -27,6 +24,7 @@ const Tasks: React.FC = () => {
     <Table isFullwidth>
       <thead>
         <tr>
+          <TableHeaderCell />
           <TableHeaderCell title="ID" />
           <TableHeaderCell title="Worker" />
           <TableHeaderCell title="State" />
@@ -41,28 +39,7 @@ const Tasks: React.FC = () => {
           </tr>
         )}
         {tasks?.map((task) => (
-          <tr key={task.status?.id}>
-            <td>{task.status?.id}</td>
-            <td>{task.status?.workerId}</td>
-            <td>
-              <Tag color={getTagColor(task.status)}>{task.status.state}</Tag>
-            </td>
-            <td>
-              <TraceCell stackTrace={task.status.trace || ''} />
-            </td>
-            <td style={{ width: '5%' }}>
-              <div>
-                <Dropdown>
-                  <DropdownItem
-                    onClick={() => restartTaskHandler(task.id?.task)}
-                    danger
-                  >
-                    <span>Restart task</span>
-                  </DropdownItem>
-                </Dropdown>
-              </div>
-            </td>
-          </tr>
+          <TaskRow task={task} restartTaskHandler={restartTaskHandler} />
         ))}
       </tbody>
     </Table>
