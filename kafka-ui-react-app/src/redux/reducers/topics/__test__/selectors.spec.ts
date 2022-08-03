@@ -21,12 +21,6 @@ describe('Topics selectors', () => {
         false
       );
       expect(
-        selectors.getTopicPartitionsCountIncreased(store.getState())
-      ).toEqual(false);
-      expect(
-        selectors.getTopicReplicationFactorUpdated(store.getState())
-      ).toEqual(false);
-      expect(
         selectors.getTopicsConsumerGroupsFetched(store.getState())
       ).toEqual(false);
       expect(selectors.getTopicList(store.getState())).toEqual([]);

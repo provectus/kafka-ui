@@ -27,7 +27,7 @@ export const clearTopicMessages = createAsyncThunk<
       dispatch(fetchTopicDetails({ clusterName, topicName }));
       showSuccessAlert({
         id: `message-${topicName}-${clusterName}-${partitions}`,
-        message: 'Messages successfully cleared!',
+        message: `${topicName} messages have been successfully cleared!`,
       });
 
       return undefined;

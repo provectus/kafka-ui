@@ -11,8 +11,6 @@ import {
   fetchTopicConsumerGroups,
   createTopic,
   deleteTopic,
-  updateTopicPartitionsCount,
-  updateTopicReplicationFactor,
 } from 'redux/reducers/topics/topicsSlice';
 import { AsyncRequestStatus } from 'lib/constants';
 
@@ -87,24 +85,6 @@ const getTopicMessageSchemaFetchingStatus = createFetchingSelector(
 
 export const getTopicMessageSchemaFetched = createSelector(
   getTopicMessageSchemaFetchingStatus,
-  (status) => status === AsyncRequestStatus.fulfilled
-);
-
-const getPartitionsCountIncreaseStatus = createFetchingSelector(
-  updateTopicPartitionsCount.typePrefix
-);
-
-export const getTopicPartitionsCountIncreased = createSelector(
-  getPartitionsCountIncreaseStatus,
-  (status) => status === AsyncRequestStatus.fulfilled
-);
-
-const getReplicationFactorUpdateStatus = createFetchingSelector(
-  updateTopicReplicationFactor.typePrefix
-);
-
-export const getTopicReplicationFactorUpdated = createSelector(
-  getReplicationFactorUpdateStatus,
   (status) => status === AsyncRequestStatus.fulfilled
 );
 

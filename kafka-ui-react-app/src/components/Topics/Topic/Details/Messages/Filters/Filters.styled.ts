@@ -298,13 +298,6 @@ export const DeleteSavedFilterIcon = styled.div`
   margin-left: 4px;
 `;
 
-export const ConfirmDeletionText = styled.h3`
-  color: ${({ theme }) => theme.modal.deletionTextColor};
-  font-size: 14px;
-  line-height: 20px;
-  padding: 16px 0;
-`;
-
 export const MessageLoading = styled.div.attrs({
   role: 'contentLoader',
 })<MessageLoadingProps>`

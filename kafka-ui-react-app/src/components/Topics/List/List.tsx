@@ -14,7 +14,6 @@ import {
 import usePagination from 'lib/hooks/usePagination';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import {
   GetTopicsRequest,
   SortOrder,
@@ -30,6 +29,7 @@ import { SmartTable } from 'components/common/SmartTable/SmartTable';
 import { TableColumn } from 'components/common/SmartTable/TableColumn';
 import { useTableState } from 'lib/hooks/useTableState';
 import PlusIcon from 'components/common/Icons/PlusIcon';
+import { useConfirm } from 'lib/hooks/useConfirm';
 
 import {
   MessagesCell,
@@ -88,6 +88,7 @@ const List: React.FC<TopicsListProps> = ({
     page || null
   );
   const navigate = useNavigate();
+  const confirm = useConfirm();
 
   const topicsListParams = React.useMemo(
     () => ({
@@ -148,16 +149,6 @@ const List: React.FC<TopicsListProps> = ({
     });
   };
 
-  const [confirmationModal, setConfirmationModal] = React.useState<
-    '' | 'deleteTopics' | 'purgeMessages'
-  >('');
-
-  const [confirmationModalText, setConfirmationModalText] =
-    React.useState<string>('');
-  const closeConfirmationModal = () => {
-    setConfirmationModal('');
-  };
-
   const clearSelectedTopics = () => tableState.toggleSelection(false);
 
   const searchHandler = (searchString: string) => {
@@ -171,16 +162,26 @@ const List: React.FC<TopicsListProps> = ({
       search: `?page=${newPageQuery}&perPage=${perPage || PER_PAGE}`,
     });
   };
-  const deleteOrPurgeConfirmationHandler = () => {
+
+  const deleteTopicsHandler = () => {
     const selectedIds = Array.from(tableState.selectedIds);
-    if (confirmationModal === 'deleteTopics') {
+    confirm('Are you sure you want to remove selected topics?', () => {
       deleteTopics({ clusterName, topicNames: selectedIds });
-    } else {
-      clearTopicsMessages({ clusterName, topicNames: selectedIds });
-    }
-    closeConfirmationModal();
-    clearSelectedTopics();
-    fetchTopicsList(topicsListParams);
+      clearSelectedTopics();
+      fetchTopicsList(topicsListParams);
+    });
+  };
+
+  const purgeTopicsHandler = () => {
+    const selectedIds = Array.from(tableState.selectedIds);
+    confirm(
+      'Are you sure you want to purge messages of selected topics?',
+      () => {
+        clearTopicsMessages({ clusterName, topicNames: selectedIds });
+        clearSelectedTopics();
+        fetchTopicsList(topicsListParams);
+      }
+    );
   };
 
   return (
@@ -220,54 +221,35 @@ const List: React.FC<TopicsListProps> = ({
       ) : (
         <div>
           {tableState.selectedCount > 0 && (
-            <>
-              <ControlPanelWrapper data-testid="delete-buttons">
-                <Button
-                  buttonSize="M"
-                  buttonType="secondary"
-                  onClick={() => {
-                    setConfirmationModal('deleteTopics');
-                    setConfirmationModalText(
-                      'Are you sure you want to remove selected topics?'
-                    );
-                  }}
-                >
-                  Delete selected topics
-                </Button>
-                {tableState.selectedCount === 1 && (
-                  <Button
-                    buttonSize="M"
-                    buttonType="secondary"
-                    to={{
-                      pathname: clusterTopicCopyRelativePath,
-                      search: `?${getSelectedTopic()}`,
-                    }}
-                  >
-                    Copy selected topic
-                  </Button>
-                )}
-
-                <Button
-                  buttonSize="M"
-                  buttonType="secondary"
-                  onClick={() => {
-                    setConfirmationModal('purgeMessages');
-                    setConfirmationModalText(
-                      'Are you sure you want to purge messages of selected topics?'
-                    );
-                  }}
-                >
-                  Purge messages of selected topics
-                </Button>
-              </ControlPanelWrapper>
-              <ConfirmationModal
-                isOpen={confirmationModal !== ''}
-                onCancel={closeConfirmationModal}
-                onConfirm={deleteOrPurgeConfirmationHandler}
+            <ControlPanelWrapper data-testid="delete-buttons">
+              <Button
+                buttonSize="M"
+                buttonType="secondary"
+                onClick={deleteTopicsHandler}
               >
-                {confirmationModalText}
-              </ConfirmationModal>
-            </>
+                Delete selected topics
+              </Button>
+              {tableState.selectedCount === 1 && (
+                <Button
+                  buttonSize="M"
+                  buttonType="secondary"
+                  to={{
+                    pathname: clusterTopicCopyRelativePath,
+                    search: `?${getSelectedTopic()}`,
+                  }}
+                >
+                  Copy selected topic
+                </Button>
+              )}
+
+              <Button
+                buttonSize="M"
+                buttonType="secondary"
+                onClick={purgeTopicsHandler}
+              >
+                Purge messages of selected topics
+              </Button>
+            </ControlPanelWrapper>
           )}
           <SmartTable
             selectable={!isReadOnly}
