@@ -55,16 +55,19 @@ export const topicFormValidationSchema = yup.object().shape({
   partitions: yup
     .number()
     .min(1)
+    .max(2147483647)
     .required()
     .typeError('Number of partitions is required and must be a number'),
   replicationFactor: yup
     .number()
     .min(1)
+    .max(2147483647)
     .required()
     .typeError('Replication factor is required and must be a number'),
   minInSyncReplicas: yup
     .number()
     .min(1)
+    .max(2147483647)
     .required()
     .typeError('Min in sync replicas is required and must be a number'),
   cleanupPolicy: yup.string().required(),
