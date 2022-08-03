@@ -20,21 +20,20 @@ public class SchemaRegistryList {
 
     public SchemaView openSchema(String schemaName) {
         $(By.xpath("//*[contains(text(),'" + schemaName + "')]")).click();
-        return new SchemaView();
+        return  SchemaView.INSTANCE;
     }
 
     @SneakyThrows
-    public SchemaRegistryList isNotVisible(String schemaName) {
-        $x(String.format("//*[contains(text(),'%s')]",schemaName)).shouldNotBe(Condition.visible);
-        return this;
+    public boolean isNotVisible(String schemaName) {
+        return $x(String.format("//*[contains(text(),'%s')]", schemaName)).is(Condition.not(Condition.visible));
     }
 
     @Step
-    public SchemaRegistryList isSchemaVisible(String schemaName) {
+    public void isSchemaVisible(String schemaName) {
         $$("tbody td>a")
-                .find(Condition.exactText(schemaName))
-                .shouldBe(Condition.visible);
-        return this;
+                .find(Condition.exactText(schemaName)).is(Condition.visible);
+//        element.shouldBe(Condition.visible);
+//        return element.is(Condition.visible);
     }
 }
 
