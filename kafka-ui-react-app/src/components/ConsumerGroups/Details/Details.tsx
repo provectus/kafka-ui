@@ -6,15 +6,11 @@ import {
   ClusterGroupParam,
 } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
-import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import { groupBy } from 'lodash';
+import groupBy from 'lodash/groupBy';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
@@ -26,6 +22,7 @@ import {
   getAreConsumerGroupDetailsFulfilled,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import getTagColor from 'components/common/Tag/getTagColor';
+import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
 import ListItem from './ListItem';
 
@@ -40,17 +37,14 @@ const Details: React.FC = () => {
   const isDeleted = useAppSelector(getIsConsumerGroupDeleted);
   const isFetched = useAppSelector(getAreConsumerGroupDetailsFulfilled);
 
-  const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
-    React.useState<boolean>(false);
-
   React.useEffect(() => {
     dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
   }, [clusterName, consumerGroupID, dispatch]);
 
   const onDelete = () => {
-    setIsConfirmationModalVisible(false);
     dispatch(deleteConsumerGroup({ clusterName, consumerGroupID }));
   };
+
   React.useEffect(() => {
     if (isDeleted) {
       navigate('../');
@@ -72,10 +66,11 @@ const Details: React.FC = () => {
       <div>
         <PageHeading text={consumerGroupID}>
           {!isReadOnly && (
-            <Dropdown label={<VerticalElipsisIcon />} right>
+            <Dropdown>
               <DropdownItem onClick={onResetOffsets}>Reset offset</DropdownItem>
               <DropdownItem
-                onClick={() => setIsConfirmationModalVisible(true)}
+                confirm="Are you sure you want to delete this consumer group?"
+                onClick={onDelete}
                 danger
               >
                 Delete consumer group
@@ -121,13 +116,6 @@ const Details: React.FC = () => {
           ))}
         </tbody>
       </Table>
-      <ConfirmationModal
-        isOpen={isConfirmationModalVisible}
-        onCancel={() => setIsConfirmationModalVisible(false)}
-        onConfirm={onDelete}
-      >
-        Are you sure you want to delete this consumer group?
-      </ConfirmationModal>
     </div>
   );
 };

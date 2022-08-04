@@ -11,7 +11,7 @@ import {
   TopicMessageEventTypeEnum,
 } from 'generated-sources';
 import React, { useContext } from 'react';
-import { omitBy } from 'lodash';
+import omitBy from 'lodash/omitBy';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
@@ -30,6 +30,11 @@ import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
 import { useAppSelector } from 'lib/hooks/redux';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
+import PlusIcon from 'components/common/Icons/PlusIcon';
+import CloseIcon from 'components/common/Icons/CloseIcon';
+import ClockIcon from 'components/common/Icons/ClockIcon';
+import ArrowDownIcon from 'components/common/Icons/ArrowDownIcon';
+import FileIcon from 'components/common/Icons/FileIcon';
 
 import * as S from './Filters.styled';
 import {
@@ -57,7 +62,7 @@ export interface MessageFilters {
   code: string;
 }
 
-export interface ActiveMessageFilter {
+interface ActiveMessageFilter {
   index: number;
   name: string;
   code: string;
@@ -192,7 +197,17 @@ const Filters: React.FC<FiltersProps> = ({
       setAttempt(attempt + 1);
 
       if (isSeekTypeControlVisible) {
-        props.seekType = isLive ? SeekType.LATEST : currentSeekType;
+        switch (seekDirection) {
+          case SeekDirection.FORWARD:
+            props.seekType = SeekType.BEGINNING;
+            break;
+          case SeekDirection.BACKWARD:
+          case SeekDirection.TAILING:
+            props.seekType = SeekType.LATEST;
+            break;
+          default:
+            props.seekType = currentSeekType;
+        }
         props.seekTo = selectedPartitions.map(({ value }) => {
           const offsetProperty =
             seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
@@ -464,17 +479,14 @@ const Filters: React.FC<FiltersProps> = ({
       </div>
       <S.ActiveSmartFilterWrapper>
         <Button buttonType="primary" buttonSize="M" onClick={toggle}>
-          <i className="fas fa-plus fa-sm" />
+          <PlusIcon />
           Add Filters
         </Button>
         {activeFilter.name && (
           <S.ActiveSmartFilter data-testid="activeSmartFilter">
             {activeFilter.name}
             <S.DeleteSavedFilterIcon onClick={deleteActiveFilter}>
-              <i
-                className="fas fa-times"
-                data-testid="activeSmartFilterCloseIcon"
-              />
+              <CloseIcon />
             </S.DeleteSavedFilterIcon>
           </S.ActiveSmartFilter>
         )}
@@ -509,19 +521,19 @@ const Filters: React.FC<FiltersProps> = ({
         </S.MessageLoading>
         <S.Metric title="Elapsed Time">
           <S.MetricsIcon>
-            <i className="far fa-clock" />
+            <ClockIcon />
           </S.MetricsIcon>
           <span>{Math.max(elapsedMs || 0, 0)} ms</span>
         </S.Metric>
         <S.Metric title="Bytes Consumed">
           <S.MetricsIcon>
-            <i className="fas fa-arrow-down" />
+            <ArrowDownIcon />
           </S.MetricsIcon>
           <BytesFormatted value={bytesConsumed} />
         </S.Metric>
         <S.Metric title="Messages Consumed">
           <S.MetricsIcon>
-            <i className="far fa-file-alt" />
+            <FileIcon />
           </S.MetricsIcon>
           <span>{messagesConsumed} messages consumed</span>
         </S.Metric>

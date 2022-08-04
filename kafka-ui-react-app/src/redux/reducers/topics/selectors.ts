@@ -1,10 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import {
-  RootState,
-  TopicName,
-  TopicsState,
-  TopicConfigByName,
-} from 'redux/interfaces';
+import { RootState, TopicName, TopicsState } from 'redux/interfaces';
 import { CleanUpPolicy } from 'generated-sources';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 import {
@@ -16,8 +11,6 @@ import {
   fetchTopicConsumerGroups,
   createTopic,
   deleteTopic,
-  updateTopicPartitionsCount,
-  updateTopicReplicationFactor,
 } from 'redux/reducers/topics/topicsSlice';
 import { AsyncRequestStatus } from 'lib/constants';
 
@@ -95,24 +88,6 @@ export const getTopicMessageSchemaFetched = createSelector(
   (status) => status === AsyncRequestStatus.fulfilled
 );
 
-const getPartitionsCountIncreaseStatus = createFetchingSelector(
-  updateTopicPartitionsCount.typePrefix
-);
-
-export const getTopicPartitionsCountIncreased = createSelector(
-  getPartitionsCountIncreaseStatus,
-  (status) => status === AsyncRequestStatus.fulfilled
-);
-
-const getReplicationFactorUpdateStatus = createFetchingSelector(
-  updateTopicReplicationFactor.typePrefix
-);
-
-export const getTopicReplicationFactorUpdated = createSelector(
-  getReplicationFactorUpdateStatus,
-  (status) => status === AsyncRequestStatus.fulfilled
-);
-
 const getTopicConsumerGroupsStatus = createFetchingSelector(
   fetchTopicConsumerGroups.typePrefix
 );
@@ -155,23 +130,6 @@ export const getFullTopic = createSelector(getTopicByName, (topic) =>
 export const getTopicConfig = createSelector(
   getTopicByName,
   ({ config }) => config
-);
-
-export const getTopicConfigByParamName = createSelector(
-  getTopicConfig,
-  (config) => {
-    const byParamName: TopicConfigByName = {
-      byName: {},
-    };
-
-    if (config) {
-      config.forEach((param) => {
-        byParamName.byName[param.name] = param;
-      });
-    }
-
-    return byParamName;
-  }
 );
 
 export const getIsTopicDeletePolicy = createSelector(

@@ -20,6 +20,7 @@ import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import Search from 'components/common/Search/Search';
 import useSearch from 'lib/hooks/useSearch';
+import PlusIcon from 'components/common/Icons/PlusIcon';
 
 import ListItem from './ListItem';
 import GlobalSchemaSelector from './GlobalSchemaSelector/GlobalSchemaSelector';
@@ -54,7 +55,7 @@ const List: React.FC = () => {
               buttonType="primary"
               to={clusterSchemaNewRelativePath}
             >
-              <i className="fas fa-plus" /> Create Schema
+              <PlusIcon /> Create Schema
             </Button>
           </>
         )}

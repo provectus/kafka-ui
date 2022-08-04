@@ -2,17 +2,29 @@ import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
 import { screen, waitFor } from '@testing-library/dom';
 import { clusterBrokersPath } from 'lib/paths';
-import fetchMock from 'fetch-mock';
 import { act } from '@testing-library/react';
 import BrokersList from 'components/Brokers/BrokersList/BrokersList';
-import {
-  brokersPayload,
-  clusterStatsPayload,
-} from 'components/Brokers/__test__/fixtures';
+import userEvent from '@testing-library/user-event';
+import { useBrokers } from 'lib/hooks/api/brokers';
+import { useClusterStats } from 'lib/hooks/api/clusters';
+import { brokersPayload } from 'lib/fixtures/brokers';
+import { clusterStatsPayload } from 'lib/fixtures/clusters';
+
+const mockedUsedNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockedUsedNavigate,
+}));
+
+jest.mock('lib/hooks/api/brokers', () => ({
+  useBrokers: jest.fn(),
+}));
+jest.mock('lib/hooks/api/clusters', () => ({
+  useClusterStats: jest.fn(),
+}));
 
 describe('BrokersList Component', () => {
-  afterEach(() => fetchMock.reset());
-
   const clusterName = 'local';
 
   const testInSyncReplicasCount = 798;
@@ -29,44 +41,36 @@ describe('BrokersList Component', () => {
     );
 
   describe('BrokersList', () => {
-    let fetchBrokersMock: fetchMock.FetchMockStatic;
-    const fetchStatsUrl = `/api/clusters/${clusterName}/stats`;
-
     beforeEach(() => {
-      fetchBrokersMock = fetchMock.get(
-        `/api/clusters/${clusterName}/brokers`,
-        brokersPayload
-      );
+      (useBrokers as jest.Mock).mockImplementation(() => ({
+        data: brokersPayload,
+      }));
+      (useClusterStats as jest.Mock).mockImplementation(() => ({
+        data: clusterStatsPayload,
+      }));
     });
 
     it('renders', async () => {
-      const fetchStatsMock = fetchMock.get(fetchStatsUrl, clusterStatsPayload);
-      await act(() => {
-        renderComponent();
-      });
-
-      await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
-      await waitFor(() => expect(fetchBrokersMock.called()).toBeTruthy());
-
+      renderComponent();
       expect(screen.getByRole('table')).toBeInTheDocument();
       const rows = screen.getAllByRole('row');
       expect(rows.length).toEqual(3);
     });
-
-    it('shows warning when offlinePartitionCount > 0', async () => {
-      const fetchStatsMock = fetchMock.getOnce(fetchStatsUrl, {
-        ...clusterStatsPayload,
-        offlinePartitionCount: 1345,
-      });
+    it('opens broker when row clicked', async () => {
+      renderComponent();
       await act(() => {
-        renderComponent();
+        userEvent.click(screen.getByRole('cell', { name: '0' }));
       });
-      await waitFor(() => {
-        expect(fetchStatsMock.called()).toBeTruthy();
-      });
-      await waitFor(() => {
-        expect(fetchBrokersMock.called()).toBeTruthy();
-      });
+      await waitFor(() => expect(mockedUsedNavigate).toBeCalledWith('0'));
+    });
+    it('shows warning when offlinePartitionCount > 0', async () => {
+      (useClusterStats as jest.Mock).mockImplementation(() => ({
+        data: {
+          ...clusterStatsPayload,
+          offlinePartitionCount: 1345,
+        },
+      }));
+      renderComponent();
       const onlineWidget = screen.getByText(
         clusterStatsPayload.onlinePartitionCount
       );
@@ -74,18 +78,14 @@ describe('BrokersList Component', () => {
       expect(onlineWidget).toHaveStyle({ color: '#E51A1A' });
     });
     it('shows right count when offlinePartitionCount > 0', async () => {
-      const fetchStatsMock = fetchMock.getOnce(fetchStatsUrl, {
-        ...clusterStatsPayload,
-        inSyncReplicasCount: testInSyncReplicasCount,
-        outOfSyncReplicasCount: testOutOfSyncReplicasCount,
-      });
-      await act(() => {
-        renderComponent();
-      });
-      await waitFor(() => {
-        expect(fetchStatsMock.called()).toBeTruthy();
-      });
-
+      (useClusterStats as jest.Mock).mockImplementation(() => ({
+        data: {
+          ...clusterStatsPayload,
+          inSyncReplicasCount: testInSyncReplicasCount,
+          outOfSyncReplicasCount: testOutOfSyncReplicasCount,
+        },
+      }));
+      renderComponent();
       const onlineWidgetDef = screen.getByText(testInSyncReplicasCount);
       const onlineWidget = screen.getByText(
         `of ${testInSyncReplicasCount + testOutOfSyncReplicasCount}`
@@ -93,34 +93,28 @@ describe('BrokersList Component', () => {
       expect(onlineWidgetDef).toBeInTheDocument();
       expect(onlineWidget).toBeInTheDocument();
     });
-    it('shows right count when inSyncReplicasCount: undefined outOfSyncReplicasCount: 1', async () => {
-      const fetchStatsMock = fetchMock.getOnce(fetchStatsUrl, {
-        ...clusterStatsPayload,
-        inSyncReplicasCount: undefined,
-        outOfSyncReplicasCount: testOutOfSyncReplicasCount,
-      });
-      await act(() => {
-        renderComponent();
-      });
-      await waitFor(() => {
-        expect(fetchStatsMock.called()).toBeTruthy();
-      });
 
+    it('shows right count when inSyncReplicasCount: undefined outOfSyncReplicasCount: 1', async () => {
+      (useClusterStats as jest.Mock).mockImplementation(() => ({
+        data: {
+          ...clusterStatsPayload,
+          inSyncReplicasCount: undefined,
+          outOfSyncReplicasCount: testOutOfSyncReplicasCount,
+        },
+      }));
+      renderComponent();
       const onlineWidget = screen.getByText(`of ${testOutOfSyncReplicasCount}`);
       expect(onlineWidget).toBeInTheDocument();
     });
     it(`shows right count when inSyncReplicasCount: ${testInSyncReplicasCount} outOfSyncReplicasCount: undefined`, async () => {
-      const fetchStatsMock = fetchMock.getOnce(fetchStatsUrl, {
-        ...clusterStatsPayload,
-        inSyncReplicasCount: testInSyncReplicasCount,
-        outOfSyncReplicasCount: undefined,
-      });
-      await act(() => {
-        renderComponent();
-      });
-      await waitFor(() => {
-        expect(fetchStatsMock.called()).toBeTruthy();
-      });
+      (useClusterStats as jest.Mock).mockImplementation(() => ({
+        data: {
+          ...clusterStatsPayload,
+          inSyncReplicasCount: testInSyncReplicasCount,
+          outOfSyncReplicasCount: undefined,
+        },
+      }));
+      renderComponent();
       const onlineWidgetDef = screen.getByText(testInSyncReplicasCount);
       const onlineWidget = screen.getByText(`of ${testInSyncReplicasCount}`);
       expect(onlineWidgetDef).toBeInTheDocument();

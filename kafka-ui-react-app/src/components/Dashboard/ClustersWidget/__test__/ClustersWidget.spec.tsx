@@ -1,22 +1,25 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import ClustersWidget from 'components/Dashboard/ClustersWidget/ClustersWidget';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
+import { useClusters } from 'lib/hooks/api/clusters';
+import { clustersPayload } from 'lib/fixtures/clusters';
 
-import { offlineCluster, onlineCluster, clusters } from './fixtures';
-
-const setupComponent = () =>
-  render(
-    <ClustersWidget
-      clusters={clusters}
-      onlineClusters={[onlineCluster]}
-      offlineClusters={[offlineCluster]}
-    />
-  );
+jest.mock('lib/hooks/api/clusters', () => ({
+  useClusters: jest.fn(),
+}));
 
 describe('ClustersWidget', () => {
-  beforeEach(() => setupComponent());
+  beforeEach(async () => {
+    (useClusters as jest.Mock).mockImplementation(() => ({
+      data: clustersPayload,
+      isSuccess: true,
+    }));
+    await act(() => {
+      render(<ClustersWidget />);
+    });
+  });
 
   it('renders clusterWidget list', () => {
     expect(screen.getAllByRole('row').length).toBe(3);

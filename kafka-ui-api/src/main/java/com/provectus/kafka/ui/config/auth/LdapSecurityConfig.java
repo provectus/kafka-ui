@@ -14,8 +14,10 @@ import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.ReactiveAuthenticationManagerAdapter;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.ldap.authentication.AbstractLdapAuthenticationProvider;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
+import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.ldap.search.LdapUserSearch;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -39,6 +41,11 @@ public class LdapSecurityConfig extends AbstractAuthSecurityConfig {
   @Value("${spring.ldap.userFilter.searchFilter:#{null}}")
   private String userFilterSearchFilter;
 
+  @Value("${oauth2.ldap.activeDirectory:false}")
+  private boolean isActiveDirectory;
+  @Value("${oauth2.ldap.aсtiveDirectory.domain:#{null}}")
+  private String activeDirectoryDomain;
+
   @Bean
   public ReactiveAuthenticationManager authenticationManager(BaseLdapPathContextSource contextSource) {
     BindAuthenticator ba = new BindAuthenticator(contextSource);
@@ -51,9 +58,15 @@ public class LdapSecurityConfig extends AbstractAuthSecurityConfig {
       ba.setUserSearch(userSearch);
     }
 
-    LdapAuthenticationProvider lap = new LdapAuthenticationProvider(ba);
+    AbstractLdapAuthenticationProvider authenticationProvider;
+    if (!isActiveDirectory) {
+      authenticationProvider = new LdapAuthenticationProvider(ba);
+    } else {
+      authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(activeDirectoryDomain, ldapUrls);
+      authenticationProvider.setUseAuthenticationRequestCredentials(true);
+    }
 
-    AuthenticationManager am = new ProviderManager(List.of(lap));
+    AuthenticationManager am = new ProviderManager(List.of(authenticationProvider));
 
     return new ReactiveAuthenticationManagerAdapter(am);
   }
@@ -71,6 +84,9 @@ public class LdapSecurityConfig extends AbstractAuthSecurityConfig {
   @Bean
   public SecurityWebFilterChain configureLdap(ServerHttpSecurity http) {
     log.info("Configuring LDAP authentication.");
+    if (isActiveDirectory) {
+      log.info("Active Directory support for LDAP has been enabled.");
+    }
 
     http
         .authorizeExchange()

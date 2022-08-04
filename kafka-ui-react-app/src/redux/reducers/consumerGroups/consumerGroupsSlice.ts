@@ -12,7 +12,11 @@ import {
   SortOrder,
 } from 'generated-sources';
 import { AsyncRequestStatus } from 'lib/constants';
-import { getResponse } from 'lib/errorHandling';
+import {
+  getResponse,
+  showServerError,
+  showSuccessAlert,
+} from 'lib/errorHandling';
 import {
   ClusterName,
   ConsumerGroupID,
@@ -40,7 +44,7 @@ export const fetchConsumerGroupsPaged = createAsyncThunk<
     { rejectWithValue }
   ) => {
     try {
-      const response = await consumerGroupsApiClient.getConsumerGroupsPageRaw({
+      return await consumerGroupsApiClient.getConsumerGroupsPage({
         clusterName,
         orderBy,
         sortOrder,
@@ -48,8 +52,8 @@ export const fetchConsumerGroupsPaged = createAsyncThunk<
         perPage,
         search,
       });
-      return await response.value();
     } catch (error) {
+      showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
     }
   }
@@ -67,6 +71,7 @@ export const fetchConsumerGroupDetails = createAsyncThunk<
         id: consumerGroupID,
       });
     } catch (error) {
+      showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
     }
   }
@@ -83,9 +88,12 @@ export const deleteConsumerGroup = createAsyncThunk<
         clusterName,
         id: consumerGroupID,
       });
-
+      showSuccessAlert({
+        message: `Consumer ${consumerGroupID} group deleted`,
+      });
       return consumerGroupID;
     } catch (error) {
+      showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
     }
   }
@@ -115,8 +123,12 @@ export const resetConsumerGroupOffsets = createAsyncThunk<
           resetToTimestamp: requestBody.resetToTimestamp?.getTime(),
         },
       });
+      showSuccessAlert({
+        message: `Consumer ${consumerGroupID} group offsets reset`,
+      });
       return consumerGroupID;
     } catch (error) {
+      showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
     }
   }
@@ -140,7 +152,7 @@ const initialState: ConsumerGroupState = {
   ...consumerGroupsAdapter.getInitialState(),
 };
 
-export const consumerGroupsSlice = createSlice({
+const consumerGroupsSlice = createSlice({
   name: 'consumerGroups',
   initialState,
   reducers: {

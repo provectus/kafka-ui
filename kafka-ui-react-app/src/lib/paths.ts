@@ -1,8 +1,6 @@
+import { Broker, Connect, Connector } from 'generated-sources';
 import {
-  BrokerId,
   ClusterName,
-  ConnectName,
-  ConnectorName,
   ConsumerGroupID,
   SchemaName,
   TopicName,
@@ -33,16 +31,28 @@ export type ClusterNameRoute = { clusterName: ClusterName };
 
 // Brokers
 export const clusterBrokerRelativePath = 'brokers';
+export const clusterBrokerMetricsRelativePath = 'metrics';
 export const clusterBrokersPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterBrokerRelativePath}`;
 
 export const clusterBrokerPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  brokerId: BrokerId | string = RouteParams.brokerId
+  brokerId: Broker['id'] | string = RouteParams.brokerId
 ) => `${clusterBrokersPath(clusterName)}/${brokerId}`;
+export const clusterBrokerMetricsPath = (
+  clusterName: ClusterName = RouteParams.clusterName,
+  brokerId: Broker['id'] | string = RouteParams.brokerId
+) =>
+  `${clusterBrokerPath(
+    clusterName,
+    brokerId
+  )}/${clusterBrokerMetricsRelativePath}`;
 
-export type ClusterBrokerParam = { clusterName: ClusterName; brokerId: string };
+export type ClusterBrokerParam = {
+  clusterName: ClusterName;
+  brokerId: string;
+};
 
 // Consumer Groups
 export const clusterConsumerGroupsRelativePath = 'consumer-groups';
@@ -72,9 +82,9 @@ export type ClusterGroupParam = {
 export const clusterSchemasRelativePath = 'schemas';
 export const clusterSchemaNewRelativePath = 'create-new';
 export const clusterSchemaEditPageRelativePath = `edit`;
-export const clusterSchemaSchemaDiffPageRelativePath = `diff`;
+export const clusterSchemaSchemaComparePageRelativePath = `compare`;
 export const clusterSchemaEditRelativePath = `${RouteParams.subject}/${clusterSchemaEditPageRelativePath}`;
-export const clusterSchemaSchemaDiffRelativePath = `${RouteParams.subject}/${clusterSchemaSchemaDiffPageRelativePath}`;
+export const clusterSchemaSchemaDiffRelativePath = `${RouteParams.subject}/${clusterSchemaSchemaComparePageRelativePath}`;
 export const clusterSchemasPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/schemas`;
@@ -89,10 +99,10 @@ export const clusterSchemaEditPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
 ) => `${clusterSchemasPath(clusterName)}/${subject}/edit`;
-export const clusterSchemaSchemaDiffPath = (
+export const clusterSchemaSchemaComparePath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
-) => `${clusterSchemaPath(clusterName, subject)}/diff`;
+) => `${clusterSchemaPath(clusterName, subject)}/compare`;
 
 export type ClusterSubjectParam = {
   subject: string;
@@ -100,8 +110,8 @@ export type ClusterSubjectParam = {
 };
 
 // Topics
-export const clusterTopicsRelativePath = 'topics';
-export const clusterTopicNewRelativePath = 'create-new';
+export const clusterTopicsRelativePath = 'all-topics';
+export const clusterTopicNewRelativePath = 'create-new-topic';
 export const clusterTopicCopyRelativePath = 'copy';
 export const clusterTopicsPath = (
   clusterName: ClusterName = RouteParams.clusterName
@@ -187,18 +197,18 @@ export const clusterConnectorNewPath = (
 ) => `${clusterConnectorsPath(clusterName)}/create-new`;
 export const clusterConnectConnectorsPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  connectName: ConnectName = RouteParams.connectName
+  connectName: Connect['name'] = RouteParams.connectName
 ) => `${clusterConnectsPath(clusterName)}/${connectName}/connectors`;
 export const clusterConnectConnectorPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  connectName: ConnectName = RouteParams.connectName,
-  connectorName: ConnectorName = RouteParams.connectorName
+  connectName: Connect['name'] = RouteParams.connectName,
+  connectorName: Connector['name'] = RouteParams.connectorName
 ) =>
   `${clusterConnectConnectorsPath(clusterName, connectName)}/${connectorName}`;
 export const clusterConnectConnectorEditPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  connectName: ConnectName = RouteParams.connectName,
-  connectorName: ConnectorName = RouteParams.connectorName
+  connectName: Connect['name'] = RouteParams.connectName,
+  connectorName: Connector['name'] = RouteParams.connectorName
 ) =>
   `${clusterConnectConnectorsPath(
     clusterName,
@@ -206,8 +216,8 @@ export const clusterConnectConnectorEditPath = (
   )}/${connectorName}/edit`;
 export const clusterConnectConnectorTasksPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  connectName: ConnectName = RouteParams.connectName,
-  connectorName: ConnectorName = RouteParams.connectorName
+  connectName: Connect['name'] = RouteParams.connectName,
+  connectorName: Connector['name'] = RouteParams.connectorName
 ) =>
   `${clusterConnectConnectorPath(
     clusterName,
@@ -216,18 +226,19 @@ export const clusterConnectConnectorTasksPath = (
   )}/${clusterConnectConnectorTasksRelativePath}`;
 export const clusterConnectConnectorConfigPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  connectName: ConnectName = RouteParams.connectName,
-  connectorName: ConnectorName = RouteParams.connectorName
+  connectName: Connect['name'] = RouteParams.connectName,
+  connectorName: Connector['name'] = RouteParams.connectorName
 ) =>
   `${clusterConnectConnectorPath(
     clusterName,
     connectName,
     connectorName
   )}/${clusterConnectConnectorConfigRelativePath}`;
+
 export type RouterParamsClusterConnectConnector = {
   clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
+  connectName: Connect['name'];
+  connectorName: Connector['name'];
 };
 
 // KsqlDb

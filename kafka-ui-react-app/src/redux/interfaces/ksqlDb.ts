@@ -4,13 +4,6 @@ import {
   KsqlTableDescription,
 } from 'generated-sources';
 
-export interface KsqlTables {
-  data: {
-    headers: string[];
-    rows: string[][];
-  };
-}
-
 export interface KsqlState {
   tables: KsqlTableDescription[];
   streams: KsqlStreamDescription[];

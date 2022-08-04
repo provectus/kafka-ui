@@ -33,7 +33,7 @@ jobs:
           aws-region: eu-central-1
 
       - name: Terraform Install
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
 
       - name: Terraform format
         id: fmt

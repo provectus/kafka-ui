@@ -2,6 +2,8 @@ import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
 
 import { Button } from './common/Button/Button';
+import GitIcon from './common/Icons/GitIcon';
+import DiscordIcon from './common/Icons/DiscordIcon';
 
 export const Layout = styled.div`
   min-width: 1200px;
@@ -42,7 +44,9 @@ export const Sidebar = styled.div<{ $visible: boolean }>(
     background: ${theme.menu.backgroundColor.normal};
     @media screen and (max-width: 1023px) {
       ${$visible &&
-      `transform: translate3d(${theme.layout.navBarWidth}, 0, 0)`};
+      css`
+        transform: translate3d(${theme.layout.navBarWidth}, 0, 0);
+      `};
       left: -${theme.layout.navBarWidth};
       z-index: 100;
     }
@@ -75,7 +79,7 @@ export const Overlay = styled.div<{ $visible: boolean }>(
   ({ theme, $visible }) => css`
     height: calc(100vh - ${theme.layout.navBarHeight});
     z-index: 99;
-    visibility: 'hidden';
+    visibility: hidden;
     opacity: 0;
     -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease;
@@ -87,7 +91,7 @@ export const Overlay = styled.div<{ $visible: boolean }>(
       @media screen and (max-width: 1023px) {
         bottom: 0;
         right: 0;
-        visibility: 'visible';
+        visibility: visible;
         opacity: 0.7;
         background-color: ${theme.layout.overlay.backgroundColor};
       }
@@ -97,6 +101,9 @@ export const Overlay = styled.div<{ $visible: boolean }>(
 
 export const Navbar = styled.nav(
   ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     border-bottom: 1px solid ${theme.layout.stuffBorderColor};
     position: fixed;
     top: 0;
@@ -110,11 +117,43 @@ export const Navbar = styled.nav(
 
 export const NavbarBrand = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center !important;
   flex-shrink: 0;
-  align-items: stretch;
   min-height: 3.25rem;
+`;
+
+export const SocialLink = styled.a(
+  ({ theme: { layout, icons } }) => css`
+    display: block;
+    margin-top: 5px;
+    cursor: pointer;
+    fill: ${layout.socialLink.color};
+
+    &:hover {
+      ${DiscordIcon} {
+        fill: ${icons.discord.hover};
+      }
+      ${GitIcon} {
+        fill: ${icons.git.hover};
+      }
+    }
+    &:active {
+      ${DiscordIcon} {
+        fill: ${icons.discord.active};
+      }
+      ${GitIcon} {
+        fill: ${icons.git.active};
+      }
+    }
+  `
+);
+
+export const NavbarSocial = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px;
 `;
 
 export const NavbarItem = styled.div`
@@ -197,19 +236,6 @@ export const Hyperlink = styled(Link)(
   `
 );
 
-export const AlertsContainer = styled.div`
-  max-width: 40%;
-  width: 500px;
-  position: fixed;
-  bottom: 15px;
-  right: 15px;
-  z-index: 1000;
-
-  @media screen and (max-width: 1023px) {
-    max-width: initial;
-  }
-`;
-
 export const LogoutButton = styled(Button)(
   ({ theme }) => css`
     color: ${theme.button.primary.invertedColors.normal};
@@ -218,8 +244,8 @@ export const LogoutButton = styled(Button)(
   `
 );
 
-export const LogoutLink = styled(Link)(
+export const LogoutLink = styled.a(
   () => css`
-    margin-right: 16px;
+    margin-right: 2px;
   `
 );

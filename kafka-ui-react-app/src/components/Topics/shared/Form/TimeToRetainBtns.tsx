@@ -18,23 +18,27 @@ const TimeToRetainBtnsWrapper = styled.div`
 const TimeToRetainBtns: React.FC<Props> = ({ name }) => (
   <TimeToRetainBtnsWrapper>
     <TimeToRetainBtn
-      text="12h"
+      text="12 hours"
       inputName={name}
       value={MILLISECONDS_IN_DAY / 2}
     />
-    <TimeToRetainBtn text="1d" inputName={name} value={MILLISECONDS_IN_DAY} />
     <TimeToRetainBtn
-      text="2d"
+      text="1 day"
+      inputName={name}
+      value={MILLISECONDS_IN_DAY}
+    />
+    <TimeToRetainBtn
+      text="2 days"
       inputName={name}
       value={MILLISECONDS_IN_DAY * 2}
     />
     <TimeToRetainBtn
-      text="7d"
+      text="7 days"
       inputName={name}
       value={MILLISECONDS_IN_DAY * 7}
     />
     <TimeToRetainBtn
-      text="4w"
+      text="4 weeks"
       inputName={name}
       value={MILLISECONDS_IN_DAY * 7 * 4}
     />

@@ -19,6 +19,8 @@ const defaultContextValue: ContextProps = {
   changeSeekDirection: jest.fn(),
 };
 
+jest.mock('components/common/Icons/CloseIcon', () => () => 'mock-CloseIcon');
+
 const renderComponent = (
   props: Partial<FiltersProps> = {},
   ctx: ContextProps = defaultContextValue
@@ -195,9 +197,7 @@ describe('Filters component', () => {
 
     it('delete the active smart Filter', async () => {
       const smartFilterElement = screen.getByTestId('activeSmartFilter');
-      const deleteIcon = within(smartFilterElement).getByTestId(
-        'activeSmartFilterCloseIcon'
-      );
+      const deleteIcon = within(smartFilterElement).getByText('mock-CloseIcon');
       await act(() => userEvent.click(deleteIcon));
 
       const anotherSmartFilterElement =

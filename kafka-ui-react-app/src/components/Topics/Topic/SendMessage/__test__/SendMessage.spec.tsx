@@ -12,8 +12,7 @@ import { store } from 'redux/store';
 import { fetchTopicDetails } from 'redux/reducers/topics/topicsSlice';
 import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import validateMessage from 'components/Topics/Topic/SendMessage/validateMessage';
-import Alerts from 'components/Alerts/Alerts';
-import * as S from 'components/App.styled';
+import { showServerError } from 'lib/errorHandling';
 
 import { testSchema } from './fixtures';
 
@@ -32,6 +31,11 @@ jest.mock('components/Topics/Topic/SendMessage/validateMessage', () =>
   jest.fn()
 );
 
+jest.mock('lib/errorHandling', () => ({
+  ...jest.requireActual('lib/errorHandling'),
+  showServerError: jest.fn(),
+}));
+
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -44,14 +48,9 @@ const topicName = externalTopicPayload.name;
 const renderComponent = async () => {
   await act(() => {
     render(
-      <>
-        <WithRoute path={clusterTopicSendMessagePath()}>
-          <SendMessage />
-        </WithRoute>
-        <S.AlertsContainer role="toolbar">
-          <Alerts />
-        </S.AlertsContainer>
-      </>,
+      <WithRoute path={clusterTopicSendMessagePath()}>
+        <SendMessage />
+      </WithRoute>,
       {
         initialEntries: [clusterTopicSendMessagePath(clusterName, topicName)],
         store,
@@ -101,9 +100,7 @@ describe('SendMessage', () => {
       `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
       testSchema
     );
-    await act(() => {
-      renderComponent();
-    });
+    await renderComponent();
     expect(fetchTopicMessageSchemaMock.called()).toBeTruthy();
   });
 
@@ -121,7 +118,6 @@ describe('SendMessage', () => {
     it('calls sendTopicMessage on submit', async () => {
       const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, 200);
       const fetchTopicDetailsMock = fetchMock.getOnce(detailsUrl, 200);
-
       await renderAndSubmitData();
       expect(sendTopicMessageMock.called(messagesUrl)).toBeTruthy();
       expect(fetchTopicDetailsMock.called(detailsUrl)).toBeTruthy();
@@ -131,6 +127,8 @@ describe('SendMessage', () => {
     });
 
     it('should make the sendTopicMessage but most find an error within it', async () => {
+      const showServerErrorMock = jest.fn();
+      (showServerError as jest.Mock).mockImplementation(showServerErrorMock);
       const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, {
         throws: 'Error',
       });
@@ -138,7 +136,12 @@ describe('SendMessage', () => {
       await renderAndSubmitData();
       expect(sendTopicMessageMock.called()).toBeTruthy();
       expect(fetchTopicDetailsMock.called(detailsUrl)).toBeFalsy();
-      expect(screen.getByRole('alert')).toBeInTheDocument();
+
+      expect(showServerErrorMock).toHaveBeenCalledWith('Error', {
+        id: 'testCluster-external.topic-sendTopicMessagesError',
+        message: 'Error in sending a message to external.topic',
+      });
+
       expect(mockNavigate).toHaveBeenLastCalledWith(
         `../${clusterTopicMessagesRelativePath}`
       );
