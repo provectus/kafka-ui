@@ -1,57 +1,36 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { ClusterName, TopicName } from 'redux/interfaces';
-import EditContainer from 'components/Topics/Topic/Edit/EditContainer';
-import DetailsContainer from 'components/Topics/Topic/Details/DetailsContainer';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 import {
   clusterTopicEditRelativePath,
   clusterTopicSendMessageRelativePath,
-  RouteParamsClusterTopic,
 } from 'lib/paths';
-import useAppParams from 'lib/hooks/useAppParams';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import { resetTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { useAppDispatch } from 'lib/hooks/redux';
 
 import SendMessage from './SendMessage/SendMessage';
+import Details from './Details/Details';
+import Edit from './Edit/Edit';
 
-interface TopicProps {
-  isTopicFetching: boolean;
-  resetTopicMessages: () => void;
-  fetchTopicDetails: (payload: {
-    clusterName: ClusterName;
-    topicName: TopicName;
-  }) => void;
-}
-
-const Topic: React.FC<TopicProps> = ({
-  isTopicFetching,
-  fetchTopicDetails,
-  resetTopicMessages,
-}) => {
-  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
-
-  React.useEffect(() => {
-    fetchTopicDetails({ clusterName, topicName });
-  }, [fetchTopicDetails, clusterName, topicName]);
-
+const Topic: React.FC = () => {
+  const dispatch = useAppDispatch();
   React.useEffect(() => {
     return () => {
-      resetTopicMessages();
+      dispatch(resetTopicMessages());
     };
   }, []);
 
-  if (isTopicFetching) {
-    return <PageLoader />;
-  }
-
   return (
-    <Routes>
-      <Route path="*" element={<DetailsContainer />} />
-      <Route path={clusterTopicEditRelativePath} element={<EditContainer />} />
-      <Route
-        path={clusterTopicSendMessageRelativePath}
-        element={<SendMessage />}
-      />
-    </Routes>
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        <Route path="*" element={<Details />} />
+        <Route path={clusterTopicEditRelativePath} element={<Edit />} />
+        <Route
+          path={clusterTopicSendMessageRelativePath}
+          element={<SendMessage />}
+        />
+      </Routes>
+    </Suspense>
   );
 };
 

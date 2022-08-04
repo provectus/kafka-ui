@@ -1,5 +1,4 @@
-import React from 'react';
-import { ClusterName, TopicName } from 'redux/interfaces';
+import React, { Suspense } from 'react';
 import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import {
   RouteParamsClusterTopic,
@@ -14,37 +13,26 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
 import styled from 'styled-components';
 import Navbar from 'components/common/Navigation/Navbar.styled';
-import { useAppSelector } from 'lib/hooks/redux';
-import {
-  getIsTopicDeletePolicy,
-  getIsTopicInternal,
-} from 'redux/reducers/topics/selectors';
+import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import {
   Dropdown,
   DropdownItem,
   DropdownItemHint,
 } from 'components/common/Dropdown';
+import {
+  useDeleteTopic,
+  useRecreateTopic,
+  useTopicDetails,
+} from 'lib/hooks/api/topics';
+import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { CleanUpPolicy } from 'generated-sources';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 
-import OverviewContainer from './Overview/OverviewContainer';
-import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
-import SettingsContainer from './Settings/SettingsContainer';
 import Messages from './Messages/Messages';
-
-interface Props {
-  deleteTopic: (payload: {
-    clusterName: ClusterName;
-    topicName: TopicName;
-  }) => void;
-  recreateTopic: (payload: {
-    clusterName: ClusterName;
-    topicName: TopicName;
-  }) => void;
-  clearTopicMessages(params: {
-    clusterName: ClusterName;
-    topicName: TopicName;
-  }): void;
-}
+import Overview from './Overview/Overview';
+import Settings from './Settings/Settings';
+import TopicConsumerGroups from './ConsumerGroups/TopicConsumerGroups';
 
 const HeaderControlsWrapper = styled.div`
   display: flex;
@@ -53,25 +41,19 @@ const HeaderControlsWrapper = styled.div`
   gap: 26px;
 `;
 
-const Details: React.FC<Props> = ({
-  deleteTopic,
-  recreateTopic,
-  clearTopicMessages,
-}) => {
+const Details: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
-  const isInternal = useAppSelector((state) =>
-    getIsTopicInternal(state, topicName)
-  );
-  const isDeletePolicy = useAppSelector((state) =>
-    getIsTopicDeletePolicy(state, topicName)
-  );
   const navigate = useNavigate();
+  const deleteTopic = useDeleteTopic(clusterName);
+  const recreateTopic = useRecreateTopic({ clusterName, topicName });
+  const { data } = useTopicDetails({ clusterName, topicName });
 
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
 
-  const deleteTopicHandler = () => {
-    deleteTopic({ clusterName, topicName });
+  const deleteTopicHandler = async () => {
+    await deleteTopic.mutateAsync(topicName);
     navigate('../..');
   };
 
@@ -94,7 +76,7 @@ const Details: React.FC<Props> = ({
               }
             />
           </Routes>
-          {!isReadOnly && !isInternal && (
+          {!isReadOnly && !data?.internal && (
             <Routes>
               <Route
                 index
@@ -110,11 +92,12 @@ const Details: React.FC<Props> = ({
                         especially important consequences.
                       </DropdownItemHint>
                     </DropdownItem>
-                    {isDeletePolicy && (
+                    {data?.cleanUpPolicy === CleanUpPolicy.DELETE && (
                       <DropdownItem
-                        disabled={!isDeletePolicy}
                         onClick={() =>
-                          clearTopicMessages({ clusterName, topicName })
+                          dispatch(
+                            clearTopicMessages({ clusterName, topicName })
+                          ).unwrap()
                         }
                         confirm="Are you sure want to clear topic messages?"
                         danger
@@ -123,7 +106,7 @@ const Details: React.FC<Props> = ({
                       </DropdownItem>
                     )}
                     <DropdownItem
-                      onClick={() => recreateTopic({ clusterName, topicName })}
+                      onClick={recreateTopic.mutateAsync}
                       confirm={
                         <>
                           Are you sure want to recreate <b>{topicName}</b>{' '}
@@ -182,18 +165,23 @@ const Details: React.FC<Props> = ({
           Settings
         </NavLink>
       </Navbar>
-      <Routes>
-        <Route index element={<OverviewContainer />} />
-        <Route path={clusterTopicMessagesRelativePath} element={<Messages />} />
-        <Route
-          path={clusterTopicSettingsRelativePath}
-          element={<SettingsContainer />}
-        />
-        <Route
-          path={clusterTopicConsumerGroupsRelativePath}
-          element={<TopicConsumerGroupsContainer />}
-        />
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route index element={<Overview />} />
+          <Route
+            path={clusterTopicMessagesRelativePath}
+            element={<Messages />}
+          />
+          <Route
+            path={clusterTopicSettingsRelativePath}
+            element={<Settings />}
+          />
+          <Route
+            path={clusterTopicConsumerGroupsRelativePath}
+            element={<TopicConsumerGroups />}
+          />
+        </Routes>
+      </Suspense>
     </div>
   );
 };
