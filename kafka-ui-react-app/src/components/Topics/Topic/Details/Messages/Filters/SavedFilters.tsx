@@ -1,8 +1,7 @@
 import React, { FC } from 'react';
 import { Button } from 'components/common/Button/Button';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import useModal from 'lib/hooks/useModal';
 import DeleteIcon from 'components/common/Icons/DeleteIcon';
+import { useConfirm } from 'lib/hooks/useConfirm';
 
 import * as S from './Filters.styled';
 import { MessageFilters } from './Filters';
@@ -24,9 +23,8 @@ const SavedFilters: FC<Props> = ({
   closeModal,
   onGoBack,
 }) => {
-  const { isOpen, setOpen, setClose } = useModal();
-  const [deleteIndex, setDeleteIndex] = React.useState<number>(-1);
   const [selectedFilter, setSelectedFilter] = React.useState(-1);
+  const confirm = useConfirm();
 
   const activeFilter = () => {
     if (selectedFilter > -1) {
@@ -36,26 +34,13 @@ const SavedFilters: FC<Props> = ({
   };
 
   const deleteFilterHandler = (index: number) => {
-    setOpen();
-    setDeleteIndex(index);
+    confirm(<>Are you sure want to remove {filters[index]?.name}?</>, () => {
+      deleteFilter(index);
+    });
   };
 
   return (
     <>
-      <ConfirmationModal
-        isOpen={isOpen}
-        title="Confirm deletion"
-        onConfirm={() => {
-          deleteFilter(deleteIndex);
-          setClose();
-        }}
-        onCancel={setClose}
-        submitBtnText="Delete"
-      >
-        <S.ConfirmDeletionText>
-          Are you sure want to remove {filters[deleteIndex]?.name}?
-        </S.ConfirmDeletionText>
-      </ConfirmationModal>
       <S.BackToCustomText onClick={onGoBack}>
         Back To custom filters
       </S.BackToCustomText>
@@ -86,7 +71,6 @@ const SavedFilters: FC<Props> = ({
           buttonType="secondary"
           type="button"
           onClick={closeModal}
-          disabled={isOpen}
         >
           Cancel
         </Button>
@@ -95,7 +79,6 @@ const SavedFilters: FC<Props> = ({
           buttonType="primary"
           type="button"
           onClick={activeFilter}
-          disabled={isOpen}
         >
           Select filter
         </Button>

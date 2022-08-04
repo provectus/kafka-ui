@@ -60,6 +60,7 @@ export const DropdownButton = styled.button`
   border: none;
   display: flex;
   cursor: pointer;
+  align-self: center;
 `;
 
 export const DangerItem = styled.div`

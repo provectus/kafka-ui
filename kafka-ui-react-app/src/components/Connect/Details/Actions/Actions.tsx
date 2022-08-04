@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useIsMutating } from '@tanstack/react-query';
 import { ConnectorState, ConnectorAction } from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
-import useModal from 'lib/hooks/useModal';
 import {
   useConnector,
   useDeleteConnector,
@@ -15,8 +14,8 @@ import {
   clusterConnectorsPath,
   RouterParamsClusterConnectConnector,
 } from 'lib/paths';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { Button } from 'components/common/Button/Button';
+import { useConfirm } from 'lib/hooks/useConfirm';
 
 const ConnectorActionsWrapperStyled = styled.div`
   display: flex;
@@ -32,22 +31,24 @@ const Actions: React.FC = () => {
   const isMutating = mutationsNumber > 0;
 
   const { data: connector } = useConnector(routerProps);
-
-  const {
-    isOpen: isDeleteConnectorConfirmationOpen,
-    setClose: setDeleteConnectorConfirmationClose,
-    setOpen: setDeleteConnectorConfirmationOpen,
-  } = useModal();
+  const confirm = useConfirm();
 
   const deleteConnectorMutation = useDeleteConnector(routerProps);
-  const deleteConnectorHandler = async () => {
-    try {
-      await deleteConnectorMutation.mutateAsync();
-      navigate(clusterConnectorsPath(routerProps.clusterName));
-    } catch {
-      // do not redirect
-    }
-  };
+  const deleteConnectorHandler = () =>
+    confirm(
+      <>
+        Are you sure you want to remove <b>{routerProps.connectorName}</b>{' '}
+        connector?
+      </>,
+      async () => {
+        try {
+          await deleteConnectorMutation.mutateAsync();
+          navigate(clusterConnectorsPath(routerProps.clusterName));
+        } catch {
+          // do not redirect
+        }
+      }
+    );
 
   const stateMutation = useUpdateConnectorState(routerProps);
   const restartConnectorHandler = () =>
@@ -71,7 +72,7 @@ const Actions: React.FC = () => {
           onClick={pauseConnectorHandler}
           disabled={isMutating}
         >
-          <span>Pause</span>
+          Pause
         </Button>
       )}
 
@@ -83,7 +84,7 @@ const Actions: React.FC = () => {
           onClick={resumeConnectorHandler}
           disabled={isMutating}
         >
-          <span>Resume</span>
+          Resume
         </Button>
       )}
 
@@ -94,7 +95,7 @@ const Actions: React.FC = () => {
         onClick={restartConnectorHandler}
         disabled={isMutating}
       >
-        <span>Restart Connector</span>
+        Restart Connector
       </Button>
       <Button
         buttonSize="M"
@@ -103,7 +104,7 @@ const Actions: React.FC = () => {
         onClick={restartAllTasksHandler}
         disabled={isMutating}
       >
-        <span>Restart All Tasks</span>
+        Restart All Tasks
       </Button>
       <Button
         buttonSize="M"
@@ -112,7 +113,7 @@ const Actions: React.FC = () => {
         onClick={restartFailedTasksHandler}
         disabled={isMutating}
       >
-        <span>Restart Failed Tasks</span>
+        Restart Failed Tasks
       </Button>
       <Button
         buttonSize="M"
@@ -125,27 +126,18 @@ const Actions: React.FC = () => {
           routerProps.connectorName
         )}
       >
-        <span>Edit Config</span>
+        Edit Config
       </Button>
 
       <Button
         buttonSize="M"
         buttonType="secondary"
         type="button"
-        onClick={setDeleteConnectorConfirmationOpen}
+        onClick={deleteConnectorHandler}
         disabled={isMutating}
       >
-        <span>Delete</span>
+        Delete
       </Button>
-      <ConfirmationModal
-        isOpen={isDeleteConnectorConfirmationOpen}
-        onCancel={setDeleteConnectorConfirmationClose}
-        onConfirm={deleteConnectorHandler}
-        isConfirming={isMutating}
-      >
-        Are you sure you want to remove <b>{routerProps.connectorName}</b>{' '}
-        connector?
-      </ConfirmationModal>
     </ConnectorActionsWrapperStyled>
   );
 };

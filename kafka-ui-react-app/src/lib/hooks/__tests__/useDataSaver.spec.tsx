@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { render } from 'lib/testHelpers';
 import useDataSaver from 'lib/hooks/useDataSaver';
+import { render } from '@testing-library/react';
 
 describe('useDataSaver hook', () => {
   const content = {

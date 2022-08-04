@@ -6,7 +6,6 @@ import {
   clusterSchemaSchemaComparePageRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
@@ -38,10 +37,6 @@ const Details: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
-  const [
-    isDeleteSchemaConfirmationVisible,
-    setDeleteSchemaConfirmationVisible,
-  ] = React.useState(false);
 
   React.useEffect(() => {
     dispatch(fetchLatestSchema({ clusterName, subject }));
@@ -62,7 +57,7 @@ const Details: React.FC = () => {
   const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
   const areVersionsFetched = useAppSelector(getAreSchemaVersionsFulfilled);
 
-  const onDelete = async () => {
+  const deleteHandler = async () => {
     try {
       await schemasApiClient.deleteSchema({
         clusterName,
@@ -101,19 +96,17 @@ const Details: React.FC = () => {
             </Button>
             <Dropdown>
               <DropdownItem
-                onClick={() => setDeleteSchemaConfirmationVisible(true)}
+                confirm={
+                  <>
+                    Are you sure want to remove <b>{subject}</b> schema?
+                  </>
+                }
+                onClick={deleteHandler}
                 danger
               >
                 Remove schema
               </DropdownItem>
             </Dropdown>
-            <ConfirmationModal
-              isOpen={isDeleteSchemaConfirmationVisible}
-              onCancel={() => setDeleteSchemaConfirmationVisible(false)}
-              onConfirm={onDelete}
-            >
-              Are you sure want to remove <b>{subject}</b> schema?
-            </ConfirmationModal>
           </>
         )}
       </PageHeading>
