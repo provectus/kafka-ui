@@ -7,6 +7,18 @@ export interface InputProps {
 
 export const Wrapper = styled.div`
   position: relative;
+
+  svg {
+    position: absolute;
+    top: 8px;
+    line-height: 0;
+    z-index: 1;
+    left: 12px;
+    right: unset;
+    height: 16px;
+    width: 16px;
+    fill: ${({ theme }) => theme.input.icon.color};
+  }
 `;
 
 export const Input = styled.input<InputProps>(
@@ -54,22 +66,4 @@ export const Input = styled.input<InputProps>(
 export const FormError = styled.p`
   color: ${({ theme }) => theme.input.error};
   font-size: 12px;
-`;
-
-interface InputIconProps {
-  className: string;
-  position: 'left' | 'right';
-  inputSize: 'M' | 'L';
-}
-
-export const InputIcon = styled.i<InputIconProps>`
-  position: absolute;
-  top: 50%;
-  line-height: 0;
-  z-index: 1;
-  left: ${({ position }) => (position === 'left' ? '12px' : 'unset')};
-  right: ${({ position }) => (position === 'right' ? '15px' : 'unset')};
-  height: 11px;
-  width: 11px;
-  color: ${({ theme }) => theme.input.icon.color};
 `;

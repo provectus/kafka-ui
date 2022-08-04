@@ -7,7 +7,6 @@ specifiers:
   '@babel/preset-env': ^7.18.2
   '@babel/preset-react': ^7.17.12
   '@babel/preset-typescript': ^7.17.12
-  '@fortawesome/fontawesome-free': ^6.1.1
   '@hookform/error-message': ^2.0.0
   '@hookform/resolvers': ^2.7.1
   '@jest/types': ^28.1.1
@@ -36,7 +35,6 @@ specifiers:
   ace-builds: ^1.7.1
   ajv: ^8.6.3
   babel-jest: ^28.1.1
-  bulma: ^0.9.3
   classnames: ^2.2.6
   dayjs: ^1.11.2
   dotenv: ^16.0.1
@@ -60,7 +58,7 @@ specifiers:
   jest-sonar-reporter: ^2.0.0
   jest-styled-components: ^7.0.8
   jest-watch-typeahead: ^2.0.0
-  json-schema-faker: ^0.5.0-rcv.39
+  json-schema-faker: ^0.5.0-rcv.44
   lint-staged: ^13.0.2
   lodash: ^4.17.21
   prettier: ^2.3.1
@@ -93,7 +91,6 @@ dependencies:
   '@babel/core': 7.18.2
   '@babel/plugin-syntax-flow': 7.18.6_@babel+core@7.18.2
   '@babel/plugin-transform-react-jsx': 7.18.6_@babel+core@7.18.2
-  '@fortawesome/fontawesome-free': 6.1.1
   '@hookform/error-message': 2.0.0_l2dcsysovzdujulgxvsen7vbsm
   '@hookform/resolvers': 2.8.9_react-hook-form@7.6.9
   '@reduxjs/toolkit': 1.8.3_ctm756ikdwcjcvyfxxwskzbr6q
@@ -106,13 +103,12 @@ dependencies:
   ace-builds: 1.7.1
   ajv: 8.8.2
   babel-jest: 28.1.1_@babel+core@7.18.2
-  bulma: 0.9.3
   classnames: 2.3.1
   dayjs: 1.11.3
   fetch-mock: 9.11.0
   jest: 28.1.1_yqiaopbgmqcuvx27p5xxvum6wm
   jest-watch-typeahead: 2.0.0_jest@28.1.1
-  json-schema-faker: 0.5.0-rcv.40
+  json-schema-faker: 0.5.0-rcv.44
   lodash: 4.17.21
   pretty-ms: 7.0.1
   react: 18.1.0
@@ -1894,12 +1890,6 @@ packages:
       - supports-color
     dev: true
 
-  /@fortawesome/fontawesome-free/6.1.1:
-    resolution: {integrity: sha512-J/3yg2AIXc9wznaVqpHVX3Wa5jwKovVF0AMYSnbmcXTiL3PpRPfF58pzWucCwEiCJBp+hCNRLWClTomD8SseKg==}
-    engines: {node: '>=6'}
-    requiresBuild: true
-    dev: false
-
   /@hookform/error-message/2.0.0_l2dcsysovzdujulgxvsen7vbsm:
     resolution: {integrity: sha512-Y90nHzjgL2MP7GFy75kscdvxrCTjtyxGmOLLxX14nd08OXRIh9lMH/y9Kpdo0p1IPowJBiZMHyueg7p+yrqynQ==}
     peerDependencies:
@@ -3375,10 +3365,6 @@ packages:
       base64-js: 1.5.1
       ieee754: 1.2.1
     dev: true
-
-  /bulma/0.9.3:
-    resolution: {integrity: sha512-0d7GNW1PY4ud8TWxdNcP6Cc8Bu7MxcntD/RRLGWuiw/s0a9P+XlH/6QoOIrmbj6o8WWJzJYhytiu9nFjTszk1g==}
-    dev: false
 
   /call-bind/1.0.2:
     resolution: {integrity: sha512-7O+FbCihrB5WGbFYesctwmTKae6rOiIzmz1icreWJ+0aA7LJfuqhEso2T9ncpcFtzMQtzXf2QGGueWJGTYsqrA==}
@@ -5860,8 +5846,8 @@ packages:
   /json-parse-even-better-errors/2.3.1:
     resolution: {integrity: sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==}
 
-  /json-schema-faker/0.5.0-rcv.40:
-    resolution: {integrity: sha512-BczZvu03jKrGh3ovCWrHusiX6MwiaKK2WZeyomKBNA8Nm/n7aBYz0mub1CnONB6cgxOZTNxx4afNmLblbUmZbA==}
+  /json-schema-faker/0.5.0-rcv.44:
+    resolution: {integrity: sha512-MbDxYFsPXTVMawW1Y6zEU7QhfwsT+ZJ2d+LI8n57Y8+Xw1Cdx1hITgsFTLNOJ1lDMHZqWeXGGgMbc1hW0BGisg==}
     hasBin: true
     dependencies:
       json-schema-ref-parser: 6.1.0

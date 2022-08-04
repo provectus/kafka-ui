@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import { NOT_SET, BYTES_IN_GB } from 'lib/constants';
-import { TopicName } from 'redux/interfaces';
+import { ClusterName, TopicName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
 import Select, { SelectOption } from 'components/common/Select/Select';
 import Input from 'components/common/Input/Input';
@@ -9,6 +9,9 @@ import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import { StyledForm } from 'components/common/Form/Form.styled';
+import { clusterTopicsPath } from 'lib/paths';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import CustomParams from './CustomParams/CustomParams';
 import TimeToRetain from './TimeToRetain';
@@ -19,6 +22,7 @@ export interface Props {
   partitionCount?: number;
   replicationFactor?: number;
   inSyncReplicas?: number;
+  retentionBytes?: number;
   cleanUpPolicy?: string;
   isEditing?: boolean;
   isSubmitting: boolean;
@@ -40,6 +44,7 @@ const RetentionBytesOptions: Array<SelectOption> = [
 ];
 
 const TopicForm: React.FC<Props> = ({
+  retentionBytes,
   topicName,
   isEditing,
   isSubmitting,
@@ -52,11 +57,28 @@ const TopicForm: React.FC<Props> = ({
   const {
     control,
     formState: { errors, isDirty, isValid },
+    reset,
   } = useFormContext();
+  const navigate = useNavigate();
+  const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
   const getCleanUpPolicy =
     CleanupPolicyOptions.find((option: SelectOption) => {
-      return option.value === cleanUpPolicy?.toLowerCase();
+      return (
+        option.value.toString().replace(/,/g, '_') ===
+        cleanUpPolicy?.toLowerCase()
+      );
     })?.value || CleanupPolicyOptions[0].value;
+
+  const getRetentionBytes =
+    RetentionBytesOptions.find((option: SelectOption) => {
+      return option.value === retentionBytes;
+    })?.value || RetentionBytesOptions[0].value;
+
+  const onCancel = () => {
+    reset();
+    navigate(clusterTopicsPath(clusterName));
+  };
+
   return (
     <StyledForm onSubmit={onSubmit} aria-label="topic form">
       <fieldset disabled={isSubmitting}>
@@ -180,7 +202,7 @@ const TopicForm: React.FC<Props> = ({
                   id="topicFormRetentionBytes"
                   aria-labelledby="topicFormRetentionBytesLabel"
                   name={name}
-                  value={RetentionBytesOptions[0].value}
+                  value={getRetentionBytes}
                   onChange={onChange}
                   minWidth="100%"
                   options={RetentionBytesOptions}
@@ -217,7 +239,12 @@ const TopicForm: React.FC<Props> = ({
           >
             {isEditing ? 'Save' : 'Create topic'}
           </Button>
-          <Button type="button" buttonType="primary" buttonSize="L">
+          <Button
+            type="button"
+            buttonType="primary"
+            buttonSize="L"
+            onClick={onCancel}
+          >
             Cancel
           </Button>
         </S.ButtonWrapper>

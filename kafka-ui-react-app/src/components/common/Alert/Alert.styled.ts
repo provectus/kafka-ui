@@ -4,6 +4,7 @@ import styled from 'styled-components';
 export const Alert = styled.div<{ $type: ToastType }>`
   background-color: ${({ $type, theme }) => theme.alert.color[$type]};
   min-width: 400px;
+  max-width: 600px;
   min-height: 64px;
   border-radius: 8px;
   padding: 12px;

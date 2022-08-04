@@ -5,13 +5,11 @@ import {
   TopicColumnsToSort,
 } from 'generated-sources';
 import { useAppDispatch } from 'lib/hooks/redux';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { TableCellProps } from 'components/common/SmartTable/TableColumn';
 import { TopicWithDetailedInfo } from 'redux/interfaces';
 import ClusterContext from 'components/contexts/ClusterContext';
 import * as S from 'components/Topics/List/List.styled';
 import { ClusterNameRoute } from 'lib/paths';
-import useModal from 'lib/hooks/useModal';
 import useAppParams from 'lib/hooks/useAppParams';
 import {
   deleteTopic,
@@ -46,85 +44,61 @@ const ActionsCell: React.FC<
   const dispatch = useAppDispatch();
   const { clusterName } = useAppParams<ClusterNameRoute>();
 
-  const {
-    isOpen: isDeleteTopicModalOpen,
-    setClose: closeDeleteTopicModal,
-    setOpen: openDeleteTopicModal,
-  } = useModal(false);
-
-  const {
-    isOpen: isRecreateTopicModalOpen,
-    setClose: closeRecreateTopicModal,
-    setOpen: openRecreateTopicModal,
-  } = useModal(false);
-
-  const {
-    isOpen: isClearMessagesModalOpen,
-    setClose: closeClearMessagesModal,
-    setOpen: openClearMessagesModal,
-  } = useModal(false);
-
   const isHidden = internal || isReadOnly || !hovered;
 
   const deleteTopicHandler = () => {
     dispatch(deleteTopic({ clusterName, topicName: name }));
-    closeDeleteTopicModal();
   };
 
   const clearTopicMessagesHandler = () => {
     dispatch(clearTopicMessages({ clusterName, topicName: name }));
     dispatch(fetchTopicsList(topicsListParams));
-    closeClearMessagesModal();
   };
 
   const recreateTopicHandler = () => {
     dispatch(recreateTopic({ clusterName, topicName: name }));
-    closeRecreateTopicModal();
   };
 
   return (
-    <>
-      <S.ActionsContainer>
-        {!isHidden && (
-          <Dropdown>
-            {cleanUpPolicy === CleanUpPolicy.DELETE && (
-              <DropdownItem onClick={openClearMessagesModal} danger>
-                Clear Messages
-              </DropdownItem>
-            )}
-            <DropdownItem onClick={openRecreateTopicModal} danger>
-              Recreate Topic
+    <S.ActionsContainer>
+      {!isHidden && (
+        <Dropdown>
+          {cleanUpPolicy === CleanUpPolicy.DELETE && (
+            <DropdownItem
+              onClick={clearTopicMessagesHandler}
+              confirm="Are you sure want to clear topic messages?"
+              danger
+            >
+              Clear Messages
             </DropdownItem>
-            {isTopicDeletionAllowed && (
-              <DropdownItem onClick={openDeleteTopicModal} danger>
-                Remove Topic
-              </DropdownItem>
-            )}
-          </Dropdown>
-        )}
-      </S.ActionsContainer>
-      <ConfirmationModal
-        isOpen={isClearMessagesModalOpen}
-        onCancel={closeClearMessagesModal}
-        onConfirm={clearTopicMessagesHandler}
-      >
-        Are you sure want to clear topic messages?
-      </ConfirmationModal>
-      <ConfirmationModal
-        isOpen={isDeleteTopicModalOpen}
-        onCancel={closeDeleteTopicModal}
-        onConfirm={deleteTopicHandler}
-      >
-        Are you sure want to remove <b>{name}</b> topic?
-      </ConfirmationModal>
-      <ConfirmationModal
-        isOpen={isRecreateTopicModalOpen}
-        onCancel={closeRecreateTopicModal}
-        onConfirm={recreateTopicHandler}
-      >
-        Are you sure to recreate <b>{name}</b> topic?
-      </ConfirmationModal>
-    </>
+          )}
+          <DropdownItem
+            onClick={recreateTopicHandler}
+            confirm={
+              <>
+                Are you sure to recreate <b>{name}</b> topic?
+              </>
+            }
+            danger
+          >
+            Recreate Topic
+          </DropdownItem>
+          {isTopicDeletionAllowed && (
+            <DropdownItem
+              onClick={deleteTopicHandler}
+              confirm={
+                <>
+                  Are you sure want to remove <b>{name}</b> topic?
+                </>
+              }
+              danger
+            >
+              Remove Topic
+            </DropdownItem>
+          )}
+        </Dropdown>
+      )}
+    </S.ActionsContainer>
   );
 };
 

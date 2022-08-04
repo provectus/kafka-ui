@@ -15,7 +15,7 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-const renderComponent = (
+const renderComponent = async (
   props: Partial<Props> = {},
   topic: TopicWithDetailedInfo | null = topicWithInfo
 ) => {
@@ -27,7 +27,7 @@ const renderComponent = (
     topics = getTopicStateFixtures([topic]);
   }
 
-  return render(
+  render(
     <WithRoute path={clusterTopicEditPath()}>
       <Edit
         isFetched
@@ -47,8 +47,8 @@ const renderComponent = (
 describe('Edit Component', () => {
   afterEach(() => {});
 
-  it('renders the Edit Component', () => {
-    renderComponent();
+  it('renders the Edit Component', async () => {
+    await act(() => renderComponent());
 
     expect(
       screen.getByRole('heading', { name: `Edit ${topicName}` })
@@ -58,8 +58,10 @@ describe('Edit Component', () => {
     ).toBeInTheDocument();
   });
 
-  it('should check Edit component renders null is not rendered when topic is not passed', () => {
-    renderComponent({}, { ...topicWithInfo, config: undefined });
+  it('should check Edit component renders null is not rendered when topic is not passed', async () => {
+    await act(() =>
+      renderComponent({}, { ...topicWithInfo, config: undefined })
+    );
     expect(
       screen.queryByRole('heading', { name: `Edit ${topicName}` })
     ).not.toBeInTheDocument();
@@ -68,8 +70,8 @@ describe('Edit Component', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should check Edit component renders null is not isFetched is false', () => {
-    renderComponent({ isFetched: false });
+  it('should check Edit component renders null is not isFetched is false', async () => {
+    await act(() => renderComponent({ isFetched: false }));
     expect(
       screen.queryByRole('heading', { name: `Edit ${topicName}` })
     ).not.toBeInTheDocument();
@@ -78,10 +80,10 @@ describe('Edit Component', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should check Edit component renders null is not topic config is not passed is false', () => {
+  it('should check Edit component renders null is not topic config is not passed is false', async () => {
     const modifiedTopic = { ...topicWithInfo };
     modifiedTopic.config = undefined;
-    renderComponent({}, modifiedTopic);
+    await act(() => renderComponent({}, modifiedTopic));
     expect(
       screen.queryByRole('heading', { name: `Edit ${topicName}` })
     ).not.toBeInTheDocument();
@@ -92,7 +94,9 @@ describe('Edit Component', () => {
 
   describe('Edit Component with its topic default and modified values', () => {
     it('should check the default partitions value in the DangerZone', async () => {
-      renderComponent({}, { ...topicWithInfo, partitionCount: 0 });
+      await act(() =>
+        renderComponent({}, { ...topicWithInfo, partitionCount: 0 })
+      );
       // cause topic selector will return falsy
       expect(
         screen.queryByRole('heading', { name: `Edit ${topicName}` })
@@ -103,7 +107,9 @@ describe('Edit Component', () => {
     });
 
     it('should check the default partitions value in the DangerZone', async () => {
-      renderComponent({}, { ...topicWithInfo, replicationFactor: undefined });
+      await act(() =>
+        renderComponent({}, { ...topicWithInfo, replicationFactor: undefined })
+      );
       expect(screen.getByPlaceholderText('Replication Factor')).toHaveValue(
         DEFAULTS.replicationFactor
       );
@@ -114,7 +120,9 @@ describe('Edit Component', () => {
     it('should check the submit functionality when topic updated is false', async () => {
       const updateTopicMock = jest.fn();
 
-      renderComponent({ updateTopic: updateTopicMock }, undefined);
+      await act(() =>
+        renderComponent({ updateTopic: updateTopicMock }, undefined)
+      );
 
       const btn = screen.getAllByText(/Save/i)[0];
 
@@ -134,10 +142,11 @@ describe('Edit Component', () => {
 
     it('should check the submit functionality when topic updated is true', async () => {
       const updateTopicMock = jest.fn();
-
-      renderComponent(
-        { updateTopic: updateTopicMock, isTopicUpdated: true },
-        undefined
+      await act(() =>
+        renderComponent(
+          { updateTopic: updateTopicMock, isTopicUpdated: true },
+          undefined
+        )
       );
 
       const btn = screen.getAllByText(/Save/i)[0];

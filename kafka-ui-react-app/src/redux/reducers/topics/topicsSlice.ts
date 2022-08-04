@@ -169,12 +169,12 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
 
   return {
     configs: {
+      ...Object.values(customParams || {}).reduce(topicReducer, {}),
       'cleanup.policy': cleanupPolicy,
       'retention.ms': retentionMs,
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInSyncReplicas,
-      ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };
 };
@@ -274,7 +274,7 @@ export const updateTopicPartitionsCount = createAsyncThunk<
       });
       showSuccessAlert({
         id: `message-${topicName}-${clusterName}-${partitions}`,
-        message: 'Number of partitions successfully increased!',
+        message: 'Number of partitions successfully increased',
       });
       dispatch(fetchTopicDetails({ clusterName, topicName }));
       return undefined;
@@ -294,7 +294,7 @@ export const updateTopicReplicationFactor = createAsyncThunk<
   }
 >(
   'topic/updateTopicReplicationFactor',
-  async (payload, { rejectWithValue }) => {
+  async (payload, { rejectWithValue, dispatch }) => {
     try {
       const { clusterName, topicName, replicationFactor } = payload;
 
@@ -303,7 +303,11 @@ export const updateTopicReplicationFactor = createAsyncThunk<
         topicName,
         replicationFactorChange: { totalReplicationFactor: replicationFactor },
       });
-
+      showSuccessAlert({
+        id: `message-${topicName}-${clusterName}-replicationFactor`,
+        message: 'Replication Factor successfully updated',
+      });
+      dispatch(fetchTopicDetails({ clusterName, topicName }));
       return undefined;
     } catch (err) {
       showServerError(err as Response);
@@ -340,20 +344,22 @@ export const clearTopicsMessages = createAsyncThunk<
     clusterName: ClusterName;
     topicNames: TopicName[];
   }
->('topic/clearTopicsMessages', async (payload, { rejectWithValue }) => {
-  try {
-    const { clusterName, topicNames } = payload;
+>(
+  'topic/clearTopicsMessages',
+  async (payload, { rejectWithValue, dispatch }) => {
+    try {
+      const { clusterName, topicNames } = payload;
+      topicNames.forEach((topicName) => {
+        dispatch(clearTopicMessages({ clusterName, topicName }));
+      });
 
-    topicNames.forEach((topicName) => {
-      clearTopicMessages({ clusterName, topicName });
-    });
-
-    return undefined;
-  } catch (err) {
-    showServerError(err as Response);
-    return rejectWithValue(await getResponse(err as Response));
+      return undefined;
+    } catch (err) {
+      showServerError(err as Response);
+      return rejectWithValue(await getResponse(err as Response));
+    }
   }
-});
+);
 
 const initialState: TopicsState = {
   byName: {},
