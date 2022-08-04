@@ -1,4 +1,4 @@
-FROM alpine:3.15.0
+FROM alpine:3.16.1
 
 RUN apk add --no-cache openjdk13-jre libc6-compat gcompat \
 && addgroup -S kafkaui && adduser -S kafkaui -G kafkaui

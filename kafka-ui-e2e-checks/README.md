@@ -18,7 +18,7 @@ This repository is for E2E UI automation.
 
 ### Prerequisites
 - Docker & Docker-compose
-- Java
+- Java (install aarch64 jdk if you have M1/arm chip)
 - Maven
   
 ### How to install

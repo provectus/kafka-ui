@@ -18,6 +18,8 @@ import {
   QueryClientProvider,
   UseQueryResult,
 } from '@tanstack/react-query';
+import { ConfirmContextProvider } from 'components/contexts/ConfirmContext';
+import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
@@ -67,13 +69,18 @@ const customRender = (
     children,
   }) => (
     <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <TestQueryClientProvider>
-          <MemoryRouter initialEntries={initialEntries}>
-            {children}
-          </MemoryRouter>
-        </TestQueryClientProvider>
-      </Provider>
+      <ConfirmContextProvider>
+        <Provider store={store}>
+          <TestQueryClientProvider>
+            <MemoryRouter initialEntries={initialEntries}>
+              <div>
+                {children}
+                <ConfirmationModal />
+              </div>
+            </MemoryRouter>
+          </TestQueryClientProvider>
+        </Provider>
+      </ConfirmContextProvider>
     </ThemeProvider>
   );
   return render(ui, { wrapper: AllTheProviders, ...renderOptions });

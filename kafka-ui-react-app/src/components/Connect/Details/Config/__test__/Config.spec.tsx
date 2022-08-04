@@ -32,8 +32,8 @@ describe('Config', () => {
 
   it('is empty when no config', () => {
     (useConnectorConfig as jest.Mock).mockImplementation(() => ({}));
-    const { container } = renderComponent();
-    expect(container).toBeEmptyDOMElement();
+    renderComponent();
+    expect(screen.queryByText('mock-Editor')).not.toBeInTheDocument();
   });
 
   it('renders editor', () => {

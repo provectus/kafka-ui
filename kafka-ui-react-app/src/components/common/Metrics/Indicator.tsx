@@ -1,4 +1,5 @@
 import React, { PropsWithChildren } from 'react';
+import SpinnerIcon from 'components/common/Icons/SpinnerIcon';
 
 import * as S from './Metrics.styled';
 
@@ -28,17 +29,7 @@ const Indicator: React.FC<PropsWithChildren<Props>> = ({
           </S.CircularAlertWrapper>
         )}
       </S.IndicatorTitle>
-      <span>
-        {fetching ? (
-          <i
-            className="fas fa-spinner fa-pulse"
-            role="progressbar"
-            aria-label="Loading"
-          />
-        ) : (
-          children
-        )}
-      </span>
+      <span>{fetching ? <SpinnerIcon /> : children}</span>
     </div>
   </S.IndicatorWrapper>
 );
