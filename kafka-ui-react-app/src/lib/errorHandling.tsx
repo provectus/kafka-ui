@@ -30,7 +30,7 @@ export const getResponse = async (
 interface AlertOptions {
   id?: string;
   title?: string;
-  message: string;
+  message: React.ReactNode;
 }
 
 export const showAlert = (
@@ -67,10 +67,12 @@ export const showServerError = async (
   } catch (e) {
     // do nothing;
   }
-  showAlert('error', {
-    id: response.url,
-    title: `${response.status} ${response.statusText}`,
-    message: body?.message || 'An error occurred',
-    ...options,
-  });
+  if (response.status) {
+    showAlert('error', {
+      id: response.url,
+      title: `${response.status} ${response.statusText}`,
+      message: body?.message || 'An error occurred',
+      ...options,
+    });
+  }
 };
