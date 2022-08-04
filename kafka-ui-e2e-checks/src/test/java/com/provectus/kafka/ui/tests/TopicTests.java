@@ -104,6 +104,7 @@ public class TopicTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(207)
     @Test
+    @Disabled // TODO: https://github.com/provectus/kafka-ui/issues/2373
     public void deleteTopic() {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
