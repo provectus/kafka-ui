@@ -1,5 +1,4 @@
-/* eslint-disable import/prefer-default-export */
-export const Colors = {
+const Colors = {
   neutral: {
     '0': '#FFFFFF',
     '3': '#f9fafa',
@@ -61,10 +60,22 @@ export const Colors = {
 };
 
 const theme = {
+  link: {
+    color: Colors.brand[50],
+    hoverColor: Colors.brand[60],
+  },
+  hr: {
+    backgroundColor: Colors.neutral[5],
+  },
+  code: {
+    backgroundColor: Colors.neutral[5],
+    color: Colors.red[55],
+  },
   layout: {
+    backgroundColor: Colors.neutral[0],
     minWidth: '1200px',
     navBarWidth: '201px',
-    navBarHeight: '3.25rem',
+    navBarHeight: '53px',
     stuffColor: Colors.neutral[5],
     stuffBorderColor: Colors.neutral[10],
     overlay: {
@@ -78,7 +89,18 @@ const theme = {
   breadcrumb: Colors.neutral[30],
   connectEditWarning: Colors.yellow[10],
   dropdown: {
-    color: Colors.red[50],
+    backgroundColor: Colors.neutral[0],
+    borderColor: Colors.neutral[5],
+    shadow: Colors.transparency[20],
+    item: {
+      color: {
+        danger: Colors.red[60],
+      },
+      backgroundColor: {
+        default: Colors.neutral[0],
+        hover: Colors.neutral[5],
+      },
+    },
   },
   ksqlDb: {
     query: {
@@ -149,6 +171,9 @@ const theme = {
       success: Colors.green[10],
       warning: Colors.yellow[10],
       info: Colors.neutral[10],
+      loading: Colors.neutral[10],
+      blank: Colors.neutral[10],
+      custom: Colors.neutral[10],
     },
     shadow: Colors.transparency[20],
   },
@@ -182,6 +207,7 @@ const theme = {
         active: Colors.neutral[15],
       },
       color: Colors.neutral[90],
+      isActiveColor: Colors.neutral[0],
       invertedColors: {
         normal: Colors.neutral[50],
         hover: Colors.neutral[70],
@@ -463,6 +489,9 @@ const theme = {
       value: Colors.neutral[80],
       meta: Colors.neutral[30],
     },
+    liderReplica: {
+      color: Colors.green[60],
+    },
   },
   dangerZone: {
     borderColor: Colors.neutral[10],
@@ -484,6 +513,7 @@ const theme = {
   },
   icons: {
     closeIcon: Colors.neutral[30],
+    deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],
     messageToggleIcon: {
       normal: Colors.brand[50],

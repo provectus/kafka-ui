@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components';
 import BaseSQLEditor from 'components/common/SQLEditor/SQLEditor';
-import BaseEditor from 'components/common/Editor/Editor';
 
 export const QueryWrapper = styled.div`
   padding: 16px;
@@ -60,37 +59,19 @@ export const DeleteButtonWrapper = styled.div`
   margin-top: 10px;
 `;
 
-export const LabelContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
 export const Fieldset = styled.fieldset`
   width: 50%;
 `;
 
-export const Editor = styled(BaseEditor)(
-  ({ readOnly, theme }) =>
-    readOnly &&
-    css`
-      &,
-      &.ace-tomorrow {
-        background: ${theme.ksqlDb.query.editor.readonly.background};
-      }
-      .ace-cursor {
-        ${theme.ksqlDb.query.editor.readonly.cursor}
-      }
-    `
-);
-
 export const SQLEditor = styled(BaseSQLEditor)(
   ({ readOnly, theme }) =>
-    readOnly &&
     css`
-      background: ${theme.ksqlDb.query.editor.readonly.background};
+      background: ${readOnly && theme.ksqlDb.query.editor.readonly.background};
       .ace-cursor {
-        ${theme.ksqlDb.query.editor.readonly.cursor}
+        ${readOnly && theme.ksqlDb.query.editor.readonly.cursor}
+      }
+      .ace_print-margin {
+        display: none;
       }
     `
 );

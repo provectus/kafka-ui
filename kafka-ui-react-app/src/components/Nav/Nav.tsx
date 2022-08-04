@@ -1,4 +1,4 @@
-import useClusters from 'lib/hooks/api/useClusters';
+import { useClusters } from 'lib/hooks/api/clusters';
 import React from 'react';
 
 import ClusterMenu from './ClusterMenu';

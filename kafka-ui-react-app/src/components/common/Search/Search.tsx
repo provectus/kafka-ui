@@ -26,9 +26,9 @@ const Search: React.FC<SearchProps> = ({
       placeholder={placeholder}
       onChange={onChange}
       defaultValue={value}
-      leftIcon="fas fa-search"
       inputSize="M"
       disabled={disabled}
+      search
     />
   );
 };

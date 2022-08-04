@@ -20,21 +20,30 @@ public class StaticController {
 
   @Value("classpath:static/index.html")
   private Resource indexFile;
+  @Value("classpath:static/manifest.json")
+  private Resource manifestFile;
+
   private final AtomicReference<String> renderedIndexFile = new AtomicReference<>();
+  private final AtomicReference<String> renderedManifestFile = new AtomicReference<>();
 
   @GetMapping(value = "/index.html", produces = {"text/html"})
   public Mono<ResponseEntity<String>> getIndex(ServerWebExchange exchange) {
-    return Mono.just(ResponseEntity.ok(getRenderedIndexFile(exchange)));
+    return Mono.just(ResponseEntity.ok(getRenderedFile(exchange, renderedIndexFile, indexFile)));
   }
 
-  public String getRenderedIndexFile(ServerWebExchange exchange) {
-    String rendered = renderedIndexFile.get();
+  @GetMapping(value = "/manifest.json", produces = {"application/json"})
+  public Mono<ResponseEntity<String>> getManifest(ServerWebExchange exchange) {
+    return Mono.just(ResponseEntity.ok(getRenderedFile(exchange, renderedManifestFile, manifestFile)));
+  }
+
+  public String getRenderedFile(ServerWebExchange exchange, AtomicReference<String> renderedFile, Resource file) {
+    String rendered = renderedFile.get();
     if (rendered == null) {
-      rendered = buildIndexFile(exchange.getRequest().getPath().contextPath().value());
-      if (renderedIndexFile.compareAndSet(null, rendered)) {
+      rendered = buildFile(file, exchange.getRequest().getPath().contextPath().value());
+      if (renderedFile.compareAndSet(null, rendered)) {
         return rendered;
       } else {
-        return renderedIndexFile.get();
+        return renderedFile.get();
       }
     } else {
       return rendered;
@@ -42,11 +51,11 @@ public class StaticController {
   }
 
   @SneakyThrows
-  private String buildIndexFile(String contextPath) {
-    final String staticPath = contextPath + "/static";
-    return ResourceUtil.readAsString(indexFile)
-        .replace("href=\"./static", "href=\"" + staticPath)
-        .replace("src=\"./static", "src=\"" + staticPath)
-        .replace("window.basePath=\"\"", "window.basePath=\"" + contextPath + "\"");
+  private String buildFile(Resource file, String contextPath) {
+    return ResourceUtil.readAsString(file)
+        .replace("\"/assets/", "\"" + contextPath + "/assets/")
+        .replace("\"/favicon/", "\"" + contextPath + "/favicon/")
+        .replace("/manifest.json", contextPath + "/manifest.json")
+        .replace("window.basePath = ''", "window.basePath=\"" + contextPath + "\"");
   }
 }

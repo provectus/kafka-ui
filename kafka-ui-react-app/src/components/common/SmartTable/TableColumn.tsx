@@ -3,6 +3,7 @@ import { TableState } from 'lib/hooks/useTableState';
 import { SortOrder } from 'generated-sources';
 import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
 import { DefaultTheme, StyledComponent } from 'styled-components';
+import { ActionsCellProps } from 'components/Topics/List/ActionsCell/ActionsCell';
 
 export interface OrderableProps {
   orderBy: string | null;
@@ -28,7 +29,7 @@ export interface TableCellProps<T, TId extends IdType>
 }
 
 interface TableColumnProps<T, TId extends IdType> {
-  cell?: React.FC<TableCellProps<T, TId>>;
+  cell?: React.FC<TableCellProps<T, TId> & ActionsCellProps>;
   children?: React.ReactElement;
   headerCell?: React.FC<TableHeaderCellProps<T, TId>>;
   field?: string;

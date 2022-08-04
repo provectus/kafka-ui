@@ -10,22 +10,21 @@ import {
   clusterTopicSendMessageRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { useDispatch } from 'react-redux';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
-import Dropdown from 'components/common/Dropdown/Dropdown';
-import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import styled from 'styled-components';
 import Navbar from 'components/common/Navigation/Navbar.styled';
-import * as S from 'components/Topics/Topic/Details/Details.styled';
 import { useAppSelector } from 'lib/hooks/redux';
 import {
   getIsTopicDeletePolicy,
   getIsTopicInternal,
 } from 'redux/reducers/topics/selectors';
 import useAppParams from 'lib/hooks/useAppParams';
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownItemHint,
+} from 'components/common/Dropdown';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
@@ -33,7 +32,6 @@ import SettingsContainer from './Settings/SettingsContainer';
 import Messages from './Messages/Messages';
 
 interface Props {
-  isDeleted: boolean;
   deleteTopic: (payload: {
     clusterName: ClusterName;
     topicName: TopicName;
@@ -56,49 +54,25 @@ const HeaderControlsWrapper = styled.div`
 `;
 
 const Details: React.FC<Props> = ({
-  isDeleted,
   deleteTopic,
   recreateTopic,
   clearTopicMessages,
 }) => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
-
   const isInternal = useAppSelector((state) =>
     getIsTopicInternal(state, topicName)
   );
-
   const isDeletePolicy = useAppSelector((state) =>
     getIsTopicDeletePolicy(state, topicName)
   );
-
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
-  const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
-    React.useState(false);
-  const [isClearTopicConfirmationVisible, setClearTopicConfirmationVisible] =
-    React.useState(false);
-  const [
-    isRecreateTopicConfirmationVisible,
-    setRecreateTopicConfirmationVisible,
-  ] = React.useState(false);
-  const deleteTopicHandler = () => deleteTopic({ clusterName, topicName });
 
-  React.useEffect(() => {
-    if (isDeleted) {
-      navigate('../..');
-    }
-  }, [isDeleted, clusterName, dispatch, navigate]);
-
-  const clearTopicMessagesHandler = () => {
-    clearTopicMessages({ clusterName, topicName });
-    setClearTopicConfirmationVisible(false);
-  };
-
-  const recreateTopicHandler = () => {
-    recreateTopic({ clusterName, topicName });
-    setRecreateTopicConfirmationVisible(false);
+  const deleteTopicHandler = () => {
+    deleteTopic({ clusterName, topicName });
+    navigate('../..');
   };
 
   return (
@@ -125,37 +99,53 @@ const Details: React.FC<Props> = ({
               <Route
                 index
                 element={
-                  <Dropdown label={<VerticalElipsisIcon />} right>
+                  <Dropdown>
                     <DropdownItem
                       onClick={() => navigate(clusterTopicEditRelativePath)}
                     >
                       Edit settings
-                      <S.DropdownExtraMessage>
+                      <DropdownItemHint>
                         Pay attention! This operation has
                         <br />
                         especially important consequences.
-                      </S.DropdownExtraMessage>
+                      </DropdownItemHint>
                     </DropdownItem>
                     {isDeletePolicy && (
                       <DropdownItem
-                        onClick={() => setClearTopicConfirmationVisible(true)}
+                        disabled={!isDeletePolicy}
+                        onClick={() =>
+                          clearTopicMessages({ clusterName, topicName })
+                        }
+                        confirm="Are you sure want to clear topic messages?"
                         danger
                       >
                         Clear messages
                       </DropdownItem>
                     )}
                     <DropdownItem
-                      onClick={() => setRecreateTopicConfirmationVisible(true)}
+                      onClick={() => recreateTopic({ clusterName, topicName })}
+                      confirm={
+                        <>
+                          Are you sure want to recreate <b>{topicName}</b>{' '}
+                          topic?
+                        </>
+                      }
                       danger
                     >
                       Recreate Topic
                     </DropdownItem>
                     {isTopicDeletionAllowed && (
                       <DropdownItem
-                        onClick={() => setDeleteTopicConfirmationVisible(true)}
+                        onClick={deleteTopicHandler}
+                        confirm={
+                          <>
+                            Are you sure want to remove <b>{topicName}</b>{' '}
+                            topic?
+                          </>
+                        }
                         danger
                       >
-                        Remove topic
+                        Remove Topic
                       </DropdownItem>
                     )}
                   </Dropdown>
@@ -165,27 +155,6 @@ const Details: React.FC<Props> = ({
           )}
         </HeaderControlsWrapper>
       </PageHeading>
-      <ConfirmationModal
-        isOpen={isDeleteTopicConfirmationVisible}
-        onCancel={() => setDeleteTopicConfirmationVisible(false)}
-        onConfirm={deleteTopicHandler}
-      >
-        Are you sure want to remove <b>{topicName}</b> topic?
-      </ConfirmationModal>
-      <ConfirmationModal
-        isOpen={isClearTopicConfirmationVisible}
-        onCancel={() => setClearTopicConfirmationVisible(false)}
-        onConfirm={clearTopicMessagesHandler}
-      >
-        Are you sure want to clear topic messages?
-      </ConfirmationModal>
-      <ConfirmationModal
-        isOpen={isRecreateTopicConfirmationVisible}
-        onCancel={() => setRecreateTopicConfirmationVisible(false)}
-        onConfirm={recreateTopicHandler}
-      >
-        Are you sure want to recreate <b>{topicName}</b> topic?
-      </ConfirmationModal>
       <Navbar role="navigation">
         <NavLink
           to="."
@@ -215,14 +184,11 @@ const Details: React.FC<Props> = ({
       </Navbar>
       <Routes>
         <Route index element={<OverviewContainer />} />
-
         <Route path={clusterTopicMessagesRelativePath} element={<Messages />} />
-
         <Route
           path={clusterTopicSettingsRelativePath}
           element={<SettingsContainer />}
         />
-
         <Route
           path={clusterTopicConsumerGroupsRelativePath}
           element={<TopicConsumerGroupsContainer />}

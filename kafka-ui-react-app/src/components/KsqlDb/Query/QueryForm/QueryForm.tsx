@@ -7,6 +7,7 @@ import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import yup from 'lib/yupExtended';
+import PlusIcon from 'components/common/Icons/PlusIcon';
 
 import * as S from './QueryForm.styled';
 
@@ -17,8 +18,7 @@ export interface Props {
   handleSSECancel: () => void;
   submitHandler: (values: FormValues) => void;
 }
-
-export type StreamsPropertiesType = {
+type StreamsPropertiesType = {
   key: string;
   value: string;
 };
@@ -166,7 +166,7 @@ const QueryForm: React.FC<Props> = ({
               buttonType="secondary"
               onClick={() => append({ key: '', value: '' })}
             >
-              <i className="fas fa-plus" />
+              <PlusIcon />
               Add Stream Property
             </Button>
           </S.StreamPropertiesContainer>

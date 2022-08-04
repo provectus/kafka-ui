@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ClusterContext from 'components/contexts/ClusterContext';
 import Details from 'components/Topics/Topic/Details/Details';
@@ -46,7 +46,6 @@ describe('Details', () => {
             deleteTopic={mockDelete}
             recreateTopic={mockRecreateTopic}
             clearTopicMessages={mockClearTopicMessages}
-            isDeleted={false}
             {...props}
           />
         </WithRoute>
@@ -83,7 +82,6 @@ describe('Details', () => {
             deleteTopic={mockDelete}
             recreateTopic={mockRecreateTopic}
             clearTopicMessages={mockClearTopicMessages}
-            isDeleted={false}
           />
         </ClusterContext.Provider>
       );
@@ -95,14 +93,16 @@ describe('Details', () => {
   describe('when remove topic modal is open', () => {
     beforeEach(() => {
       setupComponent();
-
-      const openModalButton = screen.getAllByText('Remove topic')[0];
+      const openModalButton = screen.getAllByText('Remove Topic')[0];
       userEvent.click(openModalButton);
     });
 
-    it('calls deleteTopic on confirm', () => {
-      const submitButton = screen.getAllByText('Submit')[0];
-      userEvent.click(submitButton);
+    it('calls deleteTopic on confirm', async () => {
+      const submitButton = screen.getAllByRole('button', {
+        name: 'Confirm',
+      })[0];
+
+      await waitFor(() => userEvent.click(submitButton));
 
       expect(mockDelete).toHaveBeenCalledWith({
         clusterName: mockClusterName,
@@ -110,10 +110,9 @@ describe('Details', () => {
       });
     });
 
-    it('closes the modal when cancel button is clicked', () => {
+    it('closes the modal when cancel button is clicked', async () => {
       const cancelButton = screen.getAllByText('Cancel')[0];
-      userEvent.click(cancelButton);
-
+      await waitFor(() => userEvent.click(cancelButton));
       expect(cancelButton).not.toBeInTheDocument();
     });
   });
@@ -126,9 +125,11 @@ describe('Details', () => {
       userEvent.click(confirmButton);
     });
 
-    it('it calls clearTopicMessages on confirm', () => {
-      const submitButton = screen.getAllByText('Submit')[0];
-      userEvent.click(submitButton);
+    it('it calls clearTopicMessages on confirm', async () => {
+      const submitButton = screen.getAllByRole('button', {
+        name: 'Confirm',
+      })[0];
+      await waitFor(() => userEvent.click(submitButton));
 
       expect(mockClearTopicMessages).toHaveBeenCalledWith({
         clusterName: mockClusterName,
@@ -136,9 +137,9 @@ describe('Details', () => {
       });
     });
 
-    it('closes the modal when cancel button is clicked', () => {
+    it('closes the modal when cancel button is clicked', async () => {
       const cancelButton = screen.getAllByText('Cancel')[0];
-      userEvent.click(cancelButton);
+      await waitFor(() => userEvent.click(cancelButton));
 
       expect(cancelButton).not.toBeInTheDocument();
     });
@@ -155,8 +156,14 @@ describe('Details', () => {
     });
   });
 
-  it('redirects to the correct route if topic is deleted', () => {
-    setupComponent({ isDeleted: true });
+  it('redirects to the correct route if topic is deleted', async () => {
+    setupComponent();
+
+    const deleteTopicButton = screen.getByText(/Remove topic/i);
+    userEvent.click(deleteTopicButton);
+
+    const submitDeleteButton = screen.getByRole('button', { name: 'Confirm' });
+    await waitFor(() => userEvent.click(submitDeleteButton));
 
     expect(mockNavigate).toHaveBeenCalledWith('../..');
   });
@@ -181,12 +188,13 @@ describe('Details', () => {
     ).toBeInTheDocument();
   });
 
-  it('calling recreation function after click on Submit button', () => {
+  it('calling recreation function after click on Submit button', async () => {
     setupComponent();
     const recreateTopicButton = screen.getByText(/Recreate topic/i);
     userEvent.click(recreateTopicButton);
-    const confirmBtn = screen.getByRole('button', { name: /submit/i });
-    userEvent.click(confirmBtn);
+    const confirmBtn = screen.getByRole('button', { name: /Confirm/i });
+
+    await waitFor(() => userEvent.click(confirmBtn));
     expect(mockRecreateTopic).toBeCalledTimes(1);
   });
 

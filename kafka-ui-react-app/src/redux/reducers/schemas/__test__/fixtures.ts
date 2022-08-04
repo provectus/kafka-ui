@@ -45,17 +45,3 @@ export const schemasFulfilledState = {
     entities: {},
   },
 };
-
-export const versionFulfilledState = {
-  totalPages: 1,
-  ids: [],
-  entities: {},
-  versions: {
-    latest: schemaVersion2,
-    ids: [schemaVersion1.id, schemaVersion2.id],
-    entities: {
-      [schemaVersion2.id]: schemaVersion2,
-      [schemaVersion1.id]: schemaVersion1,
-    },
-  },
-};

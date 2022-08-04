@@ -120,7 +120,7 @@ describe('Paths', () => {
 
   it('clusterTopicsPath', () => {
     expect(paths.clusterTopicsPath(clusterName)).toEqual(
-      `${paths.clusterPath(clusterName)}/topics`
+      `${paths.clusterPath(clusterName)}/all-topics`
     );
     expect(paths.clusterTopicsPath()).toEqual(
       paths.clusterTopicsPath(RouteParams.clusterName)
@@ -128,7 +128,7 @@ describe('Paths', () => {
   });
   it('clusterTopicNewPath', () => {
     expect(paths.clusterTopicNewPath(clusterName)).toEqual(
-      `${paths.clusterTopicsPath(clusterName)}/create-new`
+      `${paths.clusterTopicsPath(clusterName)}/create-new-topic`
     );
     expect(paths.clusterTopicNewPath()).toEqual(
       paths.clusterTopicNewPath(RouteParams.clusterName)

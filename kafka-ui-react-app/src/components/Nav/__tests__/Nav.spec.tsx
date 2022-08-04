@@ -1,24 +1,28 @@
 import React from 'react';
 import Nav from 'components/Nav/Nav';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
+import { act } from 'react-dom/test-utils';
+import { Cluster } from 'generated-sources';
+import { useClusters } from 'lib/hooks/api/clusters';
 import {
   offlineClusterPayload,
   onlineClusterPayload,
-} from 'components/Cluster/__tests__/fixtures';
-import fetchMock from 'fetch-mock';
-import { act } from 'react-dom/test-utils';
-import { Cluster } from 'generated-sources';
+} from 'lib/fixtures/clusters';
+
+jest.mock('lib/hooks/api/clusters', () => ({
+  useClusters: jest.fn(),
+}));
 
 describe('Nav', () => {
-  afterEach(() => fetchMock.restore());
-
   const renderComponent = async (payload: Cluster[] = []) => {
-    const mock = fetchMock.get('/api/clusters', payload);
+    (useClusters as jest.Mock).mockImplementation(() => ({
+      data: payload,
+      isSuccess: true,
+    }));
     await act(() => {
       render(<Nav />);
     });
-    return waitFor(() => expect(mock.called()).toBeTruthy());
   };
 
   const getDashboard = () => screen.getByText('Dashboard');

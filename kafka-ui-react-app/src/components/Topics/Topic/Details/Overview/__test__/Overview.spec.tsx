@@ -10,7 +10,7 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import userEvent from '@testing-library/user-event';
 import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
 import { clusterTopicPath } from 'lib/paths';
-import { ReplicaCell } from 'components/Topics/Topic/Details/Details.styled';
+import { Replica } from 'components/Topics/Topic/Details/Overview/Overview.styled';
 
 describe('Overview', () => {
   const mockClusterName = 'local';
@@ -73,14 +73,17 @@ describe('Overview', () => {
   });
 
   it('renders replica cell with props', () => {
-    render(<ReplicaCell leader />);
+    render(<Replica leader />);
     const element = screen.getByLabelText('replica-info');
     expect(element).toBeInTheDocument();
-    expect(element).toHaveStyleRule('color', 'orange');
+    expect(element).toHaveStyleRule(
+      'color',
+      theme.topicMetaData.liderReplica.color
+    );
   });
 
   describe('when it has internal flag', () => {
-    it('does not render the Action button a Topic', () => {
+    it('renders the Action button for Topic', () => {
       setupComponent(
         {},
         {
@@ -90,7 +93,7 @@ describe('Overview', () => {
           cleanUpPolicy: CleanUpPolicy.DELETE,
         }
       );
-      expect(screen.getAllByRole('menu')[0]).toBeInTheDocument();
+      expect(screen.getAllByLabelText('Dropdown Toggle').length).toEqual(1);
     });
 
     it('does not render Partitions', () => {
