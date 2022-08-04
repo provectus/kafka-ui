@@ -3,7 +3,7 @@ package com.provectus.kafka.ui.tests;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
-import com.provectus.kafka.ui.pages.topic.TopicView;
+import com.provectus.kafka.ui.steps.kafka.TopicSteps;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
@@ -52,20 +52,14 @@ public class TopicTests extends BaseTest {
     public void createTopic() {
         pages.open()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
-        pages.topicsList.pressCreateNewTopic()
-                .setTopicName(NEW_TOPIC)
-                .sendData()
+        TopicSteps.createNewTopic(NEW_TOPIC)
                 .isOnTopicViewPage();
         pages.open()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
-                .topicIsVisible(NEW_TOPIC);
-        helpers.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
-        pages.open()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
-                .topicIsNotVisible(NEW_TOPIC);
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
+        Assertions.assertTrue(TopicSteps.IsTopicVisible(NEW_TOPIC));
     }
 
-    @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
+
     @SneakyThrows
     @DisplayName("should update a topic")
     @Issue("1500")
@@ -74,28 +68,9 @@ public class TopicTests extends BaseTest {
     @CaseId(197)
     @Test
     public void updateTopic() {
-        pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage();
-        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
-                .isOnTopicViewPage()
-                .openEditSettings()
-                .selectCleanupPolicy(COMPACT_POLICY_VALUE)
-                .setMinInsyncReplicas(10)
-                .setTimeToRetainDataInMs(UPDATED_TIME_TO_RETAIN_VALUE)
-                .setMaxSizeOnDiskInGB(UPDATED_MAX_SIZE_ON_DISK)
-                .setMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
-                .sendData()
-                .isOnTopicViewPage();
-
-        pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage();
-        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
-                .openEditSettings()
-                // Assertions
-                .cleanupPolicyIs(COMPACT_POLICY_VALUE)
-                .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
-                .maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK)
-                .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
+        pages.open()
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
+        TopicSteps.updateTopic(TOPIC_TO_UPDATE, COMPACT_POLICY_VALUE, UPDATED_TIME_TO_RETAIN_VALUE, UPDATED_MAX_SIZE_ON_DISK, UPDATED_MAX_MESSAGE_BYTES);
     }
 
     @SneakyThrows
@@ -105,13 +80,10 @@ public class TopicTests extends BaseTest {
     @CaseId(207)
     @Test
     public void deleteTopic() {
-        pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage()
-                .openTopic(TOPIC_TO_DELETE)
-                .isOnTopicViewPage()
-                .deleteTopic()
-                .isOnPage()
-                .isTopicNotVisible(TOPIC_TO_DELETE);
+        pages.open()
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
+        TopicSteps.deleteTopic(TOPIC_TO_DELETE);
+        Assertions.assertFalse(TopicSteps.isTopicNotVisible(TOPIC_TO_DELETE));
     }
 
     @SneakyThrows
@@ -121,16 +93,10 @@ public class TopicTests extends BaseTest {
     @CaseId(222)
     @Test
     void produceMessage() {
-        pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage()
-                .openTopic(TOPIC_TO_UPDATE)
-                .isOnTopicViewPage()
-                .openTopicMenu(TopicView.TopicMenu.MESSAGES)
-                .clickOnButton("Produce Message")
-                .setContentFiled(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE))
-                .setKeyField(readFileAsString(KEY_TO_PRODUCE_MESSAGE))
-                .submitProduceMessage();
-        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(readFileAsString(KEY_TO_PRODUCE_MESSAGE)));
-        Assertions.assertTrue(pages.topicView.isContentMessageVisible(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE).trim()));
+        pages.open()
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
+        TopicSteps.produceMessage(TOPIC_TO_UPDATE, CONTENT_TO_PRODUCE_MESSAGE, KEY_TO_PRODUCE_MESSAGE);
+        Assertions.assertTrue(TopicSteps.isKeyMessageVisible(readFileAsString(KEY_TO_PRODUCE_MESSAGE)));
+        Assertions.assertTrue(TopicSteps.isContentMessageVisible(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE).trim()));
     }
 }

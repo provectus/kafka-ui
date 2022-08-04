@@ -30,8 +30,8 @@ public class TopicView {
 
     @Step
     public TopicView isOnTopicViewPage() {
-        $(By.linkText("Overview")).shouldBe(Condition.visible);
-        return this;
+       $(By.linkText("Overview")).shouldBe(Condition.visible);
+       return this;
     }
 
     @SneakyThrows

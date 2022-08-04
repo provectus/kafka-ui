@@ -3,8 +3,8 @@ package com.provectus.kafka.ui.pages.topic;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
-import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
+import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
@@ -32,18 +32,17 @@ public class TopicsList {
     }
 
     @Step
-    public TopicCreateEditSettingsView pressCreateNewTopic(){
+    public TopicCreateEditSettingsView pressCreateNewTopic() {
         BrowserUtils.javaExecutorClick($x("//button[normalize-space(text()) ='Add a Topic']"));
         return new TopicCreateEditSettingsView();
     }
 
     @Step
-    public TopicsList isTopicVisible(String topicName) {
-        $$("tbody td>a")
+    public boolean isTopicVisible(String topicName) {
+        return $$("tbody td>a")
                 .shouldBe(CollectionCondition.sizeGreaterThan(4))
                 .find(Condition.exactText(topicName))
-                .shouldBe(Condition.visible);
-        return this;
+                .is(Condition.visible);
     }
 
     @SneakyThrows
@@ -53,12 +52,8 @@ public class TopicsList {
     }
 
     @SneakyThrows
-    public TopicsList isTopicNotVisible(String topicName) {
-        $$x("//table/tbody/tr/td[2]")
-                .shouldBe(CollectionCondition.sizeGreaterThanOrEqual(4))
-                .find(Condition.exactText(topicName))
-                .shouldBe(Condition.not(Condition.visible));
-        return this;
+    public boolean isTopicNotVisible(String topicName) {
+        return $$x("//table/tbody/tr/td[2]")
+                .find(Condition.exactText(topicName)).is(Condition.visible);
     }
-
 }
