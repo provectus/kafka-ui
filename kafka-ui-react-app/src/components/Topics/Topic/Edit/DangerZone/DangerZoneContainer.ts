@@ -4,10 +4,6 @@ import {
   updateTopicPartitionsCount,
   updateTopicReplicationFactor,
 } from 'redux/reducers/topics/topicsSlice';
-import {
-  getTopicPartitionsCountIncreased,
-  getTopicReplicationFactorUpdated,
-} from 'redux/reducers/topics/selectors';
 
 import DangerZone from './DangerZone';
 
@@ -17,13 +13,11 @@ type OwnProps = {
 };
 
 const mapStateToProps = (
-  state: RootState,
+  _: RootState,
   { defaultPartitions, defaultReplicationFactor }: OwnProps
 ) => ({
   defaultPartitions,
   defaultReplicationFactor,
-  partitionsCountIncreased: getTopicPartitionsCountIncreased(state),
-  replicationFactorUpdated: getTopicReplicationFactorUpdated(state),
 });
 
 const mapDispatchToProps = {
