@@ -280,9 +280,9 @@ describe('List', () => {
       )[buttonIndex];
       userEvent.click(buttonClickedElement);
 
-      const modal = screen.getByRole('dialog');
+      const modal = await screen.findByRole('dialog');
       expect(within(modal).getByText(confirmationText)).toBeInTheDocument();
-      userEvent.click(within(modal).getByRole('button', { name: 'Submit' }));
+      userEvent.click(within(modal).getByRole('button', { name: 'Confirm' }));
 
       await waitFor(() => {
         expect(screen.queryByTestId('delete-buttons')).not.toBeInTheDocument();

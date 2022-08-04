@@ -3,7 +3,7 @@ import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorPath } from 'lib/paths';
 import Actions from 'components/Connect/Details/Actions/Actions';
 import { ConnectorAction, ConnectorState } from 'generated-sources';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
   useConnector,
@@ -26,11 +26,6 @@ jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useDeleteConnector: jest.fn(),
   useUpdateConnectorState: jest.fn(),
 }));
-
-jest.mock(
-  'components/common/ConfirmationModal/ConfirmationModal',
-  () => 'mock-ConfirmationModal'
-);
 
 const expectActionButtonsExists = () => {
   expect(screen.getByText('Restart Connector')).toBeInTheDocument();
@@ -116,10 +111,10 @@ describe('Actions', () => {
 
       it('opens confirmation modal when delete button clicked', async () => {
         renderComponent();
-        userEvent.click(screen.getByRole('button', { name: 'Delete' }));
-        expect(
-          screen.getByText(/Are you sure you want to remove/i)
-        ).toHaveAttribute('isopen', 'true');
+        await waitFor(() =>
+          userEvent.click(screen.getByRole('button', { name: 'Delete' }))
+        );
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
       it('calls restartConnector when restart button clicked', () => {

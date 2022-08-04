@@ -58,7 +58,7 @@ const StyledButton = styled.button<ButtonProps>`
     color: ${(props) => props.theme.button.primary.color};
   }
 
-  & i {
+  & svg {
     margin-right: 7px;
   }
 `;

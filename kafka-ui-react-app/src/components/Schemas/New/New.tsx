@@ -16,8 +16,7 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 import { schemaAdded } from 'redux/reducers/schemas/schemasSlice';
 import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
-import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
-import { getResponse } from 'lib/errorHandling';
+import { showServerError } from 'lib/errorHandling';
 import { schemasApiClient } from 'lib/api';
 
 import * as S from './New.styled';
@@ -32,7 +31,12 @@ const New: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const methods = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
+  const methods = useForm<NewSchemaSubjectRaw>({
+    mode: 'onChange',
+    defaultValues: {
+      schemaType: SchemaType.AVRO,
+    },
+  });
   const {
     register,
     handleSubmit,
@@ -53,8 +57,7 @@ const New: React.FC = () => {
       dispatch(schemaAdded(resp));
       navigate(clusterSchemaPath(clusterName, subject));
     } catch (e) {
-      const err = await getResponse(e as Response);
-      dispatch(serverErrorAlertAdded(err));
+      showServerError(e as Response);
     }
   };
 
@@ -102,11 +105,11 @@ const New: React.FC = () => {
             control={control}
             rules={{ required: 'Schema Type is required.' }}
             name="schemaType"
+            defaultValue={SchemaTypeOptions[0].value as SchemaType}
             render={({ field: { name, onChange, value } }) => (
               <Select
                 selectSize="M"
                 name={name}
-                defaultValue={SchemaTypeOptions[0].value}
                 value={value}
                 onChange={onChange}
                 minWidth="50%"

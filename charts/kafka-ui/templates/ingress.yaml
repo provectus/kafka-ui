@@ -1,7 +1,7 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "kafka-ui.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
-{{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+{{- if and ($.Capabilities.APIVersions.Has "networking.k8s.io/v1") (trimPrefix "v" .Capabilities.KubeVersion.Version | semverCompare ">= 1.19" ) -}}
 apiVersion: networking.k8s.io/v1
 {{- else if $.Capabilities.APIVersions.Has "networking.k8s.io/v1beta1" }}
 apiVersion: networking.k8s.io/v1beta1
@@ -30,7 +30,7 @@ spec:
   rules:
     - http:
         paths:
-{{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1" -}}
+{{- if and ($.Capabilities.APIVersions.Has "networking.k8s.io/v1") (trimPrefix "v" .Capabilities.KubeVersion.Version | semverCompare ">= 1.19" ) -}}
           {{- range .Values.ingress.precedingPaths }}
           - path: {{ .path }}
             pathType: Prefix

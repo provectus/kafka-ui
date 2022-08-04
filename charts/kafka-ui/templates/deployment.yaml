@@ -40,7 +40,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ include "kafka-ui.imageName" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if or .Values.env  .Values.yamlApplicationConfig .Values.yamlApplicationConfigConfigMap}}
           env:

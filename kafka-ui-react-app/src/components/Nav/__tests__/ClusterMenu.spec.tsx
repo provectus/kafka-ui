@@ -5,7 +5,7 @@ import ClusterMenu from 'components/Nav/ClusterMenu';
 import userEvent from '@testing-library/user-event';
 import { clusterConnectorsPath } from 'lib/paths';
 import { render } from 'lib/testHelpers';
-import { onlineClusterPayload } from 'components/Cluster/__tests__/fixtures';
+import { onlineClusterPayload } from 'lib/fixtures/clusters';
 
 describe('ClusterMenu', () => {
   const setupComponent = (cluster: Cluster, singleMode?: boolean) => (

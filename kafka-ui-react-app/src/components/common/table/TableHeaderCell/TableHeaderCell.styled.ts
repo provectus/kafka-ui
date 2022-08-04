@@ -115,4 +115,5 @@ export const TableHeaderCell = styled.th`
   padding: 4px 0 4px 24px;
   border-bottom-width: 1px;
   vertical-align: middle;
+  text-align: left;
 `;
