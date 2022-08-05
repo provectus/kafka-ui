@@ -65,7 +65,6 @@ public class TopicTests extends BaseTest {
                 .topicIsNotVisible(NEW_TOPIC);
     }
 
-    @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
     @SneakyThrows
     @DisplayName("should update a topic")
     @Issue("1500")
