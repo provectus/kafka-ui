@@ -72,7 +72,7 @@ public class JmxClusterUtil {
   }
 
   private List<MetricDTO> getMetrics(KafkaCluster kafkaCluster, Node node) {
-    if (kafkaCluster.getPort() != null && kafkaCluster.getPort() > 0) {
+    if (kafkaCluster.getJmxPort() != null && kafkaCluster.getJmxPort() > 0) {
       return jmxMetricsRetriever.retrieve(kafkaCluster, node);
     } else if (kafkaCluster.getJmxExporterPort() != null && kafkaCluster.getJmxExporterPort() > 0) {
       return prometheusMetricsRetriever.retrieve(kafkaCluster, node);
