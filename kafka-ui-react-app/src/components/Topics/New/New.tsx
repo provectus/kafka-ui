@@ -4,13 +4,11 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { ClusterNameRoute } from 'lib/paths';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { createTopic } from 'redux/reducers/topics/topicsSlice';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
-import { AsyncRequestStatus } from 'lib/constants';
+import { useCreateTopic } from 'lib/hooks/api/topics';
 
 enum Filters {
   NAME = 'name',
@@ -27,10 +25,11 @@ const New: React.FC = () => {
   });
 
   const { clusterName } = useAppParams<ClusterNameRoute>();
+  const createTopic = useCreateTopic(clusterName);
+
   const navigate = useNavigate();
 
   const { search } = useLocation();
-  const dispatch = useAppDispatch();
   const params = new URLSearchParams(search);
 
   const name = params.get(Filters.NAME) || '';
@@ -40,11 +39,8 @@ const New: React.FC = () => {
   const cleanUpPolicy = params.get(Filters.CLEANUP_POLICY) || 'Delete';
 
   const onSubmit = async (data: TopicFormData) => {
-    const { meta } = await dispatch(createTopic({ clusterName, data }));
-
-    if (meta.requestStatus === AsyncRequestStatus.fulfilled) {
-      navigate(`../${data.name}`);
-    }
+    await createTopic.mutateAsync(data);
+    navigate(`../${data.name}`);
   };
 
   return (

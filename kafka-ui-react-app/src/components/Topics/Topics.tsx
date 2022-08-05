@@ -8,9 +8,9 @@ import {
 } from 'lib/paths';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
-import ListContainer from './List/ListContainer';
-import TopicContainer from './Topic/TopicContainer';
 import New from './New/New';
+import ListPage from './List/ListPage';
+import Topic from './Topic/Topic';
 
 const Topics: React.FC = () => (
   <Routes>
@@ -18,7 +18,7 @@ const Topics: React.FC = () => (
       index
       element={
         <BreadcrumbRoute>
-          <ListContainer />
+          <ListPage />
         </BreadcrumbRoute>
       }
     />
@@ -42,7 +42,7 @@ const Topics: React.FC = () => (
       path={getNonExactPath(RouteParams.topicName)}
       element={
         <BreadcrumbRoute>
-          <TopicContainer />
+          <Topic />
         </BreadcrumbRoute>
       }
     />
