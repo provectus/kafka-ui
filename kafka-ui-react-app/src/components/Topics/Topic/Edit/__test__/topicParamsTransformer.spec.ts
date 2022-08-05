@@ -1,101 +1,59 @@
 import topicParamsTransformer, {
   getValue,
 } from 'components/Topics/Topic/Edit/topicParamsTransformer';
-import { DEFAULTS } from 'components/Topics/Topic/Edit/Edit';
+import { externalTopicPayload, topicConfigPayload } from 'lib/fixtures/topics';
+import { TOPIC_EDIT_FORM_DEFAULT_PROPS } from 'components/Topics/Topic/Edit/Edit';
 
-import { transformedParams, customConfigs, topicWithInfo } from './fixtures';
+const defaultValue = 3232326;
+describe('getValue', () => {
+  it('returns value when field exists', () => {
+    expect(getValue(topicConfigPayload, 'min.insync.replicas')).toEqual(1);
+  });
+  it('returns default value when field does not exists', () => {
+    expect(getValue(topicConfigPayload, 'min.max.mid', defaultValue)).toEqual(
+      defaultValue
+    );
+  });
+});
 
 describe('topicParamsTransformer', () => {
-  const testField = (name: keyof typeof DEFAULTS, fieldName: string) => {
-    it('returns transformed value', () => {
-      expect(topicParamsTransformer(topicWithInfo)[name]).toEqual(
-        transformedParams[name]
-      );
-    });
-    it(`returns default value when ${name} not defined`, () => {
-      expect(
-        topicParamsTransformer({
-          ...topicWithInfo,
-          config: topicWithInfo.config?.filter(
-            (config) => config.name !== fieldName
-          ),
-        })[name]
-      ).toEqual(DEFAULTS[name]);
-    });
-
-    it('returns number value', () => {
-      expect(
-        typeof topicParamsTransformer(topicWithInfo).retentionBytes
-      ).toEqual('number');
-    });
-  };
-
-  describe('getValue', () => {
-    it('returns value when field exists', () => {
-      expect(
-        getValue(topicWithInfo, 'confluent.tier.segment.hotset.roll.min.bytes')
-      ).toEqual(104857600);
-    });
-    it('returns undefined when filed name does not exist', () => {
-      expect(getValue(topicWithInfo, 'some.unsupported.fieldName')).toEqual(
-        undefined
-      );
-    });
-    it('returns default value when field does not exist', () => {
-      expect(
-        getValue(topicWithInfo, 'some.unsupported.fieldName', 100)
-      ).toEqual(100);
+  it('returns default values when config payload is not defined', () => {
+    expect(topicParamsTransformer(externalTopicPayload)).toEqual(
+      TOPIC_EDIT_FORM_DEFAULT_PROPS
+    );
+  });
+  it('returns default values when topic payload is not defined', () => {
+    expect(topicParamsTransformer(undefined, topicConfigPayload)).toEqual(
+      TOPIC_EDIT_FORM_DEFAULT_PROPS
+    );
+  });
+  it('returns transformed config', () => {
+    expect(
+      topicParamsTransformer(externalTopicPayload, topicConfigPayload)
+    ).toEqual({
+      ...TOPIC_EDIT_FORM_DEFAULT_PROPS,
+      name: externalTopicPayload.name,
     });
   });
-  describe('Topic', () => {
-    it('returns default values when topic not defined found', () => {
-      expect(topicParamsTransformer(undefined)).toEqual(DEFAULTS);
-    });
-
-    it('returns transformed values', () => {
-      expect(topicParamsTransformer(topicWithInfo)).toEqual(transformedParams);
-    });
+  it('returns default partitions config', () => {
+    expect(
+      topicParamsTransformer(
+        { ...externalTopicPayload, partitionCount: undefined },
+        topicConfigPayload
+      ).partitions
+    ).toEqual(TOPIC_EDIT_FORM_DEFAULT_PROPS.partitions);
   });
-
-  describe('Topic partitions', () => {
-    it('returns transformed value', () => {
-      expect(topicParamsTransformer(topicWithInfo).partitions).toEqual(
-        transformedParams.partitions
-      );
-    });
-    it('returns default value when partitionCount not defined', () => {
-      expect(
-        topicParamsTransformer({ ...topicWithInfo, partitionCount: undefined })
-          .partitions
-      ).toEqual(DEFAULTS.partitions);
-    });
+  it('returns empty list of custom params', () => {
+    expect(
+      topicParamsTransformer(externalTopicPayload, topicConfigPayload)
+        .customParams
+    ).toEqual([]);
   });
-
-  describe('maxMessageBytes', () =>
-    testField('maxMessageBytes', 'max.message.bytes'));
-
-  describe('minInSyncReplicas', () =>
-    testField('minInSyncReplicas', 'min.insync.replicas'));
-
-  describe('retentionBytes', () =>
-    testField('retentionBytes', 'retention.bytes'));
-
-  describe('retentionMs', () => testField('retentionMs', 'retention.ms'));
-
-  describe('customParams', () => {
-    it('returns value when configs is empty', () => {
-      expect(
-        topicParamsTransformer({ ...topicWithInfo, config: [] }).customParams
-      ).toEqual([]);
-    });
-
-    it('returns value when had a 2 custom configs', () => {
-      expect(
-        topicParamsTransformer({
-          ...topicWithInfo,
-          config: customConfigs,
-        }).customParams?.length
-      ).toEqual(2);
-    });
+  it('returns list of custom params', () => {
+    expect(
+      topicParamsTransformer(externalTopicPayload, [
+        { ...topicConfigPayload[0], value: 'SuperCustom' },
+      ]).customParams
+    ).toEqual([{ name: 'compression.type', value: 'SuperCustom' }]);
   });
 });

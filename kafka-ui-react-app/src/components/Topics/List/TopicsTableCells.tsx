@@ -1,14 +1,14 @@
 import React from 'react';
-import { TopicWithDetailedInfo } from 'redux/interfaces';
 import { TableCellProps } from 'components/common/SmartTable/TableColumn';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import { Topic } from 'generated-sources';
 
 import * as S from './List.styled';
 
-export const TitleCell: React.FC<
-  TableCellProps<TopicWithDetailedInfo, string>
-> = ({ dataItem: { internal, name } }) => {
+export const TitleCell: React.FC<TableCellProps<Topic, string>> = ({
+  dataItem: { internal, name },
+}) => {
   return (
     <>
       {internal && <Tag color="gray">IN</Tag>}
@@ -19,15 +19,15 @@ export const TitleCell: React.FC<
   );
 };
 
-export const TopicSizeCell: React.FC<
-  TableCellProps<TopicWithDetailedInfo, string>
-> = ({ dataItem: { segmentSize } }) => {
+export const TopicSizeCell: React.FC<TableCellProps<Topic, string>> = ({
+  dataItem: { segmentSize },
+}) => {
   return <BytesFormatted value={segmentSize} />;
 };
 
-export const OutOfSyncReplicasCell: React.FC<
-  TableCellProps<TopicWithDetailedInfo, string>
-> = ({ dataItem: { partitions } }) => {
+export const OutOfSyncReplicasCell: React.FC<TableCellProps<Topic, string>> = ({
+  dataItem: { partitions },
+}) => {
   const data = React.useMemo(() => {
     if (partitions === undefined || partitions.length === 0) {
       return 0;
@@ -42,9 +42,9 @@ export const OutOfSyncReplicasCell: React.FC<
   return <span>{data}</span>;
 };
 
-export const MessagesCell: React.FC<
-  TableCellProps<TopicWithDetailedInfo, string>
-> = ({ dataItem: { partitions } }) => {
+export const MessagesCell: React.FC<TableCellProps<Topic, string>> = ({
+  dataItem: { partitions },
+}) => {
   const data = React.useMemo(() => {
     if (partitions === undefined || partitions.length === 0) {
       return 0;

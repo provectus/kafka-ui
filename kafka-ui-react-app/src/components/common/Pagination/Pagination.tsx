@@ -3,7 +3,7 @@ import usePagination from 'lib/hooks/usePagination';
 import range from 'lodash/range';
 import React from 'react';
 import PageControl from 'components/common/Pagination/PageControl';
-import useSearch from 'lib/hooks/useSearch';
+import { useSearchParams } from 'react-router-dom';
 
 import * as S from './Pagination.styled';
 
@@ -15,17 +15,16 @@ const NEIGHBOURS = 2;
 
 const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
   const { page, perPage, pathname } = usePagination();
-  const [searchText] = useSearch();
+  const [searchParams] = useSearchParams();
 
   const currentPage = page || 1;
   const currentPerPage = perPage || PER_PAGE;
 
-  const searchParam = searchText ? `&q=${searchText}` : '';
-  const getPath = (newPage: number) =>
-    `${pathname}?page=${Math.max(
-      newPage,
-      1
-    )}&perPage=${currentPerPage}${searchParam}`;
+  const getPath = (newPage: number) => {
+    searchParams.set('page', Math.max(newPage, 1).toString());
+    searchParams.set('perPage', currentPerPage.toString());
+    return `${pathname}?${searchParams.toString()}`;
+  };
 
   const pages = React.useMemo(() => {
     // Total visible numbers: neighbours, current, first & last

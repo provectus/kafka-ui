@@ -10,14 +10,14 @@ import {
   getNonExactPath,
 } from 'lib/paths';
 
-const listContainer = 'listContainer';
-const topicContainer = 'topicContainer';
-const newCopyContainer = 'newCopyContainer';
+const listContainer = 'My List Page';
+const topicContainer = 'My Topic Details Page';
+const newCopyContainer = 'My New/Copy Page';
 
-jest.mock('components/Topics/List/ListContainer', () => () => (
+jest.mock('components/Topics/List/ListPage', () => () => (
   <div>{listContainer}</div>
 ));
-jest.mock('components/Topics/Topic/TopicContainer', () => () => (
+jest.mock('components/Topics/Topic/Topic', () => () => (
   <div>{topicContainer}</div>
 ));
 jest.mock('components/Topics/New/New', () => () => (
