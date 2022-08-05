@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
-  margin: 16px;
-  padding: 8px 16px;
+  margin: 32px auto;
+  padding: 16px;
   border: 1px solid ${({ theme }) => theme.dangerZone.borderColor};
   box-sizing: border-box;
   border-radius: 8px;
+  width: 768px;
 
   & > div {
     display: flex;
