@@ -75,7 +75,7 @@ public class TopicTests extends BaseTest {
     @Test
     public void updateTopic() {
         pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage();
+                .waitUntilScreenReady();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
                 .isOnTopicViewPage()
                 .openEditSettings()
@@ -88,7 +88,7 @@ public class TopicTests extends BaseTest {
                 .isOnTopicViewPage();
 
         pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage();
+                .waitUntilScreenReady();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
                 .openEditSettings()
                 // Assertions
@@ -107,11 +107,11 @@ public class TopicTests extends BaseTest {
     @Disabled // TODO: https://github.com/provectus/kafka-ui/issues/2373
     public void deleteTopic() {
         pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage()
+                .waitUntilScreenReady()
                 .openTopic(TOPIC_TO_DELETE)
                 .isOnTopicViewPage()
                 .deleteTopic()
-                .isOnPage()
+                .waitUntilScreenReady()
                 .isTopicNotVisible(TOPIC_TO_DELETE);
     }
 
@@ -123,7 +123,7 @@ public class TopicTests extends BaseTest {
     @Test
     void produceMessage() {
         pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage()
+                .waitUntilScreenReady()
                 .openTopic(TOPIC_TO_UPDATE)
                 .isOnTopicViewPage()
                 .openTopicMenu(TopicView.TopicMenu.MESSAGES)
