@@ -20,7 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class PrometheusMetricsRetriever implements MetricsRetriever {
 
   private final WebClient webClient;
-  private final JmxExporterMetricsParser parser;
+  private final PrometheusEndpointMetricsParser parser;
 
   @Override
   public List<MetricDTO> retrieve(KafkaCluster c, Node node) {

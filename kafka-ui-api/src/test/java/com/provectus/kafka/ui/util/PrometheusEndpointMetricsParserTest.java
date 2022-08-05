@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class JmxExporterMetricsParserTest {
+class PrometheusEndpointMetricsParserTest {
 
-  private final JmxExporterMetricsParser parser = new JmxExporterMetricsParser();
+  private final PrometheusEndpointMetricsParser parser = new PrometheusEndpointMetricsParser();
 
   @Test
   void correctMetricsTest() {

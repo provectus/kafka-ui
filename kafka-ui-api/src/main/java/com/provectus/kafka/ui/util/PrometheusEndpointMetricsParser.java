@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class JmxExporterMetricsParser {
+public class PrometheusEndpointMetricsParser {
 
   public static final String CANONICAL_NAME = "canonicalName";
   private static final String NAME = "name";
