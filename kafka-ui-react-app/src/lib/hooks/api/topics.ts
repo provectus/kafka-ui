@@ -36,12 +36,16 @@ export const topicKeys = {
     [...topicKeys.details(props), 'schema'] as const,
   consumerGroups: (props: GetTopicDetailsRequest) =>
     [...topicKeys.details(props), 'consumerGroups'] as const,
+  statistics: (props: GetTopicDetailsRequest) =>
+    [...topicKeys.details(props), 'statistics'] as const,
 };
 
 export function useTopics(props: GetTopicsRequest) {
   const { clusterName, ...filters } = props;
-  return useQuery(topicKeys.list(clusterName, filters), () =>
-    api.getTopics(props)
+  return useQuery(
+    topicKeys.list(clusterName, filters),
+    () => api.getTopics(props),
+    { keepPreviousData: true }
   );
 }
 export function useTopicDetails(props: GetTopicDetailsRequest) {
@@ -235,4 +239,44 @@ export function useSendMessage(props: GetTopicDetailsRequest) {
       },
     }
   );
+}
+
+// Statistics
+export function useTopicAnalysis(
+  props: GetTopicDetailsRequest,
+  enabled = true
+) {
+  return useQuery(
+    topicKeys.statistics(props),
+    () => api.getTopicAnalysis(props),
+    {
+      enabled,
+      refetchInterval: 1000,
+      useErrorBoundary: true,
+      retry: false,
+      suspense: false,
+    }
+  );
+}
+export function useAnalyzeTopic(props: GetTopicDetailsRequest) {
+  const client = useQueryClient();
+  return useMutation(() => api.analyzeTopic(props), {
+    onSuccess: () => {
+      showSuccessAlert({
+        message: `Topic analysis successfully started`,
+      });
+      client.invalidateQueries(topicKeys.statistics(props));
+    },
+  });
+}
+export function useCancelTopicAnalysis(props: GetTopicDetailsRequest) {
+  const client = useQueryClient();
+  return useMutation(() => api.cancelTopicAnalysis(props), {
+    onSuccess: () => {
+      showSuccessAlert({
+        message: `Topic analysis canceled`,
+      });
+      client.invalidateQueries(topicKeys.statistics(props));
+    },
+  });
 }
