@@ -39,7 +39,11 @@ const Tasks: React.FC = () => {
           </tr>
         )}
         {tasks?.map((task) => (
-          <TaskRow task={task} restartTaskHandler={restartTaskHandler} />
+          <TaskRow
+            key={task.status?.id}
+            task={task}
+            restartTaskHandler={restartTaskHandler}
+          />
         ))}
       </tbody>
     </Table>

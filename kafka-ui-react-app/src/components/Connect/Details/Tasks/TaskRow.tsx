@@ -5,8 +5,13 @@ import { Tag } from 'components/common/Tag/Tag.styled';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
+import styled from 'styled-components';
 
-import { Cell } from './TaskRow.styled';
+import TraceContent from './TraceContent/TraceContent';
+
+const ClickableRow = styled.tr`
+  cursor: pointer;
+`;
 
 interface TaskRowProps {
   task: Task;
@@ -24,36 +29,37 @@ const TaskRow: React.FC<TaskRowProps> = ({ task, restartTaskHandler }) => {
       : str;
   };
 
+  const toggleIsOpen = () => setIsOpen(!isOpen);
+
   return (
-    <tr key={task.status?.id} onClick={() => setIsOpen(!isOpen)}>
-      <Cell>
-        {task.status.trace && task.status.trace.length > MAX_LENGTH && (
-          <IconButtonWrapper onClick={() => setIsOpen(!isOpen)} aria-hidden>
+    <>
+      <ClickableRow onClick={toggleIsOpen}>
+        <td>
+          <IconButtonWrapper aria-hidden>
             <MessageToggleIcon isOpen={isOpen} />
           </IconButtonWrapper>
-        )}
-      </Cell>
-      <Cell>{task.status?.id}</Cell>
-      <Cell>{task.status?.workerId}</Cell>
-      <Cell>
-        <Tag color={getTagColor(task.status)}>{task.status.state}</Tag>
-      </Cell>
-      <Cell>
-        {isOpen ? task.status?.trace : truncate(task.status?.trace || '')}
-      </Cell>
-      <Cell style={{ width: '5%' }}>
-        <div>
-          <Dropdown>
-            <DropdownItem
-              onClick={() => restartTaskHandler(task.id?.task)}
-              danger
-            >
-              <span>Restart task</span>
-            </DropdownItem>
-          </Dropdown>
-        </div>
-      </Cell>
-    </tr>
+        </td>
+        <td>{task.status?.id}</td>
+        <td>{task.status?.workerId}</td>
+        <td>
+          <Tag color={getTagColor(task.status)}>{task.status.state}</Tag>
+        </td>
+        <td>{truncate(task.status?.trace || '')}</td>
+        <td style={{ width: '5%' }}>
+          <div>
+            <Dropdown>
+              <DropdownItem
+                onClick={() => restartTaskHandler(task.id?.task)}
+                danger
+              >
+                <span>Restart task</span>
+              </DropdownItem>
+            </Dropdown>
+          </div>
+        </td>
+      </ClickableRow>
+      {isOpen && <TraceContent traceContent={task.status?.trace} />}
+    </>
   );
 };
 
