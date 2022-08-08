@@ -120,7 +120,7 @@ const Table: React.FC<TableProps<any>> = ({
     }
     if (page) {
       setPagination({
-        pageIndex: Number(page || 1),
+        pageIndex: Number(page),
         pageSize: Number(perPage || PER_PAGE),
       });
     }
