@@ -1,96 +1,49 @@
 import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
-import TopicConsumerGroups, {
-  Props,
-} from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
-import { ConsumerGroup, ConsumerGroupState } from 'generated-sources';
-import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
-import { TopicWithDetailedInfo } from 'redux/interfaces';
+import TopicConsumerGroups from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
 import { clusterTopicConsumerGroupsPath } from 'lib/paths';
+import { useTopicConsumerGroups } from 'lib/hooks/api/topics';
+import { ConsumerGroup } from 'generated-sources';
+import { topicConsumerGroups } from 'lib/fixtures/topics';
+
+const clusterName = 'local';
+const topicName = 'my-topicName';
+const path = clusterTopicConsumerGroupsPath(clusterName, topicName);
+
+jest.mock('lib/hooks/api/topics', () => ({
+  useTopicConsumerGroups: jest.fn(),
+}));
 
 describe('TopicConsumerGroups', () => {
-  const mockClusterName = 'localClusterName';
-  const mockTopicName = 'localTopicName';
-  const mockWithConsumerGroup = [
-    {
-      groupId: 'amazon.msk.canary.group.broker-7',
-      topics: 0,
-      members: 0,
-      simple: false,
-      partitionAssignor: '',
-      state: ConsumerGroupState.UNKNOWN,
-      coordinator: { id: 1 },
-      messagesBehind: 9,
-    },
-    {
-      groupId: 'amazon.msk.canary.group.broker-4',
-      topics: 0,
-      members: 0,
-      simple: false,
-      partitionAssignor: '',
-      state: ConsumerGroupState.COMPLETING_REBALANCE,
-      coordinator: { id: 1 },
-      messagesBehind: 9,
-    },
-  ];
+  const renderComponent = async (payload?: ConsumerGroup[]) => {
+    (useTopicConsumerGroups as jest.Mock).mockImplementation(() => ({
+      data: payload,
+    }));
 
-  const setUpComponent = (
-    props: Partial<Props> = {},
-    consumerGroups?: ConsumerGroup[]
-  ) => {
-    const topic: TopicWithDetailedInfo = {
-      name: mockTopicName,
-      consumerGroups,
-    };
-    const topicsState = getTopicStateFixtures([topic]);
-
-    return render(
+    render(
       <WithRoute path={clusterTopicConsumerGroupsPath()}>
-        <TopicConsumerGroups
-          fetchTopicConsumerGroups={jest.fn()}
-          isFetched={false}
-          {...props}
-        />
+        <TopicConsumerGroups />
       </WithRoute>,
-      {
-        initialEntries: [
-          clusterTopicConsumerGroupsPath(mockClusterName, mockTopicName),
-        ],
-        preloadedState: {
-          topics: topicsState,
-        },
-      }
+      { initialEntries: [path] }
     );
   };
 
-  describe('Default Setup', () => {
-    beforeEach(() => {
-      setUpComponent();
-    });
-    it('should view the Page loader when it is fetching state', () => {
-      expect(screen.getByRole('progressbar')).toBeInTheDocument();
-    });
+  it('renders empty table if consumer groups payload is empty', async () => {
+    await renderComponent([]);
+    expect(screen.getByText('No active consumer groups')).toBeInTheDocument();
   });
 
-  it("don't render ConsumerGroups in Topic", () => {
-    setUpComponent({ isFetched: true });
-    expect(screen.getByText(/No active consumer groups/i)).toBeInTheDocument();
+  it('renders empty table if consumer groups payload is undefined', async () => {
+    await renderComponent();
+    expect(screen.getByText('No active consumer groups')).toBeInTheDocument();
   });
 
-  it('render ConsumerGroups in Topic', () => {
-    setUpComponent(
-      {
-        isFetched: true,
-      },
-      mockWithConsumerGroup
+  it('renders table of consumer groups', async () => {
+    await renderComponent(topicConsumerGroups);
+    const groupIds = topicConsumerGroups.map(({ groupId }) => groupId);
+    groupIds.forEach((groupId) =>
+      expect(screen.getByText(groupId)).toBeInTheDocument()
     );
-    expect(screen.getAllByRole('rowgroup')).toHaveLength(2);
-    expect(
-      screen.getByText(mockWithConsumerGroup[0].groupId)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(mockWithConsumerGroup[1].groupId)
-    ).toBeInTheDocument();
   });
 });

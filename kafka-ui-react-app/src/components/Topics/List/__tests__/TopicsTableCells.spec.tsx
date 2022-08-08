@@ -4,11 +4,12 @@ import {
   MessagesCell,
   OutOfSyncReplicasCell,
   TitleCell,
+  TopicSizeCell,
 } from 'components/Topics/List/TopicsTableCells';
 import { TableState } from 'lib/hooks/useTableState';
 import { screen } from '@testing-library/react';
 import { Topic } from 'generated-sources';
-import { topicsPayload } from 'redux/reducers/topics/__test__/fixtures';
+import { topicsPayload } from 'lib/fixtures/topics';
 
 describe('TopicsTableCells Components', () => {
   const mockTableState: TableState<Topic, string> = {
@@ -49,8 +50,22 @@ describe('TopicsTableCells Components', () => {
     });
   });
 
+  describe('TopicSizeCell Component', () => {
+    const currentData = topicsPayload[1];
+    it('should check the TopicSizeCell component Render', () => {
+      render(
+        <TopicSizeCell
+          rowIndex={1}
+          dataItem={currentData}
+          tableState={mockTableState}
+        />
+      );
+      expect(screen.getByText('1KB')).toBeInTheDocument();
+    });
+  });
+
   describe('OutOfSyncReplicasCell Component', () => {
-    it('should check the content of the OutOfSyncReplicasCell to return 0 if no partition is empty array', () => {
+    it('returns 0 if no partition is empty array', () => {
       const currentData = topicsPayload[0];
       currentData.partitions = [];
       render(
@@ -63,7 +78,7 @@ describe('TopicsTableCells Components', () => {
       expect(screen.getByText('0')).toBeInTheDocument();
     });
 
-    it('should check the content of the OutOfSyncReplicasCell to return 0 if no partition is found', () => {
+    it('returns 0 if no partition is found', () => {
       const currentData = topicsPayload[1];
       currentData.partitions = undefined;
       render(
@@ -74,6 +89,29 @@ describe('TopicsTableCells Components', () => {
         />
       );
       expect(screen.getByText('0')).toBeInTheDocument();
+    });
+
+    it('returns number of out of sync partitions', () => {
+      const currentData = {
+        ...topicsPayload[1],
+        partitions: [
+          {
+            partition: 0,
+            leader: 1,
+            replicas: [{ broker: 1, leader: false, inSync: false }],
+            offsetMax: 0,
+            offsetMin: 0,
+          },
+        ],
+      };
+      render(
+        <OutOfSyncReplicasCell
+          rowIndex={1}
+          dataItem={currentData}
+          tableState={mockTableState}
+        />
+      );
+      expect(screen.getByText('1')).toBeInTheDocument();
     });
 
     it('should check the content of the OutOfSyncReplicasCell with the correct partition number', () => {
@@ -100,50 +138,52 @@ describe('TopicsTableCells Components', () => {
   });
 
   describe('MessagesCell Component', () => {
-    it('should check the content of the MessagesCell to return 0 if no partition is empty array ', () => {
-      const currentData = topicsPayload[0];
-      currentData.partitions = [];
+    it('returns 0 if partition is empty array ', () => {
       render(
         <MessagesCell
           rowIndex={1}
-          dataItem={topicsPayload[0]}
+          dataItem={{ ...topicsPayload[0], partitions: [] }}
           tableState={mockTableState}
         />
       );
       expect(screen.getByText('0')).toBeInTheDocument();
     });
 
-    it('should check the content of the MessagesCell to return 0 if no partition is found', () => {
-      const currentData = topicsPayload[0];
-      currentData.partitions = undefined;
+    it('returns 0 if no partition is found', () => {
       render(
         <MessagesCell
           rowIndex={1}
-          dataItem={topicsPayload[0]}
+          dataItem={{ ...topicsPayload[0], partitions: undefined }}
           tableState={mockTableState}
         />
       );
       expect(screen.getByText('0')).toBeInTheDocument();
     });
 
-    it('should check the content of the MessagesCell with the correct partition number', () => {
-      const currentData = topicsPayload[0];
-      const partitionNumber = currentData.partitions?.reduce(
-        (memo, { offsetMax, offsetMin }) => {
-          return memo + (offsetMax - offsetMin);
-        },
-        0
-      );
+    it('returns the correct messages number', () => {
+      const offsetMax = 10034;
+      const offsetMin = 345;
+      const currentData = {
+        ...topicsPayload[0],
+        partitions: [
+          {
+            partition: 0,
+            leader: 1,
+            replicas: [{ broker: 1, leader: false, inSync: false }],
+            offsetMax,
+            offsetMin,
+          },
+        ],
+      };
       render(
         <MessagesCell
           rowIndex={1}
-          dataItem={topicsPayload[0]}
+          dataItem={currentData}
           tableState={mockTableState}
         />
       );
-      expect(
-        screen.getByText(partitionNumber ? partitionNumber.toString() : '0')
-      ).toBeInTheDocument();
+      expect(offsetMax - offsetMin).toEqual(9689);
+      expect(screen.getByText(offsetMax - offsetMin)).toBeInTheDocument();
     });
   });
 });

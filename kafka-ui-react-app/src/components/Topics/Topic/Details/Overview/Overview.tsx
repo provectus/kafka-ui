@@ -1,55 +1,32 @@
 import React from 'react';
 import { Partition, Replica } from 'generated-sources';
-import { ClusterName, TopicName } from 'redux/interfaces';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
-import { useAppSelector } from 'lib/hooks/redux';
-import { getTopicByName } from 'redux/reducers/topics/selectors';
+import { useAppDispatch } from 'lib/hooks/redux';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { useTopicDetails } from 'lib/hooks/api/topics';
 
 import * as S from './Overview.styled';
 
-export interface Props {
-  clearTopicMessages(params: {
-    clusterName: ClusterName;
-    topicName: TopicName;
-    partitions?: number[];
-  }): void;
-}
-
-const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
+const Overview: React.FC = () => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
-
-  const {
-    partitions,
-    underReplicatedPartitions,
-    inSyncReplicas,
-    replicas,
-    partitionCount,
-    internal,
-    replicationFactor,
-    segmentSize,
-    segmentCount,
-    cleanUpPolicy,
-  } = useAppSelector((state) => {
-    const res = getTopicByName(state, topicName);
-    return res || {};
-  });
-
+  const dispatch = useAppDispatch();
+  const { data } = useTopicDetails({ clusterName, topicName });
   const { isReadOnly } = React.useContext(ClusterContext);
 
   const messageCount = React.useMemo(
     () =>
-      (partitions || []).reduce((memo, partition) => {
+      (data?.partitions || []).reduce((memo, partition) => {
         return memo + partition.offsetMax - partition.offsetMin;
       }, 0),
-    [partitions]
+    [data]
   );
 
   return (
@@ -57,46 +34,56 @@ const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="Partitions">
-            {partitionCount}
+            {data?.partitionCount}
           </Metrics.Indicator>
           <Metrics.Indicator label="Replication Factor">
-            {replicationFactor}
+            {data?.replicationFactor}
           </Metrics.Indicator>
           <Metrics.Indicator
             label="URP"
             title="Under replicated partitions"
             isAlert
-            alertType={underReplicatedPartitions === 0 ? 'success' : 'error'}
+            alertType={
+              data?.underReplicatedPartitions === 0 ? 'success' : 'error'
+            }
           >
-            {underReplicatedPartitions === 0 ? (
-              <Metrics.LightText>{underReplicatedPartitions}</Metrics.LightText>
+            {data?.underReplicatedPartitions === 0 ? (
+              <Metrics.LightText>
+                {data?.underReplicatedPartitions}
+              </Metrics.LightText>
             ) : (
-              <Metrics.RedText>{underReplicatedPartitions}</Metrics.RedText>
+              <Metrics.RedText>
+                {data?.underReplicatedPartitions}
+              </Metrics.RedText>
             )}
           </Metrics.Indicator>
           <Metrics.Indicator
             label="In Sync Replicas"
             isAlert
-            alertType={inSyncReplicas === replicas ? 'success' : 'error'}
+            alertType={
+              data?.inSyncReplicas === data?.replicas ? 'success' : 'error'
+            }
           >
-            {inSyncReplicas && replicas && inSyncReplicas < replicas ? (
-              <Metrics.RedText>{inSyncReplicas}</Metrics.RedText>
+            {data?.inSyncReplicas &&
+            data?.replicas &&
+            data?.inSyncReplicas < data?.replicas ? (
+              <Metrics.RedText>{data?.inSyncReplicas}</Metrics.RedText>
             ) : (
-              inSyncReplicas
+              data?.inSyncReplicas
             )}
-            <Metrics.LightText> of {replicas}</Metrics.LightText>
+            <Metrics.LightText> of {data?.replicas}</Metrics.LightText>
           </Metrics.Indicator>
           <Metrics.Indicator label="Type">
-            <Tag color="gray">{internal ? 'Internal' : 'External'}</Tag>
+            <Tag color="gray">{data?.internal ? 'Internal' : 'External'}</Tag>
           </Metrics.Indicator>
           <Metrics.Indicator label="Segment Size" title="">
-            <BytesFormatted value={segmentSize} />
+            <BytesFormatted value={data?.segmentSize} />
           </Metrics.Indicator>
           <Metrics.Indicator label="Segment Count">
-            {segmentCount}
+            {data?.segmentCount}
           </Metrics.Indicator>
           <Metrics.Indicator label="Clean Up Policy">
-            <Tag color="gray">{cleanUpPolicy || 'Unknown'}</Tag>
+            <Tag color="gray">{data?.cleanUpPolicy || 'Unknown'}</Tag>
           </Metrics.Indicator>
           <Metrics.Indicator label="Message Count">
             {messageCount}
@@ -116,7 +103,7 @@ const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
             </tr>
           </thead>
           <tbody>
-            {partitions?.map((partition: Partition) => (
+            {data?.partitions?.map((partition: Partition) => (
               <tr key={`partition-list-item-key-${partition.partition}`}>
                 <td>{partition.partition}</td>
                 <td>
@@ -134,15 +121,19 @@ const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
                 <td>{partition.offsetMax}</td>
                 <td>{partition.offsetMax - partition.offsetMin}</td>
                 <td style={{ width: '5%' }}>
-                  {!internal && !isReadOnly && cleanUpPolicy === 'DELETE' ? (
+                  {!data?.internal &&
+                  !isReadOnly &&
+                  data?.cleanUpPolicy === 'DELETE' ? (
                     <Dropdown>
                       <DropdownItem
                         onClick={() =>
-                          clearTopicMessages({
-                            clusterName,
-                            topicName,
-                            partitions: [partition.partition],
-                          })
+                          dispatch(
+                            clearTopicMessages({
+                              clusterName,
+                              topicName,
+                              partitions: [partition.partition],
+                            })
+                          ).unwrap()
                         }
                         danger
                       >
@@ -153,7 +144,7 @@ const Overview: React.FC<Props> = ({ clearTopicMessages }) => {
                 </td>
               </tr>
             ))}
-            {partitions?.length === 0 && (
+            {data?.partitions?.length === 0 && (
               <tr>
                 <td colSpan={10}>No Partitions found</td>
               </tr>
