@@ -9,7 +9,7 @@ interface ProgressBarProps {
 const ProgressBar: React.FC<ProgressBarProps> = ({ completed }) => {
   return (
     <S.Wrapper>
-      <S.Filler completed={completed} />
+      <S.Filler role="progressbar" completed={completed} />
     </S.Wrapper>
   );
 };
