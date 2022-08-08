@@ -109,11 +109,16 @@ const SendMessage: React.FC = () => {
         }
       }
       if (errors.length > 0) {
-        const errorsHtml = errors.map((e) => `<li>${e}</li>`).join('');
         showAlert('error', {
           id: `${clusterName}-${topicName}-createTopicMessageError`,
           title: 'Validation Error',
-          message: `<ul>${errorsHtml}</ul>`,
+          message: (
+            <ul>
+              {errors.map((e) => (
+                <li>{e}</li>
+              ))}
+            </ul>
+          ),
         });
         return;
       }
