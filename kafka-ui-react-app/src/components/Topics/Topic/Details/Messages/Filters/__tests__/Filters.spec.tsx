@@ -16,6 +16,8 @@ const defaultContextValue: ContextProps = {
   isLive: false,
   seekDirection: SeekDirection.FORWARD,
   searchParams: new URLSearchParams(''),
+  keySerde: 'preferred',
+  valueSerde: 'preferred',
   changeSeekDirection: jest.fn(),
 };
 

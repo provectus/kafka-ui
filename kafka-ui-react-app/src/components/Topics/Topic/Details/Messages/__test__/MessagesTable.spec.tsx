@@ -27,6 +27,8 @@ describe('MessagesTable', () => {
     isLive: false,
     seekDirection: SeekDirection.FORWARD,
     searchParams,
+    keySerde: 'preferred',
+    valueSerde: 'preferred',
     changeSeekDirection: jest.fn(),
   };
 

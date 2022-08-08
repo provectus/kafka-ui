@@ -6,6 +6,8 @@ export interface ContextProps {
   searchParams: URLSearchParams;
   changeSeekDirection(val: string): void;
   isLive: boolean;
+  keySerde: string;
+  valueSerde: string;
 }
 
 const TopicMessagesContext = React.createContext<ContextProps>(

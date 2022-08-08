@@ -34,9 +34,11 @@ import useAppParams from 'lib/hooks/useAppParams';
 import * as S from './Filters.styled';
 import {
   filterOptions,
+  getKeySerdeFromUrlParams,
   getOffsetFromSeekToParam,
   getSelectedPartitionsFromSeekToParam,
   getTimestampFromSeekToParam,
+  getValueSerdeFromUrlParams,
 } from './utils';
 
 type Query = Record<string, string | string[] | number>;
@@ -111,6 +113,14 @@ const Filters: React.FC<FiltersProps> = ({
     getTimestampFromSeekToParam(searchParams)
   );
 
+  const [keySerde, setKeySerde] = React.useState<string>(
+    getKeySerdeFromUrlParams(searchParams)
+  );
+
+  const [valueSerde, setValueSerde] = React.useState<string>(
+    getValueSerdeFromUrlParams(searchParams)
+  );
+
   const [savedFilters, setSavedFilters] = React.useState<MessageFilters[]>(
     JSON.parse(localStorage.getItem('savedFilters') ?? '[]')
   );
@@ -168,8 +178,18 @@ const Filters: React.FC<FiltersProps> = ({
       attempt,
       limit: PER_PAGE,
       seekDirection,
+      // keySerde,  // TODO: add back when endpoint works
+      // valueSerde,
     };
-  }, [attempt, query, queryType, seekDirection, activeFilter]);
+  }, [
+    attempt,
+    query,
+    queryType,
+    seekDirection,
+    activeFilter,
+    keySerde,
+    valueSerde,
+  ]);
 
   const handleClearAllFilters = () => {
     setCurrentSeekType(SeekType.OFFSET);
@@ -208,6 +228,7 @@ const Filters: React.FC<FiltersProps> = ({
       }
 
       const newProps = omitBy(props, (v) => v === undefined || v === '');
+
       const qs = Object.keys(newProps)
         .map((key) => `${key}=${newProps[key]}`)
         .join('&');
@@ -224,6 +245,8 @@ const Filters: React.FC<FiltersProps> = ({
       timestamp,
       query,
       selectedPartitions,
+      keySerde,
+      valueSerde,
       navigate,
     ]
   );
@@ -301,11 +324,13 @@ const Filters: React.FC<FiltersProps> = ({
         resetMessages();
         setIsFetching(true);
       };
+
       sse.onmessage = ({ data }) => {
         const { type, message, phase, consuming }: TopicMessageEvent =
           JSON.parse(data);
         switch (type) {
           case TopicMessageEventTypeEnum.MESSAGE:
+            console.log('MESSAGE', message);
             if (message) {
               addMessage({
                 message,
@@ -314,11 +339,13 @@ const Filters: React.FC<FiltersProps> = ({
             }
             break;
           case TopicMessageEventTypeEnum.PHASE:
+            console.log('PHASE', phase);
             if (phase?.name) {
               updatePhase(phase.name);
             }
             break;
           case TopicMessageEventTypeEnum.CONSUMING:
+            console.log('CONSUMING', consuming);
             if (consuming) updateMeta(consuming);
             break;
           default:
@@ -358,7 +385,10 @@ const Filters: React.FC<FiltersProps> = ({
     timestamp,
     query,
     location,
+    keySerde,
+    valueSerde,
   ]);
+
   React.useEffect(() => {
     handleFiltersSubmit(offset);
   }, [
@@ -369,6 +399,8 @@ const Filters: React.FC<FiltersProps> = ({
     timestamp,
     query,
     seekDirection,
+    keySerde,
+    valueSerde,
   ]);
 
   React.useEffect(() => {
@@ -417,6 +449,24 @@ const Filters: React.FC<FiltersProps> = ({
               />
             )}
           </S.SeekTypeSelectorWrapper>
+
+          <Select
+            selectSize="M"
+            onChange={(value) => setValueSerde(value.toString())}
+            value={valueSerde}
+            minWidth="120px"
+            options={[
+              {
+                label: 'Preferred',
+                value: 'preferred',
+              },
+              {
+                label: 'Other',
+                value: 'other',
+              },
+            ]}
+          />
+
           <MultiSelect
             options={partitions.map((p) => ({
               label: `Partition #${p.partition.toString()}`,

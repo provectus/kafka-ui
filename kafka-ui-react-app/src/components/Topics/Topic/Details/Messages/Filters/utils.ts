@@ -37,6 +37,14 @@ export const getTimestampFromSeekToParam = (params: URLSearchParams) => {
   return null;
 };
 
+export const getKeySerdeFromUrlParams = (params: URLSearchParams) => {
+  return params.get('keySerde') || 'preferred';
+};
+
+export const getValueSerdeFromUrlParams = (params: URLSearchParams) => {
+  return params.get('valueSerde') || 'preferred';
+};
+
 export const getSelectedPartitionsFromSeekToParam = (
   params: URLSearchParams,
   partitions: Partition[]
