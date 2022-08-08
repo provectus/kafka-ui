@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.pages;
 import com.provectus.kafka.ui.pages.connector.ConnectorsList;
 import com.provectus.kafka.ui.pages.connector.ConnectorsView;
 import com.provectus.kafka.ui.pages.schema.SchemaRegistryList;
+import com.provectus.kafka.ui.pages.schema.SchemaView;
 import com.provectus.kafka.ui.pages.topic.TopicView;
 import com.provectus.kafka.ui.pages.topic.TopicsList;
 
@@ -17,6 +18,7 @@ public class Pages {
     public ConnectorsList connectorsList = new ConnectorsList();
     public ConnectorsView connectorsView = new ConnectorsView();
     public SchemaRegistryList schemaRegistry = new SchemaRegistryList();
+    public SchemaView schemaView = SchemaView.INSTANCE;
 
     public MainPage open() {
         return openMainPage();
