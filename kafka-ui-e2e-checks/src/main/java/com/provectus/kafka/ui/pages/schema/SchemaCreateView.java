@@ -21,7 +21,7 @@ public class SchemaCreateView {
 
     public SchemaView clickSubmit() {
         BrowserUtils.javaExecutorClick(submitSchemaButton);
-        return SchemaView.INSTANCE;
+        return new SchemaView();
     }
 
     public SchemaCreateView setSubjectName(String name) {

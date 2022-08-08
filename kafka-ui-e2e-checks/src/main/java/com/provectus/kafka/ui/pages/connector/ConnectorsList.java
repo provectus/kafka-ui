@@ -30,15 +30,15 @@ public class ConnectorsList {
     }
 
     @Step("Click on button 'Create Connector'")
-    public static ConnectorCreateView clickCreateConnectorButton() {
+    public ConnectorCreateView clickCreateConnectorButton() {
         BrowserUtils.javaExecutorClick($x("//button[text()='Create Connector']"));
         return new ConnectorCreateView();
     }
 
     @SneakyThrows
-    public static ConnectorsList openConnector(String connectorName) {
+    public ConnectorsList openConnector(String connectorName) {
         $(By.linkText(connectorName)).click();
-        return new ConnectorsList();
+        return this;
     }
 
     @SneakyThrows
