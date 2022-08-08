@@ -24,12 +24,12 @@ public class PrometheusMetricsRetriever implements MetricsRetriever {
 
   @Override
   public List<MetricDTO> retrieve(KafkaCluster c, Node node) {
-    log.debug(String.format("retrieve metrics from prometheus exporter: %s:%d", node.host(), c.getJmxExporterPort()));
+    log.debug(String.format("retrieve metrics from prometheus exporter: %s:%d", node.host(), c.getMetrics().getPort()));
     WebClient.ResponseSpec responseSpec = webClient.get()
         .uri(UriComponentsBuilder.newInstance()
             .scheme("http")
             .host(node.host())
-            .port(c.getJmxExporterPort())
+            .port(c.getMetrics().getPort())
             .path("/metrics").build().toUri())
         .retrieve();
     return Optional.ofNullable(responseSpec.bodyToMono(String.class).block())
