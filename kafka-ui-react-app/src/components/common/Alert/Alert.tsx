@@ -8,7 +8,7 @@ import * as S from './Alert.styled';
 export interface AlertProps {
   title: string;
   type: ToastType;
-  message: string;
+  message: React.ReactNode;
   onDissmiss(): void;
 }
 
@@ -16,10 +16,7 @@ const Alert: React.FC<AlertProps> = ({ title, type, message, onDissmiss }) => (
   <S.Alert $type={type} role="alert">
     <div>
       <S.Title role="heading">{title}</S.Title>
-      <S.Message
-        role="contentinfo"
-        dangerouslySetInnerHTML={{ __html: message }}
-      />
+      <S.Message role="contentinfo">{message}</S.Message>
     </div>
     <IconButtonWrapper role="button" onClick={onDissmiss}>
       <CloseIcon />
