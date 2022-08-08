@@ -31,7 +31,7 @@ public class SchemaEditView {
 
     public SchemaView clickSubmit() {
         BrowserUtils.javaExecutorClick($(By.xpath("//button[@type='submit']")));
-        return SchemaView.INSTANCE;
+        return new SchemaView();
     }
 
     @Step("Set new schema value")

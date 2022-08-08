@@ -11,13 +11,10 @@ import static com.codeborne.selenide.Selenide.$x;
 
 public class SchemaView {
 
-    public static final SchemaView INSTANCE = new SchemaView();
-    private SchemaView(){};
-
     @Step
     public SchemaView isOnSchemaViewPage() {
-       $("div#schema").shouldBe(Condition.visible);
-       return this;
+        $("div#schema").shouldBe(Condition.visible);
+        return this;
     }
 
     @Step
