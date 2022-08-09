@@ -34,7 +34,7 @@ public class ConnectorCreateView {
         return new ConnectorsView();
     }
 
-    @Step("Verify that page 'Create Connector' opened")
+    @Step("Wait until page opened")
     public ConnectorCreateView waitUntilScreenReady() {
         nameField.shouldBe(Condition.visible);
         return this;
