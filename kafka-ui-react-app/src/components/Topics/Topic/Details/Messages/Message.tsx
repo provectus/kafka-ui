@@ -1,11 +1,11 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { TopicMessage } from 'generated-sources';
 import useDataSaver from 'lib/hooks/useDataSaver';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import styled from 'styled-components';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 import MessageContent from './MessageContent/MessageContent';
 import * as S from './MessageContent/MessageContent.styled';
@@ -64,7 +64,7 @@ const Message: React.FC<Props> = ({
         <td>{offset}</td>
         <td>{partition}</td>
         <td>
-          <div>{dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}</div>
+          <div>{formatTimestamp(timestamp)}</div>
         </td>
         <StyledDataCell title={key}>{key}</StyledDataCell>
         <StyledDataCell>

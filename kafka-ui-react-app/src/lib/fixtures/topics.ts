@@ -5,6 +5,7 @@ import {
   Topic,
   TopicConfig,
   MessageSchemaSourceEnum,
+  TopicAnalysis,
 } from 'generated-sources';
 
 export const internalTopicPayload = {
@@ -206,5 +207,79 @@ export const topicMessageSchema = {
   }
 }
 `,
+  },
+};
+
+const topicStatsSize = {
+  sum: 0,
+  avg: 0,
+  prctl50: 0,
+  prctl75: 0,
+  prctl95: 0,
+  prctl99: 0,
+  prctl999: 0,
+};
+export const topicStatsPayload: TopicAnalysis = {
+  progress: {
+    startedAt: 1659984559167,
+    completenessPercent: 43,
+    msgsScanned: 18077002,
+    bytesScanned: 6750901718,
+  },
+  result: {
+    startedAt: 1659984559095,
+    finishedAt: 1659984617816,
+    totalStats: {
+      totalMsgs: 18194715,
+      minOffset: 98869591,
+      maxOffset: 100576010,
+      minTimestamp: 1659719759485,
+      maxTimestamp: 1659984603419,
+      nullKeys: 18194715,
+      nullValues: 0,
+      approxUniqKeys: 0,
+      approxUniqValues: 17817283,
+      keySize: topicStatsSize,
+      valueSize: topicStatsSize,
+      hourlyMsgCounts: [
+        { hourStart: 1659718800000, count: 16157 },
+        { hourStart: 1659722400000, count: 225790 },
+      ],
+    },
+    partitionStats: [
+      {
+        partition: 0,
+        totalMsgs: 1515285,
+        minOffset: 99060726,
+        maxOffset: 100576010,
+        minTimestamp: 1659722684090,
+        maxTimestamp: 1659984603419,
+        nullKeys: 1515285,
+        nullValues: 0,
+        approxUniqKeys: 0,
+        approxUniqValues: 1515285,
+        keySize: topicStatsSize,
+        valueSize: topicStatsSize,
+        hourlyMsgCounts: [
+          { hourStart: 1659722400000, count: 18040 },
+          { hourStart: 1659726000000, count: 20070 },
+        ],
+      },
+      {
+        partition: 1,
+        totalMsgs: 1534422,
+        minOffset: 98897827,
+        maxOffset: 100432248,
+        minTimestamp: 1659722803993,
+        maxTimestamp: 1659984603416,
+        nullKeys: 1534422,
+        nullValues: 0,
+        approxUniqKeys: 0,
+        approxUniqValues: 1516431,
+        keySize: topicStatsSize,
+        valueSize: topicStatsSize,
+        hourlyMsgCounts: [{ hourStart: 1659722400000, count: 19058 }],
+      },
+    ],
   },
 };

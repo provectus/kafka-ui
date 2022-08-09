@@ -24,6 +24,11 @@ const topicPath = `${topicsPath}/${topicName}`;
 
 const topicParams = { clusterName, topicName };
 
+jest.mock('lib/errorHandling', () => ({
+  ...jest.requireActual('lib/errorHandling'),
+  showServerError: jest.fn(),
+}));
+
 describe('Topics hooks', () => {
   beforeEach(() => fetchMock.restore());
   it('handles useTopics', async () => {
@@ -56,6 +61,20 @@ describe('Topics hooks', () => {
       hooks.useTopicMessageSchema(topicParams)
     );
     await expectQueryWorks(mock, result);
+  });
+  describe('useTopicAnalysis', () => {
+    it('handles useTopicAnalysis', async () => {
+      const mock = fetchMock.getOnce(`${topicPath}/analysis`, {});
+      const { result } = renderQueryHook(() =>
+        hooks.useTopicAnalysis(topicParams)
+      );
+      await expectQueryWorks(mock, result);
+    });
+    it('disables useTopicAnalysis', async () => {
+      const mock = fetchMock.getOnce(`${topicPath}/analysis`, {});
+      renderQueryHook(() => hooks.useTopicAnalysis(topicParams, false));
+      expect(mock.calls()).toHaveLength(0);
+    });
   });
 
   describe('mutatations', () => {
@@ -107,7 +126,6 @@ describe('Topics hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
       expect(mock.calls()).toHaveLength(1);
     });
-
     it('useIncreaseTopicPartitionsCount', async () => {
       const mock = fetchMock.patchOnce(`${topicPath}/partitions`, {});
       const { result } = renderHook(
@@ -120,7 +138,6 @@ describe('Topics hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
       expect(mock.calls()).toHaveLength(1);
     });
-
     it('useUpdateTopicReplicationFactor', async () => {
       const mock = fetchMock.patchOnce(`${topicPath}/replications`, {});
       const { result } = renderHook(
@@ -133,7 +150,6 @@ describe('Topics hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
       expect(mock.calls()).toHaveLength(1);
     });
-
     it('useDeleteTopic', async () => {
       const mock = fetchMock.deleteOnce(topicPath, {});
       const { result } = renderHook(() => hooks.useDeleteTopic(clusterName), {
@@ -145,7 +161,6 @@ describe('Topics hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
       expect(mock.calls()).toHaveLength(1);
     });
-
     it('useRecreateTopic', async () => {
       const mock = fetchMock.postOnce(topicPath, {});
       const { result } = renderHook(() => hooks.useRecreateTopic(topicParams), {
@@ -157,7 +172,6 @@ describe('Topics hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
       expect(mock.calls()).toHaveLength(1);
     });
-
     it('useSendMessage', async () => {
       const mock = fetchMock.postOnce(`${topicPath}/messages`, {});
       const { result } = renderHook(() => hooks.useSendMessage(topicParams), {
@@ -169,6 +183,31 @@ describe('Topics hooks', () => {
       };
       await act(() => {
         result.current.mutateAsync(message);
+      });
+      await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
+      expect(mock.calls()).toHaveLength(1);
+    });
+    it('useAnalyzeTopic', async () => {
+      const mock = fetchMock.postOnce(`${topicPath}/analysis`, {});
+      const { result } = renderHook(() => hooks.useAnalyzeTopic(topicParams), {
+        wrapper: TestQueryClientProvider,
+      });
+      await act(() => {
+        result.current.mutateAsync();
+      });
+      await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
+      expect(mock.calls()).toHaveLength(1);
+    });
+    it('useCancelTopicAnalysis', async () => {
+      const mock = fetchMock.deleteOnce(`${topicPath}/analysis`, {});
+      const { result } = renderHook(
+        () => hooks.useCancelTopicAnalysis(topicParams),
+        {
+          wrapper: TestQueryClientProvider,
+        }
+      );
+      await act(() => {
+        result.current.mutateAsync();
       });
       await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
       expect(mock.calls()).toHaveLength(1);

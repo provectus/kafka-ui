@@ -43,7 +43,7 @@ export const IndicatorsWrapper = styled.div`
 
 export const SectionTitle = styled.h5`
   font-weight: 500;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem 16px;
   font-size: 100%;
 `;
 

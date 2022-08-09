@@ -71,6 +71,16 @@ const theme = {
     backgroundColor: Colors.neutral[5],
     color: Colors.red[55],
   },
+  list: {
+    label: {
+      color: Colors.neutral[50],
+    },
+  },
+  progressBar: {
+    backgroundColor: Colors.neutral[3],
+    compleatedColor: Colors.green[40],
+    borderColor: Colors.neutral[10],
+  },
   layout: {
     backgroundColor: Colors.neutral[0],
     minWidth: '1200px',
@@ -149,6 +159,7 @@ const theme = {
       4: {
         fontSize: '14px',
         lineHeight: '20px',
+        fontWeight: 500,
       },
       5: {
         fontSize: '12px',
@@ -308,6 +319,7 @@ const theme = {
     },
     tr: {
       backgroundColor: {
+        normal: Colors.neutral[0],
         hover: Colors.neutral[5],
       },
     },
@@ -315,6 +327,10 @@ const theme = {
       color: {
         normal: Colors.neutral[90],
       },
+    },
+    expander: {
+      normal: Colors.brand[50],
+      hover: Colors.brand[20],
     },
   },
   primaryTab: {
@@ -546,6 +562,9 @@ const theme = {
   },
   editFilterText: {
     color: Colors.brand[50],
+  },
+  statictics: {
+    createdAtColor: Colors.neutral[50],
   },
 };
 

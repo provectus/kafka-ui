@@ -115,7 +115,7 @@ const SendMessage: React.FC = () => {
           message: (
             <ul>
               {errors.map((e) => (
-                <li>{e}</li>
+                <li key={e}>{e}</li>
               ))}
             </ul>
           ),
