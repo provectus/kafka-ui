@@ -64,7 +64,6 @@ public class TopicTests extends BaseTest {
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
                 .topicIsNotVisible(NEW_TOPIC);
     }
-
     @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
     @SneakyThrows
     @DisplayName("should update a topic")
@@ -104,7 +103,6 @@ public class TopicTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(207)
     @Test
-    @Disabled // TODO: https://github.com/provectus/kafka-ui/issues/2373
     public void deleteTopic() {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
