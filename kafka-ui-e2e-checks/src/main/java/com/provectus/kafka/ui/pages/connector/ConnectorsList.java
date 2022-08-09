@@ -24,7 +24,7 @@ public class ConnectorsList {
     }
 
     @Step
-    public ConnectorsList isOnPage() {
+    public ConnectorsList waitUntilScreenReady() {
         $(By.xpath("//h1[text()='Connectors']")).shouldBe(Condition.visible);
         return this;
     }
