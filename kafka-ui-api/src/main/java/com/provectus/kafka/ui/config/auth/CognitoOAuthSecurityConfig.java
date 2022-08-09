@@ -13,7 +13,7 @@ import org.springframework.security.web.server.authentication.logout.ServerLogou
 
 @Configuration
 @EnableWebFluxSecurity
-@ConditionalOnProperty(value = "auth.cognito.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "auth.type", havingValue = "OAUTH2_COGNITO")
 @Slf4j
 public class CognitoOAuthSecurityConfig extends AbstractAuthSecurityConfig {
 
