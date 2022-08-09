@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.protocol.Errors;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,7 @@ public class DescribeLogDirsMapper {
                                             DescribeLogDirsResponse.LogDirInfo logDirInfo) {
     BrokersLogdirsDTO result = new BrokersLogdirsDTO();
     result.setName(dirName);
-    if (logDirInfo.error != null) {
+    if (logDirInfo.error != null && logDirInfo.error != Errors.NONE) {
       result.setError(logDirInfo.error.message());
     }
     var topics = logDirInfo.replicaInfos.entrySet().stream()

@@ -1,6 +1,6 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
-import { clusterSchemaSchemaComparePath, ClusterSubjectParam } from 'lib/paths';
+import { clusterSchemaComparePath, ClusterSubjectParam } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import DiffViewer from 'components/common/DiffViewer/DiffViewer';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -86,7 +86,7 @@ const Diff: React.FC<DiffProps> = ({ versions, areVersionsFetched }) => {
                       }
                       onChange={(event) => {
                         navigate(
-                          clusterSchemaSchemaComparePath(clusterName, subject)
+                          clusterSchemaComparePath(clusterName, subject)
                         );
                         searchParams.set('leftVersion', event.toString());
                         searchParams.set(
@@ -127,7 +127,7 @@ const Diff: React.FC<DiffProps> = ({ versions, areVersionsFetched }) => {
                       }
                       onChange={(event) => {
                         navigate(
-                          clusterSchemaSchemaComparePath(clusterName, subject)
+                          clusterSchemaComparePath(clusterName, subject)
                         );
                         searchParams.set(
                           'leftVersion',

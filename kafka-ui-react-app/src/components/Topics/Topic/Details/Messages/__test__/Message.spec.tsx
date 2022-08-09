@@ -5,8 +5,8 @@ import Message, {
 } from 'components/Topics/Topic/Details/Messages/Message';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
-import dayjs from 'dayjs';
 import userEvent from '@testing-library/user-event';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 const messageContentText = 'messageContentText';
 
@@ -50,9 +50,7 @@ describe('Message component', () => {
     expect(screen.getByText(mockMessage.content as string)).toBeInTheDocument();
     expect(screen.getByText(mockMessage.key as string)).toBeInTheDocument();
     expect(
-      screen.getByText(
-        dayjs(mockMessage.timestamp).format('MM.DD.YYYY HH:mm:ss')
-      )
+      screen.getByText(formatTimestamp(mockMessage.timestamp))
     ).toBeInTheDocument();
     expect(screen.getByText(mockMessage.offset.toString())).toBeInTheDocument();
     expect(
