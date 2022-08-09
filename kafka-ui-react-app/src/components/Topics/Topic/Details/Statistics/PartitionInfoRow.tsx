@@ -5,14 +5,11 @@ import {
   List,
   Label,
 } from 'components/common/PropertiesList/PropertiesList.styled';
-import dayjs from 'dayjs';
 import { TopicAnalysisStats } from 'generated-sources';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 import React from 'react';
 
 import * as S from './Statistics.styles';
-
-const timestampToDate = (timestamp: number | undefined) =>
-  timestamp ? dayjs(timestamp).format('MM.DD.YY hh:mm:ss a') : '-';
 
 const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
   row,
@@ -37,9 +34,9 @@ const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
           <Label>Total message</Label>
           <span>{totalMsgs}</span>
           <Label>Min. timestamp</Label>
-          <span>{timestampToDate(minTimestamp)}</span>
+          <span>{formatTimestamp(minTimestamp)}</span>
           <Label>Max. timestamp</Label>
-          <span>{timestampToDate(maxTimestamp)}</span>
+          <span>{formatTimestamp(maxTimestamp)}</span>
           <Label>Null keys amount</Label>
           <span>{nullKeys}</span>
           <Label>Null values amount</Label>

@@ -64,23 +64,42 @@ describe('Metrics', () => {
     });
   });
 
-  it('renders metrics', async () => {
+  describe('when analysis is completed', () => {
     const restartMock = jest.fn();
-    (useTopicAnalysis as jest.Mock).mockImplementation(() => ({
-      data: { ...topicStatsPayload, progress: undefined },
-    }));
-    (useAnalyzeTopic as jest.Mock).mockImplementation(() => ({
-      mutateAsync: restartMock,
-    }));
-    renderComponent();
-    const btn = screen.getByRole('button', { name: 'Restart Analysis' });
-    expect(btn).toBeInTheDocument();
-    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
-    expect(screen.getAllByRole('group').length).toEqual(3);
-    expect(screen.getByRole('table')).toBeInTheDocument();
+    beforeEach(() => {
+      (useTopicAnalysis as jest.Mock).mockImplementation(() => ({
+        data: { ...topicStatsPayload, progress: undefined },
+      }));
+      (useAnalyzeTopic as jest.Mock).mockImplementation(() => ({
+        mutateAsync: restartMock,
+      }));
+      renderComponent();
+    });
+    it('renders metrics', async () => {
+      const btn = screen.getByRole('button', { name: 'Restart Analysis' });
+      expect(btn).toBeInTheDocument();
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+      expect(screen.getAllByRole('group').length).toEqual(3);
+      expect(screen.getByRole('table')).toBeInTheDocument();
+    });
+    it('renders restarts analisis', async () => {
+      const btn = screen.getByRole('button', { name: 'Restart Analysis' });
+      await waitFor(() => userEvent.click(btn));
+      expect(restartMock).toHaveBeenCalled();
+    });
+    it('renders expandable table', async () => {
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      const rows = screen.getAllByRole('row');
+      expect(rows.length).toEqual(3);
+      const btns = screen.getAllByRole('button', { name: 'Expand row' });
+      expect(btns.length).toEqual(2);
+      expect(screen.queryByText('Partition stats')).not.toBeInTheDocument();
 
-    await waitFor(() => userEvent.click(btn));
-    expect(restartMock).toHaveBeenCalled();
+      userEvent.click(btns[0]);
+      expect(screen.getAllByText('Partition stats').length).toEqual(1);
+      userEvent.click(btns[1]);
+      expect(screen.getAllByText('Partition stats').length).toEqual(2);
+    });
   });
 
   it('returns empty container', () => {
@@ -91,7 +110,6 @@ describe('Metrics', () => {
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });
-
   it('returns empty container', () => {
     (useTopicAnalysis as jest.Mock).mockImplementation(() => ({
       data: {},

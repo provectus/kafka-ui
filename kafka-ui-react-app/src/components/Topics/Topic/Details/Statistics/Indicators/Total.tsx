@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Metrics from 'components/common/Metrics';
 import { TopicAnalysisStats } from 'generated-sources';
-import dayjs from 'dayjs';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 const Total: React.FC<TopicAnalysisStats> = ({
   totalMsgs,
@@ -20,9 +20,7 @@ const Total: React.FC<TopicAnalysisStats> = ({
       {`${minOffset} - ${maxOffset}`}
     </Metrics.Indicator>
     <Metrics.Indicator label="Timestamp min-max">
-      {`${dayjs(minTimestamp).format('MM.DD.YY hh:mm:ss a')} - ${dayjs(
-        maxTimestamp
-      ).format('MM.DD.YY hh:mm:ss a')}`}
+      {`${formatTimestamp(minTimestamp)} - ${formatTimestamp(maxTimestamp)}`}
     </Metrics.Indicator>
     <Metrics.Indicator label="Null keys">{nullKeys}</Metrics.Indicator>
     <Metrics.Indicator

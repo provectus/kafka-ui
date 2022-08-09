@@ -4,6 +4,7 @@ import Table, { TimestampCell } from 'components/common/NewTable';
 import { screen } from '@testing-library/dom';
 import { ColumnDef } from '@tanstack/react-table';
 import userEvent from '@testing-library/user-event';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 const data = [
   { timestamp: 1660034383725, text: 'lorem' },
@@ -54,7 +55,9 @@ describe('Table', () => {
 
   it('renders TimestampCell', () => {
     renderComponent();
-    expect(screen.getByText('08.09.22 11:39:43 am')).toBeInTheDocument();
+    expect(
+      screen.getByText(formatTimestamp(data[0].timestamp))
+    ).toBeInTheDocument();
   });
 
   describe('ExpanderCell', () => {

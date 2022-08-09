@@ -8,13 +8,13 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import { Button } from 'components/common/Button/Button';
 import * as Informers from 'components/common/Metrics';
-import dayjs from 'dayjs';
 import ProgressBar from 'components/common/ProgressBar/ProgressBar';
 import {
   List,
   Label,
 } from 'components/common/PropertiesList/PropertiesList.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 import * as S from './Statistics.styles';
 import Total from './Indicators/Total';
@@ -55,7 +55,7 @@ const Metrics: React.FC = () => {
         </Button>
         <List>
           <Label>Started at</Label>
-          <span>{dayjs(data.progress.startedAt).format('hh:mm:ss a')}</span>
+          <span>{formatTimestamp(data.progress.startedAt, 'hh:mm:ss a')}</span>
           <Label>Scanned messages</Label>
           <span>
             {data.progress.msgsScanned} /{' '}
@@ -76,9 +76,7 @@ const Metrics: React.FC = () => {
   return (
     <>
       <S.ActionsBar>
-        <S.CreatedAt>
-          {dayjs(data.result.finishedAt).format('MM.DD.YYYY hh:mm:ss a')}
-        </S.CreatedAt>
+        <S.CreatedAt>{formatTimestamp(data.result.finishedAt)}</S.CreatedAt>
         <Button
           onClick={async () => {
             await analyzeTopic.mutateAsync();
