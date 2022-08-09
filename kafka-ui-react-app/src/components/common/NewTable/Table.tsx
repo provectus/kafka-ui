@@ -18,6 +18,9 @@ import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
 
 import * as S from './Table.styled';
+import updateSortingState from './utils/updateSortingState';
+import updatePaginationState from './utils/updatePaginationState';
+import ExpanderCell from './ExpanderCell';
 
 interface TableProps<TData> {
   data: TData[];
@@ -42,7 +45,6 @@ const Table: React.FC<TableProps<any>> = ({
   enableSorting = false,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
@@ -52,22 +54,7 @@ const Table: React.FC<TableProps<any>> = ({
 
   const onSortingChange = React.useCallback(
     (updater: UpdaterFn<SortingState>) => {
-      const previousState: SortingState = [
-        {
-          id: searchParams.get('sortBy') || '',
-          desc: searchParams.get('sortDirection') === 'desc',
-        },
-      ];
-      const newState = updater(previousState);
-
-      if (newState.length > 0) {
-        const { id, desc } = newState[0];
-        searchParams.set('sortBy', id);
-        searchParams.set('sortDirection', desc ? 'desc' : 'asc');
-      } else {
-        searchParams.delete('sortBy');
-        searchParams.delete('sortDirection');
-      }
+      const newState = updateSortingState(updater, searchParams);
       setSearchParams(searchParams);
       setSorting(newState);
       return newState;
@@ -77,25 +64,8 @@ const Table: React.FC<TableProps<any>> = ({
 
   const onPaginationChange = React.useCallback(
     (updater: UpdaterFn<PaginationState>) => {
-      const previousState: PaginationState = {
-        pageIndex: Number(searchParams.get('page') || 0),
-        pageSize: Number(searchParams.get('perPage') || PER_PAGE),
-      };
-      const newState = updater(previousState);
-      if (newState.pageIndex !== 0) {
-        searchParams.set('page', newState.pageIndex.toString());
-      } else {
-        searchParams.delete('page');
-      }
-
-      if (newState.pageSize !== PER_PAGE) {
-        searchParams.set('perPage', newState.pageSize.toString());
-      } else {
-        searchParams.delete('perPage');
-      }
-
+      const newState = updatePaginationState(updater, searchParams);
       setSearchParams(searchParams);
-
       setPagination(newState);
       return newState;
     },
@@ -118,9 +88,9 @@ const Table: React.FC<TableProps<any>> = ({
     } else {
       setSorting([]);
     }
-    if (page) {
+    if (page || perPage) {
       setPagination({
-        pageIndex: Number(page),
+        pageIndex: Number(page || 0),
         pageSize: Number(perPage || PER_PAGE),
       });
     }
@@ -160,6 +130,9 @@ const Table: React.FC<TableProps<any>> = ({
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
+              {table.getCanSomeRowsExpand() && (
+                <S.Th expander key={`${headerGroup.id}-expander`} />
+              )}
               {headerGroup.headers.map((header) => (
                 <S.Th
                   key={header.id}
@@ -185,8 +158,16 @@ const Table: React.FC<TableProps<any>> = ({
               <S.Row
                 expandable={row.getCanExpand()}
                 expanded={row.getIsExpanded()}
-                onClick={() => row.toggleExpanded()}
+                onClick={() => row.getCanExpand() && row.toggleExpanded()}
               >
+                {row.getCanExpand() && (
+                  <td key={`${row.id}-expander`}>
+                    {flexRender(
+                      ExpanderCell,
+                      row.getVisibleCells()[0].getContext()
+                    )}
+                  </td>
+                )}
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -195,7 +176,7 @@ const Table: React.FC<TableProps<any>> = ({
               </S.Row>
               {row.getIsExpanded() && renderSubComponent && (
                 <S.Row expanded>
-                  <td colSpan={row.getVisibleCells().length}>
+                  <td colSpan={row.getVisibleCells().length + 1}>
                     <S.ExpandedRowInfo>
                       {renderSubComponent({ row })}
                     </S.ExpandedRowInfo>

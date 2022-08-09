@@ -9,7 +9,7 @@ import { RouteParamsClusterTopic } from 'lib/paths';
 import { Button } from 'components/common/Button/Button';
 import * as Informers from 'components/common/Metrics';
 import dayjs from 'dayjs';
-import ProgressBar from 'components/common/ProgressBar.tsx/ProgressBar';
+import ProgressBar from 'components/common/ProgressBar/ProgressBar';
 import {
   List,
   Label,

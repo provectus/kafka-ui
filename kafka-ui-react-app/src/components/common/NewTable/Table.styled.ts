@@ -14,6 +14,7 @@ export const ExpaderButton = styled.svg(
 interface ThProps {
   sortable?: boolean;
   sortOrder?: 'desc' | 'asc' | false;
+  expander?: boolean;
 }
 
 const sortableMixin = (normalColor: string, hoverColor: string) => `
@@ -64,7 +65,7 @@ const DESCMixin = (color: string) => `
 `;
 
 export const Th = styled.th<ThProps>(
-  ({ theme: { table }, sortable, sortOrder }) => `
+  ({ theme: { table }, sortable, sortOrder, expander }) => `
   padding: 4px 0 4px 24px;
   border-bottom-width: 1px;
   vertical-align: middle;
@@ -77,6 +78,7 @@ export const Th = styled.th<ThProps>(
   letter-spacing: 0em;
   text-align: left;
   background: ${table.th.backgroundColor.normal};
+  width: ${expander ? '5px' : 'auto'};
 
   & > div {
     cursor: default;
@@ -154,7 +156,7 @@ export const Pages = styled.div`
   gap: 8px;
 `;
 
-export const GoToPage = styled.div`
+export const GoToPage = styled.label`
   display: flex;
   flex-wrap: nowrap;
   gap: 8px;
