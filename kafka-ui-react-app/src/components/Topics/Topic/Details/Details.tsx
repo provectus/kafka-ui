@@ -7,6 +7,7 @@ import {
   clusterTopicConsumerGroupsRelativePath,
   clusterTopicEditRelativePath,
   clusterTopicSendMessageRelativePath,
+  clusterTopicStatisticsRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -33,6 +34,7 @@ import Messages from './Messages/Messages';
 import Overview from './Overview/Overview';
 import Settings from './Settings/Settings';
 import TopicConsumerGroups from './ConsumerGroups/TopicConsumerGroups';
+import Statistics from './Statistics/Statistics';
 
 const HeaderControlsWrapper = styled.div`
   display: flex;
@@ -164,6 +166,12 @@ const Details: React.FC = () => {
         >
           Settings
         </NavLink>
+        <NavLink
+          to={clusterTopicStatisticsRelativePath}
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
+        >
+          Statistics
+        </NavLink>
       </Navbar>
       <Suspense fallback={<PageLoader />}>
         <Routes>
@@ -179,6 +187,10 @@ const Details: React.FC = () => {
           <Route
             path={clusterTopicConsumerGroupsRelativePath}
             element={<TopicConsumerGroups />}
+          />
+          <Route
+            path={clusterTopicStatisticsRelativePath}
+            element={<Statistics />}
           />
         </Routes>
       </Suspense>

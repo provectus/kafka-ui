@@ -2,7 +2,7 @@ import { TopicMessageTimestampTypeEnum, SchemaType } from 'generated-sources';
 import React from 'react';
 import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import dayjs from 'dayjs';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 import * as S from './MessageContent.styled';
 
@@ -94,9 +94,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
             <S.Metadata>
               <S.MetadataLabel>Timestamp</S.MetadataLabel>
               <span>
-                <S.MetadataValue>
-                  {dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}
-                </S.MetadataValue>
+                <S.MetadataValue>{formatTimestamp(timestamp)}</S.MetadataValue>
                 <S.MetadataMeta>Timestamp type: {timestampType}</S.MetadataMeta>
               </span>
             </S.Metadata>

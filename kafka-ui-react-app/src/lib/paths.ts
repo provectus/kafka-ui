@@ -99,7 +99,7 @@ export const clusterSchemaEditPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
 ) => `${clusterSchemasPath(clusterName)}/${subject}/edit`;
-export const clusterSchemaSchemaComparePath = (
+export const clusterSchemaComparePath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
 ) => `${clusterSchemaPath(clusterName, subject)}/compare`;
@@ -127,6 +127,7 @@ export const clusterTopicCopyPath = (
 export const clusterTopicSettingsRelativePath = 'settings';
 export const clusterTopicMessagesRelativePath = 'messages';
 export const clusterTopicConsumerGroupsRelativePath = 'consumer-groups';
+export const clusterTopicStatisticsRelativePath = 'statistics';
 export const clusterTopicEditRelativePath = 'edit';
 export const clusterTopicSendMessageRelativePath = 'message';
 export const clusterTopicPath = (
@@ -162,6 +163,14 @@ export const clusterTopicConsumerGroupsPath = (
     clusterName,
     topicName
   )}/${clusterTopicConsumerGroupsRelativePath}`;
+export const clusterTopicStatisticsPath = (
+  clusterName: ClusterName = RouteParams.clusterName,
+  topicName: TopicName = RouteParams.topicName
+) =>
+  `${clusterTopicPath(
+    clusterName,
+    topicName
+  )}/${clusterTopicStatisticsRelativePath}`;
 export const clusterTopicSendMessagePath = (
   clusterName: ClusterName = RouteParams.clusterName,
   topicName: TopicName = RouteParams.topicName
