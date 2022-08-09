@@ -10,3 +10,4 @@
 8. [kafka-ui-reverse-proxy.yaml](./kafka-ui-reverse-proxy.yaml) - An example for using the app behind a proxy (like nginx).
 9. [kafka-ui-sasl.yaml](./kafka-ui-sasl.yaml) - SASL auth for Kafka.
 10. [kafka-ui-traefik-proxy.yaml](./kafka-ui-traefik-proxy.yaml) - Traefik specific proxy configuration.
+10. [oauth-cognito.yaml](./oauth-cognito.yaml) - OAuth2 with Cognito
