@@ -70,14 +70,14 @@ public class ConnectorsTests extends BaseTest {
     @Test
     public void createConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
-                .isOnPage()
+                .waitUntilScreenReady()
                 .clickCreateConnectorButton()
-                .isOnConnectorCreatePage()
+                .waitUntilScreenReady()
                 .setConnectorConfig(
                         SINK_CONNECTOR,
                         FileUtils.getResourceAsString("config_for_create_connector.json"));
         pages.openConnectorsList(LOCAL_CLUSTER)
-                .isOnPage()
+                .waitUntilScreenReady()
                 .connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
     }
 
@@ -89,7 +89,7 @@ public class ConnectorsTests extends BaseTest {
     @Test
     public void updateConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
-                .isOnPage()
+                .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_UPDATE);
         pages.connectorsView.connectorIsVisibleOnOverview();
         pages.connectorsView.openEditConfig()
@@ -106,7 +106,7 @@ public class ConnectorsTests extends BaseTest {
     @Test
     public void deleteConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
-                .isOnPage()
+                .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_DELETE);
         pages.connectorsView.clickDeleteButton();
         pages.openConnectorsList(LOCAL_CLUSTER)

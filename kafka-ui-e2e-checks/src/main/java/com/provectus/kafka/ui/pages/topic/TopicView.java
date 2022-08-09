@@ -29,7 +29,7 @@ public class TopicView {
     }
 
     @Step
-    public TopicView isOnTopicViewPage() {
+    public TopicView waitUntilScreenReady() {
         $(By.linkText("Overview")).shouldBe(Condition.visible);
         return this;
     }
