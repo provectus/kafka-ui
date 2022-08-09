@@ -15,7 +15,11 @@ import lombok.Data;
 public class KafkaCluster {
   private final String name;
   private final String version;
-  private final Metrics metrics;
+  private final Integer jmxPort;
+  private final Integer jmxExporterPort;
+  private final boolean jmxSsl;
+  private final String jmxUsername;
+  private final String jmxPassword;
   private final String bootstrapServers;
   private final InternalSchemaRegistry schemaRegistry;
   private final InternalKsqlServer ksqldbServer;

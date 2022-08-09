@@ -40,12 +40,12 @@ public class JmxMetricsRetriever implements MetricsRetriever {
   @Override
   @SneakyThrows
   public List<MetricDTO> retrieve(KafkaCluster c, Node node) {
-    String jmxUrl = JMX_URL + node.host() + ":" + c.getMetrics().getPort() + "/" + JMX_SERVICE_TYPE;
+    String jmxUrl = JMX_URL + node.host() + ":" + c.getJmxPort() + "/" + JMX_SERVICE_TYPE;
     final var connectionInfo = JmxConnectionInfo.builder()
         .url(jmxUrl)
-        .ssl(c.getMetrics().isSslEnabled())
-        .username(c.getMetrics().getUsername())
-        .password(c.getMetrics().getPassword())
+        .ssl(c.isJmxSsl())
+        .username(c.getJmxUsername())
+        .password(c.getJmxPassword())
         .build();
     JMXConnector srv;
     try {

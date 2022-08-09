@@ -20,16 +20,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class PrometheusMetricsRetriever implements MetricsRetriever {
 
   private final WebClient webClient;
-  private final PrometheusEndpointMetricsParser parser;
+  private final JmxExporterMetricsParser parser;
 
   @Override
   public List<MetricDTO> retrieve(KafkaCluster c, Node node) {
-    log.debug(String.format("retrieve metrics from prometheus exporter: %s:%d", node.host(), c.getMetrics().getPort()));
+    log.debug(String.format("retrieve metrics from prometheus exporter: %s:%d", node.host(), c.getJmxExporterPort()));
     WebClient.ResponseSpec responseSpec = webClient.get()
         .uri(UriComponentsBuilder.newInstance()
             .scheme("http")
             .host(node.host())
-            .port(c.getMetrics().getPort())
+            .port(c.getJmxExporterPort())
             .path("/metrics").build().toUri())
         .retrieve();
     return Optional.ofNullable(responseSpec.bodyToMono(String.class).block())
