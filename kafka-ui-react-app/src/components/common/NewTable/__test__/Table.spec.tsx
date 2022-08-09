@@ -1,10 +1,11 @@
 import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
 import Table, { TimestampCell } from 'components/common/NewTable';
-import { screen } from '@testing-library/dom';
+import { screen, waitFor } from '@testing-library/dom';
 import { ColumnDef } from '@tanstack/react-table';
 import userEvent from '@testing-library/user-event';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
+import { act } from '@testing-library/react';
 
 const data = [
   { timestamp: 1660034383725, text: 'lorem' },
@@ -41,6 +42,7 @@ const renderComponent = ({ path, canExpand }: Props = {}) => {
         data={data}
         renderSubComponent={ExpandedRow}
         getRowCanExpand={() => !!canExpand}
+        enableSorting
       />
     </WithRoute>,
     { initialEntries: [path || ''] }
@@ -139,6 +141,41 @@ describe('Table', () => {
       userEvent.clear(input);
       userEvent.type(input, '2');
       expect(screen.getByText('ipsum')).toBeInTheDocument();
+    });
+  });
+
+  describe('Sorting', () => {
+    it('sort rows', async () => {
+      await act(() =>
+        renderComponent({ path: '/?sortBy=text&&sortDirection=desc' })
+      );
+      expect(screen.getAllByRole('row').length).toEqual(data.length + 1);
+      const th = screen.getByRole('columnheader', { name: 'Text' });
+      expect(th).toBeInTheDocument();
+
+      let rows = [];
+      // Check initial sort order by text column is descending
+      rows = screen.getAllByRole('row');
+      expect(rows[4].textContent?.indexOf('dolor')).toBeGreaterThan(-1);
+      expect(rows[3].textContent?.indexOf('ipsum')).toBeGreaterThan(-1);
+      expect(rows[2].textContent?.indexOf('lorem')).toBeGreaterThan(-1);
+      expect(rows[1].textContent?.indexOf('sit')).toBeGreaterThan(-1);
+
+      // Disable sorting by text column
+      await waitFor(() => userEvent.click(th));
+      rows = screen.getAllByRole('row');
+      expect(rows[1].textContent?.indexOf('lorem')).toBeGreaterThan(-1);
+      expect(rows[2].textContent?.indexOf('ipsum')).toBeGreaterThan(-1);
+      expect(rows[3].textContent?.indexOf('dolor')).toBeGreaterThan(-1);
+      expect(rows[4].textContent?.indexOf('sit')).toBeGreaterThan(-1);
+
+      // Sort by text column ascending
+      await waitFor(() => userEvent.click(th));
+      rows = screen.getAllByRole('row');
+      expect(rows[1].textContent?.indexOf('dolor')).toBeGreaterThan(-1);
+      expect(rows[2].textContent?.indexOf('ipsum')).toBeGreaterThan(-1);
+      expect(rows[3].textContent?.indexOf('lorem')).toBeGreaterThan(-1);
+      expect(rows[4].textContent?.indexOf('sit')).toBeGreaterThan(-1);
     });
   });
 });
