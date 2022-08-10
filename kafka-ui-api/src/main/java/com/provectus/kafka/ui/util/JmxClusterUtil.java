@@ -73,7 +73,8 @@ public class JmxClusterUtil {
   }
 
   private List<MetricDTO> getMetrics(KafkaCluster kafkaCluster, Node node) {
-    if (kafkaCluster.getMetricsConfig().getType().equals(MetricsConfig.JMX_METRICS_TYPE)) {
+    if (kafkaCluster.getMetricsConfig().getType() == null
+        || kafkaCluster.getMetricsConfig().getType().equals(MetricsConfig.JMX_METRICS_TYPE)) {
       return jmxMetricsRetriever.retrieve(kafkaCluster, node);
     } else if (kafkaCluster.getMetricsConfig().getType().equals(MetricsConfig.PROMETHEUS_METRICS_TYPE)) {
       return prometheusMetricsRetriever.retrieve(kafkaCluster, node);

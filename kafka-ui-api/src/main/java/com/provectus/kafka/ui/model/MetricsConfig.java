@@ -12,7 +12,7 @@ public class MetricsConfig {
   public static final String JMX_METRICS_TYPE = "JMX";
   public static final String PROMETHEUS_METRICS_TYPE = "PROMETHEUS";
 
-  private final String type = JMX_METRICS_TYPE;
+  private final String type;
   private final Integer port;
   private final boolean ssl;
   private final String username;
