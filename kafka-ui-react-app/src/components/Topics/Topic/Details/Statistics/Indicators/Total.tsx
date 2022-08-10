@@ -24,14 +24,14 @@ const Total: React.FC<TopicAnalysisStats> = ({
     </Metrics.Indicator>
     <Metrics.Indicator label="Null keys">{nullKeys}</Metrics.Indicator>
     <Metrics.Indicator
-      label="Uniq keys"
+      label="Unique keys"
       title="Approximate number of unique keys"
     >
       {approxUniqKeys}
     </Metrics.Indicator>
     <Metrics.Indicator label="Null values">{nullValues}</Metrics.Indicator>
     <Metrics.Indicator
-      label="Uniq values"
+      label="Unique values"
       title="Approximate number of unique values"
     >
       {approxUniqValues}
