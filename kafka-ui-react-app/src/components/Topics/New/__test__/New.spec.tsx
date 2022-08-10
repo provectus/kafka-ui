@@ -77,6 +77,18 @@ describe('New', () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
+  it('validates form invalid name', async () => {
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
+    await waitFor(() => {
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), 'Invalid,Name');
+    });
+    await waitFor(() => {
+      expect(
+        screen.getByText('Only alphanumeric, _, -, and . allowed')
+      ).toBeInTheDocument();
+    });
+  });
+
   it('submits valid form', async () => {
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
     await act(() => {
