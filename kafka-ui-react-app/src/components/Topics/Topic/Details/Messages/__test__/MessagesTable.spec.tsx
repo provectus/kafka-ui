@@ -28,6 +28,7 @@ describe('MessagesTable', () => {
     seekDirection: SeekDirection.FORWARD,
     searchParams,
     changeSeekDirection: jest.fn(),
+    changeCurrentOption: jest.fn(),
   };
 
   const setUpComponent = (

@@ -2,25 +2,62 @@ import React, { useCallback, useMemo, useState } from 'react';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 import { SeekDirection } from 'generated-sources';
 import { useLocation } from 'react-router-dom';
+import { boolean } from 'yup/lib/locale';
+import camelCase from 'lodash/camelCase';
 
 import FiltersContainer from './Filters/FiltersContainer';
 import MessagesTable from './MessagesTable';
 
-export const SeekDirectionOptionsObj = {
-  [SeekDirection.FORWARD]: {
+// export enum ISeekDirection {
+//   FORWARD = 'FORWARD',
+//   BACKWARD = 'BACKWARD',
+//   TAILING = 'TAILING',
+
+// }
+
+interface ISeekDirection {
+  [key: string]: {
+    value: SeekDirection;
+    label: string;
+    isLive: boolean;
+  };
+}
+
+export const SeekDirectionOptionsObj: ISeekDirection = {
+  oldest: {
     value: SeekDirection.FORWARD,
-    label: 'Oldest First',
+    label: 'Oldest',
     isLive: false,
   },
-  [SeekDirection.BACKWARD]: {
+  newest: {
     value: SeekDirection.BACKWARD,
-    label: 'Newest First',
+    label: 'Newest',
     isLive: false,
   },
-  [SeekDirection.TAILING]: {
+  liveMode: {
     value: SeekDirection.TAILING,
     label: 'Live Mode',
     isLive: true,
+  },
+  fromOffset: {
+    value: SeekDirection.FORWARD,
+    label: 'From offset',
+    isLive: false,
+  },
+  toOffset: {
+    value: SeekDirection.BACKWARD,
+    label: 'To offset',
+    isLive: false,
+  },
+  sinceTime: {
+    value: SeekDirection.BACKWARD,
+    label: 'Since time',
+    isLive: false,
+  },
+  untilTime: {
+    value: SeekDirection.FORWARD,
+    label: 'Until time',
+    isLive: false,
   },
 };
 
@@ -41,26 +78,47 @@ const Messages: React.FC = () => {
       defaultSeekValue.value
   );
 
+  const [currentOption, setCurrentOption] = React.useState<string>('');
+
   const [isLive, setIsLive] = useState<boolean>(
-    SeekDirectionOptionsObj[seekDirection].isLive
+    SeekDirectionOptionsObj.untilTime.isLive
   );
 
-  const changeSeekDirection = useCallback((val: string) => {
-    switch (val) {
-      case SeekDirection.FORWARD:
-        setSeekDirection(SeekDirection.FORWARD);
-        setIsLive(SeekDirectionOptionsObj[SeekDirection.FORWARD].isLive);
-        break;
-      case SeekDirection.BACKWARD:
-        setSeekDirection(SeekDirection.BACKWARD);
-        setIsLive(SeekDirectionOptionsObj[SeekDirection.BACKWARD].isLive);
-        break;
-      case SeekDirection.TAILING:
-        setSeekDirection(SeekDirection.TAILING);
-        setIsLive(SeekDirectionOptionsObj[SeekDirection.TAILING].isLive);
-        break;
-      default:
+  React.useEffect(() => {
+    if (currentOption) {
+      setIsLive(SeekDirectionOptionsObj[currentOption].isLive);
     }
+  }, [currentOption]);
+
+  const connectWord = (label: string) => camelCase(label);
+  const changeCurrentOption = (label: string) => {
+    setCurrentOption(connectWord(label));
+  };
+
+  const changeSeekDirection = useCallback((val: string) => {
+    const connectVal = connectWord(val);
+
+    if (connectVal) {
+      setSeekDirection(SeekDirectionOptionsObj[connectVal].value);
+
+      setIsLive(SeekDirectionOptionsObj[connectVal].isLive);
+    }
+
+    // switch (val) {
+    //   case SeekDirection.FORWARD:
+    //     setSeekDirection(SeekDirection.FORWARD);
+    //     setIsLive(SeekDirectionOptionsObj.oldestFirst.isLive);
+    //     break;
+    //   case SeekDirection.BACKWARD:
+    //     setSeekDirection(SeekDirection.BACKWARD);
+    //     setIsLive(SeekDirectionOptionsObj.newestFirst.isLive);
+    //     break;
+    //   case SeekDirection.TAILING:
+    //     setSeekDirection(SeekDirection.TAILING);
+    //     setIsLive(SeekDirectionOptionsObj.liveMode.isLive);
+    //     break;
+    //   default:
+    // }
   }, []);
 
   const contextValue = useMemo(
@@ -69,6 +127,7 @@ const Messages: React.FC = () => {
       searchParams,
       changeSeekDirection,
       isLive,
+      changeCurrentOption,
     }),
     [seekDirection, searchParams, changeSeekDirection]
   );

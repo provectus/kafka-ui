@@ -62,7 +62,12 @@ interface ActiveMessageFilter {
   name: string;
   code: string;
 }
-
+enum DatePickerOptions {
+  SINCETIME = 'Since time',
+  UNTILTIME = 'Until time',
+  FROMOFFSET = 'From offset',
+  TOOFFSET = 'To offset',
+}
 const PER_PAGE = 100;
 
 export const SeekTypeOptions = [
@@ -88,8 +93,15 @@ const Filters: React.FC<FiltersProps> = ({
     getPartitionsByTopicName(state, topicName)
   );
 
-  const { searchParams, seekDirection, isLive, changeSeekDirection } =
-    useContext(TopicMessagesContext);
+  const {
+    searchParams,
+    seekDirection,
+    isLive,
+    changeSeekDirection,
+    changeCurrentOption,
+  } = useContext(TopicMessagesContext);
+
+  // console.log(SeekDirectionOptions);
 
   const { isOpen, toggle } = useModal();
 
@@ -103,6 +115,34 @@ const Filters: React.FC<FiltersProps> = ({
   const [currentSeekType, setCurrentSeekType] = React.useState<SeekType>(
     (searchParams.get('seekType') as SeekType) || SeekType.OFFSET
   );
+
+  const [selectedDirectionLabel, setSelectedDirectionLabel] = React.useState<
+    string | number
+  >(SeekDirectionOptions[0].label);
+
+  // const reservedWords = [
+  //   DatePickerOptions.FROMOFFSET,
+  //   DatePickerOptions.SINCETIME,
+  // ];
+
+  // const [showOptions, setShowOptions] = React.useState<boolean>(
+  //   reservedWords.includes(selectedDirectionLabel.toString())
+  // );
+  const isCurrentOptionOffset =
+    selectedDirectionLabel === DatePickerOptions.TOOFFSET ||
+    selectedDirectionLabel === DatePickerOptions.FROMOFFSET;
+
+  const isCurrentOptionDatePicker =
+    selectedDirectionLabel === DatePickerOptions.SINCETIME ||
+    selectedDirectionLabel === DatePickerOptions.UNTILTIME;
+
+  const [showOptions, setShowOptions] = React.useState<boolean>(
+    isCurrentOptionOffset
+  );
+  React.useEffect(() => {
+    setShowOptions(isCurrentOptionOffset);
+  }, [selectedDirectionLabel]);
+
   const [offset, setOffset] = React.useState<string>(
     getOffsetFromSeekToParam(searchParams)
   );
@@ -311,6 +351,8 @@ const Filters: React.FC<FiltersProps> = ({
         resetMessages();
         setIsFetching(true);
       };
+      console.log(sse);
+
       sse.onmessage = ({ data }) => {
         const { type, message, phase, consuming }: TopicMessageEvent =
           JSON.parse(data);
@@ -389,33 +431,43 @@ const Filters: React.FC<FiltersProps> = ({
     <S.FiltersWrapper>
       <div>
         <S.FilterInputs>
-          <Search
-            placeholder="Search"
-            value={query}
+          {/* <S.SeekTypeSelect
+            id="selectSeekType"
+            onChange={(option) => {
+              setCurrentSeekType(option.value as SeekType);
+            }}
+            value={currentSeekType}
+            selectSize="M"
+            minWidth="100px"
+            options={SeekTypeOptions}
             disabled={isTailing}
-            handleSearch={(value: string) => setQuery(value)}
-          />
+          /> */}
           <S.SeekTypeSelectorWrapper>
-            <S.SeekTypeSelect
-              id="selectSeekType"
-              onChange={(option) => setCurrentSeekType(option as SeekType)}
-              value={currentSeekType}
+            <Select
               selectSize="M"
-              minWidth="100px"
-              options={SeekTypeOptions}
-              disabled={isTailing}
+              onChange={(option) => {
+                setSelectedDirectionLabel(option.label);
+                changeSeekDirection(option.label as string);
+                changeCurrentOption(option.label as string);
+              }}
+              value={seekDirection}
+              minWidth="120px"
+              options={SeekDirectionOptions}
+              isLive={isLive}
             />
-            {currentSeekType === SeekType.OFFSET ? (
+            {showOptions && (
               <S.OffsetSelector
                 id="offset"
                 type="text"
                 inputSize="M"
                 value={offset}
-                placeholder="Offset"
+                placeholder={selectedDirectionLabel as string}
                 onChange={({ target: { value } }) => setOffset(value)}
                 disabled={isTailing}
               />
-            ) : (
+            )}
+
+            {isCurrentOptionDatePicker && (
               <S.DatePickerInput
                 selected={timestamp}
                 onChange={(date: Date | null) => setTimestamp(date)}
@@ -438,7 +490,7 @@ const Filters: React.FC<FiltersProps> = ({
             labelledBy="Select partitions"
             disabled={isTailing}
           />
-          <S.ClearAll onClick={handleClearAllFilters}>Clear all</S.ClearAll>
+          {/* <S.ClearAll onClick={handleClearAllFilters}>Clear all</S.ClearAll>
           {isFetching ? (
             <Button
               type="button"
@@ -461,15 +513,13 @@ const Filters: React.FC<FiltersProps> = ({
             >
               Submit
             </Button>
-          )}
+          )} */}
         </S.FilterInputs>
-        <Select
-          selectSize="M"
-          onChange={(option) => changeSeekDirection(option as string)}
-          value={seekDirection}
-          minWidth="120px"
-          options={SeekDirectionOptions}
-          isLive={isLive}
+        <Search
+          placeholder="Search"
+          value={query}
+          disabled={isTailing}
+          handleSearch={(value: string) => setQuery(value)}
         />
       </div>
       <S.ActiveSmartFilterWrapper>

@@ -16,7 +16,7 @@ export interface SelectProps {
   defaultValue?: string | number;
   placeholder?: string;
   disabled?: boolean;
-  onChange?: (option: string | number) => void;
+  onChange?: (option: SelectOption) => void;
 }
 
 export interface SelectOption {
@@ -37,7 +37,9 @@ const Select: React.FC<SelectProps> = ({
   onChange,
   ...props
 }) => {
-  const [selectedOption, setSelectedOption] = useState(value);
+  const [selectedOption, setSelectedOption] = useState<SelectOption>(
+    options[0]
+  );
   const [showOptions, setShowOptions] = useState(false);
 
   const showOptionsHandler = () => {
@@ -50,19 +52,19 @@ const Select: React.FC<SelectProps> = ({
 
   const updateSelectedOption = (option: SelectOption) => {
     if (!option.disabled) {
-      setSelectedOption(option.value);
+      setSelectedOption(option);
 
       if (onChange) {
-        onChange(option.value);
+        onChange(option);
       }
 
       setShowOptions(false);
     }
   };
 
-  React.useEffect(() => {
-    setSelectedOption(value);
-  }, [isLive, value]);
+  // React.useEffect(() => {
+  //   setSelectedOption(value);
+  // }, [isLive, value]);
 
   return (
     <div ref={selectContainerRef}>
@@ -77,16 +79,14 @@ const Select: React.FC<SelectProps> = ({
       >
         {isLive && <LiveIcon />}
         <S.SelectedOption role="option" tabIndex={0}>
-          {options.find(
-            (option) => option.value === (defaultValue || selectedOption)
-          )?.label || placeholder}
+          {selectedOption?.label || placeholder}
         </S.SelectedOption>
         {showOptions && (
           <S.OptionList>
             {options?.map((option) => (
               <S.Option
                 value={option.value}
-                key={option.value}
+                key={option.label}
                 disabled={option.disabled}
                 onClick={() => updateSelectedOption(option)}
                 tabIndex={0}
