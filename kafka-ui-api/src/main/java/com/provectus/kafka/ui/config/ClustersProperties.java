@@ -36,14 +36,19 @@ public class ClustersProperties {
     String protobufMessageNameForKey;
     Map<String, String> protobufMessageNameForKeyByTopic;
     List<ConnectCluster> kafkaConnect;
-    int jmxPort;
-    int jmxExporterPort;
-    boolean jmxSsl;
-    String jmxUsername;
-    String jmxPassword;
+    MetricsConfigData metricsConfig;
     Properties properties;
     boolean readOnly = false;
     boolean disableLogDirsCollection = false;
+  }
+
+  @Data
+  public static class MetricsConfigData {
+    String type;
+    Integer port;
+    boolean ssl;
+    String username;
+    String password;
   }
 
   @Data
