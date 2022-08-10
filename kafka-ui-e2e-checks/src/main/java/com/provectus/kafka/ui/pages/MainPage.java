@@ -26,7 +26,7 @@ public class MainPage {
     }
 
     @Step
-    public MainPage isOnPage() {
+    public MainPage waitUntilScreenReady() {
         $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
         $("input[name=switchRoundedDefault]").parent().$("span").shouldBe(Condition.visible);
         return this;

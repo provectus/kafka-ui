@@ -12,7 +12,7 @@ import static com.codeborne.selenide.Selenide.$x;
 public class SchemaView {
 
     @Step
-    public SchemaView isOnSchemaViewPage() {
+    public SchemaView waitUntilScreenReady() {
         $("div#schema").shouldBe(Condition.visible);
         return this;
     }

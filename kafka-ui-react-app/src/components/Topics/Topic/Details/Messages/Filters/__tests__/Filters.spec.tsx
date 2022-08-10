@@ -4,13 +4,20 @@ import Filters, {
   FiltersProps,
   SeekTypeOptions,
 } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
-import { EventSourceMock, render } from 'lib/testHelpers';
+import { EventSourceMock, render, WithRoute } from 'lib/testHelpers';
 import { act, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TopicMessagesContext, {
   ContextProps,
 } from 'components/contexts/TopicMessagesContext';
 import { SeekDirection } from 'generated-sources';
+import { clusterTopicPath } from 'lib/paths';
+import { useTopicDetails } from 'lib/hooks/api/topics';
+import { externalTopicPayload } from 'lib/fixtures/topics';
+
+jest.mock('lib/hooks/api/topics', () => ({
+  useTopicDetails: jest.fn(),
+}));
 
 const defaultContextValue: ContextProps = {
   isLive: false,
@@ -21,25 +28,37 @@ const defaultContextValue: ContextProps = {
 
 jest.mock('components/common/Icons/CloseIcon', () => () => 'mock-CloseIcon');
 
+const clusterName = 'cluster-name';
+const topicName = 'topic-name';
+
 const renderComponent = (
   props: Partial<FiltersProps> = {},
   ctx: ContextProps = defaultContextValue
 ) => {
   render(
-    <TopicMessagesContext.Provider value={ctx}>
-      <Filters
-        meta={{}}
-        isFetching={false}
-        addMessage={jest.fn()}
-        resetMessages={jest.fn()}
-        updatePhase={jest.fn()}
-        updateMeta={jest.fn()}
-        setIsFetching={jest.fn()}
-        {...props}
-      />
-    </TopicMessagesContext.Provider>
+    <WithRoute path={clusterTopicPath()}>
+      <TopicMessagesContext.Provider value={ctx}>
+        <Filters
+          meta={{}}
+          isFetching={false}
+          addMessage={jest.fn()}
+          resetMessages={jest.fn()}
+          updatePhase={jest.fn()}
+          updateMeta={jest.fn()}
+          setIsFetching={jest.fn()}
+          {...props}
+        />
+      </TopicMessagesContext.Provider>
+    </WithRoute>,
+    { initialEntries: [clusterTopicPath(clusterName, topicName)] }
   );
 };
+
+beforeEach(async () => {
+  (useTopicDetails as jest.Mock).mockImplementation(() => ({
+    data: externalTopicPayload,
+  }));
+});
 
 describe('Filters component', () => {
   Object.defineProperty(window, 'EventSource', {

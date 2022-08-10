@@ -14,6 +14,7 @@ specifiers:
   '@reduxjs/toolkit': ^1.8.3
   '@szhsin/react-menu': ^3.1.1
   '@tanstack/react-query': ^4.0.5
+  '@tanstack/react-table': ^8.5.10
   '@testing-library/dom': ^8.11.1
   '@testing-library/jest-dom': ^5.16.4
   '@testing-library/react': ^13.2.0
@@ -67,6 +68,7 @@ specifiers:
   react-ace: ^10.1.0
   react-datepicker: ^4.8.0
   react-dom: ^18.1.0
+  react-error-boundary: ^3.1.4
   react-hook-form: 7.6.9
   react-hot-toast: ^2.3.0
   react-is: ^18.2.0
@@ -96,6 +98,7 @@ dependencies:
   '@reduxjs/toolkit': 1.8.3_ctm756ikdwcjcvyfxxwskzbr6q
   '@szhsin/react-menu': 3.1.1_ef5jwxihqo6n7gxfmzogljlgcm
   '@tanstack/react-query': 4.0.5_ef5jwxihqo6n7gxfmzogljlgcm
+  '@tanstack/react-table': 8.5.10_ef5jwxihqo6n7gxfmzogljlgcm
   '@testing-library/react': 13.2.0_ef5jwxihqo6n7gxfmzogljlgcm
   '@types/testing-library__jest-dom': 5.14.5
   '@types/yup': 0.29.13
@@ -115,6 +118,7 @@ dependencies:
   react-ace: 10.1.0_ef5jwxihqo6n7gxfmzogljlgcm
   react-datepicker: 4.8.0_ef5jwxihqo6n7gxfmzogljlgcm
   react-dom: 18.1.0_react@18.1.0
+  react-error-boundary: 3.1.4_react@18.1.0
   react-hook-form: 7.6.9_react@18.1.0
   react-hot-toast: 2.3.0_ef5jwxihqo6n7gxfmzogljlgcm
   react-is: 18.2.0
@@ -2392,6 +2396,23 @@ packages:
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
       use-sync-external-store: 1.2.0_react@18.1.0
+    dev: false
+
+  /@tanstack/react-table/8.5.10_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-TG+iyqtZD5/N7gCDNM8HJc+ZWbUAkSjv8JaVqk2eYs4xaTUfPnTTsG0vJYqGkoxp8i2GFY78dRx1FDCsctYPGA==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      '@tanstack/table-core': 8.5.10
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+    dev: false
+
+  /@tanstack/table-core/8.5.10:
+    resolution: {integrity: sha512-L1GU/BAF7k50vfk1qDvHkRLhEKSjE46EtCuWRrbdu2UKP4mKClTEeL4/zMr6iefMo8QgWa+Gc0CTVVfYcFLlLA==}
+    engines: {node: '>=12'}
     dev: false
 
   /@testing-library/dom/8.13.0:
@@ -6618,6 +6639,16 @@ packages:
       loose-envify: 1.4.0
       react: 18.1.0
       scheduler: 0.22.0
+
+  /react-error-boundary/3.1.4_react@18.1.0:
+    resolution: {integrity: sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==}
+    engines: {node: '>=10', npm: '>=6'}
+    peerDependencies:
+      react: '>=16.13.1'
+    dependencies:
+      '@babel/runtime': 7.17.9
+      react: 18.1.0
+    dev: false
 
   /react-fast-compare/3.2.0:
     resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==}

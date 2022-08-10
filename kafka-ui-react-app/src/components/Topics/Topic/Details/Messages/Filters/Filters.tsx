@@ -26,8 +26,6 @@ import FilterModal, {
 import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 import useModal from 'lib/hooks/useModal';
-import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
-import { useAppSelector } from 'lib/hooks/redux';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
 import PlusIcon from 'components/common/Icons/PlusIcon';
@@ -35,6 +33,7 @@ import CloseIcon from 'components/common/Icons/CloseIcon';
 import ClockIcon from 'components/common/Icons/ClockIcon';
 import ArrowDownIcon from 'components/common/Icons/ArrowDownIcon';
 import FileIcon from 'components/common/Icons/FileIcon';
+import { useTopicDetails } from 'lib/hooks/api/topics';
 
 import * as S from './Filters.styled';
 import {
@@ -89,9 +88,9 @@ const Filters: React.FC<FiltersProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const partitions = useAppSelector((state) =>
-    getPartitionsByTopicName(state, topicName)
-  );
+  const { data: topic } = useTopicDetails({ clusterName, topicName });
+
+  const partitions = topic?.partitions || [];
 
   const { searchParams, seekDirection, isLive, changeSeekDirection } =
     useContext(TopicMessagesContext);

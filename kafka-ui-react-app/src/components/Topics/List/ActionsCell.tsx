@@ -1,62 +1,40 @@
 import React from 'react';
-import {
-  CleanUpPolicy,
-  SortOrder,
-  TopicColumnsToSort,
-} from 'generated-sources';
+import { CleanUpPolicy, Topic } from 'generated-sources';
 import { useAppDispatch } from 'lib/hooks/redux';
 import { TableCellProps } from 'components/common/SmartTable/TableColumn';
-import { TopicWithDetailedInfo } from 'redux/interfaces';
 import ClusterContext from 'components/contexts/ClusterContext';
 import * as S from 'components/Topics/List/List.styled';
 import { ClusterNameRoute } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
-import {
-  deleteTopic,
-  fetchTopicsList,
-  recreateTopic,
-} from 'redux/reducers/topics/topicsSlice';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  topicKeys,
+  useDeleteTopic,
+  useRecreateTopic,
+} from 'lib/hooks/api/topics';
 
-interface TopicsListParams {
-  clusterName: string;
-  page?: number;
-  perPage?: number;
-  showInternal?: boolean;
-  search?: string;
-  orderBy?: TopicColumnsToSort;
-  sortOrder?: SortOrder;
-}
-export interface ActionsCellProps {
-  topicsListParams: TopicsListParams;
-}
-
-const ActionsCell: React.FC<
-  TableCellProps<TopicWithDetailedInfo, string> & ActionsCellProps
-> = ({
+const ActionsCell: React.FC<TableCellProps<Topic, string>> = ({
   hovered,
   dataItem: { internal, cleanUpPolicy, name },
-  topicsListParams,
 }) => {
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
   const dispatch = useAppDispatch();
   const { clusterName } = useAppParams<ClusterNameRoute>();
+  const queryClient = useQueryClient();
+
+  const deleteTopic = useDeleteTopic(clusterName);
+  const recreateTopic = useRecreateTopic({ clusterName, topicName: name });
 
   const isHidden = internal || isReadOnly || !hovered;
 
-  const deleteTopicHandler = () => {
-    dispatch(deleteTopic({ clusterName, topicName: name }));
-  };
-
-  const clearTopicMessagesHandler = () => {
-    dispatch(clearTopicMessages({ clusterName, topicName: name }));
-    dispatch(fetchTopicsList(topicsListParams));
-  };
-
-  const recreateTopicHandler = () => {
-    dispatch(recreateTopic({ clusterName, topicName: name }));
+  const clearTopicMessagesHandler = async () => {
+    await dispatch(
+      clearTopicMessages({ clusterName, topicName: name })
+    ).unwrap();
+    queryClient.invalidateQueries(topicKeys.all(clusterName));
   };
 
   return (
@@ -73,7 +51,7 @@ const ActionsCell: React.FC<
             </DropdownItem>
           )}
           <DropdownItem
-            onClick={recreateTopicHandler}
+            onClick={recreateTopic.mutateAsync}
             confirm={
               <>
                 Are you sure to recreate <b>{name}</b> topic?
@@ -85,7 +63,7 @@ const ActionsCell: React.FC<
           </DropdownItem>
           {isTopicDeletionAllowed && (
             <DropdownItem
-              onClick={deleteTopicHandler}
+              onClick={() => deleteTopic.mutateAsync(name)}
               confirm={
                 <>
                   Are you sure want to remove <b>{name}</b> topic?

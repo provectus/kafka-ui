@@ -8,79 +8,62 @@ import {
   clusterTopicSendMessagePath,
   getNonExactPath,
 } from 'lib/paths';
+import { useAppDispatch } from 'lib/hooks/redux';
 
 const topicText = {
-  edit: 'Edit Container',
+  edit: 'Edit',
   send: 'Send Message',
-  detail: 'Details Container',
+  detail: 'Details',
   loading: 'Loading',
 };
 
-jest.mock('components/Topics/Topic/Edit/EditContainer', () => () => (
+jest.mock('components/Topics/Topic/Edit/Edit', () => () => (
   <div>{topicText.edit}</div>
 ));
 jest.mock('components/Topics/Topic/SendMessage/SendMessage', () => () => (
   <div>{topicText.send}</div>
 ));
-jest.mock('components/Topics/Topic/Details/DetailsContainer', () => () => (
+jest.mock('components/Topics/Topic/Details/Details', () => () => (
   <div>{topicText.detail}</div>
 ));
-jest.mock('components/common/PageLoader/PageLoader', () => () => (
-  <div>{topicText.loading}</div>
-));
+
+jest.mock('lib/hooks/redux', () => ({
+  ...jest.requireActual('lib/hooks/redux'),
+  useAppDispatch: jest.fn(),
+}));
+const useDispatchMock = jest.fn(jest.fn());
 
 describe('Topic Component', () => {
-  const resetTopicMessages = jest.fn();
-  const fetchTopicDetailsMock = jest.fn();
+  beforeEach(() => {
+    (useAppDispatch as jest.Mock).mockImplementation(() => useDispatchMock);
+  });
 
-  const renderComponent = (pathname: string, topicFetching: boolean) =>
+  const renderComponent = (pathname: string) =>
     render(
       <WithRoute path={getNonExactPath(clusterTopicPath())}>
-        <Topic
-          isTopicFetching={topicFetching}
-          resetTopicMessages={resetTopicMessages}
-          fetchTopicDetails={fetchTopicDetailsMock}
-        />
+        <Topic />
       </WithRoute>,
       { initialEntries: [pathname] }
     );
 
-  afterEach(() => {
-    resetTopicMessages.mockClear();
-    fetchTopicDetailsMock.mockClear();
-  });
-
   it('renders Edit page', () => {
-    renderComponent(clusterTopicEditPath('local', 'myTopicName'), false);
+    renderComponent(clusterTopicEditPath('local', 'myTopicName'));
     expect(screen.getByText(topicText.edit)).toBeInTheDocument();
   });
 
   it('renders Send Message page', () => {
-    renderComponent(clusterTopicSendMessagePath('local', 'myTopicName'), false);
+    renderComponent(clusterTopicSendMessagePath('local', 'myTopicName'));
     expect(screen.getByText(topicText.send)).toBeInTheDocument();
   });
 
   it('renders Details Container page', () => {
-    renderComponent(clusterTopicPath('local', 'myTopicName'), false);
+    renderComponent(clusterTopicPath('local', 'myTopicName'));
     expect(screen.getByText(topicText.detail)).toBeInTheDocument();
   });
 
-  it('renders Page loader', () => {
-    renderComponent(clusterTopicPath('local', 'myTopicName'), true);
-    expect(screen.getByText(topicText.loading)).toBeInTheDocument();
-  });
-
-  it('fetches topicDetails', () => {
-    renderComponent(clusterTopicPath('local', 'myTopicName'), false);
-    expect(fetchTopicDetailsMock).toHaveBeenCalledTimes(1);
-  });
-
   it('resets topic messages after unmount', () => {
-    const component = renderComponent(
-      clusterTopicPath('local', 'myTopicName'),
-      false
-    );
+    const component = renderComponent(clusterTopicPath('local', 'myTopicName'));
     component.unmount();
-    expect(resetTopicMessages).toHaveBeenCalledTimes(1);
+    expect(useDispatchMock).toHaveBeenCalledTimes(1);
   });
 });
