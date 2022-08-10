@@ -156,7 +156,6 @@ Info endpoint (build info) is located at `/actuator/info`.
 Alternatively, each variable of the .yml file can be set with an environment variable. 
 For example, if you want to use an environment variable to set the `name` parameter, you can write it like this: `KAFKA_CLUSTERS_2_NAME`
 
-| Name               	                                |Description
 |Name               	|Description
 |-----------------------|-------------------------------
 |`SERVER_SERVLET_CONTEXT_PATH` | URI basePath
