@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.toList;
 import com.provectus.kafka.ui.model.JmxBrokerMetrics;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MetricDTO;
+import com.provectus.kafka.ui.model.MetricsConfig;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
@@ -72,9 +73,9 @@ public class JmxClusterUtil {
   }
 
   private List<MetricDTO> getMetrics(KafkaCluster kafkaCluster, Node node) {
-    if (kafkaCluster.getJmxPort() != null && kafkaCluster.getJmxPort() > 0) {
+    if (kafkaCluster.getMetricsConfig().getType().equals(MetricsConfig.JMX_METRICS_TYPE)) {
       return jmxMetricsRetriever.retrieve(kafkaCluster, node);
-    } else if (kafkaCluster.getJmxExporterPort() != null && kafkaCluster.getJmxExporterPort() > 0) {
+    } else if (kafkaCluster.getMetricsConfig().getType().equals(MetricsConfig.PROMETHEUS_METRICS_TYPE)) {
       return prometheusMetricsRetriever.retrieve(kafkaCluster, node);
     } else {
       return Collections.emptyList();
