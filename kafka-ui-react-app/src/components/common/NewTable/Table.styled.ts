@@ -145,10 +145,21 @@ export const Table = styled.table(
     vertical-align: middle;
     word-wrap: break-word;
 
-    & > a {
-      color: ${table.link.color};
+    & a {
+      color: ${table.link.color.normal};
       font-weight: 500;
+      max-width: 450px;
+      white-space: nowrap;
+      overflow: hidden;
       text-overflow: ellipsis;
+
+      &:hover {
+        color: ${table.link.color.hover};
+      }
+
+      &:active {
+        color: ${table.link.color.active};
+      }
     }
   }
 `

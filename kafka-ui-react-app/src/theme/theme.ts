@@ -330,6 +330,8 @@ const theme = {
     link: {
       color: {
         normal: Colors.neutral[90],
+        hover: Colors.neutral[50],
+        active: Colors.neutral[90],
       },
     },
     expander: {

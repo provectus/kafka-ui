@@ -32,7 +32,7 @@ interface TableProps<TData> {
   getRowCanExpand?: (row: Row<TData>) => boolean;
   serverSideProcessing?: boolean;
   enableSorting?: boolean;
-  enableRowSelection?: boolean | ((row: Row<TData>) => boolean) | undefined;
+  enableRowSelection?: boolean | ((row: Row<TData>) => boolean);
   batchActionsBar?: React.FC<{ rows: Row<TData>[]; resetRowSelection(): void }>;
   emptyMessage?: string;
 }
