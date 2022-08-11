@@ -12,14 +12,8 @@ const BrokerLogdir: React.FC = () => {
 
   const columns = React.useMemo<ColumnDef<BrokersLogdirs>[]>(
     () => [
-      {
-        header: 'Name',
-        accessorKey: 'name',
-      },
-      {
-        header: 'Error',
-        accessorKey: 'error',
-      },
+      { header: 'Name', accessorKey: 'name' },
+      { header: 'Error', accessorKey: 'error' },
       {
         header: 'Topics',
         accessorKey: 'topics',

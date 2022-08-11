@@ -103,7 +103,7 @@ const TopicTable: React.FC = () => {
       serverSideProcessing
       batchActionsBar={BatchActionsbar}
       enableRowSelection={
-        !isReadOnly ? (row) => !isReadOnly && !row.original.internal : undefined
+        !isReadOnly ? (row) => !row.original.internal : undefined
       }
       emptyMessage="No topics found"
     />

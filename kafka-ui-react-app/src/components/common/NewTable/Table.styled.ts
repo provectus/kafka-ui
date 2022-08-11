@@ -73,7 +73,7 @@ export const Th = styled.th<ThProps>(
     sortOrder,
     expander,
   }) => `
-  padding: 4px 0 4px 24px;
+  padding: 8px 0 8px 24px;
   border-bottom-width: 1px;
   vertical-align: middle;
   text-align: left;
@@ -152,6 +152,7 @@ export const Table = styled.table(
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: block;
 
       &:hover {
         color: ${table.link.color.hover};

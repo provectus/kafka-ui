@@ -24,7 +24,7 @@ import ExpanderCell from './ExpanderCell';
 import SelectRowCell from './SelectRowCell';
 import SelectRowHeader from './SelectRowHeader';
 
-interface TableProps<TData> {
+export interface TableProps<TData> {
   data: TData[];
   pageCount?: number;
   columns: ColumnDef<TData>[];
