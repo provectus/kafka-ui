@@ -8,6 +8,7 @@ import {
   clusterTopicEditRelativePath,
   clusterTopicSendMessageRelativePath,
   clusterTopicStatisticsRelativePath,
+  clusterTopicsPath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -61,7 +62,11 @@ const Details: React.FC = () => {
 
   return (
     <div>
-      <PageHeading text={topicName}>
+      <PageHeading
+        text={topicName}
+        backText="Topics"
+        backTo={clusterTopicsPath(clusterName)}
+      >
         <HeaderControlsWrapper>
           <Routes>
             <Route

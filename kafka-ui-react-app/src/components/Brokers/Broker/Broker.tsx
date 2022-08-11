@@ -8,6 +8,7 @@ import {
   clusterBrokerMetricsRelativePath,
   ClusterBrokerParam,
   clusterBrokerPath,
+  clusterBrokersPath,
 } from 'lib/paths';
 import { useClusterStats } from 'lib/hooks/api/clusters';
 import { useBrokers } from 'lib/hooks/api/brokers';
@@ -31,7 +32,11 @@ const Broker: React.FC = () => {
   );
   return (
     <>
-      <PageHeading text={`Broker ${brokerId}`} />
+      <PageHeading
+        text={`Broker ${brokerId}`}
+        backTo={clusterBrokersPath(clusterName)}
+        backText="Brokers"
+      />
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="Segment Size">

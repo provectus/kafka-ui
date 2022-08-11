@@ -134,7 +134,7 @@ export const MessageFilterModal = styled.div`
   background: ${({ theme }) => theme.modal.backgroundColor};
   position: absolute;
   left: 25%;
-  border: 1px solid ${({ theme }) => theme.breadcrumb};
+  border: 1px solid ${({ theme }) => theme.modal.border.contrast};
   box-shadow: ${({ theme }) => theme.modal.shadow};
   padding: 16px;
   z-index: 1;
@@ -147,7 +147,7 @@ export const InfoModal = styled.div`
   background: ${({ theme }) => theme.modal.backgroundColor};
   position: absolute;
   left: 25%;
-  border: 1px solid ${({ theme }) => theme.breadcrumb};
+  border: 1px solid ${({ theme }) => theme.modal.border.contrast};
   box-shadow: ${({ theme }) => theme.modal.shadow};
   padding: 32px;
   z-index: 1;
@@ -182,7 +182,6 @@ export const FilterTitle = styled.h3`
 
 export const CreatedFilter = styled.p`
   margin: 25px 0 10px;
-  color: ${({ theme }) => theme.breadcrumb};
   font-size: 14px;
   line-height: 20px;
 `;
@@ -190,11 +189,8 @@ export const CreatedFilter = styled.p`
 export const SavedFiltersContainer = styled.div`
   overflow-y: auto;
   height: 195px;
-  // display: flex;
-  // flex-direction: column;
   justify-content: space-around;
   padding-left: 10px;
-  // gap: 10px;
 `;
 
 export const SavedFilterName = styled.div`

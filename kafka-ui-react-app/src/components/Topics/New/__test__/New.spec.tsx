@@ -48,18 +48,14 @@ describe('New', () => {
 
   it('checks header for create new', async () => {
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
-    expect(
-      screen.getByRole('heading', { name: 'Create new Topic' })
-    ).toHaveTextContent('Create new Topic');
+    expect(screen.getByRole('heading', { name: 'Create' })).toBeInTheDocument();
   });
 
   it('checks header for copy', async () => {
     await act(() =>
       renderComponent(`${clusterTopicCopyPath(clusterName)}?name=test`)
     );
-    expect(
-      screen.getByRole('heading', { name: 'Copy Topic' })
-    ).toHaveTextContent('Copy Topic');
+    expect(screen.getByRole('heading', { name: 'Copy' })).toBeInTheDocument();
   });
 
   it('validates form', async () => {
