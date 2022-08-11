@@ -90,68 +90,66 @@ const Overview: React.FC = () => {
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
-      <div>
-        <Table isFullwidth>
-          <thead>
-            <tr>
-              <TableHeaderCell title="Partition ID" />
-              <TableHeaderCell title="Replicas" />
-              <TableHeaderCell title="First Offset" />
-              <TableHeaderCell title="Next Offset" />
-              <TableHeaderCell title="Message Count" />
-              <TableHeaderCell title=" " />
-            </tr>
-          </thead>
-          <tbody>
-            {data?.partitions?.map((partition: Partition) => (
-              <tr key={`partition-list-item-key-${partition.partition}`}>
-                <td>{partition.partition}</td>
-                <td>
-                  {partition.replicas?.map(({ broker, leader }: Replica) => (
-                    <S.Replica
-                      leader={leader}
-                      key={broker}
-                      title={leader ? 'Leader' : ''}
+      <Table isFullwidth>
+        <thead>
+          <tr>
+            <TableHeaderCell title="Partition ID" />
+            <TableHeaderCell title="Replicas" />
+            <TableHeaderCell title="First Offset" />
+            <TableHeaderCell title="Next Offset" />
+            <TableHeaderCell title="Message Count" />
+            <TableHeaderCell title=" " />
+          </tr>
+        </thead>
+        <tbody>
+          {data?.partitions?.map((partition: Partition) => (
+            <tr key={`partition-list-item-key-${partition.partition}`}>
+              <td>{partition.partition}</td>
+              <td>
+                {partition.replicas?.map(({ broker, leader }: Replica) => (
+                  <S.Replica
+                    leader={leader}
+                    key={broker}
+                    title={leader ? 'Leader' : ''}
+                  >
+                    {broker}
+                  </S.Replica>
+                ))}
+              </td>
+              <td>{partition.offsetMin}</td>
+              <td>{partition.offsetMax}</td>
+              <td>{partition.offsetMax - partition.offsetMin}</td>
+              <td style={{ width: '5%' }}>
+                {!data?.internal &&
+                !isReadOnly &&
+                data?.cleanUpPolicy === 'DELETE' ? (
+                  <Dropdown>
+                    <DropdownItem
+                      onClick={() =>
+                        dispatch(
+                          clearTopicMessages({
+                            clusterName,
+                            topicName,
+                            partitions: [partition.partition],
+                          })
+                        ).unwrap()
+                      }
+                      danger
                     >
-                      {broker}
-                    </S.Replica>
-                  ))}
-                </td>
-                <td>{partition.offsetMin}</td>
-                <td>{partition.offsetMax}</td>
-                <td>{partition.offsetMax - partition.offsetMin}</td>
-                <td style={{ width: '5%' }}>
-                  {!data?.internal &&
-                  !isReadOnly &&
-                  data?.cleanUpPolicy === 'DELETE' ? (
-                    <Dropdown>
-                      <DropdownItem
-                        onClick={() =>
-                          dispatch(
-                            clearTopicMessages({
-                              clusterName,
-                              topicName,
-                              partitions: [partition.partition],
-                            })
-                          ).unwrap()
-                        }
-                        danger
-                      >
-                        Clear Messages
-                      </DropdownItem>
-                    </Dropdown>
-                  ) : null}
-                </td>
-              </tr>
-            ))}
-            {data?.partitions?.length === 0 && (
-              <tr>
-                <td colSpan={10}>No Partitions found</td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
-      </div>
+                      Clear Messages
+                    </DropdownItem>
+                  </Dropdown>
+                ) : null}
+              </td>
+            </tr>
+          ))}
+          {data?.partitions?.length === 0 && (
+            <tr>
+              <td colSpan={10}>No Partitions found</td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
     </>
   );
 };

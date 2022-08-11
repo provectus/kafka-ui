@@ -1,7 +1,7 @@
 import React from 'react';
 import { CleanUpPolicy, Topic } from 'generated-sources';
+import { CellContext } from '@tanstack/react-table';
 import { useAppDispatch } from 'lib/hooks/redux';
-import { TableCellProps } from 'components/common/SmartTable/TableColumn';
 import ClusterContext from 'components/contexts/ClusterContext';
 import * as S from 'components/Topics/List/List.styled';
 import { ClusterNameRoute } from 'lib/paths';
@@ -15,10 +15,9 @@ import {
   useRecreateTopic,
 } from 'lib/hooks/api/topics';
 
-const ActionsCell: React.FC<TableCellProps<Topic, string>> = ({
-  hovered,
-  dataItem: { internal, cleanUpPolicy, name },
-}) => {
+const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
+  const { name, internal, cleanUpPolicy } = row.original;
+
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
   const dispatch = useAppDispatch();
@@ -28,7 +27,7 @@ const ActionsCell: React.FC<TableCellProps<Topic, string>> = ({
   const deleteTopic = useDeleteTopic(clusterName);
   const recreateTopic = useRecreateTopic({ clusterName, topicName: name });
 
-  const isHidden = internal || isReadOnly || !hovered;
+  const isHidden = internal || isReadOnly;
 
   const clearTopicMessagesHandler = async () => {
     await dispatch(
@@ -39,43 +38,41 @@ const ActionsCell: React.FC<TableCellProps<Topic, string>> = ({
 
   return (
     <S.ActionsContainer>
-      {!isHidden && (
-        <Dropdown>
-          {cleanUpPolicy === CleanUpPolicy.DELETE && (
-            <DropdownItem
-              onClick={clearTopicMessagesHandler}
-              confirm="Are you sure want to clear topic messages?"
-              danger
-            >
-              Clear Messages
-            </DropdownItem>
-          )}
+      <Dropdown disabled={isHidden}>
+        {cleanUpPolicy === CleanUpPolicy.DELETE && (
           <DropdownItem
-            onClick={recreateTopic.mutateAsync}
+            onClick={clearTopicMessagesHandler}
+            confirm="Are you sure want to clear topic messages?"
+            danger
+          >
+            Clear Messages
+          </DropdownItem>
+        )}
+        <DropdownItem
+          onClick={recreateTopic.mutateAsync}
+          confirm={
+            <>
+              Are you sure to recreate <b>{name}</b> topic?
+            </>
+          }
+          danger
+        >
+          Recreate Topic
+        </DropdownItem>
+        {isTopicDeletionAllowed && (
+          <DropdownItem
+            onClick={() => deleteTopic.mutateAsync(name)}
             confirm={
               <>
-                Are you sure to recreate <b>{name}</b> topic?
+                Are you sure want to remove <b>{name}</b> topic?
               </>
             }
             danger
           >
-            Recreate Topic
+            Remove Topic
           </DropdownItem>
-          {isTopicDeletionAllowed && (
-            <DropdownItem
-              onClick={() => deleteTopic.mutateAsync(name)}
-              confirm={
-                <>
-                  Are you sure want to remove <b>{name}</b> topic?
-                </>
-              }
-              danger
-            >
-              Remove Topic
-            </DropdownItem>
-          )}
-        </Dropdown>
-      )}
+        )}
+      </Dropdown>
     </S.ActionsContainer>
   );
 };

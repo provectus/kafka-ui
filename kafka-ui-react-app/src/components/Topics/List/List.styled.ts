@@ -2,6 +2,13 @@ import { Td } from 'components/common/table/TableHeaderCell/TableHeaderCell.styl
 import { NavLink } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
+export const TitleCellContent = styled.div`
+  width: 450px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
 export const Link = styled(NavLink)<{
   $isInternal?: boolean;
 }>(
@@ -9,6 +16,11 @@ export const Link = styled(NavLink)<{
     color: ${theme.topicsList.color.normal};
     font-weight: 500;
     padding-left: ${$isInternal ? '5px' : 0};
+
+    width: 450px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:hover {
       background-color: ${theme.topicsList.backgroundColor.hover};

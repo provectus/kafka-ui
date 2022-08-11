@@ -7,21 +7,14 @@ export default (
   updater: UpdaterFn<PaginationState>,
   searchParams: URLSearchParams
 ) => {
+  const page = searchParams.get('page');
   const previousState: PaginationState = {
-    pageIndex: Number(searchParams.get('page') || 0),
+    // Page number starts at 1, but the pageIndex starts at 0
+    pageIndex: page ? Number(page) - 1 : 0,
     pageSize: Number(searchParams.get('perPage') || PER_PAGE),
   };
   const newState = updater(previousState);
-  if (newState.pageIndex !== 0) {
-    searchParams.set('page', newState.pageIndex.toString());
-  } else {
-    searchParams.delete('page');
-  }
-
-  if (newState.pageSize !== PER_PAGE) {
-    searchParams.set('perPage', newState.pageSize.toString());
-  } else {
-    searchParams.delete('perPage');
-  }
-  return newState;
+  searchParams.set('page', String(newState.pageIndex + 1));
+  searchParams.set('perPage', newState.pageSize.toString());
+  return previousState;
 };

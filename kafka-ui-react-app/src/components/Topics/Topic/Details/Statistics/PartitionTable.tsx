@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 import { TopicAnalysisStats } from 'generated-sources';
 import { ColumnDef } from '@tanstack/react-table';
