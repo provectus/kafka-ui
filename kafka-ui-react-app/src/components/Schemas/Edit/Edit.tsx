@@ -5,7 +5,11 @@ import {
   CompatibilityLevelCompatibilityEnum,
   SchemaType,
 } from 'generated-sources';
-import { clusterSchemaPath, ClusterSubjectParam } from 'lib/paths';
+import {
+  clusterSchemaPath,
+  clusterSchemasPath,
+  ClusterSubjectParam,
+} from 'lib/paths';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
 import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
@@ -99,7 +103,11 @@ const Edit: React.FC = () => {
   }
   return (
     <FormProvider {...methods}>
-      <PageHeading text="Edit schema" />
+      <PageHeading
+        text="Edit"
+        backText="Schema Registry"
+        backTo={clusterSchemasPath(clusterName)}
+      />
       <S.EditWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>

@@ -60,7 +60,7 @@ const BrokersList: React.FC = () => {
 
   return (
     <>
-      <PageHeading text="Broker" />
+      <PageHeading text="Brokers" />
       <Metrics.Wrapper>
         <Metrics.Section title="Uptime">
           <Metrics.Indicator label="Total Broker">

@@ -47,7 +47,7 @@ const ListPage: React.FC = () => {
 
   return (
     <>
-      <PageHeading text="All Topics">
+      <PageHeading text="Topics">
         {!isReadOnly && (
           <Button
             buttonType="primary"
