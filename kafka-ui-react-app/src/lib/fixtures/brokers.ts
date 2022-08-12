@@ -32,4 +32,8 @@ export const brokerLogDirsPayload: BrokersLogdirs[] = [
       },
     ],
   },
+  {
+    error: 'NONE',
+    name: '/opt/kafka/data-1/logs',
+  },
 ];

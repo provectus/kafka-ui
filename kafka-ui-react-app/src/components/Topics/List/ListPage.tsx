@@ -11,7 +11,7 @@ import Switch from 'components/common/Switch/Switch';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import useSearch from 'lib/hooks/useSearch';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import TopicsTable from 'components/Topics/List/TopicsTable';
+import TopicTable from 'components/Topics/List/TopicTable';
 
 const ListPage: React.FC = () => {
   const { isReadOnly } = React.useContext(ClusterContext);
@@ -29,7 +29,7 @@ const ListPage: React.FC = () => {
     ) {
       searchParams.set('hideInternal', 'true');
     }
-    setSearchParams(searchParams, { replace: true });
+    setSearchParams(searchParams);
   }, []);
 
   const handleSwitch = () => {
@@ -41,8 +41,8 @@ const ListPage: React.FC = () => {
       searchParams.set('hideInternal', 'true');
     }
     // Page must be reset when the switch is toggled
-    searchParams.delete('page');
-    setSearchParams(searchParams.toString(), { replace: true });
+    searchParams.set('page', '1');
+    setSearchParams(searchParams);
   };
 
   return (
@@ -59,26 +59,22 @@ const ListPage: React.FC = () => {
         )}
       </PageHeading>
       <ControlPanelWrapper hasInput>
-        <div>
-          <Search
-            handleSearch={handleSearchQuery}
-            placeholder="Search by Topic Name"
-            value={searchQuery}
+        <Search
+          handleSearch={handleSearchQuery}
+          placeholder="Search by Topic Name"
+          value={searchQuery}
+        />
+        <label>
+          <Switch
+            name="ShowInternalTopics"
+            checked={!searchParams.has('hideInternal')}
+            onChange={handleSwitch}
           />
-        </div>
-        <div>
-          <label>
-            <Switch
-              name="ShowInternalTopics"
-              checked={!searchParams.has('hideInternal')}
-              onChange={handleSwitch}
-            />
-            Show Internal Topics
-          </label>
-        </div>
+          Show Internal Topics
+        </label>
       </ControlPanelWrapper>
       <Suspense fallback={<PageLoader />}>
-        <TopicsTable />
+        <TopicTable />
       </Suspense>
     </>
   );

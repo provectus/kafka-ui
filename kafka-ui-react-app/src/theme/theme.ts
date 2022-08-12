@@ -299,12 +299,16 @@ const theme = {
     deletionTextColor: Colors.neutral[70],
   },
   table: {
+    actionBar: {
+      backgroundColor: Colors.neutral[0],
+    },
     th: {
       backgroundColor: {
         normal: Colors.neutral[0],
       },
       color: {
-        normal: Colors.neutral[50],
+        sortable: Colors.neutral[30],
+        normal: Colors.neutral[60],
         hover: Colors.brand[50],
         active: Colors.brand[50],
       },
@@ -326,6 +330,8 @@ const theme = {
     link: {
       color: {
         normal: Colors.neutral[90],
+        hover: Colors.neutral[50],
+        active: Colors.neutral[90],
       },
     },
     expander: {

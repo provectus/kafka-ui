@@ -51,6 +51,7 @@ export const Dropdown = styled(ControlledMenu)(
 
     ${menuItemSelector.disabled} {
       cursor: not-allowed;
+      opacity: 0.5;
     }
   `
 );
@@ -61,6 +62,12 @@ export const DropdownButton = styled.button`
   display: flex;
   cursor: pointer;
   align-self: center;
+  float: right;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 export const DangerItem = styled.div`

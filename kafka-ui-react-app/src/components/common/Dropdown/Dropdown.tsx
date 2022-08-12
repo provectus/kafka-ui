@@ -7,9 +7,10 @@ import * as S from './Dropdown.styled';
 
 interface DropdownProps extends PropsWithChildren<Partial<MenuProps>> {
   label?: React.ReactNode;
+  disabled?: boolean;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, children }) => {
+const Dropdown: React.FC<DropdownProps> = ({ label, disabled, children }) => {
   const ref = useRef(null);
   const { isOpen, setClose, setOpen } = useModal(false);
 
@@ -25,6 +26,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, children }) => {
         onClick={handleClick}
         ref={ref}
         aria-label="Dropdown Toggle"
+        disabled={disabled}
       >
         {label || <VerticalElipsisIcon />}
       </S.DropdownButton>

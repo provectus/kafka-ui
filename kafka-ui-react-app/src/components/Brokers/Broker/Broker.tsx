@@ -17,13 +17,6 @@ import BrokerMetrics from 'components/Brokers/Broker/BrokerMetrics/BrokerMetrics
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 
-export interface BrokerLogdirState {
-  name: string;
-  error: string;
-  topics: number;
-  partitions: number;
-}
-
 const Broker: React.FC = () => {
   const { clusterName, brokerId } = useAppParams<ClusterBrokerParam>();
 

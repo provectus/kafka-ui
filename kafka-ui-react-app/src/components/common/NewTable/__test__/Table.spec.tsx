@@ -1,19 +1,24 @@
 import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
-import Table, { TimestampCell } from 'components/common/NewTable';
+import Table, {
+  TableProps,
+  TimestampCell,
+  SizeCell,
+} from 'components/common/NewTable';
 import { screen, waitFor } from '@testing-library/dom';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import userEvent from '@testing-library/user-event';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
 import { act } from '@testing-library/react';
 
-const data = [
-  { timestamp: 1660034383725, text: 'lorem' },
-  { timestamp: 1660034399999, text: 'ipsum' },
-  { timestamp: 1660034399922, text: 'dolor' },
-  { timestamp: 1660034199922, text: 'sit' },
-];
 type Datum = typeof data[0];
+
+const data = [
+  { timestamp: 1660034383725, text: 'lorem', selectable: false, size: 1234 },
+  { timestamp: 1660034399999, text: 'ipsum', selectable: true, size: 3 },
+  { timestamp: 1660034399922, text: 'dolor', selectable: true, size: 50000 },
+  { timestamp: 1660034199922, text: 'sit', selectable: false, size: 1_312_323 },
+];
 
 const columns: ColumnDef<Datum>[] = [
   {
@@ -25,27 +30,30 @@ const columns: ColumnDef<Datum>[] = [
     header: 'Text',
     accessorKey: 'text',
   },
+  {
+    header: 'Size',
+    accessorKey: 'size',
+    cell: SizeCell,
+  },
 ];
 
 const ExpandedRow: React.FC = () => <div>I am expanded row</div>;
 
-interface Props {
+interface Props extends TableProps<Datum> {
   path?: string;
-  canExpand?: boolean;
 }
 
-const renderComponent = ({ path, canExpand }: Props = {}) => {
+const renderComponent = (props: Partial<Props> = {}) => {
   render(
     <WithRoute path="/">
       <Table
         columns={columns}
         data={data}
         renderSubComponent={ExpandedRow}
-        getRowCanExpand={() => !!canExpand}
-        enableSorting
+        {...props}
       />
     </WithRoute>,
-    { initialEntries: [path || ''] }
+    { initialEntries: [props.path || ''] }
   );
 };
 
@@ -53,6 +61,30 @@ describe('Table', () => {
   it('renders table', () => {
     renderComponent();
     expect(screen.getByRole('table')).toBeInTheDocument();
+    expect(screen.getAllByRole('row').length).toEqual(data.length + 1);
+  });
+
+  it('renders empty table', () => {
+    renderComponent({ data: [] });
+    expect(screen.getByRole('table')).toBeInTheDocument();
+    expect(screen.getAllByRole('row').length).toEqual(2);
+    expect(screen.getByText('No rows found')).toBeInTheDocument();
+  });
+
+  it('renders empty table with custom message', () => {
+    const emptyMessage = 'Super custom message';
+    renderComponent({ data: [], emptyMessage });
+    expect(screen.getByRole('table')).toBeInTheDocument();
+    expect(screen.getAllByRole('row').length).toEqual(2);
+    expect(screen.getByText(emptyMessage)).toBeInTheDocument();
+  });
+
+  it('renders SizeCell', () => {
+    renderComponent();
+    expect(screen.getByText('1KB')).toBeInTheDocument();
+    expect(screen.getByText('3Bytes')).toBeInTheDocument();
+    expect(screen.getByText('49KB')).toBeInTheDocument();
+    expect(screen.getByText('1MB')).toBeInTheDocument();
   });
 
   it('renders TimestampCell', () => {
@@ -64,7 +96,7 @@ describe('Table', () => {
 
   describe('ExpanderCell', () => {
     it('renders button', () => {
-      renderComponent({ canExpand: true });
+      renderComponent({ getRowCanExpand: () => true });
       const btns = screen.getAllByRole('button', { name: 'Expand row' });
       expect(btns.length).toEqual(data.length);
 
@@ -76,7 +108,7 @@ describe('Table', () => {
     });
 
     it('does not render button', () => {
-      renderComponent({ canExpand: false });
+      renderComponent({ getRowCanExpand: () => false });
       expect(
         screen.queryByRole('button', { name: 'Expand row' })
       ).not.toBeInTheDocument();
@@ -147,7 +179,10 @@ describe('Table', () => {
   describe('Sorting', () => {
     it('sort rows', async () => {
       await act(() =>
-        renderComponent({ path: '/?sortBy=text&&sortDirection=desc' })
+        renderComponent({
+          path: '/?sortBy=text&&sortDirection=desc',
+          enableSorting: true,
+        })
       );
       expect(screen.getAllByRole('row').length).toEqual(data.length + 1);
       const th = screen.getByRole('columnheader', { name: 'Text' });
@@ -176,6 +211,33 @@ describe('Table', () => {
       expect(rows[2].textContent?.indexOf('ipsum')).toBeGreaterThan(-1);
       expect(rows[3].textContent?.indexOf('lorem')).toBeGreaterThan(-1);
       expect(rows[4].textContent?.indexOf('sit')).toBeGreaterThan(-1);
+    });
+  });
+
+  describe('Row Selecting', () => {
+    beforeEach(() => {
+      renderComponent({
+        enableRowSelection: (row: Row<Datum>) => row.original.selectable,
+        batchActionsBar: () => <div>I am Action Bar</div>,
+      });
+    });
+    it('renders selectable rows', () => {
+      expect(screen.getAllByRole('row').length).toEqual(data.length + 1);
+      const checkboxes = screen.getAllByRole('checkbox');
+      expect(checkboxes.length).toEqual(data.length + 1);
+      expect(checkboxes[1]).toBeDisabled();
+      expect(checkboxes[2]).toBeEnabled();
+      expect(checkboxes[3]).toBeEnabled();
+      expect(checkboxes[4]).toBeDisabled();
+    });
+
+    it('renders action bar', () => {
+      expect(screen.getAllByRole('row').length).toEqual(data.length + 1);
+      expect(screen.queryByText('I am Action Bar')).not.toBeInTheDocument();
+      const checkboxes = screen.getAllByRole('checkbox');
+      expect(checkboxes.length).toEqual(data.length + 1);
+      userEvent.click(checkboxes[2]);
+      expect(screen.getByText('I am Action Bar')).toBeInTheDocument();
     });
   });
 });
