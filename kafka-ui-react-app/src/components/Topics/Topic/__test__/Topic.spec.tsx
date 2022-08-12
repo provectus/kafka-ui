@@ -98,9 +98,9 @@ describe('Details', () => {
   });
   describe('Action Bar', () => {
     describe('when it has readonly flag', () => {
-      it('does not render the Action button a Topic', () => {
+      it('renders disabled the Action button a Topic', () => {
         renderComponent(true);
-        expect(screen.queryByText('Produce Message')).not.toBeInTheDocument();
+        expect(screen.getByText('Produce Message')).toBeDisabled();
       });
     });
 
