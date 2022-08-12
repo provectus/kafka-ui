@@ -15,7 +15,7 @@ export const BASE_PARAMS: ConfigurationParameters = {
   },
 };
 
-export const TOPIC_NAME_VALIDATION_PATTERN = /^[.,A-Za-z0-9_-]+$/;
+export const TOPIC_NAME_VALIDATION_PATTERN = /^[a-zA-Z0-9._-]+$/;
 export const SCHEMA_NAME_VALIDATION_PATTERN = /^[.,A-Za-z0-9_/-]+$/;
 
 export const TOPIC_CUSTOM_PARAMS_PREFIX = 'customParams';
