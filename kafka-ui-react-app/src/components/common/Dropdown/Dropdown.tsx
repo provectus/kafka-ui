@@ -21,7 +21,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, disabled, children }) => {
   };
 
   return (
-    <>
+    <S.Wrapper>
       <S.DropdownButton
         onClick={handleClick}
         ref={ref}
@@ -42,7 +42,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, disabled, children }) => {
       >
         {children}
       </S.Dropdown>
-    </>
+    </S.Wrapper>
   );
 };
 
