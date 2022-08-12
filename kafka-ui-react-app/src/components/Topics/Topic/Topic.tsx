@@ -9,6 +9,7 @@ import {
   clusterTopicSendMessageRelativePath,
   clusterTopicStatisticsRelativePath,
   clusterTopicsPath,
+  clusterTopicSendMessagePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -75,7 +76,7 @@ const Topic: React.FC = () => {
         <Button
           buttonSize="M"
           buttonType="primary"
-          to={`../${clusterTopicSendMessageRelativePath}`}
+          to={clusterTopicSendMessagePath(clusterName, topicName)}
           disabled={isReadOnly}
         >
           Produce Message
