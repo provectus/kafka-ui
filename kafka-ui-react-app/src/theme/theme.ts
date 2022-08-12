@@ -151,7 +151,7 @@ const theme = {
     },
     variants: {
       1: {
-        fontSize: '24px',
+        fontSize: '20px',
         lineHeight: '32px',
       },
       2: {
