@@ -41,8 +41,10 @@ import TopicConsumerGroups from './ConsumerGroups/TopicConsumerGroups';
 import Statistics from './Statistics/Statistics';
 import Edit from './Edit/Edit';
 import SendMessage from './SendMessage/SendMessage';
+import { FloatingSidebar } from './Topics.styled';
 
 const Topic: React.FC = () => {
+  const [isVisible, setIsVisible] = React.useState(false);
   const dispatch = useAppDispatch();
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const navigate = useNavigate();
@@ -76,7 +78,7 @@ const Topic: React.FC = () => {
         <Button
           buttonSize="M"
           buttonType="primary"
-          to={clusterTopicSendMessagePath(clusterName, topicName)}
+          onClick={() => setIsVisible(true)}
           disabled={isReadOnly}
         >
           Produce Message
@@ -90,7 +92,6 @@ const Topic: React.FC = () => {
               especially important consequences.
             </DropdownItemHint>
           </DropdownItem>
-
           <DropdownItem
             onClick={() =>
               dispatch(clearTopicMessages({ clusterName, topicName })).unwrap()
@@ -198,6 +199,9 @@ const Topic: React.FC = () => {
           />
         </Routes>
       </Suspense>
+      <FloatingSidebar $visible={isVisible}>
+        <SendMessage />
+      </FloatingSidebar>
     </>
   );
 };

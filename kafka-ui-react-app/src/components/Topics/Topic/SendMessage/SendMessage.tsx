@@ -1,10 +1,7 @@
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import {
-  clusterTopicMessagesRelativePath,
-  RouteParamsClusterTopic,
-} from 'lib/paths';
+import { clusterTopicMessagesPath, RouteParamsClusterTopic } from 'lib/paths';
 import jsf from 'json-schema-faker';
 import { Button } from 'components/common/Button/Button';
 import Editor from 'components/common/Editor/Editor';
@@ -129,7 +126,7 @@ const SendMessage: React.FC = () => {
         headers,
         partition: !partition ? 0 : partition,
       });
-      navigate(`../${clusterTopicMessagesRelativePath}`);
+      navigate(clusterTopicMessagesPath(clusterName, topicName));
     }
   };
 
