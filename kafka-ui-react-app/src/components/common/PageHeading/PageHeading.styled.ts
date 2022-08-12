@@ -20,7 +20,7 @@ export const BackLink = styled(NavLink)`
     right: -11px;
     bottom: 2px;
     border-left: 1px solid ${({ theme }) => theme.pageHeading.dividerColor};
-    height: 25px;
+    height: 20px;
     transform: rotate(14deg);
   }
 `;

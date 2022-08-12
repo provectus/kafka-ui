@@ -6,11 +6,10 @@ import {
 } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
-import { clusterTopicsPath, RouteParamsClusterTopic } from 'lib/paths';
+import { RouteParamsClusterTopic } from 'lib/paths';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
-import PageHeading from 'components/common/PageHeading/PageHeading';
 import useAppParams from 'lib/hooks/useAppParams';
 import topicParamsTransformer from 'components/Topics/Topic/Edit/topicParamsTransformer';
 import { MILLISECONDS_IN_WEEK } from 'lib/constants';
@@ -63,11 +62,6 @@ const Edit: React.FC = () => {
 
   return (
     <>
-      <PageHeading
-        text={`Edit ${topicName}`}
-        backText="Topics"
-        backTo={clusterTopicsPath(clusterName)}
-      />
       <FormProvider {...methods}>
         <TopicForm
           topicName={topicName}
