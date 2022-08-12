@@ -391,58 +391,66 @@ const Filters: React.FC<FiltersProps> = ({
 
   return (
     <S.FiltersWrapper>
-      <div>
-        <S.FilterInputs>
-          <Search
-            placeholder="Search"
-            value={query}
+      <S.Filters>
+        <Search
+          placeholder="Search"
+          value={query}
+          disabled={isTailing}
+          handleSearch={(value: string) => setQuery(value)}
+        />
+        <S.SeekTypeSelectorWrapper>
+          <S.SeekTypeSelect
+            id="selectSeekType"
+            onChange={(option) => setCurrentSeekType(option as SeekType)}
+            value={currentSeekType}
+            selectSize="M"
+            minWidth="100px"
+            options={SeekTypeOptions}
             disabled={isTailing}
-            handleSearch={(value: string) => setQuery(value)}
           />
-          <S.SeekTypeSelectorWrapper>
-            <S.SeekTypeSelect
-              id="selectSeekType"
-              onChange={(option) => setCurrentSeekType(option as SeekType)}
-              value={currentSeekType}
-              selectSize="M"
-              minWidth="100px"
-              options={SeekTypeOptions}
+          {currentSeekType === SeekType.OFFSET ? (
+            <S.OffsetSelector
+              id="offset"
+              type="text"
+              inputSize="M"
+              value={offset}
+              placeholder="Offset"
+              onChange={({ target: { value } }) => setOffset(value)}
               disabled={isTailing}
             />
-            {currentSeekType === SeekType.OFFSET ? (
-              <S.OffsetSelector
-                id="offset"
-                type="text"
-                inputSize="M"
-                value={offset}
-                placeholder="Offset"
-                onChange={({ target: { value } }) => setOffset(value)}
-                disabled={isTailing}
-              />
-            ) : (
-              <S.DatePickerInput
-                selected={timestamp}
-                onChange={(date: Date | null) => setTimestamp(date)}
-                showTimeInput
-                timeInputLabel="Time:"
-                dateFormat="MMMM d, yyyy HH:mm"
-                placeholderText="Select timestamp"
-                disabled={isTailing}
-              />
-            )}
-          </S.SeekTypeSelectorWrapper>
-          <MultiSelect
-            options={partitions.map((p) => ({
-              label: `Partition #${p.partition.toString()}`,
-              value: p.partition,
-            }))}
-            filterOptions={filterOptions}
-            value={selectedPartitions}
-            onChange={setSelectedPartitions}
-            labelledBy="Select partitions"
-            disabled={isTailing}
-          />
-          <S.ClearAll onClick={handleClearAllFilters}>Clear all</S.ClearAll>
+          ) : (
+            <S.DatePickerInput
+              selected={timestamp}
+              onChange={(date: Date | null) => setTimestamp(date)}
+              showTimeInput
+              timeInputLabel="Time:"
+              dateFormat="MMMM d, yyyy HH:mm"
+              placeholderText="Select timestamp"
+              disabled={isTailing}
+            />
+          )}
+        </S.SeekTypeSelectorWrapper>
+        <MultiSelect
+          options={partitions.map((p) => ({
+            label: `Partition #${p.partition.toString()}`,
+            value: p.partition,
+          }))}
+          filterOptions={filterOptions}
+          value={selectedPartitions}
+          onChange={setSelectedPartitions}
+          labelledBy="Select partitions"
+          disabled={isTailing}
+        />
+        <S.Buttons>
+          <Button
+            type="button"
+            buttonType="secondary"
+            buttonSize="M"
+            onClick={handleClearAllFilters}
+            style={{ fontWeight: 500 }}
+          >
+            Clear all
+          </Button>
           {isFetching ? (
             <Button
               type="button"
@@ -457,7 +465,7 @@ const Filters: React.FC<FiltersProps> = ({
           ) : (
             <Button
               type="submit"
-              buttonType="secondary"
+              buttonType="primary"
               buttonSize="M"
               disabled={isSubmitDisabled}
               onClick={() => handleFiltersSubmit(offset)}
@@ -466,16 +474,16 @@ const Filters: React.FC<FiltersProps> = ({
               Submit
             </Button>
           )}
-        </S.FilterInputs>
-        <Select
-          selectSize="M"
-          onChange={(option) => changeSeekDirection(option as string)}
-          value={seekDirection}
-          minWidth="120px"
-          options={SeekDirectionOptions}
-          isLive={isLive}
-        />
-      </div>
+        </S.Buttons>
+      </S.Filters>
+      <Select
+        onChange={(option) => changeSeekDirection(option as string)}
+        value={seekDirection}
+        options={SeekDirectionOptions}
+        isLive={isLive}
+        minWidth="100%"
+      />
+
       <S.ActiveSmartFilterWrapper>
         <Button buttonType="primary" buttonSize="M" onClick={toggle}>
           <PlusIcon />

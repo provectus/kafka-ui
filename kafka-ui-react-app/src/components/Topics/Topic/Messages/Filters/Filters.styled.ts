@@ -15,27 +15,21 @@ interface MessageLoadingSpinnerProps {
 }
 
 export const FiltersWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding-left: 16px;
-  padding-right: 16px;
-
-  & > div:first-child {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 16px;
-  }
+  padding: 16px;
 `;
 
-export const FilterInputs = styled.div`
+export const Filters = styled.div`
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-items: center;
-  width: 90%;
+  padding-bottom: 16px;
+`;
 
-  & > div:first-child {
-    width: 25%;
-  }
+export const Buttons = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 8px;
 `;
 
 export const SeekTypeSelectorWrapper = styled.div`
@@ -79,11 +73,9 @@ export const DatePickerInput = styled(DatePicker)`
 
 export const FiltersMetrics = styled.div`
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
   align-items: center;
-  gap: 22px;
-  padding-top: 16px;
-  padding-bottom: 16px;
+  gap: 8px;
 `;
 
 export const Metric = styled.div`
@@ -96,12 +88,6 @@ export const MetricsIcon = styled.div`
   color: ${({ theme }) => theme.metrics.filters.color.icon};
   padding-right: 6px;
   height: 12px;
-`;
-
-export const ClearAll = styled.span`
-  color: ${({ theme }) => theme.metrics.filters.color.normal};
-  font-size: 12px;
-  cursor: pointer;
 `;
 
 export const ButtonContainer = styled.div`

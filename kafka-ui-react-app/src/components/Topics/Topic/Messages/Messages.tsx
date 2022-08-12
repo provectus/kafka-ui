@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 
 import FiltersContainer from './Filters/FiltersContainer';
 import MessagesTable from './MessagesTable';
+import * as S from './Messages.styled';
 
 export const SeekDirectionOptionsObj = {
   [SeekDirection.FORWARD]: {
@@ -75,8 +76,10 @@ const Messages: React.FC = () => {
 
   return (
     <TopicMessagesContext.Provider value={contextValue}>
-      <FiltersContainer />
-      <MessagesTable />
+      <S.Wrapper>
+        <MessagesTable />
+        <FiltersContainer />
+      </S.Wrapper>
     </TopicMessagesContext.Provider>
   );
 };
