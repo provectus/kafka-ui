@@ -44,7 +44,7 @@ const TopicConsumerGroups: React.FC = () => {
             <td>{consumer.coordinator?.id}</td>
             <td>
               {consumer.state && (
-                <Tag color={getTagColor(consumer)}>{`${consumer.state
+                <Tag color={getTagColor(consumer.state)}>{`${consumer.state
                   .charAt(0)
                   .toUpperCase()}${consumer.state
                   .slice(1)

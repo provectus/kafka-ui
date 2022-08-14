@@ -82,7 +82,9 @@ const Details: React.FC = () => {
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="State">
-            <Tag color={getTagColor(consumerGroup)}>{consumerGroup.state}</Tag>
+            <Tag color={getTagColor(consumerGroup.state)}>
+              {consumerGroup.state}
+            </Tag>
           </Metrics.Indicator>
           <Metrics.Indicator label="Members">
             {consumerGroup.members}
