@@ -8,9 +8,10 @@ import {
 import { getKsqlExecution } from 'redux/reducers/ksqlDb/selectors';
 import { BASE_PARAMS } from 'lib/constants';
 import { KsqlResponse, KsqlTableResponse } from 'generated-sources';
-import { ClusterNameRoute } from 'lib/paths';
+import { clusterKsqlDbPath, ClusterNameRoute } from 'lib/paths';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import { showAlert, showSuccessAlert } from 'lib/errorHandling';
+import PageHeading from 'components/common/PageHeading/PageHeading';
 
 import type { FormValues } from './QueryForm/QueryForm';
 import * as S from './Query.styled';
@@ -200,6 +201,11 @@ const Query: FC = () => {
 
   return (
     <>
+      <PageHeading
+        text="Query"
+        backText="KSQL DB"
+        backTo={clusterKsqlDbPath(clusterName)}
+      />
       <QueryForm
         fetching={fetching}
         hasResults={!!KSQLTable}

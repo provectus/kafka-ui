@@ -1,5 +1,4 @@
 import { ConfigurationParameters } from 'generated-sources';
-import { BreadcrumbDefinitions } from 'components/common/Breadcrumb/Breadcrumb';
 
 declare global {
   interface Window {
@@ -58,10 +57,6 @@ export const GIT_REPO_LATEST_RELEASE_LINK =
   'https://api.github.com/repos/provectus/kafka-ui/releases/latest';
 export const GIT_TAG = process.env.VITE_TAG;
 export const GIT_COMMIT = process.env.VITE_COMMIT;
-
-export const BREADCRUMB_DEFINITIONS: BreadcrumbDefinitions = {
-  Ksqldb: 'ksqlDB',
-};
 
 export enum AsyncRequestStatus {
   initial = 'initial',

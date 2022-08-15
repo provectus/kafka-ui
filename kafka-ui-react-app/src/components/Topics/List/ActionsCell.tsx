@@ -6,7 +6,11 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import { ClusterNameRoute } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
-import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownItemHint,
+} from 'components/common/Dropdown';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   topicKeys,
@@ -26,7 +30,7 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
   const deleteTopic = useDeleteTopic(clusterName);
   const recreateTopic = useRecreateTopic({ clusterName, topicName: name });
 
-  const isHidden = internal || isReadOnly;
+  const disabled = internal || isReadOnly;
 
   const clearTopicMessagesHandler = async () => {
     await dispatch(
@@ -38,15 +42,19 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
   const isCleanupDisabled = cleanUpPolicy !== CleanUpPolicy.DELETE;
 
   return (
-    <Dropdown disabled={isHidden}>
+    <Dropdown disabled={disabled}>
       <DropdownItem
         disabled={isCleanupDisabled}
         onClick={clearTopicMessagesHandler}
         confirm="Are you sure want to clear topic messages?"
         danger
-        title="Cleanup is alowed only for topics with DELETE policy"
       >
         Clear Messages
+        <DropdownItemHint>
+          Clearing messages is only allowed for topics
+          <br />
+          with DELETE policy
+        </DropdownItemHint>
       </DropdownItem>
       <DropdownItem
         onClick={recreateTopic.mutateAsync}
@@ -67,14 +75,16 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
             Are you sure want to remove <b>{name}</b> topic?
           </>
         }
-        title={
-          isTopicDeletionAllowed
-            ? 'The topic deletion is restricted by app configuration'
-            : ''
-        }
         danger
       >
         Remove Topic
+        {!isTopicDeletionAllowed && (
+          <DropdownItemHint>
+            The topic deletion is restricted at the application
+            <br />
+            configuration level
+          </DropdownItemHint>
+        )}
       </DropdownItem>
     </Dropdown>
   );

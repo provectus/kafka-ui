@@ -1,7 +1,7 @@
 import React from 'react';
 import { TopicFormData } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
-import { ClusterNameRoute } from 'lib/paths';
+import { ClusterNameRoute, clusterTopicsPath } from 'lib/paths';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -45,7 +45,11 @@ const New: React.FC = () => {
 
   return (
     <>
-      <PageHeading text={search ? 'Copy Topic' : 'Create new Topic'} />
+      <PageHeading
+        text={search ? 'Copy' : 'Create'}
+        backText="Topics"
+        backTo={clusterTopicsPath(clusterName)}
+      />
       <FormProvider {...methods}>
         <TopicForm
           topicName={name}

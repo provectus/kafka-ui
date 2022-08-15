@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import useAppParams from 'lib/hooks/useAppParams';
 import {
   clusterConsumerGroupResetRelativePath,
+  clusterConsumerGroupsPath,
   ClusterGroupParam,
 } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -64,7 +65,11 @@ const Details: React.FC = () => {
   return (
     <div>
       <div>
-        <PageHeading text={consumerGroupID}>
+        <PageHeading
+          text={consumerGroupID}
+          backTo={clusterConsumerGroupsPath(clusterName)}
+          backText="Consumers"
+        >
           {!isReadOnly && (
             <Dropdown>
               <DropdownItem onClick={onResetOffsets}>Reset offset</DropdownItem>

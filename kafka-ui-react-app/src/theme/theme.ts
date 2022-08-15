@@ -95,8 +95,16 @@ const theme = {
       color: Colors.neutral[20],
     },
   },
+  pageHeading: {
+    dividerColor: Colors.neutral[30],
+    backLink: {
+      color: {
+        normal: Colors.brand[70],
+        hover: Colors.brand[60],
+      },
+    },
+  },
   panelColor: Colors.neutral[0],
-  breadcrumb: Colors.neutral[30],
   connectEditWarning: Colors.yellow[10],
   dropdown: {
     backgroundColor: Colors.neutral[0],
@@ -143,7 +151,7 @@ const theme = {
     },
     variants: {
       1: {
-        fontSize: '24px',
+        fontSize: '20px',
         lineHeight: '32px',
       },
       2: {
@@ -293,6 +301,7 @@ const theme = {
     border: {
       top: Colors.neutral[5],
       bottom: Colors.neutral[5],
+      contrast: Colors.neutral[30],
     },
     overlay: Colors.transparency[10],
     shadow: Colors.transparency[20],
