@@ -19,8 +19,8 @@ import fetchMock from 'fetch-mock';
 import { schemasPayload, schemasEmptyPayload } from './fixtures';
 
 const clusterName = 'testClusterName';
-const schemasAPIUrl = `/api/clusters/${clusterName}/schemas`;
-const schemasAPICompabilityUrl = `${schemasAPIUrl}/compatibility`;
+const schemasAPIUrl = `/api/clusters/${clusterName}/schemas?page=1&perPage=25`;
+const schemasAPICompabilityUrl = `/api/clusters/${clusterName}/schemas/compatibility`;
 const renderComponent = (
   initialState: RootState['schemas'] = schemasInitialState,
   context: ContextProps = contextInitialValue
@@ -109,6 +109,7 @@ describe('List', () => {
           schemasAPIUrl,
           schemasPayload
         );
+        fetchMock.getOnce(schemasAPICompabilityUrl, 200);
         await act(() => {
           renderComponent(schemasFulfilledState, {
             ...contextInitialValue,

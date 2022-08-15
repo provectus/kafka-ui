@@ -10,11 +10,11 @@ import {
 import useSearch from 'lib/hooks/useSearch';
 import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
-import { ClusterNameRoute } from 'lib/paths';
+import { clusterConsumerGroupDetailsPath, ClusterNameRoute } from 'lib/paths';
 import { fetchConsumerGroupsPaged } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import { ColumnDef } from '@tanstack/react-table';
 import Table, { TagCell, LinkCell } from 'components/common/NewTable';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
 
 export interface Props {
@@ -27,6 +27,7 @@ const List: React.FC<Props> = ({ consumerGroups, totalPages }) => {
   const dispatch = useAppDispatch();
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     dispatch(
@@ -99,6 +100,11 @@ const List: React.FC<Props> = ({ consumerGroups, totalPages }) => {
         emptyMessage="No active consumer groups found"
         serverSideProcessing
         enableSorting
+        onRowClick={({ original }) =>
+          navigate(
+            clusterConsumerGroupDetailsPath(clusterName, original.groupId)
+          )
+        }
       />
     </>
   );

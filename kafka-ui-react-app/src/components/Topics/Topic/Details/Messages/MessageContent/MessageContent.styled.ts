@@ -69,22 +69,6 @@ export const MetadataMeta = styled.p`
   font-size: 12px;
 `;
 
-export const PaginationButton = styled.button`
-  display: flex;
-  align-items: center;
-  padding: 6px 12px;
-  height: 32px;
-  border: 1px solid ${({ theme }) => theme.pagination.borderColor.normal};
-  box-sizing: border-box;
-  border-radius: 4px;
-  color: ${({ theme }) => theme.pagination.color.normal};
-  background: none;
-  font-family: Inter;
-  margin-right: 13px;
-  cursor: pointer;
-  font-size: 14px;
-`;
-
 export const Tab = styled.button<{ $active?: boolean }>(
   ({ theme, $active }) => css`
     background-color: ${theme.secondaryTab.backgroundColor[
