@@ -117,7 +117,7 @@ public class ConsumerGroupService {
       ConsumerGroupOrderingDTO orderBy,
       SortOrderDTO sortOrderDto
   ) {
-    var comparator = sortOrderDto.equals(SortOrderDTO.ASC)
+    var comparator = sortOrderDto.equals(SortOrderDTO.DESC)
         ? getPaginationComparator(orderBy)
         : getPaginationComparator(orderBy).reversed();
     return adminClientService.get(cluster).flatMap(ac ->
