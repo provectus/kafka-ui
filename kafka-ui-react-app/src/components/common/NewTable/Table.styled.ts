@@ -99,13 +99,13 @@ export const Th = styled.th<ThProps>(
 );
 
 interface RowProps {
-  expandable?: boolean;
+  clickable?: boolean;
   expanded?: boolean;
 }
 
 export const Row = styled.tr<RowProps>(
-  ({ theme: { table }, expanded, expandable }) => `
-  cursor: ${expandable ? 'pointer' : 'default'};
+  ({ theme: { table }, expanded, clickable }) => `
+  cursor: ${clickable ? 'pointer' : 'default'};
   background-color: ${table.tr.backgroundColor[expanded ? 'hover' : 'normal']};
   &:hover {
     background-color: ${table.tr.backgroundColor.hover};

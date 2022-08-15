@@ -28,13 +28,26 @@ export interface TableProps<TData> {
   data: TData[];
   pageCount?: number;
   columns: ColumnDef<TData>[];
-  renderSubComponent?: React.FC<{ row: Row<TData> }>;
-  getRowCanExpand?: (row: Row<TData>) => boolean;
+
+  // Server-side processing: sorting, pagination
   serverSideProcessing?: boolean;
-  enableSorting?: boolean;
-  enableRowSelection?: boolean | ((row: Row<TData>) => boolean);
-  batchActionsBar?: React.FC<{ rows: Row<TData>[]; resetRowSelection(): void }>;
+
+  // Expandeble rows
+  getRowCanExpand?: (row: Row<TData>) => boolean; // Enables the ability to expand row. Use `() => true` when want to expand all rows.
+  renderSubComponent?: React.FC<{ row: Row<TData> }>; // Component to render expanded row.
+
+  // Selectable rows
+  enableRowSelection?: boolean | ((row: Row<TData>) => boolean); // Enables the ability to select row.
+  batchActionsBar?: React.FC<{ rows: Row<TData>[]; resetRowSelection(): void }>; // Component to render batch actions bar for slected rows
+
+  // Sorting.
+  enableSorting?: boolean; // Enables sorting for table.
+
+  // Placeholder for empty table
   emptyMessage?: string;
+
+  // Handles row click. Can not be combined with `enableRowSelection` && expandable rows.
+  onRowClick?: (row: Row<TData>) => void;
 }
 
 type UpdaterFn<T> = (previousState: T) => T;
@@ -72,6 +85,7 @@ const getSortingFromSearchParams = (searchParams: URLSearchParams) => {
  *     `enableSorting = false` to the column def.
  *    - table component stores the sorting state in URLSearchParams. Use `sortBy` and `sortDirection`
  *      search param to set default sortings.
+ *    - use `id` property of the column def to set the sortBy for server side sorting.
  *
  * 2. Pagination
  *    - pagination enabled by default.
@@ -107,6 +121,7 @@ const Table: React.FC<TableProps<any>> = ({
   enableRowSelection = false,
   batchActionsBar,
   emptyMessage,
+  onRowClick,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [rowSelection, setRowSelection] = React.useState({});
@@ -157,6 +172,24 @@ const Table: React.FC<TableProps<any>> = ({
 
   const Bar = batchActionsBar;
 
+  const handleRowClick = (row: Row<typeof data>) => (e: React.MouseEvent) => {
+    // If row selection is enabled do not handle row click.
+    if (enableRowSelection) return undefined;
+
+    // If row can be expanded do not handle row click.
+    if (row.getCanExpand()) {
+      e.stopPropagation();
+      return row.toggleExpanded();
+    }
+
+    if (onRowClick) {
+      e.stopPropagation();
+      return onRowClick(row);
+    }
+
+    return undefined;
+  };
+
   return (
     <>
       {table.getSelectedRowModel().flatRows.length > 0 && Bar && (
@@ -205,9 +238,12 @@ const Table: React.FC<TableProps<any>> = ({
           {table.getRowModel().rows.map((row) => (
             <React.Fragment key={row.id}>
               <S.Row
-                expandable={row.getCanExpand()}
                 expanded={row.getIsExpanded()}
-                onClick={() => row.getCanExpand() && row.toggleExpanded()}
+                onClick={handleRowClick(row)}
+                clickable={
+                  !enableRowSelection &&
+                  (row.getCanExpand() || onRowClick !== undefined)
+                }
               >
                 {!!enableRowSelection && (
                   <td key={`${row.id}-select`}>

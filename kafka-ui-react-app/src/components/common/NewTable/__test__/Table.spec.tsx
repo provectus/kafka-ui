@@ -4,20 +4,54 @@ import Table, {
   TableProps,
   TimestampCell,
   SizeCell,
+  LinkCell,
+  TagCell,
 } from 'components/common/NewTable';
 import { screen, waitFor } from '@testing-library/dom';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import userEvent from '@testing-library/user-event';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
 import { act } from '@testing-library/react';
+import { ConnectorState, ConsumerGroupState } from 'generated-sources';
+
+const mockedUsedNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockedUsedNavigate,
+}));
 
 type Datum = typeof data[0];
 
 const data = [
-  { timestamp: 1660034383725, text: 'lorem', selectable: false, size: 1234 },
-  { timestamp: 1660034399999, text: 'ipsum', selectable: true, size: 3 },
-  { timestamp: 1660034399922, text: 'dolor', selectable: true, size: 50000 },
-  { timestamp: 1660034199922, text: 'sit', selectable: false, size: 1_312_323 },
+  {
+    timestamp: 1660034383725,
+    text: 'lorem',
+    selectable: false,
+    size: 1234,
+    tag: ConnectorState.RUNNING,
+  },
+  {
+    timestamp: 1660034399999,
+    text: 'ipsum',
+    selectable: true,
+    size: 3,
+    tag: ConnectorState.FAILED,
+  },
+  {
+    timestamp: 1660034399922,
+    text: 'dolor',
+    selectable: true,
+    size: 50000,
+    tag: ConsumerGroupState.EMPTY,
+  },
+  {
+    timestamp: 1660034199922,
+    text: 'sit',
+    selectable: false,
+    size: 1_312_323,
+    tag: 'some_string',
+  },
 ];
 
 const columns: ColumnDef<Datum>[] = [
@@ -29,11 +63,17 @@ const columns: ColumnDef<Datum>[] = [
   {
     header: 'Text',
     accessorKey: 'text',
+    cell: LinkCell,
   },
   {
     header: 'Size',
     accessorKey: 'size',
     cell: SizeCell,
+  },
+  {
+    header: 'Tag',
+    accessorKey: 'tag',
+    cell: TagCell,
   },
 ];
 
@@ -45,7 +85,7 @@ interface Props extends TableProps<Datum> {
 
 const renderComponent = (props: Partial<Props> = {}) => {
   render(
-    <WithRoute path="/">
+    <WithRoute path="/*">
       <Table
         columns={columns}
         data={data}
@@ -94,6 +134,21 @@ describe('Table', () => {
     ).toBeInTheDocument();
   });
 
+  describe('LinkCell', () => {
+    it('renders link', () => {
+      renderComponent();
+      expect(screen.getByRole('link', { name: 'lorem' })).toBeInTheDocument();
+    });
+
+    it('link click stops propagation', () => {
+      const onRowClick = jest.fn();
+      renderComponent({ onRowClick });
+      const link = screen.getByRole('link', { name: 'lorem' });
+      userEvent.click(link);
+      expect(onRowClick).not.toHaveBeenCalled();
+    });
+  });
+
   describe('ExpanderCell', () => {
     it('renders button', () => {
       renderComponent({ getRowCanExpand: () => true });
@@ -114,6 +169,14 @@ describe('Table', () => {
       ).not.toBeInTheDocument();
       expect(screen.queryByText('I am expanded row')).not.toBeInTheDocument();
     });
+  });
+
+  it('renders TagCell', () => {
+    renderComponent();
+    expect(screen.getByText(data[0].tag)).toBeInTheDocument();
+    expect(screen.getByText(data[1].tag)).toBeInTheDocument();
+    expect(screen.getByText(data[2].tag)).toBeInTheDocument();
+    expect(screen.getByText(data[3].tag)).toBeInTheDocument();
   });
 
   describe('Pagination', () => {
@@ -238,6 +301,36 @@ describe('Table', () => {
       expect(checkboxes.length).toEqual(data.length + 1);
       userEvent.click(checkboxes[2]);
       expect(screen.getByText('I am Action Bar')).toBeInTheDocument();
+    });
+  });
+  describe('Clickable Row', () => {
+    const onRowClick = jest.fn();
+    it('handles onRowClick', () => {
+      renderComponent({ onRowClick });
+      const rows = screen.getAllByRole('row');
+      expect(rows.length).toEqual(data.length + 1);
+      userEvent.click(rows[1]);
+      expect(onRowClick).toHaveBeenCalledTimes(1);
+    });
+    it('does nothing unless onRowClick is provided', () => {
+      renderComponent();
+      const rows = screen.getAllByRole('row');
+      expect(rows.length).toEqual(data.length + 1);
+      userEvent.click(rows[1]);
+    });
+    it('does not handle onRowClick if enableRowSelection', () => {
+      renderComponent({ onRowClick, enableRowSelection: true });
+      const rows = screen.getAllByRole('row');
+      expect(rows.length).toEqual(data.length + 1);
+      userEvent.click(rows[1]);
+      expect(onRowClick).not.toHaveBeenCalled();
+    });
+    it('does not handle onRowClick if expandable rows', () => {
+      renderComponent({ onRowClick, getRowCanExpand: () => true });
+      const rows = screen.getAllByRole('row');
+      expect(rows.length).toEqual(data.length + 1);
+      userEvent.click(rows[1]);
+      expect(onRowClick).not.toHaveBeenCalled();
     });
   });
 });

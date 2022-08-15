@@ -72,7 +72,9 @@ const ListItem: React.FC<ListItemProps> = ({
           ))}
         </S.TagsWrapper>
       </td>
-      <td>{status && <Tag color={getTagColor(status)}>{status.state}</Tag>}</td>
+      <td>
+        {status && <Tag color={getTagColor(status.state)}>{status.state}</Tag>}
+      </td>
       <td>
         {runningTasks && (
           <span>
