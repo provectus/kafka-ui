@@ -78,6 +78,7 @@ When creating a PR please do the following:
 4. If the PR does not close any of the issues, the PR itself might need to have a milestone set. Reach out to the maintainers to consult.
 5. Assign the PR to yourself. A PR assignee is someone whose goal is to get the PR merged.
 6. Add reviewers. As a rule, reviewers' suggestions are pretty good; please use them.
+7. Upon merging the PR, please use a meaningful commit message, task name should be fine in this case.
 
 ### Pull Request checklist
 

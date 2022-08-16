@@ -5,25 +5,17 @@ on:
     types: ['unlabeled', 'closed']
 jobs:
   remove:
-    if: ${{ github.event.label.name == 'status/feature_testing' || github.event.label.name == 'status/feature_testing_public' || github.event.action == 'closed'}}
     runs-on: ubuntu-latest
+    if: ${{ (github.event.label.name == 'status/feature_testing' || github.event.label.name == 'status/feature_testing_public') || (github.event.action == 'closed' && (contains(github.event.pull_request.labels.*.name, 'status/feature_testing') || contains(github.event.pull_request.labels.*.name, 'status/feature_testing_public'))) }}
     steps:
       - uses: actions/checkout@v3
-      - name: get branch name
-        id: extract_branch
-        run: |
-          tag='pr${{ github.event.pull_request.number }}'
-          echo ::set-output name=tag::${tag}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: clone
         run: |
           git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git
       - name: remove env
         run: |
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
-          echo "Branch:${{ steps.extract_branch.outputs.tag }}"
-          ./delete-env.sh ${{ steps.extract_branch.outputs.tag }} || true
+          ./delete-env.sh pr${{ github.event.pull_request.number }} || true
           git config --global user.email "kafka-ui-infra@provectus.com"
           git config --global user.name "kafka-ui-infra"
           git add ../kafka-ui-from-branch/

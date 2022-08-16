@@ -2,20 +2,18 @@ import React from 'react';
 import SendMessage from 'components/Topics/Topic/SendMessage/SendMessage';
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import fetchMock from 'fetch-mock';
 import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterTopicMessagesRelativePath,
   clusterTopicSendMessagePath,
 } from 'lib/paths';
-import { store } from 'redux/store';
-import { fetchTopicDetails } from 'redux/reducers/topics/topicsSlice';
-import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import validateMessage from 'components/Topics/Topic/SendMessage/validateMessage';
-import Alerts from 'components/Alerts/Alerts';
-import * as S from 'components/App.styled';
-
-import { testSchema } from './fixtures';
+import { externalTopicPayload, topicMessageSchema } from 'lib/fixtures/topics';
+import {
+  useSendMessage,
+  useTopicDetails,
+  useTopicMessageSchema,
+} from 'lib/hooks/api/topics';
 
 import Mock = jest.Mock;
 
@@ -32,37 +30,40 @@ jest.mock('components/Topics/Topic/SendMessage/validateMessage', () =>
   jest.fn()
 );
 
+jest.mock('lib/errorHandling', () => ({
+  ...jest.requireActual('lib/errorHandling'),
+  showServerError: jest.fn(),
+}));
+
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }));
 
+jest.mock('lib/hooks/api/topics', () => ({
+  useTopicDetails: jest.fn(),
+  useTopicMessageSchema: jest.fn(),
+  useSendMessage: jest.fn(),
+}));
+
 const clusterName = 'testCluster';
 const topicName = externalTopicPayload.name;
 
 const renderComponent = async () => {
+  const path = clusterTopicSendMessagePath(clusterName, topicName);
   await act(() => {
     render(
-      <>
-        <WithRoute path={clusterTopicSendMessagePath()}>
-          <SendMessage />
-        </WithRoute>
-        <S.AlertsContainer role="toolbar">
-          <Alerts />
-        </S.AlertsContainer>
-      </>,
-      {
-        initialEntries: [clusterTopicSendMessagePath(clusterName, topicName)],
-        store,
-      }
+      <WithRoute path={clusterTopicSendMessagePath()}>
+        <SendMessage />
+      </WithRoute>,
+      { initialEntries: [path] }
     );
   });
 };
 
 const renderAndSubmitData = async (error: string[] = []) => {
   await renderComponent();
-  expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   await act(() => {
     userEvent.click(screen.getByRole('listbox'));
   });
@@ -76,79 +77,55 @@ const renderAndSubmitData = async (error: string[] = []) => {
 };
 
 describe('SendMessage', () => {
-  beforeAll(() => {
-    store.dispatch(
-      fetchTopicDetails.fulfilled(
-        {
-          topicDetails: externalTopicPayload,
-          topicName,
-        },
-        'topic',
-        {
-          clusterName,
-          topicName,
-        }
-      )
-    );
+  beforeEach(() => {
+    (useTopicDetails as jest.Mock).mockImplementation(() => ({
+      data: externalTopicPayload,
+    }));
   });
+
   afterEach(() => {
-    fetchMock.reset();
     mockNavigate.mockClear();
   });
 
-  it('fetches schema on first render', async () => {
-    const fetchTopicMessageSchemaMock = fetchMock.getOnce(
-      `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
-      testSchema
-    );
-    await act(() => {
-      renderComponent();
-    });
-    expect(fetchTopicMessageSchemaMock.called()).toBeTruthy();
-  });
-
   describe('when schema is fetched', () => {
-    const messagesUrl = `/api/clusters/${clusterName}/topics/${topicName}/messages`;
-    const detailsUrl = `/api/clusters/${clusterName}/topics/${topicName}`;
-
     beforeEach(() => {
-      fetchMock.getOnce(
-        `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
-        testSchema
-      );
+      (useTopicMessageSchema as jest.Mock).mockImplementation(() => ({
+        data: topicMessageSchema,
+      }));
     });
 
     it('calls sendTopicMessage on submit', async () => {
-      const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, 200);
-      const fetchTopicDetailsMock = fetchMock.getOnce(detailsUrl, 200);
-
+      const sendTopicMessageMock = jest.fn();
+      (useSendMessage as jest.Mock).mockImplementation(() => ({
+        mutateAsync: sendTopicMessageMock,
+      }));
       await renderAndSubmitData();
-      expect(sendTopicMessageMock.called(messagesUrl)).toBeTruthy();
-      expect(fetchTopicDetailsMock.called(detailsUrl)).toBeTruthy();
-      expect(mockNavigate).toHaveBeenLastCalledWith(
-        `../${clusterTopicMessagesRelativePath}`
-      );
-    });
-
-    it('should make the sendTopicMessage but most find an error within it', async () => {
-      const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, {
-        throws: 'Error',
-      });
-      const fetchTopicDetailsMock = fetchMock.getOnce(detailsUrl, 200);
-      await renderAndSubmitData();
-      expect(sendTopicMessageMock.called()).toBeTruthy();
-      expect(fetchTopicDetailsMock.called(detailsUrl)).toBeFalsy();
-      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(sendTopicMessageMock).toHaveBeenCalledTimes(1);
       expect(mockNavigate).toHaveBeenLastCalledWith(
         `../${clusterTopicMessagesRelativePath}`
       );
     });
 
     it('should check and view validation error message when is not valid', async () => {
-      const sendTopicMessageMock = fetchMock.postOnce(messagesUrl, 200);
+      const sendTopicMessageMock = jest.fn();
+      (useSendMessage as jest.Mock).mockImplementation(() => ({
+        mutateAsync: sendTopicMessageMock,
+      }));
       await renderAndSubmitData(['error']);
-      expect(sendTopicMessageMock.called(messagesUrl)).toBeFalsy();
+      expect(sendTopicMessageMock).not.toHaveBeenCalled();
       expect(mockNavigate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('when schema is empty', () => {
+    beforeEach(() => {
+      (useTopicMessageSchema as jest.Mock).mockImplementation(() => ({
+        data: undefined,
+      }));
+    });
+    it('renders if schema is not defined', async () => {
+      await renderComponent();
+      expect(screen.getAllByRole('textbox')[0].nodeValue).toBeNull();
     });
   });
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ConsumerGroupOffsetsResetType } from 'generated-sources';
-import { ClusterGroupParam } from 'lib/paths';
+import { clusterConsumerGroupsPath, ClusterGroupParam } from 'lib/paths';
 import {
   Controller,
   FormProvider,
@@ -12,7 +12,7 @@ import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { groupBy } from 'lodash';
+import groupBy from 'lodash/groupBy';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ErrorMessage } from '@hookform/error-message';
 import Select from 'components/common/Select/Select';
@@ -170,7 +170,11 @@ const ResetOffsets: React.FC = () => {
 
   return (
     <FormProvider {...methods}>
-      <PageHeading text="Reset offsets" />
+      <PageHeading
+        text="Reset offsets"
+        backTo={clusterConsumerGroupsPath(clusterName)}
+        backText="Consumers"
+      />
       <S.Wrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <S.MainSelectors>

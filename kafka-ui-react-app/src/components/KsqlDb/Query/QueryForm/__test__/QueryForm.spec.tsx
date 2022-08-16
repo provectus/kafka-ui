@@ -1,7 +1,7 @@
 import { render } from 'lib/testHelpers';
 import React from 'react';
 import QueryForm, { Props } from 'components/KsqlDb/Query/QueryForm/QueryForm';
-import { screen, within } from '@testing-library/dom';
+import { screen, waitFor, within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { act } from '@testing-library/react';
 
@@ -26,20 +26,11 @@ describe('QueryForm', () => {
     // Represents SQL editor
     expect(within(KSQLBlock).getByRole('textbox')).toBeInTheDocument();
 
-    const streamPropertiesBlock = screen.getByLabelText(
-      'Stream properties (JSON format)'
-    );
+    const streamPropertiesBlock = screen.getByRole('textbox', { name: 'key' });
     expect(streamPropertiesBlock).toBeInTheDocument();
-    expect(
-      within(streamPropertiesBlock).getByText('Stream properties (JSON format)')
-    ).toBeInTheDocument();
-    expect(
-      within(streamPropertiesBlock).getByRole('button', { name: 'Clear' })
-    ).toBeInTheDocument();
-    // Represents JSON editor
-    expect(
-      within(streamPropertiesBlock).getByRole('textbox')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Stream properties:')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
+    expect(screen.queryAllByRole('textbox')[0]).toBeInTheDocument();
 
     // Form controls
     expect(screen.getByRole('button', { name: 'Execute' })).toBeInTheDocument();
@@ -69,58 +60,10 @@ describe('QueryForm', () => {
     await act(() =>
       userEvent.click(screen.getByRole('button', { name: 'Execute' }))
     );
-    expect(screen.getByText('ksql is a required field')).toBeInTheDocument();
-    expect(submitFn).not.toBeCalled();
-  });
-
-  it('renders error with non-JSON streamProperties', async () => {
-    renderComponent({
-      fetching: false,
-      hasResults: false,
-      handleClearResults: jest.fn(),
-      handleSSECancel: jest.fn(),
-      submitHandler: jest.fn(),
+    waitFor(() => {
+      expect(screen.getByText('ksql is a required field')).toBeInTheDocument();
+      expect(submitFn).not.toBeCalled();
     });
-
-    await act(() => {
-      // the use of `paste` is a hack that i found somewhere,
-      // `type` won't work
-      userEvent.paste(
-        within(
-          screen.getByLabelText('Stream properties (JSON format)')
-        ).getByRole('textbox'),
-        'not-a-JSON-string'
-      );
-
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
-    });
-
-    expect(
-      screen.getByText('streamsProperties is not JSON object')
-    ).toBeInTheDocument();
-  });
-
-  it('renders without error with correct JSON', async () => {
-    renderComponent({
-      fetching: false,
-      hasResults: false,
-      handleClearResults: jest.fn(),
-      handleSSECancel: jest.fn(),
-      submitHandler: jest.fn(),
-    });
-
-    await act(() => {
-      userEvent.paste(
-        within(
-          screen.getByLabelText('Stream properties (JSON format)')
-        ).getByRole('textbox'),
-        '{"totallyJSON": "string"}'
-      );
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
-    });
-    expect(
-      screen.queryByText('streamsProperties is not JSON object')
-    ).not.toBeInTheDocument();
   });
 
   it('submits with correct inputs', async () => {
@@ -134,18 +77,9 @@ describe('QueryForm', () => {
     });
 
     await act(() => {
-      userEvent.paste(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        'show tables;'
-      );
-
-      userEvent.paste(
-        within(
-          screen.getByLabelText('Stream properties (JSON format)')
-        ).getByRole('textbox'),
-        '{"totallyJSON": "string"}'
-      );
-
+      userEvent.paste(screen.getAllByRole('textbox')[0], 'show tables;');
+      userEvent.paste(screen.getByRole('textbox', { name: 'key' }), 'test');
+      userEvent.paste(screen.getByRole('textbox', { name: 'value' }), 'test');
       userEvent.click(screen.getByRole('button', { name: 'Execute' }));
     });
 
@@ -223,41 +157,7 @@ describe('QueryForm', () => {
     expect(submitFn.mock.calls.length).toBe(1);
   });
 
-  it('submits form with ctrl+enter on streamProperties editor', async () => {
-    const submitFn = jest.fn();
-    renderComponent({
-      fetching: false,
-      hasResults: false,
-      handleClearResults: jest.fn(),
-      handleSSECancel: jest.fn(),
-      submitHandler: submitFn,
-    });
-
-    await act(() => {
-      userEvent.paste(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        'show tables;'
-      );
-
-      userEvent.paste(
-        within(
-          screen.getByLabelText('Stream properties (JSON format)')
-        ).getByRole('textbox'),
-        '{"some":"json"}'
-      );
-
-      userEvent.type(
-        within(
-          screen.getByLabelText('Stream properties (JSON format)')
-        ).getByRole('textbox'),
-        '{ctrl}{enter}'
-      );
-    });
-
-    expect(submitFn.mock.calls.length).toBe(1);
-  });
-
-  it('clears KSQL with Clear button', async () => {
+  it('add new property', async () => {
     renderComponent({
       fetching: false,
       hasResults: false,
@@ -267,22 +167,15 @@ describe('QueryForm', () => {
     });
 
     await act(() => {
-      userEvent.paste(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        'show tables;'
-      );
       userEvent.click(
-        within(screen.getByLabelText('KSQL')).getByRole('button', {
-          name: 'Clear',
-        })
+        screen.getByRole('button', { name: 'Add Stream Property' })
       );
     });
-
-    expect(screen.queryByText('show tables;')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('textbox', { name: 'key' }).length).toEqual(2);
   });
 
-  it('clears streamProperties with Clear button', async () => {
-    renderComponent({
+  it('delete stream property', async () => {
+    await renderComponent({
       fetching: false,
       hasResults: false,
       handleClearResults: jest.fn(),
@@ -291,20 +184,13 @@ describe('QueryForm', () => {
     });
 
     await act(() => {
-      userEvent.paste(
-        within(
-          screen.getByLabelText('Stream properties (JSON format)')
-        ).getByRole('textbox'),
-        '{"some":"json"}'
-      );
       userEvent.click(
-        within(
-          screen.getByLabelText('Stream properties (JSON format)')
-        ).getByRole('button', {
-          name: 'Clear',
-        })
+        screen.getByRole('button', { name: 'Add Stream Property' })
       );
     });
-    expect(screen.queryByText('{"some":"json"}')).not.toBeInTheDocument();
+    await act(() => {
+      userEvent.click(screen.getAllByLabelText('deleteProperty')[0]);
+    });
+    expect(screen.getAllByRole('textbox', { name: 'key' }).length).toEqual(1);
   });
 });

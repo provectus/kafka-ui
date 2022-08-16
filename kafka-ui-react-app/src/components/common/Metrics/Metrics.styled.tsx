@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import { AlertType } from 'redux/interfaces';
 
 export const Wrapper = styled.div`
   padding: 1.5rem 1rem;
@@ -44,7 +43,7 @@ export const IndicatorsWrapper = styled.div`
 
 export const SectionTitle = styled.h5`
   font-weight: 500;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem 16px;
   font-size: 100%;
 `;
 
@@ -75,7 +74,7 @@ export const CircularAlert = styled.circle.attrs({
   cy: 2,
   r: 2,
 })<{
-  $type: AlertType;
+  $type: 'error' | 'success' | 'warning' | 'info';
 }>(
   ({ theme, $type }) => css`
     fill: ${theme.circularAlert.color[$type]};

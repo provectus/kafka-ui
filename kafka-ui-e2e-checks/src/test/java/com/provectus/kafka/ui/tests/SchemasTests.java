@@ -6,14 +6,22 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.schema.SchemaCreateView;
+import com.provectus.kafka.ui.utils.qaseIO.Status;
+import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
+import io.qase.api.annotation.CaseId;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
+import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
+
+import java.io.IOException;
 
 import static org.apache.kafka.common.utils.Utils.readFileAsString;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SchemasTests extends BaseTest {
 
+    private final long suiteId = 11;
+    private final String suiteTitle = "Schema Registry";
     public static final String SECOND_LOCAL = "secondLocal";
     public static final String SCHEMA_AVRO_CREATE = "avro_schema";
     public static final String SCHEMA_JSON_CREATE = "json_schema";
@@ -49,11 +57,13 @@ public class SchemasTests extends BaseTest {
 
     }
 
-    @SneakyThrows
     @DisplayName("should create AVRO schema")
+    @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(43)
     @Test
     @Order(1)
-    void createSchemaAvro() {
+    void createSchemaAvro() throws IOException {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
@@ -61,7 +71,7 @@ public class SchemasTests extends BaseTest {
                 .setSchemaField(readFileAsString(PATH_AVRO_VALUE))
                 .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.AVRO)
                 .clickSubmit()
-                .isOnSchemaViewPage();
+                .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_CREATE);
@@ -69,36 +79,45 @@ public class SchemasTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should update AVRO schema")
+    @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(186)
     @Test
     @Order(2)
     void updateSchemaAvro() {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(SCHEMA_AVRO_API_UPDATE)
-                .isOnSchemaViewPage()
+                .waitUntilScreenReady()
                 .openEditSchema()
                 .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(readFileAsString(PATH_AVRO_FOR_UPDATE))
                 .clickSubmit()
-                .isOnSchemaViewPage()
+                .waitUntilScreenReady()
                 .isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE);
     }
 
     @SneakyThrows
     @DisplayName("should delete AVRO schema")
+    @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(187)
     @Test
     @Order(3)
     void deleteSchemaAvro() {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(SCHEMA_AVRO_API)
-                .isOnSchemaViewPage()
+                .waitUntilScreenReady()
                 .removeSchema()
                 .isNotVisible(SCHEMA_AVRO_API);
     }
 
     @SneakyThrows
     @DisplayName("should create JSON schema")
+    @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(89)
     @Test
     @Order(4)
     void createSchemaJson() {
@@ -109,7 +128,7 @@ public class SchemasTests extends BaseTest {
                 .setSchemaField(readFileAsString(PATH_JSON_VALUE))
                 .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.JSON)
                 .clickSubmit()
-                .isOnSchemaViewPage();
+                .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_CREATE);
@@ -117,19 +136,25 @@ public class SchemasTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should delete JSON schema")
+    @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(189)
     @Test
     @Order(5)
     void deleteSchemaJson() {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(SCHEMA_JSON_API)
-                .isOnSchemaViewPage()
+                .waitUntilScreenReady()
                 .removeSchema()
                 .isNotVisible(SCHEMA_JSON_API);
     }
 
     @SneakyThrows
     @DisplayName("should create PROTOBUF schema")
+    @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(91)
     @Test
     @Order(6)
     void createSchemaProtobuf() {
@@ -140,7 +165,7 @@ public class SchemasTests extends BaseTest {
                 .setSchemaField(readFileAsString(PATH_PROTOBUF_VALUE))
                 .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.PROTOBUF)
                 .clickSubmit()
-                .isOnSchemaViewPage();
+                .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_CREATE);
@@ -148,13 +173,16 @@ public class SchemasTests extends BaseTest {
 
     @SneakyThrows
     @DisplayName("should delete PROTOBUF schema")
+    @Suite(suiteId = suiteId, title = suiteTitle)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(223)
     @Test
     @Order(7)
     void deleteSchemaProtobuf() {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(SCHEMA_PROTOBUF_API)
-                .isOnSchemaViewPage()
+                .waitUntilScreenReady()
                 .removeSchema()
                 .isNotVisible(SCHEMA_PROTOBUF_API);
     }

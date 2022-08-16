@@ -6,6 +6,7 @@ const clusterName = 'test-cluster-name';
 const groupId = 'test-group-id';
 const schemaId = 'test-schema-id';
 const topicId = 'test-topic-id';
+const brokerId = 'test-Broker-id';
 const connectName = 'test-connect-name';
 const connectorName = 'test-connector-name';
 
@@ -14,6 +15,10 @@ describe('Paths', () => {
     expect(paths.gitCommitPath('1234567gh')).toEqual(
       `${GIT_REPO_LINK}/commit/1234567gh`
     );
+  });
+  it('getNonExactPath', () => {
+    expect(paths.getNonExactPath('')).toEqual('/*');
+    expect(paths.getNonExactPath('/clusters')).toEqual('/clusters/*');
   });
   it('clusterPath', () => {
     expect(paths.clusterPath(clusterName)).toEqual(
@@ -29,6 +34,23 @@ describe('Paths', () => {
     );
     expect(paths.clusterBrokersPath()).toEqual(
       paths.clusterBrokersPath(RouteParams.clusterName)
+    );
+
+    expect(paths.clusterBrokerPath(clusterName, brokerId)).toEqual(
+      `${paths.clusterPath(clusterName)}/brokers/${brokerId}`
+    );
+    expect(paths.clusterBrokerPath()).toEqual(
+      paths.clusterBrokerPath(RouteParams.clusterName, RouteParams.brokerId)
+    );
+
+    expect(paths.clusterBrokerMetricsPath(clusterName, brokerId)).toEqual(
+      `${paths.clusterPath(clusterName)}/brokers/${brokerId}/metrics`
+    );
+    expect(paths.clusterBrokerMetricsPath()).toEqual(
+      paths.clusterBrokerMetricsPath(
+        RouteParams.clusterName,
+        RouteParams.brokerId
+      )
     );
   });
   it('clusterConsumerGroupsPath', () => {
@@ -99,10 +121,21 @@ describe('Paths', () => {
       paths.clusterSchemaEditPath(RouteParams.clusterName, RouteParams.subject)
     );
   });
+  it('clusterSchemaComparePath', () => {
+    expect(paths.clusterSchemaComparePath(clusterName, schemaId)).toEqual(
+      `${paths.clusterSchemaPath(clusterName, schemaId)}/compare`
+    );
+    expect(paths.clusterSchemaComparePath()).toEqual(
+      paths.clusterSchemaComparePath(
+        RouteParams.clusterName,
+        RouteParams.subject
+      )
+    );
+  });
 
   it('clusterTopicsPath', () => {
     expect(paths.clusterTopicsPath(clusterName)).toEqual(
-      `${paths.clusterPath(clusterName)}/topics`
+      `${paths.clusterPath(clusterName)}/all-topics`
     );
     expect(paths.clusterTopicsPath()).toEqual(
       paths.clusterTopicsPath(RouteParams.clusterName)
@@ -110,7 +143,7 @@ describe('Paths', () => {
   });
   it('clusterTopicNewPath', () => {
     expect(paths.clusterTopicNewPath(clusterName)).toEqual(
-      `${paths.clusterTopicsPath(clusterName)}/create-new`
+      `${paths.clusterTopicsPath(clusterName)}/create-new-topic`
     );
     expect(paths.clusterTopicNewPath()).toEqual(
       paths.clusterTopicNewPath(RouteParams.clusterName)
@@ -174,6 +207,25 @@ describe('Paths', () => {
     );
     expect(paths.clusterTopicEditPath()).toEqual(
       paths.clusterTopicEditPath(RouteParams.clusterName, RouteParams.topicName)
+    );
+  });
+  it('clusterTopicCopyPath', () => {
+    expect(paths.clusterTopicCopyPath(clusterName)).toEqual(
+      `${paths.clusterTopicsPath(clusterName)}/copy`
+    );
+    expect(paths.clusterTopicCopyPath()).toEqual(
+      paths.clusterTopicCopyPath(RouteParams.clusterName)
+    );
+  });
+  it('clusterTopicStatisticsPath', () => {
+    expect(paths.clusterTopicStatisticsPath(clusterName, topicId)).toEqual(
+      `${paths.clusterTopicPath(clusterName, topicId)}/statistics`
+    );
+    expect(paths.clusterTopicStatisticsPath()).toEqual(
+      paths.clusterTopicStatisticsPath(
+        RouteParams.clusterName,
+        RouteParams.topicName
+      )
     );
   });
 
@@ -311,6 +363,22 @@ describe('Paths', () => {
     );
     expect(paths.clusterKsqlDbQueryPath()).toEqual(
       paths.clusterKsqlDbQueryPath(RouteParams.clusterName)
+    );
+  });
+  it('clusterKsqlDbTablesPath', () => {
+    expect(paths.clusterKsqlDbTablesPath(clusterName)).toEqual(
+      `${paths.clusterKsqlDbPath(clusterName)}/tables`
+    );
+    expect(paths.clusterKsqlDbTablesPath()).toEqual(
+      paths.clusterKsqlDbTablesPath(RouteParams.clusterName)
+    );
+  });
+  it('clusterKsqlDbStreamsPath', () => {
+    expect(paths.clusterKsqlDbStreamsPath(clusterName)).toEqual(
+      `${paths.clusterKsqlDbPath(clusterName)}/streams`
+    );
+    expect(paths.clusterKsqlDbStreamsPath()).toEqual(
+      paths.clusterKsqlDbStreamsPath(RouteParams.clusterName)
     );
   });
 });
