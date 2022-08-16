@@ -65,6 +65,7 @@ public class MetricsService {
   }
 
   private Mono<InternalLogDirStats> getLogDirInfo(KafkaCluster cluster, ReactiveAdminClient c) {
+    log.trace("Getting logdir info for cluster [{}]", cluster.getName());
     if (!cluster.isDisableLogDirsCollection()) {
       return c.describeLogDirs().map(InternalLogDirStats::new);
     }
@@ -72,10 +73,12 @@ public class MetricsService {
   }
 
   private Mono<Map<String, TopicDescription>> describeTopics(KafkaCluster c) {
+    log.trace("Describing topics for cluster [{}]", c.getName());
     return adminClientService.get(c).flatMap(ReactiveAdminClient::describeTopics);
   }
 
   private Mono<Map<String, List<ConfigEntry>>> loadTopicConfigs(KafkaCluster c) {
+    log.trace("Loading topic configs for cluster [{}]", c.getName());
     return adminClientService.get(c).flatMap(ReactiveAdminClient::getTopicsConfig);
   }
 

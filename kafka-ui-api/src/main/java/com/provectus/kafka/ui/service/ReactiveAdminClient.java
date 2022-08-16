@@ -253,6 +253,7 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<ClusterDescription> describeCluster() {
+    log.trace("Describing cluster");
     var r = client.describeCluster();
     var all = KafkaFuture.allOf(r.nodes(), r.clusterId(), r.controller(), r.authorizedOperations());
     return Mono.create(sink -> all.whenComplete((res, ex) -> {
