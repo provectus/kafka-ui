@@ -8,8 +8,13 @@ import java.nio.charset.StandardCharsets;
 
 public class FileUtils {
 
-    public static String getResourceAsString(String resourceFileName) throws IOException {
-        return IOUtils.resourceToString("/" + resourceFileName, StandardCharsets.UTF_8);
+    public static String getResourceAsString(String resourceFileName) {
+        try {
+            return IOUtils.resourceToString("/" + resourceFileName, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

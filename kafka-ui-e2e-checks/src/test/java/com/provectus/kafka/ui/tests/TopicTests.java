@@ -29,21 +29,18 @@ public class TopicTests extends BaseTest {
 
 
     @BeforeAll
-    @SneakyThrows
     public static void beforeAll() {
         Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, TOPIC_TO_UPDATE);
         Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
     }
 
     @AfterAll
-    @SneakyThrows
     public static void afterAll() {
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_UPDATE);
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
     }
 
-    @SneakyThrows
     @DisplayName("should create a topic")
     @Suite(suiteId = 4, title = "Create new Topic")
     @AutomationStatus(status = Status.AUTOMATED)
@@ -65,7 +62,6 @@ public class TopicTests extends BaseTest {
                 .topicIsNotVisible(NEW_TOPIC);
     }
     @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
-    @SneakyThrows
     @DisplayName("should update a topic")
     @Issue("1500")
     @Suite(suiteId = 2, title = "Topics")
@@ -97,7 +93,6 @@ public class TopicTests extends BaseTest {
                 .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
     }
 
-    @SneakyThrows
     @DisplayName("should delete topic")
     @Suite(suiteId = 2, title = "Topics")
     @AutomationStatus(status = Status.AUTOMATED)

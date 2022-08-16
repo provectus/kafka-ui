@@ -45,7 +45,6 @@ public class SchemasTests extends BaseTest {
     }
 
     @AfterAll
-    @SneakyThrows
     public static void afterAll() {
         Helpers.INSTANCE.apiHelper.deleteSchema(SECOND_LOCAL, SCHEMA_AVRO_CREATE);
         Helpers.INSTANCE.apiHelper.deleteSchema(SECOND_LOCAL, SCHEMA_JSON_CREATE);
@@ -97,7 +96,6 @@ public class SchemasTests extends BaseTest {
                 .isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE);
     }
 
-    @SneakyThrows
     @DisplayName("should delete AVRO schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -112,7 +110,6 @@ public class SchemasTests extends BaseTest {
                 .removeSchema()
                 .isNotVisible(SCHEMA_AVRO_API);
     }
-
     @SneakyThrows
     @DisplayName("should create JSON schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
@@ -134,7 +131,6 @@ public class SchemasTests extends BaseTest {
         pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_CREATE);
     }
 
-    @SneakyThrows
     @DisplayName("should delete JSON schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -171,7 +167,6 @@ public class SchemasTests extends BaseTest {
         pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_CREATE);
     }
 
-    @SneakyThrows
     @DisplayName("should delete PROTOBUF schema")
     @Suite(suiteId = suiteId, title = suiteTitle)
     @AutomationStatus(status = Status.AUTOMATED)

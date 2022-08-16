@@ -3,8 +3,8 @@ package com.provectus.kafka.ui.pages.topic;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
+import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.pages.ProduceMessagePage;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
@@ -34,7 +34,7 @@ public class TopicView {
         return this;
     }
 
-    @SneakyThrows
+
     public TopicCreateEditSettingsView openEditSettings() {
         BrowserUtils.javaExecutorClick(dotMenuHeader);
         $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() + "']").click();
@@ -47,7 +47,7 @@ public class TopicView {
         return this;
     }
 
-    @SneakyThrows
+
     public TopicsList deleteTopic() {
         BrowserUtils.javaExecutorClick(dotMenuHeader);
         $("#dropdown-menu").$(byLinkText(DotMenuHeaderItems.REMOVE_TOPIC.getValue())).click();
@@ -55,7 +55,7 @@ public class TopicView {
         return new TopicsList();
     }
 
-    @SneakyThrows
+
     public ProduceMessagePage clickOnButton(String buttonName) {
         BrowserUtils.javaExecutorClick($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
         return new ProduceMessagePage();

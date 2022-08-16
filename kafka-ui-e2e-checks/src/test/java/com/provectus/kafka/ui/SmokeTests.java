@@ -12,7 +12,6 @@ public class SmokeTests extends BaseTest {
     @Test
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(198)
-    @SneakyThrows
     @DisplayName("main page should load")
     void mainPageLoads() {
         pages.open()
