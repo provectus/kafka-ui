@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.container;
 
-import java.time.Duration;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
@@ -12,8 +11,7 @@ public class KafkaConnectContainer extends GenericContainer<KafkaConnectContaine
   public KafkaConnectContainer(String version) {
     super("confluentinc/cp-kafka-connect:" + version);
     addExposedPort(CONNECT_PORT);
-    waitStrategy = Wait.forHttp("/")
-        .withStartupTimeout(Duration.ofMinutes(5));
+    Wait.forHealthcheck();
   }
 
 

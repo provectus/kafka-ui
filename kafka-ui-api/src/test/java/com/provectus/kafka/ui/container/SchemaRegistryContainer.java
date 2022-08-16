@@ -11,7 +11,7 @@ public class SchemaRegistryContainer extends GenericContainer<SchemaRegistryCont
 
   public SchemaRegistryContainer(String version) {
     super("confluentinc/cp-schema-registry:" + version);
-    withExposedPorts(8081);
+    withExposedPorts(SCHEMA_PORT);
   }
 
   public SchemaRegistryContainer withKafka(KafkaContainer kafka) {
