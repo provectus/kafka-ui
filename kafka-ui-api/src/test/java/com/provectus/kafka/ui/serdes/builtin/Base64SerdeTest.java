@@ -13,9 +13,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 class Base64SerdeTest {
 
-  private static final String TEST_STRING = "some test string in utf8";
-  private static final String TEST_STRING_BASE64 = Base64.getEncoder().encodeToString(TEST_STRING.getBytes());
-  private static final byte[] TEST_STRING_BASE64_BYTES = Base64.getDecoder().decode(TEST_STRING_BASE64);
+  private static final byte[] TEST_BYTES = "some bytes go here".getBytes();
+  private static final String TEST_BYTES_BASE64_ENCODED = Base64.getEncoder().encodeToString(TEST_BYTES);
 
   private Serde base64Serde;
 
@@ -33,16 +32,16 @@ class Base64SerdeTest {
   @EnumSource
   void serializesInputAsBase64String(Serde.Target type) {
     var serializer = base64Serde.serializer("anyTopic", type);
-    byte[] bytes = serializer.serialize(TEST_STRING_BASE64);
-    assertThat(bytes).isEqualTo(TEST_STRING_BASE64_BYTES);
+    byte[] bytes = serializer.serialize(TEST_BYTES_BASE64_ENCODED);
+    assertThat(bytes).isEqualTo(TEST_BYTES);
   }
 
   @ParameterizedTest
   @EnumSource
   void deserializesDataAsBase64Bytes(Serde.Target type) {
     var deserializer = base64Serde.deserializer("anyTopic", type);
-    var result = deserializer.deserialize(new RecordHeaders(), TEST_STRING_BASE64_BYTES);
-    assertThat(result.getResult()).isEqualTo(TEST_STRING_BASE64);
+    var result = deserializer.deserialize(new RecordHeaders(), TEST_BYTES);
+    assertThat(result.getResult()).isEqualTo(TEST_BYTES_BASE64_ENCODED);
     assertThat(result.getType()).isEqualTo(DeserializeResult.Type.STRING);
     assertThat(result.getAdditionalProperties()).isEmpty();
   }

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.bind.BindException;
@@ -15,21 +14,12 @@ import org.springframework.mock.env.MockEnvironment;
 
 class PropertyResolverImplTest {
 
-  private final MockEnvironment env = new MockEnvironment();
+  private static final String TEST_STRING_VALUE = "testStr";
+  private static final int TEST_INT_VALUE = 123;
+  private static final List<String> TEST_STRING_LIST = List.of("v1", "v2", "v3");
+  private static final List<Integer> TEST_INT_LIST = List.of(1, 2, 3);
 
-  @BeforeEach
-  void initEnv() {
-    env.setProperty("prop.0.strProp", "testStr");
-    env.setProperty("prop.0.intProp", "123");
-    env.setProperty("prop.0.strLst", "v1,v2,v3");
-    env.setProperty("prop.0.intLst", "1,2,3");
-    env.setProperty("prop.0.custProps.f1", "f1val");
-    env.setProperty("prop.0.custProps.f2", "1234");
-    env.setProperty("prop.0.strMap.k1", "v1");
-    env.setProperty("prop.0.strMap.k2", "v2");
-    env.setProperty("prop.0.intToLongMap.100", "111");
-    env.setProperty("prop.0.intToLongMap.200", "222");
-  }
+  private final MockEnvironment env = new MockEnvironment();
 
   @Data
   @AllArgsConstructor
@@ -48,6 +38,10 @@ class PropertyResolverImplTest {
 
   @Test
   void throwsExceptionWhenPropertyCantBeResolverToRequstedClass() {
+    env.setProperty("prop.0.strProp", "testStr");
+    env.setProperty("prop.0.strLst", "v1,v2,v3");
+    env.setProperty("prop.0.strMap.k1", "v1");
+
     var resolver = new PropertyResolverImpl(env);
     assertThatCode(() -> resolver.getProperty("prop.0.strProp", Integer.class))
         .isInstanceOf(BindException.class);
@@ -59,7 +53,10 @@ class PropertyResolverImplTest {
 
   @Test
   void resolvedSingleValueProperties() {
-    PropertyResolverImpl resolver = new PropertyResolverImpl(env);
+    env.setProperty("prop.0.strProp", "testStr");
+    env.setProperty("prop.0.intProp", "123");
+
+    var resolver = new PropertyResolverImpl(env);
     assertThat(resolver.getProperty("prop.0.strProp", String.class))
         .hasValue("testStr");
     assertThat(resolver.getProperty("prop.0.intProp", Integer.class))
@@ -68,6 +65,9 @@ class PropertyResolverImplTest {
 
   @Test
   void resolvesListProperties() {
+    env.setProperty("prop.0.strLst", "v1,v2,v3");
+    env.setProperty("prop.0.intLst", "1,2,3");
+
     var resolver = new PropertyResolverImpl(env);
     assertThat(resolver.getListProperty("prop.0.strLst", String.class))
         .hasValue(List.of("v1", "v2", "v3"));
@@ -77,6 +77,9 @@ class PropertyResolverImplTest {
 
   @Test
   void resolvesCustomConfigClassProperties() {
+    env.setProperty("prop.0.custProps.f1", "f1val");
+    env.setProperty("prop.0.custProps.f2", "1234");
+
     var resolver = new PropertyResolverImpl(env);
     assertThat(resolver.getProperty("prop.0.custProps", CustomPropertiesClass.class))
         .hasValue(new CustomPropertiesClass("f1val", 1234));
@@ -84,6 +87,11 @@ class PropertyResolverImplTest {
 
   @Test
   void resolvesMapProperties() {
+    env.setProperty("prop.0.strMap.k1", "v1");
+    env.setProperty("prop.0.strMap.k2", "v2");
+    env.setProperty("prop.0.intToLongMap.100", "111");
+    env.setProperty("prop.0.intToLongMap.200", "222");
+
     var resolver = new PropertyResolverImpl(env);
     assertThat(resolver.getMapProperty("prop.0.strMap", String.class, String.class))
         .hasValue(Map.of("k1", "v1", "k2", "v2"));
@@ -97,25 +105,34 @@ class PropertyResolverImplTest {
 
     @Test
     void resolvedSingleValueProperties() {
+      env.setProperty("prop.0.strProp", "testStr");
+      env.setProperty("prop.0.intProp", "123");
+
       var resolver = new PropertyResolverImpl(env, "prop.0");
       assertThat(resolver.getProperty("strProp", String.class))
-          .hasValue("testStr");
+          .hasValue(TEST_STRING_VALUE);
 
       assertThat(resolver.getProperty("intProp", Integer.class))
-          .hasValue(123);
+          .hasValue(TEST_INT_VALUE);
     }
 
     @Test
     void resolvesListProperties() {
+      env.setProperty("prop.0.strLst", "v1,v2,v3");
+      env.setProperty("prop.0.intLst", "1,2,3");
+
       var resolver = new PropertyResolverImpl(env, "prop.0");
       assertThat(resolver.getListProperty("strLst", String.class))
-          .hasValue(List.of("v1", "v2", "v3"));
+          .hasValue(TEST_STRING_LIST);
       assertThat(resolver.getListProperty("intLst", Integer.class))
-          .hasValue(List.of(1, 2, 3));
+          .hasValue(TEST_INT_LIST);
     }
 
     @Test
     void resolvesCustomConfigClassProperties() {
+      env.setProperty("prop.0.custProps.f1", "f1val");
+      env.setProperty("prop.0.custProps.f2", "1234");
+
       var  resolver = new PropertyResolverImpl(env, "prop.0");
       assertThat(resolver.getProperty("custProps", CustomPropertiesClass.class))
           .hasValue(new CustomPropertiesClass("f1val", 1234));
@@ -123,6 +140,11 @@ class PropertyResolverImplTest {
 
     @Test
     void resolvesMapProperties() {
+      env.setProperty("prop.0.strMap.k1", "v1");
+      env.setProperty("prop.0.strMap.k2", "v2");
+      env.setProperty("prop.0.intToLongMap.100", "111");
+      env.setProperty("prop.0.intToLongMap.200", "222");
+
       var resolver = new PropertyResolverImpl(env, "prop.0.");
       assertThat(resolver.getMapProperty("strMap", String.class, String.class))
           .hasValue(Map.of("k1", "v1", "k2", "v2"));

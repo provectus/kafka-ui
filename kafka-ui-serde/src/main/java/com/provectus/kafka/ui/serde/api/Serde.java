@@ -15,7 +15,7 @@ public interface Serde {
       PropertyResolver globalProperties
   );
 
-  Optional<String> description();
+  Optional<String> getDescription();
 
   Optional<SchemaDescription> getSchema(String topic, Target type);
 
