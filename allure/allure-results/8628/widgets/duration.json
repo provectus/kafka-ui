@@ -1,1 +1,0 @@
-[{"uid":"a9951a382ac4faad","name":"should create AVRO schema","time":{"start":1660761093955,"stop":1660761153969,"duration":60014},"status":"broken","severity":"normal"},{"uid":"67f10a75bc714597","name":"main page should load","time":{"start":1660760886785,"stop":1660760908211,"duration":21426},"status":"passed","severity":"normal"}]
