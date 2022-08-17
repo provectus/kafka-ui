@@ -1,0 +1,3 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"broken","Wed Aug 17 18:31:33 GMT 2022","Wed Aug 17 18:32:33 GMT 2022","60014","","com.provectus.kafka.ui.tests.SchemasTests","","com.provectus.kafka.ui.tests.SchemasTests","createSchemaAvro","should create AVRO schema",""
+"passed","Wed Aug 17 18:28:06 GMT 2022","Wed Aug 17 18:28:28 GMT 2022","21426","","com.provectus.kafka.ui.SmokeTests","","com.provectus.kafka.ui.SmokeTests","mainPageLoads","main page should load",""
