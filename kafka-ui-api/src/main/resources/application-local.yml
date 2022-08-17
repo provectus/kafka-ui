@@ -8,7 +8,7 @@ kafka:
       kafkaConnect:
         - name: first
           address: http://localhost:8083
-      metricsConfig:
+      metrics:
         port: 9997
         type: JMX
   #    -
