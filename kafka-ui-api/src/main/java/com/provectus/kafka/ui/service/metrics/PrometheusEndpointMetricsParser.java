@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.util;
+package com.provectus.kafka.ui.service.metrics;
 
 import com.provectus.kafka.ui.model.MetricDTO;
 import java.math.BigDecimal;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class PrometheusEndpointMetricsParser {
+class PrometheusEndpointMetricsParser {
 
   public static final String CANONICAL_NAME = "canonicalName";
   private static final String NAME = "name";
@@ -42,8 +42,10 @@ public class PrometheusEndpointMetricsParser {
       if (value == null || name == null || canonicalName == null) {
         return null;
       }
+      String[] canonicalNameParts = canonicalName.split("_");
+      String valueName = canonicalNameParts[canonicalNameParts.length - 1];
       metricDto = new MetricDTO();
-      metricDto.setCanonicalName(canonicalName);
+      metricDto.setCanonicalName(valueName);
       metricDto.setName(name);
       metricDto.setParams(
           Arrays.stream(matcher.group(PROPERTIES).split(","))
@@ -59,7 +61,7 @@ public class PrometheusEndpointMetricsParser {
   }
 
   private String getMetricsValueName(String name) {
-    for (JmxMetricsValueName metricsValueName : JmxMetricsValueName.values()) {
+    for (MetricsValueName metricsValueName : MetricsValueName.values()) {
       if (name.endsWith(metricsValueName.getValue())) {
         return metricsValueName.getValue();
       }

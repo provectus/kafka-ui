@@ -1,12 +1,10 @@
-package com.provectus.kafka.ui.util;
+package com.provectus.kafka.ui.service.metrics;
 
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MetricDTO;
 import java.util.List;
-import lombok.SneakyThrows;
 import org.apache.kafka.common.Node;
 
-public interface MetricsRetriever {
-  @SneakyThrows
+interface MetricsRetriever {
   List<MetricDTO> retrieve(KafkaCluster c, Node node);
 }

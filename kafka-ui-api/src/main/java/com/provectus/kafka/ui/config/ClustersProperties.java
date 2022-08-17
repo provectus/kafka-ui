@@ -36,7 +36,7 @@ public class ClustersProperties {
     String protobufMessageNameForKey;
     Map<String, String> protobufMessageNameForKeyByTopic;
     List<ConnectCluster> kafkaConnect;
-    MetricsConfigData metricsConfig;
+    MetricsConfigData metrics;
     Properties properties;
     boolean readOnly = false;
     boolean disableLogDirsCollection = false;

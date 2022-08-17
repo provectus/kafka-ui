@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 @Builder(toBuilder = true)
-public class JmxBrokerMetrics {
+public class BrokerMetrics {
   private final List<MetricDTO> metrics;
 }

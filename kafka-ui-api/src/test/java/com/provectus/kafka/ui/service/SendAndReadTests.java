@@ -127,7 +127,7 @@ public class SendAndReadTests extends AbstractIntegrationTest {
   private ClustersStorage clustersStorage;
 
   @Autowired
-  private ClustersMetricsScheduler clustersMetricsScheduler;
+  private ClustersStatisticsScheduler clustersMetricsScheduler;
 
   @BeforeEach
   void init() {
@@ -516,7 +516,7 @@ public class SendAndReadTests extends AbstractIntegrationTest {
       }
 
       // need to update to see new topic & schemas
-      clustersMetricsScheduler.updateMetrics();
+      clustersMetricsScheduler.updateStatistics();
 
       return topic;
     }

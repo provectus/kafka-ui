@@ -1,6 +1,6 @@
-package com.provectus.kafka.ui.util;
+package com.provectus.kafka.ui.service.metrics;
 
-public enum JmxMetricsValueName {
+public enum MetricsValueName {
   COUNT("Count"),
   ONE_MINUTE_RATE("OneMinuteRate"),
   FIFTEEN_MINUTE_RATE("FifteenMinuteRate"),
@@ -9,7 +9,7 @@ public enum JmxMetricsValueName {
 
   private final String value;
 
-  JmxMetricsValueName(String value) {
+  MetricsValueName(String value) {
     this.value = value;
   }
 

@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.util;
+package com.provectus.kafka.ui.service.metrics;
 
 import com.provectus.kafka.ui.model.MetricDTO;
 import java.math.BigDecimal;
@@ -18,7 +18,7 @@ class PrometheusEndpointMetricsParserTest {
         "kafka_cluster_Partition_Value{name=\"InSyncReplicasCount\","
             + "topic=\"__consumer_offsets\",partition=\"37\",} 13.555");
     MatcherAssert.assertThat("should be correct canonical name", metric.getCanonicalName(),
-        Matchers.is("kafka_cluster_Partition_Value"));
+        Matchers.is("Value"));
     MatcherAssert.assertThat("should be correct name", metric.getName(),
         Matchers.is("InSyncReplicasCount"));
     MatcherAssert.assertThat("should contain correct value", metric.getValue(),
@@ -35,7 +35,7 @@ class PrometheusEndpointMetricsParserTest {
         "kafka_cluster_Partition_Value  {name=\"InSyncReplicasCount\","
             + "  topic=\"__consumer_offsets\", partition=\"37\",}  13.555");
     MatcherAssert.assertThat("should be correct canonical name", metric.getCanonicalName(),
-        Matchers.is("kafka_cluster_Partition_Value"));
+        Matchers.is("Value"));
     MatcherAssert.assertThat("should be correct name", metric.getName(), Matchers.is("InSyncReplicasCount"));
     MatcherAssert.assertThat("should contain correct value", metric.getValue(),
         Matchers.hasEntry(Matchers.is("value"), Matchers.is(new BigDecimal("13.555"))));

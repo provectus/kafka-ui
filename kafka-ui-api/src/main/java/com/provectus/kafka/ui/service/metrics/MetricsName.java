@@ -1,6 +1,6 @@
-package com.provectus.kafka.ui.util;
+package com.provectus.kafka.ui.service.metrics;
 
-public enum JmxMetricsName {
+public enum MetricsName {
   MESSAGES_IN_PER_SEC("MessagesInPerSec"),
   BYTES_IN_PER_SEC("BytesInPerSec"),
   REPLICATION_BYTES_IN_PER_SEC("ReplicationBytesInPerSec"),
@@ -31,7 +31,7 @@ public enum JmxMetricsName {
 
   private final String value;
 
-  JmxMetricsName(String value) {
+  MetricsName(String value) {
     this.value = value;
   }
 

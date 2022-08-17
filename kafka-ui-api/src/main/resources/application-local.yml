@@ -19,7 +19,7 @@ kafka:
   #      kafkaConnect:
   #        - name: first
   #          address: http://localhost:8083
-  #      metricsConfig:
+  #      metrics:
   #        port: 9998
   #        type: JMX
   #      read-only: true

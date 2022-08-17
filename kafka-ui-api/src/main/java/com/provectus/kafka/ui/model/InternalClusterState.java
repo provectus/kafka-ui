@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.model;
 
 import com.google.common.base.Throwables;
-import com.provectus.kafka.ui.service.MetricsCache;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +27,7 @@ public class InternalClusterState {
   private BigDecimal bytesOutPerSec;
   private Boolean readOnly;
 
-  public InternalClusterState(KafkaCluster cluster, MetricsCache.Metrics metrics) {
+  public InternalClusterState(KafkaCluster cluster, Statistics metrics) {
     name = cluster.getName();
     status = metrics.getStatus();
     lastError = Optional.ofNullable(metrics.getLastKafkaException())
@@ -53,13 +52,13 @@ public class InternalClusterState {
     features = metrics.getFeatures();
 
     bytesInPerSec = metrics
-        .getJmxMetrics()
+        .getMetrics()
         .getBytesInPerSec()
         .values().stream()
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     bytesOutPerSec = metrics
-        .getJmxMetrics()
+        .getMetrics()
         .getBytesOutPerSec()
         .values().stream()
         .reduce(BigDecimal.ZERO, BigDecimal::add);

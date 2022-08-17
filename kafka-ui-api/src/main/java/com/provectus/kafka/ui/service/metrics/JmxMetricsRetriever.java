@@ -1,8 +1,10 @@
-package com.provectus.kafka.ui.util;
+package com.provectus.kafka.ui.service.metrics;
 
 import com.provectus.kafka.ui.model.JmxConnectionInfo;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MetricDTO;
+import com.provectus.kafka.ui.util.JmxPoolFactory;
+import com.provectus.kafka.ui.util.NumberUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,27 +17,32 @@ import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.pool2.KeyedObjectPool;
+import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
+import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.apache.kafka.common.Node;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 @Service
-@RequiredArgsConstructor
 @Slf4j
-public class JmxMetricsRetriever implements MetricsRetriever {
+class JmxMetricsRetriever implements MetricsRetriever, AutoCloseable {
 
   private static final String JMX_URL = "service:jmx:rmi:///jndi/rmi://";
   private static final String JMX_SERVICE_TYPE = "jmxrmi";
   private static final String KAFKA_SERVER_PARAM = "kafka.server";
   private static final String NAME_METRIC_FIELD = "name";
 
-  @Autowired
-  private final KeyedObjectPool<JmxConnectionInfo, JMXConnector> pool;
+  private final GenericKeyedObjectPool<JmxConnectionInfo, JMXConnector> pool;
 
+  public JmxMetricsRetriever() {
+    this.pool = new GenericKeyedObjectPool<>(new JmxPoolFactory());
+    GenericKeyedObjectPoolConfig<JMXConnector> poolConfig = new GenericKeyedObjectPoolConfig<>();
+    poolConfig.setMaxIdlePerKey(3);
+    poolConfig.setMaxTotalPerKey(3);
+    this.pool.setConfig(poolConfig);
+  }
 
   @Override
   @SneakyThrows
@@ -98,5 +105,10 @@ public class JmxMetricsRetriever implements MetricsRetriever {
       }
     }
     return resultAttr;
+  }
+
+  @Override
+  public void close() {
+    this.pool.close();
   }
 }

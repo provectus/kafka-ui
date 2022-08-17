@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.util;
+package com.provectus.kafka.ui.service.metrics;
 
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MetricDTO;
@@ -17,7 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PrometheusMetricsRetriever implements MetricsRetriever {
+class PrometheusMetricsRetriever implements MetricsRetriever {
 
   private final WebClient webClient;
   private final PrometheusEndpointMetricsParser parser;

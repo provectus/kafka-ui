@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.mapper;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.BrokerConfigDTO;
 import com.provectus.kafka.ui.model.BrokerDiskUsageDTO;
+import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.BrokerMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ClusterMetricsDTO;
@@ -23,9 +24,9 @@ import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
-import com.provectus.kafka.ui.model.JmxBrokerMetrics;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
+import com.provectus.kafka.ui.model.Metrics;
 import com.provectus.kafka.ui.model.PartitionDTO;
 import com.provectus.kafka.ui.model.ReplicaDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
@@ -33,7 +34,6 @@ import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
-import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,11 +59,11 @@ public interface ClusterMapper {
 
   ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
 
-  default ClusterMetricsDTO toClusterMetrics(JmxClusterUtil.JmxMetrics jmxMetrics) {
-    return new ClusterMetricsDTO().items(jmxMetrics.getMetrics());
+  default ClusterMetricsDTO toClusterMetrics(Metrics metrics) {
+    return new ClusterMetricsDTO().items(metrics.getMetrics());
   }
 
-  BrokerMetricsDTO toBrokerMetrics(JmxBrokerMetrics metrics);
+  BrokerMetricsDTO toBrokerMetrics(BrokerMetrics metrics);
 
   @Mapping(target = "isSensitive", source = "sensitive")
   @Mapping(target = "isReadOnly", source = "readOnly")
