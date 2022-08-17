@@ -28,7 +28,7 @@ const Tasks: React.FC = () => {
         accessorKey: 'status.trace',
         enableSorting: false,
         cell: ({ getValue }) => {
-          const trace = getValue<Task['status']>() || '';
+          const trace = getValue<string>() || '';
           return trace.toString().length > MAX_LENGTH
             ? `${trace.toString().substring(0, MAX_LENGTH - 3)}...`
             : trace;
@@ -49,7 +49,7 @@ const Tasks: React.FC = () => {
       data={data}
       emptyMessage="No tasks found"
       enableSorting
-      getRowCanExpand={() => true}
+      getRowCanExpand={(row) => row.original.status.trace?.length > 0}
       renderSubComponent={ExpandedTaskRow}
     />
   );

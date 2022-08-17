@@ -18,7 +18,11 @@ const ActionsCellTasks: React.FC<CellContext<Task, unknown>> = ({ row }) => {
 
   return (
     <Dropdown>
-      <DropdownItem onClick={() => restartTaskHandler(id?.task)} danger>
+      <DropdownItem
+        onClick={() => restartTaskHandler(id?.task)}
+        danger
+        confirm="Are you sure you want to restart the task?"
+      >
         <span>Restart task</span>
       </DropdownItem>
     </Dropdown>

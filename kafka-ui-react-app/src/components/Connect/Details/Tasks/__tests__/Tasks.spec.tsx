@@ -113,6 +113,13 @@ describe('Tasks', () => {
       expect(actionBtn[0]).toHaveTextContent('Restart task');
 
       userEvent.click(actionBtn[0]);
+      expect(
+        screen.getByText('Are you sure you want to restart the task?')
+      ).toBeInTheDocument();
+
+      expect(screen.getByText('Confirm the action')).toBeInTheDocument();
+      userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+
       await waitFor(() => expect(restartConnectorMock).toHaveBeenCalled());
     });
   });
