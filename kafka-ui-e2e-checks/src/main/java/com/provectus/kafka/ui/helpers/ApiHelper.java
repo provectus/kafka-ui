@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.helpers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.api.ApiClient;
 import com.provectus.kafka.ui.api.api.KafkaConnectApi;
@@ -14,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.codeborne.selenide.Selenide.sleep;
 
@@ -87,29 +85,24 @@ public class ApiHelper {
         }
     }
 
+    @SneakyThrows
     public void deleteConnector(String clusterName, String connectName, String connectorName) {
-        try {
-            connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
-        } catch (WebClientResponseException ignore) {
-        }
+        connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
     }
 
+    @SneakyThrows
     public void createConnector(String clusterName, String connectName, String connectorName, String configJson) {
         NewConnector connector = new NewConnector();
         connector.setName(connectorName);
         Map<String, Object> configMap = null;
-        try {
-            configMap = new ObjectMapper().readValue(configJson, HashMap.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        configMap = new ObjectMapper().readValue(configJson, HashMap.class);
         connector.setConfig(configMap);
-            connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
+        connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
         connectorApi().createConnector(clusterName, connectName, connector).block();
     }
 
     public String getFirstConnectName(String clusterName) {
-        return Objects.requireNonNull(connectorApi().getConnects(clusterName).blockFirst()).getName();
+        return connectorApi().getConnects(clusterName).blockFirst().getName();
     }
 
     public void sendMessage(String clusterName, String topicName, String messageContentJson,
