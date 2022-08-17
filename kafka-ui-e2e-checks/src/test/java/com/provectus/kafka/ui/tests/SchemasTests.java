@@ -71,7 +71,7 @@ public class SchemasTests extends BaseTest {
                 .setSchemaField(readFileAsString(PATH_AVRO_VALUE))
                 .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.AVRO)
                 .clickSubmit()
-                .isOnSchemaViewPage();
+                .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_CREATE);
@@ -88,12 +88,12 @@ public class SchemasTests extends BaseTest {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(SCHEMA_AVRO_API_UPDATE)
-                .isOnSchemaViewPage()
+                .waitUntilScreenReady()
                 .openEditSchema()
                 .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(readFileAsString(PATH_AVRO_FOR_UPDATE))
                 .clickSubmit()
-                .isOnSchemaViewPage()
+                .waitUntilScreenReady()
                 .isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE);
     }
 
@@ -108,7 +108,7 @@ public class SchemasTests extends BaseTest {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(SCHEMA_AVRO_API)
-                .isOnSchemaViewPage()
+                .waitUntilScreenReady()
                 .removeSchema()
                 .isNotVisible(SCHEMA_AVRO_API);
     }
@@ -128,7 +128,7 @@ public class SchemasTests extends BaseTest {
                 .setSchemaField(readFileAsString(PATH_JSON_VALUE))
                 .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.JSON)
                 .clickSubmit()
-                .isOnSchemaViewPage();
+                .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_CREATE);
@@ -145,7 +145,7 @@ public class SchemasTests extends BaseTest {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(SCHEMA_JSON_API)
-                .isOnSchemaViewPage()
+                .waitUntilScreenReady()
                 .removeSchema()
                 .isNotVisible(SCHEMA_JSON_API);
     }
@@ -165,7 +165,7 @@ public class SchemasTests extends BaseTest {
                 .setSchemaField(readFileAsString(PATH_PROTOBUF_VALUE))
                 .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.PROTOBUF)
                 .clickSubmit()
-                .isOnSchemaViewPage();
+                .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_CREATE);
@@ -182,7 +182,7 @@ public class SchemasTests extends BaseTest {
         pages.openMainPage()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(SCHEMA_PROTOBUF_API)
-                .isOnSchemaViewPage()
+                .waitUntilScreenReady()
                 .removeSchema()
                 .isNotVisible(SCHEMA_PROTOBUF_API);
     }

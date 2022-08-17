@@ -232,20 +232,20 @@ const TopicForm: React.FC<Props> = ({
         <CustomParams isSubmitting={isSubmitting} />
         <S.ButtonWrapper>
           <Button
-            type="submit"
-            buttonType="primary"
-            buttonSize="L"
-            disabled={!isValid || isSubmitting || !isDirty}
-          >
-            {isEditing ? 'Save' : 'Create topic'}
-          </Button>
-          <Button
             type="button"
             buttonType="primary"
             buttonSize="L"
             onClick={onCancel}
           >
             Cancel
+          </Button>
+          <Button
+            type="submit"
+            buttonType="primary"
+            buttonSize="L"
+            disabled={!isValid || isSubmitting || !isDirty}
+          >
+            {isEditing ? 'Update topic' : 'Create topic'}
           </Button>
         </S.ButtonWrapper>
       </fieldset>

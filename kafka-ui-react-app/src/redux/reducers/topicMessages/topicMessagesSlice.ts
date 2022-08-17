@@ -6,7 +6,6 @@ import {
   showServerError,
   showSuccessAlert,
 } from 'lib/errorHandling';
-import { fetchTopicDetails } from 'redux/reducers/topics/topicsSlice';
 import { messagesApiClient } from 'lib/api';
 
 export const clearTopicMessages = createAsyncThunk<
@@ -14,22 +13,17 @@ export const clearTopicMessages = createAsyncThunk<
   { clusterName: ClusterName; topicName: TopicName; partitions?: number[] }
 >(
   'topicMessages/clearTopicMessages',
-  async (
-    { clusterName, topicName, partitions },
-    { rejectWithValue, dispatch }
-  ) => {
+  async ({ clusterName, topicName, partitions }, { rejectWithValue }) => {
     try {
       await messagesApiClient.deleteTopicMessages({
         clusterName,
         topicName,
         partitions,
       });
-      dispatch(fetchTopicDetails({ clusterName, topicName }));
       showSuccessAlert({
         id: `message-${topicName}-${clusterName}-${partitions}`,
         message: `${topicName} messages have been successfully cleared!`,
       });
-
       return undefined;
     } catch (err) {
       showServerError(err as Response);

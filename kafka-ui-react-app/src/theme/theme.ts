@@ -71,6 +71,16 @@ const theme = {
     backgroundColor: Colors.neutral[5],
     color: Colors.red[55],
   },
+  list: {
+    label: {
+      color: Colors.neutral[50],
+    },
+  },
+  progressBar: {
+    backgroundColor: Colors.neutral[3],
+    compleatedColor: Colors.green[40],
+    borderColor: Colors.neutral[10],
+  },
   layout: {
     backgroundColor: Colors.neutral[0],
     minWidth: '1200px',
@@ -85,8 +95,16 @@ const theme = {
       color: Colors.neutral[20],
     },
   },
+  pageHeading: {
+    dividerColor: Colors.neutral[30],
+    backLink: {
+      color: {
+        normal: Colors.brand[70],
+        hover: Colors.brand[60],
+      },
+    },
+  },
   panelColor: Colors.neutral[0],
-  breadcrumb: Colors.neutral[30],
   connectEditWarning: Colors.yellow[10],
   dropdown: {
     backgroundColor: Colors.neutral[0],
@@ -133,7 +151,7 @@ const theme = {
     },
     variants: {
       1: {
-        fontSize: '24px',
+        fontSize: '20px',
         lineHeight: '32px',
       },
       2: {
@@ -149,6 +167,7 @@ const theme = {
       4: {
         fontSize: '14px',
         lineHeight: '20px',
+        fontWeight: 500,
       },
       5: {
         fontSize: '12px',
@@ -282,18 +301,23 @@ const theme = {
     border: {
       top: Colors.neutral[5],
       bottom: Colors.neutral[5],
+      contrast: Colors.neutral[30],
     },
     overlay: Colors.transparency[10],
     shadow: Colors.transparency[20],
     deletionTextColor: Colors.neutral[70],
   },
   table: {
+    actionBar: {
+      backgroundColor: Colors.neutral[0],
+    },
     th: {
       backgroundColor: {
         normal: Colors.neutral[0],
       },
       color: {
-        normal: Colors.neutral[50],
+        sortable: Colors.neutral[30],
+        normal: Colors.neutral[60],
         hover: Colors.brand[50],
         active: Colors.brand[50],
       },
@@ -308,13 +332,20 @@ const theme = {
     },
     tr: {
       backgroundColor: {
+        normal: Colors.neutral[0],
         hover: Colors.neutral[5],
       },
     },
     link: {
       color: {
         normal: Colors.neutral[90],
+        hover: Colors.neutral[50],
+        active: Colors.neutral[90],
       },
+    },
+    expander: {
+      normal: Colors.brand[50],
+      hover: Colors.brand[20],
     },
   },
   primaryTab: {
@@ -425,22 +456,6 @@ const theme = {
     },
     color: Colors.neutral[90],
   },
-  pagination: {
-    backgroundColor: Colors.neutral[0],
-    currentPage: Colors.neutral[10],
-    borderColor: {
-      normal: Colors.neutral[30],
-      hover: Colors.neutral[50],
-      active: Colors.neutral[70],
-      disabled: Colors.neutral[20],
-    },
-    color: {
-      normal: Colors.neutral[90],
-      hover: Colors.neutral[90],
-      active: Colors.neutral[90],
-      disabled: Colors.neutral[20],
-    },
-  },
   switch: {
     unchecked: Colors.brand[20],
     checked: Colors.brand[50],
@@ -546,6 +561,9 @@ const theme = {
   },
   editFilterText: {
     color: Colors.brand[50],
+  },
+  statictics: {
+    createdAtColor: Colors.neutral[50],
   },
 };
 

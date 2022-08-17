@@ -51,6 +51,7 @@ export const Dropdown = styled(ControlledMenu)(
 
     ${menuItemSelector.disabled} {
       cursor: not-allowed;
+      opacity: 0.5;
     }
   `
 );
@@ -61,6 +62,11 @@ export const DropdownButton = styled.button`
   display: flex;
   cursor: pointer;
   align-self: center;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 export const DangerItem = styled.div`
@@ -70,5 +76,12 @@ export const DangerItem = styled.div`
 export const DropdownItemHint = styled.div`
   color: ${({ theme }) => theme.topicMetaData.color.label};
   font-size: 12px;
+  line-height: 1.4;
   margin-top: 5px;
+`;
+
+export const Wrapper = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: end;
 `;

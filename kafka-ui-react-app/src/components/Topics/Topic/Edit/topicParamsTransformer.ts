@@ -1,43 +1,41 @@
-import { TopicWithDetailedInfo } from 'redux/interfaces';
 import {
   MILLISECONDS_IN_WEEK,
   TOPIC_CUSTOM_PARAMS,
   TOPIC_CUSTOM_PARAMS_PREFIX,
 } from 'lib/constants';
-import { DEFAULTS } from 'components/Topics/Topic/Edit/Edit';
+import { TOPIC_EDIT_FORM_DEFAULT_PROPS } from 'components/Topics/Topic/Edit/Edit';
+import { Topic, TopicConfig } from 'generated-sources';
 
 export const getValue = (
-  topic: TopicWithDetailedInfo,
+  config: TopicConfig[],
   fieldName: string,
   defaultValue?: number
 ) =>
-  Number(topic?.config?.find((config) => config.name === fieldName)?.value) ||
-  defaultValue;
+  Number(config.find(({ name }) => name === fieldName)?.value) || defaultValue;
 
-const topicParamsTransformer = (topic?: TopicWithDetailedInfo) => {
-  if (!topic) {
-    return DEFAULTS;
+const topicParamsTransformer = (topic?: Topic, config?: TopicConfig[]) => {
+  if (!config || !topic) {
+    return TOPIC_EDIT_FORM_DEFAULT_PROPS;
   }
 
-  const { name, replicationFactor } = topic;
+  const customParams = config.reduce((acc, { name, value, defaultValue }) => {
+    if (value === defaultValue) return acc;
+    if (!Object.keys(TOPIC_CUSTOM_PARAMS).includes(name)) return acc;
+    return [...acc, { name, value }];
+  }, [] as { name: string; value?: string }[]);
 
   return {
-    ...DEFAULTS,
-    name,
-    replicationFactor,
-    partitions: topic.partitionCount || DEFAULTS.partitions,
-    maxMessageBytes: getValue(topic, 'max.message.bytes', 1000012),
-    minInSyncReplicas: getValue(topic, 'min.insync.replicas', 1),
-    retentionBytes: getValue(topic, 'retention.bytes', -1),
-    retentionMs: getValue(topic, 'retention.ms', MILLISECONDS_IN_WEEK),
+    ...TOPIC_EDIT_FORM_DEFAULT_PROPS,
+    name: topic.name,
+    replicationFactor: topic.replicationFactor,
+    partitions:
+      topic.partitionCount || TOPIC_EDIT_FORM_DEFAULT_PROPS.partitions,
+    maxMessageBytes: getValue(config, 'max.message.bytes', 1000012),
+    minInSyncReplicas: getValue(config, 'min.insync.replicas', 1),
+    retentionBytes: getValue(config, 'retention.bytes', -1),
+    retentionMs: getValue(config, 'retention.ms', MILLISECONDS_IN_WEEK),
 
-    [TOPIC_CUSTOM_PARAMS_PREFIX]: topic.config
-      ?.filter(
-        (el) =>
-          el.value !== el.defaultValue &&
-          Object.keys(TOPIC_CUSTOM_PARAMS).includes(el.name)
-      )
-      .map((el) => ({ name: el.name, value: el.value })),
+    [TOPIC_CUSTOM_PARAMS_PREFIX]: customParams,
   };
 };
 export default topicParamsTransformer;

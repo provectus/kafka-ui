@@ -22,7 +22,7 @@ describe('New Component', () => {
   });
 
   it('renders component', () => {
-    expect(screen.getByText('Create new schema')).toBeInTheDocument();
+    expect(screen.getByText('Create')).toBeInTheDocument();
   });
   it('submit button will be disabled while form fields are not filled', () => {
     const submitBtn = screen.getByRole('button', { name: /submit/i });

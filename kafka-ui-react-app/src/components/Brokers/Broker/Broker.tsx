@@ -8,6 +8,7 @@ import {
   clusterBrokerMetricsRelativePath,
   ClusterBrokerParam,
   clusterBrokerPath,
+  clusterBrokersPath,
 } from 'lib/paths';
 import { useClusterStats } from 'lib/hooks/api/clusters';
 import { useBrokers } from 'lib/hooks/api/brokers';
@@ -16,13 +17,6 @@ import BrokerLogdir from 'components/Brokers/Broker/BrokerLogdir/BrokerLogdir';
 import BrokerMetrics from 'components/Brokers/Broker/BrokerMetrics/BrokerMetrics';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-
-export interface BrokerLogdirState {
-  name: string;
-  error: string;
-  topics: number;
-  partitions: number;
-}
 
 const Broker: React.FC = () => {
   const { clusterName, brokerId } = useAppParams<ClusterBrokerParam>();
@@ -38,7 +32,11 @@ const Broker: React.FC = () => {
   );
   return (
     <>
-      <PageHeading text={`Broker ${brokerId}`} />
+      <PageHeading
+        text={`Broker ${brokerId}`}
+        backTo={clusterBrokersPath(clusterName)}
+        backText="Brokers"
+      />
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="Segment Size">

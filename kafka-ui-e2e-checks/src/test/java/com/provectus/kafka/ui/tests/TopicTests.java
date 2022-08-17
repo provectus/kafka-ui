@@ -55,7 +55,7 @@ public class TopicTests extends BaseTest {
         pages.topicsList.pressCreateNewTopic()
                 .setTopicName(NEW_TOPIC)
                 .sendData()
-                .isOnTopicViewPage();
+                .waitUntilScreenReady();
         pages.open()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
                 .topicIsVisible(NEW_TOPIC);
@@ -64,7 +64,6 @@ public class TopicTests extends BaseTest {
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
                 .topicIsNotVisible(NEW_TOPIC);
     }
-
     @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
     @SneakyThrows
     @DisplayName("should update a topic")
@@ -75,9 +74,9 @@ public class TopicTests extends BaseTest {
     @Test
     public void updateTopic() {
         pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage();
+                .waitUntilScreenReady();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
-                .isOnTopicViewPage()
+                .waitUntilScreenReady()
                 .openEditSettings()
                 .selectCleanupPolicy(COMPACT_POLICY_VALUE)
                 .setMinInsyncReplicas(10)
@@ -85,10 +84,10 @@ public class TopicTests extends BaseTest {
                 .setMaxSizeOnDiskInGB(UPDATED_MAX_SIZE_ON_DISK)
                 .setMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
                 .sendData()
-                .isOnTopicViewPage();
+                .waitUntilScreenReady();
 
         pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage();
+                .waitUntilScreenReady();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
                 .openEditSettings()
                 // Assertions
@@ -104,14 +103,13 @@ public class TopicTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(207)
     @Test
-    @Disabled // TODO: https://github.com/provectus/kafka-ui/issues/2373
     public void deleteTopic() {
         pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage()
+                .waitUntilScreenReady()
                 .openTopic(TOPIC_TO_DELETE)
-                .isOnTopicViewPage()
+                .waitUntilScreenReady()
                 .deleteTopic()
-                .isOnPage()
+                .waitUntilScreenReady()
                 .isTopicNotVisible(TOPIC_TO_DELETE);
     }
 
@@ -123,9 +121,9 @@ public class TopicTests extends BaseTest {
     @Test
     void produceMessage() {
         pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage()
+                .waitUntilScreenReady()
                 .openTopic(TOPIC_TO_UPDATE)
-                .isOnTopicViewPage()
+                .waitUntilScreenReady()
                 .openTopicMenu(TopicView.TopicMenu.MESSAGES)
                 .clickOnButton("Produce Message")
                 .setContentFiled(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE))

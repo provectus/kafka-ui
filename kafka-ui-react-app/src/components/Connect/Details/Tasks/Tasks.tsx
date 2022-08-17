@@ -43,7 +43,9 @@ const Tasks: React.FC = () => {
             <td>{task.status?.id}</td>
             <td>{task.status?.workerId}</td>
             <td>
-              <Tag color={getTagColor(task.status)}>{task.status.state}</Tag>
+              <Tag color={getTagColor(task.status.state)}>
+                {task.status.state}
+              </Tag>
             </td>
             <td>{task.status.trace || 'null'}</td>
             <td style={{ width: '5%' }}>

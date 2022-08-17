@@ -35,7 +35,7 @@ const Overview: React.FC = () => {
           </Metrics.Indicator>
         )}
         <Metrics.Indicator label="State">
-          <C.Tag color={getTagColor(connector.status)}>
+          <C.Tag color={getTagColor(connector.status.state)}>
             {connector.status.state}
           </C.Tag>
         </Metrics.Indicator>

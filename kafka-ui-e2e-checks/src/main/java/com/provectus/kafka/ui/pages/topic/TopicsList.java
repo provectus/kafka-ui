@@ -25,7 +25,7 @@ public class TopicsList {
     }
 
     @Step
-    public TopicsList isOnPage() {
+    public TopicsList waitUntilScreenReady() {
         $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
         $(By.xpath("//h1[text()='All Topics']")).shouldBe(Condition.visible);
         return this;
@@ -55,7 +55,7 @@ public class TopicsList {
     @SneakyThrows
     public TopicsList isTopicNotVisible(String topicName) {
         $$x("//table/tbody/tr/td[2]")
-                .shouldBe(CollectionCondition.sizeGreaterThanOrEqual(4))
+                .shouldBe(CollectionCondition.sizeGreaterThan(0))
                 .find(Condition.exactText(topicName))
                 .shouldBe(Condition.not(Condition.visible));
         return this;

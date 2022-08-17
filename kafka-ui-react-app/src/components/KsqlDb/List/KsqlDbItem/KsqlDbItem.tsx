@@ -1,10 +1,9 @@
 import React from 'react';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { KsqlStreamDescription, KsqlTableDescription } from 'generated-sources';
-import { useTableState } from 'lib/hooks/useTableState';
-import { SmartTable } from 'components/common/SmartTable/SmartTable';
-import { TableColumn } from 'components/common/SmartTable/TableColumn';
 import { ksqlRowData } from 'components/KsqlDb/List/KsqlDbItem/utils/ksqlRowData';
+import Table from 'components/common/NewTable';
+import { ColumnDef } from '@tanstack/react-table';
 
 export enum KsqlDbItemType {
   Tables = 'tables',
@@ -31,27 +30,28 @@ export interface KsqlTableState {
 
 const KsqlDbItem: React.FC<KsqlDbItemProps> = ({ type, fetching, rows }) => {
   const preparedRows = rows[type]?.map(ksqlRowData) || [];
-  const tableState = useTableState<KsqlTableState, string>(preparedRows, {
-    idSelector: ({ name }) => name,
-    totalPages: 0,
-  });
+
+  const columns = React.useMemo<ColumnDef<KsqlTableState>[]>(
+    () => [
+      { header: 'Name', accessorKey: 'name' },
+      { header: 'Topic', accessorKey: 'topic' },
+      { header: 'Key Format', accessorKey: 'keyFormat' },
+      { header: 'Value Format', accessorKey: 'valueFormat' },
+      { header: 'Is Windowed', accessorKey: 'isWindowed' },
+    ],
+    []
+  );
 
   if (fetching) {
     return <PageLoader />;
   }
   return (
-    <SmartTable
-      tableState={tableState}
-      isFullwidth
-      placeholder="No tables or streams found"
-      hoverable
-    >
-      <TableColumn title="Name" field="name" />
-      <TableColumn title="Topic" field="topic" />
-      <TableColumn title="Key Format" field="keyFormat" />
-      <TableColumn title="Value Format" field="valueFormat" />
-      <TableColumn title="Is Windowed" field="isWindowed" />
-    </SmartTable>
+    <Table
+      data={preparedRows}
+      columns={columns}
+      emptyMessage="No tables or streams found"
+      enableSorting={false}
+    />
   );
 };
 
