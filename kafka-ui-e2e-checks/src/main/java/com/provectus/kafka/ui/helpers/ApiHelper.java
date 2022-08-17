@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.helpers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.api.ApiClient;
 import com.provectus.kafka.ui.api.api.KafkaConnectApi;
@@ -45,7 +46,7 @@ public class ApiHelper {
         return new MessagesApi(new ApiClient().setBasePath(baseURL));
     }
 
-    @SneakyThrows
+
     public void createTopic(String clusterName, String topicName) {
         TopicCreation topic = new TopicCreation();
         topic.setName(topicName);
@@ -66,7 +67,6 @@ public class ApiHelper {
         }
     }
 
-    @SneakyThrows
     public void createSchema(String clusterName, String schemaName, SchemaType type, String schemaValue) {
         NewSchemaSubject schemaSubject = new NewSchemaSubject();
         schemaSubject.setSubject(schemaName);
@@ -79,7 +79,6 @@ public class ApiHelper {
         }
     }
 
-    @SneakyThrows
     public void deleteSchema(String clusterName, String schemaName) {
         try {
             schemaApi().deleteSchema(clusterName, schemaName).block();
@@ -99,12 +98,14 @@ public class ApiHelper {
     public void createConnector(String clusterName, String connectName, String connectorName, String configJson) {
         NewConnector connector = new NewConnector();
         connector.setName(connectorName);
-        Map<String, Object> configMap = new ObjectMapper().readValue(configJson, HashMap.class);
-        connector.setConfig(configMap);
+        Map<String, Object> configMap = null;
         try {
-            connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
-        } catch (WebClientResponseException ignored) {
+            configMap = new ObjectMapper().readValue(configJson, HashMap.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
+        connector.setConfig(configMap);
+            connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
         connectorApi().createConnector(clusterName, connectName, connector).block();
     }
 
@@ -112,7 +113,6 @@ public class ApiHelper {
         return connectorApi().getConnects(clusterName).blockFirst().getName();
     }
 
-    @SneakyThrows
     public void sendMessage(String clusterName, String topicName, String messageContentJson,
                             String messageKey) {
         CreateTopicMessage createMessage = new CreateTopicMessage();
