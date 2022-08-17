@@ -8,7 +8,8 @@
 [![Chat with us](https://img.shields.io/discord/897805035122077716)](https://discord.gg/4DWzD7pGE5)
 
 ### DISCLAIMER
-<em>UI for Apache Kafka is a free, open-source tool that is curated by Provectus, and is built and supported by the open-source community. It will remain free and open-source in the future. Provectus does not plan to add any paid features or subscription plans so that everyone can have a better experience observing their data. UI for Apache Kafka is a part of the [Provectus NextGen Data Platform](https://provectus.com/nextgen-data-platform/) — Check it out! Also, learn more about [Professional Services for Apache Kafka](https://provectus.com/professional-services-apache-kafka/), to start handling your Kafka clusters and streaming apps with the help of Provectus Kafka experts. </em> 
+<em>UI for Apache Kafka is a free tool built and supported by the open-source community. Curated by Provectus, it will remain free and open-source, without any paid features or subscription plans to be added in the future.
+Looking for the help of Kafka experts? Provectus can help you design, build, deploy, and manage Apache Kafka clusters and streaming applications. Discover [Professional Services for Apache Kafka](https://provectus.com/professional-services-apache-kafka/), to unlock the full potential of Kafka in your enteprise! </em>
 
 
 #### UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters. 
