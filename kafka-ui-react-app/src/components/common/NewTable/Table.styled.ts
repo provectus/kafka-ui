@@ -1,14 +1,15 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const ExpaderButton = styled.svg(
-  ({ theme: { table } }) => `
-  & > path {
-    fill: ${table.expander.normal};
-    &:hover {
-      fill: ${table.expander.hover};
+export const ExpaderButton = styled.svg<{ $disabled: boolean }>(
+  ({ theme: { table }, $disabled }) => css`
+    & > path {
+      fill: ${table.expander[$disabled ? 'disabled' : 'normal']};
     }
-  }
-`
+
+    &:hover > path {
+      fill: ${table.expander[$disabled ? 'disabled' : 'hover']};
+    }
+  `
 );
 
 interface ThProps {

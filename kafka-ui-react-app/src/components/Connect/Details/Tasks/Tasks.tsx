@@ -33,6 +33,7 @@ const Tasks: React.FC = () => {
             ? `${trace.toString().substring(0, MAX_LENGTH - 3)}...`
             : trace;
         },
+        meta: { width: '70%' },
       },
       {
         id: 'actions',
