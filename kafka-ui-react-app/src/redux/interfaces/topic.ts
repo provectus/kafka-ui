@@ -10,6 +10,7 @@ import {
   TopicMessageConsuming,
   TopicMessageSchema,
   SortOrder,
+  TopicSerdeSuggestion,
 } from 'generated-sources';
 
 export type TopicName = Topic['name'];
@@ -91,5 +92,6 @@ export interface TopicMessagesState {
   messages: TopicMessage[];
   phase?: string;
   meta: TopicMessageConsuming;
+  serdes: TopicSerdeSuggestion;
   isFetching: boolean;
 }

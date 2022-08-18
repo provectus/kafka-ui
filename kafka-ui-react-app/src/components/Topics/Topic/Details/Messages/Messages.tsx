@@ -69,8 +69,8 @@ const Messages: React.FC = () => {
       searchParams,
       changeSeekDirection,
       isLive,
-      keySerde: '',
-      valueSerde: '',
+      keySerde: 'String',
+      valueSerde: 'String',
     }),
     [seekDirection, searchParams, changeSeekDirection]
   );

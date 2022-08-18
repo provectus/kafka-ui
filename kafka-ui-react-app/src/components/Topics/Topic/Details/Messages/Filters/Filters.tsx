@@ -1,14 +1,17 @@
 import 'react-datepicker/dist/react-datepicker.css';
 
 import {
+  GetSerdesRequest,
   MessageFilterType,
   Partition,
   SeekDirection,
   SeekType,
+  SerdeUsage,
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageEvent,
   TopicMessageEventTypeEnum,
+  TopicSerdeSuggestion,
 } from 'generated-sources';
 import React, { useContext } from 'react';
 import omitBy from 'lodash/omitBy';
@@ -40,6 +43,8 @@ import {
   getTimestampFromSeekToParam,
   getValueSerdeFromUrlParams,
 } from './utils';
+import { TopicName } from 'redux/interfaces';
+import { AsyncThunk } from '@reduxjs/toolkit';
 
 type Query = Record<string, string | string[] | number>;
 
@@ -52,6 +57,13 @@ export interface FiltersProps {
   updatePhase(phase: string): void;
   updateMeta(meta: TopicMessageConsuming): void;
   setIsFetching(status: boolean): void;
+  setTopicSerdes(serdes: TopicSerdeSuggestion): void;
+  fetchTopicSerdes: AsyncThunk<
+    { topicSerdes: TopicSerdeSuggestion; topicName: TopicName },
+    GetSerdesRequest,
+    {}
+  >;
+  serdes: TopicSerdeSuggestion;
 }
 
 export interface MessageFilters {
@@ -63,6 +75,13 @@ export interface ActiveMessageFilter {
   index: number;
   name: string;
   code: string;
+}
+
+interface SerdeKeyValue {
+  key: string;
+  value: string;
+  label: string;
+  preferred: boolean;
 }
 
 const PER_PAGE = 100;
@@ -81,6 +100,9 @@ const Filters: React.FC<FiltersProps> = ({
   updatePhase,
   updateMeta,
   setIsFetching,
+  setTopicSerdes,
+  fetchTopicSerdes,
+  serdes,
 }) => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const location = useLocation();
@@ -102,6 +124,9 @@ const Filters: React.FC<FiltersProps> = ({
   );
 
   const [attempt, setAttempt] = React.useState(0);
+  const [serdeOptions, setSerdeOptions] = React.useState<SerdeKeyValue[]>([]);
+  const [selectedSerde, setSelectedSerde] =
+    React.useState<SerdeKeyValue | null>(null);
   const [currentSeekType, setCurrentSeekType] = React.useState<SeekType>(
     (searchParams.get('seekType') as SeekType) || SeekType.OFFSET
   );
@@ -111,14 +136,6 @@ const Filters: React.FC<FiltersProps> = ({
 
   const [timestamp, setTimestamp] = React.useState<Date | null>(
     getTimestampFromSeekToParam(searchParams)
-  );
-
-  const [keySerde, setKeySerde] = React.useState<string>(
-    getKeySerdeFromUrlParams(searchParams)
-  );
-
-  const [valueSerde, setValueSerde] = React.useState<string>(
-    getValueSerdeFromUrlParams(searchParams)
   );
 
   const [savedFilters, setSavedFilters] = React.useState<MessageFilters[]>(
@@ -178,18 +195,10 @@ const Filters: React.FC<FiltersProps> = ({
       attempt,
       limit: PER_PAGE,
       seekDirection,
-      // keySerde,  // TODO: add back when endpoint works
-      // valueSerde,
+      keySerde: selectedSerde ? selectedSerde.key : undefined,
+      valueSerde: selectedSerde ? selectedSerde.value : undefined,
     };
-  }, [
-    attempt,
-    query,
-    queryType,
-    seekDirection,
-    activeFilter,
-    keySerde,
-    valueSerde,
-  ]);
+  }, [attempt, query, queryType, seekDirection, activeFilter, selectedSerde]);
 
   const handleClearAllFilters = () => {
     setCurrentSeekType(SeekType.OFFSET);
@@ -245,8 +254,7 @@ const Filters: React.FC<FiltersProps> = ({
       timestamp,
       query,
       selectedPartitions,
-      keySerde,
-      valueSerde,
+      selectedSerde,
       navigate,
     ]
   );
@@ -311,6 +319,52 @@ const Filters: React.FC<FiltersProps> = ({
     localStorage.setItem('savedFilters', JSON.stringify(filters));
     setSavedFilters(filters);
   };
+
+  React.useEffect(() => {
+    if (serdes && serdes.key && serdes.value) {
+      const newSerdes: SerdeKeyValue[] = [];
+
+      serdes.key.forEach((keyItem, index) => {
+        newSerdes.push({
+          key: keyItem.name || '',
+          label: keyItem.name || '',
+          value:
+            serdes && serdes.value[index].name
+              ? serdes.value[index].name || ''
+              : '',
+          preferred: !!keyItem.preferred,
+        });
+
+        if (!!keyItem.preferred) {
+          setSelectedSerde({
+            key: keyItem.name || '',
+            label: keyItem.name || '',
+            value:
+              serdes && serdes.value[index].name
+                ? serdes.value[index].name || ''
+                : '',
+            preferred: !!keyItem.preferred,
+          });
+        }
+      });
+
+      setSerdeOptions(newSerdes);
+    }
+  }, [serdes]);
+
+  React.useEffect(() => {
+    const init = async () => {
+      const topSerdesAction = await fetchTopicSerdes({
+        topicName,
+        clusterName,
+        use: SerdeUsage.DESERIALIZE,
+      });
+      setTopicSerdes(topSerdesAction);
+    };
+
+    init();
+  }, [fetchTopicSerdes, topicName, clusterName]);
+
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
     if (location.search?.length !== 0) {
@@ -330,7 +384,6 @@ const Filters: React.FC<FiltersProps> = ({
           JSON.parse(data);
         switch (type) {
           case TopicMessageEventTypeEnum.MESSAGE:
-            console.log('MESSAGE', message);
             if (message) {
               addMessage({
                 message,
@@ -339,13 +392,11 @@ const Filters: React.FC<FiltersProps> = ({
             }
             break;
           case TopicMessageEventTypeEnum.PHASE:
-            console.log('PHASE', phase);
             if (phase?.name) {
               updatePhase(phase.name);
             }
             break;
           case TopicMessageEventTypeEnum.CONSUMING:
-            console.log('CONSUMING', consuming);
             if (consuming) updateMeta(consuming);
             break;
           default:
@@ -385,8 +436,7 @@ const Filters: React.FC<FiltersProps> = ({
     timestamp,
     query,
     location,
-    keySerde,
-    valueSerde,
+    selectedSerde,
   ]);
 
   React.useEffect(() => {
@@ -399,8 +449,7 @@ const Filters: React.FC<FiltersProps> = ({
     timestamp,
     query,
     seekDirection,
-    keySerde,
-    valueSerde,
+    selectedSerde,
   ]);
 
   React.useEffect(() => {
@@ -452,19 +501,15 @@ const Filters: React.FC<FiltersProps> = ({
 
           <Select
             selectSize="M"
-            onChange={(value) => setValueSerde(value.toString())}
-            value={valueSerde}
+            onChange={(value) => {
+              const foundSerde = serdeOptions.find(
+                (option) => option.value === value
+              );
+              setSelectedSerde(foundSerde);
+            }}
+            value={selectedSerde ? selectedSerde.value : undefined}
             minWidth="120px"
-            options={[
-              {
-                label: 'Preferred',
-                value: 'preferred',
-              },
-              {
-                label: 'Other',
-                value: 'other',
-              },
-            ]}
+            options={serdeOptions}
           />
 
           <MultiSelect

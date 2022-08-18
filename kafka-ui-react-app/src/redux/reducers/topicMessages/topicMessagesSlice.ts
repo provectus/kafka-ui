@@ -1,6 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TopicMessagesState, ClusterName, TopicName } from 'redux/interfaces';
-import { TopicMessage } from 'generated-sources';
+import {
+  GetSerdesRequest,
+  SerdeUsage,
+  TopicMessage,
+  TopicSerdeSuggestion,
+} from 'generated-sources';
 import { getResponse } from 'lib/errorHandling';
 import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
 import { fetchTopicDetails } from 'redux/reducers/topics/topicsSlice';
@@ -44,6 +49,7 @@ export const initialState: TopicMessagesState = {
     messagesConsumed: 0,
     isCancelled: false,
   },
+  serdes: {},
   isFetching: false,
 };
 
@@ -71,6 +77,11 @@ export const topicMessagesSlice = createSlice({
     setTopicMessagesFetchingStatus: (state, action) => {
       state.isFetching = action.payload;
     },
+    setTopicSerdes: (state, action) => {
+      if (action?.payload?.payload?.topicSerdes) {
+        state.serdes = action.payload.payload.topicSerdes;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(clearTopicMessages.fulfilled, (state) => {
@@ -79,12 +90,28 @@ export const topicMessagesSlice = createSlice({
   },
 });
 
+export const fetchTopicSerdes = createAsyncThunk<
+  { topicSerdes: TopicSerdeSuggestion; topicName: TopicName },
+  GetSerdesRequest
+>('topic/fetchTopicSerdes', async (payload, { rejectWithValue }) => {
+  try {
+    const { topicName } = payload;
+    payload.use = SerdeUsage.SERIALIZE;
+    const topicSerdes = await messagesApiClient.getSerdes(payload);
+
+    return { topicSerdes, topicName };
+  } catch (err) {
+    return rejectWithValue(await getResponse(err as Response));
+  }
+});
+
 export const {
   addTopicMessage,
   resetTopicMessages,
   updateTopicMessagesPhase,
   updateTopicMessagesMeta,
   setTopicMessagesFetchingStatus,
+  setTopicSerdes,
 } = topicMessagesSlice.actions;
 
 export default topicMessagesSlice.reducer;
