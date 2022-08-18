@@ -15,7 +15,6 @@ import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
 import now from 'lodash/now';
 import { Button } from 'components/common/Button/Button';
 import Editor from 'components/common/Editor/Editor';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 import {
   getMessageSchemaByTopicName,
   getPartitionsByTopicName,
@@ -26,15 +25,23 @@ import useAppParams from 'lib/hooks/useAppParams';
 import Heading from 'components/common/heading/Heading.styled';
 import { messagesApiClient } from 'lib/api';
 import { getResponse } from 'lib/errorHandling';
+import {
+  fetchTopicSerdes,
+  setTopicSerdes,
+} from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { SerdeUsage, TopicSerdeSuggestion } from 'generated-sources';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 
-import validateMessage from './validateMessage';
 import * as S from './SendMessage.styled';
+import validateMessage from './validateMessage';
 
 type FieldValues = Partial<{
   key: string;
   content: string;
   headers: string;
   partition: number | string;
+  keySerde: string;
+  valueSerde: string;
 }>;
 
 const SendMessage: React.FC = () => {
@@ -44,6 +51,11 @@ const SendMessage: React.FC = () => {
 
   jsf.option('fillProperties', false);
   jsf.option('alwaysFakeOptionals', true);
+
+  const [serdeOptions, setSerdeOptions] =
+    React.useState<TopicSerdeSuggestion>();
+  const [selectedSerdeKey, setSelectedSerdeKey] = React.useState('');
+  const [selectedSerdeValue, setSelectedSerdeValue] = React.useState('');
 
   React.useEffect(() => {
     dispatch(fetchTopicMessageSchema({ clusterName, topicName }));
@@ -55,6 +67,7 @@ const SendMessage: React.FC = () => {
   const partitions = useAppSelector((state) =>
     getPartitionsByTopicName(state, topicName)
   );
+
   const schemaIsFetched = useAppSelector(getTopicMessageSchemaFetched);
   const selectPartitionOptions: Array<SelectOption> = partitions.map((p) => {
     const value = String(p.partition);
@@ -105,6 +118,39 @@ const SendMessage: React.FC = () => {
     });
   }, [keyDefaultValue, contentDefaultValue, reset]);
 
+  React.useEffect(() => {
+    const init = async () => {
+      const serdes = await messagesApiClient.getSerdes({
+        topicName,
+        clusterName,
+        use: SerdeUsage.SERIALIZE,
+      });
+
+      if (serdes.key && serdes.value) {
+        setSerdeOptions(serdes);
+      }
+    };
+
+    init();
+  }, [fetchTopicSerdes, setTopicSerdes, topicName, clusterName]);
+
+  React.useEffect(() => {
+    if (serdeOptions != null && serdeOptions.key && serdeOptions.value) {
+      setSerdeOptions(serdeOptions);
+
+      const preferredKeySerde = serdeOptions.key.find((k) => k.preferred);
+      const preferredValueSerde = serdeOptions.value.find((v) => v.preferred);
+
+      if (
+        typeof preferredKeySerde !== 'undefined' &&
+        typeof preferredValueSerde !== 'undefined'
+      ) {
+        setSelectedSerdeKey(preferredKeySerde.name as string);
+        setSelectedSerdeValue(preferredValueSerde.name as string);
+      }
+    }
+  }, [serdeOptions]);
+
   const onSubmit = async (data: {
     key: string;
     content: string;
@@ -144,6 +190,8 @@ const SendMessage: React.FC = () => {
             content: !content ? null : content,
             headers,
             partition: !partition ? 0 : partition,
+            keySerde: selectedSerdeKey,
+            valueSerde: selectedSerdeValue,
           },
         });
         dispatch(fetchTopicDetails({ clusterName, topicName }));
@@ -166,6 +214,7 @@ const SendMessage: React.FC = () => {
   if (!schemaIsFetched) {
     return <PageLoader />;
   }
+
   return (
     <S.Wrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -185,6 +234,60 @@ const SendMessage: React.FC = () => {
                   minWidth="100%"
                   options={selectPartitionOptions}
                   value={selectPartitionOptions[0].value}
+                />
+              )}
+            />
+          </S.Column>
+        </S.Columns>
+
+        <S.Columns>
+          <S.Column>
+            <Heading level={3}>Key Serde</Heading>
+            <Controller
+              control={control}
+              name="keySerde"
+              render={({ field: { name, onChange } }) => (
+                <Select
+                  id="keySerdeOptions"
+                  aria-labelledby="keySerdeOptions"
+                  name={name}
+                  onChange={onChange}
+                  minWidth="100%"
+                  options={
+                    Array.isArray(serdeOptions?.key)
+                      ? serdeOptions?.key.map((keyItem) => ({
+                          label: keyItem.name || '',
+                          value: keyItem.name || '',
+                        }))
+                      : []
+                  }
+                  value={selectedSerdeKey}
+                />
+              )}
+            />
+          </S.Column>
+
+          <S.Column>
+            <Heading level={3}>Value Serde</Heading>
+            <Controller
+              control={control}
+              name="valueSerde"
+              render={({ field: { name, onChange } }) => (
+                <Select
+                  id="valueSerdeOptions"
+                  aria-labelledby="valueSerdeOptions"
+                  name={name}
+                  onChange={onChange}
+                  minWidth="100%"
+                  options={
+                    Array.isArray(serdeOptions?.value)
+                      ? serdeOptions?.value.map((keyItem) => ({
+                          label: keyItem.name || '',
+                          value: keyItem.name || '',
+                        }))
+                      : []
+                  }
+                  value={selectedSerdeValue}
                 />
               )}
             />

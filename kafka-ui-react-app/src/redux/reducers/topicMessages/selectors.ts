@@ -1,6 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState, TopicMessagesState } from 'redux/interfaces';
+
 import { createFetchingSelector } from '../loader/selectors';
+
 import { fetchTopicSerdes } from './topicMessagesSlice';
 
 const topicMessagesState = ({ topicMessages }: RootState): TopicMessagesState =>

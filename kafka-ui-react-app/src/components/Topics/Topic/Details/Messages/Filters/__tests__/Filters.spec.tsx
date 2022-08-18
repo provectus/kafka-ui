@@ -35,6 +35,12 @@ const renderComponent = (
         updatePhase={jest.fn()}
         updateMeta={jest.fn()}
         setIsFetching={jest.fn()}
+        fetchTopicSerdes={jest.fn()}
+        setTopicSerdes={jest.fn()}
+        serdes={{
+          key: [],
+          value: [],
+        }}
         {...props}
       />
     </TopicMessagesContext.Provider>

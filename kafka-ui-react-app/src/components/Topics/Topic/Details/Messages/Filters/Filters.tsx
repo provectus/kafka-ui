@@ -33,9 +33,9 @@ import React, { useContext } from 'react';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
-
 import { AsyncThunk } from '@reduxjs/toolkit';
 import { TopicName } from 'redux/interfaces';
+
 import * as S from './Filters.styled';
 import {
   filterOptions,
@@ -122,11 +122,11 @@ const Filters: React.FC<FiltersProps> = ({
   );
 
   const [attempt, setAttempt] = React.useState(0);
-  const [serdeOptions, setSerdeOptions] = React.useState<SerdeKeyValue[]>([]);
-  const [selectedSerde, setSelectedSerde] =
-    React.useState<SerdeKeyValue | null>(null);
-  const [selectedSerdeUsage, setSelectedSerdeUsage] =
-    React.useState<SerdeUsage>(SerdeUsage.SERIALIZE);
+
+  const [serdeOptions, setSerdeOptions] =
+    React.useState<TopicSerdeSuggestion>();
+  const [selectedSerdeKey, setSelectedSerdeKey] = React.useState('');
+  const [selectedSerdeValue, setSelectedSerdeValue] = React.useState('');
   const [currentSeekType, setCurrentSeekType] = React.useState<SeekType>(
     (searchParams.get('seekType') as SeekType) || SeekType.OFFSET
   );
@@ -195,10 +195,18 @@ const Filters: React.FC<FiltersProps> = ({
       attempt,
       limit: PER_PAGE,
       seekDirection,
-      keySerde: selectedSerde ? selectedSerde.key : undefined,
-      valueSerde: selectedSerde ? selectedSerde.value : undefined,
+      keySerde: selectedSerdeKey,
+      valueSerde: selectedSerdeValue,
     };
-  }, [attempt, query, queryType, seekDirection, activeFilter, selectedSerde]);
+  }, [
+    attempt,
+    query,
+    queryType,
+    seekDirection,
+    activeFilter,
+    selectedSerdeKey,
+    selectedSerdeValue,
+  ]);
 
   const handleClearAllFilters = () => {
     setCurrentSeekType(SeekType.OFFSET);
@@ -254,7 +262,8 @@ const Filters: React.FC<FiltersProps> = ({
       timestamp,
       query,
       selectedPartitions,
-      selectedSerde,
+      selectedSerdeKey,
+      selectedSerdeValue,
       navigate,
     ]
   );
@@ -321,34 +330,15 @@ const Filters: React.FC<FiltersProps> = ({
   };
 
   React.useEffect(() => {
-    if (serdes && serdes.key && serdes.value) {
-      const newSerdes: SerdeKeyValue[] = [];
+    if (serdes.key && serdes.value) {
+      setSerdeOptions(serdes);
 
-      serdes.key.forEach((keyItem, index) => {
-        newSerdes.push({
-          key: keyItem.name || '',
-          label: keyItem.name || '',
-          value:
-            serdes && serdes.value[index].name
-              ? serdes.value[index].name || ''
-              : '',
-          preferred: !!keyItem.preferred,
-        });
+      const preferredKeySerde = serdes.key.find((k) => k.preferred);
+      const preferredValueSerde = serdes.value.find((v) => v.preferred);
 
-        if (!!keyItem.preferred) {
-          setSelectedSerde({
-            key: keyItem.name || '',
-            label: keyItem.name || '',
-            value:
-              serdes && serdes.value[index].name
-                ? serdes.value[index].name || ''
-                : '',
-            preferred: !!keyItem.preferred,
-          });
-        }
-      });
-
-      setSerdeOptions(newSerdes);
+      preferredKeySerde?.name && setSelectedSerdeKey(preferredKeySerde.name);
+      preferredValueSerde?.name &&
+        setSelectedSerdeValue(preferredValueSerde.name);
     }
   }, [serdes]);
 
@@ -357,13 +347,13 @@ const Filters: React.FC<FiltersProps> = ({
       const topSerdesAction = await fetchTopicSerdes({
         topicName,
         clusterName,
-        use: selectedSerdeUsage,
+        use: SerdeUsage.SERIALIZE,
       });
       setTopicSerdes(topSerdesAction);
     };
 
     init();
-  }, [fetchTopicSerdes, topicName, clusterName, selectedSerdeUsage]);
+  }, [fetchTopicSerdes, topicName, clusterName]);
 
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
@@ -423,6 +413,8 @@ const Filters: React.FC<FiltersProps> = ({
     setIsFetching,
     updateMeta,
     updatePhase,
+    selectedSerdeKey,
+    selectedSerdeValue,
   ]);
   React.useEffect(() => {
     if (location.search?.length === 0) {
@@ -436,8 +428,8 @@ const Filters: React.FC<FiltersProps> = ({
     timestamp,
     query,
     location,
-    selectedSerde,
-    selectedSerdeUsage,
+    selectedSerdeKey,
+    selectedSerdeValue,
   ]);
 
   React.useEffect(() => {
@@ -450,7 +442,8 @@ const Filters: React.FC<FiltersProps> = ({
     timestamp,
     query,
     seekDirection,
-    selectedSerde,
+    selectedSerdeKey,
+    selectedSerdeValue,
   ]);
 
   React.useEffect(() => {
@@ -502,32 +495,32 @@ const Filters: React.FC<FiltersProps> = ({
 
           <Select
             selectSize="M"
-            onChange={(value) => {
-              const foundSerde = serdeOptions.find(
-                (option) => option.value === value
-              );
-              foundSerde && setSelectedSerde(foundSerde);
-            }}
-            value={selectedSerde ? selectedSerde.value : undefined}
+            onChange={(newValue) => setSelectedSerdeValue(newValue as string)}
+            value={selectedSerdeValue}
             minWidth="120px"
-            options={serdeOptions}
+            options={
+              serdeOptions && Array.isArray(serdeOptions.value)
+                ? serdeOptions.value.map((valueItem) => ({
+                    label: valueItem.name || '',
+                    value: valueItem.name || '',
+                  }))
+                : []
+            }
           />
 
           <Select
             selectSize="M"
-            minWidth="60px"
-            onChange={setSelectedSerdeUsage}
-            options={[
-              {
-                label: 'Serialize',
-                value: SerdeUsage.SERIALIZE,
-              },
-              {
-                label: 'Deserialize',
-                value: SerdeUsage.DESERIALIZE,
-              },
-            ]}
-            value={selectedSerdeUsage}
+            onChange={(newKey) => setSelectedSerdeKey(newKey as string)}
+            value={selectedSerdeKey}
+            minWidth="120px"
+            options={
+              serdeOptions && Array.isArray(serdeOptions.key)
+                ? serdeOptions.key.map((keyItem) => ({
+                    label: keyItem.name || '',
+                    value: keyItem.name || '',
+                  }))
+                : []
+            }
           />
 
           <MultiSelect
