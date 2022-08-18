@@ -12,6 +12,7 @@ const ExpanderCell: React.FC<CellContext<unknown, unknown>> = ({ row }) => (
     xmlns="http://www.w3.org/2000/svg"
     role="button"
     aria-label="Expand row"
+    $disabled={!row.getCanExpand()}
   >
     {row.getIsExpanded() ? (
       <path

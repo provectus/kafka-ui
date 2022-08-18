@@ -12,18 +12,19 @@ import static com.codeborne.selenide.Selenide.*;
 public class SchemaRegistryList {
 
     private final SelenideElement schemaButton = $(By.xpath("//*[contains(text(),'Create Schema')]"));
-
+    @Step
     public SchemaCreateView clickCreateSchema() {
         BrowserUtils.javaExecutorClick(schemaButton);
         return new SchemaCreateView();
     }
-
+    @Step
     public SchemaView openSchema(String schemaName) {
         $(By.xpath("//*[contains(text(),'" + schemaName + "')]")).click();
         return new SchemaView();
     }
 
     @SneakyThrows
+    @Step
     public SchemaRegistryList isNotVisible(String schemaName) {
         $x(String.format("//*[contains(text(),'%s')]",schemaName)).shouldNotBe(Condition.visible);
         return this;

@@ -346,6 +346,7 @@ const theme = {
     expander: {
       normal: Colors.brand[50],
       hover: Colors.brand[20],
+      disabled: Colors.neutral[10],
     },
   },
   primaryTab: {
