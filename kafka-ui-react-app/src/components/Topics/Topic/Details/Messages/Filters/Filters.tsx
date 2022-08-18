@@ -1,5 +1,15 @@
 import 'react-datepicker/dist/react-datepicker.css';
 
+import { Button } from 'components/common/Button/Button';
+import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
+import Search from 'components/common/Search/Search';
+import Select from 'components/common/Select/Select';
+import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
+import FilterModal, {
+  FilterEdit,
+} from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
+import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
 import {
   GetSerdesRequest,
   MessageFilterType,
@@ -13,38 +23,26 @@ import {
   TopicMessageEventTypeEnum,
   TopicSerdeSuggestion,
 } from 'generated-sources';
-import React, { useContext } from 'react';
-import omitBy from 'lodash/omitBy';
-import { useNavigate, useLocation } from 'react-router-dom';
-import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
-import { Option } from 'react-multi-select-component/dist/lib/interfaces';
-import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { BASE_PARAMS } from 'lib/constants';
-import Select from 'components/common/Select/Select';
-import { Button } from 'components/common/Button/Button';
-import Search from 'components/common/Search/Search';
-import FilterModal, {
-  FilterEdit,
-} from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
-import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
-import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
-import useModal from 'lib/hooks/useModal';
-import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
 import { useAppSelector } from 'lib/hooks/redux';
-import { RouteParamsClusterTopic } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
+import useModal from 'lib/hooks/useModal';
+import { RouteParamsClusterTopic } from 'lib/paths';
+import omitBy from 'lodash/omitBy';
+import React, { useContext } from 'react';
+import { Option } from 'react-multi-select-component/dist/lib/interfaces';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
 
+import { AsyncThunk } from '@reduxjs/toolkit';
+import { TopicName } from 'redux/interfaces';
 import * as S from './Filters.styled';
 import {
   filterOptions,
-  getKeySerdeFromUrlParams,
   getOffsetFromSeekToParam,
   getSelectedPartitionsFromSeekToParam,
   getTimestampFromSeekToParam,
-  getValueSerdeFromUrlParams,
 } from './utils';
-import { TopicName } from 'redux/interfaces';
-import { AsyncThunk } from '@reduxjs/toolkit';
 
 type Query = Record<string, string | string[] | number>;
 
@@ -127,6 +125,8 @@ const Filters: React.FC<FiltersProps> = ({
   const [serdeOptions, setSerdeOptions] = React.useState<SerdeKeyValue[]>([]);
   const [selectedSerde, setSelectedSerde] =
     React.useState<SerdeKeyValue | null>(null);
+  const [selectedSerdeUsage, setSelectedSerdeUsage] =
+    React.useState<SerdeUsage>(SerdeUsage.SERIALIZE);
   const [currentSeekType, setCurrentSeekType] = React.useState<SeekType>(
     (searchParams.get('seekType') as SeekType) || SeekType.OFFSET
   );
@@ -357,13 +357,13 @@ const Filters: React.FC<FiltersProps> = ({
       const topSerdesAction = await fetchTopicSerdes({
         topicName,
         clusterName,
-        use: SerdeUsage.DESERIALIZE,
+        use: selectedSerdeUsage,
       });
       setTopicSerdes(topSerdesAction);
     };
 
     init();
-  }, [fetchTopicSerdes, topicName, clusterName]);
+  }, [fetchTopicSerdes, topicName, clusterName, selectedSerdeUsage]);
 
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
@@ -437,6 +437,7 @@ const Filters: React.FC<FiltersProps> = ({
     query,
     location,
     selectedSerde,
+    selectedSerdeUsage,
   ]);
 
   React.useEffect(() => {
@@ -505,11 +506,28 @@ const Filters: React.FC<FiltersProps> = ({
               const foundSerde = serdeOptions.find(
                 (option) => option.value === value
               );
-              setSelectedSerde(foundSerde);
+              foundSerde && setSelectedSerde(foundSerde);
             }}
             value={selectedSerde ? selectedSerde.value : undefined}
             minWidth="120px"
             options={serdeOptions}
+          />
+
+          <Select
+            selectSize="M"
+            minWidth="60px"
+            onChange={setSelectedSerdeUsage}
+            options={[
+              {
+                label: 'Serialize',
+                value: SerdeUsage.SERIALIZE,
+              },
+              {
+                label: 'Deserialize',
+                value: SerdeUsage.DESERIALIZE,
+              },
+            ]}
+            value={selectedSerdeUsage}
           />
 
           <MultiSelect

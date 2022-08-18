@@ -96,7 +96,6 @@ export const fetchTopicSerdes = createAsyncThunk<
 >('topic/fetchTopicSerdes', async (payload, { rejectWithValue }) => {
   try {
     const { topicName } = payload;
-    payload.use = SerdeUsage.SERIALIZE;
     const topicSerdes = await messagesApiClient.getSerdes(payload);
 
     return { topicSerdes, topicName };
