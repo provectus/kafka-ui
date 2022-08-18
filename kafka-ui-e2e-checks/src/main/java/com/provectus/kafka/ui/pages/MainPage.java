@@ -33,10 +33,11 @@ public class MainPage {
     }
 
     @SneakyThrows
+    @Step
     public void topicIsVisible(String topicName) {
         new TopicsList().isTopicVisible(topicName);
     }
-
+    @Step
     public void topicIsNotVisible(String topicName){
         new TopicsList().isTopicNotVisible(topicName);
     }

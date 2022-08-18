@@ -47,12 +47,14 @@ public class TopicsList {
     }
 
     @SneakyThrows
+    @Step
     public TopicView openTopic(String topicName) {
         $(By.linkText(topicName)).click();
         return new TopicView();
     }
 
     @SneakyThrows
+    @Step
     public TopicsList isTopicNotVisible(String topicName) {
         $$x("//table/tbody/tr/td[2]")
                 .shouldBe(CollectionCondition.sizeGreaterThan(0))
