@@ -16,19 +16,19 @@ public class SchemaEditView {
 
     SelenideElement newSchemaTextArea = $("#newSchema [wrap]");
 
-
+    @Step
     public SchemaEditView selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType schemaType) {
         $x("//ul[@name='schemaType']").click();
         $x("//li[text()='" + schemaType.getValue() + "']").click();
         return this;
     }
-
+    @Step
     public SchemaEditView selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum level) {
         $x("//ul[@name='compatibilityLevel']").click();
         $x("//li[text()='" + level.getValue() + "']").click();
         return this;
     }
-
+    @Step
     public SchemaView clickSubmit() {
         BrowserUtils.javaExecutorClick($(By.xpath("//button[@type='submit']")));
         return new SchemaView();
@@ -43,7 +43,7 @@ public class SchemaEditView {
         return this;
     }
 
-
+    @Step
     public SchemaRegistryList removeSchema() {
         $(By.xpath("//*[contains(text(),'Remove')]")).click();
         $(By.xpath("//*[text()='Confirm']")).shouldBe(Condition.visible).click();
