@@ -246,15 +246,15 @@ const Table: React.FC<TableProps<any>> = ({
                 }
               >
                 {!!enableRowSelection && (
-                  <td key={`${row.id}-select`}>
+                  <td key={`${row.id}-select`} style={{ width: '1px' }}>
                     {flexRender(
                       SelectRowCell,
                       row.getVisibleCells()[0].getContext()
                     )}
                   </td>
                 )}
-                {row.getCanExpand() && (
-                  <td key={`${row.id}-expander`}>
+                {table.getCanSomeRowsExpand() && (
+                  <td key={`${row.id}-expander`} style={{ width: '1px' }}>
                     {flexRender(
                       ExpanderCell,
                       row.getVisibleCells()[0].getContext()
@@ -264,7 +264,9 @@ const Table: React.FC<TableProps<any>> = ({
                 {row
                   .getVisibleCells()
                   .map(({ id, getContext, column: { columnDef } }) => (
-                    <td key={id}>{flexRender(columnDef.cell, getContext())}</td>
+                    <td key={id} style={columnDef.meta}>
+                      {flexRender(columnDef.cell, getContext())}
+                    </td>
                   ))}
               </S.Row>
               {row.getIsExpanded() && renderSubComponent && (
