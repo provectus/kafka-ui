@@ -72,7 +72,7 @@ public class ConnectorsTests extends BaseTest {
                 .waitUntilScreenReady()
                 .setConnectorConfig(
                         SINK_CONNECTOR,
-                        (getResourceAsString("config_for_create_connector.json")));
+                        getResourceAsString("config_for_create_connector.json"));
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .waitUntilScreenReady()
                 .connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
