@@ -36,12 +36,14 @@ public class ConnectorsList {
     }
 
     @SneakyThrows
+    @Step
     public ConnectorsList openConnector(String connectorName) {
         $(By.linkText(connectorName)).click();
         return this;
     }
 
     @SneakyThrows
+    @Step
     public ConnectorsList isNotVisible(String connectorName) {
         $(By.xpath("//table")).shouldBe(Condition.visible);
         $x("//tbody//td[1]//a[text()='" + connectorName + "']").shouldBe(Condition.not(Condition.visible));
@@ -54,7 +56,7 @@ public class ConnectorsList {
        $$(By.linkText(topicName));
         return this;
     }
-
+    @Step
     public ConnectorsList connectorIsUpdatedInList(String connectorName, String topicName) {
         $(By.xpath(String.format("//a[text() = '%s']", connectorName))).shouldBe(Condition.visible);
         By.xpath(String.format("//a[text() = '%s']", topicName)).refreshUntil(Condition.visible);
