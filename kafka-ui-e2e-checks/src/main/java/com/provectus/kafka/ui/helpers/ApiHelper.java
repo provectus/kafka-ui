@@ -13,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.codeborne.selenide.Selenide.sleep;
 
@@ -103,7 +102,7 @@ public class ApiHelper {
     }
 
     public String getFirstConnectName(String clusterName) {
-        return Objects.requireNonNull(connectorApi().getConnects(clusterName).blockFirst()).getName();
+        return (connectorApi().getConnects(clusterName).blockFirst()).getName();
     }
 
     public void sendMessage(String clusterName, String topicName, String messageContentJson,
