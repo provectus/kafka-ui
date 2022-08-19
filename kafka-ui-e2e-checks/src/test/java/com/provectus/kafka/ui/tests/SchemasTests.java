@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.tests;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.api.model.SchemaType;
 import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.extensions.FileUtils;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.schema.SchemaCreateView;
@@ -12,6 +11,8 @@ import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.*;
+
+import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SchemasTests extends BaseTest {
@@ -33,10 +34,10 @@ public class SchemasTests extends BaseTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, SCHEMA_AVRO_API_UPDATE, SchemaType.AVRO, FileUtils.fileToString(PATH_AVRO_VALUE));
-        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, SCHEMA_AVRO_API, SchemaType.AVRO, FileUtils.fileToString(PATH_AVRO_VALUE));
-        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, SCHEMA_JSON_API, SchemaType.JSON, FileUtils.fileToString(PATH_JSON_VALUE));
-        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, SCHEMA_PROTOBUF_API, SchemaType.PROTOBUF, FileUtils.fileToString(PATH_PROTOBUF_VALUE));
+        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, SCHEMA_AVRO_API_UPDATE, SchemaType.AVRO, fileToString(PATH_AVRO_VALUE));
+        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, SCHEMA_AVRO_API, SchemaType.AVRO, fileToString(PATH_AVRO_VALUE));
+        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, SCHEMA_JSON_API, SchemaType.JSON, fileToString(PATH_JSON_VALUE));
+        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, SCHEMA_PROTOBUF_API, SchemaType.PROTOBUF, fileToString(PATH_PROTOBUF_VALUE));
     }
 
     @AfterAll
@@ -62,7 +63,7 @@ public class SchemasTests extends BaseTest {
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
                 .setSubjectName(SCHEMA_AVRO_CREATE)
-                .setSchemaField(FileUtils.fileToString(PATH_AVRO_VALUE))
+                .setSchemaField(fileToString(PATH_AVRO_VALUE))
                 .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.AVRO)
                 .clickSubmit()
                 .waitUntilScreenReady();
@@ -84,7 +85,7 @@ public class SchemasTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openEditSchema()
                 .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
-                .setNewSchemaValue(FileUtils.fileToString(PATH_AVRO_FOR_UPDATE))
+                .setNewSchemaValue(fileToString(PATH_AVRO_FOR_UPDATE))
                 .clickSubmit()
                 .waitUntilScreenReady()
                 .isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE);
@@ -116,7 +117,7 @@ public class SchemasTests extends BaseTest {
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
                 .setSubjectName(SCHEMA_JSON_CREATE)
-                .setSchemaField(FileUtils.fileToString(PATH_JSON_VALUE))
+                .setSchemaField(fileToString(PATH_JSON_VALUE))
                 .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.JSON)
                 .clickSubmit()
                 .waitUntilScreenReady();
@@ -151,7 +152,7 @@ public class SchemasTests extends BaseTest {
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
                 .setSubjectName(SCHEMA_PROTOBUF_CREATE)
-                .setSchemaField(FileUtils.fileToString(PATH_PROTOBUF_VALUE))
+                .setSchemaField(fileToString(PATH_PROTOBUF_VALUE))
                 .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.PROTOBUF)
                 .clickSubmit()
                 .waitUntilScreenReady();

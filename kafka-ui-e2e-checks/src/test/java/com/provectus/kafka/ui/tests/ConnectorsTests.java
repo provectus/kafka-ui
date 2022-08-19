@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.extensions.FileUtils;
 import com.provectus.kafka.ui.helpers.ApiHelper;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
@@ -13,7 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
+import static com.provectus.kafka.ui.extensions.FileUtils.getResourceAsString;
 
 public class ConnectorsTests extends BaseTest {
 
@@ -32,9 +31,9 @@ public class ConnectorsTests extends BaseTest {
     public static void beforeAll() {
         ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
 
-        String connectorToDelete = FileUtils.getResourceAsString("delete_connector_config.json");
-        String connectorToUpdate = FileUtils.getResourceAsString("config_for_create_connector_via_api.json");
-        String message = FileUtils.getResourceAsString("message_content_create_topic.json");
+        String connectorToDelete = getResourceAsString("delete_connector_config.json");
+        String connectorToUpdate = getResourceAsString("config_for_create_connector_via_api.json");
+        String message = getResourceAsString("message_content_create_topic.json");
 
         apiHelper.deleteTopic(LOCAL_CLUSTER, CONNECTOR_FOR_DELETE);
 
@@ -73,7 +72,7 @@ public class ConnectorsTests extends BaseTest {
                 .waitUntilScreenReady()
                 .setConnectorConfig(
                         SINK_CONNECTOR,
-                        Objects.requireNonNull(FileUtils.getResourceAsString("config_for_create_connector.json")));
+                        (getResourceAsString("config_for_create_connector.json")));
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .waitUntilScreenReady()
                 .connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
@@ -90,7 +89,7 @@ public class ConnectorsTests extends BaseTest {
                 .openConnector(CONNECTOR_FOR_UPDATE);
         pages.connectorsView.connectorIsVisibleOnOverview();
         pages.connectorsView.openEditConfig()
-                .updConnectorConfig(Objects.requireNonNull(FileUtils.getResourceAsString("config_for_update_connector.json")));
+                .updConnectorConfig(getResourceAsString("config_for_update_connector.json"));
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .connectorIsVisibleInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
     }

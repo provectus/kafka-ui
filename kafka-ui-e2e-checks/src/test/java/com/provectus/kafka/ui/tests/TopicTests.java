@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.extensions.FileUtils;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.topic.TopicView;
@@ -11,6 +10,8 @@ import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.*;
+
+import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
 
 public class TopicTests extends BaseTest {
 
@@ -118,10 +119,10 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicView.TopicMenu.MESSAGES)
                 .clickOnButton("Produce Message")
-                .setContentFiled(FileUtils.fileToString(CONTENT_TO_PRODUCE_MESSAGE))
-                .setKeyField(FileUtils.fileToString(KEY_TO_PRODUCE_MESSAGE))
+                .setContentFiled(fileToString(CONTENT_TO_PRODUCE_MESSAGE))
+                .setKeyField(fileToString(KEY_TO_PRODUCE_MESSAGE))
                 .submitProduceMessage();
-        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(FileUtils.fileToString(KEY_TO_PRODUCE_MESSAGE)));
-        Assertions.assertTrue(pages.topicView.isContentMessageVisible(FileUtils.fileToString(CONTENT_TO_PRODUCE_MESSAGE).trim()));
+        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(fileToString(KEY_TO_PRODUCE_MESSAGE)));
+        Assertions.assertTrue(pages.topicView.isContentMessageVisible(fileToString(CONTENT_TO_PRODUCE_MESSAGE).trim()));
     }
 }
