@@ -223,7 +223,7 @@ const Filters: React.FC<FiltersProps> = ({
 
       const newProps = omitBy(props, (v) => v === undefined || v === '');
       const qs = Object.keys(newProps)
-        .map((key) => `${key}=${newProps[key]}`)
+        .map((key) => `${key}=${encodeURIComponent(newProps[key] as string)}`)
         .join('&');
 
       navigate({
