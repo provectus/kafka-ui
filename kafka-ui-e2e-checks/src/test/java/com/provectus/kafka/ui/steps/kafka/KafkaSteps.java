@@ -48,7 +48,7 @@ public class KafkaSteps {
     }
   }
 
-  @SneakyThrows
+ @SneakyThrows
   public void deleteTopic(Cluster cluster,String topicName) {
     try (AdminClient client = AdminClient.create(cluster.config)) {
       assertTrue(client.listTopics().names().get().contains(topicName));

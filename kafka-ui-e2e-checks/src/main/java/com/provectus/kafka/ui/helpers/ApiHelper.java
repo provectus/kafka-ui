@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.codeborne.selenide.Selenide.sleep;
 
@@ -86,7 +87,6 @@ public class ApiHelper {
         }
     }
 
-    @SneakyThrows
     public void deleteConnector(String clusterName, String connectName, String connectorName) {
         try {
             connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
@@ -94,7 +94,6 @@ public class ApiHelper {
         }
     }
 
-    @SneakyThrows
     public void createConnector(String clusterName, String connectName, String connectorName, String configJson) {
         NewConnector connector = new NewConnector();
         connector.setName(connectorName);
@@ -110,7 +109,7 @@ public class ApiHelper {
     }
 
     public String getFirstConnectName(String clusterName) {
-        return connectorApi().getConnects(clusterName).blockFirst().getName();
+        return Objects.requireNonNull(connectorApi().getConnects(clusterName).blockFirst()).getName();
     }
 
     public void sendMessage(String clusterName, String topicName, String messageContentJson,
