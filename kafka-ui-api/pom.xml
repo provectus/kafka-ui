@@ -404,6 +404,7 @@
                         <artifactId>frontend-maven-plugin</artifactId>
                         <version>${frontend-maven-plugin.version}</version>
                         <configuration>
+                            <skip>${skipUIBuild}</skip>
                             <workingDirectory>../kafka-ui-react-app</workingDirectory>
                             <environmentVariables>
                                 <VITE_TAG>${project.version}</VITE_TAG>
