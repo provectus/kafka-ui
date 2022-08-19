@@ -31,15 +31,15 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
 
 @Slf4j
 @DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
 public class BaseTest {
 
-  public static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome";
-  public static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium";
+  public static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
+  public static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium:103.0";
   protected Pages pages = Pages.INSTANCE;
   protected Helpers helpers = Helpers.INSTANCE;
 
@@ -64,7 +64,6 @@ public class BaseTest {
 
   @BeforeAll
   public static void start() {
-
     DockerImageName image = isARM64()
         ? DockerImageName.parse(SELENIARM_STANDALONE_CHROMIUM).asCompatibleSubstituteFor(SELENIUM_IMAGE_NAME)
         : DockerImageName.parse(SELENIUM_IMAGE_NAME);
@@ -74,13 +73,14 @@ public class BaseTest {
         .withEnv("JAVA_OPTS", "-Dwebdriver.chrome.whitelistedIps=")
         .withCapabilities(new ChromeOptions()
             .addArguments("--disable-dev-shm-usage")
+            .addArguments("--disable-gpu")
+            .addArguments("--no-sandbox")
             .addArguments("--verbose")
         )
-        .waitingFor(Wait.forHttp("/"))
-        //.withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: ")) // uncomment for debugging
-        .waitingFor(Wait.forLogMessage(".*Started Selenium Standalone.*", 1));
+        .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: "));
     try {
       Testcontainers.exposeHostPorts(8080);
+      log.info("Starting browser container");
       webDriverContainer.start();
     } catch (Throwable e) {
       log.error("Couldn't start a container", e);
