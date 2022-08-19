@@ -134,6 +134,7 @@ public class BaseTest {
     Configuration.browser = TestConfiguration.BROWSER;
     Configuration.baseUrl = TestConfiguration.BASE_WEB_URL;
     Configuration.timeout = 10000;
+    Configuration.pageLoadTimeout = 180000;
     Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
     SelenideLogger.addListener("allure", new AllureSelenide().savePageSource(false));
   }
