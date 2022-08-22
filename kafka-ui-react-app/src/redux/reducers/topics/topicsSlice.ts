@@ -16,8 +16,6 @@ import {
   TopicColumnsToSort,
   GetTopicSchemaRequest,
   TopicMessageSchema,
-  TopicSerdeSuggestion,
-  GetTopicSerdes,
 } from 'generated-sources';
 import {
   TopicsState,

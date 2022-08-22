@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TopicMessagesState, ClusterName, TopicName } from 'redux/interfaces';
 import {
   GetSerdesRequest,
-  SerdeUsage,
   TopicMessage,
   TopicSerdeSuggestion,
 } from 'generated-sources';

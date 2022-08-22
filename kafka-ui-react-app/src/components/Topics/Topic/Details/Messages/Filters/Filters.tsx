@@ -59,7 +59,7 @@ export interface FiltersProps {
   fetchTopicSerdes: AsyncThunk<
     { topicSerdes: TopicSerdeSuggestion; topicName: TopicName },
     GetSerdesRequest,
-    {}
+    Record<string, unknown>
   >;
   serdes: TopicSerdeSuggestion;
 }
@@ -73,13 +73,6 @@ export interface ActiveMessageFilter {
   index: number;
   name: string;
   code: string;
-}
-
-interface SerdeKeyValue {
-  key: string;
-  value: string;
-  label: string;
-  preferred: boolean;
 }
 
 const PER_PAGE = 100;
@@ -336,9 +329,13 @@ const Filters: React.FC<FiltersProps> = ({
       const preferredKeySerde = serdes.key.find((k) => k.preferred);
       const preferredValueSerde = serdes.value.find((v) => v.preferred);
 
-      preferredKeySerde?.name && setSelectedSerdeKey(preferredKeySerde.name);
-      preferredValueSerde?.name &&
+      if (preferredKeySerde?.name) {
+        setSelectedSerdeKey(preferredKeySerde.name);
+      }
+
+      if (preferredValueSerde?.name) {
         setSelectedSerdeValue(preferredValueSerde.name);
+      }
     }
   }, [serdes]);
 
