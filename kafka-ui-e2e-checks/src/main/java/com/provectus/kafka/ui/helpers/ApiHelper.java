@@ -45,7 +45,7 @@ public class ApiHelper {
         return new MessagesApi(new ApiClient().setBasePath(baseURL));
     }
 
-
+    @SneakyThrows
     public void createTopic(String clusterName, String topicName) {
         TopicCreation topic = new TopicCreation();
         topic.setName(topicName);
@@ -66,6 +66,7 @@ public class ApiHelper {
         }
     }
 
+    @SneakyThrows
     public void createSchema(String clusterName, String schemaName, SchemaType type, String schemaValue) {
         NewSchemaSubject schemaSubject = new NewSchemaSubject();
         schemaSubject.setSubject(schemaName);
@@ -78,6 +79,7 @@ public class ApiHelper {
         }
     }
 
+    @SneakyThrows
     public void deleteSchema(String clusterName, String schemaName) {
         try {
             schemaApi().deleteSchema(clusterName, schemaName).block();
@@ -87,24 +89,30 @@ public class ApiHelper {
 
     @SneakyThrows
     public void deleteConnector(String clusterName, String connectName, String connectorName) {
-        connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
+        try {
+            connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
+        } catch (WebClientResponseException ignore) {
+        }
     }
 
     @SneakyThrows
     public void createConnector(String clusterName, String connectName, String connectorName, String configJson) {
         NewConnector connector = new NewConnector();
         connector.setName(connectorName);
-        Map<String, Object> configMap = null;
-        configMap = new ObjectMapper().readValue(configJson, HashMap.class);
+        Map<String, Object> configMap = new ObjectMapper().readValue(configJson, HashMap.class);
         connector.setConfig(configMap);
-        connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
+        try {
+            connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
+        } catch (WebClientResponseException ignored) {
+        }
         connectorApi().createConnector(clusterName, connectName, connector).block();
     }
 
     public String getFirstConnectName(String clusterName) {
-        return (connectorApi().getConnects(clusterName).blockFirst()).getName();
+        return connectorApi().getConnects(clusterName).blockFirst().getName();
     }
 
+    @SneakyThrows
     public void sendMessage(String clusterName, String topicName, String messageContentJson,
                             String messageKey) {
         CreateTopicMessage createMessage = new CreateTopicMessage();
