@@ -130,11 +130,11 @@ describe('Filters component', () => {
     });
 
     it('seekDirection select', () => {
-      userEvent.click(seekTypeSelects[1]);
-      userEvent.selectOptions(seekTypeSelects[1], [
+      userEvent.click(seekTypeSelects[3]);
+      userEvent.selectOptions(seekTypeSelects[3], [
         mockDirectionOptionSelectLabel,
       ]);
-      expect(options[1]).toHaveTextContent(mockDirectionOptionSelectLabel);
+      expect(options[3]).toHaveTextContent(mockDirectionOptionSelectLabel);
     });
   });
 
@@ -142,7 +142,7 @@ describe('Filters component', () => {
     renderComponent();
     userEvent.click(screen.getByText('Stop loading'));
     const option = screen.getAllByRole('option');
-    expect(option[1]).toHaveTextContent('Oldest First');
+    expect(option[3]).toHaveTextContent('Oldest First');
     expect(screen.getByText('Submit')).toBeInTheDocument();
   });
 

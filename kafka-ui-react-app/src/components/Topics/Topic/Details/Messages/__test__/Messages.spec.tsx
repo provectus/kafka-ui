@@ -9,7 +9,7 @@ import { SeekDirection, SeekType } from 'generated-sources';
 import userEvent from '@testing-library/user-event';
 
 describe('Messages', () => {
-  const searchParams = `?filterQueryType=STRING_CONTAINS&attempt=0&limit=100&seekDirection=${SeekDirection.FORWARD}&seekType=${SeekType.OFFSET}&seekTo=0::9`;
+  const searchParams = `?filterQueryType=STRING_CONTAINS&attempt=0&limit=100&seekDirection=${SeekDirection.FORWARD}&seekType=${SeekType.OFFSET}&seekTo=0::9&keySerde=String&valueSerde=String`;
 
   const setUpComponent = (param: string = searchParams) => {
     return render(<Messages />, {
@@ -26,8 +26,14 @@ describe('Messages', () => {
     beforeEach(() => {
       setUpComponent();
     });
-    it('should check default seekDirection if it actually take the value from the url', () => {
-      expect(screen.getAllByRole('listbox')[1]).toHaveTextContent(
+    it.only('should check default seekDirection if it actually take the value from the url', () => {
+      const listboxOptions = screen.getAllByRole('listbox');
+
+      listboxOptions.forEach((option, index) => {
+        console.log('>>>', index, option.innerHTML);
+      });
+
+      expect(screen.getAllByRole('listbox')[3]).toHaveTextContent(
         SeekDirectionOptionsObj[SeekDirection.FORWARD].label
       );
     });
