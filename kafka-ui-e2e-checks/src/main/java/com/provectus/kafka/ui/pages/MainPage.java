@@ -3,11 +3,10 @@ package com.provectus.kafka.ui.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
+import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.pages.topic.TopicsList;
 import io.qameta.allure.Step;
-import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
@@ -32,7 +31,6 @@ public class MainPage {
         return this;
     }
 
-    @SneakyThrows
     @Step
     public void topicIsVisible(String topicName) {
         new TopicsList().isTopicVisible(topicName);
@@ -43,18 +41,18 @@ public class MainPage {
     }
 
 
-  public enum SideMenuOptions {
-    BROKERS("Brokers"),
-    TOPICS("Topics"),
-    CONSUMERS("Consumers"),
-    SCHEMA_REGISTRY("Schema Registry");
+    public enum SideMenuOptions {
+        BROKERS("Brokers"),
+        TOPICS("Topics"),
+        CONSUMERS("Consumers"),
+        SCHEMA_REGISTRY("Schema Registry");
 
-    final String value;
+        final String value;
 
-    SideMenuOptions(String value) {
-      this.value = value;
+        SideMenuOptions(String value) {
+            this.value = value;
+        }
     }
-  }
 
 
 

@@ -4,7 +4,6 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
-import lombok.SneakyThrows;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
@@ -23,10 +22,9 @@ public class SchemaRegistryList {
         return new SchemaView();
     }
 
-    @SneakyThrows
     @Step
     public SchemaRegistryList isNotVisible(String schemaName) {
-        $x(String.format("//*[contains(text(),'%s')]",schemaName)).shouldNotBe(Condition.visible);
+        $x(String.format("//*[contains(text(),'%s')]", schemaName)).shouldNotBe(Condition.visible);
         return this;
     }
 
