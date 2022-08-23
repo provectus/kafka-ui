@@ -9,10 +9,9 @@ import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
-import static org.apache.kafka.common.utils.Utils.readFileAsString;
+import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
 
 public class TopicTests extends BaseTest {
 
@@ -29,21 +28,18 @@ public class TopicTests extends BaseTest {
 
 
     @BeforeAll
-    @SneakyThrows
     public static void beforeAll() {
         Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, TOPIC_TO_UPDATE);
         Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
     }
 
     @AfterAll
-    @SneakyThrows
     public static void afterAll() {
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_UPDATE);
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
     }
 
-    @SneakyThrows
     @DisplayName("should create a topic")
     @Suite(suiteId = 4, title = "Create new Topic")
     @AutomationStatus(status = Status.AUTOMATED)
@@ -65,7 +61,6 @@ public class TopicTests extends BaseTest {
                 .topicIsNotVisible(NEW_TOPIC);
     }
     @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
-    @SneakyThrows
     @DisplayName("should update a topic")
     @Issue("1500")
     @Suite(suiteId = 2, title = "Topics")
@@ -97,7 +92,6 @@ public class TopicTests extends BaseTest {
                 .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
     }
 
-    @SneakyThrows
     @DisplayName("should delete topic")
     @Suite(suiteId = 2, title = "Topics")
     @AutomationStatus(status = Status.AUTOMATED)
@@ -113,7 +107,6 @@ public class TopicTests extends BaseTest {
                 .isTopicNotVisible(TOPIC_TO_DELETE);
     }
 
-    @SneakyThrows
     @DisplayName("produce message")
     @Suite(suiteId = 2, title = "Topics")
     @AutomationStatus(status = Status.AUTOMATED)
@@ -126,10 +119,10 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicView.TopicMenu.MESSAGES)
                 .clickOnButton("Produce Message")
-                .setContentFiled(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE))
-                .setKeyField(readFileAsString(KEY_TO_PRODUCE_MESSAGE))
+                .setContentFiled(fileToString(CONTENT_TO_PRODUCE_MESSAGE))
+                .setKeyField(fileToString(KEY_TO_PRODUCE_MESSAGE))
                 .submitProduceMessage();
-        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(readFileAsString(KEY_TO_PRODUCE_MESSAGE)));
-        Assertions.assertTrue(pages.topicView.isContentMessageVisible(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE).trim()));
+        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(fileToString(KEY_TO_PRODUCE_MESSAGE)));
+        Assertions.assertTrue(pages.topicView.isContentMessageVisible(fileToString(CONTENT_TO_PRODUCE_MESSAGE).trim()));
     }
 }
