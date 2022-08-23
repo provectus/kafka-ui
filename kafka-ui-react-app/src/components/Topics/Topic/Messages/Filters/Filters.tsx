@@ -498,6 +498,7 @@ const Filters: React.FC<FiltersProps> = ({
           deleteFilter={deleteFilter}
           activeFilterHandler={activeFilterHandler}
           editSavedFilter={editSavedFilter}
+          activeFilter={activeFilter}
         />
       )}
       <S.FiltersMetrics>
