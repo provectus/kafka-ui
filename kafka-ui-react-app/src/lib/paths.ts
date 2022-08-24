@@ -93,16 +93,20 @@ export const clusterSchemaNewPath = (
 ) => `${clusterSchemasPath(clusterName)}/${clusterSchemaNewRelativePath}`;
 export const clusterSchemaPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  subject: SchemaName = RouteParams.subject === ':subject'
-    ? RouteParams.subject
-    : encodeURIComponent(RouteParams.subject)
-) => `${clusterSchemasPath(clusterName)}/${subject}`;
+  subject: SchemaName = RouteParams.subject
+) => {
+  let subjectName = subject;
+  if (subject !== ':subject') subjectName = encodeURIComponent(subject);
+  return `${clusterSchemasPath(clusterName)}/${subjectName}`;
+};
 export const clusterSchemaEditPath = (
   clusterName: ClusterName = RouteParams.clusterName,
-  subject: SchemaName = RouteParams.subject === ':subject'
-    ? RouteParams.subject
-    : encodeURIComponent(RouteParams.subject)
-) => `${clusterSchemasPath(clusterName)}/${subject}/edit`;
+  subject: SchemaName = RouteParams.subject
+) => {
+  let subjectName = subject;
+  if (subject !== ':subject') subjectName = encodeURIComponent(subject);
+  return `${clusterSchemasPath(clusterName)}/${subjectName}/edit`;
+};
 export const clusterSchemaComparePath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
