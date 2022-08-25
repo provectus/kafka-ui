@@ -245,10 +245,8 @@ services:
   create-connectors:
     image: ellerbrock/alpine-bash-curl-ssl
     depends_on:
-      postgres-db:
-          condition: service_healthy
-      kafka-connect0:
-        condition: service_healthy
+      - postgres-db
+      - kafka-connect0
     volumes:
       - ./connectors:/connectors
     command: bash -c '/connectors/start.sh'
@@ -261,12 +259,9 @@ services:
       timeout: 10s
       retries: 10
     depends_on:
-      kafka0:
-        condition: service_healthy
-      kafka-connect0:
-        condition: service_healthy
-      schemaregistry0:
-         condition: service_healthy
+      - kafka0
+      - kafka-connect0
+      - schemaregistry0
     ports:
       - 8088:8088
     environment:
