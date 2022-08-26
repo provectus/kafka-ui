@@ -274,6 +274,21 @@ class SchemaRegistryServiceTests extends AbstractIntegrationTest {
         });
   }
 
+  @Test
+  void shouldCreateNewSchemaWhenSubjectIncludesNonAsciiCharacters() {
+    String schema =
+        "{\"subject\":\"test/test\",\"schemaType\":\"JSON\",\"schema\":"
+        + "\"{\\\"type\\\": \\\"string\\\"}\"}";
+
+    webTestClient
+        .post()
+        .uri("/api/clusters/{clusterName}/schemas", LOCAL)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(BodyInserters.fromValue(schema))
+        .exchange()
+        .expectStatus().isOk();
+  }
+
   private void createNewSubjectAndAssert(String subject) {
     webTestClient
         .post()
