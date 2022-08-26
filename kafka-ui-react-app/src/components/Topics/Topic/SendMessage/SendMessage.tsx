@@ -1,36 +1,28 @@
-import React, { useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { Button } from 'components/common/Button/Button';
+import Editor from 'components/common/Editor/Editor';
+import Heading from 'components/common/heading/Heading.styled';
+import Select, { SelectOption } from 'components/common/Select/Select';
+import { SerdeUsage, TopicSerdeSuggestion } from 'generated-sources';
+import jsf from 'json-schema-faker';
+import { messagesApiClient } from 'lib/api';
+import { getResponse, showAlert } from 'lib/errorHandling';
+import {
+  useSendMessage,
+  useTopicDetails,
+  useTopicMessageSchema,
+} from 'lib/hooks/api/topics';
+import useAppParams from 'lib/hooks/useAppParams';
 import {
   clusterTopicMessagesRelativePath,
   RouteParamsClusterTopic,
 } from 'lib/paths';
-import jsf from 'json-schema-faker';
-import {
-  fetchTopicMessageSchema,
-  fetchTopicDetails,
-} from 'redux/reducers/topics/topicsSlice';
-import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
-import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
-import now from 'lodash/now';
-import { Button } from 'components/common/Button/Button';
-import Editor from 'components/common/Editor/Editor';
-import {
-  getMessageSchemaByTopicName,
-  getPartitionsByTopicName,
-  getTopicMessageSchemaFetched,
-} from 'redux/reducers/topics/selectors';
-import Select, { SelectOption } from 'components/common/Select/Select';
-import useAppParams from 'lib/hooks/useAppParams';
-import Heading from 'components/common/heading/Heading.styled';
-import { messagesApiClient } from 'lib/api';
-import { getResponse } from 'lib/errorHandling';
+import React, { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import {
   fetchTopicSerdes,
   setTopicSerdes,
 } from 'redux/reducers/topicMessages/topicMessagesSlice';
-import { SerdeUsage, TopicSerdeSuggestion } from 'generated-sources';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 
 import * as S from './SendMessage.styled';
 import validateMessage from './validateMessage';
@@ -45,9 +37,14 @@ type FieldValues = Partial<{
 }>;
 
 const SendMessage: React.FC = () => {
-  const dispatch = useAppDispatch();
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const navigate = useNavigate();
+  const { data: topic } = useTopicDetails({ clusterName, topicName });
+  const { data: messageSchema } = useTopicMessageSchema({
+    clusterName,
+    topicName,
+  });
+  const sendMessage = useSendMessage({ clusterName, topicName });
 
   jsf.option('fillProperties', false);
   jsf.option('alwaysFakeOptionals', true);
@@ -56,26 +53,15 @@ const SendMessage: React.FC = () => {
     React.useState<TopicSerdeSuggestion>();
   const [selectedSerdeKey, setSelectedSerdeKey] = React.useState('');
   const [selectedSerdeValue, setSelectedSerdeValue] = React.useState('');
+  const partitions = topic?.partitions || [];
 
-  React.useEffect(() => {
-    dispatch(fetchTopicMessageSchema({ clusterName, topicName }));
-  }, [clusterName, dispatch, topicName]);
-
-  const messageSchema = useAppSelector((state) =>
-    getMessageSchemaByTopicName(state, topicName)
-  );
-  const partitions = useAppSelector((state) =>
-    getPartitionsByTopicName(state, topicName)
-  );
-
-  const schemaIsFetched = useAppSelector(getTopicMessageSchemaFetched);
   const selectPartitionOptions: Array<SelectOption> = partitions.map((p) => {
     const value = String(p.partition);
     return { value, label: value };
   });
 
   const keyDefaultValue = React.useMemo(() => {
-    if (!schemaIsFetched || !messageSchema) {
+    if (!messageSchema) {
       return undefined;
     }
     return JSON.stringify(
@@ -83,10 +69,10 @@ const SendMessage: React.FC = () => {
       null,
       '\t'
     );
-  }, [messageSchema, schemaIsFetched]);
+  }, [messageSchema]);
 
   const contentDefaultValue = React.useMemo(() => {
-    if (!schemaIsFetched || !messageSchema) {
+    if (!messageSchema) {
       return undefined;
     }
     return JSON.stringify(
@@ -94,7 +80,7 @@ const SendMessage: React.FC = () => {
       null,
       '\t'
     );
-  }, [messageSchema, schemaIsFetched]);
+  }, [messageSchema]);
 
   const {
     handleSubmit,
@@ -168,52 +154,31 @@ const SendMessage: React.FC = () => {
         }
       }
       if (errors.length > 0) {
-        const errorsHtml = errors.map((e) => `<li>${e}</li>`).join('');
-        dispatch(
-          alertAdded({
-            id: `${clusterName}-${topicName}-createTopicMessageError`,
-            type: 'error',
-            title: 'Validation Error',
-            message: `<ul>${errorsHtml}</ul>`,
-            createdAt: now(),
-          })
-        );
+        showAlert('error', {
+          id: `${clusterName}-${topicName}-createTopicMessageError`,
+          title: 'Validation Error',
+          message: (
+            <ul>
+              {errors.map((e) => (
+                <li key={e}>{e}</li>
+              ))}
+            </ul>
+          ),
+        });
         return;
       }
       const headers = data.headers ? JSON.parse(data.headers) : undefined;
-      try {
-        await messagesApiClient.sendTopicMessages({
-          clusterName,
-          topicName,
-          createTopicMessage: {
-            key: !key ? null : key,
-            content: !content ? null : content,
-            headers,
-            partition: !partition ? 0 : partition,
-            keySerde: selectedSerdeKey,
-            valueSerde: selectedSerdeValue,
-          },
-        });
-        dispatch(fetchTopicDetails({ clusterName, topicName }));
-      } catch (e) {
-        const err = await getResponse(e as Response);
-        dispatch(
-          alertAdded({
-            id: `${clusterName}-${topicName}-sendTopicMessagesError`,
-            type: 'error',
-            title: `Error in sending a message to ${topicName}`,
-            message: err?.message || '',
-            createdAt: now(),
-          })
-        );
-      }
+      await sendMessage.mutateAsync({
+        key: !key ? null : key,
+        content: !content ? null : content,
+        headers,
+        partition: !partition ? 0 : partition,
+        keySerde: selectedSerdeKey,
+        valueSerde: selectedSerdeValue,
+      });
       navigate(`../${clusterTopicMessagesRelativePath}`);
     }
   };
-
-  if (!schemaIsFetched) {
-    return <PageLoader />;
-  }
 
   return (
     <S.Wrapper>
@@ -231,7 +196,7 @@ const SendMessage: React.FC = () => {
                   aria-labelledby="selectPartitionOptions"
                   name={name}
                   onChange={onChange}
-                  minWidth="100%"
+                  minWidth="100px"
                   options={selectPartitionOptions}
                   value={selectPartitionOptions[0].value}
                 />

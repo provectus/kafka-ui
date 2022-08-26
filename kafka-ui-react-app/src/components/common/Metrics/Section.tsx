@@ -7,7 +7,7 @@ interface Props {
 }
 
 const Section: React.FC<PropsWithChildren<Props>> = ({ title, children }) => (
-  <div>
+  <div role="group">
     {title && <S.SectionTitle>{title}</S.SectionTitle>}
     <S.IndicatorsWrapper>{children}</S.IndicatorsWrapper>
   </div>

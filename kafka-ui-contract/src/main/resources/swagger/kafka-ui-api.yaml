@@ -592,6 +592,8 @@ paths:
                 $ref: '#/components/schemas/ReplicationFactorChangeResponse'
         404:
           description: Not found
+        400:
+          description: Bad Request
 
   /api/clusters/{clusterName}/topic/{topicName}/serdes:
     get:
@@ -3100,7 +3102,6 @@ components:
       properties:
         totalReplicationFactor:
           type: integer
-          minimum: 1
       required:
         - totalReplicationFactor
 

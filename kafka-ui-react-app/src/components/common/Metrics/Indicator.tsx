@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { AlertType } from 'redux/interfaces';
+import SpinnerIcon from 'components/common/Icons/SpinnerIcon';
 
 import * as S from './Metrics.styled';
 
@@ -8,7 +8,7 @@ export interface Props {
   isAlert?: boolean;
   label: React.ReactNode;
   title?: string;
-  alertType?: AlertType;
+  alertType?: 'success' | 'error' | 'warning' | 'info';
 }
 
 const Indicator: React.FC<PropsWithChildren<Props>> = ({
@@ -29,9 +29,7 @@ const Indicator: React.FC<PropsWithChildren<Props>> = ({
           </S.CircularAlertWrapper>
         )}
       </S.IndicatorTitle>
-      <span>
-        {fetching ? <i className="fas fa-spinner fa-pulse" /> : children}
-      </span>
+      <span>{fetching ? <SpinnerIcon /> : children}</span>
     </div>
   </S.IndicatorWrapper>
 );

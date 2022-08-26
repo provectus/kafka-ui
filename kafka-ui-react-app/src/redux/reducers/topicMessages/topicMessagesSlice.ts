@@ -1,40 +1,36 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { TopicMessagesState, ClusterName, TopicName } from 'redux/interfaces';
 import {
   GetSerdesRequest,
   TopicMessage,
   TopicSerdeSuggestion,
 } from 'generated-sources';
-import { getResponse } from 'lib/errorHandling';
-import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
-import { fetchTopicDetails } from 'redux/reducers/topics/topicsSlice';
 import { messagesApiClient } from 'lib/api';
+import {
+  getResponse,
+  showServerError,
+  showSuccessAlert,
+} from 'lib/errorHandling';
+import { ClusterName, TopicMessagesState, TopicName } from 'redux/interfaces';
 
 export const clearTopicMessages = createAsyncThunk<
   undefined,
   { clusterName: ClusterName; topicName: TopicName; partitions?: number[] }
 >(
   'topicMessages/clearTopicMessages',
-  async (
-    { clusterName, topicName, partitions },
-    { rejectWithValue, dispatch }
-  ) => {
+  async ({ clusterName, topicName, partitions }, { rejectWithValue }) => {
     try {
       await messagesApiClient.deleteTopicMessages({
         clusterName,
         topicName,
         partitions,
       });
-      dispatch(fetchTopicDetails({ clusterName, topicName }));
-      dispatch(
-        showSuccessAlert({
-          id: `message-${topicName}-${clusterName}-${partitions}`,
-          message: 'Messages successfully cleared!',
-        })
-      );
-
+      showSuccessAlert({
+        id: `message-${topicName}-${clusterName}-${partitions}`,
+        message: `${topicName} messages have been successfully cleared!`,
+      });
       return undefined;
     } catch (err) {
+      showServerError(err as Response);
       return rejectWithValue(await getResponse(err as Response));
     }
   }
@@ -52,7 +48,7 @@ export const initialState: TopicMessagesState = {
   isFetching: false,
 };
 
-export const topicMessagesSlice = createSlice({
+const topicMessagesSlice = createSlice({
   name: 'topicMessages',
   initialState,
   reducers: {

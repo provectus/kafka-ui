@@ -222,6 +222,11 @@
             <artifactId>datasketches-java</artifactId>
             <version>${datasketches-java.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
 
     </dependencies>
 
@@ -404,6 +409,7 @@
                         <artifactId>frontend-maven-plugin</artifactId>
                         <version>${frontend-maven-plugin.version}</version>
                         <configuration>
+                            <skip>${skipUIBuild}</skip>
                             <workingDirectory>../kafka-ui-react-app</workingDirectory>
                             <environmentVariables>
                                 <VITE_TAG>${project.version}</VITE_TAG>

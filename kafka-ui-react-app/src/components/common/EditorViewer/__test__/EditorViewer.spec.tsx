@@ -1,6 +1,6 @@
 import React from 'react';
 import EditorViewer, {
-  FullMessageProps,
+  EditorViewerProps,
 } from 'components/common/EditorViewer/EditorViewer';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
@@ -10,7 +10,7 @@ const maxLines = 28;
 const schemaType = 'JSON';
 
 describe('EditorViewer component', () => {
-  const setupComponent = (props: FullMessageProps) =>
+  const setupComponent = (props: EditorViewerProps) =>
     render(<EditorViewer {...props} />);
 
   it('renders JSONTree', () => {
