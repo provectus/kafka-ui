@@ -6,9 +6,11 @@ import useAppParams from 'lib/hooks/useAppParams';
 import {
   clusterBrokerMetricsPath,
   clusterBrokerMetricsRelativePath,
+  clusterBrokerConfigsPath,
   ClusterBrokerParam,
   clusterBrokerPath,
   clusterBrokersPath,
+  clusterBrokerConfigsRelativePath,
 } from 'lib/paths';
 import { useClusterStats } from 'lib/hooks/api/clusters';
 import { useBrokers } from 'lib/hooks/api/brokers';
@@ -17,6 +19,8 @@ import BrokerLogdir from 'components/Brokers/Broker/BrokerLogdir/BrokerLogdir';
 import BrokerMetrics from 'components/Brokers/Broker/BrokerMetrics/BrokerMetrics';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+
+import Configs from './Configs/Configs';
 
 const Broker: React.FC = () => {
   const { clusterName, brokerId } = useAppParams<ClusterBrokerParam>();
@@ -64,6 +68,12 @@ const Broker: React.FC = () => {
         >
           Metrics
         </NavLink>
+        <NavLink
+          to={clusterBrokerConfigsPath(clusterName, brokerId)}
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
+        >
+          Configs
+        </NavLink>
       </Navbar>
 
       <Suspense fallback={<PageLoader />}>
@@ -72,6 +82,10 @@ const Broker: React.FC = () => {
           <Route
             path={clusterBrokerMetricsRelativePath}
             element={<BrokerMetrics />}
+          />
+          <Route
+            path={clusterBrokerConfigsRelativePath}
+            element={<Configs />}
           />
         </Routes>
       </Suspense>
