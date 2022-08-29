@@ -12,6 +12,7 @@ import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import Search from 'components/common/Search/Search';
 import Select from 'components/common/Select/Select';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
+import { SeekDirectionOptions } from 'components/Topics/Topic/Messages/Messages';
 import {
   GetSerdesRequest,
   MessageFilterType,
@@ -36,6 +37,7 @@ import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TopicName } from 'redux/interfaces';
 
+import FilterModal, { FilterEdit } from './FilterModal';
 import * as S from './Filters.styled';
 import {
   filterOptions,
@@ -43,8 +45,6 @@ import {
   getSelectedPartitionsFromSeekToParam,
   getTimestampFromSeekToParam,
 } from './utils';
-import FilterModal, { FilterEdit } from './FilterModal';
-import { SeekDirectionOptions } from '../Messages';
 
 type Query = Record<string, string | string[] | number>;
 

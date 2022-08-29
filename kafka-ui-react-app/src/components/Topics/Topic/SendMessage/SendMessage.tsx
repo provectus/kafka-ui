@@ -5,7 +5,7 @@ import Select, { SelectOption } from 'components/common/Select/Select';
 import { SerdeUsage, TopicSerdeSuggestion } from 'generated-sources';
 import jsf from 'json-schema-faker';
 import { messagesApiClient } from 'lib/api';
-import { getResponse, showAlert } from 'lib/errorHandling';
+import { showAlert } from 'lib/errorHandling';
 import {
   useSendMessage,
   useTopicDetails,

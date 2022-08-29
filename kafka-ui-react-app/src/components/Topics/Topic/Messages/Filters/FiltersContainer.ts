@@ -1,22 +1,21 @@
+import Filters from 'components/Topics/Topic/Messages/Message';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
-  addTopicMessage,
-  resetTopicMessages,
-  updateTopicMessagesMeta,
-  updateTopicMessagesPhase,
-  setTopicMessagesFetchingStatus,
-  setTopicSerdes,
-  fetchTopicSerdes,
-} from 'redux/reducers/topicMessages/topicMessagesSlice';
-import {
+  getIsTopicMessagesFetching,
   getTopicMessgesMeta,
   getTopicMessgesPhase,
-  getIsTopicMessagesFetching,
   getTopicSerdes,
 } from 'redux/reducers/topicMessages/selectors';
-
-import Filters from './Filters';
+import {
+  addTopicMessage,
+  fetchTopicSerdes,
+  resetTopicMessages,
+  setTopicMessagesFetchingStatus,
+  setTopicSerdes,
+  updateTopicMessagesMeta,
+  updateTopicMessagesPhase,
+} from 'redux/reducers/topicMessages/topicMessagesSlice';
 
 const mapStateToProps = (state: RootState) => ({
   phaseMessage: getTopicMessgesPhase(state),
