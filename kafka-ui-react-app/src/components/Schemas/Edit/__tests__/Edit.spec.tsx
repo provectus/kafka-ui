@@ -5,6 +5,7 @@ import { clusterSchemaEditPath } from 'lib/paths';
 import {
   schemasInitialState,
   schemaVersion,
+  schemaVersionWithNonAsciiChars,
 } from 'redux/reducers/schemas/__test__/fixtures';
 import { screen, waitFor } from '@testing-library/dom';
 import ClusterContext, {
@@ -60,6 +61,23 @@ describe('Edit', () => {
         const schemasAPILatestMock = fetchMock.getOnce(
           schemasAPILatestUrl,
           schemaVersion
+        );
+        await act(() => {
+          renderComponent();
+        });
+        await waitFor(() => expect(schemasAPILatestMock.called()).toBeTruthy());
+        expect(screen.getByText('Submit')).toBeInTheDocument();
+        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('fetch success schema with non ascii characters', () => {
+    describe('has schema versions', () => {
+      it('renders component with schema info', async () => {
+        const schemasAPILatestMock = fetchMock.getOnce(
+          schemasAPILatestUrl,
+          schemaVersionWithNonAsciiChars
         );
         await act(() => {
           renderComponent();
