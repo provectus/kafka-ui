@@ -95,7 +95,7 @@ public class ReactiveAdminClient implements Closeable {
       return version <= 2.3f
           ? SupportedFeature.ALTER_CONFIGS
           : SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
-    } catch (Exception e) {
+    } catch (NumberFormatException e) {
       log.info("Assuming non-incremental alter configs due to version parsing error");
       return SupportedFeature.ALTER_CONFIGS;
     }

@@ -13,7 +13,7 @@ public class NumberUtil {
     return value != null && NumberUtils.isCreatable(value.toString());
   }
 
-  public static float parserClusterVersion(String version) {
+  public static float parserClusterVersion(String version) throws NumberFormatException {
     log.trace("Parsing cluster version [{}]", version);
     try {
       final String[] parts = version.split("\\.");
