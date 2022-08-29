@@ -62,7 +62,7 @@ mvn -pl ‘!kafka-ui-api’ test -Pprod
 ### Reporting
 
 Reports are in `allure-results` folder.
-If you have installed allure commandline(e.g. like [here](https://docs.qameta.io/allure/#_installing_a_commandline) or [here](https://www.npmjs.com/package/allure-commandline))
+If you have installed allure commandline [here](https://www.npmjs.com/package/allure-commandline))
 You can see allure report with command:
 ```
 allure serve
