@@ -45,18 +45,14 @@ docker pull selenoid/vnc:chrome_86.0
 
 ### How to run checks
 
-1. Enter your QaseIO API token as value of `qaseApiToken` using path below:
-
-   kafka-ui-e2e-checks/src/main/java/com/provectus/kafka/ui/extensions/QaseExtension.java
-
-2. Run `kafka-ui`: 
+1. Run `kafka-ui`: 
 ```
 cd kafka-ui
 docker-compose -f documentation/compose/kafka-ui-connectors.yaml up -d
 ```
-3. Run tests 
+2. Run tests using your QaseIO API token as environment variable (put instead $s into command below)
 ```
-mvn -pl ‘!kafka-ui-api’ test -Pprod
+mvn -DQASEIO_API_TOKEN=‘%s’ -pl ‘!kafka-ui-api’ test -Pprod
 ```
 
 ### Reporting
