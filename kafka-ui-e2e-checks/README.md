@@ -45,53 +45,19 @@ docker pull selenoid/vnc:chrome_86.0
 
 ### How to run checks
 
-1. Run `kafka-ui` 
-```
-cd docker
-docker-compose -f kafka-ui.yaml up -d
-```
-2. Run `selenoid-ui` 
-```
-cd kafka-ui-e2e-checks/docker
-docker-compose -f selenoid.yaml up -d
-```
-3. Compile `kafka-ui-contract` project
-```
-cd <projectRoot>/kafka-ui-contract
-mvn clean compile
-```
-4. Run checks 
-```
-cd kafka-ui-e2e-checks
-mvn test
-```
+1. Enter your QaseIO API token as value of `qaseApiToken` using path below:
 
-* There are several ways to run checks
+   kafka-ui-e2e-checks/src/main/java/com/provectus/kafka/ui/extensions/QaseExtension.java
 
-1. If you don't have  selenoid run on your machine
+2. Run `kafka-ui`: 
 ```
- mvn test -DSHOULD_START_SELENOID=true
+cd kafka-ui
+docker-compose -f documentation/compose/kafka-ui-connectors.yaml up -d
 ```
-⚠️ If you want to run checks in IDE with this approach, you'd need to set up
-environment variable(`SHOULD_START_SELENOID=true`) in `Run/Edit Configurations..`
-
-2. For development purposes it is better to just start separate selenoid in docker-compose
-Do it in separate window
+3. Run tests 
 ```
-cd docker
-docker-compose -f selenoid.yaml up
+mvn -pl ‘!kafka-ui-api’ test -Pprod
 ```
-Then you can just `mvn test`. By default, `SELENOID_URL` will resolve to `http://localhost:4444/wd/hub`
-
-It's preferred way to run. 
-
-* If you have remote selenoid instance, set 
-
-`SELENOID_URL` environment variable
-
-Example:
-`mvn test -DSELENOID_URL=http://localhost:4444/wd/hub`
-That's the way to run tests in CI with selenoid set up somewhere in cloud
 
 ### Reporting
 
