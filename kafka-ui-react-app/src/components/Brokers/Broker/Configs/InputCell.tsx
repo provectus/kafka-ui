@@ -31,17 +31,23 @@ const InputCell: React.FC<InputCellProps> = ({ row, getValue, onUpdate }) => {
   return isEdit ? (
     <>
       <input value={value} onChange={({ target }) => setValue(target?.value)} />
-      <IconButtonWrapper onClick={onSave}>
+      <IconButtonWrapper aria-label="confirmAction" onClick={onSave}>
         <CheckmarkIcon /> <ConfirmationModal />
       </IconButtonWrapper>{' '}
-      <IconButtonWrapper onClick={() => setIsEdit(false)}>
+      <IconButtonWrapper
+        aria-label="cancelAction"
+        onClick={() => setIsEdit(false)}
+      >
         <CancelIcon />
       </IconButtonWrapper>
     </>
   ) : (
     <span>
       {value}{' '}
-      <IconButtonWrapper onClick={() => setIsEdit(true)}>
+      <IconButtonWrapper
+        aria-label="editAction"
+        onClick={() => setIsEdit(true)}
+      >
         <EditIcon />
       </IconButtonWrapper>
     </span>
