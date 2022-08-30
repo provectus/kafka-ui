@@ -1,67 +1,66 @@
 import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
-import { screen, waitFor } from '@testing-library/dom';
+import { screen } from '@testing-library/dom';
 import { clusterBrokerPath } from 'lib/paths';
-import fetchMock from 'fetch-mock';
 import { act } from '@testing-library/react';
-import Broker from 'components/Brokers/Broker/Broker';
-import {
-  clusterStatsPayload,
-  brokerLogDirsPayload,
-  brokersPayload,
-} from 'components/Brokers/__test__/fixtures';
+import { brokerLogDirsPayload } from 'lib/fixtures/brokers';
+import { useBrokerLogDirs } from 'lib/hooks/api/brokers';
+import { BrokerLogdirs } from 'generated-sources';
+import BrokerLogdir from 'components/Brokers/Broker/BrokerLogdir/BrokerLogdir';
+
+jest.mock('lib/hooks/api/brokers', () => ({
+  useBrokerLogDirs: jest.fn(),
+}));
 
 const clusterName = 'local';
 const brokerId = 1;
-const fetchStatsUrl = `/api/clusters/${clusterName}/stats`;
-const fetchBrokersUrl = `/api/clusters/${clusterName}/brokers`;
-const fetchLogDirsUrl = `/api/clusters/${clusterName}/brokers/logdirs`;
 
 describe('BrokerLogdir Component', () => {
-  afterEach(() => {
-    fetchMock.reset();
-  });
-
-  const renderComponent = async () => {
-    const fetchStatsMock = fetchMock.get(fetchStatsUrl, clusterStatsPayload);
-    const fetchBrokersMock = fetchMock.get(fetchBrokersUrl, brokersPayload);
+  const renderComponent = async (payload?: BrokerLogdirs[]) => {
+    (useBrokerLogDirs as jest.Mock).mockImplementation(() => ({
+      data: payload,
+    }));
     await act(() => {
       render(
         <WithRoute path={clusterBrokerPath()}>
-          <Broker />
+          <BrokerLogdir />
         </WithRoute>,
         {
           initialEntries: [clusterBrokerPath(clusterName, brokerId)],
         }
       );
     });
-    await waitFor(() => expect(fetchStatsMock.called()).toBeTruthy());
-    expect(fetchBrokersMock.called()).toBeTruthy();
   };
 
-  it('shows warning when server returns empty logDirs response', async () => {
-    const fetchLogDirsMock = fetchMock.getOnce(fetchLogDirsUrl, [], {
-      query: { broker: brokerId },
-    });
+  it('shows warning when server returns undefined logDirs response', async () => {
     await renderComponent();
-    await waitFor(() => expect(fetchLogDirsMock.called()).toBeTruthy());
-    expect(screen.getByText('Log dir data not available')).toBeInTheDocument();
+    expect(
+      screen.getByRole('row', { name: 'Log dir data not available' })
+    ).toBeInTheDocument();
   });
 
-  it('shows broker', async () => {
-    const fetchLogDirsMock = fetchMock.getOnce(
-      fetchLogDirsUrl,
-      brokerLogDirsPayload,
-      {
-        query: { broker: brokerId },
-      }
-    );
+  it('shows warning when server returns empty logDirs response', async () => {
+    await renderComponent([]);
+    expect(
+      screen.getByRole('row', { name: 'Log dir data not available' })
+    ).toBeInTheDocument();
+  });
 
-    await renderComponent();
-    await waitFor(() => expect(fetchLogDirsMock.called()).toBeTruthy());
-    const topicCount = screen.getByText(3);
-    const partitionsCount = screen.getByText(4);
-    expect(topicCount).toBeInTheDocument();
-    expect(partitionsCount).toBeInTheDocument();
+  it('shows brokers', async () => {
+    await renderComponent(brokerLogDirsPayload);
+    expect(
+      screen.queryByRole('row', { name: 'Log dir data not available' })
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.getByRole('row', {
+        name: '/opt/kafka/data-0/logs NONE 3 4',
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('row', {
+        name: '/opt/kafka/data-1/logs NONE 0 0',
+      })
+    ).toBeInTheDocument();
   });
 });

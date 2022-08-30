@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ConsumerGroupOffsetsResetType } from 'generated-sources';
-import { ClusterGroupParam } from 'lib/paths';
+import { clusterConsumerGroupsPath, ClusterGroupParam } from 'lib/paths';
 import {
   Controller,
   FormProvider,
@@ -170,7 +170,11 @@ const ResetOffsets: React.FC = () => {
 
   return (
     <FormProvider {...methods}>
-      <PageHeading text="Reset offsets" />
+      <PageHeading
+        text="Reset offsets"
+        backTo={clusterConsumerGroupsPath(clusterName)}
+        backText="Consumers"
+      />
       <S.Wrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <S.MainSelectors>

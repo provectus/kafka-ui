@@ -1,14 +1,6 @@
-import {
-  ConnectorState,
-  ConnectorStatus,
-  ConsumerGroup,
-  ConsumerGroupState,
-  TaskStatus,
-} from 'generated-sources';
+import { ConnectorState, ConsumerGroupState } from 'generated-sources';
 
-const getTagColor = ({
-  state,
-}: ConnectorStatus | TaskStatus | ConsumerGroup) => {
+const getTagColor = (state?: string) => {
   switch (state) {
     case ConnectorState.RUNNING:
     case ConsumerGroupState.STABLE:

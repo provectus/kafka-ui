@@ -259,6 +259,11 @@ public class TopicsService {
                 new ValidationException(
                     String.format("Topic already has replicationFactor %s.", actual)));
           }
+          if (requested <= 0) {
+            return Mono.error(
+                new ValidationException(
+                    String.format("Requested replication factor (%s) should be greater or equal to 1.", requested)));
+          }
           if (requested > brokersCount) {
             return Mono.error(
                 new ValidationException(

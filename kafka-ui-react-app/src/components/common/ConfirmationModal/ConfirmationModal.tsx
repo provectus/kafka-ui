@@ -1,64 +1,42 @@
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import { Button } from 'components/common/Button/Button';
+import { ConfirmContext } from 'components/contexts/ConfirmContext';
 
-import { ConfirmationModalWrapper } from './ConfirmationModal.styled';
+import * as S from './ConfirmationModal.styled';
 
-export interface ConfirmationModalProps {
-  isOpen?: boolean;
-  title?: React.ReactNode;
-  onConfirm(): void;
-  onCancel(): void;
-  isConfirming?: boolean;
-  submitBtnText?: string;
-}
+const ConfirmationModal: React.FC = () => {
+  const context = React.useContext(ConfirmContext);
+  const isOpen = context?.content && context?.confirm;
 
-const ConfirmationModal: React.FC<
-  PropsWithChildren<ConfirmationModalProps>
-> = ({
-  isOpen,
-  children,
-  title = 'Confirm the action',
-  onCancel,
-  onConfirm,
-  isConfirming = false,
-  submitBtnText = 'Submit',
-}) => {
-  const cancelHandler = () => {
-    if (!isConfirming) onCancel();
-  };
+  if (!isOpen) return null;
 
-  return isOpen ? (
-    <ConfirmationModalWrapper>
-      <div onClick={cancelHandler} aria-hidden="true" role="button" />
-      <div>
-        <header>
-          <p>{title}</p>
-        </header>
-        <section>{children}</section>
-        <footer>
+  return (
+    <S.Wrapper role="dialog" aria-label="Confirmation Dialog">
+      <S.Overlay onClick={context.cancel} aria-hidden="true" role="button" />
+      <S.Modal>
+        <S.Header>Confirm the action</S.Header>
+        <S.Content>{context.content}</S.Content>
+        <S.Footer>
           <Button
             buttonType="secondary"
             buttonSize="M"
-            onClick={cancelHandler}
+            onClick={context.cancel}
             type="button"
-            disabled={isConfirming}
           >
             Cancel
           </Button>
-
           <Button
             buttonType="primary"
             buttonSize="M"
-            onClick={onConfirm}
+            onClick={context.confirm}
             type="button"
-            disabled={isConfirming}
           >
-            {submitBtnText}
+            Confirm
           </Button>
-        </footer>
-      </div>
-    </ConfirmationModalWrapper>
-  ) : null;
+        </S.Footer>
+      </S.Modal>
+    </S.Wrapper>
+  );
 };
 
 export default ConfirmationModal;

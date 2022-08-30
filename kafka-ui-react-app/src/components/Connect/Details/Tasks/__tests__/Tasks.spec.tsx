@@ -1,59 +1,126 @@
 import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorTasksPath } from 'lib/paths';
-import TasksContainer from 'components/Connect/Details/Tasks/TasksContainer';
-import Tasks, { TasksProps } from 'components/Connect/Details/Tasks/Tasks';
-import { tasks } from 'redux/reducers/connect/__test__/fixtures';
-import { screen } from '@testing-library/dom';
+import Tasks from 'components/Connect/Details/Tasks/Tasks';
+import { tasks } from 'lib/fixtures/kafkaConnect';
+import { screen, within, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import {
+  useConnectorTasks,
+  useRestartConnectorTask,
+} from 'lib/hooks/api/kafkaConnect';
+import { Task } from 'generated-sources';
 
-jest.mock(
-  'components/Connect/Details/Tasks/ListItem/ListItemContainer',
-  () => 'tr'
-);
+jest.mock('lib/hooks/api/kafkaConnect', () => ({
+  useConnectorTasks: jest.fn(),
+  useRestartConnectorTask: jest.fn(),
+}));
+
+const path = clusterConnectConnectorTasksPath('local', 'ghp', '1');
+
+const restartConnectorMock = jest.fn();
 
 describe('Tasks', () => {
-  it('container renders view', () => {
-    render(<TasksContainer />);
-    expect(screen.getByRole('table')).toBeInTheDocument();
+  beforeEach(() => {
+    (useRestartConnectorTask as jest.Mock).mockImplementation(() => ({
+      mutateAsync: restartConnectorMock,
+    }));
   });
 
-  describe('view', () => {
-    const clusterName = 'my-cluster';
-    const connectName = 'my-connect';
-    const connectorName = 'my-connector';
+  const renderComponent = (currentData: Task[] | undefined = undefined) => {
+    (useConnectorTasks as jest.Mock).mockImplementation(() => ({
+      data: currentData,
+    }));
 
-    const setupWrapper = (props: Partial<TasksProps> = {}) => (
+    render(
       <WithRoute path={clusterConnectConnectorTasksPath()}>
-        <Tasks areTasksFetching={false} tasks={tasks} {...props} />
-      </WithRoute>
+        <Tasks />
+      </WithRoute>,
+      { initialEntries: [path] }
     );
+  };
 
-    it('to be in the document when fetching tasks', () => {
-      render(setupWrapper({ areTasksFetching: true }), {
-        initialEntries: [
-          clusterConnectConnectorTasksPath(
-            clusterName,
-            connectName,
-            connectorName
-          ),
-        ],
+  it('renders empty table', () => {
+    renderComponent();
+    expect(screen.getByRole('table')).toBeInTheDocument();
+    expect(screen.getByText('No tasks found')).toBeInTheDocument();
+  });
+
+  it('renders tasks table', () => {
+    renderComponent(tasks);
+    expect(screen.getAllByRole('row').length).toEqual(tasks.length + 1);
+
+    expect(
+      screen.getByRole('row', {
+        name: '1 kafka-connect0:8083 RUNNING',
+      })
+    ).toBeInTheDocument();
+  });
+
+  it('renders truncates long trace and expands', () => {
+    renderComponent(tasks);
+
+    const trace = tasks[2]?.status?.trace || '';
+    const truncatedTrace = trace.toString().substring(0, 100 - 3);
+
+    const thirdRow = screen.getByRole('row', {
+      name: `3 kafka-connect0:8083 RUNNING ${truncatedTrace}...`,
+    });
+    expect(thirdRow).toBeInTheDocument();
+
+    const expandedDetails = screen.queryByText(trace);
+    //  Full trace is not visible
+    expect(expandedDetails).not.toBeInTheDocument();
+
+    userEvent.click(thirdRow);
+
+    expect(
+      screen.getByRole('row', {
+        name: trace,
+      })
+    ).toBeInTheDocument();
+  });
+
+  describe('Action button', () => {
+    const expectDropdownExists = () => {
+      const firstTaskRow = screen.getByRole('row', {
+        name: '1 kafka-connect0:8083 RUNNING',
       });
-      expect(screen.getByRole('progressbar')).toBeInTheDocument();
-      expect(screen.queryByRole('table')).not.toBeInTheDocument();
+      expect(firstTaskRow).toBeInTheDocument();
+      const extBtn = within(firstTaskRow).getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+      expect(extBtn).toBeEnabled();
+      userEvent.click(extBtn);
+      expect(screen.getByRole('menu')).toBeInTheDocument();
+    };
+
+    it('renders action button', () => {
+      renderComponent(tasks);
+      expectDropdownExists();
+      expect(
+        screen.getAllByRole('button', { name: 'Dropdown Toggle' }).length
+      ).toEqual(tasks.length);
+      // Action buttons are enabled
+      const actionBtn = screen.getAllByRole('menuitem');
+      expect(actionBtn[0]).toHaveTextContent('Restart task');
     });
 
-    it('to be in the document when no tasks', () => {
-      render(setupWrapper({ tasks: [] }), {
-        initialEntries: [
-          clusterConnectConnectorTasksPath(
-            clusterName,
-            connectName,
-            connectorName
-          ),
-        ],
-      });
-      expect(screen.getByRole('table')).toBeInTheDocument();
-      expect(screen.getByText('No tasks found')).toBeInTheDocument();
+    it('works as expected', async () => {
+      renderComponent(tasks);
+      expectDropdownExists();
+      const actionBtn = screen.getAllByRole('menuitem');
+      expect(actionBtn[0]).toHaveTextContent('Restart task');
+
+      userEvent.click(actionBtn[0]);
+      expect(
+        screen.getByText('Are you sure you want to restart the task?')
+      ).toBeInTheDocument();
+
+      expect(screen.getByText('Confirm the action')).toBeInTheDocument();
+      userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+
+      await waitFor(() => expect(restartConnectorMock).toHaveBeenCalled());
     });
   });
 });

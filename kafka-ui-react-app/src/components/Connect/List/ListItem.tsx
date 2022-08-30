@@ -3,15 +3,12 @@ import { FullConnectorInfo } from 'generated-sources';
 import { clusterConnectConnectorPath, clusterTopicPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import { Link, NavLink } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { deleteConnector } from 'redux/reducers/connect/connectSlice';
-import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
-import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import getTagColor from 'components/common/Tag/getTagColor';
+import { useDeleteConnector } from 'lib/hooks/api/kafkaConnect';
+import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { useConfirm } from 'lib/hooks/useConfirm';
 
 import * as S from './List.styled';
 
@@ -33,23 +30,22 @@ const ListItem: React.FC<ListItemProps> = ({
     failedTasksCount,
   },
 }) => {
-  const dispatch = useDispatch();
-  const [
-    isDeleteConnectorConfirmationVisible,
-    setDeleteConnectorConfirmationVisible,
-  ] = React.useState(false);
+  const confirm = useConfirm();
+  const deleteMutation = useDeleteConnector({
+    clusterName,
+    connectName: connect,
+    connectorName: name,
+  });
 
   const handleDelete = () => {
-    if (clusterName && connect && name) {
-      dispatch(
-        deleteConnector({
-          clusterName,
-          connectName: connect,
-          connectorName: name,
-        })
-      );
-    }
-    setDeleteConnectorConfirmationVisible(false);
+    confirm(
+      <>
+        Are you sure want to remove <b>{name}</b> connector?
+      </>,
+      async () => {
+        await deleteMutation.mutateAsync();
+      }
+    );
   };
 
   const runningTasks = React.useMemo(() => {
@@ -76,7 +72,9 @@ const ListItem: React.FC<ListItemProps> = ({
           ))}
         </S.TagsWrapper>
       </td>
-      <td>{status && <Tag color={getTagColor(status)}>{status.state}</Tag>}</td>
+      <td>
+        {status && <Tag color={getTagColor(status.state)}>{status.state}</Tag>}
+      </td>
       <td>
         {runningTasks && (
           <span>
@@ -86,22 +84,12 @@ const ListItem: React.FC<ListItemProps> = ({
       </td>
       <td>
         <div>
-          <Dropdown label={<VerticalElipsisIcon />} right up>
-            <DropdownItem
-              onClick={() => setDeleteConnectorConfirmationVisible(true)}
-              danger
-            >
+          <Dropdown>
+            <DropdownItem onClick={handleDelete} danger>
               Remove Connector
             </DropdownItem>
           </Dropdown>
         </div>
-        <ConfirmationModal
-          isOpen={isDeleteConnectorConfirmationVisible}
-          onCancel={() => setDeleteConnectorConfirmationVisible(false)}
-          onConfirm={handleDelete}
-        >
-          Are you sure want to remove <b>{name}</b> connector?
-        </ConfirmationModal>
       </td>
     </tr>
   );

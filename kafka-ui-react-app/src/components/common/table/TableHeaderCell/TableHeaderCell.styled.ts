@@ -67,12 +67,6 @@ const DESCMixin = css(
   `
 );
 
-export const Td = styled.td<{ maxWidth?: string }>`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: ${(props) => props.maxWidth};
-`;
-
 export const Title = styled.span<TitleProps>(
   ({ isOrderable, isOrdered, sortOrder, theme: { table } }) => css`
     font-family: Inter, sans-serif;
@@ -115,4 +109,5 @@ export const TableHeaderCell = styled.th`
   padding: 4px 0 4px 24px;
   border-bottom-width: 1px;
   vertical-align: middle;
+  text-align: left;
 `;
