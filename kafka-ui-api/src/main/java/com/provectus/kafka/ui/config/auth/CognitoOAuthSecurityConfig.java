@@ -12,7 +12,6 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrations;
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 
@@ -27,7 +26,7 @@ public class CognitoOAuthSecurityConfig extends AbstractAuthSecurityConfig {
     log.info("Configuring Cognito OAUTH2 authentication.");
 
     String clientId = env.getRequiredProperty("auth.cognito.client-id");
-    String logoutUrl = env.getRequiredProperty("auth.cognito.logout-url");
+    String logoutUrl = env.getRequiredProperty("auth.cognito.logout-uri");
 
     final ServerLogoutSuccessHandler logoutHandler = new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId);
 
