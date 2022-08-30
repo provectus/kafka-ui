@@ -2,8 +2,19 @@ apiVersion: v1
 entries:
   kafka-ui:
   - apiVersion: v2
+    appVersion: 0.4.0
+    created: "2022-08-30T16:59:55.280426+04:00"
+    description: A Helm chart for kafka-UI
+    digest: 21ed50ba7a96bcc64a27ba89779b55cd95119fa263aa5ae5353401d77fe480dd
+    icon: https://github.com/provectus/kafka-ui/raw/master/documentation/images/kafka-ui-logo.png
+    name: kafka-ui
+    type: application
+    urls:
+    - kafka-ui-0.4.2.tgz
+    version: 0.4.2
+  - apiVersion: v2
     appVersion: v0.4.0
-    created: "2022-08-02T18:48:30.100056+03:00"
+    created: "2022-08-30T16:59:55.281001+04:00"
     description: A Helm chart for kafka-UI
     digest: 4684db862405b008be104fb0054ac853a562f5575777ae07ddf595216c517c24
     icon: https://github.com/provectus/kafka-ui/raw/master/documentation/images/kafka-ui-logo.png
@@ -14,7 +25,7 @@ entries:
     version: v0.4.1
   - apiVersion: v2
     appVersion: v0.4.0
-    created: "2022-05-02T18:42:44.120889943Z"
+    created: "2022-08-30T16:59:55.280694+04:00"
     description: A Helm chart for kafka-UI
     digest: b4b148df88312deb9444485f0278eeed0d1d5f5c5358521a9cb38ff81c1210a7
     icon: https://github.com/provectus/kafka-ui/raw/master/images/kafka-ui-logo.png
@@ -25,7 +36,7 @@ entries:
     version: v0.4.0
   - apiVersion: v2
     appVersion: 0.3.3
-    created: "2022-05-02T18:42:44.120276124Z"
+    created: "2022-08-30T16:59:55.280134+04:00"
     description: A Helm chart for kafka-UI
     digest: 313928460dcff2a8045133ed4e89f8a21ea17c11f0944eaea82ac5471df36f22
     icon: https://github.com/provectus/kafka-ui/raw/master/images/kafka-ui-logo.png
@@ -36,7 +47,7 @@ entries:
     version: 0.3.3
   - apiVersion: v2
     appVersion: 0.0.3
-    created: "2022-05-02T18:42:44.119573601Z"
+    created: "2022-08-30T16:59:55.279835+04:00"
     description: A Helm chart for kafka-UI
     digest: a9d01c1f3a44057e365d6183911103a7bafabe90e17101dad6514a91ef2ba1c9
     icon: https://github.com/provectus/kafka-ui/raw/master/images/kafka-ui-logo.png
@@ -47,7 +58,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: 0.2.0
-    created: "2022-05-02T18:42:44.118482666Z"
+    created: "2022-08-30T16:59:55.279517+04:00"
     description: A Helm chart for kafka-UI
     digest: fd4411860b4298d649ae664bf9a921c6ea9750224555da0c458a321d4a40a3ac
     icon: https://github.com/provectus/kafka-ui/raw/master/images/kafka-ui-logo.png
@@ -56,4 +67,4 @@ entries:
     urls:
     - kafka-ui-0.0.1.tgz
     version: 0.0.1
-generated: "2022-05-02T18:42:44.117515335Z"
+generated: "2022-08-30T16:59:55.279146+04:00"
