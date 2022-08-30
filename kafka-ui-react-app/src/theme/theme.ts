@@ -95,8 +95,16 @@ const theme = {
       color: Colors.neutral[20],
     },
   },
+  pageHeading: {
+    dividerColor: Colors.neutral[30],
+    backLink: {
+      color: {
+        normal: Colors.brand[70],
+        hover: Colors.brand[60],
+      },
+    },
+  },
   panelColor: Colors.neutral[0],
-  breadcrumb: Colors.neutral[30],
   connectEditWarning: Colors.yellow[10],
   dropdown: {
     backgroundColor: Colors.neutral[0],
@@ -143,7 +151,7 @@ const theme = {
     },
     variants: {
       1: {
-        fontSize: '24px',
+        fontSize: '20px',
         lineHeight: '32px',
       },
       2: {
@@ -293,6 +301,7 @@ const theme = {
     border: {
       top: Colors.neutral[5],
       bottom: Colors.neutral[5],
+      contrast: Colors.neutral[30],
     },
     overlay: Colors.transparency[10],
     shadow: Colors.transparency[20],
@@ -337,6 +346,7 @@ const theme = {
     expander: {
       normal: Colors.brand[50],
       hover: Colors.brand[20],
+      disabled: Colors.neutral[10],
     },
   },
   primaryTab: {
@@ -446,22 +456,6 @@ const theme = {
       blue: Colors.blue[10],
     },
     color: Colors.neutral[90],
-  },
-  pagination: {
-    backgroundColor: Colors.neutral[0],
-    currentPage: Colors.neutral[10],
-    borderColor: {
-      normal: Colors.neutral[30],
-      hover: Colors.neutral[50],
-      active: Colors.neutral[70],
-      disabled: Colors.neutral[20],
-    },
-    color: {
-      normal: Colors.neutral[90],
-      hover: Colors.neutral[90],
-      active: Colors.neutral[90],
-      disabled: Colors.neutral[20],
-    },
   },
   switch: {
     unchecked: Colors.brand[20],

@@ -1,14 +1,15 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const ExpaderButton = styled.svg(
-  ({ theme: { table } }) => `
-  & > path {
-    fill: ${table.expander.normal};
-    &:hover {
-      fill: ${table.expander.hover};
+export const ExpaderButton = styled.svg<{ $disabled: boolean }>(
+  ({ theme: { table }, $disabled }) => css`
+    & > path {
+      fill: ${table.expander[$disabled ? 'disabled' : 'normal']};
     }
-  }
-`
+
+    &:hover > path {
+      fill: ${table.expander[$disabled ? 'disabled' : 'hover']};
+    }
+  `
 );
 
 interface ThProps {
@@ -99,13 +100,13 @@ export const Th = styled.th<ThProps>(
 );
 
 interface RowProps {
-  expandable?: boolean;
+  clickable?: boolean;
   expanded?: boolean;
 }
 
 export const Row = styled.tr<RowProps>(
-  ({ theme: { table }, expanded, expandable }) => `
-  cursor: ${expandable ? 'pointer' : 'default'};
+  ({ theme: { table }, expanded, clickable }) => `
+  cursor: ${clickable ? 'pointer' : 'default'};
   background-color: ${table.tr.backgroundColor[expanded ? 'hover' : 'normal']};
   &:hover {
     background-color: ${table.tr.backgroundColor.hover};

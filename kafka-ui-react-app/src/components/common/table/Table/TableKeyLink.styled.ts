@@ -21,7 +21,3 @@ const tableLinkMixin = css(
 export const TableKeyLink = styled.td`
   ${tableLinkMixin}
 `;
-
-export const SmartTableKeyLink = styled.div`
-  ${tableLinkMixin}
-`;

@@ -10,7 +10,6 @@ import { RouteParamsClusterTopic } from 'lib/paths';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
-import PageHeading from 'components/common/PageHeading/PageHeading';
 import useAppParams from 'lib/hooks/useAppParams';
 import topicParamsTransformer from 'components/Topics/Topic/Edit/topicParamsTransformer';
 import { MILLISECONDS_IN_WEEK } from 'lib/constants';
@@ -63,7 +62,6 @@ const Edit: React.FC = () => {
 
   return (
     <>
-      <PageHeading text={`Edit ${topicName}`} />
       <FormProvider {...methods}>
         <TopicForm
           topicName={topicName}

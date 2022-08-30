@@ -3,12 +3,11 @@ package com.provectus.kafka.ui.pages.topic;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
+import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.pages.ProduceMessagePage;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
-import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
@@ -34,7 +33,7 @@ public class TopicView {
         return this;
     }
 
-    @SneakyThrows
+    @Step
     public TopicCreateEditSettingsView openEditSettings() {
         BrowserUtils.javaExecutorClick(dotMenuHeader);
         $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() + "']").click();
@@ -47,7 +46,7 @@ public class TopicView {
         return this;
     }
 
-    @SneakyThrows
+    @Step
     public TopicsList deleteTopic() {
         BrowserUtils.javaExecutorClick(dotMenuHeader);
         $("#dropdown-menu").$(byLinkText(DotMenuHeaderItems.REMOVE_TOPIC.getValue())).click();
@@ -55,16 +54,18 @@ public class TopicView {
         return new TopicsList();
     }
 
-    @SneakyThrows
+    @Step
     public ProduceMessagePage clickOnButton(String buttonName) {
         BrowserUtils.javaExecutorClick($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
         return new ProduceMessagePage();
     }
 
+    @Step
     public boolean isKeyMessageVisible(String keyMessage) {
         return keyMessage.equals($("td[title]").getText());
     }
 
+    @Step
     public boolean isContentMessageVisible(String contentMessage) {
         return contentMessage.matches($x("//html//div[@id='root']/div/main//table//p").getText().trim());
     }

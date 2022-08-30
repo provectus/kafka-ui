@@ -28,7 +28,7 @@ public class SchemaView {
         $x("//button[text()= 'Edit Schema']").click();
         return new SchemaEditView();
     }
-
+    @Step
     public SchemaRegistryList removeSchema() {
         BrowserUtils.javaExecutorClick($(".dropdown.is-right button"));
         $(By.xpath("//*[contains(text(),'Remove')]")).click();

@@ -9,7 +9,7 @@ import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import { StyledForm } from 'components/common/Form/Form.styled';
-import { clusterTopicsPath } from 'lib/paths';
+import { clusterTopicPath } from 'lib/paths';
 import { useNavigate } from 'react-router-dom';
 import useAppParams from 'lib/hooks/useAppParams';
 
@@ -76,7 +76,7 @@ const TopicForm: React.FC<Props> = ({
 
   const onCancel = () => {
     reset();
-    navigate(clusterTopicsPath(clusterName));
+    navigate(clusterTopicPath(clusterName, topicName));
   };
 
   return (
@@ -232,20 +232,20 @@ const TopicForm: React.FC<Props> = ({
         <CustomParams isSubmitting={isSubmitting} />
         <S.ButtonWrapper>
           <Button
-            type="submit"
-            buttonType="primary"
-            buttonSize="L"
-            disabled={!isValid || isSubmitting || !isDirty}
-          >
-            {isEditing ? 'Save' : 'Create topic'}
-          </Button>
-          <Button
             type="button"
             buttonType="primary"
             buttonSize="L"
             onClick={onCancel}
           >
             Cancel
+          </Button>
+          <Button
+            type="submit"
+            buttonType="primary"
+            buttonSize="L"
+            disabled={!isValid || isSubmitting || !isDirty}
+          >
+            {isEditing ? 'Update topic' : 'Create topic'}
           </Button>
         </S.ButtonWrapper>
       </fieldset>

@@ -62,17 +62,13 @@ describe('Edit Component', () => {
     await act(() => renderComponent());
   });
 
-  it('renders component', async () => {
-    expect(screen.getByText(`Edit ${topicName}`)).toBeInTheDocument();
-  });
-
   it('renders DangerZone component', async () => {
     expect(screen.getByText(`DangerZone`)).toBeInTheDocument();
   });
 
   it('submits form correctly', async () => {
     await act(() => renderComponent());
-    const btn = screen.getAllByText(/Save/i)[0];
+    const btn = screen.getAllByText(/Update topic/i)[0];
     const field = screen.getByRole('spinbutton', {
       name: 'Min In Sync Replicas * Min In Sync Replicas *',
     });
