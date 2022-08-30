@@ -28,8 +28,5 @@ jobs:
           for version in $K8S_VERSIONS
             do
               echo $version;
-              if [ "$version" = "1.23.0" ] ||  [ "$version" = "1.24.0" ]||  [ "$version" = "1.25.0" ]; then
-                 sed -i "s@v2beta1@v2@g" charts/kafka-ui/templates/hpa.yaml
-              fi   
-              helm template --kube-version $version --set ingress.enabled=true charts/kafka-ui -f charts/kafka-ui/values.yaml | kubeval --additional-schema-locations https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict -v $version
+              helm template --kube-version $version --set ingress.enabled=true charts/kafka-ui -f charts/kafka-ui/values.yaml | kubeval --additional-schema-locations https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict -v $version;
             done
