@@ -44,7 +44,7 @@ public class SerdeInstance {
   }
 
   public Optional<String> description() {
-    return wrapWithClassloader(serde::description);
+    return wrapWithClassloader(serde::getDescription);
   }
 
   public boolean canSerialize(String topic, Serde.Target type) {

@@ -23,7 +23,7 @@ public class Int64Serde implements BuiltInSerde {
   }
 
   @Override
-  public Optional<String> description() {
+  public Optional<String> getDescription() {
     return Optional.empty();
   }
 

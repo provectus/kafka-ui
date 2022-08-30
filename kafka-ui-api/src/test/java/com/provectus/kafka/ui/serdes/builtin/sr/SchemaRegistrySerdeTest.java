@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
+import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serde.api.Serde;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
@@ -41,8 +42,15 @@ class SchemaRegistrySerdeTest {
     registryClient.register(topic + "-key", new AvroSchema("{ \"type\": \"int\" }"));
     registryClient.register(topic + "-value", new AvroSchema("{ \"type\": \"float\" }"));
 
-    assertThat(serde.getSchema(topic, Serde.Target.KEY)).isPresent();
-    assertThat(serde.getSchema(topic, Serde.Target.VALUE)).isPresent();
+    var keySchemaOptional = serde.getSchema(topic, Serde.Target.KEY);
+    assertThat(keySchemaOptional)
+        .map(SchemaDescription::getSchema)
+        .contains("{\"$id\":\"int\",\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"integer\"}");
+
+    var valueSchemaOptional = serde.getSchema(topic, Serde.Target.VALUE);
+    assertThat(valueSchemaOptional)
+        .map(SchemaDescription::getSchema)
+        .contains("{\"$id\":\"float\",\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"number\"}");
   }
 
   @Test

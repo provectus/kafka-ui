@@ -53,23 +53,26 @@ class CustomSerdeLoader {
   }
 
   private static boolean isArchive(Path path) {
-    String archivePath = path.toString().toLowerCase(Locale.ROOT);
-    return Files.isReadable(path) && (archivePath.endsWith(".jar") || archivePath.endsWith(".zip"));
+    String archivePath = path.toString().toLowerCase();
+    return Files.isReadable(path)
+        && Files.isRegularFile(path)
+        && (archivePath.endsWith(".jar") || archivePath.endsWith(".zip"));
   }
 
   @SneakyThrows
   private static List<URL> findArchiveFiles(Path location) {
     if (isArchive(location)) {
       return List.of(location.toUri().toURL());
-    } else if (Files.isDirectory(location)) {
-      List<URL> archives = new ArrayList<>();
+    }
+    if (Files.isDirectory(location)) {
+      List<URL> archiveFiles = new ArrayList<>();
       try (var files = Files.walk(location)) {
         var paths = files.filter(CustomSerdeLoader::isArchive).collect(Collectors.toList());
         for (Path path : paths) {
-          archives.add(path.toUri().toURL());
+          archiveFiles.add(path.toUri().toURL());
         }
       }
-      return archives;
+      return archiveFiles;
     }
     return List.of();
   }
