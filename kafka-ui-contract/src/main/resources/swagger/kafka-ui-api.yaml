@@ -592,6 +592,8 @@ paths:
                 $ref: '#/components/schemas/ReplicationFactorChangeResponse'
         404:
           description: Not found
+        400:
+          description: Bad Request
 
   /api/clusters/{clusterName}/topic/{topicName}/serdes:
     get:
@@ -1764,7 +1766,19 @@ paths:
                 $ref: '#/components/schemas/PartitionsIncreaseResponse'
         404:
           description: Not found
-
+  /api/info/timestampformat:
+    get:
+      tags:
+        - TimeStampFormat
+      summary: getTimeStampFormat
+      operationId: getTimeStampFormat
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeStampFormat'
 components:
   schemas:
     TopicSerdeSuggestion:
@@ -2381,6 +2395,12 @@ components:
       type: object
       properties:
         name:
+          type: string
+
+    TimeStampFormat:
+      type: object
+      properties:
+        timeStampFormat:
           type: string
 
     TopicMessageConsuming:
@@ -3100,7 +3120,6 @@ components:
       properties:
         totalReplicationFactor:
           type: integer
-          minimum: 1
       required:
         - totalReplicationFactor
 

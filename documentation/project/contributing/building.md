@@ -19,6 +19,13 @@ docker-compose -f ./documentation/compose/kafka-clusters-only.yaml up -d
 
 Then, start the app.
 
+### Building only the API
+
+To build only the kafka-ui-api you can use this command:
+```sh
+./mvnw -f kafka-ui-api/pom.xml clean install -Pprod -DskipUIBuild=true
+```
+
 ## Where to go next
 
 In the next section, you'll [learn how to run the application](running.md).

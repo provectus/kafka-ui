@@ -14,20 +14,25 @@ import {
   getNonExactPath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
-import { BreadcrumbProvider } from 'components/common/Breadcrumb/Breadcrumb.provider';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import useClusters from 'lib/hooks/api/useClusters';
+import { useClusters } from 'lib/hooks/api/clusters';
+import Brokers from 'components/Brokers/Brokers';
+import Topics from 'components/Topics/Topics';
+import Schemas from 'components/Schemas/Schemas';
+import Connect from 'components/Connect/Connect';
+import KsqlDb from 'components/KsqlDb/KsqlDb';
+import ConsumerGroups from 'components/ConsumerGroups/ConsumerGroups';
 
-const Brokers = React.lazy(() => import('components/Brokers/Brokers'));
-const Topics = React.lazy(() => import('components/Topics/Topics'));
-const Schemas = React.lazy(() => import('components/Schemas/Schemas'));
-const Connect = React.lazy(() => import('components/Connect/Connect'));
-const KsqlDb = React.lazy(() => import('components/KsqlDb/KsqlDb'));
-const ConsumerGroups = React.lazy(
-  () => import('components/ConsumerGroups/ConsumerGroups')
-);
+// We can't use Lazy loading till we have a better way to update publicPath in runtime
+// Now java app replaces paths in builded index.html file.
+// const Brokers = React.lazy(() => import('components/Brokers/Brokers'));
+// const Topics = React.lazy(() => import('components/Topics/Topics'));
+// const Schemas = React.lazy(() => import('components/Schemas/Schemas'));
+// const Connect = React.lazy(() => import('components/Connect/Connect'));
+// const KsqlDb = React.lazy(() => import('components/KsqlDb/KsqlDb'));
+// const ConsumerGroups = React.lazy(
+//   () => import('components/ConsumerGroups/ConsumerGroups')
+// );
 
 const Cluster: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
@@ -52,84 +57,53 @@ const Cluster: React.FC = () => {
   }, [clusterName, data]);
 
   return (
-    <BreadcrumbProvider>
-      <Breadcrumb />
-      <Suspense fallback={<PageLoader />}>
-        <ClusterContext.Provider value={contextValue}>
-          <Routes>
+    <Suspense fallback={<PageLoader />}>
+      <ClusterContext.Provider value={contextValue}>
+        <Routes>
+          <Route
+            path={getNonExactPath(clusterBrokerRelativePath)}
+            element={<Brokers />}
+          />
+          <Route
+            path={getNonExactPath(clusterTopicsRelativePath)}
+            element={<Topics />}
+          />
+          <Route
+            path={getNonExactPath(clusterConsumerGroupsRelativePath)}
+            element={<ConsumerGroups />}
+          />
+          {contextValue.hasSchemaRegistryConfigured && (
             <Route
-              path={getNonExactPath(clusterBrokerRelativePath)}
-              element={
-                <BreadcrumbRoute>
-                  <Brokers />
-                </BreadcrumbRoute>
-              }
+              path={getNonExactPath(clusterSchemasRelativePath)}
+              element={<Schemas />}
             />
+          )}
+          {contextValue.hasKafkaConnectConfigured && (
             <Route
-              path={getNonExactPath(clusterTopicsRelativePath)}
-              element={
-                <BreadcrumbRoute>
-                  <Topics />
-                </BreadcrumbRoute>
-              }
+              path={getNonExactPath(clusterConnectsRelativePath)}
+              element={<Connect />}
             />
+          )}
+          {contextValue.hasKafkaConnectConfigured && (
             <Route
-              path={getNonExactPath(clusterConsumerGroupsRelativePath)}
-              element={
-                <BreadcrumbRoute>
-                  <ConsumerGroups />
-                </BreadcrumbRoute>
-              }
+              path={getNonExactPath(clusterConnectorsRelativePath)}
+              element={<Connect />}
             />
-            {contextValue.hasSchemaRegistryConfigured && (
-              <Route
-                path={getNonExactPath(clusterSchemasRelativePath)}
-                element={
-                  <BreadcrumbRoute>
-                    <Schemas />
-                  </BreadcrumbRoute>
-                }
-              />
-            )}
-            {contextValue.hasKafkaConnectConfigured && (
-              <Route
-                path={getNonExactPath(clusterConnectsRelativePath)}
-                element={
-                  <BreadcrumbRoute>
-                    <Connect />
-                  </BreadcrumbRoute>
-                }
-              />
-            )}
-            {contextValue.hasKafkaConnectConfigured && (
-              <Route
-                path={getNonExactPath(clusterConnectorsRelativePath)}
-                element={
-                  <BreadcrumbRoute>
-                    <Connect />
-                  </BreadcrumbRoute>
-                }
-              />
-            )}
-            {contextValue.hasKsqlDbConfigured && (
-              <Route
-                path={getNonExactPath(clusterKsqlDbRelativePath)}
-                element={
-                  <BreadcrumbRoute>
-                    <KsqlDb />
-                  </BreadcrumbRoute>
-                }
-              />
-            )}
+          )}
+          {contextValue.hasKsqlDbConfigured && (
             <Route
-              path="/"
-              element={<Navigate to={clusterBrokerRelativePath} replace />}
+              path={getNonExactPath(clusterKsqlDbRelativePath)}
+              element={<KsqlDb />}
             />
-          </Routes>
-          <Outlet />
-        </ClusterContext.Provider>
-      </Suspense>
-    </BreadcrumbProvider>
+          )}
+          <Route
+            path="/"
+            element={<Navigate to={clusterBrokerRelativePath} replace />}
+          />
+        </Routes>
+        <Outlet />
+      </ClusterContext.Provider>
+    </Suspense>
   );
 };
 

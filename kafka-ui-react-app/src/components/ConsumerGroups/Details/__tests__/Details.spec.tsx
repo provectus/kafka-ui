@@ -97,12 +97,13 @@ describe('Details component', () => {
         `/api/clusters/${clusterName}/consumer-groups/${groupId}`,
         200
       );
-      await act(() => {
-        userEvent.click(screen.getByText('Submit'));
+      await waitFor(() => {
+        userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
       });
       expect(deleteConsumerGroupMock.called()).toBeTruthy();
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-      expect(mockNavigate).toHaveBeenLastCalledWith('../');
+
+      await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
+      await waitFor(() => expect(mockNavigate).toHaveBeenLastCalledWith('../'));
     });
   });
 });

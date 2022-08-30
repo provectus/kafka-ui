@@ -1,43 +1,58 @@
 import React from 'react';
+import { useConnectorTasks } from 'lib/hooks/api/kafkaConnect';
+import useAppParams from 'lib/hooks/useAppParams';
+import { RouterParamsClusterConnectConnector } from 'lib/paths';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import { Task } from 'generated-sources';
-import PageLoader from 'components/common/PageLoader/PageLoader';
-import { Table } from 'components/common/table/Table/Table.styled';
-import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import Table, { TagCell } from 'components/common/NewTable';
 
-import ListItemContainer from './ListItem/ListItemContainer';
+import ActionsCellTasks from './ActionsCellTasks';
 
-export interface TasksProps {
-  areTasksFetching: boolean;
-  tasks: Task[];
-}
+const ExpandedTaskRow: React.FC<{ row: Row<Task> }> = ({ row }) => {
+  return <div>{row.original.status.trace}</div>;
+};
 
-const Tasks: React.FC<TasksProps> = ({ areTasksFetching, tasks }) => {
-  if (areTasksFetching) {
-    return <PageLoader />;
-  }
+const MAX_LENGTH = 100;
+
+const Tasks: React.FC = () => {
+  const routerProps = useAppParams<RouterParamsClusterConnectConnector>();
+  const { data = [] } = useConnectorTasks(routerProps);
+
+  const columns = React.useMemo<ColumnDef<Task>[]>(
+    () => [
+      { header: 'ID', accessorKey: 'status.id' },
+      { header: 'Worker', accessorKey: 'status.workerId' },
+      { header: 'State', accessorKey: 'status.state', cell: TagCell },
+      {
+        header: 'Trace',
+        accessorKey: 'status.trace',
+        enableSorting: false,
+        cell: ({ getValue }) => {
+          const trace = getValue<string>() || '';
+          return trace.toString().length > MAX_LENGTH
+            ? `${trace.toString().substring(0, MAX_LENGTH - 3)}...`
+            : trace;
+        },
+        meta: { width: '70%' },
+      },
+      {
+        id: 'actions',
+        header: '',
+        cell: ActionsCellTasks,
+      },
+    ],
+    []
+  );
 
   return (
-    <Table isFullwidth>
-      <thead>
-        <tr>
-          <TableHeaderCell title="ID" />
-          <TableHeaderCell title="Worker" />
-          <TableHeaderCell title="State" />
-          <TableHeaderCell title="Trace" />
-          <TableHeaderCell />
-        </tr>
-      </thead>
-      <tbody>
-        {tasks.length === 0 && (
-          <tr>
-            <td colSpan={10}>No tasks found</td>
-          </tr>
-        )}
-        {tasks.map((task) => (
-          <ListItemContainer key={task.status?.id} task={task} />
-        ))}
-      </tbody>
-    </Table>
+    <Table
+      columns={columns}
+      data={data}
+      emptyMessage="No tasks found"
+      enableSorting
+      getRowCanExpand={(row) => row.original.status.trace?.length > 0}
+      renderSubComponent={ExpandedTaskRow}
+    />
   );
 };
 

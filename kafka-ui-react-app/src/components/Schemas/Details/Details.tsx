@@ -4,15 +4,12 @@ import {
   ClusterSubjectParam,
   clusterSchemaEditPageRelativePath,
   clusterSchemaSchemaComparePageRelativePath,
+  clusterSchemasPath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
-import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
@@ -26,12 +23,12 @@ import {
   selectAllSchemaVersions,
   getSchemaLatest,
 } from 'redux/reducers/schemas/schemasSlice';
-import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
-import { getResponse } from 'lib/errorHandling';
+import { showServerError } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
 import useAppParams from 'lib/hooks/useAppParams';
 import { schemasApiClient } from 'lib/api';
+import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
@@ -41,10 +38,6 @@ const Details: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
-  const [
-    isDeleteSchemaConfirmationVisible,
-    setDeleteSchemaConfirmationVisible,
-  ] = React.useState(false);
 
   React.useEffect(() => {
     dispatch(fetchLatestSchema({ clusterName, subject }));
@@ -65,7 +58,7 @@ const Details: React.FC = () => {
   const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
   const areVersionsFetched = useAppSelector(getAreSchemaVersionsFulfilled);
 
-  const onDelete = async () => {
+  const deleteHandler = async () => {
     try {
       await schemasApiClient.deleteSchema({
         clusterName,
@@ -73,8 +66,7 @@ const Details: React.FC = () => {
       });
       navigate('../');
     } catch (e) {
-      const err = await getResponse(e as Response);
-      dispatch(serverErrorAlertAdded(err));
+      showServerError(e as Response);
     }
   };
 
@@ -83,7 +75,11 @@ const Details: React.FC = () => {
   }
   return (
     <>
-      <PageHeading text={schema.subject}>
+      <PageHeading
+        text={schema.subject}
+        backText="Schema Registry"
+        backTo={clusterSchemasPath(clusterName)}
+      >
         {!isReadOnly && (
           <>
             <Button
@@ -103,21 +99,19 @@ const Details: React.FC = () => {
             >
               Edit Schema
             </Button>
-            <Dropdown label={<VerticalElipsisIcon />} right>
+            <Dropdown>
               <DropdownItem
-                onClick={() => setDeleteSchemaConfirmationVisible(true)}
+                confirm={
+                  <>
+                    Are you sure want to remove <b>{subject}</b> schema?
+                  </>
+                }
+                onClick={deleteHandler}
                 danger
               >
                 Remove schema
               </DropdownItem>
             </Dropdown>
-            <ConfirmationModal
-              isOpen={isDeleteSchemaConfirmationVisible}
-              onCancel={() => setDeleteSchemaConfirmationVisible(false)}
-              onConfirm={onDelete}
-            >
-              Are you sure want to remove <b>{subject}</b> schema?
-            </ConfirmationModal>
           </>
         )}
       </PageHeading>

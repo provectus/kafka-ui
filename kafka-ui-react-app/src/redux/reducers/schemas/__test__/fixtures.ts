@@ -29,6 +29,14 @@ export const schemaVersion2: SchemaSubject = {
   compatibilityLevel: 'FORWARD_TRANSITIVE',
   schemaType: SchemaType.JSON,
 };
+export const schemaVersionWithNonAsciiChars: SchemaSubject = {
+  subject: 'test/test',
+  version: '1',
+  id: 29,
+  schema: '13',
+  compatibilityLevel: 'FORWARD_TRANSITIVE',
+  schemaType: SchemaType.JSON,
+};
 
 export { schemaVersion1 as schemaVersion };
 
@@ -43,19 +51,5 @@ export const schemasFulfilledState = {
     latest: null,
     ids: [],
     entities: {},
-  },
-};
-
-export const versionFulfilledState = {
-  totalPages: 1,
-  ids: [],
-  entities: {},
-  versions: {
-    latest: schemaVersion2,
-    ids: [schemaVersion1.id, schemaVersion2.id],
-    entities: {
-      [schemaVersion2.id]: schemaVersion2,
-      [schemaVersion1.id]: schemaVersion1,
-    },
   },
 };

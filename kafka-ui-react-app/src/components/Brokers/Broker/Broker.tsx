@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import * as Metrics from 'components/common/Metrics';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
@@ -8,20 +8,15 @@ import {
   clusterBrokerMetricsRelativePath,
   ClusterBrokerParam,
   clusterBrokerPath,
+  clusterBrokersPath,
 } from 'lib/paths';
-import useClusterStats from 'lib/hooks/useClusterStats';
-import useBrokers from 'lib/hooks/useBrokers';
+import { useClusterStats } from 'lib/hooks/api/clusters';
+import { useBrokers } from 'lib/hooks/api/brokers';
 import { NavLink, Route, Routes } from 'react-router-dom';
 import BrokerLogdir from 'components/Brokers/Broker/BrokerLogdir/BrokerLogdir';
 import BrokerMetrics from 'components/Brokers/Broker/BrokerMetrics/BrokerMetrics';
 import Navbar from 'components/common/Navigation/Navbar.styled';
-
-export interface BrokerLogdirState {
-  name: string;
-  error: string;
-  topics: number;
-  partitions: number;
-}
+import PageLoader from 'components/common/PageLoader/PageLoader';
 
 const Broker: React.FC = () => {
   const { clusterName, brokerId } = useAppParams<ClusterBrokerParam>();
@@ -37,7 +32,11 @@ const Broker: React.FC = () => {
   );
   return (
     <>
-      <PageHeading text={`Broker ${brokerId}`} />
+      <PageHeading
+        text={`Broker ${brokerId}`}
+        backTo={clusterBrokersPath(clusterName)}
+        backText="Brokers"
+      />
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="Segment Size">
@@ -67,13 +66,15 @@ const Broker: React.FC = () => {
         </NavLink>
       </Navbar>
 
-      <Routes>
-        <Route index element={<BrokerLogdir />} />
-        <Route
-          path={clusterBrokerMetricsRelativePath}
-          element={<BrokerMetrics />}
-        />
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route index element={<BrokerLogdir />} />
+          <Route
+            path={clusterBrokerMetricsRelativePath}
+            element={<BrokerMetrics />}
+          />
+        </Routes>
+      </Suspense>
     </>
   );
 };
