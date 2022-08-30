@@ -381,7 +381,7 @@ public class SchemaRegistryService {
     final var builder = UriComponentsBuilder
         .fromHttpUrl(schemaRegistry.getUri() + path);
     builder.queryParams(queryParams);
-    return builder.buildAndExpand(uriVariables.toArray()).toUri();
+    return builder.build(uriVariables.toArray());
   }
 
   private Function<ClientResponse, Mono<? extends Throwable>> errorOnSchemaDeleteFailure(String schemaName) {
