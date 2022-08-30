@@ -43,7 +43,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     healthcheck:
-      test: echo ruok | nc 127.0.0.1 2181 || exit -1
+      test: jps -l | grep zookeeper
       interval: 30s
       timeout: 10s
       retries: 10
@@ -93,7 +93,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     healthcheck:
-      test: echo ruok | nc 127.0.0.1 2181 || exit -1
+      test: jps -l | grep zookeeper
       interval: 30s
       timeout: 10s
       retries: 10
