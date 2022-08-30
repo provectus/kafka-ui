@@ -110,7 +110,7 @@ public class KafkaConsumerGroupTests extends AbstractIntegrationTest {
             assertThat(page.getPageCount()).isEqualTo(1);
             assertThat(page.getConsumerGroups().size()).isEqualTo(5);
             assertThat(page.getConsumerGroups())
-                .isSortedAccordingTo(Comparator.comparing(ConsumerGroupDTO::getGroupId).reversed());
+                .isSortedAccordingTo(Comparator.comparing(ConsumerGroupDTO::getGroupId));
           });
 
       webTestClient
@@ -125,8 +125,23 @@ public class KafkaConsumerGroupTests extends AbstractIntegrationTest {
               assertThat(page.getPageCount()).isEqualTo(1);
               assertThat(page.getConsumerGroups().size()).isEqualTo(5);
               assertThat(page.getConsumerGroups())
-                  .isSortedAccordingTo(Comparator.comparing(ConsumerGroupDTO::getGroupId));
+                  .isSortedAccordingTo(Comparator.comparing(ConsumerGroupDTO::getGroupId).reversed());
             });
+
+      webTestClient
+          .get()
+          .uri("/api/clusters/{clusterName}/consumer-groups/paged?perPage=10&&search"
+              + "=cgPageTest&orderBy=MEMBERS&sortOrder=DESC", LOCAL)
+          .exchange()
+          .expectStatus()
+          .isOk()
+          .expectBody(ConsumerGroupsPageResponseDTO.class)
+          .value(page -> {
+            assertThat(page.getPageCount()).isEqualTo(1);
+            assertThat(page.getConsumerGroups().size()).isEqualTo(5);
+            assertThat(page.getConsumerGroups())
+                .isSortedAccordingTo(Comparator.comparing(ConsumerGroupDTO::getMembers).reversed());
+          });
     }
   }
 

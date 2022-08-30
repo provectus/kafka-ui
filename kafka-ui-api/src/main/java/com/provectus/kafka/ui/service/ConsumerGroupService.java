@@ -117,7 +117,7 @@ public class ConsumerGroupService {
       ConsumerGroupOrderingDTO orderBy,
       SortOrderDTO sortOrderDto
   ) {
-    var comparator = sortOrderDto.equals(SortOrderDTO.DESC)
+    var comparator = sortOrderDto.equals(SortOrderDTO.ASC)
         ? getPaginationComparator(orderBy)
         : getPaginationComparator(orderBy).reversed();
     return adminClientService.get(cluster).flatMap(ac ->
@@ -161,7 +161,7 @@ public class ConsumerGroupService {
         };
         return Comparator.comparingInt(statesPriorities);
       case MEMBERS:
-        return Comparator.comparingInt(cg -> -cg.members().size());
+        return Comparator.comparingInt(cg -> cg.members().size());
       default:
         throw new IllegalStateException("Unsupported order by: " + orderBy);
     }
