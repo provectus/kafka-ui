@@ -1,4 +1,3 @@
-import Filters from 'components/Topics/Topic/Messages/Message';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
@@ -16,6 +15,8 @@ import {
   updateTopicMessagesMeta,
   updateTopicMessagesPhase,
 } from 'redux/reducers/topicMessages/topicMessagesSlice';
+
+import Filters from './Filters';
 
 const mapStateToProps = (state: RootState) => ({
   phaseMessage: getTopicMessgesPhase(state),
