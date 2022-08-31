@@ -7,6 +7,11 @@ services:
     image: provectuslabs/kafka-ui:latest
     ports:
       - 8080:8080
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider  http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      retries: 10  
     depends_on:
         zookeeper0:
           condition: service_healthy
@@ -43,10 +48,10 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     healthcheck:
-      test: jps -l | grep zookeeper
+      test: curl -f http://localhost:2181 || exit 1
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 10
     ports:
       - 2181:2181
 
@@ -81,10 +86,10 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     healthcheck:
-      test: jps -l | grep zookeeper
+      test: curl -f http://localhost:2181 || exit 1
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 10
 
   kafka1:
     image: confluentinc/cp-kafka:5.3.1
@@ -175,7 +180,7 @@ services:
           condition: service_healthy
     healthcheck:
       test: ["CMD", "nc", "127.0.0.1", "8083"]
-      interval: 10s
+      interval: 30s
       timeout: 10s
       retries: 10   
     environment:
@@ -244,9 +249,14 @@ services:
 
   ksqldb:
     image: confluentinc/ksqldb-server:0.18.0
+    healthcheck:
+      test: ["CMD", "curl", "--silent", "--fail", "http://localhost:8088/info"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
       kafka0:
-          condition: service_healthy
+        condition: service_healthy
       kafka-connect0:
         condition: service_healthy
       schemaregistry0:
