@@ -40,9 +40,18 @@ const Message: React.FC<Props> = ({
   },
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const savedMessageJson = {
+    Content: content,
+    Offset: offset,
+    Key: key,
+    Partition: partition,
+    Headers: headers,
+    Timestamp: timestamp,
+  };
+  const savedMessage = JSON.stringify(savedMessageJson, null, '\t');
   const { copyToClipboard, saveFile } = useDataSaver(
     'topic-message',
-    content || ''
+    savedMessage || ''
   );
 
   const toggleIsOpen = () => setIsOpen(!isOpen);
