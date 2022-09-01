@@ -38,7 +38,7 @@ public class KafkaConnectContainer extends GenericContainer<KafkaConnectContaine
     withEnv("CONNECT_INTERNAL_KEY_CONVERTER", "org.apache.kafka.connect.json.JsonConverter");
     withEnv("CONNECT_INTERNAL_VALUE_CONVERTER", "org.apache.kafka.connect.json.JsonConverter");
     withEnv("CONNECT_REST_ADVERTISED_HOST_NAME", "kafka-connect");
-    withEnv("CONNECT_REST_PORT", "8083");
+    withEnv("CONNECT_REST_PORT", String.valueOf(CONNECT_PORT));
     withEnv("CONNECT_PLUGIN_PATH", "/usr/share/java,/usr/share/confluent-hub-components");
     return self();
   }
