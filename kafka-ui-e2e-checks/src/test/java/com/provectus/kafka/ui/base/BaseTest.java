@@ -12,18 +12,10 @@ import com.provectus.kafka.ui.utils.qaseIO.TestCaseGenerator;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
 import io.qameta.allure.selenide.AllureSelenide;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -34,12 +26,18 @@ import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
 @Slf4j
 @DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
 public class BaseTest {
 
   public static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
   public static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium:103.0";
+  public static final String CLUSTER_NAME = "local";
   protected Pages pages = Pages.INSTANCE;
   protected Helpers helpers = Helpers.INSTANCE;
 
