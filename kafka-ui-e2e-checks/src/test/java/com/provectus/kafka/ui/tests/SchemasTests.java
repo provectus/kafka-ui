@@ -19,7 +19,6 @@ public class SchemasTests extends BaseTest {
 
     private final long suiteId = 11;
     private final String suiteTitle = "Schema Registry";
-    public static final String SECOND_LOCAL = "secondLocal";
     public static final String SCHEMA_AVRO_CREATE = "avro_schema";
     public static final String SCHEMA_JSON_CREATE = "json_schema";
     public static final String SCHEMA_PROTOBUF_CREATE = "protobuf_schema";
@@ -34,21 +33,21 @@ public class SchemasTests extends BaseTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, SCHEMA_AVRO_API_UPDATE, SchemaType.AVRO, fileToString(PATH_AVRO_VALUE));
-        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, SCHEMA_AVRO_API, SchemaType.AVRO, fileToString(PATH_AVRO_VALUE));
-        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, SCHEMA_JSON_API, SchemaType.JSON, fileToString(PATH_JSON_VALUE));
-        Helpers.INSTANCE.apiHelper.createSchema(SECOND_LOCAL, SCHEMA_PROTOBUF_API, SchemaType.PROTOBUF, fileToString(PATH_PROTOBUF_VALUE));
+        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, SCHEMA_AVRO_API_UPDATE, SchemaType.AVRO, fileToString(PATH_AVRO_VALUE));
+        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, SCHEMA_AVRO_API, SchemaType.AVRO, fileToString(PATH_AVRO_VALUE));
+        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, SCHEMA_JSON_API, SchemaType.JSON, fileToString(PATH_JSON_VALUE));
+        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, SCHEMA_PROTOBUF_API, SchemaType.PROTOBUF, fileToString(PATH_PROTOBUF_VALUE));
     }
 
     @AfterAll
     public static void afterAll() {
-        Helpers.INSTANCE.apiHelper.deleteSchema(SECOND_LOCAL, SCHEMA_AVRO_CREATE);
-        Helpers.INSTANCE.apiHelper.deleteSchema(SECOND_LOCAL, SCHEMA_JSON_CREATE);
-        Helpers.INSTANCE.apiHelper.deleteSchema(SECOND_LOCAL, SCHEMA_PROTOBUF_CREATE);
-        Helpers.INSTANCE.apiHelper.deleteSchema(SECOND_LOCAL, SCHEMA_AVRO_API_UPDATE);
-        Helpers.INSTANCE.apiHelper.deleteSchema(SECOND_LOCAL, SCHEMA_AVRO_API);
-        Helpers.INSTANCE.apiHelper.deleteSchema(SECOND_LOCAL, SCHEMA_JSON_API);
-        Helpers.INSTANCE.apiHelper.deleteSchema(SECOND_LOCAL, SCHEMA_PROTOBUF_API);
+        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_AVRO_CREATE);
+        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_JSON_CREATE);
+        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_PROTOBUF_CREATE);
+        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_AVRO_API_UPDATE);
+        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_AVRO_API);
+        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_JSON_API);
+        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_PROTOBUF_API);
 
     }
 
@@ -60,7 +59,7 @@ public class SchemasTests extends BaseTest {
     @Order(1)
     void createSchemaAvro() {
         pages.openMainPage()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
                 .setSubjectName(SCHEMA_AVRO_CREATE)
                 .setSchemaField(fileToString(PATH_AVRO_VALUE))
@@ -68,7 +67,7 @@ public class SchemasTests extends BaseTest {
                 .clickSubmit()
                 .waitUntilScreenReady();
         pages.mainPage
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_CREATE);
     }
 
@@ -80,7 +79,7 @@ public class SchemasTests extends BaseTest {
     @Order(2)
     void updateSchemaAvro() {
         pages.openMainPage()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(SCHEMA_AVRO_API_UPDATE)
                 .waitUntilScreenReady()
                 .openEditSchema()
@@ -99,7 +98,7 @@ public class SchemasTests extends BaseTest {
     @Order(3)
     void deleteSchemaAvro() {
         pages.openMainPage()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(SCHEMA_AVRO_API)
                 .waitUntilScreenReady()
                 .removeSchema()
@@ -114,7 +113,7 @@ public class SchemasTests extends BaseTest {
     @Order(4)
     void createSchemaJson() {
         pages.openMainPage()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
                 .setSubjectName(SCHEMA_JSON_CREATE)
                 .setSchemaField(fileToString(PATH_JSON_VALUE))
@@ -122,7 +121,7 @@ public class SchemasTests extends BaseTest {
                 .clickSubmit()
                 .waitUntilScreenReady();
         pages.mainPage
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_CREATE);
     }
 
@@ -134,7 +133,7 @@ public class SchemasTests extends BaseTest {
     @Order(5)
     void deleteSchemaJson() {
         pages.openMainPage()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(SCHEMA_JSON_API)
                 .waitUntilScreenReady()
                 .removeSchema()
@@ -149,7 +148,7 @@ public class SchemasTests extends BaseTest {
     @Order(6)
     void createSchemaProtobuf() {
         pages.openMainPage()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
                 .setSubjectName(SCHEMA_PROTOBUF_CREATE)
                 .setSchemaField(fileToString(PATH_PROTOBUF_VALUE))
@@ -157,7 +156,7 @@ public class SchemasTests extends BaseTest {
                 .clickSubmit()
                 .waitUntilScreenReady();
         pages.mainPage
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_CREATE);
     }
 
@@ -169,7 +168,7 @@ public class SchemasTests extends BaseTest {
     @Order(7)
     void deleteSchemaProtobuf() {
         pages.openMainPage()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(SCHEMA_PROTOBUF_API)
                 .waitUntilScreenReady()
                 .removeSchema()

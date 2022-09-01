@@ -6,7 +6,7 @@
 4. [kafka-ui-ssl.yml](./kafka-ssl.yml) - Connect to Kafka via TLS/SSL
 5. [kafka-cluster-sr-auth.yaml](./kafka-cluster-sr-auth.yaml) - Schema registry with authentication.
 6. [kafka-ui-auth-context.yaml](./kafka-ui-auth-context.yaml) - Basic (username/password) authentication with custom path (URL) (issue 861).
-7. [kafka-ui-connectors.yaml](./kafka-ui-connectors.yaml) - Configuration with different connectors (github-source, s3, sink-activities, source-activities) and Ksql functionality.
+7. [kafka-e2e.yaml](./kafka-e2e.yaml) - Configuration with different connectors (github-source, s3, sink-activities, source-activities) and Ksql functionality.
 8. [kafka-ui-jmx-secured.yml](./kafka-ui-jmx-secured.yml) - Kafka’s JMX with SSL and authentication.
 9. [kafka-ui-reverse-proxy.yaml](./kafka-ui-reverse-proxy.yaml) - An example for using the app behind a proxy (like nginx).
 10. [kafka-ui-sasl.yaml](./kafka-ui-sasl.yaml) - SASL auth for Kafka.
