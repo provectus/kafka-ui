@@ -90,10 +90,15 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   private static SupportedFeature getSupportedUpdateFeatureForVersion(String versionStr) {
-    float version = NumberUtil.parserClusterVersion(versionStr);
-    return version <= 2.3f
-        ? SupportedFeature.ALTER_CONFIGS
-        : SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
+    try {
+      float version = NumberUtil.parserClusterVersion(versionStr);
+      return version <= 2.3f
+          ? SupportedFeature.ALTER_CONFIGS
+          : SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
+    } catch (NumberFormatException e) {
+      log.info("Assuming non-incremental alter configs due to version parsing error");
+      return SupportedFeature.ALTER_CONFIGS;
+    }
   }
 
   //TODO: discuss - maybe we should map kafka-library's exceptions to our exceptions here

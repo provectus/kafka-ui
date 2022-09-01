@@ -4,7 +4,7 @@ Once you installed the prerequisites and cloned the repository, run the followin
 
 Build a docker container with the app:
 ```sh
-./mvnw clean install -Pprod
+./mvnw clean install -Dmaven.test.skip=true -Pprod
 ``` 
 Start the app with Kafka clusters:
 ```sh
