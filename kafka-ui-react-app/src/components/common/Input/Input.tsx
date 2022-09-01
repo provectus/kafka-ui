@@ -17,6 +17,7 @@ const Input: React.FC<InputProps> = ({
   hookFormOptions,
   search,
   inputSize = 'L',
+  type,
   ...rest
 }) => {
   const methods = useFormContext();
@@ -28,10 +29,30 @@ const Input: React.FC<InputProps> = ({
           inputSize={inputSize}
           {...methods.register(name, { ...hookFormOptions })}
           hasLeftIcon={!!search}
+          type={type}
           {...rest}
+          onKeyDown={(e) => {
+            if (type === 'number') {
+              if (e.key === 'e') {
+                e.preventDefault();
+              }
+            }
+          }}
+          onPaste={(e) => {
+            if (type === 'number') {
+              e.preventDefault();
+              const value = e.clipboardData.getData('Text');
+              methods.setValue(name, value.replace(/[^\d.]/g, ''));
+            }
+          }}
         />
       ) : (
-        <S.Input inputSize={inputSize} hasLeftIcon={!!search} {...rest} />
+        <S.Input
+          inputSize={inputSize}
+          hasLeftIcon={!!search}
+          type={type}
+          {...rest}
+        />
       )}
     </S.Wrapper>
   );
