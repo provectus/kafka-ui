@@ -48,11 +48,11 @@ docker pull selenoid/vnc:chrome_86.0
 1. Run `kafka-ui`: 
 ```
 cd kafka-ui
-docker-compose -f documentation/compose/kafka-e2e.yaml up -d
+docker-compose -f documentation/compose/e2e-tests.yaml up -d
 ```
 2. Run tests using your QaseIO API token as environment variable (put instead %s into command below)
 ```
-mvn -DQASEIO_API_TOKEN=‘%s’ -pl ‘!kafka-ui-api’ test -Pprod
+mvn -DQASEIO_API_TOKEN='%s' -pl '!kafka-ui-api' test -Pprod
 ```
 
 ### Reporting
