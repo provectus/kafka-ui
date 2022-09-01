@@ -108,7 +108,7 @@
     "eslint-plugin-react": "^7.30.1",
     "eslint-plugin-react-hooks": "^4.5.0",
     "husky": "^8.0.1",
-    "jest-environment-jsdom": "^28.1.1",
+    "jest-environment-jsdom": "^29.0.1",
     "jest-sonar-reporter": "^2.0.0",
     "jest-styled-components": "^7.0.8",
     "lint-staged": "^13.0.2",
