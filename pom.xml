@@ -39,7 +39,7 @@
         <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
         <mockito.version>2.21.0</mockito.version>
         <assertj.version>3.19.0</assertj.version>
-        <antlr4-maven-plugin.version>4.7.1</antlr4-maven-plugin.version>
+        <antlr4-maven-plugin.version>4.10.1</antlr4-maven-plugin.version>
         <groovy.version>3.0.9</groovy.version>
         <datasketches-java.version>3.1.0</datasketches-java.version>
 
