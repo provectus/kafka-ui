@@ -11,7 +11,7 @@ entries:
     type: application
     urls:
     - kafka-ui-0.4.2.tgz
-    version: 0.4.2
+    version: v0.4.2
   - apiVersion: v2
     appVersion: v0.4.0
     created: "2022-08-30T16:59:55.281001+04:00"
