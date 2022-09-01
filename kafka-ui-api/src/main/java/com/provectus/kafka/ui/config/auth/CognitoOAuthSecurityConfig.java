@@ -1,12 +1,13 @@
 package com.provectus.kafka.ui.config.auth;
 
 import com.provectus.kafka.ui.config.CognitoOidcLogoutSuccessHandler;
+import com.provectus.kafka.ui.config.auth.props.CognitoProperties;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -18,15 +19,18 @@ import org.springframework.security.web.server.authentication.logout.ServerLogou
 @Configuration
 @EnableWebFluxSecurity
 @ConditionalOnProperty(value = "auth.type", havingValue = "OAUTH2_COGNITO")
+@RequiredArgsConstructor
 @Slf4j
 public class CognitoOAuthSecurityConfig extends AbstractAuthSecurityConfig {
 
+  private static final String COGNITO = "cognito";
+
   @Bean
-  public SecurityWebFilterChain configure(ServerHttpSecurity http, Environment env) {
+  public SecurityWebFilterChain configure(ServerHttpSecurity http, CognitoProperties props) {
     log.info("Configuring Cognito OAUTH2 authentication.");
 
-    String clientId = env.getRequiredProperty("auth.cognito.client-id");
-    String logoutUrl = env.getRequiredProperty("auth.cognito.logout-uri");
+    String clientId = props.getClientId();
+    String logoutUrl = props.getLogoutUrl();
 
     final ServerLogoutSuccessHandler logoutHandler = new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId);
 
@@ -52,21 +56,16 @@ public class CognitoOAuthSecurityConfig extends AbstractAuthSecurityConfig {
   }
 
   @Bean
-  public InMemoryReactiveClientRegistrationRepository clientRegistrationRepository(Environment env) {
-    String issuerUrl = env.getRequiredProperty("auth.cognito.issuer-uri");
-    String clientId = env.getRequiredProperty("auth.cognito.client-id");
-    String clientSecret = env.getRequiredProperty("auth.cognito.client-secret");
+  public InMemoryReactiveClientRegistrationRepository clientRegistrationRepository(CognitoProperties props) {
+    ClientRegistration.Builder builder = ClientRegistrations
+        .fromIssuerLocation(props.getIssuerUrl())
+        .registrationId(COGNITO);
 
-    String scope = env.getProperty("auth.cognito.scope");
-    String userNameAttribute = env.getProperty("auth.cognito.user-name-attribute");
+    builder.clientId(props.getClientId());
+    builder.clientSecret(props.getClientSecret());
 
-    ClientRegistration.Builder builder = ClientRegistrations.fromIssuerLocation(issuerUrl).registrationId("cognito");
-
-    builder.clientId(clientId);
-    builder.clientSecret(clientSecret);
-
-    Optional.ofNullable(scope).ifPresent(builder::scope);
-    Optional.ofNullable(userNameAttribute).ifPresent(builder::userNameAttributeName);
+    Optional.ofNullable(props.getScope()).ifPresent(builder::scope);
+    Optional.ofNullable(props.getUserNameAttribute()).ifPresent(builder::userNameAttributeName);
 
     return new InMemoryReactiveClientRegistrationRepository(builder.build());
   }
