@@ -13,6 +13,7 @@ export interface Props {
   activeFilterHandler(activeFilter: MessageFilters, index: number): void;
   closeModal(): void;
   onGoBack(): void;
+  activeFilter?: MessageFilters;
 }
 
 const SavedFilters: FC<Props> = ({
@@ -22,11 +23,12 @@ const SavedFilters: FC<Props> = ({
   activeFilterHandler,
   closeModal,
   onGoBack,
+  activeFilter,
 }) => {
   const [selectedFilter, setSelectedFilter] = React.useState(-1);
   const confirm = useConfirm();
 
-  const activeFilter = () => {
+  const activateFilter = () => {
     if (selectedFilter > -1) {
       activeFilterHandler(filters[selectedFilter], selectedFilter);
     }
@@ -34,9 +36,23 @@ const SavedFilters: FC<Props> = ({
   };
 
   const deleteFilterHandler = (index: number) => {
-    confirm(<>Are you sure want to remove {filters[index]?.name}?</>, () => {
-      deleteFilter(index);
-    });
+    const filterName = filters[index]?.name;
+    const isFilterSelected = activeFilter && activeFilter.name === filterName;
+
+    confirm(
+      <>
+        <p>Are you sure want to remove {filterName}?</p>
+        {isFilterSelected && (
+          <>
+            <br />
+            <p>Warning: this filter is currently selected.</p>
+          </>
+        )}
+      </>,
+      () => {
+        deleteFilter(index);
+      }
+    );
   };
 
   return (
@@ -78,7 +94,7 @@ const SavedFilters: FC<Props> = ({
           buttonSize="M"
           buttonType="primary"
           type="button"
-          onClick={activeFilter}
+          onClick={activateFilter}
         >
           Select filter
         </Button>
