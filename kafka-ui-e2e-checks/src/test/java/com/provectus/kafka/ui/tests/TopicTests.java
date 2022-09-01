@@ -18,7 +18,6 @@ public class TopicTests extends BaseTest {
     public static final String NEW_TOPIC = "new-topic";
     public static final String TOPIC_TO_UPDATE = "topic-to-update";
     public static final String TOPIC_TO_DELETE = "topic-to-delete";
-    public static final String CLUSTER_NAME = "local";
     public static final String COMPACT_POLICY_VALUE = "Compact";
     public static final String UPDATED_TIME_TO_RETAIN_VALUE = "604800001";
     public static final String UPDATED_MAX_SIZE_ON_DISK = "20 GB";

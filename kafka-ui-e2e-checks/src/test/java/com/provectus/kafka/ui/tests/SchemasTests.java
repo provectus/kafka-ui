@@ -19,7 +19,6 @@ public class SchemasTests extends BaseTest {
 
     private final long suiteId = 11;
     private final String suiteTitle = "Schema Registry";
-    public static final String CLUSTER_NAME = "local";
     public static final String SCHEMA_AVRO_CREATE = "avro_schema";
     public static final String SCHEMA_JSON_CREATE = "json_schema";
     public static final String SCHEMA_PROTOBUF_CREATE = "protobuf_schema";
