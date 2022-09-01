@@ -50,7 +50,7 @@ docker pull selenoid/vnc:chrome_86.0
 cd kafka-ui
 docker-compose -f documentation/compose/kafka-ui-connectors.yaml up -d
 ```
-2. Run tests using your QaseIO API token as environment variable (put instead $s into command below)
+2. Run tests using your QaseIO API token as environment variable (put instead %s into command below)
 ```
 mvn -DQASEIO_API_TOKEN=‘%s’ -pl ‘!kafka-ui-api’ test -Pprod
 ```
