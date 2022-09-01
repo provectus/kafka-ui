@@ -43,7 +43,7 @@ jobs:
         id: compose_app
         # use the following command until #819 will be fixed
         run: |
-          docker-compose -f ./documentation/compose/kafka-ui-e2e.yaml up -d
+          docker-compose -f ./documentation/compose/e2e-tests.yaml up -d
       - name: e2e run
         run: |
           mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
