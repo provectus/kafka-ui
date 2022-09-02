@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.controller;
 import static java.util.stream.Collectors.toMap;
 
 import com.provectus.kafka.ui.api.MessagesApi;
-import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
@@ -14,7 +13,6 @@ import com.provectus.kafka.ui.service.MessagesService;
 import com.provectus.kafka.ui.service.TopicsService;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,11 +39,7 @@ public class MessagesController extends AbstractController implements MessagesAp
   public Mono<ResponseEntity<Void>> deleteTopicMessages(
       String clusterName, String topicName, @Valid List<Integer> partitions,
       ServerWebExchange exchange) {
-    return messagesService.deleteTopicMessages(
-        getCluster(clusterName),
-        topicName,
-        Optional.ofNullable(partitions).orElse(List.of())
-    ).thenReturn(ResponseEntity.ok().build());
+    throw new RuntimeException("Access denied");
   }
 
   @Override
@@ -53,20 +47,7 @@ public class MessagesController extends AbstractController implements MessagesAp
       String clusterName, String topicName, SeekTypeDTO seekType, List<String> seekTo,
       Integer limit, String q, MessageFilterTypeDTO filterQueryType,
       SeekDirectionDTO seekDirection, ServerWebExchange exchange) {
-    var positions = new ConsumerPosition(
-        seekType != null ? seekType : SeekTypeDTO.BEGINNING,
-        parseSeekTo(topicName, seekTo),
-        seekDirection
-    );
-    int recordsLimit = Optional.ofNullable(limit)
-        .map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT))
-        .orElse(DEFAULT_LOAD_RECORD_LIMIT);
-    return Mono.just(
-        ResponseEntity.ok(
-            messagesService.loadMessages(
-                getCluster(clusterName), topicName, positions, q, filterQueryType, recordsLimit)
-        )
-    );
+    throw new RuntimeException("Access denied");
   }
 
   @Override
@@ -80,9 +61,7 @@ public class MessagesController extends AbstractController implements MessagesAp
   public Mono<ResponseEntity<Void>> sendTopicMessages(
       String clusterName, String topicName, @Valid Mono<CreateTopicMessageDTO> createTopicMessage,
       ServerWebExchange exchange) {
-    return createTopicMessage.flatMap(msg ->
-        messagesService.sendMessage(getCluster(clusterName), topicName, msg).then()
-    ).map(ResponseEntity::ok);
+    throw new RuntimeException("Access denied");
   }
 
   /**

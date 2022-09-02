@@ -148,12 +148,6 @@ const Topic: React.FC = () => {
           Overview
         </NavLink>
         <NavLink
-          to={clusterTopicMessagesRelativePath}
-          className={({ isActive }) => (isActive ? 'is-active' : '')}
-        >
-          Messages
-        </NavLink>
-        <NavLink
           to={clusterTopicConsumerGroupsRelativePath}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
         >

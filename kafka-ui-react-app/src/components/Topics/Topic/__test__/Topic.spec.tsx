@@ -223,13 +223,6 @@ describe('Details', () => {
     it('renders Overview tab by default', () => {
       itExpectsCorrectPageRendered(defaultPath, 'Overview', 'OverviewMock');
     });
-    it('renders Messages tabs', () => {
-      itExpectsCorrectPageRendered(
-        clusterTopicMessagesPath(),
-        'Messages',
-        'MessagesMock'
-      );
-    });
     it('renders Consumers tab', () => {
       itExpectsCorrectPageRendered(
         clusterTopicConsumerGroupsPath(),
