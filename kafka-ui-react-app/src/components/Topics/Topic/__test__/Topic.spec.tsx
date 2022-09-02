@@ -7,7 +7,6 @@ import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterTopicConsumerGroupsPath,
   clusterTopicEditRelativePath,
-  clusterTopicMessagesPath,
   clusterTopicPath,
   clusterTopicSettingsPath,
   clusterTopicStatisticsPath,
