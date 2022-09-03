@@ -45,7 +45,8 @@ describe('Configs', () => {
     await act(() => {
       userEvent.click(screen.getAllByLabelText('editAction')[0]);
     });
-    const textbox = screen.getByRole('textbox');
+
+    const textbox = screen.getByLabelText('inputValue');
     expect(textbox).toBeInTheDocument();
     expect(textbox).toHaveValue('producer');
 

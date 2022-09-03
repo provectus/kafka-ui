@@ -7,17 +7,32 @@ import {
   useUpdateBrokerConfigByName,
 } from 'lib/hooks/api/brokers';
 import Table from 'components/common/NewTable';
-import { BrokerConfig } from 'generated-sources';
+import { BrokerConfig, ConfigSource } from 'generated-sources';
+import Search from 'components/common/Search/Search';
 
 import InputCell from './InputCell';
+import * as S from './Configs.styled';
 
 const Configs: React.FC = () => {
+  const [keyword, setKeyword] = React.useState('');
   const { clusterName, brokerId } = useAppParams<ClusterBrokerParam>();
   const { data = [] } = useBrokerConfig(clusterName, Number(brokerId));
   const stateMutation = useUpdateBrokerConfigByName(
     clusterName,
     Number(brokerId)
   );
+
+  const getData = () => {
+    return data
+      .filter((item) => item.name.toLocaleLowerCase().indexOf(keyword) > -1)
+      .sort((a, b) => {
+        if (a.source === b.source) return 0;
+
+        return a.source === ConfigSource.DYNAMIC_BROKER_CONFIG ? -1 : 1;
+      });
+  };
+
+  const dataSource = React.useMemo(() => getData(), [data, keyword]);
 
   const renderCell = (props: CellContext<BrokerConfig, unknown>) => (
     <InputCell
@@ -41,11 +56,26 @@ const Configs: React.FC = () => {
         accessorKey: 'value',
         cell: renderCell,
       },
+      {
+        header: 'Source',
+        accessorKey: 'source',
+      },
     ],
     []
   );
 
-  return <Table columns={columns} data={data} />;
+  return (
+    <>
+      <S.SearchWrapper>
+        <Search
+          handleSearch={setKeyword}
+          placeholder="Search by Key"
+          value={keyword}
+        />
+      </S.SearchWrapper>
+      <Table columns={columns} data={dataSource} />
+    </>
+  );
 };
 
 export default Configs;

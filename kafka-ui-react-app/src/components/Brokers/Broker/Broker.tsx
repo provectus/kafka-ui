@@ -63,29 +63,28 @@ const Broker: React.FC = () => {
           Log directories
         </NavLink>
         <NavLink
-          to={clusterBrokerMetricsPath(clusterName, brokerId)}
-          className={({ isActive }) => (isActive ? 'is-active' : '')}
-        >
-          Metrics
-        </NavLink>
-        <NavLink
           to={clusterBrokerConfigsPath(clusterName, brokerId)}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
         >
           Configs
         </NavLink>
+        <NavLink
+          to={clusterBrokerMetricsPath(clusterName, brokerId)}
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
+        >
+          Metrics
+        </NavLink>
       </Navbar>
-
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route index element={<BrokerLogdir />} />
           <Route
-            path={clusterBrokerMetricsRelativePath}
-            element={<BrokerMetrics />}
-          />
-          <Route
             path={clusterBrokerConfigsRelativePath}
             element={<Configs />}
+          />
+          <Route
+            path={clusterBrokerMetricsRelativePath}
+            element={<BrokerMetrics />}
           />
         </Routes>
       </Suspense>
