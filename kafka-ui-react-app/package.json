@@ -77,7 +77,7 @@
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-react": "^7.17.12",
     "@babel/preset-typescript": "^7.17.12",
-    "@jest/types": "^28.1.1",
+    "@jest/types": "^29.0.2",
     "@openapitools/openapi-generator-cli": "^2.5.1",
     "@testing-library/dom": "^8.11.1",
     "@testing-library/jest-dom": "^5.16.4",
