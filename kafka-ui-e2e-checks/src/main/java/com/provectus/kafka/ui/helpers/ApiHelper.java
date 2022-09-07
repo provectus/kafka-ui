@@ -6,7 +6,11 @@ import com.provectus.kafka.ui.api.api.KafkaConnectApi;
 import com.provectus.kafka.ui.api.api.MessagesApi;
 import com.provectus.kafka.ui.api.api.SchemasApi;
 import com.provectus.kafka.ui.api.api.TopicsApi;
-import com.provectus.kafka.ui.api.model.*;
+import com.provectus.kafka.ui.api.model.CreateTopicMessage;
+import com.provectus.kafka.ui.api.model.NewConnector;
+import com.provectus.kafka.ui.api.model.NewSchemaSubject;
+import com.provectus.kafka.ui.api.model.TopicCreation;
+import com.provectus.kafka.ui.models.Schema;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -67,11 +71,11 @@ public class ApiHelper {
     }
 
     @SneakyThrows
-    public void createSchema(String clusterName, String schemaName, SchemaType type, String schemaValue) {
+    public void createSchema(String clusterName, Schema schema) {
         NewSchemaSubject schemaSubject = new NewSchemaSubject();
-        schemaSubject.setSubject(schemaName);
-        schemaSubject.setSchema(schemaValue);
-        schemaSubject.setSchemaType(type);
+        schemaSubject.setSubject(schema.getName());
+        schemaSubject.setSchema(schema.getValuePath());
+        schemaSubject.setSchemaType(schema.getType());
         try {
             schemaApi().createNewSchema(clusterName, schemaSubject).block();
         } catch (WebClientResponseException ex) {

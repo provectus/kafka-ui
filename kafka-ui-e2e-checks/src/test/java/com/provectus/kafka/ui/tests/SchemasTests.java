@@ -1,59 +1,47 @@
 package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
-import com.provectus.kafka.ui.api.model.SchemaType;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
+import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.pages.MainPage;
-import com.provectus.kafka.ui.pages.schema.SchemaCreateView;
-import com.provectus.kafka.ui.pages.schema.SchemaEditView;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qase.api.annotation.CaseId;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
 import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
+import static com.provectus.kafka.ui.models.Schema.*;
+
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SchemasTests extends BaseTest {
-
-    private final long suiteId = 11;
-    private final String suiteTitle = "Schema Registry";
-    public static final String SCHEMA_AVRO_CREATE = "avro_schema";
-    public static final String SCHEMA_JSON_CREATE = "json_schema";
-    public static final String SCHEMA_PROTOBUF_CREATE = "protobuf_schema";
-    public static final String SCHEMA_AVRO_API_UPDATE = "avro_schema_for_update_api";
-    public static final String SCHEMA_AVRO_API = "avro_schema_api";
-    public static final String SCHEMA_JSON_API = "json_schema_api";
-    public static final String SCHEMA_PROTOBUF_API = "protobuf_schema_api";
-    private static final String PATH_AVRO_VALUE = System.getProperty("user.dir") + "/src/test/resources/schema_avro_value.json";
-    private static final String PATH_AVRO_FOR_UPDATE = System.getProperty("user.dir") + "/src/test/resources/schema_avro_for_update.json";
-    private static final String PATH_PROTOBUF_VALUE = System.getProperty("user.dir") + "/src/test/resources/schema_protobuf_value.txt";
-    private static final String PATH_JSON_VALUE = System.getProperty("user.dir") + "/src/test/resources/schema_Json_Value.json";
+//    private static Schema avroApiUpdate;
+    private static Schema avroApi;
+    private static Schema jsonApi;
+    private static Schema protobufApi;
+    private static final long SUITE_ID = 11;
+    private static final String SUITE_TITLE = "Schema Registry";
+    private static final String CLUSTER_NAME = "secondLocal";
+    private static final String PATH_AVRO_FOR_UPDATE = System.getProperty("user.dir") + "/src/main/resources/testData/schema_avro_for_update.json";
 
     @BeforeAll
+    @SneakyThrows
     public static void beforeAll() {
-        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, SCHEMA_AVRO_API_UPDATE, SchemaType.AVRO, fileToString(PATH_AVRO_VALUE));
-        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, SCHEMA_AVRO_API, SchemaType.AVRO, fileToString(PATH_AVRO_VALUE));
-        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, SCHEMA_JSON_API, SchemaType.JSON, fileToString(PATH_JSON_VALUE));
-        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, SCHEMA_PROTOBUF_API, SchemaType.PROTOBUF, fileToString(PATH_PROTOBUF_VALUE));
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_AVRO_CREATE);
-        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_JSON_CREATE);
-        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_PROTOBUF_CREATE);
-        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_AVRO_API_UPDATE);
-        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_AVRO_API);
-        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_JSON_API);
-        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, SCHEMA_PROTOBUF_API);
-
+//        avroApiUpdate = getSchemaAvro().setValuePath(PATH_AVRO_FOR_UPDATE);
+        avroApi = getSchemaAvro();
+        jsonApi = getSchemaJson();
+        protobufApi = getSchemaProtobuf();
+        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, avroApi.setValuePath(PATH_AVRO_FOR_UPDATE));
+        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, avroApi);
+        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, jsonApi);
+        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, protobufApi);
     }
 
     @DisplayName("should create AVRO schema")
-    @Suite(suiteId = suiteId, title = suiteTitle)
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(43)
     @Test
@@ -62,18 +50,18 @@ public class SchemasTests extends BaseTest {
         pages.openMainPage()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
-                .setSubjectName(SCHEMA_AVRO_CREATE)
-                .setSchemaField(fileToString(PATH_AVRO_VALUE))
-                .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.AVRO)
+                .setSubjectName(getSchemaAvro().getName())
+                .setSchemaField(fileToString(getSchemaAvro().getValuePath()))
+                .selectSchemaTypeFromDropdown(getSchemaAvro().getType())
                 .clickSubmit()
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_CREATE);
+        pages.schemaRegistry.isSchemaVisible(getSchemaAvro().getName());
     }
 
     @DisplayName("should update AVRO schema")
-    @Suite(suiteId = suiteId, title = suiteTitle)
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(186)
     @Test
@@ -81,19 +69,18 @@ public class SchemasTests extends BaseTest {
     void updateSchemaAvro() {
         pages.openMainPage()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.openSchema(SCHEMA_AVRO_API_UPDATE)
+        pages.schemaRegistry.openSchema(avroApi.getName())
                 .waitUntilScreenReady()
-                .openEditSchema();
-        Assertions.assertTrue(new SchemaEditView().isSchemaDropDownDisabled(),"isSchemaDropDownDisabled()");
-        new SchemaEditView().selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
-                .setNewSchemaValue(fileToString(PATH_AVRO_FOR_UPDATE))
+                .openEditSchema()
+                .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
+                .setNewSchemaValue(fileToString(avroApi.getValuePath()))
                 .clickSubmit()
                 .waitUntilScreenReady()
                 .isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE);
     }
 
     @DisplayName("should delete AVRO schema")
-    @Suite(suiteId = suiteId, title = suiteTitle)
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(187)
     @Test
@@ -101,14 +88,14 @@ public class SchemasTests extends BaseTest {
     void deleteSchemaAvro() {
         pages.openMainPage()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.openSchema(SCHEMA_AVRO_API)
+        pages.schemaRegistry.openSchema(avroApi.getName())
                 .waitUntilScreenReady()
                 .removeSchema()
-                .isNotVisible(SCHEMA_AVRO_API);
+                .isNotVisible(avroApi.getName());
     }
 
     @DisplayName("should create JSON schema")
-    @Suite(suiteId = suiteId, title = suiteTitle)
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(89)
     @Test
@@ -117,18 +104,18 @@ public class SchemasTests extends BaseTest {
         pages.openMainPage()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
-                .setSubjectName(SCHEMA_JSON_CREATE)
-                .setSchemaField(fileToString(PATH_JSON_VALUE))
-                .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.JSON)
+                .setSubjectName(getSchemaJson().getName())
+                .setSchemaField(fileToString(getSchemaJson().getValuePath()))
+                .selectSchemaTypeFromDropdown(getSchemaJson().getType())
                 .clickSubmit()
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_CREATE);
+        pages.schemaRegistry.isSchemaVisible(getSchemaJson().getName());
     }
 
     @DisplayName("should delete JSON schema")
-    @Suite(suiteId = suiteId, title = suiteTitle)
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(189)
     @Test
@@ -136,14 +123,14 @@ public class SchemasTests extends BaseTest {
     void deleteSchemaJson() {
         pages.openMainPage()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.openSchema(SCHEMA_JSON_API)
+        pages.schemaRegistry.openSchema(jsonApi.getName())
                 .waitUntilScreenReady()
                 .removeSchema()
-                .isNotVisible(SCHEMA_JSON_API);
+                .isNotVisible(jsonApi.getName());
     }
 
     @DisplayName("should create PROTOBUF schema")
-    @Suite(suiteId = suiteId, title = suiteTitle)
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(91)
     @Test
@@ -152,18 +139,18 @@ public class SchemasTests extends BaseTest {
         pages.openMainPage()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
-                .setSubjectName(SCHEMA_PROTOBUF_CREATE)
-                .setSchemaField(fileToString(PATH_PROTOBUF_VALUE))
-                .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.PROTOBUF)
+                .setSubjectName(getSchemaProtobuf().getName())
+                .setSchemaField(fileToString(getSchemaProtobuf().getValuePath()))
+                .selectSchemaTypeFromDropdown(getSchemaProtobuf().getType())
                 .clickSubmit()
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_CREATE);
+        pages.schemaRegistry.isSchemaVisible(getSchemaProtobuf().getName());
     }
 
     @DisplayName("should delete PROTOBUF schema")
-    @Suite(suiteId = suiteId, title = suiteTitle)
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(223)
     @Test
@@ -171,9 +158,17 @@ public class SchemasTests extends BaseTest {
     void deleteSchemaProtobuf() {
         pages.openMainPage()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.openSchema(SCHEMA_PROTOBUF_API)
+        pages.schemaRegistry.openSchema(protobufApi.getName())
                 .waitUntilScreenReady()
                 .removeSchema()
-                .isNotVisible(SCHEMA_PROTOBUF_API);
+                .isNotVisible(protobufApi.getName());
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, avroApi.setValuePath(PATH_AVRO_FOR_UPDATE).getName());
+        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, avroApi.getName());
+        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, jsonApi.getName());
+        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, protobufApi.getName());
     }
 }
