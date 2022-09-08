@@ -6,6 +6,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -30,7 +31,7 @@ public class CognitoOAuthSecurityConfig extends AbstractAuthSecurityConfig {
     log.info("Configuring Cognito OAUTH2 authentication.");
 
     String clientId = props.getClientId();
-    String logoutUrl = props.getLogoutUrl();
+    String logoutUrl = props.getLogoutUri();
 
     final ServerLogoutSuccessHandler logoutHandler = new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId);
 
@@ -58,7 +59,7 @@ public class CognitoOAuthSecurityConfig extends AbstractAuthSecurityConfig {
   @Bean
   public InMemoryReactiveClientRegistrationRepository clientRegistrationRepository(CognitoProperties props) {
     ClientRegistration.Builder builder = ClientRegistrations
-        .fromIssuerLocation(props.getIssuerUrl())
+        .fromIssuerLocation(props.getIssuerUri())
         .registrationId(COGNITO);
 
     builder.clientId(props.getClientId());
@@ -68,6 +69,12 @@ public class CognitoOAuthSecurityConfig extends AbstractAuthSecurityConfig {
     Optional.ofNullable(props.getUserNameAttribute()).ifPresent(builder::userNameAttributeName);
 
     return new InMemoryReactiveClientRegistrationRepository(builder.build());
+  }
+
+  @Bean
+  @ConfigurationProperties("auth.cognito")
+  public CognitoProperties cognitoProperties() {
+    return new CognitoProperties();
   }
 
 }
