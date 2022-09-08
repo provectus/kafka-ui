@@ -10,6 +10,7 @@ import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.extensions.WebUtils.isVisible;
 
 @ExtensionMethod(WaitUtils.class)
 public class ConnectorsList {
@@ -41,15 +42,9 @@ public class ConnectorsList {
     }
 
     @Step
-    public boolean isVisible(String connectorName) {
-        boolean isVisible = false;
+    public boolean isConnectorVisible(String connectorName) {
         $(By.xpath("//table")).shouldBe(Condition.visible);
-     try  {
-      isVisible = $x("//tbody//td[1]//a[text()='" + connectorName + "']").is(Condition.visible);
-     }
-     catch (Throwable ignored) {
-     }
-     return isVisible;
+        return isVisible($x("//tbody//td[1]//a[text()='" + connectorName + "']"));
     }
 
     @Step

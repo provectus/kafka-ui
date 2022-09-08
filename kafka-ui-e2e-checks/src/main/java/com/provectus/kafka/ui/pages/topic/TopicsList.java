@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.pages.topic;
 
-import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.provectus.kafka.ui.extensions.WaitUtils;
@@ -13,6 +12,7 @@ import org.openqa.selenium.By;
 import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.extensions.WebUtils.isVisible;
 
 @ExtensionMethod(WaitUtils.class)
 public class TopicsList {
@@ -40,10 +40,8 @@ public class TopicsList {
 
     @Step
     public boolean isTopicVisible(String topicName) {
-       return  $$("tbody td>a")
-                .shouldBe(CollectionCondition.sizeGreaterThan(4))
-                .find(Condition.exactText(topicName))
-                .is(Condition.visible);
+        $(By.xpath("//table")).shouldBe(Condition.visible);
+        return isVisible($x("//tbody//td//a[text()='" + topicName + "']"));
     }
 
     @Step
@@ -51,14 +49,4 @@ public class TopicsList {
         $(By.linkText(topicName)).click();
         return new TopicView();
     }
-
-    @Step
-    public TopicsList isTopicNotVisible(String topicName) {
-        $$x("//table/tbody/tr/td[2]")
-                .shouldBe(CollectionCondition.sizeGreaterThan(0))
-                .find(Condition.exactText(topicName))
-                .shouldBe(Condition.not(Condition.visible));
-        return this;
-    }
-
 }

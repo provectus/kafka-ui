@@ -28,7 +28,7 @@ public class ConnectorsTests extends BaseTest {
         ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
 
         String connectorToDelete = getResourceAsString("delete_connector_config.json");
-        String connectorToUpdate = getResourceAsString("config_for_create_connector_via_api.json");
+        String connectorToUpdate = getResourceAsString("config_for_create_connector.json");
         String message = getResourceAsString("message_content_create_topic.json");
 
         apiHelper.deleteTopic(CLUSTER_NAME, CONNECTOR_FOR_DELETE);
@@ -71,7 +71,7 @@ public class ConnectorsTests extends BaseTest {
                         getResourceAsString("config_for_create_connector.json"));
         pages.openConnectorsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        Assertions.assertTrue(pages.connectorsList.isVisible(SINK_CONNECTOR));
+        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(SINK_CONNECTOR));
     }
 
     @DisplayName("should update a connector")
@@ -87,7 +87,7 @@ public class ConnectorsTests extends BaseTest {
         pages.connectorsView.openEditConfig()
                 .updConnectorConfig(getResourceAsString("config_for_update_connector.json"));
         pages.openConnectorsList(CLUSTER_NAME);
-        Assertions.assertTrue(pages.connectorsList.isVisible(CONNECTOR_FOR_UPDATE));
+        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_UPDATE));
     }
 
     @DisplayName("should delete connector")
@@ -101,6 +101,6 @@ public class ConnectorsTests extends BaseTest {
                 .openConnector(CONNECTOR_FOR_DELETE);
         pages.connectorsView.clickDeleteButton();
         pages.openConnectorsList(CLUSTER_NAME);
-       Assertions.assertFalse(pages.connectorsList.isVisible(CONNECTOR_FOR_DELETE));
+       Assertions.assertFalse(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_DELETE));
     }
 }
