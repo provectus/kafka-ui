@@ -31,6 +31,7 @@ jobs:
       - name: Check version
         shell: bash
         run: |
+          git branch
           git checkout master
           helm_version_old=$(cat chatrs/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
           git checkout helm-versioning
