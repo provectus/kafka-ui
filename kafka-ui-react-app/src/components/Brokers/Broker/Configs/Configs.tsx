@@ -37,7 +37,7 @@ const Configs: React.FC = () => {
   const renderCell = (props: CellContext<BrokerConfig, unknown>) => (
     <InputCell
       {...props}
-      onUpdate={(name: string, value: string) => {
+      onUpdate={(name: string, value: string | null) => {
         stateMutation.mutateAsync({
           name,
           brokerConfigItem: {
