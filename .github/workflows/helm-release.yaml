@@ -16,6 +16,16 @@ jobs:
         uses: Azure/setup-helm@v1
       - name: Setup Kubeval
         uses: lra/setup-kubeval@v1.0.1
+      - name: Check version
+        shell: bash
+        run: |
+          git branch
+          git checkout master
+          helm_version_old=$(cat chatrs/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
+          git checkout helm-versioning
+          helm_version_new=$(cat chatrs/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
+          echo $helm_version_old
+          echo $helm_version_new   
       - name: Run kubeval
         shell: bash
         run: |
@@ -28,16 +38,6 @@ jobs:
               echo $version;
               helm template --kube-version $version --set ingress.enabled=true charts/kafka-ui -f charts/kafka-ui/values.yaml | kubeval --additional-schema-locations https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict -v $version;
             done
-      - name: Check version
-        shell: bash
-        run: |
-          git branch
-          git checkout master
-          helm_version_old=$(cat chatrs/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
-          git checkout helm-versioning
-          helm_version_new=$(cat chatrs/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
-          echo $helm_version_old
-          echo $helm_version_new
 
 
        
