@@ -3,7 +3,9 @@ name: Release-helm
 # push:
 #   paths:
 #      - "charts/kafka-ui/**"
-
+push:
+    branches:
+      - master
 jobs:
  release:
   steps:
