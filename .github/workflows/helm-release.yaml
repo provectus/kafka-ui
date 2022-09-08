@@ -3,11 +3,13 @@ on:
 # push:
 #   paths:
 #      - "charts/kafka-ui/**"
-push:
+ push:
     branches:
       - master
 jobs:
  release:
+  runs-on:
+   ubuntu-latest
   steps:
       - uses: actions/checkout@v3
       - name: Helm tool installer
