@@ -223,6 +223,11 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -336,6 +341,7 @@
                     </execution>
                     <execution>
                         <id>report</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
