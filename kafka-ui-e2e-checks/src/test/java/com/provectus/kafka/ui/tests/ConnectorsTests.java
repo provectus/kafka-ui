@@ -18,7 +18,6 @@ public class ConnectorsTests extends BaseTest {
 
     private final long suiteId = 10;
     private final String suiteTitle = "Kafka Connect";
-    public static final String LOCAL_CLUSTER = "local";
     public static final String SINK_CONNECTOR = "sink_postgres_activities_e2e_checks";
     public static final String TOPIC_FOR_CONNECTOR = "topic_for_connector";
     public static final String TOPIC_FOR_DELETE_CONNECTOR = "topic_for_delete_connector";
@@ -35,29 +34,29 @@ public class ConnectorsTests extends BaseTest {
         String connectorToUpdate = getResourceAsString("config_for_create_connector_via_api.json");
         String message = getResourceAsString("message_content_create_topic.json");
 
-        apiHelper.deleteTopic(LOCAL_CLUSTER, CONNECTOR_FOR_DELETE);
+        apiHelper.deleteTopic(CLUSTER_NAME, CONNECTOR_FOR_DELETE);
 
-        apiHelper.createTopic(LOCAL_CLUSTER, TOPIC_FOR_CONNECTOR);
-        apiHelper.sendMessage(LOCAL_CLUSTER, TOPIC_FOR_CONNECTOR, message, " ");
+        apiHelper.createTopic(CLUSTER_NAME, TOPIC_FOR_CONNECTOR);
+        apiHelper.sendMessage(CLUSTER_NAME, TOPIC_FOR_CONNECTOR, message, " ");
 
-        apiHelper.createTopic(LOCAL_CLUSTER, TOPIC_FOR_DELETE_CONNECTOR);
-        apiHelper.sendMessage(LOCAL_CLUSTER, TOPIC_FOR_DELETE_CONNECTOR, message, " ");
+        apiHelper.createTopic(CLUSTER_NAME, TOPIC_FOR_DELETE_CONNECTOR);
+        apiHelper.sendMessage(CLUSTER_NAME, TOPIC_FOR_DELETE_CONNECTOR, message, " ");
 
-        apiHelper.createTopic(LOCAL_CLUSTER, TOPIC_FOR_UPDATE_CONNECTOR);
-        apiHelper.sendMessage(LOCAL_CLUSTER, TOPIC_FOR_UPDATE_CONNECTOR, message, " ");
+        apiHelper.createTopic(CLUSTER_NAME, TOPIC_FOR_UPDATE_CONNECTOR);
+        apiHelper.sendMessage(CLUSTER_NAME, TOPIC_FOR_UPDATE_CONNECTOR, message, " ");
 
-        apiHelper.createConnector(LOCAL_CLUSTER, FIRST_CONNECTOR, CONNECTOR_FOR_DELETE, connectorToDelete);
-        apiHelper.createConnector(LOCAL_CLUSTER, FIRST_CONNECTOR, CONNECTOR_FOR_UPDATE, connectorToUpdate);
+        apiHelper.createConnector(CLUSTER_NAME, FIRST_CONNECTOR, CONNECTOR_FOR_DELETE, connectorToDelete);
+        apiHelper.createConnector(CLUSTER_NAME, FIRST_CONNECTOR, CONNECTOR_FOR_UPDATE, connectorToUpdate);
     }
 
     @AfterAll
     public static void afterAll() {
         ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
-        apiHelper.deleteConnector(LOCAL_CLUSTER, FIRST_CONNECTOR, SINK_CONNECTOR);
-        apiHelper.deleteConnector(LOCAL_CLUSTER, FIRST_CONNECTOR, CONNECTOR_FOR_UPDATE);
-        apiHelper.deleteTopic(LOCAL_CLUSTER, TOPIC_FOR_CONNECTOR);
-        apiHelper.deleteTopic(LOCAL_CLUSTER, TOPIC_FOR_DELETE_CONNECTOR);
-        apiHelper.deleteTopic(LOCAL_CLUSTER, TOPIC_FOR_UPDATE_CONNECTOR);
+        apiHelper.deleteConnector(CLUSTER_NAME, FIRST_CONNECTOR, SINK_CONNECTOR);
+        apiHelper.deleteConnector(CLUSTER_NAME, FIRST_CONNECTOR, CONNECTOR_FOR_UPDATE);
+        apiHelper.deleteTopic(CLUSTER_NAME, TOPIC_FOR_CONNECTOR);
+        apiHelper.deleteTopic(CLUSTER_NAME, TOPIC_FOR_DELETE_CONNECTOR);
+        apiHelper.deleteTopic(CLUSTER_NAME, TOPIC_FOR_UPDATE_CONNECTOR);
     }
 
     @DisplayName("should create a connector")
@@ -66,14 +65,14 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(42)
     @Test
     public void createConnector() {
-        pages.openConnectorsList(LOCAL_CLUSTER)
+        pages.openConnectorsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .clickCreateConnectorButton()
                 .waitUntilScreenReady()
                 .setConnectorConfig(
                         SINK_CONNECTOR,
                         getResourceAsString("config_for_create_connector.json"));
-        pages.openConnectorsList(LOCAL_CLUSTER)
+        pages.openConnectorsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
     }
@@ -84,13 +83,13 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(196)
     @Test
     public void updateConnector() {
-        pages.openConnectorsList(LOCAL_CLUSTER)
+        pages.openConnectorsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_UPDATE);
         pages.connectorsView.connectorIsVisibleOnOverview();
         pages.connectorsView.openEditConfig()
                 .updConnectorConfig(getResourceAsString("config_for_update_connector.json"));
-        pages.openConnectorsList(LOCAL_CLUSTER)
+        pages.openConnectorsList(CLUSTER_NAME)
                 .connectorIsVisibleInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
     }
 
@@ -100,11 +99,11 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(195)
     @Test
     public void deleteConnector() {
-        pages.openConnectorsList(LOCAL_CLUSTER)
+        pages.openConnectorsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_DELETE);
         pages.connectorsView.clickDeleteButton();
-        pages.openConnectorsList(LOCAL_CLUSTER)
+        pages.openConnectorsList(CLUSTER_NAME)
                 .isNotVisible(CONNECTOR_FOR_DELETE);
     }
 }

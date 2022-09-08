@@ -18,7 +18,6 @@ public class TopicTests extends BaseTest {
     public static final String NEW_TOPIC = "new-topic";
     public static final String TOPIC_TO_UPDATE = "topic-to-update";
     public static final String TOPIC_TO_DELETE = "topic-to-delete";
-    public static final String SECOND_LOCAL = "secondLocal";
     public static final String COMPACT_POLICY_VALUE = "Compact";
     public static final String UPDATED_TIME_TO_RETAIN_VALUE = "604800001";
     public static final String UPDATED_MAX_SIZE_ON_DISK = "20 GB";
@@ -29,15 +28,15 @@ public class TopicTests extends BaseTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, TOPIC_TO_UPDATE);
-        Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
+        Helpers.INSTANCE.apiHelper.createTopic(CLUSTER_NAME, TOPIC_TO_UPDATE);
+        Helpers.INSTANCE.apiHelper.createTopic(CLUSTER_NAME, TOPIC_TO_DELETE);
     }
 
     @AfterAll
     public static void afterAll() {
-        Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_UPDATE);
-        Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
-        Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
+        Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, TOPIC_TO_UPDATE);
+        Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, TOPIC_TO_DELETE);
+        Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, NEW_TOPIC);
     }
 
     @DisplayName("should create a topic")
@@ -47,17 +46,17 @@ public class TopicTests extends BaseTest {
     @Test
     public void createTopic() {
         pages.open()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
         pages.topicsList.pressCreateNewTopic()
                 .setTopicName(NEW_TOPIC)
                 .sendData()
                 .waitUntilScreenReady();
         pages.open()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS)
                 .topicIsVisible(NEW_TOPIC);
-        helpers.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
+        helpers.apiHelper.deleteTopic(CLUSTER_NAME, NEW_TOPIC);
         pages.open()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS)
                 .topicIsNotVisible(NEW_TOPIC);
     }
     @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
@@ -68,9 +67,9 @@ public class TopicTests extends BaseTest {
     @CaseId(197)
     @Test
     public void updateTopic() {
-        pages.openTopicsList(SECOND_LOCAL)
+        pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
+        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
                 .waitUntilScreenReady()
                 .openEditSettings()
                 .selectCleanupPolicy(COMPACT_POLICY_VALUE)
@@ -81,9 +80,9 @@ public class TopicTests extends BaseTest {
                 .sendData()
                 .waitUntilScreenReady();
 
-        pages.openTopicsList(SECOND_LOCAL)
+        pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
+        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
                 .openEditSettings()
                 // Assertions
                 .cleanupPolicyIs(COMPACT_POLICY_VALUE)
@@ -98,7 +97,7 @@ public class TopicTests extends BaseTest {
     @CaseId(207)
     @Test
     public void deleteTopic() {
-        pages.openTopicsList(SECOND_LOCAL)
+        pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .openTopic(TOPIC_TO_DELETE)
                 .waitUntilScreenReady()
@@ -113,7 +112,7 @@ public class TopicTests extends BaseTest {
     @CaseId(222)
     @Test
     void produceMessage() {
-        pages.openTopicsList(SECOND_LOCAL)
+        pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .openTopic(TOPIC_TO_UPDATE)
                 .waitUntilScreenReady()
