@@ -18,6 +18,8 @@
         <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.language>java</sonar.language>
+        <sonar.projectKey>com.provectus:kafka-ui_backend</sonar.projectKey>
+        <sonar.organization>provectus</sonar.organization>
     </properties>
 
     <dependencyManagement>
