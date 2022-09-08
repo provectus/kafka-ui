@@ -1,11 +1,9 @@
 name: Release-helm
-on:
+on: push
 # push:
 #   paths:
 #      - "charts/kafka-ui/**"
- push:
-    branches:
-      - helm-versioning
+
 jobs:
  release:
   runs-on:
