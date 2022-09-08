@@ -34,27 +34,24 @@ public class ConnectorsList {
         return new ConnectorCreateView();
     }
 
-
     @Step
     public ConnectorsList openConnector(String connectorName) {
         $(By.linkText(connectorName)).click();
         return this;
     }
 
-
     @Step
-    public ConnectorsList isNotVisible(String connectorName) {
+    public boolean isVisible(String connectorName) {
+        boolean isVisible = false;
         $(By.xpath("//table")).shouldBe(Condition.visible);
-        $x("//tbody//td[1]//a[text()='" + connectorName + "']").shouldBe(Condition.not(Condition.visible));
-        return this;
+     try  {
+      isVisible = $x("//tbody//td[1]//a[text()='" + connectorName + "']").is(Condition.visible);
+     }
+     catch (Throwable ignored) {
+     }
+     return isVisible;
     }
 
-    @Step("Verify that connector {connectorName} is visible in the list")
-    public ConnectorsList connectorIsVisibleInList(String connectorName, String topicName) {
-        $x("//table//a[@href='/ui/clusters/local/connects/first/connectors/" + connectorName + "']").shouldBe(Condition.visible);
-        $$(By.linkText(topicName));
-        return this;
-    }
     @Step
     public ConnectorsList connectorIsUpdatedInList(String connectorName, String topicName) {
         $(By.xpath(String.format("//a[text() = '%s']", connectorName))).shouldBe(Condition.visible);

@@ -23,17 +23,11 @@ public class SchemaRegistryList {
     }
 
     @Step
-    public SchemaRegistryList isNotVisible(String schemaName) {
-        $x(String.format("//*[contains(text(),'%s')]", schemaName)).shouldNotBe(Condition.visible);
-        return this;
-    }
-
-    @Step
-    public SchemaRegistryList isSchemaVisible(String schemaName) {
-        $$("tbody td>a")
+    public boolean isSchemaVisible(String schemaName) {
+       return  $$("tbody td>a")
                 .find(Condition.exactText(schemaName))
-                .shouldBe(Condition.visible);
-        return this;
+                .is(Condition.visible);
+
     }
 }
 

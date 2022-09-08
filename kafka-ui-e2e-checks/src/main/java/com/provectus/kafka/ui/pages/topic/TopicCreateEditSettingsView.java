@@ -15,20 +15,24 @@ public class TopicCreateEditSettingsView {
 
     private final SelenideElement timeToRetain = $(By.cssSelector("input#timeToRetain"));
     private final SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
+
     @Step
     public TopicCreateEditSettingsView setTopicName(String topicName) {
         $("input#topicFormName").setValue(topicName);
         return this;
+
     }
     @Step
     public TopicCreateEditSettingsView setMinInsyncReplicas(Integer minInsyncReplicas) {
         $("input[name=minInSyncReplicas]").setValue(minInsyncReplicas.toString());
         return this;
+
     }
     @Step
     public TopicCreateEditSettingsView setTimeToRetainDataInMs(Long ms) {
         timeToRetain.setValue(ms.toString());
         return this;
+
     }
     @Step
     public TopicCreateEditSettingsView setTimeToRetainDataInMs(String ms) {
@@ -41,15 +45,18 @@ public class TopicCreateEditSettingsView {
         KafkaUISelectElement kafkaUISelectElement = new KafkaUISelectElement("retentionBytes");
         kafkaUISelectElement.selectByVisibleText(value);
         return this;
+
     }
     @Step
     public TopicCreateEditSettingsView setMaxMessageBytes(Long bytes) {
         maxMessageBytes.setValue(bytes.toString());
         return this;
     }
+
     @Step
     public TopicCreateEditSettingsView setMaxMessageBytes(String bytes) {
         return setMaxMessageBytes(Long.parseLong(bytes));
+
     }
     @Step
     public TopicCreateEditSettingsView setTimeToRetainDataInMsUsingButtons(String value) {
@@ -62,30 +69,36 @@ public class TopicCreateEditSettingsView {
         return this;
     }
 
+
     @Step
     public TopicCreateEditSettingsView selectCleanupPolicy(CleanupPolicyValue cleanupPolicyValue) {
         return selectFromDropDownByOptionValue("cleanupPolicy",
                 cleanupPolicyValue.getOptionValue());
     }
+
     @Step
     public TopicCreateEditSettingsView selectCleanupPolicy(String cleanupPolicyOptionValue) {
         $("ul#topicFormCleanupPolicy").click();
         $x("//li[text()='" + cleanupPolicyOptionValue + "']").click();
         return this;
     }
+
     @Step
     public TopicCreateEditSettingsView selectRetentionBytes(String visibleValue) {
         return selectFromDropDownByVisibleText("retentionBytes", visibleValue);
     }
+
     @Step
     public TopicCreateEditSettingsView selectRetentionBytes(Long optionValue) {
         return selectFromDropDownByOptionValue("retentionBytes", optionValue.toString());
     }
+
     @Step
     public TopicView sendData() {
         BrowserUtils.javaExecutorClick($x("//button[@type='submit']"));
         return new TopicView();
     }
+
     @Step
     public TopicCreateEditSettingsView addCustomParameter(String customParameterName,
                                                           String customParameterValue) {
@@ -110,6 +123,7 @@ public class TopicCreateEditSettingsView {
                 .setValue(customParameterValue);
         return this;
     }
+
     @Step
     public TopicCreateEditSettingsView updateCustomParameter(String customParameterName,
                                                              String customParameterValue) {
@@ -122,6 +136,7 @@ public class TopicCreateEditSettingsView {
         $(String.format("input[name^=%s]", name)).setValue(customParameterValue);
         return this;
     }
+
     @Step
     public TopicCreateEditSettingsView cleanupPolicyIs(String value) {
         String cleanupPolicy = new KafkaUISelectElement("cleanupPolicy")
@@ -131,6 +146,7 @@ public class TopicCreateEditSettingsView {
                 .isEqualToIgnoringCase(value);
         return this;
     }
+
     @Step
     public TopicCreateEditSettingsView timeToRetainIs(String time) {
         String value = timeToRetain.getValue();
@@ -139,6 +155,7 @@ public class TopicCreateEditSettingsView {
                 .isEqualTo(time);
         return this;
     }
+
     @Step
     public TopicCreateEditSettingsView maxSizeOnDiskIs(String size) {
         String retentionBytes = new KafkaUISelectElement("retentionBytes")
@@ -148,6 +165,7 @@ public class TopicCreateEditSettingsView {
                 .isEqualTo(size);
         return this;
     }
+
     @Step
     public TopicCreateEditSettingsView maxMessageBytesIs(String bytes) {
         String value = maxMessageBytes.getValue();
@@ -158,7 +176,7 @@ public class TopicCreateEditSettingsView {
     }
 
 
-    private static class KafkaUISelectElement {
+    protected static class KafkaUISelectElement {
 
         private final SelenideElement selectElement;
 

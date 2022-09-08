@@ -10,6 +10,8 @@ import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
+import java.time.Duration;
+
 import static com.codeborne.selenide.Selenide.*;
 
 @ExtensionMethod(WaitUtils.class)
@@ -26,7 +28,7 @@ public class TopicsList {
     @Step
     public TopicsList waitUntilScreenReady() {
         $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
-        $(By.xpath("//h1[text()='All Topics']")).shouldBe(Condition.visible);
+        $(By.xpath("//h1[text()='All Topics']")).shouldBe(Condition.visible, Duration.ofSeconds (60));
         return this;
     }
 
@@ -37,12 +39,11 @@ public class TopicsList {
     }
 
     @Step
-    public TopicsList isTopicVisible(String topicName) {
-        $$("tbody td>a")
+    public boolean isTopicVisible(String topicName) {
+       return  $$("tbody td>a")
                 .shouldBe(CollectionCondition.sizeGreaterThan(4))
                 .find(Condition.exactText(topicName))
-                .shouldBe(Condition.visible);
-        return this;
+                .is(Condition.visible);
     }
 
     @Step

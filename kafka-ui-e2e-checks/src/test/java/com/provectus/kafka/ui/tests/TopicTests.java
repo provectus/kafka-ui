@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 
 import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
@@ -52,13 +53,14 @@ public class TopicTests extends BaseTest {
                 .sendData()
                 .waitUntilScreenReady();
         pages.open()
-                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS)
-                .topicIsVisible(NEW_TOPIC);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
+        Assertions.assertTrue(pages.topicsList.isTopicVisible(NEW_TOPIC));
         helpers.apiHelper.deleteTopic(CLUSTER_NAME, NEW_TOPIC);
         pages.open()
-                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS)
-                .topicIsNotVisible(NEW_TOPIC);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
+        Assertions.assertFalse(pages.topicsList.isTopicVisible(NEW_TOPIC));
     }
+
     @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
     @DisplayName("should update a topic")
     @Issue("1500")
@@ -79,16 +81,16 @@ public class TopicTests extends BaseTest {
                 .setMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
                 .sendData()
                 .waitUntilScreenReady();
-
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
         pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
-                .openEditSettings()
-                // Assertions
-                .cleanupPolicyIs(COMPACT_POLICY_VALUE)
-                .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
-                .maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK)
-                .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
+                .openEditSettings();
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(COMPACT_POLICY_VALUE).isEqualTo(pages.topicsList.openTopic(TOPIC_TO_UPDATE).openEditSettings().cleanupPolicyIs(COMPACT_POLICY_VALUE));
+        softly.assertThat(UPDATED_TIME_TO_RETAIN_VALUE).isEqualTo(pages.topicsList.openTopic(TOPIC_TO_UPDATE).openEditSettings().timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE));
+        softly.assertThat(UPDATED_MAX_SIZE_ON_DISK).isEqualTo(pages.topicsList.openTopic(TOPIC_TO_UPDATE).openEditSettings().maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK));
+        softly.assertThat(UPDATED_MAX_MESSAGE_BYTES).isEqualTo(pages.topicsList.openTopic(TOPIC_TO_UPDATE).openEditSettings().maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES));
+        softly.assertAll();
     }
 
     @DisplayName("should delete topic")
@@ -102,8 +104,8 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_TO_DELETE)
                 .waitUntilScreenReady()
                 .deleteTopic()
-                .waitUntilScreenReady()
-                .isTopicNotVisible(TOPIC_TO_DELETE);
+                .waitUntilScreenReady();
+        Assertions.assertFalse(pages.topicsList.isTopicVisible(TOPIC_TO_DELETE));
     }
 
     @DisplayName("produce message")
@@ -113,7 +115,6 @@ public class TopicTests extends BaseTest {
     @Test
     void produceMessage() {
         pages.openTopicsList(CLUSTER_NAME)
-                .waitUntilScreenReady()
                 .openTopic(TOPIC_TO_UPDATE)
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicView.TopicMenu.MESSAGES)
@@ -121,7 +122,9 @@ public class TopicTests extends BaseTest {
                 .setContentFiled(fileToString(CONTENT_TO_PRODUCE_MESSAGE))
                 .setKeyField(fileToString(KEY_TO_PRODUCE_MESSAGE))
                 .submitProduceMessage();
-        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(fileToString(KEY_TO_PRODUCE_MESSAGE)));
-        Assertions.assertTrue(pages.topicView.isContentMessageVisible(fileToString(CONTENT_TO_PRODUCE_MESSAGE).trim()));
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(pages.topicView.isKeyMessageVisible(fileToString(KEY_TO_PRODUCE_MESSAGE))).isTrue();
+        softly.assertThat(pages.topicView.isContentMessageVisible(fileToString(CONTENT_TO_PRODUCE_MESSAGE).trim())).isTrue();
+        softly.assertAll();
     }
 }
