@@ -11,6 +11,10 @@ export const ValueWrapper = styled.div`
 export const Value = styled.span`
   line-height: 24px;
   margin-right: 10px;
+  text-overflow: ellipsis;
+  width: 600px;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
 export const ButtonsWrapper = styled.div`

@@ -51,7 +51,7 @@ const InputCell: React.FC<InputCellProps> = ({ row, getValue, onUpdate }) => {
           aria-label="confirmAction"
           onClick={onSave}
         >
-          <CheckmarkIcon /> Save <ConfirmationModal />
+          <CheckmarkIcon /> Save
         </Button>
         <Button
           buttonType="primary"
