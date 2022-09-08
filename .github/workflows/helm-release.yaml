@@ -1,5 +1,5 @@
 name: Release-helm
-#on:
+on:
 # push:
 #   paths:
 #      - "charts/kafka-ui/**"
