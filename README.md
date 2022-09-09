@@ -137,13 +137,9 @@ Quick-start instruction [here](helm_chart.md)
 
 Check [software-required.md](documentation/project/contributing/software-required.md)
 
-### Building
+### Building and Running
 
 Check [building.md](documentation/project/contributing/building.md)
-
-### Running
-
-Check [running.md](documentation/project/contributing/running.md)
 
 ## Liveliness and readiness probes
 Liveliness and readiness endpoint is at `/actuator/health`.
