@@ -1,7 +1,7 @@
 {{- if .Values.autoscaling.enabled }}
 {{- $kubeCapabilityVersion := semver .Capabilities.KubeVersion.Version -}}
-{{- $isHigher1p23 := ge (semver "1.23" | $kubeCapabilityVersion.Compare) 0 -}}
-{{- if and ($.Capabilities.APIVersions.Has "autoscaling/v2") $isHigher1p23 -}}
+{{- $isHigher1p24 := ge (semver "1.24" | $kubeCapabilityVersion.Compare) 0 -}}
+{{- if and ($.Capabilities.APIVersions.Has "autoscaling/v2") $isHigher1p24 -}}
 apiVersion: autoscaling/v2
 {{- else  }}
 apiVersion: autoscaling/v2beta1
@@ -23,7 +23,7 @@ spec:
     - type: Resource
       resource:
         name: cpu
-  {{- if  $isHigher1p23 }}
+  {{- if  $isHigher1p24 }}
         target:
          type: Utilization
          averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
@@ -35,7 +35,7 @@ spec:
     - type: Resource
       resource:
         name: memory
-  {{- if  $isHigher1p23 }}     
+  {{- if  $isHigher1p24 }}     
         target:
           type: Utilization
           averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
