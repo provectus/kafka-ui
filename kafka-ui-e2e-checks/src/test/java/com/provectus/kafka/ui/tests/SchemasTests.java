@@ -12,32 +12,34 @@ import io.qase.api.annotation.CaseId;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
 import static com.provectus.kafka.ui.models.Schema.*;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SchemasTests extends BaseTest {
-//    private static Schema avroApiUpdate;
+    private static List<Schema> schemaList = new ArrayList<>();
     private static Schema avroApi;
     private static Schema jsonApi;
     private static Schema protobufApi;
     private static final long SUITE_ID = 11;
     private static final String SUITE_TITLE = "Schema Registry";
-    private static final String CLUSTER_NAME = "secondLocal";
     private static final String PATH_AVRO_FOR_UPDATE = System.getProperty("user.dir") + "/src/main/resources/testData/schema_avro_for_update.json";
 
     @BeforeAll
     @SneakyThrows
     public static void beforeAll() {
-//        avroApiUpdate = getSchemaAvro().setValuePath(PATH_AVRO_FOR_UPDATE);
         avroApi = getSchemaAvro();
         jsonApi = getSchemaJson();
         protobufApi = getSchemaProtobuf();
-        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, avroApi.setValuePath(PATH_AVRO_FOR_UPDATE));
-        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, avroApi);
-        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, jsonApi);
-        Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, protobufApi);
+        schemaList.addAll(List.of(avroApi,jsonApi,protobufApi));
+//        for(int i=0;i<schemaList.size();i++){
+//            System.out.println(schemaList.get(i));
+//        }
+        schemaList.forEach(schema -> Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, schema));
     }
 
     @DisplayName("should create AVRO schema")
@@ -47,17 +49,19 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(1)
     void createSchemaAvro() {
+        Schema schemaAvro = getSchemaAvro();
         pages.openMainPage()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
-                .setSubjectName(getSchemaAvro().getName())
-                .setSchemaField(fileToString(getSchemaAvro().getValuePath()))
-                .selectSchemaTypeFromDropdown(getSchemaAvro().getType())
+                .setSubjectName(schemaAvro.getName())
+                .setSchemaField(fileToString(schemaAvro.getValuePath()))
+                .selectSchemaTypeFromDropdown(schemaAvro.getType())
                 .clickSubmit()
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.isSchemaVisible(getSchemaAvro().getName());
+        pages.schemaRegistry.isSchemaVisible(schemaAvro.getName());
+        schemaList.add(schemaAvro);
     }
 
     @DisplayName("should update AVRO schema")
@@ -67,6 +71,7 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(2)
     void updateSchemaAvro() {
+        avroApi.setValuePath(PATH_AVRO_FOR_UPDATE);
         pages.openMainPage()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(avroApi.getName())
@@ -101,17 +106,19 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(4)
     void createSchemaJson() {
+        Schema schemaJson = getSchemaJson();
         pages.openMainPage()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
-                .setSubjectName(getSchemaJson().getName())
-                .setSchemaField(fileToString(getSchemaJson().getValuePath()))
-                .selectSchemaTypeFromDropdown(getSchemaJson().getType())
+                .setSubjectName(schemaJson.getName())
+                .setSchemaField(fileToString(schemaJson.getValuePath()))
+                .selectSchemaTypeFromDropdown(schemaJson.getType())
                 .clickSubmit()
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.isSchemaVisible(getSchemaJson().getName());
+        pages.schemaRegistry.isSchemaVisible(schemaJson.getName());
+        schemaList.add(schemaJson);
     }
 
     @DisplayName("should delete JSON schema")
@@ -136,17 +143,19 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(6)
     void createSchemaProtobuf() {
+        Schema schemaProtobuf = getSchemaProtobuf();
         pages.openMainPage()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.clickCreateSchema()
-                .setSubjectName(getSchemaProtobuf().getName())
-                .setSchemaField(fileToString(getSchemaProtobuf().getValuePath()))
-                .selectSchemaTypeFromDropdown(getSchemaProtobuf().getType())
+                .setSubjectName(schemaProtobuf.getName())
+                .setSchemaField(fileToString(schemaProtobuf.getValuePath()))
+                .selectSchemaTypeFromDropdown(schemaProtobuf.getType())
                 .clickSubmit()
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.isSchemaVisible(getSchemaProtobuf().getName());
+        pages.schemaRegistry.isSchemaVisible(schemaProtobuf.getName());
+        schemaList.add(schemaProtobuf);
     }
 
     @DisplayName("should delete PROTOBUF schema")
@@ -165,10 +174,8 @@ public class SchemasTests extends BaseTest {
     }
 
     @AfterAll
+    @SneakyThrows
     public static void afterAll() {
-        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, avroApi.setValuePath(PATH_AVRO_FOR_UPDATE).getName());
-        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, avroApi.getName());
-        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, jsonApi.getName());
-        Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, protobufApi.getName());
+        schemaList.forEach(schema -> Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, schema.getName()));
     }
 }
