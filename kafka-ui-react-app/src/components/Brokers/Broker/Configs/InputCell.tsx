@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { CellContext } from '@tanstack/react-table';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import CheckmarkIcon from 'components/common/Icons/CheckmarkIcon';
 import EditIcon from 'components/common/Icons/EditIcon';
 import CancelIcon from 'components/common/Icons/CancelIcon';
