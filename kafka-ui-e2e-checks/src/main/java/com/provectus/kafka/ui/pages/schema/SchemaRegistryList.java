@@ -7,6 +7,7 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.extensions.WebUtils.isVisible;
 
 public class SchemaRegistryList {
 
@@ -24,10 +25,8 @@ public class SchemaRegistryList {
 
     @Step
     public boolean isSchemaVisible(String schemaName) {
-       return  $$("tbody td>a")
-                .find(Condition.exactText(schemaName))
-                .is(Condition.visible);
-
+        $(By.xpath("//table")).shouldBe(Condition.visible);
+        return isVisible($x("//tbody//td//a[text()='" + schemaName + "']"));
     }
 }
 
