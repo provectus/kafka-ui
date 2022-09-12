@@ -12,6 +12,7 @@ import io.qase.api.annotation.CaseId;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 
+
 import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
 
 public class TopicTests extends BaseTest {
@@ -58,7 +59,7 @@ public class TopicTests extends BaseTest {
         helpers.apiHelper.deleteTopic(CLUSTER_NAME, NEW_TOPIC);
         pages.open()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
-        Assertions.assertFalse(pages.topicsList.isTopicVisible(NEW_TOPIC));
+        Assertions.assertFalse(pages.topicsList.isTopicVisible(NEW_TOPIC),"isTopicVisible()");
     }
 
     @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
@@ -105,7 +106,7 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .deleteTopic()
                 .waitUntilScreenReady();
-        Assertions.assertFalse(pages.topicsList.isTopicVisible(TOPIC_TO_DELETE));
+        Assertions.assertFalse(pages.topicsList.isTopicVisible(TOPIC_TO_DELETE),"isTopicVisible()");
     }
 
     @DisplayName("produce message")
@@ -123,8 +124,8 @@ public class TopicTests extends BaseTest {
                 .setKeyField(fileToString(KEY_TO_PRODUCE_MESSAGE))
                 .submitProduceMessage();
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(pages.topicView.isKeyMessageVisible(fileToString(KEY_TO_PRODUCE_MESSAGE))).isTrue();
-        softly.assertThat(pages.topicView.isContentMessageVisible(fileToString(CONTENT_TO_PRODUCE_MESSAGE).trim())).isTrue();
+        softly.assertThat(pages.topicView.isKeyMessageVisible(fileToString(KEY_TO_PRODUCE_MESSAGE ))).withFailMessage("isKeyMessageVisible()").isTrue();
+        softly.assertThat(pages.topicView.isContentMessageVisible(fileToString(CONTENT_TO_PRODUCE_MESSAGE).trim())).withFailMessage("isContentMessageVisible()").isTrue();
         softly.assertAll();
     }
 }

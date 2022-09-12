@@ -13,6 +13,7 @@ public class SchemaCreateView {
     private final SelenideElement subjectName = $(By.xpath("//input[@name='subject']"));
     private final SelenideElement schemaField = $(By.xpath("//textarea[@name='schema']"));
     private final SelenideElement submitSchemaButton = $(By.xpath("//button[@type='submit']"));
+
     @Step
     public SchemaCreateView selectSchemaTypeFromDropdown(SchemaType schemaType) {
         $("ul[role='listbox']").click();

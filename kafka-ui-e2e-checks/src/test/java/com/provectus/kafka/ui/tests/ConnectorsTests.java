@@ -71,7 +71,7 @@ public class ConnectorsTests extends BaseTest {
                         getResourceAsString("config_for_create_connector.json"));
         pages.openConnectorsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(SINK_CONNECTOR));
+        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(SINK_CONNECTOR),"isConnectorVisible()");
     }
 
     @DisplayName("should update a connector")
@@ -87,7 +87,7 @@ public class ConnectorsTests extends BaseTest {
         pages.connectorsView.openEditConfig()
                 .updConnectorConfig(getResourceAsString("config_for_update_connector.json"));
         pages.openConnectorsList(CLUSTER_NAME);
-        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_UPDATE));
+        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_UPDATE),"isConnectorVisible()");
     }
 
     @DisplayName("should delete connector")
@@ -101,6 +101,6 @@ public class ConnectorsTests extends BaseTest {
                 .openConnector(CONNECTOR_FOR_DELETE);
         pages.connectorsView.clickDeleteButton();
         pages.openConnectorsList(CLUSTER_NAME);
-       Assertions.assertFalse(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_DELETE));
+       Assertions.assertFalse(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_DELETE),"isConnectorVisible()");
     }
 }

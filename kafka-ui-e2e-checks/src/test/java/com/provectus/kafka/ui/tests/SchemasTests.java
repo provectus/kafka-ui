@@ -66,7 +66,9 @@ public class SchemasTests extends BaseTest {
                 .selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType.AVRO)
                 .clickSubmit()
                 .waitUntilScreenReady();
-        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_CREATE));
+        pages.openMainPage()
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
+        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_CREATE), "isSchemaVisible()");
     }
 
     @DisplayName("should update AVRO schema")
@@ -85,7 +87,7 @@ public class SchemasTests extends BaseTest {
                 .setNewSchemaValue(fileToString(PATH_AVRO_FOR_UPDATE))
                 .clickSubmit()
                 .waitUntilScreenReady();
-        Assertions.assertTrue(pages.schemaRegistry.openSchema(SCHEMA_AVRO_API_UPDATE).isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE));
+        Assertions.assertTrue(pages.schemaRegistry.openSchema(SCHEMA_AVRO_API_UPDATE).isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE),"isCompatibility()");
     }
 
     @DisplayName("should delete AVRO schema")
@@ -100,7 +102,7 @@ public class SchemasTests extends BaseTest {
         pages.schemaRegistry.openSchema(SCHEMA_AVRO_API)
                 .waitUntilScreenReady()
                 .removeSchema();
-        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_API));
+        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_API), "isSchemaVisible()");
     }
 
     @DisplayName("should create JSON schema")
@@ -120,7 +122,7 @@ public class SchemasTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_CREATE));
+        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_CREATE),"isSchemaVisible()");
     }
 
     @DisplayName("should delete JSON schema")
@@ -135,7 +137,7 @@ public class SchemasTests extends BaseTest {
         pages.schemaRegistry.openSchema(SCHEMA_JSON_API)
                 .waitUntilScreenReady()
                 .removeSchema();
-        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_API));
+        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_API),"isSchemaVisible()");
     }
 
     @DisplayName("should create PROTOBUF schema")
@@ -155,7 +157,7 @@ public class SchemasTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_CREATE));
+        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_CREATE),"isSchemaVisible()");
     }
 
     @DisplayName("should delete PROTOBUF schema")
@@ -170,6 +172,6 @@ public class SchemasTests extends BaseTest {
         pages.schemaRegistry.openSchema(SCHEMA_PROTOBUF_API)
                 .waitUntilScreenReady()
                 .removeSchema();
-        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_API));
+        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_API), "isSchemaVisible()");
     }
 }
