@@ -1,4 +1,4 @@
-name: Release-helm
+name: cehck-helm
 on:
  push:
   branches:
