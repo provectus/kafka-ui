@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.sleep;
+import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
 
 
 @Slf4j
@@ -74,7 +75,7 @@ public class ApiHelper {
     public void createSchema(String clusterName, Schema schema) {
         NewSchemaSubject schemaSubject = new NewSchemaSubject();
         schemaSubject.setSubject(schema.getName());
-        schemaSubject.setSchema(schema.getValuePath());
+        schemaSubject.setSchema(fileToString(schema.getValuePath()));
         schemaSubject.setSchemaType(schema.getType());
         try {
             schemaApi().createNewSchema(clusterName, schemaSubject).block();

@@ -36,9 +36,6 @@ public class SchemasTests extends BaseTest {
         jsonApi = getSchemaJson();
         protobufApi = getSchemaProtobuf();
         schemaList.addAll(List.of(avroApi,jsonApi,protobufApi));
-//        for(int i=0;i<schemaList.size();i++){
-//            System.out.println(schemaList.get(i));
-//        }
         schemaList.forEach(schema -> Helpers.INSTANCE.apiHelper.createSchema(CLUSTER_NAME, schema));
     }
 
