@@ -28,7 +28,7 @@ public class TopicsList {
     @Step
     public TopicsList waitUntilScreenReady() {
         $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
-        $(By.xpath("//h1[text()='All Topics']")).shouldBe(Condition.visible, Duration.ofSeconds (60));
+        $(By.xpath("//h1[text()='All Topics']")).shouldBe(Condition.visible);
         return this;
     }
 
