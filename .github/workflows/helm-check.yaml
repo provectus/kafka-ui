@@ -2,7 +2,7 @@ name: cehck-helm
 on:
  push:
   branches:
-   - helm-versioning
+   - '!master'
 
 jobs:
  release:
