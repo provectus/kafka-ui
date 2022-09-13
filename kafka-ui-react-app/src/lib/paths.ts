@@ -32,6 +32,8 @@ export type ClusterNameRoute = { clusterName: ClusterName };
 // Brokers
 export const clusterBrokerRelativePath = 'brokers';
 export const clusterBrokerMetricsRelativePath = 'metrics';
+export const clusterBrokerConfigsRelativePath = 'configs';
+
 export const clusterBrokersPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterBrokerRelativePath}`;
@@ -48,6 +50,15 @@ export const clusterBrokerMetricsPath = (
     clusterName,
     brokerId
   )}/${clusterBrokerMetricsRelativePath}`;
+
+export const clusterBrokerConfigsPath = (
+  clusterName: ClusterName = RouteParams.clusterName,
+  brokerId: Broker['id'] | string = RouteParams.brokerId
+) =>
+  `${clusterBrokerPath(
+    clusterName,
+    brokerId
+  )}/${clusterBrokerConfigsRelativePath}`;
 
 export type ClusterBrokerParam = {
   clusterName: ClusterName;
