@@ -1,9 +1,15 @@
 import styled, { css } from 'styled-components';
 
 export interface InputProps {
-  inputSize?: 'M' | 'L';
+  inputSize?: 'S' | 'M' | 'L';
   hasLeftIcon: boolean;
 }
+
+const INPUT_SIZES = {
+  S: '24px',
+  M: '32px',
+  L: '40px',
+};
 
 export const Wrapper = styled.div`
   position: relative;
@@ -25,7 +31,9 @@ export const Input = styled.input<InputProps>(
   ({ theme: { input }, inputSize, hasLeftIcon }) => css`
     border: 1px ${input.borderColor.normal} solid;
     border-radius: 4px;
-    height: ${inputSize === 'M' ? '32px' : '40px'};
+    height: ${inputSize && INPUT_SIZES[inputSize]
+      ? INPUT_SIZES[inputSize]
+      : '40px'};
     width: 100%;
     padding-left: ${hasLeftIcon ? '36px' : '12px'};
     font-size: 14px;
