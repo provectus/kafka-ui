@@ -18,6 +18,8 @@ export interface FilterModalProps {
   activeFilterHandler(activeFilter: MessageFilters, index: number): void;
   toggleEditModal(): void;
   editFilter(value: FilterEdit): void;
+  isSavedFiltersOpen: boolean;
+  onClickSavedFilters(newValue: boolean): void;
   activeFilter?: MessageFilters;
 }
 
@@ -33,10 +35,10 @@ const AddFilter: React.FC<FilterModalProps> = ({
   activeFilterHandler,
   toggleEditModal,
   editFilter,
+  isSavedFiltersOpen,
+  onClickSavedFilters,
   activeFilter,
 }) => {
-  const [savedFilterState, setSavedFilterState] =
-    React.useState<boolean>(false);
   const { isOpen, toggle } = useModal();
 
   const onSubmit = React.useCallback(
@@ -71,12 +73,12 @@ const AddFilter: React.FC<FilterModalProps> = ({
           {isOpen && <InfoModal toggleIsOpen={toggle} />}
         </div>
       </S.FilterTitle>
-      {savedFilterState ? (
+      {isSavedFiltersOpen ? (
         <SavedFilters
           deleteFilter={deleteFilter}
           activeFilterHandler={activeFilterHandler}
           closeModal={toggleIsOpen}
-          onGoBack={() => setSavedFilterState(false)}
+          onGoBack={() => onClickSavedFilters(!onClickSavedFilters)}
           filters={filters}
           onEdit={(index: number, filter: MessageFilters) => {
             toggleEditModal();
@@ -87,7 +89,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
       ) : (
         <>
           <S.SavedFiltersTextContainer
-            onClick={() => setSavedFilterState(true)}
+            onClick={() => onClickSavedFilters(!isSavedFiltersOpen)}
           >
             <SavedIcon /> <S.SavedFiltersText>Saved Filters</S.SavedFiltersText>
           </S.SavedFiltersTextContainer>
