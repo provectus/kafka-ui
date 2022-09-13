@@ -11,6 +11,7 @@ export interface FilterModalProps {
   deleteFilter(index: number): void;
   activeFilterHandler(activeFilter: MessageFilters, index: number): void;
   editSavedFilter(filter: FilterEdit): void;
+  activeFilter?: MessageFilters;
 }
 
 export interface FilterEdit {
@@ -25,6 +26,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   deleteFilter,
   activeFilterHandler,
   editSavedFilter,
+  activeFilter,
 }) => {
   const [addFilterModal, setAddFilterModal] = React.useState<boolean>(true);
   const [isSavedFiltersOpen, setIsSavedFiltersOpen] =
@@ -56,6 +58,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
           editFilter={editFilterHandler}
           isSavedFiltersOpen={isSavedFiltersOpen}
           onClickSavedFilters={() => setIsSavedFiltersOpen(!isSavedFiltersOpen)}
+          activeFilter={activeFilter}
         />
       ) : (
         <EditFilter

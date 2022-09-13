@@ -20,6 +20,7 @@ export interface FilterModalProps {
   editFilter(value: FilterEdit): void;
   isSavedFiltersOpen: boolean;
   onClickSavedFilters(newValue: boolean): void;
+  activeFilter?: MessageFilters;
 }
 
 export interface AddMessageFilters extends MessageFilters {
@@ -36,6 +37,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
   editFilter,
   isSavedFiltersOpen,
   onClickSavedFilters,
+  activeFilter,
 }) => {
   const { isOpen, toggle } = useModal();
 
@@ -82,6 +84,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
             toggleEditModal();
             editFilter({ index, filter });
           }}
+          activeFilter={activeFilter}
         />
       ) : (
         <>

@@ -20,9 +20,7 @@ const useDataSaver = (
 
   const saveFile = () => {
     const extension = isObject(data) ? 'json' : 'txt';
-    const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(data)
-    )}`;
+    const dataStr = `data:text/json;charset=utf-8,${data}`;
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute('href', dataStr);
     downloadAnchorNode.setAttribute(

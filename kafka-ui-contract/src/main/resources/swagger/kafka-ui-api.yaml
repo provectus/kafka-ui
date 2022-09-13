@@ -1750,7 +1750,19 @@ paths:
                 $ref: '#/components/schemas/PartitionsIncreaseResponse'
         404:
           description: Not found
-
+  /api/info/timestampformat:
+    get:
+      tags:
+        - TimeStampFormat
+      summary: getTimeStampFormat
+      operationId: getTimeStampFormat
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeStampFormat'
 components:
   schemas:
     ErrorResponse:
@@ -2351,6 +2363,12 @@ components:
       type: object
       properties:
         name:
+          type: string
+
+    TimeStampFormat:
+      type: object
+      properties:
+        timeStampFormat:
           type: string
 
     TopicMessageConsuming:
