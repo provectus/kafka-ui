@@ -2,6 +2,7 @@ name: cehck-helm
 on:
  push:
   branches:
+   - '**'
    - '!master'
 
 jobs:
