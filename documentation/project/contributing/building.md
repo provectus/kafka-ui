@@ -27,7 +27,7 @@ Once you installed the prerequisites and cloned the repository, run the followin
 - In case you want to build `kafka-ui-api` by skipping the tests
 ```sh
 ./mvnw clean install -Dmaven.test.skip=true -Pprod
-``` 
+```
 
 - To build only the `kafka-ui-api` you can use this command:
 ```sh
@@ -48,7 +48,7 @@ docker-compose -f ./documentation/compose/kafka-ui.yaml up -d
  - If you want to start only kafka clusters (to run the `kafka-ui` app via `spring-boot:run`):
 ```sh
 docker-compose -f ./documentation/compose/kafka-clusters-only.yaml up -d
-``` 
+```
 - Then start the app.
 ```sh
 ./mvnw spring-boot:run -Pprod
@@ -65,6 +65,6 @@ helm repo add kafka-ui https://provectus.github.io/kafka-ui
 helm install kafka-ui kafka-ui/kafka-ui
 ```
 To read more please follow to [chart documentation](../../../charts/kafka-ui/README.md).
- 
-## Step 4 : Access Kafka-UI
+
+## Step 3 : Access Kafka-UI
  - To see the `kafka-ui` app running, navigate to http://localhost:8080.
