@@ -5,7 +5,7 @@ Once you installed the prerequisites and cloned the repository, run the followin
 ## <a name="run_without_docker_quickly"></a> Running Without Docker Quickly
 
 - [Download the latest kafka-ui jar file](https://github.com/provectus/kafka-ui/releases)
-### <a name="run_kafkaui_jar_file"></a> Execute the jar
+#### <a name="run_kafkaui_jar_file"></a> Execute the jar
 ```sh
 java -Dspring.config.additional-location=<path-to-application-local.yml> -jar <path-to-kafka-ui-jar>
 ```
