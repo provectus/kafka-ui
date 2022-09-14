@@ -161,7 +161,7 @@ public class ConsumerGroupService {
         };
         return Comparator.comparingInt(statesPriorities);
       case MEMBERS:
-        return Comparator.comparingInt(cg -> -cg.members().size());
+        return Comparator.comparingInt(cg -> cg.members().size());
       default:
         throw new IllegalStateException("Unsupported order by: " + orderBy);
     }
