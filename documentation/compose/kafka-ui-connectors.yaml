@@ -126,7 +126,7 @@ services:
       kafka0:
           condition: service_healthy
     healthcheck:
-     test: ["CMD", "curl", "--silent", "--fail", "http://schemaregistry0:8085/subjects"]
+     test: ["CMD", "timeout", "1", "curl", "--silent", "--fail", "http://schemaregistry0:8085/subjects"]
      interval: 30s
      timeout: 10s
      retries: 10      
@@ -151,7 +151,7 @@ services:
       kafka1:
           condition: service_healthy
     healthcheck:
-     test: ["CMD", "curl", "--silent", "--fail", "http://schemaregistry1:8085/subjects"]
+     test: ["CMD", "timeout", "1", "curl", "--silent", "--fail", "http://schemaregistry1:8085/subjects"]
      interval: 30s
      timeout: 10s
      retries: 10      
@@ -250,7 +250,7 @@ services:
   ksqldb:
     image: confluentinc/ksqldb-server:0.18.0
     healthcheck:
-      test: ["CMD", "curl", "--silent", "--fail", "http://localhost:8088/info"]
+      test: ["CMD", "timeout", "1", "curl", "--silent", "--fail", "http://localhost:8088/info"]
       interval: 30s
       timeout: 10s
       retries: 10
