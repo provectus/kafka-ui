@@ -18,7 +18,7 @@ java -Dspring.config.additional-location=<path-to-application-local.yml> -jar <p
 
 > Comment out `com.spotify` plugin in `kafka-ui-api` pom.xml
 
-- [Command to build the jar](./building.md#cmds_to_build_kafkaui_without_docker)
+- [Command to build the jar](./building.md#cmd_to_build_kafkaui_without_docker)
 
 > Once your build is successful and the jar file named kafka-ui-api-0.0.1-SNAPSHOT.jar is generated inside `kafka-ui-api/target`.
 
