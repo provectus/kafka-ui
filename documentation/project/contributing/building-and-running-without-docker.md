@@ -3,7 +3,9 @@
 Once you installed the prerequisites and cloned the repository, run the following steps in your project directory:
 
 ## <a name="run_without_docker_quickly"></a> Running Without Docker Quickly
+
 - [Download the latest kafka-ui jar file](https://github.com/provectus/kafka-ui/releases)
+<a name="run_kafkaui_jar_file"></a>
 - Then run the following command.
 ```sh
 java -Dspring.config.additional-location=<path-to-application-local.yml> -jar <path-to-kafka-ui-jar>
@@ -11,28 +13,13 @@ java -Dspring.config.additional-location=<path-to-application-local.yml> -jar <p
 - Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file.
 
 ## <a name="build_and_run_without_docker"></a> Building And Running Without Docker
-> **_NOTE:_**  If you want to get kafka-ui up and running locally quickly, then just follow [Running Without Docker](#run_without_docker_quickly)
 
-> Skip the maven tests as they might not be successful
+> **_NOTE:_**  If you want to get kafka-ui up and running locally quickly without building the jar file manually, then just follow [Running Without Docker](#run_without_docker_quickly)
 
 > Comment out `com.spotify` plugin in `kafka-ui-api` pom.xml
 
-- if you need to build the frontend `kafka-ui-react-app`, go here
-     - [kafka-ui-react-app-build-documentation](../../../kafka-ui-react-app/README.md)
+- [Command to build the jar](./building.md#cmds_to_build_kafkaui_without_docker)
 
-- In case you want to build `kafka-ui-api` by skipping the tests
-```sh
-./mvnw clean install -Dmaven.test.skip=true -Pprod
-```
+> Once your build is successful and the jar file named kafka-ui-api-0.0.1-SNAPSHOT.jar is generated inside `kafka-ui-api/target`.
 
-- To build only the `kafka-ui-api` you can use this command:
-```sh
-./mvnw -f kafka-ui-api/pom.xml clean install -Pprod -DskipUIBuild=true
-```
-
-> Once your build is successful and the jar files are generated.
-- Then run the following command.
-```sh
-java -Dspring.config.additional-location=<path to application-local.yml> -jar <path to kafka-ui jar file>
-```
-- Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file.
+- [Command to execute the jar](#run_kafkaui_jar_file)

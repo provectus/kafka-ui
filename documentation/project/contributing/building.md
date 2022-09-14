@@ -15,15 +15,14 @@ Once you installed the prerequisites and cloned the repository, run the followin
 
 > ```docker build --platform linux/arm64 -t provectuslabs/kafka-ui:latest --build-arg JAR_FILE=kafka-ui-api-0.0.1-SNAPSHOT.jar .```
 
-
-- if you need to build the frontend `kafka-ui-react-app`, go here
-     - [kafka-ui-react-app-build-documentation](../../../kafka-ui-react-app/README.md)
-
 - Build a docker image with the app
 ```sh
 ./mvnw clean install -Pprod
 ```
+- if you need to build the frontend `kafka-ui-react-app`, go here
+     - [kafka-ui-react-app-build-documentation](../../../kafka-ui-react-app/README.md)
 
+<a name="cmd_to_build_kafkaui_without_docker"></a>
 - In case you want to build `kafka-ui-api` by skipping the tests
 ```sh
 ./mvnw clean install -Dmaven.test.skip=true -Pprod
