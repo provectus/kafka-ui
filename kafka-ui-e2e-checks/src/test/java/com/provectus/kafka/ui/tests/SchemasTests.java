@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.schema.SchemaCreateView;
+import com.provectus.kafka.ui.pages.schema.SchemaView;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
@@ -80,14 +81,15 @@ public class SchemasTests extends BaseTest {
     void updateSchemaAvro() {
         pages.openMainPage()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.openSchema(SCHEMA_AVRO_API_UPDATE)
+        SchemaView schemaView = pages.schemaRegistry.openSchema(SCHEMA_AVRO_API_UPDATE);
+        schemaView
                 .waitUntilScreenReady()
                 .openEditSchema()
                 .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(PATH_AVRO_FOR_UPDATE))
                 .clickSubmit()
                 .waitUntilScreenReady();
-        Assertions.assertTrue(pages.schemaRegistry.openSchema(SCHEMA_AVRO_API_UPDATE).isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE),"isCompatibility()");
+        Assertions.assertTrue(schemaView.isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE),"isCompatibility()");
     }
 
     @DisplayName("should delete AVRO schema")

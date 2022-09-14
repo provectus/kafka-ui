@@ -176,7 +176,7 @@ public class TopicCreateEditSettingsView {
     }
 
 
-    protected static class KafkaUISelectElement {
+    private static class KafkaUISelectElement {
 
         private final SelenideElement selectElement;
 

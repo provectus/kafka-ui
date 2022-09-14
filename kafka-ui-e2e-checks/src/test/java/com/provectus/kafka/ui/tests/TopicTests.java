@@ -27,7 +27,6 @@ public class TopicTests extends BaseTest {
     private static final String KEY_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/producedkey.txt";
     private static final String CONTENT_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/testData.txt";
 
-
     @BeforeAll
     public static void beforeAll() {
         Helpers.INSTANCE.apiHelper.createTopic(CLUSTER_NAME, TOPIC_TO_UPDATE);
@@ -70,28 +69,29 @@ public class TopicTests extends BaseTest {
     @CaseId(197)
     @Test
     public void updateTopic() {
-        pages.openTopicsList(CLUSTER_NAME)
-                .waitUntilScreenReady();
-        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
-                .waitUntilScreenReady()
-                .openEditSettings()
-                .selectCleanupPolicy(COMPACT_POLICY_VALUE)
-                .setMinInsyncReplicas(10)
-                .setTimeToRetainDataInMs(UPDATED_TIME_TO_RETAIN_VALUE)
-                .setMaxSizeOnDiskInGB(UPDATED_MAX_SIZE_ON_DISK)
-                .setMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
-                .sendData()
-                .waitUntilScreenReady();
-        pages.openTopicsList(CLUSTER_NAME)
-                .waitUntilScreenReady();
-        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
-                .openEditSettings();
-        SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(COMPACT_POLICY_VALUE).isEqualTo(pages.topicsList.openTopic(TOPIC_TO_UPDATE).openEditSettings().cleanupPolicyIs(COMPACT_POLICY_VALUE));
-        softly.assertThat(UPDATED_TIME_TO_RETAIN_VALUE).isEqualTo(pages.topicsList.openTopic(TOPIC_TO_UPDATE).openEditSettings().timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE));
-        softly.assertThat(UPDATED_MAX_SIZE_ON_DISK).isEqualTo(pages.topicsList.openTopic(TOPIC_TO_UPDATE).openEditSettings().maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK));
-        softly.assertThat(UPDATED_MAX_MESSAGE_BYTES).isEqualTo(pages.topicsList.openTopic(TOPIC_TO_UPDATE).openEditSettings().maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES));
-        softly.assertAll();
+            pages.openTopicsList(CLUSTER_NAME)
+                    .waitUntilScreenReady();
+            pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
+                    .waitUntilScreenReady()
+                    .openEditSettings()
+                    .selectCleanupPolicy(COMPACT_POLICY_VALUE)
+                    .setMinInsyncReplicas(10)
+                    .setTimeToRetainDataInMs(UPDATED_TIME_TO_RETAIN_VALUE)
+                    .setMaxSizeOnDiskInGB(UPDATED_MAX_SIZE_ON_DISK)
+                    .setMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
+                    .sendData()
+                    .waitUntilScreenReady();
+
+            pages.openTopicsList(CLUSTER_NAME)
+                    .waitUntilScreenReady();
+            pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
+                    .openEditSettings()
+                    // Assertions
+                    //TODO: need to refactor assertions to settings tab using softassertions, because UI was updated.
+                    .cleanupPolicyIs(COMPACT_POLICY_VALUE)
+                    .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
+                    .maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK)
+                    .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
     }
 
     @DisplayName("should delete topic")
@@ -116,6 +116,7 @@ public class TopicTests extends BaseTest {
     @Test
     void produceMessage() {
         pages.openTopicsList(CLUSTER_NAME)
+                .waitUntilScreenReady()
                 .openTopic(TOPIC_TO_UPDATE)
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicView.TopicMenu.MESSAGES)

@@ -28,7 +28,7 @@ public class ConnectorsTests extends BaseTest {
         ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
 
         String connectorToDelete = getResourceAsString("delete_connector_config.json");
-        String connectorToUpdate = getResourceAsString("config_for_create_connector.json");
+        String connectorToUpdate = getResourceAsString("config_for_create_connector_via_api.json");
         String message = getResourceAsString("message_content_create_topic.json");
 
         apiHelper.deleteTopic(CLUSTER_NAME, CONNECTOR_FOR_DELETE);
