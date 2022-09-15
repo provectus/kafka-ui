@@ -4,13 +4,11 @@ import com.codeborne.selenide.ClickOptions;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
-import com.provectus.kafka.ui.utils.BrowserUtils;
 
 import static com.codeborne.selenide.Selenide.*;
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class TopicCreateEditSettingsView {
 
     private final SelenideElement timeToRetain = $(By.cssSelector("input#timeToRetain"));
@@ -20,20 +18,20 @@ public class TopicCreateEditSettingsView {
     public TopicCreateEditSettingsView setTopicName(String topicName) {
         $("input#topicFormName").setValue(topicName);
         return this;
-
     }
+
     @Step
     public TopicCreateEditSettingsView setMinInsyncReplicas(Integer minInsyncReplicas) {
         $("input[name=minInSyncReplicas]").setValue(minInsyncReplicas.toString());
         return this;
-
     }
+
     @Step
     public TopicCreateEditSettingsView setTimeToRetainDataInMs(Long ms) {
         timeToRetain.setValue(ms.toString());
         return this;
-
     }
+
     @Step
     public TopicCreateEditSettingsView setTimeToRetainDataInMs(String ms) {
         timeToRetain.setValue(ms);
@@ -45,8 +43,8 @@ public class TopicCreateEditSettingsView {
         KafkaUISelectElement kafkaUISelectElement = new KafkaUISelectElement("retentionBytes");
         kafkaUISelectElement.selectByVisibleText(value);
         return this;
-
     }
+
     @Step
     public TopicCreateEditSettingsView setMaxMessageBytes(Long bytes) {
         maxMessageBytes.setValue(bytes.toString());
@@ -56,8 +54,8 @@ public class TopicCreateEditSettingsView {
     @Step
     public TopicCreateEditSettingsView setMaxMessageBytes(String bytes) {
         return setMaxMessageBytes(Long.parseLong(bytes));
-
     }
+
     @Step
     public TopicCreateEditSettingsView setTimeToRetainDataInMsUsingButtons(String value) {
         timeToRetain
@@ -138,41 +136,23 @@ public class TopicCreateEditSettingsView {
     }
 
     @Step
-    public TopicCreateEditSettingsView cleanupPolicyIs(String value) {
-        String cleanupPolicy = new KafkaUISelectElement("cleanupPolicy")
-                .getCurrentValue();
-        assertThat(cleanupPolicy)
-                .as("Clear policy value should be " + value)
-                .isEqualToIgnoringCase(value);
-        return this;
+    public String getCleanupPolicy() {
+        return new KafkaUISelectElement("cleanupPolicy").getCurrentValue();
     }
 
     @Step
-    public TopicCreateEditSettingsView timeToRetainIs(String time) {
-        String value = timeToRetain.getValue();
-        assertThat(value)
-                .as("Time to retain data (in ms) should be " + time)
-                .isEqualTo(time);
-        return this;
+    public String getTimeToRetain() {
+        return timeToRetain.getValue();
     }
 
     @Step
-    public TopicCreateEditSettingsView maxSizeOnDiskIs(String size) {
-        String retentionBytes = new KafkaUISelectElement("retentionBytes")
-                .getCurrentValue();
-        assertThat(retentionBytes)
-                .as("Max size on disk in GB should be " + size)
-                .isEqualTo(size);
-        return this;
+    public String getMaxSizeOnDisk() {
+        return new KafkaUISelectElement("retentionBytes").getCurrentValue();
     }
 
     @Step
-    public TopicCreateEditSettingsView maxMessageBytesIs(String bytes) {
-        String value = maxMessageBytes.getValue();
-        assertThat(value)
-                .as("Maximum message size in bytes should be " + bytes)
-                .isEqualTo(bytes);
-        return this;
+    public String getMessageBytes() {
+        return maxMessageBytes.getValue();
     }
 
 
