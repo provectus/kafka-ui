@@ -15,6 +15,7 @@ import static com.codeborne.selenide.Selenide.$x;
 public class SchemaEditView {
 
     SelenideElement newSchemaTextArea = $("#newSchema [wrap]");
+    private static final SelenideElement schemaTypeDropDown = $(By.xpath("//ul[@name='schemaType']"));
 
     @Step
     public SchemaEditView selectSchemaTypeFromDropdown(SchemaCreateView.SchemaType schemaType) {
@@ -23,10 +24,10 @@ public class SchemaEditView {
         return this;
     }
     @Step
-    public SchemaEditView selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum level) {
+    public static SchemaEditView selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum level) {
         $x("//ul[@name='compatibilityLevel']").click();
         $x("//li[text()='" + level.getValue() + "']").click();
-        return this;
+        return new SchemaEditView();
     }
     @Step
     public SchemaView clickSubmit() {
@@ -48,5 +49,17 @@ public class SchemaEditView {
         $(By.xpath("//*[contains(text(),'Remove')]")).click();
         $(By.xpath("//*[text()='Confirm']")).shouldBe(Condition.visible).click();
         return new SchemaRegistryList();
+    }
+
+    @Step
+    public static boolean isSchemaDropDownDisabled(){
+        boolean disabled = false;
+        try{
+           String attribute = schemaTypeDropDown.getAttribute("disabled");
+           disabled = true;
+        }
+        catch (Throwable ignored){
+        }
+       return disabled;
     }
 }
