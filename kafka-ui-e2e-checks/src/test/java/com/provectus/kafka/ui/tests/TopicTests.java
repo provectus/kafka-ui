@@ -83,13 +83,14 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        TopicCreateEditSettingsView topicCreateEditSettingsView = pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
+        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
                 .openEditSettings();
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(topicCreateEditSettingsView.getCleanupPolicy()).isEqualTo(COMPACT_POLICY_VALUE);
-        softly.assertThat(topicCreateEditSettingsView.getTimeToRetain()).isEqualTo(UPDATED_TIME_TO_RETAIN_VALUE);
-        softly.assertThat(topicCreateEditSettingsView.getMaxSizeOnDisk()).isEqualTo(UPDATED_MAX_SIZE_ON_DISK);
-        softly.assertThat(topicCreateEditSettingsView.getMessageBytes()).isEqualTo(UPDATED_MAX_MESSAGE_BYTES);
+        softly.assertThat(new TopicCreateEditSettingsView().getCleanupPolicy()).as("CleanupPolicy").isEqualTo(COMPACT_POLICY_VALUE);
+        softly.assertThat(new TopicCreateEditSettingsView().getTimeToRetain()).as("TimeToRetain").isEqualTo(UPDATED_TIME_TO_RETAIN_VALUE);
+        softly.assertThat(new TopicCreateEditSettingsView().getMaxSizeOnDisk()).as("MaxSizeOnDisk").isEqualTo(UPDATED_MAX_SIZE_ON_DISK);
+        softly.assertThat(new TopicCreateEditSettingsView().getMessageBytes()).as("MessageBytes").isEqualTo(UPDATED_MAX_MESSAGE_BYTES);
+        softly.assertAll();
     }
 
     @DisplayName("should delete topic")
