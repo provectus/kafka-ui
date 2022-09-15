@@ -171,7 +171,6 @@ public class SchemasTests extends BaseTest {
     }
 
     @AfterAll
-    @SneakyThrows
     public static void afterAll() {
         schemaList.forEach(schema -> Helpers.INSTANCE.apiHelper.deleteSchema(CLUSTER_NAME, schema.getName()));
     }
