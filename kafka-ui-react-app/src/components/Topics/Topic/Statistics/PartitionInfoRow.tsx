@@ -5,8 +5,9 @@ import {
   List,
   Label,
 } from 'components/common/PropertiesList/PropertiesList.styled';
-import { TopicAnalysisStats } from 'generated-sources';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
+import { useTimeFormatStats } from 'lib/hooks/api/timeFormat';
+import { TimeStampFormat, TopicAnalysisStats } from 'generated-sources';
 import React from 'react';
 
 import * as S from './Statistics.styles';
@@ -26,6 +27,9 @@ const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
     valueSize,
   } = row.original;
 
+  const { data } = useTimeFormatStats();
+  const { timeStampFormat } = data as TimeStampFormat;
+
   return (
     <S.PartitionInfo>
       <div>
@@ -34,9 +38,9 @@ const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
           <Label>Total message</Label>
           <span>{totalMsgs}</span>
           <Label>Min. timestamp</Label>
-          <span>{formatTimestamp(minTimestamp)}</span>
+          <span>{formatTimestamp(minTimestamp, timeStampFormat)}</span>
           <Label>Max. timestamp</Label>
-          <span>{formatTimestamp(maxTimestamp)}</span>
+          <span>{formatTimestamp(maxTimestamp, timeStampFormat)}</span>
           <Label>Null keys amount</Label>
           <span>{nullKeys}</span>
           <Label>Null values amount</Label>

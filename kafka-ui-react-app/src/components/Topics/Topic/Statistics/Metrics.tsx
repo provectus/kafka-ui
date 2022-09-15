@@ -15,6 +15,8 @@ import {
 } from 'components/common/PropertiesList/PropertiesList.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
+import { TimeStampFormat } from 'generated-sources/models/TimeStampFormat';
+import { useTimeFormatStats } from 'lib/hooks/api/timeFormat';
 
 import * as S from './Statistics.styles';
 import Total from './Indicators/Total';
@@ -28,6 +30,8 @@ const Metrics: React.FC = () => {
   const cancelTopicAnalysis = useCancelTopicAnalysis(params);
 
   const { data } = useTopicAnalysis(params, isAnalyzing);
+  const { data: timeFormat } = useTimeFormatStats();
+  const { timeStampFormat } = timeFormat as TimeStampFormat;
 
   React.useEffect(() => {
     if (data && !data.progress) {
@@ -55,7 +59,9 @@ const Metrics: React.FC = () => {
         </Button>
         <List>
           <Label>Started at</Label>
-          <span>{formatTimestamp(data.progress.startedAt, 'hh:mm:ss a')}</span>
+          <span>
+            {formatTimestamp(data.progress.startedAt, timeStampFormat)}
+          </span>
           <Label>Scanned messages</Label>
           <span>
             {data.progress.msgsScanned} /{' '}
@@ -76,7 +82,9 @@ const Metrics: React.FC = () => {
   return (
     <>
       <S.ActionsBar>
-        <S.CreatedAt>{formatTimestamp(data.result.finishedAt)}</S.CreatedAt>
+        <S.CreatedAt>
+          {formatTimestamp(data.result.finishedAt, timeStampFormat)}
+        </S.CreatedAt>
         <Button
           onClick={async () => {
             await analyzeTopic.mutateAsync();

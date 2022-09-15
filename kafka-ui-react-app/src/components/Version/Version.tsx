@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { gitCommitPath } from 'lib/paths';
 import { GIT_REPO_LATEST_RELEASE_LINK } from 'lib/constants';
 import WarningIcon from 'components/common/Icons/WarningIcon';
+import { useActuatorInfoStats } from 'lib/hooks/api/actuatorInfo';
 
 import * as S from './Version.styled';
 import compareVersions from './compareVersions';
@@ -11,11 +12,16 @@ export interface VesionProps {
   commit?: string;
 }
 
-const Version: React.FC<VesionProps> = ({ tag, commit }) => {
+const Version: React.FC = () => {
   const [latestVersionInfo, setLatestVersionInfo] = useState({
     outdated: false,
     latestTag: '',
   });
+
+  const { data: actuatorInfo } = useActuatorInfoStats();
+
+  const tag = actuatorInfo.build.version;
+  const commit = actuatorInfo.git.commit.id;
 
   useEffect(() => {
     fetch(GIT_REPO_LATEST_RELEASE_LINK)
@@ -31,27 +37,31 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
   const { outdated, latestTag } = latestVersionInfo;
   return (
     <S.Wrapper>
-      <S.CurrentVersion>{tag}</S.CurrentVersion>
-
-      {outdated && (
-        <S.OutdatedWarning
-          title={`Your app version is outdated. Current latest version is ${latestTag}`}
-        >
-          <WarningIcon />
-        </S.OutdatedWarning>
-      )}
-
-      {commit && (
+      {tag && (
         <>
-          <S.SymbolWrapper>&#40;</S.SymbolWrapper>
-          <S.CurrentCommitLink
-            title="Current commit"
-            target="__blank"
-            href={gitCommitPath(commit)}
-          >
-            {commit}
-          </S.CurrentCommitLink>
-          <S.SymbolWrapper>&#41;</S.SymbolWrapper>
+          <S.CurrentVersion>{tag}</S.CurrentVersion>
+
+          {outdated && (
+            <S.OutdatedWarning
+              title={`Your app version is outdated. Current latest version is ${latestTag}`}
+            >
+              <WarningIcon />
+            </S.OutdatedWarning>
+          )}
+
+          {commit && (
+            <>
+              <S.SymbolWrapper>&#40;</S.SymbolWrapper>
+              <S.CurrentCommitLink
+                title="Current commit"
+                target="__blank"
+                href={gitCommitPath(commit)}
+              >
+                {commit}
+              </S.CurrentCommitLink>
+              <S.SymbolWrapper>&#41;</S.SymbolWrapper>
+            </>
+          )}
         </>
       )}
     </S.Wrapper>

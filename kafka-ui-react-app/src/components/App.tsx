@@ -1,6 +1,5 @@
 import React, { Suspense, useCallback } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
 import { clusterPath, getNonExactPath } from 'lib/paths';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -71,7 +70,7 @@ const App: React.FC = () => {
                   </S.Hyperlink>
 
                   <S.NavbarItem>
-                    {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
+                    <Version />
                   </S.NavbarItem>
                 </S.NavbarBrand>
               </S.NavbarBrand>

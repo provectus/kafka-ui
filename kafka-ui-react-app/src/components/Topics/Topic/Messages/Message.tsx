@@ -4,8 +4,10 @@ import useDataSaver from 'lib/hooks/useDataSaver';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import styled from 'styled-components';
-import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
+import { TimeStampFormat } from 'generated-sources/models/TimeStampFormat';
+import { useTimeFormatStats } from 'lib/hooks/api/timeFormat';
+import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
 import MessageContent from './MessageContent/MessageContent';
 import * as S from './MessageContent/MessageContent.styled';
@@ -48,6 +50,10 @@ const Message: React.FC<Props> = ({
     Headers: headers,
     Timestamp: timestamp,
   };
+
+  const { data } = useTimeFormatStats();
+  const { timeStampFormat } = data as TimeStampFormat;
+
   const savedMessage = JSON.stringify(savedMessageJson, null, '\t');
   const { copyToClipboard, saveFile } = useDataSaver(
     'topic-message',
@@ -73,7 +79,7 @@ const Message: React.FC<Props> = ({
         <td>{offset}</td>
         <td>{partition}</td>
         <td>
-          <div>{formatTimestamp(timestamp)}</div>
+          <div>{formatTimestamp(timestamp, timeStampFormat)}</div>
         </td>
         <StyledDataCell title={key}>{key}</StyledDataCell>
         <StyledDataCell>

@@ -1,8 +1,13 @@
-import { TopicMessageTimestampTypeEnum, SchemaType } from 'generated-sources';
+import {
+  SchemaType,
+  TimeStampFormat,
+  TopicMessageTimestampTypeEnum,
+} from 'generated-sources';
 import React from 'react';
 import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
+import { useTimeFormatStats } from 'lib/hooks/api/timeFormat';
 
 import * as S from './MessageContent.styled';
 
@@ -28,6 +33,10 @@ const MessageContent: React.FC<MessageContentProps> = ({
   timestampType,
 }) => {
   const [activeTab, setActiveTab] = React.useState<Tab>('content');
+
+  const { data } = useTimeFormatStats();
+  const { timeStampFormat } = data as TimeStampFormat;
+
   const activeTabContent = () => {
     switch (activeTab) {
       case 'content':
@@ -94,7 +103,9 @@ const MessageContent: React.FC<MessageContentProps> = ({
             <S.Metadata>
               <S.MetadataLabel>Timestamp</S.MetadataLabel>
               <span>
-                <S.MetadataValue>{formatTimestamp(timestamp)}</S.MetadataValue>
+                <S.MetadataValue>
+                  {formatTimestamp(timestamp, timeStampFormat)}
+                </S.MetadataValue>
                 <S.MetadataMeta>Timestamp type: {timestampType}</S.MetadataMeta>
               </span>
             </S.Metadata>
