@@ -11,8 +11,9 @@ import org.openqa.selenium.By;
 import static com.codeborne.selenide.Selenide.*;
 public class TopicCreateEditSettingsView {
 
-    private final SelenideElement timeToRetain = $(By.cssSelector("input#timeToRetain"));
-    private final SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
+    protected SelenideElement timeToRetain = $(By.cssSelector("input#timeToRetain"));
+    protected SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
+    protected SelenideElement minInSyncReplicasFld = $("input[name=minInsyncReplicas]");
 
     @Step
     public TopicCreateEditSettingsView setTopicName(String topicName) {
@@ -21,8 +22,9 @@ public class TopicCreateEditSettingsView {
     }
 
     @Step
-    public TopicCreateEditSettingsView setMinInsyncReplicas(Integer minInsyncReplicas) {
-        $("input[name=minInSyncReplicas]").setValue(minInsyncReplicas.toString());
+    public TopicCreateEditSettingsView setMinInSyncReplicas(Integer minInsyncReplicas) {
+        minInSyncReplicasFld.shouldBe(Condition.enabled).clear();
+        minInSyncReplicasFld.sendKeys(String.valueOf(minInsyncReplicas));
         return this;
     }
 
