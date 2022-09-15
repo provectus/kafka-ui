@@ -22,7 +22,7 @@ public class TopicCreateEditSettingsView {
 
     @Step
     public TopicCreateEditSettingsView setMinInsyncReplicas(Integer minInsyncReplicas) {
-        $("input[name=minInSyncReplicas]").setValue(minInsyncReplicas.toString());
+        $("input[name=mininSyncReplicas]").setValue(minInsyncReplicas.toString());
         return this;
     }
 
