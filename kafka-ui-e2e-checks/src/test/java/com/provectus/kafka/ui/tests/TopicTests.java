@@ -75,7 +75,7 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openEditSettings()
                 .selectCleanupPolicy(COMPACT_POLICY_VALUE)
-                .setMinInsyncReplicas(10)
+                .setMinInSyncReplicas(10)
                 .setTimeToRetainDataInMs(UPDATED_TIME_TO_RETAIN_VALUE)
                 .setMaxSizeOnDiskInGB(UPDATED_MAX_SIZE_ON_DISK)
                 .setMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
