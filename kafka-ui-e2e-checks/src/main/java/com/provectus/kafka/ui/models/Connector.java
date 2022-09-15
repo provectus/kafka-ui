@@ -7,5 +7,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Connector {
 
+    private String name, config;
 
 }
