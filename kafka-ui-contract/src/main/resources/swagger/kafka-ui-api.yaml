@@ -2594,7 +2594,7 @@ components:
 
     NewSchemaSubject:
       type: object
-      description: should be set for create/update schema subject
+      description: should be set for creating/updating schema subject
       properties:
         subject:
           type: string
