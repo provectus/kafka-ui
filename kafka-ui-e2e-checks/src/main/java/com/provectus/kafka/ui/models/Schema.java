@@ -10,8 +10,8 @@ import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 @Accessors(chain = true)
 public class Schema {
 
-    String name,valuePath;
-    SchemaType type;
+    private String name,valuePath;
+    private SchemaType type;
 
     public static Schema getSchemaAvro(){
         return new Schema().setName(randomAlphabetic(10))
