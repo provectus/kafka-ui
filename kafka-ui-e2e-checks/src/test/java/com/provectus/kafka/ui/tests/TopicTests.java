@@ -1,7 +1,9 @@
 package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
+import com.provectus.kafka.ui.helpers.ApiHelper;
 import com.provectus.kafka.ui.helpers.Helpers;
+import com.provectus.kafka.ui.models.Topic;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.topic.TopicView;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
@@ -11,13 +13,19 @@ import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
 
 public class TopicTests extends BaseTest {
 
-    public static final String NEW_TOPIC = "new-topic";
-    public static final String TOPIC_TO_UPDATE = "topic-to-update";
-    public static final String TOPIC_TO_DELETE = "topic-to-delete";
+//    public static final String NEW_TOPIC = "new-topic";
+    private static final Topic topicToUpdate = new Topic().setName("topic-to-update");
+    private static final Topic topicToDelete = new Topic().setName("topic-to-delete");
+    private static final List<Topic> topicList = new ArrayList<>();
+//    public static final String TOPIC_TO_UPDATE = "topic-to-update";
+//    public static final String TOPIC_TO_DELETE = "topic-to-delete";
     public static final String COMPACT_POLICY_VALUE = "Compact";
     public static final String UPDATED_TIME_TO_RETAIN_VALUE = "604800001";
     public static final String UPDATED_MAX_SIZE_ON_DISK = "20 GB";
@@ -28,15 +36,11 @@ public class TopicTests extends BaseTest {
 
     @BeforeAll
     public static void beforeAll() {
-        Helpers.INSTANCE.apiHelper.createTopic(CLUSTER_NAME, TOPIC_TO_UPDATE);
-        Helpers.INSTANCE.apiHelper.createTopic(CLUSTER_NAME, TOPIC_TO_DELETE);
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, TOPIC_TO_UPDATE);
-        Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, TOPIC_TO_DELETE);
-        Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, NEW_TOPIC);
+        ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
+        topicList.addAll(List.of(topicToUpdate,topicToDelete));
+        topicList.forEach(topic -> apiHelper.createTopic(CLUSTER_NAME,topic.getName()));
+//        Helpers.INSTANCE.apiHelper.createTopic(CLUSTER_NAME, TOPIC_TO_UPDATE);
+//        Helpers.INSTANCE.apiHelper.createTopic(CLUSTER_NAME, TOPIC_TO_DELETE);
     }
 
     @DisplayName("should create a topic")
@@ -45,19 +49,21 @@ public class TopicTests extends BaseTest {
     @CaseId(199)
     @Test
     public void createTopic() {
+        Topic topicForCreate = new Topic().setName("new-topic");
         pages.open()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
         pages.topicsList.pressCreateNewTopic()
-                .setTopicName(NEW_TOPIC)
+                .setTopicName(topicForCreate.getName())
                 .sendData()
                 .waitUntilScreenReady();
         pages.open()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS)
-                .topicIsVisible(NEW_TOPIC);
-        helpers.apiHelper.deleteTopic(CLUSTER_NAME, NEW_TOPIC);
+                .topicIsVisible(topicForCreate.getName());
+        helpers.apiHelper.deleteTopic(CLUSTER_NAME, topicForCreate.getName());
         pages.open()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS)
-                .topicIsNotVisible(NEW_TOPIC);
+                .topicIsNotVisible(topicForCreate.getName());
+        topicList.add(topicForCreate);
     }
     @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
     @DisplayName("should update a topic")
@@ -69,7 +75,7 @@ public class TopicTests extends BaseTest {
     public void updateTopic() {
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
+        pages.openTopicView(CLUSTER_NAME, topicToUpdate.getName())
                 .waitUntilScreenReady()
                 .openEditSettings()
                 .selectCleanupPolicy(COMPACT_POLICY_VALUE)
@@ -82,7 +88,7 @@ public class TopicTests extends BaseTest {
 
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
+        pages.openTopicView(CLUSTER_NAME, topicToUpdate.getName())
                 .openEditSettings()
                 // Assertions
                 .cleanupPolicyIs(COMPACT_POLICY_VALUE)
@@ -99,12 +105,12 @@ public class TopicTests extends BaseTest {
     public void deleteTopic() {
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_TO_DELETE)
+                .openTopic(topicToDelete.getName())
                 .waitUntilScreenReady()
                 .deleteTopic();
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
-                .isTopicNotVisible(TOPIC_TO_DELETE);
+                .isTopicNotVisible(topicToDelete.getName());
     }
 
     @DisplayName("produce message")
@@ -115,7 +121,7 @@ public class TopicTests extends BaseTest {
     void produceMessage() {
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_TO_UPDATE)
+                .openTopic(topicToUpdate.getName())
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicView.TopicMenu.MESSAGES)
                 .clickOnButton("Produce Message")
@@ -124,5 +130,14 @@ public class TopicTests extends BaseTest {
                 .submitProduceMessage();
         Assertions.assertTrue(pages.topicView.isKeyMessageVisible(fileToString(KEY_TO_PRODUCE_MESSAGE)));
         Assertions.assertTrue(pages.topicView.isContentMessageVisible(fileToString(CONTENT_TO_PRODUCE_MESSAGE).trim()));
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
+        topicList.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME,topic.getName()));
+//        Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, TOPIC_TO_UPDATE);
+//        Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, TOPIC_TO_DELETE);
+//        Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, NEW_TOPIC);
     }
 }
