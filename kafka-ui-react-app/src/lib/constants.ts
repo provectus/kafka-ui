@@ -49,6 +49,7 @@ export const MILLISECONDS_IN_SECOND = 1_000;
 
 export const NOT_SET = -1;
 export const BYTES_IN_GB = 1_073_741_824;
+export const VERSION_PATTERN = /v[0-9][.][0-9][.][0-9]/;
 
 export const PER_PAGE = 25;
 
