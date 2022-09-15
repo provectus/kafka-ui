@@ -66,6 +66,7 @@ public class SchemaRegistryService {
 
   private static final String UNRECOGNIZED_FIELD_SCHEMA_TYPE = "Unrecognized field: schemaType";
   private static final String INCOMPATIBLE_WITH_AN_EARLIER_SCHEMA = "incompatible with an earlier schema";
+  private static final String INVALID_SCHEMA = "Invalid Schema";
 
   private final WebClient webClient;
 
@@ -237,7 +238,8 @@ public class SchemaRegistryService {
     } else if (isIncompatibleSchemaMessage(x.getMessage())) {
       return Mono.error(new SchemaCompatibilityException(x.getMessage()));
     } else {
-      return Mono.error(new UnprocessableEntityException(x.getMessage()));
+      log.error(x.getMessage());
+      return Mono.error(new UnprocessableEntityException(INVALID_SCHEMA));
     }
   }
 
