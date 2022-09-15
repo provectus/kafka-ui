@@ -13,7 +13,7 @@ management:
         include: "info,health"
   health:
     ldap:
-      enabled: false
+      enabled: true
 
 logging:
   level:

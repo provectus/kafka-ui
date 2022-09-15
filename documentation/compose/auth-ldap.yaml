@@ -19,13 +19,6 @@ services:
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schemaregistry0:8085
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
-      KAFKA_CLUSTERS_1_NAME: secondLocal
-      KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: kafka1:29092
-      KAFKA_CLUSTERS_1_ZOOKEEPER: zookeeper1:2181
-      KAFKA_CLUSTERS_1_JMXPORT: 9998
-      KAFKA_CLUSTERS_1_SCHEMAREGISTRY: http://schemaregistry1:8085
-      KAFKA_CLUSTERS_1_KAFKACONNECT_0_NAME: first
-      KAFKA_CLUSTERS_1_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
       AUTH_TYPE: "LDAP"
       SPRING_LDAP_URLS: "ldap://ldap:10389"
       SPRING_LDAP_DN_PATTERN: "cn={0},ou=people,dc=planetexpress,dc=com"
