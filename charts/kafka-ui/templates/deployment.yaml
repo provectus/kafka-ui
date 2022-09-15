@@ -20,8 +20,6 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
       labels:
-        app: {{ include "kafka-ui.name" . }}
-        version: {{ .Values.image.tag | default .Chart.AppVersion }}
         {{- include "kafka-ui.selectorLabels" . | nindent 8 }}
         {{- if .Values.podLabels }}
         {{- toYaml .Values.podLabels | nindent 8 }}
@@ -74,7 +72,7 @@ spec:
             {{- if .Values.envs.secret}}
             - secretRef:
                 name: {{ include "kafka-ui.fullname" . }}
-            {{- end}}
+            {{- end}}    
           ports:
             - name: http
               containerPort: 8080
@@ -99,7 +97,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- if or .Values.yamlApplicationConfig .Values.volumeMounts .Values.yamlApplicationConfigConfigMap}}
           volumeMounts:
-            {{- with .Values.volumeMounts }}
+            {{- with .Values.volumeMounts }} 
               {{- toYaml . | nindent 12 }}
             {{- end }}
             {{- if .Values.yamlApplicationConfig }}
@@ -118,12 +116,12 @@ spec:
         {{- end }}
         {{- if .Values.yamlApplicationConfig }}
         - name: kafka-ui-yaml-conf
-          configMap:
+          configMap: 
             name: {{ include "kafka-ui.fullname" . }}-fromvalues
         {{- end }}
         {{- if .Values.yamlApplicationConfigConfigMap}}
         - name: kafka-ui-yaml-conf-configmap
-          configMap:
+          configMap: 
             name: {{ .Values.yamlApplicationConfigConfigMap.name }}
         {{- end }}
       {{- end }}
