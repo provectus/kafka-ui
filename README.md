@@ -12,12 +12,12 @@
 Looking for the help of Kafka experts? Provectus can help you design, build, deploy, and manage Apache Kafka clusters and streaming applications. Discover [Professional Services for Apache Kafka](https://provectus.com/professional-services-apache-kafka/), to unlock the full potential of Kafka in your enteprise! </em>
 
 
-#### UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters. 
+#### UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters.
 
-UI for Apache Kafka is a simple tool that makes your data flows observable, helps find and troubleshoot issues faster and deliver optimal performance. Its lightweight dashboard makes it easy to track key metrics of your Kafka clusters - Brokers, Topics, Partitions, Production, and Consumption. 
+UI for Apache Kafka is a simple tool that makes your data flows observable, helps find and troubleshoot issues faster and deliver optimal performance. Its lightweight dashboard makes it easy to track key metrics of your Kafka clusters - Brokers, Topics, Partitions, Production, and Consumption.
 
-Set up UI for Apache Kafka with just a couple of easy commands to visualize your Kafka data in a comprehensible way. You can run the tool locally or in 
-the cloud. 
+Set up UI for Apache Kafka with just a couple of easy commands to visualize your Kafka data in a comprehensible way. You can run the tool locally or in
+the cloud.
 
 ![Interface](documentation/images/Interface.gif)
 
@@ -30,20 +30,20 @@ the cloud.
 * **Browse Messages** — browse messages with JSON, plain text, and Avro encoding
 * **Dynamic Topic Configuration** — create and configure new topics with dynamic configuration
 * **Configurable Authentification** — secure your installation with optional Github/Gitlab/Google OAuth 2.0
- 
+
 # The Interface
 UI for Apache Kafka wraps major functions of Apache Kafka with an intuitive user interface.
 
 ![Interface](documentation/images/Interface.gif)
 
 ## Topics
-UI for Apache Kafka makes it easy for you to create topics in your browser by several clicks, 
+UI for Apache Kafka makes it easy for you to create topics in your browser by several clicks,
 pasting your own parameters, and viewing topics in the list.
 
 ![Create Topic](documentation/images/Create_topic_kafka-ui.gif)
 
 It's possible to jump from connectors view to corresponding topics and from a topic to consumers (back and forth) for more convenient navigation.
-connectors, overview topic settings. 
+connectors, overview topic settings.
 
 ![Connector_Topic_Consumer](documentation/images/Connector_Topic_Consumer.gif)
 
@@ -57,14 +57,14 @@ There are 3 supported types of schemas: Avro®, JSON Schema, and Protobuf schema
 
 ![Create Schema Registry](documentation/images/Create_schema.gif)
 
-Before producing avro-encoded messages, you have to add an avro schema for the topic in Schema Registry. Now all these steps are easy to do 
+Before producing avro-encoded messages, you have to add an avro schema for the topic in Schema Registry. Now all these steps are easy to do
 with a few clicks in a user-friendly interface.
 
 ![Avro Schema Topic](documentation/images/Schema_Topic.gif)
 
 # Getting Started
 
-To run UI for Apache Kafka, you can use a pre-built Docker image or build it locally.  
+To run UI for Apache Kafka, you can use a pre-built Docker image or build it locally.
 
 ## Configuration
 
@@ -94,7 +94,7 @@ kafka:
 #     schemaNameTemplate: "%s-value"
       jmxPort: 9997
     -
-```    
+```
 
 * `name`: cluster name
 * `bootstrapServers`: where to connect
@@ -116,12 +116,12 @@ Launch Docker container in the background:
 docker run -p 8080:8080 \
 	-e KAFKA_CLUSTERS_0_NAME=local \
 	-e KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092 \
-	-d provectuslabs/kafka-ui:latest 
+	-d provectuslabs/kafka-ui:latest
 
 ```
-Then access the web UI at [http://localhost:8080](http://localhost:8080).  
-Further configuration with environment variables - [see environment variables](#env_variables)  
- 
+Then access the web UI at [http://localhost:8080](http://localhost:8080).
+Further configuration with environment variables - [see environment variables](#env_variables)
+
 ### Docker Compose
 
 If you prefer to use `docker-compose` please refer to the [documentation](docker-compose.md).
@@ -135,11 +135,25 @@ Quick-start instruction [here](helm_chart.md)
 
 ### Prerequisites
 
-Check [software-required.md](documentation/project/contributing/software-required.md)
+Check [prerequisites.md](documentation/project/contributing/prerequisites.md)
 
 ### Building and Running
 
 Check [building.md](documentation/project/contributing/building.md)
+
+## Building Without Docker
+
+### Prerequisites
+
+[Prerequisites](documentation/project/contributing/prerequisites.md) will mostly remain the same with the exception of docker.
+
+### Running without Building
+
+[How to run quickly without building](documentation/project/contributing/building-and-running-without-docker.md#run_without_docker_quickly)
+
+### Building and Running
+
+[How to build and run](documentation/project/contributing/building-and-running-without-docker.md#build_and_run_without_docker)
 
 ## Liveliness and readiness probes
 Liveliness and readiness endpoint is at `/actuator/health`.
@@ -147,7 +161,7 @@ Info endpoint (build info) is located at `/actuator/info`.
 
 ## <a name="env_variables"></a> Environment Variables
 
-Alternatively, each variable of the .yml file can be set with an environment variable. 
+Alternatively, each variable of the .yml file can be set with an environment variable.
 For example, if you want to use an environment variable to set the `name` parameter, you can write it like this: `KAFKA_CLUSTERS_2_NAME`
 
 |Name               	|Description
@@ -158,10 +172,10 @@ For example, if you want to use an environment variable to set the `name` parame
 |`SERVER_PORT` |Port for the embedded server. Default: `8080`
 |`KAFKA_ADMIN-CLIENT-TIMEOUT` | Kafka API timeout in ms. Default: `30000`
 |`KAFKA_CLUSTERS_0_NAME` | Cluster name
-|`KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS` 	|Address where to connect 
-|`KAFKA_CLUSTERS_0_KSQLDBSERVER` 	| KSQL DB server address 
-|`KAFKA_CLUSTERS_0_KSQLDBSERVERAUTH_USERNAME` 	| KSQL DB server's basic authentication username 
-|`KAFKA_CLUSTERS_0_KSQLDBSERVERAUTH_PASSWORD` 	| KSQL DB server's basic authentication password 
+|`KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS` 	|Address where to connect
+|`KAFKA_CLUSTERS_0_KSQLDBSERVER` 	| KSQL DB server address
+|`KAFKA_CLUSTERS_0_KSQLDBSERVERAUTH_USERNAME` 	| KSQL DB server's basic authentication username
+|`KAFKA_CLUSTERS_0_KSQLDBSERVERAUTH_PASSWORD` 	| KSQL DB server's basic authentication password
 |`KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL` 	|Security protocol to connect to the brokers. For SSL connection use "SSL", for plaintext connection don't set this environment variable
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRY`   	|SchemaRegistry's address
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_USERNAME`   	|SchemaRegistry's basic authentication username
@@ -171,7 +185,7 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_READONLY`        	|Enable read-only mode. Default: false
 |`KAFKA_CLUSTERS_0_DISABLELOGDIRSCOLLECTION`        	|Disable collecting segments information. It should be true for confluent cloud. Default: false
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME` |Given name for the Kafka Connect cluster
-|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS` |Address of the Kafka Connect service endpoint 
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS` |Address of the Kafka Connect service endpoint
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_USERNAME`| Kafka Connect cluster's basic authentication username
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_PASSWORD`| Kafka Connect cluster's basic authentication password
 |`KAFKA_CLUSTERS_0_JMXSSL` |Enable SSL for JMX? `true` or `false`. For advanced setup, see `kafka-ui-jmx-secured.yml`
