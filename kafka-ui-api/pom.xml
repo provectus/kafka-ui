@@ -56,7 +56,7 @@
         </dependency>
         <dependency>
             <groupId>com.provectus</groupId>
-            <artifactId>kafka-ui-serde</artifactId>
+            <artifactId>kafka-ui-serde-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
