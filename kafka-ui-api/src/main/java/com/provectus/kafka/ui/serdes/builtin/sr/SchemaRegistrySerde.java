@@ -7,6 +7,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
+import com.provectus.kafka.ui.serde.api.RecordHeaders;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import com.provectus.kafka.ui.util.jsonschema.AvroJsonSchemaConverter;
@@ -31,7 +32,6 @@ import java.util.concurrent.Callable;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.kafka.common.header.Headers;
 
 
 public class SchemaRegistrySerde implements BuiltInSerde {
@@ -229,7 +229,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
     private final String topic;
 
     @Override
-    public DeserializeResult deserialize(Headers headers, byte[] data) {
+    public DeserializeResult deserialize(RecordHeaders headers, byte[] data) {
       var schemaId = extractSchemaIdFromMsg(data);
       SchemaType format = getMessageFormatBySchemaId(schemaId);
       MessageFormatter formatter = schemaRegistryFormatters.get(format);

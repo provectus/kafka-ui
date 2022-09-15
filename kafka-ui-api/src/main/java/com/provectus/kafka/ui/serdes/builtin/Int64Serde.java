@@ -3,11 +3,11 @@ package com.provectus.kafka.ui.serdes.builtin;
 import com.google.common.primitives.Longs;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
+import com.provectus.kafka.ui.serde.api.RecordHeaders;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.kafka.common.header.Headers;
 
 public class Int64Serde implements BuiltInSerde {
 
@@ -64,7 +64,7 @@ public class Int64Serde implements BuiltInSerde {
   public Deserializer deserializer(String topic, Target type) {
     return new Deserializer() {
       @Override
-      public DeserializeResult deserialize(Headers headers, byte[] data) {
+      public DeserializeResult deserialize(RecordHeaders headers, byte[] data) {
         return new DeserializeResult(
             String.valueOf(Longs.fromByteArray(data)),
             DeserializeResult.Type.JSON,

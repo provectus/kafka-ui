@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.serde.api;
 
 import java.util.Optional;
-import org.apache.kafka.common.header.Headers;
 
 public interface Serde {
 
@@ -34,7 +33,7 @@ public interface Serde {
   }
 
   interface Deserializer {
-    DeserializeResult deserialize(Headers headers, byte[] data);
+    DeserializeResult deserialize(RecordHeaders headers, byte[] data);
   }
 
 }

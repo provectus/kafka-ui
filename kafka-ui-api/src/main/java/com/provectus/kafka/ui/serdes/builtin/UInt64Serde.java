@@ -5,6 +5,7 @@ import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedLong;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
+import com.provectus.kafka.ui.serde.api.RecordHeaders;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class UInt64Serde implements BuiltInSerde {
   public Deserializer deserializer(String topic, Target type) {
     return new Deserializer() {
       @Override
-      public DeserializeResult deserialize(Headers headers, byte[] data) {
+      public DeserializeResult deserialize(RecordHeaders headers, byte[] data) {
         return new DeserializeResult(
             UnsignedLong.fromLongBits(Longs.fromByteArray(data)).toString(),
             DeserializeResult.Type.JSON,

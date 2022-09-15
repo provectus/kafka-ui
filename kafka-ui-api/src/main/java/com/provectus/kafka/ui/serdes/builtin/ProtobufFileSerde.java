@@ -6,6 +6,7 @@ import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
+import com.provectus.kafka.ui.serde.api.RecordHeaders;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
@@ -22,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import lombok.SneakyThrows;
-import org.apache.kafka.common.header.Headers;
 
 
 public class ProtobufFileSerde implements BuiltInSerde {
@@ -153,7 +153,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
     return new Deserializer() {
       @SneakyThrows
       @Override
-      public DeserializeResult deserialize(Headers headers, byte[] data) {
+      public DeserializeResult deserialize(RecordHeaders headers, byte[] data) {
         var protoMsg = DynamicMessage.parseFrom(descriptor, new ByteArrayInputStream(data));
         byte[] jsonFromProto = ProtobufSchemaUtils.toJson(protoMsg);
         var result = new String(jsonFromProto);

@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.PropertyResolverImpl;
+import com.provectus.kafka.ui.serdes.RecordHeadersImpl;
 import java.util.Base64;
-import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -40,7 +40,7 @@ class Base64SerdeTest {
   @EnumSource
   void deserializesDataAsBase64Bytes(Serde.Target type) {
     var deserializer = base64Serde.deserializer("anyTopic", type);
-    var result = deserializer.deserialize(new RecordHeaders(), TEST_BYTES);
+    var result = deserializer.deserialize(new RecordHeadersImpl(), TEST_BYTES);
     assertThat(result.getResult()).isEqualTo(TEST_BYTES_BASE64_ENCODED);
     assertThat(result.getType()).isEqualTo(DeserializeResult.Type.STRING);
     assertThat(result.getAdditionalProperties()).isEmpty();

@@ -8,7 +8,7 @@ import com.google.common.primitives.UnsignedLong;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.PropertyResolverImpl;
-import org.apache.kafka.common.header.internals.RecordHeaders;
+import com.provectus.kafka.ui.serdes.RecordHeadersImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -50,7 +50,7 @@ class UInt64SerdeTest {
   void deserializeUses8BytesUIn64tRepresentation(Serde.Target type) {
     var deserializer = serde.deserializer("anyTopic", type);
     byte[] uint64Bytes = Longs.toByteArray(UnsignedLong.MAX_VALUE.longValue());
-    var result = deserializer.deserialize(new RecordHeaders(), uint64Bytes);
+    var result = deserializer.deserialize(new RecordHeadersImpl(), uint64Bytes);
     assertThat(result.getResult()).isEqualTo(UnsignedLong.MAX_VALUE.toString());
     assertThat(result.getType()).isEqualTo(DeserializeResult.Type.JSON);
   }

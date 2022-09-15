@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.serdes.builtin;
 
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
+import com.provectus.kafka.ui.serde.api.RecordHeaders;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import java.util.Base64;
@@ -61,7 +62,7 @@ public class Base64Serde implements BuiltInSerde {
     var encoder = Base64.getEncoder();
     return new Deserializer() {
       @Override
-      public DeserializeResult deserialize(Headers headers, byte[] data) {
+      public DeserializeResult deserialize(RecordHeaders headers, byte[] data) {
         return new DeserializeResult(
             encoder.encodeToString(data),
             DeserializeResult.Type.STRING,

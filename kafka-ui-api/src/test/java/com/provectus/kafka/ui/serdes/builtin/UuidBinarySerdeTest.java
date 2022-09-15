@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.PropertyResolverImpl;
+import com.provectus.kafka.ui.serdes.RecordHeadersImpl;
 import java.nio.ByteBuffer;
 import java.util.UUID;
-import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,7 +50,7 @@ class UuidBinarySerdeTest {
       bb.putLong(uuid.getMostSignificantBits());
       bb.putLong(uuid.getLeastSignificantBits());
 
-      var result = serde.deserializer("anyTopic", type).deserialize(new RecordHeaders(), bb.array());
+      var result = serde.deserializer("anyTopic", type).deserialize(new RecordHeadersImpl(), bb.array());
       assertThat(result.getType()).isEqualTo(DeserializeResult.Type.STRING);
       assertThat(result.getAdditionalProperties()).isEmpty();
       assertThat(result.getResult()).isEqualTo(uuid.toString());
@@ -91,7 +91,7 @@ class UuidBinarySerdeTest {
       bb.putLong(uuid.getLeastSignificantBits());
       bb.putLong(uuid.getMostSignificantBits());
 
-      var result = serde.deserializer("anyTopic", type).deserialize(new RecordHeaders(), bb.array());
+      var result = serde.deserializer("anyTopic", type).deserialize(new RecordHeadersImpl(), bb.array());
       assertThat(result.getType()).isEqualTo(DeserializeResult.Type.STRING);
       assertThat(result.getAdditionalProperties()).isEmpty();
       assertThat(result.getResult()).isEqualTo(uuid.toString());
