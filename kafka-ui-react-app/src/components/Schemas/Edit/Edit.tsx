@@ -124,7 +124,7 @@ const Edit: React.FC = () => {
                     value={schema.schemaType}
                     onChange={onChange}
                     minWidth="100%"
-                    disabled={isSubmitting}
+                    disabled
                     options={Object.keys(SchemaType).map((type) => ({
                       value: type,
                       label: type,
