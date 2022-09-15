@@ -898,7 +898,7 @@ paths:
     post:
       tags:
         - Schemas
-      summary: create a new subject schema
+      summary: create a new subject schema or update existing subject schema
       operationId: createNewSchema
       parameters:
         - name: clusterName
@@ -2594,6 +2594,7 @@ components:
 
     NewSchemaSubject:
       type: object
+      description: should be set for creating/updating schema subject
       properties:
         subject:
           type: string
@@ -2601,6 +2602,7 @@ components:
           type: string
         schemaType:
           $ref: '#/components/schemas/SchemaType'
+          description: upon updating a schema, the type of an existing schema can't be changed
       required:
         - subject
         - schema
@@ -2624,6 +2626,7 @@ components:
 
     SchemaType:
       type: string
+      description: upon updating a schema, the type of an existing schema can't be changed
       enum:
         - AVRO
         - JSON
