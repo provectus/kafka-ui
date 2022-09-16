@@ -27,9 +27,13 @@ import {
   schemaUpdated,
 } from 'redux/reducers/schemas/schemasSlice';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import { FormError } from 'components/common/Input/Input.styled';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { ErrorMessage } from '@hookform/error-message';
+import { showServerError } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { schemasApiClient } from 'lib/api';
-import { showServerError } from 'lib/errorHandling';
+import { topicFormValidationSchema } from 'lib/yupExtended';
 
 import * as S from './Edit.styled';
 
@@ -38,9 +42,12 @@ const Edit: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
-  const methods = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
+  const methods = useForm<NewSchemaSubjectRaw>({
+    mode: 'onChange',
+    resolver: yupResolver(topicFormValidationSchema),
+  });
   const {
-    formState: { isDirty, isSubmitting, dirtyFields },
+    formState: { isSubmitting, dirtyFields, errors },
     control,
     handleSubmit,
   } = methods;
@@ -188,12 +195,15 @@ const Edit: React.FC = () => {
                     />
                   )}
                 />
+                <FormError>
+                  <ErrorMessage errors={errors} name="newSchema" />
+                </FormError>
               </S.EditorContainer>
               <Button
                 buttonType="primary"
                 buttonSize="M"
                 type="submit"
-                disabled={!isDirty || isSubmitting}
+                disabled={!!errors.newSchema}
               >
                 Submit
               </Button>

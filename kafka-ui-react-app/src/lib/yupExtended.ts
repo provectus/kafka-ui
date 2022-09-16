@@ -10,6 +10,7 @@ declare module 'yup' {
     TOut extends TType = TType
   > extends yup.BaseSchema<TType, TContext, TOut> {
     isJsonObject(): StringSchema<TType, TContext>;
+    isObjectScopeOut(): StringSchema<TType, TContext>;
   }
 }
 
@@ -31,6 +32,15 @@ export const isValidJsonObject = (value?: string) => {
   return false;
 };
 
+export const isValidObjectScopeOut = (value?: string) => {
+  const lastLetter = value?.slice(-1);
+
+  if (lastLetter !== '}') {
+    return false;
+  }
+  return true;
+};
+
 const isJsonObject = () => {
   return yup.string().test(
     'isJsonObject',
@@ -40,7 +50,17 @@ const isJsonObject = () => {
   );
 };
 
+const isObjectScopeOut = () => {
+  return yup.string().test(
+    'isObjectScopeOut',
+    // eslint-disable-next-line no-template-curly-in-string
+    'That invalid data was filled',
+    isValidObjectScopeOut
+  );
+};
+
 yup.addMethod(yup.string, 'isJsonObject', isJsonObject);
+yup.addMethod(yup.string, 'isObjectScopeOut', isObjectScopeOut);
 
 export default yup;
 
@@ -88,4 +108,5 @@ export const topicFormValidationSchema = yup.object().shape({
       value: yup.string().required('Value is required'),
     })
   ),
+  newSchema: yup.string().required().isObjectScopeOut(),
 });
