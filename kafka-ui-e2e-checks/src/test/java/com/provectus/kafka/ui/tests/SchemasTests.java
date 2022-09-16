@@ -84,8 +84,8 @@ public class SchemasTests extends BaseTest {
         pages.schemaRegistry.openSchema(SCHEMA_AVRO_API_UPDATE)
                 .waitUntilScreenReady()
                 .openEditSchema();
-        Assertions.assertTrue(SchemaEditView.isSchemaDropDownDisabled(),"isSchemaDropDownDisabled()");
-        SchemaEditView.selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
+        Assertions.assertTrue(new SchemaEditView().isSchemaDropDownDisabled(),"isSchemaDropDownDisabled()");
+        new SchemaEditView().selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(PATH_AVRO_FOR_UPDATE))
                 .clickSubmit()
                 .waitUntilScreenReady()
