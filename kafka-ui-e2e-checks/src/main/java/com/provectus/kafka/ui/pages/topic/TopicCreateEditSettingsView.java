@@ -13,7 +13,7 @@ public class TopicCreateEditSettingsView {
 
     protected SelenideElement timeToRetain = $(By.cssSelector("input#timeToRetain"));
     protected SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
-    protected SelenideElement minInSyncReplicasFld = $("input[name=minInsyncReplicas]");
+    protected SelenideElement minInSyncReplicasFld = $x("//input[@name='minInSyncReplicas']");
 
     @Step
     public TopicCreateEditSettingsView setTopicName(String topicName) {

@@ -18,7 +18,7 @@ import static com.codeborne.selenide.Selenide.*;
 public class TopicView {
 
     private static final String path = "/ui/clusters/%s/topics/%s";
-    private final SelenideElement dotMenuHeader = $$(".dropdown.is-right button").first();
+    private final SelenideElement dotMenuHeader = $x("//button[@aria-label = 'Dropdown Toggle']");
     private final SelenideElement dotMenuFooter = $$(".dropdown.is-right button").get(1);
 
     @Step
@@ -36,7 +36,7 @@ public class TopicView {
     @Step
     public TopicCreateEditSettingsView openEditSettings() {
         BrowserUtils.javaExecutorClick(dotMenuHeader);
-        $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() + "']").click();
+        $x("//li[@role = 'menuitem'][text()= 'Edit settings']").click();
         return new TopicCreateEditSettingsView();
     }
 
