@@ -9,6 +9,7 @@ import TopicMessagesContext, {
 import {
   topicMessagePayload,
   topicMessagesMetaPayload,
+  topicSergePayload,
 } from 'redux/reducers/topicMessages/__test__/fixtures';
 
 const mockTopicsMessages: TopicMessage[] = [{ ...topicMessagePayload }];
@@ -51,6 +52,9 @@ describe('MessagesTable', () => {
             messages,
             meta: {
               ...topicMessagesMetaPayload,
+            },
+            serdes: {
+              ...topicSergePayload,
             },
             isFetching: !!isFetching,
           },

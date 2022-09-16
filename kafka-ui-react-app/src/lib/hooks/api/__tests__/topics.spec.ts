@@ -55,13 +55,6 @@ describe('Topics hooks', () => {
     );
     await expectQueryWorks(mock, result);
   });
-  it('handles useTopicMessageSchema', async () => {
-    const mock = fetchMock.getOnce(`${topicPath}/messages/schema`, {});
-    const { result } = renderQueryHook(() =>
-      hooks.useTopicMessageSchema(topicParams)
-    );
-    await expectQueryWorks(mock, result);
-  });
   describe('useTopicAnalysis', () => {
     it('handles useTopicAnalysis', async () => {
       const mock = fetchMock.getOnce(`${topicPath}/analysis`, {});

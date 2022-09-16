@@ -17,7 +17,6 @@ import FilterModal, {
 } from 'components/Topics/Topic/Messages/Filters/FilterModal';
 import { SeekDirectionOptions } from 'components/Topics/Topic/Messages/Messages';
 import {
-  GetSerdesRequest,
   MessageFilterType,
   Partition,
   SeekDirection,
@@ -38,7 +37,11 @@ import omitBy from 'lodash/omitBy';
 import React, { useContext } from 'react';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { TopicName } from 'redux/interfaces';
+import {
+  fetchTopicSerdes,
+  setTopicSerdes,
+} from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { useAppDispatch } from 'lib/hooks/redux';
 
 import * as S from './Filters.styled';
 import {
@@ -59,12 +62,6 @@ export interface FiltersProps {
   updatePhase(phase: string): void;
   updateMeta(meta: TopicMessageConsuming): void;
   setIsFetching(status: boolean): void;
-  setTopicSerdes(serdes: TopicSerdeSuggestion): void;
-  fetchTopicSerdes: AsyncThunk<
-    { topicSerdes: TopicSerdeSuggestion; topicName: TopicName },
-    GetSerdesRequest,
-    Record<string, unknown>
-  >;
   serdes: TopicSerdeSuggestion;
 }
 
@@ -95,13 +92,12 @@ const Filters: React.FC<FiltersProps> = ({
   updatePhase,
   updateMeta,
   setIsFetching,
-  setTopicSerdes,
-  fetchTopicSerdes,
   serdes,
 }) => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const { data: topic } = useTopicDetails({ clusterName, topicName });
 
@@ -354,17 +350,14 @@ const Filters: React.FC<FiltersProps> = ({
   }, [serdes]);
 
   React.useEffect(() => {
-    const init = async () => {
-      const topSerdesAction = await fetchTopicSerdes({
+    dispatch(
+      fetchTopicSerdes({
         topicName,
         clusterName,
         use: SerdeUsage.SERIALIZE,
-      });
-      setTopicSerdes(topSerdesAction);
-    };
-
-    init();
-  }, [fetchTopicSerdes, topicName, clusterName]);
+      })
+    );
+  }, [topicName, clusterName]);
 
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {

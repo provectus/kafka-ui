@@ -11,8 +11,8 @@ import validateMessage from 'components/Topics/Topic/SendMessage/validateMessage
 import { externalTopicPayload, topicMessageSchema } from 'lib/fixtures/topics';
 import {
   useSendMessage,
+  useMessageSerdes,
   useTopicDetails,
-  useTopicMessageSchema,
 } from 'lib/hooks/api/topics';
 
 import Mock = jest.Mock;
@@ -43,7 +43,7 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
-  useTopicMessageSchema: jest.fn(),
+  useMessageSerdes: jest.fn(),
   useSendMessage: jest.fn(),
 }));
 
@@ -65,7 +65,7 @@ const renderComponent = async () => {
 const renderAndSubmitData = async (error: string[] = []) => {
   await renderComponent();
   await act(() => {
-    userEvent.click(screen.getByRole('listbox'));
+    userEvent.click(screen.getAllByRole('listbox')[0]);
   });
   await act(() => {
     userEvent.click(screen.getAllByRole('option')[1]);
@@ -89,8 +89,9 @@ describe('SendMessage', () => {
 
   describe('when schema is fetched', () => {
     beforeEach(() => {
-      (useTopicMessageSchema as jest.Mock).mockImplementation(() => ({
-        data: topicMessageSchema,
+      (useMessageSerdes as jest.Mock).mockImplementation(() => ({
+        key: [topicMessageSchema.key],
+        value: [topicMessageSchema.value],
       }));
     });
 
@@ -119,7 +120,7 @@ describe('SendMessage', () => {
 
   describe('when schema is empty', () => {
     beforeEach(() => {
-      (useTopicMessageSchema as jest.Mock).mockImplementation(() => ({
+      (useMessageSerdes as jest.Mock).mockImplementation(() => ({
         data: undefined,
       }));
     });

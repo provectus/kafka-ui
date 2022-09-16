@@ -12,6 +12,7 @@ import {
 } from 'redux/interfaces';
 import {
   CreateTopicMessage,
+  GetSerdesRequest,
   GetTopicDetailsRequest,
   GetTopicsRequest,
   Topic,
@@ -57,6 +58,20 @@ export function useTopicConfig(props: GetTopicDetailsRequest) {
 export function useTopicConsumerGroups(props: GetTopicDetailsRequest) {
   return useQuery(topicKeys.consumerGroups(props), () =>
     consumerGroupsApiClient.getTopicConsumerGroups(props)
+  );
+}
+
+export function useMessageSerdes({
+  clusterName,
+  topicName,
+  use,
+}: GetSerdesRequest) {
+  return useQuery(['clusters', clusterName, 'topics'], () =>
+    messagesApi.getSerdes({
+      clusterName,
+      topicName,
+      use,
+    })
   );
 }
 
@@ -215,11 +230,6 @@ export function useRecreateTopic(props: GetTopicDetailsRequest) {
   });
 }
 
-export function useTopicMessageSchema(props: GetTopicDetailsRequest) {
-  return useQuery(topicKeys.schema(props), () =>
-    messagesApi.getTopicSchema(props)
-  );
-}
 export function useSendMessage(props: GetTopicDetailsRequest) {
   const client = useQueryClient();
   return useMutation(

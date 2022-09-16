@@ -8,10 +8,8 @@ import {
 } from 'redux/reducers/topicMessages/selectors';
 import {
   addTopicMessage,
-  fetchTopicSerdes,
   resetTopicMessages,
   setTopicMessagesFetchingStatus,
-  setTopicSerdes,
   updateTopicMessagesMeta,
   updateTopicMessagesPhase,
 } from 'redux/reducers/topicMessages/topicMessagesSlice';
@@ -31,8 +29,6 @@ const mapDispatchToProps = {
   updatePhase: updateTopicMessagesPhase,
   updateMeta: updateTopicMessagesMeta,
   setIsFetching: setTopicMessagesFetchingStatus,
-  setTopicSerdes,
-  fetchTopicSerdes,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Filters);

@@ -1,4 +1,3 @@
-import { TopicMessageSchema } from 'generated-sources';
 import Ajv, { DefinedError } from 'ajv/dist/2020';
 import upperFirst from 'lodash/upperFirst';
 
@@ -49,7 +48,14 @@ const validateBySchema = (
 const validateMessage = (
   key: string,
   content: string,
-  messageSchema: TopicMessageSchema | undefined
+  messageSchema: {
+    key?: {
+      schema?: string;
+    };
+    value?: {
+      schema?: string;
+    };
+  }
 ): string[] => [
   ...validateBySchema(key, messageSchema?.key?.schema, 'key'),
   ...validateBySchema(content, messageSchema?.value?.schema, 'content'),

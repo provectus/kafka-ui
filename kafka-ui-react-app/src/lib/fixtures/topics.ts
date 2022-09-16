@@ -4,7 +4,6 @@ import {
   ConsumerGroupState,
   Topic,
   TopicConfig,
-  MessageSchemaSourceEnum,
   TopicAnalysis,
 } from 'generated-sources';
 
@@ -164,7 +163,7 @@ export const topicConfigPayload: TopicConfig[] = [
 export const topicMessageSchema = {
   key: {
     name: 'key',
-    source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
+    preferred: true,
     schema: `{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "http://example.com/myURI.schema.json",
@@ -187,7 +186,7 @@ export const topicMessageSchema = {
   },
   value: {
     name: 'value',
-    source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
+    preferred: true,
     schema: `{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "http://example.com/myURI1.schema.json",

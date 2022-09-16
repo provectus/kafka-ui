@@ -48,6 +48,20 @@ export const initialState: TopicMessagesState = {
   isFetching: false,
 };
 
+export const fetchTopicSerdes = createAsyncThunk<
+  { topicSerdes: TopicSerdeSuggestion; topicName: TopicName },
+  GetSerdesRequest
+>('topic/fetchTopicSerdes', async (payload, { rejectWithValue }) => {
+  try {
+    const { topicName } = payload;
+    const topicSerdes = await messagesApiClient.getSerdes(payload);
+
+    return { topicSerdes, topicName };
+  } catch (err) {
+    return rejectWithValue(await getResponse(err as Response));
+  }
+});
+
 const topicMessagesSlice = createSlice({
   name: 'topicMessages',
   initialState,
@@ -82,21 +96,12 @@ const topicMessagesSlice = createSlice({
     builder.addCase(clearTopicMessages.fulfilled, (state) => {
       state.messages = [];
     });
+    builder.addCase(fetchTopicSerdes.fulfilled, (state, { payload }) => {
+      if (payload?.topicSerdes) {
+        state.serdes = payload.topicSerdes;
+      }
+    });
   },
-});
-
-export const fetchTopicSerdes = createAsyncThunk<
-  { topicSerdes: TopicSerdeSuggestion; topicName: TopicName },
-  GetSerdesRequest
->('topic/fetchTopicSerdes', async (payload, { rejectWithValue }) => {
-  try {
-    const { topicName } = payload;
-    const topicSerdes = await messagesApiClient.getSerdes(payload);
-
-    return { topicSerdes, topicName };
-  } catch (err) {
-    return rejectWithValue(await getResponse(err as Response));
-  }
 });
 
 export const {

@@ -2,6 +2,7 @@ import {
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageTimestampTypeEnum,
+  TopicSerdeSuggestion,
 } from 'generated-sources';
 
 export const topicMessagePayload: TopicMessage = {
@@ -26,4 +27,9 @@ export const topicMessagesMetaPayload: TopicMessageConsuming = {
   elapsedMs: 440,
   messagesConsumed: 2301,
   isCancelled: false,
+};
+
+export const topicSergePayload: TopicSerdeSuggestion = {
+  key: [{ name: 'key', description: ' test key description' }],
+  value: [{ name: 'value', description: ' test value description' }],
 };

@@ -1,28 +1,23 @@
+import React from 'react';
 import { Button } from 'components/common/Button/Button';
 import Editor from 'components/common/Editor/Editor';
 import Heading from 'components/common/heading/Heading.styled';
 import Select, { SelectOption } from 'components/common/Select/Select';
 import { SerdeUsage, TopicSerdeSuggestion } from 'generated-sources';
 import jsf from 'json-schema-faker';
-import { messagesApiClient } from 'lib/api';
 import { showAlert } from 'lib/errorHandling';
 import {
+  useMessageSerdes,
   useSendMessage,
   useTopicDetails,
-  useTopicMessageSchema,
 } from 'lib/hooks/api/topics';
 import useAppParams from 'lib/hooks/useAppParams';
 import {
   clusterTopicMessagesRelativePath,
   RouteParamsClusterTopic,
 } from 'lib/paths';
-import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import {
-  fetchTopicSerdes,
-  setTopicSerdes,
-} from 'redux/reducers/topicMessages/topicMessagesSlice';
 
 import * as S from './SendMessage.styled';
 import validateMessage from './validateMessage';
@@ -40,10 +35,12 @@ const SendMessage: React.FC = () => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const navigate = useNavigate();
   const { data: topic } = useTopicDetails({ clusterName, topicName });
-  const { data: messageSchema } = useTopicMessageSchema({
-    clusterName,
+  const { data: serdes } = useMessageSerdes({
     topicName,
+    clusterName,
+    use: SerdeUsage.SERIALIZE,
   });
+
   const sendMessage = useSendMessage({ clusterName, topicName });
 
   jsf.option('fillProperties', false);
@@ -61,26 +58,44 @@ const SendMessage: React.FC = () => {
   });
 
   const keyDefaultValue = React.useMemo(() => {
-    if (!messageSchema) {
+    if (!selectedSerdeKey || !serdeOptions) {
       return undefined;
     }
-    return JSON.stringify(
-      jsf.generate(JSON.parse(messageSchema.key.schema)),
-      null,
-      '\t'
+
+    const selectedSerde = serdeOptions.key?.find(
+      (keyItem) => keyItem.name === selectedSerdeKey
     );
-  }, [messageSchema]);
+
+    if (selectedSerde && selectedSerde?.schema) {
+      return JSON.stringify(
+        jsf.generate(JSON.parse(selectedSerde?.schema)),
+        null,
+        '\t'
+      );
+    }
+
+    return undefined;
+  }, [selectedSerdeKey]);
 
   const contentDefaultValue = React.useMemo(() => {
-    if (!messageSchema) {
+    if (!selectedSerdeValue || !serdeOptions) {
       return undefined;
     }
-    return JSON.stringify(
-      jsf.generate(JSON.parse(messageSchema.value.schema)),
-      null,
-      '\t'
+
+    const selectedSerde = serdeOptions.key?.find(
+      (keyItem) => keyItem.name === selectedSerdeValue
     );
-  }, [messageSchema]);
+
+    if (selectedSerde && selectedSerde?.schema) {
+      return JSON.stringify(
+        jsf.generate(JSON.parse(selectedSerde?.schema)),
+        null,
+        '\t'
+      );
+    }
+
+    return undefined;
+  }, [selectedSerdeValue]);
 
   const {
     handleSubmit,
@@ -97,7 +112,7 @@ const SendMessage: React.FC = () => {
     },
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     reset({
       key: keyDefaultValue,
       content: contentDefaultValue,
@@ -105,27 +120,15 @@ const SendMessage: React.FC = () => {
   }, [keyDefaultValue, contentDefaultValue, reset]);
 
   React.useEffect(() => {
-    const init = async () => {
-      const serdes = await messagesApiClient.getSerdes({
-        topicName,
-        clusterName,
-        use: SerdeUsage.SERIALIZE,
-      });
-
-      if (serdes.key && serdes.value) {
-        setSerdeOptions(serdes);
-      }
-    };
-
-    init();
-  }, [fetchTopicSerdes, setTopicSerdes, topicName, clusterName]);
+    if (serdes?.key && serdes?.value) {
+      setSerdeOptions(serdes);
+    }
+  }, [serdes]);
 
   React.useEffect(() => {
     if (serdeOptions != null && serdeOptions.key && serdeOptions.value) {
-      setSerdeOptions(serdeOptions);
-
-      const preferredKeySerde = serdeOptions.key.find((k) => k.preferred);
-      const preferredValueSerde = serdeOptions.value.find((v) => v.preferred);
+      const preferredKeySerde = serdeOptions?.key?.find((k) => k.preferred);
+      const preferredValueSerde = serdeOptions?.value?.find((v) => v.preferred);
 
       if (
         typeof preferredKeySerde !== 'undefined' &&
@@ -142,7 +145,38 @@ const SendMessage: React.FC = () => {
     content: string;
     headers: string;
     partition: number;
+    keySerde: string;
+    valueSerde: string;
   }) => {
+    const { keySerde, valueSerde } = data;
+    const messageSchema: {
+      key?: {
+        schema?: string;
+      };
+      value?: {
+        schema?: string;
+      };
+    } = {};
+
+    if (keySerde && serdeOptions) {
+      const selectedKeySerde = serdeOptions.key?.find(
+        (keyItem) => keyItem.name === keySerde
+      );
+
+      messageSchema.key = {
+        schema: selectedKeySerde?.schema,
+      };
+    }
+
+    if (valueSerde && serdeOptions) {
+      const selectedValueSerde = serdeOptions.key?.find(
+        (keyItem) => keyItem.name === valueSerde
+      );
+      messageSchema.value = {
+        schema: selectedValueSerde?.schema,
+      };
+    }
+
     if (messageSchema) {
       const { partition, key, content } = data;
       const errors = validateMessage(key, content, messageSchema);
