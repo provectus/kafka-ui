@@ -13,19 +13,19 @@ public class Schema {
     private String name,valuePath;
     private SchemaType type;
 
-    public static Schema getSchemaAvro(){
+    public static Schema createSchemaAvro(){
         return new Schema().setName(randomAlphabetic(10))
                 .setType(SchemaType.AVRO)
                 .setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schema_avro_value.json");
     }
 
-    public static Schema getSchemaJson(){
+    public static Schema createSchemaJson(){
         return new Schema().setName(randomAlphabetic(10))
                 .setType(SchemaType.JSON)
                 .setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schema_Json_Value.json");
     }
 
-    public static Schema getSchemaProtobuf(){
+    public static Schema createSchemaProtobuf(){
         return new Schema().setName(randomAlphabetic(10))
                 .setType(SchemaType.PROTOBUF)
                 .setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schema_protobuf_value.txt");
