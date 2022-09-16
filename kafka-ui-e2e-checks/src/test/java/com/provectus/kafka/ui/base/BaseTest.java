@@ -41,7 +41,7 @@ public class BaseTest {
   protected Pages pages = Pages.INSTANCE;
   protected Helpers helpers = Helpers.INSTANCE;
 
-  private Screenshooter screenshooter = new Screenshooter();
+  private final Screenshooter screenshooter = new Screenshooter();
 
   protected static BrowserWebDriverContainer<?> webDriverContainer = null;
 
