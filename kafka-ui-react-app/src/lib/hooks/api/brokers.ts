@@ -5,7 +5,7 @@ import { ClusterName } from 'redux/interfaces';
 interface UpdateBrokerConfigProps {
   name: string;
   brokerConfigItem: {
-    value: string | null;
+    value?: string;
   };
 }
 
