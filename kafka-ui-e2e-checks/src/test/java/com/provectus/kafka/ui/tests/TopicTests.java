@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.tests;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.ApiHelper;
 import com.provectus.kafka.ui.helpers.Helpers;
+import com.provectus.kafka.ui.models.Topic;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.topic.TopicView;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
@@ -20,14 +21,21 @@ import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
 public class TopicTests extends BaseTest {
     private static final long SUITE_ID = 2;
     private static final String SUITE_TITLE = "Topics";
-    private static final String TOPIC_NAME_FOR_UPDATE = "topic-to-update";
+    private static final Topic TOPIC_FOR_UPDATE = new Topic()
+            .setName("topic-to-update")
+            .setCompactPolicyValue("Compact")
+            .setTimeToRetainData("604800001")
+            .setMaxSizeOnDisk("20 GB")
+            .setMaxMessageBytes("1000020")
+            .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
+            .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
     private static final String TOPIC_NAME_FOR_DELETE = "topic-to-delete";
     private static final List<String> TOPIC_NAME_LIST = new ArrayList<>();
 
     @BeforeAll
     public static void beforeAll() {
         ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
-        TOPIC_NAME_LIST.addAll(List.of(TOPIC_NAME_FOR_UPDATE, TOPIC_NAME_FOR_DELETE));
+        TOPIC_NAME_LIST.addAll(List.of(TOPIC_FOR_UPDATE.getName(), TOPIC_NAME_FOR_DELETE));
         TOPIC_NAME_LIST.forEach(topicName -> apiHelper.createTopic(CLUSTER_NAME, topicName));
     }
 
@@ -58,31 +66,27 @@ public class TopicTests extends BaseTest {
     @CaseId(197)
     @Test
     public void updateTopic() {
-        String compactPolicyValue = "Compact";
-        String updatedTimeToRetainValue = "604800001";
-        String updatedMaxSizeOnDisk = "20 GB";
-        String updatedMaxMessageBytes = "1000020";
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        pages.openTopicView(CLUSTER_NAME, TOPIC_NAME_FOR_UPDATE)
+        pages.openTopicView(CLUSTER_NAME, TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
                 .openEditSettings()
-                .selectCleanupPolicy(compactPolicyValue)
+                .selectCleanupPolicy(TOPIC_FOR_UPDATE.getCompactPolicyValue())
                 .setMinInsyncReplicas(10)
-                .setTimeToRetainDataInMs(updatedTimeToRetainValue)
-                .setMaxSizeOnDiskInGB(updatedMaxSizeOnDisk)
-                .setMaxMessageBytes(updatedMaxMessageBytes)
+                .setTimeToRetainDataInMs(TOPIC_FOR_UPDATE.getTimeToRetainData())
+                .setMaxSizeOnDiskInGB(TOPIC_FOR_UPDATE.getMaxSizeOnDisk())
+                .setMaxMessageBytes(TOPIC_FOR_UPDATE.getMaxMessageBytes())
                 .sendData()
                 .waitUntilScreenReady();
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        pages.openTopicView(CLUSTER_NAME, TOPIC_NAME_FOR_UPDATE)
+        pages.openTopicView(CLUSTER_NAME, TOPIC_FOR_UPDATE.getName())
                 .openEditSettings()
                 // Assertions
-                .cleanupPolicyIs(compactPolicyValue)
-                .timeToRetainIs(updatedTimeToRetainValue)
-                .maxSizeOnDiskIs(updatedMaxSizeOnDisk)
-                .maxMessageBytesIs(updatedMaxMessageBytes);
+                .cleanupPolicyIs(TOPIC_FOR_UPDATE.getCompactPolicyValue())
+                .timeToRetainIs(TOPIC_FOR_UPDATE.getTimeToRetainData())
+                .maxSizeOnDiskIs(TOPIC_FOR_UPDATE.getMaxSizeOnDisk())
+                .maxMessageBytesIs(TOPIC_FOR_UPDATE.getMaxMessageBytes());
     }
 
     @DisplayName("should delete topic")
@@ -108,19 +112,17 @@ public class TopicTests extends BaseTest {
     @CaseId(222)
     @Test
     void produceMessage() {
-        String messageKey = fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt");
-        String messageContent = fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt");
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_NAME_FOR_UPDATE)
+                .openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicView.TopicMenu.MESSAGES)
                 .clickOnButton("Produce Message")
-                .setContentFiled(messageContent)
-                .setKeyField(messageKey)
+                .setContentFiled(TOPIC_FOR_UPDATE.getMessageContent())
+                .setKeyField(TOPIC_FOR_UPDATE.getMessageKey())
                 .submitProduceMessage();
-        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(messageKey));
-        Assertions.assertTrue(pages.topicView.isContentMessageVisible(messageContent.trim()));
+        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(TOPIC_FOR_UPDATE.getMessageKey()));
+        Assertions.assertTrue(pages.topicView.isContentMessageVisible(TOPIC_FOR_UPDATE.getMessageContent().trim()));
     }
 
     @AfterAll
