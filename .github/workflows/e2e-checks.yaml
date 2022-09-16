@@ -38,7 +38,7 @@ jobs:
         id: build_app
         run: |
           mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
-          mvn clean package -Dmaven.test.skip=true ${{ github.event.inputs.extraMavenOptions }}
+          mvn clean package -Pprod -Dmaven.test.skip=true ${{ github.event.inputs.extraMavenOptions }}
       - name: compose app
         id: compose_app
         # use the following command until #819 will be fixed
