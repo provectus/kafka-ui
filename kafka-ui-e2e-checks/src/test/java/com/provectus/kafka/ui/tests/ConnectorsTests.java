@@ -37,15 +37,11 @@ public class ConnectorsTests extends BaseTest {
     @BeforeAll
     public static void beforeAll() {
         ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
-        String PRODUCE_MESSAGE = getResourceAsString("message_content_create_topic.json");
-
+        String produceMessage = getResourceAsString("message_content_create_topic.json");
         TOPIC_NAME_LIST.addAll(List.of(TOPIC_FOR_CREATE_CONNECTOR, TOPIC_FOR_DELETE_CONNECTOR, TOPIC_FOR_UPDATE_CONNECTOR));
-
         TOPIC_NAME_LIST.forEach(topicName -> { apiHelper.createTopic(CLUSTER_NAME, topicName);
-                apiHelper.sendMessage(CLUSTER_NAME, topicName, PRODUCE_MESSAGE," ");});
-
+                apiHelper.sendMessage(CLUSTER_NAME, topicName, produceMessage," ");});
         CONNECTOR_LIST.addAll(List.of(CONNECTOR_FOR_DELETE, CONNECTOR_FOR_UPDATE));
-
         CONNECTOR_LIST.forEach(connector -> apiHelper.createConnector(CLUSTER_NAME, CONNECT_NAME, connector.getName(), connector.getConfig()));
     }
 
@@ -55,7 +51,9 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(42)
     @Test
     public void createConnector() {
-        Connector connectorForCreate = new Connector().setName("sink_postgres_activities_e2e_checks").setConfig(getResourceAsString("config_for_create_connector.json"));
+        Connector connectorForCreate = new Connector()
+                .setName("sink_postgres_activities_e2e_checks")
+                .setConfig(getResourceAsString("config_for_create_connector.json"));
         pages.openConnectorsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .clickCreateConnectorButton()
