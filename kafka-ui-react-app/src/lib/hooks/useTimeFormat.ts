@@ -1,11 +1,10 @@
 import { useContext } from 'react';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
-import { TimeFormatContext } from 'components/contexts/TimeFormatContext';
+import { GlobalSettingsContext } from 'components/contexts/GlobalSettingsContext';
 
-export const useTimeFormat = (
-  timestamp: number | string | Date | undefined
-) => {
-  const { timeStampFormat } = useContext(TimeFormatContext);
+export const useTimeFormat = () => {
+  const { timeStampFormat } = useContext(GlobalSettingsContext);
 
-  return formatTimestamp(timestamp, timeStampFormat);
+  return (timestamp?: number | string | Date) =>
+    formatTimestamp(timestamp, timeStampFormat);
 };

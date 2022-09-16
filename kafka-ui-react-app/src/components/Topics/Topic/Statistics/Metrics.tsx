@@ -22,15 +22,14 @@ import SizeStats from './Indicators/SizeStats';
 import PartitionTable from './PartitionTable';
 
 const Metrics: React.FC = () => {
+  const formatTimestamp = useTimeFormat();
+
   const params = useAppParams<RouteParamsClusterTopic>();
   const [isAnalyzing, setIsAnalyzing] = React.useState(true);
   const analyzeTopic = useAnalyzeTopic(params);
   const cancelTopicAnalysis = useCancelTopicAnalysis(params);
 
   const { data } = useTopicAnalysis(params, isAnalyzing);
-
-  const dateTimeStartedAt = useTimeFormat(data?.progress?.startedAt);
-  const dateTimeFinishedAt = useTimeFormat(data?.result?.finishedAt);
 
   React.useEffect(() => {
     if (data && !data.progress) {
@@ -58,7 +57,7 @@ const Metrics: React.FC = () => {
         </Button>
         <List>
           <Label>Started at</Label>
-          <span>{dateTimeStartedAt}</span>
+          <span>{formatTimestamp(data?.progress?.startedAt)}</span>
           <Label>Scanned messages</Label>
           <span>
             {data.progress.msgsScanned} /{' '}
@@ -79,7 +78,7 @@ const Metrics: React.FC = () => {
   return (
     <>
       <S.ActionsBar>
-        <S.CreatedAt>{dateTimeFinishedAt}</S.CreatedAt>
+        <S.CreatedAt>{formatTimestamp(data?.result?.finishedAt)}</S.CreatedAt>
         <Button
           onClick={async () => {
             await analyzeTopic.mutateAsync();

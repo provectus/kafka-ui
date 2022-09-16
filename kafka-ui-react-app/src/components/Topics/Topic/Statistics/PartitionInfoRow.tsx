@@ -14,6 +14,8 @@ import * as S from './Statistics.styles';
 const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
   row,
 }) => {
+  const formatTimestamp = useTimeFormat();
+
   const {
     totalMsgs,
     minTimestamp,
@@ -26,9 +28,6 @@ const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
     valueSize,
   } = row.original;
 
-  const dateTimeMin = useTimeFormat(minTimestamp);
-  const dateTimeMax = useTimeFormat(maxTimestamp);
-
   return (
     <S.PartitionInfo>
       <div>
@@ -37,9 +36,9 @@ const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
           <Label>Total message</Label>
           <span>{totalMsgs}</span>
           <Label>Min. timestamp</Label>
-          <span>{dateTimeMin}</span>
+          <span>{formatTimestamp(minTimestamp)}</span>
           <Label>Max. timestamp</Label>
-          <span>{dateTimeMax}</span>
+          <span>{formatTimestamp(maxTimestamp)}</span>
           <Label>Null keys amount</Label>
           <span>{nullKeys}</span>
           <Label>Null values amount</Label>

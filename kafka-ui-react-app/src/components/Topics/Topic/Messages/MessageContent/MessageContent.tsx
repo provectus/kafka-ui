@@ -27,7 +27,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
   timestamp,
   timestampType,
 }) => {
-  const dateTime = useTimeFormat(timestamp);
+  const formatTimestamp = useTimeFormat();
 
   const [activeTab, setActiveTab] = React.useState<Tab>('content');
 
@@ -102,7 +102,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
             <S.Metadata>
               <S.MetadataLabel>Timestamp</S.MetadataLabel>
               <span>
-                <S.MetadataValue>{dateTime}</S.MetadataValue>
+                <S.MetadataValue>{formatTimestamp(timestamp)}</S.MetadataValue>
                 <S.MetadataMeta>Timestamp type: {timestampType}</S.MetadataMeta>
               </span>
             </S.Metadata>

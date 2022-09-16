@@ -56,7 +56,6 @@ export const PER_PAGE = 25;
 export const GIT_REPO_LINK = 'https://github.com/provectus/kafka-ui';
 export const GIT_REPO_LATEST_RELEASE_LINK =
   'https://api.github.com/repos/provectus/kafka-ui/releases/latest';
-export const BASE_URL = 'http://pr2583.internal.kafka-ui.provectus.io';
 
 export enum AsyncRequestStatus {
   initial = 'initial',

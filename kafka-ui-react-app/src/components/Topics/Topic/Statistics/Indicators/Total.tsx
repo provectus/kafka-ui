@@ -14,8 +14,7 @@ const Total: React.FC<TopicAnalysisStats> = ({
   approxUniqKeys,
   approxUniqValues,
 }) => {
-  const dateTimeMin = useTimeFormat(minTimestamp);
-  const dateTimeMax = useTimeFormat(maxTimestamp);
+  const formatTimestamp = useTimeFormat();
 
   return (
     <Metrics.Section title="Messages">
@@ -24,7 +23,7 @@ const Total: React.FC<TopicAnalysisStats> = ({
         {`${minOffset} - ${maxOffset}`}
       </Metrics.Indicator>
       <Metrics.Indicator label="Timestamp min-max">
-        {`${dateTimeMin} - ${dateTimeMax}`}
+        {`${formatTimestamp(minTimestamp)} - ${formatTimestamp(maxTimestamp)}`}
       </Metrics.Indicator>
       <Metrics.Indicator label="Null keys">{nullKeys}</Metrics.Indicator>
       <Metrics.Indicator

@@ -19,7 +19,7 @@ import DiscordIcon from 'components/common/Icons/DiscordIcon';
 
 import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
 import { ConfirmContextProvider } from './contexts/ConfirmContext';
-import { TimeFormatContextProvider } from './contexts/TimeFormatContext';
+import { GlobalSettingsProvider } from './contexts/GlobalSettingsContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,7 +48,7 @@ const App: React.FC = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <ConfirmContextProvider>
-          <TimeFormatContextProvider>
+          <GlobalSettingsProvider>
             <GlobalCSS />
             <S.Layout>
               <S.Navbar role="navigation" aria-label="Page Header">
@@ -127,7 +127,7 @@ const App: React.FC = () => {
               </S.Container>
               <Toaster position="bottom-right" />
             </S.Layout>
-          </TimeFormatContextProvider>
+          </GlobalSettingsProvider>
           <ConfirmationModal />
         </ConfirmContextProvider>
       </ThemeProvider>

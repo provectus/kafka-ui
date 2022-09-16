@@ -48,8 +48,7 @@ const Message: React.FC<Props> = ({
     Headers: headers,
     Timestamp: timestamp,
   };
-
-  const dateTime = useTimeFormat(timestamp);
+  const formatTimestamp = useTimeFormat();
 
   const savedMessage = JSON.stringify(savedMessageJson, null, '\t');
   const { copyToClipboard, saveFile } = useDataSaver(
@@ -76,7 +75,7 @@ const Message: React.FC<Props> = ({
         <td>{offset}</td>
         <td>{partition}</td>
         <td>
-          <div>{dateTime}</div>
+          <div>{formatTimestamp(timestamp)}</div>
         </td>
         <StyledDataCell title={key}>{key}</StyledDataCell>
         <StyledDataCell>

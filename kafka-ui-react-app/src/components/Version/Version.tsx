@@ -14,6 +14,8 @@ export interface VesionProps {
 }
 
 const Version: React.FC = () => {
+  const formatTimestamp = useTimeFormat();
+
   const { data: actuatorInfo } = useActuatorInfoStats();
 
   const [latestVersionInfo, setLatestVersionInfo] = useState({
@@ -23,10 +25,12 @@ const Version: React.FC = () => {
 
   const commit = actuatorInfo.git.commit.id;
   const { time, version: tag } = actuatorInfo.build;
-  const dateTime = useTimeFormat(time);
+
   const { outdated, latestTag } = latestVersionInfo;
 
-  const currentVersion = tag.match(VERSION_PATTERN) ? tag : dateTime;
+  const currentVersion = tag.match(VERSION_PATTERN)
+    ? tag
+    : formatTimestamp(time);
 
   useEffect(() => {
     fetch(GIT_REPO_LATEST_RELEASE_LINK)
