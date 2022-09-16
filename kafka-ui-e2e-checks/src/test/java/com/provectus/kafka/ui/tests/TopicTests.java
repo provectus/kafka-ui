@@ -24,14 +24,17 @@ public class TopicTests extends BaseTest {
     private static final Topic topicToUpdate = new Topic().setName("topic-to-update");
     private static final Topic topicToDelete = new Topic().setName("topic-to-delete");
     private static final List<Topic> topicList = new ArrayList<>();
+    private static final Topic keyMessage = new Topic().setMessage(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"));
+    private static final Topic contentMessage = new Topic().setMessage(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+
 //    public static final String TOPIC_TO_UPDATE = "topic-to-update";
 //    public static final String TOPIC_TO_DELETE = "topic-to-delete";
     public static final String COMPACT_POLICY_VALUE = "Compact";
     public static final String UPDATED_TIME_TO_RETAIN_VALUE = "604800001";
     public static final String UPDATED_MAX_SIZE_ON_DISK = "20 GB";
     public static final String UPDATED_MAX_MESSAGE_BYTES = "1000020";
-    private static final String KEY_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/producedkey.txt";
-    private static final String CONTENT_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/testData.txt";
+//    private static final String KEY_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/producedkey.txt";
+//    private static final String CONTENT_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/testData.txt";
 
 
     @BeforeAll
@@ -65,7 +68,7 @@ public class TopicTests extends BaseTest {
                 .topicIsNotVisible(topicForCreate.getName());
         topicList.add(topicForCreate);
     }
-    @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
+//    @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
     @DisplayName("should update a topic")
     @Issue("1500")
     @Suite(suiteId = 2, title = "Topics")
@@ -125,11 +128,11 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicView.TopicMenu.MESSAGES)
                 .clickOnButton("Produce Message")
-                .setContentFiled(fileToString(CONTENT_TO_PRODUCE_MESSAGE))
-                .setKeyField(fileToString(KEY_TO_PRODUCE_MESSAGE))
+                .setContentFiled(contentMessage.getMessage())
+                .setKeyField(keyMessage.getMessage())
                 .submitProduceMessage();
-        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(fileToString(KEY_TO_PRODUCE_MESSAGE)));
-        Assertions.assertTrue(pages.topicView.isContentMessageVisible(fileToString(CONTENT_TO_PRODUCE_MESSAGE).trim()));
+        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(keyMessage.getMessage()));
+        Assertions.assertTrue(pages.topicView.isContentMessageVisible(contentMessage.getMessage().trim()));
     }
 
     @AfterAll
