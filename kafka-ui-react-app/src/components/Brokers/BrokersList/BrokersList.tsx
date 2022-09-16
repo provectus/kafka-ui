@@ -63,7 +63,7 @@ const BrokersList: React.FC = () => {
       <PageHeading text="Brokers" />
       <Metrics.Wrapper>
         <Metrics.Section title="Uptime">
-          <Metrics.Indicator label="Total Broker">
+          <Metrics.Indicator label="Broker Count">
             {brokerCount}
           </Metrics.Indicator>
           <Metrics.Indicator label="Active Controllers">
