@@ -15,7 +15,7 @@ java -Dspring.config.additional-location=<path-to-application-local.yml> -jar <p
 
 > **_NOTE:_**  If you want to get kafka-ui up and running locally quickly without building the jar file manually, then just follow [Running Without Docker Quickly](#run_without_docker_quickly)
 
-> Comment out `com.spotify` plugin in `kafka-ui-api` pom.xml
+> Comment out `docker-maven-plugin` plugin in `kafka-ui-api` pom.xml
 
 - [Command to build the jar](./building.md#cmd_to_build_kafkaui_without_docker)
 
