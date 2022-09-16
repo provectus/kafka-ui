@@ -15,7 +15,7 @@ import static com.codeborne.selenide.Selenide.*;
 @ExtensionMethod(WaitUtils.class)
 public class TopicsList {
 
-    private static final String path = "/ui/clusters/%s/topics";
+    private static final String path = "/ui/clusters/%s/all-topics";
 
     @Step
     public TopicsList goTo(String cluster) {
@@ -26,7 +26,7 @@ public class TopicsList {
     @Step
     public TopicsList waitUntilScreenReady() {
         $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
-        $(By.xpath("//h1[text()='All Topics']")).shouldBe(Condition.visible);
+        $(By.xpath("//h1[text()='Topics']")).shouldBe(Condition.visible);
         return this;
     }
 

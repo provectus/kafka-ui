@@ -22,8 +22,10 @@ const renderComponent = (props: Partial<FilterModalProps> = {}) =>
       deleteFilter={jest.fn()}
       activeFilterHandler={jest.fn()}
       toggleEditModal={jest.fn()}
+      onClickSavedFilters={jest.fn()}
       editFilter={editFilterMock}
       filters={props.filters || filters}
+      isSavedFiltersOpen={false}
       {...props}
     />
   );
@@ -38,8 +40,8 @@ describe('AddFilter component', () => {
 
     it('should test click on Saved Filters redirects to Saved components', () => {
       userEvent.click(screen.getByRole('savedFilterText'));
-      expect(screen.getByText('Saved filters')).toBeInTheDocument();
-      expect(screen.getAllByRole('savedFilter')).toHaveLength(2);
+      expect(screen.getByText('Saved Filters')).toBeInTheDocument();
+      expect(screen.getByRole('savedFilterText')).toBeInTheDocument();
     });
 
     it('info button to be in the document', () => {
@@ -54,16 +56,9 @@ describe('AddFilter component', () => {
       ).toBeInTheDocument();
     });
 
-    it('should test click on return to custom filter redirects to Add filters', async () => {
+    it('should test click on return to custom filter redirects to Saved Filters', async () => {
       userEvent.click(screen.getByRole('savedFilterText'));
 
-      expect(screen.getByText('Saved filters')).toBeInTheDocument();
-      expect(screen.queryByRole('savedFilterText')).not.toBeInTheDocument();
-      expect(screen.getAllByRole('savedFilter')).toHaveLength(2);
-
-      await act(() =>
-        userEvent.click(screen.getByText(/back to custom filters/i))
-      );
       expect(screen.queryByText('Saved filters')).not.toBeInTheDocument();
       expect(screen.getByRole('savedFilterText')).toBeInTheDocument();
     });
@@ -112,6 +107,9 @@ describe('AddFilter component', () => {
     });
 
     it('calls editFilter when edit button is clicked in saved filters', async () => {
+      await act(() => {
+        renderComponent({ isSavedFiltersOpen: true });
+      });
       userEvent.click(screen.getByText('Saved Filters'));
       const index = 0;
       const editButton = screen.getAllByText('Edit')[index];
