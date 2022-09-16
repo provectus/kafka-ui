@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.pages.connector;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
 import com.provectus.kafka.ui.utils.BrowserUtils;
@@ -24,14 +25,16 @@ public class ConnectorsView {
 
     @Step("Open 'Edit Config' of connector")
     public ConnectorUpdateView openEditConfig() {
-        BrowserUtils.javaExecutorClick($x("//button[@type='button']/span[.='Edit Config']"));
+        BrowserUtils.javaExecutorClick($x("//button[text()='Edit Config']"));
         return new ConnectorUpdateView();
     }
 
     @Step("Click 'Delete' button")
     public void clickDeleteButton() {
-        BrowserUtils.javaExecutorClick($x("//span[text()='Delete']"));
-        $(By.xpath("//button[text()='Submit']")).shouldBe(Condition.visible).click();
+        BrowserUtils.javaExecutorClick($x("//button[text()='Delete']"));
+        SelenideElement confirmButton = $x("//div[@role=\"dialog\"]//button[text()='Confirm']");
+        confirmButton.shouldBe(Condition.enabled).click();
+        confirmButton.shouldBe(Condition.disappear);
     }
 
     @Step
