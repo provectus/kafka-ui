@@ -6,6 +6,5 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class Topic {
-
-    private String name,message;
+    private String name, message, compactPolicyValue, timeToRetainData, maxSizeOnDisk, maxMessageBytes, messageKey, messageContent ;
 }
