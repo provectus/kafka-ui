@@ -1,8 +1,7 @@
 import React from 'react';
 import * as Metrics from 'components/common/Metrics';
-import { formatTimestamp } from 'lib/dateTimeHelpers';
-import { useTimeFormatStats } from 'lib/hooks/api/timeFormat';
-import { TimeStampFormat, TopicAnalysisStats } from 'generated-sources';
+import { useTimeFormat } from 'lib/hooks/useTimeFormat';
+import { TopicAnalysisStats } from 'generated-sources';
 
 const Total: React.FC<TopicAnalysisStats> = ({
   totalMsgs,
@@ -15,8 +14,8 @@ const Total: React.FC<TopicAnalysisStats> = ({
   approxUniqKeys,
   approxUniqValues,
 }) => {
-  const { data } = useTimeFormatStats();
-  const { timeStampFormat } = data as TimeStampFormat;
+  const dateTimeMin = useTimeFormat(minTimestamp);
+  const dateTimeMax = useTimeFormat(maxTimestamp);
 
   return (
     <Metrics.Section title="Messages">
@@ -25,10 +24,7 @@ const Total: React.FC<TopicAnalysisStats> = ({
         {`${minOffset} - ${maxOffset}`}
       </Metrics.Indicator>
       <Metrics.Indicator label="Timestamp min-max">
-        {`${formatTimestamp(minTimestamp, timeStampFormat)} - ${formatTimestamp(
-          maxTimestamp,
-          timeStampFormat
-        )}`}
+        {`${dateTimeMin} - ${dateTimeMax}`}
       </Metrics.Indicator>
       <Metrics.Indicator label="Null keys">{nullKeys}</Metrics.Indicator>
       <Metrics.Indicator

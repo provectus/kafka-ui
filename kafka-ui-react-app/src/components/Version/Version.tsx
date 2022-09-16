@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import WarningIcon from 'components/common/Icons/WarningIcon';
 import { gitCommitPath } from 'lib/paths';
-import { TimeStampFormat } from 'generated-sources';
-import { formatTimestamp } from 'lib/dateTimeHelpers';
-import { useTimeFormatStats } from 'lib/hooks/api/timeFormat';
+import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 import { useActuatorInfoStats } from 'lib/hooks/api/actuatorInfo';
 import { GIT_REPO_LATEST_RELEASE_LINK, VERSION_PATTERN } from 'lib/constants';
 
@@ -16,7 +14,6 @@ export interface VesionProps {
 }
 
 const Version: React.FC = () => {
-  const { data: timeFormat } = useTimeFormatStats();
   const { data: actuatorInfo } = useActuatorInfoStats();
 
   const [latestVersionInfo, setLatestVersionInfo] = useState({
@@ -26,11 +23,10 @@ const Version: React.FC = () => {
 
   const commit = actuatorInfo.git.commit.id;
   const { time, version: tag } = actuatorInfo.build;
+  const dateTime = useTimeFormat(time);
   const { outdated, latestTag } = latestVersionInfo;
-  const { timeStampFormat } = timeFormat as TimeStampFormat;
-  const currentVersion = tag.match(VERSION_PATTERN)
-    ? tag
-    : formatTimestamp(time, timeStampFormat);
+
+  const currentVersion = tag.match(VERSION_PATTERN) ? tag : dateTime;
 
   useEffect(() => {
     fetch(GIT_REPO_LATEST_RELEASE_LINK)

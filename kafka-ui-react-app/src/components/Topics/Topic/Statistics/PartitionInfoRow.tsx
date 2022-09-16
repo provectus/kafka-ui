@@ -1,14 +1,13 @@
+import React from 'react';
 import { Row } from '@tanstack/react-table';
-import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import Heading from 'components/common/heading/Heading.styled';
+import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import {
   List,
   Label,
 } from 'components/common/PropertiesList/PropertiesList.styled';
-import { formatTimestamp } from 'lib/dateTimeHelpers';
-import { useTimeFormatStats } from 'lib/hooks/api/timeFormat';
-import { TimeStampFormat, TopicAnalysisStats } from 'generated-sources';
-import React from 'react';
+import { useTimeFormat } from 'lib/hooks/useTimeFormat';
+import { TopicAnalysisStats } from 'generated-sources';
 
 import * as S from './Statistics.styles';
 
@@ -27,8 +26,8 @@ const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
     valueSize,
   } = row.original;
 
-  const { data } = useTimeFormatStats();
-  const { timeStampFormat } = data as TimeStampFormat;
+  const dateTimeMin = useTimeFormat(minTimestamp);
+  const dateTimeMax = useTimeFormat(maxTimestamp);
 
   return (
     <S.PartitionInfo>
@@ -38,9 +37,9 @@ const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
           <Label>Total message</Label>
           <span>{totalMsgs}</span>
           <Label>Min. timestamp</Label>
-          <span>{formatTimestamp(minTimestamp, timeStampFormat)}</span>
+          <span>{dateTimeMin}</span>
           <Label>Max. timestamp</Label>
-          <span>{formatTimestamp(maxTimestamp, timeStampFormat)}</span>
+          <span>{dateTimeMax}</span>
           <Label>Null keys amount</Label>
           <span>{nullKeys}</span>
           <Label>Null values amount</Label>
