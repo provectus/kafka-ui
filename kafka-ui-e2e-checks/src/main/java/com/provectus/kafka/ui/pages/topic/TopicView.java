@@ -17,13 +17,12 @@ import static com.codeborne.selenide.Selenide.*;
 @ExtensionMethod({WaitUtils.class})
 public class TopicView {
 
-    private static final String path = "/ui/clusters/%s/topics/%s";
-    private final SelenideElement dotMenuHeader = $$(".dropdown.is-right button").first();
-    private final SelenideElement dotMenuFooter = $$(".dropdown.is-right button").get(1);
+    private static final String URL_PATH = "/ui/clusters/%s/topics/%s";
+    protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
 
     @Step
     public TopicView goTo(String cluster, String topic) {
-        Selenide.open(TestConfiguration.BASE_WEB_URL + String.format(path, cluster, topic));
+        Selenide.open(TestConfiguration.BASE_WEB_URL + String.format(URL_PATH, cluster, topic));
         return this;
     }
 
@@ -35,7 +34,7 @@ public class TopicView {
 
     @Step
     public TopicCreateEditSettingsView openEditSettings() {
-        BrowserUtils.javaExecutorClick(dotMenuHeader);
+        BrowserUtils.javaExecutorClick(dotMenuBtn);
         $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() + "']").click();
         return new TopicCreateEditSettingsView();
     }
@@ -48,9 +47,11 @@ public class TopicView {
 
     @Step
     public TopicsList deleteTopic() {
-        BrowserUtils.javaExecutorClick(dotMenuHeader);
-        $("#dropdown-menu").$(byLinkText(DotMenuHeaderItems.REMOVE_TOPIC.getValue())).click();
-        $$("div[role=\"dialog\"] button").find(Condition.exactText("Submit")).click();
+        BrowserUtils.javaExecutorClick(dotMenuBtn);
+        $x("//ul[@role='menu']//div[text()='Remove Topic']").click();
+        SelenideElement confirmButton = $x("//div[@role=\"dialog\"]//button[text()='Confirm']");
+        confirmButton.shouldBe(Condition.enabled).click();
+        confirmButton.shouldBe(Condition.disappear);
         return new TopicsList();
     }
 
