@@ -497,36 +497,6 @@ const Filters: React.FC<FiltersProps> = ({
             )}
           </S.SeekTypeSelectorWrapper>
 
-          <Select
-            selectSize="M"
-            onChange={(newValue) => setSelectedSerdeValue(newValue as string)}
-            value={selectedSerdeValue}
-            minWidth="120px"
-            options={
-              serdeOptions && Array.isArray(serdeOptions.value)
-                ? serdeOptions.value.map((valueItem) => ({
-                    label: valueItem.name || '',
-                    value: valueItem.name || '',
-                  }))
-                : []
-            }
-          />
-
-          <Select
-            selectSize="M"
-            onChange={(newKey) => setSelectedSerdeKey(newKey as string)}
-            value={selectedSerdeKey}
-            minWidth="120px"
-            options={
-              serdeOptions && Array.isArray(serdeOptions.key)
-                ? serdeOptions.key.map((keyItem) => ({
-                    label: keyItem.name || '',
-                    value: keyItem.name || '',
-                  }))
-                : []
-            }
-          />
-
           <MultiSelect
             options={partitions.map((p) => ({
               label: `Partition #${p.partition.toString()}`,
@@ -572,6 +542,37 @@ const Filters: React.FC<FiltersProps> = ({
           isLive={isLive}
         />
       </div>
+      <S.ActiveSmartFilterWrapper>
+        <Select
+          selectSize="M"
+          onChange={(newKey) => setSelectedSerdeKey(newKey as string)}
+          value={selectedSerdeKey}
+          minWidth="120px"
+          options={
+            serdeOptions && Array.isArray(serdeOptions.key)
+              ? serdeOptions.key.map((keyItem) => ({
+                  label: keyItem.name || '',
+                  value: keyItem.name || '',
+                }))
+              : []
+          }
+        />
+
+        <Select
+          selectSize="M"
+          onChange={(newValue) => setSelectedSerdeValue(newValue as string)}
+          value={selectedSerdeValue}
+          minWidth="120px"
+          options={
+            serdeOptions && Array.isArray(serdeOptions.value)
+              ? serdeOptions.value.map((valueItem) => ({
+                  label: valueItem.name || '',
+                  value: valueItem.name || '',
+                }))
+              : []
+          }
+        />
+      </S.ActiveSmartFilterWrapper>
       <S.ActiveSmartFilterWrapper>
         <Button buttonType="primary" buttonSize="M" onClick={toggle}>
           <PlusIcon />

@@ -34,7 +34,7 @@ describe('Messages', () => {
       renderComponent();
     });
     it.only('should check default seekDirection if it actually take the value from the url', () => {
-      expect(screen.getAllByRole('listbox')[3]).toHaveTextContent(
+      expect(screen.getAllByRole('listbox')[1]).toHaveTextContent(
         SeekDirectionOptionsObj[SeekDirection.FORWARD].label
       );
     });
