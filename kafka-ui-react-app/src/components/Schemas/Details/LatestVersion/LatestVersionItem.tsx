@@ -14,7 +14,7 @@ const LatestVersionItem: React.FC<LatestVersionProps> = ({
 }) => (
   <S.Wrapper>
     <div>
-      <Heading level={3}>Relevant version</Heading>
+      <Heading level={3}>Actual version</Heading>
       <EditorViewer data={schema} schemaType={schemaType} maxLines={28} />
     </div>
     <div>
