@@ -190,25 +190,6 @@ const Table: React.FC<TableProps<any>> = ({
     return undefined;
   };
 
-  // Prevent Users to paste negative values in go to page field
-  const preventPasteNegative = (event: React.ClipboardEvent) => {
-    const { clipboardData } = event;
-    if (clipboardData != null) {
-      const pastedData = parseFloat(clipboardData.getData('text'));
-
-      if (pastedData < 0) {
-        event.preventDefault();
-      }
-    }
-  };
-
-  // Prevent Users to type negative values in go to page field
-  const preventMinus = (event: React.KeyboardEvent) => {
-    if (event.code === 'Minus') {
-      event.preventDefault();
-    }
-  };
-
   return (
     <>
       {table.getSelectedRowModel().flatRows.length > 0 && Bar && (
@@ -348,12 +329,11 @@ const Table: React.FC<TableProps<any>> = ({
               <span>Go to page:</span>
               <Input
                 type="number"
+                positiveOnly
                 defaultValue={table.getState().pagination.pageIndex + 1}
                 inputSize="M"
                 max={table.getPageCount()}
                 min={1}
-                onKeyPress={preventMinus}
-                onPaste={preventPasteNegative}
                 onChange={({ target: { value } }) => {
                   const index = value ? Number(value) - 1 : 0;
                   table.setPageIndex(index);
