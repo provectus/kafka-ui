@@ -7,6 +7,7 @@ import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.schema.SchemaCreateView;
 import com.provectus.kafka.ui.pages.schema.SchemaEditView;
+import com.provectus.kafka.ui.pages.schema.SchemaView;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
@@ -69,8 +70,7 @@ public class SchemasTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-//        pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_CREATE);
-        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_CREATE));
+        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_CREATE),"isSchemaVisible()");
     }
 
     @DisplayName("should update AVRO schema")
@@ -89,8 +89,8 @@ public class SchemasTests extends BaseTest {
         new SchemaEditView().selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(PATH_AVRO_FOR_UPDATE))
                 .clickSubmit()
-                .waitUntilScreenReady()
-                .isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE);
+                .waitUntilScreenReady();
+        Assertions.assertTrue(new SchemaView().isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE),"isCompatibility()");
     }
 
     @DisplayName("should delete AVRO schema")
@@ -105,8 +105,7 @@ public class SchemasTests extends BaseTest {
         pages.schemaRegistry.openSchema(SCHEMA_AVRO_API)
                 .waitUntilScreenReady()
                 .removeSchema();
-//                .isNotVisible(SCHEMA_AVRO_API);
-        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_API));
+        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(SCHEMA_AVRO_API),"isSchemaVisible()");
     }
 
     @DisplayName("should create JSON schema")
@@ -126,8 +125,7 @@ public class SchemasTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-//        pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_CREATE);
-        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_CREATE));
+        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_CREATE),"isSchemaVisible()");
     }
 
     @DisplayName("should delete JSON schema")
@@ -142,8 +140,7 @@ public class SchemasTests extends BaseTest {
         pages.schemaRegistry.openSchema(SCHEMA_JSON_API)
                 .waitUntilScreenReady()
                 .removeSchema();
-//                .isNotVisible(SCHEMA_JSON_API);
-        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_API));
+        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(SCHEMA_JSON_API),"isSchemaVisible()");
     }
 
     @DisplayName("should create PROTOBUF schema")
@@ -163,8 +160,7 @@ public class SchemasTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-//        pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_CREATE);
-        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_CREATE));
+        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_CREATE),"isSchemaVisible()");
     }
 
     @DisplayName("should delete PROTOBUF schema")
@@ -179,7 +175,6 @@ public class SchemasTests extends BaseTest {
         pages.schemaRegistry.openSchema(SCHEMA_PROTOBUF_API)
                 .waitUntilScreenReady()
                 .removeSchema();
-//                .isNotVisible(SCHEMA_PROTOBUF_API);
-        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_API));
+        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(SCHEMA_PROTOBUF_API),"isSchemaVisible()");
     }
 }

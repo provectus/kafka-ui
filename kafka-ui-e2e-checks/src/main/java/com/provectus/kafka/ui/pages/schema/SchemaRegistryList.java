@@ -12,6 +12,7 @@ import static com.provectus.kafka.ui.extensions.WebUtils.isVisible;
 public class SchemaRegistryList {
 
     private final SelenideElement schemaButton = $(By.xpath("//*[contains(text(),'Create Schema')]"));
+
     @Step
     public SchemaCreateView clickCreateSchema() {
         BrowserUtils.javaExecutorClick(schemaButton);
@@ -21,12 +22,6 @@ public class SchemaRegistryList {
     public SchemaView openSchema(String schemaName) {
         $(By.xpath("//*[contains(text(),'" + schemaName + "')]")).click();
         return new SchemaView();
-    }
-
-    @Step
-    public SchemaRegistryList isNotVisible(String schemaName) {
-        $x(String.format("//*[contains(text(),'%s')]", schemaName)).shouldNotBe(Condition.visible);
-        return this;
     }
 
     @Step

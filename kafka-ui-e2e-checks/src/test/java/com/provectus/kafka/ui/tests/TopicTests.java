@@ -55,13 +55,11 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.open()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
-//                .topicIsVisible(NEW_TOPIC);
-        Assertions.assertTrue(pages.topicsList.isTopicVisible(NEW_TOPIC));
+        Assertions.assertTrue(pages.topicsList.isTopicVisible(NEW_TOPIC),"isTopicVisible()");
         helpers.apiHelper.deleteTopic(CLUSTER_NAME, NEW_TOPIC);
         pages.open()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
-//                .topicIsNotVisible(NEW_TOPIC);
-        Assertions.assertFalse(pages.topicsList.isTopicVisible(NEW_TOPIC));
+        Assertions.assertFalse(pages.topicsList.isTopicVisible(NEW_TOPIC),"isTopicVisible()");
     }
 
     @DisplayName("should update a topic")
@@ -109,8 +107,7 @@ public class TopicTests extends BaseTest {
                 .deleteTopic();
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-//                .isTopicNotVisible(TOPIC_TO_DELETE);
-        Assertions.assertFalse(pages.topicsList.isTopicVisible(TOPIC_TO_DELETE));
+        Assertions.assertFalse(pages.topicsList.isTopicVisible(TOPIC_TO_DELETE),"isTopicVisible");
     }
 
     @DisplayName("produce message")
