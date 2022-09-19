@@ -57,7 +57,7 @@ const Metrics: React.FC = () => {
         </Button>
         <List>
           <Label>Started at</Label>
-          <span>{formatTimestamp(data?.progress?.startedAt)}</span>
+          <span>{formatTimestamp(data.progress.startedAt, 'hh:mm:ss a')}</span>
           <Label>Scanned messages</Label>
           <span>
             {data.progress.msgsScanned} /{' '}
