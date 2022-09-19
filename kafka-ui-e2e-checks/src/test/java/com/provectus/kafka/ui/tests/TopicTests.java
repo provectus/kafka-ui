@@ -3,12 +3,14 @@ package com.provectus.kafka.ui.tests;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
+import com.provectus.kafka.ui.pages.topic.TopicCreateEditSettingsView;
 import com.provectus.kafka.ui.pages.topic.TopicView;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 
 import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
@@ -68,8 +70,9 @@ public class TopicTests extends BaseTest {
     @Test
     public void updateTopic() {
         pages.openTopicsList(CLUSTER_NAME)
-                .waitUntilScreenReady();
-        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
+                .waitUntilScreenReady()
+                .openTopic(TOPIC_TO_UPDATE)
+//        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
                 .waitUntilScreenReady()
                 .openEditSettings()
                 .selectCleanupPolicy(COMPACT_POLICY_VALUE)
@@ -79,16 +82,24 @@ public class TopicTests extends BaseTest {
                 .setMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
                 .sendData()
                 .waitUntilScreenReady();
-
         pages.openTopicsList(CLUSTER_NAME)
-                .waitUntilScreenReady();
-        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
-                .openEditSettings()
+                .waitUntilScreenReady()
+//        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
+                .openTopic(TOPIC_TO_UPDATE)
+                .waitUntilScreenReady()
+                .openEditSettings();
                 // Assertions
-                .cleanupPolicyIs(COMPACT_POLICY_VALUE)
-                .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
-                .maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK)
-                .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(new TopicCreateEditSettingsView().getCleanupPolicy()).as("Cleanup Policy").isEqualTo(COMPACT_POLICY_VALUE);
+        softly.assertThat(new TopicCreateEditSettingsView().getTimeToRetain()).as("Time to retain").isEqualTo(UPDATED_TIME_TO_RETAIN_VALUE);
+        softly.assertThat(new TopicCreateEditSettingsView().getMaxSizeOnDisk()).as("Max size on disk").isEqualTo(UPDATED_MAX_SIZE_ON_DISK);
+        softly.assertThat(new TopicCreateEditSettingsView().getMaxMessageBytes()).as("Max message bytes").isEqualTo(UPDATED_MAX_MESSAGE_BYTES);
+
+//                .cleanupPolicyIs(COMPACT_POLICY_VALUE)
+//                .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
+//                .maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK)
+//                .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
+        softly.assertAll();
     }
 
     @DisplayName("should delete topic")
@@ -122,7 +133,9 @@ public class TopicTests extends BaseTest {
                 .setContentFiled(fileToString(CONTENT_TO_PRODUCE_MESSAGE))
                 .setKeyField(fileToString(KEY_TO_PRODUCE_MESSAGE))
                 .submitProduceMessage();
-        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(fileToString(KEY_TO_PRODUCE_MESSAGE)));
-        Assertions.assertTrue(pages.topicView.isContentMessageVisible(fileToString(CONTENT_TO_PRODUCE_MESSAGE).trim()));
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(pages.topicView.isKeyMessageVisible(fileToString(KEY_TO_PRODUCE_MESSAGE ))).withFailMessage("isKeyMessageVisible()").isTrue();
+        softly.assertThat(pages.topicView.isContentMessageVisible(fileToString(CONTENT_TO_PRODUCE_MESSAGE).trim())).withFailMessage("isContentMessageVisible()").isTrue();
+        softly.assertAll();
     }
 }
