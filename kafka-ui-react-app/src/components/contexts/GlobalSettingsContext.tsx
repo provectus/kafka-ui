@@ -6,7 +6,7 @@ type GlobalSettingsType = {
 };
 
 const defaultGlobalSettingsValue = {
-  timeStampFormat: 'dd.MM.YYYY HH:mm:ss',
+  timeStampFormat: 'DD.MM.YYYY HH:mm:ss',
 };
 
 export const GlobalSettingsContext = React.createContext<GlobalSettingsType>(

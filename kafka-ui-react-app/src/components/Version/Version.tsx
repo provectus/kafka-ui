@@ -23,12 +23,13 @@ const Version: React.FC = () => {
     latestTag: '',
   });
 
-  const commit = actuatorInfo.git.commit.id;
-  const { time, version: tag } = actuatorInfo.build;
+  const commit = actuatorInfo?.git.commit.id;
+  const time = actuatorInfo?.build.time;
+  const tag = actuatorInfo?.build.version;
 
   const { outdated, latestTag } = latestVersionInfo;
 
-  const currentVersion = tag.match(VERSION_PATTERN)
+  const currentVersion = tag?.match(VERSION_PATTERN)
     ? tag
     : formatTimestamp(time);
 
@@ -44,7 +45,7 @@ const Version: React.FC = () => {
   }, [tag]);
 
   return (
-    <S.Wrapper>
+    <S.Wrapper data-testid="data_commit_wrapper">
       {tag && (
         <>
           <S.CurrentVersion>{currentVersion}</S.CurrentVersion>
