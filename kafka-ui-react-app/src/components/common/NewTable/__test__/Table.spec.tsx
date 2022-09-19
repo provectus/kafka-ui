@@ -225,17 +225,37 @@ describe('Table', () => {
       expect(screen.getByText('lorem')).toBeInTheDocument();
     });
 
-    it('renders go to page input', async () => {
-      renderComponent({ path: '?perPage=1' });
-      // Check it renders header row and only one data row
-      expect(screen.getAllByRole('row').length).toEqual(2);
-      expect(screen.getByText('lorem')).toBeInTheDocument();
-      const input = screen.getByRole('spinbutton', { name: 'Go to page:' });
-      expect(input).toBeInTheDocument();
+    describe('Go To page', () => {
+      const getGoToPageInput = () =>
+        screen.getByRole('spinbutton', { name: 'Go to page:' });
 
-      userEvent.clear(input);
-      userEvent.type(input, '2');
-      expect(screen.getByText('ipsum')).toBeInTheDocument();
+      beforeEach(() => {
+        renderComponent({ path: '?perPage=1' });
+      });
+
+      it('renders Go To page', () => {
+        const goToPage = getGoToPageInput();
+        expect(goToPage).toBeInTheDocument();
+        expect(goToPage).toHaveValue(1);
+      });
+      it('updates page on Go To page change', () => {
+        const goToPage = getGoToPageInput();
+        userEvent.clear(goToPage);
+        userEvent.type(goToPage, '2');
+        expect(goToPage).toHaveValue(2);
+        expect(screen.getByText('ipsum')).toBeInTheDocument();
+      });
+      it('does not update page on Go To page change if page is out of range', () => {
+        const goToPage = getGoToPageInput();
+        userEvent.type(goToPage, '5');
+        expect(goToPage).toHaveValue(15);
+        expect(screen.getByText('No rows found')).toBeInTheDocument();
+      });
+      it('does not update page on Go To page change if page is not a number', () => {
+        const goToPage = getGoToPageInput();
+        userEvent.type(goToPage, 'abc');
+        expect(goToPage).toHaveValue(1);
+      });
     });
   });
 
