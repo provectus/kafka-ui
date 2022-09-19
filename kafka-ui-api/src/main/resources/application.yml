@@ -11,9 +11,6 @@ management:
     web:
       exposure:
         include: "info,health"
-  health:
-    ldap:
-      enabled: false
 
 logging:
   level:
