@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 const messageContentText = 'messageContentText';
+const format = 'DD.MM.YYYY HH:mm:ss';
 
 jest.mock(
   'components/Topics/Topic/Messages/MessageContent/MessageContent',
@@ -48,7 +49,7 @@ describe('Message component', () => {
     expect(screen.getByText(mockMessage.content as string)).toBeInTheDocument();
     expect(screen.getByText(mockMessage.key as string)).toBeInTheDocument();
     expect(
-      screen.getByText(formatTimestamp(mockMessage.timestamp))
+      screen.getByText(formatTimestamp(mockMessage.timestamp, format))
     ).toBeInTheDocument();
     expect(screen.getByText(mockMessage.offset.toString())).toBeInTheDocument();
     expect(
