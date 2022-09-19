@@ -32,3 +32,5 @@ spring:
     enabled: true
 auth:
   type: DISABLED
+#server:
+#  port: 8080 #- Port in which kafka-ui will run.

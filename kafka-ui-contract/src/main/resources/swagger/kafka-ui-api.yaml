@@ -592,6 +592,8 @@ paths:
                 $ref: '#/components/schemas/ReplicationFactorChangeResponse'
         404:
           description: Not found
+        400:
+          description: Bad Request
 
   /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
@@ -896,7 +898,7 @@ paths:
     post:
       tags:
         - Schemas
-      summary: create a new subject schema
+      summary: create a new subject schema or update existing subject schema
       operationId: createNewSchema
       parameters:
         - name: clusterName
@@ -1758,7 +1760,19 @@ paths:
                 $ref: '#/components/schemas/PartitionsIncreaseResponse'
         404:
           description: Not found
-
+  /api/info/timestampformat:
+    get:
+      tags:
+        - TimeStampFormat
+      summary: getTimeStampFormat
+      operationId: getTimeStampFormat
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeStampFormat'
 components:
   schemas:
     ErrorResponse:
@@ -2369,6 +2383,12 @@ components:
         name:
           type: string
 
+    TimeStampFormat:
+      type: object
+      properties:
+        timeStampFormat:
+          type: string
+
     TopicMessageConsuming:
       type: object
       properties:
@@ -2592,6 +2612,7 @@ components:
 
     NewSchemaSubject:
       type: object
+      description: should be set for creating/updating schema subject
       properties:
         subject:
           type: string
@@ -2599,6 +2620,7 @@ components:
           type: string
         schemaType:
           $ref: '#/components/schemas/SchemaType'
+          description: upon updating a schema, the type of an existing schema can't be changed
       required:
         - subject
         - schema
@@ -2622,6 +2644,7 @@ components:
 
     SchemaType:
       type: string
+      description: upon updating a schema, the type of an existing schema can't be changed
       enum:
         - AVRO
         - JSON
@@ -3070,7 +3093,6 @@ components:
       properties:
         totalReplicationFactor:
           type: integer
-          minimum: 1
       required:
         - totalReplicationFactor
 

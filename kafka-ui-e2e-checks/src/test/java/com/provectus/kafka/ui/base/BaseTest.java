@@ -12,18 +12,10 @@ import com.provectus.kafka.ui.utils.qaseIO.TestCaseGenerator;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
 import io.qameta.allure.selenide.AllureSelenide;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -31,19 +23,25 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 @Slf4j
 @DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
 public class BaseTest {
 
-  public static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome";
-  public static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium";
+  public static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
+  public static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium:103.0";
+  public static final String CLUSTER_NAME = "local";
   protected Pages pages = Pages.INSTANCE;
   protected Helpers helpers = Helpers.INSTANCE;
 
-  private Screenshooter screenshooter = new Screenshooter();
+  private final Screenshooter screenshooter = new Screenshooter();
 
   protected static BrowserWebDriverContainer<?> webDriverContainer = null;
 
@@ -64,7 +62,6 @@ public class BaseTest {
 
   @BeforeAll
   public static void start() {
-
     DockerImageName image = isARM64()
         ? DockerImageName.parse(SELENIARM_STANDALONE_CHROMIUM).asCompatibleSubstituteFor(SELENIUM_IMAGE_NAME)
         : DockerImageName.parse(SELENIUM_IMAGE_NAME);
@@ -74,13 +71,14 @@ public class BaseTest {
         .withEnv("JAVA_OPTS", "-Dwebdriver.chrome.whitelistedIps=")
         .withCapabilities(new ChromeOptions()
             .addArguments("--disable-dev-shm-usage")
+            .addArguments("--disable-gpu")
+            .addArguments("--no-sandbox")
             .addArguments("--verbose")
         )
-        .waitingFor(Wait.forHttp("/"))
-        //.withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: ")) // uncomment for debugging
-        .waitingFor(Wait.forLogMessage(".*Started Selenium Standalone.*", 1));
+        .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: "));
     try {
       Testcontainers.exposeHostPorts(8080);
+      log.info("Starting browser container");
       webDriverContainer.start();
     } catch (Throwable e) {
       log.error("Couldn't start a container", e);
@@ -134,6 +132,7 @@ public class BaseTest {
     Configuration.browser = TestConfiguration.BROWSER;
     Configuration.baseUrl = TestConfiguration.BASE_WEB_URL;
     Configuration.timeout = 10000;
+    Configuration.pageLoadTimeout = 180000;
     Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
     SelenideLogger.addListener("allure", new AllureSelenide().savePageSource(false));
   }

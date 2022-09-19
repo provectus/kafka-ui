@@ -3,11 +3,10 @@ package com.provectus.kafka.ui.pages.topic;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
-import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
+import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
-import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
@@ -16,7 +15,7 @@ import static com.codeborne.selenide.Selenide.*;
 @ExtensionMethod(WaitUtils.class)
 public class TopicsList {
 
-    private static final String path = "/ui/clusters/%s/topics";
+    private static final String path = "/ui/clusters/%s/all-topics";
 
     @Step
     public TopicsList goTo(String cluster) {
@@ -25,14 +24,14 @@ public class TopicsList {
     }
 
     @Step
-    public TopicsList isOnPage() {
+    public TopicsList waitUntilScreenReady() {
         $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
-        $(By.xpath("//h1[text()='All Topics']")).shouldBe(Condition.visible);
+        $(By.xpath("//h1[text()='Topics']")).shouldBe(Condition.visible);
         return this;
     }
 
     @Step
-    public TopicCreateEditSettingsView pressCreateNewTopic(){
+    public TopicCreateEditSettingsView pressCreateNewTopic() {
         BrowserUtils.javaExecutorClick($x("//button[normalize-space(text()) ='Add a Topic']"));
         return new TopicCreateEditSettingsView();
     }
@@ -46,16 +45,16 @@ public class TopicsList {
         return this;
     }
 
-    @SneakyThrows
+    @Step
     public TopicView openTopic(String topicName) {
         $(By.linkText(topicName)).click();
         return new TopicView();
     }
 
-    @SneakyThrows
+    @Step
     public TopicsList isTopicNotVisible(String topicName) {
         $$x("//table/tbody/tr/td[2]")
-                .shouldBe(CollectionCondition.sizeGreaterThanOrEqual(4))
+                .shouldBe(CollectionCondition.sizeGreaterThan(0))
                 .find(Condition.exactText(topicName))
                 .shouldBe(Condition.not(Condition.visible));
         return this;

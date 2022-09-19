@@ -2,11 +2,10 @@ package com.provectus.kafka.ui.pages.connector;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
+import com.provectus.kafka.ui.extensions.WaitUtils;
 import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.utils.BrowserUtils;
-import com.provectus.kafka.ui.extensions.WaitUtils;
 import io.qameta.allure.Step;
-import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
@@ -24,7 +23,7 @@ public class ConnectorsList {
     }
 
     @Step
-    public ConnectorsList isOnPage() {
+    public ConnectorsList waitUntilScreenReady() {
         $(By.xpath("//h1[text()='Connectors']")).shouldBe(Condition.visible);
         return this;
     }
@@ -35,13 +34,15 @@ public class ConnectorsList {
         return new ConnectorCreateView();
     }
 
-    @SneakyThrows
+
+    @Step
     public ConnectorsList openConnector(String connectorName) {
         $(By.linkText(connectorName)).click();
         return this;
     }
 
-    @SneakyThrows
+
+    @Step
     public ConnectorsList isNotVisible(String connectorName) {
         $(By.xpath("//table")).shouldBe(Condition.visible);
         $x("//tbody//td[1]//a[text()='" + connectorName + "']").shouldBe(Condition.not(Condition.visible));
@@ -50,11 +51,11 @@ public class ConnectorsList {
 
     @Step("Verify that connector {connectorName} is visible in the list")
     public ConnectorsList connectorIsVisibleInList(String connectorName, String topicName) {
-        $x("//table//a[@href='/ui/clusters/local/connects/first/connectors/" + connectorName +"']").shouldBe(Condition.visible);
-       $$(By.linkText(topicName));
+        $x("//table//a[@href='/ui/clusters/local/connects/first/connectors/" + connectorName + "']").shouldBe(Condition.visible);
+        $$(By.linkText(topicName));
         return this;
     }
-
+    @Step
     public ConnectorsList connectorIsUpdatedInList(String connectorName, String topicName) {
         $(By.xpath(String.format("//a[text() = '%s']", connectorName))).shouldBe(Condition.visible);
         By.xpath(String.format("//a[text() = '%s']", topicName)).refreshUntil(Condition.visible);

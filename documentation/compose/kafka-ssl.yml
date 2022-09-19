@@ -1,7 +1,6 @@
 ---
 version: '3.4'
 services:
-
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
@@ -17,8 +16,12 @@ services:
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper0:2181
       KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION: /kafka.truststore.jks
       KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD: secret
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_LOCATION: /kafka.keystore.jks
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD: secret
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: '' # DISABLE COMMON NAME VERIFICATION
     volumes:
       - ./ssl/kafka.truststore.jks:/kafka.truststore.jks
+      - ./ssl/kafka.keystore.jks:/kafka.keystore.jks
 
   zookeeper0:
     image: confluentinc/cp-zookeeper:6.0.1
@@ -50,7 +53,7 @@ services:
       KAFKA_SSL_TRUSTSTORE_FILENAME: kafka.truststore.jks
       KAFKA_SSL_TRUSTSTORE_CREDENTIALS: creds
       #KAFKA_SSL_CLIENT_AUTH: 'required'
-      KAFKA_SSL_CLIENT_AUTH: "requested"
+      KAFKA_SSL_CLIENT_AUTH: 'requested'
       KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: '' # COMMON NAME VERIFICATION IS DISABLED SERVER-SIDE
     volumes:
       - ./ssl/creds:/etc/kafka/secrets/creds

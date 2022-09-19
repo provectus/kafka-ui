@@ -9,7 +9,6 @@ import {
   getNonExactPath,
   clusterConnectorsPath,
 } from 'lib/paths';
-import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import useAppParams from 'lib/hooks/useAppParams';
 
 import ListPage from './List/ListPage';
@@ -22,37 +21,15 @@ const Connect: React.FC = () => {
 
   return (
     <Routes>
-      <Route
-        index
-        element={
-          <BreadcrumbRoute>
-            <ListPage />
-          </BreadcrumbRoute>
-        }
-      />
-      <Route
-        path={clusterConnectorNewRelativePath}
-        element={
-          <BreadcrumbRoute>
-            <New />
-          </BreadcrumbRoute>
-        }
-      />
+      <Route index element={<ListPage />} />
+      <Route path={clusterConnectorNewRelativePath} element={<New />} />
       <Route
         path={clusterConnectConnectorEditRelativePath}
-        element={
-          <BreadcrumbRoute>
-            <Edit />
-          </BreadcrumbRoute>
-        }
+        element={<Edit />}
       />
       <Route
         path={getNonExactPath(clusterConnectConnectorRelativePath)}
-        element={
-          <BreadcrumbRoute>
-            <DetailsPage />
-          </BreadcrumbRoute>
-        }
+        element={<DetailsPage />}
       />
       <Route
         path={clusterConnectConnectorsRelativePath}

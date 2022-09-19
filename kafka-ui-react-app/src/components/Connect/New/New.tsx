@@ -4,7 +4,11 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { clusterConnectConnectorPath, ClusterNameRoute } from 'lib/paths';
+import {
+  clusterConnectConnectorPath,
+  clusterConnectorsPath,
+  ClusterNameRoute,
+} from 'lib/paths';
 import yup from 'lib/yupExtended';
 import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
@@ -91,7 +95,11 @@ const New: React.FC = () => {
 
   return (
     <FormProvider {...methods}>
-      <PageHeading text="Create new connector" />
+      <PageHeading
+        text="Create new connector"
+        backTo={clusterConnectorsPath(clusterName)}
+        backText="Connectors"
+      />
       <S.NewConnectFormStyled
         onSubmit={handleSubmit(onSubmit)}
         aria-label="Create connect form"

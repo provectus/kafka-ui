@@ -140,7 +140,7 @@ class MessageFiltersTest {
 
 
     @Test
-    void filterSpeedIsAtLeast10kPerSec() {
+    void filterSpeedIsAtLeast5kPerSec() {
       var f = groovyScriptFilter("value.name.first == 'user1' && keyAsText.startsWith('a') ");
 
       List<TopicMessageDTO> toFilter = new ArrayList<>();
@@ -159,7 +159,7 @@ class MessageFiltersTest {
       long matched = toFilter.stream().filter(f).count();
       long took = System.currentTimeMillis() - before;
 
-      assertThat(took).isLessThan(500);
+      assertThat(took).isLessThan(1000);
       assertThat(matched).isGreaterThan(0);
     }
   }

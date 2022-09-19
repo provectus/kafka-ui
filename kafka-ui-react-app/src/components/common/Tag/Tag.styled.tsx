@@ -4,7 +4,7 @@ interface Props {
   color: 'green' | 'gray' | 'yellow' | 'red' | 'white' | 'blue';
 }
 
-export const Tag = styled.p<Props>`
+export const Tag = styled.span.attrs({ role: 'widget' })<Props>`
   border: none;
   border-radius: 16px;
   height: 20px;
@@ -17,4 +17,5 @@ export const Tag = styled.p<Props>`
   padding-right: 0.75em;
   text-align: center;
   width: max-content;
+  margin: 2px 0;
 `;

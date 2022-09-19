@@ -1,13 +1,18 @@
 import React from 'react';
-import Edit, { DEFAULTS, Props } from 'components/Topics/Topic/Edit/Edit';
+import Edit from 'components/Topics/Topic/Edit/Edit';
 import { act, screen } from '@testing-library/react';
 import { render, WithRoute } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
 import { clusterTopicEditPath } from 'lib/paths';
-import { TopicsState, TopicWithDetailedInfo } from 'redux/interfaces';
-import { getTopicStateFixtures } from 'redux/reducers/topics/__test__/fixtures';
+import {
+  useTopicConfig,
+  useTopicDetails,
+  useUpdateTopic,
+} from 'lib/hooks/api/topics';
+import { internalTopicPayload, topicConfigPayload } from 'lib/fixtures/topics';
 
-import { topicName, clusterName, topicWithInfo } from './fixtures';
+const clusterName = 'testCluster';
+const topicName = 'testTopic';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -15,144 +20,61 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-const renderComponent = (
-  props: Partial<Props> = {},
-  topic: TopicWithDetailedInfo | null = topicWithInfo
-) => {
-  let topics: TopicsState | undefined;
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
-  if (topic === null) {
-    topics = undefined;
-  } else {
-    topics = getTopicStateFixtures([topic]);
-  }
+jest.mock('components/Topics/Topic/Edit/DangerZone/DangerZone', () => () => (
+  <>DangerZone</>
+));
 
-  return render(
+jest.mock('lib/hooks/api/topics', () => ({
+  useTopicDetails: jest.fn(),
+  useTopicConfig: jest.fn(),
+  useUpdateTopic: jest.fn(),
+}));
+
+const updateTopicMock = jest.fn();
+
+const renderComponent = () => {
+  const path = clusterTopicEditPath(clusterName, topicName);
+  render(
     <WithRoute path={clusterTopicEditPath()}>
-      <Edit
-        isFetched
-        isTopicUpdated={false}
-        fetchTopicConfig={jest.fn()}
-        updateTopic={jest.fn()}
-        {...props}
-      />
+      <Edit />
     </WithRoute>,
-    {
-      initialEntries: [clusterTopicEditPath(clusterName, topicName)],
-      preloadedState: { topics },
-    }
+    { initialEntries: [path] }
   );
 };
 
 describe('Edit Component', () => {
-  afterEach(() => {});
-
-  it('renders the Edit Component', () => {
-    renderComponent();
-
-    expect(
-      screen.getByRole('heading', { name: `Edit ${topicName}` })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', { name: `Danger Zone` })
-    ).toBeInTheDocument();
+  beforeEach(async () => {
+    (useTopicDetails as jest.Mock).mockImplementation(() => ({
+      data: internalTopicPayload,
+    }));
+    (useTopicConfig as jest.Mock).mockImplementation(() => ({
+      data: topicConfigPayload,
+    }));
+    (useUpdateTopic as jest.Mock).mockImplementation(() => ({
+      isLoading: false,
+      mutateAsync: updateTopicMock,
+    }));
+    await act(() => renderComponent());
   });
 
-  it('should check Edit component renders null is not rendered when topic is not passed', () => {
-    renderComponent({}, { ...topicWithInfo, config: undefined });
-    expect(
-      screen.queryByRole('heading', { name: `Edit ${topicName}` })
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('heading', { name: `Danger Zone` })
-    ).not.toBeInTheDocument();
+  it('renders DangerZone component', async () => {
+    expect(screen.getByText(`DangerZone`)).toBeInTheDocument();
   });
 
-  it('should check Edit component renders null is not isFetched is false', () => {
-    renderComponent({ isFetched: false });
-    expect(
-      screen.queryByRole('heading', { name: `Edit ${topicName}` })
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('heading', { name: `Danger Zone` })
-    ).not.toBeInTheDocument();
-  });
-
-  it('should check Edit component renders null is not topic config is not passed is false', () => {
-    const modifiedTopic = { ...topicWithInfo };
-    modifiedTopic.config = undefined;
-    renderComponent({}, modifiedTopic);
-    expect(
-      screen.queryByRole('heading', { name: `Edit ${topicName}` })
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('heading', { name: `Danger Zone` })
-    ).not.toBeInTheDocument();
-  });
-
-  describe('Edit Component with its topic default and modified values', () => {
-    it('should check the default partitions value in the DangerZone', async () => {
-      renderComponent({}, { ...topicWithInfo, partitionCount: 0 });
-      // cause topic selector will return falsy
-      expect(
-        screen.queryByRole('heading', { name: `Edit ${topicName}` })
-      ).not.toBeInTheDocument();
-      expect(
-        screen.queryByRole('heading', { name: `Danger Zone` })
-      ).not.toBeInTheDocument();
+  it('submits form correctly', async () => {
+    await act(() => renderComponent());
+    const btn = screen.getAllByText(/Update topic/i)[0];
+    const field = screen.getByRole('spinbutton', {
+      name: 'Min In Sync Replicas * Min In Sync Replicas *',
     });
-
-    it('should check the default partitions value in the DangerZone', async () => {
-      renderComponent({}, { ...topicWithInfo, replicationFactor: undefined });
-      expect(screen.getByPlaceholderText('Replication Factor')).toHaveValue(
-        DEFAULTS.replicationFactor
-      );
-    });
-  });
-
-  describe('Submit Case of the Edit Component', () => {
-    it('should check the submit functionality when topic updated is false', async () => {
-      const updateTopicMock = jest.fn();
-
-      renderComponent({ updateTopic: updateTopicMock }, undefined);
-
-      const btn = screen.getAllByText(/Save/i)[0];
-
-      await act(() => {
-        userEvent.type(
-          screen.getByPlaceholderText('Min In Sync Replicas'),
-          '1'
-        );
-      });
-
-      await act(() => {
-        userEvent.click(btn);
-      });
-      expect(updateTopicMock).toHaveBeenCalledTimes(1);
-      expect(mockNavigate).not.toHaveBeenCalled();
-    });
-
-    it('should check the submit functionality when topic updated is true', async () => {
-      const updateTopicMock = jest.fn();
-
-      renderComponent(
-        { updateTopic: updateTopicMock, isTopicUpdated: true },
-        undefined
-      );
-
-      const btn = screen.getAllByText(/Save/i)[0];
-
-      await act(() => {
-        userEvent.type(
-          screen.getByPlaceholderText('Min In Sync Replicas'),
-          '1'
-        );
-      });
-      await act(() => {
-        userEvent.click(btn);
-      });
-      expect(updateTopicMock).toHaveBeenCalledTimes(1);
-      expect(mockNavigate).toHaveBeenLastCalledWith('../');
-    });
+    await act(() => userEvent.type(field, '1'));
+    await act(() => userEvent.click(btn));
+    expect(updateTopicMock).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith('../');
   });
 });

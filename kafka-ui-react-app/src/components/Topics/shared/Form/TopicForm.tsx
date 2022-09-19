@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import { NOT_SET, BYTES_IN_GB } from 'lib/constants';
-import { TopicName } from 'redux/interfaces';
+import { ClusterName, TopicName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
 import Select, { SelectOption } from 'components/common/Select/Select';
 import Input from 'components/common/Input/Input';
@@ -9,6 +9,9 @@ import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import { StyledForm } from 'components/common/Form/Form.styled';
+import { clusterTopicPath } from 'lib/paths';
+import { useNavigate } from 'react-router-dom';
+import useAppParams from 'lib/hooks/useAppParams';
 
 import CustomParams from './CustomParams/CustomParams';
 import TimeToRetain from './TimeToRetain';
@@ -54,7 +57,10 @@ const TopicForm: React.FC<Props> = ({
   const {
     control,
     formState: { errors, isDirty, isValid },
+    reset,
   } = useFormContext();
+  const navigate = useNavigate();
+  const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
   const getCleanUpPolicy =
     CleanupPolicyOptions.find((option: SelectOption) => {
       return (
@@ -67,6 +73,11 @@ const TopicForm: React.FC<Props> = ({
     RetentionBytesOptions.find((option: SelectOption) => {
       return option.value === retentionBytes;
     })?.value || RetentionBytesOptions[0].value;
+
+  const onCancel = () => {
+    reset();
+    navigate(clusterTopicPath(clusterName, topicName));
+  };
 
   return (
     <StyledForm onSubmit={onSubmit} aria-label="topic form">
@@ -221,15 +232,20 @@ const TopicForm: React.FC<Props> = ({
         <CustomParams isSubmitting={isSubmitting} />
         <S.ButtonWrapper>
           <Button
+            type="button"
+            buttonType="primary"
+            buttonSize="L"
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
+          <Button
             type="submit"
             buttonType="primary"
             buttonSize="L"
             disabled={!isValid || isSubmitting || !isDirty}
           >
-            {isEditing ? 'Save' : 'Create topic'}
-          </Button>
-          <Button type="button" buttonType="primary" buttonSize="L">
-            Cancel
+            {isEditing ? 'Update topic' : 'Create topic'}
           </Button>
         </S.ButtonWrapper>
       </fieldset>

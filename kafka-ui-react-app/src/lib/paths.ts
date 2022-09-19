@@ -32,6 +32,8 @@ export type ClusterNameRoute = { clusterName: ClusterName };
 // Brokers
 export const clusterBrokerRelativePath = 'brokers';
 export const clusterBrokerMetricsRelativePath = 'metrics';
+export const clusterBrokerConfigsRelativePath = 'configs';
+
 export const clusterBrokersPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterBrokerRelativePath}`;
@@ -48,6 +50,15 @@ export const clusterBrokerMetricsPath = (
     clusterName,
     brokerId
   )}/${clusterBrokerMetricsRelativePath}`;
+
+export const clusterBrokerConfigsPath = (
+  clusterName: ClusterName = RouteParams.clusterName,
+  brokerId: Broker['id'] | string = RouteParams.brokerId
+) =>
+  `${clusterBrokerPath(
+    clusterName,
+    brokerId
+  )}/${clusterBrokerConfigsRelativePath}`;
 
 export type ClusterBrokerParam = {
   clusterName: ClusterName;
@@ -94,12 +105,20 @@ export const clusterSchemaNewPath = (
 export const clusterSchemaPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
-) => `${clusterSchemasPath(clusterName)}/${subject}`;
+) => {
+  let subjectName = subject;
+  if (subject !== ':subject') subjectName = encodeURIComponent(subject);
+  return `${clusterSchemasPath(clusterName)}/${subjectName}`;
+};
 export const clusterSchemaEditPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
-) => `${clusterSchemasPath(clusterName)}/${subject}/edit`;
-export const clusterSchemaSchemaComparePath = (
+) => {
+  let subjectName = subject;
+  if (subject !== ':subject') subjectName = encodeURIComponent(subject);
+  return `${clusterSchemasPath(clusterName)}/${subjectName}/edit`;
+};
+export const clusterSchemaComparePath = (
   clusterName: ClusterName = RouteParams.clusterName,
   subject: SchemaName = RouteParams.subject
 ) => `${clusterSchemaPath(clusterName, subject)}/compare`;
@@ -127,6 +146,7 @@ export const clusterTopicCopyPath = (
 export const clusterTopicSettingsRelativePath = 'settings';
 export const clusterTopicMessagesRelativePath = 'messages';
 export const clusterTopicConsumerGroupsRelativePath = 'consumer-groups';
+export const clusterTopicStatisticsRelativePath = 'statistics';
 export const clusterTopicEditRelativePath = 'edit';
 export const clusterTopicSendMessageRelativePath = 'message';
 export const clusterTopicPath = (
@@ -162,6 +182,14 @@ export const clusterTopicConsumerGroupsPath = (
     clusterName,
     topicName
   )}/${clusterTopicConsumerGroupsRelativePath}`;
+export const clusterTopicStatisticsPath = (
+  clusterName: ClusterName = RouteParams.clusterName,
+  topicName: TopicName = RouteParams.topicName
+) =>
+  `${clusterTopicPath(
+    clusterName,
+    topicName
+  )}/${clusterTopicStatisticsRelativePath}`;
 export const clusterTopicSendMessagePath = (
   clusterName: ClusterName = RouteParams.clusterName,
   topicName: TopicName = RouteParams.topicName

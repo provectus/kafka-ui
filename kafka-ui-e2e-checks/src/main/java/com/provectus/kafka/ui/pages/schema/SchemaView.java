@@ -1,18 +1,20 @@
 package com.provectus.kafka.ui.pages.schema;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.*;
 
 public class SchemaView {
 
+    protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
+
     @Step
-    public SchemaView isOnSchemaViewPage() {
+    public SchemaView waitUntilScreenReady() {
         $("div#schema").shouldBe(Condition.visible);
         return this;
     }
@@ -28,11 +30,13 @@ public class SchemaView {
         $x("//button[text()= 'Edit Schema']").click();
         return new SchemaEditView();
     }
-
+    @Step
     public SchemaRegistryList removeSchema() {
-        BrowserUtils.javaExecutorClick($(".dropdown.is-right button"));
+        BrowserUtils.javaExecutorClick(dotMenuBtn);
         $(By.xpath("//*[contains(text(),'Remove')]")).click();
-        $(By.xpath("//*[text()='Submit']")).shouldBe(Condition.visible).click();
+        SelenideElement confirmButton = $x("//div[@role=\"dialog\"]//button[text()='Confirm']");
+        confirmButton.shouldBe(Condition.enabled).click();
+        confirmButton.shouldBe(Condition.disappear);
         return new SchemaRegistryList();
     }
 }

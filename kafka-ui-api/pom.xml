@@ -193,10 +193,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-ldap</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-ldap</artifactId>
         </dependency>
@@ -216,6 +212,11 @@
             <groupId>org.apache.datasketches</groupId>
             <artifactId>datasketches-java</artifactId>
             <version>${datasketches-java.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
         </dependency>
 
     </dependencies>
@@ -399,6 +400,7 @@
                         <artifactId>frontend-maven-plugin</artifactId>
                         <version>${frontend-maven-plugin.version}</version>
                         <configuration>
+                            <skip>${skipUIBuild}</skip>
                             <workingDirectory>../kafka-ui-react-app</workingDirectory>
                             <environmentVariables>
                                 <VITE_TAG>${project.version}</VITE_TAG>
@@ -437,11 +439,22 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>com.spotify</groupId>
-                        <artifactId>dockerfile-maven-plugin</artifactId>
-                        <version>${dockerfile-maven-plugin.version}</version>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>${fabric8-maven-plugin.version}</version>
                         <configuration>
-                            <skipPush>true</skipPush>
+                            <verbose>true</verbose>
+                            <images>
+                                <image>
+                                    <name>provectuslabs/kafka-ui:${git.revision}</name>
+                                    <build>
+                                        <contextDir>${project.basedir}</contextDir>
+                                        <args>
+                                            <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                                        </args>
+                                    </build>
+                                </image>
+                            </images>
                         </configuration>
                         <executions>
                             <execution>
@@ -450,14 +463,6 @@
                                 <goals>
                                     <goal>build</goal>
                                 </goals>
-                                <configuration>
-                                    <tag>${git.revision}</tag>
-                                    <repository>provectuslabs/kafka-ui</repository>
-                                    <buildArgs>
-                                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
-                                        <JAR_NAME>${project.artifactId}.jar</JAR_NAME>
-                                    </buildArgs>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
