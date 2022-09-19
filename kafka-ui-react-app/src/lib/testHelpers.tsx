@@ -20,6 +20,10 @@ import {
 } from '@tanstack/react-query';
 import { ConfirmContextProvider } from 'components/contexts/ConfirmContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
+import {
+  defaultGlobalSettingsValue,
+  GlobalSettingsContext,
+} from 'components/contexts/GlobalSettingsContext';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
@@ -68,20 +72,22 @@ const customRender = (
   const AllTheProviders: React.FC<PropsWithChildren<unknown>> = ({
     children,
   }) => (
-    <ThemeProvider theme={theme}>
-      <ConfirmContextProvider>
-        <Provider store={store}>
-          <TestQueryClientProvider>
-            <MemoryRouter initialEntries={initialEntries}>
-              <div>
-                {children}
-                <ConfirmationModal />
-              </div>
-            </MemoryRouter>
-          </TestQueryClientProvider>
-        </Provider>
-      </ConfirmContextProvider>
-    </ThemeProvider>
+    <TestQueryClientProvider>
+      <GlobalSettingsContext.Provider value={defaultGlobalSettingsValue}>
+        <ThemeProvider theme={theme}>
+          <ConfirmContextProvider>
+            <Provider store={store}>
+              <MemoryRouter initialEntries={initialEntries}>
+                <div>
+                  {children}
+                  <ConfirmationModal />
+                </div>
+              </MemoryRouter>
+            </Provider>
+          </ConfirmContextProvider>
+        </ThemeProvider>
+      </GlobalSettingsContext.Provider>
+    </TestQueryClientProvider>
   );
   return render(ui, { wrapper: AllTheProviders, ...renderOptions });
 };

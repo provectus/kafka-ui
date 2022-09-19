@@ -5,7 +5,7 @@ type GlobalSettingsType = {
   timeStampFormat: string;
 };
 
-const defaultGlobalSettingsValue = {
+export const defaultGlobalSettingsValue = {
   timeStampFormat: 'DD.MM.YYYY HH:mm:ss',
 };
 

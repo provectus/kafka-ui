@@ -46,9 +46,9 @@ const App: React.FC = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <ConfirmContextProvider>
-          <GlobalSettingsProvider>
+      <GlobalSettingsProvider>
+        <ThemeProvider theme={theme}>
+          <ConfirmContextProvider>
             <GlobalCSS />
             <S.Layout>
               <S.Navbar role="navigation" aria-label="Page Header">
@@ -127,10 +127,10 @@ const App: React.FC = () => {
               </S.Container>
               <Toaster position="bottom-right" />
             </S.Layout>
-          </GlobalSettingsProvider>
-          <ConfirmationModal />
-        </ConfirmContextProvider>
-      </ThemeProvider>
+            <ConfirmationModal />
+          </ConfirmContextProvider>
+        </ThemeProvider>
+      </GlobalSettingsProvider>
     </QueryClientProvider>
   );
 };
