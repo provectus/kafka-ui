@@ -72,7 +72,6 @@ public class TopicTests extends BaseTest {
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .openTopic(TOPIC_TO_UPDATE)
-//        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
                 .waitUntilScreenReady()
                 .openEditSettings()
                 .selectCleanupPolicy(COMPACT_POLICY_VALUE)
@@ -84,21 +83,14 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
-//        pages.openTopicView(CLUSTER_NAME, TOPIC_TO_UPDATE)
                 .openTopic(TOPIC_TO_UPDATE)
                 .waitUntilScreenReady()
                 .openEditSettings();
-                // Assertions
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(new TopicCreateEditSettingsView().getCleanupPolicy()).as("Cleanup Policy").isEqualTo(COMPACT_POLICY_VALUE);
         softly.assertThat(new TopicCreateEditSettingsView().getTimeToRetain()).as("Time to retain").isEqualTo(UPDATED_TIME_TO_RETAIN_VALUE);
         softly.assertThat(new TopicCreateEditSettingsView().getMaxSizeOnDisk()).as("Max size on disk").isEqualTo(UPDATED_MAX_SIZE_ON_DISK);
         softly.assertThat(new TopicCreateEditSettingsView().getMaxMessageBytes()).as("Max message bytes").isEqualTo(UPDATED_MAX_MESSAGE_BYTES);
-
-//                .cleanupPolicyIs(COMPACT_POLICY_VALUE)
-//                .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
-//                .maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK)
-//                .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
         softly.assertAll();
     }
 
