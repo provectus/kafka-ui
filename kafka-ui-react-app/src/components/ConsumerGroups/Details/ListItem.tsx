@@ -18,6 +18,15 @@ interface Props {
 
 const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
   const [isOpen, setIsOpen] = React.useState(false);
+
+  const getTotalMessagesBehind = () => {
+    let count = 0;
+    consumers.forEach((consumer) => {
+      count += consumer?.messagesBehind || 0;
+    });
+    return count;
+  };
+
   return (
     <>
       <tr>
@@ -29,6 +38,7 @@ const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
         <TableKeyLink>
           <Link to={clusterTopicPath(clusterName, name)}>{name}</Link>
         </TableKeyLink>
+        <td>{getTotalMessagesBehind()}</td>
       </tr>
       {isOpen && <TopicContents consumers={consumers} />}
     </>

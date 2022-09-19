@@ -113,6 +113,7 @@ const Details: React.FC = () => {
           <tr>
             <TableHeaderCell> </TableHeaderCell>
             <TableHeaderCell title="Topic" />
+            <TableHeaderCell title="Messages behind" />
           </tr>
         </thead>
         <tbody>
