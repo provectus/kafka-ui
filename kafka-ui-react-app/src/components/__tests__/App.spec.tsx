@@ -1,5 +1,5 @@
 import React from 'react';
-import { prettyDOM, screen, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import App from 'components/App';
 import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
