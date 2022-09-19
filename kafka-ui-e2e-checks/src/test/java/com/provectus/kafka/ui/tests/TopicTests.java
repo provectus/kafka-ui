@@ -54,14 +54,16 @@ public class TopicTests extends BaseTest {
                 .sendData()
                 .waitUntilScreenReady();
         pages.open()
-                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS)
-                .topicIsVisible(NEW_TOPIC);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
+//                .topicIsVisible(NEW_TOPIC);
+        Assertions.assertTrue(pages.topicsList.isTopicVisible(NEW_TOPIC));
         helpers.apiHelper.deleteTopic(CLUSTER_NAME, NEW_TOPIC);
         pages.open()
-                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS)
-                .topicIsNotVisible(NEW_TOPIC);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
+//                .topicIsNotVisible(NEW_TOPIC);
+        Assertions.assertFalse(pages.topicsList.isTopicVisible(NEW_TOPIC));
     }
-    @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
+
     @DisplayName("should update a topic")
     @Issue("1500")
     @Suite(suiteId = 2, title = "Topics")
@@ -106,8 +108,9 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .deleteTopic();
         pages.openTopicsList(CLUSTER_NAME)
-                .waitUntilScreenReady()
-                .isTopicNotVisible(TOPIC_TO_DELETE);
+                .waitUntilScreenReady();
+//                .isTopicNotVisible(TOPIC_TO_DELETE);
+        Assertions.assertFalse(pages.topicsList.isTopicVisible(TOPIC_TO_DELETE));
     }
 
     @DisplayName("produce message")

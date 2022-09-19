@@ -11,6 +11,7 @@ import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.extensions.WebUtils.isVisible;
 
 @ExtensionMethod(WaitUtils.class)
 public class TopicsList {
@@ -37,12 +38,9 @@ public class TopicsList {
     }
 
     @Step
-    public TopicsList isTopicVisible(String topicName) {
-        $$("tbody td>a")
-                .shouldBe(CollectionCondition.sizeGreaterThan(4))
-                .find(Condition.exactText(topicName))
-                .shouldBe(Condition.visible);
-        return this;
+    public boolean isTopicVisible(String topicName) {
+        $(By.xpath("//table")).shouldBe(Condition.visible);
+        return isVisible($x("//tbody//td//a[text()='" + topicName + "']"));
     }
 
     @Step
