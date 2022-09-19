@@ -7,10 +7,7 @@ import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qase.api.annotation.CaseId;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static com.provectus.kafka.ui.extensions.FileUtils.getResourceAsString;
 
@@ -73,8 +70,9 @@ public class ConnectorsTests extends BaseTest {
                         SINK_CONNECTOR,
                         getResourceAsString("config_for_create_connector.json"));
         pages.openConnectorsList(CLUSTER_NAME)
-                .waitUntilScreenReady()
-                .connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
+                .waitUntilScreenReady();
+//                .connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
+        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(SINK_CONNECTOR));
     }
 
     @DisplayName("should update a connector")
@@ -89,8 +87,9 @@ public class ConnectorsTests extends BaseTest {
         pages.connectorsView.connectorIsVisibleOnOverview();
         pages.connectorsView.openEditConfig()
                 .updConnectorConfig(getResourceAsString("config_for_update_connector.json"));
-        pages.openConnectorsList(CLUSTER_NAME)
-                .connectorIsVisibleInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
+        pages.openConnectorsList(CLUSTER_NAME);
+//                .connectorIsVisibleInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
+        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_UPDATE));
     }
 
     @DisplayName("should delete connector")
@@ -103,7 +102,8 @@ public class ConnectorsTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_DELETE);
         pages.connectorsView.clickDeleteButton();
-        pages.openConnectorsList(CLUSTER_NAME)
-                .isNotVisible(CONNECTOR_FOR_DELETE);
+        pages.openConnectorsList(CLUSTER_NAME);
+//                .isNotVisible(CONNECTOR_FOR_DELETE);
+        Assertions.assertFalse(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_DELETE));
     }
 }
