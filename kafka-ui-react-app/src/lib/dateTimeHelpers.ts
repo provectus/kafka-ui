@@ -7,5 +7,6 @@ export const formatTimestamp = (
   if (!timestamp) {
     return '';
   }
+
   return dayjs(timestamp).format(format);
 };
