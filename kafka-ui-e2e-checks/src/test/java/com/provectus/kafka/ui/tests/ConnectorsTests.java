@@ -66,11 +66,9 @@ public class ConnectorsTests extends BaseTest {
                 .waitUntilScreenReady()
                 .setConnectorConfig(connectorForCreate.getName(), connectorForCreate.getConfig());
         pages.openConnectorsList(CLUSTER_NAME)
-                .waitUntilScreenReady()
-                .connectorIsVisibleInList(connectorForCreate.getName(), TOPIC_FOR_CREATE.getName());
-        CONNECTOR_LIST.add(connectorForCreate);
                 .waitUntilScreenReady();
-        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(SINK_CONNECTOR),"isConnectorVisible()");
+        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(connectorForCreate.getName()),"isConnectorVisible()");
+        CONNECTOR_LIST.add(connectorForCreate);
     }
 
     @DisplayName("should update a connector")
@@ -79,17 +77,14 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(196)
     @Test
     public void updateConnector() {
-        pages.openConnectorsList(CLUSTER_NAME)
-                .waitUntilScreenReady()
-                .openConnector(CONNECTOR_FOR_UPDATE.getName());
-        pages.connectorsView.connectorIsVisibleOnOverview();
-        pages.connectorsView.openEditConfig()
-                .updConnectorConfig(CONNECTOR_FOR_UPDATE.getConfig());
-        pages.openConnectorsList(CLUSTER_NAME)
-                .connectorIsVisibleInList(CONNECTOR_FOR_UPDATE.getName(), TOPIC_FOR_UPDATE.getName());
-                .updConnectorConfig(getResourceAsString("config_for_update_connector.json"));
-        pages.openConnectorsList(CLUSTER_NAME);
-        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_UPDATE),"isConnectorVisible()");
+            pages.openConnectorsList(CLUSTER_NAME)
+                    .waitUntilScreenReady()
+                    .openConnector(CONNECTOR_FOR_UPDATE.getName());
+            pages.connectorsView.connectorIsVisibleOnOverview();
+            pages.connectorsView.openEditConfig()
+                    .updConnectorConfig(CONNECTOR_FOR_UPDATE.getConfig());
+            pages.openConnectorsList(CLUSTER_NAME);
+        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_UPDATE.getName()),"isConnectorVisible()");
     }
 
     @DisplayName("should delete connector")
@@ -103,9 +98,7 @@ public class ConnectorsTests extends BaseTest {
                 .openConnector(CONNECTOR_FOR_DELETE.getName());
         pages.connectorsView.clickDeleteButton();
         pages.openConnectorsList(CLUSTER_NAME);
-        Assertions.assertFalse(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_DELETE),"isConnectorVisible()");
-        pages.openConnectorsList(CLUSTER_NAME)
-                .isNotVisible(CONNECTOR_FOR_DELETE.getName());
+        Assertions.assertFalse(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()),"isConnectorVisible()");
         CONNECTOR_LIST.remove(CONNECTOR_FOR_DELETE);
     }
 

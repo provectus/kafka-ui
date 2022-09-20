@@ -52,12 +52,11 @@ public class TopicTests extends BaseTest {
                 .sendData()
                 .waitUntilScreenReady();
         pages.open()
-                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS)
-                .topicIsVisible(topicToCreate.getName());
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
+                Assertions.assertTrue(pages.topicsList.isTopicVisible(topicToCreate.getName()));
         TOPIC_LIST.add(topicToCreate);
     }
 
-    @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
     @DisplayName("should update a topic")
     @Issue("1500")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
@@ -67,7 +66,7 @@ public class TopicTests extends BaseTest {
     public void updateTopic() {
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        pages.openTopicView(CLUSTER_NAME, TOPIC_FOR_UPDATE.getName())
+        pages.topicsList.openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
                 .openEditSettings()
                 .selectCleanupPolicy(TOPIC_FOR_UPDATE.getCompactPolicyValue())
@@ -79,22 +78,14 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        pages.openTopicView(CLUSTER_NAME, TOPIC_FOR_UPDATE.getName())
-                .openEditSettings()
-                // Assertions
-                .cleanupPolicyIs(TOPIC_FOR_UPDATE.getCompactPolicyValue())
-                .timeToRetainIs(TOPIC_FOR_UPDATE.getTimeToRetainData())
-                .maxSizeOnDiskIs(TOPIC_FOR_UPDATE.getMaxSizeOnDisk())
-                .maxMessageBytesIs(TOPIC_FOR_UPDATE.getMaxMessageBytes());
-                .waitUntilScreenReady()
-                .openTopic(TOPIC_TO_UPDATE)
+        pages.topicsList.openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
                 .openEditSettings();
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(new TopicCreateEditSettingsView().getCleanupPolicy()).as("Cleanup Policy").isEqualTo(COMPACT_POLICY_VALUE);
-        softly.assertThat(new TopicCreateEditSettingsView().getTimeToRetain()).as("Time to retain").isEqualTo(UPDATED_TIME_TO_RETAIN_VALUE);
-        softly.assertThat(new TopicCreateEditSettingsView().getMaxSizeOnDisk()).as("Max size on disk").isEqualTo(UPDATED_MAX_SIZE_ON_DISK);
-        softly.assertThat(new TopicCreateEditSettingsView().getMaxMessageBytes()).as("Max message bytes").isEqualTo(UPDATED_MAX_MESSAGE_BYTES);
+        softly.assertThat(new TopicCreateEditSettingsView().getCleanupPolicy()).as("Cleanup Policy").isEqualTo(TOPIC_FOR_UPDATE.getCompactPolicyValue());
+        softly.assertThat(new TopicCreateEditSettingsView().getTimeToRetain()).as("Time to retain").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
+        softly.assertThat(new TopicCreateEditSettingsView().getMaxSizeOnDisk()).as("Max size on disk").isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk());
+        softly.assertThat(new TopicCreateEditSettingsView().getMaxMessageBytes()).as("Max message bytes").isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
         softly.assertAll();
     }
 
@@ -110,11 +101,9 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .deleteTopic();
         pages.openTopicsList(CLUSTER_NAME)
-                .waitUntilScreenReady()
-                .isTopicNotVisible(TOPIC_FOR_DELETE.getName());
-        TOPIC_LIST.remove(TOPIC_FOR_DELETE);
                 .waitUntilScreenReady();
-        Assertions.assertFalse(pages.topicsList.isTopicVisible(TOPIC_TO_DELETE),"isTopicVisible");
+        Assertions.assertFalse(pages.topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()),"isTopicVisible");
+        TOPIC_LIST.remove(TOPIC_FOR_DELETE);
     }
 
     @DisplayName("produce message")
@@ -127,17 +116,14 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicView.TopicMenu.MESSAGES)
                 .clickOnButton("Produce Message")
                 .setContentFiled(TOPIC_FOR_UPDATE.getMessageContent())
                 .setKeyField(TOPIC_FOR_UPDATE.getMessageKey())
                 .submitProduceMessage();
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(pages.topicView.isKeyMessageVisible(fileToString(KEY_TO_PRODUCE_MESSAGE ))).withFailMessage("isKeyMessageVisible()").isTrue();
-        softly.assertThat(pages.topicView.isContentMessageVisible(fileToString(CONTENT_TO_PRODUCE_MESSAGE).trim())).withFailMessage("isContentMessageVisible()").isTrue();
+        softly.assertThat(pages.topicView.isKeyMessageVisible((TOPIC_FOR_UPDATE.getMessageKey()))).withFailMessage("isKeyMessageVisible()").isTrue();
+        softly.assertThat(pages.topicView.isContentMessageVisible((TOPIC_FOR_UPDATE.getMessageContent()).trim())).withFailMessage("isContentMessageVisible()").isTrue();
         softly.assertAll();
-        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(TOPIC_FOR_UPDATE.getMessageKey()));
-        Assertions.assertTrue(pages.topicView.isContentMessageVisible(TOPIC_FOR_UPDATE.getMessageContent().trim()));
     }
 
     @AfterAll
