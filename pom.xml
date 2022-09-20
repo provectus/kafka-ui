@@ -33,7 +33,7 @@
         <swagger-annotations.version>1.6.0</swagger-annotations.version>
         <springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
         <avro.version>1.11.0</avro.version>
-        <confluent.version>7.0.1</confluent.version>
+        <confluent.version>7.2.1</confluent.version>
         <apache.commons.version>2.11.1</apache.commons.version>
         <test.containers.version>1.17.1</test.containers.version>
         <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
