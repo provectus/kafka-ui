@@ -8,8 +8,7 @@ import {
   useFieldArray,
   useForm,
 } from 'react-hook-form';
-import MultiSelect from 'react-multi-select-component';
-import { Option } from 'react-multi-select-component/dist/lib/interfaces';
+import { MultiSelect, Option } from 'react-multi-select-component';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import groupBy from 'lodash/groupBy';

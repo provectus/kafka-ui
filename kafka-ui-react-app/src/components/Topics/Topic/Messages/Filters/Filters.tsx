@@ -14,7 +14,7 @@ import React, { useContext } from 'react';
 import omitBy from 'lodash/omitBy';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
-import { Option } from 'react-multi-select-component/dist/lib/interfaces';
+import { Option } from 'react-multi-select-component';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { BASE_PARAMS } from 'lib/constants';
 import Select from 'components/common/Select/Select';
@@ -25,7 +25,7 @@ import FilterModal, {
 } from 'components/Topics/Topic/Messages/Filters/FilterModal';
 import { SeekDirectionOptions } from 'components/Topics/Topic/Messages/Messages';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
-import useModal from 'lib/hooks/useModal';
+import useBoolean from 'lib/hooks/useBoolean';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
 import PlusIcon from 'components/common/Icons/PlusIcon';
@@ -95,7 +95,7 @@ const Filters: React.FC<FiltersProps> = ({
   const { searchParams, seekDirection, isLive, changeSeekDirection } =
     useContext(TopicMessagesContext);
 
-  const { isOpen, toggle } = useModal();
+  const { value: isOpen, toggle } = useBoolean();
 
   const source = React.useRef<EventSource | null>(null);
 
@@ -393,12 +393,7 @@ const Filters: React.FC<FiltersProps> = ({
     <S.FiltersWrapper>
       <div>
         <S.FilterInputs>
-          <Search
-            placeholder="Search"
-            value={query}
-            disabled={isTailing}
-            handleSearch={(value: string) => setQuery(value)}
-          />
+          <Search placeholder="Search" disabled={isTailing} />
           <S.SeekTypeSelectorWrapper>
             <S.SeekTypeSelect
               id="selectSeekType"
