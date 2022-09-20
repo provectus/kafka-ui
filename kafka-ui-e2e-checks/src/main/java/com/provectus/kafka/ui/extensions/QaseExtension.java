@@ -40,7 +40,7 @@ public class QaseExtension implements TestExecutionListener {
 
 
     static {
-        String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");;
+        String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
 
         if (qaseApiToken == null || StringUtils.isEmpty(qaseApiToken)) {
             throw new RuntimeException("QaseIO API token should be present");
