@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 export interface InputProps {
   inputSize?: 'S' | 'M' | 'L';
-  hasLeftIcon: boolean;
+  search: boolean;
 }
 
 const INPUT_SIZES = {
@@ -14,7 +14,7 @@ const INPUT_SIZES = {
 export const Wrapper = styled.div`
   position: relative;
 
-  svg {
+  svg:first-child {
     position: absolute;
     top: 8px;
     line-height: 0;
@@ -28,14 +28,14 @@ export const Wrapper = styled.div`
 `;
 
 export const Input = styled.input<InputProps>(
-  ({ theme: { input }, inputSize, hasLeftIcon }) => css`
+  ({ theme: { input }, inputSize, search }) => css`
     border: 1px ${input.borderColor.normal} solid;
     border-radius: 4px;
     height: ${inputSize && INPUT_SIZES[inputSize]
       ? INPUT_SIZES[inputSize]
       : '40px'};
     width: 100%;
-    padding-left: ${hasLeftIcon ? '36px' : '12px'};
+    padding-left: ${search ? '36px' : '12px'};
     font-size: 14px;
 
     &::placeholder {
