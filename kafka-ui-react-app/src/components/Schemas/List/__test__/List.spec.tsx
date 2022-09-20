@@ -110,9 +110,10 @@ describe('List', () => {
         expect(screen.getByText(schemaVersion2.subject)).toBeInTheDocument();
       });
       it('handles onRowClick', () => {
-        const { subject, version, compatibilityLevel } = schemaVersion2;
+        const { id, schemaType, subject, version, compatibilityLevel } =
+          schemaVersion2;
         const row = screen.getByRole('row', {
-          name: `${subject} ${version} ${compatibilityLevel}`,
+          name: `${subject} ${id} ${schemaType} ${version} ${compatibilityLevel}`,
         });
         expect(row).toBeInTheDocument();
         userEvent.click(row);

@@ -57,6 +57,8 @@ const List: React.FC = () => {
   const columns = React.useMemo<ColumnDef<SchemaSubject>[]>(
     () => [
       { header: 'Subject', accessorKey: 'subject', cell: LinkCell },
+      { header: 'Id', accessorKey: 'id' },
+      { header: 'Type', accessorKey: 'schemaType' },
       { header: 'Version', accessorKey: 'version' },
       { header: 'Compatibility', accessorKey: 'compatibilityLevel' },
     ],

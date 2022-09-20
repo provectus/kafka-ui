@@ -124,6 +124,7 @@ const Details: React.FC = () => {
               <TableHeaderCell />
               <TableHeaderCell title="Version" />
               <TableHeaderCell title="ID" />
+              <TableHeaderCell title="Type" />
             </tr>
           </thead>
           <tbody>
