@@ -75,6 +75,9 @@ const theme = {
     label: {
       color: Colors.neutral[50],
     },
+    meta: {
+      color: Colors.neutral[30],
+    },
   },
   progressBar: {
     backgroundColor: Colors.neutral[3],
@@ -86,6 +89,8 @@ const theme = {
     minWidth: '1200px',
     navBarWidth: '201px',
     navBarHeight: '53px',
+    rightSidebarWidth: '70vw',
+
     stuffColor: Colors.neutral[5],
     stuffBorderColor: Colors.neutral[10],
     overlay: {
@@ -96,6 +101,7 @@ const theme = {
     },
   },
   pageHeading: {
+    height: '64px',
     dividerColor: Colors.neutral[30],
     backLink: {
       color: {
@@ -350,6 +356,7 @@ const theme = {
     },
   },
   primaryTab: {
+    height: '41px',
     color: {
       normal: Colors.neutral[50],
       hover: Colors.neutral[90],

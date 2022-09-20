@@ -6,7 +6,7 @@ import * as S from './Input.styled';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement>,
-    Omit<S.InputProps, 'hasLeftIcon'> {
+    Omit<S.InputProps, 'search'> {
   name?: string;
   hookFormOptions?: RegisterOptions;
   search?: boolean;
@@ -74,7 +74,7 @@ const Input: React.FC<InputProps> = ({
       {search && <SearchIcon />}
       <S.Input
         inputSize={inputSize}
-        hasLeftIcon={!!search}
+        search={!!search}
         type={type}
         onKeyPress={keyPressEventHandler}
         onPaste={pasteEventHandler}

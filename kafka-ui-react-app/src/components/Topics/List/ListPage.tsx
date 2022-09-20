@@ -9,13 +9,11 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import Switch from 'components/common/Switch/Switch';
 import PlusIcon from 'components/common/Icons/PlusIcon';
-import useSearch from 'lib/hooks/useSearch';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import TopicTable from 'components/Topics/List/TopicTable';
 
 const ListPage: React.FC = () => {
   const { isReadOnly } = React.useContext(ClusterContext);
-  const [searchQuery, handleSearchQuery] = useSearch();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Set the search params to the url based on the localStorage value
@@ -59,11 +57,7 @@ const ListPage: React.FC = () => {
         )}
       </PageHeading>
       <ControlPanelWrapper hasInput>
-        <Search
-          handleSearch={handleSearchQuery}
-          placeholder="Search by Topic Name"
-          value={searchQuery}
-        />
+        <Search placeholder="Search by Topic Name" />
         <label>
           <Switch
             name="ShowInternalTopics"

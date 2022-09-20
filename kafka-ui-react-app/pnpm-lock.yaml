@@ -10,6 +10,7 @@ specifiers:
   '@hookform/error-message': ^2.0.0
   '@hookform/resolvers': ^2.7.1
   '@jest/types': ^29.0.3
+  '@microsoft/fetch-event-source': ^2.0.1
   '@openapitools/openapi-generator-cli': ^2.5.1
   '@reduxjs/toolkit': ^1.8.3
   '@szhsin/react-menu': ^3.1.1
@@ -72,7 +73,7 @@ specifiers:
   react-hook-form: 7.6.9
   react-hot-toast: ^2.3.0
   react-is: ^18.2.0
-  react-multi-select-component: ^4.0.6
+  react-multi-select-component: ^4.3.3
   react-redux: ^8.0.2
   react-router-dom: ^6.3.0
   redux: ^4.2.0
@@ -88,6 +89,7 @@ specifiers:
   vite-tsconfig-paths: ^3.5.0
   whatwg-fetch: ^3.6.2
   yup: ^0.32.9
+  zustand: ^4.1.1
 
 dependencies:
   '@babel/core': 7.18.2
@@ -95,6 +97,7 @@ dependencies:
   '@babel/plugin-transform-react-jsx': 7.18.6_@babel+core@7.18.2
   '@hookform/error-message': 2.0.0_l2dcsysovzdujulgxvsen7vbsm
   '@hookform/resolvers': 2.8.9_react-hook-form@7.6.9
+  '@microsoft/fetch-event-source': 2.0.1
   '@reduxjs/toolkit': 1.8.3_ctm756ikdwcjcvyfxxwskzbr6q
   '@szhsin/react-menu': 3.1.1_ef5jwxihqo6n7gxfmzogljlgcm
   '@tanstack/react-query': 4.0.5_ef5jwxihqo6n7gxfmzogljlgcm
@@ -122,7 +125,7 @@ dependencies:
   react-hook-form: 7.6.9_react@18.1.0
   react-hot-toast: 2.3.0_ef5jwxihqo6n7gxfmzogljlgcm
   react-is: 18.2.0
-  react-multi-select-component: 4.0.6_react@18.1.0
+  react-multi-select-component: 4.3.3_ef5jwxihqo6n7gxfmzogljlgcm
   react-redux: 8.0.2_nfqigfgwurfoimtkde74cji6ga
   react-router-dom: 6.3.0_ef5jwxihqo6n7gxfmzogljlgcm
   redux: 4.2.0
@@ -133,6 +136,7 @@ dependencies:
   vite-tsconfig-paths: 3.5.0_vite@3.0.2
   whatwg-fetch: 3.6.2
   yup: 0.32.11
+  zustand: 4.1.1_react@18.1.0
 
 devDependencies:
   '@babel/preset-env': 7.18.2_@babel+core@7.18.2
@@ -3058,6 +3062,10 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.0.7
       '@jridgewell/sourcemap-codec': 1.4.13
+
+  /@microsoft/fetch-event-source/2.0.1:
+    resolution: {integrity: sha512-W6CLUJ2eBMw3Rec70qrsEW0jOm/3twwJv21mrmj2yORiaVmVYGS4sSS5yUwvQc1ZlDLYGPnClVWmUUMagKNsfA==}
+    dev: false
 
   /@nestjs/common/8.4.4_47vcjb2de6lyibr6g4enoa5lyu:
     resolution: {integrity: sha512-QHi7QcgH/5Jinz+SCfIZJkFHc6Cch1YsAEGFEhi6wSp6MILb0sJMQ1CX06e9tCOAjSlBwaJj4PH0eFCVau5v9Q==}
@@ -7659,12 +7667,14 @@ packages:
   /react-is/18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
 
-  /react-multi-select-component/4.0.6_react@18.1.0:
-    resolution: {integrity: sha512-cNpDv8vh1kWkJiMsa097tTUqWLVTQn+La4aXlgoGOQVpOSH9u1fbj1+MsvnLQjTBySuDx+pzm/DpbIoma/i1Fw==}
+  /react-multi-select-component/4.3.3_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-V8cDJC3M7F27PWv1baV8FpJReHa/SbpJGL80CmXwnlMkDK2KMlQSRDmDzBnmCjcbROIgoztdW+gYBpqo9BIF4g==}
     peerDependencies:
-      react: '>=17'
+      react: ^16 || ^17 || ^18
+      react-dom: ^16 || ^17 || ^18
     dependencies:
       react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
     dev: false
 
   /react-onclickoutside/6.12.1_ef5jwxihqo6n7gxfmzogljlgcm:
@@ -8933,4 +8943,20 @@ packages:
       nanoclone: 0.2.1
       property-expr: 2.0.4
       toposort: 2.0.2
+    dev: false
+
+  /zustand/4.1.1_react@18.1.0:
+    resolution: {integrity: sha512-h4F3WMqsZgvvaE0n3lThx4MM81Ls9xebjvrABNzf5+jb3/03YjNTSgZXeyrvXDArMeV9untvWXRw1tY+ntPYbA==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      react: 18.1.0
+      use-sync-external-store: 1.2.0_react@18.1.0
     dev: false
