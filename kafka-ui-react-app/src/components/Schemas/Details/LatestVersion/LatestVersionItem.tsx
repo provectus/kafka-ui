@@ -27,6 +27,10 @@ const LatestVersionItem: React.FC<LatestVersionProps> = ({
         <p>{id}</p>
       </div>
       <div>
+        <S.MetaDataLabel>Type</S.MetaDataLabel>
+        <p>{schemaType}</p>
+      </div>
+      <div>
         <S.MetaDataLabel>Subject</S.MetaDataLabel>
         <p>{subject}</p>
       </div>

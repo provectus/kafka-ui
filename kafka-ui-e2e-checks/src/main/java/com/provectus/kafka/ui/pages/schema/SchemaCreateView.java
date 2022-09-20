@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.pages.schema;
 
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.api.model.SchemaType;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
@@ -33,20 +34,5 @@ public class SchemaCreateView {
     public SchemaCreateView setSchemaField(String text) {
         schemaField.setValue(text);
         return this;
-    }
-
-    public enum SchemaType {
-        AVRO("AVRO"),
-        JSON("JSON"),
-        PROTOBUF("PROTOBUF");
-
-        final String value;
-
-        SchemaType(String value) {
-            this.value = value;
-        }
-        public String getValue(){
-            return value;
-        }
     }
 }

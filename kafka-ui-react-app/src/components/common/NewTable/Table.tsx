@@ -329,6 +329,7 @@ const Table: React.FC<TableProps<any>> = ({
               <span>Go to page:</span>
               <Input
                 type="number"
+                positiveOnly
                 defaultValue={table.getState().pagination.pageIndex + 1}
                 inputSize="M"
                 max={table.getPageCount()}
