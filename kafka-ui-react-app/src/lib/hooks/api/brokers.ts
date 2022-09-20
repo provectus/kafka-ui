@@ -1,12 +1,11 @@
 import { brokersApiClient as api } from 'lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ClusterName } from 'redux/interfaces';
+import { BrokerConfigItem } from 'generated-sources';
 
 interface UpdateBrokerConfigProps {
   name: string;
-  brokerConfigItem: {
-    value: string | null;
-  };
+  brokerConfigItem: BrokerConfigItem;
 }
 
 export function useBrokers(clusterName: ClusterName) {

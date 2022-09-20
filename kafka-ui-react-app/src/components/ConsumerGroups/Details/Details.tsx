@@ -103,6 +103,9 @@ const Details: React.FC = () => {
           <Metrics.Indicator label="Coordinator ID">
             {consumerGroup.coordinator?.id}
           </Metrics.Indicator>
+          <Metrics.Indicator label="Total lag">
+            {consumerGroup.messagesBehind}
+          </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
       <Table isFullwidth>

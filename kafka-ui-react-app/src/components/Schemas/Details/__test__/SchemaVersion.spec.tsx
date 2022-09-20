@@ -17,7 +17,7 @@ const component = (
 describe('SchemaVersion', () => {
   it('renders versions', () => {
     render(component);
-    expect(screen.getAllByRole('cell')).toHaveLength(3);
+    expect(screen.getAllByRole('cell')).toHaveLength(4);
     expect(screen.queryByTestId('json-viewer')).not.toBeInTheDocument();
     userEvent.click(screen.getByRole('button'));
   });
