@@ -51,12 +51,13 @@ const isJsonObject = () => {
 };
 
 const isObjectScopeOut = () => {
-  return yup.string().test(
-    'isObjectScopeOut',
-    // eslint-disable-next-line no-template-curly-in-string
-    'That invalid data was filled',
-    isValidObjectScopeOut
-  );
+  return yup
+    .string()
+    .test(
+      'isObjectScopeOut',
+      'Schema syntax is not valid',
+      isValidObjectScopeOut
+    );
 };
 
 yup.addMethod(yup.string, 'isJsonObject', isJsonObject);
