@@ -6,7 +6,6 @@ import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.schema.SchemaEditView;
-import com.provectus.kafka.ui.pages.schema.SchemaView;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
@@ -54,9 +53,8 @@ public class SchemasTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(schemaAvro.getName()),"isSchemaVisible()");
+        pages.schemaRegistry.isSchemaVisible(schemaAvro.getName());
         SCHEMA_LIST.add(schemaAvro);
-
     }
 
     @DisplayName("should update AVRO schema")
@@ -76,8 +74,8 @@ public class SchemasTests extends BaseTest {
         new SchemaEditView().selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(AVRO_API.getValuePath()))
                 .clickSubmit()
-                .waitUntilScreenReady();
-        Assertions.assertTrue(new SchemaView().isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE),"isCompatibility()");
+                .waitUntilScreenReady()
+                .isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE);
     }
 
     @DisplayName("should delete AVRO schema")
@@ -91,8 +89,8 @@ public class SchemasTests extends BaseTest {
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(AVRO_API.getName())
                 .waitUntilScreenReady()
-                .removeSchema();
-        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(AVRO_API.getName()),"isSchemaVisible()");
+                .removeSchema()
+                .isNotVisible(AVRO_API.getName());
         SCHEMA_LIST.remove(AVRO_API);
     }
 
@@ -114,7 +112,7 @@ public class SchemasTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(schemaJson.getName()),"isSchemaVisible()");
+        pages.schemaRegistry.isSchemaVisible(schemaJson.getName());
         SCHEMA_LIST.add(schemaJson);
     }
 
@@ -129,8 +127,8 @@ public class SchemasTests extends BaseTest {
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(JSON_API.getName())
                 .waitUntilScreenReady()
-                .removeSchema();
-        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(JSON_API.getName()),"isSchemaVisible()");
+                .removeSchema()
+                .isNotVisible(JSON_API.getName());
         SCHEMA_LIST.remove(JSON_API);
     }
 
@@ -152,7 +150,7 @@ public class SchemasTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(schemaProtobuf.getName()),"isSchemaVisible()");
+        pages.schemaRegistry.isSchemaVisible(schemaProtobuf.getName());
         SCHEMA_LIST.add(schemaProtobuf);
     }
 
@@ -167,8 +165,8 @@ public class SchemasTests extends BaseTest {
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(PROTOBUF_API.getName())
                 .waitUntilScreenReady()
-                .removeSchema();
-        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(PROTOBUF_API.getName()),"isSchemaVisible()");
+                .removeSchema()
+                .isNotVisible(PROTOBUF_API.getName());
         SCHEMA_LIST.remove(PROTOBUF_API);
     }
 

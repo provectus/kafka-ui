@@ -8,7 +8,10 @@ import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
 import io.qase.api.annotation.CaseId;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +69,8 @@ public class ConnectorsTests extends BaseTest {
                 .waitUntilScreenReady()
                 .setConnectorConfig(connectorForCreate.getName(), connectorForCreate.getConfig());
         pages.openConnectorsList(CLUSTER_NAME)
-                .waitUntilScreenReady();
-        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(connectorForCreate.getName()),"isConnectorVisible()");
+                .waitUntilScreenReady()
+                .connectorIsVisibleInList(connectorForCreate.getName(), TOPIC_FOR_CREATE.getName());
         CONNECTOR_LIST.add(connectorForCreate);
     }
 
@@ -77,14 +80,14 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(196)
     @Test
     public void updateConnector() {
-            pages.openConnectorsList(CLUSTER_NAME)
-                    .waitUntilScreenReady()
-                    .openConnector(CONNECTOR_FOR_UPDATE.getName());
-            pages.connectorsView.connectorIsVisibleOnOverview();
-            pages.connectorsView.openEditConfig()
-                    .updConnectorConfig(CONNECTOR_FOR_UPDATE.getConfig());
-            pages.openConnectorsList(CLUSTER_NAME);
-        Assertions.assertTrue(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_UPDATE.getName()),"isConnectorVisible()");
+        pages.openConnectorsList(CLUSTER_NAME)
+                .waitUntilScreenReady()
+                .openConnector(CONNECTOR_FOR_UPDATE.getName());
+        pages.connectorsView.connectorIsVisibleOnOverview();
+        pages.connectorsView.openEditConfig()
+                .updConnectorConfig(CONNECTOR_FOR_UPDATE.getConfig());
+        pages.openConnectorsList(CLUSTER_NAME)
+                .connectorIsVisibleInList(CONNECTOR_FOR_UPDATE.getName(), TOPIC_FOR_UPDATE.getName());
     }
 
     @DisplayName("should delete connector")
@@ -97,8 +100,8 @@ public class ConnectorsTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_DELETE.getName());
         pages.connectorsView.clickDeleteButton();
-        pages.openConnectorsList(CLUSTER_NAME);
-        Assertions.assertFalse(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()),"isConnectorVisible()");
+        pages.openConnectorsList(CLUSTER_NAME)
+                .isNotVisible(CONNECTOR_FOR_DELETE.getName());
         CONNECTOR_LIST.remove(CONNECTOR_FOR_DELETE);
     }
 
