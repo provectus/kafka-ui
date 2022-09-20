@@ -19,7 +19,6 @@ import java.util.List;
 
 import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
 
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SchemasTests extends BaseTest {
     private static final long SUITE_ID = 11;

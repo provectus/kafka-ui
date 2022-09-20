@@ -13,6 +13,9 @@ import org.junit.jupiter.api.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.provectus.kafka.ui.extensions.FileUtils.getResourceAsString;
 
 public class ConnectorsTests extends BaseTest {
