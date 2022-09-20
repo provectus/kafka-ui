@@ -72,6 +72,7 @@ describe('Edit Component', () => {
     const field = screen.getByRole('spinbutton', {
       name: 'Min In Sync Replicas * Min In Sync Replicas *',
     });
+
     await act(() => userEvent.type(field, '1'));
     await act(() => userEvent.click(btn));
     updateTopicMock();
