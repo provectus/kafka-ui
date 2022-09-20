@@ -3,10 +3,7 @@ import SendMessage from 'components/Topics/Topic/SendMessage/SendMessage';
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
-import {
-  clusterTopicMessagesRelativePath,
-  clusterTopicSendMessagePath,
-} from 'lib/paths';
+import { clusterTopicPath } from 'lib/paths';
 import validateMessage from 'components/Topics/Topic/SendMessage/validateMessage';
 import { externalTopicPayload, topicMessageSchema } from 'lib/fixtures/topics';
 import {
@@ -35,12 +32,6 @@ jest.mock('lib/errorHandling', () => ({
   showServerError: jest.fn(),
 }));
 
-const mockNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
-}));
-
 jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
   useTopicMessageSchema: jest.fn(),
@@ -50,12 +41,14 @@ jest.mock('lib/hooks/api/topics', () => ({
 const clusterName = 'testCluster';
 const topicName = externalTopicPayload.name;
 
+const mockOnSubmit = jest.fn();
+
 const renderComponent = async () => {
-  const path = clusterTopicSendMessagePath(clusterName, topicName);
+  const path = clusterTopicPath(clusterName, topicName);
   await act(() => {
     render(
-      <WithRoute path={clusterTopicSendMessagePath()}>
-        <SendMessage />
+      <WithRoute path={clusterTopicPath()}>
+        <SendMessage onSubmit={mockOnSubmit} />
       </WithRoute>,
       { initialEntries: [path] }
     );
@@ -72,7 +65,7 @@ const renderAndSubmitData = async (error: string[] = []) => {
   });
   await act(() => {
     (validateMessage as Mock).mockImplementation(() => error);
-    userEvent.click(screen.getByText('Send'));
+    userEvent.click(screen.getByText('Produce Message'));
   });
 };
 
@@ -81,10 +74,6 @@ describe('SendMessage', () => {
     (useTopicDetails as jest.Mock).mockImplementation(() => ({
       data: externalTopicPayload,
     }));
-  });
-
-  afterEach(() => {
-    mockNavigate.mockClear();
   });
 
   describe('when schema is fetched', () => {
@@ -101,9 +90,7 @@ describe('SendMessage', () => {
       }));
       await renderAndSubmitData();
       expect(sendTopicMessageMock).toHaveBeenCalledTimes(1);
-      expect(mockNavigate).toHaveBeenLastCalledWith(
-        `../${clusterTopicMessagesRelativePath}`
-      );
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
     });
 
     it('should check and view validation error message when is not valid', async () => {
@@ -113,7 +100,7 @@ describe('SendMessage', () => {
       }));
       await renderAndSubmitData(['error']);
       expect(sendTopicMessageMock).not.toHaveBeenCalled();
-      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(mockOnSubmit).not.toHaveBeenCalled();
     });
   });
 

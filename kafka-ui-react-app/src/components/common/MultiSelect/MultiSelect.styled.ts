@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import ReactMultiSelect from 'react-multi-select-component';
+import { MultiSelect as ReactMultiSelect } from 'react-multi-select-component';
 
 const MultiSelect = styled(ReactMultiSelect)<{ minWidth?: string }>`
   min-width: ${({ minWidth }) => minWidth || '200px;'};

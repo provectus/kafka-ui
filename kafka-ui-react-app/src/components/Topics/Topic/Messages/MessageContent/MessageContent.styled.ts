@@ -31,7 +31,6 @@ export const ContentBox = styled.div`
   & nav {
     padding-bottom: 16px;
   }
-
   ${SEditorViewer.Wrapper} {
     flex-grow: 1;
   }
@@ -94,5 +93,4 @@ export const Tab = styled.button<{ $active?: boolean }>(
     }
   `
 );
-
 export const Tabs = styled.nav``;

@@ -115,11 +115,11 @@ const Table: React.FC<TableProps<any>> = ({
   pageCount,
   columns,
   getRowCanExpand,
-  renderSubComponent,
+  renderSubComponent: SubComponent,
   serverSideProcessing = false,
   enableSorting = false,
   enableRowSelection = false,
-  batchActionsBar,
+  batchActionsBar: BatchActionsBar,
   emptyMessage,
   onRowClick,
 }) => {
@@ -170,8 +170,6 @@ const Table: React.FC<TableProps<any>> = ({
     enableRowSelection,
   });
 
-  const Bar = batchActionsBar;
-
   const handleRowClick = (row: Row<typeof data>) => (e: React.MouseEvent) => {
     // If row selection is enabled do not handle row click.
     if (enableRowSelection) return undefined;
@@ -192,9 +190,9 @@ const Table: React.FC<TableProps<any>> = ({
 
   return (
     <>
-      {table.getSelectedRowModel().flatRows.length > 0 && Bar && (
+      {table.getSelectedRowModel().flatRows.length > 0 && BatchActionsBar && (
         <S.TableActionsBar>
-          <Bar
+          <BatchActionsBar
             rows={table.getSelectedRowModel().flatRows}
             resetRowSelection={table.resetRowSelection}
           />
@@ -269,11 +267,11 @@ const Table: React.FC<TableProps<any>> = ({
                     </td>
                   ))}
               </S.Row>
-              {row.getIsExpanded() && renderSubComponent && (
+              {row.getIsExpanded() && SubComponent && (
                 <S.Row expanded>
                   <td colSpan={row.getVisibleCells().length + 2}>
                     <S.ExpandedRowInfo>
-                      {renderSubComponent({ row })}
+                      <SubComponent row={row} />
                     </S.ExpandedRowInfo>
                   </td>
                 </S.Row>

@@ -203,3 +203,11 @@ export const PageInfo = styled.div`
   white-space: nowrap;
   margin-left: 16px;
 `;
+
+export const Ellipsis = styled.div`
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+`;
