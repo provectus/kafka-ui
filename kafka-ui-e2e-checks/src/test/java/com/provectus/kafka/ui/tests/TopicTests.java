@@ -4,7 +4,6 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.topic.TopicCreateEditSettingsView;
-import com.provectus.kafka.ui.pages.topic.TopicView;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
@@ -120,7 +119,6 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openTopic(TOPIC_TO_UPDATE)
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicView.TopicMenu.MESSAGES)
                 .clickOnButton("Produce Message")
                 .setContentFiled(fileToString(CONTENT_TO_PRODUCE_MESSAGE))
                 .setKeyField(fileToString(KEY_TO_PRODUCE_MESSAGE))
