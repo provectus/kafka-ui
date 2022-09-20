@@ -7,7 +7,6 @@ import * as Metrics from 'components/common/Metrics';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
-import useSearch from 'lib/hooks/useSearch';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ConnectorState } from 'generated-sources';
 import { useConnectors } from 'lib/hooks/api/kafkaConnect';
@@ -17,7 +16,6 @@ import List from './List';
 const ListPage: React.FC = () => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useAppParams<ClusterNameRoute>();
-  const [search, handleSearch] = useSearch();
 
   // Fetches all connectors from the API, without search criteria. Used to display general metrics.
   const { data: connectorsMetrics, isLoading } = useConnectors(clusterName);
@@ -70,11 +68,7 @@ const ListPage: React.FC = () => {
         </Metrics.Section>
       </Metrics.Wrapper>
       <ControlPanelWrapper hasInput>
-        <Search
-          handleSearch={handleSearch}
-          placeholder="Search by Connect Name, Status or Type"
-          value={search}
-        />
+        <Search placeholder="Search by Connect Name, Status or Type" />
       </ControlPanelWrapper>
       <Suspense fallback={<PageLoader />}>
         <List />

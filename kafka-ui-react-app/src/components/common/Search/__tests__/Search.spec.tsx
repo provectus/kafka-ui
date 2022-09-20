@@ -3,42 +3,42 @@ import React from 'react';
 import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
+import { useSearchParams } from 'react-router-dom';
 
 jest.mock('use-debounce', () => ({
   useDebouncedCallback: (fn: (e: Event) => void) => fn,
 }));
 
+const setSearchParamsMock = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...(jest.requireActual('react-router-dom') as object),
+  useSearchParams: jest.fn(),
+}));
+
+const placeholder = 'I am a search placeholder';
+
 describe('Search', () => {
-  const handleSearch = jest.fn();
+  beforeEach(() => {
+    (useSearchParams as jest.Mock).mockImplementation(() => [
+      new URLSearchParams(),
+      setSearchParamsMock,
+    ]);
+  });
   it('calls handleSearch on input', () => {
-    render(
-      <Search
-        handleSearch={handleSearch}
-        value=""
-        placeholder="Search bt the Topic name"
-      />
-    );
-    const input = screen.getByPlaceholderText('Search bt the Topic name');
+    render(<Search placeholder={placeholder} />);
+    const input = screen.getByPlaceholderText(placeholder);
     userEvent.click(input);
     userEvent.keyboard('value');
-    expect(handleSearch).toHaveBeenCalledTimes(5);
+    expect(setSearchParamsMock).toHaveBeenCalledTimes(5);
   });
 
   it('when placeholder is provided', () => {
-    render(
-      <Search
-        handleSearch={handleSearch}
-        value=""
-        placeholder="Search bt the Topic name"
-      />
-    );
-    expect(
-      screen.getByPlaceholderText('Search bt the Topic name')
-    ).toBeInTheDocument();
+    render(<Search placeholder={placeholder} />);
+    expect(screen.getByPlaceholderText(placeholder)).toBeInTheDocument();
   });
 
   it('when placeholder is not provided', () => {
-    render(<Search handleSearch={handleSearch} value="" />);
+    render(<Search />);
     expect(screen.queryByPlaceholderText('Search')).toBeInTheDocument();
   });
 });

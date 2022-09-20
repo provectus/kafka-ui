@@ -5,11 +5,11 @@ import DangerZone, {
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
-import { clusterTopicSendMessagePath } from 'lib/paths';
 import {
   useIncreaseTopicPartitionsCount,
   useUpdateTopicReplicationFactor,
 } from 'lib/hooks/api/topics';
+import { clusterTopicPath } from 'lib/paths';
 
 const defaultPartitions = 3;
 const defaultReplicationFactor = 3;
@@ -24,14 +24,14 @@ jest.mock('lib/hooks/api/topics', () => ({
 
 const renderComponent = (props?: Partial<DangerZoneProps>) =>
   render(
-    <WithRoute path={clusterTopicSendMessagePath()}>
+    <WithRoute path={clusterTopicPath()}>
       <DangerZone
         defaultPartitions={defaultPartitions}
         defaultReplicationFactor={defaultReplicationFactor}
         {...props}
       />
     </WithRoute>,
-    { initialEntries: [clusterTopicSendMessagePath(clusterName, topicName)] }
+    { initialEntries: [clusterTopicPath(clusterName, topicName)] }
   );
 
 const clickOnDialogSubmitButton = () => {
