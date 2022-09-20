@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.helpers.ApiHelper;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.models.Topic;
 import com.provectus.kafka.ui.pages.MainPage;
@@ -29,14 +28,13 @@ public class TopicTests extends BaseTest {
             .setMaxMessageBytes("1000020")
             .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
             .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
-    private static final String TOPIC_NAME_FOR_DELETE = "topic-to-delete";
-    private static final List<String> TOPIC_NAME_LIST = new ArrayList<>();
+    private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete");
+    private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
     @BeforeAll
     public static void beforeAll() {
-        ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
-        TOPIC_NAME_LIST.addAll(List.of(TOPIC_FOR_UPDATE.getName(), TOPIC_NAME_FOR_DELETE));
-        TOPIC_NAME_LIST.forEach(topicName -> apiHelper.createTopic(CLUSTER_NAME, topicName));
+        TOPIC_LIST.addAll(List.of(TOPIC_FOR_UPDATE, TOPIC_FOR_DELETE));
+        TOPIC_LIST.forEach(topic -> Helpers.INSTANCE.apiHelper.createTopic(CLUSTER_NAME, topic.getName()));
     }
 
     @DisplayName("should create a topic")
@@ -45,17 +43,17 @@ public class TopicTests extends BaseTest {
     @CaseId(199)
     @Test
     public void createTopic() {
-        String topicName = "new-topic";
+        Topic topicToCreate = new Topic().setName("new-topic");
         pages.open()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
         pages.topicsList.pressCreateNewTopic()
-                .setTopicName(topicName)
+                .setTopicName(topicToCreate.getName())
                 .sendData()
                 .waitUntilScreenReady();
         pages.open()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS)
-                .topicIsVisible(topicName);
-        TOPIC_NAME_LIST.add(topicName);
+                .topicIsVisible(topicToCreate.getName());
+        TOPIC_LIST.add(topicToCreate);
     }
 
     @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
@@ -97,13 +95,13 @@ public class TopicTests extends BaseTest {
     public void deleteTopic() {
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_NAME_FOR_DELETE)
+                .openTopic(TOPIC_FOR_DELETE.getName())
                 .waitUntilScreenReady()
                 .deleteTopic();
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
-                .isTopicNotVisible(TOPIC_NAME_FOR_DELETE);
-        TOPIC_NAME_LIST.remove(TOPIC_NAME_FOR_DELETE);
+                .isTopicNotVisible(TOPIC_FOR_DELETE.getName());
+        TOPIC_LIST.remove(TOPIC_FOR_DELETE);
     }
 
     @DisplayName("produce message")
@@ -127,7 +125,6 @@ public class TopicTests extends BaseTest {
 
     @AfterAll
     public static void afterAll() {
-        ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
-        TOPIC_NAME_LIST.forEach(topicName -> apiHelper.deleteTopic(CLUSTER_NAME, topicName));
+        TOPIC_LIST.forEach(topic -> Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
     }
 }
