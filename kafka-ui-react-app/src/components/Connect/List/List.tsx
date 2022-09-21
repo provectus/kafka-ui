@@ -3,15 +3,18 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { ClusterNameRoute } from 'lib/paths';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
-import useSearch from 'lib/hooks/useSearch';
 import { useConnectors } from 'lib/hooks/api/kafkaConnect';
+import { useSearchParams } from 'react-router-dom';
 
 import ListItem from './ListItem';
 
 const List: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
-  const [search] = useSearch();
-  const { data: connectors } = useConnectors(clusterName, search);
+  const [searchParams] = useSearchParams();
+  const { data: connectors } = useConnectors(
+    clusterName,
+    searchParams.get('q') || ''
+  );
 
   return (
     <Table isFullwidth>

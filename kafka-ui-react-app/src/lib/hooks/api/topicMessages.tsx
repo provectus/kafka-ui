@@ -3,6 +3,7 @@ import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { BASE_PARAMS, MESSAGES_PER_PAGE } from 'lib/constants';
 import { ClusterName } from 'redux/interfaces';
 import {
+  GetSerdesRequest,
   SeekDirection,
   SeekType,
   TopicMessage,
@@ -13,6 +14,8 @@ import {
 import { showServerError } from 'lib/errorHandling';
 import toast from 'react-hot-toast';
 import { StopLoading } from 'components/Topics/Topic/MessagesV2/FiltersBar/FiltersBar.styled';
+import { useQuery } from '@tanstack/react-query';
+import { messagesApiClient } from 'lib/api';
 
 interface UseTopicMessagesProps {
   clusterName: ClusterName;
@@ -175,3 +178,10 @@ export const useTopicMessages = ({
     isFetching,
   };
 };
+
+export function useSerdes(props: GetSerdesRequest) {
+  return useQuery(
+    ['clusters', props.clusterName, 'topics', props.topicName, 'serdes'],
+    () => messagesApiClient.getSerdes(props)
+  );
+}
