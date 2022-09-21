@@ -7,15 +7,18 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.extensions.WebUtils.isVisible;
 
 public class SchemaRegistryList {
 
     private final SelenideElement schemaButton = $(By.xpath("//*[contains(text(),'Create Schema')]"));
+
     @Step
     public SchemaCreateView clickCreateSchema() {
         BrowserUtils.javaExecutorClick(schemaButton);
         return new SchemaCreateView();
     }
+
     @Step
     public SchemaView openSchema(String schemaName) {
         $(By.xpath("//*[contains(text(),'" + schemaName + "')]")).click();
@@ -23,17 +26,10 @@ public class SchemaRegistryList {
     }
 
     @Step
-    public SchemaRegistryList isNotVisible(String schemaName) {
-        $x(String.format("//*[contains(text(),'%s')]", schemaName)).shouldNotBe(Condition.visible);
-        return this;
-    }
-
-    @Step
-    public SchemaRegistryList isSchemaVisible(String schemaName) {
-        $$("tbody td>a")
-                .find(Condition.exactText(schemaName))
-                .shouldBe(Condition.visible);
-        return this;
+    public boolean isSchemaVisible(String schemaName) {
+        $(By.xpath("//table")).shouldBe(Condition.visible);
+        return isVisible($x("//tbody//td//a[text()='" + schemaName + "']"));
     }
 }
+
 

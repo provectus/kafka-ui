@@ -20,9 +20,8 @@ public class SchemaView {
     }
 
     @Step
-    public SchemaView isCompatibility(CompatibilityLevel.CompatibilityEnum compatibility){
-        $x("//div//p[.='" + compatibility.getValue() + "']").shouldBe(Condition.visible);
-        return this;
+    public boolean isCompatibility(CompatibilityLevel.CompatibilityEnum compatibility){
+        return    $x("//div//p[.='" + compatibility.getValue() + "']").is(Condition.visible);
     }
 
     @Step
