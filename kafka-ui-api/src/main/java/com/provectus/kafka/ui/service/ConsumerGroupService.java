@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.OffsetSpec;
@@ -30,7 +31,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ConsumerGroupService {
@@ -73,33 +74,44 @@ public class ConsumerGroupService {
 
   public Mono<List<InternalConsumerGroup>> getConsumerGroupsForTopic(KafkaCluster cluster,
                                                                      String topic) {
+    log.info("getting consumer groups for topic {}", topic);
     return adminClientService.get(cluster)
         // 1. getting topic's end offsets
         .flatMap(ac -> ac.listOffsets(topic, OffsetSpec.latest())
             .flatMap(endOffsets -> {
+              log.info("end offsets: " + endOffsets);
               var tps = new ArrayList<>(endOffsets.keySet());
               // 2. getting all consumer groups
               return ac.listConsumerGroups()
-                  .flatMap((List<String> groups) ->
-                      Flux.fromIterable(groups)
-                          // 3. for each group trying to find committed offsets for topic
-                          .flatMap(g ->
-                              ac.listConsumerGroupOffsets(g, tps)
-                                  .map(offsets -> Tuples.of(g, offsets)))
-                          .filter(t -> !t.getT2().isEmpty())
-                          .collectMap(Tuple2::getT1, Tuple2::getT2)
+                  .flatMap((List<String> groups) -> {
+                        log.info("found consumer groups: " + groups);
+                        return Flux.fromIterable(groups)
+                            // 3. for each group trying to find committed offsets for topic
+                            .flatMap(g -> {
+                                  return ac.listConsumerGroupOffsets(g, tps)
+                                      .map(offsets -> {
+                                        log.info("offsets for group {} : {}", g, offsets);
+                                        return Tuples.of(g, offsets);
+                                      });
+                                }
+                            )
+                            .filter(t -> !t.getT2().isEmpty())
+                            .collectMap(Tuple2::getT1, Tuple2::getT2);
+                      }
                   )
-                  .flatMap((Map<String, Map<TopicPartition, Long>> groupOffsets) ->
-                      // 4. getting description for groups with non-emtpy offsets
-                      ac.describeConsumerGroups(new ArrayList<>(groupOffsets.keySet()))
-                          .map((Map<String, ConsumerGroupDescription> descriptions) ->
-                              descriptions.values().stream().map(desc ->
-                                      // 5. gathering and filter non-target-topic data
-                                      InternalConsumerGroup.create(
-                                              desc, groupOffsets.get(desc.groupId()), endOffsets)
-                                          .retainDataForPartitions(p -> p.topic().equals(topic))
-                                  )
-                                  .collect(Collectors.toList())));
+                  .flatMap((Map<String, Map<TopicPartition, Long>> groupOffsets) -> {
+                    log.info("describing consumer groups " + groupOffsets.keySet());
+                    // 4. getting description for groups with non-emtpy offsets
+                    return ac.describeConsumerGroups(new ArrayList<>(groupOffsets.keySet()))
+                        .map((Map<String, ConsumerGroupDescription> descriptions) ->
+                            descriptions.values().stream().map(desc ->
+                                    // 5. gathering and filter non-target-topic data
+                                    InternalConsumerGroup.create(
+                                            desc, groupOffsets.get(desc.groupId()), endOffsets)
+                                        .retainDataForPartitions(p -> p.topic().equals(topic))
+                                )
+                                .collect(Collectors.toList()));
+                  });
             }));
   }
 
