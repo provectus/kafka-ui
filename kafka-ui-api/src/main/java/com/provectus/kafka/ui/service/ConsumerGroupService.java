@@ -41,10 +41,17 @@ public class ConsumerGroupService {
   private Mono<List<InternalConsumerGroup>> getConsumerGroups(
       ReactiveAdminClient ac,
       List<ConsumerGroupDescription> descriptions) {
+    log.info("getting consumer groups: {}",
+        descriptions.stream()
+            .map(ConsumerGroupDescription::groupId)
+            .collect(Collectors.toList()));
     return Flux.fromIterable(descriptions)
         // 1. getting committed offsets for all groups
         .flatMap(desc -> ac.listConsumerGroupOffsets(desc.groupId())
-            .map(offsets -> Tuples.of(desc, offsets)))
+            .map(offsets -> {
+              log.info("offsets for group {} : {}", desc.groupId(), offsets);
+              return Tuples.of(desc, offsets);
+            }))
         .collectMap(Tuple2::getT1, Tuple2::getT2)
         .flatMap((Map<ConsumerGroupDescription, Map<TopicPartition, Long>> groupOffsetsMap) -> {
           var tpsFromGroupOffsets = groupOffsetsMap.values().stream()
@@ -59,6 +66,8 @@ public class ConsumerGroupService {
                         var endOffsetsForGroup = new HashMap<>(endOffsets);
                         endOffsetsForGroup.keySet().retainAll(groupOffsets.keySet());
                         // 3. gathering description & offsets
+                        log.info("Constructing consumer: {}, go: {}, eo: {}",
+                            desc.groupId(), groupOffsets, endOffsetsForGroup);
                         return InternalConsumerGroup.create(desc, groupOffsets, endOffsetsForGroup);
                       })
                       .collect(Collectors.toList()));
