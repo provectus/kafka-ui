@@ -30,7 +30,7 @@ const SchemaVersion: React.FC<SchemaVersionProps> = ({
       </tr>
       {isOpen && (
         <S.Wrapper>
-          <td colSpan={3}>
+          <td colSpan={4}>
             <EditorViewer data={schema} schemaType={schemaType} />
           </td>
         </S.Wrapper>
