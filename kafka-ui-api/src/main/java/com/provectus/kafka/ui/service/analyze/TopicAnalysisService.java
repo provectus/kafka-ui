@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service.analyze;
 
+import static com.provectus.kafka.ui.emitter.AbstractEmitter.NO_MORE_DATA_EMPTY_POLLS_COUNT;
+
 import com.provectus.kafka.ui.exception.TopicAnalysisException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.TopicAnalysisDTO;
@@ -118,7 +120,7 @@ public class TopicAnalysisService {
         consumer.seekToBeginning(topicPartitions);
 
         var waitingOffsets = new WaitingOffsets(topicId.topicName, consumer, topicPartitions);
-        for (int emptyPolls = 0; !waitingOffsets.endReached() && emptyPolls < 3; ) {
+        for (int emptyPolls = 0; !waitingOffsets.endReached() && emptyPolls < NO_MORE_DATA_EMPTY_POLLS_COUNT;) {
           var polled = consumer.poll(Duration.ofSeconds(3));
           emptyPolls = polled.isEmpty() ? emptyPolls + 1 : 0;
           polled.forEach(r -> {
