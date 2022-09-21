@@ -5,6 +5,7 @@ import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.models.Topic;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.topic.TopicCreateEditSettingsView;
+import com.provectus.kafka.ui.pages.topic.TopicView;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
@@ -57,9 +58,8 @@ public class TopicTests extends BaseTest {
         TOPIC_LIST.add(topicToCreate);
     }
 
-    @Disabled()
+    @Disabled("https://github.com/provectus/kafka-ui/issues/2625")
     @DisplayName("should update a topic")
-    @Issue("")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(197)
@@ -117,6 +117,7 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
+                .openTopicMenu(TopicView.TopicMenu.MESSAGES)
                 .clickOnButton("Produce Message")
                 .setContentFiled(TOPIC_FOR_UPDATE.getMessageContent())
                 .setKeyField(TOPIC_FOR_UPDATE.getMessageKey())
