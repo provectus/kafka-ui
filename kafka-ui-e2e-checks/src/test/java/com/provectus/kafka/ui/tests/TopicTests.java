@@ -57,8 +57,9 @@ public class TopicTests extends BaseTest {
         TOPIC_LIST.add(topicToCreate);
     }
 
+    @Disabled()
     @DisplayName("should update a topic")
-    @Issue("1500")
+    @Issue("")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(197)

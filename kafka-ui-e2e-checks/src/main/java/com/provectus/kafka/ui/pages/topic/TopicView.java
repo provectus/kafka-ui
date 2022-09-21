@@ -33,7 +33,7 @@ public class TopicView {
     @Step
     public TopicCreateEditSettingsView openEditSettings() {
         BrowserUtils.javaExecutorClick(dotMenuBtn);
-        $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() + "']").click();
+        $x("//li[@role][text()='Edit settings']").click();
         return new TopicCreateEditSettingsView();
     }
 
