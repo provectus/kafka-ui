@@ -26,7 +26,7 @@ public class InternalTopicConsumerGroup {
   public static InternalTopicConsumerGroup create(
       String topic,
       ConsumerGroupDescription g,
-      Map<TopicPartition, Long> offsets,
+      Map<TopicPartition, Long> committedOffsets,
       Map<TopicPartition, Long> endOffsets) {
     return InternalTopicConsumerGroup.builder()
         .groupId(g.groupId())
@@ -37,7 +37,7 @@ public class InternalTopicConsumerGroup {
                 .count()
         )
         .messagesBehind(
-            offsets.entrySet().stream()
+            committedOffsets.entrySet().stream()
                 .mapToLong(e ->
                     Optional.ofNullable(endOffsets.get(e.getKey()))
                         .map(o -> o - e.getValue())
