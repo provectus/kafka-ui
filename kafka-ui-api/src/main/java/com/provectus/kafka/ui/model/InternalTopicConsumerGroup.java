@@ -16,7 +16,8 @@ public class InternalTopicConsumerGroup {
 
   String groupId;
   int members;
-  long messagesBehind;
+  @Nullable
+  Long messagesBehind; //null means no committed offsets found for this group
   boolean isSimple;
   String partitionAssignor;
   ConsumerGroupState state;
@@ -36,18 +37,25 @@ public class InternalTopicConsumerGroup {
                 .filter(m -> m.assignment().topicPartitions().stream().anyMatch(p -> p.topic().equals(topic)))
                 .count()
         )
-        .messagesBehind(
-            committedOffsets.entrySet().stream()
-                .mapToLong(e ->
-                    Optional.ofNullable(endOffsets.get(e.getKey()))
-                        .map(o -> o - e.getValue())
-                        .orElse(0L)
-                ).sum()
-        )
+        .messagesBehind(calculateMessagesBehind(committedOffsets, endOffsets))
         .isSimple(g.isSimpleConsumerGroup())
         .partitionAssignor(g.partitionAssignor())
         .state(g.state())
         .coordinator(g.coordinator())
         .build();
+  }
+
+  @Nullable
+  private static Long calculateMessagesBehind(Map<TopicPartition, Long> committedOffsets,
+                                              Map<TopicPartition, Long> endOffsets) {
+    if (committedOffsets.isEmpty()) {
+      return null;
+    }
+    return committedOffsets.entrySet().stream()
+        .mapToLong(e ->
+            Optional.ofNullable(endOffsets.get(e.getKey()))
+                .map(o -> o - e.getValue())
+                .orElse(0L)
+        ).sum();
   }
 }
