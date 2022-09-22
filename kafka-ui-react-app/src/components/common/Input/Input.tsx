@@ -8,20 +8,18 @@ export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement>,
     Omit<S.InputProps, 'search'> {
   name?: string;
-  search?: boolean;
-  inputWidth?: string;
-  positiveOnly?: boolean;
   hookFormOptions?: RegisterOptions;
+  search?: boolean;
+  positiveOnly?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
   name,
-  type,
+  hookFormOptions,
   search,
   inputSize = 'L',
-  inputWidth,
+  type,
   positiveOnly,
-  hookFormOptions,
   ...rest
 }) => {
   const methods = useFormContext();
@@ -76,7 +74,6 @@ const Input: React.FC<InputProps> = ({
       {search && <SearchIcon />}
       <S.Input
         inputSize={inputSize}
-        inputWidth={inputWidth}
         search={!!search}
         type={type}
         onKeyPress={keyPressEventHandler}

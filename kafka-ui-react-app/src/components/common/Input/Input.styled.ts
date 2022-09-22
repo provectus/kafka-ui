@@ -1,9 +1,8 @@
 import styled, { css } from 'styled-components';
 
 export interface InputProps {
-  search: boolean;
   inputSize?: 'S' | 'M' | 'L';
-  inputWidth?: string;
+  search: boolean;
 }
 
 const INPUT_SIZES = {
@@ -29,13 +28,13 @@ export const Wrapper = styled.div`
 `;
 
 export const Input = styled.input<InputProps>(
-  ({ theme: { input }, inputSize, inputWidth, search }) => css`
+  ({ theme: { input }, inputSize, search }) => css`
     border: 1px ${input.borderColor.normal} solid;
     border-radius: 4px;
     height: ${inputSize && INPUT_SIZES[inputSize]
       ? INPUT_SIZES[inputSize]
       : '40px'};
-    width: ${inputWidth || '100%'};
+    width: 100%;
     padding-left: ${search ? '36px' : '12px'};
     font-size: 14px;
 

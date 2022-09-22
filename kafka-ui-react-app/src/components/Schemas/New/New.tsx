@@ -76,8 +76,8 @@ const New: React.FC = () => {
         <div>
           <InputLabel>Subject *</InputLabel>
           <Input
+            style={{ width: '50%' }}
             inputSize="M"
-            inputWidth="50%"
             placeholder="Schema Name"
             name="subject"
             hookFormOptions={{
