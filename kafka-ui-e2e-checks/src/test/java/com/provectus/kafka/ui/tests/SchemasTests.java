@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.schema.SchemaEditView;
+import com.provectus.kafka.ui.pages.schema.SchemaView;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
@@ -53,7 +54,7 @@ public class SchemasTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.isSchemaVisible(schemaAvro.getName());
+        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(schemaAvro.getName()),"isSchemaVisible()");
         SCHEMA_LIST.add(schemaAvro);
     }
 
@@ -74,8 +75,8 @@ public class SchemasTests extends BaseTest {
         new SchemaEditView().selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(AVRO_API.getValuePath()))
                 .clickSubmit()
-                .waitUntilScreenReady()
-                .isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE);
+                .waitUntilScreenReady();
+        Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), new SchemaView().getCompatibility(), "getCompatibility()");
     }
 
     @DisplayName("should delete AVRO schema")
@@ -89,8 +90,8 @@ public class SchemasTests extends BaseTest {
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(AVRO_API.getName())
                 .waitUntilScreenReady()
-                .removeSchema()
-                .isNotVisible(AVRO_API.getName());
+                .removeSchema();
+        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(AVRO_API.getName()),"isSchemaVisible()");
         SCHEMA_LIST.remove(AVRO_API);
     }
 
@@ -112,7 +113,7 @@ public class SchemasTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.isSchemaVisible(schemaJson.getName());
+        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(schemaJson.getName()),"isSchemaVisible()");
         SCHEMA_LIST.add(schemaJson);
     }
 
@@ -127,8 +128,8 @@ public class SchemasTests extends BaseTest {
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(JSON_API.getName())
                 .waitUntilScreenReady()
-                .removeSchema()
-                .isNotVisible(JSON_API.getName());
+                .removeSchema();
+        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(JSON_API.getName()),"isSchemaVisible()");
         SCHEMA_LIST.remove(JSON_API);
     }
 
@@ -150,7 +151,7 @@ public class SchemasTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.mainPage
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.isSchemaVisible(schemaProtobuf.getName());
+        Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(schemaProtobuf.getName()),"isSchemaVisible()");
         SCHEMA_LIST.add(schemaProtobuf);
     }
 
@@ -165,8 +166,8 @@ public class SchemasTests extends BaseTest {
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         pages.schemaRegistry.openSchema(PROTOBUF_API.getName())
                 .waitUntilScreenReady()
-                .removeSchema()
-                .isNotVisible(PROTOBUF_API.getName());
+                .removeSchema();
+        Assertions.assertFalse(pages.schemaRegistry.isSchemaVisible(PROTOBUF_API.getName()),"isSchemaVisible()");
         SCHEMA_LIST.remove(PROTOBUF_API);
     }
 
