@@ -13,7 +13,7 @@ public class WebUtils {
             element.shouldBe(Condition.visible);
             isVisible = true;
         } catch (Throwable e) {
-            e.printStackTrace();
+            log.debug("Element {} is not visible", element.getSearchCriteria());
         }
         return isVisible;
     }
