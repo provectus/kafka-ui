@@ -9,7 +9,7 @@
 
 ### DISCLAIMER
 <em>UI for Apache Kafka is a free tool built and supported by the open-source community. Curated by Provectus, it will remain free and open-source, without any paid features or subscription plans to be added in the future.
-Looking for the help of Kafka experts? Provectus can help you design, build, deploy, and manage Apache Kafka clusters and streaming applications. Discover [Professional Services for Apache Kafka](https://provectus.com/professional-services-apache-kafka/), to unlock the full potential of Kafka in your enteprise! </em>
+Looking for the help of Kafka experts? Provectus can help you design, build, deploy, and manage Apache Kafka clusters and streaming applications. Discover [Professional Services for Apache Kafka](https://provectus.com/professional-services-apache-kafka/), to unlock the full potential of Kafka in your enterprise! </em>
 
 
 #### UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters.
