@@ -15,6 +15,13 @@ import reactor.core.publisher.FluxSink;
 public abstract class AbstractEmitter {
   private static final Duration DEFAULT_POLL_TIMEOUT_MS = Duration.ofMillis(1000L);
 
+  // In some situations it is hard to say whether records range (between two offsets) was fully polled.
+  // This happens when we have holes in records sequences that is usual case for compact topics or
+  // topics with transactional writes. In such cases if you want to poll all records between offsets X and Y
+  // there is no guarantee that you will ever see record with offset Y.
+  // To workaround this we can assume that after N consecutive empty polls all target messages were read.
+  public static final int NO_MORE_DATA_EMPTY_POLLS_COUNT = 3;
+
   private final ConsumerRecordDeserializer recordDeserializer;
   private final ConsumingStats consumingStats = new ConsumingStats();
 
