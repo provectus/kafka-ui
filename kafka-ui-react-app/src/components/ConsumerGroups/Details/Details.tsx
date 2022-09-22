@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAppParams from 'lib/hooks/useAppParams';
 import {
@@ -6,6 +6,7 @@ import {
   clusterConsumerGroupsPath,
   ClusterGroupParam,
 } from 'lib/paths';
+import Search from 'components/common/Search/Search';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -24,6 +25,7 @@ import {
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import getTagColor from 'components/common/Tag/getTagColor';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 
 import ListItem from './ListItem';
 
@@ -37,6 +39,8 @@ const Details: React.FC = () => {
   );
   const isDeleted = useAppSelector(getIsConsumerGroupDeleted);
   const isFetched = useAppSelector(getAreConsumerGroupDetailsFulfilled);
+
+  const [searchValue, setSearchValue] = useState<string>('');
 
   React.useEffect(() => {
     dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
@@ -61,6 +65,14 @@ const Details: React.FC = () => {
   }
 
   const partitionsByTopic = groupBy(consumerGroup.partitions, 'topic');
+
+  const filteredPartitionsByTopic = Object.keys(partitionsByTopic).filter(
+    (el) => el.includes(searchValue)
+  );
+
+  const currentPartitionsByTopic = searchValue.length
+    ? filteredPartitionsByTopic
+    : Object.keys(partitionsByTopic);
 
   return (
     <div>
@@ -108,6 +120,13 @@ const Details: React.FC = () => {
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
+      <ControlPanelWrapper hasInput style={{ margin: '16px 0 20px' }}>
+        <Search
+          onChange={setSearchValue}
+          placeholder="Search by Topic Name"
+          value={searchValue}
+        />
+      </ControlPanelWrapper>
       <Table isFullwidth>
         <thead>
           <tr>
@@ -116,7 +135,7 @@ const Details: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(partitionsByTopic).map((key) => (
+          {currentPartitionsByTopic.map((key) => (
             <ListItem
               clusterName={clusterName}
               consumers={partitionsByTopic[key]}
