@@ -56,7 +56,6 @@ public class SchemasTests extends BaseTest {
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
         Assertions.assertTrue(pages.schemaRegistry.isSchemaVisible(schemaAvro.getName()),"isSchemaVisible()");
         SCHEMA_LIST.add(schemaAvro);
-
     }
 
     @DisplayName("should update AVRO schema")
@@ -77,7 +76,7 @@ public class SchemasTests extends BaseTest {
                 .setNewSchemaValue(fileToString(AVRO_API.getValuePath()))
                 .clickSubmit()
                 .waitUntilScreenReady();
-        Assertions.assertTrue(new SchemaView().isCompatibility(CompatibilityLevel.CompatibilityEnum.NONE),"isCompatibility()");
+        Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), new SchemaView().getCompatibility(), "getCompatibility()");
     }
 
     @DisplayName("should delete AVRO schema")

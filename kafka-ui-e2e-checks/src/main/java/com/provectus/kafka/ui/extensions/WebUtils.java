@@ -2,13 +2,16 @@ package com.provectus.kafka.ui.extensions;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class WebUtils {
 
     public static boolean isVisible(SelenideElement element) {
         boolean isVisible = false;
         try {
-            isVisible = element.is(Condition.visible);
+            element.shouldBe(Condition.visible);
+            isVisible = true;
         } catch (Throwable e) {
             e.printStackTrace();
         }

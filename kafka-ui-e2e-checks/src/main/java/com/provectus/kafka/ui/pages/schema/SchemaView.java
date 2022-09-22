@@ -2,13 +2,11 @@ package com.provectus.kafka.ui.pages.schema;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
-
 public class SchemaView {
 
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
@@ -20,8 +18,8 @@ public class SchemaView {
     }
 
     @Step
-    public boolean isCompatibility(CompatibilityLevel.CompatibilityEnum compatibility){
-        return    $x("//div//p[.='" + compatibility.getValue() + "']").is(Condition.visible);
+    public String getCompatibility() {
+        return $x("//h4[contains(text(),'Compatibility')]/../p").getText();
     }
 
     @Step

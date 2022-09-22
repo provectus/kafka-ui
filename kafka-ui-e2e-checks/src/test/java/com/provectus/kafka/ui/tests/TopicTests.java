@@ -9,7 +9,6 @@ import com.provectus.kafka.ui.pages.topic.TopicView;
 import com.provectus.kafka.ui.utils.qaseIO.Status;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
 import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
-import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
@@ -54,7 +53,7 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.open()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
-        Assertions.assertTrue(pages.topicsList.isTopicVisible(topicToCreate.getName()));
+        Assertions.assertTrue(pages.topicsList.isTopicVisible(topicToCreate.getName()),"isTopicVisible");
         TOPIC_LIST.add(topicToCreate);
     }
 
