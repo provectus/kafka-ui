@@ -1,4 +1,4 @@
-name: cehck-helm
+name: Check-helm
 on:
  pull_request:
   types: ["opened", "edited", "reopened", "synchronize"]
