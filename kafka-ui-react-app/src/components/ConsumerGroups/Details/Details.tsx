@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import useAppParams from 'lib/hooks/useAppParams';
 import {
   clusterConsumerGroupResetRelativePath,
@@ -31,6 +31,8 @@ import ListItem from './ListItem';
 
 const Details: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const searchValue = searchParams.get('q') || '';
   const { isReadOnly } = React.useContext(ClusterContext);
   const { consumerGroupID, clusterName } = useAppParams<ClusterGroupParam>();
   const dispatch = useAppDispatch();
@@ -39,8 +41,6 @@ const Details: React.FC = () => {
   );
   const isDeleted = useAppSelector(getIsConsumerGroupDeleted);
   const isFetched = useAppSelector(getAreConsumerGroupDetailsFulfilled);
-
-  const [searchValue, setSearchValue] = useState<string>('');
 
   React.useEffect(() => {
     dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
@@ -121,11 +121,7 @@ const Details: React.FC = () => {
         </Metrics.Section>
       </Metrics.Wrapper>
       <ControlPanelWrapper hasInput style={{ margin: '16px 0 20px' }}>
-        <Search
-          onChange={setSearchValue}
-          placeholder="Search by Topic Name"
-          value={searchValue}
-        />
+        <Search placeholder="Search by Topic Name" />
       </ControlPanelWrapper>
       <Table isFullwidth>
         <thead>
