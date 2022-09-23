@@ -71,6 +71,7 @@ class JmxMetricsRetriever implements MetricsRetriever, AutoCloseable {
       for (ObjectName jmxMetric : jmxMetrics) {
         final Hashtable<String, String> params = jmxMetric.getKeyPropertyList();
         MetricDTO metric = new MetricDTO();
+
         metric.setName(params.get(NAME_METRIC_FIELD));
         metric.setCanonicalName(jmxMetric.getCanonicalName());
         metric.setParams(params);

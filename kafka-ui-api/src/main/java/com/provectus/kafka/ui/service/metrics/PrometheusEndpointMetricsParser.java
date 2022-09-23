@@ -42,10 +42,8 @@ class PrometheusEndpointMetricsParser {
       if (value == null || name == null || canonicalName == null) {
         return null;
       }
-      String[] canonicalNameParts = canonicalName.split("_");
-      String valueName = canonicalNameParts[canonicalNameParts.length - 1];
       metricDto = new MetricDTO();
-      metricDto.setCanonicalName(valueName);
+      metricDto.setCanonicalName(canonicalName);
       metricDto.setName(name);
       metricDto.setParams(
           Arrays.stream(matcher.group(PROPERTIES).split(","))
