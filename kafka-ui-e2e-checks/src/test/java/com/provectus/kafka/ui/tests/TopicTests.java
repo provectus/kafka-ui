@@ -38,6 +38,11 @@ public class TopicTests extends BaseTest {
         TOPIC_LIST.forEach(topic -> Helpers.INSTANCE.apiHelper.createTopic(CLUSTER_NAME, topic.getName()));
     }
 
+    @AfterAll
+    public static void afterAll() {
+        TOPIC_LIST.forEach(topic -> Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
+    }
+
     @DisplayName("should create a topic")
     @Suite(suiteId = 4, title = "Create new Topic")
     @AutomationStatus(status = Status.AUTOMATED)
@@ -53,7 +58,7 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady();
         pages.open()
                 .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
-        Assertions.assertTrue(pages.topicsList.isTopicVisible(topicToCreate.getName()),"isTopicVisible");
+        Assertions.assertTrue(pages.topicsList.isTopicVisible(topicToCreate.getName()), "isTopicVisible");
         TOPIC_LIST.add(topicToCreate);
     }
 
@@ -102,7 +107,7 @@ public class TopicTests extends BaseTest {
                 .deleteTopic();
         pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        Assertions.assertFalse(pages.topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()),"isTopicVisible");
+        Assertions.assertFalse(pages.topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()), "isTopicVisible");
         TOPIC_LIST.remove(TOPIC_FOR_DELETE);
     }
 
@@ -125,10 +130,5 @@ public class TopicTests extends BaseTest {
         softly.assertThat(pages.topicView.isKeyMessageVisible((TOPIC_FOR_UPDATE.getMessageKey()))).withFailMessage("isKeyMessageVisible()").isTrue();
         softly.assertThat(pages.topicView.isContentMessageVisible((TOPIC_FOR_UPDATE.getMessageContent()).trim())).withFailMessage("isContentMessageVisible()").isTrue();
         softly.assertAll();
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        TOPIC_LIST.forEach(topic -> Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
     }
 }
