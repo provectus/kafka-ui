@@ -76,7 +76,6 @@ const New: React.FC = () => {
         <div>
           <InputLabel>Subject *</InputLabel>
           <Input
-            style={{ width: '50%' }}
             inputSize="M"
             placeholder="Schema Name"
             name="subject"
@@ -121,7 +120,7 @@ const New: React.FC = () => {
                 name={name}
                 value={value}
                 onChange={onChange}
-                minWidth="50%"
+                minWidth="100%"
                 disabled={isSubmitting}
                 options={SchemaTypeOptions}
               />
