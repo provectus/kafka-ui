@@ -104,7 +104,7 @@ kafka:
 * `schemaRegistryAuth.password`: schemaRegistry's basic authentication password
 * `schemaNameTemplate`: how keys are saved to schemaRegistry
 * `metrics.port`: open JMX port of a broker
-* `metrics.type`: Type of metrics, either JMX or PROMETHEUS
+* `metrics.type`: Type of metrics, either JMX or PROMETHEUS. Defaulted to JMX.
 * `readOnly`: enable read only mode
 
 Configure as many clusters as you need by adding their configs below separated with `-`.
@@ -174,7 +174,7 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_PASSWORD`   	|SchemaRegistry's basic authentication password
 |`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE` |How keys are saved to schemaRegistry
 |`KAFKA_CLUSTERS_0_METRICS_PORT`        	 |Open metrics port of a broker
-|`KAFKA_CLUSTERS_0_METRICS_TYPE`        	 |Type of metrics retriever to use. Valid values are JMX or PROMETHEUS. If Prometheus, then metrics are read from prometheus-jmx-exporter instead of jmx
+|`KAFKA_CLUSTERS_0_METRICS_TYPE`        	 |Type of metrics retriever to use. Valid values are JMX (default) or PROMETHEUS. If Prometheus, then metrics are read from prometheus-jmx-exporter instead of jmx
 |`KAFKA_CLUSTERS_0_READONLY`        	|Enable read-only mode. Default: false
 |`KAFKA_CLUSTERS_0_DISABLELOGDIRSCOLLECTION`        	|Disable collecting segments information. It should be true for confluent cloud. Default: false
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME` |Given name for the Kafka Connect cluster

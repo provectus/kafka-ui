@@ -24,8 +24,7 @@ class PrometheusMetricsRetriever implements MetricsRetriever {
 
   @Override
   public List<MetricDTO> retrieve(KafkaCluster c, Node node) {
-    log.debug(String.format("retrieve metrics from prometheus exporter: %s:%d", node.host(),
-        c.getMetricsConfig().getPort()));
+    log.debug("Retrieving metrics from prometheus exporter: {}:{}", node.host(), c.getMetricsConfig().getPort());
     WebClient.ResponseSpec responseSpec = webClient.get()
         .uri(UriComponentsBuilder.newInstance()
             .scheme("http")

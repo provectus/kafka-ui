@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,6 +33,7 @@ class PrometheusEndpointMetricsParser {
       "(?<canonicalName>^\\w+)([ \t]*\\{.*(name=\"(?<name>[\\w+]+)\"(?<properties>.*))\\})[ \\t]+"
           + "(?<value>[\\d]+\\.?[\\d]+)?");
 
+  @Nullable
   MetricDTO parse(String s) {
     Matcher matcher = pattern.matcher(s);
     MetricDTO metricDto = null;

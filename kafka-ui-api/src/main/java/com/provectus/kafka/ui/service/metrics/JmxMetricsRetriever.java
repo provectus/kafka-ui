@@ -45,7 +45,6 @@ class JmxMetricsRetriever implements MetricsRetriever, AutoCloseable {
   }
 
   @Override
-  @SneakyThrows
   public List<MetricDTO> retrieve(KafkaCluster c, Node node) {
     String jmxUrl = JMX_URL + node.host() + ":" + c.getMetricsConfig().getPort() + "/" + JMX_SERVICE_TYPE;
     final var connectionInfo = JmxConnectionInfo.builder()
@@ -90,7 +89,7 @@ class JmxMetricsRetriever implements MetricsRetriever, AutoCloseable {
     try {
       pool.invalidateObject(new JmxConnectionInfo(url), srv);
     } catch (Exception e) {
-      log.error("Cannot invalidate object in pool, {}", url);
+      log.error("Cannot invalidate object in pool, {}", url, e);
     }
   }
 
