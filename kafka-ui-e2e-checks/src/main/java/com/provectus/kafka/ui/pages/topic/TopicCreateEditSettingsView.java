@@ -140,21 +140,23 @@ public class TopicCreateEditSettingsView {
         return this;
     }
     @Step
-    public TopicCreateEditSettingsView maxSizeOnDiskIs(String size) {
-        String retentionBytes = new KafkaUISelectElement("retentionBytes")
-                .getCurrentValue();
-        assertThat(retentionBytes)
-                .as("Max size on disk in GB should be " + size)
-                .isEqualTo(size);
-        return this;
+    public String getCleanupPolicy() {
+        return new KafkaUISelectElement("cleanupPolicy").getCurrentValue();
     }
+
     @Step
-    public TopicCreateEditSettingsView maxMessageBytesIs(String bytes) {
-        String value = maxMessageBytes.getValue();
-        assertThat(value)
-                .as("Maximum message size in bytes should be " + bytes)
-                .isEqualTo(bytes);
-        return this;
+    public String getTimeToRetain() {
+        return timeToRetain.getValue();
+    }
+
+    @Step
+    public String getMaxSizeOnDisk() {
+        return new KafkaUISelectElement("retentionBytes").getCurrentValue();
+    }
+
+    @Step
+    public String getMaxMessageBytes() {
+        return maxMessageBytes.getValue();
     }
 
 

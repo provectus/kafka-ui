@@ -5,13 +5,11 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.extensions.WaitUtils;
 import com.provectus.kafka.ui.helpers.TestConfiguration;
-import com.provectus.kafka.ui.pages.ProduceMessagePage;
 import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selenide.*;
 
 @ExtensionMethod({WaitUtils.class})
@@ -35,7 +33,7 @@ public class TopicView {
     @Step
     public TopicCreateEditSettingsView openEditSettings() {
         BrowserUtils.javaExecutorClick(dotMenuBtn);
-        $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() + "']").click();
+        $x("//li[@role][text()='Edit settings']").click();
         return new TopicCreateEditSettingsView();
     }
 
@@ -56,9 +54,9 @@ public class TopicView {
     }
 
     @Step
-    public ProduceMessagePage clickOnButton(String buttonName) {
+    public ProduceMessagePanel clickOnButton(String buttonName) {
         BrowserUtils.javaExecutorClick($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
-        return new ProduceMessagePage();
+        return new ProduceMessagePanel();
     }
 
     @Step

@@ -1,22 +1,18 @@
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import {
-  clusterTopicMessagesRelativePath,
-  RouteParamsClusterTopic,
-} from 'lib/paths';
+import { RouteParamsClusterTopic } from 'lib/paths';
 import jsf from 'json-schema-faker';
 import { Button } from 'components/common/Button/Button';
 import Editor from 'components/common/Editor/Editor';
 import Select, { SelectOption } from 'components/common/Select/Select';
 import useAppParams from 'lib/hooks/useAppParams';
-import Heading from 'components/common/heading/Heading.styled';
 import { showAlert } from 'lib/errorHandling';
 import {
   useSendMessage,
   useTopicDetails,
   useTopicMessageSchema,
 } from 'lib/hooks/api/topics';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
 
 import validateMessage from './validateMessage';
 import * as S from './SendMessage.styled';
@@ -28,9 +24,8 @@ type FieldValues = Partial<{
   partition: number | string;
 }>;
 
-const SendMessage: React.FC = () => {
+const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
-  const navigate = useNavigate();
   const { data: topic } = useTopicDetails({ clusterName, topicName });
   const { data: messageSchema } = useTopicMessageSchema({
     clusterName,
@@ -92,7 +87,7 @@ const SendMessage: React.FC = () => {
     });
   }, [keyDefaultValue, contentDefaultValue, reset]);
 
-  const onSubmit = async (data: {
+  const submit = async (data: {
     key: string;
     content: string;
     headers: string;
@@ -129,16 +124,16 @@ const SendMessage: React.FC = () => {
         headers,
         partition: !partition ? 0 : partition,
       });
-      navigate(`../${clusterTopicMessagesRelativePath}`);
+      onSubmit();
     }
   };
 
   return (
     <S.Wrapper>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(submit)}>
         <S.Columns>
           <S.Column>
-            <Heading level={3}>Partition</Heading>
+            <InputLabel>Partition</InputLabel>
             <Controller
               control={control}
               name="partition"
@@ -160,7 +155,7 @@ const SendMessage: React.FC = () => {
 
         <S.Columns>
           <S.Column>
-            <Heading level={3}>Key</Heading>
+            <InputLabel>Key</InputLabel>
             <Controller
               control={control}
               name="key"
@@ -175,7 +170,7 @@ const SendMessage: React.FC = () => {
             />
           </S.Column>
           <S.Column>
-            <Heading level={3}>Content</Heading>
+            <InputLabel>Content</InputLabel>
             <Controller
               control={control}
               name="content"
@@ -192,7 +187,7 @@ const SendMessage: React.FC = () => {
         </S.Columns>
         <S.Columns>
           <S.Column>
-            <Heading level={3}>Headers</Heading>
+            <InputLabel>Headers</InputLabel>
             <Controller
               control={control}
               name="headers"
@@ -214,7 +209,7 @@ const SendMessage: React.FC = () => {
           type="submit"
           disabled={!isDirty || isSubmitting}
         >
-          Send
+          Produce Message
         </Button>
       </form>
     </S.Wrapper>

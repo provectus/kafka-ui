@@ -3,6 +3,7 @@ import styled from 'styled-components';
 const Navbar = styled.nav`
   display: flex;
   border-bottom: 1px ${({ theme }) => theme.primaryTab.borderColor.nav} solid;
+  height: ${({ theme }) => theme.primaryTab.height};
   & a {
     height: 40px;
     min-width: 96px;

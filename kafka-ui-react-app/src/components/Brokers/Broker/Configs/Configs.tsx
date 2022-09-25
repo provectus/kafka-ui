@@ -68,7 +68,7 @@ const Configs: React.FC = () => {
     <>
       <S.SearchWrapper>
         <Search
-          handleSearch={setKeyword}
+          onChange={setKeyword}
           placeholder="Search by Key"
           value={keyword}
         />

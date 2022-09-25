@@ -148,7 +148,6 @@ export const clusterTopicMessagesRelativePath = 'messages';
 export const clusterTopicConsumerGroupsRelativePath = 'consumer-groups';
 export const clusterTopicStatisticsRelativePath = 'statistics';
 export const clusterTopicEditRelativePath = 'edit';
-export const clusterTopicSendMessageRelativePath = 'message';
 export const clusterTopicPath = (
   clusterName: ClusterName = RouteParams.clusterName,
   topicName: TopicName = RouteParams.topicName
@@ -190,14 +189,6 @@ export const clusterTopicStatisticsPath = (
     clusterName,
     topicName
   )}/${clusterTopicStatisticsRelativePath}`;
-export const clusterTopicSendMessagePath = (
-  clusterName: ClusterName = RouteParams.clusterName,
-  topicName: TopicName = RouteParams.topicName
-) =>
-  `${clusterTopicPath(
-    clusterName,
-    topicName
-  )}/${clusterTopicSendMessageRelativePath}`;
 
 export type RouteParamsClusterTopic = {
   clusterName: ClusterName;

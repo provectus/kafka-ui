@@ -1,4 +1,4 @@
-import { Option } from 'react-multi-select-component/dist/lib/interfaces';
+import { Option } from 'react-multi-select-component';
 import {
   filterOptions,
   getOffsetFromSeekToParam,

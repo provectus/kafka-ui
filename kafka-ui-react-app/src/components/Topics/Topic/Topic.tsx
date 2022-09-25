@@ -6,10 +6,8 @@ import {
   clusterTopicSettingsRelativePath,
   clusterTopicConsumerGroupsRelativePath,
   clusterTopicEditRelativePath,
-  clusterTopicSendMessageRelativePath,
   clusterTopicStatisticsRelativePath,
   clusterTopicsPath,
-  clusterTopicSendMessagePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -33,8 +31,11 @@ import {
 } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { CleanUpPolicy } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import SlidingSidebar from 'components/common/SlidingSidebar';
+import useBoolean from 'lib/hooks/useBoolean';
 
 import Messages from './Messages/Messages';
+import MessagesV2 from './MessagesV2/Messages';
 import Overview from './Overview/Overview';
 import Settings from './Settings/Settings';
 import TopicConsumerGroups from './ConsumerGroups/TopicConsumerGroups';
@@ -44,6 +45,11 @@ import SendMessage from './SendMessage/SendMessage';
 
 const Topic: React.FC = () => {
   const dispatch = useAppDispatch();
+  const {
+    value: isSidebarOpen,
+    setFalse: closeSidebar,
+    setTrue: openSidebar,
+  } = useBoolean(false);
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const navigate = useNavigate();
   const deleteTopic = useDeleteTopic(clusterName);
@@ -76,7 +82,7 @@ const Topic: React.FC = () => {
         <Button
           buttonSize="M"
           buttonType="primary"
-          to={clusterTopicSendMessagePath(clusterName, topicName)}
+          onClick={openSidebar}
           disabled={isReadOnly}
         >
           Produce Message
@@ -179,6 +185,7 @@ const Topic: React.FC = () => {
             path={clusterTopicMessagesRelativePath}
             element={<Messages />}
           />
+          <Route path="v2" element={<MessagesV2 />} />
           <Route
             path={clusterTopicSettingsRelativePath}
             element={<Settings />}
@@ -192,12 +199,15 @@ const Topic: React.FC = () => {
             element={<Statistics />}
           />
           <Route path={clusterTopicEditRelativePath} element={<Edit />} />
-          <Route
-            path={clusterTopicSendMessageRelativePath}
-            element={<SendMessage />}
-          />
         </Routes>
       </Suspense>
+      <SlidingSidebar
+        open={isSidebarOpen}
+        onClose={closeSidebar}
+        title="Produce Message"
+      >
+        <SendMessage onSubmit={closeSidebar} />
+      </SlidingSidebar>
     </>
   );
 };
