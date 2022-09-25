@@ -5,6 +5,7 @@ import {
   Partition,
   SeekDirection,
   SeekType,
+  SerdeUsage,
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageEvent,
@@ -12,7 +13,7 @@ import {
 } from 'generated-sources';
 import React, { useContext } from 'react';
 import omitBy from 'lodash/omitBy';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
@@ -34,6 +35,9 @@ import ClockIcon from 'components/common/Icons/ClockIcon';
 import ArrowDownIcon from 'components/common/Icons/ArrowDownIcon';
 import FileIcon from 'components/common/Icons/FileIcon';
 import { useTopicDetails } from 'lib/hooks/api/topics';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
+import { getSerdeOptions } from 'components/Topics/Topic/SendMessage/utils';
+import { useSerdes } from 'lib/hooks/api/topicMessages';
 
 import * as S from './Filters.styled';
 import {
@@ -87,12 +91,13 @@ const Filters: React.FC<FiltersProps> = ({
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const { data: topic } = useTopicDetails({ clusterName, topicName });
 
   const partitions = topic?.partitions || [];
 
-  const { searchParams, seekDirection, isLive, changeSeekDirection } =
+  const { seekDirection, isLive, changeSeekDirection } =
     useContext(TopicMessagesContext);
 
   const { value: isOpen, toggle } = useBoolean();
@@ -103,7 +108,6 @@ const Filters: React.FC<FiltersProps> = ({
     getSelectedPartitionsFromSeekToParam(searchParams, partitions)
   );
 
-  const [attempt, setAttempt] = React.useState(0);
   const [currentSeekType, setCurrentSeekType] = React.useState<SeekType>(
     (searchParams.get('seekType') as SeekType) || SeekType.OFFSET
   );
@@ -113,6 +117,12 @@ const Filters: React.FC<FiltersProps> = ({
 
   const [timestamp, setTimestamp] = React.useState<Date | null>(
     getTimestampFromSeekToParam(searchParams)
+  );
+  const [keySerde, setKeySerde] = React.useState<string>(
+    searchParams.get('keySerde') as string
+  );
+  const [valueSerde, setValueSerde] = React.useState<string>(
+    searchParams.get('valueSerde') as string
   );
 
   const [savedFilters, setSavedFilters] = React.useState<MessageFilters[]>(
@@ -162,19 +172,6 @@ const Filters: React.FC<FiltersProps> = ({
     [partitions]
   );
 
-  const props: Query = React.useMemo(() => {
-    return {
-      q:
-        queryType === MessageFilterType.GROOVY_SCRIPT
-          ? activeFilter.code
-          : query,
-      filterQueryType: queryType,
-      attempt,
-      limit: PER_PAGE,
-      seekDirection,
-    };
-  }, [attempt, query, queryType, seekDirection, activeFilter]);
-
   const handleClearAllFilters = () => {
     setCurrentSeekType(SeekType.OFFSET);
     setOffset('');
@@ -191,56 +188,55 @@ const Filters: React.FC<FiltersProps> = ({
     );
   };
 
-  const handleFiltersSubmit = React.useCallback(
-    (currentOffset: string) => {
-      setAttempt(attempt + 1);
-
-      if (isSeekTypeControlVisible) {
-        switch (seekDirection) {
-          case SeekDirection.FORWARD:
-            props.seekType = SeekType.BEGINNING;
-            break;
-          case SeekDirection.BACKWARD:
-          case SeekDirection.TAILING:
-            props.seekType = SeekType.LATEST;
-            break;
-          default:
-            props.seekType = currentSeekType;
-        }
-        props.seekTo = selectedPartitions.map(({ value }) => {
-          const offsetProperty =
-            seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
-          const offsetBasedSeekTo =
-            currentOffset || partitionMap[value][offsetProperty];
-          const seekToOffset =
-            currentSeekType === SeekType.OFFSET
-              ? offsetBasedSeekTo
-              : timestamp?.getTime();
-
-          return `${value}::${seekToOffset || '0'}`;
-        });
-      }
-
-      const newProps = omitBy(props, (v) => v === undefined || v === '');
-      const qs = Object.keys(newProps)
-        .map((key) => `${key}=${encodeURIComponent(newProps[key] as string)}`)
-        .join('&');
-
-      navigate({
-        search: `?${qs}`,
-      });
-    },
-    [
+  const handleFiltersSubmit = (currentOffset: string) => {
+    const nextAttempt = Number(searchParams.get('attempt') || 0) + 1;
+    const props: Query = {
+      q:
+        queryType === MessageFilterType.GROOVY_SCRIPT
+          ? activeFilter.code
+          : query,
+      filterQueryType: queryType,
+      attempt: nextAttempt,
+      limit: PER_PAGE,
       seekDirection,
-      queryType,
-      activeFilter,
-      currentSeekType,
-      timestamp,
-      query,
-      selectedPartitions,
-      navigate,
-    ]
-  );
+      keySerde: keySerde || (searchParams.get('keySerde') as string),
+      valueSerde: valueSerde || (searchParams.get('valueSerde') as string),
+    };
+
+    if (isSeekTypeControlVisible) {
+      switch (seekDirection) {
+        case SeekDirection.FORWARD:
+          props.seekType = SeekType.BEGINNING;
+          break;
+        case SeekDirection.BACKWARD:
+        case SeekDirection.TAILING:
+          props.seekType = SeekType.LATEST;
+          break;
+        default:
+          props.seekType = currentSeekType;
+      }
+      props.seekTo = selectedPartitions.map(({ value }) => {
+        const offsetProperty =
+          seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
+        const offsetBasedSeekTo =
+          currentOffset || partitionMap[value][offsetProperty];
+        const seekToOffset =
+          currentSeekType === SeekType.OFFSET
+            ? offsetBasedSeekTo
+            : timestamp?.getTime();
+
+        return `${value}::${seekToOffset || '0'}`;
+      });
+    }
+
+    const newProps = omitBy(props, (v) => v === undefined || v === '');
+    const qs = Object.keys(newProps)
+      .map((key) => `${key}=${encodeURIComponent(newProps[key] as string)}`)
+      .join('&');
+    navigate({
+      search: `?${qs}`,
+    });
+  };
 
   const handleSSECancel = () => {
     if (!source.current) return;
@@ -389,78 +385,105 @@ const Filters: React.FC<FiltersProps> = ({
     setIsTailing(isLive);
   }, [isLive]);
 
+  const { data: serdes = {} } = useSerdes({
+    clusterName,
+    topicName,
+    use: SerdeUsage.DESERIALIZE,
+  });
+
   return (
     <S.FiltersWrapper>
       <div>
         <S.FilterInputs>
-          <Search placeholder="Search" disabled={isTailing} />
-          <S.SeekTypeSelectorWrapper>
-            <S.SeekTypeSelect
-              id="selectSeekType"
-              onChange={(option) => setCurrentSeekType(option as SeekType)}
-              value={currentSeekType}
-              selectSize="M"
-              minWidth="100px"
-              options={SeekTypeOptions}
+          <div>
+            <InputLabel>Seek Type</InputLabel>
+            <S.SeekTypeSelectorWrapper>
+              <S.SeekTypeSelect
+                id="selectSeekType"
+                onChange={(option) => setCurrentSeekType(option as SeekType)}
+                value={currentSeekType}
+                selectSize="M"
+                minWidth="100px"
+                options={SeekTypeOptions}
+                disabled={isTailing}
+              />
+
+              {currentSeekType === SeekType.OFFSET ? (
+                <S.OffsetSelector
+                  id="offset"
+                  type="text"
+                  inputSize="M"
+                  value={offset}
+                  placeholder="Offset"
+                  onChange={({ target: { value } }) => setOffset(value)}
+                  disabled={isTailing}
+                />
+              ) : (
+                <S.DatePickerInput
+                  selected={timestamp}
+                  onChange={(date: Date | null) => setTimestamp(date)}
+                  showTimeInput
+                  timeInputLabel="Time:"
+                  dateFormat="MMMM d, yyyy HH:mm"
+                  placeholderText="Select timestamp"
+                  disabled={isTailing}
+                />
+              )}
+            </S.SeekTypeSelectorWrapper>
+          </div>
+          <div>
+            <InputLabel>Partitions</InputLabel>
+            <MultiSelect
+              options={partitions.map((p) => ({
+                label: `Partition #${p.partition.toString()}`,
+                value: p.partition,
+              }))}
+              filterOptions={filterOptions}
+              value={selectedPartitions}
+              onChange={setSelectedPartitions}
+              labelledBy="Select partitions"
               disabled={isTailing}
             />
-            {currentSeekType === SeekType.OFFSET ? (
-              <S.OffsetSelector
-                id="offset"
-                type="text"
-                inputSize="M"
-                value={offset}
-                placeholder="Offset"
-                onChange={({ target: { value } }) => setOffset(value)}
-                disabled={isTailing}
-              />
-            ) : (
-              <S.DatePickerInput
-                selected={timestamp}
-                onChange={(date: Date | null) => setTimestamp(date)}
-                showTimeInput
-                timeInputLabel="Time:"
-                dateFormat="MMMM d, yyyy HH:mm"
-                placeholderText="Select timestamp"
-                disabled={isTailing}
-              />
-            )}
-          </S.SeekTypeSelectorWrapper>
-          <MultiSelect
-            options={partitions.map((p) => ({
-              label: `Partition #${p.partition.toString()}`,
-              value: p.partition,
-            }))}
-            filterOptions={filterOptions}
-            value={selectedPartitions}
-            onChange={setSelectedPartitions}
-            labelledBy="Select partitions"
-            disabled={isTailing}
-          />
+          </div>
+          <div>
+            <InputLabel>Key Serde</InputLabel>
+            <Select
+              id="selectKeySerdeOptions"
+              aria-labelledby="selectKeySerdeOptions"
+              onChange={(option) => setKeySerde(option as string)}
+              minWidth="170px"
+              options={getSerdeOptions(serdes.key || [])}
+              value={searchParams.get('keySerde') as string}
+              selectSize="M"
+              disabled={isTailing}
+            />
+          </div>
+          <div>
+            <InputLabel>Content Serde</InputLabel>
+            <Select
+              id="selectValueSerdeOptions"
+              aria-labelledby="selectValueSerdeOptions"
+              onChange={(option) => setValueSerde(option as string)}
+              options={getSerdeOptions(serdes.value || [])}
+              value={searchParams.get('valueSerde') as string}
+              minWidth="170px"
+              selectSize="M"
+              disabled={isTailing}
+            />
+          </div>
           <S.ClearAll onClick={handleClearAllFilters}>Clear all</S.ClearAll>
-          {isFetching ? (
-            <Button
-              type="button"
-              buttonType="secondary"
-              buttonSize="M"
-              disabled={isSubmitDisabled}
-              onClick={handleSSECancel}
-              style={{ fontWeight: 500 }}
-            >
-              Cancel
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              buttonType="secondary"
-              buttonSize="M"
-              disabled={isSubmitDisabled}
-              onClick={() => handleFiltersSubmit(offset)}
-              style={{ fontWeight: 500 }}
-            >
-              Submit
-            </Button>
-          )}
+          <Button
+            type="submit"
+            buttonType="secondary"
+            buttonSize="M"
+            disabled={isSubmitDisabled}
+            onClick={() =>
+              isFetching ? handleSSECancel() : handleFiltersSubmit(offset)
+            }
+            style={{ fontWeight: 500 }}
+          >
+            {isFetching ? 'Cancel' : 'Submit'}
+          </Button>
         </S.FilterInputs>
         <Select
           selectSize="M"
@@ -472,6 +495,8 @@ const Filters: React.FC<FiltersProps> = ({
         />
       </div>
       <S.ActiveSmartFilterWrapper>
+        <Search placeholder="Search" disabled={isTailing} />
+
         <Button buttonType="primary" buttonSize="M" onClick={toggle}>
           <PlusIcon />
           Add Filters

@@ -20,8 +20,8 @@ const generateValueFromSchema = (preffered?: SerdeDescription) => {
   return JSON.stringify(value);
 };
 
-const getPrefferedDescription = (items: SerdeDescription[]) =>
-  items.find((item) => item.preferred);
+export const getPrefferedDescription = (serdes: SerdeDescription[]) =>
+  serdes.find((s) => s.preferred);
 
 export const getDefaultValues = (serdes: TopicSerdeSuggestion) => {
   const keySerde = getPrefferedDescription(serdes.key || []);

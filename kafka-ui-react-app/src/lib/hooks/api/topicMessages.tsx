@@ -56,6 +56,8 @@ export const useTopicMessages = ({
         limit,
         seekTo: seekTo.replaceAll('-', '::').replaceAll('.', ','),
         q: searchParams.get('q') || '',
+        keySerde: searchParams.get('keySerde') || '',
+        valueSerde: searchParams.get('valueSerde') || '',
       });
 
       switch (mode) {
@@ -180,8 +182,15 @@ export const useTopicMessages = ({
 };
 
 export function useSerdes(props: GetSerdesRequest) {
+  const { clusterName, topicName, use } = props;
   return useQuery(
-    ['clusters', props.clusterName, 'topics', props.topicName, 'serdes'],
-    () => messagesApiClient.getSerdes(props)
+    ['clusters', clusterName, 'topics', topicName, 'serdes', use],
+    () => messagesApiClient.getSerdes(props),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchInterval: false,
+    }
   );
 }
