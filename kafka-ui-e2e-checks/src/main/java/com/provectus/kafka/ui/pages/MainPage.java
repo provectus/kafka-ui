@@ -5,7 +5,6 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.extensions.WaitUtils;
 import com.provectus.kafka.ui.helpers.TestConfiguration;
-import com.provectus.kafka.ui.pages.topic.TopicsList;
 import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
@@ -31,16 +30,6 @@ public class MainPage {
         return this;
     }
 
-    @Step
-    public void topicIsVisible(String topicName) {
-        new TopicsList().isTopicVisible(topicName);
-    }
-    @Step
-    public void topicIsNotVisible(String topicName){
-        new TopicsList().isTopicNotVisible(topicName);
-    }
-
-
     public enum SideMenuOptions {
         BROKERS("Brokers"),
         TOPICS("Topics"),
@@ -53,8 +42,6 @@ public class MainPage {
             this.value = value;
         }
     }
-
-
 
     @Step
     public MainPage goToSideMenu(String clusterName, SideMenuOptions option) {
