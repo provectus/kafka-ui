@@ -50,46 +50,7 @@ jobs:
         with:
           name: kafka-ui-${{ steps.build.outputs.version }}
           path: kafka-ui-api/target/kafka-ui-api-${{ steps.build.outputs.version }}.jar
-#################
-#               #
-# Docker images #
-#               #
-#################
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push
-        id: docker_build_and_push
-        uses: docker/build-push-action@v3
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          context: kafka-ui-api
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            provectuslabs/kafka-ui:${{ steps.build.outputs.version }}
-            provectuslabs/kafka-ui:latest
-          build-args: |
-            JAR_FILE=kafka-ui-api-${{ steps.build.outputs.version }}.jar
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
 
   charts:
     runs-on: ubuntu-latest
@@ -99,26 +60,14 @@ jobs:
         with:
           fetch-depth: 1
 
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-
-      - uses: azure/setup-helm@v1
 
       - name: update chart version
         run: |
-          export version=${{needs.release.outputs.version}}
-          sed -i "s/version:.*/version: ${version}/" charts/kafka-ui/Chart.yaml
-          sed -i "s/appVersion:.*/appVersion: ${version}/" charts/kafka-ui/Chart.yaml
-
-      - name: add chart
-        run: |
-          export VERSION=${{needs.release.outputs.version}}
-          MSG=$(helm package --app-version ${VERSION} charts/kafka-ui)
-          git fetch origin
-          git stash
-          git checkout -b gh-pages origin/gh-pages
-          helm repo index .
-          git add -f ${MSG##*/} index.yaml
-          git commit -m "release ${VERSION}"
-          git push
+          echo ${{needs.release.outputs.version}}
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: Narekmat/kafka-ui
+          event-type: my-event
+          client-payload: '{"appversion": "${{needs.release.outputs.version}}"}'    
