@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.extensions;
+package com.provectus.kafka.ui.utilities;
 
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 

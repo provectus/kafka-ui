@@ -2,12 +2,12 @@ package com.provectus.kafka.ui.pages.schema;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
-import static com.provectus.kafka.ui.extensions.WebUtils.isVisible;
+import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
+import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
 
 public class SchemaRegistryList {
 
@@ -15,7 +15,7 @@ public class SchemaRegistryList {
 
     @Step
     public SchemaCreateView clickCreateSchema() {
-        BrowserUtils.javaExecutorClick(schemaButton);
+        javaExecutorClick(schemaButton);
         return new SchemaCreateView();
     }
 
