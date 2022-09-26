@@ -81,7 +81,7 @@ public class ConnectorsTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_UPDATE.getName());
         pages.connectorsView.connectorIsVisibleOnOverview();
-        pages.connectorsView.openEditConfig()
+        pages.connectorsView.openConfigTab()
                 .updConnectorConfig(CONNECTOR_FOR_UPDATE.getConfig());
         pages.openConnectorsList(CLUSTER_NAME);
         Assertions.assertTrue(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_UPDATE.getName()),"isConnectorVisible()");
