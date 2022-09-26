@@ -8,6 +8,7 @@ import { kafkaConnectApiClient as api } from 'lib/api';
 import sortBy from 'lodash/sortBy';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ClusterName } from 'redux/interfaces';
+import { showSuccessAlert } from 'lib/errorHandling';
 
 interface UseConnectorProps {
   clusterName: ClusterName;
@@ -42,10 +43,6 @@ const connectorKey = (props: UseConnectorProps) => [
 const connectorTasksKey = (props: UseConnectorProps) => [
   ...connectorKey(props),
   'tasks',
-];
-const connectorConfigKey = (props: UseConnectorProps) => [
-  ...connectorKey(props),
-  'config',
 ];
 
 export function useConnects(clusterName: ClusterName) {
@@ -104,8 +101,10 @@ export function useUpdateConnectorConfig(props: UseConnectorProps) {
       api.setConnectorConfig({ ...props, requestBody }),
     {
       onSuccess: () => {
+        showSuccessAlert({
+          message: `Config successfully updated.`,
+        });
         client.invalidateQueries(connectorKey(props));
-        client.invalidateQueries(connectorConfigKey(props));
       },
     }
   );

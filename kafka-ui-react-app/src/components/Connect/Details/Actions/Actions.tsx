@@ -10,7 +10,6 @@ import {
   useUpdateConnectorState,
 } from 'lib/hooks/api/kafkaConnect';
 import {
-  clusterConnectConnectorEditPath,
   clusterConnectorsPath,
   RouterParamsClusterConnectConnector,
 } from 'lib/paths';
@@ -115,20 +114,6 @@ const Actions: React.FC = () => {
       >
         Restart Failed Tasks
       </Button>
-      <Button
-        buttonSize="M"
-        buttonType="primary"
-        type="button"
-        disabled={isMutating}
-        to={clusterConnectConnectorEditPath(
-          routerProps.clusterName,
-          routerProps.connectName,
-          routerProps.connectorName
-        )}
-      >
-        Edit Config
-      </Button>
-
       <Button
         buttonSize="M"
         buttonType="secondary"
