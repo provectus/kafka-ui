@@ -1,6 +1,5 @@
-package com.provectus.kafka.ui.extensions;
+package com.provectus.kafka.ui.utilities.qaseIoUtils;
 
-import com.provectus.kafka.ui.utils.qaseIO.TestCaseGenerator;
 import io.qase.api.QaseClient;
 import io.qase.api.StepStorage;
 import io.qase.api.exceptions.QaseException;
@@ -40,7 +39,7 @@ public class QaseExtension implements TestExecutionListener {
 
 
     static {
-        String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
+        String qaseApiToken = "8988e8ac4179bd9ae2109d7fa225137855416ed2";
 
         if (qaseApiToken == null || StringUtils.isEmpty(qaseApiToken)) {
             throw new RuntimeException("QaseIO API token should be present");

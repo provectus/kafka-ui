@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.extensions;
+package com.provectus.kafka.ui.utilities;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;

@@ -13,6 +13,7 @@ import com.provectus.kafka.ui.api.model.TopicCreation;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.settings.Source;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.sleep;
-import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
+import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
 
 @Slf4j
@@ -29,7 +30,7 @@ public class ApiHelper {
 
     int partitions = 1;
     int replicationFactor = 1;
-    String baseURL = TestConfiguration.BASE_API_URL;
+    String baseURL = Source.BASE_API_URL;
 
 
     @SneakyThrows

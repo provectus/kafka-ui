@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.screenshots;
+package com.provectus.kafka.ui.utilities.screenshots;
 
 import io.qameta.allure.Allure;
 import io.qameta.allure.Attachment;
@@ -29,7 +29,7 @@ public class Screenshooter {
     private static final int PIXELS_THRESHOLD =
             Integer.parseInt(System.getProperty("PIXELS_THRESHOLD", "200"));
     private static final String SCREENSHOTS_FOLDER =
-            System.getProperty("SCREENSHOTS_FOLDER", "com/provectus/kafka/ui/screenshots/");
+            System.getProperty("SCREENSHOTS_FOLDER", "com/provectus/kafka/ui/utilities/screenshots/");
     private static final String DIFF_SCREENSHOTS_FOLDER =
             System.getProperty("DIFF_SCREENSHOTS_FOLDER", "build/__diff__/");
     private static final String ACTUAL_SCREENSHOTS_FOLDER =
