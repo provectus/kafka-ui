@@ -23,9 +23,9 @@ public class ConnectorsView {
         return this;
     }
 
-    @Step("Open 'Edit Config' of connector")
-    public ConnectorUpdateView openEditConfig() {
-        BrowserUtils.javaExecutorClick($x("//button[text()='Edit Config']"));
+    @Step()
+    public ConnectorUpdateView openConfigTab() {
+        BrowserUtils.javaExecutorClick($(By.xpath("//a[text() ='Config']")));
         return new ConnectorUpdateView();
     }
 
