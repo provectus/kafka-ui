@@ -75,7 +75,7 @@ describe('Edit Component', () => {
 
     await act(() => userEvent.type(field, '1'));
     await act(() => userEvent.click(btn));
-    updateTopicMock();
-    mockNavigate('../');
+    expect(updateTopicMock).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith('../');
   });
 });

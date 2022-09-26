@@ -109,5 +109,4 @@ export const topicFormValidationSchema = yup.object().shape({
       value: yup.string().required('Value is required'),
     })
   ),
-  newSchema: yup.string().required().isObjectScopeOut(),
 });

@@ -1,4 +1,4 @@
-import { isValidJsonObject } from 'lib/yupExtended';
+import { isValidJsonObject, isValidObjectScopeOut } from 'lib/yupExtended';
 
 describe('yup extended', () => {
   describe('isValidJsonObject', () => {
@@ -19,6 +19,14 @@ describe('yup extended', () => {
 
     it('returns true for valid JSON object', () => {
       expect(isValidJsonObject('{ "foo": "bar" }')).toBeTruthy();
+    });
+
+    it('returns false for invalid string', () => {
+      expect(isValidObjectScopeOut('{ "foo": "bar" }a')).toBeFalsy();
+    });
+
+    it('returns true for valid schema syntax object', () => {
+      expect(isValidObjectScopeOut('{ "foo": "bar" }')).toBeTruthy();
     });
   });
 });

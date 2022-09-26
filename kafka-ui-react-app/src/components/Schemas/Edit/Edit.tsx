@@ -1,4 +1,5 @@
 import React from 'react';
+import yup from 'lib/yupExtended';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
@@ -33,9 +34,12 @@ import { ErrorMessage } from '@hookform/error-message';
 import { showServerError } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { schemasApiClient } from 'lib/api';
-import { topicFormValidationSchema } from 'lib/yupExtended';
 
 import * as S from './Edit.styled';
+
+const validationSchema = yup.object().shape({
+  config: yup.string().required().isObjectScopeOut(),
+});
 
 const Edit: React.FC = () => {
   const navigate = useNavigate();
@@ -44,7 +48,7 @@ const Edit: React.FC = () => {
   const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
   const methods = useForm<NewSchemaSubjectRaw>({
     mode: 'onChange',
-    resolver: yupResolver(topicFormValidationSchema),
+    resolver: yupResolver(validationSchema),
   });
   const {
     formState: { isSubmitting, dirtyFields, errors },

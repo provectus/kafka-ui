@@ -93,7 +93,9 @@ describe('New', () => {
     await act(() => {
       userEvent.click(screen.getByText('Create topic'));
     });
-    createTopicMock();
-    mockNavigate(`../${topicName}`);
+    await waitFor(() => expect(createTopicMock).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(mockNavigate).toHaveBeenLastCalledWith(`../${topicName}`)
+    );
   });
 });
