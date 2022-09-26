@@ -39,12 +39,10 @@ public class QaseExtension implements TestExecutionListener {
 
 
     static {
-        String qaseApiToken = "8988e8ac4179bd9ae2109d7fa225137855416ed2";
-
+        String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
         if (qaseApiToken == null || StringUtils.isEmpty(qaseApiToken)) {
             throw new RuntimeException("QaseIO API token should be present");
         }
-
         if ("true".equalsIgnoreCase(System.getProperty("QASEIO_CREATE_TESTRUN"))) {
             System.setProperty("QASE_RUN_NAME", "Automation run " +
                     new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
@@ -54,7 +52,6 @@ public class QaseExtension implements TestExecutionListener {
         System.setProperty("QASE_API_TOKEN", qaseApiToken);
         System.setProperty("QASE_USE_BULK", "false");
     }
-
 
     @Override
     public void executionStarted(TestIdentifier testIdentifier) {
