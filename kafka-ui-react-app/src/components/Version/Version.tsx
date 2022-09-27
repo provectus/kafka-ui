@@ -37,7 +37,7 @@ const Version: React.FC = () => {
         <>
           <S.CurrentVersion>{currentVersion}</S.CurrentVersion>
 
-          {outdated && (
+          {!!outdated && (
             <S.OutdatedWarning
               title={`Your app version is outdated. Current latest version is ${latestTag}`}
             >
