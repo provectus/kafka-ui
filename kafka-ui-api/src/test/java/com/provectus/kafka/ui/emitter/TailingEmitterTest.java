@@ -114,7 +114,9 @@ class TailingEmitterTest extends AbstractIntegrationTest {
             new ConsumerPosition(SeekTypeDTO.LATEST, Map.of(), SeekDirectionDTO.TAILING),
             query,
             MessageFilterTypeDTO.STRING_CONTAINS,
-            0);
+            0,
+            "String",
+            "String");
   }
 
   private List<TopicMessageEventDTO> startTailing(String filterQuery) {
