@@ -33,31 +33,27 @@ const Version: React.FC = () => {
 
   return (
     <S.Wrapper>
-      {tag && (
+      <S.CurrentVersion>{currentVersion}</S.CurrentVersion>
+
+      {!!outdated && (
+        <S.OutdatedWarning
+          title={`Your app version is outdated. Current latest version is ${latestTag}`}
+        >
+          <WarningIcon />
+        </S.OutdatedWarning>
+      )}
+
+      {commit && (
         <>
-          <S.CurrentVersion>{currentVersion}</S.CurrentVersion>
-
-          {!!outdated && (
-            <S.OutdatedWarning
-              title={`Your app version is outdated. Current latest version is ${latestTag}`}
-            >
-              <WarningIcon />
-            </S.OutdatedWarning>
-          )}
-
-          {commit && (
-            <>
-              <S.SymbolWrapper>&#40;</S.SymbolWrapper>
-              <S.CurrentCommitLink
-                title="Current commit"
-                target="__blank"
-                href={gitCommitPath(commit)}
-              >
-                {commit}
-              </S.CurrentCommitLink>
-              <S.SymbolWrapper>&#41;</S.SymbolWrapper>
-            </>
-          )}
+          <S.SymbolWrapper>&#40;</S.SymbolWrapper>
+          <S.CurrentCommitLink
+            title="Current commit"
+            target="__blank"
+            href={gitCommitPath(commit)}
+          >
+            {commit}
+          </S.CurrentCommitLink>
+          <S.SymbolWrapper>&#41;</S.SymbolWrapper>
         </>
       )}
     </S.Wrapper>
