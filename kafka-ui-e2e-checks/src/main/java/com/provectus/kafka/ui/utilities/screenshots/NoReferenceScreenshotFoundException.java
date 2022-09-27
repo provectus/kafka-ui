@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.screenshots;
+package com.provectus.kafka.ui.utilities.screenshots;
 
 public class NoReferenceScreenshotFoundException extends Throwable {
     public NoReferenceScreenshotFoundException(String name) {

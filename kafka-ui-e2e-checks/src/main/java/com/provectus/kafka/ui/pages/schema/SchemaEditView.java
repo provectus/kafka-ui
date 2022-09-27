@@ -5,13 +5,13 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.api.model.SchemaType;
-import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
 
 public class SchemaEditView {
 
@@ -32,7 +32,7 @@ public class SchemaEditView {
     }
     @Step
     public SchemaView clickSubmit() {
-        BrowserUtils.javaExecutorClick($(By.xpath("//button[@type='submit']")));
+        javaExecutorClick($(By.xpath("//button[@type='submit']")));
         return new SchemaView();
     }
 

@@ -1,12 +1,11 @@
-package com.provectus.kafka.ui.utils;
+package com.provectus.kafka.ui.utilities.qaseIoUtils;
 
-import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.platform.commons.util.ClassUtils;
 import org.junit.platform.commons.util.Preconditions;
 
 import java.lang.reflect.Method;
 
-public class CamelCaseToSpacedDisplayNameGenerator implements DisplayNameGenerator {
+public class DisplayNameGenerator implements org.junit.jupiter.api.DisplayNameGenerator {
   @Override
   public String generateDisplayNameForClass(Class<?> testClass) {
     String name = testClass.getName();

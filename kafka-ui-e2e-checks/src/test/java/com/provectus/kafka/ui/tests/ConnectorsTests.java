@@ -4,16 +4,16 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.utils.qaseIO.Status;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.provectus.kafka.ui.extensions.FileUtils.getResourceAsString;
+import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
 
 public class ConnectorsTests extends BaseTest {
     private static final long SUITE_ID = 10;
@@ -80,9 +80,10 @@ public class ConnectorsTests extends BaseTest {
         pages.openConnectorsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_UPDATE.getName());
-        pages.connectorsView.connectorIsVisibleOnOverview();
-        pages.connectorsView.openEditConfig()
-                .updConnectorConfig(CONNECTOR_FOR_UPDATE.getConfig());
+        pages.connectorsView
+                .waitUntilScreenReady()
+                .openConfigTab()
+                .setConfig(CONNECTOR_FOR_UPDATE.getConfig());
         pages.openConnectorsList(CLUSTER_NAME);
         Assertions.assertTrue(pages.connectorsList.isConnectorVisible(CONNECTOR_FOR_UPDATE.getName()),"isConnectorVisible()");
     }

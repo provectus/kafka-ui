@@ -6,9 +6,9 @@ import com.provectus.kafka.ui.models.Topic;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.topic.TopicCreateEditSettingsView;
 import com.provectus.kafka.ui.pages.topic.TopicView;
-import com.provectus.kafka.ui.utils.qaseIO.Status;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import io.qase.api.annotation.CaseId;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
+import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
 public class TopicTests extends BaseTest {
     private static final long SUITE_ID = 2;

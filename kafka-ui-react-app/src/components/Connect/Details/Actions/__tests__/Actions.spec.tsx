@@ -31,7 +31,6 @@ const expectActionButtonsExists = () => {
   expect(screen.getByText('Restart Connector')).toBeInTheDocument();
   expect(screen.getByText('Restart All Tasks')).toBeInTheDocument();
   expect(screen.getByText('Restart Failed Tasks')).toBeInTheDocument();
-  expect(screen.getByText('Edit Config')).toBeInTheDocument();
   expect(screen.getByText('Delete')).toBeInTheDocument();
 };
 
@@ -63,7 +62,7 @@ describe('Actions', () => {
         data: set({ ...connector }, 'status.state', ConnectorState.PAUSED),
       }));
       renderComponent();
-      expect(screen.getAllByRole('button').length).toEqual(6);
+      expect(screen.getAllByRole('button').length).toEqual(5);
       expect(screen.getByText('Resume')).toBeInTheDocument();
       expect(screen.queryByText('Pause')).not.toBeInTheDocument();
       expectActionButtonsExists();
@@ -74,7 +73,7 @@ describe('Actions', () => {
         data: set({ ...connector }, 'status.state', ConnectorState.FAILED),
       }));
       renderComponent();
-      expect(screen.getAllByRole('button').length).toEqual(5);
+      expect(screen.getAllByRole('button').length).toEqual(4);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
       expect(screen.queryByText('Pause')).not.toBeInTheDocument();
       expectActionButtonsExists();
@@ -85,7 +84,7 @@ describe('Actions', () => {
         data: set({ ...connector }, 'status.state', ConnectorState.UNASSIGNED),
       }));
       renderComponent();
-      expect(screen.getAllByRole('button').length).toEqual(5);
+      expect(screen.getAllByRole('button').length).toEqual(4);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
       expect(screen.queryByText('Pause')).not.toBeInTheDocument();
       expectActionButtonsExists();
@@ -96,7 +95,7 @@ describe('Actions', () => {
         data: set({ ...connector }, 'status.state', ConnectorState.RUNNING),
       }));
       renderComponent();
-      expect(screen.getAllByRole('button').length).toEqual(6);
+      expect(screen.getAllByRole('button').length).toEqual(5);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
       expect(screen.getByText('Pause')).toBeInTheDocument();
       expectActionButtonsExists();
