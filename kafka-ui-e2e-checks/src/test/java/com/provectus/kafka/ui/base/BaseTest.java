@@ -3,8 +3,6 @@ package com.provectus.kafka.ui.base;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
-import com.provectus.kafka.ui.helpers.Helpers;
-import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.TestCaseGenerator;
 import com.provectus.kafka.ui.utilities.screenshots.Screenshooter;
@@ -32,13 +30,11 @@ import java.util.Arrays;
 
 @Slf4j
 @DisplayNameGeneration(DisplayNameGenerator.class)
-public class BaseTest {
+public class BaseTest extends Facade {
 
   public static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
   public static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium:103.0";
   public static final String CLUSTER_NAME = "local";
-  protected Pages pages = Pages.INSTANCE;
-  protected Helpers helpers = Helpers.INSTANCE;
 
   private final Screenshooter screenshooter = new Screenshooter();
 
