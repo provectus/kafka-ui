@@ -1,10 +1,7 @@
 import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
-import {
-  clusterConnectConnectorConfigPath,
-  clusterConnectConnectorEditPath,
-} from 'lib/paths';
-import Edit from 'components/Connect/Edit/Edit';
+import { clusterConnectConnectorConfigPath } from 'lib/paths';
+import Config from 'components/Connect/Details/Config/Config';
 import { connector } from 'lib/fixtures/kafkaConnect';
 import { waitFor } from '@testing-library/dom';
 import { act, fireEvent, screen } from '@testing-library/react';
@@ -31,16 +28,16 @@ const [clusterName, connectName, connectorName] = [
   'my-connector',
 ];
 
-describe('Edit', () => {
-  const pathname = clusterConnectConnectorEditPath();
+describe('Config', () => {
+  const pathname = clusterConnectConnectorConfigPath();
   const renderComponent = () =>
     render(
       <WithRoute path={pathname}>
-        <Edit />
+        <Config />
       </WithRoute>,
       {
         initialEntries: [
-          clusterConnectConnectorEditPath(
+          clusterConnectConnectorConfigPath(
             clusterName,
             connectName,
             connectorName
@@ -66,11 +63,6 @@ describe('Edit', () => {
     renderComponent();
     fireEvent.submit(screen.getByRole('form'));
     await waitFor(() => expect(updateConfig).toHaveBeenCalledTimes(1));
-
-    await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledTimes(1));
-    expect(mockHistoryPush).toHaveBeenCalledWith(
-      clusterConnectConnectorConfigPath(clusterName, connectName, connectorName)
-    );
   });
 
   it('does not redirect to connector config view on unsuccessful submit', async () => {

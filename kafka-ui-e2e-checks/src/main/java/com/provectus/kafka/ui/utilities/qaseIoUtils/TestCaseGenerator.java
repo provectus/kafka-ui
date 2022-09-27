@@ -1,7 +1,8 @@
-package com.provectus.kafka.ui.utils.qaseIO;
+package com.provectus.kafka.ui.utilities.qaseIoUtils;
 
-import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qase.api.QaseClient;
 import io.qase.api.annotation.CaseId;
 import io.qase.client.ApiClient;
@@ -9,14 +10,13 @@ import io.qase.client.api.CasesApi;
 import io.qase.client.model.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static io.qase.api.QaseClient.getConfig;
 
@@ -146,9 +146,18 @@ public class TestCaseGenerator {
         return true;
     }
 
+    private static String formatTestCaseTitle(String testMethodName) {
+        String[] split = StringUtils.splitByCharacterTypeCamelCase(testMethodName);
+        String[] name = Arrays.stream(split).map(String::toLowerCase).toArray(String[]::new);
+        String[] subarray = ArrayUtils.subarray(name, 1, name.length);
+        ArrayList<String> stringList = new ArrayList<>(Arrays.asList(subarray));
+        stringList.add(0, StringUtils.capitalize(name[0]));
+        return StringUtils.join(stringList, " ");
+    }
+
     public static String generateTestCaseTitle(Method testMethod) {
         return getClassName(MethodSource.from(testMethod)) + "." + testMethod.getName() + " : " +
-                MethodNameUtils.formatTestCaseTitle(testMethod.getName());
+                formatTestCaseTitle(testMethod.getName());
     }
 
     private static String getClassName(MethodSource testSource) {

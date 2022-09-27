@@ -1,6 +1,6 @@
-package com.provectus.kafka.ui.utils.qaseIO.annotation;
+package com.provectus.kafka.ui.utilities.qaseIoUtils.annotations;
 
-import com.provectus.kafka.ui.utils.qaseIO.Status;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
