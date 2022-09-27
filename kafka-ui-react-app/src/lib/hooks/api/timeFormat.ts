@@ -1,13 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { BASE_PARAMS } from 'lib/constants';
+import { timerStampFormatApiClient as api } from 'lib/api';
+import { QUERY_REFETCH_OFF_OPTIONS } from 'lib/constants';
 
-const fetchTimeFormat = async () => {
-  const data = await fetch('/api/info/timestampformat', BASE_PARAMS).then(
-    (res) => res.json()
+export function useTimeFormat() {
+  return useQuery(
+    ['settings', 'timestampformat'],
+    () => api.getTimeStampFormat(),
+    QUERY_REFETCH_OFF_OPTIONS
   );
-  return data;
-};
-
-export function useTimeFormatStats() {
-  return useQuery(['timestampformat'], fetchTimeFormat);
 }

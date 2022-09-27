@@ -5,10 +5,16 @@ import {
   Route,
   Routes,
 } from 'react-router-dom';
+import fetchMock from 'fetch-mock';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { render, renderHook, RenderOptions } from '@testing-library/react';
+import {
+  render,
+  renderHook,
+  RenderOptions,
+  waitFor,
+} from '@testing-library/react';
 import { AnyAction, Store } from 'redux';
 import { RootState } from 'redux/interfaces';
 import { configureStore } from '@reduxjs/toolkit';
@@ -35,6 +41,15 @@ interface WithRouteProps {
   children: React.ReactNode;
   path: string;
 }
+
+export const expectQueryWorks = async (
+  mock: fetchMock.FetchMockStatic,
+  result: { current: UseQueryResult<unknown, unknown> }
+) => {
+  await waitFor(() => expect(result.current.isFetched).toBeTruthy());
+  expect(mock.calls()).toHaveLength(1);
+  expect(result.current.data).toBeDefined();
+};
 
 export const WithRoute: React.FC<WithRouteProps> = ({ children, path }) => {
   return (

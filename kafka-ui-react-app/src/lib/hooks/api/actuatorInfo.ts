@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { BASE_PARAMS } from 'lib/constants';
+import { BASE_PARAMS, QUERY_REFETCH_OFF_OPTIONS } from 'lib/constants';
 
 const fetchActuatorInfo = async () => {
   const data = await fetch('/actuator/info', BASE_PARAMS).then((res) =>
@@ -9,6 +9,10 @@ const fetchActuatorInfo = async () => {
   return data;
 };
 
-export function useActuatorInfoStats() {
-  return useQuery(['actuatorInfo'], fetchActuatorInfo);
+export function useActuatorInfo() {
+  return useQuery(
+    ['actuatorInfo'],
+    fetchActuatorInfo,
+    QUERY_REFETCH_OFF_OPTIONS
+  );
 }

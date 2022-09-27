@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import WarningIcon from 'components/common/Icons/WarningIcon';
 import { gitCommitPath } from 'lib/paths';
 import { useTimeFormat } from 'lib/hooks/useTimeFormat';
-import { useActuatorInfoStats } from 'lib/hooks/api/actuatorInfo';
-import { GIT_REPO_LATEST_RELEASE_LINK, VERSION_PATTERN } from 'lib/constants';
+import { useActuatorInfo } from 'lib/hooks/api/actuatorInfo';
+import { BUILD_VERSION_PATTERN } from 'lib/constants';
+import { useLatestVersion } from 'lib/hooks/api/latestVersion';
 
-import compareVersions from './compareVersions';
 import * as S from './Version.styled';
+import compareVersions from './compareVersions';
 
 export interface VesionProps {
   tag: string;
@@ -15,37 +16,23 @@ export interface VesionProps {
 
 const Version: React.FC = () => {
   const formatTimestamp = useTimeFormat();
+  const { data: actuatorInfo = {} } = useActuatorInfo();
+  const { data: latestVersionInfo = {} } = useLatestVersion();
 
-  const { data: actuatorInfo } = useActuatorInfoStats();
+  const tag = actuatorInfo?.build?.version;
+  const commit = actuatorInfo?.git?.commit.id;
+  const { tag_name: latestTag } = latestVersionInfo;
 
-  const [latestVersionInfo, setLatestVersionInfo] = useState({
-    outdated: false,
-    latestTag: '',
-  });
+  const outdated = compareVersions(tag, latestTag);
 
-  const commit = actuatorInfo?.git.commit.id;
-  const time = actuatorInfo?.build.time;
-  const tag = actuatorInfo?.build.version;
-
-  const { outdated, latestTag } = latestVersionInfo;
-
-  const currentVersion = tag?.match(VERSION_PATTERN)
+  const currentVersion = tag?.match(BUILD_VERSION_PATTERN)
     ? tag
-    : formatTimestamp(time);
+    : formatTimestamp(actuatorInfo?.build?.time);
 
-  useEffect(() => {
-    fetch(GIT_REPO_LATEST_RELEASE_LINK)
-      .then((response) => response.json())
-      .then((data) => {
-        setLatestVersionInfo({
-          outdated: compareVersions(tag, data.tag_name) === -1,
-          latestTag: data.tag_name,
-        });
-      });
-  }, [tag]);
+  if (!tag) return null;
 
   return (
-    <S.Wrapper data-testid="data_commit_wrapper">
+    <S.Wrapper>
       {tag && (
         <>
           <S.CurrentVersion>{currentVersion}</S.CurrentVersion>

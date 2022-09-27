@@ -49,7 +49,7 @@ export const MILLISECONDS_IN_SECOND = 1_000;
 
 export const NOT_SET = -1;
 export const BYTES_IN_GB = 1_073_741_824;
-export const VERSION_PATTERN = /v\d.\d.\d/;
+export const BUILD_VERSION_PATTERN = /v\d.\d.\d/;
 
 export const PER_PAGE = 25;
 
@@ -63,3 +63,9 @@ export enum AsyncRequestStatus {
   fulfilled = 'fulfilled',
   rejected = 'rejected',
 }
+
+export const QUERY_REFETCH_OFF_OPTIONS = {
+  refetchOnMount: false,
+  refetchOnWindowFocus: false,
+  refetchIntervalInBackground: false,
+};

@@ -1,22 +1,21 @@
 import React from 'react';
-import { useTimeFormatStats } from 'lib/hooks/api/timeFormat';
+import { useTimeFormat } from 'lib/hooks/api/timeFormat';
 
-type GlobalSettingsType = {
+interface GlobalSettingsContextValue {
   timeStampFormat: string;
-};
+}
 
 export const defaultGlobalSettingsValue = {
   timeStampFormat: 'DD.MM.YYYY HH:mm:ss',
 };
 
-export const GlobalSettingsContext = React.createContext<GlobalSettingsType>(
-  defaultGlobalSettingsValue
-);
+export const GlobalSettingsContext =
+  React.createContext<GlobalSettingsContextValue>(defaultGlobalSettingsValue);
 
 export const GlobalSettingsProvider: React.FC<
   React.PropsWithChildren<unknown>
 > = ({ children }) => {
-  const { data } = useTimeFormatStats();
+  const { data } = useTimeFormat();
 
   return (
     <GlobalSettingsContext.Provider
