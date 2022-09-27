@@ -26,7 +26,6 @@ describe('MessagesTable', () => {
   const contextValue: ContextProps = {
     isLive: false,
     seekDirection: SeekDirection.FORWARD,
-    searchParams,
     changeSeekDirection: jest.fn(),
   };
 

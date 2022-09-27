@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serde.RecordSerDe;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.util.OffsetsSeek;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class ForwardRecordEmitter
   public ForwardRecordEmitter(
       Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
       OffsetsSeek offsetsSeek,
-      RecordSerDe recordDeserializer) {
+      ConsumerRecordDeserializer recordDeserializer) {
     super(recordDeserializer);
     this.consumerSupplier = consumerSupplier;
     this.offsetsSeek = offsetsSeek;

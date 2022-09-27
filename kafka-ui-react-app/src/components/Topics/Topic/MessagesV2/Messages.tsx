@@ -15,7 +15,6 @@ import MessagesTable from './MessagesTable/MessagesTable';
 import * as S from './Messages.styled';
 import Meta from './FiltersBar/Meta';
 import Form from './FiltersBar/Form';
-import { setSeekTo } from './FiltersBar/utils';
 import handleNextPageClick from './utils/handleNextPageClick';
 import StatusBar from './StatusBar';
 import AdvancedFilter from './Advanced Filter/AdvancedFilter';
@@ -38,30 +37,6 @@ const Messages = () => {
   const { data: topic = { partitions: [] } } = useTopicDetails(routerProps);
 
   const partitions = topic.partitions || [];
-
-  /**
-   * Search params:
-   * - `q` - search query
-   * - `m` - way the consumer is going to consume the messages..
-   * - `o` - offset
-   * - `t` - timestamp
-   * - `perPage` - number of messages per page
-   * - `seekTo` - offset or timestamp to seek to.
-   *    Format: `0-101.1-987` - [partition 0, offset 101], [partition 1, offset 987]
-   * - `page` - page number
-   */
-  React.useEffect(() => {
-    if (!mode) {
-      searchParams.set('m', 'newest');
-    }
-    if (!searchParams.get('perPage')) {
-      searchParams.set('perPage', MESSAGES_PER_PAGE);
-    }
-    if (!searchParams.get('seekTo')) {
-      setSeekTo(searchParams, partitions);
-    }
-    setSearchParams(searchParams);
-  }, [topic]);
 
   // Pagination is disabled in live mode, also we don't want to show the button
   // if we are fetching the messages or if we are at the end of the topic
