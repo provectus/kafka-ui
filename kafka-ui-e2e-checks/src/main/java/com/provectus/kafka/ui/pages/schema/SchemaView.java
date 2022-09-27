@@ -2,11 +2,12 @@ package com.provectus.kafka.ui.pages.schema;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
+
 public class SchemaView {
 
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
@@ -29,7 +30,7 @@ public class SchemaView {
     }
     @Step
     public SchemaRegistryList removeSchema() {
-        BrowserUtils.javaExecutorClick(dotMenuBtn);
+        javaExecutorClick(dotMenuBtn);
         $(By.xpath("//*[contains(text(),'Remove')]")).click();
         SelenideElement confirmButton = $x("//div[@role=\"dialog\"]//button[text()='Confirm']");
         confirmButton.shouldBe(Condition.enabled).click();

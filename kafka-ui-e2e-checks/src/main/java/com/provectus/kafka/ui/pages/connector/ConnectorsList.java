@@ -2,16 +2,16 @@ package com.provectus.kafka.ui.pages.connector;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
-import com.provectus.kafka.ui.extensions.WaitUtils;
-import com.provectus.kafka.ui.helpers.TestConfiguration;
-import com.provectus.kafka.ui.utils.BrowserUtils;
+import com.provectus.kafka.ui.utilities.WaitUtils;
+import com.provectus.kafka.ui.settings.Source;
 import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.extensions.WebUtils.isVisible;
+import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
+import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
 
 @ExtensionMethod(WaitUtils.class)
 public class ConnectorsList {
@@ -20,7 +20,7 @@ public class ConnectorsList {
 
     @Step("Open URL to {cluster}")
     public ConnectorsList goTo(String cluster) {
-        Selenide.open(TestConfiguration.BASE_WEB_URL + String.format(path, cluster));
+        Selenide.open(Source.BASE_WEB_URL + String.format(path, cluster));
         return this;
     }
 
@@ -32,7 +32,7 @@ public class ConnectorsList {
 
     @Step("Click on button 'Create Connector'")
     public ConnectorCreateView clickCreateConnectorButton() {
-        BrowserUtils.javaExecutorClick($x("//button[text()='Create Connector']"));
+        javaExecutorClick($x("//button[text()='Create Connector']"));
         return new ConnectorCreateView();
     }
 

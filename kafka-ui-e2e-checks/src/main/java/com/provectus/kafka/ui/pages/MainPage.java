@@ -3,8 +3,8 @@ package com.provectus.kafka.ui.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.extensions.WaitUtils;
-import com.provectus.kafka.ui.helpers.TestConfiguration;
+import com.provectus.kafka.ui.utilities.WaitUtils;
+import com.provectus.kafka.ui.settings.Source;
 import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
@@ -19,7 +19,7 @@ public class MainPage {
 
     @Step
     public MainPage goTo() {
-        Selenide.open(TestConfiguration.BASE_WEB_URL + path);
+        Selenide.open(Source.BASE_WEB_URL + path);
         return this;
     }
 

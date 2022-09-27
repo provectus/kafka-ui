@@ -4,11 +4,10 @@ import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.provectus.kafka.ui.helpers.Helpers;
-import com.provectus.kafka.ui.helpers.TestConfiguration;
 import com.provectus.kafka.ui.pages.Pages;
-import com.provectus.kafka.ui.screenshots.Screenshooter;
-import com.provectus.kafka.ui.utils.CamelCaseToSpacedDisplayNameGenerator;
-import com.provectus.kafka.ui.utils.qaseIO.TestCaseGenerator;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.TestCaseGenerator;
+import com.provectus.kafka.ui.utilities.screenshots.Screenshooter;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
 import io.qameta.allure.selenide.AllureSelenide;
@@ -32,7 +31,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 @Slf4j
-@DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
+@DisplayNameGeneration(DisplayNameGenerator.class)
 public class BaseTest {
 
   public static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
@@ -103,7 +102,7 @@ public class BaseTest {
       }
     }
     Dotenv.load().entries().forEach(env -> System.setProperty(env.getKey(), env.getValue()));
-    if (TestConfiguration.CLEAR_REPORTS_DIR) {
+    if (Config.CLEAR_REPORTS_DIR) {
       clearReports();
     }
     setup();
@@ -125,28 +124,27 @@ public class BaseTest {
 
   @SneakyThrows
   private static void setup() {
-    Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
-    Configuration.screenshots = TestConfiguration.SCREENSHOTS;
-    Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;
-    Configuration.reopenBrowserOnFail = TestConfiguration.REOPEN_BROWSER_ON_FAIL;
-    Configuration.browser = TestConfiguration.BROWSER;
-    Configuration.baseUrl = TestConfiguration.BASE_WEB_URL;
+    Configuration.reportsFolder = Config.REPORTS_FOLDER;
+    Configuration.screenshots = Config.SCREENSHOTS;
+    Configuration.savePageSource = Config.SAVE_PAGE_SOURCE;
+    Configuration.reopenBrowserOnFail = Config.REOPEN_BROWSER_ON_FAIL;
+    Configuration.browser = Config.BROWSER;
     Configuration.timeout = 10000;
     Configuration.pageLoadTimeout = 180000;
-    Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
+    Configuration.browserSize = Config.BROWSER_SIZE;
     SelenideLogger.addListener("allure", new AllureSelenide().savePageSource(false));
   }
 
   public static void clearReports() {
-    log.info(String.format("Clearing reports dir [%s]...", TestConfiguration.REPORTS_FOLDER));
-    File allureResults = new File(TestConfiguration.REPORTS_FOLDER);
+    log.info(String.format("Clearing reports dir [%s]...", Config.REPORTS_FOLDER));
+    File allureResults = new File(Config.REPORTS_FOLDER);
     if (allureResults.isDirectory()) {
       File[] list = allureResults.listFiles();
       if (list != null) {
         Arrays.stream(list)
-            .sequential()
-            .filter(e -> !e.getName().equals("categories.json"))
-            .forEach(File::delete);
+                .sequential()
+                .filter(e -> !e.getName().equals("categories.json"))
+                .forEach(File::delete);
       }
     }
   }
