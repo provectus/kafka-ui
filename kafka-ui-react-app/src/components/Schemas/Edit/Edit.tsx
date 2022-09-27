@@ -38,7 +38,7 @@ import { schemasApiClient } from 'lib/api';
 import * as S from './Edit.styled';
 
 const validationSchema = yup.object().shape({
-  config: yup.string().required().isObjectScopeOut(),
+  newSchema: yup.string().required().isJsonObject('Schema syntax is not valid'),
 });
 
 const Edit: React.FC = () => {

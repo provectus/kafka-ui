@@ -9,8 +9,7 @@ declare module 'yup' {
     TContext extends AnyObject = AnyObject,
     TOut extends TType = TType
   > extends yup.BaseSchema<TType, TContext, TOut> {
-    isJsonObject(): StringSchema<TType, TContext>;
-    isObjectScopeOut(): StringSchema<TType, TContext>;
+    isJsonObject(message?: string): StringSchema<TType, TContext>;
   }
 }
 
@@ -32,36 +31,16 @@ export const isValidJsonObject = (value?: string) => {
   return false;
 };
 
-export const isValidObjectScopeOut = (value?: string) => {
-  const lastLetter = value?.slice(-1);
-
-  if (lastLetter !== '}') {
-    return false;
-  }
-  return true;
-};
-
-const isJsonObject = () => {
+const isJsonObject = (message?: string) => {
   return yup.string().test(
     'isJsonObject',
     // eslint-disable-next-line no-template-curly-in-string
-    '${path} is not JSON object',
+    message || '${path} is not JSON object',
     isValidJsonObject
   );
 };
 
-const isObjectScopeOut = () => {
-  return yup
-    .string()
-    .test(
-      'isObjectScopeOut',
-      'Schema syntax is not valid',
-      isValidObjectScopeOut
-    );
-};
-
 yup.addMethod(yup.string, 'isJsonObject', isJsonObject);
-yup.addMethod(yup.string, 'isObjectScopeOut', isObjectScopeOut);
 
 export default yup;
 
