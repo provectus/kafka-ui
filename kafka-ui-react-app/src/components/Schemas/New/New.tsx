@@ -120,7 +120,7 @@ const New: React.FC = () => {
                 name={name}
                 value={value}
                 onChange={onChange}
-                minWidth="50%"
+                minWidth="100%"
                 disabled={isSubmitting}
                 options={SchemaTypeOptions}
               />
