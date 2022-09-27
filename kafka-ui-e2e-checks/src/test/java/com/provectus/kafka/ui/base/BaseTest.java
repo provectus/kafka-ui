@@ -4,9 +4,12 @@ import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.TestCaseGenerator;
 import com.provectus.kafka.ui.utilities.screenshots.Screenshooter;
+import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
@@ -19,6 +22,11 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+
+import static com.provectus.kafka.ui.base.Setup.clearReports;
+import static com.provectus.kafka.ui.base.Setup.setup;
 
 @Slf4j
 @DisplayNameGeneration(DisplayNameGenerator.class)
@@ -68,7 +76,7 @@ public class BaseTest {
             .addArguments("--no-sandbox")
             .addArguments("--verbose")
         )
-        .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: "));
+            .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: "));
     try {
       Testcontainers.exposeHostPorts(8080);
       log.info("Starting browser container");
@@ -76,6 +84,29 @@ public class BaseTest {
     } catch (Throwable e) {
       log.error("Couldn't start a container", e);
     }
+  }
+
+  static {
+    if (!new File("./.env").exists()) {
+      try {
+        FileUtils.copyFile(new File(".env.example"), new File(".env"));
+      } catch (IOException e) {
+        log.error("couldn't copy .env.example to .env. Please add .env");
+        e.printStackTrace();
+      }
+    }
+    Dotenv.load().entries().forEach(env -> System.setProperty(env.getKey(), env.getValue()));
+    if (Config.CLEAR_REPORTS_DIR) {
+      clearReports();
+    }
+    setup();
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+      if (TestCaseGenerator.FAILED) {
+        log.error(
+                "Tests FAILED because some problem with @CaseId annotation. Verify that all tests annotated with @CaseId and Id is correct!");
+        Runtime.getRuntime().halt(100500);
+      }
+    }));
   }
 
   @AfterAll
