@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.utils.qaseIO.annotation;
+package com.provectus.kafka.ui.utilities.qaseIoUtils.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

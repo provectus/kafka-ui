@@ -3,14 +3,14 @@ package com.provectus.kafka.ui.pages.topic;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.extensions.WaitUtils;
-import com.provectus.kafka.ui.helpers.TestConfiguration;
-import com.provectus.kafka.ui.utils.BrowserUtils;
+import com.provectus.kafka.ui.utilities.WaitUtils;
+import com.provectus.kafka.ui.settings.Source;
 import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
 
 @ExtensionMethod({WaitUtils.class})
 public class TopicView {
@@ -20,7 +20,7 @@ public class TopicView {
 
     @Step
     public TopicView goTo(String cluster, String topic) {
-        Selenide.open(TestConfiguration.BASE_WEB_URL + String.format(URL_PATH, cluster, topic));
+        Selenide.open(Source.BASE_WEB_URL + String.format(URL_PATH, cluster, topic));
         return this;
     }
 
@@ -32,7 +32,7 @@ public class TopicView {
 
     @Step
     public TopicCreateEditSettingsView openEditSettings() {
-        BrowserUtils.javaExecutorClick(dotMenuBtn);
+        javaExecutorClick(dotMenuBtn);
         $x("//li[@role][text()='Edit settings']").click();
         return new TopicCreateEditSettingsView();
     }
@@ -45,7 +45,7 @@ public class TopicView {
 
     @Step
     public TopicsList deleteTopic() {
-        BrowserUtils.javaExecutorClick(dotMenuBtn);
+        javaExecutorClick(dotMenuBtn);
         $x("//ul[@role='menu']//div[text()='Remove Topic']").click();
         SelenideElement confirmButton = $x("//div[@role=\"dialog\"]//button[text()='Confirm']");
         confirmButton.shouldBe(Condition.enabled).click();
@@ -55,7 +55,7 @@ public class TopicView {
 
     @Step
     public ProduceMessagePanel clickOnButton(String buttonName) {
-        BrowserUtils.javaExecutorClick($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
+        javaExecutorClick($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
         return new ProduceMessagePanel();
     }
 

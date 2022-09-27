@@ -1,8 +1,8 @@
 package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.utils.qaseIO.Status;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

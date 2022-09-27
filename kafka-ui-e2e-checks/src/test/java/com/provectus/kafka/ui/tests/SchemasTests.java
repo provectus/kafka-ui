@@ -7,9 +7,9 @@ import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.schema.SchemaEditView;
 import com.provectus.kafka.ui.pages.schema.SchemaView;
-import com.provectus.kafka.ui.utils.qaseIO.Status;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import io.qase.api.annotation.CaseId;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
+import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

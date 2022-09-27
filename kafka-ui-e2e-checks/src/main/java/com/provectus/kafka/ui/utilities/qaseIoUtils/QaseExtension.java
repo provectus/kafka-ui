@@ -1,6 +1,5 @@
-package com.provectus.kafka.ui.extensions;
+package com.provectus.kafka.ui.utilities.qaseIoUtils;
 
-import com.provectus.kafka.ui.utils.qaseIO.TestCaseGenerator;
 import io.qase.api.QaseClient;
 import io.qase.api.StepStorage;
 import io.qase.api.exceptions.QaseException;
@@ -41,11 +40,9 @@ public class QaseExtension implements TestExecutionListener {
 
     static {
         String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
-
         if (qaseApiToken == null || StringUtils.isEmpty(qaseApiToken)) {
             throw new RuntimeException("QaseIO API token should be present");
         }
-
         if ("true".equalsIgnoreCase(System.getProperty("QASEIO_CREATE_TESTRUN"))) {
             System.setProperty("QASE_RUN_NAME", "Automation run " +
                     new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
@@ -55,7 +52,6 @@ public class QaseExtension implements TestExecutionListener {
         System.setProperty("QASE_API_TOKEN", qaseApiToken);
         System.setProperty("QASE_USE_BULK", "false");
     }
-
 
     @Override
     public void executionStarted(TestIdentifier testIdentifier) {
