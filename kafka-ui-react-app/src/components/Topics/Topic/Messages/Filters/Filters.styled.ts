@@ -23,19 +23,16 @@ export const FiltersWrapper = styled.div`
   & > div:first-child {
     display: flex;
     justify-content: space-between;
-    padding-top: 16px;
+    padding-top: 2px;
+    align-items: flex-end;
   }
 `;
 
 export const FilterInputs = styled.div`
   display: flex;
   gap: 8px;
-  align-items: center;
+  align-items: flex-end;
   width: 90%;
-
-  & > div:first-child {
-    width: 25%;
-  }
 `;
 
 export const SeekTypeSelectorWrapper = styled.div`
@@ -98,10 +95,12 @@ export const MetricsIcon = styled.div`
   height: 12px;
 `;
 
-export const ClearAll = styled.span`
+export const ClearAll = styled.div`
   color: ${({ theme }) => theme.metrics.filters.color.normal};
   font-size: 12px;
   cursor: pointer;
+  line-height: 32px;
+  margin-left: 8px;
 `;
 
 export const ButtonContainer = styled.div`
@@ -218,11 +217,15 @@ export const FilterButtonWrapper = styled.div`
 `;
 
 export const ActiveSmartFilterWrapper = styled.div`
-  padding: 5px 0;
+  padding: 8px 0 5px;
   display: flex;
   gap: 10px;
   align-items: center;
   justify-content: flex-start;
+
+  & div:first-child {
+    width: 25%;
+  }
 `;
 
 export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
@@ -358,4 +361,10 @@ export const SeekTypeSelect = styled(Select)`
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   user-select: none;
+`;
+
+export const Serdes = styled.div`
+  display: flex;
+  gap: 24px;
+  padding 8px 0;
 `;
