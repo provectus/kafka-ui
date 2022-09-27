@@ -80,8 +80,7 @@ public class ConnectorsTests extends BaseTest {
         connectorsList.goTo(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_UPDATE.getName());
-        connectorsView
-                .waitUntilScreenReady()
+        connectorsView.waitUntilScreenReady()
                 .openConfigTab()
                 .setConfig(CONNECTOR_FOR_UPDATE.getConfig());
         connectorsList.goTo(CLUSTER_NAME);
