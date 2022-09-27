@@ -23,6 +23,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
+import static com.provectus.kafka.ui.base.Setup.clearReports;
+import static com.provectus.kafka.ui.base.Setup.setup;
+
 @Slf4j
 @DisplayNameGeneration(DisplayNameGenerator.class)
 public class BaseTest extends Facade {
