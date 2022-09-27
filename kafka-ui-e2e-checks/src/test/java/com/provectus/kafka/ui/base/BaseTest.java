@@ -60,18 +60,18 @@ public class BaseTest extends Facade {
   @BeforeAll
   public static void start() {
     DockerImageName image = isARM64()
-        ? DockerImageName.parse(SELENIARM_STANDALONE_CHROMIUM).asCompatibleSubstituteFor(SELENIUM_IMAGE_NAME)
-        : DockerImageName.parse(SELENIUM_IMAGE_NAME);
+            ? DockerImageName.parse(SELENIARM_STANDALONE_CHROMIUM).asCompatibleSubstituteFor(SELENIUM_IMAGE_NAME)
+            : DockerImageName.parse(SELENIUM_IMAGE_NAME);
     log.info("Using [{}] as image name for chrome", image.getUnversionedPart());
 
     webDriverContainer = new BrowserWebDriverContainer<>(image)
-        .withEnv("JAVA_OPTS", "-Dwebdriver.chrome.whitelistedIps=")
-        .withCapabilities(new ChromeOptions()
-            .addArguments("--disable-dev-shm-usage")
-            .addArguments("--disable-gpu")
-            .addArguments("--no-sandbox")
-            .addArguments("--verbose")
-        )
+            .withEnv("JAVA_OPTS", "-Dwebdriver.chrome.whitelistedIps=")
+            .withCapabilities(new ChromeOptions()
+                    .addArguments("--disable-dev-shm-usage")
+                    .addArguments("--disable-gpu")
+                    .addArguments("--no-sandbox")
+                    .addArguments("--verbose")
+            )
             .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: "));
     try {
       Testcontainers.exposeHostPorts(8080);
@@ -116,7 +116,7 @@ public class BaseTest extends Facade {
   @AfterEach
   public void afterMethod() {
     Allure.addAttachment("Screenshot",
-        new ByteArrayInputStream(
-            ((TakesScreenshot) webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
+            new ByteArrayInputStream(
+                    ((TakesScreenshot) webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
   }
 }
