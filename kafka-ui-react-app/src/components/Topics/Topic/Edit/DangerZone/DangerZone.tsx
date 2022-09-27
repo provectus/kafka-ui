@@ -81,6 +81,10 @@ const DangerZone: React.FC<DangerZoneProps> = ({
   return (
     <S.Wrapper>
       <S.Title>Danger Zone</S.Title>
+      <S.Warning>
+        Change these parameters only if you are absolutely sure that you are
+        doing.
+      </S.Warning>
       <div>
         <FormProvider {...partitionsMethods}>
           <S.Form
