@@ -1,8 +1,8 @@
-import { TopicMessageTimestampTypeEnum, SchemaType } from 'generated-sources';
 import React from 'react';
 import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { formatTimestamp } from 'lib/dateTimeHelpers';
+import { useTimeFormat } from 'lib/hooks/useTimeFormat';
+import { SchemaType, TopicMessageTimestampTypeEnum } from 'generated-sources';
 
 import * as S from './MessageContent.styled';
 
@@ -27,7 +27,10 @@ const MessageContent: React.FC<MessageContentProps> = ({
   timestamp,
   timestampType,
 }) => {
+  const formatTimestamp = useTimeFormat();
+
   const [activeTab, setActiveTab] = React.useState<Tab>('content');
+
   const activeTabContent = () => {
     switch (activeTab) {
       case 'content':
@@ -38,24 +41,29 @@ const MessageContent: React.FC<MessageContentProps> = ({
         return JSON.stringify(headers);
     }
   };
+
   const handleKeyTabClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setActiveTab('key');
   };
+
   const handleContentTabClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setActiveTab('content');
   };
+
   const handleHeadersTabClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setActiveTab('headers');
   };
+
   const keySize = new TextEncoder().encode(messageKey).length;
   const contentSize = new TextEncoder().encode(messageContent).length;
   const contentType =
     messageContent && messageContent.trim().startsWith('{')
       ? SchemaType.JSON
       : SchemaType.PROTOBUF;
+
   return (
     <S.Wrapper>
       <td colSpan={10}>
