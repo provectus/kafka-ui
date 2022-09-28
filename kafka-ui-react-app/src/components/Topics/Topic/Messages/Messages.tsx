@@ -1,10 +1,14 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
-import { SeekDirection } from 'generated-sources';
-import { useLocation } from 'react-router-dom';
+import { SeekDirection, SerdeUsage } from 'generated-sources';
+import { useSearchParams } from 'react-router-dom';
+import { useSerdes } from 'lib/hooks/api/topicMessages';
+import useAppParams from 'lib/hooks/useAppParams';
+import { RouteParamsClusterTopic } from 'lib/paths';
+import { getDefaultSerdeName } from 'components/Topics/Topic/MessagesV2/utils/getDefaultSerdeName';
 
-import FiltersContainer from './Filters/FiltersContainer';
 import MessagesTable from './MessagesTable';
+import FiltersContainer from './Filters/FiltersContainer';
 
 export const SeekDirectionOptionsObj = {
   [SeekDirection.FORWARD]: {
@@ -27,12 +31,24 @@ export const SeekDirectionOptionsObj = {
 export const SeekDirectionOptions = Object.values(SeekDirectionOptionsObj);
 
 const Messages: React.FC = () => {
-  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
 
-  const searchParams = React.useMemo(
-    () => new URLSearchParams(location.search),
-    [location.search]
-  );
+  const { data: serdes = {} } = useSerdes({
+    clusterName,
+    topicName,
+    use: SerdeUsage.DESERIALIZE,
+  });
+
+  React.useEffect(() => {
+    if (!searchParams.get('keySerde')) {
+      searchParams.set('keySerde', getDefaultSerdeName(serdes.key || []));
+    }
+    if (!searchParams.get('valueSerde')) {
+      searchParams.set('valueSerde', getDefaultSerdeName(serdes.value || []));
+    }
+    setSearchParams(searchParams);
+  }, [serdes]);
 
   const defaultSeekValue = SeekDirectionOptions[0];
 
@@ -66,11 +82,10 @@ const Messages: React.FC = () => {
   const contextValue = useMemo(
     () => ({
       seekDirection,
-      searchParams,
       changeSeekDirection,
       isLive,
     }),
-    [seekDirection, searchParams, changeSeekDirection]
+    [seekDirection, changeSeekDirection]
   );
 
   return (

@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serde.RecordSerDe;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class BackwardRecordEmitter
   public BackwardRecordEmitter(
       Function<Map<String, Object>, KafkaConsumer<Bytes, Bytes>> consumerSupplier,
       OffsetsSeekBackward offsetsSeek,
-      RecordSerDe recordDeserializer) {
+      ConsumerRecordDeserializer recordDeserializer) {
     super(recordDeserializer);
     this.offsetsSeek = offsetsSeek;
     this.consumerSupplier = consumerSupplier;
