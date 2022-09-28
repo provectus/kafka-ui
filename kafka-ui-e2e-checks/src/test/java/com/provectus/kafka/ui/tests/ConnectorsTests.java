@@ -43,11 +43,11 @@ public class ConnectorsTests extends BaseTest {
     public void beforeAll() {
         TOPIC_LIST.addAll(List.of(TOPIC_FOR_CREATE, TOPIC_FOR_DELETE, TOPIC_FOR_UPDATE));
         TOPIC_LIST.forEach(topic -> {
-            apiHelpers.createTopic(CLUSTER_NAME, topic.getName());
-            apiHelpers.sendMessage(CLUSTER_NAME, topic);
+            apiHelper.createTopic(CLUSTER_NAME, topic.getName());
+            apiHelper.sendMessage(CLUSTER_NAME, topic);
         });
         CONNECTOR_LIST.addAll(List.of(CONNECTOR_FOR_DELETE, CONNECTOR_FOR_UPDATE));
-        CONNECTOR_LIST.forEach(connector -> apiHelpers
+        CONNECTOR_LIST.forEach(connector -> apiHelper
                 .createConnector(CLUSTER_NAME, CONNECT_NAME, connector));
     }
 
@@ -67,7 +67,7 @@ public class ConnectorsTests extends BaseTest {
                 .setConnectorConfig(connectorForCreate.getName(), connectorForCreate.getConfig());
         connectorsList.goTo(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        Assertions.assertTrue(connectorsList.isConnectorVisible(connectorForCreate.getName()),"isConnectorVisible()");
+        Assertions.assertTrue(connectorsList.isConnectorVisible(connectorForCreate.getName()), "isConnectorVisible()");
         CONNECTOR_LIST.add(connectorForCreate);
     }
 
@@ -77,10 +77,8 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(196)
     @Test
     public void updateConnector() {
-        connectorsList.goTo(CLUSTER_NAME)
+        connectorsView.goTo(CLUSTER_NAME, CONNECTOR_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
-                .openConnector(CONNECTOR_FOR_UPDATE.getName());
-        connectorsView.waitUntilScreenReady()
                 .openConfigTab()
                 .setConfig(CONNECTOR_FOR_UPDATE.getConfig());
         connectorsList.goTo(CLUSTER_NAME);
@@ -93,19 +91,17 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(195)
     @Test
     public void deleteConnector() {
-        connectorsList.goTo(CLUSTER_NAME)
-                .waitUntilScreenReady()
-                .openConnector(CONNECTOR_FOR_DELETE.getName());
-        connectorsView.clickDeleteButton();
+        connectorsView.goTo(CLUSTER_NAME, CONNECTOR_FOR_DELETE.getName())
+                .clickDeleteButton();
         connectorsList.goTo(CLUSTER_NAME);
-        Assertions.assertFalse(connectorsList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()),"isConnectorVisible()");
+        Assertions.assertFalse(connectorsList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()), "isConnectorVisible()");
         CONNECTOR_LIST.remove(CONNECTOR_FOR_DELETE);
     }
 
     @AfterAll
     public void afterAll() {
         CONNECTOR_LIST.forEach(connector ->
-                apiHelpers.deleteConnector(CLUSTER_NAME, CONNECT_NAME, connector.getName()));
-        TOPIC_LIST.forEach(topic -> apiHelpers.deleteTopic(CLUSTER_NAME, topic.getName()));
+                apiHelper.deleteConnector(CLUSTER_NAME, CONNECT_NAME, connector.getName()));
+        TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
     }
 }
