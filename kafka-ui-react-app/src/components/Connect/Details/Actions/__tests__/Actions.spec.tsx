@@ -33,7 +33,11 @@ const expectActionButtonsExists = () => {
   expect(screen.getByText('Restart Failed Tasks')).toBeInTheDocument();
   expect(screen.getByText('Delete')).toBeInTheDocument();
 };
-
+const afterClickDropDownButton = () => {
+  const dropDownButton = screen.getAllByRole('button');
+  expect(dropDownButton.length).toEqual(1);
+  userEvent.click(dropDownButton[0]);
+};
 describe('Actions', () => {
   afterEach(() => {
     mockHistoryPush.mockClear();
@@ -62,7 +66,8 @@ describe('Actions', () => {
         data: set({ ...connector }, 'status.state', ConnectorState.PAUSED),
       }));
       renderComponent();
-      expect(screen.getAllByRole('button').length).toEqual(5);
+      afterClickDropDownButton();
+      expect(screen.getAllByRole('menuitem').length).toEqual(5);
       expect(screen.getByText('Resume')).toBeInTheDocument();
       expect(screen.queryByText('Pause')).not.toBeInTheDocument();
       expectActionButtonsExists();
@@ -73,7 +78,8 @@ describe('Actions', () => {
         data: set({ ...connector }, 'status.state', ConnectorState.FAILED),
       }));
       renderComponent();
-      expect(screen.getAllByRole('button').length).toEqual(4);
+      afterClickDropDownButton();
+      expect(screen.getAllByRole('menuitem').length).toEqual(4);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
       expect(screen.queryByText('Pause')).not.toBeInTheDocument();
       expectActionButtonsExists();
@@ -84,7 +90,8 @@ describe('Actions', () => {
         data: set({ ...connector }, 'status.state', ConnectorState.UNASSIGNED),
       }));
       renderComponent();
-      expect(screen.getAllByRole('button').length).toEqual(4);
+      afterClickDropDownButton();
+      expect(screen.getAllByRole('menuitem').length).toEqual(4);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
       expect(screen.queryByText('Pause')).not.toBeInTheDocument();
       expectActionButtonsExists();
@@ -95,7 +102,8 @@ describe('Actions', () => {
         data: set({ ...connector }, 'status.state', ConnectorState.RUNNING),
       }));
       renderComponent();
-      expect(screen.getAllByRole('button').length).toEqual(5);
+      afterClickDropDownButton();
+      expect(screen.getAllByRole('menuitem').length).toEqual(5);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
       expect(screen.getByText('Pause')).toBeInTheDocument();
       expectActionButtonsExists();
@@ -110,9 +118,7 @@ describe('Actions', () => {
 
       it('opens confirmation modal when delete button clicked', async () => {
         renderComponent();
-        await waitFor(() =>
-          userEvent.click(screen.getByRole('button', { name: 'Delete' }))
-        );
+        await waitFor(() => userEvent.click(screen.getByText('Delete')));
         expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
@@ -122,9 +128,7 @@ describe('Actions', () => {
           mutateAsync: restartConnector,
         }));
         renderComponent();
-        userEvent.click(
-          screen.getByRole('button', { name: 'Restart Connector' })
-        );
+        userEvent.click(screen.getByText('Restart Connector'));
         expect(restartConnector).toHaveBeenCalledWith(ConnectorAction.RESTART);
       });
 
@@ -134,9 +138,7 @@ describe('Actions', () => {
           mutateAsync: restartAllTasks,
         }));
         renderComponent();
-        userEvent.click(
-          screen.getByRole('button', { name: 'Restart All Tasks' })
-        );
+        userEvent.click(screen.getByText('Restart All Tasks'));
         expect(restartAllTasks).toHaveBeenCalledWith(
           ConnectorAction.RESTART_ALL_TASKS
         );
@@ -148,9 +150,7 @@ describe('Actions', () => {
           mutateAsync: restartFailedTasks,
         }));
         renderComponent();
-        userEvent.click(
-          screen.getByRole('button', { name: 'Restart Failed Tasks' })
-        );
+        userEvent.click(screen.getByText('Restart Failed Tasks'));
         expect(restartFailedTasks).toHaveBeenCalledWith(
           ConnectorAction.RESTART_FAILED_TASKS
         );
@@ -162,7 +162,7 @@ describe('Actions', () => {
           mutateAsync: pauseConnector,
         }));
         renderComponent();
-        userEvent.click(screen.getByRole('button', { name: 'Pause' }));
+        userEvent.click(screen.getByText('Pause'));
         expect(pauseConnector).toHaveBeenCalledWith(ConnectorAction.PAUSE);
       });
 
@@ -175,7 +175,7 @@ describe('Actions', () => {
           mutateAsync: resumeConnector,
         }));
         renderComponent();
-        userEvent.click(screen.getByRole('button', { name: 'Resume' }));
+        userEvent.click(screen.getByText('Resume'));
         expect(resumeConnector).toHaveBeenCalledWith(ConnectorAction.RESUME);
       });
     });
