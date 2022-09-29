@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.mapper;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.BrokerConfigDTO;
 import com.provectus.kafka.ui.model.BrokerDiskUsageDTO;
-import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.BrokerMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ClusterMetricsDTO;
@@ -26,6 +25,7 @@ import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
+import com.provectus.kafka.ui.model.MetricDTO;
 import com.provectus.kafka.ui.model.Metrics;
 import com.provectus.kafka.ui.model.PartitionDTO;
 import com.provectus.kafka.ui.model.ReplicaDTO;
@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import com.provectus.kafka.ui.service.metrics.RawMetric;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -61,10 +62,21 @@ public interface ClusterMapper {
   ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
 
   default ClusterMetricsDTO toClusterMetrics(Metrics metrics) {
-    return new ClusterMetricsDTO().items(metrics.getMetrics());
+    return new ClusterMetricsDTO()
+        .items(metrics.getSummarizedMetrics().map(this::convert).collect(Collectors.toList()));
   }
 
-  BrokerMetricsDTO toBrokerMetrics(BrokerMetrics metrics);
+  private MetricDTO convert(RawMetric rawMetric) {
+    return new MetricDTO()
+        .name(rawMetric.name())
+        .labels(rawMetric.labels())
+        .value(rawMetric.value());
+  }
+
+  default BrokerMetricsDTO toBrokerMetrics(List<RawMetric> metrics) {
+    return new BrokerMetricsDTO()
+        .metrics(metrics.stream().map(this::convert).collect(Collectors.toList()));
+  }
 
   @Mapping(target = "isSensitive", source = "sensitive")
   @Mapping(target = "isReadOnly", source = "readOnly")

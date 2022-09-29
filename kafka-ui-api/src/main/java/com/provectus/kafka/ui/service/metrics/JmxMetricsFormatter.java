@@ -1,0 +1,78 @@
+package com.provectus.kafka.ui.service.metrics;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.management.MBeanAttributeInfo;
+import javax.management.ObjectName;
+
+// Converts JMX metrics into JmxExporter prometheus format: https://github.com/prometheus/jmx_exporter#default-format
+class JmxMetricsFormatter {
+
+  // copied from https://github.com/prometheus/jmx_exporter/blob/b6b811b4aae994e812e902b26dd41f29364c0e2b/collector/src/main/java/io/prometheus/jmx/JmxMBeanPropertyCache.java#L15
+  private static final Pattern PROPERTY_PATTERN = Pattern.compile(
+      "([^,=:\\*\\?]+)=(\"(?:[^\\\\\"]*(?:\\\\.)?)*\"|[^,=:\"]*)");
+
+  static List<RawMetric> constructMetricsList(ObjectName jmxMetric,
+                                              MBeanAttributeInfo[] attributes,
+                                              Object[] attrValues) {
+    String domain = fixIllegalChars(jmxMetric.getDomain());
+    LinkedHashMap<String, String> keyProperties = getKeyPropertyList(jmxMetric);
+    String firstKeyPropertyName = keyProperties.keySet().iterator().next();
+    String firstKeyPropertyValue = fixIllegalChars(keyProperties.get(firstKeyPropertyName));
+    keyProperties.remove(firstKeyPropertyName); //removing first key since it's value will be in name
+
+    List<RawMetric> result = new ArrayList<>(attributes.length);
+    for (int i = 0; i < attributes.length; i++) {
+      String attrName = fixIllegalChars(attributes[i].getName());
+      convertNumericValue(attrValues[i]).ifPresent(convertedValue -> {
+        String name = String.format("%s_%s_%s", domain, firstKeyPropertyValue, attrName);
+        var metric = RawMetric.create(name, keyProperties, convertedValue);
+        result.add(metric);
+      });
+    }
+    return result;
+  }
+
+  private static String fixIllegalChars(String str) {
+    return str
+        .replace('.', '_')
+        .replace('-', '_');
+  }
+
+  private static Optional<BigDecimal> convertNumericValue(Object value) {
+    if (!(value instanceof Number)) {
+      return Optional.empty();
+    }
+    try {
+      if (value instanceof Long) {
+        return Optional.of(new BigDecimal((Long) value));
+      } else if (value instanceof Integer) {
+        return Optional.of(new BigDecimal((Integer) value));
+      }
+      return Optional.of(new BigDecimal(value.toString()));
+    } catch (NumberFormatException nfe) {
+      return Optional.empty();
+    }
+  }
+
+  private static LinkedHashMap<String, String> getKeyPropertyList(ObjectName mbeanName) {
+    LinkedHashMap<String, String> keyProperties = new LinkedHashMap<>();
+    String properties = mbeanName.getKeyPropertyListString();
+    Matcher match = PROPERTY_PATTERN.matcher(properties);
+    while (match.lookingAt()) {
+      keyProperties.put(match.group(1), match.group(2));
+      properties = properties.substring(match.end());
+      if (properties.startsWith(",")) {
+        properties = properties.substring(1);
+      }
+      match.reset(properties);
+    }
+    return keyProperties;
+  }
+
+}

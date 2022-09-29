@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.math.NumberUtils;
 
 @Slf4j
 public class NumberUtil {
@@ -9,9 +8,6 @@ public class NumberUtil {
   private NumberUtil() {
   }
 
-  public static boolean isNumeric(Object value) {
-    return value != null && NumberUtils.isCreatable(value.toString());
-  }
 
   public static float parserClusterVersion(String version) {
     try {

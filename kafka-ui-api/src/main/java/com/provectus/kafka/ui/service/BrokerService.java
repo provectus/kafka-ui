@@ -7,7 +7,6 @@ import com.provectus.kafka.ui.exception.TopicOrPartitionNotFoundException;
 import com.provectus.kafka.ui.mapper.DescribeLogDirsMapper;
 import com.provectus.kafka.ui.model.BrokerDTO;
 import com.provectus.kafka.ui.model.BrokerLogdirUpdateDTO;
-import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -16,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import com.provectus.kafka.ui.service.metrics.RawMetric;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -150,9 +150,8 @@ public class BrokerService {
     return getBrokersConfig(cluster, brokerId);
   }
 
-  public Mono<BrokerMetrics> getBrokerMetrics(KafkaCluster cluster, Integer brokerId) {
-    return Mono.justOrEmpty(
-            statisticsCache.get(cluster).getMetrics().getInternalBrokerMetrics().get(brokerId));
+  public Mono<List<RawMetric>> getBrokerMetrics(KafkaCluster cluster, Integer brokerId) {
+    return Mono.justOrEmpty(statisticsCache.get(cluster).getMetrics().getPerBrokerMetrics().get(brokerId));
   }
 
 }

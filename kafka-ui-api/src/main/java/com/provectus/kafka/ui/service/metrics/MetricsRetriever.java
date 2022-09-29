@@ -1,10 +1,9 @@
 package com.provectus.kafka.ui.service.metrics;
 
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.MetricDTO;
-import java.util.List;
 import org.apache.kafka.common.Node;
+import reactor.core.publisher.Flux;
 
 interface MetricsRetriever {
-  List<MetricDTO> retrieve(KafkaCluster c, Node node);
+  Flux<RawMetric> retrieve(KafkaCluster c, Node node);
 }

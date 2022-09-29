@@ -1,18 +1,16 @@
 package com.provectus.kafka.ui.service.metrics;
 
+import com.google.common.base.Strings;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.MetricDTO;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.Node;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Flux;
 
 @Service
 @RequiredArgsConstructor
@@ -20,26 +18,29 @@ import org.springframework.web.util.UriComponentsBuilder;
 class PrometheusMetricsRetriever implements MetricsRetriever {
 
   private final WebClient webClient;
-  private final PrometheusEndpointMetricsParser parser;
 
   @Override
-  public List<MetricDTO> retrieve(KafkaCluster c, Node node) {
+  public Flux<RawMetric> retrieve(KafkaCluster c, Node node) {
     log.debug("Retrieving metrics from prometheus exporter: {}:{}", node.host(), c.getMetricsConfig().getPort());
+    var metricsConfig = c.getMetricsConfig();
     WebClient.ResponseSpec responseSpec = webClient.get()
         .uri(UriComponentsBuilder.newInstance()
-            .scheme("http")
+            .scheme(metricsConfig.isSsl() ? "https" : "http")
             .host(node.host())
-            .port(c.getMetricsConfig().getPort())
+            .port(metricsConfig.getPort())
             .path("/metrics").build().toUri())
         .retrieve();
-    return Optional.ofNullable(responseSpec.bodyToMono(String.class).block())
-        .map(body ->
-            Arrays.stream(body.split("\\n"))
-                .parallel()
-                .filter(str -> str != null && !"".equals(str) && !str.startsWith("#"))
-                .map(parser::parse)
-                .filter(metrics -> metrics != null && metrics.getCanonicalName() != null)
-                .collect(Collectors.toList()))
-        .orElse(Collections.emptyList());
+
+    //TODO: read line by line, not entire body at once
+    return responseSpec.bodyToMono(String.class)
+        .flatMapMany(body ->
+            Flux.fromStream(
+                Arrays.stream(body.split("\\n"))
+                    .filter(str -> !Strings.isNullOrEmpty(str) && !str.startsWith("#")) // skipping comments strings
+                    .map(PrometheusEndpointMetricsParser::parse)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+            )
+        );
   }
 }

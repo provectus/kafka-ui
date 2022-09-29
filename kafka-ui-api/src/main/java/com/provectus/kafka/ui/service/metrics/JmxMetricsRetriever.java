@@ -2,17 +2,10 @@ package com.provectus.kafka.ui.service.metrics;
 
 import com.provectus.kafka.ui.model.JmxConnectionInfo;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.MetricDTO;
 import com.provectus.kafka.ui.util.JmxPoolFactory;
-import com.provectus.kafka.ui.util.NumberUtil;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
@@ -22,17 +15,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.apache.kafka.common.Node;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 
 @Service
+@Lazy
 @Slf4j
 class JmxMetricsRetriever implements MetricsRetriever, AutoCloseable {
 
   private static final String JMX_URL = "service:jmx:rmi:///jndi/rmi://";
   private static final String JMX_SERVICE_TYPE = "jmxrmi";
-  private static final String KAFKA_SERVER_PARAM = "kafka.server";
-  private static final String NAME_METRIC_FIELD = "name";
+  private static final String CANONICAL_NAME_PATTERN = "kafka.server*:*";
 
   private final GenericKeyedObjectPool<JmxConnectionInfo, JMXConnector> pool;
 
@@ -45,8 +42,15 @@ class JmxMetricsRetriever implements MetricsRetriever, AutoCloseable {
   }
 
   @Override
-  public List<MetricDTO> retrieve(KafkaCluster c, Node node) {
+  public Flux<RawMetric> retrieve(KafkaCluster c, Node node) {
+    return Mono.fromSupplier(() -> retrieveSync(c, node))
+        .subscribeOn(Schedulers.boundedElastic())
+        .flatMapMany(Flux::fromIterable);
+  }
+
+  private List<RawMetric> retrieveSync(KafkaCluster c, Node node) {
     String jmxUrl = JMX_URL + node.host() + ":" + c.getMetricsConfig().getPort() + "/" + JMX_SERVICE_TYPE;
+    log.debug("Collection JMX metrics for {}", jmxUrl);
     final var connectionInfo = JmxConnectionInfo.builder()
         .url(jmxUrl)
         .ssl(c.getMetricsConfig().isSsl())
@@ -60,28 +64,19 @@ class JmxMetricsRetriever implements MetricsRetriever, AutoCloseable {
       log.error("Cannot get JMX connector for the pool due to: ", e);
       return Collections.emptyList();
     }
-
-    List<MetricDTO> result = new ArrayList<>();
+    List<RawMetric> result = new ArrayList<>();
     try {
       MBeanServerConnection msc = srv.getMBeanServerConnection();
-      var jmxMetrics = msc.queryNames(null, null).stream()
-          .filter(q -> q.getCanonicalName().startsWith(KAFKA_SERVER_PARAM))
-          .collect(Collectors.toList());
+      var jmxMetrics = msc.queryNames(new ObjectName(CANONICAL_NAME_PATTERN), null);
       for (ObjectName jmxMetric : jmxMetrics) {
-        final Hashtable<String, String> params = jmxMetric.getKeyPropertyList();
-        MetricDTO metric = new MetricDTO();
-
-        metric.setName(params.get(NAME_METRIC_FIELD));
-        metric.setCanonicalName(jmxMetric.getCanonicalName());
-        metric.setParams(params);
-        metric.setValue(getJmxMetrics(jmxMetric.getCanonicalName(), msc));
-        result.add(metric);
+        result.addAll(extractObjectMetrics(jmxMetric, msc));
       }
       pool.returnObject(connectionInfo, srv);
     } catch (Exception e) {
       log.error("Cannot get jmxMetricsNames, {}", jmxUrl, e);
       closeConnectionExceptionally(jmxUrl, srv);
     }
+    log.debug("{} metrics collected for {}", result.size(), jmxUrl);
     return result;
   }
 
@@ -94,17 +89,13 @@ class JmxMetricsRetriever implements MetricsRetriever, AutoCloseable {
   }
 
   @SneakyThrows
-  private Map<String, BigDecimal> getJmxMetrics(String canonicalName, MBeanServerConnection msc) {
-    Map<String, BigDecimal> resultAttr = new HashMap<>();
-    ObjectName name = new ObjectName(canonicalName);
-    var attrNames = msc.getMBeanInfo(name).getAttributes();
-    for (MBeanAttributeInfo attrName : attrNames) {
-      var value = msc.getAttribute(name, attrName.getName());
-      if (NumberUtil.isNumeric(value)) {
-        resultAttr.put(attrName.getName(), new BigDecimal(value.toString()));
-      }
+  private List<RawMetric> extractObjectMetrics(ObjectName objectName, MBeanServerConnection msc) {
+    MBeanAttributeInfo[] attrNames = msc.getMBeanInfo(objectName).getAttributes();
+    Object[] attrValues = new Object[attrNames.length];
+    for (int i = 0; i < attrNames.length; i++) {
+      attrValues[i] = msc.getAttribute(objectName, attrNames[i].getName());
     }
-    return resultAttr;
+    return JmxMetricsFormatter.constructMetricsList(objectName, attrNames, attrValues);
   }
 
   @Override
@@ -112,3 +103,4 @@ class JmxMetricsRetriever implements MetricsRetriever, AutoCloseable {
     this.pool.close();
   }
 }
+
