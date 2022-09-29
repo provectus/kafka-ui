@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serde.RecordSerDe;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.util.OffsetsSeek;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ public class TailingEmitter extends AbstractEmitter
   private final Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier;
   private final OffsetsSeek offsetsSeek;
 
-  public TailingEmitter(RecordSerDe recordDeserializer,
+  public TailingEmitter(ConsumerRecordDeserializer recordDeserializer,
                         Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
                         OffsetsSeek offsetsSeek) {
     super(recordDeserializer);

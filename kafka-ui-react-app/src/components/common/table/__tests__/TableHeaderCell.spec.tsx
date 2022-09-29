@@ -23,7 +23,7 @@ describe('TableHeaderCell', () => {
       <table>
         <thead>
           <tr>
-            <TableHeaderCell {...props} />;
+            <TableHeaderCell {...props} />
           </tr>
         </thead>
       </table>
