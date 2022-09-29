@@ -1,4 +1,4 @@
-name: Check-helm
+name: Check helm version and validation
 on:
  pull_request:
   types: ["opened", "edited", "reopened", "synchronize"]
@@ -8,7 +8,7 @@ on:
    - "charts/**"
 
 jobs:
- check-helm:
+ check-helm-version:
   runs-on:
    ubuntu-latest
   steps:

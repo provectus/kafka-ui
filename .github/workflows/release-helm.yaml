@@ -1,4 +1,4 @@
-name: Release-helm
+name: Release helm
 on:
  push:
     branches:
