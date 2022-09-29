@@ -33,7 +33,7 @@ const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
           <Label>Total message</Label>
           <span>{totalMsgs}</span>
           <Label>Total size</Label>
-          <span>{(keySize?.sum || 0) + (valueSize?.sum || 0)}</span>
+          <BytesFormatted value={(keySize?.sum || 0) + (valueSize?.sum || 0)} />
           <Label>Min. timestamp</Label>
           <span>{formatTimestamp(minTimestamp)}</span>
           <Label>Max. timestamp</Label>
