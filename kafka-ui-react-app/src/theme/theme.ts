@@ -57,9 +57,6 @@ const Colors = {
     '45': '#5865F2',
     '50': '#5B67E3',
   },
-  gray: {
-    '50': '#73848C',
-  },
 };
 
 const theme = {
@@ -523,7 +520,7 @@ const theme = {
     borderColor: Colors.neutral[10],
     color: {
       title: Colors.red[50],
-      warningMessage: Colors.gray[50],
+      warningMessage: Colors.neutral[50],
     },
   },
   configList: {
