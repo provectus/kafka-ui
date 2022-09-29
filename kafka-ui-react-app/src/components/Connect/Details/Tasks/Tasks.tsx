@@ -1,67 +1,58 @@
 import React from 'react';
-import { Table } from 'components/common/table/Table/Table.styled';
-import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
-import {
-  useConnectorTasks,
-  useRestartConnectorTask,
-} from 'lib/hooks/api/kafkaConnect';
+import { useConnectorTasks } from 'lib/hooks/api/kafkaConnect';
 import useAppParams from 'lib/hooks/useAppParams';
 import { RouterParamsClusterConnectConnector } from 'lib/paths';
-import getTagColor from 'components/common/Tag/getTagColor';
-import { Tag } from 'components/common/Tag/Tag.styled';
-import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { ColumnDef, Row } from '@tanstack/react-table';
+import { Task } from 'generated-sources';
+import Table, { TagCell } from 'components/common/NewTable';
+
+import ActionsCellTasks from './ActionsCellTasks';
+
+const ExpandedTaskRow: React.FC<{ row: Row<Task> }> = ({ row }) => {
+  return <div>{row.original.status.trace}</div>;
+};
+
+const MAX_LENGTH = 100;
 
 const Tasks: React.FC = () => {
   const routerProps = useAppParams<RouterParamsClusterConnectConnector>();
-  const { data: tasks } = useConnectorTasks(routerProps);
-  const restartMutation = useRestartConnectorTask(routerProps);
+  const { data = [] } = useConnectorTasks(routerProps);
 
-  const restartTaskHandler = (taskId?: number) => {
-    if (taskId === undefined) return;
-    restartMutation.mutateAsync(taskId);
-  };
+  const columns = React.useMemo<ColumnDef<Task>[]>(
+    () => [
+      { header: 'ID', accessorKey: 'status.id' },
+      { header: 'Worker', accessorKey: 'status.workerId' },
+      { header: 'State', accessorKey: 'status.state', cell: TagCell },
+      {
+        header: 'Trace',
+        accessorKey: 'status.trace',
+        enableSorting: false,
+        cell: ({ getValue }) => {
+          const trace = getValue<string>() || '';
+          return trace.toString().length > MAX_LENGTH
+            ? `${trace.toString().substring(0, MAX_LENGTH - 3)}...`
+            : trace;
+        },
+        meta: { width: '70%' },
+      },
+      {
+        id: 'actions',
+        header: '',
+        cell: ActionsCellTasks,
+      },
+    ],
+    []
+  );
 
   return (
-    <Table isFullwidth>
-      <thead>
-        <tr>
-          <TableHeaderCell title="ID" />
-          <TableHeaderCell title="Worker" />
-          <TableHeaderCell title="State" />
-          <TableHeaderCell title="Trace" />
-          <TableHeaderCell />
-        </tr>
-      </thead>
-      <tbody>
-        {tasks?.length === 0 && (
-          <tr>
-            <td colSpan={10}>No tasks found</td>
-          </tr>
-        )}
-        {tasks?.map((task) => (
-          <tr key={task.status?.id}>
-            <td>{task.status?.id}</td>
-            <td>{task.status?.workerId}</td>
-            <td>
-              <Tag color={getTagColor(task.status)}>{task.status.state}</Tag>
-            </td>
-            <td>{task.status.trace || 'null'}</td>
-            <td style={{ width: '5%' }}>
-              <div>
-                <Dropdown>
-                  <DropdownItem
-                    onClick={() => restartTaskHandler(task.id?.task)}
-                    danger
-                  >
-                    <span>Restart task</span>
-                  </DropdownItem>
-                </Dropdown>
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
+    <Table
+      columns={columns}
+      data={data}
+      emptyMessage="No tasks found"
+      enableSorting
+      getRowCanExpand={(row) => row.original.status.trace?.length > 0}
+      renderSubComponent={ExpandedTaskRow}
+    />
   );
 };
 

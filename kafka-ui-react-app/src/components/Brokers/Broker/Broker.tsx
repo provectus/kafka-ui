@@ -6,8 +6,11 @@ import useAppParams from 'lib/hooks/useAppParams';
 import {
   clusterBrokerMetricsPath,
   clusterBrokerMetricsRelativePath,
+  clusterBrokerConfigsPath,
   ClusterBrokerParam,
   clusterBrokerPath,
+  clusterBrokersPath,
+  clusterBrokerConfigsRelativePath,
 } from 'lib/paths';
 import { useClusterStats } from 'lib/hooks/api/clusters';
 import { useBrokers } from 'lib/hooks/api/brokers';
@@ -17,12 +20,7 @@ import BrokerMetrics from 'components/Brokers/Broker/BrokerMetrics/BrokerMetrics
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 
-export interface BrokerLogdirState {
-  name: string;
-  error: string;
-  topics: number;
-  partitions: number;
-}
+import Configs from './Configs/Configs';
 
 const Broker: React.FC = () => {
   const { clusterName, brokerId } = useAppParams<ClusterBrokerParam>();
@@ -38,7 +36,11 @@ const Broker: React.FC = () => {
   );
   return (
     <>
-      <PageHeading text={`Broker ${brokerId}`} />
+      <PageHeading
+        text={`Broker ${brokerId}`}
+        backTo={clusterBrokersPath(clusterName)}
+        backText="Brokers"
+      />
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="Segment Size">
@@ -61,16 +63,25 @@ const Broker: React.FC = () => {
           Log directories
         </NavLink>
         <NavLink
+          to={clusterBrokerConfigsPath(clusterName, brokerId)}
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
+        >
+          Configs
+        </NavLink>
+        <NavLink
           to={clusterBrokerMetricsPath(clusterName, brokerId)}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
         >
           Metrics
         </NavLink>
       </Navbar>
-
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route index element={<BrokerLogdir />} />
+          <Route
+            path={clusterBrokerConfigsRelativePath}
+            element={<Configs />}
+          />
           <Route
             path={clusterBrokerMetricsRelativePath}
             element={<BrokerMetrics />}

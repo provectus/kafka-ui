@@ -3,28 +3,24 @@ package com.provectus.kafka.ui.pages.topic;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.helpers.TestConfiguration;
-import com.provectus.kafka.ui.extensions.WaitUtils;
-import com.provectus.kafka.ui.pages.ProduceMessagePage;
-import com.provectus.kafka.ui.utils.BrowserUtils;
+import com.provectus.kafka.ui.utilities.WaitUtils;
+import com.provectus.kafka.ui.settings.Source;
 import io.qameta.allure.Step;
-import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
 
 @ExtensionMethod({WaitUtils.class})
 public class TopicView {
 
-    private static final String path = "/ui/clusters/%s/topics/%s";
-    private final SelenideElement dotMenuHeader = $$(".dropdown.is-right button").first();
-    private final SelenideElement dotMenuFooter = $$(".dropdown.is-right button").get(1);
+    private static final String URL_PATH = "/ui/clusters/%s/topics/%s";
+    protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
 
     @Step
     public TopicView goTo(String cluster, String topic) {
-        Selenide.open(TestConfiguration.BASE_WEB_URL + String.format(path, cluster, topic));
+        Selenide.open(Source.BASE_WEB_URL + String.format(URL_PATH, cluster, topic));
         return this;
     }
 
@@ -34,10 +30,10 @@ public class TopicView {
         return this;
     }
 
-    @SneakyThrows
+    @Step
     public TopicCreateEditSettingsView openEditSettings() {
-        BrowserUtils.javaExecutorClick(dotMenuHeader);
-        $x("//a[text()= '" + DotMenuHeaderItems.EDIT_SETTINGS.getValue() + "']").click();
+        javaExecutorClick(dotMenuBtn);
+        $x("//li[@role][text()='Edit settings']").click();
         return new TopicCreateEditSettingsView();
     }
 
@@ -47,24 +43,28 @@ public class TopicView {
         return this;
     }
 
-    @SneakyThrows
+    @Step
     public TopicsList deleteTopic() {
-        BrowserUtils.javaExecutorClick(dotMenuHeader);
-        $("#dropdown-menu").$(byLinkText(DotMenuHeaderItems.REMOVE_TOPIC.getValue())).click();
-        $$("div[role=\"dialog\"] button").find(Condition.exactText("Submit")).click();
+        javaExecutorClick(dotMenuBtn);
+        $x("//ul[@role='menu']//div[text()='Remove Topic']").click();
+        SelenideElement confirmButton = $x("//div[@role=\"dialog\"]//button[text()='Confirm']");
+        confirmButton.shouldBe(Condition.enabled).click();
+        confirmButton.shouldBe(Condition.disappear);
         return new TopicsList();
     }
 
-    @SneakyThrows
-    public ProduceMessagePage clickOnButton(String buttonName) {
-        BrowserUtils.javaExecutorClick($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
-        return new ProduceMessagePage();
+    @Step
+    public ProduceMessagePanel clickOnButton(String buttonName) {
+        javaExecutorClick($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
+        return new ProduceMessagePanel();
     }
 
+    @Step
     public boolean isKeyMessageVisible(String keyMessage) {
         return keyMessage.equals($("td[title]").getText());
     }
 
+    @Step
     public boolean isContentMessageVisible(String contentMessage) {
         return contentMessage.matches($x("//html//div[@id='root']/div/main//table//p").getText().trim());
     }

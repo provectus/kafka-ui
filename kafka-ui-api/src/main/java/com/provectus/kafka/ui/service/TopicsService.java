@@ -22,7 +22,6 @@ import com.provectus.kafka.ui.model.ReplicationFactorChangeDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
 import com.provectus.kafka.ui.model.Statistics;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
-import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.model.TopicUpdateDTO;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import java.time.Duration;
@@ -95,8 +94,8 @@ public class TopicsService {
   }
 
   /**
-   * After creation topic can be invisible via API for some time.
-   * To workaround this, we retyring topic loading until it becomes visible.
+   *  After creation topic can be invisible via API for some time.
+   *  To workaround this, we retyring topic loading until it becomes visible.
    */
   private Mono<InternalTopic> loadTopicAfterCreation(KafkaCluster c, String topicName) {
     return loadTopic(c, topicName)
@@ -226,7 +225,7 @@ public class TopicsService {
   }
 
   public Mono<InternalTopic> updateTopic(KafkaCluster cl, String topicName,
-                                         Mono<TopicUpdateDTO> topicUpdate) {
+                                    Mono<TopicUpdateDTO> topicUpdate) {
     return topicUpdate
         .flatMap(t -> updateTopic(cl, topicName, t));
   }
@@ -453,16 +452,16 @@ public class TopicsService {
   }
 
   public Mono<List<InternalTopic>> getTopicsForPagination(KafkaCluster cluster) {
-    Statistics metrics = statisticsCache.get(cluster);
-    return filterExisting(cluster, metrics.getTopicDescriptions().keySet())
+    Statistics stats = statisticsCache.get(cluster);
+    return filterExisting(cluster, stats.getTopicDescriptions().keySet())
         .map(lst -> lst.stream()
             .map(topicName ->
                 InternalTopic.from(
-                    metrics.getTopicDescriptions().get(topicName),
-                    metrics.getTopicConfigs().getOrDefault(topicName, List.of()),
+                    stats.getTopicDescriptions().get(topicName),
+                    stats.getTopicConfigs().getOrDefault(topicName, List.of()),
                     InternalPartitionsOffsets.empty(),
-                    metrics.getMetrics(),
-                    metrics.getLogDirInfo()))
+                    stats.getMetrics(),
+                    stats.getLogDirInfo()))
             .collect(toList())
         );
   }

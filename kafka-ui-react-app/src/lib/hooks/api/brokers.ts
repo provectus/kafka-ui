@@ -1,6 +1,12 @@
 import { brokersApiClient as api } from 'lib/api';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ClusterName } from 'redux/interfaces';
+import { BrokerConfigItem } from 'generated-sources';
+
+interface UpdateBrokerConfigProps {
+  name: string;
+  brokerConfigItem: BrokerConfigItem;
+}
 
 export function useBrokers(clusterName: ClusterName) {
   return useQuery(
@@ -29,5 +35,41 @@ export function useBrokerLogDirs(clusterName: ClusterName, brokerId: number) {
         clusterName,
         broker: [brokerId],
       })
+  );
+}
+
+export function useBrokerConfig(clusterName: ClusterName, brokerId: number) {
+  return useQuery(
+    ['clusters', clusterName, 'brokers', brokerId, 'settings'],
+    () =>
+      api.getBrokerConfig({
+        clusterName,
+        id: brokerId,
+      })
+  );
+}
+
+export function useUpdateBrokerConfigByName(
+  clusterName: ClusterName,
+  brokerId: number
+) {
+  const client = useQueryClient();
+  return useMutation(
+    (payload: UpdateBrokerConfigProps) =>
+      api.updateBrokerConfigByName({
+        ...payload,
+        clusterName,
+        id: brokerId,
+      }),
+    {
+      onSuccess: () =>
+        client.invalidateQueries([
+          'clusters',
+          clusterName,
+          'brokers',
+          brokerId,
+          'settings',
+        ]),
+    }
   );
 }

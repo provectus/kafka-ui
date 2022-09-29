@@ -3,8 +3,7 @@ import React from 'react';
 
 import * as S from './Table.styled';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const ExpanderCell: React.FC<CellContext<any, unknown>> = ({ row }) => (
+const ExpanderCell: React.FC<CellContext<unknown, unknown>> = ({ row }) => (
   <S.ExpaderButton
     width="16"
     height="20"
@@ -13,6 +12,7 @@ const ExpanderCell: React.FC<CellContext<any, unknown>> = ({ row }) => (
     xmlns="http://www.w3.org/2000/svg"
     role="button"
     aria-label="Expand row"
+    $disabled={!row.getCanExpand()}
   >
     {row.getIsExpanded() ? (
       <path

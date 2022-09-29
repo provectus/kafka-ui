@@ -91,13 +91,12 @@ public class ConsumerGroupService {
                   )
                   .flatMap((Map<String, Map<TopicPartition, Long>> groupOffsets) ->
                       // 4. getting description for groups with non-emtpy offsets
-                      ac.describeConsumerGroups(new ArrayList<>(groupOffsets.keySet()))
+                      ac.describeConsumerGroups(groupOffsets.keySet())
                           .map((Map<String, ConsumerGroupDescription> descriptions) ->
                               descriptions.values().stream().map(desc ->
-                                      // 5. gathering and filter non-target-topic data
+                                      // 5. gathering into InternalConsumerGroup
                                       InternalConsumerGroup.create(
                                               desc, groupOffsets.get(desc.groupId()), endOffsets)
-                                          .retainDataForPartitions(p -> p.topic().equals(topic))
                                   )
                                   .collect(Collectors.toList())));
             }));
@@ -161,7 +160,7 @@ public class ConsumerGroupService {
         };
         return Comparator.comparingInt(statesPriorities);
       case MEMBERS:
-        return Comparator.comparingInt(cg -> -cg.members().size());
+        return Comparator.comparingInt(cg -> cg.members().size());
       default:
         throw new IllegalStateException("Unsupported order by: " + orderBy);
     }

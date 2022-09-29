@@ -48,18 +48,14 @@ describe('New', () => {
 
   it('checks header for create new', async () => {
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
-    expect(
-      screen.getByRole('heading', { name: 'Create new Topic' })
-    ).toHaveTextContent('Create new Topic');
+    expect(screen.getByRole('heading', { name: 'Create' })).toBeInTheDocument();
   });
 
   it('checks header for copy', async () => {
     await act(() =>
       renderComponent(`${clusterTopicCopyPath(clusterName)}?name=test`)
     );
-    expect(
-      screen.getByRole('heading', { name: 'Copy Topic' })
-    ).toHaveTextContent('Copy Topic');
+    expect(screen.getByRole('heading', { name: 'Copy' })).toBeInTheDocument();
   });
 
   it('validates form', async () => {
@@ -75,6 +71,18 @@ describe('New', () => {
     });
     expect(createTopicMock).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('validates form invalid name', async () => {
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
+    await waitFor(() => {
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), 'Invalid,Name');
+    });
+    await waitFor(() => {
+      expect(
+        screen.getByText('Only alphanumeric, _, -, and . allowed')
+      ).toBeInTheDocument();
+    });
   });
 
   it('submits valid form', async () => {

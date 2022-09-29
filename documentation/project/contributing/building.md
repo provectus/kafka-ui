@@ -1,24 +1,63 @@
-### Building the application locally
+# Build & Run
 
-Once you installed the prerequisites and cloned the repository, run the following commands in your project directory:
+Once you installed the prerequisites and cloned the repository, run the following steps in your project directory:
 
-Build a docker container with the app:
+## Step 1 : Build
+> **_NOTE:_**  If you are an macOS M1 User then please keep in mind below things
+
+> Make sure you have ARM supported java installed
+
+> Skip the maven tests as they might not be successful
+
+- Build a docker image with the app
 ```sh
 ./mvnw clean install -Pprod
-``` 
-Start the app with Kafka clusters:
+```
+- if you need to build the frontend `kafka-ui-react-app`, go here
+     - [kafka-ui-react-app-build-documentation](../../../kafka-ui-react-app/README.md)
+
+<a name="cmd_to_build_kafkaui_without_docker"></a>
+- In case you want to build `kafka-ui-api` by skipping the tests
+```sh
+./mvnw clean install -Dmaven.test.skip=true -Pprod
+```
+
+- To build only the `kafka-ui-api` you can use this command:
+```sh
+./mvnw -f kafka-ui-api/pom.xml clean install -Pprod -DskipUIBuild=true
+```
+
+If this step is successful, it should create a docker image named `provectuslabs/kafka-ui` with `latest` tag on your local machine except macOS M1.
+
+## Step 2 : Run
+#### Using Docker Compose
+> **_NOTE:_**  If you are an macOS M1 User then you can use arm64 supported docker compose script `./documentation/compose/kafka-ui-arm64.yaml`
+ - Start the `kafka-ui` app using docker image built in step 1 along with Kafka clusters:
 ```sh
 docker-compose -f ./documentation/compose/kafka-ui.yaml up -d
-``` 
-To see the app, navigate to http://localhost:8080.
+```
 
-If you want to start only kafka clusters (to run the app via `spring-boot:run`):
+#### Using Spring Boot Run
+ - If you want to start only kafka clusters (to run the `kafka-ui` app via `spring-boot:run`):
 ```sh
 docker-compose -f ./documentation/compose/kafka-clusters-only.yaml up -d
-``` 
+```
+- Then start the app.
+```sh
+./mvnw spring-boot:run -Pprod
 
-Then, start the app.
+# or
 
-## Where to go next
+./mvnw spring-boot:run -Pprod -Dspring.config.location=file:///path/to/conf.yaml
+```
 
-In the next section, you'll [learn how to run the application](running.md).
+#### Running in kubernetes
+- Using Helm Charts
+```sh bash
+helm repo add kafka-ui https://provectus.github.io/kafka-ui
+helm install kafka-ui kafka-ui/kafka-ui
+```
+To read more please follow to [chart documentation](../../../charts/kafka-ui/README.md).
+
+## Step 3 : Access Kafka-UI
+ - To see the `kafka-ui` app running, navigate to http://localhost:8080.

@@ -1,11 +1,13 @@
 package com.provectus.kafka.ui.config.auth;
 
 import java.util.List;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.ldap.core.support.BaseLdapPathContextSource;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,7 +27,8 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @Configuration
 @EnableWebFluxSecurity
 @ConditionalOnProperty(value = "auth.type", havingValue = "LDAP")
-@Log4j2
+@Import(LdapAutoConfiguration.class)
+@Slf4j
 public class LdapSecurityConfig extends AbstractAuthSecurityConfig {
 
   @Value("${spring.ldap.urls}")

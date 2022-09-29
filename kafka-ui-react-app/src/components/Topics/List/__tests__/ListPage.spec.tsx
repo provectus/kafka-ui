@@ -8,9 +8,7 @@ import ListPage from 'components/Topics/List/ListPage';
 
 const clusterName = 'test-cluster';
 
-jest.mock('components/Topics/List/TopicsTable', () => () => (
-  <>TopicsTableMock</>
-));
+jest.mock('components/Topics/List/TopicTable', () => () => <>TopicTableMock</>);
 
 describe('ListPage Component', () => {
   const renderComponent = () => {
@@ -47,6 +45,6 @@ describe('ListPage Component', () => {
   });
 
   it('renders the TopicsTable', () => {
-    expect(screen.getByText('TopicsTableMock')).toBeInTheDocument();
+    expect(screen.getByText('TopicTableMock')).toBeInTheDocument();
   });
 });

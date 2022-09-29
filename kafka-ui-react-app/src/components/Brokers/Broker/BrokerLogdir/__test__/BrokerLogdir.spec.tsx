@@ -16,7 +16,7 @@ const clusterName = 'local';
 const brokerId = 1;
 
 describe('BrokerLogdir Component', () => {
-  const renderComponent = async (payload: BrokerLogdirs[] = []) => {
+  const renderComponent = async (payload?: BrokerLogdirs[]) => {
     (useBrokerLogDirs as jest.Mock).mockImplementation(() => ({
       data: payload,
     }));
@@ -32,13 +32,35 @@ describe('BrokerLogdir Component', () => {
     });
   };
 
-  it('shows warning when server returns empty logDirs response', async () => {
+  it('shows warning when server returns undefined logDirs response', async () => {
     await renderComponent();
-    expect(screen.getByText('Log dir data not available')).toBeInTheDocument();
+    expect(
+      screen.getByRole('row', { name: 'Log dir data not available' })
+    ).toBeInTheDocument();
   });
 
-  it('shows broker', async () => {
+  it('shows warning when server returns empty logDirs response', async () => {
+    await renderComponent([]);
+    expect(
+      screen.getByRole('row', { name: 'Log dir data not available' })
+    ).toBeInTheDocument();
+  });
+
+  it('shows brokers', async () => {
     await renderComponent(brokerLogDirsPayload);
-    expect(screen.getByText('/opt/kafka/data-0/logs')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('row', { name: 'Log dir data not available' })
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.getByRole('row', {
+        name: '/opt/kafka/data-0/logs NONE 3 4',
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('row', {
+        name: '/opt/kafka/data-1/logs NONE 0 0',
+      })
+    ).toBeInTheDocument();
   });
 });

@@ -6,6 +6,7 @@ import { screen, waitFor } from '@testing-library/dom';
 import {
   schemasInitialState,
   schemaVersion,
+  schemaVersionWithNonAsciiChars,
 } from 'redux/reducers/schemas/__test__/fixtures';
 import fetchMock from 'fetch-mock';
 import ClusterContext, {
@@ -95,6 +96,36 @@ describe('Details', () => {
         expect(screen.getByText('Edit Schema')).toBeInTheDocument();
         expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
         expect(screen.getByRole('table')).toBeInTheDocument();
+      });
+    });
+
+    describe('fetch success schema with non ascii characters', () => {
+      describe('has schema versions', () => {
+        beforeEach(async () => {
+          const schemasAPILatestMock = fetchMock.getOnce(
+            schemasAPILatestUrl,
+            schemaVersionWithNonAsciiChars
+          );
+          const schemasAPIVersionsMock = fetchMock.getOnce(
+            schemasAPIVersionsUrl,
+            versionPayload
+          );
+          await act(() => {
+            renderComponent();
+          });
+          await waitFor(() => {
+            expect(schemasAPILatestMock.called()).toBeTruthy();
+          });
+          await waitFor(() => {
+            expect(schemasAPIVersionsMock.called()).toBeTruthy();
+          });
+        });
+
+        it('renders component with schema info', () => {
+          expect(screen.getByText('Edit Schema')).toBeInTheDocument();
+          expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+          expect(screen.getByRole('table')).toBeInTheDocument();
+        });
       });
     });
 

@@ -1,14 +1,15 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const ExpaderButton = styled.svg(
-  ({ theme: { table } }) => `
-  & > path {
-    fill: ${table.expander.normal};
-    &:hover {
-      fill: ${table.expander.hover};
+export const ExpaderButton = styled.svg<{ $disabled: boolean }>(
+  ({ theme: { table }, $disabled }) => css`
+    & > path {
+      fill: ${table.expander[$disabled ? 'disabled' : 'normal']};
     }
-  }
-`
+
+    &:hover > path {
+      fill: ${table.expander[$disabled ? 'disabled' : 'hover']};
+    }
+  `
 );
 
 interface ThProps {
@@ -19,7 +20,7 @@ interface ThProps {
 
 const sortableMixin = (normalColor: string, hoverColor: string) => `
   cursor: pointer;
-  padding-right: 18px;
+  padding-left: 14px;
   position: relative;
 
   &::before,
@@ -28,7 +29,7 @@ const sortableMixin = (normalColor: string, hoverColor: string) => `
     content: '';
     display: block;
     height: 0;
-    right: 5px;
+    left: 0px;
     top: 50%;
     position: absolute;
   }
@@ -51,13 +52,13 @@ const ASCMixin = (color: string) => `
     border-bottom-color: ${color};
   }
   &:after {
-    border-top-color: rgba(0, 0, 0, 0.2);
+    border-top-color: rgba(0, 0, 0, 0.1);
   }
 `;
 const DESCMixin = (color: string) => `
   color: ${color};
   &:before {
-    border-bottom-color: rgba(0, 0, 0, 0.2);
+    border-bottom-color: rgba(0, 0, 0, 0.1);
   }
   &:after {
     border-top-color: ${color};
@@ -65,8 +66,15 @@ const DESCMixin = (color: string) => `
 `;
 
 export const Th = styled.th<ThProps>(
-  ({ theme: { table }, sortable, sortOrder, expander }) => `
-  padding: 4px 0 4px 24px;
+  ({
+    theme: {
+      table: { th },
+    },
+    sortable,
+    sortOrder,
+    expander,
+  }) => `
+  padding: 8px 0 8px 24px;
   border-bottom-width: 1px;
   vertical-align: middle;
   text-align: left;
@@ -77,29 +85,28 @@ export const Th = styled.th<ThProps>(
   line-height: 16px;
   letter-spacing: 0em;
   text-align: left;
-  background: ${table.th.backgroundColor.normal};
+  background: ${th.backgroundColor.normal};
   width: ${expander ? '5px' : 'auto'};
+  white-space: nowrap;
 
   & > div {
     cursor: default;
-    color: ${table.th.color.normal};
-    ${
-      sortable ? sortableMixin(table.th.color.normal, table.th.color.hover) : ''
-    }
-    ${sortable && sortOrder === 'asc' && ASCMixin(table.th.color.active)}
-    ${sortable && sortOrder === 'desc' && DESCMixin(table.th.color.active)}
+    color: ${th.color.normal};
+    ${sortable ? sortableMixin(th.color.sortable, th.color.hover) : ''}
+    ${sortable && sortOrder === 'asc' && ASCMixin(th.color.active)}
+    ${sortable && sortOrder === 'desc' && DESCMixin(th.color.active)}
   }
 `
 );
 
 interface RowProps {
-  expandable?: boolean;
+  clickable?: boolean;
   expanded?: boolean;
 }
 
 export const Row = styled.tr<RowProps>(
-  ({ theme: { table }, expanded, expandable }) => `
-  cursor: ${expandable ? 'pointer' : 'default'};
+  ({ theme: { table }, expanded, clickable }) => `
+  cursor: ${clickable ? 'pointer' : 'default'};
   background-color: ${table.tr.backgroundColor[expanded ? 'hover' : 'normal']};
   &:hover {
     background-color: ${table.tr.backgroundColor.hover};
@@ -118,6 +125,14 @@ export const Nowrap = styled.div`
   white-space: nowrap;
 `;
 
+export const TableActionsBar = styled.div`
+  padding: 8px;
+  background-color: ${({ theme }) => theme.table.actionBar.backgroundColor};
+  margin: 16px 0;
+  display: flex;
+  gap: 8px;
+`;
+
 export const Table = styled.table(
   ({ theme: { table } }) => `
   width: 100%;
@@ -129,17 +144,33 @@ export const Table = styled.table(
     padding: 8px 8px 8px 24px;
     color: ${table.td.color.normal};
     vertical-align: middle;
-    max-width: 350px;
     word-wrap: break-word;
 
-    & > a {
-      color: ${table.link.color};
+    & a {
+      color: ${table.link.color.normal};
       font-weight: 500;
+      max-width: 450px;
+      white-space: nowrap;
+      overflow: hidden;
       text-overflow: ellipsis;
+      display: block;
+
+      &:hover {
+        color: ${table.link.color.hover};
+      }
+
+      &:active {
+        color: ${table.link.color.active};
+      }
     }
   }
 `
 );
+
+export const EmptyTableMessageCell = styled.td`
+  padding: 16px;
+  text-align: center;
+`;
 
 export const Pagination = styled.div`
   display: flex;
@@ -171,4 +202,12 @@ export const PageInfo = styled.div`
   flex-wrap: nowrap;
   white-space: nowrap;
   margin-left: 16px;
+`;
+
+export const Ellipsis = styled.div`
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 `;

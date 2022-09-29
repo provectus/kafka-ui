@@ -6,7 +6,14 @@ import com.provectus.kafka.ui.api.api.KafkaConnectApi;
 import com.provectus.kafka.ui.api.api.MessagesApi;
 import com.provectus.kafka.ui.api.api.SchemasApi;
 import com.provectus.kafka.ui.api.api.TopicsApi;
-import com.provectus.kafka.ui.api.model.*;
+import com.provectus.kafka.ui.api.model.CreateTopicMessage;
+import com.provectus.kafka.ui.api.model.NewConnector;
+import com.provectus.kafka.ui.api.model.NewSchemaSubject;
+import com.provectus.kafka.ui.api.model.TopicCreation;
+import com.provectus.kafka.ui.models.Connector;
+import com.provectus.kafka.ui.models.Schema;
+import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.settings.Source;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -15,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.sleep;
+import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
 
 @Slf4j
@@ -22,7 +30,7 @@ public class ApiHelper {
 
     int partitions = 1;
     int replicationFactor = 1;
-    String baseURL = TestConfiguration.BASE_API_URL;
+    String baseURL = Source.BASE_API_URL;
 
 
     @SneakyThrows
@@ -67,11 +75,11 @@ public class ApiHelper {
     }
 
     @SneakyThrows
-    public void createSchema(String clusterName, String schemaName, SchemaType type, String schemaValue) {
+    public void createSchema(String clusterName, Schema schema) {
         NewSchemaSubject schemaSubject = new NewSchemaSubject();
-        schemaSubject.setSubject(schemaName);
-        schemaSubject.setSchema(schemaValue);
-        schemaSubject.setSchemaType(type);
+        schemaSubject.setSubject(schema.getName());
+        schemaSubject.setSchema(fileToString(schema.getValuePath()));
+        schemaSubject.setSchemaType(schema.getType());
         try {
             schemaApi().createNewSchema(clusterName, schemaSubject).block();
         } catch (WebClientResponseException ex) {
@@ -96,16 +104,16 @@ public class ApiHelper {
     }
 
     @SneakyThrows
-    public void createConnector(String clusterName, String connectName, String connectorName, String configJson) {
-        NewConnector connector = new NewConnector();
-        connector.setName(connectorName);
-        Map<String, Object> configMap = new ObjectMapper().readValue(configJson, HashMap.class);
-        connector.setConfig(configMap);
+    public void createConnector(String clusterName, String connectName, Connector connector) {
+        NewConnector connectorProperties = new NewConnector();
+        connectorProperties.setName(connector.getName());
+        Map<String, Object> configMap = new ObjectMapper().readValue(connector.getConfig(), HashMap.class);
+        connectorProperties.setConfig(configMap);
         try {
-            connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
+            connectorApi().deleteConnector(clusterName, connectName, connector.getName()).block();
         } catch (WebClientResponseException ignored) {
         }
-        connectorApi().createConnector(clusterName, connectName, connector).block();
+        connectorApi().createConnector(clusterName, connectName, connectorProperties).block();
     }
 
     public String getFirstConnectName(String clusterName) {
@@ -113,14 +121,13 @@ public class ApiHelper {
     }
 
     @SneakyThrows
-    public void sendMessage(String clusterName, String topicName, String messageContentJson,
-                            String messageKey) {
+    public void sendMessage(String clusterName, Topic topic) {
         CreateTopicMessage createMessage = new CreateTopicMessage();
         createMessage.partition(0);
-        createMessage.setContent(messageContentJson);
-        createMessage.setKey(messageKey);
+        createMessage.setContent(topic.getMessageContent());
+        createMessage.setKey(topic.getMessageKey());
         try {
-            messageApi().sendTopicMessages(clusterName, topicName, createMessage).block();
+            messageApi().sendTopicMessages(clusterName, topic.getName(), createMessage).block();
         } catch (WebClientResponseException ex) {
             ex.getRawStatusCode();
         }

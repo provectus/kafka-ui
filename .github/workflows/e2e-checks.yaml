@@ -29,7 +29,7 @@ jobs:
       - name: pull docker
         id: pull_chrome
         run: |
-          docker pull selenium/standalone-chrome
+          docker pull selenium/standalone-chrome:103.0
       - name: Set up JDK 1.13
         uses: actions/setup-java@v1
         with:
@@ -38,12 +38,12 @@ jobs:
         id: build_app
         run: |
           mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
-          mvn clean package -Dmaven.test.skip=true ${{ github.event.inputs.extraMavenOptions }}
+          mvn clean package -Pprod -Dmaven.test.skip=true ${{ github.event.inputs.extraMavenOptions }}
       - name: compose app
         id: compose_app
         # use the following command until #819 will be fixed
         run: |
-          docker-compose -f ./documentation/compose/kafka-ui-connectors.yaml up -d
+          docker-compose -f ./documentation/compose/e2e-tests.yaml up -d
       - name: e2e run
         run: |
           mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}

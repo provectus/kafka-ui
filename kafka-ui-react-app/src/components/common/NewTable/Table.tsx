@@ -21,18 +21,93 @@ import * as S from './Table.styled';
 import updateSortingState from './utils/updateSortingState';
 import updatePaginationState from './utils/updatePaginationState';
 import ExpanderCell from './ExpanderCell';
+import SelectRowCell from './SelectRowCell';
+import SelectRowHeader from './SelectRowHeader';
 
-interface TableProps<TData> {
+export interface TableProps<TData> {
   data: TData[];
   pageCount?: number;
   columns: ColumnDef<TData>[];
-  renderSubComponent?: React.FC<{ row: Row<TData> }>;
-  getRowCanExpand?: (row: Row<TData>) => boolean;
+
+  // Server-side processing: sorting, pagination
   serverSideProcessing?: boolean;
-  enableSorting?: boolean;
+
+  // Expandeble rows
+  getRowCanExpand?: (row: Row<TData>) => boolean; // Enables the ability to expand row. Use `() => true` when want to expand all rows.
+  renderSubComponent?: React.FC<{ row: Row<TData> }>; // Component to render expanded row.
+
+  // Selectable rows
+  enableRowSelection?: boolean | ((row: Row<TData>) => boolean); // Enables the ability to select row.
+  batchActionsBar?: React.FC<{ rows: Row<TData>[]; resetRowSelection(): void }>; // Component to render batch actions bar for slected rows
+
+  // Sorting.
+  enableSorting?: boolean; // Enables sorting for table.
+
+  // Placeholder for empty table
+  emptyMessage?: string;
+
+  // Handles row click. Can not be combined with `enableRowSelection` && expandable rows.
+  onRowClick?: (row: Row<TData>) => void;
 }
 
 type UpdaterFn<T> = (previousState: T) => T;
+
+const getPaginationFromSearchParams = (searchParams: URLSearchParams) => {
+  const page = searchParams.get('page');
+  const perPage = searchParams.get('perPage');
+  const pageIndex = page ? Number(page) - 1 : 0;
+  return {
+    pageIndex,
+    pageSize: Number(perPage || PER_PAGE),
+  };
+};
+
+const getSortingFromSearchParams = (searchParams: URLSearchParams) => {
+  const sortBy = searchParams.get('sortBy');
+  const sortDirection = searchParams.get('sortDirection');
+  if (!sortBy) return [];
+  return [{ id: sortBy, desc: sortDirection === 'desc' }];
+};
+
+/**
+ * Table component that uses the react-table library to render a table.
+ * https://tanstack.com/table/v8
+ *
+ * The most important props are:
+ *  - `data`: the data to render in the table
+ *  - `columns`: ColumnsDef. You can finde more info about it on https://tanstack.com/table/v8/docs/guide/column-defs
+ *  - `emptyMessage`: the message to show when there is no data to render
+ *
+ * Usecases:
+ * 1. Sortable table
+ *    - set `enableSorting` property of component to true. It will enable sorting for all columns.
+ *      If you want to disable sorting for some particular columns you can pass
+ *     `enableSorting = false` to the column def.
+ *    - table component stores the sorting state in URLSearchParams. Use `sortBy` and `sortDirection`
+ *      search param to set default sortings.
+ *    - use `id` property of the column def to set the sortBy for server side sorting.
+ *
+ * 2. Pagination
+ *    - pagination enabled by default.
+ *    - use `perPage` search param to manage default page size.
+ *    - use `page` search param to manage default page index.
+ *    - use `pageCount` prop to set the total number of pages only in case of server side processing.
+ *
+ * 3. Expandable rows
+ *    - use `getRowCanExpand` prop to set a function that returns true if the row can be expanded.
+ *    - use `renderSubComponent` prop to provide a sub component for each expanded row.
+ *
+ * 4. Row selection
+ *    - use `enableRowSelection` prop to enable row selection. This prop can be a boolean or
+ *      a function that returns true if the particular row can be selected.
+ *    - use `batchActionsBar` prop to provide a component that will be rendered at the top of the table
+ *      when row selection is enabled and there are selected rows.
+ *
+ * 5. Server side processing:
+ *    - set `serverSideProcessing` to true
+ *    - set `pageCount` to the total number of pages
+ *    - use URLSearchParams to get the pagination and sorting state from the url for your server side processing.
+ */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Table: React.FC<TableProps<any>> = ({
@@ -40,80 +115,49 @@ const Table: React.FC<TableProps<any>> = ({
   pageCount,
   columns,
   getRowCanExpand,
-  renderSubComponent,
+  renderSubComponent: SubComponent,
   serverSideProcessing = false,
   enableSorting = false,
+  enableRowSelection = false,
+  batchActionsBar: BatchActionsBar,
+  emptyMessage,
+  onRowClick,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [{ pageIndex, pageSize }, setPagination] =
-    React.useState<PaginationState>({
-      pageIndex: 0,
-      pageSize: PER_PAGE,
-    });
-
+  const [rowSelection, setRowSelection] = React.useState({});
   const onSortingChange = React.useCallback(
     (updater: UpdaterFn<SortingState>) => {
       const newState = updateSortingState(updater, searchParams);
       setSearchParams(searchParams);
-      setSorting(newState);
       return newState;
     },
     [searchParams]
   );
-
   const onPaginationChange = React.useCallback(
     (updater: UpdaterFn<PaginationState>) => {
       const newState = updatePaginationState(updater, searchParams);
       setSearchParams(searchParams);
-      setPagination(newState);
       return newState;
     },
     [searchParams]
   );
 
   React.useEffect(() => {
-    const sortBy = searchParams.get('sortBy');
-    const sortDirection = searchParams.get('sortDirection');
-    const page = searchParams.get('page');
-    const perPage = searchParams.get('perPage');
-
-    if (sortBy) {
-      setSorting([
-        {
-          id: sortBy,
-          desc: sortDirection === 'desc',
-        },
-      ]);
-    } else {
-      setSorting([]);
-    }
-    if (page || perPage) {
-      setPagination({
-        pageIndex: Number(page || 0),
-        pageSize: Number(perPage || PER_PAGE),
-      });
-    }
-  }, []);
-
-  const pagination = React.useMemo(
-    () => ({
-      pageIndex,
-      pageSize,
-    }),
-    [pageIndex, pageSize]
-  );
+    setRowSelection({});
+  }, [searchParams]);
 
   const table = useReactTable({
     data,
     pageCount,
     columns,
     state: {
-      sorting,
-      pagination,
+      sorting: getSortingFromSearchParams(searchParams),
+      pagination: getPaginationFromSearchParams(searchParams),
+      rowSelection,
     },
     onSortingChange: onSortingChange as OnChangeFn<SortingState>,
     onPaginationChange: onPaginationChange as OnChangeFn<PaginationState>,
+    onRowSelectionChange: setRowSelection,
     getRowCanExpand,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
@@ -122,14 +166,50 @@ const Table: React.FC<TableProps<any>> = ({
     manualSorting: serverSideProcessing,
     manualPagination: serverSideProcessing,
     enableSorting,
+    autoResetPageIndex: false,
+    enableRowSelection,
   });
+
+  const handleRowClick = (row: Row<typeof data>) => (e: React.MouseEvent) => {
+    // If row selection is enabled do not handle row click.
+    if (enableRowSelection) return undefined;
+
+    // If row can be expanded do not handle row click.
+    if (row.getCanExpand()) {
+      e.stopPropagation();
+      return row.toggleExpanded();
+    }
+
+    if (onRowClick) {
+      e.stopPropagation();
+      return onRowClick(row);
+    }
+
+    return undefined;
+  };
 
   return (
     <>
+      {table.getSelectedRowModel().flatRows.length > 0 && BatchActionsBar && (
+        <S.TableActionsBar>
+          <BatchActionsBar
+            rows={table.getSelectedRowModel().flatRows}
+            resetRowSelection={table.resetRowSelection}
+          />
+        </S.TableActionsBar>
+      )}
       <S.Table>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
+              {!!enableRowSelection && (
+                <S.Th key={`${headerGroup.id}-select`}>
+                  {flexRender(
+                    SelectRowHeader,
+                    headerGroup.headers[0].getContext()
+                  )}
+                </S.Th>
+              )}
               {table.getCanSomeRowsExpand() && (
                 <S.Th expander key={`${headerGroup.id}-expander`} />
               )}
@@ -156,35 +236,55 @@ const Table: React.FC<TableProps<any>> = ({
           {table.getRowModel().rows.map((row) => (
             <React.Fragment key={row.id}>
               <S.Row
-                expandable={row.getCanExpand()}
                 expanded={row.getIsExpanded()}
-                onClick={() => row.getCanExpand() && row.toggleExpanded()}
+                onClick={handleRowClick(row)}
+                clickable={
+                  !enableRowSelection &&
+                  (row.getCanExpand() || onRowClick !== undefined)
+                }
               >
-                {row.getCanExpand() && (
-                  <td key={`${row.id}-expander`}>
+                {!!enableRowSelection && (
+                  <td key={`${row.id}-select`} style={{ width: '1px' }}>
+                    {flexRender(
+                      SelectRowCell,
+                      row.getVisibleCells()[0].getContext()
+                    )}
+                  </td>
+                )}
+                {table.getCanSomeRowsExpand() && (
+                  <td key={`${row.id}-expander`} style={{ width: '1px' }}>
                     {flexRender(
                       ExpanderCell,
                       row.getVisibleCells()[0].getContext()
                     )}
                   </td>
                 )}
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+                {row
+                  .getVisibleCells()
+                  .map(({ id, getContext, column: { columnDef } }) => (
+                    <td key={id} style={columnDef.meta}>
+                      {flexRender(columnDef.cell, getContext())}
+                    </td>
+                  ))}
               </S.Row>
-              {row.getIsExpanded() && renderSubComponent && (
+              {row.getIsExpanded() && SubComponent && (
                 <S.Row expanded>
-                  <td colSpan={row.getVisibleCells().length + 1}>
+                  <td colSpan={row.getVisibleCells().length + 2}>
                     <S.ExpandedRowInfo>
-                      {renderSubComponent({ row })}
+                      <SubComponent row={row} />
                     </S.ExpandedRowInfo>
                   </td>
                 </S.Row>
               )}
             </React.Fragment>
           ))}
+          {table.getRowModel().rows.length === 0 && (
+            <S.Row>
+              <S.EmptyTableMessageCell colSpan={100}>
+                {emptyMessage || 'No rows found'}
+              </S.EmptyTableMessageCell>
+            </S.Row>
+          )}
         </tbody>
       </S.Table>
       {table.getPageCount() > 1 && (
@@ -227,13 +327,14 @@ const Table: React.FC<TableProps<any>> = ({
               <span>Go to page:</span>
               <Input
                 type="number"
+                positiveOnly
                 defaultValue={table.getState().pagination.pageIndex + 1}
                 inputSize="M"
                 max={table.getPageCount()}
                 min={1}
-                onChange={(e) => {
-                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                  table.setPageIndex(page);
+                onChange={({ target: { value } }) => {
+                  const index = value ? Number(value) - 1 : 0;
+                  table.setPageIndex(index);
                 }}
               />
             </S.GoToPage>

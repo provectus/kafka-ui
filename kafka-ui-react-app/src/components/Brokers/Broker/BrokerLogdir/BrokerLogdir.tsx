@@ -1,40 +1,53 @@
 import React from 'react';
 import useAppParams from 'lib/hooks/useAppParams';
-import { translateLogdirs } from 'components/Brokers/utils/translateLogdirs';
-import { SmartTable } from 'components/common/SmartTable/SmartTable';
-import { TableColumn } from 'components/common/SmartTable/TableColumn';
-import { useTableState } from 'lib/hooks/useTableState';
 import { ClusterBrokerParam } from 'lib/paths';
 import { useBrokerLogDirs } from 'lib/hooks/api/brokers';
-
-interface BrokerLogdirState {
-  name: string;
-  error: string;
-  topics: number;
-  partitions: number;
-}
+import Table from 'components/common/NewTable';
+import { ColumnDef } from '@tanstack/react-table';
+import { BrokersLogdirs } from 'generated-sources';
 
 const BrokerLogdir: React.FC = () => {
   const { clusterName, brokerId } = useAppParams<ClusterBrokerParam>();
-  const { data: logDirs } = useBrokerLogDirs(clusterName, Number(brokerId));
+  const { data } = useBrokerLogDirs(clusterName, Number(brokerId));
 
-  const preparedRows = translateLogdirs(logDirs);
-  const tableState = useTableState<BrokerLogdirState, string>(preparedRows, {
-    idSelector: ({ name }) => name,
-    totalPages: 0,
-  });
+  const columns = React.useMemo<ColumnDef<BrokersLogdirs>[]>(
+    () => [
+      { header: 'Name', accessorKey: 'name' },
+      { header: 'Error', accessorKey: 'error' },
+      {
+        header: 'Topics',
+        accessorKey: 'topics',
+        cell: ({ getValue }) =>
+          getValue<BrokersLogdirs['topics']>()?.length || 0,
+        enableSorting: false,
+      },
+      {
+        id: 'partitions',
+        header: 'Partitions',
+        accessorKey: 'topics',
+        cell: ({ getValue }) => {
+          const topics = getValue<BrokersLogdirs['topics']>();
+          if (!topics) {
+            return 0;
+          }
+          return topics.reduce(
+            (acc, topic) => acc + (topic.partitions?.length || 0),
+            0
+          );
+        },
+        enableSorting: false,
+      },
+    ],
+    []
+  );
 
   return (
-    <SmartTable
-      tableState={tableState}
-      placeholder="Log dir data not available"
-      isFullwidth
-    >
-      <TableColumn title="Name" field="name" />
-      <TableColumn title="Error" field="error" />
-      <TableColumn title="Topics" field="topics" />
-      <TableColumn title="Partitions" field="partitions" />
-    </SmartTable>
+    <Table
+      data={data || []}
+      columns={columns}
+      emptyMessage="Log dir data not available"
+      enableSorting
+    />
   );
 };
 

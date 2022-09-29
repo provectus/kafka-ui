@@ -2,134 +2,133 @@ package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
+import com.provectus.kafka.ui.models.Topic;
 import com.provectus.kafka.ui.pages.MainPage;
+import com.provectus.kafka.ui.pages.topic.TopicCreateEditSettingsView;
 import com.provectus.kafka.ui.pages.topic.TopicView;
-import com.provectus.kafka.ui.utils.qaseIO.Status;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
-import io.qameta.allure.Issue;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import io.qase.api.annotation.CaseId;
-import lombok.SneakyThrows;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 
-import static org.apache.kafka.common.utils.Utils.readFileAsString;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
 public class TopicTests extends BaseTest {
-
-    public static final String NEW_TOPIC = "new-topic";
-    public static final String TOPIC_TO_UPDATE = "topic-to-update";
-    public static final String TOPIC_TO_DELETE = "topic-to-delete";
-    public static final String SECOND_LOCAL = "secondLocal";
-    public static final String COMPACT_POLICY_VALUE = "Compact";
-    public static final String UPDATED_TIME_TO_RETAIN_VALUE = "604800001";
-    public static final String UPDATED_MAX_SIZE_ON_DISK = "20 GB";
-    public static final String UPDATED_MAX_MESSAGE_BYTES = "1000020";
-    private static final String KEY_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/producedkey.txt";
-    private static final String CONTENT_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/testData.txt";
-
+    private static final long SUITE_ID = 2;
+    private static final String SUITE_TITLE = "Topics";
+    private static final Topic TOPIC_FOR_UPDATE = new Topic()
+            .setName("topic-to-update")
+            .setCompactPolicyValue("Compact")
+            .setTimeToRetainData("604800001")
+            .setMaxSizeOnDisk("20 GB")
+            .setMaxMessageBytes("1000020")
+            .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
+            .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+    private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete");
+    private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
     @BeforeAll
-    @SneakyThrows
     public static void beforeAll() {
-        Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, TOPIC_TO_UPDATE);
-        Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
+        TOPIC_LIST.addAll(List.of(TOPIC_FOR_UPDATE, TOPIC_FOR_DELETE));
+        TOPIC_LIST.forEach(topic -> Helpers.INSTANCE.apiHelper.createTopic(CLUSTER_NAME, topic.getName()));
     }
 
-    @AfterAll
-    @SneakyThrows
-    public static void afterAll() {
-        Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_UPDATE);
-        Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
-        Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
-    }
-
-    @SneakyThrows
     @DisplayName("should create a topic")
     @Suite(suiteId = 4, title = "Create new Topic")
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(199)
     @Test
     public void createTopic() {
+        Topic topicToCreate = new Topic().setName("new-topic");
         pages.open()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
         pages.topicsList.pressCreateNewTopic()
-                .setTopicName(NEW_TOPIC)
+                .setTopicName(topicToCreate.getName())
                 .sendData()
                 .waitUntilScreenReady();
         pages.open()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
-                .topicIsVisible(NEW_TOPIC);
-        helpers.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
-        pages.open()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
-                .topicIsNotVisible(NEW_TOPIC);
+                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
+        Assertions.assertTrue(pages.topicsList.isTopicVisible(topicToCreate.getName()),"isTopicVisible");
+        TOPIC_LIST.add(topicToCreate);
     }
-    @Disabled("Due to issue https://github.com/provectus/kafka-ui/issues/1500 ignore this test")
-    @SneakyThrows
+
+    @Disabled("https://github.com/provectus/kafka-ui/issues/2625")
     @DisplayName("should update a topic")
-    @Issue("1500")
-    @Suite(suiteId = 2, title = "Topics")
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(197)
     @Test
     public void updateTopic() {
-        pages.openTopicsList(SECOND_LOCAL)
+        pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
+        pages.topicsList.openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
                 .openEditSettings()
-                .selectCleanupPolicy(COMPACT_POLICY_VALUE)
+                .selectCleanupPolicy(TOPIC_FOR_UPDATE.getCompactPolicyValue())
                 .setMinInsyncReplicas(10)
-                .setTimeToRetainDataInMs(UPDATED_TIME_TO_RETAIN_VALUE)
-                .setMaxSizeOnDiskInGB(UPDATED_MAX_SIZE_ON_DISK)
-                .setMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
+                .setTimeToRetainDataInMs(TOPIC_FOR_UPDATE.getTimeToRetainData())
+                .setMaxSizeOnDiskInGB(TOPIC_FOR_UPDATE.getMaxSizeOnDisk())
+                .setMaxMessageBytes(TOPIC_FOR_UPDATE.getMaxMessageBytes())
                 .sendData()
                 .waitUntilScreenReady();
-
-        pages.openTopicsList(SECOND_LOCAL)
+        pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
-                .openEditSettings()
-                // Assertions
-                .cleanupPolicyIs(COMPACT_POLICY_VALUE)
-                .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
-                .maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK)
-                .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
+        pages.topicsList.openTopic(TOPIC_FOR_UPDATE.getName())
+                .waitUntilScreenReady()
+                .openEditSettings();
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(new TopicCreateEditSettingsView().getCleanupPolicy()).as("Cleanup Policy").isEqualTo(TOPIC_FOR_UPDATE.getCompactPolicyValue());
+        softly.assertThat(new TopicCreateEditSettingsView().getTimeToRetain()).as("Time to retain").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
+        softly.assertThat(new TopicCreateEditSettingsView().getMaxSizeOnDisk()).as("Max size on disk").isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk());
+        softly.assertThat(new TopicCreateEditSettingsView().getMaxMessageBytes()).as("Max message bytes").isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
+        softly.assertAll();
     }
 
-    @SneakyThrows
     @DisplayName("should delete topic")
-    @Suite(suiteId = 2, title = "Topics")
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(207)
     @Test
     public void deleteTopic() {
-        pages.openTopicsList(SECOND_LOCAL)
+        pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_TO_DELETE)
+                .openTopic(TOPIC_FOR_DELETE.getName())
                 .waitUntilScreenReady()
-                .deleteTopic()
-                .waitUntilScreenReady()
-                .isTopicNotVisible(TOPIC_TO_DELETE);
+                .deleteTopic();
+        pages.openTopicsList(CLUSTER_NAME)
+                .waitUntilScreenReady();
+        Assertions.assertFalse(pages.topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()),"isTopicVisible");
+        TOPIC_LIST.remove(TOPIC_FOR_DELETE);
     }
 
-    @SneakyThrows
     @DisplayName("produce message")
-    @Suite(suiteId = 2, title = "Topics")
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(222)
     @Test
     void produceMessage() {
-        pages.openTopicsList(SECOND_LOCAL)
+        pages.openTopicsList(CLUSTER_NAME)
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_TO_UPDATE)
+                .openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicView.TopicMenu.MESSAGES)
                 .clickOnButton("Produce Message")
-                .setContentFiled(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE))
-                .setKeyField(readFileAsString(KEY_TO_PRODUCE_MESSAGE))
+                .setContentFiled(TOPIC_FOR_UPDATE.getMessageContent())
+                .setKeyField(TOPIC_FOR_UPDATE.getMessageKey())
                 .submitProduceMessage();
-        Assertions.assertTrue(pages.topicView.isKeyMessageVisible(readFileAsString(KEY_TO_PRODUCE_MESSAGE)));
-        Assertions.assertTrue(pages.topicView.isContentMessageVisible(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE).trim()));
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(pages.topicView.isKeyMessageVisible((TOPIC_FOR_UPDATE.getMessageKey()))).withFailMessage("isKeyMessageVisible()").isTrue();
+        softly.assertThat(pages.topicView.isContentMessageVisible((TOPIC_FOR_UPDATE.getMessageContent()).trim())).withFailMessage("isContentMessageVisible()").isTrue();
+        softly.assertAll();
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        TOPIC_LIST.forEach(topic -> Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
     }
 }

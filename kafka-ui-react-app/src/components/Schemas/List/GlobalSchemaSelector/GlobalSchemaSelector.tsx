@@ -2,22 +2,21 @@ import React from 'react';
 import Select from 'components/common/Select/Select';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import { useAppDispatch } from 'lib/hooks/redux';
-import usePagination from 'lib/hooks/usePagination';
-import useSearch from 'lib/hooks/useSearch';
 import useAppParams from 'lib/hooks/useAppParams';
 import { fetchSchemas } from 'redux/reducers/schemas/schemasSlice';
 import { ClusterNameRoute } from 'lib/paths';
 import { schemasApiClient } from 'lib/api';
 import { showServerError } from 'lib/errorHandling';
 import { useConfirm } from 'lib/hooks/useConfirm';
+import { useSearchParams } from 'react-router-dom';
+import { PER_PAGE } from 'lib/constants';
 
 import * as S from './GlobalSchemaSelector.styled';
 
 const GlobalSchemaSelector: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const dispatch = useAppDispatch();
-  const [searchText] = useSearch();
-  const { page, perPage } = usePagination();
+  const [searchParams] = useSearchParams();
   const confirm = useConfirm();
 
   const [currentCompatibilityLevel, setCurrentCompatibilityLevel] =
@@ -61,7 +60,12 @@ const GlobalSchemaSelector: React.FC = () => {
           });
           setCurrentCompatibilityLevel(nextLevel);
           dispatch(
-            fetchSchemas({ clusterName, page, perPage, search: searchText })
+            fetchSchemas({
+              clusterName,
+              page: Number(searchParams.get('page') || 1),
+              perPage: Number(searchParams.get('perPage') || PER_PAGE),
+              search: searchParams.get('q') || '',
+            })
           );
         } catch (e) {
           showServerError(e as Response);

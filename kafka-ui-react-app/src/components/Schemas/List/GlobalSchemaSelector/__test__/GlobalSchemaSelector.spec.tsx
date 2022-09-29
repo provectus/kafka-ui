@@ -82,7 +82,7 @@ describe('GlobalSchemaSelector', () => {
       }
     );
     const getSchemasMock = fetchMock.getOnce(
-      `api/clusters/${clusterName}/schemas`,
+      `api/clusters/${clusterName}/schemas?page=1&perPage=25`,
       200
     );
     await waitFor(() => {

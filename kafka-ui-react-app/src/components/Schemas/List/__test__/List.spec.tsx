@@ -1,7 +1,7 @@
 import React from 'react';
 import List from 'components/Schemas/List/List';
 import { render, WithRoute } from 'lib/testHelpers';
-import { clusterSchemasPath } from 'lib/paths';
+import { clusterSchemaPath, clusterSchemasPath } from 'lib/paths';
 import { act, screen } from '@testing-library/react';
 import {
   schemasFulfilledState,
@@ -15,12 +15,20 @@ import ClusterContext, {
 } from 'components/contexts/ClusterContext';
 import { RootState } from 'redux/interfaces';
 import fetchMock from 'fetch-mock';
+import userEvent from '@testing-library/user-event';
 
 import { schemasPayload, schemasEmptyPayload } from './fixtures';
 
+const mockedUsedNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockedUsedNavigate,
+}));
+
 const clusterName = 'testClusterName';
-const schemasAPIUrl = `/api/clusters/${clusterName}/schemas`;
-const schemasAPICompabilityUrl = `${schemasAPIUrl}/compatibility`;
+const schemasAPIUrl = `/api/clusters/${clusterName}/schemas?page=1&perPage=25`;
+const schemasAPICompabilityUrl = `/api/clusters/${clusterName}/schemas/compatibility`;
 const renderComponent = (
   initialState: RootState['schemas'] = schemasInitialState,
   context: ContextProps = contextInitialValue
@@ -101,6 +109,18 @@ describe('List', () => {
         expect(screen.getByText(schemaVersion1.subject)).toBeInTheDocument();
         expect(screen.getByText(schemaVersion2.subject)).toBeInTheDocument();
       });
+      it('handles onRowClick', () => {
+        const { id, schemaType, subject, version, compatibilityLevel } =
+          schemaVersion2;
+        const row = screen.getByRole('row', {
+          name: `${subject} ${id} ${schemaType} ${version} ${compatibilityLevel}`,
+        });
+        expect(row).toBeInTheDocument();
+        userEvent.click(row);
+        expect(mockedUsedNavigate).toHaveBeenCalledWith(
+          clusterSchemaPath(clusterName, subject)
+        );
+      });
     });
 
     describe('responded with readonly cluster schemas', () => {
@@ -109,6 +129,7 @@ describe('List', () => {
           schemasAPIUrl,
           schemasPayload
         );
+        fetchMock.getOnce(schemasAPICompabilityUrl, 200);
         await act(() => {
           renderComponent(schemasFulfilledState, {
             ...contextInitialValue,

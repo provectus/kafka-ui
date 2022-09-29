@@ -32,11 +32,7 @@ describe('useDataSaver hook', () => {
       render(<HookWrapper />);
       expect(mockCreate).toHaveBeenCalledTimes(2);
       expect(link.download).toEqual('message_1616581196000.json');
-      expect(link.href).toEqual(
-        `data:text/json;charset=utf-8,${encodeURIComponent(
-          JSON.stringify(content)
-        )}`
-      );
+      expect(link.href).toEqual(`data:text/json;charset=utf-8,${content}`);
       expect(link.click).toHaveBeenCalledTimes(1);
 
       mockCreate.mockRestore();
@@ -59,11 +55,7 @@ describe('useDataSaver hook', () => {
       render(<HookWrapper />);
       expect(mockCreate).toHaveBeenCalledTimes(2);
       expect(link.download).toEqual('message_1616581196000.txt');
-      expect(link.href).toEqual(
-        `data:text/json;charset=utf-8,${encodeURIComponent(
-          JSON.stringify('content')
-        )}`
-      );
+      expect(link.href).toEqual(`data:text/json;charset=utf-8,content`);
       expect(link.click).toHaveBeenCalledTimes(1);
 
       mockCreate.mockRestore();

@@ -57,7 +57,9 @@ const CustomParams: React.FC<CustomParamsProps> = ({ isSubmitting }) => {
           type="button"
           buttonSize="M"
           buttonType="secondary"
-          onClick={() => append({ name: '', value: '' })}
+          onClick={() =>
+            append({ name: '', value: '' }, { shouldFocus: false })
+          }
         >
           <PlusIcon />
           Add Custom Parameter

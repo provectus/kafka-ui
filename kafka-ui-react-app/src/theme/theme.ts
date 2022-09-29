@@ -75,6 +75,9 @@ const theme = {
     label: {
       color: Colors.neutral[50],
     },
+    meta: {
+      color: Colors.neutral[30],
+    },
   },
   progressBar: {
     backgroundColor: Colors.neutral[3],
@@ -86,6 +89,8 @@ const theme = {
     minWidth: '1200px',
     navBarWidth: '201px',
     navBarHeight: '53px',
+    rightSidebarWidth: '70vw',
+
     stuffColor: Colors.neutral[5],
     stuffBorderColor: Colors.neutral[10],
     overlay: {
@@ -95,8 +100,17 @@ const theme = {
       color: Colors.neutral[20],
     },
   },
+  pageHeading: {
+    height: '64px',
+    dividerColor: Colors.neutral[30],
+    backLink: {
+      color: {
+        normal: Colors.brand[70],
+        hover: Colors.brand[60],
+      },
+    },
+  },
   panelColor: Colors.neutral[0],
-  breadcrumb: Colors.neutral[30],
   connectEditWarning: Colors.yellow[10],
   dropdown: {
     backgroundColor: Colors.neutral[0],
@@ -143,7 +157,7 @@ const theme = {
     },
     variants: {
       1: {
-        fontSize: '24px',
+        fontSize: '20px',
         lineHeight: '32px',
       },
       2: {
@@ -293,18 +307,23 @@ const theme = {
     border: {
       top: Colors.neutral[5],
       bottom: Colors.neutral[5],
+      contrast: Colors.neutral[30],
     },
     overlay: Colors.transparency[10],
     shadow: Colors.transparency[20],
     deletionTextColor: Colors.neutral[70],
   },
   table: {
+    actionBar: {
+      backgroundColor: Colors.neutral[0],
+    },
     th: {
       backgroundColor: {
         normal: Colors.neutral[0],
       },
       color: {
-        normal: Colors.neutral[50],
+        sortable: Colors.neutral[30],
+        normal: Colors.neutral[60],
         hover: Colors.brand[50],
         active: Colors.brand[50],
       },
@@ -326,14 +345,18 @@ const theme = {
     link: {
       color: {
         normal: Colors.neutral[90],
+        hover: Colors.neutral[50],
+        active: Colors.neutral[90],
       },
     },
     expander: {
       normal: Colors.brand[50],
       hover: Colors.brand[20],
+      disabled: Colors.neutral[10],
     },
   },
   primaryTab: {
+    height: '41px',
     color: {
       normal: Colors.neutral[50],
       hover: Colors.neutral[90],
@@ -440,22 +463,6 @@ const theme = {
       blue: Colors.blue[10],
     },
     color: Colors.neutral[90],
-  },
-  pagination: {
-    backgroundColor: Colors.neutral[0],
-    currentPage: Colors.neutral[10],
-    borderColor: {
-      normal: Colors.neutral[30],
-      hover: Colors.neutral[50],
-      active: Colors.neutral[70],
-      disabled: Colors.neutral[20],
-    },
-    color: {
-      normal: Colors.neutral[90],
-      hover: Colors.neutral[90],
-      active: Colors.neutral[90],
-      disabled: Colors.neutral[20],
-    },
   },
   switch: {
     unchecked: Colors.brand[20],

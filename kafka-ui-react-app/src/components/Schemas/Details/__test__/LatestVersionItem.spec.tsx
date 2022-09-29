@@ -8,7 +8,7 @@ import { jsonSchema, protoSchema } from './fixtures';
 describe('LatestVersionItem', () => {
   it('renders latest version of json schema', () => {
     render(<LatestVersionItem schema={jsonSchema} />);
-    expect(screen.getByText('Relevant version')).toBeInTheDocument();
+    expect(screen.getByText('Actual version')).toBeInTheDocument();
     expect(screen.getByText('Latest version')).toBeInTheDocument();
     expect(screen.getByText('ID')).toBeInTheDocument();
     expect(screen.getByText('Subject')).toBeInTheDocument();
@@ -18,7 +18,7 @@ describe('LatestVersionItem', () => {
 
   it('renders latest version of compatibility', () => {
     render(<LatestVersionItem schema={protoSchema} />);
-    expect(screen.getByText('Relevant version')).toBeInTheDocument();
+    expect(screen.getByText('Actual version')).toBeInTheDocument();
     expect(screen.getByText('Latest version')).toBeInTheDocument();
     expect(screen.getByText('ID')).toBeInTheDocument();
     expect(screen.getByText('Subject')).toBeInTheDocument();

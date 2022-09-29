@@ -4,6 +4,7 @@ import {
   ClusterSubjectParam,
   clusterSchemaEditPageRelativePath,
   clusterSchemaSchemaComparePageRelativePath,
+  clusterSchemasPath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -74,7 +75,11 @@ const Details: React.FC = () => {
   }
   return (
     <>
-      <PageHeading text={schema.subject}>
+      <PageHeading
+        text={schema.subject}
+        backText="Schema Registry"
+        backTo={clusterSchemasPath(clusterName)}
+      >
         {!isReadOnly && (
           <>
             <Button
@@ -119,6 +124,7 @@ const Details: React.FC = () => {
               <TableHeaderCell />
               <TableHeaderCell title="Version" />
               <TableHeaderCell title="ID" />
+              <TableHeaderCell title="Type" />
             </tr>
           </thead>
           <tbody>

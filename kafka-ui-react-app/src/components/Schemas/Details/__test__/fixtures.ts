@@ -2,12 +2,21 @@ import { SchemaSubject, SchemaType } from 'generated-sources';
 import {
   schemaVersion1,
   schemaVersion2,
+  schemaVersionWithNonAsciiChars,
 } from 'redux/reducers/schemas/__test__/fixtures';
 
-export const versionPayload = [schemaVersion1, schemaVersion2];
+export const versionPayload = [
+  schemaVersion1,
+  schemaVersion2,
+  schemaVersionWithNonAsciiChars,
+];
 export const versionEmptyPayload = [];
 
-export const versions = [schemaVersion1, schemaVersion2];
+export const versions = [
+  schemaVersion1,
+  schemaVersion2,
+  schemaVersionWithNonAsciiChars,
+];
 
 export const jsonSchema: SchemaSubject = {
   subject: 'test',

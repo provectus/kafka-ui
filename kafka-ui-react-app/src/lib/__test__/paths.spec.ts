@@ -5,6 +5,8 @@ import { RouteParams } from 'lib/paths';
 const clusterName = 'test-cluster-name';
 const groupId = 'test-group-id';
 const schemaId = 'test-schema-id';
+const schemaIdWithNonAsciiChars = 'test/test';
+const schemaIdWithNonAsciiCharsEncoded = 'test%2Ftest';
 const topicId = 'test-topic-id';
 const brokerId = 'test-Broker-id';
 const connectName = 'test-connect-name';
@@ -112,6 +114,13 @@ describe('Paths', () => {
     expect(paths.clusterSchemaPath()).toEqual(
       paths.clusterSchemaPath(RouteParams.clusterName, RouteParams.subject)
     );
+    expect(
+      paths.clusterSchemaPath(clusterName, schemaIdWithNonAsciiChars)
+    ).toEqual(
+      `${paths.clusterSchemasPath(
+        clusterName
+      )}/${schemaIdWithNonAsciiCharsEncoded}`
+    );
   });
   it('clusterSchemaEditPath', () => {
     expect(paths.clusterSchemaEditPath(clusterName, schemaId)).toEqual(
@@ -119,6 +128,11 @@ describe('Paths', () => {
     );
     expect(paths.clusterSchemaEditPath()).toEqual(
       paths.clusterSchemaEditPath(RouteParams.clusterName, RouteParams.subject)
+    );
+    expect(
+      paths.clusterSchemaEditPath(clusterName, schemaIdWithNonAsciiChars)
+    ).toEqual(
+      `${paths.clusterSchemaPath(clusterName, schemaIdWithNonAsciiChars)}/edit`
     );
   });
   it('clusterSchemaComparePath', () => {
@@ -185,17 +199,6 @@ describe('Paths', () => {
     );
     expect(paths.clusterTopicMessagesPath()).toEqual(
       paths.clusterTopicMessagesPath(
-        RouteParams.clusterName,
-        RouteParams.topicName
-      )
-    );
-  });
-  it('clusterTopicSendMessagePath', () => {
-    expect(paths.clusterTopicSendMessagePath(clusterName, topicId)).toEqual(
-      `${paths.clusterTopicPath(clusterName, topicId)}/message`
-    );
-    expect(paths.clusterTopicSendMessagePath()).toEqual(
-      paths.clusterTopicSendMessagePath(
         RouteParams.clusterName,
         RouteParams.topicName
       )

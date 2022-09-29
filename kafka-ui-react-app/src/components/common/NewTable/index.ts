@@ -1,7 +1,11 @@
-import Table from './Table';
+import Table, { TableProps } from './Table';
 import TimestampCell from './TimestampCell';
-import ExpanderCell from './ExpanderCell';
+import SizeCell from './SizeCell';
+import LinkCell from './LinkCell';
+import TagCell from './TagCell';
 
-export { TimestampCell, ExpanderCell };
+export type { TableProps };
+
+export { TimestampCell, SizeCell, LinkCell, TagCell };
 
 export default Table;

@@ -2,7 +2,11 @@ import React from 'react';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
 import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import { ClusterNameRoute, clusterSchemaPath } from 'lib/paths';
+import {
+  ClusterNameRoute,
+  clusterSchemaPath,
+  clusterSchemasPath,
+} from 'lib/paths';
 import { SchemaType } from 'generated-sources';
 import { SCHEMA_NAME_VALIDATION_PATTERN } from 'lib/constants';
 import { useNavigate } from 'react-router-dom';
@@ -63,7 +67,11 @@ const New: React.FC = () => {
 
   return (
     <FormProvider {...methods}>
-      <PageHeading text="Create new schema" />
+      <PageHeading
+        text="Create"
+        backText="Schema Registry"
+        backTo={clusterSchemasPath(clusterName)}
+      />
       <S.Form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <InputLabel>Subject *</InputLabel>
@@ -112,7 +120,7 @@ const New: React.FC = () => {
                 name={name}
                 value={value}
                 onChange={onChange}
-                minWidth="50%"
+                minWidth="100%"
                 disabled={isSubmitting}
                 options={SchemaTypeOptions}
               />

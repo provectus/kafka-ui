@@ -2,15 +2,16 @@ package com.provectus.kafka.ui.pages.connector;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
-import com.provectus.kafka.ui.helpers.TestConfiguration;
-import com.provectus.kafka.ui.utils.BrowserUtils;
-import com.provectus.kafka.ui.extensions.WaitUtils;
+import com.provectus.kafka.ui.utilities.WaitUtils;
+import com.provectus.kafka.ui.settings.Source;
 import io.qameta.allure.Step;
-import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
+import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
 
 @ExtensionMethod(WaitUtils.class)
 public class ConnectorsList {
@@ -19,7 +20,7 @@ public class ConnectorsList {
 
     @Step("Open URL to {cluster}")
     public ConnectorsList goTo(String cluster) {
-        Selenide.open(TestConfiguration.BASE_WEB_URL + String.format(path, cluster));
+        Selenide.open(Source.BASE_WEB_URL + String.format(path, cluster));
         return this;
     }
 
@@ -31,30 +32,23 @@ public class ConnectorsList {
 
     @Step("Click on button 'Create Connector'")
     public ConnectorCreateView clickCreateConnectorButton() {
-        BrowserUtils.javaExecutorClick($x("//button[text()='Create Connector']"));
+        javaExecutorClick($x("//button[text()='Create Connector']"));
         return new ConnectorCreateView();
     }
 
-    @SneakyThrows
+    @Step
     public ConnectorsList openConnector(String connectorName) {
         $(By.linkText(connectorName)).click();
         return this;
     }
 
-    @SneakyThrows
-    public ConnectorsList isNotVisible(String connectorName) {
+    @Step
+    public boolean isConnectorVisible(String connectorName) {
         $(By.xpath("//table")).shouldBe(Condition.visible);
-        $x("//tbody//td[1]//a[text()='" + connectorName + "']").shouldBe(Condition.not(Condition.visible));
-        return this;
+        return isVisible($x("//tbody//td[1]//a[text()='" + connectorName + "']"));
     }
 
-    @Step("Verify that connector {connectorName} is visible in the list")
-    public ConnectorsList connectorIsVisibleInList(String connectorName, String topicName) {
-        $x("//table//a[@href='/ui/clusters/local/connects/first/connectors/" + connectorName +"']").shouldBe(Condition.visible);
-       $$(By.linkText(topicName));
-        return this;
-    }
-
+    @Step
     public ConnectorsList connectorIsUpdatedInList(String connectorName, String topicName) {
         $(By.xpath(String.format("//a[text() = '%s']", connectorName))).shouldBe(Condition.visible);
         By.xpath(String.format("//a[text() = '%s']", topicName)).refreshUntil(Condition.visible);

@@ -7,6 +7,7 @@ import {
   clusterConnectConnectorPath,
   clusterConnectConnectorTasksPath,
   clusterConnectConnectorTasksRelativePath,
+  clusterConnectorsPath,
   RouterParamsClusterConnectConnector,
 } from 'lib/paths';
 import Navbar from 'components/common/Navigation/Navbar.styled';
@@ -24,7 +25,11 @@ const DetailsPage: React.FC = () => {
 
   return (
     <div>
-      <PageHeading text={connectorName}>
+      <PageHeading
+        text={connectorName}
+        backTo={clusterConnectorsPath(clusterName)}
+        backText="Connectors"
+      >
         <Actions />
       </PageHeading>
       <Navbar role="navigation">

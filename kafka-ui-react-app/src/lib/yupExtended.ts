@@ -47,6 +47,7 @@ export default yup;
 export const topicFormValidationSchema = yup.object().shape({
   name: yup
     .string()
+    .max(249)
     .required()
     .matches(
       TOPIC_NAME_VALIDATION_PATTERN,

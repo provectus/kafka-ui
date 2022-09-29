@@ -90,10 +90,15 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   private static SupportedFeature getSupportedUpdateFeatureForVersion(String versionStr) {
-    float version = NumberUtil.parserClusterVersion(versionStr);
-    return version <= 2.3f
-        ? SupportedFeature.ALTER_CONFIGS
-        : SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
+    try {
+      float version = NumberUtil.parserClusterVersion(versionStr);
+      return version <= 2.3f
+          ? SupportedFeature.ALTER_CONFIGS
+          : SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
+    } catch (NumberFormatException e) {
+      log.info("Assuming non-incremental alter configs due to version parsing error");
+      return SupportedFeature.ALTER_CONFIGS;
+    }
   }
 
   //TODO: discuss - maybe we should map kafka-library's exceptions to our exceptions here
@@ -329,7 +334,7 @@ public class ReactiveAdminClient implements Closeable {
         .map(lst -> lst.stream().map(ConsumerGroupListing::groupId).collect(toList()));
   }
 
-  public Mono<Map<String, ConsumerGroupDescription>> describeConsumerGroups(List<String> groupIds) {
+  public Mono<Map<String, ConsumerGroupDescription>> describeConsumerGroups(Collection<String> groupIds) {
     return toMono(client.describeConsumerGroups(groupIds).all());
   }
 
@@ -367,6 +372,7 @@ public class ReactiveAdminClient implements Closeable {
 
   public Mono<Map<TopicPartition, Long>> listOffsets(Collection<TopicPartition> partitions,
                                                      OffsetSpec offsetSpec) {
+    //TODO: need to split this into multiple calls if number of target partitions is big
     return toMono(
         client.listOffsets(partitions.stream().collect(toMap(tp -> tp, tp -> offsetSpec))).all())
         .map(offsets -> offsets.entrySet()
