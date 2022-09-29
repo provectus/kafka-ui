@@ -38,7 +38,8 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { Tag } from 'components/common/Tag/Tag.styled';
 
 import Messages from './Messages/Messages';
-import MessagesV2 from './MessagesV2/Messages';
+// Messages v2
+import MessagesContainer from './MessagesV2/MessagesContainer';
 import Overview from './Overview/Overview';
 import Settings from './Settings/Settings';
 import TopicConsumerGroups from './ConsumerGroups/TopicConsumerGroups';
@@ -256,7 +257,7 @@ const Topic: React.FC = () => {
             path={clusterTopicMessagesRelativePath}
             element={<Messages />}
           />
-          <Route path="v2" element={<MessagesV2 />} />
+          <Route path="v2" element={<MessagesContainer />} />
           <Route
             path={clusterTopicSettingsRelativePath}
             element={<Settings />}
@@ -277,7 +278,9 @@ const Topic: React.FC = () => {
         onClose={closeSidebar}
         title="Produce Message"
       >
-        <SendMessage onSubmit={closeSidebar} />
+        <Suspense fallback={<PageLoader />}>
+          <SendMessage onSubmit={closeSidebar} />
+        </Suspense>
       </SlidingSidebar>
     </>
   );

@@ -8,6 +8,12 @@ import Messages, {
 import { SeekDirection, SeekType } from 'generated-sources';
 import userEvent from '@testing-library/user-event';
 import { clusterTopicMessagesPath } from 'lib/paths';
+import { useSerdes } from 'lib/hooks/api/topicMessages';
+import { serdesPayload } from 'lib/fixtures/topicMessages';
+
+jest.mock('lib/hooks/api/topicMessages', () => ({
+  useSerdes: jest.fn(),
+}));
 
 describe('Messages', () => {
   const searchParams = `?filterQueryType=STRING_CONTAINS&attempt=0&limit=100&seekDirection=${SeekDirection.FORWARD}&seekType=${SeekType.OFFSET}&seekTo=0::9`;
@@ -28,20 +34,23 @@ describe('Messages', () => {
     Object.defineProperty(window, 'EventSource', {
       value: EventSourceMock,
     });
+    (useSerdes as jest.Mock).mockImplementation(() => ({
+      data: serdesPayload,
+    }));
   });
   describe('component rendering default behavior with the search params', () => {
     beforeEach(() => {
       renderComponent();
     });
     it('should check default seekDirection if it actually take the value from the url', () => {
-      expect(screen.getAllByRole('listbox')[1]).toHaveTextContent(
+      expect(screen.getAllByRole('listbox')[3]).toHaveTextContent(
         SeekDirectionOptionsObj[SeekDirection.FORWARD].label
       );
     });
 
     it('should check the SeekDirection select changes with live option', async () => {
-      const seekDirectionSelect = screen.getAllByRole('listbox')[1];
-      const seekDirectionOption = screen.getAllByRole('option')[1];
+      const seekDirectionSelect = screen.getAllByRole('listbox')[3];
+      const seekDirectionOption = screen.getAllByRole('option')[3];
 
       expect(seekDirectionOption).toHaveTextContent(
         SeekDirectionOptionsObj[SeekDirection.FORWARD].label
@@ -79,7 +88,7 @@ describe('Messages', () => {
       renderComponent(
         searchParams.replace(SeekDirection.FORWARD, SeekDirection.BACKWARD)
       );
-      expect(screen.getAllByRole('listbox')[1]).toHaveTextContent(
+      expect(screen.getAllByRole('listbox')[3]).toHaveTextContent(
         SeekDirectionOptionsObj[SeekDirection.BACKWARD].label
       );
     });

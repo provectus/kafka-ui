@@ -52,6 +52,7 @@ export const StatusBarWrapper = styled.div(
     white-space: nowrap;
     display: flex;
     justify-content: space-between;
+    z-index: 10;
   `
 );
 

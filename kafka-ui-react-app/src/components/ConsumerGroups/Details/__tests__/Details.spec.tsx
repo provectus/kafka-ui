@@ -77,6 +77,13 @@ describe('Details component', () => {
       );
     });
 
+    it('renders search input', async () => {
+      await renderComponent();
+      expect(
+        screen.getByPlaceholderText('Search by Topic Name')
+      ).toBeInTheDocument();
+    });
+
     it('shows confirmation modal on consumer group delete', async () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       userEvent.click(screen.getByText('Delete consumer group'));

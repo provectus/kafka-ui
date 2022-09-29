@@ -12,8 +12,8 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serde.DeserializationService;
-import com.provectus.kafka.ui.serde.RecordSerDe;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
+import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import com.provectus.kafka.ui.util.ResultSizeLimiter;
@@ -35,9 +35,6 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.internals.RecordHeader;
-import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -96,8 +93,13 @@ public class MessagesService {
         && msg.getPartition() > topicDescription.partitions().size() - 1) {
       return Mono.error(new ValidationException("Invalid partition"));
     }
-    RecordSerDe serde =
-        deserializationService.getRecordDeserializerForCluster(cluster);
+    ProducerRecordCreator producerRecordCreator =
+        deserializationService.producerRecordCreator(
+            cluster,
+            topicDescription.name(),
+            msg.getKeySerde().get(),
+            msg.getValueSerde().get()
+        );
 
     Properties properties = new Properties();
     properties.putAll(cluster.getProperties());
@@ -105,19 +107,13 @@ public class MessagesService {
     properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
     properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
     try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
-      ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(
+      ProducerRecord<byte[], byte[]> producerRecord = producerRecordCreator.create(
           topicDescription.name(),
+          msg.getPartition(),
           msg.getKey().orElse(null),
           msg.getContent().orElse(null),
-          msg.getPartition()
+          msg.getHeaders()
       );
-      producerRecord = new ProducerRecord<>(
-          producerRecord.topic(),
-          producerRecord.partition(),
-          producerRecord.key(),
-          producerRecord.value(),
-          createHeaders(msg.getHeaders()));
-
       CompletableFuture<RecordMetadata> cf = new CompletableFuture<>();
       producer.send(producerRecord, (metadata, exception) -> {
         if (exception != null) {
@@ -132,32 +128,30 @@ public class MessagesService {
     }
   }
 
-  private Iterable<Header> createHeaders(@Nullable Map<String, String> clientHeaders) {
-    if (clientHeaders == null) {
-      return new RecordHeaders();
-    }
-    RecordHeaders headers = new RecordHeaders();
-    clientHeaders.forEach((k, v) -> headers.add(new RecordHeader(k, v.getBytes())));
-    return headers;
-  }
-
   public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic,
                                                  ConsumerPosition consumerPosition, String query,
                                                  MessageFilterTypeDTO filterQueryType,
-                                                 int limit) {
+                                                 int limit,
+                                                 @Nullable String keySerde,
+                                                 @Nullable String valueSerde) {
     return withExistingTopic(cluster, topic)
         .flux()
-        .flatMap(td -> loadMessagesImpl(cluster, topic, consumerPosition, query, filterQueryType, limit));
+        .flatMap(td -> loadMessagesImpl(cluster, topic, consumerPosition, query,
+            filterQueryType, limit, keySerde, valueSerde));
   }
 
-  private Flux<TopicMessageEventDTO> loadMessagesImpl(KafkaCluster cluster, String topic,
-                                                 ConsumerPosition consumerPosition, String query,
-                                                 MessageFilterTypeDTO filterQueryType,
-                                                 int limit) {
+  private Flux<TopicMessageEventDTO> loadMessagesImpl(KafkaCluster cluster,
+                                                      String topic,
+                                                      ConsumerPosition consumerPosition,
+                                                      String query,
+                                                      MessageFilterTypeDTO filterQueryType,
+                                                      int limit,
+                                                      @Nullable String keySerde,
+                                                      @Nullable String valueSerde) {
 
     java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
-    RecordSerDe recordDeserializer =
-        deserializationService.getRecordDeserializerForCluster(cluster);
+    ConsumerRecordDeserializer recordDeserializer =
+        deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde);
     if (consumerPosition.getSeekDirection().equals(SeekDirectionDTO.FORWARD)) {
       emitter = new ForwardRecordEmitter(
           () -> consumerGroupService.createConsumer(cluster),

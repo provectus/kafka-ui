@@ -1,27 +1,29 @@
 package com.provectus.kafka.ui.util.jsonschema;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import lombok.SneakyThrows;
 import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericData;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class AvroJsonSchemaConverterTest {
-  @Test
-  public void avroConvertTest() throws URISyntaxException, JsonProcessingException {
-    final AvroJsonSchemaConverter converter = new AvroJsonSchemaConverter();
-    URI basePath = new URI("http://example.com/");
+class AvroJsonSchemaConverterTest {
 
-    Schema recordSchema = (new Schema.Parser()).parse(
-         " {"
+  private AvroJsonSchemaConverter converter;
+  private URI basePath;
+
+  @BeforeEach
+  void init() throws URISyntaxException {
+    converter = new AvroJsonSchemaConverter();
+    basePath = new URI("http://example.com/");
+  }
+
+  @Test
+  void avroConvertTest() {
+    String avroSchema =
+        " {"
             + "     \"type\": \"record\","
             + "     \"name\": \"Message\","
             + "     \"namespace\": \"com.provectus.kafka\","
@@ -76,45 +78,59 @@ public class AvroJsonSchemaConverterTest {
             + "             }"
             + "         }"
             + "     ]"
-            + " }"
-    );
+            + " }";
 
+    String expectedJsonSchema = "{ "
+        + "  \"$id\" : \"http://example.com/Message\", "
+        + "  \"$schema\" : \"https://json-schema.org/draft/2020-12/schema\", "
+        + "  \"type\" : \"object\", "
+        + "  \"properties\" : { "
+        + "    \"record\" : { \"$ref\" : \"#/definitions/com.provectus.kafka.InnerMessage\" } "
+        + "  }, "
+        + "  \"required\" : [ \"record\" ], "
+        + "  \"definitions\" : { "
+        + "    \"com.provectus.kafka.Message\" : { \"$ref\" : \"#\" }, "
+        + "    \"com.provectus.kafka.InnerMessage\" : { "
+        + "      \"type\" : \"object\", "
+        + "      \"properties\" : { "
+        + "        \"long_text\" : { "
+        + "          \"oneOf\" : [ { "
+        + "            \"type\" : \"null\" "
+        + "          }, { "
+        + "            \"type\" : \"object\", "
+        + "            \"properties\" : { "
+        + "              \"string\" : { "
+        + "                \"type\" : \"string\" "
+        + "              } "
+        + "            } "
+        + "          } ] "
+        + "        }, "
+        + "        \"array\" : { "
+        + "          \"type\" : \"array\", "
+        + "          \"items\" : { \"type\" : \"string\" } "
+        + "        }, "
+        + "        \"id\" : { \"type\" : \"integer\" }, "
+        + "        \"text\" : { \"type\" : \"string\" }, "
+        + "        \"map\" : { "
+        + "          \"type\" : \"object\", "
+        + "          \"additionalProperties\" : { \"type\" : \"integer\" } "
+        + "        }, "
+        + "        \"order\" : { "
+        + "          \"enum\" : [ \"SPADES\", \"HEARTS\", \"DIAMONDS\", \"CLUBS\" ], "
+        + "          \"type\" : \"string\" "
+        + "        } "
+        + "      }, "
+        + "      \"required\" : [ \"id\", \"text\", \"order\", \"array\", \"map\" ] "
+        + "    } "
+        + "  } "
+        + "}";
 
-    String expected = "{\"$id\":\"http://example.com/Message\","
-        + "\"$schema\":\"https://json-schema.org/draft/2020-12/schema\","
-        + "\"type\":\"object\",\"properties\":{\"record\":"
-        + "{\"$ref\":\"#/definitions/RecordInnerMessage\"}},"
-        + "\"required\":[\"record\"],\"definitions\":"
-        + "{\"RecordInnerMessage\":{\"type\":\"object\",\""
-        + "properties\":{\"long_text\":{\"oneOf\":[{\"type\":\"null\"},"
-        + "{\"type\":\"object\",\"properties\":{\"string\":"
-        + "{\"type\":\"string\"}}}]},\"array\":{\"type\":\"array\",\"items\":"
-        + "{\"type\":\"string\"}},\"id\":{\"type\":\"integer\"},\"text\":"
-        + "{\"type\":\"string\"},\"map\":{\"type\":\"object\","
-        + "\"additionalProperties\":{\"type\":\"integer\"}},"
-        + "\"order\":{\"enum\":[\"SPADES\",\"HEARTS\",\"DIAMONDS\",\"CLUBS\"],"
-        + "\"type\":\"string\"}},"
-        + "\"required\":[\"id\",\"text\",\"order\",\"array\",\"map\"]}}}";
-
-    final JsonSchema convertRecord = converter.convert(basePath, recordSchema);
-
-    ObjectMapper om = new ObjectMapper();
-    Assertions.assertEquals(
-        om.readTree(expected),
-        om.readTree(
-            convertRecord.toJson()
-        )
-    );
-
+    convertAndCompare(expectedJsonSchema, avroSchema);
   }
 
   @Test
-  public void testNullableUnions() throws URISyntaxException, IOException, ProcessingException {
-    final AvroJsonSchemaConverter converter = new AvroJsonSchemaConverter();
-    URI basePath = new URI("http://example.com/");
-    final ObjectMapper objectMapper = new ObjectMapper();
-
-    Schema recordSchema = (new Schema.Parser()).parse(
+  void testNullableUnions()  {
+    String avroSchema =
         " {"
             + "     \"type\": \"record\","
             + "     \"name\": \"Message\","
@@ -138,38 +154,105 @@ public class AvroJsonSchemaConverterTest {
             + "                         \"default\": null"
             + "                     }"
             + "     ]"
-            + " }"
-    );
+            + " }";
 
-    final GenericData.Record record = new GenericData.Record(recordSchema);
-    record.put("text", "Hello world");
-    record.put("value", 100L);
-    byte[] jsonBytes = AvroSchemaUtils.toJson(record);
-    String serialized = new String(jsonBytes);
-
-    String expected =
+    String expectedJsonSchema =
         "{\"$id\":\"http://example.com/Message\","
         + "\"$schema\":\"https://json-schema.org/draft/2020-12/schema\","
         + "\"type\":\"object\",\"properties\":{\"text\":"
         + "{\"oneOf\":[{\"type\":\"null\"},{\"type\":\"object\","
         + "\"properties\":{\"string\":{\"type\":\"string\"}}}]},\"value\":"
         + "{\"oneOf\":[{\"type\":\"null\"},{\"type\":\"object\","
-        + "\"properties\":{\"string\":{\"type\":\"string\"},\"long\":{\"type\":\"integer\"}}}]}}}";
+        + "\"properties\":{\"string\":{\"type\":\"string\"},\"long\":{\"type\":\"integer\"}}}]}},"
+        + "\"definitions\" : { \"com.provectus.kafka.Message\" : { \"$ref\" : \"#\" }}}";
 
-    final JsonSchema convert = converter.convert(basePath, recordSchema);
-    Assertions.assertEquals(
-        objectMapper.readTree(expected),
-        objectMapper.readTree(convert.toJson())
-    );
-
-
-    final ProcessingReport validate =
-        JsonSchemaFactory.byDefault().getJsonSchema(
-            objectMapper.readTree(expected)
-        ).validate(
-            objectMapper.readTree(serialized)
-        );
-
-    Assertions.assertTrue(validate.isSuccess());
+    convertAndCompare(expectedJsonSchema, avroSchema);
   }
+
+  @Test
+  void testRecordReferences() {
+    String avroSchema =
+        "{\n"
+            + "    \"type\": \"record\", "
+            + "    \"namespace\": \"n.s\", "
+            + "    \"name\": \"RootMsg\", "
+            + "    \"fields\":\n"
+            + "    [ "
+            + "        { "
+            + "            \"name\": \"inner1\", "
+            + "            \"type\": { "
+            + "                \"type\": \"record\", "
+            + "                \"name\": \"Inner\", "
+            + "                \"fields\": [ { \"name\": \"f1\", \"type\": \"double\" } ] "
+            + "            } "
+            + "        }, "
+            + "        { "
+            + "            \"name\": \"inner2\", "
+            + "            \"type\": { "
+            + "                \"type\": \"record\", "
+            + "                \"namespace\": \"n.s2\", "
+            + "                \"name\": \"Inner\", "
+            + "                \"fields\": "
+            + "                [ { \"name\": \"f1\", \"type\": \"double\" } ] "
+            + "            } "
+            + "        }, "
+            + "        { "
+            + "            \"name\": \"refField\", "
+            + "            \"type\": [ \"null\", \"Inner\", \"n.s2.Inner\", \"RootMsg\" ] "
+            + "        } "
+            + "    ] "
+            + "}";
+
+    String expectedJsonSchema = "{ "
+        + "  \"$id\" : \"http://example.com/RootMsg\", "
+        + "  \"$schema\" : \"https://json-schema.org/draft/2020-12/schema\", "
+        + "  \"type\" : \"object\", "
+        + "  \"properties\" : { "
+        + "    \"inner1\" : { \"$ref\" : \"#/definitions/n.s.Inner\" }, "
+        + "    \"inner2\" : { \"$ref\" : \"#/definitions/n.s2.Inner\" }, "
+        + "    \"refField\" : { "
+        + "      \"oneOf\" : [  "
+        + "      { "
+        + "        \"type\" : \"null\" "
+        + "      },  "
+        + "      { "
+        + "        \"type\" : \"object\", "
+        + "        \"properties\" : { "
+        + "          \"n.s.RootMsg\" : { \"$ref\" : \"#/definitions/n.s.RootMsg\" }, "
+        + "          \"n.s2.Inner\" : { \"$ref\" : \"#/definitions/n.s2.Inner\" }, "
+        + "          \"n.s.Inner\" : { \"$ref\" : \"#/definitions/n.s.Inner\" } "
+        + "        } "
+        + "      } ] "
+        + "    } "
+        + "  }, "
+        + "  \"required\" : [ \"inner1\", \"inner2\" ], "
+        + "  \"definitions\" : { "
+        + "    \"n.s.RootMsg\" : { \"$ref\" : \"#\" }, "
+        + "    \"n.s2.Inner\" : { "
+        + "      \"type\" : \"object\", "
+        + "      \"properties\" : { \"f1\" : { \"type\" : \"number\" } }, "
+        + "      \"required\" : [ \"f1\" ] "
+        + "    }, "
+        + "    \"n.s.Inner\" : { "
+        + "      \"type\" : \"object\", "
+        + "      \"properties\" : { \"f1\" : { \"type\" : \"number\" } }, "
+        + "      \"required\" : [ \"f1\" ] "
+        + "    } "
+        + "  } "
+        + "}";
+
+    convertAndCompare(expectedJsonSchema, avroSchema);
+  }
+
+  @SneakyThrows
+  private void convertAndCompare(String expectedJsonSchema, String sourceAvroSchema) {
+    var parseAvroSchema = new Schema.Parser().parse(sourceAvroSchema);
+    var converted = converter.convert(basePath, parseAvroSchema).toJson();
+    var objectMapper = new ObjectMapper();
+    Assertions.assertEquals(
+        objectMapper.readTree(expectedJsonSchema),
+        objectMapper.readTree(converted)
+    );
+  }
+
 }
