@@ -2,9 +2,7 @@ package com.provectus.kafka.ui.pages.connector;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
-import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -12,7 +10,6 @@ import static com.codeborne.selenide.Selenide.sleep;
 import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
 import static com.provectus.kafka.ui.utilities.screenshots.Screenshooter.log;
 
-@ExtensionMethod(WaitUtils.class)
 public class ConnectorCreateView {
 
     SelenideElement nameField = $(By.xpath("//input[@name='name']"));
