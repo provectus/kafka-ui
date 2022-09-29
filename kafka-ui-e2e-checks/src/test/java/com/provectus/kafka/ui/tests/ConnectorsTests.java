@@ -43,11 +43,11 @@ public class ConnectorsTests extends BaseTest {
     public void beforeAll() {
         TOPIC_LIST.addAll(List.of(TOPIC_FOR_CREATE, TOPIC_FOR_DELETE, TOPIC_FOR_UPDATE));
         TOPIC_LIST.forEach(topic -> {
-            apiHelpers.createTopic(CLUSTER_NAME, topic.getName());
-            apiHelpers.sendMessage(CLUSTER_NAME, topic);
+            apiHelper.createTopic(CLUSTER_NAME, topic.getName());
+            apiHelper.sendMessage(CLUSTER_NAME, topic);
         });
         CONNECTOR_LIST.addAll(List.of(CONNECTOR_FOR_DELETE, CONNECTOR_FOR_UPDATE));
-        CONNECTOR_LIST.forEach(connector -> apiHelpers
+        CONNECTOR_LIST.forEach(connector -> apiHelper
                 .createConnector(CLUSTER_NAME, CONNECT_NAME, connector));
     }
 
@@ -105,7 +105,7 @@ public class ConnectorsTests extends BaseTest {
     @AfterAll
     public void afterAll() {
         CONNECTOR_LIST.forEach(connector ->
-                apiHelpers.deleteConnector(CLUSTER_NAME, CONNECT_NAME, connector.getName()));
-        TOPIC_LIST.forEach(topic -> apiHelpers.deleteTopic(CLUSTER_NAME, topic.getName()));
+                apiHelper.deleteConnector(CLUSTER_NAME, CONNECT_NAME, connector.getName()));
+        TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
     }
 }

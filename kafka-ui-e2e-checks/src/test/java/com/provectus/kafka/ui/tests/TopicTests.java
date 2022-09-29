@@ -35,7 +35,7 @@ public class TopicTests extends BaseTest {
     @BeforeAll
     public void beforeAll() {
         TOPIC_LIST.addAll(List.of(TOPIC_FOR_UPDATE, TOPIC_FOR_DELETE));
-        TOPIC_LIST.forEach(topic -> apiHelpers.createTopic(CLUSTER_NAME, topic.getName()));
+        TOPIC_LIST.forEach(topic -> apiHelper.createTopic(CLUSTER_NAME, topic.getName()));
     }
 
     @DisplayName("should create a topic")
@@ -129,6 +129,6 @@ public class TopicTests extends BaseTest {
 
     @AfterAll
     public void afterAll() {
-        TOPIC_LIST.forEach(topic -> apiHelpers.deleteTopic(CLUSTER_NAME, topic.getName()));
+        TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
     }
 }
