@@ -4,7 +4,6 @@ import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.pages.MainPage;
-import com.provectus.kafka.ui.pages.schema.SchemaEditView;
 import com.provectus.kafka.ui.pages.schema.SchemaView;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
@@ -70,8 +69,8 @@ public class SchemasTests extends BaseTest {
         schemaRegistryList.openSchema(AVRO_API.getName())
                 .waitUntilScreenReady()
                 .openEditSchema();
-        Assertions.assertTrue(new SchemaEditView().isSchemaDropDownDisabled(),"isSchemaDropDownDisabled()");
-        new SchemaEditView().selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
+        Assertions.assertTrue(schemaEditView.isSchemaDropDownDisabled(),"isSchemaDropDownDisabled()");
+        schemaEditView.selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(AVRO_API.getValuePath()))
                 .clickSubmit()
                 .waitUntilScreenReady();
