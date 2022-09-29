@@ -23,7 +23,6 @@ import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
 import com.provectus.kafka.ui.model.Statistics;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
 import com.provectus.kafka.ui.model.TopicUpdateDTO;
-import com.provectus.kafka.ui.serde.DeserializationService;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -421,15 +420,6 @@ public class TopicsService {
     } else {
       return Mono.error(new ValidationException("Topic deletion restricted"));
     }
-  }
-
-  public TopicMessageSchemaDTO getTopicSchema(KafkaCluster cluster, String topicName) {
-    if (!statisticsCache.get(cluster).getTopicDescriptions().containsKey(topicName)) {
-      throw new TopicNotFoundException();
-    }
-    return deserializationService
-        .getRecordDeserializerForCluster(cluster)
-        .getTopicSchema(topicName);
   }
 
   public Mono<InternalTopic> cloneTopic(
