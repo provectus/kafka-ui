@@ -1,17 +1,11 @@
 package com.provectus.kafka.ui.base;
 
-import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
-import com.codeborne.selenide.logevents.SelenideLogger;
-import com.provectus.kafka.ui.helpers.Helpers;
-import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.TestCaseGenerator;
 import com.provectus.kafka.ui.utilities.screenshots.Screenshooter;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
-import io.qameta.allure.selenide.AllureSelenide;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
@@ -28,17 +22,17 @@ import org.testcontainers.utility.DockerImageName;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+
+import static com.provectus.kafka.ui.base.Setup.clearReports;
+import static com.provectus.kafka.ui.base.Setup.setup;
 
 @Slf4j
 @DisplayNameGeneration(DisplayNameGenerator.class)
-public class BaseTest {
+public class BaseTest extends Facade {
 
-  public static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
-  public static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium:103.0";
-  public static final String CLUSTER_NAME = "local";
-  protected Pages pages = Pages.INSTANCE;
-  protected Helpers helpers = Helpers.INSTANCE;
+  private static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
+  private static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium:103.0";
+  protected static final String CLUSTER_NAME = "local";
 
   private final Screenshooter screenshooter = new Screenshooter();
 
@@ -50,6 +44,10 @@ public class BaseTest {
 
   public void compareScreenshots(String name, Boolean shouldUpdateScreenshots) {
     screenshooter.compareScreenshots(name, shouldUpdateScreenshots);
+  }
+
+  private static boolean isARM64() {
+    return System.getProperty("os.arch").equals("aarch64");
   }
 
   @BeforeEach
@@ -74,21 +72,13 @@ public class BaseTest {
             .addArguments("--no-sandbox")
             .addArguments("--verbose")
         )
-        .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: "));
+            .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: "));
     try {
       Testcontainers.exposeHostPorts(8080);
       log.info("Starting browser container");
       webDriverContainer.start();
     } catch (Throwable e) {
       log.error("Couldn't start a container", e);
-    }
-  }
-
-  @AfterAll
-  public static void tearDown() {
-    if (webDriverContainer.isRunning()) {
-      webDriverContainer.close();
-      webDriverContainer.stop();
     }
   }
 
@@ -109,10 +99,18 @@ public class BaseTest {
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
       if (TestCaseGenerator.FAILED) {
         log.error(
-            "Tests FAILED because some problem with @CaseId annotation. Verify that all tests annotated with @CaseId and Id is correct!");
+                "Tests FAILED because some problem with @CaseId annotation. Verify that all tests annotated with @CaseId and Id is correct!");
         Runtime.getRuntime().halt(100500);
       }
     }));
+  }
+
+  @AfterAll
+  public static void tearDown() {
+    if (webDriverContainer.isRunning()) {
+      webDriverContainer.close();
+      webDriverContainer.stop();
+    }
   }
 
   @AfterEach
@@ -120,36 +118,5 @@ public class BaseTest {
     Allure.addAttachment("Screenshot",
         new ByteArrayInputStream(
             ((TakesScreenshot) webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
-  }
-
-  @SneakyThrows
-  private static void setup() {
-    Configuration.reportsFolder = Config.REPORTS_FOLDER;
-    Configuration.screenshots = Config.SCREENSHOTS;
-    Configuration.savePageSource = Config.SAVE_PAGE_SOURCE;
-    Configuration.reopenBrowserOnFail = Config.REOPEN_BROWSER_ON_FAIL;
-    Configuration.browser = Config.BROWSER;
-    Configuration.timeout = 10000;
-    Configuration.pageLoadTimeout = 180000;
-    Configuration.browserSize = Config.BROWSER_SIZE;
-    SelenideLogger.addListener("allure", new AllureSelenide().savePageSource(false));
-  }
-
-  public static void clearReports() {
-    log.info(String.format("Clearing reports dir [%s]...", Config.REPORTS_FOLDER));
-    File allureResults = new File(Config.REPORTS_FOLDER);
-    if (allureResults.isDirectory()) {
-      File[] list = allureResults.listFiles();
-      if (list != null) {
-        Arrays.stream(list)
-                .sequential()
-                .filter(e -> !e.getName().equals("categories.json"))
-                .forEach(File::delete);
-      }
-    }
-  }
-
-  private static boolean isARM64() {
-    return System.getProperty("os.arch").equals("aarch64");
   }
 }

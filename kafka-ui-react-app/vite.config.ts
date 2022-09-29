@@ -38,6 +38,11 @@ export default defineConfig(({ mode }) => {
             changeOrigin: true,
             secure: false,
           },
+          '/actuator/info': {
+            target: proxy,
+            changeOrigin: true,
+            secure: false,
+          },
         },
       },
     };

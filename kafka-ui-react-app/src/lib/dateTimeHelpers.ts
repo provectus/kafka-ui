@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 export const formatTimestamp = (
   timestamp: number | string | Date | undefined,
-  format = 'MM.DD.YY hh:mm:ss a'
+  format?: string
 ): string => {
   if (!timestamp) {
     return '';

@@ -11,6 +11,7 @@ export default {
     '<rootDir>/src/index.tsx',
     '<rootDir>/src/serviceWorker.ts',
   ],
+  coverageReporters: ['json', 'lcov', 'text', 'clover'],
   resolver: '<rootDir>/.jest/resolver.js',
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   testMatch: [

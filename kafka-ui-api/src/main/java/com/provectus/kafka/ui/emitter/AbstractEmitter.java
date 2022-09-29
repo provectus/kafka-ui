@@ -3,8 +3,7 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicMessagePhaseDTO;
-import com.provectus.kafka.ui.serde.RecordSerDe;
-import com.provectus.kafka.ui.util.ClusterUtil;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import java.time.Duration;
 import java.time.Instant;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -23,10 +22,10 @@ public abstract class AbstractEmitter {
   // To workaround this we can assume that after N consecutive empty polls all target messages were read.
   public static final int NO_MORE_DATA_EMPTY_POLLS_COUNT = 3;
 
-  private final RecordSerDe recordDeserializer;
+  private final ConsumerRecordDeserializer recordDeserializer;
   private final ConsumingStats consumingStats = new ConsumingStats();
 
-  protected AbstractEmitter(RecordSerDe recordDeserializer) {
+  protected AbstractEmitter(ConsumerRecordDeserializer recordDeserializer) {
     this.recordDeserializer = recordDeserializer;
   }
 
@@ -46,7 +45,7 @@ public abstract class AbstractEmitter {
 
   protected void sendMessage(FluxSink<TopicMessageEventDTO> sink,
                                                        ConsumerRecord<Bytes, Bytes> msg) {
-    final TopicMessageDTO topicMessage = ClusterUtil.mapToTopicMessage(msg, recordDeserializer);
+    final TopicMessageDTO topicMessage = recordDeserializer.deserialize(msg);
     sink.next(
         new TopicMessageEventDTO()
             .type(TopicMessageEventDTO.TypeEnum.MESSAGE)

@@ -1,16 +1,14 @@
 import React from 'react';
 import SendMessage from 'components/Topics/Topic/SendMessage/SendMessage';
-import { act, screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterTopicPath } from 'lib/paths';
-import validateMessage from 'components/Topics/Topic/SendMessage/validateMessage';
-import { externalTopicPayload, topicMessageSchema } from 'lib/fixtures/topics';
-import {
-  useSendMessage,
-  useTopicDetails,
-  useTopicMessageSchema,
-} from 'lib/hooks/api/topics';
+import { validateBySchema } from 'components/Topics/Topic/SendMessage/utils';
+import { externalTopicPayload } from 'lib/fixtures/topics';
+import { useSendMessage, useTopicDetails } from 'lib/hooks/api/topics';
+import { useSerdes } from 'lib/hooks/api/topicMessages';
+import { serdesPayload } from 'lib/fixtures/topicMessages';
 
 import Mock = jest.Mock;
 
@@ -23,9 +21,10 @@ jest.mock('json-schema-faker', () => ({
   option: jest.fn(),
 }));
 
-jest.mock('components/Topics/Topic/SendMessage/validateMessage', () =>
-  jest.fn()
-);
+jest.mock('components/Topics/Topic/SendMessage/utils', () => ({
+  ...jest.requireActual('components/Topics/Topic/SendMessage/utils'),
+  validateBySchema: jest.fn(),
+}));
 
 jest.mock('lib/errorHandling', () => ({
   ...jest.requireActual('lib/errorHandling'),
@@ -34,8 +33,11 @@ jest.mock('lib/errorHandling', () => ({
 
 jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
-  useTopicMessageSchema: jest.fn(),
   useSendMessage: jest.fn(),
+}));
+
+jest.mock('lib/hooks/api/topicMessages', () => ({
+  useSerdes: jest.fn(),
 }));
 
 const clusterName = 'testCluster';
@@ -58,14 +60,18 @@ const renderComponent = async () => {
 const renderAndSubmitData = async (error: string[] = []) => {
   await renderComponent();
   await act(() => {
-    userEvent.click(screen.getByRole('listbox'));
+    userEvent.click(screen.getAllByRole('listbox')[0]);
   });
   await act(() => {
     userEvent.click(screen.getAllByRole('option')[1]);
   });
+  (validateBySchema as Mock).mockImplementation(() => error);
+  const submitButton = screen.getByRole('button', {
+    name: 'Produce Message',
+  });
+  await waitFor(() => expect(submitButton).toBeEnabled());
   await act(() => {
-    (validateMessage as Mock).mockImplementation(() => error);
-    userEvent.click(screen.getByText('Produce Message'));
+    userEvent.click(submitButton);
   });
 };
 
@@ -74,15 +80,12 @@ describe('SendMessage', () => {
     (useTopicDetails as jest.Mock).mockImplementation(() => ({
       data: externalTopicPayload,
     }));
+    (useSerdes as jest.Mock).mockImplementation(() => ({
+      data: serdesPayload,
+    }));
   });
 
   describe('when schema is fetched', () => {
-    beforeEach(() => {
-      (useTopicMessageSchema as jest.Mock).mockImplementation(() => ({
-        data: topicMessageSchema,
-      }));
-    });
-
     it('calls sendTopicMessage on submit', async () => {
       const sendTopicMessageMock = jest.fn();
       (useSendMessage as jest.Mock).mockImplementation(() => ({
@@ -105,11 +108,6 @@ describe('SendMessage', () => {
   });
 
   describe('when schema is empty', () => {
-    beforeEach(() => {
-      (useTopicMessageSchema as jest.Mock).mockImplementation(() => ({
-        data: undefined,
-      }));
-    });
     it('renders if schema is not defined', async () => {
       await renderComponent();
       expect(screen.getAllByRole('textbox')[0].nodeValue).toBeNull();
