@@ -10,7 +10,9 @@ import java.util.regex.Pattern;
 import javax.management.MBeanAttributeInfo;
 import javax.management.ObjectName;
 
-// Converts JMX metrics into JmxExporter prometheus format: https://github.com/prometheus/jmx_exporter#default-format
+/**
+ * Converts JMX metrics into JmxExporter prometheus format: <a href="https://github.com/prometheus/jmx_exporter#default-format">format</a>.
+ */
 class JmxMetricsFormatter {
 
   // copied from https://github.com/prometheus/jmx_exporter/blob/b6b811b4aae994e812e902b26dd41f29364c0e2b/collector/src/main/java/io/prometheus/jmx/JmxMBeanPropertyCache.java#L15
@@ -60,6 +62,9 @@ class JmxMetricsFormatter {
     }
   }
 
+  /**
+   * Converts Mbean properties to map keeping order (copied from jmx_exporter repo).
+   */
   private static LinkedHashMap<String, String> getKeyPropertyList(ObjectName mbeanName) {
     LinkedHashMap<String, String> keyProperties = new LinkedHashMap<>();
     String properties = mbeanName.getKeyPropertyListString();
