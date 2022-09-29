@@ -20,6 +20,7 @@ import {
   useRecreateTopic,
   useTopicDetails,
 } from 'lib/hooks/api/topics';
+import theme from 'theme/theme';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -65,6 +66,9 @@ const mockRecreate = jest.fn();
 const mockClusterName = 'local';
 const topic: Topic = {
   ...externalTopicPayload,
+  underReplicatedPartitions: 0,
+  inSyncReplicas: 1,
+  replicas: 2,
   cleanUpPolicy: CleanUpPolicy.DELETE,
 };
 const defaultPath = clusterTopicPath(mockClusterName, topic.name);
@@ -211,6 +215,26 @@ describe('Details', () => {
       expect(
         screen.queryByText(/Are you sure want to recreate topic?/i)
       ).not.toBeInTheDocument();
+    });
+  });
+
+  describe('should render circular alert', () => {
+    it('should be in document', () => {
+      renderComponent();
+      const circles = screen.getAllByRole('circle');
+      expect(circles.length).toEqual(2);
+    });
+
+    it('should be the appropriate color', () => {
+      renderComponent();
+      const circles = screen.getAllByRole('circle');
+
+      expect(circles[0]).toHaveStyle(
+        `fill: ${theme.circularAlert.color.success}`
+      );
+      expect(circles[1]).toHaveStyle(
+        `fill: ${theme.circularAlert.color.error}`
+      );
     });
   });
 
