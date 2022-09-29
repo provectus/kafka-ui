@@ -216,7 +216,6 @@ const Topic: React.FC = () => {
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
-
       <Navbar role="navigation">
         <NavLink
           to="."
