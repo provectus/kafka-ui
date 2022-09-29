@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +32,9 @@ class PrometheusMetricsRetriever implements MetricsRetriever {
             .path("/metrics").build().toUri())
         .retrieve();
 
-    //TODO: read line by line, not entire body at once
     return responseSpec.bodyToMono(String.class)
+        .doOnError(e -> log.error("Error while getting metrics from {} - {}", c.getName(), node, e))
+        .onErrorResume(th -> Mono.empty())
         .flatMapMany(body ->
             Flux.fromStream(
                 Arrays.stream(body.split("\\n"))

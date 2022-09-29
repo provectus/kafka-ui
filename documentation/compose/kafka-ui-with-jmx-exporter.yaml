@@ -12,6 +12,8 @@ services:
 
   kafka0:
     image: confluentinc/cp-kafka:5.3.1
+    # downloading jmx_exporter javaagent and starting kafka
+    command: "/usr/share/jmx_exporter/kafka-prepare-and-run"
     depends_on:
       - zookeeper0
     environment:
@@ -21,7 +23,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_OPTS: -javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-0.16.1.jar=11001:/usr/share/jmx_exporter/kafka-broker.yml
+      KAFKA_OPTS: -javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent.jar=11001:/usr/share/jmx_exporter/kafka-broker.yml
     ports:
       - 9092:9092
       - 11001:11001

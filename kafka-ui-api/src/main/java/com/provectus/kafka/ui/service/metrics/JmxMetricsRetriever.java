@@ -73,7 +73,7 @@ class JmxMetricsRetriever implements MetricsRetriever, AutoCloseable {
       }
       pool.returnObject(connectionInfo, srv);
     } catch (Exception e) {
-      log.error("Cannot get jmxMetricsNames, {}", jmxUrl, e);
+      log.error("Error getting jmx metrics from {}", jmxUrl, e);
       closeConnectionExceptionally(jmxUrl, srv);
     }
     log.debug("{} metrics collected for {}", result.size(), jmxUrl);
