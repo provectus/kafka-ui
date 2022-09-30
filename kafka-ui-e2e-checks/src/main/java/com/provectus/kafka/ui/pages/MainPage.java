@@ -30,29 +30,29 @@ public class MainPage {
         return this;
     }
 
-    public enum SideMenuOptions {
-        BROKERS("Brokers"),
-        TOPICS("Topics"),
-        CONSUMERS("Consumers"),
-        SCHEMA_REGISTRY("Schema Registry");
+//    public enum SideMenuOptions {
+//        BROKERS("Brokers"),
+//        TOPICS("Topics"),
+//        CONSUMERS("Consumers"),
+//        SCHEMA_REGISTRY("Schema Registry");
+//
+//        final String value;
+//
+//        SideMenuOptions(String value) {
+//            this.value = value;
+//        }
+//    }
 
-        final String value;
-
-        SideMenuOptions(String value) {
-            this.value = value;
-        }
-    }
-
-    @Step
-    public MainPage goToSideMenu(String clusterName, SideMenuOptions option) {
-        SelenideElement clusterElement = $x(String.format("//aside/ul/li[contains(.,'%s')]", clusterName)).shouldBe(Condition.visible);
-        if (clusterElement.parent().$$x(".//ul").size() == 0) {
-            clusterElement.click();
-        }
-        clusterElement
-                .parent()
-                .$x(String.format(".//ul/li[contains(.,'%s')]", option.value))
-                .click();
-        return this;
-    }
+//    @Step
+//    public MainPage goToSideMenu(String clusterName, SideMenuOptions option) {
+//        SelenideElement clusterElement = $x(String.format("//aside/ul/li[contains(.,'%s')]", clusterName)).shouldBe(Condition.visible);
+//        if (clusterElement.parent().$$x(".//ul").size() == 0) {
+//            clusterElement.click();
+//        }
+//        clusterElement
+//                .parent()
+//                .$x(String.format(".//ul/li[contains(.,'%s')]", option.value))
+//                .click();
+//        return this;
+//    }
 }
