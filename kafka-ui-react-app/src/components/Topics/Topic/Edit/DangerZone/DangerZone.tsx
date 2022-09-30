@@ -82,7 +82,7 @@ const DangerZone: React.FC<DangerZoneProps> = ({
     <S.Wrapper>
       <S.Title>Danger Zone</S.Title>
       <S.Warning>
-        Change these parameters only if you are absolutely sure that you are
+        Change these parameters only if you are absolutely sure what you are
         doing.
       </S.Warning>
       <div>
