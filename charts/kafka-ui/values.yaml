@@ -100,7 +100,7 @@ ingress:
   ingressClassName: ""
 
   # The path for the Ingress
-  path: ""
+  path: "/"
 
   # The hostname for the Ingress
   host: ""
