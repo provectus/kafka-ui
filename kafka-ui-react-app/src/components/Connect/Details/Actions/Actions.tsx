@@ -83,7 +83,11 @@ const Actions: React.FC = () => {
         <DropdownItem onClick={restartFailedTasksHandler} disabled={isMutating}>
           Restart Failed Tasks
         </DropdownItem>
-        <DropdownItem onClick={deleteConnectorHandler} disabled={isMutating}>
+        <DropdownItem
+          onClick={deleteConnectorHandler}
+          disabled={isMutating}
+          danger
+        >
           Delete
         </DropdownItem>
       </Dropdown>

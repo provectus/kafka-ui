@@ -118,7 +118,10 @@ describe('Actions', () => {
 
       it('opens confirmation modal when delete button clicked', async () => {
         renderComponent();
-        await waitFor(() => userEvent.click(screen.getByText('Delete')));
+        afterClickDropDownButton();
+        await waitFor(() =>
+          userEvent.click(screen.getByRole('menuitem', { name: 'Delete' }))
+        );
         expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
@@ -128,7 +131,10 @@ describe('Actions', () => {
           mutateAsync: restartConnector,
         }));
         renderComponent();
-        userEvent.click(screen.getByText('Restart Connector'));
+        afterClickDropDownButton();
+        userEvent.click(
+          screen.getByRole('menuitem', { name: 'Restart Connector' })
+        );
         expect(restartConnector).toHaveBeenCalledWith(ConnectorAction.RESTART);
       });
 
@@ -138,7 +144,10 @@ describe('Actions', () => {
           mutateAsync: restartAllTasks,
         }));
         renderComponent();
-        userEvent.click(screen.getByText('Restart All Tasks'));
+        afterClickDropDownButton();
+        userEvent.click(
+          screen.getByRole('menuitem', { name: 'Restart All Tasks' })
+        );
         expect(restartAllTasks).toHaveBeenCalledWith(
           ConnectorAction.RESTART_ALL_TASKS
         );
@@ -150,7 +159,10 @@ describe('Actions', () => {
           mutateAsync: restartFailedTasks,
         }));
         renderComponent();
-        userEvent.click(screen.getByText('Restart Failed Tasks'));
+        afterClickDropDownButton();
+        userEvent.click(
+          screen.getByRole('menuitem', { name: 'Restart Failed Tasks' })
+        );
         expect(restartFailedTasks).toHaveBeenCalledWith(
           ConnectorAction.RESTART_FAILED_TASKS
         );
@@ -162,7 +174,8 @@ describe('Actions', () => {
           mutateAsync: pauseConnector,
         }));
         renderComponent();
-        userEvent.click(screen.getByText('Pause'));
+        afterClickDropDownButton();
+        userEvent.click(screen.getByRole('menuitem', { name: 'Pause' }));
         expect(pauseConnector).toHaveBeenCalledWith(ConnectorAction.PAUSE);
       });
 
@@ -175,7 +188,8 @@ describe('Actions', () => {
           mutateAsync: resumeConnector,
         }));
         renderComponent();
-        userEvent.click(screen.getByText('Resume'));
+        afterClickDropDownButton();
+        userEvent.click(screen.getByRole('menuitem', { name: 'Resume' }));
         expect(resumeConnector).toHaveBeenCalledWith(ConnectorAction.RESUME);
       });
     });
