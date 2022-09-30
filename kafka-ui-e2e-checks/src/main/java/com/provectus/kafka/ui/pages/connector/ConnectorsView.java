@@ -4,9 +4,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.settings.Source;
-import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
-import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
@@ -14,7 +12,6 @@ import static com.codeborne.selenide.Selenide.*;
 import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
 import static com.provectus.kafka.ui.utilities.screenshots.Screenshooter.log;
 
-@ExtensionMethod(WaitUtils.class)
 public class ConnectorsView {
     private static final String path = "/ui/clusters/%s/connects/first/connectors/%s";
     protected SelenideElement submitButton = $(By.xpath("//button[@type='submit']"));
