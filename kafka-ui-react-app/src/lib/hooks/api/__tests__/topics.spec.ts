@@ -1,23 +1,17 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { renderQueryHook, TestQueryClientProvider } from 'lib/testHelpers';
+import {
+  expectQueryWorks,
+  renderQueryHook,
+  TestQueryClientProvider,
+} from 'lib/testHelpers';
 import * as hooks from 'lib/hooks/api/topics';
 import fetchMock from 'fetch-mock';
-import { UseQueryResult } from '@tanstack/react-query';
 import { externalTopicPayload, topicConfigPayload } from 'lib/fixtures/topics';
 import { TopicFormData, TopicFormDataRaw } from 'redux/interfaces';
 import { CreateTopicMessage } from 'generated-sources';
 
 const clusterName = 'test-cluster';
 const topicName = 'test-topic';
-
-const expectQueryWorks = async (
-  mock: fetchMock.FetchMockStatic,
-  result: { current: UseQueryResult<unknown, unknown> }
-) => {
-  await waitFor(() => expect(result.current.isFetched).toBeTruthy());
-  expect(mock.calls()).toHaveLength(1);
-  expect(result.current.data).toBeDefined();
-};
 
 const topicsPath = `/api/clusters/${clusterName}/topics`;
 const topicPath = `${topicsPath}/${topicName}`;
@@ -52,13 +46,6 @@ describe('Topics hooks', () => {
     const mock = fetchMock.getOnce(`${topicPath}/consumer-groups`, []);
     const { result } = renderQueryHook(() =>
       hooks.useTopicConsumerGroups(topicParams)
-    );
-    await expectQueryWorks(mock, result);
-  });
-  it('handles useTopicMessageSchema', async () => {
-    const mock = fetchMock.getOnce(`${topicPath}/messages/schema`, {});
-    const { result } = renderQueryHook(() =>
-      hooks.useTopicMessageSchema(topicParams)
     );
     await expectQueryWorks(mock, result);
   });

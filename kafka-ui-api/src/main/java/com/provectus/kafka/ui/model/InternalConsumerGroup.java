@@ -63,26 +63,6 @@ public class InternalConsumerGroup {
     return builder.build();
   }
 
-  // removes data for all partitions that are not fit filter
-  public InternalConsumerGroup retainDataForPartitions(Predicate<TopicPartition> partitionsFilter) {
-    var offsetsMap = getOffsets().entrySet().stream()
-        .filter(e -> partitionsFilter.test(e.getKey()))
-        .collect(Collectors.toMap(
-            Map.Entry::getKey,
-            Map.Entry::getValue
-        ));
-
-    var nonEmptyMembers = getMembers().stream()
-        .map(m -> filterConsumerMemberTopic(m, partitionsFilter))
-        .filter(m -> !m.getAssignment().isEmpty())
-        .collect(Collectors.toList());
-
-    return toBuilder()
-        .offsets(offsetsMap)
-        .members(nonEmptyMembers)
-        .build();
-  }
-
   private InternalConsumerGroup.InternalMember filterConsumerMemberTopic(
       InternalConsumerGroup.InternalMember member, Predicate<TopicPartition> partitionsFilter) {
     var topicPartitions = member.getAssignment()

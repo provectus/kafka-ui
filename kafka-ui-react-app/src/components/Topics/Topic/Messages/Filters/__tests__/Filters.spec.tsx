@@ -14,15 +14,20 @@ import { SeekDirection } from 'generated-sources';
 import { clusterTopicPath } from 'lib/paths';
 import { useTopicDetails } from 'lib/hooks/api/topics';
 import { externalTopicPayload } from 'lib/fixtures/topics';
+import { useSerdes } from 'lib/hooks/api/topicMessages';
+import { serdesPayload } from 'lib/fixtures/topicMessages';
 
 jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
 }));
 
+jest.mock('lib/hooks/api/topicMessages', () => ({
+  useSerdes: jest.fn(),
+}));
+
 const defaultContextValue: ContextProps = {
   isLive: false,
   seekDirection: SeekDirection.FORWARD,
-  searchParams: new URLSearchParams(''),
   changeSeekDirection: jest.fn(),
 };
 
@@ -57,6 +62,9 @@ const renderComponent = (
 beforeEach(async () => {
   (useTopicDetails as jest.Mock).mockImplementation(() => ({
     data: externalTopicPayload,
+  }));
+  (useSerdes as jest.Mock).mockImplementation(() => ({
+    data: serdesPayload,
   }));
 });
 
@@ -143,11 +151,11 @@ describe('Filters component', () => {
     });
 
     it('seekDirection select', () => {
-      userEvent.click(seekTypeSelects[1]);
-      userEvent.selectOptions(seekTypeSelects[1], [
+      userEvent.click(seekTypeSelects[3]);
+      userEvent.selectOptions(seekTypeSelects[3], [
         mockDirectionOptionSelectLabel,
       ]);
-      expect(options[1]).toHaveTextContent(mockDirectionOptionSelectLabel);
+      expect(options[3]).toHaveTextContent(mockDirectionOptionSelectLabel);
     });
   });
 
@@ -155,7 +163,7 @@ describe('Filters component', () => {
     renderComponent();
     userEvent.click(screen.getByText('Stop loading'));
     const option = screen.getAllByRole('option');
-    expect(option[1]).toHaveTextContent('Oldest First');
+    expect(option[3]).toHaveTextContent('Oldest First');
     expect(screen.getByText('Submit')).toBeInTheDocument();
   });
 

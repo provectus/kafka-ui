@@ -5,10 +5,16 @@ import {
   Route,
   Routes,
 } from 'react-router-dom';
+import fetchMock from 'fetch-mock';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { render, renderHook, RenderOptions } from '@testing-library/react';
+import {
+  render,
+  renderHook,
+  RenderOptions,
+  waitFor,
+} from '@testing-library/react';
 import { AnyAction, Store } from 'redux';
 import { RootState } from 'redux/interfaces';
 import { configureStore } from '@reduxjs/toolkit';
@@ -20,6 +26,10 @@ import {
 } from '@tanstack/react-query';
 import { ConfirmContextProvider } from 'components/contexts/ConfirmContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
+import {
+  defaultGlobalSettingsValue,
+  GlobalSettingsContext,
+} from 'components/contexts/GlobalSettingsContext';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
@@ -31,6 +41,15 @@ interface WithRouteProps {
   children: React.ReactNode;
   path: string;
 }
+
+export const expectQueryWorks = async (
+  mock: fetchMock.FetchMockStatic,
+  result: { current: UseQueryResult<unknown, unknown> }
+) => {
+  await waitFor(() => expect(result.current.isFetched).toBeTruthy());
+  expect(mock.calls()).toHaveLength(1);
+  expect(result.current.data).toBeDefined();
+};
 
 export const WithRoute: React.FC<WithRouteProps> = ({ children, path }) => {
   return (
@@ -68,20 +87,22 @@ const customRender = (
   const AllTheProviders: React.FC<PropsWithChildren<unknown>> = ({
     children,
   }) => (
-    <ThemeProvider theme={theme}>
-      <ConfirmContextProvider>
-        <Provider store={store}>
-          <TestQueryClientProvider>
-            <MemoryRouter initialEntries={initialEntries}>
-              <div>
-                {children}
-                <ConfirmationModal />
-              </div>
-            </MemoryRouter>
-          </TestQueryClientProvider>
-        </Provider>
-      </ConfirmContextProvider>
-    </ThemeProvider>
+    <TestQueryClientProvider>
+      <GlobalSettingsContext.Provider value={defaultGlobalSettingsValue}>
+        <ThemeProvider theme={theme}>
+          <ConfirmContextProvider>
+            <Provider store={store}>
+              <MemoryRouter initialEntries={initialEntries}>
+                <div>
+                  {children}
+                  <ConfirmationModal />
+                </div>
+              </MemoryRouter>
+            </Provider>
+          </ConfirmContextProvider>
+        </ThemeProvider>
+      </GlobalSettingsContext.Provider>
+    </TestQueryClientProvider>
   );
   return render(ui, { wrapper: AllTheProviders, ...renderOptions });
 };
