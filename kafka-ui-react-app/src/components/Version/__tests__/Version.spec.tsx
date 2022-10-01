@@ -1,22 +1,103 @@
 import React from 'react';
-import Version, { VesionProps } from 'components/Version/Version';
-import { screen } from '@testing-library/react';
+import { screen } from '@testing-library/dom';
+import Version from 'components/Version/Version';
 import { render } from 'lib/testHelpers';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
+import { useTimeFormat } from 'lib/hooks/api/timeFormat';
+import { useActuatorInfo } from 'lib/hooks/api/actuatorInfo';
+import { useLatestVersion } from 'lib/hooks/api/latestVersion';
+import { actuatorInfoPayload } from 'lib/fixtures/actuatorInfo';
+import { latestVersionPayload } from 'lib/fixtures/latestVersion';
+import { defaultGlobalSettingsValue } from 'components/contexts/GlobalSettingsContext';
 
-const tag = 'v1.0.1-SHAPSHOT';
-const commit = '123sdf34';
+jest.mock('lib/hooks/api/timeFormat', () => ({
+  useTimeFormat: jest.fn(),
+}));
+jest.mock('lib/hooks/api/actuatorInfo', () => ({
+  useActuatorInfo: jest.fn(),
+}));
+jest.mock('lib/hooks/api/latestVersion', () => ({
+  useLatestVersion: jest.fn(),
+}));
 
-describe('Version', () => {
-  const setupComponent = (props: VesionProps) => render(<Version {...props} />);
+describe('Version Component', () => {
+  const { timeStampFormat } = defaultGlobalSettingsValue;
 
-  it('renders', () => {
-    setupComponent({ tag });
-    expect(screen.getByText(tag)).toBeInTheDocument();
+  const versionTag = 'v0.5.0';
+  const snapshotTag = 'test-SNAPSHOT';
+  const commitTag = 'befd3b328e2c9c7df57b0c5746561b2f7fee8813';
+
+  const actuatorVersionPayload = actuatorInfoPayload(versionTag);
+  const formattedTimestamp = formatTimestamp(
+    actuatorVersionPayload.build.time,
+    timeStampFormat
+  );
+
+  beforeEach(() => {
+    (useTimeFormat as jest.Mock).mockImplementation(() => ({
+      data: {
+        timeStampFormat,
+      },
+    }));
+    (useActuatorInfo as jest.Mock).mockImplementation(() => ({
+      data: actuatorVersionPayload,
+    }));
+    (useLatestVersion as jest.Mock).mockImplementation(() => ({
+      data: latestVersionPayload,
+    }));
   });
 
-  it('shows current tag and commit', () => {
-    setupComponent({ tag, commit });
-    expect(screen.getByText(tag)).toBeInTheDocument();
-    expect(screen.getByText(commit)).toBeInTheDocument();
+  describe('tag does not exist', () => {
+    it('does not render component', async () => {
+      (useActuatorInfo as jest.Mock).mockImplementation(() => ({
+        data: null,
+      }));
+      const { container } = render(<Version />);
+      expect(container.firstChild).toBeEmptyDOMElement();
+    });
+  });
+
+  describe('renders current version', () => {
+    it('renders release build version as current version', async () => {
+      render(<Version />);
+      expect(screen.getByText(versionTag)).toBeInTheDocument();
+    });
+    it('renders formatted timestamp as current version when version is commit', async () => {
+      (useActuatorInfo as jest.Mock).mockImplementation(() => ({
+        data: actuatorInfoPayload(commitTag),
+      }));
+      render(<Version />);
+      expect(screen.getByText(formattedTimestamp)).toBeInTheDocument();
+    });
+    it('renders formatted timestamp as current version when version contains -SNAPSHOT', async () => {
+      (useActuatorInfo as jest.Mock).mockImplementation(() => ({
+        data: actuatorInfoPayload(snapshotTag),
+      }));
+      render(<Version />);
+      expect(screen.getByText(formattedTimestamp)).toBeInTheDocument();
+    });
+  });
+
+  describe('outdated build version', () => {
+    it('renders warning message', async () => {
+      (useActuatorInfo as jest.Mock).mockImplementation(() => ({
+        data: actuatorInfoPayload('v0.3.0'),
+      }));
+      render(<Version />);
+      expect(
+        screen.getByTitle(
+          `Your app version is outdated. Current latest version is ${latestVersionPayload.tag_name}`
+        )
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('current commit id with link', () => {
+    it('renders', async () => {
+      render(<Version />);
+      expect(
+        screen.getByText(actuatorVersionPayload.git.commit.id)
+      ).toBeInTheDocument();
+    });
   });
 });

@@ -1,19 +1,21 @@
+import React from 'react';
 import { Row } from '@tanstack/react-table';
-import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import Heading from 'components/common/heading/Heading.styled';
+import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import {
   List,
   Label,
 } from 'components/common/PropertiesList/PropertiesList.styled';
+import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 import { TopicAnalysisStats } from 'generated-sources';
-import { formatTimestamp } from 'lib/dateTimeHelpers';
-import React from 'react';
 
 import * as S from './Statistics.styles';
 
 const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
   row,
 }) => {
+  const formatTimestamp = useTimeFormat();
+
   const {
     totalMsgs,
     minTimestamp,
