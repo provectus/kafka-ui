@@ -15,11 +15,15 @@ export const Wrapper = styled.div`
 `;
 
 export const Title = styled.h1`
-  color: ${({ theme }) => theme.dangerZone.color};
+  color: ${({ theme }) => theme.dangerZone.color.title};
   font-size: 20px;
   padding-bottom: 16px;
 `;
-
+export const Warning = styled.div`
+  color: ${({ theme }) => theme.dangerZone.color.warningMessage};
+  font-size: 12px;
+  padding-bottom: 16px;
+`;
 export const Form = styled.form`
   display: flex;
   align-items: flex-end;
