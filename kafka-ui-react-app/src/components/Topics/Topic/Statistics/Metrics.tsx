@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   useAnalyzeTopic,
   useCancelTopicAnalysis,
@@ -29,22 +29,43 @@ const Metrics: React.FC = () => {
   const analyzeTopic = useAnalyzeTopic(params);
   const cancelTopicAnalysis = useCancelTopicAnalysis(params);
 
+  const [minutes, setMinutes] = useState<number>(0);
+  const [seconds, setSeconds] = useState<number>(0);
+
   const { data } = useTopicAnalysis(params, isAnalyzing);
 
-  React.useEffect(() => {
+  const getTime = () => {
+    setMinutes(Math.floor(seconds / 60));
+    setSeconds(Math.floor(seconds + 1));
+  };
+
+  useEffect(() => {
     if (data && !data.progress) {
       setIsAnalyzing(false);
     }
   }, [data]);
 
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (data?.progress) {
+      const interval = setInterval(() => getTime(), 1000);
+      return () => clearInterval(interval);
+    }
+  }, [seconds, data]);
+
   if (!data) {
     return null;
   }
 
+  const passedTime = (time: number) => (time < 10 ? `0${time}` : time);
+
   if (data.progress) {
     return (
       <S.ProgressContainer>
-        <ProgressBar completed={data.progress.completenessPercent || 0} />
+        <S.ProgressBarWrapper>
+          <ProgressBar completed={data.progress.completenessPercent || 0} />
+          <span> {data.progress.completenessPercent || 0} %</span>
+        </S.ProgressBarWrapper>
         <Button
           onClick={async () => {
             await cancelTopicAnalysis.mutateAsync();
@@ -58,9 +79,17 @@ const Metrics: React.FC = () => {
         <List>
           <Label>Started at</Label>
           <span>{formatTimestamp(data.progress.startedAt, 'hh:mm:ss a')}</span>
+          <Label>Passed at</Label>
+          <S.PassedTime>
+            <span>{`${passedTime(minutes)} : ${passedTime(
+              seconds % 60
+            )}`}</span>
+            <span>s</span>
+          </S.PassedTime>
           <Label>Scanned messages</Label>
+          <span>{data.progress.msgsScanned}</span>
+          <Label>Scanned bytes</Label>
           <span>
-            {data.progress.msgsScanned} /{' '}
             <BytesFormatted value={data.progress.bytesScanned} />
           </span>
         </List>

@@ -13,6 +13,7 @@ import userEvent from '@testing-library/user-event';
 
 const clusterName = 'local';
 const topicName = 'topic';
+const time = 100;
 
 jest.mock('lib/hooks/api/topics', () => ({
   ...jest.requireActual('lib/hooks/api/topics'),
@@ -32,6 +33,27 @@ describe('Metrics', () => {
     );
   };
 
+  describe('setinterval fn', () => {
+    it('should increment index by 1 after 1 second (using advanceTimersByTime)', () => {
+      let minutes = 0;
+      let seconds = 0;
+      const getTime = jest.fn(() => {
+        minutes = Math.floor(time / 60);
+        seconds = Math.floor(time + 1);
+      });
+      getTime();
+      expect(minutes).toBe(1);
+      expect(seconds).toBe(101);
+
+      expect(getTime).toBeCalled();
+      expect(getTime).toHaveBeenCalledTimes(1);
+
+      jest.useFakeTimers();
+      jest.useRealTimers();
+      jest.clearAllTimers();
+    });
+  });
+
   describe('when analysis is in progress', () => {
     const cancelMock = jest.fn();
     beforeEach(() => {
@@ -50,10 +72,10 @@ describe('Metrics', () => {
       renderComponent();
     });
 
-    it('renders Stop Analysis button', () => {
+    it('renders Stop Analysis button', async () => {
       const btn = screen.getByRole('button', { name: 'Stop Analysis' });
       expect(btn).toBeInTheDocument();
-      userEvent.click(btn);
+      await waitFor(() => userEvent.click(btn));
       expect(cancelMock).toHaveBeenCalled();
     });
 
