@@ -1,14 +1,19 @@
 import React from 'react';
 import useAppParams from 'lib/hooks/useAppParams';
-import { ClusterNameRoute } from 'lib/paths';
-import { Table } from 'components/common/table/Table/Table.styled';
-import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import { clusterConnectConnectorPath, ClusterNameRoute } from 'lib/paths';
+import Table from 'components/common/NewTable';
+import { FullConnectorInfo } from 'generated-sources';
 import { useConnectors } from 'lib/hooks/api/kafkaConnect';
-import { useSearchParams } from 'react-router-dom';
+import { ColumnDef } from '@tanstack/react-table';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import ListItem from './ListItem';
+import ActionsCell from './ActionsCell';
+import TopicCell from './TopicCell';
+import StatusCell from './StatusCell';
+import RunningTasksCell from './RunningTasksCell';
 
 const List: React.FC = () => {
+  const navigate = useNavigate();
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const [searchParams] = useSearchParams();
   const { data: connectors } = useConnectors(
@@ -16,35 +21,30 @@ const List: React.FC = () => {
     searchParams.get('q') || ''
   );
 
+  const columns = React.useMemo<ColumnDef<FullConnectorInfo>[]>(
+    () => [
+      { header: 'Name', accessorKey: 'name' },
+      { header: 'Connect', accessorKey: 'connect' },
+      { header: 'Type', accessorKey: 'type' },
+      { header: 'Plugin', accessorKey: 'connectorClass' },
+      { header: 'Topics', cell: TopicCell },
+      { header: 'Status', accessorKey: 'status', cell: StatusCell },
+      { header: 'Running Tasks', cell: RunningTasksCell },
+      { header: '', id: 'action', cell: ActionsCell },
+    ],
+    []
+  );
+
   return (
-    <Table isFullwidth>
-      <thead>
-        <tr>
-          <TableHeaderCell title="Name" />
-          <TableHeaderCell title="Connect" />
-          <TableHeaderCell title="Type" />
-          <TableHeaderCell title="Plugin" />
-          <TableHeaderCell title="Topics" />
-          <TableHeaderCell title="Status" />
-          <TableHeaderCell title="Running Tasks" />
-          <TableHeaderCell> </TableHeaderCell>
-        </tr>
-      </thead>
-      <tbody>
-        {(!connectors || connectors.length) === 0 && (
-          <tr>
-            <td colSpan={10}>No connectors found</td>
-          </tr>
-        )}
-        {connectors?.map((connector) => (
-          <ListItem
-            key={connector.name}
-            connector={connector}
-            clusterName={clusterName}
-          />
-        ))}
-      </tbody>
-    </Table>
+    <Table
+      data={connectors || []}
+      columns={columns}
+      enableSorting
+      onRowClick={({ original: { connect, name } }) =>
+        navigate(clusterConnectConnectorPath(clusterName, connect, name))
+      }
+      emptyMessage="No connectors found"
+    />
   );
 };
 

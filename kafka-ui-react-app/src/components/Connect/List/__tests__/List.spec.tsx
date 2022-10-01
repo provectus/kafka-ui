@@ -10,13 +10,9 @@ import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectorsPath } from 'lib/paths';
 import { useConnectors } from 'lib/hooks/api/kafkaConnect';
 
-jest.mock('components/Connect/List/ListItem', () => () => (
-  <tr>
-    <td>List Item</td>
-  </tr>
-));
 jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useConnectors: jest.fn(),
+  useDeleteConnector: jest.fn(),
 }));
 
 const clusterName = 'local';
@@ -48,6 +44,5 @@ describe('Connectors List', () => {
     }));
     await renderComponent();
     expect(screen.getByRole('table')).toBeInTheDocument();
-    expect(screen.getAllByText('List Item').length).toEqual(2);
   });
 });
