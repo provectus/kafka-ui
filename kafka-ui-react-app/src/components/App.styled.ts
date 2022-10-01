@@ -20,9 +20,10 @@ export const Container = styled.main(
     position: relative;
     padding-bottom: 30px;
     z-index: 20;
-
+    max-width: calc(100vw - ${theme.layout.navBarWidth});
     @media screen and (max-width: 1023px) {
       margin-left: initial;
+      max-width: 100vw;
     }
   `
 );
