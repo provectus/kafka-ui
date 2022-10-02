@@ -42,7 +42,7 @@ const TopicTable: React.FC = () => {
       },
       {
         id: TopicColumnsToSort.TOTAL_PARTITIONS,
-        header: 'Total Partitions',
+        header: 'Partitions',
         accessorKey: 'partitionCount',
       },
       {
