@@ -11,7 +11,7 @@ import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
 public class SchemaEditView {
 
@@ -32,7 +32,7 @@ public class SchemaEditView {
     }
     @Step
     public SchemaView clickSubmit() {
-        javaExecutorClick($(By.xpath("//button[@type='submit']")));
+        clickByJavaScript($(By.xpath("//button[@type='submit']")));
         return new SchemaView();
     }
 

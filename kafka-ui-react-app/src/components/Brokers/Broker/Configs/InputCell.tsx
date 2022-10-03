@@ -70,7 +70,7 @@ const InputCell: React.FC<InputCellProps> = ({ row, getValue, onUpdate }) => {
           : { fontWeight: 400 }
       }
     >
-      <S.Value>{initialValue}</S.Value>
+      <S.Value title={initialValue}>{initialValue}</S.Value>
       <Button
         buttonType="primary"
         buttonSize="S"

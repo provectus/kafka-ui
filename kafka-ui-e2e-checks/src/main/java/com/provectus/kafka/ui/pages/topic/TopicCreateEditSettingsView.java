@@ -8,7 +8,7 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
-import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TopicCreateEditSettingsView {
@@ -83,7 +83,7 @@ public class TopicCreateEditSettingsView {
     }
     @Step
     public TopicView sendData() {
-        javaExecutorClick($x("//button[@type='submit']"));
+        clickByJavaScript($x("//button[@type='submit']"));
         return new TopicView();
     }
     @Step
