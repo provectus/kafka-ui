@@ -3,9 +3,10 @@ import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import Switch from 'components/common/Switch/Switch';
 import { useClusters } from 'lib/hooks/api/clusters';
-import { ServerStatus } from 'generated-sources';
+import { Cluster, ServerStatus } from 'generated-sources';
 import { ColumnDef } from '@tanstack/react-table';
 import Table, { SizeCell, LinkTopic } from 'components/common/NewTable';
+import { clusterTopicsPath } from 'lib/paths';
 
 import * as S from './ClustersWidget.styled';
 import ClusterName from './ClusterName';
@@ -26,13 +27,20 @@ const ClustersWidget: React.FC = () => {
     };
   }, [data, showOfflineOnly]);
 
-  const columns = React.useMemo<ColumnDef<typeof config>[]>(
+  const columns = React.useMemo<ColumnDef<Cluster>[]>(
     () => [
       { header: 'Cluster name', accessorKey: 'name', cell: ClusterName },
       { header: 'Version', accessorKey: 'version' },
       { header: 'Brokers count', accessorKey: 'brokerCount' },
       { header: 'Partitions', accessorKey: 'onlinePartitionCount' },
-      { header: 'Topics', accessorKey: 'topicCount', cell: LinkTopic },
+      {
+        header: 'Topics',
+        accessorKey: 'topicCount',
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ row }) => (
+          <LinkTopic row={row} to={clusterTopicsPath(row.original.name)} />
+        ),
+      },
       { header: 'Production', accessorKey: 'bytesInPerSec', cell: SizeCell },
       { header: 'Consumption', accessorKey: 'bytesOutPerSec', cell: SizeCell },
     ],
