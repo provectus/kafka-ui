@@ -90,6 +90,7 @@ const theme = {
     navBarWidth: '201px',
     navBarHeight: '53px',
     rightSidebarWidth: '70vw',
+    filtersSidebarWidth: '300px',
 
     stuffColor: Colors.neutral[5],
     stuffBorderColor: Colors.neutral[10],
