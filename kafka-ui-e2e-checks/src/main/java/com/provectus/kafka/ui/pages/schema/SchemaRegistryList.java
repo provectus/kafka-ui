@@ -7,7 +7,7 @@ import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
 import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
-import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
 public class SchemaRegistryList {
 
@@ -15,7 +15,7 @@ public class SchemaRegistryList {
 
     @Step
     public SchemaCreateView clickCreateSchema() {
-        javaExecutorClick(schemaButton);
+        clickByJavaScript(schemaButton);
         return new SchemaCreateView();
     }
 
