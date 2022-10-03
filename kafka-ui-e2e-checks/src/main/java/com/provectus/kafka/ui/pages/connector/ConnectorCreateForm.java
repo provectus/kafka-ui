@@ -12,9 +12,9 @@ import static com.provectus.kafka.ui.utilities.screenshots.Screenshooter.log;
 
 public class ConnectorCreateForm {
 
-    SelenideElement nameField = $(By.xpath("//input[@name='name']"));
-    SelenideElement contentTextArea = $(".ace_text-input");
-    SelenideElement submitButton = $(By.xpath("//button[@type='submit']"));
+    protected SelenideElement nameField = $(By.xpath("//input[@name='name']"));
+    protected SelenideElement contentTextArea = $(".ace_text-input");
+    protected SelenideElement submitButton = $(By.xpath("//button[@type='submit']"));
 
     private static final String path = "/ui/clusters/secondLocal/connectors/create_new";
 
