@@ -1,15 +1,18 @@
 package com.provectus.kafka.ui.utilities;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.codeborne.selenide.Selenide.executeJavaScript;
 
 @Slf4j
 public class WebUtils {
 
-    public static void javaExecutorClick(SelenideElement element){
-        Selenide.executeJavaScript("arguments[0].click();", element);
+    public static void clickByJavaScript(SelenideElement element) {
+        element.shouldBe(Condition.enabled);
+        String script = "arguments[0].click();";
+        executeJavaScript(script, element);
     }
 
     public static boolean isVisible(SelenideElement element) {

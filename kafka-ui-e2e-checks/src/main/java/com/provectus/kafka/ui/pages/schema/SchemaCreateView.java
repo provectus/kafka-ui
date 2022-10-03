@@ -7,7 +7,7 @@ import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
 public class SchemaCreateView {
 
@@ -22,7 +22,7 @@ public class SchemaCreateView {
     }
     @Step
     public SchemaView clickSubmit() {
-        javaExecutorClick(submitSchemaButton);
+        clickByJavaScript(submitSchemaButton);
         return new SchemaView();
     }
     @Step

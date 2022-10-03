@@ -96,9 +96,13 @@ public class ConnectorsTests extends BaseTest {
         connectorsList.goTo(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_DELETE.getName());
-        connectorsView.clickDeleteButton();
+        connectorsView
+                .waitUntilScreenReady()
+                .openDotMenu()
+                .clickDeleteButton()
+                .clickConfirmButton();
         connectorsList.goTo(CLUSTER_NAME);
-        Assertions.assertFalse(connectorsList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()),"isConnectorVisible()");
+        Assertions.assertFalse(connectorsList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()), "isConnectorVisible()");
         CONNECTOR_LIST.remove(CONNECTOR_FOR_DELETE);
     }
 
