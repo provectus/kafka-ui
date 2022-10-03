@@ -6,7 +6,7 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
-import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
 public class SchemaView {
 
@@ -30,7 +30,7 @@ public class SchemaView {
     }
     @Step
     public SchemaRegistryList removeSchema() {
-        javaExecutorClick(dotMenuBtn);
+        clickByJavaScript(dotMenuBtn);
         $(By.xpath("//*[contains(text(),'Remove')]")).click();
         SelenideElement confirmButton = $x("//div[@role=\"dialog\"]//button[text()='Confirm']");
         confirmButton.shouldBe(Condition.enabled).click();
