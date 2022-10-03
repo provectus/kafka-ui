@@ -43,7 +43,8 @@ class SchemaRegistrySerdeTest {
       "test_topic, test_topic-key, KEY",
       "test_topic, test_topic-value, VALUE"
   })
-  void returnsSchemaDescriptionIfSchemaRegisteredInSR(String topic, String subject, Serde.Target target) throws RestClientException, IOException {
+  @SneakyThrows
+  void returnsSchemaDescriptionIfSchemaRegisteredInSR(String topic, String subject, Serde.Target target) {
     int schemaId = registryClient.register(subject, new AvroSchema("{ \"type\": \"int\" }"));
     int registeredVersion = registryClient.getLatestSchemaMetadata(subject).getVersion();
 
