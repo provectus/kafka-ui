@@ -11,7 +11,7 @@ import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
 import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
-import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
 @ExtensionMethod(WaitUtils.class)
 public class TopicsList {
@@ -33,7 +33,7 @@ public class TopicsList {
 
     @Step
     public TopicCreateEditSettingsView pressCreateNewTopic() {
-        javaExecutorClick($x("//button[normalize-space(text()) ='Add a Topic']"));
+        clickByJavaScript($x("//button[normalize-space(text()) ='Add a Topic']"));
         return new TopicCreateEditSettingsView();
     }
 

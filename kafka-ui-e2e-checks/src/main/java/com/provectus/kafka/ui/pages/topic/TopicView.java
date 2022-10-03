@@ -10,7 +10,7 @@ import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
-import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
 @ExtensionMethod({WaitUtils.class})
 public class TopicView {
@@ -32,7 +32,7 @@ public class TopicView {
 
     @Step
     public TopicCreateEditSettingsView openEditSettings() {
-        javaExecutorClick(dotMenuBtn);
+        clickByJavaScript(dotMenuBtn);
         $x("//li[@role][text()='Edit settings']").click();
         return new TopicCreateEditSettingsView();
     }
@@ -45,7 +45,7 @@ public class TopicView {
 
     @Step
     public TopicsList deleteTopic() {
-        javaExecutorClick(dotMenuBtn);
+        clickByJavaScript(dotMenuBtn);
         $x("//ul[@role='menu']//div[text()='Remove Topic']").click();
         SelenideElement confirmButton = $x("//div[@role=\"dialog\"]//button[text()='Confirm']");
         confirmButton.shouldBe(Condition.enabled).click();
@@ -55,7 +55,7 @@ public class TopicView {
 
     @Step
     public ProduceMessagePanel clickOnButton(String buttonName) {
-        javaExecutorClick($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
+        clickByJavaScript($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
         return new ProduceMessagePanel();
     }
 

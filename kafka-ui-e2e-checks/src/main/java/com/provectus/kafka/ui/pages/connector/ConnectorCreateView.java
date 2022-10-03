@@ -7,7 +7,7 @@ import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
-import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 import static com.provectus.kafka.ui.utilities.screenshots.Screenshooter.log;
 
 public class ConnectorCreateView {
@@ -25,7 +25,7 @@ public class ConnectorCreateView {
         contentTextArea.setValue("");
         contentTextArea.setValue(String.valueOf(configJson.toCharArray()));
         nameField.click();
-        javaExecutorClick(submitButton);
+        clickByJavaScript(submitButton);
         sleep(4000);
         log.info("Connector config is submitted");
         return new ConnectorsView();
