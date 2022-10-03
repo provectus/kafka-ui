@@ -2035,6 +2035,10 @@ components:
           format: int64
         segmentCount:
           type: integer
+        bytesInPerSec:
+          type: number
+        bytesOutPerSec:
+          type: number
         underReplicatedPartitions:
           type: integer
         cleanUpPolicy:

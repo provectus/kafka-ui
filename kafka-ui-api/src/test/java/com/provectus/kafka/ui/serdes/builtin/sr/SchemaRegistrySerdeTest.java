@@ -23,6 +23,8 @@ import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class SchemaRegistrySerdeTest {
 
@@ -36,21 +38,27 @@ class SchemaRegistrySerdeTest {
     serde.configure(List.of("wontbeused"), registryClient, "%s-key", "%s-value");
   }
 
-  @Test
-  void returnsSchemaDescriptionIfSchemaRegisteredInSR() throws RestClientException, IOException {
-    String topic = "test";
-    registryClient.register(topic + "-key", new AvroSchema("{ \"type\": \"int\" }"));
-    registryClient.register(topic + "-value", new AvroSchema("{ \"type\": \"float\" }"));
+  @ParameterizedTest
+  @CsvSource({
+      "test_topic, test_topic-key, KEY",
+      "test_topic, test_topic-value, VALUE"
+  })
+  void returnsSchemaDescriptionIfSchemaRegisteredInSR(String topic, String subject, Serde.Target target) throws RestClientException, IOException {
+    int schemaId = registryClient.register(subject, new AvroSchema("{ \"type\": \"int\" }"));
+    int registeredVersion = registryClient.getLatestSchemaMetadata(subject).getVersion();
 
-    var keySchemaOptional = serde.getSchema(topic, Serde.Target.KEY);
-    assertThat(keySchemaOptional)
-        .map(SchemaDescription::getSchema)
+    var schemaOptional = serde.getSchema(topic, target);
+    assertThat(schemaOptional).isPresent();
+
+    SchemaDescription schemaDescription = schemaOptional.get();
+    assertThat(schemaDescription.getSchema())
         .contains("{\"$id\":\"int\",\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"integer\"}");
-
-    var valueSchemaOptional = serde.getSchema(topic, Serde.Target.VALUE);
-    assertThat(valueSchemaOptional)
-        .map(SchemaDescription::getSchema)
-        .contains("{\"$id\":\"float\",\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"number\"}");
+    assertThat(schemaDescription.getAdditionalProperties())
+        .containsOnlyKeys("subject", "schemaId", "latestVersion", "type")
+        .containsEntry("subject", subject)
+        .containsEntry("schemaId", schemaId)
+        .containsEntry("latestVersion", registeredVersion)
+        .containsEntry("type", "AVRO");
   }
 
   @Test
