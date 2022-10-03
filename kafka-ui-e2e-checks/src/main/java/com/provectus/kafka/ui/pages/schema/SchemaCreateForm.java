@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.pages.schema;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
@@ -13,31 +12,45 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
-public class SchemaEditView {
+public class SchemaCreateForm {
 
+    protected SelenideElement subjectName = $(By.xpath("//input[@name='subject']"));
+    protected SelenideElement schemaField = $(By.xpath("//textarea[@name='schema']"));
+    protected SelenideElement submitSchemaButton = $(By.xpath("//button[@type='submit']"));
     protected SelenideElement newSchemaTextArea = $("#newSchema [wrap]");
     protected SelenideElement schemaTypeDropDown = $x("//ul[@name='schemaType']");
 
     @Step
-    public SchemaEditView selectSchemaTypeFromDropdown(SchemaType schemaType) {
-        $x("//ul[@name='schemaType']").click();
+    public SchemaCreateForm setSubjectName(String name) {
+        subjectName.setValue(name);
+        return this;
+    }
+    @Step
+    public SchemaCreateForm setSchemaField(String text) {
+        schemaField.setValue(text);
+        return this;
+    }
+    @Step
+    public SchemaCreateForm selectSchemaTypeFromDropdown(SchemaType schemaType) {
+        $("ul[role='listbox']").click();
         $x("//li[text()='" + schemaType.getValue() + "']").click();
         return this;
     }
     @Step
-    public SchemaEditView selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum level) {
+    public SchemaDetails clickSubmit() {
+        clickByJavaScript(submitSchemaButton);
+        return new SchemaDetails();
+    }
+
+    @Step
+    public SchemaCreateForm selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum level) {
         $x("//ul[@name='compatibilityLevel']").click();
         $x("//li[text()='" + level.getValue() + "']").click();
         return this;
     }
-    @Step
-    public SchemaView clickSubmit() {
-        clickByJavaScript($(By.xpath("//button[@type='submit']")));
-        return new SchemaView();
-    }
 
     @Step("Set new schema value")
-    public SchemaEditView setNewSchemaValue(String configJson) {
+    public SchemaCreateForm setNewSchemaValue(String configJson) {
         $("#newSchema").click();
         newSchemaTextArea.sendKeys(Keys.CONTROL + "a", Keys.BACK_SPACE);
         Selenide.executeJavaScript("arguments[0].value = '';", $("#newSchema"));
@@ -46,21 +59,14 @@ public class SchemaEditView {
     }
 
     @Step
-    public SchemaRegistryList removeSchema() {
-        $(By.xpath("//*[contains(text(),'Remove')]")).click();
-        $(By.xpath("//*[text()='Confirm']")).shouldBe(Condition.visible).click();
-        return new SchemaRegistryList();
-    }
-
-    @Step
     public boolean isSchemaDropDownDisabled(){
         boolean disabled = false;
         try{
-           String attribute = schemaTypeDropDown.getAttribute("disabled");
-           disabled = true;
+            String attribute = schemaTypeDropDown.getAttribute("disabled");
+            disabled = true;
         }
         catch (Throwable ignored){
         }
-       return disabled;
+        return disabled;
     }
 }
