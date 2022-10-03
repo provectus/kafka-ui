@@ -57,9 +57,12 @@ public class InternalTopic {
           partitionDto.inSyncReplicasCount(partition.isr().size());
           partitionDto.replicasCount(partition.replicas().size());
           List<InternalReplica> replicas = partition.replicas().stream()
-              .map(r -> new InternalReplica(r.id(),
-                  partition.leader() != null && partition.leader().id() != r.id(),
-                  partition.isr().contains(r)))
+              .map(r ->
+                  InternalReplica.builder()
+                    .broker(r.id())
+                    .inSync(partition.isr().contains(r))
+                    .leader(partition.leader() != null && partition.leader().id() == r.id())
+                    .build())
               .collect(Collectors.toList());
           partitionDto.replicas(replicas);
 
