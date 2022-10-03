@@ -15,21 +15,25 @@ public class TopicCreateEditForm {
 
     private final SelenideElement timeToRetain = $(By.cssSelector("input#timeToRetain"));
     private final SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
+
     @Step
     public TopicCreateEditForm setTopicName(String topicName) {
         $("input#topicFormName").setValue(topicName);
         return this;
     }
+
     @Step
     public TopicCreateEditForm setMinInsyncReplicas(Integer minInsyncReplicas) {
         $("input[name=minInSyncReplicas]").setValue(minInsyncReplicas.toString());
         return this;
     }
+
     @Step
     public TopicCreateEditForm setTimeToRetainDataInMs(Long ms) {
         timeToRetain.setValue(ms.toString());
         return this;
     }
+
     @Step
     public TopicCreateEditForm setTimeToRetainDataInMs(String ms) {
         timeToRetain.setValue(ms);
@@ -42,15 +46,18 @@ public class TopicCreateEditForm {
         kafkaUISelectElement.selectByVisibleText(value);
         return this;
     }
+
     @Step
     public TopicCreateEditForm setMaxMessageBytes(Long bytes) {
         maxMessageBytes.setValue(bytes.toString());
         return this;
     }
+
     @Step
     public TopicCreateEditForm setMaxMessageBytes(String bytes) {
         return setMaxMessageBytes(Long.parseLong(bytes));
     }
+
     @Step
     public TopicCreateEditForm setTimeToRetainDataInMsUsingButtons(String value) {
         timeToRetain
@@ -67,25 +74,30 @@ public class TopicCreateEditForm {
         return selectFromDropDownByOptionValue("cleanupPolicy",
                 cleanupPolicyValue.getOptionValue());
     }
+
     @Step
     public TopicCreateEditForm selectCleanupPolicy(String cleanupPolicyOptionValue) {
         $("ul#topicFormCleanupPolicy").click();
         $x("//li[text()='" + cleanupPolicyOptionValue + "']").click();
         return this;
     }
+
     @Step
     public TopicCreateEditForm selectRetentionBytes(String visibleValue) {
         return selectFromDropDownByVisibleText("retentionBytes", visibleValue);
     }
+
     @Step
     public TopicCreateEditForm selectRetentionBytes(Long optionValue) {
         return selectFromDropDownByOptionValue("retentionBytes", optionValue.toString());
     }
+
     @Step
     public TopicDetails sendData() {
         clickByJavaScript($x("//button[@type='submit']"));
         return new TopicDetails();
     }
+
     @Step
     public TopicCreateEditForm addCustomParameter(String customParameterName,
                                                   String customParameterValue) {
@@ -110,6 +122,7 @@ public class TopicCreateEditForm {
                 .setValue(customParameterValue);
         return this;
     }
+
     @Step
     public TopicCreateEditForm updateCustomParameter(String customParameterName,
                                                      String customParameterValue) {
@@ -122,6 +135,7 @@ public class TopicCreateEditForm {
         $(String.format("input[name^=%s]", name)).setValue(customParameterValue);
         return this;
     }
+
     @Step
     public TopicCreateEditForm cleanupPolicyIs(String value) {
         String cleanupPolicy = new KafkaUISelectElement("cleanupPolicy")
@@ -131,6 +145,7 @@ public class TopicCreateEditForm {
                 .isEqualToIgnoringCase(value);
         return this;
     }
+
     @Step
     public TopicCreateEditForm timeToRetainIs(String time) {
         String value = timeToRetain.getValue();
@@ -139,6 +154,7 @@ public class TopicCreateEditForm {
                 .isEqualTo(time);
         return this;
     }
+
     @Step
     public String getCleanupPolicy() {
         return new KafkaUISelectElement("cleanupPolicy").getCurrentValue();

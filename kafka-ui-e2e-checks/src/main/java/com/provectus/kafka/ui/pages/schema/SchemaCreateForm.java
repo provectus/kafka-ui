@@ -25,17 +25,20 @@ public class SchemaCreateForm {
         subjectName.setValue(name);
         return this;
     }
+
     @Step
     public SchemaCreateForm setSchemaField(String text) {
         schemaField.setValue(text);
         return this;
     }
+
     @Step
     public SchemaCreateForm selectSchemaTypeFromDropdown(SchemaType schemaType) {
         $("ul[role='listbox']").click();
         $x("//li[text()='" + schemaType.getValue() + "']").click();
         return this;
     }
+
     @Step
     public SchemaDetails clickSubmit() {
         clickByJavaScript(submitSchemaButton);

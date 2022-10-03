@@ -28,6 +28,7 @@ public class SchemaDetails {
         $x("//button[text()= 'Edit Schema']").click();
         return this;
     }
+
     @Step
     public SchemaRegistryList removeSchema() {
         clickByJavaScript(dotMenuBtn);
