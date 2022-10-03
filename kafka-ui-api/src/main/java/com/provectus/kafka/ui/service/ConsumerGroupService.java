@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.model.ConsumerGroupOrderingDTO;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
+import com.provectus.kafka.ui.model.InternalTopicConsumerGroup;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SortOrderDTO;
 import java.util.ArrayList;
@@ -29,7 +30,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
-
 
 @Service
 @RequiredArgsConstructor
@@ -71,35 +71,36 @@ public class ConsumerGroupService {
             .flatMap(descriptions -> getConsumerGroups(ac, descriptions)));
   }
 
-  public Mono<List<InternalConsumerGroup>> getConsumerGroupsForTopic(KafkaCluster cluster,
-                                                                     String topic) {
+  public Mono<List<InternalTopicConsumerGroup>> getConsumerGroupsForTopic(KafkaCluster cluster,
+                                                                          String topic) {
     return adminClientService.get(cluster)
         // 1. getting topic's end offsets
         .flatMap(ac -> ac.listOffsets(topic, OffsetSpec.latest())
             .flatMap(endOffsets -> {
               var tps = new ArrayList<>(endOffsets.keySet());
               // 2. getting all consumer groups
-              return ac.listConsumerGroups()
-                  .flatMap((List<String> groups) ->
+              return describeConsumerGroups(ac, null)
+                  .flatMap((List<ConsumerGroupDescription> groups) ->
                       Flux.fromIterable(groups)
                           // 3. for each group trying to find committed offsets for topic
                           .flatMap(g ->
-                              ac.listConsumerGroupOffsets(g, tps)
-                                  .map(offsets -> Tuples.of(g, offsets)))
-                          .filter(t -> !t.getT2().isEmpty())
-                          .collectMap(Tuple2::getT1, Tuple2::getT2)
-                  )
-                  .flatMap((Map<String, Map<TopicPartition, Long>> groupOffsets) ->
-                      // 4. getting description for groups with non-emtpy offsets
-                      ac.describeConsumerGroups(groupOffsets.keySet())
-                          .map((Map<String, ConsumerGroupDescription> descriptions) ->
-                              descriptions.values().stream().map(desc ->
-                                      // 5. gathering into InternalConsumerGroup
-                                      InternalConsumerGroup.create(
-                                              desc, groupOffsets.get(desc.groupId()), endOffsets)
-                                  )
-                                  .collect(Collectors.toList())));
+                              ac.listConsumerGroupOffsets(g.groupId(), tps)
+                                  // 4. keeping only groups that relates to topic
+                                  .filter(offsets -> isConsumerGroupRelatesToTopic(topic, g, offsets))
+                                  // 5. constructing results
+                                  .map(offsets -> InternalTopicConsumerGroup.create(topic, g, offsets, endOffsets))
+                          ).collectList());
             }));
+  }
+
+  private boolean isConsumerGroupRelatesToTopic(String topic,
+                                                ConsumerGroupDescription description,
+                                                Map<TopicPartition, Long> committedGroupOffsetsForTopic) {
+    boolean hasActiveMembersForTopic = description.members()
+        .stream()
+        .anyMatch(m -> m.assignment().topicPartitions().stream().anyMatch(tp -> tp.topic().equals(topic)));
+    boolean hasCommittedOffsets = !committedGroupOffsetsForTopic.isEmpty();
+    return hasActiveMembersForTopic || hasCommittedOffsets;
   }
 
   @Value

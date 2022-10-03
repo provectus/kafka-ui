@@ -11,7 +11,7 @@ import org.openqa.selenium.By;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
-import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
 @ExtensionMethod(WaitUtils.class)
 public class ConnectorsList {
@@ -32,7 +32,7 @@ public class ConnectorsList {
 
     @Step("Click on button 'Create Connector'")
     public ConnectorCreateView clickCreateConnectorButton() {
-        javaExecutorClick($x("//button[text()='Create Connector']"));
+        clickByJavaScript($x("//button[text()='Create Connector']"));
         return new ConnectorCreateView();
     }
 

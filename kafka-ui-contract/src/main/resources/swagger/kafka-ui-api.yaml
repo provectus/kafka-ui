@@ -2333,6 +2333,7 @@ components:
         messagesBehind:
           type: integer
           format: int64
+          description: null if consumer group has no offsets committed
       required:
         - groupId
 
@@ -2546,6 +2547,7 @@ components:
         messagesBehind:
           type: integer
           format: int64
+          description: null if consumer group has no offsets committed
         consumerId:
           type: string
         host:
