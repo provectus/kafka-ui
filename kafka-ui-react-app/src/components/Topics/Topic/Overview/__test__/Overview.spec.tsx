@@ -84,6 +84,30 @@ describe('Overview', () => {
     });
   });
 
+  describe('should render circular alert', () => {
+    it('should be in document', () => {
+      renderComponent();
+      const circles = screen.getAllByRole('circle');
+      expect(circles.length).toEqual(2);
+    });
+
+    it('should be the appropriate color', () => {
+      renderComponent({
+        ...externalTopicPayload,
+        underReplicatedPartitions: 0,
+        inSyncReplicas: 1,
+        replicas: 2,
+      });
+      const circles = screen.getAllByRole('circle');
+      expect(circles[0]).toHaveStyle(
+        `fill: ${theme.circularAlert.color.success}`
+      );
+      expect(circles[1]).toHaveStyle(
+        `fill: ${theme.circularAlert.color.error}`
+      );
+    });
+  });
+
   describe('when Clear Messages is clicked', () => {
     it('should when Clear Messages is clicked', () => {
       renderComponent({

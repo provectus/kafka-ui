@@ -33,9 +33,6 @@ import { CleanUpPolicy } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import SlidingSidebar from 'components/common/SlidingSidebar';
 import useBoolean from 'lib/hooks/useBoolean';
-import * as Metrics from 'components/common/Metrics';
-import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { Tag } from 'components/common/Tag/Tag.styled';
 
 import Messages from './Messages/Messages';
 // Messages v2
@@ -75,14 +72,6 @@ const Topic: React.FC = () => {
   }, []);
 
   const canCleanup = data?.cleanUpPolicy === CleanUpPolicy.DELETE;
-
-  const messageCount = React.useMemo(
-    () =>
-      (data?.partitions || []).reduce((memo, partition) => {
-        return memo + partition.offsetMax - partition.offsetMin;
-      }, 0),
-    [data]
-  );
 
   return (
     <>
@@ -157,66 +146,6 @@ const Topic: React.FC = () => {
           </DropdownItem>
         </Dropdown>
       </PageHeading>
-
-      <Metrics.Wrapper>
-        <Metrics.Section>
-          <Metrics.Indicator label="Partitions">
-            {data?.partitionCount}
-          </Metrics.Indicator>
-          <Metrics.Indicator label="Replication Factor">
-            {data?.replicationFactor}
-          </Metrics.Indicator>
-          <Metrics.Indicator
-            label="URP"
-            title="Under replicated partitions"
-            isAlert
-            alertType={
-              data?.underReplicatedPartitions === 0 ? 'success' : 'error'
-            }
-          >
-            {data?.underReplicatedPartitions === 0 ? (
-              <Metrics.LightText>
-                {data?.underReplicatedPartitions}
-              </Metrics.LightText>
-            ) : (
-              <Metrics.RedText>
-                {data?.underReplicatedPartitions}
-              </Metrics.RedText>
-            )}
-          </Metrics.Indicator>
-          <Metrics.Indicator
-            label="In Sync Replicas"
-            isAlert
-            alertType={
-              data?.inSyncReplicas === data?.replicas ? 'success' : 'error'
-            }
-          >
-            {data?.inSyncReplicas &&
-            data?.replicas &&
-            data?.inSyncReplicas < data?.replicas ? (
-              <Metrics.RedText>{data?.inSyncReplicas}</Metrics.RedText>
-            ) : (
-              data?.inSyncReplicas
-            )}
-            <Metrics.LightText> of {data?.replicas}</Metrics.LightText>
-          </Metrics.Indicator>
-          <Metrics.Indicator label="Type">
-            <Tag color="gray">{data?.internal ? 'Internal' : 'External'}</Tag>
-          </Metrics.Indicator>
-          <Metrics.Indicator label="Segment Size" title="">
-            <BytesFormatted value={data?.segmentSize} />
-          </Metrics.Indicator>
-          <Metrics.Indicator label="Segment Count">
-            {data?.segmentCount}
-          </Metrics.Indicator>
-          <Metrics.Indicator label="Clean Up Policy">
-            <Tag color="gray">{data?.cleanUpPolicy || 'Unknown'}</Tag>
-          </Metrics.Indicator>
-          <Metrics.Indicator label="Message Count">
-            {messageCount}
-          </Metrics.Indicator>
-        </Metrics.Section>
-      </Metrics.Wrapper>
       <Navbar role="navigation">
         <NavLink
           to="."
