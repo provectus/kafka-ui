@@ -1,13 +1,11 @@
 import React from 'react';
-import { CellContext } from '@tanstack/react-table';
 import { NavLink } from 'react-router-dom';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const LinkCell: React.FC<CellContext<any, unknown>> = ({ getValue }) => {
-  const value = `${getValue<string | number>()}`;
+const LinkCell = ({ value, to = '', color = '' }: any) => {
   const handleClick: React.MouseEventHandler = (e) => e.stopPropagation();
   return (
-    <NavLink to={encodeURIComponent(value)} title={value} onClick={handleClick}>
+    <NavLink style={{ color }} to={to} title={value} onClick={handleClick}>
       {value}
     </NavLink>
   );

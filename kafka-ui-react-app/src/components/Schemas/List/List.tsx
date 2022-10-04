@@ -54,7 +54,17 @@ const List: React.FC = () => {
 
   const columns = React.useMemo<ColumnDef<SchemaSubject>[]>(
     () => [
-      { header: 'Subject', accessorKey: 'subject', cell: LinkCell },
+      {
+        header: 'Subject',
+        accessorKey: 'subject',
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ getValue }) => (
+          <LinkCell
+            value={`${getValue<string | number>()}`}
+            to={encodeURIComponent(`${getValue<string | number>()}`)}
+          />
+        ),
+      },
       { header: 'Id', accessorKey: 'id' },
       { header: 'Type', accessorKey: 'schemaType' },
       { header: 'Version', accessorKey: 'version' },

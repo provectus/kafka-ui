@@ -5,7 +5,7 @@ import Switch from 'components/common/Switch/Switch';
 import { useClusters } from 'lib/hooks/api/clusters';
 import { Cluster, ServerStatus } from 'generated-sources';
 import { ColumnDef } from '@tanstack/react-table';
-import Table, { SizeCell, LinkTopic } from 'components/common/NewTable';
+import Table, { SizeCell, LinkCell } from 'components/common/NewTable';
 import { clusterTopicsPath } from 'lib/paths';
 
 import * as S from './ClustersWidget.styled';
@@ -38,7 +38,11 @@ const ClustersWidget: React.FC = () => {
         accessorKey: 'topicCount',
         // eslint-disable-next-line react/no-unstable-nested-components
         cell: ({ row }) => (
-          <LinkTopic row={row} to={clusterTopicsPath(row.original.name)} />
+          <LinkCell
+            color="blue"
+            value={row.original.topicCount}
+            to={clusterTopicsPath(row.original.name)}
+          />
         ),
       },
       { header: 'Production', accessorKey: 'bytesInPerSec', cell: SizeCell },
