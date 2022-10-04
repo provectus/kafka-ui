@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.pages.MainPage;
+import com.provectus.kafka.ui.pages.NaviSideBar;
 import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
@@ -44,15 +44,13 @@ public class TopicTests extends BaseTest {
     @Test
     public void createTopic() {
         Topic topicToCreate = new Topic().setName("new-topic");
-        mainPage.goTo()
-                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
+        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
         topicsList.pressCreateNewTopic()
                 .setTopicName(topicToCreate.getName())
                 .sendData()
                 .waitUntilScreenReady();
-        mainPage.goTo()
-                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
-        Assertions.assertTrue(topicsList.isTopicVisible(topicToCreate.getName()),"isTopicVisible");
+        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        Assertions.assertTrue(topicsList.isTopicVisible(topicToCreate.getName()), "isTopicVisible");
         TOPIC_LIST.add(topicToCreate);
     }
 
@@ -63,9 +61,9 @@ public class TopicTests extends BaseTest {
     @CaseId(197)
     @Test
     public void updateTopic() {
-        topicsList.goTo(CLUSTER_NAME)
-                .waitUntilScreenReady();
-        topicsList.openTopic(TOPIC_FOR_UPDATE.getName())
+        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        topicsList.waitUntilScreenReady()
+                .openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
                 .openEditSettings()
                 .selectCleanupPolicy(TOPIC_FOR_UPDATE.getCompactPolicyValue())
@@ -75,9 +73,9 @@ public class TopicTests extends BaseTest {
                 .setMaxMessageBytes(TOPIC_FOR_UPDATE.getMaxMessageBytes())
                 .sendData()
                 .waitUntilScreenReady();
-        topicsList.goTo(CLUSTER_NAME)
-                .waitUntilScreenReady();
-        topicsList.openTopic(TOPIC_FOR_UPDATE.getName())
+        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        topicsList.waitUntilScreenReady()
+                .openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
                 .openEditSettings();
         SoftAssertions softly = new SoftAssertions();
@@ -94,14 +92,14 @@ public class TopicTests extends BaseTest {
     @CaseId(207)
     @Test
     public void deleteTopic() {
-        topicsList.goTo(CLUSTER_NAME)
-                .waitUntilScreenReady()
+        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        topicsList.waitUntilScreenReady()
                 .openTopic(TOPIC_FOR_DELETE.getName())
                 .waitUntilScreenReady()
                 .deleteTopic();
-        topicsList.goTo(CLUSTER_NAME)
-                .waitUntilScreenReady();
-        Assertions.assertFalse(topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()),"isTopicVisible");
+        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        topicsList.waitUntilScreenReady();
+        Assertions.assertFalse(topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()), "isTopicVisible");
         TOPIC_LIST.remove(TOPIC_FOR_DELETE);
     }
 
@@ -111,8 +109,8 @@ public class TopicTests extends BaseTest {
     @CaseId(222)
     @Test
     void produceMessage() {
-        topicsList.goTo(CLUSTER_NAME)
-                .waitUntilScreenReady()
+        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        topicsList.waitUntilScreenReady()
                 .openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)

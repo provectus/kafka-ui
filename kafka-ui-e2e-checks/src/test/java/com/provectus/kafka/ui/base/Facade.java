@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.base;
 
 import com.provectus.kafka.ui.helpers.ApiHelper;
-import com.provectus.kafka.ui.pages.MainPage;
+import com.provectus.kafka.ui.pages.NaviSideBar;
 import com.provectus.kafka.ui.pages.connector.ConnectorCreateForm;
 import com.provectus.kafka.ui.pages.connector.ConnectorDetails;
 import com.provectus.kafka.ui.pages.connector.KafkaConnectList;
@@ -14,7 +14,6 @@ import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.pages.topic.TopicsList;
 
 public abstract class Facade {
-    protected MainPage mainPage = new MainPage();
     protected ApiHelper apiHelper = new ApiHelper();
     protected ConnectorCreateForm connectorCreateForm = new ConnectorCreateForm();
     protected KafkaConnectList kafkaConnectList = new KafkaConnectList();
@@ -26,4 +25,5 @@ public abstract class Facade {
     protected TopicCreateEditForm topicCreateEditForm = new TopicCreateEditForm();
     protected TopicsList topicsList = new TopicsList();
     protected TopicDetails topicDetails = new TopicDetails();
+    protected NaviSideBar naviSideBar = new NaviSideBar();
 }

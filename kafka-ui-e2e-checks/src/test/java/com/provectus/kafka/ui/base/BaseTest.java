@@ -1,14 +1,19 @@
 package com.provectus.kafka.ui.base;
 
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
+import com.provectus.kafka.ui.pages.NaviSideBar;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.TestCaseGenerator;
 import com.provectus.kafka.ui.utilities.screenshots.Screenshooter;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
+import io.qameta.allure.Step;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -23,8 +28,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
-import static com.provectus.kafka.ui.base.Setup.clearReports;
-import static com.provectus.kafka.ui.base.Setup.setup;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.base.Setup.*;
+import static com.provectus.kafka.ui.settings.Source.BASE_WEB_URL;
 
 @Slf4j
 @DisplayNameGeneration(DisplayNameGenerator.class)
@@ -55,6 +62,8 @@ public class BaseTest extends Facade {
     RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
     WebDriverRunner.setWebDriver(remoteWebDriver);
     remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
+    Selenide.open(BASE_WEB_URL);
+    waitUntilScreenReady();
   }
 
   @BeforeAll
@@ -118,5 +127,12 @@ public class BaseTest extends Facade {
     Allure.addAttachment("Screenshot",
         new ByteArrayInputStream(
             ((TakesScreenshot) webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
+    browserClear();
+  }
+
+  @Step
+  public void waitUntilScreenReady() {
+    $x("//*[contains(text(),'Loading')]").shouldBe(Condition.disappear);
+    $x("//button[text()='Log out']").shouldBe(Condition.visible);
   }
 }
