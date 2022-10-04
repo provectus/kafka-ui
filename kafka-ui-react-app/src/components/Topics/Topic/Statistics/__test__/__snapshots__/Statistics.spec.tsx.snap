@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Statistics when analysis is in progress renders Metricks component 1`] = `<div />`;

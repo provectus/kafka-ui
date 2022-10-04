@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import {
   useAnalyzeTopic,
   useCancelTopicAnalysis,
@@ -15,29 +15,31 @@ import {
 } from 'components/common/PropertiesList/PropertiesList.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useTimeFormat } from 'lib/hooks/useTimeFormat';
+import { useStopwatch } from 'react-timer-hook';
 
 import * as S from './Statistics.styles';
 import Total from './Indicators/Total';
 import SizeStats from './Indicators/SizeStats';
 import PartitionTable from './PartitionTable';
 
-const Metrics: React.FC = () => {
+interface Props {
+  timing: boolean;
+}
+
+const Metrics: React.FC<Props> = ({ timing }) => {
   const formatTimestamp = useTimeFormat();
 
+  const { seconds, minutes, start, pause, reset } = useStopwatch({
+    autoStart: true,
+  });
+
   const params = useAppParams<RouteParamsClusterTopic>();
-  const [isAnalyzing, setIsAnalyzing] = React.useState(true);
+
+  const [isAnalyzing, setIsAnalyzing] = useState(true);
   const analyzeTopic = useAnalyzeTopic(params);
   const cancelTopicAnalysis = useCancelTopicAnalysis(params);
 
-  const [minutes, setMinutes] = useState<number>(0);
-  const [seconds, setSeconds] = useState<number>(0);
-
   const { data } = useTopicAnalysis(params, isAnalyzing);
-
-  const getTime = () => {
-    setMinutes(Math.floor(seconds / 60));
-    setSeconds(Math.floor(seconds + 1));
-  };
 
   useEffect(() => {
     if (data && !data.progress) {
@@ -45,31 +47,32 @@ const Metrics: React.FC = () => {
     }
   }, [data]);
 
-  // eslint-disable-next-line consistent-return
   useEffect(() => {
-    if (data?.progress) {
-      const interval = setInterval(() => getTime(), 1000);
-      return () => clearInterval(interval);
+    if (timing) {
+      start();
+    } else {
+      pause();
     }
-  }, [seconds, data]);
+  }, [timing]);
 
   if (!data) {
     return null;
   }
 
-  const passedTime = (time: number) => (time < 10 ? `0${time}` : time);
+  const passedTime = (value: number) => (value < 10 ? `0${value}` : value);
 
   if (data.progress) {
     return (
       <S.ProgressContainer>
         <S.ProgressBarWrapper>
           <ProgressBar completed={data.progress.completenessPercent || 0} />
-          <span> {data.progress.completenessPercent || 0} %</span>
+          <span> {Math.floor(data.progress.completenessPercent || 0)} %</span>
         </S.ProgressBarWrapper>
         <Button
           onClick={async () => {
             await cancelTopicAnalysis.mutateAsync();
             setIsAnalyzing(true);
+            pause();
           }}
           buttonType="primary"
           buttonSize="M"
@@ -81,9 +84,7 @@ const Metrics: React.FC = () => {
           <span>{formatTimestamp(data.progress.startedAt, 'hh:mm:ss a')}</span>
           <Label>Passed at</Label>
           <S.PassedTime>
-            <span>{`${passedTime(minutes)} : ${passedTime(
-              seconds % 60
-            )}`}</span>
+            <span>{`${passedTime(minutes)} : ${passedTime(seconds)}`}</span>
             <span>s</span>
           </S.PassedTime>
           <Label>Scanned messages</Label>
@@ -112,6 +113,7 @@ const Metrics: React.FC = () => {
           onClick={async () => {
             await analyzeTopic.mutateAsync();
             setIsAnalyzing(true);
+            reset();
           }}
           buttonType="primary"
           buttonSize="S"
@@ -119,7 +121,6 @@ const Metrics: React.FC = () => {
           Restart Analysis
         </Button>
       </S.ActionsBar>
-
       <Informers.Wrapper>
         <Total {...totalStats} />
         {totalStats.keySize && (

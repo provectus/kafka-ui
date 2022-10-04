@@ -76,6 +76,7 @@ specifiers:
   react-multi-select-component: ^4.3.3
   react-redux: ^8.0.2
   react-router-dom: ^6.3.0
+  react-timer-hook: ^3.0.5
   redux: ^4.2.0
   rimraf: ^3.0.2
   sass: ^1.52.3
@@ -128,6 +129,7 @@ dependencies:
   react-multi-select-component: 4.3.3_ef5jwxihqo6n7gxfmzogljlgcm
   react-redux: 8.0.2_nfqigfgwurfoimtkde74cji6ga
   react-router-dom: 6.3.0_ef5jwxihqo6n7gxfmzogljlgcm
+  react-timer-hook: 3.0.5_ef5jwxihqo6n7gxfmzogljlgcm
   redux: 4.2.0
   sass: 1.52.3
   styled-components: 5.3.1_uuaz5p7xzfmtjacf6iqf7idnby
@@ -7756,6 +7758,16 @@ packages:
     dependencies:
       history: 5.3.0
       react: 18.1.0
+    dev: false
+
+  /react-timer-hook/3.0.5_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-n+98SdmYvui2ne3KyWb3Ldu4k0NYQa3g/VzW6VEIfZJ8GAk/jJsIY700M8Nd2vNSTj05c7wKyQfJBqZ0x7zfiA==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
     dev: false
 
   /react-transition-state/1.1.4_ef5jwxihqo6n7gxfmzogljlgcm:

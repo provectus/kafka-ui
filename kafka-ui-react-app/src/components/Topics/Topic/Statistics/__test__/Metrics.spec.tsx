@@ -13,7 +13,6 @@ import userEvent from '@testing-library/user-event';
 
 const clusterName = 'local';
 const topicName = 'topic';
-const time = 100;
 
 jest.mock('lib/hooks/api/topics', () => ({
   ...jest.requireActual('lib/hooks/api/topics'),
@@ -33,29 +32,9 @@ describe('Metrics', () => {
     );
   };
 
-  describe('setinterval fn', () => {
-    it('should increment index by 1 after 1 second (using advanceTimersByTime)', () => {
-      let minutes = 0;
-      let seconds = 0;
-      const getTime = jest.fn(() => {
-        minutes = Math.floor(time / 60);
-        seconds = Math.floor(time + 1);
-      });
-      getTime();
-      expect(minutes).toBe(1);
-      expect(seconds).toBe(101);
-
-      expect(getTime).toBeCalled();
-      expect(getTime).toHaveBeenCalledTimes(1);
-
-      jest.useFakeTimers();
-      jest.useRealTimers();
-      jest.clearAllTimers();
-    });
-  });
-
   describe('when analysis is in progress', () => {
     const cancelMock = jest.fn();
+
     beforeEach(() => {
       (useCancelTopicAnalysis as jest.Mock).mockImplementation(() => ({
         mutateAsync: cancelMock,
@@ -70,6 +49,27 @@ describe('Metrics', () => {
         },
       }));
       renderComponent();
+    });
+
+    it('start timer ', () => {
+      expect(screen.getByText('Passed at')).toBeInTheDocument();
+    });
+
+    describe('passedTime()', () => {
+      renderComponent();
+      const passedTime = jest
+        .fn()
+        .mockImplementation((time: number) => (time < 10 ? `0${time}` : time));
+
+      it('should return by zero', () => {
+        passedTime(5);
+        passedTime.mockReturnValue('05');
+      });
+
+      it("shouldn't return by zero", () => {
+        passedTime(11);
+        passedTime.mockReturnValue('11');
+      });
     });
 
     it('renders Stop Analysis button', async () => {

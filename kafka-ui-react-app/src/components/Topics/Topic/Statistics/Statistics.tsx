@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React from 'react';
+import React, { useState } from 'react';
 import { useAnalyzeTopic } from 'lib/hooks/api/topics';
 import useAppParams from 'lib/hooks/useAppParams';
 import { RouteParamsClusterTopic } from 'lib/paths';
@@ -14,6 +14,8 @@ const Statistics: React.FC = () => {
   const params = useAppParams<RouteParamsClusterTopic>();
   const analyzeTopic = useAnalyzeTopic(params);
 
+  const [timing, toggleTiming] = useState<boolean>(false);
+
   return (
     <QueryErrorResetBoundary>
       {({ reset }) => (
@@ -25,6 +27,7 @@ const Statistics: React.FC = () => {
                 onClick={async () => {
                   await analyzeTopic.mutateAsync();
                   resetErrorBoundary();
+                  toggleTiming(true);
                 }}
                 buttonType="primary"
                 buttonSize="M"
@@ -34,7 +37,7 @@ const Statistics: React.FC = () => {
             </S.ProgressContainer>
           )}
         >
-          <Metrics />
+          <Metrics timing={timing} />
         </ErrorBoundary>
       )}
     </QueryErrorResetBoundary>
