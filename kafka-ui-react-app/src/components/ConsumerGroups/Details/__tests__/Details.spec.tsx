@@ -65,7 +65,7 @@ describe('Details component', () => {
       expect(screen.getByText(groupId)).toBeInTheDocument();
 
       expect(screen.getByRole('table')).toBeInTheDocument();
-      expect(screen.getAllByRole('columnheader').length).toEqual(2);
+      expect(screen.getAllByRole('columnheader').length).toEqual(3);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
