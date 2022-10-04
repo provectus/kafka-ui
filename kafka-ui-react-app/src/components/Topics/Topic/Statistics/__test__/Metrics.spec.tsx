@@ -51,27 +51,6 @@ describe('Metrics', () => {
       renderComponent();
     });
 
-    it('start timer ', () => {
-      expect(screen.getByText('Passed at')).toBeInTheDocument();
-    });
-
-    describe('passedTime()', () => {
-      renderComponent();
-      const passedTime = jest
-        .fn()
-        .mockImplementation((time: number) => (time < 10 ? `0${time}` : time));
-
-      it('should return by zero', () => {
-        passedTime(5);
-        passedTime.mockReturnValue('05');
-      });
-
-      it("shouldn't return by zero", () => {
-        passedTime(11);
-        passedTime.mockReturnValue('11');
-      });
-    });
-
     it('renders Stop Analysis button', async () => {
       const btn = screen.getByRole('button', { name: 'Stop Analysis' });
       expect(btn).toBeInTheDocument();
@@ -83,6 +62,10 @@ describe('Metrics', () => {
       const progressbar = screen.getByRole('progressbar');
       expect(progressbar).toBeInTheDocument();
       expect(progressbar).toHaveStyleRule('width', '0%');
+    });
+
+    it('calculate Timer ', () => {
+      expect(screen.getByText('Passed at')).toBeInTheDocument();
     });
   });
 

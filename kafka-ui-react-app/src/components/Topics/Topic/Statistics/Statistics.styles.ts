@@ -49,9 +49,3 @@ export const ProgressBarWrapper = styled.div`
   align-items: center;
   width: 280px;
 `;
-
-export const PassedTime = styled.div`
-  display: flex;
-  width: 56px;
-  justify-content: space-between;
-`;

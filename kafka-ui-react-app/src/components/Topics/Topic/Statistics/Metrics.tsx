@@ -15,23 +15,15 @@ import {
 } from 'components/common/PropertiesList/PropertiesList.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useTimeFormat } from 'lib/hooks/useTimeFormat';
-import { useStopwatch } from 'react-timer-hook';
+import { calculateTimer } from 'lib/dateTimeHelpers';
 
 import * as S from './Statistics.styles';
 import Total from './Indicators/Total';
 import SizeStats from './Indicators/SizeStats';
 import PartitionTable from './PartitionTable';
 
-interface Props {
-  timing: boolean;
-}
-
-const Metrics: React.FC<Props> = ({ timing }) => {
+const Metrics: React.FC = () => {
   const formatTimestamp = useTimeFormat();
-
-  const { seconds, minutes, start, pause, reset } = useStopwatch({
-    autoStart: true,
-  });
 
   const params = useAppParams<RouteParamsClusterTopic>();
 
@@ -47,19 +39,9 @@ const Metrics: React.FC<Props> = ({ timing }) => {
     }
   }, [data]);
 
-  useEffect(() => {
-    if (timing) {
-      start();
-    } else {
-      pause();
-    }
-  }, [timing]);
-
   if (!data) {
     return null;
   }
-
-  const passedTime = (value: number) => (value < 10 ? `0${value}` : value);
 
   if (data.progress) {
     return (
@@ -72,7 +54,6 @@ const Metrics: React.FC<Props> = ({ timing }) => {
           onClick={async () => {
             await cancelTopicAnalysis.mutateAsync();
             setIsAnalyzing(true);
-            pause();
           }}
           buttonType="primary"
           buttonSize="M"
@@ -83,10 +64,7 @@ const Metrics: React.FC<Props> = ({ timing }) => {
           <Label>Started at</Label>
           <span>{formatTimestamp(data.progress.startedAt, 'hh:mm:ss a')}</span>
           <Label>Passed at</Label>
-          <S.PassedTime>
-            <span>{`${passedTime(minutes)} : ${passedTime(seconds)}`}</span>
-            <span>s</span>
-          </S.PassedTime>
+          <span>{calculateTimer(data.progress.startedAt as number)}</span>
           <Label>Scanned messages</Label>
           <span>{data.progress.msgsScanned}</span>
           <Label>Scanned bytes</Label>
@@ -113,7 +91,6 @@ const Metrics: React.FC<Props> = ({ timing }) => {
           onClick={async () => {
             await analyzeTopic.mutateAsync();
             setIsAnalyzing(true);
-            reset();
           }}
           buttonType="primary"
           buttonSize="S"
