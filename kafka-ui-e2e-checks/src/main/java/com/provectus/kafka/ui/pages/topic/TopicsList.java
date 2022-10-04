@@ -3,15 +3,15 @@ package com.provectus.kafka.ui.pages.topic;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
-import com.provectus.kafka.ui.utilities.WaitUtils;
 import com.provectus.kafka.ui.settings.Source;
+import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
-import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
+import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
 @ExtensionMethod(WaitUtils.class)
 public class TopicsList {
@@ -32,9 +32,9 @@ public class TopicsList {
     }
 
     @Step
-    public TopicCreateEditSettingsView pressCreateNewTopic() {
+    public TopicCreateEditForm pressCreateNewTopic() {
         clickByJavaScript($x("//button[normalize-space(text()) ='Add a Topic']"));
-        return new TopicCreateEditSettingsView();
+        return new TopicCreateEditForm();
     }
 
     @Step
@@ -44,9 +44,9 @@ public class TopicsList {
     }
 
     @Step
-    public TopicView openTopic(String topicName) {
+    public TopicDetails openTopic(String topicName) {
         $(By.linkText(topicName)).click();
-        return new TopicView();
+        return new TopicDetails();
     }
 
     @Step

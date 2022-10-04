@@ -8,12 +8,12 @@ import org.openqa.selenium.By;
 import static com.codeborne.selenide.Selenide.*;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
-public class SchemaView {
+public class SchemaDetails {
 
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
 
     @Step
-    public SchemaView waitUntilScreenReady() {
+    public SchemaDetails waitUntilScreenReady() {
         $("div#schema").shouldBe(Condition.visible);
         return this;
     }
@@ -24,10 +24,11 @@ public class SchemaView {
     }
 
     @Step
-    public SchemaEditView openEditSchema(){
+    public SchemaDetails openEditSchema(){
         $x("//button[text()= 'Edit Schema']").click();
-        return new SchemaEditView();
+        return this;
     }
+
     @Step
     public SchemaRegistryList removeSchema() {
         clickByJavaScript(dotMenuBtn);
