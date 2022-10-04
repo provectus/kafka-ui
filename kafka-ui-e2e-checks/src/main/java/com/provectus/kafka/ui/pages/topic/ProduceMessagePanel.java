@@ -39,10 +39,10 @@ public class ProduceMessagePanel {
     }
 
     @Step
-    public TopicView submitProduceMessage() {
+    public TopicDetails submitProduceMessage() {
         submitBtn.shouldBe(Condition.enabled).click();
         submitBtn.shouldBe(Condition.disappear);
         refresh();
-        return new TopicView().waitUntilScreenReady();
+        return new TopicDetails().waitUntilScreenReady();
     }
 }
