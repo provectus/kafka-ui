@@ -3,49 +3,49 @@ package com.provectus.kafka.ui.pages.topic;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.utilities.WaitUtils;
 import com.provectus.kafka.ui.settings.Source;
+import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
-import static com.provectus.kafka.ui.utilities.WebUtils.javaExecutorClick;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
 @ExtensionMethod({WaitUtils.class})
-public class TopicView {
+public class TopicDetails {
 
     private static final String URL_PATH = "/ui/clusters/%s/topics/%s";
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
 
     @Step
-    public TopicView goTo(String cluster, String topic) {
+    public TopicDetails goTo(String cluster, String topic) {
         Selenide.open(Source.BASE_WEB_URL + String.format(URL_PATH, cluster, topic));
         return this;
     }
 
     @Step
-    public TopicView waitUntilScreenReady() {
+    public TopicDetails waitUntilScreenReady() {
         $(By.linkText("Overview")).shouldBe(Condition.visible);
         return this;
     }
 
     @Step
-    public TopicCreateEditSettingsView openEditSettings() {
-        javaExecutorClick(dotMenuBtn);
+    public TopicCreateEditForm openEditSettings() {
+        clickByJavaScript(dotMenuBtn);
         $x("//li[@role][text()='Edit settings']").click();
-        return new TopicCreateEditSettingsView();
+        return new TopicCreateEditForm();
     }
 
     @Step
-    public TopicView openTopicMenu(TopicMenu menu) {
+    public TopicDetails openTopicMenu(TopicMenu menu) {
         $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
     @Step
     public TopicsList deleteTopic() {
-        javaExecutorClick(dotMenuBtn);
+        clickByJavaScript(dotMenuBtn);
         $x("//ul[@role='menu']//div[text()='Remove Topic']").click();
         SelenideElement confirmButton = $x("//div[@role=\"dialog\"]//button[text()='Confirm']");
         confirmButton.shouldBe(Condition.enabled).click();
@@ -55,7 +55,7 @@ public class TopicView {
 
     @Step
     public ProduceMessagePanel clickOnButton(String buttonName) {
-        javaExecutorClick($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
+        clickByJavaScript($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
         return new ProduceMessagePanel();
     }
 

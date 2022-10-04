@@ -4,7 +4,7 @@ import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.pages.MainPage;
-import com.provectus.kafka.ui.pages.schema.SchemaView;
+import com.provectus.kafka.ui.pages.schema.SchemaDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
@@ -69,12 +69,12 @@ public class SchemasTests extends BaseTest {
         schemaRegistryList.openSchema(AVRO_API.getName())
                 .waitUntilScreenReady()
                 .openEditSchema();
-        Assertions.assertTrue(schemaEditView.isSchemaDropDownDisabled(),"isSchemaDropDownDisabled()");
-        schemaEditView.selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
+        Assertions.assertTrue(schemaCreateForm.isSchemaDropDownDisabled(),"isSchemaDropDownDisabled()");
+        schemaCreateForm.selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(AVRO_API.getValuePath()))
                 .clickSubmit()
                 .waitUntilScreenReady();
-        Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), new SchemaView().getCompatibility(), "getCompatibility()");
+        Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), new SchemaDetails().getCompatibility(), "getCompatibility()");
     }
 
     @DisplayName("should delete AVRO schema")
