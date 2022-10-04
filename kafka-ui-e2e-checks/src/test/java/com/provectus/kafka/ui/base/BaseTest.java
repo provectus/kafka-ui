@@ -63,7 +63,7 @@ public class BaseTest extends Facade {
     WebDriverRunner.setWebDriver(remoteWebDriver);
     remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
     Selenide.open(BASE_WEB_URL);
-    waitUntilScreenReady();
+    naviSideBar.waitUntilScreenReady();
   }
 
   @BeforeAll
@@ -128,11 +128,5 @@ public class BaseTest extends Facade {
         new ByteArrayInputStream(
             ((TakesScreenshot) webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
     browserClear();
-  }
-
-  @Step
-  public void waitUntilScreenReady() {
-    $x("//*[contains(text(),'Loading')]").shouldBe(Condition.disappear);
-    $x("//button[text()='Log out']").shouldBe(Condition.visible);
   }
 }

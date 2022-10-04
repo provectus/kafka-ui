@@ -41,4 +41,10 @@ public class NaviSideBar {
             this.value = value;
         }
     }
+
+    @Step
+    public void waitUntilScreenReady() {
+        $x("//*[contains(text(),'Loading')]").shouldBe(Condition.disappear);
+        $x("//h1[text()='Dashboard']").shouldBe(Condition.visible);
+    }
 }
