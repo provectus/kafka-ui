@@ -28,7 +28,7 @@ const List: React.FC = () => {
       { header: 'Type', accessorKey: 'type' },
       { header: 'Plugin', accessorKey: 'connectorClass' },
       { header: 'Topics', cell: TopicCell },
-      { header: 'Status', accessorKey: 'status', cell: StatusCell },
+      { header: 'Status', accessorKey: 'status.state', cell: StatusCell },
       { header: 'Running Tasks', cell: RunningTasksCell },
       { header: '', id: 'action', cell: ActionsCell },
     ],
