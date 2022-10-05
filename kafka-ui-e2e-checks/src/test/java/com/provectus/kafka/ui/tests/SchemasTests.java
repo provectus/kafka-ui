@@ -42,14 +42,17 @@ public class SchemasTests extends BaseTest {
     @Order(1)
     void createSchemaAvro() {
         Schema schemaAvro = Schema.createSchemaAvro();
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
-        schemaRegistryList.clickCreateSchema()
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
+        schemaRegistryList
+                .clickCreateSchema()
                 .setSubjectName(schemaAvro.getName())
                 .setSchemaField(fileToString(schemaAvro.getValuePath()))
                 .selectSchemaTypeFromDropdown(schemaAvro.getType())
                 .clickSubmit()
                 .waitUntilScreenReady();
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
         Assertions.assertTrue(schemaRegistryList.isSchemaVisible(schemaAvro.getName()),"isSchemaVisible()");
         SCHEMA_LIST.add(schemaAvro);
     }
@@ -62,12 +65,15 @@ public class SchemasTests extends BaseTest {
     @Order(2)
     void updateSchemaAvro() {
         AVRO_API.setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schema_avro_for_update.json");
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
-        schemaRegistryList.openSchema(AVRO_API.getName())
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
+        schemaRegistryList
+                .openSchema(AVRO_API.getName())
                 .waitUntilScreenReady()
                 .openEditSchema();
         Assertions.assertTrue(schemaCreateForm.isSchemaDropDownDisabled(),"isSchemaDropDownDisabled()");
-        schemaCreateForm.selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
+        schemaCreateForm
+                .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(AVRO_API.getValuePath()))
                 .clickSubmit()
                 .waitUntilScreenReady();
@@ -81,8 +87,10 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(3)
     void deleteSchemaAvro() {
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
-        schemaRegistryList.openSchema(AVRO_API.getName())
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
+        schemaRegistryList
+                .openSchema(AVRO_API.getName())
                 .waitUntilScreenReady()
                 .removeSchema();
         Assertions.assertFalse(schemaRegistryList.isSchemaVisible(AVRO_API.getName()),"isSchemaVisible()");
@@ -97,14 +105,17 @@ public class SchemasTests extends BaseTest {
     @Order(4)
     void createSchemaJson() {
         Schema schemaJson = Schema.createSchemaJson();
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
-        schemaRegistryList.clickCreateSchema()
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
+        schemaRegistryList
+                .clickCreateSchema()
                 .setSubjectName(schemaJson.getName())
                 .setSchemaField(fileToString(schemaJson.getValuePath()))
                 .selectSchemaTypeFromDropdown(schemaJson.getType())
                 .clickSubmit()
                 .waitUntilScreenReady();
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
         Assertions.assertTrue(schemaRegistryList.isSchemaVisible(schemaJson.getName()),"isSchemaVisible()");
         SCHEMA_LIST.add(schemaJson);
     }
@@ -116,8 +127,10 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(5)
     void deleteSchemaJson() {
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
-        schemaRegistryList.openSchema(JSON_API.getName())
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
+        schemaRegistryList
+                .openSchema(JSON_API.getName())
                 .waitUntilScreenReady()
                 .removeSchema();
         Assertions.assertFalse(schemaRegistryList.isSchemaVisible(JSON_API.getName()),"isSchemaVisible()");
@@ -132,14 +145,17 @@ public class SchemasTests extends BaseTest {
     @Order(6)
     void createSchemaProtobuf() {
         Schema schemaProtobuf = Schema.createSchemaProtobuf();
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
-        schemaRegistryList.clickCreateSchema()
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
+        schemaRegistryList
+                .clickCreateSchema()
                 .setSubjectName(schemaProtobuf.getName())
                 .setSchemaField(fileToString(schemaProtobuf.getValuePath()))
                 .selectSchemaTypeFromDropdown(schemaProtobuf.getType())
                 .clickSubmit()
                 .waitUntilScreenReady();
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
         Assertions.assertTrue(schemaRegistryList.isSchemaVisible(schemaProtobuf.getName()),"isSchemaVisible()");
         SCHEMA_LIST.add(schemaProtobuf);
     }
@@ -151,8 +167,10 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(7)
     void deleteSchemaProtobuf() {
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
-        schemaRegistryList.openSchema(PROTOBUF_API.getName())
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.SCHEMA_REGISTRY);
+        schemaRegistryList
+                .openSchema(PROTOBUF_API.getName())
                 .waitUntilScreenReady()
                 .removeSchema();
         Assertions.assertFalse(schemaRegistryList.isSchemaVisible(PROTOBUF_API.getName()),"isSchemaVisible()");

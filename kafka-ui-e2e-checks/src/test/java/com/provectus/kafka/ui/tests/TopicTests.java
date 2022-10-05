@@ -44,12 +44,15 @@ public class TopicTests extends BaseTest {
     @Test
     public void createTopic() {
         Topic topicToCreate = new Topic().setName("new-topic");
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
-        topicsList.pressCreateNewTopic()
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        topicsList
+                .pressCreateNewTopic()
                 .setTopicName(topicToCreate.getName())
                 .sendData()
                 .waitUntilScreenReady();
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
         Assertions.assertTrue(topicsList.isTopicVisible(topicToCreate.getName()), "isTopicVisible");
         TOPIC_LIST.add(topicToCreate);
     }
@@ -61,8 +64,10 @@ public class TopicTests extends BaseTest {
     @CaseId(197)
     @Test
     public void updateTopic() {
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
-        topicsList.waitUntilScreenReady()
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        topicsList
+                .waitUntilScreenReady()
                 .openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
                 .openEditSettings()
@@ -73,8 +78,10 @@ public class TopicTests extends BaseTest {
                 .setMaxMessageBytes(TOPIC_FOR_UPDATE.getMaxMessageBytes())
                 .sendData()
                 .waitUntilScreenReady();
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
-        topicsList.waitUntilScreenReady()
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        topicsList
+                .waitUntilScreenReady()
                 .openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
                 .openEditSettings();
@@ -92,13 +99,17 @@ public class TopicTests extends BaseTest {
     @CaseId(207)
     @Test
     public void deleteTopic() {
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
-        topicsList.waitUntilScreenReady()
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        topicsList
+                .waitUntilScreenReady()
                 .openTopic(TOPIC_FOR_DELETE.getName())
                 .waitUntilScreenReady()
                 .deleteTopic();
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
-        topicsList.waitUntilScreenReady();
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        topicsList
+                .waitUntilScreenReady();
         Assertions.assertFalse(topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()), "isTopicVisible");
         TOPIC_LIST.remove(TOPIC_FOR_DELETE);
     }
@@ -109,8 +120,10 @@ public class TopicTests extends BaseTest {
     @CaseId(222)
     @Test
     void produceMessage() {
-        naviSideBar.openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
-        topicsList.waitUntilScreenReady()
+        naviSideBar
+                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+        topicsList
+                .waitUntilScreenReady()
                 .openTopic(TOPIC_FOR_UPDATE.getName())
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)
