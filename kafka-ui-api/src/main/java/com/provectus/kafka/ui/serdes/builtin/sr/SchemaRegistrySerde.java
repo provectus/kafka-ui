@@ -142,6 +142,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
             new SchemaDescription(
                 convertSchema(schemaMetadata),
                 Map.of(
+                    "subject", subject,
                     "schemaId", schemaMetadata.getId(),
                     "latestVersion", schemaMetadata.getVersion(),
                     "type", schemaMetadata.getSchemaType() // AVRO / PROTOBUF / JSON

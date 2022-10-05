@@ -27,7 +27,6 @@ const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
     keySize,
     valueSize,
   } = row.original;
-
   return (
     <S.PartitionInfo>
       <div>
@@ -35,6 +34,8 @@ const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
         <List>
           <Label>Total message</Label>
           <span>{totalMsgs}</span>
+          <Label>Total size</Label>
+          <BytesFormatted value={(keySize?.sum || 0) + (valueSize?.sum || 0)} />
           <Label>Min. timestamp</Label>
           <span>{formatTimestamp(minTimestamp)}</span>
           <Label>Max. timestamp</Label>

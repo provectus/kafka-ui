@@ -90,6 +90,7 @@ const theme = {
     navBarWidth: '201px',
     navBarHeight: '53px',
     rightSidebarWidth: '70vw',
+    filtersSidebarWidth: '300px',
 
     stuffColor: Colors.neutral[5],
     stuffBorderColor: Colors.neutral[10],
@@ -518,7 +519,10 @@ const theme = {
   },
   dangerZone: {
     borderColor: Colors.neutral[10],
-    color: Colors.red[50],
+    color: {
+      title: Colors.red[50],
+      warningMessage: Colors.neutral[50],
+    },
   },
   configList: {
     color: Colors.neutral[30],
