@@ -51,7 +51,7 @@ class WellKnownMetricsTest {
   }
 
   @Test
-  void appliesInnerStateToMetricsBuilder(){
+  void appliesInnerStateToMetricsBuilder() {
     wellKnownMetrics.bytesInFifteenMinuteRate.put("topic", new BigDecimal(1));
     wellKnownMetrics.bytesOutFifteenMinuteRate.put("topic", new BigDecimal(2));
 

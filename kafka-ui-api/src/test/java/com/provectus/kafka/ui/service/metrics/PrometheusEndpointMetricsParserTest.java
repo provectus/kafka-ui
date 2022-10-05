@@ -11,7 +11,8 @@ class PrometheusEndpointMetricsParserTest {
   @Test
   void test() {
     String metricsString =
-        "kafka_server_BrokerTopicMetrics_FifteenMinuteRate{name=\"BytesOutPerSec\",topic=\"__confluent.support.metrics\",} 123.1234";
+        "kafka_server_BrokerTopicMetrics_FifteenMinuteRate"
+            + "{name=\"BytesOutPerSec\",topic=\"__confluent.support.metrics\",} 123.1234";
 
     Optional<RawMetric> parsedOpt = PrometheusEndpointMetricsParser.parse(metricsString);
 

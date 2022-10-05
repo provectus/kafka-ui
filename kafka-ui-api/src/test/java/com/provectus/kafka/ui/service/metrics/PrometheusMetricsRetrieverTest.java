@@ -32,13 +32,13 @@ class PrometheusMetricsRetrieverTest {
     var url = mockWebServer.url("/metrics");
     // body copied from real jmx exporter
     MockResponse response = new MockResponse().setBody(
-        "# HELP kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate Attribute exposed for management (kafka.server<type=KafkaRequestHandlerPool, name=RequestHandlerAvgIdlePercent><>FifteenMinuteRate)\n"
+        "# HELP kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate Attribute exposed for management \n"
             + "# TYPE kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate untyped\n"
             + "kafka_server_KafkaRequestHandlerPool_FifteenMinuteRate{name=\"RequestHandlerAvgIdlePercent\",} 0.898\n"
-            + "# HELP kafka_server_socket_server_metrics_request_size_avg The average size of requests sent. (kafka.server<type=socket-server-metrics, listener=PLAINTEXT, networkProcessor=1><>request-size-avg)\n"
+            + "# HELP kafka_server_socket_server_metrics_request_size_avg The average size of requests sent. \n"
             + "# TYPE kafka_server_socket_server_metrics_request_size_avg untyped\n"
-            + "kafka_server_socket_server_metrics_request_size_avg{listener=\"PLAINTEXT\",networkProcessor=\"1\",} 101.1\n"
-            + "kafka_server_socket_server_metrics_request_size_avg{listener=\"PLAINTEXT_HOST\",networkProcessor=\"5\",} NaN"
+            + "kafka_server_socket_server_metrics_request_size_avg{listener=\"PLAIN\",networkProcessor=\"1\",} 101.1\n"
+            + "kafka_server_socket_server_metrics_request_size_avg{listener=\"PLAIN2\",networkProcessor=\"5\",} NaN"
     );
     mockWebServer.enqueue(response);
 
