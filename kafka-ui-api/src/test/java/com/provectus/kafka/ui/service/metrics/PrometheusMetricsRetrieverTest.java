@@ -50,7 +50,7 @@ class PrometheusMetricsRetrieverTest {
 
     var second = RawMetric.create(
         "kafka_server_socket_server_metrics_request_size_avg",
-        Map.of("listener", "PLAINTEXT", "networkProcessor", "1"),
+        Map.of("listener", "PLAIN", "networkProcessor", "1"),
         new BigDecimal("101.1")
     );
 
