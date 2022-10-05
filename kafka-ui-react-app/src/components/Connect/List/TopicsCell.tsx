@@ -8,7 +8,7 @@ import useAppParams from 'lib/hooks/useAppParams';
 
 import * as S from './List.styled';
 
-const TopicCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
+const TopicsCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
   row,
 }) => {
   const { topics } = row.original;
@@ -27,4 +27,4 @@ const TopicCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
   );
 };
 
-export default TopicCell;
+export default TopicsCell;
