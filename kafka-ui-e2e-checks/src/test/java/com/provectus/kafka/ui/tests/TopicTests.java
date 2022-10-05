@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.pages.NaviSideBar;
 import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
@@ -14,6 +13,8 @@ import org.junit.jupiter.api.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
+import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -45,14 +46,15 @@ public class TopicTests extends BaseTest {
     public void createTopic() {
         Topic topicToCreate = new Topic().setName("new-topic");
         naviSideBar
-                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+                .openSideMenu(TOPICS);
         topicsList
+                .waitUntilScreenReady()
                 .pressCreateNewTopic()
                 .setTopicName(topicToCreate.getName())
                 .sendData()
                 .waitUntilScreenReady();
         naviSideBar
-                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+                .openSideMenu(TOPICS);
         Assertions.assertTrue(topicsList.isTopicVisible(topicToCreate.getName()), "isTopicVisible");
         TOPIC_LIST.add(topicToCreate);
     }
@@ -65,7 +67,7 @@ public class TopicTests extends BaseTest {
     @Test
     public void updateTopic() {
         naviSideBar
-                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+                .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
                 .openTopic(TOPIC_FOR_UPDATE.getName())
@@ -79,7 +81,7 @@ public class TopicTests extends BaseTest {
                 .sendData()
                 .waitUntilScreenReady();
         naviSideBar
-                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+                .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
                 .openTopic(TOPIC_FOR_UPDATE.getName())
@@ -100,14 +102,14 @@ public class TopicTests extends BaseTest {
     @Test
     public void deleteTopic() {
         naviSideBar
-                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+                .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
                 .openTopic(TOPIC_FOR_DELETE.getName())
                 .waitUntilScreenReady()
                 .deleteTopic();
         naviSideBar
-                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+                .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady();
         Assertions.assertFalse(topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()), "isTopicVisible");
@@ -121,7 +123,7 @@ public class TopicTests extends BaseTest {
     @Test
     void produceMessage() {
         naviSideBar
-                .openSideMenu(CLUSTER_NAME, NaviSideBar.SideMenuOptions.TOPICS);
+                .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
                 .openTopic(TOPIC_FOR_UPDATE.getName())

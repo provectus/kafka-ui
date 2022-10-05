@@ -1,19 +1,15 @@
 package com.provectus.kafka.ui.base;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
-import com.provectus.kafka.ui.pages.NaviSideBar;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.TestCaseGenerator;
 import com.provectus.kafka.ui.utilities.screenshots.Screenshooter;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
-import io.qameta.allure.Step;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -28,8 +24,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.base.Setup.*;
 import static com.provectus.kafka.ui.settings.Source.BASE_WEB_URL;
 
@@ -39,8 +33,6 @@ public class BaseTest extends Facade {
 
   private static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
   private static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium:103.0";
-  protected static final String CLUSTER_NAME = "local";
-
   private final Screenshooter screenshooter = new Screenshooter();
 
   protected static BrowserWebDriverContainer<?> webDriverContainer = null;
