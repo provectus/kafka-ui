@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service.metrics;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Arrays;
@@ -18,22 +19,31 @@ import reactor.core.publisher.Mono;
 @Slf4j
 class PrometheusMetricsRetriever implements MetricsRetriever {
 
+  private static final String METRICS_ENDPOINT_PATH = "/metrics";
+  private static final int DEFAULT_EXPORTER_PORT = 11001;
+
   private final WebClient webClient;
 
   @Override
   public Flux<RawMetric> retrieve(KafkaCluster c, Node node) {
     log.debug("Retrieving metrics from prometheus exporter: {}:{}", node.host(), c.getMetricsConfig().getPort());
     var metricsConfig = c.getMetricsConfig();
+    Integer port = Optional.ofNullable(metricsConfig.getPort()).orElse(DEFAULT_EXPORTER_PORT);
+    return retrieve(node.host(), port, metricsConfig.isSsl());
+  }
+
+  @VisibleForTesting
+  Flux<RawMetric> retrieve(String host, int port, boolean ssl) {
     WebClient.ResponseSpec responseSpec = webClient.get()
         .uri(UriComponentsBuilder.newInstance()
-            .scheme(metricsConfig.isSsl() ? "https" : "http")
-            .host(node.host())
-            .port(metricsConfig.getPort())
-            .path("/metrics").build().toUri())
+            .scheme(ssl ? "https" : "http")
+            .host(host)
+            .port(port)
+            .path(METRICS_ENDPOINT_PATH).build().toUri())
         .retrieve();
 
     return responseSpec.bodyToMono(String.class)
-        .doOnError(e -> log.error("Error while getting metrics from {} - {}", c.getName(), node, e))
+        .doOnError(e -> log.error("Error while getting metrics from {}", host, e))
         .onErrorResume(th -> Mono.empty())
         .flatMapMany(body ->
             Flux.fromStream(

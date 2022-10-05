@@ -18,7 +18,7 @@ class PrometheusEndpointMetricsParser {
    * will produce:
    * name=kafka_server_BrokerTopicMetrics_FiveMinuteRate
    * value=16.94886650744339
-   * labels={topic="__consumer_offsets", name="BytesInPerSec"}",
+   * labels={name="BytesInPerSec", topic="__consumer_offsets"}",
    */
   private static final Pattern PATTERN = Pattern.compile(
       "(?<metricName>^\\w+)([ \t]*\\{*(?<properties>.*)}*)[ \\t]+(?<value>[\\d]+\\.?[\\d]+)?");
@@ -35,7 +35,7 @@ class PrometheusEndpointMetricsParser {
           .filter(str -> !"".equals(str))
           .map(str -> str.split("="))
           .filter(spit -> spit.length == 2)
-          .collect(Collectors.toMap(
+          .collect(Collectors.toUnmodifiableMap(
               str -> str[0].trim(),
               str -> str[1].trim().replace("\"", "")));
 

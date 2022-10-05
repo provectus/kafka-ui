@@ -2,6 +2,9 @@ package com.provectus.kafka.ui.service.metrics;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 public interface RawMetric {
 
@@ -24,17 +27,14 @@ public interface RawMetric {
     return new SimpleMetric(name, labels, value);
   }
 
+  @AllArgsConstructor
+  @EqualsAndHashCode
+  @ToString
   class SimpleMetric implements RawMetric {
 
     private final String name;
     private final Map<String, String> labels;
     private final BigDecimal value;
-
-    private SimpleMetric(String name, Map<String, String> labels, BigDecimal value) {
-      this.name = name;
-      this.labels = labels;
-      this.value = value;
-    }
 
     @Override
     public String name() {
@@ -54,11 +54,6 @@ public interface RawMetric {
     @Override
     public RawMetric copyWithValue(BigDecimal newValue) {
       return new SimpleMetric(name, labels, newValue);
-    }
-
-    @Override
-    public String toString() {
-      return String.format("SimpleMetric{name='%s', labels=%s, value=%s}", name, labels, value);
     }
   }
 
