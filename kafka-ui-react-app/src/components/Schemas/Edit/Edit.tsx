@@ -37,18 +37,25 @@ import { schemasApiClient } from 'lib/api';
 
 import * as S from './Edit.styled';
 
-const validationSchema = yup.object().shape({
-  newSchema: yup.string().required().isJsonObject('Schema syntax is not valid'),
-});
-
 const Edit: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const schema = useAppSelector((state) => getSchemaLatest(state));
+  const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
+
+  const validationSchema = () =>
+    yup.object().shape({
+      newSchema:
+        schema?.schemaType === SchemaType.PROTOBUF
+          ? yup.string().required()
+          : yup.string().required().isJsonObject('Schema syntax is not valid'),
+    });
+
   const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
   const methods = useForm<NewSchemaSubjectRaw>({
     mode: 'onChange',
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(validationSchema()),
   });
   const {
     formState: { isSubmitting, dirtyFields, errors },
@@ -62,9 +69,6 @@ const Edit: React.FC = () => {
       dispatch(resetLoaderById(SCHEMA_LATEST_FETCH_ACTION));
     };
   }, [clusterName, dispatch, subject]);
-
-  const schema = useAppSelector((state) => getSchemaLatest(state));
-  const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
 
   const formatedSchema = React.useMemo(() => {
     return schema?.schemaType === SchemaType.PROTOBUF
