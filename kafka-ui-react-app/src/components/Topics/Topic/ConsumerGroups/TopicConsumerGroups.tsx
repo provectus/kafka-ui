@@ -21,8 +21,7 @@ const TopicConsumerGroups: React.FC = () => {
       <thead>
         <tr>
           <TableHeaderCell title="Consumer Group ID" />
-          <TableHeaderCell title="Num Of Members" />
-          <TableHeaderCell title="Num Of Topics" />
+          <TableHeaderCell title="Active Consumers" />
           <TableHeaderCell title="Messages Behind" />
           <TableHeaderCell title="Coordinator" />
           <TableHeaderCell title="State" />
@@ -41,7 +40,6 @@ const TopicConsumerGroups: React.FC = () => {
               </Link>
             </TableKeyLink>
             <td>{consumer.members}</td>
-            <td>{consumer.topics}</td>
             <td>{consumer.messagesBehind}</td>
             <td>{consumer.coordinator?.id}</td>
             <td>

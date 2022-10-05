@@ -60,14 +60,14 @@ public class ConnectorsTests extends BaseTest {
         Connector connectorForCreate = new Connector()
                 .setName("sink_postgres_activities_e2e_checks")
                 .setConfig(getResourceAsString("config_for_create_connector.json"));
-        connectorsList.goTo(CLUSTER_NAME)
+        kafkaConnectList.goTo(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .clickCreateConnectorButton()
                 .waitUntilScreenReady()
                 .setConnectorConfig(connectorForCreate.getName(), connectorForCreate.getConfig());
-        connectorsList.goTo(CLUSTER_NAME)
+        kafkaConnectList.goTo(CLUSTER_NAME)
                 .waitUntilScreenReady();
-        Assertions.assertTrue(connectorsList.isConnectorVisible(connectorForCreate.getName()),"isConnectorVisible()");
+        Assertions.assertTrue(kafkaConnectList.isConnectorVisible(connectorForCreate.getName()),"isConnectorVisible()");
         CONNECTOR_LIST.add(connectorForCreate);
     }
 
@@ -77,14 +77,14 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(196)
     @Test
     public void updateConnector() {
-        connectorsList.goTo(CLUSTER_NAME)
+        kafkaConnectList.goTo(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_UPDATE.getName());
-        connectorsView.waitUntilScreenReady()
+        connectorDetails.waitUntilScreenReady()
                 .openConfigTab()
                 .setConfig(CONNECTOR_FOR_UPDATE.getConfig());
-        connectorsList.goTo(CLUSTER_NAME);
-        Assertions.assertTrue(connectorsList.isConnectorVisible(CONNECTOR_FOR_UPDATE.getName()),"isConnectorVisible()");
+        kafkaConnectList.goTo(CLUSTER_NAME);
+        Assertions.assertTrue(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_UPDATE.getName()),"isConnectorVisible()");
     }
 
     @DisplayName("should delete connector")
@@ -93,12 +93,16 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(195)
     @Test
     public void deleteConnector() {
-        connectorsList.goTo(CLUSTER_NAME)
+        kafkaConnectList.goTo(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_DELETE.getName());
-        connectorsView.clickDeleteButton();
-        connectorsList.goTo(CLUSTER_NAME);
-        Assertions.assertFalse(connectorsList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()),"isConnectorVisible()");
+        connectorDetails
+                .waitUntilScreenReady()
+                .openDotMenu()
+                .clickDeleteButton()
+                .clickConfirmButton();
+        kafkaConnectList.goTo(CLUSTER_NAME);
+        Assertions.assertFalse(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()), "isConnectorVisible()");
         CONNECTOR_LIST.remove(CONNECTOR_FOR_DELETE);
     }
 
