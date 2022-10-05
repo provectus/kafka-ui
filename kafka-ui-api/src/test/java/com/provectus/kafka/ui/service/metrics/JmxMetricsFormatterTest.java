@@ -19,7 +19,7 @@ class JmxMetricsFormatterTest {
   void convertsJmxMetricsAccordingToJmxExporterFormat() throws Exception {
     List<RawMetric> metrics = JmxMetricsFormatter.constructMetricsList(
         new ObjectName(
-            "kafka.server:type=Some.BrokerTopic-Metrics,name=BytesOutPer-Sec,topic=__confluent.support.metrics"),
+            "kafka.server:type=Some.BrokerTopic-Metrics,name=BytesOutPer-Sec,topic=test,some-lbl=123"),
         new MBeanAttributeInfo[] {
             createMbeanInfo("FifteenMinuteRate"),
             createMbeanInfo("Mean"),
@@ -39,7 +39,7 @@ class JmxMetricsFormatterTest {
     assertMetricsEqual(
         RawMetric.create(
             "kafka_server_Some_BrokerTopic_Metrics_FifteenMinuteRate",
-            Map.of("name", "BytesOutPer-Sec", "topic", "__confluent.support.metrics"),
+            Map.of("name", "BytesOutPer-Sec", "topic", "test",  "some_lbl", "123"),
             BigDecimal.valueOf(123.0)
         ),
         metrics.get(0)
@@ -48,7 +48,7 @@ class JmxMetricsFormatterTest {
     assertMetricsEqual(
         RawMetric.create(
             "kafka_server_Some_BrokerTopic_Metrics_Mean",
-            Map.of("name", "BytesOutPer-Sec", "topic", "__confluent.support.metrics"),
+            Map.of("name", "BytesOutPer-Sec", "topic", "test", "some_lbl", "123"),
             BigDecimal.valueOf(100.0)
         ),
         metrics.get(1)
@@ -57,7 +57,7 @@ class JmxMetricsFormatterTest {
     assertMetricsEqual(
         RawMetric.create(
             "kafka_server_Some_BrokerTopic_Metrics_Calls_count",
-            Map.of("name", "BytesOutPer-Sec", "topic", "__confluent.support.metrics"),
+            Map.of("name", "BytesOutPer-Sec", "topic", "test", "some_lbl", "123"),
             BigDecimal.valueOf(10)
         ),
         metrics.get(2)

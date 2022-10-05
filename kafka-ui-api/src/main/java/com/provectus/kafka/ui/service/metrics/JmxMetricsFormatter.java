@@ -23,17 +23,17 @@ class JmxMetricsFormatter {
                                               MBeanAttributeInfo[] attributes,
                                               Object[] attrValues) {
     String domain = fixIllegalChars(jmxMetric.getDomain());
-    LinkedHashMap<String, String> keyProperties = getKeyPropertyList(jmxMetric);
-    String firstKeyPropertyName = keyProperties.keySet().iterator().next();
-    String firstKeyPropertyValue = fixIllegalChars(keyProperties.get(firstKeyPropertyName));
-    keyProperties.remove(firstKeyPropertyName); //removing first key since it's value will be in name
+    LinkedHashMap<String, String> labels = getLabelsMap(jmxMetric);
+    String firstLabel = labels.keySet().iterator().next();
+    String firstLabelValue = fixIllegalChars(labels.get(firstLabel));
+    labels.remove(firstLabel); //removing first label since it's value will be in name
 
     List<RawMetric> result = new ArrayList<>(attributes.length);
     for (int i = 0; i < attributes.length; i++) {
       String attrName = fixIllegalChars(attributes[i].getName());
       convertNumericValue(attrValues[i]).ifPresent(convertedValue -> {
-        String name = String.format("%s_%s_%s", domain, firstKeyPropertyValue, attrName);
-        var metric = RawMetric.create(name, keyProperties, convertedValue);
+        String name = String.format("%s_%s_%s", domain, firstLabelValue, attrName);
+        var metric = RawMetric.create(name, labels, convertedValue);
         result.add(metric);
       });
     }
@@ -65,12 +65,14 @@ class JmxMetricsFormatter {
   /**
    * Converts Mbean properties to map keeping order (copied from jmx_exporter repo).
    */
-  private static LinkedHashMap<String, String> getKeyPropertyList(ObjectName mbeanName) {
+  private static LinkedHashMap<String, String> getLabelsMap(ObjectName mbeanName) {
     LinkedHashMap<String, String> keyProperties = new LinkedHashMap<>();
     String properties = mbeanName.getKeyPropertyListString();
     Matcher match = PROPERTY_PATTERN.matcher(properties);
     while (match.lookingAt()) {
-      keyProperties.put(match.group(1), match.group(2));
+      String labelName = fixIllegalChars(match.group(1)); // label names should be fixed
+      String labelValue = match.group(2);
+      keyProperties.put(labelName, labelValue);
       properties = properties.substring(match.end());
       if (properties.startsWith(",")) {
         properties = properties.substring(1);
