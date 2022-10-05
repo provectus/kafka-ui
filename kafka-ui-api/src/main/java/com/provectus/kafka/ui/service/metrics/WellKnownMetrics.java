@@ -15,7 +15,7 @@ class WellKnownMetrics {
   final Map<String, BigDecimal> bytesInFifteenMinuteRate = new HashMap<>();
   final Map<String, BigDecimal> bytesOutFifteenMinuteRate = new HashMap<>();
 
-  void feed(KafkaCluster cluster, Node node, RawMetric rawMetric) {
+  void populate(KafkaCluster cluster, Node node, RawMetric rawMetric) {
     updateTopicsIOrates(rawMetric);
   }
 

@@ -52,17 +52,17 @@ public class MetricsCollector {
                 .stream()
                 .collect(Collectors.toMap(e -> e.getKey().id(), Map.Entry::getValue)));
 
-    feedWellknowMetrics(cluster, perBrokerMetrics)
+    populateWellknowMetrics(cluster, perBrokerMetrics)
         .apply(builder);
 
     return builder.build();
   }
 
-  private WellKnownMetrics feedWellknowMetrics(KafkaCluster cluster, Map<Node, List<RawMetric>> perBrokerMetrics) {
+  private WellKnownMetrics populateWellknowMetrics(KafkaCluster cluster, Map<Node, List<RawMetric>> perBrokerMetrics) {
     WellKnownMetrics wellKnownMetrics = new WellKnownMetrics();
     perBrokerMetrics.forEach((node, metrics) ->
         metrics.forEach(metric ->
-            wellKnownMetrics.feed(cluster, node, metric)));
+            wellKnownMetrics.populate(cluster, node, metric)));
     return wellKnownMetrics;
   }
 

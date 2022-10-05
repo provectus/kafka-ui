@@ -39,8 +39,8 @@ class WellKnownMetricsTest {
 
     // feeding metrics
     for (int i = 0; i < 3; i++) {
-      wellKnownMetrics.feed(clusterParam, nodeParam, in);
-      wellKnownMetrics.feed(clusterParam, nodeParam, out);
+      wellKnownMetrics.populate(clusterParam, nodeParam, in);
+      wellKnownMetrics.populate(clusterParam, nodeParam, out);
     }
 
     assertThat(wellKnownMetrics.bytesInFifteenMinuteRate)
