@@ -12,7 +12,7 @@ export const Value = styled.span`
   line-height: 24px;
   margin-right: 10px;
   text-overflow: ellipsis;
-  width: 600px;
+  max-width: 400px;
   overflow: hidden;
   white-space: nowrap;
 `;
