@@ -2,10 +2,10 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const LinkCell = ({ value, to = '', color = '' }: any) => {
+const LinkCell = ({ value, to = '' }: any) => {
   const handleClick: React.MouseEventHandler = (e) => e.stopPropagation();
   return (
-    <NavLink style={{ color }} to={to} title={value} onClick={handleClick}>
+    <NavLink to={to} title={value} onClick={handleClick}>
       {value}
     </NavLink>
   );

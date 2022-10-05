@@ -39,7 +39,6 @@ const ClustersWidget: React.FC = () => {
         // eslint-disable-next-line react/no-unstable-nested-components
         cell: ({ row }) => (
           <LinkCell
-            color="blue"
             value={row.original.topicCount}
             to={clusterTopicsPath(row.original.name)}
           />
