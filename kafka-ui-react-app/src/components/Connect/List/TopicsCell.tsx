@@ -18,9 +18,7 @@ const TopicsCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
     <S.TagsWrapper>
       {topics?.map((t) => (
         <Tag key={t} color="gray">
-          <Link color="#4C4CFF" to={clusterTopicPath(clusterName, t)}>
-            {t}
-          </Link>
+          <Link to={clusterTopicPath(clusterName, t)}>{t}</Link>
         </Tag>
       ))}
     </S.TagsWrapper>
