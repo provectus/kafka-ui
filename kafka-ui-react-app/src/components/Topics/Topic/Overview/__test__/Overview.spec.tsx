@@ -122,7 +122,7 @@ describe('Overview', () => {
   });
 
   describe('when the table partition dropdown appearance', () => {
-    it('should check if the dropdown is not present when it is readOnly', () => {
+    it('should check if the dropdown is not disabled when it is readOnly', () => {
       renderComponent(
         {
           ...internalTopicPayload,
@@ -130,31 +130,34 @@ describe('Overview', () => {
         },
         { ...defaultContextValues, isReadOnly: true }
       );
-      expect(screen.queryByText('Clear Messages')).not.toBeInTheDocument();
+      expect(screen.queryByText('Clear Messages')).toBeEnabled();
     });
 
-    it('should check if the dropdown is not present when it is internal', () => {
+    it('should check if the dropdown is not disabled when it is internal', () => {
       renderComponent({
         ...internalTopicPayload,
         cleanUpPolicy: CleanUpPolicy.DELETE,
       });
-      expect(screen.queryByText('Clear Messages')).not.toBeInTheDocument();
+      expect(screen.queryByText('Clear Messages')).toBeEnabled();
     });
 
-    it('should check if the dropdown is not present when cleanUpPolicy is not DELETE', () => {
+    it('should check if the dropdown is not disabled when cleanUpPolicy is not DELETE', () => {
       renderComponent({
         ...externalTopicPayload,
         cleanUpPolicy: CleanUpPolicy.COMPACT,
       });
-      expect(screen.queryByText('Clear Messages')).not.toBeInTheDocument();
+      expect(screen.queryByText('Clear Messages')).toBeEnabled();
     });
 
     it('should check if the dropdown action to be in visible', () => {
-      renderComponent({
-        ...externalTopicPayload,
-        cleanUpPolicy: CleanUpPolicy.DELETE,
-      });
-      expect(screen.getByText('Clear Messages')).toBeInTheDocument();
+      renderComponent(
+        {
+          ...externalTopicPayload,
+          cleanUpPolicy: CleanUpPolicy.DELETE,
+        },
+        { ...defaultContextValues, isReadOnly: false }
+      );
+      expect(screen.getByLabelText('Dropdown Toggle')).toBeDisabled();
     });
   });
 });

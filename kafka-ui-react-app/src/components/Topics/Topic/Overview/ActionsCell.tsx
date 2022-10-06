@@ -21,17 +21,14 @@ const ActionsCell: React.FC<CellContext<Partition, unknown>> = ({ row }) => {
       clearTopicMessages({ clusterName, topicName, partitions: [partition] })
     ).unwrap();
   };
-
+  const disabled =
+    !data?.internal && !isReadOnly && data?.cleanUpPolicy === 'DELETE';
   return (
-    <div>
-      {!data?.internal && !isReadOnly && data?.cleanUpPolicy === 'DELETE' ? (
-        <Dropdown>
-          <DropdownItem onClick={clearTopicMessagesHandler} danger>
-            Clear Messages
-          </DropdownItem>
-        </Dropdown>
-      ) : null}
-    </div>
+    <Dropdown disabled={disabled}>
+      <DropdownItem onClick={clearTopicMessagesHandler} danger>
+        Clear Messages
+      </DropdownItem>
+    </Dropdown>
   );
 };
 
