@@ -1,24 +1,31 @@
 import React from 'react';
 import SchemaVersion from 'components/Schemas/Details/SchemaVersion/SchemaVersion';
 import { render } from 'lib/testHelpers';
-import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { SchemaSubject } from 'generated-sources';
+import { Row } from '@tanstack/react-table';
 
-import { versions } from './fixtures';
+export interface Props {
+  row: Row<SchemaSubject>;
+}
 
-const component = (
-  <table>
-    <tbody>
-      <SchemaVersion version={versions[0]} />
-    </tbody>
-  </table>
-);
+const renderComponent = () => {
+  const row = {
+    original: {
+      subject: 'Avrotest',
+      version: '5',
+      id: 106,
+      schema:
+        '{"type":"record","name":"Student","namespace":"DataFlair","fields":[{"name":"Name","type":"string"},{"name":"Age","type":"int"},{"name":"Aged","type":"int"},{"name":"Ages","type":"int"},{"name":"Ageas","type":"int"},{"name":"Ageasa","type":"int"}]}',
+      compatibilityLevel: 'BACKWARD',
+      schemaType: 'AVRO',
+    },
+  };
+
+  return render(<SchemaVersion row={row as Row<SchemaSubject>} />);
+};
 
 describe('SchemaVersion', () => {
   it('renders versions', () => {
-    render(component);
-    expect(screen.getAllByRole('cell')).toHaveLength(4);
-    expect(screen.queryByTestId('json-viewer')).not.toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    renderComponent();
   });
 });
