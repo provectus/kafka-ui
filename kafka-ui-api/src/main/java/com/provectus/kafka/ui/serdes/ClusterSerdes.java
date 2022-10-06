@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.serdes;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
@@ -33,17 +34,17 @@ public class ClusterSerdes implements Closeable {
   private static final CustomSerdeLoader CUSTOM_SERDE_LOADER = new CustomSerdeLoader();
 
   private static final Map<String, Class<? extends BuiltInSerde>> BUILT_IN_SERDES =
-      Map.of(
-          StringSerde.name(), StringSerde.class,
-          Int32Serde.name(), Int32Serde.class,
-          Int64Serde.name(), Int64Serde.class,
-          UInt32Serde.name(), UInt32Serde.class,
-          UInt64Serde.name(), UInt64Serde.class,
-          UuidBinarySerde.name(), UuidBinarySerde.class,
-          Base64Serde.name(), Base64Serde.class,
-          SchemaRegistrySerde.name(), SchemaRegistrySerde.class,
-          ProtobufFileSerde.name(), ProtobufFileSerde.class
-      );
+      ImmutableMap.<String, Class<? extends BuiltInSerde>>builder()
+          .put(StringSerde.name(), StringSerde.class)
+          .put(Int32Serde.name(), Int32Serde.class)
+          .put(Int64Serde.name(), Int64Serde.class)
+          .put(UInt32Serde.name(), UInt32Serde.class)
+          .put(UInt64Serde.name(), UInt64Serde.class)
+          .put(Base64Serde.name(), Base64Serde.class)
+          .put(SchemaRegistrySerde.name(), SchemaRegistrySerde.class)
+          .put(ProtobufFileSerde.name(), ProtobufFileSerde.class)
+          .put(UuidBinarySerde.name(), UuidBinarySerde.class)
+          .build();
 
   // using linked map to keep order of serdes added to it
   private final Map<String, SerdeInstance> serdes = new LinkedHashMap<>();

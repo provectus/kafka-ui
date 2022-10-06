@@ -98,13 +98,70 @@ kafka:
             password: P@ssW0RdForAuth_2
 ```
 
-## Default serdes
-
 ## Setting serdes for specific topics
+You can specify preferable serde for topics key/value. This serde will be chosen by default in UI on topic's view/produce pages. 
+To do it, set `topicValuesPattern/topicValuesPattern` properties for selected serde. kafka-ui will choose first serde that match specified pattern.
 
-By deafult kafka-
+Sample configuration:
+```yaml
+kafka:
+  clusters:
+    - name: Cluster1
+      serdes:
+        - name: String
+          topicKeysPattern: click-events|imp-events
+        
+        - name: Int64
+          topicKeysPattern: ".*-events"
+        
+        - name: SchemaRegistry
+          properties:
+            url:  http://schema-registry:8081
+          topicValuesPattern: click-events|imp-events
+```
 
-1. how patterns work
-2. default key & value serdes
-3. fallback
-4. how to pack pluggable serdes (jar/zip/folder)
+
+## Default serdes
+You can specify which serde will be chosen in UI by default if no other serdes selected via `topicKeysPattern/topicValuesPattern` settings.
+
+Sample configuration:
+```yaml
+kafka:
+  clusters:
+    - name: Cluster1
+      defaultKeySerde: Int34
+      defaultValueSerde: String
+      serdes:
+        - name: Int32
+          topicKeysPattern: click-events|imp-events
+```
+
+## Fallback
+If selected serde wasn't able to be applied (exception was thrown), than fallback (String serde with UTF-8 encoding) serde will be applied. Such messages will be specially highlighted in UI.
+
+## Custom pluggable serde registration
+You can implement your own serde and register it in kafka-ui application.
+To do it:
+1. Add `kafka-ui-serde-api` dependency 
+2. Implement `com.provectus.kafka.ui.serde.api.Serde` interface. See javadoc for implementation requirements.
+3. Pack your serde into uber jar, or provide directory with no-dependency jar and it's dependencies jars
+
+
+Example pluggable serde : [TODO]
+
+Sample configuration:
+```yaml
+kafka:
+  clusters:
+    - name: Cluster1
+      serdes:
+        - name: MyCustomSerde
+          className: my.lovely.org.KafkaUiSerde
+          filePath: /var/lib/kui-serde/my-kui-serde.jar
+          
+        - name: MyCustomSerde2
+          className: my.lovely.org.KafkaUiSerde2
+          filePath: /var/lib/kui-serde2
+          properties:
+            prop1: v1
+```
