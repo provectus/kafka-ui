@@ -1,7 +1,7 @@
 import React from 'react';
 import { FullConnectorInfo } from 'generated-sources';
 import { CellContext } from '@tanstack/react-table';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { ClusterNameRoute, clusterTopicPath } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
@@ -12,13 +12,30 @@ const TopicsCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
   row,
 }) => {
   const { topics } = row.original;
-
   const { clusterName } = useAppParams<ClusterNameRoute>();
+  const navigate = useNavigate();
+
+  const navigateToTopic = (
+    e: React.KeyboardEvent | React.MouseEvent,
+    topic: string
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(clusterTopicPath(clusterName, topic));
+  };
+
   return (
     <S.TagsWrapper>
       {topics?.map((t) => (
         <Tag key={t} color="gray">
-          <Link to={clusterTopicPath(clusterName, t)}>{t}</Link>
+          <span
+            role="link"
+            onClick={(e) => navigateToTopic(e, t)}
+            onKeyDown={(e) => navigateToTopic(e, t)}
+            tabIndex={0}
+          >
+            {t}
+          </span>
         </Tag>
       ))}
     </S.TagsWrapper>
