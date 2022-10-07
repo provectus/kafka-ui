@@ -11,7 +11,7 @@ import static com.codeborne.selenide.Selenide.sleep;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 import static com.provectus.kafka.ui.utilities.screenshots.Screenshooter.log;
 
-public class ConnectorsView {
+public class ConnectorDetails {
     protected SelenideElement dotMenuBtn = $(By.xpath("//button[@aria-label='Dropdown Toggle']"));
     protected SelenideElement deleteBtn = $(By.xpath("//li/div[text()='Delete']"));
     protected SelenideElement confirmBtnMdl = $(By.xpath("//div[@role='dialog']//button[text()='Confirm']"));
@@ -19,7 +19,7 @@ public class ConnectorsView {
     protected SelenideElement contentTextArea = $("[wrap]");
 
     @Step
-    public ConnectorsView waitUntilScreenReady() {
+    public ConnectorDetails waitUntilScreenReady() {
         $(By.xpath("//a[text() ='Tasks']")).shouldBe(Condition.visible);
         $(By.xpath("//a[text() ='Config']")).shouldBe(Condition.visible);
         $(By.xpath("//a[text() ='Overview']")).shouldBe(Condition.visible);
@@ -27,13 +27,13 @@ public class ConnectorsView {
     }
 
     @Step()
-    public ConnectorsView openConfigTab() {
+    public ConnectorDetails openConfigTab() {
         clickByJavaScript($(By.xpath("//a[text() ='Config']")));
         return this;
     }
 
     @Step()
-    public ConnectorsView setConfig(String configJson) {
+    public ConnectorDetails setConfig(String configJson) {
         $("#config").click();
         contentTextArea.sendKeys(Keys.LEFT_CONTROL + "a");
         contentTextArea.setValue("");
@@ -46,26 +46,26 @@ public class ConnectorsView {
     }
 
     @Step()
-    public ConnectorsView openDotMenu() {
+    public ConnectorDetails openDotMenu() {
         clickByJavaScript(dotMenuBtn);
         return this;
     }
 
     @Step()
-    public ConnectorsView clickDeleteButton() {
+    public ConnectorDetails clickDeleteButton() {
         clickByJavaScript(deleteBtn);
         return this;
     }
 
     @Step()
-    public ConnectorsView clickConfirmButton() {
+    public ConnectorDetails clickConfirmButton() {
         confirmBtnMdl.shouldBe(Condition.enabled).click();
         confirmBtnMdl.shouldBe(Condition.disappear);
         return this;
     }
 
     @Step()
-    public ConnectorsView deleteConnector() {
+    public ConnectorDetails deleteConnector() {
         openDotMenu();
         clickDeleteButton();
         clickConfirmButton();

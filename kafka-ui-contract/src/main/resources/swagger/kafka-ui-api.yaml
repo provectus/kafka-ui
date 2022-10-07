@@ -2035,6 +2035,10 @@ components:
           format: int64
         segmentCount:
           type: integer
+        bytesInPerSec:
+          type: number
+        bytesOutPerSec:
+          type: number
         underReplicatedPartitions:
           type: integer
         cleanUpPolicy:
@@ -2568,16 +2572,12 @@ components:
       properties:
         name:
           type: string
-        canonicalName:
-          type: string
-        params:
+        labels:
           type: string
           additionalProperties:
             type: string
         value:
-          type: string
-          additionalProperties:
-            type: number
+          type: number
 
     TopicLogdirs:
       type: object
