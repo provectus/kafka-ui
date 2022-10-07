@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.base;
 
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.TestCaseGenerator;
@@ -22,9 +24,10 @@ import org.testcontainers.utility.DockerImageName;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 
-import static com.provectus.kafka.ui.base.Setup.clearReports;
-import static com.provectus.kafka.ui.base.Setup.setup;
+import static com.provectus.kafka.ui.base.Setup.*;
+import static com.provectus.kafka.ui.settings.Source.BASE_WEB_URL;
 
 @Slf4j
 @DisplayNameGeneration(DisplayNameGenerator.class)
@@ -32,8 +35,6 @@ public class BaseTest extends Facade {
 
   private static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
   private static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium:103.0";
-  protected static final String CLUSTER_NAME = "local";
-
   private final Screenshooter screenshooter = new Screenshooter();
 
   protected static BrowserWebDriverContainer<?> webDriverContainer = null;
@@ -55,6 +56,8 @@ public class BaseTest extends Facade {
     RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
     WebDriverRunner.setWebDriver(remoteWebDriver);
     remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
+    Selenide.open(BASE_WEB_URL);
+    naviSideBar.waitUntilScreenReady();
   }
 
   @BeforeAll
@@ -118,5 +121,6 @@ public class BaseTest extends Facade {
     Allure.addAttachment("Screenshot",
         new ByteArrayInputStream(
             ((TakesScreenshot) webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
+    browserClear();
   }
 }
