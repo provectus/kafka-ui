@@ -57,6 +57,8 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady();
         naviSideBar
                 .openSideMenu(TOPICS);
+        topicsList
+                .waitUntilScreenReady();
         Assertions.assertTrue(topicsList.isTopicVisible(topicToCreate.getName()), "isTopicVisible");
         TOPIC_LIST.add(topicToCreate);
     }

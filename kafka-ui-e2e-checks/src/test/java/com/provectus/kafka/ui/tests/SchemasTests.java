@@ -78,6 +78,8 @@ public class SchemasTests extends BaseTest {
         schemaDetails
                 .waitUntilScreenReady()
                 .openEditSchema();
+        schemaCreateForm
+                .waitUntilScreenReady();
         Assertions.assertTrue(schemaCreateForm.isSchemaDropDownDisabled(),"isSchemaDropDownDisabled()");
         schemaCreateForm
                 .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
