@@ -9,8 +9,8 @@ import com.provectus.kafka.ui.model.BrokerDTO;
 import com.provectus.kafka.ui.model.BrokerLogdirUpdateDTO;
 import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
-import com.provectus.kafka.ui.model.JmxBrokerMetrics;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +35,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class BrokerService {
 
-  private final MetricsCache metricsCache;
+  private final StatisticsCache statisticsCache;
   private final AdminClientService adminClientService;
   private final DescribeLogDirsMapper describeLogDirsMapper;
 
@@ -54,7 +54,7 @@ public class BrokerService {
   }
 
   private Flux<InternalBrokerConfig> getBrokersConfig(KafkaCluster cluster, Integer brokerId) {
-    if (metricsCache.get(cluster).getClusterDescription().getNodes()
+    if (statisticsCache.get(cluster).getClusterDescription().getNodes()
         .stream().noneMatch(node -> node.id() == brokerId)) {
       return Flux.error(
           new NotFoundException(String.format("Broker with id %s not found", brokerId)));
@@ -125,7 +125,7 @@ public class BrokerService {
       KafkaCluster cluster, List<Integer> reqBrokers) {
     return adminClientService.get(cluster)
         .flatMap(admin -> {
-          List<Integer> brokers = metricsCache.get(cluster).getClusterDescription().getNodes()
+          List<Integer> brokers = statisticsCache.get(cluster).getClusterDescription().getNodes()
               .stream()
               .map(Node::id)
               .collect(Collectors.toList());
@@ -150,9 +150,8 @@ public class BrokerService {
     return getBrokersConfig(cluster, brokerId);
   }
 
-  public Mono<JmxBrokerMetrics> getBrokerMetrics(KafkaCluster cluster, Integer brokerId) {
-    return Mono.justOrEmpty(
-            metricsCache.get(cluster).getJmxMetrics().getInternalBrokerMetrics().get(brokerId));
+  public Mono<List<RawMetric>> getBrokerMetrics(KafkaCluster cluster, Integer brokerId) {
+    return Mono.justOrEmpty(statisticsCache.get(cluster).getMetrics().getPerBrokerMetrics().get(brokerId));
   }
 
 }

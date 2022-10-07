@@ -129,9 +129,6 @@ public class SendAndReadTests extends AbstractIntegrationTest {
   @Autowired
   private ClustersStorage clustersStorage;
 
-  @Autowired
-  private ClustersMetricsScheduler clustersMetricsScheduler;
-
   @BeforeEach
   void init() {
     targetCluster = clustersStorage.getClusterByName(LOCAL).get();
