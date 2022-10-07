@@ -22,7 +22,6 @@ public class ConnectorDetails {
     public ConnectorDetails waitUntilScreenReady() {
         $(By.xpath("//a[text() ='Tasks']")).shouldBe(Condition.visible);
         $(By.xpath("//a[text() ='Config']")).shouldBe(Condition.visible);
-        $(By.xpath("//a[text() ='Overview']")).shouldBe(Condition.visible);
         return this;
     }
 
