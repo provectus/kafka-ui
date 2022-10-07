@@ -1,0 +1,22 @@
+# Configuration for welcome - https://github.com/behaviorbot/welcome
+
+# Configuration for new-issue-welcome - https://github.com/behaviorbot/new-issue-welcome
+
+newIssueWelcomeComment: >
+  Hello there! 👋
+
+
+  Thank you and congratulations 🎉 for opening your very first issue in this project! 💖
+
+
+  In case you want to claim this issue, please comment down below! We will try to get back to you as soon as we can. 👀
+
+newPRWelcomeComment: >
+  Hello there! 👋
+  
+
+  Thank you and congrats 🎉 for opening your first PR on this project! ✨ 💖
+
+
+  We will try to review it soon!
+  
