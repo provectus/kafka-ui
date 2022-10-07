@@ -1,4 +1,10 @@
-import { calculateTimer, formatMilliseconds } from 'lib/dateTimeHelpers';
+import {
+  passedTime,
+  calculateTimer,
+  formatMilliseconds,
+} from 'lib/dateTimeHelpers';
+
+const startedAt = 1664891890889;
 
 describe('format Milliseconds', () => {
   it('hours > 0', () => {
@@ -27,13 +33,15 @@ describe('format Milliseconds', () => {
 });
 
 describe('calculate timer', () => {
-  const startedAt = 1664891890889;
-
-  const passedTimeMck = jest.fn((value: number) => {
-    return value < 10 ? `0${value}` : value;
+  it('time value < 10', () => {
+    expect(passedTime(5)).toBeTruthy();
   });
 
-  expect(calculateTimer(startedAt));
-  expect(passedTimeMck(5)).toBeTruthy();
-  expect(passedTimeMck(10)).toBeTruthy();
+  it('time value > 9', () => {
+    expect(passedTime(10)).toBeTruthy();
+  });
+
+  it('run calculate time', () => {
+    expect(calculateTimer(startedAt));
+  });
 });
