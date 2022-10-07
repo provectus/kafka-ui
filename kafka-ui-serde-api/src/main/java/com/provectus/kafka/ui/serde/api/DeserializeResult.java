@@ -71,4 +71,15 @@ public final class DeserializeResult {
   public int hashCode() {
     return Objects.hash(result, type, additionalProperties);
   }
+
+  @Override
+  public String toString() {
+    return "DeserializeResult{"
+        + "result='" + result
+        + '\''
+        + ", type=" + type
+        + ", additionalProperties="
+        + additionalProperties
+        + '}';
+  }
 }
