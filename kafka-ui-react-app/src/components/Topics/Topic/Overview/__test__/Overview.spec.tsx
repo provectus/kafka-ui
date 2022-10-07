@@ -122,31 +122,31 @@ describe('Overview', () => {
   });
 
   describe('when the table partition dropdown appearance', () => {
-    it('should check if the dropdown is not disabled when it is readOnly', () => {
+    it('should check if the dropdown is disabled when it is readOnly', () => {
       renderComponent(
         {
-          ...internalTopicPayload,
+          ...externalTopicPayload,
           cleanUpPolicy: CleanUpPolicy.DELETE,
         },
         { ...defaultContextValues, isReadOnly: true }
       );
-      expect(screen.queryByText('Clear Messages')).toBeEnabled();
+      expect(screen.getByLabelText('Dropdown Toggle')).toBeDisabled();
     });
 
-    it('should check if the dropdown is not disabled when it is internal', () => {
+    it('should check if the dropdown is disabled when it is internal', () => {
       renderComponent({
         ...internalTopicPayload,
         cleanUpPolicy: CleanUpPolicy.DELETE,
       });
-      expect(screen.queryByText('Clear Messages')).toBeEnabled();
+      expect(screen.getByLabelText('Dropdown Toggle')).toBeDisabled();
     });
 
-    it('should check if the dropdown is not disabled when cleanUpPolicy is not DELETE', () => {
+    it('should check if the dropdown is disabled when cleanUpPolicy is not DELETE', () => {
       renderComponent({
         ...externalTopicPayload,
         cleanUpPolicy: CleanUpPolicy.COMPACT,
       });
-      expect(screen.queryByText('Clear Messages')).toBeEnabled();
+      expect(screen.getByLabelText('Dropdown Toggle')).toBeDisabled();
     });
 
     it('should check if the dropdown action to be in visible', () => {
@@ -157,7 +157,7 @@ describe('Overview', () => {
         },
         { ...defaultContextValues, isReadOnly: false }
       );
-      expect(screen.getByLabelText('Dropdown Toggle')).toBeDisabled();
+      expect(screen.getByLabelText('Dropdown Toggle')).toBeInTheDocument();
     });
   });
 });

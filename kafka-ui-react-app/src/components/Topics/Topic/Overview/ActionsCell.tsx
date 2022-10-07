@@ -22,7 +22,7 @@ const ActionsCell: React.FC<CellContext<Partition, unknown>> = ({ row }) => {
     ).unwrap();
   };
   const disabled =
-    !data?.internal && !isReadOnly && data?.cleanUpPolicy === 'DELETE';
+    data?.internal || isReadOnly || data?.cleanUpPolicy !== 'DELETE';
   return (
     <Dropdown disabled={disabled}>
       <DropdownItem onClick={clearTopicMessagesHandler} danger>
