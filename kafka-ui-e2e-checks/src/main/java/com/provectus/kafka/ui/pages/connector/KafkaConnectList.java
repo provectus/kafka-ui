@@ -28,14 +28,14 @@ public class KafkaConnectList {
 
     @Step
     public KafkaConnectList openConnector(String connectorName) {
-        $(By.linkText(connectorName)).click();
+        $x("//tbody//td[1][text()='" + connectorName + "']").shouldBe(Condition.enabled).click();
         return this;
     }
 
     @Step
     public boolean isConnectorVisible(String connectorName) {
         $(By.xpath("//table")).shouldBe(Condition.visible);
-        return isVisible($x("//tbody//td[1]//a[text()='" + connectorName + "']"));
+        return isVisible($x("//tbody//td[1][text()='" + connectorName + "']"));
     }
 
     @Step
