@@ -1,8 +1,6 @@
 package com.provectus.kafka.ui.pages.connector;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
-import com.provectus.kafka.ui.settings.Source;
 import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
@@ -15,14 +13,6 @@ import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
 @ExtensionMethod(WaitUtils.class)
 public class KafkaConnectList {
-
-    private static final String path = "/ui/clusters/%s/connectors";
-
-    @Step("Open URL to {cluster}")
-    public KafkaConnectList goTo(String cluster) {
-        Selenide.open(Source.BASE_WEB_URL + String.format(path, cluster));
-        return this;
-    }
 
     @Step
     public KafkaConnectList waitUntilScreenReady() {
