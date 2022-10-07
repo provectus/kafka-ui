@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.model;
 
-import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,7 @@ public class InternalTopic {
   private final List<InternalTopicConfig> topicConfigs;
   private final CleanupPolicy cleanUpPolicy;
 
-  // rates from jmx
+  // rates from metrics
   private final BigDecimal bytesInPerSec;
   private final BigDecimal bytesOutPerSec;
 
@@ -40,7 +39,7 @@ public class InternalTopic {
   public static InternalTopic from(TopicDescription topicDescription,
                                    List<ConfigEntry> configs,
                                    InternalPartitionsOffsets partitionsOffsets,
-                                   JmxClusterUtil.JmxMetrics jmxMetrics,
+                                   Metrics metrics,
                                    InternalLogDirStats logDirInfo) {
     var topic = InternalTopic.builder();
     topic.internal(
@@ -105,8 +104,8 @@ public class InternalTopic {
       topic.segmentSize(segmentStats.getSegmentSize());
     }
 
-    topic.bytesInPerSec(jmxMetrics.getBytesInPerSec().get(topicDescription.name()));
-    topic.bytesOutPerSec(jmxMetrics.getBytesOutPerSec().get(topicDescription.name()));
+    topic.bytesInPerSec(metrics.getBytesInPerSec().get(topicDescription.name()));
+    topic.bytesOutPerSec(metrics.getBytesOutPerSec().get(topicDescription.name()));
 
     topic.topicConfigs(
         configs.stream().map(InternalTopicConfig::from).collect(Collectors.toList()));
