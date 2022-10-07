@@ -17,7 +17,7 @@ public class SchemaRegistryList {
     @Step
     public SchemaRegistryList waitUntilScreenReady(){
         $x("//*[contains(text(),'Loading')]").shouldBe(Condition.disappear);
-        $x("//button[text()=' Create Schema']").shouldBe(Condition.visible);
+        $x("//button[contains(text(),'Create Schema')]").shouldBe(Condition.visible);
         return this;
     }
 

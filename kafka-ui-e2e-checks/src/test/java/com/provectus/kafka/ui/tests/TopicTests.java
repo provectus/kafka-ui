@@ -49,9 +49,11 @@ public class TopicTests extends BaseTest {
                 .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
-                .pressCreateNewTopic()
+                .pressCreateNewTopic();
+        topicCreateEditForm
                 .setTopicName(topicToCreate.getName())
-                .sendData()
+                .sendData();
+        topicDetails
                 .waitUntilScreenReady();
         naviSideBar
                 .openSideMenu(TOPICS);
@@ -70,21 +72,25 @@ public class TopicTests extends BaseTest {
                 .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_FOR_UPDATE.getName())
+                .openTopic(TOPIC_FOR_UPDATE.getName());
+        topicDetails
                 .waitUntilScreenReady()
-                .openEditSettings()
+                .openEditSettings();
+        topicCreateEditForm
                 .selectCleanupPolicy(TOPIC_FOR_UPDATE.getCompactPolicyValue())
                 .setMinInsyncReplicas(10)
                 .setTimeToRetainDataInMs(TOPIC_FOR_UPDATE.getTimeToRetainData())
                 .setMaxSizeOnDiskInGB(TOPIC_FOR_UPDATE.getMaxSizeOnDisk())
                 .setMaxMessageBytes(TOPIC_FOR_UPDATE.getMaxMessageBytes())
-                .sendData()
+                .sendData();
+        topicDetails
                 .waitUntilScreenReady();
         naviSideBar
                 .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_FOR_UPDATE.getName())
+                .openTopic(TOPIC_FOR_UPDATE.getName());
+        topicDetails
                 .waitUntilScreenReady()
                 .openEditSettings();
         SoftAssertions softly = new SoftAssertions();
@@ -105,7 +111,8 @@ public class TopicTests extends BaseTest {
                 .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_FOR_DELETE.getName())
+                .openTopic(TOPIC_FOR_DELETE.getName());
+        topicDetails
                 .waitUntilScreenReady()
                 .deleteTopic();
         naviSideBar
@@ -126,13 +133,17 @@ public class TopicTests extends BaseTest {
                 .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_FOR_UPDATE.getName())
+                .openTopic(TOPIC_FOR_UPDATE.getName());
+        topicDetails
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)
-                .clickOnButton("Produce Message")
+                .clickOnButton("Produce Message");
+        produceMessagePanel
                 .setContentFiled(TOPIC_FOR_UPDATE.getMessageContent())
                 .setKeyField(TOPIC_FOR_UPDATE.getMessageKey())
                 .submitProduceMessage();
+        topicDetails
+                .waitUntilScreenReady();
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(topicDetails.isKeyMessageVisible((TOPIC_FOR_UPDATE.getMessageKey()))).withFailMessage("isKeyMessageVisible()").isTrue();
         softly.assertThat(topicDetails.isContentMessageVisible((TOPIC_FOR_UPDATE.getMessageContent()).trim())).withFailMessage("isContentMessageVisible()").isTrue();

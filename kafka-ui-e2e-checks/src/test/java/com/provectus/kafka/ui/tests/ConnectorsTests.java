@@ -66,7 +66,8 @@ public class ConnectorsTests extends BaseTest {
                 .openSideMenu(KAFKA_CONNECT);
         kafkaConnectList
                 .waitUntilScreenReady()
-                .clickCreateConnectorButton()
+                .clickCreateConnectorButton();
+        connectorCreateForm
                 .waitUntilScreenReady()
                 .setConnectorConfig(connectorForCreate.getName(), connectorForCreate.getConfig());
         naviSideBar
@@ -94,6 +95,8 @@ public class ConnectorsTests extends BaseTest {
                 .setConfig(CONNECTOR_FOR_UPDATE.getConfig());
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
+        kafkaConnectList
+                .waitUntilScreenReady();
         Assertions.assertTrue(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_UPDATE.getName()), "isConnectorVisible()");
     }
 
@@ -115,6 +118,8 @@ public class ConnectorsTests extends BaseTest {
                 .clickConfirmButton();
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
+        kafkaConnectList
+                .waitUntilScreenReady();
         Assertions.assertFalse(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()), "isConnectorVisible()");
         CONNECTOR_LIST.remove(CONNECTOR_FOR_DELETE);
     }

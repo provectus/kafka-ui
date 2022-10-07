@@ -2,21 +2,18 @@ package com.provectus.kafka.ui.pages;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
-import lombok.experimental.ExtensionMethod;
 
 import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 
-@ExtensionMethod(WaitUtils.class)
 public class NaviSideBar {
 
     @Step
     public NaviSideBar waitUntilScreenReady() {
-        $x("//*[contains(text(),'Loading')]").shouldBe(Condition.disappear);
+        $x("//*[contains(text(),'Loading')]").shouldBe(Condition.disappear, Duration.ofSeconds(30));
         $x("//a[@title='Dashboard']").shouldBe(Condition.visible, Duration.ofSeconds(30));
         return this;
     }

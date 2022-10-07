@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.base;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
@@ -23,6 +24,7 @@ import org.testcontainers.utility.DockerImageName;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 
 import static com.provectus.kafka.ui.base.Setup.*;
 import static com.provectus.kafka.ui.settings.Source.BASE_WEB_URL;
