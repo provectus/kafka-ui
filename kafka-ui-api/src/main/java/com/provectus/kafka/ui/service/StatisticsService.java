@@ -3,8 +3,10 @@ package com.provectus.kafka.ui.service;
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalLogDirStats;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.Metrics;
 import com.provectus.kafka.ui.model.ServerStatusDTO;
-import com.provectus.kafka.ui.util.JmxClusterUtil;
+import com.provectus.kafka.ui.model.Statistics;
+import com.provectus.kafka.ui.service.metrics.MetricsCollector;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -17,33 +19,33 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class MetricsService {
+public class StatisticsService {
 
-  private final JmxClusterUtil jmxClusterUtil;
+  private final MetricsCollector metricsClusterUtil;
   private final AdminClientService adminClientService;
   private final FeatureService featureService;
-  private final MetricsCache cache;
+  private final StatisticsCache cache;
 
-  public Mono<MetricsCache.Metrics> updateCache(KafkaCluster c) {
-    return getMetrics(c).doOnSuccess(m -> cache.replace(c, m));
+  public Mono<Statistics> updateCache(KafkaCluster c) {
+    return getStatistics(c).doOnSuccess(m -> cache.replace(c, m));
   }
 
-  private Mono<MetricsCache.Metrics> getMetrics(KafkaCluster cluster) {
+  private Mono<Statistics> getStatistics(KafkaCluster cluster) {
     return adminClientService.get(cluster).flatMap(ac ->
             ac.describeCluster().flatMap(description ->
                 Mono.zip(
                     List.of(
-                        jmxClusterUtil.getBrokerMetrics(cluster, description.getNodes()),
+                        metricsClusterUtil.getBrokerMetrics(cluster, description.getNodes()),
                         getLogDirInfo(cluster, ac),
                         featureService.getAvailableFeatures(cluster, description.getController()),
                         loadTopicConfigs(cluster),
                         describeTopics(cluster)),
                     results ->
-                        MetricsCache.Metrics.builder()
+                        Statistics.builder()
                             .status(ServerStatusDTO.ONLINE)
                             .clusterDescription(description)
                             .version(ac.getVersion())
-                            .jmxMetrics((JmxClusterUtil.JmxMetrics) results[0])
+                            .metrics((Metrics) results[0])
                             .logDirInfo((InternalLogDirStats) results[1])
                             .features((List<Feature>) results[2])
                             .topicConfigs((Map<String, List<ConfigEntry>>) results[3])
@@ -53,7 +55,7 @@ public class MetricsService {
         .doOnError(e ->
             log.error("Failed to collect cluster {} info", cluster.getName(), e))
         .onErrorResume(
-            e -> Mono.just(MetricsCache.Metrics.empty().toBuilder().lastKafkaException(e).build()));
+            e -> Mono.just(Statistics.empty().toBuilder().lastKafkaException(e).build()));
   }
 
   private Mono<InternalLogDirStats> getLogDirInfo(KafkaCluster cluster, ReactiveAdminClient c) {
