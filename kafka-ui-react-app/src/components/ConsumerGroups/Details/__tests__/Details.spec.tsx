@@ -65,7 +65,7 @@ describe('Details component', () => {
       expect(screen.getByText(groupId)).toBeInTheDocument();
 
       expect(screen.getByRole('table')).toBeInTheDocument();
-      expect(screen.getAllByRole('columnheader').length).toEqual(2);
+      expect(screen.getAllByRole('columnheader').length).toEqual(3);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
@@ -75,6 +75,13 @@ describe('Details component', () => {
       expect(mockNavigate).toHaveBeenLastCalledWith(
         clusterConsumerGroupResetRelativePath
       );
+    });
+
+    it('renders search input', async () => {
+      await renderComponent();
+      expect(
+        screen.getByPlaceholderText('Search by Topic Name')
+      ).toBeInTheDocument();
     });
 
     it('shows confirmation modal on consumer group delete', async () => {

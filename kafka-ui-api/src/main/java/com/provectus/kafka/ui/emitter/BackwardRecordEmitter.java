@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serde.RecordSerDe;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class BackwardRecordEmitter
   public BackwardRecordEmitter(
       Function<Map<String, Object>, KafkaConsumer<Bytes, Bytes>> consumerSupplier,
       OffsetsSeekBackward offsetsSeek,
-      RecordSerDe recordDeserializer) {
+      ConsumerRecordDeserializer recordDeserializer) {
     super(recordDeserializer);
     this.offsetsSeek = offsetsSeek;
     this.consumerSupplier = consumerSupplier;
@@ -118,7 +118,7 @@ public class BackwardRecordEmitter
     var recordsToSend = new ArrayList<ConsumerRecord<Bytes, Bytes>>();
 
     // we use empty polls counting to verify that partition was fully read
-    for (int emptyPolls = 0; recordsToSend.size() < desiredMsgsToPoll && emptyPolls < 3; ) {
+    for (int emptyPolls = 0; recordsToSend.size() < desiredMsgsToPoll && emptyPolls < NO_MORE_DATA_EMPTY_POLLS_COUNT;) {
       var polledRecords = poll(sink, consumer, POLL_TIMEOUT);
       log.debug("{} records polled from {}", polledRecords.count(), tp);
 

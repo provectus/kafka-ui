@@ -2,38 +2,35 @@ package com.provectus.kafka.ui.pages.schema;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.utils.BrowserUtils;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
+import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
 public class SchemaRegistryList {
 
     private final SelenideElement schemaButton = $(By.xpath("//*[contains(text(),'Create Schema')]"));
+
     @Step
-    public SchemaCreateView clickCreateSchema() {
-        BrowserUtils.javaExecutorClick(schemaButton);
-        return new SchemaCreateView();
+    public SchemaCreateForm clickCreateSchema() {
+        clickByJavaScript(schemaButton);
+        return new SchemaCreateForm();
     }
+
     @Step
-    public SchemaView openSchema(String schemaName) {
+    public SchemaDetails openSchema(String schemaName) {
         $(By.xpath("//*[contains(text(),'" + schemaName + "')]")).click();
-        return new SchemaView();
+        return new SchemaDetails();
     }
 
     @Step
-    public SchemaRegistryList isNotVisible(String schemaName) {
-        $x(String.format("//*[contains(text(),'%s')]", schemaName)).shouldNotBe(Condition.visible);
-        return this;
-    }
-
-    @Step
-    public SchemaRegistryList isSchemaVisible(String schemaName) {
-        $$("tbody td>a")
-                .find(Condition.exactText(schemaName))
-                .shouldBe(Condition.visible);
-        return this;
+    public boolean isSchemaVisible(String schemaName) {
+        $(By.xpath("//table")).shouldBe(Condition.visible);
+        return isVisible($x("//tbody//td//a[text()='" + schemaName + "']"));
     }
 }
+
 

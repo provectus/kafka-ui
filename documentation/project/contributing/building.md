@@ -9,12 +9,6 @@ Once you installed the prerequisites and cloned the repository, run the followin
 
 > Skip the maven tests as they might not be successful
 
-> Comment out `com.spotify` plugin in `kafka-ui-api` pom file
-
-> Once your build is successful you need to create docker image manually as you'd commented `com.spotify` plugin
-
-> ```docker build --platform linux/arm64 -t provectuslabs/kafka-ui:latest --build-arg JAR_FILE=kafka-ui-api-0.0.1-SNAPSHOT.jar .```
-
 - Build a docker image with the app
 ```sh
 ./mvnw clean install -Pprod

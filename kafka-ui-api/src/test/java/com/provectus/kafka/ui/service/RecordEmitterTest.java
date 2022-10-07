@@ -13,7 +13,10 @@ import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
-import com.provectus.kafka.ui.serde.SimpleRecordSerDe;
+import com.provectus.kafka.ui.serde.api.Serde;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
+import com.provectus.kafka.ui.serdes.PropertyResolverImpl;
+import com.provectus.kafka.ui.serdes.builtin.StringSerde;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import java.io.Serializable;
@@ -53,6 +56,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
   static final String TOPIC = RecordEmitterTest.class.getSimpleName() + "_" + UUID.randomUUID();
   static final String EMPTY_TOPIC = TOPIC + "_empty";
   static final List<Record> SENT_RECORDS = new ArrayList<>();
+  static final ConsumerRecordDeserializer RECORD_DESERIALIZER = createRecordsDeserializer();
 
   @BeforeAll
   static void generateMsgs() throws Exception {
@@ -90,13 +94,27 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     deleteTopic(EMPTY_TOPIC);
   }
 
+  private static ConsumerRecordDeserializer createRecordsDeserializer() {
+    Serde s = new StringSerde();
+    s.configure(PropertyResolverImpl.empty(), PropertyResolverImpl.empty(), PropertyResolverImpl.empty());
+    return new ConsumerRecordDeserializer(
+        StringSerde.name(),
+        s.deserializer(null, Serde.Target.KEY),
+        StringSerde.name(),
+        s.deserializer(null, Serde.Target.VALUE),
+        StringSerde.name(),
+        s.deserializer(null, Serde.Target.KEY),
+        s.deserializer(null, Serde.Target.VALUE)
+    );
+  }
+
   @Test
   void pollNothingOnEmptyTopic() {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new OffsetsSeekForward(EMPTY_TOPIC,
             new ConsumerPosition(BEGINNING, Map.of(), FORWARD)
-        ), new SimpleRecordSerDe()
+        ), RECORD_DESERIALIZER
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
@@ -105,7 +123,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
             EMPTY_TOPIC,
             new ConsumerPosition(BEGINNING, Map.of(), BACKWARD),
             100
-        ), new SimpleRecordSerDe()
+        ), RECORD_DESERIALIZER
     );
 
     StepVerifier.create(
@@ -127,7 +145,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new OffsetsSeekForward(TOPIC,
             new ConsumerPosition(BEGINNING, Map.of(), FORWARD)
-        ), new SimpleRecordSerDe()
+        ), RECORD_DESERIALIZER
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
@@ -135,7 +153,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new OffsetsSeekBackward(TOPIC,
             new ConsumerPosition(BEGINNING, Map.of(), BACKWARD),
             PARTITIONS * MSGS_PER_PARTITION
-        ), new SimpleRecordSerDe()
+        ), RECORD_DESERIALIZER
     );
 
     List<String> expectedValues = SENT_RECORDS.stream().map(Record::getValue).collect(Collectors.toList());
@@ -156,7 +174,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new OffsetsSeekForward(TOPIC,
             new ConsumerPosition(OFFSET, targetOffsets, FORWARD)
-        ), new SimpleRecordSerDe()
+        ), RECORD_DESERIALIZER
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
@@ -164,7 +182,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new OffsetsSeekBackward(TOPIC,
             new ConsumerPosition(OFFSET, targetOffsets, BACKWARD),
             PARTITIONS * MSGS_PER_PARTITION
-        ), new SimpleRecordSerDe()
+        ), RECORD_DESERIALIZER
     );
 
     var expectedValues = SENT_RECORDS.stream()
@@ -201,7 +219,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new OffsetsSeekForward(TOPIC,
             new ConsumerPosition(TIMESTAMP, targetTimestamps, FORWARD)
-        ), new SimpleRecordSerDe()
+        ), RECORD_DESERIALIZER
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
@@ -209,7 +227,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new OffsetsSeekBackward(TOPIC,
             new ConsumerPosition(TIMESTAMP, targetTimestamps, BACKWARD),
             PARTITIONS * MSGS_PER_PARTITION
-        ), new SimpleRecordSerDe()
+        ), RECORD_DESERIALIZER
     );
 
     var expectedValues = SENT_RECORDS.stream()
@@ -240,7 +258,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new OffsetsSeekBackward(TOPIC,
             new ConsumerPosition(OFFSET, targetOffsets, BACKWARD),
             numMessages
-        ), new SimpleRecordSerDe()
+        ), RECORD_DESERIALIZER
     );
 
     var expectedValues = SENT_RECORDS.stream()
@@ -266,7 +284,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new OffsetsSeekBackward(TOPIC,
             new ConsumerPosition(OFFSET, offsets, BACKWARD),
             100
-        ), new SimpleRecordSerDe()
+        ), RECORD_DESERIALIZER
     );
 
     expectEmitter(backwardEmitter,
@@ -283,7 +301,8 @@ class RecordEmitterTest extends AbstractIntegrationTest {
             .expectNextCount(expectedValues.size())
             .expectRecordedMatches(r -> r.containsAll(expectedValues))
             .consumeRecordedWith(r -> log.info("Collected collection: {}", r)),
-        v -> {}
+        v -> {
+        }
     );
   }
 

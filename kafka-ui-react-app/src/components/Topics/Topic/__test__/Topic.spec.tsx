@@ -46,6 +46,9 @@ jest.mock('components/Topics/Topic/Overview/Overview', () => () => (
 jest.mock('components/Topics/Topic/Messages/Messages', () => () => (
   <>MessagesMock</>
 ));
+jest.mock('components/Topics/Topic/SendMessage/SendMessage', () => () => (
+  <>SendMessageMock</>
+));
 jest.mock('components/Topics/Topic/Settings/Settings', () => () => (
   <>SettingsMock</>
 ));
@@ -98,9 +101,11 @@ describe('Details', () => {
   });
   describe('Action Bar', () => {
     describe('when it has readonly flag', () => {
-      it('renders disabled the Action button a Topic', () => {
+      it('renders disabled the Action button', () => {
         renderComponent(true);
-        expect(screen.getByText('Produce Message')).toBeDisabled();
+        expect(
+          screen.getByRole('button', { name: 'Produce Message' })
+        ).toBeDisabled();
       });
     });
 

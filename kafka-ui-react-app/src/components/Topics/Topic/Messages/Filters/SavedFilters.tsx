@@ -58,7 +58,7 @@ const SavedFilters: FC<Props> = ({
   return (
     <>
       <S.BackToCustomText onClick={onGoBack}>
-        Back To custom filters
+        Back To create filters
       </S.BackToCustomText>
       <S.SavedFiltersContainer>
         <S.CreatedFilter>Saved filters</S.CreatedFilter>

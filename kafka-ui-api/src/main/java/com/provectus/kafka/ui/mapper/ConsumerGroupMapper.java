@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.model.ConsumerGroupDetailsDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupStateDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupTopicPartitionDTO;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
+import com.provectus.kafka.ui.model.InternalTopicConsumerGroup;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,20 @@ public class ConsumerGroupMapper {
 
   public static ConsumerGroupDTO toDto(InternalConsumerGroup c) {
     return convertToConsumerGroup(c, new ConsumerGroupDTO());
+  }
+
+  public static ConsumerGroupDTO toDto(InternalTopicConsumerGroup c) {
+    ConsumerGroupDTO consumerGroup = new ConsumerGroupDetailsDTO();
+    consumerGroup.setTopics(1); //for ui backward-compatibility, need to rm usage from ui
+    consumerGroup.setGroupId(c.getGroupId());
+    consumerGroup.setMembers(c.getMembers());
+    consumerGroup.setMessagesBehind(c.getMessagesBehind());
+    consumerGroup.setSimple(c.isSimple());
+    consumerGroup.setPartitionAssignor(c.getPartitionAssignor());
+    consumerGroup.setState(mapConsumerGroupState(c.getState()));
+    Optional.ofNullable(c.getCoordinator())
+        .ifPresent(cd -> consumerGroup.setCoordinator(mapCoordinator(cd)));
+    return consumerGroup;
   }
 
   public static ConsumerGroupDetailsDTO toDetailsDto(InternalConsumerGroup g) {

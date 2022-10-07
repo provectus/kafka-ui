@@ -1,11 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import useAppParams from 'lib/hooks/useAppParams';
 import {
   clusterConsumerGroupResetRelativePath,
   clusterConsumerGroupsPath,
   ClusterGroupParam,
 } from 'lib/paths';
+import Search from 'components/common/Search/Search';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -24,11 +25,14 @@ import {
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import getTagColor from 'components/common/Tag/getTagColor';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 
 import ListItem from './ListItem';
 
 const Details: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const searchValue = searchParams.get('q') || '';
   const { isReadOnly } = React.useContext(ClusterContext);
   const { consumerGroupID, clusterName } = useAppParams<ClusterGroupParam>();
   const dispatch = useAppDispatch();
@@ -61,6 +65,14 @@ const Details: React.FC = () => {
   }
 
   const partitionsByTopic = groupBy(consumerGroup.partitions, 'topic');
+
+  const filteredPartitionsByTopic = Object.keys(partitionsByTopic).filter(
+    (el) => el.includes(searchValue)
+  );
+
+  const currentPartitionsByTopic = searchValue.length
+    ? filteredPartitionsByTopic
+    : Object.keys(partitionsByTopic);
 
   return (
     <div>
@@ -103,17 +115,24 @@ const Details: React.FC = () => {
           <Metrics.Indicator label="Coordinator ID">
             {consumerGroup.coordinator?.id}
           </Metrics.Indicator>
+          <Metrics.Indicator label="Total lag">
+            {consumerGroup.messagesBehind}
+          </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
+      <ControlPanelWrapper hasInput style={{ margin: '16px 0 20px' }}>
+        <Search placeholder="Search by Topic Name" />
+      </ControlPanelWrapper>
       <Table isFullwidth>
         <thead>
           <tr>
             <TableHeaderCell> </TableHeaderCell>
             <TableHeaderCell title="Topic" />
+            <TableHeaderCell title="Messages behind" />
           </tr>
         </thead>
         <tbody>
-          {Object.keys(partitionsByTopic).map((key) => (
+          {currentPartitionsByTopic.map((key) => (
             <ListItem
               clusterName={clusterName}
               consumers={partitionsByTopic[key]}

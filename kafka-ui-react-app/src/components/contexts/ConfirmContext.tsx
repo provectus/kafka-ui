@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
-type ConfirmContextType = {
+interface ConfirmContextType {
   content: React.ReactNode;
   confirm?: () => void;
   setContent: React.Dispatch<React.SetStateAction<React.ReactNode>>;
   setConfirm: React.Dispatch<React.SetStateAction<(() => void) | undefined>>;
   cancel: () => void;
-};
+}
 
 export const ConfirmContext = React.createContext<ConfirmContextType | null>(
   null

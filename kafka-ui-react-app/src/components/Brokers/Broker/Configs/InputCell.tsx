@@ -11,7 +11,7 @@ import Input from 'components/common/Input/Input';
 import * as S from './Configs.styled';
 
 interface InputCellProps extends CellContext<BrokerConfig, unknown> {
-  onUpdate: (name: string, value: string | null) => void;
+  onUpdate: (name: string, value?: string) => void;
 }
 
 const InputCell: React.FC<InputCellProps> = ({ row, getValue, onUpdate }) => {
@@ -24,7 +24,7 @@ const InputCell: React.FC<InputCellProps> = ({ row, getValue, onUpdate }) => {
   const onSave = () => {
     if (value !== initialValue) {
       confirm('Are you sure you want to change the value?', async () => {
-        onUpdate(row?.original?.name, value || null);
+        onUpdate(row?.original?.name, value);
       });
     }
     setIsEdit(false);
@@ -70,7 +70,7 @@ const InputCell: React.FC<InputCellProps> = ({ row, getValue, onUpdate }) => {
           : { fontWeight: 400 }
       }
     >
-      <S.Value>{initialValue}</S.Value>
+      <S.Value title={initialValue}>{initialValue}</S.Value>
       <Button
         buttonType="primary"
         buttonSize="S"

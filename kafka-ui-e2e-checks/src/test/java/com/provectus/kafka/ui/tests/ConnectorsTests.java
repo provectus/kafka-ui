@@ -1,109 +1,115 @@
 package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.helpers.ApiHelper;
-import com.provectus.kafka.ui.helpers.Helpers;
-import com.provectus.kafka.ui.utils.qaseIO.Status;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
+import com.provectus.kafka.ui.models.Connector;
+import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qase.api.annotation.CaseId;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-import static com.provectus.kafka.ui.extensions.FileUtils.getResourceAsString;
+import java.util.ArrayList;
+import java.util.List;
 
+import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ConnectorsTests extends BaseTest {
-
-    private final long suiteId = 10;
-    private final String suiteTitle = "Kafka Connect";
-    public static final String SINK_CONNECTOR = "sink_postgres_activities_e2e_checks";
-    public static final String TOPIC_FOR_CONNECTOR = "topic_for_connector";
-    public static final String TOPIC_FOR_DELETE_CONNECTOR = "topic_for_delete_connector";
-    public static final String TOPIC_FOR_UPDATE_CONNECTOR = "topic_for_update_connector";
-    public static final String FIRST_CONNECTOR = "first";
-    public static final String CONNECTOR_FOR_DELETE = "sink_postgres_activities_e2e_checks_for_delete";
-    public static final String CONNECTOR_FOR_UPDATE = "sink_postgres_activities_e2e_checks_for_update";
+    private static final long SUITE_ID = 10;
+    private static final String SUITE_TITLE = "Kafka Connect";
+    private static final String CONNECT_NAME = "first";
+    private static final List<Topic> TOPIC_LIST = new ArrayList<>();
+    private static final List<Connector> CONNECTOR_LIST = new ArrayList<>();
+    private static final String MESSAGE_CONTENT = "message_content_create_topic.json";
+    private static final String MESSAGE_KEY = " ";
+    private static final Topic TOPIC_FOR_CREATE = new Topic()
+            .setName("topic_for_create_connector")
+            .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
+    private static final Topic TOPIC_FOR_DELETE = new Topic()
+            .setName("topic_for_delete_connector")
+            .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
+    private static final Topic TOPIC_FOR_UPDATE = new Topic()
+            .setName("topic_for_update_connector")
+            .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
+    private static final Connector CONNECTOR_FOR_DELETE = new Connector()
+            .setName("sink_postgres_activities_e2e_checks_for_delete")
+            .setConfig(getResourceAsString("delete_connector_config.json"));
+    private static final Connector CONNECTOR_FOR_UPDATE = new Connector()
+            .setName("sink_postgres_activities_e2e_checks_for_update")
+            .setConfig(getResourceAsString("config_for_create_connector_via_api.json"));
 
     @BeforeAll
-    public static void beforeAll() {
-        ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
-
-        String connectorToDelete = getResourceAsString("delete_connector_config.json");
-        String connectorToUpdate = getResourceAsString("config_for_create_connector_via_api.json");
-        String message = getResourceAsString("message_content_create_topic.json");
-
-        apiHelper.deleteTopic(CLUSTER_NAME, CONNECTOR_FOR_DELETE);
-
-        apiHelper.createTopic(CLUSTER_NAME, TOPIC_FOR_CONNECTOR);
-        apiHelper.sendMessage(CLUSTER_NAME, TOPIC_FOR_CONNECTOR, message, " ");
-
-        apiHelper.createTopic(CLUSTER_NAME, TOPIC_FOR_DELETE_CONNECTOR);
-        apiHelper.sendMessage(CLUSTER_NAME, TOPIC_FOR_DELETE_CONNECTOR, message, " ");
-
-        apiHelper.createTopic(CLUSTER_NAME, TOPIC_FOR_UPDATE_CONNECTOR);
-        apiHelper.sendMessage(CLUSTER_NAME, TOPIC_FOR_UPDATE_CONNECTOR, message, " ");
-
-        apiHelper.createConnector(CLUSTER_NAME, FIRST_CONNECTOR, CONNECTOR_FOR_DELETE, connectorToDelete);
-        apiHelper.createConnector(CLUSTER_NAME, FIRST_CONNECTOR, CONNECTOR_FOR_UPDATE, connectorToUpdate);
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
-        apiHelper.deleteConnector(CLUSTER_NAME, FIRST_CONNECTOR, SINK_CONNECTOR);
-        apiHelper.deleteConnector(CLUSTER_NAME, FIRST_CONNECTOR, CONNECTOR_FOR_UPDATE);
-        apiHelper.deleteTopic(CLUSTER_NAME, TOPIC_FOR_CONNECTOR);
-        apiHelper.deleteTopic(CLUSTER_NAME, TOPIC_FOR_DELETE_CONNECTOR);
-        apiHelper.deleteTopic(CLUSTER_NAME, TOPIC_FOR_UPDATE_CONNECTOR);
+    public void beforeAll() {
+        TOPIC_LIST.addAll(List.of(TOPIC_FOR_CREATE, TOPIC_FOR_DELETE, TOPIC_FOR_UPDATE));
+        TOPIC_LIST.forEach(topic -> {
+            apiHelper.createTopic(CLUSTER_NAME, topic.getName());
+            apiHelper.sendMessage(CLUSTER_NAME, topic);
+        });
+        CONNECTOR_LIST.addAll(List.of(CONNECTOR_FOR_DELETE, CONNECTOR_FOR_UPDATE));
+        CONNECTOR_LIST.forEach(connector -> apiHelper
+                .createConnector(CLUSTER_NAME, CONNECT_NAME, connector));
     }
 
     @DisplayName("should create a connector")
-    @Suite(suiteId = suiteId, title = suiteTitle)
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(42)
     @Test
     public void createConnector() {
-        pages.openConnectorsList(CLUSTER_NAME)
+        Connector connectorForCreate = new Connector()
+                .setName("sink_postgres_activities_e2e_checks")
+                .setConfig(getResourceAsString("config_for_create_connector.json"));
+        kafkaConnectList.goTo(CLUSTER_NAME)
                 .waitUntilScreenReady()
                 .clickCreateConnectorButton()
                 .waitUntilScreenReady()
-                .setConnectorConfig(
-                        SINK_CONNECTOR,
-                        getResourceAsString("config_for_create_connector.json"));
-        pages.openConnectorsList(CLUSTER_NAME)
-                .waitUntilScreenReady()
-                .connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
+                .setConnectorConfig(connectorForCreate.getName(), connectorForCreate.getConfig());
+        kafkaConnectList.goTo(CLUSTER_NAME)
+                .waitUntilScreenReady();
+        Assertions.assertTrue(kafkaConnectList.isConnectorVisible(connectorForCreate.getName()),"isConnectorVisible()");
+        CONNECTOR_LIST.add(connectorForCreate);
     }
 
     @DisplayName("should update a connector")
-    @Suite(suiteId = suiteId, title = suiteTitle)
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(196)
     @Test
     public void updateConnector() {
-        pages.openConnectorsList(CLUSTER_NAME)
+        kafkaConnectList.goTo(CLUSTER_NAME)
                 .waitUntilScreenReady()
-                .openConnector(CONNECTOR_FOR_UPDATE);
-        pages.connectorsView.connectorIsVisibleOnOverview();
-        pages.connectorsView.openEditConfig()
-                .updConnectorConfig(getResourceAsString("config_for_update_connector.json"));
-        pages.openConnectorsList(CLUSTER_NAME)
-                .connectorIsVisibleInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
+                .openConnector(CONNECTOR_FOR_UPDATE.getName());
+        connectorDetails.waitUntilScreenReady()
+                .openConfigTab()
+                .setConfig(CONNECTOR_FOR_UPDATE.getConfig());
+        kafkaConnectList.goTo(CLUSTER_NAME);
+        Assertions.assertTrue(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_UPDATE.getName()),"isConnectorVisible()");
     }
 
     @DisplayName("should delete connector")
-    @Suite(suiteId = suiteId, title = suiteTitle)
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(195)
     @Test
     public void deleteConnector() {
-        pages.openConnectorsList(CLUSTER_NAME)
+        kafkaConnectList.goTo(CLUSTER_NAME)
                 .waitUntilScreenReady()
-                .openConnector(CONNECTOR_FOR_DELETE);
-        pages.connectorsView.clickDeleteButton();
-        pages.openConnectorsList(CLUSTER_NAME)
-                .isNotVisible(CONNECTOR_FOR_DELETE);
+                .openConnector(CONNECTOR_FOR_DELETE.getName());
+        connectorDetails
+                .waitUntilScreenReady()
+                .openDotMenu()
+                .clickDeleteButton()
+                .clickConfirmButton();
+        kafkaConnectList.goTo(CLUSTER_NAME);
+        Assertions.assertFalse(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()), "isConnectorVisible()");
+        CONNECTOR_LIST.remove(CONNECTOR_FOR_DELETE);
+    }
+
+    @AfterAll
+    public void afterAll() {
+        CONNECTOR_LIST.forEach(connector ->
+                apiHelper.deleteConnector(CLUSTER_NAME, CONNECT_NAME, connector.getName()));
+        TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
     }
 }

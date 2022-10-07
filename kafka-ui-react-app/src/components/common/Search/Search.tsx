@@ -1,31 +1,37 @@
 import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import Input from 'components/common/Input/Input';
+import { useSearchParams } from 'react-router-dom';
 
 interface SearchProps {
-  handleSearch: (value: string) => void;
   placeholder?: string;
-  value: string;
   disabled?: boolean;
+  onChange?: (value: string) => void;
+  value?: string;
 }
 
 const Search: React.FC<SearchProps> = ({
-  handleSearch,
   placeholder = 'Search',
-  value,
   disabled = false,
+  value,
+  onChange,
 }) => {
-  const onChange = useDebouncedCallback(
-    (e) => handleSearch(e.target.value),
-    300
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
+  const handleChange = useDebouncedCallback((e) => {
+    if (onChange) {
+      onChange(e.target.value);
+    } else {
+      searchParams.set('q', e.target.value);
+      setSearchParams(searchParams);
+    }
+  }, 500);
 
   return (
     <Input
       type="text"
       placeholder={placeholder}
-      onChange={onChange}
-      defaultValue={value}
+      onChange={handleChange}
+      defaultValue={value || searchParams.get('q') || ''}
       inputSize="M"
       disabled={disabled}
       search
