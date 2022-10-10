@@ -126,7 +126,6 @@ describe('Overview', () => {
       renderComponent(
         {
           ...externalTopicPayload,
-          cleanUpPolicy: CleanUpPolicy.DELETE,
         },
         { ...defaultContextValues, isReadOnly: true }
       );
@@ -136,7 +135,6 @@ describe('Overview', () => {
     it('should check if the dropdown is disabled when it is internal', () => {
       renderComponent({
         ...internalTopicPayload,
-        cleanUpPolicy: CleanUpPolicy.DELETE,
       });
       expect(screen.getByLabelText('Dropdown Toggle')).toBeDisabled();
     });
@@ -147,17 +145,6 @@ describe('Overview', () => {
         cleanUpPolicy: CleanUpPolicy.COMPACT,
       });
       expect(screen.getByLabelText('Dropdown Toggle')).toBeDisabled();
-    });
-
-    it('should check if the dropdown action to be in visible', () => {
-      renderComponent(
-        {
-          ...externalTopicPayload,
-          cleanUpPolicy: CleanUpPolicy.DELETE,
-        },
-        { ...defaultContextValues, isReadOnly: false }
-      );
-      expect(screen.getByLabelText('Dropdown Toggle')).toBeInTheDocument();
     });
   });
 });
