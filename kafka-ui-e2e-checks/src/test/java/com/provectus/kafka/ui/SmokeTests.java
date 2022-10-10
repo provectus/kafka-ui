@@ -14,8 +14,6 @@ public class SmokeTests extends BaseTest {
     @CaseId(198)
     @DisplayName("main page should load")
     void mainPageLoads() {
-        mainPage.goTo()
-                .waitUntilScreenReady();
         compareScreenshots("main");
     }
 }
