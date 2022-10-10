@@ -5,8 +5,6 @@ import {
   clusterConnectConnectorConfigPath,
   clusterConnectConnectorConfigRelativePath,
   clusterConnectConnectorPath,
-  clusterConnectConnectorTasksPath,
-  clusterConnectConnectorTasksRelativePath,
   clusterConnectorsPath,
   RouterParamsClusterConnectConnector,
 } from 'lib/paths';
@@ -32,6 +30,7 @@ const DetailsPage: React.FC = () => {
       >
         <Actions />
       </PageHeading>
+      <Overview />
       <Navbar role="navigation">
         <NavLink
           to={clusterConnectConnectorPath(
@@ -41,16 +40,6 @@ const DetailsPage: React.FC = () => {
           )}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
           end
-        >
-          Overview
-        </NavLink>
-        <NavLink
-          to={clusterConnectConnectorTasksPath(
-            clusterName,
-            connectName,
-            connectorName
-          )}
-          className={({ isActive }) => (isActive ? 'is-active' : '')}
         >
           Tasks
         </NavLink>
@@ -67,11 +56,7 @@ const DetailsPage: React.FC = () => {
       </Navbar>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route index element={<Overview />} />
-          <Route
-            path={clusterConnectConnectorTasksRelativePath}
-            element={<Tasks />}
-          />
+          <Route index element={<Tasks />} />
           <Route
             path={clusterConnectConnectorConfigRelativePath}
             element={<Config />}
