@@ -14,8 +14,6 @@ import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
-import com.provectus.kafka.ui.util.OffsetsSeekBackward;
-import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import com.provectus.kafka.ui.util.ResultSizeLimiter;
 import java.util.List;
 import java.util.Map;
@@ -132,12 +130,13 @@ public class MessagesService {
                                                  ConsumerPosition consumerPosition, String query,
                                                  MessageFilterTypeDTO filterQueryType,
                                                  int limit,
+                                                 SeekDirectionDTO seekDirection,
                                                  @Nullable String keySerde,
                                                  @Nullable String valueSerde) {
     return withExistingTopic(cluster, topic)
         .flux()
         .flatMap(td -> loadMessagesImpl(cluster, topic, consumerPosition, query,
-            filterQueryType, limit, keySerde, valueSerde));
+            filterQueryType, limit, seekDirection, keySerde, valueSerde));
   }
 
   private Flux<TopicMessageEventDTO> loadMessagesImpl(KafkaCluster cluster,
@@ -146,41 +145,43 @@ public class MessagesService {
                                                       String query,
                                                       MessageFilterTypeDTO filterQueryType,
                                                       int limit,
+                                                      SeekDirectionDTO seekDirection,
                                                       @Nullable String keySerde,
                                                       @Nullable String valueSerde) {
 
     java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
     ConsumerRecordDeserializer recordDeserializer =
         deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde);
-    if (consumerPosition.getSeekDirection().equals(SeekDirectionDTO.FORWARD)) {
+    if (seekDirection.equals(SeekDirectionDTO.FORWARD)) {
       emitter = new ForwardRecordEmitter(
           () -> consumerGroupService.createConsumer(cluster),
-          new OffsetsSeekForward(topic, consumerPosition),
+          consumerPosition,
           recordDeserializer
       );
-    } else if (consumerPosition.getSeekDirection().equals(SeekDirectionDTO.BACKWARD)) {
+    } else if (seekDirection.equals(SeekDirectionDTO.BACKWARD)) {
       emitter = new BackwardRecordEmitter(
-          (Map<String, Object> props) -> consumerGroupService.createConsumer(cluster, props),
-          new OffsetsSeekBackward(topic, consumerPosition, limit),
+          () -> consumerGroupService.createConsumer(cluster),
+          consumerPosition,
+          limit,
           recordDeserializer
       );
     } else {
       emitter = new TailingEmitter(
-          recordDeserializer,
           () -> consumerGroupService.createConsumer(cluster),
-          new OffsetsSeekForward(topic, consumerPosition)
+          consumerPosition,
+          recordDeserializer
       );
     }
     return Flux.create(emitter)
         .filter(getMsgFilter(query, filterQueryType))
-        .takeWhile(createTakeWhilePredicate(consumerPosition, limit))
+        .takeWhile(createTakeWhilePredicate(seekDirection, limit))
         .subscribeOn(Schedulers.boundedElastic())
         .share();
   }
 
   private Predicate<TopicMessageEventDTO> createTakeWhilePredicate(
-      ConsumerPosition consumerPosition, int limit) {
-    return consumerPosition.getSeekDirection() == SeekDirectionDTO.TAILING
+      SeekDirectionDTO seekDirection, int limit) {
+    return seekDirection == SeekDirectionDTO.TAILING
         ? evt -> true // no limit for tailing
         : new ResultSizeLimiter(limit);
   }
