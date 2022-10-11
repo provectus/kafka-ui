@@ -6,7 +6,6 @@ import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.api.model.SchemaType;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -15,15 +14,22 @@ import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
 public class SchemaCreateForm {
 
-    protected SelenideElement subjectName = $(By.xpath("//input[@name='subject']"));
-    protected SelenideElement schemaField = $(By.xpath("//textarea[@name='schema']"));
-    protected SelenideElement submitSchemaButton = $(By.xpath("//button[@type='submit']"));
+    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+    protected SelenideElement subjectName = $x("//input[@name='subject']");
+    protected SelenideElement titleElementLocator = $x("//h1['Edit']");
+    protected SelenideElement schemaField = $x("//textarea[@name='schema']");
+    protected SelenideElement submitSchemaButton = $x("//button[@type='submit']");
     protected SelenideElement newSchemaTextArea = $("#newSchema [wrap]");
     protected SelenideElement schemaTypeDropDown = $x("//ul[@name='schemaType']");
+    protected SelenideElement schemaTypeList = $x("//ul[@role='listbox']");
+    protected SelenideElement compatibilityLevelList = $x("//ul[@name='compatibilityLevel']");
+    protected SelenideElement fieldNewSchema = $x("//div[@id='newSchema']");
+    protected String ddlElementLocator = "//li[text()='%s']";
 
     @Step
-    public SchemaCreateForm waitUntilScreenReady() {
-        $x("//h1['Edit']").shouldBe(Condition.visible);
+    public SchemaCreateForm waitUntilScreenReady(){
+        loadingSpinner.shouldBe(Condition.disappear);
+        titleElementLocator.shouldBe(Condition.visible);
         return this;
     }
 
@@ -41,8 +47,8 @@ public class SchemaCreateForm {
 
     @Step
     public SchemaCreateForm selectSchemaTypeFromDropdown(SchemaType schemaType) {
-        $("ul[role='listbox']").click();
-        $x("//li[text()='" + schemaType.getValue() + "']").click();
+        schemaTypeList.shouldBe(Condition.enabled).click();
+        $x(String.format(ddlElementLocator, schemaType.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
@@ -54,14 +60,14 @@ public class SchemaCreateForm {
 
     @Step
     public SchemaCreateForm selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum level) {
-        $x("//ul[@name='compatibilityLevel']").click();
-        $x("//li[text()='" + level.getValue() + "']").click();
+        compatibilityLevelList.shouldBe(Condition.enabled).click();
+        $x(String.format(ddlElementLocator, level.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
     @Step("Set new schema value")
     public SchemaCreateForm setNewSchemaValue(String configJson) {
-        $("#newSchema").click();
+        fieldNewSchema.shouldBe(Condition.visible).click();
         newSchemaTextArea.sendKeys(Keys.CONTROL + "a", Keys.BACK_SPACE);
         Selenide.executeJavaScript("arguments[0].value = '';", $("#newSchema"));
         newSchemaTextArea.setValue(configJson);

@@ -5,7 +5,6 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
@@ -13,18 +12,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TopicCreateEditForm {
 
-    private final SelenideElement timeToRetain = $(By.cssSelector("input#timeToRetain"));
-    private final SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
+    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+    protected SelenideElement timeToRetain = $x("//input[@id='timeToRetain']");
+    protected SelenideElement inputNameField = $x("//input[@name='name']");
+    protected SelenideElement maxMessageBytes = $x("//input[@name='maxMessageBytes']");
+    protected SelenideElement minInSyncReplicas = $x("//input[@name='minInSyncReplicas']");
+    protected SelenideElement cleanUpPolicyDropDown = $x("//ul[@id='topicFormCleanupPolicy']");
+    protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
+    protected String cleanUpPolicyLocator = "//li[text()='%s']";
+
+    @Step
+    public TopicCreateEditForm waitUntilScreenReady(){
+        loadingSpinner.shouldBe(Condition.disappear);
+        inputNameField.shouldBe(Condition.visible);
+        return this;
+    }
 
     @Step
     public TopicCreateEditForm setTopicName(String topicName) {
-        $("input#topicFormName").setValue(topicName);
+        inputNameField.setValue(topicName);
         return this;
     }
 
     @Step
     public TopicCreateEditForm setMinInsyncReplicas(Integer minInsyncReplicas) {
-        $("input[name=minInSyncReplicas]").setValue(minInsyncReplicas.toString());
+        minInSyncReplicas.setValue(minInsyncReplicas.toString());
         return this;
     }
 
@@ -42,8 +54,7 @@ public class TopicCreateEditForm {
 
     @Step
     public TopicCreateEditForm setMaxSizeOnDiskInGB(String value) {
-        KafkaUISelectElement kafkaUISelectElement = new KafkaUISelectElement("retentionBytes");
-        kafkaUISelectElement.selectByVisibleText(value);
+        new KafkaUISelectElement("retentionBytes").selectByVisibleText(value);
         return this;
     }
 
@@ -77,8 +88,8 @@ public class TopicCreateEditForm {
 
     @Step
     public TopicCreateEditForm selectCleanupPolicy(String cleanupPolicyOptionValue) {
-        $("ul#topicFormCleanupPolicy").click();
-        $x("//li[text()='" + cleanupPolicyOptionValue + "']").click();
+        cleanUpPolicyDropDown.shouldBe(Condition.visible).click();
+        $x(String.format(cleanUpPolicyLocator,cleanupPolicyOptionValue)).shouldBe(Condition.visible).click();
         return this;
     }
 
@@ -93,8 +104,8 @@ public class TopicCreateEditForm {
     }
 
     @Step
-    public TopicDetails sendData() {
-        clickByJavaScript($x("//button[@type='submit']"));
+    public TopicDetails clickCreateTopicBtn() {
+        clickByJavaScript(createTopicBtn);
         return new TopicDetails();
     }
 
