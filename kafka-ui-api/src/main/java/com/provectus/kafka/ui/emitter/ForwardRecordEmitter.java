@@ -32,13 +32,13 @@ public class ForwardRecordEmitter
   public void accept(FluxSink<TopicMessageEventDTO> sink) {
     try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
       sendPhase(sink, "Assigning partitions");
-      var offsetOperations = SeekOperations.create(consumer, position);
-      offsetOperations.assignAndSeekNonEmptyPartitions();
+      var seekOperations = SeekOperations.create(consumer, position);
+      seekOperations.assignAndSeekNonEmptyPartitions();
 
       // we use empty polls counting to verify that topic was fully read
       int emptyPolls = 0;
       while (!sink.isCancelled()
-          && !offsetOperations.assignedPartitionsFullyPolled()
+          && !seekOperations.assignedPartitionsFullyPolled()
           && emptyPolls < NO_MORE_DATA_EMPTY_POLLS_COUNT) {
 
         sendPhase(sink, "Polling");

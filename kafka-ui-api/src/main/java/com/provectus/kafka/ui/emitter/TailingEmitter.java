@@ -47,9 +47,9 @@ public class TailingEmitter extends AbstractEmitter
   }
 
   private void assignAndSeek(KafkaConsumer<Bytes, Bytes> consumer) {
-    var offsetOperations = SeekOperations.create(consumer, consumerPosition);
-    var seekOffsets = new HashMap<>(offsetOperations.getEndOffsets()); // defaulting offsets to topic end
-    seekOffsets.putAll(offsetOperations.getOffsetsForSeek()); // this will only set non-empty partitions
+    var seekOperations = SeekOperations.create(consumer, consumerPosition);
+    var seekOffsets = new HashMap<>(seekOperations.getEndOffsets()); // defaulting offsets to topic end
+    seekOffsets.putAll(seekOperations.getOffsetsForSeek()); // this will only set non-empty partitions
     consumer.assign(seekOffsets.keySet());
     seekOffsets.forEach(consumer::seek);
   }

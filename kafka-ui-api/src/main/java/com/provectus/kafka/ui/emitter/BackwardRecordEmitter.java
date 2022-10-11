@@ -46,9 +46,9 @@ public class BackwardRecordEmitter
     try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
       sendPhase(sink, "Created consumer");
 
-      var offsetOperations = SeekOperations.create(consumer, consumerPosition);
+      var seekOperations = SeekOperations.create(consumer, consumerPosition);
       var readUntilOffsets = new TreeMap<TopicPartition, Long>(Comparator.comparingInt(TopicPartition::partition));
-      readUntilOffsets.putAll(offsetOperations.getOffsetsForSeek());
+      readUntilOffsets.putAll(seekOperations.getOffsetsForSeek());
 
       int msgsToPollPerPartition = (int) Math.ceil((double) messagesPerPage / readUntilOffsets.size());
       log.debug("'Until' offsets for polling: {}", readUntilOffsets);
@@ -58,7 +58,7 @@ public class BackwardRecordEmitter
           if (sink.isCancelled()) {
             return; //fast return in case of downstream cancellation
           }
-          long beginOffset = offsetOperations.getBeginOffsets().get(tp);
+          long beginOffset = seekOperations.getBeginOffsets().get(tp);
           long readFromOffset = Math.max(beginOffset, readToOffset - msgsToPollPerPartition);
 
           partitionPollIteration(tp, readFromOffset, readToOffset, consumer, sink)
