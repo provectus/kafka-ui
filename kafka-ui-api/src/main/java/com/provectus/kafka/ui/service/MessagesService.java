@@ -17,7 +17,6 @@ import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.util.ResultSizeLimiter;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -127,7 +126,8 @@ public class MessagesService {
   }
 
   public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic,
-                                                 ConsumerPosition consumerPosition, String query,
+                                                 ConsumerPosition consumerPosition,
+                                                 @Nullable String query,
                                                  MessageFilterTypeDTO filterQueryType,
                                                  int limit,
                                                  SeekDirectionDTO seekDirection,
@@ -142,7 +142,7 @@ public class MessagesService {
   private Flux<TopicMessageEventDTO> loadMessagesImpl(KafkaCluster cluster,
                                                       String topic,
                                                       ConsumerPosition consumerPosition,
-                                                      String query,
+                                                      @Nullable String query,
                                                       MessageFilterTypeDTO filterQueryType,
                                                       int limit,
                                                       SeekDirectionDTO seekDirection,
@@ -190,8 +190,6 @@ public class MessagesService {
     if (StringUtils.isEmpty(query)) {
       return evt -> true;
     }
-    filterQueryType = Optional.ofNullable(filterQueryType)
-        .orElse(MessageFilterTypeDTO.STRING_CONTAINS);
     var messageFilter = MessageFilters.createMsgFilter(query, filterQueryType);
     return evt -> {
       // we only apply filter for message events

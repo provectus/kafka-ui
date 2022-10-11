@@ -65,14 +65,17 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                            String keySerde,
                                                                            String valueSerde,
                                                                            ServerWebExchange exchange) {
+    seekType = seekType != null ? seekType : SeekTypeDTO.BEGINNING;
+    seekDirection = seekDirection != null ? seekDirection : SeekDirectionDTO.FORWARD;
+    filterQueryType = filterQueryType != null ? filterQueryType : MessageFilterTypeDTO.STRING_CONTAINS;
+    int recordsLimit =
+        Optional.ofNullable(limit).map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT)).orElse(DEFAULT_LOAD_RECORD_LIMIT);
+
     var positions = new ConsumerPosition(
-        seekType != null ? seekType : SeekTypeDTO.BEGINNING,
+        seekType,
         topicName,
         parseSeekTo(topicName, seekType, seekTo)
     );
-    int recordsLimit = Optional.ofNullable(limit)
-        .map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT))
-        .orElse(DEFAULT_LOAD_RECORD_LIMIT);
     return Mono.just(
         ResponseEntity.ok(
             messagesService.loadMessages(
