@@ -63,7 +63,12 @@ const columns: ColumnDef<Datum>[] = [
   {
     header: 'Text',
     accessorKey: 'text',
-    cell: LinkCell,
+    cell: ({ getValue }) => (
+      <LinkCell
+        value={`${getValue<string | number>()}`}
+        to={encodeURIComponent(`${getValue<string | number>()}`)}
+      />
+    ),
   },
   {
     header: 'Size',
