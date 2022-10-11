@@ -243,7 +243,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
 
     var backwardEmitter = new BackwardRecordEmitter(
         this::createConsumer,
-       new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
+        new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
         numMessages,
         RECORD_DESERIALIZER
     );
