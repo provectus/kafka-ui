@@ -56,7 +56,7 @@ public class BackwardRecordEmitter
       while (!sink.isCancelled() && !readUntilOffsets.isEmpty()) {
         new TreeMap<>(readUntilOffsets).forEach((tp, readToOffset) -> {
           if (sink.isCancelled()) {
-            return; //fast return in case of downstream cancellation
+            return; //fast return in case of sink cancellation
           }
           long beginOffset = seekOperations.getBeginOffsets().get(tp);
           long readFromOffset = Math.max(beginOffset, readToOffset - msgsToPollPerPartition);

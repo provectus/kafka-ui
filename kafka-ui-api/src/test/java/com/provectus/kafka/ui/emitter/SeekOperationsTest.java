@@ -37,20 +37,28 @@ class SeekOperationsTest {
     consumer.updateEndOffsets(Map.of(tp0, 0L, tp1, 10L, tp2, 20L, tp3, 30L));
   }
 
-
-
   @Nested
   class GetOffsetsForSeek {
 
     @Test
     void latest() {
-      var offsets = SeekOperations.getOffsetsForSeek(consumer, new OffsetsInfo(consumer, topic), SeekTypeDTO.LATEST, null);
+      var offsets = SeekOperations.getOffsetsForSeek(
+          consumer,
+          new OffsetsInfo(consumer, topic),
+          SeekTypeDTO.LATEST,
+          null
+      );
       assertThat(offsets).containsExactlyInAnyOrderEntriesOf(Map.of(tp2, 20L, tp3, 30L));
     }
 
     @Test
     void beginning() {
-      var offsets = SeekOperations.getOffsetsForSeek(consumer, new OffsetsInfo(consumer, topic), SeekTypeDTO.BEGINNING, null);
+      var offsets = SeekOperations.getOffsetsForSeek(
+          consumer,
+          new OffsetsInfo(consumer, topic),
+          SeekTypeDTO.BEGINNING,
+          null
+      );
       assertThat(offsets).containsExactlyInAnyOrderEntriesOf(Map.of(tp2, 0L, tp3, 25L));
     }
 
@@ -71,7 +79,7 @@ class SeekOperationsTest {
           consumer,
           new OffsetsInfo(consumer, topic),
           SeekTypeDTO.OFFSET,
-          Map.of( tp1, 10L, tp2, 21L, tp3, 24L)
+          Map.of(tp1, 10L, tp2, 21L, tp3, 24L)
       );
       assertThat(offsets).containsExactlyInAnyOrderEntriesOf(Map.of(tp2, 20L, tp3, 25L));
     }
