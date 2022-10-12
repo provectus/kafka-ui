@@ -16,4 +16,6 @@ public class SmokeTests extends BaseTest {
     void mainPageLoads() {
         compareScreenshots("main");
     }
+
+    //some text for commit
 }
