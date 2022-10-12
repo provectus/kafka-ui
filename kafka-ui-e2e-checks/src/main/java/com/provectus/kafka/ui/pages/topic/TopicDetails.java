@@ -21,7 +21,8 @@ public class TopicDetails {
     protected SelenideElement editSettingsTab = $x("//li[@role][contains(text(),'Edit settings')]");
     protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
     protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
-    protected String buttonLocator = "//div//button[text()='%s']";
+    protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
+    protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
 
     @Step
     public TopicDetails waitUntilScreenReady() {
@@ -53,8 +54,8 @@ public class TopicDetails {
     }
 
     @Step
-    public ProduceMessagePanel clickOnButton(String buttonName) {
-        clickByJavaScript($x(String.format(buttonLocator,buttonName)));
+    public ProduceMessagePanel openProduceMessagePanel() {
+        clickByJavaScript(produceMessageBtn);
         return new ProduceMessagePanel();
     }
 
@@ -65,7 +66,7 @@ public class TopicDetails {
 
     @Step
     public boolean isContentMessageVisible(String contentMessage) {
-        return contentMessage.matches($x("//html//div[@id='root']/div/main//table//p").getText().trim());
+        return contentMessage.matches(contentMessageTab.getText().trim());
     }
 
     private enum DotMenuHeaderItems {
