@@ -51,6 +51,7 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .clickCreateNewTopic();
         topicCreateEditForm
+                .waitUntilScreenReady()
                 .setTopicName(topicToCreate.getName())
                 .clickCreateTopicBtn();
         topicDetails
@@ -79,6 +80,7 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openEditSettings();
         topicCreateEditForm
+                .waitUntilScreenReady()
                 .selectCleanupPolicy(TOPIC_FOR_UPDATE.getCompactPolicyValue())
                 .setMinInsyncReplicas(10)
                 .setTimeToRetainDataInMs(TOPIC_FOR_UPDATE.getTimeToRetainData())
@@ -139,8 +141,9 @@ public class TopicTests extends BaseTest {
         topicDetails
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)
-                .clickOnButton("Produce Message");
+                .openProduceMessagePanel();
         produceMessagePanel
+                .waitUntilScreenReady()
                 .setContentFiled(TOPIC_FOR_UPDATE.getMessageContent())
                 .setKeyField(TOPIC_FOR_UPDATE.getMessageKey())
                 .submitProduceMessage();
