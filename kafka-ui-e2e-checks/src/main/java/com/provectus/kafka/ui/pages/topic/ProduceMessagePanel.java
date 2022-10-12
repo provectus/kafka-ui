@@ -6,15 +6,25 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.refresh;
+import java.util.List;
+
+import static com.codeborne.selenide.Selenide.*;
 
 public class ProduceMessagePanel {
 
-    private final SelenideElement keyField = $(By.xpath("//div[@id='key']/textarea"));
-    private final SelenideElement contentField = $(By.xpath("//div[@id='content']/textarea"));
-    private final SelenideElement headersField = $(By.xpath("//div[@id='headers']/textarea"));
-    private final SelenideElement submitBtn = headersField.$(By.xpath("../../../..//button[@type='submit']"));
+    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+    protected SelenideElement keyField = $(By.xpath("//div[@id='key']/textarea"));
+    protected SelenideElement contentField = $(By.xpath("//div[@id='content']/textarea"));
+    protected SelenideElement headersField = $(By.xpath("//div[@id='headers']/textarea"));
+    protected SelenideElement submitBtn = headersField.$(By.xpath("../../../..//button[@type='submit']"));
+    protected List<SelenideElement> ddElementsLocator = $$x("//ul[@role='listbox']");
+
+    @Step
+    public ProduceMessagePanel waitUntilScreenReady(){
+        loadingSpinner.shouldBe(Condition.disappear);
+        ddElementsLocator.forEach(element -> element.shouldBe(Condition.visible));
+        return this;
+    }
 
     @Step
     public ProduceMessagePanel setKeyField(String value) {
@@ -35,7 +45,7 @@ public class ProduceMessagePanel {
     @Step
     public ProduceMessagePanel setHeaderFiled(String value) {
         headersField.setValue(value);
-        return new ProduceMessagePanel();
+        return this;
     }
 
     @Step
