@@ -8,6 +8,8 @@ specifiers:
   '@babel/preset-react': ^7.17.12
   '@babel/preset-typescript': ^7.17.12
   '@floating-ui/react-dom-interactions': ^0.10.3
+  '@fontsource/inter': ^4.5.13
+  '@fontsource/roboto-mono': ^4.5.8
   '@hookform/error-message': ^2.0.0
   '@hookform/resolvers': ^2.7.1
   '@jest/types': ^29.0.3
@@ -95,6 +97,8 @@ dependencies:
   '@babel/plugin-syntax-flow': 7.18.6_@babel+core@7.18.2
   '@babel/plugin-transform-react-jsx': 7.18.6_@babel+core@7.18.2
   '@floating-ui/react-dom-interactions': 0.10.3_ohobp6rpsmerwlq5ipwfh5yigy
+  '@fontsource/inter': 4.5.14
+  '@fontsource/roboto-mono': 4.5.8
   '@hookform/error-message': 2.0.0_l2dcsysovzdujulgxvsen7vbsm
   '@hookform/resolvers': 2.8.9_react-hook-form@7.6.9
   '@microsoft/fetch-event-source': 2.0.1
@@ -2766,6 +2770,14 @@ packages:
       '@floating-ui/dom': 1.0.4
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
+    dev: false
+
+  /@fontsource/inter/4.5.14:
+    resolution: {integrity: sha512-JDC9AocdPLuGsASkvWw9hS5gtHE7K9dOwL98XLrk5yjYqxy4uVnScG58NUvFMJDVJRl/7c8Wnap6PEs+7Zvj1Q==}
+    dev: false
+
+  /@fontsource/roboto-mono/4.5.8:
+    resolution: {integrity: sha512-AW44UkbQD0w1CT5mzDbsvhGZ6/bb0YmZzoELj6Sx8vcVEzcbYGUdt2Dtl5zqlOuYMWQFY1mniwWyVv+Bm/lVxw==}
     dev: false
 
   /@hookform/error-message/2.0.0_l2dcsysovzdujulgxvsen7vbsm:

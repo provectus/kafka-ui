@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import App from 'components/App';
 import { store } from 'redux/store';
 import 'lib/constants';
+import 'theme/fonts.scss';
 import 'theme/index.scss';
 
 const container =
