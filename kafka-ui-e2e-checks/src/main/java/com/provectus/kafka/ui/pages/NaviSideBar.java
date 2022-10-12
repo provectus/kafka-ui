@@ -12,8 +12,8 @@ import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 public class NaviSideBar {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected String sideMenuOptionElementLocator = ".//ul/li[contains(.,'%s')]";
     protected SelenideElement dashBoardTitle = $x("//a[@title='Dashboard']");
+    protected String sideMenuOptionElementLocator = ".//ul/li[contains(.,'%s')]";
     protected String clusterElementLocator = "//aside/ul/li[contains(.,'%s')]";
 
     @Step
