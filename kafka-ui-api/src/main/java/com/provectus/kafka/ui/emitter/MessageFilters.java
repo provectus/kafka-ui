@@ -43,6 +43,7 @@ public class MessageFilters {
     return msg -> {
       var bindings = getGroovyEngine().createBindings();
       bindings.put("partition", msg.getPartition());
+      bindings.put("offset", msg.getOffset());
       bindings.put("timestampMs", msg.getTimestamp().toInstant().toEpochMilli());
       bindings.put("keyAsText", msg.getKey());
       bindings.put("valueAsText", msg.getContent());
