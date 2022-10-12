@@ -183,7 +183,7 @@ public class ReactiveAdminClient implements Closeable {
             th -> log.trace("Error while getting broker {} configs", brokerIds, th))
         // some kafka backends (like MSK serverless) do not support broker's configs retrieval,
         // in that case InvalidRequestException will be thrown
-        .onErrorResume(th -> th instanceof InvalidRequestException, th -> Mono.just(Map.of()))
+        .onErrorResume(InvalidRequestException.class, th -> Mono.just(Map.of()))
         .map(config -> config.entrySet().stream()
             .collect(toMap(
                 c -> Integer.valueOf(c.getKey().name()),
