@@ -15,10 +15,10 @@ const component = (
 );
 
 describe('SchemaVersion', () => {
-  it('renders versions', () => {
+  it('renders versions', async () => {
     render(component);
     expect(screen.getAllByRole('cell')).toHaveLength(4);
     expect(screen.queryByTestId('json-viewer')).not.toBeInTheDocument();
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
   });
 });

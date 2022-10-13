@@ -35,17 +35,17 @@ describe('SavedFilter Component', () => {
 
   const getSavedFilters = () => screen.getAllByRole('savedFilter');
 
-  it('should check the Cancel button click', () => {
+  it('should check the Cancel button click', async () => {
     const cancelMock = jest.fn();
     setUpComponent({ closeModal: cancelMock });
-    userEvent.click(screen.getByText(/cancel/i));
+    await userEvent.click(screen.getByText(/cancel/i));
     expect(cancelMock).toHaveBeenCalled();
   });
 
-  it('should check on go back button click', () => {
+  it('should check on go back button click', async () => {
     const onGoBackMock = jest.fn();
     setUpComponent({ onGoBack: onGoBackMock });
-    userEvent.click(screen.getByText(/back to create filters/i));
+    await userEvent.click(screen.getByText(/back to create filters/i));
     expect(onGoBackMock).toHaveBeenCalled();
   });
 
@@ -84,26 +84,26 @@ describe('SavedFilter Component', () => {
       expect(screen.getByText(mockFilters[1].name)).toBeInTheDocument();
     });
 
-    it('should check the Filter edit Button works', () => {
+    it('should check the Filter edit Button works', async () => {
       const savedFilters = getSavedFilters();
-      userEvent.hover(savedFilters[0]);
-      userEvent.click(within(savedFilters[0]).getByText(/edit/i));
+      await userEvent.hover(savedFilters[0]);
+      await userEvent.click(within(savedFilters[0]).getByText(/edit/i));
       expect(onEditMock).toHaveBeenCalled();
 
-      userEvent.hover(savedFilters[1]);
-      userEvent.click(within(savedFilters[1]).getByText(/edit/i));
+      await userEvent.hover(savedFilters[1]);
+      await userEvent.click(within(savedFilters[1]).getByText(/edit/i));
       expect(onEditMock).toHaveBeenCalledTimes(2);
     });
 
-    it('should check the select filter', () => {
+    it('should check the select filter', async () => {
       const selectFilterButton = screen.getByText(/Select filter/i);
 
-      userEvent.click(selectFilterButton);
+      await userEvent.click(selectFilterButton);
       expect(activeFilterMock).not.toHaveBeenCalled();
 
       const savedFilterElement = getSavedFilters();
-      userEvent.click(savedFilterElement[0]);
-      userEvent.click(selectFilterButton);
+      await userEvent.click(savedFilterElement[0]);
+      await userEvent.click(selectFilterButton);
 
       expect(activeFilterMock).toHaveBeenCalled();
       expect(cancelMock).toHaveBeenCalled();
@@ -121,12 +121,12 @@ describe('SavedFilter Component', () => {
       deleteMock.mockClear();
     });
 
-    it('Open Confirmation for the deletion modal', () => {
+    it('Open Confirmation for the deletion modal', async () => {
       setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
       const deleteIcons = screen.getAllByText('mock-DeleteIcon');
-      userEvent.hover(savedFilters[0]);
-      userEvent.click(deleteIcons[0]);
+      await userEvent.hover(savedFilters[0]);
+      await userEvent.click(deleteIcons[0]);
       const modelDialog = screen.getByRole('dialog');
       expect(modelDialog).toBeInTheDocument();
       expect(
@@ -139,8 +139,8 @@ describe('SavedFilter Component', () => {
       const savedFilters = getSavedFilters();
       const deleteIcons = screen.getAllByText('mock-DeleteIcon');
 
-      userEvent.hover(savedFilters[0]);
-      userEvent.click(deleteIcons[0]);
+      await userEvent.hover(savedFilters[0]);
+      await userEvent.click(deleteIcons[0]);
 
       const modelDialog = screen.getByRole('dialog');
       expect(modelDialog).toBeInTheDocument();
@@ -156,8 +156,8 @@ describe('SavedFilter Component', () => {
       const savedFilters = getSavedFilters();
       const deleteIcons = screen.getAllByText('mock-DeleteIcon');
 
-      userEvent.hover(savedFilters[0]);
-      userEvent.click(deleteIcons[0]);
+      await userEvent.hover(savedFilters[0]);
+      await userEvent.click(deleteIcons[0]);
 
       await waitFor(() =>
         userEvent.click(screen.getByRole('button', { name: 'Confirm' }))

@@ -76,12 +76,16 @@ describe('QueryForm', () => {
       submitHandler: submitFn,
     });
 
-    await act(() => {
-      userEvent.paste(screen.getAllByRole('textbox')[0], 'show tables;');
-      userEvent.paste(screen.getByRole('textbox', { name: 'key' }), 'test');
-      userEvent.paste(screen.getByRole('textbox', { name: 'value' }), 'test');
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
-    });
+    const textbox = screen.getAllByRole('textbox');
+    textbox[0].focus();
+    await userEvent.paste('show tables;');
+    const key = screen.getByRole('textbox', { name: 'key' });
+    key.focus();
+    await userEvent.paste('test');
+    const value = screen.getByRole('textbox', { name: 'value' });
+    value.focus();
+    await userEvent.paste('test');
+    await userEvent.click(screen.getByRole('button', { name: 'Execute' }));
 
     expect(
       screen.queryByText('ksql is a required field')
@@ -106,8 +110,8 @@ describe('QueryForm', () => {
 
     expect(screen.getByRole('button', { name: 'Clear results' })).toBeEnabled();
 
-    await act(() =>
-      userEvent.click(screen.getByRole('button', { name: 'Clear results' }))
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Clear results' })
     );
 
     expect(clearFn).toBeCalled();
@@ -125,9 +129,7 @@ describe('QueryForm', () => {
 
     expect(screen.getByRole('button', { name: 'Stop query' })).toBeEnabled();
 
-    await act(() =>
-      userEvent.click(screen.getByRole('button', { name: 'Stop query' }))
-    );
+    await userEvent.click(screen.getByRole('button', { name: 'Stop query' }));
 
     expect(cancelFn).toBeCalled();
   });
@@ -142,17 +144,14 @@ describe('QueryForm', () => {
       submitHandler: submitFn,
     });
 
-    await act(() => {
-      userEvent.paste(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        'show tables;'
-      );
+    const ksql = within(screen.getByLabelText('KSQL')).getByRole('textbox');
+    ksql.focus();
+    await userEvent.paste('show tables;');
 
-      userEvent.type(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        '{ctrl}{enter}'
-      );
-    });
+    await userEvent.type(
+      within(screen.getByLabelText('KSQL')).getByRole('textbox'),
+      '{ctrl}{enter}'
+    );
 
     expect(submitFn.mock.calls.length).toBe(1);
   });

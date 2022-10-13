@@ -38,8 +38,8 @@ describe('AddFilter component', () => {
       });
     });
 
-    it('should test click on Saved Filters redirects to Saved components', () => {
-      userEvent.click(screen.getByRole('savedFilterText'));
+    it('should test click on Saved Filters redirects to Saved components', async () => {
+      await userEvent.click(screen.getByRole('savedFilterText'));
       expect(screen.getByText('Saved Filters')).toBeInTheDocument();
       expect(screen.getByRole('savedFilterText')).toBeInTheDocument();
     });
@@ -48,8 +48,8 @@ describe('AddFilter component', () => {
       expect(screen.getByRole('button', { name: 'info' })).toBeInTheDocument();
     });
 
-    it('renders InfoModal', () => {
-      userEvent.click(screen.getByRole('button', { name: 'info' }));
+    it('renders InfoModal', async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'info' }));
       expect(screen.getByRole('button', { name: 'Ok' })).toBeInTheDocument();
       expect(
         screen.getByRole('list', { name: 'info-list' })
@@ -57,7 +57,7 @@ describe('AddFilter component', () => {
     });
 
     it('should test click on return to custom filter redirects to Saved Filters', async () => {
-      userEvent.click(screen.getByRole('savedFilterText'));
+      await userEvent.click(screen.getByRole('savedFilterText'));
 
       expect(screen.queryByText('Saved filters')).not.toBeInTheDocument();
       expect(screen.getByRole('savedFilterText')).toBeInTheDocument();
@@ -83,9 +83,10 @@ describe('AddFilter component', () => {
       expect(addFilterBtn).toBeDisabled();
       expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
 
-      await act(() => {
-        userEvent.paste(codeTextBox, codeValue);
-        userEvent.type(nameTextBox, nameValue);
+      await act(async () => {
+        codeTextBox.focus();
+        await userEvent.paste(codeValue);
+        await userEvent.type(nameTextBox, nameValue);
       });
 
       expect(addFilterBtn).toBeEnabled();
@@ -101,7 +102,10 @@ describe('AddFilter component', () => {
       const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
       expect(addFilterBtn).toBeDisabled();
       expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
-      await act(() => userEvent.paste(codeTextBox, code));
+      await act(async () => {
+        codeTextBox.focus();
+        await userEvent.paste(code);
+      });
       expect(addFilterBtn).toBeEnabled();
       expect(codeTextBox).toHaveValue(`${code}\n\n`);
     });
@@ -110,10 +114,10 @@ describe('AddFilter component', () => {
       await act(() => {
         renderComponent({ isSavedFiltersOpen: true });
       });
-      userEvent.click(screen.getByText('Saved Filters'));
+      await userEvent.click(screen.getByText('Saved Filters'));
       const index = 0;
       const editButton = screen.getAllByText('Edit')[index];
-      userEvent.click(editButton);
+      await userEvent.click(editButton);
       const { code, name } = filters[index];
       expect(editFilterMock).toHaveBeenCalledTimes(1);
       expect(editFilterMock).toHaveBeenCalledWith({
@@ -150,12 +154,14 @@ describe('AddFilter component', () => {
 
     describe('OnSubmit conditions with codeValue and nameValue in fields', () => {
       beforeEach(async () => {
-        await act(() => {
-          userEvent.paste(
-            screen.getAllByRole('textbox')[0] as HTMLTextAreaElement,
-            codeValue
-          );
-          userEvent.type(screen.getAllByRole('textbox')[1], nameValue);
+        const textAreaElement = screen.getAllByRole(
+          'textbox'
+        )[0] as HTMLTextAreaElement;
+        const input = screen.getAllByRole('textbox')[1];
+        await act(async () => {
+          textAreaElement.focus();
+          await userEvent.paste(codeValue);
+          await userEvent.type(input, nameValue);
         });
       });
 
@@ -166,16 +172,18 @@ describe('AddFilter component', () => {
         });
         expect(addFilterBtn).toBeEnabled();
 
-        await act(() => userEvent.click(addFilterBtn));
+        await act(async () => {
+          await userEvent.click(addFilterBtn);
+        });
 
         expect(activeFilterHandlerMock).toHaveBeenCalled();
         expect(addFilterMock).not.toHaveBeenCalled();
       });
 
       it('OnSubmit condition with checkbox on functionality', async () => {
-        await act(() => {
-          userEvent.click(screen.getByRole('checkbox'));
-          userEvent.click(screen.getAllByRole('button')[2]);
+        await act(async () => {
+          await userEvent.click(screen.getByRole('checkbox'));
+          await userEvent.click(screen.getAllByRole('button')[2]);
         });
 
         expect(activeFilterHandlerMock).not.toHaveBeenCalled();
@@ -193,11 +201,15 @@ describe('AddFilter component', () => {
           name: /Add filter/i,
         });
 
-        await act(() => userEvent.clear(nameTextBox));
+        await act(async () => {
+          await userEvent.clear(nameTextBox);
+        });
 
         expect(nameTextBox).toHaveValue('');
 
-        await act(() => userEvent.click(addFilterBtn));
+        await act(async () => {
+          await userEvent.click(addFilterBtn);
+        });
         expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
 
         expect(activeFilterHandlerMock).toHaveBeenCalledWith(
@@ -211,17 +223,25 @@ describe('AddFilter component', () => {
         // get reset-ed
         expect(codeTextBox).toHaveValue(``);
         expect(toggleModelMock).toHaveBeenCalled();
-
-        await act(() => userEvent.paste(codeTextBox, codeValue));
+        codeTextBox.focus();
+        await act(async () => {
+          await userEvent.paste(codeValue);
+        });
         expect(codeTextBox).toHaveValue(`${codeValue}\n\n`);
 
-        await act(() => userEvent.click(checkbox));
+        await act(async () => {
+          await userEvent.click(checkbox);
+        });
         expect(addFilterBtn).toBeDisabled();
 
-        await act(() => userEvent.type(nameTextBox, nameValue));
+        await act(async () => {
+          await userEvent.type(nameTextBox, nameValue);
+        });
         expect(nameTextBox).toHaveValue(nameValue);
         expect(addFilterBtn).toBeEnabled();
-        await act(() => userEvent.click(addFilterBtn));
+        await act(async () => {
+          await userEvent.click(addFilterBtn);
+        });
 
         expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
         expect(addFilterMock).toHaveBeenCalledWith({
@@ -238,16 +258,19 @@ describe('AddFilter component', () => {
       )[0] as HTMLTextAreaElement;
       const nameTextBox = screen.getAllByRole('textbox')[1];
       const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
-      await act(() => {
-        userEvent.clear(nameTextBox);
-        userEvent.clear(codeTextBox);
-        userEvent.paste(codeTextBox, longCodeValue);
+      await act(async () => {
+        await userEvent.clear(nameTextBox);
+        await userEvent.clear(codeTextBox);
+        codeTextBox.focus();
+        await userEvent.paste(longCodeValue);
       });
 
       expect(nameTextBox).toHaveValue('');
       expect(codeTextBox).toHaveValue(`${longCodeValue}\n\n`);
 
-      await act(() => userEvent.click(addFilterBtn));
+      await act(async () => {
+        await userEvent.click(addFilterBtn);
+      });
 
       const filterName = `${longCodeValue.slice(0, 16)}...`;
 

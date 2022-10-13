@@ -6,9 +6,15 @@ import {
   useBrokerConfig,
   useUpdateBrokerConfigByName,
 } from 'lib/hooks/api/brokers';
-import Table from 'components/common/NewTable';
-import { BrokerConfig, ConfigSource } from 'generated-sources';
+import Table, { LinkCell, Tooltip } from 'components/common/NewTable';
+import {
+  BrokerConfig,
+  ConfigSource,
+  ConfigSourceTooltip,
+} from 'generated-sources';
 import Search from 'components/common/Search/Search';
+import ReactTooltip from 'react-tooltip';
+import { retry } from '@reduxjs/toolkit/query';
 
 import InputCell from './InputCell';
 import * as S from './Configs.styled';
@@ -59,6 +65,13 @@ const Configs: React.FC = () => {
       {
         header: 'Source',
         accessorKey: 'source',
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ row }) => {
+          const { source } = row.original;
+          const value = row.original.source;
+          const messageTooltip = ConfigSourceTooltip[source];
+          return <Tooltip value={value} messageTooltip={messageTooltip} />;
+        },
       },
     ],
     []

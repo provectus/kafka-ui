@@ -42,9 +42,7 @@ describe('Configs', () => {
   });
 
   it('updates textbox value', async () => {
-    await act(() => {
-      userEvent.click(screen.getAllByLabelText('editAction')[0]);
-    });
+    await userEvent.click(screen.getAllByLabelText('editAction')[0]);
 
     const textbox = screen.getByLabelText('inputValue');
     expect(textbox).toBeInTheDocument();
@@ -59,9 +57,9 @@ describe('Configs', () => {
       screen.getByRole('button', { name: 'cancelAction' })
     ).toBeInTheDocument();
 
-    await act(() => {
-      userEvent.click(screen.getByRole('button', { name: 'confirmAction' }));
-    });
+    await userEvent.click(
+      screen.getByRole('button', { name: 'confirmAction' })
+    );
 
     expect(
       screen.getByText('Are you sure you want to change the value?')

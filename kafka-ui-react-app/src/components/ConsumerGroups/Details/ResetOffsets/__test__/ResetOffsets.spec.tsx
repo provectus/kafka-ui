@@ -33,9 +33,9 @@ const resetConsumerGroupOffsetsMockCalled = () =>
   ).toBeTruthy();
 
 const selectresetTypeAndPartitions = async (resetType: string) => {
-  userEvent.click(screen.getByLabelText('Reset Type'));
-  userEvent.click(screen.getByText(resetType));
-  userEvent.click(screen.getByText('Select...'));
+  await userEvent.click(screen.getByLabelText('Reset Type'));
+  await userEvent.click(screen.getByText(resetType));
+  await userEvent.click(screen.getByText('Select...'));
   await waitFor(() => {
     userEvent.click(screen.getByText('Partition #0'));
   });
@@ -45,10 +45,10 @@ const resetConsumerGroupOffsetsWith = async (
   resetType: string,
   offset: null | number = null
 ) => {
-  userEvent.click(screen.getByLabelText('Reset Type'));
+  await userEvent.click(screen.getByLabelText('Reset Type'));
   const options = screen.getAllByText(resetType);
-  userEvent.click(options.length > 1 ? options[1] : options[0]);
-  userEvent.click(screen.getByText('Select...'));
+  await userEvent.click(options.length > 1 ? options[1] : options[0]);
+  await userEvent.click(screen.getByText('Select...'));
   await waitFor(() => {
     userEvent.click(screen.getByText('Partition #0'));
   });
@@ -64,7 +64,7 @@ const resetConsumerGroupOffsetsWith = async (
       },
     }
   );
-  userEvent.click(screen.getByText('Submit'));
+  await userEvent.click(screen.getByText('Submit'));
   await waitFor(() => resetConsumerGroupOffsetsMockCalled());
 };
 
@@ -122,7 +122,7 @@ describe('ResetOffsets', () => {
         await waitFor(() => {
           userEvent.keyboard('10');
         });
-        userEvent.click(screen.getByText('Submit'));
+        await userEvent.click(screen.getByText('Submit'));
         await waitFor(() => resetConsumerGroupOffsetsMockCalled());
       });
       it('calls resetConsumerGroupOffsets with TIMESTAMP', async () => {
@@ -139,7 +139,7 @@ describe('ResetOffsets', () => {
             },
           }
         );
-        userEvent.click(screen.getByText('Submit'));
+        await userEvent.click(screen.getByText('Submit'));
         await waitFor(() =>
           expect(
             screen.getByText("This field shouldn't be empty!")

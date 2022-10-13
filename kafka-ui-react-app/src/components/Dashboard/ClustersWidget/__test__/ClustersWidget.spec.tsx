@@ -25,9 +25,9 @@ describe('ClustersWidget', () => {
     expect(screen.getAllByRole('row').length).toBe(3);
   });
 
-  it('hides online cluster widgets', () => {
+  it('hides online cluster widgets', async () => {
     expect(screen.getAllByRole('row').length).toBe(3);
-    userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByRole('checkbox'));
     expect(screen.getAllByRole('row').length).toBe(2);
   });
 

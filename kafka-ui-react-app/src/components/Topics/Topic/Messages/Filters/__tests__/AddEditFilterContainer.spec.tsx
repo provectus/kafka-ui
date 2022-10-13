@@ -43,16 +43,15 @@ describe('AddEditFilterContainer component', () => {
       const inputs = screen.getAllByRole('textbox');
 
       const textAreaElement = inputs[0] as HTMLTextAreaElement;
-      await act(() =>
-        userEvent.paste(textAreaElement, 'Hello World With TextArea')
-      );
+      textAreaElement.focus();
+      await userEvent.paste('Hello World With TextArea');
 
-      const inputNameElement = inputs[1];
-      await act(() => userEvent.type(inputNameElement, 'Hello World!'));
+      const inputNameElement = inputs[1] as HTMLTextAreaElement;
+      await userEvent.type(inputNameElement, 'Hello World!');
 
       expect(submitButtonElem).toBeEnabled();
-
-      await act(() => userEvent.clear(inputNameElement));
+      inputNameElement.focus();
+      await userEvent.clear(inputNameElement);
 
       expect(submitButtonElem).toBeDisabled();
     });
@@ -61,18 +60,17 @@ describe('AddEditFilterContainer component', () => {
       const inputs = screen.getAllByRole('textbox');
 
       const textAreaElement = inputs[0] as HTMLTextAreaElement;
-      await act(() =>
-        userEvent.paste(textAreaElement, 'Hello World With TextArea')
-      );
+      textAreaElement.focus();
+      await userEvent.paste('Hello World With TextArea');
+      screen.debug();
 
       const inputNameElement = inputs[1];
-      await act(() => {
-        userEvent.type(inputNameElement, 'Hello World!');
 
-        userEvent.clear(inputNameElement);
-        userEvent.clear(textAreaElement);
-      });
+      await userEvent.type(inputNameElement, 'Hello World!');
 
+      await userEvent.clear(inputNameElement);
+
+      await userEvent.clear(textAreaElement);
       expect(screen.getByText(/required field/i)).toBeInTheDocument();
     });
   });
@@ -111,16 +109,17 @@ describe('AddEditFilterContainer component', () => {
       const inputs = screen.getAllByRole('textbox');
 
       const textAreaElement = inputs[0] as HTMLTextAreaElement;
-      userEvent.paste(textAreaElement, 'Hello World With TextArea');
+      textAreaElement.focus();
+      await userEvent.paste('Hello World With TextArea');
 
       const inputNameElement = inputs[1];
-      await act(() => userEvent.type(inputNameElement, 'Hello World!'));
+      await userEvent.type(inputNameElement, 'Hello World!');
 
       const submitBtnElement = screen.getByText(defaultSubmitBtn);
 
       expect(submitBtnElement).toBeEnabled();
 
-      await act(() => userEvent.click(submitBtnElement));
+      await userEvent.click(submitBtnElement);
 
       expect(submitCallback).toBeCalled();
     });

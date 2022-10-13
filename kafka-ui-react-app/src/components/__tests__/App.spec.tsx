@@ -42,7 +42,7 @@ describe('App', () => {
     ).toBeInTheDocument();
   });
 
-  it('handle burger click correctly', () => {
+  it('handle burger click correctly', async () => {
     const burger = within(screen.getByLabelText('Page Header')).getByRole(
       'button',
       burgerButtonOptions
@@ -52,7 +52,7 @@ describe('App', () => {
     expect(overlay).toBeInTheDocument();
     expect(overlay).toHaveStyleRule('visibility: hidden');
     expect(burger).toHaveStyleRule('display: none');
-    userEvent.click(burger);
+    await userEvent.click(burger);
     expect(overlay).toHaveStyleRule('visibility: visible');
   });
 
