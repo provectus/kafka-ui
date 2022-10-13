@@ -60,11 +60,11 @@ jobs:
         if: always()
         id: allure-report
         with:
-          allure_results: ./kafka-ui-e2e-checks/allure-results/artifact
+          allure_results: ./kafka-ui-e2e-checks/target/allure-results/artifact
 #          gh_pages: allure-results
           allure_history: allure-history
 #          allure_report: allure-report
-#          subfolder: allure-results
+          subfolder: reports
           keep_reports: 10
       - name: Deploy allure report to Github Pages
         if: always()
@@ -73,7 +73,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-history
           publish_branch: gh-pages
-          destination_dir: ./allure
+          destination_dir: reports
       - name: Post the link to allure report
         if: always()
         uses: Sibz/github-status-action@v1.1.6
