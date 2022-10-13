@@ -55,7 +55,7 @@ class WellKnownMetricsTest {
         .containsEntry(2, new BigDecimal("20.0"));
   }
 
-    @Test
+  @Test
   void appliesInnerStateToMetricsBuilder() {
     //filling per topic io rates
     wellKnownMetrics.bytesInFifteenMinuteRate.put("topic", new BigDecimal(1));
