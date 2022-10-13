@@ -29,7 +29,7 @@
         <allure.maven-plugin.version>2.6</allure.maven-plugin.version>
         <ashot.version>1.5.4</ashot.version>
         <allure.screendiff-plugin.version>2.18.1</allure.screendiff-plugin.version>
-        <maven.surefire-plugin.version>2.22.2</maven.surefire-plugin.version>
+        <maven.surefire-plugin.version>3.0.0-M7</maven.surefire-plugin.version>
         <allure-maven.version>2.10.0</allure-maven.version>
         <kafka.version>3.0.0</kafka.version>
         <netty.version>4.1.77.Final</netty.version>
@@ -269,8 +269,29 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>${maven.surefire-plugin.version}</version>
                         <configuration>
-                            <skipTests>true</skipTests>
+                            <testFailureIgnore>false</testFailureIgnore>
+                            <systemProperties>
+                                <property>
+                                    <name>junit.jupiter.extensions.autodetection.enabled</name>
+                                    <value>true</value>
+                                </property>
+                            </systemProperties>
+                            <argLine>
+                                -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                            </argLine>
+                            <systemPropertyVariables>
+                                <allure.results.directory>${project.build.directory}/allure-results
+                                </allure.results.directory>
+                            </systemPropertyVariables>
                         </configuration>
+                        <dependencies>
+                            <!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+                            <dependency>
+                                <groupId>org.aspectj</groupId>
+                                <artifactId>aspectjweaver</artifactId>
+                                <version>${aspectj.version}</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -302,6 +323,10 @@
                             <argLine>
                                 -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                             </argLine>
+                            <systemPropertyVariables>
+                                <allure.results.directory>${project.build.directory}/allure-results
+                                </allure.results.directory>
+                            </systemPropertyVariables>
                         </configuration>
                         <dependencies>
                             <dependency>
