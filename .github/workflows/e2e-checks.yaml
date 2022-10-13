@@ -61,11 +61,11 @@ jobs:
         id: allure-report
         with:
           allure_results: ./kafka-ui-e2e-checks/allure-results
-          gh_pages: allure-results
-          allure_report: allure-report
-          subfolder: allure-results
+#          gh_pages: allure-results
           allure_history: allure-history
-          keep_reports: 5
+#          allure_report: allure-report
+          subfolder: allure-results
+          keep_reports: 10
       - name: Deploy allure report to Github Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v3
