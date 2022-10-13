@@ -15,6 +15,13 @@ public class SchemaRegistryList {
     private final SelenideElement schemaButton = $(By.xpath("//*[contains(text(),'Create Schema')]"));
 
     @Step
+    public SchemaRegistryList waitUntilScreenReady(){
+        $x("//*[contains(text(),'Loading')]").shouldBe(Condition.disappear);
+        $x("//button[contains(text(),'Create Schema')]").shouldBe(Condition.visible);
+        return this;
+    }
+
+    @Step
     public SchemaCreateForm clickCreateSchema() {
         clickByJavaScript(schemaButton);
         return new SchemaCreateForm();

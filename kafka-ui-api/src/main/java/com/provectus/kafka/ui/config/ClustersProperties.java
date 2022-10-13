@@ -30,16 +30,22 @@ public class ClustersProperties {
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
     List<ConnectCluster> kafkaConnect;
-    int jmxPort;
-    boolean jmxSsl;
-    String jmxUsername;
-    String jmxPassword;
+    MetricsConfigData metrics;
     Properties properties;
     boolean readOnly = false;
     boolean disableLogDirsCollection = false;
     List<SerdeConfig> serde = new ArrayList<>();
     String defaultKeySerde;
     String defaultValueSerde;
+  }
+
+  @Data
+  public static class MetricsConfigData {
+    String type;
+    Integer port;
+    boolean ssl;
+    String username;
+    String password;
   }
 
   @Data

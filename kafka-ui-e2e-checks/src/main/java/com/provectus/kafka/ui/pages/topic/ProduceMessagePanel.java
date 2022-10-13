@@ -43,6 +43,6 @@ public class ProduceMessagePanel {
         submitBtn.shouldBe(Condition.enabled).click();
         submitBtn.shouldBe(Condition.disappear);
         refresh();
-        return new TopicDetails().waitUntilScreenReady();
+        return new TopicDetails();
     }
 }
