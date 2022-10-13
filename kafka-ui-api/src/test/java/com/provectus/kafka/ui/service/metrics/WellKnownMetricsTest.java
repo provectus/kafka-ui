@@ -82,7 +82,7 @@ class WellKnownMetricsTest {
         Map.of(1, new BigDecimal(2), 2, new BigDecimal(20)));
   }
 
-  private void populateWith(Node n, String ...prometheusMetric){
+  private void populateWith(Node n, String... prometheusMetric) {
     Arrays.stream(prometheusMetric)
         .map(PrometheusEndpointMetricsParser::parse)
         .filter(Optional::isPresent)
