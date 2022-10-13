@@ -48,6 +48,13 @@ jobs:
         run: |
           mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
           mvn -DQASEIO_API_TOKEN=${{ secrets.QASEIO_API_TOKEN }} -pl '!kafka-ui-api' test -Pprod
+      - name: Get Allure history
+        uses: actions/checkout@v2
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
       - name: Generate allure report
         uses: simple-elf/allure-report-action@master
         if: always()
@@ -57,6 +64,8 @@ jobs:
           gh_pages: allure-results
           allure_report: allure-report
           subfolder: allure-results
+          allure_history: allure-history
+          keep_reports: 5
       - name: Deploy allure report to Github Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v3
