@@ -170,11 +170,11 @@ public class TopicsService {
             adminClient.createTopic(
                 topicData.getName(),
                 topicData.getPartitions(),
-                topicData.getReplicationFactor().shortValue(),
+                topicData.getReplicationFactor(),
                 topicData.getConfigs()
             ).thenReturn(topicData)
         )
-        .onErrorResume(t -> Mono.error(new TopicMetadataException(t.getMessage())))
+        .onErrorMap(t -> new TopicMetadataException(t.getMessage(), t))
         .flatMap(topicData -> loadTopicAfterCreation(c, topicData.getName()));
   }
 
@@ -194,7 +194,7 @@ public class TopicsService {
                         ac.createTopic(
                                 topic.getName(),
                                 topic.getPartitionCount(),
-                                (short) topic.getReplicationFactor(),
+                                topic.getReplicationFactor(),
                                 topic.getTopicConfigs()
                                     .stream()
                                     .collect(Collectors.toMap(InternalTopicConfig::getName,
@@ -430,7 +430,7 @@ public class TopicsService {
                 ac.createTopic(
                     newTopicName,
                     topic.getPartitionCount(),
-                    (short) topic.getReplicationFactor(),
+                    topic.getReplicationFactor(),
                     topic.getTopicConfigs()
                         .stream()
                         .collect(Collectors

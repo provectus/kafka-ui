@@ -2261,7 +2261,6 @@ components:
       required:
         - name
         - partitions
-        - replicationFactor
 
     TopicUpdate:
       type: object
