@@ -21,7 +21,7 @@ jobs:
 
       - uses: azure/setup-helm@v1
 
-      - name: add chart # realse helm with new version
+      - name: add chart #realse helm with new version
         run: |
           echo "VERSION=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk '{print $2}')" >> $GITHUB_ENV
           MSG=$(helm package  charts/kafka-ui)
@@ -31,7 +31,7 @@ jobs:
           helm repo index .
           git add -f ${MSG##*/} index.yaml
           git commit -m "release ${{ env.VERSION }}"
-          git push        
+          git push
       - uses: rickstaa/action-create-tag@v1 #create new tag
         with:
-          tag: "charts/kafka-ui-${{ env.VERSION }}"    
+          tag: "charts/kafka-ui-${{ env.VERSION }}"
