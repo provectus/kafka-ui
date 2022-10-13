@@ -18,5 +18,4 @@ public class SmokeTests extends BaseTest {
     }
 
     //some text for commit
-    //one more for history
 }
