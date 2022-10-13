@@ -1923,6 +1923,7 @@ components:
           deprecated: true
         activeControllers:
           type: integer
+          description: Id of broker which is cluster's controller. null, if controller not known yet.
         onlinePartitionCount:
           type: integer
         offlinePartitionCount:
@@ -2281,6 +2282,10 @@ components:
           type: string
         port:
           type: integer
+        bytesInPerSec:
+          type: number
+        bytesOutPerSec:
+          type: number
       required:
         - id
 

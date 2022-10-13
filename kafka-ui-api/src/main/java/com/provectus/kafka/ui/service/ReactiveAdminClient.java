@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.service;
 
-import static com.google.common.util.concurrent.Uninterruptibles.getUninterruptibly;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -279,25 +278,8 @@ public class ReactiveAdminClient implements Closeable {
 
   public Mono<ClusterDescription> describeCluster() {
     var r = client.describeCluster();
-    var all = KafkaFuture.allOf(r.nodes(), r.clusterId(), r.controller(), r.authorizedOperations());
-    return Mono.create(sink -> all.whenComplete((res, ex) -> {
-      if (ex != null) {
-        sink.error(ex);
-      } else {
-        try {
-          sink.success(
-              new ClusterDescription(
-                  getUninterruptibly(r.controller()),
-                  getUninterruptibly(r.clusterId()),
-                  getUninterruptibly(r.nodes()),
-                  getUninterruptibly(r.authorizedOperations())
-              )
-          );
-        } catch (ExecutionException e) {
-          // can't be here, because all futures already completed
-        }
-      }
-    }));
+    return Mono.zip(toMono(r.controller()), toMono(r.clusterId()), toMono(r.nodes()), toMono(r.authorizedOperations()))
+        .map(t -> new ClusterDescription(t.getT1(), t.getT2(), t.getT3(), t.getT4()));
   }
 
   private static Mono<String> getClusterVersion(AdminClient client) {
