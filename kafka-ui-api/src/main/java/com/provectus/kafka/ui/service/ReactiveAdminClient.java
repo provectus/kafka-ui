@@ -35,6 +35,7 @@ import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
+import org.apache.kafka.clients.admin.DescribeClusterOptions;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
 import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsOptions;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
@@ -44,6 +45,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.KafkaFuture;
@@ -102,7 +104,8 @@ public class ReactiveAdminClient implements Closeable {
     }
   }
 
-  //TODO: discuss - maybe we should map kafka-library's exceptions to our exceptions here
+  // NOTE: if KafkaFuture returns null, that Mono will be empty(!), since Reactor does not support nullable results
+  // (see MonoSink.success(..) javadoc for details)
   private static <T> Mono<T> toMono(KafkaFuture<T> future) {
     return Mono.<T>create(sink -> future.whenComplete((res, ex) -> {
       if (ex != null) {
@@ -277,9 +280,19 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<ClusterDescription> describeCluster() {
-    var r = client.describeCluster();
-    return Mono.zip(toMono(r.controller()), toMono(r.clusterId()), toMono(r.nodes()), toMono(r.authorizedOperations()))
-        .map(t -> new ClusterDescription(t.getT1(), t.getT2(), t.getT3(), t.getT4()));
+    var result = client.describeCluster(new DescribeClusterOptions().includeAuthorizedOperations(true));
+    var allOfFuture = KafkaFuture.allOf(
+        result.controller(), result.clusterId(), result.nodes(), result.authorizedOperations());
+    return toMono(allOfFuture).then(
+        Mono.fromCallable(() ->
+          new ClusterDescription(
+            result.controller().get(),
+            result.clusterId().get(),
+            result.nodes().get(),
+            result.authorizedOperations().get()
+          )
+        )
+    );
   }
 
   private static Mono<String> getClusterVersion(AdminClient client) {
