@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import React from 'react';
 import styled from 'styled-components';
 import useDataSaver from 'lib/hooks/useDataSaver';
@@ -22,7 +23,14 @@ const ClickableRow = styled.tr`
   cursor: pointer;
 `;
 
+export interface PreviewFilter {
+  field: string;
+  path: string;
+}
+
 export interface Props {
+  keyFilters: PreviewFilter[];
+  contentFilters: PreviewFilter[];
   message: TopicMessage;
 }
 
@@ -38,6 +46,8 @@ const Message: React.FC<Props> = ({
     keyFormat,
     headers,
   },
+  keyFilters,
+  contentFilters,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const savedMessageJson = {
@@ -60,6 +70,31 @@ const Message: React.FC<Props> = ({
 
   const [vEllipsisOpen, setVEllipsisOpen] = React.useState(false);
 
+  const renderFilteredJson = (
+    jsonValue?: string,
+    filters?: PreviewFilter[]
+  ) => {
+    if (!filters?.length || !jsonValue) return jsonValue;
+
+    let parsedJson: object = {};
+
+    try {
+      parsedJson = JSON.parse(jsonValue);
+    } catch (e) {
+      // do nothing;
+    }
+
+    return (
+      <>
+        {filters.map((item) => (
+          <div>
+            {item.field}: {get(parsedJson, item.path)}
+          </div>
+        ))}
+      </>
+    );
+  };
+
   return (
     <>
       <ClickableRow
@@ -77,10 +112,14 @@ const Message: React.FC<Props> = ({
         <td>
           <div>{formatTimestamp(timestamp)}</div>
         </td>
-        <StyledDataCell title={key}>{key}</StyledDataCell>
+        <StyledDataCell title={key}>
+          {renderFilteredJson(key, keyFilters)}
+        </StyledDataCell>
         <StyledDataCell>
           <S.Metadata>
-            <S.MetadataValue>{content}</S.MetadataValue>
+            <S.MetadataValue>
+              {renderFilteredJson(content, contentFilters)}
+            </S.MetadataValue>
           </S.Metadata>
         </StyledDataCell>
         <td style={{ width: '5%' }}>
