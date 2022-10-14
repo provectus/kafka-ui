@@ -7,7 +7,6 @@ import {
   ConsumerGroupOrdering,
   SortOrder,
 } from 'generated-sources';
-import useSearch from 'lib/hooks/useSearch';
 import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import { clusterConsumerGroupDetailsPath, ClusterNameRoute } from 'lib/paths';
@@ -23,7 +22,6 @@ export interface Props {
 }
 
 const List: React.FC<Props> = ({ consumerGroups, totalPages }) => {
-  const [searchText, handleSearchText] = useSearch();
   const dispatch = useAppDispatch();
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const [searchParams] = useSearchParams();
@@ -40,10 +38,10 @@ const List: React.FC<Props> = ({ consumerGroups, totalPages }) => {
           undefined,
         page: Number(searchParams.get('page') || 1),
         perPage: Number(searchParams.get('perPage') || PER_PAGE),
-        search: searchText,
+        search: searchParams.get('q') || '',
       })
     );
-  }, [clusterName, searchText, dispatch, searchParams]);
+  }, [clusterName, dispatch, searchParams]);
 
   const columns = React.useMemo<ColumnDef<ConsumerGroupDetails>[]>(
     () => [
@@ -51,7 +49,13 @@ const List: React.FC<Props> = ({ consumerGroups, totalPages }) => {
         id: ConsumerGroupOrdering.NAME,
         header: 'Group ID',
         accessorKey: 'groupId',
-        cell: LinkCell,
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ getValue }) => (
+          <LinkCell
+            value={`${getValue<string | number>()}`}
+            to={encodeURIComponent(`${getValue<string | number>()}`)}
+          />
+        ),
       },
       {
         id: ConsumerGroupOrdering.MEMBERS,
@@ -87,11 +91,7 @@ const List: React.FC<Props> = ({ consumerGroups, totalPages }) => {
     <>
       <PageHeading text="Consumers" />
       <ControlPanelWrapper hasInput>
-        <Search
-          placeholder="Search by Consumer Group ID"
-          value={searchText}
-          handleSearch={handleSearchText}
-        />
+        <Search placeholder="Search by Consumer Group ID" />
       </ControlPanelWrapper>
       <Table
         columns={columns}

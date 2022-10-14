@@ -1,14 +1,8 @@
 package com.provectus.kafka.ui.config;
 
-import com.provectus.kafka.ui.model.JmxConnectionInfo;
-import com.provectus.kafka.ui.util.JmxPoolFactory;
 import java.util.Collections;
 import java.util.Map;
-import javax.management.remote.JMXConnector;
 import lombok.AllArgsConstructor;
-import org.apache.commons.pool2.KeyedObjectPool;
-import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
-import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,21 +41,6 @@ public class Config {
       return new ContextPathCompositeHandler(handlersMap);
     }
     return httpHandler;
-  }
-
-
-  @Bean
-  public KeyedObjectPool<JmxConnectionInfo, JMXConnector> pool() {
-    var pool = new GenericKeyedObjectPool<>(new JmxPoolFactory());
-    pool.setConfig(poolConfig());
-    return pool;
-  }
-
-  private GenericKeyedObjectPoolConfig poolConfig() {
-    final var poolConfig = new GenericKeyedObjectPoolConfig();
-    poolConfig.setMaxIdlePerKey(3);
-    poolConfig.setMaxTotalPerKey(3);
-    return poolConfig;
   }
 
   @Bean

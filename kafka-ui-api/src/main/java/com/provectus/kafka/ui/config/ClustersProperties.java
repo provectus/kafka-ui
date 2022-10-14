@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -28,21 +29,23 @@ public class ClustersProperties {
     SchemaRegistryAuth schemaRegistryAuth;
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
-    String schemaNameTemplate = "%s-value";
-    String keySchemaNameTemplate = "%s-key";
-    String protobufFile;
-    String protobufMessageName;
-    Map<String, String> protobufMessageNameByTopic;
-    String protobufMessageNameForKey;
-    Map<String, String> protobufMessageNameForKeyByTopic;
     List<ConnectCluster> kafkaConnect;
-    int jmxPort;
-    boolean jmxSsl;
-    String jmxUsername;
-    String jmxPassword;
+    MetricsConfigData metrics;
     Properties properties;
     boolean readOnly = false;
     boolean disableLogDirsCollection = false;
+    List<SerdeConfig> serde = new ArrayList<>();
+    String defaultKeySerde;
+    String defaultValueSerde;
+  }
+
+  @Data
+  public static class MetricsConfigData {
+    String type;
+    Integer port;
+    boolean ssl;
+    String username;
+    String password;
   }
 
   @Data
@@ -57,6 +60,16 @@ public class ClustersProperties {
   public static class SchemaRegistryAuth {
     String username;
     String password;
+  }
+
+  @Data
+  public static class SerdeConfig {
+    String name;
+    String className;
+    String filePath;
+    Map<String, Object> properties = new HashMap<>();
+    String topicKeysPattern;
+    String topicValuesPattern;
   }
 
   @Data

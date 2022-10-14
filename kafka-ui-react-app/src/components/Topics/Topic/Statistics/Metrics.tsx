@@ -14,7 +14,7 @@ import {
   Label,
 } from 'components/common/PropertiesList/PropertiesList.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { formatTimestamp } from 'lib/dateTimeHelpers';
+import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 
 import * as S from './Statistics.styles';
 import Total from './Indicators/Total';
@@ -22,6 +22,8 @@ import SizeStats from './Indicators/SizeStats';
 import PartitionTable from './PartitionTable';
 
 const Metrics: React.FC = () => {
+  const formatTimestamp = useTimeFormat();
+
   const params = useAppParams<RouteParamsClusterTopic>();
   const [isAnalyzing, setIsAnalyzing] = React.useState(true);
   const analyzeTopic = useAnalyzeTopic(params);
@@ -76,7 +78,7 @@ const Metrics: React.FC = () => {
   return (
     <>
       <S.ActionsBar>
-        <S.CreatedAt>{formatTimestamp(data.result.finishedAt)}</S.CreatedAt>
+        <S.CreatedAt>{formatTimestamp(data?.result?.finishedAt)}</S.CreatedAt>
         <Button
           onClick={async () => {
             await analyzeTopic.mutateAsync();

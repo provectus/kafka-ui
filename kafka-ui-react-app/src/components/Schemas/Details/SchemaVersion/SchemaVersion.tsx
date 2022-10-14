@@ -25,11 +25,12 @@ const SchemaVersion: React.FC<SchemaVersionProps> = ({
           </IconButtonWrapper>
         </td>
         <td style={{ width: '6%' }}>{version}</td>
-        <td>{id}</td>
+        <td style={{ width: '6%' }}>{id}</td>
+        <td>{schemaType}</td>
       </tr>
       {isOpen && (
         <S.Wrapper>
-          <td colSpan={3}>
+          <td colSpan={4}>
             <EditorViewer data={schema} schemaType={schemaType} />
           </td>
         </S.Wrapper>

@@ -46,10 +46,10 @@ public class InternalClusterMetrics {
   @Nullable // will be null if log dir collection disabled
   private final Map<Integer, InternalBrokerDiskUsage> internalBrokerDiskUsage;
 
-  // metrics from jmx
+  // metrics from metrics collector
   private final BigDecimal bytesInPerSec;
   private final BigDecimal bytesOutPerSec;
-  private final Map<Integer, JmxBrokerMetrics> internalBrokerMetrics;
+  private final Map<Integer, BrokerMetrics> internalBrokerMetrics;
   private final List<MetricDTO> metrics;
 
 }

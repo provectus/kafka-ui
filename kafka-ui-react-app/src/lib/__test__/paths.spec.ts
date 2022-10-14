@@ -204,17 +204,6 @@ describe('Paths', () => {
       )
     );
   });
-  it('clusterTopicSendMessagePath', () => {
-    expect(paths.clusterTopicSendMessagePath(clusterName, topicId)).toEqual(
-      `${paths.clusterTopicPath(clusterName, topicId)}/message`
-    );
-    expect(paths.clusterTopicSendMessagePath()).toEqual(
-      paths.clusterTopicSendMessagePath(
-        RouteParams.clusterName,
-        RouteParams.topicName
-      )
-    );
-  });
   it('clusterTopicEditPath', () => {
     expect(paths.clusterTopicEditPath(clusterName, topicId)).toEqual(
       `${paths.clusterTopicPath(clusterName, topicId)}/edit`

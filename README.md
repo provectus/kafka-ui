@@ -9,7 +9,7 @@
 
 ### DISCLAIMER
 <em>UI for Apache Kafka is a free tool built and supported by the open-source community. Curated by Provectus, it will remain free and open-source, without any paid features or subscription plans to be added in the future.
-Looking for the help of Kafka experts? Provectus can help you design, build, deploy, and manage Apache Kafka clusters and streaming applications. Discover [Professional Services for Apache Kafka](https://provectus.com/professional-services-apache-kafka/), to unlock the full potential of Kafka in your enteprise! </em>
+Looking for the help of Kafka experts? Provectus can help you design, build, deploy, and manage Apache Kafka clusters and streaming applications. Discover [Professional Services for Apache Kafka](https://provectus.com/professional-services-apache-kafka/), to unlock the full potential of Kafka in your enterprise! </em>
 
 
 #### UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters.
@@ -92,7 +92,9 @@ kafka:
         username: username
         password: password
 #     schemaNameTemplate: "%s-value"
-      jmxPort: 9997
+      metrics:
+        port: 9997
+        type: JMX
     -
 ```
 
@@ -102,7 +104,8 @@ kafka:
 * `schemaRegistryAuth.username`: schemaRegistry's basic authentication username
 * `schemaRegistryAuth.password`: schemaRegistry's basic authentication password
 * `schemaNameTemplate`: how keys are saved to schemaRegistry
-* `jmxPort`: open JMX port of a broker
+* `metrics.port`: open JMX port of a broker
+* `metrics.type`: Type of metrics, either JMX or PROMETHEUS. Defaulted to JMX.
 * `readOnly`: enable read only mode
 
 Configure as many clusters as you need by adding their configs below separated with `-`.
@@ -181,15 +184,16 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_USERNAME`   	|SchemaRegistry's basic authentication username
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_PASSWORD`   	|SchemaRegistry's basic authentication password
 |`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE` |How keys are saved to schemaRegistry
-|`KAFKA_CLUSTERS_0_JMXPORT`        	|Open JMX port of a broker
+|`KAFKA_CLUSTERS_0_METRICS_PORT`        	 |Open metrics port of a broker
+|`KAFKA_CLUSTERS_0_METRICS_TYPE`        	 |Type of metrics retriever to use. Valid values are JMX (default) or PROMETHEUS. If Prometheus, then metrics are read from prometheus-jmx-exporter instead of jmx
 |`KAFKA_CLUSTERS_0_READONLY`        	|Enable read-only mode. Default: false
 |`KAFKA_CLUSTERS_0_DISABLELOGDIRSCOLLECTION`        	|Disable collecting segments information. It should be true for confluent cloud. Default: false
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME` |Given name for the Kafka Connect cluster
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS` |Address of the Kafka Connect service endpoint
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_USERNAME`| Kafka Connect cluster's basic authentication username
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_PASSWORD`| Kafka Connect cluster's basic authentication password
-|`KAFKA_CLUSTERS_0_JMXSSL` |Enable SSL for JMX? `true` or `false`. For advanced setup, see `kafka-ui-jmx-secured.yml`
-|`KAFKA_CLUSTERS_0_JMXUSERNAME` |Username for JMX authentication
-|`KAFKA_CLUSTERS_0_JMXPASSWORD` |Password for JMX authentication
+|`KAFKA_CLUSTERS_0_METRICS_SSL`          |Enable SSL for Metrics? `true` or `false`. For advanced setup, see `kafka-ui-jmx-secured.yml`
+|`KAFKA_CLUSTERS_0_METRICS_USERNAME` |Username for Metrics authentication
+|`KAFKA_CLUSTERS_0_METRICS_PASSWORD` |Password for Metrics authentication
 |`TOPIC_RECREATE_DELAY_SECONDS` |Time delay between topic deletion and topic creation attempts for topic recreate functionality. Default: 1
 |`TOPIC_RECREATE_MAXRETRIES`  |Number of attempts of topic creation after topic deletion for topic recreate functionality. Default: 15
