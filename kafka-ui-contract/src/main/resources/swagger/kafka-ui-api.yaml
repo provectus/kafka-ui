@@ -1267,6 +1267,16 @@ paths:
           required: false
           schema:
             type: string
+        - name: orderBy
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ConnectorColumnsToSort'
+        - name: sortOrder
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/SortOrder'
       responses:
         200:
           description: OK
@@ -2008,6 +2018,14 @@ components:
         - TOTAL_PARTITIONS
         - REPLICATION_FACTOR
         - SIZE
+
+    ConnectorColumnsToSort:
+      type: string
+      enum:
+        - NAME
+        - CONNECT
+        - TYPE
+        - STATUS
 
     SortOrder:
       type: string
