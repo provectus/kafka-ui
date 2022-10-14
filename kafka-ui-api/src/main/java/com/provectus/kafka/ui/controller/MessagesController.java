@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.controller;
 
+import static com.provectus.kafka.ui.serde.api.Serde.Target.KEY;
+import static com.provectus.kafka.ui.serde.api.Serde.Target.VALUE;
 import static java.util.stream.Collectors.toMap;
 
 import com.provectus.kafka.ui.api.MessagesApi;
@@ -8,10 +10,11 @@ import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
+import com.provectus.kafka.ui.model.SerdeUsageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
+import com.provectus.kafka.ui.model.TopicSerdeSuggestionDTO;
+import com.provectus.kafka.ui.service.DeserializationService;
 import com.provectus.kafka.ui.service.MessagesService;
-import com.provectus.kafka.ui.service.TopicsService;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,7 +38,7 @@ public class MessagesController extends AbstractController implements MessagesAp
   private static final int DEFAULT_LOAD_RECORD_LIMIT = 20;
 
   private final MessagesService messagesService;
-  private final TopicsService topicsService;
+  private final DeserializationService deserializationService;
 
   @Override
   public Mono<ResponseEntity<Void>> deleteTopicMessages(
@@ -49,10 +52,17 @@ public class MessagesController extends AbstractController implements MessagesAp
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> getTopicMessages(
-      String clusterName, String topicName, SeekTypeDTO seekType, List<String> seekTo,
-      Integer limit, String q, MessageFilterTypeDTO filterQueryType,
-      SeekDirectionDTO seekDirection, ServerWebExchange exchange) {
+  public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> getTopicMessages(String clusterName,
+                                                                           String topicName,
+                                                                           SeekTypeDTO seekType,
+                                                                           List<String> seekTo,
+                                                                           Integer limit,
+                                                                           String q,
+                                                                           MessageFilterTypeDTO filterQueryType,
+                                                                           SeekDirectionDTO seekDirection,
+                                                                           String keySerde,
+                                                                           String valueSerde,
+                                                                           ServerWebExchange exchange) {
     var positions = new ConsumerPosition(
         seekType != null ? seekType : SeekTypeDTO.BEGINNING,
         parseSeekTo(topicName, seekTo),
@@ -64,16 +74,9 @@ public class MessagesController extends AbstractController implements MessagesAp
     return Mono.just(
         ResponseEntity.ok(
             messagesService.loadMessages(
-                getCluster(clusterName), topicName, positions, q, filterQueryType, recordsLimit)
+                getCluster(clusterName), topicName, positions, q, filterQueryType, recordsLimit, keySerde, valueSerde)
         )
     );
-  }
-
-  @Override
-  public Mono<ResponseEntity<TopicMessageSchemaDTO>> getTopicSchema(
-      String clusterName, String topicName, ServerWebExchange exchange) {
-    return Mono.just(topicsService.getTopicSchema(getCluster(clusterName), topicName))
-        .map(ResponseEntity::ok);
   }
 
   @Override
@@ -109,4 +112,19 @@ public class MessagesController extends AbstractController implements MessagesAp
         .collect(toMap(Pair::getKey, Pair::getValue));
   }
 
+  @Override
+  public Mono<ResponseEntity<TopicSerdeSuggestionDTO>> getSerdes(String clusterName,
+                                                                 String topicName,
+                                                                 SerdeUsageDTO use,
+                                                                 ServerWebExchange exchange) {
+    return Mono.just(
+        new TopicSerdeSuggestionDTO()
+            .key(use == SerdeUsageDTO.SERIALIZE
+                ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, KEY)
+                : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, KEY))
+            .value(use == SerdeUsageDTO.SERIALIZE
+                ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, VALUE)
+                : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, VALUE))
+    ).map(ResponseEntity::ok);
+  }
 }

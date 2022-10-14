@@ -39,3 +39,17 @@ jobs:
               echo $version;
               helm template --kube-version $version --set ingress.enabled=true charts/kafka-ui -f charts/kafka-ui/values.yaml | kubeval --additional-schema-locations https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict -v $version;
             done
+      #check, was helm version increased in Chart.yaml?
+      - name: Check version
+        shell: bash
+        run: |
+          git fetch
+          git checkout master
+          helm_version_old=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
+          git checkout $GITHUB_HEAD_REF
+          helm_version_new=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
+          echo $helm_version_old
+          echo $helm_version_new
+          if [[ "$helm_version_new" > "$helm_version_old" ]]; then exit 0 ; else exit 1 ; fi
+
+

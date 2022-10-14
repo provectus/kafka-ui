@@ -4,7 +4,7 @@ info:
   version: 0.1.0
   title: Api Documentation
   termsOfService: urn:tos
-  contact: {}
+  contact: { }
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0
@@ -595,6 +595,37 @@ paths:
         400:
           description: Bad Request
 
+  /api/clusters/{clusterName}/topic/{topicName}/serdes:
+    get:
+      tags:
+        - Messages
+      summary: getSerdes
+      operationId: getSerdes
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: use
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/SerdeUsage'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicSerdeSuggestion'
+
+
   /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
       tags:
@@ -639,6 +670,16 @@ paths:
           in: query
           schema:
             $ref: "#/components/schemas/SeekDirection"
+        - name: keySerde
+          in: query
+          description: "Serde that should be used for deserialization. Will be chosen automatically if not set."
+          schema:
+            type: string
+        - name: valueSerde
+          in: query
+          description: "Serde that should be used for deserialization. Will be chosen automatically if not set."
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -702,31 +743,6 @@ paths:
           description: OK
         404:
           description: Not found
-
-  /api/clusters/{clusterName}/topics/{topicName}/messages/schema:
-    get:
-      tags:
-        - Messages
-      summary: getTopicSchema
-      operationId: getTopicSchema
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: topicName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TopicMessageSchema'
 
   /api/clusters/{clusterName}/topics/{topicName}/consumer-groups:
     get:
@@ -1251,6 +1267,16 @@ paths:
           required: false
           schema:
             type: string
+        - name: orderBy
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ConnectorColumnsToSort'
+        - name: sortOrder
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/SortOrder'
       responses:
         200:
           description: OK
@@ -1765,6 +1791,41 @@ paths:
                 $ref: '#/components/schemas/TimeStampFormat'
 components:
   schemas:
+    TopicSerdeSuggestion:
+      type: object
+      properties:
+        key:
+          type: array
+          items:
+            $ref: '#/components/schemas/SerdeDescription'
+        value:
+          type: array
+          items:
+            $ref: '#/components/schemas/SerdeDescription'
+
+    SerdeDescription:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        preferred:
+          description: "This serde was automatically chosen by cluster config. This should be enabled in UI by default. Also it will be used for deserialization if no serdes passed."
+          type: boolean
+        schema:
+          type: string
+        additionalProperties:
+          type: object
+          additionalProperties:
+            type: object
+
+    SerdeUsage:
+      type: string
+      enum:
+        - SERIALIZE
+        - DESERIALIZE
+
     ErrorResponse:
       description: Error object that will be returned with 4XX and 5XX HTTP statuses
       type: object
@@ -1958,6 +2019,14 @@ components:
         - REPLICATION_FACTOR
         - SIZE
 
+    ConnectorColumnsToSort:
+      type: string
+      enum:
+        - NAME
+        - CONNECT
+        - TYPE
+        - STATUS
+
     SortOrder:
       type: string
       enum:
@@ -1984,6 +2053,10 @@ components:
           format: int64
         segmentCount:
           type: integer
+        bytesInPerSec:
+          type: number
+        bytesOutPerSec:
+          type: number
         underReplicatedPartitions:
           type: integer
         cleanUpPolicy:
@@ -2161,6 +2234,10 @@ components:
           type: integer
         cleanUpPolicy:
           $ref: '#/components/schemas/CleanUpPolicy'
+        keySerde:
+          type: string
+        valueSerde:
+          type: string
       required:
         - name
 
@@ -2202,7 +2279,6 @@ components:
       required:
         - name
         - partitions
-        - replicationFactor
 
     TopicUpdate:
       type: object
@@ -2274,6 +2350,7 @@ components:
         messagesBehind:
           type: integer
           format: int64
+          description: null if consumer group has no offsets committed
       required:
         - groupId
 
@@ -2309,37 +2386,14 @@ components:
         content:
           type: string
           nullable: true
+        keySerde:
+          type: string
+          nullable: true
+        valueSerde:
+          type: string
+          nullable: true
       required:
         - partition
-
-    TopicMessageSchema:
-      type: object
-      properties:
-        key:
-          $ref: "#/components/schemas/MessageSchema"
-        value:
-          $ref: "#/components/schemas/MessageSchema"
-      required:
-        - key
-        - value
-
-    MessageSchema:
-      type: object
-      properties:
-        name:
-          type: string
-        source:
-          type: string
-          enum:
-            - SOURCE_SCHEMA_REGISTRY
-            - SOURCE_PROTO_FILE
-            - SOURCE_UNKNOWN
-        schema:
-          type: string
-      required:
-        - name
-        - source
-        - schema
 
     TopicMessageEvent:
       type: object
@@ -2412,8 +2466,10 @@ components:
         content:
           type: string
         keyFormat:
+          #deprecated - wont be filled - use 'keySerde' field instead
           $ref: "#/components/schemas/MessageFormat"
         valueFormat:
+          #deprecated - wont be filled - use 'valueSerde' field instead
           $ref: "#/components/schemas/MessageFormat"
         keySize:
           type: integer
@@ -2422,12 +2478,26 @@ components:
           type: integer
           format: int64
         keySchemaId:
+          deprecated: true
+          description: deprecated - wont be filled - use 'keyDeserializeProperties' field instead
           type: string
         valueSchemaId:
+          deprecated: true
+          description: deprecated - wont be filled - use 'valueDeserializeProperties' field instead
           type: string
         headersSize:
           type: integer
           format: int64
+        keySerde:
+          type: string
+        valueSerde:
+          type: string
+        keyDeserializeProperties:
+          additionalProperties:
+            type: object
+        valueDeserializeProperties:
+          additionalProperties:
+            type: object
       required:
         - partition
         - offset
@@ -2494,6 +2564,7 @@ components:
         messagesBehind:
           type: integer
           format: int64
+          description: null if consumer group has no offsets committed
         consumerId:
           type: string
         host:
@@ -2518,16 +2589,12 @@ components:
       properties:
         name:
           type: string
-        canonicalName:
-          type: string
-        params:
+        labels:
           type: string
           additionalProperties:
             type: string
         value:
-          type: string
-          additionalProperties:
-            type: number
+          type: number
 
     TopicLogdirs:
       type: object

@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { gitCommitPath } from 'lib/paths';
-import { GIT_REPO_LATEST_RELEASE_LINK } from 'lib/constants';
+import React from 'react';
 import WarningIcon from 'components/common/Icons/WarningIcon';
+import { gitCommitPath } from 'lib/paths';
+import { useTimeFormat } from 'lib/hooks/useTimeFormat';
+import { useActuatorInfo } from 'lib/hooks/api/actuatorInfo';
+import { BUILD_VERSION_PATTERN } from 'lib/constants';
+import { useLatestVersion } from 'lib/hooks/api/latestVersion';
 
 import * as S from './Version.styled';
 import compareVersions from './compareVersions';
@@ -11,29 +14,28 @@ export interface VesionProps {
   commit?: string;
 }
 
-const Version: React.FC<VesionProps> = ({ tag, commit }) => {
-  const [latestVersionInfo, setLatestVersionInfo] = useState({
-    outdated: false,
-    latestTag: '',
-  });
+const Version: React.FC = () => {
+  const formatTimestamp = useTimeFormat();
+  const { data: actuatorInfo = {} } = useActuatorInfo();
+  const { data: latestVersionInfo = {} } = useLatestVersion();
 
-  useEffect(() => {
-    fetch(GIT_REPO_LATEST_RELEASE_LINK)
-      .then((response) => response.json())
-      .then((data) => {
-        setLatestVersionInfo({
-          outdated: compareVersions(tag, data.tag_name) === -1,
-          latestTag: data.tag_name,
-        });
-      });
-  }, [tag]);
+  const tag = actuatorInfo?.build?.version;
+  const commit = actuatorInfo?.git?.commit.id;
+  const { tag_name: latestTag } = latestVersionInfo;
 
-  const { outdated, latestTag } = latestVersionInfo;
+  const outdated = compareVersions(tag, latestTag);
+
+  const currentVersion = tag?.match(BUILD_VERSION_PATTERN)
+    ? tag
+    : formatTimestamp(actuatorInfo?.build?.time);
+
+  if (!tag) return null;
+
   return (
     <S.Wrapper>
-      <S.CurrentVersion>{tag}</S.CurrentVersion>
+      <S.CurrentVersion>{currentVersion}</S.CurrentVersion>
 
-      {outdated && (
+      {!!outdated && (
         <S.OutdatedWarning
           title={`Your app version is outdated. Current latest version is ${latestTag}`}
         >

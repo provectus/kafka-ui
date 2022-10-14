@@ -14,7 +14,7 @@ export const Wrapper = styled.div(
 
 export const Sidebar = styled.div(
   ({ theme }) => css`
-    width: 300px;
+    width: ${theme.layout.filtersSidebarWidth};
     position: sticky;
     top: ${theme.layout.navBarHeight};
     align-self: start;
@@ -27,7 +27,9 @@ export const SidebarContent = styled.div`
 
 export const TableWrapper = styled.div(
   ({ theme }) => css`
-    width: 100%;
+    width: calc(
+      100vw - ${theme.layout.navBarWidth} - ${theme.layout.filtersSidebarWidth}
+    );
     border-left: 1px solid ${theme.layout.stuffBorderColor};
   `
 );
@@ -52,6 +54,7 @@ export const StatusBarWrapper = styled.div(
     white-space: nowrap;
     display: flex;
     justify-content: space-between;
+    z-index: 10;
   `
 );
 

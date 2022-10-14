@@ -10,12 +10,11 @@ import {
   useUpdateConnectorState,
 } from 'lib/hooks/api/kafkaConnect';
 import {
-  clusterConnectConnectorEditPath,
   clusterConnectorsPath,
   RouterParamsClusterConnectConnector,
 } from 'lib/paths';
-import { Button } from 'components/common/Button/Button';
 import { useConfirm } from 'lib/hooks/useConfirm';
+import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 
 const ConnectorActionsWrapperStyled = styled.div`
   display: flex;
@@ -64,80 +63,34 @@ const Actions: React.FC = () => {
 
   return (
     <ConnectorActionsWrapperStyled>
-      {connector?.status.state === ConnectorState.RUNNING && (
-        <Button
-          buttonSize="M"
-          buttonType="primary"
-          type="button"
-          onClick={pauseConnectorHandler}
-          disabled={isMutating}
-        >
-          Pause
-        </Button>
-      )}
-
-      {connector?.status.state === ConnectorState.PAUSED && (
-        <Button
-          buttonSize="M"
-          buttonType="primary"
-          type="button"
-          onClick={resumeConnectorHandler}
-          disabled={isMutating}
-        >
-          Resume
-        </Button>
-      )}
-
-      <Button
-        buttonSize="M"
-        buttonType="primary"
-        type="button"
-        onClick={restartConnectorHandler}
-        disabled={isMutating}
-      >
-        Restart Connector
-      </Button>
-      <Button
-        buttonSize="M"
-        buttonType="primary"
-        type="button"
-        onClick={restartAllTasksHandler}
-        disabled={isMutating}
-      >
-        Restart All Tasks
-      </Button>
-      <Button
-        buttonSize="M"
-        buttonType="primary"
-        type="button"
-        onClick={restartFailedTasksHandler}
-        disabled={isMutating}
-      >
-        Restart Failed Tasks
-      </Button>
-      <Button
-        buttonSize="M"
-        buttonType="primary"
-        type="button"
-        disabled={isMutating}
-        to={clusterConnectConnectorEditPath(
-          routerProps.clusterName,
-          routerProps.connectName,
-          routerProps.connectorName
+      <Dropdown>
+        {connector?.status.state === ConnectorState.RUNNING && (
+          <DropdownItem onClick={pauseConnectorHandler} disabled={isMutating}>
+            Pause
+          </DropdownItem>
         )}
-      >
-        Edit Config
-      </Button>
-
-      <Button
-        buttonSize="M"
-        buttonType="secondary"
-        type="button"
-        onClick={deleteConnectorHandler}
-        disabled={isMutating}
-      >
-        Delete
-      </Button>
+        {connector?.status.state === ConnectorState.PAUSED && (
+          <DropdownItem onClick={resumeConnectorHandler} disabled={isMutating}>
+            Resume
+          </DropdownItem>
+        )}
+        <DropdownItem onClick={restartConnectorHandler} disabled={isMutating}>
+          Restart Connector
+        </DropdownItem>
+        <DropdownItem onClick={restartAllTasksHandler} disabled={isMutating}>
+          Restart All Tasks
+        </DropdownItem>
+        <DropdownItem onClick={restartFailedTasksHandler} disabled={isMutating}>
+          Restart Failed Tasks
+        </DropdownItem>
+        <DropdownItem
+          onClick={deleteConnectorHandler}
+          disabled={isMutating}
+          danger
+        >
+          Delete
+        </DropdownItem>
+      </Dropdown>
     </ConnectorActionsWrapperStyled>
   );
 };

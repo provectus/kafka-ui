@@ -1,9 +1,12 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { renderQueryHook, TestQueryClientProvider } from 'lib/testHelpers';
+import {
+  expectQueryWorks,
+  renderQueryHook,
+  TestQueryClientProvider,
+} from 'lib/testHelpers';
 import * as hooks from 'lib/hooks/api/kafkaConnect';
 import fetchMock from 'fetch-mock';
 import { connectors, connects, tasks } from 'lib/fixtures/kafkaConnect';
-import { UseQueryResult } from '@tanstack/react-query';
 import { ConnectorAction } from 'generated-sources';
 
 const clusterName = 'test-cluster';
@@ -18,15 +21,6 @@ const connectorProps = {
   clusterName,
   connectName,
   connectorName,
-};
-
-const expectQueryWorks = async (
-  mock: fetchMock.FetchMockStatic,
-  result: { current: UseQueryResult<unknown, unknown> }
-) => {
-  await waitFor(() => expect(result.current.isFetched).toBeTruthy());
-  expect(mock.calls()).toHaveLength(1);
-  expect(result.current.data).toBeDefined();
 };
 
 describe('kafkaConnect hooks', () => {

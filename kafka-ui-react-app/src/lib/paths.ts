@@ -201,7 +201,6 @@ export const clusterConnectorsRelativePath = 'connectors';
 export const clusterConnectorNewRelativePath = 'create-new';
 export const clusterConnectConnectorsRelativePath = `${RouteParams.connectName}/connectors`;
 export const clusterConnectConnectorRelativePath = `${clusterConnectConnectorsRelativePath}/${RouteParams.connectorName}`;
-export const clusterConnectConnectorEditRelativePath = `${clusterConnectConnectorRelativePath}/edit`;
 export const clusterConnectConnectorTasksRelativePath = 'tasks';
 export const clusterConnectConnectorConfigRelativePath = 'config';
 

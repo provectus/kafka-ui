@@ -215,11 +215,6 @@ export function useRecreateTopic(props: GetTopicDetailsRequest) {
   });
 }
 
-export function useTopicMessageSchema(props: GetTopicDetailsRequest) {
-  return useQuery(topicKeys.schema(props), () =>
-    messagesApi.getTopicSchema(props)
-  );
-}
 export function useSendMessage(props: GetTopicDetailsRequest) {
   const client = useQueryClient();
   return useMutation(
@@ -233,9 +228,7 @@ export function useSendMessage(props: GetTopicDetailsRequest) {
         client.invalidateQueries(topicKeys.all(props.clusterName));
       },
       onError: (e) => {
-        showServerError(e as Response, {
-          message: `Error in sending a message to ${props.topicName}`,
-        });
+        showServerError(e as Response);
       },
     }
   );

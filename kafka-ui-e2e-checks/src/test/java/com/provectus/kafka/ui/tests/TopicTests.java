@@ -1,14 +1,11 @@
 package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.pages.MainPage;
-import com.provectus.kafka.ui.pages.topic.TopicCreateEditSettingsView;
-import com.provectus.kafka.ui.pages.topic.TopicView;
-import com.provectus.kafka.ui.utils.qaseIO.Status;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.AutomationStatus;
-import com.provectus.kafka.ui.utils.qaseIO.annotation.Suite;
+import com.provectus.kafka.ui.pages.topic.TopicDetails;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qase.api.annotation.CaseId;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
@@ -16,8 +13,11 @@ import org.junit.jupiter.api.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.provectus.kafka.ui.extensions.FileUtils.fileToString;
+import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
+import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TopicTests extends BaseTest {
     private static final long SUITE_ID = 2;
     private static final String SUITE_TITLE = "Topics";
@@ -33,9 +33,9 @@ public class TopicTests extends BaseTest {
     private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
     @BeforeAll
-    public static void beforeAll() {
+    public void beforeAll() {
         TOPIC_LIST.addAll(List.of(TOPIC_FOR_UPDATE, TOPIC_FOR_DELETE));
-        TOPIC_LIST.forEach(topic -> Helpers.INSTANCE.apiHelper.createTopic(CLUSTER_NAME, topic.getName()));
+        TOPIC_LIST.forEach(topic -> apiHelper.createTopic(CLUSTER_NAME, topic.getName()));
     }
 
     @DisplayName("should create a topic")
@@ -45,15 +45,21 @@ public class TopicTests extends BaseTest {
     @Test
     public void createTopic() {
         Topic topicToCreate = new Topic().setName("new-topic");
-        pages.open()
-                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
-        pages.topicsList.pressCreateNewTopic()
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
+                .waitUntilScreenReady()
+                .pressCreateNewTopic();
+        topicCreateEditForm
                 .setTopicName(topicToCreate.getName())
-                .sendData()
+                .sendData();
+        topicDetails
                 .waitUntilScreenReady();
-        pages.open()
-                .goToSideMenu(CLUSTER_NAME, MainPage.SideMenuOptions.TOPICS);
-        Assertions.assertTrue(pages.topicsList.isTopicVisible(topicToCreate.getName()),"isTopicVisible");
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
+                .waitUntilScreenReady();
+        Assertions.assertTrue(topicsList.isTopicVisible(topicToCreate.getName()), "isTopicVisible");
         TOPIC_LIST.add(topicToCreate);
     }
 
@@ -64,28 +70,36 @@ public class TopicTests extends BaseTest {
     @CaseId(197)
     @Test
     public void updateTopic() {
-        pages.openTopicsList(CLUSTER_NAME)
-                .waitUntilScreenReady();
-        pages.topicsList.openTopic(TOPIC_FOR_UPDATE.getName())
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
                 .waitUntilScreenReady()
-                .openEditSettings()
+                .openTopic(TOPIC_FOR_UPDATE.getName());
+        topicDetails
+                .waitUntilScreenReady()
+                .openEditSettings();
+        topicCreateEditForm
                 .selectCleanupPolicy(TOPIC_FOR_UPDATE.getCompactPolicyValue())
                 .setMinInsyncReplicas(10)
                 .setTimeToRetainDataInMs(TOPIC_FOR_UPDATE.getTimeToRetainData())
                 .setMaxSizeOnDiskInGB(TOPIC_FOR_UPDATE.getMaxSizeOnDisk())
                 .setMaxMessageBytes(TOPIC_FOR_UPDATE.getMaxMessageBytes())
-                .sendData()
+                .sendData();
+        topicDetails
                 .waitUntilScreenReady();
-        pages.openTopicsList(CLUSTER_NAME)
-                .waitUntilScreenReady();
-        pages.topicsList.openTopic(TOPIC_FOR_UPDATE.getName())
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
+                .waitUntilScreenReady()
+                .openTopic(TOPIC_FOR_UPDATE.getName());
+        topicDetails
                 .waitUntilScreenReady()
                 .openEditSettings();
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(new TopicCreateEditSettingsView().getCleanupPolicy()).as("Cleanup Policy").isEqualTo(TOPIC_FOR_UPDATE.getCompactPolicyValue());
-        softly.assertThat(new TopicCreateEditSettingsView().getTimeToRetain()).as("Time to retain").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
-        softly.assertThat(new TopicCreateEditSettingsView().getMaxSizeOnDisk()).as("Max size on disk").isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk());
-        softly.assertThat(new TopicCreateEditSettingsView().getMaxMessageBytes()).as("Max message bytes").isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
+        softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("Cleanup Policy").isEqualTo(TOPIC_FOR_UPDATE.getCompactPolicyValue());
+        softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("Time to retain").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
+        softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("Max size on disk").isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk());
+        softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("Max message bytes").isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
         softly.assertAll();
     }
 
@@ -95,14 +109,19 @@ public class TopicTests extends BaseTest {
     @CaseId(207)
     @Test
     public void deleteTopic() {
-        pages.openTopicsList(CLUSTER_NAME)
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_FOR_DELETE.getName())
+                .openTopic(TOPIC_FOR_DELETE.getName());
+        topicDetails
                 .waitUntilScreenReady()
                 .deleteTopic();
-        pages.openTopicsList(CLUSTER_NAME)
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
                 .waitUntilScreenReady();
-        Assertions.assertFalse(pages.topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()),"isTopicVisible");
+        Assertions.assertFalse(topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()), "isTopicVisible");
         TOPIC_LIST.remove(TOPIC_FOR_DELETE);
     }
 
@@ -112,23 +131,29 @@ public class TopicTests extends BaseTest {
     @CaseId(222)
     @Test
     void produceMessage() {
-        pages.openTopicsList(CLUSTER_NAME)
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_FOR_UPDATE.getName())
+                .openTopic(TOPIC_FOR_UPDATE.getName());
+        topicDetails
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicView.TopicMenu.MESSAGES)
-                .clickOnButton("Produce Message")
+                .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)
+                .clickOnButton("Produce Message");
+        produceMessagePanel
                 .setContentFiled(TOPIC_FOR_UPDATE.getMessageContent())
                 .setKeyField(TOPIC_FOR_UPDATE.getMessageKey())
                 .submitProduceMessage();
+        topicDetails
+                .waitUntilScreenReady();
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(pages.topicView.isKeyMessageVisible((TOPIC_FOR_UPDATE.getMessageKey()))).withFailMessage("isKeyMessageVisible()").isTrue();
-        softly.assertThat(pages.topicView.isContentMessageVisible((TOPIC_FOR_UPDATE.getMessageContent()).trim())).withFailMessage("isContentMessageVisible()").isTrue();
+        softly.assertThat(topicDetails.isKeyMessageVisible((TOPIC_FOR_UPDATE.getMessageKey()))).withFailMessage("isKeyMessageVisible()").isTrue();
+        softly.assertThat(topicDetails.isContentMessageVisible((TOPIC_FOR_UPDATE.getMessageContent()).trim())).withFailMessage("isContentMessageVisible()").isTrue();
         softly.assertAll();
     }
 
     @AfterAll
-    public static void afterAll() {
-        TOPIC_LIST.forEach(topic -> Helpers.INSTANCE.apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
+    public void afterAll() {
+        TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
     }
 }
