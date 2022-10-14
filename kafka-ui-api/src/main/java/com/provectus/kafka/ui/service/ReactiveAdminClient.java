@@ -296,15 +296,17 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   private static Mono<String> getClusterVersion(AdminClient client) {
-    return toMono(client.describeCluster().controller())
+    return toMono(client.describeCluster().controller()) //this Mono can be empty if controller not known
         .flatMap(controller -> loadBrokersConfig(client, List.of(controller.id())))
-        .map(configs -> configs.values().stream()
-            .flatMap(Collection::stream)
-            .filter(entry -> entry.name().contains("inter.broker.protocol.version"))
-            .findFirst()
-            .map(ConfigEntry::value)
-            .orElse("1.0-UNKNOWN")
-        );
+        .flatMap(configs ->
+            Mono.justOrEmpty(
+              configs.values().stream()
+                .flatMap(Collection::stream)
+                .filter(entry -> entry.name().contains("inter.broker.protocol.version"))
+                .findFirst()
+                .map(ConfigEntry::value))
+        )
+        .defaultIfEmpty("1.0-UNKNOWN");
   }
 
   public Mono<Void> deleteConsumerGroups(Collection<String> groupIds) {
