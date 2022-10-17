@@ -1,7 +1,7 @@
 name: e2e-checks
 on:
   pull_request_target:
-    types: ["opened", "edited", "reopened", "synchronize"]
+    types: [ "opened", "edited", "reopened", "synchronize" ]
     paths:
       - "kafka-ui-api/**"
       - "kafka-ui-contract/**"
@@ -86,7 +86,8 @@ jobs:
 
   docker_logs:
     runs-on: ubuntu-latest
-               - name: Dump docker logs on failure
-               if: failure()
-               uses: jwalton/gh-docker-logs@v2.2.0
+    steps:
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v2.2.0
 
