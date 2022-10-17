@@ -38,6 +38,7 @@ public class TopicTests extends BaseTest {
         TOPIC_LIST.forEach(topic -> apiHelper.createTopic(CLUSTER_NAME, topic.getName()));
     }
 
+    @Disabled
     @DisplayName("should create a topic")
     @Suite(suiteId = 4, title = "Create new Topic")
     @AutomationStatus(status = Status.AUTOMATED)
@@ -103,6 +104,7 @@ public class TopicTests extends BaseTest {
         softly.assertAll();
     }
 
+    @Disabled
     @DisplayName("should delete topic")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -125,6 +127,7 @@ public class TopicTests extends BaseTest {
         TOPIC_LIST.remove(TOPIC_FOR_DELETE);
     }
 
+    @Disabled
     @DisplayName("produce message")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)

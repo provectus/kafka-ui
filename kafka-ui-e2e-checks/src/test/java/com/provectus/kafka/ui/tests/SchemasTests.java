@@ -34,6 +34,7 @@ public class SchemasTests extends BaseTest {
         SCHEMA_LIST.forEach(schema -> apiHelper.createSchema(CLUSTER_NAME, schema));
     }
 
+    @Disabled
     @DisplayName("should create AVRO schema")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -62,6 +63,7 @@ public class SchemasTests extends BaseTest {
         SCHEMA_LIST.add(schemaAvro);
     }
 
+    @Disabled
     @DisplayName("should update AVRO schema")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -90,6 +92,7 @@ public class SchemasTests extends BaseTest {
         Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), schemaDetails.getCompatibility(), "getCompatibility()");
     }
 
+    @Disabled
     @DisplayName("should delete AVRO schema")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -111,6 +114,7 @@ public class SchemasTests extends BaseTest {
         SCHEMA_LIST.remove(AVRO_API);
     }
 
+    @Disabled
     @DisplayName("should create JSON schema")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -139,6 +143,7 @@ public class SchemasTests extends BaseTest {
         SCHEMA_LIST.add(schemaJson);
     }
 
+    @Disabled
     @DisplayName("should delete JSON schema")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -160,6 +165,7 @@ public class SchemasTests extends BaseTest {
         SCHEMA_LIST.remove(JSON_API);
     }
 
+    @Disabled
     @DisplayName("should create PROTOBUF schema")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -188,6 +194,7 @@ public class SchemasTests extends BaseTest {
         SCHEMA_LIST.add(schemaProtobuf);
     }
 
+    @Disabled
     @DisplayName("should delete PROTOBUF schema")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)

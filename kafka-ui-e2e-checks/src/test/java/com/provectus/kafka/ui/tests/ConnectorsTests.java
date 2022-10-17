@@ -53,6 +53,7 @@ public class ConnectorsTests extends BaseTest {
                 .createConnector(CLUSTER_NAME, CONNECT_NAME, connector));
     }
 
+    @Disabled
     @DisplayName("should create a connector")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -78,6 +79,7 @@ public class ConnectorsTests extends BaseTest {
         CONNECTOR_LIST.add(connectorForCreate);
     }
 
+    @Disabled
     @DisplayName("should update a connector")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -100,6 +102,7 @@ public class ConnectorsTests extends BaseTest {
         Assertions.assertTrue(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_UPDATE.getName()), "isConnectorVisible()");
     }
 
+    @Disabled
     @DisplayName("should delete connector")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)

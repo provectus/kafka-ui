@@ -51,7 +51,7 @@ jobs:
 
   publish_report:
     needs: build-and-test
-    runs-on: [ self-hosted, k8s-runner, basic ]
+    runs-on: ubuntu-latest
     if: always()
     steps:
       - uses: actions/checkout@v2
@@ -90,4 +90,3 @@ jobs:
       - name: Dump docker logs on failure
         if: failure()
         uses: jwalton/gh-docker-logs@v2.2.0
-
