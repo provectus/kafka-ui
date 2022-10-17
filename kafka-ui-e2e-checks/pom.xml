@@ -23,7 +23,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.36</slf4j.version>
         <testcontainers.junit-jupiter.version>1.17.2</testcontainers.junit-jupiter.version>
-<!--        <allure.java-commons.version>2.18.1</allure.java-commons.version>-->
+        <allure.java-commons.version>2.18.1</allure.java-commons.version>
         <dotenv.version>2.2.4</dotenv.version>
         <junit.platform-launcher.version>1.8.2</junit.platform-launcher.version>
 <!--        <allure.maven-plugin.version>2.6</allure.maven-plugin.version>-->
@@ -201,11 +201,11 @@
             <artifactId>junit-jupiter</artifactId>
             <version>${testcontainers.junit-jupiter.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.qameta.allure</groupId>-->
-<!--            <artifactId>allure-java-commons</artifactId>-->
-<!--            <version>${allure.java-commons.version}</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-java-commons</artifactId>
+            <version>${allure.java-commons.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.github.cdimascio</groupId>
             <artifactId>dotenv-java</artifactId>

@@ -9,7 +9,7 @@ import io.qase.client.model.ResultCreate;
 import io.qase.client.model.ResultCreate.StatusEnum;
 import io.qase.client.model.ResultCreateSteps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.support.descriptor.MethodSource;

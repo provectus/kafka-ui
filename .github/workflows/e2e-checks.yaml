@@ -60,7 +60,7 @@ jobs:
       - name: Restore static
         uses: actions/download-artifact@v2
         with:
-          path: kafka-ui-e2e-checks/target/allure-results
+          path: kafka-ui-e2e-checks/allure-results
 
       - name: Get Allure history
         uses: actions/checkout@v2
@@ -72,7 +72,7 @@ jobs:
       - name: Allure report action
         uses: simple-elf/allure-report-action@master
         with:
-          allure_results: kafka-ui-e2e-checks/target/allure-results/artifact
+          allure_results: kafka-ui-e2e-checks/allure-results/artifact
           allure_history: allure-history-web
           keep_reports: 10
           subfolder: results

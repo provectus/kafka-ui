@@ -4,7 +4,8 @@ import com.provectus.kafka.ui.api.model.SchemaType;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+
 
 @Data
 @Accessors(chain = true)
