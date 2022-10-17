@@ -12,6 +12,8 @@ import org.junit.jupiter.api.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KAFKA_CONNECT;
+import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -60,14 +62,19 @@ public class ConnectorsTests extends BaseTest {
         Connector connectorForCreate = new Connector()
                 .setName("sink_postgres_activities_e2e_checks")
                 .setConfig(getResourceAsString("config_for_create_connector.json"));
-        kafkaConnectList.goTo(CLUSTER_NAME)
+        naviSideBar
+                .openSideMenu(KAFKA_CONNECT);
+        kafkaConnectList
                 .waitUntilScreenReady()
-                .clickCreateConnectorButton()
+                .clickCreateConnectorButton();
+        connectorCreateForm
                 .waitUntilScreenReady()
                 .setConnectorConfig(connectorForCreate.getName(), connectorForCreate.getConfig());
-        kafkaConnectList.goTo(CLUSTER_NAME)
+        naviSideBar
+                .openSideMenu(KAFKA_CONNECT);
+        kafkaConnectList
                 .waitUntilScreenReady();
-        Assertions.assertTrue(kafkaConnectList.isConnectorVisible(connectorForCreate.getName()),"isConnectorVisible()");
+        Assertions.assertTrue(kafkaConnectList.isConnectorVisible(connectorForCreate.getName()), "isConnectorVisible()");
         CONNECTOR_LIST.add(connectorForCreate);
     }
 
@@ -77,14 +84,20 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(196)
     @Test
     public void updateConnector() {
-        kafkaConnectList.goTo(CLUSTER_NAME)
+        naviSideBar
+                .openSideMenu(KAFKA_CONNECT);
+        kafkaConnectList
                 .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_UPDATE.getName());
-        connectorDetails.waitUntilScreenReady()
+        connectorDetails
+                .waitUntilScreenReady()
                 .openConfigTab()
                 .setConfig(CONNECTOR_FOR_UPDATE.getConfig());
-        kafkaConnectList.goTo(CLUSTER_NAME);
-        Assertions.assertTrue(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_UPDATE.getName()),"isConnectorVisible()");
+        naviSideBar
+                .openSideMenu(KAFKA_CONNECT);
+        kafkaConnectList
+                .waitUntilScreenReady();
+        Assertions.assertTrue(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_UPDATE.getName()), "isConnectorVisible()");
     }
 
     @DisplayName("should delete connector")
@@ -93,7 +106,9 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(195)
     @Test
     public void deleteConnector() {
-        kafkaConnectList.goTo(CLUSTER_NAME)
+        naviSideBar
+                .openSideMenu(KAFKA_CONNECT);
+        kafkaConnectList
                 .waitUntilScreenReady()
                 .openConnector(CONNECTOR_FOR_DELETE.getName());
         connectorDetails
@@ -101,7 +116,10 @@ public class ConnectorsTests extends BaseTest {
                 .openDotMenu()
                 .clickDeleteButton()
                 .clickConfirmButton();
-        kafkaConnectList.goTo(CLUSTER_NAME);
+        naviSideBar
+                .openSideMenu(KAFKA_CONNECT);
+        kafkaConnectList
+                .waitUntilScreenReady();
         Assertions.assertFalse(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()), "isConnectorVisible()");
         CONNECTOR_LIST.remove(CONNECTOR_FOR_DELETE);
     }

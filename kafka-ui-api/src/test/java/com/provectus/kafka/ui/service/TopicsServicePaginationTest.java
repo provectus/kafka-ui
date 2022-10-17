@@ -14,11 +14,11 @@ import com.provectus.kafka.ui.model.InternalPartitionsOffsets;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.Metrics;
 import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.service.analyze.TopicAnalysisService;
-import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -42,7 +42,7 @@ class TopicsServicePaginationTest {
   private final ClustersStorage clustersStorage = mock(ClustersStorage.class);
   private final ClusterMapper clusterMapper = new ClusterMapperImpl();
 
-  private final TopicsController topicsController  = new TopicsController(
+  private final TopicsController topicsController = new TopicsController(
       topicsService, mock(TopicAnalysisService.class), clusterMapper);
 
   private void init(Map<String, InternalTopic> topicsInCache) {
@@ -66,7 +66,7 @@ class TopicsServicePaginationTest {
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, false, List.of()))
             .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-                JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+                Metrics.empty(), InternalLogDirStats.empty()))
             .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
@@ -93,7 +93,7 @@ class TopicsServicePaginationTest {
         .map(Objects::toString)
         .map(name -> new TopicDescription(name, false, List.of()))
         .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-            JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+            Metrics.empty(), InternalLogDirStats.empty()))
         .collect(Collectors.toMap(InternalTopic::getName, Function.identity()));
     init(internalTopics);
 
@@ -120,7 +120,7 @@ class TopicsServicePaginationTest {
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, false, List.of()))
             .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-                JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+                Metrics.empty(), InternalLogDirStats.empty()))
             .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
@@ -139,7 +139,7 @@ class TopicsServicePaginationTest {
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, false, List.of()))
             .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-                JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+                Metrics.empty(), InternalLogDirStats.empty()))
             .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
@@ -158,7 +158,7 @@ class TopicsServicePaginationTest {
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, Integer.parseInt(name) % 10 == 0, List.of()))
             .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-                JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+                Metrics.empty(), InternalLogDirStats.empty()))
             .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
@@ -179,7 +179,7 @@ class TopicsServicePaginationTest {
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, Integer.parseInt(name) % 5 == 0, List.of()))
             .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-                JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+                Metrics.empty(), InternalLogDirStats.empty()))
             .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
@@ -200,7 +200,7 @@ class TopicsServicePaginationTest {
             .map(Objects::toString)
             .map(name -> new TopicDescription(name, false, List.of()))
             .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), null,
-                JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+                Metrics.empty(), InternalLogDirStats.empty()))
             .collect(Collectors.toMap(InternalTopic::getName, Function.identity()))
     );
 
@@ -222,7 +222,7 @@ class TopicsServicePaginationTest {
                     new TopicPartitionInfo(p, null, List.of(), List.of()))
                 .collect(Collectors.toList())))
         .map(topicDescription -> InternalTopic.from(topicDescription, List.of(), InternalPartitionsOffsets.empty(),
-            JmxClusterUtil.JmxMetrics.empty(), InternalLogDirStats.empty()))
+            Metrics.empty(), InternalLogDirStats.empty()))
         .collect(Collectors.toMap(InternalTopic::getName, Function.identity()));
 
     init(internalTopics);

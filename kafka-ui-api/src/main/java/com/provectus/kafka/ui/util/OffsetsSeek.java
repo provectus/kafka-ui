@@ -93,11 +93,9 @@ public abstract class OffsetsSeek {
   public static class WaitingOffsets {
     private final Map<Integer, Long> endOffsets; // partition number -> offset
     private final Map<Integer, Long> beginOffsets; // partition number -> offset
-    private final String topic;
 
     public WaitingOffsets(String topic, Consumer<?, ?> consumer,
                           Collection<TopicPartition> partitions) {
-      this.topic = topic;
       var allBeginningOffsets = consumer.beginningOffsets(partitions);
       var allEndOffsets = consumer.endOffsets(partitions);
 

@@ -1,8 +1,6 @@
 package com.provectus.kafka.ui.pages.connector;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
-import com.provectus.kafka.ui.settings.Source;
 import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
@@ -15,14 +13,6 @@ import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
 @ExtensionMethod(WaitUtils.class)
 public class KafkaConnectList {
-
-    private static final String path = "/ui/clusters/%s/connectors";
-
-    @Step("Open URL to {cluster}")
-    public KafkaConnectList goTo(String cluster) {
-        Selenide.open(Source.BASE_WEB_URL + String.format(path, cluster));
-        return this;
-    }
 
     @Step
     public KafkaConnectList waitUntilScreenReady() {
@@ -38,14 +28,14 @@ public class KafkaConnectList {
 
     @Step
     public KafkaConnectList openConnector(String connectorName) {
-        $(By.linkText(connectorName)).click();
+        $x("//tbody//td[1][text()='" + connectorName + "']").shouldBe(Condition.enabled).click();
         return this;
     }
 
     @Step
     public boolean isConnectorVisible(String connectorName) {
         $(By.xpath("//table")).shouldBe(Condition.visible);
-        return isVisible($x("//tbody//td[1]//a[text()='" + connectorName + "']"));
+        return isVisible($x("//tbody//td[1][text()='" + connectorName + "']"));
     }
 
     @Step
