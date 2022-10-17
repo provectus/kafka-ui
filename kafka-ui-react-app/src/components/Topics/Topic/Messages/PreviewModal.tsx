@@ -56,6 +56,7 @@ const PreviewModal: React.FC<InfoModalProps> = ({
           id="previewFormField"
           min="1"
           value={field}
+          placeholder="Field"
           onChange={({ target }) => setField(target?.value)}
         />
         <FormError>{field === '' && 'Field is required'}</FormError>
@@ -67,6 +68,7 @@ const PreviewModal: React.FC<InfoModalProps> = ({
           id="previewFormJsonPath"
           min="1"
           value={path}
+          placeholder="Json Path"
           onChange={({ target }) => setPath(target?.value)}
         />
         <FormError>{path === '' && 'Json path is required'}</FormError>
