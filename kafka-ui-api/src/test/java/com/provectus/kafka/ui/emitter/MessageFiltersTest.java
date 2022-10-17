@@ -74,6 +74,13 @@ class MessageFiltersTest {
     }
 
     @Test
+    void canCheckOffset() {
+      var f = groovyScriptFilter("offset == 100");
+      assertTrue(f.test(msg().offset(100L)));
+      assertFalse(f.test(msg().offset(200L)));
+    }
+
+    @Test
     void canCheckTimestampMs() {
       var ts = OffsetDateTime.now();
       var f = groovyScriptFilter("timestampMs == " + ts.toInstant().toEpochMilli());
