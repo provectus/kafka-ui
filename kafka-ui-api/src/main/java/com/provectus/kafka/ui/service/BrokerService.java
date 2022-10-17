@@ -47,10 +47,7 @@ public class BrokerService {
   private Mono<List<ConfigEntry>> loadBrokersConfig(
       KafkaCluster cluster, Integer brokerId) {
     return loadBrokersConfig(cluster, Collections.singletonList(brokerId))
-        .map(map -> map.values().stream()
-            .findFirst()
-            .orElseThrow(() -> new NotFoundException(
-                String.format("Config for broker %s not found", brokerId))));
+        .map(map -> map.values().stream().findFirst().orElse(List.of()));
   }
 
   private Flux<InternalBrokerConfig> getBrokersConfig(KafkaCluster cluster, Integer brokerId) {
@@ -79,13 +76,6 @@ public class BrokerService {
               return broker;
             }).collect(Collectors.toList()))
         .flatMapMany(Flux::fromIterable);
-  }
-
-  public Mono<Node> getController(KafkaCluster cluster) {
-    return adminClientService
-        .get(cluster)
-        .flatMap(ReactiveAdminClient::describeCluster)
-        .map(ReactiveAdminClient.ClusterDescription::getController);
   }
 
   public Mono<Void> updateBrokerLogDir(KafkaCluster cluster,

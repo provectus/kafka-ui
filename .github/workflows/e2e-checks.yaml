@@ -106,4 +106,4 @@ jobs:
     steps:
       - name: Dump docker logs on failure
         if: failure()
-        uses: jwalton/gh-docker-logs@v2.2.0
+        uses: jwalton/gh-docker-logs@v2.2.1
