@@ -1,9 +1,7 @@
 package com.provectus.kafka.ui.pages.topic;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.settings.Source;
 import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
@@ -15,14 +13,7 @@ import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 @ExtensionMethod({WaitUtils.class})
 public class TopicDetails {
 
-    private static final String URL_PATH = "/ui/clusters/%s/topics/%s";
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
-
-    @Step
-    public TopicDetails goTo(String cluster, String topic) {
-        Selenide.open(Source.BASE_WEB_URL + String.format(URL_PATH, cluster, topic));
-        return this;
-    }
 
     @Step
     public TopicDetails waitUntilScreenReady() {
@@ -70,7 +61,9 @@ public class TopicDetails {
     }
 
     private enum DotMenuHeaderItems {
-        EDIT_SETTINGS("Edit settings"), CLEAR_MESSAGES("Clear messages"), REMOVE_TOPIC("Remove topic");
+        EDIT_SETTINGS("Edit settings"),
+        CLEAR_MESSAGES("Clear messages"),
+        REMOVE_TOPIC("Remove topic");
 
         private final String value;
 
@@ -89,7 +82,10 @@ public class TopicDetails {
     }
 
     public enum TopicMenu {
-        OVERVIEW("Overview"), MESSAGES("Messages"), CONSUMERS("Consumers"), SETTINGS("Settings");
+        OVERVIEW("Overview"),
+        MESSAGES("Messages"),
+        CONSUMERS("Consumers"),
+        SETTINGS("Settings");
 
         private final String value;
 

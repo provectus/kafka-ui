@@ -8,7 +8,9 @@ kafka:
       kafkaConnect:
         - name: first
           address: http://localhost:8083
-      jmxPort: 9997
+      metrics:
+        port: 9997
+        type: JMX
   #    -
   #      name: secondLocal
   #      bootstrapServers: localhost:9093
@@ -17,7 +19,9 @@ kafka:
   #      kafkaConnect:
   #        - name: first
   #          address: http://localhost:8083
-  #      jmxPort: 9998
+  #      metrics:
+  #        port: 9998
+  #        type: JMX
   #      read-only: true
   #    -
   #      name: localUsingProtobufFile

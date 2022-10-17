@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.pages.schema;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
@@ -19,6 +20,12 @@ public class SchemaCreateForm {
     protected SelenideElement submitSchemaButton = $(By.xpath("//button[@type='submit']"));
     protected SelenideElement newSchemaTextArea = $("#newSchema [wrap]");
     protected SelenideElement schemaTypeDropDown = $x("//ul[@name='schemaType']");
+
+    @Step
+    public SchemaCreateForm waitUntilScreenReady() {
+        $x("//h1['Edit']").shouldBe(Condition.visible);
+        return this;
+    }
 
     @Step
     public SchemaCreateForm setSubjectName(String name) {

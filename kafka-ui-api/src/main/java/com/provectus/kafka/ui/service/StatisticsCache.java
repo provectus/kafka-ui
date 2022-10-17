@@ -1,61 +1,28 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.model.Feature;
-import com.provectus.kafka.ui.model.InternalLogDirStats;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.ServerStatusDTO;
-import com.provectus.kafka.ui.util.JmxClusterUtil;
+import com.provectus.kafka.ui.model.Statistics;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import lombok.Builder;
-import lombok.Value;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MetricsCache {
+public class StatisticsCache {
 
-  @Value
-  @Builder(toBuilder = true)
-  public static class Metrics {
-    ServerStatusDTO status;
-    Throwable lastKafkaException;
-    String version;
-    List<Feature> features;
-    ReactiveAdminClient.ClusterDescription clusterDescription;
-    JmxClusterUtil.JmxMetrics jmxMetrics;
-    InternalLogDirStats logDirInfo;
-    Map<String, TopicDescription> topicDescriptions;
-    Map<String, List<ConfigEntry>> topicConfigs;
+  private final Map<String, Statistics> cache = new ConcurrentHashMap<>();
 
-    public static Metrics empty() {
-      return builder()
-          .status(ServerStatusDTO.OFFLINE)
-          .version("Unknown")
-          .features(List.of())
-          .clusterDescription(
-              new ReactiveAdminClient.ClusterDescription(null, null, List.of(), Set.of()))
-          .jmxMetrics(JmxClusterUtil.JmxMetrics.empty())
-          .logDirInfo(InternalLogDirStats.empty())
-          .topicDescriptions(Map.of())
-          .topicConfigs(Map.of())
-          .build();
-    }
-  }
-
-  private final Map<String, Metrics> cache = new ConcurrentHashMap<>();
-
-  public MetricsCache(ClustersStorage clustersStorage) {
-    var initializing = Metrics.empty().toBuilder().status(ServerStatusDTO.INITIALIZING).build();
+  public StatisticsCache(ClustersStorage clustersStorage) {
+    var initializing = Statistics.empty().toBuilder().status(ServerStatusDTO.INITIALIZING).build();
     clustersStorage.getKafkaClusters().forEach(c -> cache.put(c.getName(), initializing));
   }
 
-  public synchronized void replace(KafkaCluster c, Metrics stats) {
+  public synchronized void replace(KafkaCluster c, Statistics stats) {
     cache.put(c.getName(), stats);
   }
 
@@ -91,7 +58,7 @@ public class MetricsCache {
     );
   }
 
-  public Metrics get(KafkaCluster c) {
+  public Statistics get(KafkaCluster c) {
     return Objects.requireNonNull(cache.get(c.getName()), "Unknown cluster metrics requested");
   }
 

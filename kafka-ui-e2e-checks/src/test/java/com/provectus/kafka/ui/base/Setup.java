@@ -2,12 +2,18 @@ package com.provectus.kafka.ui.base;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.Step;
 import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 import java.util.Arrays;
+
+import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.settings.Source.BASE_WEB_URL;
 
 @Slf4j
 public abstract class Setup {
@@ -37,5 +43,14 @@ public abstract class Setup {
                         .forEach(File::delete);
             }
         }
+    }
+
+    @Step
+    public static void browserClear() {
+        log.debug("browserClear");
+        clearBrowserLocalStorage();
+        clearBrowserCookies();
+        refresh();
+        log.debug("=> DONE");
     }
 }

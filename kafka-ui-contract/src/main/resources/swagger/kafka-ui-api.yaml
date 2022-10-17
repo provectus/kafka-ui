@@ -1267,6 +1267,16 @@ paths:
           required: false
           schema:
             type: string
+        - name: orderBy
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ConnectorColumnsToSort'
+        - name: sortOrder
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/SortOrder'
       responses:
         200:
           description: OK
@@ -2009,6 +2019,14 @@ components:
         - REPLICATION_FACTOR
         - SIZE
 
+    ConnectorColumnsToSort:
+      type: string
+      enum:
+        - NAME
+        - CONNECT
+        - TYPE
+        - STATUS
+
     SortOrder:
       type: string
       enum:
@@ -2261,7 +2279,6 @@ components:
       required:
         - name
         - partitions
-        - replicationFactor
 
     TopicUpdate:
       type: object
@@ -2572,16 +2589,12 @@ components:
       properties:
         name:
           type: string
-        canonicalName:
-          type: string
-        params:
+        labels:
           type: string
           additionalProperties:
             type: string
         value:
-          type: string
-          additionalProperties:
-            type: number
+          type: number
 
     TopicLogdirs:
       type: object

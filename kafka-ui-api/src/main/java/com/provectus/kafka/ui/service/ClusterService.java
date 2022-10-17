@@ -18,33 +18,33 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class ClusterService {
 
-  private final MetricsCache metricsCache;
+  private final StatisticsCache statisticsCache;
   private final ClustersStorage clustersStorage;
   private final ClusterMapper clusterMapper;
-  private final MetricsService metricsService;
+  private final StatisticsService statisticsService;
 
   public List<ClusterDTO> getClusters() {
     return clustersStorage.getKafkaClusters()
         .stream()
-        .map(c -> clusterMapper.toCluster(new InternalClusterState(c, metricsCache.get(c))))
+        .map(c -> clusterMapper.toCluster(new InternalClusterState(c, statisticsCache.get(c))))
         .collect(Collectors.toList());
   }
 
   public Mono<ClusterStatsDTO> getClusterStats(KafkaCluster cluster) {
     return Mono.justOrEmpty(
         clusterMapper.toClusterStats(
-            new InternalClusterState(cluster, metricsCache.get(cluster)))
+            new InternalClusterState(cluster, statisticsCache.get(cluster)))
     );
   }
 
   public Mono<ClusterMetricsDTO> getClusterMetrics(KafkaCluster cluster) {
     return Mono.just(
         clusterMapper.toClusterMetrics(
-            metricsCache.get(cluster).getJmxMetrics()));
+            statisticsCache.get(cluster).getMetrics()));
   }
 
   public Mono<ClusterDTO> updateCluster(KafkaCluster cluster) {
-    return metricsService.updateCache(cluster)
+    return statisticsService.updateCache(cluster)
         .map(metrics -> clusterMapper.toCluster(new InternalClusterState(cluster, metrics)));
   }
 }

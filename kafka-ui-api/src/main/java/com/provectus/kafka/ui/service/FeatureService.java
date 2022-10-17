@@ -60,6 +60,6 @@ public class FeatureService {
                 .filter(e -> e.name().equals(DELETE_TOPIC_ENABLED_SERVER_PROPERTY))
                 .map(e -> Boolean.parseBoolean(e.value()))
                 .findFirst()
-                .orElse(false));
+                .orElse(true));
   }
 }
