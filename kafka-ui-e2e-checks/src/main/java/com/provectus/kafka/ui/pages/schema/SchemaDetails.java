@@ -12,8 +12,8 @@ public class SchemaDetails {
 
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement actualVersionWindow = $x("//div[@id='schema']");
-    protected SelenideElement compatibility = $x("//h4[contains(text(),'Compatibility')]/../p");
+    protected SelenideElement actualVersionMdlWindow = $x("//div[@id='schema']");
+    protected SelenideElement compatibilityField = $x("//h4[contains(text(),'Compatibility')]/../p");
     protected SelenideElement editSchemaBtn = $x("//button[contains(text(),'Edit Schema')]");
     protected SelenideElement removeBtn = $x("//*[contains(text(),'Remove')]");
     protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
@@ -21,13 +21,13 @@ public class SchemaDetails {
     @Step
     public SchemaDetails waitUntilScreenReady() {
         loadingSpinner.shouldBe(Condition.disappear);
-        actualVersionWindow.shouldBe(Condition.visible);
+        actualVersionMdlWindow.shouldBe(Condition.visible);
         return this;
     }
 
     @Step
     public String getCompatibility() {
-        return compatibility.getText();
+        return compatibilityField.getText();
     }
 
     @Step
@@ -37,11 +37,11 @@ public class SchemaDetails {
     }
 
     @Step
-    public SchemaRegistryList removeSchema() {
+    public SchemaDetails removeSchema() {
         clickByJavaScript(dotMenuBtn);
-        removeBtn.shouldBe(Condition.visible).click();
-        confirmBtn.shouldBe(Condition.enabled).click();
+        removeBtn.shouldBe(Condition.enabled).click();
+        confirmBtn.shouldBe(Condition.visible).click();
         confirmBtn.shouldBe(Condition.disappear);
-        return new SchemaRegistryList();
+        return this;
     }
 }

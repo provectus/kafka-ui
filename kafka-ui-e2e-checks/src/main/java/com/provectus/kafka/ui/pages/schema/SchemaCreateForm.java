@@ -16,12 +16,11 @@ public class SchemaCreateForm {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement subjectName = $x("//input[@name='subject']");
-    protected SelenideElement titleElementLocator = $x("//h1['Edit']");
+    protected SelenideElement titleSchema = $x("//h1['Edit']");
     protected SelenideElement schemaField = $x("//textarea[@name='schema']");
     protected SelenideElement submitSchemaButton = $x("//button[@type='submit']");
     protected SelenideElement newSchemaTextArea = $("#newSchema [wrap]");
-    protected SelenideElement schemaTypeDropDown = $x("//ul[@name='schemaType']");
-    protected SelenideElement schemaTypeList = $x("//ul[@role='listbox']");
+    protected SelenideElement ddlSchemaType = $x("//ul[@name='schemaType']");
     protected SelenideElement compatibilityLevelList = $x("//ul[@name='compatibilityLevel']");
     protected SelenideElement fieldNewSchema = $x("//div[@id='newSchema']");
     protected String ddlElementLocator = "//li[text()='%s']";
@@ -29,7 +28,7 @@ public class SchemaCreateForm {
     @Step
     public SchemaCreateForm waitUntilScreenReady(){
         loadingSpinner.shouldBe(Condition.disappear);
-        titleElementLocator.shouldBe(Condition.visible);
+        titleSchema.shouldBe(Condition.visible);
         return this;
     }
 
@@ -47,15 +46,15 @@ public class SchemaCreateForm {
 
     @Step
     public SchemaCreateForm selectSchemaTypeFromDropdown(SchemaType schemaType) {
-        schemaTypeList.shouldBe(Condition.enabled).click();
+        ddlSchemaType.shouldBe(Condition.enabled).click();
         $x(String.format(ddlElementLocator, schemaType.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
     @Step
-    public SchemaDetails clickSubmit() {
+    public SchemaCreateForm clickSubmit() {
         clickByJavaScript(submitSchemaButton);
-        return new SchemaDetails();
+        return this;
     }
 
     @Step
@@ -78,7 +77,7 @@ public class SchemaCreateForm {
     public boolean isSchemaDropDownDisabled(){
         boolean disabled = false;
         try{
-            String attribute = schemaTypeDropDown.getAttribute("disabled");
+            String attribute = ddlSchemaType.getAttribute("disabled");
             disabled = true;
         }
         catch (Throwable ignored){

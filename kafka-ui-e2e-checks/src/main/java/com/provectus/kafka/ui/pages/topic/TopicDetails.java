@@ -7,7 +7,7 @@ import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
-import java.util.List;
+import java.util.Arrays;
 
 import static com.codeborne.selenide.Selenide.*;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
@@ -17,7 +17,8 @@ public class TopicDetails {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
-    protected List<SelenideElement> navigationTabs = $$x("(//nav[@role='navigation'])[last()]/a");
+    protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
+    protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
     protected SelenideElement editSettingsTab = $x("//li[@role][contains(text(),'Edit settings')]");
     protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
     protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
@@ -27,15 +28,15 @@ public class TopicDetails {
     @Step
     public TopicDetails waitUntilScreenReady() {
         loadingSpinner.shouldBe(Condition.disappear);
-        navigationTabs.forEach(element -> element.shouldBe(Condition.visible));
+        Arrays.asList(overviewTab,messagesTab).forEach(element -> element.shouldBe(Condition.visible));
         return this;
     }
 
     @Step
-    public TopicCreateEditForm openEditSettings() {
+    public TopicDetails openEditSettings() {
         clickByJavaScript(dotMenuBtn);
         editSettingsTab.shouldBe(Condition.visible).click();
-        return new TopicCreateEditForm();
+        return this;
     }
 
     @Step
@@ -45,18 +46,18 @@ public class TopicDetails {
     }
 
     @Step
-    public TopicsList deleteTopic() {
+    public TopicDetails deleteTopic() {
         clickByJavaScript(dotMenuBtn);
         removeTopicBtn.shouldBe(Condition.visible).click();
         confirmBtn.shouldBe(Condition.enabled).click();
         confirmBtn.shouldBe(Condition.disappear);
-        return new TopicsList();
+        return this;
     }
 
     @Step
-    public ProduceMessagePanel openProduceMessagePanel() {
+    public TopicDetails openProduceMessagePanel() {
         clickByJavaScript(produceMessageBtn);
-        return new ProduceMessagePanel();
+        return this;
     }
 
     @Step

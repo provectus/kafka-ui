@@ -23,15 +23,15 @@ public class SchemaRegistryList {
     }
 
     @Step
-    public SchemaCreateForm clickCreateSchema() {
+    public SchemaRegistryList clickCreateSchema() {
         clickByJavaScript(createSchemaBtn);
-        return new SchemaCreateForm();
+        return this;
     }
 
     @Step
-    public SchemaDetails openSchema(String schemaName) {
+    public SchemaRegistryList openSchema(String schemaName) {
         $x(String.format(schemaElementLocator,schemaName)).shouldBe(Condition.visible).click();
-        return new SchemaDetails();
+        return this;
     }
 
     @Step

@@ -7,7 +7,6 @@ import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
@@ -16,27 +15,27 @@ import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 public class KafkaConnectList {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement headerConnectors = $x("//h1[text()='Connectors']");
+    protected SelenideElement titleConnectors = $x("//h1[text()='Connectors']");
     protected SelenideElement createConnectorBtn = $x("//button[contains(text(),'Create Connector')]");
     protected SelenideElement connectorsGrid = $x("//table");
-    protected String tabElementLocator = "//a[text()='%s']";
+    protected String tabElementLocator = "//td[contains(text(),'%s')]";
 
     @Step
     public KafkaConnectList waitUntilScreenReady() {
         loadingSpinner.shouldBe(Condition.disappear);
-        headerConnectors.shouldBe(Condition.visible);
+        titleConnectors.shouldBe(Condition.visible);
         return this;
     }
 
     @Step("Click on button 'Create Connector'")
-    public ConnectorCreateForm clickCreateConnectorButton() {
+    public KafkaConnectList clickCreateConnectorBtn() {
         clickByJavaScript(createConnectorBtn);
-        return new ConnectorCreateForm();
+        return this;
     }
 
     @Step
     public KafkaConnectList openConnector(String connectorName) {
-        $(By.linkText(connectorName)).shouldBe(Condition.visible).click();
+        $x(String.format(tabElementLocator,connectorName)).shouldBe(Condition.visible).click();
         return this;
     }
 

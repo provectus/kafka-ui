@@ -12,14 +12,14 @@ import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 public class NaviSideBar {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement dashBoardTitle = $x("//a[@title='Dashboard']");
+    protected SelenideElement dashboardMenuItem = $x("//a[@title='Dashboard']");
     protected String sideMenuOptionElementLocator = ".//ul/li[contains(.,'%s')]";
     protected String clusterElementLocator = "//aside/ul/li[contains(.,'%s')]";
 
     @Step
     public NaviSideBar waitUntilScreenReady() {
         loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(30));
-        dashBoardTitle.shouldBe(Condition.visible, Duration.ofSeconds(30));
+        dashboardMenuItem.shouldBe(Condition.visible, Duration.ofSeconds(30));
         return this;
     }
 

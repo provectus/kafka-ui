@@ -29,9 +29,9 @@ public class TopicsList {
     }
 
     @Step
-    public TopicCreateEditForm clickCreateNewTopic() {
+    public TopicsList clickAddTopicBtn() {
         clickByJavaScript(addTopicBtn);
-        return new TopicCreateEditForm();
+        return this;
     }
 
     @Step
@@ -41,8 +41,8 @@ public class TopicsList {
     }
 
     @Step
-    public TopicDetails openTopic(String topicName) {
+    public TopicsList openTopic(String topicName) {
         $(By.linkText(topicName)).click();
-        return new TopicDetails();
+        return this;
     }
 }

@@ -3,26 +3,28 @@ package com.provectus.kafka.ui.pages.topic;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
-import java.util.List;
+import java.util.Arrays;
 
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.refresh;
 
 public class ProduceMessagePanel {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement keyField = $(By.xpath("//div[@id='key']/textarea"));
-    protected SelenideElement contentField = $(By.xpath("//div[@id='content']/textarea"));
-    protected SelenideElement headersField = $(By.xpath("//div[@id='headers']/textarea"));
-    protected SelenideElement submitBtn = headersField.$(By.xpath("../../../..//button[@type='submit']"));
-    protected List<SelenideElement> ddElementsLocator = $$x("//ul[@role='listbox']");
+    protected SelenideElement keyField = $x("//div[@id='key']/textarea");
+    protected SelenideElement contentField = $x("//div[@id='content']/textarea");
+    protected SelenideElement headersField = $x("//div[@id='headers']/textarea");
+    protected SelenideElement submitBtn = headersField.$x("../../../..//button[@type='submit']");
+    protected SelenideElement ddlPartition = $x("//ul[@name='partition']");
+    protected SelenideElement ddlKeySerde = $x("//ul[@name='keySerde']");
+    protected SelenideElement ddlContentSerde = $x("//ul[@name='valueSerde']");
 
     @Step
     public ProduceMessagePanel waitUntilScreenReady(){
         loadingSpinner.shouldBe(Condition.disappear);
-        ddElementsLocator.forEach(element -> element.shouldBe(Condition.visible));
+        Arrays.asList(ddlPartition,ddlKeySerde,ddlContentSerde).forEach(element -> element.shouldBe(Condition.visible));
         return this;
     }
 
@@ -49,10 +51,10 @@ public class ProduceMessagePanel {
     }
 
     @Step
-    public TopicDetails submitProduceMessage() {
+    public ProduceMessagePanel submitProduceMessage() {
         submitBtn.shouldBe(Condition.enabled).click();
         submitBtn.shouldBe(Condition.disappear);
         refresh();
-        return new TopicDetails();
+        return this;
     }
 }

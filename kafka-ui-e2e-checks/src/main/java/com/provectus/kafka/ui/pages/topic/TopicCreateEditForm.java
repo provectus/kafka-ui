@@ -13,42 +13,42 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TopicCreateEditForm {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement timeToRetain = $x("//input[@id='timeToRetain']");
-    protected SelenideElement inputNameField = $x("//input[@name='name']");
-    protected SelenideElement maxMessageBytes = $x("//input[@name='maxMessageBytes']");
-    protected SelenideElement minInSyncReplicas = $x("//input[@name='minInSyncReplicas']");
-    protected SelenideElement cleanUpPolicyDropDown = $x("//ul[@id='topicFormCleanupPolicy']");
+    protected SelenideElement timeToRetainField = $x("//input[@id='timeToRetain']");
+    protected SelenideElement nameField = $x("//input[@name='name']");
+    protected SelenideElement maxMessageBytesField = $x("//input[@name='maxMessageBytes']");
+    protected SelenideElement minInSyncReplicasField = $x("//input[@name='minInSyncReplicas']");
+    protected SelenideElement ddlCleanUpPolicy = $x("//ul[@id='topicFormCleanupPolicy']");
     protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
     protected String cleanUpPolicyLocator = "//li[text()='%s']";
 
     @Step
     public TopicCreateEditForm waitUntilScreenReady(){
         loadingSpinner.shouldBe(Condition.disappear);
-        inputNameField.shouldBe(Condition.visible);
+        nameField.shouldBe(Condition.visible);
         return this;
     }
 
     @Step
     public TopicCreateEditForm setTopicName(String topicName) {
-        inputNameField.setValue(topicName);
+        nameField.setValue(topicName);
         return this;
     }
 
     @Step
     public TopicCreateEditForm setMinInsyncReplicas(Integer minInsyncReplicas) {
-        minInSyncReplicas.setValue(minInsyncReplicas.toString());
+        minInSyncReplicasField.setValue(minInsyncReplicas.toString());
         return this;
     }
 
     @Step
     public TopicCreateEditForm setTimeToRetainDataInMs(Long ms) {
-        timeToRetain.setValue(ms.toString());
+        timeToRetainField.setValue(ms.toString());
         return this;
     }
 
     @Step
     public TopicCreateEditForm setTimeToRetainDataInMs(String ms) {
-        timeToRetain.setValue(ms);
+        timeToRetainField.setValue(ms);
         return this;
     }
 
@@ -60,7 +60,7 @@ public class TopicCreateEditForm {
 
     @Step
     public TopicCreateEditForm setMaxMessageBytes(Long bytes) {
-        maxMessageBytes.setValue(bytes.toString());
+        maxMessageBytesField.setValue(bytes.toString());
         return this;
     }
 
@@ -71,7 +71,7 @@ public class TopicCreateEditForm {
 
     @Step
     public TopicCreateEditForm setTimeToRetainDataInMsUsingButtons(String value) {
-        timeToRetain
+        timeToRetainField
                 .parent()
                 .parent()
                 .$$("button")
@@ -88,7 +88,7 @@ public class TopicCreateEditForm {
 
     @Step
     public TopicCreateEditForm selectCleanupPolicy(String cleanupPolicyOptionValue) {
-        cleanUpPolicyDropDown.shouldBe(Condition.visible).click();
+        ddlCleanUpPolicy.shouldBe(Condition.visible).click();
         $x(String.format(cleanUpPolicyLocator,cleanupPolicyOptionValue)).shouldBe(Condition.visible).click();
         return this;
     }
@@ -104,9 +104,9 @@ public class TopicCreateEditForm {
     }
 
     @Step
-    public TopicDetails clickCreateTopicBtn() {
+    public TopicCreateEditForm submitCreateTopicBtn() {
         clickByJavaScript(createTopicBtn);
-        return new TopicDetails();
+        return this;
     }
 
     @Step
@@ -159,7 +159,7 @@ public class TopicCreateEditForm {
 
     @Step
     public TopicCreateEditForm timeToRetainIs(String time) {
-        String value = timeToRetain.getValue();
+        String value = timeToRetainField.getValue();
         assertThat(value)
                 .as("Time to retain data (in ms) should be " + time)
                 .isEqualTo(time);
@@ -173,7 +173,7 @@ public class TopicCreateEditForm {
 
     @Step
     public String getTimeToRetain() {
-        return timeToRetain.getValue();
+        return timeToRetainField.getValue();
     }
 
     @Step
@@ -183,7 +183,7 @@ public class TopicCreateEditForm {
 
     @Step
     public String getMaxMessageBytes() {
-        return maxMessageBytes.getValue();
+        return maxMessageBytesField.getValue();
     }
 
 

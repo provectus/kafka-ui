@@ -49,11 +49,11 @@ public class TopicTests extends BaseTest {
                 .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
-                .clickCreateNewTopic();
+                .clickAddTopicBtn();
         topicCreateEditForm
                 .waitUntilScreenReady()
                 .setTopicName(topicToCreate.getName())
-                .clickCreateTopicBtn();
+                .submitCreateTopicBtn();
         topicDetails
                 .waitUntilScreenReady();
         naviSideBar
@@ -86,7 +86,7 @@ public class TopicTests extends BaseTest {
                 .setTimeToRetainDataInMs(TOPIC_FOR_UPDATE.getTimeToRetainData())
                 .setMaxSizeOnDiskInGB(TOPIC_FOR_UPDATE.getMaxSizeOnDisk())
                 .setMaxMessageBytes(TOPIC_FOR_UPDATE.getMaxMessageBytes())
-                .clickCreateTopicBtn();
+                .submitCreateTopicBtn();
         topicDetails
                 .waitUntilScreenReady();
         naviSideBar
