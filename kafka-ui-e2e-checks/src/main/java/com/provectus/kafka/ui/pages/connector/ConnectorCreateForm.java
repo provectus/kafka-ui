@@ -12,7 +12,7 @@ import static com.provectus.kafka.ui.utilities.screenshots.Screenshooter.log;
 public class ConnectorCreateForm {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement nameField = $x("//input[@placeholder='Connector Name']");
+    protected SelenideElement nameField = $x("//input[@name='name']");
     protected SelenideElement contentTextArea = $x("//textarea[@class='ace_text-input']");
     protected SelenideElement submitButton = $x("//button[@type='submit']");
     protected SelenideElement configField = $x("//div[@id='config']");
