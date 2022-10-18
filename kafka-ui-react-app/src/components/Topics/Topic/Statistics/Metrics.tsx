@@ -63,11 +63,11 @@ const Metrics: React.FC = () => {
         <List>
           <Label>Started at</Label>
           <span>{formatTimestamp(data.progress.startedAt, 'hh:mm:ss a')}</span>
-          <Label>Passed at</Label>
+          <Label>Passed since start</Label>
           <span>{calculateTimer(data.progress.startedAt as number)}</span>
           <Label>Scanned messages</Label>
           <span>{data.progress.msgsScanned}</span>
-          <Label>Scanned bytes</Label>
+          <Label>Scanned size</Label>
           <span>
             <BytesFormatted value={data.progress.bytesScanned} />
           </span>

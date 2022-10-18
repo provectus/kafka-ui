@@ -65,7 +65,7 @@ describe('Metrics', () => {
     });
 
     it('calculate Timer ', () => {
-      expect(screen.getByText('Passed at')).toBeInTheDocument();
+      expect(screen.getByText('Passed since start')).toBeInTheDocument();
     });
   });
 

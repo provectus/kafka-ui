@@ -41,5 +41,7 @@ export const calculateTimer = (startedAt: number) => {
   const minutes = dayjs(newDate).minute();
   const second = dayjs(newDate).second();
 
-  return `${passedTime(minutes)} : ${passedTime(second)} s`;
+  return newDate > 0
+    ? `${passedTime(minutes)} : ${passedTime(second)} s`
+    : '00 : 00 s';
 };
