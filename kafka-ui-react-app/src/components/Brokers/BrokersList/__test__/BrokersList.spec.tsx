@@ -140,7 +140,7 @@ describe('BrokersList Component', () => {
         renderComponent();
         expect(screen.getByRole('table')).toBeInTheDocument();
         expect(
-          screen.getByRole('row', { name: 'Disk usage data not available' })
+          screen.getByRole('row', { name: 'No Offline Clusters' })
         ).toBeInTheDocument();
       });
     });

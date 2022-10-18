@@ -66,7 +66,7 @@ const ClustersWidget: React.FC = () => {
         columns={columns}
         data={config?.list}
         enableSorting
-        emptyMessage="Disk usage data not available"
+        emptyMessage="No Offline Clusters"
       />
     </>
   );
