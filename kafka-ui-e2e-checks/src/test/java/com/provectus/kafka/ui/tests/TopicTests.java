@@ -53,7 +53,7 @@ public class TopicTests extends BaseTest {
         topicCreateEditForm
                 .waitUntilScreenReady()
                 .setTopicName(topicToCreate.getName())
-                .submitCreateTopicBtn();
+                .clickCreateTopicBtn();
         topicDetails
                 .waitUntilScreenReady();
         naviSideBar
@@ -86,7 +86,7 @@ public class TopicTests extends BaseTest {
                 .setTimeToRetainDataInMs(TOPIC_FOR_UPDATE.getTimeToRetainData())
                 .setMaxSizeOnDiskInGB(TOPIC_FOR_UPDATE.getMaxSizeOnDisk())
                 .setMaxMessageBytes(TOPIC_FOR_UPDATE.getMaxMessageBytes())
-                .submitCreateTopicBtn();
+                .clickCreateTopicBtn();
         topicDetails
                 .waitUntilScreenReady();
         naviSideBar
@@ -141,7 +141,7 @@ public class TopicTests extends BaseTest {
         topicDetails
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)
-                .openProduceMessagePanel();
+                .clickProduceMessageBtn();
         produceMessagePanel
                 .waitUntilScreenReady()
                 .setContentFiled(TOPIC_FOR_UPDATE.getMessageContent())

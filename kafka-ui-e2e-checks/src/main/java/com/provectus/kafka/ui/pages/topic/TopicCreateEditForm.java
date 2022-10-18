@@ -17,9 +17,9 @@ public class TopicCreateEditForm {
     protected SelenideElement nameField = $x("//input[@name='name']");
     protected SelenideElement maxMessageBytesField = $x("//input[@name='maxMessageBytes']");
     protected SelenideElement minInSyncReplicasField = $x("//input[@name='minInSyncReplicas']");
-    protected SelenideElement ddlCleanUpPolicy = $x("//ul[@id='topicFormCleanupPolicy']");
+    protected SelenideElement cleanUpPolicyDdl = $x("//ul[@id='topicFormCleanupPolicy']");
     protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
-    protected String cleanUpPolicyLocator = "//li[text()='%s']";
+    protected String cleanUpPolicyTypeLocator = "//li[text()='%s']";
 
     @Step
     public TopicCreateEditForm waitUntilScreenReady(){
@@ -88,8 +88,8 @@ public class TopicCreateEditForm {
 
     @Step
     public TopicCreateEditForm selectCleanupPolicy(String cleanupPolicyOptionValue) {
-        ddlCleanUpPolicy.shouldBe(Condition.visible).click();
-        $x(String.format(cleanUpPolicyLocator,cleanupPolicyOptionValue)).shouldBe(Condition.visible).click();
+        cleanUpPolicyDdl.shouldBe(Condition.visible).click();
+        $x(String.format(cleanUpPolicyTypeLocator,cleanupPolicyOptionValue)).shouldBe(Condition.visible).click();
         return this;
     }
 
@@ -104,7 +104,7 @@ public class TopicCreateEditForm {
     }
 
     @Step
-    public TopicCreateEditForm submitCreateTopicBtn() {
+    public TopicCreateEditForm clickCreateTopicBtn() {
         clickByJavaScript(createTopicBtn);
         return this;
     }

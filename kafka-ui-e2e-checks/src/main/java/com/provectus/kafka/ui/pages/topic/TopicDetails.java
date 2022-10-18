@@ -55,7 +55,7 @@ public class TopicDetails {
     }
 
     @Step
-    public TopicDetails openProduceMessagePanel() {
+    public TopicDetails clickProduceMessageBtn() {
         clickByJavaScript(produceMessageBtn);
         return this;
     }

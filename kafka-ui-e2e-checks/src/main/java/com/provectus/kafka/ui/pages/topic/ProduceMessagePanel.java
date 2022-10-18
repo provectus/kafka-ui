@@ -13,40 +13,40 @@ import static com.codeborne.selenide.Selenide.refresh;
 public class ProduceMessagePanel {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement keyField = $x("//div[@id='key']/textarea");
-    protected SelenideElement contentField = $x("//div[@id='content']/textarea");
-    protected SelenideElement headersField = $x("//div[@id='headers']/textarea");
-    protected SelenideElement submitBtn = headersField.$x("../../../..//button[@type='submit']");
-    protected SelenideElement ddlPartition = $x("//ul[@name='partition']");
-    protected SelenideElement ddlKeySerde = $x("//ul[@name='keySerde']");
-    protected SelenideElement ddlContentSerde = $x("//ul[@name='valueSerde']");
+    protected SelenideElement keyTextArea = $x("//div[@id='key']/textarea");
+    protected SelenideElement contentTextArea = $x("//div[@id='content']/textarea");
+    protected SelenideElement headersTextArea = $x("//div[@id='headers']/textarea");
+    protected SelenideElement submitBtn = headersTextArea.$x("../../../..//button[@type='submit']");
+    protected SelenideElement partitionDdl = $x("//ul[@name='partition']");
+    protected SelenideElement keySerdeDdl = $x("//ul[@name='keySerde']");
+    protected SelenideElement contentSerdeDdl = $x("//ul[@name='valueSerde']");
 
     @Step
     public ProduceMessagePanel waitUntilScreenReady(){
         loadingSpinner.shouldBe(Condition.disappear);
-        Arrays.asList(ddlPartition,ddlKeySerde,ddlContentSerde).forEach(element -> element.shouldBe(Condition.visible));
+        Arrays.asList(partitionDdl, keySerdeDdl, contentSerdeDdl).forEach(element -> element.shouldBe(Condition.visible));
         return this;
     }
 
     @Step
     public ProduceMessagePanel setKeyField(String value) {
-        keyField.shouldBe(Condition.enabled)
+        keyTextArea.shouldBe(Condition.enabled)
                 .sendKeys(Keys.chord(Keys.DELETE));
-        keyField.setValue(value);
+        keyTextArea.setValue(value);
         return this;
     }
 
     @Step
     public ProduceMessagePanel setContentFiled(String value) {
-        contentField.shouldBe(Condition.enabled)
+        contentTextArea.shouldBe(Condition.enabled)
                 .sendKeys(Keys.DELETE);
-        contentField.setValue(value);
+        contentTextArea.setValue(value);
         return this;
     }
 
     @Step
     public ProduceMessagePanel setHeaderFiled(String value) {
-        headersField.setValue(value);
+        headersTextArea.setValue(value);
         return this;
     }
 

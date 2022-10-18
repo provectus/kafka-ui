@@ -15,7 +15,7 @@ import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 public class KafkaConnectList {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement titleConnectors = $x("//h1[text()='Connectors']");
+    protected SelenideElement pageTitle = $x("//h1[text()='Connectors']");
     protected SelenideElement createConnectorBtn = $x("//button[contains(text(),'Create Connector')]");
     protected SelenideElement connectorsGrid = $x("//table");
     protected String tabElementLocator = "//td[contains(text(),'%s')]";
@@ -23,7 +23,7 @@ public class KafkaConnectList {
     @Step
     public KafkaConnectList waitUntilScreenReady() {
         loadingSpinner.shouldBe(Condition.disappear);
-        titleConnectors.shouldBe(Condition.visible);
+        pageTitle.shouldBe(Condition.visible);
         return this;
     }
 

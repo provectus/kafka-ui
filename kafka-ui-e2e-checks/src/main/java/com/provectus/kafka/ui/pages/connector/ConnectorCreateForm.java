@@ -14,7 +14,7 @@ public class ConnectorCreateForm {
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement nameField = $x("//input[@name='name']");
     protected SelenideElement contentTextArea = $x("//textarea[@class='ace_text-input']");
-    protected SelenideElement submitButton = $x("//button[@type='submit']");
+    protected SelenideElement submitBtn = $x("//button[@type='submit']");
     protected SelenideElement configField = $x("//div[@id='config']");
 
     @Step
@@ -26,12 +26,12 @@ public class ConnectorCreateForm {
 
     @Step("Set connector config JSON")
     public ConnectorCreateForm setConnectorConfig(String connectName, String configJson) {
-        nameField.setValue(connectName);
+        nameField.shouldBe(Condition.enabled).setValue(connectName);
         configField.shouldBe(Condition.visible).click();
         contentTextArea.setValue("");
         contentTextArea.setValue(String.valueOf(configJson.toCharArray()));
         nameField.shouldBe(Condition.visible).click();
-        clickByJavaScript(submitButton);
+        clickByJavaScript(submitBtn);
         sleep(4000);
         log.info("Connector config is submitted");
         return this;

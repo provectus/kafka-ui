@@ -13,7 +13,7 @@ public class SchemaRegistryList {
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement createSchemaBtn = $x("//button[contains(text(),'Create Schema')]");
     protected SelenideElement schemaGrid = $x("//table");
-    protected String schemaElementLocator = "//a[contains(text(),'%s')]";
+    protected String schemaTabElementLocator = "//a[contains(text(),'%s')]";
 
     @Step
     public SchemaRegistryList waitUntilScreenReady(){
@@ -30,14 +30,14 @@ public class SchemaRegistryList {
 
     @Step
     public SchemaRegistryList openSchema(String schemaName) {
-        $x(String.format(schemaElementLocator,schemaName)).shouldBe(Condition.visible).click();
+        $x(String.format(schemaTabElementLocator,schemaName)).shouldBe(Condition.visible).click();
         return this;
     }
 
     @Step
     public boolean isSchemaVisible(String schemaName) {
         schemaGrid.shouldBe(Condition.visible);
-        return isVisible($x(String.format(schemaElementLocator,schemaName)));
+        return isVisible($x(String.format(schemaTabElementLocator,schemaName)));
     }
 }
 
