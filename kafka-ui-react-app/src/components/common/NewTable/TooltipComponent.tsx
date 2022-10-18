@@ -1,5 +1,7 @@
 import React from 'react';
-import ReactTooltip from 'react-tooltip';
+import Tippy from '@tippyjs/react';
+
+import { MessageTooltip } from './TooltipComponent.styled';
 
 export interface PropsTypes {
   value: string;
@@ -7,10 +9,9 @@ export interface PropsTypes {
 }
 const TooltipComponent: React.FC<PropsTypes> = ({ value, messageTooltip }) => {
   return (
-    <div>
-      <span data-tip={messageTooltip}>{value}</span>
-      <ReactTooltip />
-    </div>
+    <Tippy content={<MessageTooltip>{messageTooltip}</MessageTooltip>}>
+      <span>{value}</span>
+    </Tippy>
   );
 };
 export default TooltipComponent;
