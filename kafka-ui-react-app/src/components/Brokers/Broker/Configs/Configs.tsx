@@ -6,12 +6,13 @@ import {
   useBrokerConfig,
   useUpdateBrokerConfigByName,
 } from 'lib/hooks/api/brokers';
-import Table from 'components/common/NewTable';
+import Table, { TooltipComponent } from 'components/common/NewTable';
 import { BrokerConfig, ConfigSource } from 'generated-sources';
 import Search from 'components/common/Search/Search';
 
 import InputCell from './InputCell';
 import * as S from './Configs.styled';
+import { ConfigSourceTooltip } from './ConfigsType';
 
 const Configs: React.FC = () => {
   const [keyword, setKeyword] = React.useState('');
@@ -59,6 +60,15 @@ const Configs: React.FC = () => {
       {
         header: 'Source',
         accessorKey: 'source',
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ row }) => {
+          const { source } = row.original;
+          const value = row.original.source;
+          const messageTooltip = ConfigSourceTooltip[source];
+          return (
+            <TooltipComponent value={value} messageTooltip={messageTooltip} />
+          );
+        },
       },
     ],
     []

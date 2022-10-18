@@ -75,6 +75,7 @@ specifiers:
   react-multi-select-component: ^4.3.3
   react-redux: ^8.0.2
   react-router-dom: ^6.3.0
+  react-tooltip: ^4.4.0
   redux: ^4.2.0
   rimraf: ^3.0.2
   sass: ^1.52.3
@@ -126,6 +127,7 @@ dependencies:
   react-multi-select-component: 4.3.3_ef5jwxihqo6n7gxfmzogljlgcm
   react-redux: 8.0.2_nfqigfgwurfoimtkde74cji6ga
   react-router-dom: 6.3.0_ef5jwxihqo6n7gxfmzogljlgcm
+  react-tooltip: 4.4.0_ef5jwxihqo6n7gxfmzogljlgcm
   redux: 4.2.0
   sass: 1.52.3
   styled-components: 5.3.1_uuaz5p7xzfmtjacf6iqf7idnby
@@ -7751,6 +7753,19 @@ packages:
       react: 18.1.0
     dev: false
 
+  /react-tooltip/4.4.0_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-+pSsbT1UNZS+ZHAm+yfO9p9skHi11ZWxhfccuEq9oIoU52P09d+nzu1nUTqLn/hP7fUG6t+x6u2BuGKCP8vfRQ==}
+    engines: {npm: '>=6.13'}
+    peerDependencies:
+      react: '>=16.0.0'
+      react-dom: '>=16.0.0'
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+      uuid: 8.3.2
+    dev: false
+
   /react-transition-state/1.1.4_ef5jwxihqo6n7gxfmzogljlgcm:
     resolution: {integrity: sha512-6nQLWWx95gYazCm6OdtD1zGbRiirvVXPrDtHAGsYb4xs9spMM7bA8Vx77KCpjL8PJ8qz1lXFGz2PTboCSvt7iw==}
     peerDependencies:
@@ -8651,7 +8666,6 @@ packages:
   /uuid/8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
-    dev: true
 
   /v8-compile-cache-lib/3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
