@@ -1,7 +1,7 @@
 import React from 'react';
 import Tippy from '@tippyjs/react';
 
-import { MessageTooltip } from './TooltipComponent.styled';
+import * as S from './TooltipComponent.styled';
 
 export interface PropsTypes {
   value: string;
@@ -9,7 +9,7 @@ export interface PropsTypes {
 }
 const TooltipComponent: React.FC<PropsTypes> = ({ value, messageTooltip }) => {
   return (
-    <Tippy content={<MessageTooltip>{messageTooltip}</MessageTooltip>}>
+    <Tippy content={<S.MessageTooltip>{messageTooltip}</S.MessageTooltip>}>
       <span>{value}</span>
     </Tippy>
   );
