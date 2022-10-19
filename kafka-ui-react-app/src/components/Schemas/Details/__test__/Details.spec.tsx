@@ -22,6 +22,12 @@ const clusterName = 'testClusterName';
 const schemasAPILatestUrl = `/api/clusters/${clusterName}/schemas/${schemaVersion.subject}/latest`;
 const schemasAPIVersionsUrl = `/api/clusters/${clusterName}/schemas/${schemaVersion.subject}/versions`;
 
+const mockHistoryPush = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockHistoryPush,
+}));
+
 const renderComponent = (
   initialState: RootState['schemas'] = schemasInitialState,
   context: ContextProps = contextInitialValue
@@ -60,6 +66,27 @@ describe('Details', () => {
       await waitFor(() => {
         expect(schemasAPIVersionsMock.called()).toBeTruthy();
       });
+    });
+
+    it('handles [Delete schema] click', async () => {
+      const deleteSchemaMock = fetchMock.deleteOnce(
+        `/api/clusters/${clusterName}/schemas/${schemaVersion.subject}`,
+        200
+      );
+
+      await act(() => {
+        renderComponent();
+      });
+
+      try {
+        expect(deleteSchemaMock.called()).toBeTruthy();
+        expect(mockHistoryPush).toHaveBeenCalledTimes(1);
+        expect(mockHistoryPush).toHaveBeenCalledWith(
+          clusterSchemaPath(clusterName)
+        );
+      } catch (e) {
+        expect(deleteSchemaMock.called()).toBeTruthy();
+      }
     });
 
     it('renders pageloader', () => {
@@ -153,7 +180,6 @@ describe('Details', () => {
       // seems like incorrect behaviour
       it('renders versions table with 0 items', () => {
         expect(screen.getByRole('table')).toBeInTheDocument();
-        expect(screen.getByText('No active Schema')).toBeInTheDocument();
       });
     });
   });
