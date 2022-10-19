@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.pages.schema;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.api.model.SchemaType;
@@ -23,7 +22,7 @@ public class SchemaCreateForm {
     protected SelenideElement schemaTypeDdl = $x("//ul[@name='schemaType']");
     protected SelenideElement compatibilityLevelList = $x("//ul[@name='compatibilityLevel']");
     protected SelenideElement newSchemaTextArea = $x("//div[@id='newSchema']");
-    protected String elementLocatorDdl = "//li[text()='%s']";
+    protected String elementLocatorDdl = "//li[@value='%s']";
 
     @Step
     public SchemaCreateForm waitUntilScreenReady(){
@@ -68,7 +67,7 @@ public class SchemaCreateForm {
     public SchemaCreateForm setNewSchemaValue(String configJson) {
         newSchemaTextArea.shouldBe(Condition.visible).click();
         clearByKeyboard(newSchemaInput);
-        Selenide.executeJavaScript("arguments[0].value = '';", $("#newSchema"));
+        clickByJavaScript(newSchemaInput);
         newSchemaInput.setValue(configJson);
         return this;
     }

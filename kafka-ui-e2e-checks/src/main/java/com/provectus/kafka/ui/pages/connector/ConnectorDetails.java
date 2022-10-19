@@ -41,8 +41,7 @@ public class ConnectorDetails {
     public ConnectorDetails setConfig(String configJson) {
         configField.shouldBe(Condition.enabled).click();
         clearByKeyboard(contentTextArea);
-        contentTextArea.setValue("");
-        contentTextArea.setValue(String.valueOf(configJson.toCharArray()));
+        contentTextArea.setValue(configJson);
         configField.shouldBe(Condition.enabled).click();
         clickByJavaScript(submitBtn);
         sleep(4000);
