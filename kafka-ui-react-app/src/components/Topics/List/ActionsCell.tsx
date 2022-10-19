@@ -19,7 +19,7 @@ import {
 } from 'lib/hooks/api/topics';
 
 const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
-  const { name, internal, cleanUpPolicy } = row.original;
+  const { name, cleanUpPolicy } = row.original;
 
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
@@ -30,7 +30,7 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
   const deleteTopic = useDeleteTopic(clusterName);
   const recreateTopic = useRecreateTopic({ clusterName, topicName: name });
 
-  const disabled = internal || isReadOnly;
+  const disabled = isReadOnly;
 
   const clearTopicMessagesHandler = async () => {
     await dispatch(

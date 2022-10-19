@@ -5,7 +5,6 @@ import Table, { SizeCell } from 'components/common/NewTable';
 import useAppParams from 'lib/hooks/useAppParams';
 import { ClusterName } from 'redux/interfaces';
 import { useSearchParams } from 'react-router-dom';
-import ClusterContext from 'components/contexts/ClusterContext';
 import { useTopics } from 'lib/hooks/api/topics';
 import { PER_PAGE } from 'lib/constants';
 
@@ -16,7 +15,6 @@ import BatchActionsbar from './BatchActionsBar';
 const TopicTable: React.FC = () => {
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
   const [searchParams] = useSearchParams();
-  const { isReadOnly } = React.useContext(ClusterContext);
   const { data } = useTopics({
     clusterName,
     page: Number(searchParams.get('page') || 1),
@@ -102,9 +100,7 @@ const TopicTable: React.FC = () => {
       enableSorting
       serverSideProcessing
       batchActionsBar={BatchActionsbar}
-      enableRowSelection={
-        !isReadOnly ? (row) => !row.original.internal : undefined
-      }
+      enableRowSelection
       emptyMessage="No topics found"
     />
   );

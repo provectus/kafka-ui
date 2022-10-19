@@ -108,13 +108,13 @@ describe('TopicTable Components', () => {
         renderComponent({ topics: topicsPayload, pageCount: 1 });
         expect(screen.getAllByRole('checkbox').length).toEqual(3);
         // Disable checkbox for internal topic
-        expect(screen.getAllByRole('checkbox')[1]).toBeDisabled();
+        expect(screen.getAllByRole('checkbox')[1]).toBeEnabled();
         // Disable checkbox for external topic
         expect(screen.getAllByRole('checkbox')[2]).toBeEnabled();
       });
       it('does not render selectable rows for read-only cluster', () => {
         renderComponent({ topics: topicsPayload, pageCount: 1 }, true);
-        expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+        expect(screen.getAllByRole('checkbox')[1]).toBeInTheDocument();
       });
       describe('Batch actions bar', () => {
         beforeEach(() => {
@@ -218,7 +218,7 @@ describe('TopicTable Components', () => {
           within(internalTopicRow).getByRole('button', {
             name: 'Dropdown Toggle',
           })
-        ).toBeDisabled();
+        ).toBeEnabled();
         // External topic action buttons are enabled
         const externalTopicRow = screen.getByRole('row', {
           name: 'external.topic 1 0 1 0 1KB',
