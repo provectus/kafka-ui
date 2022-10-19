@@ -12,7 +12,7 @@ public class SchemaDetails {
 
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement actualVersionMdlWindow = $x("//div[@id='schema']");
+    protected SelenideElement actualVersionTextArea = $x("//div[@id='schema']");
     protected SelenideElement compatibilityField = $x("//h4[contains(text(),'Compatibility')]/../p");
     protected SelenideElement editSchemaBtn = $x("//button[contains(text(),'Edit Schema')]");
     protected SelenideElement removeBtn = $x("//*[contains(text(),'Remove')]");
@@ -21,7 +21,7 @@ public class SchemaDetails {
     @Step
     public SchemaDetails waitUntilScreenReady() {
         loadingSpinner.shouldBe(Condition.disappear);
-        actualVersionMdlWindow.shouldBe(Condition.visible);
+        actualVersionTextArea.shouldBe(Condition.visible);
         return this;
     }
 

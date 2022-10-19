@@ -6,10 +6,10 @@ import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.api.model.SchemaType;
 import io.qameta.allure.Step;
-import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.utilities.WebUtils.clearByKeyboard;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
 public class SchemaCreateForm {
@@ -19,10 +19,10 @@ public class SchemaCreateForm {
     protected SelenideElement pageTitle = $x("//h1['Edit']");
     protected SelenideElement schemaTextArea = $x("//textarea[@name='schema']");
     protected SelenideElement submitBtn = $x("//button[@type='submit']");
-    protected SelenideElement newSchemaTextArea = $("#newSchema [wrap]");
+    protected SelenideElement newSchemaInput = $("#newSchema [wrap]");
     protected SelenideElement schemaTypeDdl = $x("//ul[@name='schemaType']");
     protected SelenideElement compatibilityLevelList = $x("//ul[@name='compatibilityLevel']");
-    protected SelenideElement newSchemaAceEditor = $x("//div[@id='newSchema']");
+    protected SelenideElement newSchemaTextArea = $x("//div[@id='newSchema']");
     protected String elementLocatorDdl = "//li[text()='%s']";
 
     @Step
@@ -66,10 +66,10 @@ public class SchemaCreateForm {
 
     @Step("Set new schema value")
     public SchemaCreateForm setNewSchemaValue(String configJson) {
-        newSchemaAceEditor.shouldBe(Condition.visible).click();
-        newSchemaTextArea.sendKeys(Keys.CONTROL + "a", Keys.BACK_SPACE);
+        newSchemaTextArea.shouldBe(Condition.visible).click();
+        clearByKeyboard(newSchemaInput);
         Selenide.executeJavaScript("arguments[0].value = '';", $("#newSchema"));
-        newSchemaTextArea.setValue(configJson);
+        newSchemaInput.setValue(configJson);
         return this;
     }
 

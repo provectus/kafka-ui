@@ -3,12 +3,12 @@ package com.provectus.kafka.ui.pages.topic;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import org.openqa.selenium.Keys;
 
 import java.util.Arrays;
 
 import static com.codeborne.selenide.Selenide.$x;
 import static com.codeborne.selenide.Selenide.refresh;
+import static com.provectus.kafka.ui.utilities.WebUtils.clearByKeyboard;
 
 public class ProduceMessagePanel {
 
@@ -30,16 +30,14 @@ public class ProduceMessagePanel {
 
     @Step
     public ProduceMessagePanel setKeyField(String value) {
-        keyTextArea.shouldBe(Condition.enabled)
-                .sendKeys(Keys.chord(Keys.DELETE));
+        clearByKeyboard(keyTextArea);
         keyTextArea.setValue(value);
         return this;
     }
 
     @Step
     public ProduceMessagePanel setContentFiled(String value) {
-        contentTextArea.shouldBe(Condition.enabled)
-                .sendKeys(Keys.DELETE);
+        clearByKeyboard(contentTextArea);
         contentTextArea.setValue(value);
         return this;
     }

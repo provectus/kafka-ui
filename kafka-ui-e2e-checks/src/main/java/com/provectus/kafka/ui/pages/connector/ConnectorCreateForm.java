@@ -27,10 +27,10 @@ public class ConnectorCreateForm {
     @Step("Set connector config JSON")
     public ConnectorCreateForm setConnectorConfig(String connectName, String configJson) {
         nameField.shouldBe(Condition.enabled).setValue(connectName);
-        configField.shouldBe(Condition.visible).click();
+        configField.shouldBe(Condition.enabled).click();
         contentTextArea.setValue("");
         contentTextArea.setValue(String.valueOf(configJson.toCharArray()));
-        nameField.shouldBe(Condition.visible).click();
+        nameField.shouldBe(Condition.enabled).click();
         clickByJavaScript(submitBtn);
         sleep(4000);
         log.info("Connector config is submitted");

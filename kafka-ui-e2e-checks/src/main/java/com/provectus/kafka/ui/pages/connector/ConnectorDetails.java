@@ -3,12 +3,12 @@ package com.provectus.kafka.ui.pages.connector;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import org.openqa.selenium.Keys;
 
 import java.util.Arrays;
 
 import static com.codeborne.selenide.Selenide.$x;
 import static com.codeborne.selenide.Selenide.sleep;
+import static com.provectus.kafka.ui.utilities.WebUtils.clearByKeyboard;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 import static com.provectus.kafka.ui.utilities.screenshots.Screenshooter.log;
 
@@ -40,7 +40,7 @@ public class ConnectorDetails {
     @Step()
     public ConnectorDetails setConfig(String configJson) {
         configField.shouldBe(Condition.enabled).click();
-        contentTextArea.sendKeys(Keys.LEFT_CONTROL + "a");
+        clearByKeyboard(contentTextArea);
         contentTextArea.setValue("");
         contentTextArea.setValue(String.valueOf(configJson.toCharArray()));
         configField.shouldBe(Condition.enabled).click();
