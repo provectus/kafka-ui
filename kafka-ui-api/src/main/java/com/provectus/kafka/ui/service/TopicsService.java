@@ -138,11 +138,15 @@ public class TopicsService {
                                                               ReactiveAdminClient ac) {
     var topicPartitions = descriptions.values().stream()
         .flatMap(desc ->
-            desc.partitions().stream().map(p -> new TopicPartition(desc.name(), p.partition())))
+            desc.partitions().stream()
+                // list offsets should only be applied to partitions with existing leader
+                // (see ReactiveAdminClient.listOffsetsUnsafe(..) docs)
+                .filter(tp -> tp.leader() != null)
+                .map(p -> new TopicPartition(desc.name(), p.partition())))
         .collect(toList());
 
-    return ac.listOffsets(topicPartitions, OffsetSpec.earliest())
-        .zipWith(ac.listOffsets(topicPartitions, OffsetSpec.latest()),
+    return ac.listOffsetsUnsafe(topicPartitions, OffsetSpec.earliest())
+        .zipWith(ac.listOffsetsUnsafe(topicPartitions, OffsetSpec.latest()),
             (earliest, latest) ->
                 topicPartitions.stream()
                     .filter(tp -> earliest.containsKey(tp) && latest.containsKey(tp))
