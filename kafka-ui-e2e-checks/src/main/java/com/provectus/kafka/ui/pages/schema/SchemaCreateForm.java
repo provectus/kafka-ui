@@ -67,7 +67,6 @@ public class SchemaCreateForm {
     public SchemaCreateForm setNewSchemaValue(String configJson) {
         newSchemaTextArea.shouldBe(Condition.visible).click();
         clearByKeyboard(newSchemaInput);
-        clickByJavaScript(newSchemaInput);
         newSchemaInput.setValue(configJson);
         return this;
     }
