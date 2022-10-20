@@ -20,7 +20,7 @@ jobs:
         shell: bash
         run: |
           helm_version_new=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
-          git checkout master
+          git checkout origin/master
           helm_version_old=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
           echo $helm_version_old
           echo $helm_version_new
@@ -37,5 +37,3 @@ jobs:
               echo $version;
               helm template --kube-version $version --set ingress.enabled=true charts/kafka-ui -f charts/kafka-ui/values.yaml | kubeval --additional-schema-locations https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict -v $version;
             done
-
-
