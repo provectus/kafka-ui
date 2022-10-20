@@ -84,7 +84,7 @@ public class TopicDetails {
 
     @Step
     public String MessageCountAmount() {
-        return $(By.xpath("//table[@class=\"sc-euMpEg khVwpf\"]/tbody/tr/td[5]")).getText();
+        return $(By.xpath("//table[@class=\"sc-hiSbEG cvnuic\"]/tbody/tr/td[5]")).getText();
     }
 
     private enum DotMenuHeaderItems {
