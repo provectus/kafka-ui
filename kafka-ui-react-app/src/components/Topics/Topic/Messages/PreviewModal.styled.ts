@@ -20,3 +20,8 @@ export const ButtonWrapper = styled.div`
   margin-top: 20px;
   gap: 10px;
 `;
+
+export const PreviewValues = styled.div`
+  font-weight: 500;
+  padding-bottom: 7px;
+`;

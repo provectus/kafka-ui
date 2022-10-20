@@ -3,8 +3,9 @@ import { Button } from 'components/common/Button/Button';
 import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
-import CloseIcon from 'components/common/Icons/CloseIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
+import EditIcon from 'components/common/Icons/EditIcon';
+import CancelIcon from 'components/common/Icons/CancelIcon';
 
 import * as S from './PreviewModal.styled';
 import { PreviewFilter } from './Message';
@@ -22,9 +23,23 @@ const PreviewModal: React.FC<InfoModalProps> = ({
 }) => {
   const [field, setField] = React.useState('');
   const [path, setPath] = React.useState('');
+  const [errors, setErrors] = React.useState<string[]>([]);
 
   const handleOk = () => {
-    if (field === '' || path === '') return;
+    const newErrors = [];
+
+    if (field === '') {
+      newErrors.push('field');
+    }
+
+    if (path === '') {
+      newErrors.push('path');
+    }
+
+    if (newErrors?.length) {
+      setErrors(newErrors);
+      return;
+    }
 
     const newValues = [...values, { field, path }];
     setFilters(newValues);
@@ -39,15 +54,28 @@ const PreviewModal: React.FC<InfoModalProps> = ({
     setFilters(newValues);
   };
 
+  const handleEdit = (filter: PreviewFilter) => {
+    setField(filter.field);
+    setPath(filter.path);
+    const newValues = values.filter(
+      (item) => item.field !== filter.field && item.path !== filter.path
+    );
+    setFilters(newValues);
+  };
+
   return (
     <S.PreviewModal>
       {values.map((item) => (
-        <div>
+        <S.PreviewValues>
           {item.field} : {item.path}{' '}
-          <IconButtonWrapper role="button" onClick={() => handleRemove(item)}>
-            <CloseIcon />
+          <IconButtonWrapper role="button" onClick={() => handleEdit(item)}>
+            <EditIcon />
           </IconButtonWrapper>
-        </div>
+          {'  '}
+          <IconButtonWrapper role="button" onClick={() => handleRemove(item)}>
+            <CancelIcon />
+          </IconButtonWrapper>
+        </S.PreviewValues>
       ))}
       <div>
         <InputLabel htmlFor="previewFormField">Field</InputLabel>
@@ -59,7 +87,7 @@ const PreviewModal: React.FC<InfoModalProps> = ({
           placeholder="Field"
           onChange={({ target }) => setField(target?.value)}
         />
-        <FormError>{field === '' && 'Field is required'}</FormError>
+        <FormError>{errors.includes('field') && 'Field is required'}</FormError>
       </div>
       <div>
         <InputLabel htmlFor="previewFormJsonPath">Json path</InputLabel>
@@ -71,7 +99,9 @@ const PreviewModal: React.FC<InfoModalProps> = ({
           placeholder="Json Path"
           onChange={({ target }) => setPath(target?.value)}
         />
-        <FormError>{path === '' && 'Json path is required'}</FormError>
+        <FormError>
+          {errors.includes('path') && 'Json path is required'}
+        </FormError>
       </div>
       <S.ButtonWrapper>
         <Button

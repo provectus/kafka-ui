@@ -41,7 +41,7 @@ const renderComponent = () => {
 describe('PreviewModal component', () => {
   it('closes PreviewModal', () => {
     renderComponent();
-    userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    userEvent.click(screen.getAllByRole('button', { name: 'Cancel' })[1]);
     expect(toggleInfoModal).toHaveBeenCalledTimes(1);
   });
 
