@@ -77,8 +77,6 @@ describe('MessagesTable', () => {
       userEvent.click(screen.getAllByText('Preview')[0]);
       expect(screen.getByPlaceholderText('Field')).toHaveValue('');
       expect(screen.getByPlaceholderText('Json Path')).toHaveValue('');
-      expect(screen.getByText('Json path is required')).toBeInTheDocument();
-      expect(screen.getByText('Field is required')).toBeInTheDocument();
     });
 
     it('should check the if no elements is rendered in the table', () => {

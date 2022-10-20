@@ -70,19 +70,21 @@ const Message: React.FC<Props> = ({
 
   const [vEllipsisOpen, setVEllipsisOpen] = React.useState(false);
 
+  const getParsedJson = (jsonValue: string) => {
+    try {
+      return JSON.parse(jsonValue);
+    } catch (e) {
+      return {};
+    }
+  };
+
   const renderFilteredJson = (
     jsonValue?: string,
     filters?: PreviewFilter[]
   ) => {
     if (!filters?.length || !jsonValue) return jsonValue;
 
-    let parsedJson: object = {};
-
-    try {
-      parsedJson = JSON.parse(jsonValue);
-    } catch (e) {
-      // do nothing;
-    }
+    const parsedJson = getParsedJson(jsonValue);
 
     return (
       <>
