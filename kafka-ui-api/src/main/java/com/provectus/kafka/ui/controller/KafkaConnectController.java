@@ -5,16 +5,19 @@ import static com.provectus.kafka.ui.model.rbac.permission.ClusterAction.VIEW;
 import com.provectus.kafka.ui.api.KafkaConnectApi;
 import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.ConnectorActionDTO;
+import com.provectus.kafka.ui.model.ConnectorColumnsToSortDTO;
 import com.provectus.kafka.ui.model.ConnectorDTO;
 import com.provectus.kafka.ui.model.ConnectorPluginConfigValidationResponseDTO;
 import com.provectus.kafka.ui.model.ConnectorPluginDTO;
 import com.provectus.kafka.ui.model.FullConnectorInfoDTO;
 import com.provectus.kafka.ui.model.NewConnectorDTO;
+import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TaskDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectorAction;
 import com.provectus.kafka.ui.service.KafkaConnectService;
+import java.util.Comparator;ш
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Collection;
 import java.util.List;
@@ -126,14 +129,18 @@ public class KafkaConnectController extends AbstractController implements KafkaC
   public Mono<ResponseEntity<Flux<FullConnectorInfoDTO>>> getAllConnectors(
       String clusterName,
       String search,
+      ConnectorColumnsToSortDTO orderBy,
+      SortOrderDTO sortOrder,
       ServerWebExchange exchange
   ) {
-
+    var comparator = sortOrder == null || sortOrder.equals(SortOrderDTO.ASC)
+            ? getConnectorsComparator(orderBy)
+            : getConnectorsComparator(orderBy).reversed();
     Flux<FullConnectorInfoDTO> job = kafkaConnectService.getAllConnectors(getCluster(clusterName), search)
         .filterWhen(dto -> accessControlService.isConnectAccessible(dto.getConnect()))
         .filterWhen(dto -> accessControlService.isConnectorAccessible(dto.getConnect(), dto.getName()));
 
-    return Mono.just(ResponseEntity.ok(job));
+    return Mono.just(ResponseEntity.ok(job.sort(comparator)));
   }
 
   @Override
@@ -268,5 +275,23 @@ public class KafkaConnectController extends AbstractController implements KafkaC
         .validateConnectorPluginConfig(
             getCluster(clusterName), connectName, pluginName, requestBody)
         .map(ResponseEntity::ok);
+  }
+
+  private Comparator<FullConnectorInfoDTO> getConnectorsComparator(ConnectorColumnsToSortDTO orderBy) {
+    var defaultComparator = Comparator.comparing(FullConnectorInfoDTO::getName);
+    if (orderBy == null) {
+      return defaultComparator;
+    }
+    switch (orderBy) {
+      case CONNECT:
+        return Comparator.comparing(FullConnectorInfoDTO::getConnect);
+      case TYPE:
+        return Comparator.comparing(FullConnectorInfoDTO::getType);
+      case STATUS:
+        return Comparator.comparing(fullConnectorInfoDTO -> fullConnectorInfoDTO.getStatus().getState());
+      case NAME:
+      default:
+        return defaultComparator;
+    }
   }
 }
