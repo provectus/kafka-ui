@@ -8,7 +8,10 @@ import com.provectus.kafka.ui.model.BrokerDTO;
 import com.provectus.kafka.ui.model.BrokerLogdirUpdateDTO;
 import com.provectus.kafka.ui.model.BrokerMetricsDTO;
 import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
+import com.provectus.kafka.ui.model.rbac.AccessContext;
+import com.provectus.kafka.ui.model.rbac.permission.ClusterAction;
 import com.provectus.kafka.ui.service.BrokerService;
+import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,46 +27,83 @@ import reactor.core.publisher.Mono;
 public class BrokersController extends AbstractController implements BrokersApi {
   private final BrokerService brokerService;
   private final ClusterMapper clusterMapper;
-
-  @Override
-  public Mono<ResponseEntity<BrokerMetricsDTO>> getBrokersMetrics(String clusterName, Integer id,
-                                                                  ServerWebExchange exchange) {
-    return brokerService.getBrokerMetrics(getCluster(clusterName), id)
-        .map(clusterMapper::toBrokerMetrics)
-        .map(ResponseEntity::ok)
-        .onErrorReturn(ResponseEntity.notFound().build());
-  }
+  private final AccessControlService accessControlService;
 
   @Override
   public Mono<ResponseEntity<Flux<BrokerDTO>>> getBrokers(String clusterName,
                                                           ServerWebExchange exchange) {
-    return Mono.just(ResponseEntity.ok(brokerService.getBrokers(getCluster(clusterName))));
+    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+        .cluster(clusterName)
+        .clusterActions(ClusterAction.VIEW)
+        .build());
+
+    var job = brokerService.getBrokers(getCluster(clusterName));
+
+    return validateAccess.then(Mono.just(ResponseEntity.ok(job)));
+  }
+
+  @Override
+  public Mono<ResponseEntity<BrokerMetricsDTO>> getBrokersMetrics(String clusterName, Integer id,
+                                                                  ServerWebExchange exchange) {
+    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+        .cluster(clusterName)
+        .clusterActions(ClusterAction.VIEW)
+        .build());
+
+    return validateAccess.then(
+        brokerService.getBrokerMetrics(getCluster(clusterName), id)
+            .map(clusterMapper::toBrokerMetrics)
+            .map(ResponseEntity::ok)
+            .onErrorReturn(ResponseEntity.notFound().build())
+    );
   }
 
   @Override
   public Mono<ResponseEntity<Flux<BrokersLogdirsDTO>>> getAllBrokersLogdirs(String clusterName,
                                                                             List<Integer> brokers,
-                                                                            ServerWebExchange exchange
-  ) {
-    return Mono.just(ResponseEntity.ok(
-        brokerService.getAllBrokersLogdirs(getCluster(clusterName), brokers)));
+                                                                            ServerWebExchange exchange) {
+    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+        .cluster(clusterName)
+        .clusterActions(ClusterAction.VIEW, ClusterAction.LOGDIRS_VIEW)
+        .build());
+
+    return validateAccess.then(
+        Mono.just(ResponseEntity.ok(
+            brokerService.getAllBrokersLogdirs(getCluster(clusterName), brokers)))
+    );
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<BrokerConfigDTO>>> getBrokerConfig(String clusterName, Integer id,
+  public Mono<ResponseEntity<Flux<BrokerConfigDTO>>> getBrokerConfig(String clusterName,
+                                                                     Integer id,
                                                                      ServerWebExchange exchange) {
-    return Mono.just(ResponseEntity.ok(
-        brokerService.getBrokerConfig(getCluster(clusterName), id)
-            .map(clusterMapper::toBrokerConfig)));
+    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+        .cluster(clusterName)
+        .clusterActions(ClusterAction.VIEW)
+        .build());
+
+    return validateAccess.then(
+        Mono.just(ResponseEntity.ok(
+            brokerService.getBrokerConfig(getCluster(clusterName), id)
+                .map(clusterMapper::toBrokerConfig)))
+    );
   }
 
   @Override
-  public Mono<ResponseEntity<Void>> updateBrokerTopicPartitionLogDir(
-      String clusterName, Integer id, Mono<BrokerLogdirUpdateDTO> brokerLogdir,
-      ServerWebExchange exchange) {
-    return brokerLogdir
-        .flatMap(bld -> brokerService.updateBrokerLogDir(getCluster(clusterName), id, bld))
-        .map(ResponseEntity::ok);
+  public Mono<ResponseEntity<Void>> updateBrokerTopicPartitionLogDir(String clusterName,
+                                                                     Integer id,
+                                                                     Mono<BrokerLogdirUpdateDTO> brokerLogdir,
+                                                                     ServerWebExchange exchange) {
+    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+        .cluster(clusterName)
+        .clusterActions(ClusterAction.VIEW, ClusterAction.LOGDIRS_EDIT)
+        .build());
+
+    return validateAccess.then(
+        brokerLogdir
+            .flatMap(bld -> brokerService.updateBrokerLogDir(getCluster(clusterName), id, bld))
+            .map(ResponseEntity::ok)
+    );
   }
 
   @Override
@@ -72,9 +112,16 @@ public class BrokersController extends AbstractController implements BrokersApi 
                                                              String name,
                                                              Mono<BrokerConfigItemDTO> brokerConfig,
                                                              ServerWebExchange exchange) {
-    return brokerConfig
-        .flatMap(bci -> brokerService.updateBrokerConfigByName(
-            getCluster(clusterName), id, name, bci.getValue()))
-        .map(ResponseEntity::ok);
+    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+        .cluster(clusterName)
+        .clusterActions(ClusterAction.VIEW, ClusterAction.EDIT)
+        .build());
+
+    return validateAccess.then(
+        brokerConfig
+            .flatMap(bci -> brokerService.updateBrokerConfigByName(
+                getCluster(clusterName), id, name, bci.getValue()))
+            .map(ResponseEntity::ok)
+    );
   }
 }
