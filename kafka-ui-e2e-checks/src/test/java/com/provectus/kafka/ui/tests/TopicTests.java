@@ -24,7 +24,7 @@ public class TopicTests extends BaseTest {
     private static final String SUITE_TITLE = "Topics";
     private static final Topic TOPIC_FOR_UPDATE = new Topic()
             .setName("topic-to-update")
-            .setCompactPolicyValue("Compact")
+            .setCleanupPolicyValue("Compact")
             .setTimeToRetainData("604800001")
             .setMaxSizeOnDisk("20 GB")
             .setMaxMessageBytes("1000020")
@@ -91,7 +91,7 @@ public class TopicTests extends BaseTest {
                 .openEditSettings();
         topicCreateEditForm
                 .waitUntilScreenReady()
-                .selectCleanupPolicy(TOPIC_FOR_UPDATE.getCompactPolicyValue())
+                .selectCleanupPolicy(TOPIC_FOR_UPDATE.getCleanupPolicyValue())
                 .setMinInsyncReplicas(10)
                 .setTimeToRetainDataInMs(TOPIC_FOR_UPDATE.getTimeToRetainData())
                 .setMaxSizeOnDiskInGB(TOPIC_FOR_UPDATE.getMaxSizeOnDisk())
@@ -108,7 +108,7 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openEditSettings();
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("Cleanup Policy").isEqualTo(TOPIC_FOR_UPDATE.getCompactPolicyValue());
+        softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("Cleanup Policy").isEqualTo(TOPIC_FOR_UPDATE.getCleanupPolicyValue());
         softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("Time to retain").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
         softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("Max size on disk").isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk());
         softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("Max message bytes").isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
