@@ -66,7 +66,7 @@ public class ConnectorsTests extends BaseTest {
                 .openSideMenu(KAFKA_CONNECT);
         kafkaConnectList
                 .waitUntilScreenReady()
-                .clickCreateConnectorButton();
+                .clickCreateConnectorBtn();
         connectorCreateForm
                 .waitUntilScreenReady()
                 .setConnectorConfig(connectorForCreate.getName(), connectorForCreate.getConfig());
@@ -114,8 +114,8 @@ public class ConnectorsTests extends BaseTest {
         connectorDetails
                 .waitUntilScreenReady()
                 .openDotMenu()
-                .clickDeleteButton()
-                .clickConfirmButton();
+                .clickDeleteBtn()
+                .clickConfirmBtn();
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
         kafkaConnectList
