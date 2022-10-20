@@ -15,6 +15,18 @@ jobs:
         uses: Azure/setup-helm@v1
       - name: Setup Kubeval
         uses: lra/setup-kubeval@v1.0.1
+      #check, was helm version increased in Chart.yaml?
+      - name: Check version
+        shell: bash
+        run: |
+          git fetch
+          git checkout master
+          helm_version_old=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
+          git checkout $GITHUB_HEAD_REF
+          helm_version_new=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
+          echo $helm_version_old
+          echo $helm_version_new
+          if [[ "$helm_version_new" > "$helm_version_old" ]]; then exit 0 ; else exit 1 ; fi
       - name: Run kubeval
         shell: bash
         run: |
