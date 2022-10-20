@@ -29,12 +29,21 @@ public class TopicTests extends BaseTest {
             .setMaxMessageBytes("1000020")
             .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
             .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+
+    private static final Topic TOPIC_FOR_MESSAGES = new Topic()
+            .setName("topic-with-clean-message-attribute")
+            .setTimeToRetainData("604800001")
+            .setMaxSizeOnDisk("10 GB")
+            .setMaxMessageBytes("1000012")
+            .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
+            .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+
     private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete");
     private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
     @BeforeAll
     public void beforeAll() {
-        TOPIC_LIST.addAll(List.of(TOPIC_FOR_UPDATE, TOPIC_FOR_DELETE));
+        TOPIC_LIST.addAll(List.of(TOPIC_FOR_UPDATE, TOPIC_FOR_DELETE, TOPIC_FOR_MESSAGES));
         TOPIC_LIST.forEach(topic -> apiHelper.createTopic(CLUSTER_NAME, topic.getName()));
     }
 
@@ -137,22 +146,54 @@ public class TopicTests extends BaseTest {
                 .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_FOR_UPDATE.getName());
+                .openTopic(TOPIC_FOR_MESSAGES.getName());
         topicDetails
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)
                 .clickProduceMessageBtn();
         produceMessagePanel
                 .waitUntilScreenReady()
-                .setContentFiled(TOPIC_FOR_UPDATE.getMessageContent())
-                .setKeyField(TOPIC_FOR_UPDATE.getMessageKey())
+                .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
+                .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
                 .submitProduceMessage();
         topicDetails
                 .waitUntilScreenReady();
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(topicDetails.isKeyMessageVisible((TOPIC_FOR_UPDATE.getMessageKey()))).withFailMessage("isKeyMessageVisible()").isTrue();
-        softly.assertThat(topicDetails.isContentMessageVisible((TOPIC_FOR_UPDATE.getMessageContent()).trim())).withFailMessage("isContentMessageVisible()").isTrue();
+        softly.assertThat(topicDetails.isKeyMessageVisible((TOPIC_FOR_MESSAGES.getMessageKey()))).withFailMessage("isKeyMessageVisible()").isTrue();
+        softly.assertThat(topicDetails.isContentMessageVisible((TOPIC_FOR_MESSAGES.getMessageContent()).trim())).withFailMessage("isContentMessageVisible()").isTrue();
         softly.assertAll();
+    }
+
+
+    //TODO:Uncomment last assertion after bug https://github.com/provectus/kafka-ui/issues/2778 fix
+    @DisplayName("clear message")
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(19)
+    @Test
+    void clearMessage() {
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
+                .waitUntilScreenReady()
+                .openTopic(TOPIC_FOR_MESSAGES.getName());
+        topicDetails
+                .waitUntilScreenReady()
+                .openTopicMenu(TopicDetails.TopicMenu.OVERVIEW)
+                .clickProduceMessageBtn();
+        produceMessagePanel
+                .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
+                .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
+                .submitProduceMessage();
+        topicDetails
+                .waitUntilScreenReady();
+        String messageAmount = topicDetails.MessageCountAmount();
+        Assertions.assertEquals(messageAmount,topicDetails.MessageCountAmount());
+        topicDetails
+                .openDotPartitionIdMenu()
+                .waitUntilScreenReady()
+                .selectDotPartitionIdMenuItem(CLEAR_MESSAGES);
+//        Assertions.assertEquals(Integer.toString(Integer.valueOf(messageAmount)-1),topicDetails.MessageCountAmount());
     }
 
     @AfterAll
