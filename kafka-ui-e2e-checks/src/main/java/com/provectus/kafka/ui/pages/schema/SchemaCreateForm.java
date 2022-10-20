@@ -63,7 +63,7 @@ public class SchemaCreateForm {
         return this;
     }
 
-    @Step("Set new schema value")
+    @Step
     public SchemaCreateForm setNewSchemaValue(String configJson) {
         newSchemaTextArea.shouldBe(Condition.visible).click();
         clearByKeyboard(newSchemaInput);

@@ -5,9 +5,7 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.$x;
-import static com.codeborne.selenide.Selenide.sleep;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
-import static com.provectus.kafka.ui.utilities.screenshots.Screenshooter.log;
 
 public class ConnectorCreateForm {
 
@@ -24,16 +22,14 @@ public class ConnectorCreateForm {
         return this;
     }
 
-    @Step("Set connector config JSON")
+    @Step
     public ConnectorCreateForm setConnectorConfig(String connectName, String configJson) {
         nameField.shouldBe(Condition.enabled).setValue(connectName);
         configField.shouldBe(Condition.enabled).click();
-        contentTextArea.setValue("");
-        contentTextArea.setValue(String.valueOf(configJson.toCharArray()));
+        contentTextArea.setValue(configJson);
         nameField.shouldBe(Condition.enabled).click();
         clickByJavaScript(submitBtn);
-        sleep(4000);
-        log.info("Connector config is submitted");
+        loadingSpinner.shouldBe(Condition.disappear);
         return this;
     }
 }

@@ -7,10 +7,8 @@ import io.qameta.allure.Step;
 import java.util.Arrays;
 
 import static com.codeborne.selenide.Selenide.$x;
-import static com.codeborne.selenide.Selenide.sleep;
 import static com.provectus.kafka.ui.utilities.WebUtils.clearByKeyboard;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
-import static com.provectus.kafka.ui.utilities.screenshots.Screenshooter.log;
 
 public class ConnectorDetails {
 
@@ -23,6 +21,8 @@ public class ConnectorDetails {
     protected SelenideElement taskTab = $x("//a[contains(text(),'Tasks')]");
     protected SelenideElement configTab = $x("//a[contains(text(),'Config')]");
     protected SelenideElement configField = $x("//div[@id='config']");
+    protected SelenideElement successAlertMessage = $x("//div[contains(text(),'Config successfully updated')]");
+
 
     @Step
     public ConnectorDetails waitUntilScreenReady() {
@@ -31,44 +31,43 @@ public class ConnectorDetails {
         return this;
     }
 
-    @Step()
+    @Step
     public ConnectorDetails openConfigTab() {
         clickByJavaScript(configTab);
         return this;
     }
 
-    @Step()
+    @Step
     public ConnectorDetails setConfig(String configJson) {
         configField.shouldBe(Condition.enabled).click();
         clearByKeyboard(contentTextArea);
         contentTextArea.setValue(configJson);
         configField.shouldBe(Condition.enabled).click();
         clickByJavaScript(submitBtn);
-        sleep(4000);
-        log.info("Connector config is submitted");
+        successAlertMessage.shouldBe(Condition.visible);
         return this;
     }
 
-    @Step()
+    @Step
     public ConnectorDetails openDotMenu() {
         clickByJavaScript(dotMenuBtn);
         return this;
     }
 
-    @Step()
+    @Step
     public ConnectorDetails clickDeleteBtn() {
         clickByJavaScript(deleteBtn);
         return this;
     }
 
-    @Step()
+    @Step
     public ConnectorDetails clickConfirmBtn() {
         confirmBtnMdl.shouldBe(Condition.enabled).click();
         confirmBtnMdl.shouldBe(Condition.disappear);
         return this;
     }
 
-    @Step()
+    @Step
     public ConnectorDetails deleteConnector() {
         openDotMenu();
         clickDeleteBtn();

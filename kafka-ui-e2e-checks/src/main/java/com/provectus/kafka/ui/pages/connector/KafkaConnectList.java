@@ -27,7 +27,7 @@ public class KafkaConnectList {
         return this;
     }
 
-    @Step("Click on button 'Create Connector'")
+    @Step
     public KafkaConnectList clickCreateConnectorBtn() {
         clickByJavaScript(createConnectorBtn);
         return this;
