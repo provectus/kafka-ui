@@ -20,7 +20,6 @@ import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.service.analyze.TopicAnalysisService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
-import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

@@ -23,7 +23,7 @@ public class GoogleAuthorityExtractor implements ProviderAuthorityExtractor {
   }
 
   @Override
-  public Mono<List<String>> extract(AccessControlService acs, Object value, Map<String , Object> additionalParams) {
+  public Mono<List<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams) {
     log.debug("Extracting google user authorities");
 
     DefaultOAuth2User principal;

@@ -75,7 +75,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
         .retrieve()
         //@formatter:off
         .bodyToMono(new ParameterizedTypeReference<>() {});
-        //@formatter:on
+    //@formatter:on
 
     return userOrganizations
         .map(orgsMap -> {

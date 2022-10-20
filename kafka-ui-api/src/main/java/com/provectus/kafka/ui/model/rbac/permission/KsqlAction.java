@@ -5,11 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 public enum KsqlAction implements PermissibleAction {
 
-//  EXECUTE_READ,
-//  EXECUTE_WRITE
-  EXECUTE
-
-  ;
+  EXECUTE;
 
   @Nullable
   public static KsqlAction fromString(String name) {

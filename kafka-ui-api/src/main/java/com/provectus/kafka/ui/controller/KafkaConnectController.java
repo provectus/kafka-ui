@@ -17,12 +17,9 @@ import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectorAction;
 import com.provectus.kafka.ui.service.KafkaConnectService;
-import java.util.Comparator;ш
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
-import java.util.Collection;
-import java.util.List;
+import java.util.Comparator;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -134,8 +131,8 @@ public class KafkaConnectController extends AbstractController implements KafkaC
       ServerWebExchange exchange
   ) {
     var comparator = sortOrder == null || sortOrder.equals(SortOrderDTO.ASC)
-            ? getConnectorsComparator(orderBy)
-            : getConnectorsComparator(orderBy).reversed();
+        ? getConnectorsComparator(orderBy)
+        : getConnectorsComparator(orderBy).reversed();
     Flux<FullConnectorInfoDTO> job = kafkaConnectService.getAllConnectors(getCluster(clusterName), search)
         .filterWhen(dto -> accessControlService.isConnectAccessible(dto.getConnect()))
         .filterWhen(dto -> accessControlService.isConnectorAccessible(dto.getConnect(), dto.getName()));
@@ -267,8 +264,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
   }
 
   @Override
-  public Mono<ResponseEntity<ConnectorPluginConfigValidationResponseDTO>>
-  validateConnectorPluginConfig(
+  public Mono<ResponseEntity<ConnectorPluginConfigValidationResponseDTO>> validateConnectorPluginConfig(
       String clusterName, String connectName, String pluginName, @Valid Mono<Object> requestBody,
       ServerWebExchange exchange) {
     return kafkaConnectService

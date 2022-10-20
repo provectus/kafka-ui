@@ -16,7 +16,7 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
   }
 
   @Override
-  public Mono<List<String>> extract(AccessControlService acs, Object value, Map<String , Object> additionalParams) {
+  public Mono<List<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams) {
     DefaultOAuth2User principal;
     try {
       principal = (DefaultOAuth2User) value;

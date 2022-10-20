@@ -238,10 +238,10 @@ public class AccessControlService {
     return isAccessible("consumer", context.getConsumerGroup(), user, context, requiredActions);
   }
 
-  public Mono<Boolean> isConsumerGroupAccessible(InternalConsumerGroup dto) {
+  public Mono<Boolean> isConsumerGroupAccessible(String groupId) {
     AccessContext accessContext = AccessContext
         .builder()
-        .consumerGroup(dto.getGroupId())
+        .consumerGroup(groupId)
         .consumerGroupActions(ConsumerGroupAction.VIEW)
         .build();
 
