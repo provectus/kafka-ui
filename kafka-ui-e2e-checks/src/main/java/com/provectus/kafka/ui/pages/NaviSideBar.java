@@ -11,22 +11,27 @@ import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 
 public class NaviSideBar {
 
+    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+    protected SelenideElement dashboardMenuItem = $x("//a[@title='Dashboard']");
+    protected String sideMenuOptionElementLocator = ".//ul/li[contains(.,'%s')]";
+    protected String clusterElementLocator = "//aside/ul/li[contains(.,'%s')]";
+
     @Step
     public NaviSideBar waitUntilScreenReady() {
-        $x("//*[contains(text(),'Loading')]").shouldBe(Condition.disappear, Duration.ofSeconds(30));
-        $x("//a[@title='Dashboard']").shouldBe(Condition.visible, Duration.ofSeconds(30));
+        loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(30));
+        dashboardMenuItem.shouldBe(Condition.visible, Duration.ofSeconds(30));
         return this;
     }
 
     @Step
     public NaviSideBar openSideMenu(String clusterName, SideMenuOption option) {
-        SelenideElement clusterElement = $x(String.format("//aside/ul/li[contains(.,'%s')]", clusterName)).shouldBe(Condition.visible);
+        SelenideElement clusterElement = $x(String.format(clusterElementLocator, clusterName)).shouldBe(Condition.visible);
         if (clusterElement.parent().$$x(".//ul").size() == 0) {
             clusterElement.click();
         }
         clusterElement
                 .parent()
-                .$x(String.format(".//ul/li[contains(.,'%s')]", option.value))
+                .$x(String.format(sideMenuOptionElementLocator, option.value))
                 .click();
         return this;
     }
@@ -36,7 +41,6 @@ public class NaviSideBar {
         openSideMenu(CLUSTER_NAME, option);
         return this;
     }
-
 
     public enum SideMenuOption {
         BROKERS("Brokers"),
