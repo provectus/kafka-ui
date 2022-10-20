@@ -1,38 +1,38 @@
-import React from 'react'
-import { Partition, Replica } from 'generated-sources'
-import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted'
-import Table from 'components/common/NewTable'
-import * as Metrics from 'components/common/Metrics'
-import { Tag } from 'components/common/Tag/Tag.styled'
-import { RouteParamsClusterTopic } from 'lib/paths'
-import useAppParams from 'lib/hooks/useAppParams'
-import { useTopicDetails } from 'lib/hooks/api/topics'
-import { ColumnDef } from '@tanstack/react-table'
+import React from 'react';
+import { Partition, Replica } from 'generated-sources';
+import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import Table from 'components/common/NewTable';
+import * as Metrics from 'components/common/Metrics';
+import { Tag } from 'components/common/Tag/Tag.styled';
+import { RouteParamsClusterTopic } from 'lib/paths';
+import useAppParams from 'lib/hooks/useAppParams';
+import { useTopicDetails } from 'lib/hooks/api/topics';
+import { ColumnDef } from '@tanstack/react-table';
 
-import * as S from './Overview.styled'
-import ActionsCell from './ActionsCell'
+import * as S from './Overview.styled';
+import ActionsCell from './ActionsCell';
 
 const Overview: React.FC = () => {
-  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>()
-  const { data } = useTopicDetails({ clusterName, topicName })
+  const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+  const { data } = useTopicDetails({ clusterName, topicName });
 
   const messageCount = React.useMemo(
     () =>
       (data?.partitions || []).reduce((memo, partition) => {
-        return memo + partition.offsetMax - partition.offsetMin
+        return memo + partition.offsetMax - partition.offsetMin;
       }, 0),
     [data]
-  )
+  );
   const newData = React.useMemo(() => {
-    if (!data?.partitions) return []
+    if (!data?.partitions) return [];
 
     return data.partitions.map((items: Partition) => {
       return {
         ...items,
         messageCount: items.offsetMax - items.offsetMin,
-      }
-    })
-  }, [data?.partitions])
+      };
+    });
+  }, [data?.partitions]);
 
   const columns = React.useMemo<ColumnDef<Partition>[]>(
     () => [
@@ -47,9 +47,9 @@ const Overview: React.FC = () => {
 
         accessorKey: 'replicas',
         cell: ({ getValue }) => {
-          const replicas = getValue<Partition['replicas']>()
+          const replicas = getValue<Partition['replicas']>();
           if (replicas === undefined || replicas.length === 0) {
-            return 0
+            return 0;
           }
           return replicas?.map(({ broker, leader }: Replica) => (
             <S.Replica
@@ -59,7 +59,7 @@ const Overview: React.FC = () => {
             >
               {broker}
             </S.Replica>
-          ))
+          ));
         },
       },
       {
@@ -81,20 +81,20 @@ const Overview: React.FC = () => {
       },
     ],
     []
-  )
+  );
   return (
     <>
       <Metrics.Wrapper>
         <Metrics.Section>
-          <Metrics.Indicator label='Partitions'>
+          <Metrics.Indicator label="Partitions">
             {data?.partitionCount}
           </Metrics.Indicator>
-          <Metrics.Indicator label='Replication Factor'>
+          <Metrics.Indicator label="Replication Factor">
             {data?.replicationFactor}
           </Metrics.Indicator>
           <Metrics.Indicator
-            label='URP'
-            title='Under replicated partitions'
+            label="URP"
+            title="Under replicated partitions"
             isAlert
             alertType={
               data?.underReplicatedPartitions === 0 ? 'success' : 'error'
@@ -111,7 +111,7 @@ const Overview: React.FC = () => {
             )}
           </Metrics.Indicator>
           <Metrics.Indicator
-            label='In Sync Replicas'
+            label="In Sync Replicas"
             isAlert
             alertType={
               data?.inSyncReplicas === data?.replicas ? 'success' : 'error'
@@ -126,25 +126,25 @@ const Overview: React.FC = () => {
             )}
             <Metrics.LightText> of {data?.replicas}</Metrics.LightText>
           </Metrics.Indicator>
-          <Metrics.Indicator label='Type'>
-            <Tag color='gray'>{data?.internal ? 'Internal' : 'External'}</Tag>
+          <Metrics.Indicator label="Type">
+            <Tag color="gray">{data?.internal ? 'Internal' : 'External'}</Tag>
           </Metrics.Indicator>
-          <Metrics.Indicator label='Segment Size' title=''>
+          <Metrics.Indicator label="Segment Size" title="">
             <BytesFormatted value={data?.segmentSize} />
           </Metrics.Indicator>
-          <Metrics.Indicator label='Segment Count'>
+          <Metrics.Indicator label="Segment Count">
             {data?.segmentCount}
           </Metrics.Indicator>
-          <Metrics.Indicator label='Clean Up Policy'>
-            <Tag color='gray'>{data?.cleanUpPolicy || 'Unknown'}</Tag>
+          <Metrics.Indicator label="Clean Up Policy">
+            <Tag color="gray">{data?.cleanUpPolicy || 'Unknown'}</Tag>
           </Metrics.Indicator>
-          <Metrics.Indicator label='Message Count'>
+          <Metrics.Indicator label="Message Count">
             {messageCount}
           </Metrics.Indicator>
-          <Metrics.Indicator label='Production'>
+          <Metrics.Indicator label="Production">
             <BytesFormatted value={data?.bytesInPerSec} />
           </Metrics.Indicator>
-          <Metrics.Indicator label='Consumption'>
+          <Metrics.Indicator label="Consumption">
             <BytesFormatted value={data?.bytesOutPerSec} />
           </Metrics.Indicator>
         </Metrics.Section>
@@ -153,10 +153,10 @@ const Overview: React.FC = () => {
         columns={columns}
         data={newData}
         enableSorting
-        emptyMessage='No Partitions found '
+        emptyMessage="No Partitions found "
       />
     </>
-  )
-}
+  );
+};
 
-export default Overview
+export default Overview;

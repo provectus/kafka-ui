@@ -1,38 +1,38 @@
-import React from 'react'
-import { SortOrder, Topic, TopicColumnsToSort } from 'generated-sources'
-import { ColumnDef } from '@tanstack/react-table'
-import Table, { SizeCell } from 'components/common/NewTable'
-import useAppParams from 'lib/hooks/useAppParams'
-import { ClusterName } from 'redux/interfaces'
-import { useSearchParams } from 'react-router-dom'
-import ClusterContext from 'components/contexts/ClusterContext'
-import { useTopics } from 'lib/hooks/api/topics'
-import { PER_PAGE } from 'lib/constants'
-import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted'
+import React from 'react';
+import { SortOrder, Topic, TopicColumnsToSort } from 'generated-sources';
+import { ColumnDef } from '@tanstack/react-table';
+import Table, { SizeCell } from 'components/common/NewTable';
+import useAppParams from 'lib/hooks/useAppParams';
+import { ClusterName } from 'redux/interfaces';
+import { useSearchParams } from 'react-router-dom';
+import ClusterContext from 'components/contexts/ClusterContext';
+import { useTopics } from 'lib/hooks/api/topics';
+import { PER_PAGE } from 'lib/constants';
+import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
-import { TopicTitleCell } from './TopicTitleCell'
-import ActionsCell from './ActionsCell'
-import BatchActionsbar from './BatchActionsBar'
+import { TopicTitleCell } from './TopicTitleCell';
+import ActionsCell from './ActionsCell';
+import BatchActionsbar from './BatchActionsBar';
 
 function formatThroughput(row: Topic) {
-  const production = row.bytesInPerSec
-  const consumption = row.bytesOutPerSec
+  const production = row.bytesInPerSec;
+  const consumption = row.bytesOutPerSec;
   if (production === undefined && consumption === undefined) {
-    return <tr>N/A</tr>
+    return <tr>N/A</tr>;
   }
   if (production === undefined) {
     return (
       <tr>
         out: <BytesFormatted value={consumption} />
       </tr>
-    )
+    );
   }
   if (consumption === undefined) {
     return (
       <tr>
         in: <BytesFormatted value={production} />
       </tr>
-    )
+    );
   }
 
   return (
@@ -44,13 +44,13 @@ function formatThroughput(row: Topic) {
         out: <BytesFormatted value={consumption} />
       </tr>
     </div>
-  )
+  );
 }
 
 const TopicTable: React.FC = () => {
-  const { clusterName } = useAppParams<{ clusterName: ClusterName }>()
-  const [searchParams] = useSearchParams()
-  const { isReadOnly } = React.useContext(ClusterContext)
+  const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
+  const [searchParams] = useSearchParams();
+  const { isReadOnly } = React.useContext(ClusterContext);
   const { data } = useTopics({
     clusterName,
     page: Number(searchParams.get('page') || 1),
@@ -61,10 +61,10 @@ const TopicTable: React.FC = () => {
     sortOrder:
       (searchParams.get('sortDirection')?.toUpperCase() as SortOrder) ||
       undefined,
-  })
+  });
 
-  const topics = data?.topics || []
-  const pageCount = data?.pageCount || 0
+  const topics = data?.topics || [];
+  const pageCount = data?.pageCount || 0;
 
   const columns = React.useMemo<ColumnDef<Topic>[]>(
     () => [
@@ -84,14 +84,14 @@ const TopicTable: React.FC = () => {
         header: 'Out of sync replicas',
         accessorKey: 'partitions',
         cell: ({ getValue }) => {
-          const partitions = getValue<Topic['partitions']>()
+          const partitions = getValue<Topic['partitions']>();
           if (partitions === undefined || partitions.length === 0) {
-            return 0
+            return 0;
           }
           return partitions.reduce((memo, { replicas }) => {
-            const outOfSync = replicas?.filter(({ inSync }) => !inSync)
-            return memo + (outOfSync?.length || 0)
-          }, 0)
+            const outOfSync = replicas?.filter(({ inSync }) => !inSync);
+            return memo + (outOfSync?.length || 0);
+          }, 0);
         },
       },
       {
@@ -104,13 +104,13 @@ const TopicTable: React.FC = () => {
         accessorKey: 'partitions',
         enableSorting: false,
         cell: ({ getValue }) => {
-          const partitions = getValue<Topic['partitions']>()
+          const partitions = getValue<Topic['partitions']>();
           if (partitions === undefined || partitions.length === 0) {
-            return 0
+            return 0;
           }
           return partitions.reduce((memo, { offsetMax, offsetMin }) => {
-            return memo + (offsetMax - offsetMin)
-          }, 0)
+            return memo + (offsetMax - offsetMin);
+          }, 0);
         },
       },
       {
@@ -124,7 +124,7 @@ const TopicTable: React.FC = () => {
         accessorFn: (row) => formatThroughput(row),
         enableSorting: false,
         cell: ({ getValue }) => {
-          return getValue()
+          return getValue();
         },
       },
       {
@@ -134,7 +134,7 @@ const TopicTable: React.FC = () => {
       },
     ],
     []
-  )
+  );
 
   return (
     <Table
@@ -147,9 +147,9 @@ const TopicTable: React.FC = () => {
       enableRowSelection={
         !isReadOnly ? (row) => !row.original.internal : undefined
       }
-      emptyMessage='No topics found'
+      emptyMessage="No topics found"
     />
-  )
-}
+  );
+};
 
-export default TopicTable
+export default TopicTable;
