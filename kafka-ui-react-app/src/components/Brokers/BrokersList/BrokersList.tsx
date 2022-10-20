@@ -9,6 +9,9 @@ import { useClusterStats } from 'lib/hooks/api/clusters';
 import Table, { LinkCell, SizeCell } from 'components/common/NewTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { clusterBrokerPath } from 'lib/paths';
+import StarIcon from 'components/common/Icons/StarIcon';
+
+import * as S from './BrokersList.styled';
 
 const BrokersList: React.FC = () => {
   const navigate = useNavigate();
@@ -42,6 +45,7 @@ const BrokersList: React.FC = () => {
       };
     });
   }, [diskUsage, brokers]);
+
   const columns = React.useMemo<ColumnDef<typeof rows>[]>(
     () => [
       {
@@ -58,7 +62,17 @@ const BrokersList: React.FC = () => {
       { header: 'Segment Size', accessorKey: 'size', cell: SizeCell },
       { header: 'Segment Count', accessorKey: 'count' },
       { header: 'Port', accessorKey: 'port' },
-      { header: 'Host', accessorKey: 'host' },
+      {
+        header: 'Host',
+        accessorKey: 'host',
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ row: { id }, getValue }) => (
+          <S.RowCell>
+            {id === String(activeControllers) && <StarIcon />}
+            {getValue<string | number>()}
+          </S.RowCell>
+        ),
+      },
     ],
     []
   );
@@ -75,8 +89,8 @@ const BrokersList: React.FC = () => {
           <Metrics.Indicator label="Broker Count">
             {brokerCount}
           </Metrics.Indicator>
-          <Metrics.Indicator label="Active Controllers">
-            {activeControllers}
+          <Metrics.Indicator label="Active Controller">
+            {activeControllers || 'Not known'}
           </Metrics.Indicator>
           <Metrics.Indicator label="Version">{version}</Metrics.Indicator>
         </Metrics.Section>
@@ -92,8 +106,10 @@ const BrokersList: React.FC = () => {
               onlinePartitionCount
             )}
             <Metrics.LightText>
-              {' '}
-              of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
+              {` of ${
+                (onlinePartitionCount || 0) + (offlinePartitionCount || 0)
+              }
+              `}
             </Metrics.LightText>
           </Metrics.Indicator>
           <Metrics.Indicator
