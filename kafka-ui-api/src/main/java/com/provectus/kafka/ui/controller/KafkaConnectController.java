@@ -3,13 +3,16 @@ package com.provectus.kafka.ui.controller;
 import com.provectus.kafka.ui.api.KafkaConnectApi;
 import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.ConnectorActionDTO;
+import com.provectus.kafka.ui.model.ConnectorColumnsToSortDTO;
 import com.provectus.kafka.ui.model.ConnectorDTO;
 import com.provectus.kafka.ui.model.ConnectorPluginConfigValidationResponseDTO;
 import com.provectus.kafka.ui.model.ConnectorPluginDTO;
 import com.provectus.kafka.ui.model.FullConnectorInfoDTO;
 import com.provectus.kafka.ui.model.NewConnectorDTO;
+import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TaskDTO;
 import com.provectus.kafka.ui.service.KafkaConnectService;
+import java.util.Comparator;
 import java.util.Map;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -68,10 +71,16 @@ public class KafkaConnectController extends AbstractController implements KafkaC
   public Mono<ResponseEntity<Flux<FullConnectorInfoDTO>>> getAllConnectors(
       String clusterName,
       String search,
+      ConnectorColumnsToSortDTO orderBy,
+      SortOrderDTO sortOrder,
       ServerWebExchange exchange
   ) {
+    var comparator = sortOrder == null || sortOrder.equals(SortOrderDTO.ASC)
+            ? getConnectorsComparator(orderBy)
+            : getConnectorsComparator(orderBy).reversed();
     return Mono.just(ResponseEntity.ok(
-        kafkaConnectService.getAllConnectors(getCluster(clusterName), search)));
+        kafkaConnectService.getAllConnectors(getCluster(clusterName), search).sort(comparator))
+    );
   }
 
   @Override
@@ -141,5 +150,23 @@ public class KafkaConnectController extends AbstractController implements KafkaC
         .validateConnectorPluginConfig(
             getCluster(clusterName), connectName, pluginName, requestBody)
         .map(ResponseEntity::ok);
+  }
+
+  private Comparator<FullConnectorInfoDTO> getConnectorsComparator(ConnectorColumnsToSortDTO orderBy) {
+    var defaultComparator = Comparator.comparing(FullConnectorInfoDTO::getName);
+    if (orderBy == null) {
+      return defaultComparator;
+    }
+    switch (orderBy) {
+      case CONNECT:
+        return Comparator.comparing(FullConnectorInfoDTO::getConnect);
+      case TYPE:
+        return Comparator.comparing(FullConnectorInfoDTO::getType);
+      case STATUS:
+        return Comparator.comparing(fullConnectorInfoDTO -> fullConnectorInfoDTO.getStatus().getState());
+      case NAME:
+      default:
+        return defaultComparator;
+    }
   }
 }

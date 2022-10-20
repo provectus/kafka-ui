@@ -459,7 +459,7 @@ const Filters: React.FC<FiltersProps> = ({
             />
           </div>
           <div>
-            <InputLabel>Content Serde</InputLabel>
+            <InputLabel>Value Serde</InputLabel>
             <Select
               id="selectValueSerdeOptions"
               aria-labelledby="selectValueSerdeOptions"

@@ -157,7 +157,26 @@ describe('QueryForm', () => {
     expect(submitFn.mock.calls.length).toBe(1);
   });
 
-  it('add new property', async () => {
+  it('adds new property', async () => {
+    renderComponent({
+      fetching: false,
+      hasResults: false,
+      handleClearResults: jest.fn(),
+      handleSSECancel: jest.fn(),
+      submitHandler: jest.fn(),
+    });
+
+    const textbox = screen.getByLabelText('key');
+    await userEvent.type(textbox, 'prop_name');
+    await act(() => {
+      userEvent.click(
+        screen.getByRole('button', { name: 'Add Stream Property' })
+      );
+    });
+    expect(screen.getAllByRole('textbox', { name: 'key' }).length).toEqual(2);
+  });
+
+  it("doesn't add new property", async () => {
     renderComponent({
       fetching: false,
       hasResults: false,
@@ -171,7 +190,7 @@ describe('QueryForm', () => {
         screen.getByRole('button', { name: 'Add Stream Property' })
       );
     });
-    expect(screen.getAllByRole('textbox', { name: 'key' }).length).toEqual(2);
+    expect(screen.getAllByRole('textbox', { name: 'key' }).length).toEqual(1);
   });
 
   it('delete stream property', async () => {
@@ -184,6 +203,7 @@ describe('QueryForm', () => {
     });
 
     await act(() => {
+      userEvent.paste(screen.getByRole('textbox', { name: 'key' }), 'test');
       userEvent.click(
         screen.getByRole('button', { name: 'Add Stream Property' })
       );

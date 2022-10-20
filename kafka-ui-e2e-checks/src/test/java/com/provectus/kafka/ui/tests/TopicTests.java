@@ -49,10 +49,11 @@ public class TopicTests extends BaseTest {
                 .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
-                .pressCreateNewTopic();
+                .clickAddTopicBtn();
         topicCreateEditForm
+                .waitUntilScreenReady()
                 .setTopicName(topicToCreate.getName())
-                .sendData();
+                .clickCreateTopicBtn();
         topicDetails
                 .waitUntilScreenReady();
         naviSideBar
@@ -79,12 +80,13 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openEditSettings();
         topicCreateEditForm
+                .waitUntilScreenReady()
                 .selectCleanupPolicy(TOPIC_FOR_UPDATE.getCompactPolicyValue())
                 .setMinInsyncReplicas(10)
                 .setTimeToRetainDataInMs(TOPIC_FOR_UPDATE.getTimeToRetainData())
                 .setMaxSizeOnDiskInGB(TOPIC_FOR_UPDATE.getMaxSizeOnDisk())
                 .setMaxMessageBytes(TOPIC_FOR_UPDATE.getMaxMessageBytes())
-                .sendData();
+                .clickCreateTopicBtn();
         topicDetails
                 .waitUntilScreenReady();
         naviSideBar
@@ -139,8 +141,9 @@ public class TopicTests extends BaseTest {
         topicDetails
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)
-                .clickOnButton("Produce Message");
+                .clickProduceMessageBtn();
         produceMessagePanel
+                .waitUntilScreenReady()
                 .setContentFiled(TOPIC_FOR_UPDATE.getMessageContent())
                 .setKeyField(TOPIC_FOR_UPDATE.getMessageKey())
                 .submitProduceMessage();
