@@ -8,7 +8,7 @@ import List from 'components/Connect/List/List';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
-import { clusterConnectConnectorPath, clusterConnectorsPath } from 'lib/paths';
+import { clusterConnectorsPath } from 'lib/paths';
 import { useConnectors, useDeleteConnector } from 'lib/hooks/api/kafkaConnect';
 
 const mockedUsedNavigate = jest.fn();
