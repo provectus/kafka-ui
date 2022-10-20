@@ -22,6 +22,7 @@ jobs:
           helm_version_new=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
           echo $helm_version_new
           pwd
+          git fetch
           git checkout origin/master
           helm_version_old=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
           echo $helm_version_old
