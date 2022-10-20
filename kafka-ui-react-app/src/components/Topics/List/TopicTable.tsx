@@ -13,6 +13,27 @@ import { TopicTitleCell } from './TopicTitleCell';
 import ActionsCell from './ActionsCell';
 import BatchActionsbar from './BatchActionsBar';
 
+import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+
+function formatThroughput(row: Topic) {
+  const production = row.bytesInPerSec;
+  const consumption = row.bytesOutPerSec;
+  if (production === undefined && consumption === undefined) {
+    return (<tr>N/A</tr>);
+  } else if (production === undefined) {
+    return (<tr>out: <BytesFormatted value={consumption}/> </tr>);
+  } else if (consumption === undefined)  {
+    return (<tr>in: <BytesFormatted value={production}/></tr>);
+  } else {
+    return (
+      <div>
+        <tr>in: <BytesFormatted value={production}/></tr>
+        <tr>out: <BytesFormatted value={consumption}/></tr>
+      </div>
+    );
+  }
+}
+
 const TopicTable: React.FC = () => {
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
   const [searchParams] = useSearchParams();
@@ -84,6 +105,14 @@ const TopicTable: React.FC = () => {
         header: 'Size',
         accessorKey: 'segmentSize',
         cell: SizeCell,
+      },
+      {
+        header: 'Throughput',
+        accessorFn: row => formatThroughput(row),
+        enableSorting: false,
+        cell: ({ getValue }) => {
+          return getValue();
+        },
       },
       {
         id: 'actions',
