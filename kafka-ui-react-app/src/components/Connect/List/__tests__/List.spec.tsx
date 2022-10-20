@@ -50,24 +50,11 @@ describe('Connectors List', () => {
       expect(screen.getAllByRole('row').length).toEqual(3);
     });
 
-    it('opens broker when row clicked', async () => {
+    it('contains link to broker', async () => {
       renderComponent();
-      await act(() => {
-        userEvent.click(
-          screen.getByRole('row', {
-            name: 'hdfs-source-connector first SOURCE FileStreamSource a b c RUNNING 2 of 2',
-          })
-        );
-      });
-      await waitFor(() =>
-        expect(mockedUsedNavigate).toBeCalledWith(
-          clusterConnectConnectorPath(
-            clusterName,
-            'first',
-            'hdfs-source-connector'
-          )
-        )
-      );
+      expect(
+        screen.getByRole('link', { name: 'hdfs-source-connector' })
+      ).toBeInTheDocument();
     });
   });
 
