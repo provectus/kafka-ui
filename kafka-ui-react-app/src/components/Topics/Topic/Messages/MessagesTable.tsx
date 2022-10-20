@@ -39,7 +39,7 @@ const MessagesTable: React.FC = () => {
             onPreview={() => setPreviewFor('key')}
           />
           <TableHeaderCell
-            title="Content"
+            title="Value"
             previewText={`Preview ${
               contentFilters.length ? `(${contentFilters.length} selected)` : ''
             }`}

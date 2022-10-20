@@ -7,25 +7,36 @@ import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
+import java.util.Arrays;
+
 import static com.codeborne.selenide.Selenide.*;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
 @ExtensionMethod({WaitUtils.class})
 public class TopicDetails {
 
+    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
+    protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
+    protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
+    protected SelenideElement editSettingsTab = $x("//li[@role][contains(text(),'Edit settings')]");
+    protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
+    protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
+    protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
+    protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
 
     @Step
     public TopicDetails waitUntilScreenReady() {
-        $(By.linkText("Overview")).shouldBe(Condition.visible);
+        loadingSpinner.shouldBe(Condition.disappear);
+        Arrays.asList(overviewTab,messagesTab).forEach(element -> element.shouldBe(Condition.visible));
         return this;
     }
 
     @Step
-    public TopicCreateEditForm openEditSettings() {
+    public TopicDetails openEditSettings() {
         clickByJavaScript(dotMenuBtn);
-        $x("//li[@role][text()='Edit settings']").click();
-        return new TopicCreateEditForm();
+        editSettingsTab.shouldBe(Condition.visible).click();
+        return this;
     }
 
     @Step
@@ -35,19 +46,18 @@ public class TopicDetails {
     }
 
     @Step
-    public TopicsList deleteTopic() {
+    public TopicDetails deleteTopic() {
         clickByJavaScript(dotMenuBtn);
-        $x("//ul[@role='menu']//div[text()='Remove Topic']").click();
-        SelenideElement confirmButton = $x("//div[@role=\"dialog\"]//button[text()='Confirm']");
-        confirmButton.shouldBe(Condition.enabled).click();
-        confirmButton.shouldBe(Condition.disappear);
-        return new TopicsList();
+        removeTopicBtn.shouldBe(Condition.visible).click();
+        confirmBtn.shouldBe(Condition.enabled).click();
+        confirmBtn.shouldBe(Condition.disappear);
+        return this;
     }
 
     @Step
-    public ProduceMessagePanel clickOnButton(String buttonName) {
-        clickByJavaScript($(By.xpath(String.format("//div//button[text()='%s']", buttonName))));
-        return new ProduceMessagePanel();
+    public TopicDetails clickProduceMessageBtn() {
+        clickByJavaScript(produceMessageBtn);
+        return this;
     }
 
     @Step
@@ -57,7 +67,7 @@ public class TopicDetails {
 
     @Step
     public boolean isContentMessageVisible(String contentMessage) {
-        return contentMessage.matches($x("//html//div[@id='root']/div/main//table//p").getText().trim());
+        return contentMessage.matches(contentMessageTab.getText().trim());
     }
 
     private enum DotMenuHeaderItems {

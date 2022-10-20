@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormError } from 'components/common/Input/Input.styled';
 import { ErrorMessage } from '@hookform/error-message';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
@@ -46,6 +46,7 @@ const QueryForm: React.FC<Props> = ({
   const {
     handleSubmit,
     setValue,
+    getValues,
     control,
     formState: { errors },
   } = useForm<FormValues>({
@@ -63,6 +64,16 @@ const QueryForm: React.FC<Props> = ({
     control,
     name: 'streamsProperties',
   });
+
+  const handleAddNewProperty = useCallback(() => {
+    if (
+      getValues().streamsProperties.every((prop) => {
+        return prop.key;
+      })
+    ) {
+      append({ key: '', value: '' });
+    }
+  }, []);
 
   return (
     <S.QueryWrapper>
@@ -164,7 +175,7 @@ const QueryForm: React.FC<Props> = ({
               type="button"
               buttonSize="M"
               buttonType="secondary"
-              onClick={() => append({ key: '', value: '' })}
+              onClick={handleAddNewProperty}
             >
               <PlusIcon />
               Add Stream Property

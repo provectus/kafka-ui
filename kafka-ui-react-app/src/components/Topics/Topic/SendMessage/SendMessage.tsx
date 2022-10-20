@@ -154,7 +154,7 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
             />
           </S.Column>
           <S.Column>
-            <InputLabel>Content Serde</InputLabel>
+            <InputLabel>Value Serde</InputLabel>
             <Controller
               control={control}
               name="valueSerde"
@@ -190,7 +190,7 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
             />
           </S.Column>
           <S.Column>
-            <InputLabel>Content</InputLabel>
+            <InputLabel>Value</InputLabel>
             <Controller
               control={control}
               name="content"
