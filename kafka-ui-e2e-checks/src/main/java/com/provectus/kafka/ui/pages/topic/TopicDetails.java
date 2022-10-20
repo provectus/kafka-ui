@@ -35,6 +35,18 @@ public class TopicDetails {
     }
 
     @Step
+    public TopicDetails openDotPartitionIdMenu() {
+        $(By.cssSelector("button.sc-hOqruk.eYtACj")).shouldBe(Condition.visible.because("dot menu invisible")).click();
+        return this;
+    }
+
+    @Step
+    public TopicDetails selectDotPartitionIdMenuItem(DotPartitionIdMenu menuItems) {
+        $(By.xpath(String.format(("//div[contains(text(), '%s')]"), menuItems.getValue()))).shouldBe(Condition.visible.because("Clear Messages invisible")).click();
+        return this;
+    }
+
+    @Step
     public TopicsList deleteTopic() {
         clickByJavaScript(dotMenuBtn);
         $x("//ul[@role='menu']//div[text()='Remove Topic']").click();
@@ -60,6 +72,11 @@ public class TopicDetails {
         return contentMessage.matches($x("//html//div[@id='root']/div/main//table//p").getText().trim());
     }
 
+    @Step
+    public String MessageCountAmount() {
+        return $(By.xpath("//table[@class=\"sc-euMpEg khVwpf\"]/tbody/tr/td[5]")).getText();
+    }
+
     private enum DotMenuHeaderItems {
         EDIT_SETTINGS("Edit settings"),
         CLEAR_MESSAGES("Clear messages"),
@@ -78,6 +95,26 @@ public class TopicDetails {
         @Override
         public String toString() {
             return "DotMenuHeaderItems{" + "value='" + value + '\'' + '}';
+        }
+    }
+
+    public enum DotPartitionIdMenu {
+        CLEAR_MESSAGES("Clear messages");
+
+
+        private final String value;
+
+        DotPartitionIdMenu(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return "DotPartitionIdMenuItems{" + "value='" + value + '\'' + '}';
         }
     }
 

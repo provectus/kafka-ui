@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
+import static com.provectus.kafka.ui.pages.topic.TopicDetails.DotPartitionIdMenu.CLEAR_MESSAGES;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
@@ -23,18 +24,28 @@ public class TopicTests extends BaseTest {
     private static final String SUITE_TITLE = "Topics";
     private static final Topic TOPIC_FOR_UPDATE = new Topic()
             .setName("topic-to-update")
-            .setCompactPolicyValue("Compact")
+//            .setCleanupPolicyValue("Compact")
             .setTimeToRetainData("604800001")
             .setMaxSizeOnDisk("20 GB")
             .setMaxMessageBytes("1000020")
             .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
             .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+
+    private static final Topic TOPIC_FOR_CLEAR_MESSAGES = new Topic()
+            .setName("topic-with-clean-message-attribute")
+//            .setCleanupPolicyValue("Delete")
+            .setTimeToRetainData("604800001")
+            .setMaxSizeOnDisk("10 GB")
+            .setMaxMessageBytes("1000012")
+            .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
+            .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+
     private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete");
     private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
     @BeforeAll
     public void beforeAll() {
-        TOPIC_LIST.addAll(List.of(TOPIC_FOR_UPDATE, TOPIC_FOR_DELETE));
+        TOPIC_LIST.addAll(List.of(TOPIC_FOR_UPDATE, TOPIC_FOR_DELETE, TOPIC_FOR_CLEAR_MESSAGES));
         TOPIC_LIST.forEach(topic -> apiHelper.createTopic(CLUSTER_NAME, topic.getName()));
     }
 
@@ -79,7 +90,7 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openEditSettings();
         topicCreateEditForm
-                .selectCleanupPolicy(TOPIC_FOR_UPDATE.getCompactPolicyValue())
+                .selectCleanupPolicy("Compact")
                 .setMinInsyncReplicas(10)
                 .setTimeToRetainDataInMs(TOPIC_FOR_UPDATE.getTimeToRetainData())
                 .setMaxSizeOnDiskInGB(TOPIC_FOR_UPDATE.getMaxSizeOnDisk())
@@ -96,7 +107,7 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openEditSettings();
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("Cleanup Policy").isEqualTo(TOPIC_FOR_UPDATE.getCompactPolicyValue());
+        softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("Cleanup Policy").isEqualTo("Compact");
         softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("Time to retain").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
         softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("Max size on disk").isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk());
         softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("Max message bytes").isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
@@ -150,6 +161,37 @@ public class TopicTests extends BaseTest {
         softly.assertThat(topicDetails.isKeyMessageVisible((TOPIC_FOR_UPDATE.getMessageKey()))).withFailMessage("isKeyMessageVisible()").isTrue();
         softly.assertThat(topicDetails.isContentMessageVisible((TOPIC_FOR_UPDATE.getMessageContent()).trim())).withFailMessage("isContentMessageVisible()").isTrue();
         softly.assertAll();
+    }
+
+
+    //TODO:Uncomment last assertion after bug https://github.com/provectus/kafka-ui/issues/2778 fix
+    @DisplayName("clear message")
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(19)
+    @Test
+    void clearMessage() {
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
+                .waitUntilScreenReady()
+                .openTopic(TOPIC_FOR_CLEAR_MESSAGES.getName());
+        topicDetails
+                .waitUntilScreenReady()
+                .openTopicMenu(TopicDetails.TopicMenu.OVERVIEW)
+                .clickOnButton("Produce Message");
+        produceMessagePanel
+                .setContentFiled(TOPIC_FOR_CLEAR_MESSAGES.getMessageContent())
+                .setKeyField(TOPIC_FOR_CLEAR_MESSAGES.getMessageKey())
+                .submitProduceMessage();
+        topicDetails
+                .waitUntilScreenReady();
+        Assertions.assertEquals(topicDetails.MessageCountAmount(),"1");
+        topicDetails
+                .openDotPartitionIdMenu()
+                .waitUntilScreenReady()
+                .selectDotPartitionIdMenuItem(CLEAR_MESSAGES);
+//        Assertions.assertEquals(topicDetails.MessageCountAmount(),"0");
     }
 
     @AfterAll
