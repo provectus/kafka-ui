@@ -18,19 +18,19 @@ function formatThroughput(row: Topic) {
   const production = row.bytesInPerSec;
   const consumption = row.bytesOutPerSec;
   if (production === undefined && consumption === undefined) {
-    return <tr>N/A</tr>;
+    return <tr><td>N/A</td></tr>;
   }
   if (production === undefined) {
     return (
       <tr>
-        out: <BytesFormatted value={consumption} />
+        <td>out: <BytesFormatted value={consumption} />></td>
       </tr>
     );
   }
   if (consumption === undefined) {
     return (
       <tr>
-        in: <BytesFormatted value={production} />
+        <td>in: <BytesFormatted value={production} /></td>
       </tr>
     );
   }
@@ -38,10 +38,10 @@ function formatThroughput(row: Topic) {
   return (
     <div>
       <tr>
-        in: <BytesFormatted value={production} />
+        <td>in: <BytesFormatted value={production} /></td>
       </tr>
       <tr>
-        out: <BytesFormatted value={consumption} />
+        <td>out: <BytesFormatted value={consumption} /></td>
       </tr>
     </div>
   );
