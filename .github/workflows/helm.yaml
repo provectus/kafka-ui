@@ -19,7 +19,6 @@ jobs:
       - name: Check version
         shell: bash
         run: |
-          git fetch
           git checkout master
           helm_version_old=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
           git checkout $GITHUB_HEAD_REF
