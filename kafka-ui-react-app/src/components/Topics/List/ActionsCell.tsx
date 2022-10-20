@@ -19,7 +19,7 @@ import {
 } from 'lib/hooks/api/topics';
 
 const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
-  const { name, cleanUpPolicy } = row.original;
+  const { name, internal, cleanUpPolicy } = row.original;
 
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
@@ -42,7 +42,7 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
   const isCleanupDisabled = cleanUpPolicy !== CleanUpPolicy.DELETE;
 
   return (
-    <Dropdown disabled={disabled}>
+    <Dropdown disabled={internal || disabled}>
       <DropdownItem
         disabled={isCleanupDisabled}
         onClick={clearTopicMessagesHandler}
