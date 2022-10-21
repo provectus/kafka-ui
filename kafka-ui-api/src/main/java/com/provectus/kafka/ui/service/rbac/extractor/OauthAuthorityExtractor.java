@@ -12,7 +12,7 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
 
   @Override
   public boolean isApplicable(String provider) {
-    return false; // TODO
+    return false; // TODO #2844
   }
 
   @Override
@@ -25,7 +25,7 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
       throw new RuntimeException();
     }
 
-    return Mono.just(List.of(principal.getName())); // TODO
+    return Mono.just(List.of(principal.getName())); // TODO #2844
   }
 
 }

@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.model.rbac;
 
 import com.provectus.kafka.ui.model.rbac.permission.ClusterAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
-import com.provectus.kafka.ui.model.rbac.permission.ConnectorAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
 import com.provectus.kafka.ui.model.rbac.permission.KsqlAction;
 import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
@@ -29,7 +28,6 @@ public class AccessContext {
   Collection<ConnectAction> connectActions;
 
   String connector;
-  Collection<ConnectorAction> connectorActions;
 
   String schema;
   Collection<SchemaAction> schemaActions;
@@ -51,7 +49,6 @@ public class AccessContext {
     private String connect;
     private Collection<ConnectAction> connectActions = Collections.emptySet();
     private String connector;
-    private Collection<ConnectorAction> connectorActions = Collections.emptySet();
     private String schema;
     private Collection<SchemaAction> schemaActions = Collections.emptySet();
     private Collection<KsqlAction> ksqlActions = Collections.emptySet();
@@ -108,12 +105,6 @@ public class AccessContext {
       return this;
     }
 
-    public AccessContextBuilder connectorActions(ConnectorAction... actions) {
-      Assert.isTrue(actions.length > 0, "actions not present");
-      this.connectorActions = List.of(actions);
-      return this;
-    }
-
     public AccessContextBuilder schema(String schema) {
       this.schema = schema;
       return this;
@@ -136,7 +127,7 @@ public class AccessContext {
           topic, topicActions,
           consumerGroup, consumerGroupActions,
           connect, connectActions,
-          connector, connectorActions,
+          connector,
           schema, schemaActions,
           ksqlActions);
     }

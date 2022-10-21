@@ -5,7 +5,9 @@ import org.jetbrains.annotations.Nullable;
 
 public enum ConnectAction implements PermissibleAction {
 
-  VIEW
+  VIEW,
+  EDIT,
+  CREATE
 
   ;
 

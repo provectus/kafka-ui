@@ -8,6 +8,6 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class CognitoCondition extends AbstractProviderCondition implements Condition {
   @Override
   public boolean matches(final ConditionContext context, final AnnotatedTypeMetadata metadata) {
-    return getRegisteredProviders(context.getEnvironment()).stream().anyMatch(a -> a.equalsIgnoreCase("cognito"));
+    return getRegisteredProvidersTypes(context.getEnvironment()).stream().anyMatch(a -> a.equalsIgnoreCase("cognito"));
   }
 }

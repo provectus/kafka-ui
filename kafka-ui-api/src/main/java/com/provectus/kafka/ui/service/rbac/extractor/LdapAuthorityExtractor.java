@@ -12,12 +12,12 @@ public class LdapAuthorityExtractor implements ProviderAuthorityExtractor {
 
   @Override
   public boolean isApplicable(String provider) {
-    return false; // TODO
+    return false; // TODO #2752
   }
 
   @Override
   public Mono<List<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams) {
-    return Mono.just(Collections.emptyList()); // TODO
+    return Mono.just(Collections.emptyList()); // TODO #2752
   }
 
 }

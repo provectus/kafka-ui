@@ -15,8 +15,6 @@ import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
 import com.provectus.kafka.ui.service.SchemaRegistryService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -211,18 +209,10 @@ public class SchemasController extends AbstractController implements SchemasApi 
                                                                     @Valid Integer perPage,
                                                                     @Valid String search,
                                                                     ServerWebExchange serverWebExchange) {
-
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
-        .cluster(clusterName)
-        .clusterActions(VIEW)
-        .schema(search) // TODO !!!
-        .schemaActions(SchemaAction.VIEW)
-        .build());
-
-    Mono<ResponseEntity<SchemaSubjectsResponseDTO>> job = schemaRegistryService
+    return schemaRegistryService
         .getAllSubjectNames(getCluster(clusterName))
         .flatMapMany(Flux::fromArray)
-        .filterWhen(accessControlService::isSchemaAccessible)
+        .filterWhen(schema -> accessControlService.isSchemaAccessible(schema, clusterName))
         .collectList()
         .flatMap(subjects -> {
           int pageSize = perPage != null && perPage > 0 ? perPage : DEFAULT_PAGE_SIZE;
@@ -240,9 +230,8 @@ public class SchemasController extends AbstractController implements SchemasApi 
               .collect(Collectors.toList());
           return schemaRegistryService.getAllLatestVersionSchemas(getCluster(clusterName), subjectsToRender)
               .map(a -> new SchemaSubjectsResponseDTO().pageCount(totalPages).schemas(a));
-        }).map(ResponseEntity::ok);
-
-    return validateAccess.then(job);
+        })
+        .map(ResponseEntity::ok);
   }
 
   @Override
@@ -253,7 +242,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
         .clusterActions(VIEW)
-        .schemaActions(SchemaAction.MODIFY_COMPATIBILITY)
+        .schemaActions(SchemaAction.MODIFY_GLOBAL_COMPATIBILITY)
         .build());
 
     log.info("Updating schema compatibility globally");
@@ -273,7 +262,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
         .clusterActions(VIEW)
-        .schemaActions(SchemaAction.MODIFY_COMPATIBILITY)
+        .schemaActions(SchemaAction.EDIT)
         .build());
 
     log.info("Updating schema compatibility for subject: {}", subject);

@@ -114,8 +114,10 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
               final OAuthProperties.OAuth2Provider provider =
                   properties.getClient().get(cr.getRegistrationId());
 
-              if (provider.getCustomParams().get("type").equalsIgnoreCase("google")) { // TODO
-                String allowedDomain = provider.getCustomParams().get("allowedDomain");
+              Map<String, String> customParams = provider.getCustomParams();
+
+              if (customParams.get("type").equalsIgnoreCase("google")) { // TODO
+                String allowedDomain = customParams.get("allowedDomain");
                 if (StringUtils.isNotEmpty(allowedDomain)) {
                   final String newUri =
                       cr.getProviderDetails().getAuthorizationUri() + "?hd=" + allowedDomain;

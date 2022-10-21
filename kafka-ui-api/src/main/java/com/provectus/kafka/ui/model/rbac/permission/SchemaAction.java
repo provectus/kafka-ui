@@ -9,7 +9,7 @@ public enum SchemaAction implements PermissibleAction {
   CREATE,
   DELETE,
   EDIT,
-  MODIFY_COMPATIBILITY
+  MODIFY_GLOBAL_COMPATIBILITY
 
   ;
 

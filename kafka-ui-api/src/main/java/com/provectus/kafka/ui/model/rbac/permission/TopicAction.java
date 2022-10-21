@@ -17,8 +17,6 @@ public enum TopicAction implements PermissibleAction {
   MESSAGES_PRODUCE,
   MESSAGES_DELETE,
 
-  SCHEMA_VIEW
-
   ;
 
   @Nullable

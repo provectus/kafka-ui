@@ -198,7 +198,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
           return topicsService.loadTopics(getCluster(clusterName), topicsPage)
               .flatMapMany(Flux::fromIterable)
-              .filterWhen(accessControlService::isTopicAccessible)
+              .filterWhen(dto -> accessControlService.isTopicAccessible(dto, clusterName))
               .collectList()
               .map(topicsToRender ->
                   new TopicsResponseDTO()

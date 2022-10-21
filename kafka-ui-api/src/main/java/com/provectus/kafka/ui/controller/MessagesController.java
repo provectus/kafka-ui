@@ -4,7 +4,6 @@ import static com.provectus.kafka.ui.model.rbac.permission.ClusterAction.VIEW;
 import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.MESSAGES_DELETE;
 import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.MESSAGES_PRODUCE;
 import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.MESSAGES_READ;
-import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.SCHEMA_VIEW;
 import static com.provectus.kafka.ui.serde.api.Serde.Target.KEY;
 import static com.provectus.kafka.ui.serde.api.Serde.Target.VALUE;
 import static java.util.stream.Collectors.toMap;
@@ -19,6 +18,7 @@ import com.provectus.kafka.ui.model.SerdeUsageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicSerdeSuggestionDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
+import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.DeserializationService;
 import com.provectus.kafka.ui.service.MessagesService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
@@ -162,7 +162,7 @@ public class MessagesController extends AbstractController implements MessagesAp
         .cluster(clusterName)
         .clusterActions(VIEW)
         .topic(topicName)
-        .topicActions(SCHEMA_VIEW) // TODO ??
+        .topicActions(TopicAction.VIEW)
         .build());
 
     return validateAccess.then(

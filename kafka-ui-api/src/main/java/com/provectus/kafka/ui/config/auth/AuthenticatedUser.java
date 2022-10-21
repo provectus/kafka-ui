@@ -4,7 +4,6 @@ import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
-@RequiredArgsConstructor
 @Value
 public class AuthenticatedUser {
 

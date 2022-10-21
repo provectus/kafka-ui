@@ -8,16 +8,12 @@ import com.google.common.cache.CacheBuilder;
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
 import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
-import com.provectus.kafka.ui.model.ConsumerGroupDTO;
-import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.InternalTopic;
-import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.Permission;
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.permission.ClusterAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
-import com.provectus.kafka.ui.model.rbac.permission.ConnectorAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
 import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
@@ -34,7 +30,6 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -44,7 +39,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -53,10 +50,10 @@ import reactor.core.publisher.Mono;
 public class AccessControlService {
 
   private final Environment environment;
+  private final InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
 
   private final Cache<String, AuthenticatedUser> cachedUsers = CacheBuilder.newBuilder() // TODO cache supporting flux
       .maximumSize(10000)
-      .expireAfterAccess(5, TimeUnit.MINUTES) // todo configurable
       .build();
   private Set<ProviderAuthorityExtractor> extractors;
   private List<Role> roles;
@@ -73,6 +70,7 @@ public class AccessControlService {
 
     if (Files.notExists(rolesFilePath)) {
       log.error("Roles file path provided but the file doesn't exist");
+      log.trace("Roles file path: [{}]", rolesFilePath);
       throw new IllegalArgumentException();
     }
 
@@ -118,6 +116,10 @@ public class AccessControlService {
       throw new RuntimeException("Can't deserialize roles file", e);
     }
 
+    if (!clientRegistrationRepository.iterator().hasNext() && !roles.isEmpty()) {
+      log.error("Roles are configured but no authentication methods are present. Authentication might fail.");
+    }
+
   }
 
   public AccessContext.AccessContextBuilder builder() {
@@ -156,19 +158,19 @@ public class AccessControlService {
 
   private Mono<AuthenticatedUser> getCachedUser(String principal) {
     AuthenticatedUser user = cachedUsers.getIfPresent(principal);
-    if (user != null) {
-      return Mono.just(user);
+
+    if (user == null) {
+      throw new IllegalArgumentException("User not found in cache");
     }
 
-    return Mono.just(new AuthenticatedUser(principal, Collections.emptySet()))
-        .doOnNext(u -> cachedUsers.put(principal, u));
+    return Mono.just(user);
   }
 
   private boolean isClusterAccessible(AccessContext context, AuthenticatedUser user) {
-    if (context.getClusterActions().isEmpty()) {
-      log.trace("actions are empty, skipping");
+    if (context.getCluster() == null && context.getClusterActions().isEmpty()) {
       return true;
     }
+    Assert.isTrue(!context.getClusterActions().isEmpty(), "actions are empty");
 
     if (context.getCluster() == null) {
       throw new IllegalArgumentException();
@@ -179,7 +181,7 @@ public class AccessControlService {
         .map(a -> a.toString().toLowerCase())
         .collect(Collectors.toSet());
 
-    return isAccessible("cluster", null, user, context, requiredActions);
+    return isAccessible("cluster", context.getCluster(), user, context, requiredActions);
   }
 
   public Mono<Boolean> isClusterAccessible(ClusterDTO cluster) {
@@ -193,14 +195,10 @@ public class AccessControlService {
   }
 
   private boolean isTopicAccessible(AccessContext context, AuthenticatedUser user) {
-    if (context.getTopicActions().isEmpty()) {
-      log.trace("actions are empty, skipping");
+    if (context.getTopic() == null && context.getTopicActions().isEmpty()) {
       return true;
     }
-
-    if (context.getTopic() == null) {
-      throw new IllegalArgumentException();
-    }
+    Assert.isTrue(!context.getTopicActions().isEmpty(), "actions are empty");
 
     Set<String> requiredActions = context.getTopicActions()
         .stream()
@@ -210,9 +208,11 @@ public class AccessControlService {
     return isAccessible("topic", context.getTopic(), user, context, requiredActions);
   }
 
-  public Mono<Boolean> isTopicAccessible(InternalTopic dto) {
+  public Mono<Boolean> isTopicAccessible(InternalTopic dto, String clusterName) {
     AccessContext accessContext = AccessContext
         .builder()
+        .cluster(clusterName)
+        .clusterActions(ClusterAction.VIEW)
         .topic(dto.getName())
         .topicActions(TopicAction.VIEW)
         .build();
@@ -221,14 +221,10 @@ public class AccessControlService {
   }
 
   private boolean isConsumerGroupAccessible(AccessContext context, AuthenticatedUser user) {
-    if (context.getConsumerGroupActions().isEmpty()) {
-      log.trace("actions are empty, skipping");
+    if (context.getConsumerGroup() == null && context.getConsumerGroupActions().isEmpty()) {
       return true;
     }
-
-    if (context.getConsumerGroup() == null) {
-      throw new IllegalArgumentException();
-    }
+    Assert.isTrue(!context.getConsumerGroupActions().isEmpty(), "actions are empty");
 
     Set<String> requiredActions = context.getConsumerGroupActions()
         .stream()
@@ -238,9 +234,11 @@ public class AccessControlService {
     return isAccessible("consumer", context.getConsumerGroup(), user, context, requiredActions);
   }
 
-  public Mono<Boolean> isConsumerGroupAccessible(String groupId) {
+  public Mono<Boolean> isConsumerGroupAccessible(String groupId, String clusterName) {
     AccessContext accessContext = AccessContext
         .builder()
+        .cluster(clusterName)
+        .clusterActions(ClusterAction.VIEW)
         .consumerGroup(groupId)
         .consumerGroupActions(ConsumerGroupAction.VIEW)
         .build();
@@ -249,14 +247,10 @@ public class AccessControlService {
   }
 
   private boolean isSchemaAccessible(AccessContext context, AuthenticatedUser user) {
-    if (context.getSchemaActions().isEmpty()) {
-      log.trace("actions are empty, skipping");
+    if (context.getSchema() == null && context.getSchemaActions().isEmpty()) {
       return true;
     }
-
-    if (context.getSchema() == null) {
-      throw new IllegalArgumentException();
-    }
+    Assert.isTrue(!context.getSchemaActions().isEmpty(), "actions are empty");
 
     Set<String> requiredActions = context.getSchemaActions()
         .stream()
@@ -266,9 +260,11 @@ public class AccessControlService {
     return isAccessible("schema", context.getSchema(), user, context, requiredActions);
   }
 
-  public Mono<Boolean> isSchemaAccessible(String schema) {
+  public Mono<Boolean> isSchemaAccessible(String schema, String clusterName) {
     AccessContext accessContext = AccessContext
         .builder()
+        .cluster(clusterName)
+        .clusterActions(ClusterAction.VIEW)
         .schema(schema)
         .schemaActions(SchemaAction.VIEW)
         .build();
@@ -277,14 +273,10 @@ public class AccessControlService {
   }
 
   private boolean isConnectAccessible(AccessContext context, AuthenticatedUser user) {
-    if (context.getConnectActions().isEmpty()) {
-      log.trace("actions are empty, skipping");
+    if (context.getConnect() == null && context.getConnectActions().isEmpty()) {
       return true;
     }
-
-    if (context.getConnect() == null) {
-      throw new IllegalArgumentException();
-    }
+    Assert.isTrue(!context.getConnectActions().isEmpty(), "actions are empty");
 
     Set<String> requiredActions = context.getConnectActions()
         .stream()
@@ -294,13 +286,15 @@ public class AccessControlService {
     return isAccessible("connect", context.getConnect(), user, context, requiredActions);
   }
 
-  public Mono<Boolean> isConnectAccessible(ConnectDTO dto) {
-    return isConnectAccessible(dto.getName());
+  public Mono<Boolean> isConnectAccessible(ConnectDTO dto, String clusterName) {
+    return isConnectAccessible(dto.getName(), clusterName);
   }
 
-  public Mono<Boolean> isConnectAccessible(String connectName) {
+  public Mono<Boolean> isConnectAccessible(String connectName, String clusterName) {
     AccessContext accessContext = AccessContext
         .builder()
+        .cluster(clusterName)
+        .clusterActions(ClusterAction.VIEW)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
         .build();
@@ -313,13 +307,14 @@ public class AccessControlService {
     return isConnectAccessible(context, user);
   }
 
-  public Mono<Boolean> isConnectorAccessible(String connectName, String connectorName) {
+  public Mono<Boolean> isConnectorAccessible(String connectName, String connectorName, String clusterName) {
     AccessContext accessContext = AccessContext
         .builder()
+        .cluster(clusterName)
+        .clusterActions(ClusterAction.VIEW)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
         .connector(connectorName)
-        .connectorActions(ConnectorAction.VIEW)
         .build();
 
     return getCachedUser().map(u -> isConnectorAccessible(accessContext, u));
@@ -327,7 +322,6 @@ public class AccessControlService {
 
   private boolean isKsqlAccessible(AccessContext context, AuthenticatedUser user) {
     if (context.getKsqlActions().isEmpty()) {
-      log.trace("actions are empty, skipping");
       return true;
     }
 
@@ -349,7 +343,7 @@ public class AccessControlService {
 
   private boolean isAccessible(String resourceName, String resourceValue,
                                AuthenticatedUser user, AccessContext context, Set<String> requiredActions) {
-    return roles
+    Set<String> grantedActions = roles
         .stream()
         .filter(filterRole(user))
         .filter(filterCluster(context.getCluster()))
@@ -357,17 +351,19 @@ public class AccessControlService {
         .filter(filterResource(resourceName))
         .filter(filterResourceValue(resourceValue))
         .flatMap(grantedPermission -> grantedPermission.getActions().stream())
-        .allMatch(requiredActions::contains);
+        .collect(Collectors.toSet());
+
+    return grantedActions.containsAll(requiredActions);
   }
 
   private Predicate<Role> filterRole(AuthenticatedUser user) {
     return role -> user.getGroups().contains(role.getName());
   }
 
-  private Predicate<Role> filterCluster(String clusterExp) {
+  private Predicate<Role> filterCluster(String cluster) {
     return grantedRole -> grantedRole.getClusters()
         .stream()
-        .anyMatch(clusterExp::matches);
+        .anyMatch(cluster::equalsIgnoreCase);
   }
 
   private Predicate<Permission> filterResource(String resource) {
@@ -378,7 +374,10 @@ public class AccessControlService {
     if (object == null) {
       return grantedPermission -> true;
     }
-    return grantedPermission -> grantedPermission.getName().matches(object);
+    return grantedPermission -> object.matches(grantedPermission.getName());
   }
 
+  public void evictCache() {
+    cachedUsers.invalidateAll();
+  }
 }

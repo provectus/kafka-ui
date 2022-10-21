@@ -64,7 +64,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
                                                                             ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW, ClusterAction.LOGDIRS_VIEW)
+        .clusterActions(ClusterAction.VIEW)
         .build());
 
     return validateAccess.then(
@@ -96,7 +96,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
                                                                      ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW, ClusterAction.LOGDIRS_EDIT)
+        .clusterActions(ClusterAction.VIEW)
         .build());
 
     return validateAccess.then(

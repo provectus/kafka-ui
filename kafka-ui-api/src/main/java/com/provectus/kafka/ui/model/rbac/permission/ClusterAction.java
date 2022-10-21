@@ -6,10 +6,7 @@ import org.jetbrains.annotations.Nullable;
 public enum ClusterAction implements PermissibleAction {
 
   VIEW,
-  EDIT,
-
-  LOGDIRS_VIEW,
-  LOGDIRS_EDIT
+  EDIT
 
   ;
 

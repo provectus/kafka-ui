@@ -1789,6 +1789,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TimeStampFormat'
+
+  /api/access/permissions:
+    get:
+      tags:
+        - Access
+      summary: get user permissions
+      operationId: getPermissions
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserPermission'
+
+  /api/access/evictCache:
+    post:
+      tags:
+        - Access
+      summary: evict permissions cache
+      operationId: evictCache
+      responses:
+        200:
+          description: OK
+
 components:
   schemas:
     TopicSerdeSuggestion:
@@ -3214,3 +3241,15 @@ components:
         - COMPACT
         - COMPACT_DELETE
         - UNKNOWN
+
+    UserPermission:
+      type: object
+      properties:
+        resource:
+          type: string
+        value:
+          type: string
+        actions:
+          type: array
+          items:
+            type: string

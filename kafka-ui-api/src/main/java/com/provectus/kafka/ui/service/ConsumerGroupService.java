@@ -134,7 +134,7 @@ public class ConsumerGroupService {
                     .collect(Collectors.toList())
             )
                 .flatMapMany(Flux::fromIterable)
-                .filterWhen(cg -> accessControlService.isConsumerGroupAccessible(cg.getGroupId()))
+                .filterWhen(cg -> accessControlService.isConsumerGroupAccessible(cg.getGroupId(), cluster.getName()))
                 .collect(Collectors.toList())
                 .map(cgs -> new ConsumerGroupsPage(
                 cgs,

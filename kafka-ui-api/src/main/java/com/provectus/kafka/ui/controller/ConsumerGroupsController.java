@@ -53,7 +53,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
 
     Flux<ConsumerGroupDTO> flux = consumerGroupService.getAllConsumerGroups(getCluster(clusterName))
         .flatMapMany(Flux::fromIterable)
-        .filterWhen(cg -> accessControlService.isConsumerGroupAccessible(cg.getGroupId()))
+        .filterWhen(cg -> accessControlService.isConsumerGroupAccessible(cg.getGroupId(), clusterName))
         .map(ConsumerGroupMapper::toDto);
 
     return Mono.just(ResponseEntity.ok(flux));
@@ -93,7 +93,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
     Mono<ResponseEntity<Flux<ConsumerGroupDTO>>> job =
         consumerGroupService.getConsumerGroupsForTopic(getCluster(clusterName), topicName)
             .flatMapMany(Flux::fromIterable)
-            .filterWhen(cg -> accessControlService.isConsumerGroupAccessible(cg.getGroupId()))
+            .filterWhen(cg -> accessControlService.isConsumerGroupAccessible(cg.getGroupId(), clusterName))
             .map(ConsumerGroupMapper::toDto)
             .collectList()
             .map(Flux::fromIterable)

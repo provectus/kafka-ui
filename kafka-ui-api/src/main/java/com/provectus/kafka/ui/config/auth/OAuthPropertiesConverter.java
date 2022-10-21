@@ -1,11 +1,11 @@
 package com.provectus.kafka.ui.config.auth;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class OAuthPropertiesConverter {
-
-  private OAuthPropertiesConverter() {
-  }
 
   public static OAuth2ClientProperties convertProperties(final OAuthProperties properties) {
     final OAuth2ClientProperties result = new OAuth2ClientProperties();
