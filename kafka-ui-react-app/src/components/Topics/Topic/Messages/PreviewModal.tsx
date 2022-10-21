@@ -10,7 +10,7 @@ import CancelIcon from 'components/common/Icons/CancelIcon';
 import * as S from './PreviewModal.styled';
 import { PreviewFilter } from './Message';
 
-interface InfoModalProps {
+export interface InfoModalProps {
   values: PreviewFilter[];
   toggleIsOpen(): void;
   setFilters: (payload: PreviewFilter[]) => void;
