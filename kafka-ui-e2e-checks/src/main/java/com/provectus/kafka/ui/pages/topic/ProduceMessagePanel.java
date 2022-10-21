@@ -52,6 +52,7 @@ public class ProduceMessagePanel {
     public ProduceMessagePanel submitProduceMessage() {
         submitBtn.shouldBe(Condition.enabled).click();
         submitBtn.shouldBe(Condition.disappear);
+        refresh();
         return this;
     }
 }

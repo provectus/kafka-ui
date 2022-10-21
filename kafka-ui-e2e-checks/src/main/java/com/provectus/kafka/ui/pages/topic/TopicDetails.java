@@ -17,7 +17,6 @@ public class TopicDetails {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
-
     protected SelenideElement dotPartitionIdMenuBtn = $(By.cssSelector("button.sc-hOqruk.eYtACj"));
     protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
     protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
