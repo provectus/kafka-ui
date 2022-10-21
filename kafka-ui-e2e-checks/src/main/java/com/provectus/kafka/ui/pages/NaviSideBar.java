@@ -5,6 +5,9 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
 import java.time.Duration;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
@@ -43,6 +46,7 @@ public class NaviSideBar {
     }
 
     public enum SideMenuOption {
+        DASHBOARD("Dashboard"),
         BROKERS("Brokers"),
         TOPICS("Topics"),
         CONSUMERS("Consumers"),
@@ -55,5 +59,13 @@ public class NaviSideBar {
         SideMenuOption(String value) {
             this.value = value;
         }
+    }
+
+    public List<SelenideElement> getAllBtns(){
+        SelenideElement clusterElement = $x(String.format(clusterElementLocator, CLUSTER_NAME)).shouldBe(Condition.visible);
+        if (clusterElement.parent().$$x(".//ul").size() == 0) {
+            clusterElement.click();
+        }
+        return Stream.of(SideMenuOption.values()).map(option -> $x(String.format(sideMenuOptionElementLocator, option.value))).collect(Collectors.toList());
     }
 }
