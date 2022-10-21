@@ -91,8 +91,7 @@ const BrokersList: React.FC = () => {
             ) : (
               onlinePartitionCount
             )}
-            <Metrics.LightText>
-              of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
+            <Metrics.LightText> of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
             </Metrics.LightText>
           </Metrics.Indicator>
           <Metrics.Indicator
