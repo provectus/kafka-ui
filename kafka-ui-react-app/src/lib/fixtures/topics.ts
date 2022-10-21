@@ -49,9 +49,79 @@ export const externalTopicPayload = {
   ],
 };
 
+export const internalTopicBytesInPayload = {
+  name: '__internal.topic2',
+  internal: true,
+  partitionCount: 1,
+  replicationFactor: 1,
+  replicas: 1,
+  inSyncReplicas: 1,
+  segmentSize: 0,
+  segmentCount: 1,
+  underReplicatedPartitions: 0,
+  partitions: [
+    {
+      partition: 0,
+      leader: 1,
+      replicas: [{ broker: 1, leader: false, inSync: true }],
+      offsetMax: 0,
+      offsetMin: 0,
+    },
+  ],
+  bytesInPerSec: 0,
+};
+
+export const internalTopicBytesOutPayload = {
+  name: '__internal.topic3',
+  internal: true,
+  partitionCount: 1,
+  replicationFactor: 1,
+  replicas: 1,
+  inSyncReplicas: 1,
+  segmentSize: 0,
+  segmentCount: 1,
+  underReplicatedPartitions: 0,
+  partitions: [
+    {
+      partition: 0,
+      leader: 1,
+      replicas: [{ broker: 1, leader: false, inSync: true }],
+      offsetMax: 0,
+      offsetMin: 0,
+    },
+  ],
+  bytesOutPerSec: 0,
+};
+
+export const internalTopicThroughputPayload = {
+  name: '__internal.topic4',
+  internal: true,
+  partitionCount: 1,
+  replicationFactor: 1,
+  replicas: 1,
+  inSyncReplicas: 1,
+  segmentSize: 0,
+  segmentCount: 1,
+  underReplicatedPartitions: 0,
+  partitions: [
+    {
+      partition: 0,
+      leader: 1,
+      replicas: [{ broker: 1, leader: false, inSync: true }],
+      offsetMax: 0,
+      offsetMin: 0,
+    },
+  ],
+  bytesInPerSec: 0,
+  bytesOutPerSec: 0,
+};
+
 export const topicsPayload: Topic[] = [
   internalTopicPayload,
   externalTopicPayload,
+  internalTopicBytesInPayload,
+  internalTopicBytesOutPayload,
+  internalTopicThroughputPayload,
 ];
 
 export const topicConsumerGroups: ConsumerGroup[] = [
