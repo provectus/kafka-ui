@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
@@ -30,12 +31,8 @@ public class TopicTests extends BaseTest {
             .setMaxMessageBytes("1000020")
             .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
             .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
-
     private static final Topic TOPIC_FOR_MESSAGES = new Topic()
             .setName("topic-with-clean-message-attribute")
-            .setTimeToRetainData("604800001")
-            .setMaxSizeOnDisk("10 GB")
-            .setMaxMessageBytes("1000012")
             .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
             .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
 
@@ -136,7 +133,7 @@ public class TopicTests extends BaseTest {
         Assertions.assertFalse(topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()), "isTopicVisible");
         TOPIC_LIST.remove(TOPIC_FOR_DELETE);
     }
-
+    
     @DisplayName("produce message")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -165,8 +162,7 @@ public class TopicTests extends BaseTest {
         softly.assertAll();
     }
 
-
-    //TODO:Uncomment last assertion after bug https://github.com/provectus/kafka-ui/issues/2778 fix
+    @Issue("Uncomment last assertion after bug https://github.com/provectus/kafka-ui/issues/2778 fix")
     @DisplayName("clear message")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -183,6 +179,7 @@ public class TopicTests extends BaseTest {
                 .openTopicMenu(TopicDetails.TopicMenu.OVERVIEW)
                 .clickProduceMessageBtn();
         produceMessagePanel
+                .waitUntilScreenReady()
                 .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
                 .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
                 .submitProduceMessage();
@@ -192,8 +189,7 @@ public class TopicTests extends BaseTest {
         Assertions.assertEquals(messageAmount,topicDetails.MessageCountAmount());
         topicDetails
                 .openDotPartitionIdMenu()
-                .waitUntilScreenReady()
-                .selectDotPartitionIdMenuItem(CLEAR_MESSAGES);
+                .clickClearMessagesBtn();
 //        Assertions.assertEquals(Integer.toString(Integer.valueOf(messageAmount)-1),topicDetails.MessageCountAmount());
     }
 

@@ -17,6 +17,9 @@ public class TopicDetails {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
+
+    protected SelenideElement dotPartitionIdMenuBtn = $(By.cssSelector("button.sc-hOqruk.eYtACj"));
+    protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
     protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
     protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
     protected SelenideElement editSettingsTab = $x("//li[@role][contains(text(),'Edit settings')]");
@@ -47,13 +50,13 @@ public class TopicDetails {
 
     @Step
     public TopicDetails openDotPartitionIdMenu() {
-        $(By.cssSelector("button.sc-hOqruk.eYtACj")).shouldBe(Condition.visible.because("dot menu invisible")).click();
+        dotPartitionIdMenuBtn.shouldBe(Condition.visible.because("dot menu invisible")).click();
         return this;
     }
 
     @Step
-    public TopicDetails selectDotPartitionIdMenuItem(DotPartitionIdMenu menuItems) {
-        $(By.xpath(String.format(("//div[contains(text(), '%s')]"), menuItems.getValue()))).shouldBe(Condition.visible.because("Clear Messages invisible")).click();
+    public TopicDetails clickClearMessagesBtn() {
+        clearMessagesBtn.shouldBe(Condition.visible.because("Clear Messages invisible")).click();
         return this;
     }
 
