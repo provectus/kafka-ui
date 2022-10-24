@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TopicFormData } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import { ClusterNameRoute, clusterTopicsPath } from 'lib/paths';
@@ -9,6 +9,7 @@ import { topicFormValidationSchema } from 'lib/yupExtended';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import useAppParams from 'lib/hooks/useAppParams';
 import { useCreateTopic } from 'lib/hooks/api/topics';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 
 enum Filters {
   NAME = 'name',
@@ -23,6 +24,8 @@ const New: React.FC = () => {
     mode: 'onChange',
     resolver: yupResolver(topicFormValidationSchema),
   });
+
+  const [isFetched, setIsFetched] = useState<boolean>(false);
 
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const createTopic = useCreateTopic(clusterName);
@@ -39,9 +42,14 @@ const New: React.FC = () => {
   const cleanUpPolicy = params.get(Filters.CLEANUP_POLICY) || 'Delete';
 
   const onSubmit = async (data: TopicFormData) => {
+    setIsFetched(true);
     await createTopic.mutateAsync(data);
     navigate(`../${data.name}`);
   };
+
+  if (isFetched) {
+    return <PageLoader />;
+  }
 
   return (
     <>

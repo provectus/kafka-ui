@@ -85,6 +85,20 @@ describe('New', () => {
     });
   });
 
+  it('renders pageloader', async () => {
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
+
+    await act(() => {
+      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+    });
+    await act(() => {
+      userEvent.click(screen.getByText('Create topic'));
+    });
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(screen.queryByText('Create')).not.toBeInTheDocument();
+    expect(screen.queryByText('Copy')).not.toBeInTheDocument();
+  });
+
   it('submits valid form', async () => {
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
     await act(() => {
