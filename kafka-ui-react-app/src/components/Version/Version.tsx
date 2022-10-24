@@ -35,13 +35,9 @@ const Version: React.FC = () => {
     <S.Wrapper>
       <S.CurrentVersion>{currentVersion}</S.CurrentVersion>
 
-      {!!outdated && (
-        <S.OutdatedWarning
-          title={`Your app version is outdated. Current latest version is ${latestTag}`}
-        >
-          <WarningIcon />
-        </S.OutdatedWarning>
-      )}
+      <S.OutdatedWarning title="You have disabled version check, can’t fetch actual version">
+        <WarningIcon />
+      </S.OutdatedWarning>
 
       {commit && (
         <>

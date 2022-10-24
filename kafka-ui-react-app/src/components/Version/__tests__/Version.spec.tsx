@@ -86,7 +86,7 @@ describe('Version Component', () => {
       render(<Version />);
       expect(
         screen.getByTitle(
-          `Your app version is outdated. Current latest version is ${latestVersionPayload.tag_name}`
+          `You have disabled version check, can’t fetch actual version`
         )
       ).toBeInTheDocument();
     });
