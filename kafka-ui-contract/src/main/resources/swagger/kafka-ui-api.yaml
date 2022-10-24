@@ -2008,6 +2008,7 @@ components:
         - TOTAL_PARTITIONS
         - REPLICATION_FACTOR
         - SIZE
+        - MESSAGE_COUNT
 
     SortOrder:
       type: string
