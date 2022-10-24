@@ -5,7 +5,6 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
@@ -13,43 +12,55 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TopicCreateEditForm {
 
-    private final SelenideElement timeToRetain = $(By.cssSelector("input#timeToRetain"));
-    private final SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
+    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+    protected SelenideElement timeToRetainField = $x("//input[@id='timeToRetain']");
+    protected SelenideElement nameField = $x("//input[@name='name']");
+    protected SelenideElement maxMessageBytesField = $x("//input[@name='maxMessageBytes']");
+    protected SelenideElement minInSyncReplicasField = $x("//input[@name='minInSyncReplicas']");
+    protected SelenideElement cleanUpPolicyDdl = $x("//ul[@id='topicFormCleanupPolicy']");
+    protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
+    protected String cleanUpPolicyTypeLocator = "//li[text()='%s']";
+
+    @Step
+    public TopicCreateEditForm waitUntilScreenReady(){
+        loadingSpinner.shouldBe(Condition.disappear);
+        nameField.shouldBe(Condition.visible);
+        return this;
+    }
 
     @Step
     public TopicCreateEditForm setTopicName(String topicName) {
-        $("input#topicFormName").setValue(topicName);
+        nameField.setValue(topicName);
         return this;
     }
 
     @Step
     public TopicCreateEditForm setMinInsyncReplicas(Integer minInsyncReplicas) {
-        $("input[name=minInSyncReplicas]").setValue(minInsyncReplicas.toString());
+        minInSyncReplicasField.setValue(minInsyncReplicas.toString());
         return this;
     }
 
     @Step
     public TopicCreateEditForm setTimeToRetainDataInMs(Long ms) {
-        timeToRetain.setValue(ms.toString());
+        timeToRetainField.setValue(ms.toString());
         return this;
     }
 
     @Step
     public TopicCreateEditForm setTimeToRetainDataInMs(String ms) {
-        timeToRetain.setValue(ms);
+        timeToRetainField.setValue(ms);
         return this;
     }
 
     @Step
     public TopicCreateEditForm setMaxSizeOnDiskInGB(String value) {
-        KafkaUISelectElement kafkaUISelectElement = new KafkaUISelectElement("retentionBytes");
-        kafkaUISelectElement.selectByVisibleText(value);
+        new KafkaUISelectElement("retentionBytes").selectByVisibleText(value);
         return this;
     }
 
     @Step
     public TopicCreateEditForm setMaxMessageBytes(Long bytes) {
-        maxMessageBytes.setValue(bytes.toString());
+        maxMessageBytesField.setValue(bytes.toString());
         return this;
     }
 
@@ -60,7 +71,7 @@ public class TopicCreateEditForm {
 
     @Step
     public TopicCreateEditForm setTimeToRetainDataInMsUsingButtons(String value) {
-        timeToRetain
+        timeToRetainField
                 .parent()
                 .parent()
                 .$$("button")
@@ -77,8 +88,8 @@ public class TopicCreateEditForm {
 
     @Step
     public TopicCreateEditForm selectCleanupPolicy(String cleanupPolicyOptionValue) {
-        $("ul#topicFormCleanupPolicy").click();
-        $x("//li[text()='" + cleanupPolicyOptionValue + "']").click();
+        cleanUpPolicyDdl.shouldBe(Condition.visible).click();
+        $x(String.format(cleanUpPolicyTypeLocator,cleanupPolicyOptionValue)).shouldBe(Condition.visible).click();
         return this;
     }
 
@@ -93,9 +104,9 @@ public class TopicCreateEditForm {
     }
 
     @Step
-    public TopicDetails sendData() {
-        clickByJavaScript($x("//button[@type='submit']"));
-        return new TopicDetails();
+    public TopicCreateEditForm clickCreateTopicBtn() {
+        clickByJavaScript(createTopicBtn);
+        return this;
     }
 
     @Step
@@ -148,7 +159,7 @@ public class TopicCreateEditForm {
 
     @Step
     public TopicCreateEditForm timeToRetainIs(String time) {
-        String value = timeToRetain.getValue();
+        String value = timeToRetainField.getValue();
         assertThat(value)
                 .as("Time to retain data (in ms) should be " + time)
                 .isEqualTo(time);
@@ -162,7 +173,7 @@ public class TopicCreateEditForm {
 
     @Step
     public String getTimeToRetain() {
-        return timeToRetain.getValue();
+        return timeToRetainField.getValue();
     }
 
     @Step
@@ -172,7 +183,7 @@ public class TopicCreateEditForm {
 
     @Step
     public String getMaxMessageBytes() {
-        return maxMessageBytes.getValue();
+        return maxMessageBytesField.getValue();
     }
 
 

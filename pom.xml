@@ -39,10 +39,11 @@
         <test.containers.version>1.17.1</test.containers.version>
         <okhttp3.mockwebserver.version>4.10.0</okhttp3.mockwebserver.version>
         <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
-        <mockito.version>2.21.0</mockito.version>
+        <mockito.version>4.8.1</mockito.version>
+        <byte-buddy.version>1.12.18</byte-buddy.version>
         <assertj.version>3.19.0</assertj.version>
         <antlr4-maven-plugin.version>4.7.1</antlr4-maven-plugin.version>
-        <groovy.version>3.0.9</groovy.version>
+        <groovy.version>3.0.13</groovy.version>
         <datasketches-java.version>3.1.0</datasketches-java.version>
 
         <frontend-generated-sources-directory>..//kafka-ui-react-app/src/generated-sources
