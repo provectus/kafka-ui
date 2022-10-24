@@ -1,14 +1,13 @@
 import React from 'react';
 import useAppParams from 'lib/hooks/useAppParams';
-import { ClusterNameRoute } from 'lib/paths';
-import Table, { TagCell } from 'components/common/NewTable';
+import { clusterConnectConnectorPath, ClusterNameRoute } from 'lib/paths';
+import Table, { LinkCell, TagCell } from 'components/common/NewTable';
 import { FullConnectorInfo } from 'generated-sources';
 import { useConnectors } from 'lib/hooks/api/kafkaConnect';
 import { ColumnDef } from '@tanstack/react-table';
 import { useSearchParams } from 'react-router-dom';
 
 import ActionsCell from './ActionsCell';
-import { ListTitleCell } from './ListTitleCell';
 import TopicsCell from './TopicsCell';
 import RunningTasksCell from './RunningTasksCell';
 
@@ -22,7 +21,21 @@ const List: React.FC = () => {
 
   const columns = React.useMemo<ColumnDef<FullConnectorInfo>[]>(
     () => [
-      { header: 'Name', accessorKey: 'name', cell: ListTitleCell },
+      {
+        header: 'Name',
+        accessorKey: 'name',
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ row }) => (
+          <LinkCell
+            value={row.original.name}
+            to={`${clusterConnectConnectorPath(
+              clusterName,
+              row.original.connect,
+              row.original.name
+            )}`}
+          />
+        ),
+      },
       { header: 'Connect', accessorKey: 'connect' },
       { header: 'Type', accessorKey: 'type' },
       { header: 'Plugin', accessorKey: 'connectorClass' },
