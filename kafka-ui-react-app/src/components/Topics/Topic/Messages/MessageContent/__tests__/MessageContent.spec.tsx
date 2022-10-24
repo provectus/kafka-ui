@@ -72,7 +72,7 @@ describe('MessageContent screen', () => {
 
   describe('when switched to display the content', () => {
     it('makes content tab active', () => {
-      const contentTab = screen.getAllByText('Content');
+      const contentTab = screen.getAllByText('Value');
       userEvent.click(contentTab[0]);
       expect(contentTab[0]).toHaveStyleRule(
         'background-color',
