@@ -10,8 +10,6 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
-import { Table } from 'components/common/table/Table/Table.styled';
-import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
   fetchLatestSchema,
@@ -29,6 +27,7 @@ import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled
 import useAppParams from 'lib/hooks/useAppParams';
 import { schemasApiClient } from 'lib/api';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import Table from 'components/common/NewTable';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
@@ -57,6 +56,15 @@ const Details: React.FC = () => {
   const schema = useAppSelector(getSchemaLatest);
   const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
   const areVersionsFetched = useAppSelector(getAreSchemaVersionsFulfilled);
+
+  const columns = React.useMemo(
+    () => [
+      { header: 'Version', accessorKey: 'version' },
+      { header: 'ID', accessorKey: 'id' },
+      { header: 'Type', accessorKey: 'schemaType' },
+    ],
+    []
+  );
 
   const deleteHandler = async () => {
     try {
@@ -118,26 +126,13 @@ const Details: React.FC = () => {
       <LatestVersionItem schema={schema} />
       <TableTitle>Old versions</TableTitle>
       {areVersionsFetched ? (
-        <Table isFullwidth>
-          <thead>
-            <tr>
-              <TableHeaderCell />
-              <TableHeaderCell title="Version" />
-              <TableHeaderCell title="ID" />
-              <TableHeaderCell title="Type" />
-            </tr>
-          </thead>
-          <tbody>
-            {versions.map((version) => (
-              <SchemaVersion key={version.id} version={version} />
-            ))}
-            {versions.length === 0 && (
-              <tr>
-                <td colSpan={10}>No active Schema</td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
+        <Table
+          columns={columns}
+          data={versions}
+          getRowCanExpand={() => true}
+          renderSubComponent={SchemaVersion}
+          enableSorting
+        />
       ) : (
         <PageLoader />
       )}
