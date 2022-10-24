@@ -43,7 +43,7 @@
         <byte-buddy.version>1.12.18</byte-buddy.version>
         <assertj.version>3.19.0</assertj.version>
         <antlr4-maven-plugin.version>4.7.1</antlr4-maven-plugin.version>
-        <groovy.version>3.0.9</groovy.version>
+        <groovy.version>3.0.13</groovy.version>
         <datasketches-java.version>3.1.0</datasketches-java.version>
 
         <frontend-generated-sources-directory>..//kafka-ui-react-app/src/generated-sources
