@@ -35,7 +35,8 @@ public class KafkaConnectList {
 
     @Step
     public KafkaConnectList openConnector(String connectorName) {
-        $x(String.format(tabElementLocator,connectorName)).shouldBe(Condition.visible).click();
+        $x(String.format(tabElementLocator,connectorName))
+                .shouldBe(Condition.enabled).click();
         return this;
     }
 
