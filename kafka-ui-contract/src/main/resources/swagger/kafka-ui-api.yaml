@@ -1776,6 +1776,111 @@ paths:
                 $ref: '#/components/schemas/PartitionsIncreaseResponse'
         404:
           description: Not found
+
+  /api/clusters/{clusterName}/acls:
+    get:
+      tags:
+        - Acls
+      summary: listKafkaAcls
+      operationId: listAcls
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KafkaAcl'
+
+  /api/clusters/{clusterName}/acl/csv:
+    get:
+      tags:
+        - Acls
+      summary: getAclAsCsv
+      operationId: getAclAsCsv
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+    post:
+      tags:
+        - Acls
+      summary: syncAclsCsv
+      operationId: syncAclsCsv
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        200:
+          description: OK
+
+  /api/clusters/{clusterName}/acl:
+    post:
+      tags:
+        - Acls
+      summary: createAcl
+      operationId: createAcl
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KafkaAcl'
+      responses:
+        200:
+          description: OK
+
+    delete:
+      tags:
+        - Acls
+      summary: deleteAcl
+      operationId: deleteAcl
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KafkaAcl'
+      responses:
+        200:
+          description: OK
+        404:
+          description: Acl not found
+
   /api/info/timestampformat:
     get:
       tags:
@@ -1903,6 +2008,7 @@ components:
               - KAFKA_CONNECT
               - KSQL_DB
               - TOPIC_DELETION
+              - KAFKA_ACL
       required:
         - id
         - name
@@ -3216,3 +3322,46 @@ components:
         - COMPACT
         - COMPACT_DELETE
         - UNKNOWN
+
+    KafkaAcl:
+      type: object
+      required: [resourceType, resourceName, namePatternType, principal, host, operation, permission]
+      properties:
+        resourceType:
+          type: string
+          enum:
+            - TOPIC
+            - GROUP
+            - CLUSTER
+            - TRANSACTIONAL_ID
+            - DELEGATION_TOPIC
+        resourceName:
+          type: string # "*" if acl can be applied to any resource of given type
+        namePatternType:
+          type: string
+          enum:
+            - LITERAL
+            - PREFIXED
+        principal:
+          type: string
+        host:
+          type: string  # "*" if acl can be applied to any resource of given type
+        operation:
+          type: string
+          enum:
+            - ALL # Cluster, Topic, Group
+            - READ  # Topic, Group
+            - WRITE # Topic, TransactionalId
+            - CREATE # Cluster, Topic
+            - DELETE  # Topic, Group
+            - ALTER  # Cluster, Topic,
+            - DESCRIBE # Cluster, Topic, Group, TransactionalId, DelegationToken
+            - CLUSTER_ACTION # Cluster
+            - DESCRIBE_CONFIGS # Cluster, Topic
+            - ALTER_CONFIGS   # Cluster, Topic
+            - IDEMPOTENT_WRITE # -
+        permission:
+          type: string
+          enum:
+            - ALLOW
+            - DENY

@@ -23,6 +23,7 @@ import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
+import com.provectus.kafka.ui.model.KafkaAclDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
 import com.provectus.kafka.ui.model.MetricDTO;
@@ -35,7 +36,6 @@ import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +43,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.common.acl.AccessControlEntry;
+import org.apache.kafka.common.acl.AclBinding;
+import org.apache.kafka.common.acl.AclOperation;
+import org.apache.kafka.common.acl.AclPermissionType;
+import org.apache.kafka.common.resource.PatternType;
+import org.apache.kafka.common.resource.ResourcePattern;
+import org.apache.kafka.common.resource.ResourceType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -179,6 +186,35 @@ public interface ClusterMapper {
       copy.putAll(properties);
     }
     return copy;
+  }
+
+  static AclBinding toAclBinding(KafkaAclDTO dto) {
+    return new AclBinding(
+        new ResourcePattern(
+            ResourceType.valueOf(dto.getResourceType().name()),
+            dto.getResourceName(),
+            PatternType.valueOf(dto.getNamePatternType().name())
+        ),
+        new AccessControlEntry(
+            dto.getPrincipal(),
+            dto.getHost(),
+            AclOperation.valueOf(dto.getOperation().name()),
+            AclPermissionType.valueOf(dto.getPermission().name())
+        )
+    );
+  }
+
+  static KafkaAclDTO toKafkaAclDto(AclBinding binding) {
+    var pattern = binding.pattern();
+    var filter = binding.toFilter().entryFilter();
+    return new KafkaAclDTO()
+        .resourceType(KafkaAclDTO.ResourceTypeEnum.fromValue(pattern.resourceType().name()))
+        .resourceName(pattern.name())
+        .namePatternType(KafkaAclDTO.NamePatternTypeEnum.fromValue(pattern.patternType().name()))
+        .principal(filter.principal())
+        .host(filter.host())
+        .operation(KafkaAclDTO.OperationEnum.fromValue(filter.operation().name()))
+        .permission(KafkaAclDTO.PermissionEnum.fromValue(filter.permissionType().name()));
   }
 
 }
