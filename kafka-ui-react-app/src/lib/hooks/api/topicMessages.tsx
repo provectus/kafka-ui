@@ -185,12 +185,6 @@ export function useSerdes(props: GetSerdesRequest) {
   const { clusterName, topicName, use } = props;
   return useQuery(
     ['clusters', clusterName, 'topics', topicName, 'serdes', use],
-    () => messagesApiClient.getSerdes(props),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchInterval: false,
-    }
+    () => messagesApiClient.getSerdes(props)
   );
 }
