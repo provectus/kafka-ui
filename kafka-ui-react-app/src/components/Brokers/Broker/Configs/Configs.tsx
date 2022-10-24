@@ -6,9 +6,10 @@ import {
   useBrokerConfig,
   useUpdateBrokerConfigByName,
 } from 'lib/hooks/api/brokers';
-import Table, { TooltipComponent } from 'components/common/NewTable';
+import Table from 'components/common/NewTable';
 import { BrokerConfig, ConfigSource } from 'generated-sources';
 import Search from 'components/common/Search/Search';
+import TooltipComponent from 'components/common/Tooltip/TooltipComponent';
 
 import InputCell from './InputCell';
 import * as S from './Configs.styled';

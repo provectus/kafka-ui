@@ -3,10 +3,9 @@ import TimestampCell from './TimestampCell';
 import SizeCell from './SizeCell';
 import LinkCell from './LinkCell';
 import TagCell from './TagCell';
-import TooltipComponent from './TooltipComponent';
 
 export type { TableProps };
 
-export { TimestampCell, SizeCell, LinkCell, TagCell, TooltipComponent };
+export { TimestampCell, SizeCell, LinkCell, TagCell };
 
 export default Table;
