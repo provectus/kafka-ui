@@ -21,7 +21,7 @@
         <org.projectlombok.version>1.18.20</org.projectlombok.version>
         <org.projectlombok.e2e-checks.version>1.18.20</org.projectlombok.e2e-checks.version>
         <git.revision>latest</git.revision>
-        <kafka-clients.version>3.2.0</kafka-clients.version>
+        <kafka-clients.version>3.2.3</kafka-clients.version>
         <node.version>v16.15.0</node.version>
         <pnpm.version>v7.4.0</pnpm.version>
         <fabric8-maven-plugin.version>0.40.2</fabric8-maven-plugin.version>
@@ -33,7 +33,7 @@
         <openapi-generator-maven-plugin.version>4.3.0</openapi-generator-maven-plugin.version>
         <swagger-annotations.version>1.6.0</swagger-annotations.version>
         <springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
-        <avro.version>1.11.0</avro.version>
+        <avro.version>1.11.1</avro.version>
         <confluent.version>7.2.1</confluent.version>
         <apache.commons.version>2.11.1</apache.commons.version>
         <test.containers.version>1.17.1</test.containers.version>

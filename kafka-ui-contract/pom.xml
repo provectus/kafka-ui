@@ -52,6 +52,10 @@
                             <groupId>com.fasterxml.jackson.core</groupId>
                             <artifactId>jackson-databind</artifactId>
                         </exclusion>
+                        <exclusion>
+                            <groupId>io.projectreactor</groupId>
+                            <artifactId>reactor-netty-http</artifactId>
+                        </exclusion>
                     </exclusions>
                 </dependency>
                 <dependency>
