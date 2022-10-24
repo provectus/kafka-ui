@@ -45,7 +45,7 @@ class MessagesServiceTest extends AbstractIntegrationTest {
   @Test
   void loadMessagesReturnsExceptionWhenTopicNotFound() {
     StepVerifier.create(messagesService
-            .loadMessages(cluster, NON_EXISTING_TOPIC, null, null, null, 1, "String", "String"))
+            .loadMessages(cluster, NON_EXISTING_TOPIC, null, null, null, 1, null, "String", "String"))
         .expectError(TopicNotFoundException.class)
         .verify();
   }
