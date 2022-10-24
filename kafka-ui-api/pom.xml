@@ -99,6 +99,12 @@
             <groupId>io.confluent</groupId>
             <artifactId>kafka-json-schema-serializer</artifactId>
             <version>${confluent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.scala-lang</groupId>
+                    <artifactId>scala-library</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
@@ -144,6 +150,12 @@
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
             <version>3.19.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala-lang.library.version}</version>
         </dependency>
 
         <dependency>
