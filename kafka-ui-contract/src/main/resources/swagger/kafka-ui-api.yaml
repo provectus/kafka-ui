@@ -1267,6 +1267,16 @@ paths:
           required: false
           schema:
             type: string
+        - name: orderBy
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ConnectorColumnsToSort'
+        - name: sortOrder
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/SortOrder'
       responses:
         200:
           description: OK
@@ -1551,31 +1561,6 @@ paths:
         200:
           description: OK
 
-  /api/clusters/{clusterName}/ksql:
-    description: Deprecated - use ksql/v2 instead!
-    post:
-      tags:
-        - Ksql
-      summary: executeKsqlCommand
-      operationId: executeKsqlCommand
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/KsqlCommand'
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/KsqlCommandResponse'
 
   /api/clusters/{clusterName}/ksql/v2:
     post:
@@ -2010,6 +1995,14 @@ components:
         - SIZE
         - MESSAGE_COUNT
 
+    ConnectorColumnsToSort:
+      type: string
+      enum:
+        - NAME
+        - CONNECT
+        - TYPE
+        - STATUS
+
     SortOrder:
       type: string
       enum:
@@ -2036,6 +2029,10 @@ components:
           format: int64
         segmentCount:
           type: integer
+        bytesInPerSec:
+          type: number
+        bytesOutPerSec:
+          type: number
         underReplicatedPartitions:
           type: integer
         cleanUpPolicy:
@@ -2258,7 +2255,6 @@ components:
       required:
         - name
         - partitions
-        - replicationFactor
 
     TopicUpdate:
       type: object
@@ -2569,16 +2565,12 @@ components:
       properties:
         name:
           type: string
-        canonicalName:
-          type: string
-        params:
+        labels:
           type: string
           additionalProperties:
             type: string
         value:
-          type: string
-          additionalProperties:
-            type: number
+          type: number
 
     TopicLogdirs:
       type: object
@@ -2970,18 +2962,6 @@ components:
           items:
             $ref: '#/components/schemas/ConnectorPluginConfig'
 
-    KsqlCommand:
-      type: object
-      properties:
-        ksql:
-          type: string
-        streamsProperties:
-          type: object
-          additionalProperties:
-            type: string
-      required:
-        - ksql
-
     KsqlCommandV2:
       type: object
       properties:
@@ -3027,31 +3007,6 @@ components:
           type: string
         valueFormat:
           type: string
-
-    KsqlCommandResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/Table'
-        message:
-          type: string
-
-    Table:
-      type: object
-      properties:
-        headers:
-          type: array
-          items:
-            type: string
-        rows:
-          type: array
-          items:
-            type: array
-            items:
-              type: string
-      required:
-        - headers
-        - rows
 
     KsqlResponse:
       type: object

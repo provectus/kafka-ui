@@ -3,14 +3,13 @@ import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterConnectConnectorConfigPath,
   clusterConnectConnectorPath,
-  clusterConnectConnectorTasksPath,
   getNonExactPath,
 } from 'lib/paths';
 import { screen } from '@testing-library/dom';
 import DetailsPage from 'components/Connect/Details/DetailsPage';
 
 const DetailsCompText = {
-  overview: 'Overview Page',
+  overview: 'Overview Pane',
   tasks: 'Tasks Page',
   config: 'Config Page',
   actions: 'Actions',
@@ -55,19 +54,14 @@ describe('Details Page', () => {
     expect(screen.getByText(DetailsCompText.actions));
   });
 
-  describe('Router component tests', () => {
-    it('should test if overview is rendering', () => {
-      renderComponent();
-      expect(screen.getByText(DetailsCompText.overview));
-    });
+  it('renders overview pane', () => {
+    renderComponent();
+    expect(screen.getByText(DetailsCompText.overview));
+  });
 
+  describe('Router component tests', () => {
     it('should test if tasks is rendering', () => {
-      const path = clusterConnectConnectorTasksPath(
-        clusterName,
-        connectName,
-        connectorName
-      );
-      renderComponent(path);
+      renderComponent();
       expect(screen.getByText(DetailsCompText.tasks));
     });
 

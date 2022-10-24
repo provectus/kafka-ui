@@ -37,7 +37,6 @@ public class QaseExtension implements TestExecutionListener {
     private static final String QASE_PROJECT = "KAFKAUI";
     private static final String QASE_ENABLE = "true";
 
-
     static {
         String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
         if (qaseApiToken == null || StringUtils.isEmpty(qaseApiToken)) {

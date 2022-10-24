@@ -198,95 +198,97 @@ const Table: React.FC<TableProps<any>> = ({
           />
         </S.TableActionsBar>
       )}
-      <S.Table>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {!!enableRowSelection && (
-                <S.Th key={`${headerGroup.id}-select`}>
-                  {flexRender(
-                    SelectRowHeader,
-                    headerGroup.headers[0].getContext()
-                  )}
-                </S.Th>
-              )}
-              {table.getCanSomeRowsExpand() && (
-                <S.Th expander key={`${headerGroup.id}-expander`} />
-              )}
-              {headerGroup.headers.map((header) => (
-                <S.Th
-                  key={header.id}
-                  colSpan={header.colSpan}
-                  sortable={header.column.getCanSort()}
-                  sortOrder={header.column.getIsSorted()}
-                  onClick={header.column.getToggleSortingHandler()}
-                >
-                  <div>
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </div>
-                </S.Th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <React.Fragment key={row.id}>
-              <S.Row
-                expanded={row.getIsExpanded()}
-                onClick={handleRowClick(row)}
-                clickable={
-                  !enableRowSelection &&
-                  (row.getCanExpand() || onRowClick !== undefined)
-                }
-              >
+      <S.TableWrapper>
+        <S.Table>
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
                 {!!enableRowSelection && (
-                  <td key={`${row.id}-select`} style={{ width: '1px' }}>
+                  <S.Th key={`${headerGroup.id}-select`}>
                     {flexRender(
-                      SelectRowCell,
-                      row.getVisibleCells()[0].getContext()
+                      SelectRowHeader,
+                      headerGroup.headers[0].getContext()
                     )}
-                  </td>
+                  </S.Th>
                 )}
                 {table.getCanSomeRowsExpand() && (
-                  <td key={`${row.id}-expander`} style={{ width: '1px' }}>
-                    {flexRender(
-                      ExpanderCell,
-                      row.getVisibleCells()[0].getContext()
-                    )}
-                  </td>
+                  <S.Th expander key={`${headerGroup.id}-expander`} />
                 )}
-                {row
-                  .getVisibleCells()
-                  .map(({ id, getContext, column: { columnDef } }) => (
-                    <td key={id} style={columnDef.meta}>
-                      {flexRender(columnDef.cell, getContext())}
+                {headerGroup.headers.map((header) => (
+                  <S.Th
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    sortable={header.column.getCanSort()}
+                    sortOrder={header.column.getIsSorted()}
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
+                    <div>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </div>
+                  </S.Th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <React.Fragment key={row.id}>
+                <S.Row
+                  expanded={row.getIsExpanded()}
+                  onClick={handleRowClick(row)}
+                  clickable={
+                    !enableRowSelection &&
+                    (row.getCanExpand() || onRowClick !== undefined)
+                  }
+                >
+                  {!!enableRowSelection && (
+                    <td key={`${row.id}-select`} style={{ width: '1px' }}>
+                      {flexRender(
+                        SelectRowCell,
+                        row.getVisibleCells()[0].getContext()
+                      )}
                     </td>
-                  ))}
-              </S.Row>
-              {row.getIsExpanded() && SubComponent && (
-                <S.Row expanded>
-                  <td colSpan={row.getVisibleCells().length + 2}>
-                    <S.ExpandedRowInfo>
-                      <SubComponent row={row} />
-                    </S.ExpandedRowInfo>
-                  </td>
+                  )}
+                  {table.getCanSomeRowsExpand() && (
+                    <td key={`${row.id}-expander`} style={{ width: '1px' }}>
+                      {flexRender(
+                        ExpanderCell,
+                        row.getVisibleCells()[0].getContext()
+                      )}
+                    </td>
+                  )}
+                  {row
+                    .getVisibleCells()
+                    .map(({ id, getContext, column: { columnDef } }) => (
+                      <td key={id} style={columnDef.meta}>
+                        {flexRender(columnDef.cell, getContext())}
+                      </td>
+                    ))}
                 </S.Row>
-              )}
-            </React.Fragment>
-          ))}
-          {table.getRowModel().rows.length === 0 && (
-            <S.Row>
-              <S.EmptyTableMessageCell colSpan={100}>
-                {emptyMessage || 'No rows found'}
-              </S.EmptyTableMessageCell>
-            </S.Row>
-          )}
-        </tbody>
-      </S.Table>
+                {row.getIsExpanded() && SubComponent && (
+                  <S.Row expanded>
+                    <td colSpan={row.getVisibleCells().length + 2}>
+                      <S.ExpandedRowInfo>
+                        <SubComponent row={row} />
+                      </S.ExpandedRowInfo>
+                    </td>
+                  </S.Row>
+                )}
+              </React.Fragment>
+            ))}
+            {table.getRowModel().rows.length === 0 && (
+              <S.Row>
+                <S.EmptyTableMessageCell colSpan={100}>
+                  {emptyMessage || 'No rows found'}
+                </S.EmptyTableMessageCell>
+              </S.Row>
+            )}
+          </tbody>
+        </S.Table>
+      </S.TableWrapper>
       {table.getPageCount() > 1 && (
         <S.Pagination>
           <S.Pages>
