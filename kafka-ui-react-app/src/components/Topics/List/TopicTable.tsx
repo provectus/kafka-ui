@@ -66,9 +66,10 @@ const TopicTable: React.FC = () => {
         enableSorting: false,
       },
       {
+        id: TopicColumnsToSort.MESSAGE_COUNT,
         header: 'Number of messages',
         accessorKey: 'partitions',
-        enableSorting: false,
+        enableSorting: true,
         cell: ({ getValue }) => {
           const partitions = getValue<Topic['partitions']>();
           if (partitions === undefined || partitions.length === 0) {
