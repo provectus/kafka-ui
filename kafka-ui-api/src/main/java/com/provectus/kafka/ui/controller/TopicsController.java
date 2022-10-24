@@ -23,6 +23,7 @@ import com.provectus.kafka.ui.service.TopicsService;
 import com.provectus.kafka.ui.service.analyze.TopicAnalysisService;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -148,6 +149,10 @@ public class TopicsController extends AbstractController implements TopicsApi {
         return Comparator.comparing(InternalTopic::getReplicationFactor);
       case SIZE:
         return Comparator.comparing(InternalTopic::getSegmentSize);
+      case MESSAGE_COUNT:
+        return Comparator.comparing(t -> t.getPartitions().values().stream()
+                  .map(val->val.getOffsetMax()-val.getOffsetMin())
+                  .reduce(0L, Long::sum));
       case NAME:
       default:
         return defaultComparator;
