@@ -69,7 +69,10 @@ public class ConnectorsTests extends BaseTest {
                 .clickCreateConnectorBtn();
         connectorCreateForm
                 .waitUntilScreenReady()
-                .setConnectorConfig(connectorForCreate.getName(), connectorForCreate.getConfig());
+                .setConnectorDetails(connectorForCreate.getName(), connectorForCreate.getConfig())
+                .clickSubmitButton();
+        connectorDetails
+                .waitUntilScreenReady();
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
         kafkaConnectList

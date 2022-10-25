@@ -23,13 +23,17 @@ public class ConnectorCreateForm {
     }
 
     @Step
-    public ConnectorCreateForm setConnectorConfig(String connectName, String configJson) {
+    public ConnectorCreateForm clickSubmitButton() {
+        clickByJavaScript(submitBtn);
+        return this;
+    }
+
+    @Step
+    public ConnectorCreateForm setConnectorDetails(String connectName, String configJson) {
         nameField.shouldBe(Condition.enabled).setValue(connectName);
         configField.shouldBe(Condition.enabled).click();
         contentTextArea.setValue(configJson);
         nameField.shouldBe(Condition.enabled).click();
-        clickByJavaScript(submitBtn);
-        loadingSpinner.shouldBe(Condition.disappear);
         return this;
     }
 }

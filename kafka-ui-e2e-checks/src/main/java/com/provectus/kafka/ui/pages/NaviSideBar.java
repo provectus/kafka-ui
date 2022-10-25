@@ -8,6 +8,7 @@ import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByActions;
 
 public class NaviSideBar {
 
@@ -26,13 +27,10 @@ public class NaviSideBar {
     @Step
     public NaviSideBar openSideMenu(String clusterName, SideMenuOption option) {
         SelenideElement clusterElement = $x(String.format(clusterElementLocator, clusterName)).shouldBe(Condition.visible);
-        if (clusterElement.parent().$$x(".//ul").size() == 0) {
-            clusterElement.click();
-        }
-        clusterElement
-                .parent()
-                .$x(String.format(sideMenuOptionElementLocator, option.value))
-                .click();
+        if (clusterElement.parent().$$x(".//ul").size() == 0)
+            clickByActions(clusterElement);
+        clickByActions(clusterElement.parent()
+                .$x(String.format(sideMenuOptionElementLocator, option.value)));
         return this;
     }
 

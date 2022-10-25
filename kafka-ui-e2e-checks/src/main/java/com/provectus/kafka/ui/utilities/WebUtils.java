@@ -2,8 +2,10 @@ package com.provectus.kafka.ui.utilities;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.interactions.Actions;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 
@@ -15,6 +17,15 @@ public class WebUtils {
         element.shouldBe(Condition.enabled);
         String script = "arguments[0].click();";
         executeJavaScript(script, element);
+    }
+
+    public static void clickByActions(SelenideElement element) {
+        log.debug("\nclickByActions: {}", element.getSearchCriteria());
+        element.shouldBe(Condition.enabled);
+        new Actions(WebDriverRunner.getWebDriver())
+                .moveToElement(element)
+                .click(element)
+                .perform();
     }
 
     public static void clearByKeyboard(SelenideElement field) {
