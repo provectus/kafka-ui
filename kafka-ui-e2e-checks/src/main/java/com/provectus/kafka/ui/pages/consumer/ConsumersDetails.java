@@ -13,7 +13,7 @@ import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 public class ConsumersDetails {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement connectSinkPostgresActivitiesHeader = $x("//h1[text()='connect-sink_postgres_activities']");
+    protected String connectSinkPostgresActivitiesHeader = "//h1[contains(text(),'connect-sink_postgres_activities')]";
     protected SelenideElement topicGrid = $x("//table");
     protected String topicElementLocator = "//tbody//td//a[text()='%s']";
 
@@ -26,7 +26,7 @@ public class ConsumersDetails {
 
     @Step
     public boolean isRedirectedConsumerTitleVisible() {
-        return isVisible($x(String.valueOf(connectSinkPostgresActivitiesHeader)));
+        return isVisible($x(connectSinkPostgresActivitiesHeader));
     }
 
     @Step
