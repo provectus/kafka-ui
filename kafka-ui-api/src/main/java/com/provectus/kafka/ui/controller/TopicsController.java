@@ -151,7 +151,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         return Comparator.comparing(InternalTopic::getSegmentSize);
       case MESSAGE_COUNT:
         return Comparator.comparing(t -> t.getPartitions().values().stream()
-                  .map(val->val.getOffsetMax()-val.getOffsetMin())
+                  .map(val -> val.getOffsetMax() - val.getOffsetMin())
                   .reduce(0L, Long::sum));
       case NAME:
       default:
