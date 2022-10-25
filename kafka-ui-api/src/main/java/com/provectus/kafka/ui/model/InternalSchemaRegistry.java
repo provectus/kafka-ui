@@ -10,6 +10,11 @@ public class InternalSchemaRegistry {
   private final String password;
   private final FailoverUrlList url;
 
+  private final String keyStoreLocation;
+  private final String trustStoreLocation;
+  private final String keyStorePassword;
+  private final String trustStorePassword;
+
   public String getPrimaryNodeUri() {
     return url.get(0);
   }
