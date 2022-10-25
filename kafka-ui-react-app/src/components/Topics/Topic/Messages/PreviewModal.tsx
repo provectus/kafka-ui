@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'components/common/Button/Button';
 import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
@@ -24,6 +24,7 @@ const PreviewModal: React.FC<InfoModalProps> = ({
   const [field, setField] = React.useState('');
   const [path, setPath] = React.useState('');
   const [errors, setErrors] = React.useState<string[]>([]);
+  const [editIndex, setEditIndex] = React.useState<number | undefined>();
 
   const handleOk = () => {
     const newErrors = [];
@@ -41,7 +42,14 @@ const PreviewModal: React.FC<InfoModalProps> = ({
       return;
     }
 
-    const newValues = [...values, { field, path }];
+    const newValues = [...values];
+
+    if (typeof editIndex !== 'undefined') {
+      newValues.splice(editIndex, 1, { field, path });
+    } else {
+      newValues.push({ field, path });
+    }
+
     setFilters(newValues);
     toggleIsOpen();
   };
@@ -54,28 +62,29 @@ const PreviewModal: React.FC<InfoModalProps> = ({
     setFilters(newValues);
   };
 
-  const handleEdit = (filter: PreviewFilter) => {
-    setField(filter.field);
-    setPath(filter.path);
-    const newValues = values.filter(
-      (item) => item.field !== filter.field && item.path !== filter.path
-    );
-    setFilters(newValues);
-  };
+  useEffect(() => {
+    if (values?.length && typeof editIndex !== 'undefined') {
+      setField(values[editIndex].field);
+      setPath(values[editIndex].path);
+    }
+  }, [editIndex]);
 
   return (
     <S.PreviewModal>
-      {values.map((item) => (
-        <S.PreviewValues>
-          {item.field} : {item.path}{' '}
-          <IconButtonWrapper role="button" onClick={() => handleEdit(item)}>
+      {values.map((item, index) => (
+        <S.EditForm key="index">
+          <S.Field>
+            {' '}
+            {item.field} : {item.path}
+          </S.Field>
+          <IconButtonWrapper role="button" onClick={() => setEditIndex(index)}>
             <EditIcon />
           </IconButtonWrapper>
           {'  '}
           <IconButtonWrapper role="button" onClick={() => handleRemove(item)}>
             <CancelIcon />
           </IconButtonWrapper>
-        </S.PreviewValues>
+        </S.EditForm>
       ))}
       <div>
         <InputLabel htmlFor="previewFormField">Field</InputLabel>
@@ -110,7 +119,7 @@ const PreviewModal: React.FC<InfoModalProps> = ({
           type="button"
           onClick={toggleIsOpen}
         >
-          Cancel
+          Close
         </Button>
         <Button
           buttonSize="M"
@@ -118,7 +127,7 @@ const PreviewModal: React.FC<InfoModalProps> = ({
           type="button"
           onClick={handleOk}
         >
-          Ok
+          Save
         </Button>
       </S.ButtonWrapper>
     </S.PreviewModal>

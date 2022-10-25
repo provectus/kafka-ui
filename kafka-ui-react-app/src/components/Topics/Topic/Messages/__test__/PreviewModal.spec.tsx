@@ -43,13 +43,13 @@ const renderComponent = (props?: Partial<InfoModalProps>) => {
 describe('PreviewModal component', () => {
   it('closes PreviewModal', () => {
     renderComponent();
-    userEvent.click(screen.getAllByRole('button', { name: 'Cancel' })[1]);
+    userEvent.click(screen.getByRole('button', { name: 'Close' }));
     expect(toggleInfoModal).toHaveBeenCalledTimes(1);
   });
 
   it('return if empty inputs', () => {
     renderComponent();
-    userEvent.click(screen.getByRole('button', { name: 'Ok' }));
+    userEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(screen.getByText('Json path is required')).toBeInTheDocument();
     expect(screen.getByText('Field is required')).toBeInTheDocument();
   });
@@ -88,7 +88,7 @@ describe('PreviewModal component', () => {
       await act(() => {
         renderComponent({ setFilters });
       });
-      userEvent.click(screen.getAllByRole('button', { name: 'Cancel' })[0]);
+      userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
       expect(setFilters).toHaveBeenCalledTimes(1);
     });
 
@@ -99,12 +99,11 @@ describe('PreviewModal component', () => {
         renderComponent({ setFilters });
       });
       userEvent.click(screen.getByRole('button', { name: 'Edit' }));
-      expect(setFilters).toHaveBeenCalledTimes(1);
       const fieldInput = screen.getByPlaceholderText('Field');
       userEvent.type(fieldInput, fieldValue);
       const pathInput = screen.getByPlaceholderText('Json Path');
       userEvent.type(pathInput, pathValue);
-      userEvent.click(screen.getByRole('button', { name: 'Ok' }));
+      userEvent.click(screen.getByRole('button', { name: 'Save' }));
       await act(() => {
         renderComponent({ setFilters, toggleIsOpen });
       });

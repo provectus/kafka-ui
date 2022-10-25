@@ -21,7 +21,15 @@ export const ButtonWrapper = styled.div`
   gap: 10px;
 `;
 
-export const PreviewValues = styled.div`
+export const EditForm = styled.div`
   font-weight: 500;
   padding-bottom: 7px;
+  display: flex;
+`;
+
+export const Field = styled.div`
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 5px;
 `;
