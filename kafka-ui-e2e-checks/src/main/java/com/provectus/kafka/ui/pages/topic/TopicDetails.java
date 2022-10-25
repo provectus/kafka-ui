@@ -27,6 +27,8 @@ public class TopicDetails {
     protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
     protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
 
+    protected SelenideElement sourceActivitiesConsumer = $x("//a[@title='connect-sink_postgres_activities']");
+
     @Step
     public TopicDetails waitUntilScreenReady() {
         loadingSpinner.shouldBe(Condition.disappear);
@@ -71,6 +73,12 @@ public class TopicDetails {
     @Step
     public TopicDetails clickProduceMessageBtn() {
         clickByJavaScript(produceMessageBtn);
+        return this;
+    }
+
+    @Step
+    public TopicDetails clickOnSourceActivitiesConsumer() {
+        sourceActivitiesConsumer.click();
         return this;
     }
 

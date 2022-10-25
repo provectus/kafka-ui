@@ -193,6 +193,27 @@ public class TopicTests extends BaseTest {
 //        Assertions.assertEquals(Integer.toString(Integer.valueOf(messageAmount)-1),topicDetails.MessageCountAmount());
     }
 
+    @DisplayName("Redirect to consumer from topic profile")
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(20)
+    @Test
+    void redirectToConsumerFromTopic() {
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
+                .waitUntilScreenReady()
+                .isTopicVisible("source-activities");
+        topicDetails
+                .waitUntilScreenReady()
+                .openTopicMenu(TopicDetails.TopicMenu.CONSUMERS)
+                .clickOnSourceActivitiesConsumer();
+        consumersDetails
+                .waitUntilScreenReady();
+        Assertions.assertTrue(consumersDetails.isRedirectedConsumerTitleVisible());
+        Assertions.assertTrue(consumersDetails.isTopicInConsumersDetailsVisible("source-activities"));
+    }
+
     @AfterAll
     public void afterAll() {
         TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
