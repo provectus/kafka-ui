@@ -82,7 +82,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
                 type="button"
                 onClick={handleContentTabClick}
               >
-                Content
+                Value
               </S.Tab>
               <S.Tab
                 $active={activeTab === 'headers'}
@@ -108,7 +108,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
             </S.Metadata>
 
             <S.Metadata>
-              <S.MetadataLabel>Content</S.MetadataLabel>
+              <S.MetadataLabel>Value</S.MetadataLabel>
               <span>
                 <S.MetadataValue>{messageContentFormat}</S.MetadataValue>
                 <S.MetadataMeta>
