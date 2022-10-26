@@ -46,9 +46,9 @@ describe('TimeToRetainBtn', () => {
       );
       expect(buttonElement).toHaveStyle(`border:none`);
     });
-    it('should test the non active state with click becoming active', () => {
+    it('should test the non active state with click becoming active', async () => {
       const buttonElement = screen.getByRole('button');
-      userEvent.click(buttonElement);
+      await userEvent.click(buttonElement);
       expect(buttonElement).toHaveStyle(
         `background-color:${theme.button.secondary.invertedColors.normal}`
       );
