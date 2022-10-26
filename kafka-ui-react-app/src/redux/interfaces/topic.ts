@@ -8,7 +8,7 @@ import {
 
 export type TopicName = Topic['name'];
 
-interface TopicConfigParams {
+export interface TopicConfigParams {
   [paramName: string]: TopicConfig;
 }
 

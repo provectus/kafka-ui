@@ -64,6 +64,7 @@ const Edit: React.FC = () => {
     <>
       <FormProvider {...methods}>
         <TopicForm
+          config={config.byName}
           topicName={topicName}
           retentionBytes={defaultValues.retentionBytes}
           inSyncReplicas={Number(defaultValues.minInSyncReplicas)}

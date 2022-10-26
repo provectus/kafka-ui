@@ -13,6 +13,8 @@ import { useCreateTopic } from 'lib/hooks/api/topics';
 
 const clusterName = 'local';
 const topicName = 'test-topic';
+const retainTime = '2419200000';
+const minValue = '1';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -96,12 +98,42 @@ describe('New', () => {
         topicName
       );
     });
-    await act(async () => {
-      await userEvent.click(screen.getByText('Create topic'));
+    await act(() => {
+      userEvent.type(
+        screen.getByPlaceholderText('Number of partitions'),
+        minValue
+      );
+    });
+    await act(() => {
+      userEvent.type(
+        screen.getByPlaceholderText('Min In Sync Replicas'),
+        minValue
+      );
+    });
+    await act(() => {
+      userEvent.type(
+        screen.getByPlaceholderText('Replication Factor'),
+        minValue
+      );
+    });
+    await act(() => {
+      userEvent.type(
+        screen.getByPlaceholderText('Time to retain data (in ms)'),
+        retainTime
+      );
+    });
+    await act(() => {
+      userEvent.type(
+        screen.getByPlaceholderText('Maximum message size'),
+        minValue
+      );
+    });
+    await act(() => {
+      userEvent.click(screen.getByText('Create topic'));
     });
     await waitFor(() => expect(createTopicMock).toHaveBeenCalledTimes(1));
     await waitFor(() =>
-      expect(mockNavigate).toHaveBeenLastCalledWith(`../${topicName}`)
+      expect(mockNavigate).toHaveBeenCalledWith(`../${topicName}`)
     );
   });
 });
