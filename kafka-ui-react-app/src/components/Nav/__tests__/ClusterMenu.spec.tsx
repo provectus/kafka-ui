@@ -19,19 +19,19 @@ describe('ClusterMenu', () => {
   const getKafkaConnect = () => screen.getByTitle('Kafka Connect');
   const getCluster = () => screen.getByText(onlineClusterPayload.name);
 
-  it('renders cluster menu with default set of features', () => {
+  it('renders cluster menu with default set of features', async () => {
     render(setupComponent(onlineClusterPayload));
     expect(getCluster()).toBeInTheDocument();
 
     expect(getMenuItems().length).toEqual(1);
-    userEvent.click(getMenuItem());
+    await userEvent.click(getMenuItem());
     expect(getMenuItems().length).toEqual(4);
 
     expect(getBrokers()).toBeInTheDocument();
     expect(getTopics()).toBeInTheDocument();
     expect(getConsumers()).toBeInTheDocument();
   });
-  it('renders cluster menu with correct set of features', () => {
+  it('renders cluster menu with correct set of features', async () => {
     render(
       setupComponent({
         ...onlineClusterPayload,
@@ -43,7 +43,7 @@ describe('ClusterMenu', () => {
       })
     );
     expect(getMenuItems().length).toEqual(1);
-    userEvent.click(getMenuItem());
+    await userEvent.click(getMenuItem());
     expect(getMenuItems().length).toEqual(7);
 
     expect(getBrokers()).toBeInTheDocument();
@@ -64,7 +64,7 @@ describe('ClusterMenu', () => {
     expect(getTopics()).toBeInTheDocument();
     expect(getConsumers()).toBeInTheDocument();
   });
-  it('makes Kafka Connect link active', () => {
+  it('makes Kafka Connect link active', async () => {
     render(
       setupComponent({
         ...onlineClusterPayload,
@@ -73,7 +73,7 @@ describe('ClusterMenu', () => {
       { initialEntries: [clusterConnectorsPath(onlineClusterPayload.name)] }
     );
     expect(getMenuItems().length).toEqual(1);
-    userEvent.click(getMenuItem());
+    await userEvent.click(getMenuItem());
     expect(getMenuItems().length).toEqual(5);
 
     const kafkaConnect = getKafkaConnect();

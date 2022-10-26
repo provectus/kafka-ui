@@ -61,7 +61,7 @@ describe('TableHeaderCell', () => {
     expect(title).toHaveStyle(`color: ${theme.table.th.color.active};`);
     expect(title).toHaveStyle('cursor: pointer;');
   });
-  it('renders click on title triggers handler', () => {
+  it('renders click on title triggers handler', async () => {
     setupComponent({
       title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
@@ -69,11 +69,11 @@ describe('TableHeaderCell', () => {
       handleOrderBy,
     });
     const title = within(getColumnHeader()).getByRole('button');
-    userEvent.click(title);
+    await userEvent.click(title);
     expect(handleOrderBy.mock.calls.length).toBe(1);
   });
 
-  it('renders space on title triggers handler', () => {
+  it('renders space on title triggers handler', async () => {
     setupComponent({
       title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
@@ -81,30 +81,30 @@ describe('TableHeaderCell', () => {
       handleOrderBy,
     });
     const title = within(getColumnHeader()).getByRole('button');
-    userEvent.type(title, SPACE_KEY);
+    await userEvent.type(title, SPACE_KEY);
     // userEvent.type clicks and only then presses space
     expect(handleOrderBy.mock.calls.length).toBe(2);
   });
 
-  it('click on preview triggers handler', () => {
+  it('click on preview triggers handler', async () => {
     setupComponent({
       title: testTitle,
       previewText: testPreviewText,
       onPreview,
     });
     const preview = within(getColumnHeader()).getByRole('button');
-    userEvent.click(preview);
+    await userEvent.click(preview);
     expect(onPreview.mock.calls.length).toBe(1);
   });
 
-  it('click on preview triggers handler', () => {
+  it('click on preview triggers handler', async () => {
     setupComponent({
       title: testTitle,
       previewText: testPreviewText,
       onPreview,
     });
     const preview = within(getColumnHeader()).getByRole('button');
-    userEvent.type(preview, SPACE_KEY);
+    await userEvent.type(preview, SPACE_KEY);
     expect(onPreview.mock.calls.length).toBe(2);
   });
 

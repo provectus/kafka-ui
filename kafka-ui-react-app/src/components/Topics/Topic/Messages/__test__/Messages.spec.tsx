@@ -57,24 +57,24 @@ describe('Messages', () => {
       );
 
       const labelValue1 = SeekDirectionOptions[1].label;
-      userEvent.click(seekDirectionSelect);
-      userEvent.selectOptions(seekDirectionSelect, [labelValue1]);
+      await userEvent.click(seekDirectionSelect);
+      await userEvent.selectOptions(seekDirectionSelect, [labelValue1]);
       expect(seekDirectionOption).toHaveTextContent(labelValue1);
 
       const labelValue0 = SeekDirectionOptions[0].label;
-      userEvent.click(seekDirectionSelect);
-      userEvent.selectOptions(seekDirectionSelect, [labelValue0]);
+      await userEvent.click(seekDirectionSelect);
+      await userEvent.selectOptions(seekDirectionSelect, [labelValue0]);
       expect(seekDirectionOption).toHaveTextContent(labelValue0);
 
       const liveOptionConf = SeekDirectionOptions[2];
       const labelValue2 = liveOptionConf.label;
-      userEvent.click(seekDirectionSelect);
+      await userEvent.click(seekDirectionSelect);
       const liveModeLi = screen.getByRole(
         (role, element) =>
           role === 'option' &&
           element?.getAttribute('value') === liveOptionConf.value
       );
-      userEvent.selectOptions(seekDirectionSelect, [liveModeLi]);
+      await userEvent.selectOptions(seekDirectionSelect, [liveModeLi]);
       expect(seekDirectionOption).toHaveTextContent(labelValue2);
 
       await waitFor(() => {

@@ -2,7 +2,6 @@ import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/dom';
 import { clusterBrokerPath } from 'lib/paths';
-import { act } from '@testing-library/react';
 import { brokerLogDirsPayload } from 'lib/fixtures/brokers';
 import { useBrokerLogDirs } from 'lib/hooks/api/brokers';
 import { BrokerLogdirs } from 'generated-sources';
@@ -20,16 +19,14 @@ describe('BrokerLogdir Component', () => {
     (useBrokerLogDirs as jest.Mock).mockImplementation(() => ({
       data: payload,
     }));
-    await act(() => {
-      render(
-        <WithRoute path={clusterBrokerPath()}>
-          <BrokerLogdir />
-        </WithRoute>,
-        {
-          initialEntries: [clusterBrokerPath(clusterName, brokerId)],
-        }
-      );
-    });
+    await render(
+      <WithRoute path={clusterBrokerPath()}>
+        <BrokerLogdir />
+      </WithRoute>,
+      {
+        initialEntries: [clusterBrokerPath(clusterName, brokerId)],
+      }
+    );
   };
 
   it('shows warning when server returns undefined logDirs response', async () => {

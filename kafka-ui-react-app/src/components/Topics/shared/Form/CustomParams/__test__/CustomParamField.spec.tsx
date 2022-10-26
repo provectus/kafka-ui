@@ -57,7 +57,7 @@ describe('CustomParamsField', () => {
   });
 
   describe('core functionality works', () => {
-    it('click on button triggers remove', () => {
+    it('click on button triggers remove', async () => {
       setupComponent({
         field,
         isDisabled,
@@ -66,11 +66,11 @@ describe('CustomParamsField', () => {
         existingFields,
         setExistingFields,
       });
-      userEvent.click(screen.getByRole('button'));
+      await userEvent.click(screen.getByRole('button'));
       expect(remove).toHaveBeenCalledTimes(1);
     });
 
-    it('pressing space on button triggers remove', () => {
+    it('pressing space on button triggers remove', async () => {
       setupComponent({
         field,
         isDisabled,
@@ -79,7 +79,7 @@ describe('CustomParamsField', () => {
         existingFields,
         setExistingFields,
       });
-      userEvent.type(screen.getByRole('button'), SPACE_KEY);
+      await userEvent.type(screen.getByRole('button'), SPACE_KEY);
       // userEvent.type triggers remove two times as at first it clicks on element and then presses space
       expect(remove).toHaveBeenCalledTimes(2);
     });
