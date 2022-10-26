@@ -109,14 +109,14 @@ describe('Overview', () => {
   });
 
   describe('when Clear Messages is clicked', () => {
-    it('should when Clear Messages is clicked', () => {
+    it('should when Clear Messages is clicked', async () => {
       renderComponent({
         ...externalTopicPayload,
         cleanUpPolicy: CleanUpPolicy.DELETE,
       });
 
       const clearMessagesButton = screen.getByText('Clear Messages');
-      userEvent.click(clearMessagesButton);
+      await userEvent.click(clearMessagesButton);
       expect(uwrapMock).toHaveBeenCalledTimes(1);
     });
   });
