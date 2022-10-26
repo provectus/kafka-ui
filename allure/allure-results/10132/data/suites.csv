@@ -1,0 +1,5 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"broken","Wed Oct 26 20:12:00 GMT 2022","Wed Oct 26 20:12:00 GMT 2022","0","","com.provectus.kafka.ui.tests.ConnectorsTests","","com.provectus.kafka.ui.tests.ConnectorsTests",""," connectors tests",""
+"passed","Wed Oct 26 20:11:34 GMT 2022","Wed Oct 26 20:11:45 GMT 2022","10766","","com.provectus.kafka.ui.SmokeTests","","com.provectus.kafka.ui.SmokeTests","mainPageLoads","main page should load",""
+"broken","Wed Oct 26 20:11:54 GMT 2022","Wed Oct 26 20:11:54 GMT 2022","0","","com.provectus.kafka.ui.tests.TopicTests","","com.provectus.kafka.ui.tests.TopicTests",""," topic tests",""
+"broken","Wed Oct 26 20:12:04 GMT 2022","Wed Oct 26 20:12:04 GMT 2022","0","","com.provectus.kafka.ui.tests.SchemasTests","","com.provectus.kafka.ui.tests.SchemasTests",""," schemas tests",""
