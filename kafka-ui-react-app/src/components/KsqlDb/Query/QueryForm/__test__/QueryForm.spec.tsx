@@ -172,13 +172,18 @@ describe('QueryForm', () => {
       handleSSECancel: jest.fn(),
       submitHandler: jest.fn(),
     });
-
+    const textBoxes = screen.getAllByRole('textbox', { name: 'key' });
+    textBoxes[0].focus();
+    await userEvent.paste('test');
     await userEvent.click(
       screen.getByRole('button', { name: 'Add Stream Property' })
     );
+    await userEvent.click(screen.getAllByLabelText('deleteProperty')[0]);
+
+    await screen.getByRole('button', { name: 'Add Stream Property' });
 
     await userEvent.click(screen.getAllByLabelText('deleteProperty')[0]);
 
-    expect(screen.getAllByRole('textbox', { name: 'key' }).length).toEqual(1);
+    expect(textBoxes.length).toEqual(1);
   });
 });
