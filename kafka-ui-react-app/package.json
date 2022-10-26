@@ -16,7 +16,6 @@
     "@tanstack/react-table": "^8.5.10",
     "@testing-library/react": "^13.2.0",
     "@types/testing-library__jest-dom": "^5.14.5",
-    "@types/yup": "^0.29.13",
     "@vitejs/plugin-react": "^2.0.0",
     "ace-builds": "^1.7.1",
     "ajv": "^8.6.3",
@@ -47,7 +46,7 @@
     "vite": "^3.0.2",
     "vite-tsconfig-paths": "^3.5.0",
     "whatwg-fetch": "^3.6.2",
-    "yup": "^0.32.9",
+    "yup": "^0.32.11",
     "zustand": "^4.1.1"
   },
   "lint-staged": {

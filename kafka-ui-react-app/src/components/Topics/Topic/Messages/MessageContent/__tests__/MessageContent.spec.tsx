@@ -61,7 +61,7 @@ describe('MessageContent screen', () => {
   });
 
   describe('when switched to display the headers', () => {
-    it('makes Headers tab active', () => {
+    it('makes headers tab active', () => {
       userEvent.click(screen.getByText('Headers'));
       expect(screen.getByText('Headers')).toHaveStyleRule(
         'background-color',
@@ -70,9 +70,9 @@ describe('MessageContent screen', () => {
     });
   });
 
-  describe('when switched to display the content', () => {
-    it('makes content tab active', () => {
-      const contentTab = screen.getAllByText('Content');
+  describe('when switched to display the value', () => {
+    it('makes value tab active', () => {
+      const contentTab = screen.getAllByText('Value');
       userEvent.click(contentTab[0]);
       expect(contentTab[0]).toHaveStyleRule(
         'background-color',

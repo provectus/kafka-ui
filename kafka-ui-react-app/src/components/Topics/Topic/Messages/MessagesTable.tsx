@@ -27,7 +27,7 @@ const MessagesTable: React.FC = () => {
           <TableHeaderCell title="Partition" />
           <TableHeaderCell title="Timestamp" />
           <TableHeaderCell title="Key" />
-          <TableHeaderCell title="Content" />
+          <TableHeaderCell title="Value" />
           <TableHeaderCell> </TableHeaderCell>
         </tr>
       </thead>
