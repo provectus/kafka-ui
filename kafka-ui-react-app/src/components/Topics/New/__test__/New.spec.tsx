@@ -1,6 +1,7 @@
 import React from 'react';
 import New from 'components/Topics/New/New';
 import { Route, Routes } from 'react-router-dom';
+import { connectors } from 'lib/fixtures/kafkaConnect';
 import { act, screen, waitFor } from '@testing-library/react';
 import {
   clusterTopicCopyPath,
@@ -85,20 +86,6 @@ describe('New', () => {
     });
   });
 
-  it('renders pageloader', async () => {
-    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
-
-    await act(() => {
-      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
-    });
-    await act(() => {
-      userEvent.click(screen.getByText('Create topic'));
-    });
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
-    expect(screen.queryByText('Create')).not.toBeInTheDocument();
-    expect(screen.queryByText('Copy')).not.toBeInTheDocument();
-  });
-
   it('submits valid form', async () => {
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
     await act(() => {
@@ -111,5 +98,15 @@ describe('New', () => {
     await waitFor(() =>
       expect(mockNavigate).toHaveBeenLastCalledWith(`../${topicName}`)
     );
+  });
+
+  it('renders indicators in loading state', async () => {
+    (useCreateTopic as jest.Mock).mockImplementation(() => ({
+      isLoading: true,
+      data: connectors,
+    }));
+
+    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 });

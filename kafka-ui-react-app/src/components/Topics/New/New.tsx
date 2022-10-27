@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TopicFormData } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import { ClusterNameRoute, clusterTopicsPath } from 'lib/paths';
@@ -25,8 +25,6 @@ const New: React.FC = () => {
     resolver: yupResolver(topicFormValidationSchema),
   });
 
-  const [isFetched, setIsFetched] = useState<boolean>(false);
-
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const createTopic = useCreateTopic(clusterName);
 
@@ -42,12 +40,11 @@ const New: React.FC = () => {
   const cleanUpPolicy = params.get(Filters.CLEANUP_POLICY) || 'Delete';
 
   const onSubmit = async (data: TopicFormData) => {
-    setIsFetched(true);
     await createTopic.mutateAsync(data);
     navigate(`../${data.name}`);
   };
 
-  if (isFetched) {
+  if (createTopic.isLoading) {
     return <PageLoader />;
   }
 
