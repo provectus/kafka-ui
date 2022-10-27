@@ -56,9 +56,7 @@ describe('Details', () => {
         schemasAPIVersionsUrl,
         404
       );
-      await act(() => {
-        renderComponent();
-      });
+      await renderComponent();
 
       await waitFor(() => {
         expect(schemasAPILatestMock.called()).toBeTruthy();

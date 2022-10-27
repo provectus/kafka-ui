@@ -33,10 +33,10 @@ const expectActionButtonsExists = () => {
   expect(screen.getByText('Restart Failed Tasks')).toBeInTheDocument();
   expect(screen.getByText('Delete')).toBeInTheDocument();
 };
-const afterClickDropDownButton = () => {
+const afterClickDropDownButton = async () => {
   const dropDownButton = screen.getAllByRole('button');
   expect(dropDownButton.length).toEqual(1);
-  userEvent.click(dropDownButton[0]);
+  await userEvent.click(dropDownButton[0]);
 };
 describe('Actions', () => {
   afterEach(() => {
@@ -61,48 +61,48 @@ describe('Actions', () => {
         { initialEntries: [path] }
       );
 
-    it('renders buttons when paused', () => {
+    it('renders buttons when paused', async () => {
       (useConnector as jest.Mock).mockImplementation(() => ({
         data: set({ ...connector }, 'status.state', ConnectorState.PAUSED),
       }));
       renderComponent();
-      afterClickDropDownButton();
+      await afterClickDropDownButton();
       expect(screen.getAllByRole('menuitem').length).toEqual(5);
       expect(screen.getByText('Resume')).toBeInTheDocument();
       expect(screen.queryByText('Pause')).not.toBeInTheDocument();
       expectActionButtonsExists();
     });
 
-    it('renders buttons when failed', () => {
+    it('renders buttons when failed', async () => {
       (useConnector as jest.Mock).mockImplementation(() => ({
         data: set({ ...connector }, 'status.state', ConnectorState.FAILED),
       }));
       renderComponent();
-      afterClickDropDownButton();
+      await afterClickDropDownButton();
       expect(screen.getAllByRole('menuitem').length).toEqual(4);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
       expect(screen.queryByText('Pause')).not.toBeInTheDocument();
       expectActionButtonsExists();
     });
 
-    it('renders buttons when unassigned', () => {
+    it('renders buttons when unassigned', async () => {
       (useConnector as jest.Mock).mockImplementation(() => ({
         data: set({ ...connector }, 'status.state', ConnectorState.UNASSIGNED),
       }));
       renderComponent();
-      afterClickDropDownButton();
+      await afterClickDropDownButton();
       expect(screen.getAllByRole('menuitem').length).toEqual(4);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
       expect(screen.queryByText('Pause')).not.toBeInTheDocument();
       expectActionButtonsExists();
     });
 
-    it('renders buttons when running connector action', () => {
+    it('renders buttons when running connector action', async () => {
       (useConnector as jest.Mock).mockImplementation(() => ({
         data: set({ ...connector }, 'status.state', ConnectorState.RUNNING),
       }));
       renderComponent();
-      afterClickDropDownButton();
+      await afterClickDropDownButton();
       expect(screen.getAllByRole('menuitem').length).toEqual(5);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
       expect(screen.getByText('Pause')).toBeInTheDocument();
@@ -118,34 +118,34 @@ describe('Actions', () => {
 
       it('opens confirmation modal when delete button clicked', async () => {
         renderComponent();
-        afterClickDropDownButton();
-        await waitFor(() =>
+        await afterClickDropDownButton();
+        await waitFor(async () =>
           userEvent.click(screen.getByRole('menuitem', { name: 'Delete' }))
         );
         expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
-      it('calls restartConnector when restart button clicked', () => {
+      it('calls restartConnector when restart button clicked', async () => {
         const restartConnector = jest.fn();
         (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
           mutateAsync: restartConnector,
         }));
         renderComponent();
-        afterClickDropDownButton();
-        userEvent.click(
+        await afterClickDropDownButton();
+        await userEvent.click(
           screen.getByRole('menuitem', { name: 'Restart Connector' })
         );
         expect(restartConnector).toHaveBeenCalledWith(ConnectorAction.RESTART);
       });
 
-      it('calls restartAllTasks', () => {
+      it('calls restartAllTasks', async () => {
         const restartAllTasks = jest.fn();
         (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
           mutateAsync: restartAllTasks,
         }));
         renderComponent();
-        afterClickDropDownButton();
-        userEvent.click(
+        await afterClickDropDownButton();
+        await userEvent.click(
           screen.getByRole('menuitem', { name: 'Restart All Tasks' })
         );
         expect(restartAllTasks).toHaveBeenCalledWith(
@@ -153,14 +153,14 @@ describe('Actions', () => {
         );
       });
 
-      it('calls restartFailedTasks', () => {
+      it('calls restartFailedTasks', async () => {
         const restartFailedTasks = jest.fn();
         (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
           mutateAsync: restartFailedTasks,
         }));
         renderComponent();
-        afterClickDropDownButton();
-        userEvent.click(
+        await afterClickDropDownButton();
+        await userEvent.click(
           screen.getByRole('menuitem', { name: 'Restart Failed Tasks' })
         );
         expect(restartFailedTasks).toHaveBeenCalledWith(
@@ -168,18 +168,18 @@ describe('Actions', () => {
         );
       });
 
-      it('calls pauseConnector when pause button clicked', () => {
+      it('calls pauseConnector when pause button clicked', async () => {
         const pauseConnector = jest.fn();
         (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
           mutateAsync: pauseConnector,
         }));
         renderComponent();
-        afterClickDropDownButton();
-        userEvent.click(screen.getByRole('menuitem', { name: 'Pause' }));
+        await afterClickDropDownButton();
+        await userEvent.click(screen.getByRole('menuitem', { name: 'Pause' }));
         expect(pauseConnector).toHaveBeenCalledWith(ConnectorAction.PAUSE);
       });
 
-      it('calls resumeConnector when resume button clicked', () => {
+      it('calls resumeConnector when resume button clicked', async () => {
         const resumeConnector = jest.fn();
         (useConnector as jest.Mock).mockImplementation(() => ({
           data: set({ ...connector }, 'status.state', ConnectorState.PAUSED),
@@ -188,8 +188,8 @@ describe('Actions', () => {
           mutateAsync: resumeConnector,
         }));
         renderComponent();
-        afterClickDropDownButton();
-        userEvent.click(screen.getByRole('menuitem', { name: 'Resume' }));
+        await afterClickDropDownButton();
+        await userEvent.click(screen.getByRole('menuitem', { name: 'Resume' }));
         expect(resumeConnector).toHaveBeenCalledWith(ConnectorAction.RESUME);
       });
     });
