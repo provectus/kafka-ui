@@ -21,7 +21,7 @@ services:
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
 
   kafka0:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-kafka:7.2.1.arm64
     hostname: kafka0
     container_name: kafka0
     ports:
