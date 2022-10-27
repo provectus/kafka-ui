@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ClusterContext from 'components/contexts/ClusterContext';
 import Details from 'components/Topics/Topic/Topic';
@@ -110,17 +110,17 @@ describe('Details', () => {
     });
 
     describe('when remove topic modal is open', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         renderComponent();
         const openModalButton = screen.getAllByText('Remove Topic')[0];
-        userEvent.click(openModalButton);
+        await userEvent.click(openModalButton);
       });
 
       it('calls deleteTopic on confirm', async () => {
         const submitButton = screen.getAllByRole('button', {
           name: 'Confirm',
         })[0];
-        await act(() => userEvent.click(submitButton));
+        await userEvent.click(submitButton);
         expect(mockDelete).toHaveBeenCalledWith(topic.name);
       });
       it('closes the modal when cancel button is clicked', async () => {
@@ -134,7 +134,7 @@ describe('Details', () => {
       beforeEach(async () => {
         await renderComponent();
         const confirmButton = screen.getAllByText('Clear messages')[0];
-        await act(() => userEvent.click(confirmButton));
+        await userEvent.click(confirmButton);
       });
 
       it('it calls clearTopicMessages on confirm', async () => {
@@ -154,10 +154,10 @@ describe('Details', () => {
     });
 
     describe('when edit settings is clicked', () => {
-      it('redirects to the edit page', () => {
+      it('redirects to the edit page', async () => {
         renderComponent();
         const button = screen.getAllByText('Edit settings')[0];
-        userEvent.click(button);
+        await userEvent.click(button);
         expect(mockNavigate).toHaveBeenCalledWith(clusterTopicEditRelativePath);
       });
     });
@@ -169,24 +169,24 @@ describe('Details', () => {
       const submitDeleteButton = screen.getByRole('button', {
         name: 'Confirm',
       });
-      await act(() => userEvent.click(submitDeleteButton));
+      await userEvent.click(submitDeleteButton);
       expect(mockNavigate).toHaveBeenCalledWith('../..');
     });
 
-    it('shows a confirmation popup on deleting topic messages', () => {
+    it('shows a confirmation popup on deleting topic messages', async () => {
       renderComponent();
       const clearMessagesButton = screen.getAllByText(/Clear messages/i)[0];
-      userEvent.click(clearMessagesButton);
+      await userEvent.click(clearMessagesButton);
 
       expect(
         screen.getByText(/Are you sure want to clear topic messages?/i)
       ).toBeInTheDocument();
     });
 
-    it('shows a confirmation popup on recreating topic', () => {
+    it('shows a confirmation popup on recreating topic', async () => {
       renderComponent();
       const recreateTopicButton = screen.getByText(/Recreate topic/i);
-      userEvent.click(recreateTopicButton);
+      await userEvent.click(recreateTopicButton);
       expect(
         screen.getByText(/Are you sure want to recreate topic?/i)
       ).toBeInTheDocument();
@@ -195,19 +195,19 @@ describe('Details', () => {
     it('is calling recreation function after click on Submit button', async () => {
       renderComponent();
       const recreateTopicButton = screen.getByText(/Recreate topic/i);
-      userEvent.click(recreateTopicButton);
+      await userEvent.click(recreateTopicButton);
       const confirmBtn = screen.getByRole('button', { name: /Confirm/i });
 
       await waitFor(() => userEvent.click(confirmBtn));
       expect(mockRecreate).toBeCalledTimes(1);
     });
 
-    it('closes popup confirmation window after click on Cancel button', () => {
+    it('closes popup confirmation window after click on Cancel button', async () => {
       renderComponent();
       const recreateTopicButton = screen.getByText(/Recreate topic/i);
-      userEvent.click(recreateTopicButton);
+      await userEvent.click(recreateTopicButton);
       const cancelBtn = screen.getByRole('button', { name: /cancel/i });
-      userEvent.click(cancelBtn);
+      await userEvent.click(cancelBtn);
       expect(
         screen.queryByText(/Are you sure want to recreate topic?/i)
       ).not.toBeInTheDocument();

@@ -19,7 +19,7 @@ const renderComponent = () => {
 };
 
 describe('SchemaVersion', () => {
-  it('renders versions', () => {
+  it('renders versions', async () => {
     renderComponent();
   });
 });

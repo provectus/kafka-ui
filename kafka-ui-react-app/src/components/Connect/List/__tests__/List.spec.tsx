@@ -5,7 +5,7 @@ import ClusterContext, {
   initialValue,
 } from 'components/contexts/ClusterContext';
 import List from 'components/Connect/List/List';
-import { act, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorPath, clusterConnectorsPath } from 'lib/paths';
@@ -52,13 +52,11 @@ describe('Connectors List', () => {
 
     it('opens broker when row clicked', async () => {
       renderComponent();
-      await act(() => {
-        userEvent.click(
-          screen.getByRole('row', {
-            name: 'hdfs-source-connector first SOURCE FileStreamSource a b c RUNNING 2 of 2',
-          })
-        );
-      });
+      await userEvent.click(
+        screen.getByRole('row', {
+          name: 'hdfs-source-connector first SOURCE FileStreamSource a b c RUNNING 2 of 2',
+        })
+      );
       await waitFor(() =>
         expect(mockedUsedNavigate).toBeCalledWith(
           clusterConnectConnectorPath(
@@ -105,7 +103,7 @@ describe('Connectors List', () => {
       const submitButton = screen.getAllByRole('button', {
         name: 'Confirm',
       })[0];
-      await act(() => userEvent.click(submitButton));
+      await userEvent.click(submitButton);
       expect(mockDelete).toHaveBeenCalledWith();
     });
 
