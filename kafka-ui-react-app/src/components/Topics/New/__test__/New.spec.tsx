@@ -60,11 +60,14 @@ describe('New', () => {
 
   it('validates form', async () => {
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
-    await waitFor(() => {
-      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+    await waitFor(async () => {
+      await userEvent.type(
+        screen.getByPlaceholderText('Topic Name'),
+        topicName
+      );
     });
-    await waitFor(() => {
-      userEvent.clear(screen.getByPlaceholderText('Topic Name'));
+    await waitFor(async () => {
+      await userEvent.clear(screen.getByPlaceholderText('Topic Name'));
     });
     await waitFor(() => {
       expect(screen.getByText('name is a required field')).toBeInTheDocument();
@@ -87,11 +90,14 @@ describe('New', () => {
 
   it('submits valid form', async () => {
     await act(() => renderComponent(clusterTopicNewPath(clusterName)));
-    await act(() => {
-      userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+    await act(async () => {
+      await userEvent.type(
+        screen.getByPlaceholderText('Topic Name'),
+        topicName
+      );
     });
-    await act(() => {
-      userEvent.click(screen.getByText('Create topic'));
+    await act(async () => {
+      await userEvent.click(screen.getByText('Create topic'));
     });
     await waitFor(() => expect(createTopicMock).toHaveBeenCalledTimes(1));
     await waitFor(() =>

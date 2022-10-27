@@ -167,7 +167,10 @@ const Query: FC = () => {
 
   const submitHandler = useCallback(
     (values: FormValues) => {
-      const streamsProperties = values.streamsProperties.reduce(
+      const filteredProperties = values.streamsProperties.filter(
+        (property) => property.key != null
+      );
+      const streamsProperties = filteredProperties.reduce(
         (acc, current) => ({
           ...acc,
           [current.key as keyof string]: current.value,
