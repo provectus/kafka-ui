@@ -201,9 +201,6 @@ public class TopicTests extends BaseTest {
     void redirectToConsumerFromTopic() {
         naviSideBar
                 .openSideMenu(TOPICS);
-//        topicsList
-//                .waitUntilScreenReady()
-//                .isTopicVisible("source-activities");
         topicsList
                 .waitUntilScreenReady()
                 .openTopic("source-activities");
