@@ -21,7 +21,8 @@ import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.model.schemaregistry.InternalNewSchema;
 import com.provectus.kafka.ui.model.schemaregistry.SubjectIdResponse;
-
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -34,9 +35,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.TrustManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -58,9 +58,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
-
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManagerFactory;
 
 @Service
 @Slf4j
@@ -383,13 +380,13 @@ public class SchemaRegistryService {
                                                         MultiValueMap<String, String> queryParams) {
     final var schemaRegistry = cluster.getSchemaRegistry();
 
-    return securedWebClientOnTLS(cluster)
+    return securedWebClientOnTls(cluster)
         .method(method)
         .uri(buildUri(schemaRegistry, path, uriVariables, queryParams))
         .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers));
   }
 
-  private WebClient securedWebClientOnTLS(KafkaCluster cluster) {
+  private WebClient securedWebClientOnTls(KafkaCluster cluster) {
     InternalSchemaRegistry srConfig = cluster.getSchemaRegistry();
 
     // If we want to customize our TLS configuration, we need at least a truststore
@@ -407,7 +404,9 @@ public class SchemaRegistryService {
               srConfig.getTrustStorePassword().toCharArray()
       );
 
-      TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+      TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+          TrustManagerFactory.getDefaultAlgorithm()
+      );
       trustManagerFactory.init(trustStore);
       contextBuilder.trustManager(trustManagerFactory);
 
