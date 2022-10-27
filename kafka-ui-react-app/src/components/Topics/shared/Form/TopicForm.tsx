@@ -218,6 +218,7 @@ const TopicForm: React.FC<Props> = ({
             <Input
               id="topicFormMaxMessageBytes"
               type="number"
+              placeholder="Maximum message size"
               min="1"
               defaultValue="1000012"
               name="maxMessageBytes"
