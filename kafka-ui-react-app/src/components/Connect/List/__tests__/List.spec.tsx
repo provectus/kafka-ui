@@ -5,7 +5,7 @@ import ClusterContext, {
   initialValue,
 } from 'components/contexts/ClusterContext';
 import List from 'components/Connect/List/List';
-import { act, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectorsPath } from 'lib/paths';
@@ -92,7 +92,7 @@ describe('Connectors List', () => {
       const submitButton = screen.getAllByRole('button', {
         name: 'Confirm',
       })[0];
-      await act(() => userEvent.click(submitButton));
+      await userEvent.click(submitButton);
       expect(mockDelete).toHaveBeenCalledWith();
     });
 

@@ -39,8 +39,8 @@ describe('ListItem', () => {
     expect(screen.getByRole('row')).toBeInTheDocument();
   });
 
-  it('should renders list item with topic content open', () => {
-    userEvent.click(screen.getAllByRole('cell')[0].children[0]);
+  it('should renders list item with topic content open', async () => {
+    await userEvent.click(screen.getAllByRole('cell')[0].children[0]);
     expect(screen.getByText('Consumer ID')).toBeInTheDocument();
   });
 });
