@@ -5,8 +5,8 @@ export const MessageTooltip = styled.div`
   max-height: 100%;
   background-color: ${({ theme }) => theme.tooltip.bg};
   color: ${({ theme }) => theme.tooltip.text};
-  text-align: center;
   border-radius: 6px;
-  padding: 5px 0;
+  padding: 5px;
   z-index: 1;
+  white-space: pre-wrap;
 `;

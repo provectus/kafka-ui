@@ -24,3 +24,15 @@ export const SearchWrapper = styled.div`
   margin: 10px;
   width: 21%;
 `;
+
+export const Source = styled.div`
+  display: flex;
+  align-content: center;
+  span {
+    margin-left: 10px;
+    svg {
+      vertical-align: middle;
+      cursor: pointer;
+    }
+  }
+`;
