@@ -53,17 +53,6 @@ public class ConsumerGroupsController extends AbstractController implements Cons
         .map(ResponseEntity::ok);
   }
 
-
-  @Override
-  public Mono<ResponseEntity<Flux<ConsumerGroupDTO>>> getConsumerGroups(String clusterName,
-                                                                        ServerWebExchange exchange) {
-    return consumerGroupService.getAllConsumerGroups(getCluster(clusterName))
-        .map(Flux::fromIterable)
-        .map(f -> f.map(ConsumerGroupMapper::toDto))
-        .map(ResponseEntity::ok)
-        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
-  }
-
   @Override
   public Mono<ResponseEntity<Flux<ConsumerGroupDTO>>> getTopicConsumerGroups(
       String clusterName, String topicName, ServerWebExchange exchange) {
