@@ -54,7 +54,7 @@ describe('Metrics', () => {
     it('renders Stop Analysis button', async () => {
       const btn = screen.getByRole('button', { name: 'Stop Analysis' });
       expect(btn).toBeInTheDocument();
-      await waitFor(() => userEvent.click(btn));
+      await userEvent.click(btn);
       expect(cancelMock).toHaveBeenCalled();
     });
 

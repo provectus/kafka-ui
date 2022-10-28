@@ -46,6 +46,6 @@ describe('calculate timer', () => {
   });
 
   it('return when startedAt > new Date()', () => {
-    expect(calculateTimer(1664891890889199)).toBe('00 : 00 s');
+    expect(calculateTimer(1664891890889199)).toBe('00:00');
   });
 });

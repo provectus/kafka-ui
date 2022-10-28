@@ -16,10 +16,6 @@ export const ProgressContainer = styled.div`
 
   ${List} {
     opacity: 0.5;
-
-    ${Label} {
-      text-align: right;
-    }
   }
 `;
 
