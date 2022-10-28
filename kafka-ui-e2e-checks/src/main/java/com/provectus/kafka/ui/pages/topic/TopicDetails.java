@@ -26,9 +26,9 @@ public class TopicDetails {
     protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
     protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
     protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
-    protected SelenideElement sourceActivitiesConsumer = $x("//a[@title='connect-sink_postgres_activities']");
-
+    protected String sourceActivitiesConsumerId = "//a[@title='%s']";
     @Step
+
     public TopicDetails waitUntilScreenReady() {
         loadingSpinner.shouldBe(Condition.disappear);
         Arrays.asList(overviewTab,messagesTab).forEach(element -> element.shouldBe(Condition.visible));
@@ -76,8 +76,8 @@ public class TopicDetails {
     }
 
     @Step
-    public TopicDetails clickOnSourceActivitiesConsumer() {
-        sourceActivitiesConsumer.click();
+    public TopicDetails openConsumerGroup(String consumerId) {
+        $x(String.format(sourceActivitiesConsumerId, consumerId)).click();
         return this;
     }
 

@@ -12,22 +12,19 @@ import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 public class ConsumersDetails {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected String connectSinkPostgresActivitiesHeader = "//h1[contains(text(),'connect-sink_postgres_activities')]";
     protected SelenideElement topicGrid = $x("//table");
+    protected String connectSinkPostgresActivitiesHeader = "//h1[contains(text(),'%s')]";
     protected String topicElementLocator = "//tbody//td//a[text()='%s']";
-
     @Step
     public ConsumersDetails waitUntilScreenReady() {
         loadingSpinner.shouldBe(Condition.disappear);
         topicGrid.shouldBe(Condition.visible);
         return this;
     }
-
     @Step
-    public boolean isRedirectedConsumerTitleVisible() {
-        return isVisible($x(connectSinkPostgresActivitiesHeader));
+    public boolean isRedirectedConsumerTitleVisible(String consumerGroupId) {
+        return isVisible($x(String.format(connectSinkPostgresActivitiesHeader, consumerGroupId)));
     }
-
     @Step
     public boolean isTopicInConsumersDetailsVisible(String topicName) {
         topicGrid.shouldBe(Condition.visible);

@@ -23,6 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TopicTests extends BaseTest {
     private static final long SUITE_ID = 2;
     private static final String SUITE_TITLE = "Topics";
+    private static final String TOPIC_NAME = "source-activities";
+    private static final String TOPIC_ID = "connect-sink_postgres_activities";
     private static final Topic TOPIC_FOR_UPDATE = new Topic()
             .setName("topic-to-update")
             .setCleanupPolicyValue("Compact")
@@ -191,7 +193,8 @@ public class TopicTests extends BaseTest {
         topicDetails
                 .openDotPartitionIdMenu()
                 .clickClearMessagesBtn();
-//        Assertions.assertEquals(Integer.toString(Integer.valueOf(messageAmount)-1),topicDetails.MessageCountAmount());
+//        assertThat(Integer.toString(Integer.valueOf(messageAmount)-1))
+//                .withFailMessage("message amount not decrease by one").isEqualTo(topicDetails.MessageCountAmount());
     }
 
     @DisplayName("Redirect to consumer from topic profile")
@@ -204,16 +207,16 @@ public class TopicTests extends BaseTest {
                 .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
-                .openTopic("source-activities");
+                .openTopic(TOPIC_NAME);
         topicDetails
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicDetails.TopicMenu.CONSUMERS)
-                .clickOnSourceActivitiesConsumer();
+                .openConsumerGroup(TOPIC_ID);
         consumersDetails
                 .waitUntilScreenReady();
-        assertThat(consumersDetails.isRedirectedConsumerTitleVisible())
+        assertThat(consumersDetails.isRedirectedConsumerTitleVisible(TOPIC_ID))
                 .withFailMessage("isRedirectedConsumerTitleVisible").isTrue();
-        assertThat(consumersDetails.isTopicInConsumersDetailsVisible("source-activities"))
+        assertThat(consumersDetails.isTopicInConsumersDetailsVisible(TOPIC_NAME))
                 .withFailMessage("isTopicInConsumersDetailsVisible").isTrue();
     }
 
