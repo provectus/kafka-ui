@@ -9,7 +9,6 @@ import lombok.experimental.ExtensionMethod;
 import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
-@ExtensionMethod({WaitUtils.class})
 public class ConsumersDetails {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");

@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
-import static com.provectus.kafka.ui.pages.topic.TopicDetails.DotPartitionIdMenu.CLEAR_MESSAGES;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TopicTests extends BaseTest {
@@ -186,7 +186,8 @@ public class TopicTests extends BaseTest {
         topicDetails
                 .waitUntilScreenReady();
         String messageAmount = topicDetails.MessageCountAmount();
-        Assertions.assertEquals(messageAmount,topicDetails.MessageCountAmount());
+        assertThat(messageAmount)
+                .withFailMessage("message amount not equals").isEqualTo(topicDetails.MessageCountAmount());
         topicDetails
                 .openDotPartitionIdMenu()
                 .clickClearMessagesBtn();
@@ -210,8 +211,10 @@ public class TopicTests extends BaseTest {
                 .clickOnSourceActivitiesConsumer();
         consumersDetails
                 .waitUntilScreenReady();
-        Assertions.assertTrue(consumersDetails.isRedirectedConsumerTitleVisible());
-        Assertions.assertTrue(consumersDetails.isTopicInConsumersDetailsVisible("source-activities"));
+        assertThat(consumersDetails.isRedirectedConsumerTitleVisible())
+                .withFailMessage("isRedirectedConsumerTitleVisible").isTrue();
+        assertThat(consumersDetails.isTopicInConsumersDetailsVisible("source-activities"))
+                .withFailMessage("isTopicInConsumersDetailsVisible").isTrue();
     }
 
     @AfterAll
