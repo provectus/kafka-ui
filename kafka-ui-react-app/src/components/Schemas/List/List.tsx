@@ -90,7 +90,7 @@ const List: React.FC = () => {
         )}
       </PageHeading>
       <ControlPanelWrapper hasInput>
-        <Search placeholder="Search by Schema Name" />
+        <Search placeholder="Search by Subject" />
       </ControlPanelWrapper>
       {isFetched ? (
         <Table
