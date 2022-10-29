@@ -11,10 +11,10 @@ import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import { defaultValues } from './fixtures';
 
 const selectOption = async (listbox: HTMLElement, option: string) => {
-  await act(() => {
-    userEvent.click(listbox);
+  await act(async () => {
+    await userEvent.click(listbox);
   });
-  userEvent.click(screen.getByText(option));
+  await userEvent.click(screen.getByText(option));
 };
 
 const expectOptionIsSelected = (listbox: HTMLElement, option: string) => {
@@ -28,7 +28,9 @@ const expectOptionAvailability = async (
   option: string,
   disabled: boolean
 ) => {
-  await act(() => userEvent.click(listbox));
+  await act(async () => {
+    await userEvent.click(listbox);
+  });
   const selectedOptions = within(listbox).getAllByText(option).reverse();
   // its either two or one nodes, we only need last one
   const selectedOption = selectedOptions[0];
@@ -43,7 +45,9 @@ const expectOptionAvailability = async (
     'cursor',
     disabled ? 'not-allowed' : 'pointer'
   );
-  await act(() => userEvent.click(listbox));
+  await act(async () => {
+    await userEvent.click(listbox);
+  });
 };
 
 const renderComponent = (props: CustomParamsProps, defaults = {}) => {
@@ -85,7 +89,9 @@ describe('CustomParams', () => {
     beforeEach(async () => {
       renderComponent({ isSubmitting: false });
       button = screen.getByRole('button');
-      await act(() => userEvent.click(button));
+      await act(async () => {
+        await userEvent.click(button);
+      });
     });
 
     it('button click creates custom param fieldset', async () => {
@@ -120,8 +126,12 @@ describe('CustomParams', () => {
     });
 
     it('multiple button clicks create multiple fieldsets', async () => {
-      await act(() => userEvent.click(button));
-      await act(() => userEvent.click(button));
+      await act(async () => {
+        await userEvent.click(button);
+      });
+      await act(async () => {
+        await userEvent.click(button);
+      });
 
       const listboxes = screen.getAllByRole('listbox');
       expect(listboxes.length).toBe(3);
@@ -131,7 +141,9 @@ describe('CustomParams', () => {
     });
 
     it("can't select already selected option", async () => {
-      await act(() => userEvent.click(button));
+      await act(async () => {
+        await userEvent.click(button);
+      });
 
       const listboxes = screen.getAllByRole('listbox');
 
@@ -144,8 +156,12 @@ describe('CustomParams', () => {
     });
 
     it('when fieldset with selected custom property type is deleted disabled options update correctly', async () => {
-      await act(() => userEvent.click(button));
-      await act(() => userEvent.click(button));
+      await act(async () => {
+        await userEvent.click(button);
+      });
+      await act(async () => {
+        await userEvent.click(button);
+      });
 
       const listboxes = screen.getAllByRole('listbox');
 
@@ -172,7 +188,9 @@ describe('CustomParams', () => {
       const deleteSecondFieldsetButton = screen.getByTitle(
         'Delete customParam field 1'
       );
-      await act(() => userEvent.click(deleteSecondFieldsetButton));
+      await act(async () => {
+        await userEvent.click(deleteSecondFieldsetButton);
+      });
       expect(secondListbox).not.toBeInTheDocument();
 
       await expectOptionAvailability(

@@ -48,16 +48,20 @@ public class ConsumerGroupsController extends AbstractController implements Cons
   private int defaultConsumerGroupsPageSize;
 
   @Override
-  public Mono<ResponseEntity<Flux<ConsumerGroupDTO>>> getConsumerGroups(String clusterName,
-                                                                        ServerWebExchange exchange) {
+  public Mono<ResponseEntity<Void>> deleteConsumerGroup(String clusterName,
+                                                        String id,
+                                                        ServerWebExchange exchange) {
+    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+        .cluster(clusterName)
+        .clusterActions(ClusterAction.VIEW)
+        .consumerGroup(id)
+        .consumerGroupActions(DELETE)
+        .build());
 
-    Flux<ConsumerGroupDTO> flux = consumerGroupService.getAllConsumerGroups(getCluster(clusterName))
-        .flatMapMany(Flux::fromIterable)
-        .filterWhen(cg -> accessControlService.isConsumerGroupAccessible(cg.getGroupId(), clusterName))
-        .map(ConsumerGroupMapper::toDto);
-
-    return Mono.just(ResponseEntity.ok(flux));
-
+    return validateAccess.then(
+        consumerGroupService.deleteConsumerGroupById(getCluster(clusterName), id)
+            .thenReturn(ResponseEntity.ok().build())
+    );
   }
 
   @Override
@@ -87,7 +91,6 @@ public class ConsumerGroupsController extends AbstractController implements Cons
         .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(TopicAction.VIEW)
-        .consumerGroupActions(VIEW)
         .build());
 
     Mono<ResponseEntity<Flux<ConsumerGroupDTO>>> job =
@@ -187,23 +190,6 @@ public class ConsumerGroupsController extends AbstractController implements Cons
 
       return validateAccess.then(mono.get());
     }).thenReturn(ResponseEntity.ok().build());
-  }
-
-  @Override
-  public Mono<ResponseEntity<Void>> deleteConsumerGroup(String clusterName,
-                                                        String id,
-                                                        ServerWebExchange exchange) {
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
-        .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
-        .consumerGroup(id)
-        .consumerGroupActions(DELETE)
-        .build());
-
-    return validateAccess.then(
-        consumerGroupService.deleteConsumerGroupById(getCluster(clusterName), id)
-            .thenReturn(ResponseEntity.ok().build())
-    );
   }
 
   private ConsumerGroupsPageResponseDTO convertPage(ConsumerGroupService.ConsumerGroupsPage

@@ -45,9 +45,7 @@ describe('Edit', () => {
   describe('fetch failed', () => {
     it('renders page loader', async () => {
       const schemasAPILatestMock = fetchMock.getOnce(schemasAPILatestUrl, 404);
-      await act(() => {
-        renderComponent();
-      });
+      await renderComponent();
       await waitFor(() => expect(schemasAPILatestMock.called()).toBeTruthy());
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
       expect(screen.queryByText(schemaVersion.subject)).not.toBeInTheDocument();

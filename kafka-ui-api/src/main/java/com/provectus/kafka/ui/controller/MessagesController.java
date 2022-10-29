@@ -9,6 +9,7 @@ import static com.provectus.kafka.ui.serde.api.Serde.Target.VALUE;
 import static java.util.stream.Collectors.toMap;
 
 import com.provectus.kafka.ui.api.MessagesApi;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
@@ -25,6 +26,7 @@ import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,32 +83,33 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                            String keySerde,
                                                                            String valueSerde,
                                                                            ServerWebExchange exchange) {
-
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    final Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
         .clusterActions(VIEW)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
         .build());
 
-    var positions = new ConsumerPosition(
-        seekType != null ? seekType : SeekTypeDTO.BEGINNING,
-        parseSeekTo(topicName, seekTo),
-        seekDirection
-    );
-    int recordsLimit = Optional.ofNullable(limit)
-        .map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT))
-        .orElse(DEFAULT_LOAD_RECORD_LIMIT);
+    seekType = seekType != null ? seekType : SeekTypeDTO.BEGINNING;
+    seekDirection = seekDirection != null ? seekDirection : SeekDirectionDTO.FORWARD;
+    filterQueryType = filterQueryType != null ? filterQueryType : MessageFilterTypeDTO.STRING_CONTAINS;
+    int recordsLimit =
+        Optional.ofNullable(limit).map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT)).orElse(DEFAULT_LOAD_RECORD_LIMIT);
 
-    return validateAccess.then(
-        Mono.just(
-            ResponseEntity.ok(
-                messagesService.loadMessages(
-                    getCluster(clusterName), topicName, positions, q, filterQueryType, recordsLimit, keySerde,
-                    valueSerde)
-            )
+    var positions = new ConsumerPosition(
+        seekType,
+        topicName,
+        parseSeekTo(topicName, seekType, seekTo)
+    );
+    Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> job = Mono.just(
+        ResponseEntity.ok(
+            messagesService.loadMessages(
+                getCluster(clusterName), topicName, positions, q, filterQueryType,
+                recordsLimit, seekDirection, keySerde, valueSerde)
         )
     );
+
+    return validateAccess.then(job);
   }
 
   @Override
@@ -132,9 +135,13 @@ public class MessagesController extends AbstractController implements MessagesAp
    * The format is [partition]::[offset] for specifying offsets
    * or [partition]::[timestamp in millis] for specifying timestamps.
    */
-  private Map<TopicPartition, Long> parseSeekTo(String topic, List<String> seekTo) {
+  @Nullable
+  private Map<TopicPartition, Long> parseSeekTo(String topic, SeekTypeDTO seekType, List<String> seekTo) {
     if (seekTo == null || seekTo.isEmpty()) {
-      return Map.of();
+      if (seekType == SeekTypeDTO.LATEST || seekType == SeekTypeDTO.BEGINNING) {
+        return null;
+      }
+      throw new ValidationException("seekTo should be set if seekType is " + seekType);
     }
     return seekTo.stream()
         .map(p -> {

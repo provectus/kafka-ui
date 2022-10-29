@@ -66,24 +66,24 @@ describe('Message component', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should check the dropdown being visible during hover', () => {
+  it('should check the dropdown being visible during hover', async () => {
     renderComponent();
     const text = 'Save as a file';
     const trElement = screen.getByRole('row');
     expect(screen.queryByText(text)).not.toBeInTheDocument();
 
-    userEvent.hover(trElement);
+    await userEvent.hover(trElement);
     expect(screen.getByText(text)).toBeInTheDocument();
 
-    userEvent.unhover(trElement);
+    await userEvent.unhover(trElement);
     expect(screen.queryByText(text)).not.toBeInTheDocument();
   });
 
-  it('should check open Message Content functionality', () => {
+  it('should check open Message Content functionality', async () => {
     renderComponent();
     const messageToggleIcon = screen.getByRole('button', { hidden: true });
     expect(screen.queryByText(messageContentText)).not.toBeInTheDocument();
-    userEvent.click(messageToggleIcon);
+    await userEvent.click(messageToggleIcon);
     expect(screen.getByText(messageContentText)).toBeInTheDocument();
   });
 });
