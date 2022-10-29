@@ -62,19 +62,16 @@ public class TopicsService {
   @Value("${topic.load.after.create.delay.ms:500}")
   private int loadTopicAfterCreateDelayInMs;
 
-  public Mono<List<InternalTopic>> loadTopics(KafkaCluster c, List<String> topics) {
-    if (topics.isEmpty()) {
-      return Mono.just(List.of());
-    }
-    return adminClientService.get(c)
+  public Mono<List<InternalTopic>> loadTopics(KafkaCluster c, Mono<List<String>> topics) {
+    return topics.flatMap(t -> adminClientService.get(c)
         .flatMap(ac ->
-            ac.describeTopics(topics).zipWith(ac.getTopicsConfig(topics),
+            ac.describeTopics(t).zipWith(ac.getTopicsConfig(t),
                 (descriptions, configs) -> {
                   statisticsCache.update(c, descriptions, configs);
                   return getPartitionOffsets(descriptions, ac).map(offsets -> {
                     var metrics = statisticsCache.get(c);
                     return createList(
-                        topics,
+                        t,
                         descriptions,
                         configs,
                         offsets,
@@ -82,7 +79,14 @@ public class TopicsService {
                         metrics.getLogDirInfo()
                     );
                   });
-                })).flatMap(Function.identity());
+                })).flatMap(Function.identity()));
+  }
+
+  public Mono<List<InternalTopic>> loadTopics(KafkaCluster c, List<String> topics) {
+    if (topics.isEmpty()) {
+      return Mono.just(List.of());
+    }
+    return loadTopics(c, Mono.just(topics));
   }
 
   private Mono<InternalTopic> loadTopic(KafkaCluster c, String topicName) {
@@ -441,19 +445,22 @@ public class TopicsService {
     );
   }
 
-  public Mono<List<InternalTopic>> getTopicsForPagination(KafkaCluster cluster) {
+  public Mono<List<InternalTopic>> getTopicsForPagination(KafkaCluster cluster, boolean isMessageCountRequired) {
     Statistics stats = statisticsCache.get(cluster);
-    return filterExisting(cluster, stats.getTopicDescriptions().keySet())
-        .map(lst -> lst.stream()
-            .map(topicName ->
-                InternalTopic.from(
-                    stats.getTopicDescriptions().get(topicName),
-                    stats.getTopicConfigs().getOrDefault(topicName, List.of()),
-                    InternalPartitionsOffsets.empty(),
-                    stats.getMetrics(),
-                    stats.getLogDirInfo()))
-            .collect(toList())
-        );
+    Mono<List<String>> filteredTopicsList = filterExisting(cluster, stats.getTopicDescriptions().keySet());
+    if (isMessageCountRequired) {
+      return loadTopics(cluster, filteredTopicsList);
+    }
+    return filteredTopicsList.map(lst -> lst.stream()
+        .map(topicName ->
+            InternalTopic.from(
+                stats.getTopicDescriptions().get(topicName),
+                stats.getTopicConfigs().getOrDefault(topicName, List.of()),
+                InternalPartitionsOffsets.empty(),
+                stats.getMetrics(),
+                stats.getLogDirInfo()))
+        .collect(toList())
+    );
   }
 
   private Mono<List<String>> filterExisting(KafkaCluster cluster, Collection<String> topics) {
