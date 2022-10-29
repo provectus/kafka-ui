@@ -374,7 +374,7 @@ public class AccessControlService {
     if (object == null) {
       return grantedPermission -> true;
     }
-    return grantedPermission -> object.matches(grantedPermission.getName());
+    return grantedPermission -> grantedPermission.getNamePattern().matcher(object).matches();
   }
 
   public void evictCache() {

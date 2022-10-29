@@ -44,6 +44,9 @@ import reactor.core.publisher.Mono;
 @Log4j2
 public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
 
+  private static final String TYPE = "type";
+  private static final String GOOGLE = "google";
+
   private final OAuthProperties properties;
 
   @Bean
@@ -116,7 +119,7 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
 
               Map<String, String> customParams = provider.getCustomParams();
 
-              if (customParams.get("type").equalsIgnoreCase("google")) { // TODO
+              if (isGoogle(provider)) {
                 String allowedDomain = customParams.get("allowedDomain");
                 if (StringUtils.isNotEmpty(allowedDomain)) {
                   final String newUri =
@@ -124,6 +127,7 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
                   return ClientRegistration.withClientRegistration(cr).authorizationUri(newUri).build();
                 }
               }
+
               return cr;
             })
             .collect(Collectors.toList());
@@ -148,6 +152,10 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
 
   private String getProviderByProviderId(final String providerId) {
     return properties.getClient().get(providerId).getProvider();
+  }
+
+  private boolean isGoogle(OAuthProperties.OAuth2Provider provider) {
+    return provider.getCustomParams().get(TYPE).equalsIgnoreCase(GOOGLE);
   }
 
 
