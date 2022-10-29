@@ -49,7 +49,7 @@ class TopicsServicePaginationTest {
 
     when(clustersStorage.getClusterByName(isA(String.class)))
         .thenReturn(Optional.of(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME)));
-    when(topicsService.getTopicsForPagination(isA(KafkaCluster.class)))
+    when(topicsService.getTopicsForPagination(isA(KafkaCluster.class), false))
         .thenReturn(Mono.just(new ArrayList<>(topicsInCache.values())));
     when(topicsService.loadTopics(isA(KafkaCluster.class), anyList()))
         .thenAnswer(a -> {
