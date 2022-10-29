@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -49,7 +50,7 @@ class TopicsServicePaginationTest {
 
     when(clustersStorage.getClusterByName(isA(String.class)))
         .thenReturn(Optional.of(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME)));
-    when(topicsService.getTopicsForPagination(isA(KafkaCluster.class), false))
+    when(topicsService.getTopicsForPagination(isA(KafkaCluster.class), anyBoolean()))
         .thenReturn(Mono.just(new ArrayList<>(topicsInCache.values())));
     when(topicsService.loadTopics(isA(KafkaCluster.class), anyList()))
         .thenAnswer(a -> {
