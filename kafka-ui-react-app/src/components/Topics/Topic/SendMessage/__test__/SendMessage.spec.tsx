@@ -1,6 +1,6 @@
 import React from 'react';
 import SendMessage from 'components/Topics/Topic/SendMessage/SendMessage';
-import { act, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterTopicPath } from 'lib/paths';
@@ -47,32 +47,26 @@ const mockOnSubmit = jest.fn();
 
 const renderComponent = async () => {
   const path = clusterTopicPath(clusterName, topicName);
-  await act(() => {
-    render(
-      <WithRoute path={clusterTopicPath()}>
-        <SendMessage onSubmit={mockOnSubmit} />
-      </WithRoute>,
-      { initialEntries: [path] }
-    );
-  });
+  await render(
+    <WithRoute path={clusterTopicPath()}>
+      <SendMessage onSubmit={mockOnSubmit} />
+    </WithRoute>,
+    { initialEntries: [path] }
+  );
 };
 
 const renderAndSubmitData = async (error: string[] = []) => {
   await renderComponent();
-  await act(() => {
-    userEvent.click(screen.getAllByRole('listbox')[0]);
-  });
-  await act(() => {
-    userEvent.click(screen.getAllByRole('option')[1]);
-  });
+  await userEvent.click(screen.getAllByRole('listbox')[0]);
+
+  await userEvent.click(screen.getAllByRole('option')[1]);
+
   (validateBySchema as Mock).mockImplementation(() => error);
   const submitButton = screen.getByRole('button', {
     name: 'Produce Message',
   });
   await waitFor(() => expect(submitButton).toBeEnabled());
-  await act(() => {
-    userEvent.click(submitButton);
-  });
+  await userEvent.click(submitButton);
 };
 
 describe('SendMessage', () => {
