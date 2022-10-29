@@ -63,6 +63,12 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
   type Tuple = [string, string];
 
   const getCopyTopicPath = () => {
+    if (!rows.length) {
+      return {
+        pathname: '',
+        search: '',
+      };
+    }
     const topic = rows[0].original;
 
     const search = Object.keys(topic).reduce((acc: Tuple[], key) => {
@@ -86,13 +92,14 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
         buttonSize="M"
         buttonType="secondary"
         onClick={deleteTopicsHandler}
+        disabled={!selectedTopics.length}
       >
         Delete selected topics
       </Button>
       <Button
         buttonSize="M"
         buttonType="secondary"
-        disabled={selectedTopics.length > 1}
+        disabled={selectedTopics.length !== 1}
         to={getCopyTopicPath()}
       >
         Copy selected topic
@@ -101,6 +108,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
         buttonSize="M"
         buttonType="secondary"
         onClick={purgeTopicsHandler}
+        disabled={!selectedTopics.length}
       >
         Purge messages of selected topics
       </Button>
