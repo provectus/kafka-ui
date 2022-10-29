@@ -6,7 +6,6 @@ import { useBrokerConfig } from 'lib/hooks/api/brokers';
 import { brokerConfigPayload } from 'lib/fixtures/brokers';
 import Configs from 'components/Brokers/Broker/Configs/Configs';
 import userEvent from '@testing-library/user-event';
-import { act } from '@testing-library/react';
 
 const clusterName = 'Cluster_Name';
 const brokerId = 'Broker_Id';
@@ -42,9 +41,7 @@ describe('Configs', () => {
   });
 
   it('updates textbox value', async () => {
-    await act(() => {
-      userEvent.click(screen.getAllByLabelText('editAction')[0]);
-    });
+    await userEvent.click(screen.getAllByLabelText('editAction')[0]);
 
     const textbox = screen.getByLabelText('inputValue');
     expect(textbox).toBeInTheDocument();
@@ -59,9 +56,9 @@ describe('Configs', () => {
       screen.getByRole('button', { name: 'cancelAction' })
     ).toBeInTheDocument();
 
-    await act(() => {
-      userEvent.click(screen.getByRole('button', { name: 'confirmAction' }));
-    });
+    await userEvent.click(
+      screen.getByRole('button', { name: 'confirmAction' })
+    );
 
     expect(
       screen.getByText('Are you sure you want to change the value?')

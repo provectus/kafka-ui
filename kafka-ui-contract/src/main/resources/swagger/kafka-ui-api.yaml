@@ -862,28 +862,6 @@ paths:
         200:
           description: OK
 
-  /api/clusters/{clusterName}/consumer-groups:
-    get:
-      tags:
-        - Consumer Groups
-      summary: get all ConsumerGroups
-      operationId: getConsumerGroups
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ConsumerGroup'
-
   /api/clusters/{clusterName}/consumer-groups/{id}/offsets:
     post:
       tags:
