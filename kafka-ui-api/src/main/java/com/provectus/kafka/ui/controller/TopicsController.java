@@ -105,7 +105,8 @@ public class TopicsController extends AbstractController implements TopicsApi {
                                                            @Valid TopicColumnsToSortDTO orderBy,
                                                            @Valid SortOrderDTO sortOrder,
                                                            ServerWebExchange exchange) {
-    return topicsService.getTopicsForPagination(getCluster(clusterName))
+    return topicsService
+        .getTopicsForPagination(getCluster(clusterName), TopicColumnsToSortDTO.MESSAGE_COUNT.equals(orderBy))
         .flatMap(existingTopics -> {
           int pageSize = perPage != null && perPage > 0 ? perPage : DEFAULT_PAGE_SIZE;
           var topicsToSkip = ((page != null && page > 0 ? page : 1) - 1) * pageSize;
@@ -126,6 +127,18 @@ public class TopicsController extends AbstractController implements TopicsApi {
               .map(InternalTopic::getName)
               .collect(toList());
 
+          if (TopicColumnsToSortDTO.MESSAGE_COUNT.equals(orderBy)) {
+            Set<String> topicsSet = new HashSet<>(topicsPage);
+            return Mono.just(new TopicsResponseDTO()
+                .topics(
+                    filtered.stream()
+                        .filter(f -> topicsSet.contains(f.getName()))
+                        .map(clusterMapper::toTopic)
+                        .collect(toList())
+                )
+                .pageCount(totalPages)
+            );
+          }
           return topicsService.loadTopics(getCluster(clusterName), topicsPage)
               .map(topicsToRender ->
                   new TopicsResponseDTO()
