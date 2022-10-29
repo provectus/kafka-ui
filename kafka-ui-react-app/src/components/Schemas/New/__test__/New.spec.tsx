@@ -29,7 +29,7 @@ describe('New Component', () => {
     expect(submitBtn).toBeDisabled();
   });
   it('submit button will be enabled when form fields are filled', async () => {
-    const subject = screen.getByPlaceholderText('Schema Name');
+    const subject = screen.getByPlaceholderText('Subject');
     const schema = screen.getAllByRole('textbox')[1];
     const schemaTypeSelect = screen.getByRole('listbox');
 

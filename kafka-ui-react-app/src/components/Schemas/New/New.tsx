@@ -77,10 +77,10 @@ const New: React.FC = () => {
           <InputLabel>Subject *</InputLabel>
           <Input
             inputSize="M"
-            placeholder="Schema Name"
+            placeholder="Subject"
             name="subject"
             hookFormOptions={{
-              required: 'Schema Name is required.',
+              required: 'Subject is required.',
               pattern: {
                 value: SCHEMA_NAME_VALIDATION_PATTERN,
                 message: 'Only alphanumeric, _, -, and . allowed',
