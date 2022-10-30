@@ -125,10 +125,10 @@ describe('Table', () => {
 
   it('renders SizeCell', () => {
     renderComponent();
-    expect(screen.getByText('1KB')).toBeInTheDocument();
-    expect(screen.getByText('3Bytes')).toBeInTheDocument();
-    expect(screen.getByText('49KB')).toBeInTheDocument();
-    expect(screen.getByText('1MB')).toBeInTheDocument();
+    expect(screen.getByText('1 KB')).toBeInTheDocument();
+    expect(screen.getByText('3 Bytes')).toBeInTheDocument();
+    expect(screen.getByText('49 KB')).toBeInTheDocument();
+    expect(screen.getByText('1 MB')).toBeInTheDocument();
   });
 
   it('renders TimestampCell', () => {
