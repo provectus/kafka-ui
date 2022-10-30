@@ -32,10 +32,10 @@ import com.provectus.kafka.ui.model.ReplicaDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
+import com.provectus.kafka.ui.service.masking.DataMasking;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -56,6 +56,7 @@ public interface ClusterMapper {
   @Mapping(target = "schemaRegistry", source = ".", qualifiedByName = "setSchemaRegistry")
   @Mapping(target = "ksqldbServer", source = ".", qualifiedByName = "setKsqldbServer")
   @Mapping(target = "metricsConfig", source = "metrics")
+  @Mapping(target = "masking", source = "masking")
   KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
 
   ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
@@ -170,6 +171,10 @@ public interface ClusterMapper {
     brokerDiskUsage.segmentCount((int) internalBrokerDiskUsage.getSegmentCount());
     brokerDiskUsage.segmentSize(internalBrokerDiskUsage.getSegmentSize());
     return brokerDiskUsage;
+  }
+
+  default DataMasking map(List<ClustersProperties.Masking> maskingProperties) {
+    return DataMasking.create(maskingProperties);
   }
 
   @Named("setProperties")

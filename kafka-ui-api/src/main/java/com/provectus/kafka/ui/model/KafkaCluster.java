@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.model;
 
+import com.provectus.kafka.ui.service.masking.DataMasking;
 import java.util.List;
 import java.util.Properties;
 import lombok.AccessLevel;
@@ -21,4 +22,5 @@ public class KafkaCluster {
   private final boolean readOnly;
   private final boolean disableLogDirsCollection;
   private final MetricsConfig metricsConfig;
+  private final DataMasking masking;
 }

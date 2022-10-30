@@ -101,7 +101,9 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         s.deserializer(null, Serde.Target.VALUE),
         StringSerde.name(),
         s.deserializer(null, Serde.Target.KEY),
-        s.deserializer(null, Serde.Target.VALUE)
+        s.deserializer(null, Serde.Target.VALUE),
+        Function.identity(),
+        Function.identity()
     );
   }
 

@@ -92,7 +92,9 @@ public class DeserializationService {
         valueSerde.deserializer(topic, Serde.Target.VALUE),
         fallbackSerde.getName(),
         fallbackSerde.deserializer(topic, Serde.Target.KEY),
-        fallbackSerde.deserializer(topic, Serde.Target.VALUE)
+        fallbackSerde.deserializer(topic, Serde.Target.VALUE),
+        cluster.getMasking().getMaskingFunction(topic, Serde.Target.KEY),
+        cluster.getMasking().getMaskingFunction(topic, Serde.Target.VALUE)
     );
   }
 
