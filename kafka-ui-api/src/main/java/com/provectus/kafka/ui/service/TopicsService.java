@@ -68,7 +68,7 @@ public class TopicsService {
     }
     return adminClientService.get(c)
         .flatMap(ac ->
-            ac.describeTopics(topics).zipWith(ac.getTopicsConfig(topics),
+            ac.describeTopics(topics).zipWith(ac.getTopicsConfig(topics, false),
                 (descriptions, configs) -> {
                   statisticsCache.update(c, descriptions, configs);
                   return getPartitionOffsets(descriptions, ac).map(offsets -> {
@@ -160,7 +160,7 @@ public class TopicsService {
 
   public Mono<List<ConfigEntry>> getTopicConfigs(KafkaCluster cluster, String topicName) {
     return adminClientService.get(cluster)
-        .flatMap(ac -> ac.getTopicsConfig(List.of(topicName)))
+        .flatMap(ac -> ac.getTopicsConfig(List.of(topicName), true))
         .map(m -> m.values().stream().findFirst().orElseThrow(TopicNotFoundException::new));
   }
 

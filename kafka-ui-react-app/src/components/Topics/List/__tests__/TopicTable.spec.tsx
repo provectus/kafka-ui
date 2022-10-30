@@ -155,8 +155,8 @@ describe('TopicTable Components', () => {
           expect(screen.getAllByRole('checkbox')[2]).toBeEnabled();
         });
         describe('when only one topic is selected', () => {
-          beforeEach(() => {
-            userEvent.click(screen.getAllByRole('checkbox')[1]);
+          beforeEach(async () => {
+            await userEvent.click(screen.getAllByRole('checkbox')[1]);
           });
           it('renders batch actions bar', () => {
             expect(getButtonByName('Delete selected topics')).toBeEnabled();
@@ -167,9 +167,9 @@ describe('TopicTable Components', () => {
           });
         });
         describe('when more then one topics are selected', () => {
-          beforeEach(() => {
-            userEvent.click(screen.getAllByRole('checkbox')[1]);
-            userEvent.click(screen.getAllByRole('checkbox')[2]);
+          beforeEach(async () => {
+            await userEvent.click(screen.getAllByRole('checkbox')[1]);
+            await userEvent.click(screen.getAllByRole('checkbox')[2]);
           });
           it('renders batch actions bar', () => {
             expect(getButtonByName('Delete selected topics')).toBeEnabled();
@@ -214,12 +214,12 @@ describe('TopicTable Components', () => {
       });
     });
     describe('Action buttons', () => {
-      const expectDropdownExists = () => {
+      const expectDropdownExists = async () => {
         const btn = screen.getByRole('button', {
           name: 'Dropdown Toggle',
         });
         expect(btn).toBeEnabled();
-        userEvent.click(btn);
+        await userEvent.click(btn);
         expect(screen.getByRole('menu')).toBeInTheDocument();
       };
       it('renders disable action buttons for read-only cluster', () => {
@@ -228,7 +228,7 @@ describe('TopicTable Components', () => {
         expect(btns[0]).toBeDisabled();
         expect(btns[1]).toBeDisabled();
       });
-      it('renders action buttons', () => {
+      it('renders action buttons', async () => {
         renderComponent({ topics: topicsPayload, pageCount: 1 });
         expect(
           screen.getAllByRole('button', { name: 'Dropdown Toggle' }).length
@@ -252,7 +252,7 @@ describe('TopicTable Components', () => {
           name: 'Dropdown Toggle',
         });
         expect(extBtn).toBeEnabled();
-        userEvent.click(extBtn);
+        await userEvent.click(extBtn);
         expect(screen.getByRole('menu')).toBeInTheDocument();
       });
       describe('and clear messages action', () => {
@@ -265,7 +265,7 @@ describe('TopicTable Components', () => {
               },
             ],
           });
-          expectDropdownExists();
+          await expectDropdownExists();
           const actionBtn = screen.getAllByRole('menuitem');
           expect(actionBtn[0]).toHaveTextContent('Clear Messages');
           expect(actionBtn[0]).not.toHaveAttribute('aria-disabled');
@@ -279,7 +279,7 @@ describe('TopicTable Components', () => {
               },
             ],
           });
-          expectDropdownExists();
+          await expectDropdownExists();
           const actionBtn = screen.getAllByRole('menuitem');
           expect(actionBtn[0]).toHaveTextContent('Clear Messages');
           expect(actionBtn[0]).toHaveAttribute('aria-disabled');
@@ -293,8 +293,8 @@ describe('TopicTable Components', () => {
               },
             ],
           });
-          expectDropdownExists();
-          userEvent.click(screen.getByText('Clear Messages'));
+          await expectDropdownExists();
+          await userEvent.click(screen.getByText('Clear Messages'));
           expect(
             screen.getByText('Are you sure want to clear topic messages?')
           ).toBeInTheDocument();
@@ -308,22 +308,22 @@ describe('TopicTable Components', () => {
       describe('and remove topic action', () => {
         it('is visible only when topic deletion allowed for cluster', async () => {
           renderComponent({ topics: [topicsPayload[1]] });
-          expectDropdownExists();
+          await expectDropdownExists();
           const actionBtn = screen.getAllByRole('menuitem');
           expect(actionBtn[2]).toHaveTextContent('Remove Topic');
           expect(actionBtn[2]).not.toHaveAttribute('aria-disabled');
         });
         it('is disabled when topic deletion is not allowed for cluster', async () => {
           renderComponent({ topics: [topicsPayload[1]] }, false, false);
-          expectDropdownExists();
+          await expectDropdownExists();
           const actionBtn = screen.getAllByRole('menuitem');
           expect(actionBtn[2]).toHaveTextContent('Remove Topic');
           expect(actionBtn[2]).toHaveAttribute('aria-disabled');
         });
         it('works as expected', async () => {
           renderComponent({ topics: [topicsPayload[1]] });
-          expectDropdownExists();
-          userEvent.click(screen.getByText('Remove Topic'));
+          await expectDropdownExists();
+          await userEvent.click(screen.getByText('Remove Topic'));
           expect(screen.getByText('Confirm the action')).toBeInTheDocument();
           await waitFor(() =>
             userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
@@ -334,8 +334,8 @@ describe('TopicTable Components', () => {
       describe('and recreate topic action', () => {
         it('works as expected', async () => {
           renderComponent({ topics: [topicsPayload[1]] });
-          expectDropdownExists();
-          userEvent.click(screen.getByText('Recreate Topic'));
+          await expectDropdownExists();
+          await userEvent.click(screen.getByText('Recreate Topic'));
           expect(screen.getByText('Confirm the action')).toBeInTheDocument();
           await waitFor(() =>
             userEvent.click(screen.getByRole('button', { name: 'Confirm' }))

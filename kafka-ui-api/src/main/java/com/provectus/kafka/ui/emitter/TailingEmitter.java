@@ -1,8 +1,9 @@
 package com.provectus.kafka.ui.emitter;
 
+import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
-import com.provectus.kafka.ui.util.OffsetsSeek;
+import java.util.HashMap;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -15,21 +16,21 @@ public class TailingEmitter extends AbstractEmitter
     implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
 
   private final Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier;
-  private final OffsetsSeek offsetsSeek;
+  private final ConsumerPosition consumerPosition;
 
-  public TailingEmitter(ConsumerRecordDeserializer recordDeserializer,
-                        Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
-                        OffsetsSeek offsetsSeek) {
+  public TailingEmitter(Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
+                        ConsumerPosition consumerPosition,
+                        ConsumerRecordDeserializer recordDeserializer) {
     super(recordDeserializer);
     this.consumerSupplier = consumerSupplier;
-    this.offsetsSeek = offsetsSeek;
+    this.consumerPosition = consumerPosition;
   }
 
   @Override
   public void accept(FluxSink<TopicMessageEventDTO> sink) {
     try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
       log.debug("Starting topic tailing");
-      offsetsSeek.assignAndSeek(consumer);
+      assignAndSeek(consumer);
       while (!sink.isCancelled()) {
         sendPhase(sink, "Polling");
         var polled = poll(sink, consumer);
@@ -40,9 +41,17 @@ public class TailingEmitter extends AbstractEmitter
     } catch (InterruptException kafkaInterruptException) {
       sink.complete();
     } catch (Exception e) {
-      log.error("Error consuming {}", offsetsSeek.getConsumerPosition(), e);
+      log.error("Error consuming {}", consumerPosition, e);
       sink.error(e);
     }
+  }
+
+  private void assignAndSeek(KafkaConsumer<Bytes, Bytes> consumer) {
+    var seekOperations = SeekOperations.create(consumer, consumerPosition);
+    var seekOffsets = new HashMap<>(seekOperations.getEndOffsets()); // defaulting offsets to topic end
+    seekOffsets.putAll(seekOperations.getOffsetsForSeek()); // this will only set non-empty partitions
+    consumer.assign(seekOffsets.keySet());
+    seekOffsets.forEach(consumer::seek);
   }
 
 }
