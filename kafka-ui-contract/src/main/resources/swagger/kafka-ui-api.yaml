@@ -2408,6 +2408,8 @@ components:
           type: boolean
         messagesConsumed:
           type: integer
+        filterApplyErrors:
+          type: integer
 
 
     TopicMessage:
