@@ -1,13 +1,16 @@
 package com.provectus.kafka.ui.service.masking;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.provectus.kafka.ui.config.ClustersProperties;
-import com.provectus.kafka.ui.service.masking.policies.MaskingPolicy;
 import com.provectus.kafka.ui.serde.api.Serde;
-import com.provectus.kafka.ui.service.masking.DataMasking;
+import com.provectus.kafka.ui.service.masking.policies.MaskingPolicy;
 import java.util.List;
 import java.util.regex.Pattern;
 import lombok.SneakyThrows;

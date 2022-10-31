@@ -15,8 +15,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class MaskTest {
 
-  private final static List<String> TARGET_FIELDS = List.of("id", "name");
-  private final static List<Character> PATTERN = List.of('X', 'x', 'n', '-');
+  private static final List<String> TARGET_FIELDS = List.of("id", "name");
+  private static final List<Character> PATTERN = List.of('X', 'x', 'n', '-');
 
   @ParameterizedTest
   @MethodSource

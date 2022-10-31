@@ -15,7 +15,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class RemoveTest {
 
-  private final static List<String> TARGET_FIELDS = List.of("id", "name");
+  private static final List<String> TARGET_FIELDS = List.of("id", "name");
 
   @ParameterizedTest
   @MethodSource
