@@ -446,14 +446,13 @@ public class ReactiveAdminClient implements Closeable {
     for (TopicDescription description : topicDescriptions) {
       for (TopicPartitionInfo partitionInfo : description.partitions()) {
         TopicPartition topicPartition = new TopicPartition(description.name(), partitionInfo.partition());
-        if (partitionPredicate.test(topicPartition)) {
-          if (partitionInfo.leader() == null) {
-            if (failOnUnknownLeader) {
-              throw new ValidationException(String.format("Topic partition %s has no leader", topicPartition));
-            }
-          } else {
-            goodPartitions.add(topicPartition);
-          }
+        if (!partitionPredicate.test(topicPartition)) {
+          continue;
+        }
+        if (partitionInfo.leader() != null) {
+          goodPartitions.add(topicPartition);
+        } else if (failOnUnknownLeader) {
+          throw new ValidationException(String.format("Topic partition %s has no leader", topicPartition));
         }
       }
     }
