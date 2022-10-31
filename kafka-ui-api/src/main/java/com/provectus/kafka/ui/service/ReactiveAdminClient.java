@@ -11,6 +11,7 @@ import com.provectus.kafka.ui.util.MapUtil;
 import com.provectus.kafka.ui.util.NumberUtil;
 import java.io.Closeable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -70,8 +71,24 @@ import reactor.util.function.Tuples;
 public class ReactiveAdminClient implements Closeable {
 
   private enum SupportedFeature {
-    INCREMENTAL_ALTER_CONFIGS,
-    ALTER_CONFIGS
+    INCREMENTAL_ALTER_CONFIGS(2.3f),
+    CONFIG_DOCUMENTATION_RETRIEVAL(2.6f);
+
+    private final float sinceVersion;
+
+    SupportedFeature(float sinceVersion) {
+      this.sinceVersion = sinceVersion;
+    }
+
+    static Set<SupportedFeature> forVersion(float kafkaVersion) {
+      return Arrays.stream(SupportedFeature.values())
+          .filter(f -> kafkaVersion >= f.sinceVersion)
+          .collect(Collectors.toSet());
+    }
+
+    static Set<SupportedFeature> defaultFeatures() {
+      return Set.of();
+    }
   }
 
   @Value
@@ -89,18 +106,15 @@ public class ReactiveAdminClient implements Closeable {
             new ReactiveAdminClient(
                 adminClient,
                 ver,
-                Set.of(getSupportedUpdateFeatureForVersion(ver))));
+                getSupportedUpdateFeaturesForVersion(ver)));
   }
 
-  private static SupportedFeature getSupportedUpdateFeatureForVersion(String versionStr) {
+  private static Set<SupportedFeature> getSupportedUpdateFeaturesForVersion(String versionStr) {
     try {
       float version = NumberUtil.parserClusterVersion(versionStr);
-      return version <= 2.3f
-          ? SupportedFeature.ALTER_CONFIGS
-          : SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
+      return SupportedFeature.forVersion(version);
     } catch (NumberFormatException e) {
-      log.info("Assuming non-incremental alter configs due to version parsing error");
-      return SupportedFeature.ALTER_CONFIGS;
+      return SupportedFeature.defaultFeatures();
     }
   }
 
@@ -147,20 +161,21 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig() {
-    return listTopics(true).flatMap(this::getTopicsConfig);
+    return listTopics(true).flatMap(topics -> getTopicsConfig(topics, false));
   }
 
-  public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames) {
+  public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames, boolean includeDoc) {
+    var includeDocFixed = features.contains(SupportedFeature.CONFIG_DOCUMENTATION_RETRIEVAL) && includeDoc;
     // we need to partition calls, because it can lead to AdminClient timeouts in case of large topics count
     return partitionCalls(
         topicNames,
         200,
-        this::getTopicsConfigImpl,
+        part -> getTopicsConfigImpl(part, includeDocFixed),
         (m1, m2) -> ImmutableMap.<String, List<ConfigEntry>>builder().putAll(m1).putAll(m2).build()
     );
   }
 
-  private Mono<Map<String, List<ConfigEntry>>> getTopicsConfigImpl(Collection<String> topicNames) {
+  private Mono<Map<String, List<ConfigEntry>>> getTopicsConfigImpl(Collection<String> topicNames, boolean includeDoc) {
     List<ConfigResource> resources = topicNames.stream()
         .map(topicName -> new ConfigResource(ConfigResource.Type.TOPIC, topicName))
         .collect(toList());
@@ -168,7 +183,7 @@ public class ReactiveAdminClient implements Closeable {
     return toMonoWithExceptionFilter(
         client.describeConfigs(
             resources,
-            new DescribeConfigsOptions().includeSynonyms(true)).values(),
+            new DescribeConfigsOptions().includeSynonyms(true).includeDocumentation(includeDoc)).values(),
         UnknownTopicOrPartitionException.class
     ).map(config -> config.entrySet().stream()
         .collect(toMap(

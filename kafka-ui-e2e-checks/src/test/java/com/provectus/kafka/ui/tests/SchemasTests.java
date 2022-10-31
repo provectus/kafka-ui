@@ -51,7 +51,7 @@ public class SchemasTests extends BaseTest {
                 .setSubjectName(schemaAvro.getName())
                 .setSchemaField(fileToString(schemaAvro.getValuePath()))
                 .selectSchemaTypeFromDropdown(schemaAvro.getType())
-                .clickSubmit();
+                .clickSubmitBtn();
         schemaDetails
                 .waitUntilScreenReady();
         naviSideBar
@@ -84,7 +84,7 @@ public class SchemasTests extends BaseTest {
         schemaCreateForm
                 .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(AVRO_API.getValuePath()))
-                .clickSubmit();
+                .clickSubmitBtn();
         schemaDetails
                 .waitUntilScreenReady();
         Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), schemaDetails.getCompatibility(), "getCompatibility()");
@@ -128,7 +128,7 @@ public class SchemasTests extends BaseTest {
                 .setSubjectName(schemaJson.getName())
                 .setSchemaField(fileToString(schemaJson.getValuePath()))
                 .selectSchemaTypeFromDropdown(schemaJson.getType())
-                .clickSubmit();
+                .clickSubmitBtn();
         schemaDetails
                 .waitUntilScreenReady();
         naviSideBar
@@ -177,7 +177,7 @@ public class SchemasTests extends BaseTest {
                 .setSubjectName(schemaProtobuf.getName())
                 .setSchemaField(fileToString(schemaProtobuf.getValuePath()))
                 .selectSchemaTypeFromDropdown(schemaProtobuf.getType())
-                .clickSubmit();
+                .clickSubmitBtn();
         schemaDetails
                 .waitUntilScreenReady();
         naviSideBar

@@ -67,14 +67,17 @@ describe('TopicForm', () => {
       onSubmit: onSubmit.mockImplementation((e) => e.preventDefault()),
     });
 
-    await act(() => {
-      userEvent.type(screen.getByPlaceholderText('Topic Name'), 'topicName');
+    await act(async () => {
+      await userEvent.type(
+        screen.getByPlaceholderText('Topic Name'),
+        'topicName'
+      );
     });
     await act(() => {
       fireEvent.submit(screen.getByLabelText('topic form'));
     });
 
-    userEvent.click(screen.getByRole('button', { name: 'Create topic' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Create topic' }));
     expect(onSubmit).toBeCalledTimes(1);
   });
 });

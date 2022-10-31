@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.pages.topic;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
@@ -14,28 +15,35 @@ import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 @ExtensionMethod(WaitUtils.class)
 public class TopicsList {
 
+    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+    protected SelenideElement topicListHeader = $x("//h1[text()='Topics']");
+    protected SelenideElement addTopicBtn = $x("//button[normalize-space(text()) ='Add a Topic']");
+    protected SelenideElement topicGrid = $x("//table");
+    protected String topicElementLocator = "//tbody//td//a[text()='%s']";
+
     @Step
     public TopicsList waitUntilScreenReady() {
-        $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
-        $(By.xpath("//h1[text()='Topics']")).shouldBe(Condition.visible);
+        loadingSpinner.shouldBe(Condition.disappear);
+        topicListHeader.shouldBe(Condition.visible);
         return this;
     }
 
     @Step
-    public TopicCreateEditForm pressCreateNewTopic() {
-        clickByJavaScript($x("//button[normalize-space(text()) ='Add a Topic']"));
-        return new TopicCreateEditForm();
+    public TopicsList clickAddTopicBtn() {
+        clickByJavaScript(addTopicBtn);
+        return this;
     }
 
     @Step
     public boolean isTopicVisible(String topicName) {
-        $(By.xpath("//table")).shouldBe(Condition.visible);
-        return isVisible($x("//tbody//td//a[text()='" + topicName + "']"));
+        topicGrid.shouldBe(Condition.visible);
+        return isVisible($x(String.format(topicElementLocator,topicName)));
     }
 
     @Step
-    public TopicDetails openTopic(String topicName) {
-        $(By.linkText(topicName)).click();
-        return new TopicDetails();
+    public TopicsList openTopic(String topicName) {
+        $(By.linkText(topicName))
+                .shouldBe(Condition.enabled).click();
+        return this;
     }
 }
