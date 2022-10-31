@@ -61,3 +61,6 @@
 ```
 
 ### Attach policy to user to provide access.
+
+##
+Run the app with `KAFKA_CLUSTERS_0_DISABLELOGDIRSCOLLECTION`
