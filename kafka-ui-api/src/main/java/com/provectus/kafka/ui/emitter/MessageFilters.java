@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import javax.script.CompiledScript;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.jsr223.GroovyScriptEngineImpl;
@@ -40,25 +41,26 @@ public class MessageFilters {
   static Predicate<TopicMessageDTO> groovyScriptFilter(String script) {
     var compiledScript = compileScript(script);
     var jsonSlurper = new JsonSlurper();
-    return msg -> {
-      var bindings = getGroovyEngine().createBindings();
-      bindings.put("partition", msg.getPartition());
-      bindings.put("offset", msg.getOffset());
-      bindings.put("timestampMs", msg.getTimestamp().toInstant().toEpochMilli());
-      bindings.put("keyAsText", msg.getKey());
-      bindings.put("valueAsText", msg.getContent());
-      bindings.put("headers", msg.getHeaders());
-      bindings.put("key", parseToJsonOrReturnNull(jsonSlurper, msg.getKey()));
-      bindings.put("value", parseToJsonOrReturnNull(jsonSlurper, msg.getContent()));
-      try {
+    return new Predicate<TopicMessageDTO>() {
+      @SneakyThrows
+      @Override
+      public boolean test(TopicMessageDTO msg) {
+        var bindings = getGroovyEngine().createBindings();
+        bindings.put("partition", msg.getPartition());
+        bindings.put("offset", msg.getOffset());
+        bindings.put("timestampMs", msg.getTimestamp().toInstant().toEpochMilli());
+        bindings.put("keyAsText", msg.getKey());
+        bindings.put("valueAsText", msg.getContent());
+        bindings.put("headers", msg.getHeaders());
+        bindings.put("key", parseToJsonOrReturnNull(jsonSlurper, msg.getKey()));
+        bindings.put("value", parseToJsonOrReturnNull(jsonSlurper, msg.getContent()));
         var result = compiledScript.eval(bindings);
         if (result instanceof Boolean) {
           return (Boolean) result;
+        } else {
+          throw new ValidationException(
+              String.format("Unexpected script result: %s, Boolean should be returned instead", result));
         }
-        return false;
-      } catch (Exception e) {
-        log.trace("Error executing filter script '{}' on message '{}' ", script, msg, e);
-        return false;
       }
     };
   }
