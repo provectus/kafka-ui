@@ -128,6 +128,13 @@ public interface ClusterMapper {
       internalSchemaRegistry.password(clusterProperties.getSchemaRegistryAuth().getPassword());
     }
 
+    if (clusterProperties.getSchemaRegistrySsl() != null) {
+      internalSchemaRegistry.keystoreLocation(clusterProperties.getSchemaRegistrySsl().getKeystoreLocation());
+      internalSchemaRegistry.keystorePassword(clusterProperties.getSchemaRegistrySsl().getKeystorePassword());
+      internalSchemaRegistry.truststoreLocation(clusterProperties.getSchemaRegistrySsl().getTruststoreLocation());
+      internalSchemaRegistry.truststorePassword(clusterProperties.getSchemaRegistrySsl().getTruststorePassword());
+    }
+
     return internalSchemaRegistry.build();
   }
 
