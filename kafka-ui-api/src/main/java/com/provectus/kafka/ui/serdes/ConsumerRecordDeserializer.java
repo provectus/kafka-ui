@@ -8,8 +8,6 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -33,9 +31,6 @@ public class ConsumerRecordDeserializer {
   private final String fallbackSerdeName;
   private final Serde.Deserializer fallbackKeyDeserializer;
   private final Serde.Deserializer fallbackValueDeserializer;
-
-  private final Function<String, String> keyMasking;
-  private final Function<String, String> valueMasking;
 
   public TopicMessageDTO deserialize(ConsumerRecord<Bytes, Bytes> rec) {
     var message = new TopicMessageDTO();
@@ -85,14 +80,14 @@ public class ConsumerRecordDeserializer {
     }
     try {
       var deserResult = keyDeserializer.deserialize(new RecordHeadersImpl(), rec.key().get());
-      message.setKey(maskNullable(deserResult.getResult(), keyMasking));
+      message.setKey(deserResult.getResult());
       message.setKeySerde(keySerdeName);
       message.setKeyDeserializeProperties(deserResult.getAdditionalProperties());
     } catch (Exception e) {
       log.trace("Error deserializing key for key topic: {}, partition {}, offset {}, with serde {}",
           rec.topic(), rec.partition(), rec.offset(), keySerdeName, e);
       var deserResult = fallbackKeyDeserializer.deserialize(new RecordHeadersImpl(), rec.key().get());
-      message.setKey(maskNullable(deserResult.getResult(), keyMasking));
+      message.setKey(deserResult.getResult());
       message.setKeySerde(fallbackSerdeName);
     }
   }
@@ -104,7 +99,7 @@ public class ConsumerRecordDeserializer {
     try {
       var deserResult = valueDeserializer.deserialize(
           new RecordHeadersImpl(rec.headers()), rec.value().get());
-      message.setContent(maskNullable(deserResult.getResult(), valueMasking));
+      message.setContent(deserResult.getResult());
       message.setValueSerde(valueSerdeName);
       message.setValueDeserializeProperties(deserResult.getAdditionalProperties());
     } catch (Exception e) {
@@ -112,13 +107,9 @@ public class ConsumerRecordDeserializer {
           rec.topic(), rec.partition(), rec.offset(), valueSerdeName, e);
       var deserResult = fallbackValueDeserializer.deserialize(
           new RecordHeadersImpl(rec.headers()), rec.value().get());
-      message.setContent(maskNullable(deserResult.getResult(), valueMasking));
+      message.setContent(deserResult.getResult());
       message.setValueSerde(fallbackSerdeName);
     }
-  }
-
-  private static String maskNullable(@Nullable String val, Function<String, String> mask) {
-    return val == null ? null : mask.apply(val);
   }
 
   private static Long getHeadersSize(ConsumerRecord<Bytes, Bytes> consumerRecord) {

@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service.masking;
 
+import static java.util.stream.Collectors.toList;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -11,9 +13,8 @@ import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.service.masking.policies.MaskingPolicy;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
@@ -45,30 +46,31 @@ public class DataMasking {
         config.stream().map(property -> {
           Preconditions.checkNotNull(property.getType(), "masking type not specifed");
           Preconditions.checkArgument(
-              !StringUtils.isEmpty(property.getTopicValuesPattern())
-                  || !StringUtils.isEmpty(property.getTopicValuesPattern()),
+              StringUtils.isNotEmpty(property.getTopicValuesPattern())
+                  || StringUtils.isNotEmpty(property.getTopicValuesPattern()),
               "topicKeysPattern or topicValuesPattern (or both) should be set for masking policy");
           return new Mask(
               Optional.ofNullable(property.getTopicKeysPattern()).map(Pattern::compile).orElse(null),
               Optional.ofNullable(property.getTopicValuesPattern()).map(Pattern::compile).orElse(null),
               MaskingPolicy.create(property)
           );
-        }).collect(Collectors.toList()));
+        }).collect(toList()));
   }
 
   @VisibleForTesting
-  DataMasking(List<Mask> masks) {
+  public DataMasking(List<Mask> masks) {
     this.masks = masks;
   }
 
-  public Function<String, String> getMaskingFunction(String topic, Serde.Target target) {
-    List<Mask> targetMasks = masks.stream()
-        .filter(m -> m.shouldBeApplied(topic, target))
-        .collect(Collectors.toList());
+  public UnaryOperator<String> getMaskingFunction(String topic, Serde.Target target) {
+    var targetMasks = masks.stream().filter(m -> m.shouldBeApplied(topic, target)).collect(toList());
     if (targetMasks.isEmpty()) {
-      return Function.identity();
+      return UnaryOperator.identity();
     }
     return inputStr -> {
+      if (inputStr == null) {
+        return null;
+      }
       try {
         JsonNode json = JSON_MAPPER.readTree(inputStr);
         if (json.isContainerNode()) {
