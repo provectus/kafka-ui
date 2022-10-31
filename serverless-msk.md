@@ -1,6 +1,6 @@
-# Ceate serverless msk service on AWS and atach policies
+# Ceate serverless MSK service on AWS and attach policies
 
-# Create  serverless msk.
+## Create  serverless MSK.
 
 1. Go to MSK page.
 2. Click "create cluster".
@@ -9,7 +9,7 @@
 5. Choose VPC and subnets.
 6. Choose default security group or use existing one.
 
-# Create Policy
+## Create Policy
 
 1. Go to iam policies
 2. Click create policy
@@ -59,3 +59,5 @@
     ]
 }
 ```
+
+### Attach policy to user to provide access.
