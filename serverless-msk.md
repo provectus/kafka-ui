@@ -32,8 +32,8 @@
                 "kafka-cluster:DeleteTopic"
             ],
             "Resource": [
-                "MSK ARN",
-                "MSK ARN/*"
+                "MSK_ARN",
+                "MSK_ARN/*"
             ]
         },
         {
@@ -45,7 +45,7 @@
                 "kafka-cluster:DescribeTopic",
                 "kafka-cluster:WriteData"
             ],
-            "Resource": "MSK ARN/*"
+            "Resource": "MSK_ARN/*"
         },
         {
             "Sid": "VisualEditor2",
@@ -54,7 +54,7 @@
                 "kafka-cluster:AlterGroup",
                 "kafka-cluster:DescribeGroup"
             ],
-            "Resource": "MSK ARN/*"
+            "Resource": "MSK_ARN/*"
         }
     ]
 }
