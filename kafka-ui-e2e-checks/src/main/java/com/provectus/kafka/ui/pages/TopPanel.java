@@ -14,13 +14,11 @@ public class TopPanel {
     protected SelenideElement gitBtn = $x("//a[@href='https://github.com/provectus/kafka-ui']");
     protected SelenideElement discordBtn = $x("//a[@href='https://discord.com/invite/4DWzD7pGE5']");
 
-
-
     public List<SelenideElement> getAllVisibleElements() {
         return Arrays.asList(kafkaLogo, kafkaVersion, logOutBtn);
     }
 
     public List<SelenideElement> getAllEnabledElements() {
-        return Arrays.asList(logOutBtn,gitBtn,discordBtn);
+        return Arrays.asList(logOutBtn, gitBtn, discordBtn, kafkaLogo);
     }
 }

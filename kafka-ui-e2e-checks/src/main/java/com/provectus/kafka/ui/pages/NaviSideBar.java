@@ -19,6 +19,14 @@ public class NaviSideBar {
     protected String sideMenuOptionElementLocator = ".//ul/li[contains(.,'%s')]";
     protected String clusterElementLocator = "//aside/ul/li[contains(.,'%s')]";
 
+    private SelenideElement expandCluster(String clusterName) {
+        SelenideElement clusterElement = $x(String.format(clusterElementLocator, clusterName)).shouldBe(Condition.visible);
+        if (clusterElement.parent().$$x(".//ul").size() == 0) {
+            clusterElement.click();
+        }
+        return clusterElement;
+    }
+
     @Step
     public NaviSideBar waitUntilScreenReady() {
         loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(30));
@@ -28,11 +36,7 @@ public class NaviSideBar {
 
     @Step
     public NaviSideBar openSideMenu(String clusterName, SideMenuOption option) {
-        SelenideElement clusterElement = $x(String.format(clusterElementLocator, clusterName)).shouldBe(Condition.visible);
-        if (clusterElement.parent().$$x(".//ul").size() == 0) {
-            clusterElement.click();
-        }
-        clusterElement
+        expandCluster(clusterName)
                 .parent()
                 .$x(String.format(sideMenuOptionElementLocator, option.value))
                 .click();
@@ -61,11 +65,10 @@ public class NaviSideBar {
         }
     }
 
-    public List<SelenideElement> getAllBtns(){
-        SelenideElement clusterElement = $x(String.format(clusterElementLocator, CLUSTER_NAME)).shouldBe(Condition.visible);
-        if (clusterElement.parent().$$x(".//ul").size() == 0) {
-            clusterElement.click();
-        }
-        return Stream.of(SideMenuOption.values()).map(option -> $x(String.format(sideMenuOptionElementLocator, option.value))).collect(Collectors.toList());
+    public List<SelenideElement> getAllMenuButtons() {
+        expandCluster(CLUSTER_NAME);
+        return Stream.of(SideMenuOption.values())
+                .map(option -> $x(String.format(sideMenuOptionElementLocator, option.value)))
+                .collect(Collectors.toList());
     }
 }
