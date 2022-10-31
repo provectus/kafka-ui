@@ -37,6 +37,7 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
       properties
           .put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
       properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
+      properties.putIfAbsent(AdminClientConfig.CLIENT_ID_CONFIG, "kafka-ui-app");
       return AdminClient.create(properties);
     })
         .flatMap(ReactiveAdminClient::create)

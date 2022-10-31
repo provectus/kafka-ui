@@ -3,10 +3,10 @@ package com.provectus.kafka.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.TEXT_EVENT_STREAM;
 
-import com.provectus.kafka.ui.api.model.TopicConfig;
 import com.provectus.kafka.ui.model.BrokerConfigDTO;
 import com.provectus.kafka.ui.model.PartitionsIncreaseDTO;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponseDTO;
+import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
@@ -206,12 +206,12 @@ public class KafkaConsumerTests extends AbstractIntegrationTest {
             .expectStatus()
             .isOk();
 
-    List<TopicConfig> configs = webTestClient.get()
+    List<TopicConfigDTO> configs = webTestClient.get()
             .uri("/api/clusters/{clusterName}/topics/{topicName}/config", LOCAL, topicName)
             .exchange()
             .expectStatus()
             .isOk()
-            .expectBodyList(TopicConfig.class)
+            .expectBodyList(TopicConfigDTO.class)
             .returnResult()
             .getResponseBody();
 
