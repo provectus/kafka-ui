@@ -2213,6 +2213,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ConfigSynonym"
+        doc:
+          type: string
       required:
         - name
 

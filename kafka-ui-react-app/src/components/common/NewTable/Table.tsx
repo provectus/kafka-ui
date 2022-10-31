@@ -101,7 +101,7 @@ const getSortingFromSearchParams = (searchParams: URLSearchParams) => {
  *    - use `enableRowSelection` prop to enable row selection. This prop can be a boolean or
  *      a function that returns true if the particular row can be selected.
  *    - use `batchActionsBar` prop to provide a component that will be rendered at the top of the table
- *      when row selection is enabled and there are selected rows.
+ *      when row selection is enabled.
  *
  * 5. Server side processing:
  *    - set `serverSideProcessing` to true
@@ -190,7 +190,7 @@ const Table: React.FC<TableProps<any>> = ({
 
   return (
     <>
-      {table.getSelectedRowModel().flatRows.length > 0 && BatchActionsBar && (
+      {BatchActionsBar && (
         <S.TableActionsBar>
           <BatchActionsBar
             rows={table.getSelectedRowModel().flatRows}
