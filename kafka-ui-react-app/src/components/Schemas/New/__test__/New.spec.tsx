@@ -10,8 +10,8 @@ const subjectValue = 'subject';
 const schemaValue = 'schema';
 
 describe('New Component', () => {
-  beforeEach(() => {
-    render(
+  beforeEach(async () => {
+    await render(
       <WithRoute path={clusterSchemaNewPath()}>
         <New />
       </WithRoute>,
@@ -33,14 +33,14 @@ describe('New Component', () => {
     const schema = screen.getAllByRole('textbox')[1];
     const schemaTypeSelect = screen.getByRole('listbox');
 
-    await act(() => {
-      userEvent.type(subject, subjectValue);
+    await act(async () => {
+      await userEvent.type(subject, subjectValue);
     });
-    await act(() => {
-      userEvent.type(schema, schemaValue);
+    await act(async () => {
+      await userEvent.type(schema, schemaValue);
     });
-    await act(() => {
-      userEvent.selectOptions(schemaTypeSelect, ['AVRO']);
+    await act(async () => {
+      await userEvent.selectOptions(schemaTypeSelect, ['AVRO']);
     });
 
     const submitBtn = screen.getByRole('button', { name: /Submit/i });
