@@ -1733,7 +1733,7 @@ paths:
     get:
       tags:
         - TimeStampFormat
-      summary: getTimeStampFormat
+      summary: get system default datetime format
       operationId: getTimeStampFormat
       responses:
         200:
@@ -1742,6 +1742,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TimeStampFormat'
+
+  /api/info/timestampformat/iso:
+    get:
+      tags:
+        - TimeStampFormat
+      summary: get system default datetime format (in ISO format, for JS)
+      operationId: getTimeStampFormatISO
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeStampFormat'
+
 components:
   schemas:
     TopicSerdeSuggestion:
@@ -2213,6 +2228,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ConfigSynonym"
+        doc:
+          type: string
       required:
         - name
 
@@ -2390,6 +2407,8 @@ components:
         isCancelled:
           type: boolean
         messagesConsumed:
+          type: integer
+        filterApplyErrors:
           type: integer
 
 

@@ -47,11 +47,12 @@ public class OffsetsResetService {
                                                   @Nullable Collection<Integer> partitions,
                                                   OffsetSpec spec) {
     if (partitions == null) {
-      return client.listOffsets(topic, spec);
+      return client.listTopicOffsets(topic, spec, true);
     }
     return client.listOffsets(
         partitions.stream().map(idx -> new TopicPartition(topic, idx)).collect(toSet()),
-        spec
+        spec,
+        true
     );
   }
 
@@ -84,9 +85,9 @@ public class OffsetsResetService {
         .collect(toMap(e -> new TopicPartition(topic, e.getKey()), Map.Entry::getValue));
     return checkGroupCondition(cluster, group).flatMap(
         ac ->
-            ac.listOffsets(partitionOffsets.keySet(), OffsetSpec.earliest())
+            ac.listOffsets(partitionOffsets.keySet(), OffsetSpec.earliest(), true)
                 .flatMap(earliest ->
-                    ac.listOffsets(partitionOffsets.keySet(), OffsetSpec.latest())
+                    ac.listOffsets(partitionOffsets.keySet(), OffsetSpec.latest(), true)
                         .map(latest -> editOffsetsBounds(partitionOffsets, earliest, latest))
                         .flatMap(offsetsToCommit -> resetOffsets(ac, group, offsetsToCommit)))
     );
