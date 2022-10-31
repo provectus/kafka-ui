@@ -21,12 +21,9 @@ import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.model.schemaregistry.InternalNewSchema;
 import com.provectus.kafka.ui.model.schemaregistry.SubjectIdResponse;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import java.io.FileInputStream;
+import com.provectus.kafka.ui.util.SecuredWebClient;
 import java.io.IOException;
 import java.net.URI;
-import java.security.KeyStore;
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
@@ -35,8 +32,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -45,11 +40,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -57,7 +50,6 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClient;
 
 @Service
 @Slf4j
@@ -380,58 +372,21 @@ public class SchemaRegistryService {
                                                         MultiValueMap<String, String> queryParams) {
     final var schemaRegistry = cluster.getSchemaRegistry();
 
-    return securedWebClientOnTls(cluster)
-        .method(method)
-        .uri(buildUri(schemaRegistry, path, uriVariables, queryParams))
-        .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers));
-  }
-
-  private WebClient securedWebClientOnTls(KafkaCluster cluster) {
-    InternalSchemaRegistry srConfig = cluster.getSchemaRegistry();
-
-    // If we want to customize our TLS configuration, we need at least a truststore
-    if (srConfig.getTrustStoreLocation() == null || srConfig.getTrustStorePassword() == null) {
-      return WebClient.builder().build();
-    }
-
     try {
-      SslContextBuilder contextBuilder = SslContextBuilder.forClient();
-
-      // Prepare truststore
-      KeyStore trustStore = KeyStore.getInstance("JKS");
-      trustStore.load(
-              new FileInputStream((ResourceUtils.getFile(srConfig.getTrustStoreLocation()))),
-              srConfig.getTrustStorePassword().toCharArray()
+      WebClient.Builder schemaRegistryWebClient = SecuredWebClient.configure(
+          schemaRegistry.getKeystoreLocation(),
+          schemaRegistry.getKeystorePassword(),
+          schemaRegistry.getTruststoreLocation(),
+          schemaRegistry.getTruststorePassword()
       );
 
-      TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
-          TrustManagerFactory.getDefaultAlgorithm()
-      );
-      trustManagerFactory.init(trustStore);
-      contextBuilder.trustManager(trustManagerFactory);
-
-      // Prepare keystore only if we got a keystore
-      if (srConfig.getKeyStoreLocation() != null && srConfig.getKeyStorePassword() != null) {
-        KeyStore keyStore = KeyStore.getInstance("JKS");
-        keyStore.load(
-                new FileInputStream(ResourceUtils.getFile(srConfig.getKeyStoreLocation())),
-                srConfig.getKeyStorePassword().toCharArray()
-        );
-
-        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        keyManagerFactory.init(keyStore, srConfig.getKeyStorePassword().toCharArray());
-        contextBuilder.keyManager(keyManagerFactory);
-      }
-
-      // Create webclient
-      SslContext context = contextBuilder.build();
-
-      return WebClient.builder()
-              .clientConnector(new ReactorClientHttpConnector(HttpClient.create().secure(t -> t.sslContext(context))))
-              .build();
-
+      return schemaRegistryWebClient.build()
+          .method(method)
+          .uri(buildUri(schemaRegistry, path, uriVariables, queryParams))
+          .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers));
     } catch (Exception e) {
-      throw new IllegalStateException("cannot create TLS configuration for schema-registry", e);
+      throw new IllegalStateException(
+          "cannot create TLS configuration for schema-registry in cluster " + cluster.getName(), e);
     }
   }
 

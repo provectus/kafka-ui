@@ -27,7 +27,7 @@ public class ClustersProperties {
     String bootstrapServers;
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
-    SchemaRegistrySsl schemaRegistrySsl;
+    WebClientSsl schemaRegistrySsl;
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
     List<ConnectCluster> kafkaConnect;
@@ -64,7 +64,7 @@ public class ClustersProperties {
   }
 
   @Data
-  public static class SchemaRegistrySsl {
+  public static class WebClientSsl {
     String keystoreLocation;
     String keystorePassword;
     String truststoreLocation;

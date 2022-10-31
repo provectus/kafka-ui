@@ -121,10 +121,10 @@ public interface ClusterMapper {
     }
 
     if (clusterProperties.getSchemaRegistrySsl() != null) {
-      internalSchemaRegistry.keyStoreLocation(clusterProperties.getSchemaRegistrySsl().getKeystoreLocation());
-      internalSchemaRegistry.keyStorePassword(clusterProperties.getSchemaRegistrySsl().getKeystorePassword());
-      internalSchemaRegistry.trustStoreLocation(clusterProperties.getSchemaRegistrySsl().getTruststoreLocation());
-      internalSchemaRegistry.trustStorePassword(clusterProperties.getSchemaRegistrySsl().getTruststorePassword());
+      internalSchemaRegistry.keystoreLocation(clusterProperties.getSchemaRegistrySsl().getKeystoreLocation());
+      internalSchemaRegistry.keystorePassword(clusterProperties.getSchemaRegistrySsl().getKeystorePassword());
+      internalSchemaRegistry.truststoreLocation(clusterProperties.getSchemaRegistrySsl().getTruststoreLocation());
+      internalSchemaRegistry.truststorePassword(clusterProperties.getSchemaRegistrySsl().getTruststorePassword());
     }
 
     return internalSchemaRegistry.build();
