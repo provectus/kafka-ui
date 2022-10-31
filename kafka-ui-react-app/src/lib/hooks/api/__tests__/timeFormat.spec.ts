@@ -3,7 +3,7 @@ import { expectQueryWorks, renderQueryHook } from 'lib/testHelpers';
 import * as hooks from 'lib/hooks/api/timeFormat';
 import { timeFormatPayload } from 'lib/fixtures/timeFormat';
 
-const timeFormatPath = '/api/info/timestampformat';
+const timeFormatPath = '/api/info/timestampformat/iso';
 
 describe('Time format hooks', () => {
   beforeEach(() => fetchMock.restore());
