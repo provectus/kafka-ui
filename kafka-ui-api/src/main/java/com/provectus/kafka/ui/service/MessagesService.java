@@ -65,8 +65,8 @@ public class MessagesService {
   private Mono<Map<TopicPartition, Long>> offsetsForDeletion(KafkaCluster cluster, String topicName,
                                                              List<Integer> partitionsToInclude) {
     return adminClientService.get(cluster).flatMap(ac ->
-        ac.listOffsets(topicName, OffsetSpec.earliest())
-            .zipWith(ac.listOffsets(topicName, OffsetSpec.latest()),
+        ac.listTopicOffsets(topicName, OffsetSpec.earliest(), true)
+            .zipWith(ac.listTopicOffsets(topicName, OffsetSpec.latest(), true),
                 (start, end) ->
                     end.entrySet().stream()
                         .filter(e -> partitionsToInclude.isEmpty()
