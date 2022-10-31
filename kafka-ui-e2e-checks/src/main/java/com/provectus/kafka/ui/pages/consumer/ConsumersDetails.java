@@ -2,9 +2,7 @@ package com.provectus.kafka.ui.pages.consumer;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
-import lombok.experimental.ExtensionMethod;
 
 import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
@@ -13,7 +11,7 @@ public class ConsumersDetails {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement topicGrid = $x("//table");
-    protected String connectSinkPostgresActivitiesHeader = "//h1[contains(text(),'%s')]";
+    protected String consumerIdHeaderLocator = "//h1[contains(text(),'%s')]";
     protected String topicElementLocator = "//tbody//td//a[text()='%s']";
     @Step
     public ConsumersDetails waitUntilScreenReady() {
@@ -23,7 +21,7 @@ public class ConsumersDetails {
     }
     @Step
     public boolean isRedirectedConsumerTitleVisible(String consumerGroupId) {
-        return isVisible($x(String.format(connectSinkPostgresActivitiesHeader, consumerGroupId)));
+        return isVisible($x(String.format(consumerIdHeaderLocator, consumerGroupId)));
     }
     @Step
     public boolean isTopicInConsumersDetailsVisible(String topicName) {
