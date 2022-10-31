@@ -111,10 +111,11 @@ class TailingEmitterTest extends AbstractIntegrationTest {
 
     return applicationContext.getBean(MessagesService.class)
         .loadMessages(cluster, topicName,
-            new ConsumerPosition(SeekTypeDTO.LATEST, Map.of(), SeekDirectionDTO.TAILING),
+            new ConsumerPosition(SeekTypeDTO.LATEST, topic, null),
             query,
             MessageFilterTypeDTO.STRING_CONTAINS,
             0,
+            SeekDirectionDTO.TAILING,
             "String",
             "String");
   }
@@ -137,7 +138,7 @@ class TailingEmitterTest extends AbstractIntegrationTest {
     Awaitility.await()
         .pollInSameThread()
         .pollDelay(Duration.ofMillis(100))
-        .atMost(Duration.ofSeconds(10))
+        .atMost(Duration.ofSeconds(200))
         .until(() -> fluxOutput.stream()
             .anyMatch(msg -> msg.getType() == TopicMessageEventDTO.TypeEnum.CONSUMING));
   }

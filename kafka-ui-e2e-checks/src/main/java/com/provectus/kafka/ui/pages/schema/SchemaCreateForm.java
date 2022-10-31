@@ -1,70 +1,73 @@
 package com.provectus.kafka.ui.pages.schema;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.api.model.SchemaType;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.utilities.WebUtils.clearByKeyboard;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 
 public class SchemaCreateForm {
 
-    protected SelenideElement subjectName = $(By.xpath("//input[@name='subject']"));
-    protected SelenideElement schemaField = $(By.xpath("//textarea[@name='schema']"));
-    protected SelenideElement submitSchemaButton = $(By.xpath("//button[@type='submit']"));
-    protected SelenideElement newSchemaTextArea = $("#newSchema [wrap]");
-    protected SelenideElement schemaTypeDropDown = $x("//ul[@name='schemaType']");
+    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+    protected SelenideElement schemaNameField = $x("//input[@name='subject']");
+    protected SelenideElement pageTitle = $x("//h1['Edit']");
+    protected SelenideElement schemaTextArea = $x("//textarea[@name='schema']");
+    protected SelenideElement submitBtn = $x("//button[@type='submit']");
+    protected SelenideElement newSchemaInput = $("#newSchema [wrap]");
+    protected SelenideElement schemaTypeDdl = $x("//ul[@name='schemaType']");
+    protected SelenideElement compatibilityLevelList = $x("//ul[@name='compatibilityLevel']");
+    protected SelenideElement newSchemaTextArea = $x("//div[@id='newSchema']");
+    protected String elementLocatorDdl = "//li[@value='%s']";
 
     @Step
-    public SchemaCreateForm waitUntilScreenReady() {
-        $x("//h1['Edit']").shouldBe(Condition.visible);
+    public SchemaCreateForm waitUntilScreenReady(){
+        loadingSpinner.shouldBe(Condition.disappear);
+        pageTitle.shouldBe(Condition.visible);
         return this;
     }
 
     @Step
     public SchemaCreateForm setSubjectName(String name) {
-        subjectName.setValue(name);
+        schemaNameField.setValue(name);
         return this;
     }
 
     @Step
     public SchemaCreateForm setSchemaField(String text) {
-        schemaField.setValue(text);
+        schemaTextArea.setValue(text);
         return this;
     }
 
     @Step
     public SchemaCreateForm selectSchemaTypeFromDropdown(SchemaType schemaType) {
-        $("ul[role='listbox']").click();
-        $x("//li[text()='" + schemaType.getValue() + "']").click();
+        schemaTypeDdl.shouldBe(Condition.enabled).click();
+        $x(String.format(elementLocatorDdl, schemaType.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
     @Step
-    public SchemaDetails clickSubmit() {
-        clickByJavaScript(submitSchemaButton);
-        return new SchemaDetails();
+    public SchemaCreateForm clickSubmitBtn() {
+        clickByJavaScript(submitBtn);
+        return this;
     }
 
     @Step
     public SchemaCreateForm selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum level) {
-        $x("//ul[@name='compatibilityLevel']").click();
-        $x("//li[text()='" + level.getValue() + "']").click();
+        compatibilityLevelList.shouldBe(Condition.enabled).click();
+        $x(String.format(elementLocatorDdl, level.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
-    @Step("Set new schema value")
+    @Step
     public SchemaCreateForm setNewSchemaValue(String configJson) {
-        $("#newSchema").click();
-        newSchemaTextArea.sendKeys(Keys.CONTROL + "a", Keys.BACK_SPACE);
-        Selenide.executeJavaScript("arguments[0].value = '';", $("#newSchema"));
-        newSchemaTextArea.setValue(configJson);
+        newSchemaTextArea.shouldBe(Condition.visible).click();
+        clearByKeyboard(newSchemaInput);
+        newSchemaInput.setValue(configJson);
         return this;
     }
 
@@ -72,7 +75,7 @@ public class SchemaCreateForm {
     public boolean isSchemaDropDownDisabled(){
         boolean disabled = false;
         try{
-            String attribute = schemaTypeDropDown.getAttribute("disabled");
+            String attribute = schemaTypeDdl.getAttribute("disabled");
             disabled = true;
         }
         catch (Throwable ignored){

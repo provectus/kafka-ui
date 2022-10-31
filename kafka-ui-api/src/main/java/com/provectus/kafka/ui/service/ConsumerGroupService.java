@@ -64,13 +64,6 @@ public class ConsumerGroupService {
         });
   }
 
-  @Deprecated // need to migrate to pagination
-  public Mono<List<InternalConsumerGroup>> getAllConsumerGroups(KafkaCluster cluster) {
-    return adminClientService.get(cluster)
-        .flatMap(ac -> describeConsumerGroups(ac, null)
-            .flatMap(descriptions -> getConsumerGroups(ac, descriptions)));
-  }
-
   public Mono<List<InternalTopicConsumerGroup>> getConsumerGroupsForTopic(KafkaCluster cluster,
                                                                           String topic) {
     return adminClientService.get(cluster)

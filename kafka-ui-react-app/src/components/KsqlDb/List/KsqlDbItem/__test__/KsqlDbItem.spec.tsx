@@ -7,7 +7,6 @@ import KsqlDbItem, {
 } from 'components/KsqlDb/List/KsqlDbItem/KsqlDbItem';
 import { screen } from '@testing-library/dom';
 import { fetchKsqlDbTablesPayload } from 'redux/reducers/ksqlDb/__test__/fixtures';
-import { act } from '@testing-library/react';
 
 describe('KsqlDbItem', () => {
   const tablesPathname = clusterKsqlDbTablesPath();
@@ -27,37 +26,34 @@ describe('KsqlDbItem', () => {
     );
   };
 
-  it('renders progressbar when fetching tables and streams', async () => {
-    await act(() => renderComponent({ fetching: true }));
+  it('renders progressbar when fetching tables and streams', () => {
+    renderComponent({ fetching: true });
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
-  it('show no text if no data found', async () => {
-    await act(() => renderComponent({}));
+  it('show no text if no data found', () => {
+    renderComponent({});
     expect(screen.getByText('No tables or streams found')).toBeInTheDocument();
   });
 
-  it('renders with tables', async () => {
-    await act(() =>
-      renderComponent({
-        rows: {
-          tables: fetchKsqlDbTablesPayload.tables,
-          streams: [],
-        },
-      })
-    );
+  it('renders with tables', () => {
+    renderComponent({
+      rows: {
+        tables: fetchKsqlDbTablesPayload.tables,
+        streams: [],
+      },
+    });
+
     expect(screen.getByRole('table').querySelectorAll('td')).toHaveLength(10);
   });
-  it('renders with streams', async () => {
-    await act(() =>
-      renderComponent({
-        type: KsqlDbItemType.Streams,
-        rows: {
-          tables: [],
-          streams: fetchKsqlDbTablesPayload.streams,
-        },
-      })
-    );
+  it('renders with streams', () => {
+    renderComponent({
+      type: KsqlDbItemType.Streams,
+      rows: {
+        tables: [],
+        streams: fetchKsqlDbTablesPayload.streams,
+      },
+    });
     expect(screen.getByRole('table').querySelectorAll('td')).toHaveLength(10);
   });
 });

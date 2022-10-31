@@ -57,7 +57,7 @@ describe('Tasks', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders truncates long trace and expands', () => {
+  it('renders truncates long trace and expands', async () => {
     renderComponent(tasks);
 
     const trace = tasks[2]?.status?.trace || '';
@@ -72,7 +72,7 @@ describe('Tasks', () => {
     //  Full trace is not visible
     expect(expandedDetails).not.toBeInTheDocument();
 
-    userEvent.click(thirdRow);
+    await userEvent.click(thirdRow);
 
     expect(
       screen.getByRole('row', {
@@ -82,7 +82,7 @@ describe('Tasks', () => {
   });
 
   describe('Action button', () => {
-    const expectDropdownExists = () => {
+    const expectDropdownExists = async () => {
       const firstTaskRow = screen.getByRole('row', {
         name: '1 kafka-connect0:8083 RUNNING',
       });
@@ -91,13 +91,13 @@ describe('Tasks', () => {
         name: 'Dropdown Toggle',
       });
       expect(extBtn).toBeEnabled();
-      userEvent.click(extBtn);
+      await userEvent.click(extBtn);
       expect(screen.getByRole('menu')).toBeInTheDocument();
     };
 
-    it('renders action button', () => {
+    it('renders action button', async () => {
       renderComponent(tasks);
-      expectDropdownExists();
+      await expectDropdownExists();
       expect(
         screen.getAllByRole('button', { name: 'Dropdown Toggle' }).length
       ).toEqual(tasks.length);
@@ -108,11 +108,11 @@ describe('Tasks', () => {
 
     it('works as expected', async () => {
       renderComponent(tasks);
-      expectDropdownExists();
+      await expectDropdownExists();
       const actionBtn = screen.getAllByRole('menuitem');
       expect(actionBtn[0]).toHaveTextContent('Restart task');
 
-      userEvent.click(actionBtn[0]);
+      await userEvent.click(actionBtn[0]);
       expect(
         screen.getByText('Are you sure you want to restart the task?')
       ).toBeInTheDocument();
