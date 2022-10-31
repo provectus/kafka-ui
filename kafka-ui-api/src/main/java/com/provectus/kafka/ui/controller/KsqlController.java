@@ -1,15 +1,12 @@
 package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.KsqlApi;
-import com.provectus.kafka.ui.model.KsqlCommandDTO;
-import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
 import com.provectus.kafka.ui.model.KsqlCommandV2DTO;
 import com.provectus.kafka.ui.model.KsqlCommandV2ResponseDTO;
 import com.provectus.kafka.ui.model.KsqlResponseDTO;
 import com.provectus.kafka.ui.model.KsqlStreamDescriptionDTO;
 import com.provectus.kafka.ui.model.KsqlTableDescriptionDTO;
 import com.provectus.kafka.ui.model.KsqlTableResponseDTO;
-import com.provectus.kafka.ui.service.KsqlService;
 import com.provectus.kafka.ui.service.ksql.KsqlServiceV2;
 import java.util.List;
 import java.util.Map;
@@ -27,17 +24,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class KsqlController extends AbstractController implements KsqlApi {
-  private final KsqlService ksqlService;
-  private final KsqlServiceV2 ksqlServiceV2;
 
-  @Override
-  public Mono<ResponseEntity<KsqlCommandResponseDTO>> executeKsqlCommand(String clusterName,
-                                                                         Mono<KsqlCommandDTO>
-                                                                             ksqlCommand,
-                                                                         ServerWebExchange exchange) {
-    return ksqlService.executeKsqlCommand(getCluster(clusterName), ksqlCommand)
-        .map(ResponseEntity::ok);
-  }
+  private final KsqlServiceV2 ksqlServiceV2;
 
   @Override
   public Mono<ResponseEntity<KsqlCommandV2ResponseDTO>> executeKsql(String clusterName,
