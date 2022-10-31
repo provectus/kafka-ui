@@ -862,28 +862,6 @@ paths:
         200:
           description: OK
 
-  /api/clusters/{clusterName}/consumer-groups:
-    get:
-      tags:
-        - Consumer Groups
-      summary: get all ConsumerGroups
-      operationId: getConsumerGroups
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ConsumerGroup'
-
   /api/clusters/{clusterName}/consumer-groups/{id}/offsets:
     post:
       tags:
@@ -1755,7 +1733,7 @@ paths:
     get:
       tags:
         - TimeStampFormat
-      summary: getTimeStampFormat
+      summary: get system default datetime format
       operationId: getTimeStampFormat
       responses:
         200:
@@ -1764,6 +1742,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TimeStampFormat'
+
+  /api/info/timestampformat/iso:
+    get:
+      tags:
+        - TimeStampFormat
+      summary: get system default datetime format (in ISO format, for JS)
+      operationId: getTimeStampFormatISO
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeStampFormat'
+
 components:
   schemas:
     TopicSerdeSuggestion:
@@ -2235,6 +2228,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ConfigSynonym"
+        doc:
+          type: string
       required:
         - name
 
