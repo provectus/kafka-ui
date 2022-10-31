@@ -49,7 +49,7 @@ services:
     command: "bash -c 'if [ ! -f /tmp/update_run.sh ]; then echo \"ERROR: Did you forget the update_run.sh file that came with this docker-compose.yml file?\" && exit 1 ; else /tmp/update_run.sh && /etc/confluent/docker/run ; fi'"
 
   schema-registry0:
-    image: confluentinc/cp-schema-registry:7.2.1
+    image: confluentinc/cp-schema-registry:7.2.1.arm64
     ports:
       - 8085:8085
     depends_on:
@@ -65,7 +65,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
 
   kafka-connect0:
-    image: confluentinc/cp-kafka-connect:7.2.1
+    image: confluentinc/cp-kafka-connect:7.2.1.arm64
     ports:
       - 8083:8083
     depends_on:
@@ -90,7 +90,7 @@ services:
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
 
   kafka-init-topics:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-kafka:7.2.1.arm64
     volumes:
        - ./message.json:/data/message.json
     depends_on:
