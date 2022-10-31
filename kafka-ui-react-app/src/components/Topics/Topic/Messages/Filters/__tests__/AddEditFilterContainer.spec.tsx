@@ -15,16 +15,18 @@ describe('AddEditFilterContainer component', () => {
     code: 'mockCode',
   };
 
-  const renderComponent = (
+  const renderComponent = async (
     props: Partial<AddEditFilterContainerProps> = {}
   ) => {
-    render(
-      <AddEditFilterContainer
-        cancelBtnHandler={jest.fn()}
-        submitBtnText={props.submitBtnText || defaultSubmitBtn}
-        {...props}
-      />
-    );
+    await act(() => {
+      render(
+        <AddEditFilterContainer
+          cancelBtnHandler={jest.fn()}
+          submitBtnText={props.submitBtnText || defaultSubmitBtn}
+          {...props}
+        />
+      );
+    });
   };
 
   describe('default Component Parameters', () => {
@@ -43,35 +45,32 @@ describe('AddEditFilterContainer component', () => {
       const inputs = screen.getAllByRole('textbox');
 
       const textAreaElement = inputs[0] as HTMLTextAreaElement;
-      await act(() =>
-        userEvent.paste(textAreaElement, 'Hello World With TextArea')
-      );
+      textAreaElement.focus();
+      await userEvent.paste('Hello World With TextArea');
 
-      const inputNameElement = inputs[1];
-      await act(() => userEvent.type(inputNameElement, 'Hello World!'));
+      const inputNameElement = inputs[1] as HTMLTextAreaElement;
+      await userEvent.type(inputNameElement, 'Hello World!');
 
       expect(submitButtonElem).toBeEnabled();
 
-      await act(() => userEvent.clear(inputNameElement));
+      await userEvent.clear(inputNameElement);
+      await userEvent.tab();
 
       expect(submitButtonElem).toBeDisabled();
     });
 
     it('should view the error message after typing and clearing the input', async () => {
       const inputs = screen.getAllByRole('textbox');
-
+      const user = userEvent.setup();
       const textAreaElement = inputs[0] as HTMLTextAreaElement;
-      await act(() =>
-        userEvent.paste(textAreaElement, 'Hello World With TextArea')
-      );
-
       const inputNameElement = inputs[1];
-      await act(() => {
-        userEvent.type(inputNameElement, 'Hello World!');
 
-        userEvent.clear(inputNameElement);
-        userEvent.clear(textAreaElement);
-      });
+      await user.type(textAreaElement, 'Hello World With TextArea');
+      await user.type(inputNameElement, 'Hello World!');
+
+      await user.clear(inputNameElement);
+      await user.keyboard('{Control>}[KeyA]{/Control}{backspace}');
+      await user.tab();
 
       expect(screen.getByText(/required field/i)).toBeInTheDocument();
     });
@@ -79,11 +78,12 @@ describe('AddEditFilterContainer component', () => {
 
   describe('Custom setup for the component', () => {
     it('should render the input with default data if they are passed', async () => {
-      renderComponent({
-        inputDisplayNameDefaultValue: mockData.name,
-        inputCodeDefaultValue: mockData.code,
+      await act(() => {
+        renderComponent({
+          inputDisplayNameDefaultValue: mockData.name,
+          inputCodeDefaultValue: mockData.code,
+        });
       });
-
       const inputs = screen.getAllByRole('textbox');
       const textAreaElement = inputs[0] as HTMLTextAreaElement;
       const inputNameElement = inputs[1];
@@ -93,44 +93,43 @@ describe('AddEditFilterContainer component', () => {
 
     it('should test whether the cancel callback is being called', async () => {
       const cancelCallback = jest.fn();
-      renderComponent({
-        cancelBtnHandler: cancelCallback,
-      });
+      await act(() =>
+        renderComponent({
+          cancelBtnHandler: cancelCallback,
+        })
+      );
       const cancelBtnElement = screen.getByText(/cancel/i);
 
-      await act(() => userEvent.click(cancelBtnElement));
+      await userEvent.click(cancelBtnElement);
       expect(cancelCallback).toBeCalled();
     });
 
     it('should test whether the submit Callback is being called', async () => {
       const submitCallback = jest.fn();
-      renderComponent({
-        submitCallback,
-      });
+      await act(() => renderComponent({ submitCallback }));
 
       const inputs = screen.getAllByRole('textbox');
 
       const textAreaElement = inputs[0] as HTMLTextAreaElement;
-      userEvent.paste(textAreaElement, 'Hello World With TextArea');
+      textAreaElement.focus();
+      await userEvent.paste('Hello World With TextArea');
 
       const inputNameElement = inputs[1];
-      await act(() => userEvent.type(inputNameElement, 'Hello World!'));
+      await userEvent.type(inputNameElement, 'Hello World!');
 
       const submitBtnElement = screen.getByText(defaultSubmitBtn);
-
       expect(submitBtnElement).toBeEnabled();
 
-      await act(() => userEvent.click(submitBtnElement));
-
+      await userEvent.click(submitBtnElement);
       expect(submitCallback).toBeCalled();
     });
 
     it('should display the checkbox if the props is passed and initially check state', async () => {
-      renderComponent({ isAdd: true });
+      await act(() => renderComponent({ isAdd: true }));
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).toBeInTheDocument();
       expect(checkbox).not.toBeChecked();
-      await act(() => userEvent.click(checkbox));
+      await userEvent.click(checkbox);
       expect(checkbox).toBeChecked();
     });
 

@@ -109,14 +109,14 @@ describe('List', () => {
         expect(screen.getByText(schemaVersion1.subject)).toBeInTheDocument();
         expect(screen.getByText(schemaVersion2.subject)).toBeInTheDocument();
       });
-      it('handles onRowClick', () => {
+      it('handles onRowClick', async () => {
         const { id, schemaType, subject, version, compatibilityLevel } =
           schemaVersion2;
         const row = screen.getByRole('row', {
           name: `${subject} ${id} ${schemaType} ${version} ${compatibilityLevel}`,
         });
         expect(row).toBeInTheDocument();
-        userEvent.click(row);
+        await userEvent.click(row);
         expect(mockedUsedNavigate).toHaveBeenCalledWith(
           clusterSchemaPath(clusterName, subject)
         );

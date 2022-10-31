@@ -6,6 +6,10 @@ public class TopicMetadataException extends CustomBaseException {
     super(message);
   }
 
+  public TopicMetadataException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
   @Override
   public ErrorCode getErrorCode() {
     return ErrorCode.INVALID_ENTITY_STATE;

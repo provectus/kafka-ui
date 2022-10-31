@@ -35,7 +35,7 @@ describe('EditFilter component', () => {
     await act(() => {
       renderComponent({ toggleEditModal });
     });
-    userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
     expect(toggleEditModal).toHaveBeenCalledTimes(1);
   });
 
@@ -43,16 +43,16 @@ describe('EditFilter component', () => {
     const toggleEditModal = jest.fn();
     const editSavedFilter = jest.fn();
 
-    await act(() => {
-      renderComponent({ toggleEditModal, editSavedFilter });
-    });
+    await renderComponent({ toggleEditModal, editSavedFilter });
 
     const inputs = screen.getAllByRole('textbox');
     const textAreaElement = inputs[0] as HTMLTextAreaElement;
     const inputNameElement = inputs[1];
-    await act(() => {
-      userEvent.paste(textAreaElement, 'edited code');
-      userEvent.type(inputNameElement, 'edited name');
+    await act(async () => {
+      textAreaElement.focus();
+      await userEvent.paste('edited code');
+      textAreaElement.focus();
+      await userEvent.type(inputNameElement, 'edited name');
       fireEvent.submit(screen.getByRole('form'));
     });
     expect(toggleEditModal).toHaveBeenCalledTimes(1);

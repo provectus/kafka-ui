@@ -68,7 +68,7 @@ public class TopicsService {
     }
     return adminClientService.get(c)
         .flatMap(ac ->
-            ac.describeTopics(topics).zipWith(ac.getTopicsConfig(topics),
+            ac.describeTopics(topics).zipWith(ac.getTopicsConfig(topics, false),
                 (descriptions, configs) -> {
                   statisticsCache.update(c, descriptions, configs);
                   return getPartitionOffsets(descriptions, ac).map(offsets -> {
@@ -138,11 +138,15 @@ public class TopicsService {
                                                               ReactiveAdminClient ac) {
     var topicPartitions = descriptions.values().stream()
         .flatMap(desc ->
-            desc.partitions().stream().map(p -> new TopicPartition(desc.name(), p.partition())))
+            desc.partitions().stream()
+                // list offsets should only be applied to partitions with existing leader
+                // (see ReactiveAdminClient.listOffsetsUnsafe(..) docs)
+                .filter(tp -> tp.leader() != null)
+                .map(p -> new TopicPartition(desc.name(), p.partition())))
         .collect(toList());
 
-    return ac.listOffsets(topicPartitions, OffsetSpec.earliest())
-        .zipWith(ac.listOffsets(topicPartitions, OffsetSpec.latest()),
+    return ac.listOffsetsUnsafe(topicPartitions, OffsetSpec.earliest())
+        .zipWith(ac.listOffsetsUnsafe(topicPartitions, OffsetSpec.latest()),
             (earliest, latest) ->
                 topicPartitions.stream()
                     .filter(tp -> earliest.containsKey(tp) && latest.containsKey(tp))
@@ -160,7 +164,7 @@ public class TopicsService {
 
   public Mono<List<ConfigEntry>> getTopicConfigs(KafkaCluster cluster, String topicName) {
     return adminClientService.get(cluster)
-        .flatMap(ac -> ac.getTopicsConfig(List.of(topicName)))
+        .flatMap(ac -> ac.getTopicsConfig(List.of(topicName), true))
         .map(m -> m.values().stream().findFirst().orElseThrow(TopicNotFoundException::new));
   }
 
@@ -170,11 +174,11 @@ public class TopicsService {
             adminClient.createTopic(
                 topicData.getName(),
                 topicData.getPartitions(),
-                topicData.getReplicationFactor().shortValue(),
+                topicData.getReplicationFactor(),
                 topicData.getConfigs()
             ).thenReturn(topicData)
         )
-        .onErrorResume(t -> Mono.error(new TopicMetadataException(t.getMessage())))
+        .onErrorMap(t -> new TopicMetadataException(t.getMessage(), t))
         .flatMap(topicData -> loadTopicAfterCreation(c, topicData.getName()));
   }
 
@@ -194,7 +198,7 @@ public class TopicsService {
                         ac.createTopic(
                                 topic.getName(),
                                 topic.getPartitionCount(),
-                                (short) topic.getReplicationFactor(),
+                                topic.getReplicationFactor(),
                                 topic.getTopicConfigs()
                                     .stream()
                                     .collect(Collectors.toMap(InternalTopicConfig::getName,
@@ -430,7 +434,7 @@ public class TopicsService {
                 ac.createTopic(
                     newTopicName,
                     topic.getPartitionCount(),
-                    (short) topic.getReplicationFactor(),
+                    topic.getReplicationFactor(),
                     topic.getTopicConfigs()
                         .stream()
                         .collect(Collectors

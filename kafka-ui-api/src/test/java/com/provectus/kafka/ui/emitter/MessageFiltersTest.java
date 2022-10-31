@@ -13,6 +13,7 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Nested;
@@ -71,6 +72,20 @@ class MessageFiltersTest {
       var f = groovyScriptFilter("partition == 1");
       assertTrue(f.test(msg().partition(1)));
       assertFalse(f.test(msg().partition(0)));
+    }
+
+    @Test
+    void canCheckOffset() {
+      var f = groovyScriptFilter("offset == 100");
+      assertTrue(f.test(msg().offset(100L)));
+      assertFalse(f.test(msg().offset(200L)));
+    }
+
+    @Test
+    void canCheckHeaders() {
+      var f = groovyScriptFilter("headers.size() == 2 && headers['k1'] == 'v1'");
+      assertTrue(f.test(msg().headers(Map.of("k1", "v1", "k2", "v2"))));
+      assertFalse(f.test(msg().headers(Map.of("k1", "unexpected", "k2", "v2"))));
     }
 
     @Test
