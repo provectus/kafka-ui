@@ -28,11 +28,9 @@ export const SearchWrapper = styled.div`
 export const Source = styled.div`
   display: flex;
   align-content: center;
-  span {
+  svg {
     margin-left: 10px;
-    svg {
-      vertical-align: middle;
-      cursor: pointer;
-    }
+    vertical-align: middle;
+    cursor: pointer;
   }
 `;

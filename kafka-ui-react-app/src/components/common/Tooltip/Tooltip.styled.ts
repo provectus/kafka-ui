@@ -10,3 +10,8 @@ export const MessageTooltip = styled.div`
   z-index: 1;
   white-space: pre-wrap;
 `;
+
+export const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
