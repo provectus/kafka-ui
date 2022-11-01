@@ -9,7 +9,7 @@ import {
 import Table from 'components/common/NewTable';
 import { BrokerConfig, ConfigSource } from 'generated-sources';
 import Search from 'components/common/Search/Search';
-import Tooltip from 'components/common/Tooltip/Tooltip';
+import { Tooltip2 } from 'components/common/Tooltip/Tooltip';
 import InfoIcon from 'components/common/Icons/InfoIcon';
 
 import InputCell from './InputCell';
@@ -72,7 +72,11 @@ const Configs: React.FC = () => {
           return (
             <S.Source>
               Source
-              <Tooltip value={<InfoIcon />} messageTooltip={messageTooltip} />
+              <Tooltip2
+                value={<InfoIcon />}
+                messageTooltip={messageTooltip}
+                placement="top-end"
+              />
             </S.Source>
           );
         },
