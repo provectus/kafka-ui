@@ -7,11 +7,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Preconditions;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 class Mask extends MaskingPolicy {
 
-  private final Function<String, String> masker;
+  private final UnaryOperator<String> masker;
 
   Mask(List<String> fieldNames, List<Character> maskingChars) {
     super(fieldNames);
@@ -28,24 +28,32 @@ class Mask extends MaskingPolicy {
     return masker.apply(str);
   }
 
-  private static Function<String, String> createMasker(List<Character> maskingChars) {
+  private static UnaryOperator<String> createMasker(List<Character> maskingChars) {
     Preconditions.checkNotNull(maskingChars);
-    Preconditions.checkArgument(maskingChars.size() == 4, "mask patter should contain of 4 elements");
+    Preconditions.checkArgument(maskingChars.size() == 4, "mask pattern should contain of 4 elements");
     return input -> {
       StringBuilder sb = new StringBuilder(input.length());
-      input.chars().forEach(ch -> {
-        if (Character.isSpaceChar(ch)) {
-          sb.appendCodePoint(ch); // keeping spaces and line separators as-is
-        } else if (Character.isUpperCase(ch)) {
-          sb.append(maskingChars.get(0));
-        } else if (Character.isLowerCase(ch)) {
-          sb.append(maskingChars.get(1));
-        }  else if (Character.isDigit(ch)) {
-          sb.append(maskingChars.get(2));
-        } else {
-          sb.append(maskingChars.get(3));
+      for (int i = 0; i < input.length(); i++) {
+        int cp = input.codePointAt(i);
+        switch (Character.getType(cp)) {
+          case Character.SPACE_SEPARATOR:
+          case Character.LINE_SEPARATOR:
+          case Character.PARAGRAPH_SEPARATOR:
+            sb.appendCodePoint(cp); // keeping separators as-is
+            break;
+          case Character.UPPERCASE_LETTER:
+            sb.appendCodePoint(maskingChars.get(0));
+            break;
+          case Character.LOWERCASE_LETTER:
+            sb.appendCodePoint(maskingChars.get(1));
+            break;
+          case Character.DECIMAL_DIGIT_NUMBER:
+            sb.appendCodePoint(maskingChars.get(2));
+            break;
+          default:
+            sb.appendCodePoint(maskingChars.get(3));
         }
-      });
+      }
       return sb.toString();
     };
   }
