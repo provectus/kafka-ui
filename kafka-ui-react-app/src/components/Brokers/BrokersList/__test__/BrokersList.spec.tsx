@@ -2,7 +2,6 @@ import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
 import { screen, waitFor } from '@testing-library/dom';
 import { clusterBrokerPath, clusterBrokersPath } from 'lib/paths';
-import { act } from '@testing-library/react';
 import BrokersList from 'components/Brokers/BrokersList/BrokersList';
 import userEvent from '@testing-library/user-event';
 import { useBrokers } from 'lib/hooks/api/brokers';
@@ -57,9 +56,8 @@ describe('BrokersList Component', () => {
       });
       it('opens broker when row clicked', async () => {
         renderComponent();
-        await act(() => {
-          userEvent.click(screen.getByRole('cell', { name: '0' }));
-        });
+        await userEvent.click(screen.getByRole('cell', { name: '0' }));
+
         await waitFor(() =>
           expect(mockedUsedNavigate).toBeCalledWith(
             clusterBrokerPath(clusterName, '0')

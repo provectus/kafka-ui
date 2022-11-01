@@ -26,9 +26,9 @@ describe('Alert', () => {
     expect(screen.getByRole('contentinfo')).toHaveTextContent(message);
     expect(getButton()).toBeInTheDocument();
   });
-  it('handles dismiss callback', () => {
+  it('handles dismiss callback', async () => {
     setupComponent();
-    userEvent.click(getButton());
+    await userEvent.click(getButton());
     expect(dismiss).toHaveBeenCalled();
   });
 });

@@ -17,6 +17,8 @@ public class TopicDetails {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
+    protected SelenideElement dotPartitionIdMenuBtn = $(By.cssSelector("button.sc-hOqruk.eYtACj"));
+    protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
     protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
     protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
     protected SelenideElement editSettingsTab = $x("//li[@role][contains(text(),'Edit settings')]");
@@ -24,6 +26,7 @@ public class TopicDetails {
     protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
     protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
     protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
+    protected String consumerIdLocator = "//a[@title='%s']";
 
     @Step
     public TopicDetails waitUntilScreenReady() {
@@ -46,6 +49,18 @@ public class TopicDetails {
     }
 
     @Step
+    public TopicDetails openDotPartitionIdMenu() {
+        dotPartitionIdMenuBtn.shouldBe(Condition.visible.because("dot menu invisible")).click();
+        return this;
+    }
+
+    @Step
+    public TopicDetails clickClearMessagesBtn() {
+        clearMessagesBtn.shouldBe(Condition.visible.because("Clear Messages invisible")).click();
+        return this;
+    }
+
+    @Step
     public TopicDetails deleteTopic() {
         clickByJavaScript(dotMenuBtn);
         removeTopicBtn.shouldBe(Condition.visible).click();
@@ -61,6 +76,12 @@ public class TopicDetails {
     }
 
     @Step
+    public TopicDetails openConsumerGroup(String consumerId) {
+        $x(String.format(consumerIdLocator, consumerId)).click();
+        return this;
+    }
+
+    @Step
     public boolean isKeyMessageVisible(String keyMessage) {
         return keyMessage.equals($("td[title]").getText());
     }
@@ -68,6 +89,11 @@ public class TopicDetails {
     @Step
     public boolean isContentMessageVisible(String contentMessage) {
         return contentMessage.matches(contentMessageTab.getText().trim());
+    }
+
+    @Step
+    public String MessageCountAmount() {
+        return $(By.xpath("//table[@class=\"sc-hiSbEG cvnuic\"]/tbody/tr/td[5]")).getText();
     }
 
     private enum DotMenuHeaderItems {
@@ -88,6 +114,26 @@ public class TopicDetails {
         @Override
         public String toString() {
             return "DotMenuHeaderItems{" + "value='" + value + '\'' + '}';
+        }
+    }
+
+    public enum DotPartitionIdMenu {
+        CLEAR_MESSAGES("Clear messages");
+
+
+        private final String value;
+
+        DotPartitionIdMenu(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return "DotPartitionIdMenuItems{" + "value='" + value + '\'' + '}';
         }
     }
 

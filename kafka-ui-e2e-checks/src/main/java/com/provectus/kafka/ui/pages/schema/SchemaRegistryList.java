@@ -30,7 +30,8 @@ public class SchemaRegistryList {
 
     @Step
     public SchemaRegistryList openSchema(String schemaName) {
-        $x(String.format(schemaTabElementLocator,schemaName)).shouldBe(Condition.visible).click();
+        $x(String.format(schemaTabElementLocator,schemaName))
+                .shouldBe(Condition.enabled).click();
         return this;
     }
 
