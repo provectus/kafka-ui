@@ -18,8 +18,10 @@ public class TopicCreateEditForm {
     protected SelenideElement maxMessageBytesField = $x("//input[@name='maxMessageBytes']");
     protected SelenideElement minInSyncReplicasField = $x("//input[@name='minInSyncReplicas']");
     protected SelenideElement cleanUpPolicyDdl = $x("//ul[@id='topicFormCleanupPolicy']");
+    protected SelenideElement maxSizeOnDiscDdl = $x("//ul[@id='topicFormRetentionBytes']");
     protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
-    protected String cleanUpPolicyTypeLocator = "//li[text()='%s']";
+    protected String cleanUpPolicyTypeLocator = "//li[@value='%s']";
+    protected String maxSizeOnDiscTypeLocator = "//li[@value='%s']";
 
     @Step
     public TopicCreateEditForm waitUntilScreenReady(){
@@ -52,11 +54,17 @@ public class TopicCreateEditForm {
         return this;
     }
 
-    @Step
-    public TopicCreateEditForm setMaxSizeOnDiskInGB(String value) {
-        new KafkaUISelectElement("retentionBytes").selectByVisibleText(value);
-        return this;
-    }
+//    @Step
+//    public TopicCreateEditForm setMaxSizeOnDiskInGB(MaxSizeOnDisk option) {
+//        new KafkaUISelectElement("retentionBytes").selectByVisibleText(value);
+//        return this;
+//    }
+@Step
+public TopicCreateEditForm setMaxSizeOnDiskInGB(MaxSizeOnDisk MaxSizeOnDisk) {
+    maxSizeOnDiscDdl.shouldBe(Condition.visible).click();
+    $x(String.format(maxSizeOnDiscTypeLocator,MaxSizeOnDisk.getOptionValue())).shouldBe(Condition.visible).click();
+    return this;
+}
 
     @Step
     public TopicCreateEditForm setMaxMessageBytes(Long bytes) {
@@ -80,16 +88,16 @@ public class TopicCreateEditForm {
         return this;
     }
 
-    @Step
-    public TopicCreateEditForm selectCleanupPolicy(CleanupPolicyValue cleanupPolicyValue) {
-        return selectFromDropDownByOptionValue("cleanupPolicy",
-                cleanupPolicyValue.getOptionValue());
-    }
+//    @Step
+//    public TopicCreateEditForm selectCleanupPolicy(CleanupPolicyValue cleanupPolicyValue) {
+//        return selectFromDropDownByOptionValue("cleanupPolicy",
+//                cleanupPolicyValue.getOptionValue());
+//    }
 
     @Step
-    public TopicCreateEditForm selectCleanupPolicy(String cleanupPolicyOptionValue) {
+    public TopicCreateEditForm selectCleanupPolicy(CleanupPolicyValue cleanupPolicyOptionValue) {
         cleanUpPolicyDdl.shouldBe(Condition.visible).click();
-        $x(String.format(cleanUpPolicyTypeLocator,cleanupPolicyOptionValue)).shouldBe(Condition.visible).click();
+        $x(String.format(cleanUpPolicyTypeLocator,cleanupPolicyOptionValue.getOptionValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
@@ -229,6 +237,30 @@ public class TopicCreateEditForm {
         private final String visibleText;
 
         CleanupPolicyValue(String optionValue, String visibleText) {
+            this.optionValue = optionValue;
+            this.visibleText = visibleText;
+        }
+
+        public String getOptionValue() {
+            return optionValue;
+        }
+
+        public String getVisibleText() {
+            return visibleText;
+        }
+    }
+
+    public enum MaxSizeOnDisk {
+        NOT_SET("-1", "Not Set"),
+        GB1("1073741824", "1 GB"),
+        GB10("10737418240", "10 GB"),
+        GB20("21474836480", "20 GB"),
+        GB50("53687091200", "50 GB");
+
+        private final String optionValue;
+        private final String visibleText;
+
+        MaxSizeOnDisk(String optionValue, String visibleText) {
             this.optionValue = optionValue;
             this.visibleText = visibleText;
         }

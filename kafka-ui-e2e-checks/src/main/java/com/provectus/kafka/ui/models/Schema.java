@@ -14,7 +14,7 @@ public class Schema {
     private SchemaType type;
 
     public static Schema createSchemaAvro(){
-        return new Schema().setName(randomAlphabetic(10))
+        return new Schema().setName("schema_avro" + randomAlphabetic(5))
                 .setType(SchemaType.AVRO)
                 .setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schema_avro_value.json");
     }
