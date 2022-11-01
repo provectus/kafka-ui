@@ -21,7 +21,6 @@ specifiers:
   '@testing-library/jest-dom': ^5.16.4
   '@testing-library/react': ^13.2.0
   '@testing-library/user-event': ^14.4.3
-  '@tippyjs/react': ^4.2.6
   '@types/eventsource': ^1.1.8
   '@types/jest': ^29.0.1
   '@types/lodash': ^4.14.172
@@ -105,7 +104,6 @@ dependencies:
   '@tanstack/react-query': 4.0.5_ef5jwxihqo6n7gxfmzogljlgcm
   '@tanstack/react-table': 8.5.10_ef5jwxihqo6n7gxfmzogljlgcm
   '@testing-library/react': 13.2.0_ef5jwxihqo6n7gxfmzogljlgcm
-  '@tippyjs/react': 4.2.6_ef5jwxihqo6n7gxfmzogljlgcm
   '@types/testing-library__jest-dom': 5.14.5
   '@vitejs/plugin-react': 2.0.0_vite@3.0.2
   ace-builds: 1.7.1
@@ -3384,17 +3382,6 @@ packages:
     dependencies:
       '@testing-library/dom': 8.13.0
     dev: true
-
-  /@tippyjs/react/4.2.6_ef5jwxihqo6n7gxfmzogljlgcm:
-    resolution: {integrity: sha512-91RicDR+H7oDSyPycI13q3b7o4O60wa2oRbjlz2fyRLmHImc4vyDwuUP8NtZaN0VARJY5hybvDYrFzhY9+Lbyw==}
-    peerDependencies:
-      react: '>=16.8'
-      react-dom: '>=16.8'
-    dependencies:
-      react: 18.1.0
-      react-dom: 18.1.0_react@18.1.0
-      tippy.js: 6.3.7
-    dev: false
 
   /@tootallnate/once/2.0.0:
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
@@ -8420,12 +8407,6 @@ packages:
       globalyzer: 0.1.0
       globrex: 0.1.2
     dev: true
-
-  /tippy.js/6.3.7:
-    resolution: {integrity: sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==}
-    dependencies:
-      '@popperjs/core': 2.9.2
-    dev: false
 
   /tmp/0.0.33:
     resolution: {integrity: sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw==}

@@ -16,7 +16,6 @@
     "@tanstack/react-query": "^4.0.5",
     "@tanstack/react-table": "^8.5.10",
     "@testing-library/react": "^13.2.0",
-    "@tippyjs/react": "^4.2.6",
     "@types/testing-library__jest-dom": "^5.14.5",
     "@vitejs/plugin-react": "^2.0.0",
     "ace-builds": "^1.7.1",
