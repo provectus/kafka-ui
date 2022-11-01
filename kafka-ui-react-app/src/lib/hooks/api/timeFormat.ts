@@ -5,7 +5,7 @@ import { QUERY_REFETCH_OFF_OPTIONS } from 'lib/constants';
 export function useTimeFormat() {
   return useQuery(
     ['settings', 'timestampformat'],
-    () => api.getTimeStampFormat(),
+    () => api.getTimeStampFormatISO(),
     QUERY_REFETCH_OFF_OPTIONS
   );
 }

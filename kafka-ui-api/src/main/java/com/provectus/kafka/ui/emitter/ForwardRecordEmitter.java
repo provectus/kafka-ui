@@ -54,7 +54,7 @@ public class ForwardRecordEmitter
           }
         }
       }
-      sink.complete();
+      sendFinishStatsAndCompleteSink(sink);
       log.info("Polling finished");
     } catch (Exception e) {
       log.error("Error occurred while consuming records", e);
