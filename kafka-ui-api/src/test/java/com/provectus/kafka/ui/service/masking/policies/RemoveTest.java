@@ -19,12 +19,12 @@ class RemoveTest {
 
   @ParameterizedTest
   @MethodSource
-  void testJsonContainer(List<String> fields, ContainerNode<?> original, ContainerNode<?>  expected) {
+  void testApplyToJsonContainer(List<String> fields, ContainerNode<?> original, ContainerNode<?>  expected) {
     var policy = new Remove(fields);
     assertThat(policy.applyToJsonContainer(original)).isEqualTo(expected);
   }
 
-  private static Stream<Arguments> testJsonContainer() {
+  private static Stream<Arguments> testApplyToJsonContainer() {
     return Stream.of(
         Arguments.of(
             TARGET_FIELDS,
@@ -65,7 +65,7 @@ class RemoveTest {
       "1.24343, null",
       "null, null"
   })
-  void testString(String original, String expected) {
+  void testApplyToString(String original, String expected) {
     var policy = new Remove(List.of());
     assertThat(policy.applyToString(original)).isEqualTo(expected);
   }

@@ -19,12 +19,12 @@ class ReplaceTest {
 
   @ParameterizedTest
   @MethodSource
-  void testJsonContainer(List<String> fields, ContainerNode<?> original, ContainerNode<?>  expected) {
+  void testApplyToJsonContainer(List<String> fields, ContainerNode<?> original, ContainerNode<?>  expected) {
     var policy = new Replace(fields, "***");
     assertThat(policy.applyToJsonContainer(original)).isEqualTo(expected);
   }
 
-  private static Stream<Arguments> testJsonContainer() {
+  private static Stream<Arguments> testApplyToJsonContainer() {
     return Stream.of(
         Arguments.of(
             TARGET_FIELDS,
@@ -60,7 +60,7 @@ class ReplaceTest {
       "1.24343, ***",
       "null, ***"
   })
-  void testString(String original, String expected) {
+  void testApplyToString(String original, String expected) {
     var policy = new Replace(List.of(), "***");
     assertThat(policy.applyToString(original)).isEqualTo(expected);
   }

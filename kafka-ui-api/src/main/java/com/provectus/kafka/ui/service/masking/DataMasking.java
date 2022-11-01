@@ -58,7 +58,7 @@ public class DataMasking {
   }
 
   @VisibleForTesting
-  public DataMasking(List<Mask> masks) {
+  DataMasking(List<Mask> masks) {
     this.masks = masks;
   }
 
