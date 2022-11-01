@@ -27,8 +27,8 @@ public class TopicDetails {
     protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
     protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
     protected String consumerIdLocator = "//a[@title='%s']";
-    @Step
 
+    @Step
     public TopicDetails waitUntilScreenReady() {
         loadingSpinner.shouldBe(Condition.disappear);
         Arrays.asList(overviewTab,messagesTab).forEach(element -> element.shouldBe(Condition.visible));

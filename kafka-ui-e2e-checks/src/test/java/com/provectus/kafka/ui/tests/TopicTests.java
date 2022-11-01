@@ -23,8 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TopicTests extends BaseTest {
     private static final long SUITE_ID = 2;
     private static final String SUITE_TITLE = "Topics";
-    private static final String TOPIC_NAME = "source-activities";
-    private static final String TOPIC_ID = "connect-sink_postgres_activities";
+
     private static final Topic TOPIC_FOR_UPDATE = new Topic()
             .setName("topic-to-update")
             .setCleanupPolicyValue("Compact")
@@ -203,20 +202,22 @@ public class TopicTests extends BaseTest {
     @CaseId(20)
     @Test
     void redirectToConsumerFromTopic() {
+        String topicName = "source-activities";
+        String consumerGroupId = "connect-sink_postgres_activities";
         naviSideBar
                 .openSideMenu(TOPICS);
         topicsList
                 .waitUntilScreenReady()
-                .openTopic(TOPIC_NAME);
+                .openTopic(topicName);
         topicDetails
                 .waitUntilScreenReady()
                 .openTopicMenu(TopicDetails.TopicMenu.CONSUMERS)
-                .openConsumerGroup(TOPIC_ID);
+                .openConsumerGroup(consumerGroupId);
         consumersDetails
                 .waitUntilScreenReady();
-        assertThat(consumersDetails.isRedirectedConsumerTitleVisible(TOPIC_ID))
+        assertThat(consumersDetails.isRedirectedConsumerTitleVisible(consumerGroupId))
                 .withFailMessage("isRedirectedConsumerTitleVisible").isTrue();
-        assertThat(consumersDetails.isTopicInConsumersDetailsVisible(TOPIC_NAME))
+        assertThat(consumersDetails.isTopicInConsumersDetailsVisible(topicName))
                 .withFailMessage("isTopicInConsumersDetailsVisible").isTrue();
     }
 
