@@ -4,6 +4,7 @@ import { RouteParamsClusterTopic } from 'lib/paths';
 import { Button } from 'components/common/Button/Button';
 import Editor from 'components/common/Editor/Editor';
 import Select, { SelectOption } from 'components/common/Select/Select';
+import Switch from 'components/common/Switch/Switch';
 import useAppParams from 'lib/hooks/useAppParams';
 import { showAlert } from 'lib/errorHandling';
 import { useSendMessage, useTopicDetails } from 'lib/hooks/api/topics';
@@ -26,6 +27,7 @@ interface FormType {
   partition: number;
   keySerde: string;
   valueSerde: string;
+  keepContents: boolean;
 }
 
 const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
@@ -52,6 +54,7 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
     defaultValues: {
       ...defaultValues,
       partition: Number(partitionOptions[0].value),
+      keepContents: false,
     },
   });
 
@@ -62,6 +65,7 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
     content,
     headers,
     partition,
+    keepContents,
   }: FormType) => {
     let errors: string[] = [];
 
@@ -110,7 +114,9 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
       keySerde,
       valueSerde,
     });
-    onSubmit();
+    if (!keepContents) {
+      onSubmit();
+    }
   };
 
   return (
@@ -168,6 +174,18 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
                   options={getSerdeOptions(serdes.value || [])}
                   value={value}
                 />
+              )}
+            />
+          </S.Column>
+          <S.Column>
+            <InputLabel>Keep the contents</InputLabel>
+            <Controller
+              control={control}
+              name="keepContents"
+              render={({ field: { name, onChange, value } }) => (
+                <div>
+                  <Switch name={name} onChange={onChange} checked={value} />
+                </div>
               )}
             />
           </S.Column>
