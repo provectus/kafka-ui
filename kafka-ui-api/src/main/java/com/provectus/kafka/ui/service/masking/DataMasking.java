@@ -46,7 +46,7 @@ public class DataMasking {
         config.stream().map(property -> {
           Preconditions.checkNotNull(property.getType(), "masking type not specifed");
           Preconditions.checkArgument(
-              StringUtils.isNotEmpty(property.getTopicValuesPattern())
+              StringUtils.isNotEmpty(property.getTopicKeysPattern())
                   || StringUtils.isNotEmpty(property.getTopicValuesPattern()),
               "topicKeysPattern or topicValuesPattern (or both) should be set for masking policy");
           return new Mask(
