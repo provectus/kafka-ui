@@ -9,13 +9,13 @@ import {
 import Table from 'components/common/NewTable';
 import { BrokerConfig, ConfigSource } from 'generated-sources';
 import Search from 'components/common/Search/Search';
-import { Tooltip2 } from 'components/common/Tooltip/Tooltip';
+import Tooltip from 'components/common/Tooltip/Tooltip';
 import InfoIcon from 'components/common/Icons/InfoIcon';
 
 import InputCell from './InputCell';
 import * as S from './Configs.styled';
 
-const messageTooltip = `DYNAMIC_TOPIC_CONFIG = dynamic topic config that is configured for a specific topic
+const tooltipContent = `DYNAMIC_TOPIC_CONFIG = dynamic topic config that is configured for a specific topic
 DYNAMIC_BROKER_LOGGER_CONFIG = dynamic broker logger config that is configured for a specific broker
 DYNAMIC_BROKER_CONFIG = dynamic broker config that is configured for a specific broker
 DYNAMIC_DEFAULT_BROKER_CONFIG = dynamic broker config that is configured as default for all brokers in the cluster
@@ -72,9 +72,9 @@ const Configs: React.FC = () => {
           return (
             <S.Source>
               Source
-              <Tooltip2
+              <Tooltip
                 value={<InfoIcon />}
-                messageTooltip={messageTooltip}
+                content={tooltipContent}
                 placement="top-end"
               />
             </S.Source>

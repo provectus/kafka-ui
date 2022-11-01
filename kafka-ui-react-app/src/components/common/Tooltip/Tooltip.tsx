@@ -5,32 +5,16 @@ import {
   useInteractions,
   Placement,
 } from '@floating-ui/react-dom-interactions';
-import Tippy from '@tippyjs/react';
 
 import * as S from './Tooltip.styled';
 
 export interface PropsTypes {
   value: string | JSX.Element;
-  messageTooltip: string;
+  content: string;
   placement?: Placement;
 }
 
-export const Tooltip: React.FC<PropsTypes> = ({ value, messageTooltip }) => {
-  return (
-    <Tippy
-      maxWidth="100%"
-      content={<S.MessageTooltip>{messageTooltip}</S.MessageTooltip>}
-    >
-      <span>{value}</span>
-    </Tippy>
-  );
-};
-
-export const Tooltip2: React.FC<PropsTypes> = ({
-  value,
-  messageTooltip,
-  placement,
-}) => {
+const Tooltip: React.FC<PropsTypes> = ({ value, content, placement }) => {
   const [open, setOpen] = useState(false);
   const { x, y, reference, floating, strategy, context } = useFloating({
     open,
@@ -42,7 +26,7 @@ export const Tooltip2: React.FC<PropsTypes> = ({
 
   return (
     <>
-      <span ref={reference}>{value}</span>
+      <div ref={reference}>{value}</div>
       {open && (
         <S.MessageTooltip
           ref={floating}
@@ -53,9 +37,11 @@ export const Tooltip2: React.FC<PropsTypes> = ({
             width: 'max-content',
           }}
         >
-          {messageTooltip}
+          {content}
         </S.MessageTooltip>
       )}
     </>
   );
 };
+
+export default Tooltip;
