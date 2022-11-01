@@ -19,7 +19,7 @@ Apply examples:
 { "age": 30 } 
 ```
 ```
-some string -> nulla
+some string -> null
 ```
 
 ### REPLACE
