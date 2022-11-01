@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { NoWrap } from './BytesFormatted.styled';
+
 interface Props {
   value: string | number | undefined;
   precision?: number;
@@ -23,7 +25,7 @@ const BytesFormatted: React.FC<Props> = ({ value, precision = 0 }) => {
     }
   }, [precision, value]);
 
-  return <span>{formattedValue}</span>;
+  return <NoWrap>{formattedValue}</NoWrap>;
 };
 
 export default BytesFormatted;
