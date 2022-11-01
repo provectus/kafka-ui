@@ -17,11 +17,10 @@ public class TopicDetails {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
-    protected SelenideElement dotPartitionIdMenuBtn = $(By.cssSelector("button.sc-hOqruk.eYtACj"));
     protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
     protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
     protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
-    protected SelenideElement editSettingsTab = $x("//li[@role][contains(text(),'Edit settings')]");
+    protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
     protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
     protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
     protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
@@ -36,27 +35,26 @@ public class TopicDetails {
     }
 
     @Step
-    public TopicDetails openEditSettings() {
+    public TopicDetails clickEditSettingsMenu() {
+        editSettingsMenu.shouldBe(Condition.enabled).click();
+        return this;
+    }
+
+    @Step
+    public TopicDetails openDetailsTab(TopicMenu tab) {
+        $(By.linkText(tab.getValue())).shouldBe(Condition.enabled).click();
+        return this;
+    }
+
+    @Step
+    public TopicDetails openDotMenu() {
         clickByJavaScript(dotMenuBtn);
-        editSettingsTab.shouldBe(Condition.visible).click();
-        return this;
-    }
-
-    @Step
-    public TopicDetails openTopicMenu(TopicMenu menu) {
-        $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
-        return this;
-    }
-
-    @Step
-    public TopicDetails openDotPartitionIdMenu() {
-        dotPartitionIdMenuBtn.shouldBe(Condition.visible.because("dot menu invisible")).click();
         return this;
     }
 
     @Step
     public TopicDetails clickClearMessagesBtn() {
-        clearMessagesBtn.shouldBe(Condition.visible.because("Clear Messages invisible")).click();
+        clearMessagesBtn.shouldBe(Condition.enabled).click();
         return this;
     }
 

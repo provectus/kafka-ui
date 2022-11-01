@@ -86,7 +86,8 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_UPDATE.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openEditSettings();
+                .openDotMenu()
+                .clickEditSettingsMenu();
         topicCreateEditForm
                 .waitUntilScreenReady()
                 .selectCleanupPolicy(TOPIC_FOR_UPDATE.getCleanupPolicyValue())
@@ -104,7 +105,8 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_UPDATE.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openEditSettings();
+                .openDotMenu()
+                .clickEditSettingsMenu();
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("Cleanup Policy").isEqualTo(TOPIC_FOR_UPDATE.getCleanupPolicyValue());
         softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("Time to retain").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
@@ -148,7 +150,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_MESSAGES.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)
+                .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
                 .clickProduceMessageBtn();
         produceMessagePanel
                 .waitUntilScreenReady()
@@ -177,7 +179,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_MESSAGES.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicDetails.TopicMenu.OVERVIEW)
+                .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
                 .clickProduceMessageBtn();
         produceMessagePanel
                 .waitUntilScreenReady()
@@ -190,7 +192,7 @@ public class TopicTests extends BaseTest {
         assertThat(messageAmount)
                 .withFailMessage("message amount not equals").isEqualTo(topicDetails.MessageCountAmount());
         topicDetails
-                .openDotPartitionIdMenu()
+                .openDotMenu()
                 .clickClearMessagesBtn();
 //        assertThat(Integer.toString(Integer.valueOf(messageAmount)-1))
 //                .withFailMessage("message amount not decrease by one").isEqualTo(topicDetails.MessageCountAmount());
@@ -211,7 +213,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(topicName);
         topicDetails
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicDetails.TopicMenu.CONSUMERS)
+                .openDetailsTab(TopicDetails.TopicMenu.CONSUMERS)
                 .openConsumerGroup(consumerGroupId);
         consumersDetails
                 .waitUntilScreenReady();
