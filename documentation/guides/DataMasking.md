@@ -19,11 +19,11 @@ Apply examples:
 { "age": 30 } 
 ```
 ```
-some string -> null
+non-json string -> null
 ```
 
 ### REPLACE
-For json objects - replaces target fields values with specified replacement string (by default with `***DATA_MASKED***`). Note: if target field's value is objects, then replacement applied to all fields of that object recursively (see example). 
+For json objects - replace target fields values with specified replacement string (by default with `***DATA_MASKED***`). Note: if target field's value is objects, then replacement applied to all fields of that object recursively (see example). 
 
 ```yaml
 - type: REPLACE
@@ -39,17 +39,17 @@ Apply examples:
 { "id": "***", "name: { "first": "***", "last": "***" }, "age": 30 } 
 ```
 ```
-some string -> ***
+non-json string -> ***
 ```
 
 ### MASK
-Masks target field's values with specified masking characters, recursively (spaces will be kept as-is).
-`pattern` array specifies what symbols should be used to replace upper-case chars, lower-case chars, digits and other symbols accordingly.
+Mask target field's values with specified masking characters, recursively (spaces will be kept as-is).
+`pattern` array specifies what symbols will be used to replace upper-case chars, lower-case chars, digits and other symbols correspondingly.
 
 ```yaml
 - type: MASK
   fields: [ "name", "surname" ]
-  pattern: ["A", "a", "N", "_"]  # optional, default is ["X", "x", "n", "-"]
+  pattern: ["A", "a", "N", "_"]   # optional, default is ["X", "x", "n", "-"]
   ...
 ```
 
