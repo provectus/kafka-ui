@@ -26,7 +26,7 @@ public class TopicDetails {
     protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
     protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
     protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
-    protected String sourceActivitiesConsumerId = "//a[@title='%s']";
+    protected String consumerIdLocator = "//a[@title='%s']";
     @Step
 
     public TopicDetails waitUntilScreenReady() {
@@ -77,7 +77,7 @@ public class TopicDetails {
 
     @Step
     public TopicDetails openConsumerGroup(String consumerId) {
-        $x(String.format(sourceActivitiesConsumerId, consumerId)).click();
+        $x(String.format(consumerIdLocator, consumerId)).click();
         return this;
     }
 
