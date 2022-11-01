@@ -80,7 +80,7 @@ public class BackwardRecordEmitter
           log.debug("sink is cancelled after partitions poll iteration");
         }
       }
-      sink.complete();
+      sendFinishStatsAndCompleteSink(sink);
       log.debug("Polling finished");
     } catch (Exception e) {
       log.error("Error occurred while consuming records", e);

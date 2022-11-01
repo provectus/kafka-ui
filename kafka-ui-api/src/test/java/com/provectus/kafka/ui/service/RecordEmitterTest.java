@@ -120,17 +120,17 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         RECORD_DESERIALIZER
     );
 
-    StepVerifier.create(
-        Flux.create(forwardEmitter)
-            .filter(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
-            .take(100)
-    ).expectNextCount(0).expectComplete().verify();
+    StepVerifier.create(Flux.create(forwardEmitter))
+        .expectNextMatches(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.PHASE))
+        .expectNextMatches(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.DONE))
+        .expectComplete()
+        .verify();
 
-    StepVerifier.create(
-        Flux.create(backwardEmitter)
-            .filter(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
-            .take(100)
-    ).expectNextCount(0).expectComplete().verify();
+    StepVerifier.create(Flux.create(backwardEmitter))
+        .expectNextMatches(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.PHASE))
+        .expectNextMatches(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.DONE))
+        .expectComplete()
+        .verify();
   }
 
   @Test
