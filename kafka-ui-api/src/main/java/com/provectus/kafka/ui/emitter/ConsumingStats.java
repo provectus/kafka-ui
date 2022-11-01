@@ -16,7 +16,8 @@ class ConsumingStats {
 
   void sendConsumingEvt(FluxSink<TopicMessageEventDTO> sink,
                         ConsumerRecords<Bytes, Bytes> polledRecords,
-                        long elapsed) {
+                        long elapsed,
+                        Number filterApplyErrors) {
     for (ConsumerRecord<Bytes, Bytes> rec : polledRecords) {
       for (Header header : rec.headers()) {
         bytes +=
@@ -27,15 +28,28 @@ class ConsumingStats {
     }
     this.records += polledRecords.count();
     this.elapsed += elapsed;
-    final TopicMessageConsumingDTO consuming = new TopicMessageConsumingDTO()
-        .bytesConsumed(this.bytes)
-        .elapsedMs(this.elapsed)
-        .isCancelled(sink.isCancelled())
-        .messagesConsumed(this.records);
     sink.next(
         new TopicMessageEventDTO()
             .type(TopicMessageEventDTO.TypeEnum.CONSUMING)
-            .consuming(consuming)
+            .consuming(createConsumingStats(sink, filterApplyErrors))
     );
+  }
+
+  void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink, Number filterApplyErrors) {
+    sink.next(
+        new TopicMessageEventDTO()
+            .type(TopicMessageEventDTO.TypeEnum.DONE)
+            .consuming(createConsumingStats(sink, filterApplyErrors))
+    );
+  }
+
+  private TopicMessageConsumingDTO createConsumingStats(FluxSink<TopicMessageEventDTO> sink,
+                                                        Number filterApplyErrors) {
+    return new TopicMessageConsumingDTO()
+        .bytesConsumed(this.bytes)
+        .elapsedMs(this.elapsed)
+        .isCancelled(sink.isCancelled())
+        .filterApplyErrors(filterApplyErrors.intValue())
+        .messagesConsumed(this.records);
   }
 }

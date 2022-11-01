@@ -6,7 +6,6 @@ import Query, {
 import { screen } from '@testing-library/dom';
 import fetchMock from 'fetch-mock';
 import { clusterKsqlDbQueryPath } from 'lib/paths';
-import { act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const clusterName = 'testLocal';
@@ -41,10 +40,10 @@ describe('Query', () => {
     });
     const inputs = screen.getAllByRole('textbox');
     const textAreaElement = inputs[0] as HTMLTextAreaElement;
-    await act(() => {
-      userEvent.paste(textAreaElement, 'show tables;');
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
-    });
+
+    textAreaElement.focus();
+    await userEvent.paste('show tables;');
+    await userEvent.click(screen.getByRole('button', { name: 'Execute' }));
 
     expect(mock.calls().length).toBe(1);
   });
@@ -59,18 +58,20 @@ describe('Query', () => {
     Object.defineProperty(window, 'EventSource', {
       value: EventSourceMock,
     });
-    await act(() => {
-      const inputs = screen.getAllByRole('textbox');
-      const textAreaElement = inputs[0] as HTMLTextAreaElement;
-      userEvent.paste(textAreaElement, 'show tables;');
-    });
-    await act(() => {
-      userEvent.paste(screen.getByLabelText('key'), 'key');
-      userEvent.paste(screen.getByLabelText('value'), 'value');
-    });
-    await act(() => {
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
-    });
+
+    const inputs = screen.getAllByRole('textbox');
+    const textAreaElement = inputs[0] as HTMLTextAreaElement;
+    textAreaElement.focus();
+    await userEvent.paste('show tables;');
+
+    const key = screen.getByLabelText('key');
+    key.focus();
+    await userEvent.paste('key');
+    const value = screen.getByLabelText('value');
+    value.focus();
+    await userEvent.paste('value');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Execute' }));
 
     expect(mock.calls().length).toBe(1);
   });

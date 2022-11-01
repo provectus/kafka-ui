@@ -34,17 +34,22 @@ export const StreamPropertiesContainer = styled.label`
 `;
 
 export const InputsContainer = styled.div`
+  overflow: hidden;
+  width: 100%;
   display: flex;
   justify-content: center;
   gap: 10px;
 `;
 
 export const StreamPropertiesInputWrapper = styled.div`
+  & {
+    width: 100%;
+  }
   & > input {
+    width: 100%;
     height: 40px;
     border: 1px solid grey;
     border-radius: 4px;
-    min-width: 300px;
     font-size: 16px;
     padding-left: 15px;
   }

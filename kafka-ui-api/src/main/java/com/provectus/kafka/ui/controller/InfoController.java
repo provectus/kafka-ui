@@ -17,9 +17,16 @@ public class InfoController extends AbstractController implements TimeStampForma
 
   @Value("${timestamp.format:dd.MM.YYYY HH:mm:ss}")
   private String timeStampFormat;
+  @Value("${timestamp.format:DD.MM.YYYY HH:mm:ss}")
+  private String timeStampFormatIso;
 
   @Override
   public Mono<ResponseEntity<TimeStampFormatDTO>> getTimeStampFormat(ServerWebExchange exchange) {
     return Mono.just(ResponseEntity.ok(new TimeStampFormatDTO().timeStampFormat(timeStampFormat)));
+  }
+
+  @Override
+  public Mono<ResponseEntity<TimeStampFormatDTO>> getTimeStampFormatISO(ServerWebExchange exchange) {
+    return Mono.just(ResponseEntity.ok(new TimeStampFormatDTO().timeStampFormat(timeStampFormatIso)));
   }
 }
