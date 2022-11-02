@@ -28,19 +28,19 @@ public class ConnectorsTests extends BaseTest {
     private static final String MESSAGE_CONTENT = "message_content_create_topic.json";
     private static final String MESSAGE_KEY = " ";
     private static final Topic TOPIC_FOR_CREATE = new Topic()
-            .setName("topic_for_create_connector" + randomAlphabetic(5))
+            .setName("topic_for_create_connector-" + randomAlphabetic(5))
             .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
     private static final Topic TOPIC_FOR_DELETE = new Topic()
-            .setName("topic_for_delete_connector" + randomAlphabetic(5))
+            .setName("topic_for_delete_connector-" + randomAlphabetic(5))
             .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
     private static final Topic TOPIC_FOR_UPDATE = new Topic()
-            .setName("topic_for_update_connector" + randomAlphabetic(5))
+            .setName("topic_for_update_connector-" + randomAlphabetic(5))
             .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
     private static final Connector CONNECTOR_FOR_DELETE = new Connector()
-            .setName("sink_postgres_activities_e2e_checks_for_delete" + randomAlphabetic(5))
+            .setName("sink_postgres_activities_e2e_checks_for_delete-" + randomAlphabetic(5))
             .setConfig(getResourceAsString("delete_connector_config.json"));
     private static final Connector CONNECTOR_FOR_UPDATE = new Connector()
-            .setName("sink_postgres_activities_e2e_checks_for_update" + randomAlphabetic(5))
+            .setName("sink_postgres_activities_e2e_checks_for_update-" + randomAlphabetic(5))
             .setConfig(getResourceAsString("config_for_create_connector_via_api.json"));
 
     @BeforeAll
@@ -77,14 +77,12 @@ public class ConnectorsTests extends BaseTest {
         kafkaConnectList
                 .waitUntilScreenReady()
                 .openConnector(connectorForCreate.getName());
-        SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(connectorDetails.getConnectorTitleFromHeader(connectorForCreate.getName())).as("getConnectorTitleFromHeader()").isEqualTo(connectorForCreate.getName());
+        Assertions.assertTrue(connectorDetails.isConnectorTitleVisible(connectorForCreate.getName()),"isConnectorTitleVisible()");
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
         kafkaConnectList
                 .waitUntilScreenReady();
-        softly.assertThat(kafkaConnectList.getConnectorName(connectorForCreate.getName())).as("getConnectorName").isEqualTo(connectorForCreate.getName());
-        softly.assertAll();
+        Assertions.assertTrue(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()), "isConnectorVisible()");
         CONNECTOR_LIST.add(connectorForCreate);
     }
 

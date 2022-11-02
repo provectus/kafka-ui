@@ -17,8 +17,8 @@ public class SchemaDetails {
     protected SelenideElement editSchemaBtn = $x("//button[contains(text(),'Edit Schema')]");
     protected SelenideElement removeBtn = $x("//*[contains(text(),'Remove')]");
     protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
-    protected SelenideElement schemaTypeLocator = $x("//h4[contains(text(),'Type')]/../p");
-    protected String schemaTitleFromHeaderLocator = "//h1[contains(text(),'')]";
+    protected SelenideElement schemaTypeDdl = $x("//h4[contains(text(),'Type')]/../p");
+    protected String schemaHeaderLocator = "//h1[contains(text(),'')]";
 
     @Step
     public SchemaDetails waitUntilScreenReady() {
@@ -34,12 +34,12 @@ public class SchemaDetails {
 
     @Step
     public String getSchemaTitleFromHeader(String schemaName){
-        return $x(String.format(schemaTitleFromHeaderLocator, schemaName)).getText();
+        return $x(String.format(schemaHeaderLocator, schemaName)).getText();
     }
 
     @Step
     public String getSchemaType() {
-        return schemaTypeLocator.getText();
+        return schemaTypeDdl.getText();
     }
 
     @Step

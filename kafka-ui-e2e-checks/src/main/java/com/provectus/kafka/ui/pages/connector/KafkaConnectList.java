@@ -19,6 +19,7 @@ public class KafkaConnectList {
     protected SelenideElement createConnectorBtn = $x("//button[contains(text(),'Create Connector')]");
     protected SelenideElement connectorsGrid = $x("//table");
     protected String tabElementLocator = "//td[contains(text(),'%s')]";
+    protected String connectorNameLocator = "//td[contains(text(),'%s')]";
 
     @Step
     public KafkaConnectList waitUntilScreenReady() {
@@ -42,7 +43,7 @@ public class KafkaConnectList {
 
     @Step
     public String getConnectorName(String connectorName){
-        return $x(String.format(tabElementLocator, connectorName)).getText();
+        return $x(String.format(connectorNameLocator, connectorName)).getText();
     }
 
     @Step

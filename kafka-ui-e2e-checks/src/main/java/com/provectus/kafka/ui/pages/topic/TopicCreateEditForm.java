@@ -37,8 +37,6 @@ public class TopicCreateEditForm {
         return this;
     }
 
-
-
     @Step
     public TopicCreateEditForm setMinInsyncReplicas(Integer minInsyncReplicas) {
         minInSyncReplicasField.setValue(minInsyncReplicas.toString());

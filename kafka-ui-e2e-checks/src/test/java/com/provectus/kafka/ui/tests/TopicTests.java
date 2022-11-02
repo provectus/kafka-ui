@@ -17,7 +17,6 @@ import java.util.List;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.DELETE;
-import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.MaxSizeOnDisk.NOT_SET;
 import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
