@@ -109,7 +109,11 @@ const Filters: React.FC<FiltersProps> = ({
   );
 
   const [currentSeekType, setCurrentSeekType] = React.useState<SeekType>(
-    (searchParams.get('seekType') as SeekType) || SeekType.OFFSET
+    SeekTypeOptions.map(({ value }) => value).includes(
+      searchParams.get('seekType') as SeekType
+    )
+      ? (searchParams.get('seekType') as SeekType)
+      : SeekType.OFFSET
   );
   const [offset, setOffset] = React.useState<string>(
     getOffsetFromSeekToParam(searchParams)
