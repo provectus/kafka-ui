@@ -22,6 +22,7 @@ public class ConnectorDetails {
     protected SelenideElement configTab = $x("//a[contains(text(),'Config')]");
     protected SelenideElement configField = $x("//div[@id='config']");
     protected SelenideElement successAlertMessage = $x("//div[contains(text(),'Config successfully updated')]");
+    protected String connectorTitleFromHeader = "//h1[contains(text(),'%s')]";
 
 
     @Step
@@ -46,6 +47,10 @@ public class ConnectorDetails {
         clickByJavaScript(submitBtn);
         successAlertMessage.shouldBe(Condition.visible);
         return this;
+    }
+    @Step
+    public String getConnectorTitleFromHeader(String connectorName){
+        return $x(String.format(connectorTitleFromHeader, connectorName)).getText();
     }
 
     @Step

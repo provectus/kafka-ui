@@ -7,6 +7,7 @@ import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qase.api.annotation.CaseId;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class ConnectorsTests extends BaseTest {
     @Test
     public void createConnector() {
         Connector connectorForCreate = new Connector()
-                .setName("sink_postgres_activities_e2e_checks" + randomAlphabetic(5))
+                .setName("sink_postgres_activities_e2e_checks-" + randomAlphabetic(5))
                 .setConfig(getResourceAsString("config_for_create_connector.json"));
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
@@ -74,8 +75,16 @@ public class ConnectorsTests extends BaseTest {
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
         kafkaConnectList
+                .waitUntilScreenReady()
+                .openConnector(connectorForCreate.getName());
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(connectorDetails.getConnectorTitleFromHeader(connectorForCreate.getName())).as("getConnectorTitleFromHeader()").isEqualTo(connectorForCreate.getName());
+        naviSideBar
+                .openSideMenu(KAFKA_CONNECT);
+        kafkaConnectList
                 .waitUntilScreenReady();
-        Assertions.assertTrue(kafkaConnectList.isConnectorVisible(connectorForCreate.getName()), "isConnectorVisible()");
+        softly.assertThat(kafkaConnectList.getConnectorName(connectorForCreate.getName())).as("getConnectorName").isEqualTo(connectorForCreate.getName());
+        softly.assertAll();
         CONNECTOR_LIST.add(connectorForCreate);
     }
 

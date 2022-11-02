@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Topic {
     private String name, timeToRetainData, maxMessageBytes, messageKey, messageContent,
-            partitions, replicationFactor, customParameter;
+            partitions, customParameter;
     private TopicCreateEditForm.CleanupPolicyValue cleanupPolicyValue;
     private TopicCreateEditForm.MaxSizeOnDisk maxSizeOnDisk;
 }

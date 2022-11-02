@@ -16,8 +16,8 @@ import java.util.List;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.DELETE;
-import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.MaxSizeOnDisk.GB20;
 import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.MaxSizeOnDisk.NOT_SET;
+import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
@@ -28,22 +28,19 @@ public class TopicTests extends BaseTest {
     private static final long SUITE_ID = 2;
     private static final String SUITE_TITLE = "Topics";
     private static final Topic TOPIC_TO_CREATE = new Topic()
-            .setName("new-topic" + randomAlphabetic(5))
+            .setName("new-topic-"+ randomAlphabetic(5))
             .setPartitions("1")
-            .setReplicationFactor("1")
-            .setCleanupPolicyValue(DELETE)
-            .setTimeToRetainData("604800001")
-            .setMaxMessageBytes("1000020");
+            .setCleanupPolicyValue(DELETE);
     private static final Topic TOPIC_FOR_UPDATE = new Topic()
-            .setName("topic-to-update" + randomAlphabetic(5))
+            .setName("topic-to-update-" + randomAlphabetic(5))
             .setCleanupPolicyValue(COMPACT)
             .setTimeToRetainData("604800001")
-            .setMaxSizeOnDisk(GB20)
+            .setMaxSizeOnDisk(SIZE_20_GB)
             .setMaxMessageBytes("1000020")
             .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
             .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
     private static final Topic TOPIC_FOR_MESSAGES = new Topic()
-            .setName("topic-with-clean-message-attribute" + randomAlphabetic(5))
+            .setName("topic-with-clean-message-attribute-" + randomAlphabetic(5))
             .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
             .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
 
@@ -70,6 +67,7 @@ public class TopicTests extends BaseTest {
         topicCreateEditForm
                 .waitUntilScreenReady()
                 .setTopicName(TOPIC_TO_CREATE.getName())
+                .setPartitions(TOPIC_TO_CREATE.getPartitions())
                 .selectCleanupPolicy(TOPIC_TO_CREATE.getCleanupPolicyValue())
                 .clickCreateTopicBtn();
         topicDetails
@@ -79,10 +77,17 @@ public class TopicTests extends BaseTest {
         topicsList
                 .waitUntilScreenReady();
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(topicsList.getTopicName(TOPIC_TO_CREATE.getName())).isEqualTo(TOPIC_TO_CREATE.getName());
-        softly.assertThat(TOPIC_TO_CREATE.getCleanupPolicyValue()).isEqualTo("TOPIC_TO_CREATE.getCleanupPolicyValue()");
+        topicsList
+                .openTopic(TOPIC_TO_CREATE.getName());
+        softly.assertThat(topicDetails.getCleanUpPolicy()).as("getCleanUpPolicy()").isEqualTo(TOPIC_TO_CREATE.getCleanupPolicyValue().toString());
+        softly.assertThat(topicDetails.getPartitions()).as("getPartitions()").isEqualTo(TOPIC_TO_CREATE.getPartitions());
+        softly.assertThat(topicDetails.getTopicTitleFromHeader(TOPIC_TO_CREATE.getName())).as("getTopicTitleFromHeader()").isEqualTo(TOPIC_TO_CREATE.getName());
         softly.assertAll();
-//        Assertions.assertTrue(topicsList.isTopicVisible(TOPIC_TO_CREATE.getName()), "isTopicVisible");
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
+                .waitUntilScreenReady();
+        Assertions.assertTrue(topicsList.isTopicVisible(TOPIC_TO_CREATE.getName()), "isTopicVisible");
         TOPIC_LIST.add(TOPIC_TO_CREATE);
     }
 
@@ -120,10 +125,10 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openEditSettings();
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("Cleanup Policy").isEqualTo(TOPIC_FOR_UPDATE.getCleanupPolicyValue());
-        softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("Time to retain").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
-        softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("Max size on disk").isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk());
-        softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("Max message bytes").isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
+        softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()").isEqualTo(TOPIC_FOR_UPDATE.getCleanupPolicyValue().getVisibleText());
+        softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
+        softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()").isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk().getVisibleText());
+        softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("getMaxMessageBytes()").isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
         softly.assertAll();
     }
 

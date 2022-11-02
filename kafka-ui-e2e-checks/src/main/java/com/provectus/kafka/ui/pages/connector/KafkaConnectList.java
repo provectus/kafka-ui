@@ -41,6 +41,11 @@ public class KafkaConnectList {
     }
 
     @Step
+    public String getConnectorName(String connectorName){
+        return $x(String.format(tabElementLocator, connectorName)).getText();
+    }
+
+    @Step
     public boolean isConnectorVisible(String connectorName) {
         connectorsGrid.shouldBe(Condition.visible);
         return isVisible($x(String.format(tabElementLocator,connectorName)));

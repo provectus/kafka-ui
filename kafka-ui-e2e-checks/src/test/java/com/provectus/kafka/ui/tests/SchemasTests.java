@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qase.api.annotation.CaseId;
 import lombok.SneakyThrows;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
@@ -54,11 +55,16 @@ public class SchemasTests extends BaseTest {
                 .clickSubmitBtn();
         schemaDetails
                 .waitUntilScreenReady();
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(schemaDetails.getSchemaTitleFromHeader(schemaAvro.getName())).as("getSchemaTitleFromHeader()").isEqualTo(schemaAvro.getName());
+        softly.assertThat(schemaDetails.getSchemaType()).as("getSchemaType()").isEqualTo(schemaAvro.getType().getValue());
+        softly.assertThat(schemaDetails.getCompatibility()).as("getCompatibility()").isEqualTo(CompatibilityLevel.CompatibilityEnum.BACKWARD.getValue());
         naviSideBar
                 .openSideMenu(SCHEMA_REGISTRY);
         schemaRegistryList
                 .waitUntilScreenReady();
-        Assertions.assertTrue(schemaRegistryList.isSchemaVisible(schemaAvro.getName()),"isSchemaVisible()");
+        softly.assertThat(schemaRegistryList.getSchemaName(schemaAvro.getName())).as("getSchemaName").isEqualTo(schemaAvro.getName());
+        softly.assertAll();
         SCHEMA_LIST.add(schemaAvro);
     }
 
@@ -131,11 +137,16 @@ public class SchemasTests extends BaseTest {
                 .clickSubmitBtn();
         schemaDetails
                 .waitUntilScreenReady();
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(schemaDetails.getSchemaTitleFromHeader(schemaJson.getName())).as("getSchemaTitleFromHeader()").isEqualTo(schemaJson.getName());
+        softly.assertThat(schemaDetails.getSchemaType()).as("getSchemaType()").isEqualTo(schemaJson.getType().getValue());
+        softly.assertThat(schemaDetails.getCompatibility()).as("getCompatibility()").isEqualTo(CompatibilityLevel.CompatibilityEnum.BACKWARD.getValue());
         naviSideBar
                 .openSideMenu(SCHEMA_REGISTRY);
         schemaRegistryList
                 .waitUntilScreenReady();
-        Assertions.assertTrue(schemaRegistryList.isSchemaVisible(schemaJson.getName()),"isSchemaVisible()");
+        softly.assertThat(schemaRegistryList.getSchemaName(schemaJson.getName())).as("getSchemaName()").isEqualTo(schemaJson.getName());
+        softly.assertAll();
         SCHEMA_LIST.add(schemaJson);
     }
 
@@ -180,11 +191,16 @@ public class SchemasTests extends BaseTest {
                 .clickSubmitBtn();
         schemaDetails
                 .waitUntilScreenReady();
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(schemaDetails.getSchemaTitleFromHeader(schemaProtobuf.getName())).as("getSchemaTitleFromHeader()").isEqualTo(schemaProtobuf.getName());
+        softly.assertThat(schemaDetails.getSchemaType()).as("getSchemaType()").isEqualTo(schemaProtobuf.getType().getValue());
+        softly.assertThat(schemaDetails.getCompatibility()).as("getCompatibility()").isEqualTo(CompatibilityLevel.CompatibilityEnum.BACKWARD.getValue());
         naviSideBar
                 .openSideMenu(SCHEMA_REGISTRY);
         schemaRegistryList
                 .waitUntilScreenReady();
-        Assertions.assertTrue(schemaRegistryList.isSchemaVisible(schemaProtobuf.getName()),"isSchemaVisible()");
+        softly.assertThat(schemaRegistryList.getSchemaName(schemaProtobuf.getName())).as("getSchemaName()").isEqualTo(schemaProtobuf.getName());
+        softly.assertAll();
         SCHEMA_LIST.add(schemaProtobuf);
     }
 

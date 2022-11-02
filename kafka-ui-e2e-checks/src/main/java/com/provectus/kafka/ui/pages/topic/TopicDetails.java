@@ -26,7 +26,10 @@ public class TopicDetails {
     protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
     protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
     protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
+    protected SelenideElement cleanUpPolicyLocator = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
+    protected SelenideElement partitionsLocator = $x("//div[contains(text(),'Partitions')]/../span");
     protected String consumerIdLocator = "//a[@title='%s']";
+    protected String topicTitleFromHeaderLocator = "//h1[contains(text(),'%s')]";
 
     @Step
     public TopicDetails waitUntilScreenReady() {
@@ -52,6 +55,21 @@ public class TopicDetails {
     public TopicDetails openDotPartitionIdMenu() {
         dotPartitionIdMenuBtn.shouldBe(Condition.visible.because("dot menu invisible")).click();
         return this;
+    }
+
+    @Step
+    public String getCleanUpPolicy(){
+      return cleanUpPolicyLocator.getText();
+    }
+
+    @Step
+    public String getPartitions(){
+        return partitionsLocator.getText();
+    }
+
+    @Step
+    public String getTopicTitleFromHeader(String topicName) {
+        return $x(String.format(topicTitleFromHeaderLocator, topicName)).getText();
     }
 
     @Step
