@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByActions;
 
 public class NaviSideBar {
 
@@ -22,7 +23,7 @@ public class NaviSideBar {
     private SelenideElement expandCluster(String clusterName) {
         SelenideElement clusterElement = $x(String.format(clusterElementLocator, clusterName)).shouldBe(Condition.visible);
         if (clusterElement.parent().$$x(".//ul").size() == 0) {
-            clusterElement.click();
+            clickByActions(clusterElement);
         }
         return clusterElement;
     }
@@ -36,10 +37,8 @@ public class NaviSideBar {
 
     @Step
     public NaviSideBar openSideMenu(String clusterName, SideMenuOption option) {
-        expandCluster(clusterName)
-                .parent()
-                .$x(String.format(sideMenuOptionElementLocator, option.value))
-                .click();
+        clickByActions(expandCluster(clusterName).parent()
+                .$x(String.format(sideMenuOptionElementLocator, option.value)));
         return this;
     }
 
