@@ -41,11 +41,6 @@ public class TopicsList {
     }
 
     @Step
-    public String getTopicName(String topicName) {
-        return $x(String.format(topicElementLocator, topicName)).getText();
-    }
-
-    @Step
     public TopicsList openTopic(String topicName) {
         $(By.linkText(topicName))
                 .shouldBe(Condition.enabled).click();

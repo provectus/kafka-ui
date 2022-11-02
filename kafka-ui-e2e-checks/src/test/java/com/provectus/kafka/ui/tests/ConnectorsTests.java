@@ -7,7 +7,6 @@ import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qase.api.annotation.CaseId;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
@@ -77,7 +76,7 @@ public class ConnectorsTests extends BaseTest {
         kafkaConnectList
                 .waitUntilScreenReady()
                 .openConnector(connectorForCreate.getName());
-        Assertions.assertTrue(connectorDetails.isConnectorTitleVisible(connectorForCreate.getName()),"isConnectorTitleVisible()");
+        Assertions.assertTrue(connectorDetails.isConnectorHeaderVisible(connectorForCreate.getName()),"isConnectorTitleVisible()");
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
         kafkaConnectList

@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import static com.codeborne.selenide.Selenide.*;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
+import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
 @ExtensionMethod({WaitUtils.class})
 public class TopicDetails {
@@ -68,8 +69,8 @@ public class TopicDetails {
     }
 
     @Step
-    public String getTopicTitleFromHeader(String topicName) {
-        return $x(String.format(topicHeaderLocator, topicName)).getText();
+    public boolean isTopicHeaderVisible(String topicName) {
+        return isVisible($x(String.format(String.valueOf(topicHeaderLocator),topicName)));
     }
 
     @Step

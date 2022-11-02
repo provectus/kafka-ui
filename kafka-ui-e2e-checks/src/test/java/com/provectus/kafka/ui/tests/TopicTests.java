@@ -44,7 +44,7 @@ public class TopicTests extends BaseTest {
             .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
             .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
 
-    private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete" + randomAlphabetic(5));
+    private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete-" + randomAlphabetic(5));
     private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
     @BeforeAll
@@ -75,13 +75,12 @@ public class TopicTests extends BaseTest {
         naviSideBar
                 .openSideMenu(TOPICS);
         topicsList
-                .waitUntilScreenReady();
-        SoftAssertions softly = new SoftAssertions();
-        topicsList
+                .waitUntilScreenReady()
                 .openTopic(TOPIC_TO_CREATE.getName());
+        Assertions.assertTrue(topicDetails.isTopicHeaderVisible(TOPIC_TO_CREATE.getName()),"isTopicTitleVisible()");
+        SoftAssertions softly = new SoftAssertions();
         softly.assertThat(topicDetails.getCleanUpPolicy()).as("getCleanUpPolicy()").isEqualTo(TOPIC_TO_CREATE.getCleanupPolicyValue().toString());
         softly.assertThat(topicDetails.getPartitions()).as("getPartitions()").isEqualTo(TOPIC_TO_CREATE.getPartitions());
-        softly.assertThat(topicDetails.getTopicTitleFromHeader(TOPIC_TO_CREATE.getName())).as("getTopicTitleFromHeader()").isEqualTo(TOPIC_TO_CREATE.getName());
         softly.assertAll();
         naviSideBar
                 .openSideMenu(TOPICS);

@@ -36,11 +36,6 @@ public class SchemaRegistryList {
     }
 
     @Step
-    public String getSchemaName(String schemaName) {
-        return $x(String.format(schemaTabElementLocator, schemaName)).getText();
-    }
-
-    @Step
     public boolean isSchemaVisible(String schemaName) {
         schemaGrid.shouldBe(Condition.visible);
         return isVisible($x(String.format(schemaTabElementLocator,schemaName)));

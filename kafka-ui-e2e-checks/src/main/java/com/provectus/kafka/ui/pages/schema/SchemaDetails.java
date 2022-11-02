@@ -7,6 +7,7 @@ import io.qameta.allure.Step;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
+import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
 public class SchemaDetails {
 
@@ -33,8 +34,8 @@ public class SchemaDetails {
     }
 
     @Step
-    public String getSchemaTitleFromHeader(String schemaName){
-        return $x(String.format(schemaHeaderLocator, schemaName)).getText();
+    public boolean isSchemaHeaderVisible(String schemaName) {
+        return isVisible($x(String.format(schemaHeaderLocator,schemaName)));
     }
 
     @Step

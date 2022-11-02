@@ -76,7 +76,7 @@ public class ConnectorDetails {
     }
 
     @Step
-    public boolean isConnectorTitleVisible(String connectorName) {
+    public boolean isConnectorHeaderVisible(String connectorName) {
         return isVisible($x(String.format(connectorHeaderLocator,connectorName)));
     }
 }

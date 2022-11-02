@@ -21,8 +21,7 @@ public class TopicCreateEditForm {
     protected SelenideElement cleanUpPolicyDdl = $x("//ul[@id='topicFormCleanupPolicy']");
     protected SelenideElement maxSizeOnDiscDdl = $x("//ul[@id='topicFormRetentionBytes']");
     protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
-    protected String cleanUpPolicyTypeLocator = "//li[@value='%s']";
-    protected String maxSizeOnDiscTypeLocator = "//li[@value='%s']";
+    protected String ddlElementLocator = "//li[@value='%s']";
 
     @Step
     public TopicCreateEditForm waitUntilScreenReady(){
@@ -58,7 +57,7 @@ public class TopicCreateEditForm {
     @Step
     public TopicCreateEditForm setMaxSizeOnDiskInGB(MaxSizeOnDisk MaxSizeOnDisk) {
         maxSizeOnDiscDdl.shouldBe(Condition.visible).click();
-        $x(String.format(maxSizeOnDiscTypeLocator, MaxSizeOnDisk.getOptionValue())).shouldBe(Condition.visible).click();
+        $x(String.format(ddlElementLocator, MaxSizeOnDisk.getOptionValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
@@ -93,7 +92,7 @@ public class TopicCreateEditForm {
     @Step
     public TopicCreateEditForm selectCleanupPolicy(CleanupPolicyValue cleanupPolicyOptionValue) {
         cleanUpPolicyDdl.shouldBe(Condition.visible).click();
-        $x(String.format(cleanUpPolicyTypeLocator,cleanupPolicyOptionValue.getOptionValue())).shouldBe(Condition.visible).click();
+        $x(String.format(ddlElementLocator,cleanupPolicyOptionValue.getOptionValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
