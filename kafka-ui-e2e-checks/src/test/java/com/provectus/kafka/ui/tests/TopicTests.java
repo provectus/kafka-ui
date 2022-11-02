@@ -15,14 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
-import static com.provectus.kafka.ui.pages.topic.TopicDetails.DotPartitionIdMenu.CLEAR_MESSAGES;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TopicTests extends BaseTest {
     private static final long SUITE_ID = 2;
     private static final String SUITE_TITLE = "Topics";
+
     private static final Topic TOPIC_FOR_UPDATE = new Topic()
             .setName("topic-to-update")
             .setCleanupPolicyValue("Compact")
@@ -186,11 +187,38 @@ public class TopicTests extends BaseTest {
         topicDetails
                 .waitUntilScreenReady();
         String messageAmount = topicDetails.MessageCountAmount();
-        Assertions.assertEquals(messageAmount,topicDetails.MessageCountAmount());
+        assertThat(messageAmount)
+                .withFailMessage("message amount not equals").isEqualTo(topicDetails.MessageCountAmount());
         topicDetails
                 .openDotPartitionIdMenu()
                 .clickClearMessagesBtn();
-//        Assertions.assertEquals(Integer.toString(Integer.valueOf(messageAmount)-1),topicDetails.MessageCountAmount());
+//        assertThat(Integer.toString(Integer.valueOf(messageAmount)-1))
+//                .withFailMessage("message amount not decrease by one").isEqualTo(topicDetails.MessageCountAmount());
+    }
+
+    @DisplayName("Redirect to consumer from topic profile")
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(20)
+    @Test
+    void redirectToConsumerFromTopic() {
+        String topicName = "source-activities";
+        String consumerGroupId = "connect-sink_postgres_activities";
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
+                .waitUntilScreenReady()
+                .openTopic(topicName);
+        topicDetails
+                .waitUntilScreenReady()
+                .openTopicMenu(TopicDetails.TopicMenu.CONSUMERS)
+                .openConsumerGroup(consumerGroupId);
+        consumersDetails
+                .waitUntilScreenReady();
+        assertThat(consumersDetails.isRedirectedConsumerTitleVisible(consumerGroupId))
+                .withFailMessage("isRedirectedConsumerTitleVisible").isTrue();
+        assertThat(consumersDetails.isTopicInConsumersDetailsVisible(topicName))
+                .withFailMessage("isTopicInConsumersDetailsVisible").isTrue();
     }
 
     @AfterAll

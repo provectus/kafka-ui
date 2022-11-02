@@ -35,7 +35,6 @@ import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -119,6 +118,13 @@ public interface ClusterMapper {
     if (clusterProperties.getSchemaRegistryAuth() != null) {
       internalSchemaRegistry.username(clusterProperties.getSchemaRegistryAuth().getUsername());
       internalSchemaRegistry.password(clusterProperties.getSchemaRegistryAuth().getPassword());
+    }
+
+    if (clusterProperties.getSchemaRegistrySsl() != null) {
+      internalSchemaRegistry.keystoreLocation(clusterProperties.getSchemaRegistrySsl().getKeystoreLocation());
+      internalSchemaRegistry.keystorePassword(clusterProperties.getSchemaRegistrySsl().getKeystorePassword());
+      internalSchemaRegistry.truststoreLocation(clusterProperties.getSchemaRegistrySsl().getTruststoreLocation());
+      internalSchemaRegistry.truststorePassword(clusterProperties.getSchemaRegistrySsl().getTruststorePassword());
     }
 
     return internalSchemaRegistry.build();
