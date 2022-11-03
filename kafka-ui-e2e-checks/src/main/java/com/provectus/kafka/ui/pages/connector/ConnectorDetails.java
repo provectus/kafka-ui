@@ -29,7 +29,7 @@ public class ConnectorDetails {
   public ConnectorDetails waitUntilScreenReady() {
     if(isVisible(loadingSpinner))
       loadingSpinner.shouldBe(Condition.disappear);
-    Arrays.asList(taskTab,configTab).forEach(elementsMenu -> elementsMenu.shouldBe(Condition.visible, Duration.ofSeconds(15)));
+      taskTab.shouldBe(Condition.visible);
     return this;
   }
 
