@@ -26,7 +26,8 @@ public class ConnectorDetails {
 
   @Step
   public ConnectorDetails waitUntilScreenReady() {
-    loadingSpinner.shouldBe(Condition.disappear);
+    if(isVisible(loadingSpinner))
+      loadingSpinner.shouldBe(Condition.disappear);
     Arrays.asList(taskTab,configTab).forEach(elementsMenu -> elementsMenu.shouldBe(Condition.visible));
     return this;
   }
