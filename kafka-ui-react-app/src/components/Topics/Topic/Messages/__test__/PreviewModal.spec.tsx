@@ -24,8 +24,8 @@ beforeEach(async () => {
 const toggleInfoModal = jest.fn();
 const mockValues: PreviewFilter[] = [
   {
-    field: 'type',
-    path: 'schema.type',
+    field: '',
+    path: '',
   },
 ];
 
@@ -41,15 +41,15 @@ const renderComponent = (props?: Partial<InfoModalProps>) => {
 };
 
 describe('PreviewModal component', () => {
-  it('closes PreviewModal', () => {
+  it('closes PreviewModal', async () => {
     renderComponent();
-    userEvent.click(screen.getByRole('button', { name: 'Close' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
     expect(toggleInfoModal).toHaveBeenCalledTimes(1);
   });
 
-  it('return if empty inputs', () => {
+  it('return if empty inputs', async () => {
     renderComponent();
-    userEvent.click(screen.getByRole('button', { name: 'Save' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(screen.getByText('Json path is required')).toBeInTheDocument();
     expect(screen.getByText('Field is required')).toBeInTheDocument();
   });
@@ -64,18 +64,18 @@ describe('PreviewModal component', () => {
       });
     });
 
-    it('field input', () => {
+    it('field input', async () => {
       const fieldInput = screen.getByPlaceholderText('Field');
       expect(fieldInput).toHaveValue('');
-      userEvent.type(fieldInput, fieldValue);
+      await userEvent.type(fieldInput, fieldValue);
       expect(fieldInput).toHaveValue(fieldValue);
     });
 
-    it('path input', () => {
+    it('path input', async () => {
       const pathInput = screen.getByPlaceholderText('Json Path');
       expect(pathInput).toHaveValue('');
-      userEvent.type(pathInput, pathValue);
-      expect(pathInput).toHaveValue(pathValue);
+      await userEvent.type(pathInput, pathValue);
+      expect(pathInput).toHaveValue(pathValue.toString());
     });
   });
 
@@ -88,7 +88,7 @@ describe('PreviewModal component', () => {
       await act(() => {
         renderComponent({ setFilters });
       });
-      userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
       expect(setFilters).toHaveBeenCalledTimes(1);
     });
 

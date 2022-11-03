@@ -74,7 +74,7 @@ describe('MessagesTable', () => {
     });
 
     it('should show preview modal with validation', async () => {
-      userEvent.click(screen.getAllByText('Preview')[0]);
+      await userEvent.click(screen.getAllByText('Preview')[0]);
       expect(screen.getByPlaceholderText('Field')).toHaveValue('');
       expect(screen.getByPlaceholderText('Json Path')).toHaveValue('');
     });
