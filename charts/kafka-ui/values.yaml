@@ -69,6 +69,10 @@ networkPolicy:
 podAnnotations: {}
 podLabels: {}
 
+## Annotations to be added to kafka-ui Deployment
+##
+annotations: {}
+
 podSecurityContext:
   {}
   # fsGroup: 2000
