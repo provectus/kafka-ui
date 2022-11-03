@@ -1769,6 +1769,16 @@ paths:
         200:
           description: OK
 
+  /api/access/reloadRoles:
+    post:
+      tags:
+        - Access
+      summary: Reload roles and evict cache
+      operationId: reloadRoles
+      responses:
+        200:
+          description: OK
+
 components:
   schemas:
     TopicSerdeSuggestion:
@@ -3163,6 +3173,13 @@ components:
       properties:
         resource:
           type: string
+          enum:
+            - CLUSTER
+            - TOPIC
+            - CONSUMER
+            - SCHEMA
+            - CONNECT
+            - KSQL
         value:
           type: string
         actions:

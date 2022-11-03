@@ -6,11 +6,13 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
+import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.Permission;
+import com.provectus.kafka.ui.model.rbac.Resource;
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.permission.ClusterAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
@@ -69,14 +71,13 @@ public class AccessControlService {
     Path rolesFilePath = Paths.get(rawProperty);
 
     if (Files.notExists(rolesFilePath)) {
-      log.error("Roles file path provided but the file doesn't exist");
       log.trace("Roles file path: [{}]", rolesFilePath);
-      throw new IllegalArgumentException();
+      throw new NotFoundException("Roles file path provided but the file doesn't exist");
     }
 
     if (!Files.isReadable(rolesFilePath)) {
-      log.error("Roles file path provided but the file isn't readable");
-      throw new IllegalArgumentException();
+      log.trace("Roles file path: [{}]", rolesFilePath);
+      throw new NotFoundException("Roles file path provided but the file isn't readable");
     }
 
     var mapper = YAMLMapper
@@ -181,7 +182,7 @@ public class AccessControlService {
         .map(a -> a.toString().toLowerCase())
         .collect(Collectors.toSet());
 
-    return isAccessible("cluster", context.getCluster(), user, context, requiredActions);
+    return isAccessible(Resource.CLUSTER, context.getCluster(), user, context, requiredActions);
   }
 
   public Mono<Boolean> isClusterAccessible(ClusterDTO cluster) {
@@ -205,7 +206,7 @@ public class AccessControlService {
         .map(a -> a.toString().toLowerCase())
         .collect(Collectors.toSet());
 
-    return isAccessible("topic", context.getTopic(), user, context, requiredActions);
+    return isAccessible(Resource.TOPIC, context.getTopic(), user, context, requiredActions);
   }
 
   public Mono<Boolean> isTopicAccessible(InternalTopic dto, String clusterName) {
@@ -231,7 +232,7 @@ public class AccessControlService {
         .map(a -> a.toString().toLowerCase())
         .collect(Collectors.toSet());
 
-    return isAccessible("consumer", context.getConsumerGroup(), user, context, requiredActions);
+    return isAccessible(Resource.CONSUMER, context.getConsumerGroup(), user, context, requiredActions);
   }
 
   public Mono<Boolean> isConsumerGroupAccessible(String groupId, String clusterName) {
@@ -257,7 +258,7 @@ public class AccessControlService {
         .map(a -> a.toString().toLowerCase())
         .collect(Collectors.toSet());
 
-    return isAccessible("schema", context.getSchema(), user, context, requiredActions);
+    return isAccessible(Resource.SCHEMA, context.getSchema(), user, context, requiredActions);
   }
 
   public Mono<Boolean> isSchemaAccessible(String schema, String clusterName) {
@@ -283,7 +284,7 @@ public class AccessControlService {
         .map(a -> a.toString().toLowerCase())
         .collect(Collectors.toSet());
 
-    return isAccessible("connect", context.getConnect(), user, context, requiredActions);
+    return isAccessible(Resource.CONNECT, context.getConnect(), user, context, requiredActions);
   }
 
   public Mono<Boolean> isConnectAccessible(ConnectDTO dto, String clusterName) {
@@ -330,7 +331,7 @@ public class AccessControlService {
         .map(a -> a.toString().toLowerCase())
         .collect(Collectors.toSet());
 
-    return isAccessible("ksql", null, user, context, requiredActions);
+    return isAccessible(Resource.KSQL, null, user, context, requiredActions);
   }
 
   public Set<ProviderAuthorityExtractor> getExtractors() {
@@ -341,14 +342,14 @@ public class AccessControlService {
     return Collections.unmodifiableList(roles);
   }
 
-  private boolean isAccessible(String resourceName, String resourceValue,
+  private boolean isAccessible(Resource resource, String resourceValue,
                                AuthenticatedUser user, AccessContext context, Set<String> requiredActions) {
     Set<String> grantedActions = roles
         .stream()
         .filter(filterRole(user))
         .filter(filterCluster(context.getCluster()))
         .flatMap(grantedRole -> grantedRole.getPermissions().stream())
-        .filter(filterResource(resourceName))
+        .filter(filterResource(resource))
         .filter(filterResourceValue(resourceValue))
         .flatMap(grantedPermission -> grantedPermission.getActions().stream())
         .collect(Collectors.toSet());
@@ -366,8 +367,8 @@ public class AccessControlService {
         .anyMatch(cluster::equalsIgnoreCase);
   }
 
-  private Predicate<Permission> filterResource(String resource) {
-    return grantedPermission -> resource.equalsIgnoreCase(grantedPermission.getResource());
+  private Predicate<Permission> filterResource(Resource resource) {
+    return grantedPermission -> resource.toString().equalsIgnoreCase(grantedPermission.getResource());
   }
 
   private Predicate<Permission> filterResourceValue(String object) {
@@ -379,5 +380,10 @@ public class AccessControlService {
 
   public void evictCache() {
     cachedUsers.invalidateAll();
+  }
+
+  public void reloadRoles() {
+    init();
+    evictCache();
   }
 }

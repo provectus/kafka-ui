@@ -39,9 +39,14 @@ public class AccessController implements AccessApi {
     return Mono.just(ResponseEntity.ok().build());
   }
 
+  public Mono<ResponseEntity<Void>> reloadRoles(ServerWebExchange exchange) {
+    accessControlService.reloadRoles();
+    return Mono.just(ResponseEntity.ok().build());
+  }
+
   private UserPermissionDTO mapPermission(Permission permission) {
     UserPermissionDTO dto = new UserPermissionDTO();
-    dto.setResource(permission.getResource());
+    dto.setResource(UserPermissionDTO.ResourceEnum.fromValue(permission.getResource().toUpperCase()));
     dto.setValue(permission.getName());
     dto.setActions(permission.getActions());
     return dto;
