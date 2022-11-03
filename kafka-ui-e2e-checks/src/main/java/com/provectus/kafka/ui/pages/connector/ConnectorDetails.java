@@ -1,34 +1,35 @@
 package com.provectus.kafka.ui.pages.connector;
 
+import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.utilities.WebUtils.clearByKeyboard;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
+import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
+
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-
 import java.util.Arrays;
-
-import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.utilities.WebUtils.*;
 
 public class ConnectorDetails {
 
-    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement dotMenuBtn = $x("//button[@aria-label='Dropdown Toggle']");
-    protected SelenideElement deleteBtn = $x("//li/div[contains(text(),'Delete')]");
-    protected SelenideElement confirmBtnMdl = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
-    protected SelenideElement submitBtn = $x("//button[@type='submit']");
-    protected SelenideElement contentTextArea = $x("//textarea[@class='ace_text-input']");
-    protected SelenideElement taskTab = $x("//a[contains(text(),'Tasks')]");
-    protected SelenideElement configTab = $x("//a[contains(text(),'Config')]");
-    protected SelenideElement configField = $x("//div[@id='config']");
-    protected SelenideElement successAlertMessage = $x("//div[contains(text(),'Config successfully updated')]");
-    protected String connectorHeaderLocator = "//h1[contains(text(),'%s')]";
+  protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+  protected SelenideElement dotMenuBtn = $x("//button[@aria-label='Dropdown Toggle']");
+  protected SelenideElement deleteBtn = $x("//li/div[contains(text(),'Delete')]");
+  protected SelenideElement pageTitle = $x("//a[text()='Connectors']");
+  protected SelenideElement confirmBtnMdl = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
+  protected SelenideElement submitBtn = $x("//button[@type='submit']");
+  protected SelenideElement contentTextArea = $x("//textarea[@class='ace_text-input']");
+  protected SelenideElement configTab = $x("//a[contains(text(),'Config')]");
+  protected SelenideElement configField = $x("//div[@id='config']");
+  protected SelenideElement successAlertMessage = $x("//div[contains(text(),'Config successfully updated')]");
+  protected String connectorHeaderLocator = "//h1[contains(text(),'%s')]";
 
 
     @Step
     public ConnectorDetails waitUntilScreenReady() {
-        loadingSpinner.shouldBe(Condition.disappear);
-        Arrays.asList(taskTab,configTab).forEach(elementsMenu -> elementsMenu.shouldBe(Condition.visible));
-        return this;
+      loadingSpinner.shouldBe(Condition.disappear);
+      pageTitle.shouldBe(Condition.visible);
+      return this;
     }
 
     @Step
