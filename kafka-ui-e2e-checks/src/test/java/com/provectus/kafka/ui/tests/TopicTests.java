@@ -78,7 +78,7 @@ public class TopicTests extends BaseTest {
                 .waitUntilScreenReady()
                 .openTopic(TOPIC_TO_CREATE.getName());
         SoftAssertions softly = new SoftAssertions();
-        Assertions.assertTrue(topicDetails.isTopicHeaderVisible(TOPIC_TO_CREATE.getName()),"isTopicTitleVisible()");
+        softly.assertThat(topicDetails.isTopicHeaderVisible(TOPIC_TO_CREATE.getName())).as("isTopicHeaderVisible()").isTrue();
         softly.assertThat(topicDetails.getCleanUpPolicy()).as("getCleanUpPolicy()").isEqualTo(TOPIC_TO_CREATE.getCleanupPolicyValue().toString());
         softly.assertThat(topicDetails.getPartitions()).as("getPartitions()").isEqualTo(TOPIC_TO_CREATE.getPartitions());
         softly.assertAll();
