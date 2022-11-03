@@ -1,23 +1,21 @@
 package com.provectus.kafka.ui.pages.schema;
 
+import static com.codeborne.selenide.Selenide.$x;
+
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 
-import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
-import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
+public class SchemaRegistryList extends BasePage {
 
-public class SchemaRegistryList {
-
-    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement createSchemaBtn = $x("//button[contains(text(),'Create Schema')]");
-    protected SelenideElement schemaGrid = $x("//table");
+//    protected SelenideElement schemaGrid = $x("//table");
     protected String schemaTabElementLocator = "//a[contains(text(),'%s')]";
 
     @Step
     public SchemaRegistryList waitUntilScreenReady(){
-        loadingSpinner.shouldBe(Condition.disappear);
+        waitUntilSpinnerDisappear();
         createSchemaBtn.shouldBe(Condition.visible);
         return this;
     }
@@ -37,7 +35,7 @@ public class SchemaRegistryList {
 
     @Step
     public boolean isSchemaVisible(String schemaName) {
-        schemaGrid.shouldBe(Condition.visible);
+        tableGrid.shouldBe(Condition.visible);
         return isVisible($x(String.format(schemaTabElementLocator,schemaName)));
     }
 }

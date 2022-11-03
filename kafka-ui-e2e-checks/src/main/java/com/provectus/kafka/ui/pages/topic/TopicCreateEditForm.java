@@ -3,30 +3,27 @@ package com.provectus.kafka.ui.pages.topic;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.utilities.WebUtils.clearByKeyboard;
-import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
-import static com.provectus.kafka.ui.utilities.WebUtils.isEnabled;
-import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeborne.selenide.ClickOptions;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue;
 import com.provectus.kafka.ui.pages.topic.enums.CustomParameterType;
 import com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk;
 import io.qameta.allure.Step;
 
-public class TopicCreateEditForm {
+public class TopicCreateEditForm extends BasePage {
 
-  protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
   protected SelenideElement timeToRetainField = $x("//input[@id='timeToRetain']");
   protected SelenideElement partitionsField = $x("//input[@name='partitions']");
   protected SelenideElement nameField = $x("//input[@name='name']");
   protected SelenideElement maxMessageBytesField = $x("//input[@name='maxMessageBytes']");
   protected SelenideElement minInSyncReplicasField = $x("//input[@name='minInSyncReplicas']");
   protected SelenideElement cleanUpPolicyDdl = $x("//ul[@id='topicFormCleanupPolicy']");
+  protected String cleanUpPolicyTypeLocator = "//li[text()='%s']";
   protected SelenideElement maxSizeOnDiscDdl = $x("//ul[@id='topicFormRetentionBytes']");
   protected SelenideElement customParameterDdl = $x("//ul[contains(@name,'customParams')]");
   protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
@@ -38,7 +35,7 @@ public class TopicCreateEditForm {
 
   @Step
   public TopicCreateEditForm waitUntilScreenReady() {
-    loadingSpinner.shouldBe(Condition.disappear);
+    waitUntilSpinnerDisappear();
     nameField.shouldBe(Condition.visible);
     return this;
   }
@@ -148,7 +145,7 @@ public class TopicCreateEditForm {
 
   @Step
   public TopicCreateEditForm clickCreateTopicBtn() {
-    clickByJavaScript(createTopicBtn);
+    clickSubmitButton();
     return this;
   }
 

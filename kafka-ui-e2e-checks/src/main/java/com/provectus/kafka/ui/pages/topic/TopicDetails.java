@@ -1,23 +1,22 @@
 package com.provectus.kafka.ui.pages.topic;
 
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
+
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
+import java.util.Arrays;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
-import java.util.Arrays;
-
-import static com.codeborne.selenide.Selenide.*;
-import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
-import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
-
 @ExtensionMethod({WaitUtils.class})
-public class TopicDetails {
+public class TopicDetails extends BasePage {
 
-    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
+//    protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
+    protected SelenideElement dotPartitionIdMenuBtn = $(By.cssSelector("button.sc-hOqruk.eYtACj"));
     protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
     protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
     protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
@@ -33,7 +32,7 @@ public class TopicDetails {
 
     @Step
     public TopicDetails waitUntilScreenReady() {
-        loadingSpinner.shouldBe(Condition.disappear);
+        waitUntilSpinnerDisappear();
         Arrays.asList(overviewTab,messagesTab).forEach(element -> element.shouldBe(Condition.visible));
         return this;
     }
