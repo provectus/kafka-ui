@@ -36,29 +36,29 @@ describe('Custom Select', () => {
       expect(getListbox()).toBeInTheDocument();
     });
 
-    it('show select options when select is being clicked', () => {
+    it('show select options when select is being clicked', async () => {
       expect(getOption()).toBeInTheDocument();
-      userEvent.click(getListbox());
+      await userEvent.click(getListbox());
       expect(screen.getAllByRole('option')).toHaveLength(3);
     });
 
-    it('checking select option change', () => {
+    it('checking select option change', async () => {
       const optionLabel = 'test-label1';
 
-      userEvent.click(getListbox());
-      userEvent.selectOptions(getListbox(), [optionLabel]);
+      await userEvent.click(getListbox());
+      await userEvent.selectOptions(getListbox(), [optionLabel]);
 
       expect(getOption()).toHaveTextContent(optionLabel);
     });
 
-    it('trying to select disabled option does not trigger change', () => {
+    it('trying to select disabled option does not trigger change', async () => {
       const normalOptionLabel = 'test-label1';
       const disabledOptionLabel = 'test-label2';
 
-      userEvent.click(getListbox());
-      userEvent.selectOptions(getListbox(), [normalOptionLabel]);
-      userEvent.click(getListbox());
-      userEvent.selectOptions(getListbox(), [disabledOptionLabel]);
+      await userEvent.click(getListbox());
+      await userEvent.selectOptions(getListbox(), [normalOptionLabel]);
+      await userEvent.click(getListbox());
+      await userEvent.selectOptions(getListbox(), [disabledOptionLabel]);
 
       expect(getOption()).toHaveTextContent(normalOptionLabel);
     });

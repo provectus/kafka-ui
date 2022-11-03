@@ -50,9 +50,9 @@ describe('MessageContent screen', () => {
   });
 
   describe('when switched to display the key', () => {
-    it('makes key tab active', () => {
+    it('makes key tab active', async () => {
       const keyTab = screen.getAllByText('Key');
-      userEvent.click(keyTab[0]);
+      await userEvent.click(keyTab[0]);
       expect(keyTab[0]).toHaveStyleRule(
         'background-color',
         theme.secondaryTab.backgroundColor.active
@@ -61,8 +61,8 @@ describe('MessageContent screen', () => {
   });
 
   describe('when switched to display the headers', () => {
-    it('makes Headers tab active', () => {
-      userEvent.click(screen.getByText('Headers'));
+    it('makes Headers tab active', async () => {
+      await userEvent.click(screen.getByText('Headers'));
       expect(screen.getByText('Headers')).toHaveStyleRule(
         'background-color',
         theme.secondaryTab.backgroundColor.active
@@ -70,10 +70,10 @@ describe('MessageContent screen', () => {
     });
   });
 
-  describe('when switched to display the content', () => {
-    it('makes content tab active', () => {
-      const contentTab = screen.getAllByText('Content');
-      userEvent.click(contentTab[0]);
+  describe('when switched to display the value', () => {
+    it('makes value tab active', async () => {
+      const contentTab = screen.getAllByText('Value');
+      await userEvent.click(contentTab[0]);
       expect(contentTab[0]).toHaveStyleRule(
         'background-color',
         theme.secondaryTab.backgroundColor.active

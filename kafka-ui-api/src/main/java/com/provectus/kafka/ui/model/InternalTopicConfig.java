@@ -1,8 +1,5 @@
 package com.provectus.kafka.ui.model;
 
-import static com.provectus.kafka.ui.util.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
-import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
-
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +16,7 @@ public class InternalTopicConfig {
   private final boolean isSensitive;
   private final boolean isReadOnly;
   private final List<ConfigEntry.ConfigSynonym> synonyms;
+  private final String doc;
 
   public static InternalTopicConfig from(ConfigEntry configEntry) {
     InternalTopicConfig.InternalTopicConfigBuilder builder = InternalTopicConfig.builder()
@@ -27,11 +25,22 @@ public class InternalTopicConfig {
         .source(configEntry.source())
         .isReadOnly(configEntry.isReadOnly())
         .isSensitive(configEntry.isSensitive())
-        .synonyms(configEntry.synonyms());
-    if (configEntry.name().equals(MESSAGE_FORMAT_VERSION_CONFIG)) {
+        .synonyms(configEntry.synonyms())
+        .doc(configEntry.documentation());
+
+    if (configEntry.source() == ConfigEntry.ConfigSource.DEFAULT_CONFIG) {
+      // this is important case, because for some configs like "confluent.*" no synonyms returned, but
+      // they are set by default and "source" == DEFAULT_CONFIG
       builder.defaultValue(configEntry.value());
     } else {
-      builder.defaultValue(TOPIC_DEFAULT_CONFIGS.get(configEntry.name()));
+      // normally by default first entity of synonyms values will be used.
+      configEntry.synonyms().stream()
+          // skipping DYNAMIC_TOPIC_CONFIG value - which is explicitly set value when
+          // topic was created (not default), see ConfigEntry.synonyms() doc
+          .filter(s -> s.source() != ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG)
+          .map(ConfigEntry.ConfigSynonym::value)
+          .findFirst()
+          .ifPresent(builder::defaultValue);
     }
     return builder.build();
   }
