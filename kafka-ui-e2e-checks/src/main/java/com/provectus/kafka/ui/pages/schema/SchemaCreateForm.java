@@ -64,7 +64,7 @@ public class SchemaCreateForm {
         $("#newSchema").click();
         newSchemaTextArea.sendKeys(Keys.CONTROL + "a", Keys.BACK_SPACE);
         Selenide.executeJavaScript("arguments[0].value = '';", $("#newSchema"));
-        newSchemaTextArea.setValue(configJson);
+        newSchemaTextArea.setValue(configJson.replace("  ", ""));
         return this;
     }
 
