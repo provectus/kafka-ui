@@ -70,7 +70,7 @@ public class TopicDetails {
 
     @Step
     public boolean isTopicHeaderVisible(String topicName) {
-        return isVisible($x(String.format(String.valueOf(topicHeaderLocator),topicName)));
+        return isVisible($x(String.format(topicHeaderLocator,topicName)));
     }
 
     @Step

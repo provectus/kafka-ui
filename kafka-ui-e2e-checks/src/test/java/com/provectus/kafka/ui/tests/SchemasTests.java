@@ -55,8 +55,8 @@ public class SchemasTests extends BaseTest {
                 .clickSubmitBtn();
         schemaDetails
                 .waitUntilScreenReady();
-        Assertions.assertTrue(schemaDetails.isSchemaHeaderVisible(schemaAvro.getName()),"isSchemaHeaderVisible()");
         SoftAssertions softly = new SoftAssertions();
+        Assertions.assertTrue(schemaDetails.isSchemaHeaderVisible(schemaAvro.getName()),"isSchemaHeaderVisible()");
         softly.assertThat(schemaDetails.getSchemaType()).as("getSchemaType()").isEqualTo(schemaAvro.getType().getValue());
         softly.assertThat(schemaDetails.getCompatibility()).as("getCompatibility()").isEqualTo(CompatibilityLevel.CompatibilityEnum.BACKWARD.getValue());
         softly.assertAll();
@@ -137,8 +137,8 @@ public class SchemasTests extends BaseTest {
                 .clickSubmitBtn();
         schemaDetails
                 .waitUntilScreenReady();
-        Assertions.assertTrue(schemaDetails.isSchemaHeaderVisible(schemaJson.getName()),"isSchemaHeaderVisible()");
         SoftAssertions softly = new SoftAssertions();
+        Assertions.assertTrue(schemaDetails.isSchemaHeaderVisible(schemaJson.getName()),"isSchemaHeaderVisible()");
         softly.assertThat(schemaDetails.getSchemaType()).as("getSchemaType()").isEqualTo(schemaJson.getType().getValue());
         softly.assertThat(schemaDetails.getCompatibility()).as("getCompatibility()").isEqualTo(CompatibilityLevel.CompatibilityEnum.BACKWARD.getValue());
         softly.assertAll();
@@ -191,8 +191,8 @@ public class SchemasTests extends BaseTest {
                 .clickSubmitBtn();
         schemaDetails
                 .waitUntilScreenReady();
-        Assertions.assertTrue(schemaDetails.isSchemaHeaderVisible(schemaProtobuf.getName()),"isSchemaHeaderVisible()");
         SoftAssertions softly = new SoftAssertions();
+        Assertions.assertTrue(schemaDetails.isSchemaHeaderVisible(schemaProtobuf.getName()),"isSchemaHeaderVisible()");
         softly.assertThat(schemaDetails.getSchemaType()).as("getSchemaType()").isEqualTo(schemaProtobuf.getType().getValue());
         softly.assertThat(schemaDetails.getCompatibility()).as("getCompatibility()").isEqualTo(CompatibilityLevel.CompatibilityEnum.BACKWARD.getValue());
         softly.assertAll();

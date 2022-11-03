@@ -76,6 +76,8 @@ public class ConnectorsTests extends BaseTest {
         kafkaConnectList
                 .waitUntilScreenReady()
                 .openConnector(connectorForCreate.getName());
+        connectorDetails
+                .waitUntilScreenReady();
         Assertions.assertTrue(connectorDetails.isConnectorHeaderVisible(connectorForCreate.getName()),"isConnectorTitleVisible()");
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);

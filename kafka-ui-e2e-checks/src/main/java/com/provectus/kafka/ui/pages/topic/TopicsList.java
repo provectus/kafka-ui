@@ -37,7 +37,7 @@ public class TopicsList {
     @Step
     public boolean isTopicVisible(String topicName) {
         topicGrid.shouldBe(Condition.visible);
-        return isVisible($x(String.format(String.valueOf(topicElementLocator),topicName)));
+        return isVisible($x(String.format(topicElementLocator,topicName)));
     }
 
     @Step

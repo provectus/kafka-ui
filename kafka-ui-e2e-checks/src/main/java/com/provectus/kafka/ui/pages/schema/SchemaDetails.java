@@ -19,7 +19,7 @@ public class SchemaDetails {
     protected SelenideElement removeBtn = $x("//*[contains(text(),'Remove')]");
     protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
     protected SelenideElement schemaTypeDdl = $x("//h4[contains(text(),'Type')]/../p");
-    protected String schemaHeaderLocator = "//h1[contains(text(),'')]";
+    protected String schemaHeaderLocator = "//h1[contains(text(),'%s')]";
 
     @Step
     public SchemaDetails waitUntilScreenReady() {
