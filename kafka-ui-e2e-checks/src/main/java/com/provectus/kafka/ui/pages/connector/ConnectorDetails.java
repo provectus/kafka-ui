@@ -15,22 +15,21 @@ public class ConnectorDetails {
   protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
   protected SelenideElement dotMenuBtn = $x("//button[@aria-label='Dropdown Toggle']");
   protected SelenideElement deleteBtn = $x("//li/div[contains(text(),'Delete')]");
-  protected SelenideElement pageTitle = $x("//a[text()='Connectors']");
   protected SelenideElement confirmBtnMdl = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
   protected SelenideElement submitBtn = $x("//button[@type='submit']");
   protected SelenideElement contentTextArea = $x("//textarea[@class='ace_text-input']");
+  protected SelenideElement taskTab = $x("//a[contains(text(),'Tasks')]");
   protected SelenideElement configTab = $x("//a[contains(text(),'Config')]");
   protected SelenideElement configField = $x("//div[@id='config']");
   protected SelenideElement successAlertMessage = $x("//div[contains(text(),'Config successfully updated')]");
   protected String connectorHeaderLocator = "//h1[contains(text(),'%s')]";
 
-
-    @Step
-    public ConnectorDetails waitUntilScreenReady() {
-      loadingSpinner.shouldBe(Condition.disappear);
-      pageTitle.shouldBe(Condition.visible);
-      return this;
-    }
+  @Step
+  public ConnectorDetails waitUntilScreenReady() {
+    loadingSpinner.shouldBe(Condition.disappear);
+    Arrays.asList(taskTab,configTab).forEach(elementsMenu -> elementsMenu.shouldBe(Condition.visible));
+    return this;
+  }
 
     @Step
     public ConnectorDetails openConfigTab() {
