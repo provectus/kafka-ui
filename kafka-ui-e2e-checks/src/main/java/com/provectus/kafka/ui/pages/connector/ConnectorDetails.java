@@ -8,6 +8,7 @@ import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import java.time.Duration;
 import java.util.Arrays;
 
 public class ConnectorDetails {
@@ -26,7 +27,9 @@ public class ConnectorDetails {
 
   @Step
   public ConnectorDetails waitUntilScreenReady() {
-    Arrays.asList(taskTab,configTab).forEach(elementsMenu -> elementsMenu.shouldBe(Condition.visible));
+    if(isVisible(loadingSpinner))
+      loadingSpinner.shouldBe(Condition.disappear);
+    Arrays.asList(taskTab,configTab).forEach(elementsMenu -> elementsMenu.shouldBe(Condition.visible, Duration.ofSeconds(15)));
     return this;
   }
 
