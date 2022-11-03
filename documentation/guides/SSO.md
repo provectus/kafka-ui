@@ -58,7 +58,6 @@ For Azure AD (Office365) OAUTH2 you'll want to add additional environment variab
 docker run -p 8080:8080 \
         -e KAFKA_CLUSTERS_0_NAME="${cluster_name}"\
         -e KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS="${kafka_listeners}" \
-        -e KAFKA_CLUSTERS_0_ZOOKEEPER="${zookeeper_servers}" \
         -e KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS="${kafka_connect_servers}"
         -e AUTH_TYPE=OAUTH2 \
         -e SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_AUTH0_CLIENTID=uhvaPKIHU4ZF8Ne4B6PGvF0hWW6OcUSB \

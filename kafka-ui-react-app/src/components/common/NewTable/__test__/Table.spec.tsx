@@ -318,7 +318,7 @@ describe('Table', () => {
 
     it('renders action bar', async () => {
       expect(screen.getAllByRole('row').length).toEqual(data.length + 1);
-      expect(screen.queryByText('I am Action Bar')).not.toBeInTheDocument();
+      expect(screen.queryByText('I am Action Bar')).toBeInTheDocument();
       const checkboxes = screen.getAllByRole('checkbox');
       expect(checkboxes.length).toEqual(data.length + 1);
       await userEvent.click(checkboxes[2]);

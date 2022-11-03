@@ -49,8 +49,8 @@ public class ConsumerGroupService {
           var tpsFromGroupOffsets = groupOffsetsMap.values().stream()
               .flatMap(v -> v.keySet().stream())
               .collect(Collectors.toSet());
-          // 2. getting end offsets for partitions with in committed offsets
-          return ac.listOffsets(tpsFromGroupOffsets, OffsetSpec.latest())
+          // 2. getting end offsets for partitions with committed offsets
+          return ac.listOffsets(tpsFromGroupOffsets, OffsetSpec.latest(), false)
               .map(endOffsets ->
                   descriptions.stream()
                       .map(desc -> {
@@ -64,18 +64,11 @@ public class ConsumerGroupService {
         });
   }
 
-  @Deprecated // need to migrate to pagination
-  public Mono<List<InternalConsumerGroup>> getAllConsumerGroups(KafkaCluster cluster) {
-    return adminClientService.get(cluster)
-        .flatMap(ac -> describeConsumerGroups(ac, null)
-            .flatMap(descriptions -> getConsumerGroups(ac, descriptions)));
-  }
-
   public Mono<List<InternalTopicConsumerGroup>> getConsumerGroupsForTopic(KafkaCluster cluster,
                                                                           String topic) {
     return adminClientService.get(cluster)
         // 1. getting topic's end offsets
-        .flatMap(ac -> ac.listOffsets(topic, OffsetSpec.latest())
+        .flatMap(ac -> ac.listTopicOffsets(topic, OffsetSpec.latest(), false)
             .flatMap(endOffsets -> {
               var tps = new ArrayList<>(endOffsets.keySet());
               // 2. getting all consumer groups

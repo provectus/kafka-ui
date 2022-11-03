@@ -2,9 +2,12 @@ package com.provectus.kafka.ui.base;
 
 import com.provectus.kafka.ui.helpers.ApiHelper;
 import com.provectus.kafka.ui.pages.NaviSideBar;
+import com.provectus.kafka.ui.pages.TopPanel;
 import com.provectus.kafka.ui.pages.connector.ConnectorCreateForm;
 import com.provectus.kafka.ui.pages.connector.ConnectorDetails;
 import com.provectus.kafka.ui.pages.connector.KafkaConnectList;
+import com.provectus.kafka.ui.pages.consumer.ConsumersDetails;
+import com.provectus.kafka.ui.pages.consumer.ConsumersList;
 import com.provectus.kafka.ui.pages.schema.SchemaCreateForm;
 import com.provectus.kafka.ui.pages.schema.SchemaDetails;
 import com.provectus.kafka.ui.pages.schema.SchemaRegistryList;
@@ -25,5 +28,8 @@ public abstract class Facade {
     protected TopicCreateEditForm topicCreateEditForm = new TopicCreateEditForm();
     protected TopicsList topicsList = new TopicsList();
     protected TopicDetails topicDetails = new TopicDetails();
+    protected ConsumersDetails consumersDetails = new ConsumersDetails();
+    protected ConsumersList consumersList = new ConsumersList();
     protected NaviSideBar naviSideBar = new NaviSideBar();
+    protected TopPanel topPanel = new TopPanel();
 }
