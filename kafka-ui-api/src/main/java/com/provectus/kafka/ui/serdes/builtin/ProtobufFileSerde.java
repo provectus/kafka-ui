@@ -134,6 +134,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
             propertyResolver.getProperty("protobufFile", String.class).map(List::of).stream(),
             propertyResolver.getListProperty("protobufFiles", String.class).stream())
         .flatMap(Collection::stream)
+        .distinct()
         .map(Path::of)
         .collect(Collectors.toList());
   }
@@ -141,10 +142,8 @@ public class ProtobufFileSerde implements BuiltInSerde {
   private static Map.Entry<Descriptor, Path> getDescriptorAndPath(Map<Path, ProtobufSchema> protobufSchemas,
                                                                   String msgName) {
     return protobufSchemas.entrySet().stream()
-            .filter(schema -> schema.getValue() != null)
-            .filter(schema -> schema.getValue().toDescriptor(msgName) != null)
+            .filter(schema -> schema.getValue() != null && schema.getValue().toDescriptor(msgName) != null)
             .map(schema -> Map.entry(schema.getValue().toDescriptor(msgName), schema.getKey()))
-            .filter(descriptor -> descriptor.getKey() != null)
             .findFirst()
             .orElseThrow(() -> new NullPointerException(
                     "The given message type not found in protobuf definition: " + msgName));
