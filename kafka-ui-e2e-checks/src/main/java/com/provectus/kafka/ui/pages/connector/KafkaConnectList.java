@@ -21,10 +21,9 @@ public class KafkaConnectList {
 
     @Step
     public KafkaConnectList waitUntilScreenReady() {
-      if(isVisible(loadingSpinner))
-        loadingSpinner.shouldBe(Condition.disappear);
+      loadingSpinner.shouldBe(Condition.disappear);
       createConnectorBtn.shouldBe(Condition.visible);
-        return this;
+      return this;
     }
 
     @Step

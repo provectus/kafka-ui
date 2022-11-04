@@ -27,9 +27,8 @@ public class ConnectorDetails {
 
   @Step
   public ConnectorDetails waitUntilScreenReady() {
-    if(isVisible(loadingSpinner))
-      loadingSpinner.shouldBe(Condition.disappear);
-      taskTab.shouldBe(Condition.visible);
+    loadingSpinner.shouldBe(Condition.disappear);
+    dotMenuBtn.shouldBe(Condition.visible);
     return this;
   }
 
@@ -45,9 +44,14 @@ public class ConnectorDetails {
         clearByKeyboard(contentTextArea);
         contentTextArea.setValue(configJson);
         configField.shouldBe(Condition.enabled).click();
-        clickByJavaScript(submitBtn);
-        successAlertMessage.shouldBe(Condition.visible);
         return this;
+    }
+
+    @Step
+    public ConnectorDetails clickSubmitButton() {
+      clickByJavaScript(submitBtn);
+      successAlertMessage.shouldBe(Condition.visible);
+      return this;
     }
 
     @Step
