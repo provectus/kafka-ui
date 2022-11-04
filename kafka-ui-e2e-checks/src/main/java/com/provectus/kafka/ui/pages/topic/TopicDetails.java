@@ -55,7 +55,7 @@ public class TopicDetails {
     @Step
     public TopicDetails copyMessageToClipboard(String messageMenuItem) {
         messageValueCell.hover();
-        dotMessageMenuBtn.shouldBe(Condition.visible.because("dotMessageMenuBtn not visible")).click();
+        dotMessageMenuBtn.hover().click();
         $x(String.format(dotMessageMenu, messageMenuItem)).click();
         return this;
     }
