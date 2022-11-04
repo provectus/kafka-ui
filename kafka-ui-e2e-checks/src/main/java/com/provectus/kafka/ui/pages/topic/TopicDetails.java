@@ -60,12 +60,13 @@ public class TopicDetails {
     public TopicDetails copyMessageToClipboard(String messageMenuItem) {
         messageValueCell.hover();
         actions().moveToElement(dotMessageMenuBtn).click();
-        $x(String.format(dotMessageMenu, messageMenuItem)).click();
+        $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.visible.because("dotMessageMenu not visible")).click();
         return this;
     }
 
     @Step
     public boolean isMessageCopiedSuccessfullyVisible(String message) {
+        copiedSuccessfullyPopUpMessage.shouldBe(Condition.visible.because("CopiedSuccessfully Message Not Visible"));
         return message.equals(copiedSuccessfullyPopUpMessage.getText());
     }
 
