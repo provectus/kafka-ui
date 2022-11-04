@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.pages.connector;
 
 import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.refresh;
 import static com.provectus.kafka.ui.utilities.WebUtils.clearByKeyboard;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
@@ -27,9 +28,10 @@ public class ConnectorDetails {
 
   @Step
   public ConnectorDetails waitUntilScreenReady() {
+    refresh();
     if(isVisible(loadingSpinner))
       loadingSpinner.shouldBe(Condition.disappear);
-      taskTab.shouldBe(Condition.visible);
+    Arrays.asList(taskTab,configTab).forEach(elementsMenu -> elementsMenu.shouldBe(Condition.visible));
     return this;
   }
 
