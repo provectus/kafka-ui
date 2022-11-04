@@ -245,6 +245,16 @@ class ProtobufFileSerdeTest {
   }
 
   @Test
+  void initOnStartupReturnsFalseIfProtoFilesListIsEmpty() {
+    PropertyResolver resolver = mock(PropertyResolver.class);
+    when(resolver.getListProperty("protobufFiles", String.class)).thenReturn(Optional.of(List.of()));
+
+    var serde = new ProtobufFileSerde();
+    boolean startupSuccessful = serde.initOnStartup(resolver, resolver);
+    assertThat(startupSuccessful).isFalse();
+  }
+
+  @Test
   void initOnStartupReturnsTrueIfNoProtoFileHasBeenProvided() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getProperty("protobufFile", String.class)).thenReturn(Optional.of("file.proto"));

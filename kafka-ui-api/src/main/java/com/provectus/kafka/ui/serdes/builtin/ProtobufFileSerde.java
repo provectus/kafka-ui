@@ -53,7 +53,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
     Optional<String> protobufFile = kafkaClusterProperties.getProperty("protobufFile", String.class);
     Optional<List<String>> protobufFiles = kafkaClusterProperties.getListProperty("protobufFiles", String.class);
 
-    return protobufFile.isPresent() || protobufFiles.isPresent();
+    return protobufFile.isPresent() || protobufFiles.map(files -> files.isEmpty() ? null : files).isPresent();
   }
 
   @SneakyThrows
