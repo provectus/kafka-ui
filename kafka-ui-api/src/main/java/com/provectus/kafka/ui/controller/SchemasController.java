@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.controller;
 
-import static com.provectus.kafka.ui.model.rbac.permission.ClusterAction.VIEW;
-
 import com.provectus.kafka.ui.api.SchemasApi;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
@@ -55,7 +53,6 @@ public class SchemasController extends AbstractController implements SchemasApi 
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .schema(subject)
         .schemaActions(SchemaAction.VIEW)
         .build());
@@ -76,7 +73,6 @@ public class SchemasController extends AbstractController implements SchemasApi 
     return newSchemaSubject.flatMap(dto -> {
       Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
           .cluster(clusterName)
-          .clusterActions(VIEW)
           .schemaActions(SchemaAction.CREATE)
           .build());
 
@@ -95,7 +91,6 @@ public class SchemasController extends AbstractController implements SchemasApi 
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .schema(subject)
         .schemaActions(SchemaAction.DELETE)
         .build());
@@ -112,7 +107,6 @@ public class SchemasController extends AbstractController implements SchemasApi 
                                                  ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .schema(subject)
         .schemaActions(SchemaAction.DELETE)
         .build());
@@ -131,7 +125,6 @@ public class SchemasController extends AbstractController implements SchemasApi 
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .schema(subject)
         .schemaActions(SchemaAction.DELETE)
         .build());
@@ -148,7 +141,6 @@ public class SchemasController extends AbstractController implements SchemasApi 
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .schema(subject)
         .schemaActions(SchemaAction.VIEW)
         .build());
@@ -174,7 +166,6 @@ public class SchemasController extends AbstractController implements SchemasApi 
                                                                 ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .schema(subject)
         .schemaActions(SchemaAction.VIEW)
         .build());
@@ -191,7 +182,6 @@ public class SchemasController extends AbstractController implements SchemasApi 
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .schema(subject)
         .schemaActions(SchemaAction.VIEW)
         .build());
@@ -241,7 +231,6 @@ public class SchemasController extends AbstractController implements SchemasApi 
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .schemaActions(SchemaAction.MODIFY_GLOBAL_COMPATIBILITY)
         .build());
 
@@ -261,7 +250,6 @@ public class SchemasController extends AbstractController implements SchemasApi 
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .schemaActions(SchemaAction.EDIT)
         .build());
 

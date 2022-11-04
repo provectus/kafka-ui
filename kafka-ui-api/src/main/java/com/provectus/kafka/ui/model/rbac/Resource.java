@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 public enum Resource {
 
-  CLUSTER,
+  CLUSTERCONFIG,
   TOPIC,
   CONSUMER,
   SCHEMA,

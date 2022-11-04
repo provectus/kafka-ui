@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.controller;
 
-import static com.provectus.kafka.ui.model.rbac.permission.ClusterAction.VIEW;
 import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.MESSAGES_DELETE;
 import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.MESSAGES_PRODUCE;
 import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.MESSAGES_READ;
@@ -57,7 +56,6 @@ public class MessagesController extends AbstractController implements MessagesAp
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .topic(topicName)
         .topicActions(MESSAGES_DELETE)
         .build());
@@ -85,7 +83,6 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                            ServerWebExchange exchange) {
     final Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
         .build());
@@ -119,7 +116,6 @@ public class MessagesController extends AbstractController implements MessagesAp
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .topic(topicName)
         .topicActions(MESSAGES_PRODUCE)
         .build());
@@ -167,7 +163,6 @@ public class MessagesController extends AbstractController implements MessagesAp
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .topic(topicName)
         .topicActions(TopicAction.VIEW)
         .build());

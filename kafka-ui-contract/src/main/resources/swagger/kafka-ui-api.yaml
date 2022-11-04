@@ -3171,10 +3171,14 @@ components:
     UserPermission:
       type: object
       properties:
+        clusters:
+          type: array
+          items:
+            type: string
         resource:
           type: string
           enum:
-            - CLUSTER
+            - CLUSTERCONFIG
             - TOPIC
             - CONSUMER
             - SCHEMA
@@ -3185,4 +3189,23 @@ components:
         actions:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/Action'
+      required:
+        - resource
+        - actions
+
+    Action:
+      type: string
+      enum:
+        - VIEW
+        - EDIT
+        - CREATE
+        - DELETE
+        - RESET_OFFSETS
+        - EXECUTE
+        - MODIFY_GLOBAL_COMPATIBILITY
+        - ANALYSIS_VIEW
+        - ANALYSIS_RUN
+        - MESSAGES_READ
+        - MESSAGES_PRODUCE
+        - MESSAGES_DELETE

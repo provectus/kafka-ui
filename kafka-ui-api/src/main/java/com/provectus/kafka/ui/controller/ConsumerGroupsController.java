@@ -16,7 +16,7 @@ import com.provectus.kafka.ui.model.ConsumerGroupsPageResponseDTO;
 import com.provectus.kafka.ui.model.PartitionOffsetDTO;
 import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
-import com.provectus.kafka.ui.model.rbac.permission.ClusterAction;
+import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
 import com.provectus.kafka.ui.service.OffsetsResetService;
@@ -53,7 +53,6 @@ public class ConsumerGroupsController extends AbstractController implements Cons
                                                         ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .consumerGroup(id)
         .consumerGroupActions(DELETE)
         .build());
@@ -70,7 +69,6 @@ public class ConsumerGroupsController extends AbstractController implements Cons
                                                                         ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .consumerGroup(consumerGroupId)
         .consumerGroupActions(VIEW)
         .build());
@@ -88,7 +86,6 @@ public class ConsumerGroupsController extends AbstractController implements Cons
                                                                              ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(TopicAction.VIEW)
         .build());
@@ -118,7 +115,6 @@ public class ConsumerGroupsController extends AbstractController implements Cons
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         // consumer group access validation is within the service
         .build());
 
@@ -144,7 +140,6 @@ public class ConsumerGroupsController extends AbstractController implements Cons
     return resetDto.flatMap(reset -> {
       Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
           .cluster(clusterName)
-          .clusterActions(ClusterAction.VIEW)
           .topic(reset.getTopic())
           .topicActions(TopicAction.VIEW)
           .consumerGroupActions(RESET_OFFSETS)

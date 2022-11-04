@@ -9,7 +9,7 @@ import com.provectus.kafka.ui.model.BrokerLogdirUpdateDTO;
 import com.provectus.kafka.ui.model.BrokerMetricsDTO;
 import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
-import com.provectus.kafka.ui.model.rbac.permission.ClusterAction;
+import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.service.BrokerService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.List;
@@ -34,7 +34,6 @@ public class BrokersController extends AbstractController implements BrokersApi 
                                                           ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .build());
 
     var job = brokerService.getBrokers(getCluster(clusterName));
@@ -47,7 +46,6 @@ public class BrokersController extends AbstractController implements BrokersApi 
                                                                   ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .build());
 
     return validateAccess.then(
@@ -64,7 +62,6 @@ public class BrokersController extends AbstractController implements BrokersApi 
                                                                             ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .build());
 
     return validateAccess.then(
@@ -79,7 +76,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
                                                                      ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
+        .clusterConfigActions(ClusterConfigAction.VIEW)
         .build());
 
     return validateAccess.then(
@@ -96,7 +93,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
                                                                      ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
+        .clusterConfigActions(ClusterConfigAction.VIEW, ClusterConfigAction.EDIT)
         .build());
 
     return validateAccess.then(
@@ -114,7 +111,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
                                                              ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW, ClusterAction.EDIT)
+        .clusterConfigActions(ClusterConfigAction.VIEW, ClusterConfigAction.EDIT)
         .build());
 
     return validateAccess.then(
