@@ -15,16 +15,15 @@ import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 public class KafkaConnectList {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement pageTitle = $x("//h1[text()='Connectors']");
     protected SelenideElement createConnectorBtn = $x("//button[contains(text(),'Create Connector')]");
     protected SelenideElement connectorsGrid = $x("//table");
-    protected String tabElementLocator = "//td[contains(text(),'%s')]";
+    protected String connectorNameLocator = "//td[contains(text(),'%s')]";
 
     @Step
     public KafkaConnectList waitUntilScreenReady() {
-        loadingSpinner.shouldBe(Condition.disappear);
-        pageTitle.shouldBe(Condition.visible);
-        return this;
+      loadingSpinner.shouldBe(Condition.disappear);
+      createConnectorBtn.shouldBe(Condition.visible);
+      return this;
     }
 
     @Step
@@ -35,7 +34,7 @@ public class KafkaConnectList {
 
     @Step
     public KafkaConnectList openConnector(String connectorName) {
-        $x(String.format(tabElementLocator,connectorName))
+        $x(String.format(connectorNameLocator, connectorName))
                 .shouldBe(Condition.enabled).click();
         return this;
     }
@@ -43,13 +42,13 @@ public class KafkaConnectList {
     @Step
     public boolean isConnectorVisible(String connectorName) {
         connectorsGrid.shouldBe(Condition.visible);
-        return isVisible($x(String.format(tabElementLocator,connectorName)));
+        return isVisible($x(String.format(connectorNameLocator,connectorName)));
     }
 
     @Step
     public KafkaConnectList connectorIsUpdatedInList(String connectorName, String topicName) {
-        $x(String.format(tabElementLocator,connectorName)).shouldBe(Condition.visible);
-        By.xpath(String.format(tabElementLocator,topicName)).refreshUntil(Condition.visible);
+        $x(String.format(connectorNameLocator,connectorName)).shouldBe(Condition.visible);
+        By.xpath(String.format(connectorNameLocator,topicName)).refreshUntil(Condition.visible);
         return this;
     }
 }
