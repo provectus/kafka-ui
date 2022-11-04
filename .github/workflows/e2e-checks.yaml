@@ -32,8 +32,8 @@ jobs:
       - name: Build with Maven
         id: build_app
         run: |
-          mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
-          mvn clean package -Pprod -Dmaven.test.skip=true ${{ github.event.inputs.extraMavenOptions }}
+          ./mvnw versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
+          ./mvnw clean package -Pprod -Dmaven.test.skip=true ${{ github.event.inputs.extraMavenOptions }}
       - name: compose app
         id: compose_app
         # use the following command until #819 will be fixed
@@ -41,8 +41,8 @@ jobs:
           docker-compose -f ./documentation/compose/e2e-tests.yaml up -d
       - name: e2e run
         run: |
-          mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
-          mvn -DQASEIO_API_TOKEN=${{ secrets.QASEIO_API_TOKEN }} -pl '!kafka-ui-api' test -Pprod
+          ./mvnw versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
+          ./mvnw -DQASEIO_API_TOKEN=${{ secrets.QASEIO_API_TOKEN }} -pl '!kafka-ui-api' test -Pprod
       - name: Generate allure report
         uses: simple-elf/allure-report-action@master
         if: always()
