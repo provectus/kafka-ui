@@ -15,15 +15,15 @@ import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 public class KafkaConnectList {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement pageTitle = $x("//h1[text()='Connectors']");
     protected SelenideElement createConnectorBtn = $x("//button[contains(text(),'Create Connector')]");
     protected SelenideElement connectorsGrid = $x("//table");
     protected String connectorNameLocator = "//td[contains(text(),'%s')]";
 
     @Step
     public KafkaConnectList waitUntilScreenReady() {
+      if(isVisible(loadingSpinner))
         loadingSpinner.shouldBe(Condition.disappear);
-        pageTitle.shouldBe(Condition.visible);
+      createConnectorBtn.shouldBe(Condition.visible);
         return this;
     }
 
