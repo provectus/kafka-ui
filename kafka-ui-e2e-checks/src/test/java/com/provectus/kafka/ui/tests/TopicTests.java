@@ -221,6 +221,26 @@ public class TopicTests extends BaseTest {
                 .withFailMessage("isTopicInConsumersDetailsVisible").isTrue();
     }
 
+    @DisplayName("Message copy from topic profile")
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(21)
+    @Test
+    void copyMessageFromTopicProfile() {
+        String topicName = "_schemas";
+        naviSideBar
+                .openSideMenu(TOPICS);
+        topicsList
+                .waitUntilScreenReady()
+                .openTopic(topicName);
+        topicDetails
+                .waitUntilScreenReady()
+                .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)
+                        .copyMessageToClipboard("Copy to clipboard");
+        assertThat(topicDetails.isMessageCopiedSuccessfullyVisible("Copied successfully!"))
+                .withFailMessage("Message Copied Successfully Not Visible").isTrue();
+    }
+
     @AfterAll
     public void afterAll() {
         TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));

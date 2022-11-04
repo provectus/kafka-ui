@@ -18,6 +18,9 @@ public class TopicDetails {
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
     protected SelenideElement dotPartitionIdMenuBtn = $(By.cssSelector("button.sc-hOqruk.eYtACj"));
+    protected SelenideElement dotMessageMenuBtn = $x("//button[@aria-label = 'Dropdown Toggle']");
+    protected SelenideElement messageValueCell = $(By.cssSelector(".sc-FyeoB.cJMvpm td:nth-child(6)"));
+    protected SelenideElement copiedSuccessfullyPopUpMessage = $x("//div[text() = 'Copied successfully!']");
     protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
     protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
     protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
@@ -27,6 +30,7 @@ public class TopicDetails {
     protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
     protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
     protected String consumerIdLocator = "//a[@title='%s']";
+    protected String dotMessageMenu = "//li[text() = '%s']";
 
     @Step
     public TopicDetails waitUntilScreenReady() {
@@ -46,6 +50,19 @@ public class TopicDetails {
     public TopicDetails openTopicMenu(TopicMenu menu) {
         $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
         return this;
+    }
+
+    @Step
+    public TopicDetails copyMessageToClipboard(String messageMenuItem) {
+        messageValueCell.hover();
+        dotMessageMenuBtn.shouldBe(Condition.visible.because("dotMessageMenuBtn not visible")).click();
+        $x(String.format(dotMessageMenu, messageMenuItem)).click();
+        return this;
+    }
+
+    @Step
+    public boolean isMessageCopiedSuccessfullyVisible(String message) {
+        return message.equals(copiedSuccessfullyPopUpMessage.getText());
     }
 
     @Step
