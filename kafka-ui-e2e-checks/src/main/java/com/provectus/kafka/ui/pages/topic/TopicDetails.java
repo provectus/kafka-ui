@@ -59,7 +59,7 @@ public class TopicDetails {
     @Step
     public TopicDetails copyMessageToClipboard(String messageMenuItem) {
         messageValueCell.hover();
-        dotMessageMenuBtn.hover().click();
+        actions().moveToElement(dotMessageMenuBtn).click();
         $x(String.format(dotMessageMenu, messageMenuItem)).click();
         return this;
     }
