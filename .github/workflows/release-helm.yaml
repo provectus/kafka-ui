@@ -29,6 +29,7 @@ jobs:
           git fetch origin
           git stash
           git checkout -b gh-pages origin/gh-pages
+          git pull
           helm repo index .
           git add -f ${MSG##*/} index.yaml
           git commit -m "release ${VERSION}"
