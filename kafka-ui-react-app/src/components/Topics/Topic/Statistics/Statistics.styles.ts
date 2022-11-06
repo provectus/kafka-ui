@@ -1,7 +1,4 @@
-import {
-  Label,
-  List,
-} from 'components/common/PropertiesList/PropertiesList.styled';
+import { List } from 'components/common/PropertiesList/PropertiesList.styled';
 import styled from 'styled-components';
 
 export const ProgressContainer = styled.div`
