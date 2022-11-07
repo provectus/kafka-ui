@@ -20,9 +20,9 @@ jobs:
       - name: Build project
         id: build
         run: |
-          mvn versions:set -DnewVersion=$GITHUB_SHA
-          mvn clean package -DskipTests
-          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          ./mvnw -B -ntp versions:set -DnewVersion=$GITHUB_SHA
+          ./mvnw -B -V -ntp clean package -DskipTests
+          export VERSION=$(./mvnw -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           echo "::set-output name=version::${VERSION}"
 
       - name: Set up QEMU
