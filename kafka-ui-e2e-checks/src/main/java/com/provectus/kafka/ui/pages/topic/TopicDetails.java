@@ -17,7 +17,6 @@ public class TopicDetails {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
-    protected SelenideElement dotPartitionIdMenuBtn = $(By.cssSelector("button.sc-hOqruk.eYtACj"));
     protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
     protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
     protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
@@ -36,34 +35,37 @@ public class TopicDetails {
     }
 
     @Step
-    public TopicDetails openEditSettings() {
-        clickByJavaScript(dotMenuBtn);
-        editSettingsTab.shouldBe(Condition.visible).click();
-        return this;
-    }
-
-    @Step
     public TopicDetails openTopicMenu(TopicMenu menu) {
         $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
     @Step
-    public TopicDetails openDotPartitionIdMenu() {
-        dotPartitionIdMenuBtn.shouldBe(Condition.visible.because("dot menu invisible")).click();
-        return this;
-    }
-
-    @Step
-    public TopicDetails clickClearMessagesBtn() {
-        clearMessagesBtn.shouldBe(Condition.visible.because("Clear Messages invisible")).click();
-        return this;
-    }
-
-    @Step
-    public TopicDetails deleteTopic() {
+    public TopicDetails openDotMenu() {
         clickByJavaScript(dotMenuBtn);
+        return this;
+    }
+
+    @Step
+    public TopicDetails clickEditSettingsMenu() {
+        editSettingsTab.shouldBe(Condition.visible).click();
+        return this;
+    }
+
+    @Step
+    public TopicDetails clickClearMessagesMenu() {
+        clearMessagesBtn.shouldBe(Condition.visible).click();
+        return this;
+    }
+
+    @Step
+    public TopicDetails clickDeleteTopicMenu() {
         removeTopicBtn.shouldBe(Condition.visible).click();
+        return this;
+    }
+
+    @Step
+    public TopicDetails clickConfirmDeleteBtn() {
         confirmBtn.shouldBe(Condition.enabled).click();
         confirmBtn.shouldBe(Condition.disappear);
         return this;
