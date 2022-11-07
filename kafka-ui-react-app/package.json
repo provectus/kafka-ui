@@ -7,6 +7,7 @@
     "@babel/core": "^7.16.0",
     "@babel/plugin-syntax-flow": "^7.18.6",
     "@babel/plugin-transform-react-jsx": "^7.18.6",
+    "@floating-ui/react-dom-interactions": "^0.10.3",
     "@hookform/error-message": "^2.0.0",
     "@hookform/resolvers": "^2.7.1",
     "@microsoft/fetch-event-source": "^2.0.1",

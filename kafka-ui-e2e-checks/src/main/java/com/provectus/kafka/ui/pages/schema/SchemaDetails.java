@@ -7,6 +7,7 @@ import io.qameta.allure.Step;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
+import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
 public class SchemaDetails {
 
@@ -17,6 +18,8 @@ public class SchemaDetails {
     protected SelenideElement editSchemaBtn = $x("//button[contains(text(),'Edit Schema')]");
     protected SelenideElement removeBtn = $x("//*[contains(text(),'Remove')]");
     protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
+    protected SelenideElement schemaTypeDdl = $x("//h4[contains(text(),'Type')]/../p");
+    protected String schemaHeaderLocator = "//h1[contains(text(),'%s')]";
 
     @Step
     public SchemaDetails waitUntilScreenReady() {
@@ -28,6 +31,16 @@ public class SchemaDetails {
     @Step
     public String getCompatibility() {
         return compatibilityField.getText();
+    }
+
+    @Step
+    public boolean isSchemaHeaderVisible(String schemaName) {
+        return isVisible($x(String.format(schemaHeaderLocator,schemaName)));
+    }
+
+    @Step
+    public String getSchemaType() {
+        return schemaTypeDdl.getText();
     }
 
     @Step
