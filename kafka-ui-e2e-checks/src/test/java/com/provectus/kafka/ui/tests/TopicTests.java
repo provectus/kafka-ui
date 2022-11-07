@@ -175,7 +175,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_MESSAGES.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)
+                .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
                 .clickProduceMessageBtn();
         produceMessagePanel
                 .waitUntilScreenReady()
@@ -204,7 +204,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_MESSAGES.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicDetails.TopicMenu.OVERVIEW)
+                .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
                 .clickProduceMessageBtn();
         produceMessagePanel
                 .waitUntilScreenReady()
@@ -238,7 +238,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(topicName);
         topicDetails
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicDetails.TopicMenu.CONSUMERS)
+                .openDetailsTab(TopicDetails.TopicMenu.CONSUMERS)
                 .openConsumerGroup(consumerGroupId);
         consumersDetails
                 .waitUntilScreenReady();
