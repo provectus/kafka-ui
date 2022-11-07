@@ -39,7 +39,7 @@ public class TopicDetails {
     }
 
     @Step
-    public TopicDetails openTopicMenu(TopicMenu menu) {
+    public TopicDetails openDetailsTab(TopicMenu menu) {
         $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
@@ -52,7 +52,7 @@ public class TopicDetails {
 
     @Step
     public TopicDetails clickEditSettingsMenu() {
-        editSettingsTab.shouldBe(Condition.visible).click();
+        editSettingsMenu.shouldBe(Condition.visible).click();
         return this;
     }
 
