@@ -62,6 +62,7 @@ public class TopicDetails {
         messageValueCell.hover();
 //        actions().moveToElement(dotMessageMenuBtn).click().perform();
         clickByJavaScript(dotMessageMenuBtn);
+        clickByActions(dotMessageMenuBtn);
         $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.visible.because("dotMessageMenu not visible")).click();
         return this;
     }
