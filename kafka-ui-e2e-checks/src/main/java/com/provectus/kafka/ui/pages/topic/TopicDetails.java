@@ -39,20 +39,26 @@ public class TopicDetails {
     }
 
     @Step
-    public TopicDetails clickEditSettingsMenu() {
-        editSettingsMenu.shouldBe(Condition.enabled).click();
-        return this;
-    }
-
-    @Step
-    public TopicDetails openDetailsTab(TopicMenu tab) {
-        $(By.linkText(tab.getValue())).shouldBe(Condition.enabled).click();
+    public TopicDetails openTopicMenu(TopicMenu menu) {
+        $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
     @Step
     public TopicDetails openDotMenu() {
         clickByJavaScript(dotMenuBtn);
+        return this;
+    }
+
+    @Step
+    public TopicDetails clickEditSettingsMenu() {
+        editSettingsTab.shouldBe(Condition.visible).click();
+        return this;
+    }
+
+    @Step
+    public TopicDetails clickClearMessagesMenu() {
+        clearMessagesBtn.shouldBe(Condition.visible).click();
         return this;
     }
 
@@ -72,15 +78,13 @@ public class TopicDetails {
     }
 
     @Step
-    public TopicDetails clickClearMessagesBtn() {
-        clearMessagesBtn.shouldBe(Condition.enabled).click();
+    public TopicDetails clickDeleteTopicMenu() {
+        removeTopicBtn.shouldBe(Condition.visible).click();
         return this;
     }
 
     @Step
-    public TopicDetails deleteTopic() {
-        clickByJavaScript(dotMenuBtn);
-        removeTopicBtn.shouldBe(Condition.visible).click();
+    public TopicDetails clickConfirmDeleteBtn() {
         confirmBtn.shouldBe(Condition.enabled).click();
         confirmBtn.shouldBe(Condition.disappear);
         return this;
@@ -91,6 +95,7 @@ public class TopicDetails {
         clickByJavaScript(produceMessageBtn);
         return this;
     }
+
     @Step
     public TopicDetails openConsumerGroup(String consumerId) {
         $x(String.format(consumerIdLocator, consumerId)).click();
@@ -130,26 +135,6 @@ public class TopicDetails {
         @Override
         public String toString() {
             return "DotMenuHeaderItems{" + "value='" + value + '\'' + '}';
-        }
-    }
-
-    public enum DotPartitionIdMenu {
-        CLEAR_MESSAGES("Clear messages");
-
-
-        private final String value;
-
-        DotPartitionIdMenu(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return "DotPartitionIdMenuItems{" + "value='" + value + '\'' + '}';
         }
     }
 

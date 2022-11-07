@@ -1,0 +1,14 @@
+syntax = "proto3";
+package iot;
+
+message Sensor {
+    string name = 1;
+    double temperature = 2;
+    int32 humidity = 3;
+
+    enum SwitchLevel {
+        CLOSED = 0;
+        OPEN = 1;
+    }
+    SwitchLevel door = 5;
+}
