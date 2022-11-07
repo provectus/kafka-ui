@@ -270,7 +270,7 @@ public class TopicCreateEditForm {
         }
     }
 
-    public boolean createTopicButtonIsEnabled(){
+    public boolean isCreateTopicButtonEnabled(){
        return isEnabled(createTopicBtn);
     }
 

@@ -258,10 +258,10 @@ public class TopicTests extends BaseTest {
     topicCreateEditForm
         .waitUntilScreenReady()
         .setTopicName("");
-    assertThat(topicCreateEditForm.createTopicButtonIsEnabled()).as("createTopicButtonIsEnabled()").isFalse();
+    assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isFalse();
     topicCreateEditForm
         .setTopicName("testTopic1");
-    assertThat(topicCreateEditForm.createTopicButtonIsEnabled()).as("createTopicButtonIsEnabled()").isTrue();
+    assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isTrue();
   }
 
     @AfterAll
