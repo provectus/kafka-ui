@@ -138,26 +138,6 @@ public class TopicDetails {
         }
     }
 
-    public enum DotPartitionIdMenu {
-        CLEAR_MESSAGES("Clear messages");
-
-
-        private final String value;
-
-        DotPartitionIdMenu(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return "DotPartitionIdMenuItems{" + "value='" + value + '\'' + '}';
-        }
-    }
-
     public enum TopicMenu {
         OVERVIEW("Overview"),
         MESSAGES("Messages"),
