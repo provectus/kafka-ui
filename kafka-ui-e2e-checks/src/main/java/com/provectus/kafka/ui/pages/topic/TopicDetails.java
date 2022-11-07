@@ -61,7 +61,7 @@ public class TopicDetails {
     public TopicDetails copyMessageToClipboard(String messageMenuItem) {
         messageValueCell.hover();
 //        actions().moveToElement(dotMessageMenuBtn).click().perform();
-        clickByActions(dotMessageMenuBtn);
+        clickByJavaScript(dotMessageMenuBtn);
         $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.visible.because("dotMessageMenu not visible")).click();
         return this;
     }
