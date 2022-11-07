@@ -1,19 +1,5 @@
 package com.provectus.kafka.ui.tests;
 
-import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.pages.topic.TopicDetails;
-import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
-import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
-import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
-import io.qameta.allure.Issue;
-import io.qase.api.annotation.CaseId;
-import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.DELETE;
@@ -22,6 +8,25 @@ import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.provectus.kafka.ui.base.BaseTest;
+import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.pages.topic.TopicDetails;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
+import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import io.qameta.allure.Issue;
+import io.qase.api.annotation.CaseId;
+import java.util.ArrayList;
+import java.util.List;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TopicTests extends BaseTest {
@@ -238,6 +243,26 @@ public class TopicTests extends BaseTest {
         assertThat(consumersDetails.isTopicInConsumersDetailsVisible(topicName))
                 .withFailMessage("isTopicInConsumersDetailsVisible").isTrue();
     }
+
+  @DisplayName("Checking Topic creation possibility in case of empty Topic Name")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(4)
+  @Test
+  void checkTopicCreatePossibility() {
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .clickAddTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady()
+        .setTopicName("");
+    assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isFalse();
+    topicCreateEditForm
+        .setTopicName("testTopic1");
+    assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isTrue();
+  }
 
     @AfterAll
     public void afterAll() {
