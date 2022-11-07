@@ -59,7 +59,7 @@ public class TopicDetails {
 
     @Step
     public TopicDetails copyMessageToClipboard(String messageMenuItem) {
-        messageValueCell.hover().click();
+        messageValueCell.hover();
 //        actions().moveToElement(dotMessageMenuBtn).click().perform();
         clickByActions(dotMessageMenuBtn);
         $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.visible.because("dotMessageMenu not visible")).click();
