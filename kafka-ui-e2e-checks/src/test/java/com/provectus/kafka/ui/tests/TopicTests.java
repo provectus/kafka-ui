@@ -109,7 +109,8 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_UPDATE.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openEditSettings();
+                .openDotMenu()
+                .clickEditSettingsMenu();
         topicCreateEditForm
                 .waitUntilScreenReady()
                 .selectCleanupPolicy((TOPIC_FOR_UPDATE.getCleanupPolicyValue()))
@@ -127,7 +128,8 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_UPDATE.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openEditSettings();
+                .openDotMenu()
+                .clickEditSettingsMenu();
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()").isEqualTo(TOPIC_FOR_UPDATE.getCleanupPolicyValue().getVisibleText());
         softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
@@ -149,7 +151,9 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_DELETE.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .deleteTopic();
+                .openDotMenu()
+                .clickDeleteTopicMenu()
+                .clickConfirmDeleteBtn();
         naviSideBar
                 .openSideMenu(TOPICS);
         topicsList
@@ -171,7 +175,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_MESSAGES.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)
+                .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
                 .clickProduceMessageBtn();
         produceMessagePanel
                 .waitUntilScreenReady()
@@ -200,7 +204,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_MESSAGES.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicDetails.TopicMenu.OVERVIEW)
+                .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
                 .clickProduceMessageBtn();
         produceMessagePanel
                 .waitUntilScreenReady()
@@ -213,8 +217,8 @@ public class TopicTests extends BaseTest {
         assertThat(messageAmount)
                 .withFailMessage("message amount not equals").isEqualTo(topicDetails.MessageCountAmount());
         topicDetails
-                .openDotPartitionIdMenu()
-                .clickClearMessagesBtn();
+                .openDotMenu()
+                .clickClearMessagesMenu();
 //        assertThat(Integer.toString(Integer.valueOf(messageAmount)-1))
 //                .withFailMessage("message amount not decrease by one").isEqualTo(topicDetails.MessageCountAmount());
     }
@@ -234,7 +238,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(topicName);
         topicDetails
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicDetails.TopicMenu.CONSUMERS)
+                .openDetailsTab(TopicDetails.TopicMenu.CONSUMERS)
                 .openConsumerGroup(consumerGroupId);
         consumersDetails
                 .waitUntilScreenReady();
