@@ -40,21 +40,26 @@ public class TopicDetails {
     }
 
     @Step
-    public TopicDetails openEditSettings() {
-        clickByJavaScript(dotMenuBtn);
-        editSettingsTab.shouldBe(Condition.visible).click();
-        return this;
-    }
-
-    @Step
     public TopicDetails openTopicMenu(TopicMenu menu) {
         $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
     @Step
-    public TopicDetails openDotPartitionIdMenu() {
-        dotPartitionIdMenuBtn.shouldBe(Condition.visible.because("dot menu invisible")).click();
+    public TopicDetails openDotMenu() {
+        clickByJavaScript(dotMenuBtn);
+        return this;
+    }
+
+    @Step
+    public TopicDetails clickEditSettingsMenu() {
+        editSettingsTab.shouldBe(Condition.visible).click();
+        return this;
+    }
+
+    @Step
+    public TopicDetails clickClearMessagesMenu() {
+        clearMessagesBtn.shouldBe(Condition.visible).click();
         return this;
     }
 
@@ -74,15 +79,13 @@ public class TopicDetails {
     }
 
     @Step
-    public TopicDetails clickClearMessagesBtn() {
-        clearMessagesBtn.shouldBe(Condition.visible.because("Clear Messages invisible")).click();
+    public TopicDetails clickDeleteTopicMenu() {
+        removeTopicBtn.shouldBe(Condition.visible).click();
         return this;
     }
 
     @Step
-    public TopicDetails deleteTopic() {
-        clickByJavaScript(dotMenuBtn);
-        removeTopicBtn.shouldBe(Condition.visible).click();
+    public TopicDetails clickConfirmDeleteBtn() {
         confirmBtn.shouldBe(Condition.enabled).click();
         confirmBtn.shouldBe(Condition.disappear);
         return this;
@@ -93,6 +96,7 @@ public class TopicDetails {
         clickByJavaScript(produceMessageBtn);
         return this;
     }
+
     @Step
     public TopicDetails openConsumerGroup(String consumerId) {
         $x(String.format(consumerIdLocator, consumerId)).click();
