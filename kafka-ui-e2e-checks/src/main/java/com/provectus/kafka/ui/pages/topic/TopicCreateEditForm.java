@@ -8,6 +8,7 @@ import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.*;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
+import static com.provectus.kafka.ui.utilities.WebUtils.isEnabled;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TopicCreateEditForm {
@@ -267,6 +268,10 @@ public class TopicCreateEditForm {
         public String getVisibleText() {
             return visibleText;
         }
+    }
+
+    public boolean createTopicButtonIsEnabled(){
+       return isEnabled(createTopicBtn);
     }
 
     private TopicCreateEditForm selectFromDropDownByOptionValue(String dropDownElementName,

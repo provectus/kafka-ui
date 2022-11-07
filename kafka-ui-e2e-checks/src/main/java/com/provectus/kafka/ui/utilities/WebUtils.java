@@ -46,4 +46,15 @@ public class WebUtils {
         return isVisible;
     }
 
+  public static boolean isEnabled(SelenideElement element) {
+    log.debug("\nisEnabled: {}", element.getSearchCriteria());
+    boolean isEnabled = false;
+    try {
+      element.shouldBe(Condition.enabled);
+      isEnabled = true;
+    } catch (Throwable e) {
+      log.debug("{} is not enabled", element.getSearchCriteria());
+    }
+    return isEnabled;
+  }
 }
