@@ -264,6 +264,32 @@ public class TopicTests extends BaseTest {
     assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isTrue();
   }
 
+  @DisplayName("Checking requiredness of Custom parameters within 'Create new Topic'")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(6)
+  @Test
+  void checkCustomParametersWithinCreateNewTopic() {
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .clickAddTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady()
+        .setTopicName(TOPIC_TO_CREATE.getName())
+        .addCustomParameter("compression.type","producer");
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicCreateEditForm.isDeleteCustomParameterButtonEnabled()).as("deleteCustomParameterBtn()");
+    softly.assertThat(topicCreateEditForm.getCustomParameterValue()).isEqualTo("producer");
+    softly.assertAll();
+    topicCreateEditForm
+        .clearCustomParameterValue();
+    assertThat(topicCreateEditForm.getCustomParameterValue()).isEqualTo("");
+    assertThat(topicCreateEditForm.getValidationMessageFromCustomParameterValue())
+        .as("getValidationMessageFromCustomParameterValue()").isEqualTo("Value is required");
+  }
+
     @AfterAll
     public void afterAll() {
         TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));

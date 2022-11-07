@@ -6,6 +6,8 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
+import java.time.Duration;
+
 import static com.codeborne.selenide.Selenide.*;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 import static com.provectus.kafka.ui.utilities.WebUtils.isEnabled;
@@ -22,7 +24,10 @@ public class TopicCreateEditForm {
     protected SelenideElement cleanUpPolicyDdl = $x("//ul[@id='topicFormCleanupPolicy']");
     protected SelenideElement maxSizeOnDiscDdl = $x("//ul[@id='topicFormRetentionBytes']");
     protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
+    protected SelenideElement deleteCustomParameterBtn = $x("//span[contains(@title,'Delete customParam')]");
     protected String ddlElementLocator = "//li[@value='%s']";
+    protected String customParameterValueLocator = "//input[@value='producer']";
+    protected String validationMessageCustomParameterValueLocator = "//p[contains(text(),'Value is required')]";
 
     @Step
     public TopicCreateEditForm waitUntilScreenReady(){
@@ -190,6 +195,21 @@ public class TopicCreateEditForm {
         return maxMessageBytesField.getValue();
     }
 
+    @Step
+    public String getValidationMessageFromCustomParameterValue(){
+      $x(validationMessageCustomParameterValueLocator).shouldBe(Condition.exist);
+      return  $x(validationMessageCustomParameterValueLocator).getText();
+    }
+
+    @Step
+    public String getCustomParameterValue(){
+      return $x(customParameterValueLocator).getValue();
+    }
+
+    @Step
+    public void clearCustomParameterValue(){
+      $x(customParameterValueLocator).clear();
+    }
 
     private static class KafkaUISelectElement {
 
@@ -272,6 +292,10 @@ public class TopicCreateEditForm {
 
     public boolean isCreateTopicButtonEnabled(){
        return isEnabled(createTopicBtn);
+    }
+
+    public boolean isDeleteCustomParameterButtonEnabled(){
+      return isEnabled(deleteCustomParameterBtn);
     }
 
     private TopicCreateEditForm selectFromDropDownByOptionValue(String dropDownElementName,
