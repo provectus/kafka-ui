@@ -16,9 +16,12 @@ public class KafkaConnectList extends BasePage {
     protected SelenideElement pageTitle = $x("//h1[text()='Connectors']");
     protected SelenideElement createConnectorBtn = $x("//button[contains(text(),'Create Connector')]");
 //    protected SelenideElement connectorsGrid = $x("//table");
-    protected String tabElementLocator = "//td[contains(text(),'%s')]";
-    protected SelenideElement connectorsGrid = $x("//table");
-    protected String connectorNameLocator = "//td[contains(text(),'%s')]";
+//    protected String tabElementLocator = "//td[contains(text(),'%s')]";
+
+    public KafkaConnectList(){
+        tableElementNameLocator = "//tbody//td[contains(text(),'%s')]";
+    }
+
 
     @Step
     public KafkaConnectList waitUntilScreenReady() {
@@ -35,7 +38,7 @@ public class KafkaConnectList extends BasePage {
 
     @Step
     public KafkaConnectList openConnector(String connectorName) {
-        $x(String.format(connectorNameLocator, connectorName))
+        $x(String.format(tableElementNameLocator,connectorName))
                 .shouldBe(Condition.enabled).click();
         return this;
     }
@@ -43,13 +46,13 @@ public class KafkaConnectList extends BasePage {
     @Step
     public boolean isConnectorVisible(String connectorName) {
         tableGrid.shouldBe(Condition.visible);
-        return isVisible($x(String.format(tabElementLocator,connectorName)));
+        return isVisible($x(String.format(tableElementNameLocator,connectorName)));
     }
 
     @Step
     public KafkaConnectList connectorIsUpdatedInList(String connectorName, String topicName) {
-        $x(String.format(tabElementLocator,connectorName)).shouldBe(Condition.visible);
-        By.xpath(String.format(tabElementLocator,topicName)).refreshUntil(Condition.visible);
+        $x(String.format(tableElementNameLocator,connectorName)).shouldBe(Condition.visible);
+        By.xpath(String.format(tableElementNameLocator,topicName)).refreshUntil(Condition.visible);
         return this;
     }
 }

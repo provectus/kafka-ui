@@ -11,13 +11,17 @@ public abstract class BasePage extends WebUtils {
     protected SelenideElement submitBtn = $x("//button[@type='submit']");
     protected SelenideElement tableGrid = $x("//table");
     protected SelenideElement dotMenuBtn = $x("//button[@aria-label='Dropdown Toggle']");
+    protected String tableElementNameLocator = "//tbody//a[contains(text(),'%s')]";
 
     public void waitUntilSpinnerDisappear(){
-        if(isVisible(loadingSpinner))
             loadingSpinner.shouldBe(Condition.disappear);
     }
 
     public void clickSubmitButton(){
         clickByJavaScript(submitBtn);
+    }
+
+    public void clickTableElement(String elementName){
+        $x(String.format(tableElementNameLocator,elementName)).shouldBe(Condition.enabled).click();
     }
 }
