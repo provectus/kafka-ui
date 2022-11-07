@@ -10,6 +10,7 @@ import org.openqa.selenium.By;
 import java.util.Arrays;
 
 import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByActions;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
@@ -59,8 +60,8 @@ public class TopicDetails {
     @Step
     public TopicDetails copyMessageToClipboard(String messageMenuItem) {
         messageValueCell.hover().click();
-        actions().moveToElement(dotMessageMenuBtn).perform();
-        dotMessageMenuBtn.click();
+//        actions().moveToElement(dotMessageMenuBtn).click().perform();
+        clickByActions(dotMessageMenuBtn);
         $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.visible.because("dotMessageMenu not visible")).click();
         return this;
     }
