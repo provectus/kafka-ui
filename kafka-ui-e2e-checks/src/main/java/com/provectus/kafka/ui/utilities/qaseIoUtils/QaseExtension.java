@@ -39,7 +39,8 @@ public class QaseExtension implements TestExecutionListener {
     static {
         String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
         if (StringUtils.isEmpty(qaseApiToken)) {
-           System.setProperty("QASE_ENABLE", "false");
+            log.warn("QASEIO_API_TOKEN system property is not set. Support for Qase will be disabled.");
+            System.setProperty("QASE_ENABLE", "false");
         } else {
             System.setProperty("QASE_ENABLE", "true");
             System.setProperty("QASE_PROJECT_CODE", QASE_PROJECT);
