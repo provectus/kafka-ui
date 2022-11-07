@@ -4,6 +4,10 @@ metadata:
   name: {{ include "kafka-ui.fullname" . }}
   labels:
     {{- include "kafka-ui.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -18,6 +22,7 @@ spec:
           {{- toYaml . | nindent 8 }}
       {{- end }}
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/configFromValues: {{ include (print $.Template.BasePath "/configmap_fromValues.yaml") . | sha256sum }}
         checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
       labels:
         {{- include "kafka-ui.selectorLabels" . | nindent 8 }}

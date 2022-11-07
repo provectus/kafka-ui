@@ -42,7 +42,8 @@ public class TopicsList {
 
     @Step
     public TopicsList openTopic(String topicName) {
-        $(By.linkText(topicName)).click();
+        $(By.linkText(topicName))
+                .shouldBe(Condition.enabled).click();
         return this;
     }
 }

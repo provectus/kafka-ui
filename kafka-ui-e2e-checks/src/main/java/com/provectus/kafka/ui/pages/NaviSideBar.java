@@ -5,9 +5,13 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
 import java.time.Duration;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByActions;
 
 public class NaviSideBar {
 
@@ -15,6 +19,14 @@ public class NaviSideBar {
     protected SelenideElement dashboardMenuItem = $x("//a[@title='Dashboard']");
     protected String sideMenuOptionElementLocator = ".//ul/li[contains(.,'%s')]";
     protected String clusterElementLocator = "//aside/ul/li[contains(.,'%s')]";
+
+    private SelenideElement expandCluster(String clusterName) {
+        SelenideElement clusterElement = $x(String.format(clusterElementLocator, clusterName)).shouldBe(Condition.visible);
+        if (clusterElement.parent().$$x(".//ul").size() == 0) {
+            clickByActions(clusterElement);
+        }
+        return clusterElement;
+    }
 
     @Step
     public NaviSideBar waitUntilScreenReady() {
@@ -25,14 +37,8 @@ public class NaviSideBar {
 
     @Step
     public NaviSideBar openSideMenu(String clusterName, SideMenuOption option) {
-        SelenideElement clusterElement = $x(String.format(clusterElementLocator, clusterName)).shouldBe(Condition.visible);
-        if (clusterElement.parent().$$x(".//ul").size() == 0) {
-            clusterElement.click();
-        }
-        clusterElement
-                .parent()
-                .$x(String.format(sideMenuOptionElementLocator, option.value))
-                .click();
+        clickByActions(expandCluster(clusterName).parent()
+                .$x(String.format(sideMenuOptionElementLocator, option.value)));
         return this;
     }
 
@@ -43,6 +49,7 @@ public class NaviSideBar {
     }
 
     public enum SideMenuOption {
+        DASHBOARD("Dashboard"),
         BROKERS("Brokers"),
         TOPICS("Topics"),
         CONSUMERS("Consumers"),
@@ -55,5 +62,12 @@ public class NaviSideBar {
         SideMenuOption(String value) {
             this.value = value;
         }
+    }
+
+    public List<SelenideElement> getAllMenuButtons() {
+        expandCluster(CLUSTER_NAME);
+        return Stream.of(SideMenuOption.values())
+                .map(option -> $x(String.format(sideMenuOptionElementLocator, option.value)))
+                .collect(Collectors.toList());
     }
 }

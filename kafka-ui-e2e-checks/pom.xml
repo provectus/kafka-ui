@@ -32,7 +32,7 @@
         <maven.surefire-plugin.version>2.22.2</maven.surefire-plugin.version>
         <allure-maven.version>2.10.0</allure-maven.version>
         <kafka.version>3.0.0</kafka.version>
-        <netty.version>4.1.77.Final</netty.version>
+        <netty.version>4.1.84.Final</netty.version>
         <qase.io.version>2.1.3</qase.io.version>
     </properties>
 
@@ -267,7 +267,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven.surefire-plugin.version}</version>
                         <configuration>
                             <skipTests>true</skipTests>
                         </configuration>
@@ -275,10 +274,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <source>${maven.compiler.source}</source>
-                            <target>${maven.compiler.target}</target>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -319,10 +314,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <source>${maven.compiler.source}</source>
-                            <target>${maven.compiler.target}</target>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

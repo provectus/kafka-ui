@@ -32,9 +32,9 @@ describe('FilterModal component', () => {
       screen.getByRole('heading', { name: /add filter/i, level: 3 })
     ).toBeInTheDocument();
   });
-  it('renders component with edit filter modal', () => {
-    userEvent.click(screen.getByRole('savedFilterText'));
-    userEvent.click(screen.getByText('Edit'));
+  it('renders component with edit filter modal', async () => {
+    await userEvent.click(screen.getByRole('savedFilterText'));
+    await userEvent.click(screen.getByText('Edit'));
     expect(
       screen.getByRole('heading', { name: /edit saved filter/i, level: 3 })
     ).toBeInTheDocument();
