@@ -8,23 +8,24 @@ import io.qameta.allure.Step;
 
 public class ConsumersDetails extends BasePage {
 
-//    protected SelenideElement topicGrid = $x("//table");
     protected String consumerIdHeaderLocator = "//h1[contains(text(),'%s')]";
     protected String topicElementLocator = "//tbody//td//a[text()='%s']";
+
     @Step
     public ConsumersDetails waitUntilScreenReady() {
         waitUntilSpinnerDisappear();
         tableGrid.shouldBe(Condition.visible);
         return this;
     }
+
     @Step
     public boolean isRedirectedConsumerTitleVisible(String consumerGroupId) {
         return isVisible($x(String.format(consumerIdHeaderLocator, consumerGroupId)));
     }
+
     @Step
     public boolean isTopicInConsumersDetailsVisible(String topicName) {
         tableGrid.shouldBe(Condition.visible);
         return isVisible($x(String.format(topicElementLocator, topicName)));
     }
-
 }

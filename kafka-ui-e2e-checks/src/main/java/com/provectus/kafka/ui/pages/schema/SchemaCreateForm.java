@@ -15,7 +15,6 @@ public class SchemaCreateForm extends BasePage {
     protected SelenideElement schemaNameField = $x("//input[@name='subject']");
     protected SelenideElement pageTitle = $x("//h1['Edit']");
     protected SelenideElement schemaTextArea = $x("//textarea[@name='schema']");
-//    protected SelenideElement submitBtn = $x("//button[@type='submit']");
     protected SelenideElement newSchemaInput = $("#newSchema [wrap]");
     protected SelenideElement schemaTypeDdl = $x("//ul[@name='schemaType']");
     protected SelenideElement compatibilityLevelList = $x("//ul[@name='compatibilityLevel']");
@@ -48,11 +47,11 @@ public class SchemaCreateForm extends BasePage {
         return this;
     }
 
-//    @Step
-//    public SchemaCreateForm clickSubmitBtn() {
-//        clickSubmitButton();
-//        return this;
-//    }
+    @Step
+    public SchemaCreateForm clickSubmitButton() {
+        clickSubmitBtn();
+        return this;
+    }
 
     @Step
     public SchemaCreateForm selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum level) {

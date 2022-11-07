@@ -9,7 +9,6 @@ import io.qameta.allure.Step;
 
 public class SchemaDetails extends BasePage {
 
-//    protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
     protected SelenideElement actualVersionTextArea = $x("//div[@id='schema']");
     protected SelenideElement compatibilityField = $x("//h4[contains(text(),'Compatibility')]/../p");
     protected SelenideElement editSchemaBtn = $x("//button[contains(text(),'Edit Schema')]");

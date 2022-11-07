@@ -31,7 +31,7 @@ public class ConnectorCreateForm extends BasePage {
 
     @Step
     public ConnectorCreateForm clickSubmitButton() {
-      clickByJavaScript(submitBtn);
+      clickSubmitBtn();
       loadingSpinner.shouldBe(Condition.disappear);
       return this;
     }

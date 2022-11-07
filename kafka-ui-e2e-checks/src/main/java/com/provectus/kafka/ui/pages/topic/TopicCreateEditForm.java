@@ -26,7 +26,6 @@ public class TopicCreateEditForm extends BasePage {
   protected String cleanUpPolicyTypeLocator = "//li[text()='%s']";
   protected SelenideElement maxSizeOnDiscDdl = $x("//ul[@id='topicFormRetentionBytes']");
   protected SelenideElement customParameterDdl = $x("//ul[contains(@name,'customParams')]");
-  protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
   protected SelenideElement deleteCustomParameterBtn = $x("//span[contains(@title,'Delete customParam')]");
   protected SelenideElement addCustomParameterTypeBtn = $x("//button[contains(text(),'Add Custom Parameter')]");
   protected SelenideElement customParameterValueField = $x("//input[@placeholder='Value']");

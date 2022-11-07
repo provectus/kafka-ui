@@ -14,8 +14,6 @@ public class TopicsList extends BasePage {
 
     protected SelenideElement topicListHeader = $x("//h1[text()='Topics']");
     protected SelenideElement addTopicBtn = $x("//button[normalize-space(text()) ='Add a Topic']");
-//    protected SelenideElement topicGrid = $x("//table");
-//    protected String topicElementLocator = "//tbody//td//a[text()='%s']";
 
     @Step
     public TopicsList waitUntilScreenReady() {
@@ -33,14 +31,12 @@ public class TopicsList extends BasePage {
     @Step
     public boolean isTopicVisible(String topicName) {
         tableGrid.shouldBe(Condition.visible);
-        return isVisible($x(String.format(tableElementNameLocator,topicName)));
+        return isVisible(tableElement(topicName));
     }
 
     @Step
     public TopicsList openTopic(String topicName) {
-        clickTableElement(topicName);
-//        $(By.linkText(topicName))
-//                .shouldBe(Condition.enabled).click();
+      tableElement(topicName).shouldBe(Condition.enabled).click();
         return this;
     }
 }

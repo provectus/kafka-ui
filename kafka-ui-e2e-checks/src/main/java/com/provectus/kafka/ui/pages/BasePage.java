@@ -17,11 +17,11 @@ public abstract class BasePage extends WebUtils {
             loadingSpinner.shouldBe(Condition.disappear);
     }
 
-    public void clickSubmitButton(){
+    public void clickSubmitBtn(){
         clickByJavaScript(submitBtn);
     }
 
-    public void clickTableElement(String elementName){
-        $x(String.format(tableElementNameLocator,elementName)).shouldBe(Condition.enabled).click();
+    public SelenideElement tableElement(String elementName){
+      return $x(String.format(tableElementNameLocator,elementName));
     }
 }

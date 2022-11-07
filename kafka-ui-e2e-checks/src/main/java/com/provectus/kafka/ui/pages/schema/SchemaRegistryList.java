@@ -10,8 +10,6 @@ import io.qameta.allure.Step;
 public class SchemaRegistryList extends BasePage {
 
     protected SelenideElement createSchemaBtn = $x("//button[contains(text(),'Create Schema')]");
-//    protected SelenideElement schemaGrid = $x("//table");
-//    protected String schemaTabElementLocator = "//a[contains(text(),'%s')]";
 
     @Step
     public SchemaRegistryList waitUntilScreenReady(){
@@ -28,7 +26,7 @@ public class SchemaRegistryList extends BasePage {
 
     @Step
     public SchemaRegistryList openSchema(String schemaName) {
-        $x(String.format(tableElementNameLocator,schemaName))
+        tableElement(schemaName)
                 .shouldBe(Condition.enabled).click();
         return this;
     }
@@ -36,7 +34,7 @@ public class SchemaRegistryList extends BasePage {
     @Step
     public boolean isSchemaVisible(String schemaName) {
         tableGrid.shouldBe(Condition.visible);
-        return isVisible($x(String.format(tableElementNameLocator,schemaName)));
+        return isVisible(tableElement(schemaName));
     }
 }
 
