@@ -13,7 +13,7 @@ jobs:
         id: extract_branch
         run: |
           tag='${{ github.event.pull_request.number }}'
-          echo ::set-output name=tag::${tag}
+          echo "tag=${tag}" >> $GITHUB_OUTPUT
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -26,7 +26,7 @@ jobs:
           ./mvnw -B -ntp versions:set -DnewVersion=$GITHUB_SHA
           ./mvnw -B -V -ntp clean package -Pprod -DskipTests
           export VERSION=$(./mvnw -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
-          echo "::set-output name=version::${VERSION}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
