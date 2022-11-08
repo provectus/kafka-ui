@@ -213,9 +213,9 @@ public class TopicTests extends BaseTest {
                 .submitProduceMessage();
         topicDetails
                 .waitUntilScreenReady();
-        String messageAmount = topicDetails.MessageCountAmount();
+        String messageAmount = topicDetails.getMessageCountAmount();
         assertThat(messageAmount)
-                .withFailMessage("message amount not equals").isEqualTo(topicDetails.MessageCountAmount());
+                .withFailMessage("message amount not equals").isEqualTo(topicDetails.getMessageCountAmount());
         topicDetails
                 .openDotMenu()
                 .clickClearMessagesMenu();
@@ -266,6 +266,26 @@ public class TopicTests extends BaseTest {
     topicCreateEditForm
         .setTopicName("testTopic1");
     assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isTrue();
+  }
+
+  @DisplayName("Message copy from topic profile")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(21)
+  @Test
+  void copyMessageFromTopicProfile() {
+    String topicName = "_schemas";
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .openTopic(topicName);
+    topicDetails
+        .waitUntilScreenReady()
+        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .copyMessageToClipboard("Copy to clipboard");
+    assertThat(topicDetails.isMessageCopiedSuccessfullyVisible("Copied successfully!"))
+        .withFailMessage("Message Copied Successfully Not Visible").isTrue();
   }
 
     @AfterAll

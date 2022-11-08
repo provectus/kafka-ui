@@ -10,153 +10,177 @@ import org.openqa.selenium.By;
 import java.util.Arrays;
 
 import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByActions;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
 @ExtensionMethod({WaitUtils.class})
 public class TopicDetails {
 
-    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
-    protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
-    protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
-    protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
-    protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
-    protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
-    protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
-    protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
-    protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
-    protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
-    protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
-    protected String consumerIdLocator = "//a[@title='%s']";
-    protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
+  protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+  protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
+  protected SelenideElement dotMessageMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").get(1);
+  protected SelenideElement messageValueCell = $(By.cssSelector(".sc-FyeoB.cJMvpm td:nth-child(6)"));
+  protected SelenideElement messageAmountCell = $x("//table[@class='sc-hiSbEG cvnuic']/tbody/tr/td[5]");
+  protected SelenideElement copiedSuccessfullyPopUpMessage = $x("//div[text() = 'Copied successfully!']");
+  protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
+  protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
+  protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
+  protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
+  protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
+  protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
+  protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
+  protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
+  protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
+  protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
+  protected String consumerIdLocator = "//a[@title='%s']";
+  protected String dotMessageMenu = "//li[text() = '%s']";
+  protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
 
-    @Step
-    public TopicDetails waitUntilScreenReady() {
-        loadingSpinner.shouldBe(Condition.disappear);
-        Arrays.asList(overviewTab,messagesTab).forEach(element -> element.shouldBe(Condition.visible));
-        return this;
+  @Step
+  public TopicDetails waitUntilScreenReady() {
+    loadingSpinner.shouldBe(Condition.disappear);
+    Arrays.asList(overviewTab, messagesTab).forEach(element -> element.shouldBe(Condition.visible));
+    return this;
+  }
+
+  @Step
+  public TopicDetails openDetailsTab(TopicMenu menu) {
+    $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails openDotMenu() {
+    clickByJavaScript(dotMenuBtn);
+    return this;
+  }
+
+  @Step
+  public TopicDetails copyMessageToClipboard(String messageMenuItem) {
+    messageValueCell.hover();
+//        actions().moveToElement(dotMessageMenuBtn).click().perform();
+    clickByJavaScript(dotMessageMenuBtn);
+    clickByActions(dotMessageMenuBtn);
+    screenshot("Menu click step");
+    $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.visible.because("dotMessageMenu not visible"))
+        .click();
+    return this;
+  }
+
+  @Step
+  public boolean isMessageCopiedSuccessfullyVisible(String message) {
+    copiedSuccessfullyPopUpMessage.shouldBe(Condition.visible.because("CopiedSuccessfully Message Not Visible"));
+    return message.equals(copiedSuccessfullyPopUpMessage.getText());
+  }
+
+  @Step
+  public TopicDetails clickEditSettingsMenu() {
+    editSettingsMenu.shouldBe(Condition.visible).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickClearMessagesMenu() {
+    clearMessagesBtn.shouldBe(Condition.visible).click();
+    return this;
+  }
+
+  @Step
+  public String getCleanUpPolicy() {
+    return cleanUpPolicyField.getText();
+  }
+
+  @Step
+  public String getPartitions() {
+    return partitionsField.getText();
+  }
+
+  @Step
+  public boolean isTopicHeaderVisible(String topicName) {
+    return isVisible($x(String.format(topicHeaderLocator, topicName)));
+  }
+
+  @Step
+  public TopicDetails clickDeleteTopicMenu() {
+    removeTopicBtn.shouldBe(Condition.visible).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickConfirmDeleteBtn() {
+    confirmBtn.shouldBe(Condition.enabled).click();
+    confirmBtn.shouldBe(Condition.disappear);
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickProduceMessageBtn() {
+    clickByJavaScript(produceMessageBtn);
+    return this;
+  }
+
+  @Step
+  public TopicDetails openConsumerGroup(String consumerId) {
+    $x(String.format(consumerIdLocator, consumerId)).click();
+    return this;
+  }
+
+  @Step
+  public boolean isKeyMessageVisible(String keyMessage) {
+    return keyMessage.equals($("td[title]").getText());
+  }
+
+  @Step
+  public boolean isContentMessageVisible(String contentMessage) {
+    return contentMessage.matches(contentMessageTab.getText().trim());
+  }
+
+  @Step
+  public String getMessageCountAmount() {
+    return messageAmountCell.getText();
+  }
+
+  private enum DotMenuHeaderItems {
+    EDIT_SETTINGS("Edit settings"),
+    CLEAR_MESSAGES("Clear messages"),
+    REMOVE_TOPIC("Remove topic");
+
+    private final String value;
+
+    DotMenuHeaderItems(String value) {
+      this.value = value;
     }
 
-    @Step
-    public TopicDetails openDetailsTab(TopicMenu menu) {
-        $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
-        return this;
+    public String getValue() {
+      return value;
     }
 
-    @Step
-    public TopicDetails openDotMenu() {
-        clickByJavaScript(dotMenuBtn);
-        return this;
+    @Override
+    public String toString() {
+      return "DotMenuHeaderItems{" + "value='" + value + '\'' + '}';
+    }
+  }
+
+  public enum TopicMenu {
+    OVERVIEW("Overview"),
+    MESSAGES("Messages"),
+    CONSUMERS("Consumers"),
+    SETTINGS("Settings");
+
+    private final String value;
+
+    TopicMenu(String value) {
+      this.value = value;
     }
 
-    @Step
-    public TopicDetails clickEditSettingsMenu() {
-        editSettingsMenu.shouldBe(Condition.visible).click();
-        return this;
+    public String getValue() {
+      return value;
     }
 
-    @Step
-    public TopicDetails clickClearMessagesMenu() {
-        clearMessagesBtn.shouldBe(Condition.visible).click();
-        return this;
+    @Override
+    public String toString() {
+      return "TopicMenu{" + "value='" + value + '\'' + '}';
     }
-
-    @Step
-    public String getCleanUpPolicy(){
-      return cleanUpPolicyField.getText();
-    }
-
-    @Step
-    public String getPartitions(){
-        return partitionsField.getText();
-    }
-
-    @Step
-    public boolean isTopicHeaderVisible(String topicName) {
-        return isVisible($x(String.format(topicHeaderLocator,topicName)));
-    }
-
-    @Step
-    public TopicDetails clickDeleteTopicMenu() {
-        removeTopicBtn.shouldBe(Condition.visible).click();
-        return this;
-    }
-
-    @Step
-    public TopicDetails clickConfirmDeleteBtn() {
-        confirmBtn.shouldBe(Condition.enabled).click();
-        confirmBtn.shouldBe(Condition.disappear);
-        return this;
-    }
-
-    @Step
-    public TopicDetails clickProduceMessageBtn() {
-        clickByJavaScript(produceMessageBtn);
-        return this;
-    }
-
-    @Step
-    public TopicDetails openConsumerGroup(String consumerId) {
-        $x(String.format(consumerIdLocator, consumerId)).click();
-        return this;
-    }
-
-    @Step
-    public boolean isKeyMessageVisible(String keyMessage) {
-        return keyMessage.equals($("td[title]").getText());
-    }
-
-    @Step
-    public boolean isContentMessageVisible(String contentMessage) {
-        return contentMessage.matches(contentMessageTab.getText().trim());
-    }
-
-    @Step
-    public String MessageCountAmount() {
-        return $(By.xpath("//table[@class=\"sc-hiSbEG cvnuic\"]/tbody/tr/td[5]")).getText();
-    }
-
-    private enum DotMenuHeaderItems {
-        EDIT_SETTINGS("Edit settings"),
-        CLEAR_MESSAGES("Clear messages"),
-        REMOVE_TOPIC("Remove topic");
-
-        private final String value;
-
-        DotMenuHeaderItems(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return "DotMenuHeaderItems{" + "value='" + value + '\'' + '}';
-        }
-    }
-
-    public enum TopicMenu {
-        OVERVIEW("Overview"),
-        MESSAGES("Messages"),
-        CONSUMERS("Consumers"),
-        SETTINGS("Settings");
-
-        private final String value;
-
-        TopicMenu(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return "TopicMenu{" + "value='" + value + '\'' + '}';
-        }
-    }
+  }
 }
