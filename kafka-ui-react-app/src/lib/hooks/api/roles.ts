@@ -1,6 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { AccessApiClient } from 'lib/api';
-import { UserPermission, UserPermissionResourceEnum } from 'generated-sources';
+import {
+  Action,
+  UserPermission,
+  UserPermissionResourceEnum,
+} from 'generated-sources';
 import { QUERY_REFETCH_OFF_OPTIONS } from 'lib/constants';
 
 export function useRoleBasedAccess() {
@@ -17,17 +21,21 @@ export function useRoleBasedAccessMock() {
       setTimeout(() => {
         return resolve([
           {
+            clusters: ['local'],
             resource: UserPermissionResourceEnum.TOPIC,
             value: 'sss',
-            actions: ['delete'],
+            actions: [Action.DELETE, Action.CREATE],
           },
           {
+            clusters: ['local', 'dev'],
             resource: UserPermissionResourceEnum.SCHEMA,
-            actions: ['create'],
+            actions: [Action.CREATE],
           },
           {
+            clusters: ['local'],
             resource: UserPermissionResourceEnum.TOPIC,
-            actions: ['create'],
+            value: 'topic',
+            actions: [Action.CREATE],
           },
         ]);
       }, 5000);
