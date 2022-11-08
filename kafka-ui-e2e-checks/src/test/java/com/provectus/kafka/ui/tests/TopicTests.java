@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.tests;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.DELETE;
+import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CustomParameterType.COMPRESSION_TYPE;
 import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
@@ -11,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.pages.topic.TopicCreateEditForm;
 import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
@@ -35,6 +37,8 @@ public class TopicTests extends BaseTest {
     private static final Topic TOPIC_TO_CREATE = new Topic()
             .setName("new-topic-"+ randomAlphabetic(5))
             .setPartitions("1")
+            .setCustomParameterType(COMPRESSION_TYPE)
+            .setCustomParameterValue("producer")
             .setCleanupPolicyValue(DELETE);
     private static final Topic TOPIC_FOR_UPDATE = new Topic()
             .setName("topic-to-update-" + randomAlphabetic(5))
@@ -282,16 +286,15 @@ public class TopicTests extends BaseTest {
     topicCreateEditForm
         .waitUntilScreenReady()
         .setTopicName(TOPIC_TO_CREATE.getName())
-        .addCustomParameter("compression.type","producer");
+        .setCustomParameterType(TOPIC_TO_CREATE.getCustomParameterType());
+//        .setCustomParameterValue(TOPIC_TO_CREATE.getCustomParameterValue());
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicCreateEditForm.isDeleteCustomParameterButtonEnabled()).as("deleteCustomParameterBtn()");
-    softly.assertThat(topicCreateEditForm.getCustomParameterValue()).isEqualTo("producer");
+    softly.assertThat(topicCreateEditForm.isDeleteCustomParameterButtonEnabled()).as("isDeleteCustomParameterBtn()");
+    softly.assertThat(TOPIC_TO_CREATE.getCustomParameterValue()).isEqualTo("");
     softly.assertAll();
-    topicCreateEditForm
-        .clearCustomParameterValue();
-    assertThat(topicCreateEditForm.getCustomParameterValue()).isEqualTo("");
-    assertThat(topicCreateEditForm.getValidationMessageFromCustomParameterValue())
-        .as("getValidationMessageFromCustomParameterValue()").isEqualTo("Value is required");
+//        .setCustomParameterValue("");
+//    assertThat(topicCreateEditForm.getCustomParameterValue()).isEqualTo("");
+    assertThat(topicCreateEditForm.isValidationMessageCustomParameterValueVisible()).isTrue();
   }
 
     @AfterAll

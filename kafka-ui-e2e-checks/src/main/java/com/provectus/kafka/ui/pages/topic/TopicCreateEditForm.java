@@ -1,17 +1,18 @@
 package com.provectus.kafka.ui.pages.topic;
 
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
+import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
+import static com.provectus.kafka.ui.utilities.WebUtils.isEnabled;
+import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.codeborne.selenide.ClickOptions;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-
-import java.time.Duration;
-
-import static com.codeborne.selenide.Selenide.*;
-import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
-import static com.provectus.kafka.ui.utilities.WebUtils.isEnabled;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class TopicCreateEditForm {
 
@@ -23,10 +24,13 @@ public class TopicCreateEditForm {
     protected SelenideElement minInSyncReplicasField = $x("//input[@name='minInSyncReplicas']");
     protected SelenideElement cleanUpPolicyDdl = $x("//ul[@id='topicFormCleanupPolicy']");
     protected SelenideElement maxSizeOnDiscDdl = $x("//ul[@id='topicFormRetentionBytes']");
+    protected SelenideElement customParameterDdl = $x("//ul[contains(@name,'customParams')]");
     protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
     protected SelenideElement deleteCustomParameterBtn = $x("//span[contains(@title,'Delete customParam')]");
+    protected SelenideElement addCustomParameterTypeBtn = $x("//button/*/*");
+    protected SelenideElement topicShname = $x("//input[@id='topicFormName']");
     protected String ddlElementLocator = "//li[@value='%s']";
-    protected String customParameterValueLocator = "//input[@value='producer']";
+    protected String customParameterValueLocator = "//input[@placeholder='Value']";
     protected String validationMessageCustomParameterValueLocator = "//p[contains(text(),'Value is required')]";
 
     @Step
@@ -66,6 +70,21 @@ public class TopicCreateEditForm {
         $x(String.format(ddlElementLocator, MaxSizeOnDisk.getOptionValue())).shouldBe(Condition.visible).click();
         return this;
     }
+
+  @Step
+  public TopicCreateEditForm setCustomParameterType(CustomParameterType CustomParameterType){
+        addCustomParameterTypeBtn.click();
+        customParameterDdl.shouldBe(Condition.visible).click();
+        $x(String.format(ddlElementLocator, CustomParameterType.getOptionValue())).shouldBe(Condition.visible).click();
+        return this;
+    }
+
+  @Step
+  public TopicCreateEditForm setCustomParameterValue(String customParameterValue) {
+    addCustomParameterTypeBtn.click();
+    $x(customParameterValueLocator).setValue(customParameterValue);
+    return this;
+  }
 
     @Step
     public TopicCreateEditForm setMaxMessageBytes(Long bytes) {
@@ -201,14 +220,14 @@ public class TopicCreateEditForm {
       return  $x(validationMessageCustomParameterValueLocator).getText();
     }
 
+  @Step
+  public boolean isValidationMessageCustomParameterValueVisible(){
+      return isVisible($x(validationMessageCustomParameterValueLocator));
+  }
+
     @Step
     public String getCustomParameterValue(){
       return $x(customParameterValueLocator).getValue();
-    }
-
-    @Step
-    public void clearCustomParameterValue(){
-      $x(customParameterValueLocator).clear();
     }
 
     private static class KafkaUISelectElement {
@@ -289,6 +308,35 @@ public class TopicCreateEditForm {
             return visibleText;
         }
     }
+
+  public enum CustomParameterType {
+    COMPRESSION_TYPE("compression.type");
+
+    private final String optionValue;
+
+    CustomParameterType(String optionValue) {
+      this.optionValue = optionValue;
+    }
+
+    public String getOptionValue() {
+      return optionValue;
+    }
+  }
+
+//  public enum CustomParameterValue {
+//    EMPTY_VALUE(""),
+//    PRODUCER("producer");
+//
+//    private final String optionValue;
+//
+//    CustomParameterValue(String optionValue) {
+//      this.optionValue = optionValue;
+//    }
+//
+//    public String getOptionValue() {
+//      return optionValue;
+//    }
+//  }
 
     public boolean isCreateTopicButtonEnabled(){
        return isEnabled(createTopicBtn);
