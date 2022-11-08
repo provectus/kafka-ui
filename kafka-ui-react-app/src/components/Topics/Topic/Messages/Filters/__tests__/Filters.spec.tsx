@@ -5,7 +5,7 @@ import Filters, {
   SeekTypeOptions,
 } from 'components/Topics/Topic/Messages/Filters/Filters';
 import { EventSourceMock, render, WithRoute } from 'lib/testHelpers';
-import { act, screen, within, waitFor } from '@testing-library/react';
+import { act, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TopicMessagesContext, {
   ContextProps,
@@ -36,27 +36,29 @@ jest.mock('components/common/Icons/CloseIcon', () => () => 'mock-CloseIcon');
 const clusterName = 'cluster-name';
 const topicName = 'topic-name';
 
-const renderComponent = (
+const renderComponent = async (
   props: Partial<FiltersProps> = {},
   ctx: ContextProps = defaultContextValue
 ) => {
-  render(
-    <WithRoute path={clusterTopicPath()}>
-      <TopicMessagesContext.Provider value={ctx}>
-        <Filters
-          meta={{}}
-          isFetching={false}
-          addMessage={jest.fn()}
-          resetMessages={jest.fn()}
-          updatePhase={jest.fn()}
-          updateMeta={jest.fn()}
-          setIsFetching={jest.fn()}
-          {...props}
-        />
-      </TopicMessagesContext.Provider>
-    </WithRoute>,
-    { initialEntries: [clusterTopicPath(clusterName, topicName)] }
-  );
+  await act(() => {
+    render(
+      <WithRoute path={clusterTopicPath()}>
+        <TopicMessagesContext.Provider value={ctx}>
+          <Filters
+            meta={{}}
+            isFetching={false}
+            addMessage={jest.fn()}
+            resetMessages={jest.fn()}
+            updatePhase={jest.fn()}
+            updateMeta={jest.fn()}
+            setIsFetching={jest.fn()}
+            {...props}
+          />
+        </TopicMessagesContext.Provider>
+      </WithRoute>,
+      { initialEntries: [clusterTopicPath(clusterName, topicName)] }
+    );
+  });
 };
 
 beforeEach(async () => {
@@ -87,9 +89,7 @@ describe('Filters component', () => {
     const inputValue = 'Hello World!';
 
     beforeEach(async () => {
-      await act(() => {
-        renderComponent();
-      });
+      await renderComponent();
     });
 
     it('search input', async () => {
@@ -110,19 +110,15 @@ describe('Filters component', () => {
       const seekTypeSelect = screen.getAllByRole('listbox');
       const option = screen.getAllByRole('option');
 
-      await act(async () => {
-        await userEvent.click(seekTypeSelect[0]);
-      });
+      await userEvent.click(seekTypeSelect[0]);
 
-      await act(async () => {
-        await userEvent.selectOptions(seekTypeSelect[0], ['Timestamp']);
-      });
+      await userEvent.selectOptions(seekTypeSelect[0], ['Timestamp']);
 
       expect(option[0]).toHaveTextContent('Timestamp');
       const timestampInput = screen.getByPlaceholderText('Select timestamp');
       expect(timestampInput).toHaveValue('');
 
-      await waitFor(() => userEvent.type(timestampInput, inputValue));
+      await userEvent.type(timestampInput, inputValue);
 
       expect(timestampInput).toHaveValue(inputValue);
       expect(screen.getByText('Submit')).toBeInTheDocument();
@@ -138,8 +134,8 @@ describe('Filters component', () => {
     const selectTypeOptionValue = SeekTypeOptions[0];
     const mockTypeOptionSelectLabel = selectTypeOptionValue.label;
 
-    beforeEach(() => {
-      renderComponent();
+    beforeEach(async () => {
+      await renderComponent();
       seekTypeSelects = screen.getAllByRole('listbox');
       options = screen.getAllByRole('option');
     });
@@ -164,7 +160,7 @@ describe('Filters component', () => {
   });
 
   it('stop loading when live mode is active', async () => {
-    renderComponent();
+    await renderComponent();
     await userEvent.click(screen.getByText('Stop loading'));
     const option = screen.getAllByRole('option');
     expect(option[3]).toHaveTextContent('Oldest First');
@@ -172,28 +168,24 @@ describe('Filters component', () => {
   });
 
   it('renders addFilter modal', async () => {
-    renderComponent();
-    await act(async () => {
-      await userEvent.click(
-        screen.getByRole('button', {
-          name: /add filters/i,
-        })
-      );
-    });
+    await renderComponent();
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: /add filters/i,
+      })
+    );
     expect(screen.getByTestId('messageFilterModal')).toBeInTheDocument();
   });
 
   describe('when there is active smart filter', () => {
     beforeEach(async () => {
-      renderComponent();
+      await renderComponent();
 
-      await act(async () => {
-        await userEvent.click(
-          screen.getByRole('button', {
-            name: /add filters/i,
-          })
-        );
-      });
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Add Filters',
+        })
+      );
 
       const filterName = 'filter name';
       const filterCode = 'filter code';
@@ -205,34 +197,34 @@ describe('Filters component', () => {
 
       const textAreaElement = textBoxElements[0] as HTMLTextAreaElement;
       const inputNameElement = textBoxElements[1];
-      await act(async () => {
-        textAreaElement.focus();
-        await userEvent.paste(filterName);
-        await userEvent.type(inputNameElement, filterCode);
-      });
 
-      expect(textAreaElement.value).toEqual(`${filterName}\n\n`);
-      expect(inputNameElement).toHaveValue(filterCode);
+      textAreaElement.focus();
+      await userEvent.paste(filterCode);
+      await userEvent.type(inputNameElement, filterName);
 
-      await act(async () => {
-        await userEvent.click(
-          within(messageFilterModal).getByRole('button', {
-            name: /add filter/i,
-          })
-        );
-      });
+      expect(textAreaElement).toHaveValue(`${filterCode}\n\n`);
+      expect(inputNameElement).toHaveValue('filter name');
+      expect(
+        screen.getByRole('button', {
+          name: 'Add filter',
+        })
+      ).toBeEnabled();
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Add filter',
+        })
+      );
+      await userEvent.tab();
     });
 
-    it('shows saved smart filter', () => {
+    it('shows saved smart filter', async () => {
       expect(screen.getByTestId('activeSmartFilter')).toBeInTheDocument();
     });
 
     it('delete the active smart Filter', async () => {
       const smartFilterElement = screen.getByTestId('activeSmartFilter');
       const deleteIcon = within(smartFilterElement).getByText('mock-CloseIcon');
-      await act(async () => {
-        await userEvent.click(deleteIcon);
-      });
+      await userEvent.click(deleteIcon);
 
       const anotherSmartFilterElement =
         screen.queryByTestId('activeSmartFilter');

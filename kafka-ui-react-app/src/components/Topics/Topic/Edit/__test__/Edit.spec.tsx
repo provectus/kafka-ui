@@ -37,14 +37,16 @@ jest.mock('lib/hooks/api/topics', () => ({
 
 const updateTopicMock = jest.fn();
 
-const renderComponent = () => {
+const renderComponent = async () => {
   const path = clusterTopicEditPath(clusterName, topicName);
-  render(
-    <WithRoute path={clusterTopicEditPath()}>
-      <Edit />
-    </WithRoute>,
-    { initialEntries: [path] }
-  );
+  await act(() => {
+    render(
+      <WithRoute path={clusterTopicEditPath()}>
+        <Edit />
+      </WithRoute>,
+      { initialEntries: [path] }
+    );
+  });
 };
 
 describe('Edit Component', () => {
@@ -59,7 +61,7 @@ describe('Edit Component', () => {
       isLoading: false,
       mutateAsync: updateTopicMock,
     }));
-    await act(() => renderComponent());
+    await renderComponent();
   });
 
   it('renders DangerZone component', async () => {
@@ -67,13 +69,13 @@ describe('Edit Component', () => {
   });
 
   it('submits form correctly', async () => {
-    await act(() => renderComponent());
+    await renderComponent();
     const btn = screen.getAllByText(/Update topic/i)[0];
     const field = screen.getByRole('spinbutton', {
       name: 'Min In Sync Replicas * Min In Sync Replicas *',
     });
-    await act(() => userEvent.type(field, '1'));
-    await act(() => userEvent.click(btn));
+    await userEvent.type(field, '1');
+    await userEvent.click(btn);
     expect(updateTopicMock).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith('../');
   });
