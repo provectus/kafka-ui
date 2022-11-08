@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.pages.topic.TopicCreateEditForm;
 import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
@@ -286,15 +285,18 @@ public class TopicTests extends BaseTest {
     topicCreateEditForm
         .waitUntilScreenReady()
         .setTopicName(TOPIC_TO_CREATE.getName())
+        .clickAddCustomParameterTypeButton()
         .setCustomParameterType(TOPIC_TO_CREATE.getCustomParameterType());
-//        .setCustomParameterValue(TOPIC_TO_CREATE.getCustomParameterValue());
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(topicCreateEditForm.isDeleteCustomParameterButtonEnabled()).as("isDeleteCustomParameterBtn()");
-    softly.assertThat(TOPIC_TO_CREATE.getCustomParameterValue()).isEqualTo("");
+    softly.assertThat(TOPIC_TO_CREATE.getCustomParameterValue()).as("getCustomParameterValue()").isEqualTo("producer");
     softly.assertAll();
-//        .setCustomParameterValue("");
-//    assertThat(topicCreateEditForm.getCustomParameterValue()).isEqualTo("");
-    assertThat(topicCreateEditForm.isValidationMessageCustomParameterValueVisible()).isTrue();
+    topicCreateEditForm
+        .clearCustomParameterValue();
+    softly.assertThat(topicCreateEditForm.getCustomParameterValue()).as("getCustomParameterValue()").isEqualTo("");
+    softly.assertThat(topicCreateEditForm.isValidationMessageCustomParameterValueVisible())
+        .as("isValidationMessageCustomParameterValueVisible()").isTrue();
+   softly.assertAll();
   }
 
     @AfterAll
