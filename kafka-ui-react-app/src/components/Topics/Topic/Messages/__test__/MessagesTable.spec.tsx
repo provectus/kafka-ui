@@ -1,5 +1,6 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 import MessagesTable from 'components/Topics/Topic/Messages/MessagesTable';
 import { SeekDirection, SeekType, TopicMessage } from 'generated-sources';
@@ -63,6 +64,19 @@ describe('MessagesTable', () => {
 
     it('should check the render', () => {
       expect(screen.getByRole('table')).toBeInTheDocument();
+    });
+
+    it('should check preview buttons', async () => {
+      const previewButtons = await screen.findAllByRole('button', {
+        name: 'Preview',
+      });
+      expect(previewButtons).toHaveLength(2);
+    });
+
+    it('should show preview modal with validation', async () => {
+      await userEvent.click(screen.getAllByText('Preview')[0]);
+      expect(screen.getByPlaceholderText('Field')).toHaveValue('');
+      expect(screen.getByPlaceholderText('Json Path')).toHaveValue('');
     });
 
     it('should check the if no elements is rendered in the table', () => {

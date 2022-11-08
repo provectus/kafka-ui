@@ -1,83 +1,41 @@
 ---
-version: '2'
+version: "2"
 services:
-
-  zookeeper0:
-    image: confluentinc/cp-zookeeper:5.2.4
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-    - 2181:2181
-
   kafka0:
-    image: confluentinc/cp-kafka:5.3.1
-    depends_on:
-      - zookeeper0
+    image: confluentinc/cp-kafka:7.2.1
+    hostname: kafka0
+    container_name: kafka0
+    ports:
+      - "9092:9092"
+      - "9997:9997"
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka0:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
-      JMX_PORT: 9997
-      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9997
-    ports:
-      - 9092:9092
-      - 9997:9997
-
-  kafka01:
-    image: confluentinc/cp-kafka:5.3.1
-    depends_on:
-      - zookeeper0
-    environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka01:29092,PLAINTEXT_HOST://localhost:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,PLAIN:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
-      JMX_PORT: 9999
-      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9999
-    ports:
-      - 9094:9094
-      - 9999:9999
-
-  zookeeper1:
-    image: confluentinc/cp-zookeeper:5.2.4
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - 2182:2181
-
-  kafka1:
-    image: confluentinc/cp-kafka:5.3.1
-    depends_on:
-      - zookeeper1
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper1:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://localhost:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka0:29092,PLAINTEXT_HOST://localhost:9092"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      JMX_PORT: 9998
-      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9998
-    ports:
-      - 9093:9093
-      - 9998:9998 
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9997
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka0:29093"
+      KAFKA_LISTENERS: "PLAINTEXT://kafka0:29092,CONTROLLER://kafka0:29093,PLAINTEXT_HOST://0.0.0.0:9092"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_LOG_DIRS: "/tmp/kraft-combined-logs"
+    volumes:
+      - ./scripts/update_run_cluster.sh:/tmp/update_run.sh
+      - ./scripts/clusterID:/tmp/clusterID
+    command: 'bash -c ''if [ ! -f /tmp/update_run.sh ]; then echo "ERROR: Did you forget the update_run.sh file that came with this docker-compose.yml file?" && exit 1 ; else /tmp/update_run.sh && /etc/confluent/docker/run ; fi'''
 
   schemaregistry0:
-    image: confluentinc/cp-schema-registry:5.5.0
+    image: confluentinc/cp-schema-registry:7.2.1
     depends_on:
-      - zookeeper0
       - kafka0
-      - kafka01
     environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka0:29092,PLAINTEXT://kafka01:29092
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper0:2181
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka0:29092
       SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
       SCHEMA_REGISTRY_HOST_NAME: schemaregistry0
       SCHEMA_REGISTRY_LISTENERS: http://schemaregistry0:8085
@@ -86,28 +44,10 @@ services:
       SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
       SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
     ports:
-    - 8085:8085
-
-  schemaregistry1:
-    image: confluentinc/cp-schema-registry:5.5.0
-    ports:
-      - 18085:8085
-    depends_on:
-      - zookeeper1
-      - kafka1
-    environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka1:29092
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper1:2181
-      SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
-      SCHEMA_REGISTRY_HOST_NAME: schemaregistry1
-      SCHEMA_REGISTRY_LISTENERS: http://schemaregistry1:8085
-
-      SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "http"
-      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
-      SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
+      - 8085:8085
 
   kafka-connect0:
-    image: confluentinc/cp-kafka-connect:6.0.1
+    image: confluentinc/cp-kafka-connect:7.2.1
     ports:
       - 8083:8083
     depends_on:
@@ -131,16 +71,14 @@ services:
       CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect0
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
 
-
   kafka-init-topics:
-    image: confluentinc/cp-kafka:5.3.1
+    image: confluentinc/cp-kafka:7.2.1
     volumes:
-       - ./message.json:/data/message.json
+      - ./message.json:/data/message.json
     depends_on:
-      - kafka1
+      - kafka0
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
-               cub kafka-ready -b kafka1:29092 1 30 && \
-               kafka-topics --create --topic second.users --partitions 3 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181 && \
-               kafka-topics --create --topic second.messages --partitions 2 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181 && \
-               kafka-topics --create --topic first.messages --partitions 2 --replication-factor 1 --if-not-exists --zookeeper zookeeper0:2181 && \
-               kafka-console-producer --broker-list kafka1:29092 -topic second.users < /data/message.json'"
+      cub kafka-ready -b kafka0:29092 1 30 && \
+      kafka-topics --create --topic users --partitions 3 --replication-factor 1 --if-not-exists --bootstrap-server kafka0:29092 && \
+      kafka-topics --create --topic messages --partitions 2 --replication-factor 1 --if-not-exists --bootstrap-server kafka0:29092 && \
+      kafka-console-producer --bootstrap-server kafka0:29092 --topic users < /data/message.json'"

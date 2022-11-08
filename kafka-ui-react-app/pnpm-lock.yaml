@@ -7,6 +7,7 @@ specifiers:
   '@babel/preset-env': ^7.18.2
   '@babel/preset-react': ^7.17.12
   '@babel/preset-typescript': ^7.17.12
+  '@floating-ui/react-dom-interactions': ^0.10.3
   '@hookform/error-message': ^2.0.0
   '@hookform/resolvers': ^2.7.1
   '@jest/types': ^29.0.3
@@ -19,7 +20,7 @@ specifiers:
   '@testing-library/dom': ^8.11.1
   '@testing-library/jest-dom': ^5.16.4
   '@testing-library/react': ^13.2.0
-  '@testing-library/user-event': ^13.5.0
+  '@testing-library/user-event': ^14.4.3
   '@types/eventsource': ^1.1.8
   '@types/jest': ^29.0.1
   '@types/lodash': ^4.14.172
@@ -30,7 +31,6 @@ specifiers:
   '@types/react-router-dom': ^5.3.3
   '@types/styled-components': ^5.1.13
   '@types/testing-library__jest-dom': ^5.14.5
-  '@types/yup': ^0.29.13
   '@typescript-eslint/eslint-plugin': ^5.29.0
   '@typescript-eslint/parser': ^5.29.0
   '@vitejs/plugin-react': ^2.0.0
@@ -88,13 +88,14 @@ specifiers:
   vite: ^3.0.2
   vite-tsconfig-paths: ^3.5.0
   whatwg-fetch: ^3.6.2
-  yup: ^0.32.9
+  yup: ^0.32.11
   zustand: ^4.1.1
 
 dependencies:
   '@babel/core': 7.18.2
   '@babel/plugin-syntax-flow': 7.18.6_@babel+core@7.18.2
   '@babel/plugin-transform-react-jsx': 7.18.6_@babel+core@7.18.2
+  '@floating-ui/react-dom-interactions': 0.10.3_ohobp6rpsmerwlq5ipwfh5yigy
   '@hookform/error-message': 2.0.0_l2dcsysovzdujulgxvsen7vbsm
   '@hookform/resolvers': 2.8.9_react-hook-form@7.6.9
   '@microsoft/fetch-event-source': 2.0.1
@@ -104,7 +105,6 @@ dependencies:
   '@tanstack/react-table': 8.5.10_ef5jwxihqo6n7gxfmzogljlgcm
   '@testing-library/react': 13.2.0_ef5jwxihqo6n7gxfmzogljlgcm
   '@types/testing-library__jest-dom': 5.14.5
-  '@types/yup': 0.29.13
   '@vitejs/plugin-react': 2.0.0_vite@3.0.2
   ace-builds: 1.7.1
   ajv: 8.8.2
@@ -146,7 +146,7 @@ devDependencies:
   '@openapitools/openapi-generator-cli': 2.5.1
   '@testing-library/dom': 8.13.0
   '@testing-library/jest-dom': 5.16.4
-  '@testing-library/user-event': 13.5.0_tlwynutqiyp5mns3woioasuxnq
+  '@testing-library/user-event': 14.4.3_tlwynutqiyp5mns3woioasuxnq
   '@types/eventsource': 1.1.8
   '@types/jest': 29.0.1
   '@types/lodash': 4.14.177
@@ -2735,6 +2735,41 @@ packages:
       - supports-color
     dev: true
 
+  /@floating-ui/core/1.0.1:
+    resolution: {integrity: sha512-bO37brCPfteXQfFY0DyNDGB3+IMe4j150KFQcgJ5aBP295p9nBGeHEs/p0czrRbtlHq4Px/yoPXO/+dOCcF4uA==}
+    dev: false
+
+  /@floating-ui/dom/1.0.4:
+    resolution: {integrity: sha512-maYJRv+sAXTy4K9mzdv0JPyNW5YPVHrqtY90tEdI6XNpuLOP26Ci2pfwPsKBA/Wh4Z3FX5sUrtUFTdMYj9v+ug==}
+    dependencies:
+      '@floating-ui/core': 1.0.1
+    dev: false
+
+  /@floating-ui/react-dom-interactions/0.10.3_ohobp6rpsmerwlq5ipwfh5yigy:
+    resolution: {integrity: sha512-UEHqdnzyoiWNU5az/tAljr9iXFzN18DcvpMqW+/cXz4FEhDEB1ogLtWldOWCujLerPBnSRocADALafelOReMpw==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      '@floating-ui/react-dom': 1.0.0_ef5jwxihqo6n7gxfmzogljlgcm
+      aria-hidden: 1.2.1_7cpxmzzodpxnolj5zcc5cr63ji
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+    transitivePeerDependencies:
+      - '@types/react'
+    dev: false
+
+  /@floating-ui/react-dom/1.0.0_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-uiOalFKPG937UCLm42RxjESTWUVpbbatvlphQAU6bsv+ence6IoVG8JOUZcy8eW81NkU+Idiwvx10WFLmR4MIg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      '@floating-ui/dom': 1.0.4
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+    dev: false
+
   /@hookform/error-message/2.0.0_l2dcsysovzdujulgxvsen7vbsm:
     resolution: {integrity: sha512-Y90nHzjgL2MP7GFy75kscdvxrCTjtyxGmOLLxX14nd08OXRIh9lMH/y9Kpdo0p1IPowJBiZMHyueg7p+yrqynQ==}
     peerDependencies:
@@ -3339,13 +3374,12 @@ packages:
       react-dom: 18.1.0_react@18.1.0
     dev: false
 
-  /@testing-library/user-event/13.5.0_tlwynutqiyp5mns3woioasuxnq:
-    resolution: {integrity: sha512-5Kwtbo3Y/NowpkbRuSepbyMFkZmHgD+vPzYB/RJ4oxt5Gj/avFFBYjhw27cqSVPVw/3a67NK1PbiIr9k4Gwmdg==}
-    engines: {node: '>=10', npm: '>=6'}
+  /@testing-library/user-event/14.4.3_tlwynutqiyp5mns3woioasuxnq:
+    resolution: {integrity: sha512-kCUc5MEwaEMakkO5x7aoD+DLi02ehmEM2QCGWvNqAS1dV/fAvORWEjnjsEIvml59M7Y5kCkWN6fCCyPOe8OL6Q==}
+    engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
     dependencies:
-      '@babel/runtime': 7.17.9
       '@testing-library/dom': 8.13.0
     dev: true
 
@@ -3545,10 +3579,6 @@ packages:
     resolution: {integrity: sha512-gmEaFwpj/7f/ROdtIlci1R1VYU1J4j95m8T+Tj3iBgiBFKg1foE/PSl93bBd5T9LDXNPo8UlNN6W0qwD8O5OaA==}
     dependencies:
       '@types/yargs-parser': 20.2.0
-
-  /@types/yup/0.29.13:
-    resolution: {integrity: sha512-qRyuv+P/1t1JK1rA+elmK1MmCL1BapEzKKfbEhDBV/LMMse4lmhZ/XbgETI39JveDJRpLjmToOI6uFtMW/WR2g==}
-    dev: false
 
   /@typescript-eslint/eslint-plugin/5.29.0_uaxwak76nssfibsnotx5epygnu:
     resolution: {integrity: sha512-kgTsISt9pM53yRFQmLZ4npj99yGl3x3Pl7z4eA66OuTzAGC4bQB5H5fuLwPnqTKU3yyrrg4MIhjF17UYnL4c0w==}
@@ -3905,6 +3935,21 @@ packages:
   /argparse/2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
     dev: true
+
+  /aria-hidden/1.2.1_7cpxmzzodpxnolj5zcc5cr63ji:
+    resolution: {integrity: sha512-PN344VAf9j1EAi+jyVHOJ8XidQdPVssGco39eNcsGdM4wcsILtxrKLkbuiMfLWYROK1FjRQasMWCBttrhjnr6A==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      '@types/react': ^16.9.0 || ^17.0.0 || ^18.0.0
+      react: ^16.9.0 || ^17.0.0 || ^18.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@types/react': 18.0.9
+      react: 18.1.0
+      tslib: 2.4.0
+    dev: false
 
   /aria-query/4.2.2:
     resolution: {integrity: sha512-o/HelwhuKpTj/frsOsbNLNgnNGVIFsVP/SW2BSF14gVl7kAfMOJ6/8wUAUvG1R1NHKrfG+2sHZTu0yauT1qBrA==}
@@ -8538,7 +8583,6 @@ packages:
 
   /tslib/2.4.0:
     resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
-    dev: true
 
   /tsutils/3.21.0_typescript@4.7.4:
     resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==}

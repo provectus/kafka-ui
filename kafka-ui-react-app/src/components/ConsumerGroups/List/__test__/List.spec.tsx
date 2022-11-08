@@ -48,10 +48,10 @@ describe('List', () => {
       expect(screen.getByText('groupId2')).toBeInTheDocument();
     });
 
-    it('handles onRowClick', () => {
+    it('handles onRowClick', async () => {
       const row = screen.getByRole('row', { name: 'groupId1 0 1 1' });
       expect(row).toBeInTheDocument();
-      userEvent.click(row);
+      await userEvent.click(row);
       expect(mockedUsedNavigate).toHaveBeenCalledWith(
         clusterConsumerGroupDetailsPath(':clusterName', 'groupId1')
       );

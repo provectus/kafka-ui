@@ -3,39 +3,58 @@ package com.provectus.kafka.ui.pages.schema;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.$$x;
+import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
+import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
 public class SchemaDetails {
 
     protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
+    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+    protected SelenideElement actualVersionTextArea = $x("//div[@id='schema']");
+    protected SelenideElement compatibilityField = $x("//h4[contains(text(),'Compatibility')]/../p");
+    protected SelenideElement editSchemaBtn = $x("//button[contains(text(),'Edit Schema')]");
+    protected SelenideElement removeBtn = $x("//*[contains(text(),'Remove')]");
+    protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
+    protected SelenideElement schemaTypeDdl = $x("//h4[contains(text(),'Type')]/../p");
+    protected String schemaHeaderLocator = "//h1[contains(text(),'%s')]";
 
     @Step
     public SchemaDetails waitUntilScreenReady() {
-        $("div#schema").shouldBe(Condition.visible);
+        loadingSpinner.shouldBe(Condition.disappear);
+        actualVersionTextArea.shouldBe(Condition.visible);
         return this;
     }
 
     @Step
     public String getCompatibility() {
-        return $x("//h4[contains(text(),'Compatibility')]/../p").getText();
+        return compatibilityField.getText();
+    }
+
+    @Step
+    public boolean isSchemaHeaderVisible(String schemaName) {
+        return isVisible($x(String.format(schemaHeaderLocator,schemaName)));
+    }
+
+    @Step
+    public String getSchemaType() {
+        return schemaTypeDdl.getText();
     }
 
     @Step
     public SchemaDetails openEditSchema(){
-        $x("//button[text()= 'Edit Schema']").click();
+        editSchemaBtn.shouldBe(Condition.visible).click();
         return this;
     }
 
     @Step
-    public SchemaRegistryList removeSchema() {
+    public SchemaDetails removeSchema() {
         clickByJavaScript(dotMenuBtn);
-        $(By.xpath("//*[contains(text(),'Remove')]")).click();
-        SelenideElement confirmButton = $x("//div[@role=\"dialog\"]//button[text()='Confirm']");
-        confirmButton.shouldBe(Condition.enabled).click();
-        confirmButton.shouldBe(Condition.disappear);
-        return new SchemaRegistryList();
+        removeBtn.shouldBe(Condition.enabled).click();
+        confirmBtn.shouldBe(Condition.visible).click();
+        confirmBtn.shouldBe(Condition.disappear);
+        return this;
     }
 }

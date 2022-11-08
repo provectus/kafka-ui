@@ -6,7 +6,7 @@ machine for local development.
 Before you begin contributing you must have:
 
 * A GitHub account
-* `Java` 13 or newer
+* `Java` 17 or newer
 * `Git`
 * `Docker`
 
@@ -17,18 +17,19 @@ Before you begin contributing you must have:
 ```sh
 brew cask
 ```
-3. Install JDK 13 via Homebrew cask:
+3. Install Eclipse Temurin 17 via Homebrew cask:
 ```sh
-brew tap adoptopenjdk/openjdk
-brew install adoptopenjdk13
+brew tap homebrew/cask-versions
+brew install temurin17
 ```
 4. Verify Installation
 ```sh
 java -version
 ```
-Note : In case JAVA13 is not set as your default Java then you can consider to include JAVA13 in your PATH after installation
+Note : In case OpenJDK 17 is not set as your default Java, you can consider to include it in your `$PATH` after installation
 ```sh
-export PATH="/Library/Java/JavaVirtualMachines/adoptopenjdk-13.jdk/Contents/Home/bin:$PATH
+export PATH="$(/usr/libexec/java_home -v 17)/bin:$PATH"
+export JAVA_HOME="$(/usr/libexec/java_home -v 17)"
 ```
 
 ## Tips

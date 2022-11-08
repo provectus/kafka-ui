@@ -13,7 +13,6 @@ import {
   clusterSchemasPath,
   clusterTopicsPath,
 } from 'lib/paths';
-import { act } from 'react-dom/test-utils';
 import { useClusters } from 'lib/hooks/api/clusters';
 import { onlineClusterPayload } from 'lib/fixtures/clusters';
 
@@ -54,14 +53,12 @@ describe('Cluster', () => {
     (useClusters as jest.Mock).mockImplementation(() => ({
       data: payload,
     }));
-    await act(() => {
-      render(
-        <WithRoute path={`${clusterPath()}/*`}>
-          <ClusterComponent />
-        </WithRoute>,
-        { initialEntries: [pathname] }
-      );
-    });
+    await render(
+      <WithRoute path={`${clusterPath()}/*`}>
+        <ClusterComponent />
+      </WithRoute>,
+      { initialEntries: [pathname] }
+    );
   };
 
   it('renders Brokers', async () => {

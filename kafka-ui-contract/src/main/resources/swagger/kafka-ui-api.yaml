@@ -862,28 +862,6 @@ paths:
         200:
           description: OK
 
-  /api/clusters/{clusterName}/consumer-groups:
-    get:
-      tags:
-        - Consumer Groups
-      summary: get all ConsumerGroups
-      operationId: getConsumerGroups
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ConsumerGroup'
-
   /api/clusters/{clusterName}/consumer-groups/{id}/offsets:
     post:
       tags:
@@ -1561,31 +1539,6 @@ paths:
         200:
           description: OK
 
-  /api/clusters/{clusterName}/ksql:
-    description: Deprecated - use ksql/v2 instead!
-    post:
-      tags:
-        - Ksql
-      summary: executeKsqlCommand
-      operationId: executeKsqlCommand
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/KsqlCommand'
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/KsqlCommandResponse'
 
   /api/clusters/{clusterName}/ksql/v2:
     post:
@@ -1780,7 +1733,7 @@ paths:
     get:
       tags:
         - TimeStampFormat
-      summary: getTimeStampFormat
+      summary: get system default datetime format
       operationId: getTimeStampFormat
       responses:
         200:
@@ -1789,6 +1742,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TimeStampFormat'
+
+  /api/info/timestampformat/iso:
+    get:
+      tags:
+        - TimeStampFormat
+      summary: get system default datetime format (in ISO format, for JS)
+      operationId: getTimeStampFormatISO
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeStampFormat'
+
 components:
   schemas:
     TopicSerdeSuggestion:
@@ -2260,6 +2228,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ConfigSynonym"
+        doc:
+          type: string
       required:
         - name
 
@@ -2437,6 +2407,8 @@ components:
         isCancelled:
           type: boolean
         messagesConsumed:
+          type: integer
+        filterApplyErrors:
           type: integer
 
 
@@ -2986,18 +2958,6 @@ components:
           items:
             $ref: '#/components/schemas/ConnectorPluginConfig'
 
-    KsqlCommand:
-      type: object
-      properties:
-        ksql:
-          type: string
-        streamsProperties:
-          type: object
-          additionalProperties:
-            type: string
-      required:
-        - ksql
-
     KsqlCommandV2:
       type: object
       properties:
@@ -3043,31 +3003,6 @@ components:
           type: string
         valueFormat:
           type: string
-
-    KsqlCommandResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/Table'
-        message:
-          type: string
-
-    Table:
-      type: object
-      properties:
-        headers:
-          type: array
-          items:
-            type: string
-        rows:
-          type: array
-          items:
-            type: array
-            items:
-              type: string
-      required:
-        - headers
-        - rows
 
     KsqlResponse:
       type: object

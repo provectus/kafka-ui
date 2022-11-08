@@ -9,11 +9,11 @@ import fetchMock from 'fetch-mock';
 
 const clusterName = 'testClusterName';
 
-const selectForwardOption = () => {
+const selectForwardOption = async () => {
   const dropdownElement = screen.getByRole('listbox');
   // clicks to open dropdown
-  userEvent.click(within(dropdownElement).getByRole('option'));
-  userEvent.click(
+  await userEvent.click(within(dropdownElement).getByRole('option'));
+  await userEvent.click(
     screen.getByText(CompatibilityLevelCompatibilityEnum.FORWARD)
   );
 };
@@ -59,19 +59,19 @@ describe('GlobalSchemaSelector', () => {
 
   it('shows popup when select value is changed', async () => {
     expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FULL);
-    selectForwardOption();
+    await selectForwardOption();
     expect(screen.getByText('Confirm the action')).toBeInTheDocument();
   });
 
-  it('resets select value when cancel is clicked', () => {
-    selectForwardOption();
-    userEvent.click(screen.getByText('Cancel'));
+  it('resets select value when cancel is clicked', async () => {
+    await selectForwardOption();
+    await userEvent.click(screen.getByText('Cancel'));
     expect(screen.queryByText('Confirm the action')).not.toBeInTheDocument();
     expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FULL);
   });
 
   it('sets new schema when confirm is clicked', async () => {
-    selectForwardOption();
+    await selectForwardOption();
     const putNewCompatibilityMock = fetchMock.putOnce(
       `api/clusters/${clusterName}/schemas/compatibility`,
       200,

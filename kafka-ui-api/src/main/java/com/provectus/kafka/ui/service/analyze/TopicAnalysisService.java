@@ -2,12 +2,12 @@ package com.provectus.kafka.ui.service.analyze;
 
 import static com.provectus.kafka.ui.emitter.AbstractEmitter.NO_MORE_DATA_EMPTY_POLLS_COUNT;
 
+import com.provectus.kafka.ui.emitter.OffsetsInfo;
 import com.provectus.kafka.ui.exception.TopicAnalysisException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.TopicAnalysisDTO;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
 import com.provectus.kafka.ui.service.TopicsService;
-import com.provectus.kafka.ui.util.OffsetsSeek.WaitingOffsets;
 import java.io.Closeable;
 import java.time.Duration;
 import java.time.Instant;
@@ -119,14 +119,14 @@ public class TopicAnalysisService {
         consumer.assign(topicPartitions);
         consumer.seekToBeginning(topicPartitions);
 
-        var waitingOffsets = new WaitingOffsets(topicId.topicName, consumer, topicPartitions);
-        for (int emptyPolls = 0; !waitingOffsets.endReached() && emptyPolls < NO_MORE_DATA_EMPTY_POLLS_COUNT;) {
+        var offsetsInfo = new OffsetsInfo(consumer, topicId.topicName);
+        for (int emptyPolls = 0; !offsetsInfo.assignedPartitionsFullyPolled()
+            && emptyPolls < NO_MORE_DATA_EMPTY_POLLS_COUNT;) {
           var polled = consumer.poll(Duration.ofSeconds(3));
           emptyPolls = polled.isEmpty() ? emptyPolls + 1 : 0;
           polled.forEach(r -> {
             totalStats.apply(r);
             partitionStats.get(r.partition()).apply(r);
-            waitingOffsets.markPolled(r);
           });
           updateProgress();
         }

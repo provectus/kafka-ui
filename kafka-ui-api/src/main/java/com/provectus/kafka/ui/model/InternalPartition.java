@@ -13,12 +13,12 @@ public class InternalPartition {
   private final int inSyncReplicasCount;
   private final int replicasCount;
 
-  private final long offsetMin;
-  private final long offsetMax;
+  private final Long offsetMin;
+  private final Long offsetMax;
 
   // from log dir
-  private final long segmentSize;
-  private final long segmentCount;
+  private final Long segmentSize;
+  private final Integer segmentCount;
 
 
 }

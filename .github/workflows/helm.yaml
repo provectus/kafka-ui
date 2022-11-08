@@ -12,9 +12,18 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Helm tool installer
-        uses: Azure/setup-helm@v1
+        uses: Azure/setup-helm@v3
       - name: Setup Kubeval
         uses: lra/setup-kubeval@v1.0.1
+      #check, was helm version increased in Chart.yaml?
+      - name: Check version
+        shell: bash
+        run: |
+          helm_version_new=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
+          helm_version_old=$(curl -s https://raw.githubusercontent.com/provectus/kafka-ui/master/charts/kafka-ui/Chart.yaml |   grep version | awk  '{print $2}' )
+          echo $helm_version_old
+          echo $helm_version_new
+          if [[ "$helm_version_new" > "$helm_version_old" ]]; then exit 0 ; else exit 1 ; fi
       - name: Run kubeval
         shell: bash
         run: |
@@ -27,17 +36,3 @@ jobs:
               echo $version;
               helm template --kube-version $version --set ingress.enabled=true charts/kafka-ui -f charts/kafka-ui/values.yaml | kubeval --additional-schema-locations https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict -v $version;
             done
-      #check, was helm version increased in Chart.yaml?
-      - name: Check version
-        shell: bash
-        run: |
-          git fetch
-          git checkout master
-          helm_version_old=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
-          git checkout $GITHUB_HEAD_REF
-          helm_version_new=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk  '{print $2}')
-          echo $helm_version_old
-          echo $helm_version_new
-          if [[ "$helm_version_new" > "$helm_version_old" ]]; then exit 0 ; else exit 1 ; fi
-
-

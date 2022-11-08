@@ -11,7 +11,6 @@ import { screen, waitFor } from '@testing-library/dom';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import userEvent from '@testing-library/user-event';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
-import { act } from '@testing-library/react';
 import { ConnectorState, ConsumerGroupState } from 'generated-sources';
 
 const mockedUsedNavigate = jest.fn();
@@ -126,10 +125,10 @@ describe('Table', () => {
 
   it('renders SizeCell', () => {
     renderComponent();
-    expect(screen.getByText('1KB')).toBeInTheDocument();
-    expect(screen.getByText('3Bytes')).toBeInTheDocument();
-    expect(screen.getByText('49KB')).toBeInTheDocument();
-    expect(screen.getByText('1MB')).toBeInTheDocument();
+    expect(screen.getByText('1 KB')).toBeInTheDocument();
+    expect(screen.getByText('3 Bytes')).toBeInTheDocument();
+    expect(screen.getByText('49 KB')).toBeInTheDocument();
+    expect(screen.getByText('1 MB')).toBeInTheDocument();
   });
 
   it('renders TimestampCell', () => {
@@ -155,15 +154,15 @@ describe('Table', () => {
   });
 
   describe('ExpanderCell', () => {
-    it('renders button', () => {
+    it('renders button', async () => {
       renderComponent({ getRowCanExpand: () => true });
       const btns = screen.getAllByRole('button', { name: 'Expand row' });
       expect(btns.length).toEqual(data.length);
 
       expect(screen.queryByText('I am expanded row')).not.toBeInTheDocument();
-      userEvent.click(btns[2]);
+      await userEvent.click(btns[2]);
       expect(screen.getByText('I am expanded row')).toBeInTheDocument();
-      userEvent.click(btns[0]);
+      await userEvent.click(btns[0]);
       expect(screen.getAllByText('I am expanded row').length).toEqual(2);
     });
 
@@ -213,20 +212,20 @@ describe('Table', () => {
       expect(lastBtn).toBeInTheDocument();
       expect(lastBtn).toBeEnabled();
 
-      userEvent.click(nextBtn);
+      await userEvent.click(nextBtn);
       expect(screen.getByText('ipsum')).toBeInTheDocument();
       expect(prevBtn).toBeEnabled();
       expect(firstBtn).toBeEnabled();
 
-      userEvent.click(lastBtn);
+      await userEvent.click(lastBtn);
       expect(screen.getByText('sit')).toBeInTheDocument();
       expect(lastBtn).toBeDisabled();
       expect(nextBtn).toBeDisabled();
 
-      userEvent.click(prevBtn);
+      await userEvent.click(prevBtn);
       expect(screen.getByText('dolor')).toBeInTheDocument();
 
-      userEvent.click(firstBtn);
+      await userEvent.click(firstBtn);
       expect(screen.getByText('lorem')).toBeInTheDocument();
     });
 
@@ -243,22 +242,22 @@ describe('Table', () => {
         expect(goToPage).toBeInTheDocument();
         expect(goToPage).toHaveValue(1);
       });
-      it('updates page on Go To page change', () => {
+      it('updates page on Go To page change', async () => {
         const goToPage = getGoToPageInput();
-        userEvent.clear(goToPage);
-        userEvent.type(goToPage, '2');
+        await userEvent.clear(goToPage);
+        await userEvent.type(goToPage, '2');
         expect(goToPage).toHaveValue(2);
         expect(screen.getByText('ipsum')).toBeInTheDocument();
       });
-      it('does not update page on Go To page change if page is out of range', () => {
+      it('does not update page on Go To page change if page is out of range', async () => {
         const goToPage = getGoToPageInput();
-        userEvent.type(goToPage, '5');
+        await userEvent.type(goToPage, '5');
         expect(goToPage).toHaveValue(15);
         expect(screen.getByText('No rows found')).toBeInTheDocument();
       });
-      it('does not update page on Go To page change if page is not a number', () => {
+      it('does not update page on Go To page change if page is not a number', async () => {
         const goToPage = getGoToPageInput();
-        userEvent.type(goToPage, 'abc');
+        await userEvent.type(goToPage, 'abc');
         expect(goToPage).toHaveValue(1);
       });
     });
@@ -266,12 +265,10 @@ describe('Table', () => {
 
   describe('Sorting', () => {
     it('sort rows', async () => {
-      await act(() =>
-        renderComponent({
-          path: '/?sortBy=text&&sortDirection=desc',
-          enableSorting: true,
-        })
-      );
+      await renderComponent({
+        path: '/?sortBy=text&&sortDirection=desc',
+        enableSorting: true,
+      });
       expect(screen.getAllByRole('row').length).toEqual(data.length + 1);
       const th = screen.getByRole('columnheader', { name: 'Text' });
       expect(th).toBeInTheDocument();
@@ -319,42 +316,42 @@ describe('Table', () => {
       expect(checkboxes[4]).toBeDisabled();
     });
 
-    it('renders action bar', () => {
+    it('renders action bar', async () => {
       expect(screen.getAllByRole('row').length).toEqual(data.length + 1);
-      expect(screen.queryByText('I am Action Bar')).not.toBeInTheDocument();
+      expect(screen.queryByText('I am Action Bar')).toBeInTheDocument();
       const checkboxes = screen.getAllByRole('checkbox');
       expect(checkboxes.length).toEqual(data.length + 1);
-      userEvent.click(checkboxes[2]);
+      await userEvent.click(checkboxes[2]);
       expect(screen.getByText('I am Action Bar')).toBeInTheDocument();
     });
   });
   describe('Clickable Row', () => {
     const onRowClick = jest.fn();
-    it('handles onRowClick', () => {
+    it('handles onRowClick', async () => {
       renderComponent({ onRowClick });
       const rows = screen.getAllByRole('row');
       expect(rows.length).toEqual(data.length + 1);
-      userEvent.click(rows[1]);
+      await userEvent.click(rows[1]);
       expect(onRowClick).toHaveBeenCalledTimes(1);
     });
-    it('does nothing unless onRowClick is provided', () => {
+    it('does nothing unless onRowClick is provided', async () => {
       renderComponent();
       const rows = screen.getAllByRole('row');
       expect(rows.length).toEqual(data.length + 1);
-      userEvent.click(rows[1]);
+      await userEvent.click(rows[1]);
     });
-    it('does not handle onRowClick if enableRowSelection', () => {
+    it('does not handle onRowClick if enableRowSelection', async () => {
       renderComponent({ onRowClick, enableRowSelection: true });
       const rows = screen.getAllByRole('row');
       expect(rows.length).toEqual(data.length + 1);
-      userEvent.click(rows[1]);
+      await userEvent.click(rows[1]);
       expect(onRowClick).not.toHaveBeenCalled();
     });
-    it('does not handle onRowClick if expandable rows', () => {
+    it('does not handle onRowClick if expandable rows', async () => {
       renderComponent({ onRowClick, getRowCanExpand: () => true });
       const rows = screen.getAllByRole('row');
       expect(rows.length).toEqual(data.length + 1);
-      userEvent.click(rows[1]);
+      await userEvent.click(rows[1]);
       expect(onRowClick).not.toHaveBeenCalled();
     });
   });

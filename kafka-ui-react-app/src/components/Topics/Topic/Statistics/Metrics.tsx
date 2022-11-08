@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   useAnalyzeTopic,
   useCancelTopicAnalysis,
@@ -15,6 +15,7 @@ import {
 } from 'components/common/PropertiesList/PropertiesList.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useTimeFormat } from 'lib/hooks/useTimeFormat';
+import { calculateTimer } from 'lib/dateTimeHelpers';
 
 import * as S from './Statistics.styles';
 import Total from './Indicators/Total';
@@ -25,13 +26,14 @@ const Metrics: React.FC = () => {
   const formatTimestamp = useTimeFormat();
 
   const params = useAppParams<RouteParamsClusterTopic>();
-  const [isAnalyzing, setIsAnalyzing] = React.useState(true);
+
+  const [isAnalyzing, setIsAnalyzing] = useState(true);
   const analyzeTopic = useAnalyzeTopic(params);
   const cancelTopicAnalysis = useCancelTopicAnalysis(params);
 
   const { data } = useTopicAnalysis(params, isAnalyzing);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (data && !data.progress) {
       setIsAnalyzing(false);
     }
@@ -44,7 +46,10 @@ const Metrics: React.FC = () => {
   if (data.progress) {
     return (
       <S.ProgressContainer>
-        <ProgressBar completed={data.progress.completenessPercent || 0} />
+        <S.ProgressBarWrapper>
+          <ProgressBar completed={data.progress.completenessPercent || 0} />
+          <span> {Math.floor(data.progress.completenessPercent || 0)} %</span>
+        </S.ProgressBarWrapper>
         <Button
           onClick={async () => {
             await cancelTopicAnalysis.mutateAsync();
@@ -58,9 +63,12 @@ const Metrics: React.FC = () => {
         <List>
           <Label>Started at</Label>
           <span>{formatTimestamp(data.progress.startedAt, 'hh:mm:ss a')}</span>
+          <Label>Passed since start</Label>
+          <span>{calculateTimer(data.progress.startedAt as number)}</span>
           <Label>Scanned messages</Label>
+          <span>{data.progress.msgsScanned}</span>
+          <Label>Scanned size</Label>
           <span>
-            {data.progress.msgsScanned} /{' '}
             <BytesFormatted value={data.progress.bytesScanned} />
           </span>
         </List>
@@ -90,7 +98,6 @@ const Metrics: React.FC = () => {
           Restart Analysis
         </Button>
       </S.ActionsBar>
-
       <Informers.Wrapper>
         <Total {...totalStats} />
         {totalStats.keySize && (

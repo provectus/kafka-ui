@@ -25,17 +25,17 @@ describe('Custom Input', () => {
   describe('number', () => {
     const getInput = () => screen.getByRole('spinbutton');
 
-    it('allows user to type only numbers', () => {
+    it('allows user to type only numbers', async () => {
       render(setupWrapper({ type: 'number' }));
       const input = getInput();
-      userEvent.type(input, 'abc131');
+      await userEvent.type(input, 'abc131');
       expect(input).toHaveValue(131);
     });
 
-    it('allows negative values', () => {
+    it('allows negative values', async () => {
       render(setupWrapper({ type: 'number' }));
       const input = getInput();
-      userEvent.type(input, '-2');
+      await userEvent.type(input, '-2');
       expect(input).toHaveValue(-2);
     });
   });

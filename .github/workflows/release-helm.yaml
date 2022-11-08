@@ -19,19 +19,21 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
 
-      - uses: azure/setup-helm@v1
+      - uses: azure/setup-helm@v3
 
       - name: add chart #realse helm with new version
         run: |
-          echo "VERSION=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk '{print $2}')" >> $GITHUB_ENV
-          MSG=$(helm package  charts/kafka-ui)
+          VERSION=$(cat charts/kafka-ui/Chart.yaml  | grep version | awk '{print $2}')
+          echo "HELM_VERSION=$(echo ${VERSION})" >> $GITHUB_ENV
+          MSG=$(helm package charts/kafka-ui)
           git fetch origin
           git stash
           git checkout -b gh-pages origin/gh-pages
+          git pull
           helm repo index .
           git add -f ${MSG##*/} index.yaml
-          git commit -m "release ${{ env.VERSION }}"
+          git commit -m "release ${VERSION}"
           git push
       - uses: rickstaa/action-create-tag@v1 #create new tag
         with:
-          tag: "charts/kafka-ui-${{ env.VERSION }}"
+          tag: "charts/kafka-ui-${{ env.HELM_VERSION }}"
