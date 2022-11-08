@@ -20,8 +20,8 @@ public class TopicDetails {
   protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
   protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
   protected SelenideElement dotMessageMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").get(1);
-  protected SelenideElement messageValueCell = $(By.cssSelector(".sc-FyeoB.cJMvpm td:nth-child(6)"));
-  protected SelenideElement messageAmountCell = $x("//table[@class='sc-hiSbEG cvnuic']/tbody/tr/td[5]");
+  protected SelenideElement messageValueCell = $(By.cssSelector("//tbody/tr[1]/td[6]"));
+  protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
   protected SelenideElement copiedSuccessfullyPopUpMessage = $x("//div[text() = 'Copied successfully!']");
   protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
