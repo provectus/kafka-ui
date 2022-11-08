@@ -13,7 +13,7 @@ jobs:
         run: |
           echo
           tag='${{ github.event.pull_request.number }}'
-          echo ::set-output name=tag::${tag}
+          echo "tag=${tag}" >> $GITHUB_OUTPUT
       - name: Configure AWS credentials for Kafka-UI account
         uses: aws-actions/configure-aws-credentials@v1
         with:
