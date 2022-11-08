@@ -136,12 +136,21 @@ describe('BrokersList Component', () => {
         }));
       });
 
-      it('renders empty table', async () => {
+      it('renders list of all brokers', async () => {
         renderComponent();
         expect(screen.getByRole('table')).toBeInTheDocument();
-        expect(
-          screen.getByRole('row', { name: 'Disk usage data not available' })
-        ).toBeInTheDocument();
+        expect(screen.getAllByRole('row').length).toEqual(3);
+      });
+      it('opens broker when row clicked', async () => {
+        renderComponent();
+        await act(() => {
+          userEvent.click(screen.getByRole('cell', { name: '1' }));
+        });
+        await waitFor(() =>
+          expect(mockedUsedNavigate).toBeCalledWith(
+            clusterBrokerPath(clusterName, '1')
+          )
+        );
       });
     });
   });

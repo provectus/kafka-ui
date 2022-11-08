@@ -29,14 +29,26 @@ const BrokersList: React.FC = () => {
   } = clusterStats;
 
   const rows = React.useMemo(() => {
-    if (!diskUsage) return [];
+    let brokersResource;
+    if (!diskUsage) {
+      brokersResource =
+        brokers?.map(({ id, host, port }) => {
+          return {
+            brokerId: id,
+            segmentSize: 'N/A',
+            segmentCount: 'N/A',
+          };
+        }) || [];
+    } else {
+      brokersResource = diskUsage;
+    }
 
-    return diskUsage.map(({ brokerId, segmentSize, segmentCount }) => {
+    return brokersResource.map(({ brokerId, segmentSize, segmentCount }) => {
       const broker = brokers?.find(({ id }) => id === brokerId);
       return {
         brokerId,
-        size: segmentSize,
-        count: segmentCount,
+        size: segmentSize || 'N/A',
+        count: segmentCount || 'N/A',
         port: broker?.port,
         host: broker?.host,
       };
