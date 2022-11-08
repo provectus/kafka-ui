@@ -2,11 +2,9 @@ import React, { useMemo } from 'react';
 import { useRoleBasedAccessMock } from 'lib/hooks/api/roles';
 import { UserPermission } from 'generated-sources';
 
-interface Types {
-  roles: Map<string, UserPermission[]>;
-}
-
-const RolesAccessContext = React.createContext<Types>({} as Types);
+export const RolesAccessContext = React.createContext(
+  new Map() as Map<string, UserPermission[]>
+);
 
 export const RolesAccessProvider: React.FC<
   React.PropsWithChildren<unknown>
@@ -29,7 +27,7 @@ export const RolesAccessProvider: React.FC<
   }, [data]);
 
   return (
-    <RolesAccessContext.Provider value={{ roles }}>
+    <RolesAccessContext.Provider value={roles}>
       {children}
     </RolesAccessContext.Provider>
   );
