@@ -35,21 +35,22 @@ public class QaseExtension implements TestExecutionListener {
     private final ResultsApi resultsApi = new ResultsApi(apiClient);
     private final Map<TestIdentifier, Long> testStartTimes = new ConcurrentHashMap<>();
     private static final String QASE_PROJECT = "KAFKAUI";
-    private static final String QASE_ENABLE = "true";
 
     static {
         String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
-        if (qaseApiToken == null || StringUtils.isEmpty(qaseApiToken)) {
-            throw new RuntimeException("QaseIO API token should be present");
+        if (StringUtils.isEmpty(qaseApiToken)) {
+            log.warn("QASEIO_API_TOKEN system property is not set. Support for Qase will be disabled.");
+            System.setProperty("QASE_ENABLE", "false");
+        } else {
+            System.setProperty("QASE_ENABLE", "true");
+            System.setProperty("QASE_PROJECT_CODE", QASE_PROJECT);
+            System.setProperty("QASE_API_TOKEN", qaseApiToken);
+            System.setProperty("QASE_USE_BULK", "false");
+            if ("true".equalsIgnoreCase(System.getProperty("QASEIO_CREATE_TESTRUN"))) {
+              System.setProperty("QASE_RUN_NAME", "Automation run " +
+                   new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+            }
         }
-        if ("true".equalsIgnoreCase(System.getProperty("QASEIO_CREATE_TESTRUN"))) {
-            System.setProperty("QASE_RUN_NAME", "Automation run " +
-                    new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
-        }
-        System.setProperty("QASE_ENABLE", QASE_ENABLE);
-        System.setProperty("QASE_PROJECT_CODE", QASE_PROJECT);
-        System.setProperty("QASE_API_TOKEN", qaseApiToken);
-        System.setProperty("QASE_USE_BULK", "false");
     }
 
     @Override
