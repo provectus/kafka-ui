@@ -92,7 +92,7 @@ jobs:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           repository: Narekmat/kafka-ui
           event-type: change-app-version
           client-payload: '{"appversion": "${{ needs.release.outputs.version }}"}'
