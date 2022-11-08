@@ -287,16 +287,12 @@ public class TopicTests extends BaseTest {
         .setTopicName(TOPIC_TO_CREATE.getName())
         .clickAddCustomParameterTypeButton()
         .setCustomParameterType(TOPIC_TO_CREATE.getCustomParameterType());
-    SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicCreateEditForm.isDeleteCustomParameterButtonEnabled()).as("isDeleteCustomParameterButtonEnabled()");
-    softly.assertThat(TOPIC_TO_CREATE.getCustomParameterValue()).as("getCustomParameterValue()").isEqualTo("producer");
-    softly.assertAll();
+    assertThat(topicCreateEditForm.isDeleteCustomParameterButtonEnabled()).as("isDeleteCustomParameterButtonEnabled()")
+        .isTrue();
     topicCreateEditForm
         .clearCustomParameterValue();
-    softly.assertThat(topicCreateEditForm.getCustomParameterValue()).as("getCustomParameterValue()").isEqualTo("");
-    softly.assertThat(topicCreateEditForm.isValidationMessageCustomParameterValueVisible())
+    assertThat(topicCreateEditForm.isValidationMessageCustomParameterValueVisible())
         .as("isValidationMessageCustomParameterValueVisible()").isTrue();
-   softly.assertAll();
   }
 
     @AfterAll
