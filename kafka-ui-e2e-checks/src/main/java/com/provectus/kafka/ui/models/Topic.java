@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.models;
 
-import com.provectus.kafka.ui.pages.topic.TopicCreateEditForm;
+import com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue;
+import com.provectus.kafka.ui.pages.topic.enums.CustomParameterType;
+import com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -9,8 +11,7 @@ import lombok.experimental.Accessors;
 public class Topic {
     private String name, timeToRetainData, maxMessageBytes, messageKey, messageContent,
             partitions, customParameterValue;
-//    private TopicCreateEditForm.CustomParameterValue customParameterValue;
-    private TopicCreateEditForm.CustomParameterType customParameterType;
-    private TopicCreateEditForm.CleanupPolicyValue cleanupPolicyValue;
-    private TopicCreateEditForm.MaxSizeOnDisk maxSizeOnDisk;
+    private CustomParameterType customParameterType;
+    private CleanupPolicyValue cleanupPolicyValue;
+    private MaxSizeOnDisk maxSizeOnDisk;
 }

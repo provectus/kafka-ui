@@ -13,6 +13,9 @@ import com.codeborne.selenide.ClickOptions;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue;
+import com.provectus.kafka.ui.pages.topic.enums.CustomParameterType;
+import com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk;
 import io.qameta.allure.Step;
 
 public class TopicCreateEditForm {
@@ -28,7 +31,7 @@ public class TopicCreateEditForm {
   protected SelenideElement customParameterDdl = $x("//ul[contains(@name,'customParams')]");
   protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
   protected SelenideElement deleteCustomParameterBtn = $x("//span[contains(@title,'Delete customParam')]");
-  protected SelenideElement addCustomParameterTypeBtn = $x("//button/*/*");
+  protected SelenideElement addCustomParameterTypeBtn = $x("//button[contains(text(),'Add Custom Parameter')]");
   protected SelenideElement customParameterValueField = $x("//input[@placeholder='Value']");
   protected SelenideElement validationCustomParameterValueMsg = $x("//p[contains(text(),'Value is required')]");
   protected String ddlElementLocator = "//li[@value='%s']";
@@ -38,6 +41,14 @@ public class TopicCreateEditForm {
     loadingSpinner.shouldBe(Condition.disappear);
     nameField.shouldBe(Condition.visible);
     return this;
+  }
+
+  public boolean isCreateTopicButtonEnabled() {
+    return isEnabled(createTopicBtn);
+  }
+
+  public boolean isDeleteCustomParameterButtonEnabled() {
+    return isEnabled(deleteCustomParameterBtn);
   }
 
   @Step
@@ -78,9 +89,9 @@ public class TopicCreateEditForm {
   }
 
   @Step
-  public TopicCreateEditForm setCustomParameterType(CustomParameterType CustomParameterType) {
+  public TopicCreateEditForm setCustomParameterType(CustomParameterType customParameterType) {
     customParameterDdl.shouldBe(Condition.visible).click();
-    $x(String.format(ddlElementLocator, CustomParameterType.getOptionValue())).shouldBe(Condition.visible).click();
+    $x(String.format(ddlElementLocator, customParameterType.getOptionValue())).shouldBe(Condition.visible).click();
     return this;
   }
 
@@ -259,95 +270,6 @@ public class TopicCreateEditForm {
     public String getCurrentValue() {
       return selectElement.$("li").getText();
     }
-  }
-
-  public enum CleanupPolicyValue {
-    DELETE("delete", "Delete"),
-    COMPACT("compact", "Compact"),
-    COMPACT_DELETE("compact,delete", "Compact,Delete");
-
-    private final String optionValue;
-    private final String visibleText;
-
-    CleanupPolicyValue(String optionValue, String visibleText) {
-      this.optionValue = optionValue;
-      this.visibleText = visibleText;
-    }
-
-    public String getOptionValue() {
-      return optionValue;
-    }
-
-    public String getVisibleText() {
-      return visibleText;
-    }
-  }
-
-  public enum MaxSizeOnDisk {
-    NOT_SET("-1", "Not Set"),
-    SIZE_1_GB("1073741824", "1 GB"),
-    SIZE_10_GB("10737418240", "10 GB"),
-    SIZE_20_GB("21474836480", "20 GB"),
-    SIZE_50_GB("53687091200", "50 GB");
-
-    private final String optionValue;
-    private final String visibleText;
-
-    MaxSizeOnDisk(String optionValue, String visibleText) {
-      this.optionValue = optionValue;
-      this.visibleText = visibleText;
-    }
-
-    public String getOptionValue() {
-      return optionValue;
-    }
-
-    public String getVisibleText() {
-      return visibleText;
-    }
-  }
-
-  public enum CustomParameterType {
-    COMPRESSION_TYPE("compression.type"),
-    DELETE_RETENTION_MS("delete.retention.ms"),
-    FILE_DELETE_DELAY_MS("file.delete.delay.ms"),
-    FLUSH_MESSAGES("flush.messages"),
-    FLUSH_MS("flush.ms"),
-    FOLLOWER_REPLICATION_THROTTLED_REPLICAS("follower.replication.throttled.replicas"),
-    INDEX_INTERVAL_BYTES("index.interval.bytes"),
-    LEADER_REPLICATION_THROTTLED_REPLICAS("leader.replication.throttled.replicas"),
-    MAX_COMPACTION_LAG_MS("max.compaction.lag.ms"),
-    MESSAGE_DOWNCONVERSION_ENABLE("message.downconversion.enable"),
-    MESSAGE_FORMAT_VERSION("message.format.version"),
-    MESSAGE_TIMESTAMP_DIFFERENCE_MAX_MS("message.timestamp.difference.max.ms"),
-    MESSAGE_TIMESTAMP_TYPE("message.timestamp.type"),
-    MIN_CLEANABLE_DIRTY_RATIO("min.cleanable.dirty.ratio"),
-    MIN_COMPACTION_LAG_MS("min.compaction.lag.ms"),
-    PREALLOCATE("preallocate"),
-    RETENTION_BYTES("retention.bytes"),
-    SEGMENT_BYTES("segment.bytes"),
-    SEGMENT_INDEX_BYTES("segment.index.bytes"),
-    SEGMENT_JITTER_MS("segment.jitter.ms"),
-    SEGMENT_MS("segment.ms"),
-    UNCLEAN_LEADER_ELECTION_ENABLE("unclean.leader.election.enable");
-
-    private final String optionValue;
-
-    CustomParameterType(String optionValue) {
-      this.optionValue = optionValue;
-    }
-
-    public String getOptionValue() {
-      return optionValue;
-    }
-  }
-
-  public boolean isCreateTopicButtonEnabled() {
-    return isEnabled(createTopicBtn);
-  }
-
-  public boolean isDeleteCustomParameterButtonEnabled() {
-    return isEnabled(deleteCustomParameterBtn);
   }
 
   private TopicCreateEditForm selectFromDropDownByOptionValue(String dropDownElementName,

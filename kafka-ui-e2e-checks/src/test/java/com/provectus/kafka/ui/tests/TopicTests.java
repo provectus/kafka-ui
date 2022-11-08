@@ -1,10 +1,10 @@
 package com.provectus.kafka.ui.tests;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
-import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.COMPACT;
-import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.DELETE;
-import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CustomParameterType.COMPRESSION_TYPE;
-import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.MaxSizeOnDisk.SIZE_20_GB;
+import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
+import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE;
+import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPRESSION_TYPE;
+import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
@@ -288,7 +288,7 @@ public class TopicTests extends BaseTest {
         .clickAddCustomParameterTypeButton()
         .setCustomParameterType(TOPIC_TO_CREATE.getCustomParameterType());
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicCreateEditForm.isDeleteCustomParameterButtonEnabled()).as("isDeleteCustomParameterBtn()");
+    softly.assertThat(topicCreateEditForm.isDeleteCustomParameterButtonEnabled()).as("isDeleteCustomParameterButtonEnabled()");
     softly.assertThat(TOPIC_TO_CREATE.getCustomParameterValue()).as("getCustomParameterValue()").isEqualTo("producer");
     softly.assertAll();
     topicCreateEditForm
