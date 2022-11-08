@@ -1,0 +1,28 @@
+kafka:
+  clusters:
+    - name: local
+      bootstrapServers: localhost:9092
+      zookeeper: localhost:2181
+      schemaRegistry: http://localhost:8085
+      kafkaConnect:
+        - name: first
+          address: http://localhost:8083
+      jmxPort: 9997
+      bufRegistry: "clst.buf.team"
+      bufPort: 443
+      bufApiToken: "${BUF_TOKEN}"
+      bufDefaultOwner: "fleet"
+      bufOwnerRepoByProtobufMessageName:
+        apollo.bk.v1.Event: "fleet/bk"
+        fully.qualified.type.2: "owner/repo"
+      protobufMessageNameByTopic:
+        topic.1: fully.qualified.type.1
+        topic.2: fully.qualified.type.2
+      protobufKeyMessageNameByTopic:
+        topic.1: fully.qualified.type.1
+        topic.2: fully.qualified.type.2
+spring:
+  jmx:
+    enabled: true
+auth:
+  type: DISABLED

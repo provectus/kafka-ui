@@ -33,4 +33,15 @@ public class KafkaCluster {
   private final Properties properties;
   private final boolean readOnly;
   private final boolean disableLogDirsCollection;
+
+  // clst specific
+  private final String bufRegistry;
+  private final Integer bufPort;
+  private final String bufApiToken;
+  private final Integer bufRegistryCacheDurationSeconds;
+  private final String bufDefaultOwner;
+  private final String bufDefaultRepo;
+  private final Map<String, String> bufOwnerRepoByProtobufMessageName;
+  private final Map<String, String> protobufKeyMessageNameByTopic;
+  // clst specific
 }

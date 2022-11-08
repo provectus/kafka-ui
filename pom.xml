@@ -7,6 +7,7 @@
         <module>kafka-ui-contract</module>
         <module>kafka-ui-api</module>
         <module>kafka-ui-e2e-checks</module>
+        <module>kafka-ui-proto-gen</module>
     </modules>
 
     <properties>
@@ -45,6 +46,7 @@
         </frontend-generated-sources-directory>
         <sonar.organization>provectus</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <io.grpc.version>1.50.2</io.grpc.version>
     </properties>
 
     <repositories>

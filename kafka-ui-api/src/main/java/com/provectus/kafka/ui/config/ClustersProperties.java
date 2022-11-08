@@ -41,6 +41,17 @@ public class ClustersProperties {
     Properties properties;
     boolean readOnly = false;
     boolean disableLogDirsCollection = false;
+
+    // clst specific
+    String bufRegistry;
+    int bufPort;
+    String bufApiToken;
+    int bufRegistryCacheDurationSeconds;
+    String bufDefaultOwner;
+    String bufDefaultRepo;
+    Map<String, String> bufOwnerRepoByProtobufMessageName;
+    Map<String, String> protobufKeyMessageNameByTopic;
+    // clst specific
   }
 
   @Data
