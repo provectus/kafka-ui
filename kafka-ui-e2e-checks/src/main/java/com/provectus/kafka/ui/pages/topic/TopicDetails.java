@@ -61,12 +61,14 @@ public class TopicDetails {
     messageValueCell.hover();
 //        actions().moveToElement(dotMessageMenuBtn).click().perform();
     clickByJavaScript(dotMessageMenuBtn);
-    clickByActions(dotMessageMenuBtn);
+//    clickByActions(dotMessageMenuBtn);
     screenshot("Menu click step");
-    $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.enabled.because("dotMessageMenu not enabled"))
-        .click();
+//    $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.enabled.because("dotMessageMenu not enabled"))
+//        .click();
+    $(By.cssSelector("#root > div > main > table > tbody > tr:nth-child(1) > td:nth-child(7) > div > div > ul > li:nth-child(2)")).click();
     return this;
   }
+
 
   @Step
   public boolean isMessageCopiedSuccessfullyVisible(String message) {
