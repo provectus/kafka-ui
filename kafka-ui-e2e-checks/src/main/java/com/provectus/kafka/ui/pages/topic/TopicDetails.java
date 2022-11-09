@@ -28,7 +28,6 @@ public class TopicDetails extends BasePage {
   protected SelenideElement messageValueCell = $x("//tbody/tr[1]/td[6]");
   protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
   protected SelenideElement copiedSuccessfullyPopUpMessage = $x("//div[text() = 'Copied successfully!']");
-
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
   protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
@@ -68,10 +67,7 @@ public class TopicDetails extends BasePage {
     clickByJavaScript(dotMessageMenuBtn);
 //    clickByActions(dotMessageMenuBtn);
     screenshot("Menu click step");
-//    $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.enabled.because("dotMessageMenu not enabled"))
-//        .click();
-    $(By.cssSelector(
-        "#root > div > main > table > tbody > tr:nth-child(1) > td:nth-child(7) > div > div > ul > li:nth-child(2)")).click();
+    $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.enabled.because("dotMessageMenu not enabled")).click();
     return this;
   }
 
