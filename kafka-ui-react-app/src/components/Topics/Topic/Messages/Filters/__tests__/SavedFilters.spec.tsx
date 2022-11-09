@@ -52,7 +52,9 @@ describe('SavedFilter Component', () => {
       expect(screen.getByText(/no saved filter/i)).toBeInTheDocument();
       expect(screen.queryByRole('savedFilter')).not.toBeInTheDocument();
 
-      const selectFilterBtn = screen.getByRole('button', { name: /Select filter/i });
+      const selectFilterBtn = screen.getByRole('button', {
+        name: /Select filter/i,
+      });
       expect(selectFilterBtn).toBeDisabled();
     });
   });
@@ -162,7 +164,9 @@ describe('SavedFilter Component', () => {
       expect(deleteMock).toHaveBeenCalledTimes(1);
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
-      const selectFilterBtn = screen.getByRole('button', { name: /Select filter/i });
+      const selectFilterBtn = screen.getByRole('button', {
+        name: /Select filter/i,
+      });
       expect(selectFilterBtn).toBeDisabled();
     });
   });
