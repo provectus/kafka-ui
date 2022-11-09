@@ -15,7 +15,6 @@ import org.openqa.selenium.By;
 @ExtensionMethod({WaitUtils.class})
 public class TopicDetails extends BasePage {
 
-    protected SelenideElement dotPartitionIdMenuBtn = $(By.cssSelector("button.sc-hOqruk.eYtACj"));
     protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
     protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
     protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");

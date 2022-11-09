@@ -32,7 +32,7 @@ public class ConnectorCreateForm extends BasePage {
     @Step
     public ConnectorCreateForm clickSubmitButton() {
       clickSubmitBtn();
-      loadingSpinner.shouldBe(Condition.disappear);
+      waitUntilSpinnerDisappear();
       return this;
     }
 }
