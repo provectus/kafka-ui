@@ -1,9 +1,10 @@
 package com.provectus.kafka.ui.tests;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
-import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.COMPACT;
-import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.DELETE;
-import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.MaxSizeOnDisk.SIZE_20_GB;
+import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
+import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE;
+import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPRESSION_TYPE;
+import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
@@ -35,6 +36,8 @@ public class TopicTests extends BaseTest {
     private static final Topic TOPIC_TO_CREATE = new Topic()
             .setName("new-topic-"+ randomAlphabetic(5))
             .setPartitions("1")
+            .setCustomParameterType(COMPRESSION_TYPE)
+            .setCustomParameterValue("producer")
             .setCleanupPolicyValue(DELETE);
     private static final Topic TOPIC_FOR_UPDATE = new Topic()
             .setName("topic-to-update-" + randomAlphabetic(5))
@@ -266,6 +269,30 @@ public class TopicTests extends BaseTest {
     topicCreateEditForm
         .setTopicName("testTopic1");
     assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isTrue();
+  }
+
+  @DisplayName("Checking requiredness of Custom parameters within 'Create new Topic'")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(6)
+  @Test
+  void checkCustomParametersWithinCreateNewTopic() {
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .clickAddTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady()
+        .setTopicName(TOPIC_TO_CREATE.getName())
+        .clickAddCustomParameterTypeButton()
+        .setCustomParameterType(TOPIC_TO_CREATE.getCustomParameterType());
+    assertThat(topicCreateEditForm.isDeleteCustomParameterButtonEnabled()).as("isDeleteCustomParameterButtonEnabled()")
+        .isTrue();
+    topicCreateEditForm
+        .clearCustomParameterValue();
+    assertThat(topicCreateEditForm.isValidationMessageCustomParameterValueVisible())
+        .as("isValidationMessageCustomParameterValueVisible()").isTrue();
   }
 
   @DisplayName("Message copy from topic profile")

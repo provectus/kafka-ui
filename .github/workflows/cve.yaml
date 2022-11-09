@@ -55,7 +55,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache
 
       - name: Run CVE checks
-        uses: aquasecurity/trivy-action@0.7.1
+        uses: aquasecurity/trivy-action@0.8.0
         with:
           image-ref: "provectuslabs/kafka-ui:${{ steps.build.outputs.version }}"
           format: "table"
