@@ -3,24 +3,20 @@ package com.provectus.kafka.ui.pages.topic;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.utilities.WebUtils.clearByKeyboard;
-import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
-import static com.provectus.kafka.ui.utilities.WebUtils.isEnabled;
-import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeborne.selenide.ClickOptions;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue;
 import com.provectus.kafka.ui.pages.topic.enums.CustomParameterType;
 import com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk;
 import io.qameta.allure.Step;
 
-public class TopicCreateEditForm {
+public class TopicCreateEditForm extends BasePage {
 
-  protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
   protected SelenideElement timeToRetainField = $x("//input[@id='timeToRetain']");
   protected SelenideElement partitionsField = $x("//input[@name='partitions']");
   protected SelenideElement nameField = $x("//input[@name='name']");
@@ -29,7 +25,6 @@ public class TopicCreateEditForm {
   protected SelenideElement cleanUpPolicyDdl = $x("//ul[@id='topicFormCleanupPolicy']");
   protected SelenideElement maxSizeOnDiscDdl = $x("//ul[@id='topicFormRetentionBytes']");
   protected SelenideElement customParameterDdl = $x("//ul[contains(@name,'customParams')]");
-  protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
   protected SelenideElement deleteCustomParameterBtn = $x("//span[contains(@title,'Delete customParam')]");
   protected SelenideElement addCustomParameterTypeBtn = $x("//button[contains(text(),'Add Custom Parameter')]");
   protected SelenideElement customParameterValueField = $x("//input[@placeholder='Value']");
@@ -38,13 +33,13 @@ public class TopicCreateEditForm {
 
   @Step
   public TopicCreateEditForm waitUntilScreenReady() {
-    loadingSpinner.shouldBe(Condition.disappear);
+    waitUntilSpinnerDisappear();
     nameField.shouldBe(Condition.visible);
     return this;
   }
 
   public boolean isCreateTopicButtonEnabled() {
-    return isEnabled(createTopicBtn);
+    return isEnabled(submitBtn);
   }
 
   public boolean isDeleteCustomParameterButtonEnabled() {
@@ -148,7 +143,7 @@ public class TopicCreateEditForm {
 
   @Step
   public TopicCreateEditForm clickCreateTopicBtn() {
-    clickByJavaScript(createTopicBtn);
+    clickSubmitBtn();
     return this;
   }
 
