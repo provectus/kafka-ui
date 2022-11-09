@@ -31,12 +31,12 @@ public class TopicsList extends BasePage {
     @Step
     public boolean isTopicVisible(String topicName) {
         tableGrid.shouldBe(Condition.visible);
-        return isVisible(tableElement(topicName));
+        return isVisible(getTableElement(topicName));
     }
 
     @Step
     public TopicsList openTopic(String topicName) {
-      tableElement(topicName).shouldBe(Condition.enabled).click();
+        getTableElement(topicName).shouldBe(Condition.enabled).click();
         return this;
     }
 }

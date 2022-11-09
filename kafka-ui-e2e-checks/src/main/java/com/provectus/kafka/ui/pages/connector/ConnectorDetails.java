@@ -15,7 +15,6 @@ public class ConnectorDetails extends BasePage {
   protected SelenideElement taskTab = $x("//a[contains(text(),'Tasks')]");
   protected SelenideElement configTab = $x("//a[contains(text(),'Config')]");
   protected SelenideElement configField = $x("//div[@id='config']");
-  protected SelenideElement successAlertMessage = $x("//div[contains(text(),'Config successfully updated')]");
   protected String connectorHeaderLocator = "//h1[contains(text(),'%s')]";
 
   @Step
@@ -43,7 +42,6 @@ public class ConnectorDetails extends BasePage {
     @Step
     public ConnectorDetails clickSubmitButton() {
       clickSubmitBtn();
-      successAlertMessage.shouldBe(Condition.visible);
       return this;
     }
 
@@ -77,5 +75,10 @@ public class ConnectorDetails extends BasePage {
     @Step
     public boolean isConnectorHeaderVisible(String connectorName) {
         return isVisible($x(String.format(connectorHeaderLocator,connectorName)));
+    }
+
+    @Step
+    public boolean isAlertWithMessageVisible(AlertHeader header, String message){
+      return isAlertVisible(header, message);
     }
 }

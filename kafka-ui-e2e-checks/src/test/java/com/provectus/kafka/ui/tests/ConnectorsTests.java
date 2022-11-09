@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.tests;
 
+import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KAFKA_CONNECT;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
@@ -110,6 +111,7 @@ public class ConnectorsTests extends BaseTest {
                 .openConfigTab()
                 .setConfig(CONNECTOR_FOR_UPDATE.getConfig())
                 .clickSubmitButton();
+        Assertions.assertTrue(connectorDetails.isAlertWithMessageVisible(SUCCESS,"Config successfully updated."),"isAlertWithMessageVisible()");
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
         kafkaConnectList

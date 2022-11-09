@@ -26,7 +26,7 @@ public class SchemaRegistryList extends BasePage {
 
     @Step
     public SchemaRegistryList openSchema(String schemaName) {
-        tableElement(schemaName)
+        getTableElement(schemaName)
                 .shouldBe(Condition.enabled).click();
         return this;
     }
@@ -34,7 +34,7 @@ public class SchemaRegistryList extends BasePage {
     @Step
     public boolean isSchemaVisible(String schemaName) {
         tableGrid.shouldBe(Condition.visible);
-        return isVisible(tableElement(schemaName));
+        return isVisible(getTableElement(schemaName));
     }
 }
 
