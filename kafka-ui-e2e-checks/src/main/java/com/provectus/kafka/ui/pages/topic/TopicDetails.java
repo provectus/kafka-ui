@@ -1,23 +1,19 @@
 package com.provectus.kafka.ui.pages.topic;
 
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.screenshot;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
+import java.time.Duration;
 import java.util.Arrays;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
-
-import java.util.Arrays;
-
-import static com.codeborne.selenide.Selenide.*;
-import static com.provectus.kafka.ui.utilities.WebUtils.clickByActions;
-import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
-import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
 @ExtensionMethod({WaitUtils.class})
 public class TopicDetails extends BasePage {
@@ -63,18 +59,18 @@ public class TopicDetails extends BasePage {
   @Step
   public TopicDetails copyMessageToClipboard(String messageMenuItem) {
     messageValueCell.hover();
-//        actions().moveToElement(dotMessageMenuBtn).click().perform();
     clickByJavaScript(dotMessageMenuBtn);
-//    clickByActions(dotMessageMenuBtn);
     screenshot("Menu click step");
+    $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.enabled.because("dotMessageMenu not enabled")).hover();
+    screenshot("Item hover step");
     $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.enabled.because("dotMessageMenu not enabled")).click();
+    screenshot("After Menu click step");
     return this;
   }
 
-
   @Step
   public boolean isMessageCopiedSuccessfullyVisible(String message) {
-    copiedSuccessfullyPopUpMessage.shouldBe(Condition.visible.because("CopiedSuccessfully Message Not Visible"));
+    copiedSuccessfullyPopUpMessage.shouldBe(Condition.visible.because("CopiedSuccessfully Message Not Visible"), Duration.ofSeconds(10));
     return message.equals(copiedSuccessfullyPopUpMessage.getText());
   }
 
