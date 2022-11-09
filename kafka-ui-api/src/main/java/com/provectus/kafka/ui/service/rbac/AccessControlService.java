@@ -109,7 +109,7 @@ public class AccessControlService {
                   case LDAP_AD:
                     return new LdapAuthorityExtractor();
                   default:
-                    return null;
+                    throw new NotFoundException("Unknown provider type: " + provider.getProvider());
                 }
               }).collect(Collectors.toSet()))
           .flatMap(Set::stream)

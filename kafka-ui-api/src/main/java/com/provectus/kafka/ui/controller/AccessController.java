@@ -53,7 +53,11 @@ public class AccessController implements AccessApi {
           dto.setClusters(clusters);
           dto.setResource(UserPermissionDTO.ResourceEnum.fromValue(permission.getResource().toString().toUpperCase()));
           dto.setValue(permission.getValue() != null ? permission.getValue().toString() : null);
-          dto.setActions(permission.getActions().stream().map(String::toUpperCase).map(ActionDTO::valueOf).collect(Collectors.toList()));
+          dto.setActions(permission.getActions()
+              .stream()
+              .map(String::toUpperCase)
+              .map(ActionDTO::valueOf)
+              .collect(Collectors.toList()));
           return dto;
         })
         .collect(Collectors.toList());
