@@ -63,7 +63,7 @@ public class TopicDetails {
     clickByJavaScript(dotMessageMenuBtn);
     clickByActions(dotMessageMenuBtn);
     screenshot("Menu click step");
-    $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.visible.because("dotMessageMenu not visible"))
+    $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.enabled.because("dotMessageMenu not enabled"))
         .click();
     return this;
   }
