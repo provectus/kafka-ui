@@ -6,6 +6,8 @@ import { screen, within } from '@testing-library/react';
 const burgerButtonOptions = { name: 'burger' };
 const logoutButtonOptions = { name: 'Log out' };
 
+jest.mock('components/Version/Version', () => () => <div>Version</div>);
+
 describe('NavBar', () => {
   beforeEach(() => {
     render(<NavBar onBurgerClick={jest.fn()} />);

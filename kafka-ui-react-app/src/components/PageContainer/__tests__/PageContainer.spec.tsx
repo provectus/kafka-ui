@@ -12,6 +12,8 @@ jest.mock('lib/hooks/api/clusters', () => ({
   useClusters: jest.fn(),
 }));
 
+jest.mock('components/Version/Version', () => () => <div>Version</div>);
+
 describe('Page Container', () => {
   beforeEach(() => {
     (useClusters as jest.Mock).mockImplementation(() => ({
