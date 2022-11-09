@@ -5,7 +5,7 @@ import Filters, {
   SeekTypeOptions,
 } from 'components/Topics/Topic/Messages/Filters/Filters';
 import { EventSourceMock, render, WithRoute } from 'lib/testHelpers';
-import { act, screen, within, waitFor } from '@testing-library/react';
+import { act, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TopicMessagesContext, {
   ContextProps,
@@ -122,7 +122,7 @@ describe('Filters component', () => {
       const timestampInput = screen.getByPlaceholderText('Select timestamp');
       expect(timestampInput).toHaveValue('');
 
-      await waitFor(() => userEvent.type(timestampInput, inputValue));
+      await userEvent.type(timestampInput, inputValue);
 
       expect(timestampInput).toHaveValue(inputValue);
       expect(screen.getByText('Submit')).toBeInTheDocument();

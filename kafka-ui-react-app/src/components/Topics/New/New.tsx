@@ -27,6 +27,7 @@ const New: React.FC = () => {
 
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const createTopic = useCreateTopic(clusterName);
+  console.log(createTopic, 'createTopic');
 
   const navigate = useNavigate();
 

@@ -2,6 +2,6 @@ apiVersion: v2
 name: kafka-ui
 description: A Helm chart for kafka-UI
 type: application
-version: 0.4.4
+version: 0.4.5
 appVersion: v0.4.0
 icon: https://github.com/provectus/kafka-ui/raw/master/documentation/images/kafka-ui-logo.png

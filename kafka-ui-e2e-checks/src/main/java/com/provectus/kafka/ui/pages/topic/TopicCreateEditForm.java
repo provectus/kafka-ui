@@ -8,18 +8,21 @@ import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.*;
 import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
+import static com.provectus.kafka.ui.utilities.WebUtils.isEnabled;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TopicCreateEditForm {
 
     protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement timeToRetainField = $x("//input[@id='timeToRetain']");
+    protected SelenideElement partitionsField = $x("//input[@name='partitions']");
     protected SelenideElement nameField = $x("//input[@name='name']");
     protected SelenideElement maxMessageBytesField = $x("//input[@name='maxMessageBytes']");
     protected SelenideElement minInSyncReplicasField = $x("//input[@name='minInSyncReplicas']");
     protected SelenideElement cleanUpPolicyDdl = $x("//ul[@id='topicFormCleanupPolicy']");
+    protected SelenideElement maxSizeOnDiscDdl = $x("//ul[@id='topicFormRetentionBytes']");
     protected SelenideElement createTopicBtn = $x("//button[@type='submit']");
-    protected String cleanUpPolicyTypeLocator = "//li[text()='%s']";
+    protected String ddlElementLocator = "//li[@value='%s']";
 
     @Step
     public TopicCreateEditForm waitUntilScreenReady(){
@@ -53,8 +56,9 @@ public class TopicCreateEditForm {
     }
 
     @Step
-    public TopicCreateEditForm setMaxSizeOnDiskInGB(String value) {
-        new KafkaUISelectElement("retentionBytes").selectByVisibleText(value);
+    public TopicCreateEditForm setMaxSizeOnDiskInGB(MaxSizeOnDisk MaxSizeOnDisk) {
+        maxSizeOnDiscDdl.shouldBe(Condition.visible).click();
+        $x(String.format(ddlElementLocator, MaxSizeOnDisk.getOptionValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
@@ -70,6 +74,12 @@ public class TopicCreateEditForm {
     }
 
     @Step
+    public TopicCreateEditForm setPartitions(String partitions){
+        partitionsField.setValue(partitions);
+        return this;
+    }
+
+    @Step
     public TopicCreateEditForm setTimeToRetainDataInMsUsingButtons(String value) {
         timeToRetainField
                 .parent()
@@ -81,15 +91,9 @@ public class TopicCreateEditForm {
     }
 
     @Step
-    public TopicCreateEditForm selectCleanupPolicy(CleanupPolicyValue cleanupPolicyValue) {
-        return selectFromDropDownByOptionValue("cleanupPolicy",
-                cleanupPolicyValue.getOptionValue());
-    }
-
-    @Step
-    public TopicCreateEditForm selectCleanupPolicy(String cleanupPolicyOptionValue) {
+    public TopicCreateEditForm selectCleanupPolicy(CleanupPolicyValue cleanupPolicyOptionValue) {
         cleanUpPolicyDdl.shouldBe(Condition.visible).click();
-        $x(String.format(cleanUpPolicyTypeLocator,cleanupPolicyOptionValue)).shouldBe(Condition.visible).click();
+        $x(String.format(ddlElementLocator,cleanupPolicyOptionValue.getOptionValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
@@ -240,6 +244,34 @@ public class TopicCreateEditForm {
         public String getVisibleText() {
             return visibleText;
         }
+    }
+
+    public enum MaxSizeOnDisk {
+        NOT_SET("-1", "Not Set"),
+        SIZE_1_GB("1073741824", "1 GB"),
+        SIZE_10_GB("10737418240", "10 GB"),
+        SIZE_20_GB("21474836480", "20 GB"),
+        SIZE_50_GB("53687091200", "50 GB");
+
+        private final String optionValue;
+        private final String visibleText;
+
+        MaxSizeOnDisk(String optionValue, String visibleText) {
+            this.optionValue = optionValue;
+            this.visibleText = visibleText;
+        }
+
+        public String getOptionValue() {
+            return optionValue;
+        }
+
+        public String getVisibleText() {
+            return visibleText;
+        }
+    }
+
+    public boolean isCreateTopicButtonEnabled(){
+       return isEnabled(createTopicBtn);
     }
 
     private TopicCreateEditForm selectFromDropDownByOptionValue(String dropDownElementName,
