@@ -22,9 +22,14 @@ import Search from 'components/common/Search/Search';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import Table, { LinkCell } from 'components/common/NewTable';
 import { ColumnDef } from '@tanstack/react-table';
-import { SchemaSubject } from 'generated-sources';
+import {
+  Action,
+  SchemaSubject,
+  UserPermissionResourceEnum,
+} from 'generated-sources';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
+import { usePermission } from 'lib/hooks/usePermission';
 
 import GlobalSchemaSelector from './GlobalSchemaSelector/GlobalSchemaSelector';
 
@@ -37,6 +42,11 @@ const List: React.FC = () => {
   const isFetched = useAppSelector(getAreSchemasFulfilled);
   const totalPages = useAppSelector((state) => state.schemas.totalPages);
   const [searchParams] = useSearchParams();
+  const canAdd = usePermission(
+    clusterName,
+    UserPermissionResourceEnum.SCHEMA,
+    Action.CREATE
+  );
 
   React.useEffect(() => {
     dispatch(
@@ -83,6 +93,7 @@ const List: React.FC = () => {
               buttonSize="M"
               buttonType="primary"
               to={clusterSchemaNewRelativePath}
+              disabled={!canAdd}
             >
               <PlusIcon /> Create Schema
             </Button>
