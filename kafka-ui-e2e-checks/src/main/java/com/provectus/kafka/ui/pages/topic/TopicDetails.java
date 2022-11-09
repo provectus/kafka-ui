@@ -1,9 +1,14 @@
 package com.provectus.kafka.ui.pages.topic;
 
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
+
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
+import java.util.Arrays;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
@@ -15,15 +20,15 @@ import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
 import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
 
 @ExtensionMethod({WaitUtils.class})
-public class TopicDetails {
+public class TopicDetails extends BasePage {
 
-  protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+  protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
   protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
   protected SelenideElement dotMessageMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").get(1);
   protected SelenideElement messageValueCell = $x("//tbody/tr[1]/td[6]");
   protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
   protected SelenideElement copiedSuccessfullyPopUpMessage = $x("//div[text() = 'Copied successfully!']");
-  protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
+
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
   protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
@@ -39,7 +44,7 @@ public class TopicDetails {
 
   @Step
   public TopicDetails waitUntilScreenReady() {
-    loadingSpinner.shouldBe(Condition.disappear);
+    waitUntilSpinnerDisappear();
     Arrays.asList(overviewTab, messagesTab).forEach(element -> element.shouldBe(Condition.visible));
     return this;
   }
@@ -65,7 +70,8 @@ public class TopicDetails {
     screenshot("Menu click step");
 //    $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.enabled.because("dotMessageMenu not enabled"))
 //        .click();
-    $(By.cssSelector("#root > div > main > table > tbody > tr:nth-child(1) > td:nth-child(7) > div > div > ul > li:nth-child(2)")).click();
+    $(By.cssSelector(
+        "#root > div > main > table > tbody > tr:nth-child(1) > td:nth-child(7) > div > div > ul > li:nth-child(2)")).click();
     return this;
   }
 
