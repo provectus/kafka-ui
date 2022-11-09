@@ -3191,6 +3191,7 @@ components:
           items:
             $ref: '#/components/schemas/Action'
       required:
+        - clusters
         - resource
         - actions
 
