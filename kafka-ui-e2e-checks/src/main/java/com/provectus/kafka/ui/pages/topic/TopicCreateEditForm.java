@@ -23,7 +23,6 @@ public class TopicCreateEditForm extends BasePage {
   protected SelenideElement maxMessageBytesField = $x("//input[@name='maxMessageBytes']");
   protected SelenideElement minInSyncReplicasField = $x("//input[@name='minInSyncReplicas']");
   protected SelenideElement cleanUpPolicyDdl = $x("//ul[@id='topicFormCleanupPolicy']");
-  protected String cleanUpPolicyTypeLocator = "//li[text()='%s']";
   protected SelenideElement maxSizeOnDiscDdl = $x("//ul[@id='topicFormRetentionBytes']");
   protected SelenideElement customParameterDdl = $x("//ul[contains(@name,'customParams')]");
   protected SelenideElement deleteCustomParameterBtn = $x("//span[contains(@title,'Delete customParam')]");
@@ -40,7 +39,7 @@ public class TopicCreateEditForm extends BasePage {
   }
 
   public boolean isCreateTopicButtonEnabled() {
-    return isEnabled(createTopicBtn);
+    return isEnabled(submitBtn);
   }
 
   public boolean isDeleteCustomParameterButtonEnabled() {
@@ -144,7 +143,7 @@ public class TopicCreateEditForm extends BasePage {
 
   @Step
   public TopicCreateEditForm clickCreateTopicBtn() {
-    clickSubmitButton();
+    clickSubmitBtn();
     return this;
   }
 
