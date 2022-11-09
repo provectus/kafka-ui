@@ -51,6 +51,9 @@ describe('SavedFilter Component', () => {
     it('should check the rendering of the empty filter', () => {
       expect(screen.getByText(/no saved filter/i)).toBeInTheDocument();
       expect(screen.queryByRole('savedFilter')).not.toBeInTheDocument();
+
+      const selectFilterBtn = screen.getByRole('button', { name: /Select filter/i });
+      expect(selectFilterBtn).toBeDisabled();
     });
   });
 
@@ -158,6 +161,9 @@ describe('SavedFilter Component', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
       expect(deleteMock).toHaveBeenCalledTimes(1);
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+      const selectFilterBtn = screen.getByRole('button', { name: /Select filter/i });
+      expect(selectFilterBtn).toBeDisabled();
     });
   });
 });
