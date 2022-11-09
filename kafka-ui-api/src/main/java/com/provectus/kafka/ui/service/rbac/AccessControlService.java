@@ -97,20 +97,11 @@ public class AccessControlService {
           .stream()
           .map(role -> role.getSubjects()
               .stream()
-              .map(provider -> {
-                switch (provider.getProvider()) {
-                  case OAUTH_COGNITO:
-                    return new CognitoAuthorityExtractor();
-                  case OAUTH_GOOGLE:
-                    return new GoogleAuthorityExtractor();
-                  case OAUTH_GITHUB:
-                    return new GithubAuthorityExtractor();
-                  case LDAP:
-                  case LDAP_AD:
-                    return new LdapAuthorityExtractor();
-                  default:
-                    throw new NotFoundException("Unknown provider type: " + provider.getProvider());
-                }
+              .map(provider -> switch (provider.getProvider()) {
+                case OAUTH_COGNITO -> new CognitoAuthorityExtractor();
+                case OAUTH_GOOGLE -> new GoogleAuthorityExtractor();
+                case OAUTH_GITHUB -> new GithubAuthorityExtractor();
+                case LDAP, LDAP_AD -> new LdapAuthorityExtractor();
               }).collect(Collectors.toSet()))
           .flatMap(Set::stream)
           .collect(Collectors.toSet());
