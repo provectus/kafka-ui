@@ -42,8 +42,7 @@ const List: React.FC = () => {
   const isFetched = useAppSelector(getAreSchemasFulfilled);
   const totalPages = useAppSelector((state) => state.schemas.totalPages);
   const [searchParams] = useSearchParams();
-  const canAdd = usePermission(
-    clusterName,
+  const canCreateSchema = usePermission(
     UserPermissionResourceEnum.SCHEMA,
     Action.CREATE
   );
@@ -93,7 +92,7 @@ const List: React.FC = () => {
               buttonSize="M"
               buttonType="primary"
               to={clusterSchemaNewRelativePath}
-              disabled={!canAdd}
+              disabled={!canCreateSchema}
             >
               <PlusIcon /> Create Schema
             </Button>
