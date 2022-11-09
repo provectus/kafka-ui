@@ -32,9 +32,9 @@ const BrokersList: React.FC = () => {
     let brokersResource;
     if (!diskUsage) {
       brokersResource =
-        brokers?.map(({ id, host, port }) => {
+        brokers?.map((broker) => {
           return {
-            brokerId: id,
+            brokerId: broker.id,
             segmentSize: 'N/A',
             segmentCount: 'N/A',
           };

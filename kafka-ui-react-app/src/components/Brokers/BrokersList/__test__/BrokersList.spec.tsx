@@ -141,9 +141,8 @@ describe('BrokersList Component', () => {
       });
       it('opens broker when row clicked', async () => {
         renderComponent();
-        await act(() => {
-          userEvent.click(screen.getByRole('cell', { name: '1' }));
-        });
+        await userEvent.click(screen.getByRole('cell', { name: '1' }));
+
         await waitFor(() =>
           expect(mockedUsedNavigate).toBeCalledWith(
             clusterBrokerPath(clusterName, '1')
