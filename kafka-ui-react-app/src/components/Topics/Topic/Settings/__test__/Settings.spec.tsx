@@ -13,11 +13,8 @@ jest.mock('lib/hooks/api/topics', () => ({
   useTopicConfig: jest.fn(),
 }));
 
-jest.mock('components/Topics/Topic/Settings/ConfigListItem', () => () => (
-  <tr>
-    <td>ConfigListItemMock</td>
-  </tr>
-));
+const getName = () => screen.getByText('compression.type');
+const getValue = () => screen.getByText('producer');
 
 describe('Settings', () => {
   const renderComponent = () => {
@@ -37,9 +34,10 @@ describe('Settings', () => {
     renderComponent();
   });
 
-  it('should check it returns null if no config is passed', () => {
-    expect(screen.getByRole('table')).toBeInTheDocument();
-    const items = screen.getAllByText('ConfigListItemMock');
-    expect(items.length).toEqual(topicConfigPayload.length);
+  it('renders without CustomValue', () => {
+    expect(getName()).toBeInTheDocument();
+    expect(getName()).toHaveStyle('font-weight: 400');
+    expect(getValue()).toBeInTheDocument();
+    expect(getValue()).toHaveStyle('font-weight: 400');
   });
 });
