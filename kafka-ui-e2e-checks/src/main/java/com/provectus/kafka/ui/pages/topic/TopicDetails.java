@@ -3,15 +3,17 @@ package com.provectus.kafka.ui.pages.topic;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
-import static com.codeborne.selenide.Selenide.screenshot;
 
+import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
-import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
@@ -19,11 +21,7 @@ import org.openqa.selenium.By;
 public class TopicDetails extends BasePage {
 
   protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
-  protected SelenideElement dotMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").first();
-  protected SelenideElement dotMessageMenuBtn = $$x("//button[@aria-label='Dropdown Toggle']").get(1);
-  protected SelenideElement messageValueCell = $x("//tbody/tr[1]/td[6]");
   protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
-  protected SelenideElement copiedSuccessfullyPopUpMessage = $x("//div[text() = 'Copied successfully!']");
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
   protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
@@ -33,20 +31,21 @@ public class TopicDetails extends BasePage {
   protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
   protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
   protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
+  protected ElementsCollection messageGridItems = $$x("//tbody//tr");
   protected String consumerIdLocator = "//a[@title='%s']";
-  protected String dotMessageMenu = "//li[text() = '%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
 
   @Step
   public TopicDetails waitUntilScreenReady() {
     waitUntilSpinnerDisappear();
-    Arrays.asList(overviewTab, messagesTab).forEach(element -> element.shouldBe(Condition.visible));
+    dotMenuBtn.shouldBe(Condition.visible);
     return this;
   }
 
   @Step
   public TopicDetails openDetailsTab(TopicMenu menu) {
     $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
+    waitUntilSpinnerDisappear();
     return this;
   }
 
@@ -57,21 +56,8 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails copyMessageToClipboard(String messageMenuItem) {
-    messageValueCell.hover();
-    clickByJavaScript(dotMessageMenuBtn);
-    screenshot("Menu click step");
-    $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.enabled.because("dotMessageMenu not enabled")).hover();
-    screenshot("Item hover step");
-    $x(String.format(dotMessageMenu, messageMenuItem)).shouldBe(Condition.enabled.because("dotMessageMenu not enabled")).click();
-    screenshot("After Menu click step");
-    return this;
-  }
-
-  @Step
-  public boolean isMessageCopiedSuccessfullyVisible(String message) {
-    copiedSuccessfullyPopUpMessage.shouldBe(Condition.visible.because("CopiedSuccessfully Message Not Visible"), Duration.ofSeconds(10));
-    return message.equals(copiedSuccessfullyPopUpMessage.getText());
+  public boolean isAlertWithMessageVisible(AlertHeader header, String message) {
+    return isAlertVisible(header, message);
   }
 
   @Step
@@ -137,28 +123,93 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public String getMessageCountAmount() {
-    return messageAmountCell.getText();
+  public int getMessageCountAmount() {
+    return Integer.parseInt(messageAmountCell.getText().trim());
   }
 
-  private enum DotMenuHeaderItems {
-    EDIT_SETTINGS("Edit settings"),
-    CLEAR_MESSAGES("Clear messages"),
-    REMOVE_TOPIC("Remove topic");
+  private List<TopicDetails.MessageGridItem> initItems() {
+    List<TopicDetails.MessageGridItem> gridItemList = new ArrayList<>();
+    messageGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+        .forEach(item -> gridItemList.add(new TopicDetails.MessageGridItem(item)));
+    return gridItemList;
+  }
 
-    private final String value;
+  @Step
+  public TopicDetails.MessageGridItem getMessage(int offset) {
+    return initItems().stream()
+        .filter(e -> e.getOffset() == offset)
+        .findFirst().orElse(null);
+  }
 
-    DotMenuHeaderItems(String value) {
-      this.value = value;
+  @Step
+  public TopicDetails.MessageGridItem getRandomMessage() {
+    return getMessage(initItems().size() - 1);
+  }
+
+  public static class MessageGridItem extends BasePage {
+
+    private final SelenideElement element;
+
+    private MessageGridItem(SelenideElement element) {
+      this.element = element;
     }
 
+    @Step
+    public MessageGridItem expand() {
+      element.$x("./td[1]/span").click();
+      return this;
+    }
+
+    @Step
+    public SelenideElement getOffsetElm() {
+      return element.$x("./td[2]");
+    }
+
+    @Step
+    public int getOffset() {
+      return Integer.parseInt(getOffsetElm().getText().trim());
+    }
+
+    @Step
+    public int getPartition() {
+      return Integer.parseInt(element.$x("./td[3]").getText().trim());
+    }
+
+    @Step
+    public String getTimestamp() {
+      return element.$x("./td[4]/div").getText().trim();
+    }
+
+    @Step
+    public String getKey() {
+      return element.$x("./td[5]").getText().trim();
+    }
+
+    @Step
     public String getValue() {
-      return value;
+      return element.$x("./td[6]/span/p").getText().trim();
     }
 
-    @Override
-    public String toString() {
-      return "DotMenuHeaderItems{" + "value='" + value + '\'' + '}';
+    @Step
+    public MessageGridItem openDotMenu() {
+      getOffsetElm().hover();
+      element.$x("./td[7]/div/button[@aria-label='Dropdown Toggle']")
+          .shouldBe(Condition.visible).click();
+      return this;
+    }
+
+    @Step
+    public MessageGridItem clickCopyToClipBoard() {
+      clickByJavaScript(element.$x("./td[7]//li[text() = 'Copy to clipboard']")
+          .shouldBe(Condition.visible));
+      return this;
+    }
+
+    @Step
+    public MessageGridItem clickSaveAsFile() {
+      clickByJavaScript(element.$x("./td[7]//li[text() = 'Save as a file']")
+          .shouldBe(Condition.visible));
+      return this;
     }
   }
 

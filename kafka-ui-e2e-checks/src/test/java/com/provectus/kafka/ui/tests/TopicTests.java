@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
@@ -200,30 +201,29 @@ public class TopicTests extends BaseTest {
     @CaseId(19)
     @Test
     void clearMessage() {
-        naviSideBar
-                .openSideMenu(TOPICS);
-        topicsList
-                .waitUntilScreenReady()
-                .openTopic(TOPIC_FOR_MESSAGES.getName());
-        topicDetails
-                .waitUntilScreenReady()
-                .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
-                .clickProduceMessageBtn();
-        produceMessagePanel
-                .waitUntilScreenReady()
-                .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
-                .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
-                .submitProduceMessage();
-        topicDetails
-                .waitUntilScreenReady();
-        String messageAmount = topicDetails.getMessageCountAmount();
-        assertThat(messageAmount)
-                .withFailMessage("message amount not equals").isEqualTo(topicDetails.getMessageCountAmount());
-        topicDetails
-                .openDotMenu()
-                .clickClearMessagesMenu();
-//        assertThat(Integer.toString(Integer.valueOf(messageAmount)-1))
-//                .withFailMessage("message amount not decrease by one").isEqualTo(topicDetails.MessageCountAmount());
+      naviSideBar
+          .openSideMenu(TOPICS);
+      topicsList
+          .waitUntilScreenReady()
+          .openTopic(TOPIC_FOR_MESSAGES.getName());
+      topicDetails
+          .waitUntilScreenReady()
+          .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
+          .clickProduceMessageBtn();
+      int messageAmount = topicDetails.getMessageCountAmount();
+      produceMessagePanel
+          .waitUntilScreenReady()
+          .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
+          .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
+          .submitProduceMessage();
+      topicDetails
+          .waitUntilScreenReady();
+      Assertions.assertEquals(messageAmount + 1, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
+      topicDetails
+          .openDotMenu()
+          .clickClearMessagesMenu()
+          .waitUntilScreenReady();
+//      Assertions.assertEquals(0, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
     }
 
     @DisplayName("Redirect to consumer from topic profile")
@@ -310,9 +310,11 @@ public class TopicTests extends BaseTest {
     topicDetails
         .waitUntilScreenReady()
         .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
-        .copyMessageToClipboard("Copy to clipboard");
-    assertThat(topicDetails.isMessageCopiedSuccessfullyVisible("Copied successfully!"))
-        .withFailMessage("Message Copied Successfully Not Visible").isTrue();
+        .getRandomMessage()
+        .openDotMenu()
+        .clickCopyToClipBoard();
+    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(BasePage.AlertHeader.SUCCESS, "Copied successfully!"),
+        "isAlertWithMessageVisible()");
   }
 
     @AfterAll
