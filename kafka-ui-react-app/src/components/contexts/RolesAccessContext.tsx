@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useRoleBasedAccessMock } from 'lib/hooks/api/roles';
 import { UserPermission } from 'generated-sources';
+import { modifyRolesData } from 'lib/rolesHelper';
 
 export const RolesAccessContext = React.createContext(
   new Map() as Map<string, UserPermission[]>
@@ -11,20 +12,7 @@ export const RolesAccessProvider: React.FC<
 > = ({ children }) => {
   const { data } = useRoleBasedAccessMock();
 
-  const roles = useMemo(() => {
-    const map = new Map<string, UserPermission[]>();
-    data?.forEach((item) => {
-      item.clusters?.forEach((name) => {
-        const res = map.get(name);
-        if (res) {
-          map.set(name, res.concat(item));
-          return;
-        }
-        map.set(name, [item]);
-      });
-    });
-    return map;
-  }, [data]);
+  const roles = useMemo(() => modifyRolesData(data), [data]);
 
   return (
     <RolesAccessContext.Provider value={roles}>

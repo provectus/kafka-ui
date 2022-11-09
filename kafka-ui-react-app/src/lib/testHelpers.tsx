@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactElement } from 'react';
+import React, { PropsWithChildren, ReactElement, useMemo } from 'react';
 import {
   MemoryRouter,
   MemoryRouterProps,
@@ -30,11 +30,15 @@ import {
   defaultGlobalSettingsValue,
   GlobalSettingsContext,
 } from 'components/contexts/GlobalSettingsContext';
+import { RolesAccessContext } from 'components/contexts/RolesAccessContext';
+
+import { RolesType, modifyRolesData } from './rolesHelper';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
   store?: Store<Partial<RootState>, AnyAction>;
   initialEntries?: MemoryRouterProps['initialEntries'];
+  roles?: RolesType;
 }
 
 interface WithRouteProps {
@@ -71,6 +75,18 @@ export const TestQueryClientProvider: React.FC<PropsWithChildren<unknown>> = ({
   );
 };
 
+export const TestRolesProvider: React.FC<
+  PropsWithChildren<{ data?: RolesType }>
+> = ({ children, data }) => {
+  const roles = useMemo(() => modifyRolesData(data), [data]);
+
+  return (
+    <RolesAccessContext.Provider value={roles}>
+      {children}
+    </RolesAccessContext.Provider>
+  );
+};
+
 const customRender = (
   ui: ReactElement,
   {
@@ -80,6 +96,7 @@ const customRender = (
       preloadedState,
     }),
     initialEntries,
+    roles,
     ...renderOptions
   }: CustomRenderOptions = {}
 ) => {
@@ -90,16 +107,18 @@ const customRender = (
     <TestQueryClientProvider>
       <GlobalSettingsContext.Provider value={defaultGlobalSettingsValue}>
         <ThemeProvider theme={theme}>
-          <ConfirmContextProvider>
-            <Provider store={store}>
-              <MemoryRouter initialEntries={initialEntries}>
-                <div>
-                  {children}
-                  <ConfirmationModal />
-                </div>
-              </MemoryRouter>
-            </Provider>
-          </ConfirmContextProvider>
+          <TestRolesProvider data={roles}>
+            <ConfirmContextProvider>
+              <Provider store={store}>
+                <MemoryRouter initialEntries={initialEntries}>
+                  <div>
+                    {children}
+                    <ConfirmationModal />
+                  </div>
+                </MemoryRouter>
+              </Provider>
+            </ConfirmContextProvider>
+          </TestRolesProvider>
         </ThemeProvider>
       </GlobalSettingsContext.Provider>
     </TestQueryClientProvider>
