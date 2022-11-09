@@ -64,6 +64,18 @@ public abstract class AbstractEmitter {
   protected void sendConsuming(FluxSink<TopicMessageEventDTO> sink,
                                ConsumerRecords<Bytes, Bytes> records,
                                long elapsed) {
-    consumingStats.sendConsumingEvt(sink, records, elapsed);
+    consumingStats.sendConsumingEvt(sink, records, elapsed, getFilterApplyErrors(sink));
+  }
+
+  protected void sendFinishStatsAndCompleteSink(FluxSink<TopicMessageEventDTO> sink) {
+    consumingStats.sendFinishEvent(sink, getFilterApplyErrors(sink));
+    sink.complete();
+  }
+
+  protected Number getFilterApplyErrors(FluxSink<?> sink) {
+    return sink.contextView()
+        .<MessageFilterStats>getOrEmpty(MessageFilterStats.class)
+        .<Number>map(MessageFilterStats::getFilterApplyErrors)
+        .orElse(0);
   }
 }

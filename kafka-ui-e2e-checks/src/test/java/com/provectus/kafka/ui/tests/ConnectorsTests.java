@@ -1,5 +1,11 @@
 package com.provectus.kafka.ui.tests;
 
+import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
+import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KAFKA_CONNECT;
+import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Topic;
@@ -7,14 +13,14 @@ import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qase.api.annotation.CaseId;
-import org.junit.jupiter.api.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KAFKA_CONNECT;
-import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
-import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ConnectorsTests extends BaseTest {
@@ -26,19 +32,19 @@ public class ConnectorsTests extends BaseTest {
     private static final String MESSAGE_CONTENT = "message_content_create_topic.json";
     private static final String MESSAGE_KEY = " ";
     private static final Topic TOPIC_FOR_CREATE = new Topic()
-            .setName("topic_for_create_connector")
+            .setName("topic_for_create_connector-" + randomAlphabetic(5))
             .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
     private static final Topic TOPIC_FOR_DELETE = new Topic()
-            .setName("topic_for_delete_connector")
+            .setName("topic_for_delete_connector-" + randomAlphabetic(5))
             .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
     private static final Topic TOPIC_FOR_UPDATE = new Topic()
-            .setName("topic_for_update_connector")
+            .setName("topic_for_update_connector-" + randomAlphabetic(5))
             .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
     private static final Connector CONNECTOR_FOR_DELETE = new Connector()
-            .setName("sink_postgres_activities_e2e_checks_for_delete")
+            .setName("sink_postgres_activities_e2e_checks_for_delete-" + randomAlphabetic(5))
             .setConfig(getResourceAsString("delete_connector_config.json"));
     private static final Connector CONNECTOR_FOR_UPDATE = new Connector()
-            .setName("sink_postgres_activities_e2e_checks_for_update")
+            .setName("sink_postgres_activities_e2e_checks_for_update-" + randomAlphabetic(5))
             .setConfig(getResourceAsString("config_for_create_connector_via_api.json"));
 
     @BeforeAll
@@ -60,7 +66,7 @@ public class ConnectorsTests extends BaseTest {
     @Test
     public void createConnector() {
         Connector connectorForCreate = new Connector()
-                .setName("sink_postgres_activities_e2e_checks")
+                .setName("sink_postgres_activities_e2e_checks-" + randomAlphabetic(5))
                 .setConfig(getResourceAsString("config_for_create_connector.json"));
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
@@ -69,12 +75,23 @@ public class ConnectorsTests extends BaseTest {
                 .clickCreateConnectorBtn();
         connectorCreateForm
                 .waitUntilScreenReady()
-                .setConnectorConfig(connectorForCreate.getName(), connectorForCreate.getConfig());
+                .setConnectorDetails(connectorForCreate.getName(), connectorForCreate.getConfig())
+                .clickSubmitButton();
+        connectorDetails
+                .waitUntilScreenReady();
+        naviSideBar
+                .openSideMenu(KAFKA_CONNECT);
+        kafkaConnectList
+                .waitUntilScreenReady()
+                .openConnector(connectorForCreate.getName());
+        connectorDetails
+                .waitUntilScreenReady();
+        Assertions.assertTrue(connectorDetails.isConnectorHeaderVisible(connectorForCreate.getName()),"isConnectorTitleVisible()");
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
         kafkaConnectList
                 .waitUntilScreenReady();
-        Assertions.assertTrue(kafkaConnectList.isConnectorVisible(connectorForCreate.getName()), "isConnectorVisible()");
+        Assertions.assertTrue(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()), "isConnectorVisible()");
         CONNECTOR_LIST.add(connectorForCreate);
     }
 
@@ -92,7 +109,9 @@ public class ConnectorsTests extends BaseTest {
         connectorDetails
                 .waitUntilScreenReady()
                 .openConfigTab()
-                .setConfig(CONNECTOR_FOR_UPDATE.getConfig());
+                .setConfig(CONNECTOR_FOR_UPDATE.getConfig())
+                .clickSubmitButton();
+        Assertions.assertTrue(connectorDetails.isAlertWithMessageVisible(SUCCESS,"Config successfully updated."),"isAlertWithMessageVisible()");
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
         kafkaConnectList

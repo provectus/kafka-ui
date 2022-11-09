@@ -527,6 +527,10 @@ const theme = {
   configList: {
     color: Colors.neutral[30],
   },
+  tooltip: {
+    bg: Colors.neutral[70],
+    text: Colors.neutral[0],
+  },
   topicsList: {
     color: {
       normal: Colors.neutral[90],
