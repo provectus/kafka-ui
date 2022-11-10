@@ -47,7 +47,7 @@
         <datasketches-java.version>3.1.0</datasketches-java.version>
         <scala-lang.library.version>2.13.9</scala-lang.library.version>
         <snakeyaml.version>1.32</snakeyaml.version>
-        <jackson.version>2.14.0-rc1</jackson.version>
+        <jackson.version>2.14.0</jackson.version>
 
         <frontend-generated-sources-directory>..//kafka-ui-react-app/src/generated-sources
         </frontend-generated-sources-directory>
