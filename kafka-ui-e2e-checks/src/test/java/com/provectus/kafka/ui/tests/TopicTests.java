@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.tests;
 
+import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE;
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
@@ -98,7 +100,8 @@ public class TopicTests extends BaseTest {
         TOPIC_LIST.add(TOPIC_TO_CREATE);
     }
 
-    @Disabled("https://github.com/provectus/kafka-ui/issues/2625")
+    @Disabled()
+    @Issue("https://github.com/provectus/kafka-ui/issues/2625")
     @DisplayName("should update a topic")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -193,37 +196,37 @@ public class TopicTests extends BaseTest {
         softly.assertAll();
     }
 
-    @Issue("Uncomment last assertion after bug https://github.com/provectus/kafka-ui/issues/2778 fix")
+    @Disabled
+    @Issue("https://github.com/provectus/kafka-ui/issues/2778")
     @DisplayName("clear message")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(19)
     @Test
     void clearMessage() {
-        naviSideBar
-                .openSideMenu(TOPICS);
-        topicsList
-                .waitUntilScreenReady()
-                .openTopic(TOPIC_FOR_MESSAGES.getName());
-        topicDetails
-                .waitUntilScreenReady()
-                .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
-                .clickProduceMessageBtn();
-        produceMessagePanel
-                .waitUntilScreenReady()
-                .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
-                .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
-                .submitProduceMessage();
-        topicDetails
-                .waitUntilScreenReady();
-        String messageAmount = topicDetails.MessageCountAmount();
-        assertThat(messageAmount)
-                .withFailMessage("message amount not equals").isEqualTo(topicDetails.MessageCountAmount());
-        topicDetails
-                .openDotMenu()
-                .clickClearMessagesMenu();
-//        assertThat(Integer.toString(Integer.valueOf(messageAmount)-1))
-//                .withFailMessage("message amount not decrease by one").isEqualTo(topicDetails.MessageCountAmount());
+      naviSideBar
+          .openSideMenu(TOPICS);
+      topicsList
+          .waitUntilScreenReady()
+          .openTopic(TOPIC_FOR_MESSAGES.getName());
+      topicDetails
+          .waitUntilScreenReady()
+          .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
+          .clickProduceMessageBtn();
+      int messageAmount = topicDetails.getMessageCountAmount();
+      produceMessagePanel
+          .waitUntilScreenReady()
+          .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
+          .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
+          .submitProduceMessage();
+      topicDetails
+          .waitUntilScreenReady();
+      Assertions.assertEquals(messageAmount + 1, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
+      topicDetails
+          .openDotMenu()
+          .clickClearMessagesMenu()
+          .waitUntilScreenReady();
+      Assertions.assertEquals(0, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
     }
 
     @DisplayName("Redirect to consumer from topic profile")
@@ -293,6 +296,30 @@ public class TopicTests extends BaseTest {
         .clearCustomParameterValue();
     assertThat(topicCreateEditForm.isValidationMessageCustomParameterValueVisible())
         .as("isValidationMessageCustomParameterValueVisible()").isTrue();
+  }
+
+  @Disabled
+  @Issue("https://github.com/provectus/kafka-ui/issues/2819")
+  @DisplayName("Message copy from topic profile")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(21)
+  @Test
+  void copyMessageFromTopicProfile() {
+    String topicName = "_schemas";
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .openTopic(topicName);
+    topicDetails
+        .waitUntilScreenReady()
+        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .getRandomMessage()
+        .openDotMenu()
+        .clickCopyToClipBoard();
+    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Copied successfully!"),
+        "isAlertWithMessageVisible()");
   }
 
     @AfterAll
