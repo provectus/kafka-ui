@@ -184,14 +184,14 @@ describe('Connectors List Page', () => {
     });
   });
 
-  describe('Permission', () => {
-    it('checks the create Schema button is disable when there is not permission', () => {
+  describe('Permissions', () => {
+    it('checks the create connector button is disable when there is not permission', () => {
       (usePermission as jest.Mock).mockImplementation(() => false);
       renderComponent();
       expect(screen.getByText(/Create Connector/i)).toBeDisabled();
     });
 
-    it('checks the add Schema button is enable when there is permission', () => {
+    it('checks the create connector button is enable when there is permission', () => {
       (usePermission as jest.Mock).mockImplementation(() => true);
       renderComponent();
       expect(screen.getByText(/Create Connector/i)).toBeEnabled();

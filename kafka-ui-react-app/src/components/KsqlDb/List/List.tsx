@@ -4,24 +4,30 @@ import * as Metrics from 'components/common/Metrics';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
 import {
   clusterKsqlDbQueryRelativePath,
-  ClusterNameRoute,
   clusterKsqlDbStreamsPath,
-  clusterKsqlDbTablesPath,
   clusterKsqlDbStreamsRelativePath,
+  clusterKsqlDbTablesPath,
   clusterKsqlDbTablesRelativePath,
+  ClusterNameRoute,
 } from 'lib/paths';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
 import Navbar from 'components/common/Navigation/Navbar.styled';
-import { NavLink, Route, Routes, Navigate } from 'react-router-dom';
+import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import { usePermission } from 'lib/hooks/usePermission';
+import { Action, UserPermissionResourceEnum } from 'generated-sources';
 
 import KsqlDbItem, { KsqlDbItemType } from './KsqlDbItem/KsqlDbItem';
 
 const List: FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const dispatch = useAppDispatch();
+  const canExecuteKSQLRequest = usePermission(
+    UserPermissionResourceEnum.KSQL,
+    Action.EXECUTE
+  );
 
   const { rows, fetching, tablesCount, streamsCount } =
     useAppSelector(getKsqlDbTables);
@@ -37,6 +43,7 @@ const List: FC = () => {
           to={clusterKsqlDbQueryRelativePath}
           buttonType="primary"
           buttonSize="M"
+          disabled={!canExecuteKSQLRequest}
         >
           Execute KSQL Request
         </Button>
