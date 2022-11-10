@@ -1,7 +1,6 @@
 import React from 'react';
 import New from 'components/Topics/New/New';
 import { Route, Routes } from 'react-router-dom';
-import { connectors } from 'lib/fixtures/kafkaConnect';
 import { act, screen, waitFor } from '@testing-library/react';
 import {
   clusterTopicCopyPath,
