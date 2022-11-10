@@ -42,8 +42,14 @@ export function useRoleBasedAccessMock() {
             actions: [Action.MESSAGES_PRODUCE],
             value: '123fff',
           },
+          {
+            clusters: ['local'],
+            resource: UserPermissionResourceEnum.SCHEMA,
+            actions: [Action.EDIT],
+            value: '111date',
+          },
         ]);
-      }, 5000);
+      }, 1000);
     });
   });
 }

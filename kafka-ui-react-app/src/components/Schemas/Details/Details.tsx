@@ -28,6 +28,8 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { schemasApiClient } from 'lib/api';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 import Table from 'components/common/NewTable';
+import { usePermission } from 'lib/hooks/usePermission';
+import { Action, UserPermissionResourceEnum } from 'generated-sources';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
@@ -37,6 +39,11 @@ const Details: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
+  const canEditSchema = usePermission(
+    UserPermissionResourceEnum.SCHEMA,
+    Action.EDIT,
+    subject
+  );
 
   React.useEffect(() => {
     dispatch(fetchLatestSchema({ clusterName, subject }));
@@ -104,6 +111,7 @@ const Details: React.FC = () => {
               buttonSize="M"
               buttonType="primary"
               to={clusterSchemaEditPageRelativePath}
+              disabled={!canEditSchema}
             >
               Edit Schema
             </Button>
