@@ -93,7 +93,7 @@ const formatTopicCreation = (form: TopicFormData): TopicCreation => {
 
   const cleanConfigs = () => {
     return Object.fromEntries(
-      Object.entries(configs).filter(([, val]) => !(val === ''))
+      Object.entries(configs).filter(([, val]) => val !== '')
     );
   };
 
