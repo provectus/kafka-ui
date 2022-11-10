@@ -3,9 +3,11 @@ import { CellContext } from '@tanstack/react-table';
 import { Topic } from 'generated-sources';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
-function formatThroughput(row: Topic) {
-  const production = row.bytesInPerSec;
-  const consumption = row.bytesOutPerSec;
+export const ThroughputCell: React.FC<CellContext<Topic, unknown>> = ({
+  row: { original },
+}) => {
+  const production = original.bytesInPerSec;
+  const consumption = original.bytesOutPerSec;
   if (production === undefined && consumption === undefined) {
     return <>N/A</>;
   }
@@ -34,10 +36,4 @@ function formatThroughput(row: Topic) {
       </div>
     </>
   );
-}
-
-export const ThroughputCell: React.FC<CellContext<Topic, unknown>> = ({
-  row: { original },
-}) => {
-  return formatThroughput(original);
 };
