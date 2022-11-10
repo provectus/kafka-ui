@@ -144,7 +144,7 @@ describe('Table', () => {
       expect(screen.getByRole('link', { name: 'lorem' })).toBeInTheDocument();
     });
 
-    it('link click stops propagation', () => {
+    it('link click stops propagation', async () => {
       const onRowClick = jest.fn();
       renderComponent({ onRowClick });
       const link = screen.getByRole('link', { name: 'lorem' });
