@@ -23,6 +23,12 @@ public class BrokersList extends BasePage {
   }
 
   @Step
+  public boolean isBrokerVisible(String brokerId) {
+    tableGrid.shouldBe(Condition.visible);
+    return isVisible(getTableElement(brokerId));
+  }
+
+  @Step
   public BrokersList openBroker(String brokerName) {
     getTableElement(brokerName).shouldBe(Condition.enabled).click();
     return this;
