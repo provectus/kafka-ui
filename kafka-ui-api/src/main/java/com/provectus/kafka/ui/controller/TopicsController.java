@@ -1,10 +1,9 @@
 package com.provectus.kafka.ui.controller;
 
-import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.ANALYSIS_RUN;
-import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.ANALYSIS_VIEW;
 import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.CREATE;
 import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.DELETE;
 import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.EDIT;
+import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.MESSAGES_READ;
 import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.VIEW;
 import static java.util.stream.Collectors.toList;
 
@@ -276,7 +275,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
-        .topicActions(ANALYSIS_RUN)
+        .topicActions(MESSAGES_READ)
         .build());
 
     return validateAccess.then(
@@ -292,7 +291,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
-        .topicActions(ANALYSIS_RUN)
+        .topicActions(MESSAGES_READ)
         .build());
 
     topicAnalysisService.cancelAnalysis(getCluster(clusterName), topicName);
@@ -310,7 +309,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
-        .topicActions(ANALYSIS_VIEW)
+        .topicActions(MESSAGES_READ)
         .build());
 
     return validateAccess.then(Mono.just(

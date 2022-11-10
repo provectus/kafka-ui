@@ -10,9 +10,6 @@ public enum TopicAction implements PermissibleAction {
   EDIT,
   DELETE,
 
-  ANALYSIS_VIEW,
-  ANALYSIS_RUN,
-
   MESSAGES_READ,
   MESSAGES_PRODUCE,
   MESSAGES_DELETE,
