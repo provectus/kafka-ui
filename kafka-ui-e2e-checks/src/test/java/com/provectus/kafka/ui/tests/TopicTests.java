@@ -1,27 +1,35 @@
 package com.provectus.kafka.ui.tests;
 
+import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
+import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
+import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
+import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE;
+import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPRESSION_TYPE;
+import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
+import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
-import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
-import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.COMPACT;
-import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.CleanupPolicyValue.DELETE;
-import static com.provectus.kafka.ui.pages.topic.TopicCreateEditForm.MaxSizeOnDisk.SIZE_20_GB;
-import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
-import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TopicTests extends BaseTest {
@@ -30,6 +38,8 @@ public class TopicTests extends BaseTest {
     private static final Topic TOPIC_TO_CREATE = new Topic()
             .setName("new-topic-"+ randomAlphabetic(5))
             .setPartitions("1")
+            .setCustomParameterType(COMPRESSION_TYPE)
+            .setCustomParameterValue("producer")
             .setCleanupPolicyValue(DELETE);
     private static final Topic TOPIC_FOR_UPDATE = new Topic()
             .setName("topic-to-update-" + randomAlphabetic(5))
@@ -90,7 +100,8 @@ public class TopicTests extends BaseTest {
         TOPIC_LIST.add(TOPIC_TO_CREATE);
     }
 
-    @Disabled("https://github.com/provectus/kafka-ui/issues/2625")
+    @Disabled()
+    @Issue("https://github.com/provectus/kafka-ui/issues/2625")
     @DisplayName("should update a topic")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -104,7 +115,8 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_UPDATE.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openEditSettings();
+                .openDotMenu()
+                .clickEditSettingsMenu();
         topicCreateEditForm
                 .waitUntilScreenReady()
                 .selectCleanupPolicy((TOPIC_FOR_UPDATE.getCleanupPolicyValue()))
@@ -122,7 +134,8 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_UPDATE.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openEditSettings();
+                .openDotMenu()
+                .clickEditSettingsMenu();
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()").isEqualTo(TOPIC_FOR_UPDATE.getCleanupPolicyValue().getVisibleText());
         softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
@@ -144,7 +157,9 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_DELETE.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .deleteTopic();
+                .openDotMenu()
+                .clickDeleteTopicMenu()
+                .clickConfirmDeleteBtn();
         naviSideBar
                 .openSideMenu(TOPICS);
         topicsList
@@ -166,7 +181,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_MESSAGES.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicDetails.TopicMenu.MESSAGES)
+                .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
                 .clickProduceMessageBtn();
         produceMessagePanel
                 .waitUntilScreenReady()
@@ -181,37 +196,37 @@ public class TopicTests extends BaseTest {
         softly.assertAll();
     }
 
-    @Issue("Uncomment last assertion after bug https://github.com/provectus/kafka-ui/issues/2778 fix")
+    @Disabled
+    @Issue("https://github.com/provectus/kafka-ui/issues/2778")
     @DisplayName("clear message")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(19)
     @Test
     void clearMessage() {
-        naviSideBar
-                .openSideMenu(TOPICS);
-        topicsList
-                .waitUntilScreenReady()
-                .openTopic(TOPIC_FOR_MESSAGES.getName());
-        topicDetails
-                .waitUntilScreenReady()
-                .openTopicMenu(TopicDetails.TopicMenu.OVERVIEW)
-                .clickProduceMessageBtn();
-        produceMessagePanel
-                .waitUntilScreenReady()
-                .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
-                .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
-                .submitProduceMessage();
-        topicDetails
-                .waitUntilScreenReady();
-        String messageAmount = topicDetails.MessageCountAmount();
-        assertThat(messageAmount)
-                .withFailMessage("message amount not equals").isEqualTo(topicDetails.MessageCountAmount());
-        topicDetails
-                .openDotPartitionIdMenu()
-                .clickClearMessagesBtn();
-//        assertThat(Integer.toString(Integer.valueOf(messageAmount)-1))
-//                .withFailMessage("message amount not decrease by one").isEqualTo(topicDetails.MessageCountAmount());
+      naviSideBar
+          .openSideMenu(TOPICS);
+      topicsList
+          .waitUntilScreenReady()
+          .openTopic(TOPIC_FOR_MESSAGES.getName());
+      topicDetails
+          .waitUntilScreenReady()
+          .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
+          .clickProduceMessageBtn();
+      int messageAmount = topicDetails.getMessageCountAmount();
+      produceMessagePanel
+          .waitUntilScreenReady()
+          .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
+          .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
+          .submitProduceMessage();
+      topicDetails
+          .waitUntilScreenReady();
+      Assertions.assertEquals(messageAmount + 1, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
+      topicDetails
+          .openDotMenu()
+          .clickClearMessagesMenu()
+          .waitUntilScreenReady();
+      Assertions.assertEquals(0, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
     }
 
     @DisplayName("Redirect to consumer from topic profile")
@@ -229,7 +244,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(topicName);
         topicDetails
                 .waitUntilScreenReady()
-                .openTopicMenu(TopicDetails.TopicMenu.CONSUMERS)
+                .openDetailsTab(TopicDetails.TopicMenu.CONSUMERS)
                 .openConsumerGroup(consumerGroupId);
         consumersDetails
                 .waitUntilScreenReady();
@@ -238,6 +253,74 @@ public class TopicTests extends BaseTest {
         assertThat(consumersDetails.isTopicInConsumersDetailsVisible(topicName))
                 .withFailMessage("isTopicInConsumersDetailsVisible").isTrue();
     }
+
+  @DisplayName("Checking Topic creation possibility in case of empty Topic Name")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(4)
+  @Test
+  void checkTopicCreatePossibility() {
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .clickAddTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady()
+        .setTopicName("");
+    assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isFalse();
+    topicCreateEditForm
+        .setTopicName("testTopic1");
+    assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isTrue();
+  }
+
+  @DisplayName("Checking requiredness of Custom parameters within 'Create new Topic'")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(6)
+  @Test
+  void checkCustomParametersWithinCreateNewTopic() {
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .clickAddTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady()
+        .setTopicName(TOPIC_TO_CREATE.getName())
+        .clickAddCustomParameterTypeButton()
+        .setCustomParameterType(TOPIC_TO_CREATE.getCustomParameterType());
+    assertThat(topicCreateEditForm.isDeleteCustomParameterButtonEnabled()).as("isDeleteCustomParameterButtonEnabled()")
+        .isTrue();
+    topicCreateEditForm
+        .clearCustomParameterValue();
+    assertThat(topicCreateEditForm.isValidationMessageCustomParameterValueVisible())
+        .as("isValidationMessageCustomParameterValueVisible()").isTrue();
+  }
+
+  @Disabled
+  @Issue("https://github.com/provectus/kafka-ui/issues/2819")
+  @DisplayName("Message copy from topic profile")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(21)
+  @Test
+  void copyMessageFromTopicProfile() {
+    String topicName = "_schemas";
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .openTopic(topicName);
+    topicDetails
+        .waitUntilScreenReady()
+        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .getRandomMessage()
+        .openDotMenu()
+        .clickCopyToClipBoard();
+    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Copied successfully!"),
+        "isAlertWithMessageVisible()");
+  }
 
     @AfterAll
     public void afterAll() {
