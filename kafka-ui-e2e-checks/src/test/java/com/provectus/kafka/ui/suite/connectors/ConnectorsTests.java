@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.tests;
+package com.provectus.kafka.ui.suite.connectors;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KAFKA_CONNECT;

@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.tests;
+package com.provectus.kafka.ui.suite.schemas;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.SCHEMA_REGISTRY;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
