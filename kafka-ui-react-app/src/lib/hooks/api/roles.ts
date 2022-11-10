@@ -33,7 +33,7 @@ export function useRoleBasedAccessMock() {
           },
           {
             clusters: ['local'],
-            resource: UserPermissionResourceEnum.TOPIC,
+            resource: UserPermissionResourceEnum.CONNECT,
             actions: [Action.CREATE],
           },
         ]);
