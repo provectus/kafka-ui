@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.tests;
 
+import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE;
@@ -99,7 +100,8 @@ public class TopicTests extends BaseTest {
         TOPIC_LIST.add(TOPIC_TO_CREATE);
     }
 
-    @Disabled("https://github.com/provectus/kafka-ui/issues/2625")
+    @Disabled()
+    @Issue("https://github.com/provectus/kafka-ui/issues/2625")
     @DisplayName("should update a topic")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -194,7 +196,8 @@ public class TopicTests extends BaseTest {
         softly.assertAll();
     }
 
-    @Issue("Uncomment last assertion after bug https://github.com/provectus/kafka-ui/issues/2778 fix")
+    @Disabled
+    @Issue("https://github.com/provectus/kafka-ui/issues/2778")
     @DisplayName("clear message")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
@@ -223,7 +226,7 @@ public class TopicTests extends BaseTest {
           .openDotMenu()
           .clickClearMessagesMenu()
           .waitUntilScreenReady();
-//      Assertions.assertEquals(0, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
+      Assertions.assertEquals(0, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
     }
 
     @DisplayName("Redirect to consumer from topic profile")
@@ -313,7 +316,7 @@ public class TopicTests extends BaseTest {
         .getRandomMessage()
         .openDotMenu()
         .clickCopyToClipBoard();
-    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(BasePage.AlertHeader.SUCCESS, "Copied successfully!"),
+    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Copied successfully!"),
         "isAlertWithMessageVisible()");
   }
 

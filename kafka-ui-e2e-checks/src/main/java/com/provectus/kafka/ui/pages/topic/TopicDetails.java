@@ -12,7 +12,6 @@ import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
@@ -44,7 +43,7 @@ public class TopicDetails extends BasePage {
 
   @Step
   public TopicDetails openDetailsTab(TopicMenu menu) {
-    $(By.linkText(menu.getValue())).shouldBe(Condition.visible).click();
+    $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
     waitUntilSpinnerDisappear();
     return this;
   }
@@ -155,13 +154,12 @@ public class TopicDetails extends BasePage {
     }
 
     @Step
-    public MessageGridItem expand() {
-      element.$x("./td[1]/span").click();
+    public MessageGridItem clickExpand() {
+      clickByJavaScript(element.$x("./td[1]/span"));
       return this;
     }
 
-    @Step
-    public SelenideElement getOffsetElm() {
+    private SelenideElement getOffsetElm() {
       return element.$x("./td[2]");
     }
 
@@ -225,13 +223,8 @@ public class TopicDetails extends BasePage {
       this.value = value;
     }
 
-    public String getValue() {
-      return value;
-    }
-
-    @Override
     public String toString() {
-      return "TopicMenu{" + "value='" + value + '\'' + '}';
+      return value;
     }
   }
 }
