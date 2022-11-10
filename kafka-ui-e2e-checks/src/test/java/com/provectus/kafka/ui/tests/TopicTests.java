@@ -298,6 +298,8 @@ public class TopicTests extends BaseTest {
         .as("isValidationMessageCustomParameterValueVisible()").isTrue();
   }
 
+  @Disabled
+  @Issue("https://github.com/provectus/kafka-ui/issues/2819")
   @DisplayName("Message copy from topic profile")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
