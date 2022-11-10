@@ -1,32 +1,31 @@
 package com.provectus.kafka.ui.pages.consumer;
 
+import static com.codeborne.selenide.Selenide.$x;
+
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 
-import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.utilities.WebUtils.isVisible;
+public class ConsumersDetails extends BasePage {
 
-public class ConsumersDetails {
-
-    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
-    protected SelenideElement topicGrid = $x("//table");
     protected String consumerIdHeaderLocator = "//h1[contains(text(),'%s')]";
     protected String topicElementLocator = "//tbody//td//a[text()='%s']";
+
     @Step
     public ConsumersDetails waitUntilScreenReady() {
-        loadingSpinner.shouldBe(Condition.disappear);
-        topicGrid.shouldBe(Condition.visible);
+        waitUntilSpinnerDisappear();
+        tableGrid.shouldBe(Condition.visible);
         return this;
     }
+
     @Step
     public boolean isRedirectedConsumerTitleVisible(String consumerGroupId) {
         return isVisible($x(String.format(consumerIdHeaderLocator, consumerGroupId)));
     }
+
     @Step
     public boolean isTopicInConsumersDetailsVisible(String topicName) {
-        topicGrid.shouldBe(Condition.visible);
+        tableGrid.shouldBe(Condition.visible);
         return isVisible($x(String.format(topicElementLocator, topicName)));
     }
-
 }

@@ -13,9 +13,9 @@ import {
 } from 'generated-sources';
 import { showServerError } from 'lib/errorHandling';
 import toast from 'react-hot-toast';
-import { StopLoading } from 'components/Topics/Topic/MessagesV2/FiltersBar/FiltersBar.styled';
 import { useQuery } from '@tanstack/react-query';
 import { messagesApiClient } from 'lib/api';
+import { StopLoading } from 'components/Topics/Topic/Messages/Messages.styled';
 
 interface UseTopicMessagesProps {
   clusterName: ClusterName;
