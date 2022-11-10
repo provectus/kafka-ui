@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.base;
 import com.provectus.kafka.ui.helpers.ApiHelper;
 import com.provectus.kafka.ui.pages.NaviSideBar;
 import com.provectus.kafka.ui.pages.TopPanel;
+import com.provectus.kafka.ui.pages.brokers.BrokersList;
 import com.provectus.kafka.ui.pages.connector.ConnectorCreateForm;
 import com.provectus.kafka.ui.pages.connector.ConnectorDetails;
 import com.provectus.kafka.ui.pages.connector.KafkaConnectList;
@@ -32,4 +33,5 @@ public abstract class Facade {
     protected ConsumersList consumersList = new ConsumersList();
     protected NaviSideBar naviSideBar = new NaviSideBar();
     protected TopPanel topPanel = new TopPanel();
+    protected BrokersList brokersList = new BrokersList();
 }
