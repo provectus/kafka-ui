@@ -30,6 +30,7 @@ import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 import Table from 'components/common/NewTable';
 import { usePermission } from 'lib/hooks/usePermission';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import ActionButton from 'components/common/ActionButton/ActionButton';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
@@ -107,14 +108,14 @@ const Details: React.FC = () => {
             >
               Compare Versions
             </Button>
-            <Button
+            <ActionButton
               buttonSize="M"
               buttonType="primary"
               to={clusterSchemaEditPageRelativePath}
-              disabled={!canEditSchema}
+              canDoAction={canEditSchema}
             >
               Edit Schema
-            </Button>
+            </ActionButton>
             <Dropdown>
               <DropdownItem
                 confirm={

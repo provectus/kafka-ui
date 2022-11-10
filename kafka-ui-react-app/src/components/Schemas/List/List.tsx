@@ -5,7 +5,7 @@ import {
   clusterSchemaPath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
-import { Button } from 'components/common/Button/Button';
+import ActionButton from 'components/common/ActionButton/ActionButton';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
@@ -88,14 +88,14 @@ const List: React.FC = () => {
         {!isReadOnly && (
           <>
             <GlobalSchemaSelector />
-            <Button
+            <ActionButton
               buttonSize="M"
               buttonType="primary"
               to={clusterSchemaNewRelativePath}
-              disabled={!canCreateSchema}
+              canDoAction={canCreateSchema}
             >
               <PlusIcon /> Create Schema
-            </Button>
+            </ActionButton>
           </>
         )}
       </PageHeading>

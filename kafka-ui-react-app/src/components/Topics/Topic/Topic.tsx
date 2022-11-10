@@ -11,7 +11,7 @@ import {
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { Button } from 'components/common/Button/Button';
+import ActionButton from 'components/common/ActionButton/ActionButton';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
@@ -88,14 +88,15 @@ const Topic: React.FC = () => {
         backText="Topics"
         backTo={clusterTopicsPath(clusterName)}
       >
-        <Button
+        <ActionButton
           buttonSize="M"
           buttonType="primary"
           onClick={openSidebar}
-          disabled={isReadOnly || !canProduceTopicMessage}
+          disabled={isReadOnly}
+          canDoAction={canProduceTopicMessage}
         >
           Produce Message
-        </Button>
+        </ActionButton>
         <Dropdown disabled={isReadOnly || data?.internal}>
           <DropdownItem onClick={() => navigate(clusterTopicEditRelativePath)}>
             Edit settings

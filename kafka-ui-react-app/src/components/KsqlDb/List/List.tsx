@@ -11,7 +11,7 @@ import {
   ClusterNameRoute,
 } from 'lib/paths';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { Button } from 'components/common/Button/Button';
+import ActionButton from 'components/common/ActionButton/ActionButton';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
@@ -39,14 +39,14 @@ const List: FC = () => {
   return (
     <>
       <PageHeading text="KSQL DB">
-        <Button
+        <ActionButton
           to={clusterKsqlDbQueryRelativePath}
           buttonType="primary"
           buttonSize="M"
-          disabled={!canExecuteKSQLRequest}
+          canDoAction={canExecuteKSQLRequest}
         >
           Execute KSQL Request
-        </Button>
+        </ActionButton>
       </PageHeading>
       <Metrics.Wrapper>
         <Metrics.Section>
