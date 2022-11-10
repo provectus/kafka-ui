@@ -105,14 +105,4 @@ describe('New', () => {
       expect(mockNavigate).toHaveBeenLastCalledWith(`../${topicName}`)
     );
   });
-
-  it('renders indicators in loading state', async () => {
-    (useCreateTopic as jest.Mock).mockImplementation(() => ({
-      isLoading: true,
-      data: connectors,
-    }));
-
-    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
-  });
 });

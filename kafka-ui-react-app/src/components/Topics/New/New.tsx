@@ -9,7 +9,6 @@ import { topicFormValidationSchema } from 'lib/yupExtended';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import useAppParams from 'lib/hooks/useAppParams';
 import { useCreateTopic } from 'lib/hooks/api/topics';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 
 enum Filters {
   NAME = 'name',
@@ -27,7 +26,6 @@ const New: React.FC = () => {
 
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const createTopic = useCreateTopic(clusterName);
-  console.log(createTopic, 'createTopic');
 
   const navigate = useNavigate();
 
@@ -45,10 +43,6 @@ const New: React.FC = () => {
     navigate(`../${data.name}`);
   };
 
-  if (createTopic.isLoading) {
-    return <PageLoader />;
-  }
-
   return (
     <>
       <PageHeading
@@ -63,7 +57,7 @@ const New: React.FC = () => {
           partitionCount={Number(partitionCount)}
           replicationFactor={Number(replicationFactor)}
           inSyncReplicas={Number(inSyncReplicas)}
-          isSubmitting={false}
+          isSubmitting={createTopic.isLoading}
           onSubmit={methods.handleSubmit(onSubmit)}
         />
       </FormProvider>
