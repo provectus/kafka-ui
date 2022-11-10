@@ -35,6 +35,8 @@ import SlidingSidebar from 'components/common/SlidingSidebar';
 import useBoolean from 'lib/hooks/useBoolean';
 
 import Messages from './Messages/Messages';
+// Messages v2
+import MessagesContainer from './MessagesV2/MessagesContainer';
 import Overview from './Overview/Overview';
 import Settings from './Settings/Settings';
 import TopicConsumerGroups from './ConsumerGroups/TopicConsumerGroups';
@@ -217,6 +219,7 @@ const Topic: React.FC = () => {
             path={clusterTopicMessagesRelativePath}
             element={<Messages />}
           />
+          <Route path="v2" element={<MessagesContainer />} />
           <Route
             path={clusterTopicSettingsRelativePath}
             element={<Settings />}
