@@ -73,48 +73,6 @@ describe('New', () => {
       screen.getByText('Number of partitions is required and must be a number')
     ).toBeInTheDocument();
 
-    await userEvent.type(
-      screen.getByLabelText('Min In Sync Replicas *'),
-      minValue
-    );
-    await userEvent.clear(screen.getByLabelText('Min In Sync Replicas *'));
-    await userEvent.tab();
-    await expect(
-      screen.getByText('Min in sync replicas is required and must be a number')
-    ).toBeInTheDocument();
-
-    await userEvent.type(
-      screen.getByLabelText('Replication Factor *'),
-      minValue
-    );
-    await userEvent.clear(screen.getByLabelText('Replication Factor *'));
-    await userEvent.tab();
-    await expect(
-      screen.getByText('Replication factor is required and must be a number')
-    ).toBeInTheDocument();
-
-    await userEvent.type(
-      screen.getByLabelText('Time to retain data (in ms)'),
-      retainTime
-    );
-    await userEvent.clear(screen.getByLabelText('Time to retain data (in ms)'));
-    await userEvent.tab();
-    await expect(
-      screen.getByText('Time to retain data is required and must be a number')
-    ).toBeInTheDocument();
-
-    await userEvent.type(
-      screen.getByLabelText('Maximum message size in bytes *'),
-      minValue
-    );
-    await userEvent.clear(
-      screen.getByLabelText('Maximum message size in bytes *')
-    );
-    await userEvent.tab();
-    await expect(
-      screen.getByText('Maximum message size is required and must be a number')
-    ).toBeInTheDocument();
-
     expect(createTopicMock).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
   });
@@ -138,19 +96,16 @@ describe('New', () => {
       minValue
     );
     await userEvent.type(
-      screen.getByLabelText('Min In Sync Replicas *'),
+      screen.getByLabelText('Min In Sync Replicas'),
       minValue
     );
-    await userEvent.type(
-      screen.getByLabelText('Replication Factor *'),
-      minValue
-    );
+    await userEvent.type(screen.getByLabelText('Replication Factor'), minValue);
     await userEvent.type(
       screen.getByLabelText('Time to retain data (in ms)'),
       retainTime
     );
     await userEvent.type(
-      screen.getByLabelText('Maximum message size in bytes *'),
+      screen.getByLabelText('Maximum message size in bytes'),
       minValue
     );
     expect(screen.getByText('Create topic')).toBeEnabled();

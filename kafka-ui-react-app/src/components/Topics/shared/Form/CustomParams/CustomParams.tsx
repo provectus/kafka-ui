@@ -12,11 +12,13 @@ import * as S from './CustomParams.styled';
 export interface CustomParamsProps {
   config?: TopicConfigParams;
   isSubmitting: boolean;
+  isEditing?: boolean;
 }
 
 const CustomParams: React.FC<CustomParamsProps> = ({
   isSubmitting,
   config,
+  isEditing,
 }) => {
   const { control } = useFormContext<TopicFormData>();
   const { fields, append, remove } = useFieldArray({
@@ -46,13 +48,16 @@ const CustomParams: React.FC<CustomParamsProps> = ({
 
   return (
     <S.ParamsWrapper>
-      {controlledFields.map(
+      {controlledFields?.map(
         (field, idx) =>
-          (!config ||
-            config[field.name].source ===
-              ConfigSource.DYNAMIC_TOPIC_CONFIG) && (
+          ((config &&
+            field.name &&
+            config[field.name]?.source === ConfigSource.DYNAMIC_TOPIC_CONFIG) ||
+            !field.name ||
+            !isEditing) && (
             <CustomParamField
               key={field.id}
+              config={config}
               field={field}
               remove={removeField}
               index={idx}

@@ -70,7 +70,7 @@ describe('Edit Component', () => {
     await act(() => renderComponent());
     const btn = screen.getAllByText(/Update topic/i)[0];
     const field = screen.getByRole('spinbutton', {
-      name: 'Min In Sync Replicas * Min In Sync Replicas *',
+      name: 'Min In Sync Replicas Min In Sync Replicas',
     });
     await act(() => userEvent.type(field, '1'));
     await act(() => userEvent.click(btn));

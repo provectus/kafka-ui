@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { ErrorMessage } from '@hookform/error-message';
 import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import { FieldArrayWithId, useFormContext, Controller } from 'react-hook-form';
-import { TopicFormData } from 'redux/interfaces';
+import { TopicConfigParams, TopicFormData } from 'redux/interfaces';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import Select from 'components/common/Select/Select';
@@ -10,10 +10,12 @@ import Input from 'components/common/Input/Input';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 import * as C from 'components/Topics/shared/Form/TopicForm.styled';
+import { ConfigSource } from 'generated-sources';
 
 import * as S from './CustomParams.styled';
 
 export interface Props {
+  config?: TopicConfigParams;
   isDisabled: boolean;
   index: number;
   existingFields: string[];
@@ -27,6 +29,7 @@ const CustomParamField: React.FC<Props> = ({
   isDisabled,
   index,
   remove,
+  config,
   existingFields,
   setExistingFields,
 }) => {
@@ -44,7 +47,9 @@ const CustomParamField: React.FC<Props> = ({
     .map((option) => ({
       value: option,
       label: option,
-      disabled: existingFields.includes(option),
+      disabled:
+        existingFields.includes(option) ||
+        (config && config[option].source !== ConfigSource.DYNAMIC_TOPIC_CONFIG),
     }));
 
   React.useEffect(() => {

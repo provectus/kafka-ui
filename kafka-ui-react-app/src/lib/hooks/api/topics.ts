@@ -82,19 +82,33 @@ const formatTopicCreation = (form: TopicFormData): TopicCreation => {
     customParams,
   } = form;
 
-  return {
+  const configs = {
+    'cleanup.policy': cleanupPolicy,
+    'retention.ms': retentionMs.toString(),
+    'retention.bytes': retentionBytes.toString(),
+    'max.message.bytes': maxMessageBytes.toString(),
+    'min.insync.replicas': minInSyncReplicas.toString(),
+    ...Object.values(customParams || {}).reduce(topicReducer, {}),
+  };
+
+  const cleanConfigs = () => {
+    return Object.fromEntries(
+      Object.entries(configs).filter(([, val]) => !(val === ''))
+    );
+  };
+
+  const topicsvalue = {
     name,
     partitions,
-    replicationFactor,
-    configs: {
-      'cleanup.policy': cleanupPolicy,
-      'retention.ms': retentionMs.toString(),
-      'retention.bytes': retentionBytes.toString(),
-      'max.message.bytes': maxMessageBytes.toString(),
-      'min.insync.replicas': minInSyncReplicas.toString(),
-      ...Object.values(customParams || {}).reduce(topicReducer, {}),
-    },
+    configs: cleanConfigs(),
   };
+
+  return replicationFactor.toString() !== ''
+    ? {
+        ...topicsvalue,
+        replicationFactor,
+      }
+    : topicsvalue;
 };
 
 export function useCreateTopic(clusterName: ClusterName) {

@@ -80,8 +80,7 @@ const TopicForm: React.FC<Props> = ({
   };
 
   const getDynamicSource = (key: string) =>
-    config &&
-    config[key as string]?.source === ConfigSource.DYNAMIC_TOPIC_CONFIG;
+    config && config[key]?.source === ConfigSource.DYNAMIC_TOPIC_CONFIG;
 
   return (
     <StyledForm onSubmit={onSubmit} aria-label="topic form">
@@ -151,7 +150,7 @@ const TopicForm: React.FC<Props> = ({
           {(!isEditing || getDynamicSource('min.insync.replicas')) && (
             <div>
               <InputLabel htmlFor="topicFormMinInSyncReplicas">
-                Min In Sync Replicas *
+                Min In Sync Replicas
               </InputLabel>
               <Input
                 id="topicFormMinInSyncReplicas"
@@ -167,7 +166,7 @@ const TopicForm: React.FC<Props> = ({
           )}
           <div>
             <InputLabel htmlFor="topicFormReplicationFactor">
-              Replication Factor *
+              Replication Factor
             </InputLabel>
             <Input
               id="topicFormReplicationFactor"
@@ -219,7 +218,7 @@ const TopicForm: React.FC<Props> = ({
           {(!isEditing || getDynamicSource('max.message.bytes')) && (
             <div>
               <InputLabel htmlFor="topicFormMaxMessageBytes">
-                Maximum message size in bytes *
+                Maximum message size in bytes
               </InputLabel>
               <Input
                 id="topicFormMaxMessageBytes"
@@ -236,7 +235,11 @@ const TopicForm: React.FC<Props> = ({
         </S.Column>
 
         <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>
-        <CustomParams config={config} isSubmitting={isSubmitting} />
+        <CustomParams
+          config={config}
+          isSubmitting={isSubmitting}
+          isEditing={isEditing}
+        />
         <S.ButtonWrapper>
           <Button
             type="button"
