@@ -13,7 +13,11 @@ import { AdvancedFilter } from 'lib/hooks/useMessageFiltersStore';
 
 const validationSchema = yup.object().shape({
   value: yup.string().required(),
-  name: yup.string().required(),
+  name: yup.string().when('saveFilter', {
+    is: (value: boolean | undefined) => typeof value === 'undefined' || value,
+    then: (schema) => schema.required(),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
 export interface FormProps {
@@ -21,9 +25,16 @@ export interface FormProps {
   value?: string;
   save(filter: AdvancedFilter): void;
   apply(filter: AdvancedFilter): void;
+  onClose?: () => void;
 }
 
-const Form: React.FC<FormProps> = ({ name, value, save, apply }) => {
+const Form: React.FC<FormProps> = ({
+  name = '',
+  value,
+  save,
+  apply,
+  onClose,
+}) => {
   const methods = useForm<AdvancedFilter>({
     mode: 'onChange',
     resolver: yupResolver(validationSchema),
@@ -36,18 +47,21 @@ const Form: React.FC<FormProps> = ({ name, value, save, apply }) => {
     getValues,
   } = methods;
 
+  const onApply = React.useCallback(() => {
+    apply(getValues());
+    reset({ name: '', value: '' });
+    if (onClose) {
+      onClose();
+    }
+  }, []);
+
   const onSubmit = React.useCallback(
     (values: AdvancedFilter) => {
-      apply(values);
-      reset({ name: '', value: '' });
+      save(values);
+      onApply();
     },
     [reset, save]
   );
-
-  const onSave = React.useCallback(() => {
-    save(getValues());
-    handleSubmit(onSubmit);
-  }, []);
 
   return (
     <FormProvider {...methods}>
@@ -97,7 +111,6 @@ const Form: React.FC<FormProps> = ({ name, value, save, apply }) => {
             buttonType="secondary"
             type="submit"
             disabled={!isValid || isSubmitting || !isDirty}
-            onClick={onSave}
           >
             Save & Apply
           </Button>
@@ -106,6 +119,7 @@ const Form: React.FC<FormProps> = ({ name, value, save, apply }) => {
             buttonType="primary"
             type="submit"
             disabled={isSubmitting || !isDirty}
+            onClick={onApply}
           >
             Apply Filter
           </Button>
