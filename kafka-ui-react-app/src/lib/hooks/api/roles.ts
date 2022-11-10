@@ -27,6 +27,11 @@ export function useRoleBasedAccessMock() {
             actions: [Action.DELETE, Action.CREATE],
           },
           {
+            clusters: ['local'],
+            resource: UserPermissionResourceEnum.KSQL,
+            actions: [Action.EXECUTE],
+          },
+          {
             clusters: ['local', 'dev'],
             resource: UserPermissionResourceEnum.SCHEMA,
             actions: [Action.CREATE],
