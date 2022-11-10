@@ -36,6 +36,12 @@ export function useRoleBasedAccessMock() {
             resource: UserPermissionResourceEnum.CONNECT,
             actions: [Action.CREATE],
           },
+          {
+            clusters: ['local'],
+            resource: UserPermissionResourceEnum.TOPIC,
+            actions: [Action.MESSAGES_PRODUCE],
+            value: '123fff',
+          },
         ]);
       }, 5000);
     });

@@ -1,13 +1,13 @@
 import React, { Suspense } from 'react';
 import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import {
-  RouteParamsClusterTopic,
-  clusterTopicMessagesRelativePath,
-  clusterTopicSettingsRelativePath,
   clusterTopicConsumerGroupsRelativePath,
   clusterTopicEditRelativePath,
-  clusterTopicStatisticsRelativePath,
+  clusterTopicMessagesRelativePath,
+  clusterTopicSettingsRelativePath,
   clusterTopicsPath,
+  clusterTopicStatisticsRelativePath,
+  RouteParamsClusterTopic,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -29,10 +29,15 @@ import {
   clearTopicMessages,
   resetTopicMessages,
 } from 'redux/reducers/topicMessages/topicMessagesSlice';
-import { CleanUpPolicy } from 'generated-sources';
+import {
+  Action,
+  CleanUpPolicy,
+  UserPermissionResourceEnum,
+} from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import SlidingSidebar from 'components/common/SlidingSidebar';
 import useBoolean from 'lib/hooks/useBoolean';
+import { usePermission } from 'lib/hooks/usePermission';
 
 import Messages from './Messages/Messages';
 import Overview from './Overview/Overview';
@@ -50,6 +55,11 @@ const Topic: React.FC = () => {
     setTrue: openSidebar,
   } = useBoolean(false);
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+  const canProduceTopicMessage = usePermission(
+    UserPermissionResourceEnum.TOPIC,
+    Action.MESSAGES_PRODUCE,
+    topicName
+  );
   const navigate = useNavigate();
   const deleteTopic = useDeleteTopic(clusterName);
   const recreateTopic = useRecreateTopic({ clusterName, topicName });
@@ -82,7 +92,7 @@ const Topic: React.FC = () => {
           buttonSize="M"
           buttonType="primary"
           onClick={openSidebar}
-          disabled={isReadOnly}
+          disabled={isReadOnly || !canProduceTopicMessage}
         >
           Produce Message
         </Button>
