@@ -23,6 +23,14 @@ public class TopicDetails extends BasePage {
   protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
+  protected SelenideElement messagesAddFiltersBtn = $x("//button[text()='Add Filters']");
+  protected SelenideElement messagesAddFilterSavedFiltersField = $x("//div[text()='Saved Filters']");
+  protected SelenideElement messagesAddFilterFilterCodeTitle = $x("//label[text()='Filter code']");
+  protected SelenideElement messagesAddFilterFilterCodeInput = $x("//*[@id='ace-editor']/div[2]/div/div[3]/div/div");
+  protected SelenideElement messagesAddFilterSaveThisFilterCheckBox = $x("//input[@name='saveFilter']");
+  protected SelenideElement messagesAddFilterDisplayNameInput = $x("//input[@placeholder='Enter Name']");
+  protected SelenideElement messagesAddFilterCancelBtn = $x("//button[text()='Cancel']");
+  protected SelenideElement messagesAddFilterTabAddFilterBtn = $x("//button[text()='Add filter']");
   protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
   protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
   protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
@@ -33,6 +41,7 @@ public class TopicDetails extends BasePage {
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
+  protected String filterNameLocator = "//div[text()='%s']";
 
   @Step
   public TopicDetails waitUntilScreenReady() {
@@ -103,6 +112,62 @@ public class TopicDetails extends BasePage {
   public TopicDetails clickProduceMessageBtn() {
     clickByJavaScript(produceMessageBtn);
     return this;
+  }
+
+  @Step
+  public TopicDetails clickMessagesAddFiltersBtn() {
+    messagesAddFiltersBtn.click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickMessagesAddFilterTabAddFilterBtn() {
+    messagesAddFilterTabAddFilterBtn.click();
+    return this;
+  }
+
+  @Step
+  public boolean isMessagesAddFilterSavedFiltersFieldVisible() {
+    return isVisible(messagesAddFilterSavedFiltersField);
+  }
+
+  @Step
+  public boolean isMessagesAddFilterFilterCodeTitleVisible() {
+    return isVisible(messagesAddFilterFilterCodeTitle);
+  }
+
+  @Step
+  public TopicDetails messagesAddFilterFilterCodeInputSetValue(String filterCode) {
+//    messagesAddFilterFilterCodeInput.click();
+    clickByJavaScript(messagesAddFilterFilterCodeInput);
+    messagesAddFilterFilterCodeInput.sendKeys(filterCode);
+    return this;
+  }
+
+  @Step
+  public TopicDetails saveThisFilterCheckBoxStatus() {
+    messagesAddFilterSaveThisFilterCheckBox.shouldNotBe(Condition.selected);
+    return this;
+  }
+
+  @Step
+  public boolean isMessagesAddFilterDisplayNameInputEnabled() {
+    return isEnabled(messagesAddFilterDisplayNameInput);
+  }
+
+  @Step
+  public boolean isMessagesAddFilterCancelBtnEnabled() {
+    return isEnabled(messagesAddFilterCancelBtn);
+  }
+
+  @Step
+  public boolean isMessagesAddFilterTabAddFilterBtnEnabled() {
+    return isEnabled(messagesAddFilterTabAddFilterBtn);
+  }
+
+  @Step
+  public boolean isFilterNameVisible(String filterName) {
+    return isVisible($x(String.format(filterNameLocator, filterName)));
   }
 
   @Step

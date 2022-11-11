@@ -322,6 +322,44 @@ public class TopicTests extends BaseTest {
         "isAlertWithMessageVisible()");
   }
 
+  @DisplayName("Filter adding within Topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(12)
+  @Test
+  void addingNewFilterWithinTopic() {
+    String topicName = "messages";
+    String filterName = "123ABC";
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .openTopic(topicName);
+    topicDetails
+        .waitUntilScreenReady()
+        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .clickMessagesAddFiltersBtn();
+    assertThat(topicDetails.isMessagesAddFilterSavedFiltersFieldVisible()).as("isMessagesAddFilterSavedFiltersFieldVisible()")
+        .isTrue();
+    assertThat(topicDetails.isMessagesAddFilterFilterCodeTitleVisible()).as("isMessagesAddFilterFilterCodeTitleVisible()")
+        .isTrue();
+    topicDetails
+        .saveThisFilterCheckBoxStatus();
+    assertThat(topicDetails.isMessagesAddFilterDisplayNameInputEnabled()).as("isMessagesAddFilterDisplayNameInputEnabled()")
+        .isTrue();
+    assertThat(topicDetails.isMessagesAddFilterCancelBtnEnabled()).as("isMessagesAddFilterCancelBtnEnabled()")
+        .isTrue();
+    assertThat(topicDetails.isMessagesAddFilterTabAddFilterBtnEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
+        .isFalse();
+    topicDetails
+        .messagesAddFilterFilterCodeInputSetValue(filterName);
+    assertThat(topicDetails.isMessagesAddFilterTabAddFilterBtnEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
+        .isTrue();
+    topicDetails.clickMessagesAddFilterTabAddFilterBtn();
+    assertThat(topicDetails.isFilterNameVisible(filterName)).as("isFilterNameVisible(filterName)")
+        .isTrue();
+  }
+
     @AfterAll
     public void afterAll() {
         TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
