@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.pages.topic;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.screenshot;
 import static org.apache.commons.lang.math.RandomUtils.nextInt;
 
 import com.codeborne.selenide.CollectionCondition;
@@ -42,7 +43,7 @@ public class TopicDetails extends BasePage {
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
-  protected String filterNameLocator = "//div[text()='%s']";
+  protected String filterNameLocator = "//div[contains(text(),'%s')]";
 
   @Step
   public TopicDetails waitUntilScreenReady() {
@@ -165,8 +166,9 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public boolean isFilterNameVisible(String filterName) {
-    return isVisible($x(String.format(filterNameLocator, filterName)));
+  public String filterNameCheck(String filterName) {
+    screenshot("My test");
+    return ($x(String.format(filterNameLocator, filterName))).getText();
   }
 
   @Step

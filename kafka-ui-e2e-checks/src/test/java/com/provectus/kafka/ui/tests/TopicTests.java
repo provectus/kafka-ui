@@ -2,7 +2,8 @@ package com.provectus.kafka.ui.tests;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
-import static com.provectus.kafka.ui.pages.topic.TopicDetails.DetailsTab.*;
+import static com.provectus.kafka.ui.pages.topic.TopicDetails.DetailsTab.MESSAGES;
+import static com.provectus.kafka.ui.pages.topic.TopicDetails.DetailsTab.OVERVIEW;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE;
 import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPRESSION_TYPE;
@@ -359,8 +360,8 @@ public class TopicTests extends BaseTest {
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
         .isTrue();
     topicDetails.clickAddFilterBtnAddFilterMdl();
-    assertThat(topicDetails.isFilterNameVisible(filterName)).as("isFilterNameVisible(filterName)")
-        .isTrue();
+    assertThat(topicDetails.filterNameCheck(filterName)).as("isFilterNameVisible(filterName)")
+        .isEqualTo(filterName);
   }
 
     @AfterAll
