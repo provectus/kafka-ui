@@ -122,23 +122,23 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails clickMessagesAddFilterTabAddFilterBtn() {
+  public TopicDetails clickAddFilterBtnAddFilterMdl() {
     addFilterBtnAddFilterMdl.click();
     return this;
   }
 
   @Step
-  public boolean isMessagesAddFilterSavedFiltersFieldVisible() {
+  public boolean isSavedFiltersFieldVisible() {
     return isVisible(savedFiltersField);
   }
 
   @Step
-  public boolean isMessagesAddFilterFilterCodeTitleVisible() {
+  public boolean isAddFilterCodeTitleVisible() {
     return isVisible(addFilterCodeTitle);
   }
 
   @Step
-  public TopicDetails messagesAddFilterFilterCodeInputSetValue(String filterCode) {
+  public TopicDetails addFilterCodeInputSetValue(String filterCode) {
     addFilterCodeInput.sendKeys(filterCode);
     return this;
   }
@@ -150,17 +150,17 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public boolean isMessagesAddFilterDisplayNameInputEnabled() {
+  public boolean isDisplayNameInputAddFilterMdlEnabled() {
     return isEnabled(displayNameInputAddFilterMdl);
   }
 
   @Step
-  public boolean isMessagesAddFilterCancelBtnEnabled() {
+  public boolean isCancelBtnAddFilterMdlEnabled() {
     return isEnabled(cancelBtnAddFilterMdl);
   }
 
   @Step
-  public boolean isMessagesAddFilterTabAddFilterBtnEnabled() {
+  public boolean isAddFilterBtnAddFilterMdlEnabled() {
     return isEnabled(addFilterBtnAddFilterMdl);
   }
 

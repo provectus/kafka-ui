@@ -340,25 +340,25 @@ public class TopicTests extends BaseTest {
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn();
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicDetails.isMessagesAddFilterSavedFiltersFieldVisible()).as("isMessagesAddFilterSavedFiltersFieldVisible()")
+    softly.assertThat(topicDetails.isSavedFiltersFieldVisible()).as("isMessagesAddFilterSavedFiltersFieldVisible()")
         .isTrue();
-    softly.assertThat(topicDetails.isMessagesAddFilterFilterCodeTitleVisible()).as("isMessagesAddFilterFilterCodeTitleVisible()")
+    softly.assertThat(topicDetails.isAddFilterCodeTitleVisible()).as("isMessagesAddFilterFilterCodeTitleVisible()")
         .isTrue();
     softly.assertAll();
     topicDetails
         .saveThisFilterCheckBoxStatus();
-    softly.assertThat(topicDetails.isMessagesAddFilterDisplayNameInputEnabled()).as("isMessagesAddFilterDisplayNameInputEnabled()")
+    softly.assertThat(topicDetails.isDisplayNameInputAddFilterMdlEnabled()).as("isMessagesAddFilterDisplayNameInputEnabled()")
         .isTrue();
-    softly.assertThat(topicDetails.isMessagesAddFilterCancelBtnEnabled()).as("isMessagesAddFilterCancelBtnEnabled()")
+    softly.assertThat(topicDetails.isCancelBtnAddFilterMdlEnabled()).as("isMessagesAddFilterCancelBtnEnabled()")
         .isTrue();
-    softly.assertThat(topicDetails.isMessagesAddFilterTabAddFilterBtnEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
+    softly.assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
         .isFalse();
     softly.assertAll();
     topicDetails
-        .messagesAddFilterFilterCodeInputSetValue(filterName);
-    assertThat(topicDetails.isMessagesAddFilterTabAddFilterBtnEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
+        .addFilterCodeInputSetValue(filterName);
+    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
         .isTrue();
-    topicDetails.clickMessagesAddFilterTabAddFilterBtn();
+    topicDetails.clickAddFilterBtnAddFilterMdl();
     assertThat(topicDetails.isFilterNameVisible(filterName)).as("isFilterNameVisible(filterName)")
         .isTrue();
   }
