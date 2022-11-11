@@ -144,11 +144,11 @@ describe('Table', () => {
       expect(screen.getByRole('link', { name: 'lorem' })).toBeInTheDocument();
     });
 
-    it('link click stops propagation', () => {
+    it('link click stops propagation', async () => {
       const onRowClick = jest.fn();
       renderComponent({ onRowClick });
       const link = screen.getByRole('link', { name: 'lorem' });
-      userEvent.click(link);
+      await userEvent.click(link);
       expect(onRowClick).not.toHaveBeenCalled();
     });
   });
@@ -273,9 +273,9 @@ describe('Table', () => {
       const th = screen.getByRole('columnheader', { name: 'Text' });
       expect(th).toBeInTheDocument();
 
-      let rows = [];
+      let rows = screen.getAllByRole('row');
       // Check initial sort order by text column is descending
-      rows = screen.getAllByRole('row');
+
       expect(rows[4].textContent?.indexOf('dolor')).toBeGreaterThan(-1);
       expect(rows[3].textContent?.indexOf('ipsum')).toBeGreaterThan(-1);
       expect(rows[2].textContent?.indexOf('lorem')).toBeGreaterThan(-1);
