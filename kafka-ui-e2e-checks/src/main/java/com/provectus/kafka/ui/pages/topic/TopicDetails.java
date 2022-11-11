@@ -24,14 +24,14 @@ public class TopicDetails extends BasePage {
   protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
-  protected SelenideElement messagesAddFiltersBtn = $x("//button[text()='Add Filters']");
-  protected SelenideElement messagesAddFilterSavedFiltersField = $x("//div[text()='Saved Filters']");
-  protected SelenideElement messagesAddFilterFilterCodeTitle = $x("//label[text()='Filter code']");
-  protected SelenideElement messagesAddFilterFilterCodeInput = $x("//div[@id='ace-editor']//textarea");
+  protected SelenideElement addFiltersMessagesTabBtn = $x("//button[text()='Add Filters']");
+  protected SelenideElement savedFiltersField = $x("//div[text()='Saved Filters']");
+  protected SelenideElement addFilterCodeTitle = $x("//label[text()='Filter code']");
+  protected SelenideElement addFilterCodeInput = $x("//div[@id='ace-editor']//textarea");
   protected SelenideElement saveThisFilterCheckBoxAddFilterMdl = $x("//input[@name='saveFilter']");
-  protected SelenideElement messagesAddFilterDisplayNameInput = $x("//input[@placeholder='Enter Name']");
-  protected SelenideElement messagesAddFilterCancelBtn = $x("//button[text()='Cancel']");
-  protected SelenideElement messagesAddFilterTabAddFilterBtn = $x("//button[text()='Add filter']");
+  protected SelenideElement displayNameInputAddFilterMdl = $x("//input[@placeholder='Enter Name']");
+  protected SelenideElement cancelBtnAddFilterMdl = $x("//button[text()='Cancel']");
+  protected SelenideElement addFilterBtnAddFilterMdl = $x("//button[text()='Add filter']");
   protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
   protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
   protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
@@ -117,29 +117,29 @@ public class TopicDetails extends BasePage {
 
   @Step
   public TopicDetails clickMessagesAddFiltersBtn() {
-    messagesAddFiltersBtn.click();
+    addFiltersMessagesTabBtn.click();
     return this;
   }
 
   @Step
   public TopicDetails clickMessagesAddFilterTabAddFilterBtn() {
-    messagesAddFilterTabAddFilterBtn.click();
+    addFilterBtnAddFilterMdl.click();
     return this;
   }
 
   @Step
   public boolean isMessagesAddFilterSavedFiltersFieldVisible() {
-    return isVisible(messagesAddFilterSavedFiltersField);
+    return isVisible(savedFiltersField);
   }
 
   @Step
   public boolean isMessagesAddFilterFilterCodeTitleVisible() {
-    return isVisible(messagesAddFilterFilterCodeTitle);
+    return isVisible(addFilterCodeTitle);
   }
 
   @Step
   public TopicDetails messagesAddFilterFilterCodeInputSetValue(String filterCode) {
-    messagesAddFilterFilterCodeInput.sendKeys(filterCode);
+    addFilterCodeInput.sendKeys(filterCode);
     return this;
   }
 
@@ -151,17 +151,17 @@ public class TopicDetails extends BasePage {
 
   @Step
   public boolean isMessagesAddFilterDisplayNameInputEnabled() {
-    return isEnabled(messagesAddFilterDisplayNameInput);
+    return isEnabled(displayNameInputAddFilterMdl);
   }
 
   @Step
   public boolean isMessagesAddFilterCancelBtnEnabled() {
-    return isEnabled(messagesAddFilterCancelBtn);
+    return isEnabled(cancelBtnAddFilterMdl);
   }
 
   @Step
   public boolean isMessagesAddFilterTabAddFilterBtnEnabled() {
-    return isEnabled(messagesAddFilterTabAddFilterBtn);
+    return isEnabled(addFilterBtnAddFilterMdl);
   }
 
   @Step
