@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.pages.topic;
 
-import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 
 import com.codeborne.selenide.Condition;
@@ -8,7 +7,11 @@ import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.experimental.ExtensionMethod;
 
 @ExtensionMethod(WaitUtils.class)
@@ -17,8 +20,9 @@ public class TopicsList extends BasePage {
     protected SelenideElement topicListHeader = $x("//h1[text()='Topics']");
     protected SelenideElement addTopicBtn = $x("//button[normalize-space(text()) ='Add a Topic']");
     protected SelenideElement searchField = $x("//input[@placeholder='Search by Topic Name']");
-    protected SelenideElement showInternalCheckbox = $x("//input[@name='ShowInternalTopics']");
-    protected List<SelenideElement> tableColumnsName = $$x("//table//tr/th/div");
+    protected SelenideElement showInternalRadioBtn = $x("//input[@name='ShowInternalTopics']");
+    protected String сolumnHeaderLocator = "//table//tr/th/div[text()='%s']";
+    protected String actionButtonLocator = "//button[text()='%s']";
 
     @Step
     public TopicsList waitUntilScreenReady() {
@@ -45,24 +49,37 @@ public class TopicsList extends BasePage {
         return this;
     }
 
-    @Step
-    public boolean isSearchFieldActive(){
-      return isVisible(searchField) && isEnabled(searchField);
+    private List<SelenideElement> getActionButtons() {
+      return Stream.of("Delete selected topics", "Copy selected topic", "Purge messages of selected topics")
+          .map(name -> $x(String.format(actionButtonLocator, name)))
+          .collect(Collectors.toList());
+    }
+
+    private List<SelenideElement> getVisibleColumnHeaders() {
+      return Stream.of("Replication Factor","Number of messages","Topic Name", "Partitions", "Out of sync replicas", "Size")
+          .map(name -> $x(String.format(сolumnHeaderLocator, name)))
+        .collect(Collectors.toList());
+    }
+
+    private List<SelenideElement> getEnabledColumnHeaders(){
+      return Stream.of("Topic Name", "Partitions", "Out of sync replicas", "Size")
+          .map(name -> $x(String.format(сolumnHeaderLocator, name)))
+          .collect(Collectors.toList());
     }
 
     @Step
-    public boolean isShowInternalTopicsActive() {
-      return isEnabled(showInternalCheckbox);
+    public List<SelenideElement> getAllVisibleElements() {
+      List<SelenideElement> visibleElements = new ArrayList<>(getVisibleColumnHeaders());
+      List<SelenideElement> visibleButtons = new ArrayList<>(getActionButtons());
+      visibleElements.addAll(visibleButtons);
+      visibleElements.addAll(Arrays.asList(searchField, addTopicBtn, tableGrid));
+      return visibleElements;
     }
 
     @Step
-    public boolean isAddTopicButtonVisible(){
-      return isEnabled(addTopicBtn);
-    }
-
-    @Step
-    public TopicsList isTableColumnVisible(){
-      tableColumnsName.forEach(names -> names.shouldBe(Condition.visible));
-      return this;
+    public List<SelenideElement> getAllEnabledElements() {
+      List<SelenideElement> enabledElements = new ArrayList<>(getEnabledColumnHeaders());
+      enabledElements.addAll(Arrays.asList(searchField, showInternalRadioBtn,addTopicBtn));
+      return enabledElements;
     }
 }
