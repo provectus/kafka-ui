@@ -339,18 +339,21 @@ public class TopicTests extends BaseTest {
         .waitUntilScreenReady()
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn();
-    assertThat(topicDetails.isMessagesAddFilterSavedFiltersFieldVisible()).as("isMessagesAddFilterSavedFiltersFieldVisible()")
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicDetails.isMessagesAddFilterSavedFiltersFieldVisible()).as("isMessagesAddFilterSavedFiltersFieldVisible()")
         .isTrue();
-    assertThat(topicDetails.isMessagesAddFilterFilterCodeTitleVisible()).as("isMessagesAddFilterFilterCodeTitleVisible()")
+    softly.assertThat(topicDetails.isMessagesAddFilterFilterCodeTitleVisible()).as("isMessagesAddFilterFilterCodeTitleVisible()")
         .isTrue();
+    softly.assertAll();
     topicDetails
         .saveThisFilterCheckBoxStatus();
-    assertThat(topicDetails.isMessagesAddFilterDisplayNameInputEnabled()).as("isMessagesAddFilterDisplayNameInputEnabled()")
+    softly.assertThat(topicDetails.isMessagesAddFilterDisplayNameInputEnabled()).as("isMessagesAddFilterDisplayNameInputEnabled()")
         .isTrue();
-    assertThat(topicDetails.isMessagesAddFilterCancelBtnEnabled()).as("isMessagesAddFilterCancelBtnEnabled()")
+    softly.assertThat(topicDetails.isMessagesAddFilterCancelBtnEnabled()).as("isMessagesAddFilterCancelBtnEnabled()")
         .isTrue();
-    assertThat(topicDetails.isMessagesAddFilterTabAddFilterBtnEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
+    softly.assertThat(topicDetails.isMessagesAddFilterTabAddFilterBtnEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
         .isFalse();
+    softly.assertAll();
     topicDetails
         .messagesAddFilterFilterCodeInputSetValue(filterName);
     assertThat(topicDetails.isMessagesAddFilterTabAddFilterBtnEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")

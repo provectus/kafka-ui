@@ -28,7 +28,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement messagesAddFilterSavedFiltersField = $x("//div[text()='Saved Filters']");
   protected SelenideElement messagesAddFilterFilterCodeTitle = $x("//label[text()='Filter code']");
   protected SelenideElement messagesAddFilterFilterCodeInput = $x("//div[@id='ace-editor']//textarea");
-  protected SelenideElement messagesAddFilterSaveThisFilterCheckBox = $x("//input[@name='saveFilter']");
+  protected SelenideElement saveThisFilterCheckBoxAddFilterMdl = $x("//input[@name='saveFilter']");
   protected SelenideElement messagesAddFilterDisplayNameInput = $x("//input[@placeholder='Enter Name']");
   protected SelenideElement messagesAddFilterCancelBtn = $x("//button[text()='Cancel']");
   protected SelenideElement messagesAddFilterTabAddFilterBtn = $x("//button[text()='Add filter']");
@@ -145,7 +145,7 @@ public class TopicDetails extends BasePage {
 
   @Step
   public TopicDetails saveThisFilterCheckBoxStatus() {
-    messagesAddFilterSaveThisFilterCheckBox.shouldNotBe(Condition.selected);
+    saveThisFilterCheckBoxAddFilterMdl.shouldNotBe(Condition.selected);
     return this;
   }
 
