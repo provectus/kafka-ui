@@ -237,7 +237,7 @@ public class TopicActionsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(2)
   @Test
-  void checkTopicListElementsPresents(){
+  void checkTopicListElements(){
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
