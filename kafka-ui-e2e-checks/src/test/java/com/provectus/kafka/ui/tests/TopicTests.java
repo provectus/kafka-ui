@@ -329,7 +329,7 @@ public class TopicTests extends BaseTest {
   @CaseId(12)
   @Test
   void addingNewFilterWithinTopic() {
-    String topicName = "messages";
+    String topicName = "_schemas";
     String filterName = "123ABC";
     naviSideBar
         .openSideMenu(TOPICS);
