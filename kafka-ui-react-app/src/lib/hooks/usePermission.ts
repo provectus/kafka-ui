@@ -5,6 +5,7 @@ import { ClusterNameRoute } from 'lib/paths';
 
 import useAppParams from './useAppParams';
 
+// TODO finalize with the regex and write the tests
 export function usePermission(
   resource: UserPermissionResourceEnum,
   action: Action,
@@ -18,11 +19,19 @@ export function usePermission(
   if (!cluster) return false;
 
   return (
-    cluster.findIndex(
-      (item) =>
+    cluster.findIndex((item) => {
+      let valueCheck = true;
+      if (item.value) {
+        valueCheck = false;
+
+        if (value) valueCheck = new RegExp(item.value).test(value);
+      }
+
+      return (
         item.resource === resource &&
-        item.value === value &&
+        valueCheck &&
         item.actions.includes(action)
-    ) !== -1
+      );
+    }) !== -1
   );
 }
