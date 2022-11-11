@@ -4,9 +4,15 @@ import CheckmarkIcon from 'components/common/Icons/CheckmarkIcon';
 import EditIcon from 'components/common/Icons/EditIcon';
 import CancelIcon from 'components/common/Icons/CancelIcon';
 import { useConfirm } from 'lib/hooks/useConfirm';
-import { BrokerConfig } from 'generated-sources';
+import {
+  Action,
+  BrokerConfig,
+  UserPermissionResourceEnum,
+} from 'generated-sources';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
+import ActionButton from 'components/common/ActionButton/ActionButton';
+import { usePermission } from 'lib/hooks/usePermission';
 
 import * as S from './Configs.styled';
 
@@ -18,6 +24,10 @@ const InputCell: React.FC<InputCellProps> = ({ row, getValue, onUpdate }) => {
   const initialValue = `${getValue<string | number>()}`;
   const [isEdit, setIsEdit] = React.useState(false);
   const [value, setValue] = React.useState(initialValue);
+  const canEditBrokersConfig = usePermission(
+    UserPermissionResourceEnum.CLUSTERCONFIG,
+    Action.EDIT
+  );
 
   const confirm = useConfirm();
 
@@ -71,14 +81,15 @@ const InputCell: React.FC<InputCellProps> = ({ row, getValue, onUpdate }) => {
       }
     >
       <S.Value title={initialValue}>{initialValue}</S.Value>
-      <Button
+      <ActionButton
         buttonType="primary"
         buttonSize="S"
         aria-label="editAction"
         onClick={() => setIsEdit(true)}
+        canDoAction={canEditBrokersConfig}
       >
         <EditIcon /> Edit
-      </Button>
+      </ActionButton>
     </S.ValueWrapper>
   );
 };

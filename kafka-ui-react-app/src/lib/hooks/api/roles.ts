@@ -51,10 +51,15 @@ export function useRoleBasedAccessMock() {
             clusters: ['local'],
             resource: UserPermissionResourceEnum.SCHEMA,
             actions: [Action.EDIT],
-            value: '111date',
+            value: '111.*',
+          },
+          {
+            clusters: ['local'],
+            resource: UserPermissionResourceEnum.CLUSTERCONFIG,
+            actions: [Action.EDIT],
           },
         ]);
-      }, 1000);
+      });
     });
   });
 }

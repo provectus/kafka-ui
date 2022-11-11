@@ -3,9 +3,10 @@ import { render } from 'lib/testHelpers';
 import ActionButton from 'components/common/ActionButton/ActionButton';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { getDefaultActionMessage } from 'components/common/ActionComponent/ActionComponent';
 
 describe('ActionButton', () => {
-  const tooltipText = "You don't have the permission to do this action";
+  const tooltipText = getDefaultActionMessage();
 
   it('should render the button with the correct text, for the permission tooltip not to show', async () => {
     render(

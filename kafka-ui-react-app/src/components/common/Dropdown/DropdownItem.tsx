@@ -4,7 +4,7 @@ import { useConfirm } from 'lib/hooks/useConfirm';
 
 import * as S from './Dropdown.styled';
 
-interface DropdownItemProps extends PropsWithChildren<MenuItemProps> {
+export interface DropdownItemProps extends PropsWithChildren<MenuItemProps> {
   danger?: boolean;
   onClick?(): void;
   confirm?: React.ReactNode;
