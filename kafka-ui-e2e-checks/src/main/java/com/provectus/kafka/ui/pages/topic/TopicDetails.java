@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.pages.topic;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
+import static org.apache.commons.lang.math.RandomUtils.nextInt;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
@@ -26,7 +27,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement messagesAddFiltersBtn = $x("//button[text()='Add Filters']");
   protected SelenideElement messagesAddFilterSavedFiltersField = $x("//div[text()='Saved Filters']");
   protected SelenideElement messagesAddFilterFilterCodeTitle = $x("//label[text()='Filter code']");
-  protected SelenideElement messagesAddFilterFilterCodeInput = $x("//*[@id='ace-editor']/div[2]/div/div[3]/div/div");
+  protected SelenideElement messagesAddFilterFilterCodeInput = $x("//div[@id='ace-editor']//textarea");
   protected SelenideElement messagesAddFilterSaveThisFilterCheckBox = $x("//input[@name='saveFilter']");
   protected SelenideElement messagesAddFilterDisplayNameInput = $x("//input[@placeholder='Enter Name']");
   protected SelenideElement messagesAddFilterCancelBtn = $x("//button[text()='Cancel']");
@@ -51,7 +52,7 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails openDetailsTab(TopicMenu menu) {
+  public TopicDetails openDetailsTab(DetailsTab menu) {
     $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
     waitUntilSpinnerDisappear();
     return this;
@@ -138,8 +139,6 @@ public class TopicDetails extends BasePage {
 
   @Step
   public TopicDetails messagesAddFilterFilterCodeInputSetValue(String filterCode) {
-//    messagesAddFilterFilterCodeInput.click();
-    clickByJavaScript(messagesAddFilterFilterCodeInput);
     messagesAddFilterFilterCodeInput.sendKeys(filterCode);
     return this;
   }
@@ -207,7 +206,7 @@ public class TopicDetails extends BasePage {
 
   @Step
   public TopicDetails.MessageGridItem getRandomMessage() {
-    return getMessage(initItems().size() - 1);
+    return getMessage(nextInt(initItems().size() - 1));
   }
 
   public static class MessageGridItem extends BasePage {
@@ -276,7 +275,7 @@ public class TopicDetails extends BasePage {
     }
   }
 
-  public enum TopicMenu {
+  public enum DetailsTab {
     OVERVIEW("Overview"),
     MESSAGES("Messages"),
     CONSUMERS("Consumers"),
@@ -284,7 +283,7 @@ public class TopicDetails extends BasePage {
 
     private final String value;
 
-    TopicMenu(String value) {
+    DetailsTab(String value) {
       this.value = value;
     }
 

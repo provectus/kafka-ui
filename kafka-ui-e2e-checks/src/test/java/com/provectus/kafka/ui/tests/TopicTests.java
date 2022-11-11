@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.tests;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
+import static com.provectus.kafka.ui.pages.topic.TopicDetails.DetailsTab.*;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE;
 import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPRESSION_TYPE;
@@ -13,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
@@ -181,7 +181,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_FOR_MESSAGES.getName());
         topicDetails
                 .waitUntilScreenReady()
-                .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+                .openDetailsTab(MESSAGES)
                 .clickProduceMessageBtn();
         produceMessagePanel
                 .waitUntilScreenReady()
@@ -211,7 +211,7 @@ public class TopicTests extends BaseTest {
           .openTopic(TOPIC_FOR_MESSAGES.getName());
       topicDetails
           .waitUntilScreenReady()
-          .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
+          .openDetailsTab(OVERVIEW)
           .clickProduceMessageBtn();
       int messageAmount = topicDetails.getMessageCountAmount();
       produceMessagePanel
@@ -244,7 +244,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(topicName);
         topicDetails
                 .waitUntilScreenReady()
-                .openDetailsTab(TopicDetails.TopicMenu.CONSUMERS)
+                .openDetailsTab(TopicDetails.DetailsTab.CONSUMERS)
                 .openConsumerGroup(consumerGroupId);
         consumersDetails
                 .waitUntilScreenReady();
@@ -314,7 +314,7 @@ public class TopicTests extends BaseTest {
         .openTopic(topicName);
     topicDetails
         .waitUntilScreenReady()
-        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .openDetailsTab(MESSAGES)
         .getRandomMessage()
         .openDotMenu()
         .clickCopyToClipBoard();
@@ -337,7 +337,7 @@ public class TopicTests extends BaseTest {
         .openTopic(topicName);
     topicDetails
         .waitUntilScreenReady()
-        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn();
     assertThat(topicDetails.isMessagesAddFilterSavedFiltersFieldVisible()).as("isMessagesAddFilterSavedFiltersFieldVisible()")
         .isTrue();
