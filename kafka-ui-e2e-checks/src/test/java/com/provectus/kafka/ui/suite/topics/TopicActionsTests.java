@@ -10,12 +10,14 @@ import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
 import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class TopicCreateEditTest extends BaseTest {
+public class TopicActionsTests extends BaseTest {
   private static final long SUITE_ID = 2;
   private static final String SUITE_TITLE = "Topics";
   private static final Topic TOPIC_TO_CREATE = new Topic()
@@ -81,10 +83,8 @@ public class TopicCreateEditTest extends BaseTest {
         .waitUntilScreenReady()
         .openTopic(TOPIC_TO_CREATE.getName());
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicDetails.isTopicHeaderVisible(TOPIC_TO_CREATE.getName())).as("isTopicHeaderVisible()")
-        .isTrue();
-    softly.assertThat(topicDetails.getCleanUpPolicy()).as("getCleanUpPolicy()")
-        .isEqualTo(TOPIC_TO_CREATE.getCleanupPolicyValue().toString());
+    softly.assertThat(topicDetails.isTopicHeaderVisible(TOPIC_TO_CREATE.getName())).as("isTopicHeaderVisible()").isTrue();
+    softly.assertThat(topicDetails.getCleanUpPolicy()).as("getCleanUpPolicy()").isEqualTo(TOPIC_TO_CREATE.getCleanupPolicyValue().toString());
     softly.assertThat(topicDetails.getPartitions()).as("getPartitions()").isEqualTo(TOPIC_TO_CREATE.getPartitions());
     softly.assertAll();
     naviSideBar
@@ -95,7 +95,8 @@ public class TopicCreateEditTest extends BaseTest {
     TOPIC_LIST.add(TOPIC_TO_CREATE);
   }
 
-  @Disabled("https://github.com/provectus/kafka-ui/issues/2625")
+  @Disabled()
+  @Issue("https://github.com/provectus/kafka-ui/issues/2625")
   @DisplayName("should update a topic")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
@@ -131,14 +132,10 @@ public class TopicCreateEditTest extends BaseTest {
         .openDotMenu()
         .clickEditSettingsMenu();
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
-        .isEqualTo(TOPIC_FOR_UPDATE.getCleanupPolicyValue().getVisibleText());
-    softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
-        .isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
-    softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()")
-        .isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk().getVisibleText());
-    softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("getMaxMessageBytes()")
-        .isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
+    softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()").isEqualTo(TOPIC_FOR_UPDATE.getCleanupPolicyValue().getVisibleText());
+    softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
+    softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()").isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk().getVisibleText());
+    softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("getMaxMessageBytes()").isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
     softly.assertAll();
   }
 
@@ -246,12 +243,13 @@ public class TopicCreateEditTest extends BaseTest {
     topicsList
         .waitUntilScreenReady();
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicsList.isSearchFieldActive()).as("isSearchFieldActive()").isTrue();
-    softly.assertThat(topicsList.isShowInternalTopicsActive()).as("isShowInternalTopicsActive()").isTrue();
-    softly.assertThat(topicsList.isAddTopicButtonVisible()).as("isAddTopicButtonVisible()").isTrue();
-    softly.assertThat(topicsList.isTableColumnVisible()).as("isTableColumnVisible()").isNotNull();
+    topicsList.getAllVisibleElements().forEach(
+        element -> softly.assertThat(element.is(Condition.visible)).as(element.getSearchCriteria() + " isVisible()")
+            .isTrue());
+    topicsList.getAllEnabledElements().forEach(
+        element -> softly.assertThat(element.is(Condition.enabled)).as(element.getSearchCriteria() + " isEnabled()")
+            .isTrue());
     softly.assertAll();
-    System.out.println();
   }
 
   @AfterAll

@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui;
+package com.provectus.kafka.ui.suite;
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.base.BaseTest;

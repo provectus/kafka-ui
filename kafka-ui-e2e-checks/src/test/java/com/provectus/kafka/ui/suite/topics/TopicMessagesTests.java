@@ -5,7 +5,6 @@ import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
@@ -21,12 +20,13 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class MessageTest extends BaseTest {
+public class TopicMessagesTests extends BaseTest {
   private static final long SUITE_ID = 2;
   private static final String SUITE_TITLE = "Topics";
   private static final Topic TOPIC_FOR_MESSAGES = new Topic()
@@ -69,7 +69,8 @@ public class MessageTest extends BaseTest {
     softly.assertAll();
   }
 
-  @Issue("Uncomment last assertion after bug https://github.com/provectus/kafka-ui/issues/2778 fix")
+  @Disabled
+  @Issue("https://github.com/provectus/kafka-ui/issues/2778")
   @DisplayName("clear message")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
@@ -85,6 +86,7 @@ public class MessageTest extends BaseTest {
         .waitUntilScreenReady()
         .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
         .clickProduceMessageBtn();
+    int messageAmount = topicDetails.getMessageCountAmount();
     produceMessagePanel
         .waitUntilScreenReady()
         .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
@@ -92,16 +94,36 @@ public class MessageTest extends BaseTest {
         .submitProduceMessage();
     topicDetails
         .waitUntilScreenReady();
-    String messageAmount = topicDetails.MessageCountAmount();
-    assertThat(messageAmount)
-        .withFailMessage("message amount not equals").isEqualTo(topicDetails.MessageCountAmount());
+    Assertions.assertEquals(messageAmount + 1, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
     topicDetails
         .openDotMenu()
         .clickClearMessagesMenu()
-        .clickConfirmDeleteBtn();
-    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS,TOPIC_FOR_MESSAGES.getName() + " messages have been successfully cleared!"),"isAlertWithMessageVisible()");
-//        assertThat(Integer.toString(Integer.valueOf(messageAmount)-1))
-//                .withFailMessage("message amount not decrease by one").isEqualTo(topicDetails.MessageCountAmount());
+        .waitUntilScreenReady();
+    Assertions.assertEquals(0, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
+  }
+
+  @Disabled
+  @Issue("https://github.com/provectus/kafka-ui/issues/2819")
+  @DisplayName("Message copy from topic profile")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(21)
+  @Test
+  void copyMessageFromTopicProfile() {
+    String topicName = "_schemas";
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .openTopic(topicName);
+    topicDetails
+        .waitUntilScreenReady()
+        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .getRandomMessage()
+        .openDotMenu()
+        .clickCopyToClipBoard();
+    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Copied successfully!"),
+        "isAlertWithMessageVisible()");
   }
 
   @AfterAll
