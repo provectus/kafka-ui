@@ -70,9 +70,8 @@ public class TopicsList extends BasePage {
     @Step
     public List<SelenideElement> getAllVisibleElements() {
       List<SelenideElement> visibleElements = new ArrayList<>(getVisibleColumnHeaders());
-      List<SelenideElement> visibleButtons = new ArrayList<>(getActionButtons());
-      visibleElements.addAll(visibleButtons);
       visibleElements.addAll(Arrays.asList(searchField, addTopicBtn, tableGrid));
+      visibleElements.addAll(getActionButtons());
       return visibleElements;
     }
 
