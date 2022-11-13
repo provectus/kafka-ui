@@ -48,8 +48,12 @@ const ActionDropdownItem: React.FC<Props> = ({
 
   return (
     <>
-      <DropdownItem {...props} disabled={disabled || isDisabled}>
-        <S.Wrapper ref={reference}>{children}</S.Wrapper>
+      <DropdownItem
+        {...props}
+        disabled={disabled || isDisabled}
+        ref={reference}
+      >
+        {children}
       </DropdownItem>
       {open && (
         <S.MessageTooltip
@@ -58,7 +62,6 @@ const ActionDropdownItem: React.FC<Props> = ({
             position: strategy,
             top: y ?? 0,
             left: x ?? 0,
-            width: '100%',
           }}
         >
           {message}

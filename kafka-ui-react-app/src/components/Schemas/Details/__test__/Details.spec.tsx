@@ -16,6 +16,8 @@ import ClusterContext, {
 import { RootState } from 'redux/interfaces';
 import { act } from '@testing-library/react';
 import { usePermission } from 'lib/hooks/usePermission';
+import userEvent from '@testing-library/user-event';
+import { getDefaultActionMessage } from 'components/common/ActionComponent/ActionComponent';
 
 import { versionPayload, versionEmptyPayload } from './fixtures';
 
@@ -206,6 +208,48 @@ describe('Details', () => {
         renderComponent();
       });
       expect(screen.getByText(/Edit Schema/i)).toBeEnabled();
+    });
+
+    it('checks the remove Button show the tooltip when there is no permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => false);
+      fetchMock.getOnce(schemasAPILatestUrl, schemaVersion);
+      fetchMock.getOnce(schemasAPIVersionsUrl, versionPayload);
+      await act(() => {
+        renderComponent();
+      });
+      const dropdown = screen.getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+
+      await userEvent.click(dropdown);
+
+      const dropItem = screen.getByText(/Remove schema/i);
+
+      await userEvent.hover(dropItem);
+
+      expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+    });
+
+    it('checks the remove Button does not show the tooltip when there is permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => true);
+      fetchMock.getOnce(schemasAPILatestUrl, schemaVersion);
+      fetchMock.getOnce(schemasAPIVersionsUrl, versionPayload);
+      await act(() => {
+        renderComponent();
+      });
+      const dropdown = screen.getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+
+      await userEvent.click(dropdown);
+
+      const dropItem = screen.getByText(/Remove schema/i);
+
+      await userEvent.hover(dropItem);
+
+      expect(
+        screen.queryByText(getDefaultActionMessage())
+      ).not.toBeInTheDocument();
     });
   });
 });

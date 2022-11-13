@@ -49,8 +49,13 @@ export function useRoleBasedAccessMock() {
           },
           {
             clusters: ['local'],
+            resource: UserPermissionResourceEnum.TOPIC,
+            actions: [Action.CREATE],
+          },
+          {
+            clusters: ['local'],
             resource: UserPermissionResourceEnum.SCHEMA,
-            actions: [Action.EDIT],
+            actions: [Action.EDIT, Action.DELETE],
             value: '111.*',
           },
           {

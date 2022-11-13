@@ -46,7 +46,7 @@ const ActionButton: React.FC<Props> = ({
     <S.Wrapper ref={reference}>
       <Button {...props} disabled={disabled || isDisabled} />
       {open && (
-        <S.MessageTooltip
+        <S.MessageTooltipLimited
           ref={floating}
           style={{
             position: strategy,
@@ -56,7 +56,7 @@ const ActionButton: React.FC<Props> = ({
           }}
         >
           {message}
-        </S.MessageTooltip>
+        </S.MessageTooltipLimited>
       )}
     </S.Wrapper>
   );

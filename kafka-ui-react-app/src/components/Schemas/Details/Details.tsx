@@ -26,11 +26,12 @@ import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
 import useAppParams from 'lib/hooks/useAppParams';
 import { schemasApiClient } from 'lib/api';
-import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { Dropdown } from 'components/common/Dropdown';
 import Table from 'components/common/NewTable';
 import { usePermission } from 'lib/hooks/usePermission';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
 import ActionButton from 'components/common/ActionButton/ActionButton';
+import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
@@ -43,6 +44,11 @@ const Details: React.FC = () => {
   const canEditSchema = usePermission(
     UserPermissionResourceEnum.SCHEMA,
     Action.EDIT,
+    subject
+  );
+  const canRemoveSchema = usePermission(
+    UserPermissionResourceEnum.SCHEMA,
+    Action.DELETE,
     subject
   );
 
@@ -117,7 +123,7 @@ const Details: React.FC = () => {
               Edit Schema
             </ActionButton>
             <Dropdown>
-              <DropdownItem
+              <ActionDropdownItem
                 confirm={
                   <>
                     Are you sure want to remove <b>{subject}</b> schema?
@@ -125,9 +131,10 @@ const Details: React.FC = () => {
                 }
                 onClick={deleteHandler}
                 danger
+                canDoAction={canRemoveSchema}
               >
                 Remove schema
-              </DropdownItem>
+              </ActionDropdownItem>
             </Dropdown>
           </>
         )}
