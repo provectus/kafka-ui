@@ -1,5 +1,10 @@
 import React from 'react';
-import { CleanUpPolicy, Topic } from 'generated-sources';
+import {
+  Action,
+  CleanUpPolicy,
+  Topic,
+  UserPermissionResourceEnum,
+} from 'generated-sources';
 import { CellContext } from '@tanstack/react-table';
 import { useAppDispatch } from 'lib/hooks/redux';
 import ClusterContext from 'components/contexts/ClusterContext';
@@ -17,6 +22,8 @@ import {
   useDeleteTopic,
   useRecreateTopic,
 } from 'lib/hooks/api/topics';
+import { usePermission } from 'lib/hooks/usePermission';
+import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
 
 const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
   const { name, internal, cleanUpPolicy } = row.original;
@@ -32,21 +39,34 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
 
   const disabled = internal || isReadOnly;
 
+  const canRemoveTopic = usePermission(
+    UserPermissionResourceEnum.TOPIC,
+    Action.DELETE,
+    name
+  );
+
+  const canClearMessages = usePermission(
+    UserPermissionResourceEnum.TOPIC,
+    Action.MESSAGES_DELETE,
+    name
+  );
+
   const clearTopicMessagesHandler = async () => {
     await dispatch(
       clearTopicMessages({ clusterName, topicName: name })
     ).unwrap();
-    queryClient.invalidateQueries(topicKeys.all(clusterName));
+    return queryClient.invalidateQueries(topicKeys.all(clusterName));
   };
 
   const isCleanupDisabled = cleanUpPolicy !== CleanUpPolicy.DELETE;
 
   return (
     <Dropdown disabled={disabled}>
-      <DropdownItem
+      <ActionDropdownItem
         disabled={isCleanupDisabled}
         onClick={clearTopicMessagesHandler}
         confirm="Are you sure want to clear topic messages?"
+        canDoAction={canClearMessages}
         danger
       >
         Clear Messages
@@ -55,7 +75,7 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
           <br />
           with DELETE policy
         </DropdownItemHint>
-      </DropdownItem>
+      </ActionDropdownItem>
       <DropdownItem
         onClick={recreateTopic.mutateAsync}
         confirm={
@@ -67,9 +87,10 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
       >
         Recreate Topic
       </DropdownItem>
-      <DropdownItem
+      <ActionDropdownItem
         disabled={!isTopicDeletionAllowed}
         onClick={() => deleteTopic.mutateAsync(name)}
+        canDoAction={canRemoveTopic}
         confirm={
           <>
             Are you sure want to remove <b>{name}</b> topic?
@@ -85,7 +106,7 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
             configuration level
           </DropdownItemHint>
         )}
-      </DropdownItem>
+      </ActionDropdownItem>
     </Dropdown>
   );
 };

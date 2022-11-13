@@ -5,7 +5,7 @@ import { ClusterNameRoute } from 'lib/paths';
 
 import useAppParams from './useAppParams';
 
-// TODO finalize with the regex and write the tests
+// TODO just write tests
 export function usePermission(
   resource: UserPermissionResourceEnum,
   action: Action,
