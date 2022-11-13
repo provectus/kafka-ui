@@ -17,15 +17,18 @@ import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
-  fetchConsumerGroupDetails,
   deleteConsumerGroup,
-  selectById,
-  getIsConsumerGroupDeleted,
+  fetchConsumerGroupDetails,
   getAreConsumerGroupDetailsFulfilled,
+  getIsConsumerGroupDeleted,
+  selectById,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import getTagColor from 'components/common/Tag/getTagColor';
-import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { Dropdown } from 'components/common/Dropdown';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
+import { usePermission } from 'lib/hooks/usePermission';
+import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
 
 import ListItem from './ListItem';
 
@@ -41,6 +44,17 @@ const Details: React.FC = () => {
   );
   const isDeleted = useAppSelector(getIsConsumerGroupDeleted);
   const isFetched = useAppSelector(getAreConsumerGroupDetailsFulfilled);
+  const canDeleteConsumerGroup = usePermission(
+    UserPermissionResourceEnum.CONSUMER,
+    Action.DELETE,
+    consumerGroupID
+  );
+
+  const canResetOffsetsConsumerGroup = usePermission(
+    UserPermissionResourceEnum.CONSUMER,
+    Action.RESET_OFFSETS,
+    consumerGroupID
+  );
 
   React.useEffect(() => {
     dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
@@ -84,14 +98,20 @@ const Details: React.FC = () => {
         >
           {!isReadOnly && (
             <Dropdown>
-              <DropdownItem onClick={onResetOffsets}>Reset offset</DropdownItem>
-              <DropdownItem
+              <ActionDropdownItem
+                onClick={onResetOffsets}
+                canDoAction={canResetOffsetsConsumerGroup}
+              >
+                Reset offset
+              </ActionDropdownItem>
+              <ActionDropdownItem
                 confirm="Are you sure you want to delete this consumer group?"
                 onClick={onDelete}
                 danger
+                canDoAction={canDeleteConsumerGroup}
               >
                 Delete consumer group
-              </DropdownItem>
+              </ActionDropdownItem>
             </Dropdown>
           )}
         </PageHeading>

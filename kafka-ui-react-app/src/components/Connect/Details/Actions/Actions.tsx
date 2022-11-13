@@ -2,7 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useIsMutating } from '@tanstack/react-query';
-import { ConnectorState, ConnectorAction } from 'generated-sources';
+import {
+  Action,
+  ConnectorAction,
+  ConnectorState,
+  UserPermissionResourceEnum,
+} from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
 import {
   useConnector,
@@ -15,6 +20,8 @@ import {
 } from 'lib/paths';
 import { useConfirm } from 'lib/hooks/useConfirm';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { usePermission } from 'lib/hooks/usePermission';
+import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
 
 const ConnectorActionsWrapperStyled = styled.div`
   display: flex;
@@ -31,6 +38,12 @@ const Actions: React.FC = () => {
 
   const { data: connector } = useConnector(routerProps);
   const confirm = useConfirm();
+
+  const canDeleteConnector = usePermission(
+    UserPermissionResourceEnum.CONNECT,
+    Action.DELETE,
+    routerProps.connectorName
+  );
 
   const deleteConnectorMutation = useDeleteConnector(routerProps);
   const deleteConnectorHandler = () =>
@@ -83,13 +96,14 @@ const Actions: React.FC = () => {
         <DropdownItem onClick={restartFailedTasksHandler} disabled={isMutating}>
           Restart Failed Tasks
         </DropdownItem>
-        <DropdownItem
+        <ActionDropdownItem
           onClick={deleteConnectorHandler}
           disabled={isMutating}
           danger
+          canDoAction={canDeleteConnector}
         >
           Delete
-        </DropdownItem>
+        </ActionDropdownItem>
       </Dropdown>
     </ConnectorActionsWrapperStyled>
   );

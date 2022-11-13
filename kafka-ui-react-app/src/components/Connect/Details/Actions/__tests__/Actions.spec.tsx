@@ -9,8 +9,10 @@ import {
   useConnector,
   useUpdateConnectorState,
 } from 'lib/hooks/api/kafkaConnect';
+import { usePermission } from 'lib/hooks/usePermission';
 import { connector } from 'lib/fixtures/kafkaConnect';
 import set from 'lodash/set';
+import { getDefaultActionMessage } from 'components/common/ActionComponent/ActionComponent';
 
 const mockHistoryPush = jest.fn();
 const deleteConnector = jest.fn();
@@ -25,6 +27,10 @@ jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useConnector: jest.fn(),
   useDeleteConnector: jest.fn(),
   useUpdateConnectorState: jest.fn(),
+}));
+
+jest.mock('lib/hooks/usePermission', () => ({
+  usePermission: jest.fn(),
 }));
 
 const expectActionButtonsExists = () => {
@@ -114,6 +120,7 @@ describe('Actions', () => {
         (useConnector as jest.Mock).mockImplementation(() => ({
           data: set({ ...connector }, 'status.state', ConnectorState.RUNNING),
         }));
+        (usePermission as jest.Mock).mockImplementation(() => true);
       });
 
       it('opens confirmation modal when delete button clicked', async () => {
@@ -191,6 +198,45 @@ describe('Actions', () => {
         await afterClickDropDownButton();
         await userEvent.click(screen.getByRole('menuitem', { name: 'Resume' }));
         expect(resumeConnector).toHaveBeenCalledWith(ConnectorAction.RESUME);
+      });
+    });
+
+    describe('Permissions', () => {
+      beforeEach(() => {
+        (useConnector as jest.Mock).mockImplementation(() => ({
+          data: set({ ...connector }, 'status.state', ConnectorState.RUNNING),
+        }));
+        (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
+          mutateAsync: jest.fn(),
+        }));
+      });
+
+      it('checks the Delete Connector show the tooltip when there is no permission', async () => {
+        (usePermission as jest.Mock).mockImplementation(() => false);
+        renderComponent();
+
+        await afterClickDropDownButton();
+
+        const dropItem = screen.getByText(/Delete/i);
+
+        await userEvent.hover(dropItem);
+
+        expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+      });
+
+      it('checks the Delete Connector does not show the tooltip when there is permission', async () => {
+        (usePermission as jest.Mock).mockImplementation(() => true);
+        renderComponent();
+
+        await afterClickDropDownButton();
+
+        const dropItem = screen.getByText(/Delete/i);
+
+        await userEvent.hover(dropItem);
+
+        expect(
+          screen.queryByText(getDefaultActionMessage())
+        ).not.toBeInTheDocument();
       });
     });
   });
