@@ -1,10 +1,9 @@
 import React, { useMemo } from 'react';
 import { useRoleBasedAccessMock } from 'lib/hooks/api/roles';
-import { UserPermission } from 'generated-sources';
-import { modifyRolesData } from 'lib/rolesHelper';
+import { modifyRolesData, RolesModifiedTypes } from 'lib/permissions';
 
 export const RolesAccessContext = React.createContext(
-  new Map() as Map<string, UserPermission[]>
+  new Map() as RolesModifiedTypes
 );
 
 export const RolesAccessProvider: React.FC<

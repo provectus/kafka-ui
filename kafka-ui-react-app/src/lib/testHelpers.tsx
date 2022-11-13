@@ -32,7 +32,7 @@ import {
 } from 'components/contexts/GlobalSettingsContext';
 import { RolesAccessContext } from 'components/contexts/RolesAccessContext';
 
-import { RolesType, modifyRolesData } from './rolesHelper';
+import { RolesType, modifyRolesData } from './permissions';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
