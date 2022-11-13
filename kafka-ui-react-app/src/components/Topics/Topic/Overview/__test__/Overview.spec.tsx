@@ -9,10 +9,12 @@ import userEvent from '@testing-library/user-event';
 import { clusterTopicPath } from 'lib/paths';
 import { Replica } from 'components/Topics/Topic/Overview/Overview.styled';
 import { useTopicDetails } from 'lib/hooks/api/topics';
+import { usePermission } from 'lib/hooks/usePermission';
 import {
   externalTopicPayload,
   internalTopicPayload,
 } from 'lib/fixtures/topics';
+import { getDefaultActionMessage } from 'components/common/ActionComponent/ActionComponent';
 
 const clusterName = 'local';
 const topicName = 'topic';
@@ -33,6 +35,10 @@ const useDispatchMock = () => jest.fn(() => ({ unwrap: uwrapMock }));
 jest.mock('lib/hooks/redux', () => ({
   ...jest.requireActual('lib/hooks/redux'),
   useAppDispatch: useDispatchMock,
+}));
+
+jest.mock('lib/hooks/usePermission', () => ({
+  usePermission: jest.fn(),
 }));
 
 describe('Overview', () => {
@@ -110,6 +116,7 @@ describe('Overview', () => {
 
   describe('when Clear Messages is clicked', () => {
     it('should when Clear Messages is clicked', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => true);
       renderComponent({
         ...externalTopicPayload,
         cleanUpPolicy: CleanUpPolicy.DELETE,
@@ -145,6 +152,52 @@ describe('Overview', () => {
         cleanUpPolicy: CleanUpPolicy.COMPACT,
       });
       expect(screen.getByLabelText('Dropdown Toggle')).toBeDisabled();
+    });
+  });
+
+  describe('Permissions', () => {
+    it('checks the Clear messages in Overview show the tooltip when there is no permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => false);
+
+      renderComponent({
+        ...externalTopicPayload,
+        cleanUpPolicy: CleanUpPolicy.DELETE,
+      });
+
+      const dropdown = screen.getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+
+      await userEvent.click(dropdown);
+
+      const dropItem = screen.getByText(/Clear messages/i);
+
+      await userEvent.hover(dropItem);
+
+      expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+    });
+
+    it('checks the Clear messages in Overview does not show the tooltip when there is permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => true);
+
+      renderComponent({
+        ...externalTopicPayload,
+        cleanUpPolicy: CleanUpPolicy.DELETE,
+      });
+
+      const dropdown = screen.getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+
+      await userEvent.click(dropdown);
+
+      const dropItem = screen.getByText(/Clear messages/i);
+
+      await userEvent.hover(dropItem);
+
+      expect(
+        screen.queryByText(getDefaultActionMessage())
+      ).not.toBeInTheDocument();
     });
   });
 });
