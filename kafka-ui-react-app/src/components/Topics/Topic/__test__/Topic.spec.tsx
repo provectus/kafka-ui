@@ -21,6 +21,7 @@ import {
   useTopicDetails,
 } from 'lib/hooks/api/topics';
 import { usePermission } from 'lib/hooks/usePermission';
+import { getDefaultActionMessage } from 'components/common/ActionComponent/ActionComponent';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -103,6 +104,7 @@ describe('Details', () => {
     (useRecreateTopic as jest.Mock).mockImplementation(() => ({
       mutateAsync: mockRecreate,
     }));
+    (usePermission as jest.Mock).mockImplementation(() => true);
   });
   describe('Action Bar', () => {
     describe('when it has readonly flag', () => {
@@ -263,7 +265,7 @@ describe('Details', () => {
     });
   });
 
-  describe('Permission', () => {
+  describe('Permissions', () => {
     it('checks the create Schema button is disable when there is not permission', () => {
       (usePermission as jest.Mock).mockImplementation(() => false);
       renderComponent();
@@ -282,6 +284,120 @@ describe('Details', () => {
           name: /Produce Message/i,
         })
       ).toBeEnabled();
+    });
+
+    it('checks the Edit messages show the tooltip when there is no permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => false);
+
+      renderComponent();
+
+      const dropdown = screen.getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+
+      await userEvent.click(dropdown);
+
+      const dropItem = screen.getByText(/Edit settings/i);
+
+      await userEvent.hover(dropItem);
+
+      expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+    });
+
+    it('checks the Edit messages does not show the tooltip when there is permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => true);
+
+      renderComponent();
+
+      const dropdown = screen.getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+
+      await userEvent.click(dropdown);
+
+      const dropItem = screen.getByText(/Edit settings/i);
+
+      await userEvent.hover(dropItem);
+
+      expect(
+        screen.queryByText(getDefaultActionMessage())
+      ).not.toBeInTheDocument();
+    });
+
+    it('checks the Clear messages show the tooltip when there is no permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => false);
+
+      renderComponent();
+
+      const dropdown = screen.getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+
+      await userEvent.click(dropdown);
+
+      const dropItem = screen.getByText(/Clear messages/i);
+
+      await userEvent.hover(dropItem);
+
+      expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+    });
+
+    it('checks the Clear messages does not show the tooltip when there is permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => true);
+
+      renderComponent();
+
+      const dropdown = screen.getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+
+      await userEvent.click(dropdown);
+
+      const dropItem = screen.getByText(/Clear messages/i);
+
+      await userEvent.hover(dropItem);
+
+      expect(
+        screen.queryByText(getDefaultActionMessage())
+      ).not.toBeInTheDocument();
+    });
+
+    it('checks the Remove Topic show the tooltip when there is no permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => false);
+
+      renderComponent();
+
+      const dropdown = screen.getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+
+      await userEvent.click(dropdown);
+
+      const dropItem = screen.getByText(/Remove Topic/i);
+
+      await userEvent.hover(dropItem);
+
+      expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+    });
+
+    it('checks the Remove Topic does not show the tooltip when there is permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => true);
+
+      renderComponent();
+
+      const dropdown = screen.getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+
+      await userEvent.click(dropdown);
+
+      const dropItem = screen.getByText(/Remove Topic/i);
+
+      await userEvent.hover(dropItem);
+
+      expect(
+        screen.queryByText(getDefaultActionMessage())
+      ).not.toBeInTheDocument();
     });
   });
 });

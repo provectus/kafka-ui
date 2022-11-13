@@ -34,6 +34,7 @@ import {
   CleanUpPolicy,
   UserPermissionResourceEnum,
 } from 'generated-sources';
+import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import SlidingSidebar from 'components/common/SlidingSidebar';
 import useBoolean from 'lib/hooks/useBoolean';
@@ -55,11 +56,31 @@ const Topic: React.FC = () => {
     setTrue: openSidebar,
   } = useBoolean(false);
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+
   const canProduceTopicMessage = usePermission(
     UserPermissionResourceEnum.TOPIC,
     Action.MESSAGES_PRODUCE,
     topicName
   );
+
+  const canEditMessage = usePermission(
+    UserPermissionResourceEnum.TOPIC,
+    Action.EDIT,
+    topicName
+  );
+
+  const canRemoveMessage = usePermission(
+    UserPermissionResourceEnum.TOPIC,
+    Action.DELETE,
+    topicName
+  );
+
+  const canClearMessage = usePermission(
+    UserPermissionResourceEnum.TOPIC,
+    Action.MESSAGES_DELETE,
+    topicName
+  );
+
   const navigate = useNavigate();
   const deleteTopic = useDeleteTopic(clusterName);
   const recreateTopic = useRecreateTopic({ clusterName, topicName });
@@ -98,21 +119,25 @@ const Topic: React.FC = () => {
           Produce Message
         </ActionButton>
         <Dropdown disabled={isReadOnly || data?.internal}>
-          <DropdownItem onClick={() => navigate(clusterTopicEditRelativePath)}>
+          <ActionDropdownItem
+            onClick={() => navigate(clusterTopicEditRelativePath)}
+            canDoAction={canEditMessage}
+          >
             Edit settings
             <DropdownItemHint>
               Pay attention! This operation has
               <br />
               especially important consequences.
             </DropdownItemHint>
-          </DropdownItem>
+          </ActionDropdownItem>
 
-          <DropdownItem
+          <ActionDropdownItem
             onClick={() =>
               dispatch(clearTopicMessages({ clusterName, topicName })).unwrap()
             }
             confirm="Are you sure want to clear topic messages?"
             disabled={!canCleanup}
+            canDoAction={canClearMessage}
             danger
           >
             Clear messages
@@ -121,7 +146,7 @@ const Topic: React.FC = () => {
               <br />
               with DELETE policy
             </DropdownItemHint>
-          </DropdownItem>
+          </ActionDropdownItem>
 
           <DropdownItem
             onClick={recreateTopic.mutateAsync}
@@ -134,7 +159,7 @@ const Topic: React.FC = () => {
           >
             Recreate Topic
           </DropdownItem>
-          <DropdownItem
+          <ActionDropdownItem
             onClick={deleteTopicHandler}
             confirm={
               <>
@@ -143,6 +168,7 @@ const Topic: React.FC = () => {
             }
             disabled={!isTopicDeletionAllowed}
             danger
+            canDoAction={canRemoveMessage}
           >
             Remove Topic
             {!isTopicDeletionAllowed && (
@@ -152,7 +178,7 @@ const Topic: React.FC = () => {
                 configuration level
               </DropdownItemHint>
             )}
-          </DropdownItem>
+          </ActionDropdownItem>
         </Dropdown>
       </PageHeading>
       <Navbar role="navigation">
