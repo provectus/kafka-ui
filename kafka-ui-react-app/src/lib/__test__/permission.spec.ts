@@ -154,6 +154,15 @@ describe('Permission Helpers', () => {
 
       expect(
         isPermitted({
+          roles,
+          clusterName: 'unFoundCluster',
+          resource: UserPermissionResourceEnum.TOPIC,
+          action: Action.CREATE,
+        })
+      ).toBeFalsy();
+
+      expect(
+        isPermitted({
           roles: new Map(),
           clusterName: 'unFoundCluster',
           resource: UserPermissionResourceEnum.TOPIC,
