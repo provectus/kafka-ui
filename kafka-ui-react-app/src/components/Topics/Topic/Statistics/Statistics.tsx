@@ -5,7 +5,9 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Button } from 'components/common/Button/Button';
+import { usePermission } from 'lib/hooks/usePermission';
+import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import ActionButton from 'components/common/ActionButton/ActionButton';
 
 import * as S from './Statistics.styles';
 import Metrics from './Metrics';
@@ -13,6 +15,11 @@ import Metrics from './Metrics';
 const Statistics: React.FC = () => {
   const params = useAppParams<RouteParamsClusterTopic>();
   const analyzeTopic = useAnalyzeTopic(params);
+  const canStartAnalysis = usePermission(
+    UserPermissionResourceEnum.TOPIC,
+    Action.MESSAGES_READ,
+    params.topicName
+  );
 
   return (
     <QueryErrorResetBoundary>
@@ -21,16 +28,17 @@ const Statistics: React.FC = () => {
           onReset={reset}
           fallbackRender={({ resetErrorBoundary }) => (
             <S.ProgressContainer>
-              <Button
+              <ActionButton
                 onClick={async () => {
                   await analyzeTopic.mutateAsync();
                   resetErrorBoundary();
                 }}
                 buttonType="primary"
                 buttonSize="M"
+                canDoAction={canStartAnalysis}
               >
                 Start Analysis
-              </Button>
+              </ActionButton>
             </S.ProgressContainer>
           )}
         >

@@ -6,7 +6,6 @@ import {
 } from 'lib/hooks/api/topics';
 import useAppParams from 'lib/hooks/useAppParams';
 import { RouteParamsClusterTopic } from 'lib/paths';
-import { Button } from 'components/common/Button/Button';
 import * as Informers from 'components/common/Metrics';
 import ProgressBar from 'components/common/ProgressBar/ProgressBar';
 import {
@@ -16,6 +15,9 @@ import {
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 import { calculateTimer } from 'lib/dateTimeHelpers';
+import { usePermission } from 'lib/hooks/usePermission';
+import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import ActionButton from 'components/common/ActionButton/ActionButton';
 
 import * as S from './Statistics.styles';
 import Total from './Indicators/Total';
@@ -30,6 +32,11 @@ const Metrics: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const analyzeTopic = useAnalyzeTopic(params);
   const cancelTopicAnalysis = useCancelTopicAnalysis(params);
+  const canStartAnalysis = usePermission(
+    UserPermissionResourceEnum.TOPIC,
+    Action.MESSAGES_READ,
+    params.topicName
+  );
 
   const { data } = useTopicAnalysis(params, isAnalyzing);
 
@@ -50,16 +57,17 @@ const Metrics: React.FC = () => {
           <ProgressBar completed={data.progress.completenessPercent || 0} />
           <span> {Math.floor(data.progress.completenessPercent || 0)} %</span>
         </S.ProgressBarWrapper>
-        <Button
+        <ActionButton
           onClick={async () => {
             await cancelTopicAnalysis.mutateAsync();
             setIsAnalyzing(true);
           }}
           buttonType="primary"
           buttonSize="M"
+          canDoAction={canStartAnalysis}
         >
           Stop Analysis
-        </Button>
+        </ActionButton>
         <List>
           <Label>Started at</Label>
           <span>{formatTimestamp(data.progress.startedAt, 'hh:mm:ss a')}</span>
@@ -87,16 +95,17 @@ const Metrics: React.FC = () => {
     <>
       <S.ActionsBar>
         <S.CreatedAt>{formatTimestamp(data?.result?.finishedAt)}</S.CreatedAt>
-        <Button
+        <ActionButton
           onClick={async () => {
             await analyzeTopic.mutateAsync();
             setIsAnalyzing(true);
           }}
           buttonType="primary"
           buttonSize="S"
+          canDoAction={canStartAnalysis}
         >
           Restart Analysis
-        </Button>
+        </ActionButton>
       </S.ActionsBar>
       <Informers.Wrapper>
         <Total {...totalStats} />

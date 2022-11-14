@@ -10,6 +10,7 @@ import {
 } from 'lib/hooks/api/topics';
 import { topicStatsPayload } from 'lib/fixtures/topics';
 import userEvent from '@testing-library/user-event';
+import { usePermission } from 'lib/hooks/usePermission';
 
 const clusterName = 'local';
 const topicName = 'topic';
@@ -19,6 +20,10 @@ jest.mock('lib/hooks/api/topics', () => ({
   useTopicAnalysis: jest.fn(),
   useCancelTopicAnalysis: jest.fn(),
   useAnalyzeTopic: jest.fn(),
+}));
+
+jest.mock('lib/hooks/usePermission', () => ({
+  usePermission: jest.fn(),
 }));
 
 describe('Metrics', () => {
@@ -48,6 +53,7 @@ describe('Metrics', () => {
           result: undefined,
         },
       }));
+      (usePermission as jest.Mock).mockImplementation(() => true);
       renderComponent();
     });
 
@@ -78,6 +84,7 @@ describe('Metrics', () => {
       (useAnalyzeTopic as jest.Mock).mockImplementation(() => ({
         mutateAsync: restartMock,
       }));
+      (usePermission as jest.Mock).mockImplementation(() => true);
       renderComponent();
     });
     it('renders metrics', async () => {
@@ -122,5 +129,67 @@ describe('Metrics', () => {
     renderComponent();
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  });
+
+  describe('Permissions', () => {
+    describe('when analysis is in progress', () => {
+      beforeEach(() => {
+        (useCancelTopicAnalysis as jest.Mock).mockImplementation(() => ({
+          mutateAsync: jest.fn(),
+        }));
+        (useTopicAnalysis as jest.Mock).mockImplementation(() => ({
+          data: {
+            progress: {
+              ...topicStatsPayload.progress,
+              completenessPercent: undefined,
+            },
+            result: undefined,
+          },
+        }));
+      });
+
+      it('checks the Stop Analysis button is disable when there is not permission', () => {
+        (usePermission as jest.Mock).mockImplementation(() => false);
+        renderComponent();
+        expect(
+          screen.getByRole('button', { name: 'Stop Analysis' })
+        ).toBeDisabled();
+      });
+
+      it('checks the Stop Analysis button is not disable when there is permission', () => {
+        (usePermission as jest.Mock).mockImplementation(() => true);
+        renderComponent();
+        expect(
+          screen.getByRole('button', { name: 'Stop Analysis' })
+        ).toBeEnabled();
+      });
+    });
+
+    describe('when analysis is completed', () => {
+      beforeEach(() => {
+        (useTopicAnalysis as jest.Mock).mockImplementation(() => ({
+          data: { ...topicStatsPayload, progress: undefined },
+        }));
+        (useAnalyzeTopic as jest.Mock).mockImplementation(() => ({
+          mutateAsync: jest.fn(),
+        }));
+      });
+
+      it('checks the Restart Analysis button is disable when there is not permission', () => {
+        (usePermission as jest.Mock).mockImplementation(() => false);
+        renderComponent();
+        expect(
+          screen.getByRole('button', { name: 'Restart Analysis' })
+        ).toBeDisabled();
+      });
+
+      it('checks the Stop Analysis button is not disable when there is permission', () => {
+        (usePermission as jest.Mock).mockImplementation(() => true);
+        renderComponent();
+        expect(
+          screen.getByRole('button', { name: 'Restart Analysis' })
+        ).toBeEnabled();
+      });
+    });
   });
 });
