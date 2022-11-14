@@ -8,24 +8,12 @@ import {
 
 export type RolesType = UserPermission[];
 
-export type RolesModifiedTypes = Map<string, UserPermission[]>;
+export type RolesModifiedTypes = Map<
+  string,
+  Map<UserPermissionResourceEnum, RolesType>
+>;
 
-export function modifyRolesData(data?: RolesType): Map<string, RolesType> {
-  const map = new Map<string, RolesType>();
-  data?.forEach((item) => {
-    item.clusters.forEach((name) => {
-      const res = map.get(name);
-      if (res) {
-        map.set(name, res.concat(item));
-        return;
-      }
-      map.set(name, [item]);
-    });
-  });
-  return map;
-}
-
-export function modifyRolesDataV2(
+export function modifyRolesData(
   data?: RolesType
 ): Map<string, Map<UserPermissionResourceEnum, RolesType>> {
   const map = new Map<string, Map<UserPermissionResourceEnum, RolesType>>();
@@ -56,6 +44,9 @@ export function modifyRolesDataV2(
  * is permitted or not the philosophy is inspired from Headless UI libraries where
  * you separate the logic from the renderer
  *
+ * Algorithm: we Mapped the cluster name and the resource name , because all the actions in them are
+ * constant and limited and hence faster lookup approach
+ *
  * @example you can use this in the hook format where it used in , or if you want to calculate it dynamically
  * you can call this dynamically in your component but the render is on you from that point on
  * */
@@ -74,11 +65,14 @@ export function isPermitted({
 }) {
   if (!roles) return false;
 
-  const cluster = roles.get(clusterName);
-  if (!cluster) return false;
+  const clusterMap = roles.get(clusterName);
+  if (!clusterMap) return false;
+
+  const resourceData = clusterMap.get(resource);
+  if (!resourceData) return false;
 
   return (
-    cluster.findIndex((item) => {
+    resourceData.findIndex((item) => {
       let valueCheck = true;
       if (item.value) {
         valueCheck = false;
@@ -86,11 +80,7 @@ export function isPermitted({
         if (value) valueCheck = new RegExp(item.value).test(value);
       }
 
-      return (
-        item.resource === resource &&
-        valueCheck &&
-        item.actions.includes(action)
-      );
+      return valueCheck && item.actions.includes(action);
     }) !== -1
   );
 }
