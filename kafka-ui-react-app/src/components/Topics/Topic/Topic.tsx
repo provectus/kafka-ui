@@ -35,6 +35,7 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import SlidingSidebar from 'components/common/SlidingSidebar';
 import useBoolean from 'lib/hooks/useBoolean';
 import { usePermission } from 'lib/hooks/usePermission';
+import ActionNavLink from 'components/common/ActionNavLink/ActionNavLink';
 
 import Messages from './Messages/Messages';
 import Overview from './Overview/Overview';
@@ -198,12 +199,13 @@ const Topic: React.FC = () => {
         >
           Overview
         </NavLink>
-        <NavLink
+        <ActionNavLink
           to={clusterTopicMessagesRelativePath}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
+          canDoAction={canViewMessage}
         >
           Messages
-        </NavLink>
+        </ActionNavLink>
         <NavLink
           to={clusterTopicConsumerGroupsRelativePath}
           className={({ isActive }) => (isActive ? 'is-active' : '')}

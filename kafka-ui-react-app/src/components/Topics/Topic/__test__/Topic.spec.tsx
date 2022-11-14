@@ -437,5 +437,35 @@ describe('Details', () => {
         screen.queryByText(getDefaultActionMessage())
       ).not.toBeInTheDocument();
     });
+
+    it('checks the Messages NavLink does not show the tooltip when there is no permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => false);
+
+      renderComponent();
+
+      await userEvent.hover(
+        screen.getByRole('link', {
+          name: 'Messages',
+        })
+      );
+
+      expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+    });
+
+    it('checks the Messages NavLink show the tooltip when there is permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => true);
+
+      renderComponent();
+
+      await userEvent.hover(
+        screen.getByRole('link', {
+          name: 'Messages',
+        })
+      );
+
+      expect(
+        screen.queryByText(getDefaultActionMessage())
+      ).not.toBeInTheDocument();
+    });
   });
 });
