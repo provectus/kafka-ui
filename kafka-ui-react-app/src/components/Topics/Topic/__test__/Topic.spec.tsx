@@ -266,7 +266,7 @@ describe('Details', () => {
   });
 
   describe('Permissions', () => {
-    it('checks the create Schema button is disable when there is not permission', () => {
+    it('checks the Produce Message button is disable when there is not permission', () => {
       (usePermission as jest.Mock).mockImplementation(() => false);
       renderComponent();
       expect(
@@ -276,7 +276,7 @@ describe('Details', () => {
       ).toBeDisabled();
     });
 
-    it('checks the add Schema button is enable when there is permission', () => {
+    it('checks the Produce Message is enable when there is permission', () => {
       (usePermission as jest.Mock).mockImplementation(() => true);
       renderComponent();
       expect(
@@ -286,7 +286,7 @@ describe('Details', () => {
       ).toBeEnabled();
     });
 
-    it('checks the Edit messages show the tooltip when there is no permission', async () => {
+    it('checks the Edit settings show the tooltip when there is no permission', async () => {
       (usePermission as jest.Mock).mockImplementation(() => false);
 
       renderComponent();
@@ -304,7 +304,7 @@ describe('Details', () => {
       expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
     });
 
-    it('checks the Edit messages does not show the tooltip when there is permission', async () => {
+    it('checks the Edit settings does not show the tooltip when there is permission', async () => {
       (usePermission as jest.Mock).mockImplementation(() => true);
 
       renderComponent();

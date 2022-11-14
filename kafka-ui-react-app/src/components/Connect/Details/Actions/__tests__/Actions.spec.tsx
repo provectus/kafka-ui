@@ -337,15 +337,12 @@ describe('Actions', () => {
       });
 
       it('checks the Pause Connector does not show the tooltip when there is permission', async () => {
-        (useConnector as jest.Mock).mockImplementation(() => ({
-          data: set({ ...connector }, 'status.state', ConnectorState.PAUSED),
-        }));
         (usePermission as jest.Mock).mockImplementation(() => true);
         renderComponent();
 
         await afterClickDropDownButton();
 
-        const dropItem = screen.getByText(/Resume/i);
+        const dropItem = screen.getByText(/Pause/i);
 
         await userEvent.hover(dropItem);
 
@@ -370,13 +367,16 @@ describe('Actions', () => {
         expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
       });
 
-      it('checks the Resume Connector does not show the tooltip when there is permission', async () => {
+      it('checks the Pause Connector does not show the tooltip when there is permission', async () => {
+        (useConnector as jest.Mock).mockImplementation(() => ({
+          data: set({ ...connector }, 'status.state', ConnectorState.PAUSED),
+        }));
         (usePermission as jest.Mock).mockImplementation(() => true);
         renderComponent();
 
         await afterClickDropDownButton();
 
-        const dropItem = screen.getByText(/Pause/i);
+        const dropItem = screen.getByText(/Resume/i);
 
         await userEvent.hover(dropItem);
 

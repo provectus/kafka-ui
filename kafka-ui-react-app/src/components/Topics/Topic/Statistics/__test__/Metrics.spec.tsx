@@ -183,7 +183,7 @@ describe('Metrics', () => {
         ).toBeDisabled();
       });
 
-      it('checks the Stop Analysis button is not disable when there is permission', () => {
+      it('checks the Restart Analysis button is not disable when there is permission', () => {
         (usePermission as jest.Mock).mockImplementation(() => true);
         renderComponent();
         expect(

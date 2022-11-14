@@ -58,7 +58,7 @@ describe('Statistics', () => {
     afterEach(() => {
       jest.clearAllMocks();
     });
-    it('checks the Restart Analysis button is disable when there is not permission', () => {
+    it('checks the Start Analysis button is disable when there is not permission', () => {
       // throwing intentional For error boundaries to work
       jest.spyOn(console, 'error').mockImplementation(() => undefined);
       (useAnalyzeTopic as jest.Mock).mockImplementation(() => ({
@@ -74,7 +74,7 @@ describe('Statistics', () => {
       ).toBeDisabled();
     });
 
-    it('checks the Stop Analysis button is not disable when there is permission', () => {
+    it('checks the Start Analysis button is not disable when there is permission', () => {
       // throwing intentional For error boundaries to work
       jest.spyOn(console, 'error').mockImplementation(() => undefined);
       (useAnalyzeTopic as jest.Mock).mockImplementation(() => ({

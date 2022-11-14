@@ -150,7 +150,7 @@ describe('List', () => {
   });
 
   describe('Permissions', () => {
-    it('checks the create Schema button is disable when there is not permission', () => {
+    it('checks the add Schema button is disable when there is not permission', () => {
       (usePermission as jest.Mock).mockImplementation(() => false);
       renderComponent();
       expect(screen.getByText(/Create Schema/i)).toBeDisabled();
