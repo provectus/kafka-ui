@@ -3,8 +3,7 @@ import { Action, UserPermissionResourceEnum } from 'generated-sources';
 import { RolesAccessContext } from 'components/contexts/RolesAccessContext';
 import { ClusterNameRoute } from 'lib/paths';
 import { isPermitted } from 'lib/permissions';
-
-import useAppParams from './useAppParams';
+import useAppParams from 'lib/hooks/useAppParams';
 
 export function usePermission(
   resource: UserPermissionResourceEnum,

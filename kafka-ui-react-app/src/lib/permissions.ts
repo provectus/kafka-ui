@@ -4,8 +4,6 @@ import {
   UserPermissionResourceEnum,
 } from 'generated-sources';
 
-// TODO write tests here for both functions
-
 export type RolesType = UserPermission[];
 
 export type RolesModifiedTypes = Map<
