@@ -135,6 +135,24 @@ describe('Permission Helpers', () => {
   describe('isPermitted', () => {
     const roles = modifyRolesData(userPermissionsMock);
 
+    it('should check if the isPermitted returns the correct when there is no roles or clusters', () => {
+      expect(
+        isPermitted({
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.TOPIC,
+          action: Action.CREATE,
+        })
+      ).toBeFalsy();
+
+      expect(
+        isPermitted({
+          clusterName: 'unFoundCluster',
+          resource: UserPermissionResourceEnum.TOPIC,
+          action: Action.CREATE,
+        })
+      ).toBeFalsy();
+    });
+
     it('should check if the isPermitted returns the correct value without name values', () => {
       expect(
         isPermitted({

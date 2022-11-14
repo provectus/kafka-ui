@@ -57,7 +57,7 @@ export function isPermitted({
   clusterName,
   value,
 }: {
-  roles: RolesModifiedTypes;
+  roles?: RolesModifiedTypes;
   resource: UserPermissionResourceEnum;
   action: Action;
   clusterName: string;
