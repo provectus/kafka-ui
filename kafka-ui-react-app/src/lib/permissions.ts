@@ -47,6 +47,8 @@ export function modifyRolesData(
  *
  * @example you can use this in the hook format where it used in , or if you want to calculate it dynamically
  * you can call this dynamically in your component but the render is on you from that point on
+ *
+ * Don't use this anywhere , use the hook version in the component for declarative purposes
  * */
 export function isPermitted({
   roles,
