@@ -91,37 +91,27 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
   const roles = useContext(RolesAccessContext);
 
   const canDeleteSelectedTopics = useMemo(() => {
-    for (let i = 0; i < selectedTopics.length; i += 1) {
-      if (
-        !isPermitted({
-          roles,
-          resource: UserPermissionResourceEnum.TOPIC,
-          action: Action.DELETE,
-          value: selectedTopics[i],
-          clusterName,
-        })
-      ) {
-        return false;
-      }
-    }
-    return true;
+    return selectedTopics.every((value) =>
+      isPermitted({
+        roles,
+        resource: UserPermissionResourceEnum.TOPIC,
+        action: Action.DELETE,
+        value,
+        clusterName,
+      })
+    );
   }, [selectedTopics, clusterName, roles]);
 
   const canPurgeSelectedTopics = useMemo(() => {
-    for (let i = 0; i < selectedTopics.length; i += 1) {
-      if (
-        !isPermitted({
-          roles,
-          resource: UserPermissionResourceEnum.TOPIC,
-          action: Action.MESSAGES_DELETE,
-          value: selectedTopics[i],
-          clusterName,
-        })
-      ) {
-        return false;
-      }
-    }
-    return true;
+    return selectedTopics.every((value) =>
+      isPermitted({
+        roles,
+        resource: UserPermissionResourceEnum.TOPIC,
+        action: Action.MESSAGES_DELETE,
+        value,
+        clusterName,
+      })
+    );
   }, [selectedTopics, clusterName, roles]);
 
   return (
