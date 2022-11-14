@@ -19,7 +19,6 @@ const ActionNavLink: React.FC<Props> = ({
   children,
   canDoAction,
   className,
-  onClick,
   ...props
 }) => {
   const [open, setOpen] = useState(false);
@@ -46,7 +45,7 @@ const ActionNavLink: React.FC<Props> = ({
         ref={reference}
         className={isDisabled ? 'is-disabled' : className}
         aria-disabled={isDisabled}
-        onClick={(event) => (isDisabled ? event.preventDefault() : onClick)}
+        onClick={(event) => (isDisabled ? event.preventDefault() : null)}
       >
         {children}
       </NavLink>
