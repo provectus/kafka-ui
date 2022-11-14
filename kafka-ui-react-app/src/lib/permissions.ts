@@ -63,7 +63,7 @@ export function isPermitted({
   clusterName: string;
   value?: string;
 }) {
-  if (!roles) return false;
+  if (!roles || roles.size === 0) return false;
 
   const clusterMap = roles.get(clusterName);
   if (!clusterMap) return false;
