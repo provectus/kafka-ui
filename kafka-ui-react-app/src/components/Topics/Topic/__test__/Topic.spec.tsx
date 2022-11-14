@@ -399,5 +399,43 @@ describe('Details', () => {
         screen.queryByText(getDefaultActionMessage())
       ).not.toBeInTheDocument();
     });
+
+    it('checks the Recreate Topic show the tooltip when there is no permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => false);
+
+      renderComponent();
+
+      const dropdown = screen.getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+
+      await userEvent.click(dropdown);
+
+      const dropItem = screen.getByText(/Recreate Topic/i);
+
+      await userEvent.hover(dropItem);
+
+      expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+    });
+
+    it('checks the Recreate Topic does not show the tooltip when there is permission', async () => {
+      (usePermission as jest.Mock).mockImplementation(() => true);
+
+      renderComponent();
+
+      const dropdown = screen.getByRole('button', {
+        name: 'Dropdown Toggle',
+      });
+
+      await userEvent.click(dropdown);
+
+      const dropItem = screen.getByText(/Recreate Topic/i);
+
+      await userEvent.hover(dropItem);
+
+      expect(
+        screen.queryByText(getDefaultActionMessage())
+      ).not.toBeInTheDocument();
+    });
   });
 });

@@ -15,11 +15,7 @@ import ActionButton from 'components/common/ActionButton/ActionButton';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownItemHint,
-} from 'components/common/Dropdown';
+import { Dropdown, DropdownItemHint } from 'components/common/Dropdown';
 import {
   useDeleteTopic,
   useRecreateTopic,
@@ -66,6 +62,18 @@ const Topic: React.FC = () => {
   const canEditMessage = usePermission(
     UserPermissionResourceEnum.TOPIC,
     Action.EDIT,
+    topicName
+  );
+
+  const canViewMessage = usePermission(
+    UserPermissionResourceEnum.TOPIC,
+    Action.VIEW,
+    topicName
+  );
+
+  const canCreateMessage = usePermission(
+    UserPermissionResourceEnum.TOPIC,
+    Action.CREATE,
     topicName
   );
 
@@ -148,7 +156,7 @@ const Topic: React.FC = () => {
             </DropdownItemHint>
           </ActionDropdownItem>
 
-          <DropdownItem
+          <ActionDropdownItem
             onClick={recreateTopic.mutateAsync}
             confirm={
               <>
@@ -156,9 +164,10 @@ const Topic: React.FC = () => {
               </>
             }
             danger
+            canDoAction={canViewMessage && canCreateMessage && canRemoveMessage}
           >
             Recreate Topic
-          </DropdownItem>
+          </ActionDropdownItem>
           <ActionDropdownItem
             onClick={deleteTopicHandler}
             confirm={
