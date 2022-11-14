@@ -14,7 +14,7 @@
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring-boot.version>2.6.8</spring-boot.version>
+        <spring-boot.version>2.7.5</spring-boot.version>
         <jackson-databind-nullable.version>0.2.2</jackson-databind-nullable.version>
         <jackson-dataformat-yaml.version>2.13.3</jackson-dataformat-yaml.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
@@ -34,7 +34,7 @@
         <swagger-annotations.version>1.6.0</swagger-annotations.version>
         <springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
         <avro.version>1.11.0</avro.version>
-        <confluent.version>7.0.1</confluent.version>
+        <confluent.version>7.3.0</confluent.version>
         <apache.commons.version>2.11.1</apache.commons.version>
         <test.containers.version>1.17.1</test.containers.version>
         <okhttp3.mockwebserver.version>4.10.0</okhttp3.mockwebserver.version>
