@@ -21,7 +21,7 @@ public class AccessController implements AccessApi {
 
   private final AccessControlService accessControlService;
 
-  public Mono<ResponseEntity<Flux<UserPermissionDTO>>> getPermissions(ServerWebExchange exchange) {
+  public Mono<ResponseEntity<Flux<UserPermissionDTO>>> getUserPermissions(ServerWebExchange exchange) {
     Flux<UserPermissionDTO> perms = accessControlService.getCachedUser()
         .map(user -> accessControlService.getRoles()
                 .stream()
@@ -35,7 +35,7 @@ public class AccessController implements AccessApi {
     return Mono.just(ResponseEntity.ok(perms));
   }
 
-  public Mono<ResponseEntity<Void>> evictCache(ServerWebExchange exchange) {
+  public Mono<ResponseEntity<Void>> evictRolesCache(ServerWebExchange exchange) {
     accessControlService.evictCache();
     return Mono.just(ResponseEntity.ok().build());
   }

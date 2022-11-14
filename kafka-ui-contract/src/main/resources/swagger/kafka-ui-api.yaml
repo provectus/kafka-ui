@@ -1758,12 +1758,12 @@ paths:
                 $ref: '#/components/schemas/TimeStampFormat'
 
 
-  /api/access/permissions:
+  /api/access/userPermissions:
     get:
       tags:
         - Access
       summary: get user permissions
-      operationId: getPermissions
+      operationId: getUserPermissions
       responses:
         200:
           description: OK
@@ -1774,12 +1774,12 @@ paths:
                 items:
                   $ref: '#/components/schemas/UserPermission'
 
-  /api/access/evictCache:
+  /api/access/evictRolesCache:
     post:
       tags:
         - Access
       summary: evict permissions cache
-      operationId: evictCache
+      operationId: evictRolesCache
       responses:
         200:
           description: OK

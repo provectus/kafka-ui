@@ -371,7 +371,9 @@ public class AccessControlService {
     }
     return grantedPermission -> {
       Pattern value = grantedPermission.getValue();
-      Assert.notNull(value, "permission value can't be empty here");
+      if (value == null) {
+        return true;
+      }
       return value.matcher(resourceValue).matches();
     };
   }
