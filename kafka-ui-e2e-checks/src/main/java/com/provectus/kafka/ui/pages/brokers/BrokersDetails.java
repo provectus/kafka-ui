@@ -5,18 +5,14 @@ import static com.codeborne.selenide.Selenide.$x;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
-import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.experimental.ExtensionMethod;
 
-@ExtensionMethod(WaitUtils.class)
 public class BrokersDetails extends BasePage {
-
 
   protected SelenideElement logDirectoriesTab = $x("//a[text()='Log directories']");
   protected SelenideElement metricsTab = $x("//a[text()='Metrics']");
@@ -40,7 +36,7 @@ public class BrokersDetails extends BasePage {
         .collect(Collectors.toList());
   }
 
-  private List<SelenideElement> getVisibleSummaryCellL() {
+  private List<SelenideElement> getVisibleSummaryCells() {
     return Stream.of("Segment Size", "Segment Count", "Port", "Host")
         .map(name -> $x(String.format(summaryCellLocator, name)))
         .collect(Collectors.toList());
@@ -48,14 +44,13 @@ public class BrokersDetails extends BasePage {
 
   @Step
   public List<SelenideElement> getAllEnabledElements() {
-    List<SelenideElement> enabledElements = new ArrayList<>(getEnabledColumnHeaders());
-    return enabledElements;
+    return getEnabledColumnHeaders();
   }
 
   @Step
   public List<SelenideElement> getAllVisibleElements() {
-    List<SelenideElement> enabledElements = new ArrayList<>(getVisibleSummaryCellL());
-    enabledElements.addAll(getVisibleColumnHeaders());
-    return enabledElements;
+    List<SelenideElement> visibleElements = new ArrayList<>(getVisibleSummaryCells());
+    visibleElements.addAll(getVisibleColumnHeaders());
+    return visibleElements;
   }
 }

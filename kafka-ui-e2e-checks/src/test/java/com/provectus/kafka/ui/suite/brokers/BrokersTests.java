@@ -34,9 +34,9 @@ public class BrokersTests extends BaseTest {
         .waitUntilScreenReady();
     SoftAssertions softly = new SoftAssertions();
     brokersDetails.getAllVisibleElements().forEach(element -> softly.assertThat(element.is(Condition.visible))
-        .as("getAllVisibleElements()").isTrue());
+        .as(element.getSearchCriteria() + " isVisible()").isTrue());
     brokersDetails.getAllEnabledElements().forEach(element -> softly.assertThat(element.is(Condition.enabled))
-        .as("getAllEnabledElements()").isTrue());
+        .as(element.getSearchCriteria() + " isEnabled()").isTrue());
     softly.assertAll();
   }
 }
