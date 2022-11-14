@@ -343,11 +343,10 @@ public class TopicTests extends BaseTest {
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(topicDetails.isSavedFiltersFieldVisible()).as("isMessagesAddFilterSavedFiltersFieldVisible()")
         .isTrue();
-    softly.assertThat(topicDetails.isAddFilterCodeTitleVisible()).as("isMessagesAddFilterFilterCodeTitleVisible()")
+    softly.assertThat(topicDetails.isAddFilterCodeModalTitleVisible()).as("isMessagesAddFilterFilterCodeTitleVisible()")
         .isTrue();
-    softly.assertAll();
-    topicDetails
-        .saveThisFilterCheckBoxStatus();
+    softly.assertThat(topicDetails.isSaveThisFilterCheckBoxSelected()).as("isSaveThisFilterCheckBoxSelected()")
+        .isFalse();
     softly.assertThat(topicDetails.isDisplayNameInputAddFilterMdlEnabled()).as("isMessagesAddFilterDisplayNameInputEnabled()")
         .isTrue();
     softly.assertThat(topicDetails.isCancelBtnAddFilterMdlEnabled()).as("isMessagesAddFilterCancelBtnEnabled()")
@@ -356,11 +355,11 @@ public class TopicTests extends BaseTest {
         .isFalse();
     softly.assertAll();
     topicDetails
-        .addFilterCodeInputSetValue(filterName);
+        .setFilterCodeFieldAddFilterMdl(filterName);
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
         .isTrue();
     topicDetails.clickAddFilterBtnAddFilterMdl();
-    assertThat(topicDetails.filterNameCheck(filterName)).as("isFilterNameVisible(filterName)")
+    assertThat(topicDetails.getFilterName(filterName)).as("isFilterNameVisible(filterName)")
         .isEqualTo(filterName);
   }
 

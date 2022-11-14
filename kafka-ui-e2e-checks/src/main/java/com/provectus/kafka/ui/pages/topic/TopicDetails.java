@@ -25,9 +25,9 @@ public class TopicDetails extends BasePage {
   protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
-  protected SelenideElement addFiltersMessagesTabBtn = $x("//button[text()='Add Filters']");
+  protected SelenideElement addFiltersBtn = $x("//button[text()='Add Filters']");
   protected SelenideElement savedFiltersField = $x("//div[text()='Saved Filters']");
-  protected SelenideElement addFilterCodeTitle = $x("//label[text()='Filter code']");
+  protected SelenideElement addFilterCodeModalTitle = $x("//label[text()='Filter code']");
   protected SelenideElement addFilterCodeInput = $x("//div[@id='ace-editor']//textarea");
   protected SelenideElement saveThisFilterCheckBoxAddFilterMdl = $x("//input[@name='saveFilter']");
   protected SelenideElement displayNameInputAddFilterMdl = $x("//input[@placeholder='Enter Name']");
@@ -118,7 +118,7 @@ public class TopicDetails extends BasePage {
 
   @Step
   public TopicDetails clickMessagesAddFiltersBtn() {
-    addFiltersMessagesTabBtn.click();
+    addFiltersBtn.click();
     return this;
   }
 
@@ -134,20 +134,19 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public boolean isAddFilterCodeTitleVisible() {
-    return isVisible(addFilterCodeTitle);
+  public boolean isAddFilterCodeModalTitleVisible() {
+    return isVisible(addFilterCodeModalTitle);
   }
 
   @Step
-  public TopicDetails addFilterCodeInputSetValue(String filterCode) {
+  public TopicDetails setFilterCodeFieldAddFilterMdl(String filterCode) {
     addFilterCodeInput.sendKeys(filterCode);
     return this;
   }
 
   @Step
-  public TopicDetails saveThisFilterCheckBoxStatus() {
-    saveThisFilterCheckBoxAddFilterMdl.shouldNotBe(Condition.selected);
-    return this;
+  public boolean isSaveThisFilterCheckBoxSelected() {
+    return isSelected(saveThisFilterCheckBoxAddFilterMdl);
   }
 
   @Step
@@ -166,9 +165,8 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public String filterNameCheck(String filterName) {
-    screenshot("My test");
-    return ($x(String.format(filterNameLocator, filterName))).getText();
+  public String getFilterName(String filterName) {
+    return $x(String.format(filterNameLocator, filterName)).getText();
   }
 
   @Step
