@@ -8,7 +8,6 @@ import com.provectus.kafka.ui.model.KsqlStreamDescriptionDTO;
 import com.provectus.kafka.ui.model.KsqlTableDescriptionDTO;
 import com.provectus.kafka.ui.model.KsqlTableResponseDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
-import com.provectus.kafka.ui.model.rbac.permission.ClusterAction;
 import com.provectus.kafka.ui.model.rbac.permission.KsqlAction;
 import com.provectus.kafka.ui.service.ksql.KsqlServiceV2;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
@@ -38,7 +37,6 @@ public class KsqlController extends AbstractController implements KsqlApi {
                                                                     ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .ksqlActions(KsqlAction.EXECUTE)
         .build());
 
@@ -59,7 +57,6 @@ public class KsqlController extends AbstractController implements KsqlApi {
                                                                           ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .ksqlActions(KsqlAction.EXECUTE)
         .build());
 
@@ -80,7 +77,6 @@ public class KsqlController extends AbstractController implements KsqlApi {
                                                                           ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .ksqlActions(KsqlAction.EXECUTE)
         .build());
 
@@ -94,7 +90,6 @@ public class KsqlController extends AbstractController implements KsqlApi {
                                                                         ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .ksqlActions(KsqlAction.EXECUTE)
         .build());
 

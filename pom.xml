@@ -11,11 +11,10 @@
     </modules>
 
     <properties>
-        <maven.compiler.source>13</maven.compiler.source>
-        <maven.compiler.target>13</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring-boot.version>2.6.8</spring-boot.version>
+        <spring-boot.version>2.7.5</spring-boot.version>
         <jackson-databind-nullable.version>0.2.2</jackson-databind-nullable.version>
         <jackson-dataformat-yaml.version>2.13.3</jackson-dataformat-yaml.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
@@ -27,15 +26,15 @@
         <pnpm.version>v7.4.0</pnpm.version>
         <fabric8-maven-plugin.version>0.40.2</fabric8-maven-plugin.version>
         <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <openapi-generator-maven-plugin.version>4.3.0</openapi-generator-maven-plugin.version>
         <swagger-annotations.version>1.6.0</swagger-annotations.version>
         <springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
         <avro.version>1.11.0</avro.version>
-        <confluent.version>7.0.1</confluent.version>
+        <confluent.version>7.3.0</confluent.version>
         <apache.commons.version>2.11.1</apache.commons.version>
         <test.containers.version>1.17.1</test.containers.version>
         <okhttp3.mockwebserver.version>4.10.0</okhttp3.mockwebserver.version>
@@ -87,6 +86,33 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${maven-clean-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <groupId>com.provectus</groupId>
     <artifactId>kafka-ui</artifactId>

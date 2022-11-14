@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.controller;
 
-import static com.provectus.kafka.ui.model.rbac.permission.ClusterAction.VIEW;
-
 import com.provectus.kafka.ui.api.KafkaConnectApi;
 import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.ConnectorActionDTO;
@@ -51,7 +49,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
         .build());
@@ -68,7 +65,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.CREATE)
         .build());
@@ -86,7 +82,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
         .connector(connectorName)
@@ -105,7 +100,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
         .build());
@@ -143,7 +137,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
         .build());
@@ -164,7 +157,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
         .build());
@@ -184,7 +176,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
         .build());
@@ -203,7 +194,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
                                                                ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
         .build());
@@ -222,7 +212,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
         .build());
@@ -240,7 +229,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(VIEW)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
         .build());

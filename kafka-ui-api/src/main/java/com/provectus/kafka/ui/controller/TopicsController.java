@@ -25,13 +25,11 @@ import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.TopicUpdateDTO;
 import com.provectus.kafka.ui.model.TopicsResponseDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
-import com.provectus.kafka.ui.model.rbac.permission.ClusterAction;
 import com.provectus.kafka.ui.service.TopicsService;
 import com.provectus.kafka.ui.service.analyze.TopicAnalysisService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +59,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topicActions(CREATE)
         .build());
 
@@ -78,7 +75,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
                                                       String topicName, ServerWebExchange serverWebExchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(VIEW, CREATE, DELETE)
         .build());
@@ -96,7 +92,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(VIEW, CREATE)
         .build());
@@ -113,7 +108,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(DELETE)
         .build());
@@ -130,7 +124,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(VIEW)
         .build());
@@ -152,7 +145,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(VIEW)
         .build());
@@ -214,7 +206,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(VIEW, EDIT)
         .build());
@@ -235,7 +226,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(VIEW, EDIT)
         .build());
@@ -255,7 +245,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(VIEW, EDIT)
         .build());
@@ -273,7 +262,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
         .build());
@@ -289,7 +277,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
                                                         ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
         .build());
@@ -307,7 +294,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
         .build());

@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.model.rbac;
 
-import com.provectus.kafka.ui.model.rbac.permission.ClusterAction;
+import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
 import com.provectus.kafka.ui.model.rbac.permission.KsqlAction;
@@ -16,7 +16,7 @@ import org.springframework.util.Assert;
 public class AccessContext {
 
   String cluster;
-  Collection<ClusterAction> clusterActions;
+  Collection<ClusterConfigAction> clusterConfigActions;
 
   String topic;
   Collection<TopicAction> topicActions;
@@ -41,7 +41,7 @@ public class AccessContext {
 
   public static final class AccessContextBuilder {
     private String cluster;
-    private Collection<ClusterAction> clusterActions = Collections.emptySet();
+    private Collection<ClusterConfigAction> clusterConfigActions = Collections.emptySet();
     private String topic;
     private Collection<TopicAction> topicActions = Collections.emptySet();
     private String consumerGroup;
@@ -61,9 +61,9 @@ public class AccessContext {
       return this;
     }
 
-    public AccessContextBuilder clusterActions(ClusterAction... actions) {
+    public AccessContextBuilder clusterConfigActions(ClusterConfigAction... actions) {
       Assert.isTrue(actions.length > 0, "actions not present");
-      this.clusterActions = List.of(actions);
+      this.clusterConfigActions = List.of(actions);
       return this;
     }
 
@@ -123,7 +123,7 @@ public class AccessContext {
     }
 
     public AccessContext build() {
-      return new AccessContext(cluster, clusterActions,
+      return new AccessContext(cluster, clusterConfigActions,
           topic, topicActions,
           consumerGroup, consumerGroupActions,
           connect, connectActions,

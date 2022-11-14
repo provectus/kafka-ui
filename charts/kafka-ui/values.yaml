@@ -69,6 +69,10 @@ networkPolicy:
 podAnnotations: {}
 podLabels: {}
 
+## Annotations to be added to kafka-ui Deployment
+##
+annotations: {}
+
 podSecurityContext:
   {}
   # fsGroup: 2000
@@ -100,7 +104,7 @@ ingress:
   ingressClassName: ""
 
   # The path for the Ingress
-  path: ""
+  path: "/"
 
   # The hostname for the Ingress
   host: ""

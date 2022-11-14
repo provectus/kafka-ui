@@ -34,6 +34,7 @@ describe('Metrics', () => {
 
   describe('when analysis is in progress', () => {
     const cancelMock = jest.fn();
+
     beforeEach(() => {
       (useCancelTopicAnalysis as jest.Mock).mockImplementation(() => ({
         mutateAsync: cancelMock,
@@ -61,6 +62,10 @@ describe('Metrics', () => {
       const progressbar = screen.getByRole('progressbar');
       expect(progressbar).toBeInTheDocument();
       expect(progressbar).toHaveStyleRule('width', '0%');
+    });
+
+    it('calculate Timer ', () => {
+      expect(screen.getByText('Passed since start')).toBeInTheDocument();
     });
   });
 

@@ -268,10 +268,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.mapstruct</groupId>
@@ -299,7 +296,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <argLine>@{argLine} --illegal-access=permit</argLine>
                 </configuration>
@@ -407,7 +403,6 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>${maven-resources-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
@@ -501,6 +496,5 @@
             </build>
         </profile>
     </profiles>
-
 
 </project>

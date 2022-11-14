@@ -1,12 +1,10 @@
 package com.provectus.kafka.ui.controller;
 
-
 import com.provectus.kafka.ui.api.ClustersApi;
 import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ClusterMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterStatsDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
-import com.provectus.kafka.ui.model.rbac.permission.ClusterAction;
 import com.provectus.kafka.ui.service.ClusterService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,7 +35,6 @@ public class ClustersController extends AbstractController implements ClustersAp
                                                                    ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .build());
 
     return validateAccess
@@ -56,7 +51,6 @@ public class ClustersController extends AbstractController implements ClustersAp
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .build());
 
     return validateAccess
@@ -73,7 +67,6 @@ public class ClustersController extends AbstractController implements ClustersAp
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
-        .clusterActions(ClusterAction.VIEW)
         .build());
 
     return validateAccess
