@@ -1,7 +1,12 @@
 import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
 import { act, screen, waitFor, within } from '@testing-library/react';
-import { CleanUpPolicy, TopicsResponse } from 'generated-sources';
+import {
+  Action,
+  CleanUpPolicy,
+  TopicsResponse,
+  UserPermissionResourceEnum,
+} from 'generated-sources';
 import { externalTopicPayload, topicsPayload } from 'lib/fixtures/topics';
 import ClusterContext from 'components/contexts/ClusterContext';
 import userEvent from '@testing-library/user-event';
@@ -53,7 +58,15 @@ describe('TopicTable Components', () => {
   const renderComponent = (
     currentData: TopicsResponse | undefined = undefined,
     isReadOnly = false,
-    isTopicDeletionAllowed = true
+    isTopicDeletionAllowed = true,
+    roles = [
+      {
+        resource: UserPermissionResourceEnum.TOPIC,
+        actions: [Action.MESSAGES_DELETE, Action.DELETE],
+        clusters: [clusterName],
+        value: '.*',
+      },
+    ]
   ) => {
     (useTopics as jest.Mock).mockImplementation(() => ({
       data: currentData,
@@ -72,7 +85,10 @@ describe('TopicTable Components', () => {
           <TopicTable />
         </WithRoute>
       </ClusterContext.Provider>,
-      { initialEntries: [clusterTopicsPath(clusterName)] }
+      {
+        initialEntries: [clusterTopicsPath(clusterName)],
+        roles,
+      }
     );
   };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import { renderHook } from '@testing-library/react';
 import { usePermission } from 'lib/hooks/usePermission';
 import {
@@ -7,7 +8,6 @@ import {
   RolesModifiedTypes,
 } from 'lib/permissions';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
-import { useParams } from 'react-router-dom';
 import { RolesAccessContext } from 'components/contexts/RolesAccessContext';
 
 jest.mock('react-router-dom', () => ({
