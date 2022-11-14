@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.pages.topic;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
+import static org.apache.commons.lang.math.RandomUtils.nextInt;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
@@ -142,7 +143,7 @@ public class TopicDetails extends BasePage {
 
   @Step
   public TopicDetails.MessageGridItem getRandomMessage() {
-    return getMessage(initItems().size() - 1);
+    return getMessage(nextInt(initItems().size() - 1));
   }
 
   public static class MessageGridItem extends BasePage {
