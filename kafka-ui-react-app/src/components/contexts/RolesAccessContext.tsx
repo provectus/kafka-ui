@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useRoleBasedAccessMock } from 'lib/hooks/api/roles';
+import { useRoleBasedAccess } from 'lib/hooks/api/roles';
 import { modifyRolesData, RolesModifiedTypes } from 'lib/permissions';
 
 export const RolesAccessContext = React.createContext(
@@ -9,7 +9,7 @@ export const RolesAccessContext = React.createContext(
 export const RolesAccessProvider: React.FC<
   React.PropsWithChildren<unknown>
 > = ({ children }) => {
-  const { data } = useRoleBasedAccessMock();
+  const { data } = useRoleBasedAccess();
 
   const roles = useMemo(() => modifyRolesData(data), [data]);
 
