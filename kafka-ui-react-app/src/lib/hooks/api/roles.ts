@@ -45,7 +45,7 @@ export function useRoleBasedAccessMock() {
             clusters: ['local'],
             resource: UserPermissionResourceEnum.TOPIC,
             actions: [Action.EDIT, Action.MESSAGES_DELETE, Action.DELETE],
-            value: '123*',
+            value: '123.*',
           },
           {
             clusters: ['local'],
