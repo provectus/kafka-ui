@@ -1,7 +1,9 @@
-package com.provectus.kafka.ui.tests;
+package com.provectus.kafka.ui.suite.brokers;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.BROKERS;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
@@ -10,19 +12,17 @@ import io.qase.api.annotation.CaseId;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class BrokersTests extends BaseTest {
   private static final String SUITE_TITLE = "Brokers";
-
-
+  private static final long SUITE_ID = 1;
 
   @DisplayName("Checking the existing Broker's profile in a cluster")
-  @Suite(suiteId = 4, title = SUITE_TITLE)
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(85)
   @Test
-  public void CheckExistingBrokersInCluster(){
+  public void checkExistingBrokersInCluster(){
     naviSideBar
         .openSideMenu(BROKERS);
     brokersList
@@ -33,8 +33,10 @@ public class BrokersTests extends BaseTest {
     brokersDetails
         .waitUntilScreenReady();
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(brokersDetails.isSegmentSizeVisible()).as("isSegmentSizeVisible()").isTrue();
-
+    brokersDetails.getAllVisibleElements().forEach(element -> softly.assertThat(element.is(Condition.visible))
+        .as("getAllVisibleElements()").isTrue());
+    brokersDetails.getAllEnabledElements().forEach(element -> softly.assertThat(element.is(Condition.enabled))
+        .as("getAllEnabledElements()").isTrue());
     softly.assertAll();
   }
 }
