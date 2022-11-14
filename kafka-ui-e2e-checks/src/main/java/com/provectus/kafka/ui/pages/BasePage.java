@@ -16,7 +16,9 @@ public abstract class BasePage extends WebUtils {
   protected SelenideElement dotMenuBtn = $x("//button[@aria-label='Dropdown Toggle']");
   protected SelenideElement alertHeader = $x("//div[@role='alert']//div[@role='heading']");
   protected SelenideElement alertMessage = $x("//div[@role='alert']//div[@role='contentinfo']");
+  protected String summaryCellLocator = "//div[contains(text(),'%s')]";
   protected String tableElementNameLocator = "//tbody//a[contains(text(),'%s')]";
+  protected String сolumnHeaderLocator = "//table//tr/th/div[text()='%s']";
 
   protected void waitUntilSpinnerDisappear() {
     log.debug("\nwaitUntilSpinnerDisappear");
