@@ -19,7 +19,7 @@ import {
   RouterParamsClusterConnectConnector,
 } from 'lib/paths';
 import { useConfirm } from 'lib/hooks/useConfirm';
-import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { Dropdown } from 'components/common/Dropdown';
 import { usePermission } from 'lib/hooks/usePermission';
 import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
 
@@ -42,6 +42,12 @@ const Actions: React.FC = () => {
   const canDeleteConnector = usePermission(
     UserPermissionResourceEnum.CONNECT,
     Action.DELETE,
+    routerProps.connectorName
+  );
+
+  const canEditConnector = usePermission(
+    UserPermissionResourceEnum.CONNECT,
+    Action.EDIT,
     routerProps.connectorName
   );
 
@@ -78,24 +84,44 @@ const Actions: React.FC = () => {
     <ConnectorActionsWrapperStyled>
       <Dropdown>
         {connector?.status.state === ConnectorState.RUNNING && (
-          <DropdownItem onClick={pauseConnectorHandler} disabled={isMutating}>
+          <ActionDropdownItem
+            onClick={pauseConnectorHandler}
+            disabled={isMutating}
+            canDoAction={canEditConnector}
+          >
             Pause
-          </DropdownItem>
+          </ActionDropdownItem>
         )}
         {connector?.status.state === ConnectorState.PAUSED && (
-          <DropdownItem onClick={resumeConnectorHandler} disabled={isMutating}>
+          <ActionDropdownItem
+            onClick={resumeConnectorHandler}
+            disabled={isMutating}
+            canDoAction={canEditConnector}
+          >
             Resume
-          </DropdownItem>
+          </ActionDropdownItem>
         )}
-        <DropdownItem onClick={restartConnectorHandler} disabled={isMutating}>
+        <ActionDropdownItem
+          onClick={restartConnectorHandler}
+          disabled={isMutating}
+          canDoAction={canEditConnector}
+        >
           Restart Connector
-        </DropdownItem>
-        <DropdownItem onClick={restartAllTasksHandler} disabled={isMutating}>
+        </ActionDropdownItem>
+        <ActionDropdownItem
+          onClick={restartAllTasksHandler}
+          disabled={isMutating}
+          canDoAction={canEditConnector}
+        >
           Restart All Tasks
-        </DropdownItem>
-        <DropdownItem onClick={restartFailedTasksHandler} disabled={isMutating}>
+        </ActionDropdownItem>
+        <ActionDropdownItem
+          onClick={restartFailedTasksHandler}
+          disabled={isMutating}
+          canDoAction={canEditConnector}
+        >
           Restart Failed Tasks
-        </DropdownItem>
+        </ActionDropdownItem>
         <ActionDropdownItem
           onClick={deleteConnectorHandler}
           disabled={isMutating}

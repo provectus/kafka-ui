@@ -238,6 +238,152 @@ describe('Actions', () => {
           screen.queryByText(getDefaultActionMessage())
         ).not.toBeInTheDocument();
       });
+
+      it('checks the Restart Connector show the tooltip when there is no permission', async () => {
+        (usePermission as jest.Mock).mockImplementation(() => false);
+        renderComponent();
+
+        await afterClickDropDownButton();
+
+        const dropItem = screen.getByText(/Restart Connector/i);
+
+        await userEvent.hover(dropItem);
+
+        expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+      });
+
+      it('checks the Restart Connector does not show the tooltip when there is permission', async () => {
+        (usePermission as jest.Mock).mockImplementation(() => true);
+        renderComponent();
+
+        await afterClickDropDownButton();
+
+        const dropItem = screen.getByText(/Restart Connector/i);
+
+        await userEvent.hover(dropItem);
+
+        expect(
+          screen.queryByText(getDefaultActionMessage())
+        ).not.toBeInTheDocument();
+      });
+
+      it('checks the Restart All Tasks show the tooltip when there is no permission', async () => {
+        (usePermission as jest.Mock).mockImplementation(() => false);
+        renderComponent();
+
+        await afterClickDropDownButton();
+
+        const dropItem = screen.getByText(/Restart All Tasks/i);
+
+        await userEvent.hover(dropItem);
+
+        expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+      });
+
+      it('checks the Restart All Tasks does not show the tooltip when there is permission', async () => {
+        (usePermission as jest.Mock).mockImplementation(() => true);
+        renderComponent();
+
+        await afterClickDropDownButton();
+
+        const dropItem = screen.getByText(/Restart All Tasks/i);
+
+        await userEvent.hover(dropItem);
+
+        expect(
+          screen.queryByText(getDefaultActionMessage())
+        ).not.toBeInTheDocument();
+      });
+
+      it('checks the Restart Failed Tasks show the tooltip when there is no permission', async () => {
+        (usePermission as jest.Mock).mockImplementation(() => false);
+        renderComponent();
+
+        await afterClickDropDownButton();
+
+        const dropItem = screen.getByText(/Restart Failed Tasks/i);
+
+        await userEvent.hover(dropItem);
+
+        expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+      });
+
+      it('checks the Restart Failed Tasks does not show the tooltip when there is permission', async () => {
+        (usePermission as jest.Mock).mockImplementation(() => true);
+        renderComponent();
+
+        await afterClickDropDownButton();
+
+        const dropItem = screen.getByText(/Restart Failed Tasks/i);
+
+        await userEvent.hover(dropItem);
+
+        expect(
+          screen.queryByText(getDefaultActionMessage())
+        ).not.toBeInTheDocument();
+      });
+
+      it('checks the Pause Connector show the tooltip when there is no permission', async () => {
+        (usePermission as jest.Mock).mockImplementation(() => false);
+        renderComponent();
+
+        await afterClickDropDownButton();
+
+        const dropItem = screen.getByText(/Pause/i);
+
+        await userEvent.hover(dropItem);
+
+        expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+      });
+
+      it('checks the Pause Connector does not show the tooltip when there is permission', async () => {
+        (useConnector as jest.Mock).mockImplementation(() => ({
+          data: set({ ...connector }, 'status.state', ConnectorState.PAUSED),
+        }));
+        (usePermission as jest.Mock).mockImplementation(() => true);
+        renderComponent();
+
+        await afterClickDropDownButton();
+
+        const dropItem = screen.getByText(/Resume/i);
+
+        await userEvent.hover(dropItem);
+
+        expect(
+          screen.queryByText(getDefaultActionMessage())
+        ).not.toBeInTheDocument();
+      });
+
+      it('checks the Resume Connector show the tooltip when there is no permission', async () => {
+        (useConnector as jest.Mock).mockImplementation(() => ({
+          data: set({ ...connector }, 'status.state', ConnectorState.PAUSED),
+        }));
+        (usePermission as jest.Mock).mockImplementation(() => false);
+        renderComponent();
+
+        await afterClickDropDownButton();
+
+        const dropItem = screen.getByText(/Resume/i);
+
+        await userEvent.hover(dropItem);
+
+        expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
+      });
+
+      it('checks the Resume Connector does not show the tooltip when there is permission', async () => {
+        (usePermission as jest.Mock).mockImplementation(() => true);
+        renderComponent();
+
+        await afterClickDropDownButton();
+
+        const dropItem = screen.getByText(/Pause/i);
+
+        await userEvent.hover(dropItem);
+
+        expect(
+          screen.queryByText(getDefaultActionMessage())
+        ).not.toBeInTheDocument();
+      });
     });
   });
 });
