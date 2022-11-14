@@ -48,7 +48,7 @@ Mask target field's values with specified masking characters, recursively (space
 
 ```yaml
 - type: MASK
-  fields: [ "name", "surname" ]
+  fields: [ "id", "name" ]
   pattern: ["A", "a", "N", "_"]   # optional, default is ["X", "x", "n", "-"]
   ...
 ```

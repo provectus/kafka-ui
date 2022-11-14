@@ -30,7 +30,7 @@ class Mask extends MaskingPolicy {
 
   private static UnaryOperator<String> createMasker(List<Character> maskingChars) {
     Preconditions.checkNotNull(maskingChars);
-    Preconditions.checkArgument(maskingChars.size() == 4, "mask pattern should contain of 4 elements");
+    Preconditions.checkArgument(maskingChars.size() == 4, "mask pattern should contain 4 elements");
     return input -> {
       StringBuilder sb = new StringBuilder(input.length());
       for (int i = 0; i < input.length(); i++) {

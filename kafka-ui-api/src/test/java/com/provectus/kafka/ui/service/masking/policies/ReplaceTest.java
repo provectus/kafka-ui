@@ -16,11 +16,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 class ReplaceTest {
 
   private static final List<String> TARGET_FIELDS = List.of("id", "name");
+  private static final String REPLACEMENT_STRING = "***";
 
   @ParameterizedTest
   @MethodSource
   void testApplyToJsonContainer(List<String> fields, ContainerNode<?> original, ContainerNode<?>  expected) {
-    var policy = new Replace(fields, "***");
+    var policy = new Replace(fields, REPLACEMENT_STRING);
     assertThat(policy.applyToJsonContainer(original)).isEqualTo(expected);
   }
 
@@ -61,7 +62,7 @@ class ReplaceTest {
       "null, ***"
   })
   void testApplyToString(String original, String expected) {
-    var policy = new Replace(List.of(), "***");
+    var policy = new Replace(List.of(), REPLACEMENT_STRING);
     assertThat(policy.applyToString(original)).isEqualTo(expected);
   }
 }
