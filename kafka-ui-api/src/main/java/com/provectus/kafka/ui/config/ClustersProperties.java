@@ -55,6 +55,10 @@ public class ClustersProperties {
     String address;
     String userName;
     String password;
+    String keystoreLocation;
+    String keystorePassword;
+    String truststoreLocation;
+    String truststorePassword;
   }
 
   @Data
