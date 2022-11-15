@@ -4,9 +4,11 @@ import NavBar from 'components/NavBar/NavBar';
 import { screen, within } from '@testing-library/react';
 
 const burgerButtonOptions = { name: 'burger' };
-const logoutButtonOptions = { name: 'Log out' };
 
 jest.mock('components/Version/Version', () => () => <div>Version</div>);
+jest.mock('components/NavBar/UserInfo/UserInfo', () => () => (
+  <div>UserInfo</div>
+));
 
 describe('NavBar', () => {
   beforeEach(() => {
@@ -21,8 +23,6 @@ describe('NavBar', () => {
     expect(
       within(header).getByRole('button', burgerButtonOptions)
     ).toBeInTheDocument();
-    expect(
-      within(header).getByRole('button', logoutButtonOptions)
-    ).toBeInTheDocument();
+    expect(within(header).getByText('UserInfo')).toBeInTheDocument();
   });
 });

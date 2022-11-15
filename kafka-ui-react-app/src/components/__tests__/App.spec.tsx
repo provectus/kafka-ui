@@ -10,6 +10,8 @@ jest.mock('components/Nav/Nav', () => () => <div>Navigation</div>);
 
 jest.mock('components/Version/Version', () => () => <div>Version</div>);
 
+jest.mock('components/NavBar/NavBar', () => () => <div>NavBar</div>);
+
 jest.mock('lib/hooks/api/timeFormat', () => ({
   ...jest.requireActual('lib/hooks/api/timeFormat'),
   useTimeFormat: jest.fn(),

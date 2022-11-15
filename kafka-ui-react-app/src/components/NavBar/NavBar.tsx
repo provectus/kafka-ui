@@ -5,6 +5,7 @@ import GitIcon from 'components/common/Icons/GitIcon';
 import DiscordIcon from 'components/common/Icons/DiscordIcon';
 
 import * as S from './NavBar.styled';
+import UserInfo from './UserInfo/UserInfo';
 
 interface Props {
   onBurgerClick: () => void;
@@ -38,11 +39,6 @@ const NavBar: React.FC<Props> = ({ onBurgerClick }) => {
         </S.NavbarBrand>
       </S.NavbarBrand>
       <S.NavbarSocial>
-        <S.LogoutLink href="/logout">
-          <S.LogoutButton buttonType="primary" buttonSize="M">
-            Log out
-          </S.LogoutButton>
-        </S.LogoutLink>
         <S.SocialLink
           href="https://github.com/provectus/kafka-ui"
           target="_blank"
@@ -55,6 +51,7 @@ const NavBar: React.FC<Props> = ({ onBurgerClick }) => {
         >
           <DiscordIcon />
         </S.SocialLink>
+        <UserInfo />
       </S.NavbarSocial>
     </S.Navbar>
   );

@@ -2,7 +2,6 @@ import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
 import DiscordIcon from 'components/common/Icons/DiscordIcon';
 import GitIcon from 'components/common/Icons/GitIcon';
-import { Button } from 'components/common/Button/Button';
 
 export const Navbar = styled.nav(
   ({ theme }) => css`
@@ -143,19 +142,5 @@ export const Hyperlink = styled(Link)(
     text-decoration: none;
     word-break: break-word;
     cursor: pointer;
-  `
-);
-
-export const LogoutButton = styled(Button)(
-  ({ theme }) => css`
-    color: ${theme.button.primary.invertedColors.normal};
-    background: none !important;
-    padding: 0 8px;
-  `
-);
-
-export const LogoutLink = styled.a(
-  () => css`
-    margin-right: 2px;
   `
 );
