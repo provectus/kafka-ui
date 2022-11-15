@@ -12,27 +12,22 @@
     <artifactId>kafka-ui-e2e-checks</artifactId>
     <properties>
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
-        <junit.version>5.8.2</junit.version>
         <aspectj.version>1.9.8</aspectj.version>
         <allure.version>2.18.1</allure.version>
         <json-smart.version>2.4.8</json-smart.version>
-        <testcontainers.version>1.17.2</testcontainers.version>
         <selenide.version>6.6.3</selenide.version>
         <assertj.version>3.23.1</assertj.version>
         <google.auto-service.version>1.0.1</google.auto-service.version>
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <testcontainers.junit-jupiter.version>1.17.2</testcontainers.junit-jupiter.version>
         <allure.java-commons.version>2.18.1</allure.java-commons.version>
         <dotenv.version>2.2.4</dotenv.version>
-        <junit.platform-launcher.version>1.8.2</junit.platform-launcher.version>
         <allure.maven-plugin.version>2.6</allure.maven-plugin.version>
         <ashot.version>1.5.4</ashot.version>
         <allure.screendiff-plugin.version>2.18.1</allure.screendiff-plugin.version>
         <maven.surefire-plugin.version>2.22.2</maven.surefire-plugin.version>
         <allure-maven.version>2.10.0</allure-maven.version>
-        <kafka.version>3.0.0</kafka.version>
-        <netty.version>4.1.84.Final</netty.version>
+        <kafka.version>3.3.1</kafka.version>
         <qase.io.version>2.1.3</qase.io.version>
     </properties>
 
@@ -89,54 +84,44 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-buffer</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-common</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-resolver</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport-native-epoll</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport-native-unix-common</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-resolver-dns-native-macos</artifactId>
-            <version>${netty.version}</version>
             <classifier>osx-aarch_64</classifier>
         </dependency>
 
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>${testcontainers.version}</version>
         </dependency>
 
         <dependency>
@@ -199,7 +184,6 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${testcontainers.junit-jupiter.version}</version>
         </dependency>
         <dependency>
             <groupId>io.qameta.allure</groupId>
@@ -214,7 +198,6 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
-            <version>${junit.platform-launcher.version}</version>
         </dependency>
         <dependency>
             <groupId>ru.yandex.qatools.allure</groupId>
@@ -245,7 +228,6 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>selenium</artifactId>
-            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
