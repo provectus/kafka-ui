@@ -17,7 +17,7 @@ public class KafkaUiApplication {
     var snClass = Class.forName("org.xerial.snappy.Snappy");
     var f = snClass.getDeclaredField("impl");
     f.setAccessible(true);
-    System.out.println("\n\n Snappy implementation: "
+    System.out.println("\n\n Snappy implementation (with gcompat): "
         + f.get(null)
         + "\n\n "
         + "\n\n ");
