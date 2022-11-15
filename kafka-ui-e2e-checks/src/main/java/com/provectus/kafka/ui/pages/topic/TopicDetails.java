@@ -44,7 +44,7 @@ public class TopicDetails extends BasePage {
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
-  protected String filterNameLocator = "//div[contains(text(),'%s')]";
+  protected String filterNameLocator = "//*[@data-testid='activeSmartFilter']";
 
   @Step
   public TopicDetails waitUntilScreenReady() {
@@ -146,8 +146,8 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public String getFilterName(String filterName) {
-    return $x(String.format(filterNameLocator, filterName)).getText();
+  public String getFilterName() {
+    return $x(filterNameLocator).getText();
   }
 
   @Step

@@ -283,7 +283,7 @@ public class TopicActionsTests extends BaseTest {
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
         .isTrue();
     topicDetails.clickAddFilterBtnAddFilterMdl();
-    assertThat(topicDetails.getFilterName(filterName)).as("isFilterNameVisible(filterName)")
+    assertThat(topicDetails.getFilterName()).as("isFilterNameVisible(filterName)")
         .isEqualTo(filterName);
   }
 
