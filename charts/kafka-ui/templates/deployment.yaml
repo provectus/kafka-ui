@@ -87,7 +87,7 @@ spec:
               {{- $contextPath := .Values.envs.config.SERVER_SERVLET_CONTEXT_PATH | default "" | printf "%s/actuator/health" | urlParse }}
               path: {{ get $contextPath "path" }}
               port: http
-              {{- if .Values.probes.skipCertificatesVerification }}
+              {{- if .Values.probes.useHttpsScheme }}
               scheme: https
               {{- end }}
             initialDelaySeconds: 60
@@ -98,7 +98,7 @@ spec:
               {{- $contextPath := .Values.envs.config.SERVER_SERVLET_CONTEXT_PATH | default "" | printf "%s/actuator/health" | urlParse }}
               path: {{ get $contextPath "path" }}
               port: http
-              {{- if .Values.probes.skipCertificatesVerification }}
+              {{- if .Values.probes.useHttpsScheme }}
               scheme: https
               {{- end }}
             initialDelaySeconds: 60
