@@ -25,7 +25,7 @@
         <testcontainers.junit-jupiter.version>1.17.2</testcontainers.junit-jupiter.version>
         <allure.java-commons.version>2.18.1</allure.java-commons.version>
         <dotenv.version>2.2.4</dotenv.version>
-        <junit.platform-launcher.version>1.8.2</junit.platform-launcher.version>
+        <junit.platform-launcher.version>1.9.1</junit.platform-launcher.version>
         <allure.maven-plugin.version>2.6</allure.maven-plugin.version>
         <ashot.version>1.5.4</ashot.version>
         <allure.screendiff-plugin.version>2.18.1</allure.screendiff-plugin.version>
