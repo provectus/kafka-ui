@@ -134,6 +134,22 @@ describe('BrokersList Component', () => {
         }));
       });
 
+      describe('when it has no brokers', () => {
+        beforeEach(() => {
+          (useBrokers as jest.Mock).mockImplementation(() => ({
+            data: [],
+          }));
+        });
+
+        it('renders empty table', async () => {
+          renderComponent();
+          expect(screen.getByRole('table')).toBeInTheDocument();
+          expect(
+            screen.getByRole('row', { name: 'Disk usage data not available' })
+          ).toBeInTheDocument();
+        });
+      });
+
       it('renders list of all brokers', async () => {
         renderComponent();
         expect(screen.getByRole('table')).toBeInTheDocument();
