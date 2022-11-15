@@ -57,4 +57,16 @@ public class WebUtils {
     }
     return isEnabled;
   }
+
+  public static boolean isSelected(SelenideElement element) {
+    log.debug("\nisSelected: {}", element.getSearchCriteria());
+    boolean isSelected = false;
+    try {
+      element.shouldBe(Condition.selected);
+      isSelected = true;
+    } catch (Throwable e) {
+      log.debug("{} is not selected", element.getSearchCriteria());
+    }
+    return isSelected;
+  }
 }

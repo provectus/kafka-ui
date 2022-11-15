@@ -13,8 +13,10 @@ import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import lombok.experimental.ExtensionMethod;
+import org.assertj.core.api.SoftAssertions;
 import org.openqa.selenium.By;
 
 @ExtensionMethod({WaitUtils.class})
@@ -24,6 +26,14 @@ public class TopicDetails extends BasePage {
   protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
+  protected SelenideElement addFiltersBtn = $x("//button[text()='Add Filters']");
+  protected SelenideElement savedFiltersField = $x("//div[text()='Saved Filters']");
+  protected SelenideElement addFilterCodeModalTitle = $x("//label[text()='Filter code']");
+  protected SelenideElement addFilterCodeInput = $x("//div[@id='ace-editor']//textarea");
+  protected SelenideElement saveThisFilterCheckBoxAddFilterMdl = $x("//input[@name='saveFilter']");
+  protected SelenideElement displayNameInputAddFilterMdl = $x("//input[@placeholder='Enter Name']");
+  protected SelenideElement cancelBtnAddFilterMdl = $x("//button[text()='Cancel']");
+  protected SelenideElement addFilterBtnAddFilterMdl = $x("//button[text()='Add filter']");
   protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
   protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
   protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
@@ -34,6 +44,7 @@ public class TopicDetails extends BasePage {
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
+  protected String filterNameLocator = "//div[contains(text(),'%s')]";
 
   @Step
   public TopicDetails waitUntilScreenReady() {
@@ -104,6 +115,67 @@ public class TopicDetails extends BasePage {
   public TopicDetails clickProduceMessageBtn() {
     clickByJavaScript(produceMessageBtn);
     return this;
+  }
+
+  @Step
+  public TopicDetails clickMessagesAddFiltersBtn() {
+    addFiltersBtn.click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickAddFilterBtnAddFilterMdl() {
+    addFilterBtnAddFilterMdl.click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails setFilterCodeFieldAddFilterMdl(String filterCode) {
+    addFilterCodeInput.sendKeys(filterCode);
+    return this;
+  }
+
+  @Step
+  public boolean isSaveThisFilterCheckBoxSelected() {
+    return isSelected(saveThisFilterCheckBoxAddFilterMdl);
+  }
+
+  @Step
+  public boolean isAddFilterBtnAddFilterMdlEnabled() {
+    return isEnabled(addFilterBtnAddFilterMdl);
+  }
+
+  @Step
+  public String getFilterName(String filterName) {
+    return $x(String.format(filterNameLocator, filterName)).getText();
+  }
+
+  @Step
+  public TopicDetails waitUntilAddFilterModalVisible() {
+    SoftAssertions softly = new SoftAssertions();
+    getAllAddFilterModalVisibleElements().forEach(element ->
+        softly.assertThat(element.is(Condition.visible))
+            .as(element.getSearchCriteria() + " isVisible()").isTrue());
+    getAllAddFilterModalEnabledElements().forEach(element ->
+        softly.assertThat(element.is(Condition.enabled))
+            .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    getAllAddFilterModalDisabledElements().forEach(element ->
+        softly.assertThat(element.is(Condition.enabled))
+            .as(element.getSearchCriteria() + " isEnabled()").isFalse());
+    softly.assertAll();
+    return this;
+  }
+
+  public List<SelenideElement> getAllAddFilterModalVisibleElements() {
+    return Arrays.asList(savedFiltersField, addFilterCodeModalTitle);
+  }
+
+  public List<SelenideElement> getAllAddFilterModalEnabledElements() {
+    return Arrays.asList(displayNameInputAddFilterMdl, cancelBtnAddFilterMdl);
+  }
+
+  public List<SelenideElement> getAllAddFilterModalDisabledElements() {
+    return Arrays.asList(addFilterBtnAddFilterMdl);
   }
 
   @Step
