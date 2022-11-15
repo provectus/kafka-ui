@@ -1,5 +1,6 @@
 FROM azul/zulu-openjdk-alpine:17
 
+RUN apk add --no-cache gcompat
 RUN addgroup -S kafkaui && adduser -S kafkaui -G kafkaui
 
 USER kafkaui
