@@ -76,7 +76,7 @@ annotations: {}
 ## Set field schema as HTTPS for readines and liveness probe
 ##
 probes:
-  skipCertificatesVerification: false
+  useHttpsScheme: false
 
 podSecurityContext:
   {}
