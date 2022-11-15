@@ -68,7 +68,7 @@ const Topic: React.FC = () => {
 
   const canViewMessage = usePermission(
     UserPermissionResourceEnum.TOPIC,
-    Action.VIEW,
+    Action.MESSAGES_READ,
     topicName
   );
 
