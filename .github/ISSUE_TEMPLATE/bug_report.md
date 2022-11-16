@@ -63,8 +63,8 @@ Steps to reproduce the behavior:
 **Additional context**
 <!--
 Add any other context about the problem here. E.g.: 
-1. Impact or severity/priority suggestions with justification
-2. Additional checks done with outcome, if that can help understand the issue better or pinpoint the root cause
-3. Related issues 
-4. Logs (if available)
+1. Additional checks done with outcome, if that can help understand the issue better or pinpoint the root cause
+2. Related issues 
+3. Logs (if available)
+4. Impact on the end user in general.
 -->
