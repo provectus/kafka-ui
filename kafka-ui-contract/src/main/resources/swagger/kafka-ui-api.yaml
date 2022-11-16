@@ -7,7 +7,7 @@ info:
   contact: { }
   license:
     name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
 tags:
   - name: /api/clusters
   - name: /api/clusters/connects
@@ -1757,23 +1757,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/TimeStampFormat'
 
-
-  /api/access/userPermissions:
-    get:
-      tags:
-        - Access
-      summary: get user permissions
-      operationId: getUserPermissions
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserPermission'
-
   /api/access/evictRolesCache:
     post:
       tags:
@@ -1793,6 +1776,20 @@ paths:
       responses:
         200:
           description: OK
+
+  /api/access/userAuthInfo:
+    get:
+      tags:
+        - Access
+      summary: Get user authentication related info
+      operationId: getUserAuthInfo
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationInfo'
 
 components:
   schemas:
@@ -2678,7 +2675,7 @@ components:
           type: string
         schemaType:
           $ref: '#/components/schemas/SchemaType'
-          description: upon updating a schema, the type of an existing schema can't be changed
+          # upon updating a schema, the type of existing schema can't be changed
       required:
         - subject
         - schema
@@ -3186,6 +3183,30 @@ components:
         - COMPACT
         - COMPACT_DELETE
         - UNKNOWN
+
+    AuthenticationInfo:
+      type: object
+      properties:
+        rbacEnabled:
+          type: boolean
+          description: true if role based access control is enabled and granular permission access is required
+        userInfo:
+          $ref: '#/components/schemas/UserInfo'
+      required:
+        - rbacEnabled
+
+    UserInfo:
+      type: object
+      properties:
+        username:
+          type: string
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserPermission'
+      required:
+        - username
+        - permissions
 
     UserPermission:
       type: object

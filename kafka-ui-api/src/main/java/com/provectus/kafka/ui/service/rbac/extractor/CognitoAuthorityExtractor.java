@@ -61,8 +61,7 @@ public class CognitoAuthorityExtractor implements ProviderAuthorityExtractor {
             .map(Object::toString)
             .distinct()
             .filter(cognitoGroup -> subject.getValue().equals(cognitoGroup))
-        )
-        .collect(Collectors.toList());
+        ).toList();
 
     return Mono.just(Stream.concat(groupsByUsername.stream(), groupsByGroups.stream()).collect(Collectors.toList()));
   }

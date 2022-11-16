@@ -59,16 +59,18 @@ public class AccessControlService {
   private final Cache<String, AuthenticatedUser> cachedUsers = CacheBuilder.newBuilder() // TODO cache supporting flux
       .maximumSize(10000)
       .build();
+  private boolean rbacEnabled = false;
   private Set<ProviderAuthorityExtractor> extractors;
   private List<Role> roles;
 
   @PostConstruct
   public void init() {
-    String rawProperty = environment.getProperty("roles.file"); // TODO cacherefresh
+    String rawProperty = environment.getProperty("roles.file");
     if (rawProperty == null) {
       log.trace("No roles file is provided");
       return;
     }
+    rbacEnabled = true;
 
     Path rolesFilePath = Paths.get(rawProperty);
 
@@ -385,5 +387,9 @@ public class AccessControlService {
   public void reloadRoles() {
     init();
     evictCache();
+  }
+
+  public boolean isRbacEnabled() {
+    return rbacEnabled;
   }
 }

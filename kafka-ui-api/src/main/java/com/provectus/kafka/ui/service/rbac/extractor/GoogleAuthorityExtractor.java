@@ -58,8 +58,7 @@ public class GoogleAuthorityExtractor implements ProviderAuthorityExtractor {
             .filter(s -> s.getProvider().equals(Provider.OAUTH_GOOGLE))
             .filter(s -> s.getType().equals("domain"))
             .anyMatch(s -> s.getValue().equals(domain)))
-        .map(Role::getName)
-        .collect(Collectors.toList());
+        .map(Role::getName).toList();
 
     return Mono.just(Stream.concat(groupsByUsername.stream(), groupsByDomain.stream())
         .collect(Collectors.toList()));
