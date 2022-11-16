@@ -10,21 +10,32 @@ import com.provectus.kafka.ui.connect.model.Connector;
 import com.provectus.kafka.ui.connect.model.NewConnector;
 import com.provectus.kafka.ui.exception.KafkaConnectConflictReponseException;
 import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.model.InternalSchemaRegistry;
+import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
+import com.provectus.kafka.ui.util.SecuredWebClient;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import java.io.FileInputStream;
+import java.security.KeyStore;
 import java.text.DateFormat;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.TrustManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.ResourceUtils;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -32,6 +43,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
 import reactor.util.retry.Retry;
 
 @Slf4j
@@ -89,7 +101,7 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
     private static final ObjectMapper mapper = buildObjectMapper(dateFormat);
 
     public RetryingApiClient(KafkaConnectCluster config, DataSize maxBuffSize) {
-      super(buildWebClient(mapper, maxBuffSize), mapper, dateFormat);
+      super(buildWebClient(mapper, maxBuffSize, config), mapper, dateFormat);
       setBasePath(config.getAddress());
       setUsername(config.getUserName());
       setPassword(config.getPassword());
@@ -101,7 +113,7 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
       return dateFormat;
     }
 
-    public static WebClient buildWebClient(ObjectMapper mapper, DataSize maxBuffSize) {
+    public static WebClient buildWebClient(ObjectMapper mapper, DataSize maxBuffSize, KafkaConnectCluster config) {
       ExchangeStrategies strategies = ExchangeStrategies
               .builder()
               .codecs(clientDefaultCodecsConfigurer -> {
@@ -113,8 +125,20 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
                         .maxInMemorySize((int) maxBuffSize.toBytes());
               })
               .build();
-      WebClient.Builder webClient = WebClient.builder().exchangeStrategies(strategies);
-      return webClient.build();
+
+      try {
+        WebClient.Builder webClient = SecuredWebClient.configure(
+            config.getKeystoreLocation(),
+            config.getKeystorePassword(),
+            config.getTruststoreLocation(),
+            config.getTruststorePassword()
+        );
+
+        return webClient.exchangeStrategies(strategies).build();
+      } catch (Exception e) {
+        throw new IllegalStateException(
+            "cannot create TLS configuration for kafka-connect cluster " + config.getName(), e);
+      }
     }
 
     public static ObjectMapper buildObjectMapper(DateFormat dateFormat) {
