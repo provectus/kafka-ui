@@ -14,41 +14,40 @@ const filters: MessageFilters[] = [
 
 const editFilterMock = jest.fn();
 
-const renderComponent = async (props: Partial<FilterModalProps> = {}) => {
-  await act(() => {
-    render(
-      <AddFilter
-        toggleIsOpen={jest.fn()}
-        addFilter={jest.fn()}
-        deleteFilter={jest.fn()}
-        activeFilterHandler={jest.fn()}
-        toggleEditModal={jest.fn()}
-        onClickSavedFilters={jest.fn()}
-        editFilter={editFilterMock}
-        filters={props.filters || filters}
-        isSavedFiltersOpen={false}
-        {...props}
-      />
-    );
-  });
+const renderComponent = (props: Partial<FilterModalProps> = {}) => {
+  return render(
+    <AddFilter
+      toggleIsOpen={jest.fn()}
+      addFilter={jest.fn()}
+      deleteFilter={jest.fn()}
+      activeFilterHandler={jest.fn()}
+      toggleEditModal={jest.fn()}
+      onClickSavedFilters={jest.fn()}
+      editFilter={editFilterMock}
+      filters={props.filters || filters}
+      isSavedFiltersOpen={false}
+      {...props}
+    />
+  );
 };
 describe('AddFilter component', () => {
   describe('', () => {
-    beforeEach(() => {
-      renderComponent();
-    });
-
     it('should test click on Saved Filters redirects to Saved components', async () => {
+      renderComponent();
       await userEvent.click(screen.getByRole('savedFilterText'));
       expect(screen.getByText('Saved Filters')).toBeInTheDocument();
       expect(screen.getByRole('savedFilterText')).toBeInTheDocument();
     });
 
-    it('info button to be in the document', () => {
+    it('info button to be in the document', async () => {
+      await act(() => {
+        renderComponent();
+      });
       expect(screen.getByRole('button', { name: 'info' })).toBeInTheDocument();
     });
 
     it('renders InfoModal', async () => {
+      renderComponent();
       await userEvent.click(screen.getByRole('button', { name: 'info' }));
       expect(screen.getByRole('button', { name: 'Ok' })).toBeInTheDocument();
       expect(
@@ -57,19 +56,18 @@ describe('AddFilter component', () => {
     });
 
     it('should test click on return to custom filter redirects to Saved Filters', async () => {
+      await act(() => {
+        renderComponent();
+      });
       await userEvent.click(screen.getByRole('savedFilterText'));
-
       expect(screen.queryByText('Saved filters')).not.toBeInTheDocument();
       expect(screen.getByRole('savedFilterText')).toBeInTheDocument();
     });
   });
 
   describe('Add new filter', () => {
-    beforeEach(() => {
-      renderComponent();
-    });
-
     it('adding new filter', async () => {
+      renderComponent();
       const codeValue = 'filter code';
       const nameValue = 'filter name';
       const textBoxes = screen.getAllByRole('textbox');
@@ -91,6 +89,7 @@ describe('AddFilter component', () => {
     });
 
     it('should check unSaved filter without name', async () => {
+      renderComponent();
       const codeTextBox = screen.getAllByRole(
         'textbox'
       )[0] as HTMLTextAreaElement;
@@ -106,7 +105,10 @@ describe('AddFilter component', () => {
     });
 
     it('calls editFilter when edit button is clicked in saved filters', async () => {
-      await renderComponent({ isSavedFiltersOpen: true });
+      await act(() => {
+        renderComponent();
+        renderComponent({ isSavedFiltersOpen: true });
+      });
       await userEvent.click(screen.getByText('Saved Filters'));
       const index = 0;
       const editButton = screen.getAllByText('Edit')[index];
@@ -129,14 +131,6 @@ describe('AddFilter component', () => {
     const longCodeValue = 'a long filter code';
     const nameValue = 'filter name';
 
-    beforeEach(async () => {
-      await renderComponent({
-        addFilter: addFilterMock,
-        activeFilterHandler: activeFilterHandlerMock,
-        toggleIsOpen: toggleModelMock,
-      });
-    });
-
     afterEach(() => {
       addFilterMock.mockClear();
       activeFilterHandlerMock.mockClear();
@@ -145,6 +139,11 @@ describe('AddFilter component', () => {
 
     describe('OnSubmit conditions with codeValue and nameValue in fields', () => {
       beforeEach(async () => {
+        renderComponent({
+          addFilter: addFilterMock,
+          activeFilterHandler: activeFilterHandlerMock,
+          toggleIsOpen: toggleModelMock,
+        });
         const textAreaElement = screen.getAllByRole(
           'textbox'
         )[0] as HTMLTextAreaElement;
@@ -231,6 +230,13 @@ describe('AddFilter component', () => {
     });
 
     it('should use sliced code as the filter name if filter name is empty', async () => {
+      await act(() => {
+        renderComponent({
+          addFilter: addFilterMock,
+          activeFilterHandler: activeFilterHandlerMock,
+          toggleIsOpen: toggleModelMock,
+        });
+      });
       const codeTextBox = screen.getAllByRole(
         'textbox'
       )[0] as HTMLTextAreaElement;

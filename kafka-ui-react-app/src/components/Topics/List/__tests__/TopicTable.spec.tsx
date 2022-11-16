@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
-import { act, screen, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import { CleanUpPolicy, TopicsResponse } from 'generated-sources';
 import { externalTopicPayload, topicsPayload } from 'lib/fixtures/topics';
 import ClusterContext from 'components/contexts/ClusterContext';
@@ -44,7 +44,7 @@ describe('TopicTable Components', () => {
     }));
   });
 
-  const renderComponent = async (
+  const renderComponent = (
     currentData: TopicsResponse | undefined = undefined,
     isReadOnly = false,
     isTopicDeletionAllowed = true
@@ -53,43 +53,41 @@ describe('TopicTable Components', () => {
       data: currentData,
     }));
 
-    await act(() => {
-      render(
-        <ClusterContext.Provider
-          value={{
-            isReadOnly,
-            hasKafkaConnectConfigured: true,
-            hasSchemaRegistryConfigured: true,
-            isTopicDeletionAllowed,
-          }}
-        >
-          <WithRoute path={clusterTopicsPath()}>
-            <TopicTable />
-          </WithRoute>
-        </ClusterContext.Provider>,
-        { initialEntries: [clusterTopicsPath(clusterName)] }
-      );
-    });
+    return render(
+      <ClusterContext.Provider
+        value={{
+          isReadOnly,
+          hasKafkaConnectConfigured: true,
+          hasSchemaRegistryConfigured: true,
+          isTopicDeletionAllowed,
+        }}
+      >
+        <WithRoute path={clusterTopicsPath()}>
+          <TopicTable />
+        </WithRoute>
+      </ClusterContext.Provider>,
+      { initialEntries: [clusterTopicsPath(clusterName)] }
+    );
   };
 
   describe('without data', () => {
-    it('renders empty table when payload is undefined', async () => {
-      await renderComponent();
+    it('renders empty table when payload is undefined', () => {
+      renderComponent();
       expect(
         screen.getByRole('row', { name: 'No topics found' })
       ).toBeInTheDocument();
     });
 
-    it('renders empty table when payload is empty', async () => {
-      await renderComponent({ topics: [] });
+    it('renders empty table when payload is empty', () => {
+      renderComponent({ topics: [] });
       expect(
         screen.getByRole('row', { name: 'No topics found' })
       ).toBeInTheDocument();
     });
   });
   describe('with topics', () => {
-    it('renders correct rows', async () => {
-      await renderComponent({ topics: topicsPayload, pageCount: 1 });
+    it('renders correct rows', () => {
+      renderComponent({ topics: topicsPayload, pageCount: 1 });
       expect(
         screen.getByRole('link', { name: '__internal.topic' })
       ).toBeInTheDocument();
@@ -106,20 +104,20 @@ describe('TopicTable Components', () => {
       expect(screen.getAllByRole('checkbox').length).toEqual(3);
     });
     describe('Selectable rows', () => {
-      it('renders selectable rows', async () => {
-        await renderComponent({ topics: topicsPayload, pageCount: 1 });
+      it('renders selectable rows', () => {
+        renderComponent({ topics: topicsPayload, pageCount: 1 });
         expect(screen.getAllByRole('checkbox').length).toEqual(3);
         // Disable checkbox for internal topic
         expect(screen.getAllByRole('checkbox')[1]).toBeDisabled();
         // Disable checkbox for external topic
         expect(screen.getAllByRole('checkbox')[2]).toBeEnabled();
       });
-      it('does not render selectable rows for read-only cluster', async () => {
-        await renderComponent({ topics: topicsPayload, pageCount: 1 }, true);
+      it('does not render selectable rows for read-only cluster', () => {
+        renderComponent({ topics: topicsPayload, pageCount: 1 }, true);
         expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
       });
       describe('Batch actions bar', () => {
-        beforeEach(async () => {
+        beforeEach(() => {
           const payload = {
             topics: [
               externalTopicPayload,
@@ -127,7 +125,7 @@ describe('TopicTable Components', () => {
             ],
             totalPages: 1,
           };
-          await renderComponent(payload);
+          renderComponent(payload);
           expect(screen.getAllByRole('checkbox').length).toEqual(3);
           expect(screen.getAllByRole('checkbox')[1]).toBeEnabled();
           expect(screen.getAllByRole('checkbox')[2]).toBeEnabled();
@@ -200,8 +198,8 @@ describe('TopicTable Components', () => {
         await userEvent.click(btn);
         expect(screen.getByRole('menu')).toBeInTheDocument();
       };
-      it('renders disable action buttons for read-only cluster', async () => {
-        await renderComponent({ topics: topicsPayload, pageCount: 1 }, true);
+      it('renders disable action buttons for read-only cluster', () => {
+        renderComponent({ topics: topicsPayload, pageCount: 1 }, true);
         const btns = screen.getAllByRole('button', { name: 'Dropdown Toggle' });
         expect(btns[0]).toBeDisabled();
         expect(btns[1]).toBeDisabled();
@@ -235,7 +233,7 @@ describe('TopicTable Components', () => {
       });
       describe('and clear messages action', () => {
         it('is visible for topic with CleanUpPolicy.DELETE', async () => {
-          await renderComponent({
+          renderComponent({
             topics: [
               {
                 ...topicsPayload[1],
@@ -249,7 +247,7 @@ describe('TopicTable Components', () => {
           expect(actionBtn[0]).not.toHaveAttribute('aria-disabled');
         });
         it('is disabled for topic without CleanUpPolicy.DELETE', async () => {
-          await renderComponent({
+          renderComponent({
             topics: [
               {
                 ...topicsPayload[1],
@@ -263,7 +261,7 @@ describe('TopicTable Components', () => {
           expect(actionBtn[0]).toHaveAttribute('aria-disabled');
         });
         it('works as expected', async () => {
-          await renderComponent({
+          renderComponent({
             topics: [
               {
                 ...topicsPayload[1],
@@ -285,21 +283,21 @@ describe('TopicTable Components', () => {
 
       describe('and remove topic action', () => {
         it('is visible only when topic deletion allowed for cluster', async () => {
-          await renderComponent({ topics: [topicsPayload[1]] });
+          renderComponent({ topics: [topicsPayload[1]] });
           await expectDropdownExists();
           const actionBtn = screen.getAllByRole('menuitem');
           expect(actionBtn[2]).toHaveTextContent('Remove Topic');
           expect(actionBtn[2]).not.toHaveAttribute('aria-disabled');
         });
         it('is disabled when topic deletion is not allowed for cluster', async () => {
-          await renderComponent({ topics: [topicsPayload[1]] }, false, false);
+          renderComponent({ topics: [topicsPayload[1]] }, false, false);
           await expectDropdownExists();
           const actionBtn = screen.getAllByRole('menuitem');
           expect(actionBtn[2]).toHaveTextContent('Remove Topic');
           expect(actionBtn[2]).toHaveAttribute('aria-disabled');
         });
         it('works as expected', async () => {
-          await renderComponent({ topics: [topicsPayload[1]] });
+          renderComponent({ topics: [topicsPayload[1]] });
           await expectDropdownExists();
           await userEvent.click(screen.getByText('Remove Topic'));
           expect(screen.getByText('Confirm the action')).toBeInTheDocument();
@@ -311,7 +309,7 @@ describe('TopicTable Components', () => {
       });
       describe('and recreate topic action', () => {
         it('works as expected', async () => {
-          await renderComponent({ topics: [topicsPayload[1]] });
+          renderComponent({ topics: [topicsPayload[1]] });
           await expectDropdownExists();
           await userEvent.click(screen.getByText('Recreate Topic'));
           expect(screen.getByText('Confirm the action')).toBeInTheDocument();

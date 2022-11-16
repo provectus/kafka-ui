@@ -2,7 +2,7 @@ import React from 'react';
 import DangerZone, {
   DangerZoneProps,
 } from 'components/Topics/Topic/Edit/DangerZone/DangerZone';
-import { act, screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
 import {
@@ -22,19 +22,17 @@ jest.mock('lib/hooks/api/topics', () => ({
   useUpdateTopicReplicationFactor: jest.fn(),
 }));
 
-const renderComponent = async (props?: Partial<DangerZoneProps>) => {
-  await act(() => {
-    render(
-      <WithRoute path={clusterTopicPath()}>
-        <DangerZone
-          defaultPartitions={defaultPartitions}
-          defaultReplicationFactor={defaultReplicationFactor}
-          {...props}
-        />
-      </WithRoute>,
-      { initialEntries: [clusterTopicPath(clusterName, topicName)] }
-    );
-  });
+const renderComponent = (props?: Partial<DangerZoneProps>) => {
+  return render(
+    <WithRoute path={clusterTopicPath()}>
+      <DangerZone
+        defaultPartitions={defaultPartitions}
+        defaultReplicationFactor={defaultReplicationFactor}
+        {...props}
+      />
+    </WithRoute>,
+    { initialEntries: [clusterTopicPath(clusterName, topicName)] }
+  );
 };
 
 const clickOnDialogSubmitButton = async () => {
@@ -55,8 +53,8 @@ const checkDialogThenPressCancel = async () => {
 };
 
 describe('DangerZone', () => {
-  it('renders the component', async () => {
-    await renderComponent();
+  it('renders the component', () => {
+    renderComponent();
 
     const numberOfPartitionsEditForm = screen.getByRole('form', {
       name: 'Edit number of partitions',
@@ -90,7 +88,7 @@ describe('DangerZone', () => {
     (useIncreaseTopicPartitionsCount as jest.Mock).mockImplementation(() => ({
       mutateAsync: mockIncreaseTopicPartitionsCount,
     }));
-    await renderComponent();
+    renderComponent();
     const numberOfPartitionsEditForm = screen.getByRole('form', {
       name: 'Edit number of partitions',
     });
@@ -111,7 +109,7 @@ describe('DangerZone', () => {
     (useUpdateTopicReplicationFactor as jest.Mock).mockImplementation(() => ({
       mutateAsync: mockUpdateTopicReplicationFactor,
     }));
-    await renderComponent();
+    renderComponent();
     const replicationFactorEditForm = screen.getByRole('form', {
       name: 'Edit replication factor',
     });
@@ -139,7 +137,7 @@ describe('DangerZone', () => {
   });
 
   it('should view the validation error when partition value is lower than the default passed or empty', async () => {
-    await renderComponent();
+    renderComponent();
     const partitionInput = screen.getByPlaceholderText('Number of partitions');
     const partitionInputSubmitBtn = screen.getAllByText(/submit/i)[0];
     const value = (defaultPartitions - 4).toString();
@@ -161,7 +159,7 @@ describe('DangerZone', () => {
   });
 
   it('should view the validation error when Replication Facto value is lower than the default passed or empty', async () => {
-    await renderComponent();
+    renderComponent();
     const replicatorFactorInput =
       screen.getByPlaceholderText('Replication Factor');
     const replicatorFactorInputSubmitBtn = screen.getAllByText(/submit/i)[1];
@@ -176,7 +174,7 @@ describe('DangerZone', () => {
   });
 
   it('should close the partitions dialog if he cancel button is pressed', async () => {
-    await renderComponent();
+    renderComponent();
 
     const partitionInput = screen.getByPlaceholderText('Number of partitions');
     const partitionInputSubmitBtn = screen.getAllByText(/submit/i)[0];
@@ -188,7 +186,7 @@ describe('DangerZone', () => {
   });
 
   it('should close the replicator dialog if he cancel button is pressed', async () => {
-    await renderComponent();
+    renderComponent();
     const replicatorFactorInput =
       screen.getByPlaceholderText('Replication Factor');
     const replicatorFactorInputSubmitBtn = screen.getAllByText(/submit/i)[1];

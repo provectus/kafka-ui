@@ -12,27 +12,27 @@ const editFilter: FilterEdit = {
   filter: { name: 'name', code: '' },
 };
 
-const renderComponent = async (props?: Partial<EditFilterProps>) => {
-  await act(() => {
-    render(
-      <EditFilter
-        toggleEditModal={jest.fn()}
-        editSavedFilter={jest.fn()}
-        editFilter={editFilter}
-        {...props}
-      />
-    );
-  });
+const renderComponent = (props?: Partial<EditFilterProps>) => {
+  return render(
+    <EditFilter
+      toggleEditModal={jest.fn()}
+      editSavedFilter={jest.fn()}
+      editFilter={editFilter}
+      {...props}
+    />
+  );
 };
 describe('EditFilter component', () => {
   it('renders component', async () => {
-    await renderComponent();
+    await act(() => {
+      renderComponent();
+    });
     expect(screen.getByText(/edit saved filter/i)).toBeInTheDocument();
   });
 
   it('closes editFilter modal', async () => {
     const toggleEditModal = jest.fn();
-    await renderComponent({ toggleEditModal });
+    renderComponent({ toggleEditModal });
     await userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
     expect(toggleEditModal).toHaveBeenCalledTimes(1);
   });
@@ -41,7 +41,7 @@ describe('EditFilter component', () => {
     const toggleEditModal = jest.fn();
     const editSavedFilter = jest.fn();
 
-    await renderComponent({ toggleEditModal, editSavedFilter });
+    renderComponent({ toggleEditModal, editSavedFilter });
 
     const inputs = screen.getAllByRole('textbox');
     const textAreaElement = inputs[0] as HTMLTextAreaElement;
@@ -55,7 +55,9 @@ describe('EditFilter component', () => {
   });
 
   it('checks input values to match', async () => {
-    await renderComponent();
+    await act(() => {
+      renderComponent();
+    });
     const inputs = screen.getAllByRole('textbox');
     const textAreaElement = inputs[0] as HTMLTextAreaElement;
     const inputNameElement = inputs[1];

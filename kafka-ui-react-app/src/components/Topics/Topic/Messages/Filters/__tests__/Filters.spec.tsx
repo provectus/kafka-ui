@@ -5,7 +5,7 @@ import Filters, {
   SeekTypeOptions,
 } from 'components/Topics/Topic/Messages/Filters/Filters';
 import { EventSourceMock, render, WithRoute } from 'lib/testHelpers';
-import { act, screen, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TopicMessagesContext, {
   ContextProps,
@@ -36,29 +36,27 @@ jest.mock('components/common/Icons/CloseIcon', () => () => 'mock-CloseIcon');
 const clusterName = 'cluster-name';
 const topicName = 'topic-name';
 
-const renderComponent = async (
+const renderComponent = (
   props: Partial<FiltersProps> = {},
   ctx: ContextProps = defaultContextValue
 ) => {
-  await act(() => {
-    render(
-      <WithRoute path={clusterTopicPath()}>
-        <TopicMessagesContext.Provider value={ctx}>
-          <Filters
-            meta={{}}
-            isFetching={false}
-            addMessage={jest.fn()}
-            resetMessages={jest.fn()}
-            updatePhase={jest.fn()}
-            updateMeta={jest.fn()}
-            setIsFetching={jest.fn()}
-            {...props}
-          />
-        </TopicMessagesContext.Provider>
-      </WithRoute>,
-      { initialEntries: [clusterTopicPath(clusterName, topicName)] }
-    );
-  });
+  return render(
+    <WithRoute path={clusterTopicPath()}>
+      <TopicMessagesContext.Provider value={ctx}>
+        <Filters
+          meta={{}}
+          isFetching={false}
+          addMessage={jest.fn()}
+          resetMessages={jest.fn()}
+          updatePhase={jest.fn()}
+          updateMeta={jest.fn()}
+          setIsFetching={jest.fn()}
+          {...props}
+        />
+      </TopicMessagesContext.Provider>
+    </WithRoute>,
+    { initialEntries: [clusterTopicPath(clusterName, topicName)] }
+  );
 };
 
 beforeEach(async () => {
@@ -88,8 +86,8 @@ describe('Filters component', () => {
   describe('Input elements', () => {
     const inputValue = 'Hello World!';
 
-    beforeEach(async () => {
-      await renderComponent();
+    beforeEach(() => {
+      renderComponent();
     });
 
     it('search input', async () => {
@@ -134,8 +132,8 @@ describe('Filters component', () => {
     const selectTypeOptionValue = SeekTypeOptions[0];
     const mockTypeOptionSelectLabel = selectTypeOptionValue.label;
 
-    beforeEach(async () => {
-      await renderComponent();
+    beforeEach(() => {
+      renderComponent();
       seekTypeSelects = screen.getAllByRole('listbox');
       options = screen.getAllByRole('option');
     });
@@ -160,7 +158,7 @@ describe('Filters component', () => {
   });
 
   it('stop loading when live mode is active', async () => {
-    await renderComponent();
+    renderComponent();
     await userEvent.click(screen.getByText('Stop loading'));
     const option = screen.getAllByRole('option');
     expect(option[3]).toHaveTextContent('Oldest First');
@@ -168,7 +166,7 @@ describe('Filters component', () => {
   });
 
   it('renders addFilter modal', async () => {
-    await renderComponent();
+    renderComponent();
     await userEvent.click(
       screen.getByRole('button', {
         name: /add filters/i,
@@ -179,7 +177,7 @@ describe('Filters component', () => {
 
   describe('when there is active smart filter', () => {
     beforeEach(async () => {
-      await renderComponent();
+      renderComponent();
 
       await userEvent.click(
         screen.getByRole('button', {

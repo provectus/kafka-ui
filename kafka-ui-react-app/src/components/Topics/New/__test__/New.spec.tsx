@@ -24,17 +24,15 @@ jest.mock('lib/hooks/api/topics', () => ({
   useCreateTopic: jest.fn(),
 }));
 
-const renderComponent = async (path: string) => {
-  await act(() => {
-    render(
-      <Routes>
-        <Route path={clusterTopicNewPath()} element={<New />} />
-        <Route path={clusterTopicCopyPath()} element={<New />} />
-        <Route path={clusterTopicPath()} element="New topic path" />
-      </Routes>,
-      { initialEntries: [path] }
-    );
-  });
+const renderComponent = (path: string) => {
+  return render(
+    <Routes>
+      <Route path={clusterTopicNewPath()} element={<New />} />
+      <Route path={clusterTopicCopyPath()} element={<New />} />
+      <Route path={clusterTopicPath()} element="New topic path" />
+    </Routes>,
+    { initialEntries: [path] }
+  );
 };
 const createTopicMock = jest.fn();
 
@@ -49,17 +47,19 @@ describe('New', () => {
   });
 
   it('checks header for create new', async () => {
-    await renderComponent(clusterTopicNewPath(clusterName));
+    await act(() => {
+      renderComponent(clusterTopicNewPath(clusterName));
+    });
     expect(screen.getByRole('heading', { name: 'Create' })).toBeInTheDocument();
   });
 
-  it('checks header for copy', async () => {
-    await renderComponent(`${clusterTopicCopyPath(clusterName)}?name=test`);
+  it('checks header for copy', () => {
+    renderComponent(`${clusterTopicCopyPath(clusterName)}?name=test`);
     expect(screen.getByRole('heading', { name: 'Copy' })).toBeInTheDocument();
   });
 
   it('validates form', async () => {
-    await renderComponent(clusterTopicNewPath(clusterName));
+    renderComponent(clusterTopicNewPath(clusterName));
     await userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
     await userEvent.clear(screen.getByPlaceholderText('Topic Name'));
     await waitFor(() => {
@@ -70,7 +70,7 @@ describe('New', () => {
   });
 
   it('validates form invalid name', async () => {
-    await renderComponent(clusterTopicNewPath(clusterName));
+    renderComponent(clusterTopicNewPath(clusterName));
     await userEvent.type(
       screen.getByPlaceholderText('Topic Name'),
       'Invalid,Name'
@@ -81,7 +81,7 @@ describe('New', () => {
   });
 
   it('submits valid form', async () => {
-    await renderComponent(clusterTopicNewPath(clusterName));
+    renderComponent(clusterTopicNewPath(clusterName));
     await userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
     await userEvent.click(screen.getByText('Create topic'));
     expect(createTopicMock).toHaveBeenCalledTimes(1);
