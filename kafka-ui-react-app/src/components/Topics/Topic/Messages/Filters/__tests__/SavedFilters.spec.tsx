@@ -120,7 +120,6 @@ describe('SavedFilter Component', () => {
     });
 
     it('Open Confirmation for the deletion modal', async () => {
-      setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
       const deleteIcons = screen.getAllByText('mock-DeleteIcon');
       await userEvent.hover(savedFilters[0]);
@@ -133,7 +132,6 @@ describe('SavedFilter Component', () => {
     });
 
     it('Close Confirmations deletion modal with button', async () => {
-      setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
       const deleteIcons = screen.getAllByText('mock-DeleteIcon');
 
@@ -150,7 +148,6 @@ describe('SavedFilter Component', () => {
     });
 
     it('Delete the saved filter', async () => {
-      setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
       const deleteIcons = screen.getAllByText('mock-DeleteIcon');
 
