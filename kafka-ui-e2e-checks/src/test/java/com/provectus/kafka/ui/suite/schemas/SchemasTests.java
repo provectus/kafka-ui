@@ -121,7 +121,7 @@ public class SchemasTests extends BaseTest {
           .openCompareVersionMenu();
       schemaCreateForm
           .waitUntilScreenReady()
-          .selectFirstVersionFromDropDown("1");
+          .selectLeftVersionFromDropDown("1");
       Assertions.assertEquals(53, (int) schemaCreateForm.getAllMarkedLines(), "getAllMarkedLines()");
 
     }

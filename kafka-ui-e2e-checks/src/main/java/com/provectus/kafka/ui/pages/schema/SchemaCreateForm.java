@@ -65,7 +65,7 @@ public class SchemaCreateForm extends BasePage {
     }
 
     @Step
-    public SchemaCreateForm selectFirstVersionFromDropDown(String versionNumberDd){
+    public SchemaCreateForm selectLeftVersionFromDropDown(String versionNumberDd){
       schemaVersionDdl.shouldBe(Condition.enabled).click();
       $x(String.format(elementLocatorDdl,versionNumberDd)).shouldBe(Condition.visible).click();
       return this;
