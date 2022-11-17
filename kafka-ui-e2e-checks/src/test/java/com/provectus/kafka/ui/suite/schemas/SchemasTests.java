@@ -122,10 +122,7 @@ public class SchemasTests extends BaseTest {
       schemaCreateForm
           .waitUntilScreenReady()
           .selectFirstVersionFromDropDown("1");
-      Assertions.assertTrue(schemaCreateForm.getAllMarkedLines().equals(52),"getAllMarkedLines()");
-
-
-
+      Assertions.assertEquals(53, (int) schemaCreateForm.getAllMarkedLines(), "getAllMarkedLines()");
 
     }
 
