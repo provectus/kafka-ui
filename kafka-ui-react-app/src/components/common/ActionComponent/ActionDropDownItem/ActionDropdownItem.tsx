@@ -6,10 +6,8 @@ import {
 } from 'components/common/ActionComponent/ActionComponent';
 import { useActionTooltip } from 'lib/hooks/useActionTooltip';
 import { usePermission } from 'lib/hooks/usePermission';
-
-import { DropdownItemProps } from './DropdownItem';
-
-import { DropdownItem } from './index';
+import { DropdownItemProps } from 'components/common/Dropdown/DropdownItem';
+import { DropdownItem } from 'components/common/Dropdown';
 
 interface Props extends ActionComponentProps, DropdownItemProps {}
 

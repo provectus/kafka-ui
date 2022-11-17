@@ -20,7 +20,7 @@ import {
 } from 'lib/paths';
 import { useConfirm } from 'lib/hooks/useConfirm';
 import { Dropdown } from 'components/common/Dropdown';
-import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
+import { ActionDropdownItem } from 'components/common/ActionComponent';
 
 const ConnectorActionsWrapperStyled = styled.div`
   display: flex;

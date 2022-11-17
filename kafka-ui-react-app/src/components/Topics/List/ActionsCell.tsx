@@ -22,7 +22,7 @@ import {
   useDeleteTopic,
   useRecreateTopic,
 } from 'lib/hooks/api/topics';
-import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
+import { ActionDropdownItem } from 'components/common/ActionComponent';
 
 const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
   const { name, internal, cleanUpPolicy } = row.original;

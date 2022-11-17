@@ -12,7 +12,7 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { Dropdown } from 'components/common/Dropdown';
 import { useTopicDetails } from 'lib/hooks/api/topics';
-import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
+import { ActionDropdownItem } from 'components/common/ActionComponent';
 
 const ActionsCell: React.FC<CellContext<Partition, unknown>> = ({ row }) => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();

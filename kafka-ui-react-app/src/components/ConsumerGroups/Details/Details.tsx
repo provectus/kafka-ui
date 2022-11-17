@@ -27,7 +27,7 @@ import getTagColor from 'components/common/Tag/getTagColor';
 import { Dropdown } from 'components/common/Dropdown';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
-import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
+import { ActionDropdownItem } from 'components/common/ActionComponent';
 
 import ListItem from './ListItem';
 
