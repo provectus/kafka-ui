@@ -16,7 +16,7 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 import { calculateTimer } from 'lib/dateTimeHelpers';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
-import ActionButton from 'components/common/ActionComponent/ActionButton/ActionButton';
+import { ActionButton } from 'components/common/ActionComponent';
 
 import * as S from './Statistics.styles';
 import Total from './Indicators/Total';

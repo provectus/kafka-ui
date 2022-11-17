@@ -11,7 +11,7 @@ import {
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import ActionButton from 'components/common/ActionComponent/ActionButton/ActionButton';
+import { ActionButton, ActionNavLink } from 'components/common/ActionComponent';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
@@ -34,7 +34,6 @@ import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import SlidingSidebar from 'components/common/SlidingSidebar';
 import useBoolean from 'lib/hooks/useBoolean';
-import ActionNavLink from 'components/common/ActionComponent/ActionNavLink/ActionNavLink';
 
 import Messages from './Messages/Messages';
 import Overview from './Overview/Overview';

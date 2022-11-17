@@ -5,7 +5,7 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import Search from 'components/common/Search/Search';
 import * as Metrics from 'components/common/Metrics';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import ActionButton from 'components/common/ActionComponent/ActionButton/ActionButton';
+import { ActionButton } from 'components/common/ActionComponent';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import {

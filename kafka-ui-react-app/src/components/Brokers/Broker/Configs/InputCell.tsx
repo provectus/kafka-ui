@@ -11,7 +11,7 @@ import {
 } from 'generated-sources';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
-import ActionButton from 'components/common/ActionComponent/ActionButton/ActionButton';
+import { ActionButton } from 'components/common/ActionComponent';
 
 import * as S from './Configs.styled';
 
