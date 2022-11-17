@@ -92,13 +92,13 @@ describe('TopicTable Components', () => {
         screen.getByRole('link', { name: '__internal.topic' })
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('row', { name: '__internal.topic 1 0 1 0 0Bytes' })
+        screen.getByRole('row', { name: '__internal.topic 1 0 1 0 0 Bytes' })
       ).toBeInTheDocument();
       expect(
         screen.getByRole('link', { name: 'external.topic' })
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('row', { name: 'external.topic 1 0 1 0 1KB' })
+        screen.getByRole('row', { name: 'external.topic 1 0 1 0 1 KB' })
       ).toBeInTheDocument();
 
       expect(screen.getAllByRole('checkbox').length).toEqual(3);
@@ -211,7 +211,7 @@ describe('TopicTable Components', () => {
         ).toEqual(2);
         // Internal topic action buttons are disabled
         const internalTopicRow = screen.getByRole('row', {
-          name: '__internal.topic 1 0 1 0 0Bytes',
+          name: '__internal.topic 1 0 1 0 0 Bytes',
         });
         expect(internalTopicRow).toBeInTheDocument();
         expect(
@@ -221,7 +221,7 @@ describe('TopicTable Components', () => {
         ).toBeDisabled();
         // External topic action buttons are enabled
         const externalTopicRow = screen.getByRole('row', {
-          name: 'external.topic 1 0 1 0 1KB',
+          name: 'external.topic 1 0 1 0 1 KB',
         });
         expect(externalTopicRow).toBeInTheDocument();
         const extBtn = within(externalTopicRow).getByRole('button', {

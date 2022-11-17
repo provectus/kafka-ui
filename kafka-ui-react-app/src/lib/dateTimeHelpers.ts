@@ -32,3 +32,14 @@ export const formatMilliseconds = (input = 0) => {
 
   return `${milliseconds}ms`;
 };
+
+export const passedTime = (value: number) => (value < 10 ? `0${value}` : value);
+
+export const calculateTimer = (startedAt: number) => {
+  const now = new Date().getTime();
+  const newDate = now - startedAt;
+  const minutes = dayjs(newDate).minute();
+  const second = dayjs(newDate).second();
+
+  return newDate > 0 ? `${passedTime(minutes)}:${passedTime(second)}` : '00:00';
+};

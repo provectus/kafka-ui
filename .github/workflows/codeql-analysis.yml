@@ -20,6 +20,8 @@ on:
     paths:
     - 'kafka-ui-contract/**'
     - 'kafka-ui-react-app/**'
+    - 'kafka-ui-api/**'
+    - 'kafka-ui-serde-api/**'
   schedule:
     - cron: '39 15 * * 6'
 
@@ -31,7 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript' ]
+        language: [ 'javascript', 'java' ]
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python' ]
         # Learn more:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
@@ -49,6 +51,13 @@ jobs:
         # By default, queries listed here will override any specified in a config file.
         # Prefix the list here with "+" to use these queries and those in the config file.
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'maven'
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)

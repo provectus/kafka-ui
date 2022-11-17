@@ -1,18 +1,16 @@
 package com.provectus.kafka.ui.pages.topic;
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.SelenideElement;
-import io.qameta.allure.Step;
-
-import java.util.Arrays;
-
 import static com.codeborne.selenide.Selenide.$x;
 import static com.codeborne.selenide.Selenide.refresh;
-import static com.provectus.kafka.ui.utilities.WebUtils.clearByKeyboard;
 
-public class ProduceMessagePanel {
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.pages.BasePage;
+import io.qameta.allure.Step;
+import java.util.Arrays;
 
-    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+public class ProduceMessagePanel extends BasePage {
+
     protected SelenideElement keyTextArea = $x("//div[@id='key']/textarea");
     protected SelenideElement contentTextArea = $x("//div[@id='content']/textarea");
     protected SelenideElement headersTextArea = $x("//div[@id='headers']/textarea");
@@ -23,7 +21,7 @@ public class ProduceMessagePanel {
 
     @Step
     public ProduceMessagePanel waitUntilScreenReady(){
-        loadingSpinner.shouldBe(Condition.disappear);
+        waitUntilSpinnerDisappear();
         Arrays.asList(partitionDdl, keySerdeDdl, contentSerdeDdl).forEach(element -> element.shouldBe(Condition.visible));
         return this;
     }
