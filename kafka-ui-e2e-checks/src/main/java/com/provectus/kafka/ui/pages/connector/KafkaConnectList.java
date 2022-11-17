@@ -5,12 +5,9 @@ import static com.codeborne.selenide.Selenide.$x;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
-import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
-import lombok.experimental.ExtensionMethod;
 
 
-@ExtensionMethod(WaitUtils.class)
 public class KafkaConnectList extends BasePage {
 
     protected SelenideElement createConnectorBtn = $x("//button[contains(text(),'Create Connector')]");

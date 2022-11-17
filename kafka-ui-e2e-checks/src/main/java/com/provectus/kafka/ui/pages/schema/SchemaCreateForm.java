@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.pages.schema;
 
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 
 import com.codeborne.selenide.Condition;
@@ -9,6 +10,7 @@ import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.api.model.SchemaType;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
+import java.util.List;
 
 public class SchemaCreateForm extends BasePage {
 
@@ -19,6 +21,8 @@ public class SchemaCreateForm extends BasePage {
     protected SelenideElement schemaTypeDdl = $x("//ul[@name='schemaType']");
     protected SelenideElement compatibilityLevelList = $x("//ul[@name='compatibilityLevel']");
     protected SelenideElement newSchemaTextArea = $x("//div[@id='newSchema']");
+    protected SelenideElement schemaVersionDdl = $$x("//ul[@role='listbox']/li[text()='Version 2']").first();
+    protected List<SelenideElement> visibleMarkers = $$x("//div[@class='ace_scroller']//div[contains(@class,'codeMarker')]");
     protected String elementLocatorDdl = "//li[@value='%s']";
 
     @Step
@@ -58,6 +62,18 @@ public class SchemaCreateForm extends BasePage {
         compatibilityLevelList.shouldBe(Condition.enabled).click();
         $x(String.format(elementLocatorDdl, level.getValue())).shouldBe(Condition.visible).click();
         return this;
+    }
+
+    @Step
+    public SchemaCreateForm selectFirstVersionFromDropDown(String versionNumberDd){
+      schemaVersionDdl.shouldBe(Condition.enabled).click();
+      $x(String.format(elementLocatorDdl,versionNumberDd)).shouldBe(Condition.visible).click();
+      return this;
+    }
+
+    @Step
+    public Integer getAllMarkedLines(){
+      return visibleMarkers.size();
     }
 
     @Step

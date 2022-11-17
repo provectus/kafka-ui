@@ -5,16 +5,13 @@ import static com.codeborne.selenide.Selenide.$x;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
-import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.experimental.ExtensionMethod;
 
-@ExtensionMethod(WaitUtils.class)
 public class TopicsList extends BasePage {
 
     protected SelenideElement topicListHeader = $x("//h1[text()='Topics']");

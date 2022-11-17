@@ -98,30 +98,35 @@ public class SchemasTests extends BaseTest {
                 .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(AVRO_API.getValuePath()))
                 .clickSubmitButton();
+      System.out.println(AVRO_API.getValuePath());
         schemaDetails
                 .waitUntilScreenReady();
         Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), schemaDetails.getCompatibility(), "getCompatibility()");
     }
 
-    @DisplayName("should delete AVRO schema")
+    @DisplayName("Checking Compare Versions operation for Schema")
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(187)
+    @CaseId(186)
     @Test
     @Order(3)
-    void deleteSchemaAvro() {
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
-        schemaRegistryList
-                .waitUntilScreenReady()
-                .openSchema(AVRO_API.getName());
-        schemaDetails
-                .waitUntilScreenReady()
-                .removeSchema();
-        schemaRegistryList
-                .waitUntilScreenReady();
-        Assertions.assertFalse(schemaRegistryList.isSchemaVisible(AVRO_API.getName()),"isSchemaVisible()");
-        SCHEMA_LIST.remove(AVRO_API);
+    void compareVersionsOperation() {
+      naviSideBar
+          .openSideMenu(SCHEMA_REGISTRY);
+      schemaRegistryList
+          .waitUntilScreenReady()
+          .openSchema(AVRO_API.getName());
+      schemaDetails
+          .waitUntilScreenReady()
+          .openCompareVersionMenu();
+      schemaCreateForm
+          .waitUntilScreenReady()
+          .selectFirstVersionFromDropDown("1");
+      Assertions.assertTrue(schemaCreateForm.getAllMarkedLines().equals(52),"getAllMarkedLines()");
+
+
+
+
     }
 
     @DisplayName("should create JSON schema")
