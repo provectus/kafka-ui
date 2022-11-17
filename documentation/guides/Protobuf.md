@@ -11,8 +11,12 @@ To configure Kafkaui to deserialize protobuf messages using a supplied protobuf 
 kafka:
   clusters:
     - # Cluster configuration omitted.
-      # protobufFile is the path to the protobuf schema.
+      # protobufFile is the path to the protobuf schema. (deprecated: please use "protobufFiles")
       protobufFile: path/to/my.proto
+      # protobufFiles is the path to one or more protobuf schemas.
+      protobufFiles: 
+          - path/to/my.proto
+          - path/to/another.proto
       # protobufMessageName is the default protobuf type that is used to deserilize
       # the message's value if the topic is not found in protobufMessageNameByTopic.
       protobufMessageName: my.Type1
