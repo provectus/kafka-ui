@@ -29,7 +29,7 @@ import { schemasApiClient } from 'lib/api';
 import { Dropdown } from 'components/common/Dropdown';
 import Table from 'components/common/NewTable';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
-import ActionButton from 'components/common/ActionButton/ActionButton';
+import ActionButton from 'components/common/ActionComponent/ActionButton/ActionButton';
 import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';

@@ -4,7 +4,7 @@ import { clusterTopicNewRelativePath } from 'lib/paths';
 import { PER_PAGE } from 'lib/constants';
 import ClusterContext from 'components/contexts/ClusterContext';
 import Search from 'components/common/Search/Search';
-import ActionButton from 'components/common/ActionButton/ActionButton';
+import ActionButton from 'components/common/ActionComponent/ActionButton/ActionButton';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import Switch from 'components/common/Switch/Switch';

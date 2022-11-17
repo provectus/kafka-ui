@@ -5,7 +5,7 @@ import {
   clusterSchemaPath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
-import ActionButton from 'components/common/ActionButton/ActionButton';
+import ActionButton from 'components/common/ActionComponent/ActionButton/ActionButton';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';

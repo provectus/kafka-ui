@@ -13,7 +13,7 @@ import { showServerError } from 'lib/errorHandling';
 import { useConfirm } from 'lib/hooks/useConfirm';
 import { useSearchParams } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
-import ActionSelect from 'components/common/ActionSelect/ActionSelect';
+import ActionSelect from 'components/common/ActionComponent/ActionSelect/ActionSelect';
 
 import * as S from './GlobalSchemaSelector.styled';
 

@@ -6,7 +6,7 @@ import { RouteParamsClusterTopic } from 'lib/paths';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
-import ActionButton from 'components/common/ActionButton/ActionButton';
+import ActionButton from 'components/common/ActionComponent/ActionButton/ActionButton';
 
 import * as S from './Statistics.styles';
 import Metrics from './Metrics';

@@ -10,7 +10,7 @@ import { useAppDispatch } from 'lib/hooks/redux';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { clusterTopicCopyRelativePath } from 'lib/paths';
 import { useQueryClient } from '@tanstack/react-query';
-import ActionCanButton from 'components/common/ActionCanButton/ActionCanButton';
+import ActionCanButton from 'components/common/ActionComponent/ActionCanButton/ActionCanButton';
 import { RolesAccessContext } from 'components/contexts/RolesAccessContext';
 import { isPermitted } from 'lib/permissions';
 

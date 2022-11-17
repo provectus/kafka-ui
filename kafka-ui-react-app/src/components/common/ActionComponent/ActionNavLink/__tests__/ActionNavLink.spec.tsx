@@ -2,26 +2,43 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
-import ActionNavLink from 'components/common/ActionNavLink/ActionNavLink';
+import ActionNavLink from 'components/common/ActionComponent/ActionNavLink/ActionNavLink';
 import { getDefaultActionMessage } from 'components/common/ActionComponent/ActionComponent';
-import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import { useParams } from 'react-router-dom';
+import {
+  clusterName,
+  fixtures,
+  roles,
+  tooltipIsShowing,
+} from 'components/common/ActionComponent/__tests__/fixtures';
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: jest.fn(),
+}));
 
 describe('ActionNavLink', () => {
   const tooltipText = getDefaultActionMessage();
-  const fixtures = {
-    resource: UserPermissionResourceEnum.TOPIC,
-    action: Action.CREATE,
-  };
+
+  beforeEach(() => {
+    (useParams as jest.Mock).mockImplementation(() => ({
+      clusterName,
+    }));
+  });
+
   it('should render the button with the correct text, for the permission tooltip not to show', async () => {
     render(
       <ActionNavLink to="/" permission={fixtures}>
         test
-      </ActionNavLink>
+      </ActionNavLink>,
+      {
+        roles,
+      }
     );
-    // const link = screen.getByRole('link', { name: 'test' });
-    // expect(link).toBeInTheDocument();
-    // await userEvent.hover(link);
-    // expect(screen.queryByText(tooltipText)).not.toBeInTheDocument();
+    const link = screen.getByRole('link', { name: 'test' });
+    expect(link).toBeInTheDocument();
+    await userEvent.hover(link);
+    expect(screen.queryByText(tooltipText)).not.toBeInTheDocument();
   });
 
   it('should make the button disable and view the tooltip with the default text', async () => {
@@ -33,9 +50,7 @@ describe('ActionNavLink', () => {
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute('aria-disabled');
 
-    expect(screen.queryByText(tooltipText)).not.toBeInTheDocument();
-    await userEvent.hover(link);
-    expect(screen.getByText(tooltipText)).toBeInTheDocument();
+    await tooltipIsShowing(link, tooltipText);
   });
 
   it('should make the button disable and view the tooltip with the given text', async () => {
@@ -47,10 +62,6 @@ describe('ActionNavLink', () => {
     const button = screen.getByRole('link');
     expect(button).toHaveAttribute('aria-disabled');
 
-    expect(screen.queryByText(customTooltipText)).not.toBeInTheDocument();
-    await userEvent.hover(button);
-    expect(screen.getByText(customTooltipText)).toBeInTheDocument();
-    await userEvent.unhover(button);
-    expect(screen.queryByText(customTooltipText)).not.toBeInTheDocument();
+    await tooltipIsShowing(button, customTooltipText);
   });
 });
