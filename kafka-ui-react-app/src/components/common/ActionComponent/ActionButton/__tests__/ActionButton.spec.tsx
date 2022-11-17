@@ -7,7 +7,8 @@ import { getDefaultActionMessage } from 'components/common/ActionComponent/Actio
 import { useParams } from 'react-router-dom';
 import {
   clusterName,
-  fixtures,
+  validPermission,
+  invalidPermission,
   roles,
   tooltipIsShowing,
 } from 'components/common/ActionComponent/__tests__/fixtures';
@@ -28,7 +29,11 @@ describe('ActionButton', () => {
 
   it('should render the button with the correct text, for the permission tooltip not to show', async () => {
     render(
-      <ActionButton buttonType="primary" buttonSize="M" permission={fixtures}>
+      <ActionButton
+        buttonType="primary"
+        buttonSize="M"
+        permission={validPermission}
+      >
         test
       </ActionButton>,
       {
@@ -44,7 +49,11 @@ describe('ActionButton', () => {
 
   it('should make the button disable and view the tooltip with the default text', async () => {
     render(
-      <ActionButton buttonType="primary" buttonSize="M" permission={fixtures}>
+      <ActionButton
+        buttonType="primary"
+        buttonSize="M"
+        permission={validPermission}
+      >
         test
       </ActionButton>
     );
@@ -60,12 +69,26 @@ describe('ActionButton', () => {
       <ActionButton
         buttonType="primary"
         buttonSize="M"
-        permission={fixtures}
+        permission={validPermission}
         message={customTooltipText}
       />
     );
     const button = screen.getByRole('button');
     expect(button).toBeDisabled();
     await tooltipIsShowing(button, customTooltipText);
+  });
+
+  it('should render the Button but disabled cause the given role is not correct', async () => {
+    render(
+      <ActionButton
+        buttonType="primary"
+        buttonSize="M"
+        permission={invalidPermission}
+      />,
+      { roles }
+    );
+    const button = screen.getByRole('button');
+    expect(button).toBeDisabled();
+    await tooltipIsShowing(button, tooltipText);
   });
 });

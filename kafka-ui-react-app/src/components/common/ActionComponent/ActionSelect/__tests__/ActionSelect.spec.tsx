@@ -5,7 +5,8 @@ import ActionSelect from 'components/common/ActionComponent/ActionSelect/ActionS
 import { getDefaultActionMessage } from 'components/common/ActionComponent/ActionComponent';
 import {
   clusterName,
-  fixtures,
+  validPermission,
+  invalidPermission,
   roles,
   tooltipIsShowing,
 } from 'components/common/ActionComponent/__tests__/fixtures';
@@ -27,7 +28,7 @@ describe('ActionSelect', () => {
   });
 
   it('should render the button with the correct text, for the permission tooltip not to show', async () => {
-    render(<ActionSelect permission={fixtures} />, { roles });
+    render(<ActionSelect permission={validPermission} />, { roles });
     const list = screen.getByRole('listbox');
     expect(list).toBeInTheDocument();
     await userEvent.hover(list);
@@ -35,7 +36,7 @@ describe('ActionSelect', () => {
   });
 
   it('should make the button disable and view the tooltip with the default text', async () => {
-    render(<ActionSelect permission={fixtures} />);
+    render(<ActionSelect permission={validPermission} />);
     const list = screen.getByRole('listbox');
     await tooltipIsShowing(list, tooltipText);
   });
@@ -43,9 +44,20 @@ describe('ActionSelect', () => {
   it('should make the button disable and view the tooltip with the given text', async () => {
     const customTooltipText = 'something here else';
 
-    render(<ActionSelect permission={fixtures} message={customTooltipText} />);
+    render(
+      <ActionSelect permission={validPermission} message={customTooltipText} />
+    );
     const list = screen.getByRole('listbox');
 
     await tooltipIsShowing(list, customTooltipText);
+  });
+
+  it('should render the Select, but disabled cause the given role is not correct', async () => {
+    render(<ActionSelect permission={invalidPermission} />, {
+      roles,
+    });
+    const list = screen.getByRole('listbox');
+
+    await tooltipIsShowing(list, tooltipText);
   });
 });

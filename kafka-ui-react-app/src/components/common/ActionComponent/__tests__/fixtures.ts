@@ -4,15 +4,20 @@ import { Action, UserPermissionResourceEnum } from 'generated-sources';
 
 export const clusterName = 'local';
 
-export const fixtures = {
+export const validPermission = {
   resource: UserPermissionResourceEnum.TOPIC,
   action: Action.CREATE,
 };
 
+export const invalidPermission = {
+  resource: UserPermissionResourceEnum.TOPIC,
+  action: Action.DELETE,
+};
+
 export const roles = [
   {
-    ...fixtures,
-    actions: [fixtures.action],
+    ...validPermission,
+    actions: [validPermission.action],
     clusters: [clusterName],
   },
 ];

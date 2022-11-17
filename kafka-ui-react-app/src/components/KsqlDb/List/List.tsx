@@ -11,7 +11,7 @@ import {
   ClusterNameRoute,
 } from 'lib/paths';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import ActionButton from 'components/common/ActionButton/ActionButton';
+import ActionButton from 'components/common/ActionComponent/ActionButton/ActionButton';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';

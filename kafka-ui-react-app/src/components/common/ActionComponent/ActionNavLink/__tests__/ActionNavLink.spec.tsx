@@ -7,7 +7,8 @@ import { getDefaultActionMessage } from 'components/common/ActionComponent/Actio
 import { useParams } from 'react-router-dom';
 import {
   clusterName,
-  fixtures,
+  validPermission,
+  invalidPermission,
   roles,
   tooltipIsShowing,
 } from 'components/common/ActionComponent/__tests__/fixtures';
@@ -28,7 +29,7 @@ describe('ActionNavLink', () => {
 
   it('should render the button with the correct text, for the permission tooltip not to show', async () => {
     render(
-      <ActionNavLink to="/" permission={fixtures}>
+      <ActionNavLink to="/" permission={validPermission}>
         test
       </ActionNavLink>,
       {
@@ -43,7 +44,7 @@ describe('ActionNavLink', () => {
 
   it('should make the button disable and view the tooltip with the default text', async () => {
     render(
-      <ActionNavLink to="/" permission={fixtures}>
+      <ActionNavLink to="/" permission={validPermission}>
         test
       </ActionNavLink>
     );
@@ -57,11 +58,30 @@ describe('ActionNavLink', () => {
     const customTooltipText = 'something here';
 
     render(
-      <ActionNavLink to="/" permission={fixtures} message={customTooltipText} />
+      <ActionNavLink
+        to="/"
+        permission={validPermission}
+        message={customTooltipText}
+      />
     );
     const button = screen.getByRole('link');
     expect(button).toHaveAttribute('aria-disabled');
 
     await tooltipIsShowing(button, customTooltipText);
+  });
+
+  it('should render the Link with the correct text, but disabled cause the given role is not correct', async () => {
+    render(
+      <ActionNavLink to="/" permission={invalidPermission}>
+        test
+      </ActionNavLink>,
+      {
+        roles,
+      }
+    );
+    const button = screen.getByRole('link');
+    expect(button).toHaveAttribute('aria-disabled');
+
+    await tooltipIsShowing(button, tooltipText);
   });
 });
