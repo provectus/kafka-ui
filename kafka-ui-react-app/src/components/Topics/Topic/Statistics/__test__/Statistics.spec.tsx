@@ -53,41 +53,4 @@ describe('Statistics', () => {
     expect(startMock).toHaveBeenCalled();
     jest.clearAllMocks();
   });
-
-  describe('Permissions', () => {
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-    it('checks the Start Analysis button is disable when there is not permission', () => {
-      // throwing intentional For error boundaries to work
-      jest.spyOn(console, 'error').mockImplementation(() => undefined);
-      (useAnalyzeTopic as jest.Mock).mockImplementation(() => ({
-        mutateAsync: startMock,
-      }));
-      (useTopicAnalysis as jest.Mock).mockImplementation(() => {
-        throw new Error('Error boundary');
-      });
-      (usePermission as jest.Mock).mockImplementation(() => false);
-      renderComponent();
-      expect(
-        screen.getByRole('button', { name: 'Start Analysis' })
-      ).toBeDisabled();
-    });
-
-    it('checks the Start Analysis button is not disable when there is permission', () => {
-      // throwing intentional For error boundaries to work
-      jest.spyOn(console, 'error').mockImplementation(() => undefined);
-      (useAnalyzeTopic as jest.Mock).mockImplementation(() => ({
-        mutateAsync: startMock,
-      }));
-      (useTopicAnalysis as jest.Mock).mockImplementation(() => {
-        throw new Error('Error boundary');
-      });
-      (usePermission as jest.Mock).mockImplementation(() => true);
-      renderComponent();
-      expect(
-        screen.getByRole('button', { name: 'Start Analysis' })
-      ).toBeEnabled();
-    });
-  });
 });

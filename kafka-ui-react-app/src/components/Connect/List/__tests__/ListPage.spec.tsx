@@ -9,7 +9,6 @@ import { screen, within } from '@testing-library/react';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectorsPath } from 'lib/paths';
 import { useConnectors } from 'lib/hooks/api/kafkaConnect';
-import { usePermission } from 'lib/hooks/usePermission';
 
 jest.mock('components/Connect/List/List', () => () => (
   <div>Connectors List</div>
@@ -17,10 +16,6 @@ jest.mock('components/Connect/List/List', () => () => (
 
 jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useConnectors: jest.fn(),
-}));
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
 }));
 
 jest.mock('components/common/Icons/SpinnerIcon', () => () => 'progressbar');
@@ -181,20 +176,6 @@ describe('Connectors List Page', () => {
       );
       expect(failedTasksIndicator).toBeInTheDocument();
       expect(failedTasksIndicator).toHaveTextContent('Failed Tasks 1');
-    });
-  });
-
-  describe('Permissions', () => {
-    it('checks the create connector button is disable when there is not permission', () => {
-      (usePermission as jest.Mock).mockImplementation(() => false);
-      renderComponent();
-      expect(screen.getByText(/Create Connector/i)).toBeDisabled();
-    });
-
-    it('checks the create connector button is enable when there is permission', () => {
-      (usePermission as jest.Mock).mockImplementation(() => true);
-      renderComponent();
-      expect(screen.getByText(/Create Connector/i)).toBeEnabled();
     });
   });
 });

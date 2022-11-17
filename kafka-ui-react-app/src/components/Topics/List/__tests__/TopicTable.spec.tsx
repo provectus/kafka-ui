@@ -18,7 +18,6 @@ import {
 import TopicTable from 'components/Topics/List/TopicTable';
 import { clusterTopicsPath } from 'lib/paths';
 import { usePermission } from 'lib/hooks/usePermission';
-import { getDefaultActionMessage } from 'components/common/ActionComponent/ActionComponent';
 
 const clusterName = 'test-cluster';
 const mockUnwrap = jest.fn();
@@ -346,80 +345,6 @@ describe('TopicTable Components', () => {
           );
           await waitFor(() => expect(recreateTopicMock).toHaveBeenCalled());
         });
-      });
-    });
-
-    describe('Permissions', () => {
-      it('checks the Topic Actions Cell Remove DropdownItem is enable when there is permission', async () => {
-        (usePermission as jest.Mock).mockImplementation(() => true);
-        renderComponent({ topics: [topicsPayload[1]] });
-
-        const dropdown = screen.getByRole('button', {
-          name: 'Dropdown Toggle',
-        });
-
-        await userEvent.click(dropdown);
-
-        const dropItem = screen.getByText(/Remove Topic/i);
-
-        await userEvent.hover(dropItem);
-
-        expect(
-          screen.queryByText(getDefaultActionMessage())
-        ).not.toBeInTheDocument();
-      });
-
-      it('checks the Topic Actions Cell Remove DropdownItem is disable when there is no permission', async () => {
-        (usePermission as jest.Mock).mockImplementation(() => false);
-        renderComponent({ topics: [topicsPayload[1]] });
-
-        const dropdown = screen.getByRole('button', {
-          name: 'Dropdown Toggle',
-        });
-
-        await userEvent.click(dropdown);
-
-        const dropItem = screen.getByText(/Remove Topic/i);
-
-        await userEvent.hover(dropItem);
-
-        expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
-      });
-
-      it('checks the Topic Actions Cell ClearMessages DropdownItem is enable when there is permission', async () => {
-        (usePermission as jest.Mock).mockImplementation(() => true);
-        renderComponent({ topics: [topicsPayload[1]] });
-
-        const dropdown = screen.getByRole('button', {
-          name: 'Dropdown Toggle',
-        });
-
-        await userEvent.click(dropdown);
-
-        const dropItem = screen.getByText(/Clear Messages/i);
-
-        await userEvent.hover(dropItem);
-
-        expect(
-          screen.queryByText(getDefaultActionMessage())
-        ).not.toBeInTheDocument();
-      });
-
-      it('checks the Topic Actions Cell ClearMessages DropdownItem is disable when there is no permission', async () => {
-        (usePermission as jest.Mock).mockImplementation(() => false);
-        renderComponent({ topics: [topicsPayload[1]] });
-
-        const dropdown = screen.getByRole('button', {
-          name: 'Dropdown Toggle',
-        });
-
-        await userEvent.click(dropdown);
-
-        const dropItem = screen.getByText(/Clear Messages/i);
-
-        await userEvent.hover(dropItem);
-
-        expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
       });
     });
   });

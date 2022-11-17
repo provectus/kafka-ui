@@ -16,13 +16,8 @@ import ClusterContext, {
 import { RootState } from 'redux/interfaces';
 import fetchMock from 'fetch-mock';
 import userEvent from '@testing-library/user-event';
-import { usePermission } from 'lib/hooks/usePermission';
 
 import { schemasPayload, schemasEmptyPayload } from './fixtures';
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
-}));
 
 const mockedUsedNavigate = jest.fn();
 
@@ -146,20 +141,6 @@ describe('List', () => {
       it('does not render Create Schema button', () => {
         expect(screen.queryByText('Create Schema')).not.toBeInTheDocument();
       });
-    });
-  });
-
-  describe('Permissions', () => {
-    it('checks the add Schema button is disable when there is not permission', () => {
-      (usePermission as jest.Mock).mockImplementation(() => false);
-      renderComponent();
-      expect(screen.getByText(/Create Schema/i)).toBeDisabled();
-    });
-
-    it('checks the add Schema button is enable when there is permission', () => {
-      (usePermission as jest.Mock).mockImplementation(() => true);
-      renderComponent();
-      expect(screen.getByText(/Create Schema/i)).toBeEnabled();
     });
   });
 });

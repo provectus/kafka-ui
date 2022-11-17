@@ -5,15 +5,10 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import userEvent from '@testing-library/user-event';
 import { clusterTopicsPath } from 'lib/paths';
 import ListPage from 'components/Topics/List/ListPage';
-import { usePermission } from 'lib/hooks/usePermission';
 
 const clusterName = 'test-cluster';
 
 jest.mock('components/Topics/List/TopicTable', () => () => <>TopicTableMock</>);
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
-}));
 
 describe('ListPage Component', () => {
   const renderComponent = () => {
@@ -51,20 +46,6 @@ describe('ListPage Component', () => {
 
     it('renders the TopicsTable', () => {
       expect(screen.getByText('TopicTableMock')).toBeInTheDocument();
-    });
-  });
-
-  describe('Permissions', () => {
-    it('checks the add Topic button is disable when there is not permission', () => {
-      (usePermission as jest.Mock).mockImplementation(() => false);
-      renderComponent();
-      expect(screen.getByText(/Add a Topic/i)).toBeDisabled();
-    });
-
-    it('checks the add Topic button is enable when there is permission', () => {
-      (usePermission as jest.Mock).mockImplementation(() => true);
-      renderComponent();
-      expect(screen.getByText(/Add a Topic/i)).toBeEnabled();
     });
   });
 });

@@ -72,34 +72,4 @@ describe('Configs', () => {
       ).toBeInTheDocument();
     });
   });
-
-  describe('Permissions', () => {
-    it('checks the Edit Brokers config button is disable when there is not permission', () => {
-      (usePermission as jest.Mock).mockImplementation(() => false);
-      (useBrokerConfig as jest.Mock).mockImplementation(() => ({
-        data: brokerConfigPayload,
-      }));
-      renderComponent();
-      const buttons = screen.getAllByRole('button', {
-        name: /Edit/i,
-      });
-      buttons.forEach((button) => {
-        expect(button).toBeDisabled();
-      });
-    });
-
-    it('checks the Edit Brokers config connector button is enable when there is permission', () => {
-      (usePermission as jest.Mock).mockImplementation(() => true);
-      (useBrokerConfig as jest.Mock).mockImplementation(() => ({
-        data: brokerConfigPayload,
-      }));
-      renderComponent();
-      const buttons = screen.getAllByRole('button', {
-        name: /Edit/i,
-      });
-      buttons.forEach((button) => {
-        expect(button).toBeEnabled();
-      });
-    });
-  });
 });

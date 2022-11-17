@@ -14,7 +14,6 @@ import {
   externalTopicPayload,
   internalTopicPayload,
 } from 'lib/fixtures/topics';
-import { getDefaultActionMessage } from 'components/common/ActionComponent/ActionComponent';
 
 const clusterName = 'local';
 const topicName = 'topic';
@@ -152,52 +151,6 @@ describe('Overview', () => {
         cleanUpPolicy: CleanUpPolicy.COMPACT,
       });
       expect(screen.getByLabelText('Dropdown Toggle')).toBeDisabled();
-    });
-  });
-
-  describe('Permissions', () => {
-    it('checks the Clear messages in Overview show the tooltip when there is no permission', async () => {
-      (usePermission as jest.Mock).mockImplementation(() => false);
-
-      renderComponent({
-        ...externalTopicPayload,
-        cleanUpPolicy: CleanUpPolicy.DELETE,
-      });
-
-      const dropdown = screen.getByRole('button', {
-        name: 'Dropdown Toggle',
-      });
-
-      await userEvent.click(dropdown);
-
-      const dropItem = screen.getByText(/Clear messages/i);
-
-      await userEvent.hover(dropItem);
-
-      expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
-    });
-
-    it('checks the Clear messages in Overview does not show the tooltip when there is permission', async () => {
-      (usePermission as jest.Mock).mockImplementation(() => true);
-
-      renderComponent({
-        ...externalTopicPayload,
-        cleanUpPolicy: CleanUpPolicy.DELETE,
-      });
-
-      const dropdown = screen.getByRole('button', {
-        name: 'Dropdown Toggle',
-      });
-
-      await userEvent.click(dropdown);
-
-      const dropItem = screen.getByText(/Clear messages/i);
-
-      await userEvent.hover(dropItem);
-
-      expect(
-        screen.queryByText(getDefaultActionMessage())
-      ).not.toBeInTheDocument();
     });
   });
 });

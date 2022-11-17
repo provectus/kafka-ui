@@ -15,9 +15,6 @@ import ClusterContext, {
 } from 'components/contexts/ClusterContext';
 import { RootState } from 'redux/interfaces';
 import { act } from '@testing-library/react';
-import { usePermission } from 'lib/hooks/usePermission';
-import userEvent from '@testing-library/user-event';
-import { getDefaultActionMessage } from 'components/common/ActionComponent/ActionComponent';
 
 import { versionPayload, versionEmptyPayload } from './fixtures';
 
@@ -29,10 +26,6 @@ const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockHistoryPush,
-}));
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
 }));
 
 const renderComponent = (
@@ -186,70 +179,6 @@ describe('Details', () => {
       it('renders versions table with 0 items', () => {
         expect(screen.getByRole('table')).toBeInTheDocument();
       });
-    });
-  });
-
-  describe('Permissions', () => {
-    it('checks the Edit Schema button is disable when there is not permission', async () => {
-      (usePermission as jest.Mock).mockImplementation(() => false);
-      fetchMock.getOnce(schemasAPILatestUrl, schemaVersion);
-      fetchMock.getOnce(schemasAPIVersionsUrl, versionPayload);
-      await act(() => {
-        renderComponent();
-      });
-      expect(screen.getByText(/Edit Schema/i)).toBeDisabled();
-    });
-
-    it('checks the Edit Schema button is enable when there is permission', async () => {
-      (usePermission as jest.Mock).mockImplementation(() => true);
-      fetchMock.getOnce(schemasAPILatestUrl, schemaVersion);
-      fetchMock.getOnce(schemasAPIVersionsUrl, versionPayload);
-      await act(() => {
-        renderComponent();
-      });
-      expect(screen.getByText(/Edit Schema/i)).toBeEnabled();
-    });
-
-    it('checks the remove Button show the tooltip when there is no permission', async () => {
-      (usePermission as jest.Mock).mockImplementation(() => false);
-      fetchMock.getOnce(schemasAPILatestUrl, schemaVersion);
-      fetchMock.getOnce(schemasAPIVersionsUrl, versionPayload);
-      await act(() => {
-        renderComponent();
-      });
-      const dropdown = screen.getByRole('button', {
-        name: 'Dropdown Toggle',
-      });
-
-      await userEvent.click(dropdown);
-
-      const dropItem = screen.getByText(/Remove schema/i);
-
-      await userEvent.hover(dropItem);
-
-      expect(screen.getByText(getDefaultActionMessage())).toBeInTheDocument();
-    });
-
-    it('checks the remove Button does not show the tooltip when there is permission', async () => {
-      (usePermission as jest.Mock).mockImplementation(() => true);
-      fetchMock.getOnce(schemasAPILatestUrl, schemaVersion);
-      fetchMock.getOnce(schemasAPIVersionsUrl, versionPayload);
-      await act(() => {
-        renderComponent();
-      });
-      const dropdown = screen.getByRole('button', {
-        name: 'Dropdown Toggle',
-      });
-
-      await userEvent.click(dropdown);
-
-      const dropItem = screen.getByText(/Remove schema/i);
-
-      await userEvent.hover(dropItem);
-
-      expect(
-        screen.queryByText(getDefaultActionMessage())
-      ).not.toBeInTheDocument();
     });
   });
 });
