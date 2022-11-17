@@ -31,45 +31,43 @@ describe('Configs', () => {
     );
   };
 
-  describe('Component Render', () => {
-    beforeEach(() => {
-      (useBrokerConfig as jest.Mock).mockImplementation(() => ({
-        data: brokerConfigPayload,
-      }));
-      (usePermission as jest.Mock).mockImplementation(() => true);
-      renderComponent();
-    });
+  beforeEach(() => {
+    (useBrokerConfig as jest.Mock).mockImplementation(() => ({
+      data: brokerConfigPayload,
+    }));
+    (usePermission as jest.Mock).mockImplementation(() => true);
+    renderComponent();
+  });
 
-    it('renders configs table', async () => {
-      expect(screen.getByRole('table')).toBeInTheDocument();
-      expect(screen.getAllByRole('row').length).toEqual(
-        brokerConfigPayload.length + 1
-      );
-    });
+  it('renders configs table', async () => {
+    expect(screen.getByRole('table')).toBeInTheDocument();
+    expect(screen.getAllByRole('row').length).toEqual(
+      brokerConfigPayload.length + 1
+    );
+  });
 
-    it('updates textbox value', async () => {
-      await userEvent.click(screen.getAllByLabelText('editAction')[0]);
+  it('updates textbox value', async () => {
+    await userEvent.click(screen.getAllByLabelText('editAction')[0]);
 
-      const textbox = screen.getByLabelText('inputValue');
-      expect(textbox).toBeInTheDocument();
-      expect(textbox).toHaveValue('producer');
+    const textbox = screen.getByLabelText('inputValue');
+    expect(textbox).toBeInTheDocument();
+    expect(textbox).toHaveValue('producer');
 
-      await userEvent.type(textbox, 'new value');
+    await userEvent.type(textbox, 'new value');
 
-      expect(
-        screen.getByRole('button', { name: 'confirmAction' })
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: 'cancelAction' })
-      ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'confirmAction' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'cancelAction' })
+    ).toBeInTheDocument();
 
-      await userEvent.click(
-        screen.getByRole('button', { name: 'confirmAction' })
-      );
+    await userEvent.click(
+      screen.getByRole('button', { name: 'confirmAction' })
+    );
 
-      expect(
-        screen.getByText('Are you sure you want to change the value?')
-      ).toBeInTheDocument();
-    });
+    expect(
+      screen.getByText('Are you sure you want to change the value?')
+    ).toBeInTheDocument();
   });
 });
