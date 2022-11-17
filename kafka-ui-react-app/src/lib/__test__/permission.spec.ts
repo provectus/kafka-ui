@@ -372,5 +372,87 @@ describe('Permission Helpers', () => {
         })
       ).toBeTruthy();
     });
+
+    it('should test the algorithmic worse case when the input is multiple actions', () => {
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: [Action.EDIT, Action.DELETE],
+          value: '123456',
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: [Action.EDIT],
+          value: '123456',
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: [Action.EDIT],
+          value: '123456',
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: [Action.DELETE],
+          value: '123456',
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: [Action.DELETE, Action.EDIT],
+          value: '123456',
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: [Action.EDIT, Action.CREATE],
+          value: '123456',
+        })
+      ).toBeFalsy();
+
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: [Action.EDIT, Action.CREATE],
+          value: 'notFound',
+        })
+      ).toBeFalsy();
+
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: [],
+          value: '123456',
+        })
+      ).toBeTruthy();
+    });
   });
 });

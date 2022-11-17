@@ -49,6 +49,12 @@ export function modifyRolesData(
  * you can call this dynamically in your component but the render is on you from that point on
  *
  * Don't use this anywhere , use the hook version in the component for declarative purposes
+ *
+ * Array action approach bear in mind they should be from the same resource with the same name restrictions, then the logic it
+ * will try to find every element from the given array inside the permissions data
+ *
+ * DON'T use the array approach until it is necessary to do so
+ *
  * */
 export function isPermitted({
   roles,
@@ -63,11 +69,14 @@ export function isPermitted({
   clusterName: string;
   value?: string;
 }) {
+  // short circuit
   if (!roles || roles.size === 0) return false;
 
+  // short circuit
   const clusterMap = roles.get(clusterName);
   if (!clusterMap) return false;
 
+  // short circuit
   const resourceData = clusterMap.get(resource);
   if (!resourceData) return false;
 
@@ -80,9 +89,17 @@ export function isPermitted({
         if (value) valueCheck = new RegExp(item.value).test(value);
       }
 
-      return (
-        valueCheck &&
-        item.actions.includes(Array.isArray(action) ? action[0] : action)
+      // short circuit
+      if (!valueCheck) return false;
+
+      if (!Array.isArray(action)) {
+        return item.actions.includes(action);
+      }
+
+      // every given action should be found in that resource
+      return action.every(
+        (currentAction) =>
+          item.actions.findIndex((element) => element === currentAction) !== -1
       );
     }) !== -1
   );
