@@ -1,0 +1,144 @@
+---
+version: '3.4'
+services:
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - kafka0
+      - schemaregistry0
+      - kafka-connect0
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SSL
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka0:29092 # SSL LISTENER!
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION: /kafka.truststore.jks
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD: secret
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_LOCATION: /kafka.keystore.jks
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD: secret
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: '' # DISABLE COMMON NAME VERIFICATION
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: https://schemaregistry0:8085
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_KEYSTORELOCATION: /kafka.keystore.jks
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_KEYSTOREPASSWORD: "secret"
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_TRUSTSTORELOCATION: /kafka.truststore.jks
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_TRUSTSTOREPASSWORD: "secret"
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: local
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: https://kafka-connect0:8083
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_KEYSTORELOCATION: /kafka.keystore.jks
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_KEYSTOREPASSWORD: "secret"
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_TRUSTSTORELOCATION: /kafka.truststore.jks
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_TRUSTSTOREPASSWORD: "secret"
+    volumes:
+      - ./ssl/kafka.truststore.jks:/kafka.truststore.jks
+      - ./ssl/kafka.keystore.jks:/kafka.keystore.jks
+
+  kafka0:
+    image: confluentinc/cp-kafka:7.2.1
+    hostname: kafka0
+    container_name: kafka0
+    ports:
+      - "9092:9092"
+      - "9997:9997"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,SSL:SSL,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'SSL://kafka0:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9997
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka0:29093'
+      KAFKA_LISTENERS: 'SSL://kafka0:29092,CONTROLLER://kafka0:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'SSL'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      KAFKA_SECURITY_PROTOCOL: SSL
+      KAFKA_SSL_ENABLED_MECHANISMS: PLAIN,SSL
+      KAFKA_SSL_KEYSTORE_FILENAME: kafka.keystore.jks
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: creds
+      KAFKA_SSL_KEY_CREDENTIALS: creds
+      KAFKA_SSL_TRUSTSTORE_FILENAME: kafka.truststore.jks
+      KAFKA_SSL_TRUSTSTORE_CREDENTIALS: creds
+      #KAFKA_SSL_CLIENT_AUTH: 'required'
+      KAFKA_SSL_CLIENT_AUTH: 'requested'
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: '' # COMMON NAME VERIFICATION IS DISABLED SERVER-SIDE
+    volumes:
+      - ./scripts/update_run.sh:/tmp/update_run.sh
+      - ./ssl/creds:/etc/kafka/secrets/creds
+      - ./ssl/kafka.truststore.jks:/etc/kafka/secrets/kafka.truststore.jks
+      - ./ssl/kafka.keystore.jks:/etc/kafka/secrets/kafka.keystore.jks
+    command: "bash -c 'if [ ! -f /tmp/update_run.sh ]; then echo \"ERROR: Did you forget the update_run.sh file that came with this docker-compose.yml file?\" && exit 1 ; else /tmp/update_run.sh && /etc/confluent/docker/run ; fi'"
+
+  schemaregistry0:
+    image: confluentinc/cp-schema-registry:7.2.1
+    depends_on:
+      - kafka0
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: SSL://kafka0:29092
+      SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: SSL
+      SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_LOCATION: /kafka.truststore.jks
+      SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_PASSWORD: secret
+      SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_LOCATION: /kafka.keystore.jks
+      SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_PASSWORD: secret
+      SCHEMA_REGISTRY_KAFKASTORE_SSL_KEY_PASSWORD: secret
+      SCHEMA_REGISTRY_HOST_NAME: schemaregistry0
+      SCHEMA_REGISTRY_LISTENERS: https://schemaregistry0:8085
+      SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: https
+
+      SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "https"
+      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
+      SCHEMA_REGISTRY_SSL_CLIENT_AUTHENTICATION: "REQUIRED"
+      SCHEMA_REGISTRY_SSL_TRUSTSTORE_LOCATION: /kafka.truststore.jks
+      SCHEMA_REGISTRY_SSL_TRUSTSTORE_PASSWORD: secret
+      SCHEMA_REGISTRY_SSL_KEYSTORE_LOCATION: /kafka.keystore.jks
+      SCHEMA_REGISTRY_SSL_KEYSTORE_PASSWORD: secret
+      SCHEMA_REGISTRY_SSL_KEY_PASSWORD: secret
+    ports:
+      - 8085:8085
+    volumes:
+      - ./ssl/kafka.truststore.jks:/kafka.truststore.jks
+      - ./ssl/kafka.keystore.jks:/kafka.keystore.jks
+
+  kafka-connect0:
+    image: confluentinc/cp-kafka-connect:7.2.1
+    ports:
+      - 8083:8083
+    depends_on:
+      - kafka0
+      - schemaregistry0
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka0:29092
+      CONNECT_GROUP_ID: compose-connect-group
+      CONNECT_CONFIG_STORAGE_TOPIC: _connect_configs
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_TOPIC: _connect_offset
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_TOPIC: _connect_status
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: https://schemaregistry0:8085
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: https://schemaregistry0:8085
+      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect0
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
+      CONNECT_SECURITY_PROTOCOL: "SSL"
+      CONNECT_SSL_KEYSTORE_LOCATION: "/kafka.keystore.jks"
+      CONNECT_SSL_KEY_PASSWORD: "secret"
+      CONNECT_SSL_KEYSTORE_PASSWORD: "secret"
+      CONNECT_SSL_TRUSTSTORE_LOCATION: "/kafka.truststore.jks"
+      CONNECT_SSL_TRUSTSTORE_PASSWORD: "secret"
+      CONNECT_SSL_CLIENT_AUTH: "requested"
+      CONNECT_REST_ADVERTISED_LISTENER: "https"
+      CONNECT_LISTENERS: "https://kafka-connect0:8083"
+    volumes:
+      - ./ssl/kafka.truststore.jks:/kafka.truststore.jks
+      - ./ssl/kafka.keystore.jks:/kafka.keystore.jks
