@@ -16,7 +16,6 @@ import Navbar from 'components/common/Navigation/Navbar.styled';
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
-import { usePermission } from 'lib/hooks/usePermission';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
 
 import KsqlDbItem, { KsqlDbItemType } from './KsqlDbItem/KsqlDbItem';
@@ -24,10 +23,6 @@ import KsqlDbItem, { KsqlDbItemType } from './KsqlDbItem/KsqlDbItem';
 const List: FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const dispatch = useAppDispatch();
-  const canExecuteKSQLRequest = usePermission(
-    UserPermissionResourceEnum.KSQL,
-    Action.EXECUTE
-  );
 
   const { rows, fetching, tablesCount, streamsCount } =
     useAppSelector(getKsqlDbTables);
@@ -43,7 +38,10 @@ const List: FC = () => {
           to={clusterKsqlDbQueryRelativePath}
           buttonType="primary"
           buttonSize="M"
-          canDoAction={canExecuteKSQLRequest}
+          permission={{
+            resource: UserPermissionResourceEnum.KSQL,
+            action: Action.EXECUTE,
+          }}
         >
           Execute KSQL Request
         </ActionButton>

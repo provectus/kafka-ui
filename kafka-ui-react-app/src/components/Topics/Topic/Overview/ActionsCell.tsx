@@ -13,7 +13,6 @@ import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSl
 import { Dropdown } from 'components/common/Dropdown';
 import { useTopicDetails } from 'lib/hooks/api/topics';
 import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
-import { usePermission } from 'lib/hooks/usePermission';
 
 const ActionsCell: React.FC<CellContext<Partition, unknown>> = ({ row }) => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
@@ -21,11 +20,6 @@ const ActionsCell: React.FC<CellContext<Partition, unknown>> = ({ row }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { partition } = row.original;
   const dispatch = useAppDispatch();
-  const canClearMessage = usePermission(
-    UserPermissionResourceEnum.TOPIC,
-    Action.MESSAGES_DELETE,
-    topicName
-  );
 
   const clearTopicMessagesHandler = async () => {
     await dispatch(
@@ -39,7 +33,11 @@ const ActionsCell: React.FC<CellContext<Partition, unknown>> = ({ row }) => {
       <ActionDropdownItem
         onClick={clearTopicMessagesHandler}
         danger
-        canDoAction={canClearMessage}
+        permission={{
+          resource: UserPermissionResourceEnum.TOPIC,
+          action: Action.MESSAGES_DELETE,
+          value: topicName,
+        }}
       >
         Clear Messages
       </ActionDropdownItem>

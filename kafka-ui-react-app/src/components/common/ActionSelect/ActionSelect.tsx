@@ -5,17 +5,24 @@ import {
   getDefaultActionMessage,
 } from 'components/common/ActionComponent/ActionComponent';
 import { useActionTooltip } from 'lib/hooks/useActionTooltip';
+import { usePermission } from 'lib/hooks/usePermission';
 import * as S from 'components/common/ActionComponent/ActionComponent.styled';
 
 interface Props extends SelectProps, ActionComponentProps {}
 
 const ActionSelect: React.FC<Props> = ({
   message = getDefaultActionMessage(),
-  canDoAction,
+  permission,
   placement = 'bottom',
   disabled,
   ...props
 }) => {
+  const canDoAction = usePermission(
+    permission.resource,
+    permission.action,
+    permission.value
+  );
+
   const isDisabled = !canDoAction;
 
   const { x, y, reference, floating, strategy, open } = useActionTooltip(

@@ -7,7 +7,7 @@ import useAppParams from 'lib/hooks/useAppParams';
 
 export function usePermission(
   resource: UserPermissionResourceEnum,
-  action: Action,
+  action: Action | Array<Action>,
   value?: string
 ): boolean {
   const { clusterName } = useAppParams<ClusterNameRoute>();

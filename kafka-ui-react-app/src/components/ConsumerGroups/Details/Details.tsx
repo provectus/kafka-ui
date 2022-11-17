@@ -26,7 +26,6 @@ import {
 import getTagColor from 'components/common/Tag/getTagColor';
 import { Dropdown } from 'components/common/Dropdown';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
-import { usePermission } from 'lib/hooks/usePermission';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
 import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
 
@@ -44,17 +43,6 @@ const Details: React.FC = () => {
   );
   const isDeleted = useAppSelector(getIsConsumerGroupDeleted);
   const isFetched = useAppSelector(getAreConsumerGroupDetailsFulfilled);
-  const canDeleteConsumerGroup = usePermission(
-    UserPermissionResourceEnum.CONSUMER,
-    Action.DELETE,
-    consumerGroupID
-  );
-
-  const canResetOffsetsConsumerGroup = usePermission(
-    UserPermissionResourceEnum.CONSUMER,
-    Action.RESET_OFFSETS,
-    consumerGroupID
-  );
 
   React.useEffect(() => {
     dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
@@ -100,7 +88,11 @@ const Details: React.FC = () => {
             <Dropdown>
               <ActionDropdownItem
                 onClick={onResetOffsets}
-                canDoAction={canResetOffsetsConsumerGroup}
+                permission={{
+                  resource: UserPermissionResourceEnum.CONSUMER,
+                  action: Action.RESET_OFFSETS,
+                  value: consumerGroupID,
+                }}
               >
                 Reset offset
               </ActionDropdownItem>
@@ -108,7 +100,11 @@ const Details: React.FC = () => {
                 confirm="Are you sure you want to delete this consumer group?"
                 onClick={onDelete}
                 danger
-                canDoAction={canDeleteConsumerGroup}
+                permission={{
+                  resource: UserPermissionResourceEnum.CONSUMER,
+                  action: Action.DELETE,
+                  value: consumerGroupID,
+                }}
               >
                 Delete consumer group
               </ActionDropdownItem>

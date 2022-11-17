@@ -12,7 +12,6 @@ import {
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
 import ActionButton from 'components/common/ActionButton/ActionButton';
-import { usePermission } from 'lib/hooks/usePermission';
 
 import * as S from './Configs.styled';
 
@@ -24,10 +23,6 @@ const InputCell: React.FC<InputCellProps> = ({ row, getValue, onUpdate }) => {
   const initialValue = `${getValue<string | number>()}`;
   const [isEdit, setIsEdit] = React.useState(false);
   const [value, setValue] = React.useState(initialValue);
-  const canEditBrokersConfig = usePermission(
-    UserPermissionResourceEnum.CLUSTERCONFIG,
-    Action.EDIT
-  );
 
   const confirm = useConfirm();
 
@@ -86,7 +81,10 @@ const InputCell: React.FC<InputCellProps> = ({ row, getValue, onUpdate }) => {
         buttonSize="S"
         aria-label="editAction"
         onClick={() => setIsEdit(true)}
-        canDoAction={canEditBrokersConfig}
+        permission={{
+          resource: UserPermissionResourceEnum.CLUSTERCONFIG,
+          action: Action.EDIT,
+        }}
       >
         <EditIcon /> Edit
       </ActionButton>

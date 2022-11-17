@@ -20,7 +20,6 @@ import {
 } from 'lib/paths';
 import { useConfirm } from 'lib/hooks/useConfirm';
 import { Dropdown } from 'components/common/Dropdown';
-import { usePermission } from 'lib/hooks/usePermission';
 import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
 
 const ConnectorActionsWrapperStyled = styled.div`
@@ -38,18 +37,6 @@ const Actions: React.FC = () => {
 
   const { data: connector } = useConnector(routerProps);
   const confirm = useConfirm();
-
-  const canDeleteConnector = usePermission(
-    UserPermissionResourceEnum.CONNECT,
-    Action.DELETE,
-    routerProps.connectorName
-  );
-
-  const canEditConnector = usePermission(
-    UserPermissionResourceEnum.CONNECT,
-    Action.EDIT,
-    routerProps.connectorName
-  );
 
   const deleteConnectorMutation = useDeleteConnector(routerProps);
   const deleteConnectorHandler = () =>
@@ -87,7 +74,11 @@ const Actions: React.FC = () => {
           <ActionDropdownItem
             onClick={pauseConnectorHandler}
             disabled={isMutating}
-            canDoAction={canEditConnector}
+            permission={{
+              resource: UserPermissionResourceEnum.CONNECT,
+              action: Action.EDIT,
+              value: routerProps.connectorName,
+            }}
           >
             Pause
           </ActionDropdownItem>
@@ -96,7 +87,11 @@ const Actions: React.FC = () => {
           <ActionDropdownItem
             onClick={resumeConnectorHandler}
             disabled={isMutating}
-            canDoAction={canEditConnector}
+            permission={{
+              resource: UserPermissionResourceEnum.CONNECT,
+              action: Action.EDIT,
+              value: routerProps.connectorName,
+            }}
           >
             Resume
           </ActionDropdownItem>
@@ -104,21 +99,33 @@ const Actions: React.FC = () => {
         <ActionDropdownItem
           onClick={restartConnectorHandler}
           disabled={isMutating}
-          canDoAction={canEditConnector}
+          permission={{
+            resource: UserPermissionResourceEnum.CONNECT,
+            action: Action.EDIT,
+            value: routerProps.connectorName,
+          }}
         >
           Restart Connector
         </ActionDropdownItem>
         <ActionDropdownItem
           onClick={restartAllTasksHandler}
           disabled={isMutating}
-          canDoAction={canEditConnector}
+          permission={{
+            resource: UserPermissionResourceEnum.CONNECT,
+            action: Action.EDIT,
+            value: routerProps.connectorName,
+          }}
         >
           Restart All Tasks
         </ActionDropdownItem>
         <ActionDropdownItem
           onClick={restartFailedTasksHandler}
           disabled={isMutating}
-          canDoAction={canEditConnector}
+          permission={{
+            resource: UserPermissionResourceEnum.CONNECT,
+            action: Action.EDIT,
+            value: routerProps.connectorName,
+          }}
         >
           Restart Failed Tasks
         </ActionDropdownItem>
@@ -126,7 +133,11 @@ const Actions: React.FC = () => {
           onClick={deleteConnectorHandler}
           disabled={isMutating}
           danger
-          canDoAction={canDeleteConnector}
+          permission={{
+            resource: UserPermissionResourceEnum.CONNECT,
+            action: Action.DELETE,
+            value: routerProps.connectorName,
+          }}
         >
           Delete
         </ActionDropdownItem>

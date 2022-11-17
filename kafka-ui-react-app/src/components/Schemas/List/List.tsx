@@ -29,7 +29,6 @@ import {
 } from 'generated-sources';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
-import { usePermission } from 'lib/hooks/usePermission';
 
 import GlobalSchemaSelector from './GlobalSchemaSelector/GlobalSchemaSelector';
 
@@ -42,10 +41,6 @@ const List: React.FC = () => {
   const isFetched = useAppSelector(getAreSchemasFulfilled);
   const totalPages = useAppSelector((state) => state.schemas.totalPages);
   const [searchParams] = useSearchParams();
-  const canCreateSchema = usePermission(
-    UserPermissionResourceEnum.SCHEMA,
-    Action.CREATE
-  );
 
   React.useEffect(() => {
     dispatch(
@@ -92,7 +87,10 @@ const List: React.FC = () => {
               buttonSize="M"
               buttonType="primary"
               to={clusterSchemaNewRelativePath}
-              canDoAction={canCreateSchema}
+              permission={{
+                resource: UserPermissionResourceEnum.SCHEMA,
+                action: Action.CREATE,
+              }}
             >
               <PlusIcon /> Create Schema
             </ActionButton>

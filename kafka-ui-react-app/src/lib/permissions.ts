@@ -59,7 +59,7 @@ export function isPermitted({
 }: {
   roles?: RolesModifiedTypes;
   resource: UserPermissionResourceEnum;
-  action: Action;
+  action: Action | Array<Action>;
   clusterName: string;
   value?: string;
 }) {
@@ -80,7 +80,10 @@ export function isPermitted({
         if (value) valueCheck = new RegExp(item.value).test(value);
       }
 
-      return valueCheck && item.actions.includes(action);
+      return (
+        valueCheck &&
+        item.actions.includes(Array.isArray(action) ? action[0] : action)
+      );
     }) !== -1
   );
 }

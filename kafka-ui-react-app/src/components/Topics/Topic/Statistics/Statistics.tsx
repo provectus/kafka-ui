@@ -5,7 +5,6 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
-import { usePermission } from 'lib/hooks/usePermission';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
 import ActionButton from 'components/common/ActionButton/ActionButton';
 
@@ -15,11 +14,6 @@ import Metrics from './Metrics';
 const Statistics: React.FC = () => {
   const params = useAppParams<RouteParamsClusterTopic>();
   const analyzeTopic = useAnalyzeTopic(params);
-  const canStartAnalysis = usePermission(
-    UserPermissionResourceEnum.TOPIC,
-    Action.MESSAGES_READ,
-    params.topicName
-  );
 
   return (
     <QueryErrorResetBoundary>
@@ -35,7 +29,11 @@ const Statistics: React.FC = () => {
                 }}
                 buttonType="primary"
                 buttonSize="M"
-                canDoAction={canStartAnalysis}
+                permission={{
+                  resource: UserPermissionResourceEnum.TOPIC,
+                  action: Action.MESSAGES_READ,
+                  value: params.topicName,
+                }}
               >
                 Start Analysis
               </ActionButton>

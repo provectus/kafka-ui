@@ -11,16 +11,11 @@ import Switch from 'components/common/Switch/Switch';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import TopicTable from 'components/Topics/List/TopicTable';
-import { usePermission } from 'lib/hooks/usePermission';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
 
 const ListPage: React.FC = () => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const [searchParams, setSearchParams] = useSearchParams();
-  const canAddTopics = usePermission(
-    UserPermissionResourceEnum.TOPIC,
-    Action.CREATE
-  );
 
   // Set the search params to the url based on the localStorage value
   React.useEffect(() => {
@@ -57,7 +52,10 @@ const ListPage: React.FC = () => {
             buttonType="primary"
             buttonSize="M"
             to={clusterTopicNewRelativePath}
-            canDoAction={canAddTopics}
+            permission={{
+              resource: UserPermissionResourceEnum.TOPIC,
+              action: Action.CREATE,
+            }}
           >
             <PlusIcon /> Add a Topic
           </ActionButton>

@@ -28,7 +28,6 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { schemasApiClient } from 'lib/api';
 import { Dropdown } from 'components/common/Dropdown';
 import Table from 'components/common/NewTable';
-import { usePermission } from 'lib/hooks/usePermission';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
 import ActionButton from 'components/common/ActionButton/ActionButton';
 import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
@@ -41,16 +40,6 @@ const Details: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName, subject } = useAppParams<ClusterSubjectParam>();
-  const canEditSchema = usePermission(
-    UserPermissionResourceEnum.SCHEMA,
-    Action.EDIT,
-    subject
-  );
-  const canRemoveSchema = usePermission(
-    UserPermissionResourceEnum.SCHEMA,
-    Action.DELETE,
-    subject
-  );
 
   React.useEffect(() => {
     dispatch(fetchLatestSchema({ clusterName, subject }));
@@ -118,7 +107,11 @@ const Details: React.FC = () => {
               buttonSize="M"
               buttonType="primary"
               to={clusterSchemaEditPageRelativePath}
-              canDoAction={canEditSchema}
+              permission={{
+                resource: UserPermissionResourceEnum.SCHEMA,
+                action: Action.EDIT,
+                value: subject,
+              }}
             >
               Edit Schema
             </ActionButton>
@@ -131,7 +124,11 @@ const Details: React.FC = () => {
                 }
                 onClick={deleteHandler}
                 danger
-                canDoAction={canRemoveSchema}
+                permission={{
+                  resource: UserPermissionResourceEnum.SCHEMA,
+                  action: Action.DELETE,
+                  value: subject,
+                }}
               >
                 Remove schema
               </ActionDropdownItem>

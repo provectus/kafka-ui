@@ -1,26 +1,28 @@
 import React from 'react';
 import { Button, Props as ButtonProps } from 'components/common/Button/Button';
-import { Placement } from '@floating-ui/react-dom-interactions';
 import * as S from 'components/common/ActionComponent/ActionComponent.styled';
 import {
   ActionComponentProps,
   getDefaultActionMessage,
 } from 'components/common/ActionComponent/ActionComponent';
 import { useActionTooltip } from 'lib/hooks/useActionTooltip';
+import { usePermission } from 'lib/hooks/usePermission';
 
-interface Props extends ActionComponentProps, ButtonProps {
-  canDoAction: boolean;
-  message?: string;
-  placement?: Placement;
-}
+interface Props extends ActionComponentProps, ButtonProps {}
 
 const ActionButton: React.FC<Props> = ({
-  canDoAction,
+  permission,
   placement = 'bottom-end',
   message = getDefaultActionMessage(),
   disabled,
   ...props
 }) => {
+  const canDoAction = usePermission(
+    permission.resource,
+    permission.action,
+    permission.value
+  );
+
   const isDisabled = !canDoAction;
 
   const { x, y, reference, floating, strategy, open } = useActionTooltip(

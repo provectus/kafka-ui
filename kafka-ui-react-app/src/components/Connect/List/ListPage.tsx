@@ -14,17 +14,12 @@ import {
   UserPermissionResourceEnum,
 } from 'generated-sources';
 import { useConnectors } from 'lib/hooks/api/kafkaConnect';
-import { usePermission } from 'lib/hooks/usePermission';
 
 import List from './List';
 
 const ListPage: React.FC = () => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useAppParams<ClusterNameRoute>();
-  const canAddConnector = usePermission(
-    UserPermissionResourceEnum.CONNECT,
-    Action.CREATE
-  );
 
   // Fetches all connectors from the API, without search criteria. Used to display general metrics.
   const { data: connectorsMetrics, isLoading } = useConnectors(clusterName);
@@ -46,7 +41,10 @@ const ListPage: React.FC = () => {
             buttonType="primary"
             buttonSize="M"
             to={clusterConnectorNewRelativePath}
-            canDoAction={canAddConnector}
+            permission={{
+              resource: UserPermissionResourceEnum.CONNECT,
+              action: Action.CREATE,
+            }}
           >
             Create Connector
           </ActionButton>

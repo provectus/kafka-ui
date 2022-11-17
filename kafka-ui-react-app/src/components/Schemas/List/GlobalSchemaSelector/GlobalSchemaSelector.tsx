@@ -13,7 +13,6 @@ import { showServerError } from 'lib/errorHandling';
 import { useConfirm } from 'lib/hooks/useConfirm';
 import { useSearchParams } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
-import { usePermission } from 'lib/hooks/usePermission';
 import ActionSelect from 'components/common/ActionSelect/ActionSelect';
 
 import * as S from './GlobalSchemaSelector.styled';
@@ -23,10 +22,6 @@ const GlobalSchemaSelector: React.FC = () => {
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
   const confirm = useConfirm();
-  const canChange = usePermission(
-    UserPermissionResourceEnum.SCHEMA,
-    Action.MODIFY_GLOBAL_COMPATIBILITY
-  );
 
   const [currentCompatibilityLevel, setCurrentCompatibilityLevel] =
     React.useState<CompatibilityLevelCompatibilityEnum | undefined>();
@@ -97,7 +92,10 @@ const GlobalSchemaSelector: React.FC = () => {
         options={Object.keys(CompatibilityLevelCompatibilityEnum).map(
           (level) => ({ value: level, label: level })
         )}
-        canDoAction={canChange}
+        permission={{
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: Action.MODIFY_GLOBAL_COMPATIBILITY,
+        }}
       />
     </S.Wrapper>
   );

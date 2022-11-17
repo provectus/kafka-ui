@@ -34,7 +34,6 @@ import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import SlidingSidebar from 'components/common/SlidingSidebar';
 import useBoolean from 'lib/hooks/useBoolean';
-import { usePermission } from 'lib/hooks/usePermission';
 import ActionNavLink from 'components/common/ActionNavLink/ActionNavLink';
 
 import Messages from './Messages/Messages';
@@ -53,42 +52,6 @@ const Topic: React.FC = () => {
     setTrue: openSidebar,
   } = useBoolean(false);
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
-
-  const canProduceTopicMessage = usePermission(
-    UserPermissionResourceEnum.TOPIC,
-    Action.MESSAGES_PRODUCE,
-    topicName
-  );
-
-  const canEditMessage = usePermission(
-    UserPermissionResourceEnum.TOPIC,
-    Action.EDIT,
-    topicName
-  );
-
-  const canViewMessage = usePermission(
-    UserPermissionResourceEnum.TOPIC,
-    Action.MESSAGES_READ,
-    topicName
-  );
-
-  const canCreateMessage = usePermission(
-    UserPermissionResourceEnum.TOPIC,
-    Action.CREATE,
-    topicName
-  );
-
-  const canRemoveMessage = usePermission(
-    UserPermissionResourceEnum.TOPIC,
-    Action.DELETE,
-    topicName
-  );
-
-  const canClearMessage = usePermission(
-    UserPermissionResourceEnum.TOPIC,
-    Action.MESSAGES_DELETE,
-    topicName
-  );
 
   const navigate = useNavigate();
   const deleteTopic = useDeleteTopic(clusterName);
@@ -123,14 +86,22 @@ const Topic: React.FC = () => {
           buttonType="primary"
           onClick={openSidebar}
           disabled={isReadOnly}
-          canDoAction={canProduceTopicMessage}
+          permission={{
+            resource: UserPermissionResourceEnum.TOPIC,
+            action: Action.MESSAGES_PRODUCE,
+            value: topicName,
+          }}
         >
           Produce Message
         </ActionButton>
         <Dropdown disabled={isReadOnly || data?.internal}>
           <ActionDropdownItem
             onClick={() => navigate(clusterTopicEditRelativePath)}
-            canDoAction={canEditMessage}
+            permission={{
+              resource: UserPermissionResourceEnum.TOPIC,
+              action: Action.EDIT,
+              value: topicName,
+            }}
           >
             Edit settings
             <DropdownItemHint>
@@ -146,8 +117,12 @@ const Topic: React.FC = () => {
             }
             confirm="Are you sure want to clear topic messages?"
             disabled={!canCleanup}
-            canDoAction={canClearMessage}
             danger
+            permission={{
+              resource: UserPermissionResourceEnum.TOPIC,
+              action: Action.MESSAGES_DELETE,
+              value: topicName,
+            }}
           >
             Clear messages
             <DropdownItemHint>
@@ -165,7 +140,11 @@ const Topic: React.FC = () => {
               </>
             }
             danger
-            canDoAction={canViewMessage && canCreateMessage && canRemoveMessage}
+            permission={{
+              resource: UserPermissionResourceEnum.TOPIC,
+              action: [Action.MESSAGES_READ, Action.CREATE, Action.DELETE],
+              value: topicName,
+            }}
           >
             Recreate Topic
           </ActionDropdownItem>
@@ -178,7 +157,11 @@ const Topic: React.FC = () => {
             }
             disabled={!isTopicDeletionAllowed}
             danger
-            canDoAction={canRemoveMessage}
+            permission={{
+              resource: UserPermissionResourceEnum.TOPIC,
+              action: Action.DELETE,
+              value: topicName,
+            }}
           >
             Remove Topic
             {!isTopicDeletionAllowed && (
@@ -202,7 +185,11 @@ const Topic: React.FC = () => {
         <ActionNavLink
           to={clusterTopicMessagesRelativePath}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
-          canDoAction={canViewMessage}
+          permission={{
+            resource: UserPermissionResourceEnum.TOPIC,
+            action: Action.MESSAGES_READ,
+            value: topicName,
+          }}
         >
           Messages
         </ActionNavLink>

@@ -15,7 +15,6 @@ import {
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 import { calculateTimer } from 'lib/dateTimeHelpers';
-import { usePermission } from 'lib/hooks/usePermission';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
 import ActionButton from 'components/common/ActionButton/ActionButton';
 
@@ -32,11 +31,6 @@ const Metrics: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const analyzeTopic = useAnalyzeTopic(params);
   const cancelTopicAnalysis = useCancelTopicAnalysis(params);
-  const canStartAnalysis = usePermission(
-    UserPermissionResourceEnum.TOPIC,
-    Action.MESSAGES_READ,
-    params.topicName
-  );
 
   const { data } = useTopicAnalysis(params, isAnalyzing);
 
@@ -64,7 +58,11 @@ const Metrics: React.FC = () => {
           }}
           buttonType="primary"
           buttonSize="M"
-          canDoAction={canStartAnalysis}
+          permission={{
+            resource: UserPermissionResourceEnum.TOPIC,
+            action: Action.MESSAGES_READ,
+            value: params.topicName,
+          }}
         >
           Stop Analysis
         </ActionButton>
@@ -102,7 +100,11 @@ const Metrics: React.FC = () => {
           }}
           buttonType="primary"
           buttonSize="S"
-          canDoAction={canStartAnalysis}
+          permission={{
+            resource: UserPermissionResourceEnum.TOPIC,
+            action: Action.MESSAGES_READ,
+            value: params.topicName,
+          }}
         >
           Restart Analysis
         </ActionButton>

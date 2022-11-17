@@ -22,7 +22,6 @@ import {
   useDeleteTopic,
   useRecreateTopic,
 } from 'lib/hooks/api/topics';
-import { usePermission } from 'lib/hooks/usePermission';
 import ActionDropdownItem from 'components/common/Dropdown/ActionDropdownItem';
 
 const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
@@ -39,18 +38,6 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
 
   const disabled = internal || isReadOnly;
 
-  const canRemoveTopic = usePermission(
-    UserPermissionResourceEnum.TOPIC,
-    Action.DELETE,
-    name
-  );
-
-  const canClearMessages = usePermission(
-    UserPermissionResourceEnum.TOPIC,
-    Action.MESSAGES_DELETE,
-    name
-  );
-
   const clearTopicMessagesHandler = async () => {
     await dispatch(
       clearTopicMessages({ clusterName, topicName: name })
@@ -66,8 +53,12 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
         disabled={isCleanupDisabled}
         onClick={clearTopicMessagesHandler}
         confirm="Are you sure want to clear topic messages?"
-        canDoAction={canClearMessages}
         danger
+        permission={{
+          resource: UserPermissionResourceEnum.TOPIC,
+          action: Action.MESSAGES_DELETE,
+          value: name,
+        }}
       >
         Clear Messages
         <DropdownItemHint>
@@ -90,13 +81,17 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
       <ActionDropdownItem
         disabled={!isTopicDeletionAllowed}
         onClick={() => deleteTopic.mutateAsync(name)}
-        canDoAction={canRemoveTopic}
         confirm={
           <>
             Are you sure want to remove <b>{name}</b> topic?
           </>
         }
         danger
+        permission={{
+          resource: UserPermissionResourceEnum.TOPIC,
+          action: Action.DELETE,
+          value: name,
+        }}
       >
         Remove Topic
         {!isTopicDeletionAllowed && (

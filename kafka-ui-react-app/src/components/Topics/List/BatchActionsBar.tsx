@@ -10,7 +10,7 @@ import { useAppDispatch } from 'lib/hooks/redux';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { clusterTopicCopyRelativePath } from 'lib/paths';
 import { useQueryClient } from '@tanstack/react-query';
-import ActionButton from 'components/common/ActionButton/ActionButton';
+import ActionCanButton from 'components/common/ActionCanButton/ActionCanButton';
 import { RolesAccessContext } from 'components/contexts/RolesAccessContext';
 import { isPermitted } from 'lib/permissions';
 
@@ -116,7 +116,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
 
   return (
     <>
-      <ActionButton
+      <ActionCanButton
         buttonSize="M"
         buttonType="secondary"
         onClick={deleteTopicsHandler}
@@ -124,7 +124,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
         canDoAction={canDeleteSelectedTopics}
       >
         Delete selected topics
-      </ActionButton>
+      </ActionCanButton>
       <Button
         buttonSize="M"
         buttonType="secondary"
@@ -133,7 +133,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
       >
         Copy selected topic
       </Button>
-      <ActionButton
+      <ActionCanButton
         buttonSize="M"
         buttonType="secondary"
         onClick={purgeTopicsHandler}
@@ -141,7 +141,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
         canDoAction={canPurgeSelectedTopics}
       >
         Purge messages of selected topics
-      </ActionButton>
+      </ActionCanButton>
     </>
   );
 };
