@@ -22,8 +22,8 @@ jest.mock('lib/hooks/api/topics', () => ({
   useUpdateTopicReplicationFactor: jest.fn(),
 }));
 
-const renderComponent = (props?: Partial<DangerZoneProps>) => {
-  return render(
+const renderComponent = (props?: Partial<DangerZoneProps>) =>
+  render(
     <WithRoute path={clusterTopicPath()}>
       <DangerZone
         defaultPartitions={defaultPartitions}
@@ -33,7 +33,6 @@ const renderComponent = (props?: Partial<DangerZoneProps>) => {
     </WithRoute>,
     { initialEntries: [clusterTopicPath(clusterName, topicName)] }
   );
-};
 
 const clickOnDialogSubmitButton = async () => {
   await userEvent.click(

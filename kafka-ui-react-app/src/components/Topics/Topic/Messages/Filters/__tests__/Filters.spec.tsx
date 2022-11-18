@@ -39,8 +39,8 @@ const topicName = 'topic-name';
 const renderComponent = (
   props: Partial<FiltersProps> = {},
   ctx: ContextProps = defaultContextValue
-) => {
-  return render(
+) =>
+  render(
     <WithRoute path={clusterTopicPath()}>
       <TopicMessagesContext.Provider value={ctx}>
         <Filters
@@ -57,7 +57,6 @@ const renderComponent = (
     </WithRoute>,
     { initialEntries: [clusterTopicPath(clusterName, topicName)] }
   );
-};
 
 beforeEach(async () => {
   (useTopicDetails as jest.Mock).mockImplementation(() => ({

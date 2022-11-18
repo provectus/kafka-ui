@@ -12,8 +12,8 @@ const editFilter: FilterEdit = {
   filter: { name: 'name', code: '' },
 };
 
-const renderComponent = (props?: Partial<EditFilterProps>) => {
-  return render(
+const renderComponent = (props?: Partial<EditFilterProps>) =>
+  render(
     <EditFilter
       toggleEditModal={jest.fn()}
       editSavedFilter={jest.fn()}
@@ -21,7 +21,7 @@ const renderComponent = (props?: Partial<EditFilterProps>) => {
       {...props}
     />
   );
-};
+
 describe('EditFilter component', () => {
   it('renders component', async () => {
     await act(() => {

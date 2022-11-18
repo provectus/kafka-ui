@@ -9,8 +9,8 @@ import userEvent from '@testing-library/user-event';
 
 const filters: MessageFilters[] = [{ name: 'name', code: 'code' }];
 
-const renderComponent = (props?: Partial<FilterModalProps>) => {
-  return render(
+const renderComponent = (props?: Partial<FilterModalProps>) =>
+  render(
     <FilterModal
       toggleIsOpen={jest.fn()}
       filters={filters}
@@ -21,7 +21,7 @@ const renderComponent = (props?: Partial<FilterModalProps>) => {
       {...props}
     />
   );
-};
+
 describe('FilterModal component', () => {
   it('renders component with add filter modal', async () => {
     await act(() => {

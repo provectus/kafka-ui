@@ -14,8 +14,8 @@ const filters: MessageFilters[] = [
 
 const editFilterMock = jest.fn();
 
-const renderComponent = (props: Partial<FilterModalProps> = {}) => {
-  return render(
+const renderComponent = (props: Partial<FilterModalProps> = {}) =>
+  render(
     <AddFilter
       toggleIsOpen={jest.fn()}
       addFilter={jest.fn()}
@@ -29,7 +29,7 @@ const renderComponent = (props: Partial<FilterModalProps> = {}) => {
       {...props}
     />
   );
-};
+
 describe('AddFilter component', () => {
   describe('', () => {
     it('should test click on Saved Filters redirects to Saved components', async () => {

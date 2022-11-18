@@ -24,8 +24,8 @@ jest.mock('lib/hooks/api/topics', () => ({
   useCreateTopic: jest.fn(),
 }));
 
-const renderComponent = (path: string) => {
-  return render(
+const renderComponent = (path: string) =>
+  render(
     <Routes>
       <Route path={clusterTopicNewPath()} element={<New />} />
       <Route path={clusterTopicCopyPath()} element={<New />} />
@@ -33,7 +33,7 @@ const renderComponent = (path: string) => {
     </Routes>,
     { initialEntries: [path] }
   );
-};
+
 const createTopicMock = jest.fn();
 
 describe('New', () => {
