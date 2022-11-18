@@ -3,7 +3,7 @@ on:
   repository_dispatch:
     types: [change-app-version]
 jobs:
-  myEvent:
+  change-app-version:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
