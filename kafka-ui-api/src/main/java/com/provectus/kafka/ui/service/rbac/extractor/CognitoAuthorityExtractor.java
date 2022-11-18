@@ -53,15 +53,17 @@ public class CognitoAuthorityExtractor implements ProviderAuthorityExtractor {
 
     List<String> groupsByGroups = acs.getRoles()
         .stream()
-        .map(Role::getSubjects)
-        .flatMap(Collection::stream)
-        .filter(s -> s.getProvider().equals(Provider.OAUTH_COGNITO))
-        .filter(s -> s.getType().equals("group"))
-        .flatMap(subject -> Stream.of(groups.toArray())
-            .map(Object::toString)
-            .distinct()
-            .filter(cognitoGroup -> subject.getValue().equals(cognitoGroup))
-        ).toList();
+        .filter(role -> role.getSubjects()
+            .stream()
+            .filter(s -> s.getProvider().equals(Provider.OAUTH_COGNITO))
+            .filter(s -> s.getType().equals("group"))
+            .anyMatch(subject -> Stream.of(groups.toArray())
+                .map(Object::toString)
+                .distinct()
+                .anyMatch(cognitoGroup -> cognitoGroup.equals(subject.getValue()))
+            ))
+        .map(Role::getName)
+        .toList();
 
     return Mono.just(Stream.concat(groupsByUsername.stream(), groupsByGroups.stream()).collect(Collectors.toList()));
   }

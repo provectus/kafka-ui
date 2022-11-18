@@ -81,17 +81,16 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
         .map(orgsMap -> {
           var groupsByOrg = acs.getRoles()
               .stream()
-              .map(Role::getSubjects)
-              .flatMap(Collection::stream)
-              .filter(s -> s.getProvider().equals(Provider.OAUTH_GITHUB))
-              .filter(s -> s.getType().equals("organization"))
-              .flatMap(subject -> Stream.of(orgsMap)
-                  .filter(orgs -> orgs
-                      .stream()
-                      .anyMatch(org -> org.get(ORGANIZATION_NAME).toString().equalsIgnoreCase(subject.getValue()))
-                  )
-                  .map(Object::toString)
-              );
+              .filter(role -> role.getSubjects()
+                  .stream()
+                  .filter(s -> s.getProvider().equals(Provider.OAUTH_GITHUB))
+                  .filter(s -> s.getType().equals("organization"))
+                  .anyMatch(subject -> orgsMap.stream()
+                      .map(org -> org.get(ORGANIZATION_NAME).toString())
+                      .distinct()
+                      .anyMatch(orgName -> orgName.equalsIgnoreCase(subject.getValue()))
+                  ))
+              .map(Role::getName);
 
           return Stream.concat(groupsByOrg, groupsByUsername.stream()).collect(Collectors.toList());
         });
