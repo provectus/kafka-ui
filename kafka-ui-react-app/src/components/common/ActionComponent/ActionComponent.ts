@@ -12,5 +12,5 @@ export interface ActionComponentProps {
 }
 
 export function getDefaultActionMessage() {
-  return "You don't have the permission to do this action";
+  return "You don't have a required permission to perform this action";
 }
