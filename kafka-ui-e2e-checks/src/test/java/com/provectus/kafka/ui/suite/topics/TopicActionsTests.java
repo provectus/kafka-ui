@@ -272,12 +272,21 @@ public class TopicActionsTests extends BaseTest {
         .waitUntilScreenReady()
         .openTopic(topicName);
     topicDetails
-        .waitUntilScreenReady()
         .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
-        .clickMessagesAddFiltersBtn()
-        .waitUntilAddFilterModalVisible();
-    assertThat(topicDetails.isSaveThisFilterCheckBoxSelected()).as("isSaveThisFilterCheckBoxSelected()")
+        .clickMessagesAddFiltersBtn();
+    SoftAssertions softly = new SoftAssertions();
+    topicDetails.getAllAddFilterModalVisibleElements().forEach(element ->
+        softly.assertThat(element.is(Condition.visible))
+            .as(element.getSearchCriteria() + " isVisible()").isTrue());
+    topicDetails.getAllAddFilterModalEnabledElements().forEach(element ->
+        softly.assertThat(element.is(Condition.enabled))
+            .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    topicDetails.getAllAddFilterModalDisabledElements().forEach(element ->
+        softly.assertThat(element.is(Condition.enabled))
+            .as(element.getSearchCriteria() + " isEnabled()").isFalse());
+    softly.assertThat(topicDetails.isSaveThisFilterCheckBoxSelected()).as("isSaveThisFilterCheckBoxSelected()")
         .isFalse();
+    softly.assertAll();
     topicDetails
         .setFilterCodeFieldAddFilterMdl(filterName);
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
