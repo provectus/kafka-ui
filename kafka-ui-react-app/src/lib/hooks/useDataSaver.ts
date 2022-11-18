@@ -1,4 +1,3 @@
-import isObject from 'lodash/isObject';
 import { showSuccessAlert } from 'lib/errorHandling';
 
 const useDataSaver = (
@@ -17,19 +16,14 @@ const useDataSaver = (
       });
     }
   };
-
   const saveFile = () => {
-    const extension = isObject(data) ? 'json' : 'txt';
-    const dataStr = `data:text/json;charset=utf-8,${data}`;
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute('href', dataStr);
-    downloadAnchorNode.setAttribute(
-      'download',
-      `${subject}_${new Date().getTime()}.${extension}`
-    );
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
+    const blob = new Blob([data as BlobPart], { type: 'text/json' });
+    const elem = window.document.createElement('a');
+    elem.href = window.URL.createObjectURL(blob);
+    elem.download = subject;
+    document.body.appendChild(elem);
+    elem.click();
+    document.body.removeChild(elem);
   };
 
   return { copyToClipboard, saveFile };

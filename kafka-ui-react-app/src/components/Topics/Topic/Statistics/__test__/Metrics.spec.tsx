@@ -34,6 +34,7 @@ describe('Metrics', () => {
 
   describe('when analysis is in progress', () => {
     const cancelMock = jest.fn();
+
     beforeEach(() => {
       (useCancelTopicAnalysis as jest.Mock).mockImplementation(() => ({
         mutateAsync: cancelMock,
@@ -50,10 +51,10 @@ describe('Metrics', () => {
       renderComponent();
     });
 
-    it('renders Stop Analysis button', () => {
+    it('renders Stop Analysis button', async () => {
       const btn = screen.getByRole('button', { name: 'Stop Analysis' });
       expect(btn).toBeInTheDocument();
-      userEvent.click(btn);
+      await userEvent.click(btn);
       expect(cancelMock).toHaveBeenCalled();
     });
 
@@ -61,6 +62,10 @@ describe('Metrics', () => {
       const progressbar = screen.getByRole('progressbar');
       expect(progressbar).toBeInTheDocument();
       expect(progressbar).toHaveStyleRule('width', '0%');
+    });
+
+    it('calculate Timer ', () => {
+      expect(screen.getByText('Passed since start')).toBeInTheDocument();
     });
   });
 
@@ -95,9 +100,9 @@ describe('Metrics', () => {
       expect(btns.length).toEqual(2);
       expect(screen.queryByText('Partition stats')).not.toBeInTheDocument();
 
-      userEvent.click(btns[0]);
+      await userEvent.click(btns[0]);
       expect(screen.getAllByText('Partition stats').length).toEqual(1);
-      userEvent.click(btns[1]);
+      await userEvent.click(btns[1]);
       expect(screen.getAllByText('Partition stats').length).toEqual(2);
     });
   });

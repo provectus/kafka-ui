@@ -1,74 +1,84 @@
 package com.provectus.kafka.ui.pages.connector;
 
+import static com.codeborne.selenide.Selenide.$x;
+
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.sleep;
-import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
-import static com.provectus.kafka.ui.utilities.screenshots.Screenshooter.log;
+public class ConnectorDetails extends BasePage {
 
-public class ConnectorDetails {
-    protected SelenideElement dotMenuBtn = $(By.xpath("//button[@aria-label='Dropdown Toggle']"));
-    protected SelenideElement deleteBtn = $(By.xpath("//li/div[text()='Delete']"));
-    protected SelenideElement confirmBtnMdl = $(By.xpath("//div[@role='dialog']//button[text()='Confirm']"));
-    protected SelenideElement submitBtn = $(By.xpath("//button[@type='submit']"));
-    protected SelenideElement contentTextArea = $("[wrap]");
+  protected SelenideElement deleteBtn = $x("//li/div[contains(text(),'Delete')]");
+  protected SelenideElement confirmBtnMdl = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
+  protected SelenideElement contentTextArea = $x("//textarea[@class='ace_text-input']");
+  protected SelenideElement taskTab = $x("//a[contains(text(),'Tasks')]");
+  protected SelenideElement configTab = $x("//a[contains(text(),'Config')]");
+  protected SelenideElement configField = $x("//div[@id='config']");
+  protected String connectorHeaderLocator = "//h1[contains(text(),'%s')]";
+
+  @Step
+  public ConnectorDetails waitUntilScreenReady() {
+    waitUntilSpinnerDisappear();
+    dotMenuBtn.shouldBe(Condition.visible);
+    return this;
+  }
 
     @Step
-    public ConnectorDetails waitUntilScreenReady() {
-        $(By.xpath("//a[text() ='Tasks']")).shouldBe(Condition.visible);
-        $(By.xpath("//a[text() ='Config']")).shouldBe(Condition.visible);
-        $(By.xpath("//a[text() ='Overview']")).shouldBe(Condition.visible);
-        return this;
-    }
-
-    @Step()
     public ConnectorDetails openConfigTab() {
-        clickByJavaScript($(By.xpath("//a[text() ='Config']")));
+        clickByJavaScript(configTab);
         return this;
     }
 
-    @Step()
+    @Step
     public ConnectorDetails setConfig(String configJson) {
-        $("#config").click();
-        contentTextArea.sendKeys(Keys.LEFT_CONTROL + "a");
-        contentTextArea.setValue("");
-        contentTextArea.setValue(String.valueOf(configJson.toCharArray()));
-        $("#config").click();
-        clickByJavaScript(submitBtn);
-        sleep(4000);
-        log.info("Connector config is submitted");
+        configField.shouldBe(Condition.enabled).click();
+        clearByKeyboard(contentTextArea);
+        contentTextArea.setValue(configJson);
+        configField.shouldBe(Condition.enabled).click();
         return this;
     }
 
-    @Step()
+    @Step
+    public ConnectorDetails clickSubmitButton() {
+      clickSubmitBtn();
+      return this;
+    }
+
+    @Step
     public ConnectorDetails openDotMenu() {
         clickByJavaScript(dotMenuBtn);
         return this;
     }
 
-    @Step()
-    public ConnectorDetails clickDeleteButton() {
+    @Step
+    public ConnectorDetails clickDeleteBtn() {
         clickByJavaScript(deleteBtn);
         return this;
     }
 
-    @Step()
-    public ConnectorDetails clickConfirmButton() {
+    @Step
+    public ConnectorDetails clickConfirmBtn() {
         confirmBtnMdl.shouldBe(Condition.enabled).click();
         confirmBtnMdl.shouldBe(Condition.disappear);
         return this;
     }
 
-    @Step()
+    @Step
     public ConnectorDetails deleteConnector() {
         openDotMenu();
-        clickDeleteButton();
-        clickConfirmButton();
+        clickDeleteBtn();
+        clickConfirmBtn();
         return this;
+    }
+
+    @Step
+    public boolean isConnectorHeaderVisible(String connectorName) {
+        return isVisible($x(String.format(connectorHeaderLocator,connectorName)));
+    }
+
+    @Step
+    public boolean isAlertWithMessageVisible(AlertHeader header, String message){
+      return isAlertVisible(header, message);
     }
 }

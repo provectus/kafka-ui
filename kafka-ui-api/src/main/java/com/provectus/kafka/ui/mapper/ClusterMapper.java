@@ -23,9 +23,10 @@ import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
-import com.provectus.kafka.ui.model.JmxBrokerMetrics;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
+import com.provectus.kafka.ui.model.MetricDTO;
+import com.provectus.kafka.ui.model.Metrics;
 import com.provectus.kafka.ui.model.PartitionDTO;
 import com.provectus.kafka.ui.model.ReplicaDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
@@ -33,7 +34,7 @@ import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
-import com.provectus.kafka.ui.util.JmxClusterUtil;
+import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -53,15 +54,27 @@ public interface ClusterMapper {
   @Mapping(target = "properties", source = "properties", qualifiedByName = "setProperties")
   @Mapping(target = "schemaRegistry", source = ".", qualifiedByName = "setSchemaRegistry")
   @Mapping(target = "ksqldbServer", source = ".", qualifiedByName = "setKsqldbServer")
+  @Mapping(target = "metricsConfig", source = "metrics")
   KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
 
   ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
 
-  default ClusterMetricsDTO toClusterMetrics(JmxClusterUtil.JmxMetrics jmxMetrics) {
-    return new ClusterMetricsDTO().items(jmxMetrics.getMetrics());
+  default ClusterMetricsDTO toClusterMetrics(Metrics metrics) {
+    return new ClusterMetricsDTO()
+        .items(metrics.getSummarizedMetrics().map(this::convert).collect(Collectors.toList()));
   }
 
-  BrokerMetricsDTO toBrokerMetrics(JmxBrokerMetrics metrics);
+  private MetricDTO convert(RawMetric rawMetric) {
+    return new MetricDTO()
+        .name(rawMetric.name())
+        .labels(rawMetric.labels())
+        .value(rawMetric.value());
+  }
+
+  default BrokerMetricsDTO toBrokerMetrics(List<RawMetric> metrics) {
+    return new BrokerMetricsDTO()
+        .metrics(metrics.stream().map(this::convert).collect(Collectors.toList()));
+  }
 
   @Mapping(target = "isSensitive", source = "sensitive")
   @Mapping(target = "isReadOnly", source = "readOnly")
@@ -105,6 +118,13 @@ public interface ClusterMapper {
     if (clusterProperties.getSchemaRegistryAuth() != null) {
       internalSchemaRegistry.username(clusterProperties.getSchemaRegistryAuth().getUsername());
       internalSchemaRegistry.password(clusterProperties.getSchemaRegistryAuth().getPassword());
+    }
+
+    if (clusterProperties.getSchemaRegistrySsl() != null) {
+      internalSchemaRegistry.keystoreLocation(clusterProperties.getSchemaRegistrySsl().getKeystoreLocation());
+      internalSchemaRegistry.keystorePassword(clusterProperties.getSchemaRegistrySsl().getKeystorePassword());
+      internalSchemaRegistry.truststoreLocation(clusterProperties.getSchemaRegistrySsl().getTruststoreLocation());
+      internalSchemaRegistry.truststorePassword(clusterProperties.getSchemaRegistrySsl().getTruststorePassword());
     }
 
     return internalSchemaRegistry.build();

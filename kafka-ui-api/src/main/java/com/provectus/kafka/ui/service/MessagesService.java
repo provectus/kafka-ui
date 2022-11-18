@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
+import com.provectus.kafka.ui.emitter.MessageFilterStats;
 import com.provectus.kafka.ui.emitter.MessageFilters;
 import com.provectus.kafka.ui.emitter.TailingEmitter;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
@@ -14,12 +15,9 @@ import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
-import com.provectus.kafka.ui.util.OffsetsSeekBackward;
-import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import com.provectus.kafka.ui.util.ResultSizeLimiter;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -68,8 +66,8 @@ public class MessagesService {
   private Mono<Map<TopicPartition, Long>> offsetsForDeletion(KafkaCluster cluster, String topicName,
                                                              List<Integer> partitionsToInclude) {
     return adminClientService.get(cluster).flatMap(ac ->
-        ac.listOffsets(topicName, OffsetSpec.earliest())
-            .zipWith(ac.listOffsets(topicName, OffsetSpec.latest()),
+        ac.listTopicOffsets(topicName, OffsetSpec.earliest(), true)
+            .zipWith(ac.listTopicOffsets(topicName, OffsetSpec.latest(), true),
                 (start, end) ->
                     end.entrySet().stream()
                         .filter(e -> partitionsToInclude.isEmpty()
@@ -129,73 +127,85 @@ public class MessagesService {
   }
 
   public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic,
-                                                 ConsumerPosition consumerPosition, String query,
+                                                 ConsumerPosition consumerPosition,
+                                                 @Nullable String query,
                                                  MessageFilterTypeDTO filterQueryType,
                                                  int limit,
+                                                 SeekDirectionDTO seekDirection,
                                                  @Nullable String keySerde,
                                                  @Nullable String valueSerde) {
     return withExistingTopic(cluster, topic)
         .flux()
         .flatMap(td -> loadMessagesImpl(cluster, topic, consumerPosition, query,
-            filterQueryType, limit, keySerde, valueSerde));
+            filterQueryType, limit, seekDirection, keySerde, valueSerde));
   }
 
   private Flux<TopicMessageEventDTO> loadMessagesImpl(KafkaCluster cluster,
                                                       String topic,
                                                       ConsumerPosition consumerPosition,
-                                                      String query,
+                                                      @Nullable String query,
                                                       MessageFilterTypeDTO filterQueryType,
                                                       int limit,
+                                                      SeekDirectionDTO seekDirection,
                                                       @Nullable String keySerde,
                                                       @Nullable String valueSerde) {
 
     java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
     ConsumerRecordDeserializer recordDeserializer =
         deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde);
-    if (consumerPosition.getSeekDirection().equals(SeekDirectionDTO.FORWARD)) {
+    if (seekDirection.equals(SeekDirectionDTO.FORWARD)) {
       emitter = new ForwardRecordEmitter(
           () -> consumerGroupService.createConsumer(cluster),
-          new OffsetsSeekForward(topic, consumerPosition),
+          consumerPosition,
           recordDeserializer
       );
-    } else if (consumerPosition.getSeekDirection().equals(SeekDirectionDTO.BACKWARD)) {
+    } else if (seekDirection.equals(SeekDirectionDTO.BACKWARD)) {
       emitter = new BackwardRecordEmitter(
-          (Map<String, Object> props) -> consumerGroupService.createConsumer(cluster, props),
-          new OffsetsSeekBackward(topic, consumerPosition, limit),
+          () -> consumerGroupService.createConsumer(cluster),
+          consumerPosition,
+          limit,
           recordDeserializer
       );
     } else {
       emitter = new TailingEmitter(
-          recordDeserializer,
           () -> consumerGroupService.createConsumer(cluster),
-          new OffsetsSeekForward(topic, consumerPosition)
+          consumerPosition,
+          recordDeserializer
       );
     }
+    MessageFilterStats filterStats = new MessageFilterStats();
     return Flux.create(emitter)
-        .filter(getMsgFilter(query, filterQueryType))
-        .takeWhile(createTakeWhilePredicate(consumerPosition, limit))
+        .contextWrite(ctx -> ctx.put(MessageFilterStats.class, filterStats))
+        .filter(getMsgFilter(query, filterQueryType, filterStats))
+        .takeWhile(createTakeWhilePredicate(seekDirection, limit))
         .subscribeOn(Schedulers.boundedElastic())
         .share();
   }
 
   private Predicate<TopicMessageEventDTO> createTakeWhilePredicate(
-      ConsumerPosition consumerPosition, int limit) {
-    return consumerPosition.getSeekDirection() == SeekDirectionDTO.TAILING
+      SeekDirectionDTO seekDirection, int limit) {
+    return seekDirection == SeekDirectionDTO.TAILING
         ? evt -> true // no limit for tailing
         : new ResultSizeLimiter(limit);
   }
 
-  private Predicate<TopicMessageEventDTO> getMsgFilter(String query, MessageFilterTypeDTO filterQueryType) {
+  private Predicate<TopicMessageEventDTO> getMsgFilter(String query,
+                                                       MessageFilterTypeDTO filterQueryType,
+                                                       MessageFilterStats filterStats) {
     if (StringUtils.isEmpty(query)) {
       return evt -> true;
     }
-    filterQueryType = Optional.ofNullable(filterQueryType)
-        .orElse(MessageFilterTypeDTO.STRING_CONTAINS);
     var messageFilter = MessageFilters.createMsgFilter(query, filterQueryType);
     return evt -> {
       // we only apply filter for message events
       if (evt.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE) {
-        return messageFilter.test(evt.getMessage());
+        try {
+          return messageFilter.test(evt.getMessage());
+        } catch (Exception e) {
+          filterStats.incrementApplyErrors();
+          log.trace("Error applying filter '{}' for message {}", query, evt.getMessage());
+          return false;
+        }
       }
       return true;
     };

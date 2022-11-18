@@ -22,6 +22,9 @@ const Search: React.FC<SearchProps> = ({
       onChange(e.target.value);
     } else {
       searchParams.set('q', e.target.value);
+      if (searchParams.get('page')) {
+        searchParams.set('page', '1');
+      }
       setSearchParams(searchParams);
     }
   }, 500);

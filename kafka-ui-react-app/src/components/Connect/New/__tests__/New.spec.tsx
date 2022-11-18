@@ -31,16 +31,14 @@ jest.mock('lib/hooks/api/kafkaConnect', () => ({
 describe('New', () => {
   const clusterName = 'my-cluster';
   const simulateFormSubmit = async () => {
-    await act(() => {
-      userEvent.type(
-        screen.getByPlaceholderText('Connector Name'),
-        'my-connector'
-      );
-      userEvent.type(
-        screen.getByPlaceholderText('json'),
-        '{"class":"MyClass"}'.replace(/[{[]/g, '$&$&')
-      );
-    });
+    await userEvent.type(
+      screen.getByPlaceholderText('Connector Name'),
+      'my-connector'
+    );
+    await userEvent.type(
+      screen.getByPlaceholderText('json'),
+      '{"class":"MyClass"}'.replace(/[{[]/g, '$&$&')
+    );
 
     expect(screen.getByPlaceholderText('json')).toHaveValue(
       '{"class":"MyClass"}'

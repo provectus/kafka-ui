@@ -13,7 +13,6 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import { act } from '@testing-library/react';
 
 const clusterName = 'cluster1';
 const { groupId } = consumerGroupPayload;
@@ -71,7 +70,7 @@ describe('Details component', () => {
     });
 
     it('handles [Reset offset] click', async () => {
-      userEvent.click(screen.getByText('Reset offset'));
+      await userEvent.click(screen.getByText('Reset offset'));
       expect(mockNavigate).toHaveBeenLastCalledWith(
         clusterConsumerGroupResetRelativePath
       );
@@ -86,19 +85,19 @@ describe('Details component', () => {
 
     it('shows confirmation modal on consumer group delete', async () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-      userEvent.click(screen.getByText('Delete consumer group'));
+      await userEvent.click(screen.getByText('Delete consumer group'));
       await waitFor(() =>
         expect(screen.queryByRole('dialog')).toBeInTheDocument()
       );
-      userEvent.click(screen.getByText('Cancel'));
+      await userEvent.click(screen.getByText('Cancel'));
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('handles [Delete consumer group] click', async () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-      await act(() => {
-        userEvent.click(screen.getByText('Delete consumer group'));
-      });
+
+      await userEvent.click(screen.getByText('Delete consumer group'));
+
       expect(screen.queryByRole('dialog')).toBeInTheDocument();
       const deleteConsumerGroupMock = fetchMock.deleteOnce(
         `/api/clusters/${clusterName}/consumer-groups/${groupId}`,

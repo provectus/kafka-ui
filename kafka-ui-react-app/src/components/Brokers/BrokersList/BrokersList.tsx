@@ -42,10 +42,19 @@ const BrokersList: React.FC = () => {
       };
     });
   }, [diskUsage, brokers]);
-
   const columns = React.useMemo<ColumnDef<typeof rows>[]>(
     () => [
-      { header: 'Broker ID', accessorKey: 'brokerId', cell: LinkCell },
+      {
+        header: 'Broker ID',
+        accessorKey: 'brokerId',
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ getValue }) => (
+          <LinkCell
+            value={`${getValue<string | number>()}`}
+            to={encodeURIComponent(`${getValue<string | number>()}`)}
+          />
+        ),
+      },
       { header: 'Segment Size', accessorKey: 'size', cell: SizeCell },
       { header: 'Segment Count', accessorKey: 'count' },
       { header: 'Port', accessorKey: 'port' },
@@ -83,6 +92,7 @@ const BrokersList: React.FC = () => {
               onlinePartitionCount
             )}
             <Metrics.LightText>
+              {' '}
               of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
             </Metrics.LightText>
           </Metrics.Indicator>

@@ -27,13 +27,11 @@ public class ClustersProperties {
     String bootstrapServers;
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
+    WebClientSsl schemaRegistrySsl;
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
     List<ConnectCluster> kafkaConnect;
-    int jmxPort;
-    boolean jmxSsl;
-    String jmxUsername;
-    String jmxPassword;
+    MetricsConfigData metrics;
     Properties properties;
     boolean readOnly = false;
     boolean disableLogDirsCollection = false;
@@ -43,17 +41,38 @@ public class ClustersProperties {
   }
 
   @Data
+  public static class MetricsConfigData {
+    String type;
+    Integer port;
+    boolean ssl;
+    String username;
+    String password;
+  }
+
+  @Data
   public static class ConnectCluster {
     String name;
     String address;
     String userName;
     String password;
+    String keystoreLocation;
+    String keystorePassword;
+    String truststoreLocation;
+    String truststorePassword;
   }
 
   @Data
   public static class SchemaRegistryAuth {
     String username;
     String password;
+  }
+
+  @Data
+  public static class WebClientSsl {
+    String keystoreLocation;
+    String keystorePassword;
+    String truststoreLocation;
+    String truststorePassword;
   }
 
   @Data

@@ -129,9 +129,6 @@ public class SendAndReadTests extends AbstractIntegrationTest {
   @Autowired
   private ClustersStorage clustersStorage;
 
-  @Autowired
-  private ClustersMetricsScheduler clustersMetricsScheduler;
-
   @BeforeEach
   void init() {
     targetCluster = clustersStorage.getClusterByName(LOCAL).get();
@@ -505,12 +502,13 @@ public class SendAndReadTests extends AbstractIntegrationTest {
                 topic,
                 new ConsumerPosition(
                     SeekTypeDTO.BEGINNING,
-                    Map.of(new TopicPartition(topic, 0), 0L),
-                    SeekDirectionDTO.FORWARD
+                    topic,
+                    Map.of(new TopicPartition(topic, 0), 0L)
                 ),
                 null,
                 null,
                 1,
+                SeekDirectionDTO.FORWARD,
                 msgToSend.getKeySerde().get(),
                 msgToSend.getValueSerde().get()
             ).filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))

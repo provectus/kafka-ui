@@ -1,6 +1,9 @@
 import React from 'react';
 import { TopicMessage, TopicMessageTimestampTypeEnum } from 'generated-sources';
-import Message, { Props } from 'components/Topics/Topic/Messages/Message';
+import Message, {
+  PreviewFilter,
+  Props,
+} from 'components/Topics/Topic/Messages/Message';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
@@ -30,6 +33,9 @@ describe('Message component', () => {
     headers: { header: 'test' },
   };
 
+  const mockKeyFilters: PreviewFilter[] = [];
+  const mockContentFilters: PreviewFilter[] = [];
+
   const renderComponent = (
     props: Partial<Props> = {
       message: mockMessage,
@@ -38,7 +44,11 @@ describe('Message component', () => {
     return render(
       <table>
         <tbody>
-          <Message message={props.message || mockMessage} />
+          <Message
+            message={props.message || mockMessage}
+            keyFilters={mockKeyFilters}
+            contentFilters={mockContentFilters}
+          />
         </tbody>
       </table>
     );
@@ -66,24 +76,24 @@ describe('Message component', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should check the dropdown being visible during hover', () => {
+  it('should check the dropdown being visible during hover', async () => {
     renderComponent();
     const text = 'Save as a file';
     const trElement = screen.getByRole('row');
     expect(screen.queryByText(text)).not.toBeInTheDocument();
 
-    userEvent.hover(trElement);
+    await userEvent.hover(trElement);
     expect(screen.getByText(text)).toBeInTheDocument();
 
-    userEvent.unhover(trElement);
+    await userEvent.unhover(trElement);
     expect(screen.queryByText(text)).not.toBeInTheDocument();
   });
 
-  it('should check open Message Content functionality', () => {
+  it('should check open Message Content functionality', async () => {
     renderComponent();
     const messageToggleIcon = screen.getByRole('button', { hidden: true });
     expect(screen.queryByText(messageContentText)).not.toBeInTheDocument();
-    userEvent.click(messageToggleIcon);
+    await userEvent.click(messageToggleIcon);
     expect(screen.getByText(messageContentText)).toBeInTheDocument();
   });
 });

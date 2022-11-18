@@ -24,11 +24,11 @@ describe('Search', () => {
       setSearchParamsMock,
     ]);
   });
-  it('calls handleSearch on input', () => {
+  it('calls handleSearch on input', async () => {
     render(<Search placeholder={placeholder} />);
     const input = screen.getByPlaceholderText(placeholder);
-    userEvent.click(input);
-    userEvent.keyboard('value');
+    await userEvent.click(input);
+    await userEvent.keyboard('value');
     expect(setSearchParamsMock).toHaveBeenCalledTimes(5);
   });
 

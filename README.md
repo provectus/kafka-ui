@@ -92,7 +92,9 @@ kafka:
         username: username
         password: password
 #     schemaNameTemplate: "%s-value"
-      jmxPort: 9997
+      metrics:
+        port: 9997
+        type: JMX
     -
 ```
 
@@ -102,7 +104,8 @@ kafka:
 * `schemaRegistryAuth.username`: schemaRegistry's basic authentication username
 * `schemaRegistryAuth.password`: schemaRegistry's basic authentication password
 * `schemaNameTemplate`: how keys are saved to schemaRegistry
-* `jmxPort`: open JMX port of a broker
+* `metrics.port`: open JMX port of a broker
+* `metrics.type`: Type of metrics, either JMX or PROMETHEUS. Defaulted to JMX.
 * `readOnly`: enable read only mode
 
 Configure as many clusters as you need by adding their configs below separated with `-`.
@@ -180,16 +183,25 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRY`   	|SchemaRegistry's address
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_USERNAME`   	|SchemaRegistry's basic authentication username
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_PASSWORD`   	|SchemaRegistry's basic authentication password
+|`KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_KEYSTORELOCATION`   	|Path to the JKS keystore to communicate to SchemaRegistry
+|`KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_KEYSTOREPASSWORD`   	|Password of the JKS keystore for SchemaRegistry
+|`KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_TRUSTSTORELOCATION`   	|Path to the JKS truststore to communicate to SchemaRegistry
+|`KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_TRUSTSTOREPASSWORD`   	|Password of the JKS truststore for SchemaRegistry
 |`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE` |How keys are saved to schemaRegistry
-|`KAFKA_CLUSTERS_0_JMXPORT`        	|Open JMX port of a broker
+|`KAFKA_CLUSTERS_0_METRICS_PORT`        	 |Open metrics port of a broker
+|`KAFKA_CLUSTERS_0_METRICS_TYPE`        	 |Type of metrics retriever to use. Valid values are JMX (default) or PROMETHEUS. If Prometheus, then metrics are read from prometheus-jmx-exporter instead of jmx
 |`KAFKA_CLUSTERS_0_READONLY`        	|Enable read-only mode. Default: false
 |`KAFKA_CLUSTERS_0_DISABLELOGDIRSCOLLECTION`        	|Disable collecting segments information. It should be true for confluent cloud. Default: false
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME` |Given name for the Kafka Connect cluster
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS` |Address of the Kafka Connect service endpoint
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_USERNAME`| Kafka Connect cluster's basic authentication username
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_PASSWORD`| Kafka Connect cluster's basic authentication password
-|`KAFKA_CLUSTERS_0_JMXSSL` |Enable SSL for JMX? `true` or `false`. For advanced setup, see `kafka-ui-jmx-secured.yml`
-|`KAFKA_CLUSTERS_0_JMXUSERNAME` |Username for JMX authentication
-|`KAFKA_CLUSTERS_0_JMXPASSWORD` |Password for JMX authentication
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_KEYSTORELOCATION`| Path to the JKS keystore to communicate to Kafka Connect
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_KEYSTOREPASSWORD`| Password of the JKS keystore for Kafka Connect
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_TRUSTSTORELOCATION`| Path to the JKS truststore to communicate to Kafka Connect
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_TRUSTSTOREPASSWORD`| Password of the JKS truststore for Kafka Connect
+|`KAFKA_CLUSTERS_0_METRICS_SSL`          |Enable SSL for Metrics? `true` or `false`. For advanced setup, see `kafka-ui-jmx-secured.yml`
+|`KAFKA_CLUSTERS_0_METRICS_USERNAME` |Username for Metrics authentication
+|`KAFKA_CLUSTERS_0_METRICS_PASSWORD` |Password for Metrics authentication
 |`TOPIC_RECREATE_DELAY_SECONDS` |Time delay between topic deletion and topic creation attempts for topic recreate functionality. Default: 1
 |`TOPIC_RECREATE_MAXRETRIES`  |Number of attempts of topic creation after topic deletion for topic recreate functionality. Default: 15
