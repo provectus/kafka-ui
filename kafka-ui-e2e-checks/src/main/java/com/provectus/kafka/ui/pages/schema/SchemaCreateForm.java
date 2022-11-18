@@ -24,7 +24,7 @@ public class SchemaCreateForm extends BasePage {
     protected SelenideElement newSchemaTextArea = $x("//div[@id='newSchema']");
     protected SelenideElement schemaVersionDdl = $$x("//ul[@role='listbox']/li[text()='Version 2']").first();
     protected List<SelenideElement> visibleMarkers = $$x("//div[@class='ace_scroller']//div[contains(@class,'codeMarker')]");
-    protected List<SelenideElement> elementsDdl = $$x("//ul[@role='listbox']/ul/li");
+    protected List<SelenideElement> elementsCompareVersionDdl = $$x("//ul[@role='listbox']/ul/li");
     protected String elementLocatorDdl = "//li[@value='%s']";
 
     @Step
@@ -69,7 +69,7 @@ public class SchemaCreateForm extends BasePage {
     @Step
     public int getCountOfElementsFromDd(){
       schemaVersionDdl.shouldBe(Condition.enabled).click();
-      int elementsSize = elementsDdl.size();
+      int elementsSize = elementsCompareVersionDdl.size();
       refresh();
       return elementsSize;
     }
@@ -82,7 +82,7 @@ public class SchemaCreateForm extends BasePage {
     }
 
     @Step
-    public int getAllMarkedLines(){
+    public int getMarkedLinesNumber(){
       return visibleMarkers.size();
     }
 

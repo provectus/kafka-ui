@@ -58,7 +58,6 @@ public class SchemaDetails extends BasePage {
       return this;
     }
 
-
     @Step
     public SchemaDetails removeSchema() {
         clickByJavaScript(dotMenuBtn);

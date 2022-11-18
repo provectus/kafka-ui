@@ -126,7 +126,7 @@ public class SchemasTests extends BaseTest {
       Assertions.assertEquals(latestVersion,countOfElementsDd,"Compare versions is failed");
       schemaCreateForm
               .selectVersionFromLeftDropDown(1);
-      Assertions.assertEquals(53, schemaCreateForm.getAllMarkedLines(), "getAllMarkedLines()");
+      Assertions.assertEquals(53, schemaCreateForm.getMarkedLinesNumber(), "getAllMarkedLines()");
 
     }
 
