@@ -9,7 +9,6 @@ import {
   useConnector,
   useUpdateConnectorState,
 } from 'lib/hooks/api/kafkaConnect';
-import { usePermission } from 'lib/hooks/usePermission';
 import { connector } from 'lib/fixtures/kafkaConnect';
 import set from 'lodash/set';
 
@@ -26,10 +25,6 @@ jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useConnector: jest.fn(),
   useDeleteConnector: jest.fn(),
   useUpdateConnectorState: jest.fn(),
-}));
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
 }));
 
 const expectActionButtonsExists = () => {
@@ -119,7 +114,6 @@ describe('Actions', () => {
         (useConnector as jest.Mock).mockImplementation(() => ({
           data: set({ ...connector }, 'status.state', ConnectorState.RUNNING),
         }));
-        (usePermission as jest.Mock).mockImplementation(() => true);
       });
 
       it('opens confirmation modal when delete button clicked', async () => {

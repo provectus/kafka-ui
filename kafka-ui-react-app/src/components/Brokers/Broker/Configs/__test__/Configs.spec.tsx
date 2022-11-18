@@ -6,7 +6,6 @@ import { useBrokerConfig } from 'lib/hooks/api/brokers';
 import { brokerConfigPayload } from 'lib/fixtures/brokers';
 import Configs from 'components/Brokers/Broker/Configs/Configs';
 import userEvent from '@testing-library/user-event';
-import { usePermission } from 'lib/hooks/usePermission';
 
 const clusterName = 'Cluster_Name';
 const brokerId = 'Broker_Id';
@@ -14,10 +13,6 @@ const brokerId = 'Broker_Id';
 jest.mock('lib/hooks/api/brokers', () => ({
   useBrokerConfig: jest.fn(),
   useUpdateBrokerConfigByName: jest.fn(),
-}));
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
 }));
 
 describe('Configs', () => {
@@ -35,7 +30,6 @@ describe('Configs', () => {
     (useBrokerConfig as jest.Mock).mockImplementation(() => ({
       data: brokerConfigPayload,
     }));
-    (usePermission as jest.Mock).mockImplementation(() => true);
     renderComponent();
   });
 

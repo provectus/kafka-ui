@@ -6,11 +6,6 @@ import GlobalSchemaSelector from 'components/Schemas/List/GlobalSchemaSelector/G
 import userEvent from '@testing-library/user-event';
 import { clusterSchemasPath } from 'lib/paths';
 import fetchMock from 'fetch-mock';
-import { usePermission } from 'lib/hooks/usePermission';
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
-}));
 
 const clusterName = 'testClusterName';
 
@@ -46,7 +41,6 @@ describe('GlobalSchemaSelector', () => {
       `api/clusters/${clusterName}/schemas/compatibility`,
       { compatibility: CompatibilityLevelCompatibilityEnum.FULL }
     );
-    (usePermission as jest.Mock).mockImplementation(() => true);
     await act(() => {
       renderComponent();
     });

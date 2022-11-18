@@ -20,7 +20,6 @@ import {
   useRecreateTopic,
   useTopicDetails,
 } from 'lib/hooks/api/topics';
-import { usePermission } from 'lib/hooks/usePermission';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -31,10 +30,6 @@ jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
   useDeleteTopic: jest.fn(),
   useRecreateTopic: jest.fn(),
-}));
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
 }));
 
 const mockUnwrap = jest.fn();
@@ -103,7 +98,6 @@ describe('Details', () => {
     (useRecreateTopic as jest.Mock).mockImplementation(() => ({
       mutateAsync: mockRecreate,
     }));
-    (usePermission as jest.Mock).mockImplementation(() => true);
   });
   describe('Action Bar', () => {
     describe('when it has readonly flag', () => {

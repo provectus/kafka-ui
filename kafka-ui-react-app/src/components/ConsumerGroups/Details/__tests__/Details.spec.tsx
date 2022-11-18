@@ -13,7 +13,6 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import { usePermission } from 'lib/hooks/usePermission';
 
 const clusterName = 'cluster1';
 const { groupId } = consumerGroupPayload;
@@ -22,10 +21,6 @@ const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
-}));
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
 }));
 
 const renderComponent = () => {
@@ -59,7 +54,6 @@ describe('Details component', () => {
         `/api/clusters/${clusterName}/consumer-groups/${groupId}`,
         consumerGroupPayload
       );
-      (usePermission as jest.Mock).mockImplementation(() => true);
       renderComponent();
       await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
       await waitFor(() => expect(fetchConsumerGroupMock.called()).toBeTruthy());

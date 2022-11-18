@@ -5,7 +5,6 @@ import Statistics from 'components/Topics/Topic/Statistics/Statistics';
 import { clusterTopicStatisticsPath } from 'lib/paths';
 import { useTopicAnalysis, useAnalyzeTopic } from 'lib/hooks/api/topics';
 import userEvent from '@testing-library/user-event';
-import { usePermission } from 'lib/hooks/usePermission';
 
 const clusterName = 'local';
 const topicName = 'topic';
@@ -14,10 +13,6 @@ jest.mock('lib/hooks/api/topics', () => ({
   ...jest.requireActual('lib/hooks/api/topics'),
   useTopicAnalysis: jest.fn(),
   useAnalyzeTopic: jest.fn(),
-}));
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
 }));
 
 describe('Statistics', () => {
@@ -45,7 +40,6 @@ describe('Statistics', () => {
     (useAnalyzeTopic as jest.Mock).mockImplementation(() => ({
       mutateAsync: startMock,
     }));
-    (usePermission as jest.Mock).mockImplementation(() => true);
     renderComponent();
     const btn = screen.getByRole('button', { name: 'Start Analysis' });
     expect(btn).toBeInTheDocument();

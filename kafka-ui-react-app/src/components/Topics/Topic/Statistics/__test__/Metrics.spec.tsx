@@ -10,7 +10,6 @@ import {
 } from 'lib/hooks/api/topics';
 import { topicStatsPayload } from 'lib/fixtures/topics';
 import userEvent from '@testing-library/user-event';
-import { usePermission } from 'lib/hooks/usePermission';
 
 const clusterName = 'local';
 const topicName = 'topic';
@@ -20,10 +19,6 @@ jest.mock('lib/hooks/api/topics', () => ({
   useTopicAnalysis: jest.fn(),
   useCancelTopicAnalysis: jest.fn(),
   useAnalyzeTopic: jest.fn(),
-}));
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
 }));
 
 describe('Metrics', () => {
@@ -53,7 +48,6 @@ describe('Metrics', () => {
           result: undefined,
         },
       }));
-      (usePermission as jest.Mock).mockImplementation(() => true);
       renderComponent();
     });
 
@@ -84,7 +78,6 @@ describe('Metrics', () => {
       (useAnalyzeTopic as jest.Mock).mockImplementation(() => ({
         mutateAsync: restartMock,
       }));
-      (usePermission as jest.Mock).mockImplementation(() => true);
       renderComponent();
     });
     it('renders metrics', async () => {

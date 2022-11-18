@@ -9,7 +9,6 @@ import userEvent from '@testing-library/user-event';
 import { clusterTopicPath } from 'lib/paths';
 import { Replica } from 'components/Topics/Topic/Overview/Overview.styled';
 import { useTopicDetails } from 'lib/hooks/api/topics';
-import { usePermission } from 'lib/hooks/usePermission';
 import {
   externalTopicPayload,
   internalTopicPayload,
@@ -34,10 +33,6 @@ const useDispatchMock = () => jest.fn(() => ({ unwrap: uwrapMock }));
 jest.mock('lib/hooks/redux', () => ({
   ...jest.requireActual('lib/hooks/redux'),
   useAppDispatch: useDispatchMock,
-}));
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
 }));
 
 describe('Overview', () => {
@@ -115,7 +110,6 @@ describe('Overview', () => {
 
   describe('when Clear Messages is clicked', () => {
     it('should when Clear Messages is clicked', async () => {
-      (usePermission as jest.Mock).mockImplementation(() => true);
       renderComponent({
         ...externalTopicPayload,
         cleanUpPolicy: CleanUpPolicy.DELETE,

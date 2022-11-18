@@ -12,7 +12,6 @@ import {
 } from 'lib/hooks/api/topics';
 import TopicTable from 'components/Topics/List/TopicTable';
 import { clusterTopicsPath } from 'lib/paths';
-import { usePermission } from 'lib/hooks/usePermission';
 
 const clusterName = 'test-cluster';
 const mockUnwrap = jest.fn();
@@ -23,10 +22,6 @@ const getButtonByName = (name: string) => screen.getByRole('button', { name });
 jest.mock('lib/hooks/redux', () => ({
   ...jest.requireActual('lib/hooks/redux'),
   useAppDispatch: useDispatchMock,
-}));
-
-jest.mock('lib/hooks/usePermission', () => ({
-  usePermission: jest.fn(),
 }));
 
 jest.mock('lib/hooks/api/topics', () => ({
@@ -239,9 +234,6 @@ describe('TopicTable Components', () => {
         expect(screen.getByRole('menu')).toBeInTheDocument();
       });
       describe('and clear messages action', () => {
-        beforeEach(() => {
-          (usePermission as jest.Mock).mockImplementation(() => true);
-        });
         it('is visible for topic with CleanUpPolicy.DELETE', async () => {
           renderComponent({
             topics: [
@@ -292,9 +284,6 @@ describe('TopicTable Components', () => {
       });
 
       describe('and remove topic action', () => {
-        beforeEach(() => {
-          (usePermission as jest.Mock).mockImplementation(() => true);
-        });
         it('is visible only when topic deletion allowed for cluster', async () => {
           renderComponent({ topics: [topicsPayload[1]] });
           await expectDropdownExists();

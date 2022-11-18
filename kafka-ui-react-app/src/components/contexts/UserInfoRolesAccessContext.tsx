@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useGetUserInfoMock } from 'lib/hooks/api/roles';
+import { useGetUserInfo } from 'lib/hooks/api/roles';
 import { modifyRolesData, RolesModifiedTypes } from 'lib/permissions';
 
 export interface UserInfoType {
@@ -17,8 +17,7 @@ export const UserInfoRolesAccessContext = React.createContext({
 export const UserInfoRolesAccessProvider: React.FC<
   React.PropsWithChildren<unknown>
 > = ({ children }) => {
-  // const { data } = useGetUserInfo();
-  const { data } = useGetUserInfoMock();
+  const { data } = useGetUserInfo();
 
   const contextValue = useMemo(() => {
     const username = data?.userInfo?.username ? data?.userInfo?.username : '';
