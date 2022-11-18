@@ -1729,6 +1729,94 @@ paths:
                 $ref: '#/components/schemas/PartitionsIncreaseResponse'
         404:
           description: Not found
+
+  /api/clusters/{clusterName}/partitionsreaassignments/generate:
+    post:
+      tags:
+        - Topics
+      operationId: generatePartitionAssignment
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeneratePartitionsReassignmentCommand'
+      responses:
+          200:
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ReassignPartitionsCommand'
+
+  /api/clusters/{clusterName}/partitionsreaassignments/current:
+    post:
+      tags:
+        - Topics
+      operationId: getCurrentPartitionAssignment
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeneratePartitionsReassignmentCommand'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReassignPartitionsCommand'
+
+  /api/clusters/{clusterName}/partitionsreaassignments/execute:
+    post:
+      tags:
+        - Topics
+      operationId: executePartitionAssignment
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReassignPartitionsCommand'
+      responses:
+        200:
+          description: OK
+
+  /api/clusters/{clusterName}/partitionsreaassignments/inprogress:
+    get:
+      tags:
+        - Topics
+      operationId: getInProgressAssignments
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+              type: string
+      responses:
+       200:
+         description: OK
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/InProgressReassignment'
+
   /api/info/timestampformat:
     get:
       tags:
@@ -3149,3 +3237,79 @@ components:
         - COMPACT
         - COMPACT_DELETE
         - UNKNOWN
+
+    ReassignPartitionsCommand:
+      type: object
+      properties:
+        version:
+          type: integer
+          format: int32
+        partitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PartitionReassignment"
+
+    PartitionReassignment:
+      type: object
+      properties:
+        topic:
+          type: string
+        partition:
+          type: integer
+        replicas:
+          type: array
+          items:
+            type: integer
+        log_dirs:
+          type: array
+          items:
+            type: string
+
+    GeneratePartitionsReassignmentCommand:
+      type: object
+      properties:
+        version:
+          type: integer
+          format: int32
+        broker_ids:
+          type: array
+          items:
+           type: integer
+           format: int32
+        topics:
+          type: array
+          items:
+            type: object
+            properties:
+              topic:
+                type: string
+
+    InProgressReassignment:
+      type: object
+      properties:
+        partitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/InProgressPartitionReassignment"
+
+    InProgressPartitionReassignment:
+      type: object
+      properties:
+        topic:
+          type: string
+        partition:
+          type: integer
+          format: int32
+        currentReplicas:
+          type: array
+          items:
+            type: integer
+            format: int32
+        addingReplicas:
+          items:
+            type: integer
+            format: int32
+        removingReplicas:
+          items:
+            type: integer
+            format: int32

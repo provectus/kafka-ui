@@ -4,10 +4,13 @@ import static java.util.stream.Collectors.toList;
 
 import com.provectus.kafka.ui.api.TopicsApi;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
+import com.provectus.kafka.ui.model.GeneratePartitionsReassignmentCommandDTO;
+import com.provectus.kafka.ui.model.InProgressReassignmentDTO;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.PartitionsIncreaseDTO;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponseDTO;
+import com.provectus.kafka.ui.model.ReassignPartitionsCommandDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
 import com.provectus.kafka.ui.model.SortOrderDTO;
@@ -21,8 +24,10 @@ import com.provectus.kafka.ui.model.TopicUpdateDTO;
 import com.provectus.kafka.ui.model.TopicsResponseDTO;
 import com.provectus.kafka.ui.service.TopicsService;
 import com.provectus.kafka.ui.service.analyze.TopicAnalysisService;
+import com.provectus.kafka.ui.service.reassign.ReassignmentService;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +48,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
   private final TopicsService topicsService;
   private final TopicAnalysisService topicAnalysisService;
+  private final ReassignmentService reassignmentService;
   private final ClusterMapper clusterMapper;
 
   @Override
@@ -208,5 +214,45 @@ public class TopicsController extends AbstractController implements TopicsApi {
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build())
     );
+  }
+
+
+  @Override
+  public Mono<ResponseEntity<ReassignPartitionsCommandDTO>> generatePartitionAssignment(String clusterName,
+                                                                                        Mono<GeneratePartitionsReassignmentCommandDTO> generatePartitionsReassignmentCommandDTO,
+                                                                                        ServerWebExchange exchange) {
+    return generatePartitionsReassignmentCommandDTO
+        .flatMap(generateDto ->
+            reassignmentService.generate(
+                getCluster(clusterName),
+                generateDto.getTopics().stream().map(t -> t.getTopic()).collect(Collectors.toSet()),
+                generateDto.getBrokerIds()))
+        .map(ResponseEntity::ok);
+  }
+
+  @Override
+  public Mono<ResponseEntity<ReassignPartitionsCommandDTO>> getCurrentPartitionAssignment(String clusterName,
+                                                                                          Mono<GeneratePartitionsReassignmentCommandDTO> generatePartitionsReassignmentCommandDTO,
+                                                                                          ServerWebExchange exchange) {
+    return generatePartitionsReassignmentCommandDTO
+        .flatMap(generateDto ->
+            reassignmentService.getCurrentAssignment(
+                getCluster(clusterName),
+                generateDto.getTopics().stream().map(t -> t.getTopic()).collect(Collectors.toSet())))
+        .map(ResponseEntity::ok);
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> executePartitionAssignment(String clusterName,
+                                                               Mono<ReassignPartitionsCommandDTO> reassignPartitionsCommandDTO,
+                                                               ServerWebExchange exchange) {
+    return null;
+  }
+
+  @Override
+  public Mono<ResponseEntity<InProgressReassignmentDTO>> getInProgressAssignments(String clusterName,
+                                                                                  ServerWebExchange exchange) {
+    return reassignmentService.getInProgressAssignments(getCluster(clusterName))
+        .map(ResponseEntity::ok);
   }
 }

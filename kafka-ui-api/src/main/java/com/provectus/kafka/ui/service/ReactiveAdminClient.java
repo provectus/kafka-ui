@@ -48,6 +48,7 @@ import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.OffsetSpec;
+import org.apache.kafka.clients.admin.PartitionReassignment;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -355,6 +356,10 @@ public class ReactiveAdminClient implements Closeable {
   public Mono<Void> alterPartitionReassignments(
       Map<TopicPartition, Optional<NewPartitionReassignment>> reassignments) {
     return toMono(client.alterPartitionReassignments(reassignments).all());
+  }
+
+  public Mono<Map<TopicPartition, PartitionReassignment>> listPartitionReassignments() {
+    return toMono(client.listPartitionReassignments().reassignments());
   }
 
   public Mono<Void> createPartitions(Map<String, NewPartitions> newPartitionsMap) {
