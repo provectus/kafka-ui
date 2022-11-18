@@ -15,7 +15,7 @@ import * as S from 'components/App.styled';
 import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
 import { ConfirmContextProvider } from './contexts/ConfirmContext';
 import { GlobalSettingsProvider } from './contexts/GlobalSettingsContext';
-import { RolesAccessProvider } from './contexts/RolesAccessContext';
+import { UserInfoRolesAccessProvider } from './contexts/UserInfoRolesAccessContext';
 import PageContainer from './PageContainer/PageContainer';
 
 const queryClient = new QueryClient({
@@ -37,7 +37,7 @@ const App: React.FC = () => {
       <GlobalSettingsProvider>
         <ThemeProvider theme={theme}>
           <Suspense fallback={<PageLoader />}>
-            <RolesAccessProvider>
+            <UserInfoRolesAccessProvider>
               <ConfirmContextProvider>
                 <GlobalCSS />
                 <S.Layout>
@@ -60,7 +60,7 @@ const App: React.FC = () => {
                 </S.Layout>
                 <ConfirmationModal />
               </ConfirmContextProvider>
-            </RolesAccessProvider>
+            </UserInfoRolesAccessProvider>
           </Suspense>
         </ThemeProvider>
       </GlobalSettingsProvider>

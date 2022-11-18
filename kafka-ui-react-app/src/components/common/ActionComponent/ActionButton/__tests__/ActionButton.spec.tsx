@@ -9,8 +9,8 @@ import {
   clusterName,
   validPermission,
   invalidPermission,
-  roles,
   tooltipIsShowing,
+  userInfoRbacEnabled,
 } from 'components/common/ActionComponent/__tests__/fixtures';
 
 jest.mock('react-router-dom', () => ({
@@ -37,7 +37,7 @@ describe('ActionButton', () => {
         test
       </ActionButton>,
       {
-        roles,
+        userInfo: userInfoRbacEnabled,
       }
     );
     const button = screen.getByRole('button', { name: 'test' });
@@ -52,10 +52,11 @@ describe('ActionButton', () => {
       <ActionButton
         buttonType="primary"
         buttonSize="M"
-        permission={validPermission}
+        permission={invalidPermission}
       >
         test
-      </ActionButton>
+      </ActionButton>,
+      { userInfo: userInfoRbacEnabled }
     );
     const button = screen.getByRole('button');
     expect(button).toBeDisabled();
@@ -69,9 +70,10 @@ describe('ActionButton', () => {
       <ActionButton
         buttonType="primary"
         buttonSize="M"
-        permission={validPermission}
+        permission={invalidPermission}
         message={customTooltipText}
-      />
+      />,
+      { userInfo: userInfoRbacEnabled }
     );
     const button = screen.getByRole('button');
     expect(button).toBeDisabled();
@@ -85,7 +87,9 @@ describe('ActionButton', () => {
         buttonSize="M"
         permission={invalidPermission}
       />,
-      { roles }
+      {
+        userInfo: userInfoRbacEnabled,
+      }
     );
     const button = screen.getByRole('button');
     expect(button).toBeDisabled();

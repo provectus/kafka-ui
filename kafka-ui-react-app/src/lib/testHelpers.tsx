@@ -30,7 +30,7 @@ import {
   defaultGlobalSettingsValue,
   GlobalSettingsContext,
 } from 'components/contexts/GlobalSettingsContext';
-import { RolesAccessContext } from 'components/contexts/RolesAccessContext';
+import { UserInfoRolesAccessContext } from 'components/contexts/UserInfoRolesAccessContext';
 
 import { RolesType, modifyRolesData } from './permissions';
 
@@ -38,7 +38,10 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
   store?: Store<Partial<RootState>, AnyAction>;
   initialEntries?: MemoryRouterProps['initialEntries'];
-  roles?: RolesType;
+  userInfo?: {
+    roles?: RolesType;
+    rbacFlag: boolean;
+  };
 }
 
 interface WithRouteProps {
@@ -75,15 +78,29 @@ export const TestQueryClientProvider: React.FC<PropsWithChildren<unknown>> = ({
   );
 };
 
-export const TestRolesProvider: React.FC<
-  PropsWithChildren<{ data?: RolesType }>
+/**
+ * @description it will create a UserInfo Provider that will actually
+ * disable the rbacFlag , to user if you can pass it as an argument
+ * */
+export const TestUserInfoProvider: React.FC<
+  PropsWithChildren<{ data?: { roles?: RolesType; rbacFlag: boolean } }>
 > = ({ children, data }) => {
-  const roles = useMemo(() => modifyRolesData(data), [data]);
+  const contextValue = useMemo(() => {
+    const roles = modifyRolesData(data?.roles);
+
+    return {
+      username: 'test',
+      rbacFlag: !!(typeof data?.rbacFlag === 'undefined'
+        ? false
+        : data?.rbacFlag),
+      roles,
+    };
+  }, [data]);
 
   return (
-    <RolesAccessContext.Provider value={roles}>
+    <UserInfoRolesAccessContext.Provider value={contextValue}>
       {children}
-    </RolesAccessContext.Provider>
+    </UserInfoRolesAccessContext.Provider>
   );
 };
 
@@ -96,7 +113,7 @@ const customRender = (
       preloadedState,
     }),
     initialEntries,
-    roles,
+    userInfo,
     ...renderOptions
   }: CustomRenderOptions = {}
 ) => {
@@ -107,7 +124,7 @@ const customRender = (
     <TestQueryClientProvider>
       <GlobalSettingsContext.Provider value={defaultGlobalSettingsValue}>
         <ThemeProvider theme={theme}>
-          <TestRolesProvider data={roles}>
+          <TestUserInfoProvider data={userInfo}>
             <ConfirmContextProvider>
               <Provider store={store}>
                 <MemoryRouter initialEntries={initialEntries}>
@@ -118,7 +135,7 @@ const customRender = (
                 </MemoryRouter>
               </Provider>
             </ConfirmContextProvider>
-          </TestRolesProvider>
+          </TestUserInfoProvider>
         </ThemeProvider>
       </GlobalSettingsContext.Provider>
     </TestQueryClientProvider>

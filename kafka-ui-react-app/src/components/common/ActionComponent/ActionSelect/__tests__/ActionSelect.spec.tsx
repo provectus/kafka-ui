@@ -7,8 +7,8 @@ import {
   clusterName,
   validPermission,
   invalidPermission,
-  roles,
   tooltipIsShowing,
+  userInfoRbacEnabled,
 } from 'components/common/ActionComponent/__tests__/fixtures';
 import { useParams } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
@@ -28,7 +28,9 @@ describe('ActionSelect', () => {
   });
 
   it('should render the button with the correct text, for the permission tooltip not to show', async () => {
-    render(<ActionSelect permission={validPermission} />, { roles });
+    render(<ActionSelect permission={validPermission} />, {
+      userInfo: userInfoRbacEnabled,
+    });
     const list = screen.getByRole('listbox');
     expect(list).toBeInTheDocument();
     await userEvent.hover(list);
@@ -36,7 +38,9 @@ describe('ActionSelect', () => {
   });
 
   it('should make the button disable and view the tooltip with the default text', async () => {
-    render(<ActionSelect permission={validPermission} />);
+    render(<ActionSelect permission={invalidPermission} />, {
+      userInfo: userInfoRbacEnabled,
+    });
     const list = screen.getByRole('listbox');
     await tooltipIsShowing(list, tooltipText);
   });
@@ -45,7 +49,13 @@ describe('ActionSelect', () => {
     const customTooltipText = 'something here else';
 
     render(
-      <ActionSelect permission={validPermission} message={customTooltipText} />
+      <ActionSelect
+        permission={invalidPermission}
+        message={customTooltipText}
+      />,
+      {
+        userInfo: userInfoRbacEnabled,
+      }
     );
     const list = screen.getByRole('listbox');
 
@@ -54,7 +64,7 @@ describe('ActionSelect', () => {
 
   it('should render the Select, but disabled cause the given role is not correct', async () => {
     render(<ActionSelect permission={invalidPermission} />, {
-      roles,
+      userInfo: userInfoRbacEnabled,
     });
     const list = screen.getByRole('listbox');
 

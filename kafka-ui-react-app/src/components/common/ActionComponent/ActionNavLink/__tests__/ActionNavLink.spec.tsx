@@ -9,8 +9,8 @@ import {
   clusterName,
   validPermission,
   invalidPermission,
-  roles,
   tooltipIsShowing,
+  userInfoRbacEnabled,
 } from 'components/common/ActionComponent/__tests__/fixtures';
 
 jest.mock('react-router-dom', () => ({
@@ -33,7 +33,7 @@ describe('ActionNavLink', () => {
         test
       </ActionNavLink>,
       {
-        roles,
+        userInfo: userInfoRbacEnabled,
       }
     );
     const link = screen.getByRole('link', { name: 'test' });
@@ -44,9 +44,12 @@ describe('ActionNavLink', () => {
 
   it('should make the button disable and view the tooltip with the default text', async () => {
     render(
-      <ActionNavLink to="/" permission={validPermission}>
+      <ActionNavLink to="/" permission={invalidPermission}>
         test
-      </ActionNavLink>
+      </ActionNavLink>,
+      {
+        userInfo: userInfoRbacEnabled,
+      }
     );
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute('aria-disabled');
@@ -60,9 +63,12 @@ describe('ActionNavLink', () => {
     render(
       <ActionNavLink
         to="/"
-        permission={validPermission}
+        permission={invalidPermission}
         message={customTooltipText}
-      />
+      />,
+      {
+        userInfo: userInfoRbacEnabled,
+      }
     );
     const button = screen.getByRole('link');
     expect(button).toHaveAttribute('aria-disabled');
@@ -76,7 +82,7 @@ describe('ActionNavLink', () => {
         test
       </ActionNavLink>,
       {
-        roles,
+        userInfo: userInfoRbacEnabled,
       }
     );
     const button = screen.getByRole('link');

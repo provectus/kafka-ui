@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
-import { RolesAccessContext } from 'components/contexts/RolesAccessContext';
+import { UserInfoRolesAccessContext } from 'components/contexts/UserInfoRolesAccessContext';
 import { ClusterNameRoute } from 'lib/paths';
 import { isPermitted } from 'lib/permissions';
 import useAppParams from 'lib/hooks/useAppParams';
@@ -11,7 +11,7 @@ export function usePermission(
   value?: string
 ): boolean {
   const { clusterName } = useAppParams<ClusterNameRoute>();
-  const roles = useContext(RolesAccessContext);
+  const { roles, rbacFlag } = useContext(UserInfoRolesAccessContext);
 
-  return isPermitted({ roles, resource, action, clusterName, value });
+  return isPermitted({ roles, resource, action, clusterName, value, rbacFlag });
 }

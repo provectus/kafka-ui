@@ -1,14 +1,14 @@
 import React from 'react';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 import UserIcon from 'components/common/Icons/UserIcon';
-import { useUserInfo } from 'lib/hooks/api/roles';
 import DropdownArrowIcon from 'components/common/Icons/DropdownArrowIcon';
 import { useTheme } from 'styled-components';
+import { useUserInfo } from 'lib/hooks/useUserInfo';
 
 import * as S from './UserInfo.styled';
 
 const UserInfo = () => {
-  const { data } = useUserInfo();
+  const { username } = useUserInfo();
   const theme = useTheme();
 
   return (
@@ -16,7 +16,7 @@ const UserInfo = () => {
       label={
         <S.Wrapper>
           <UserIcon />
-          <S.Text>{data?.username}</S.Text>
+          <S.Text>{username}</S.Text>
           <DropdownArrowIcon
             isOpen={false}
             style={{}}

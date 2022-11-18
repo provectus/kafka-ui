@@ -62,13 +62,17 @@ export function isPermitted({
   action,
   clusterName,
   value,
+  rbacFlag,
 }: {
   roles?: RolesModifiedTypes;
   resource: UserPermissionResourceEnum;
   action: Action | Array<Action>;
   clusterName: string;
   value?: string;
+  rbacFlag: boolean;
 }) {
+  if (!rbacFlag) return true;
+
   // short circuit
   if (!roles || roles.size === 0) return false;
 

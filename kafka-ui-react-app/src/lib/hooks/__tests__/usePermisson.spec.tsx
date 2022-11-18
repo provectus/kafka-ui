@@ -2,13 +2,12 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { renderHook } from '@testing-library/react';
 import { usePermission } from 'lib/hooks/usePermission';
-import {
-  isPermitted,
-  modifyRolesData,
-  RolesModifiedTypes,
-} from 'lib/permissions';
+import { isPermitted, modifyRolesData } from 'lib/permissions';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
-import { RolesAccessContext } from 'components/contexts/RolesAccessContext';
+import {
+  UserInfoRolesAccessContext,
+  UserInfoType,
+} from 'components/contexts/UserInfoRolesAccessContext';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -20,21 +19,21 @@ describe('usePermission', () => {
     resource,
     action,
     value,
-    roles,
+    userInfo,
   }: {
     resource: UserPermissionResourceEnum;
     action: Action;
     value?: string;
-    roles: RolesModifiedTypes;
+    userInfo: UserInfoType;
   }) =>
     renderHook(() => usePermission(resource, action, value), {
       wrapper: ({ children }) => (
         // eslint-disable-next-line react/react-in-jsx-scope
 
         // issue in initialProps of wrapper
-        <RolesAccessContext.Provider value={roles}>
+        <UserInfoRolesAccessContext.Provider value={userInfo}>
           {children}
-        </RolesAccessContext.Provider>
+        </UserInfoRolesAccessContext.Provider>
       ),
     });
 
@@ -73,7 +72,11 @@ describe('usePermission', () => {
     const permissionConfig = {
       resource: UserPermissionResourceEnum.TOPIC,
       action: Action.CREATE,
-      roles: modifiedData,
+      userInfo: {
+        roles: modifiedData,
+        rbacFlag: true,
+        username: '',
+      },
     };
 
     (useParams as jest.Mock).mockImplementation(() => ({
@@ -85,7 +88,9 @@ describe('usePermission', () => {
     expect(result.current).toEqual(
       isPermitted({
         ...permissionConfig,
+        roles: modifiedData,
         clusterName: clusterName1,
+        rbacFlag: true,
       })
     );
   });
@@ -94,7 +99,11 @@ describe('usePermission', () => {
     const permissionConfig = {
       resource: UserPermissionResourceEnum.SCHEMA,
       action: Action.CREATE,
-      roles: modifiedData,
+      userInfo: {
+        roles: modifiedData,
+        rbacFlag: true,
+        username: '',
+      },
     };
 
     (useParams as jest.Mock).mockImplementation(() => ({
@@ -106,7 +115,9 @@ describe('usePermission', () => {
     expect(result.current).toEqual(
       isPermitted({
         ...permissionConfig,
+        roles: modifiedData,
         clusterName: clusterName1,
+        rbacFlag: true,
       })
     );
   });
@@ -115,7 +126,11 @@ describe('usePermission', () => {
     const permissionConfig = {
       resource: UserPermissionResourceEnum.SCHEMA,
       action: Action.CREATE,
-      roles: modifiedData,
+      userInfo: {
+        roles: modifiedData,
+        rbacFlag: true,
+        username: '',
+      },
     };
 
     (useParams as jest.Mock).mockImplementation(() => ({
@@ -127,7 +142,9 @@ describe('usePermission', () => {
     expect(result.current).toEqual(
       isPermitted({
         ...permissionConfig,
+        roles: modifiedData,
         clusterName: clusterName2,
+        rbacFlag: true,
       })
     );
   });

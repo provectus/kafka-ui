@@ -21,6 +21,17 @@ export const roles = [
     clusters: [clusterName],
   },
 ];
+
+export const userInfoRbacEnabled = {
+  rbacFlag: true,
+  roles,
+};
+
+export const userInfoRbacDisabled = {
+  rbacFlag: false,
+  roles,
+};
+
 export const tooltipIsShowing = async (button: HTMLElement, text: string) => {
   expect(screen.queryByText(text)).not.toBeInTheDocument();
   await userEvent.hover(button);

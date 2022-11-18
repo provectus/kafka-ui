@@ -141,6 +141,7 @@ describe('Permission Helpers', () => {
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeFalsy();
 
@@ -149,6 +150,7 @@ describe('Permission Helpers', () => {
           clusterName: 'unFoundCluster',
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeFalsy();
 
@@ -158,6 +160,7 @@ describe('Permission Helpers', () => {
           clusterName: 'unFoundCluster',
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeFalsy();
 
@@ -167,6 +170,7 @@ describe('Permission Helpers', () => {
           clusterName: '',
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeFalsy();
 
@@ -176,6 +180,7 @@ describe('Permission Helpers', () => {
           clusterName: 'unFoundCluster',
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeFalsy();
 
@@ -185,6 +190,7 @@ describe('Permission Helpers', () => {
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeFalsy();
     });
@@ -196,6 +202,7 @@ describe('Permission Helpers', () => {
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -205,6 +212,7 @@ describe('Permission Helpers', () => {
           clusterName: clusterName2,
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeFalsy();
 
@@ -214,6 +222,7 @@ describe('Permission Helpers', () => {
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.SCHEMA,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -223,6 +232,7 @@ describe('Permission Helpers', () => {
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.CLUSTERCONFIG,
           action: Action.EDIT,
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -232,6 +242,7 @@ describe('Permission Helpers', () => {
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.KSQL,
           action: Action.EXECUTE,
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -241,6 +252,7 @@ describe('Permission Helpers', () => {
           clusterName: clusterName2,
           resource: UserPermissionResourceEnum.KSQL,
           action: Action.EXECUTE,
+          rbacFlag: true,
         })
       ).toBeFalsy();
 
@@ -250,6 +262,7 @@ describe('Permission Helpers', () => {
           clusterName: clusterName2,
           resource: UserPermissionResourceEnum.SCHEMA,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -259,6 +272,7 @@ describe('Permission Helpers', () => {
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.SCHEMA,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -268,6 +282,7 @@ describe('Permission Helpers', () => {
           clusterName: clusterName2,
           resource: UserPermissionResourceEnum.CONNECT,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -277,6 +292,7 @@ describe('Permission Helpers', () => {
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.CONNECT,
           action: Action.CREATE,
+          rbacFlag: true,
         })
       ).toBeTruthy();
     });
@@ -289,6 +305,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.SCHEMA,
           action: Action.EDIT,
           value: '123456',
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -299,6 +316,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.SCHEMA,
           action: Action.EDIT,
           value: '123',
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -309,6 +327,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.SCHEMA,
           action: Action.EDIT,
           value: 'some_wrong_value',
+          rbacFlag: true,
         })
       ).toBeFalsy();
 
@@ -319,6 +338,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.MESSAGES_DELETE,
           value: 'test_something',
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -329,6 +349,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.MESSAGES_DELETE,
           value: 'test_something',
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -339,6 +360,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.EDIT,
           value: 'any_text',
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -349,6 +371,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.EDIT,
           value: 'any_text',
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -359,6 +382,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.DELETE,
           value: 'some_other',
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -369,6 +393,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.TOPIC,
           action: Action.DELETE,
           value: 'some_other',
+          rbacFlag: true,
         })
       ).toBeTruthy();
     });
@@ -381,6 +406,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.SCHEMA,
           action: [Action.EDIT, Action.DELETE],
           value: '123456',
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -391,6 +417,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.SCHEMA,
           action: [Action.EDIT],
           value: '123456',
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -401,6 +428,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.SCHEMA,
           action: [Action.EDIT],
           value: '123456',
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -411,6 +439,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.SCHEMA,
           action: [Action.DELETE],
           value: '123456',
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -421,6 +450,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.SCHEMA,
           action: [Action.DELETE, Action.EDIT],
           value: '123456',
+          rbacFlag: true,
         })
       ).toBeTruthy();
 
@@ -431,6 +461,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.SCHEMA,
           action: [Action.EDIT, Action.CREATE],
           value: '123456',
+          rbacFlag: true,
         })
       ).toBeFalsy();
 
@@ -441,6 +472,7 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.SCHEMA,
           action: [Action.EDIT, Action.CREATE],
           value: 'notFound',
+          rbacFlag: true,
         })
       ).toBeFalsy();
 
@@ -451,6 +483,53 @@ describe('Permission Helpers', () => {
           resource: UserPermissionResourceEnum.SCHEMA,
           action: [],
           value: '123456',
+          rbacFlag: true,
+        })
+      ).toBeTruthy();
+    });
+
+    it('should check the rbac flag and works with permissions accordingly', () => {
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: [],
+          value: '123456',
+          rbacFlag: false,
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: [Action.EDIT, Action.CREATE],
+          value: '123456',
+          rbacFlag: false,
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermitted({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: [Action.EDIT, Action.CREATE],
+          value: 'notFound',
+          rbacFlag: false,
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermitted({
+          roles: new Map(),
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          action: [Action.EDIT, Action.CREATE],
+          value: 'notFound',
+          rbacFlag: false,
         })
       ).toBeTruthy();
     });

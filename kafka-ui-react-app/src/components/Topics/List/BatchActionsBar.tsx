@@ -11,7 +11,7 @@ import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSl
 import { clusterTopicCopyRelativePath } from 'lib/paths';
 import { useQueryClient } from '@tanstack/react-query';
 import { ActionCanButton } from 'components/common/ActionComponent';
-import { RolesAccessContext } from 'components/contexts/RolesAccessContext';
+import { UserInfoRolesAccessContext } from 'components/contexts/UserInfoRolesAccessContext';
 import { isPermitted } from 'lib/permissions';
 
 interface BatchActionsbarProps {
@@ -88,7 +88,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
       search: new URLSearchParams(search).toString(),
     };
   };
-  const roles = useContext(RolesAccessContext);
+  const { roles, rbacFlag } = useContext(UserInfoRolesAccessContext);
 
   const canDeleteSelectedTopics = useMemo(() => {
     return selectedTopics.every((value) =>
@@ -98,6 +98,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
         action: Action.DELETE,
         value,
         clusterName,
+        rbacFlag,
       })
     );
   }, [selectedTopics, clusterName, roles]);
@@ -110,6 +111,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
         action: Action.MESSAGES_DELETE,
         value,
         clusterName,
+        rbacFlag,
       })
     );
   }, [selectedTopics, clusterName, roles]);

@@ -4,7 +4,7 @@ import App from 'components/App';
 import { render } from 'lib/testHelpers';
 import { useTimeFormat } from 'lib/hooks/api/timeFormat';
 import { defaultGlobalSettingsValue } from 'components/contexts/GlobalSettingsContext';
-import { useRoleBasedAccess } from 'lib/hooks/api/roles';
+import { useGetUserInfo, useGetUserInfoMock } from 'lib/hooks/api/roles';
 
 jest.mock('components/Nav/Nav', () => () => <div>Navigation</div>);
 
@@ -18,7 +18,8 @@ jest.mock('lib/hooks/api/timeFormat', () => ({
 }));
 
 jest.mock('lib/hooks/api/roles', () => ({
-  useRoleBasedAccess: jest.fn(),
+  useGetUserInfo: jest.fn(),
+  useGetUserInfoMock: jest.fn(),
 }));
 
 describe('App', () => {
@@ -27,8 +28,12 @@ describe('App', () => {
       data: defaultGlobalSettingsValue,
     }));
 
-    (useRoleBasedAccess as jest.Mock).mockImplementation(() => ({
-      data: [],
+    (useGetUserInfo as jest.Mock).mockImplementation(() => ({
+      data: {},
+    }));
+
+    (useGetUserInfoMock as jest.Mock).mockImplementation(() => ({
+      data: {},
     }));
 
     render(<App />, {

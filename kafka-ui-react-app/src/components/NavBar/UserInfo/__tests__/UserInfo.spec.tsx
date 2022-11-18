@@ -2,10 +2,10 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import UserInfo from 'components/NavBar/UserInfo/UserInfo';
-import { useUserInfo } from 'lib/hooks/api/roles';
+import { useUserInfo } from 'lib/hooks/useUserInfo';
 import userEvent from '@testing-library/user-event';
 
-jest.mock('lib/hooks/api/roles', () => ({
+jest.mock('lib/hooks/useUserInfo', () => ({
   useUserInfo: jest.fn(),
 }));
 
@@ -14,9 +14,7 @@ describe('UserInfo', () => {
 
   it('should render the userInfo with correct data', () => {
     const username = 'someName';
-    (useUserInfo as jest.Mock).mockImplementation(() => ({
-      data: { username },
-    }));
+    (useUserInfo as jest.Mock).mockImplementation(() => ({ username }));
 
     renderComponent();
     expect(screen.getByText(username)).toBeInTheDocument();
@@ -24,9 +22,7 @@ describe('UserInfo', () => {
 
   it('should render the userInfo during click opens the dropdown', async () => {
     const username = 'someName';
-    (useUserInfo as jest.Mock).mockImplementation(() => ({
-      data: { username },
-    }));
+    (useUserInfo as jest.Mock).mockImplementation(() => ({ username }));
 
     renderComponent();
     const dropdown = screen.getByText(username);
