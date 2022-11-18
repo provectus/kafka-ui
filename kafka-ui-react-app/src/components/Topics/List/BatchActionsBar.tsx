@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Row } from '@tanstack/react-table';
 import { Action, Topic, UserPermissionResourceEnum } from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
@@ -11,8 +11,8 @@ import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSl
 import { clusterTopicCopyRelativePath } from 'lib/paths';
 import { useQueryClient } from '@tanstack/react-query';
 import { ActionCanButton } from 'components/common/ActionComponent';
-import { UserInfoRolesAccessContext } from 'components/contexts/UserInfoRolesAccessContext';
 import { isPermitted } from 'lib/permissions';
+import { useUserInfo } from 'lib/hooks/useUserInfo';
 
 interface BatchActionsbarProps {
   rows: Row<Topic>[];
@@ -88,7 +88,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
       search: new URLSearchParams(search).toString(),
     };
   };
-  const { roles, rbacFlag } = useContext(UserInfoRolesAccessContext);
+  const { roles, rbacFlag } = useUserInfo();
 
   const canDeleteSelectedTopics = useMemo(() => {
     return selectedTopics.every((value) =>
