@@ -42,7 +42,7 @@ const New: React.FC = () => {
   const mutation = useCreateConnector(clusterName);
 
   const methods = useForm<FormValues>({
-    mode: 'onTouched',
+    mode: 'all',
     resolver: yupResolver(validationSchema),
     defaultValues: {
       connectName: get(connects, '0.name', ''),
