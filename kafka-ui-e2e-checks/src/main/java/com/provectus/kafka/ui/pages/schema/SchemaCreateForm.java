@@ -25,7 +25,7 @@ public class SchemaCreateForm extends BasePage {
     protected SelenideElement schemaVersionDdl = $$x("//ul[@role='listbox']/li[text()='Version 2']").first();
     protected List<SelenideElement> visibleMarkers = $$x("//div[@class='ace_scroller']//div[contains(@class,'codeMarker')]");
     protected List<SelenideElement> elementsCompareVersionDdl = $$x("//ul[@role='listbox']/ul/li");
-    protected String elementLocatorDdl = "//li[@value='%s']";
+    protected String ddlElementLocator = "//li[@value='%s']";
 
     @Step
     public SchemaCreateForm waitUntilScreenReady(){
@@ -49,7 +49,7 @@ public class SchemaCreateForm extends BasePage {
     @Step
     public SchemaCreateForm selectSchemaTypeFromDropdown(SchemaType schemaType) {
         schemaTypeDdl.shouldBe(Condition.enabled).click();
-        $x(String.format(elementLocatorDdl, schemaType.getValue())).shouldBe(Condition.visible).click();
+        $x(String.format(ddlElementLocator, schemaType.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
@@ -62,7 +62,7 @@ public class SchemaCreateForm extends BasePage {
     @Step
     public SchemaCreateForm selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum level) {
         compatibilityLevelList.shouldBe(Condition.enabled).click();
-        $x(String.format(elementLocatorDdl, level.getValue())).shouldBe(Condition.visible).click();
+        $x(String.format(ddlElementLocator, level.getValue())).shouldBe(Condition.visible).click();
         return this;
     }
 
@@ -77,7 +77,7 @@ public class SchemaCreateForm extends BasePage {
     @Step
     public SchemaCreateForm selectVersionFromLeftDropDown(int versionNumberDd){
       schemaVersionDdl.shouldBe(Condition.enabled).click();
-      $x(String.format(elementLocatorDdl,versionNumberDd)).shouldBe(Condition.visible).click();
+      $x(String.format(ddlElementLocator,versionNumberDd)).shouldBe(Condition.visible).click();
       return this;
     }
 
