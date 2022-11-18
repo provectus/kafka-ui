@@ -1,5 +1,6 @@
 FROM azul/zulu-openjdk-alpine:17
 
+RUN apk add --no-cache gcompat # need to make snappy codec work
 RUN addgroup -S kafkaui && adduser -S kafkaui -G kafkaui
 
 USER kafkaui
