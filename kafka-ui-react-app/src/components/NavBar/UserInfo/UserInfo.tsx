@@ -11,7 +11,7 @@ const UserInfo = () => {
   const { username } = useUserInfo();
   const theme = useTheme();
 
-  return (
+  return username ? (
     <Dropdown
       label={
         <S.Wrapper>
@@ -29,7 +29,7 @@ const UserInfo = () => {
         <S.LogoutLink href="/logout">Log out</S.LogoutLink>
       </DropdownItem>
     </Dropdown>
-  );
+  ) : null;
 };
 
 export default UserInfo;

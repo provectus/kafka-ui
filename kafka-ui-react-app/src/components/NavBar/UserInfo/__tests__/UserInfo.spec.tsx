@@ -32,4 +32,13 @@ describe('UserInfo', () => {
     expect(logout).toBeInTheDocument();
     expect(logout).toHaveAttribute('href', '/logout');
   });
+
+  it('should not render anything if the username does not exists', () => {
+    (useUserInfo as jest.Mock).mockImplementation(() => ({
+      username: undefined,
+    }));
+
+    renderComponent();
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  });
 });
