@@ -37,8 +37,8 @@ public class SchemaDetails extends BasePage {
     }
 
     @Step
-    public String getLatestVersion(){
-      return latestVersionField.getText();
+    public int getLatestVersion(){
+      return Integer.parseInt(latestVersionField.getText());
     }
 
     @Step

@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.pages.schema;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.refresh;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
@@ -23,6 +24,7 @@ public class SchemaCreateForm extends BasePage {
     protected SelenideElement newSchemaTextArea = $x("//div[@id='newSchema']");
     protected SelenideElement schemaVersionDdl = $$x("//ul[@role='listbox']/li[text()='Version 2']").first();
     protected List<SelenideElement> visibleMarkers = $$x("//div[@class='ace_scroller']//div[contains(@class,'codeMarker')]");
+    protected List<SelenideElement> elementsDdl = $$x("//ul[@role='listbox']/ul/li");
     protected String elementLocatorDdl = "//li[@value='%s']";
 
     @Step
@@ -65,14 +67,22 @@ public class SchemaCreateForm extends BasePage {
     }
 
     @Step
-    public SchemaCreateForm selectVersionFromLeftDropDown(String versionNumberDd){
+    public int getCountOfElementsFromDd(){
+      schemaVersionDdl.shouldBe(Condition.enabled).click();
+      int elementsSize = elementsDdl.size();
+      refresh();
+      return elementsSize;
+    }
+
+    @Step
+    public SchemaCreateForm selectVersionFromLeftDropDown(int versionNumberDd){
       schemaVersionDdl.shouldBe(Condition.enabled).click();
       $x(String.format(elementLocatorDdl,versionNumberDd)).shouldBe(Condition.visible).click();
       return this;
     }
 
     @Step
-    public Integer getAllMarkedLines(){
+    public int getAllMarkedLines(){
       return visibleMarkers.size();
     }
 

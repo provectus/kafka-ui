@@ -98,7 +98,6 @@ public class SchemasTests extends BaseTest {
                 .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(AVRO_API.getValuePath()))
                 .clickSubmitButton();
-      System.out.println(AVRO_API.getValuePath());
         schemaDetails
                 .waitUntilScreenReady();
         Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), schemaDetails.getCompatibility(), "getCompatibility()");
@@ -117,13 +116,39 @@ public class SchemasTests extends BaseTest {
           .waitUntilScreenReady()
           .openSchema(AVRO_API.getName());
       schemaDetails
-          .waitUntilScreenReady()
-          .openCompareVersionMenu();
+          .waitUntilScreenReady();
+      int latestVersion = schemaDetails.getLatestVersion();
+      schemaDetails
+              .openCompareVersionMenu();
       schemaCreateForm
-          .waitUntilScreenReady()
-          .selectVersionFromLeftDropDown("1");
-      Assertions.assertEquals(53, (int) schemaCreateForm.getAllMarkedLines(), "getAllMarkedLines()");
+          .waitUntilScreenReady();
+      int countOfElementsDd = schemaCreateForm.getCountOfElementsFromDd();
+      Assertions.assertEquals(latestVersion,countOfElementsDd,"Compare versions is failed");
+      schemaCreateForm
+              .selectVersionFromLeftDropDown(1);
+      Assertions.assertEquals(53, schemaCreateForm.getAllMarkedLines(), "getAllMarkedLines()");
 
+    }
+
+    @DisplayName("should delete AVRO schema")
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(187)
+    @Test
+    @Order(4)
+    void deleteSchemaAvro() {
+      naviSideBar
+          .openSideMenu(SCHEMA_REGISTRY);
+      schemaRegistryList
+          .waitUntilScreenReady()
+          .openSchema(AVRO_API.getName());
+      schemaDetails
+          .waitUntilScreenReady()
+          .removeSchema();
+      schemaRegistryList
+          .waitUntilScreenReady();
+      Assertions.assertFalse(schemaRegistryList.isSchemaVisible(AVRO_API.getName()),"isSchemaVisible()");
+      SCHEMA_LIST.remove(AVRO_API);
     }
 
     @DisplayName("should create JSON schema")
@@ -131,7 +156,7 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(89)
     @Test
-    @Order(4)
+    @Order(5)
     void createSchemaJson() {
         Schema schemaJson = Schema.createSchemaJson();
         naviSideBar
@@ -164,7 +189,7 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(189)
     @Test
-    @Order(5)
+    @Order(6)
     void deleteSchemaJson() {
         naviSideBar
                 .openSideMenu(SCHEMA_REGISTRY);
@@ -185,7 +210,7 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(91)
     @Test
-    @Order(6)
+    @Order(7)
     void createSchemaProtobuf() {
         Schema schemaProtobuf = Schema.createSchemaProtobuf();
         naviSideBar
@@ -218,7 +243,7 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(223)
     @Test
-    @Order(7)
+    @Order(8)
     void deleteSchemaProtobuf() {
         naviSideBar
                 .openSideMenu(SCHEMA_REGISTRY);

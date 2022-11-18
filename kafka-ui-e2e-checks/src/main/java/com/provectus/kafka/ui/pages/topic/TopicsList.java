@@ -53,13 +53,13 @@ public class TopicsList extends BasePage {
 
     private List<SelenideElement> getVisibleColumnHeaders() {
       return Stream.of("Replication Factor","Number of messages","Topic Name", "Partitions", "Out of sync replicas", "Size")
-          .map(name -> $x(String.format(сolumnHeaderLocator, name)))
+          .map(name -> $x(String.format(columnHeaderLocator, name)))
         .collect(Collectors.toList());
     }
 
     private List<SelenideElement> getEnabledColumnHeaders(){
       return Stream.of("Topic Name", "Partitions", "Out of sync replicas", "Size")
-          .map(name -> $x(String.format(сolumnHeaderLocator, name)))
+          .map(name -> $x(String.format(columnHeaderLocator, name)))
           .collect(Collectors.toList());
     }
 
