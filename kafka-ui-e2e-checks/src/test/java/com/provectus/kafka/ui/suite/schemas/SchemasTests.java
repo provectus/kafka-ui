@@ -117,15 +117,17 @@ public class SchemasTests extends BaseTest {
           .openSchema(AVRO_API.getName());
       schemaDetails
           .waitUntilScreenReady();
-      int latestVersion = schemaDetails.getLatestVersion();
+      int latestVersion = schemaDetails
+          .waitUntilScreenReady()
+          .getLatestVersion();
       schemaDetails
               .openCompareVersionMenu();
       schemaCreateForm
           .waitUntilScreenReady();
-      int countOfElementsDd = schemaCreateForm
+      int versionsNumberFromDdl = schemaCreateForm
           .openSchemaVersionDdl()
           .getVersionsNumberFromList();
-      Assertions.assertEquals(latestVersion,countOfElementsDd,"Compare versions is failed");
+      Assertions.assertEquals(latestVersion,versionsNumberFromDdl,"Versions number is not matched");
       schemaCreateForm
           .selectVersionFromDropDown(1);
       Assertions.assertEquals(53, schemaCreateForm.getMarkedLinesNumber(), "getAllMarkedLines()");
