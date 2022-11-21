@@ -119,7 +119,7 @@ public class SchemasTests extends BaseTest {
           .waitUntilScreenReady()
           .getLatestVersion();
       schemaDetails
-              .openCompareVersionMenu();
+          .openCompareVersionMenu();
       int versionsNumberFromDdl = schemaCreateForm
           .waitUntilScreenReady()
           .openSchemaVersionDdl()
