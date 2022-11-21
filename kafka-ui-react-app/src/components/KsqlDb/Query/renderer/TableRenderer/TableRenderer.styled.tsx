@@ -8,6 +8,7 @@ export const Wrapper = styled.div`
 
 export const ScrollableTable = styled(Table)`
   overflow-y: scroll;
+  width: 100%;
 
   td {
     vertical-align: top;

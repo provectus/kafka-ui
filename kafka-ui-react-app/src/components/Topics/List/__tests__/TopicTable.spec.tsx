@@ -117,6 +117,7 @@ describe('TopicTable Components', () => {
         screen.getByRole('row', {
           name: '__internal.topic4 1 0 1 0 0Bytes in: 0Bytes out: 0Bytes',
         })
+        screen.getByRole('row', { name: '__internal.topic 1 0 1 0 0 Bytes' })
       ).toBeInTheDocument();
       expect(
         screen.getByRole('link', { name: 'external.topic' })

@@ -1,23 +1,20 @@
 package com.provectus.kafka.ui.pages.schema;
 
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
+
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.api.model.SchemaType;
+import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.utilities.WebUtils.clearByKeyboard;
-import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
+public class SchemaCreateForm extends BasePage {
 
-public class SchemaCreateForm {
-
-    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement schemaNameField = $x("//input[@name='subject']");
     protected SelenideElement pageTitle = $x("//h1['Edit']");
     protected SelenideElement schemaTextArea = $x("//textarea[@name='schema']");
-    protected SelenideElement submitBtn = $x("//button[@type='submit']");
     protected SelenideElement newSchemaInput = $("#newSchema [wrap]");
     protected SelenideElement schemaTypeDdl = $x("//ul[@name='schemaType']");
     protected SelenideElement compatibilityLevelList = $x("//ul[@name='compatibilityLevel']");
@@ -26,7 +23,7 @@ public class SchemaCreateForm {
 
     @Step
     public SchemaCreateForm waitUntilScreenReady(){
-        loadingSpinner.shouldBe(Condition.disappear);
+        waitUntilSpinnerDisappear();
         pageTitle.shouldBe(Condition.visible);
         return this;
     }
@@ -51,8 +48,8 @@ public class SchemaCreateForm {
     }
 
     @Step
-    public SchemaCreateForm clickSubmitBtn() {
-        clickByJavaScript(submitBtn);
+    public SchemaCreateForm clickSubmitButton() {
+        clickSubmitBtn();
         return this;
     }
 
