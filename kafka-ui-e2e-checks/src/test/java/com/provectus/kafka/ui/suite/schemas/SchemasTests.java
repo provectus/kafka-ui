@@ -122,12 +122,13 @@ public class SchemasTests extends BaseTest {
               .openCompareVersionMenu();
       schemaCreateForm
           .waitUntilScreenReady();
-      int countOfElementsDd = schemaCreateForm.getVersionsNumberFromList();
+      int countOfElementsDd = schemaCreateForm
+          .openSchemaVersionDdl()
+          .getVersionsNumberFromList();
       Assertions.assertEquals(latestVersion,countOfElementsDd,"Compare versions is failed");
       schemaCreateForm
-              .selectVersionFromLeftDropDown(1);
+          .selectVersionFromDropDown(1);
       Assertions.assertEquals(53, schemaCreateForm.getMarkedLinesNumber(), "getAllMarkedLines()");
-
     }
 
     @DisplayName("should delete AVRO schema")

@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.pages.schema;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
-import static com.codeborne.selenide.Selenide.refresh;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
@@ -74,15 +73,11 @@ public class SchemaCreateForm extends BasePage {
 
     @Step
     public int getVersionsNumberFromList(){
-      openSchemaVersionDdl();
-      int elementsSize = elementsCompareVersionDdl.size();
-      refresh();
-      return elementsSize;
+      return elementsCompareVersionDdl.size();
     }
 
     @Step
-    public SchemaCreateForm selectVersionFromLeftDropDown(int versionNumberDd){
-      openSchemaVersionDdl();
+    public SchemaCreateForm selectVersionFromDropDown(int versionNumberDd){
       $x(String.format(ddlElementLocator,versionNumberDd)).shouldBe(Condition.visible).click();
       return this;
     }
