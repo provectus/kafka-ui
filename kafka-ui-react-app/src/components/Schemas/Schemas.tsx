@@ -11,13 +11,21 @@ import Details from 'components/Schemas/Details/Details';
 import New from 'components/Schemas/New/New';
 import Edit from 'components/Schemas/Edit/Edit';
 import DiffContainer from 'components/Schemas/Diff/DiffContainer';
+import SuspenseQueryComponent from 'components/common/SuspenseQueryComponent/SuspenseQueryComponent';
 
 const Schemas: React.FC = () => {
   return (
     <Routes>
       <Route index element={<List />} />
       <Route path={clusterSchemaNewRelativePath} element={<New />} />
-      <Route path={RouteParams.subject} element={<Details />} />
+      <Route
+        path={RouteParams.subject}
+        element={
+          <SuspenseQueryComponent>
+            <Details />
+          </SuspenseQueryComponent>
+        }
+      />
       <Route path={clusterSchemaEditRelativePath} element={<Edit />} />
       <Route
         path={clusterSchemaSchemaDiffRelativePath}
