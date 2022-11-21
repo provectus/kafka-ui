@@ -10,15 +10,12 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
-import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
-@ExtensionMethod({WaitUtils.class})
 public class TopicDetails extends BasePage {
 
   protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
