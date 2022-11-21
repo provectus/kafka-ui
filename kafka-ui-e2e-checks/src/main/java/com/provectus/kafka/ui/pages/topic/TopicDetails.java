@@ -28,7 +28,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement addFiltersBtn = $x("//button[text()='Add Filters']");
   protected SelenideElement savedFiltersField = $x("//div[text()='Saved Filters']");
   protected SelenideElement addFilterCodeModalTitle = $x("//label[text()='Filter code']");
-  protected SelenideElement addFilterCodeInput = $x("//*[@aria-label='Filters submit Form']/div[1]/textarea");
+  protected SelenideElement addFilterCodeInput = $x("//div[@id='ace-editor']//textarea");
   protected SelenideElement saveThisFilterCheckBoxAddFilterMdl = $x("//input[@name='saveFilter']");
   protected SelenideElement displayNameInputAddFilterMdl = $x("//input[@placeholder='Enter Name']");
   protected SelenideElement cancelBtnAddFilterMdl = $x("//button[text()='Cancel']");
