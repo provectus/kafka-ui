@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class TopicActionsTests extends BaseTest {
+public class TopicsTests extends BaseTest {
   private static final long SUITE_ID = 2;
   private static final String SUITE_TITLE = "Topics";
   private static final Topic TOPIC_TO_CREATE = new Topic()
@@ -273,7 +273,8 @@ public class TopicActionsTests extends BaseTest {
         .openTopic(topicName);
     topicDetails
         .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
-        .clickMessagesAddFiltersBtn();
+        .clickMessagesAddFiltersBtn()
+        .waitUntilAddFiltersMdlVisible();
     SoftAssertions softly = new SoftAssertions();
     topicDetails.getAllAddFilterModalVisibleElements().forEach(element ->
         softly.assertThat(element.is(Condition.visible))

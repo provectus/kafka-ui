@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import lombok.experimental.ExtensionMethod;
-import org.assertj.core.api.SoftAssertions;
 import org.openqa.selenium.By;
 
 @ExtensionMethod({WaitUtils.class})
@@ -119,19 +118,26 @@ public class TopicDetails extends BasePage {
 
   @Step
   public TopicDetails clickMessagesAddFiltersBtn() {
-    addFiltersBtn.click();
+    addFiltersBtn.shouldBe(Condition.enabled).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails waitUntilAddFiltersMdlVisible() {
+    addFilterCodeModalTitle.shouldBe(Condition.visible);
     return this;
   }
 
   @Step
   public TopicDetails clickAddFilterBtnAddFilterMdl() {
-    addFilterBtnAddFilterMdl.click();
+    addFilterBtnAddFilterMdl.shouldBe(Condition.enabled).click();
+    addFilterCodeModalTitle.shouldBe(Condition.hidden);
     return this;
   }
 
   @Step
   public TopicDetails setFilterCodeFieldAddFilterMdl(String filterCode) {
-    addFilterCodeInput.sendKeys(filterCode);
+    addFilterCodeInput.shouldBe(Condition.enabled).sendKeys(filterCode);
     return this;
   }
 
@@ -151,7 +157,7 @@ public class TopicDetails extends BasePage {
   }
 
   public List<SelenideElement> getAllAddFilterModalVisibleElements() {
-    return Arrays.asList(savedFiltersField, addFilterCodeModalTitle);
+    return Arrays.asList(savedFiltersField, displayNameInputAddFilterMdl, addFilterBtnAddFilterMdl, cancelBtnAddFilterMdl);
   }
 
   public List<SelenideElement> getAllAddFilterModalEnabledElements() {
@@ -200,6 +206,23 @@ public class TopicDetails extends BasePage {
   @Step
   public TopicDetails.MessageGridItem getRandomMessage() {
     return getMessage(nextInt(initItems().size() - 1));
+  }
+
+  public enum TopicMenu {
+    OVERVIEW("Overview"),
+    MESSAGES("Messages"),
+    CONSUMERS("Consumers"),
+    SETTINGS("Settings");
+
+    private final String value;
+
+    TopicMenu(String value) {
+      this.value = value;
+    }
+
+    public String toString() {
+      return value;
+    }
   }
 
   public static class MessageGridItem extends BasePage {
@@ -265,23 +288,6 @@ public class TopicDetails extends BasePage {
       clickByJavaScript(element.$x("./td[7]//li[text() = 'Save as a file']")
           .shouldBe(Condition.visible));
       return this;
-    }
-  }
-
-  public enum TopicMenu {
-    OVERVIEW("Overview"),
-    MESSAGES("Messages"),
-    CONSUMERS("Consumers"),
-    SETTINGS("Settings");
-
-    private final String value;
-
-    TopicMenu(String value) {
-      this.value = value;
-    }
-
-    public String toString() {
-      return value;
     }
   }
 }
