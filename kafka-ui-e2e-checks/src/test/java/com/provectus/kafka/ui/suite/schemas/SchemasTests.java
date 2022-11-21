@@ -122,7 +122,7 @@ public class SchemasTests extends BaseTest {
               .openCompareVersionMenu();
       schemaCreateForm
           .waitUntilScreenReady();
-      int countOfElementsDd = schemaCreateForm.getCountOfElementsFromDd();
+      int countOfElementsDd = schemaCreateForm.getVersionsNumberFromList();
       Assertions.assertEquals(latestVersion,countOfElementsDd,"Compare versions is failed");
       schemaCreateForm
               .selectVersionFromLeftDropDown(1);

@@ -67,8 +67,14 @@ public class SchemaCreateForm extends BasePage {
     }
 
     @Step
-    public int getCountOfElementsFromDd(){
+    public SchemaCreateForm openSchemaVersionDdl(){
       schemaVersionDdl.shouldBe(Condition.enabled).click();
+      return this;
+    }
+
+    @Step
+    public int getVersionsNumberFromList(){
+      openSchemaVersionDdl();
       int elementsSize = elementsCompareVersionDdl.size();
       refresh();
       return elementsSize;
@@ -76,7 +82,7 @@ public class SchemaCreateForm extends BasePage {
 
     @Step
     public SchemaCreateForm selectVersionFromLeftDropDown(int versionNumberDd){
-      schemaVersionDdl.shouldBe(Condition.enabled).click();
+      openSchemaVersionDdl();
       $x(String.format(ddlElementLocator,versionNumberDd)).shouldBe(Condition.visible).click();
       return this;
     }
