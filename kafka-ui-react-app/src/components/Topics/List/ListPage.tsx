@@ -55,6 +55,7 @@ const ListPage: React.FC = () => {
             permission={{
               resource: UserPermissionResourceEnum.TOPIC,
               action: Action.CREATE,
+              value: '*',
             }}
           >
             <PlusIcon /> Add a Topic
