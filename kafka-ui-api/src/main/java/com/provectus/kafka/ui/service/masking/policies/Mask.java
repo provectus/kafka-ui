@@ -13,7 +13,7 @@ class Mask extends MaskingPolicy {
 
   private final UnaryOperator<String> masker;
 
-  Mask(List<String> fieldNames, List<Character> maskingChars) {
+  Mask(List<String> fieldNames, List<String> maskingChars) {
     super(fieldNames);
     this.masker = createMasker(maskingChars);
   }
@@ -28,7 +28,7 @@ class Mask extends MaskingPolicy {
     return masker.apply(str);
   }
 
-  private static UnaryOperator<String> createMasker(List<Character> maskingChars) {
+  private static UnaryOperator<String> createMasker(List<String> maskingChars) {
     Preconditions.checkNotNull(maskingChars);
     Preconditions.checkArgument(maskingChars.size() == 4, "mask pattern should contain 4 elements");
     return input -> {
@@ -42,16 +42,16 @@ class Mask extends MaskingPolicy {
             sb.appendCodePoint(cp); // keeping separators as-is
             break;
           case Character.UPPERCASE_LETTER:
-            sb.appendCodePoint(maskingChars.get(0));
+            sb.append(maskingChars.get(0));
             break;
           case Character.LOWERCASE_LETTER:
-            sb.appendCodePoint(maskingChars.get(1));
+            sb.append(maskingChars.get(1));
             break;
           case Character.DECIMAL_DIGIT_NUMBER:
-            sb.appendCodePoint(maskingChars.get(2));
+            sb.append(maskingChars.get(2));
             break;
           default:
-            sb.appendCodePoint(maskingChars.get(3));
+            sb.append(maskingChars.get(3));
         }
       }
       return sb.toString();

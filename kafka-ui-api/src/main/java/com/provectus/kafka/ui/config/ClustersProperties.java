@@ -97,7 +97,7 @@ public class ClustersProperties {
   public static class Masking {
     Type type;
     List<String> fields = List.of(); //if empty - policy will be applied to all fields
-    List<Character> pattern = List.of('X', 'x', 'n', '-'); //used when type=MASK
+    List<String> pattern = List.of("X", "x", "n", "-"); //used when type=MASK
     String replacement = "***DATA_MASKED***"; //used when type=REPLACE
     String topicKeysPattern;
     String topicValuesPattern;
