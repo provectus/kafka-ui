@@ -258,6 +258,73 @@ public class TopicsTests extends BaseTest {
     softly.assertAll();
   }
 
+  @DisplayName("Clear messages of topic from topics list")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.TO_BE_AUTOMATED)
+  @CaseId(239)
+  @Test
+  void clearMessageOfTopicFromAllTopics() {
+    /*
+    Navigate to Topics lis
+    Click on 3dot menu icon
+    Press clear messages
+     */
+  }
+
+  @DisplayName("Recreate topic from topics list")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.TO_BE_AUTOMATED)
+  @CaseId(240)
+  @Test
+  void recreateTopicFromAllTopics() {
+    /*
+    Navigate to Topics list
+    Click on 3dot menu icon
+    Press recreate topic
+     */
+  }
+
+  @DisplayName("Remove topic from all topics")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.TO_BE_AUTOMATED)
+  @CaseId(242)
+  @Test
+  void removeTopicFromAllTopics() {
+    /*
+    Navigate to Topics list
+    Click on 3dot menu icon
+    Press remove topic
+     */
+  }
+
+  @DisplayName("Copy topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.TO_BE_AUTOMATED)
+  @CaseId(8)
+  @Test
+  void copyTopic() {
+    /*
+    Navigate to Topics list
+    Check the Topic
+    Press Copy selected topic
+     */
+  }
+
+  @DisplayName("Purge messages of topics")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.TO_BE_AUTOMATED)
+  @CaseId(10)
+  @Test
+  void purgeMessagesOfTopics() {
+    /*
+    Navigate to Topics list
+    Check the Topic
+    Press Purge messages of selected topics
+     */
+  }
+
+
+
   @DisplayName("Filter adding within Topic")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
