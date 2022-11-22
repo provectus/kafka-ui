@@ -2,8 +2,8 @@ package com.provectus.kafka.ui.service.rbac.extractor;
 
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -16,8 +16,8 @@ public class LdapAuthorityExtractor implements ProviderAuthorityExtractor {
   }
 
   @Override
-  public Mono<List<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams) {
-    return Mono.just(Collections.emptyList()); // TODO #2752
+  public Mono<Set<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams) {
+    return Mono.just(Collections.emptySet()); // TODO #2752
   }
 
 }

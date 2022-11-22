@@ -5,6 +5,7 @@ import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ public class GoogleAuthorityExtractor implements ProviderAuthorityExtractor {
   }
 
   @Override
-  public Mono<List<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams) {
+  public Mono<Set<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams) {
     log.debug("Extracting google user authorities");
 
     DefaultOAuth2User principal;
@@ -34,7 +35,7 @@ public class GoogleAuthorityExtractor implements ProviderAuthorityExtractor {
       throw new RuntimeException();
     }
 
-    List<String> groupsByUsername = acs.getRoles()
+    Set<String> groupsByUsername = acs.getRoles()
         .stream()
         .filter(r -> r.getSubjects()
             .stream()
@@ -42,7 +43,7 @@ public class GoogleAuthorityExtractor implements ProviderAuthorityExtractor {
             .filter(s -> s.getType().equals("user"))
             .anyMatch(s -> s.getValue().equals(principal.getAttribute(EMAIL_ATTRIBUTE_NAME))))
         .map(Role::getName)
-        .collect(Collectors.toList());
+        .collect(Collectors.toSet());
 
 
     String domain = principal.getAttribute(GOOGLE_DOMAIN_ATTRIBUTE_NAME);
@@ -62,7 +63,7 @@ public class GoogleAuthorityExtractor implements ProviderAuthorityExtractor {
         .toList();
 
     return Mono.just(Stream.concat(groupsByUsername.stream(), groupsByDomain.stream())
-        .collect(Collectors.toList()));
+        .collect(Collectors.toSet()));
   }
 
 }
