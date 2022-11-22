@@ -7,7 +7,7 @@ const SelectRowHeader: React.FC<HeaderContext<unknown, unknown>> = ({
 }) => (
   <IndeterminateCheckbox
     checked={table.getIsAllRowsSelected()}
-    indeterminate={table.getIsSomePageRowsSelected()}
+    indeterminate={table.getIsSomeRowsSelected()}
     onChange={table.getToggleAllRowsSelectedHandler()}
   />
 );
