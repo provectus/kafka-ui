@@ -15,8 +15,8 @@ describe('SavedFilter Component', () => {
     { name: 'One More Filter', code: 'code1' },
   ];
 
-  const setUpComponent = (props: Partial<Props> = {}) => {
-    return render(
+  const setUpComponent = (props: Partial<Props> = {}) =>
+    render(
       <SavedFilters
         filters={props.filters || mockFilters}
         onEdit={props.onEdit || jest.fn()}
@@ -26,7 +26,6 @@ describe('SavedFilter Component', () => {
         deleteFilter={props.deleteFilter || jest.fn()}
       />
     );
-  };
 
   const getSavedFilters = () => screen.getAllByRole('savedFilter');
 
