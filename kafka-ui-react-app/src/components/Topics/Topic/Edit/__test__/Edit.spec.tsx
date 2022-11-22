@@ -1,6 +1,6 @@
 import React from 'react';
 import Edit from 'components/Topics/Topic/Edit/Edit';
-import { act, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { render, WithRoute } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
 import { clusterTopicEditPath } from 'lib/paths';
@@ -39,7 +39,7 @@ const updateTopicMock = jest.fn();
 
 const renderComponent = () => {
   const path = clusterTopicEditPath(clusterName, topicName);
-  render(
+  return render(
     <WithRoute path={clusterTopicEditPath()}>
       <Edit />
     </WithRoute>,
@@ -48,7 +48,7 @@ const renderComponent = () => {
 };
 
 describe('Edit Component', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     (useTopicDetails as jest.Mock).mockImplementation(() => ({
       data: internalTopicPayload,
     }));
@@ -59,21 +59,21 @@ describe('Edit Component', () => {
       isLoading: false,
       mutateAsync: updateTopicMock,
     }));
-    await act(() => renderComponent());
+    renderComponent();
   });
 
-  it('renders DangerZone component', async () => {
+  it('renders DangerZone component', () => {
     expect(screen.getByText(`DangerZone`)).toBeInTheDocument();
   });
 
   it('submits form correctly', async () => {
-    await act(() => renderComponent());
+    renderComponent();
     const btn = screen.getAllByText(/Update topic/i)[0];
     const field = screen.getByRole('spinbutton', {
       name: 'Min In Sync Replicas * Min In Sync Replicas *',
     });
-    await act(() => userEvent.type(field, '1'));
-    await act(() => userEvent.click(btn));
+    await userEvent.type(field, '1');
+    await userEvent.click(btn);
     expect(updateTopicMock).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith('../');
   });
