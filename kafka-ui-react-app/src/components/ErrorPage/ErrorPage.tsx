@@ -9,7 +9,8 @@ const ErrorPage = () => {
     <>
       <PageHeading text="404" />
       <S.Wrapper>
-        <S.Text>404</S.Text>
+        <S.Number>404</S.Number>
+        <S.Text>Page is not found</S.Text>
         <Button buttonType="primary" buttonSize="M" to="/">
           Go Back to Dashboard
         </Button>

@@ -5,11 +5,15 @@ export const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 50px;
+  gap: 20px;
+`;
+
+export const Number = styled.div`
+  font-size: 100px;
+  color: ${({ theme }) => theme.errorPage.text};
+  line-height: initial;
 `;
 
 export const Text = styled.div`
-  font-size: 60px;
-  color: ${({ theme }) => theme.errorPage.text};
-  line-height: initial;
+  font-size: 20px;
 `;
