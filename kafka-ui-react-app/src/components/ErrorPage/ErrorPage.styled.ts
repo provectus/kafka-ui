@@ -6,6 +6,7 @@ export const Wrapper = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 20px;
+  margin-top: 100px;
 `;
 
 export const Number = styled.div`

@@ -1,5 +1,5 @@
 import React, { Suspense, useCallback } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { clusterPath, errorPage, getNonExactPath } from 'lib/paths';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -125,6 +125,10 @@ const App: React.FC = () => {
                     element={<ClusterPage />}
                   />
                   <Route path={errorPage} element={<ErrorPage />} />
+                  <Route
+                    path="*"
+                    element={<Navigate to={errorPage} replace />}
+                  />
                 </Routes>
               </S.Container>
               <Toaster position="bottom-right" />
