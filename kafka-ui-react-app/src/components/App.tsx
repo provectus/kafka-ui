@@ -1,6 +1,6 @@
 import React, { Suspense, useCallback } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { clusterPath, getNonExactPath } from 'lib/paths';
+import { clusterPath, errorPage, getNonExactPath } from 'lib/paths';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
@@ -20,6 +20,7 @@ import DiscordIcon from 'components/common/Icons/DiscordIcon';
 import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
 import { ConfirmContextProvider } from './contexts/ConfirmContext';
 import { GlobalSettingsProvider } from './contexts/GlobalSettingsContext';
+import ErrorPage from './ErrorPage/ErrorPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -123,6 +124,7 @@ const App: React.FC = () => {
                     path={getNonExactPath(clusterPath())}
                     element={<ClusterPage />}
                   />
+                  <Route path={errorPage} element={<ErrorPage />} />
                 </Routes>
               </S.Container>
               <Toaster position="bottom-right" />
