@@ -40,8 +40,8 @@ describe('Message component', () => {
     props: Partial<Props> = {
       message: mockMessage,
     }
-  ) => {
-    return render(
+  ) =>
+    render(
       <table>
         <tbody>
           <Message
@@ -52,7 +52,6 @@ describe('Message component', () => {
         </tbody>
       </table>
     );
-  };
 
   it('shows the data in the table row', () => {
     renderComponent();
