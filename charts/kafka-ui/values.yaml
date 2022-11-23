@@ -73,6 +73,11 @@ podLabels: {}
 ##
 annotations: {}
 
+## Set field schema as HTTPS for readines and liveness probe
+##
+probes:
+  useHttpsScheme: false
+
 podSecurityContext:
   {}
   # fsGroup: 2000
