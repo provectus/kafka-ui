@@ -19,6 +19,7 @@ import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.service.analyze.TopicAnalysisService;
+import com.provectus.kafka.ui.service.reassign.ReassignmentService;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -43,7 +44,7 @@ class TopicsServicePaginationTest {
   private final ClusterMapper clusterMapper = new ClusterMapperImpl();
 
   private final TopicsController topicsController = new TopicsController(
-      topicsService, mock(TopicAnalysisService.class), clusterMapper);
+      topicsService, mock(TopicAnalysisService.class), mock(ReassignmentService.class), clusterMapper);
 
   private void init(Map<String, InternalTopic> topicsInCache) {
 

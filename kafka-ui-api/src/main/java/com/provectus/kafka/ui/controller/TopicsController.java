@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.model.GeneratePartitionsReassignmentCommandDTO;
 import com.provectus.kafka.ui.model.InProgressReassignmentDTO;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
+import com.provectus.kafka.ui.model.PartitionReassignmentCancellationDTO;
 import com.provectus.kafka.ui.model.PartitionsIncreaseDTO;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponseDTO;
 import com.provectus.kafka.ui.model.ReassignPartitionsCommandDTO;
@@ -32,6 +33,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -218,10 +220,11 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
 
   @Override
-  public Mono<ResponseEntity<ReassignPartitionsCommandDTO>> generatePartitionAssignment(String clusterName,
-                                                                                        Mono<GeneratePartitionsReassignmentCommandDTO> generatePartitionsReassignmentCommandDTO,
-                                                                                        ServerWebExchange exchange) {
-    return generatePartitionsReassignmentCommandDTO
+  public Mono<ResponseEntity<ReassignPartitionsCommandDTO>>
+        generatePartitionAssignment(String clusterName,
+                              Mono<GeneratePartitionsReassignmentCommandDTO> reassignCmdDto,
+                              ServerWebExchange exchange) {
+    return reassignCmdDto
         .flatMap(generateDto ->
             reassignmentService.generate(
                 getCluster(clusterName),
@@ -232,21 +235,24 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
   @Override
   public Mono<ResponseEntity<ReassignPartitionsCommandDTO>> getCurrentPartitionAssignment(String clusterName,
-                                                                                          Mono<GeneratePartitionsReassignmentCommandDTO> generatePartitionsReassignmentCommandDTO,
+                                                                                          Flux<String> topicsList,
                                                                                           ServerWebExchange exchange) {
-    return generatePartitionsReassignmentCommandDTO
-        .flatMap(generateDto ->
+    return topicsList
+        .collect(Collectors.toSet())
+        .flatMap(topics ->
             reassignmentService.getCurrentAssignment(
                 getCluster(clusterName),
-                generateDto.getTopics().stream().map(t -> t.getTopic()).collect(Collectors.toSet())))
+                topics))
         .map(ResponseEntity::ok);
   }
 
   @Override
   public Mono<ResponseEntity<Void>> executePartitionAssignment(String clusterName,
-                                                               Mono<ReassignPartitionsCommandDTO> reassignPartitionsCommandDTO,
+                                                               Mono<ReassignPartitionsCommandDTO> cmdDto,
                                                                ServerWebExchange exchange) {
-    return null;
+    return cmdDto
+        .flatMap(cmd -> reassignmentService.executeReassignment(getCluster(clusterName), cmd))
+        .thenReturn(ResponseEntity.ok().build());
   }
 
   @Override
@@ -254,5 +260,19 @@ public class TopicsController extends AbstractController implements TopicsApi {
                                                                                   ServerWebExchange exchange) {
     return reassignmentService.getInProgressAssignments(getCluster(clusterName))
         .map(ResponseEntity::ok);
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> cancelPartitionAssignment(String clusterName,
+                                                              Mono<PartitionReassignmentCancellationDTO> cancelDto,
+                                                              ServerWebExchange exchange) {
+    return cancelDto
+        .flatMap(dto ->
+            reassignmentService.cancelReassignment(
+                getCluster(clusterName),
+                dto.getPartitions().stream()
+                    .map(p -> new TopicPartition(p.getTopic(), p.getPartition()))
+                    .collect(Collectors.toSet())))
+        .thenReturn(ResponseEntity.ok().build());
   }
 }
