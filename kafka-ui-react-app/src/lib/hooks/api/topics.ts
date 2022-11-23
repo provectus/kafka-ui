@@ -155,8 +155,12 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
 export function useUpdateTopic(props: GetTopicDetailsRequest) {
   const client = useQueryClient();
   return useMutation(
-    (data: TopicFormDataRaw) =>
-      api.updateTopic({ ...props, topicUpdate: formatTopicUpdate(data) }),
+    (data: TopicFormDataRaw) => {
+      return api.updateTopic({
+        ...props,
+        topicUpdate: formatTopicUpdate(data),
+      });
+    },
     {
       onSuccess: () => {
         showSuccessAlert({

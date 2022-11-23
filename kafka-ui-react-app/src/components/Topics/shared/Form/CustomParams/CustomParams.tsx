@@ -4,7 +4,6 @@ import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { Button } from 'components/common/Button/Button';
 import { TOPIC_CUSTOM_PARAMS_PREFIX } from 'lib/constants';
 import PlusIcon from 'components/common/Icons/PlusIcon';
-import { ConfigSource } from 'generated-sources';
 
 import CustomParamField from './CustomParamField';
 import * as S from './CustomParams.styled';
@@ -18,7 +17,6 @@ export interface CustomParamsProps {
 const CustomParams: React.FC<CustomParamsProps> = ({
   isSubmitting,
   config,
-  isEditing,
 }) => {
   const { control } = useFormContext<TopicFormData>();
   const { fields, append, remove } = useFieldArray({
@@ -48,25 +46,18 @@ const CustomParams: React.FC<CustomParamsProps> = ({
 
   return (
     <S.ParamsWrapper>
-      {controlledFields?.map(
-        (field, idx) =>
-          ((config &&
-            field.name &&
-            config[field.name]?.source === ConfigSource.DYNAMIC_TOPIC_CONFIG) ||
-            !field.name ||
-            !isEditing) && (
-            <CustomParamField
-              key={field.id}
-              config={config}
-              field={field}
-              remove={removeField}
-              index={idx}
-              isDisabled={isSubmitting}
-              existingFields={existingFields}
-              setExistingFields={setExistingFields}
-            />
-          )
-      )}
+      {controlledFields?.map((field, idx) => (
+        <CustomParamField
+          key={field.id}
+          config={config}
+          field={field}
+          remove={removeField}
+          index={idx}
+          isDisabled={isSubmitting}
+          existingFields={existingFields}
+          setExistingFields={setExistingFields}
+        />
+      ))}
       <div>
         <Button
           type="button"

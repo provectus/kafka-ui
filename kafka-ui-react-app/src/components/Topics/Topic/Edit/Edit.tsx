@@ -54,9 +54,18 @@ const Edit: React.FC = () => {
   topicConfig?.forEach((param) => {
     config.byName[param.name] = param;
   });
-
   const onSubmit = async (data: TopicFormDataRaw) => {
-    await updateTopic.mutateAsync(data);
+    const changeData = () => {
+      return Object.fromEntries(
+        Object.entries(data).filter(
+          ([key, val]) =>
+            String(val) !==
+            String(defaultValues[key as keyof typeof defaultValues])
+        )
+      );
+    };
+
+    await updateTopic.mutateAsync(changeData());
     navigate('../');
   };
 

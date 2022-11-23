@@ -12,7 +12,6 @@ import { StyledForm } from 'components/common/Form/Form.styled';
 import { clusterTopicPath } from 'lib/paths';
 import { useNavigate } from 'react-router-dom';
 import useAppParams from 'lib/hooks/useAppParams';
-import { ConfigSource } from 'generated-sources';
 
 import CustomParams from './CustomParams/CustomParams';
 import TimeToRetain from './TimeToRetain';
@@ -79,9 +78,6 @@ const TopicForm: React.FC<Props> = ({
     navigate(clusterTopicPath(clusterName, topicName));
   };
 
-  const getDynamicSource = (key: string) =>
-    config && config[key]?.source === ConfigSource.DYNAMIC_TOPIC_CONFIG;
-
   return (
     <StyledForm onSubmit={onSubmit} aria-label="topic form">
       <fieldset disabled={isSubmitting}>
@@ -147,23 +143,21 @@ const TopicForm: React.FC<Props> = ({
         </fieldset>
 
         <S.Column>
-          {(!isEditing || getDynamicSource('min.insync.replicas')) && (
-            <div>
-              <InputLabel htmlFor="topicFormMinInSyncReplicas">
-                Min In Sync Replicas
-              </InputLabel>
-              <Input
-                id="topicFormMinInSyncReplicas"
-                type="number"
-                placeholder="Min In Sync Replicas"
-                min="1"
-                name="minInSyncReplicas"
-              />
-              <FormError>
-                <ErrorMessage errors={errors} name="minInSyncReplicas" />
-              </FormError>
-            </div>
-          )}
+          <div>
+            <InputLabel htmlFor="topicFormMinInSyncReplicas">
+              Min In Sync Replicas
+            </InputLabel>
+            <Input
+              id="topicFormMinInSyncReplicas"
+              type="number"
+              placeholder="Min In Sync Replicas"
+              min="1"
+              name="minInSyncReplicas"
+            />
+            <FormError>
+              <ErrorMessage errors={errors} name="minInSyncReplicas" />
+            </FormError>
+          </div>
           <div>
             <InputLabel htmlFor="topicFormReplicationFactor">
               Replication Factor
@@ -181,13 +175,11 @@ const TopicForm: React.FC<Props> = ({
           </div>
         </S.Column>
 
-        {(!isEditing || getDynamicSource('retention.ms')) && (
-          <S.Column>
-            <div>
-              <TimeToRetain isSubmitting={isSubmitting} />
-            </div>
-          </S.Column>
-        )}
+        <S.Column>
+          <div>
+            <TimeToRetain isSubmitting={isSubmitting} />
+          </div>
+        </S.Column>
 
         <S.Column>
           <div>
@@ -215,23 +207,21 @@ const TopicForm: React.FC<Props> = ({
             />
           </div>
 
-          {(!isEditing || getDynamicSource('max.message.bytes')) && (
-            <div>
-              <InputLabel htmlFor="topicFormMaxMessageBytes">
-                Maximum message size in bytes
-              </InputLabel>
-              <Input
-                id="topicFormMaxMessageBytes"
-                type="number"
-                placeholder="Maximum message size"
-                min="1"
-                name="maxMessageBytes"
-              />
-              <FormError>
-                <ErrorMessage errors={errors} name="maxMessageBytes" />
-              </FormError>
-            </div>
-          )}
+          <div>
+            <InputLabel htmlFor="topicFormMaxMessageBytes">
+              Maximum message size in bytes
+            </InputLabel>
+            <Input
+              id="topicFormMaxMessageBytes"
+              type="number"
+              placeholder="Maximum message size"
+              min="1"
+              name="maxMessageBytes"
+            />
+            <FormError>
+              <ErrorMessage errors={errors} name="maxMessageBytes" />
+            </FormError>
+          </div>
         </S.Column>
 
         <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>

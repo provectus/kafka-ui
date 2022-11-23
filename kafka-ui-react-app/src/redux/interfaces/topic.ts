@@ -24,15 +24,15 @@ interface TopicFormCustomParams {
 export type TopicFormFormattedParams = TopicCreation['configs'];
 
 export interface TopicFormDataRaw {
-  name: string;
-  partitions: number;
-  replicationFactor: number;
-  minInSyncReplicas: number;
-  cleanupPolicy: string;
-  retentionMs: number;
-  retentionBytes: number;
-  maxMessageBytes: number;
-  customParams: TopicFormCustomParams;
+  name?: string;
+  partitions?: number;
+  replicationFactor?: number;
+  minInSyncReplicas?: number;
+  cleanupPolicy?: string;
+  retentionMs?: number;
+  retentionBytes?: number;
+  maxMessageBytes?: number;
+  customParams?: TopicFormCustomParams;
 }
 
 export interface TopicFormData {
