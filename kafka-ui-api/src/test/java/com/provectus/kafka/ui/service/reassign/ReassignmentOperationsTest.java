@@ -154,12 +154,12 @@ class ReassignmentOperationsTest {
     Awaitility.await()
         .pollInSameThread()
         .atMost(Duration.ofSeconds(10))
-        .until(() -> ADMIN_CLIENT.listPartitionReassignments().reassignments().get().isEmpty());
+        .untilAsserted(() -> {
+          Map<TopicPartition, List<Integer>> actualAssignment =
+              ops.getCurrentAssignment(Set.of(testTopic1, testTopic2)).block();
 
-    Map<TopicPartition, List<Integer>> actualAssignment =
-        ops.getCurrentAssignment(Set.of(testTopic1, testTopic2)).block();
-
-    assertThat(actualAssignment).containsExactlyInAnyOrderEntriesOf(desiredAssignment);
+          assertThat(actualAssignment).containsExactlyInAnyOrderEntriesOf(desiredAssignment);
+        });
   }
 
   //test case copied from https://github.com/apache/kafka/blob/99b9b3e84f4e98c3f07714e1de6a139a004cbc5b/core/src/test/scala/unit/kafka/admin/AdminRackAwareTest.scala#L198
