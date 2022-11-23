@@ -97,6 +97,29 @@ public class TopicsTests extends BaseTest {
     TOPIC_LIST.add(TOPIC_TO_CREATE);
   }
 
+  @DisplayName("Checking available operations for selected Topic within 'All Topics' page")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(7)
+  @Test
+  void checkAvailableOperations(){
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .selectCheckboxByName(TOPIC_FOR_DELETE.getName());
+    SoftAssertions softly = new SoftAssertions();
+    topicsList.getEnabledActionButtons().
+        forEach(element -> softly.assertThat(element.is(Condition.enabled))
+            .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    topicsList
+        .selectCheckboxByName(TOPIC_FOR_UPDATE.getName());
+    softly.assertThat(topicsList.getDisabledActionButtons()
+            .is(Condition.disabled))
+        .as(topicsList.getDisabledActionButtons().getSearchCriteria() + " isDisabled()").isTrue();
+    softly.assertAll();
+  }
+
   @Disabled()
   @Issue("https://github.com/provectus/kafka-ui/issues/2625")
   @DisplayName("should update a topic")
