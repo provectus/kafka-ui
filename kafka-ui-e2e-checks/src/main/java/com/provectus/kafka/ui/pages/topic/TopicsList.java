@@ -22,7 +22,6 @@ public class TopicsList extends BasePage {
     protected SelenideElement copySelectedTopicBtn = $x("//button[text()='Copy selected topic']");
     protected SelenideElement purgeMessagesOfSelectedTopicsBtn = $x("//button[text()='Purge messages of selected topics']");
     protected String checkBoxListLocator = "//a[@title='%s']//ancestor::td/../td/input[@type='checkbox']";
-    protected String actionButtonLocator = "//button[text()='%s']";
 
     @Step
     public TopicsList waitUntilScreenReady() {
