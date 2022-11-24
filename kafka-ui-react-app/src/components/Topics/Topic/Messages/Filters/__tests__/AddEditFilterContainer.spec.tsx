@@ -15,30 +15,28 @@ describe('AddEditFilterContainer component', () => {
     code: 'mockCode',
   };
 
-  const renderComponent = async (
+  const renderComponent = (
     props: Partial<AddEditFilterContainerProps> = {}
   ) => {
-    await act(() => {
-      render(
-        <AddEditFilterContainer
-          cancelBtnHandler={jest.fn()}
-          submitBtnText={props.submitBtnText || defaultSubmitBtn}
-          {...props}
-        />
-      );
-    });
+    return render(
+      <AddEditFilterContainer
+        cancelBtnHandler={jest.fn()}
+        submitBtnText={props.submitBtnText || defaultSubmitBtn}
+        {...props}
+      />
+    );
   };
 
   describe('default Component Parameters', () => {
-    beforeEach(async () => {
-      await act(() => renderComponent());
-    });
-
-    it('should check the default Button text', () => {
+    it('should check the default Button text', async () => {
+      await act(() => {
+        renderComponent();
+      });
       expect(screen.getByText(defaultSubmitBtn)).toBeInTheDocument();
     });
 
     it('should check whether the submit Button is disabled when the form is pristine and disabled if dirty', async () => {
+      renderComponent();
       const submitButtonElem = screen.getByText(defaultSubmitBtn);
       expect(submitButtonElem).toBeDisabled();
 
@@ -60,6 +58,9 @@ describe('AddEditFilterContainer component', () => {
     });
 
     it('should view the error message after typing and clearing the input', async () => {
+      await act(() => {
+        renderComponent();
+      });
       const inputs = screen.getAllByRole('textbox');
       const user = userEvent.setup();
       const textAreaElement = inputs[0] as HTMLTextAreaElement;
@@ -77,12 +78,10 @@ describe('AddEditFilterContainer component', () => {
   });
 
   describe('Custom setup for the component', () => {
-    it('should render the input with default data if they are passed', async () => {
-      await act(() => {
-        renderComponent({
-          inputDisplayNameDefaultValue: mockData.name,
-          inputCodeDefaultValue: mockData.code,
-        });
+    it('should render the input with default data if they are passed', () => {
+      renderComponent({
+        inputDisplayNameDefaultValue: mockData.name,
+        inputCodeDefaultValue: mockData.code,
       });
       const inputs = screen.getAllByRole('textbox');
       const textAreaElement = inputs[0] as HTMLTextAreaElement;
@@ -93,11 +92,9 @@ describe('AddEditFilterContainer component', () => {
 
     it('should test whether the cancel callback is being called', async () => {
       const cancelCallback = jest.fn();
-      await act(() =>
-        renderComponent({
-          cancelBtnHandler: cancelCallback,
-        })
-      );
+      renderComponent({
+        cancelBtnHandler: cancelCallback,
+      });
       const cancelBtnElement = screen.getByText(/cancel/i);
 
       await userEvent.click(cancelBtnElement);
@@ -106,7 +103,7 @@ describe('AddEditFilterContainer component', () => {
 
     it('should test whether the submit Callback is being called', async () => {
       const submitCallback = jest.fn();
-      await act(() => renderComponent({ submitCallback }));
+      renderComponent({ submitCallback });
 
       const inputs = screen.getAllByRole('textbox');
 
@@ -125,7 +122,7 @@ describe('AddEditFilterContainer component', () => {
     });
 
     it('should display the checkbox if the props is passed and initially check state', async () => {
-      await act(() => renderComponent({ isAdd: true }));
+      renderComponent({ isAdd: true });
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).toBeInTheDocument();
       expect(checkbox).not.toBeChecked();
@@ -135,11 +132,11 @@ describe('AddEditFilterContainer component', () => {
 
     it('should pass and render the correct button text', async () => {
       const submitBtnText = 'submitBtnTextTest';
-      await act(() =>
+      await act(() => {
         renderComponent({
           submitBtnText,
-        })
-      );
+        });
+      });
       expect(screen.getByText(submitBtnText)).toBeInTheDocument();
     });
   });

@@ -1,7 +1,7 @@
 import React from 'react';
 import New from 'components/Topics/New/New';
 import { Route, Routes } from 'react-router-dom';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import {
   clusterTopicCopyPath,
   clusterTopicNewPath,
@@ -13,7 +13,6 @@ import { useCreateTopic } from 'lib/hooks/api/topics';
 
 const clusterName = 'local';
 const topicName = 'test-topic';
-const retainTime = '2419200000';
 const minValue = '1';
 
 const mockNavigate = jest.fn();
@@ -34,6 +33,7 @@ const renderComponent = (path: string) => {
     { initialEntries: [path] }
   );
 };
+
 const createTopicMock = jest.fn();
 describe('New', () => {
   beforeEach(() => {
@@ -45,13 +45,14 @@ describe('New', () => {
     mockNavigate.mockClear();
   });
   it('checks header for create new', async () => {
-    await act(() => renderComponent(clusterTopicNewPath(clusterName)));
+    await act(() => {
+      renderComponent(clusterTopicNewPath(clusterName));
+    });
     expect(screen.getByRole('heading', { name: 'Create' })).toBeInTheDocument();
   });
-  it('checks header for copy', async () => {
-    await act(() =>
-      renderComponent(`${clusterTopicCopyPath(clusterName)}?name=test`)
-    );
+
+  it('checks header for copy', () => {
+    renderComponent(`${clusterTopicCopyPath(clusterName)}?name=test`);
     expect(screen.getByRole('heading', { name: 'Copy' })).toBeInTheDocument();
   });
   it('validates form', async () => {
@@ -78,41 +79,25 @@ describe('New', () => {
   });
 
   it('validates form invalid name', async () => {
-    await renderComponent(clusterTopicNewPath(clusterName));
+    renderComponent(clusterTopicNewPath(clusterName));
     await userEvent.type(
       screen.getByPlaceholderText('Topic Name'),
       'Invalid,Name'
     );
-    await expect(
+    expect(
       screen.getByText('Only alphanumeric, _, -, and . allowed')
     ).toBeInTheDocument();
   });
 
   it('submits valid form', async () => {
-    await renderComponent(clusterTopicNewPath(clusterName));
-    await userEvent.type(screen.getByLabelText('Topic Name *'), topicName);
+    renderComponent(clusterTopicNewPath(clusterName));
+    await userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
     await userEvent.type(
       screen.getByLabelText('Number of partitions *'),
       minValue
     );
-    await userEvent.type(
-      screen.getByLabelText('Min In Sync Replicas'),
-      minValue
-    );
-    await userEvent.type(screen.getByLabelText('Replication Factor'), minValue);
-    await userEvent.type(
-      screen.getByLabelText('Time to retain data (in ms)'),
-      retainTime
-    );
-    await userEvent.type(
-      screen.getByLabelText('Maximum message size in bytes'),
-      minValue
-    );
-    expect(screen.getByText('Create topic')).toBeEnabled();
     await userEvent.click(screen.getByText('Create topic'));
-    await waitFor(() => expect(createTopicMock).toHaveBeenCalledTimes(1));
-    await waitFor(() =>
-      expect(mockNavigate).toHaveBeenCalledWith(`../${topicName}`)
-    );
+    expect(createTopicMock).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenLastCalledWith(`../${topicName}`);
   });
 });
