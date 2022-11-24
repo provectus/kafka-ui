@@ -15,30 +15,8 @@ describe('useDataSaver hook', () => {
 
     afterAll(() => jest.useRealTimers());
 
-    it('downloads json file', () => {
-      const link: HTMLAnchorElement = document.createElement('a');
-      link.click = jest.fn();
-
-      const mockCreate = jest
-        .spyOn(document, 'createElement')
-        .mockImplementation(() => link);
-
-      const HookWrapper: React.FC = () => {
-        const { saveFile } = useDataSaver('message', content);
-        useEffect(() => saveFile(), [saveFile]);
-        return null;
-      };
-
-      render(<HookWrapper />);
-      expect(mockCreate).toHaveBeenCalledTimes(2);
-      expect(link.download).toEqual('message_1616581196000.json');
-      expect(link.href).toEqual(`data:text/json;charset=utf-8,${content}`);
-      expect(link.click).toHaveBeenCalledTimes(1);
-
-      mockCreate.mockRestore();
-    });
-
     it('downloads txt file', () => {
+      global.URL.createObjectURL = jest.fn();
       const link: HTMLAnchorElement = document.createElement('a');
       link.click = jest.fn();
 
@@ -54,8 +32,7 @@ describe('useDataSaver hook', () => {
 
       render(<HookWrapper />);
       expect(mockCreate).toHaveBeenCalledTimes(2);
-      expect(link.download).toEqual('message_1616581196000.txt');
-      expect(link.href).toEqual(`data:text/json;charset=utf-8,content`);
+      expect(link.download).toEqual('message');
       expect(link.click).toHaveBeenCalledTimes(1);
 
       mockCreate.mockRestore();

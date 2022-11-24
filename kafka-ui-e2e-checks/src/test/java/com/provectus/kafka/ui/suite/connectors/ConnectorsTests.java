@@ -1,4 +1,10 @@
-package com.provectus.kafka.ui.tests;
+package com.provectus.kafka.ui.suite.connectors;
+
+import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
+import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KAFKA_CONNECT;
+import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Connector;
@@ -7,15 +13,14 @@ import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qase.api.annotation.CaseId;
-import org.junit.jupiter.api.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KAFKA_CONNECT;
-import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
-import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ConnectorsTests extends BaseTest {
@@ -106,6 +111,7 @@ public class ConnectorsTests extends BaseTest {
                 .openConfigTab()
                 .setConfig(CONNECTOR_FOR_UPDATE.getConfig())
                 .clickSubmitButton();
+        Assertions.assertTrue(connectorDetails.isAlertWithMessageVisible(SUCCESS,"Config successfully updated."),"isAlertWithMessageVisible()");
         naviSideBar
                 .openSideMenu(KAFKA_CONNECT);
         kafkaConnectList

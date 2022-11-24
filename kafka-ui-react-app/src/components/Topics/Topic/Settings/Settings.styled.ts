@@ -1,13 +1,14 @@
 import styled, { css } from 'styled-components';
 
-export const Row = styled.tr<{ $hasCustomValue?: boolean }>(
-  ({ theme, $hasCustomValue }) => css`
-    & > td {
-      font-weight: ${$hasCustomValue ? 500 : 400};
-      &:last-child {
-        color: ${theme.configList.color};
-        font-weight: 400;
-      }
-    }
+export const Value = styled.span<{ $hasCustomValue?: boolean }>(
+  ({ $hasCustomValue }) => css`
+    font-weight: ${$hasCustomValue ? 500 : 400};
+  `
+);
+
+export const DefaultValue = styled.span(
+  ({ theme }) => css`
+    color: ${theme.configList.color};
+    font-weight: 400;
   `
 );
