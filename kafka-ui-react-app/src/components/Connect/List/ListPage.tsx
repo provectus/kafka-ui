@@ -44,6 +44,7 @@ const ListPage: React.FC = () => {
             permission={{
               resource: UserPermissionResourceEnum.CONNECT,
               action: Action.CREATE,
+              value: '*',
             }}
           >
             Create Connector
