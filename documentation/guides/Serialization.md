@@ -1,20 +1,20 @@
-## Serialization and deserialization 
+## Serialization and deserialization and custom plugins
 
-Kafka-ui supports multiple way serialize/deserialize data.
+Kafka-ui supports multiple ways to serialize/deserialize data.
 
 
 ### Int32, Int64, UInt32, UInt64
 Big-endian 4/8 bytes representation of signed/unsigned integers.
 
 ### Base64
-Base64 (RFC4648) binary data representation. Can be useful when actual data is not important, but exactly the same (byte-wise) key/value should be send.
+Base64 (RFC4648) binary data representation. Can be useful in case if the actual data is not important, but exactly the same (byte-wise) key/value should be send.
 
 ### String 
 Treats binary data as a string in specified encoding. Default encoding is UTF-8.
 
 Class name: `com.provectus.kafka.ui.serdes.builtin.StringSerde`
 
-Sample configuration:
+Sample configuration (if you want to overwrite default configuration):
 ```yaml
 kafka:
   clusters:
@@ -100,7 +100,7 @@ kafka:
 
 ## Setting serdes for specific topics
 You can specify preferable serde for topics key/value. This serde will be chosen by default in UI on topic's view/produce pages. 
-To do it, set `topicValuesPattern/topicValuesPattern` properties for selected serde. kafka-ui will choose first serde that match specified pattern.
+To do so, set `topicValuesPattern/topicValuesPattern` properties for the selected serde. Kafka-ui will choose a first serde that matches specified pattern.
 
 Sample configuration:
 ```yaml
@@ -137,17 +137,19 @@ kafka:
 ```
 
 ## Fallback
-If selected serde wasn't able to be applied (exception was thrown), than fallback (String serde with UTF-8 encoding) serde will be applied. Such messages will be specially highlighted in UI.
+If selected serde couldn't be applied (exception was thrown), then fallback (String serde with UTF-8 encoding) serde will be applied. Such messages will be specially highlighted in UI.
 
 ## Custom pluggable serde registration
 You can implement your own serde and register it in kafka-ui application.
-To do it:
-1. Add `kafka-ui-serde-api` dependency 
+To do so:
+1. Add `kafka-ui-serde-api` dependency (should be downloadable via maven central)
 2. Implement `com.provectus.kafka.ui.serde.api.Serde` interface. See javadoc for implementation requirements.
 3. Pack your serde into uber jar, or provide directory with no-dependency jar and it's dependencies jars
 
 
-Example pluggable serde : [TODO]
+Example pluggable serdes :
+https://github.com/provectus/kafkaui-smile-serde
+https://github.com/provectus/kafkaui-glue-sr-serde
 
 Sample configuration:
 ```yaml
