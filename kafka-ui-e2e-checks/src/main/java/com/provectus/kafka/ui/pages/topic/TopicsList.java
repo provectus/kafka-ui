@@ -50,21 +50,18 @@ public class TopicsList extends BasePage {
 
     @Step
     public TopicsList selectCheckboxByName(String topicName){
-      $x(String.format(checkBoxListLocator, topicName)).shouldBe(Condition.enabled).click();
+      SelenideElement checkBox = $x(String.format(checkBoxListLocator,topicName));
+      if(!checkBox.is(Condition.selected)){clickByJavaScript(checkBox);}
       return this;
     }
 
     @Step
-    public SelenideElement getDisabledActionButtons(){
-      return copySelectedTopicBtn;
+    public boolean isCopySelectedTopicBtnEnabled(){
+      return isEnabled(copySelectedTopicBtn);
     }
 
     @Step
-    public List<SelenideElement> getEnabledActionButtons(){
-      return new ArrayList<>(getActionButtons());
-    }
-
-    private List<SelenideElement> getActionButtons() {
+    public List<SelenideElement> getActionButtons() {
       return Stream.of(deleteSelectedTopicsBtn, copySelectedTopicBtn, purgeMessagesOfSelectedTopicsBtn)
           .collect(Collectors.toList());
     }
