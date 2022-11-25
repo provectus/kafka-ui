@@ -10,20 +10,26 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
-import com.provectus.kafka.ui.utilities.WaitUtils;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
-@ExtensionMethod({WaitUtils.class})
 public class TopicDetails extends BasePage {
 
   protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
   protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
+  protected SelenideElement addFiltersBtn = $x("//button[text()='Add Filters']");
+  protected SelenideElement savedFiltersField = $x("//div[text()='Saved Filters']");
+  protected SelenideElement addFilterCodeModalTitle = $x("//label[text()='Filter code']");
+  protected SelenideElement addFilterCodeInput = $x("//div[@id='ace-editor']//textarea");
+  protected SelenideElement saveThisFilterCheckBoxAddFilterMdl = $x("//input[@name='saveFilter']");
+  protected SelenideElement displayNameInputAddFilterMdl = $x("//input[@placeholder='Enter Name']");
+  protected SelenideElement cancelBtnAddFilterMdl = $x("//button[text()='Cancel']");
+  protected SelenideElement addFilterBtnAddFilterMdl = $x("//button[text()='Add filter']");
   protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
   protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
   protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
@@ -34,6 +40,7 @@ public class TopicDetails extends BasePage {
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
+  protected String filterNameLocator = "//*[@data-testid='activeSmartFilter']";
 
   @Step
   public TopicDetails waitUntilScreenReady() {
@@ -107,6 +114,58 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
+  public TopicDetails clickMessagesAddFiltersBtn() {
+    addFiltersBtn.shouldBe(Condition.enabled).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails waitUntilAddFiltersMdlVisible() {
+    addFilterCodeModalTitle.shouldBe(Condition.visible);
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickAddFilterBtnAddFilterMdl() {
+    addFilterBtnAddFilterMdl.shouldBe(Condition.enabled).click();
+    addFilterCodeModalTitle.shouldBe(Condition.hidden);
+    return this;
+  }
+
+  @Step
+  public TopicDetails setFilterCodeFieldAddFilterMdl(String filterCode) {
+    addFilterCodeInput.shouldBe(Condition.enabled).sendKeys(filterCode);
+    return this;
+  }
+
+  @Step
+  public boolean isSaveThisFilterCheckBoxSelected() {
+    return isSelected(saveThisFilterCheckBoxAddFilterMdl);
+  }
+
+  @Step
+  public boolean isAddFilterBtnAddFilterMdlEnabled() {
+    return isEnabled(addFilterBtnAddFilterMdl);
+  }
+
+  @Step
+  public String getFilterName() {
+    return $x(filterNameLocator).getText();
+  }
+
+  public List<SelenideElement> getAllAddFilterModalVisibleElements() {
+    return Arrays.asList(savedFiltersField, displayNameInputAddFilterMdl, addFilterBtnAddFilterMdl, cancelBtnAddFilterMdl);
+  }
+
+  public List<SelenideElement> getAllAddFilterModalEnabledElements() {
+    return Arrays.asList(displayNameInputAddFilterMdl, cancelBtnAddFilterMdl);
+  }
+
+  public List<SelenideElement> getAllAddFilterModalDisabledElements() {
+    return Arrays.asList(addFilterBtnAddFilterMdl);
+  }
+
+  @Step
   public TopicDetails openConsumerGroup(String consumerId) {
     $x(String.format(consumerIdLocator, consumerId)).click();
     return this;
@@ -144,6 +203,23 @@ public class TopicDetails extends BasePage {
   @Step
   public TopicDetails.MessageGridItem getRandomMessage() {
     return getMessage(nextInt(initItems().size() - 1));
+  }
+
+  public enum TopicMenu {
+    OVERVIEW("Overview"),
+    MESSAGES("Messages"),
+    CONSUMERS("Consumers"),
+    SETTINGS("Settings");
+
+    private final String value;
+
+    TopicMenu(String value) {
+      this.value = value;
+    }
+
+    public String toString() {
+      return value;
+    }
   }
 
   public static class MessageGridItem extends BasePage {
@@ -209,23 +285,6 @@ public class TopicDetails extends BasePage {
       clickByJavaScript(element.$x("./td[7]//li[text() = 'Save as a file']")
           .shouldBe(Condition.visible));
       return this;
-    }
-  }
-
-  public enum TopicMenu {
-    OVERVIEW("Overview"),
-    MESSAGES("Messages"),
-    CONSUMERS("Consumers"),
-    SETTINGS("Settings");
-
-    private final String value;
-
-    TopicMenu(String value) {
-      this.value = value;
-    }
-
-    public String toString() {
-      return value;
     }
   }
 }
