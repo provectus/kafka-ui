@@ -1,21 +1,18 @@
 package com.provectus.kafka.ui.pages;
 
+import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
-import static com.provectus.kafka.ui.utilities.WebUtils.clickByActions;
+public class NaviSideBar extends BasePage {
 
-public class NaviSideBar {
-
-    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement dashboardMenuItem = $x("//a[@title='Dashboard']");
     protected String sideMenuOptionElementLocator = ".//ul/li[contains(.,'%s')]";
     protected String clusterElementLocator = "//aside/ul/li[contains(.,'%s')]";
@@ -30,7 +27,7 @@ public class NaviSideBar {
 
     @Step
     public NaviSideBar waitUntilScreenReady() {
-        loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(30));
+        waitUntilSpinnerDisappear();
         dashboardMenuItem.shouldBe(Condition.visible, Duration.ofSeconds(30));
         return this;
     }

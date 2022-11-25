@@ -1,4 +1,8 @@
-package com.provectus.kafka.ui.tests;
+package com.provectus.kafka.ui.suite.schemas;
+
+import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.SCHEMA_REGISTRY;
+import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.base.BaseTest;
@@ -7,16 +11,19 @@ import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qase.api.annotation.CaseId;
-import lombok.SneakyThrows;
-import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.SCHEMA_REGISTRY;
-import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
-import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
+import lombok.SneakyThrows;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -52,7 +59,7 @@ public class SchemasTests extends BaseTest {
                 .setSubjectName(schemaAvro.getName())
                 .setSchemaField(fileToString(schemaAvro.getValuePath()))
                 .selectSchemaTypeFromDropdown(schemaAvro.getType())
-                .clickSubmitBtn();
+                .clickSubmitButton();
         schemaDetails
                 .waitUntilScreenReady();
         SoftAssertions softly = new SoftAssertions();
@@ -90,10 +97,37 @@ public class SchemasTests extends BaseTest {
         schemaCreateForm
                 .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(AVRO_API.getValuePath()))
-                .clickSubmitBtn();
+                .clickSubmitButton();
         schemaDetails
                 .waitUntilScreenReady();
         Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), schemaDetails.getCompatibility(), "getCompatibility()");
+    }
+
+    @DisplayName("Checking Compare Versions operation for Schema")
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(186)
+    @Test
+    @Order(3)
+    void compareVersionsOperation() {
+      naviSideBar
+          .openSideMenu(SCHEMA_REGISTRY);
+      schemaRegistryList
+          .waitUntilScreenReady()
+          .openSchema(AVRO_API.getName());
+      int latestVersion = schemaDetails
+          .waitUntilScreenReady()
+          .getLatestVersion();
+      schemaDetails
+          .openCompareVersionMenu();
+      int versionsNumberFromDdl = schemaCreateForm
+          .waitUntilScreenReady()
+          .openSchemaVersionDdl()
+          .getVersionsNumberFromList();
+      Assertions.assertEquals(latestVersion,versionsNumberFromDdl,"Versions number is not matched");
+      schemaCreateForm
+          .selectVersionFromDropDown(1);
+      Assertions.assertEquals(53, schemaCreateForm.getMarkedLinesNumber(), "getAllMarkedLines()");
     }
 
     @DisplayName("should delete AVRO schema")
@@ -101,20 +135,20 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(187)
     @Test
-    @Order(3)
+    @Order(4)
     void deleteSchemaAvro() {
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
-        schemaRegistryList
-                .waitUntilScreenReady()
-                .openSchema(AVRO_API.getName());
-        schemaDetails
-                .waitUntilScreenReady()
-                .removeSchema();
-        schemaRegistryList
-                .waitUntilScreenReady();
-        Assertions.assertFalse(schemaRegistryList.isSchemaVisible(AVRO_API.getName()),"isSchemaVisible()");
-        SCHEMA_LIST.remove(AVRO_API);
+      naviSideBar
+          .openSideMenu(SCHEMA_REGISTRY);
+      schemaRegistryList
+          .waitUntilScreenReady()
+          .openSchema(AVRO_API.getName());
+      schemaDetails
+          .waitUntilScreenReady()
+          .removeSchema();
+      schemaRegistryList
+          .waitUntilScreenReady();
+      Assertions.assertFalse(schemaRegistryList.isSchemaVisible(AVRO_API.getName()),"isSchemaVisible()");
+      SCHEMA_LIST.remove(AVRO_API);
     }
 
     @DisplayName("should create JSON schema")
@@ -122,7 +156,7 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(89)
     @Test
-    @Order(4)
+    @Order(5)
     void createSchemaJson() {
         Schema schemaJson = Schema.createSchemaJson();
         naviSideBar
@@ -134,7 +168,7 @@ public class SchemasTests extends BaseTest {
                 .setSubjectName(schemaJson.getName())
                 .setSchemaField(fileToString(schemaJson.getValuePath()))
                 .selectSchemaTypeFromDropdown(schemaJson.getType())
-                .clickSubmitBtn();
+                .clickSubmitButton();
         schemaDetails
                 .waitUntilScreenReady();
         SoftAssertions softly = new SoftAssertions();
@@ -155,7 +189,7 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(189)
     @Test
-    @Order(5)
+    @Order(6)
     void deleteSchemaJson() {
         naviSideBar
                 .openSideMenu(SCHEMA_REGISTRY);
@@ -176,7 +210,7 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(91)
     @Test
-    @Order(6)
+    @Order(7)
     void createSchemaProtobuf() {
         Schema schemaProtobuf = Schema.createSchemaProtobuf();
         naviSideBar
@@ -188,7 +222,7 @@ public class SchemasTests extends BaseTest {
                 .setSubjectName(schemaProtobuf.getName())
                 .setSchemaField(fileToString(schemaProtobuf.getValuePath()))
                 .selectSchemaTypeFromDropdown(schemaProtobuf.getType())
-                .clickSubmitBtn();
+                .clickSubmitButton();
         schemaDetails
                 .waitUntilScreenReady();
         SoftAssertions softly = new SoftAssertions();
@@ -209,7 +243,7 @@ public class SchemasTests extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(223)
     @Test
-    @Order(7)
+    @Order(8)
     void deleteSchemaProtobuf() {
         naviSideBar
                 .openSideMenu(SCHEMA_REGISTRY);

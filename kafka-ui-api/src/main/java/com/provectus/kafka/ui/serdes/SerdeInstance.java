@@ -2,16 +2,18 @@ package com.provectus.kafka.ui.serdes;
 
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serde.api.Serde;
+import java.io.Closeable;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @RequiredArgsConstructor
-public class SerdeInstance {
+public class SerdeInstance implements Closeable {
 
   @Getter
   private final String name;
@@ -66,6 +68,18 @@ public class SerdeInstance {
     return wrapWithClassloader(() -> {
       var deserializer = serde.deserializer(topic, type);
       return (headers, data) -> wrapWithClassloader(() -> deserializer.deserialize(headers, data));
+    });
+  }
+
+  @Override
+  public void close() {
+    wrapWithClassloader(() -> {
+      try {
+        serde.close();
+      } catch (Exception e) {
+        log.error("Error closing serde " + name, e);
+      }
+      return null;
     });
   }
 }

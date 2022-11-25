@@ -30,6 +30,7 @@ the cloud.
 * **Browse Messages** — browse messages with JSON, plain text, and Avro encoding
 * **Dynamic Topic Configuration** — create and configure new topics with dynamic configuration
 * **Configurable Authentification** — secure your installation with optional Github/Gitlab/Google OAuth 2.0
+* **Custom serialization/deserialization plugins** - use a ready-to-go serde for your data like AWS Glue or Smile, or code your own!
 
 # The Interface
 UI for Apache Kafka wraps major functions of Apache Kafka with an intuitive user interface.
@@ -76,6 +77,7 @@ We have plenty of [docker-compose files](documentation/compose/DOCKER_COMPOSE.md
 - [AWS IAM configuration](documentation/guides/AWS_IAM.md)
 - [Docker-compose files](documentation/compose/DOCKER_COMPOSE.md)
 - [Connection to a secure broker](documentation/guides/SECURE_BROKER.md)
+- [Configure seriliazation/deserialization plugins or code your own](documentation/guides/Serialization.md)
 
 ### Configuration File
 Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
@@ -196,6 +198,10 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS` |Address of the Kafka Connect service endpoint
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_USERNAME`| Kafka Connect cluster's basic authentication username
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_PASSWORD`| Kafka Connect cluster's basic authentication password
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_KEYSTORELOCATION`| Path to the JKS keystore to communicate to Kafka Connect
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_KEYSTOREPASSWORD`| Password of the JKS keystore for Kafka Connect
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_TRUSTSTORELOCATION`| Path to the JKS truststore to communicate to Kafka Connect
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_TRUSTSTOREPASSWORD`| Password of the JKS truststore for Kafka Connect
 |`KAFKA_CLUSTERS_0_METRICS_SSL`          |Enable SSL for Metrics? `true` or `false`. For advanced setup, see `kafka-ui-jmx-secured.yml`
 |`KAFKA_CLUSTERS_0_METRICS_USERNAME` |Username for Metrics authentication
 |`KAFKA_CLUSTERS_0_METRICS_PASSWORD` |Password for Metrics authentication

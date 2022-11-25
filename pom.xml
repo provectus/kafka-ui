@@ -14,41 +14,54 @@
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring-boot.version>2.6.8</spring-boot.version>
-        <jackson-databind-nullable.version>0.2.2</jackson-databind-nullable.version>
-        <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
-        <org.projectlombok.version>1.18.20</org.projectlombok.version>
-        <org.projectlombok.e2e-checks.version>1.18.20</org.projectlombok.e2e-checks.version>
-        <git.revision>latest</git.revision>
-        <kafka-clients.version>3.2.0</kafka-clients.version>
-        <node.version>v16.15.0</node.version>
-        <pnpm.version>v7.4.0</pnpm.version>
-        <fabric8-maven-plugin.version>0.40.2</fabric8-maven-plugin.version>
-        <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
-        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-        <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
-        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
-        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-        <openapi-generator-maven-plugin.version>4.3.0</openapi-generator-maven-plugin.version>
-        <swagger-annotations.version>1.6.0</swagger-annotations.version>
-        <springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
-        <avro.version>1.11.0</avro.version>
-        <confluent.version>7.0.1</confluent.version>
-        <apache.commons.version>2.11.1</apache.commons.version>
-        <test.containers.version>1.17.1</test.containers.version>
-        <okhttp3.mockwebserver.version>4.10.0</okhttp3.mockwebserver.version>
-        <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
-        <mockito.version>4.8.1</mockito.version>
-        <byte-buddy.version>1.12.18</byte-buddy.version>
-        <assertj.version>3.19.0</assertj.version>
-        <antlr4-maven-plugin.version>4.7.1</antlr4-maven-plugin.version>
-        <groovy.version>3.0.13</groovy.version>
-        <datasketches-java.version>3.1.0</datasketches-java.version>
-
         <frontend-generated-sources-directory>..//kafka-ui-react-app/src/generated-sources
         </frontend-generated-sources-directory>
         <sonar.organization>provectus</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <git.revision>latest</git.revision>
+
+        <!-- Dependency versions -->
+        <antlr4-maven-plugin.version>4.7.1</antlr4-maven-plugin.version>
+        <apache.commons.version>2.11.1</apache.commons.version>
+        <assertj.version>3.19.0</assertj.version>
+        <avro.version>1.11.1</avro.version>
+        <byte-buddy.version>1.12.18</byte-buddy.version>
+        <confluent.version>7.3.0</confluent.version>
+        <datasketches-java.version>3.1.0</datasketches-java.version>
+        <groovy.version>3.0.13</groovy.version>
+        <jackson-databind-nullable.version>0.2.4</jackson-databind-nullable.version>
+        <jackson.version>2.14.0</jackson.version>
+        <kafka-clients.version>3.3.1</kafka-clients.version>
+        <netty.version>4.1.85.Final</netty.version>
+        <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
+        <org.projectlombok.version>1.18.24</org.projectlombok.version>
+        <protobuf-java.version>3.21.9</protobuf-java.version>
+        <reactor-netty.version>1.1.0</reactor-netty.version>
+        <scala-lang.library.version>2.13.9</scala-lang.library.version>
+        <snakeyaml.version>1.33</snakeyaml.version>
+        <spring-boot.version>2.7.5</spring-boot.version>
+        <spring-security.version>5.7.5</spring-security.version>
+
+        <!-- Test dependency versions -->
+        <junit.version>5.9.1</junit.version>
+        <mockito.version>4.8.1</mockito.version>
+        <okhttp3.mockwebserver.version>4.10.0</okhttp3.mockwebserver.version>
+        <testcontainers.version>1.17.5</testcontainers.version>
+
+        <!-- Frontend dependency versions -->
+        <node.version>v16.15.0</node.version>
+        <pnpm.version>v7.4.0</pnpm.version>
+
+        <!-- Plugin versions -->
+        <fabric8-maven-plugin.version>0.40.2</fabric8-maven-plugin.version>
+        <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
+        <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <openapi-generator-maven-plugin.version>4.3.0</openapi-generator-maven-plugin.version>
+        <springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
+        <swagger-annotations.version>1.6.0</swagger-annotations.version>
     </properties>
 
     <repositories>
@@ -85,6 +98,73 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-bom</artifactId>
+                <version>${spring-security.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scala-lang.library.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.projectreactor.netty</groupId>
+                <artifactId>reactor-netty-http</artifactId>
+                <version>${reactor-netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <pluginManagement>

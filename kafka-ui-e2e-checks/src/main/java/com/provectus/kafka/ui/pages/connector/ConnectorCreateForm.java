@@ -1,24 +1,21 @@
 package com.provectus.kafka.ui.pages.connector;
 
+import static com.codeborne.selenide.Selenide.$x;
+
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 
-import static com.codeborne.selenide.Selenide.$x;
-import static com.codeborne.selenide.Selenide.refresh;
-import static com.provectus.kafka.ui.utilities.WebUtils.clickByJavaScript;
+public class ConnectorCreateForm extends BasePage {
 
-public class ConnectorCreateForm {
-
-    protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
     protected SelenideElement nameField = $x("//input[@name='name']");
     protected SelenideElement contentTextArea = $x("//textarea[@class='ace_text-input']");
-    protected SelenideElement submitBtn = $x("//button[@type='submit']");
     protected SelenideElement configField = $x("//div[@id='config']");
 
     @Step
     public ConnectorCreateForm waitUntilScreenReady() {
-        loadingSpinner.shouldBe(Condition.disappear);
+        waitUntilSpinnerDisappear();
         nameField.shouldBe(Condition.visible);
         return this;
     }
@@ -34,8 +31,8 @@ public class ConnectorCreateForm {
 
     @Step
     public ConnectorCreateForm clickSubmitButton() {
-      clickByJavaScript(submitBtn);
-      loadingSpinner.shouldBe(Condition.disappear);
+      clickSubmitBtn();
+      waitUntilSpinnerDisappear();
       return this;
     }
 }
