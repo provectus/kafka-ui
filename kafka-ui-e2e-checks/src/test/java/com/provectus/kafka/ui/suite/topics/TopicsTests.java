@@ -331,6 +331,26 @@ public class TopicsTests extends BaseTest {
         .isEqualTo(filterName);
   }
 
+  @DisplayName("Checking 'Show Internal Topics' toggle functionality within 'All Topics' page")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(11)
+  @Test
+  void checkShowInternalTopicsButtonFunctionality(){
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicsList.isShowInternalRadioBtnSelected()).as("isInternalRadioBtnSelected()").isTrue();
+    softly.assertThat(topicsList.getInternalTopics()).as("getInternalTopics()").size().isGreaterThan(0);
+    softly.assertThat(topicsList.getNonInternalTopics()).as("getNonInternalTopics()").size().isGreaterThan(0);
+    softly.assertAll();
+    topicsList
+        .unSelectShowInternalRadioButton();
+    assertThat(topicsList.getInternalTopics()).as("getInternalTopics()").size().isEqualTo(0);
+  }
+
   @AfterAll
   public void afterAll() {
     TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));

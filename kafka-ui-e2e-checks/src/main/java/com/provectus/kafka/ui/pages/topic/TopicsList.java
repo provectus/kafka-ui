@@ -1,8 +1,11 @@
 package com.provectus.kafka.ui.pages.topic;
 
+import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 
+import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
@@ -21,6 +24,7 @@ public class TopicsList extends BasePage {
     protected SelenideElement deleteSelectedTopicsBtn = $x("//button[text()='Delete selected topics']");
     protected SelenideElement copySelectedTopicBtn = $x("//button[text()='Copy selected topic']");
     protected SelenideElement purgeMessagesOfSelectedTopicsBtn = $x("//button[text()='Purge messages of selected topics']");
+    protected ElementsCollection topicsGridItems = $$x("//tr[@class]");
     protected String checkBoxListLocator = "//a[@title='%s']//ancestor::td/../td/input[@type='checkbox']";
 
     @Step
@@ -40,6 +44,27 @@ public class TopicsList extends BasePage {
     public boolean isTopicVisible(String topicName) {
         tableGrid.shouldBe(Condition.visible);
         return isVisible(getTableElement(topicName));
+    }
+
+    @Step
+    public boolean isShowInternalRadioBtnSelected() {
+      return isSelected(showInternalRadioBtn);
+    }
+
+    @Step
+    public TopicsList selectShowInternalRadioButton() {
+      if (!showInternalRadioBtn.is(Condition.selected)) {
+        clickByJavaScript(showInternalRadioBtn);
+      }
+      return this;
+    }
+
+    @Step
+    public TopicsList unSelectShowInternalRadioButton() {
+      if (showInternalRadioBtn.is(Condition.selected)) {
+        clickByJavaScript(showInternalRadioBtn);
+      }
+      return this;
     }
 
     @Step
@@ -91,5 +116,81 @@ public class TopicsList extends BasePage {
       List<SelenideElement> enabledElements = new ArrayList<>(getEnabledColumnHeaders());
       enabledElements.addAll(Arrays.asList(searchField, showInternalRadioBtn,addTopicBtn));
       return enabledElements;
+    }
+
+    private List<TopicGridItems> initGridItems() {
+      List<TopicGridItems> gridItemList = new ArrayList<>();
+      topicsGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+          .forEach(item -> gridItemList.add(new TopicGridItems(item)));
+      return gridItemList;
+    }
+
+    @Step
+    public List<TopicGridItems> getNonInternalTopics() {
+      return initGridItems().stream()
+          .filter(e -> !e.isInternal())
+          .collect(Collectors.toList());
+    }
+
+    @Step
+    public List<TopicGridItems> getInternalTopics() {
+      return initGridItems().stream()
+          .filter(TopicGridItems::isInternal)
+          .collect(Collectors.toList());
+    }
+
+    public static class TopicGridItems extends BasePage {
+
+      private final SelenideElement element;
+
+      public TopicGridItems(SelenideElement element) {
+        this.element = element;
+      }
+
+      @Step
+      public boolean isInternal() {
+        boolean internal = false;
+        try {
+          element.$x("./td[2]/a/span").shouldBe(Condition.visible);
+          internal = true;
+        } catch (Throwable ignored) {
+        }
+        return internal;
+      }
+
+      @Step
+      public int getCheckBox() {
+        return Integer.parseInt(element.$x("./td[1]").getText().trim());
+      }
+
+      @Step
+      public int getNameElm() {
+        return Integer.parseInt(element.$x("./td[2]").getText().trim());
+      }
+
+      @Step
+      public int getPartition() {
+        return Integer.parseInt(element.$x("./td[3]").getText().trim());
+      }
+
+      @Step
+      public int getOutOfSyncReplicas() {
+        return Integer.parseInt(element.$x("./td[4]").getText().trim());
+      }
+
+      @Step
+      public int getReplicationFactor() {
+        return Integer.parseInt(element.$x("./td[5]").getText().trim());
+      }
+
+      @Step
+      public int getNumberOfMessages() {
+        return Integer.parseInt(element.$x("./td[6]").getText().trim());
+      }
+
+      @Step
+      public int getSize() {
+        return Integer.parseInt(element.$x("./td[7]").getText().trim());
+      }
     }
 }
