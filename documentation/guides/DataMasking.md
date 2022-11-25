@@ -14,7 +14,7 @@ For json objects - remove target fields, otherwise - return "null" string.
 
 Apply examples:
 ```
-{ "id": 1234, "name: { "first": "James" }, "age": 30 } 
+{ "id": 1234, "name": { "first": "James" }, "age": 30 } 
  ->
 { "age": 30 } 
 ```
@@ -34,9 +34,9 @@ For json objects - replace target field's values with specified replacement stri
 
 Apply examples:
 ```
-{ "id": 1234, "name: { "first": "James", "last": "Bond" }, "age": 30 } 
+{ "id": 1234, "name": { "first": "James", "last": "Bond" }, "age": 30 } 
  ->
-{ "id": "***", "name: { "first": "***", "last": "***" }, "age": 30 } 
+{ "id": "***", "name": { "first": "***", "last": "***" }, "age": 30 } 
 ```
 ```
 non-json string -> ***
@@ -55,9 +55,9 @@ Mask target field's values with specified masking characters, recursively (space
 
 Apply examples:
 ```
-{ "id": 1234, "name: { "first": "James", "last": "Bond!" }, "age": 30 } 
+{ "id": 1234, "name": { "first": "James", "last": "Bond!" }, "age": 30 } 
  ->
-{ "id": "NNNN", "name: { "first": "Aaaaa", "last": "Aaaa_" }, "age": 30 } 
+{ "id": "NNNN", "name": { "first": "Aaaaa", "last": "Aaaa_" }, "age": 30 } 
 ```
 ```
 Some string! -> Aaaa aaaaaa_
