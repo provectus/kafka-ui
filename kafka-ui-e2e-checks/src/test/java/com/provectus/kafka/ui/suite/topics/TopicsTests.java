@@ -27,10 +27,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TopicsTests extends BaseTest {
   private static final long SUITE_ID = 2;
   private static final String SUITE_TITLE = "Topics";
@@ -63,6 +67,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(199)
   @Test
+  @Order(1)
   public void createTopic() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -97,6 +102,28 @@ public class TopicsTests extends BaseTest {
     TOPIC_LIST.add(TOPIC_TO_CREATE);
   }
 
+  @DisplayName("Checking available operations for selected Topic within 'All Topics' page")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(7)
+  @Test
+  @Order(2)
+  void checkAvailableOperations(){
+    String processingTopic = "my_ksql_1ksql_processing_log";
+    String confluentTopic = "_confluent-ksql-my_ksql_1_command_topic";
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .selectCheckboxByName(processingTopic);
+    topicsList.getActionButtons().
+        forEach(element -> assertThat(element.is(Condition.enabled))
+            .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    topicsList
+        .selectCheckboxByName(confluentTopic);
+    Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(),"isCopySelectedTopicBtnEnabled()");
+  }
+
   @Disabled()
   @Issue("https://github.com/provectus/kafka-ui/issues/2625")
   @DisplayName("should update a topic")
@@ -104,6 +131,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(197)
   @Test
+  @Order(3)
   public void updateTopic() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -150,6 +178,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(207)
   @Test
+  @Order(4)
   public void deleteTopic() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -174,6 +203,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(20)
   @Test
+  @Order(5)
   void redirectToConsumerFromTopic() {
     String topicName = "source-activities";
     String consumerGroupId = "connect-sink_postgres_activities";
@@ -199,6 +229,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(4)
   @Test
+  @Order(6)
   void checkTopicCreatePossibility() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -219,6 +250,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(6)
   @Test
+  @Order(7)
   void checkCustomParametersWithinCreateNewTopic() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -243,6 +275,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(2)
   @Test
+  @Order(8)
   void checkTopicListElements() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -263,6 +296,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(12)
   @Test
+  @Order(9)
   void addingNewFilterWithinTopic() {
     String topicName = "_schemas";
     String filterName = "123ABC";
