@@ -114,11 +114,9 @@ public class TopicsTests extends BaseTest {
     topicsList
         .waitUntilScreenReady()
         .selectCheckboxByName(TOPIC_FOR_DELETE.getName());
-    SoftAssertions softly = new SoftAssertions();
     topicsList.getActionButtons().
-        forEach(element -> softly.assertThat(element.is(Condition.enabled))
+        forEach(element -> assertThat(element.is(Condition.enabled))
             .as(element.getSearchCriteria() + " isEnabled()").isTrue());
-    softly.assertAll();
     topicsList
         .selectCheckboxByName(TOPIC_FOR_UPDATE.getName());
     Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(),"isCopySelectedTopicBtnEnabled()");
