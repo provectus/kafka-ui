@@ -27,14 +27,13 @@ jest.mock('components/Topics/New/New', () => () => (
 describe('Topics Component', () => {
   const clusterName = 'clusterName';
   const topicName = 'topicName';
-  const setUpComponent = (path: string) => {
-    return render(
+  const setUpComponent = (path: string) =>
+    render(
       <WithRoute path={getNonExactPath(clusterTopicsPath())}>
         <Topics />
       </WithRoute>,
       { initialEntries: [path] }
     );
-  };
 
   it('should check if the page is Topics List rendered', () => {
     setUpComponent(clusterTopicsPath(clusterName));

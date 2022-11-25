@@ -189,7 +189,7 @@ public class AccessControlService {
 
     Set<String> requiredActions = context.getClusterConfigActions()
         .stream()
-        .map(a -> a.toString().toLowerCase())
+        .map(a -> a.toString().toUpperCase())
         .collect(Collectors.toSet());
 
     return isAccessible(Resource.CLUSTERCONFIG, context.getCluster(), user, context, requiredActions);
@@ -203,7 +203,7 @@ public class AccessControlService {
 
     Set<String> requiredActions = context.getTopicActions()
         .stream()
-        .map(a -> a.toString().toLowerCase())
+        .map(a -> a.toString().toUpperCase())
         .collect(Collectors.toSet());
 
     return isAccessible(Resource.TOPIC, context.getTopic(), user, context, requiredActions);
@@ -228,7 +228,7 @@ public class AccessControlService {
 
     Set<String> requiredActions = context.getConsumerGroupActions()
         .stream()
-        .map(a -> a.toString().toLowerCase())
+        .map(a -> a.toString().toUpperCase())
         .collect(Collectors.toSet());
 
     return isAccessible(Resource.CONSUMER, context.getConsumerGroup(), user, context, requiredActions);
@@ -253,7 +253,7 @@ public class AccessControlService {
 
     Set<String> requiredActions = context.getSchemaActions()
         .stream()
-        .map(a -> a.toString().toLowerCase())
+        .map(a -> a.toString().toUpperCase())
         .collect(Collectors.toSet());
 
     return isAccessible(Resource.SCHEMA, context.getSchema(), user, context, requiredActions);
@@ -278,7 +278,7 @@ public class AccessControlService {
 
     Set<String> requiredActions = context.getConnectActions()
         .stream()
-        .map(a -> a.toString().toLowerCase())
+        .map(a -> a.toString().toUpperCase())
         .collect(Collectors.toSet());
 
     return isAccessible(Resource.CONNECT, context.getConnect(), user, context, requiredActions);
@@ -323,7 +323,7 @@ public class AccessControlService {
 
     Set<String> requiredActions = context.getKsqlActions()
         .stream()
-        .map(a -> a.toString().toLowerCase())
+        .map(a -> a.toString().toUpperCase())
         .collect(Collectors.toSet());
 
     return isAccessible(Resource.KSQL, null, user, context, requiredActions);
@@ -347,6 +347,7 @@ public class AccessControlService {
         .filter(filterResource(resource))
         .filter(filterResourceValue(resourceValue))
         .flatMap(grantedPermission -> grantedPermission.getActions().stream())
+        .map(String::toUpperCase)
         .collect(Collectors.toSet());
 
     return grantedActions.containsAll(requiredActions);

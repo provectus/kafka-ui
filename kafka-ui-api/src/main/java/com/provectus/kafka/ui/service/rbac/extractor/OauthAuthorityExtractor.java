@@ -1,8 +1,8 @@
 package com.provectus.kafka.ui.service.rbac.extractor;
 
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import reactor.core.publisher.Mono;
@@ -16,7 +16,7 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
   }
 
   @Override
-  public Mono<List<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams) {
+  public Mono<Set<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams) {
     DefaultOAuth2User principal;
     try {
       principal = (DefaultOAuth2User) value;
@@ -25,7 +25,7 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
       throw new RuntimeException();
     }
 
-    return Mono.just(List.of(principal.getName())); // TODO #2844
+    return Mono.just(Set.of(principal.getName())); // TODO #2844
   }
 
 }

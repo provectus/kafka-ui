@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.serdes.ClusterSerdes;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.serdes.SerdeInstance;
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class DeserializationService {
+public class DeserializationService implements Closeable {
 
   private final Map<KafkaCluster, ClusterSerdes> clusterSerdes = new ConcurrentHashMap<>();
 
@@ -137,4 +138,8 @@ public class DeserializationService {
         .preferred(preferred);
   }
 
+  @Override
+  public void close() {
+    clusterSerdes.values().forEach(ClusterSerdes::close);
+  }
 }

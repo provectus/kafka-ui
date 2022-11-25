@@ -3,10 +3,10 @@ package com.provectus.kafka.ui.service.rbac.extractor;
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
   }
 
   @Override
-  public Mono<List<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams) {
+  public Mono<Set<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams) {
     DefaultOAuth2User principal;
     try {
       principal = (DefaultOAuth2User) value;
@@ -42,7 +42,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
       throw new RuntimeException();
     }
 
-    List<String> groupsByUsername = new ArrayList<>();
+    Set<String> groupsByUsername = new HashSet<>();
     String username = principal.getAttribute(USERNAME_ATTRIBUTE_NAME);
     if (username == null) {
       log.debug("Github username param is not present");
@@ -92,7 +92,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
                   ))
               .map(Role::getName);
 
-          return Stream.concat(groupsByOrg, groupsByUsername.stream()).collect(Collectors.toList());
+          return Stream.concat(groupsByOrg, groupsByUsername.stream()).collect(Collectors.toSet());
         });
   }
 
