@@ -109,18 +109,18 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(2)
   void checkAvailableOperations(){
-    String messagesTopic = "messages";
-    String topicForConnector = "topic_for_connecto";
+    String processingTopic = "my_ksql_1ksql_processing_log";
+    String confluentTopic = "_confluent-ksql-my_ksql_1_command_topic";
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
         .waitUntilScreenReady()
-        .selectCheckboxByName(messagesTopic);
+        .selectCheckboxByName(processingTopic);
     topicsList.getActionButtons().
         forEach(element -> assertThat(element.is(Condition.enabled))
             .as(element.getSearchCriteria() + " isEnabled()").isTrue());
     topicsList
-        .selectCheckboxByName(topicForConnector);
+        .selectCheckboxByName(confluentTopic);
     Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(),"isCopySelectedTopicBtnEnabled()");
   }
 
