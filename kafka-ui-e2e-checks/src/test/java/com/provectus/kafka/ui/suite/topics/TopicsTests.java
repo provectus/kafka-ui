@@ -109,16 +109,18 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(2)
   void checkAvailableOperations(){
+    String connectConfigsTopic = "_connect_configs";
+    String connectOffsetTopics = "_connect_offset";
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
         .waitUntilScreenReady()
-        .selectCheckboxByName(TOPIC_FOR_DELETE.getName());
+        .selectCheckboxByName(connectConfigsTopic);
     topicsList.getActionButtons().
         forEach(element -> assertThat(element.is(Condition.enabled))
             .as(element.getSearchCriteria() + " isEnabled()").isTrue());
     topicsList
-        .selectCheckboxByName(TOPIC_FOR_UPDATE.getName());
+        .selectCheckboxByName(connectOffsetTopics);
     Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(),"isCopySelectedTopicBtnEnabled()");
   }
 
