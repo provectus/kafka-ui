@@ -20,6 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+/**
+ * Class is responsible for managing serdes for kafka clusters.
+ * NOTE: Since Serde interface is designed to be blocking it is required that DeserializationService
+ * (and all Serde-related code) calls executed within special thread pool (boundedElastic).
+ */
 @Slf4j
 @Component
 public class DeserializationService implements Closeable {

@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
+import com.provectus.kafka.ui.util.PollingThrottler;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,8 +35,9 @@ public class BackwardRecordEmitter
       Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
       ConsumerPosition consumerPosition,
       int messagesPerPage,
-      ConsumerRecordDeserializer recordDeserializer) {
-    super(recordDeserializer);
+      ConsumerRecordDeserializer recordDeserializer,
+      PollingThrottler throttler) {
+    super(recordDeserializer, throttler);
     this.consumerPosition = consumerPosition;
     this.messagesPerPage = messagesPerPage;
     this.consumerSupplier = consumerSupplier;
@@ -43,6 +45,7 @@ public class BackwardRecordEmitter
 
   @Override
   public void accept(FluxSink<TopicMessageEventDTO> sink) {
+    log.debug("Starting backward polling for {}", consumerPosition);
     try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
       sendPhase(sink, "Created consumer");
 

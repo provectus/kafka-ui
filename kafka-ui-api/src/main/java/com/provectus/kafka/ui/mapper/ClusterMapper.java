@@ -36,11 +36,13 @@ import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.service.masking.DataMasking;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
+import com.provectus.kafka.ui.util.PollingThrottler;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.mapstruct.Mapper;
@@ -56,6 +58,7 @@ public interface ClusterMapper {
   @Mapping(target = "schemaRegistry", source = ".", qualifiedByName = "setSchemaRegistry")
   @Mapping(target = "ksqldbServer", source = ".", qualifiedByName = "setKsqldbServer")
   @Mapping(target = "metricsConfig", source = "metrics")
+  @Mapping(target = "throttler", source = ".", qualifiedByName = "createClusterThrottler")
   KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
 
   ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
@@ -147,6 +150,11 @@ public interface ClusterMapper {
     }
 
     return internalKsqlServerBuilder.build();
+  }
+
+  @Named("createClusterThrottler")
+  default Supplier<PollingThrottler> createClusterThrottler(ClustersProperties.Cluster cluster) {
+    return PollingThrottler.throttlerSupplier(cluster);
   }
 
   TopicDetailsDTO toTopicDetails(InternalTopic topic);
