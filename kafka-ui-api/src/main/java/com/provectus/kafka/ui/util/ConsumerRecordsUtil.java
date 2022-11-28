@@ -10,8 +10,8 @@ public class ConsumerRecordsUtil {
     int polledBytes = 0;
     for (Header header : rec.headers()) {
       polledBytes +=
-          (header.key() != null ? header.key().getBytes().length : 0L)
-              + (header.value() != null ? header.value().length : 0L);
+          (header.key() != null ? header.key().getBytes().length : 0)
+              + (header.value() != null ? header.value().length : 0);
     }
     polledBytes += rec.key() == null ? 0 : rec.serializedKeySize();
     polledBytes += rec.value() == null ? 0 : rec.serializedValueSize();
