@@ -38,6 +38,7 @@ public class ClustersProperties {
     List<SerdeConfig> serde = new ArrayList<>();
     String defaultKeySerde;
     String defaultValueSerde;
+    List<Masking> masking = new ArrayList<>();
   }
 
   @Data
@@ -90,6 +91,20 @@ public class ClustersProperties {
   public static class KsqldbServerAuth {
     String username;
     String password;
+  }
+
+  @Data
+  public static class Masking {
+    Type type;
+    List<String> fields = List.of(); //if empty - policy will be applied to all fields
+    List<String> pattern = List.of("X", "x", "n", "-"); //used when type=MASK
+    String replacement = "***DATA_MASKED***"; //used when type=REPLACE
+    String topicKeysPattern;
+    String topicValuesPattern;
+
+    public enum Type {
+      REMOVE, MASK, REPLACE
+    }
   }
 
   @PostConstruct
