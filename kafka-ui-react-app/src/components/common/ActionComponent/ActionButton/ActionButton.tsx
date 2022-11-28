@@ -1,52 +1,17 @@
 import React from 'react';
-import { Button, Props as ButtonProps } from 'components/common/Button/Button';
-import * as S from 'components/common/ActionComponent/ActionComponent.styled';
-import {
-  ActionComponentProps,
-  getDefaultActionMessage,
-} from 'components/common/ActionComponent/ActionComponent';
-import { useActionTooltip } from 'lib/hooks/useActionTooltip';
-import { usePermission } from 'lib/hooks/usePermission';
+import { Props as ButtonProps } from 'components/common/Button/Button';
+import { ActionComponentProps } from 'components/common/ActionComponent/ActionComponent';
+import { Action } from 'generated-sources';
+import ActionPermissionButton from 'components/common/ActionComponent/ActionButton/ActionPermissionButton/ActionPermissionButton';
+import ActionCreateButton from 'components/common/ActionComponent/ActionButton//ActionCreateButton/ActionCreateButton';
 
 interface Props extends ActionComponentProps, ButtonProps {}
 
-const ActionButton: React.FC<Props> = ({
-  permission,
-  placement = 'bottom-end',
-  message = getDefaultActionMessage(),
-  disabled,
-  ...props
-}) => {
-  const canDoAction = usePermission(
-    permission.resource,
-    permission.action,
-    permission.value
-  );
-
-  const isDisabled = !canDoAction;
-
-  const { x, y, reference, floating, strategy, open } = useActionTooltip(
-    isDisabled,
-    placement
-  );
-
-  return (
-    <S.Wrapper ref={reference}>
-      <Button {...props} disabled={disabled || isDisabled} />
-      {open && (
-        <S.MessageTooltipLimited
-          ref={floating}
-          style={{
-            position: strategy,
-            top: y ?? 0,
-            left: x ?? 0,
-            width: 'max-content',
-          }}
-        >
-          {message}
-        </S.MessageTooltipLimited>
-      )}
-    </S.Wrapper>
+const ActionButton: React.FC<Props> = ({ permission, ...props }) => {
+  return permission.action === Action.CREATE ? (
+    <ActionCreateButton permission={permission} {...props} />
+  ) : (
+    <ActionPermissionButton permission={permission} {...props} />
   );
 };
 

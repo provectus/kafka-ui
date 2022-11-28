@@ -90,7 +90,6 @@ const List: React.FC = () => {
               permission={{
                 resource: UserPermissionResourceEnum.SCHEMA,
                 action: Action.CREATE,
-                value: '*',
               }}
             >
               <PlusIcon /> Create Schema

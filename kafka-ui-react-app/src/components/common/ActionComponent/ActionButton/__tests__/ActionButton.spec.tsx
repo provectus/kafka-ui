@@ -1,98 +1,48 @@
 import React from 'react';
-import { render } from 'lib/testHelpers';
-import ActionButton from 'components/common/ActionComponent/ActionButton/ActionButton';
 import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { getDefaultActionMessage } from 'components/common/ActionComponent/ActionComponent';
-import { useParams } from 'react-router-dom';
-import {
-  clusterName,
-  validPermission,
-  invalidPermission,
-  tooltipIsShowing,
-  userInfoRbacEnabled,
-} from 'components/common/ActionComponent/__tests__/fixtures';
+import ActionButton from 'components/common/ActionComponent/ActionButton/ActionButton';
+import { render } from 'lib/testHelpers';
+import { Action, UserPermissionResourceEnum } from 'generated-sources';
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useParams: jest.fn(),
-}));
+const createText = 'create';
+const otherText = 'create';
+
+jest.mock(
+  'components/common/ActionComponent/ActionButton/ActionCreateButton/ActionCreateButton',
+  () => () => <div>{createText}</div>
+);
+
+jest.mock(
+  'components/common/ActionComponent/ActionButton/ActionPermissionButton/ActionPermissionButton',
+  () => () => <div>{otherText}</div>
+);
 
 describe('ActionButton', () => {
-  const tooltipText = getDefaultActionMessage();
-
-  beforeEach(() => {
-    (useParams as jest.Mock).mockImplementation(() => ({
-      clusterName,
-    }));
-  });
-
-  it('should render the button with the correct text, for the permission tooltip not to show', async () => {
+  it('should check when passes action create it renders create component', () => {
     render(
       <ActionButton
-        buttonType="primary"
-        buttonSize="M"
-        permission={validPermission}
-      >
-        test
-      </ActionButton>,
-      {
-        userInfo: userInfoRbacEnabled,
-      }
+        permission={{
+          action: Action.CREATE,
+          resource: UserPermissionResourceEnum.CONNECT,
+        }}
+        buttonType="secondary"
+        buttonSize="S"
+      />
     );
-    const button = screen.getByRole('button', { name: 'test' });
-    expect(button).toBeInTheDocument();
-    expect(button).toBeEnabled();
-    await userEvent.hover(button);
-    expect(screen.queryByText(tooltipText)).not.toBeInTheDocument();
+    expect(screen.getByText(createText)).toBeInTheDocument();
   });
 
-  it('should make the button disable and view the tooltip with the default text', async () => {
+  it('should check when passes other actions types it renders Others component', () => {
     render(
       <ActionButton
-        buttonType="primary"
-        buttonSize="M"
-        permission={invalidPermission}
-      >
-        test
-      </ActionButton>,
-      { userInfo: userInfoRbacEnabled }
+        permission={{
+          action: Action.EDIT,
+          resource: UserPermissionResourceEnum.CONNECT,
+        }}
+        buttonType="secondary"
+        buttonSize="S"
+      />
     );
-    const button = screen.getByRole('button');
-    expect(button).toBeDisabled();
-    await tooltipIsShowing(button, tooltipText);
-  });
-
-  it('should make the button disable and view the tooltip with the given text', async () => {
-    const customTooltipText = 'something here';
-
-    render(
-      <ActionButton
-        buttonType="primary"
-        buttonSize="M"
-        permission={invalidPermission}
-        message={customTooltipText}
-      />,
-      { userInfo: userInfoRbacEnabled }
-    );
-    const button = screen.getByRole('button');
-    expect(button).toBeDisabled();
-    await tooltipIsShowing(button, customTooltipText);
-  });
-
-  it('should render the Button but disabled cause the given role is not correct', async () => {
-    render(
-      <ActionButton
-        buttonType="primary"
-        buttonSize="M"
-        permission={invalidPermission}
-      />,
-      {
-        userInfo: userInfoRbacEnabled,
-      }
-    );
-    const button = screen.getByRole('button');
-    expect(button).toBeDisabled();
-    await tooltipIsShowing(button, tooltipText);
+    expect(screen.getByText(createText)).toBeInTheDocument();
   });
 });

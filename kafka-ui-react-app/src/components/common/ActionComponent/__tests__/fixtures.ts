@@ -10,7 +10,7 @@ export const validPermission = {
 };
 
 export const invalidPermission = {
-  resource: UserPermissionResourceEnum.TOPIC,
+  resource: UserPermissionResourceEnum.SCHEMA,
   action: Action.DELETE,
 };
 
