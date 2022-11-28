@@ -37,10 +37,19 @@ export function modifyRolesData(
   return map;
 }
 
+interface IsPermittedConfig {
+  roles?: RolesModifiedTypes;
+  resource: UserPermissionResourceEnum;
+  action: Action | Array<Action>;
+  clusterName: string;
+  value?: string;
+  rbacFlag: boolean;
+}
+
 /**
  * @description it the logic behind depending on the roles whether a certain action
  * is permitted or not the philosophy is inspired from Headless UI libraries where
- * you separate the logic from the renderer
+ * you separate the logic from the renderer besides the Creation process which is handled by isPermittedToCreate
  *
  * Algorithm: we Mapped the cluster name and the resource name , because all the actions in them are
  * constant and limited and hence faster lookup approach
@@ -107,4 +116,43 @@ export function isPermitted({
       );
     }) !== -1
   );
+}
+
+/**
+ * @description it the logic behind depending on create roles, since create has extra custom permission logic that is why
+ * it is seperated from the others
+ *
+ * Algorithm: we Mapped the cluster name and the resource name , because all the actions in them are
+ * constant and limited and hence faster lookup approach
+ *
+ * @example you can use this in the hook format where it used in , or if you want to calculate it dynamically
+ * you can call this dynamically in your component but the render is on you from that point on
+ *
+ * Don't use this anywhere , use the hook version in the component for declarative purposes
+ *
+ * */
+export function isPermittedToCreate({
+  roles,
+  resource,
+  clusterName,
+  rbacFlag,
+}: Omit<IsPermittedConfig, 'value' | 'action'>) {
+  if (!rbacFlag) return true;
+
+  // short circuit
+  if (!roles || roles.size === 0) return false;
+
+  // short circuit
+  const clusterMap = roles.get(clusterName);
+  if (!clusterMap) return false;
+
+  // short circuit
+  const resourceData = clusterMap.get(resource);
+  if (!resourceData) return false;
+
+  const action = Action.CREATE;
+
+  return resourceData.some((item) => {
+    return item.actions.includes(action);
+  });
 }

@@ -1,4 +1,8 @@
-import { isPermitted, modifyRolesData } from 'lib/permissions';
+import {
+  isPermitted,
+  isPermittedToCreate,
+  modifyRolesData,
+} from 'lib/permissions';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
 
 describe('Permission Helpers', () => {
@@ -9,7 +13,7 @@ describe('Permission Helpers', () => {
     {
       clusters: [clusterName1],
       resource: UserPermissionResourceEnum.TOPIC,
-      actions: [Action.CREATE],
+      actions: [Action.VIEW, Action.CREATE],
     },
     {
       clusters: [clusterName1],
@@ -19,12 +23,12 @@ describe('Permission Helpers', () => {
     {
       clusters: [clusterName1, clusterName2],
       resource: UserPermissionResourceEnum.SCHEMA,
-      actions: [Action.CREATE],
+      actions: [Action.VIEW],
     },
     {
       clusters: [clusterName1, clusterName2],
       resource: UserPermissionResourceEnum.CONNECT,
-      actions: [Action.CREATE],
+      actions: [Action.VIEW],
     },
     {
       clusters: [clusterName1],
@@ -39,7 +43,7 @@ describe('Permission Helpers', () => {
     {
       clusters: [clusterName1],
       resource: UserPermissionResourceEnum.SCHEMA,
-      actions: [Action.EDIT, Action.DELETE],
+      actions: [Action.EDIT, Action.DELETE, Action.CREATE],
       value: '123.*',
     },
     {
@@ -55,6 +59,8 @@ describe('Permission Helpers', () => {
       actions: [Action.EDIT, Action.DELETE],
     },
   ];
+
+  const roles = modifyRolesData(userPermissionsMock);
 
   describe('modifyRoles', () => {
     it('should check if it transforms the data in a correct format to normal keys', () => {
@@ -133,14 +139,12 @@ describe('Permission Helpers', () => {
   });
 
   describe('isPermitted', () => {
-    const roles = modifyRolesData(userPermissionsMock);
-
     it('should check if the isPermitted returns the correct when there is no roles or clusters', () => {
       expect(
         isPermitted({
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.TOPIC,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeFalsy();
@@ -149,7 +153,7 @@ describe('Permission Helpers', () => {
         isPermitted({
           clusterName: 'unFoundCluster',
           resource: UserPermissionResourceEnum.TOPIC,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeFalsy();
@@ -159,7 +163,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: 'unFoundCluster',
           resource: UserPermissionResourceEnum.TOPIC,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeFalsy();
@@ -169,7 +173,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: '',
           resource: UserPermissionResourceEnum.TOPIC,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeFalsy();
@@ -179,7 +183,7 @@ describe('Permission Helpers', () => {
           roles: new Map(),
           clusterName: 'unFoundCluster',
           resource: UserPermissionResourceEnum.TOPIC,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeFalsy();
@@ -189,7 +193,7 @@ describe('Permission Helpers', () => {
           roles: new Map(),
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.TOPIC,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeFalsy();
@@ -201,7 +205,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.TOPIC,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeTruthy();
@@ -211,7 +215,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: clusterName2,
           resource: UserPermissionResourceEnum.TOPIC,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeFalsy();
@@ -221,7 +225,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.SCHEMA,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeTruthy();
@@ -261,7 +265,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: clusterName2,
           resource: UserPermissionResourceEnum.SCHEMA,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeTruthy();
@@ -271,7 +275,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.SCHEMA,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeTruthy();
@@ -281,7 +285,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: clusterName2,
           resource: UserPermissionResourceEnum.CONNECT,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeTruthy();
@@ -291,7 +295,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.CONNECT,
-          action: Action.CREATE,
+          action: Action.VIEW,
           rbacFlag: true,
         })
       ).toBeTruthy();
@@ -459,7 +463,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.SCHEMA,
-          action: [Action.EDIT, Action.CREATE],
+          action: [Action.EDIT, Action.VIEW],
           value: '123456',
           rbacFlag: true,
         })
@@ -470,7 +474,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.SCHEMA,
-          action: [Action.EDIT, Action.CREATE],
+          action: [Action.EDIT, Action.VIEW],
           value: 'notFound',
           rbacFlag: true,
         })
@@ -505,7 +509,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.SCHEMA,
-          action: [Action.EDIT, Action.CREATE],
+          action: [Action.EDIT, Action.VIEW],
           value: '123456',
           rbacFlag: false,
         })
@@ -516,7 +520,7 @@ describe('Permission Helpers', () => {
           roles,
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.SCHEMA,
-          action: [Action.EDIT, Action.CREATE],
+          action: [Action.EDIT, Action.VIEW],
           value: 'notFound',
           rbacFlag: false,
         })
@@ -527,11 +531,69 @@ describe('Permission Helpers', () => {
           roles: new Map(),
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.SCHEMA,
-          action: [Action.EDIT, Action.CREATE],
+          action: [Action.EDIT, Action.VIEW],
           value: 'notFound',
           rbacFlag: false,
         })
       ).toBeTruthy();
+    });
+  });
+
+  describe('isPermittedToCreate', () => {
+    it('should check if the isPermitted returns the correct when there is no roles or clusters', () => {
+      expect(
+        isPermittedToCreate({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.TOPIC,
+          rbacFlag: true,
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermittedToCreate({
+          roles,
+          clusterName: clusterName2,
+          resource: UserPermissionResourceEnum.TOPIC,
+          rbacFlag: true,
+        })
+      ).toBeFalsy();
+
+      expect(
+        isPermittedToCreate({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.TOPIC,
+          rbacFlag: false,
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermittedToCreate({
+          roles,
+          clusterName: clusterName2,
+          resource: UserPermissionResourceEnum.TOPIC,
+          rbacFlag: false,
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermittedToCreate({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.SCHEMA,
+          rbacFlag: true,
+        })
+      ).toBeTruthy();
+
+      expect(
+        isPermittedToCreate({
+          roles,
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.CONNECT,
+          rbacFlag: true,
+        })
+      ).toBeFalsy();
     });
   });
 });

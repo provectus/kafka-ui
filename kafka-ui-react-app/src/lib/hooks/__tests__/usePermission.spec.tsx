@@ -2,12 +2,14 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { renderHook } from '@testing-library/react';
 import { usePermission } from 'lib/hooks/usePermission';
-import { isPermitted, modifyRolesData } from 'lib/permissions';
+import { isPermitted } from 'lib/permissions';
 import { Action, UserPermissionResourceEnum } from 'generated-sources';
 import {
   UserInfoRolesAccessContext,
   UserInfoType,
 } from 'components/contexts/UserInfoRolesAccessContext';
+
+import { clusterName1, modifiedData, clusterName2 } from './fixtures';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -36,37 +38,6 @@ describe('usePermission', () => {
         </UserInfoRolesAccessContext.Provider>
       ),
     });
-
-  const clusterName1 = 'local';
-  const clusterName2 = 'dev';
-
-  const userPermissionsMock = [
-    {
-      clusters: [clusterName1],
-      resource: UserPermissionResourceEnum.TOPIC,
-      actions: [Action.CREATE],
-    },
-    {
-      clusters: [clusterName1],
-      resource: UserPermissionResourceEnum.SCHEMA,
-      actions: [Action.EDIT, Action.DELETE],
-      value: '123.*',
-    },
-    {
-      clusters: [clusterName1, clusterName2],
-      resource: UserPermissionResourceEnum.TOPIC,
-      value: 'test.*',
-      actions: [Action.MESSAGES_DELETE],
-    },
-    {
-      clusters: [clusterName1, clusterName2],
-      resource: UserPermissionResourceEnum.TOPIC,
-      value: '.*',
-      actions: [Action.EDIT, Action.DELETE],
-    },
-  ];
-
-  const modifiedData = modifyRolesData(userPermissionsMock);
 
   it('should check if the hook renders the same value as the isPermitted Headless logic method', () => {
     const permissionConfig = {
