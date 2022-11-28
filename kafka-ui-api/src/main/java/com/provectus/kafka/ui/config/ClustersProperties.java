@@ -30,6 +30,7 @@ public class ClustersProperties {
     WebClientSsl schemaRegistrySsl;
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
+    WebClientSsl ksqldbServerSsl;
     List<ConnectCluster> kafkaConnect;
     MetricsConfigData metrics;
     Properties properties;
