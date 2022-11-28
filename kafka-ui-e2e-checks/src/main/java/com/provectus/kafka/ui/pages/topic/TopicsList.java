@@ -20,12 +20,11 @@ public class TopicsList extends BasePage {
     protected SelenideElement topicListHeader = $x("//*[text()='Topics']");
     protected SelenideElement addTopicBtn = $x("//button[normalize-space(text()) ='Add a Topic']");
     protected SelenideElement searchField = $x("//input[@placeholder='Search by Topic Name']");
-    protected SelenideElement showInternalRadioBtn = $x("//input[@name='ShowInternalTopics']");
+    protected SelenideElement showInternalRadioBtn = $x("//input[@name='ShowInternalTopics']/..");
     protected SelenideElement deleteSelectedTopicsBtn = $x("//button[text()='Delete selected topics']");
     protected SelenideElement copySelectedTopicBtn = $x("//button[text()='Copy selected topic']");
     protected SelenideElement purgeMessagesOfSelectedTopicsBtn = $x("//button[text()='Purge messages of selected topics']");
     protected ElementsCollection topicsGridItems = $$x("//tr[@class]");
-    protected String checkBoxListLocator = "//a[@title='%s']//ancestor::td/../td/input[@type='checkbox']";
 
     @Step
     public TopicsList waitUntilScreenReady() {
@@ -52,32 +51,15 @@ public class TopicsList extends BasePage {
     }
 
     @Step
-    public TopicsList selectShowInternalRadioButton() {
-      if (!showInternalRadioBtn.is(Condition.selected)) {
-        clickByJavaScript(showInternalRadioBtn);
-      }
-      return this;
-    }
-
-    @Step
-    public TopicsList unSelectShowInternalRadioButton() {
-      if (showInternalRadioBtn.is(Condition.selected)) {
-        clickByJavaScript(showInternalRadioBtn);
-      }
+    public TopicsList setShowInternalRadioButton(boolean select) {
+      selectElement(showInternalRadioBtn, select);
       return this;
     }
 
     @Step
     public TopicsList openTopic(String topicName) {
-        getTableElement(topicName).shouldBe(Condition.enabled).click();
+        getTopicItem(topicName).openItem();
         return this;
-    }
-
-    @Step
-    public TopicsList selectCheckboxByName(String topicName){
-      SelenideElement checkBox = $x(String.format(checkBoxListLocator,topicName));
-      if(!checkBox.is(Condition.selected)){clickByJavaScript(checkBox);}
-      return this;
     }
 
     @Step
@@ -118,33 +100,45 @@ public class TopicsList extends BasePage {
       return enabledElements;
     }
 
-    private List<TopicGridItems> initGridItems() {
-      List<TopicGridItems> gridItemList = new ArrayList<>();
+    private List<TopicGridItem> initGridItems() {
+      List<TopicGridItem> gridItemList = new ArrayList<>();
       topicsGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
-          .forEach(item -> gridItemList.add(new TopicGridItems(item)));
+          .forEach(item -> gridItemList.add(new TopicGridItem(item)));
       return gridItemList;
     }
 
+  @Step
+  public TopicGridItem getTopicItem(String name) {
+    return initGridItems().stream()
+        .filter(e -> e.getName().equals(name))
+        .findFirst().orElse(null);
+  }
+
     @Step
-    public List<TopicGridItems> getNonInternalTopics() {
+    public List<TopicGridItem> getNonInternalTopics() {
       return initGridItems().stream()
           .filter(e -> !e.isInternal())
           .collect(Collectors.toList());
     }
 
     @Step
-    public List<TopicGridItems> getInternalTopics() {
+    public List<TopicGridItem> getInternalTopics() {
       return initGridItems().stream()
-          .filter(TopicGridItems::isInternal)
+          .filter(TopicGridItem::isInternal)
           .collect(Collectors.toList());
     }
 
-    public static class TopicGridItems extends BasePage {
+    public static class TopicGridItem extends BasePage {
 
       private final SelenideElement element;
 
-      public TopicGridItems(SelenideElement element) {
+      public TopicGridItem(SelenideElement element) {
         this.element = element;
+      }
+
+      @Step
+      public void selectItem(boolean select) {
+        selectElement(element.$x("./td[1]"), select);
       }
 
       @Step
@@ -158,14 +152,18 @@ public class TopicsList extends BasePage {
         return internal;
       }
 
-      @Step
-      public int getCheckBox() {
-        return Integer.parseInt(element.$x("./td[1]").getText().trim());
+      private SelenideElement getNameElm() {
+        return element.$x("./td[2]");
       }
 
       @Step
-      public int getNameElm() {
-        return Integer.parseInt(element.$x("./td[2]").getText().trim());
+      public String getName() {
+        return getNameElm().getText().trim();
+      }
+
+      @Step
+      public void openItem() {
+        getNameElm().click();
       }
 
       @Step
@@ -191,6 +189,11 @@ public class TopicsList extends BasePage {
       @Step
       public int getSize() {
         return Integer.parseInt(element.$x("./td[7]").getText().trim());
+      }
+
+      @Step
+      public void openDotMenu(){
+        element.$x("./td[8]//button").click();
       }
     }
 }

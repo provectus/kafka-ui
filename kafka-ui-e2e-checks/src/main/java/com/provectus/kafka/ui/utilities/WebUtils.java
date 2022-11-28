@@ -69,4 +69,12 @@ public class WebUtils {
     }
     return isSelected;
   }
+
+  public void selectElement(SelenideElement element, boolean select){
+    if (select) {
+      if (!element.isSelected()) element.click();
+    } else {
+      if (element.isSelected()) element.click();
+    }
+  }
 }

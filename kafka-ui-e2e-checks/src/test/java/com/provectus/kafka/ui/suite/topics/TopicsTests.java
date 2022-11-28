@@ -108,20 +108,23 @@ public class TopicsTests extends BaseTest {
   @CaseId(7)
   @Test
   @Order(2)
-  void checkAvailableOperations(){
+  void checkAvailableOperations() {
     String processingTopic = "my_ksql_1ksql_processing_log";
     String confluentTopic = "_confluent-ksql-my_ksql_1_command_topic";
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
         .waitUntilScreenReady()
-        .selectCheckboxByName(processingTopic);
-    topicsList.getActionButtons().
-        forEach(element -> assertThat(element.is(Condition.enabled))
+        .getTopicItem(processingTopic)
+        .selectItem(true);
+    topicsList
+        .getActionButtons()
+        .forEach(element -> assertThat(element.is(Condition.enabled))
             .as(element.getSearchCriteria() + " isEnabled()").isTrue());
     topicsList
-        .selectCheckboxByName(confluentTopic);
-    Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(),"isCopySelectedTopicBtnEnabled()");
+        .getTopicItem(confluentTopic)
+        .selectItem(true);
+    Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(), "isCopySelectedTopicBtnEnabled()");
   }
 
   @Disabled()
@@ -347,7 +350,7 @@ public class TopicsTests extends BaseTest {
     softly.assertThat(topicsList.getNonInternalTopics()).as("getNonInternalTopics()").size().isGreaterThan(0);
     softly.assertAll();
     topicsList
-        .unSelectShowInternalRadioButton();
+        .setShowInternalRadioButton(false);
     assertThat(topicsList.getInternalTopics()).as("getInternalTopics()").size().isEqualTo(0);
   }
 
