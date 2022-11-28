@@ -13,6 +13,7 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
+import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.util.ResultSizeLimiter;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -177,6 +179,7 @@ public class MessagesService {
     return Flux.create(emitter)
         .contextWrite(ctx -> ctx.put(MessageFilterStats.class, filterStats))
         .filter(getMsgFilter(query, filterQueryType, filterStats))
+        .map(getDataMasker(cluster, topic))
         .takeWhile(createTakeWhilePredicate(seekDirection, limit))
         .subscribeOn(Schedulers.boundedElastic())
         .share();
@@ -187,6 +190,20 @@ public class MessagesService {
     return seekDirection == SeekDirectionDTO.TAILING
         ? evt -> true // no limit for tailing
         : new ResultSizeLimiter(limit);
+  }
+
+  private UnaryOperator<TopicMessageEventDTO> getDataMasker(KafkaCluster cluster, String topicName) {
+    var keyMasker = cluster.getMasking().getMaskingFunction(topicName, Serde.Target.KEY);
+    var valMasker = cluster.getMasking().getMaskingFunction(topicName, Serde.Target.VALUE);
+    return evt -> {
+      if (evt.getType() != TopicMessageEventDTO.TypeEnum.MESSAGE) {
+        return evt;
+      }
+      return evt.message(
+        evt.getMessage()
+            .key(keyMasker.apply(evt.getMessage().getKey()))
+            .content(valMasker.apply(evt.getMessage().getContent())));
+    };
   }
 
   private Predicate<TopicMessageEventDTO> getMsgFilter(String query,

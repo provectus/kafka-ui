@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DeserializationService implements Closeable {
 
-  private final Map<KafkaCluster, ClusterSerdes> clusterSerdes = new ConcurrentHashMap<>();
+  private final Map<String, ClusterSerdes> clusterSerdes = new ConcurrentHashMap<>();
 
   public DeserializationService(Environment env,
                                 ClustersStorage clustersStorage,
@@ -32,15 +32,19 @@ public class DeserializationService implements Closeable {
     for (int i = 0; i < clustersProperties.getClusters().size(); i++) {
       var clusterProperties = clustersProperties.getClusters().get(i);
       var cluster = clustersStorage.getClusterByName(clusterProperties.getName()).get();
-      clusterSerdes.put(cluster, new ClusterSerdes(env, clustersProperties, i));
+      clusterSerdes.put(cluster.getName(), new ClusterSerdes(env, clustersProperties, i));
     }
+  }
+
+  private ClusterSerdes getSerdesFor(KafkaCluster cluster) {
+    return clusterSerdes.get(cluster.getName());
   }
 
   private Serde.Serializer getSerializer(KafkaCluster cluster,
                                          String topic,
                                          Serde.Target type,
                                          String serdeName) {
-    var serdes = this.clusterSerdes.get(cluster);
+    var serdes = getSerdesFor(cluster);
     var serde = serdes.serdeForName(serdeName)
         .orElseThrow(() -> new ValidationException(
             String.format("Serde %s not found", serdeName)));
@@ -55,7 +59,7 @@ public class DeserializationService implements Closeable {
                                                String topic,
                                                Serde.Target type,
                                                @Nullable String serdeName) {
-    var serdes = this.clusterSerdes.get(cluster);
+    var serdes = getSerdesFor(cluster);
     if (serdeName != null) {
       var serde = serdes.serdeForName(serdeName)
           .orElseThrow(() -> new ValidationException(String.format("Serde '%s' not found", serdeName)));
@@ -85,7 +89,7 @@ public class DeserializationService implements Closeable {
                                                     @Nullable String valueSerdeName) {
     var keySerde = getSerdeForDeserialize(cluster, topic, Serde.Target.KEY, keySerdeName);
     var valueSerde = getSerdeForDeserialize(cluster, topic, Serde.Target.VALUE, valueSerdeName);
-    var fallbackSerde = clusterSerdes.get(cluster).getFallbackSerde();
+    var fallbackSerde = getSerdesFor(cluster).getFallbackSerde();
     return new ConsumerRecordDeserializer(
         keySerde.getName(),
         keySerde.deserializer(topic, Serde.Target.KEY),
@@ -100,7 +104,7 @@ public class DeserializationService implements Closeable {
   public List<SerdeDescriptionDTO> getSerdesForSerialize(KafkaCluster cluster,
                                                          String topic,
                                                          Serde.Target serdeType) {
-    var serdes = clusterSerdes.get(cluster);
+    var serdes = getSerdesFor(cluster);
     var preferred = serdes.suggestSerdeForSerialize(topic, serdeType);
     var result = new ArrayList<SerdeDescriptionDTO>();
     result.add(toDto(preferred, topic, serdeType, true));
@@ -114,7 +118,7 @@ public class DeserializationService implements Closeable {
   public List<SerdeDescriptionDTO> getSerdesForDeserialize(KafkaCluster cluster,
                                                            String topic,
                                                            Serde.Target serdeType) {
-    var serdes = clusterSerdes.get(cluster);
+    var serdes = getSerdesFor(cluster);
     var preferred = serdes.suggestSerdeForDeserialize(topic, serdeType);
     var result = new ArrayList<SerdeDescriptionDTO>();
     result.add(toDto(preferred, topic, serdeType, true));
