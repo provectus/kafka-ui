@@ -163,7 +163,8 @@ public class SchemaRegistrySerde implements BuiltInSerde {
 
   @Override
   public boolean canDeserialize(String topic, Target type) {
-    return true;
+    String subject = schemaSubject(topic, type);
+    return getSchemaBySubject(subject).isPresent();
   }
 
   @Override
