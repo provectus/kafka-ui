@@ -339,6 +339,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(11)
   @Test
+  @Order(10)
   void checkShowInternalTopicsButtonFunctionality(){
     naviSideBar
         .openSideMenu(TOPICS);
