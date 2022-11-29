@@ -1,0 +1,7 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"broken","Tue Nov 29 20:32:35 GMT 2022","Tue Nov 29 20:32:35 GMT 2022","0","","com.provectus.kafka.ui.suite.topics.TopicsTests","","com.provectus.kafka.ui.suite.topics.TopicsTests",""," topics tests",""
+"broken","Tue Nov 29 20:32:46 GMT 2022","Tue Nov 29 20:32:46 GMT 2022","0","","com.provectus.kafka.ui.suite.schemas.SchemasTests","","com.provectus.kafka.ui.suite.schemas.SchemasTests",""," schemas tests",""
+"broken","Tue Nov 29 20:32:50 GMT 2022","Tue Nov 29 20:32:50 GMT 2022","0","","com.provectus.kafka.ui.suite.connectors.ConnectorsTests","","com.provectus.kafka.ui.suite.connectors.ConnectorsTests",""," connectors tests",""
+"failed","Tue Nov 29 20:33:30 GMT 2022","Tue Nov 29 20:34:02 GMT 2022","31627","","com.provectus.kafka.ui.suite.brokers.BrokersTests","","com.provectus.kafka.ui.suite.brokers.BrokersTests","checkExistingBrokersInCluster","Checking the existing Broker's profile in a cluster",""
+"failed","Tue Nov 29 20:32:53 GMT 2022","Tue Nov 29 20:33:27 GMT 2022","33488","","com.provectus.kafka.ui.suite.SmokeTests","","com.provectus.kafka.ui.suite.SmokeTests","checkBasePageElements","check base page elements",""
+"broken","Tue Nov 29 20:32:42 GMT 2022","Tue Nov 29 20:32:42 GMT 2022","0","","com.provectus.kafka.ui.suite.topics.TopicMessagesTests","","com.provectus.kafka.ui.suite.topics.TopicMessagesTests",""," topic messages tests",""
