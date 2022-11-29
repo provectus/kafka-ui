@@ -240,7 +240,7 @@ class ProtobufFileSerdeTest {
     PropertyResolver resolver = mock(PropertyResolver.class);
 
     var serde = new ProtobufFileSerde();
-    boolean startupSuccessful = serde.initOnStartup(resolver, resolver);
+    boolean startupSuccessful = serde.canBeAutoConfigured(resolver, resolver);
     assertThat(startupSuccessful).isFalse();
   }
 
@@ -250,7 +250,7 @@ class ProtobufFileSerdeTest {
     when(resolver.getListProperty("protobufFiles", String.class)).thenReturn(Optional.of(List.of()));
 
     var serde = new ProtobufFileSerde();
-    boolean startupSuccessful = serde.initOnStartup(resolver, resolver);
+    boolean startupSuccessful = serde.canBeAutoConfigured(resolver, resolver);
     assertThat(startupSuccessful).isFalse();
   }
 
@@ -260,7 +260,7 @@ class ProtobufFileSerdeTest {
     when(resolver.getProperty("protobufFile", String.class)).thenReturn(Optional.of("file.proto"));
 
     var serde = new ProtobufFileSerde();
-    boolean startupSuccessful = serde.initOnStartup(resolver, resolver);
+    boolean startupSuccessful = serde.canBeAutoConfigured(resolver, resolver);
     assertThat(startupSuccessful).isTrue();
   }
 
@@ -270,7 +270,7 @@ class ProtobufFileSerdeTest {
     when(resolver.getListProperty("protobufFiles", String.class)).thenReturn(Optional.of(List.of("file.proto")));
 
     var serde = new ProtobufFileSerde();
-    boolean startupSuccessful = serde.initOnStartup(resolver, resolver);
+    boolean startupSuccessful = serde.canBeAutoConfigured(resolver, resolver);
     assertThat(startupSuccessful).isTrue();
   }
 
@@ -281,7 +281,7 @@ class ProtobufFileSerdeTest {
     when(resolver.getListProperty("protobufFiles", String.class)).thenReturn(Optional.of(List.of("file2.proto")));
 
     var serde = new ProtobufFileSerde();
-    boolean startupSuccessful = serde.initOnStartup(resolver, resolver);
+    boolean startupSuccessful = serde.canBeAutoConfigured(resolver, resolver);
     assertThat(startupSuccessful).isTrue();
   }
 
