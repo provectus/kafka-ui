@@ -606,6 +606,15 @@ describe('Permission Helpers', () => {
 
       expect(
         isPermittedToCreate({
+          roles,
+          clusterName: 'unFoundCluster',
+          resource: UserPermissionResourceEnum.TOPIC,
+          rbacFlag: true,
+        })
+      ).toBeFalsy();
+
+      expect(
+        isPermittedToCreate({
           roles: new Map(),
           clusterName: clusterName1,
           resource: UserPermissionResourceEnum.TOPIC,
