@@ -351,7 +351,9 @@ public class TopicsTests extends BaseTest {
     softly.assertAll();
     topicsList
         .setShowInternalRadioButton(false);
-    assertThat(topicsList.getInternalTopics()).as("getInternalTopics()").size().isEqualTo(0);
+    softly.assertThat(topicsList.getInternalTopics()).as("getInternalTopics()").size().isEqualTo(0);
+    softly.assertThat(topicsList.getNonInternalTopics()).as("getNonInternalTopics()").size().isGreaterThan(0);
+    softly.assertAll();
   }
 
   @AfterAll
