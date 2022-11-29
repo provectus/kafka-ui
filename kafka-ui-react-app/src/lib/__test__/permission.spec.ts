@@ -594,6 +594,24 @@ describe('Permission Helpers', () => {
           rbacFlag: true,
         })
       ).toBeFalsy();
+
+      expect(
+        isPermittedToCreate({
+          roles: new Map(),
+          clusterName: 'unFoundCluster',
+          resource: UserPermissionResourceEnum.TOPIC,
+          rbacFlag: true,
+        })
+      ).toBeFalsy();
+
+      expect(
+        isPermittedToCreate({
+          roles: new Map(),
+          clusterName: clusterName1,
+          resource: UserPermissionResourceEnum.TOPIC,
+          rbacFlag: true,
+        })
+      ).toBeFalsy();
     });
   });
 });
