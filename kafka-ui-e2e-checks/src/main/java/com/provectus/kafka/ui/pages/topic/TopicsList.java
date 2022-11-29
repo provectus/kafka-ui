@@ -138,7 +138,7 @@ public class TopicsList extends BasePage {
 
       @Step
       public void selectItem(boolean select) {
-        selectElement(element.$x("./td[1]"), select);
+        selectElement(element.$x("./td[1]/input"), select);
       }
 
       @Step
