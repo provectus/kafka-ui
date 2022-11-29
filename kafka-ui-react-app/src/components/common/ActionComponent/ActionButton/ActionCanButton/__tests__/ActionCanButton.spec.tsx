@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'lib/testHelpers';
-import ActionCanButton from 'components/common/ActionComponent/ActionCanButton/ActionCanButton';
+import ActionCanButton from 'components/common/ActionComponent/ActionButton/ActionCanButton/ActionCanButton';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getDefaultActionMessage } from 'components/common/ActionComponent/ActionComponent';
