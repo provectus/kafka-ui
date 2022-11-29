@@ -1,8 +1,11 @@
 package com.provectus.kafka.ui.pages.topic;
 
+import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 
+import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
@@ -21,7 +24,7 @@ public class TopicsList extends BasePage {
     protected SelenideElement deleteSelectedTopicsBtn = $x("//button[text()='Delete selected topics']");
     protected SelenideElement copySelectedTopicBtn = $x("//button[text()='Copy selected topic']");
     protected SelenideElement purgeMessagesOfSelectedTopicsBtn = $x("//button[text()='Purge messages of selected topics']");
-    protected String checkBoxListLocator = "//a[@title='%s']//ancestor::td/../td/input[@type='checkbox']";
+    protected ElementsCollection topicsGridItems = $$x("//tr[@class]");
 
     @Step
     public TopicsList waitUntilScreenReady() {
@@ -43,16 +46,20 @@ public class TopicsList extends BasePage {
     }
 
     @Step
-    public TopicsList openTopic(String topicName) {
-        getTableElement(topicName).shouldBe(Condition.enabled).click();
-        return this;
+    public boolean isShowInternalRadioBtnSelected() {
+      return isSelected(showInternalRadioBtn);
     }
 
     @Step
-    public TopicsList selectCheckboxByName(String topicName){
-      SelenideElement checkBox = $x(String.format(checkBoxListLocator,topicName));
-      if(!checkBox.is(Condition.selected)){clickByJavaScript(checkBox);}
+    public TopicsList setShowInternalRadioButton(boolean select) {
+      selectElement(showInternalRadioBtn, select);
       return this;
+    }
+
+    @Step
+    public TopicsList openTopic(String topicName) {
+        getTopicItem(topicName).openItem();
+        return this;
     }
 
     @Step
@@ -91,5 +98,102 @@ public class TopicsList extends BasePage {
       List<SelenideElement> enabledElements = new ArrayList<>(getEnabledColumnHeaders());
       enabledElements.addAll(Arrays.asList(searchField, showInternalRadioBtn,addTopicBtn));
       return enabledElements;
+    }
+
+    private List<TopicGridItem> initGridItems() {
+      List<TopicGridItem> gridItemList = new ArrayList<>();
+      topicsGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+          .forEach(item -> gridItemList.add(new TopicGridItem(item)));
+      return gridItemList;
+    }
+
+  @Step
+  public TopicGridItem getTopicItem(String name) {
+    return initGridItems().stream()
+        .filter(e -> e.getName().equals(name))
+        .findFirst().orElse(null);
+  }
+
+    @Step
+    public List<TopicGridItem> getNonInternalTopics() {
+      return initGridItems().stream()
+          .filter(e -> !e.isInternal())
+          .collect(Collectors.toList());
+    }
+
+    @Step
+    public List<TopicGridItem> getInternalTopics() {
+      return initGridItems().stream()
+          .filter(TopicGridItem::isInternal)
+          .collect(Collectors.toList());
+    }
+
+    public static class TopicGridItem extends BasePage {
+
+      private final SelenideElement element;
+
+      public TopicGridItem(SelenideElement element) {
+        this.element = element;
+      }
+
+      @Step
+      public void selectItem(boolean select) {
+        selectElement(element.$x("./td[1]/input"), select);
+      }
+
+      @Step
+      public boolean isInternal() {
+        boolean internal = false;
+        try {
+          element.$x("./td[2]/a/span").shouldBe(Condition.visible);
+          internal = true;
+        } catch (Throwable ignored) {
+        }
+        return internal;
+      }
+
+      private SelenideElement getNameElm() {
+        return element.$x("./td[2]");
+      }
+
+      @Step
+      public String getName() {
+        return getNameElm().getText().trim();
+      }
+
+      @Step
+      public void openItem() {
+        getNameElm().click();
+      }
+
+      @Step
+      public int getPartition() {
+        return Integer.parseInt(element.$x("./td[3]").getText().trim());
+      }
+
+      @Step
+      public int getOutOfSyncReplicas() {
+        return Integer.parseInt(element.$x("./td[4]").getText().trim());
+      }
+
+      @Step
+      public int getReplicationFactor() {
+        return Integer.parseInt(element.$x("./td[5]").getText().trim());
+      }
+
+      @Step
+      public int getNumberOfMessages() {
+        return Integer.parseInt(element.$x("./td[6]").getText().trim());
+      }
+
+      @Step
+      public int getSize() {
+        return Integer.parseInt(element.$x("./td[7]").getText().trim());
+      }
+
+      @Step
+      public void openDotMenu(){
+        element.$x("./td[8]//button").click();
+      }
     }
 }

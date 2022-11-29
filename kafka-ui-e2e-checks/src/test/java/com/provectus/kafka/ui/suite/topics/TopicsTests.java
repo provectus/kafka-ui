@@ -110,20 +110,23 @@ public class TopicsTests extends BaseTest {
   @CaseId(7)
   @Test
   @Order(2)
-  void checkAvailableOperations(){
+  void checkAvailableOperations() {
     String processingTopic = "my_ksql_1ksql_processing_log";
     String confluentTopic = "_confluent-ksql-my_ksql_1_command_topic";
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
         .waitUntilScreenReady()
-        .selectCheckboxByName(processingTopic);
-    topicsList.getActionButtons().
-        forEach(element -> assertThat(element.is(Condition.enabled))
+        .getTopicItem(processingTopic)
+        .selectItem(true);
+    topicsList
+        .getActionButtons()
+        .forEach(element -> assertThat(element.is(Condition.enabled))
             .as(element.getSearchCriteria() + " isEnabled()").isTrue());
     topicsList
-        .selectCheckboxByName(confluentTopic);
-    Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(),"isCopySelectedTopicBtnEnabled()");
+        .getTopicItem(confluentTopic)
+        .selectItem(true);
+    Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(), "isCopySelectedTopicBtnEnabled()");
   }
 
   @Disabled()
@@ -337,6 +340,29 @@ public class TopicsTests extends BaseTest {
     topicDetails.clickAddFilterBtnAddFilterMdl();
     assertThat(topicDetails.getFilterName()).as("isFilterNameVisible(filterName)")
         .isEqualTo(filterName);
+  }
+
+  @DisplayName("Checking 'Show Internal Topics' toggle functionality within 'All Topics' page")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(11)
+  @Test
+  @Order(10)
+  void checkShowInternalTopicsButtonFunctionality(){
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicsList.isShowInternalRadioBtnSelected()).as("isInternalRadioBtnSelected()").isTrue();
+    softly.assertThat(topicsList.getInternalTopics()).as("getInternalTopics()").size().isGreaterThan(0);
+    softly.assertThat(topicsList.getNonInternalTopics()).as("getNonInternalTopics()").size().isGreaterThan(0);
+    softly.assertAll();
+    topicsList
+        .setShowInternalRadioButton(false);
+    softly.assertThat(topicsList.getInternalTopics()).as("getInternalTopics()").size().isEqualTo(0);
+    softly.assertThat(topicsList.getNonInternalTopics()).as("getNonInternalTopics()").size().isGreaterThan(0);
+    softly.assertAll();
   }
 
   @AfterAll
