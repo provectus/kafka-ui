@@ -20,7 +20,7 @@ public class TopicsList extends BasePage {
     protected SelenideElement topicListHeader = $x("//*[text()='Topics']");
     protected SelenideElement addTopicBtn = $x("//button[normalize-space(text()) ='Add a Topic']");
     protected SelenideElement searchField = $x("//input[@placeholder='Search by Topic Name']");
-    protected SelenideElement showInternalRadioBtn = $x("//input[@name='ShowInternalTopics']/..");
+    protected SelenideElement showInternalRadioBtn = $x("//input[@name='ShowInternalTopics']");
     protected SelenideElement deleteSelectedTopicsBtn = $x("//button[text()='Delete selected topics']");
     protected SelenideElement copySelectedTopicBtn = $x("//button[text()='Copy selected topic']");
     protected SelenideElement purgeMessagesOfSelectedTopicsBtn = $x("//button[text()='Purge messages of selected topics']");

@@ -72,9 +72,9 @@ public class WebUtils {
 
   public void selectElement(SelenideElement element, boolean select){
     if (select) {
-      if (!element.isSelected()) element.click();
+      if (!element.isSelected()) clickByJavaScript(element);
     } else {
-      if (element.isSelected()) element.click();
+      if (element.isSelected()) clickByJavaScript(element);
     }
   }
 }
