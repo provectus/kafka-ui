@@ -78,6 +78,7 @@ const New: React.FC = () => {
           <Input
             inputSize="M"
             placeholder="Schema Name"
+            autoFocus
             name="subject"
             hookFormOptions={{
               required: 'Schema Name is required.',

@@ -88,6 +88,7 @@ const TopicForm: React.FC<Props> = ({
               <InputLabel htmlFor="topicFormName">Topic Name *</InputLabel>
               <Input
                 id="topicFormName"
+                autoFocus
                 name="name"
                 placeholder="Topic Name"
                 defaultValue={topicName}
