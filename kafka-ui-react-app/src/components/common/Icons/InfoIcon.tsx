@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTheme } from 'styled-components';
 
 const InfoIcon: React.FC = () => {
+  const theme = useTheme();
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +19,7 @@ const InfoIcon: React.FC = () => {
         cx="32"
         cy="32"
         r="30"
-        fill="none"
+        fill={theme.icons.infoIcon}
         stroke="#202020"
         strokeMiterlimit="10"
         strokeWidth="2"

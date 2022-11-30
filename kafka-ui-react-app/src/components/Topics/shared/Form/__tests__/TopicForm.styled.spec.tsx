@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'lib/testHelpers';
 import * as S from 'components/Topics/shared/Form/TopicForm.styled';
 import { screen } from '@testing-library/react';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 
 describe('TopicForm styled components', () => {
   describe('Button', () => {

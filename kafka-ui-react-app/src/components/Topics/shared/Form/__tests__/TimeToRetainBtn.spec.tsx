@@ -5,7 +5,7 @@ import TimeToRetainBtn, {
   Props,
 } from 'components/Topics/shared/Form/TimeToRetainBtn';
 import { useForm, FormProvider } from 'react-hook-form';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 import userEvent from '@testing-library/user-event';
 
 describe('TimeToRetainBtn', () => {

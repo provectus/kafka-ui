@@ -15,6 +15,9 @@ const tableLinkMixin = css(
       color: ${theme.table.link.color.active};
     }
   }
+   tr {
+  background-color: red;
+  }
 `
 );
 

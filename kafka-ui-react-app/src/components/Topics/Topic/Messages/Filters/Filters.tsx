@@ -514,7 +514,7 @@ const Filters: React.FC<FiltersProps> = ({
       <S.ActiveSmartFilterWrapper>
         <Search placeholder="Search" disabled={isTailing} />
 
-        <Button buttonType="primary" buttonSize="M" onClick={toggle}>
+        <Button buttonType="secondary" buttonSize="M" onClick={toggle}>
           <PlusIcon />
           Add Filters
         </Button>

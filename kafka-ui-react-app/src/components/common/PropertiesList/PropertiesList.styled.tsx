@@ -16,7 +16,7 @@ export const Label = styled.div`
   white-space: nowrap;
 `;
 
-export const SubText = styled.div`
-  color: ${({ theme }) => theme.list.meta.color};
-  font-size: 12px;
-`;
+// export const SubText = styled.div`
+//   color: ${({ theme }) => theme.list.meta.color};
+//   font-size: 12px;
+// `;

@@ -7,10 +7,11 @@ interface Props {
 export const ControlPanelWrapper = styled.div<Props>`
   display: flex;
   align-items: center;
-  padding: 0px 16px;
-  margin: 0px 0px 16px;
+  padding: 0 16px;
+  margin: 0 0 16px;
   width: 100%;
   gap: 16px;
+  color: ${({ theme }) => theme.switch.label};
   & > *:first-child {
     width: ${(props) => (props.hasInput ? '38%' : 'auto')};
   }

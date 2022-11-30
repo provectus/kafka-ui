@@ -23,7 +23,7 @@ const StyledButton = styled.button<ButtonProps>`
   color: ${(props) =>
     props.isInverted
       ? props.theme.button[props.buttonType].invertedColors.normal
-      : props.theme.button[props.buttonType].color};
+      : props.theme.button[props.buttonType].color.normal};
   font-size: ${(props) => props.theme.button.fontSize[props.buttonSize]};
   font-weight: 500;
   height: ${(props) => props.theme.button.height[props.buttonSize]};
@@ -52,6 +52,9 @@ const StyledButton = styled.button<ButtonProps>`
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    background: ${(props) =>
+      props.theme.button[props.buttonType].backgroundColor.disabled};
+    color: ${(props) => props.theme.button[props.buttonType].color.disabled};
   }
 
   & a {
@@ -60,6 +63,10 @@ const StyledButton = styled.button<ButtonProps>`
 
   & svg {
     margin-right: 7px;
+    fill: ${(props) =>
+      props.disabled
+        ? props.theme.button[props.buttonType].color.disabled
+        : props.theme.button[props.buttonType].color.normal};
   }
 `;
 

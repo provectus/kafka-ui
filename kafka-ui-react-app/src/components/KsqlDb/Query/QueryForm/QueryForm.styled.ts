@@ -19,6 +19,7 @@ export const KSQLInputsWrapper = styled.div`
 export const KSQLInputHeader = styled.div`
   display: flex;
   justify-content: space-between;
+  color: ${(props) => props.theme.ksqlDb.label};
 `;
 
 export const KSQLButtons = styled.div`
@@ -75,6 +76,25 @@ export const SQLEditor = styled(BaseSQLEditor)(
       .ace-cursor {
         ${readOnly && theme.ksqlDb.query.editor.readonly.cursor}
       }
+      .ace_content {
+        background-color: ${theme.ksqlDb.query.editor.content.backgroundColor};
+        color: ${theme.ksqlDb.query.editor.content.color};
+      }
+      .ace_line {
+        background-color: ${theme.ksqlDb.query.editor.activeLine
+          .backgroundColor};
+      }
+      .ace_gutter-cell {
+        background-color: ${theme.ksqlDb.query.editor.cell.backgroundColor};
+      }
+      .ace_gutter-layer {
+        background-color: ${theme.ksqlDb.query.editor.layer.backgroundColor};
+        color: ${theme.ksqlDb.query.editor.layer.color};
+      }
+      .ace_cursor {
+        color: ${theme.ksqlDb.query.editor.cursor};
+      }
+
       .ace_print-margin {
         display: none;
       }

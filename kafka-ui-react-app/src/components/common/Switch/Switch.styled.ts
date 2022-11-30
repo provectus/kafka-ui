@@ -7,7 +7,20 @@ export const StyledLabel = styled.label`
   height: 20px;
   margin-right: 8px;
 `;
-
+export const CheckedIcon = styled.span`
+  position: absolute;
+  top: 1px;
+  left: 20px;
+  z-index: 10;
+  cursor: pointer;
+`;
+export const UnCheckedIcon = styled.span`
+  position: absolute;
+  top: 2px;
+  right: 17px;
+  z-index: 10;
+  cursor: pointer;
+`;
 export const StyledSlider = styled.span`
   position: absolute;
   cursor: pointer;
@@ -29,6 +42,7 @@ export const StyledSlider = styled.span`
     background-color: ${({ theme }) => theme.switch.circle};
     transition: 0.4s;
     border-radius: 50%;
+    z-index: 11;
   }
 `;
 

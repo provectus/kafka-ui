@@ -10,7 +10,7 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/Cluster/Cluster';
 import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { theme, darkTheme } from 'theme/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { showServerError } from 'lib/errorHandling';
 import { Toaster } from 'react-hot-toast';
@@ -38,6 +38,23 @@ const queryClient = new QueryClient({
 });
 
 const App: React.FC = () => {
+  const [isDarkMode, setIsDarkMode] = React.useState<boolean>(false);
+
+  React.useLayoutEffect(() => {
+    const dark = JSON.parse(localStorage.getItem('darkMode') as string);
+    setIsDarkMode(dark);
+  }, []);
+
+  const handleSwitch = () => {
+    if (isDarkMode) {
+      localStorage.setItem('darkMode', 'false');
+      setIsDarkMode(false);
+    } else {
+      localStorage.setItem('darkMode', 'true');
+      setIsDarkMode(true);
+    }
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <GlobalSettingsProvider>

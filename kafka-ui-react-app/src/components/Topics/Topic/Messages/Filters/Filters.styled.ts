@@ -48,6 +48,9 @@ export const SeekTypeSelectorWrapper = styled.div`
 export const OffsetSelector = styled(Input)`
   border-radius: 0 4px 4px 0 !important;
   border-left: none;
+  &::placeholder {
+    color: ${(props) => props.theme.input.color.normal};
+  }
 `;
 
 export const DatePickerInput = styled(DatePicker)`
@@ -58,7 +61,11 @@ export const DatePickerInput = styled(DatePicker)`
   font-size: 14px;
   width: 100%;
   padding-left: 12px;
-  color: ${(props) => props.theme.select.color.normal};
+  background-color: ${(props) => props.theme.input.backgroundColor.normal};
+  color: ${(props) => props.theme.input.color.normal};
+  &::placeholder {
+    color: ${(props) => props.theme.input.color.normal};
+  }
 
   background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
   background-repeat: no-repeat !important;
@@ -167,6 +174,7 @@ export const FilterTitle = styled.h3`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: ${({ theme }) => theme.modal.color};
   &:after {
     content: '';
     width: calc(100% + 32px);
@@ -175,7 +183,7 @@ export const FilterTitle = styled.h3`
     top: 40px;
     left: -16px;
     display: inline-block;
-    background-color: #f1f2f3;
+    background-color: ${({ theme }) => theme.modal.border.top};
   }
 `;
 
@@ -212,7 +220,7 @@ export const FilterButtonWrapper = styled.div`
     top: 0;
     left: -16px;
     display: inline-block;
-    background-color: #f1f2f3;
+    background-color: ${({ theme }) => theme.modal.border.bottom};
   }
 `;
 
@@ -256,7 +264,7 @@ export const SavedFilter = styled.div.attrs({
   height: 32px;
   align-items: center;
   cursor: pointer;
-  border-top: 1px solid #f1f2f3;
+  border-top: 1px solid ${({ theme }) => theme.panelColor.borderTop};
   &:hover ${FilterOptions} {
     display: flex;
   }
@@ -264,7 +272,9 @@ export const SavedFilter = styled.div.attrs({
     background: ${({ theme }) => theme.layout.stuffColor};
   }
   background: ${(props) =>
-    props.selected ? props.theme.layout.stuffColor : props.theme.panelColor};
+    props.selected
+      ? props.theme.layout.stuffColor
+      : props.theme.panelColor.background};
 `;
 
 export const CheckboxWrapper = styled.div`
@@ -277,13 +287,13 @@ export const ActiveSmartFilter = styled.div`
   border-radius: 4px;
   min-width: 115px;
   height: 24px;
-  background: ${({ theme }) => theme.layout.stuffColor};
+  background: ${({ theme }) => theme.savedFilter.backgroundColor};
   font-size: 14px;
   line-height: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: ${({ theme }) => theme.input.label.color};
+  color: ${({ theme }) => theme.savedFilter.color};
   padding: 16px 8px;
 `;
 
@@ -366,5 +376,5 @@ export const SeekTypeSelect = styled(Select)`
 export const Serdes = styled.div`
   display: flex;
   gap: 24px;
-  padding 8px 0;
+  padding: 8px 0;
 `;

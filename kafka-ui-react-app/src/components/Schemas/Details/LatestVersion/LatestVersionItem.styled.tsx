@@ -1,11 +1,10 @@
 import Heading from 'components/common/heading/Heading.styled';
 import React from 'react';
 import styled from 'styled-components';
-import theme from 'theme/theme';
 
 export const Wrapper = styled.div`
   width: 100%;
-  background-color: ${theme.layout.stuffColor};
+  background-color: ${(props) => props.theme.layout.stuffColor};
   padding: 16px;
   display: flex;
   justify-content: center;
@@ -14,7 +13,7 @@ export const Wrapper = styled.div`
   max-height: 700px;
 
   & > * {
-    background-color: ${theme.panelColor};
+    background-color: ${(props) => props.theme.panelColor.background};
     padding: 24px;
     overflow-y: scroll;
   }
@@ -33,12 +32,16 @@ export const Wrapper = styled.div`
       gap: 16px;
       padding-bottom: 16px;
     }
+
+    p {
+      color: ${(props) => props.theme.schema.backgroundColor.p};
+    }
   }
 `;
 
 export const MetaDataLabel = styled((props) => (
   <Heading level={4} {...props} />
 ))`
-  color: ${theme.lastestVersionItem.metaDataLabel.color};
+  color: ${(props) => props.theme.lastestVersionItem.metaDataLabel.color};
   width: 110px;
 `;

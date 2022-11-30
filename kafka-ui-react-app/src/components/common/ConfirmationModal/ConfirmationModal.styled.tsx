@@ -43,6 +43,7 @@ export const Header = styled.div`
   text-align: start;
   padding: 16px;
   width: 100%;
+  color: ${({ theme }) => theme.modal.color};
 `;
 
 export const Content = styled.div(
@@ -51,6 +52,7 @@ export const Content = styled.div(
     width: 100%;
     border-top: 1px solid ${modal.border.top};
     border-bottom: 1px solid ${modal.border.bottom};
+    color: ${modal.contentColor};
   `
 );
 

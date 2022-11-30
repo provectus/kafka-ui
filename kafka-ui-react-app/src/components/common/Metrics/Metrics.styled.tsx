@@ -21,6 +21,7 @@ export const IndicatorWrapper = styled.div`
   padding: 12px 16px;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.08);
   flex-grow: 1;
+  color: ${({ theme }) => theme.metrics.indicator.color};
 `;
 
 export const IndicatorTitle = styled.div`
@@ -39,12 +40,14 @@ export const IndicatorsWrapper = styled.div`
   border-radius: 8px;
   overflow: auto;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.08);
+  color: ${({ theme }) => theme.metrics.wrapper};
 `;
 
 export const SectionTitle = styled.h5`
   font-weight: 500;
   margin: 0 0 0.5rem 16px;
   font-size: 100%;
+  color: ${({ theme }) => theme.metrics.sectionTitle};
 `;
 
 export const LightText = styled.span`

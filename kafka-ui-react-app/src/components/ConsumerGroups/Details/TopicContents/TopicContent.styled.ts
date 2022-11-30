@@ -5,6 +5,8 @@ export const TopicContentWrapper = styled.tr`
     theme.consumerTopicContent.backgroundColor};
   & > td {
     padding: 16px !important;
+    background-color: ${({ theme }) =>
+      theme.consumerTopicContent.td.backgroundColor};
   }
 `;
 
