@@ -94,10 +94,12 @@ public class SchemasTests extends BaseTest {
                 .openEditSchema();
         schemaCreateForm
                 .waitUntilScreenReady();
-        System.out.println(schemaCreateForm.getDisabledElementsAttribute());
         SoftAssertions softly = new SoftAssertions();
-        schemaCreateForm.getAllDetailsPageElements().forEach(element -> softly.assertThat(element.is(Condition.visible)).as(element.getSearchCriteria() + " isVisible").isTrue());
-        schemaCreateForm.getDisabledElementsAttribute().forEach(element -> softly.assertThat(element.equals("true")).as("getAttribute()").isTrue());
+        schemaCreateForm.getAllDetailsPageElements()
+            .forEach(element -> softly.assertThat(element.is(Condition.visible))
+                .as(element.getSearchCriteria() + " isVisible").isTrue());
+        softly.assertThat(schemaCreateForm.isSubmitBtnEnabled()).as("isSubmitBtnEnabled()").isFalse();
+        softly.assertThat(schemaCreateForm.isSchemaDropDownEnabled()).as("isSchemaDropDownEnabled()").isFalse();
         softly.assertAll();
         schemaCreateForm
                 .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)

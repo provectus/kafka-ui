@@ -105,20 +105,19 @@ public class SchemaCreateForm extends BasePage {
     }
 
     @Step
-    public List<String> getDisabledElementsAttribute(){
-      return Stream.of(submitBtn, schemaTypeDdl).map(element -> element.getAttribute("disabled"))
-          .collect(Collectors.toList());
+    public boolean isSubmitBtnEnabled(){
+      return isEnabled(submitBtn);
     }
 
     @Step
-    public boolean isSchemaDropDownDisabled(){
-        boolean disabled = false;
+    public boolean isSchemaDropDownEnabled(){
+        boolean enabled = true;
         try{
             String attribute = schemaTypeDdl.getAttribute("disabled");
-            disabled = true;
+            enabled = false;
         }
         catch (Throwable ignored){
         }
-        return disabled;
+        return enabled;
     }
 }
