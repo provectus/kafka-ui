@@ -16,9 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 public class SerdeInstance implements Closeable {
 
   @Getter
-  private final String name;
+  final String name;
 
-  private final Serde serde;
+  final Serde serde;
 
   @Nullable
   final Pattern topicKeyPattern;
@@ -27,7 +27,7 @@ public class SerdeInstance implements Closeable {
   final Pattern topicValuePattern;
 
   @Nullable // will be set for custom serdes
-  private final ClassLoader classLoader;
+  final ClassLoader classLoader;
 
   private <T> T wrapWithClassloader(Supplier<T> call) {
     if (classLoader == null) {

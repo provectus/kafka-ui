@@ -1,0 +1,12 @@
+syntax = "proto3";
+package test;
+
+message MySpecificTopicValue {
+    string f1 = 1;
+    string f2 = 2;
+}
+
+message MyValue {
+  int32 version = 1;
+  string payload = 2;
+}
