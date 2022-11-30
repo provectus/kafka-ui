@@ -108,8 +108,7 @@ public class SerdesInitializer {
     builtInSerdeClasses.forEach((name, clazz) -> {
       if (!registeredSerdes.containsKey(name)) {
         BuiltInSerde serde = createSerdeInstance(clazz);
-        if (serde.canBeAutoConfigured(clusterPropertiesResolver, globalPropertiesResolver)) {
-          serde.autoConfigure(clusterPropertiesResolver, globalPropertiesResolver);
+        if (autoConfigureSerde(serde, clusterPropertiesResolver, globalPropertiesResolver)) {
           registeredSerdes.put(name, new SerdeInstance(name, serde, null, null, null));
         }
       }
@@ -149,6 +148,7 @@ public class SerdesInitializer {
       var builtInSerdeClass = builtInSerdeClasses.values().stream()
           .filter(c -> c.getName().equals(serdeConfig.getClassName()))
           .findAny();
+      // built-in serde type with custom name
       if (builtInSerdeClass.isPresent()) {
         return createSerdeWithBuiltInClass(builtInSerdeClass.get(), serdeConfig, serdeProps, clusterProps, globalProps);
       }
@@ -171,12 +171,12 @@ public class SerdesInitializer {
     var clazz = builtInSerdeClasses.get(name);
     BuiltInSerde serde = createSerdeInstance(clazz);
     if (serdeConfig.getProperties().isEmpty()) {
-      if (serde.canBeAutoConfigured(clusterProps, globalProps)) {
-        serde.autoConfigure(clusterProps, globalProps);
-      } else {
+      if (!autoConfigureSerde(serde, serdeProps, globalProps)) {
+        // no properties provided and serde does not support auto-configuration
         throw new ValidationException(name + " serde is not configured");
       }
     } else {
+      // configuring serde with explicitly set properties
       serde.configure(serdeProps, clusterProps, globalProps);
     }
     return new SerdeInstance(
@@ -186,6 +186,14 @@ public class SerdesInitializer {
         nullablePattern(serdeConfig.getTopicValuesPattern()),
         null
     );
+  }
+
+  private boolean autoConfigureSerde(BuiltInSerde serde, PropertyResolver clusterProps, PropertyResolver globalProps) {
+    if (serde.canBeAutoConfigured(clusterProps, globalProps)) {
+      serde.autoConfigure(clusterProps, globalProps);
+      return true;
+    }
+    return false;
   }
 
   @SneakyThrows
