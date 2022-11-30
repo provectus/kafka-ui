@@ -11,6 +11,8 @@ import com.provectus.kafka.ui.api.model.SchemaType;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SchemaCreateForm extends BasePage {
 
@@ -21,6 +23,7 @@ public class SchemaCreateForm extends BasePage {
     protected SelenideElement schemaTypeDdl = $x("//ul[@name='schemaType']");
     protected SelenideElement compatibilityLevelList = $x("//ul[@name='compatibilityLevel']");
     protected SelenideElement newSchemaTextArea = $x("//div[@id='newSchema']");
+    protected SelenideElement latestSchemaTextArea = $x("//div[@id='latestSchema']");
     protected SelenideElement schemaVersionDdl = $$x("//ul[@role='listbox']/li[text()='Version 2']").first();
     protected List<SelenideElement> visibleMarkers = $$x("//div[@class='ace_scroller']//div[contains(@class,'codeMarker')]");
     protected List<SelenideElement> elementsCompareVersionDdl = $$x("//ul[@role='listbox']/ul/li");
@@ -93,6 +96,18 @@ public class SchemaCreateForm extends BasePage {
         clearByKeyboard(newSchemaInput);
         newSchemaInput.setValue(configJson);
         return this;
+    }
+
+    @Step
+    public List<SelenideElement> getAllDetailsPageElements() {
+      return Stream.of(compatibilityLevelList, newSchemaTextArea, latestSchemaTextArea, submitBtn, schemaTypeDdl)
+          .collect(Collectors.toList());
+    }
+
+    @Step
+    public List<String> getDisabledElementsAttribute(){
+      return Stream.of(submitBtn, schemaTypeDdl).map(element -> element.getAttribute("disabled"))
+          .collect(Collectors.toList());
     }
 
     @Step
