@@ -4,6 +4,7 @@ import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.SCHEMA_REG
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
+import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Schema;
@@ -93,7 +94,13 @@ public class SchemasTests extends BaseTest {
                 .openEditSchema();
         schemaCreateForm
                 .waitUntilScreenReady();
-        Assertions.assertTrue(schemaCreateForm.isSchemaDropDownDisabled(),"isSchemaDropDownDisabled()");
+        SoftAssertions softly = new SoftAssertions();
+        schemaCreateForm.getAllDetailsPageElements()
+            .forEach(element -> softly.assertThat(element.is(Condition.visible))
+                .as(element.getSearchCriteria() + " isVisible").isTrue());
+        softly.assertThat(schemaCreateForm.isSubmitBtnEnabled()).as("isSubmitBtnEnabled()").isFalse();
+        softly.assertThat(schemaCreateForm.isSchemaDropDownEnabled()).as("isSchemaDropDownEnabled()").isFalse();
+        softly.assertAll();
         schemaCreateForm
                 .selectCompatibilityLevelFromDropdown(CompatibilityLevel.CompatibilityEnum.NONE)
                 .setNewSchemaValue(fileToString(AVRO_API.getValuePath()))
