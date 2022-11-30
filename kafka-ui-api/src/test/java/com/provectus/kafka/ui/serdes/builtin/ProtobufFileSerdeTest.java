@@ -236,7 +236,7 @@ class ProtobufFileSerdeTest {
   }
 
   @Test
-  void initOnStartupReturnsFalseIfNoProtoFilesHaveBeenProvided() {
+  void canBeAutoConfiguredReturnsFalseIfNoProtoFilesHaveBeenProvided() {
     PropertyResolver resolver = mock(PropertyResolver.class);
 
     var serde = new ProtobufFileSerde();
@@ -245,7 +245,7 @@ class ProtobufFileSerdeTest {
   }
 
   @Test
-  void initOnStartupReturnsFalseIfProtoFilesListIsEmpty() {
+  void canBeAutoConfiguredReturnsFalseIfProtoFilesListIsEmpty() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getListProperty("protobufFiles", String.class)).thenReturn(Optional.of(List.of()));
 
@@ -255,7 +255,7 @@ class ProtobufFileSerdeTest {
   }
 
   @Test
-  void initOnStartupReturnsTrueIfNoProtoFileHasBeenProvided() {
+  void canBeAutoConfiguredReturnsTrueIfNoProtoFileHasBeenProvided() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getProperty("protobufFile", String.class)).thenReturn(Optional.of("file.proto"));
 
@@ -265,7 +265,7 @@ class ProtobufFileSerdeTest {
   }
 
   @Test
-  void initOnStartupReturnsTrueIfProtoFilesHasBeenProvided() {
+  void canBeAutoConfiguredReturnsTrueIfProtoFilesHasBeenProvided() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getListProperty("protobufFiles", String.class)).thenReturn(Optional.of(List.of("file.proto")));
 
@@ -275,7 +275,7 @@ class ProtobufFileSerdeTest {
   }
 
   @Test
-  void initOnStartupReturnsTrueIfProtoFileAndProtoFilesHaveBeenProvided() {
+  void canBeAutoConfiguredReturnsTrueIfProtoFileAndProtoFilesHaveBeenProvided() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getProperty("protobufFile", String.class)).thenReturn(Optional.of("file1.proto"));
     when(resolver.getListProperty("protobufFiles", String.class)).thenReturn(Optional.of(List.of("file2.proto")));

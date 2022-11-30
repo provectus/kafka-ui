@@ -52,8 +52,7 @@ class SerdesInitializerTest {
     var serdes = init(customSerdeConfig);
 
     SerdeInstance customSerdeInstance = serdes.serdes.get("MyPluggedSerde");
-    assertThat(customSerdeInstance.topicKeyPattern.pattern()).isEqualTo(customSerdeConfig.getTopicKeysPattern());
-    assertThat(customSerdeInstance.topicValuePattern.pattern()).isEqualTo(customSerdeConfig.getTopicValuesPattern());
+    verifyPatternsMatch(customSerdeConfig, customSerdeInstance);
     assertThat(customSerdeInstance.classLoader).isNotNull();
 
     verify(customSerdeLoaderMock).loadAndConfigure(
