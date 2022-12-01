@@ -43,5 +43,38 @@ Editor.displayName = 'Editor';
 export default styled(Editor)`
   &.ace-tomorrow {
     background: transparent;
+    .ace_gutter {
+      background-color: ${({ theme }) =>
+        theme.ksqlDb.query.editor.layer.backgroundColor};
+    }
+    .ace_gutter-active-line {
+      background-color: ${({ theme }) =>
+        theme.ksqlDb.query.editor.cell.backgroundColor};
+      color: ${({ theme }) => theme.ksqlDb.query.editor.layer.color};
+    }
+    .ace_line {
+      background-color: ${({ theme }) =>
+        theme.ksqlDb.query.editor.content.backgroundColor};
+      color: ${({ theme }) => theme.ksqlDb.query.editor.content.color};
+    }
+    .ace_cursor {
+      color: ${({ theme }) => theme.ksqlDb.query.editor.cursor};
+    }
+    .ace_active-line {
+      background-color: ${({ theme }) =>
+        theme.ksqlDb.query.editor.cell.backgroundColor};
+    }
+    .ace_gutter-cell {
+      color: ${({ theme }) => theme.ksqlDb.query.editor.content.color};
+    }
+    .ace_variable {
+      color: ${({ theme }) => theme.ksqlDb.query.editor.variable};
+    }
+    .ace_string {
+      color: ${({ theme }) => theme.ksqlDb.query.editor.aceString};
+    }
+    .ace_print-margin {
+      display: none;
+    }
   }
 `;

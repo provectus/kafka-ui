@@ -11,7 +11,7 @@ describe('TopicForm styled components', () => {
       const button = screen.getByRole('button');
       expect(button).toHaveStyle({
         border: `none`,
-        backgroundColor: theme.button.secondary.invertedColors.normal,
+        backgroundColor: theme.chips.backgroundColor.active,
       });
     });
 
@@ -20,7 +20,7 @@ describe('TopicForm styled components', () => {
       const button = screen.getByRole('button');
       expect(button).toHaveStyle({
         border: `none`,
-        backgroundColor: theme.button.secondary.backgroundColor.normal,
+        backgroundColor: theme.chips.backgroundColor.normal,
       });
     });
   });

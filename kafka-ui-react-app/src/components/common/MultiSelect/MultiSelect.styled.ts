@@ -34,6 +34,10 @@ const MultiSelect = styled(ReactMultiSelect)<{ minWidth?: string }>`
   }
   & > .dropdown-container {
     background-color: ${(props) => props.theme.input.backgroundColor.normal};
+    border-color: ${(props) => props.theme.select.borderColor.normal};
+    &:hover{
+      border-color: ${(props) => props.theme.select.borderColor.hover};
+    }
     height: 32px;
     * {
       cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};

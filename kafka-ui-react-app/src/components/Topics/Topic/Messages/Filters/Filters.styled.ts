@@ -191,6 +191,7 @@ export const CreatedFilter = styled.p`
   margin: 25px 0 10px;
   font-size: 14px;
   line-height: 20px;
+  color: ${({ theme }) => theme.savedFilter.color};
 `;
 
 export const SavedFiltersContainer = styled.div`
@@ -203,6 +204,7 @@ export const SavedFiltersContainer = styled.div`
 export const SavedFilterName = styled.div`
   font-size: 14px;
   line-height: 20px;
+  color: ${({ theme }) => theme.savedFilter.filterName};
 `;
 
 export const FilterButtonWrapper = styled.div`
@@ -274,7 +276,7 @@ export const SavedFilter = styled.div.attrs({
   background: ${(props) =>
     props.selected
       ? props.theme.layout.stuffColor
-      : props.theme.panelColor.background};
+      : props.theme.modal.backgroundColor};
 `;
 
 export const CheckboxWrapper = styled.div`

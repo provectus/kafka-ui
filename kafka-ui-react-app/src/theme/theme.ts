@@ -119,7 +119,7 @@ export const theme = {
   },
   panelColor: {
     background: Colors.neutral[0],
-    borderTop: Colors.neutral[5],
+    borderTop: 'none',
   },
   connectEditWarning: Colors.yellow[10],
   dropdown: {
@@ -164,6 +164,8 @@ export const theme = {
           color: Colors.neutral[90],
         },
         cursor: Colors.neutral[90],
+        variable: Colors.red[50],
+        aceString: Colors.green[60],
       },
     },
     label: Colors.neutral[90],
@@ -307,6 +309,20 @@ export const theme = {
       active: Colors.neutral[90],
     },
   },
+  chips: {
+    backgroundColor: {
+      normal: Colors.neutral[5],
+      hover: Colors.neutral[10],
+      active: Colors.neutral[50],
+      hoverActive: Colors.neutral[60],
+    },
+    color: {
+      normal: Colors.neutral[70],
+      hover: Colors.neutral[70],
+      active: Colors.neutral[0],
+      hoverActive: Colors.neutral[0],
+    },
+  },
   menu: {
     backgroundColor: {
       normal: Colors.neutral[0],
@@ -340,6 +356,7 @@ export const theme = {
       tr: Colors.neutral[5],
       div: Colors.neutral[0],
       p: Colors.neutral[80],
+      textarea: Colors.neutral[3],
     },
   },
   modal: {
@@ -525,6 +542,9 @@ export const theme = {
     circle: Colors.neutral[0],
     disabled: Colors.neutral[10],
     label: Colors.neutral[90],
+    checkedIcon: {
+      backgroundColor: Colors.neutral[70],
+    },
   },
   pageLoader: {
     borderColor: Colors.brand[50],
@@ -640,7 +660,8 @@ export const theme = {
     },
   },
   savedFilter: {
-    color: Colors.neutral[70],
+    filterName: Colors.neutral[90],
+    color: Colors.neutral[30],
     backgroundColor: Colors.neutral[5],
   },
   editFilterText: {
@@ -686,7 +707,7 @@ export const darkTheme = {
     navBarHeight: '53px',
     rightSidebarWidth: '70vw',
     filtersSidebarWidth: '300px',
-    stuffColor: Colors.neutral[95], //--
+    stuffColor: Colors.neutral[75], //--
     stuffBorderColor: Colors.neutral[75], //--
     overlay: {
       backgroundColor: Colors.neutral[50],
@@ -745,13 +766,15 @@ export const darkTheme = {
           backgroundColor: Colors.neutral[80], //--
         },
         cell: {
-          backgroundColor: Colors.neutral[80], //--
+          backgroundColor: Colors.neutral[75], //--
         },
         layer: {
           backgroundColor: Colors.neutral[80], //--
           color: Colors.neutral[0], //--
         },
         cursor: Colors.neutral[0], //--
+        variable: Colors.red[50],
+        aceString: Colors.green[60],
       },
     },
     label: Colors.neutral[0], //--
@@ -896,6 +919,20 @@ export const darkTheme = {
       active: Colors.neutral[90],
     },
   },
+  chips: {
+    backgroundColor: {
+      normal: Colors.neutral[80],
+      hover: Colors.neutral[70],
+      active: Colors.neutral[50],
+      hoverActive: Colors.neutral[40],
+    },
+    color: {
+      normal: Colors.neutral[0],
+      hover: Colors.neutral[0],
+      active: Colors.neutral[90],
+      hoverActive: Colors.neutral[90],
+    },
+  },
   menu: {
     backgroundColor: {
       normal: Colors.neutral[90], //--
@@ -929,6 +966,7 @@ export const darkTheme = {
       tr: Colors.neutral[5],
       div: Colors.neutral[0],
       p: Colors.neutral[0], //--
+      textarea: Colors.neutral[85],
     },
   },
   modal: {
@@ -1032,10 +1070,10 @@ export const darkTheme = {
       disabled: Colors.neutral[60], //--
     },
     borderColor: {
-      normal: Colors.neutral[30],
+      normal: Colors.neutral[70],
       hover: Colors.neutral[50],
       active: Colors.neutral[70],
-      disabled: Colors.neutral[10],
+      disabled: Colors.neutral[70],
     },
     optionList: {
       scrollbar: {
@@ -1113,6 +1151,10 @@ export const darkTheme = {
     circle: Colors.neutral[0],
     disabled: Colors.neutral[10],
     label: Colors.neutral[0],
+    checkedIcon: {
+      backgroundColor: Colors.neutral[70],
+      width: '40px',
+    },
   },
   pageLoader: {
     borderColor: Colors.brand[50],
@@ -1228,7 +1270,8 @@ export const darkTheme = {
     },
   },
   savedFilter: {
-    color: Colors.neutral[30],
+    filterName: Colors.neutral[0],
+    color: Colors.neutral[70],
     backgroundColor: Colors.neutral[80],
   },
   editFilterText: {

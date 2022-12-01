@@ -33,18 +33,22 @@ export const Select = styled.ul<Props>`
     disabled ? theme.select.color.disabled : theme.select.color.normal};
   min-width: ${({ minWidth }) => minWidth || 'auto'};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  &:hover:enabled {
-    color: ${(props) => props.theme.select.color.hover};
-    border-color: ${(props) => props.theme.select.borderColor.hover};
+  &:hover {
+    color: ${({ theme, disabled }) =>
+      disabled ? theme.select.color.disabled : theme.select.color.hover};
+    border-color: ${({ theme, disabled }) =>
+      disabled
+        ? theme.select.borderColor.disabled
+        : theme.select.borderColor.hover};
   }
   &:focus {
     outline: none;
-    color: ${(props) => props.theme.select.color.active};
-    border-color: ${(props) => props.theme.select.borderColor.active};
+    color: ${({ theme }) => theme.select.color.active};
+    border-color: ${({ theme }) => theme.select.borderColor.active};
   }
   &:disabled {
-    color: ${(props) => props.theme.select.color.disabled};
-    border-color: ${(props) => props.theme.select.borderColor.disabled};
+    color: ${({ theme }) => theme.select.color.disabled};
+    border-color: ${({ theme }) => theme.select.borderColor.disabled};
   }
 `;
 

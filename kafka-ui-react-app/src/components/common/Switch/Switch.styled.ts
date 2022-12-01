@@ -1,34 +1,41 @@
 import styled from 'styled-components';
 
-export const StyledLabel = styled.label`
+interface Props {
+  isCheckedIcon?: boolean;
+}
+
+export const StyledLabel = styled.label<Props>`
   position: relative;
   display: inline-block;
-  width: 34px;
+  width: ${({ isCheckedIcon }) => (isCheckedIcon ? '40px' : '34px')};
   height: 20px;
   margin-right: 8px;
 `;
 export const CheckedIcon = styled.span`
   position: absolute;
   top: 1px;
-  left: 20px;
+  left: 24px;
   z-index: 10;
   cursor: pointer;
 `;
 export const UnCheckedIcon = styled.span`
   position: absolute;
   top: 2px;
-  right: 17px;
+  right: 23px;
   z-index: 10;
   cursor: pointer;
 `;
-export const StyledSlider = styled.span`
+export const StyledSlider = styled.span<Props>`
   position: absolute;
   cursor: pointer;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: ${({ theme }) => theme.switch.unchecked};
+  background-color: ${({ isCheckedIcon, theme }) =>
+    isCheckedIcon
+      ? theme.switch.checkedIcon.backgroundColor
+      : theme.switch.unchecked};
   transition: 0.4s;
   border-radius: 20px;
 
@@ -46,13 +53,16 @@ export const StyledSlider = styled.span`
   }
 `;
 
-export const StyledInput = styled.input`
+export const StyledInput = styled.input<Props>`
   opacity: 0;
   width: 0;
   height: 0;
 
   &:checked + ${StyledSlider} {
-    background-color: ${({ theme }) => theme.switch.checked};
+    background-color: ${({ isCheckedIcon, theme }) =>
+      isCheckedIcon
+        ? theme.switch.checkedIcon.backgroundColor
+        : theme.switch.checked};
   }
 
   &:focus + ${StyledSlider} {
@@ -60,6 +70,8 @@ export const StyledInput = styled.input`
   }
 
   :checked + ${StyledSlider}:before {
-    transform: translateX(14px);
+    transform: translateX(
+      ${({ isCheckedIcon }) => (isCheckedIcon ? '20px' : '14px')}
+    );
   }
 `;

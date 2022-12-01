@@ -8,6 +8,7 @@ export interface SwitchProps {
   name: string;
   checkedIcon?: JSX.Element;
   unCheckedIcon?: JSX.Element;
+  bgCustomColor?: string;
 }
 const Switch: React.FC<SwitchProps> = ({
   name,
@@ -16,17 +17,19 @@ const Switch: React.FC<SwitchProps> = ({
   checkedIcon,
   unCheckedIcon,
 }) => {
+  const isCheckedIcon = !!(checkedIcon || unCheckedIcon);
   return (
-    <S.StyledLabel>
+    <S.StyledLabel isCheckedIcon={isCheckedIcon}>
       <S.StyledInput
         name={name}
         type="checkbox"
         onChange={onChange}
         checked={checked}
+        isCheckedIcon={isCheckedIcon}
       />
-      <S.StyledSlider />
-      <S.CheckedIcon>{checkedIcon}</S.CheckedIcon>
-      <S.UnCheckedIcon>{unCheckedIcon}</S.UnCheckedIcon>
+      <S.StyledSlider isCheckedIcon={isCheckedIcon} />
+      {checkedIcon && <S.CheckedIcon>{checkedIcon}</S.CheckedIcon>}
+      {unCheckedIcon && <S.UnCheckedIcon>{unCheckedIcon}</S.UnCheckedIcon>}
     </S.StyledLabel>
   );
 };
