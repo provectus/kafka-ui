@@ -38,6 +38,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
   protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
+  protected String savedFiltersGridLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
   protected String filterNameLocator = "//*[@data-testid='activeSmartFilter']";
@@ -120,15 +121,19 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails waitUntilAddFiltersMdlVisible() {
-    addFilterCodeModalTitle.shouldBe(Condition.visible);
+  public TopicDetails openSavedFiltersList(){
+    savedFiltersField.shouldBe(Condition.visible).click();
     return this;
   }
 
   @Step
-  public TopicDetails clickAddFilterBtnAddFilterMdl() {
-    addFilterBtnAddFilterMdl.shouldBe(Condition.enabled).click();
-    addFilterCodeModalTitle.shouldBe(Condition.hidden);
+  public boolean isSavedFilterVisible(String filterName){
+    return isVisible($x(String.format(savedFiltersGridLocator,filterName)));
+  }
+
+  @Step
+  public TopicDetails waitUntilAddFiltersMdlVisible() {
+    addFilterCodeModalTitle.shouldBe(Condition.visible);
     return this;
   }
 
@@ -139,8 +144,31 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
+  public TopicDetails setSaveThisFilterCheckbox(boolean select){
+    selectElement(saveThisFilterCheckBoxAddFilterMdl, select);
+    return this;
+  }
+
+  @Step
   public boolean isSaveThisFilterCheckBoxSelected() {
     return isSelected(saveThisFilterCheckBoxAddFilterMdl);
+  }
+
+  @Step
+  public TopicDetails setDisplayName(String displayName) {
+    displayNameInputAddFilterMdl.shouldBe(Condition.enabled).sendKeys(displayName);
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickAddFilterBtnAndCloseMdl(boolean closeModal) {
+    addFilterBtnAddFilterMdl.shouldBe(Condition.enabled).click();
+    if(closeModal){
+      addFilterCodeModalTitle.shouldBe(Condition.hidden);}
+    else{
+      addFilterCodeModalTitle.shouldBe(Condition.visible);
+    }
+    return this;
   }
 
   @Step

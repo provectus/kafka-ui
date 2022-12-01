@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.suite.topics;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
+import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE;
 import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPRESSION_TYPE;
@@ -8,6 +9,7 @@ import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeborne.selenide.Condition;
@@ -309,7 +311,7 @@ public class TopicsTests extends BaseTest {
         .waitUntilScreenReady()
         .openTopic(topicName);
     topicDetails
-        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible();
     SoftAssertions softly = new SoftAssertions();
@@ -329,9 +331,42 @@ public class TopicsTests extends BaseTest {
         .setFilterCodeFieldAddFilterMdl(filterName);
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
         .isTrue();
-    topicDetails.clickAddFilterBtnAddFilterMdl();
+    topicDetails.clickAddFilterBtnAndCloseMdl(true);
     assertThat(topicDetails.getFilterName()).as("isFilterNameVisible(filterName)")
         .isEqualTo(filterName);
+  }
+
+  @DisplayName("Checking filter saving within Messages/Topic profile/Saved Filters")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(13)
+  @Test
+  @Order(10)
+  void checkFilterSavingWithinSavedFilters() {
+    String processingTopic = "my_ksql_1ksql_processing_log";
+    String filterCodeText = randomAlphabetic(4);
+    String displayName = randomAlphabetic(5) + randomNumeric(2);
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .openTopic(processingTopic);
+    topicDetails
+        .openDetailsTab(MESSAGES)
+        .clickMessagesAddFiltersBtn()
+        .waitUntilAddFiltersMdlVisible()
+        .setFilterCodeFieldAddFilterMdl(filterCodeText);
+    topicDetails
+        .setSaveThisFilterCheckbox(true);
+    assertThat(topicDetails.isSaveThisFilterCheckBoxSelected()).as("isSaveThisFilterCheckBoxSelected()").isTrue();
+    topicDetails
+        .setDisplayName(displayName);
+    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
+        .isTrue();
+    topicDetails
+        .clickAddFilterBtnAndCloseMdl(false)
+        .openSavedFiltersList();
+    assertThat(topicDetails.isSavedFilterVisible(displayName)).as("isSavedFilterVisible()").isTrue();
   }
 
   @DisplayName("Checking 'Show Internal Topics' toggle functionality within 'All Topics' page")
@@ -339,7 +374,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(11)
   @Test
-  @Order(10)
+  @Order(11)
   void checkShowInternalTopicsButtonFunctionality(){
     naviSideBar
         .openSideMenu(TOPICS);
