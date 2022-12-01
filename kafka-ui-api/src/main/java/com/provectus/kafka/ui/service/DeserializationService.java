@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
  * NOTE: Since Serde interface is designed to be blocking it is required that DeserializationService
  * (and all Serde-related code) calls executed within special thread pool (boundedElastic).
  */
-@Slf4j
 @Component
 public class DeserializationService implements Closeable {
 
