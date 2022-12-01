@@ -22,9 +22,11 @@ Avoid generic titles, like “Topics: incorrect layout of message sorting drop-d
 
 -->
 
-**Describe the bug**
-<!--(A clear and concise description of what the bug is.)-->
+**Describe the bug** (Actual behavior)
+<!--(A clear and concise description of what the bug is.Use a list, if there is more than one problem)-->
 
+**Expected behavior**
+<!--(A clear and concise description of what you expected to happen.)-->
 
 **Set up**
 <!--
@@ -40,19 +42,8 @@ How do you run the app? Please provide as much info as possible:
 **Steps to Reproduce**
 <!-- We'd like you to provide an example setup (via docker-compose, helm, etc.) 
 to reproduce the problem, especially with a complex setups. -->
-Steps to reproduce the behavior:
 
 1. 
-
-**Actual behavior**
-<!--
-(A clear and concise description of what happened. Use a list, if there is more than one problem)
--->
-
-**Expected behavior**
-<!--
-(A clear and concise description of what you expected to happen.)
--->
 
 **Screenshots**
 <!--
@@ -63,8 +54,9 @@ Steps to reproduce the behavior:
 **Additional context**
 <!--
 Add any other context about the problem here. E.g.: 
-1. Additional checks done with outcome, if that can help understand the issue better or pinpoint the root cause
-2. Related issues 
+1. Are there any alternative scenarios (different data/methods/configuration/setup) you have tried? 
+   Were they successfull or same issue occured? Please provide steps as well.
+2. Related issues (if there are any).
 3. Logs (if available)
-4. Impact on the end user in general.
+4. Is there any serious impact or behaviour on the end-user because of this issue, that can be overlooked?
 -->
