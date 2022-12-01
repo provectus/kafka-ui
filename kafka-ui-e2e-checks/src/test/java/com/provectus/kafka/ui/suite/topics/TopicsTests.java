@@ -9,7 +9,7 @@ import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeborne.selenide.Condition;
@@ -111,20 +111,18 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(2)
   void checkAvailableOperations() {
-    String processingTopic = "my_ksql_1ksql_processing_log";
-    String confluentTopic = "_confluent-ksql-my_ksql_1_command_topic";
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
         .waitUntilScreenReady()
-        .getTopicItem(processingTopic)
+        .getTopicItem("my_ksql_1ksql_processing_log")
         .selectItem(true);
     topicsList
         .getActionButtons()
         .forEach(element -> assertThat(element.is(Condition.enabled))
             .as(element.getSearchCriteria() + " isEnabled()").isTrue());
     topicsList
-        .getTopicItem(confluentTopic)
+        .getTopicItem("_confluent-ksql-my_ksql_1_command_topic")
         .selectItem(true);
     Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(), "isCopySelectedTopicBtnEnabled()");
   }
@@ -210,22 +208,20 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(5)
   void redirectToConsumerFromTopic() {
-    String topicName = "source-activities";
-    String consumerGroupId = "connect-sink_postgres_activities";
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
         .waitUntilScreenReady()
-        .openTopic(topicName);
+        .openTopic("source-activities");
     topicDetails
         .waitUntilScreenReady()
         .openDetailsTab(TopicDetails.TopicMenu.CONSUMERS)
-        .openConsumerGroup(consumerGroupId);
+        .openConsumerGroup("connect-sink_postgres_activities");
     consumersDetails
         .waitUntilScreenReady();
-    assertThat(consumersDetails.isRedirectedConsumerTitleVisible(consumerGroupId))
+    assertThat(consumersDetails.isRedirectedConsumerTitleVisible("connect-sink_postgres_activities"))
         .withFailMessage("isRedirectedConsumerTitleVisible").isTrue();
-    assertThat(consumersDetails.isTopicInConsumersDetailsVisible(topicName))
+    assertThat(consumersDetails.isTopicInConsumersDetailsVisible("source-activities"))
         .withFailMessage("isTopicInConsumersDetailsVisible").isTrue();
   }
 
@@ -303,14 +299,13 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(9)
   void addingNewFilterWithinTopic() {
-    String topicName = "_schemas";
-    String filterName = "123ABC";
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
         .waitUntilScreenReady()
-        .openTopic(topicName);
+        .openTopic("_schemas");
     topicDetails
+        .waitUntilScreenReady()
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible();
@@ -328,12 +323,12 @@ public class TopicsTests extends BaseTest {
         .isFalse();
     softly.assertAll();
     topicDetails
-        .setFilterCodeFieldAddFilterMdl(filterName);
+        .setFilterCodeFieldAddFilterMdl("123ABC");
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
         .isTrue();
     topicDetails.clickAddFilterBtnAndCloseMdl(true);
     assertThat(topicDetails.getFilterName()).as("isFilterNameVisible(filterName)")
-        .isEqualTo(filterName);
+        .isEqualTo("123ABC");
   }
 
   @DisplayName("Checking filter saving within Messages/Topic profile/Saved Filters")
@@ -343,30 +338,26 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(10)
   void checkFilterSavingWithinSavedFilters() {
-    String processingTopic = "my_ksql_1ksql_processing_log";
-    String filterCodeText = randomAlphabetic(4);
-    String displayName = randomAlphabetic(5) + randomNumeric(2);
+    String displayName = randomAlphanumeric(5);
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
         .waitUntilScreenReady()
-        .openTopic(processingTopic);
+        .openTopic("my_ksql_1ksql_processing_log");
     topicDetails
+        .waitUntilScreenReady()
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible()
-        .setFilterCodeFieldAddFilterMdl(filterCodeText);
-    topicDetails
-        .setSaveThisFilterCheckbox(true);
-    assertThat(topicDetails.isSaveThisFilterCheckBoxSelected()).as("isSaveThisFilterCheckBoxSelected()").isTrue();
-    topicDetails
+        .setFilterCodeFieldAddFilterMdl(randomAlphanumeric(4))
+        .selectSaveThisFilterCheckbox(true)
         .setDisplayName(displayName);
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
         .isTrue();
     topicDetails
         .clickAddFilterBtnAndCloseMdl(false)
-        .openSavedFiltersList();
-    assertThat(topicDetails.isSavedFilterVisible(displayName)).as("isSavedFilterVisible()").isTrue();
+        .openSavedFiltersListMdl();
+    assertThat(topicDetails.isSavedFilterVisibleAtFiltersList(displayName)).as("isSavedFilterVisible()").isTrue();
   }
 
   @DisplayName("Checking 'Show Internal Topics' toggle functionality within 'All Topics' page")

@@ -38,7 +38,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
   protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
-  protected String savedFiltersGridLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
+  protected String savedFiltersNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
   protected String filterNameLocator = "//*[@data-testid='activeSmartFilter']";
@@ -121,14 +121,14 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails openSavedFiltersList(){
+  public TopicDetails openSavedFiltersListMdl(){
     savedFiltersField.shouldBe(Condition.visible).click();
     return this;
   }
 
   @Step
-  public boolean isSavedFilterVisible(String filterName){
-    return isVisible($x(String.format(savedFiltersGridLocator,filterName)));
+  public boolean isSavedFilterVisibleAtFiltersList(String filterName){
+    return isVisible($x(String.format(savedFiltersNameLocator,filterName)));
   }
 
   @Step
@@ -144,7 +144,7 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails setSaveThisFilterCheckbox(boolean select){
+  public TopicDetails selectSaveThisFilterCheckbox(boolean select){
     selectElement(saveThisFilterCheckBoxAddFilterMdl, select);
     return this;
   }
