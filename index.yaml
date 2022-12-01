@@ -46,17 +46,6 @@ entries:
     - kafka-ui-0.4.3.tgz
     version: 0.4.3
   - apiVersion: v2
-    appVersion: 0.4.0
-    created: "2022-11-18T08:11:53.642210822Z"
-    description: A Helm chart for kafka-UI
-    digest: 21ed50ba7a96bcc64a27ba89779b55cd95119fa263aa5ae5353401d77fe480dd
-    icon: https://github.com/provectus/kafka-ui/raw/master/documentation/images/kafka-ui-logo.png
-    name: kafka-ui
-    type: application
-    urls:
-    - kafka-ui-0.4.2.tgz
-    version: 0.4.2
-  - apiVersion: v2
     appVersion: v0.4.0
     created: "2022-11-18T08:11:53.646360555Z"
     description: A Helm chart for kafka-UI
