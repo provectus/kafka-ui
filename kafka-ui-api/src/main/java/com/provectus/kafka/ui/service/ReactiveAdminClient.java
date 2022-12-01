@@ -511,6 +511,7 @@ public class ReactiveAdminClient implements Closeable {
                                             List<ConfigEntry> currentConfigs,
                                             Map<String, String> newConfigs) {
     var configsToDelete = currentConfigs.stream()
+        .filter(e -> e.source() == ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG) //manually set configs only
         .filter(e -> !newConfigs.containsKey(e.name()))
         .map(e -> new AlterConfigOp(e, AlterConfigOp.OpType.DELETE));
 
