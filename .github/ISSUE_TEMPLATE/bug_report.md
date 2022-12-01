@@ -17,7 +17,7 @@ https://github.com/provectus/kafka-ui/discussions
 
 <!--
 Please follow the naming conventions for bugs:
-<Feature> :  <Compact, but specific problem summary> 
+<Feature/Area/Scope> :  <Compact, but specific problem summary> 
 Avoid generic titles, like “Topics: incorrect layout of message sorting drop-down list”. Better use something like: “Topics: Message sorting drop-down list overlaps the "Submit" button”.
 
 -->
