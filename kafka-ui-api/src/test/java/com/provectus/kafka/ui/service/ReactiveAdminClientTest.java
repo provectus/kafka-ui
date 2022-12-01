@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import static com.provectus.kafka.ui.service.ReactiveAdminClient.toMonoWithExceptionFilter;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,7 +16,10 @@ import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
+import org.apache.kafka.common.internals.KafkaFutureImpl;
 import org.junit.function.ThrowingRunnable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,6 +90,20 @@ class ReactiveAdminClientTest extends AbstractIntegrationTest {
   void createTopics(NewTopic... topics) {
     adminClient.createTopics(List.of(topics)).all().get();
     clearings.add(() -> adminClient.deleteTopics(Stream.of(topics).map(NewTopic::name).toList()).all().get());
+  }
+
+  @Test
+  void testToMonoWithExceptionFilter() {
+    var failedFuture = new KafkaFutureImpl<String>();
+    failedFuture.completeExceptionally(new UnknownTopicOrPartitionException());
+
+    var okFuture = new KafkaFutureImpl<String>();
+    okFuture.complete("done");
+
+    Map<String, KafkaFuture<String>> arg = Map.of("failure", failedFuture, "ok", okFuture);
+    StepVerifier.create(toMonoWithExceptionFilter(arg, UnknownTopicOrPartitionException.class))
+        .assertNext(result -> assertThat(result).hasSize(1).containsEntry("ok", "done"))
+        .verifyComplete();
   }
 
 

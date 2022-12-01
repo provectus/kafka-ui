@@ -258,7 +258,7 @@ public class ReactiveAdminClient implements Closeable {
    * This method converts input map into Mono[Map] ignoring keys for which KafkaFutures
    * finished with <code>clazz</code> exception.
    */
-  private <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
+  static <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
                                                            Class<? extends KafkaException> clazz) {
     if (values.isEmpty()) {
       return Mono.just(Map.of());
