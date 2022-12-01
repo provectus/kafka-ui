@@ -171,7 +171,7 @@ public class SerdesInitializer {
     var clazz = builtInSerdeClasses.get(name);
     BuiltInSerde serde = createSerdeInstance(clazz);
     if (serdeConfig.getProperties().isEmpty()) {
-      if (!autoConfigureSerde(serde, serdeProps, globalProps)) {
+      if (!autoConfigureSerde(serde, clusterProps, globalProps)) {
         // no properties provided and serde does not support auto-configuration
         throw new ValidationException(name + " serde is not configured");
       }
