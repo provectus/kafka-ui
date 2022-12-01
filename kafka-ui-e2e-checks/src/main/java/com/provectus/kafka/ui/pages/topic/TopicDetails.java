@@ -37,7 +37,6 @@ public class TopicDetails extends BasePage {
   protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
   protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
   protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
-  protected ElementsCollection messageGridItems = $$x("//tbody//tr");
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
   protected String filterNameLocator = "//*[@data-testid='activeSmartFilter']";
@@ -188,7 +187,7 @@ public class TopicDetails extends BasePage {
 
   private List<TopicDetails.MessageGridItem> initItems() {
     List<TopicDetails.MessageGridItem> gridItemList = new ArrayList<>();
-    messageGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+    allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
         .forEach(item -> gridItemList.add(new TopicDetails.MessageGridItem(item)));
     return gridItemList;
   }
