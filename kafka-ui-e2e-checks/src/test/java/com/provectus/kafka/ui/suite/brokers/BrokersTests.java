@@ -11,7 +11,6 @@ import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qase.api.annotation.CaseId;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 public class BrokersTests extends BaseTest {
@@ -23,21 +22,13 @@ public class BrokersTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(1)
   @Test
-  @Order(1)
-  public void CheckBrokersOverview(){
+  public void checkBrokersOverview(){
     naviSideBar
         .openSideMenu(BROKERS);
     brokersList
         .waitUntilScreenReady();
-    naviSideBar
-        .getAllMenuButtons()
-        .forEach(element ->
-            assertThat(element.is(Condition.enabled) && element.is(Condition.visible))
-                .as(element.getSearchCriteria() + " isEnabled()").isTrue());
-    brokersList
-        .waitUntilScreenReady();
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(brokersList.getBroker()).as("getBroker()").size().isGreaterThan(0);
+    softly.assertThat(brokersList.getAllBrokers()).as("getAllBrokers()").size().isGreaterThan(0);
     brokersList.getAllVisibleElements().forEach(element -> softly.assertThat(element.is(Condition.visible))
         .as(element.getSearchCriteria() + " isVisible()").isTrue());
     brokersList.getAllEnabledElements().forEach(element -> softly.assertThat(element.is(Condition.enabled))
@@ -50,13 +41,12 @@ public class BrokersTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(85)
   @Test
-  @Order(2)
   public void checkExistingBrokersInCluster(){
     naviSideBar
         .openSideMenu(BROKERS);
     brokersList
         .waitUntilScreenReady();
-    assertThat(brokersList.isBrokerVisible("1")).as("isBrokerVisible()").isTrue();
+    assertThat(brokersList.getAllBrokers()).as("getAllBrokers()").size().isGreaterThan(0);
     brokersList
         .openBroker("1");
     brokersDetails

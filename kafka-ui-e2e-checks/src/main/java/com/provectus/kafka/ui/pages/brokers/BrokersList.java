@@ -24,24 +24,18 @@ public class BrokersList extends BasePage {
   }
 
   @Step
-  public boolean isBrokerVisible(String brokerId) {
-    tableGrid.shouldBe(Condition.visible);
-    return isVisible(getTableElement(brokerId));
-  }
-
-  @Step
   public BrokersList openBroker(String brokerId) {
     getBrokerItem(brokerId).openItem();
     return this;
   }
 
-  private List<SelenideElement> getVisibleUptimeSummaryCells() {
+  private List<SelenideElement> getUptimeSummaryCells() {
     return Stream.of("Broker Count", "Active Controllers", "Version")
         .map(name -> $x(String.format(summaryCellLocator, name)))
         .collect(Collectors.toList());
   }
 
-  private List<SelenideElement> getVisiblePartitionsSummaryCells() {
+  private List<SelenideElement> getPartitionsSummaryCells() {
     return Stream.of("Online", "URP", "In Sync Replicas", "Out Of Sync Replicas")
         .map(name -> $x(String.format(summaryCellLocator, name)))
         .collect(Collectors.toList());
@@ -49,8 +43,8 @@ public class BrokersList extends BasePage {
 
   @Step
   public List<SelenideElement> getAllVisibleElements() {
-    List<SelenideElement> visibleElements = new ArrayList<>(getVisibleUptimeSummaryCells());
-    visibleElements.addAll(getVisiblePartitionsSummaryCells());
+    List<SelenideElement> visibleElements = new ArrayList<>(getUptimeSummaryCells());
+    visibleElements.addAll(getPartitionsSummaryCells());
     return visibleElements;
   }
 
@@ -80,10 +74,8 @@ public class BrokersList extends BasePage {
   }
 
   @Step
-  public List<BrokerGridItem> getBroker(){
-    return initGridItems().stream()
-        .filter((BrokerGridItem::isBrokerVisible))
-        .collect(Collectors.toList());
+  public List<BrokerGridItem> getAllBrokers(){
+    return initGridItems();
   }
 
   public static class BrokerGridItem extends BasePage {
@@ -92,17 +84,6 @@ public class BrokersList extends BasePage {
 
     public BrokerGridItem(SelenideElement element) {
       this.element = element;
-    }
-
-    @Step
-    public boolean isBrokerVisible() {
-      boolean isBroker = false;
-      try {
-        element.$x("./td[1]/a").shouldBe(Condition.visible);
-        isBroker = true;
-      } catch (Throwable ignored) {
-      }
-      return isBroker;
     }
 
     private SelenideElement getIdElm() {
