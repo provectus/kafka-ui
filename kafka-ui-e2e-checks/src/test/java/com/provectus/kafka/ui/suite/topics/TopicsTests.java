@@ -327,10 +327,10 @@ public class TopicsTests extends BaseTest {
     softly.assertAll();
     topicDetails
         .setFilterCodeFieldAddFilterMdl(filterName);
-    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
+    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isAddFilterBtnAddFilterMdlEnabled()")
         .isTrue();
     topicDetails.clickAddFilterBtnAndCloseMdl(true);
-    assertThat(topicDetails.isActiveFilterVisible(filterName)).as("isFilterNameVisible()")
+    assertThat(topicDetails.isActiveFilterVisible(filterName)).as("isActiveFilterVisible()")
         .isTrue();
   }
 
