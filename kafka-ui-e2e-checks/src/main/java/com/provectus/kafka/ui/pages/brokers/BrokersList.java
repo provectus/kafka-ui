@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.pages.brokers;
 
 import static com.codeborne.selenide.Selenide.$x;
 
+import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
@@ -29,8 +30,8 @@ public class BrokersList extends BasePage {
   }
 
   @Step
-  public BrokersList openBroker(String brokerName) {
-    getTableElement(brokerName).shouldBe(Condition.enabled).click();
+  public BrokersList openBroker(String brokerId) {
+    getBrokerItem(brokerId).openItem();
     return this;
   }
 
@@ -53,6 +54,21 @@ public class BrokersList extends BasePage {
     return visibleElements;
   }
 
+  private List<BrokersList.BrokerGridItem> initGridItems() {
+    List<BrokersList.BrokerGridItem> gridItemList = new ArrayList<>();
+    allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+        .forEach(item -> gridItemList.add(new BrokersList.BrokerGridItem(item)));
+    return gridItemList;
+  }
+
+  @Step
+  public BrokerGridItem getBrokerItem(String id){
+    return initGridItems().stream()
+        .filter(e ->e.getBrokerId().equals(id))
+        .findFirst().orElse(null);
+  }
+
+
   public static class BrokerGridItem extends BasePage {
 
     private final SelenideElement element;
@@ -61,8 +77,28 @@ public class BrokersList extends BasePage {
       this.element = element;
     }
 
+    private SelenideElement getIdElm() {
+      return element.$x("./td[1]");
+    }
 
+    @Step
+    public String getBrokerId() {
+      return getIdElm().getText().trim();
+    }
 
+    @Step
+    public void openItem() {
+      getIdElm().click();
+    }
 
+    @Step
+    public int getSegmentCount(){
+      return Integer.parseInt(element.$x("./td[3]").getText().trim());
+    }
+
+    @Step
+    public int getPort(){
+      return Integer.parseInt(element.$x("./td[4]").getText().trim());
+    }
   }
 }
