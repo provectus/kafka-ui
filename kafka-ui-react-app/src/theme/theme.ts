@@ -628,6 +628,9 @@ export const theme = {
     },
   },
   icons: {
+    fileIcon: Colors.neutral[90],
+    clockIcon: Colors.neutral[90],
+    arrowDownIcon: Colors.neutral[90],
     moonIcon: Colors.neutral[30],
     sunIcon: Colors.neutral[30],
     infoIcon: 'none',
@@ -1241,6 +1244,9 @@ export const darkTheme = {
     },
   },
   icons: {
+    fileIcon: Colors.neutral[0],
+    clockIcon: Colors.neutral[0],
+    arrowDownIcon: Colors.neutral[0],
     moonIcon: Colors.neutral[30],
     sunIcon: Colors.neutral[30],
     infoIcon: Colors.neutral[0],
