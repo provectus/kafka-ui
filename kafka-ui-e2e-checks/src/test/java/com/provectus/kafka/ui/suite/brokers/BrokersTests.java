@@ -18,11 +18,39 @@ public class BrokersTests extends BaseTest {
   private static final String SUITE_TITLE = "Brokers";
   private static final long SUITE_ID = 1;
 
+  @DisplayName("Checking the Brokers overview")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(1)
+  @Test
+  @Order(1)
+  public void CheckBrokersOverview(){
+    naviSideBar
+        .openSideMenu(BROKERS);
+    brokersList
+        .waitUntilScreenReady();
+    naviSideBar
+        .getAllMenuButtons()
+        .forEach(element ->
+            assertThat(element.is(Condition.enabled) && element.is(Condition.visible))
+                .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    brokersList
+        .waitUntilScreenReady();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(brokersList.getBroker()).as("getBroker()").size().isGreaterThan(0);
+    brokersList.getAllVisibleElements().forEach(element -> softly.assertThat(element.is(Condition.visible))
+        .as(element.getSearchCriteria() + " isVisible()").isTrue());
+    brokersList.getAllEnabledElements().forEach(element -> softly.assertThat(element.is(Condition.enabled))
+        .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    softly.assertAll();
+  }
+
   @DisplayName("Checking the existing Broker's profile in a cluster")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(85)
   @Test
+  @Order(2)
   public void checkExistingBrokersInCluster(){
     naviSideBar
         .openSideMenu(BROKERS);
@@ -39,28 +67,5 @@ public class BrokersTests extends BaseTest {
     brokersDetails.getAllEnabledElements().forEach(element -> softly.assertThat(element.is(Condition.enabled))
         .as(element.getSearchCriteria() + " isEnabled()").isTrue());
     softly.assertAll();
-  }
-
-  @DisplayName("Checking the Brokers overview")
-  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-  @AutomationStatus(status = Status.AUTOMATED)
-  @CaseId(1)
-  @Test
-  @Order(2)
-  public void CheckBrokersOverview(){
-    naviSideBar
-        .openSideMenu(BROKERS);
-    brokersList
-        .waitUntilScreenReady();
-    naviSideBar
-        .getAllMenuButtons()
-           .forEach(element ->
-              assertThat(element.is(Condition.enabled) && element.is(Condition.visible))
-                  .as(element.getSearchCriteria() + " isEnabled()").isTrue());
-    brokersList
-        .waitUntilScreenReady();
-    SoftAssertions softly = new SoftAssertions();
-    brokersList.getAllVisibleElements().forEach(element -> softly.assertThat(element.is(Condition.visible))
-        .as(element.getSearchCriteria() + " isVisible()").isTrue());
   }
 }
