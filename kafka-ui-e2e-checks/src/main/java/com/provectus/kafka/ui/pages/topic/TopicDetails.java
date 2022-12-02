@@ -38,7 +38,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
   protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
-  protected String savedFiltersNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
+  protected String savedFilterNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
   protected String activeFilterNameLocator = "//div[@data-testid='activeSmartFilter'][text()='%s']";
@@ -128,7 +128,7 @@ public class TopicDetails extends BasePage {
 
   @Step
   public boolean isFilterVisibleAtSavedFiltersMdl(String filterName){
-    return isVisible($x(String.format(savedFiltersNameLocator,filterName)));
+    return isVisible($x(String.format(savedFilterNameLocator,filterName)));
   }
 
   @Step
@@ -144,7 +144,7 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails selectSaveThisFilterCheckbox(boolean select){
+  public TopicDetails selectSaveThisFilterCheckboxMdl(boolean select){
     selectElement(saveThisFilterCheckBoxAddFilterMdl, select);
     return this;
   }
@@ -155,7 +155,7 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails setDisplayName(String displayName) {
+  public TopicDetails setDisplayNameFldAddFilterMdl(String displayName) {
     displayNameInputAddFilterMdl.shouldBe(Condition.enabled).sendKeys(displayName);
     return this;
   }

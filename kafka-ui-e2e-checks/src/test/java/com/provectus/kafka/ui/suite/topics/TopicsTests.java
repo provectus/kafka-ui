@@ -330,7 +330,7 @@ public class TopicsTests extends BaseTest {
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
         .isTrue();
     topicDetails.clickAddFilterBtnAndCloseMdl(true);
-    assertThat(topicDetails.isActiveFilterVisible(filterName)).as("isFilterNameVisible(filterName)")
+    assertThat(topicDetails.isActiveFilterVisible(filterName)).as("isFilterNameVisible()")
         .isTrue();
   }
 
@@ -353,15 +353,15 @@ public class TopicsTests extends BaseTest {
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible()
         .setFilterCodeFieldAddFilterMdl(randomAlphanumeric(4))
-        .selectSaveThisFilterCheckbox(true)
-        .setDisplayName(displayName);
+        .selectSaveThisFilterCheckboxMdl(true)
+        .setDisplayNameFldAddFilterMdl(displayName);
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isAddFilterBtnAddFilterMdlEnabled()")
         .isTrue();
     topicDetails
         .clickAddFilterBtnAndCloseMdl(false)
         .openSavedFiltersListMdl();
     assertThat(topicDetails.isFilterVisibleAtSavedFiltersMdl(displayName))
-        .as("isFilterVisibleAtSavedFiltersMdl(displayName)").isTrue();
+        .as("isFilterVisibleAtSavedFiltersMdl()").isTrue();
   }
 
   @DisplayName("Checking 'Show Internal Topics' toggle functionality within 'All Topics' page")
