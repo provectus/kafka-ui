@@ -20,7 +20,7 @@
         <google.auto-service.version>1.0.1</google.auto-service.version>
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <allure.java-commons.version>2.18.1</allure.java-commons.version>
+        <allure.java-commons.version>2.20.1</allure.java-commons.version>
         <dotenv.version>2.2.4</dotenv.version>
         <allure.maven-plugin.version>2.6</allure.maven-plugin.version>
         <ashot.version>1.5.4</ashot.version>
