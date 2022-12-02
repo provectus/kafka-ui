@@ -81,6 +81,8 @@ const BrokersList: React.FC = () => {
   const areAllInSync = inSyncReplicasCount && replicas === inSyncReplicasCount;
   const partitionIsOffline = offlinePartitionCount && offlinePartitionCount > 0;
 
+  const isActiveControllerUnKnown = typeof activeControllers === 'undefined';
+
   return (
     <>
       <PageHeading text="Brokers" />
@@ -89,8 +91,15 @@ const BrokersList: React.FC = () => {
           <Metrics.Indicator label="Broker Count">
             {brokerCount}
           </Metrics.Indicator>
-          <Metrics.Indicator label="Active Controller">
-            {activeControllers || 'Not known'}
+          <Metrics.Indicator
+            label="Active Controller"
+            isAlert={isActiveControllerUnKnown}
+          >
+            {isActiveControllerUnKnown ? (
+              <S.DangerText>No Active Controller</S.DangerText>
+            ) : (
+              activeControllers
+            )}
           </Metrics.Indicator>
           <Metrics.Indicator label="Version">{version}</Metrics.Indicator>
         </Metrics.Section>
