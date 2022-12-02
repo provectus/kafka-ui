@@ -32,6 +32,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -147,6 +149,7 @@ public class ReactiveAdminClient implements Closeable {
 
   //---------------------------------------------------------------------------------
 
+  @Getter(AccessLevel.PACKAGE) // visible for testing
   private final AdminClient client;
   private final String version;
   private final Set<SupportedFeature> features;
@@ -361,9 +364,14 @@ public class ReactiveAdminClient implements Closeable {
     return toMono(client.createPartitions(newPartitionsMap).all());
   }
 
+
+  // NOTE: places whole current topic config with new one. Entries that were present in old config,
+  // but missed in new will be set to default
   public Mono<Void> updateTopicConfig(String topicName, Map<String, String> configs) {
     if (features.contains(SupportedFeature.INCREMENTAL_ALTER_CONFIGS)) {
-      return incrementalAlterConfig(topicName, configs);
+      return getTopicsConfigImpl(List.of(topicName), false)
+          .map(conf -> conf.getOrDefault(topicName, List.of()))
+          .flatMap(currentConfigs -> incrementalAlterConfig(topicName, currentConfigs, configs));
     } else {
       return alterConfig(topicName, configs);
     }
@@ -499,17 +507,22 @@ public class ReactiveAdminClient implements Closeable {
     return toMono(client.alterReplicaLogDirs(replicaAssignment).all());
   }
 
-  private Mono<Void> incrementalAlterConfig(String topicName, Map<String, String> configs) {
-    var config = configs.entrySet().stream()
-        .flatMap(cfg -> Stream.of(
-            new AlterConfigOp(
-                new ConfigEntry(
-                    cfg.getKey(),
-                    cfg.getValue()),
-                AlterConfigOp.OpType.SET)))
-        .collect(toList());
-    var topicResource = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
-    return toMono(client.incrementalAlterConfigs(Map.of(topicResource, config)).all());
+  private Mono<Void> incrementalAlterConfig(String topicName,
+                                            List<ConfigEntry> currentConfigs,
+                                            Map<String, String> newConfigs) {
+    var configsToDelete = currentConfigs.stream()
+        .filter(e -> e.source() == ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG) //manually set configs only
+        .filter(e -> !newConfigs.containsKey(e.name()))
+        .map(e -> new AlterConfigOp(e, AlterConfigOp.OpType.DELETE));
+
+    var configsToSet = newConfigs.entrySet().stream()
+        .map(e -> new AlterConfigOp(new ConfigEntry(e.getKey(), e.getValue()), AlterConfigOp.OpType.SET));
+
+    return toMono(client.incrementalAlterConfigs(
+        Map.of(
+            new ConfigResource(ConfigResource.Type.TOPIC, topicName),
+            Stream.concat(configsToDelete, configsToSet).toList()
+        )).all());
   }
 
   @SuppressWarnings("deprecation")

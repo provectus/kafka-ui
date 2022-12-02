@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.serdes.ClusterSerdes;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.serdes.SerdeInstance;
+import com.provectus.kafka.ui.serdes.SerdesInitializer;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +17,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 import javax.validation.ValidationException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 public class DeserializationService implements Closeable {
 
@@ -29,10 +28,11 @@ public class DeserializationService implements Closeable {
   public DeserializationService(Environment env,
                                 ClustersStorage clustersStorage,
                                 ClustersProperties clustersProperties) {
+    var serdesInitializer = new SerdesInitializer();
     for (int i = 0; i < clustersProperties.getClusters().size(); i++) {
       var clusterProperties = clustersProperties.getClusters().get(i);
       var cluster = clustersStorage.getClusterByName(clusterProperties.getName()).get();
-      clusterSerdes.put(cluster.getName(), new ClusterSerdes(env, clustersProperties, i));
+      clusterSerdes.put(cluster.getName(), serdesInitializer.init(env, clustersProperties, i));
     }
   }
 
