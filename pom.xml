@@ -37,7 +37,6 @@
         <org.projectlombok.version>1.18.24</org.projectlombok.version>
         <protobuf-java.version>3.21.9</protobuf-java.version>
         <reactor-netty.version>1.1.0</reactor-netty.version>
-        <scala-lang.library.version>2.13.9</scala-lang.library.version>
         <snakeyaml.version>1.33</snakeyaml.version>
         <spring-boot.version>2.7.5</spring-boot.version>
         <spring-security.version>5.7.5</spring-security.version>
@@ -128,11 +127,6 @@
                 <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>${scala-lang.library.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.yaml</groupId>
