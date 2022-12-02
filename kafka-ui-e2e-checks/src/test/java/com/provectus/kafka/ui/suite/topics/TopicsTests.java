@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.suite.topics;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
+import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE;
 import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPRESSION_TYPE;
@@ -8,8 +9,9 @@ import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.apache.commons.lang3.RandomUtils.nextInt;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.base.BaseTest;
@@ -111,20 +113,18 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(2)
   void checkAvailableOperations() {
-    String processingTopic = "my_ksql_1ksql_processing_log";
-    String confluentTopic = "_confluent-ksql-my_ksql_1_command_topic";
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
         .waitUntilScreenReady()
-        .getTopicItem(processingTopic)
+        .getTopicItem("my_ksql_1ksql_processing_log")
         .selectItem(true);
     topicsList
         .getActionButtons()
         .forEach(element -> assertThat(element.is(Condition.enabled))
             .as(element.getSearchCriteria() + " isEnabled()").isTrue());
     topicsList
-        .getTopicItem(confluentTopic)
+        .getTopicItem("_confluent-ksql-my_ksql_1_command_topic")
         .selectItem(true);
     Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(), "isCopySelectedTopicBtnEnabled()");
   }
@@ -309,15 +309,15 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(9)
   void addingNewFilterWithinTopic() {
-    String topicName = "_schemas";
-    String filterName = "123ABC";
+    String filterName = randomAlphanumeric(5);
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
         .waitUntilScreenReady()
-        .openTopic(topicName);
+        .openTopic("_schemas");
     topicDetails
-        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .waitUntilScreenReady()
+        .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible();
     SoftAssertions softly = new SoftAssertions();
@@ -335,11 +335,41 @@ public class TopicsTests extends BaseTest {
     softly.assertAll();
     topicDetails
         .setFilterCodeFieldAddFilterMdl(filterName);
-    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
+    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isAddFilterBtnAddFilterMdlEnabled()")
         .isTrue();
-    topicDetails.clickAddFilterBtnAddFilterMdl();
-    assertThat(topicDetails.getFilterName()).as("isFilterNameVisible(filterName)")
-        .isEqualTo(filterName);
+    topicDetails.clickAddFilterBtnAndCloseMdl(true);
+    assertThat(topicDetails.isActiveFilterVisible(filterName)).as("isActiveFilterVisible()")
+        .isTrue();
+  }
+
+  @DisplayName("Checking filter saving within Messages/Topic profile/Saved Filters")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(13)
+  @Test
+  @Order(10)
+  void checkFilterSavingWithinSavedFilters() {
+    String displayName = randomAlphanumeric(5);
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .openTopic("my_ksql_1ksql_processing_log");
+    topicDetails
+        .waitUntilScreenReady()
+        .openDetailsTab(MESSAGES)
+        .clickMessagesAddFiltersBtn()
+        .waitUntilAddFiltersMdlVisible()
+        .setFilterCodeFieldAddFilterMdl(randomAlphanumeric(4))
+        .selectSaveThisFilterCheckboxMdl(true)
+        .setDisplayNameFldAddFilterMdl(displayName);
+    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isAddFilterBtnAddFilterMdlEnabled()")
+        .isTrue();
+    topicDetails
+        .clickAddFilterBtnAndCloseMdl(false)
+        .openSavedFiltersListMdl();
+    assertThat(topicDetails.isFilterVisibleAtSavedFiltersMdl(displayName))
+        .as("isFilterVisibleAtSavedFiltersMdl()").isTrue();
   }
 
   @DisplayName("Checking 'Show Internal Topics' toggle functionality within 'All Topics' page")
@@ -347,7 +377,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(11)
   @Test
-  @Order(10)
+  @Order(11)
   void checkShowInternalTopicsButtonFunctionality(){
     naviSideBar
         .openSideMenu(TOPICS);
