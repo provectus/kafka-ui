@@ -49,22 +49,22 @@ export const OffsetSelector = styled(Input)`
   border-radius: 0 4px 4px 0 !important;
   border-left: none;
   &::placeholder {
-    color: ${(props) => props.theme.input.color.normal};
+    color: ${({ theme }) => theme.input.color.normal};
   }
 `;
 
 export const DatePickerInput = styled(DatePicker)`
   height: 32px;
-  border: 1px ${(props) => props.theme.select.borderColor.normal} solid;
+  border: 1px ${({ theme }) => theme.select.borderColor.normal} solid;
   border-left: none;
   border-radius: 0 4px 4px 0;
   font-size: 14px;
   width: 100%;
   padding-left: 12px;
-  background-color: ${(props) => props.theme.input.backgroundColor.normal};
-  color: ${(props) => props.theme.input.color.normal};
+  background-color: ${({ theme }) => theme.input.backgroundColor.normal};
+  color: ${({ theme }) => theme.input.color.normal};
   &::placeholder {
-    color: ${(props) => props.theme.input.color.normal};
+    color: ${({ theme }) => theme.input.color.normal};
   }
 
   background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
@@ -273,10 +273,8 @@ export const SavedFilter = styled.div.attrs({
   &:hover {
     background: ${({ theme }) => theme.layout.stuffColor};
   }
-  background: ${(props) =>
-    props.selected
-      ? props.theme.layout.stuffColor
-      : props.theme.modal.backgroundColor};
+  background: ${({ selected, theme }) =>
+    selected ? theme.layout.stuffColor : theme.modal.backgroundColor};
 `;
 
 export const CheckboxWrapper = styled.div`
@@ -314,7 +312,7 @@ export const MessageLoading = styled.div.attrs({
 })<MessageLoadingProps>`
   color: ${({ theme }) => theme.heading.h3.color};
   font-size: ${({ theme }) => theme.heading.h3.fontSize};
-  display: ${(props) => (props.isLive ? 'flex' : 'none')};
+  display: ${({ isLive }) => (isLive ? 'flex' : 'none')};
   justify-content: space-around;
   width: 250px;
 `;
@@ -326,7 +324,7 @@ export const StopLoading = styled.div`
 `;
 
 export const MessageLoadingSpinner = styled.div<MessageLoadingSpinnerProps>`
-  display: ${(props) => (props.isFetching ? 'block' : 'none')};
+  display: ${({ isFetching }) => (isFetching ? 'block' : 'none')};
   border: 3px solid ${({ theme }) => theme.pageLoader.borderColor};
   border-bottom: 3px solid ${({ theme }) => theme.pageLoader.borderBottomColor};
   border-radius: 50%;

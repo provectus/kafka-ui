@@ -19,7 +19,7 @@ export const KSQLInputsWrapper = styled.div`
 export const KSQLInputHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  color: ${(props) => props.theme.ksqlDb.label};
+  color: ${({ theme }) => theme.ksqlDb.label};
 `;
 
 export const KSQLButtons = styled.div`

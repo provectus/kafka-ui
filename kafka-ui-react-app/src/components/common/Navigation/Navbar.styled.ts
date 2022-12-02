@@ -14,13 +14,13 @@ const Navbar = styled.nav`
     font-weight: 500;
     font-size: 14px;
     white-space: nowrap;
-    color: ${(props) => props.theme.primaryTab.color.normal};
-    border-bottom: 1px ${(props) => props.theme.primaryTab.borderColor.normal}
+    color: ${({ theme }) => theme.primaryTab.color.normal};
+    border-bottom: 1px ${({ theme }) => theme.primaryTab.borderColor.normal}
       solid;
     &.is-active {
-      border-bottom: 1px ${(props) => props.theme.primaryTab.borderColor.active}
+      border-bottom: 1px ${({ theme }) => theme.primaryTab.borderColor.active}
         solid;
-      color: ${(props) => props.theme.primaryTab.color.active};
+      color: ${({ theme }) => theme.primaryTab.color.active};
     }
     &.is-disabled {
       color: ${(props) => props.theme.primaryTab.color.disabled};
@@ -28,9 +28,9 @@ const Navbar = styled.nav`
       cursor: not-allowed;
     }
     &:hover:not(.is-active, .is-disabled) {
-      border-bottom: 1px ${(props) => props.theme.primaryTab.borderColor.hover}
+      border-bottom: 1px ${({ theme }) => theme.primaryTab.borderColor.hover}
         solid;
-      color: ${(props) => props.theme.primaryTab.color.hover};
+      color: ${({ theme }) => theme.primaryTab.color.hover};
     }
   }
 `;

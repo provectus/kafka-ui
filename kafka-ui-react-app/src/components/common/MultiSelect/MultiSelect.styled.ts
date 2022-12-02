@@ -6,37 +6,37 @@ const MultiSelect = styled(ReactMultiSelect)<{ minWidth?: string }>`
   height: 32px;
   font-size: 14px;
   .search input {
-    color: ${(props) => props.theme.input.color.normal};
+    color: ${({ theme }) => theme.input.color.normal};
     background-color: ${(props) =>
       props.theme.input.backgroundColor.normal} !important;
   }
   .select-item {
-    color: ${(props) => props.theme.select.color.normal};
-    background-color: ${(props) =>
-      props.theme.select.backgroundColor.normal}; !important;
+    color: ${({ theme }) => theme.select.color.normal};
+    background-color: ${({ theme }) =>
+      theme.select.backgroundColor.normal}; !important;
 
     &:hover {
-      background-color: ${(props) =>
-        props.theme.select.backgroundColor.hover}; !important;
+      background-color: ${({ theme }) =>
+        theme.select.backgroundColor.hover}; !important;
     }
     &:active {
-      background-color: ${(props) =>
-        props.theme.select.backgroundColor.active}; !important;
+      background-color: ${({ theme }) =>
+        theme.select.backgroundColor.active}; !important;
     }
   }
 
   .select-item.selected{
-    background-color: ${(props) =>
-      props.theme.select.backgroundColor.active}; !important;
+    background-color: ${({ theme }) =>
+      theme.select.backgroundColor.active}; !important;
   }
   .options li{
-    background-color: ${(props) => props.theme.select.backgroundColor.normal};
+    background-color: ${({ theme }) => theme.select.backgroundColor.normal};
   }
   & > .dropdown-container {
-    background-color: ${(props) => props.theme.input.backgroundColor.normal};
-    border-color: ${(props) => props.theme.select.borderColor.normal};
+    background-color: ${({ theme }) => theme.input.backgroundColor.normal};
+    border-color: ${({ theme }) => theme.select.borderColor.normal};
     &:hover{
-      border-color: ${(props) => props.theme.select.borderColor.hover};
+      border-color: ${({ theme }) => theme.select.borderColor.hover};
     }
     height: 32px;
     * {

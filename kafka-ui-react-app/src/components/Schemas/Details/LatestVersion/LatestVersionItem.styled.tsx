@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   width: 100%;
-  background-color: ${(props) => props.theme.layout.stuffColor};
+  background-color: ${({ theme }) => theme.layout.stuffColor};
   padding: 16px;
   display: flex;
   justify-content: center;
@@ -13,7 +13,7 @@ export const Wrapper = styled.div`
   max-height: 700px;
 
   & > * {
-    background-color: ${(props) => props.theme.panelColor.background};
+    background-color: ${({ theme }) => theme.panelColor.background};
     padding: 24px;
     overflow-y: scroll;
   }
@@ -34,7 +34,7 @@ export const Wrapper = styled.div`
     }
 
     p {
-      color: ${(props) => props.theme.schema.backgroundColor.p};
+      color: ${({ theme }) => theme.schema.backgroundColor.p};
     }
   }
 `;
@@ -42,6 +42,6 @@ export const Wrapper = styled.div`
 export const MetaDataLabel = styled((props) => (
   <Heading level={4} {...props} />
 ))`
-  color: ${(props) => props.theme.lastestVersionItem.metaDataLabel.color};
+  color: ${({ theme }) => theme.lastestVersionItem.metaDataLabel.color};
   width: 110px;
 `;

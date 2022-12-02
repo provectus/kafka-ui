@@ -58,12 +58,12 @@ export const OptionList = styled.ul`
   left: 0;
   max-height: 228px;
   margin-top: 4px;
-  background-color: ${(props) => props.theme.select.backgroundColor.normal};
-  border: 1px ${(props) => props.theme.select.borderColor.normal} solid;
+  background-color: ${({ theme }) => theme.select.backgroundColor.normal};
+  border: 1px ${({ theme }) => theme.select.borderColor.normal} solid;
   border-radius: 4px;
   font-size: 14px;
   line-height: 18px;
-  color: ${(props) => props.theme.select.color.normal};
+  color: ${({ theme }) => theme.select.color.normal};
   overflow-y: auto;
   z-index: 10;
   max-width: 300px;
@@ -75,8 +75,8 @@ export const OptionList = styled.ul`
 
   &::-webkit-scrollbar-thumb {
     border-radius: 4px;
-    background-color: ${(props) =>
-      props.theme.select.optionList.scrollbar.backgroundColor};
+    background-color: ${({ theme }) =>
+      theme.select.optionList.scrollbar.backgroundColor};
   }
 
   &::-webkit-scrollbar:horizontal {
@@ -91,16 +91,16 @@ export const Option = styled.li<OptionProps>`
   transition: all 0.2s ease-in-out;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   gap: 5px;
-  color: ${(props) =>
-    props.theme.select.color[props.disabled ? 'disabled' : 'normal']};
+  color: ${({ theme, disabled }) =>
+    theme.select.color[disabled ? 'disabled' : 'normal']};
 
   &:hover {
-    background-color: ${(props) =>
-      props.theme.select.backgroundColor[props.disabled ? 'normal' : 'hover']};
+    background-color: ${({ theme, disabled }) =>
+      theme.select.backgroundColor[disabled ? 'normal' : 'hover']};
   }
 
   &:active {
-    background-color: ${(props) => props.theme.select.backgroundColor.active};
+    background-color: ${({ theme }) => theme.select.backgroundColor.active};
   }
 `;
 
