@@ -41,7 +41,7 @@ public class TopicDetails extends BasePage {
   protected String savedFiltersNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
-  protected String filterNameLocator = "//*[@data-testid='activeSmartFilter']";
+  protected String activeFilterNameLocator = "//div[@data-testid='activeSmartFilter'][text()='%s']";
 
   @Step
   public TopicDetails waitUntilScreenReady() {
@@ -127,7 +127,7 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public boolean isSavedFilterVisibleAtFiltersList(String filterName){
+  public boolean isFilterVisibleAtSavedFiltersMdl(String filterName){
     return isVisible($x(String.format(savedFiltersNameLocator,filterName)));
   }
 
@@ -177,8 +177,8 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public String getFilterName() {
-    return $x(filterNameLocator).getText();
+  public boolean isActiveFilterVisible(String activeFilterName) {
+    return isVisible($x(String.format(activeFilterNameLocator,activeFilterName)));
   }
 
   public List<SelenideElement> getAllAddFilterModalVisibleElements() {

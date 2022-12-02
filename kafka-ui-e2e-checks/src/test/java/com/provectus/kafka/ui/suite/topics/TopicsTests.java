@@ -208,20 +208,22 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(5)
   void redirectToConsumerFromTopic() {
+    String topicName = "source-activities";
+    String consumerGroupId = "connect-sink_postgres_activities";
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
         .waitUntilScreenReady()
-        .openTopic("source-activities");
+        .openTopic(topicName);
     topicDetails
         .waitUntilScreenReady()
         .openDetailsTab(TopicDetails.TopicMenu.CONSUMERS)
-        .openConsumerGroup("connect-sink_postgres_activities");
+        .openConsumerGroup(consumerGroupId);
     consumersDetails
         .waitUntilScreenReady();
-    assertThat(consumersDetails.isRedirectedConsumerTitleVisible("connect-sink_postgres_activities"))
+    assertThat(consumersDetails.isRedirectedConsumerTitleVisible(consumerGroupId))
         .withFailMessage("isRedirectedConsumerTitleVisible").isTrue();
-    assertThat(consumersDetails.isTopicInConsumersDetailsVisible("source-activities"))
+    assertThat(consumersDetails.isTopicInConsumersDetailsVisible(topicName))
         .withFailMessage("isTopicInConsumersDetailsVisible").isTrue();
   }
 
@@ -299,6 +301,7 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(9)
   void addingNewFilterWithinTopic() {
+    String filterName = "123ABC";
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
@@ -323,12 +326,12 @@ public class TopicsTests extends BaseTest {
         .isFalse();
     softly.assertAll();
     topicDetails
-        .setFilterCodeFieldAddFilterMdl("123ABC");
+        .setFilterCodeFieldAddFilterMdl(filterName);
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
         .isTrue();
     topicDetails.clickAddFilterBtnAndCloseMdl(true);
-    assertThat(topicDetails.getFilterName()).as("isFilterNameVisible(filterName)")
-        .isEqualTo("123ABC");
+    assertThat(topicDetails.isActiveFilterVisible(filterName)).as("isFilterNameVisible(filterName)")
+        .isTrue();
   }
 
   @DisplayName("Checking filter saving within Messages/Topic profile/Saved Filters")
@@ -352,12 +355,13 @@ public class TopicsTests extends BaseTest {
         .setFilterCodeFieldAddFilterMdl(randomAlphanumeric(4))
         .selectSaveThisFilterCheckbox(true)
         .setDisplayName(displayName);
-    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
+    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isAddFilterBtnAddFilterMdlEnabled()")
         .isTrue();
     topicDetails
         .clickAddFilterBtnAndCloseMdl(false)
         .openSavedFiltersListMdl();
-    assertThat(topicDetails.isSavedFilterVisibleAtFiltersList(displayName)).as("isSavedFilterVisible()").isTrue();
+    assertThat(topicDetails.isFilterVisibleAtSavedFiltersMdl(displayName))
+        .as("isFilterVisibleAtSavedFiltersMdl(displayName)").isTrue();
   }
 
   @DisplayName("Checking 'Show Internal Topics' toggle functionality within 'All Topics' page")
