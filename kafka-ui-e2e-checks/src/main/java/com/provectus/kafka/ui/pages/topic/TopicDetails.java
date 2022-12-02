@@ -124,7 +124,7 @@ public class TopicDetails extends BasePage {
   @Step
   public TopicDetails openSavedFiltersListMdl(){
     savedFiltersLink.shouldBe(Condition.enabled).click();
-    backToCreateFiltersLink.shouldBe(Condition.enabled);
+    backToCreateFiltersLink.shouldBe(Condition.visible);
     return this;
   }
 
