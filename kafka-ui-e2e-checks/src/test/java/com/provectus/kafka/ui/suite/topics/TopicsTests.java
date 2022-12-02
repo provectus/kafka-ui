@@ -301,7 +301,7 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(9)
   void addingNewFilterWithinTopic() {
-    String filterName = "123ABC";
+    String filterName = randomAlphanumeric(5);
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
