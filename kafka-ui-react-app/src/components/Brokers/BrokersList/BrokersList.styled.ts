@@ -6,8 +6,8 @@ export const RowCell = styled.div`
   align-items: center;
 
   svg {
-    width: 18px;
-    padding-right: 6px;
+    width: 20px;
+    padding-left: 6px;
   }
 `;
 

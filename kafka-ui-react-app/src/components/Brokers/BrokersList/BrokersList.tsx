@@ -7,9 +7,9 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { useBrokers } from 'lib/hooks/api/brokers';
 import { useClusterStats } from 'lib/hooks/api/clusters';
 import Table, { LinkCell, SizeCell } from 'components/common/NewTable';
+import CheckMarkRoundIcon from 'components/common/Icons/CheckMarkRoundIcon';
 import { ColumnDef } from '@tanstack/react-table';
 import { clusterBrokerPath } from 'lib/paths';
-import StarIcon from 'components/common/Icons/StarIcon';
 
 import * as S from './BrokersList.styled';
 
@@ -52,11 +52,14 @@ const BrokersList: React.FC = () => {
         header: 'Broker ID',
         accessorKey: 'brokerId',
         // eslint-disable-next-line react/no-unstable-nested-components
-        cell: ({ getValue }) => (
-          <LinkCell
-            value={`${getValue<string | number>()}`}
-            to={encodeURIComponent(`${getValue<string | number>()}`)}
-          />
+        cell: ({ row: { id }, getValue }) => (
+          <S.RowCell>
+            <LinkCell
+              value={`${getValue<string | number>()}`}
+              to={encodeURIComponent(`${getValue<string | number>()}`)}
+            />
+            {id === String(activeControllers) && <CheckMarkRoundIcon />}
+          </S.RowCell>
         ),
       },
       { header: 'Segment Size', accessorKey: 'size', cell: SizeCell },
@@ -65,13 +68,6 @@ const BrokersList: React.FC = () => {
       {
         header: 'Host',
         accessorKey: 'host',
-        // eslint-disable-next-line react/no-unstable-nested-components
-        cell: ({ row: { id }, getValue }) => (
-          <S.RowCell>
-            {id === String(activeControllers) && <StarIcon />}
-            {getValue<string | number>()}
-          </S.RowCell>
-        ),
       },
     ],
     []
