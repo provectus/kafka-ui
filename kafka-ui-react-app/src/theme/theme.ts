@@ -16,6 +16,7 @@ const Colors = {
     '75': '#394246',
     '80': '#2F3639',
     '85': '#22282A',
+    '87': '#1E2224',
     '90': '#171A1C',
     '95': '#0B0D0E',
     '100': '#000',
@@ -345,11 +346,14 @@ export const theme = {
   },
   version: {
     currentVersion: {
-      color: Colors.neutral[30],
+      color: Colors.neutral[50],
     },
     symbolWrapper: {
-      color: Colors.neutral[30],
+      color: Colors.neutral[50],
     },
+  },
+  hyperlink: {
+    color: Colors.neutral[90],
   },
   schema: {
     backgroundColor: {
@@ -579,7 +583,7 @@ export const theme = {
     },
   },
   consumerTopicContent: {
-    backgroundColor: Colors.neutral[5],
+    backgroundColor: Colors.neutral[0],
     td: {
       backgroundColor: Colors.neutral[5],
     },
@@ -645,7 +649,7 @@ export const theme = {
     savedIcon: Colors.brand[30], //--
     dropdownArrowIcon: Colors.neutral[30],
     git: {
-      hover: Colors.neutral[70],
+      hover: Colors.neutral[50],
       active: Colors.neutral[90],
     },
     discord: {
@@ -936,13 +940,13 @@ export const darkTheme = {
   menu: {
     backgroundColor: {
       normal: Colors.neutral[90], //--
-      hover: Colors.neutral[80],
+      hover: Colors.neutral[87], //--
       active: Colors.neutral[85], //--
     },
     color: {
       normal: Colors.neutral[40], //--
-      hover: Colors.neutral[70],
-      active: Colors.brand[30], //--
+      hover: Colors.neutral[20], //--
+      active: Colors.brand[20], //--
       isOpen: Colors.neutral[90],
     },
     statusIconColor: {
@@ -953,12 +957,15 @@ export const darkTheme = {
     chevronIconColor: Colors.neutral[50],
     titleColor: Colors.neutral[0],
   },
+  hyperlink: {
+    color: Colors.neutral[0],
+  },
   version: {
     currentVersion: {
-      color: Colors.neutral[30],
+      color: Colors.neutral[50],
     },
     symbolWrapper: {
-      color: Colors.neutral[30],
+      color: Colors.neutral[50],
     },
   },
   schema: {
@@ -1189,7 +1196,7 @@ export const darkTheme = {
     },
   },
   consumerTopicContent: {
-    backgroundColor: Colors.neutral[5],
+    backgroundColor: Colors.neutral[90], //--
     td: {
       backgroundColor: Colors.neutral[95], //--
     },

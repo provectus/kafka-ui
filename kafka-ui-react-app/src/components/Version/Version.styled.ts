@@ -15,7 +15,7 @@ const textStyle = css`
 
 export const CurrentVersion = styled.span(
   ({ theme }) => css`
-    ${textStyle}
+    ${textStyle};
     color: ${theme.version.currentVersion.color};
     margin-right: 0.25rem;
   `
@@ -27,11 +27,17 @@ export const OutdatedWarning = styled.span`
 
 export const SymbolWrapper = styled.span(
   ({ theme }) => css`
-    ${textStyle}
+    ${textStyle};
     color: ${theme.version.symbolWrapper.color};
   `
 );
 
-export const CurrentCommitLink = styled.a`
-  ${textStyle}
-`;
+export const CurrentCommitLink = styled.a(
+  ({ theme }) => css`
+    ${textStyle};
+    color: ${theme.version.currentVersion.color};
+    &:hover {
+      color: ${theme.version.currentVersion.color};
+    }
+  `
+);
