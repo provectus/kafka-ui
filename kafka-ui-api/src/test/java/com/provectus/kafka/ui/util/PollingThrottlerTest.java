@@ -21,7 +21,7 @@ class PollingThrottlerTest {
       throttler.throttleAfterPoll(newPolled);
       polledBytes += newPolled;
     }
-    assertThat(polledBytes).isCloseTo(1000, withPercentage(1.0));
+    assertThat(polledBytes).isCloseTo(1000, withPercentage(3.0));
   }
 
   @Test
