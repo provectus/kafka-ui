@@ -1,8 +1,10 @@
 package com.provectus.kafka.ui.pages;
 
+import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.utilities.WebUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ public abstract class BasePage extends WebUtils {
   protected SelenideElement dotMenuBtn = $x("//button[@aria-label='Dropdown Toggle']");
   protected SelenideElement alertHeader = $x("//div[@role='alert']//div[@role='heading']");
   protected SelenideElement alertMessage = $x("//div[@role='alert']//div[@role='contentinfo']");
+  protected ElementsCollection allGridItems = $$x("//tr[@class]");
   protected String summaryCellLocator = "//div[contains(text(),'%s')]";
   protected String tableElementNameLocator = "//tbody//a[contains(text(),'%s')]";
   protected String columnHeaderLocator = "//table//tr/th/div[text()='%s']";
