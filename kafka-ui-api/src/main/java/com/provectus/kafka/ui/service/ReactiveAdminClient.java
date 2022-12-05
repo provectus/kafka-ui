@@ -16,6 +16,7 @@ import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
 import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsOptions;
+import org.apache.kafka.clients.admin.ListOffsetsResult;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
@@ -478,12 +480,16 @@ public class ReactiveAdminClient implements Closeable {
                                                            OffsetSpec offsetSpec) {
 
     Function<Collection<TopicPartition>, Mono<Map<TopicPartition, Long>>> call =
-        parts -> toMono(
-            client.listOffsets(parts.stream().collect(toMap(tp -> tp, tp -> offsetSpec))).all())
-            .map(offsets -> offsets.entrySet().stream()
-                // filtering partitions for which offsets were not found
-                .filter(e -> e.getValue().offset() >= 0)
-                .collect(toMap(Map.Entry::getKey, e -> e.getValue().offset())));
+        parts -> {
+          ListOffsetsResult r = client.listOffsets(parts.stream().collect(toMap(tp -> tp, tp -> offsetSpec)));
+          Map<TopicPartition, KafkaFuture<ListOffsetsResult.ListOffsetsResultInfo>> map  = new HashMap<>();
+          partitions.forEach(p -> map.put(p, r.partitionResult(p)));
+          return toMonoWithExceptionFilter(map, UnknownTopicOrPartitionException.class)
+              .map(offsets -> offsets.entrySet().stream()
+                  // filtering partitions for which offsets were not found
+                  .filter(e -> e.getValue().offset() >= 0)
+                  .collect(toMap(Map.Entry::getKey, e -> e.getValue().offset())));
+        };
 
     return partitionCalls(
         partitions,
