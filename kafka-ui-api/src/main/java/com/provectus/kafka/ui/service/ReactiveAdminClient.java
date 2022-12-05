@@ -472,8 +472,7 @@ public class ReactiveAdminClient implements Closeable {
 
   // 1. NOTE(!): should only apply for partitions with existing leader,
   // otherwise AdminClient will try to fetch topic metadata, fail and retry infinitely (until timeout)
-  // 2. NOTE(!): Throws org.apache.kafka.common.errors.UnknownTopicOrPartitionException if partition does not exist
-  //    or not initialized yet (can happen right after topic creation)
+  // 2. NOTE(!): Skips partitions that were not found (or initialized)
   // 3. TODO: check if it is a bug that AdminClient never throws LeaderNotAvailableException and just retrying instead
   @KafkaClientInternalsDependant
   public Mono<Map<TopicPartition, Long>> listOffsetsUnsafe(Collection<TopicPartition> partitions,
