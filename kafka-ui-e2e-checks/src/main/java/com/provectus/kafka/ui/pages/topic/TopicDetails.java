@@ -23,7 +23,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
   protected SelenideElement addFiltersBtn = $x("//button[text()='Add Filters']");
-  protected SelenideElement savedFiltersField = $x("//div[text()='Saved Filters']");
+  protected SelenideElement savedFiltersLink = $x("//div[text()='Saved Filters']");
   protected SelenideElement addFilterCodeModalTitle = $x("//label[text()='Filter code']");
   protected SelenideElement addFilterCodeInput = $x("//div[@id='ace-editor']//textarea");
   protected SelenideElement saveThisFilterCheckBoxAddFilterMdl = $x("//input[@name='saveFilter']");
@@ -37,9 +37,12 @@ public class TopicDetails extends BasePage {
   protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
   protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
   protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
+  protected SelenideElement backToCreateFiltersLink = $x("//div[text()='Back To create filters']");
+  protected ElementsCollection messageGridItems = $$x("//tbody//tr");
+  protected String savedFilterNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
-  protected String filterNameLocator = "//*[@data-testid='activeSmartFilter']";
+  protected String activeFilterNameLocator = "//div[@data-testid='activeSmartFilter'][contains(text(),'%s')]";
 
   @Step
   public TopicDetails waitUntilScreenReady() {
@@ -119,15 +122,20 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails waitUntilAddFiltersMdlVisible() {
-    addFilterCodeModalTitle.shouldBe(Condition.visible);
+  public TopicDetails openSavedFiltersListMdl(){
+    savedFiltersLink.shouldBe(Condition.enabled).click();
+    backToCreateFiltersLink.shouldBe(Condition.visible);
     return this;
   }
 
   @Step
-  public TopicDetails clickAddFilterBtnAddFilterMdl() {
-    addFilterBtnAddFilterMdl.shouldBe(Condition.enabled).click();
-    addFilterCodeModalTitle.shouldBe(Condition.hidden);
+  public boolean isFilterVisibleAtSavedFiltersMdl(String filterName){
+    return isVisible($x(String.format(savedFilterNameLocator,filterName)));
+  }
+
+  @Step
+  public TopicDetails waitUntilAddFiltersMdlVisible() {
+    addFilterCodeModalTitle.shouldBe(Condition.visible);
     return this;
   }
 
@@ -138,8 +146,31 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
+  public TopicDetails selectSaveThisFilterCheckboxMdl(boolean select){
+    selectElement(saveThisFilterCheckBoxAddFilterMdl, select);
+    return this;
+  }
+
+  @Step
   public boolean isSaveThisFilterCheckBoxSelected() {
     return isSelected(saveThisFilterCheckBoxAddFilterMdl);
+  }
+
+  @Step
+  public TopicDetails setDisplayNameFldAddFilterMdl(String displayName) {
+    displayNameInputAddFilterMdl.shouldBe(Condition.enabled).sendKeys(displayName);
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickAddFilterBtnAndCloseMdl(boolean closeModal) {
+    addFilterBtnAddFilterMdl.shouldBe(Condition.enabled).click();
+    if(closeModal){
+      addFilterCodeModalTitle.shouldBe(Condition.hidden);}
+    else{
+      addFilterCodeModalTitle.shouldBe(Condition.visible);
+    }
+    return this;
   }
 
   @Step
@@ -148,12 +179,12 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public String getFilterName() {
-    return $x(filterNameLocator).getText();
+  public boolean isActiveFilterVisible(String activeFilterName) {
+    return isVisible($x(String.format(activeFilterNameLocator, activeFilterName)));
   }
 
   public List<SelenideElement> getAllAddFilterModalVisibleElements() {
-    return Arrays.asList(savedFiltersField, displayNameInputAddFilterMdl, addFilterBtnAddFilterMdl, cancelBtnAddFilterMdl);
+    return Arrays.asList(savedFiltersLink, displayNameInputAddFilterMdl, addFilterBtnAddFilterMdl, cancelBtnAddFilterMdl);
   }
 
   public List<SelenideElement> getAllAddFilterModalEnabledElements() {
