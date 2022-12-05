@@ -1,9 +1,11 @@
 package com.provectus.kafka.ui.service;
 
+import static com.provectus.kafka.ui.service.ReactiveAdminClient.toMonoWithExceptionFilter;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractIntegrationTest;
+import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +17,13 @@ import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.admin.OffsetSpec;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
+import org.apache.kafka.common.internals.KafkaFutureImpl;
 import org.junit.function.ThrowingRunnable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,5 +96,53 @@ class ReactiveAdminClientTest extends AbstractIntegrationTest {
     clearings.add(() -> adminClient.deleteTopics(Stream.of(topics).map(NewTopic::name).toList()).all().get());
   }
 
+  @Test
+  void testToMonoWithExceptionFilter() {
+    var failedFuture = new KafkaFutureImpl<String>();
+    failedFuture.completeExceptionally(new UnknownTopicOrPartitionException());
+
+    var okFuture = new KafkaFutureImpl<String>();
+    okFuture.complete("done");
+
+    Map<String, KafkaFuture<String>> arg = Map.of("failure", failedFuture, "ok", okFuture);
+    StepVerifier.create(toMonoWithExceptionFilter(arg, UnknownTopicOrPartitionException.class))
+        .assertNext(result -> assertThat(result).hasSize(1).containsEntry("ok", "done"))
+        .verifyComplete();
+  }
+
+  @Test
+  void testListOffsetsUnsafe() {
+    String topic = UUID.randomUUID().toString();
+    createTopics(new NewTopic(topic, 2, (short) 1));
+
+    // sending messages to have non-zero offsets for tp
+    try (var producer = KafkaTestProducer.forKafka(kafka)) {
+      producer.send(new ProducerRecord<>(topic, 1, "k", "v"));
+      producer.send(new ProducerRecord<>(topic, 1, "k", "v"));
+    }
+
+    var requestedPartitions = List.of(
+        new TopicPartition(topic, 0),
+        new TopicPartition(topic, 1)
+    );
+
+    StepVerifier.create(reactiveAdminClient.listOffsetsUnsafe(requestedPartitions, OffsetSpec.earliest()))
+        .assertNext(offsets -> {
+          assertThat(offsets)
+              .hasSize(2)
+              .containsEntry(new TopicPartition(topic, 0), 0L)
+              .containsEntry(new TopicPartition(topic, 1), 0L);
+        })
+        .verifyComplete();
+
+    StepVerifier.create(reactiveAdminClient.listOffsetsUnsafe(requestedPartitions, OffsetSpec.latest()))
+        .assertNext(offsets -> {
+          assertThat(offsets)
+              .hasSize(2)
+              .containsEntry(new TopicPartition(topic, 0), 0L)
+              .containsEntry(new TopicPartition(topic, 1), 2L);
+        })
+        .verifyComplete();
+  }
 
 }

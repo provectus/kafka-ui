@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.service;
 import static com.google.common.util.concurrent.Uninterruptibles.getUninterruptibly;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.kafka.clients.admin.ListOffsetsResult.ListOffsetsResultInfo;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
@@ -16,6 +17,7 @@ import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +47,7 @@ import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
 import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsOptions;
+import org.apache.kafka.clients.admin.ListOffsetsResult;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
@@ -170,6 +173,7 @@ public class ReactiveAdminClient implements Closeable {
     return listTopics(true).flatMap(topics -> getTopicsConfig(topics, false));
   }
 
+  //NOTE: skips not-found topics (for which UnknownTopicOrPartitionException was thrown by AdminClient)
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames, boolean includeDoc) {
     var includeDocFixed = features.contains(SupportedFeature.CONFIG_DOCUMENTATION_RETRIEVAL) && includeDoc;
     // we need to partition calls, because it can lead to AdminClient timeouts in case of large topics count
@@ -258,7 +262,7 @@ public class ReactiveAdminClient implements Closeable {
    * This method converts input map into Mono[Map] ignoring keys for which KafkaFutures
    * finished with <code>clazz</code> exception.
    */
-  private <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
+  static <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
                                                            Class<? extends KafkaException> clazz) {
     if (values.isEmpty()) {
       return Mono.just(Map.of());
@@ -468,19 +472,26 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   // 1. NOTE(!): should only apply for partitions with existing leader,
-  // otherwise AdminClient will try to fetch topic metadata, fail and retry infinitely (until timeout)
-  // 2. TODO: check if it is a bug that AdminClient never throws LeaderNotAvailableException and just retrying instead
+  //    otherwise AdminClient will try to fetch topic metadata, fail and retry infinitely (until timeout)
+  // 2. NOTE(!): Skips partitions that were not initialized yet
+  //    (UnknownTopicOrPartitionException thrown, ex. after topic creation)
+  // 3. TODO: check if it is a bug that AdminClient never throws LeaderNotAvailableException and just retrying instead
   @KafkaClientInternalsDependant
   public Mono<Map<TopicPartition, Long>> listOffsetsUnsafe(Collection<TopicPartition> partitions,
                                                            OffsetSpec offsetSpec) {
 
     Function<Collection<TopicPartition>, Mono<Map<TopicPartition, Long>>> call =
-        parts -> toMono(
-            client.listOffsets(parts.stream().collect(toMap(tp -> tp, tp -> offsetSpec))).all())
-            .map(offsets -> offsets.entrySet().stream()
-                // filtering partitions for which offsets were not found
-                .filter(e -> e.getValue().offset() >= 0)
-                .collect(toMap(Map.Entry::getKey, e -> e.getValue().offset())));
+        parts -> {
+          ListOffsetsResult r = client.listOffsets(parts.stream().collect(toMap(tp -> tp, tp -> offsetSpec)));
+          Map<TopicPartition, KafkaFuture<ListOffsetsResultInfo>> perPartitionResults = new HashMap<>();
+          parts.forEach(p -> perPartitionResults.put(p, r.partitionResult(p)));
+
+          return toMonoWithExceptionFilter(perPartitionResults, UnknownTopicOrPartitionException.class)
+              .map(offsets -> offsets.entrySet().stream()
+                  // filtering partitions for which offsets were not found
+                  .filter(e -> e.getValue().offset() >= 0)
+                  .collect(toMap(Map.Entry::getKey, e -> e.getValue().offset())));
+        };
 
     return partitionCalls(
         partitions,
