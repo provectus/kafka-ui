@@ -75,6 +75,10 @@ public class TopicsService {
                 .zipWith(ac.getTopicsConfig(topics, false)
                         .doOnError(th -> log.info("Get topic configs ex: {}", th.getClass())),
                           (descriptions, configs) -> {
+                            if (descriptions.isEmpty()) {
+                              log.info("Empty descriptions received before offsets check ");
+                              return Mono.<List<InternalTopic>>just(List.of());
+                            }
                             statisticsCache.update(c, descriptions, configs);
                             return getPartitionOffsets(descriptions, ac)
                                 .doOnError(th -> log.info("GetPartitionOffsetsex: {}", th.getClass()))

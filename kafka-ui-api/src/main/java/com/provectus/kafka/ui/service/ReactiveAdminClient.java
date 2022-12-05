@@ -170,6 +170,7 @@ public class ReactiveAdminClient implements Closeable {
     return listTopics(true).flatMap(topics -> getTopicsConfig(topics, false));
   }
 
+  //NOTE: skips not-found topic (for which UnknownTopicOrPartitionException was returned from AdminClient)
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames, boolean includeDoc) {
     var includeDocFixed = features.contains(SupportedFeature.CONFIG_DOCUMENTATION_RETRIEVAL) && includeDoc;
     // we need to partition calls, because it can lead to AdminClient timeouts in case of large topics count
@@ -469,7 +470,9 @@ public class ReactiveAdminClient implements Closeable {
 
   // 1. NOTE(!): should only apply for partitions with existing leader,
   // otherwise AdminClient will try to fetch topic metadata, fail and retry infinitely (until timeout)
-  // 2. TODO: check if it is a bug that AdminClient never throws LeaderNotAvailableException and just retrying instead
+  // 2. NOTE(!): Throws org.apache.kafka.common.errors.UnknownTopicOrPartitionException if partition does not exist
+  //    or not initialized yet (can happen right after topic creation)
+  // 3. TODO: check if it is a bug that AdminClient never throws LeaderNotAvailableException and just retrying instead
   @KafkaClientInternalsDependant
   public Mono<Map<TopicPartition, Long>> listOffsetsUnsafe(Collection<TopicPartition> partitions,
                                                            OffsetSpec offsetSpec) {
