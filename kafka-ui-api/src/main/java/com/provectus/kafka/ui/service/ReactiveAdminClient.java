@@ -173,7 +173,7 @@ public class ReactiveAdminClient implements Closeable {
     return listTopics(true).flatMap(topics -> getTopicsConfig(topics, false));
   }
 
-  //NOTE: skips not-found topic (for which UnknownTopicOrPartitionException was returned from AdminClient)
+  //NOTE: skips not-found topics (for which UnknownTopicOrPartitionException was thrown by AdminClient)
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames, boolean includeDoc) {
     var includeDocFixed = features.contains(SupportedFeature.CONFIG_DOCUMENTATION_RETRIEVAL) && includeDoc;
     // we need to partition calls, because it can lead to AdminClient timeouts in case of large topics count
