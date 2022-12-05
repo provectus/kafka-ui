@@ -256,8 +256,8 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(7)
   void checkTimeToRetainDataCustomValueWithEditingTopic() {
-    Topic TOPIC_TO_RETAIN_DATA = new Topic()
-        .setName(randomAlphanumeric(5))
+    Topic topicToRetainData = new Topic()
+        .setName(randomAlphabetic(5))
         .setTimeToRetainData("86400000");
     naviSideBar
         .openSideMenu(TOPICS);
@@ -266,23 +266,22 @@ public class TopicsTests extends BaseTest {
         .clickAddTopicBtn();
     topicCreateEditForm
         .waitUntilScreenReady()
-        .setTopicName(TOPIC_TO_RETAIN_DATA.getName());
-    assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
-        .isEqualTo("604800000");
+        .setTopicName(topicToRetainData.getName());
+    assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()").isEqualTo("604800000");
     topicCreateEditForm
-        .setTimeToRetainDataInMs(TOPIC_TO_RETAIN_DATA.getTimeToRetainData())
+        .setTimeToRetainDataInMs(topicToRetainData.getTimeToRetainData())
         .clickCreateTopicBtn();
     topicDetails
+        .waitUntilScreenReady()
         .openDotMenu()
-        .clickEditSettingsMenu()
-        .waitUntilScreenReady();
+        .clickEditSettingsMenu();
     assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
-        .isEqualTo(TOPIC_TO_RETAIN_DATA.getTimeToRetainData());
+        .isEqualTo(topicToRetainData.getTimeToRetainData());
     topicDetails
         .openDetailsTab(SETTINGS);
     assertThat(topicDetails.getSettingsGridValueByKey("retention.ms")).as("getSettingsGridValueByKey()")
-        .isEqualTo(TOPIC_TO_RETAIN_DATA.getTimeToRetainData());
-    TOPIC_LIST.add(TOPIC_TO_RETAIN_DATA);
+        .isEqualTo(topicToRetainData.getTimeToRetainData());
+    TOPIC_LIST.add(topicToRetainData);
   }
 
   @DisplayName("Checking requiredness of Custom parameters within 'Create new Topic'")
