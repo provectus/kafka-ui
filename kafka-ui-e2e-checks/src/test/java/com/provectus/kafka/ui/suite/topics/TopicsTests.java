@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.suite.topics;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
+import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.SETTINGS;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE;
 import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPRESSION_TYPE;
@@ -248,12 +249,48 @@ public class TopicsTests extends BaseTest {
     assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isTrue();
   }
 
+  @DisplayName("Checking 'Time to retain data (in ms)' custom value with editing Topic's settings")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(266)
+  @Test
+  @Order(7)
+  void checkTimeToRetainDataCustomValueWithEditingTopic() {
+    Topic TOPIC_TO_RETAIN_DATA = new Topic()
+        .setName(randomAlphanumeric(5))
+        .setTimeToRetainData("86400000");
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .clickAddTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady()
+        .setTopicName(TOPIC_TO_RETAIN_DATA.getName());
+    assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
+        .isEqualTo("604800000");
+    topicCreateEditForm
+        .setTimeToRetainDataInMs(TOPIC_TO_RETAIN_DATA.getTimeToRetainData())
+        .clickCreateTopicBtn();
+    topicDetails
+        .openDotMenu()
+        .clickEditSettingsMenu()
+        .waitUntilScreenReady();
+    assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
+        .isEqualTo(TOPIC_TO_RETAIN_DATA.getTimeToRetainData());
+    topicDetails
+        .openDetailsTab(SETTINGS);
+    assertThat(topicDetails.getSettingsGridValueByKey("retention.ms")).as("getSettingsGridValueByKey()")
+        .isEqualTo(TOPIC_TO_RETAIN_DATA.getTimeToRetainData());
+    TOPIC_LIST.add(TOPIC_TO_RETAIN_DATA);
+  }
+
   @DisplayName("Checking requiredness of Custom parameters within 'Create new Topic'")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(6)
   @Test
-  @Order(7)
+  @Order(8)
   void checkCustomParametersWithinCreateNewTopic() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -278,7 +315,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(2)
   @Test
-  @Order(8)
+  @Order(9)
   void checkTopicListElements() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -299,7 +336,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(12)
   @Test
-  @Order(9)
+  @Order(10)
   void addingNewFilterWithinTopic() {
     String filterName = randomAlphanumeric(5);
     naviSideBar
@@ -339,7 +376,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(13)
   @Test
-  @Order(10)
+  @Order(11)
   void checkFilterSavingWithinSavedFilters() {
     String displayName = randomAlphanumeric(5);
     naviSideBar
@@ -369,7 +406,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(11)
   @Test
-  @Order(11)
+  @Order(12)
   void checkShowInternalTopicsButtonFunctionality(){
     naviSideBar
         .openSideMenu(TOPICS);
