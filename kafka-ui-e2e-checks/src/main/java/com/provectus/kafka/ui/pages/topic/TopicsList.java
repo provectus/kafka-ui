@@ -1,11 +1,9 @@
 package com.provectus.kafka.ui.pages.topic;
 
-import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
@@ -24,7 +22,6 @@ public class TopicsList extends BasePage {
     protected SelenideElement deleteSelectedTopicsBtn = $x("//button[text()='Delete selected topics']");
     protected SelenideElement copySelectedTopicBtn = $x("//button[text()='Copy selected topic']");
     protected SelenideElement purgeMessagesOfSelectedTopicsBtn = $x("//button[text()='Purge messages of selected topics']");
-    protected ElementsCollection topicsGridItems = $$x("//tr[@class]");
 
     @Step
     public TopicsList waitUntilScreenReady() {
@@ -102,7 +99,7 @@ public class TopicsList extends BasePage {
 
     private List<TopicGridItem> initGridItems() {
       List<TopicGridItem> gridItemList = new ArrayList<>();
-      topicsGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+      allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
           .forEach(item -> gridItemList.add(new TopicGridItem(item)));
       return gridItemList;
     }
