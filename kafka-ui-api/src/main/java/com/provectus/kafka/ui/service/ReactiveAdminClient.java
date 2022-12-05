@@ -484,7 +484,7 @@ public class ReactiveAdminClient implements Closeable {
         parts -> {
           ListOffsetsResult r = client.listOffsets(parts.stream().collect(toMap(tp -> tp, tp -> offsetSpec)));
           Map<TopicPartition, KafkaFuture<ListOffsetsResultInfo>> perPartitionResults = new HashMap<>();
-          partitions.forEach(p -> perPartitionResults.put(p, r.partitionResult(p)));
+          parts.forEach(p -> perPartitionResults.put(p, r.partitionResult(p)));
 
           return toMonoWithExceptionFilter(perPartitionResults, UnknownTopicOrPartitionException.class)
               .map(offsets -> offsets.entrySet().stream()
