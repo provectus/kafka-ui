@@ -33,7 +33,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
@@ -47,7 +46,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TopicsService {
@@ -70,26 +68,21 @@ public class TopicsService {
     }
     return adminClientService.get(c)
         .flatMap(ac ->
-            ac.describeTopics(topics)
-                .doOnError(th -> log.info("Describe topic ex: {}", th.getClass()))
-                .zipWith(ac.getTopicsConfig(topics, false)
-                        .doOnError(th -> log.info("Get topic configs ex: {}", th.getClass())),
-                          (descriptions, configs) -> {
-                            statisticsCache.update(c, descriptions, configs);
-                            return getPartitionOffsets(descriptions, ac)
-                                .doOnError(th -> log.info("GetPartitionOffsetsex: {}", th.getClass()))
-                                .map(offsets -> {
-                                  var metrics = statisticsCache.get(c);
-                                  return createList(
-                                      topics,
-                                      descriptions,
-                                      configs,
-                                      offsets,
-                                      metrics.getMetrics(),
-                                      metrics.getLogDirInfo()
-                                  );
-                                });
-                          })).flatMap(Function.identity());
+            ac.describeTopics(topics).zipWith(ac.getTopicsConfig(topics, false),
+                (descriptions, configs) -> {
+                  statisticsCache.update(c, descriptions, configs);
+                  return getPartitionOffsets(descriptions, ac).map(offsets -> {
+                    var metrics = statisticsCache.get(c);
+                    return createList(
+                        topics,
+                        descriptions,
+                        configs,
+                        offsets,
+                        metrics.getMetrics(),
+                        metrics.getLogDirInfo()
+                    );
+                  });
+                })).flatMap(Function.identity());
   }
 
   private Mono<InternalTopic> loadTopic(KafkaCluster c, String topicName) {
@@ -103,15 +96,15 @@ public class TopicsService {
    *  After creation topic can be invisible via API for some time.
    *  To workaround this, we retyring topic loading until it becomes visible.
    */
-  Mono<InternalTopic> loadTopicAfterCreation(KafkaCluster c, String topicName) {
+  private Mono<InternalTopic> loadTopicAfterCreation(KafkaCluster c, String topicName) {
     return loadTopic(c, topicName)
         .retryWhen(
             Retry
-                .fixedDelay(loadTopicAfterCreateRetries, Duration.ofMillis(loadTopicAfterCreateDelayInMs))
-                .filter(e -> {
-                  log.info("Caching exception while loading created topic: {}", e.getClass());
-                  return true;
-                })
+                .fixedDelay(
+                    loadTopicAfterCreateRetries,
+                    Duration.ofMillis(loadTopicAfterCreateDelayInMs)
+                )
+                .filter(TopicNotFoundException.class::isInstance)
                 .onRetryExhaustedThrow((spec, sig) ->
                     new TopicMetadataException(
                         String.format(

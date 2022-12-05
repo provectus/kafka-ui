@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.service;
 import static com.google.common.util.concurrent.Uninterruptibles.getUninterruptibly;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.kafka.clients.admin.ListOffsetsResult.ListOffsetsResultInfo;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
@@ -471,8 +472,9 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   // 1. NOTE(!): should only apply for partitions with existing leader,
-  // otherwise AdminClient will try to fetch topic metadata, fail and retry infinitely (until timeout)
-  // 2. NOTE(!): Skips partitions that were not found (or initialized)
+  //    otherwise AdminClient will try to fetch topic metadata, fail and retry infinitely (until timeout)
+  // 2. NOTE(!): Skips partitions that were not initialized yet
+  //    (UnknownTopicOrPartitionException thrown, ex. after topic creation)
   // 3. TODO: check if it is a bug that AdminClient never throws LeaderNotAvailableException and just retrying instead
   @KafkaClientInternalsDependant
   public Mono<Map<TopicPartition, Long>> listOffsetsUnsafe(Collection<TopicPartition> partitions,
@@ -481,9 +483,10 @@ public class ReactiveAdminClient implements Closeable {
     Function<Collection<TopicPartition>, Mono<Map<TopicPartition, Long>>> call =
         parts -> {
           ListOffsetsResult r = client.listOffsets(parts.stream().collect(toMap(tp -> tp, tp -> offsetSpec)));
-          Map<TopicPartition, KafkaFuture<ListOffsetsResult.ListOffsetsResultInfo>> map  = new HashMap<>();
-          partitions.forEach(p -> map.put(p, r.partitionResult(p)));
-          return toMonoWithExceptionFilter(map, UnknownTopicOrPartitionException.class)
+          Map<TopicPartition, KafkaFuture<ListOffsetsResultInfo>> perPartitionResults = new HashMap<>();
+          partitions.forEach(p -> perPartitionResults.put(p, r.partitionResult(p)));
+
+          return toMonoWithExceptionFilter(perPartitionResults, UnknownTopicOrPartitionException.class)
               .map(offsets -> offsets.entrySet().stream()
                   // filtering partitions for which offsets were not found
                   .filter(e -> e.getValue().offset() >= 0)
