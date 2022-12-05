@@ -17,6 +17,25 @@ public class BrokersTests extends BaseTest {
   private static final String SUITE_TITLE = "Brokers";
   private static final long SUITE_ID = 1;
 
+  @DisplayName("Checking the Brokers overview")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(1)
+  @Test
+  public void checkBrokersOverview(){
+    naviSideBar
+        .openSideMenu(BROKERS);
+    brokersList
+        .waitUntilScreenReady();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(brokersList.getAllBrokers()).as("getAllBrokers()").size().isGreaterThan(0);
+    brokersList.getAllVisibleElements().forEach(element -> softly.assertThat(element.is(Condition.visible))
+        .as(element.getSearchCriteria() + " isVisible()").isTrue());
+    brokersList.getAllEnabledElements().forEach(element -> softly.assertThat(element.is(Condition.enabled))
+        .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    softly.assertAll();
+  }
+
   @DisplayName("Checking the existing Broker's profile in a cluster")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
@@ -27,7 +46,7 @@ public class BrokersTests extends BaseTest {
         .openSideMenu(BROKERS);
     brokersList
         .waitUntilScreenReady();
-    assertThat(brokersList.isBrokerVisible("1")).as("isBrokerVisible()").isTrue();
+    assertThat(brokersList.getAllBrokers()).as("getAllBrokers()").size().isGreaterThan(0);
     brokersList
         .openBroker("1");
     brokersDetails

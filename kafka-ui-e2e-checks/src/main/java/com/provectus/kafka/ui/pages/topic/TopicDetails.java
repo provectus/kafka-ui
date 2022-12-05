@@ -224,7 +224,7 @@ public class TopicDetails extends BasePage {
 
   private List<TopicDetails.MessageGridItem> initItems() {
     List<TopicDetails.MessageGridItem> gridItemList = new ArrayList<>();
-    messageGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+    allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
         .forEach(item -> gridItemList.add(new TopicDetails.MessageGridItem(item)));
     return gridItemList;
   }
