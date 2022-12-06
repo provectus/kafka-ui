@@ -10,7 +10,6 @@ import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeborne.selenide.Condition;
@@ -388,7 +387,7 @@ public class TopicsTests extends BaseTest {
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible()
-        .setFilterCodeFieldAddFilterMdl(randomAlphanumeric(4))
+        .setFilterCodeFieldAddFilterMdl(randomAlphabetic(4))
         .selectSaveThisFilterCheckboxMdl(true)
         .setDisplayNameFldAddFilterMdl(displayName);
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isAddFilterBtnAddFilterMdlEnabled()")
@@ -400,12 +399,47 @@ public class TopicsTests extends BaseTest {
         .as("isFilterVisibleAtSavedFiltersMdl()").isTrue();
   }
 
+  @DisplayName("Checking applying saved filter within Topic/Messages")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(14)
+  @Test
+  @Order(12)
+  void checkingApplyingSavedFilterWithinTopicMessages() {
+    String displayName = randomAlphabetic(5);
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .openTopic("my_ksql_1ksql_processing_log");
+    topicDetails
+        .waitUntilScreenReady()
+        .openDetailsTab(MESSAGES)
+        .clickMessagesAddFiltersBtn()
+        .waitUntilAddFiltersMdlVisible()
+        .setFilterCodeFieldAddFilterMdl(randomAlphabetic(4))
+        .selectSaveThisFilterCheckboxMdl(true)
+        .setDisplayNameFldAddFilterMdl(displayName);
+    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isAddFilterBtnAddFilterMdlEnabled()")
+        .isTrue();
+    topicDetails
+        .clickAddFilterBtnAndCloseMdl(false)
+        .openSavedFiltersListMdl();
+    assertThat(topicDetails.isFilterVisibleAtSavedFiltersMdl(displayName))
+        .as("isFilterVisibleAtSavedFiltersMdl()").isTrue();
+    topicDetails
+        .selectFilterAtSavedFiltersMdl(displayName)
+        .clickSelectFilterBtnAtSavedFiltersMdl();
+    assertThat(topicDetails.isActiveFilterVisible(displayName))
+        .as("isFilterVisibleAtSavedFiltersMdl()").isTrue();
+  }
+
   @DisplayName("Checking 'Show Internal Topics' toggle functionality within 'All Topics' page")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(11)
   @Test
-  @Order(12)
+  @Order(13)
   void checkShowInternalTopicsButtonFunctionality(){
     naviSideBar
         .openSideMenu(TOPICS);

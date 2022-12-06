@@ -30,6 +30,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement displayNameInputAddFilterMdl = $x("//input[@placeholder='Enter Name']");
   protected SelenideElement cancelBtnAddFilterMdl = $x("//button[text()='Cancel']");
   protected SelenideElement addFilterBtnAddFilterMdl = $x("//button[text()='Add filter']");
+  protected SelenideElement selectFilterBtnAddFilterMdl = $x("//button[text()='Select filter']");
   protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
   protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
   protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
@@ -137,6 +138,19 @@ public class TopicDetails extends BasePage {
   @Step
   public boolean isFilterVisibleAtSavedFiltersMdl(String filterName){
     return isVisible($x(String.format(savedFilterNameLocator,filterName)));
+  }
+
+  @Step
+  public TopicDetails selectFilterAtSavedFiltersMdl(String filterName){
+    $x(String.format(savedFilterNameLocator, filterName)).shouldBe(Condition.enabled).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickSelectFilterBtnAtSavedFiltersMdl(){
+    selectFilterBtnAddFilterMdl.shouldBe(Condition.enabled).click();
+    selectFilterBtnAddFilterMdl.shouldBe(Condition.disappear);
+    return this;
   }
 
   @Step
