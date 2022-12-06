@@ -257,7 +257,7 @@ public class TopicsTests extends BaseTest {
   @Order(7)
   void checkTimeToRetainDataCustomValueWithEditingTopic() {
     Topic topicToRetainData = new Topic()
-        .setName(randomAlphabetic(5))
+        .setName("topic-to-retain-data-" + randomAlphabetic(5))
         .setTimeToRetainData("86400000");
     naviSideBar
         .openSideMenu(TOPICS);
@@ -337,7 +337,7 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(10)
   void addingNewFilterWithinTopic() {
-    String filterName = randomAlphanumeric(5);
+    String filterName = randomAlphabetic(5);
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
