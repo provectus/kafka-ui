@@ -67,7 +67,66 @@ const Colors = {
   },
 };
 
+const baseTheme = {
+  heading: {
+    h1: {
+      color: Colors.neutral[90],
+    },
+    h3: {
+      color: Colors.neutral[50],
+      fontSize: '14px',
+    },
+    h4: Colors.neutral[90],
+    base: {
+      fontFamily: 'Inter, sans-serif',
+      fontStyle: 'normal',
+      fontWeight: 500,
+      color: Colors.neutral[100],
+    },
+    variants: {
+      1: {
+        fontSize: '20px',
+        lineHeight: '32px',
+      },
+      2: {
+        fontSize: '20px',
+        lineHeight: '32px',
+      },
+      3: {
+        fontSize: '16px',
+        lineHeight: '24px',
+        fontWeight: 400,
+        marginBottom: '16px',
+      },
+      4: {
+        fontSize: '14px',
+        lineHeight: '20px',
+        fontWeight: 500,
+      },
+      5: {
+        fontSize: '12px',
+        lineHeight: '16px',
+      },
+      6: {
+        fontSize: '12px',
+        lineHeight: '16px',
+      },
+    },
+  },
+  statictics: {
+    createdAtColor: Colors.neutral[50],
+  },
+};
+
 export const theme = {
+  ...baseTheme,
+
+  default: {
+    color: '',
+    backgroundColor: '',
+    borderColor: '',
+  },
+
   link: {
     color: Colors.brand[50],
     hoverColor: Colors.brand[60],
@@ -171,51 +230,6 @@ export const theme = {
       },
     },
     label: Colors.neutral[90],
-  },
-  heading: {
-    h1: {
-      color: Colors.neutral[90],
-    },
-    h3: {
-      color: Colors.neutral[50],
-      fontSize: '14px',
-    },
-    h4: Colors.neutral[90],
-    base: {
-      fontFamily: 'Inter, sans-serif',
-      fontStyle: 'normal',
-      fontWeight: 500,
-      color: Colors.neutral[100],
-    },
-    variants: {
-      1: {
-        fontSize: '20px',
-        lineHeight: '32px',
-      },
-      2: {
-        fontSize: '20px',
-        lineHeight: '32px',
-      },
-      3: {
-        fontSize: '16px',
-        lineHeight: '24px',
-        fontWeight: 400,
-        marginBottom: '16px',
-      },
-      4: {
-        fontSize: '14px',
-        lineHeight: '20px',
-        fontWeight: 500,
-      },
-      5: {
-        fontSize: '12px',
-        lineHeight: '16px',
-      },
-      6: {
-        fontSize: '12px',
-        lineHeight: '16px',
-      },
-    },
   },
   lastestVersionItem: {
     metaDataLabel: {
@@ -433,7 +447,6 @@ export const theme = {
       normal: Colors.neutral[50],
       hover: Colors.neutral[90],
       active: Colors.neutral[90],
-      disabled: Colors.neutral[30],
     },
     borderColor: {
       normal: 'transparent',
@@ -676,17 +689,19 @@ export const theme = {
   editFilterText: {
     color: Colors.brand[50],
   },
-  statictics: {
-    createdAtColor: Colors.neutral[50],
-  },
-  errorPage: {
-    text: Colors.blue[45],
-  },
 };
 
 export type ThemeType = typeof theme;
 
 export const darkTheme: ThemeType = {
+  ...baseTheme,
+
+  default: {
+    color: '',
+    backgroundColor: '',
+    borderColor: '',
+  },
+
   link: {
     color: Colors.brand[50], //--
     hoverColor: Colors.brand[30], //--
@@ -1292,8 +1307,5 @@ export const darkTheme: ThemeType = {
   },
   editFilterText: {
     color: Colors.brand[30],
-  },
-  statictics: {
-    createdAtColor: Colors.neutral[50],
   },
 };
