@@ -377,7 +377,7 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(11)
   void checkFilterSavingWithinSavedFilters() {
-    String displayName = randomAlphanumeric(5);
+    String displayName = randomAlphabetic(5);
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
