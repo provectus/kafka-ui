@@ -419,11 +419,9 @@ public class TopicsTests extends BaseTest {
         .waitUntilAddFiltersMdlVisible()
         .setFilterCodeFieldAddFilterMdl(randomAlphabetic(4))
         .selectSaveThisFilterCheckboxMdl(true)
-        .setDisplayNameFldAddFilterMdl(displayName);
-    topicDetails
+        .setDisplayNameFldAddFilterMdl(displayName)
         .clickAddFilterBtnAndCloseMdl(false)
-        .openSavedFiltersListMdl();
-    topicDetails
+        .openSavedFiltersListMdl()
         .selectFilterAtSavedFiltersMdl(displayName)
         .clickSelectFilterBtnAtSavedFiltersMdl();
     assertThat(topicDetails.isActiveFilterVisible(displayName))
