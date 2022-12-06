@@ -420,18 +420,14 @@ public class TopicsTests extends BaseTest {
         .setFilterCodeFieldAddFilterMdl(randomAlphabetic(4))
         .selectSaveThisFilterCheckboxMdl(true)
         .setDisplayNameFldAddFilterMdl(displayName);
-    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isAddFilterBtnAddFilterMdlEnabled()")
-        .isTrue();
     topicDetails
         .clickAddFilterBtnAndCloseMdl(false)
         .openSavedFiltersListMdl();
-    assertThat(topicDetails.isFilterVisibleAtSavedFiltersMdl(displayName))
-        .as("isFilterVisibleAtSavedFiltersMdl()").isTrue();
     topicDetails
         .selectFilterAtSavedFiltersMdl(displayName)
         .clickSelectFilterBtnAtSavedFiltersMdl();
     assertThat(topicDetails.isActiveFilterVisible(displayName))
-        .as("isFilterVisibleAtSavedFiltersMdl()").isTrue();
+        .as("isActiveFilterVisible()").isTrue();
   }
 
   @DisplayName("Checking 'Show Internal Topics' toggle functionality within 'All Topics' page")
