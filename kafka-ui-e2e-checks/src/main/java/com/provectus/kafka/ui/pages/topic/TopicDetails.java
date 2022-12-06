@@ -43,6 +43,7 @@ public class TopicDetails extends BasePage {
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
   protected String activeFilterNameLocator = "//div[@data-testid='activeSmartFilter'][contains(text(),'%s')]";
+  protected String settingsGridValueLocator = "//tbody/tr/td/span[text()='%s']//ancestor::tr/td[2]/span";
 
   @Step
   public TopicDetails waitUntilScreenReady() {
@@ -56,6 +57,11 @@ public class TopicDetails extends BasePage {
     $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
     waitUntilSpinnerDisappear();
     return this;
+  }
+
+  @Step
+  public String getSettingsGridValueByKey(String key){
+    return $x(String.format(settingsGridValueLocator, key)).scrollTo().shouldBe(Condition.visible).getText();
   }
 
   @Step
