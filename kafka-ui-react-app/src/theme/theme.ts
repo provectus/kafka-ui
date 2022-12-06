@@ -66,6 +66,7 @@ const Colors = {
     '80': '#3E3E74',
   },
 };
+
 export const theme = {
   link: {
     color: Colors.brand[50],
@@ -275,6 +276,7 @@ export const theme = {
         normal: Colors.neutral[50],
         hover: Colors.neutral[70],
         active: Colors.neutral[90],
+        disabled: Colors.neutral[75], //--
       },
     },
     danger: {
@@ -682,7 +684,9 @@ export const theme = {
   },
 };
 
-export const darkTheme = {
+export type ThemeType = typeof theme;
+
+export const darkTheme: ThemeType = {
   link: {
     color: Colors.brand[50], //--
     hoverColor: Colors.brand[30], //--
@@ -1163,7 +1167,6 @@ export const darkTheme = {
     label: Colors.neutral[0],
     checkedIcon: {
       backgroundColor: Colors.neutral[70],
-      width: '40px',
     },
   },
   pageLoader: {
@@ -1294,5 +1297,3 @@ export const darkTheme = {
     createdAtColor: Colors.neutral[50],
   },
 };
-
-export type ThemeType = typeof theme;
