@@ -122,7 +122,12 @@ export const theme = {
   ...baseTheme,
 
   default: {
-    color: '',
+    color: {
+      normal: Colors.neutral[90],
+      disabled: Colors.neutral[30],
+    },
+    secondaryColor: Colors.neutral[50],
+
     backgroundColor: '',
     borderColor: '',
   },
@@ -137,14 +142,6 @@ export const theme = {
   code: {
     backgroundColor: Colors.neutral[5],
     color: Colors.red[55],
-  },
-  list: {
-    label: {
-      color: Colors.neutral[50],
-    },
-    // meta: {
-    //   color: 'red',
-    // },
   },
   progressBar: {
     backgroundColor: Colors.neutral[3],
@@ -697,7 +694,11 @@ export const darkTheme: ThemeType = {
   ...baseTheme,
 
   default: {
-    color: '',
+    color: {
+      normal: '',
+      disabled: '',
+    },
+    secondaryColor: '',
     backgroundColor: '',
     borderColor: '',
   },
@@ -712,14 +713,6 @@ export const darkTheme: ThemeType = {
   code: {
     backgroundColor: Colors.neutral[95], //--
     color: Colors.red[55], //--
-  },
-  list: {
-    label: {
-      color: Colors.neutral[50], //--
-    },
-    // meta: {
-    //   color: Colors.neutral[30],
-    // },
   },
   progressBar: {
     backgroundColor: Colors.neutral[3],
