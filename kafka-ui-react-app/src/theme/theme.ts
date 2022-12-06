@@ -116,6 +116,11 @@ const baseTheme = {
   statictics: {
     createdAtColor: Colors.neutral[50],
   },
+  progressBar: {
+    backgroundColor: Colors.neutral[3],
+    compleatedColor: Colors.green[40],
+    borderColor: Colors.neutral[10],
+  },
 };
 
 export const theme = {
@@ -142,11 +147,6 @@ export const theme = {
   code: {
     backgroundColor: Colors.neutral[5],
     color: Colors.red[55],
-  },
-  progressBar: {
-    backgroundColor: Colors.neutral[3],
-    compleatedColor: Colors.green[40],
-    borderColor: Colors.neutral[10],
   },
   layout: {
     backgroundColor: Colors.neutral[0],
@@ -713,11 +713,6 @@ export const darkTheme: ThemeType = {
   code: {
     backgroundColor: Colors.neutral[95], //--
     color: Colors.red[55], //--
-  },
-  progressBar: {
-    backgroundColor: Colors.neutral[3],
-    compleatedColor: Colors.green[40],
-    borderColor: Colors.neutral[10],
   },
   layout: {
     backgroundColor: Colors.neutral[90], //--
