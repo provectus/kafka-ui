@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +55,8 @@ import reactor.core.publisher.Mono;
 public class AccessControlService {
 
   private final Environment environment;
+
+  @Nullable
   private final InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
 
   private final Cache<String, AuthenticatedUser> cachedUsers = CacheBuilder.newBuilder() // TODO cache supporting flux
@@ -112,7 +115,8 @@ public class AccessControlService {
       throw new RuntimeException("Can't deserialize roles file", e);
     }
 
-    if (!clientRegistrationRepository.iterator().hasNext() && !roles.isEmpty()) {
+    if ((clientRegistrationRepository == null || !clientRegistrationRepository.iterator().hasNext())
+        && !roles.isEmpty()) {
       log.error("Roles are configured but no authentication methods are present. Authentication might fail.");
     }
 
