@@ -236,52 +236,52 @@ class ProtobufFileSerdeTest {
   }
 
   @Test
-  void initOnStartupReturnsFalseIfNoProtoFilesHaveBeenProvided() {
+  void canBeAutoConfiguredReturnsFalseIfNoProtoFilesHaveBeenProvided() {
     PropertyResolver resolver = mock(PropertyResolver.class);
 
     var serde = new ProtobufFileSerde();
-    boolean startupSuccessful = serde.initOnStartup(resolver, resolver);
+    boolean startupSuccessful = serde.canBeAutoConfigured(resolver, resolver);
     assertThat(startupSuccessful).isFalse();
   }
 
   @Test
-  void initOnStartupReturnsFalseIfProtoFilesListIsEmpty() {
+  void canBeAutoConfiguredReturnsFalseIfProtoFilesListIsEmpty() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getListProperty("protobufFiles", String.class)).thenReturn(Optional.of(List.of()));
 
     var serde = new ProtobufFileSerde();
-    boolean startupSuccessful = serde.initOnStartup(resolver, resolver);
+    boolean startupSuccessful = serde.canBeAutoConfigured(resolver, resolver);
     assertThat(startupSuccessful).isFalse();
   }
 
   @Test
-  void initOnStartupReturnsTrueIfNoProtoFileHasBeenProvided() {
+  void canBeAutoConfiguredReturnsTrueIfNoProtoFileHasBeenProvided() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getProperty("protobufFile", String.class)).thenReturn(Optional.of("file.proto"));
 
     var serde = new ProtobufFileSerde();
-    boolean startupSuccessful = serde.initOnStartup(resolver, resolver);
+    boolean startupSuccessful = serde.canBeAutoConfigured(resolver, resolver);
     assertThat(startupSuccessful).isTrue();
   }
 
   @Test
-  void initOnStartupReturnsTrueIfProtoFilesHasBeenProvided() {
+  void canBeAutoConfiguredReturnsTrueIfProtoFilesHasBeenProvided() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getListProperty("protobufFiles", String.class)).thenReturn(Optional.of(List.of("file.proto")));
 
     var serde = new ProtobufFileSerde();
-    boolean startupSuccessful = serde.initOnStartup(resolver, resolver);
+    boolean startupSuccessful = serde.canBeAutoConfigured(resolver, resolver);
     assertThat(startupSuccessful).isTrue();
   }
 
   @Test
-  void initOnStartupReturnsTrueIfProtoFileAndProtoFilesHaveBeenProvided() {
+  void canBeAutoConfiguredReturnsTrueIfProtoFileAndProtoFilesHaveBeenProvided() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getProperty("protobufFile", String.class)).thenReturn(Optional.of("file1.proto"));
     when(resolver.getListProperty("protobufFiles", String.class)).thenReturn(Optional.of(List.of("file2.proto")));
 
     var serde = new ProtobufFileSerde();
-    boolean startupSuccessful = serde.initOnStartup(resolver, resolver);
+    boolean startupSuccessful = serde.canBeAutoConfigured(resolver, resolver);
     assertThat(startupSuccessful).isTrue();
   }
 
