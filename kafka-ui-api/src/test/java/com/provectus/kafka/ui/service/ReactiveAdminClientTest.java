@@ -104,7 +104,14 @@ class ReactiveAdminClientTest extends AbstractIntegrationTest {
     var okFuture = new KafkaFutureImpl<String>();
     okFuture.complete("done");
 
-    Map<String, KafkaFuture<String>> arg = Map.of("failure", failedFuture, "ok", okFuture);
+    var emptyFuture = new KafkaFutureImpl<String>();
+    emptyFuture.complete(null);
+
+    Map<String, KafkaFuture<String>> arg = Map.of(
+        "failure", failedFuture,
+        "ok", okFuture,
+        "empty", emptyFuture
+    );
     StepVerifier.create(toMonoWithExceptionFilter(arg, UnknownTopicOrPartitionException.class))
         .assertNext(result -> assertThat(result).hasSize(1).containsEntry("ok", "done"))
         .verifyComplete();
