@@ -12,7 +12,7 @@
     <artifactId>kafka-ui-e2e-checks</artifactId>
     <properties>
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
-        <aspectj.version>1.9.8</aspectj.version>
+        <aspectj.version>1.9.9.1</aspectj.version>
         <allure.version>2.18.1</allure.version>
         <json-smart.version>2.4.8</json-smart.version>
         <selenide.version>6.6.3</selenide.version>
@@ -20,8 +20,8 @@
         <google.auto-service.version>1.0.1</google.auto-service.version>
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <allure.java-commons.version>2.18.1</allure.java-commons.version>
-        <dotenv.version>2.2.4</dotenv.version>
+        <allure.java-commons.version>2.20.1</allure.java-commons.version>
+        <dotenv.version>2.3.1</dotenv.version>
         <allure.maven-plugin.version>2.6</allure.maven-plugin.version>
         <ashot.version>1.5.4</ashot.version>
         <allure.screendiff-plugin.version>2.18.1</allure.screendiff-plugin.version>

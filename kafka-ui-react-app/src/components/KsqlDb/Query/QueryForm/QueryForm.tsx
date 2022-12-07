@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { FormError } from 'components/common/Input/Input.styled';
 import { ErrorMessage } from '@hookform/error-message';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
@@ -8,6 +8,7 @@ import CloseIcon from 'components/common/Icons/CloseIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import yup from 'lib/yupExtended';
 import PlusIcon from 'components/common/Icons/PlusIcon';
+import ReactAce from 'react-ace/lib/ace';
 
 import * as S from './QueryForm.styled';
 
@@ -75,6 +76,17 @@ const QueryForm: React.FC<Props> = ({
     }
   }, []);
 
+  const inputRef = useRef<ReactAce>(null);
+
+  const handleFocus = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const textInput = inputRef?.current?.editor?.textInput as any;
+
+    if (textInput) {
+      textInput.focus();
+    }
+  };
+
   return (
     <S.QueryWrapper>
       <form onSubmit={handleSubmit(submitHandler)}>
@@ -111,6 +123,7 @@ const QueryForm: React.FC<Props> = ({
                     },
                   ]}
                   readOnly={fetching}
+                  ref={inputRef}
                 />
               )}
             />
@@ -188,6 +201,7 @@ const QueryForm: React.FC<Props> = ({
             buttonSize="M"
             type="submit"
             disabled={fetching}
+            onClick={handleFocus}
           >
             Execute
           </Button>

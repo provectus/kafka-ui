@@ -4,26 +4,17 @@ import com.google.common.primitives.Longs;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedLong;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
-import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.RecordHeaders;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.kafka.common.header.Headers;
 
 
 public class UInt64Serde implements BuiltInSerde {
 
   public static String name() {
     return "UInt64";
-  }
-
-  @Override
-  public void configure(PropertyResolver serdeProperties,
-                        PropertyResolver kafkaClusterProperties,
-                        PropertyResolver globalProperties) {
-
   }
 
   @Override
