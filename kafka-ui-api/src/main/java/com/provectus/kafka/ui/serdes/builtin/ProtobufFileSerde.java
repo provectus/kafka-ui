@@ -11,17 +11,25 @@ import com.provectus.kafka.ui.serde.api.RecordHeaders;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
+import com.squareup.wire.schema.Location;
+import com.squareup.wire.schema.ProtoFile;
+import com.squareup.wire.schema.Schema;
+import com.squareup.wire.schema.SchemaLoader;
+import com.squareup.wire.schema.internal.parser.ProtoFileElement;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -70,9 +78,16 @@ public class ProtobufFileSerde implements BuiltInSerde {
   }
 
   private void configure(PropertyResolver properties) {
-    Map<Path, ProtobufSchema> protobufSchemas = joinPathProperties(properties).stream()
-        .map(path -> Map.entry(path, new ProtobufSchema(readFileAsString(path))))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    List<Location> locations = getProtobufLocations(properties);
+    Schema schema = loadSchema(locations);
+
+    Map<Path, ProtobufSchema> protobufSchemas = schema.getProtoFiles().stream()
+        .map(protoFile -> {
+          Location location = protoFile.getLocation();
+          ProtobufSchema protobufSchema =
+              new ProtobufSchema(protoFile.toElement(), List.of(), protoFileElementsByName(schema));
+          return Map.entry(Paths.get(location.getBase(), location.getPath()), protobufSchema);
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     // Load all referenced message schemas and store their source proto file with the descriptors
     Map<Descriptor, Path> descriptorPaths = new HashMap<>();
@@ -127,6 +142,26 @@ public class ProtobufFileSerde implements BuiltInSerde {
     this.keyMessageDescriptorMap = keyMessageDescriptorMap;
   }
 
+  @VisibleForTesting
+  static Map<String, ProtoFileElement> protoFileElementsByName(Schema schema) {
+    return schema.getProtoFiles().stream()
+        .collect(Collectors.toMap(ProtoFile::toString, ProtoFile::toElement));
+  }
+
+  @VisibleForTesting
+  static Schema loadSchema(List<Location> locations) {
+    SchemaLoader schemaLoader = new SchemaLoader(FileSystems.getDefault());
+    schemaLoader.setLoadExhaustively(true);
+    schemaLoader.setPermitPackageCycles(true);
+    schemaLoader.initRoots(locations, List.of());
+
+    try {
+      return schemaLoader.loadSchema();
+    } catch (IOException e) {
+      throw new UncheckedIOException("Error while loading Protobuf schema", e);
+    }
+  }
+
   private static void addProtobufSchema(Map<Descriptor, Path> descriptorPaths,
                                  Map<Path, ProtobufSchema> protobufSchemas,
                                  String messageName) {
@@ -142,14 +177,39 @@ public class ProtobufFileSerde implements BuiltInSerde {
         .forEach(entry -> descriptorPaths.put(entry.getKey(), entry.getValue()));
   }
 
-  private static List<Path> joinPathProperties(PropertyResolver propertyResolver) {
+  @VisibleForTesting
+  static List<Location> getProtobufLocations(PropertyResolver propertyResolver) {
     return Stream.concat(
             propertyResolver.getProperty("protobufFile", String.class).map(List::of).stream(),
             propertyResolver.getListProperty("protobufFiles", String.class).stream())
         .flatMap(Collection::stream)
+        .map(ProtobufFileSerde::toLocation)
+        .filter(Objects::nonNull)
         .distinct()
-        .map(Path::of)
         .collect(Collectors.toList());
+  }
+
+  @VisibleForTesting
+  @Nullable
+  static Location toLocation(String s) {
+    int idx = s.indexOf(':');
+    if (idx > -1) {
+      String base = s.substring(0, idx);
+      String path = s.substring(idx + 1);
+
+      return Location.get(base, path);
+    } else {
+      Path path = Path.of(s);
+
+      if (Files.isDirectory(path)) {
+        return Location.get(s);
+      }
+
+      if (Files.isRegularFile(path)) {
+        return Location.get(path.getParent().toString(), path.getFileName().toString());
+      }
+    }
+    return null;
   }
 
   private static Map.Entry<Descriptor, Path> getDescriptorAndPath(Map<Path, ProtobufSchema> protobufSchemas,
@@ -160,14 +220,6 @@ public class ProtobufFileSerde implements BuiltInSerde {
             .findFirst()
             .orElseThrow(() -> new NullPointerException(
                     "The given message type not found in protobuf definition: " + msgName));
-  }
-
-  private static String readFileAsString(Path path) {
-    try {
-      return Files.readString(path);
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
   }
 
   private Map<String, Descriptor> populateDescriptors(Map<String, Descriptor> descriptorMap,

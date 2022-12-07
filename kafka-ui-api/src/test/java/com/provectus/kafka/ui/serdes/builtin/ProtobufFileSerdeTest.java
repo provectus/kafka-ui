@@ -10,8 +10,10 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.util.JsonFormat;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.Serde;
+import com.squareup.wire.schema.Location;
+import com.squareup.wire.schema.Schema;
+import com.squareup.wire.schema.internal.parser.ProtoFileElement;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +32,7 @@ class ProtobufFileSerdeTest {
       + "{ \"name\": \"My Name\",\"id\": 102, \"email\": \"addrBook@example.com\", \"phones\":[]}]}";
 
   private static final String sampleSensorMsgJson = "{ \"name\": \"My Sensor\", "
-      + "\"temperature\": 20.5, \"humidity\": 50, \"door\": \"OPEN\" }";
+      + "\"temperature\": 20.5, \"humidity\": 50, \"door\": \"OPEN\", \"lang\": \"EN\" }";
 
   // Sample message of type `test.Person`
   private byte[] personMessageBytes;
@@ -39,7 +41,6 @@ class ProtobufFileSerdeTest {
   private byte[] sensorMessageBytes;
   private Path addressBookSchemaPath;
   private Path sensorSchemaPath;
-
   private Descriptors.Descriptor personDescriptor;
   private Descriptors.Descriptor addressBookDescriptor;
   private Descriptors.Descriptor sensorDescriptor;
@@ -47,10 +48,18 @@ class ProtobufFileSerdeTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    addressBookSchemaPath = ResourceUtils.getFile("classpath:address-book.proto").toPath();
-    sensorSchemaPath = ResourceUtils.getFile("classpath:sensor.proto").toPath();
+    addressBookSchemaPath = ResourceUtils.getFile("classpath:protobuf-example/address-book.proto").toPath();
+    sensorSchemaPath = ResourceUtils.getFile("classpath:iot").toPath();
 
-    ProtobufSchema addressBookSchema = new ProtobufSchema(Files.readString(addressBookSchemaPath));
+    List<Location> locations = List.of(
+        ProtobufFileSerde.toLocation(addressBookSchemaPath.toString()),
+        ProtobufFileSerde.toLocation(sensorSchemaPath.toString())
+    );
+    Schema schema = ProtobufFileSerde.loadSchema(locations);
+    Map<String, ProtoFileElement> dependencies = ProtobufFileSerde.protoFileElementsByName(schema);
+
+    ProtobufSchema addressBookSchema =
+        new ProtobufSchema(schema.protoFile("address-book.proto").toElement(), List.of(), dependencies);
     var builder = addressBookSchema.newMessageBuilder("test.Person");
     JsonFormat.parser().merge(samplePersonMsgJson, builder);
     personMessageBytes = builder.build().toByteArray();
@@ -61,7 +70,8 @@ class ProtobufFileSerdeTest {
     personDescriptor = addressBookSchema.toDescriptor("test.Person");
     addressBookDescriptor = addressBookSchema.toDescriptor("test.AddressBook");
 
-    ProtobufSchema sensorSchema = new ProtobufSchema(Files.readString(sensorSchemaPath));
+    ProtobufSchema sensorSchema =
+        new ProtobufSchema(schema.protoFile("sensor.proto").toElement(), List.of(), dependencies);
     builder = sensorSchema.newMessageBuilder("iot.Sensor");
     JsonFormat.parser().merge(sampleSensorMsgJson, builder);
     sensorMessageBytes = builder.build().toByteArray();
@@ -73,7 +83,6 @@ class ProtobufFileSerdeTest {
         sensorDescriptor, sensorSchemaPath
     );
   }
-
 
   @Test
   void testDeserialize() {
@@ -210,7 +219,8 @@ class ProtobufFileSerdeTest {
     assertThat(booksBytes).isEqualTo(addressBookMessageBytes);
 
     var sensorBytes = serde.serializer("sensors", Serde.Target.VALUE)
-        .serialize("{ \"name\": \"My Sensor\", \"temperature\": 20.5, \"humidity\": 50, \"door\": \"OPEN\" }");
+        .serialize("{ \"name\": \"My Sensor\", \"temperature\": 20.5, \"humidity\": 50, "
+            + "\"door\": \"OPEN\", \"lang\": \"EN\" }");
     assertThat(sensorBytes).isEqualTo(sensorMessageBytes);
   }
 
@@ -292,6 +302,63 @@ class ProtobufFileSerdeTest {
         .thenReturn(Optional.of(addressBookSchemaPath.toString()));
     when(resolver.getListProperty("protobufFiles", String.class))
         .thenReturn(Optional.of(List.of(sensorSchemaPath.toString())));
+    when(resolver.getProperty("protobufMessageName", String.class))
+        .thenReturn(Optional.of("test.AddressBook"));
+
+    Map<String, String> protobufMessageNameByTopic = Map.of(
+        "persons", "test.Person",
+        "books", "test.AddressBook",
+        "sensors", "iot.Sensor");
+    when(resolver.getMapProperty("protobufMessageNameByTopic", String.class, String.class))
+        .thenReturn(Optional.of(protobufMessageNameByTopic));
+
+    var serde = new ProtobufFileSerde();
+    serde.configure(resolver, resolver, resolver);
+
+    var deserializedPerson = serde.deserializer("persons", Serde.Target.VALUE)
+        .deserialize(null, personMessageBytes);
+    assertJsonEquals(samplePersonMsgJson, deserializedPerson.getResult());
+
+    var deserializedSensor = serde.deserializer("sensors", Serde.Target.VALUE)
+        .deserialize(null, sensorMessageBytes);
+    assertJsonEquals(sampleSensorMsgJson, deserializedSensor.getResult());
+  }
+
+  @Test
+  void worksWithListOfExplicitDirectories() throws Exception {
+    String sensorSchemaPath = ResourceUtils.getFile("classpath:iot-only-sensor").toString();
+    String langSchemaPath = ResourceUtils.getFile("classpath:iot-only-lang").toString();
+
+    PropertyResolver resolver = mock(PropertyResolver.class);
+    when(resolver.getListProperty("protobufFiles", String.class))
+        .thenReturn(Optional.of(List.of(sensorSchemaPath, langSchemaPath)));
+    when(resolver.getProperty("protobufMessageName", String.class))
+        .thenReturn(Optional.of("iot.Sensor"));
+
+    Map<String, String> protobufMessageNameByTopic = Map.of("sensors", "iot.Sensor");
+
+    when(resolver.getMapProperty("protobufMessageNameByTopic", String.class, String.class))
+        .thenReturn(Optional.of(protobufMessageNameByTopic));
+
+    var serde = new ProtobufFileSerde();
+    serde.configure(resolver, resolver, resolver);
+
+    var deserializedSensor = serde.deserializer("sensors", Serde.Target.VALUE)
+        .deserialize(null, sensorMessageBytes);
+    assertJsonEquals(sampleSensorMsgJson, deserializedSensor.getResult());
+  }
+
+  @Test
+  void worksWithZipArchives() throws Exception {
+    String archivePath = ResourceUtils.getFile("classpath:protos.zip").toString();
+    PropertyResolver resolver = mock(PropertyResolver.class);
+    List<String> protoFiles = List.of(
+        archivePath + ":address-book.proto",
+        archivePath + ":iot/sensor.proto",
+        archivePath + ":language/language.proto"
+    );
+    when(resolver.getListProperty("protobufFiles", String.class))
+        .thenReturn(Optional.of(protoFiles));
     when(resolver.getProperty("protobufMessageName", String.class))
         .thenReturn(Optional.of("test.AddressBook"));
 

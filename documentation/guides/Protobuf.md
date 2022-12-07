@@ -15,11 +15,27 @@ kafka:
     - # Cluster configuration omitted.
       # protobufFile is the path to the protobuf schema. (deprecated: please use "protobufFiles")
       protobufFile: path/to/my.proto
-      # protobufFiles is the path to one or more protobuf schemas.
-      protobufFiles: 
+      # protobufFiles is the location of one or more protobuf schemas which can optionally consist of
+      # a base path and a relative path separated by ':' to satisfy the naming conventions in the schemas.
+      # Protobuf schemas from files (incl. ZIP archives) are loaded directly,
+      # directories are scanned recursively for schemas.
+      protobufFiles:
+        # Single protobuf schema with one or more message types.
         - /path/to/my.proto
-        - /path/to/another.proto
-      # protobufMessageName is the default protobuf type that is used to deserilize
+        # Directory with one or more protobuf schemas with one or more message types.
+        - /path/to/my-protobufs/
+        # Base directory with multiple protobuf schemas in separate namespaces.
+        # The effective paths to the protobuf schemas are:
+        # /path/to/my-protobufs/my.proto
+        # /path/to/my-protobufs/namespace/another.proto
+        # /path/to/my-protobufs/test/test.proto
+        - /path/to/my-protobufs:my.proto
+        - /path/to/my-protobufs:namespace/another.proto
+        - /path/to/my-protobufs:test/test.proto
+        # ZIP archive with one or more protobuf schemas.
+        - /path/to/my-archive.zip:my.proto
+        - /path/to/my-archive.zip:namespace/another.proto
+      # protobufMessageName is the default protobuf type that is used to deserialize
       # the message's value if the topic is not found in protobufMessageNameByTopic.
       protobufMessageName: my.DefaultValType
       # protobufMessageNameByTopic is a mapping of topic names to protobuf types.
@@ -27,7 +43,7 @@ kafka:
       protobufMessageNameByTopic:
         topic1: my.Type1
         topic2: my.Type2
-      # protobufMessageNameForKey is the default protobuf type that is used to deserilize
+      # protobufMessageNameForKey is the default protobuf type that is used to deserialize
       # the message's key if the topic is not found in protobufMessageNameForKeyByTopic.
       protobufMessageNameForKey: my.DefaultKeyType
       # protobufMessageNameForKeyByTopic is a mapping of topic names to protobuf types.
