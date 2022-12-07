@@ -30,7 +30,7 @@ const BrokersList: React.FC = () => {
 
   const rows = React.useMemo(() => {
     let brokersResource;
-    if (!diskUsage) {
+    if (!diskUsage || !diskUsage?.length) {
       brokersResource =
         brokers?.map((broker) => {
           return {
