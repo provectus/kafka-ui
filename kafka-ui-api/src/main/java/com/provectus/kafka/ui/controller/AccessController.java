@@ -4,9 +4,15 @@ import com.provectus.kafka.ui.api.AccessApi;
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
 import com.provectus.kafka.ui.model.ActionDTO;
 import com.provectus.kafka.ui.model.AuthenticationInfoDTO;
+import com.provectus.kafka.ui.model.ResourceTypeDTO;
 import com.provectus.kafka.ui.model.UserInfoDTO;
 import com.provectus.kafka.ui.model.UserPermissionDTO;
+import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.Permission;
+import com.provectus.kafka.ui.model.rbac.Resource;
+import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
+import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
+import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Collection;
 import java.util.List;
@@ -62,13 +68,21 @@ public class AccessController implements AccessApi {
         .map(ResponseEntity::ok);
   }
 
+  @Override
+  public Mono<ResponseEntity<Boolean>> canCreateResource(String clusterName, ResourceTypeDTO resource,
+                                                         String resourceName, ServerWebExchange exchange) {
+    return accessControlService
+        .canCreateResource(Resource.valueOf(resource.getValue()), clusterName, resourceName)
+        .map(ResponseEntity::ok);
+  }
+
   private List<UserPermissionDTO> mapPermissions(List<Permission> permissions, List<String> clusters) {
     return permissions
         .stream()
         .map(permission -> {
           UserPermissionDTO dto = new UserPermissionDTO();
           dto.setClusters(clusters);
-          dto.setResource(UserPermissionDTO.ResourceEnum.fromValue(permission.getResource().toString().toUpperCase()));
+          dto.setResource(ResourceTypeDTO.fromValue(permission.getResource().toString().toUpperCase()));
           dto.setValue(permission.getValue() != null ? permission.getValue().toString() : null);
           dto.setActions(permission.getActions()
               .stream()

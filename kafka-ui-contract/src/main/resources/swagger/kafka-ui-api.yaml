@@ -1791,6 +1791,36 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationInfo'
 
+  /api/access/canCreateResource:
+    get:
+      tags:
+        - Access
+      summary: Check if the user can create a desired resource
+      operationId: canCreateResource
+      parameters:
+        - name: clusterName
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: resource
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/ResourceType'
+        - name: resourceName
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+
 components:
   schemas:
     TopicSerdeSuggestion:
@@ -3216,14 +3246,7 @@ components:
           items:
             type: string
         resource:
-          type: string
-          enum:
-            - CLUSTERCONFIG
-            - TOPIC
-            - CONSUMER
-            - SCHEMA
-            - CONNECT
-            - KSQL
+          $ref: '#/components/schemas/ResourceType'
         value:
           type: string
         actions:
@@ -3250,3 +3273,13 @@ components:
         - MESSAGES_READ
         - MESSAGES_PRODUCE
         - MESSAGES_DELETE
+
+    ResourceType:
+      type: string
+      enum:
+        - CLUSTERCONFIG
+        - TOPIC
+        - CONSUMER
+        - SCHEMA
+        - CONNECT
+        - KSQL
