@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +55,8 @@ import reactor.core.publisher.Mono;
 public class AccessControlService {
 
   private final Environment environment;
+
+  @Nullable
   private final InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
 
   private final Cache<String, AuthenticatedUser> cachedUsers = CacheBuilder.newBuilder() // TODO cache supporting flux
@@ -112,7 +115,8 @@ public class AccessControlService {
       throw new RuntimeException("Can't deserialize roles file", e);
     }
 
-    if (!clientRegistrationRepository.iterator().hasNext() && !roles.isEmpty()) {
+    if ((clientRegistrationRepository == null || !clientRegistrationRepository.iterator().hasNext())
+        && !roles.isEmpty()) {
       log.error("Roles are configured but no authentication methods are present. Authentication might fail.");
     }
 
@@ -163,6 +167,45 @@ public class AccessControlService {
     return Mono.just(user);
   }
 
+  public Mono<Boolean> canCreateResource(Resource resource, String cluster, String resourceName) {
+    return switch (resource) {
+      case TOPIC -> {
+        AccessContext context = AccessContext.builder()
+            .cluster(cluster)
+            .topic(resourceName)
+            .topicActions(TopicAction.CREATE)
+            .build();
+
+        yield getCachedUser()
+            .map(user -> isTopicAccessible(context, user));
+      }
+
+      case SCHEMA -> {
+        AccessContext context = AccessContext.builder()
+            .cluster(cluster)
+            .schema(resourceName)
+            .schemaActions(SchemaAction.CREATE)
+            .build();
+
+        yield getCachedUser()
+            .map(user -> isSchemaAccessible(context, user));
+      }
+
+      case CONNECT -> {
+        AccessContext context = AccessContext.builder()
+            .cluster(cluster)
+            .connect(resourceName)
+            .connectActions(ConnectAction.CREATE)
+            .build();
+
+        yield getCachedUser()
+            .map(user -> isConnectAccessible(context, user));
+      }
+
+      default -> Mono.just(false);
+    };
+  }
+
   private boolean isClusterAccessible(AccessContext context, AuthenticatedUser user) {
     Assert.isTrue(StringUtils.isNotEmpty(context.getCluster()), "cluster value is empty");
 
@@ -195,7 +238,7 @@ public class AccessControlService {
     return isAccessible(Resource.CLUSTERCONFIG, context.getCluster(), user, context, requiredActions);
   }
 
-  private boolean isTopicAccessible(AccessContext context, AuthenticatedUser user) {
+  public boolean isTopicAccessible(AccessContext context, AuthenticatedUser user) {
     if (context.getTopic() == null && context.getTopicActions().isEmpty()) {
       return true;
     }
@@ -245,7 +288,7 @@ public class AccessControlService {
     return getCachedUser().map(u -> isConsumerGroupAccessible(accessContext, u));
   }
 
-  private boolean isSchemaAccessible(AccessContext context, AuthenticatedUser user) {
+  public boolean isSchemaAccessible(AccessContext context, AuthenticatedUser user) {
     if (context.getSchema() == null && context.getSchemaActions().isEmpty()) {
       return true;
     }
@@ -270,7 +313,7 @@ public class AccessControlService {
     return getCachedUser().map(u -> isSchemaAccessible(accessContext, u));
   }
 
-  private boolean isConnectAccessible(AccessContext context, AuthenticatedUser user) {
+  public boolean isConnectAccessible(AccessContext context, AuthenticatedUser user) {
     if (context.getConnect() == null && context.getConnectActions().isEmpty()) {
       return true;
     }

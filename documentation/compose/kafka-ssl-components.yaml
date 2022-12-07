@@ -10,6 +10,7 @@ services:
       - kafka0
       - schemaregistry0
       - kafka-connect0
+      - ksqldb0
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SSL
@@ -24,6 +25,11 @@ services:
       KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_KEYSTOREPASSWORD: "secret"
       KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_TRUSTSTORELOCATION: /kafka.truststore.jks
       KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_TRUSTSTOREPASSWORD: "secret"
+      KAFKA_CLUSTERS_0_KSQLDBSERVER: https://ksqldb0:8088
+      KAFKA_CLUSTERS_0_KSQLDBSERVERSSL_KEYSTORELOCATION: /kafka.keystore.jks
+      KAFKA_CLUSTERS_0_KSQLDBSERVERSSL_KEYSTOREPASSWORD: "secret"
+      KAFKA_CLUSTERS_0_KSQLDBSERVERSSL_TRUSTSTORELOCATION: /kafka.truststore.jks
+      KAFKA_CLUSTERS_0_KSQLDBSERVERSSL_TRUSTSTOREPASSWORD: "secret"
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: local
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: https://kafka-connect0:8083
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_KEYSTORELOCATION: /kafka.keystore.jks
@@ -139,6 +145,36 @@ services:
       CONNECT_SSL_CLIENT_AUTH: "requested"
       CONNECT_REST_ADVERTISED_LISTENER: "https"
       CONNECT_LISTENERS: "https://kafka-connect0:8083"
+    volumes:
+      - ./ssl/kafka.truststore.jks:/kafka.truststore.jks
+      - ./ssl/kafka.keystore.jks:/kafka.keystore.jks
+
+  ksqldb0:
+    image: confluentinc/ksqldb-server:0.18.0
+    depends_on:
+      - kafka0
+      - kafka-connect0
+      - schemaregistry0
+    ports:
+      - 8088:8088
+    environment:
+      KSQL_CUB_KAFKA_TIMEOUT: 120
+      KSQL_LISTENERS: https://0.0.0.0:8088
+      KSQL_BOOTSTRAP_SERVERS: SSL://kafka0:29092
+      KSQL_SECURITY_PROTOCOL: SSL
+      KSQL_SSL_TRUSTSTORE_LOCATION: /kafka.truststore.jks
+      KSQL_SSL_TRUSTSTORE_PASSWORD: secret
+      KSQL_SSL_KEYSTORE_LOCATION: /kafka.keystore.jks
+      KSQL_SSL_KEYSTORE_PASSWORD: secret
+      KSQL_SSL_KEY_PASSWORD: secret
+      KSQL_SSL_CLIENT_AUTHENTICATION: REQUIRED
+      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
+      KSQL_KSQL_CONNECT_URL: https://kafka-connect0:8083
+      KSQL_KSQL_SCHEMA_REGISTRY_URL: https://schemaregistry0:8085
+      KSQL_KSQL_SERVICE_ID: my_ksql_1
+      KSQL_KSQL_HIDDEN_TOPICS: '^_.*'
+      KSQL_CACHE_MAX_BYTES_BUFFERING: 0
     volumes:
       - ./ssl/kafka.truststore.jks:/kafka.truststore.jks
       - ./ssl/kafka.keystore.jks:/kafka.keystore.jks

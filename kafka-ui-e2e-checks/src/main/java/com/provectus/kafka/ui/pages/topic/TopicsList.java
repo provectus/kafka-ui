@@ -18,7 +18,10 @@ public class TopicsList extends BasePage {
     protected SelenideElement addTopicBtn = $x("//button[normalize-space(text()) ='Add a Topic']");
     protected SelenideElement searchField = $x("//input[@placeholder='Search by Topic Name']");
     protected SelenideElement showInternalRadioBtn = $x("//input[@name='ShowInternalTopics']");
-    protected String actionButtonLocator = "//button[text()='%s']";
+    protected SelenideElement deleteSelectedTopicsBtn = $x("//button[text()='Delete selected topics']");
+    protected SelenideElement copySelectedTopicBtn = $x("//button[text()='Copy selected topic']");
+    protected SelenideElement purgeMessagesOfSelectedTopicsBtn = $x("//button[text()='Purge messages of selected topics']");
+    protected String checkBoxListLocator = "//a[@title='%s']//ancestor::td/../td/input[@type='checkbox']";
 
     @Step
     public TopicsList waitUntilScreenReady() {
@@ -45,9 +48,21 @@ public class TopicsList extends BasePage {
         return this;
     }
 
-    private List<SelenideElement> getActionButtons() {
-      return Stream.of("Delete selected topics", "Copy selected topic", "Purge messages of selected topics")
-          .map(name -> $x(String.format(actionButtonLocator, name)))
+    @Step
+    public TopicsList selectCheckboxByName(String topicName){
+      SelenideElement checkBox = $x(String.format(checkBoxListLocator,topicName));
+      if(!checkBox.is(Condition.selected)){clickByJavaScript(checkBox);}
+      return this;
+    }
+
+    @Step
+    public boolean isCopySelectedTopicBtnEnabled(){
+      return isEnabled(copySelectedTopicBtn);
+    }
+
+    @Step
+    public List<SelenideElement> getActionButtons() {
+      return Stream.of(deleteSelectedTopicsBtn, copySelectedTopicBtn, purgeMessagesOfSelectedTopicsBtn)
           .collect(Collectors.toList());
     }
 

@@ -51,6 +51,7 @@ const SavedFilters: FC<Props> = ({
       </>,
       () => {
         deleteFilter(index);
+        setSelectedFilter(-1);
       }
     );
   };
@@ -95,6 +96,7 @@ const SavedFilters: FC<Props> = ({
           buttonType="primary"
           type="button"
           onClick={activateFilter}
+          disabled={selectedFilter === -1}
         >
           Select filter
         </Button>

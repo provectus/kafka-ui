@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.ksql.response.ResponseParser;
+import com.provectus.kafka.ui.util.SecuredWebClient;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -79,11 +80,24 @@ public class KsqlApiClient {
                       MimeTypeUtils.APPLICATION_OCTET_STREAM));
         })
         .build();
-    return WebClient.builder()
-        .codecs(c -> c.defaultCodecs().maxInMemorySize((int) maxBuffSize.toBytes()))
-        .defaultHeaders(httpHeaders -> setBasicAuthIfEnabled(httpHeaders, cluster))
-        .exchangeStrategies(exchangeStrategies)
-        .build();
+
+    try {
+      WebClient.Builder securedWebClient = SecuredWebClient.configure(
+          cluster.getKsqldbServer().getKeystoreLocation(),
+          cluster.getKsqldbServer().getKeystorePassword(),
+          cluster.getKsqldbServer().getTruststoreLocation(),
+          cluster.getKsqldbServer().getTruststorePassword()
+      );
+
+      return securedWebClient
+          .codecs(c -> c.defaultCodecs().maxInMemorySize((int) maxBuffSize.toBytes()))
+          .defaultHeaders(httpHeaders -> setBasicAuthIfEnabled(httpHeaders, cluster))
+          .exchangeStrategies(exchangeStrategies)
+          .build();
+    } catch (Exception e) {
+      throw new IllegalStateException(
+          "cannot create TLS configuration for ksqlDB in cluster " + cluster.getName(), e);
+    }
   }
 
   public static void setBasicAuthIfEnabled(HttpHeaders headers, KafkaCluster cluster) {

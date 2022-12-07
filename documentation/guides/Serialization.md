@@ -34,7 +34,6 @@ kafka:
 ```
 
 ### Protobuf
-[Deprecated configuration is here](Protobuf.md)
 
 Class name: `com.provectus.kafka.ui.serdes.builtin.ProtobufFileSerde`
 
@@ -47,8 +46,10 @@ kafka:
       serdes:
         - name: ProtobufFile
           properties:
-            # path to the protobuf schema file
-            protobufFile: path/to/my.proto
+            # path to the protobuf schema files
+            protobufFiles:
+              - path/to/my.proto
+              - path/to/another.proto
             # default protobuf type that is used for KEY serialization/deserialization
             # optional
             protobufMessageNameForKey: my.Type1
@@ -64,12 +65,15 @@ kafka:
             # optional
             protobufMessageNameByTopic:
               topic1: my.Type1
-              topic2: my.Type2
+              "topic.2": my.Type2
 ```
+Docker-compose sample for Protobuf serialization is [here](../compose/kafka-ui-serdes.yaml).
+
+Legacy configuration for protobuf is [here](Protobuf.md).
 
 ### SchemaRegistry
 SchemaRegistry serde is automatically configured if schema registry properties set on cluster level.
-But you can override them or add new SchemaRegistry serde that will connect to another schema-registry instance. 
+But you can add new SchemaRegistry-typed serdes that will connect to another schema-registry instance. 
 
 Class name: `com.provectus.kafka.ui.serdes.builtin.sr.SchemaRegistrySerde`
 
@@ -78,24 +82,22 @@ Sample configuration:
 kafka:
   clusters:
     - name: Cluster1
-      # this schema-registry will be used by SchemaRegistrySerde by default
+      # this url will be used by "SchemaRegistry" by default
       schemaRegistry: http://main-schema-registry:8081
       serdes:
-        - name: SchemaRegistry
+        - name: AnotherSchemaRegistry
+          className: com.provectus.kafka.ui.serdes.builtin.sr.SchemaRegistrySerde
           properties:
-            # but you can override cluster-level properties
             url:  http://another-schema-registry:8081
             # auth properties, optional
             username: nameForAuth
             password: P@ssW0RdForAuth
         
           # and also add another SchemaRegistry serde
-        - name: AnotherOneSchemaRegistry
+        - name: ThirdSchemaRegistry
           className: com.provectus.kafka.ui.serdes.builtin.sr.SchemaRegistrySerde
           properties:
             url:  http://another-yet-schema-registry:8081
-            username: nameForAuth_2
-            password: P@ssW0RdForAuth_2
 ```
 
 ## Setting serdes for specific topics
@@ -115,8 +117,6 @@ kafka:
           topicKeysPattern: ".*-events"
         
         - name: SchemaRegistry
-          properties:
-            url:  http://schema-registry:8081
           topicValuesPattern: click-events|imp-events
 ```
 
@@ -129,7 +129,7 @@ Sample configuration:
 kafka:
   clusters:
     - name: Cluster1
-      defaultKeySerde: Int34
+      defaultKeySerde: Int32
       defaultValueSerde: String
       serdes:
         - name: Int32
