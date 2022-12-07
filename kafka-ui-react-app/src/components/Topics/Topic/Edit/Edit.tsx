@@ -55,17 +55,14 @@ const Edit: React.FC = () => {
     config.byName[param.name] = param;
   });
   const onSubmit = async (data: TopicFormDataRaw) => {
-    const changeData = () => {
-      return Object.fromEntries(
-        Object.entries(data).filter(
-          ([key, val]) =>
-            String(val) !==
-            String(defaultValues[key as keyof typeof defaultValues])
-        )
-      );
-    };
+    const filteredDirtyDefaultEntries = Object.entries(data).filter(
+      ([key, val]) =>
+        String(val) !== String(defaultValues[key as keyof typeof defaultValues])
+    );
 
-    await updateTopic.mutateAsync(changeData());
+    const newData = Object.fromEntries(filteredDirtyDefaultEntries);
+
+    await updateTopic.mutateAsync(newData);
     navigate('../');
   };
 
