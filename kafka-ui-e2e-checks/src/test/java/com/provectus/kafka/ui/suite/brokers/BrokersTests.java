@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import io.qameta.allure.Step;
 import io.qase.api.annotation.CaseId;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -23,10 +24,7 @@ public class BrokersTests extends BaseTest {
   @CaseId(1)
   @Test
   public void checkBrokersOverview(){
-    naviSideBar
-        .openSideMenu(BROKERS);
-    brokersList
-        .waitUntilScreenReady();
+    navigateToBrokers();
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(brokersList.getAllBrokers()).as("getAllBrokers()").size().isGreaterThan(0);
     brokersList.getAllVisibleElements().forEach(element -> softly.assertThat(element.is(Condition.visible))
@@ -42,10 +40,7 @@ public class BrokersTests extends BaseTest {
   @CaseId(85)
   @Test
   public void checkExistingBrokersInCluster(){
-    naviSideBar
-        .openSideMenu(BROKERS);
-    brokersList
-        .waitUntilScreenReady();
+    navigateToBrokers();
     assertThat(brokersList.getAllBrokers()).as("getAllBrokers()").size().isGreaterThan(0);
     brokersList
         .openBroker("1");
@@ -57,5 +52,13 @@ public class BrokersTests extends BaseTest {
     brokersDetails.getAllEnabledElements().forEach(element -> softly.assertThat(element.is(Condition.enabled))
         .as(element.getSearchCriteria() + " isEnabled()").isTrue());
     softly.assertAll();
+  }
+
+  @Step
+  private void navigateToBrokers(){
+    naviSideBar
+        .openSideMenu(BROKERS);
+    brokersList
+        .waitUntilScreenReady();
   }
 }
