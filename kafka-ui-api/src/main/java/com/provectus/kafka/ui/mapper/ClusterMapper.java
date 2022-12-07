@@ -149,6 +149,13 @@ public interface ClusterMapper {
       internalKsqlServerBuilder.password(clusterProperties.getKsqldbServerAuth().getPassword());
     }
 
+    if (clusterProperties.getKsqldbServerSsl() != null) {
+      internalKsqlServerBuilder.keystoreLocation(clusterProperties.getKsqldbServerSsl().getKeystoreLocation());
+      internalKsqlServerBuilder.keystorePassword(clusterProperties.getKsqldbServerSsl().getKeystorePassword());
+      internalKsqlServerBuilder.truststoreLocation(clusterProperties.getKsqldbServerSsl().getTruststoreLocation());
+      internalKsqlServerBuilder.truststorePassword(clusterProperties.getKsqldbServerSsl().getTruststorePassword());
+    }
+
     return internalKsqlServerBuilder.build();
   }
 

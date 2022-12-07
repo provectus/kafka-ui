@@ -181,6 +181,10 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_KSQLDBSERVER` 	| KSQL DB server address
 |`KAFKA_CLUSTERS_0_KSQLDBSERVERAUTH_USERNAME` 	| KSQL DB server's basic authentication username
 |`KAFKA_CLUSTERS_0_KSQLDBSERVERAUTH_PASSWORD` 	| KSQL DB server's basic authentication password
+|`KAFKA_CLUSTERS_0_KSQLDBSERVERSSL_KEYSTORELOCATION`   	|Path to the JKS keystore to communicate to KSQL DB
+|`KAFKA_CLUSTERS_0_KSQLDBSERVERSSL_KEYSTOREPASSWORD`   	|Password of the JKS keystore for KSQL DB
+|`KAFKA_CLUSTERS_0_KSQLDBSERVERSSL_TRUSTSTORELOCATION`   	|Path to the JKS truststore to communicate to KSQL DB
+|`KAFKA_CLUSTERS_0_KSQLDBSERVERSSL_TRUSTSTOREPASSWORD`   	|Password of the JKS truststore for KSQL DB
 |`KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL` 	|Security protocol to connect to the brokers. For SSL connection use "SSL", for plaintext connection don't set this environment variable
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRY`   	|SchemaRegistry's address
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_USERNAME`   	|SchemaRegistry's basic authentication username
