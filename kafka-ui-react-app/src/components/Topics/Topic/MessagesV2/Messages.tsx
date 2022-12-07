@@ -103,7 +103,7 @@ const Messages = () => {
         open={isAdvancedFiltersSidebarVisible}
         onClose={closeAdvancedFiltersSidebar}
       >
-        <AdvancedFilter />
+        <AdvancedFilter onClose={closeAdvancedFiltersSidebar} />
       </SlidingSidebar>
     </>
   );
