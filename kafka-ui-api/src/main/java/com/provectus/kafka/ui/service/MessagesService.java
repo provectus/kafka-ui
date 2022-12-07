@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import com.google.common.util.concurrent.RateLimiter;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.MessageFilterStats;
@@ -46,6 +47,10 @@ import reactor.core.scheduler.Schedulers;
 @RequiredArgsConstructor
 @Slf4j
 public class MessagesService {
+
+  // limiting UI messages rate to 20/sec in tailing mode
+  public static final int TAILING_UI_MESSAGE_THROTTLE_RATE = 20;
+
   private final AdminClientService adminClientService;
   private final DeserializationService deserializationService;
   private final ConsumerGroupService consumerGroupService;
@@ -83,6 +88,7 @@ public class MessagesService {
   public Mono<RecordMetadata> sendMessage(KafkaCluster cluster, String topic,
                                           CreateTopicMessageDTO msg) {
     return withExistingTopic(cluster, topic)
+        .publishOn(Schedulers.boundedElastic())
         .flatMap(desc -> sendMessageImpl(cluster, desc, msg));
   }
 
@@ -138,6 +144,7 @@ public class MessagesService {
                                                  @Nullable String valueSerde) {
     return withExistingTopic(cluster, topic)
         .flux()
+        .publishOn(Schedulers.boundedElastic())
         .flatMap(td -> loadMessagesImpl(cluster, topic, consumerPosition, query,
             filterQueryType, limit, seekDirection, keySerde, valueSerde));
   }
@@ -159,20 +166,23 @@ public class MessagesService {
       emitter = new ForwardRecordEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
-          recordDeserializer
+          recordDeserializer,
+          cluster.getThrottler().get()
       );
     } else if (seekDirection.equals(SeekDirectionDTO.BACKWARD)) {
       emitter = new BackwardRecordEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
           limit,
-          recordDeserializer
+          recordDeserializer,
+          cluster.getThrottler().get()
       );
     } else {
       emitter = new TailingEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
-          recordDeserializer
+          recordDeserializer,
+          cluster.getThrottler().get()
       );
     }
     MessageFilterStats filterStats = new MessageFilterStats();
@@ -181,8 +191,7 @@ public class MessagesService {
         .filter(getMsgFilter(query, filterQueryType, filterStats))
         .map(getDataMasker(cluster, topic))
         .takeWhile(createTakeWhilePredicate(seekDirection, limit))
-        .subscribeOn(Schedulers.boundedElastic())
-        .share();
+        .map(throttleUiPublish(seekDirection));
   }
 
   private Predicate<TopicMessageEventDTO> createTakeWhilePredicate(
@@ -226,6 +235,19 @@ public class MessagesService {
       }
       return true;
     };
+  }
+
+  private <T> UnaryOperator<T> throttleUiPublish(SeekDirectionDTO seekDirection) {
+    if (seekDirection == SeekDirectionDTO.TAILING) {
+      RateLimiter rateLimiter = RateLimiter.create(TAILING_UI_MESSAGE_THROTTLE_RATE);
+      return m -> {
+        rateLimiter.acquire(1);
+        return m;
+      };
+    }
+    // there is no need to throttle UI production rate for non-tailing modes, since max number of produced
+    // messages is limited for them (with page size)
+    return UnaryOperator.identity();
   }
 
 }

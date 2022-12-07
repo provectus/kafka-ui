@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @RestController
 @RequiredArgsConstructor
@@ -135,6 +136,7 @@ public class MessagesController extends AbstractController implements MessagesAp
             .value(use == SerdeUsageDTO.SERIALIZE
                 ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, VALUE)
                 : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, VALUE))
-    ).map(ResponseEntity::ok);
+    ).subscribeOn(Schedulers.boundedElastic())
+        .map(ResponseEntity::ok);
   }
 }
