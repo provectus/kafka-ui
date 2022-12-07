@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @RestController
 @RequiredArgsConstructor
@@ -167,16 +168,18 @@ public class MessagesController extends AbstractController implements MessagesAp
         .topicActions(TopicAction.VIEW)
         .build());
 
+    TopicSerdeSuggestionDTO dto = new TopicSerdeSuggestionDTO()
+        .key(use == SerdeUsageDTO.SERIALIZE
+            ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, KEY)
+            : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, KEY))
+        .value(use == SerdeUsageDTO.SERIALIZE
+            ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, VALUE)
+            : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, VALUE));
+
     return validateAccess.then(
-        Mono.just(
-            new TopicSerdeSuggestionDTO()
-                .key(use == SerdeUsageDTO.SERIALIZE
-                    ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, KEY)
-                    : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, KEY))
-                .value(use == SerdeUsageDTO.SERIALIZE
-                    ? deserializationService.getSerdesForSerialize(getCluster(clusterName), topicName, VALUE)
-                    : deserializationService.getSerdesForDeserialize(getCluster(clusterName), topicName, VALUE))
-        ).map(ResponseEntity::ok)
+        Mono.just(dto)
+            .subscribeOn(Schedulers.boundedElastic())
+            .map(ResponseEntity::ok)
     );
   }
 }

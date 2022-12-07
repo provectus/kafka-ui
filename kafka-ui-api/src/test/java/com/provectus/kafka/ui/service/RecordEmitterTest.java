@@ -16,6 +16,7 @@ import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.PropertyResolverImpl;
 import com.provectus.kafka.ui.serdes.builtin.StringSerde;
+import com.provectus.kafka.ui.util.PollingThrottler;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,14 +111,16 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(BEGINNING, EMPTY_TOPIC, null),
-        RECORD_DESERIALIZER
+        RECORD_DESERIALIZER,
+        PollingThrottler.noop()
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(BEGINNING, EMPTY_TOPIC, null),
         100,
-        RECORD_DESERIALIZER
+        RECORD_DESERIALIZER,
+        PollingThrottler.noop()
     );
 
     StepVerifier.create(Flux.create(forwardEmitter))
@@ -138,14 +141,16 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(BEGINNING, TOPIC, null),
-        RECORD_DESERIALIZER
+        RECORD_DESERIALIZER,
+        PollingThrottler.noop()
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(LATEST, TOPIC, null),
         PARTITIONS * MSGS_PER_PARTITION,
-        RECORD_DESERIALIZER
+        RECORD_DESERIALIZER,
+        PollingThrottler.noop()
     );
 
     List<String> expectedValues = SENT_RECORDS.stream().map(Record::getValue).collect(Collectors.toList());
@@ -165,14 +170,16 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
-        RECORD_DESERIALIZER
+        RECORD_DESERIALIZER,
+        PollingThrottler.noop()
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
         PARTITIONS * MSGS_PER_PARTITION,
-        RECORD_DESERIALIZER
+        RECORD_DESERIALIZER,
+        PollingThrottler.noop()
     );
 
     var expectedValues = SENT_RECORDS.stream()
@@ -208,14 +215,16 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(TIMESTAMP, TOPIC, targetTimestamps),
-        RECORD_DESERIALIZER
+        RECORD_DESERIALIZER,
+        PollingThrottler.noop()
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(TIMESTAMP, TOPIC, targetTimestamps),
         PARTITIONS * MSGS_PER_PARTITION,
-        RECORD_DESERIALIZER
+        RECORD_DESERIALIZER,
+        PollingThrottler.noop()
     );
 
     var expectedValues = SENT_RECORDS.stream()
@@ -245,7 +254,8 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
         numMessages,
-        RECORD_DESERIALIZER
+        RECORD_DESERIALIZER,
+        PollingThrottler.noop()
     );
 
     var expectedValues = SENT_RECORDS.stream()
@@ -270,7 +280,8 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, offsets),
         100,
-        RECORD_DESERIALIZER
+        RECORD_DESERIALIZER,
+        PollingThrottler.noop()
     );
 
     expectEmitter(backwardEmitter,
