@@ -40,6 +40,7 @@ public class ClustersProperties {
     String defaultKeySerde;
     String defaultValueSerde;
     List<Masking> masking = new ArrayList<>();
+    long pollingThrottleRate = 0;
   }
 
   @Data
