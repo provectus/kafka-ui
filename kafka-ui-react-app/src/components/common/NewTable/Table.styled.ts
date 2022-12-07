@@ -211,7 +211,3 @@ export const Ellipsis = styled.div`
   text-overflow: ellipsis;
   display: block;
 `;
-
-export const TableWrapper = styled.div`
-  overflow-x: auto;
-`;

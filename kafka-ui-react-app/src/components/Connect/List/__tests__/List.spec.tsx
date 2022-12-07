@@ -22,6 +22,7 @@ jest.mock('react-router-dom', () => ({
 jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useConnectors: jest.fn(),
   useDeleteConnector: jest.fn(),
+  useUpdateConnectorState: jest.fn(),
 }));
 
 const clusterName = 'local';
@@ -82,41 +83,6 @@ describe('Connectors List', () => {
       expect(
         screen.getByRole('row', { name: 'No connectors found' })
       ).toBeInTheDocument();
-    });
-  });
-
-  describe('when remove connector modal is open', () => {
-    beforeEach(() => {
-      (useConnectors as jest.Mock).mockImplementation(() => ({
-        data: connectors,
-      }));
-      (useDeleteConnector as jest.Mock).mockImplementation(() => ({
-        mutateAsync: mockDelete,
-      }));
-    });
-
-    it('calls removeConnector on confirm', async () => {
-      renderComponent();
-      const removeButton = screen.getAllByText('Remove Connector')[0];
-      await waitFor(() => userEvent.click(removeButton));
-
-      const submitButton = screen.getAllByRole('button', {
-        name: 'Confirm',
-      })[0];
-      await userEvent.click(submitButton);
-      expect(mockDelete).toHaveBeenCalledWith();
-    });
-
-    it('closes the modal when cancel button is clicked', async () => {
-      renderComponent();
-      const removeButton = screen.getAllByText('Remove Connector')[0];
-      await waitFor(() => userEvent.click(removeButton));
-
-      const cancelButton = screen.getAllByRole('button', {
-        name: 'Cancel',
-      })[0];
-      await waitFor(() => userEvent.click(cancelButton));
-      expect(cancelButton).not.toBeInTheDocument();
     });
   });
 });
