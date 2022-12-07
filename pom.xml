@@ -25,7 +25,7 @@
         <apache.commons.version>2.11.1</apache.commons.version>
         <assertj.version>3.19.0</assertj.version>
         <avro.version>1.11.1</avro.version>
-        <byte-buddy.version>1.12.18</byte-buddy.version>
+        <byte-buddy.version>1.12.19</byte-buddy.version>
         <confluent.version>7.3.0</confluent.version>
         <datasketches-java.version>3.1.0</datasketches-java.version>
         <groovy.version>3.0.13</groovy.version>
