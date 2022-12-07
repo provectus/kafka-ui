@@ -10,6 +10,8 @@ import Table, { LinkCell, SizeCell } from 'components/common/NewTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { clusterBrokerPath } from 'lib/paths';
 
+const NA = 'N/A';
+
 const BrokersList: React.FC = () => {
   const navigate = useNavigate();
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
@@ -35,8 +37,8 @@ const BrokersList: React.FC = () => {
         brokers?.map((broker) => {
           return {
             brokerId: broker.id,
-            segmentSize: 'N/A',
-            segmentCount: 'N/A',
+            segmentSize: NA,
+            segmentCount: NA,
           };
         }) || [];
     } else {
@@ -47,8 +49,8 @@ const BrokersList: React.FC = () => {
       const broker = brokers?.find(({ id }) => id === brokerId);
       return {
         brokerId,
-        size: segmentSize || 'N/A',
-        count: segmentCount || 'N/A',
+        size: segmentSize || NA,
+        count: segmentCount || NA,
         port: broker?.port,
         host: broker?.host,
       };
@@ -67,7 +69,24 @@ const BrokersList: React.FC = () => {
           />
         ),
       },
-      { header: 'Segment Size', accessorKey: 'size', cell: SizeCell },
+      {
+        header: 'Segment Size',
+        accessorKey: 'size',
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ getValue, table, cell, column, renderValue, row }) =>
+          getValue() === NA ? (
+            NA
+          ) : (
+            <SizeCell
+              table={table}
+              column={column}
+              row={row}
+              cell={cell}
+              getValue={getValue}
+              renderValue={renderValue}
+            />
+          ),
+      },
       { header: 'Segment Count', accessorKey: 'count' },
       { header: 'Port', accessorKey: 'port' },
       { header: 'Host', accessorKey: 'host' },
