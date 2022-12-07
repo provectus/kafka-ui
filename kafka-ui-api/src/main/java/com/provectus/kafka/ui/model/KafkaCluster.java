@@ -1,8 +1,10 @@
 package com.provectus.kafka.ui.model;
 
 import com.provectus.kafka.ui.service.masking.DataMasking;
+import com.provectus.kafka.ui.util.PollingThrottler;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +25,5 @@ public class KafkaCluster {
   private final boolean disableLogDirsCollection;
   private final MetricsConfig metricsConfig;
   private final DataMasking masking;
+  private final Supplier<PollingThrottler> throttler;
 }
