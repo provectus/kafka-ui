@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
+import com.provectus.kafka.ui.util.PollingThrottler;
 import java.util.HashMap;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
@@ -20,16 +21,17 @@ public class TailingEmitter extends AbstractEmitter
 
   public TailingEmitter(Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
                         ConsumerPosition consumerPosition,
-                        ConsumerRecordDeserializer recordDeserializer) {
-    super(recordDeserializer);
+                        ConsumerRecordDeserializer recordDeserializer,
+                        PollingThrottler throttler) {
+    super(recordDeserializer, throttler);
     this.consumerSupplier = consumerSupplier;
     this.consumerPosition = consumerPosition;
   }
 
   @Override
   public void accept(FluxSink<TopicMessageEventDTO> sink) {
+    log.debug("Starting tailing polling for {}", consumerPosition);
     try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
-      log.debug("Starting topic tailing");
       assignAndSeek(consumer);
       while (!sink.isCancelled()) {
         sendPhase(sink, "Polling");

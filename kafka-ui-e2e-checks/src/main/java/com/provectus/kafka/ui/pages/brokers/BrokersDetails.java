@@ -26,13 +26,13 @@ public class BrokersDetails extends BasePage {
 
   private List<SelenideElement> getVisibleColumnHeaders() {
     return Stream.of("Name", "Topics", "Error", "Partitions")
-        .map(name -> $x(String.format(сolumnHeaderLocator, name)))
+        .map(name -> $x(String.format(columnHeaderLocator, name)))
         .collect(Collectors.toList());
   }
 
   private List<SelenideElement> getEnabledColumnHeaders() {
     return Stream.of("Name", "Error")
-        .map(name -> $x(String.format(сolumnHeaderLocator, name)))
+        .map(name -> $x(String.format(columnHeaderLocator, name)))
         .collect(Collectors.toList());
   }
 

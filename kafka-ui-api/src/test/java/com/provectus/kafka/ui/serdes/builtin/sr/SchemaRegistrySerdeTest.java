@@ -130,10 +130,25 @@ class SchemaRegistrySerdeTest {
   }
 
   @Test
-  void canDeserializeReturnsTrueAlways() {
+  void canDeserializeAndCanSerializeReturnsTrueIfSubjectExists() throws Exception {
     String topic = RandomString.make(10);
+    registryClient.register(topic + "-key", new AvroSchema("\"int\""));
+    registryClient.register(topic + "-value", new AvroSchema("\"int\""));
+
     assertThat(serde.canDeserialize(topic, Serde.Target.KEY)).isTrue();
     assertThat(serde.canDeserialize(topic, Serde.Target.VALUE)).isTrue();
+
+    assertThat(serde.canSerialize(topic, Serde.Target.KEY)).isTrue();
+    assertThat(serde.canSerialize(topic, Serde.Target.VALUE)).isTrue();
+  }
+
+  @Test
+  void canDeserializeAndCanSerializeReturnsFalseIfSubjectDoesNotExist() {
+    String topic = RandomString.make(10);
+    assertThat(serde.canDeserialize(topic, Serde.Target.KEY)).isFalse();
+    assertThat(serde.canDeserialize(topic, Serde.Target.VALUE)).isFalse();
+    assertThat(serde.canSerialize(topic, Serde.Target.KEY)).isFalse();
+    assertThat(serde.canSerialize(topic, Serde.Target.VALUE)).isFalse();
   }
 
   private void assertJsonsEqual(String expected, String actual) throws JsonProcessingException {

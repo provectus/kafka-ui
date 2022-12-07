@@ -18,7 +18,7 @@ public abstract class BasePage extends WebUtils {
   protected SelenideElement alertMessage = $x("//div[@role='alert']//div[@role='contentinfo']");
   protected String summaryCellLocator = "//div[contains(text(),'%s')]";
   protected String tableElementNameLocator = "//tbody//a[contains(text(),'%s')]";
-  protected String сolumnHeaderLocator = "//table//tr/th/div[text()='%s']";
+  protected String columnHeaderLocator = "//table//tr/th/div[text()='%s']";
 
   protected void waitUntilSpinnerDisappear() {
     log.debug("\nwaitUntilSpinnerDisappear");
