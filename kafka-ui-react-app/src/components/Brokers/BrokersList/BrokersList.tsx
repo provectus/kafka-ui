@@ -10,6 +10,7 @@ import Table, { LinkCell, SizeCell } from 'components/common/NewTable';
 import CheckMarkRoundIcon from 'components/common/Icons/CheckMarkRoundIcon';
 import { ColumnDef } from '@tanstack/react-table';
 import { clusterBrokerPath } from 'lib/paths';
+import Tooltip from 'components/common/Tooltip/Tooltip';
 
 import * as S from './BrokersList.styled';
 
@@ -58,7 +59,13 @@ const BrokersList: React.FC = () => {
               value={`${getValue<string | number>()}`}
               to={encodeURIComponent(`${getValue<string | number>()}`)}
             />
-            {id === String(activeControllers) && <CheckMarkRoundIcon />}
+            {id === String(activeControllers) && (
+              <Tooltip
+                value={<CheckMarkRoundIcon />}
+                content="Active Controller"
+                placement="right"
+              />
+            )}
           </S.RowCell>
         ),
       },
