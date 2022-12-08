@@ -162,17 +162,6 @@ public class ProtobufFileSerde implements BuiltInSerde {
     }
   }
 
-  @Nullable
-  private static Location toLocation(Path path) {
-    if (Files.isDirectory(path)) {
-      return Location.get(path.toString());
-    }
-    if (Files.isRegularFile(path)) {
-      return Location.get(path.getParent().toString(), path.getFileName().toString());
-    }
-    return null;
-  }
-
   private static void addProtobufSchema(Map<Descriptor, Path> descriptorPaths,
                                  Map<Path, ProtobufSchema> protobufSchemas,
                                  String messageName) {
