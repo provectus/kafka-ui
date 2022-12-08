@@ -24,6 +24,7 @@ export enum RouteParams {
 export const getNonExactPath = (path: string) => `${path}/*`;
 
 export const errorPage = '/404';
+export const accessErrorPage = '/403';
 
 export const clusterPath = (
   clusterName: ClusterName = RouteParams.clusterName

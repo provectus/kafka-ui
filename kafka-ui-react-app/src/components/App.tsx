@@ -1,6 +1,11 @@
 import React, { Suspense, useCallback } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import { clusterPath, errorPage, getNonExactPath } from 'lib/paths';
+import {
+  accessErrorPage,
+  clusterPath,
+  errorPage,
+  getNonExactPath,
+} from 'lib/paths';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
@@ -123,6 +128,10 @@ const App: React.FC = () => {
                   <Route
                     path={getNonExactPath(clusterPath())}
                     element={<ClusterPage />}
+                  />
+                  <Route
+                    path={accessErrorPage}
+                    element={<ErrorPage status={403} text="Access is Denied" />}
                   />
                   <Route path={errorPage} element={<ErrorPage />} />
                   <Route

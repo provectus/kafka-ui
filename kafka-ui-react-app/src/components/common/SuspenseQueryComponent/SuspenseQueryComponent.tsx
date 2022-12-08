@@ -2,6 +2,14 @@ import React, { PropsWithChildren } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Navigate } from 'react-router-dom';
 
+const ErrorComponent: React.FC<{ error: Error }> = ({ error }) => {
+  const errorStatus = (error as unknown as Response)?.status
+    ? (error as unknown as Response).status
+    : '404';
+
+  return <Navigate to={`/${errorStatus}`} />;
+};
+
 /**
  * @description
  * basic idea that you can not choose a wrong url, that is why you are safe, but when
@@ -14,7 +22,7 @@ const SuspenseQueryComponent: React.FC<PropsWithChildren<unknown>> = ({
   children,
 }) => {
   return (
-    <ErrorBoundary fallback={<Navigate to="/404" />}>{children}</ErrorBoundary>
+    <ErrorBoundary FallbackComponent={ErrorComponent}>{children}</ErrorBoundary>
   );
 };
 
