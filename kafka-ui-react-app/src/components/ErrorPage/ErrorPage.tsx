@@ -3,13 +3,23 @@ import { Button } from 'components/common/Button/Button';
 
 import * as S from './ErrorPage.styled';
 
-const ErrorPage = () => {
+interface Props {
+  status?: number;
+  text?: string;
+  btnText?: string;
+}
+
+const ErrorPage: React.FC<Props> = ({
+  status = 404,
+  text = 'Page not found',
+  btnText = 'Go Back to Dashboard',
+}) => {
   return (
     <S.Wrapper>
-      <S.Number>404</S.Number>
-      <S.Text>Page is not found</S.Text>
+      <S.Number>{status}</S.Number>
+      <S.Text>{text}</S.Text>
       <Button buttonType="primary" buttonSize="M" to="/">
-        Go Back to Dashboard
+        {btnText}
       </Button>
     </S.Wrapper>
   );
