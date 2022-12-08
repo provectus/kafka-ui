@@ -13,7 +13,7 @@ export const Wrapper = styled.div`
   max-height: 700px;
 
   & > * {
-    background-color: ${({ theme }) => theme.panelColor.background};
+    background-color: ${({ theme }) => theme.default.backgroundColor};
     padding: 24px;
     overflow-y: scroll;
   }

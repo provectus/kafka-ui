@@ -10,7 +10,7 @@ export const Wrapper = styled.div`
 `;
 
 export const IndicatorWrapper = styled.div`
-  background-color: ${({ theme }) => theme.metrics.indicator.backgroundColor};
+  background-color: ${({ theme }) => theme.default.backgroundColor};
   height: 68px;
   width: fit-content;
   min-width: 150px;
@@ -21,7 +21,7 @@ export const IndicatorWrapper = styled.div`
   padding: 12px 16px;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.08);
   flex-grow: 1;
-  color: ${({ theme }) => theme.metrics.indicator.color};
+  color: ${({ theme }) => theme.default.color.normal};
 `;
 
 export const IndicatorTitle = styled.div`

@@ -113,6 +113,133 @@ const baseTheme = {
       },
     },
   },
+  code: {
+    backgroundColor: Colors.neutral[5],
+    color: Colors.red[55],
+  },
+  layout: {
+    minWidth: '1200px',
+    navBarWidth: '201px',
+    navBarHeight: '53px',
+    rightSidebarWidth: '70vw',
+    filtersSidebarWidth: '300px',
+
+    stuffColor: Colors.neutral[5],
+    stuffBorderColor: Colors.neutral[10],
+    overlay: {
+      backgroundColor: Colors.neutral[50],
+    },
+    socialLink: Colors.neutral[20],
+  },
+  alert: {
+    color: {
+      error: Colors.red[10],
+      success: Colors.green[10],
+      warning: Colors.yellow[10],
+      info: Colors.neutral[10],
+      loading: Colors.neutral[10],
+      blank: Colors.neutral[10],
+      custom: Colors.neutral[10],
+    },
+    shadow: Colors.transparency[20],
+  },
+  circularAlert: {
+    color: {
+      error: Colors.red[50],
+      success: Colors.green[40],
+      warning: Colors.yellow[10],
+      info: Colors.neutral[10],
+    },
+  },
+  connectEditWarning: Colors.yellow[10],
+  lastestVersionItem: {
+    metaDataLabel: {
+      color: Colors.neutral[50],
+    },
+  },
+  version: {
+    currentVersion: {
+      color: Colors.neutral[50],
+    },
+    symbolWrapper: {
+      color: Colors.neutral[50],
+    },
+  },
+  textArea: {
+    borderColor: {
+      normal: Colors.neutral[30],
+      hover: Colors.neutral[50],
+      focus: Colors.neutral[70],
+      disabled: Colors.neutral[10],
+    },
+    color: {
+      placeholder: {
+        normal: Colors.neutral[30],
+        focus: {
+          normal: 'transparent',
+          readOnly: Colors.neutral[30],
+        },
+      },
+      disabled: Colors.neutral[30],
+      readOnly: Colors.neutral[90],
+    },
+    backgroundColor: {
+      readOnly: Colors.neutral[5],
+    },
+  },
+  tag: {
+    backgroundColor: {
+      green: Colors.green[10],
+      gray: Colors.neutral[5],
+      yellow: Colors.yellow[10],
+      white: Colors.neutral[10],
+      red: Colors.red[10],
+      blue: Colors.blue[10],
+    },
+    color: Colors.neutral[90],
+  },
+  switch: {
+    unchecked: Colors.brand[20],
+    checked: Colors.brand[50],
+    circle: Colors.neutral[0],
+    disabled: Colors.neutral[10],
+    checkedIcon: {
+      backgroundColor: Colors.neutral[70],
+    },
+  },
+  pageLoader: {
+    borderColor: Colors.brand[50],
+    borderBottomColor: Colors.neutral[0],
+  },
+  topicFormLabel: {
+    color: Colors.neutral[50],
+  },
+  dangerZone: {
+    borderColor: Colors.neutral[10],
+    color: {
+      title: Colors.red[50],
+      warningMessage: Colors.neutral[50],
+    },
+  },
+  configList: {
+    color: Colors.neutral[30],
+  },
+  tooltip: {
+    bg: Colors.neutral[70],
+    text: Colors.neutral[0],
+  },
+  topicsList: {
+    color: {
+      normal: Colors.neutral[90],
+      hover: Colors.neutral[50],
+      active: Colors.neutral[90],
+    },
+    backgroundColor: {
+      hover: Colors.neutral[5],
+      active: Colors.neutral[10],
+    },
+  },
+
   statictics: {
     createdAtColor: Colors.neutral[50],
   },
@@ -129,41 +256,16 @@ export const theme = {
   default: {
     color: {
       normal: Colors.neutral[90],
-      disabled: Colors.neutral[30],
     },
-    secondaryColor: Colors.neutral[50],
-
-    backgroundColor: '',
-    borderColor: '',
+    backgroundColor: Colors.neutral[0],
+    transparentColor: 'transparent',
   },
-
   link: {
     color: Colors.brand[50],
     hoverColor: Colors.brand[60],
   },
   hr: {
     backgroundColor: Colors.neutral[5],
-  },
-  code: {
-    backgroundColor: Colors.neutral[5],
-    color: Colors.red[55],
-  },
-  layout: {
-    backgroundColor: Colors.neutral[0],
-    minWidth: '1200px',
-    navBarWidth: '201px',
-    navBarHeight: '53px',
-    rightSidebarWidth: '70vw',
-    filtersSidebarWidth: '300px',
-
-    stuffColor: Colors.neutral[5],
-    stuffBorderColor: Colors.neutral[10],
-    overlay: {
-      backgroundColor: Colors.neutral[50],
-    },
-    socialLink: {
-      color: Colors.neutral[20],
-    },
   },
   pageHeading: {
     height: '64px',
@@ -176,10 +278,8 @@ export const theme = {
     },
   },
   panelColor: {
-    background: Colors.neutral[0],
     borderTop: 'none',
   },
-  connectEditWarning: Colors.yellow[10],
   dropdown: {
     backgroundColor: Colors.neutral[0],
     borderColor: Colors.neutral[5],
@@ -200,57 +300,20 @@ export const theme = {
       editor: {
         readonly: {
           background: Colors.neutral[3],
-          selection: {
-            backgroundColor: 'transparent',
-          },
-          cursor: {
-            color: 'transparent',
-          },
-        },
-        content: {
-          backgroundColor: Colors.neutral[0],
-          color: Colors.neutral[90],
         },
         activeLine: {
           backgroundColor: Colors.neutral[5],
         },
         cell: {
-          backgroundColor: Colors.neutral[5],
+          backgroundColor: Colors.neutral[10],
         },
         layer: {
           backgroundColor: Colors.neutral[5],
-          color: Colors.neutral[90],
         },
         cursor: Colors.neutral[90],
         variable: Colors.red[50],
         aceString: Colors.green[60],
       },
-    },
-    label: Colors.neutral[90],
-  },
-  lastestVersionItem: {
-    metaDataLabel: {
-      color: Colors.neutral[50],
-    },
-  },
-  alert: {
-    color: {
-      error: Colors.red[10],
-      success: Colors.green[10],
-      warning: Colors.yellow[10],
-      info: Colors.neutral[10],
-      loading: Colors.neutral[10],
-      blank: Colors.neutral[10],
-      custom: Colors.neutral[10],
-    },
-    shadow: Colors.transparency[20],
-  },
-  circularAlert: {
-    color: {
-      error: Colors.red[50],
-      success: Colors.green[40],
-      warning: Colors.yellow[10],
-      info: Colors.neutral[10],
     },
   },
   button: {
@@ -287,7 +350,7 @@ export const theme = {
         normal: Colors.neutral[50],
         hover: Colors.neutral[70],
         active: Colors.neutral[90],
-        disabled: Colors.neutral[75], //--
+        disabled: Colors.neutral[75],
       },
     },
     danger: {
@@ -356,17 +419,6 @@ export const theme = {
     },
     chevronIconColor: Colors.neutral[50],
     titleColor: Colors.neutral[90],
-  },
-  version: {
-    currentVersion: {
-      color: Colors.neutral[50],
-    },
-    symbolWrapper: {
-      color: Colors.neutral[50],
-    },
-  },
-  hyperlink: {
-    color: Colors.neutral[90],
   },
   schema: {
     backgroundColor: {
@@ -446,8 +498,6 @@ export const theme = {
       active: Colors.neutral[90],
     },
     borderColor: {
-      normal: 'transparent',
-      hover: 'transparent',
       active: Colors.brand[50],
       nav: Colors.neutral[10],
     },
@@ -519,62 +569,13 @@ export const theme = {
       color: Colors.neutral[70],
     },
   },
-  textArea: {
-    borderColor: {
-      normal: Colors.neutral[30],
-      hover: Colors.neutral[50],
-      focus: Colors.neutral[70],
-      disabled: Colors.neutral[10],
-    },
-    color: {
-      placeholder: {
-        normal: Colors.neutral[30],
-        focus: {
-          normal: 'transparent',
-          readOnly: Colors.neutral[30],
-        },
-      },
-      disabled: Colors.neutral[30],
-      readOnly: Colors.neutral[90],
-    },
-    backgroundColor: {
-      readOnly: Colors.neutral[5],
-    },
-  },
-  tag: {
-    backgroundColor: {
-      green: Colors.green[10],
-      gray: Colors.neutral[5],
-      yellow: Colors.yellow[10],
-      white: Colors.neutral[10],
-      red: Colors.red[10],
-      blue: Colors.blue[10],
-    },
-    color: Colors.neutral[90],
-  },
-  switch: {
-    unchecked: Colors.brand[20],
-    checked: Colors.brand[50],
-    circle: Colors.neutral[0],
-    disabled: Colors.neutral[10],
-    label: Colors.neutral[90],
-    checkedIcon: {
-      backgroundColor: Colors.neutral[70],
-    },
-  },
-  pageLoader: {
-    borderColor: Colors.brand[50],
-    borderBottomColor: Colors.neutral[0],
-  },
   metrics: {
     backgroundColor: Colors.neutral[5],
     sectionTitle: Colors.neutral[90],
     indicator: {
-      backgroundColor: Colors.neutral[0],
       titleColor: Colors.neutral[50],
       warningTextColor: Colors.red[50],
       lightTextColor: Colors.neutral[30],
-      color: Colors.neutral[90],
     },
     wrapper: Colors.neutral[0],
     filters: {
@@ -595,13 +596,9 @@ export const theme = {
     },
   },
   consumerTopicContent: {
-    backgroundColor: Colors.neutral[0],
     td: {
       backgroundColor: Colors.neutral[5],
     },
-  },
-  topicFormLabel: {
-    color: Colors.neutral[50],
   },
   topicMetaData: {
     backgroundColor: Colors.neutral[5],
@@ -612,31 +609,6 @@ export const theme = {
     },
     liderReplica: {
       color: Colors.green[60],
-    },
-  },
-  dangerZone: {
-    borderColor: Colors.neutral[10],
-    color: {
-      title: Colors.red[50],
-      warningMessage: Colors.neutral[50],
-    },
-  },
-  configList: {
-    color: Colors.neutral[30],
-  },
-  tooltip: {
-    bg: Colors.neutral[70],
-    text: Colors.neutral[0],
-  },
-  topicsList: {
-    color: {
-      normal: Colors.neutral[90],
-      hover: Colors.neutral[50],
-      active: Colors.neutral[90],
-    },
-    backgroundColor: {
-      hover: Colors.neutral[5],
-      active: Colors.neutral[10],
     },
   },
   icons: {
@@ -661,7 +633,7 @@ export const theme = {
     },
     newFilterIcon: Colors.brand[50],
     closeModalIcon: Colors.neutral[25],
-    savedIcon: Colors.brand[30], //--
+    savedIcon: Colors.brand[30],
     dropdownArrowIcon: Colors.neutral[30],
     git: {
       hover: Colors.neutral[50],
@@ -692,71 +664,63 @@ export type ThemeType = typeof theme;
 
 export const darkTheme: ThemeType = {
   ...baseTheme,
-
-  default: {
-    color: {
-      normal: '',
-      disabled: '',
+  heading: {
+    ...baseTheme.heading,
+    h4: Colors.neutral[0],
+    base: {
+      ...baseTheme.heading.base,
+      color: Colors.neutral[0],
     },
-    secondaryColor: '',
-    backgroundColor: '',
-    borderColor: '',
-  },
-
-  link: {
-    color: Colors.brand[50], //--
-    hoverColor: Colors.brand[30], //--
-  },
-  hr: {
-    backgroundColor: Colors.neutral[80], //--
   },
   code: {
-    backgroundColor: Colors.neutral[95], //--
-    color: Colors.red[55], //--
+    ...baseTheme.code,
+    backgroundColor: Colors.neutral[95],
+  },
+  default: {
+    color: {
+      normal: Colors.neutral[0],
+    },
+    backgroundColor: Colors.neutral[90],
+    transparentColor: 'transparent',
+  },
+  link: {
+    color: Colors.brand[50],
+    hoverColor: Colors.brand[30],
+  },
+  hr: {
+    backgroundColor: Colors.neutral[80],
   },
   layout: {
-    backgroundColor: Colors.neutral[90], //--
-    minWidth: '1200px',
-    navBarWidth: '201px',
-    navBarHeight: '53px',
-    rightSidebarWidth: '70vw',
-    filtersSidebarWidth: '300px',
-    stuffColor: Colors.neutral[75], //--
-    stuffBorderColor: Colors.neutral[75], //--
-    overlay: {
-      backgroundColor: Colors.neutral[50],
-    },
-    socialLink: {
-      color: Colors.neutral[30], //---
-    },
+    ...baseTheme.layout,
+    stuffColor: Colors.neutral[75],
+    stuffBorderColor: Colors.neutral[75],
+    socialLink: Colors.neutral[30],
   },
   pageHeading: {
     height: '64px',
-    dividerColor: Colors.neutral[50], //--
+    dividerColor: Colors.neutral[50],
     backLink: {
       color: {
-        normal: Colors.brand[30], //--
-        hover: Colors.brand[15], //--
+        normal: Colors.brand[30],
+        hover: Colors.brand[15],
       },
     },
   },
   panelColor: {
-    background: Colors.neutral[90], //--
-    borderTop: Colors.neutral[80], //--
+    borderTop: Colors.neutral[80],
   },
-  connectEditWarning: Colors.yellow[10], //--
   dropdown: {
-    backgroundColor: Colors.neutral[85], //
-    borderColor: Colors.neutral[80], //--
-    shadow: Colors.transparency[20], //--
+    backgroundColor: Colors.neutral[85],
+    borderColor: Colors.neutral[80],
+    shadow: Colors.transparency[20],
     item: {
       color: {
-        normal: Colors.neutral[0], //--
-        danger: Colors.red[60], //--
+        normal: Colors.neutral[0],
+        danger: Colors.red[60],
       },
       backgroundColor: {
-        default: Colors.neutral[85], //
-        hover: Colors.neutral[80], //
+        default: Colors.neutral[85],
+        hover: Colors.neutral[80],
       },
     },
   },
@@ -765,147 +729,65 @@ export const darkTheme: ThemeType = {
       editor: {
         readonly: {
           background: Colors.neutral[3],
-          selection: {
-            backgroundColor: 'transparent',
-          },
-          cursor: {
-            color: 'transparent',
-          },
-        },
-        content: {
-          backgroundColor: Colors.neutral[90], //--
-          color: Colors.neutral[0], //--
         },
         activeLine: {
-          backgroundColor: Colors.neutral[80], //--
+          backgroundColor: Colors.neutral[80],
         },
         cell: {
-          backgroundColor: Colors.neutral[75], //--
+          backgroundColor: Colors.neutral[75],
         },
         layer: {
-          backgroundColor: Colors.neutral[80], //--
-          color: Colors.neutral[0], //--
+          backgroundColor: Colors.neutral[80],
         },
-        cursor: Colors.neutral[0], //--
+        cursor: Colors.neutral[0],
         variable: Colors.red[50],
         aceString: Colors.green[60],
       },
-    },
-    label: Colors.neutral[0], //--
-  },
-  heading: {
-    h1: {
-      color: Colors.neutral[90],
-    },
-    h3: {
-      color: Colors.neutral[50],
-      fontSize: '14px',
-    },
-    h4: Colors.neutral[0],
-    base: {
-      fontFamily: 'Inter, sans-serif',
-      fontStyle: 'normal',
-      fontWeight: 500,
-      color: Colors.neutral[0], //--
-    },
-    variants: {
-      1: {
-        fontSize: '20px',
-        lineHeight: '32px',
-      },
-      2: {
-        fontSize: '20px',
-        lineHeight: '32px',
-      },
-      3: {
-        fontSize: '16px',
-        lineHeight: '24px',
-        fontWeight: 400,
-        marginBottom: '16px',
-      },
-      4: {
-        fontSize: '14px',
-        lineHeight: '20px',
-        fontWeight: 500,
-      },
-      5: {
-        fontSize: '12px',
-        lineHeight: '16px',
-      },
-      6: {
-        fontSize: '12px',
-        lineHeight: '16px',
-      },
-    },
-  },
-  lastestVersionItem: {
-    metaDataLabel: {
-      color: Colors.neutral[50], //--
-    },
-  },
-  alert: {
-    color: {
-      error: Colors.red[10],
-      success: Colors.green[10],
-      warning: Colors.yellow[10],
-      info: Colors.neutral[10],
-      loading: Colors.neutral[10],
-      blank: Colors.neutral[10],
-      custom: Colors.neutral[10],
-    },
-    shadow: Colors.transparency[20],
-  },
-  circularAlert: {
-    color: {
-      error: Colors.red[50],
-      success: Colors.green[40],
-      warning: Colors.yellow[10],
-      info: Colors.neutral[10],
     },
   },
   button: {
     primary: {
       backgroundColor: {
-        normal: Colors.brand[30], //--
-        hover: Colors.brand[20], //--
-        active: Colors.brand[10], //--
-        disabled: Colors.neutral[75], //--
+        normal: Colors.brand[30],
+        hover: Colors.brand[20],
+        active: Colors.brand[10],
+        disabled: Colors.neutral[75],
       },
       color: {
-        normal: Colors.neutral[0], //--
-        disabled: Colors.neutral[60], //--
+        normal: Colors.neutral[0],
+        disabled: Colors.neutral[60],
       },
       invertedColors: {
-        normal: Colors.brand[30], //--
+        normal: Colors.brand[30],
         hover: Colors.brand[60],
         active: Colors.brand[60],
       },
     },
     secondary: {
       backgroundColor: {
-        normal: Colors.blue[80], //--
-        hover: Colors.blue[70], //--
-        active: Colors.blue[60], //--
-        disabled: Colors.neutral[75], //--
+        normal: Colors.blue[80],
+        hover: Colors.blue[70],
+        active: Colors.blue[60],
+        disabled: Colors.neutral[75],
       },
       color: {
-        normal: Colors.neutral[0], //--
-        disabled: Colors.neutral[60], //--
+        normal: Colors.neutral[0],
+        disabled: Colors.neutral[60],
       },
       isActiveColor: Colors.neutral[90],
       invertedColors: {
         normal: Colors.neutral[50],
         hover: Colors.neutral[70],
         active: Colors.neutral[90],
-        disabled: Colors.neutral[75], //--
+        disabled: Colors.neutral[75],
       },
     },
     danger: {
       backgroundColor: {
-        normal: Colors.red[50], //--
-        hover: Colors.red[55], //--
-        active: Colors.red[60], //--
-        disabled: Colors.red[20], //--
+        normal: Colors.red[50],
+        hover: Colors.red[55],
+        active: Colors.red[60],
+        disabled: Colors.red[20],
       },
       color: {
         normal: Colors.neutral[90],
@@ -949,14 +831,14 @@ export const darkTheme: ThemeType = {
   },
   menu: {
     backgroundColor: {
-      normal: Colors.neutral[90], //--
-      hover: Colors.neutral[87], //--
-      active: Colors.neutral[85], //--
+      normal: Colors.neutral[90],
+      hover: Colors.neutral[87],
+      active: Colors.neutral[85],
     },
     color: {
-      normal: Colors.neutral[40], //--
-      hover: Colors.neutral[20], //--
-      active: Colors.brand[20], //--
+      normal: Colors.neutral[40],
+      hover: Colors.neutral[20],
+      active: Colors.brand[20],
       isOpen: Colors.neutral[90],
     },
     statusIconColor: {
@@ -967,32 +849,21 @@ export const darkTheme: ThemeType = {
     chevronIconColor: Colors.neutral[50],
     titleColor: Colors.neutral[0],
   },
-  hyperlink: {
-    color: Colors.neutral[0],
-  },
-  version: {
-    currentVersion: {
-      color: Colors.neutral[50],
-    },
-    symbolWrapper: {
-      color: Colors.neutral[50],
-    },
-  },
   schema: {
     backgroundColor: {
       tr: Colors.neutral[5],
       div: Colors.neutral[0],
-      p: Colors.neutral[0], //--
+      p: Colors.neutral[0],
       textarea: Colors.neutral[85],
     },
   },
   modal: {
-    color: Colors.neutral[0], //--
-    backgroundColor: Colors.neutral[85], //--
+    color: Colors.neutral[0],
+    backgroundColor: Colors.neutral[85],
     border: {
-      top: Colors.neutral[75], //--
-      bottom: Colors.neutral[75], //--
-      contrast: Colors.neutral[75], //--
+      top: Colors.neutral[75],
+      bottom: Colors.neutral[75],
+      contrast: Colors.neutral[75],
     },
     overlay: Colors.transparency[10],
     shadow: Colors.transparency[20],
@@ -1030,7 +901,7 @@ export const darkTheme: ThemeType = {
     },
     link: {
       color: {
-        normal: Colors.neutral[0], //--
+        normal: Colors.neutral[0],
         hover: Colors.neutral[0],
         active: Colors.neutral[0],
       },
@@ -1051,40 +922,38 @@ export const darkTheme: ThemeType = {
   primaryTab: {
     height: '41px',
     color: {
-      normal: Colors.neutral[50], //--
-      hover: Colors.neutral[0], //--
-      active: Colors.brand[30], //--
+      normal: Colors.neutral[50],
+      hover: Colors.neutral[0],
+      active: Colors.brand[30],
     },
     borderColor: {
-      normal: 'transparent',
-      hover: 'transparent',
       active: Colors.brand[50],
       nav: Colors.neutral[10],
     },
   },
   secondaryTab: {
     backgroundColor: {
-      normal: Colors.neutral[90], //--
-      hover: Colors.neutral[85], //--
-      active: Colors.neutral[80], //--
+      normal: Colors.neutral[90],
+      hover: Colors.neutral[85],
+      active: Colors.neutral[80],
     },
     color: {
-      normal: Colors.neutral[50], //--
-      hover: Colors.neutral[0], //--
-      active: Colors.neutral[0], //--
+      normal: Colors.neutral[50],
+      hover: Colors.neutral[0],
+      active: Colors.neutral[0],
     },
   },
   select: {
     backgroundColor: {
-      normal: Colors.neutral[85], //--
-      hover: Colors.neutral[80], //--
-      active: Colors.neutral[70], //--
+      normal: Colors.neutral[85],
+      hover: Colors.neutral[80],
+      active: Colors.neutral[70],
     },
     color: {
-      normal: Colors.neutral[0], //--
-      hover: Colors.neutral[0], //--
-      active: Colors.neutral[0], //--
-      disabled: Colors.neutral[60], //--
+      normal: Colors.neutral[0],
+      hover: Colors.neutral[0],
+      active: Colors.neutral[0],
+      disabled: Colors.neutral[60],
     },
     borderColor: {
       normal: Colors.neutral[70],
@@ -1109,7 +978,7 @@ export const darkTheme: ThemeType = {
     color: {
       normal: Colors.neutral[0],
       placeholder: {
-        normal: Colors.neutral[60], //--
+        normal: Colors.neutral[60],
         readOnly: Colors.neutral[0],
       },
       disabled: Colors.neutral[80],
@@ -1126,65 +995,16 @@ export const darkTheme: ThemeType = {
       hover: Colors.neutral[0],
     },
     label: {
-      color: Colors.neutral[30], //--
+      color: Colors.neutral[30],
     },
-  },
-  textArea: {
-    borderColor: {
-      normal: Colors.neutral[30],
-      hover: Colors.neutral[50],
-      focus: Colors.neutral[70],
-      disabled: Colors.neutral[10],
-    },
-    color: {
-      placeholder: {
-        normal: Colors.neutral[30],
-        focus: {
-          normal: 'transparent',
-          readOnly: Colors.neutral[30],
-        },
-      },
-      disabled: Colors.neutral[30],
-      readOnly: Colors.neutral[90],
-    },
-    backgroundColor: {
-      readOnly: Colors.neutral[5],
-    },
-  },
-  tag: {
-    backgroundColor: {
-      green: Colors.green[10],
-      gray: Colors.neutral[5],
-      yellow: Colors.yellow[10],
-      white: Colors.neutral[10],
-      red: Colors.red[10],
-      blue: Colors.blue[10],
-    },
-    color: Colors.neutral[90],
-  },
-  switch: {
-    unchecked: Colors.brand[20],
-    checked: Colors.brand[50],
-    circle: Colors.neutral[0],
-    disabled: Colors.neutral[10],
-    label: Colors.neutral[0],
-    checkedIcon: {
-      backgroundColor: Colors.neutral[70],
-    },
-  },
-  pageLoader: {
-    borderColor: Colors.brand[50],
-    borderBottomColor: Colors.neutral[0],
   },
   metrics: {
-    backgroundColor: Colors.neutral[95], //---
-    sectionTitle: Colors.neutral[0], //--
+    backgroundColor: Colors.neutral[95],
+    sectionTitle: Colors.neutral[0],
     indicator: {
-      backgroundColor: Colors.neutral[90], //---
-      titleColor: Colors.neutral[0], // ---
+      titleColor: Colors.neutral[0],
       warningTextColor: Colors.red[50],
-      lightTextColor: Colors.neutral[60], //--
-      color: Colors.neutral[0], //--
+      lightTextColor: Colors.neutral[60],
     },
     wrapper: Colors.neutral[0],
     filters: {
@@ -1196,57 +1016,28 @@ export const darkTheme: ThemeType = {
   },
   scrollbar: {
     trackColor: {
-      normal: Colors.neutral[90], //--
-      active: Colors.neutral[85], //--
+      normal: Colors.neutral[90],
+      active: Colors.neutral[85],
     },
     thumbColor: {
-      normal: Colors.neutral[75], //--
+      normal: Colors.neutral[75],
       active: Colors.neutral[50],
     },
   },
   consumerTopicContent: {
-    backgroundColor: Colors.neutral[90], //--
     td: {
-      backgroundColor: Colors.neutral[95], //--
+      backgroundColor: Colors.neutral[95],
     },
   },
-  topicFormLabel: {
-    color: Colors.neutral[50],
-  },
   topicMetaData: {
-    backgroundColor: Colors.neutral[90], //--
+    backgroundColor: Colors.neutral[90],
     color: {
-      label: Colors.neutral[50], //--
-      value: Colors.neutral[0], //--
-      meta: Colors.neutral[60], //--
+      label: Colors.neutral[50],
+      value: Colors.neutral[0],
+      meta: Colors.neutral[60],
     },
     liderReplica: {
       color: Colors.green[60],
-    },
-  },
-  dangerZone: {
-    borderColor: Colors.neutral[10],
-    color: {
-      title: Colors.red[50],
-      warningMessage: Colors.neutral[50],
-    },
-  },
-  configList: {
-    color: Colors.neutral[30],
-  },
-  tooltip: {
-    bg: Colors.neutral[70],
-    text: Colors.neutral[0],
-  },
-  topicsList: {
-    color: {
-      normal: Colors.neutral[90],
-      hover: Colors.neutral[50],
-      active: Colors.neutral[90],
-    },
-    backgroundColor: {
-      hover: Colors.neutral[5],
-      active: Colors.neutral[10],
     },
   },
   icons: {

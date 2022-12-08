@@ -50,12 +50,11 @@ export default styled(Editor)`
     .ace_gutter-active-line {
       background-color: ${({ theme }) =>
         theme.ksqlDb.query.editor.cell.backgroundColor};
-      color: ${({ theme }) => theme.ksqlDb.query.editor.layer.color};
+      color: ${({ theme }) => theme.default.color.normal};
     }
     .ace_line {
-      background-color: ${({ theme }) =>
-        theme.ksqlDb.query.editor.content.backgroundColor};
-      color: ${({ theme }) => theme.ksqlDb.query.editor.content.color};
+      background-color: ${({ theme }) => theme.default.backgroundColor};
+      color: ${({ theme }) => theme.default.color.normal};
     }
     .ace_cursor {
       color: ${({ theme }) => theme.ksqlDb.query.editor.cursor};
@@ -65,7 +64,7 @@ export default styled(Editor)`
         theme.ksqlDb.query.editor.cell.backgroundColor};
     }
     .ace_gutter-cell {
-      color: ${({ theme }) => theme.ksqlDb.query.editor.content.color};
+      color: ${({ theme }) => theme.default.color.normal};
     }
     .ace_variable {
       color: ${({ theme }) => theme.ksqlDb.query.editor.variable};

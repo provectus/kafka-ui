@@ -19,7 +19,7 @@ export const KSQLInputsWrapper = styled.div`
 export const KSQLInputHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  color: ${({ theme }) => theme.ksqlDb.label};
+  color: ${({ theme }) => theme.default.color.normal};
 `;
 
 export const KSQLButtons = styled.div`
@@ -32,6 +32,7 @@ export const StreamPropertiesContainer = styled.label`
   flex-direction: column;
   gap: 10px;
   width: 50%;
+  color: ${({ theme }) => theme.default.color.normal};
 `;
 
 export const InputsContainer = styled.div`
@@ -53,6 +54,8 @@ export const StreamPropertiesInputWrapper = styled.div`
     border-radius: 4px;
     font-size: 16px;
     padding-left: 15px;
+    background-color: ${({ theme }) => theme.input.backgroundColor.normal};
+    color: ${({ theme }) => theme.input.color.normal};
   }
 `;
 
@@ -74,11 +77,12 @@ export const SQLEditor = styled(BaseSQLEditor)(
     css`
       background: ${readOnly && theme.ksqlDb.query.editor.readonly.background};
       .ace-cursor {
-        ${readOnly && theme.ksqlDb.query.editor.readonly.cursor}
+        ${readOnly && `background: ${theme.default.transparentColor} `}
       }
+
       .ace_content {
-        background-color: ${theme.ksqlDb.query.editor.content.backgroundColor};
-        color: ${theme.ksqlDb.query.editor.content.color};
+        background-color: ${theme.default.backgroundColor};
+        color: ${theme.default.color.normal};
       }
       .ace_line {
         background-color: ${theme.ksqlDb.query.editor.activeLine
@@ -89,7 +93,7 @@ export const SQLEditor = styled(BaseSQLEditor)(
       }
       .ace_gutter-layer {
         background-color: ${theme.ksqlDb.query.editor.layer.backgroundColor};
-        color: ${theme.ksqlDb.query.editor.layer.color};
+        color: ${theme.default.color.normal};
       }
       .ace_cursor {
         color: ${theme.ksqlDb.query.editor.cursor};

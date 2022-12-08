@@ -14,9 +14,8 @@ const Navbar = styled.nav`
     font-weight: 500;
     font-size: 14px;
     white-space: nowrap;
-    color: ${({ theme }) => theme.primaryTab.color.normal};
-    border-bottom: 1px ${({ theme }) => theme.primaryTab.borderColor.normal}
-      solid;
+    color: ${({ theme }) => theme.default.transparentColor};
+    border-bottom: 1px ${({ theme }) => theme.default.transparentColor} solid;
     &.is-active {
       border-bottom: 1px ${({ theme }) => theme.primaryTab.borderColor.active}
         solid;
@@ -28,9 +27,8 @@ const Navbar = styled.nav`
       cursor: not-allowed;
     }
     &:hover:not(.is-active, .is-disabled) {
-      border-bottom: 1px ${({ theme }) => theme.primaryTab.borderColor.hover}
-        solid;
-      color: ${({ theme }) => theme.primaryTab.color.hover};
+      border-bottom: 1px ${({ theme }) => theme.default.transparentColor} solid;
+      color: ${({ theme }) => theme.default.transparentColor};
     }
   }
 `;
