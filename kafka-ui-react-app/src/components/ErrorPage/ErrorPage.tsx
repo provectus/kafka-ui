@@ -11,7 +11,7 @@ interface Props {
 
 const ErrorPage: React.FC<Props> = ({
   status = 404,
-  text = 'Page not found',
+  text = 'Page is not found',
   btnText = 'Go Back to Dashboard',
 }) => {
   return (
