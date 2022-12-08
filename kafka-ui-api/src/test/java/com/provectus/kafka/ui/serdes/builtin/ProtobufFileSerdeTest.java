@@ -10,6 +10,7 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.util.JsonFormat;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.Serde;
+import com.squareup.wire.schema.Location;
 import com.squareup.wire.schema.Schema;
 import com.squareup.wire.schema.internal.parser.ProtoFileElement;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
@@ -50,7 +51,11 @@ class ProtobufFileSerdeTest {
     addressBookSchemaPath = ResourceUtils.getFile("classpath:protobuf-example/address-book.proto").toPath();
     sensorSchemaPath = ResourceUtils.getFile("classpath:iot").toPath();
 
-    Schema schema = ProtobufFileSerde.loadSchema(List.of(addressBookSchemaPath, sensorSchemaPath));
+    List<Location> locations = List.of(
+        ProtobufFileSerde.toLocation(addressBookSchemaPath.toString()),
+        ProtobufFileSerde.toLocation(sensorSchemaPath.toString())
+    );
+    Schema schema = ProtobufFileSerde.loadSchema(locations);
     Map<String, ProtoFileElement> dependencies = ProtobufFileSerde.protoFileElementsByName(schema);
 
     ProtobufSchema addressBookSchema =
@@ -331,11 +336,45 @@ class ProtobufFileSerdeTest {
         .thenReturn(Optional.of("iot.Sensor"));
 
     Map<String, String> protobufMessageNameByTopic = Map.of("sensors", "iot.Sensor");
+
     when(resolver.getMapProperty("protobufMessageNameByTopic", String.class, String.class))
         .thenReturn(Optional.of(protobufMessageNameByTopic));
 
     var serde = new ProtobufFileSerde();
     serde.configure(resolver, resolver, resolver);
+
+    var deserializedSensor = serde.deserializer("sensors", Serde.Target.VALUE)
+        .deserialize(null, sensorMessageBytes);
+    assertJsonEquals(sampleSensorMsgJson, deserializedSensor.getResult());
+  }
+
+  @Test
+  void worksWithZipArchives() throws Exception {
+    String archivePath = ResourceUtils.getFile("classpath:protos.zip").toString();
+    PropertyResolver resolver = mock(PropertyResolver.class);
+    List<String> protoFiles = List.of(
+        archivePath + ":address-book.proto",
+        archivePath + ":iot/sensor.proto",
+        archivePath + ":language/language.proto"
+    );
+    when(resolver.getListProperty("protobufFiles", String.class))
+        .thenReturn(Optional.of(protoFiles));
+    when(resolver.getProperty("protobufMessageName", String.class))
+        .thenReturn(Optional.of("test.AddressBook"));
+
+    Map<String, String> protobufMessageNameByTopic = Map.of(
+        "persons", "test.Person",
+        "books", "test.AddressBook",
+        "sensors", "iot.Sensor");
+    when(resolver.getMapProperty("protobufMessageNameByTopic", String.class, String.class))
+        .thenReturn(Optional.of(protobufMessageNameByTopic));
+
+    var serde = new ProtobufFileSerde();
+    serde.configure(resolver, resolver, resolver);
+
+    var deserializedPerson = serde.deserializer("persons", Serde.Target.VALUE)
+        .deserialize(null, personMessageBytes);
+    assertJsonEquals(samplePersonMsgJson, deserializedPerson.getResult());
 
     var deserializedSensor = serde.deserializer("sensors", Serde.Target.VALUE)
         .deserialize(null, sensorMessageBytes);

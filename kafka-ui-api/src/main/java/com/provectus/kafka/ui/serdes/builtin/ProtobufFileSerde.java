@@ -78,8 +78,8 @@ public class ProtobufFileSerde implements BuiltInSerde {
   }
 
   private void configure(PropertyResolver properties) {
-    Collection<Path> paths = joinPathProperties(properties);
-    Schema schema = loadSchema(paths);
+    List<Location> locations = getProtobufLocations(properties);
+    Schema schema = loadSchema(locations);
 
     Map<Path, ProtobufSchema> protobufSchemas = schema.getProtoFiles().stream()
         .map(protoFile -> {
@@ -149,13 +149,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
   }
 
   @VisibleForTesting
-  static Schema loadSchema(Collection<Path> paths) {
-    List<Location> locations = paths.stream()
-        .distinct()
-        .map(ProtobufFileSerde::toLocation)
-        .filter(Objects::nonNull)
-        .toList();
-
+  static Schema loadSchema(List<Location> locations) {
     SchemaLoader schemaLoader = new SchemaLoader(FileSystems.getDefault());
     schemaLoader.setLoadExhaustively(true);
     schemaLoader.setPermitPackageCycles(true);
@@ -194,14 +188,39 @@ public class ProtobufFileSerde implements BuiltInSerde {
         .forEach(entry -> descriptorPaths.put(entry.getKey(), entry.getValue()));
   }
 
-  private static List<Path> joinPathProperties(PropertyResolver propertyResolver) {
+  @VisibleForTesting
+  static List<Location> getProtobufLocations(PropertyResolver propertyResolver) {
     return Stream.concat(
             propertyResolver.getProperty("protobufFile", String.class).map(List::of).stream(),
             propertyResolver.getListProperty("protobufFiles", String.class).stream())
         .flatMap(Collection::stream)
+        .map(ProtobufFileSerde::toLocation)
+        .filter(Objects::nonNull)
         .distinct()
-        .map(Path::of)
         .collect(Collectors.toList());
+  }
+
+  @VisibleForTesting
+  @Nullable
+  static Location toLocation(String s) {
+    int idx = s.indexOf(':');
+    if (idx > -1) {
+      String base = s.substring(0, idx);
+      String path = s.substring(idx + 1);
+
+      return Location.get(base, path);
+    } else {
+      Path path = Path.of(s);
+
+      if (Files.isDirectory(path)) {
+        return Location.get(s);
+      }
+
+      if (Files.isRegularFile(path)) {
+        return Location.get(path.getParent().toString(), path.getFileName().toString());
+      }
+    }
+    return null;
   }
 
   private static Map.Entry<Descriptor, Path> getDescriptorAndPath(Map<Path, ProtobufSchema> protobufSchemas,
@@ -212,14 +231,6 @@ public class ProtobufFileSerde implements BuiltInSerde {
             .findFirst()
             .orElseThrow(() -> new NullPointerException(
                     "The given message type not found in protobuf definition: " + msgName));
-  }
-
-  private static String readFileAsString(Path path) {
-    try {
-      return Files.readString(path);
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
   }
 
   private Map<String, Descriptor> populateDescriptors(Map<String, Descriptor> descriptorMap,
