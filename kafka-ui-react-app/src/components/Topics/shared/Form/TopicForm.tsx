@@ -158,21 +158,23 @@ const TopicForm: React.FC<Props> = ({
               <ErrorMessage errors={errors} name="minInSyncReplicas" />
             </FormError>
           </div>
-          <div>
-            <InputLabel htmlFor="topicFormReplicationFactor">
-              Replication Factor
-            </InputLabel>
-            <Input
-              id="topicFormReplicationFactor"
-              type="number"
-              placeholder="Replication Factor"
-              min="1"
-              name="replicationFactor"
-            />
-            <FormError>
-              <ErrorMessage errors={errors} name="replicationFactor" />
-            </FormError>
-          </div>
+          {!isEditing && (
+            <div>
+              <InputLabel htmlFor="topicFormReplicationFactor">
+                Replication Factor
+              </InputLabel>
+              <Input
+                id="topicFormReplicationFactor"
+                type="number"
+                placeholder="Replication Factor"
+                min="1"
+                name="replicationFactor"
+              />
+              <FormError>
+                <ErrorMessage errors={errors} name="replicationFactor" />
+              </FormError>
+            </div>
+          )}
         </S.Column>
 
         <S.Column>
