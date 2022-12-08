@@ -78,31 +78,14 @@ public class ProtobufFileSerde implements BuiltInSerde {
   }
 
   private void configure(PropertyResolver properties) {
-    List<Location> locations = joinPathProperties(properties).stream()
-        .map(ProtobufFileSerde::toLocation)
-        .filter(Objects::nonNull)
-        .distinct()
-        .toList();
-
-    SchemaLoader schemaLoader = new SchemaLoader(FileSystems.getDefault());
-    schemaLoader.setLoadExhaustively(true);
-    schemaLoader.setPermitPackageCycles(true);
-    schemaLoader.initRoots(locations, List.of());
-
-    final Schema schema;
-    try {
-      schema = schemaLoader.loadSchema();
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
-
-    Map<String, ProtoFileElement> dependencies = schema.getProtoFiles().stream()
-        .collect(Collectors.toMap(ProtoFile::toString, ProtoFile::toElement));
+    Collection<Path> paths = joinPathProperties(properties);
+    Schema schema = loadSchema(paths);
 
     Map<Path, ProtobufSchema> protobufSchemas = schema.getProtoFiles().stream()
         .map(protoFile -> {
           Location location = protoFile.getLocation();
-          ProtobufSchema protobufSchema = new ProtobufSchema(protoFile.toElement(), List.of(), dependencies);
+          ProtobufSchema protobufSchema =
+              new ProtobufSchema(protoFile.toElement(), List.of(), protoFileElementsByName(schema));
           return Map.entry(Paths.get(location.getBase(), location.getPath()), protobufSchema);
         }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
@@ -157,6 +140,32 @@ public class ProtobufFileSerde implements BuiltInSerde {
     this.descriptorPaths = descriptorPaths;
     this.messageDescriptorMap = messageDescriptorMap;
     this.keyMessageDescriptorMap = keyMessageDescriptorMap;
+  }
+
+  @VisibleForTesting
+  static Map<String, ProtoFileElement> protoFileElementsByName(Schema schema) {
+    return schema.getProtoFiles().stream()
+        .collect(Collectors.toMap(ProtoFile::toString, ProtoFile::toElement));
+  }
+
+  @VisibleForTesting
+  static Schema loadSchema(Collection<Path> paths) {
+    List<Location> locations = paths.stream()
+        .distinct()
+        .map(ProtobufFileSerde::toLocation)
+        .filter(Objects::nonNull)
+        .toList();
+
+    SchemaLoader schemaLoader = new SchemaLoader(FileSystems.getDefault());
+    schemaLoader.setLoadExhaustively(true);
+    schemaLoader.setPermitPackageCycles(true);
+    schemaLoader.initRoots(locations, List.of());
+
+    try {
+      return schemaLoader.loadSchema();
+    } catch (IOException e) {
+      throw new UncheckedIOException("Error while loading Protobuf schema", e);
+    }
   }
 
   @Nullable

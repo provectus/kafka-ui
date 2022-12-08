@@ -10,19 +10,13 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.util.JsonFormat;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.Serde;
-import com.squareup.wire.schema.Location;
-import com.squareup.wire.schema.ProtoFile;
 import com.squareup.wire.schema.Schema;
-import com.squareup.wire.schema.SchemaLoader;
 import com.squareup.wire.schema.internal.parser.ProtoFileElement;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,24 +48,10 @@ class ProtobufFileSerdeTest {
   @BeforeEach
   void setUp() throws Exception {
     addressBookSchemaPath = ResourceUtils.getFile("classpath:protobuf-example/address-book.proto").toPath();
-    sensorSchemaPath = ResourceUtils.getFile("classpath:iot/sensor.proto").toPath();
+    sensorSchemaPath = ResourceUtils.getFile("classpath:iot").toPath();
 
-    SchemaLoader schemaLoader = new SchemaLoader(FileSystems.getDefault());
-    schemaLoader.setLoadExhaustively(true);
-    schemaLoader.setPermitPackageCycles(true);
-    schemaLoader.initRoots(
-        List.of(
-            sourceLocation(addressBookSchemaPath),
-            sourceLocation(sensorSchemaPath)
-        ),
-        Stream.of(
-            protoLocation(addressBookSchemaPath),
-            protoLocation(sensorSchemaPath)
-        ).distinct().toList()
-    );
-    Schema schema = schemaLoader.loadSchema();
-    Map<String, ProtoFileElement> dependencies =
-        schema.getProtoFiles().stream().collect(Collectors.toMap(ProtoFile::toString, ProtoFile::toElement));
+    Schema schema = ProtobufFileSerde.loadSchema(List.of(addressBookSchemaPath, sensorSchemaPath));
+    Map<String, ProtoFileElement> dependencies = ProtobufFileSerde.protoFileElementsByName(schema);
 
     ProtobufSchema addressBookSchema =
         new ProtobufSchema(schema.protoFile("address-book.proto").toElement(), List.of(), dependencies);
@@ -97,14 +77,6 @@ class ProtobufFileSerdeTest {
         addressBookDescriptor, addressBookSchemaPath,
         sensorDescriptor, sensorSchemaPath
     );
-  }
-
-  private Location sourceLocation(Path path) {
-    return Location.get(path.getParent().toString(), path.getFileName().toString());
-  }
-
-  private Location protoLocation(Path path) {
-    return Location.get(path.getParent().toString());
   }
 
   @Test
@@ -324,7 +296,7 @@ class ProtobufFileSerdeTest {
     when(resolver.getProperty("protobufFile", String.class))
         .thenReturn(Optional.of(addressBookSchemaPath.toString()));
     when(resolver.getListProperty("protobufFiles", String.class))
-        .thenReturn(Optional.of(List.of(sensorSchemaPath.getParent().toString())));
+        .thenReturn(Optional.of(List.of(sensorSchemaPath.toString())));
     when(resolver.getProperty("protobufMessageName", String.class))
         .thenReturn(Optional.of("test.AddressBook"));
 
@@ -374,7 +346,7 @@ class ProtobufFileSerdeTest {
   void unknownSchemaAsDefaultThrowsException() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getListProperty("protobufFiles", String.class))
-        .thenReturn(Optional.of(List.of(addressBookSchemaPath.toString(), sensorSchemaPath.getParent().toString())));
+        .thenReturn(Optional.of(List.of(addressBookSchemaPath.toString(), sensorSchemaPath.toString())));
     when(resolver.getProperty("protobufMessageName", String.class))
         .thenReturn(Optional.of("test.NotExistent"));
 
@@ -388,7 +360,7 @@ class ProtobufFileSerdeTest {
   void unknownSchemaAsDefaultForKeyThrowsException() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getListProperty("protobufFiles", String.class))
-        .thenReturn(Optional.of(List.of(addressBookSchemaPath.toString(), sensorSchemaPath.getParent().toString())));
+        .thenReturn(Optional.of(List.of(addressBookSchemaPath.toString(), sensorSchemaPath.toString())));
     when(resolver.getProperty("protobufMessageName", String.class))
         .thenReturn(Optional.of("test.AddressBook"));
     when(resolver.getProperty("protobufMessageNameForKey", String.class))
@@ -404,7 +376,7 @@ class ProtobufFileSerdeTest {
   void unknownSchemaAsTopicSchemaThrowsException() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getListProperty("protobufFiles", String.class))
-        .thenReturn(Optional.of(List.of(addressBookSchemaPath.toString(), sensorSchemaPath.getParent().toString())));
+        .thenReturn(Optional.of(List.of(addressBookSchemaPath.toString(), sensorSchemaPath.toString())));
     when(resolver.getProperty("protobufMessageName", String.class))
         .thenReturn(Optional.of("test.AddressBook"));
 
@@ -421,7 +393,7 @@ class ProtobufFileSerdeTest {
   void unknownSchemaAsTopicSchemaForKeyThrowsException() {
     PropertyResolver resolver = mock(PropertyResolver.class);
     when(resolver.getListProperty("protobufFiles", String.class))
-        .thenReturn(Optional.of(List.of(addressBookSchemaPath.toString(), sensorSchemaPath.getParent().toString())));
+        .thenReturn(Optional.of(List.of(addressBookSchemaPath.toString(), sensorSchemaPath.toString())));
     when(resolver.getProperty("protobufMessageName", String.class))
         .thenReturn(Optional.of("test.AddressBook"));
 
