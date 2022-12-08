@@ -35,10 +35,6 @@ jobs:
       - name: Terraform Install
         uses: hashicorp/setup-terraform@v2
 
-      - name: Terraform format
-        id: fmt
-        run: cd $TF_DIR && terraform fmt -check
-
       - name: Terraform init
         id: init
         run: cd $TF_DIR && terraform init --backend-config="../envs/pro/terraform-backend.tfvars"

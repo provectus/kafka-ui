@@ -1,20 +1,18 @@
 package com.provectus.kafka.ui.pages.topic;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$$x;
-import static com.codeborne.selenide.Selenide.$x;
-import static org.apache.commons.lang.math.RandomUtils.nextInt;
-
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
+import org.openqa.selenium.By;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.openqa.selenium.By;
+
+import static com.codeborne.selenide.Selenide.*;
+import static org.apache.commons.lang.math.RandomUtils.nextInt;
 
 public class TopicDetails extends BasePage {
 
@@ -30,6 +28,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement displayNameInputAddFilterMdl = $x("//input[@placeholder='Enter Name']");
   protected SelenideElement cancelBtnAddFilterMdl = $x("//button[text()='Cancel']");
   protected SelenideElement addFilterBtnAddFilterMdl = $x("//button[text()='Add filter']");
+  protected SelenideElement selectFilterBtnAddFilterMdl = $x("//button[text()='Select filter']");
   protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
   protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
   protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
@@ -43,6 +42,7 @@ public class TopicDetails extends BasePage {
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
   protected String activeFilterNameLocator = "//div[@data-testid='activeSmartFilter'][contains(text(),'%s')]";
+  protected String settingsGridValueLocator = "//tbody/tr/td/span[text()='%s']//ancestor::tr/td[2]/span";
 
   @Step
   public TopicDetails waitUntilScreenReady() {
@@ -56,6 +56,11 @@ public class TopicDetails extends BasePage {
     $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
     waitUntilSpinnerDisappear();
     return this;
+  }
+
+  @Step
+  public String getSettingsGridValueByKey(String key){
+    return $x(String.format(settingsGridValueLocator, key)).scrollTo().shouldBe(Condition.visible).getText();
   }
 
   @Step
@@ -131,6 +136,19 @@ public class TopicDetails extends BasePage {
   @Step
   public boolean isFilterVisibleAtSavedFiltersMdl(String filterName){
     return isVisible($x(String.format(savedFilterNameLocator,filterName)));
+  }
+
+  @Step
+  public TopicDetails selectFilterAtSavedFiltersMdl(String filterName){
+    $x(String.format(savedFilterNameLocator, filterName)).shouldBe(Condition.enabled).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickSelectFilterBtnAtSavedFiltersMdl(){
+    selectFilterBtnAddFilterMdl.shouldBe(Condition.enabled).click();
+    addFilterCodeModalTitle.shouldBe(Condition.disappear);
+    return this;
   }
 
   @Step
