@@ -109,7 +109,11 @@ const Filters: React.FC<FiltersProps> = ({
   );
 
   const [currentSeekType, setCurrentSeekType] = React.useState<SeekType>(
-    (searchParams.get('seekType') as SeekType) || SeekType.OFFSET
+    SeekTypeOptions.find(
+      (ele) => ele.value === (searchParams.get('seekType') as SeekType)
+    ) !== undefined
+      ? (searchParams.get('seekType') as SeekType)
+      : SeekType.OFFSET
   );
   const [offset, setOffset] = React.useState<string>(
     getOffsetFromSeekToParam(searchParams)
@@ -424,7 +428,7 @@ const Filters: React.FC<FiltersProps> = ({
                   onChange={(date: Date | null) => setTimestamp(date)}
                   showTimeInput
                   timeInputLabel="Time:"
-                  dateFormat="MMMM d, yyyy HH:mm"
+                  dateFormat="MMM d, yyyy HH:mm"
                   placeholderText="Select timestamp"
                   disabled={isTailing}
                 />

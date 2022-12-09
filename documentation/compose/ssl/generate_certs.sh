@@ -144,7 +144,8 @@ echo "Now the trust store's private key (CA) will sign the keystore's certificat
 echo
 openssl x509 -req -CA $CA_CERT_FILE -CAkey $trust_store_private_key_file \
   -in $KEYSTORE_SIGN_REQUEST -out $KEYSTORE_SIGNED_CERT \
-  -days $VALIDITY_IN_DAYS -CAcreateserial
+  -days $VALIDITY_IN_DAYS -CAcreateserial \
+  -extensions kafka -extfile san.cnf
 # creates $KEYSTORE_SIGN_REQUEST_SRL which is never used or needed.
 
 echo
