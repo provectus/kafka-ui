@@ -30,6 +30,7 @@ export async function canCreateResourceWithAlert(
     return false;
   }
 }
+
 export function useGetUserInfo() {
   return useQuery(
     ['userInfo'],
