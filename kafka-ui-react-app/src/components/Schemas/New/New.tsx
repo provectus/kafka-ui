@@ -32,6 +32,24 @@ const SchemaTypeOptions: Array<SelectOption> = [
   { value: SchemaType.PROTOBUF, label: 'PROTOBUF' },
 ];
 
+const schemaCreate = async (
+  { subject, schema, schemaType }: NewSchemaSubjectRaw,
+  clusterName: string
+) => {
+  const result = await canCreateResourceWithAlert({
+    resource: ResourceType.SCHEMA,
+    resourceName: subject,
+    clusterName,
+  });
+
+  if (!result) throw new Error('No Permission');
+
+  return schemasApiClient.createNewSchema({
+    clusterName,
+    newSchemaSubject: { subject, schema, schemaType },
+  });
+};
+
 const New: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const navigate = useNavigate();
@@ -55,18 +73,10 @@ const New: React.FC = () => {
     schemaType,
   }: NewSchemaSubjectRaw) => {
     try {
-      const result = await canCreateResourceWithAlert({
-        resource: ResourceType.SCHEMA,
-        resourceName: subject,
-        clusterName,
-      });
-
-      if (!result) return;
-
-      const resp = await schemasApiClient.createNewSchema({
-        clusterName,
-        newSchemaSubject: { subject, schema, schemaType },
-      });
+      const resp = await schemaCreate(
+        { subject, schema, schemaType } as NewSchemaSubjectRaw,
+        clusterName
+      );
       dispatch(schemaAdded(resp));
       navigate(clusterSchemaPath(clusterName, subject));
     } catch (e) {

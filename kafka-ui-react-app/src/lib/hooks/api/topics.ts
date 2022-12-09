@@ -14,12 +14,15 @@ import {
   CreateTopicMessage,
   GetTopicDetailsRequest,
   GetTopicsRequest,
+  ResourceType,
   Topic,
   TopicConfig,
   TopicCreation,
   TopicUpdate,
 } from 'generated-sources';
 import { showServerError, showSuccessAlert } from 'lib/errorHandling';
+
+import { canCreateResourceWithAlert } from './roles';
 
 export const topicKeys = {
   all: (clusterName: ClusterName) =>
@@ -97,7 +100,7 @@ const formatTopicCreation = (form: TopicFormData): TopicCreation => {
   };
 };
 
-export function useCreateTopic(clusterName: ClusterName) {
+export function useCreateTopicMutation(clusterName: ClusterName) {
   const client = useQueryClient();
   return useMutation(
     (data: TopicFormData) =>
@@ -114,6 +117,24 @@ export function useCreateTopic(clusterName: ClusterName) {
       },
     }
   );
+}
+
+export function useCreateTopic(clusterName: ClusterName) {
+  const mutate = useCreateTopicMutation(clusterName);
+
+  return {
+    createResource: async (param: TopicFormData) => {
+      const result = canCreateResourceWithAlert({
+        resource: ResourceType.TOPIC,
+        resourceName: param.name,
+        clusterName,
+      });
+      if (!result) throw new Error('No Permission');
+
+      return mutate.mutateAsync(param);
+    },
+    ...mutate,
+  };
 }
 
 const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {

@@ -39,7 +39,7 @@ const createTopicMock = jest.fn();
 describe('New', () => {
   beforeEach(() => {
     (useCreateTopic as jest.Mock).mockImplementation(() => ({
-      mutateAsync: createTopicMock,
+      createResource: createTopicMock,
     }));
   });
   afterEach(() => {

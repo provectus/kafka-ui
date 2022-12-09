@@ -3,12 +3,15 @@ import {
   Connector,
   ConnectorAction,
   NewConnector,
+  ResourceType,
 } from 'generated-sources';
 import { kafkaConnectApiClient as api } from 'lib/api';
 import sortBy from 'lodash/sortBy';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ClusterName } from 'redux/interfaces';
 import { showSuccessAlert } from 'lib/errorHandling';
+
+import { canCreateResourceWithAlert } from './roles';
 
 interface UseConnectorProps {
   clusterName: ClusterName;
@@ -109,7 +112,7 @@ export function useUpdateConnectorConfig(props: UseConnectorProps) {
     }
   );
 }
-export function useCreateConnector(clusterName: ClusterName) {
+export function useCreateConnectorMutation(clusterName: ClusterName) {
   const client = useQueryClient();
   return useMutation(
     (props: CreateConnectorProps) =>
@@ -119,6 +122,25 @@ export function useCreateConnector(clusterName: ClusterName) {
     }
   );
 }
+
+export function useCreateConnector(clusterName: ClusterName) {
+  const mutate = useCreateConnectorMutation(clusterName);
+
+  return {
+    createResource: async (param: CreateConnectorProps) => {
+      const result = canCreateResourceWithAlert({
+        resource: ResourceType.CONNECT,
+        resourceName: param.newConnector.name,
+        clusterName,
+      });
+      if (!result) throw new Error('No Permission');
+
+      return mutate.mutateAsync(param);
+    },
+    ...mutate,
+  };
+}
+
 export function useDeleteConnector(props: UseConnectorProps) {
   const client = useQueryClient();
 

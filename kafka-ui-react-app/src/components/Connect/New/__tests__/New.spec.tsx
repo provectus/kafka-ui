@@ -10,7 +10,6 @@ import { fireEvent, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ControllerRenderProps } from 'react-hook-form';
 import { useConnects, useCreateConnector } from 'lib/hooks/api/kafkaConnect';
-import { canCreateResourceWithAlert } from 'lib/hooks/api/roles';
 
 jest.mock(
   'components/common/Editor/Editor',
@@ -27,11 +26,6 @@ jest.mock('react-router-dom', () => ({
 jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useConnects: jest.fn(),
   useCreateConnector: jest.fn(),
-}));
-
-jest.mock('lib/hooks/api/roles', () => ({
-  ...jest.requireActual('lib/hooks/api/roles'),
-  canCreateResourceWithAlert: jest.fn(),
 }));
 
 describe('New', () => {
@@ -72,11 +66,8 @@ describe('New', () => {
     const createConnectorMock = jest.fn(() => {
       return Promise.resolve(connector);
     });
-    (canCreateResourceWithAlert as jest.Mock).mockImplementation(() =>
-      Promise.resolve(true)
-    );
     (useCreateConnector as jest.Mock).mockImplementation(() => ({
-      mutateAsync: createConnectorMock,
+      createResource: createConnectorMock,
     }));
     renderComponent();
     await simulateFormSubmit();
