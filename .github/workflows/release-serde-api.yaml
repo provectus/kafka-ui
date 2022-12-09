@@ -1,0 +1,33 @@
+name: Release-serde-api
+on: workflow_dispatch
+
+jobs:
+  release-serde-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'maven'
+
+      - id: install-secret-key
+        name: Install GPG secret key
+        run: |
+          cat <(echo -e "${{ secrets.GPG_PRIVATE_KEY }}") | gpg --batch --import    
+
+      - name: Publish to Maven Central
+        run: |
+          MVN_VERSION=$(curl -s https://search.maven.org/solrsearch/select?q=g:"com.provectus"+AND+a:"kafka-ui-serde-api" | grep -o '"latestVersion": *"[^"]*"' | grep -o '"[^"]*"$' | sed 's/"//g')
+          MVN_VERSION=${MVN_VERSION%.*}.$((${MVN_VERSION##*.}+1))
+          mvn -B -ntp versions:set -DnewVersion=$MVN_VERSION -pl kafka-ui-serde-api
+          mvn source:jar  javadoc:jar  package  gpg:sign -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} -Dserver.username=${{ secrets.NEXUS_USERNAME }} -Dserver.password=${{ secrets.NEXUS_PASSWORD }} -Dversion= nexus-staging:deploy   -pl kafka-ui-serde-api  -s settings.xml
