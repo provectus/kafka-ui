@@ -581,6 +581,9 @@ const theme = {
   statictics: {
     createdAtColor: Colors.neutral[50],
   },
+  errorPage: {
+    text: Colors.blue[45],
+  },
 };
 
 export type ThemeType = typeof theme;
