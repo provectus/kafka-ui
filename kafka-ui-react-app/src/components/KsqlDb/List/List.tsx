@@ -16,7 +16,7 @@ import Navbar from 'components/common/Navigation/Navbar.styled';
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
-import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import { Action, ResourceType } from 'generated-sources';
 
 import KsqlDbItem, { KsqlDbItemType } from './KsqlDbItem/KsqlDbItem';
 
@@ -39,7 +39,7 @@ const List: FC = () => {
           buttonType="primary"
           buttonSize="M"
           permission={{
-            resource: UserPermissionResourceEnum.KSQL,
+            resource: ResourceType.KSQL,
             action: Action.EXECUTE,
           }}
         >

@@ -6,7 +6,7 @@ import {
   Action,
   ConnectorAction,
   ConnectorState,
-  UserPermissionResourceEnum,
+  ResourceType,
 } from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
 import {
@@ -75,7 +75,7 @@ const Actions: React.FC = () => {
             onClick={pauseConnectorHandler}
             disabled={isMutating}
             permission={{
-              resource: UserPermissionResourceEnum.CONNECT,
+              resource: ResourceType.CONNECT,
               action: Action.EDIT,
               value: routerProps.connectorName,
             }}
@@ -88,7 +88,7 @@ const Actions: React.FC = () => {
             onClick={resumeConnectorHandler}
             disabled={isMutating}
             permission={{
-              resource: UserPermissionResourceEnum.CONNECT,
+              resource: ResourceType.CONNECT,
               action: Action.EDIT,
               value: routerProps.connectorName,
             }}
@@ -100,7 +100,7 @@ const Actions: React.FC = () => {
           onClick={restartConnectorHandler}
           disabled={isMutating}
           permission={{
-            resource: UserPermissionResourceEnum.CONNECT,
+            resource: ResourceType.CONNECT,
             action: Action.EDIT,
             value: routerProps.connectorName,
           }}
@@ -111,7 +111,7 @@ const Actions: React.FC = () => {
           onClick={restartAllTasksHandler}
           disabled={isMutating}
           permission={{
-            resource: UserPermissionResourceEnum.CONNECT,
+            resource: ResourceType.CONNECT,
             action: Action.EDIT,
             value: routerProps.connectorName,
           }}
@@ -122,7 +122,7 @@ const Actions: React.FC = () => {
           onClick={restartFailedTasksHandler}
           disabled={isMutating}
           permission={{
-            resource: UserPermissionResourceEnum.CONNECT,
+            resource: ResourceType.CONNECT,
             action: Action.EDIT,
             value: routerProps.connectorName,
           }}
@@ -134,7 +134,7 @@ const Actions: React.FC = () => {
           disabled={isMutating}
           danger
           permission={{
-            resource: UserPermissionResourceEnum.CONNECT,
+            resource: ResourceType.CONNECT,
             action: Action.DELETE,
             value: routerProps.connectorName,
           }}

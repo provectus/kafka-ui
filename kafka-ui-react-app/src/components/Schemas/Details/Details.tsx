@@ -28,7 +28,7 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { schemasApiClient } from 'lib/api';
 import { Dropdown } from 'components/common/Dropdown';
 import Table from 'components/common/NewTable';
-import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import { Action, ResourceType } from 'generated-sources';
 import {
   ActionButton,
   ActionDropdownItem,
@@ -110,7 +110,7 @@ const Details: React.FC = () => {
               buttonType="primary"
               to={clusterSchemaEditPageRelativePath}
               permission={{
-                resource: UserPermissionResourceEnum.SCHEMA,
+                resource: ResourceType.SCHEMA,
                 action: Action.EDIT,
                 value: subject,
               }}
@@ -127,7 +127,7 @@ const Details: React.FC = () => {
                 onClick={deleteHandler}
                 danger
                 permission={{
-                  resource: UserPermissionResourceEnum.SCHEMA,
+                  resource: ResourceType.SCHEMA,
                   action: Action.DELETE,
                   value: subject,
                 }}

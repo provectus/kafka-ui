@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Action,
   CompatibilityLevelCompatibilityEnum,
-  UserPermissionResourceEnum,
+  ResourceType,
 } from 'generated-sources';
 import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
@@ -93,7 +93,7 @@ const GlobalSchemaSelector: React.FC = () => {
           (level) => ({ value: level, label: level })
         )}
         permission={{
-          resource: UserPermissionResourceEnum.SCHEMA,
+          resource: ResourceType.SCHEMA,
           action: Action.MODIFY_GLOBAL_COMPATIBILITY,
         }}
       />

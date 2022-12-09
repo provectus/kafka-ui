@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { renderHook } from '@testing-library/react';
 import { usePermission } from 'lib/hooks/usePermission';
 import { isPermitted } from 'lib/permissions';
-import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import { Action, ResourceType } from 'generated-sources';
 import {
   UserInfoRolesAccessContext,
   UserInfoType,
@@ -23,7 +23,7 @@ describe('usePermission', () => {
     value,
     userInfo,
   }: {
-    resource: UserPermissionResourceEnum;
+    resource: ResourceType;
     action: Action;
     value?: string;
     userInfo: UserInfoType;
@@ -41,7 +41,7 @@ describe('usePermission', () => {
 
   it('should check if the hook renders the same value as the isPermitted Headless logic method', () => {
     const permissionConfig = {
-      resource: UserPermissionResourceEnum.TOPIC,
+      resource: ResourceType.TOPIC,
       action: Action.CREATE,
       userInfo: {
         roles: modifiedData,
@@ -68,7 +68,7 @@ describe('usePermission', () => {
 
   it('should check if the hook renders the same value as the isPermitted Headless logic method for Schema', () => {
     const permissionConfig = {
-      resource: UserPermissionResourceEnum.SCHEMA,
+      resource: ResourceType.SCHEMA,
       action: Action.CREATE,
       userInfo: {
         roles: modifiedData,
@@ -95,7 +95,7 @@ describe('usePermission', () => {
 
   it('should check if the hook renders the same value as the isPermitted Headless logic method for another Cluster', () => {
     const permissionConfig = {
-      resource: UserPermissionResourceEnum.SCHEMA,
+      resource: ResourceType.SCHEMA,
       action: Action.CREATE,
       userInfo: {
         roles: modifiedData,

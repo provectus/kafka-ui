@@ -8,11 +8,7 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 import { ActionButton } from 'components/common/ActionComponent';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import {
-  Action,
-  ConnectorState,
-  UserPermissionResourceEnum,
-} from 'generated-sources';
+import { Action, ConnectorState, ResourceType } from 'generated-sources';
 import { useConnectors } from 'lib/hooks/api/kafkaConnect';
 
 import List from './List';
@@ -42,7 +38,7 @@ const ListPage: React.FC = () => {
             buttonSize="M"
             to={clusterConnectorNewRelativePath}
             permission={{
-              resource: UserPermissionResourceEnum.CONNECT,
+              resource: ResourceType.CONNECT,
               action: Action.CREATE,
             }}
           >

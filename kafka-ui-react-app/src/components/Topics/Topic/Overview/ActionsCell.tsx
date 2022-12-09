@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  Action,
-  Partition,
-  UserPermissionResourceEnum,
-} from 'generated-sources';
+import { Action, Partition, ResourceType } from 'generated-sources';
 import { CellContext } from '@tanstack/react-table';
 import { useAppDispatch } from 'lib/hooks/redux';
 import ClusterContext from 'components/contexts/ClusterContext';
@@ -34,7 +30,7 @@ const ActionsCell: React.FC<CellContext<Partition, unknown>> = ({ row }) => {
         onClick={clearTopicMessagesHandler}
         danger
         permission={{
-          resource: UserPermissionResourceEnum.TOPIC,
+          resource: ResourceType.TOPIC,
           action: Action.MESSAGES_DELETE,
           value: topicName,
         }}

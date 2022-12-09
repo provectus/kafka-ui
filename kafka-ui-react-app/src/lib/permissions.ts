@@ -1,20 +1,13 @@
-import {
-  Action,
-  UserPermission,
-  UserPermissionResourceEnum,
-} from 'generated-sources';
+import { Action, UserPermission, ResourceType } from 'generated-sources';
 
 export type RolesType = UserPermission[];
 
-export type RolesModifiedTypes = Map<
-  string,
-  Map<UserPermissionResourceEnum, RolesType>
->;
+export type RolesModifiedTypes = Map<string, Map<ResourceType, RolesType>>;
 
 export function modifyRolesData(
   data?: RolesType
-): Map<string, Map<UserPermissionResourceEnum, RolesType>> {
-  const map = new Map<string, Map<UserPermissionResourceEnum, RolesType>>();
+): Map<string, Map<ResourceType, RolesType>> {
+  const map = new Map<string, Map<ResourceType, RolesType>>();
 
   data?.forEach((item) => {
     item.clusters.forEach((name) => {
@@ -39,7 +32,7 @@ export function modifyRolesData(
 
 interface IsPermittedConfig {
   roles?: RolesModifiedTypes;
-  resource: UserPermissionResourceEnum;
+  resource: ResourceType;
   action: Action | Array<Action>;
   clusterName: string;
   value?: string;
@@ -74,7 +67,7 @@ export function isPermitted({
   rbacFlag,
 }: {
   roles?: RolesModifiedTypes;
-  resource: UserPermissionResourceEnum;
+  resource: ResourceType;
   action: Action | Array<Action>;
   clusterName: string;
   value?: string;

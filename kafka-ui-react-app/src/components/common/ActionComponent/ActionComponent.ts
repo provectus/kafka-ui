@@ -1,9 +1,9 @@
 import { Placement } from '@floating-ui/react-dom-interactions';
-import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import { Action, ResourceType } from 'generated-sources';
 
 export interface ActionComponentProps {
   permission: {
-    resource: UserPermissionResourceEnum;
+    resource: ResourceType;
     action: Action | Array<Action>;
     value?: string;
   };

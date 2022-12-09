@@ -22,11 +22,7 @@ import Search from 'components/common/Search/Search';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import Table, { LinkCell } from 'components/common/NewTable';
 import { ColumnDef } from '@tanstack/react-table';
-import {
-  Action,
-  SchemaSubject,
-  UserPermissionResourceEnum,
-} from 'generated-sources';
+import { Action, SchemaSubject, ResourceType } from 'generated-sources';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
 
@@ -88,7 +84,7 @@ const List: React.FC = () => {
               buttonType="primary"
               to={clusterSchemaNewRelativePath}
               permission={{
-                resource: UserPermissionResourceEnum.SCHEMA,
+                resource: ResourceType.SCHEMA,
                 action: Action.CREATE,
               }}
             >

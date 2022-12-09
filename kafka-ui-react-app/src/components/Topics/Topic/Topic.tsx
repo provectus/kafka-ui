@@ -29,11 +29,7 @@ import {
   clearTopicMessages,
   resetTopicMessages,
 } from 'redux/reducers/topicMessages/topicMessagesSlice';
-import {
-  Action,
-  CleanUpPolicy,
-  UserPermissionResourceEnum,
-} from 'generated-sources';
+import { Action, CleanUpPolicy, ResourceType } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import SlidingSidebar from 'components/common/SlidingSidebar';
 import useBoolean from 'lib/hooks/useBoolean';
@@ -89,7 +85,7 @@ const Topic: React.FC = () => {
           onClick={openSidebar}
           disabled={isReadOnly}
           permission={{
-            resource: UserPermissionResourceEnum.TOPIC,
+            resource: ResourceType.TOPIC,
             action: Action.MESSAGES_PRODUCE,
             value: topicName,
           }}
@@ -100,7 +96,7 @@ const Topic: React.FC = () => {
           <ActionDropdownItem
             onClick={() => navigate(clusterTopicEditRelativePath)}
             permission={{
-              resource: UserPermissionResourceEnum.TOPIC,
+              resource: ResourceType.TOPIC,
               action: Action.EDIT,
               value: topicName,
             }}
@@ -121,7 +117,7 @@ const Topic: React.FC = () => {
             disabled={!canCleanup}
             danger
             permission={{
-              resource: UserPermissionResourceEnum.TOPIC,
+              resource: ResourceType.TOPIC,
               action: Action.MESSAGES_DELETE,
               value: topicName,
             }}
@@ -143,7 +139,7 @@ const Topic: React.FC = () => {
             }
             danger
             permission={{
-              resource: UserPermissionResourceEnum.TOPIC,
+              resource: ResourceType.TOPIC,
               action: [Action.MESSAGES_READ, Action.CREATE, Action.DELETE],
               value: topicName,
             }}
@@ -160,7 +156,7 @@ const Topic: React.FC = () => {
             disabled={!isTopicDeletionAllowed}
             danger
             permission={{
-              resource: UserPermissionResourceEnum.TOPIC,
+              resource: ResourceType.TOPIC,
               action: Action.DELETE,
               value: topicName,
             }}
@@ -188,7 +184,7 @@ const Topic: React.FC = () => {
           to={clusterTopicMessagesRelativePath}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
           permission={{
-            resource: UserPermissionResourceEnum.TOPIC,
+            resource: ResourceType.TOPIC,
             action: Action.MESSAGES_READ,
             value: topicName,
           }}

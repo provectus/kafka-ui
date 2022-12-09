@@ -5,7 +5,7 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import { Action, ResourceType } from 'generated-sources';
 import { ActionButton } from 'components/common/ActionComponent';
 
 import * as S from './Statistics.styles';
@@ -30,7 +30,7 @@ const Statistics: React.FC = () => {
                 buttonType="primary"
                 buttonSize="M"
                 permission={{
-                  resource: UserPermissionResourceEnum.TOPIC,
+                  resource: ResourceType.TOPIC,
                   action: Action.MESSAGES_READ,
                   value: params.topicName,
                 }}

@@ -1,16 +1,16 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import { Action, ResourceType } from 'generated-sources';
 
 export const clusterName = 'local';
 
 export const validPermission = {
-  resource: UserPermissionResourceEnum.TOPIC,
+  resource: ResourceType.TOPIC,
   action: Action.CREATE,
 };
 
 export const invalidPermission = {
-  resource: UserPermissionResourceEnum.SCHEMA,
+  resource: ResourceType.SCHEMA,
   action: Action.DELETE,
 };
 

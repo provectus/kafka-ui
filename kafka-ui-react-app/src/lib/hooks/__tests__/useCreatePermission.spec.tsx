@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { renderHook } from '@testing-library/react';
 import { isPermittedToCreate } from 'lib/permissions';
-import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import { Action, ResourceType } from 'generated-sources';
 import {
   UserInfoRolesAccessContext,
   UserInfoType,
@@ -21,7 +21,7 @@ describe('useCreatePermission', () => {
     resource,
     userInfo,
   }: {
-    resource: UserPermissionResourceEnum;
+    resource: ResourceType;
     userInfo: UserInfoType;
   }) =>
     renderHook(() => useCreatePermission(resource), {
@@ -37,7 +37,7 @@ describe('useCreatePermission', () => {
 
   it('should check if the hook renders the same value as the isPermittedToCreate Headless logic method', () => {
     const permissionConfig = {
-      resource: UserPermissionResourceEnum.TOPIC,
+      resource: ResourceType.TOPIC,
       userInfo: {
         roles: modifiedData,
         rbacFlag: true,
@@ -63,7 +63,7 @@ describe('useCreatePermission', () => {
 
   it('should check if the hook renders the same value as the isPermittedToCreate Headless logic method for Schema', () => {
     const permissionConfig = {
-      resource: UserPermissionResourceEnum.SCHEMA,
+      resource: ResourceType.SCHEMA,
       action: Action.CREATE,
       userInfo: {
         roles: modifiedData,
@@ -90,7 +90,7 @@ describe('useCreatePermission', () => {
 
   it('should check if the hook renders the same value as the isPermittedToCreate Headless logic method for another Cluster', () => {
     const permissionConfig = {
-      resource: UserPermissionResourceEnum.SCHEMA,
+      resource: ResourceType.SCHEMA,
       action: Action.CREATE,
       userInfo: {
         roles: modifiedData,

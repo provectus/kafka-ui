@@ -26,7 +26,7 @@ import {
 import getTagColor from 'components/common/Tag/getTagColor';
 import { Dropdown } from 'components/common/Dropdown';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
-import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import { Action, ResourceType } from 'generated-sources';
 import { ActionDropdownItem } from 'components/common/ActionComponent';
 
 import ListItem from './ListItem';
@@ -89,7 +89,7 @@ const Details: React.FC = () => {
               <ActionDropdownItem
                 onClick={onResetOffsets}
                 permission={{
-                  resource: UserPermissionResourceEnum.CONSUMER,
+                  resource: ResourceType.CONSUMER,
                   action: Action.RESET_OFFSETS,
                   value: consumerGroupID,
                 }}
@@ -101,7 +101,7 @@ const Details: React.FC = () => {
                 onClick={onDelete}
                 danger
                 permission={{
-                  resource: UserPermissionResourceEnum.CONSUMER,
+                  resource: ResourceType.CONSUMER,
                   action: Action.DELETE,
                   value: consumerGroupID,
                 }}

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Row } from '@tanstack/react-table';
-import { Action, Topic, UserPermissionResourceEnum } from 'generated-sources';
+import { Action, Topic, ResourceType } from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
 import { ClusterName } from 'redux/interfaces';
 import { topicKeys, useDeleteTopic } from 'lib/hooks/api/topics';
@@ -94,7 +94,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
     return selectedTopics.every((value) =>
       isPermitted({
         roles,
-        resource: UserPermissionResourceEnum.TOPIC,
+        resource: ResourceType.TOPIC,
         action: Action.DELETE,
         value,
         clusterName,
@@ -107,7 +107,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
     return selectedTopics.every((value) =>
       isPermitted({
         roles,
-        resource: UserPermissionResourceEnum.TOPIC,
+        resource: ResourceType.TOPIC,
         action: Action.MESSAGES_DELETE,
         value,
         clusterName,

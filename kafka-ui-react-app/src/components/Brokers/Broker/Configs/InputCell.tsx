@@ -4,11 +4,7 @@ import CheckmarkIcon from 'components/common/Icons/CheckmarkIcon';
 import EditIcon from 'components/common/Icons/EditIcon';
 import CancelIcon from 'components/common/Icons/CancelIcon';
 import { useConfirm } from 'lib/hooks/useConfirm';
-import {
-  Action,
-  BrokerConfig,
-  UserPermissionResourceEnum,
-} from 'generated-sources';
+import { Action, BrokerConfig, ResourceType } from 'generated-sources';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
 import { ActionButton } from 'components/common/ActionComponent';
@@ -82,7 +78,7 @@ const InputCell: React.FC<InputCellProps> = ({ row, getValue, onUpdate }) => {
         aria-label="editAction"
         onClick={() => setIsEdit(true)}
         permission={{
-          resource: UserPermissionResourceEnum.CLUSTERCONFIG,
+          resource: ResourceType.CLUSTERCONFIG,
           action: Action.EDIT,
         }}
       >

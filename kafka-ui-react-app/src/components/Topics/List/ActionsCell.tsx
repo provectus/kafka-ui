@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Action,
-  CleanUpPolicy,
-  Topic,
-  UserPermissionResourceEnum,
-} from 'generated-sources';
+import { Action, CleanUpPolicy, Topic, ResourceType } from 'generated-sources';
 import { CellContext } from '@tanstack/react-table';
 import { useAppDispatch } from 'lib/hooks/redux';
 import ClusterContext from 'components/contexts/ClusterContext';
@@ -55,7 +50,7 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
         confirm="Are you sure want to clear topic messages?"
         danger
         permission={{
-          resource: UserPermissionResourceEnum.TOPIC,
+          resource: ResourceType.TOPIC,
           action: Action.MESSAGES_DELETE,
           value: name,
         }}
@@ -88,7 +83,7 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
         }
         danger
         permission={{
-          resource: UserPermissionResourceEnum.TOPIC,
+          resource: ResourceType.TOPIC,
           action: Action.DELETE,
           value: name,
         }}

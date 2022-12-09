@@ -2,7 +2,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import ActionButton from 'components/common/ActionComponent/ActionButton/ActionButton';
 import { render } from 'lib/testHelpers';
-import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import { Action, ResourceType } from 'generated-sources';
 
 const createText = 'create';
 const otherText = 'create';
@@ -23,7 +23,7 @@ describe('ActionButton', () => {
       <ActionButton
         permission={{
           action: Action.CREATE,
-          resource: UserPermissionResourceEnum.CONNECT,
+          resource: ResourceType.CONNECT,
         }}
         buttonType="secondary"
         buttonSize="S"
@@ -37,7 +37,7 @@ describe('ActionButton', () => {
       <ActionButton
         permission={{
           action: Action.EDIT,
-          resource: UserPermissionResourceEnum.CONNECT,
+          resource: ResourceType.CONNECT,
         }}
         buttonType="secondary"
         buttonSize="S"

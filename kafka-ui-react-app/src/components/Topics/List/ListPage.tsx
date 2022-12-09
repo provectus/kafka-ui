@@ -11,7 +11,7 @@ import Switch from 'components/common/Switch/Switch';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import TopicTable from 'components/Topics/List/TopicTable';
-import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import { Action, ResourceType } from 'generated-sources';
 
 const ListPage: React.FC = () => {
   const { isReadOnly } = React.useContext(ClusterContext);
@@ -53,7 +53,7 @@ const ListPage: React.FC = () => {
             buttonSize="M"
             to={clusterTopicNewRelativePath}
             permission={{
-              resource: UserPermissionResourceEnum.TOPIC,
+              resource: ResourceType.TOPIC,
               action: Action.CREATE,
             }}
           >

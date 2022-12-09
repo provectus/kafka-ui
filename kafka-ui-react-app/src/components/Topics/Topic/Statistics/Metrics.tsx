@@ -15,7 +15,7 @@ import {
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 import { calculateTimer } from 'lib/dateTimeHelpers';
-import { Action, UserPermissionResourceEnum } from 'generated-sources';
+import { Action, ResourceType } from 'generated-sources';
 import { ActionButton } from 'components/common/ActionComponent';
 
 import * as S from './Statistics.styles';
@@ -59,7 +59,7 @@ const Metrics: React.FC = () => {
           buttonType="primary"
           buttonSize="M"
           permission={{
-            resource: UserPermissionResourceEnum.TOPIC,
+            resource: ResourceType.TOPIC,
             action: Action.MESSAGES_READ,
             value: params.topicName,
           }}
@@ -101,7 +101,7 @@ const Metrics: React.FC = () => {
           buttonType="primary"
           buttonSize="S"
           permission={{
-            resource: UserPermissionResourceEnum.TOPIC,
+            resource: ResourceType.TOPIC,
             action: Action.MESSAGES_READ,
             value: params.topicName,
           }}
