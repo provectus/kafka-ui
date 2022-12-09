@@ -113,9 +113,7 @@ public class TopicCreateEditForm extends BasePage {
   @Step
   public TopicCreateEditForm setNumberOfPartitions(int partitions) {
     partitionsField.shouldBe(Condition.enabled).clear();
-    if (partitions != 0) {
-      partitionsField.sendKeys(String.valueOf(partitions));
-    }
+    partitionsField.sendKeys(String.valueOf(partitions));
     return this;
   }
 
