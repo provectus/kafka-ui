@@ -1,6 +1,11 @@
 import React, { Suspense, useCallback } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
-import { clusterPath, getNonExactPath } from 'lib/paths';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import {
+  accessErrorPage,
+  clusterPath,
+  errorPage,
+  getNonExactPath,
+} from 'lib/paths';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
@@ -20,6 +25,7 @@ import DiscordIcon from 'components/common/Icons/DiscordIcon';
 import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
 import { ConfirmContextProvider } from './contexts/ConfirmContext';
 import { GlobalSettingsProvider } from './contexts/GlobalSettingsContext';
+import ErrorPage from './ErrorPage/ErrorPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -122,6 +128,15 @@ const App: React.FC = () => {
                   <Route
                     path={getNonExactPath(clusterPath())}
                     element={<ClusterPage />}
+                  />
+                  <Route
+                    path={accessErrorPage}
+                    element={<ErrorPage status={403} text="Access is Denied" />}
+                  />
+                  <Route path={errorPage} element={<ErrorPage />} />
+                  <Route
+                    path="*"
+                    element={<Navigate to={errorPage} replace />}
                   />
                 </Routes>
               </S.Container>

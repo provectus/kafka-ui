@@ -27,15 +27,19 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class TopicActionsTests extends BaseTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class TopicsTests extends BaseTest {
   private static final long SUITE_ID = 2;
   private static final String SUITE_TITLE = "Topics";
   private static final Topic TOPIC_TO_CREATE = new Topic()
-      .setName("new-topic-"+ randomAlphabetic(5))
+      .setName("new-topic-" + randomAlphabetic(5))
       .setPartitions("1")
       .setCustomParameterType(COMPRESSION_TYPE)
       .setCustomParameterValue("producer")
@@ -63,6 +67,7 @@ public class TopicActionsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(199)
   @Test
+  @Order(1)
   public void createTopic() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -83,8 +88,10 @@ public class TopicActionsTests extends BaseTest {
         .waitUntilScreenReady()
         .openTopic(TOPIC_TO_CREATE.getName());
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicDetails.isTopicHeaderVisible(TOPIC_TO_CREATE.getName())).as("isTopicHeaderVisible()").isTrue();
-    softly.assertThat(topicDetails.getCleanUpPolicy()).as("getCleanUpPolicy()").isEqualTo(TOPIC_TO_CREATE.getCleanupPolicyValue().toString());
+    softly.assertThat(topicDetails.isTopicHeaderVisible(TOPIC_TO_CREATE.getName())).as("isTopicHeaderVisible()")
+        .isTrue();
+    softly.assertThat(topicDetails.getCleanUpPolicy()).as("getCleanUpPolicy()")
+        .isEqualTo(TOPIC_TO_CREATE.getCleanupPolicyValue().toString());
     softly.assertThat(topicDetails.getPartitions()).as("getPartitions()").isEqualTo(TOPIC_TO_CREATE.getPartitions());
     softly.assertAll();
     naviSideBar
@@ -95,6 +102,28 @@ public class TopicActionsTests extends BaseTest {
     TOPIC_LIST.add(TOPIC_TO_CREATE);
   }
 
+  @DisplayName("Checking available operations for selected Topic within 'All Topics' page")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(7)
+  @Test
+  @Order(2)
+  void checkAvailableOperations(){
+    String processingTopic = "my_ksql_1ksql_processing_log";
+    String confluentTopic = "_confluent-ksql-my_ksql_1_command_topic";
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .selectCheckboxByName(processingTopic);
+    topicsList.getActionButtons().
+        forEach(element -> assertThat(element.is(Condition.enabled))
+            .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    topicsList
+        .selectCheckboxByName(confluentTopic);
+    Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(),"isCopySelectedTopicBtnEnabled()");
+  }
+
   @Disabled()
   @Issue("https://github.com/provectus/kafka-ui/issues/2625")
   @DisplayName("should update a topic")
@@ -102,6 +131,7 @@ public class TopicActionsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(197)
   @Test
+  @Order(3)
   public void updateTopic() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -132,10 +162,14 @@ public class TopicActionsTests extends BaseTest {
         .openDotMenu()
         .clickEditSettingsMenu();
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()").isEqualTo(TOPIC_FOR_UPDATE.getCleanupPolicyValue().getVisibleText());
-    softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()").isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
-    softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()").isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk().getVisibleText());
-    softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("getMaxMessageBytes()").isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
+    softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
+        .isEqualTo(TOPIC_FOR_UPDATE.getCleanupPolicyValue().getVisibleText());
+    softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
+        .isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
+    softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()")
+        .isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk().getVisibleText());
+    softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("getMaxMessageBytes()")
+        .isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
     softly.assertAll();
   }
 
@@ -144,6 +178,7 @@ public class TopicActionsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(207)
   @Test
+  @Order(4)
   public void deleteTopic() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -168,6 +203,7 @@ public class TopicActionsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(20)
   @Test
+  @Order(5)
   void redirectToConsumerFromTopic() {
     String topicName = "source-activities";
     String consumerGroupId = "connect-sink_postgres_activities";
@@ -193,6 +229,7 @@ public class TopicActionsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(4)
   @Test
+  @Order(6)
   void checkTopicCreatePossibility() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -213,6 +250,7 @@ public class TopicActionsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(6)
   @Test
+  @Order(7)
   void checkCustomParametersWithinCreateNewTopic() {
     naviSideBar
         .openSideMenu(TOPICS);
@@ -237,7 +275,8 @@ public class TopicActionsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(2)
   @Test
-  void checkTopicListElements(){
+  @Order(8)
+  void checkTopicListElements() {
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
@@ -250,6 +289,46 @@ public class TopicActionsTests extends BaseTest {
         element -> softly.assertThat(element.is(Condition.enabled)).as(element.getSearchCriteria() + " isEnabled()")
             .isTrue());
     softly.assertAll();
+  }
+
+  @DisplayName("Filter adding within Topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(12)
+  @Test
+  @Order(9)
+  void addingNewFilterWithinTopic() {
+    String topicName = "_schemas";
+    String filterName = "123ABC";
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .openTopic(topicName);
+    topicDetails
+        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .clickMessagesAddFiltersBtn()
+        .waitUntilAddFiltersMdlVisible();
+    SoftAssertions softly = new SoftAssertions();
+    topicDetails.getAllAddFilterModalVisibleElements().forEach(element ->
+        softly.assertThat(element.is(Condition.visible))
+            .as(element.getSearchCriteria() + " isVisible()").isTrue());
+    topicDetails.getAllAddFilterModalEnabledElements().forEach(element ->
+        softly.assertThat(element.is(Condition.enabled))
+            .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    topicDetails.getAllAddFilterModalDisabledElements().forEach(element ->
+        softly.assertThat(element.is(Condition.enabled))
+            .as(element.getSearchCriteria() + " isEnabled()").isFalse());
+    softly.assertThat(topicDetails.isSaveThisFilterCheckBoxSelected()).as("isSaveThisFilterCheckBoxSelected()")
+        .isFalse();
+    softly.assertAll();
+    topicDetails
+        .setFilterCodeFieldAddFilterMdl(filterName);
+    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
+        .isTrue();
+    topicDetails.clickAddFilterBtnAddFilterMdl();
+    assertThat(topicDetails.getFilterName()).as("isFilterNameVisible(filterName)")
+        .isEqualTo(filterName);
   }
 
   @AfterAll

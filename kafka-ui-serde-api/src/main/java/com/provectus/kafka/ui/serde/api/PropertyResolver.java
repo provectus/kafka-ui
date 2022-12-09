@@ -6,7 +6,8 @@ import java.util.Optional;
 
 /**
  * Provides access to configuration properties.
- * Actual implementation uses {@code org.springframework.boot.context.properties.bind.Binder} class
+ *
+ * @implNote Actual implementation uses {@code org.springframework.boot.context.properties.bind.Binder} class
  * to bind values to target types. Target type params can be custom configs classes, not only simple types and strings.
  *
  */
