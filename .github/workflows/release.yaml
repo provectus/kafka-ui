@@ -96,5 +96,5 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: provectus/kafka-ui
-          event-type: change-app-version
+          event-type: prepare-helm-release
           client-payload: '{"appversion": "${{ needs.release.outputs.version }}"}'

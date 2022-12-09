@@ -1,7 +1,7 @@
-name: change-app-version
+name: prepare-helm-release
 on:
   repository_dispatch:
-    types: [change-app-version]
+    types: [prepare-helm-release]
 jobs:
   change-app-version:
     runs-on: ubuntu-latest
