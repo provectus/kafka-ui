@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import { NOT_SET, BYTES_IN_GB } from 'lib/constants';
-import { ClusterName, TopicName } from 'redux/interfaces';
+import { ClusterName, TopicConfigParams, TopicName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
 import Select, { SelectOption } from 'components/common/Select/Select';
 import Input from 'components/common/Input/Input';
@@ -18,6 +18,7 @@ import TimeToRetain from './TimeToRetain';
 import * as S from './TopicForm.styled';
 
 export interface Props {
+  config?: TopicConfigParams;
   topicName?: TopicName;
   partitionCount?: number;
   replicationFactor?: number;
@@ -44,14 +45,12 @@ const RetentionBytesOptions: Array<SelectOption> = [
 ];
 
 const TopicForm: React.FC<Props> = ({
+  config,
   retentionBytes,
   topicName,
   isEditing,
   isSubmitting,
   onSubmit,
-  partitionCount,
-  replicationFactor,
-  inSyncReplicas,
   cleanUpPolicy,
 }) => {
   const {
@@ -109,7 +108,6 @@ const TopicForm: React.FC<Props> = ({
                   type="number"
                   placeholder="Number of partitions"
                   min="1"
-                  defaultValue={partitionCount}
                   name="partitions"
                 />
                 <FormError>
@@ -117,20 +115,28 @@ const TopicForm: React.FC<Props> = ({
                 </FormError>
               </div>
               <div>
-                <InputLabel htmlFor="topicFormReplicationFactor">
-                  Replication Factor *
+                <InputLabel
+                  id="topicFormCleanupPolicyLabel"
+                  htmlFor="topicFormCleanupPolicy"
+                >
+                  Cleanup policy
                 </InputLabel>
-                <Input
-                  id="topicFormReplicationFactor"
-                  type="number"
-                  placeholder="Replication Factor"
-                  min="1"
-                  defaultValue={replicationFactor}
-                  name="replicationFactor"
+                <Controller
+                  defaultValue={CleanupPolicyOptions[0].value}
+                  control={control}
+                  name="cleanupPolicy"
+                  render={({ field: { name, onChange } }) => (
+                    <Select
+                      id="topicFormCleanupPolicy"
+                      aria-labelledby="topicFormCleanupPolicyLabel"
+                      name={name}
+                      value={getCleanUpPolicy}
+                      onChange={onChange}
+                      minWidth="250px"
+                      options={CleanupPolicyOptions}
+                    />
+                  )}
                 />
-                <FormError>
-                  <ErrorMessage errors={errors} name="replicationFactor" />
-                </FormError>
               </div>
             </S.Column>
           )}
@@ -139,44 +145,36 @@ const TopicForm: React.FC<Props> = ({
         <S.Column>
           <div>
             <InputLabel htmlFor="topicFormMinInSyncReplicas">
-              Min In Sync Replicas *
+              Min In Sync Replicas
             </InputLabel>
             <Input
               id="topicFormMinInSyncReplicas"
               type="number"
               placeholder="Min In Sync Replicas"
               min="1"
-              defaultValue={inSyncReplicas}
               name="minInSyncReplicas"
             />
             <FormError>
               <ErrorMessage errors={errors} name="minInSyncReplicas" />
             </FormError>
           </div>
-          <div>
-            <InputLabel
-              id="topicFormCleanupPolicyLabel"
-              htmlFor="topicFormCleanupPolicy"
-            >
-              Cleanup policy
-            </InputLabel>
-            <Controller
-              defaultValue={CleanupPolicyOptions[0].value}
-              control={control}
-              name="cleanupPolicy"
-              render={({ field: { name, onChange } }) => (
-                <Select
-                  id="topicFormCleanupPolicy"
-                  aria-labelledby="topicFormCleanupPolicyLabel"
-                  name={name}
-                  value={getCleanUpPolicy}
-                  onChange={onChange}
-                  minWidth="250px"
-                  options={CleanupPolicyOptions}
-                />
-              )}
-            />
-          </div>
+          {!isEditing && (
+            <div>
+              <InputLabel htmlFor="topicFormReplicationFactor">
+                Replication Factor
+              </InputLabel>
+              <Input
+                id="topicFormReplicationFactor"
+                type="number"
+                placeholder="Replication Factor"
+                min="1"
+                name="replicationFactor"
+              />
+              <FormError>
+                <ErrorMessage errors={errors} name="replicationFactor" />
+              </FormError>
+            </div>
+          )}
         </S.Column>
 
         <S.Column>
@@ -213,13 +211,13 @@ const TopicForm: React.FC<Props> = ({
 
           <div>
             <InputLabel htmlFor="topicFormMaxMessageBytes">
-              Maximum message size in bytes *
+              Maximum message size in bytes
             </InputLabel>
             <Input
               id="topicFormMaxMessageBytes"
               type="number"
+              placeholder="Maximum message size"
               min="1"
-              defaultValue="1000012"
               name="maxMessageBytes"
             />
             <FormError>
@@ -229,7 +227,11 @@ const TopicForm: React.FC<Props> = ({
         </S.Column>
 
         <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>
-        <CustomParams isSubmitting={isSubmitting} />
+        <CustomParams
+          config={config}
+          isSubmitting={isSubmitting}
+          isEditing={isEditing}
+        />
         <S.ButtonWrapper>
           <Button
             type="button"

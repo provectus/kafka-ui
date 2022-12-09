@@ -10,6 +10,8 @@ import Table, { LinkCell, SizeCell } from 'components/common/NewTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { clusterBrokerPath } from 'lib/paths';
 
+const NA = 'N/A';
+
 const BrokersList: React.FC = () => {
   const navigate = useNavigate();
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
@@ -29,14 +31,26 @@ const BrokersList: React.FC = () => {
   } = clusterStats;
 
   const rows = React.useMemo(() => {
-    if (!diskUsage) return [];
+    let brokersResource;
+    if (!diskUsage || !diskUsage?.length) {
+      brokersResource =
+        brokers?.map((broker) => {
+          return {
+            brokerId: broker.id,
+            segmentSize: NA,
+            segmentCount: NA,
+          };
+        }) || [];
+    } else {
+      brokersResource = diskUsage;
+    }
 
-    return diskUsage.map(({ brokerId, segmentSize, segmentCount }) => {
+    return brokersResource.map(({ brokerId, segmentSize, segmentCount }) => {
       const broker = brokers?.find(({ id }) => id === brokerId);
       return {
         brokerId,
-        size: segmentSize,
-        count: segmentCount,
+        size: segmentSize || NA,
+        count: segmentCount || NA,
         port: broker?.port,
         host: broker?.host,
       };
@@ -55,7 +69,24 @@ const BrokersList: React.FC = () => {
           />
         ),
       },
-      { header: 'Segment Size', accessorKey: 'size', cell: SizeCell },
+      {
+        header: 'Segment Size',
+        accessorKey: 'size',
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ getValue, table, cell, column, renderValue, row }) =>
+          getValue() === NA ? (
+            NA
+          ) : (
+            <SizeCell
+              table={table}
+              column={column}
+              row={row}
+              cell={cell}
+              getValue={getValue}
+              renderValue={renderValue}
+            />
+          ),
+      },
       { header: 'Segment Count', accessorKey: 'count' },
       { header: 'Port', accessorKey: 'port' },
       { header: 'Host', accessorKey: 'host' },
@@ -92,6 +123,7 @@ const BrokersList: React.FC = () => {
               onlinePartitionCount
             )}
             <Metrics.LightText>
+              {' '}
               of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
             </Metrics.LightText>
           </Metrics.Indicator>

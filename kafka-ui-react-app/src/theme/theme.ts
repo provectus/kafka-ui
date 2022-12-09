@@ -530,6 +530,10 @@ const theme = {
   configList: {
     color: Colors.neutral[30],
   },
+  tooltip: {
+    bg: Colors.neutral[70],
+    text: Colors.neutral[0],
+  },
   topicsList: {
     color: {
       normal: Colors.neutral[90],
@@ -579,6 +583,9 @@ const theme = {
   },
   statictics: {
     createdAtColor: Colors.neutral[50],
+  },
+  errorPage: {
+    text: Colors.blue[45],
   },
 };
 

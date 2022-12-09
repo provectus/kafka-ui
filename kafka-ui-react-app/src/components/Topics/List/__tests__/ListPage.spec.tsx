@@ -11,8 +11,8 @@ const clusterName = 'test-cluster';
 jest.mock('components/Topics/List/TopicTable', () => () => <>TopicTableMock</>);
 
 describe('ListPage Component', () => {
-  const renderComponent = () => {
-    return render(
+  const renderComponent = () =>
+    render(
       <ClusterContext.Provider
         value={{
           isReadOnly: false,
@@ -27,7 +27,6 @@ describe('ListPage Component', () => {
       </ClusterContext.Provider>,
       { initialEntries: [clusterTopicsPath(clusterName)] }
     );
-  };
 
   beforeEach(() => {
     renderComponent();

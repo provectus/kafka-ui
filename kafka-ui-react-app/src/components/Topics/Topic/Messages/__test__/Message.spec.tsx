@@ -1,6 +1,9 @@
 import React from 'react';
 import { TopicMessage, TopicMessageTimestampTypeEnum } from 'generated-sources';
-import Message, { Props } from 'components/Topics/Topic/Messages/Message';
+import Message, {
+  PreviewFilter,
+  Props,
+} from 'components/Topics/Topic/Messages/Message';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
@@ -30,19 +33,25 @@ describe('Message component', () => {
     headers: { header: 'test' },
   };
 
+  const mockKeyFilters: PreviewFilter[] = [];
+  const mockContentFilters: PreviewFilter[] = [];
+
   const renderComponent = (
     props: Partial<Props> = {
       message: mockMessage,
     }
-  ) => {
-    return render(
+  ) =>
+    render(
       <table>
         <tbody>
-          <Message message={props.message || mockMessage} />
+          <Message
+            message={props.message || mockMessage}
+            keyFilters={mockKeyFilters}
+            contentFilters={mockContentFilters}
+          />
         </tbody>
       </table>
     );
-  };
 
   it('shows the data in the table row', () => {
     renderComponent();
