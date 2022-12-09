@@ -18,7 +18,6 @@ import { ConnectorAction } from 'generated-sources';
 
 const mockedUsedNavigate = jest.fn();
 const mockDelete = jest.fn();
-const mutateAsync = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -43,14 +42,14 @@ const renderComponent = (contextValue: ContextProps = initialValue) =>
     { initialEntries: [clusterConnectorsPath(clusterName)] }
   );
 
-function handleButtonClick(buttonTitle: string) {
+async function handleButtonClick(buttonTitle: string) {
   const actionButton = screen.getAllByText(buttonTitle)[0];
 
-  userEvent.click(actionButton);
+  await userEvent.click(actionButton);
 }
+const mutateAsync = jest.fn();
 
 describe('Connectors List Actions', () => {
-
   beforeEach(() => {
     (useConnectors as jest.Mock).mockImplementation(() => ({
       data: connectors,
@@ -63,21 +62,26 @@ describe('Connectors List Actions', () => {
     }));
   });
 
-  it('changes connector state to RESTART_ALL_TASKS', () => {
+  afterEach(jest.clearAllMocks);
+
+  it('changes connector state to RESTART_ALL_TASKS', async () => {
     renderComponent();
-    handleButtonClick('Restart All Tasks');
+    await handleButtonClick('Restart All Tasks');
+
     expect(mutateAsync).toHaveBeenCalledWith(ConnectorAction.RESTART_ALL_TASKS);
   });
 
-  it('changes connector state to RESTART', () => {
+  it('changes connector state to RESTART', async () => {
     renderComponent();
-    handleButtonClick('Restart Connector');
+    await handleButtonClick('Restart Connector');
+
     expect(mutateAsync).toHaveBeenCalledWith(ConnectorAction.RESTART);
   });
 
-  it('changes connector state to RESTART_FAILED_TASKS', () => {
+  it('changes connector state to RESTART_FAILED_TASKS', async () => {
     renderComponent();
-    handleButtonClick('Restart Failed Tasks');
+    await handleButtonClick('Restart Failed Tasks');
+
     expect(mutateAsync).toHaveBeenCalledWith(
       ConnectorAction.RESTART_FAILED_TASKS
     );

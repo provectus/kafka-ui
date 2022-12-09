@@ -9,10 +9,9 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorPath, clusterConnectorsPath } from 'lib/paths';
-import { useConnectors, useDeleteConnector } from 'lib/hooks/api/kafkaConnect';
+import { useConnectors } from 'lib/hooks/api/kafkaConnect';
 
 const mockedUsedNavigate = jest.fn();
-const mockDelete = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
