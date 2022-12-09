@@ -78,7 +78,7 @@ public class ConnectorsTests extends BaseTest {
                 .clickSubmitButton();
         connectorDetails
                 .waitUntilScreenReady();
-        navigateToConnectorsAndOpenConnectorsDetails(connectorForCreate.getName());
+        navigateToConnectorsAndOpenDetails(connectorForCreate.getName());
         Assertions.assertTrue(connectorDetails.isConnectorHeaderVisible(connectorForCreate.getName()),"isConnectorTitleVisible()");
         navigateToConnectors();
         Assertions.assertTrue(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()), "isConnectorVisible()");
@@ -91,7 +91,7 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(196)
     @Test
     public void updateConnector() {
-      navigateToConnectorsAndOpenConnectorsDetails(CONNECTOR_FOR_UPDATE.getName());
+      navigateToConnectorsAndOpenDetails(CONNECTOR_FOR_UPDATE.getName());
       connectorDetails
                 .openConfigTab()
                 .setConfig(CONNECTOR_FOR_UPDATE.getConfig())
@@ -107,7 +107,7 @@ public class ConnectorsTests extends BaseTest {
     @CaseId(195)
     @Test
     public void deleteConnector() {
-      navigateToConnectorsAndOpenConnectorsDetails(CONNECTOR_FOR_DELETE.getName());
+      navigateToConnectorsAndOpenDetails(CONNECTOR_FOR_DELETE.getName());
       connectorDetails
                 .openDotMenu()
                 .clickDeleteBtn()
@@ -133,11 +133,9 @@ public class ConnectorsTests extends BaseTest {
     }
 
     @Step
-    private void navigateToConnectorsAndOpenConnectorsDetails(String connectorName){
-      naviSideBar
-          .openSideMenu(KAFKA_CONNECT);
+    private void navigateToConnectorsAndOpenDetails(String connectorName){
+      navigateToConnectors();
       kafkaConnectList
-          .waitUntilScreenReady()
           .openConnector(connectorName);
       connectorDetails
           .waitUntilScreenReady();

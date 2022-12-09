@@ -177,7 +177,7 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(5)
   void redirectToConsumerFromTopic() {
-    String topicName = "source-activities";
+    String topicName = "_schema";
     String consumerGroupId = "connect-sink_postgres_activities";
     navigateToTopicsAndOpenDetails(topicName);
     topicDetails
@@ -220,8 +220,7 @@ public class TopicsTests extends BaseTest {
     Topic topicToRetainData = new Topic()
         .setName("topic-to-retain-data-" + randomAlphabetic(5))
         .setTimeToRetainData("86400000");
-    naviSideBar
-        .openSideMenu(TOPICS);
+    navigateToTopics();
     topicsList
         .clickAddTopicBtn();
     topicCreateEditForm
@@ -354,13 +353,8 @@ public class TopicsTests extends BaseTest {
   @Order(12)
   void checkingApplyingSavedFilterWithinTopicMessages() {
     String displayName = randomAlphabetic(5);
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic("my_ksql_1ksql_processing_log");
+    navigateToTopicsAndOpenDetails("my_ksql_1ksql_processing_log");
     topicDetails
-        .waitUntilScreenReady()
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible()
