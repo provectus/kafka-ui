@@ -124,7 +124,7 @@ export function useCreateTopic(clusterName: ClusterName) {
 
   return {
     createResource: async (param: TopicFormData) => {
-      const result = canCreateResourceWithAlert({
+      const result = await canCreateResourceWithAlert({
         resource: ResourceType.TOPIC,
         resourceName: param.name,
         clusterName,
