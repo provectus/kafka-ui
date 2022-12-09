@@ -177,7 +177,7 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(5)
   void redirectToConsumerFromTopic() {
-    String topicName = "connect-s3-sink";
+    String topicName = "source-activities";
     String consumerGroupId = "connect-sink_postgres_activities";
     navigateToTopicsAndOpenDetails(topicName);
     topicDetails
