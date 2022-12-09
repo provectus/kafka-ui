@@ -6,6 +6,7 @@ import {
   getNonExactPath,
   RouteParams,
 } from 'lib/paths';
+import SuspenseQueryComponent from 'components/common/SuspenseQueryComponent/SuspenseQueryComponent';
 
 import New from './New/New';
 import ListPage from './List/ListPage';
@@ -16,7 +17,14 @@ const Topics: React.FC = () => (
     <Route index element={<ListPage />} />
     <Route path={clusterTopicNewRelativePath} element={<New />} />
     <Route path={clusterTopicCopyRelativePath} element={<New />} />
-    <Route path={getNonExactPath(RouteParams.topicName)} element={<Topic />} />
+    <Route
+      path={getNonExactPath(RouteParams.topicName)}
+      element={
+        <SuspenseQueryComponent>
+          <Topic />
+        </SuspenseQueryComponent>
+      }
+    />
   </Routes>
 );
 
