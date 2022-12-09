@@ -31,3 +31,4 @@ jobs:
           MVN_VERSION=${MVN_VERSION%.*}.$((${MVN_VERSION##*.}+1))
           mvn -B -ntp versions:set -DnewVersion=$MVN_VERSION -pl kafka-ui-serde-api
           mvn source:jar  javadoc:jar  package  gpg:sign -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} -Dserver.username=${{ secrets.NEXUS_USERNAME }} -Dserver.password=${{ secrets.NEXUS_PASSWORD }} -Dversion= nexus-staging:deploy   -pl kafka-ui-serde-api  -s settings.xml
+          
