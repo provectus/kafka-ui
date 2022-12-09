@@ -23,7 +23,7 @@ jobs:
       - id: install-secret-key
         name: Install GPG secret key
         run: |
-          cat <(echo -e "${{ secrets.GPG_PRIVATE_KEY }}") | gpg --batch --import    
+          cat <(echo -e "${{ secrets.GPG_PRIVATE_KEY }}") | gpg --batch --import
 
       - name: Publish to Maven Central
         run: |
@@ -31,4 +31,3 @@ jobs:
           MVN_VERSION=${MVN_VERSION%.*}.$((${MVN_VERSION##*.}+1))
           mvn -B -ntp versions:set -DnewVersion=$MVN_VERSION -pl kafka-ui-serde-api
           mvn source:jar  javadoc:jar  package  gpg:sign -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} -Dserver.username=${{ secrets.NEXUS_USERNAME }} -Dserver.password=${{ secrets.NEXUS_PASSWORD }} -Dversion= nexus-staging:deploy   -pl kafka-ui-serde-api  -s settings.xml
-          
