@@ -18,8 +18,9 @@ import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import Heading from 'components/common/heading/Heading.styled';
 import { useConnects, useCreateConnector } from 'lib/hooks/api/kafkaConnect';
+import { canCreateResourceWithAlert } from 'lib/hooks/api/roles';
 import get from 'lodash/get';
-import { Connect } from 'generated-sources';
+import { Connect, ResourceType } from 'generated-sources';
 
 import * as S from './New.styled';
 
@@ -65,6 +66,14 @@ const New: React.FC = () => {
   }, [connects, getValues, setValue]);
 
   const onSubmit = async (values: FormValues) => {
+    const result = await canCreateResourceWithAlert({
+      resource: ResourceType.CONNECT,
+      resourceName: values.name,
+      clusterName,
+    });
+
+    if (!result) return;
+
     const connector = await mutation.mutateAsync({
       connectName: values.connectName,
       newConnector: {

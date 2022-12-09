@@ -1,14 +1,16 @@
 import React from 'react';
 import { TopicFormData } from 'redux/interfaces';
-import { useForm, FormProvider } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { ClusterNameRoute, clusterTopicsPath } from 'lib/paths';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import useAppParams from 'lib/hooks/useAppParams';
 import { useCreateTopic } from 'lib/hooks/api/topics';
+import { canCreateResourceWithAlert } from 'lib/hooks/api/roles';
+import { ResourceType } from 'generated-sources';
 
 enum Filters {
   NAME = 'name',
@@ -39,6 +41,13 @@ const New: React.FC = () => {
   const cleanUpPolicy = params.get(Filters.CLEANUP_POLICY) || 'Delete';
 
   const onSubmit = async (data: TopicFormData) => {
+    const result = canCreateResourceWithAlert({
+      resource: ResourceType.TOPIC,
+      resourceName: data.name,
+      clusterName,
+    });
+    if (!result) return;
+
     await createTopic.mutateAsync(data);
     navigate(`../${data.name}`);
   };
