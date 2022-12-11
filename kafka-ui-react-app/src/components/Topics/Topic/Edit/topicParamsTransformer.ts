@@ -20,7 +20,7 @@ const topicParamsTransformer = (topic?: Topic, config?: TopicConfig[]) => {
 
   const customParams = config.reduce((acc, { name, value, defaultValue }) => {
     if (value === defaultValue) return acc;
-    if (!Object.keys(TOPIC_CUSTOM_PARAMS).includes(name)) return acc;
+    if (!TOPIC_CUSTOM_PARAMS[name]) return acc;
     return [...acc, { name, value }];
   }, [] as { name: string; value?: string }[]);
 

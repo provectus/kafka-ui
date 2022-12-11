@@ -3,8 +3,8 @@ package com.provectus.kafka.ui.serdes.builtin;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.DynamicMessage;
-import com.google.protobuf.Empty;
 import com.google.protobuf.util.JsonFormat;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.RecordHeaders;
@@ -42,47 +42,55 @@ public class ProtobufFileSerde implements BuiltInSerde {
 
   private Map<Descriptor, Path> descriptorPaths = new HashMap<>();
 
+  @Nullable
   private Descriptor defaultMessageDescriptor;
 
   @Nullable
   private Descriptor defaultKeyMessageDescriptor;
 
   @Override
-  public boolean initOnStartup(PropertyResolver kafkaClusterProperties,
-                               PropertyResolver globalProperties) {
+  public boolean canBeAutoConfigured(PropertyResolver kafkaClusterProperties,
+                                     PropertyResolver globalProperties) {
     Optional<String> protobufFile = kafkaClusterProperties.getProperty("protobufFile", String.class);
     Optional<List<String>> protobufFiles = kafkaClusterProperties.getListProperty("protobufFiles", String.class);
-
-    return protobufFile.isPresent() || protobufFiles.map(files -> files.isEmpty() ? null : files).isPresent();
+    return protobufFile.isPresent() || protobufFiles.filter(files -> !files.isEmpty()).isPresent();
   }
 
-  @SneakyThrows
+  @Override
+  public void autoConfigure(PropertyResolver kafkaClusterProperties,
+                            PropertyResolver globalProperties) {
+    configure(kafkaClusterProperties);
+  }
+
   @Override
   public void configure(PropertyResolver serdeProperties,
                         PropertyResolver kafkaClusterProperties,
                         PropertyResolver globalProperties) {
-    Map<Path, ProtobufSchema> protobufSchemas = joinPathProperties(kafkaClusterProperties).stream()
+    configure(serdeProperties);
+  }
+
+  private void configure(PropertyResolver properties) {
+    Map<Path, ProtobufSchema> protobufSchemas = joinPathProperties(properties).stream()
         .map(path -> Map.entry(path, new ProtobufSchema(readFileAsString(path))))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-
     // Load all referenced message schemas and store their source proto file with the descriptors
     Map<Descriptor, Path> descriptorPaths = new HashMap<>();
-    Optional<String> protobufMessageName = kafkaClusterProperties.getProperty("protobufMessageName", String.class);
+    Optional<String> protobufMessageName = properties.getProperty("protobufMessageName", String.class);
     protobufMessageName.ifPresent(messageName -> addProtobufSchema(descriptorPaths, protobufSchemas, messageName));
 
     Optional<String> protobufMessageNameForKey =
-        kafkaClusterProperties.getProperty("protobufMessageNameForKey", String.class);
+        properties.getProperty("protobufMessageNameForKey", String.class);
     protobufMessageNameForKey
         .ifPresent(messageName -> addProtobufSchema(descriptorPaths, protobufSchemas, messageName));
 
     Optional<Map<String, String>> protobufMessageNameByTopic =
-        kafkaClusterProperties.getMapProperty("protobufMessageNameByTopic", String.class, String.class);
+        properties.getMapProperty("protobufMessageNameByTopic", String.class, String.class);
     protobufMessageNameByTopic
         .ifPresent(messageNamesByTopic -> addProtobufSchemas(descriptorPaths, protobufSchemas, messageNamesByTopic));
 
     Optional<Map<String, String>> protobufMessageNameForKeyByTopic =
-        kafkaClusterProperties.getMapProperty("protobufMessageNameForKeyByTopic", String.class, String.class);
+        properties.getMapProperty("protobufMessageNameForKeyByTopic", String.class, String.class);
     protobufMessageNameForKeyByTopic
         .ifPresent(messageNamesByTopic -> addProtobufSchemas(descriptorPaths, protobufSchemas, messageNamesByTopic));
 
@@ -91,8 +99,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
         .collect(Collectors.toMap(Descriptor::getFullName, Function.identity()));
 
     configure(
-        // this is strange logic, but we need it to support serde's backward-compatibility
-        protobufMessageName.map(descriptorMap::get).orElseGet(Empty::getDescriptor),
+        protobufMessageName.map(descriptorMap::get).orElse(null),
         protobufMessageNameForKey.map(descriptorMap::get).orElse(null),
         descriptorPaths,
         protobufMessageNameByTopic.map(map -> populateDescriptors(descriptorMap, map)).orElse(Map.of()),
@@ -102,11 +109,17 @@ public class ProtobufFileSerde implements BuiltInSerde {
 
   @VisibleForTesting
   void configure(
-      Descriptor defaultMessageDescriptor,
+      @Nullable Descriptor defaultMessageDescriptor,
       @Nullable Descriptor defaultKeyMessageDescriptor,
       Map<Descriptor, Path> descriptorPaths,
       Map<String, Descriptor> messageDescriptorMap,
       Map<String, Descriptor> keyMessageDescriptorMap) {
+    if (defaultMessageDescriptor == null
+        && defaultKeyMessageDescriptor == null
+        && messageDescriptorMap.isEmpty()
+        && keyMessageDescriptorMap.isEmpty()) {
+      throw new ValidationException("Neither default, not per-topic descriptors defined for " + name() + " serde");
+    }
     this.defaultMessageDescriptor = defaultMessageDescriptor;
     this.defaultKeyMessageDescriptor = defaultKeyMessageDescriptor;
     this.descriptorPaths = descriptorPaths;
@@ -142,7 +155,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
   private static Map.Entry<Descriptor, Path> getDescriptorAndPath(Map<Path, ProtobufSchema> protobufSchemas,
                                                                   String msgName) {
     return protobufSchemas.entrySet().stream()
-            .filter(schema -> schema.getValue() != null && schema.getValue().toDescriptor(msgName) != null)
+            .filter(schema -> schema.getValue().toDescriptor(msgName) != null)
             .map(schema -> Map.entry(schema.getValue().toDescriptor(msgName), schema.getKey()))
             .findFirst()
             .orElseThrow(() -> new NullPointerException(
