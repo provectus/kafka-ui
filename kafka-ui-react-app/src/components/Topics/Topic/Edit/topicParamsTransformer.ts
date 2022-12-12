@@ -4,8 +4,8 @@ import {
   TOPIC_CUSTOM_PARAMS_PREFIX,
 } from 'lib/constants';
 import { TOPIC_EDIT_FORM_DEFAULT_PROPS } from 'components/Topics/Topic/Edit/Edit';
-import { Topic, TopicConfig } from 'generated-sources';
 import { getCleanUpPolicyValue } from 'components/Topics/shared/Form/TopicForm';
+import { Topic, TopicConfig } from 'generated-sources';
 
 export const getValue = (
   config: TopicConfig[],
