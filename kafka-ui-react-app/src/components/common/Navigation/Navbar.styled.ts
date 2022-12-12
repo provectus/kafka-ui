@@ -14,7 +14,7 @@ const Navbar = styled.nav`
     font-weight: 500;
     font-size: 14px;
     white-space: nowrap;
-    color: ${({ theme }) => theme.default.transparentColor};
+    color: ${({ theme }) => theme.primaryTab.color.normal};
     border-bottom: 1px ${({ theme }) => theme.default.transparentColor} solid;
     &.is-active {
       border-bottom: 1px ${({ theme }) => theme.primaryTab.borderColor.active}
@@ -28,7 +28,7 @@ const Navbar = styled.nav`
     }
     &:hover:not(.is-active, .is-disabled) {
       border-bottom: 1px ${({ theme }) => theme.default.transparentColor} solid;
-      color: ${({ theme }) => theme.default.transparentColor};
+      color: ${({ theme }) => theme.primaryTab.color.hover};
     }
   }
 `;
