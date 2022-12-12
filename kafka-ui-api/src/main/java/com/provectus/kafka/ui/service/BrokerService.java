@@ -5,9 +5,9 @@ import com.provectus.kafka.ui.exception.LogDirNotFoundApiException;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicOrPartitionNotFoundException;
 import com.provectus.kafka.ui.mapper.DescribeLogDirsMapper;
-import com.provectus.kafka.ui.model.BrokerDTO;
 import com.provectus.kafka.ui.model.BrokerLogdirUpdateDTO;
 import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
+import com.provectus.kafka.ui.model.InternalBroker;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
@@ -63,18 +63,13 @@ public class BrokerService {
         .flatMapMany(Flux::fromIterable);
   }
 
-  public Flux<BrokerDTO> getBrokers(KafkaCluster cluster) {
+  public Flux<InternalBroker> getBrokers(KafkaCluster cluster) {
     return adminClientService
         .get(cluster)
         .flatMap(ReactiveAdminClient::describeCluster)
         .map(description -> description.getNodes().stream()
-            .map(node -> {
-              BrokerDTO broker = new BrokerDTO();
-              broker.setId(node.id());
-              broker.setHost(node.host());
-              broker.setPort(node.port());
-              return broker;
-            }).collect(Collectors.toList()))
+            .map(node -> new InternalBroker(node, statisticsCache.get(cluster)))
+            .collect(Collectors.toList()))
         .flatMapMany(Flux::fromIterable);
   }
 

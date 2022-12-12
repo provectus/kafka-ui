@@ -25,6 +25,7 @@ import {
   SCHEMA_LATEST_FETCH_ACTION,
   getAreSchemaLatestFulfilled,
   schemaUpdated,
+  getAreSchemaLatestRejected,
 } from 'redux/reducers/schemas/schemasSlice';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
@@ -54,6 +55,7 @@ const Edit: React.FC = () => {
 
   const schema = useAppSelector((state) => getSchemaLatest(state));
   const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
+  const isRejected = useAppSelector(getAreSchemaLatestRejected);
 
   const formatedSchema = React.useMemo(() => {
     return schema?.schemaType === SchemaType.PROTOBUF
@@ -97,6 +99,10 @@ const Edit: React.FC = () => {
       showServerError(e as Response);
     }
   };
+
+  if (isRejected) {
+    navigate('/404');
+  }
 
   if (!isFetched || !schema) {
     return <PageLoader />;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TopicFormData } from 'redux/interfaces';
+import { TopicConfigParams, TopicFormData } from 'redux/interfaces';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { Button } from 'components/common/Button/Button';
 import { TOPIC_CUSTOM_PARAMS_PREFIX } from 'lib/constants';
@@ -9,10 +9,15 @@ import CustomParamField from './CustomParamField';
 import * as S from './CustomParams.styled';
 
 export interface CustomParamsProps {
+  config?: TopicConfigParams;
   isSubmitting: boolean;
+  isEditing?: boolean;
 }
 
-const CustomParams: React.FC<CustomParamsProps> = ({ isSubmitting }) => {
+const CustomParams: React.FC<CustomParamsProps> = ({
+  isSubmitting,
+  config,
+}) => {
   const { control } = useFormContext<TopicFormData>();
   const { fields, append, remove } = useFieldArray({
     control,
@@ -41,9 +46,10 @@ const CustomParams: React.FC<CustomParamsProps> = ({ isSubmitting }) => {
 
   return (
     <S.ParamsWrapper>
-      {controlledFields.map((field, idx) => (
+      {controlledFields?.map((field, idx) => (
         <CustomParamField
           key={field.id}
+          config={config}
           field={field}
           remove={removeField}
           index={idx}

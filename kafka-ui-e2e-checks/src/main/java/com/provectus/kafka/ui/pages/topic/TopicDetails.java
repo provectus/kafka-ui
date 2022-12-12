@@ -97,8 +97,8 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public String getPartitions() {
-    return partitionsField.getText();
+  public int getPartitions() {
+    return Integer.parseInt(partitionsField.getText().trim());
   }
 
   @Step

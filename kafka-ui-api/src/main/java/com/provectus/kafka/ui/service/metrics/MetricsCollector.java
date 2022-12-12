@@ -62,7 +62,7 @@ public class MetricsCollector {
     WellKnownMetrics wellKnownMetrics = new WellKnownMetrics();
     perBrokerMetrics.forEach((node, metrics) ->
         metrics.forEach(metric ->
-            wellKnownMetrics.populate(cluster, node, metric)));
+            wellKnownMetrics.populate(node, metric)));
     return wellKnownMetrics;
   }
 
