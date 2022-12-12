@@ -4,6 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <script type="text/javascript">
+      // console.log("i am here");
+      window.basePath = '';
+
+      window.__assetMethods = function (importer) {
+        // console.log(importer);
+        return window.basePath + importer;
+      };
+    </script>
     <!-- Google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,9 +28,6 @@
     <link rel="manifest" href="/manifest.json" />
 
     <title>UI for Apache Kafka</title>
-    <script type="text/javascript">
-      window.basePath = '';
-    </script>
   </head>
 
   <body>

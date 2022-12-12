@@ -18,6 +18,35 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'build',
     },
+    experimental: {
+      renderBuiltUrl(
+        filename: string,
+        {
+          hostId,
+          hostType,
+          type,
+        }: {
+          hostId: string;
+          hostType: 'js' | 'css' | 'html';
+          type: 'asset' | 'public';
+        }
+      ) {
+        // eslint-disable-next-line no-console
+        console.log();
+
+        // eslint-disable-next-line no-console
+        console.log(
+          `----------${hostType}------------${hostId}-----------${type}`
+        );
+        if (hostType !== 'html') {
+          return {
+            runtime: `window.__assetMethods(${JSON.stringify(filename)})`,
+          };
+        }
+
+        return filename;
+      },
+    },
     define: {
       'process.env.NODE_ENV': `"${mode}"`,
       'process.env.VITE_TAG': `"${process.env.VITE_TAG}"`,

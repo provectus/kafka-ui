@@ -53,9 +53,6 @@ public class StaticController {
   @SneakyThrows
   private String buildFile(Resource file, String contextPath) {
     return ResourceUtil.readAsString(file)
-        .replace("\"/assets/", "\"" + contextPath + "/assets/")
-        .replace("\"/favicon/", "\"" + contextPath + "/favicon/")
-        .replace("/manifest.json", contextPath + "/manifest.json")
         .replace("window.basePath = ''", "window.basePath=\"" + contextPath + "\"");
   }
 }
