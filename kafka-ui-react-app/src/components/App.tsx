@@ -1,6 +1,11 @@
 import React, { Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { clusterPath, getNonExactPath } from 'lib/paths';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import {
+  accessErrorPage,
+  clusterPath,
+  errorPage,
+  getNonExactPath,
+} from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/Cluster/Cluster';
@@ -15,6 +20,7 @@ import * as S from 'components/App.styled';
 import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
 import { ConfirmContextProvider } from './contexts/ConfirmContext';
 import { GlobalSettingsProvider } from './contexts/GlobalSettingsContext';
+import ErrorPage from './ErrorPage/ErrorPage';
 import { UserInfoRolesAccessProvider } from './contexts/UserInfoRolesAccessContext';
 import PageContainer from './PageContainer/PageContainer';
 
@@ -53,6 +59,17 @@ const App: React.FC = () => {
                       <Route
                         path={getNonExactPath(clusterPath())}
                         element={<ClusterPage />}
+                      />
+                      <Route
+                        path={accessErrorPage}
+                        element={
+                          <ErrorPage status={403} text="Access is Denied" />
+                        }
+                      />
+                      <Route path={errorPage} element={<ErrorPage />} />
+                      <Route
+                        path="*"
+                        element={<Navigate to={errorPage} replace />}
                       />
                     </Routes>
                   </PageContainer>

@@ -85,19 +85,33 @@ const formatTopicCreation = (form: TopicFormData): TopicCreation => {
     customParams,
   } = form;
 
-  return {
+  const configs = {
+    'cleanup.policy': cleanupPolicy,
+    'retention.ms': retentionMs.toString(),
+    'retention.bytes': retentionBytes.toString(),
+    'max.message.bytes': maxMessageBytes.toString(),
+    'min.insync.replicas': minInSyncReplicas.toString(),
+    ...Object.values(customParams || {}).reduce(topicReducer, {}),
+  };
+
+  const cleanConfigs = () => {
+    return Object.fromEntries(
+      Object.entries(configs).filter(([, val]) => val !== '')
+    );
+  };
+
+  const topicsvalue = {
     name,
     partitions,
-    replicationFactor,
-    configs: {
-      'cleanup.policy': cleanupPolicy,
-      'retention.ms': retentionMs.toString(),
-      'retention.bytes': retentionBytes.toString(),
-      'max.message.bytes': maxMessageBytes.toString(),
-      'min.insync.replicas': minInSyncReplicas.toString(),
-      ...Object.values(customParams || {}).reduce(topicReducer, {}),
-    },
+    configs: cleanConfigs(),
   };
+
+  return replicationFactor.toString() !== ''
+    ? {
+        ...topicsvalue,
+        replicationFactor,
+      }
+    : topicsvalue;
 };
 
 export function useCreateTopicMutation(clusterName: ClusterName) {
@@ -162,8 +176,12 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
 export function useUpdateTopic(props: GetTopicDetailsRequest) {
   const client = useQueryClient();
   return useMutation(
-    (data: TopicFormDataRaw) =>
-      api.updateTopic({ ...props, topicUpdate: formatTopicUpdate(data) }),
+    (data: TopicFormDataRaw) => {
+      return api.updateTopic({
+        ...props,
+        topicUpdate: formatTopicUpdate(data),
+      });
+    },
     {
       onSuccess: () => {
         showSuccessAlert({
