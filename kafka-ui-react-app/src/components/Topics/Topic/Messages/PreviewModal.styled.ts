@@ -6,6 +6,7 @@ export const PreviewModal = styled.div`
   border-radius: 8px;
   background: ${({ theme }) => theme.modal.backgroundColor};
   position: absolute;
+  top: 50%;
   left: 25%;
   border: 1px solid ${({ theme }) => theme.modal.border.contrast};
   box-shadow: ${({ theme }) => theme.modal.shadow};
