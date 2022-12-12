@@ -36,6 +36,17 @@ const CleanupPolicyOptions: Array<SelectOption> = [
   { value: 'compact,delete', label: 'Compact,Delete' },
 ];
 
+export const getCleanUpPolicyValue = (cleanUpPolicy?: string) => {
+  if (!cleanUpPolicy) return undefined;
+
+  return CleanupPolicyOptions.find((option: SelectOption) => {
+    return (
+      option.value.toString().replace(/,/g, '_') ===
+      cleanUpPolicy?.toLowerCase()
+    );
+  })?.value.toString();
+};
+
 const RetentionBytesOptions: Array<SelectOption> = [
   { value: NOT_SET, label: 'Not Set' },
   { value: BYTES_IN_GB, label: '1 GB' },
@@ -61,12 +72,7 @@ const TopicForm: React.FC<Props> = ({
   const navigate = useNavigate();
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
   const getCleanUpPolicy =
-    CleanupPolicyOptions.find((option: SelectOption) => {
-      return (
-        option.value.toString().replace(/,/g, '_') ===
-        cleanUpPolicy?.toLowerCase()
-      );
-    })?.value || CleanupPolicyOptions[0].value;
+    getCleanUpPolicyValue(cleanUpPolicy) || CleanupPolicyOptions[0].value;
 
   const getRetentionBytes =
     RetentionBytesOptions.find((option: SelectOption) => {
@@ -97,8 +103,8 @@ const TopicForm: React.FC<Props> = ({
             </S.NameField>
           </S.Column>
 
-          {!isEditing && (
-            <S.Column>
+          <S.Column>
+            {!isEditing && (
               <div>
                 <InputLabel htmlFor="topicFormNumberOfPartitions">
                   Number of partitions *
@@ -114,32 +120,32 @@ const TopicForm: React.FC<Props> = ({
                   <ErrorMessage errors={errors} name="partitions" />
                 </FormError>
               </div>
-              <div>
-                <InputLabel
-                  id="topicFormCleanupPolicyLabel"
-                  htmlFor="topicFormCleanupPolicy"
-                >
-                  Cleanup policy
-                </InputLabel>
-                <Controller
-                  defaultValue={CleanupPolicyOptions[0].value}
-                  control={control}
-                  name="cleanupPolicy"
-                  render={({ field: { name, onChange } }) => (
-                    <Select
-                      id="topicFormCleanupPolicy"
-                      aria-labelledby="topicFormCleanupPolicyLabel"
-                      name={name}
-                      value={getCleanUpPolicy}
-                      onChange={onChange}
-                      minWidth="250px"
-                      options={CleanupPolicyOptions}
-                    />
-                  )}
-                />
-              </div>
-            </S.Column>
-          )}
+            )}
+            <div>
+              <InputLabel
+                id="topicFormCleanupPolicyLabel"
+                htmlFor="topicFormCleanupPolicy"
+              >
+                Cleanup policy
+              </InputLabel>
+              <Controller
+                defaultValue={CleanupPolicyOptions[0].value}
+                control={control}
+                name="cleanupPolicy"
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    id="topicFormCleanupPolicy"
+                    aria-labelledby="topicFormCleanupPolicyLabel"
+                    name={name}
+                    value={getCleanUpPolicy}
+                    onChange={onChange}
+                    minWidth="250px"
+                    options={CleanupPolicyOptions}
+                  />
+                )}
+              />
+            </div>
+          </S.Column>
         </fieldset>
 
         <S.Column>
