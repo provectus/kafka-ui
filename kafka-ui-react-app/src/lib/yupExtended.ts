@@ -59,29 +59,12 @@ export const topicFormValidationSchema = yup.object().shape({
     .max(2147483647)
     .required()
     .typeError('Number of partitions is required and must be a number'),
-  replicationFactor: yup
-    .number()
-    .min(1)
-    .max(2147483647)
-    .required()
-    .typeError('Replication factor is required and must be a number'),
-  minInSyncReplicas: yup
-    .number()
-    .min(1)
-    .max(2147483647)
-    .required()
-    .typeError('Min in sync replicas is required and must be a number'),
+  replicationFactor: yup.string(),
+  minInSyncReplicas: yup.string(),
   cleanupPolicy: yup.string().required(),
-  retentionMs: yup
-    .number()
-    .min(-1, 'Must be greater than or equal to -1')
-    .typeError('Time to retain data is required and must be a number'),
+  retentionMs: yup.string(),
   retentionBytes: yup.number(),
-  maxMessageBytes: yup
-    .number()
-    .min(1)
-    .required()
-    .typeError('Maximum message size is required and must be a number'),
+  maxMessageBytes: yup.string(),
   customParams: yup.array().of(
     yup.object().shape({
       name: yup.string().required('Custom parameter is required'),

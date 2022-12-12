@@ -7,7 +7,7 @@ import java.util.Optional;
  * Main interface of  serialization/deserialization logic.
  * It provides ability to serialize, deserialize topic's keys and values, and optionally provides
  * information about data schema inside topic.
- * <p/>
+ * <p>
  * <b>Lifecycle:</b><br/>
  * 1. on application startup kafka-ui scans configs and finds all custom serde definitions<br/>
  * 2. for each custom serde its own separated child-first classloader is created<br/>
@@ -15,7 +15,7 @@ import java.util.Optional;
  * 4. {@code configure(...)} method called<br/>
  * 5. various methods called during application runtime<br/>
  * 6. on application shutdown kafka-ui calls {@code close()} method on serde instance<br/>
- * <p/>
+ * <p>
  * <b>Implementation considerations:</b><br/>
  * 1. Implementation class should have default/non-arg contructor<br/>
  * 2. All methods except {@code configure(...)} and {@code close()} can be called from different threads. So, your code should be thread-safe.<br/>

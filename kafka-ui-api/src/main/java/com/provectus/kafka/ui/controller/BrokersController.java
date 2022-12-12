@@ -37,7 +37,8 @@ public class BrokersController extends AbstractController implements BrokersApi 
   @Override
   public Mono<ResponseEntity<Flux<BrokerDTO>>> getBrokers(String clusterName,
                                                           ServerWebExchange exchange) {
-    return Mono.just(ResponseEntity.ok(brokerService.getBrokers(getCluster(clusterName))));
+    return Mono.just(ResponseEntity.ok(
+        brokerService.getBrokers(getCluster(clusterName)).map(clusterMapper::toBrokerDto)));
   }
 
   @Override

@@ -43,6 +43,7 @@
         <spring-security.version>5.7.5</spring-security.version>
         <!-- Should be kept in sync with the version in io.confluent:kafka-protobuf-provider -->
         <wire.version>4.3.0</wire.version>
+        <kafka-ui-serde-api.version>1.0.0</kafka-ui-serde-api.version>
 
         <!-- Test dependency versions -->
         <junit.version>5.9.1</junit.version>
