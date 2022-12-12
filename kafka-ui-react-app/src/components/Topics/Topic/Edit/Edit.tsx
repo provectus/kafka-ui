@@ -19,6 +19,7 @@ import {
   useUpdateTopic,
 } from 'lib/hooks/api/topics';
 import DangerZone from 'components/Topics/Topic/Edit/DangerZone/DangerZone';
+import { ConfigSource } from 'generated-sources';
 
 export const TOPIC_EDIT_FORM_DEFAULT_PROPS = {
   partitions: 1,
@@ -54,9 +55,24 @@ const Edit: React.FC = () => {
   topicConfig?.forEach((param) => {
     config.byName[param.name] = param;
   });
-
   const onSubmit = async (data: TopicFormDataRaw) => {
-    await updateTopic.mutateAsync(data);
+    const filteredDirtyDefaultEntries = Object.entries(data).filter(
+      ([key, val]) => {
+        const isDirty =
+          String(val) !==
+          String(defaultValues[key as keyof typeof defaultValues]);
+
+        const isDefaultConfig =
+          config.byName[key]?.source === ConfigSource.DEFAULT_CONFIG;
+
+        // if it is changed should be sent or if it was Dynamic
+        return isDirty || !isDefaultConfig;
+      }
+    );
+
+    const newData = Object.fromEntries(filteredDirtyDefaultEntries);
+
+    await updateTopic.mutateAsync(newData);
     navigate('../');
   };
 
@@ -64,6 +80,7 @@ const Edit: React.FC = () => {
     <>
       <FormProvider {...methods}>
         <TopicForm
+          config={config.byName}
           topicName={topicName}
           retentionBytes={defaultValues.retentionBytes}
           inSyncReplicas={Number(defaultValues.minInSyncReplicas)}
