@@ -7,8 +7,12 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { useBrokers } from 'lib/hooks/api/brokers';
 import { useClusterStats } from 'lib/hooks/api/clusters';
 import Table, { LinkCell, SizeCell } from 'components/common/NewTable';
+import CheckMarkRoundIcon from 'components/common/Icons/CheckMarkRoundIcon';
 import { ColumnDef } from '@tanstack/react-table';
 import { clusterBrokerPath } from 'lib/paths';
+import Tooltip from 'components/common/Tooltip/Tooltip';
+
+import * as S from './BrokersList.styled';
 
 const NA = 'N/A';
 
@@ -56,17 +60,27 @@ const BrokersList: React.FC = () => {
       };
     });
   }, [diskUsage, brokers]);
+
   const columns = React.useMemo<ColumnDef<typeof rows>[]>(
     () => [
       {
         header: 'Broker ID',
         accessorKey: 'brokerId',
         // eslint-disable-next-line react/no-unstable-nested-components
-        cell: ({ getValue }) => (
-          <LinkCell
-            value={`${getValue<string | number>()}`}
-            to={encodeURIComponent(`${getValue<string | number>()}`)}
-          />
+        cell: ({ row: { id }, getValue }) => (
+          <S.RowCell>
+            <LinkCell
+              value={`${getValue<string | number>()}`}
+              to={encodeURIComponent(`${getValue<string | number>()}`)}
+            />
+            {id === String(activeControllers) && (
+              <Tooltip
+                value={<CheckMarkRoundIcon />}
+                content="Active Controller"
+                placement="right"
+              />
+            )}
+          </S.RowCell>
         ),
       },
       {
@@ -89,7 +103,10 @@ const BrokersList: React.FC = () => {
       },
       { header: 'Segment Count', accessorKey: 'count' },
       { header: 'Port', accessorKey: 'port' },
-      { header: 'Host', accessorKey: 'host' },
+      {
+        header: 'Host',
+        accessorKey: 'host',
+      },
     ],
     []
   );
@@ -97,6 +114,8 @@ const BrokersList: React.FC = () => {
   const replicas = (inSyncReplicasCount ?? 0) + (outOfSyncReplicasCount ?? 0);
   const areAllInSync = inSyncReplicasCount && replicas === inSyncReplicasCount;
   const partitionIsOffline = offlinePartitionCount && offlinePartitionCount > 0;
+
+  const isActiveControllerUnKnown = typeof activeControllers === 'undefined';
 
   return (
     <>
@@ -106,8 +125,15 @@ const BrokersList: React.FC = () => {
           <Metrics.Indicator label="Broker Count">
             {brokerCount}
           </Metrics.Indicator>
-          <Metrics.Indicator label="Active Controllers">
-            {activeControllers}
+          <Metrics.Indicator
+            label="Active Controller"
+            isAlert={isActiveControllerUnKnown}
+          >
+            {isActiveControllerUnKnown ? (
+              <S.DangerText>No Active Controller</S.DangerText>
+            ) : (
+              activeControllers
+            )}
           </Metrics.Indicator>
           <Metrics.Indicator label="Version">{version}</Metrics.Indicator>
         </Metrics.Section>
@@ -123,8 +149,10 @@ const BrokersList: React.FC = () => {
               onlinePartitionCount
             )}
             <Metrics.LightText>
-              {' '}
-              of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
+              {` of ${
+                (onlinePartitionCount || 0) + (offlinePartitionCount || 0)
+              }
+              `}
             </Metrics.LightText>
           </Metrics.Indicator>
           <Metrics.Indicator
