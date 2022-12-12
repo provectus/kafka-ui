@@ -36,7 +36,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .cluster(clusterName)
         .build());
 
-    var job = brokerService.getBrokers(getCluster(clusterName));
+    var job = brokerService.getBrokers(getCluster(clusterName)).map(clusterMapper::toBrokerDto);
 
     return validateAccess.then(Mono.just(ResponseEntity.ok(job)));
   }
