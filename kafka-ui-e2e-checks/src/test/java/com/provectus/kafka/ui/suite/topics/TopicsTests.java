@@ -274,7 +274,7 @@ public class TopicsTests extends BaseTest {
     topicCreateEditForm
         .waitUntilScreenReady()
         .setTopicName(topicToRetainData.getName());
-    assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()").isEqualTo("604800000");
+    assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()").isEqualTo("");
     topicCreateEditForm
         .setTimeToRetainDataInMs(topicToRetainData.getTimeToRetainData())
         .clickCreateTopicBtn();
