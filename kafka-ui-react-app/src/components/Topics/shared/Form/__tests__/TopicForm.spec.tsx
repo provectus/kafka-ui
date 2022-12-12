@@ -36,9 +36,9 @@ describe('TopicForm', () => {
     expectByRoleAndNameToBeInDocument('textbox', 'Topic Name *');
 
     expectByRoleAndNameToBeInDocument('spinbutton', 'Number of partitions *');
-    expectByRoleAndNameToBeInDocument('spinbutton', 'Replication Factor *');
+    expectByRoleAndNameToBeInDocument('spinbutton', 'Replication Factor');
 
-    expectByRoleAndNameToBeInDocument('spinbutton', 'Min In Sync Replicas *');
+    expectByRoleAndNameToBeInDocument('spinbutton', 'Min In Sync Replicas');
     expectByRoleAndNameToBeInDocument('listbox', 'Cleanup policy');
 
     expectByRoleAndNameToBeInDocument(
@@ -53,7 +53,7 @@ describe('TopicForm', () => {
     expectByRoleAndNameToBeInDocument('listbox', 'Max size on disk in GB');
     expectByRoleAndNameToBeInDocument(
       'spinbutton',
-      'Maximum message size in bytes *'
+      'Maximum message size in bytes'
     );
 
     expectByRoleAndNameToBeInDocument('heading', 'Custom parameters');

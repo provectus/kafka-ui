@@ -20,6 +20,7 @@ import {
   SCHEMA_LATEST_FETCH_ACTION,
   selectAllSchemaVersions,
   getSchemaLatest,
+  getAreSchemaLatestRejected,
 } from 'redux/reducers/schemas/schemasSlice';
 import { showServerError } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
@@ -55,6 +56,7 @@ const Details: React.FC = () => {
   const versions = useAppSelector((state) => selectAllSchemaVersions(state));
   const schema = useAppSelector(getSchemaLatest);
   const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
+  const isRejected = useAppSelector(getAreSchemaLatestRejected);
   const areVersionsFetched = useAppSelector(getAreSchemaVersionsFulfilled);
 
   const columns = React.useMemo(
@@ -77,6 +79,10 @@ const Details: React.FC = () => {
       showServerError(e as Response);
     }
   };
+
+  if (isRejected) {
+    navigate('/404');
+  }
 
   if (!isFetched || !schema) {
     return <PageLoader />;

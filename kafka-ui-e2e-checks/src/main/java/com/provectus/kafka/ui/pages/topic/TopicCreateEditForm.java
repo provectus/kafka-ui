@@ -48,7 +48,10 @@ public class TopicCreateEditForm extends BasePage {
 
   @Step
   public TopicCreateEditForm setTopicName(String topicName) {
-    nameField.setValue(topicName);
+    nameField.shouldBe(Condition.enabled).clear();
+    if (topicName != null) {
+      nameField.sendKeys(topicName);
+    }
     return this;
   }
 
@@ -108,8 +111,9 @@ public class TopicCreateEditForm extends BasePage {
   }
 
   @Step
-  public TopicCreateEditForm setPartitions(String partitions) {
-    partitionsField.setValue(partitions);
+  public TopicCreateEditForm setNumberOfPartitions(int partitions) {
+    partitionsField.shouldBe(Condition.enabled).clear();
+    partitionsField.sendKeys(String.valueOf(partitions));
     return this;
   }
 

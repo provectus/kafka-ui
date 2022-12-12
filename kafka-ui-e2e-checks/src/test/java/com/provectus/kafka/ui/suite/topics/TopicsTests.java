@@ -8,6 +8,7 @@ import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeborne.selenide.Condition;
@@ -40,7 +41,7 @@ public class TopicsTests extends BaseTest {
   private static final String SUITE_TITLE = "Topics";
   private static final Topic TOPIC_TO_CREATE = new Topic()
       .setName("new-topic-" + randomAlphabetic(5))
-      .setPartitions("1")
+      .setNumberOfPartitions(1)
       .setCustomParameterType(COMPRESSION_TYPE)
       .setCustomParameterValue("producer")
       .setCleanupPolicyValue(DELETE);
@@ -77,7 +78,7 @@ public class TopicsTests extends BaseTest {
     topicCreateEditForm
         .waitUntilScreenReady()
         .setTopicName(TOPIC_TO_CREATE.getName())
-        .setPartitions(TOPIC_TO_CREATE.getPartitions())
+        .setNumberOfPartitions(TOPIC_TO_CREATE.getNumberOfPartitions())
         .selectCleanupPolicy(TOPIC_TO_CREATE.getCleanupPolicyValue())
         .clickCreateTopicBtn();
     topicDetails
@@ -92,7 +93,8 @@ public class TopicsTests extends BaseTest {
         .isTrue();
     softly.assertThat(topicDetails.getCleanUpPolicy()).as("getCleanUpPolicy()")
         .isEqualTo(TOPIC_TO_CREATE.getCleanupPolicyValue().toString());
-    softly.assertThat(topicDetails.getPartitions()).as("getPartitions()").isEqualTo(TOPIC_TO_CREATE.getPartitions());
+    softly.assertThat(topicDetails.getPartitions()).as("getPartitions()")
+        .isEqualTo(TOPIC_TO_CREATE.getNumberOfPartitions());
     softly.assertAll();
     naviSideBar
         .openSideMenu(TOPICS);
@@ -237,11 +239,17 @@ public class TopicsTests extends BaseTest {
         .waitUntilScreenReady()
         .clickAddTopicBtn();
     topicCreateEditForm
-        .waitUntilScreenReady()
-        .setTopicName("");
+        .waitUntilScreenReady();
     assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isFalse();
     topicCreateEditForm
-        .setTopicName("testTopic1");
+        .setTopicName("testName");
+    assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isFalse();
+    topicCreateEditForm
+        .setTopicName(null)
+        .setNumberOfPartitions(nextInt(1, 10));
+    assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isFalse();
+    topicCreateEditForm
+        .setTopicName("testName");
     assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isTrue();
   }
 
