@@ -87,7 +87,7 @@ const TopicTable: React.FC = () => {
         cell: SizeCell,
       },
       {
-        header: 'Throughput',
+        header: 'Speed',
         enableSorting: false,
         cell: ThroughputCell,
       },

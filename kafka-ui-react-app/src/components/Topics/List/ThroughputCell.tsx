@@ -2,6 +2,8 @@ import React from 'react';
 import { CellContext } from '@tanstack/react-table';
 import { Topic } from 'generated-sources';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import ArrowDownIcon from 'components/common/Icons/ArrowDownIcon';
+import ArrowUpIcon from 'components/common/Icons/ArrowUpIcon';
 
 export const ThroughputCell: React.FC<CellContext<Topic, unknown>> = ({
   row: { original },
@@ -9,31 +11,31 @@ export const ThroughputCell: React.FC<CellContext<Topic, unknown>> = ({
   const production = original.bytesInPerSec;
   const consumption = original.bytesOutPerSec;
   if (production === undefined && consumption === undefined) {
-    return <>N/A</>;
+    return (
+      <>
+        <ArrowDownIcon /> N/A <ArrowUpIcon /> N/A
+      </>
+    );
   }
   if (production === undefined) {
     return (
       <>
-        out: <BytesFormatted value={consumption} />
+        <ArrowUpIcon /> <BytesFormatted value={consumption} />
       </>
     );
   }
   if (consumption === undefined) {
     return (
       <>
-        in: <BytesFormatted value={production} />
+        <ArrowDownIcon /> <BytesFormatted value={production} />
       </>
     );
   }
 
   return (
     <>
-      <div>
-        in: <BytesFormatted value={production} />
-      </div>
-      <div>
-        out: <BytesFormatted value={consumption} />
-      </div>
+      <ArrowDownIcon /> <BytesFormatted value={production} /> <ArrowUpIcon />{' '}
+      <BytesFormatted value={consumption} />
     </>
   );
 };
