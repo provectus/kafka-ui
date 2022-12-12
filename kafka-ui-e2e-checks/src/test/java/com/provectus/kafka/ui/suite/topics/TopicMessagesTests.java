@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.suite.topics;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
+import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
@@ -54,7 +55,7 @@ public class TopicMessagesTests extends BaseTest {
         .openTopic(TOPIC_FOR_MESSAGES.getName());
     topicDetails
         .waitUntilScreenReady()
-        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .openDetailsTab(MESSAGES)
         .clickProduceMessageBtn();
     produceMessagePanel
         .waitUntilScreenReady()
@@ -118,12 +119,39 @@ public class TopicMessagesTests extends BaseTest {
         .openTopic(topicName);
     topicDetails
         .waitUntilScreenReady()
-        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .openDetailsTab(MESSAGES)
         .getRandomMessage()
         .openDotMenu()
         .clickCopyToClipBoard();
     Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Copied successfully!"),
         "isAlertWithMessageVisible()");
+  }
+
+  @Disabled
+  @Issue("https://github.com/provectus/kafka-ui/issues/2856")
+  @DisplayName("Checking messages filtering by Offset within Topic/Messages")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(15)
+  @Test
+  void checkingMessageFilteringByOffset() {
+    String topicName = "_schemas";
+    String offsetValue = "2";
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .openTopic(topicName);
+    topicDetails
+        .waitUntilScreenReady()
+        .openDetailsTab(MESSAGES);
+    topicDetails
+        .selectSeekTypeMessagesDdl("Offset")
+        .setOffsetMessagesField(offsetValue)
+        .clickSubmitMessagesFiltersButton();
+    SoftAssertions softly = new SoftAssertions();
+    topicDetails.getAllMessages().forEach(messages -> softly.assertThat(messages.getOffset() == Integer.parseInt(offsetValue)));
+    softly.assertAll();
   }
 
   @AfterAll
