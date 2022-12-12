@@ -96,6 +96,7 @@ const TopicForm: React.FC<Props> = ({
                 name="name"
                 placeholder="Topic Name"
                 defaultValue={topicName}
+                autoComplete="off"
               />
               <FormError>
                 <ErrorMessage errors={errors} name="name" />

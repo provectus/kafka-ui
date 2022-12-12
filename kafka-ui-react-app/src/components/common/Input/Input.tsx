@@ -11,6 +11,7 @@ export interface InputProps
   hookFormOptions?: RegisterOptions;
   search?: boolean;
   positiveOnly?: boolean;
+  autoComplete?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -20,6 +21,7 @@ const Input: React.FC<InputProps> = ({
   inputSize = 'L',
   type,
   positiveOnly,
+
   ...rest
 }) => {
   const methods = useFormContext();
