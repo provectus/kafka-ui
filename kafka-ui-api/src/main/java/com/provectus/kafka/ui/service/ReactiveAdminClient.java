@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.kafka.clients.admin.ListOffsetsResult.ListOffsetsResultInfo;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
@@ -15,6 +16,7 @@ import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -22,15 +24,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +45,7 @@ import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.DescribeClusterOptions;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
 import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsOptions;
+import org.apache.kafka.clients.admin.ListOffsetsResult;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
@@ -149,6 +152,7 @@ public class ReactiveAdminClient implements Closeable {
 
   //---------------------------------------------------------------------------------
 
+  @Getter(AccessLevel.PACKAGE) // visible for testing
   private final AdminClient client;
   private final String version;
   private final Set<SupportedFeature> features;
@@ -169,6 +173,7 @@ public class ReactiveAdminClient implements Closeable {
     return listTopics(true).flatMap(topics -> getTopicsConfig(topics, false));
   }
 
+  //NOTE: skips not-found topics (for which UnknownTopicOrPartitionException was thrown by AdminClient)
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames, boolean includeDoc) {
     var includeDocFixed = features.contains(SupportedFeature.CONFIG_DOCUMENTATION_RETRIEVAL) && includeDoc;
     // we need to partition calls, because it can lead to AdminClient timeouts in case of large topics count
@@ -255,37 +260,32 @@ public class ReactiveAdminClient implements Closeable {
    * such topics in resulting map.
    * <p/>
    * This method converts input map into Mono[Map] ignoring keys for which KafkaFutures
-   * finished with <code>clazz</code> exception.
+   * finished with <code>clazz</code> exception and empty Monos.
    */
-  private <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
-                                                           Class<? extends KafkaException> clazz) {
+  static <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
+                                                          Class<? extends KafkaException> clazz) {
     if (values.isEmpty()) {
       return Mono.just(Map.of());
     }
 
-    List<Mono<Tuple2<K, V>>> monos = values.entrySet().stream()
-        .map(e -> toMono(e.getValue()).map(r -> Tuples.of(e.getKey(), r)))
-        .collect(toList());
+    List<Mono<Tuple2<K, Optional<V>>>> monos = values.entrySet().stream()
+        .map(e ->
+            toMono(e.getValue())
+                .map(r -> Tuples.of(e.getKey(), Optional.of(r)))
+                .defaultIfEmpty(Tuples.of(e.getKey(), Optional.empty())) //tracking empty Monos
+                .onErrorResume(
+                    // tracking Monos with suppressible error
+                    th -> th.getClass().isAssignableFrom(clazz),
+                    th -> Mono.just(Tuples.of(e.getKey(), Optional.empty()))))
+        .toList();
 
-    return Mono.create(sink -> {
-      var finishedCnt = new AtomicInteger();
-      var results = new ConcurrentHashMap<K, V>();
-      monos.forEach(mono -> mono.subscribe(
-          r -> {
-            results.put(r.getT1(), r.getT2());
-            if (finishedCnt.incrementAndGet() == monos.size()) {
-              sink.success(results);
-            }
-          },
-          th -> {
-            if (!th.getClass().isAssignableFrom(clazz)) {
-              sink.error(th);
-            } else if (finishedCnt.incrementAndGet() == monos.size()) {
-              sink.success(results);
-            }
-          }
-      ));
-    });
+    return Mono.zip(
+        monos,
+        resultsArr -> Stream.of(resultsArr)
+            .map(obj -> (Tuple2<K, Optional<V>>) obj)
+            .filter(t -> t.getT2().isPresent()) //skipping empty & suppressible-errors
+            .collect(Collectors.toMap(Tuple2::getT1, t -> t.getT2().get()))
+    );
   }
 
   public Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> describeLogDirs() {
@@ -300,6 +300,10 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<ClusterDescription> describeCluster() {
+    return describeClusterImpl(client);
+  }
+
+  private static Mono<ClusterDescription> describeClusterImpl(AdminClient client) {
     var result = client.describeCluster(new DescribeClusterOptions().includeAuthorizedOperations(true));
     var allOfFuture = KafkaFuture.allOf(
         result.controller(), result.clusterId(), result.nodes(), result.authorizedOperations());
@@ -316,17 +320,20 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   private static Mono<String> getClusterVersion(AdminClient client) {
-    return toMono(client.describeCluster().controller()) //this Mono can be empty if controller not known
-        .flatMap(controller -> loadBrokersConfig(client, List.of(controller.id())))
-        .flatMap(configs ->
-            Mono.justOrEmpty(
-              configs.values().stream()
-                .flatMap(Collection::stream)
-                .filter(entry -> entry.name().contains("inter.broker.protocol.version"))
-                .findFirst()
-                .map(ConfigEntry::value))
+    return describeClusterImpl(client)
+        // choosing node from which we will get configs (starting with controller)
+        .flatMap(descr -> descr.controller != null
+            ? Mono.just(descr.controller)
+            : Mono.justOrEmpty(descr.nodes.stream().findFirst())
         )
-        .defaultIfEmpty("1.0-UNKNOWN");
+        .flatMap(node -> loadBrokersConfig(client, List.of(node.id())))
+        .flatMap(configs -> configs.values().stream()
+            .flatMap(Collection::stream)
+            .filter(entry -> entry.name().contains("inter.broker.protocol.version"))
+            .findFirst()
+            .map(configEntry -> Mono.just(configEntry.value()))
+            .orElse(Mono.empty()))
+        .switchIfEmpty(Mono.just("1.0-UNKNOWN"));
   }
 
   public Mono<Void> deleteConsumerGroups(Collection<String> groupIds) {
@@ -358,9 +365,14 @@ public class ReactiveAdminClient implements Closeable {
     return toMono(client.createPartitions(newPartitionsMap).all());
   }
 
+
+  // NOTE: places whole current topic config with new one. Entries that were present in old config,
+  // but missed in new will be set to default
   public Mono<Void> updateTopicConfig(String topicName, Map<String, String> configs) {
     if (features.contains(SupportedFeature.INCREMENTAL_ALTER_CONFIGS)) {
-      return incrementalAlterConfig(topicName, configs);
+      return getTopicsConfigImpl(List.of(topicName), false)
+          .map(conf -> conf.getOrDefault(topicName, List.of()))
+          .flatMap(currentConfigs -> incrementalAlterConfig(topicName, currentConfigs, configs));
     } else {
       return alterConfig(topicName, configs);
     }
@@ -404,6 +416,7 @@ public class ReactiveAdminClient implements Closeable {
 
   /**
    * List offset for the topic's partitions and OffsetSpec.
+   *
    * @param failOnUnknownLeader true - throw exception in case of no-leader partitions,
    *                            false - skip partitions with no leader
    */
@@ -417,6 +430,7 @@ public class ReactiveAdminClient implements Closeable {
 
   /**
    * List offset for the specified partitions and OffsetSpec.
+   *
    * @param failOnUnknownLeader true - throw exception in case of no-leader partitions,
    *                            false - skip partitions with no leader
    */
@@ -457,19 +471,26 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   // 1. NOTE(!): should only apply for partitions with existing leader,
-  // otherwise AdminClient will try to fetch topic metadata, fail and retry infinitely (until timeout)
-  // 2. TODO: check if it is a bug that AdminClient never throws LeaderNotAvailableException and just retrying instead
+  //    otherwise AdminClient will try to fetch topic metadata, fail and retry infinitely (until timeout)
+  // 2. NOTE(!): Skips partitions that were not initialized yet
+  //    (UnknownTopicOrPartitionException thrown, ex. after topic creation)
+  // 3. TODO: check if it is a bug that AdminClient never throws LeaderNotAvailableException and just retrying instead
   @KafkaClientInternalsDependant
   public Mono<Map<TopicPartition, Long>> listOffsetsUnsafe(Collection<TopicPartition> partitions,
                                                            OffsetSpec offsetSpec) {
 
     Function<Collection<TopicPartition>, Mono<Map<TopicPartition, Long>>> call =
-        parts -> toMono(
-            client.listOffsets(parts.stream().collect(toMap(tp -> tp, tp -> offsetSpec))).all())
-            .map(offsets -> offsets.entrySet().stream()
-                // filtering partitions for which offsets were not found
-                .filter(e -> e.getValue().offset() >= 0)
-                .collect(toMap(Map.Entry::getKey, e -> e.getValue().offset())));
+        parts -> {
+          ListOffsetsResult r = client.listOffsets(parts.stream().collect(toMap(tp -> tp, tp -> offsetSpec)));
+          Map<TopicPartition, KafkaFuture<ListOffsetsResultInfo>> perPartitionResults = new HashMap<>();
+          parts.forEach(p -> perPartitionResults.put(p, r.partitionResult(p)));
+
+          return toMonoWithExceptionFilter(perPartitionResults, UnknownTopicOrPartitionException.class)
+              .map(offsets -> offsets.entrySet().stream()
+                  // filtering partitions for which offsets were not found
+                  .filter(e -> e.getValue().offset() >= 0)
+                  .collect(toMap(Map.Entry::getKey, e -> e.getValue().offset())));
+        };
 
     return partitionCalls(
         partitions,
@@ -496,17 +517,22 @@ public class ReactiveAdminClient implements Closeable {
     return toMono(client.alterReplicaLogDirs(replicaAssignment).all());
   }
 
-  private Mono<Void> incrementalAlterConfig(String topicName, Map<String, String> configs) {
-    var config = configs.entrySet().stream()
-        .flatMap(cfg -> Stream.of(
-            new AlterConfigOp(
-                new ConfigEntry(
-                    cfg.getKey(),
-                    cfg.getValue()),
-                AlterConfigOp.OpType.SET)))
-        .collect(toList());
-    var topicResource = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
-    return toMono(client.incrementalAlterConfigs(Map.of(topicResource, config)).all());
+  private Mono<Void> incrementalAlterConfig(String topicName,
+                                            List<ConfigEntry> currentConfigs,
+                                            Map<String, String> newConfigs) {
+    var configsToDelete = currentConfigs.stream()
+        .filter(e -> e.source() == ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG) //manually set configs only
+        .filter(e -> !newConfigs.containsKey(e.name()))
+        .map(e -> new AlterConfigOp(e, AlterConfigOp.OpType.DELETE));
+
+    var configsToSet = newConfigs.entrySet().stream()
+        .map(e -> new AlterConfigOp(new ConfigEntry(e.getKey(), e.getValue()), AlterConfigOp.OpType.SET));
+
+    return toMono(client.incrementalAlterConfigs(
+        Map.of(
+            new ConfigResource(ConfigResource.Type.TOPIC, topicName),
+            Stream.concat(configsToDelete, configsToSet).toList()
+        )).all());
   }
 
   @SuppressWarnings("deprecation")

@@ -21,6 +21,7 @@ import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.model.schemaregistry.InternalNewSchema;
 import com.provectus.kafka.ui.model.schemaregistry.SubjectIdResponse;
+import com.provectus.kafka.ui.util.SecuredWebClient;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
@@ -67,8 +68,6 @@ public class SchemaRegistryService {
   private static final String UNRECOGNIZED_FIELD_SCHEMA_TYPE = "Unrecognized field: schemaType";
   private static final String INCOMPATIBLE_WITH_AN_EARLIER_SCHEMA = "incompatible with an earlier schema";
   private static final String INVALID_SCHEMA = "Invalid Schema";
-
-  private final WebClient webClient;
 
   public Mono<List<SchemaSubjectDTO>> getAllLatestVersionSchemas(KafkaCluster cluster,
                                                                  List<String> subjects) {
@@ -372,10 +371,23 @@ public class SchemaRegistryService {
                                                         List<String> uriVariables,
                                                         MultiValueMap<String, String> queryParams) {
     final var schemaRegistry = cluster.getSchemaRegistry();
-    return webClient
-        .method(method)
-        .uri(buildUri(schemaRegistry, path, uriVariables, queryParams))
-        .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers));
+
+    try {
+      WebClient.Builder schemaRegistryWebClient = SecuredWebClient.configure(
+          schemaRegistry.getKeystoreLocation(),
+          schemaRegistry.getKeystorePassword(),
+          schemaRegistry.getTruststoreLocation(),
+          schemaRegistry.getTruststorePassword()
+      );
+
+      return schemaRegistryWebClient.build()
+          .method(method)
+          .uri(buildUri(schemaRegistry, path, uriVariables, queryParams))
+          .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers));
+    } catch (Exception e) {
+      throw new IllegalStateException(
+          "cannot create TLS configuration for schema-registry in cluster " + cluster.getName(), e);
+    }
   }
 
   private URI buildUri(InternalSchemaRegistry schemaRegistry, String path, List<String> uriVariables,

@@ -27,8 +27,10 @@ public class ClustersProperties {
     String bootstrapServers;
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
+    WebClientSsl schemaRegistrySsl;
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
+    WebClientSsl ksqldbServerSsl;
     List<ConnectCluster> kafkaConnect;
     MetricsConfigData metrics;
     Properties properties;
@@ -37,6 +39,8 @@ public class ClustersProperties {
     List<SerdeConfig> serde = new ArrayList<>();
     String defaultKeySerde;
     String defaultValueSerde;
+    List<Masking> masking = new ArrayList<>();
+    long pollingThrottleRate = 0;
   }
 
   @Data
@@ -54,12 +58,24 @@ public class ClustersProperties {
     String address;
     String userName;
     String password;
+    String keystoreLocation;
+    String keystorePassword;
+    String truststoreLocation;
+    String truststorePassword;
   }
 
   @Data
   public static class SchemaRegistryAuth {
     String username;
     String password;
+  }
+
+  @Data
+  public static class WebClientSsl {
+    String keystoreLocation;
+    String keystorePassword;
+    String truststoreLocation;
+    String truststorePassword;
   }
 
   @Data
@@ -77,6 +93,20 @@ public class ClustersProperties {
   public static class KsqldbServerAuth {
     String username;
     String password;
+  }
+
+  @Data
+  public static class Masking {
+    Type type;
+    List<String> fields = List.of(); //if empty - policy will be applied to all fields
+    List<String> pattern = List.of("X", "x", "n", "-"); //used when type=MASK
+    String replacement = "***DATA_MASKED***"; //used when type=REPLACE
+    String topicKeysPattern;
+    String topicValuesPattern;
+
+    public enum Type {
+      REMOVE, MASK, REPLACE
+    }
   }
 
   @PostConstruct

@@ -134,6 +134,11 @@ export const getAreSchemaLatestFulfilled = createSelector(
   createFetchingSelector(SCHEMA_LATEST_FETCH_ACTION),
   (status) => status === AsyncRequestStatus.fulfilled
 );
+export const getAreSchemaLatestRejected = createSelector(
+  createFetchingSelector(SCHEMA_LATEST_FETCH_ACTION),
+  (status) => status === AsyncRequestStatus.rejected
+);
+
 export const getAreSchemaVersionsFulfilled = createSelector(
   createFetchingSelector(SCHEMAS_VERSIONS_FETCH_ACTION),
   (status) => status === AsyncRequestStatus.fulfilled

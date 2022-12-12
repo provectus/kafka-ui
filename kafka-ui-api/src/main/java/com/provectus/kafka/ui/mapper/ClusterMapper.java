@@ -36,12 +36,15 @@ import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
+import com.provectus.kafka.ui.service.masking.DataMasking;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
+import com.provectus.kafka.ui.util.PollingThrottler;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.mapstruct.Mapper;
@@ -57,6 +60,7 @@ public interface ClusterMapper {
   @Mapping(target = "schemaRegistry", source = ".", qualifiedByName = "setSchemaRegistry")
   @Mapping(target = "ksqldbServer", source = ".", qualifiedByName = "setKsqldbServer")
   @Mapping(target = "metricsConfig", source = "metrics")
+  @Mapping(target = "throttler", source = ".", qualifiedByName = "createClusterThrottler")
   KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
 
   ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
@@ -124,6 +128,13 @@ public interface ClusterMapper {
       internalSchemaRegistry.password(clusterProperties.getSchemaRegistryAuth().getPassword());
     }
 
+    if (clusterProperties.getSchemaRegistrySsl() != null) {
+      internalSchemaRegistry.keystoreLocation(clusterProperties.getSchemaRegistrySsl().getKeystoreLocation());
+      internalSchemaRegistry.keystorePassword(clusterProperties.getSchemaRegistrySsl().getKeystorePassword());
+      internalSchemaRegistry.truststoreLocation(clusterProperties.getSchemaRegistrySsl().getTruststoreLocation());
+      internalSchemaRegistry.truststorePassword(clusterProperties.getSchemaRegistrySsl().getTruststorePassword());
+    }
+
     return internalSchemaRegistry.build();
   }
 
@@ -142,7 +153,19 @@ public interface ClusterMapper {
       internalKsqlServerBuilder.password(clusterProperties.getKsqldbServerAuth().getPassword());
     }
 
+    if (clusterProperties.getKsqldbServerSsl() != null) {
+      internalKsqlServerBuilder.keystoreLocation(clusterProperties.getKsqldbServerSsl().getKeystoreLocation());
+      internalKsqlServerBuilder.keystorePassword(clusterProperties.getKsqldbServerSsl().getKeystorePassword());
+      internalKsqlServerBuilder.truststoreLocation(clusterProperties.getKsqldbServerSsl().getTruststoreLocation());
+      internalKsqlServerBuilder.truststorePassword(clusterProperties.getKsqldbServerSsl().getTruststorePassword());
+    }
+
     return internalKsqlServerBuilder.build();
+  }
+
+  @Named("createClusterThrottler")
+  default Supplier<PollingThrottler> createClusterThrottler(ClustersProperties.Cluster cluster) {
+    return PollingThrottler.throttlerSupplier(cluster);
   }
 
   TopicDetailsDTO toTopicDetails(InternalTopic topic);
@@ -173,6 +196,10 @@ public interface ClusterMapper {
     brokerDiskUsage.segmentCount((int) internalBrokerDiskUsage.getSegmentCount());
     brokerDiskUsage.segmentSize(internalBrokerDiskUsage.getSegmentSize());
     return brokerDiskUsage;
+  }
+
+  default DataMasking map(List<ClustersProperties.Masking> maskingProperties) {
+    return DataMasking.create(maskingProperties);
   }
 
   @Named("setProperties")

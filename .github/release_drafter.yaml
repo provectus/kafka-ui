@@ -9,6 +9,7 @@ template: |
 exclude-labels:
   - 'scope/infrastructure'
   - 'scope/QA'
+  - 'scope/AQA'
   - 'type/dependencies'
   - 'type/chore'
   - 'type/documentation'
@@ -24,6 +25,9 @@ categories:
   - title: '🔨Bug Fixes'
     labels:
       - 'type/bug'
+  - title: 'Security'
+    labels:
+      - 'type/security'
   - title: '⎈ Helm/K8S Changes'
     labels:
       - 'scope/k8s'
