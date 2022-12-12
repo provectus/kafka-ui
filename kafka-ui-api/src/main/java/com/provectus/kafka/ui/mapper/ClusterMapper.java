@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.mapper;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.BrokerConfigDTO;
+import com.provectus.kafka.ui.model.BrokerDTO;
 import com.provectus.kafka.ui.model.BrokerDiskUsageDTO;
 import com.provectus.kafka.ui.model.BrokerMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterDTO;
@@ -14,6 +15,7 @@ import com.provectus.kafka.ui.model.ConfigSynonymDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.FailoverUrlList;
 import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.InternalBroker;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalClusterState;
@@ -102,6 +104,8 @@ public interface ClusterMapper {
   TopicDTO toTopic(InternalTopic topic);
 
   PartitionDTO toPartition(InternalPartition topic);
+
+  BrokerDTO toBrokerDto(InternalBroker broker);
 
   @Named("setSchemaRegistry")
   default InternalSchemaRegistry setSchemaRegistry(ClustersProperties.Cluster clusterProperties) {
