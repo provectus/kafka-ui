@@ -210,8 +210,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
           List<String> filteredSubjects = subjects
               .stream()
               .filter(subj -> search == null || StringUtils.containsIgnoreCase(subj, search))
-              .sorted()
-              .collect(Collectors.toList());
+              .sorted().toList();
           var totalPages = (filteredSubjects.size() / pageSize)
               + (filteredSubjects.size() % pageSize == 0 ? 0 : 1);
           List<String> subjectsToRender = filteredSubjects.stream()
