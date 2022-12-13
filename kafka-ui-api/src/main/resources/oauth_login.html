@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Kafka UI Platform Log In</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet"/>
+    <style>
+        body {
+            margin: 0
+        }
+
+        * {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            font-style: normal;
+            color: #7A869A;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            text-decoration: none;
+        }
+
+        .header {
+            position: fixed;
+            font-size: 14px;
+            line-height: 16px;
+            color: #000000;
+            background-color: white;
+            border-bottom: 1px solid #EBECF0;
+            height: 49px;
+            padding-top: 16px;
+            padding-left: 16px;
+            width: 100%;
+        }
+
+        .container {
+            display: flex;
+            padding-top: 49px;
+            margin: 0 auto;
+            height: calc(100vh - 49px);
+        }
+
+        .content-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+
+        .login-buttons {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .login-btn-google {
+            margin-right: 8px;
+        }
+
+        .login-btn {
+            width: 156px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #E5F2FF;
+            padding: 8px 0;
+            margin-top: 16px;
+            text-decoration: none;
+        }
+
+        .login_title {
+            color: black;
+            font-weight: 500;
+            font-size: 24px;
+            line-height: 36px;
+        }
+
+        .login-btn-logo {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+
+        .login-btn-text {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            letter-spacing: 0em;
+            color: #0066CC;
+            margin: 0
+        }
+
+        .login-btn:hover {
+            cursor: pointer;
+            background-color: #CCE6FF;
+        }
+
+        .login-btn:active {
+            background-color: #99CCFF;
+        }
+
+        .login-error-text {
+            color: #0d11f2;
+            height: 16px;
+            font-size: 16px;
+            line-height: 16px;
+            margin: 32px 0 0;
+            align-self: center;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="content-container">
+        <h1 class="login_title">Log in into the Kafka UI Platform via:</h1>
+        <div class="login-buttons">
+            <a class="login-btn login-btn-google" th:each="reg : ${regs}" th:href="${reg.href}">
+                <img class="login-btn-logo" th:src="${reg.imgSrc}">
+                <p class="login-btn-text" th:text="${reg.name}">Google</p>
+            </a>
+        </div>
+        <p class="login-error-text" th:if="${error == true}">Authenticated</p>
+    </div>
+</div>
+</body>
+</html>
