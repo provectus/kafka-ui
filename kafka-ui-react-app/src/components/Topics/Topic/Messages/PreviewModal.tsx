@@ -9,6 +9,7 @@ import CancelIcon from 'components/common/Icons/CancelIcon';
 
 import * as S from './PreviewModal.styled';
 import { PreviewFilter } from './Message';
+import { PreviewModalInput } from './PreviewModal.styled';
 
 export interface InfoModalProps {
   values: PreviewFilter[];
@@ -86,7 +87,7 @@ const PreviewModal: React.FC<InfoModalProps> = ({
           </IconButtonWrapper>
         </S.EditForm>
       ))}
-      <div>
+      <PreviewModalInput>
         <InputLabel htmlFor="previewFormField">Field</InputLabel>
         <Input
           type="text"
@@ -97,8 +98,8 @@ const PreviewModal: React.FC<InfoModalProps> = ({
           onChange={({ target }) => setField(target?.value)}
         />
         <FormError>{errors.includes('field') && 'Field is required'}</FormError>
-      </div>
-      <div>
+      </PreviewModalInput>
+      <PreviewModalInput>
         <InputLabel htmlFor="previewFormJsonPath">Json path</InputLabel>
         <Input
           type="text"
@@ -111,7 +112,7 @@ const PreviewModal: React.FC<InfoModalProps> = ({
         <FormError>
           {errors.includes('path') && 'Json path is required'}
         </FormError>
-      </div>
+      </PreviewModalInput>
       <S.ButtonWrapper>
         <Button
           buttonSize="M"

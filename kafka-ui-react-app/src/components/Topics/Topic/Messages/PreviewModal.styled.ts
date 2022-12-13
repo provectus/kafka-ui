@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const PreviewModal = styled.div`
+export const PreviewModal = styled.th`
   height: auto;
   width: 560px;
   border-radius: 8px;
@@ -11,6 +11,9 @@ export const PreviewModal = styled.div`
   box-shadow: ${({ theme }) => theme.modal.shadow};
   padding: 32px;
   z-index: 1;
+`;
+export const PreviewModalInput = styled.div`
+  text-align: left;
 `;
 
 export const ButtonWrapper = styled.div`
