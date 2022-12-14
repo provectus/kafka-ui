@@ -9,6 +9,7 @@ import {
   clusterConnectorsPath,
 } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
+import SuspenseQueryComponent from 'components/common/SuspenseQueryComponent/SuspenseQueryComponent';
 
 import ListPage from './List/ListPage';
 import New from './New/New';
@@ -23,7 +24,11 @@ const Connect: React.FC = () => {
       <Route path={clusterConnectorNewRelativePath} element={<New />} />
       <Route
         path={getNonExactPath(clusterConnectConnectorRelativePath)}
-        element={<DetailsPage />}
+        element={
+          <SuspenseQueryComponent>
+            <DetailsPage />
+          </SuspenseQueryComponent>
+        }
       />
       <Route
         path={clusterConnectConnectorsRelativePath}
