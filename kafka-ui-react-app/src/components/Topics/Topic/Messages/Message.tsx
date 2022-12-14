@@ -7,6 +7,7 @@ import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import WarningRedIcon from 'components/common/Icons/WarningRedIcon';
 
 import MessageContent from './MessageContent/MessageContent';
 import * as S from './MessageContent/MessageContent.styled';
@@ -45,6 +46,8 @@ const Message: React.FC<Props> = ({
     valueFormat,
     keyFormat,
     headers,
+    valueSerde,
+    keySerde,
   },
   keyFilters,
   contentFilters,
@@ -120,6 +123,9 @@ const Message: React.FC<Props> = ({
         <StyledDataCell>
           <S.Metadata>
             <S.MetadataValue>
+              {(valueSerde === 'Fallback' || keySerde === 'Fallback') && (
+                <WarningRedIcon />
+              )}
               {renderFilteredJson(content, contentFilters)}
             </S.MetadataValue>
           </S.Metadata>
