@@ -7,7 +7,8 @@ import { RouteParamsClusterTopic } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
-import { useTopicDetails } from 'lib/hooks/api/topics';
+import { topicKeys, useTopicDetails } from 'lib/hooks/api/topics';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ActionsCell: React.FC<CellContext<Partition, unknown>> = ({ row }) => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
@@ -15,11 +16,13 @@ const ActionsCell: React.FC<CellContext<Partition, unknown>> = ({ row }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { partition } = row.original;
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
 
   const clearTopicMessagesHandler = async () => {
     await dispatch(
       clearTopicMessages({ clusterName, topicName, partitions: [partition] })
     ).unwrap();
+    queryClient.invalidateQueries(topicKeys?.all(clusterName));
   };
   const disabled =
     data?.internal || isReadOnly || data?.cleanUpPolicy !== 'DELETE';
