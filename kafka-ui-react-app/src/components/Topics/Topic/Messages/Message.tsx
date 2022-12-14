@@ -118,16 +118,13 @@ const Message: React.FC<Props> = ({
           <div>{formatTimestamp(timestamp)}</div>
         </td>
         <StyledDataCell title={key}>
+          <S.Icon>{keySerde === 'Fallback' && <WarningRedIcon />}</S.Icon>
           {renderFilteredJson(key, keyFilters)}
         </StyledDataCell>
         <StyledDataCell>
           <S.Metadata>
             <S.MetadataValue>
-              <S.Icon>
-                {(valueSerde === 'Fallback' || keySerde === 'Fallback') && (
-                  <WarningRedIcon />
-                )}
-              </S.Icon>
+              <S.Icon>{valueSerde === 'Fallback' && <WarningRedIcon />}</S.Icon>
               {renderFilteredJson(content, contentFilters)}
             </S.MetadataValue>
           </S.Metadata>
