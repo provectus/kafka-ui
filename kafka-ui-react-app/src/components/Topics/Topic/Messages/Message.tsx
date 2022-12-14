@@ -123,9 +123,11 @@ const Message: React.FC<Props> = ({
         <StyledDataCell>
           <S.Metadata>
             <S.MetadataValue>
-              {(valueSerde === 'Fallback' || keySerde === 'Fallback') && (
-                <WarningRedIcon />
-              )}
+              <S.Icon>
+                {(valueSerde === 'Fallback' || keySerde === 'Fallback') && (
+                  <WarningRedIcon />
+                )}
+              </S.Icon>
               {renderFilteredJson(content, contentFilters)}
             </S.MetadataValue>
           </S.Metadata>

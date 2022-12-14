@@ -63,6 +63,11 @@ export const MetadataValue = styled.p`
   font-size: 14px;
 `;
 
+export const Icon = styled.span`
+  padding-right: 5px;
+  vertical-align: top;
+`;
+
 export const MetadataMeta = styled.p`
   color: ${({ theme }) => theme.topicMetaData.color.meta};
   font-size: 12px;
@@ -89,7 +94,7 @@ export const Tab = styled.button<{ $active?: boolean }>(
       border-radius: 0 4px 4px 0;
     }
     &:not(:last-child) {
-      border-right: 0px;
+      border-right: 0;
     }
   `
 );
