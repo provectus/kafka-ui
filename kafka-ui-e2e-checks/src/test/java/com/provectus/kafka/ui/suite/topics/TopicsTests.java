@@ -285,14 +285,8 @@ public class TopicsTests extends BaseTest {
   @Order(9)
   void checkTopicListElements() {
     navigateToTopics();
-    SoftAssertions softly = new SoftAssertions();
-    topicsList.getAllVisibleElements().forEach(
-        element -> softly.assertThat(element.is(Condition.visible)).as(element.getSearchCriteria() + " isVisible()")
-            .isTrue());
-    topicsList.getAllEnabledElements().forEach(
-        element -> softly.assertThat(element.is(Condition.enabled)).as(element.getSearchCriteria() + " isEnabled()")
-            .isTrue());
-    softly.assertAll();
+    verifyVisibleElements(topicsList.getAllVisibleElements());
+    verifyEnabledElements(topicsList.getAllEnabledElements());
   }
 
   @DisplayName("Filter adding within Topic")
@@ -308,13 +302,9 @@ public class TopicsTests extends BaseTest {
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible();
+    verifyVisibleElements(topicDetails.getAllAddFilterModalVisibleElements());
+    verifyEnabledElements(topicDetails.getAllAddFilterModalEnabledElements());
     SoftAssertions softly = new SoftAssertions();
-    topicDetails.getAllAddFilterModalVisibleElements().forEach(element ->
-        softly.assertThat(element.is(Condition.visible))
-            .as(element.getSearchCriteria() + " isVisible()").isTrue());
-    topicDetails.getAllAddFilterModalEnabledElements().forEach(element ->
-        softly.assertThat(element.is(Condition.enabled))
-            .as(element.getSearchCriteria() + " isEnabled()").isTrue());
     topicDetails.getAllAddFilterModalDisabledElements().forEach(element ->
         softly.assertThat(element.is(Condition.enabled))
             .as(element.getSearchCriteria() + " isEnabled()").isFalse());

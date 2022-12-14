@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.base;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.TestCaseGenerator;
@@ -9,6 +11,7 @@ import io.qameta.allure.Allure;
 import io.qase.api.annotation.Step;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
@@ -23,6 +26,7 @@ import org.testcontainers.utility.DockerImageName;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static com.provectus.kafka.ui.base.Setup.*;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
@@ -130,5 +134,21 @@ public class BaseTest extends Facade {
         .openTopic(topicName);
     topicDetails
         .waitUntilScreenReady();
+  }
+
+  @Step
+  protected void verifyVisibleElements(List<SelenideElement> visibleElements){
+    SoftAssertions softly = new SoftAssertions();
+    visibleElements.forEach(element -> softly.assertThat(element.is(Condition.visible))
+        .as(element.getSearchCriteria() + " isVisible()").isTrue());
+    softly.assertAll();
+  }
+
+  @Step
+  protected void verifyEnabledElements(List<SelenideElement> visibleElements){
+    SoftAssertions softly = new SoftAssertions();
+    visibleElements.forEach(element -> softly.assertThat(element.is(Condition.enabled))
+        .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    softly.assertAll();
   }
 }

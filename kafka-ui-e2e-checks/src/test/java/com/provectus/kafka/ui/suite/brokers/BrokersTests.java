@@ -3,14 +3,12 @@ package com.provectus.kafka.ui.suite.brokers;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.BROKERS;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qameta.allure.Step;
 import io.qase.api.annotation.CaseId;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -25,13 +23,9 @@ public class BrokersTests extends BaseTest {
   @Test
   public void checkBrokersOverview(){
     navigateToBrokers();
-    SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(brokersList.getAllBrokers()).as("getAllBrokers()").size().isGreaterThan(0);
-    brokersList.getAllVisibleElements().forEach(element -> softly.assertThat(element.is(Condition.visible))
-        .as(element.getSearchCriteria() + " isVisible()").isTrue());
-    brokersList.getAllEnabledElements().forEach(element -> softly.assertThat(element.is(Condition.enabled))
-        .as(element.getSearchCriteria() + " isEnabled()").isTrue());
-    softly.assertAll();
+    assertThat(brokersList.getAllBrokers()).as("getAllBrokers()").size().isGreaterThan(0);
+    verifyVisibleElements(brokersList.getAllVisibleElements());
+    verifyEnabledElements(brokersList.getAllEnabledElements());
   }
 
   @DisplayName("Checking the existing Broker's profile in a cluster")
@@ -46,12 +40,8 @@ public class BrokersTests extends BaseTest {
         .openBroker("1");
     brokersDetails
         .waitUntilScreenReady();
-    SoftAssertions softly = new SoftAssertions();
-    brokersDetails.getAllVisibleElements().forEach(element -> softly.assertThat(element.is(Condition.visible))
-        .as(element.getSearchCriteria() + " isVisible()").isTrue());
-    brokersDetails.getAllEnabledElements().forEach(element -> softly.assertThat(element.is(Condition.enabled))
-        .as(element.getSearchCriteria() + " isEnabled()").isTrue());
-    softly.assertAll();
+    verifyVisibleElements(brokersDetails.getAllVisibleElements());
+    verifyEnabledElements(brokersDetails.getAllEnabledElements());
   }
 
   @Step
