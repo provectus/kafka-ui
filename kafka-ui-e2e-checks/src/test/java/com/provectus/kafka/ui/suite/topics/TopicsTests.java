@@ -233,7 +233,9 @@ public class TopicsTests extends BaseTest {
         .clickAddTopicBtn();
     topicCreateEditForm
         .waitUntilScreenReady()
-        .setTopicName(topicToRetainData.getName());
+        .setTopicName(topicToRetainData.getName())
+        .setNumberOfPartitions(1)
+        .setTimeToRetainDataInMs("604800000");
     assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()").isEqualTo("604800000");
     topicCreateEditForm
         .setTimeToRetainDataInMs(topicToRetainData.getTimeToRetainData())
