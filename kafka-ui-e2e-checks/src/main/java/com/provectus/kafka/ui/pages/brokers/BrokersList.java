@@ -30,7 +30,7 @@ public class BrokersList extends BasePage {
   }
 
   private List<SelenideElement> getUptimeSummaryCells() {
-    return Stream.of("Broker Count", "Active Controllers", "Version")
+    return Stream.of("Broker Count", "Active Controller", "Version")
         .map(name -> $x(String.format(summaryCellLocator, name)))
         .collect(Collectors.toList());
   }
@@ -87,7 +87,7 @@ public class BrokersList extends BasePage {
     }
 
     private SelenideElement getIdElm() {
-      return element.$x("./td[1]/a");
+      return element.$x("./td[1]/div/a");
     }
 
     @Step
