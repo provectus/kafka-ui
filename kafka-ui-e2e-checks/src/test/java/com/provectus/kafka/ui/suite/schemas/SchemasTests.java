@@ -80,15 +80,13 @@ public class SchemasTests extends BaseTest {
     @Order(2)
     void updateSchemaAvro() {
         AVRO_API.setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schema_avro_for_update.json");
-        navigateToSchemaRegistryAndOpenSchemaDetails(AVRO_API.getName());
+        navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
         schemaDetails
                 .openEditSchema();
         schemaCreateForm
                 .waitUntilScreenReady();
-        SoftAssertions softly = new SoftAssertions();
-        schemaCreateForm.getAllDetailsPageElements()
-            .forEach(element -> softly.assertThat(element.is(Condition.visible))
-                .as(element.getSearchCriteria() + " isVisible").isTrue());
+      verifyElementsCondition(schemaCreateForm.getAllDetailsPageElements(), Condition.visible);
+      SoftAssertions softly = new SoftAssertions();
         softly.assertThat(schemaCreateForm.isSubmitBtnEnabled()).as("isSubmitBtnEnabled()").isFalse();
         softly.assertThat(schemaCreateForm.isSchemaDropDownEnabled()).as("isSchemaDropDownEnabled()").isFalse();
         softly.assertAll();
@@ -108,7 +106,7 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(3)
     void compareVersionsOperation() {
-      navigateToSchemaRegistryAndOpenSchemaDetails(AVRO_API.getName());
+      navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
       int latestVersion = schemaDetails
           .waitUntilScreenReady()
           .getLatestVersion();
@@ -131,7 +129,7 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(4)
     void deleteSchemaAvro() {
-      navigateToSchemaRegistryAndOpenSchemaDetails(AVRO_API.getName());
+      navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
       schemaDetails
           .removeSchema();
       schemaRegistryList
@@ -175,7 +173,7 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(6)
     void deleteSchemaJson() {
-      navigateToSchemaRegistryAndOpenSchemaDetails(JSON_API.getName());
+      navigateToSchemaRegistryAndOpenDetails(JSON_API.getName());
       schemaDetails
                 .removeSchema();
         schemaRegistryList
@@ -219,7 +217,7 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(8)
     void deleteSchemaProtobuf() {
-      navigateToSchemaRegistryAndOpenSchemaDetails(PROTOBUF_API.getName());
+      navigateToSchemaRegistryAndOpenDetails(PROTOBUF_API.getName());
       schemaDetails
                 .removeSchema();
         schemaRegistryList
@@ -242,7 +240,7 @@ public class SchemasTests extends BaseTest {
     }
 
     @Step
-    private void navigateToSchemaRegistryAndOpenSchemaDetails(String schemaName){
+    private void navigateToSchemaRegistryAndOpenDetails(String schemaName){
       navigateToSchemaRegistry();
       schemaRegistryList
           .openSchema(schemaName);

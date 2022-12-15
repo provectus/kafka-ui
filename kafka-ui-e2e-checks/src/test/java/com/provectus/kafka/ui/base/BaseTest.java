@@ -137,18 +137,10 @@ public class BaseTest extends Facade {
   }
 
   @Step
-  protected void verifyVisibleElements(List<SelenideElement> visibleElements){
+  protected void verifyElementsCondition(List<SelenideElement> elementList, Condition expectedCondition) {
     SoftAssertions softly = new SoftAssertions();
-    visibleElements.forEach(element -> softly.assertThat(element.is(Condition.visible))
-        .as(element.getSearchCriteria() + " isVisible()").isTrue());
-    softly.assertAll();
-  }
-
-  @Step
-  protected void verifyEnabledElements(List<SelenideElement> visibleElements){
-    SoftAssertions softly = new SoftAssertions();
-    visibleElements.forEach(element -> softly.assertThat(element.is(Condition.enabled))
-        .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    elementList.forEach(element -> softly.assertThat(element.is(expectedCondition))
+        .as(element.getSearchCriteria() + " is " + expectedCondition).isTrue());
     softly.assertAll();
   }
 }

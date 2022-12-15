@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.suite.brokers;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.BROKERS;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
@@ -24,8 +25,8 @@ public class BrokersTests extends BaseTest {
   public void checkBrokersOverview(){
     navigateToBrokers();
     assertThat(brokersList.getAllBrokers()).as("getAllBrokers()").size().isGreaterThan(0);
-    verifyVisibleElements(brokersList.getAllVisibleElements());
-    verifyEnabledElements(brokersList.getAllEnabledElements());
+    verifyElementsCondition(brokersList.getAllVisibleElements(), Condition.visible);
+    verifyElementsCondition(brokersList.getAllEnabledElements(), Condition.enabled);
   }
 
   @DisplayName("Checking the existing Broker's profile in a cluster")
@@ -40,8 +41,8 @@ public class BrokersTests extends BaseTest {
         .openBroker("1");
     brokersDetails
         .waitUntilScreenReady();
-    verifyVisibleElements(brokersDetails.getAllVisibleElements());
-    verifyEnabledElements(brokersDetails.getAllEnabledElements());
+    verifyElementsCondition(brokersDetails.getAllVisibleElements(), Condition.visible);
+    verifyElementsCondition(brokersDetails.getAllVisibleElements(), Condition.enabled);
   }
 
   @Step

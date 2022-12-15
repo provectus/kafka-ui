@@ -105,10 +105,7 @@ public class TopicsTests extends BaseTest {
     topicsList
         .getTopicItem("my_ksql_1ksql_processing_log")
         .selectItem(true);
-    topicsList
-        .getActionButtons()
-        .forEach(element -> assertThat(element.is(Condition.enabled))
-            .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    verifyElementsCondition(topicsList.getActionButtons(),Condition.enabled);
     topicsList
         .getTopicItem("_confluent-ksql-my_ksql_1_command_topic")
         .selectItem(true);
@@ -284,8 +281,8 @@ public class TopicsTests extends BaseTest {
   @Order(9)
   void checkTopicListElements() {
     navigateToTopics();
-    verifyVisibleElements(topicsList.getAllVisibleElements());
-    verifyEnabledElements(topicsList.getAllEnabledElements());
+    verifyElementsCondition(topicsList.getAllVisibleElements(), Condition.visible);
+    verifyElementsCondition(topicsList.getAllEnabledElements(), Condition.enabled);
   }
 
   @DisplayName("Filter adding within Topic")
@@ -301,15 +298,11 @@ public class TopicsTests extends BaseTest {
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible();
-    verifyVisibleElements(topicDetails.getAllAddFilterModalVisibleElements());
-    verifyEnabledElements(topicDetails.getAllAddFilterModalEnabledElements());
-    SoftAssertions softly = new SoftAssertions();
-    topicDetails.getAllAddFilterModalDisabledElements().forEach(element ->
-        softly.assertThat(element.is(Condition.enabled))
-            .as(element.getSearchCriteria() + " isEnabled()").isFalse());
-    softly.assertThat(topicDetails.isSaveThisFilterCheckBoxSelected()).as("isSaveThisFilterCheckBoxSelected()")
+    verifyElementsCondition(topicDetails.getAllAddFilterModalVisibleElements(), Condition.visible);
+    verifyElementsCondition(topicDetails.getAllAddFilterModalEnabledElements(), Condition.enabled);
+    verifyElementsCondition(topicDetails.getAllAddFilterModalDisabledElements(), Condition.disabled);
+    assertThat(topicDetails.isSaveThisFilterCheckBoxSelected()).as("isSaveThisFilterCheckBoxSelected()")
         .isFalse();
-    softly.assertAll();
     topicDetails
         .setFilterCodeFieldAddFilterMdl(filterName);
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isAddFilterBtnAddFilterMdlEnabled()")
