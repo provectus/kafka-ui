@@ -6,6 +6,7 @@ import { externalTopicPayload, topicsPayload } from 'lib/fixtures/topics';
 import ClusterContext from 'components/contexts/ClusterContext';
 import userEvent from '@testing-library/user-event';
 import {
+  useClearTopicMessages,
   useDeleteTopic,
   useRecreateTopic,
   useTopics,
@@ -29,15 +30,20 @@ jest.mock('lib/hooks/api/topics', () => ({
   useDeleteTopic: jest.fn(),
   useRecreateTopic: jest.fn(),
   useTopics: jest.fn(),
+  useClearTopicMessages: jest.fn(),
 }));
 
 const deleteTopicMock = jest.fn();
 const recreateTopicMock = jest.fn();
+const clearTopicMessage = jest.fn();
 
 describe('TopicTable Components', () => {
   beforeEach(() => {
     (useDeleteTopic as jest.Mock).mockImplementation(() => ({
       mutateAsync: deleteTopicMock,
+    }));
+    (useClearTopicMessages as jest.Mock).mockImplementation(() => ({
+      mutateAsync: clearTopicMessage,
     }));
     (useRecreateTopic as jest.Mock).mockImplementation(() => ({
       mutateAsync: recreateTopicMock,
@@ -277,7 +283,7 @@ describe('TopicTable Components', () => {
           await userEvent.click(
             screen.getByRole('button', { name: 'Confirm' })
           );
-          expect(mockUnwrap).toHaveBeenCalled();
+          expect(clearTopicMessage).toHaveBeenCalled();
         });
       });
 
