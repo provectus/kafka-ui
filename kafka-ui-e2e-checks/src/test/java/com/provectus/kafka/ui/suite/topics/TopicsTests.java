@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.suite.topics;
 
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.SETTINGS;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
