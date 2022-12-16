@@ -70,6 +70,7 @@ jobs:
 
   separate-env-create:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: clone
         run: |
@@ -78,7 +79,7 @@ jobs:
       - name: separate env create
         run: |
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
-          bash separate_env_create.sh ${{ github.event.inputs.ENV_NAME }} ${{ secrets.FEATURE_TESTING_UI_PASSWORD }} ${{ steps.extract_branch.outputs.tag }}
+          bash separate_env_create.sh ${{ github.event.inputs.ENV_NAME }} ${{ secrets.FEATURE_TESTING_UI_PASSWORD }} ${{ needs.build.outputs.tag }}
           git config --global user.email "kafka-ui-infra@provectus.com"
           git config --global user.name "kafka-ui-infra"
           git add -A
