@@ -1,15 +1,46 @@
 package com.provectus.kafka.ui.util.jsonschema;
 
+import com.google.protobuf.Any;
+import com.google.protobuf.BoolValue;
+import com.google.protobuf.BytesValue;
 import com.google.protobuf.Descriptors;
+import com.google.protobuf.DoubleValue;
+import com.google.protobuf.Duration;
+import com.google.protobuf.FieldMask;
+import com.google.protobuf.FloatValue;
+import com.google.protobuf.Int32Value;
+import com.google.protobuf.Int64Value;
+import com.google.protobuf.ListValue;
+import com.google.protobuf.StringValue;
+import com.google.protobuf.Struct;
+import com.google.protobuf.Timestamp;
+import com.google.protobuf.UInt32Value;
+import com.google.protobuf.UInt64Value;
+import com.google.protobuf.Value;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.Descriptor> {
+
+  private final Set<String> simpleTypesWrapperNames = Set.of(
+      BoolValue.getDescriptor().getFullName(),
+      Int32Value.getDescriptor().getFullName(),
+      UInt32Value.getDescriptor().getFullName(),
+      Int64Value.getDescriptor().getFullName(),
+      UInt64Value.getDescriptor().getFullName(),
+      StringValue.getDescriptor().getFullName(),
+      BytesValue.getDescriptor().getFullName(),
+      FloatValue.getDescriptor().getFullName(),
+      DoubleValue.getDescriptor().getFullName()
+  );
+
   @Override
   public JsonSchema convert(URI basePath, Descriptors.Descriptor schema) {
     final JsonSchema.JsonSchemaBuilder builder = JsonSchema.builder();
@@ -37,41 +68,13 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
             Tuple2::getT2
         ));
 
-    final Map<String, OneOfFieldSchema> oneOfFields = schema.getOneofs().stream().map(o ->
-        Tuples.of(
-            o.getName(),
-            new OneOfFieldSchema(
-                o.getFields().stream().map(
-                    Descriptors.FieldDescriptor::getName
-                ).map(fields::get).collect(Collectors.toList())
-            )
-        )
-    ).collect(Collectors.toMap(
-        Tuple2::getT1,
-        Tuple2::getT2
-    ));
-
-    final List<String> allOneOfFields = schema.getOneofs().stream().flatMap(o ->
-        o.getFields().stream().map(Descriptors.FieldDescriptor::getName)
-    ).collect(Collectors.toList());
-
-    final Map<String, FieldSchema> excludedOneOf = fields.entrySet().stream()
-        .filter(f -> !allOneOfFields.contains(f.getKey()))
-        .collect(Collectors.toMap(
-            Map.Entry::getKey,
-            Map.Entry::getValue
-        ));
-
-    Map<String, FieldSchema> finalFields = new HashMap<>(excludedOneOf);
-    finalFields.putAll(oneOfFields);
-
     final List<String> required = schema.getFields().stream()
         .filter(f -> !f.isOptional())
         .map(Descriptors.FieldDescriptor::getName).collect(Collectors.toList());
 
     if (ref) {
       String definitionName = String.format("record.%s", schema.getFullName());
-      definitions.put(definitionName, new ObjectFieldSchema(finalFields, required));
+      definitions.put(definitionName, new ObjectFieldSchema(fields, required));
       return new RefFieldSchema(String.format("#/definitions/%s", definitionName));
     } else {
       return new ObjectFieldSchema(fields, required);
@@ -80,8 +83,11 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
 
   private FieldSchema convertField(Descriptors.FieldDescriptor field,
                                    Map<String, FieldSchema> definitions) {
+    Optional<FieldSchema> wellKnownTypeSchema = convertProtoWellKnownTypes(field);
+    if (wellKnownTypeSchema.isPresent()) {
+      return wellKnownTypeSchema.get();
+    }
     final JsonType jsonType = convertType(field);
-
     FieldSchema fieldSchema;
     if (jsonType.getType().equals(JsonType.Type.OBJECT)) {
       fieldSchema = convertObjectSchema(field.getMessageType(), definitions, true);
@@ -96,18 +102,50 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
     }
   }
 
+  // converts Protobuf WellKnownType (from google.protobuf.* packages) to Json-schema types
+  // see JsonFormat::buildWellKnownTypePrinters for impl details
+  private Optional<FieldSchema> convertProtoWellKnownTypes(Descriptors.FieldDescriptor field) {
+    if (field.getType() != Descriptors.FieldDescriptor.Type.MESSAGE) {
+      return Optional.empty();
+    }
+    String typeName = field.getMessageType().getFullName();
+    if (typeName.equals(Timestamp.getDescriptor().getFullName())
+        || typeName.equals(Duration.getDescriptor().getFullName())
+        || typeName.equals(FieldMask.getDescriptor().getFullName())) {
+      return Optional.of(new SimpleFieldSchema(new SimpleJsonType(JsonType.Type.STRING)));
+    }
+    if (typeName.equals(Any.getDescriptor().getFullName())
+        || typeName.equals(Struct.getDescriptor().getFullName())) {
+      return Optional.of(new ObjectFieldSchema(Map.of(), List.of()));
+    }
+    if (typeName.equals(Value.getDescriptor().getFullName())) {
+      return Optional.of(AnyFieldSchema.get());
+    }
+    if (typeName.equals(ListValue.getDescriptor().getFullName())) {
+      return Optional.of(new ArrayFieldSchema(AnyFieldSchema.get()));
+    }
+    if (simpleTypesWrapperNames.contains(typeName)) {
+      return Optional.of(new SimpleFieldSchema(
+          convertType(field.getMessageType().findFieldByName("value"))));
+    }
+    return Optional.empty();
+  }
 
   private JsonType convertType(Descriptors.FieldDescriptor field) {
+    //TODO: add restrictions for integer values!
     switch (field.getType()) {
       case INT32:
       case INT64:
       case SINT32:
-      case SINT64:
       case UINT32:
-      case UINT64:
       case FIXED32:
-      case FIXED64:
       case SFIXED32:
+        //TODO: actually all *64 types will be printed with quotes (as strings),
+        // see JsonFormat::printSingleFieldValue for impl. This can cause problems when you copy-paste from messages
+        // table to `Produce` area - need to think if it is critical or not.
+      case SINT64:
+      case UINT64:
+      case FIXED64:
       case SFIXED64:
         return new SimpleJsonType(JsonType.Type.INTEGER);
       case MESSAGE:
