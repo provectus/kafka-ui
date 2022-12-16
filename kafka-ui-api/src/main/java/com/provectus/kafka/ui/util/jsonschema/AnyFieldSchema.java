@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.util.jsonschema;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+// Specifies field that can contain any kind of value - primitive, complex and nulls
 public class AnyFieldSchema implements FieldSchema {
 
   public static AnyFieldSchema get() {

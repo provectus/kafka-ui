@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.util.jsonschema;
 
+import static java.util.Objects.requireNonNull;
+
 import com.fasterxml.jackson.databind.node.BigIntegerNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.LongNode;
@@ -26,6 +28,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -107,9 +110,10 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
     }
   }
 
-  // converts Protobuf WellKnownType (from google.protobuf.* packages) to Json-schema types
+  // converts Protobuf Well-known type (from google.protobuf.* packages) to Json-schema types
   // see JsonFormat::buildWellKnownTypePrinters for impl details
   private Optional<FieldSchema> convertProtoWellKnownTypes(Descriptors.FieldDescriptor field) {
+    // all well-known types are messages
     if (field.getType() != Descriptors.FieldDescriptor.Type.MESSAGE) {
       return Optional.empty();
     }
@@ -131,7 +135,7 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
     }
     if (simpleTypesWrapperNames.contains(typeName)) {
       return Optional.of(new SimpleFieldSchema(
-          convertType(field.getMessageType().findFieldByName("value"))));
+          convertType(requireNonNull(field.getMessageType().findFieldByName("value")))));
     }
     return Optional.empty();
   }
