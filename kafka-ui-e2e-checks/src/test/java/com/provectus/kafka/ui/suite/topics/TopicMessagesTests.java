@@ -47,13 +47,8 @@ public class TopicMessagesTests extends BaseTest {
   @CaseId(222)
   @Test
   void produceMessage() {
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(TOPIC_FOR_MESSAGES.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
     topicDetails
-        .waitUntilScreenReady()
         .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
         .clickProduceMessageBtn();
     produceMessagePanel
@@ -77,13 +72,8 @@ public class TopicMessagesTests extends BaseTest {
   @CaseId(19)
   @Test
   void clearMessage() {
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(TOPIC_FOR_MESSAGES.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
     topicDetails
-        .waitUntilScreenReady()
         .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
         .clickProduceMessageBtn();
     int messageAmount = topicDetails.getMessageCountAmount();
@@ -111,13 +101,8 @@ public class TopicMessagesTests extends BaseTest {
   @Test
   void copyMessageFromTopicProfile() {
     String topicName = "_schemas";
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(topicName);
+    navigateToTopicsAndOpenDetails(topicName);
     topicDetails
-        .waitUntilScreenReady()
         .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
         .getRandomMessage()
         .openDotMenu()

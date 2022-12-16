@@ -11,6 +11,7 @@ import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import io.qameta.allure.Step;
 import io.qase.api.annotation.CaseId;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +52,8 @@ public class SchemasTests extends BaseTest {
     @Order(1)
     void createSchemaAvro() {
         Schema schemaAvro = Schema.createSchemaAvro();
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
+        navigateToSchemaRegistry();
         schemaRegistryList
-                .waitUntilScreenReady()
                 .clickCreateSchema();
         schemaCreateForm
                 .setSubjectName(schemaAvro.getName())
@@ -68,10 +67,7 @@ public class SchemasTests extends BaseTest {
         softly.assertThat(schemaDetails.getSchemaType()).as("getSchemaType()").isEqualTo(schemaAvro.getType().getValue());
         softly.assertThat(schemaDetails.getCompatibility()).as("getCompatibility()").isEqualTo(CompatibilityLevel.CompatibilityEnum.BACKWARD.getValue());
         softly.assertAll();
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
-        schemaRegistryList
-                .waitUntilScreenReady();
+        navigateToSchemaRegistry();
         Assertions.assertTrue(schemaRegistryList.isSchemaVisible(AVRO_API.getName()),"isSchemaVisible()");
         SCHEMA_LIST.add(schemaAvro);
     }
@@ -84,20 +80,13 @@ public class SchemasTests extends BaseTest {
     @Order(2)
     void updateSchemaAvro() {
         AVRO_API.setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schema_avro_for_update.json");
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
-        schemaRegistryList
-                .waitUntilScreenReady()
-                .openSchema(AVRO_API.getName());
+        navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
         schemaDetails
-                .waitUntilScreenReady()
                 .openEditSchema();
         schemaCreateForm
                 .waitUntilScreenReady();
-        SoftAssertions softly = new SoftAssertions();
-        schemaCreateForm.getAllDetailsPageElements()
-            .forEach(element -> softly.assertThat(element.is(Condition.visible))
-                .as(element.getSearchCriteria() + " isVisible").isTrue());
+      verifyElementsCondition(schemaCreateForm.getAllDetailsPageElements(), Condition.visible);
+      SoftAssertions softly = new SoftAssertions();
         softly.assertThat(schemaCreateForm.isSubmitBtnEnabled()).as("isSubmitBtnEnabled()").isFalse();
         softly.assertThat(schemaCreateForm.isSchemaDropDownEnabled()).as("isSchemaDropDownEnabled()").isFalse();
         softly.assertAll();
@@ -117,11 +106,7 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(3)
     void compareVersionsOperation() {
-      naviSideBar
-          .openSideMenu(SCHEMA_REGISTRY);
-      schemaRegistryList
-          .waitUntilScreenReady()
-          .openSchema(AVRO_API.getName());
+      navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
       int latestVersion = schemaDetails
           .waitUntilScreenReady()
           .getLatestVersion();
@@ -144,13 +129,8 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(4)
     void deleteSchemaAvro() {
-      naviSideBar
-          .openSideMenu(SCHEMA_REGISTRY);
-      schemaRegistryList
-          .waitUntilScreenReady()
-          .openSchema(AVRO_API.getName());
+      navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
       schemaDetails
-          .waitUntilScreenReady()
           .removeSchema();
       schemaRegistryList
           .waitUntilScreenReady();
@@ -166,10 +146,8 @@ public class SchemasTests extends BaseTest {
     @Order(5)
     void createSchemaJson() {
         Schema schemaJson = Schema.createSchemaJson();
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
+        navigateToSchemaRegistry();
         schemaRegistryList
-                .waitUntilScreenReady()
                 .clickCreateSchema();
         schemaCreateForm
                 .setSubjectName(schemaJson.getName())
@@ -183,10 +161,7 @@ public class SchemasTests extends BaseTest {
         softly.assertThat(schemaDetails.getSchemaType()).as("getSchemaType()").isEqualTo(schemaJson.getType().getValue());
         softly.assertThat(schemaDetails.getCompatibility()).as("getCompatibility()").isEqualTo(CompatibilityLevel.CompatibilityEnum.BACKWARD.getValue());
         softly.assertAll();
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
-        schemaRegistryList
-                .waitUntilScreenReady();
+        navigateToSchemaRegistry();
         Assertions.assertTrue(schemaRegistryList.isSchemaVisible(JSON_API.getName()),"isSchemaVisible()");
         SCHEMA_LIST.add(schemaJson);
     }
@@ -198,13 +173,8 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(6)
     void deleteSchemaJson() {
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
-        schemaRegistryList
-                .waitUntilScreenReady()
-                .openSchema(JSON_API.getName());
-        schemaDetails
-                .waitUntilScreenReady()
+      navigateToSchemaRegistryAndOpenDetails(JSON_API.getName());
+      schemaDetails
                 .removeSchema();
         schemaRegistryList
                 .waitUntilScreenReady();
@@ -220,10 +190,8 @@ public class SchemasTests extends BaseTest {
     @Order(7)
     void createSchemaProtobuf() {
         Schema schemaProtobuf = Schema.createSchemaProtobuf();
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
+        navigateToSchemaRegistry();
         schemaRegistryList
-                .waitUntilScreenReady()
                 .clickCreateSchema();
         schemaCreateForm
                 .setSubjectName(schemaProtobuf.getName())
@@ -237,10 +205,7 @@ public class SchemasTests extends BaseTest {
         softly.assertThat(schemaDetails.getSchemaType()).as("getSchemaType()").isEqualTo(schemaProtobuf.getType().getValue());
         softly.assertThat(schemaDetails.getCompatibility()).as("getCompatibility()").isEqualTo(CompatibilityLevel.CompatibilityEnum.BACKWARD.getValue());
         softly.assertAll();
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
-        schemaRegistryList
-                .waitUntilScreenReady();
+        navigateToSchemaRegistry();
         Assertions.assertTrue(schemaRegistryList.isSchemaVisible(PROTOBUF_API.getName()),"isSchemaVisible()");
         SCHEMA_LIST.add(schemaProtobuf);
     }
@@ -252,13 +217,8 @@ public class SchemasTests extends BaseTest {
     @Test
     @Order(8)
     void deleteSchemaProtobuf() {
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
-        schemaRegistryList
-                .waitUntilScreenReady()
-                .openSchema(PROTOBUF_API.getName());
-        schemaDetails
-                .waitUntilScreenReady()
+      navigateToSchemaRegistryAndOpenDetails(PROTOBUF_API.getName());
+      schemaDetails
                 .removeSchema();
         schemaRegistryList
                 .waitUntilScreenReady();
@@ -269,5 +229,22 @@ public class SchemasTests extends BaseTest {
     @AfterAll
     public void afterAll() {
         SCHEMA_LIST.forEach(schema -> apiHelper.deleteSchema(CLUSTER_NAME, schema.getName()));
+    }
+
+    @Step
+    private void navigateToSchemaRegistry(){
+      naviSideBar
+          .openSideMenu(SCHEMA_REGISTRY);
+      schemaRegistryList
+          .waitUntilScreenReady();
+    }
+
+    @Step
+    private void navigateToSchemaRegistryAndOpenDetails(String schemaName){
+      navigateToSchemaRegistry();
+      schemaRegistryList
+          .openSchema(schemaName);
+      schemaDetails
+          .waitUntilScreenReady();
     }
 }
