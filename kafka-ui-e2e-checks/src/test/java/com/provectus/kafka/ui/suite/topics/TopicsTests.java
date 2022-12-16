@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.suite.topics;
 
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.SETTINGS;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
@@ -72,10 +71,8 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(1)
   public void createTopic() {
-    naviSideBar
-        .openSideMenu(TOPICS);
+    navigateToTopics();
     topicsList
-        .waitUntilScreenReady()
         .clickAddTopicBtn();
     topicCreateEditForm
         .waitUntilScreenReady()
@@ -83,13 +80,7 @@ public class TopicsTests extends BaseTest {
         .setNumberOfPartitions(TOPIC_TO_CREATE.getNumberOfPartitions())
         .selectCleanupPolicy(TOPIC_TO_CREATE.getCleanupPolicyValue())
         .clickCreateTopicBtn();
-    topicDetails
-        .waitUntilScreenReady();
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(TOPIC_TO_CREATE.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_TO_CREATE.getName());
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(topicDetails.isTopicHeaderVisible(TOPIC_TO_CREATE.getName())).as("isTopicHeaderVisible()")
         .isTrue();
@@ -98,10 +89,7 @@ public class TopicsTests extends BaseTest {
     softly.assertThat(topicDetails.getPartitions()).as("getPartitions()")
         .isEqualTo(TOPIC_TO_CREATE.getNumberOfPartitions());
     softly.assertAll();
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady();
+    navigateToTopics();
     Assertions.assertTrue(topicsList.isTopicVisible(TOPIC_TO_CREATE.getName()), "isTopicVisible");
     TOPIC_LIST.add(TOPIC_TO_CREATE);
   }
@@ -113,16 +101,11 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(2)
   void checkAvailableOperations() {
-    naviSideBar
-        .openSideMenu(TOPICS);
+    navigateToTopics();
     topicsList
-        .waitUntilScreenReady()
         .getTopicItem("my_ksql_1ksql_processing_log")
         .selectItem(true);
-    topicsList
-        .getActionButtons()
-        .forEach(element -> assertThat(element.is(Condition.enabled))
-            .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+    verifyElementsCondition(topicsList.getActionButtons(),Condition.enabled);
     topicsList
         .getTopicItem("_confluent-ksql-my_ksql_1_command_topic")
         .selectItem(true);
@@ -138,13 +121,8 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(3)
   public void updateTopic() {
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(TOPIC_FOR_UPDATE.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_UPDATE.getName());
     topicDetails
-        .waitUntilScreenReady()
         .openDotMenu()
         .clickEditSettingsMenu();
     topicCreateEditForm
@@ -157,13 +135,8 @@ public class TopicsTests extends BaseTest {
         .clickCreateTopicBtn();
     topicDetails
         .waitUntilScreenReady();
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(TOPIC_FOR_UPDATE.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_UPDATE.getName());
     topicDetails
-        .waitUntilScreenReady()
         .openDotMenu()
         .clickEditSettingsMenu();
     SoftAssertions softly = new SoftAssertions();
@@ -185,20 +158,12 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(4)
   public void deleteTopic() {
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(TOPIC_FOR_DELETE.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_DELETE.getName());
     topicDetails
-        .waitUntilScreenReady()
         .openDotMenu()
         .clickDeleteTopicMenu()
         .clickConfirmDeleteBtn();
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady();
+    navigateToTopics();
     Assertions.assertFalse(topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()), "isTopicVisible");
     TOPIC_LIST.remove(TOPIC_FOR_DELETE);
   }
@@ -212,13 +177,8 @@ public class TopicsTests extends BaseTest {
   void redirectToConsumerFromTopic() {
     String topicName = "source-activities";
     String consumerGroupId = "connect-sink_postgres_activities";
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(topicName);
+    navigateToTopicsAndOpenDetails(topicName);
     topicDetails
-        .waitUntilScreenReady()
         .openDetailsTab(TopicDetails.TopicMenu.CONSUMERS)
         .openConsumerGroup(consumerGroupId);
     consumersDetails
@@ -236,10 +196,8 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(6)
   void checkTopicCreatePossibility() {
-    naviSideBar
-        .openSideMenu(TOPICS);
+    navigateToTopics();
     topicsList
-        .waitUntilScreenReady()
         .clickAddTopicBtn();
     topicCreateEditForm
         .waitUntilScreenReady();
@@ -266,14 +224,14 @@ public class TopicsTests extends BaseTest {
     Topic topicToRetainData = new Topic()
         .setName("topic-to-retain-data-" + randomAlphabetic(5))
         .setTimeToRetainData("86400000");
-    naviSideBar
-        .openSideMenu(TOPICS);
+    navigateToTopics();
     topicsList
-        .waitUntilScreenReady()
         .clickAddTopicBtn();
     topicCreateEditForm
         .waitUntilScreenReady()
-        .setTopicName(topicToRetainData.getName());
+        .setTopicName(topicToRetainData.getName())
+        .setNumberOfPartitions(1)
+        .setTimeToRetainDataInMs("604800000");
     assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()").isEqualTo("604800000");
     topicCreateEditForm
         .setTimeToRetainDataInMs(topicToRetainData.getTimeToRetainData())
@@ -298,8 +256,7 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(8)
   void checkCustomParametersWithinCreateNewTopic() {
-    naviSideBar
-        .openSideMenu(TOPICS);
+    navigateToTopics();
     topicsList
         .waitUntilScreenReady()
         .clickAddTopicBtn();
@@ -323,18 +280,9 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(9)
   void checkTopicListElements() {
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady();
-    SoftAssertions softly = new SoftAssertions();
-    topicsList.getAllVisibleElements().forEach(
-        element -> softly.assertThat(element.is(Condition.visible)).as(element.getSearchCriteria() + " isVisible()")
-            .isTrue());
-    topicsList.getAllEnabledElements().forEach(
-        element -> softly.assertThat(element.is(Condition.enabled)).as(element.getSearchCriteria() + " isEnabled()")
-            .isTrue());
-    softly.assertAll();
+    navigateToTopics();
+    verifyElementsCondition(topicsList.getAllVisibleElements(), Condition.visible);
+    verifyElementsCondition(topicsList.getAllEnabledElements(), Condition.enabled);
   }
 
   @DisplayName("Filter adding within Topic")
@@ -345,29 +293,16 @@ public class TopicsTests extends BaseTest {
   @Order(10)
   void addingNewFilterWithinTopic() {
     String filterName = randomAlphabetic(5);
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic("_schemas");
+    navigateToTopicsAndOpenDetails("_schemas");
     topicDetails
-        .waitUntilScreenReady()
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible();
-    SoftAssertions softly = new SoftAssertions();
-    topicDetails.getAllAddFilterModalVisibleElements().forEach(element ->
-        softly.assertThat(element.is(Condition.visible))
-            .as(element.getSearchCriteria() + " isVisible()").isTrue());
-    topicDetails.getAllAddFilterModalEnabledElements().forEach(element ->
-        softly.assertThat(element.is(Condition.enabled))
-            .as(element.getSearchCriteria() + " isEnabled()").isTrue());
-    topicDetails.getAllAddFilterModalDisabledElements().forEach(element ->
-        softly.assertThat(element.is(Condition.enabled))
-            .as(element.getSearchCriteria() + " isEnabled()").isFalse());
-    softly.assertThat(topicDetails.isSaveThisFilterCheckBoxSelected()).as("isSaveThisFilterCheckBoxSelected()")
+    verifyElementsCondition(topicDetails.getAllAddFilterModalVisibleElements(), Condition.visible);
+    verifyElementsCondition(topicDetails.getAllAddFilterModalEnabledElements(), Condition.enabled);
+    verifyElementsCondition(topicDetails.getAllAddFilterModalDisabledElements(), Condition.disabled);
+    assertThat(topicDetails.isSaveThisFilterCheckBoxSelected()).as("isSaveThisFilterCheckBoxSelected()")
         .isFalse();
-    softly.assertAll();
     topicDetails
         .setFilterCodeFieldAddFilterMdl(filterName);
     assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isAddFilterBtnAddFilterMdlEnabled()")
@@ -385,13 +320,8 @@ public class TopicsTests extends BaseTest {
   @Order(11)
   void checkFilterSavingWithinSavedFilters() {
     String displayName = randomAlphabetic(5);
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic("my_ksql_1ksql_processing_log");
+    navigateToTopicsAndOpenDetails("my_ksql_1ksql_processing_log");
     topicDetails
-        .waitUntilScreenReady()
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible()
@@ -415,13 +345,8 @@ public class TopicsTests extends BaseTest {
   @Order(12)
   void checkingApplyingSavedFilterWithinTopicMessages() {
     String displayName = randomAlphabetic(5);
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic("my_ksql_1ksql_processing_log");
+    navigateToTopicsAndOpenDetails("my_ksql_1ksql_processing_log");
     topicDetails
-        .waitUntilScreenReady()
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible()
@@ -443,10 +368,7 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(13)
   void checkShowInternalTopicsButtonFunctionality(){
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady();
+    navigateToTopics();
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(topicsList.isShowInternalRadioBtnSelected()).as("isInternalRadioBtnSelected()").isTrue();
     softly.assertThat(topicsList.getInternalTopics()).as("getInternalTopics()").size().isGreaterThan(0);
