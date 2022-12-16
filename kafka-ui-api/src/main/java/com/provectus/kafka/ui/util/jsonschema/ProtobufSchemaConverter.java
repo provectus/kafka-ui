@@ -1,5 +1,10 @@
 package com.provectus.kafka.ui.util.jsonschema;
 
+import com.fasterxml.jackson.databind.node.BigIntegerNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.LongNode;
+import com.google.common.primitives.UnsignedInteger;
+import com.google.common.primitives.UnsignedLong;
 import com.google.protobuf.Any;
 import com.google.protobuf.BoolValue;
 import com.google.protobuf.BytesValue;
@@ -132,22 +137,48 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
   }
 
   private JsonType convertType(Descriptors.FieldDescriptor field) {
-    //TODO: add restrictions for integer values!
     switch (field.getType()) {
       case INT32:
-      case INT64:
-      case SINT32:
-      case UINT32:
       case FIXED32:
       case SFIXED32:
-        //TODO: actually all *64 types will be printed with quotes (as strings),
-        // see JsonFormat::printSingleFieldValue for impl. This can cause problems when you copy-paste from messages
-        // table to `Produce` area - need to think if it is critical or not.
-      case SINT64:
-      case UINT64:
+      case SINT32:
+        return new SimpleJsonType(
+            JsonType.Type.INTEGER,
+            Map.of(
+                "maximum", IntNode.valueOf(Integer.MAX_VALUE),
+                "minimum", IntNode.valueOf(Integer.MIN_VALUE)
+            )
+        );
+      case UINT32:
+        return new SimpleJsonType(
+            JsonType.Type.INTEGER,
+            Map.of(
+                "maximum", LongNode.valueOf(UnsignedInteger.MAX_VALUE.longValue()),
+                "minimum", IntNode.valueOf(0)
+            )
+        );
+      //TODO: actually all *64 types will be printed with quotes (as strings),
+      // see JsonFormat::printSingleFieldValue for impl. This can cause problems when you copy-paste from messages
+      // table to `Produce` area - need to think if it is critical or not.
+      case INT64:
       case FIXED64:
       case SFIXED64:
-        return new SimpleJsonType(JsonType.Type.INTEGER);
+      case SINT64:
+        return new SimpleJsonType(
+            JsonType.Type.INTEGER,
+            Map.of(
+                "maximum", LongNode.valueOf(Long.MAX_VALUE),
+                "minimum", LongNode.valueOf(Long.MIN_VALUE)
+            )
+        );
+      case UINT64:
+        return new SimpleJsonType(
+            JsonType.Type.INTEGER,
+            Map.of(
+                "maximum", new BigIntegerNode(UnsignedLong.MAX_VALUE.bigIntegerValue()),
+                "minimum", LongNode.valueOf(0)
+            )
+        );
       case MESSAGE:
       case GROUP:
         return new SimpleJsonType(JsonType.Type.OBJECT);

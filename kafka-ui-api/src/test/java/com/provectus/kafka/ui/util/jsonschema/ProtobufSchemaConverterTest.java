@@ -86,17 +86,17 @@ class ProtobufSchemaConverterTest {
                 "string_field": { "type": "string" },
                 "double_w_field": { "type": "number" },
                 "bool_field": { "type": "boolean" },
-                "int32_w_field": { "type": "integer" },
+                "int32_w_field": { "type": "integer", "maximum": 2147483647, "minimum": -2147483648 },
                 "duration_field": { "type": "string" },
-                "int32_field": { "type": "integer" },
-                "int64_w_field": { "type": "integer" },
+                "int32_field": { "type": "integer", "maximum": 2147483647, "minimum": -2147483648 },
+                "int64_w_field": { "type": "integer", "maximum": 9223372036854775807, "minimum": -9223372036854775808 },
                 "v1": { "type": [ "number", "string", "object", "array", "boolean", "null" ] },
                 "v2": { "type": [ "number", "string", "object", "array", "boolean", "null" ] },
                 "emb": { "$ref": "#/definitions/record.test.TestMsg.EmbeddedMsg" },
                 "emb_list": { "type": "array", "items": { "$ref": "#/definitions/record.test.TestMsg.EmbeddedMsg" } },
-                "uint32_w_field": { "type": "integer" },
+                "uint32_w_field": { "type": "integer", "maximum": 4294967295, "minimum": 0 },
                 "bool_w_field": {  "type": "boolean" },
-                "uint64_w_field": { "type": "integer" }
+                "uint64_w_field": { "type": "integer", "maximum": 18446744073709551615, "minimum": 0 }
             },
             "required": [ "emb_list" ],
             "definitions": {
@@ -104,7 +104,7 @@ class ProtobufSchemaConverterTest {
                     "type": "object",
                     "properties":
                     {
-                        "emb_f1": { "type": "integer" }
+                        "emb_f1": { "type": "integer", "maximum": 2147483647, "minimum": -2147483648}
                     }
                 }
             }
