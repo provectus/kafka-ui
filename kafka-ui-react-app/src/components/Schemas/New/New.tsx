@@ -26,8 +26,9 @@ import {
   canCreateResourceWithAlert,
   debouncedCanCreateResource,
 } from 'lib/hooks/api/roles';
-import yup from 'lib/yupExtended';
+import yup, { cacheTest } from 'lib/yupExtended';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { AnyObject } from 'yup/es/types';
 
 import * as S from './New.styled';
 
@@ -63,20 +64,23 @@ const validationSchema = yup.object().shape({
       SCHEMA_NAME_VALIDATION_PATTERN,
       'Only alphanumeric, _, -, and . allowed'
     )
-    .test('subject', async function testHandler(value?: string) {
-      const verified = await debouncedCanCreateResource({
-        resource: ResourceType.CONNECT,
-        resourceName: value || '',
-        clusterName: (this.options.context as { clusterName: string })
-          .clusterName,
-      });
-      if (!verified) {
-        return this.createError({
-          message: `No Permission to create a Schema with "${value}"`,
+    .test(
+      'subject',
+      cacheTest(async function testHandler(value?: string, ctx?: AnyObject) {
+        const verified = await debouncedCanCreateResource({
+          resource: ResourceType.CONNECT,
+          resourceName: value || '',
+          clusterName: (ctx?.options.context as { clusterName: string })
+            .clusterName,
         });
-      }
-      return verified;
-    }),
+        if (!verified) {
+          return ctx?.createError({
+            message: `No Permission to create a Schema with "${value}"`,
+          });
+        }
+        return verified;
+      })
+    ),
   schema: yup.string().required('Schema is required.'),
   schemaType: yup.string().required('Schema Type is required.'),
 });

@@ -9,7 +9,7 @@ import {
   clusterConnectorsPath,
   ClusterNameRoute,
 } from 'lib/paths';
-import yup from 'lib/yupExtended';
+import yup, { cacheTest } from 'lib/yupExtended';
 import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
 import { FormError } from 'components/common/Input/Input.styled';
@@ -21,6 +21,7 @@ import { useConnects, useCreateConnector } from 'lib/hooks/api/kafkaConnect';
 import get from 'lodash/get';
 import { Connect, ResourceType } from 'generated-sources';
 import { debouncedCanCreateResource } from 'lib/hooks/api/roles';
+import { AnyObject } from 'yup/es/types';
 
 import * as S from './New.styled';
 
@@ -28,20 +29,23 @@ const validationSchema = yup.object().shape({
   name: yup
     .string()
     .required()
-    .test('name', async function testHandler(value?: string) {
-      const verified = await debouncedCanCreateResource({
-        resource: ResourceType.CONNECT,
-        resourceName: value || '',
-        clusterName: (this.options.context as { clusterName: string })
-          .clusterName,
-      });
-      if (!verified) {
-        return this.createError({
-          message: `No Permission to create a Connector with "${value}"`,
+    .test(
+      'name',
+      cacheTest(async function testHandler(value?: string, ctx?: AnyObject) {
+        const verified = await debouncedCanCreateResource({
+          resource: ResourceType.CONNECT,
+          resourceName: value || '',
+          clusterName: (ctx?.options.context as { clusterName: string })
+            .clusterName,
         });
-      }
-      return verified;
-    }),
+        if (!verified) {
+          return ctx?.createError({
+            message: `No Permission to create a Connector with "${value}"`,
+          });
+        }
+        return verified;
+      })
+    ),
   config: yup.string().required().isJsonObject(),
 });
 

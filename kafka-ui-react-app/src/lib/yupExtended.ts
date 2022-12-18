@@ -42,9 +42,27 @@ const isJsonObject = () => {
   );
 };
 
-yup.addMethod(yup.string, 'isJsonObject', isJsonObject);
+/**
+ * due to yup rerunning all the object validiation during any render, it makes sense to cache the async results
+ * */
+export function cacheTest(
+  asyncValidate: (val?: string, ctx?: AnyObject) => Promise<boolean>
+) {
+  let valid = false;
+  let closureValue = '';
 
-export default yup;
+  return async (value?: string, ctx?: AnyObject) => {
+    if (value !== closureValue) {
+      const response = await asyncValidate(value, ctx);
+      closureValue = value || '';
+      valid = response;
+      return response;
+    }
+    return valid;
+  };
+}
+
+yup.addMethod(yup.string, 'isJsonObject', isJsonObject);
 
 export const topicFormValidationSchema = yup.object().shape({
   name: yup
@@ -55,26 +73,31 @@ export const topicFormValidationSchema = yup.object().shape({
       TOPIC_NAME_VALIDATION_PATTERN,
       'Only alphanumeric, _, -, and . allowed'
     )
-    .test('name', async function testHandler(value?: string) {
-      const { clusterName, isEditing } = this.options.context as {
-        clusterName: string;
-        isEditing: boolean;
-      };
+    .test(
+      'name',
+      cacheTest(async function testHandler(
+        value?: string,
+        ctx?: AnyObject
+      ): Promise<boolean> {
+        const { clusterName, isEditing } = ctx?.options.context as {
+          clusterName: string;
+          isEditing: boolean;
+        };
 
-      if (isEditing) return true;
-      const verified = await debouncedCanCreateResource({
-        resource: ResourceType.TOPIC,
-        resourceName: value || '',
-        clusterName,
-      });
-      if (!verified) {
-        return this.createError({
-          path: 'name',
-          message: `No Permission to create a Topic with "${value}"`,
+        if (isEditing) return true;
+        const verified = await debouncedCanCreateResource({
+          resource: ResourceType.TOPIC,
+          resourceName: value || '',
+          clusterName,
         });
-      }
-      return verified;
-    }),
+        if (!verified) {
+          return ctx?.createError({
+            message: `No Permission to create a Topic with "${value}"`,
+          });
+        }
+        return verified;
+      })
+    ),
   partitions: yup
     .number()
     .min(1)
@@ -94,3 +117,5 @@ export const topicFormValidationSchema = yup.object().shape({
     })
   ),
 });
+
+export default yup;
