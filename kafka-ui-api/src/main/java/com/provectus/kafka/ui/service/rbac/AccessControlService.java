@@ -127,6 +127,10 @@ public class AccessControlService {
   }
 
   public Mono<Void> validateAccess(AccessContext context) {
+    if (!rbacEnabled) {
+      return Mono.empty();
+    }
+
     return getCachedUser()
         .doOnNext(user -> {
           boolean accessGranted =
@@ -168,6 +172,10 @@ public class AccessControlService {
   }
 
   public Mono<Boolean> canCreateResource(Resource resource, String cluster, String resourceName) {
+    if (!rbacEnabled) {
+      return Mono.empty();
+    }
+
     return switch (resource) {
       case TOPIC -> {
         AccessContext context = AccessContext.builder()
@@ -207,6 +215,10 @@ public class AccessControlService {
   }
 
   private boolean isClusterAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
     Assert.isTrue(StringUtils.isNotEmpty(context.getCluster()), "cluster value is empty");
 
     return roles
@@ -216,6 +228,10 @@ public class AccessControlService {
   }
 
   public Mono<Boolean> isClusterAccessible(ClusterDTO cluster) {
+    if (!rbacEnabled) {
+      return Mono.just(true);
+    }
+
     AccessContext accessContext = AccessContext
         .builder()
         .cluster(cluster.getName())
@@ -225,6 +241,10 @@ public class AccessControlService {
   }
 
   public boolean isClusterConfigAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
     if (CollectionUtils.isEmpty(context.getClusterConfigActions())) {
       return true;
     }
@@ -239,6 +259,10 @@ public class AccessControlService {
   }
 
   public boolean isTopicAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
     if (context.getTopic() == null && context.getTopicActions().isEmpty()) {
       return true;
     }
@@ -253,6 +277,10 @@ public class AccessControlService {
   }
 
   public Mono<Boolean> isTopicAccessible(InternalTopic dto, String clusterName) {
+    if (!rbacEnabled) {
+      return Mono.just(true);
+    }
+
     AccessContext accessContext = AccessContext
         .builder()
         .cluster(clusterName)
@@ -264,6 +292,10 @@ public class AccessControlService {
   }
 
   private boolean isConsumerGroupAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
     if (context.getConsumerGroup() == null && context.getConsumerGroupActions().isEmpty()) {
       return true;
     }
@@ -278,6 +310,10 @@ public class AccessControlService {
   }
 
   public Mono<Boolean> isConsumerGroupAccessible(String groupId, String clusterName) {
+    if (!rbacEnabled) {
+      return Mono.just(true);
+    }
+
     AccessContext accessContext = AccessContext
         .builder()
         .cluster(clusterName)
@@ -289,6 +325,10 @@ public class AccessControlService {
   }
 
   public boolean isSchemaAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
     if (context.getSchema() == null && context.getSchemaActions().isEmpty()) {
       return true;
     }
@@ -303,6 +343,10 @@ public class AccessControlService {
   }
 
   public Mono<Boolean> isSchemaAccessible(String schema, String clusterName) {
+    if (!rbacEnabled) {
+      return Mono.just(true);
+    }
+
     AccessContext accessContext = AccessContext
         .builder()
         .cluster(clusterName)
@@ -314,6 +358,10 @@ public class AccessControlService {
   }
 
   public boolean isConnectAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
     if (context.getConnect() == null && context.getConnectActions().isEmpty()) {
       return true;
     }
@@ -328,10 +376,18 @@ public class AccessControlService {
   }
 
   public Mono<Boolean> isConnectAccessible(ConnectDTO dto, String clusterName) {
+    if (!rbacEnabled) {
+      return Mono.just(true);
+    }
+
     return isConnectAccessible(dto.getName(), clusterName);
   }
 
   public Mono<Boolean> isConnectAccessible(String connectName, String clusterName) {
+    if (!rbacEnabled) {
+      return Mono.just(true);
+    }
+
     AccessContext accessContext = AccessContext
         .builder()
         .cluster(clusterName)
@@ -344,10 +400,18 @@ public class AccessControlService {
 
 
   public boolean isConnectorAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
     return isConnectAccessible(context, user);
   }
 
   public Mono<Boolean> isConnectorAccessible(String connectName, String connectorName, String clusterName) {
+    if (!rbacEnabled) {
+      return Mono.just(true);
+    }
+
     AccessContext accessContext = AccessContext
         .builder()
         .cluster(clusterName)
@@ -360,6 +424,10 @@ public class AccessControlService {
   }
 
   private boolean isKsqlAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
     if (context.getKsqlActions().isEmpty()) {
       return true;
     }
