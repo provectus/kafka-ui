@@ -1,6 +1,6 @@
 import React from 'react';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
-import { FormProvider, useForm, Controller } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import {
   ClusterNameRoute,
@@ -22,7 +22,12 @@ import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import { showServerError } from 'lib/errorHandling';
 import { schemasApiClient } from 'lib/api';
-import { canCreateResourceWithAlert } from 'lib/hooks/api/roles';
+import {
+  canCreateResourceWithAlert,
+  debouncedCanCreateResource,
+} from 'lib/hooks/api/roles';
+import yup from 'lib/yupExtended';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import * as S from './New.styled';
 
@@ -50,6 +55,32 @@ const schemaCreate = async (
   });
 };
 
+const validationSchema = yup.object().shape({
+  subject: yup
+    .string()
+    .required('Subject is required.')
+    .matches(
+      SCHEMA_NAME_VALIDATION_PATTERN,
+      'Only alphanumeric, _, -, and . allowed'
+    )
+    .test('subject', async function testHandler(value?: string) {
+      const verified = await debouncedCanCreateResource({
+        resource: ResourceType.CONNECT,
+        resourceName: value || '',
+        clusterName: (this.options.context as { clusterName: string })
+          .clusterName,
+      });
+      if (!verified) {
+        return this.createError({
+          message: `No Permission to create a Schema with "${value}"`,
+        });
+      }
+      return verified;
+    }),
+  schema: yup.string().required('Schema is required.'),
+  schemaType: yup.string().required('Schema Type is required.'),
+});
+
 const New: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const navigate = useNavigate();
@@ -58,6 +89,10 @@ const New: React.FC = () => {
     mode: 'onChange',
     defaultValues: {
       schemaType: SchemaType.AVRO,
+    },
+    resolver: yupResolver(validationSchema),
+    context: {
+      clusterName,
     },
   });
   const {
@@ -98,13 +133,6 @@ const New: React.FC = () => {
             inputSize="M"
             placeholder="Schema Name"
             name="subject"
-            hookFormOptions={{
-              required: 'Schema Name is required.',
-              pattern: {
-                value: SCHEMA_NAME_VALIDATION_PATTERN,
-                message: 'Only alphanumeric, _, -, and . allowed',
-              },
-            }}
             autoComplete="off"
             disabled={isSubmitting}
           />
@@ -130,7 +158,6 @@ const New: React.FC = () => {
           <InputLabel>Schema Type *</InputLabel>
           <Controller
             control={control}
-            rules={{ required: 'Schema Type is required.' }}
             name="schemaType"
             defaultValue={SchemaTypeOptions[0].value as SchemaType}
             render={({ field: { name, onChange, value } }) => (

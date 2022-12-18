@@ -44,6 +44,10 @@ const Edit: React.FC = () => {
     defaultValues,
     resolver: yupResolver(topicFormValidationSchema),
     mode: 'onChange',
+    context: {
+      clusterName,
+      isEditing: true,
+    },
   });
 
   const navigate = useNavigate();

@@ -19,12 +19,16 @@ enum Filters {
 }
 
 const New: React.FC = () => {
+  const { clusterName } = useAppParams<ClusterNameRoute>();
   const methods = useForm<TopicFormData>({
     mode: 'onChange',
     resolver: yupResolver(topicFormValidationSchema),
+    context: {
+      clusterName,
+      isEditing: false,
+    },
   });
 
-  const { clusterName } = useAppParams<ClusterNameRoute>();
   const createTopic = useCreateTopic(clusterName);
 
   const navigate = useNavigate();

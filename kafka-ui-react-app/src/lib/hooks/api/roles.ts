@@ -2,11 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { AccessApiClient } from 'lib/api';
 import { QUERY_REFETCH_OFF_OPTIONS } from 'lib/constants';
 import { CanCreateResourceRequest } from 'generated-sources';
+import { debounce } from 'lodash';
 import { showAlert } from 'lib/errorHandling';
 
 export function canCreateResource(payload: CanCreateResourceRequest) {
   return AccessApiClient.canCreateResource(payload);
 }
+export const debouncedCanCreateResource = debounce(canCreateResource, 500);
 
 export async function canCreateResourceWithAlert(
   payload: CanCreateResourceRequest

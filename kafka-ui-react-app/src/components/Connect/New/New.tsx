@@ -19,12 +19,29 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 import Heading from 'components/common/heading/Heading.styled';
 import { useConnects, useCreateConnector } from 'lib/hooks/api/kafkaConnect';
 import get from 'lodash/get';
-import { Connect } from 'generated-sources';
+import { Connect, ResourceType } from 'generated-sources';
+import { debouncedCanCreateResource } from 'lib/hooks/api/roles';
 
 import * as S from './New.styled';
 
 const validationSchema = yup.object().shape({
-  name: yup.string().required(),
+  name: yup
+    .string()
+    .required()
+    .test('name', async function testHandler(value?: string) {
+      const verified = await debouncedCanCreateResource({
+        resource: ResourceType.CONNECT,
+        resourceName: value || '',
+        clusterName: (this.options.context as { clusterName: string })
+          .clusterName,
+      });
+      if (!verified) {
+        return this.createError({
+          message: `No Permission to create a Connector with "${value}"`,
+        });
+      }
+      return verified;
+    }),
   config: yup.string().required().isJsonObject(),
 });
 
@@ -48,6 +65,9 @@ const New: React.FC = () => {
       connectName: get(connects, '0.name', ''),
       name: '',
       config: '',
+    },
+    context: {
+      clusterName,
     },
   });
   const {
