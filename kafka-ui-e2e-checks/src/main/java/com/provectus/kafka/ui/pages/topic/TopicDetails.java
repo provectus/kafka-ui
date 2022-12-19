@@ -1,18 +1,20 @@
 package com.provectus.kafka.ui.pages.topic;
 
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$x;
+import static com.codeborne.selenide.Selenide.$x;
+import static org.apache.commons.lang.math.RandomUtils.nextInt;
+
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.codeborne.selenide.Selenide.*;
-import static org.apache.commons.lang.math.RandomUtils.nextInt;
+import org.openqa.selenium.By;
 
 public class TopicDetails extends BasePage {
 
@@ -20,6 +22,8 @@ public class TopicDetails extends BasePage {
   protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
+  protected SelenideElement seekTypeDdl = $x("//ul[@id='selectSeekType']/li");
+  protected SelenideElement seekTypeField = $x("//label[text()='Seek Type']//..//input");
   protected SelenideElement addFiltersBtn = $x("//button[text()='Add Filters']");
   protected SelenideElement savedFiltersLink = $x("//div[text()='Saved Filters']");
   protected SelenideElement addFilterCodeModalTitle = $x("//label[text()='Filter code']");
@@ -38,6 +42,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
   protected SelenideElement backToCreateFiltersLink = $x("//div[text()='Back To create filters']");
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
+  protected String seekFilterDdlLocator = "//ul[@id='selectSeekType']/ul/li[text()='%s']";
   protected String savedFilterNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
@@ -117,6 +122,26 @@ public class TopicDetails extends BasePage {
   @Step
   public TopicDetails clickProduceMessageBtn() {
     clickByJavaScript(produceMessageBtn);
+    return this;
+  }
+
+  @Step
+  public TopicDetails selectSeekTypeDdlMessagesTab(String seekTypeName){
+    seekTypeDdl.shouldBe(Condition.enabled).click();
+    $x(String.format(seekFilterDdlLocator, seekTypeName)).shouldBe(Condition.visible).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails setSeekTypeValueFldMessagesTab(String seekTypeValue){
+    seekTypeField.shouldBe(Condition.enabled).sendKeys(seekTypeValue);
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickSubmitFiltersBtnMessagesTab(){
+    clickByJavaScript(submitBtn);
+    waitUntilSpinnerDisappear();
     return this;
   }
 
@@ -246,6 +271,11 @@ public class TopicDetails extends BasePage {
     return initItems().stream()
         .filter(e -> e.getOffset() == offset)
         .findFirst().orElse(null);
+  }
+
+  @Step
+  public List<MessageGridItem> getAllMessages(){
+    return initItems();
   }
 
   @Step
