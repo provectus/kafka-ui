@@ -41,6 +41,7 @@ public class TailingEmitter extends AbstractEmitter
       sink.complete();
       log.debug("Tailing finished");
     } catch (InterruptException kafkaInterruptException) {
+      log.debug("Tailing finished due to thread interruption");
       sink.complete();
     } catch (Exception e) {
       log.error("Error consuming {}", consumerPosition, e);
