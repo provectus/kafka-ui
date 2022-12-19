@@ -6,14 +6,13 @@ import static com.codeborne.selenide.Selenide.$x;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
-import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.openqa.selenium.By;
 
 public class BrokersDetails extends BasePage {
 
@@ -28,7 +27,7 @@ public class BrokersDetails extends BasePage {
   }
 
   @Step
-  public BrokersDetails openDetailsTab(BrokersDetails.BrokerMenu menu) {
+  public BrokersDetails openConfigTab(BrokersDetails.BrokerMenu menu) {
     $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
     waitUntilSpinnerDisappear();
     return this;

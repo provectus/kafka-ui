@@ -44,10 +44,10 @@ public class BrokersTests extends BaseTest {
     brokersDetails
         .waitUntilScreenReady();
     verifyElementsCondition(brokersDetails.getAllVisibleElements(), Condition.visible);
-    verifyElementsCondition(brokersDetails.getAllVisibleElements(), Condition.enabled);
+    verifyElementsCondition(brokersDetails.getAllEnabledElements(), Condition.enabled);
     brokersDetails
         .waitUntilScreenReady()
-        .openDetailsTab(BrokersDetails.BrokerMenu.CONFIGS);
+        .openConfigTab(BrokersDetails.BrokerMenu.CONFIGS);
     verifyElementsCondition(brokersConfigTabPanel.getColumnHeaders(), Condition.visible);
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(brokersConfigTabPanel.isEditButtonEnabled()).as("isEditButtonEnabled()").isTrue();
