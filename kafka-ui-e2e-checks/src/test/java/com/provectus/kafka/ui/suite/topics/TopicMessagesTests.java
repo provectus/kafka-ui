@@ -125,7 +125,7 @@ public class TopicMessagesTests extends BaseTest {
     topicDetails
         .openDetailsTab(MESSAGES)
         .selectSeekTypeDdlMessagesTab("Offset")
-        .setOffsetFldMessagesTab(offsetValue)
+        .setSeekTypeValueFldMessagesTab(offsetValue)
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
     topicDetails.getAllMessages()
