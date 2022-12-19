@@ -1,11 +1,14 @@
 package com.provectus.kafka.ui.pages.brokers;
 
+import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
+import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import io.qameta.allure.Step;
+import org.openqa.selenium.By;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +26,14 @@ public class BrokersDetails extends BasePage {
     Arrays.asList(logDirectoriesTab, metricsTab).forEach(element -> element.shouldBe(Condition.visible));
     return this;
   }
+
+  @Step
+  public BrokersDetails openDetailsTab(BrokersDetails.BrokerMenu menu) {
+    $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
+    waitUntilSpinnerDisappear();
+    return this;
+  }
+
 
   private List<SelenideElement> getVisibleColumnHeaders() {
     return Stream.of("Name", "Topics", "Error", "Partitions")
@@ -53,4 +64,21 @@ public class BrokersDetails extends BasePage {
     visibleElements.addAll(getVisibleColumnHeaders());
     return visibleElements;
   }
+
+  public enum BrokerMenu {
+    LOG_DIRECTORIES("Log directories"),
+    CONFIGS("Configs"),
+    METRICS("Metrics");
+
+    private final String value;
+
+    BrokerMenu(String value) {
+      this.value = value;
+    }
+
+    public String toString() {
+      return value;
+    }
+  }
+
 }

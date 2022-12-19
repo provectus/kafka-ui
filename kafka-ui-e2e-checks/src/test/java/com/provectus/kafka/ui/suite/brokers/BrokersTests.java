@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.base.BaseTest;
+import com.provectus.kafka.ui.pages.brokers.BrokersDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
@@ -43,6 +44,9 @@ public class BrokersTests extends BaseTest {
         .waitUntilScreenReady();
     verifyElementsCondition(brokersDetails.getAllVisibleElements(), Condition.visible);
     verifyElementsCondition(brokersDetails.getAllVisibleElements(), Condition.enabled);
+    brokersDetails
+        .waitUntilScreenReady()
+        .openDetailsTab(BrokersDetails.BrokerMenu.CONFIGS);
   }
 
   @Step
