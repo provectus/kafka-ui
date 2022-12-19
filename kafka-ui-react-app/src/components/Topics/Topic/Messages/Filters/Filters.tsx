@@ -219,6 +219,15 @@ const Filters: React.FC<FiltersProps> = ({
         default:
           props.seekType = currentSeekType;
       }
+
+      if (offset && currentSeekType === SeekType.OFFSET) {
+        props.seekType = SeekType.OFFSET;
+      }
+
+      if (timestamp && currentSeekType === SeekType.TIMESTAMP) {
+        props.seekType = SeekType.TIMESTAMP;
+      }
+
       props.seekTo = selectedPartitions.map(({ value }) => {
         const offsetProperty =
           seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
