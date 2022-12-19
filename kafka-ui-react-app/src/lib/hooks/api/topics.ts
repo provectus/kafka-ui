@@ -14,15 +14,12 @@ import {
   CreateTopicMessage,
   GetTopicDetailsRequest,
   GetTopicsRequest,
-  ResourceType,
   Topic,
   TopicConfig,
   TopicCreation,
   TopicUpdate,
 } from 'generated-sources';
 import { showServerError, showSuccessAlert } from 'lib/errorHandling';
-
-import { canCreateResourceWithAlert } from './roles';
 
 export const topicKeys = {
   all: (clusterName: ClusterName) =>
@@ -133,18 +130,12 @@ export function useCreateTopicMutation(clusterName: ClusterName) {
   );
 }
 
+// this will change later when we validate the request before
 export function useCreateTopic(clusterName: ClusterName) {
   const mutate = useCreateTopicMutation(clusterName);
 
   return {
     createResource: async (param: TopicFormData) => {
-      const result = await canCreateResourceWithAlert({
-        resource: ResourceType.TOPIC,
-        resourceName: param.name,
-        clusterName,
-      });
-      if (!result) throw new Error('No Permission');
-
       return mutate.mutateAsync(param);
     },
     ...mutate,

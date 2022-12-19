@@ -22,13 +22,9 @@ import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import { showServerError } from 'lib/errorHandling';
 import { schemasApiClient } from 'lib/api';
-import {
-  canCreateResourceWithAlert,
-  debouncedCanCreateResource,
-} from 'lib/hooks/api/roles';
-import yup, { cacheTest } from 'lib/yupExtended';
+import { canCreateResourceWithAlert } from 'lib/hooks/api/roles';
+import yup from 'lib/yupExtended';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { AnyObject } from 'yup/es/types';
 
 import * as S from './New.styled';
 
@@ -63,23 +59,6 @@ const validationSchema = yup.object().shape({
     .matches(
       SCHEMA_NAME_VALIDATION_PATTERN,
       'Only alphanumeric, _, -, and . allowed'
-    )
-    .test(
-      'subject',
-      cacheTest(async function testHandler(value?: string, ctx?: AnyObject) {
-        const verified = await debouncedCanCreateResource({
-          resource: ResourceType.CONNECT,
-          resourceName: value || '',
-          clusterName: (ctx?.options.context as { clusterName: string })
-            .clusterName,
-        });
-        if (!verified) {
-          return ctx?.createError({
-            message: `No Permission to create a Schema with "${value}"`,
-          });
-        }
-        return verified;
-      })
     ),
   schema: yup.string().required('Schema is required.'),
   schemaType: yup.string().required('Schema Type is required.'),
@@ -95,9 +74,6 @@ const New: React.FC = () => {
       schemaType: SchemaType.AVRO,
     },
     resolver: yupResolver(validationSchema),
-    context: {
-      clusterName,
-    },
   });
   const {
     register,

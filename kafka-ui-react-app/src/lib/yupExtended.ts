@@ -1,7 +1,5 @@
 import * as yup from 'yup';
 import { AnyObject, Maybe } from 'yup/lib/types';
-import { ResourceType } from 'generated-sources';
-import { debouncedCanCreateResource } from 'lib/hooks/api/roles';
 
 import { TOPIC_NAME_VALIDATION_PATTERN } from './constants';
 
@@ -72,31 +70,6 @@ export const topicFormValidationSchema = yup.object().shape({
     .matches(
       TOPIC_NAME_VALIDATION_PATTERN,
       'Only alphanumeric, _, -, and . allowed'
-    )
-    .test(
-      'name',
-      cacheTest(async function testHandler(
-        value?: string,
-        ctx?: AnyObject
-      ): Promise<boolean> {
-        const { clusterName, isEditing } = ctx?.options.context as {
-          clusterName: string;
-          isEditing: boolean;
-        };
-
-        if (isEditing) return true;
-        const verified = await debouncedCanCreateResource({
-          resource: ResourceType.TOPIC,
-          resourceName: value || '',
-          clusterName,
-        });
-        if (!verified) {
-          return ctx?.createError({
-            message: `No Permission to create a Topic with "${value}"`,
-          });
-        }
-        return verified;
-      })
     ),
   partitions: yup
     .number()

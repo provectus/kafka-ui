@@ -23,10 +23,6 @@ const New: React.FC = () => {
   const methods = useForm<TopicFormData>({
     mode: 'onChange',
     resolver: yupResolver(topicFormValidationSchema),
-    context: {
-      clusterName,
-      isEditing: false,
-    },
   });
 
   const createTopic = useCreateTopic(clusterName);
