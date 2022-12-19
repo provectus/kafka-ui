@@ -1730,7 +1730,7 @@ paths:
         404:
           description: Not found
 
-  /api/clusters/{clusterName}/partitionsreaassignments/generate:
+  /api/clusters/{clusterName}/partitionsreaassignments/suggestions:
     post:
       tags:
         - Topics
@@ -1755,7 +1755,7 @@ paths:
                   $ref: '#/components/schemas/ReassignPartitionsCommand'
 
   /api/clusters/{clusterName}/partitionsreaassignments/current:
-    post:
+    get:
       tags:
         - Topics
       operationId: getCurrentPartitionAssignment
@@ -1765,13 +1765,14 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
+        - name: topics
+          required: true
+          in: query
+          description: topic names for which assignments should be returned
+          schema:
+            type: array
+            items:
+              type: string
       responses:
         200:
           description: OK
@@ -1780,7 +1781,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ReassignPartitionsCommand'
 
-  /api/clusters/{clusterName}/partitionsreaassignments/execute:
+  /api/clusters/{clusterName}/partitionsreaassignments/running:
     post:
       tags:
         - Topics
@@ -1799,12 +1800,10 @@ paths:
       responses:
         200:
           description: OK
-
-  /api/clusters/{clusterName}/partitionsreaassignments/cancel:
     delete:
       tags:
         - Topics
-      operationId: cancelPartitionAssignment
+      operationId: cancelRunningPartitionAssignment
       parameters:
         - name: clusterName
           in: path
@@ -1819,8 +1818,6 @@ paths:
       responses:
         200:
           description: OK
-
-  /api/clusters/{clusterName}/partitionsreaassignments/inprogress:
     get:
       tags:
         - Topics
