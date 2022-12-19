@@ -10,7 +10,6 @@ import { fireEvent, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ControllerRenderProps } from 'react-hook-form';
 import { useConnects, useCreateConnector } from 'lib/hooks/api/kafkaConnect';
-import { debouncedCanCreateResource } from 'lib/hooks/api/roles';
 
 jest.mock(
   'components/common/Editor/Editor',
@@ -28,11 +27,6 @@ jest.mock('react-router-dom', () => ({
 jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useConnects: jest.fn(),
   useCreateConnector: jest.fn(),
-}));
-
-jest.mock('lib/hooks/api/roles', () => ({
-  ...jest.requireActual('lib/hooks/api/roles'),
-  debouncedCanCreateResource: jest.fn(),
 }));
 
 describe('New', () => {
@@ -67,9 +61,6 @@ describe('New', () => {
     (useConnects as jest.Mock).mockImplementation(() => ({
       data: connects,
     }));
-    (debouncedCanCreateResource as unknown as jest.Mock).mockImplementation(
-      () => true
-    );
   });
 
   it('calls createConnector on form submit and redirects to the list page on success', async () => {

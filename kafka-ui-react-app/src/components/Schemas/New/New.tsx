@@ -7,7 +7,7 @@ import {
   clusterSchemaPath,
   clusterSchemasPath,
 } from 'lib/paths';
-import { ResourceType, SchemaType } from 'generated-sources';
+import { SchemaType } from 'generated-sources';
 import { SCHEMA_NAME_VALIDATION_PATTERN } from 'lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
@@ -22,7 +22,6 @@ import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import { showServerError } from 'lib/errorHandling';
 import { schemasApiClient } from 'lib/api';
-import { canCreateResourceWithAlert } from 'lib/hooks/api/roles';
 import yup from 'lib/yupExtended';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -38,14 +37,6 @@ const schemaCreate = async (
   { subject, schema, schemaType }: NewSchemaSubjectRaw,
   clusterName: string
 ) => {
-  const result = await canCreateResourceWithAlert({
-    resource: ResourceType.SCHEMA,
-    resourceName: subject,
-    clusterName,
-  });
-
-  if (!result) throw new Error('No Permission');
-
   return schemasApiClient.createNewSchema({
     clusterName,
     newSchemaSubject: { subject, schema, schemaType },

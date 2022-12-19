@@ -4,23 +4,14 @@ import { render, WithRoute } from 'lib/testHelpers';
 import { clusterSchemaNewPath } from 'lib/paths';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { debouncedCanCreateResource } from 'lib/hooks/api/roles';
 
 const clusterName = 'local';
 const subjectValue = 'subject';
 const schemaValue = 'schema';
 
-jest.mock('lib/hooks/api/roles', () => ({
-  ...jest.requireActual('lib/hooks/api/roles'),
-  debouncedCanCreateResource: jest.fn(),
-}));
-
 describe('New Component', () => {
   beforeEach(() => {
     waitFor(() => {
-      (debouncedCanCreateResource as unknown as jest.Mock).mockImplementation(
-        () => true
-      );
       render(
         <WithRoute path={clusterSchemaNewPath()}>
           <New />

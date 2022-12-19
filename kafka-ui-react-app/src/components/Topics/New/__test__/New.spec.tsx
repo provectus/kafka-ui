@@ -10,7 +10,6 @@ import {
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 import { useCreateTopic } from 'lib/hooks/api/topics';
-import { debouncedCanCreateResource } from 'lib/hooks/api/roles';
 
 const clusterName = 'local';
 const topicName = 'test-topic';
@@ -23,11 +22,6 @@ jest.mock('react-router-dom', () => ({
 }));
 jest.mock('lib/hooks/api/topics', () => ({
   useCreateTopic: jest.fn(),
-}));
-
-jest.mock('lib/hooks/api/roles', () => ({
-  ...jest.requireActual('lib/hooks/api/roles'),
-  debouncedCanCreateResource: jest.fn(),
 }));
 
 const renderComponent = (path: string) => {
@@ -44,9 +38,6 @@ const renderComponent = (path: string) => {
 const createTopicMock = jest.fn();
 describe('New', () => {
   beforeEach(() => {
-    (debouncedCanCreateResource as unknown as jest.Mock).mockImplementation(
-      () => true
-    );
     (useCreateTopic as jest.Mock).mockImplementation(() => ({
       createResource: createTopicMock,
     }));
