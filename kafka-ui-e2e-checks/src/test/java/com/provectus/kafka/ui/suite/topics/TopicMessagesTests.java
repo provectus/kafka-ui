@@ -120,7 +120,7 @@ public class TopicMessagesTests extends BaseTest {
   @CaseId(15)
   @Test
   void checkingMessageFilteringByOffset() {
-    int offsetValue = 2;
+    String offsetValue = "2";
     navigateToTopicsAndOpenDetails("_schemas");
     topicDetails
         .openDetailsTab(MESSAGES)
@@ -129,7 +129,7 @@ public class TopicMessagesTests extends BaseTest {
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
     topicDetails.getAllMessages()
-        .forEach(messages -> softly.assertThat(messages.getOffset() == offsetValue)
+        .forEach(messages -> softly.assertThat(messages.getOffset() == Integer.parseInt(offsetValue))
         .as("getAllMessages()").isTrue());
     softly.assertAll();
   }

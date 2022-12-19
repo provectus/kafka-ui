@@ -1,18 +1,20 @@
 package com.provectus.kafka.ui.pages.topic;
 
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$x;
+import static com.codeborne.selenide.Selenide.$x;
+import static org.apache.commons.lang.math.RandomUtils.nextInt;
+
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.codeborne.selenide.Selenide.*;
-import static org.apache.commons.lang.math.RandomUtils.nextInt;
+import org.openqa.selenium.By;
 
 public class TopicDetails extends BasePage {
 
@@ -131,8 +133,8 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails setOffsetFldMessagesTab(int seekTypeValue){
-    seekTypeField.shouldBe(Condition.enabled).sendKeys(String.valueOf(seekTypeValue));
+  public TopicDetails setOffsetFldMessagesTab(String seekTypeValue){
+    seekTypeField.shouldBe(Condition.enabled).sendKeys(seekTypeValue);
     return this;
   }
 
