@@ -1757,30 +1757,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/TimeStampFormat'
 
-  /api/access/evictRolesCache:
-    post:
-      tags:
-        - Access
-      summary: evict permissions cache
-      operationId: evictRolesCache
-      responses:
-        200:
-          description: OK
-
-  /api/access/reloadRoles:
-    post:
-      tags:
-        - Access
-      summary: Reload roles and evict cache
-      operationId: reloadRoles
-      responses:
-        200:
-          description: OK
-
-  /api/access/userAuthInfo:
+  /api/authorization:
     get:
       tags:
-        - Access
+        - Authorization
       summary: Get user authentication related info
       operationId: getUserAuthInfo
       responses:
@@ -1791,35 +1771,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationInfo'
 
-  /api/access/canCreateResource:
-    get:
+  /api/authorization/evictCache:
+    post:
       tags:
-        - Access
-      summary: Check if the user can create a desired resource
-      operationId: canCreateResource
-      parameters:
-        - name: clusterName
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: resource
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/ResourceType'
-        - name: resourceName
-          in: query
-          required: true
-          schema:
-            type: string
+        - Authorization
+      summary: evict authenticated users cache
+      operationId: evictCache
       responses:
         200:
           description: OK
-          content:
-            application/json:
-              schema:
-                type: boolean
 
 components:
   schemas:

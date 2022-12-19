@@ -1,12 +1,9 @@
 package com.provectus.kafka.ui.service.rbac;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
-import com.provectus.kafka.ui.exception.NotFoundException;
+import com.provectus.kafka.ui.config.auth.RoleBasedAccessControlProperties;
 import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.InternalTopic;
@@ -23,10 +20,6 @@ import com.provectus.kafka.ui.service.rbac.extractor.GithubAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GoogleAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.LdapAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.ProviderAuthorityExtractor;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.env.Environment;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
@@ -51,10 +44,9 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
+@EnableConfigurationProperties(RoleBasedAccessControlProperties.class)
 @Slf4j
 public class AccessControlService {
-
-  private final Environment environment;
 
   @Nullable
   private final InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
@@ -64,62 +56,33 @@ public class AccessControlService {
       .build();
   private boolean rbacEnabled = false;
   private Set<ProviderAuthorityExtractor> extractors;
-  private List<Role> roles;
+  private final RoleBasedAccessControlProperties properties;
 
   @PostConstruct
   public void init() {
-    String rawProperty = environment.getProperty("roles.file");
-    if (rawProperty == null) {
-      log.trace("No roles file is provided");
+    if (properties.getRoles().isEmpty()) {
+      log.trace("No roles provided, disabling RBAC");
       return;
     }
     rbacEnabled = true;
 
-    Path rolesFilePath = Paths.get(rawProperty);
-
-    if (Files.notExists(rolesFilePath)) {
-      log.trace("Roles file path: [{}]", rolesFilePath);
-      throw new NotFoundException("Roles file path provided but the file doesn't exist");
-    }
-
-    if (!Files.isReadable(rolesFilePath)) {
-      log.trace("Roles file path: [{}]", rolesFilePath);
-      throw new NotFoundException("Roles file path provided but the file isn't readable");
-    }
-
-    var mapper = YAMLMapper
-        .builder()
-        .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-        .findAndAddModules()
-        .build();
-
-    try {
-      //@formatter:off
-      this.roles = mapper.readValue(rolesFilePath.toFile(), new TypeReference<>() {});
-      //@formatter:on
-
-      this.extractors = roles
-          .stream()
-          .map(role -> role.getSubjects()
-              .stream()
-              .map(provider -> switch (provider.getProvider()) {
-                case OAUTH_COGNITO -> new CognitoAuthorityExtractor();
-                case OAUTH_GOOGLE -> new GoogleAuthorityExtractor();
-                case OAUTH_GITHUB -> new GithubAuthorityExtractor();
-                case LDAP, LDAP_AD -> new LdapAuthorityExtractor();
-              }).collect(Collectors.toSet()))
-          .flatMap(Set::stream)
-          .collect(Collectors.toSet());
-
-    } catch (IOException e) {
-      throw new RuntimeException("Can't deserialize roles file", e);
-    }
+    this.extractors = properties.getRoles()
+        .stream()
+        .map(role -> role.getSubjects()
+            .stream()
+            .map(provider -> switch (provider.getProvider()) {
+              case OAUTH_COGNITO -> new CognitoAuthorityExtractor();
+              case OAUTH_GOOGLE -> new GoogleAuthorityExtractor();
+              case OAUTH_GITHUB -> new GithubAuthorityExtractor();
+              case LDAP, LDAP_AD -> new LdapAuthorityExtractor();
+            }).collect(Collectors.toSet()))
+        .flatMap(Set::stream)
+        .collect(Collectors.toSet());
 
     if ((clientRegistrationRepository == null || !clientRegistrationRepository.iterator().hasNext())
-        && !roles.isEmpty()) {
+        && !properties.getRoles().isEmpty()) {
       log.error("Roles are configured but no authentication methods are present. Authentication might fail.");
     }
-
   }
 
   public AccessContext.AccessContextBuilder builder() {
@@ -171,6 +134,7 @@ public class AccessControlService {
     return Mono.just(user);
   }
 
+  @SuppressWarnings("unused") // TODO issues/3095
   public Mono<Boolean> canCreateResource(Resource resource, String cluster, String resourceName) {
     if (!rbacEnabled) {
       return Mono.empty();
@@ -221,7 +185,7 @@ public class AccessControlService {
 
     Assert.isTrue(StringUtils.isNotEmpty(context.getCluster()), "cluster value is empty");
 
-    return roles
+    return properties.getRoles()
         .stream()
         .filter(filterRole(user))
         .anyMatch(filterCluster(context.getCluster()));
@@ -445,12 +409,12 @@ public class AccessControlService {
   }
 
   public List<Role> getRoles() {
-    return Collections.unmodifiableList(roles);
+    return Collections.unmodifiableList(properties.getRoles());
   }
 
   private boolean isAccessible(Resource resource, String resourceValue,
                                AuthenticatedUser user, AccessContext context, Set<String> requiredActions) {
-    Set<String> grantedActions = roles
+    Set<String> grantedActions = properties.getRoles()
         .stream()
         .filter(filterRole(user))
         .filter(filterCluster(context.getCluster()))
@@ -494,11 +458,6 @@ public class AccessControlService {
 
   public void evictCache() {
     cachedUsers.invalidateAll();
-  }
-
-  public void reloadRoles() {
-    init();
-    evictCache();
   }
 
   public boolean isRbacEnabled() {

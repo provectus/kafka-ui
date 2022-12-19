@@ -1,18 +1,13 @@
 package com.provectus.kafka.ui.controller;
 
-import com.provectus.kafka.ui.api.AccessApi;
+import com.provectus.kafka.ui.api.AuthorizationApi;
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
 import com.provectus.kafka.ui.model.ActionDTO;
 import com.provectus.kafka.ui.model.AuthenticationInfoDTO;
 import com.provectus.kafka.ui.model.ResourceTypeDTO;
 import com.provectus.kafka.ui.model.UserInfoDTO;
 import com.provectus.kafka.ui.model.UserPermissionDTO;
-import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.Permission;
-import com.provectus.kafka.ui.model.rbac.Resource;
-import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
-import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
-import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Collection;
 import java.util.List;
@@ -25,17 +20,12 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-public class AccessController implements AccessApi {
+public class AccessController implements AuthorizationApi {
 
   private final AccessControlService accessControlService;
 
-  public Mono<ResponseEntity<Void>> evictRolesCache(ServerWebExchange exchange) {
+  public Mono<ResponseEntity<Void>> evictCache(ServerWebExchange exchange) {
     accessControlService.evictCache();
-    return Mono.just(ResponseEntity.ok().build());
-  }
-
-  public Mono<ResponseEntity<Void>> reloadRoles(ServerWebExchange exchange) {
-    accessControlService.reloadRoles();
     return Mono.just(ResponseEntity.ok().build());
   }
 
@@ -65,14 +55,6 @@ public class AccessController implements AccessApi {
           dto.setUserInfo(userInfo);
           return dto;
         })
-        .map(ResponseEntity::ok);
-  }
-
-  @Override
-  public Mono<ResponseEntity<Boolean>> canCreateResource(String clusterName, ResourceTypeDTO resource,
-                                                         String resourceName, ServerWebExchange exchange) {
-    return accessControlService
-        .canCreateResource(Resource.valueOf(resource.getValue()), clusterName, resourceName)
         .map(ResponseEntity::ok);
   }
 
