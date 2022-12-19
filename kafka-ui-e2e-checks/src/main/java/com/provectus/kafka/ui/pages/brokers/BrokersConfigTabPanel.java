@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.pages.brokers;
 
+import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 
 import com.codeborne.selenide.Condition;
@@ -12,9 +13,15 @@ import java.util.stream.Stream;
 
 public class BrokersConfigTabPanel extends BasePage {
 
-  protected SelenideElement editBtn = $x("//button[@aria-label='editAction']");
+  protected List<SelenideElement> editBtn = $$x("//button[@aria-label='editAction']");
   protected SelenideElement searchByKeyField = $x("//input[@placeholder='Search by Key']");
 
+  @Step
+  public BrokersConfigTabPanel waitUntilScreenReady(){
+    waitUntilSpinnerDisappear();
+    searchByKeyField.shouldBe(Condition.visible);
+    return this;
+  }
 
   @Step
   public boolean isSearchByKeyVisible() {
@@ -27,9 +34,7 @@ public class BrokersConfigTabPanel extends BasePage {
         .collect(Collectors.toList());
   }
 
-  @Step
-  public boolean isEditButtonEnabled() {
-    List.of(editBtn).forEach(element -> element.shouldBe(Condition.enabled));
-    return true;
+  public List<SelenideElement> getEditButtons() {
+    return editBtn;
   }
 }

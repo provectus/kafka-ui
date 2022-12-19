@@ -27,7 +27,7 @@ public class BrokersDetails extends BasePage {
   }
 
   @Step
-  public BrokersDetails openConfigTab(BrokersDetails.BrokerMenu menu) {
+  public BrokersDetails openBrokersTab(BrokersDetails.BrokerMenu menu) {
     $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
     waitUntilSpinnerDisappear();
     return this;

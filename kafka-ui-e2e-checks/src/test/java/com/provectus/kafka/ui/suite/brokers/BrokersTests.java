@@ -1,17 +1,16 @@
 package com.provectus.kafka.ui.suite.brokers;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.BROKERS;
+import static com.provectus.kafka.ui.pages.brokers.BrokersDetails.BrokerMenu.CONFIGS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.pages.brokers.BrokersDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qameta.allure.Step;
 import io.qase.api.annotation.CaseId;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -47,12 +46,11 @@ public class BrokersTests extends BaseTest {
     verifyElementsCondition(brokersDetails.getAllEnabledElements(), Condition.enabled);
     brokersDetails
         .waitUntilScreenReady()
-        .openConfigTab(BrokersDetails.BrokerMenu.CONFIGS);
+        .openBrokersTab(CONFIGS)
+        .waitUntilScreenReady();
     verifyElementsCondition(brokersConfigTabPanel.getColumnHeaders(), Condition.visible);
-    SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(brokersConfigTabPanel.isEditButtonEnabled()).as("isEditButtonEnabled()").isTrue();
-    softly.assertThat(brokersConfigTabPanel.isSearchByKeyVisible()).as("isSearchByKeyVisible()").isTrue();
-    softly.assertAll();
+    verifyElementsCondition(brokersConfigTabPanel.getEditButtons(), Condition.enabled);
+    assertThat(brokersConfigTabPanel.isSearchByKeyVisible()).as("isSearchByKeyVisible()").isTrue();
   }
 
   @Step
