@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import com.fasterxml.jackson.databind.node.BigIntegerNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.LongNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedLong;
 import com.google.protobuf.Any;
@@ -28,7 +29,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -51,42 +51,41 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
 
   @Override
   public JsonSchema convert(URI basePath, Descriptors.Descriptor schema) {
-    final JsonSchema.JsonSchemaBuilder builder = JsonSchema.builder();
-
-    builder.id(basePath.resolve(schema.getFullName()));
-    builder.type(new SimpleJsonType(JsonType.Type.OBJECT));
-
     Map<String, FieldSchema> definitions = new HashMap<>();
-    final ObjectFieldSchema root =
-        (ObjectFieldSchema) convertObjectSchema(schema, definitions, false);
-    builder.definitions(definitions);
-
-    builder.properties(root.getProperties());
-    builder.required(root.getRequired());
-
-    return builder.build();
+    RefFieldSchema rootRef = registerObjectAndReturnRef(schema, definitions);
+    return JsonSchema.builder()
+        .id(basePath.resolve(schema.getFullName()))
+        .type(new SimpleJsonType(JsonType.Type.OBJECT))
+        .rootRef(rootRef.getRef())
+        .definitions(definitions)
+        .build();
   }
 
-  private FieldSchema convertObjectSchema(Descriptors.Descriptor schema,
-                                          Map<String, FieldSchema> definitions, boolean ref) {
-    final Map<String, FieldSchema> fields = schema.getFields().stream()
-        .map(f -> Tuples.of(f.getName(), convertField(f, definitions)))
-        .collect(Collectors.toMap(
-            Tuple2::getT1,
-            Tuple2::getT2
-        ));
-
-    final List<String> required = schema.getFields().stream()
-        .filter(f -> !f.isOptional())
-        .map(Descriptors.FieldDescriptor::getName).collect(Collectors.toList());
-
-    if (ref) {
-      String definitionName = String.format("record.%s", schema.getFullName());
-      definitions.put(definitionName, new ObjectFieldSchema(fields, required));
-      return new RefFieldSchema(String.format("#/definitions/%s", definitionName));
-    } else {
-      return new ObjectFieldSchema(fields, required);
+  private RefFieldSchema registerObjectAndReturnRef(Descriptors.Descriptor schema,
+                                                    Map<String, FieldSchema> definitions) {
+    var definition = schema.getFullName();
+    if (definitions.containsKey(definition)) {
+      return createRefField(definition);
     }
+    // adding stub record, need to avoid infinite recursion
+    definitions.put(definition, ObjectFieldSchema.EMPTY);
+
+    Map<String, FieldSchema> fields = schema.getFields().stream()
+        .map(f -> Tuples.of(f.getName(), convertField(f, definitions)))
+        .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
+
+    List<String> required = schema.getFields().stream()
+        .filter(Descriptors.FieldDescriptor::isRequired)
+        .map(Descriptors.FieldDescriptor::getName)
+        .collect(Collectors.toList());
+
+    // replacing stub record with actual object structure
+    definitions.put(definition, new ObjectFieldSchema(fields, required));
+    return createRefField(definition);
+  }
+
+  private RefFieldSchema createRefField(String definition) {
+    return new RefFieldSchema("#/definitions/%s".formatted(definition));
   }
 
   private FieldSchema convertField(Descriptors.FieldDescriptor field,
@@ -98,7 +97,7 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
     final JsonType jsonType = convertType(field);
     FieldSchema fieldSchema;
     if (jsonType.getType().equals(JsonType.Type.OBJECT)) {
-      fieldSchema = convertObjectSchema(field.getMessageType(), definitions, true);
+      fieldSchema = registerObjectAndReturnRef(field.getMessageType(), definitions);
     } else {
       fieldSchema = new SimpleFieldSchema(jsonType);
     }
@@ -118,14 +117,23 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
       return Optional.empty();
     }
     String typeName = field.getMessageType().getFullName();
-    if (typeName.equals(Timestamp.getDescriptor().getFullName())
-        || typeName.equals(Duration.getDescriptor().getFullName())
-        || typeName.equals(FieldMask.getDescriptor().getFullName())) {
+    if (typeName.equals(Timestamp.getDescriptor().getFullName())) {
+      return Optional.of(
+          new SimpleFieldSchema(
+              new SimpleJsonType(JsonType.Type.STRING, Map.of("format", new TextNode("date-time")))));
+    }
+    if (typeName.equals(Duration.getDescriptor().getFullName())) {
+      return Optional.of(
+          new SimpleFieldSchema(
+              //TODO: current UI is failing when format=duration is set - need to fix this first
+              new SimpleJsonType(JsonType.Type.STRING // , Map.of("format", new TextNode("duration"))
+              )));
+    }
+    if (typeName.equals(FieldMask.getDescriptor().getFullName())) {
       return Optional.of(new SimpleFieldSchema(new SimpleJsonType(JsonType.Type.STRING)));
     }
-    if (typeName.equals(Any.getDescriptor().getFullName())
-        || typeName.equals(Struct.getDescriptor().getFullName())) {
-      return Optional.of(new ObjectFieldSchema(Map.of(), List.of()));
+    if (typeName.equals(Any.getDescriptor().getFullName()) || typeName.equals(Struct.getDescriptor().getFullName())) {
+      return Optional.of(ObjectFieldSchema.EMPTY);
     }
     if (typeName.equals(Value.getDescriptor().getFullName())) {
       return Optional.of(AnyFieldSchema.get());

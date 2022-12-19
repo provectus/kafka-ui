@@ -20,6 +20,7 @@
     "@vitejs/plugin-react": "^2.0.0",
     "ace-builds": "^1.7.1",
     "ajv": "^8.6.3",
+    "ajv-formats": "^2.1.1",
     "babel-jest": "^29.0.3",
     "classnames": "^2.2.6",
     "dayjs": "^1.11.2",

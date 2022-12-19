@@ -56,6 +56,7 @@ class ProtobufSchemaConverterTest {
 
             message EmbeddedMsg {
                 int32 emb_f1 = 1;
+                TestMsg outer_ref = 2;
             }
         }""";
 
@@ -65,49 +66,61 @@ class ProtobufSchemaConverterTest {
             "$id": "http://example.com/test.TestMsg",
             "$schema": "https://json-schema.org/draft/2020-12/schema",
             "type": "object",
-            "properties":
+            "definitions":
             {
-                "enum_field":
+                "test.TestMsg":
                 {
-                    "enum": [ "ENUM_V1", "ENUM_V2" ],
-                    "type": "string"
-                },
-                "string_w_field": { "type": "string" },
-                "ts_field": { "type": "string" },
-                "float_w_field": { "type": "number" },
-                "lst_v_field": {
-                    "type": "array",
-                    "items": { "type": [ "number", "string", "object", "array", "boolean", "null" ] }
-                },
-                "struct_field": {
-                    "type": "object",
-                    "properties": {}
-                },
-                "string_field": { "type": "string" },
-                "double_w_field": { "type": "number" },
-                "bool_field": { "type": "boolean" },
-                "int32_w_field": { "type": "integer", "maximum": 2147483647, "minimum": -2147483648 },
-                "duration_field": { "type": "string" },
-                "int32_field": { "type": "integer", "maximum": 2147483647, "minimum": -2147483648 },
-                "int64_w_field": { "type": "integer", "maximum": 9223372036854775807, "minimum": -9223372036854775808 },
-                "v1": { "type": [ "number", "string", "object", "array", "boolean", "null" ] },
-                "v2": { "type": [ "number", "string", "object", "array", "boolean", "null" ] },
-                "emb": { "$ref": "#/definitions/record.test.TestMsg.EmbeddedMsg" },
-                "emb_list": { "type": "array", "items": { "$ref": "#/definitions/record.test.TestMsg.EmbeddedMsg" } },
-                "uint32_w_field": { "type": "integer", "maximum": 4294967295, "minimum": 0 },
-                "bool_w_field": {  "type": "boolean" },
-                "uint64_w_field": { "type": "integer", "maximum": 18446744073709551615, "minimum": 0 }
-            },
-            "required": [ "emb_list" ],
-            "definitions": {
-                "record.test.TestMsg.EmbeddedMsg": {
                     "type": "object",
                     "properties":
                     {
-                        "emb_f1": { "type": "integer", "maximum": 2147483647, "minimum": -2147483648}
+                        "enum_field": {
+                            "enum":
+                            [
+                                "ENUM_V1",
+                                "ENUM_V2"
+                            ],
+                            "type": "string"
+                        },
+                        "string_w_field": { "type": "string" },
+                        "ts_field": { "type": "string", "format": "date-time" },
+                        "emb_list": {
+                            "type": "array",
+                            "items": { "$ref": "#/definitions/test.TestMsg.EmbeddedMsg" }
+                        },
+                        "float_w_field": { "type": "number" },
+                        "lst_v_field": {
+                            "type": "array",
+                            "items": { "type":[ "number", "string", "object", "array", "boolean", "null" ] }
+                        },
+                        "struct_field": { "type": "object", "properties": {} },
+                        "string_field": { "type": "string" },
+                        "double_w_field": { "type": "number" },
+                        "bool_field": { "type": "boolean" },
+                        "int32_w_field": { "type": "integer", "maximum": 2147483647, "minimum": -2147483648 },
+                        "duration_field": { "type": "string" },
+                        "int32_field": { "type": "integer", "maximum": 2147483647, "minimum": -2147483648 },
+                        "int64_w_field": {
+                            "type": "integer",
+                            "maximum": 9223372036854775807, "minimum": -9223372036854775808
+                        },
+                        "v1": { "type": [ "number", "string", "object", "array", "boolean", "null" ] },
+                        "emb": { "$ref": "#/definitions/test.TestMsg.EmbeddedMsg" },
+                        "v2": { "type": [ "number", "string", "object", "array", "boolean", "null" ] },
+                        "uint32_w_field": { "type": "integer", "maximum": 4294967295, "minimum": 0 },
+                        "bool_w_field": { "type": "boolean" },
+                        "uint64_w_field": { "type": "integer", "maximum": 18446744073709551615, "minimum": 0 }
+                    }
+                },
+                "test.TestMsg.EmbeddedMsg": {
+                    "type": "object",
+                    "properties":
+                    {
+                        "emb_f1": { "type": "integer", "maximum": 2147483647, "minimum": -2147483648 },
+                        "outer_ref": { "$ref": "#/definitions/test.TestMsg" }
                     }
                 }
-            }
+            },
+            "$ref": "#/definitions/test.TestMsg"
         }""";
 
     ProtobufSchemaConverter converter = new ProtobufSchemaConverter();
