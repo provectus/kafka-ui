@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.suite.topics;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
@@ -60,8 +59,10 @@ public class TopicMessagesTests extends BaseTest {
     topicDetails
         .waitUntilScreenReady();
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicDetails.isKeyMessageVisible((TOPIC_FOR_MESSAGES.getMessageKey()))).withFailMessage("isKeyMessageVisible()").isTrue();
-    softly.assertThat(topicDetails.isContentMessageVisible((TOPIC_FOR_MESSAGES.getMessageContent()).trim())).withFailMessage("isContentMessageVisible()").isTrue();
+    softly.assertThat(topicDetails.isKeyMessageVisible((TOPIC_FOR_MESSAGES.getMessageKey())))
+        .withFailMessage("isKeyMessageVisible()").isTrue();
+    softly.assertThat(topicDetails.isContentMessageVisible((TOPIC_FOR_MESSAGES.getMessageContent()).trim()))
+        .withFailMessage("isContentMessageVisible()").isTrue();
     softly.assertAll();
   }
 
@@ -101,8 +102,7 @@ public class TopicMessagesTests extends BaseTest {
   @CaseId(21)
   @Test
   void copyMessageFromTopicProfile() {
-    String topicName = "_schemas";
-    navigateToTopicsAndOpenDetails(topicName);
+    navigateToTopicsAndOpenDetails("_schemas");
     topicDetails
         .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
         .getRandomMessage()
@@ -120,22 +120,17 @@ public class TopicMessagesTests extends BaseTest {
   @CaseId(15)
   @Test
   void checkingMessageFilteringByOffset() {
-    String topicName = "_schemas";
-    String offsetValue = "2";
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(topicName);
+    int offsetValue = 2;
+    navigateToTopicsAndOpenDetails("_schemas");
     topicDetails
-        .waitUntilScreenReady()
-        .openDetailsTab(MESSAGES);
-    topicDetails
-        .selectSeekTypeMessagesDdl("Offset")
-        .setOffsetMessagesField(offsetValue)
-        .clickSubmitMessagesFiltersButton();
+        .openDetailsTab(MESSAGES)
+        .selectSeekTypeDdlMessagesTab("Offset")
+        .setOffsetFldMessagesTab(offsetValue)
+        .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
-    topicDetails.getAllMessages().forEach(messages -> softly.assertThat(messages.getOffset() == Integer.parseInt(offsetValue)));
+    topicDetails.getAllMessages()
+        .forEach(messages -> softly.assertThat(messages.getOffset() == offsetValue)
+        .as("getAllMessages()").isTrue());
     softly.assertAll();
   }
 
