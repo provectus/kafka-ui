@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.suite.brokers;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.BROKERS;
-import static com.provectus.kafka.ui.pages.brokers.BrokersDetails.BrokerMenu.CONFIGS;
+import static com.provectus.kafka.ui.pages.brokers.BrokersDetails.DetailsTab.CONFIGS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeborne.selenide.Condition;

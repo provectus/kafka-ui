@@ -28,12 +28,11 @@ public class BrokersDetails extends BasePage {
   }
 
   @Step
-  public BrokersDetails openDetailsTab(BrokersDetails.BrokerMenu menu) {
+  public BrokersDetails openDetailsTab(DetailsTab menu) {
     $(By.linkText(menu.toString())).shouldBe(Condition.enabled).click();
     waitUntilSpinnerDisappear();
     return this;
   }
-
 
   private List<SelenideElement> getVisibleColumnHeaders() {
     return Stream.of("Name", "Topics", "Error", "Partitions")
@@ -53,8 +52,8 @@ public class BrokersDetails extends BasePage {
         .collect(Collectors.toList());
   }
 
-  private List<SelenideElement> getBrokersTabs() {
-    return Stream.of("Log directories", "Configs", "Metrics")
+  private List<SelenideElement> getDetailsTabs() {
+    return Stream.of(DetailsTab.values())
         .map(name -> $x(String.format(brokersTabLocator, name)))
         .collect(Collectors.toList());
   }
@@ -62,29 +61,26 @@ public class BrokersDetails extends BasePage {
   @Step
   public List<SelenideElement> getAllEnabledElements() {
     List<SelenideElement> enabledElements = new ArrayList<>(getEnabledColumnHeaders());
-    enabledElements.addAll(getBrokersTabs());
+    enabledElements.addAll(getDetailsTabs());
     return enabledElements;
   }
-
-
-
 
   @Step
   public List<SelenideElement> getAllVisibleElements() {
     List<SelenideElement> visibleElements = new ArrayList<>(getVisibleSummaryCells());
     visibleElements.addAll(getVisibleColumnHeaders());
-    visibleElements.addAll(getBrokersTabs());
+    visibleElements.addAll(getDetailsTabs());
     return visibleElements;
   }
 
-  public enum BrokerMenu {
+  public enum DetailsTab {
     LOG_DIRECTORIES("Log directories"),
     CONFIGS("Configs"),
     METRICS("Metrics");
 
     private final String value;
 
-    BrokerMenu(String value) {
+    DetailsTab(String value) {
       this.value = value;
     }
 
