@@ -18,6 +18,7 @@ public class BrokersDetails extends BasePage {
 
   protected SelenideElement logDirectoriesTab = $x("//a[text()='Log directories']");
   protected SelenideElement metricsTab = $x("//a[text()='Metrics']");
+  protected String brokersTabLocator = "//a[text()='%s']";
 
   @Step
   public BrokersDetails waitUntilScreenReady() {
@@ -27,8 +28,8 @@ public class BrokersDetails extends BasePage {
   }
 
   @Step
-  public BrokersDetails openBrokersTab(BrokersDetails.BrokerMenu menu) {
-    $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
+  public BrokersDetails openDetailsTab(BrokersDetails.BrokerMenu menu) {
+    $(By.linkText(menu.toString())).shouldBe(Condition.enabled).click();
     waitUntilSpinnerDisappear();
     return this;
   }
@@ -52,15 +53,27 @@ public class BrokersDetails extends BasePage {
         .collect(Collectors.toList());
   }
 
+  private List<SelenideElement> getBrokersTabs() {
+    return Stream.of("Log directories", "Configs", "Metrics")
+        .map(name -> $x(String.format(brokersTabLocator, name)))
+        .collect(Collectors.toList());
+  }
+
   @Step
   public List<SelenideElement> getAllEnabledElements() {
-    return getEnabledColumnHeaders();
+    List<SelenideElement> enabledElements = new ArrayList<>(getEnabledColumnHeaders());
+    enabledElements.addAll(getBrokersTabs());
+    return enabledElements;
   }
+
+
+
 
   @Step
   public List<SelenideElement> getAllVisibleElements() {
     List<SelenideElement> visibleElements = new ArrayList<>(getVisibleSummaryCells());
     visibleElements.addAll(getVisibleColumnHeaders());
+    visibleElements.addAll(getBrokersTabs());
     return visibleElements;
   }
 
@@ -79,5 +92,4 @@ public class BrokersDetails extends BasePage {
       return value;
     }
   }
-
 }

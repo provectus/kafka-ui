@@ -39,14 +39,14 @@ public class BrokersTests extends BaseTest {
     navigateToBrokers();
     assertThat(brokersList.getAllBrokers()).as("getAllBrokers()").size().isGreaterThan(0);
     brokersList
-        .openBroker("1");
+        .openBroker(1);
     brokersDetails
         .waitUntilScreenReady();
     verifyElementsCondition(brokersDetails.getAllVisibleElements(), Condition.visible);
     verifyElementsCondition(brokersDetails.getAllEnabledElements(), Condition.enabled);
     brokersDetails
-        .waitUntilScreenReady()
-        .openBrokersTab(CONFIGS)
+        .openDetailsTab(CONFIGS);
+    brokersConfigTabPanel
         .waitUntilScreenReady();
     verifyElementsCondition(brokersConfigTabPanel.getColumnHeaders(), Condition.visible);
     verifyElementsCondition(brokersConfigTabPanel.getEditButtons(), Condition.enabled);
