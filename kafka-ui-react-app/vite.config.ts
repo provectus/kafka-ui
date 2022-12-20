@@ -31,7 +31,7 @@ export default defineConfig(({ mode }) => {
       ) {
         if (hostType === 'js') {
           return {
-            runtime: `window.__assetMethods(${JSON.stringify(filename)})`,
+            runtime: `window.__assetsPathBuilder(${JSON.stringify(filename)})`,
           };
         }
 
