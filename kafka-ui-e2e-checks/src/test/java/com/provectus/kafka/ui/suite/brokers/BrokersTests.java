@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.suite.brokers;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.BROKERS;
+import static com.provectus.kafka.ui.pages.brokers.BrokersDetails.DetailsTab.CONFIGS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeborne.selenide.Condition;
@@ -38,11 +39,18 @@ public class BrokersTests extends BaseTest {
     navigateToBrokers();
     assertThat(brokersList.getAllBrokers()).as("getAllBrokers()").size().isGreaterThan(0);
     brokersList
-        .openBroker("1");
+        .openBroker(1);
     brokersDetails
         .waitUntilScreenReady();
     verifyElementsCondition(brokersDetails.getAllVisibleElements(), Condition.visible);
-    verifyElementsCondition(brokersDetails.getAllVisibleElements(), Condition.enabled);
+    verifyElementsCondition(brokersDetails.getAllEnabledElements(), Condition.enabled);
+    brokersDetails
+        .openDetailsTab(CONFIGS);
+    brokersConfigTabPanel
+        .waitUntilScreenReady();
+    verifyElementsCondition(brokersConfigTabPanel.getColumnHeaders(), Condition.visible);
+    verifyElementsCondition(brokersConfigTabPanel.getEditButtons(), Condition.enabled);
+    assertThat(brokersConfigTabPanel.isSearchByKeyVisible()).as("isSearchByKeyVisible()").isTrue();
   }
 
   @Step
