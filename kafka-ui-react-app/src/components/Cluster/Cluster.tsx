@@ -17,8 +17,6 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { useClusters } from 'lib/hooks/api/clusters';
 
-// We can't use Lazy loading till we have a better way to update publicPath in runtime
-// Now java app replaces paths in builded index.html file.
 const Brokers = React.lazy(() => import('components/Brokers/Brokers'));
 const Topics = React.lazy(() => import('components/Topics/Topics'));
 const Schemas = React.lazy(() => import('components/Schemas/Schemas'));
