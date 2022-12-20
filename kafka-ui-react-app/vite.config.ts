@@ -22,23 +22,14 @@ export default defineConfig(({ mode }) => {
       renderBuiltUrl(
         filename: string,
         {
-          hostId,
           hostType,
-          type,
         }: {
           hostId: string;
           hostType: 'js' | 'css' | 'html';
           type: 'asset' | 'public';
         }
       ) {
-        // eslint-disable-next-line no-console
-        console.log();
-
-        // eslint-disable-next-line no-console
-        console.log(
-          `----------${hostType}------------${hostId}-----------${type}`
-        );
-        if (hostType !== 'html') {
+        if (hostType === 'js') {
           return {
             runtime: `window.__assetMethods(${JSON.stringify(filename)})`,
           };
