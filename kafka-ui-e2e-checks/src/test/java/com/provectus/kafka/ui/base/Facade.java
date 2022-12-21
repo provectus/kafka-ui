@@ -15,6 +15,7 @@ import com.provectus.kafka.ui.pages.schema.SchemaCreateForm;
 import com.provectus.kafka.ui.pages.schema.SchemaDetails;
 import com.provectus.kafka.ui.pages.schema.SchemaRegistryList;
 import com.provectus.kafka.ui.pages.topic.ProduceMessagePanel;
+import com.provectus.kafka.ui.pages.topic.SettingsPanel;
 import com.provectus.kafka.ui.pages.topic.TopicCreateEditForm;
 import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.pages.topic.TopicsList;
@@ -38,4 +39,5 @@ public abstract class Facade {
     protected BrokersList brokersList = new BrokersList();
     protected BrokersDetails brokersDetails = new BrokersDetails();
     protected BrokersConfigTabPanel brokersConfigTabPanel = new BrokersConfigTabPanel();
+    protected SettingsPanel settingsPanel = new SettingsPanel();
 }

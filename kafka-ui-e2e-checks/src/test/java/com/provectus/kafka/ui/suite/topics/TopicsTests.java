@@ -381,6 +381,31 @@ public class TopicsTests extends BaseTest {
     softly.assertAll();
   }
 
+  @DisplayName("Checking Topics settings to make sure retention.bytes is right according to Max size on disk in GB selected value")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(56)
+  @Test
+  void CheckRetentionBytesAccordingToMaxSizeOnDisk(){
+    navigateToTopics();
+    topicsList
+        .clickAddTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady()
+        .setTopicName(TOPIC_TO_CREATE.getName())
+        .setNumberOfPartitions(TOPIC_TO_CREATE.getNumberOfPartitions())
+        .clickCreateTopicBtn();
+    topicDetails
+        .waitUntilScreenReady()
+        .openDetailsTab(SETTINGS);
+    settingsPanel
+        .waitUntilScreenReady();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(settingsPanel.getValueOfKey("segment.ms")).as("getValueOfKey()").isEqualTo(604800000);
+    softly.assertThat(settingsPanel.getValueOfKey("retention.bytes")).as("getValueOfKey()").isEqualTo(-1);
+    softly.assertAll();
+  }
+
   @AfterAll
   public void afterAll() {
     TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));

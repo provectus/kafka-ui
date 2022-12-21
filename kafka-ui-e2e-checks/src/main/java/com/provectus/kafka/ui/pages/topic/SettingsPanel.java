@@ -1,0 +1,75 @@
+package com.provectus.kafka.ui.pages.topic;
+
+import com.codeborne.selenide.CollectionCondition;
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.pages.BasePage;
+import io.qameta.allure.Step;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.codeborne.selenide.Selenide.$x;
+
+public class SettingsPanel extends BasePage {
+
+  protected SelenideElement defaultValueColumnHeaderLocator = $x("//div[text() = 'Default Value']");
+
+  @Step
+  public SettingsPanel waitUntilScreenReady(){
+    waitUntilSpinnerDisappear();
+    defaultValueColumnHeaderLocator.shouldBe(Condition.visible);
+    return this;
+  }
+
+  private List<SettingsGridItem> initGridItems() {
+    List<SettingsGridItem> gridItemList = new ArrayList<>();
+    allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+        .forEach(item -> gridItemList.add(new SettingsGridItem(item)));
+    return gridItemList;
+  }
+
+  @Step
+  public SettingsPanel.SettingsGridItem getKeyItem(String key){
+    return initGridItems().stream()
+        .filter(e ->e.getKey().equals(key))
+        .findFirst().orElse(null);
+  }
+
+  @Step
+  public Integer getValueOfKey(String key){
+    return Integer.valueOf((getKeyItem(key).getValue()));
+  }
+
+  public static class SettingsGridItem extends BasePage {
+
+    private final SelenideElement element;
+
+    public SettingsGridItem(SelenideElement element) {
+      this.element = element;
+    }
+
+    private SelenideElement getKeyElm() {
+      return element.$x("./td[1]/span");
+    }
+
+    @Step
+    public String getKey(){
+      return getKeyElm().getText().trim();
+    }
+
+    private SelenideElement getValueElm() {
+      return element.$x("./td[2]/span");
+    }
+
+    @Step
+    public String getValue(){
+      return getValueElm().getText().trim();
+    }
+
+    @Step
+    public String getDefaultValue() {
+      return element.$x("./td[3]/span").getText().trim();
+    }
+  }
+}
