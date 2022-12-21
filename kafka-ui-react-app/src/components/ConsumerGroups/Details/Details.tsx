@@ -20,7 +20,6 @@ import {
   fetchConsumerGroupDetails,
   deleteConsumerGroup,
   selectById,
-  getIsConsumerGroupDeleted,
   getAreConsumerGroupDetailsFulfilled,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import getTagColor from 'components/common/Tag/getTagColor';
@@ -39,22 +38,18 @@ const Details: React.FC = () => {
   const consumerGroup = useAppSelector((state) =>
     selectById(state, consumerGroupID)
   );
-  const isDeleted = useAppSelector(getIsConsumerGroupDeleted);
   const isFetched = useAppSelector(getAreConsumerGroupDetailsFulfilled);
 
   React.useEffect(() => {
     dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
   }, [clusterName, consumerGroupID, dispatch]);
 
-  const onDelete = () => {
-    dispatch(deleteConsumerGroup({ clusterName, consumerGroupID }));
+  const onDelete = async () => {
+    const res = await dispatch(
+      deleteConsumerGroup({ clusterName, consumerGroupID })
+    ).unwrap();
+    if (res) navigate('../');
   };
-
-  React.useEffect(() => {
-    if (isDeleted) {
-      navigate('../');
-    }
-  }, [clusterName, navigate, isDeleted]);
 
   const onResetOffsets = () => {
     navigate(clusterConsumerGroupResetRelativePath);
