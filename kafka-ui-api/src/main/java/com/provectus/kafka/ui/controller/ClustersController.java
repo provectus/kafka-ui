@@ -33,11 +33,11 @@ public class ClustersController extends AbstractController implements ClustersAp
   @Override
   public Mono<ResponseEntity<ClusterMetricsDTO>> getClusterMetrics(String clusterName,
                                                                    ServerWebExchange exchange) {
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    AccessContext context = AccessContext.builder()
         .cluster(clusterName)
-        .build());
+        .build();
 
-    return validateAccess
+    return accessControlService.validateAccess(context)
         .then(
             clusterService.getClusterMetrics(getCluster(clusterName))
                 .map(ResponseEntity::ok)
@@ -48,12 +48,11 @@ public class ClustersController extends AbstractController implements ClustersAp
   @Override
   public Mono<ResponseEntity<ClusterStatsDTO>> getClusterStats(String clusterName,
                                                                ServerWebExchange exchange) {
-
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    AccessContext context = AccessContext.builder()
         .cluster(clusterName)
-        .build());
+        .build();
 
-    return validateAccess
+    return accessControlService.validateAccess(context)
         .then(
             clusterService.getClusterStats(getCluster(clusterName))
                 .map(ResponseEntity::ok)
@@ -65,11 +64,11 @@ public class ClustersController extends AbstractController implements ClustersAp
   public Mono<ResponseEntity<ClusterDTO>> updateClusterInfo(String clusterName,
                                                             ServerWebExchange exchange) {
 
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    AccessContext context = AccessContext.builder()
         .cluster(clusterName)
-        .build());
+        .build();
 
-    return validateAccess
+    return accessControlService.validateAccess(context)
         .then(
             clusterService.updateCluster(getCluster(clusterName)).map(ResponseEntity::ok)
         );

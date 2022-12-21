@@ -10,10 +10,8 @@ import reactor.core.publisher.Mono;
 
 public class AccessControlServiceMock {
 
-  private static AccessControlService mock = Mockito.mock(AccessControlService.class);
-
-  public static AccessControlService getMock() {
-    AccessControlServiceMock.mock = Mockito.mock(AccessControlService.class);
+  public AccessControlService getMock() {
+    AccessControlService mock = Mockito.mock(AccessControlService.class);
 
     when(mock.validateAccess(any())).thenReturn(Mono.empty());
     when(mock.isSchemaAccessible(anyString(), anyString())).thenReturn(Mono.just(true));

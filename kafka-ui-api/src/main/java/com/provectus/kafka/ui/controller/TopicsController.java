@@ -72,7 +72,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
   @Override
   public Mono<ResponseEntity<TopicDTO>> recreateTopic(String clusterName,
-                                                      String topicName, ServerWebExchange serverWebExchange) {
+                                                      String topicName, ServerWebExchange exchange) {
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
         .topic(topicName)
@@ -177,7 +177,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
                   || showInternal != null && showInternal)
               .filter(topic -> search == null || StringUtils.contains(topic.getName(), search))
               .sorted(comparator)
-              .collect(toList());
+              .toList();
           var totalPages = (filtered.size() / pageSize)
               + (filtered.size() % pageSize == 0 ? 0 : 1);
 
@@ -283,7 +283,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     topicAnalysisService.cancelAnalysis(getCluster(clusterName), topicName);
 
-    return validateAccess.then(Mono.just(ResponseEntity.ok().build()));
+    return validateAccess.thenReturn(ResponseEntity.ok().build());
   }
 
 
@@ -298,11 +298,9 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .topicActions(MESSAGES_READ)
         .build());
 
-    return validateAccess.then(Mono.just(
-        topicAnalysisService.getTopicAnalysis(getCluster(clusterName), topicName)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build()))
-    );
+    return validateAccess.thenReturn(topicAnalysisService.getTopicAnalysis(getCluster(clusterName), topicName)
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build()));
   }
 
   private Comparator<InternalTopic> getComparatorForTopic(
