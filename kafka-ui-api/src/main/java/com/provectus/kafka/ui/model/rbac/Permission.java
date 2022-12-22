@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 
@@ -51,7 +52,7 @@ public class Permission {
   }
 
   public void transform() {
-    if (!this.actions.contains("ALL")) {
+    if (CollectionUtils.isEmpty(actions) || this.actions.stream().noneMatch("ALL"::equalsIgnoreCase)) {
       return;
     }
     this.actions = getActionValues();
