@@ -381,6 +381,34 @@ public class TopicsTests extends BaseTest {
     softly.assertAll();
   }
 
+  @DisplayName("TopicTests.recreateTopicFromTopicProfile : Recreate topic from topic profile")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(247)
+  @Test
+  void recreateTopicFromTopicProfile(){
+    Topic topicToRecreate = new Topic()
+        .setName("topic-to-recreate-" + randomAlphabetic(5))
+        .setNumberOfPartitions(1);
+    navigateToTopics();
+    topicsList
+        .clickAddTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady()
+        .setTopicName(topicToRecreate.getName())
+        .setNumberOfPartitions(topicToRecreate.getNumberOfPartitions())
+        .clickCreateTopicBtn();
+    topicDetails
+        .waitUntilScreenReady();
+    TOPIC_LIST.add(topicToRecreate);
+    topicDetails
+        .openDotMenu()
+        .clickRecreateTopicMenu();
+//    assertThat(topicDetails)
+
+
+  }
+
   @AfterAll
   public void afterAll() {
     TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));

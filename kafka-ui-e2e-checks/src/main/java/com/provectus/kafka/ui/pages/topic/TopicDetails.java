@@ -19,6 +19,7 @@ import org.openqa.selenium.By;
 public class TopicDetails extends BasePage {
 
   protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
+  protected SelenideElement recreateTopicBtn = $x("//div[text()='Recreate Topic']");
   protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
@@ -41,6 +42,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
   protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
   protected SelenideElement backToCreateFiltersLink = $x("//div[text()='Back To create filters']");
+  protected SelenideElement confirmActionPopup = $x("//div[text()= 'Confirm the action']");
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
   protected String seekFilterDdlLocator = "//ul[@id='selectSeekType']/ul/li[text()='%s']";
   protected String savedFilterNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
@@ -86,8 +88,19 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
+  public boolean isPopUpConfirmActionsVisible(){
+    return isVisible(confirmActionPopup);
+  }
+
+  @Step
   public TopicDetails clickClearMessagesMenu() {
     clearMessagesBtn.shouldBe(Condition.visible).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickRecreateTopicMenu(){
+    recreateTopicBtn.shouldBe(Condition.visible).click();
     return this;
   }
 
