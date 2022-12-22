@@ -6,14 +6,15 @@ export const formatTimestamp = (
     return '';
   }
 
+  // empty array gets the default one from the browser
   const date = new Date(timestamp);
 
-  try {
-    // empty array gets the default one from the browser
-    return date.toLocaleString([], format);
-  } catch (e) {
+  // invalid date
+  if (Number.isNaN(date.getTime())) {
     return '';
   }
+
+  return date.toLocaleString([], format);
 };
 
 export const formatMilliseconds = (input = 0) => {
