@@ -408,7 +408,8 @@ public class TopicsTests extends BaseTest {
     assertThat(topicDetails.isPopUpConfirmActionsVisible()).as("isPopUpConfirmActionsVisible()").isTrue();
     topicDetails
         .clickConfirmRecreateBtn();
-    assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS, "Topic " + topicToRecreate.getName() + " successfully recreated!"))
+    assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS,
+        String.format("Topic %s successfully recreated!", topicToRecreate.getName())))
         .as("isAlertWithMessageVisible()").isTrue();
   }
 
