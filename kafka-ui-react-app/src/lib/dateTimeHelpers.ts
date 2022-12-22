@@ -1,14 +1,19 @@
-import dayjs from 'dayjs';
-
 export const formatTimestamp = (
-  timestamp: number | string | Date | undefined,
-  format?: string
+  timestamp?: number | string | Date,
+  format: Intl.DateTimeFormatOptions = { hour12: false }
 ): string => {
   if (!timestamp) {
     return '';
   }
 
-  return dayjs(timestamp).format(format);
+  const date = new Date(timestamp);
+
+  try {
+    // empty array gets the default one from the browser
+    return date.toLocaleString([], format);
+  } catch (e) {
+    return '';
+  }
 };
 
 export const formatMilliseconds = (input = 0) => {
@@ -36,10 +41,11 @@ export const formatMilliseconds = (input = 0) => {
 export const passedTime = (value: number) => (value < 10 ? `0${value}` : value);
 
 export const calculateTimer = (startedAt: number) => {
-  const now = new Date().getTime();
+  const nowDate = new Date();
+  const now = nowDate.getTime();
   const newDate = now - startedAt;
-  const minutes = dayjs(newDate).minute();
-  const second = dayjs(newDate).second();
+  const minutes = nowDate.getMinutes();
+  const second = nowDate.getSeconds();
 
   return newDate > 0 ? `${passedTime(minutes)}:${passedTime(second)}` : '00:00';
 };

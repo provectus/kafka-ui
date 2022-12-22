@@ -68,7 +68,13 @@ const Metrics: React.FC = () => {
         </ActionButton>
         <List>
           <Label>Started at</Label>
-          <span>{formatTimestamp(data.progress.startedAt, 'hh:mm:ss a')}</span>
+          <span>
+            {formatTimestamp(data.progress.startedAt, {
+              hour: 'numeric',
+              minute: 'numeric',
+              second: 'numeric',
+            })}
+          </span>
           <Label>Passed since start</Label>
           <span>{calculateTimer(data.progress.startedAt as number)}</span>
           <Label>Scanned messages</Label>

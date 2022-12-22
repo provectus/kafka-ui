@@ -28,10 +28,7 @@ describe('Version Component', () => {
   const commitTag = 'befd3b328e2c9c7df57b0c5746561b2f7fee8813';
 
   const actuatorVersionPayload = actuatorInfoPayload(versionTag);
-  const formattedTimestamp = formatTimestamp(
-    actuatorVersionPayload.build.time,
-    timeStampFormat
-  );
+  const formattedTimestamp = formatTimestamp(actuatorVersionPayload.build.time);
 
   beforeEach(() => {
     (useTimeFormat as jest.Mock).mockImplementation(() => ({
