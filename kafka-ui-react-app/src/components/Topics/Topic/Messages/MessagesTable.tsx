@@ -34,8 +34,7 @@ const MessagesTable: React.FC = () => {
 
   // Pagination is disabled in live mode, also we don't want to show the button
   // if we are fetching the messages or if we are at the end of the topic
-  const isPaginationDisabled =
-    isTailing || isFetching || !searchParams.get('seekTo');
+  const isPaginationDisabled = isTailing || isFetching;
 
   const isNextPageButtonDisabled =
     isPaginationDisabled || messages.length < Number(MESSAGES_PER_PAGE);
