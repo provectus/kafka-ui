@@ -134,7 +134,7 @@ public class TopicsTests extends BaseTest {
         .clickEditSettingsMenu();
     topicCreateEditForm
         .waitUntilScreenReady()
-        .selectCleanupPolicy((TOPIC_TO_UPDATE.getCleanupPolicyValue()))
+        .setNumberOfPartitions(TOPIC_TO_UPDATE.getNumberOfPartitions())
         .setMinInsyncReplicas(10)
         .setTimeToRetainDataInMs(TOPIC_TO_UPDATE.getTimeToRetainData())
         .setMaxSizeOnDiskInGB(TOPIC_TO_UPDATE.getMaxSizeOnDisk())
@@ -147,8 +147,6 @@ public class TopicsTests extends BaseTest {
         .openDotMenu()
         .clickEditSettingsMenu();
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
-        .isEqualTo(TOPIC_TO_UPDATE.getCleanupPolicyValue().getVisibleText());
     softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
         .isEqualTo(TOPIC_TO_UPDATE.getTimeToRetainData());
     softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()")
