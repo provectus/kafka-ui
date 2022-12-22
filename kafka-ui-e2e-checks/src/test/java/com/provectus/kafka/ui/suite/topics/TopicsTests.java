@@ -407,7 +407,8 @@ public class TopicsTests extends BaseTest {
         .waitUntilScreenReady();
     TOPIC_LIST.add(TOPIC_TO_CHECK_SETTINGS);
     topicDetails
-        .openDetailsTab(SETTINGS)
+        .openDetailsTab(SETTINGS);
+    topicSettingsTab
         .waitUntilScreenReady();
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(topicSettingsTab.getValueByKey("retention.bytes"))
@@ -428,9 +429,10 @@ public class TopicsTests extends BaseTest {
         .clickCreateTopicBtn();
     topicDetails
         .waitUntilScreenReady()
-        .openDetailsTab(SETTINGS)
+        .openDetailsTab(SETTINGS);
+    topicSettingsTab
         .waitUntilScreenReady();
-        softly.assertThat(topicSettingsTab.getValueByKey("retention.bytes"))
+    softly.assertThat(topicSettingsTab.getValueByKey("retention.bytes"))
         .as("getValueOfKey(retention.bytes)").isEqualTo(TOPIC_TO_CHECK_SETTINGS.getMaxSizeOnDisk().getOptionValue());
     softly.assertThat(topicSettingsTab.getValueByKey("max.message.bytes"))
         .as("getValueOfKey(max.message.bytes)").isEqualTo(TOPIC_TO_CHECK_SETTINGS.getMaxMessageBytes());
