@@ -133,6 +133,13 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
+  public TopicDetails clickConfirmRecreateBtn(){
+    confirmBtn.shouldBe(Condition.enabled).click();
+    confirmBtn.shouldBe(Condition.disappear);
+    return this;
+  }
+
+  @Step
   public TopicDetails clickProduceMessageBtn() {
     clickByJavaScript(produceMessageBtn);
     return this;

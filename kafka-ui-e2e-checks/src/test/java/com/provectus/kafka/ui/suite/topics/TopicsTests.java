@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.suite.topics;
 
+import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.SETTINGS;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
@@ -404,9 +405,11 @@ public class TopicsTests extends BaseTest {
     topicDetails
         .openDotMenu()
         .clickRecreateTopicMenu();
-//    assertThat(topicDetails)
-
-
+    assertThat(topicDetails.isPopUpConfirmActionsVisible()).as("isPopUpConfirmActionsVisible()").isTrue();
+    topicDetails
+        .clickConfirmRecreateBtn();
+    assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS, "Topic " + topicToRecreate.getName() + " successfully recreated!"))
+        .as("isAlertWithMessageVisible()").isTrue();
   }
 
   @AfterAll
