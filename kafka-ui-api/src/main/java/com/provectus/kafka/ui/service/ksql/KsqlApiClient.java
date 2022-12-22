@@ -8,10 +8,9 @@ import static ksql.KsqlGrammarParser.UndefineVariableContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.ksql.response.ResponseParser;
-import com.provectus.kafka.ui.util.SecuredWebClient;
+import com.provectus.kafka.ui.util.WebClientConfigurator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,12 +19,10 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.codec.DecodingException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.unit.DataSize;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
@@ -69,47 +66,27 @@ public class KsqlApiClient {
   }
 
   private WebClient webClient() {
-    var exchangeStrategies = ExchangeStrategies.builder()
-        .codecs(configurer -> {
-          configurer.customCodecs()
-              .register(
-                  new Jackson2JsonDecoder(
-                      new ObjectMapper(),
-                      // some ksqldb versions do not set content-type header in response,
-                      // but we still need to use JsonDecoder for it
-                      MimeTypeUtils.APPLICATION_OCTET_STREAM));
-        })
-        .build();
-
-    try {
-      WebClient.Builder securedWebClient = SecuredWebClient.configure(
-          cluster.getKsqldbServer().getKeystoreLocation(),
-          cluster.getKsqldbServer().getKeystorePassword(),
-          cluster.getKsqldbServer().getTruststoreLocation(),
-          cluster.getKsqldbServer().getTruststorePassword()
-      );
-
-      return securedWebClient
-          .codecs(c -> c.defaultCodecs().maxInMemorySize((int) maxBuffSize.toBytes()))
-          .defaultHeaders(httpHeaders -> setBasicAuthIfEnabled(httpHeaders, cluster))
-          .exchangeStrategies(exchangeStrategies)
+      return new WebClientConfigurator()
+          .configureSsl(
+              cluster.getKsqldbServer().getKeystoreLocation(),
+              cluster.getKsqldbServer().getKeystorePassword(),
+              cluster.getKsqldbServer().getTruststoreLocation(),
+              cluster.getKsqldbServer().getTruststorePassword()
+          )
+          .configureBasicAuth(
+              cluster.getKsqldbServer().getUsername(),
+              cluster.getKsqldbServer().getPassword()
+          )
+          .configureBufferSize(maxBuffSize)
+          .configureCodecs(codecs ->
+              codecs.customCodecs()
+                  .register(
+                      new Jackson2JsonDecoder(
+                          new ObjectMapper(),
+                          // some ksqldb versions do not set content-type header in response,
+                          // but we still need to use JsonDecoder for it
+                          MimeTypeUtils.APPLICATION_OCTET_STREAM)))
           .build();
-    } catch (Exception e) {
-      throw new IllegalStateException(
-          "cannot create TLS configuration for ksqlDB in cluster " + cluster.getName(), e);
-    }
-  }
-
-  public static void setBasicAuthIfEnabled(HttpHeaders headers, KafkaCluster cluster) {
-    String username = cluster.getKsqldbServer().getUsername();
-    String password = cluster.getKsqldbServer().getPassword();
-    if (username != null && password != null) {
-      headers.setBasicAuth(username, password);
-    } else if (username != null) {
-      throw new ValidationException("You specified username but did not specify password");
-    } else if (password != null) {
-      throw new ValidationException("You specified password but did not specify username");
-    }
   }
 
   private String baseKsqlDbUri() {

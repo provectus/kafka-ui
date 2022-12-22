@@ -17,6 +17,10 @@ public class KafkaConnectClientsFactory {
   private final Map<String, KafkaConnectClientApi> cache = new ConcurrentHashMap<>();
 
   public KafkaConnectClientApi withKafkaConnectConfig(KafkaConnectCluster config) {
-    return cache.computeIfAbsent(config.getAddress(), s -> new RetryingKafkaConnectClient(config, maxBuffSize));
+    return cache.computeIfAbsent(
+        config.getName() + "_" + config.getAddress(),
+        s -> new RetryingKafkaConnectClient(config, maxBuffSize)
+    );
   }
+
 }

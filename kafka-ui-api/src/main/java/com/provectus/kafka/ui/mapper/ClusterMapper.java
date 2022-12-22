@@ -8,8 +8,6 @@ import com.provectus.kafka.ui.model.BrokerMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ClusterMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterStatsDTO;
-import com.provectus.kafka.ui.model.CompatibilityCheckResponseDTO;
-import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
 import com.provectus.kafka.ui.model.ConfigSourceDTO;
 import com.provectus.kafka.ui.model.ConfigSynonymDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
@@ -34,8 +32,6 @@ import com.provectus.kafka.ui.model.ReplicaDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
-import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
-import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.service.masking.DataMasking;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
 import com.provectus.kafka.ui.util.PollingThrottler;
@@ -179,12 +175,6 @@ public interface ClusterMapper {
   ConnectDTO toKafkaConnect(KafkaConnectCluster connect);
 
   List<ClusterDTO.FeaturesEnum> toFeaturesEnum(List<Feature> features);
-
-  @Mapping(target = "isCompatible", source = "compatible")
-  CompatibilityCheckResponseDTO toCompatibilityCheckResponse(InternalCompatibilityCheck dto);
-
-  @Mapping(target = "compatibility", source = "compatibilityLevel")
-  CompatibilityLevelDTO toCompatibilityLevelDto(InternalCompatibilityLevel dto);
 
   default List<PartitionDTO> map(Map<Integer, InternalPartition> map) {
     return map.values().stream().map(this::toPartition).collect(Collectors.toList());

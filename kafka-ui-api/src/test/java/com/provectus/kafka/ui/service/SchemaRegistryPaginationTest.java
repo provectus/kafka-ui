@@ -7,11 +7,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.provectus.kafka.ui.controller.SchemasController;
-import com.provectus.kafka.ui.mapper.ClusterMapper;
+import com.provectus.kafka.ui.mapper.KafkaSrMapperImpl;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
@@ -23,11 +24,10 @@ public class SchemaRegistryPaginationTest {
 
   private final SchemaRegistryService schemaRegistryService = mock(SchemaRegistryService.class);
   private final ClustersStorage clustersStorage = mock(ClustersStorage.class);
-  private final ClusterMapper clusterMapper = mock(ClusterMapper.class);
 
-  private final SchemasController controller = new SchemasController(clusterMapper, schemaRegistryService);
+  private final SchemasController controller = new SchemasController(new KafkaSrMapperImpl(), schemaRegistryService);
 
-  private void init(String[] subjects) {
+  private void init(List<String> subjects) {
     when(schemaRegistryService.getAllSubjectNames(isA(KafkaCluster.class)))
                 .thenReturn(Mono.just(subjects));
     when(schemaRegistryService
@@ -45,7 +45,7 @@ public class SchemaRegistryPaginationTest {
             IntStream.rangeClosed(1, 100)
                     .boxed()
                     .map(num -> "subject" + num)
-                    .toArray(String[]::new)
+                    .toList()
     );
     var schemasFirst25 = controller.getSchemas(LOCAL_KAFKA_CLUSTER_NAME,
             null, null, null, null).block();
@@ -69,7 +69,7 @@ public class SchemaRegistryPaginationTest {
               IntStream.rangeClosed(1, 100)
                       .boxed()
                       .map(num -> "subject" + num)
-                      .toArray(String[]::new)
+                      .toList()
     );
     var schemasSearch7 = controller.getSchemas(LOCAL_KAFKA_CLUSTER_NAME,
             null, null, "1", null).block();
@@ -83,7 +83,7 @@ public class SchemaRegistryPaginationTest {
                 IntStream.rangeClosed(1, 100)
                         .boxed()
                         .map(num -> "subject" + num)
-                        .toArray(String[]::new)
+                        .toList()
     );
     var schemas = controller.getSchemas(LOCAL_KAFKA_CLUSTER_NAME,
             0, -1, null, null).block();
@@ -99,7 +99,7 @@ public class SchemaRegistryPaginationTest {
                 IntStream.rangeClosed(1, 100)
                         .boxed()
                         .map(num -> "subject" + num)
-                        .toArray(String[]::new)
+                        .toList()
     );
 
     var schemas = controller.getSchemas(LOCAL_KAFKA_CLUSTER_NAME,
