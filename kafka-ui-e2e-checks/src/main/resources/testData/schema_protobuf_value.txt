@@ -1,5 +1,0 @@
-enum SchemaType {
-  AVRO = 0;
-  JSON = 1;
-  PROTOBUF = 2;
-  }

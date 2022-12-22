@@ -1,5 +1,0 @@
-spring:
-  jmx:
-    enabled: true
-auth:
-  type: DISABLED

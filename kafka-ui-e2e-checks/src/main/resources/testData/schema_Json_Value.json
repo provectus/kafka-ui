@@ -1,7 +1,0 @@
-{
-  "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
-  "connection.url": "jdbc:postgresql://postgres-db:5432/test",
-  "connection.user": "dev_user",
-  "connection.password": "12345",
-  "topics": "topic_for_connector"
-}

@@ -1,5 +1,0 @@
-SchemaRegistryProps {
-  org.eclipse.jetty.jaas.spi.PropertyFileLoginModule required
-  file="/conf/schema_registry.password"
-  debug="false";
-};
