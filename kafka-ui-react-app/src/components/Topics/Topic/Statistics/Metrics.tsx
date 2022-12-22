@@ -13,8 +13,7 @@ import {
   Label,
 } from 'components/common/PropertiesList/PropertiesList.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { useTimeFormat } from 'lib/hooks/useTimeFormat';
-import { calculateTimer } from 'lib/dateTimeHelpers';
+import { calculateTimer,formatTimestamp } from 'lib/dateTimeHelpers';
 import { Action, ResourceType } from 'generated-sources';
 import { ActionButton } from 'components/common/ActionComponent';
 
@@ -24,8 +23,6 @@ import SizeStats from './Indicators/SizeStats';
 import PartitionTable from './PartitionTable';
 
 const Metrics: React.FC = () => {
-  const formatTimestamp = useTimeFormat();
-
   const params = useAppParams<RouteParamsClusterTopic>();
 
   const [isAnalyzing, setIsAnalyzing] = useState(true);

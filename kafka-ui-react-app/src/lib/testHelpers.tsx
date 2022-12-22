@@ -27,7 +27,6 @@ import {
 import { ConfirmContextProvider } from 'components/contexts/ConfirmContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import {
-  defaultGlobalSettingsValue,
   GlobalSettingsContext,
 } from 'components/contexts/GlobalSettingsContext';
 import { UserInfoRolesAccessContext } from 'components/contexts/UserInfoRolesAccessContext';
@@ -122,7 +121,7 @@ const customRender = (
     children,
   }) => (
     <TestQueryClientProvider>
-      <GlobalSettingsContext.Provider value={defaultGlobalSettingsValue}>
+      <GlobalSettingsContext.Provider value={{}}>
         <ThemeProvider theme={theme}>
           <TestUserInfoProvider data={userInfo}>
             <ConfirmContextProvider>
