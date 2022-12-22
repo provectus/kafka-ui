@@ -40,9 +40,27 @@ const isJsonObject = () => {
   );
 };
 
-yup.addMethod(yup.string, 'isJsonObject', isJsonObject);
+/**
+ * due to yup rerunning all the object validiation during any render, it makes sense to cache the async results
+ * */
+export function cacheTest(
+  asyncValidate: (val?: string, ctx?: AnyObject) => Promise<boolean>
+) {
+  let valid = false;
+  let closureValue = '';
 
-export default yup;
+  return async (value?: string, ctx?: AnyObject) => {
+    if (value !== closureValue) {
+      const response = await asyncValidate(value, ctx);
+      closureValue = value || '';
+      valid = response;
+      return response;
+    }
+    return valid;
+  };
+}
+
+yup.addMethod(yup.string, 'isJsonObject', isJsonObject);
 
 export const topicFormValidationSchema = yup.object().shape({
   name: yup
@@ -72,3 +90,5 @@ export const topicFormValidationSchema = yup.object().shape({
     })
   ),
 });
+
+export default yup;

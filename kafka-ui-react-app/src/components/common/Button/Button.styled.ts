@@ -11,7 +11,7 @@ const StyledButton = styled.button<ButtonProps>`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: 0px 12px;
+  padding: 0 12px;
   border: none;
   border-radius: 4px;
   white-space: nowrap;

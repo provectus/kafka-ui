@@ -2,7 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useIsMutating } from '@tanstack/react-query';
-import { ConnectorState, ConnectorAction } from 'generated-sources';
+import {
+  Action,
+  ConnectorAction,
+  ConnectorState,
+  ResourceType,
+} from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
 import {
   useConnector,
@@ -14,7 +19,8 @@ import {
   RouterParamsClusterConnectConnector,
 } from 'lib/paths';
 import { useConfirm } from 'lib/hooks/useConfirm';
-import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { Dropdown } from 'components/common/Dropdown';
+import { ActionDropdownItem } from 'components/common/ActionComponent';
 
 const ConnectorActionsWrapperStyled = styled.div`
   display: flex;
@@ -65,31 +71,76 @@ const Actions: React.FC = () => {
     <ConnectorActionsWrapperStyled>
       <Dropdown>
         {connector?.status.state === ConnectorState.RUNNING && (
-          <DropdownItem onClick={pauseConnectorHandler} disabled={isMutating}>
+          <ActionDropdownItem
+            onClick={pauseConnectorHandler}
+            disabled={isMutating}
+            permission={{
+              resource: ResourceType.CONNECT,
+              action: Action.EDIT,
+              value: routerProps.connectorName,
+            }}
+          >
             Pause
-          </DropdownItem>
+          </ActionDropdownItem>
         )}
         {connector?.status.state === ConnectorState.PAUSED && (
-          <DropdownItem onClick={resumeConnectorHandler} disabled={isMutating}>
+          <ActionDropdownItem
+            onClick={resumeConnectorHandler}
+            disabled={isMutating}
+            permission={{
+              resource: ResourceType.CONNECT,
+              action: Action.EDIT,
+              value: routerProps.connectorName,
+            }}
+          >
             Resume
-          </DropdownItem>
+          </ActionDropdownItem>
         )}
-        <DropdownItem onClick={restartConnectorHandler} disabled={isMutating}>
+        <ActionDropdownItem
+          onClick={restartConnectorHandler}
+          disabled={isMutating}
+          permission={{
+            resource: ResourceType.CONNECT,
+            action: Action.EDIT,
+            value: routerProps.connectorName,
+          }}
+        >
           Restart Connector
-        </DropdownItem>
-        <DropdownItem onClick={restartAllTasksHandler} disabled={isMutating}>
+        </ActionDropdownItem>
+        <ActionDropdownItem
+          onClick={restartAllTasksHandler}
+          disabled={isMutating}
+          permission={{
+            resource: ResourceType.CONNECT,
+            action: Action.EDIT,
+            value: routerProps.connectorName,
+          }}
+        >
           Restart All Tasks
-        </DropdownItem>
-        <DropdownItem onClick={restartFailedTasksHandler} disabled={isMutating}>
+        </ActionDropdownItem>
+        <ActionDropdownItem
+          onClick={restartFailedTasksHandler}
+          disabled={isMutating}
+          permission={{
+            resource: ResourceType.CONNECT,
+            action: Action.EDIT,
+            value: routerProps.connectorName,
+          }}
+        >
           Restart Failed Tasks
-        </DropdownItem>
-        <DropdownItem
+        </ActionDropdownItem>
+        <ActionDropdownItem
           onClick={deleteConnectorHandler}
           disabled={isMutating}
           danger
+          permission={{
+            resource: ResourceType.CONNECT,
+            action: Action.DELETE,
+            value: routerProps.connectorName,
+          }}
         >
           Delete
-        </DropdownItem>
+        </ActionDropdownItem>
       </Dropdown>
     </ConnectorActionsWrapperStyled>
   );
