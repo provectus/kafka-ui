@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class BrokersConfigTabPanel extends BasePage {
+public class BrokersConfigTab extends BasePage {
 
   protected List<SelenideElement> editBtn = $$x("//button[@aria-label='editAction']");
   protected SelenideElement searchByKeyField = $x("//input[@placeholder='Search by Key']");
 
   @Step
-  public BrokersConfigTabPanel waitUntilScreenReady(){
+  public BrokersConfigTab waitUntilScreenReady(){
     waitUntilSpinnerDisappear();
     searchByKeyField.shouldBe(Condition.visible);
     return this;
