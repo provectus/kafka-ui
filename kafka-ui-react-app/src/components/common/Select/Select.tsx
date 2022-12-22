@@ -20,7 +20,7 @@ export interface SelectProps {
 }
 
 export interface SelectOption {
-  label: string | number;
+  label: string | number | JSX.Element;
   value: string | number;
   disabled?: boolean;
   isLive?: boolean;

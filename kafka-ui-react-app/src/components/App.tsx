@@ -21,6 +21,10 @@ import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
 import { ConfirmContextProvider } from './contexts/ConfirmContext';
 import { GlobalSettingsProvider } from './contexts/GlobalSettingsContext';
 import ErrorPage from './ErrorPage/ErrorPage';
+import SunIcon from './common/Icons/SunIcon';
+import MoonIcon from './common/Icons/MoonIcon';
+import AutoIcon from './common/Icons/AutoIcon';
+
 import { UserInfoRolesAccessProvider } from './contexts/UserInfoRolesAccessContext';
 import PageContainer from './PageContainer/PageContainer';
 
@@ -36,24 +40,72 @@ const queryClient = new QueryClient({
     },
   },
 });
+const options = [
+  {
+    label: (
+      <>
+        <AutoIcon /> Auto theme
+      </>
+    ),
+    value: 'Auto theme',
+  },
+  {
+    label: (
+      <>
+        <SunIcon /> Light theme
+      </>
+    ),
+    value: 'Light theme',
+  },
+  {
+    label: (
+      <>
+        <MoonIcon /> Dark theme
+      </>
+    ),
+    value: 'Dark theme',
+  },
+];
 
 const App: React.FC = () => {
+  const matchDark = window.matchMedia('(prefers-color-scheme: dark)');
+  const [themeMode, setThemeMode] = React.useState<string | number>();
   const [isDarkMode, setIsDarkMode] = React.useState<boolean>(false);
 
   React.useLayoutEffect(() => {
-    const dark = JSON.parse(localStorage.getItem('darkMode') as string);
-    setIsDarkMode(dark);
+    const mode = localStorage.getItem('mode');
+    if (mode) {
+      setThemeMode(mode);
+      if (mode === 'Auto theme') {
+        setIsDarkMode(matchDark.matches);
+      } else if (mode === 'Light theme') {
+        setIsDarkMode(false);
+      } else if (mode === 'Dark theme') {
+        setIsDarkMode(true);
+      }
+    } else {
+      setThemeMode('Auto theme');
+    }
   }, []);
 
-  const handleSwitch = () => {
-    if (isDarkMode) {
-      localStorage.setItem('darkMode', 'false');
+  const onChangeThemeMode = (value: string | number) => {
+    setThemeMode(value);
+    localStorage.setItem('mode', value as string);
+    if (value === 'Light theme') {
       setIsDarkMode(false);
-    } else {
-      localStorage.setItem('darkMode', 'true');
+    } else if (value === 'Dark theme') {
       setIsDarkMode(true);
     }
   };
+
+  React.useEffect(() => {
+    if (themeMode === 'Auto theme') {
+      setIsDarkMode(matchDark.matches);
+      matchDark.addListener((e) => {
+        setIsDarkMode(e.matches);
+      });
+    }
+  }, [matchDark, themeMode]);
 
   return (
     <QueryClientProvider client={queryClient}>

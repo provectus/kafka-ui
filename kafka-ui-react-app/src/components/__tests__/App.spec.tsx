@@ -17,6 +17,13 @@ describe('App', () => {
     (useGetUserInfo as jest.Mock).mockImplementation(() => ({
       data: {},
     }));
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: jest.fn().mockImplementation(() => ({
+        matches: false,
+        addListener: jest.fn(),
+      })),
+    });
 
     render(<App />, {
       initialEntries: ['/'],
