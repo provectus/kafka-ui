@@ -31,6 +31,7 @@ the cloud.
 * **Dynamic Topic Configuration** — create and configure new topics with dynamic configuration
 * **Configurable Authentification** — secure your installation with optional Github/Gitlab/Google OAuth 2.0
 * **Custom serialization/deserialization plugins** - use a ready-to-go serde for your data like AWS Glue or Smile, or code your own!
+* **Role based access control** - manage permissions to access the UI with granular precision
 
 # The Interface
 UI for Apache Kafka wraps major functions of Apache Kafka with an intuitive user interface.

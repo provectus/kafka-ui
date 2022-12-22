@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.util.annotations;
+package com.provectus.kafka.ui.util.annotation;
 
 /**
  * All code places that depend on kafka-client's internals or implementation-specific logic

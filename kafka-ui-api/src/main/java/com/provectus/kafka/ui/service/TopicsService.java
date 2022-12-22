@@ -460,8 +460,12 @@ public class TopicsService {
   }
 
   private Mono<List<String>> filterExisting(KafkaCluster cluster, Collection<String> topics) {
-    return adminClientService.get(cluster).flatMap(ac -> ac.listTopics(true))
-        .map(existing -> existing.stream().filter(topics::contains).collect(toList()));
+    return adminClientService.get(cluster)
+        .flatMap(ac -> ac.listTopics(true))
+        .map(existing -> existing
+            .stream()
+            .filter(topics::contains)
+            .collect(toList()));
   }
 
 }
