@@ -5,6 +5,8 @@ import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.SETTINGS
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE;
 import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPRESSION_TYPE;
+import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.NOT_SET;
+import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_1_GB;
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
@@ -46,21 +48,26 @@ public class TopicsTests extends BaseTest {
       .setCustomParameterType(COMPRESSION_TYPE)
       .setCustomParameterValue("producer")
       .setCleanupPolicyValue(DELETE);
-  private static final Topic TOPIC_FOR_UPDATE = new Topic()
+  private static final Topic TOPIC_TO_UPDATE = new Topic()
       .setName("topic-to-update-" + randomAlphabetic(5))
+      .setNumberOfPartitions(1)
       .setCleanupPolicyValue(COMPACT)
       .setTimeToRetainData("604800001")
       .setMaxSizeOnDisk(SIZE_20_GB)
       .setMaxMessageBytes("1000020")
       .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
       .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
-
+  private static final Topic TOPIC_TO_CHECK_SETTINGS = new Topic()
+      .setName("new-topic-" + randomAlphabetic(5))
+      .setNumberOfPartitions(1)
+      .setMaxMessageBytes("1000012")
+      .setMaxSizeOnDisk(NOT_SET);
   private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete-" + randomAlphabetic(5));
   private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_FOR_UPDATE, TOPIC_FOR_DELETE));
+    TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE, TOPIC_FOR_DELETE));
     TOPIC_LIST.forEach(topic -> apiHelper.createTopic(CLUSTER_NAME, topic.getName()));
   }
 
@@ -121,33 +128,33 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(3)
   public void updateTopic() {
-    navigateToTopicsAndOpenDetails(TOPIC_FOR_UPDATE.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_TO_UPDATE.getName());
     topicDetails
         .openDotMenu()
         .clickEditSettingsMenu();
     topicCreateEditForm
         .waitUntilScreenReady()
-        .selectCleanupPolicy((TOPIC_FOR_UPDATE.getCleanupPolicyValue()))
+        .selectCleanupPolicy((TOPIC_TO_UPDATE.getCleanupPolicyValue()))
         .setMinInsyncReplicas(10)
-        .setTimeToRetainDataInMs(TOPIC_FOR_UPDATE.getTimeToRetainData())
-        .setMaxSizeOnDiskInGB(TOPIC_FOR_UPDATE.getMaxSizeOnDisk())
-        .setMaxMessageBytes(TOPIC_FOR_UPDATE.getMaxMessageBytes())
+        .setTimeToRetainDataInMs(TOPIC_TO_UPDATE.getTimeToRetainData())
+        .setMaxSizeOnDiskInGB(TOPIC_TO_UPDATE.getMaxSizeOnDisk())
+        .setMaxMessageBytes(TOPIC_TO_UPDATE.getMaxMessageBytes())
         .clickCreateTopicBtn();
     topicDetails
         .waitUntilScreenReady();
-    navigateToTopicsAndOpenDetails(TOPIC_FOR_UPDATE.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_TO_UPDATE.getName());
     topicDetails
         .openDotMenu()
         .clickEditSettingsMenu();
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
-        .isEqualTo(TOPIC_FOR_UPDATE.getCleanupPolicyValue().getVisibleText());
+        .isEqualTo(TOPIC_TO_UPDATE.getCleanupPolicyValue().getVisibleText());
     softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
-        .isEqualTo(TOPIC_FOR_UPDATE.getTimeToRetainData());
+        .isEqualTo(TOPIC_TO_UPDATE.getTimeToRetainData());
     softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()")
-        .isEqualTo(TOPIC_FOR_UPDATE.getMaxSizeOnDisk().getVisibleText());
+        .isEqualTo(TOPIC_TO_UPDATE.getMaxSizeOnDisk().getVisibleText());
     softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("getMaxMessageBytes()")
-        .isEqualTo(TOPIC_FOR_UPDATE.getMaxMessageBytes());
+        .isEqualTo(TOPIC_TO_UPDATE.getMaxMessageBytes());
     softly.assertAll();
   }
 
@@ -386,23 +393,50 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(56)
   @Test
-  void CheckRetentionBytesAccordingToMaxSizeOnDisk(){
+  void checkRetentionBytesAccordingToMaxSizeOnDisk(){
     navigateToTopics();
     topicsList
         .clickAddTopicBtn();
     topicCreateEditForm
         .waitUntilScreenReady()
-        .setTopicName(TOPIC_TO_CREATE.getName())
-        .setNumberOfPartitions(TOPIC_TO_CREATE.getNumberOfPartitions())
+        .setTopicName(TOPIC_TO_CHECK_SETTINGS.getName())
+        .setNumberOfPartitions(TOPIC_TO_CHECK_SETTINGS.getNumberOfPartitions())
+        .setMaxMessageBytes(TOPIC_TO_CHECK_SETTINGS.getMaxMessageBytes())
         .clickCreateTopicBtn();
     topicDetails
-        .waitUntilScreenReady()
+        .waitUntilScreenReady();
+    TOPIC_LIST.add(TOPIC_TO_CHECK_SETTINGS);
+    topicDetails
         .openDetailsTab(SETTINGS);
-    settingsPanel
+    topicSettingsTab
         .waitUntilScreenReady();
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(settingsPanel.getValueOfKey("segment.ms")).as("getValueOfKey()").isEqualTo(604800000);
-    softly.assertThat(settingsPanel.getValueOfKey("retention.bytes")).as("getValueOfKey()").isEqualTo(-1);
+    softly.assertThat(topicSettingsTab.getValueByKey("retention.bytes"))
+        .as("getValueOfKey(retention.bytes)").isEqualTo(TOPIC_TO_CHECK_SETTINGS.getMaxSizeOnDisk().getOptionValue());
+    softly.assertThat(topicSettingsTab.getValueByKey("max.message.bytes"))
+        .as("getValueOfKey(max.message.bytes)").isEqualTo(TOPIC_TO_CHECK_SETTINGS.getMaxMessageBytes());
+    softly.assertAll();
+    TOPIC_TO_CHECK_SETTINGS
+        .setMaxSizeOnDisk(SIZE_1_GB)
+        .setMaxMessageBytes("1000056");
+    navigateToTopicsAndOpenDetails(TOPIC_TO_CHECK_SETTINGS.getName());
+    topicDetails
+        .openDotMenu()
+        .clickEditSettingsMenu();
+    topicCreateEditForm
+        .waitUntilScreenReady()
+        .setMaxSizeOnDiskInGB(TOPIC_TO_CHECK_SETTINGS.getMaxSizeOnDisk())
+        .setMaxMessageBytes(TOPIC_TO_CHECK_SETTINGS.getMaxMessageBytes())
+        .clickCreateTopicBtn();
+    topicDetails
+        .waitUntilScreenReady();
+    TOPIC_LIST.add(TOPIC_TO_CHECK_SETTINGS);
+    topicDetails
+        .openDetailsTab(SETTINGS);
+        softly.assertThat(topicSettingsTab.getValueByKey("retention.bytes"))
+        .as("getValueOfKey(retention.bytes)").isEqualTo(TOPIC_TO_CHECK_SETTINGS.getMaxSizeOnDisk().getOptionValue());
+    softly.assertThat(topicSettingsTab.getValueByKey("max.message.bytes"))
+        .as("getValueOfKey(max.message.bytes)").isEqualTo(TOPIC_TO_CHECK_SETTINGS.getMaxMessageBytes());
     softly.assertAll();
   }
 

@@ -1,22 +1,21 @@
 package com.provectus.kafka.ui.pages.topic;
 
+import static com.codeborne.selenide.Selenide.$x;
+
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.codeborne.selenide.Selenide.$x;
-
-public class SettingsPanel extends BasePage {
+public class TopicSettingsTab extends BasePage {
 
   protected SelenideElement defaultValueColumnHeaderLocator = $x("//div[text() = 'Default Value']");
 
   @Step
-  public SettingsPanel waitUntilScreenReady(){
+  public TopicSettingsTab waitUntilScreenReady(){
     waitUntilSpinnerDisappear();
     defaultValueColumnHeaderLocator.shouldBe(Condition.visible);
     return this;
@@ -30,15 +29,15 @@ public class SettingsPanel extends BasePage {
   }
 
   @Step
-  public SettingsPanel.SettingsGridItem getKeyItem(String key){
+  public TopicSettingsTab.SettingsGridItem getKeyItem(String key){
     return initGridItems().stream()
         .filter(e ->e.getKey().equals(key))
         .findFirst().orElse(null);
   }
 
   @Step
-  public Integer getValueOfKey(String key){
-    return Integer.valueOf((getKeyItem(key).getValue()));
+  public String getValueByKey(String key){
+    return getKeyItem(key).getValue();
   }
 
   public static class SettingsGridItem extends BasePage {
@@ -49,22 +48,14 @@ public class SettingsPanel extends BasePage {
       this.element = element;
     }
 
-    private SelenideElement getKeyElm() {
-      return element.$x("./td[1]/span");
-    }
-
     @Step
     public String getKey(){
-      return getKeyElm().getText().trim();
-    }
-
-    private SelenideElement getValueElm() {
-      return element.$x("./td[2]/span");
+      return element.$x("./td[1]/span").getText().trim();
     }
 
     @Step
     public String getValue(){
-      return getValueElm().getText().trim();
+      return element.$x("./td[2]/span").getText().trim();
     }
 
     @Step

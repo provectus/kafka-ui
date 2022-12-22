@@ -46,11 +46,11 @@ public class BrokersTests extends BaseTest {
     verifyElementsCondition(brokersDetails.getAllEnabledElements(), Condition.enabled);
     brokersDetails
         .openDetailsTab(CONFIGS);
-    brokersConfigTabPanel
+    brokersConfigTab
         .waitUntilScreenReady();
-    verifyElementsCondition(brokersConfigTabPanel.getColumnHeaders(), Condition.visible);
-    verifyElementsCondition(brokersConfigTabPanel.getEditButtons(), Condition.enabled);
-    assertThat(brokersConfigTabPanel.isSearchByKeyVisible()).as("isSearchByKeyVisible()").isTrue();
+    verifyElementsCondition(brokersConfigTab.getColumnHeaders(), Condition.visible);
+    verifyElementsCondition(brokersConfigTab.getEditButtons(), Condition.enabled);
+    assertThat(brokersConfigTab.isSearchByKeyVisible()).as("isSearchByKeyVisible()").isTrue();
   }
 
   @Step
