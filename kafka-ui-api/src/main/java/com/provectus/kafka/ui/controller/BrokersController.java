@@ -38,7 +38,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
 
     var job = brokerService.getBrokers(getCluster(clusterName)).map(clusterMapper::toBrokerDto);
 
-    return validateAccess.then(Mono.just(ResponseEntity.ok(job)));
+    return validateAccess.thenReturn(ResponseEntity.ok(job));
   }
 
   @Override
@@ -64,10 +64,8 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .cluster(clusterName)
         .build());
 
-    return validateAccess.then(
-        Mono.just(ResponseEntity.ok(
-            brokerService.getAllBrokersLogdirs(getCluster(clusterName), brokers)))
-    );
+    return validateAccess.thenReturn(ResponseEntity.ok(
+        brokerService.getAllBrokersLogdirs(getCluster(clusterName), brokers)));
   }
 
   @Override
@@ -79,10 +77,10 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .clusterConfigActions(ClusterConfigAction.VIEW)
         .build());
 
-    return validateAccess.then(
-        Mono.just(ResponseEntity.ok(
+    return validateAccess.thenReturn(
+        ResponseEntity.ok(
             brokerService.getBrokerConfig(getCluster(clusterName), id)
-                .map(clusterMapper::toBrokerConfig)))
+                .map(clusterMapper::toBrokerConfig))
     );
   }
 

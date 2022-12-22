@@ -27,7 +27,7 @@ public class SchemaRegistryPaginationTest {
   private final SchemaRegistryService schemaRegistryService = mock(SchemaRegistryService.class);
   private final ClustersStorage clustersStorage = mock(ClustersStorage.class);
   private final ClusterMapper clusterMapper = mock(ClusterMapper.class);
-  private final AccessControlService accessControlService = AccessControlServiceMock.getMock();
+  private final AccessControlService accessControlService = new AccessControlServiceMock().getMock();
 
   private final SchemasController controller
       = new SchemasController(clusterMapper, schemaRegistryService, accessControlService);

@@ -1771,16 +1771,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationInfo'
 
-  /api/authorization/evictCache:
-    post:
-      tags:
-        - Authorization
-      summary: evict authenticated users cache
-      operationId: evictCache
-      responses:
-        200:
-          description: OK
-
 components:
   schemas:
     TopicSerdeSuggestion:

@@ -44,7 +44,7 @@ class TopicsServicePaginationTest {
   private final TopicsService topicsService = mock(TopicsService.class);
   private final ClustersStorage clustersStorage = mock(ClustersStorage.class);
   private final ClusterMapper clusterMapper = new ClusterMapperImpl();
-  private final AccessControlService accessControlService = AccessControlServiceMock.getMock();
+  private final AccessControlService accessControlService = new AccessControlServiceMock().getMock();
 
   private final TopicsController topicsController = new TopicsController(
       topicsService, mock(TopicAnalysisService.class), clusterMapper, accessControlService);

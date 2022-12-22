@@ -53,8 +53,8 @@ public class KafkaConnectController extends AbstractController implements KafkaC
         .connectActions(ConnectAction.VIEW)
         .build());
 
-    return validateAccess.then(
-        Mono.just(ResponseEntity.ok(kafkaConnectService.getConnectors(getCluster(clusterName), connectName)))
+    return validateAccess.thenReturn(
+        ResponseEntity.ok(kafkaConnectService.getConnectors(getCluster(clusterName), connectName))
     );
   }
 
@@ -198,10 +198,10 @@ public class KafkaConnectController extends AbstractController implements KafkaC
         .connectActions(ConnectAction.VIEW)
         .build());
 
-    return validateAccess.then(
-        Mono.just(ResponseEntity
+    return validateAccess.thenReturn(
+        ResponseEntity
             .ok(kafkaConnectService
-                .getConnectorTasks(getCluster(clusterName), connectName, connectorName)))
+                .getConnectorTasks(getCluster(clusterName), connectName, connectorName))
     );
   }
 

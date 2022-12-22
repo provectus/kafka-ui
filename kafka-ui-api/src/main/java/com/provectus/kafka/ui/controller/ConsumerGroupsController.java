@@ -16,7 +16,6 @@ import com.provectus.kafka.ui.model.ConsumerGroupsPageResponseDTO;
 import com.provectus.kafka.ui.model.PartitionOffsetDTO;
 import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
-import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
 import com.provectus.kafka.ui.service.OffsetsResetService;

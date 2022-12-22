@@ -1,8 +1,7 @@
 package com.provectus.kafka.ui.service.rbac;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
+import com.provectus.kafka.ui.config.auth.RbacUser;
 import com.provectus.kafka.ui.config.auth.RoleBasedAccessControlProperties;
 import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
@@ -20,7 +19,6 @@ import com.provectus.kafka.ui.service.rbac.extractor.GithubAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GoogleAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.LdapAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.ProviderAuthorityExtractor;
-import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -51,11 +49,8 @@ public class AccessControlService {
   @Nullable
   private final InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
 
-  private final Cache<String, AuthenticatedUser> cachedUsers = CacheBuilder.newBuilder() // TODO cache supporting flux
-      .maximumSize(10000)
-      .build();
   private boolean rbacEnabled = false;
-  private Set<ProviderAuthorityExtractor> extractors;
+  private Set<ProviderAuthorityExtractor> extractors = Collections.emptySet();
   private final RoleBasedAccessControlProperties properties;
 
   @PostConstruct
@@ -85,16 +80,12 @@ public class AccessControlService {
     }
   }
 
-  public AccessContext.AccessContextBuilder builder() {
-    return AccessContext.builder();
-  }
-
   public Mono<Void> validateAccess(AccessContext context) {
     if (!rbacEnabled) {
       return Mono.empty();
     }
 
-    return getCachedUser()
+    return getUser()
         .doOnNext(user -> {
           boolean accessGranted =
               isClusterAccessible(context, user)
@@ -113,69 +104,12 @@ public class AccessControlService {
         .then();
   }
 
-  public void cacheUser(AuthenticatedUser user) {
-    cachedUsers.put(user.getPrincipal(), user);
-  }
-
-  public Mono<AuthenticatedUser> getCachedUser() {
+  public Mono<AuthenticatedUser> getUser() {
     return ReactiveSecurityContextHolder.getContext()
         .map(SecurityContext::getAuthentication)
-        .map(Principal::getName)
-        .flatMap(this::getCachedUser);
-  }
-
-  private Mono<AuthenticatedUser> getCachedUser(String principal) {
-    AuthenticatedUser user = cachedUsers.getIfPresent(principal);
-
-    if (user == null) {
-      throw new IllegalArgumentException("User not found in cache");
-    }
-
-    return Mono.just(user);
-  }
-
-  @SuppressWarnings("unused") // TODO issues/3095
-  public Mono<Boolean> canCreateResource(Resource resource, String cluster, String resourceName) {
-    if (!rbacEnabled) {
-      return Mono.empty();
-    }
-
-    return switch (resource) {
-      case TOPIC -> {
-        AccessContext context = AccessContext.builder()
-            .cluster(cluster)
-            .topic(resourceName)
-            .topicActions(TopicAction.CREATE)
-            .build();
-
-        yield getCachedUser()
-            .map(user -> isTopicAccessible(context, user));
-      }
-
-      case SCHEMA -> {
-        AccessContext context = AccessContext.builder()
-            .cluster(cluster)
-            .schema(resourceName)
-            .schemaActions(SchemaAction.CREATE)
-            .build();
-
-        yield getCachedUser()
-            .map(user -> isSchemaAccessible(context, user));
-      }
-
-      case CONNECT -> {
-        AccessContext context = AccessContext.builder()
-            .cluster(cluster)
-            .connect(resourceName)
-            .connectActions(ConnectAction.CREATE)
-            .build();
-
-        yield getCachedUser()
-            .map(user -> isConnectAccessible(context, user));
-      }
-
-      default -> Mono.just(false);
-    };
+        .filter(authentication -> authentication.getPrincipal() instanceof RbacUser)
+        .map(authentication -> ((RbacUser) authentication.getPrincipal()))
+        .map(user -> new AuthenticatedUser(user.name(), user.groups()));
   }
 
   private boolean isClusterAccessible(AccessContext context, AuthenticatedUser user) {
@@ -201,7 +135,7 @@ public class AccessControlService {
         .cluster(cluster.getName())
         .build();
 
-    return getCachedUser().map(u -> isClusterAccessible(accessContext, u));
+    return getUser().map(u -> isClusterAccessible(accessContext, u));
   }
 
   public boolean isClusterConfigAccessible(AccessContext context, AuthenticatedUser user) {
@@ -252,7 +186,7 @@ public class AccessControlService {
         .topicActions(TopicAction.VIEW)
         .build();
 
-    return getCachedUser().map(u -> isTopicAccessible(accessContext, u));
+    return getUser().map(u -> isTopicAccessible(accessContext, u));
   }
 
   private boolean isConsumerGroupAccessible(AccessContext context, AuthenticatedUser user) {
@@ -285,7 +219,7 @@ public class AccessControlService {
         .consumerGroupActions(ConsumerGroupAction.VIEW)
         .build();
 
-    return getCachedUser().map(u -> isConsumerGroupAccessible(accessContext, u));
+    return getUser().map(u -> isConsumerGroupAccessible(accessContext, u));
   }
 
   public boolean isSchemaAccessible(AccessContext context, AuthenticatedUser user) {
@@ -318,7 +252,7 @@ public class AccessControlService {
         .schemaActions(SchemaAction.VIEW)
         .build();
 
-    return getCachedUser().map(u -> isSchemaAccessible(accessContext, u));
+    return getUser().map(u -> isSchemaAccessible(accessContext, u));
   }
 
   public boolean isConnectAccessible(AccessContext context, AuthenticatedUser user) {
@@ -359,9 +293,8 @@ public class AccessControlService {
         .connectActions(ConnectAction.VIEW)
         .build();
 
-    return getCachedUser().map(u -> isConnectAccessible(accessContext, u));
+    return getUser().map(u -> isConnectAccessible(accessContext, u));
   }
-
 
   public boolean isConnectorAccessible(AccessContext context, AuthenticatedUser user) {
     if (!rbacEnabled) {
@@ -384,7 +317,7 @@ public class AccessControlService {
         .connector(connectorName)
         .build();
 
-    return getCachedUser().map(u -> isConnectorAccessible(accessContext, u));
+    return getUser().map(u -> isConnectorAccessible(accessContext, u));
   }
 
   private boolean isKsqlAccessible(AccessContext context, AuthenticatedUser user) {
@@ -409,6 +342,9 @@ public class AccessControlService {
   }
 
   public List<Role> getRoles() {
+    if (!rbacEnabled) {
+      return Collections.emptyList();
+    }
     return Collections.unmodifiableList(properties.getRoles());
   }
 
@@ -429,7 +365,7 @@ public class AccessControlService {
   }
 
   private Predicate<Role> filterRole(AuthenticatedUser user) {
-    return role -> user.getGroups().contains(role.getName());
+    return role -> user.groups().contains(role.getName());
   }
 
   private Predicate<Role> filterCluster(String cluster) {
@@ -454,10 +390,6 @@ public class AccessControlService {
       }
       return value.matcher(resourceValue).matches();
     };
-  }
-
-  public void evictCache() {
-    cachedUsers.invalidateAll();
   }
 
   public boolean isRbacEnabled() {

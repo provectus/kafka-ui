@@ -12,6 +12,7 @@ public class Role {
   List<Permission> permissions;
 
   public void validate() {
+    permissions.forEach(Permission::transform);
     permissions.forEach(Permission::validate);
   }
 

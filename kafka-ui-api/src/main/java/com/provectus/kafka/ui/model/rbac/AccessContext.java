@@ -38,7 +38,6 @@ public class AccessContext {
     return new AccessContextBuilder();
   }
 
-
   public static final class AccessContextBuilder {
     private String cluster;
     private Collection<ClusterConfigAction> clusterConfigActions = Collections.emptySet();

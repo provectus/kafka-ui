@@ -60,15 +60,14 @@ public class KsqlController extends AbstractController implements KsqlApi {
         .ksqlActions(KsqlAction.EXECUTE)
         .build());
 
-    return validateAccess.then(
-        Mono.just(
-            ResponseEntity.ok(ksqlServiceV2.execute(pipeId)
-                .map(table -> new KsqlResponseDTO()
-                    .table(
-                        new KsqlTableResponseDTO()
-                            .header(table.getHeader())
-                            .columnNames(table.getColumnNames())
-                            .values((List<List<Object>>) ((List<?>) (table.getValues())))))))
+    return validateAccess.thenReturn(
+        ResponseEntity.ok(ksqlServiceV2.execute(pipeId)
+            .map(table -> new KsqlResponseDTO()
+                .table(
+                    new KsqlTableResponseDTO()
+                        .header(table.getHeader())
+                        .columnNames(table.getColumnNames())
+                        .values((List<List<Object>>) ((List<?>) (table.getValues()))))))
     );
   }
 
@@ -80,9 +79,7 @@ public class KsqlController extends AbstractController implements KsqlApi {
         .ksqlActions(KsqlAction.EXECUTE)
         .build());
 
-    return validateAccess.then(
-        Mono.just(ResponseEntity.ok(ksqlServiceV2.listStreams(getCluster(clusterName))))
-    );
+    return validateAccess.thenReturn(ResponseEntity.ok(ksqlServiceV2.listStreams(getCluster(clusterName))));
   }
 
   @Override
@@ -93,8 +90,6 @@ public class KsqlController extends AbstractController implements KsqlApi {
         .ksqlActions(KsqlAction.EXECUTE)
         .build());
 
-    return validateAccess.then(
-        Mono.just(ResponseEntity.ok(ksqlServiceV2.listTables(getCluster(clusterName))))
-    );
+    return validateAccess.thenReturn(ResponseEntity.ok(ksqlServiceV2.listTables(getCluster(clusterName))));
   }
 }
