@@ -28,8 +28,7 @@ public class TopicSettingsTab extends BasePage {
     return gridItemList;
   }
 
-  @Step
-  public TopicSettingsTab.SettingsGridItem getKeyItem(String key){
+  private TopicSettingsTab.SettingsGridItem getItemByKey(String key){
     return initGridItems().stream()
         .filter(e ->e.getKey().equals(key))
         .findFirst().orElse(null);
@@ -37,7 +36,7 @@ public class TopicSettingsTab extends BasePage {
 
   @Step
   public String getValueByKey(String key){
-    return getKeyItem(key).getValue();
+    return getItemByKey(key).getValue();
   }
 
   public static class SettingsGridItem extends BasePage {

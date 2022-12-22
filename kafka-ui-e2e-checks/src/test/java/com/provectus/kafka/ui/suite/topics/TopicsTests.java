@@ -134,7 +134,7 @@ public class TopicsTests extends BaseTest {
         .clickEditSettingsMenu();
     topicCreateEditForm
         .waitUntilScreenReady()
-        .setNumberOfPartitions(TOPIC_TO_UPDATE.getNumberOfPartitions())
+        .selectCleanupPolicy((TOPIC_TO_UPDATE.getCleanupPolicyValue()))
         .setMinInsyncReplicas(10)
         .setTimeToRetainDataInMs(TOPIC_TO_UPDATE.getTimeToRetainData())
         .setMaxSizeOnDiskInGB(TOPIC_TO_UPDATE.getMaxSizeOnDisk())
@@ -147,6 +147,8 @@ public class TopicsTests extends BaseTest {
         .openDotMenu()
         .clickEditSettingsMenu();
     SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
+        .isEqualTo(TOPIC_TO_UPDATE.getCleanupPolicyValue().getVisibleText());
     softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
         .isEqualTo(TOPIC_TO_UPDATE.getTimeToRetainData());
     softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()")
@@ -405,8 +407,7 @@ public class TopicsTests extends BaseTest {
         .waitUntilScreenReady();
     TOPIC_LIST.add(TOPIC_TO_CHECK_SETTINGS);
     topicDetails
-        .openDetailsTab(SETTINGS);
-    topicSettingsTab
+        .openDetailsTab(SETTINGS)
         .waitUntilScreenReady();
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(topicSettingsTab.getValueByKey("retention.bytes"))
@@ -417,7 +418,6 @@ public class TopicsTests extends BaseTest {
     TOPIC_TO_CHECK_SETTINGS
         .setMaxSizeOnDisk(SIZE_1_GB)
         .setMaxMessageBytes("1000056");
-    navigateToTopicsAndOpenDetails(TOPIC_TO_CHECK_SETTINGS.getName());
     topicDetails
         .openDotMenu()
         .clickEditSettingsMenu();
@@ -427,10 +427,9 @@ public class TopicsTests extends BaseTest {
         .setMaxMessageBytes(TOPIC_TO_CHECK_SETTINGS.getMaxMessageBytes())
         .clickCreateTopicBtn();
     topicDetails
+        .waitUntilScreenReady()
+        .openDetailsTab(SETTINGS)
         .waitUntilScreenReady();
-    TOPIC_LIST.add(TOPIC_TO_CHECK_SETTINGS);
-    topicDetails
-        .openDetailsTab(SETTINGS);
         softly.assertThat(topicSettingsTab.getValueByKey("retention.bytes"))
         .as("getValueOfKey(retention.bytes)").isEqualTo(TOPIC_TO_CHECK_SETTINGS.getMaxSizeOnDisk().getOptionValue());
     softly.assertThat(topicSettingsTab.getValueByKey("max.message.bytes"))
