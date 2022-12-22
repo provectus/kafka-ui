@@ -4,7 +4,6 @@ import App from 'components/App';
 import { render } from 'lib/testHelpers';
 import { useGetUserInfo } from 'lib/hooks/api/roles';
 
-
 jest.mock('components/Nav/Nav', () => () => <div>Navigation</div>);
 
 jest.mock('components/Version/Version', () => () => <div>Version</div>);

@@ -13,7 +13,7 @@ import {
   Label,
 } from 'components/common/PropertiesList/PropertiesList.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { calculateTimer,formatTimestamp } from 'lib/dateTimeHelpers';
+import { calculateTimer, formatTimestamp } from 'lib/dateTimeHelpers';
 import { Action, ResourceType } from 'generated-sources';
 import { ActionButton } from 'components/common/ActionComponent';
 
