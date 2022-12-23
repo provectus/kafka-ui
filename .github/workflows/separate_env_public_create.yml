@@ -15,7 +15,7 @@ jobs:
       - name: get branch name
         id: extract_branch
         run: |
-          tag='${{ github.event.inputs.ENV_NAME }}-$(date '+%F-%H-%M-%S')'
+          tag="${{ github.event.inputs.ENV_NAME }}-$(date '+%F-%H-%M-%S')"
           echo "tag=${tag}" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
