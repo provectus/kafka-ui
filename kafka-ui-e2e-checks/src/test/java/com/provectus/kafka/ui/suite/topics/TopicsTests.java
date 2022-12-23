@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.suite.topics;
 
+import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.SETTINGS;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
@@ -170,7 +171,7 @@ public class TopicsTests extends BaseTest {
     topicDetails
         .openDotMenu()
         .clickDeleteTopicMenu()
-        .clickConfirmDeleteBtn();
+        .clickConfirmBtnMdl();
     navigateToTopics();
     Assertions.assertFalse(topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()), "isTopicVisible");
     TOPIC_LIST.remove(TOPIC_FOR_DELETE);
@@ -438,6 +439,37 @@ public class TopicsTests extends BaseTest {
     softly.assertThat(topicSettingsTab.getValueByKey("max.message.bytes"))
         .as("getValueOfKey(max.message.bytes)").isEqualTo(TOPIC_TO_CHECK_SETTINGS.getMaxMessageBytes());
     softly.assertAll();
+  }
+
+  @DisplayName("TopicTests.recreateTopicFromTopicProfile : Recreate topic from topic profile")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(247)
+  @Test
+  void recreateTopicFromTopicProfile(){
+    Topic topicToRecreate = new Topic()
+        .setName("topic-to-recreate-" + randomAlphabetic(5))
+        .setNumberOfPartitions(1);
+    navigateToTopics();
+    topicsList
+        .clickAddTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady()
+        .setTopicName(topicToRecreate.getName())
+        .setNumberOfPartitions(topicToRecreate.getNumberOfPartitions())
+        .clickCreateTopicBtn();
+    topicDetails
+        .waitUntilScreenReady();
+    TOPIC_LIST.add(topicToRecreate);
+    topicDetails
+        .openDotMenu()
+        .clickRecreateTopicMenu();
+    assertThat(topicDetails.isConfirmationMdlVisible()).as("isConfirmationMdlVisible()").isTrue();
+    topicDetails
+        .clickConfirmBtnMdl();
+    assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS,
+        String.format("Topic %s successfully recreated!", topicToRecreate.getName())))
+        .as("isAlertWithMessageVisible()").isTrue();
   }
 
   @AfterAll
