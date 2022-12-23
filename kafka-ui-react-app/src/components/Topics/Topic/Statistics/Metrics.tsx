@@ -13,8 +13,7 @@ import {
   Label,
 } from 'components/common/PropertiesList/PropertiesList.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { useTimeFormat } from 'lib/hooks/useTimeFormat';
-import { calculateTimer } from 'lib/dateTimeHelpers';
+import { calculateTimer, formatTimestamp } from 'lib/dateTimeHelpers';
 import { Action, ResourceType } from 'generated-sources';
 import { ActionButton } from 'components/common/ActionComponent';
 
@@ -24,8 +23,6 @@ import SizeStats from './Indicators/SizeStats';
 import PartitionTable from './PartitionTable';
 
 const Metrics: React.FC = () => {
-  const formatTimestamp = useTimeFormat();
-
   const params = useAppParams<RouteParamsClusterTopic>();
 
   const [isAnalyzing, setIsAnalyzing] = useState(true);
@@ -68,7 +65,13 @@ const Metrics: React.FC = () => {
         </ActionButton>
         <List>
           <Label>Started at</Label>
-          <span>{formatTimestamp(data.progress.startedAt, 'hh:mm:ss a')}</span>
+          <span>
+            {formatTimestamp(data.progress.startedAt, {
+              hour: 'numeric',
+              minute: 'numeric',
+              second: 'numeric',
+            })}
+          </span>
           <Label>Passed since start</Label>
           <span>{calculateTimer(data.progress.startedAt as number)}</span>
           <Label>Scanned messages</Label>
