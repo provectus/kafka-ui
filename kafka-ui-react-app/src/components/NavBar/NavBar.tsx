@@ -1,17 +1,89 @@
 import React from 'react';
+import Select from 'components/common/Select/Select';
 import Logo from 'components/common/Logo/Logo';
 import Version from 'components/Version/Version';
 import GitIcon from 'components/common/Icons/GitIcon';
 import DiscordIcon from 'components/common/Icons/DiscordIcon';
+import AutoIcon from 'components/common/Icons/AutoIcon';
+import SunIcon from 'components/common/Icons/SunIcon';
+import MoonIcon from 'components/common/Icons/MoonIcon';
 
-import * as S from './NavBar.styled';
 import UserInfo from './UserInfo/UserInfo';
+import * as S from './NavBar.styled';
 
 interface Props {
   onBurgerClick: () => void;
+  setDarkMode: (value: boolean) => void;
 }
 
-const NavBar: React.FC<Props> = ({ onBurgerClick }) => {
+type ThemeDropDownValue = 'auto_theme' | 'light_theme' | 'dark_theme';
+
+const options = [
+  {
+    label: (
+      <>
+        <AutoIcon /> Auto theme
+      </>
+    ),
+    value: 'auto_theme',
+  },
+  {
+    label: (
+      <>
+        <SunIcon /> Light theme
+      </>
+    ),
+    value: 'light_theme',
+  },
+  {
+    label: (
+      <>
+        <MoonIcon /> Dark theme
+      </>
+    ),
+    value: 'dark_theme',
+  },
+];
+
+const NavBar: React.FC<Props> = ({ onBurgerClick, setDarkMode }) => {
+  const matchDark = window.matchMedia('(prefers-color-scheme: dark)');
+  const [themeMode, setThemeMode] = React.useState<ThemeDropDownValue>();
+
+  React.useLayoutEffect(() => {
+    const mode = localStorage.getItem('mode');
+    if (mode) {
+      setThemeMode(mode as ThemeDropDownValue);
+      if (mode === 'auto_theme') {
+        setDarkMode(matchDark.matches);
+      } else if (mode === 'light_theme') {
+        setDarkMode(false);
+      } else if (mode === 'dark_theme') {
+        setDarkMode(true);
+      }
+    } else {
+      setThemeMode('auto_theme');
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (themeMode === 'auto_theme') {
+      setDarkMode(matchDark.matches);
+      matchDark.addListener((e) => {
+        setDarkMode(e.matches);
+      });
+    }
+  }, [matchDark, themeMode]);
+
+  const onChangeThemeMode = (value: string | number) => {
+    setThemeMode(value as ThemeDropDownValue);
+    localStorage.setItem('mode', value as string);
+    if (value === 'light_theme') {
+      setDarkMode(false);
+    } else if (value === 'dark_theme') {
+      setDarkMode(true);
+    }
+  };
+
   return (
     <S.Navbar role="navigation" aria-label="Page Header">
       <S.NavbarBrand>
@@ -39,6 +111,11 @@ const NavBar: React.FC<Props> = ({ onBurgerClick }) => {
         </S.NavbarBrand>
       </S.NavbarBrand>
       <S.NavbarSocial>
+        <Select
+          options={options}
+          value={themeMode}
+          onChange={onChangeThemeMode}
+        />
         <S.SocialLink
           href="https://github.com/provectus/kafka-ui"
           target="_blank"

@@ -24,7 +24,6 @@ describe('App', () => {
         addListener: jest.fn(),
       })),
     });
-
     render(<App />, {
       initialEntries: ['/'],
     });

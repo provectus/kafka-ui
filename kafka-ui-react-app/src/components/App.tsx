@@ -21,10 +21,6 @@ import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
 import { ConfirmContextProvider } from './contexts/ConfirmContext';
 import { GlobalSettingsProvider } from './contexts/GlobalSettingsContext';
 import ErrorPage from './ErrorPage/ErrorPage';
-import SunIcon from './common/Icons/SunIcon';
-import MoonIcon from './common/Icons/MoonIcon';
-import AutoIcon from './common/Icons/AutoIcon';
-
 import { UserInfoRolesAccessProvider } from './contexts/UserInfoRolesAccessContext';
 import PageContainer from './PageContainer/PageContainer';
 
@@ -40,83 +36,20 @@ const queryClient = new QueryClient({
     },
   },
 });
-const options = [
-  {
-    label: (
-      <>
-        <AutoIcon /> Auto theme
-      </>
-    ),
-    value: 'Auto theme',
-  },
-  {
-    label: (
-      <>
-        <SunIcon /> Light theme
-      </>
-    ),
-    value: 'Light theme',
-  },
-  {
-    label: (
-      <>
-        <MoonIcon /> Dark theme
-      </>
-    ),
-    value: 'Dark theme',
-  },
-];
 
 const App: React.FC = () => {
-  const matchDark = window.matchMedia('(prefers-color-scheme: dark)');
-  const [themeMode, setThemeMode] = React.useState<string | number>();
-  const [isDarkMode, setIsDarkMode] = React.useState<boolean>(false);
-
-  React.useLayoutEffect(() => {
-    const mode = localStorage.getItem('mode');
-    if (mode) {
-      setThemeMode(mode);
-      if (mode === 'Auto theme') {
-        setIsDarkMode(matchDark.matches);
-      } else if (mode === 'Light theme') {
-        setIsDarkMode(false);
-      } else if (mode === 'Dark theme') {
-        setIsDarkMode(true);
-      }
-    } else {
-      setThemeMode('Auto theme');
-    }
-  }, []);
-
-  const onChangeThemeMode = (value: string | number) => {
-    setThemeMode(value);
-    localStorage.setItem('mode', value as string);
-    if (value === 'Light theme') {
-      setIsDarkMode(false);
-    } else if (value === 'Dark theme') {
-      setIsDarkMode(true);
-    }
-  };
-
-  React.useEffect(() => {
-    if (themeMode === 'Auto theme') {
-      setIsDarkMode(matchDark.matches);
-      matchDark.addListener((e) => {
-        setIsDarkMode(e.matches);
-      });
-    }
-  }, [matchDark, themeMode]);
+  const [isDarkMode, setDarkMode] = React.useState<boolean>(false);
 
   return (
     <QueryClientProvider client={queryClient}>
       <GlobalSettingsProvider>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={isDarkMode ? darkTheme : theme}>
           <Suspense fallback={<PageLoader />}>
             <UserInfoRolesAccessProvider>
               <ConfirmContextProvider>
                 <GlobalCSS />
                 <S.Layout>
-                  <PageContainer>
+                  <PageContainer setDarkMode={setDarkMode}>
                     <Routes>
                       {['/', '/ui', '/ui/clusters'].map((path) => (
                         <Route

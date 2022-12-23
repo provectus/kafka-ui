@@ -28,11 +28,11 @@ export const NavbarBrand = styled.div`
 `;
 
 export const SocialLink = styled.a(
-  ({ theme: { layout, icons } }) => css`
+  ({ theme: { icons } }) => css`
     display: block;
     margin-top: 5px;
     cursor: pointer;
-    fill: ${layout.socialLink.color};
+    fill: ${icons.discord.hover}; // TODO fix
 
     &:hover {
       ${DiscordIcon} {

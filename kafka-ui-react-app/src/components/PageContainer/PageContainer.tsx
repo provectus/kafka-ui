@@ -5,7 +5,9 @@ import * as S from 'components/PageContainer/PageContainer.styled';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Nav from 'components/Nav/Nav';
 
-const PageContainer: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
+const PageContainer: React.FC<
+  PropsWithChildren<{ setDarkMode: (value: boolean) => void }>
+> = ({ children, setDarkMode }) => {
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(false);
   const onBurgerClick = () => setIsSidebarVisible(!isSidebarVisible);
   const closeSidebar = useCallback(() => setIsSidebarVisible(false), []);
@@ -17,7 +19,7 @@ const PageContainer: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
 
   return (
     <>
-      <NavBar onBurgerClick={onBurgerClick} />
+      <NavBar onBurgerClick={onBurgerClick} setDarkMode={setDarkMode} />
       <S.Container>
         <S.Sidebar aria-label="Sidebar" $visible={isSidebarVisible}>
           <Suspense fallback={<PageLoader />}>
