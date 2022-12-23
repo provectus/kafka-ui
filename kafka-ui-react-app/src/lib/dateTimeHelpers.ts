@@ -14,7 +14,9 @@ export const formatTimestamp = (
     return '';
   }
 
-  return date.toLocaleString([], format);
+  // browser support
+  const language = navigator.language || navigator.languages[0];
+  return date.toLocaleString(language || [], format);
 };
 
 export const formatMilliseconds = (input = 0) => {
