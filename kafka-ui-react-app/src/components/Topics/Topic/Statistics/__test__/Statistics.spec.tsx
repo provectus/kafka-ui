@@ -26,29 +26,25 @@ describe('Statistics', () => {
     );
   };
   const startMock = jest.fn();
-  it('renders Metricks component', async () => {
+  it('renders Metrics component', async () => {
     (useTopicAnalysis as jest.Mock).mockImplementation(() => ({
       data: { result: 1 },
     }));
 
     renderComponent();
-
     await expect(screen.getByText('Restart Analysis')).toBeInTheDocument();
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });
   it('renders Start Analysis button', async () => {
-    // throwing intentional For error boundaries to work
     jest.spyOn(console, 'error').mockImplementation(() => undefined);
     (useAnalyzeTopic as jest.Mock).mockImplementation(() => ({
       mutateAsync: startMock,
     }));
-    (useTopicAnalysis as jest.Mock).mockImplementation(() => {
-      throw new Error('Error boundary');
-    });
     renderComponent();
     const btn = screen.getByRole('button', { name: 'Start Analysis' });
     expect(btn).toBeInTheDocument();
     await waitFor(() => userEvent.click(btn));
     expect(startMock).toHaveBeenCalled();
+    jest.clearAllMocks();
   });
 });

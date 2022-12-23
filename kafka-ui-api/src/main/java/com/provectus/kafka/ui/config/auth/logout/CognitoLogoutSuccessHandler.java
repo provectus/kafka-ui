@@ -1,27 +1,34 @@
-package com.provectus.kafka.ui.config;
+package com.provectus.kafka.ui.config.auth.logout;
 
+import com.provectus.kafka.ui.config.auth.OAuthProperties;
+import com.provectus.kafka.ui.config.auth.condition.CognitoCondition;
+import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.WebFilterExchange;
-import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.security.web.util.UrlUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.WebSession;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
-@RequiredArgsConstructor
-public class CognitoOidcLogoutSuccessHandler implements ServerLogoutSuccessHandler {
-
-  private final String logoutUrl;
-  private final String clientId;
+@Component
+@Conditional(CognitoCondition.class)
+public class CognitoLogoutSuccessHandler implements LogoutSuccessHandler {
 
   @Override
-  public Mono<Void> onLogoutSuccess(final WebFilterExchange exchange, final Authentication authentication) {
+  public boolean isApplicable(String provider) {
+    return Provider.Name.COGNITO.equalsIgnoreCase(provider);
+  }
+
+  @Override
+  public Mono<Void> handle(WebFilterExchange exchange, Authentication authentication,
+                           OAuthProperties.OAuth2Provider provider) {
     final ServerHttpResponse response = exchange.getExchange().getResponse();
     response.setStatusCode(HttpStatus.FOUND);
 
@@ -39,8 +46,8 @@ public class CognitoOidcLogoutSuccessHandler implements ServerLogoutSuccessHandl
         .build();
 
     final var uri = UriComponentsBuilder
-        .fromUri(URI.create(logoutUrl))
-        .queryParam("client_id", clientId)
+        .fromUri(URI.create(provider.getCustomParams().get("logoutUrl")))
+        .queryParam("client_id", provider.getClientId())
         .queryParam("logout_uri", baseUrl)
         .encode(StandardCharsets.UTF_8)
         .build()
@@ -49,5 +56,6 @@ public class CognitoOidcLogoutSuccessHandler implements ServerLogoutSuccessHandl
     response.getHeaders().setLocation(uri);
     return exchange.getExchange().getSession().flatMap(WebSession::invalidate);
   }
+
 }
 
