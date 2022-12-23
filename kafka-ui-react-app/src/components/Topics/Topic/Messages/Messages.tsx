@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useSerdes } from 'lib/hooks/api/topicMessages';
 import useAppParams from 'lib/hooks/useAppParams';
 import { RouteParamsClusterTopic } from 'lib/paths';
-import { getDefaultSerdeName } from 'components/Topics/Topic/Messages/getDefaultSerdeName';
+import { getDefaultSerdeName } from 'components/Topics/Topic/MessagesV2/utils/getDefaultSerdeName';
 import { MESSAGES_PER_PAGE } from 'lib/constants';
 
 import MessagesTable from './MessagesTable';
