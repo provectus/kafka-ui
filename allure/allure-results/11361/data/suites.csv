@@ -1,0 +1,4 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Fri Dec 23 15:32:42 GMT 2022","Fri Dec 23 15:32:48 GMT 2022","5570","","com.provectus.kafka.ui.suite.brokers.BrokersTests","","com.provectus.kafka.ui.suite.brokers.BrokersTests","checkBrokersOverview","Checking the Brokers overview",""
+"passed","Fri Dec 23 15:32:58 GMT 2022","Fri Dec 23 15:33:04 GMT 2022","5981","","com.provectus.kafka.ui.suite.schemas.SchemasTests","","com.provectus.kafka.ui.suite.schemas.SchemasTests","createSchemaAvro","should create AVRO schema",""
+"passed","Fri Dec 23 15:32:24 GMT 2022","Fri Dec 23 15:32:42 GMT 2022","18466","","com.provectus.kafka.ui.suite.brokers.BrokersTests","","com.provectus.kafka.ui.suite.brokers.BrokersTests","checkExistingBrokersInCluster","Checking the existing Broker's profile in a cluster",""
