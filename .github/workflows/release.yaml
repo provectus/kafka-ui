@@ -88,7 +88,7 @@ jobs:
   charts:
     runs-on: ubuntu-latest
     permissions:
-      actions: write
+      contents: write
     needs: release
     steps:
       - name: Repository Dispatch

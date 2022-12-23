@@ -1,13 +1,17 @@
 package com.provectus.kafka.ui.base;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.TestCaseGenerator;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
+import io.qase.api.annotation.Step;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
@@ -22,8 +26,10 @@ import org.testcontainers.utility.DockerImageName;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static com.provectus.kafka.ui.base.Setup.*;
+import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.settings.Source.BASE_WEB_URL;
 
 @Slf4j
@@ -109,5 +115,32 @@ public class BaseTest extends Facade {
         new ByteArrayInputStream(
             ((TakesScreenshot) webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
     browserClear();
+  }
+
+  @Step
+  protected void navigateToTopics(){
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady();
+  }
+
+  @Step
+  protected void navigateToTopicsAndOpenDetails(String topicName){
+    naviSideBar
+        .openSideMenu(TOPICS);
+    topicsList
+        .waitUntilScreenReady()
+        .openTopic(topicName);
+    topicDetails
+        .waitUntilScreenReady();
+  }
+
+  @Step
+  protected void verifyElementsCondition(List<SelenideElement> elementList, Condition expectedCondition) {
+    SoftAssertions softly = new SoftAssertions();
+    elementList.forEach(element -> softly.assertThat(element.is(expectedCondition))
+        .as(element.getSearchCriteria() + " is " + expectedCondition).isTrue());
+    softly.assertAll();
   }
 }

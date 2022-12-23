@@ -17,15 +17,17 @@ import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
-  fetchConsumerGroupDetails,
   deleteConsumerGroup,
-  selectById,
-  getIsConsumerGroupDeleted,
+  fetchConsumerGroupDetails,
   getAreConsumerGroupDetailsFulfilled,
+  getIsConsumerGroupDeleted,
+  selectById,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import getTagColor from 'components/common/Tag/getTagColor';
-import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { Dropdown } from 'components/common/Dropdown';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
+import { Action, ResourceType } from 'generated-sources';
+import { ActionDropdownItem } from 'components/common/ActionComponent';
 
 import ListItem from './ListItem';
 
@@ -84,14 +86,28 @@ const Details: React.FC = () => {
         >
           {!isReadOnly && (
             <Dropdown>
-              <DropdownItem onClick={onResetOffsets}>Reset offset</DropdownItem>
-              <DropdownItem
+              <ActionDropdownItem
+                onClick={onResetOffsets}
+                permission={{
+                  resource: ResourceType.CONSUMER,
+                  action: Action.RESET_OFFSETS,
+                  value: consumerGroupID,
+                }}
+              >
+                Reset offset
+              </ActionDropdownItem>
+              <ActionDropdownItem
                 confirm="Are you sure you want to delete this consumer group?"
                 onClick={onDelete}
                 danger
+                permission={{
+                  resource: ResourceType.CONSUMER,
+                  action: Action.DELETE,
+                  value: consumerGroupID,
+                }}
               >
                 Delete consumer group
-              </DropdownItem>
+              </ActionDropdownItem>
             </Dropdown>
           )}
         </PageHeading>

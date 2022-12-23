@@ -1,16 +1,12 @@
 import React from 'react';
 import { TopicMessage, TopicMessageTimestampTypeEnum } from 'generated-sources';
-import Message, {
-  PreviewFilter,
-  Props,
-} from 'components/Topics/Topic/Messages/Message';
+import Message, { Props } from 'components/Topics/Topic/Messages/Message';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 const messageContentText = 'messageContentText';
-const format = 'DD.MM.YYYY HH:mm:ss';
 
 jest.mock(
   'components/Topics/Topic/Messages/MessageContent/MessageContent',
@@ -33,9 +29,6 @@ describe('Message component', () => {
     headers: { header: 'test' },
   };
 
-  const mockKeyFilters: PreviewFilter[] = [];
-  const mockContentFilters: PreviewFilter[] = [];
-
   const renderComponent = (
     props: Partial<Props> = {
       message: mockMessage,
@@ -46,8 +39,8 @@ describe('Message component', () => {
         <tbody>
           <Message
             message={props.message || mockMessage}
-            keyFilters={mockKeyFilters}
-            contentFilters={mockContentFilters}
+            keyFilters={[]}
+            contentFilters={[]}
           />
         </tbody>
       </table>
@@ -58,7 +51,7 @@ describe('Message component', () => {
     expect(screen.getByText(mockMessage.content as string)).toBeInTheDocument();
     expect(screen.getByText(mockMessage.key as string)).toBeInTheDocument();
     expect(
-      screen.getByText(formatTimestamp(mockMessage.timestamp, format))
+      screen.getByText(formatTimestamp(mockMessage.timestamp))
     ).toBeInTheDocument();
     expect(screen.getByText(mockMessage.offset.toString())).toBeInTheDocument();
     expect(

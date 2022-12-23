@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.suite.topics;
 
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
+import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
+import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.SETTINGS;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE;
 import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPRESSION_TYPE;
@@ -8,8 +9,9 @@ import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.apache.commons.lang3.RandomUtils.nextInt;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.base.BaseTest;
@@ -70,10 +72,8 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(1)
   public void createTopic() {
-    naviSideBar
-        .openSideMenu(TOPICS);
+    navigateToTopics();
     topicsList
-        .waitUntilScreenReady()
         .clickAddTopicBtn();
     topicCreateEditForm
         .waitUntilScreenReady()
@@ -81,13 +81,7 @@ public class TopicsTests extends BaseTest {
         .setNumberOfPartitions(TOPIC_TO_CREATE.getNumberOfPartitions())
         .selectCleanupPolicy(TOPIC_TO_CREATE.getCleanupPolicyValue())
         .clickCreateTopicBtn();
-    topicDetails
-        .waitUntilScreenReady();
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(TOPIC_TO_CREATE.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_TO_CREATE.getName());
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(topicDetails.isTopicHeaderVisible(TOPIC_TO_CREATE.getName())).as("isTopicHeaderVisible()")
         .isTrue();
@@ -96,10 +90,7 @@ public class TopicsTests extends BaseTest {
     softly.assertThat(topicDetails.getPartitions()).as("getPartitions()")
         .isEqualTo(TOPIC_TO_CREATE.getNumberOfPartitions());
     softly.assertAll();
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady();
+    navigateToTopics();
     Assertions.assertTrue(topicsList.isTopicVisible(TOPIC_TO_CREATE.getName()), "isTopicVisible");
     TOPIC_LIST.add(TOPIC_TO_CREATE);
   }
@@ -110,20 +101,16 @@ public class TopicsTests extends BaseTest {
   @CaseId(7)
   @Test
   @Order(2)
-  void checkAvailableOperations(){
-    String processingTopic = "my_ksql_1ksql_processing_log";
-    String confluentTopic = "_confluent-ksql-my_ksql_1_command_topic";
-    naviSideBar
-        .openSideMenu(TOPICS);
+  void checkAvailableOperations() {
+    navigateToTopics();
     topicsList
-        .waitUntilScreenReady()
-        .selectCheckboxByName(processingTopic);
-    topicsList.getActionButtons().
-        forEach(element -> assertThat(element.is(Condition.enabled))
-            .as(element.getSearchCriteria() + " isEnabled()").isTrue());
+        .getTopicItem("my_ksql_1ksql_processing_log")
+        .selectItem(true);
+    verifyElementsCondition(topicsList.getActionButtons(),Condition.enabled);
     topicsList
-        .selectCheckboxByName(confluentTopic);
-    Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(),"isCopySelectedTopicBtnEnabled()");
+        .getTopicItem("_confluent-ksql-my_ksql_1_command_topic")
+        .selectItem(true);
+    Assertions.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(), "isCopySelectedTopicBtnEnabled()");
   }
 
   @Disabled()
@@ -135,13 +122,8 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(3)
   public void updateTopic() {
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(TOPIC_FOR_UPDATE.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_UPDATE.getName());
     topicDetails
-        .waitUntilScreenReady()
         .openDotMenu()
         .clickEditSettingsMenu();
     topicCreateEditForm
@@ -154,13 +136,8 @@ public class TopicsTests extends BaseTest {
         .clickCreateTopicBtn();
     topicDetails
         .waitUntilScreenReady();
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(TOPIC_FOR_UPDATE.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_UPDATE.getName());
     topicDetails
-        .waitUntilScreenReady()
         .openDotMenu()
         .clickEditSettingsMenu();
     SoftAssertions softly = new SoftAssertions();
@@ -182,20 +159,12 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(4)
   public void deleteTopic() {
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(TOPIC_FOR_DELETE.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_DELETE.getName());
     topicDetails
-        .waitUntilScreenReady()
         .openDotMenu()
         .clickDeleteTopicMenu()
         .clickConfirmDeleteBtn();
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady();
+    navigateToTopics();
     Assertions.assertFalse(topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()), "isTopicVisible");
     TOPIC_LIST.remove(TOPIC_FOR_DELETE);
   }
@@ -209,13 +178,8 @@ public class TopicsTests extends BaseTest {
   void redirectToConsumerFromTopic() {
     String topicName = "source-activities";
     String consumerGroupId = "connect-sink_postgres_activities";
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(topicName);
+    navigateToTopicsAndOpenDetails(topicName);
     topicDetails
-        .waitUntilScreenReady()
         .openDetailsTab(TopicDetails.TopicMenu.CONSUMERS)
         .openConsumerGroup(consumerGroupId);
     consumersDetails
@@ -233,10 +197,8 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(6)
   void checkTopicCreatePossibility() {
-    naviSideBar
-        .openSideMenu(TOPICS);
+    navigateToTopics();
     topicsList
-        .waitUntilScreenReady()
         .clickAddTopicBtn();
     topicCreateEditForm
         .waitUntilScreenReady();
@@ -253,15 +215,49 @@ public class TopicsTests extends BaseTest {
     assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isTrue();
   }
 
+  @DisplayName("Checking 'Time to retain data (in ms)' custom value with editing Topic's settings")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(266)
+  @Test
+  @Order(7)
+  void checkTimeToRetainDataCustomValueWithEditingTopic() {
+    Topic topicToRetainData = new Topic()
+        .setName("topic-to-retain-data-" + randomAlphabetic(5))
+        .setTimeToRetainData("86400000");
+    navigateToTopics();
+    topicsList
+        .clickAddTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady()
+        .setTopicName(topicToRetainData.getName())
+        .setNumberOfPartitions(1)
+        .setTimeToRetainDataInMs("604800000");
+    assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()").isEqualTo("604800000");
+    topicCreateEditForm
+        .setTimeToRetainDataInMs(topicToRetainData.getTimeToRetainData())
+        .clickCreateTopicBtn();
+    topicDetails
+        .waitUntilScreenReady()
+        .openDotMenu()
+        .clickEditSettingsMenu();
+    assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
+        .isEqualTo(topicToRetainData.getTimeToRetainData());
+    topicDetails
+        .openDetailsTab(SETTINGS);
+    assertThat(topicDetails.getSettingsGridValueByKey("retention.ms")).as("getSettingsGridValueByKey()")
+        .isEqualTo(topicToRetainData.getTimeToRetainData());
+    TOPIC_LIST.add(topicToRetainData);
+  }
+
   @DisplayName("Checking requiredness of Custom parameters within 'Create new Topic'")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(6)
   @Test
-  @Order(7)
+  @Order(8)
   void checkCustomParametersWithinCreateNewTopic() {
-    naviSideBar
-        .openSideMenu(TOPICS);
+    navigateToTopics();
     topicsList
         .waitUntilScreenReady()
         .clickAddTopicBtn();
@@ -283,20 +279,11 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(2)
   @Test
-  @Order(8)
+  @Order(9)
   void checkTopicListElements() {
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady();
-    SoftAssertions softly = new SoftAssertions();
-    topicsList.getAllVisibleElements().forEach(
-        element -> softly.assertThat(element.is(Condition.visible)).as(element.getSearchCriteria() + " isVisible()")
-            .isTrue());
-    topicsList.getAllEnabledElements().forEach(
-        element -> softly.assertThat(element.is(Condition.enabled)).as(element.getSearchCriteria() + " isEnabled()")
-            .isTrue());
-    softly.assertAll();
+    navigateToTopics();
+    verifyElementsCondition(topicsList.getAllVisibleElements(), Condition.visible);
+    verifyElementsCondition(topicsList.getAllEnabledElements(), Condition.enabled);
   }
 
   @DisplayName("Filter adding within Topic")
@@ -304,39 +291,95 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(12)
   @Test
-  @Order(9)
+  @Order(10)
   void addingNewFilterWithinTopic() {
-    String topicName = "_schemas";
-    String filterName = "123ABC";
-    naviSideBar
-        .openSideMenu(TOPICS);
-    topicsList
-        .waitUntilScreenReady()
-        .openTopic(topicName);
+    String filterName = randomAlphabetic(5);
+    navigateToTopicsAndOpenDetails("_schemas");
     topicDetails
-        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
         .waitUntilAddFiltersMdlVisible();
-    SoftAssertions softly = new SoftAssertions();
-    topicDetails.getAllAddFilterModalVisibleElements().forEach(element ->
-        softly.assertThat(element.is(Condition.visible))
-            .as(element.getSearchCriteria() + " isVisible()").isTrue());
-    topicDetails.getAllAddFilterModalEnabledElements().forEach(element ->
-        softly.assertThat(element.is(Condition.enabled))
-            .as(element.getSearchCriteria() + " isEnabled()").isTrue());
-    topicDetails.getAllAddFilterModalDisabledElements().forEach(element ->
-        softly.assertThat(element.is(Condition.enabled))
-            .as(element.getSearchCriteria() + " isEnabled()").isFalse());
-    softly.assertThat(topicDetails.isSaveThisFilterCheckBoxSelected()).as("isSaveThisFilterCheckBoxSelected()")
+    verifyElementsCondition(topicDetails.getAllAddFilterModalVisibleElements(), Condition.visible);
+    verifyElementsCondition(topicDetails.getAllAddFilterModalEnabledElements(), Condition.enabled);
+    verifyElementsCondition(topicDetails.getAllAddFilterModalDisabledElements(), Condition.disabled);
+    assertThat(topicDetails.isSaveThisFilterCheckBoxSelected()).as("isSaveThisFilterCheckBoxSelected()")
         .isFalse();
-    softly.assertAll();
     topicDetails
         .setFilterCodeFieldAddFilterMdl(filterName);
-    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isMessagesAddFilterTabAddFilterBtnEnabled()")
+    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isAddFilterBtnAddFilterMdlEnabled()")
         .isTrue();
-    topicDetails.clickAddFilterBtnAddFilterMdl();
-    assertThat(topicDetails.getFilterName()).as("isFilterNameVisible(filterName)")
-        .isEqualTo(filterName);
+    topicDetails.clickAddFilterBtnAndCloseMdl(true);
+    assertThat(topicDetails.isActiveFilterVisible(filterName)).as("isActiveFilterVisible()")
+        .isTrue();
+  }
+
+  @DisplayName("Checking filter saving within Messages/Topic profile/Saved Filters")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(13)
+  @Test
+  @Order(11)
+  void checkFilterSavingWithinSavedFilters() {
+    String displayName = randomAlphabetic(5);
+    navigateToTopicsAndOpenDetails("my_ksql_1ksql_processing_log");
+    topicDetails
+        .openDetailsTab(MESSAGES)
+        .clickMessagesAddFiltersBtn()
+        .waitUntilAddFiltersMdlVisible()
+        .setFilterCodeFieldAddFilterMdl(randomAlphabetic(4))
+        .selectSaveThisFilterCheckboxMdl(true)
+        .setDisplayNameFldAddFilterMdl(displayName);
+    assertThat(topicDetails.isAddFilterBtnAddFilterMdlEnabled()).as("isAddFilterBtnAddFilterMdlEnabled()")
+        .isTrue();
+    topicDetails
+        .clickAddFilterBtnAndCloseMdl(false)
+        .openSavedFiltersListMdl();
+    assertThat(topicDetails.isFilterVisibleAtSavedFiltersMdl(displayName))
+        .as("isFilterVisibleAtSavedFiltersMdl()").isTrue();
+  }
+
+  @DisplayName("Checking applying saved filter within Topic/Messages")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(14)
+  @Test
+  @Order(12)
+  void checkingApplyingSavedFilterWithinTopicMessages() {
+    String displayName = randomAlphabetic(5);
+    navigateToTopicsAndOpenDetails("my_ksql_1ksql_processing_log");
+    topicDetails
+        .openDetailsTab(MESSAGES)
+        .clickMessagesAddFiltersBtn()
+        .waitUntilAddFiltersMdlVisible()
+        .setFilterCodeFieldAddFilterMdl(randomAlphabetic(4))
+        .selectSaveThisFilterCheckboxMdl(true)
+        .setDisplayNameFldAddFilterMdl(displayName)
+        .clickAddFilterBtnAndCloseMdl(false)
+        .openSavedFiltersListMdl()
+        .selectFilterAtSavedFiltersMdl(displayName)
+        .clickSelectFilterBtnAtSavedFiltersMdl();
+    assertThat(topicDetails.isActiveFilterVisible(displayName))
+        .as("isActiveFilterVisible()").isTrue();
+  }
+
+  @DisplayName("Checking 'Show Internal Topics' toggle functionality within 'All Topics' page")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(11)
+  @Test
+  @Order(13)
+  void checkShowInternalTopicsButtonFunctionality(){
+    navigateToTopics();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicsList.isShowInternalRadioBtnSelected()).as("isInternalRadioBtnSelected()").isTrue();
+    softly.assertThat(topicsList.getInternalTopics()).as("getInternalTopics()").size().isGreaterThan(0);
+    softly.assertThat(topicsList.getNonInternalTopics()).as("getNonInternalTopics()").size().isGreaterThan(0);
+    softly.assertAll();
+    topicsList
+        .setShowInternalRadioButton(false);
+    softly.assertThat(topicsList.getInternalTopics()).as("getInternalTopics()").size().isEqualTo(0);
+    softly.assertThat(topicsList.getNonInternalTopics()).as("getNonInternalTopics()").size().isGreaterThan(0);
+    softly.assertAll();
   }
 
   @AfterAll

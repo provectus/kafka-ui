@@ -23,7 +23,6 @@
     "ajv-formats": "^2.1.1",
     "babel-jest": "^29.0.3",
     "classnames": "^2.2.6",
-    "dayjs": "^1.11.2",
     "fetch-mock": "^9.11.0",
     "jest": "^29.0.3",
     "jest-watch-typeahead": "^2.0.0",

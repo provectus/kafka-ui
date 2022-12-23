@@ -24,6 +24,7 @@ import com.provectus.kafka.ui.model.schemaregistry.SubjectIdResponse;
 import com.provectus.kafka.ui.util.SecuredWebClient;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
@@ -198,17 +199,12 @@ public class SchemaRegistryService {
    * and then returns the whole content by requesting its latest version.
    */
   public Mono<SchemaSubjectDTO> registerNewSchema(KafkaCluster cluster,
-                                                  Mono<NewSchemaSubjectDTO> newSchemaSubject) {
-    return newSchemaSubject
-        .flatMap(schema -> {
-          SchemaTypeDTO schemaType =
-              SchemaTypeDTO.AVRO == schema.getSchemaType() ? null : schema.getSchemaType();
-          Mono<InternalNewSchema> newSchema =
-              Mono.just(new InternalNewSchema(schema.getSchema(), schemaType));
-          String subject = schema.getSubject();
-          return submitNewSchema(subject, newSchema, cluster)
-              .flatMap(resp -> getLatestSchemaVersionBySubject(cluster, subject));
-        });
+                                                  NewSchemaSubjectDTO dto) {
+    SchemaTypeDTO schemaType = SchemaTypeDTO.AVRO == dto.getSchemaType() ? null : dto.getSchemaType();
+    Mono<InternalNewSchema> newSchema = Mono.just(new InternalNewSchema(dto.getSchema(), schemaType));
+    String subject = dto.getSubject();
+    return submitNewSchema(subject, newSchema, cluster)
+        .flatMap(resp -> getLatestSchemaVersionBySubject(cluster, subject));
   }
 
   @NotNull
@@ -258,18 +254,18 @@ public class SchemaRegistryService {
                                               Mono<CompatibilityLevelDTO> compatibilityLevel) {
     String configEndpoint = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
     return configuredWebClient(
-            cluster,
-            HttpMethod.PUT,
-            configEndpoint,
+        cluster,
+        HttpMethod.PUT,
+        configEndpoint,
         schemaName)
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(BodyInserters.fromPublisher(compatibilityLevel, CompatibilityLevelDTO.class))
-            .retrieve()
-            .onStatus(NOT_FOUND::equals,
-                throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
-            .bodyToMono(Void.class)
-            .as(m -> failoverAble(m, new FailoverMono<>(cluster.getSchemaRegistry(),
-                () -> this.updateSchemaCompatibility(cluster, schemaName, compatibilityLevel))));
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(BodyInserters.fromPublisher(compatibilityLevel, CompatibilityLevelDTO.class))
+        .retrieve()
+        .onStatus(NOT_FOUND::equals,
+            throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
+        .bodyToMono(Void.class)
+        .as(m -> failoverAble(m, new FailoverMono<>(cluster.getSchemaRegistry(),
+            () -> this.updateSchemaCompatibility(cluster, schemaName, compatibilityLevel))));
   }
 
   public Mono<Void> updateSchemaCompatibility(KafkaCluster cluster,
@@ -278,7 +274,7 @@ public class SchemaRegistryService {
   }
 
   public Mono<InternalCompatibilityLevel> getSchemaCompatibilityLevel(KafkaCluster cluster,
-                                                                 String schemaName) {
+                                                                      String schemaName) {
     String globalConfig = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
     final var values = new LinkedMultiValueMap<String, String>();
     values.add("defaultToGlobal", "true");
@@ -298,7 +294,7 @@ public class SchemaRegistryService {
   }
 
   private Mono<InternalCompatibilityLevel> getSchemaCompatibilityInfoOrGlobal(KafkaCluster cluster,
-                                                                         String schemaName) {
+                                                                              String schemaName) {
     return this.getSchemaCompatibilityLevel(cluster, schemaName)
         .switchIfEmpty(this.getGlobalSchemaCompatibilityLevel(cluster));
   }
@@ -306,18 +302,18 @@ public class SchemaRegistryService {
   public Mono<InternalCompatibilityCheck> checksSchemaCompatibility(
       KafkaCluster cluster, String schemaName, Mono<NewSchemaSubjectDTO> newSchemaSubject) {
     return configuredWebClient(
-            cluster,
-            HttpMethod.POST,
-            "/compatibility/subjects/{schemaName}/versions/latest",
+        cluster,
+        HttpMethod.POST,
+        "/compatibility/subjects/{schemaName}/versions/latest",
         schemaName)
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubjectDTO.class))
-            .retrieve()
-            .onStatus(NOT_FOUND::equals,
-                throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
-            .bodyToMono(InternalCompatibilityCheck.class)
-            .as(m -> failoverAble(m, new FailoverMono<>(cluster.getSchemaRegistry(),
-                () -> this.checksSchemaCompatibility(cluster, schemaName, newSchemaSubject))));
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubjectDTO.class))
+        .retrieve()
+        .onStatus(NOT_FOUND::equals,
+            throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
+        .bodyToMono(InternalCompatibilityCheck.class)
+        .as(m -> failoverAble(m, new FailoverMono<>(cluster.getSchemaRegistry(),
+            () -> this.checksSchemaCompatibility(cluster, schemaName, newSchemaSubject))));
   }
 
   public String formatted(String str, Object... args) {

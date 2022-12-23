@@ -39,7 +39,6 @@ specifiers:
   ajv-formats: ^2.1.1
   babel-jest: ^29.0.3
   classnames: ^2.2.6
-  dayjs: ^1.11.2
   dotenv: ^16.0.1
   eslint: ^8.3.0
   eslint-config-airbnb: ^19.0.4
@@ -112,7 +111,6 @@ dependencies:
   ajv-formats: 2.1.1_ajv@8.8.2
   babel-jest: 29.0.3_@babel+core@7.18.2
   classnames: 2.3.1
-  dayjs: 1.11.3
   fetch-mock: 9.11.0
   jest: 29.0.3_yqiaopbgmqcuvx27p5xxvum6wm
   jest-watch-typeahead: 2.0.0_jest@29.0.3
@@ -4698,10 +4696,6 @@ packages:
   /date-fns/2.27.0:
     resolution: {integrity: sha512-sj+J0Mo2p2X1e306MHq282WS4/A8Pz/95GIFcsPNMPMZVI3EUrAdSv90al1k+p74WGLCruMXk23bfEDZa71X9Q==}
     engines: {node: '>=0.11'}
-
-  /dayjs/1.11.3:
-    resolution: {integrity: sha512-xxwlswWOlGhzgQ4TKzASQkUhqERI3egRNqgV4ScR8wlANA/A9tZ7miXa44vTTKEq5l7vWoL5G57bG3zA+Kow0A==}
-    dev: false
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
