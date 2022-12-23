@@ -170,7 +170,7 @@ public class TopicsTests extends BaseTest {
     topicDetails
         .openDotMenu()
         .clickDeleteTopicMenu()
-        .clickConfirmDeleteBtn();
+        .clickConfirmBtnMdl();
     navigateToTopics();
     Assertions.assertFalse(topicsList.isTopicVisible(TOPIC_FOR_DELETE.getName()), "isTopicVisible");
     TOPIC_LIST.remove(TOPIC_FOR_DELETE);
@@ -465,7 +465,7 @@ public class TopicsTests extends BaseTest {
         .clickRecreateTopicMenu();
     assertThat(topicDetails.isConfirmationMdlVisible()).as("isConfirmationMdlVisible()").isTrue();
     topicDetails
-        .clickConfirmRecreateBtn();
+        .clickConfirmBtnMdl();
     assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS,
         String.format("Topic %s successfully recreated!", topicToRecreate.getName())))
         .as("isAlertWithMessageVisible()").isTrue();

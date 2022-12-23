@@ -126,14 +126,7 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails clickConfirmDeleteBtn() {
-    confirmBtn.shouldBe(Condition.enabled).click();
-    confirmBtn.shouldBe(Condition.disappear);
-    return this;
-  }
-
-  @Step
-  public TopicDetails clickConfirmRecreateBtn(){
+  public TopicDetails clickConfirmBtnMdl() {
     confirmBtn.shouldBe(Condition.enabled).click();
     confirmBtn.shouldBe(Condition.disappear);
     return this;
