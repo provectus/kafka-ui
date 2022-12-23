@@ -405,7 +405,7 @@ public class TopicsTests extends BaseTest {
     topicDetails
         .openDotMenu()
         .clickRecreateTopicMenu();
-    assertThat(topicDetails.isPopUpConfirmActionsVisible()).as("isPopUpConfirmActionsVisible()").isTrue();
+    assertThat(topicDetails.isConfirmationMdlVisible()).as("isConfirmationMdlVisible()").isTrue();
     topicDetails
         .clickConfirmRecreateBtn();
     assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS,

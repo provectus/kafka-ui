@@ -42,7 +42,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
   protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
   protected SelenideElement backToCreateFiltersLink = $x("//div[text()='Back To create filters']");
-  protected SelenideElement confirmActionPopup = $x("//div[text()= 'Confirm the action']");
+  protected SelenideElement confirmationMdl = $x("//div[text()= 'Confirm the action']/..");
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
   protected String seekFilterDdlLocator = "//ul[@id='selectSeekType']/ul/li[text()='%s']";
   protected String savedFilterNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
@@ -88,8 +88,8 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public boolean isPopUpConfirmActionsVisible(){
-    return isVisible(confirmActionPopup);
+  public boolean isConfirmationMdlVisible(){
+    return isVisible(confirmationMdl);
   }
 
   @Step
