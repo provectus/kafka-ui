@@ -5,6 +5,7 @@ interface Props {
   isLive?: boolean;
   minWidth?: string;
   disabled?: boolean;
+  isThemeMode?: boolean;
 }
 
 interface OptionProps {
@@ -19,10 +20,16 @@ export const Select = styled.ul<Props>`
   align-items: center;
   height: ${(props) => (props.selectSize === 'M' ? '32px' : '40px')};
   border: 1px
-    ${({ theme, disabled }) =>
-      disabled
-        ? theme.select.borderColor.disabled
-        : theme.select.borderColor.normal}
+    ${({ theme, disabled, isThemeMode }) => {
+      if (isThemeMode) {
+        return 'none';
+      }
+      if (disabled) {
+        return theme.select.borderColor.disabled;
+      }
+
+      return theme.select.borderColor.normal;
+    }}
     solid;
   border-radius: 4px;
   font-size: 14px;

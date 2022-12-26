@@ -496,10 +496,11 @@ export const theme = {
       normal: Colors.neutral[50],
       hover: Colors.neutral[90],
       active: Colors.neutral[90],
+      disabled: Colors.neutral[20],
     },
     borderColor: {
       active: Colors.brand[50],
-      nav: Colors.neutral[10],
+      nav: Colors.neutral[5],
     },
   },
   secondaryTab: {
@@ -637,12 +638,13 @@ export const theme = {
     savedIcon: Colors.brand[30],
     dropdownArrowIcon: Colors.neutral[30],
     git: {
-      hover: Colors.neutral[50],
-      active: Colors.neutral[90],
+      hover: Colors.neutral[90],
+      active: Colors.neutral[70],
     },
     discord: {
-      hover: Colors.brand[15],
-      active: Colors.blue[45],
+      normal: Colors.neutral[20],
+      hover: Colors.blue[45],
+      active: Colors.brand[15],
     },
   },
   viewer: {
@@ -926,10 +928,11 @@ export const darkTheme: ThemeType = {
       normal: Colors.neutral[50],
       hover: Colors.neutral[0],
       active: Colors.brand[30],
+      disabled: Colors.neutral[75],
     },
     borderColor: {
       active: Colors.brand[50],
-      nav: Colors.neutral[10],
+      nav: Colors.neutral[80],
     },
   },
   secondaryTab: {
@@ -1071,8 +1074,9 @@ export const darkTheme: ThemeType = {
       active: Colors.neutral[90],
     },
     discord: {
-      hover: Colors.brand[15],
-      active: Colors.blue[45],
+      normal: Colors.neutral[30],
+      hover: Colors.blue[45],
+      active: Colors.brand[15],
     },
   },
   viewer: {

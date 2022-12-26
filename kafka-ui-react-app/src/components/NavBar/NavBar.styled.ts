@@ -32,7 +32,7 @@ export const SocialLink = styled.a(
     display: block;
     margin-top: 5px;
     cursor: pointer;
-    fill: ${icons.discord.hover}; // TODO fix
+    fill: ${icons.discord.normal};
 
     &:hover {
       ${DiscordIcon} {

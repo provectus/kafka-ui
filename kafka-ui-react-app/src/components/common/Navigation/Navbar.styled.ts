@@ -22,8 +22,8 @@ const Navbar = styled.nav`
       color: ${({ theme }) => theme.primaryTab.color.active};
     }
     &.is-disabled {
-      color: ${(props) => props.theme.primaryTab.color}; //TODO fix
-      border-bottom: 1px ${(props) => props.theme.primaryTab.color}; //TODO fix
+      color: ${(props) => props.theme.primaryTab.color.disabled};
+      border-bottom: 1px ${({ theme }) => theme.default.transparentColor};
       cursor: not-allowed;
     }
     &:hover:not(.is-active, .is-disabled) {

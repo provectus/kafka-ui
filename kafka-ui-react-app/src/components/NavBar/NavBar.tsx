@@ -115,6 +115,7 @@ const NavBar: React.FC<Props> = ({ onBurgerClick, setDarkMode }) => {
           options={options}
           value={themeMode}
           onChange={onChangeThemeMode}
+          isThemeMode
         />
         <S.SocialLink
           href="https://github.com/provectus/kafka-ui"
