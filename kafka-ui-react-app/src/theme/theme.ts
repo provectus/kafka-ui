@@ -68,6 +68,7 @@ const Colors = {
 };
 
 const baseTheme = {
+  defaultIconColor: Colors.neutral[50],
   heading: {
     h1: {
       color: Colors.neutral[90],

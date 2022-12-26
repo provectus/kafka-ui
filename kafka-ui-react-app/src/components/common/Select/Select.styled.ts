@@ -76,9 +76,6 @@ export const OptionList = styled.ul`
   max-width: 300px;
   min-width: 100%;
   align-items: center;
-  & li {
-    align-items: center;
-  }
   & div {
     white-space: nowrap;
   }
@@ -124,6 +121,11 @@ export const SelectedOption = styled.li`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  & svg {
+    path {
+      fill: ${({ theme }) => theme.defaultIconColor};
+    }
+  }
   & div {
     display: none;
   }
