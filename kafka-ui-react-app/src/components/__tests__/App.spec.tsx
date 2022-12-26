@@ -8,6 +8,8 @@ jest.mock('components/Nav/Nav', () => () => <div>Navigation</div>);
 
 jest.mock('components/Version/Version', () => () => <div>Version</div>);
 
+jest.mock('components/NavBar/NavBar', () => () => <div>NavBar</div>);
+
 jest.mock('lib/hooks/api/roles', () => ({
   useGetUserInfo: jest.fn(),
 }));
@@ -17,13 +19,6 @@ describe('App', () => {
     (useGetUserInfo as jest.Mock).mockImplementation(() => ({
       data: {},
     }));
-    Object.defineProperty(window, 'matchMedia', {
-      writable: true,
-      value: jest.fn().mockImplementation(() => ({
-        matches: false,
-        addListener: jest.fn(),
-      })),
-    });
     render(<App />, {
       initialEntries: ['/'],
     });
@@ -31,5 +26,9 @@ describe('App', () => {
 
   it('Renders navigation', async () => {
     expect(screen.getByText('Navigation')).toBeInTheDocument();
+  });
+
+  it('Renders NavBar', async () => {
+    expect(screen.getByText('NavBar')).toBeInTheDocument();
   });
 });
