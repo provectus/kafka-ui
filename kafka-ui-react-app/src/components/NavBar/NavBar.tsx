@@ -22,7 +22,8 @@ const options = [
   {
     label: (
       <>
-        <AutoIcon /> Auto theme
+        <AutoIcon />
+        <div>Auto theme</div>
       </>
     ),
     value: 'auto_theme',
@@ -30,7 +31,8 @@ const options = [
   {
     label: (
       <>
-        <SunIcon /> Light theme
+        <SunIcon />
+        <div>Light theme</div>
       </>
     ),
     value: 'light_theme',
@@ -38,7 +40,8 @@ const options = [
   {
     label: (
       <>
-        <MoonIcon /> Dark theme
+        <MoonIcon />
+        <div>Dark theme</div>
       </>
     ),
     value: 'dark_theme',

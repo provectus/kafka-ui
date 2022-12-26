@@ -75,6 +75,13 @@ export const OptionList = styled.ul`
   z-index: 10;
   max-width: 300px;
   min-width: 100%;
+  align-items: center;
+  & li {
+    align-items: center;
+  }
+  & div {
+    white-space: nowrap;
+  }
   &::-webkit-scrollbar {
     -webkit-appearance: none;
     width: 7px;
@@ -117,4 +124,7 @@ export const SelectedOption = styled.li`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  & div {
+    display: none;
+  }
 `;

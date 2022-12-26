@@ -36,7 +36,6 @@ const Select: React.FC<SelectProps> = ({
   isLive,
   disabled = false,
   onChange,
-  isThemeMode,
   ...props
 }) => {
   const [selectedOption, setSelectedOption] = useState(value);
@@ -75,7 +74,6 @@ const Select: React.FC<SelectProps> = ({
         disabled={disabled}
         onClick={showOptionsHandler}
         onKeyDown={showOptionsHandler}
-        isThemeMode
         {...props}
       >
         {isLive && <LiveIcon />}
