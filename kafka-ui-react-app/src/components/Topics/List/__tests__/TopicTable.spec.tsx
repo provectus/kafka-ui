@@ -66,7 +66,9 @@ describe('TopicTable Components', () => {
           <TopicTable />
         </WithRoute>
       </ClusterContext.Provider>,
-      { initialEntries: [clusterTopicsPath(clusterName)] }
+      {
+        initialEntries: [clusterTopicsPath(clusterName)],
+      }
     );
   };
 

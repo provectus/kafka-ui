@@ -19,17 +19,21 @@ import org.openqa.selenium.By;
 public class TopicDetails extends BasePage {
 
   protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
+  protected SelenideElement recreateTopicBtn = $x("//div[text()='Recreate Topic']");
   protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
+  protected SelenideElement seekTypeDdl = $x("//ul[@id='selectSeekType']/li");
+  protected SelenideElement seekTypeField = $x("//label[text()='Seek Type']//..//input");
   protected SelenideElement addFiltersBtn = $x("//button[text()='Add Filters']");
-  protected SelenideElement savedFiltersField = $x("//div[text()='Saved Filters']");
+  protected SelenideElement savedFiltersLink = $x("//div[text()='Saved Filters']");
   protected SelenideElement addFilterCodeModalTitle = $x("//label[text()='Filter code']");
   protected SelenideElement addFilterCodeInput = $x("//div[@id='ace-editor']//textarea");
   protected SelenideElement saveThisFilterCheckBoxAddFilterMdl = $x("//input[@name='saveFilter']");
   protected SelenideElement displayNameInputAddFilterMdl = $x("//input[@placeholder='Enter Name']");
   protected SelenideElement cancelBtnAddFilterMdl = $x("//button[text()='Cancel']");
   protected SelenideElement addFilterBtnAddFilterMdl = $x("//button[text()='Add filter']");
+  protected SelenideElement selectFilterBtnAddFilterMdl = $x("//button[text()='Select filter']");
   protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
   protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
   protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
@@ -37,10 +41,15 @@ public class TopicDetails extends BasePage {
   protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
   protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
   protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
+  protected SelenideElement backToCreateFiltersLink = $x("//div[text()='Back To create filters']");
+  protected SelenideElement confirmationMdl = $x("//div[text()= 'Confirm the action']/..");
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
+  protected String seekFilterDdlLocator = "//ul[@id='selectSeekType']/ul/li[text()='%s']";
+  protected String savedFilterNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
-  protected String filterNameLocator = "//*[@data-testid='activeSmartFilter']";
+  protected String activeFilterNameLocator = "//div[@data-testid='activeSmartFilter'][contains(text(),'%s')]";
+  protected String settingsGridValueLocator = "//tbody/tr/td/span[text()='%s']//ancestor::tr/td[2]/span";
 
   @Step
   public TopicDetails waitUntilScreenReady() {
@@ -54,6 +63,11 @@ public class TopicDetails extends BasePage {
     $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
     waitUntilSpinnerDisappear();
     return this;
+  }
+
+  @Step
+  public String getSettingsGridValueByKey(String key){
+    return $x(String.format(settingsGridValueLocator, key)).scrollTo().shouldBe(Condition.visible).getText();
   }
 
   @Step
@@ -74,8 +88,19 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
+  public boolean isConfirmationMdlVisible(){
+    return isVisible(confirmationMdl);
+  }
+
+  @Step
   public TopicDetails clickClearMessagesMenu() {
     clearMessagesBtn.shouldBe(Condition.visible).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickRecreateTopicMenu(){
+    recreateTopicBtn.shouldBe(Condition.visible).click();
     return this;
   }
 
@@ -101,7 +126,7 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails clickConfirmDeleteBtn() {
+  public TopicDetails clickConfirmBtnMdl() {
     confirmBtn.shouldBe(Condition.enabled).click();
     confirmBtn.shouldBe(Condition.disappear);
     return this;
@@ -114,8 +139,53 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
+  public TopicDetails selectSeekTypeDdlMessagesTab(String seekTypeName){
+    seekTypeDdl.shouldBe(Condition.enabled).click();
+    $x(String.format(seekFilterDdlLocator, seekTypeName)).shouldBe(Condition.visible).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails setSeekTypeValueFldMessagesTab(String seekTypeValue){
+    seekTypeField.shouldBe(Condition.enabled).sendKeys(seekTypeValue);
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickSubmitFiltersBtnMessagesTab(){
+    clickByJavaScript(submitBtn);
+    waitUntilSpinnerDisappear();
+    return this;
+  }
+
+  @Step
   public TopicDetails clickMessagesAddFiltersBtn() {
     addFiltersBtn.shouldBe(Condition.enabled).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails openSavedFiltersListMdl(){
+    savedFiltersLink.shouldBe(Condition.enabled).click();
+    backToCreateFiltersLink.shouldBe(Condition.visible);
+    return this;
+  }
+
+  @Step
+  public boolean isFilterVisibleAtSavedFiltersMdl(String filterName){
+    return isVisible($x(String.format(savedFilterNameLocator,filterName)));
+  }
+
+  @Step
+  public TopicDetails selectFilterAtSavedFiltersMdl(String filterName){
+    $x(String.format(savedFilterNameLocator, filterName)).shouldBe(Condition.enabled).click();
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickSelectFilterBtnAtSavedFiltersMdl(){
+    selectFilterBtnAddFilterMdl.shouldBe(Condition.enabled).click();
+    addFilterCodeModalTitle.shouldBe(Condition.disappear);
     return this;
   }
 
@@ -126,15 +196,14 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails clickAddFilterBtnAddFilterMdl() {
-    addFilterBtnAddFilterMdl.shouldBe(Condition.enabled).click();
-    addFilterCodeModalTitle.shouldBe(Condition.hidden);
+  public TopicDetails setFilterCodeFieldAddFilterMdl(String filterCode) {
+    addFilterCodeInput.shouldBe(Condition.enabled).sendKeys(filterCode);
     return this;
   }
 
   @Step
-  public TopicDetails setFilterCodeFieldAddFilterMdl(String filterCode) {
-    addFilterCodeInput.shouldBe(Condition.enabled).sendKeys(filterCode);
+  public TopicDetails selectSaveThisFilterCheckboxMdl(boolean select){
+    selectElement(saveThisFilterCheckBoxAddFilterMdl, select);
     return this;
   }
 
@@ -144,17 +213,34 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
+  public TopicDetails setDisplayNameFldAddFilterMdl(String displayName) {
+    displayNameInputAddFilterMdl.shouldBe(Condition.enabled).sendKeys(displayName);
+    return this;
+  }
+
+  @Step
+  public TopicDetails clickAddFilterBtnAndCloseMdl(boolean closeModal) {
+    addFilterBtnAddFilterMdl.shouldBe(Condition.enabled).click();
+    if(closeModal){
+      addFilterCodeModalTitle.shouldBe(Condition.hidden);}
+    else{
+      addFilterCodeModalTitle.shouldBe(Condition.visible);
+    }
+    return this;
+  }
+
+  @Step
   public boolean isAddFilterBtnAddFilterMdlEnabled() {
     return isEnabled(addFilterBtnAddFilterMdl);
   }
 
   @Step
-  public String getFilterName() {
-    return $x(filterNameLocator).getText();
+  public boolean isActiveFilterVisible(String activeFilterName) {
+    return isVisible($x(String.format(activeFilterNameLocator, activeFilterName)));
   }
 
   public List<SelenideElement> getAllAddFilterModalVisibleElements() {
-    return Arrays.asList(savedFiltersField, displayNameInputAddFilterMdl, addFilterBtnAddFilterMdl, cancelBtnAddFilterMdl);
+    return Arrays.asList(savedFiltersLink, displayNameInputAddFilterMdl, addFilterBtnAddFilterMdl, cancelBtnAddFilterMdl);
   }
 
   public List<SelenideElement> getAllAddFilterModalEnabledElements() {
@@ -188,7 +274,7 @@ public class TopicDetails extends BasePage {
 
   private List<TopicDetails.MessageGridItem> initItems() {
     List<TopicDetails.MessageGridItem> gridItemList = new ArrayList<>();
-    messageGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+    allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
         .forEach(item -> gridItemList.add(new TopicDetails.MessageGridItem(item)));
     return gridItemList;
   }
@@ -198,6 +284,11 @@ public class TopicDetails extends BasePage {
     return initItems().stream()
         .filter(e -> e.getOffset() == offset)
         .findFirst().orElse(null);
+  }
+
+  @Step
+  public List<MessageGridItem> getAllMessages(){
+    return initItems();
   }
 
   @Step

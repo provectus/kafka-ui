@@ -7,7 +7,7 @@ info:
   contact: { }
   license:
     name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
 tags:
   - name: /api/clusters
   - name: /api/clusters/connects
@@ -1729,33 +1729,20 @@ paths:
                 $ref: '#/components/schemas/PartitionsIncreaseResponse'
         404:
           description: Not found
-  /api/info/timestampformat:
-    get:
-      tags:
-        - TimeStampFormat
-      summary: get system default datetime format
-      operationId: getTimeStampFormat
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TimeStampFormat'
 
-  /api/info/timestampformat/iso:
+  /api/authorization:
     get:
       tags:
-        - TimeStampFormat
-      summary: get system default datetime format (in ISO format, for JS)
-      operationId: getTimeStampFormatISO
+        - Authorization
+      summary: Get user authentication related info
+      operationId: getUserAuthInfo
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TimeStampFormat'
+                $ref: '#/components/schemas/AuthenticationInfo'
 
 components:
   schemas:
@@ -2646,7 +2633,7 @@ components:
           type: string
         schemaType:
           $ref: '#/components/schemas/SchemaType'
-          description: upon updating a schema, the type of an existing schema can't be changed
+          # upon updating a schema, the type of existing schema can't be changed
       required:
         - subject
         - schema
@@ -3154,3 +3141,73 @@ components:
         - COMPACT
         - COMPACT_DELETE
         - UNKNOWN
+
+    AuthenticationInfo:
+      type: object
+      properties:
+        rbacEnabled:
+          type: boolean
+          description: true if role based access control is enabled and granular permission access is required
+        userInfo:
+          $ref: '#/components/schemas/UserInfo'
+      required:
+        - rbacEnabled
+
+    UserInfo:
+      type: object
+      properties:
+        username:
+          type: string
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserPermission'
+      required:
+        - username
+        - permissions
+
+    UserPermission:
+      type: object
+      properties:
+        clusters:
+          type: array
+          items:
+            type: string
+        resource:
+          $ref: '#/components/schemas/ResourceType'
+        value:
+          type: string
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+      required:
+        - clusters
+        - resource
+        - actions
+
+    Action:
+      type: string
+      enum:
+        - VIEW
+        - EDIT
+        - CREATE
+        - DELETE
+        - RESET_OFFSETS
+        - EXECUTE
+        - MODIFY_GLOBAL_COMPATIBILITY
+        - ANALYSIS_VIEW
+        - ANALYSIS_RUN
+        - MESSAGES_READ
+        - MESSAGES_PRODUCE
+        - MESSAGES_DELETE
+
+    ResourceType:
+      type: string
+      enum:
+        - CLUSTERCONFIG
+        - TOPIC
+        - CONSUMER
+        - SCHEMA
+        - CONNECT
+        - KSQL

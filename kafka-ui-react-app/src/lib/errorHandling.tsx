@@ -50,7 +50,7 @@ export const showAlert = (
   );
 };
 
-export const showSuccessAlert = async (options: AlertOptions) => {
+export const showSuccessAlert = (options: AlertOptions) => {
   showAlert('success', {
     ...options,
     title: options.title || 'Success',
