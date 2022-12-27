@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import { act, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import React from 'react';
 import { PreviewFilter } from 'components/Topics/Topic/Messages/Message';
@@ -59,9 +59,7 @@ describe('PreviewModal component', () => {
     const pathValue = 'schema.type';
 
     beforeEach(async () => {
-      await act(() => {
-        renderComponent();
-      });
+      await renderComponent();
     });
 
     it('field input', async () => {
@@ -85,9 +83,7 @@ describe('PreviewModal component', () => {
 
     it('remove values', async () => {
       const setFilters = jest.fn();
-      await act(() => {
-        renderComponent({ setFilters });
-      });
+      await renderComponent({ setFilters });
       await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
       expect(setFilters).toHaveBeenCalledTimes(1);
     });
@@ -95,18 +91,14 @@ describe('PreviewModal component', () => {
     it('edit values', async () => {
       const setFilters = jest.fn();
       const toggleIsOpen = jest.fn();
-      await act(() => {
-        renderComponent({ setFilters });
-      });
-      userEvent.click(screen.getByRole('button', { name: 'Edit' }));
+      await renderComponent({ setFilters });
+      await userEvent.click(screen.getByRole('button', { name: 'Edit' }));
       const fieldInput = screen.getByPlaceholderText('Field');
-      userEvent.type(fieldInput, fieldValue);
+      await userEvent.type(fieldInput, fieldValue);
       const pathInput = screen.getByPlaceholderText('Json Path');
-      userEvent.type(pathInput, pathValue);
-      userEvent.click(screen.getByRole('button', { name: 'Save' }));
-      await act(() => {
-        renderComponent({ setFilters, toggleIsOpen });
-      });
+      await userEvent.type(pathInput, pathValue);
+      await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+      await renderComponent({ setFilters, toggleIsOpen });
     });
   });
 });
