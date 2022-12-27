@@ -21,7 +21,7 @@ public abstract class BasePage extends WebUtils {
   protected ElementsCollection allGridItems = $$x("//tr[@class]");
   protected String summaryCellLocator = "//div[contains(text(),'%s')]";
   protected String tableElementNameLocator = "//tbody//a[contains(text(),'%s')]";
-  protected String columnHeaderLocator = "//table//tr/th/div[text()='%s']";
+  protected String columnHeaderLocator = "//table//tr/th//div[text()='%s']";
 
   protected void waitUntilSpinnerDisappear() {
     log.debug("\nwaitUntilSpinnerDisappear");

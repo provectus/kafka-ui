@@ -24,7 +24,7 @@ public class BrokersList extends BasePage {
   }
 
   @Step
-  public BrokersList openBroker(String brokerId) {
+  public BrokersList openBroker(int brokerId) {
     getBrokerItem(brokerId).openItem();
     return this;
   }
@@ -67,9 +67,9 @@ public class BrokersList extends BasePage {
   }
 
   @Step
-  public BrokerGridItem getBrokerItem(String id){
+  public BrokerGridItem getBrokerItem(int id){
     return initGridItems().stream()
-        .filter(e ->e.getId().equals(id))
+        .filter(e ->e.getId() == id)
         .findFirst().orElse(null);
   }
 
@@ -91,8 +91,8 @@ public class BrokersList extends BasePage {
     }
 
     @Step
-    public String getId() {
-      return getIdElm().getText().trim();
+    public int getId() {
+      return Integer.parseInt(getIdElm().getText().trim());
     }
 
     @Step
