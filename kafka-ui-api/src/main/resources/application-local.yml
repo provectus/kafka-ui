@@ -34,7 +34,27 @@ kafka:
 spring:
   jmx:
     enabled: true
+  security:
+    oauth2:
+      client:
+        registration:
+          cognito:
+            clientId: xx
+            clientSecret: yy
+            scope: openid
+            client-name: cognito
+            provider: cognito
+            redirect-uri: http://localhost:8080/login/oauth2/code/cognito
+            authorization-grant-type: authorization_code
+        provider:
+          cognito:
+            issuer-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_M7cIUn1nj
+            jwk-set-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_M7cIUn1nj/.well-known/jwks.json
+            user-name-attribute: username
 auth:
   type: DISABLED
+
+roles.file: /tmp/roles.yml
+
 #server:
 #  port: 8080 #- Port in which kafka-ui will run.
