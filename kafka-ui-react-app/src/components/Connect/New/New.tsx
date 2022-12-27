@@ -65,7 +65,7 @@ const New: React.FC = () => {
   }, [connects, getValues, setValue]);
 
   const onSubmit = async (values: FormValues) => {
-    const connector = await mutation.mutateAsync({
+    const connector = await mutation.createResource({
       connectName: values.connectName,
       newConnector: {
         name: values.name,

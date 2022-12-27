@@ -14,10 +14,10 @@ public class TopPanel extends BasePage{
     protected SelenideElement discordBtn = $x("//a[contains(@href,'https://discord.com/invite')]");
 
     public List<SelenideElement> getAllVisibleElements() {
-        return Arrays.asList(kafkaLogo, kafkaVersion, logOutBtn, gitBtn, discordBtn);
+        return Arrays.asList(kafkaLogo, kafkaVersion, gitBtn, discordBtn);
     }
 
     public List<SelenideElement> getAllEnabledElements() {
-        return Arrays.asList(logOutBtn, gitBtn, discordBtn, kafkaLogo);
+        return Arrays.asList(gitBtn, discordBtn, kafkaLogo);
     }
 }

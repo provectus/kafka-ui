@@ -111,7 +111,7 @@ const formatTopicCreation = (form: TopicFormData): TopicCreation => {
     : topicsvalue;
 };
 
-export function useCreateTopic(clusterName: ClusterName) {
+export function useCreateTopicMutation(clusterName: ClusterName) {
   const client = useQueryClient();
   return useMutation(
     (data: TopicFormData) =>
@@ -128,6 +128,18 @@ export function useCreateTopic(clusterName: ClusterName) {
       },
     }
   );
+}
+
+// this will change later when we validate the request before
+export function useCreateTopic(clusterName: ClusterName) {
+  const mutate = useCreateTopicMutation(clusterName);
+
+  return {
+    createResource: async (param: TopicFormData) => {
+      return mutate.mutateAsync(param);
+    },
+    ...mutate,
+  };
 }
 
 const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {

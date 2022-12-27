@@ -1,8 +1,8 @@
 import React from 'react';
 import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 import { SchemaType, TopicMessageTimestampTypeEnum } from 'generated-sources';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 import * as S from './MessageContent.styled';
 
@@ -27,8 +27,6 @@ const MessageContent: React.FC<MessageContentProps> = ({
   timestamp,
   timestampType,
 }) => {
-  const formatTimestamp = useTimeFormat();
-
   const [activeTab, setActiveTab] = React.useState<Tab>('content');
 
   const activeTabContent = () => {

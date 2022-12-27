@@ -5,6 +5,7 @@ import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.InternalTopicConsumerGroup;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SortOrderDTO;
+import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import reactor.util.function.Tuples;
 public class ConsumerGroupService {
 
   private final AdminClientService adminClientService;
+  private final AccessControlService accessControlService;
 
   private Mono<List<InternalConsumerGroup>> getConsumerGroups(
       ReactiveAdminClient ac,
@@ -107,8 +109,7 @@ public class ConsumerGroupService {
       int perPage,
       @Nullable String search,
       ConsumerGroupOrderingDTO orderBy,
-      SortOrderDTO sortOrderDto
-  ) {
+      SortOrderDTO sortOrderDto) {
     var comparator = sortOrderDto.equals(SortOrderDTO.ASC)
         ? getPaginationComparator(orderBy)
         : getPaginationComparator(orderBy).reversed();
@@ -121,9 +122,14 @@ public class ConsumerGroupService {
                     .skip((long) (page - 1) * perPage)
                     .limit(perPage)
                     .collect(Collectors.toList())
-            ).map(cgs -> new ConsumerGroupsPage(
-                cgs,
-                (descriptions.size() / perPage) + (descriptions.size() % perPage == 0 ? 0 : 1))))
+            )
+                .flatMapMany(Flux::fromIterable)
+                .filterWhen(
+                    cg -> accessControlService.isConsumerGroupAccessible(cg.getGroupId(), cluster.getName()))
+                .collect(Collectors.toList())
+                .map(cgs -> new ConsumerGroupsPage(
+                    cgs,
+                    (descriptions.size() / perPage) + (descriptions.size() % perPage == 0 ? 0 : 1))))
     );
   }
 
