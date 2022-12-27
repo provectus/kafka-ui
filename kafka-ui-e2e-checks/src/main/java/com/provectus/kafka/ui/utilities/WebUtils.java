@@ -69,4 +69,13 @@ public class WebUtils {
     }
     return isSelected;
   }
+
+  public static boolean selectElement(SelenideElement element, boolean select){
+    if (select) {
+      if (!element.isSelected()) clickByJavaScript(element);
+    } else {
+      if (element.isSelected()) clickByJavaScript(element);
+    }
+    return true;
+  }
 }

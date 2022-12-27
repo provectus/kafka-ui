@@ -23,6 +23,7 @@ jest.mock('react-router-dom', () => ({
 jest.mock('lib/hooks/api/topics', () => ({
   useCreateTopic: jest.fn(),
 }));
+
 const renderComponent = (path: string) => {
   render(
     <Routes>
@@ -38,7 +39,7 @@ const createTopicMock = jest.fn();
 describe('New', () => {
   beforeEach(() => {
     (useCreateTopic as jest.Mock).mockImplementation(() => ({
-      mutateAsync: createTopicMock,
+      createResource: createTopicMock,
     }));
   });
   afterEach(() => {

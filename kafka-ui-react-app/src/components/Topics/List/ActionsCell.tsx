@@ -1,5 +1,5 @@
 import React from 'react';
-import { CleanUpPolicy, Topic } from 'generated-sources';
+import { Action, CleanUpPolicy, Topic, ResourceType } from 'generated-sources';
 import { CellContext } from '@tanstack/react-table';
 import ClusterContext from 'components/contexts/ClusterContext';
 import { ClusterNameRoute } from 'lib/paths';
@@ -14,6 +14,7 @@ import {
   useClearTopicMessages,
   useRecreateTopic,
 } from 'lib/hooks/api/topics';
+import { ActionDropdownItem } from 'components/common/ActionComponent';
 
 const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
   const { name, internal, cleanUpPolicy } = row.original;
@@ -36,11 +37,16 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
 
   return (
     <Dropdown disabled={disabled}>
-      <DropdownItem
+      <ActionDropdownItem
         disabled={isCleanupDisabled}
         onClick={clearTopicMessagesHandler}
         confirm="Are you sure want to clear topic messages?"
         danger
+        permission={{
+          resource: ResourceType.TOPIC,
+          action: Action.MESSAGES_DELETE,
+          value: name,
+        }}
       >
         Clear Messages
         <DropdownItemHint>
@@ -48,7 +54,7 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
           <br />
           with DELETE policy
         </DropdownItemHint>
-      </DropdownItem>
+      </ActionDropdownItem>
       <DropdownItem
         onClick={recreateTopic.mutateAsync}
         confirm={
@@ -60,7 +66,7 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
       >
         Recreate Topic
       </DropdownItem>
-      <DropdownItem
+      <ActionDropdownItem
         disabled={!isTopicDeletionAllowed}
         onClick={() => deleteTopic.mutateAsync(name)}
         confirm={
@@ -69,6 +75,11 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
           </>
         }
         danger
+        permission={{
+          resource: ResourceType.TOPIC,
+          action: Action.DELETE,
+          value: name,
+        }}
       >
         Remove Topic
         {!isTopicDeletionAllowed && (
@@ -78,7 +89,7 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
             configuration level
           </DropdownItemHint>
         )}
-      </DropdownItem>
+      </ActionDropdownItem>
     </Dropdown>
   );
 };
