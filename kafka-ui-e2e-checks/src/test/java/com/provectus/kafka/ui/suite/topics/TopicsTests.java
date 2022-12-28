@@ -489,7 +489,6 @@ public class TopicsTests extends BaseTest {
         .clickCopySelectedTopicBtn();
     assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isFalse();
     topicCreateEditForm
-        .waitUntilScreenReady()
         .setTopicName(topicToCopy.getName())
         .setNumberOfPartitions(topicToCopy.getNumberOfPartitions())
         .clickCreateTopicBtn();
