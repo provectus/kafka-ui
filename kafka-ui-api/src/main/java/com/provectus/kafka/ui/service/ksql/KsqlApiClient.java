@@ -4,9 +4,10 @@ import static ksql.KsqlGrammarParser.DefineVariableContext;
 import static ksql.KsqlGrammarParser.PrintTopicContext;
 import static ksql.KsqlGrammarParser.SingleStatementContext;
 import static ksql.KsqlGrammarParser.UndefineVariableContext;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.ksql.response.ResponseParser;
@@ -21,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
+import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -30,6 +33,8 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 public class KsqlApiClient {
+
+  private static final MimeType KQL_API_MIME_TYPE = MimeTypeUtils.parseMimeType("application/vnd.ksql.v1+json");
 
   private static final Set<Class<?>> UNSUPPORTED_STMT_TYPES = Set.of(
       PrintTopicContext.class,
@@ -78,14 +83,15 @@ public class KsqlApiClient {
             cluster.getKsqldbServer().getPassword()
         )
         .configureBufferSize(maxBuffSize)
-        .configureCodecs(codecs ->
-            codecs.customCodecs()
-                .register(
-                    new Jackson2JsonDecoder(
-                        new ObjectMapper(),
-                        // some ksqldb versions do not set content-type header in response,
-                        // but we still need to use JsonDecoder for it
-                        MimeTypeUtils.APPLICATION_OCTET_STREAM)))
+        .configureCodecs(codecs -> {
+          var mapper = new JsonMapper();
+          codecs.defaultCodecs()
+              .jackson2JsonEncoder(new Jackson2JsonEncoder(mapper, KQL_API_MIME_TYPE, APPLICATION_JSON));
+          // some ksqldb versions do not set content-type header in response,
+          // but we still need to use JsonDecoder for it
+          codecs.defaultCodecs()
+              .jackson2JsonDecoder(new Jackson2JsonDecoder(mapper, MimeTypeUtils.ALL));
+        })
         .build();
   }
 
@@ -101,8 +107,8 @@ public class KsqlApiClient {
     return webClient()
         .post()
         .uri(baseKsqlDbUri() + "/query")
-        .accept(MediaType.parseMediaType("application/vnd.ksql.v1+json"))
-        .contentType(MediaType.parseMediaType("application/vnd.ksql.v1+json"))
+        .accept(new MediaType(KQL_API_MIME_TYPE))
+        .contentType(new MediaType(KQL_API_MIME_TYPE))
         .bodyValue(ksqlRequest(ksql, streamProperties))
         .retrieve()
         .bodyToFlux(JsonNode.class)
@@ -131,8 +137,8 @@ public class KsqlApiClient {
     return webClient()
         .post()
         .uri(baseKsqlDbUri() + "/ksql")
-        .accept(MediaType.parseMediaType("application/vnd.ksql.v1+json"))
-        .contentType(MediaType.parseMediaType("application/json"))
+        .accept(new MediaType(KQL_API_MIME_TYPE))
+        .contentType(APPLICATION_JSON)
         .bodyValue(ksqlRequest(ksql, streamProperties))
         .exchangeToFlux(
             resp -> {

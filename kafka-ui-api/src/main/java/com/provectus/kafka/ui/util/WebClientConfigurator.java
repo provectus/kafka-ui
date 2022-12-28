@@ -34,12 +34,10 @@ public class WebClientConfigurator {
   }
 
   private static ObjectMapper defaultOM() {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.registerModule(new JavaTimeModule());
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    JsonNullableModule jnm = new JsonNullableModule();
-    mapper.registerModule(jnm);
-    return mapper;
+    return new ObjectMapper()
+        .registerModule(new JavaTimeModule())
+        .registerModule(new JsonNullableModule())
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
 
