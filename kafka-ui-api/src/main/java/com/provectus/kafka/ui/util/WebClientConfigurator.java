@@ -30,7 +30,7 @@ public class WebClientConfigurator {
   private final WebClient.Builder builder = WebClient.builder();
 
   public WebClientConfigurator() {
-    configureOM(defaultOM());
+    configureObjectMapper(defaultOM());
   }
 
   private static ObjectMapper defaultOM() {
@@ -117,7 +117,7 @@ public class WebClientConfigurator {
     return this;
   }
 
-  public WebClientConfigurator configureOM(ObjectMapper mapper) {
+  public WebClientConfigurator configureObjectMapper(ObjectMapper mapper) {
     builder.codecs(codecs -> {
       codecs.defaultCodecs()
           .jackson2JsonEncoder(new Jackson2JsonEncoder(mapper, MediaType.APPLICATION_JSON));

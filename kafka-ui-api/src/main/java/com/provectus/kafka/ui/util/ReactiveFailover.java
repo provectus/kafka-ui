@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.util;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ public class ReactiveFailover<T> {
   private final List<PublisherHolder<T>> publishers;
   private int currentIndex = 0;
 
-  private final Predicate<Throwable> failoverExeptionsPredicate;
+  private final Predicate<Throwable> failoverExceptionsPredicate;
   private final String noAvailablePublishersMsg;
 
   public static <T> ReactiveFailover<T> create(List<T> publishers,
@@ -46,13 +45,12 @@ public class ReactiveFailover<T> {
     );
   }
 
-  @VisibleForTesting
-  ReactiveFailover(List<PublisherHolder<T>> publishers,
+  private ReactiveFailover(List<PublisherHolder<T>> publishers,
                    Predicate<Throwable> failoverExceptionsPredicate,
                    String noAvailablePublishersMsg) {
     Preconditions.checkArgument(!publishers.isEmpty());
     this.publishers = publishers;
-    this.failoverExeptionsPredicate = failoverExceptionsPredicate;
+    this.failoverExceptionsPredicate = failoverExceptionsPredicate;
     this.noAvailablePublishersMsg = noAvailablePublishersMsg;
   }
 
@@ -67,7 +65,7 @@ public class ReactiveFailover<T> {
   private <V> Mono<V> mono(Function<T, Mono<V>> f, List<PublisherHolder<T>> candidates) {
     var publisher = candidates.get(0);
     return f.apply(publisher.get())
-        .onErrorResume(failoverExeptionsPredicate, th -> {
+        .onErrorResume(failoverExceptionsPredicate, th -> {
           publisher.markFailed();
           if (candidates.size() == 1) {
             return Mono.error(th);
@@ -91,7 +89,7 @@ public class ReactiveFailover<T> {
   private <V> Flux<V> flux(Function<T, Flux<V>> f, List<PublisherHolder<T>> candidates) {
     var publisher = candidates.get(0);
     return f.apply(publisher.get())
-        .onErrorResume(failoverExeptionsPredicate, th -> {
+        .onErrorResume(failoverExceptionsPredicate, th -> {
           publisher.markFailed();
           if (candidates.size() == 1) {
             return Flux.error(th);
