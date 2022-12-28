@@ -52,14 +52,13 @@ jobs:
           gh_pages: allure-results
           allure_report: allure-report
           subfolder: allure-results
-      - name: Deploy allure report to Github Pages
-        if: always()
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: allure-history
-          publish_branch: gh-pages
-          destination_dir: ./allure
+      - uses: jakejarvis/s3-sync-action@master
+        env:
+          AWS_S3_BUCKET: 'kafkaui-allure-reports'
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'eu-central-1'
+          SOURCE_DIR: 'allure-history/allure-results'
       - name: Post the link to allure report
         if: always()
         uses: Sibz/github-status-action@v1.1.6
@@ -68,7 +67,7 @@ jobs:
           context: "Test report"
           state: "success"
           sha: ${{ github.event.pull_request.head.sha  || github.sha }}
-          target_url: https://${{ github.repository_owner }}.github.io/kafka-ui/allure/allure-results/${{ github.run_number }}
+          target_url: https://kafkaui-allure-reports.s3.eu-central-1.amazonaws.com/${{ github.run_number }}/index.html
       - name: Dump docker logs on failure
         if: failure()
         uses: jwalton/gh-docker-logs@v2.2.1
