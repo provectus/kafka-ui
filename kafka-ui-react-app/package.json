@@ -17,7 +17,7 @@
     "@tanstack/react-table": "^8.5.10",
     "@testing-library/react": "^13.2.0",
     "@types/testing-library__jest-dom": "^5.14.5",
-    "@vitejs/plugin-react": "^2.0.0",
+    "@vitejs/plugin-react": "^3.0.0",
     "ace-builds": "^1.7.1",
     "ajv": "^8.6.3",
     "babel-jest": "^29.0.3",
