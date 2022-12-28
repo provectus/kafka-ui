@@ -11,10 +11,11 @@ import com.provectus.kafka.ui.sr.model.CompatibilityConfig;
 import com.provectus.kafka.ui.sr.model.CompatibilityLevelChange;
 import com.provectus.kafka.ui.sr.model.NewSubject;
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
+import com.provectus.kafka.ui.util.FailoverOperations;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.security.oauthbearer.secured.ValidateException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -42,23 +44,29 @@ public class SchemaRegistryService {
     Compatibility compatibility;
   }
 
-  private KafkaSrClientApi api(KafkaCluster cluster) {
-    var sr = cluster.getSchemaRegistry();
-    var webClient = new WebClientConfigurator()
-        .configureSsl(
-            sr.getKeystoreLocation(),
-            sr.getKeystorePassword(),
-            sr.getTruststoreLocation(),
-            sr.getTruststorePassword()
-        )
-        .configureBasicAuth(
-            sr.getUsername(),
-            sr.getPassword()
-        )
-        .build();
-    return new KafkaSrClientApi(
-        new ApiClient(webClient, null, null)
-            .setBasePath(cluster.getSchemaRegistry().getUri()));
+  private FailoverOperations<KafkaSrClientApi> api(KafkaCluster cluster) {
+    return FailoverOperations.create(
+        cluster.getSchemaRegistry().getUrl().stream().toList(),
+        url -> {
+          var sr = cluster.getSchemaRegistry();
+          var webClient = new WebClientConfigurator()
+              .configureSsl(
+                  sr.getKeystoreLocation(),
+                  sr.getKeystorePassword(),
+                  sr.getTruststoreLocation(),
+                  sr.getTruststorePassword()
+              )
+              .configureBasicAuth(
+                  sr.getUsername(),
+                  sr.getPassword()
+              )
+              .build();
+          return new KafkaSrClientApi(
+              new ApiClient(webClient, null, null).setBasePath(url));
+        },
+        error -> error instanceof WebClientRequestException && error.getCause() instanceof IOException,
+        "No live schemaRegistry instances found"
+    );
   }
 
   public Mono<List<SubjectWithCompatibilityLevel>> getAllLatestVersionSchemas(KafkaCluster cluster,
@@ -70,7 +78,7 @@ public class SchemaRegistryService {
 
   public Mono<List<String>> getAllSubjectNames(KafkaCluster cluster) {
     return api(cluster)
-        .getAllSubjectNames(null, false)
+        .mono(c -> c.getAllSubjectNames(null, false))
         .flatMapIterable(this::parseSubjectListString)
         .collectList();
   }
@@ -88,7 +96,7 @@ public class SchemaRegistryService {
   }
 
   private Flux<Integer> getSubjectVersions(KafkaCluster cluster, String schemaName) {
-    return api(cluster).getSubjectVersions(schemaName);
+    return api(cluster).flux(c -> c.getSubjectVersions(schemaName));
   }
 
   public Mono<SubjectWithCompatibilityLevel> getSchemaSubjectByVersion(KafkaCluster cluster,
@@ -105,7 +113,7 @@ public class SchemaRegistryService {
   private Mono<SubjectWithCompatibilityLevel> getSchemaSubject(KafkaCluster cluster, String schemaName,
                                                                String version) {
     return api(cluster)
-        .getSubjectVersion(schemaName, version)
+        .mono(c -> c.getSubjectVersion(schemaName, version))
         .zipWith(getSchemaCompatibilityInfoOrGlobal(cluster, schemaName))
         .map(t -> new SubjectWithCompatibilityLevel(t.getT1(), t.getT2()))
         .onErrorResume(WebClientResponseException.NotFound.class, th -> Mono.empty());
@@ -120,11 +128,11 @@ public class SchemaRegistryService {
   }
 
   private Mono<Void> deleteSchemaSubject(KafkaCluster cluster, String schemaName, String version) {
-    return api(cluster).deleteSubjectVersion(schemaName, version, false);
+    return api(cluster).mono(c -> c.deleteSubjectVersion(schemaName, version, false));
   }
 
   public Mono<Void> deleteSchemaSubjectEntirely(KafkaCluster cluster, String schemaName) {
-    return api(cluster).deleteAllSubjectVersions(schemaName, false);
+    return api(cluster).mono(c -> c.deleteAllSubjectVersions(schemaName, false));
   }
 
   /**
@@ -135,7 +143,7 @@ public class SchemaRegistryService {
                                                                String subject,
                                                                NewSubject newSchemaSubject) {
     return api(cluster)
-        .registerNewSchema(subject, newSchemaSubject)
+        .mono(c -> c.registerNewSchema(subject, newSchemaSubject))
         .onErrorMap(WebClientResponseException.Conflict.class, th -> new ValidateException("Incompatible schema"))
         .onErrorMap(WebClientResponseException.UnprocessableEntity.class, th -> new ValidateException("Invalid schema"))
         .then(getLatestSchemaVersionBySubject(cluster, subject));
@@ -144,28 +152,30 @@ public class SchemaRegistryService {
   public Mono<Void> updateSchemaCompatibility(KafkaCluster cluster,
                                               String schemaName,
                                               Compatibility compatibility) {
-    return api(cluster).updateSubjectCompatibilityLevel(
-        schemaName, new CompatibilityLevelChange().compatibility(compatibility)).then();
+    return api(cluster)
+        .mono(c -> c.updateSubjectCompatibilityLevel(
+            schemaName, new CompatibilityLevelChange().compatibility(compatibility)))
+        .then();
   }
 
   public Mono<Void> updateGlobalSchemaCompatibility(KafkaCluster cluster,
                                                     Compatibility compatibility) {
     return api(cluster)
-        .updateGlobalCompatibilityLevel(new CompatibilityLevelChange().compatibility(compatibility))
+        .mono(c -> c.updateGlobalCompatibilityLevel(new CompatibilityLevelChange().compatibility(compatibility)))
         .then();
   }
 
   public Mono<Compatibility> getSchemaCompatibilityLevel(KafkaCluster cluster,
                                                          String schemaName) {
     return api(cluster)
-        .getSubjectCompatibilityLevel(schemaName, true)
+        .mono(c -> c.getSubjectCompatibilityLevel(schemaName, true))
         .map(CompatibilityConfig::getCompatibilityLevel)
         .onErrorResume(error -> Mono.empty());
   }
 
   public Mono<Compatibility> getGlobalSchemaCompatibilityLevel(KafkaCluster cluster) {
     return api(cluster)
-        .getGlobalCompatibilityLevel()
+        .mono(KafkaSrClientApi::getGlobalCompatibilityLevel)
         .map(CompatibilityConfig::getCompatibilityLevel);
   }
 
@@ -178,6 +188,6 @@ public class SchemaRegistryService {
   public Mono<CompatibilityCheckResponse> checksSchemaCompatibility(KafkaCluster cluster,
                                                                     String schemaName,
                                                                     NewSubject newSchemaSubject) {
-    return api(cluster).checkSchemaCompatibility(schemaName, LATEST, true, newSchemaSubject);
+    return api(cluster).mono(c -> c.checkSchemaCompatibility(schemaName, LATEST, true, newSchemaSubject));
   }
 }
