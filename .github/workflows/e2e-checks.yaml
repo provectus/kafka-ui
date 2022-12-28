@@ -68,7 +68,7 @@ jobs:
           context: "Test report"
           state: "success"
           sha: ${{ github.event.pull_request.head.sha  || github.sha }}
-          target_url: https://kafkaui-allure-reports.s3.eu-central-1.amazonaws.com/${{ github.run_number }}/index.html
+          target_url: http://kafkaui-allure-reports.s3-website.eu-central-1.amazonaws.com/${{ github.run_number }}
       - name: Dump docker logs on failure
         if: failure()
         uses: jwalton/gh-docker-logs@v2.2.1
