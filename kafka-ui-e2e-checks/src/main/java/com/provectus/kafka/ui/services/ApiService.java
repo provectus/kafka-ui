@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.helpers;
+package com.provectus.kafka.ui.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.api.ApiClient;
@@ -13,7 +13,7 @@ import com.provectus.kafka.ui.api.model.TopicCreation;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.settings.Source;
+import com.provectus.kafka.ui.settings.BaseSource;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -26,11 +26,11 @@ import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
 
 @Slf4j
-public class ApiHelper {
+public class ApiService {
 
     int partitions = 1;
     int replicationFactor = 1;
-    String baseURL = Source.BASE_API_URL;
+    String baseURL = BaseSource.BASE_API_URL;
 
 
     @SneakyThrows
