@@ -1,18 +1,27 @@
 package com.provectus.kafka.ui.base;
 
+import static com.codeborne.selenide.Selenide.clearBrowserCookies;
+import static com.codeborne.selenide.Selenide.clearBrowserLocalStorage;
+import static com.codeborne.selenide.Selenide.refresh;
+import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
+import static com.provectus.kafka.ui.settings.Source.BASE_WEB_URL;
+
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
-import com.provectus.kafka.ui.utilities.qaseIoUtils.TestCaseGenerator;
-import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.Allure;
 import io.qase.api.annotation.Step;
+import java.io.ByteArrayInputStream;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -22,15 +31,6 @@ import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import static com.provectus.kafka.ui.base.Setup.*;
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
-import static com.provectus.kafka.ui.settings.Source.BASE_WEB_URL;
 
 @Slf4j
 @DisplayNameGeneration(DisplayNameGenerator.class)
@@ -78,29 +78,6 @@ public class BaseTest extends Facade {
     }
   }
 
-  static {
-    if (!new File("./.env").exists()) {
-      try {
-        FileUtils.copyFile(new File(".env.example"), new File(".env"));
-      } catch (IOException e) {
-        log.error("couldn't copy .env.example to .env. Please add .env");
-        e.printStackTrace();
-      }
-    }
-    Dotenv.load().entries().forEach(env -> System.setProperty(env.getKey(), env.getValue()));
-    if (Config.CLEAR_REPORTS_DIR) {
-      clearReports();
-    }
-    setup();
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      if (TestCaseGenerator.FAILED) {
-        log.error(
-                "Tests FAILED because some problem with @CaseId annotation. Verify that all tests annotated with @CaseId and Id is correct!");
-        Runtime.getRuntime().halt(100500);
-      }
-    }));
-  }
-
   @AfterAll
   public static void tearDown() {
     if (webDriverContainer.isRunning()) {
@@ -118,7 +95,16 @@ public class BaseTest extends Facade {
   }
 
   @Step
-  protected void navigateToTopics(){
+  public static void browserClear() {
+    log.debug("browserClear");
+    clearBrowserLocalStorage();
+    clearBrowserCookies();
+    refresh();
+    log.debug("=> DONE");
+  }
+
+  @Step
+  protected void navigateToTopics() {
     naviSideBar
         .openSideMenu(TOPICS);
     topicsList
