@@ -66,27 +66,27 @@ public class KsqlApiClient {
   }
 
   private WebClient webClient() {
-      return new WebClientConfigurator()
-          .configureSsl(
-              cluster.getKsqldbServer().getKeystoreLocation(),
-              cluster.getKsqldbServer().getKeystorePassword(),
-              cluster.getKsqldbServer().getTruststoreLocation(),
-              cluster.getKsqldbServer().getTruststorePassword()
-          )
-          .configureBasicAuth(
-              cluster.getKsqldbServer().getUsername(),
-              cluster.getKsqldbServer().getPassword()
-          )
-          .configureBufferSize(maxBuffSize)
-          .configureCodecs(codecs ->
-              codecs.customCodecs()
-                  .register(
-                      new Jackson2JsonDecoder(
-                          new ObjectMapper(),
-                          // some ksqldb versions do not set content-type header in response,
-                          // but we still need to use JsonDecoder for it
-                          MimeTypeUtils.APPLICATION_OCTET_STREAM)))
-          .build();
+    return new WebClientConfigurator()
+        .configureSsl(
+            cluster.getKsqldbServer().getKeystoreLocation(),
+            cluster.getKsqldbServer().getKeystorePassword(),
+            cluster.getKsqldbServer().getTruststoreLocation(),
+            cluster.getKsqldbServer().getTruststorePassword()
+        )
+        .configureBasicAuth(
+            cluster.getKsqldbServer().getUsername(),
+            cluster.getKsqldbServer().getPassword()
+        )
+        .configureBufferSize(maxBuffSize)
+        .configureCodecs(codecs ->
+            codecs.customCodecs()
+                .register(
+                    new Jackson2JsonDecoder(
+                        new ObjectMapper(),
+                        // some ksqldb versions do not set content-type header in response,
+                        // but we still need to use JsonDecoder for it
+                        MimeTypeUtils.APPLICATION_OCTET_STREAM)))
+        .build();
   }
 
   private String baseKsqlDbUri() {

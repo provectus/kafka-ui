@@ -36,7 +36,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
   @Override
   protected KafkaCluster getCluster(String clusterName) {
     var c = super.getCluster(clusterName);
-    if (c.getSchemaRegistry() == null) {
+    if (c.getSchemaRegistryClient() == null) {
       throw new ValidationException("Schema Registry is not set for cluster " + clusterName);
     }
     return c;

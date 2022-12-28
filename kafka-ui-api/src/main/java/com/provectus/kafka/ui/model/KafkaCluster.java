@@ -1,7 +1,9 @@
 package com.provectus.kafka.ui.model;
 
 import com.provectus.kafka.ui.service.masking.DataMasking;
+import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
 import com.provectus.kafka.ui.util.PollingThrottler;
+import com.provectus.kafka.ui.util.ReactiveFailover;
 import java.util.List;
 import java.util.Properties;
 import java.util.function.Supplier;
@@ -17,7 +19,6 @@ public class KafkaCluster {
   private final String name;
   private final String version;
   private final String bootstrapServers;
-  private final InternalSchemaRegistry schemaRegistry;
   private final InternalKsqlServer ksqldbServer;
   private final List<KafkaConnectCluster> kafkaConnect;
   private final Properties properties;
@@ -26,4 +27,5 @@ public class KafkaCluster {
   private final MetricsConfig metricsConfig;
   private final DataMasking masking;
   private final Supplier<PollingThrottler> throttler;
+  private final ReactiveFailover<KafkaSrClientApi> schemaRegistryClient;
 }

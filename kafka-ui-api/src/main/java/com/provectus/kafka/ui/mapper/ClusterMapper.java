@@ -11,7 +11,6 @@ import com.provectus.kafka.ui.model.ClusterStatsDTO;
 import com.provectus.kafka.ui.model.ConfigSourceDTO;
 import com.provectus.kafka.ui.model.ConfigSynonymDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
-import com.provectus.kafka.ui.model.FailoverUrlList;
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalBroker;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
@@ -20,7 +19,6 @@ import com.provectus.kafka.ui.model.InternalClusterState;
 import com.provectus.kafka.ui.model.InternalKsqlServer;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
-import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -34,11 +32,17 @@ import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.service.masking.DataMasking;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
+import com.provectus.kafka.ui.sr.ApiClient;
+import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
 import com.provectus.kafka.ui.util.PollingThrottler;
+import com.provectus.kafka.ui.util.ReactiveFailover;
+import com.provectus.kafka.ui.util.WebClientConfigurator;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -46,6 +50,7 @@ import org.apache.kafka.clients.admin.ConfigEntry;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 @Mapper(componentModel = "spring")
 public interface ClusterMapper {
@@ -53,7 +58,7 @@ public interface ClusterMapper {
   ClusterDTO toCluster(InternalClusterState clusterState);
 
   @Mapping(target = "properties", source = "properties", qualifiedByName = "setProperties")
-  @Mapping(target = "schemaRegistry", source = ".", qualifiedByName = "setSchemaRegistry")
+  @Mapping(target = "schemaRegistryClient", source = ".", qualifiedByName = "schemaRegistryClient")
   @Mapping(target = "ksqldbServer", source = ".", qualifiedByName = "setKsqldbServer")
   @Mapping(target = "metricsConfig", source = "metrics")
   @Mapping(target = "throttler", source = ".", qualifiedByName = "createClusterThrottler")
@@ -103,35 +108,27 @@ public interface ClusterMapper {
 
   BrokerDTO toBrokerDto(InternalBroker broker);
 
-  @Named("setSchemaRegistry")
-  default InternalSchemaRegistry setSchemaRegistry(ClustersProperties.Cluster clusterProperties) {
-    if (clusterProperties == null
-        || clusterProperties.getSchemaRegistry() == null) {
+  @Named("schemaRegistryClient")
+  default ReactiveFailover<KafkaSrClientApi> schemaRegistryClient(ClustersProperties.Cluster clusterProperties) {
+    if (clusterProperties.getSchemaRegistry() == null) {
       return null;
     }
-
-    InternalSchemaRegistry.InternalSchemaRegistryBuilder internalSchemaRegistry =
-        InternalSchemaRegistry.builder();
-
-    internalSchemaRegistry.url(
-        clusterProperties.getSchemaRegistry() != null
-            ? new FailoverUrlList(Arrays.asList(clusterProperties.getSchemaRegistry().split(",")))
-            : new FailoverUrlList(Collections.emptyList())
+    return ReactiveFailover.create(
+        Arrays.asList(clusterProperties.getSchemaRegistry().split(",")),
+        url -> {
+          var auth = Optional.ofNullable(clusterProperties.getSchemaRegistryAuth())
+              .orElse(new ClustersProperties.SchemaRegistryAuth());
+          var webClient = new WebClientConfigurator()
+              .configureSsl(clusterProperties.getSchemaRegistrySsl())
+              .configureBasicAuth(auth.getUsername(), auth.getPassword())
+              .build();
+          return new KafkaSrClientApi(
+              new ApiClient(webClient, null, null).setBasePath(url));
+        },
+        error -> error instanceof WebClientRequestException && error.getCause() instanceof IOException,
+        "No live schemaRegistry instances found",
+        ReactiveFailover.DEFAULT_RETRY_GRACE_PERIOD_MS
     );
-
-    if (clusterProperties.getSchemaRegistryAuth() != null) {
-      internalSchemaRegistry.username(clusterProperties.getSchemaRegistryAuth().getUsername());
-      internalSchemaRegistry.password(clusterProperties.getSchemaRegistryAuth().getPassword());
-    }
-
-    if (clusterProperties.getSchemaRegistrySsl() != null) {
-      internalSchemaRegistry.keystoreLocation(clusterProperties.getSchemaRegistrySsl().getKeystoreLocation());
-      internalSchemaRegistry.keystorePassword(clusterProperties.getSchemaRegistrySsl().getKeystorePassword());
-      internalSchemaRegistry.truststoreLocation(clusterProperties.getSchemaRegistrySsl().getTruststoreLocation());
-      internalSchemaRegistry.truststorePassword(clusterProperties.getSchemaRegistrySsl().getTruststorePassword());
-    }
-
-    return internalSchemaRegistry.build();
   }
 
   @Named("setKsqldbServer")

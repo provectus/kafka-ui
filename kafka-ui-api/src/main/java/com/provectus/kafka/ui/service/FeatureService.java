@@ -37,7 +37,7 @@ public class FeatureService {
       features.add(Mono.just(Feature.KSQL_DB));
     }
 
-    if (cluster.getSchemaRegistry() != null) {
+    if (cluster.getSchemaRegistryClient() != null) {
       features.add(Mono.just(Feature.SCHEMA_REGISTRY));
     }
 

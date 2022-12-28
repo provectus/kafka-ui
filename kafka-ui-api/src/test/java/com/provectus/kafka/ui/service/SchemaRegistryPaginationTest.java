@@ -8,9 +8,11 @@ import static org.mockito.Mockito.when;
 
 import com.provectus.kafka.ui.controller.SchemasController;
 import com.provectus.kafka.ui.mapper.KafkaSrMapperImpl;
-import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
+import com.provectus.kafka.ui.sr.model.Compatibility;
+import com.provectus.kafka.ui.sr.model.SchemaSubject;
+import com.provectus.kafka.ui.util.ReactiveFailover;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +37,9 @@ public class SchemaRegistryPaginationTest {
     when(clustersStorage.getClusterByName(isA(String.class)))
             .thenReturn(Optional.of(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME)));
     when(schemaRegistryService.getLatestSchemaVersionBySubject(isA(KafkaCluster.class), isA(String.class)))
-            .thenAnswer(a -> Mono.just(new SchemaSubjectDTO().subject(a.getArgument(1))));
+            .thenAnswer(a -> Mono.just(
+                new SchemaRegistryService.SubjectWithCompatibilityLevel(
+                    new SchemaSubject().subject(a.getArgument(1)), Compatibility.FULL)));
     this.controller.setClustersStorage(clustersStorage);
   }
 
@@ -113,7 +117,7 @@ public class SchemaRegistryPaginationTest {
   private KafkaCluster buildKafkaCluster(String clusterName) {
     return KafkaCluster.builder()
             .name(clusterName)
-            .schemaRegistry(InternalSchemaRegistry.builder().build())
+            .schemaRegistryClient(mock(ReactiveFailover.class))
             .build();
   }
 }

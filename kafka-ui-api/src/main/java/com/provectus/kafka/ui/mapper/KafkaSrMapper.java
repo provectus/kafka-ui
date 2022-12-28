@@ -27,12 +27,11 @@ public interface KafkaSrMapper {
         .compatibilityLevel(s.getCompatibility().toString());
   }
 
-  NewSubject fromDto(NewSchemaSubjectDTO subjectDTO);
-
   CompatibilityCheckResponseDTO toDto(CompatibilityCheckResponse ccr);
-
-  Compatibility fromDto(CompatibilityLevelDTO.CompatibilityEnum dtoEnum);
 
   CompatibilityLevelDTO.CompatibilityEnum toDto(Compatibility compatibility);
 
+  NewSubject fromDto(NewSchemaSubjectDTO subjectDto);
+
+  Compatibility fromDto(CompatibilityLevelDTO.CompatibilityEnum dtoEnum);
 }

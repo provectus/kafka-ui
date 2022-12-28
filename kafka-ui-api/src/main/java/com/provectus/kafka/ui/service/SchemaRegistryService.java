@@ -2,8 +2,10 @@ package com.provectus.kafka.ui.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.provectus.kafka.ui.exception.SchemaCompatibilityException;
+import com.provectus.kafka.ui.exception.SchemaNotFoundException;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.sr.ApiClient;
 import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
 import com.provectus.kafka.ui.sr.model.Compatibility;
 import com.provectus.kafka.ui.sr.model.CompatibilityCheckResponse;
@@ -11,7 +13,7 @@ import com.provectus.kafka.ui.sr.model.CompatibilityConfig;
 import com.provectus.kafka.ui.sr.model.CompatibilityLevelChange;
 import com.provectus.kafka.ui.sr.model.NewSubject;
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
-import com.provectus.kafka.ui.util.FailoverOperations;
+import com.provectus.kafka.ui.util.ReactiveFailover;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
 import java.io.IOException;
 import java.util.List;
@@ -22,9 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.security.oauthbearer.secured.ValidateException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -44,29 +44,8 @@ public class SchemaRegistryService {
     Compatibility compatibility;
   }
 
-  private FailoverOperations<KafkaSrClientApi> api(KafkaCluster cluster) {
-    return FailoverOperations.create(
-        cluster.getSchemaRegistry().getUrl().stream().toList(),
-        url -> {
-          var sr = cluster.getSchemaRegistry();
-          var webClient = new WebClientConfigurator()
-              .configureSsl(
-                  sr.getKeystoreLocation(),
-                  sr.getKeystorePassword(),
-                  sr.getTruststoreLocation(),
-                  sr.getTruststorePassword()
-              )
-              .configureBasicAuth(
-                  sr.getUsername(),
-                  sr.getPassword()
-              )
-              .build();
-          return new KafkaSrClientApi(
-              new ApiClient(webClient, null, null).setBasePath(url));
-        },
-        error -> error instanceof WebClientRequestException && error.getCause() instanceof IOException,
-        "No live schemaRegistry instances found"
-    );
+  private ReactiveFailover<KafkaSrClientApi> api(KafkaCluster cluster) {
+    return cluster.getSchemaRegistryClient();
   }
 
   public Mono<List<SubjectWithCompatibilityLevel>> getAllLatestVersionSchemas(KafkaCluster cluster,
@@ -116,7 +95,7 @@ public class SchemaRegistryService {
         .mono(c -> c.getSubjectVersion(schemaName, version))
         .zipWith(getSchemaCompatibilityInfoOrGlobal(cluster, schemaName))
         .map(t -> new SubjectWithCompatibilityLevel(t.getT1(), t.getT2()))
-        .onErrorResume(WebClientResponseException.NotFound.class, th -> Mono.empty());
+        .onErrorResume(WebClientResponseException.NotFound.class, th -> Mono.error(new SchemaNotFoundException()));
   }
 
   public Mono<Void> deleteSchemaSubjectByVersion(KafkaCluster cluster, String schemaName, Integer version) {
@@ -144,8 +123,10 @@ public class SchemaRegistryService {
                                                                NewSubject newSchemaSubject) {
     return api(cluster)
         .mono(c -> c.registerNewSchema(subject, newSchemaSubject))
-        .onErrorMap(WebClientResponseException.Conflict.class, th -> new ValidateException("Incompatible schema"))
-        .onErrorMap(WebClientResponseException.UnprocessableEntity.class, th -> new ValidateException("Invalid schema"))
+        .onErrorMap(WebClientResponseException.Conflict.class,
+            th -> new SchemaCompatibilityException())
+        .onErrorMap(WebClientResponseException.UnprocessableEntity.class,
+            th -> new ValidationException("Invalid schema"))
         .then(getLatestSchemaVersionBySubject(cluster, subject));
   }
 

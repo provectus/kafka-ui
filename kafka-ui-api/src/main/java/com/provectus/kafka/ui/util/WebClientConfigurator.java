@@ -127,7 +127,7 @@ public class WebClientConfigurator {
     return this;
   }
 
-  public WebClientConfigurator configureCodecs(Consumer<ClientCodecConfigurer> configurer){
+  public WebClientConfigurator configureCodecs(Consumer<ClientCodecConfigurer> configurer) {
     builder.codecs(configurer);
     return this;
   }
