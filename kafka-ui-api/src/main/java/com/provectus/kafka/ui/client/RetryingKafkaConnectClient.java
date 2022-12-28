@@ -84,25 +84,19 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
     }
 
     public static WebClient buildWebClient(DataSize maxBuffSize, KafkaConnectCluster config) {
-      try {
-        return new WebClientConfigurator()
-            .configureSsl(
-                config.getKeystoreLocation(),
-                config.getKeystorePassword(),
-                config.getTruststoreLocation(),
-                config.getTruststorePassword()
-            )
-            .configureBasicAuth(
-                config.getUserName(),
-                config.getPassword()
-            )
-            .configureBufferSize(maxBuffSize)
-            .build();
-
-      } catch (Exception e) {
-        throw new IllegalStateException(
-            "cannot create TLS configuration for kafka-connect cluster " + config.getName(), e);
-      }
+      return new WebClientConfigurator()
+          .configureSsl(
+              config.getKeystoreLocation(),
+              config.getKeystorePassword(),
+              config.getTruststoreLocation(),
+              config.getTruststorePassword()
+          )
+          .configureBasicAuth(
+              config.getUserName(),
+              config.getPassword()
+          )
+          .configureBufferSize(maxBuffSize)
+          .build();
     }
 
     @Override
