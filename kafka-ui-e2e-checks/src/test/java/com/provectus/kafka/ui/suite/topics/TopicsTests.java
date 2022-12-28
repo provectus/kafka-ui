@@ -489,16 +489,19 @@ public class TopicsTests extends BaseTest {
         .clickCopySelectedTopicBtn();
     assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isFalse();
     topicCreateEditForm
+        .waitUntilScreenReady()
         .setTopicName(topicToCopy.getName())
-        .setNumberOfPartitions(topicToCopy.getNumberOfPartitions());
-    assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isTrue();
-    topicCreateEditForm
+        .setNumberOfPartitions(topicToCopy.getNumberOfPartitions())
         .clickCreateTopicBtn();
-    assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS, "Topic successfully created."))
-        .as("isAlertWithMessageVisible()").isTrue();
     topicDetails
         .waitUntilScreenReady();
     TOPIC_LIST.add(topicToCopy);
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS, "Topic successfully created."))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicDetails.isTopicHeaderVisible(topicToCopy.getName()))
+        .as("isTopicHeaderVisible()").isTrue();
+    softly.assertAll();
   }
 
   @AfterAll
