@@ -11,7 +11,9 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
+import io.qameta.allure.Allure;
 import io.qase.api.annotation.Step;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.SoftAssertions;
@@ -21,6 +23,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.Testcontainers;
@@ -84,6 +88,8 @@ public class BaseTest extends Facade {
 
   @AfterEach
   public void afterMethod() {
+    Allure.addAttachment("Screenshot", new ByteArrayInputStream(((TakesScreenshot)
+        webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
     clearBrowserLocalStorage();
     clearBrowserCookies();
     refresh();
