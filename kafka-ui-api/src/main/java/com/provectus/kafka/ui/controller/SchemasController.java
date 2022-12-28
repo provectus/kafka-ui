@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.controller;
 import com.provectus.kafka.ui.api.SchemasApi;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.KafkaSrMapper;
+import com.provectus.kafka.ui.mapper.KafkaSrMapperImpl;
 import com.provectus.kafka.ui.model.CompatibilityCheckResponseDTO;
 import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -32,7 +33,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
 
   private static final Integer DEFAULT_PAGE_SIZE = 25;
 
-  private final KafkaSrMapper kafkaSrMapper;
+  private final KafkaSrMapper kafkaSrMapper = new KafkaSrMapperImpl();
 
   private final SchemaRegistryService schemaRegistryService;
   private final AccessControlService accessControlService;

@@ -7,11 +7,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.provectus.kafka.ui.controller.SchemasController;
-import com.provectus.kafka.ui.mapper.KafkaSrMapperImpl;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
 import com.provectus.kafka.ui.sr.model.Compatibility;
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
+import com.provectus.kafka.ui.util.AccessControlServiceMock;
 import com.provectus.kafka.ui.util.ReactiveFailover;
 import java.util.Comparator;
 import java.util.List;
@@ -24,22 +24,24 @@ public class SchemaRegistryPaginationTest {
 
   private static final String LOCAL_KAFKA_CLUSTER_NAME = "local";
 
-  private final SchemaRegistryService schemaRegistryService = mock(SchemaRegistryService.class);
-  private final ClustersStorage clustersStorage = mock(ClustersStorage.class);
-
-  private final SchemasController controller = new SchemasController(new KafkaSrMapperImpl(), schemaRegistryService);
+  private SchemasController controller;
 
   private void init(List<String> subjects) {
+    ClustersStorage clustersStorage = mock(ClustersStorage.class);
+    when(clustersStorage.getClusterByName(isA(String.class)))
+        .thenReturn(Optional.of(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME)));
+
+    SchemaRegistryService schemaRegistryService = mock(SchemaRegistryService.class);
     when(schemaRegistryService.getAllSubjectNames(isA(KafkaCluster.class)))
                 .thenReturn(Mono.just(subjects));
     when(schemaRegistryService
             .getAllLatestVersionSchemas(isA(KafkaCluster.class), anyList())).thenCallRealMethod();
-    when(clustersStorage.getClusterByName(isA(String.class)))
-            .thenReturn(Optional.of(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME)));
     when(schemaRegistryService.getLatestSchemaVersionBySubject(isA(KafkaCluster.class), isA(String.class)))
             .thenAnswer(a -> Mono.just(
                 new SchemaRegistryService.SubjectWithCompatibilityLevel(
                     new SchemaSubject().subject(a.getArgument(1)), Compatibility.FULL)));
+
+    this.controller = new SchemasController(schemaRegistryService, new AccessControlServiceMock().getMock());
     this.controller.setClustersStorage(clustersStorage);
   }
 
