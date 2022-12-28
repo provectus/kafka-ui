@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.base;
 
-import com.provectus.kafka.ui.helpers.ApiHelper;
+import com.provectus.kafka.ui.services.ApiService;
 import com.provectus.kafka.ui.pages.NaviSideBar;
 import com.provectus.kafka.ui.pages.TopPanel;
 import com.provectus.kafka.ui.pages.brokers.BrokersConfigTab;
@@ -21,7 +21,7 @@ import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.pages.topic.TopicsList;
 
 public abstract class Facade {
-    protected ApiHelper apiHelper = new ApiHelper();
+    protected ApiService apiService = new ApiService();
     protected ConnectorCreateForm connectorCreateForm = new ConnectorCreateForm();
     protected KafkaConnectList kafkaConnectList = new KafkaConnectList();
     protected ConnectorDetails connectorDetails = new ConnectorDetails();
