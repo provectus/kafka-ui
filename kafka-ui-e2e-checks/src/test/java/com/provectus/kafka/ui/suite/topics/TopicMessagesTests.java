@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.suite.topics;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
-import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+import static com.provectus.kafka.ui.settings.BaseSource.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
@@ -38,7 +38,7 @@ public class TopicMessagesTests extends BaseTest {
   @BeforeAll
   public void beforeAll() {
     TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES));
-    TOPIC_LIST.forEach(topic -> apiHelper.createTopic(CLUSTER_NAME, topic.getName()));
+    TOPIC_LIST.forEach(topic -> apiService.createTopic(CLUSTER_NAME, topic.getName()));
   }
 
   @DisplayName("produce message")
@@ -136,6 +136,6 @@ public class TopicMessagesTests extends BaseTest {
 
   @AfterAll
   public void afterAll() {
-    TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
+    TOPIC_LIST.forEach(topic -> apiService.deleteTopic(CLUSTER_NAME, topic.getName()));
   }
 }

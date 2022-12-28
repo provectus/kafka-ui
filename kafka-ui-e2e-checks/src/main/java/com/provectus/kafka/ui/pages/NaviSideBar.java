@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.pages;
 
 import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+import static com.provectus.kafka.ui.settings.BaseSource.CLUSTER_NAME;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
