@@ -45,7 +45,7 @@
         <dependency>
             <groupId>com.provectus</groupId>
             <artifactId>kafka-ui-serde-api</artifactId>
-            <version>${project.version}</version>
+            <version>${kafka-ui-serde-api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
@@ -306,6 +306,7 @@
                         </configuration>
                     </execution>
                 </executions>
+
             </plugin>
             <plugin>
                 <groupId>org.antlr</groupId>

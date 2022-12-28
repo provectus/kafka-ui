@@ -52,19 +52,16 @@ public class KafkaConnectService {
   private final KafkaConfigSanitizer kafkaConfigSanitizer;
   private final KafkaConnectClientsFactory kafkaConnectClientsFactory;
 
-  public Mono<Flux<ConnectDTO>> getConnects(KafkaCluster cluster) {
-    return Mono.just(
-        Flux.fromIterable(
-            cluster.getKafkaConnect().stream()
-                .map(clusterMapper::toKafkaConnect)
-                .collect(Collectors.toList())
-        )
-    );
+  public List<ConnectDTO> getConnects(KafkaCluster cluster) {
+    return cluster.getKafkaConnect().stream()
+        .map(clusterMapper::toKafkaConnect)
+        .collect(Collectors.toList());
   }
 
   public Flux<FullConnectorInfoDTO> getAllConnectors(final KafkaCluster cluster,
                                                      final String search) {
-    return getConnects(cluster)
+    Mono<Flux<ConnectDTO>> clusters = Mono.just(Flux.fromIterable(getConnects(cluster))); // TODO get rid
+    return clusters
         .flatMapMany(Function.identity())
         .flatMap(connect -> getConnectorNames(cluster, connect.getName()))
         .flatMap(pair -> getConnector(cluster, pair.getT1(), pair.getT2()))

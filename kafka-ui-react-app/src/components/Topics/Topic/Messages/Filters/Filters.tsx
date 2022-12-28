@@ -93,6 +93,8 @@ const Filters: React.FC<FiltersProps> = ({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  const page = searchParams.get('page');
+
   const { data: topic } = useTopicDetails({ clusterName, topicName });
 
   const partitions = topic?.partitions || [];
@@ -202,6 +204,7 @@ const Filters: React.FC<FiltersProps> = ({
       filterQueryType: queryType,
       attempt: nextAttempt,
       limit: PER_PAGE,
+      page: page || 0,
       seekDirection,
       keySerde: keySerde || (searchParams.get('keySerde') as string),
       valueSerde: valueSerde || (searchParams.get('valueSerde') as string),
@@ -219,6 +222,15 @@ const Filters: React.FC<FiltersProps> = ({
         default:
           props.seekType = currentSeekType;
       }
+
+      if (offset && currentSeekType === SeekType.OFFSET) {
+        props.seekType = SeekType.OFFSET;
+      }
+
+      if (timestamp && currentSeekType === SeekType.TIMESTAMP) {
+        props.seekType = SeekType.TIMESTAMP;
+      }
+
       props.seekTo = selectedPartitions.map(({ value }) => {
         const offsetProperty =
           seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
@@ -383,6 +395,7 @@ const Filters: React.FC<FiltersProps> = ({
     timestamp,
     query,
     seekDirection,
+    page,
   ]);
 
   React.useEffect(() => {

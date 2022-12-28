@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.service;
 
-import static com.google.common.util.concurrent.Uninterruptibles.getUninterruptibly;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.kafka.clients.admin.ListOffsetsResult.ListOffsetsResultInfo;
@@ -12,7 +11,7 @@ import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.util.MapUtil;
 import com.provectus.kafka.ui.util.NumberUtil;
-import com.provectus.kafka.ui.util.annotations.KafkaClientInternalsDependant;
+import com.provectus.kafka.ui.util.annotation.KafkaClientInternalsDependant;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +42,7 @@ import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
+import org.apache.kafka.clients.admin.DescribeClusterOptions;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
 import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsOptions;
 import org.apache.kafka.clients.admin.ListOffsetsResult;
@@ -53,6 +53,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.KafkaFuture;
@@ -125,7 +126,8 @@ public class ReactiveAdminClient implements Closeable {
     }
   }
 
-  //TODO: discuss - maybe we should map kafka-library's exceptions to our exceptions here
+  // NOTE: if KafkaFuture returns null, that Mono will be empty(!), since Reactor does not support nullable results
+  // (see MonoSink.success(..) javadoc for details)
   private static <T> Mono<T> toMono(KafkaFuture<T> future) {
     return Mono.<T>create(sink -> future.whenComplete((res, ex) -> {
       if (ex != null) {
@@ -302,26 +304,19 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   private static Mono<ClusterDescription> describeClusterImpl(AdminClient client) {
-    var r = client.describeCluster();
-    var all = KafkaFuture.allOf(r.nodes(), r.clusterId(), r.controller(), r.authorizedOperations());
-    return Mono.create(sink -> all.whenComplete((res, ex) -> {
-      if (ex != null) {
-        sink.error(ex);
-      } else {
-        try {
-          sink.success(
-              new ClusterDescription(
-                  getUninterruptibly(r.controller()),
-                  getUninterruptibly(r.clusterId()),
-                  getUninterruptibly(r.nodes()),
-                  getUninterruptibly(r.authorizedOperations())
-              )
-          );
-        } catch (ExecutionException e) {
-          // can't be here, because all futures already completed
-        }
-      }
-    }));
+    var result = client.describeCluster(new DescribeClusterOptions().includeAuthorizedOperations(true));
+    var allOfFuture = KafkaFuture.allOf(
+        result.controller(), result.clusterId(), result.nodes(), result.authorizedOperations());
+    return toMono(allOfFuture).then(
+        Mono.fromCallable(() ->
+          new ClusterDescription(
+            result.controller().get(),
+            result.clusterId().get(),
+            result.nodes().get(),
+            result.authorizedOperations().get()
+          )
+        )
+    );
   }
 
   private static Mono<String> getClusterVersion(AdminClient client) {

@@ -109,7 +109,7 @@ export function useUpdateConnectorConfig(props: UseConnectorProps) {
     }
   );
 }
-export function useCreateConnector(clusterName: ClusterName) {
+export function useCreateConnectorMutation(clusterName: ClusterName) {
   const client = useQueryClient();
   return useMutation(
     (props: CreateConnectorProps) =>
@@ -119,6 +119,19 @@ export function useCreateConnector(clusterName: ClusterName) {
     }
   );
 }
+
+// this will change later when we validate the request before
+export function useCreateConnector(clusterName: ClusterName) {
+  const mutate = useCreateConnectorMutation(clusterName);
+
+  return {
+    createResource: async (param: CreateConnectorProps) => {
+      return mutate.mutateAsync(param);
+    },
+    ...mutate,
+  };
+}
+
 export function useDeleteConnector(props: UseConnectorProps) {
   const client = useQueryClient();
 
