@@ -3,16 +3,11 @@ import { screen } from '@testing-library/dom';
 import Version from 'components/Version/Version';
 import { render } from 'lib/testHelpers';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
-import { useTimeFormat } from 'lib/hooks/api/timeFormat';
 import { useActuatorInfo } from 'lib/hooks/api/actuatorInfo';
 import { useLatestVersion } from 'lib/hooks/api/latestVersion';
 import { actuatorInfoPayload } from 'lib/fixtures/actuatorInfo';
 import { latestVersionPayload } from 'lib/fixtures/latestVersion';
-import { defaultGlobalSettingsValue } from 'components/contexts/GlobalSettingsContext';
 
-jest.mock('lib/hooks/api/timeFormat', () => ({
-  useTimeFormat: jest.fn(),
-}));
 jest.mock('lib/hooks/api/actuatorInfo', () => ({
   useActuatorInfo: jest.fn(),
 }));
@@ -21,24 +16,14 @@ jest.mock('lib/hooks/api/latestVersion', () => ({
 }));
 
 describe('Version Component', () => {
-  const { timeStampFormat } = defaultGlobalSettingsValue;
-
   const versionTag = 'v0.5.0';
   const snapshotTag = 'test-SNAPSHOT';
   const commitTag = 'befd3b328e2c9c7df57b0c5746561b2f7fee8813';
 
   const actuatorVersionPayload = actuatorInfoPayload(versionTag);
-  const formattedTimestamp = formatTimestamp(
-    actuatorVersionPayload.build.time,
-    timeStampFormat
-  );
+  const formattedTimestamp = formatTimestamp(actuatorVersionPayload.build.time);
 
   beforeEach(() => {
-    (useTimeFormat as jest.Mock).mockImplementation(() => ({
-      data: {
-        timeStampFormat,
-      },
-    }));
     (useActuatorInfo as jest.Mock).mockImplementation(() => ({
       data: actuatorVersionPayload,
     }));
