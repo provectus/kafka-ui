@@ -11,9 +11,7 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
-import io.qameta.allure.Allure;
 import io.qase.api.annotation.Step;
-import java.io.ByteArrayInputStream;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.SoftAssertions;
@@ -23,8 +21,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.Testcontainers;
@@ -44,22 +40,12 @@ public class BaseTest extends Facade {
     return System.getProperty("os.arch").equals("aarch64");
   }
 
-  @BeforeEach
-  public void setWebDriver() {
-    RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
-    WebDriverRunner.setWebDriver(remoteWebDriver);
-    remoteWebDriver.manage().window().setSize(new Dimension(1440, 1024));
-    Selenide.open(BASE_WEB_URL);
-    naviSideBar.waitUntilScreenReady();
-  }
-
   @BeforeAll
   public static void start() {
     DockerImageName image = isARM64()
         ? DockerImageName.parse(SELENIARM_STANDALONE_CHROMIUM).asCompatibleSubstituteFor(SELENIUM_IMAGE_NAME)
         : DockerImageName.parse(SELENIUM_IMAGE_NAME);
     log.info("Using [{}] as image name for chrome", image.getUnversionedPart());
-
     webDriverContainer = new BrowserWebDriverContainer<>(image)
         .withEnv("JAVA_OPTS", "-Dwebdriver.chrome.whitelistedIps=")
         .withCapabilities(new ChromeOptions()
@@ -68,7 +54,7 @@ public class BaseTest extends Facade {
             .addArguments("--no-sandbox")
             .addArguments("--verbose")
         )
-            .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: "));
+        .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: "));
     try {
       Testcontainers.exposeHostPorts(8080);
       log.info("Starting browser container");
@@ -86,21 +72,21 @@ public class BaseTest extends Facade {
     }
   }
 
-  @AfterEach
-  public void afterMethod() {
-    Allure.addAttachment("Screenshot",
-        new ByteArrayInputStream(
-            ((TakesScreenshot) webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
-    browserClear();
+  @BeforeEach
+  public void beforeMethod() {
+    RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
+    WebDriverRunner.setWebDriver(remoteWebDriver);
+    remoteWebDriver.manage()
+        .window().setSize(new Dimension(1440, 1024));
+    Selenide.open(BASE_WEB_URL);
+    naviSideBar.waitUntilScreenReady();
   }
 
-  @Step
-  public static void browserClear() {
-    log.debug("browserClear");
+  @AfterEach
+  public void afterMethod() {
     clearBrowserLocalStorage();
     clearBrowserCookies();
     refresh();
-    log.debug("=> DONE");
   }
 
   @Step
