@@ -29,7 +29,7 @@ public class BrokersConfigTab extends BasePage {
   }
 
   public List<SelenideElement> getColumnHeaders() {
-    return Stream.of("Key", "Value", "Source")
+    return Stream.of("Key", "Value", "BaseSource")
         .map(name -> $x(String.format(columnHeaderLocator, name)))
         .collect(Collectors.toList());
   }

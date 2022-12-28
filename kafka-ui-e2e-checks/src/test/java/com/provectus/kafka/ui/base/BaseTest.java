@@ -4,7 +4,7 @@ import static com.codeborne.selenide.Selenide.clearBrowserCookies;
 import static com.codeborne.selenide.Selenide.clearBrowserLocalStorage;
 import static com.codeborne.selenide.Selenide.refresh;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
-import static com.provectus.kafka.ui.settings.Source.BASE_WEB_URL;
+import static com.provectus.kafka.ui.settings.BaseSource.BASE_WEB_URL;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
