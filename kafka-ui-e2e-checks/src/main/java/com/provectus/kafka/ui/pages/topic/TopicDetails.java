@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.pages.topic;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.sleep;
 import static org.apache.commons.lang.math.RandomUtils.nextInt;
 
 import com.codeborne.selenide.CollectionCondition;
@@ -11,9 +12,17 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import org.openqa.selenium.By;
 
 public class TopicDetails extends BasePage {
@@ -44,6 +53,11 @@ public class TopicDetails extends BasePage {
   protected SelenideElement backToCreateFiltersLink = $x("//div[text()='Back To create filters']");
   protected SelenideElement confirmationMdl = $x("//div[text()= 'Confirm the action']/..");
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
+  protected SelenideElement actualCalendarDate = $x("//div[@class='react-datepicker__current-month']");
+  protected SelenideElement previousMonthButton = $x("//button[@aria-label='Previous Month']");
+  protected SelenideElement nextMonthButton = $x("//button[@aria-label='Next Month']");
+  protected SelenideElement timeCalendarField = $x("//input[@placeholder='Time']");
+  protected String cellDayLocator = "//div[@role='option'][contains(text(),'%d')]";
   protected String seekFilterDdlLocator = "//ul[@id='selectSeekType']/ul/li[text()='%s']";
   protected String savedFilterNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
   protected String consumerIdLocator = "//a[@title='%s']";
@@ -146,8 +160,8 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails setSeekTypeValueFldMessagesTab(String seekTypeValue){
-    seekTypeField.shouldBe(Condition.enabled).sendKeys(seekTypeValue);
+  public TopicDetails setSeekTypeValueFldMessagesTab(int seekTypeValue){
+    seekTypeField.shouldBe(Condition.enabled).sendKeys(String.valueOf(seekTypeValue));
     return this;
   }
 
@@ -291,6 +305,64 @@ public class TopicDetails extends BasePage {
     return initItems();
   }
 
+  private void selectYear(int expectedYear) {
+    while (getActualCalendarDate().getYear() > expectedYear) {
+      clickByJavaScript(previousMonthButton);
+      sleep(1000);
+      if (LocalTime.now().plusMinutes(3).isBefore(LocalTime.now())) {
+        throw new IllegalArgumentException("Unable to select year");
+      }
+    }
+  }
+
+  private void selectMonth(int expectedMonth) {
+    while (getActualCalendarDate().getMonthValue() > expectedMonth) {
+      clickByJavaScript(previousMonthButton);
+      sleep(1000);
+      if (LocalTime.now().plusMinutes(3).isBefore(LocalTime.now())) {
+        throw new IllegalArgumentException("Unable to select month");
+      }
+    }
+  }
+
+  private void selectDay(int expectedDay) {
+    Objects.requireNonNull($$x(String.format(cellDayLocator, expectedDay)).stream()
+        .filter(day -> !Objects.requireNonNull(day.getAttribute("class")).contains("outside-month"))
+        .findFirst().orElse(null)).shouldBe(Condition.visible).click();
+  }
+
+  private void setTime(LocalDateTime dateTime) {
+    timeCalendarField.shouldBe(Condition.visible)
+        .sendKeys(String.valueOf(dateTime.getHour()), String.valueOf(dateTime.getMinute()), String.valueOf(dateTime.getSecond()));
+  }
+
+  @Step
+  public TopicDetails selectDateTimeByCalendar(LocalDateTime dateTime) {
+    setTime(dateTime);
+    selectYear(dateTime.getYear());
+    selectMonth(dateTime.getMonthValue());
+    selectDay(dateTime.getDayOfMonth());
+    return this;
+  }
+
+  @Step
+  public LocalDate getActualCalendarDate() {
+    String monthAndYearStr = actualCalendarDate.getText().trim();
+    DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+        .parseCaseInsensitive()
+        .append(DateTimeFormatter.ofPattern("MMMM yyyy"))
+        .toFormatter(Locale.ENGLISH);
+    YearMonth yearMonth = formatter.parse(monthAndYearStr, YearMonth::from);
+    return yearMonth.atDay(1);
+  }
+
+  @Step
+  public TopicDetails openCalendarTimestamp(){
+    seekTypeField.shouldBe(Condition.visible).click();
+    actualCalendarDate.shouldBe(Condition.visible);
+    return this;
+  }
+
   @Step
   public TopicDetails.MessageGridItem getRandomMessage() {
     return getMessage(nextInt(initItems().size() - 1));
@@ -342,8 +414,10 @@ public class TopicDetails extends BasePage {
     }
 
     @Step
-    public String getTimestamp() {
-      return element.$x("./td[4]/div").getText().trim();
+    public LocalDateTime getTimestamp() {
+      String timestampValue = element.$x("./td[4]/div").getText().trim();
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy, HH:mm:ss");
+      return LocalDateTime.parse(timestampValue, formatter);
     }
 
     @Step

@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.suite.topics;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
-import static com.provectus.kafka.ui.settings.BaseSource.CLUSTER_NAME;
+import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
@@ -14,10 +14,10 @@ import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -33,12 +33,19 @@ public class TopicMessagesTests extends BaseTest {
       .setName("topic-with-clean-message-attribute-" + randomAlphabetic(5))
       .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
       .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+  private static final Topic TOPIC_FOR_CHECKING_MESSAGES = new Topic()
+      .setName("topic_for_checking_filters" + randomAlphabetic(5))
+      .setMessageKey(randomAlphabetic(3))
+      .setMessageContent(randomAlphabetic(3));
   private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES));
-    TOPIC_LIST.forEach(topic -> apiService.createTopic(CLUSTER_NAME, topic.getName()));
+    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_MESSAGES));
+    TOPIC_LIST.forEach(topic -> {apiService.createTopic(CLUSTER_NAME, topic.getName());
+      apiService.sendMessage(CLUSTER_NAME, TOPIC_FOR_CHECKING_MESSAGES);});
+//    ;
+//    IntStream.range(0,3).forEach(i -> apiHelper.sendMessage(CLUSTER_NAME, TOPIC_FOR_CHECKING_MESSAGES));}
   }
 
   @DisplayName("produce message")
@@ -112,30 +119,51 @@ public class TopicMessagesTests extends BaseTest {
         "isAlertWithMessageVisible()");
   }
 
-  @Disabled
-  @Issue("https://github.com/provectus/kafka-ui/issues/2856")
   @DisplayName("Checking messages filtering by Offset within Topic/Messages")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(15)
   @Test
   void checkingMessageFilteringByOffset() {
-    String offsetValue = "2";
     navigateToTopicsAndOpenDetails("_schemas");
     topicDetails
         .openDetailsTab(MESSAGES)
+        .waitUntilScreenReady();
+    int listMessageSize = (topicDetails.getAllMessages().size() - 1);
+    topicDetails
         .selectSeekTypeDdlMessagesTab("Offset")
-        .setSeekTypeValueFldMessagesTab(offsetValue)
+        .setSeekTypeValueFldMessagesTab(listMessageSize)
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
     topicDetails.getAllMessages()
-        .forEach(messages -> softly.assertThat(messages.getOffset() == Integer.parseInt(offsetValue))
+        .forEach(messages -> softly.assertThat(messages.getOffset() == listMessageSize)
         .as("getAllMessages()").isTrue());
     softly.assertAll();
   }
 
-  @AfterAll
-  public void afterAll() {
-    TOPIC_LIST.forEach(topic -> apiService.deleteTopic(CLUSTER_NAME, topic.getName()));
+  @DisplayName("Checking messages filtering by Timestamp within Messages/Topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(16)
+  @Test
+  void checkingMessageFilteringByTimestamp() {
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_MESSAGES.getName());
+    Assertions.assertTrue(topicDetails.getAllMessages().size() > 2);
+    int listSizeMessages = (topicDetails.getAllMessages().size() -1);
+    LocalDateTime dateOfTimestamp = topicDetails.getMessage(listSizeMessages).getTimestamp();
+    topicDetails
+        .selectSeekTypeDdlMessagesTab("Timestamp")
+        .openCalendarTimestamp()
+        .selectDateTimeByCalendar(dateOfTimestamp)
+        .clickSubmitFiltersBtnMessagesTab();
+    SoftAssertions softly = new SoftAssertions();
+    topicDetails.getAllMessages()
+        .forEach(date -> softly.assertThat(date.getTimestamp().equals(dateOfTimestamp))
+        .as("getTimestamp()").isTrue());
   }
+
+//  @AfterAll
+//  public void afterAll() {
+//    TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
+//  }
 }
