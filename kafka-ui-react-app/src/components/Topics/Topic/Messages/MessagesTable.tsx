@@ -77,19 +77,18 @@ const MessagesTable: React.FC = () => {
               onPreview={() => setPreviewFor('content')}
             />
             <TableHeaderCell> </TableHeaderCell>
-            <td>
-              {previewFor !== null && (
-                <PreviewModal
-                  values={previewFor === 'key' ? keyFilters : contentFilters}
-                  toggleIsOpen={() => setPreviewFor(null)}
-                  setFilters={(payload: PreviewFilter[]) =>
-                    previewFor === 'key'
-                      ? setKeyFilters(payload)
-                      : setContentFilters(payload)
-                  }
-                />
-              )}
-            </td>
+
+            {previewFor !== null && (
+              <PreviewModal
+                values={previewFor === 'key' ? keyFilters : contentFilters}
+                toggleIsOpen={() => setPreviewFor(null)}
+                setFilters={(payload: PreviewFilter[]) =>
+                  previewFor === 'key'
+                    ? setKeyFilters(payload)
+                    : setContentFilters(payload)
+                }
+              />
+            )}
           </tr>
         </thead>
         <tbody>
