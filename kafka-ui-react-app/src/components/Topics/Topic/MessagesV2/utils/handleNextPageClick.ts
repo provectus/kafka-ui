@@ -30,15 +30,16 @@ export default (
 
     switch (mode) {
       case 'fromOffset':
-      case 'oldest':
         // First message in the reversed array is the message with max offset.
         // Replace offset in seekTo query param with the max offset for
         // each partition from displayed messages array.
         return { partition, offset: Math.max(message.offset, offset) };
       case 'toOffset':
-      case 'newest':
         // First message in the reversed array is the message with min offset.
         return { partition, offset: Math.min(message.offset, offset) };
+      case 'oldest':
+      case 'newest':
+        return { partition, offset: message.offset };
       case 'sinceTime':
         // First message in the reversed array is the message with max timestamp.
         return {

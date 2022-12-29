@@ -41,10 +41,7 @@ const Messages = () => {
   // Pagination is disabled in live mode, also we don't want to show the button
   // if we are fetching the messages or if we are at the end of the topic
   const isPaginationDisabled =
-    isTailing ||
-    ['newest', 'oldest'].includes(mode) || // TODO: remove after BE is fixed
-    isFetching ||
-    !searchParams.get('seekTo');
+    isTailing || isFetching || !searchParams.get('seekTo');
 
   const isNextPageButtonDisabled =
     isPaginationDisabled ||

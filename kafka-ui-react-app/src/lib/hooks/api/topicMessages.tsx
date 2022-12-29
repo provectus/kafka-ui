@@ -93,6 +93,12 @@ export const useTopicMessages = ({
           break;
       }
 
+      // 0 case is null
+      if (searchParams.get('page')) {
+        // if the pagination is working then seekType is offset
+        requestParams.set('seekType', SeekType.OFFSET);
+      }
+
       await fetchEventSource(`${url}?${requestParams.toString()}`, {
         method: 'GET',
         signal: abortController.signal,
