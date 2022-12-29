@@ -2,14 +2,12 @@ package com.provectus.kafka.ui.client;
 
 import static com.provectus.kafka.ui.config.ClustersProperties.*;
 
-import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.connect.ApiClient;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
 import com.provectus.kafka.ui.connect.model.Connector;
 import com.provectus.kafka.ui.connect.model.NewConnector;
 import com.provectus.kafka.ui.exception.KafkaConnectConflictReponseException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.KafkaConnectCluster;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
 import java.time.Duration;
 import java.util.List;

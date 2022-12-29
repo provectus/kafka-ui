@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.service;
 
 import com.google.common.collect.ImmutableMap;
 import com.provectus.kafka.ui.config.ClustersProperties;
-import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Collection;
 import java.util.Optional;
@@ -13,10 +12,9 @@ public class ClustersStorage {
 
   private final ImmutableMap<String, KafkaCluster> kafkaClusters;
 
-  public ClustersStorage(ClustersProperties properties,
-                         KafkaClusterInitializer initializer) {
+  public ClustersStorage(ClustersProperties properties, KafkaClusterFactory factory) {
     var builder = ImmutableMap.<String, KafkaCluster>builder();
-    properties.getClusters().forEach(c -> builder.put(c.getName(), initializer.init(c)));
+    properties.getClusters().forEach(c -> builder.put(c.getName(), factory.create(c)));
     this.kafkaClusters = builder.build();
   }
 

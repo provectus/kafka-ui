@@ -7,7 +7,9 @@ import com.provectus.kafka.ui.connect.model.ConnectorStatus;
 import com.provectus.kafka.ui.connect.model.ConnectorStatusConnector;
 import com.provectus.kafka.ui.connect.model.ConnectorTopics;
 import com.provectus.kafka.ui.connect.model.TaskStatus;
+import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.mapper.KafkaConnectMapper;
 import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.ConnectorActionDTO;
@@ -25,6 +27,7 @@ import com.provectus.kafka.ui.util.ReactiveFailover;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -44,12 +47,15 @@ import reactor.util.function.Tuples;
 @Slf4j
 @RequiredArgsConstructor
 public class KafkaConnectService {
+  private final ClusterMapper clusterMapper;
   private final KafkaConnectMapper kafkaConnectMapper;
   private final ObjectMapper objectMapper;
   private final KafkaConfigSanitizer kafkaConfigSanitizer;
 
   public List<ConnectDTO> getConnects(KafkaCluster cluster) {
-    return cluster.getKafkaConnect();
+    return Optional.ofNullable(cluster.getOriginalProperties().getKafkaConnect())
+        .map(lst -> lst.stream().map(clusterMapper::toKafkaConnect).toList())
+        .orElse(List.of());
   }
 
   public Flux<FullConnectorInfoDTO> getAllConnectors(final KafkaCluster cluster,
@@ -318,7 +324,7 @@ public class KafkaConnectService {
   private ReactiveFailover<KafkaConnectClientApi> api(KafkaCluster cluster, String connectName) {
     var client = cluster.getConnectsClients().get(connectName);
     if (client == null) {
-      throw new ValidationException(
+      throw new NotFoundException(
           "Connect %s not found for cluster %s".formatted(connectName, cluster.getName()));
     }
     return client;

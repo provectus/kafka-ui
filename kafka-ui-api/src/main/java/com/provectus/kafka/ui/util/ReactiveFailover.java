@@ -17,7 +17,7 @@ public class ReactiveFailover<T> {
 
   public static final Duration DEFAULT_RETRY_GRACE_PERIOD_MS = Duration.ofSeconds(5);
   public static final Predicate<Throwable> CONNECTION_REFUSED_EXCEPTION_FILTER =
-      error -> error instanceof WebClientRequestException && error.getCause() instanceof IOException;
+      error -> error.getCause() instanceof IOException && error.getCause().getMessage().contains("Connection refused");
 
   private final List<PublisherHolder<T>> publishers;
   private int currentIndex = 0;

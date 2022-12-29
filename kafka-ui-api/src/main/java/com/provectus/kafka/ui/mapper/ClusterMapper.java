@@ -16,7 +16,6 @@ import com.provectus.kafka.ui.model.InternalBroker;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalClusterState;
-import com.provectus.kafka.ui.model.InternalKsqlServer;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalTopic;
@@ -30,24 +29,12 @@ import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.service.masking.DataMasking;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
-import com.provectus.kafka.ui.sr.ApiClient;
-import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
-import com.provectus.kafka.ui.util.PollingThrottler;
-import com.provectus.kafka.ui.util.ReactiveFailover;
-import com.provectus.kafka.ui.util.WebClientConfigurator;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 @Mapper(componentModel = "spring")
 public interface ClusterMapper {
@@ -98,59 +85,6 @@ public interface ClusterMapper {
 
   BrokerDTO toBrokerDto(InternalBroker broker);
 
-  @Named("schemaRegistryClient")
-  default ReactiveFailover<KafkaSrClientApi> schemaRegistryClient(ClustersProperties.Cluster clusterProperties) {
-    if (clusterProperties.getSchemaRegistry() == null) {
-      return null;
-    }
-    return ReactiveFailover.create(
-        Arrays.asList(clusterProperties.getSchemaRegistry().split(",")),
-        url -> {
-          var auth = Optional.ofNullable(clusterProperties.getSchemaRegistryAuth())
-              .orElse(new ClustersProperties.SchemaRegistryAuth());
-          var webClient = new WebClientConfigurator()
-              .configureSsl(clusterProperties.getSchemaRegistrySsl())
-              .configureBasicAuth(auth.getUsername(), auth.getPassword())
-              .build();
-          return new KafkaSrClientApi(
-              new ApiClient(webClient, null, null).setBasePath(url));
-        },
-        error -> error instanceof WebClientRequestException && error.getCause() instanceof IOException,
-        "No live schemaRegistry instances found",
-        ReactiveFailover.DEFAULT_RETRY_GRACE_PERIOD_MS
-    );
-  }
-
-  @Named("setKsqldbServer")
-  default InternalKsqlServer setKsqldbServer(ClustersProperties.Cluster clusterProperties) {
-    if (clusterProperties == null
-            || clusterProperties.getKsqldbServer() == null) {
-      return null;
-    }
-
-    InternalKsqlServer.InternalKsqlServerBuilder internalKsqlServerBuilder =
-            InternalKsqlServer.builder().url(clusterProperties.getKsqldbServer());
-
-    if (clusterProperties.getKsqldbServerAuth() != null) {
-      internalKsqlServerBuilder.username(clusterProperties.getKsqldbServerAuth().getUsername());
-      internalKsqlServerBuilder.password(clusterProperties.getKsqldbServerAuth().getPassword());
-    }
-
-    if (clusterProperties.getKsqldbServerSsl() != null) {
-      internalKsqlServerBuilder.keystoreLocation(clusterProperties.getKsqldbServerSsl().getKeystoreLocation());
-      internalKsqlServerBuilder.keystorePassword(clusterProperties.getKsqldbServerSsl().getKeystorePassword());
-      internalKsqlServerBuilder.truststoreLocation(clusterProperties.getKsqldbServerSsl().getTruststoreLocation());
-      internalKsqlServerBuilder.truststorePassword(clusterProperties.getKsqldbServerSsl().getTruststorePassword());
-    }
-
-    return internalKsqlServerBuilder.build();
-  }
-
-  @Named("createClusterThrottler")
-  default Supplier<PollingThrottler> createClusterThrottler(ClustersProperties.Cluster cluster) {
-    return PollingThrottler.throttlerSupplier(cluster);
-  }
-
   TopicDetailsDTO toTopicDetails(InternalTopic topic);
 
   @Mapping(target = "isReadOnly", source = "readOnly")
@@ -177,15 +111,6 @@ public interface ClusterMapper {
 
   default DataMasking map(List<ClustersProperties.Masking> maskingProperties) {
     return DataMasking.create(maskingProperties);
-  }
-
-  @Named("setProperties")
-  default Properties setProperties(Properties properties) {
-    Properties copy = new Properties();
-    if (properties != null) {
-      copy.putAll(properties);
-    }
-    return copy;
   }
 
 }
