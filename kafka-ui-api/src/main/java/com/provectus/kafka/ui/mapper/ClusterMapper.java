@@ -21,8 +21,6 @@ import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
-import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.KafkaConnectCluster;
 import com.provectus.kafka.ui.model.MetricDTO;
 import com.provectus.kafka.ui.model.Metrics;
 import com.provectus.kafka.ui.model.PartitionDTO;
@@ -39,7 +37,6 @@ import com.provectus.kafka.ui.util.ReactiveFailover;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -56,13 +53,6 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 public interface ClusterMapper {
 
   ClusterDTO toCluster(InternalClusterState clusterState);
-
-  @Mapping(target = "properties", source = "properties", qualifiedByName = "setProperties")
-  @Mapping(target = "schemaRegistryClient", source = ".", qualifiedByName = "schemaRegistryClient")
-  @Mapping(target = "ksqldbServer", source = ".", qualifiedByName = "setKsqldbServer")
-  @Mapping(target = "metricsConfig", source = "metrics")
-  @Mapping(target = "throttler", source = ".", qualifiedByName = "createClusterThrottler")
-  KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
 
   ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
 
@@ -169,7 +159,7 @@ public interface ClusterMapper {
 
   ReplicaDTO toReplica(InternalReplica replica);
 
-  ConnectDTO toKafkaConnect(KafkaConnectCluster connect);
+  ConnectDTO toKafkaConnect(ClustersProperties.ConnectCluster connect);
 
   List<ClusterDTO.FeaturesEnum> toFeaturesEnum(List<Feature> features);
 

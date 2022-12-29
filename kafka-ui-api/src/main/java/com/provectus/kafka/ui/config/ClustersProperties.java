@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import javax.annotation.PostConstruct;
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -53,6 +54,7 @@ public class ClustersProperties {
   }
 
   @Data
+  @Builder(toBuilder = true)
   public static class ConnectCluster {
     String name;
     String address;

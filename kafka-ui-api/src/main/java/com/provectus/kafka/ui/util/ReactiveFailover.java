@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.util;
 
 import com.google.common.base.Preconditions;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,12 +9,15 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public class ReactiveFailover<T> {
 
   public static final Duration DEFAULT_RETRY_GRACE_PERIOD_MS = Duration.ofSeconds(5);
+  public static final Predicate<Throwable> CONNECTION_REFUSED_EXCEPTION_FILTER =
+      error -> error instanceof WebClientRequestException && error.getCause() instanceof IOException;
 
   private final List<PublisherHolder<T>> publishers;
   private int currentIndex = 0;
