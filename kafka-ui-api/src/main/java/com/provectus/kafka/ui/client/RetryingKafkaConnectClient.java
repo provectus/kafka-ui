@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.client;
 
-import static com.provectus.kafka.ui.config.ClustersProperties.*;
+import static com.provectus.kafka.ui.config.ClustersProperties.ConnectCluster;
 
 import com.provectus.kafka.ui.connect.ApiClient;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
