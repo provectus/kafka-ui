@@ -29,6 +29,9 @@ const defaultContextValue: ContextProps = {
   isLive: false,
   seekDirection: SeekDirection.FORWARD,
   changeSeekDirection: jest.fn(),
+  page: 0,
+  setPageNumber: jest.fn(),
+  paginated: false,
 };
 
 jest.mock('components/common/Icons/CloseIcon', () => () => 'mock-CloseIcon');

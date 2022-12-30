@@ -65,6 +65,10 @@ const Messages: React.FC = () => {
     SeekDirectionOptionsObj[seekDirection].isLive
   );
 
+  const [page, setPage] = useState<number>(
+    Number(searchParams.get('page') || '0')
+  );
+
   const changeSeekDirection = useCallback((val: string) => {
     switch (val) {
       case SeekDirection.FORWARD:
@@ -88,8 +92,11 @@ const Messages: React.FC = () => {
       seekDirection,
       changeSeekDirection,
       isLive,
+      page,
+      paginated: !!page,
+      setPageNumber: setPage,
     }),
-    [seekDirection, changeSeekDirection]
+    [seekDirection, page, changeSeekDirection]
   );
 
   return (

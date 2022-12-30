@@ -3,6 +3,7 @@ import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { TopicMessage } from 'generated-sources';
 import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   getTopicMessges,
   getIsTopicMessagesFetching,
@@ -10,7 +11,6 @@ import {
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 import { useAppSelector } from 'lib/hooks/redux';
 import { Button } from 'components/common/Button/Button';
-import { useSearchParams } from 'react-router-dom';
 import { MESSAGES_PER_PAGE } from 'lib/constants';
 import * as S from 'components/common/NewTable/Table.styled';
 
@@ -19,13 +19,12 @@ import Message, { PreviewFilter } from './Message';
 
 const MessagesTable: React.FC = () => {
   const [previewFor, setPreviewFor] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const [keyFilters, setKeyFilters] = useState<PreviewFilter[]>([]);
   const [contentFilters, setContentFilters] = useState<PreviewFilter[]>([]);
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.get('page');
-  const { isLive } = useContext(TopicMessagesContext);
+  const { isLive, setPageNumber, page } = useContext(TopicMessagesContext);
 
   const messages = useAppSelector(getTopicMessges);
   const isFetching = useAppSelector(getIsTopicMessagesFetching);
@@ -38,17 +37,12 @@ const MessagesTable: React.FC = () => {
 
   const isNextPageButtonDisabled =
     isPaginationDisabled || messages.length < Number(MESSAGES_PER_PAGE);
-  const isPrevPageButtonDisabled =
-    isPaginationDisabled || !Number(searchParams.get('page'));
 
-  const handleNextPage = () => {
-    searchParams.set('page', String(Number(page || 0) + 1));
-    setSearchParams(searchParams);
-  };
+  const isPrevPageButtonDisabled = isPaginationDisabled || !page;
 
-  const handlePrevPage = () => {
-    searchParams.set('page', String(Number(page || 0) - 1));
-    setSearchParams(searchParams);
+  const handlePrevClick = () => {
+    setPageNumber((prevState) => prevState - 1);
+    navigate(-1);
   };
 
   return (
@@ -125,7 +119,7 @@ const MessagesTable: React.FC = () => {
             buttonType="secondary"
             buttonSize="L"
             disabled={isPrevPageButtonDisabled}
-            onClick={handlePrevPage}
+            onClick={handlePrevClick}
           >
             ← Back
           </Button>
@@ -133,7 +127,7 @@ const MessagesTable: React.FC = () => {
             buttonType="secondary"
             buttonSize="L"
             disabled={isNextPageButtonDisabled}
-            onClick={handleNextPage}
+            onClick={() => setPageNumber((prev) => prev + 1)}
           >
             Next →
           </Button>

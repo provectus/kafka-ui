@@ -33,6 +33,9 @@ describe('MessagesTable', () => {
     isLive: false,
     seekDirection: SeekDirection.FORWARD,
     changeSeekDirection: jest.fn(),
+    page: 0,
+    paginated: false,
+    setPageNumber: jest.fn(),
   };
 
   const renderComponent = (

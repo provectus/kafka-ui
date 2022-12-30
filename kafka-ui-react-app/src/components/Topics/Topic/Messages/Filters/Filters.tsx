@@ -11,7 +11,7 @@ import {
   TopicMessageEvent,
   TopicMessageEventTypeEnum,
 } from 'generated-sources';
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import omitBy from 'lodash/omitBy';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
@@ -38,6 +38,8 @@ import { useTopicDetails } from 'lib/hooks/api/topics';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { getSerdeOptions } from 'components/Topics/Topic/SendMessage/utils';
 import { useSerdes } from 'lib/hooks/api/topicMessages';
+import { useAppSelector } from 'lib/hooks/redux';
+import { getTopicMessges } from 'redux/reducers/topicMessages/selectors';
 
 import * as S from './Filters.styled';
 import {
@@ -78,6 +80,39 @@ export const SeekTypeOptions = [
   { value: SeekType.TIMESTAMP, label: 'Timestamp' },
 ];
 
+const getNextSeekTo = (
+  messages: TopicMessage[],
+  searchParams: URLSearchParams,
+  defaultCalculatedSeekTo: string
+) => {
+  const seekTo = searchParams.get('seekTo') || defaultCalculatedSeekTo;
+
+  // parse current seekTo query param to array of [partition, offset] tuples
+  const configTuple = seekTo?.split(',').map((item) => {
+    const [partition, offset] = item.split('::');
+    return { partition: Number(partition), offset: Number(offset) };
+  });
+
+  // Reverse messages array for faster last displayed message search.
+  const reversedMessages = [...messages].reverse();
+
+  if (!configTuple) return '';
+
+  const newConfigTuple = configTuple.map(({ partition, offset }) => {
+    const message = reversedMessages.find((m) => partition === m.partition);
+    if (!message) {
+      return { partition, offset };
+    }
+
+    return {
+      partition,
+      offset: message.offset,
+    };
+  });
+
+  return newConfigTuple.map((t) => `${t.partition}::${t.offset}`).join(',');
+};
+
 const Filters: React.FC<FiltersProps> = ({
   phaseMessage,
   meta: { elapsedMs, bytesConsumed, messagesConsumed },
@@ -93,14 +128,22 @@ const Filters: React.FC<FiltersProps> = ({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const page = searchParams.get('page');
-
   const { data: topic } = useTopicDetails({ clusterName, topicName });
 
   const partitions = topic?.partitions || [];
 
-  const { seekDirection, isLive, changeSeekDirection } =
-    useContext(TopicMessagesContext);
+  const {
+    seekDirection,
+    isLive,
+    changeSeekDirection,
+    page,
+    setPageNumber,
+    paginated,
+  } = useContext(TopicMessagesContext);
+
+  const paginationCache = useRef(page);
+
+  const messages = useAppSelector(getTopicMessges);
 
   const { value: isOpen, toggle } = useBoolean();
 
@@ -156,15 +199,18 @@ const Filters: React.FC<FiltersProps> = ({
     [selectedPartitions]
   );
 
+  const isFiltersDisabled = isTailing || paginated;
+
   const isSubmitDisabled = React.useMemo(() => {
     if (isSeekTypeControlVisible) {
       return (
-        (currentSeekType === SeekType.TIMESTAMP && !timestamp) || isTailing
+        (currentSeekType === SeekType.TIMESTAMP && !timestamp) ||
+        isFiltersDisabled
       );
     }
 
     return false;
-  }, [isSeekTypeControlVisible, currentSeekType, timestamp, isTailing]);
+  }, [isSeekTypeControlVisible, currentSeekType, timestamp, isFiltersDisabled]);
 
   const partitionMap = React.useMemo(
     () =>
@@ -183,6 +229,8 @@ const Filters: React.FC<FiltersProps> = ({
     setOffset('');
     setQuery('');
     changeSeekDirection(SeekDirection.FORWARD);
+    setPageNumber(0);
+    paginationCache.current = 0;
     getSelectedPartitionsFromSeekToParam(searchParams, partitions);
     setSelectedPartitions(
       partitions.map((partition: Partition) => {
@@ -195,6 +243,14 @@ const Filters: React.FC<FiltersProps> = ({
   };
 
   const handleFiltersSubmit = (currentOffset: string) => {
+    // so it will not work during back navigations
+
+    if (paginationCache.current > page) {
+      // update for the next
+      paginationCache.current = page;
+      return;
+    }
+
     const nextAttempt = Number(searchParams.get('attempt') || 0) + 1;
     const props: Query = {
       q:
@@ -231,11 +287,13 @@ const Filters: React.FC<FiltersProps> = ({
         props.seekType = SeekType.TIMESTAMP;
       }
 
-      props.seekTo = selectedPartitions.map(({ value }) => {
+      const defaultPartitionedSeekTo = selectedPartitions.map(({ value }) => {
         const offsetProperty =
           seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
+
         const offsetBasedSeekTo =
           currentOffset || partitionMap[value][offsetProperty];
+
         const seekToOffset =
           currentSeekType === SeekType.OFFSET
             ? offsetBasedSeekTo
@@ -243,12 +301,27 @@ const Filters: React.FC<FiltersProps> = ({
 
         return `${value}::${seekToOffset || '0'}`;
       });
+
+      if (page && page !== 0) {
+        // during pagination, it should always be offset
+        props.seekType = SeekType.OFFSET;
+        props.seekTo = getNextSeekTo(
+          messages,
+          searchParams,
+          defaultPartitionedSeekTo.join(',')
+        );
+      } else {
+        props.seekTo = defaultPartitionedSeekTo;
+      }
     }
 
     const newProps = omitBy(props, (v) => v === undefined || v === '');
     const qs = Object.keys(newProps)
       .map((key) => `${key}=${encodeURIComponent(newProps[key] as string)}`)
       .join('&');
+
+    paginationCache.current = Number(page);
+
     navigate({
       search: `?${qs}`,
     });
@@ -314,10 +387,15 @@ const Filters: React.FC<FiltersProps> = ({
     localStorage.setItem('savedFilters', JSON.stringify(filters));
     setSavedFilters(filters);
   };
+
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
     if (location.search?.length !== 0) {
-      const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/topics/${topicName}/messages${location.search}`;
+      const params = new URLSearchParams(location.search);
+
+      const url = `${
+        BASE_PARAMS.basePath
+      }/api/clusters/${clusterName}/topics/${topicName}/messages?${params.toString()}`;
       const sse = new EventSource(url);
 
       source.current = sse;
@@ -364,7 +442,6 @@ const Filters: React.FC<FiltersProps> = ({
   }, [
     clusterName,
     topicName,
-    seekDirection,
     location,
     addMessage,
     resetMessages,
@@ -372,19 +449,7 @@ const Filters: React.FC<FiltersProps> = ({
     updateMeta,
     updatePhase,
   ]);
-  React.useEffect(() => {
-    if (location.search?.length === 0) {
-      handleFiltersSubmit(offset);
-    }
-  }, [
-    seekDirection,
-    queryType,
-    activeFilter,
-    currentSeekType,
-    timestamp,
-    query,
-    location,
-  ]);
+
   React.useEffect(() => {
     handleFiltersSubmit(offset);
   }, [
@@ -422,7 +487,7 @@ const Filters: React.FC<FiltersProps> = ({
                 selectSize="M"
                 minWidth="100px"
                 options={SeekTypeOptions}
-                disabled={isTailing}
+                disabled={isFiltersDisabled}
               />
 
               {currentSeekType === SeekType.OFFSET ? (
@@ -433,7 +498,7 @@ const Filters: React.FC<FiltersProps> = ({
                   value={offset}
                   placeholder="Offset"
                   onChange={({ target: { value } }) => setOffset(value)}
-                  disabled={isTailing}
+                  disabled={isFiltersDisabled}
                 />
               ) : (
                 <S.DatePickerInput
@@ -443,7 +508,7 @@ const Filters: React.FC<FiltersProps> = ({
                   timeInputLabel="Time:"
                   dateFormat="MMM d, yyyy HH:mm"
                   placeholderText="Select timestamp"
-                  disabled={isTailing}
+                  disabled={isFiltersDisabled}
                 />
               )}
             </S.SeekTypeSelectorWrapper>
@@ -459,7 +524,7 @@ const Filters: React.FC<FiltersProps> = ({
               value={selectedPartitions}
               onChange={setSelectedPartitions}
               labelledBy="Select partitions"
-              disabled={isTailing}
+              disabled={isFiltersDisabled}
             />
           </div>
           <div>
@@ -472,7 +537,7 @@ const Filters: React.FC<FiltersProps> = ({
               options={getSerdeOptions(serdes.key || [])}
               value={searchParams.get('keySerde') as string}
               selectSize="M"
-              disabled={isTailing}
+              disabled={isFiltersDisabled}
             />
           </div>
           <div>
@@ -485,7 +550,7 @@ const Filters: React.FC<FiltersProps> = ({
               value={searchParams.get('valueSerde') as string}
               minWidth="170px"
               selectSize="M"
-              disabled={isTailing}
+              disabled={isFiltersDisabled}
             />
           </div>
           <S.ClearAll onClick={handleClearAllFilters}>Clear all</S.ClearAll>
@@ -509,12 +574,18 @@ const Filters: React.FC<FiltersProps> = ({
           minWidth="120px"
           options={SeekDirectionOptions}
           isLive={isLive}
+          disabled={paginated}
         />
       </div>
       <S.ActiveSmartFilterWrapper>
-        <Search placeholder="Search" disabled={isTailing} />
+        <Search placeholder="Search" disabled={isFiltersDisabled} />
 
-        <Button buttonType="primary" buttonSize="M" onClick={toggle}>
+        <Button
+          buttonType="primary"
+          buttonSize="M"
+          onClick={toggle}
+          disabled={paginated}
+        >
           <PlusIcon />
           Add Filters
         </Button>
