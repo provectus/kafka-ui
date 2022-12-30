@@ -484,9 +484,10 @@ public class TopicsTests extends BaseTest {
     navigateToTopics();
     topicsList
         .getTopicItem("_schemas")
-        .selectItem(true);
-    topicsList
+        .selectItem(true)
         .clickCopySelectedTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady();
     assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isFalse();
     topicCreateEditForm
         .setTopicName(topicToCopy.getName())

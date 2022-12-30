@@ -140,8 +140,9 @@ public class TopicsList extends BasePage {
       }
 
       @Step
-      public void selectItem(boolean select) {
-        selectElement(element.$x("./td[1]/input"), select);
+      public TopicsList selectItem(boolean select) {
+         selectElement(element.$x("./td[1]/input"), select);
+         return new TopicsList();
       }
 
       @Step
