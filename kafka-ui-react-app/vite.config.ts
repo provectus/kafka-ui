@@ -4,7 +4,7 @@ import {
   UserConfigExport,
   splitVendorChunkPlugin,
 } from 'vite';
-import react from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ mode }) => {
@@ -25,7 +25,6 @@ export default defineConfig(({ mode }) => {
     },
   };
   const proxy = process.env.VITE_DEV_PROXY;
-
   if (mode === 'development' && proxy) {
     return {
       ...defaultConfig,
