@@ -20,6 +20,7 @@ import {
   useRecreateTopic,
   useTopicDetails,
 } from 'lib/hooks/api/topics';
+import { useAppDispatch } from 'lib/hooks/redux';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -32,12 +33,11 @@ jest.mock('lib/hooks/api/topics', () => ({
   useRecreateTopic: jest.fn(),
 }));
 
-const mockUnwrap = jest.fn();
-const useDispatchMock = () => jest.fn(() => ({ unwrap: mockUnwrap }));
+const unwrapMock = jest.fn();
 
 jest.mock('lib/hooks/redux', () => ({
   ...jest.requireActual('lib/hooks/redux'),
-  useAppDispatch: useDispatchMock,
+  useAppDispatch: jest.fn(),
 }));
 
 jest.mock('components/Topics/Topic/Overview/Overview', () => () => (
@@ -98,6 +98,9 @@ describe('Details', () => {
     (useRecreateTopic as jest.Mock).mockImplementation(() => ({
       mutateAsync: mockRecreate,
     }));
+    (useAppDispatch as jest.Mock).mockImplementation(() => () => ({
+      unwrap: unwrapMock,
+    }));
   });
   describe('Action Bar', () => {
     describe('when it has readonly flag', () => {
@@ -142,7 +145,7 @@ describe('Details', () => {
           name: 'Confirm',
         })[0];
         await waitFor(() => userEvent.click(submitButton));
-        expect(mockUnwrap).toHaveBeenCalledTimes(1);
+        expect(unwrapMock).toHaveBeenCalledTimes(1);
       });
 
       it('closes the modal when cancel button is clicked', async () => {
