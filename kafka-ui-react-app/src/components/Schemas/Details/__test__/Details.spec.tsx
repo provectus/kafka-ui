@@ -2,7 +2,7 @@ import React from 'react';
 import Details from 'components/Schemas/Details/Details';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterSchemaPath } from 'lib/paths';
-import { screen, waitFor } from '@testing-library/dom';
+import { screen } from '@testing-library/dom';
 import {
   schemasInitialState,
   schemaVersion,
@@ -50,44 +50,17 @@ describe('Details', () => {
   afterEach(() => fetchMock.reset());
 
   describe('fetch failed', () => {
-    beforeEach(async () => {
+    it('renders pageloader', async () => {
       const schemasAPILatestMock = fetchMock.getOnce(schemasAPILatestUrl, 404);
       const schemasAPIVersionsMock = fetchMock.getOnce(
         schemasAPIVersionsUrl,
         404
       );
-      await renderComponent();
-
-      await waitFor(() => {
-        expect(schemasAPILatestMock.called()).toBeTruthy();
-      });
-      await waitFor(() => {
-        expect(schemasAPIVersionsMock.called()).toBeTruthy();
-      });
-    });
-
-    it('handles [Delete schema] click', async () => {
-      const deleteSchemaMock = fetchMock.deleteOnce(
-        `/api/clusters/${clusterName}/schemas/${schemaVersion.subject}`,
-        200
-      );
-
       await act(() => {
         renderComponent();
       });
-
-      try {
-        expect(deleteSchemaMock.called()).toBeTruthy();
-        expect(mockHistoryPush).toHaveBeenCalledTimes(1);
-        expect(mockHistoryPush).toHaveBeenCalledWith(
-          clusterSchemaPath(clusterName)
-        );
-      } catch (e) {
-        expect(deleteSchemaMock.called()).toBeTruthy();
-      }
-    });
-
-    it('renders pageloader', () => {
+      expect(schemasAPILatestMock.called(schemasAPILatestUrl)).toBeTruthy();
+      expect(schemasAPIVersionsMock.called(schemasAPIVersionsUrl)).toBeTruthy();
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
       expect(screen.queryByText(schemaVersion.subject)).not.toBeInTheDocument();
       expect(screen.queryByText('Edit Schema')).not.toBeInTheDocument();
@@ -97,7 +70,7 @@ describe('Details', () => {
 
   describe('fetch success', () => {
     describe('has schema versions', () => {
-      beforeEach(async () => {
+      it('renders component with schema info', async () => {
         const schemasAPILatestMock = fetchMock.getOnce(
           schemasAPILatestUrl,
           schemaVersion
@@ -109,15 +82,8 @@ describe('Details', () => {
         await act(() => {
           renderComponent();
         });
-        await waitFor(() => {
-          expect(schemasAPILatestMock.called()).toBeTruthy();
-        });
-        await waitFor(() => {
-          expect(schemasAPIVersionsMock.called()).toBeTruthy();
-        });
-      });
-
-      it('renders component with schema info', () => {
+        expect(schemasAPILatestMock.called()).toBeTruthy();
+        expect(schemasAPIVersionsMock.called()).toBeTruthy();
         expect(screen.getByText('Edit Schema')).toBeInTheDocument();
         expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
         expect(screen.getByRole('table')).toBeInTheDocument();
@@ -126,7 +92,7 @@ describe('Details', () => {
 
     describe('fetch success schema with non ascii characters', () => {
       describe('has schema versions', () => {
-        beforeEach(async () => {
+        it('renders component with schema info', async () => {
           const schemasAPILatestMock = fetchMock.getOnce(
             schemasAPILatestUrl,
             schemaVersionWithNonAsciiChars
@@ -138,15 +104,8 @@ describe('Details', () => {
           await act(() => {
             renderComponent();
           });
-          await waitFor(() => {
-            expect(schemasAPILatestMock.called()).toBeTruthy();
-          });
-          await waitFor(() => {
-            expect(schemasAPIVersionsMock.called()).toBeTruthy();
-          });
-        });
-
-        it('renders component with schema info', () => {
+          expect(schemasAPILatestMock.called()).toBeTruthy();
+          expect(schemasAPIVersionsMock.called()).toBeTruthy();
           expect(screen.getByText('Edit Schema')).toBeInTheDocument();
           expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
           expect(screen.getByRole('table')).toBeInTheDocument();
@@ -167,12 +126,8 @@ describe('Details', () => {
         await act(() => {
           renderComponent();
         });
-        await waitFor(() => {
-          expect(schemasAPILatestMock.called()).toBeTruthy();
-        });
-        await waitFor(() => {
-          expect(schemasAPIVersionsMock.called()).toBeTruthy();
-        });
+        expect(schemasAPILatestMock.called()).toBeTruthy();
+        expect(schemasAPIVersionsMock.called()).toBeTruthy();
       });
 
       // seems like incorrect behaviour
