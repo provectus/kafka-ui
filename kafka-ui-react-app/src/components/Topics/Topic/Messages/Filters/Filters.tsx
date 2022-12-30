@@ -391,11 +391,7 @@ const Filters: React.FC<FiltersProps> = ({
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
     if (location.search?.length !== 0) {
-      const params = new URLSearchParams(location.search);
-
-      const url = `${
-        BASE_PARAMS.basePath
-      }/api/clusters/${clusterName}/topics/${topicName}/messages?${params.toString()}`;
+      const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/topics/${topicName}/messages${location.search}`;
       const sse = new EventSource(url);
 
       source.current = sse;
