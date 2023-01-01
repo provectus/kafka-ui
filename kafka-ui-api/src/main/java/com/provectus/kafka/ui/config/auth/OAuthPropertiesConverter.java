@@ -8,12 +8,14 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
+import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class OAuthPropertiesConverter {
 
   private static final String TYPE = "type";
   private static final String GOOGLE = "google";
+  public static final String DUMMY = "dummy";
 
   public static OAuth2ClientProperties convertProperties(final OAuthProperties properties) {
     final var result = new OAuth2ClientProperties();
@@ -57,7 +59,14 @@ public final class OAuthPropertiesConverter {
       return;
     }
 
-    final String newUri = provider.getAuthorizationUri() + "?hd=" + allowedDomain;
+    String authorizationUri = CommonOAuth2Provider.GOOGLE
+        .getBuilder(DUMMY)
+        .clientId(DUMMY)
+        .build()
+        .getProviderDetails()
+        .getAuthorizationUri();
+
+    final String newUri = authorizationUri + "?hd=" + allowedDomain;
     provider.setAuthorizationUri(newUri);
   }
 
