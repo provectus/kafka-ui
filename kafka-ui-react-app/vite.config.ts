@@ -18,6 +18,26 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'build',
     },
+    experimental: {
+      renderBuiltUrl(
+        filename: string,
+        {
+          hostType,
+        }: {
+          hostId: string;
+          hostType: 'js' | 'css' | 'html';
+          type: 'asset' | 'public';
+        }
+      ) {
+        if (hostType === 'js') {
+          return {
+            runtime: `window.__assetsPathBuilder(${JSON.stringify(filename)})`,
+          };
+        }
+
+        return filename;
+      },
+    },
     define: {
       'process.env.NODE_ENV': `"${mode}"`,
       'process.env.VITE_TAG': `"${process.env.VITE_TAG}"`,
