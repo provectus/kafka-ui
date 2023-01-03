@@ -294,7 +294,7 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails.MessageGridItem getMessage(int offset) {
+  public TopicDetails.MessageGridItem getMessageByOffset(int offset) {
     return initItems().stream()
         .filter(e -> e.getOffset() == offset)
         .findFirst().orElse(null);
@@ -337,7 +337,7 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails selectDateTimeByCalendar(LocalDateTime dateTime) {
+  public TopicDetails selectDateAndTimeByCalendar(LocalDateTime dateTime) {
     setTime(dateTime);
     selectYear(dateTime.getYear());
     selectMonth(dateTime.getMonthValue());
@@ -357,7 +357,7 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails openCalendarTimestamp(){
+  public TopicDetails openCalendarSeekType(){
     seekTypeField.shouldBe(Condition.visible).click();
     actualCalendarDate.shouldBe(Condition.visible);
     return this;
@@ -365,7 +365,7 @@ public class TopicDetails extends BasePage {
 
   @Step
   public TopicDetails.MessageGridItem getRandomMessage() {
-    return getMessage(nextInt(initItems().size() - 1));
+    return getMessageByOffset(nextInt(initItems().size() - 1));
   }
 
   public enum TopicMenu {
@@ -416,7 +416,7 @@ public class TopicDetails extends BasePage {
     @Step
     public LocalDateTime getTimestamp() {
       String timestampValue = element.$x("./td[4]/div").getText().trim();
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy, HH:mm:ss");
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy, HH:mm:ss");
       return LocalDateTime.parse(timestampValue, formatter);
     }
 
