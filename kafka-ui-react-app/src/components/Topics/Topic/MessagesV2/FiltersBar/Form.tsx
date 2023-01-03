@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import Input from 'components/common/Input/Input';
 import { ConsumingMode, useSerdes } from 'lib/hooks/api/topicMessages';
@@ -37,14 +37,7 @@ const Form: React.FC<{ isFetching: boolean; partitions: Partition[] }> = ({
     use: SerdeUsage.DESERIALIZE,
   });
 
-  const {
-    handleSubmit,
-    setValue,
-    watch,
-    control,
-    formState: { isDirty },
-    reset,
-  } = useForm<FormValues>({
+  const methods = useForm<FormValues>({
     defaultValues: {
       mode: searchParams.get('m') || 'newest',
       offset: searchParams.get('o') || '0',
@@ -60,11 +53,16 @@ const Form: React.FC<{ isFetching: boolean; partitions: Partition[] }> = ({
     } as FormValues,
   });
 
+  const {
+    handleSubmit,
+    watch,
+    control,
+    getValues,
+    formState: { isDirty },
+    reset,
+  } = methods;
+
   const mode = watch('mode');
-  const offset = watch('offset');
-  const time = watch('time');
-  const keySerde = watch('keySerde');
-  const valueSerde = watch('valueSerde');
 
   const partitionMap = React.useMemo(
     () =>
@@ -105,21 +103,6 @@ const Form: React.FC<{ isFetching: boolean; partitions: Partition[] }> = ({
     reset(values);
   };
 
-  const handleTimestampChange = (value: Date | null) => {
-    if (value) {
-      setValue('time', value, { shouldDirty: true });
-    }
-  };
-
-  const handleOffsetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue('offset', e.target.value, { shouldDirty: true });
-  };
-
-  const handleSerdeChange =
-    (type: 'keySerde' | 'valueSerde') => (option: string | number) => {
-      setValue(type, String(option), { shouldDirty: true });
-    };
-
   const handleRefresh: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
     e.preventDefault();
@@ -128,109 +111,136 @@ const Form: React.FC<{ isFetching: boolean; partitions: Partition[] }> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <S.FilterRow>
-        <InputLabel>Mode</InputLabel>
-        <Select
-          selectSize="M"
-          minWidth="100%"
-          value={mode}
-          options={getModeOptions()}
-          isLive={mode === 'live' && isFetching}
-          onChange={(option: string | number) =>
-            setValue('mode', option as ConsumingMode, { shouldDirty: true })
-          }
-        />
-      </S.FilterRow>
-      {['sinceTime', 'untilTime'].includes(mode) && (
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <S.FilterRow>
-          <InputLabel>Time</InputLabel>
-          <S.DatePickerInput
-            selected={time}
-            onChange={handleTimestampChange}
-            showTimeInput
-            timeInputLabel="Time:"
-            dateFormat="MMMM d, yyyy HH:mm"
-            placeholderText="Select timestamp"
+          <InputLabel>Mode</InputLabel>
+          <Controller
+            control={control}
+            name="mode"
+            defaultValue={getValues('mode')}
+            render={({ field }) => (
+              <Select
+                selectSize="M"
+                minWidth="100%"
+                value={field.value}
+                options={getModeOptions()}
+                isLive={mode === 'live' && isFetching}
+                onChange={field.onChange}
+              />
+            )}
           />
         </S.FilterRow>
-      )}
-      {['fromOffset', 'toOffset'].includes(mode) && (
-        <S.FilterRow>
-          <InputLabel>Offset</InputLabel>
-          <Input
-            type="text"
-            inputSize="M"
-            value={offset}
-            placeholder="Offset"
-            onChange={handleOffsetChange}
-          />
-        </S.FilterRow>
-      )}
-      <S.FilterRow>
-        <InputLabel>Key Serde</InputLabel>
-        <Select
-          id="selectKeySerdeOptions"
-          aria-labelledby="selectKeySerdeOptions"
-          onChange={handleSerdeChange('keySerde')}
-          options={getSerdeOptions(serdes.key || [])}
-          value={keySerde}
-          selectSize="M"
-          minWidth="100%"
-        />
-      </S.FilterRow>
-      <S.FilterRow>
-        <InputLabel>Content Serde</InputLabel>
-        <Select
-          id="selectValueSerdeOptions"
-          aria-labelledby="selectValueSerdeOptions"
-          onChange={handleSerdeChange('valueSerde')}
-          options={getSerdeOptions(serdes.value || [])}
-          value={valueSerde}
-          selectSize="M"
-          minWidth="100%"
-        />
-      </S.FilterRow>
-      <S.FilterRow>
-        <InputLabel>Partitions</InputLabel>
-        <Controller
-          control={control}
-          name="partitions"
-          render={({ field }) => (
-            <MultiSelect
-              options={partitions.map((p) => ({
-                label: `Partition #${p.partition.toString()}`,
-                value: p.partition,
-              }))}
-              value={field.value}
-              onChange={field.onChange}
-              labelledBy="Select partitions"
+        {['sinceTime', 'untilTime'].includes(mode) && (
+          <S.FilterRow>
+            <InputLabel>Time</InputLabel>
+            <Controller
+              control={control}
+              name="time"
+              defaultValue={getValues('time')}
+              render={({ field }) => (
+                <S.DatePickerInput
+                  selected={field.value}
+                  onChange={field.onChange}
+                  showTimeInput
+                  timeInputLabel="Time:"
+                  dateFormat="MMMM d, yyyy HH:mm"
+                  placeholderText="Select timestamp"
+                />
+              )}
             />
-          )}
-        />
-      </S.FilterRow>
-      <S.FilterFooter>
-        <Button
-          buttonType="secondary"
-          disabled={!isDirty}
-          buttonSize="S"
-          onClick={() => reset()}
-        >
-          Clear All
-        </Button>
-        <Button
-          buttonType="secondary"
-          buttonSize="S"
-          disabled={isDirty || isFetching}
-          onClick={handleRefresh}
-        >
-          Refresh
-        </Button>
-        <Button buttonType="primary" disabled={!isDirty} buttonSize="S">
-          Apply Mode
-        </Button>
-      </S.FilterFooter>
-    </form>
+          </S.FilterRow>
+        )}
+        {['fromOffset', 'toOffset'].includes(mode) && (
+          <S.FilterRow>
+            <InputLabel>Offset</InputLabel>
+            <Input
+              type="text"
+              inputSize="M"
+              placeholder="Offset"
+              name="offset"
+            />
+          </S.FilterRow>
+        )}
+        <S.FilterRow>
+          <InputLabel>Key Serde</InputLabel>
+          <Controller
+            control={control}
+            name="keySerde"
+            defaultValue={getValues('keySerde')}
+            render={({ field }) => (
+              <Select
+                id="selectKeySerdeOptions"
+                aria-labelledby="selectKeySerdeOptions"
+                onChange={field.onChange}
+                options={getSerdeOptions(serdes.key || [])}
+                value={field.value}
+                selectSize="M"
+                minWidth="100%"
+              />
+            )}
+          />
+        </S.FilterRow>
+        <S.FilterRow>
+          <InputLabel>Content Serde</InputLabel>
+          <Controller
+            control={control}
+            name="valueSerde"
+            defaultValue={getValues('valueSerde')}
+            render={({ field }) => (
+              <Select
+                id="selectValueSerdeOptions"
+                aria-labelledby="selectValueSerdeOptions"
+                onChange={field.onChange}
+                options={getSerdeOptions(serdes.value || [])}
+                value={field.value}
+                selectSize="M"
+                minWidth="100%"
+              />
+            )}
+          />
+        </S.FilterRow>
+        <S.FilterRow>
+          <InputLabel>Partitions</InputLabel>
+          <Controller
+            control={control}
+            name="partitions"
+            render={({ field }) => (
+              <MultiSelect
+                options={partitions.map((p) => ({
+                  label: `Partition #${p.partition.toString()}`,
+                  value: p.partition,
+                }))}
+                value={field.value}
+                onChange={field.onChange}
+                labelledBy="Select partitions"
+              />
+            )}
+          />
+        </S.FilterRow>
+        <S.FilterFooter>
+          <Button
+            buttonType="secondary"
+            disabled={!isDirty}
+            buttonSize="S"
+            onClick={() => reset()}
+          >
+            Clear All
+          </Button>
+          <Button
+            buttonType="secondary"
+            buttonSize="S"
+            disabled={isDirty || isFetching}
+            onClick={handleRefresh}
+          >
+            Refresh
+          </Button>
+          <Button buttonType="primary" disabled={!isDirty} buttonSize="S">
+            Apply Mode
+          </Button>
+        </S.FilterFooter>
+      </form>
+    </FormProvider>
   );
 };
 
