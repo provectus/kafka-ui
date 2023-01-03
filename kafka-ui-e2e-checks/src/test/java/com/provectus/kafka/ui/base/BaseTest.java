@@ -34,7 +34,7 @@ import org.testcontainers.utility.DockerImageName;
 
 @Slf4j
 @DisplayNameGeneration(DisplayNameGenerator.class)
-public class BaseTest extends Facade {
+public abstract class BaseTest extends Facade {
 
   private static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
   private static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium:103.0";
