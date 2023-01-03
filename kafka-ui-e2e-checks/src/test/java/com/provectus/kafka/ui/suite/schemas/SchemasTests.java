@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.suite.schemas;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.SCHEMA_REGISTRY;
-import static com.provectus.kafka.ui.settings.BaseSource.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
 import com.codeborne.selenide.Condition;
@@ -41,7 +40,7 @@ public class SchemasTests extends BaseTest {
     @SneakyThrows
     public void beforeAll() {
         SCHEMA_LIST.addAll(List.of(AVRO_API, JSON_API, PROTOBUF_API));
-        SCHEMA_LIST.forEach(schema -> apiService.createSchema(CLUSTER_NAME, schema));
+        SCHEMA_LIST.forEach(schema -> apiService.createSchema(schema));
     }
 
     @DisplayName("should create AVRO schema")
@@ -228,7 +227,7 @@ public class SchemasTests extends BaseTest {
 
     @AfterAll
     public void afterAll() {
-        SCHEMA_LIST.forEach(schema -> apiService.deleteSchema(CLUSTER_NAME, schema.getName()));
+        SCHEMA_LIST.forEach(schema -> apiService.deleteSchema(schema.getName()));
     }
 
     @Step

@@ -1,11 +1,5 @@
 package com.provectus.kafka.ui.suite.connectors;
 
-import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KAFKA_CONNECT;
-import static com.provectus.kafka.ui.settings.BaseSource.CLUSTER_NAME;
-import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Topic;
@@ -14,14 +8,15 @@ import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qameta.allure.Step;
 import io.qase.api.annotation.CaseId;
+import org.junit.jupiter.api.*;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+
+import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
+import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KAFKA_CONNECT;
+import static com.provectus.kafka.ui.settings.BaseSource.CLUSTER_NAME;
+import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ConnectorsTests extends BaseTest {
@@ -52,8 +47,8 @@ public class ConnectorsTests extends BaseTest {
     public void beforeAll() {
         TOPIC_LIST.addAll(List.of(TOPIC_FOR_CREATE, TOPIC_FOR_DELETE, TOPIC_FOR_UPDATE));
         TOPIC_LIST.forEach(topic -> {
-            apiService.createTopic(CLUSTER_NAME, topic.getName());
-            apiService.sendMessage(CLUSTER_NAME, topic);
+            apiService.createTopic(topic.getName());
+            apiService.sendMessage(topic);
         });
         CONNECTOR_LIST.addAll(List.of(CONNECTOR_FOR_DELETE, CONNECTOR_FOR_UPDATE));
         CONNECTOR_LIST.forEach(connector -> apiService
