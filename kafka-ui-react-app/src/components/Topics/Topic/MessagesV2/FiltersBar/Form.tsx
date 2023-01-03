@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import Input from 'components/common/Input/Input';
 import { ConsumingMode, useSerdes } from 'lib/hooks/api/topicMessages';
@@ -12,9 +12,10 @@ import { getModeOptions } from 'components/Topics/Topic/MessagesV2/utils/consumi
 import { getSerdeOptions } from 'components/Topics/Topic/SendMessage/utils';
 import useAppParams from 'lib/hooks/useAppParams';
 import { RouteParamsClusterTopic } from 'lib/paths';
+import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 
 import * as S from './FiltersBar.styled';
-import { setSeekTo } from './utils';
+import { getSelectedPartitionsOptionFromSeekToParam, setSeekTo } from './utils';
 
 type FormValues = {
   mode: ConsumingMode;
@@ -40,6 +41,7 @@ const Form: React.FC<{ isFetching: boolean; partitions: Partition[] }> = ({
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { isDirty },
     reset,
   } = useForm<FormValues>({
@@ -51,13 +53,30 @@ const Form: React.FC<{ isFetching: boolean; partitions: Partition[] }> = ({
         : Date.now(),
       keySerde: searchParams.get('keySerde') as string,
       valueSerde: searchParams.get('valueSerde') as string,
+      partitions: getSelectedPartitionsOptionFromSeekToParam(
+        searchParams,
+        partitions
+      ),
     } as FormValues,
   });
+
   const mode = watch('mode');
   const offset = watch('offset');
   const time = watch('time');
   const keySerde = watch('keySerde');
   const valueSerde = watch('valueSerde');
+
+  const partitionMap = React.useMemo(
+    () =>
+      partitions.reduce<Record<string, Partition>>(
+        (acc, partition) => ({
+          ...acc,
+          [partition.partition]: partition,
+        }),
+        {}
+      ),
+    [partitions]
+  );
 
   const onSubmit = (values: FormValues) => {
     searchParams.set('m', values.mode);
@@ -77,7 +96,11 @@ const Form: React.FC<{ isFetching: boolean; partitions: Partition[] }> = ({
       searchParams.set('t', `${values.time.getTime()}`);
     }
 
-    setSeekTo(searchParams, partitions);
+    const selectedPartitions = values.partitions.map((partition) => {
+      return partitionMap[partition.value];
+    });
+
+    setSeekTo(searchParams, selectedPartitions);
     setSearchParams(searchParams);
     reset(values);
   };
@@ -87,13 +110,16 @@ const Form: React.FC<{ isFetching: boolean; partitions: Partition[] }> = ({
       setValue('time', value, { shouldDirty: true });
     }
   };
+
   const handleOffsetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue('offset', e.target.value, { shouldDirty: true });
   };
+
   const handleSerdeChange =
     (type: 'keySerde' | 'valueSerde') => (option: string | number) => {
       setValue(type, String(option), { shouldDirty: true });
     };
+
   const handleRefresh: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
     e.preventDefault();
@@ -163,6 +189,24 @@ const Form: React.FC<{ isFetching: boolean; partitions: Partition[] }> = ({
           value={valueSerde}
           selectSize="M"
           minWidth="100%"
+        />
+      </S.FilterRow>
+      <S.FilterRow>
+        <InputLabel>Partitions</InputLabel>
+        <Controller
+          control={control}
+          name="partitions"
+          render={({ field }) => (
+            <MultiSelect
+              options={partitions.map((p) => ({
+                label: `Partition #${p.partition.toString()}`,
+                value: p.partition,
+              }))}
+              value={field.value}
+              onChange={field.onChange}
+              labelledBy="Select partitions"
+            />
+          )}
         />
       </S.FilterRow>
       <S.FilterFooter>

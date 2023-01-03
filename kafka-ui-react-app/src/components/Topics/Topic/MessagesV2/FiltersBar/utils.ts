@@ -42,7 +42,7 @@ const generateSeekTo = (
   type: 'property' | 'value',
   value: PartionOffsetKey | string
 ) => {
-  // we iterating over existing partitions to avoid sending wrong partition ids to the backend
+  // we're iterating over existing partitions to avoid sending wrong partition ids to the backend
   const seekTo = partitions.map((partition) => {
     const { partition: id } = partition;
     switch (type) {
@@ -109,4 +109,32 @@ export const setSeekTo = (
   );
 
   return searchParams;
+};
+
+export const getSelectedPartitionsOptionFromSeekToParam = (
+  params: URLSearchParams,
+  partitions: Partition[]
+) => {
+  const seekTo = params.get('seekTo');
+
+  if (seekTo) {
+    const selectedPartitionIds = seekTo
+      .split('.')
+      .map((item) => Number(item.split('-')[0]));
+
+    return partitions.reduce((acc, partition) => {
+      if (selectedPartitionIds?.includes(partition.partition)) {
+        acc.push({
+          value: partition.partition,
+          label: `Partition #${partition.partition.toString()}`,
+        });
+      }
+      return acc;
+    }, [] as Option[]);
+  }
+
+  return partitions.map(({ partition }) => ({
+    value: partition,
+    label: `Partition #${partition.toString()}`,
+  }));
 };
