@@ -1,5 +1,8 @@
 package com.provectus.kafka.ui.services;
 
+import static com.codeborne.selenide.Selenide.sleep;
+import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.api.ApiClient;
 import com.provectus.kafka.ui.api.api.KafkaConnectApi;
@@ -14,23 +17,19 @@ import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.models.Topic;
 import com.provectus.kafka.ui.settings.BaseSource;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.codeborne.selenide.Selenide.sleep;
-import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
-
 
 @Slf4j
-public class ApiService {
+public class ApiService extends BaseSource {
 
-    int partitions = 1;
-    int replicationFactor = 1;
-    String baseURL = BaseSource.BASE_API_URL;
+  int partitions = 1;
+  int replicationFactor = 1;
+  String baseURL = BaseSource.BASE_API_URL;
 
 
     @SneakyThrows
@@ -67,11 +66,19 @@ public class ApiService {
         }
     }
 
+    public void createTopic(String topicName) {
+      createTopic(CLUSTER_NAME, topicName);
+    }
+
     public void deleteTopic(String clusterName, String topicName) {
         try {
             topicApi().deleteTopic(clusterName, topicName).block();
         } catch (WebClientResponseException ignore) {
         }
+    }
+
+    public void deleteTopic(String topicName){
+      deleteTopic(topicName);
     }
 
     @SneakyThrows
@@ -87,12 +94,20 @@ public class ApiService {
         }
     }
 
+    public void createSchema(Schema schema){
+      createSchema(CLUSTER_NAME, schema);
+    }
+
     @SneakyThrows
     public void deleteSchema(String clusterName, String schemaName) {
         try {
             schemaApi().deleteSchema(clusterName, schemaName).block();
         } catch (WebClientResponseException ignore) {
         }
+    }
+
+    public void deleteSchema(String schemaName){
+      deleteSchema(CLUSTER_NAME, schemaName);
     }
 
     @SneakyThrows
@@ -122,14 +137,20 @@ public class ApiService {
 
     @SneakyThrows
     public void sendMessage(String clusterName, Topic topic) {
-        CreateTopicMessage createMessage = new CreateTopicMessage();
-        createMessage.partition(0);
-        createMessage.setContent(topic.getMessageContent());
-        createMessage.setKey(topic.getMessageKey());
-        try {
-            messageApi().sendTopicMessages(clusterName, topic.getName(), createMessage).block();
-        } catch (WebClientResponseException ex) {
-            ex.getRawStatusCode();
-        }
+      CreateTopicMessage createMessage = new CreateTopicMessage();
+      createMessage.setPartition(0);
+      createMessage.setKeySerde("String");
+      createMessage.setValueSerde("String");
+      createMessage.setKey(topic.getMessageKey());
+      createMessage.setContent(topic.getMessageContent());
+      try {
+        messageApi().sendTopicMessages(clusterName, topic.getName(), createMessage).block();
+      } catch (WebClientResponseException ex) {
+        ex.getRawStatusCode();
+      }
+    }
+
+    public void sendMessage(Topic topic) {
+      sendMessage(CLUSTER_NAME, topic);
     }
 }
