@@ -54,7 +54,6 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.admin.TopicDescription;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.KafkaFuture;
@@ -383,9 +382,12 @@ public class ReactiveAdminClient implements Closeable {
     }
   }
 
-  public Mono<List<String>> listConsumerGroups() {
-    return toMono(client.listConsumerGroups().all())
-        .map(lst -> lst.stream().map(ConsumerGroupListing::groupId).collect(toList()));
+  public Mono<List<String>> listConsumerGroupNames() {
+    return listConsumerGroups().map(lst -> lst.stream().map(ConsumerGroupListing::groupId).toList());
+  }
+
+  public Mono<Collection<ConsumerGroupListing>> listConsumerGroups() {
+    return toMono(client.listConsumerGroups().all());
   }
 
   public Mono<Map<String, ConsumerGroupDescription>> describeConsumerGroups(Collection<String> groupIds) {

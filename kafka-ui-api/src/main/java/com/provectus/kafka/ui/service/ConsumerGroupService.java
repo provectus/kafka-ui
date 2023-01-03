@@ -16,12 +16,13 @@ import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
+import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.ConsumerGroupState;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
@@ -73,7 +74,7 @@ public class ConsumerGroupService {
             .flatMap(endOffsets -> {
               var tps = new ArrayList<>(endOffsets.keySet());
               // 2. getting all consumer groups
-              return describeConsumerGroups(ac, null)
+              return describeConsumerGroups(ac)
                   .flatMap((List<ConsumerGroupDescription> groups) ->
                       Flux.fromIterable(groups)
                           // 3. for each group trying to find committed offsets for topic
@@ -97,81 +98,92 @@ public class ConsumerGroupService {
     return hasActiveMembersForTopic || hasCommittedOffsets;
   }
 
-  @Value
-  public static class ConsumerGroupsPage {
-    List<InternalConsumerGroup> consumerGroups;
-    int totalPages;
-  }
+  public record ConsumerGroupsPage(List<InternalConsumerGroup> consumerGroups, int totalPages) {}
 
   public Mono<ConsumerGroupsPage> getConsumerGroupsPage(
       KafkaCluster cluster,
-      int page,
+      int pageNum,
       int perPage,
       @Nullable String search,
       ConsumerGroupOrderingDTO orderBy,
       SortOrderDTO sortOrderDto) {
-    var comparator = sortOrderDto.equals(SortOrderDTO.ASC)
-        ? getPaginationComparator(orderBy)
-        : getPaginationComparator(orderBy).reversed();
     return adminClientService.get(cluster).flatMap(ac ->
-        describeConsumerGroups(ac, search).flatMap(descriptions ->
-            getConsumerGroups(
-                ac,
-                descriptions.stream()
-                    .sorted(comparator)
-                    .skip((long) (page - 1) * perPage)
-                    .limit(perPage)
-                    .collect(Collectors.toList())
+        ac.listConsumerGroups()
+            .map(listing -> search == null
+                ? listing
+                : listing.stream()
+                .filter(g -> StringUtils.containsIgnoreCase(g.groupId(), search))
+                .toList()
             )
-                .flatMapMany(Flux::fromIterable)
-                .filterWhen(
-                    cg -> accessControlService.isConsumerGroupAccessible(cg.getGroupId(), cluster.getName()))
-                .collect(Collectors.toList())
-                .map(cgs -> new ConsumerGroupsPage(
-                    cgs,
-                    (descriptions.size() / perPage) + (descriptions.size() % perPage == 0 ? 0 : 1))))
-    );
+            .flatMapIterable(lst -> lst)
+            .filterWhen(cg -> accessControlService.isConsumerGroupAccessible(cg.groupId(), cluster.getName()))
+            .collectList()
+            .flatMap(allGroups ->
+                loadSortedDescriptions(ac, allGroups, pageNum, perPage, orderBy, sortOrderDto)
+                    .flatMap(descriptions -> getConsumerGroups(ac, descriptions)
+                        .map(page -> new ConsumerGroupsPage(
+                            page,
+                            (allGroups.size() / perPage) + (allGroups.size() % perPage == 0 ? 0 : 1))))));
   }
 
-  private Comparator<ConsumerGroupDescription> getPaginationComparator(ConsumerGroupOrderingDTO
-                                                                           orderBy) {
-    switch (orderBy) {
-      case NAME:
-        return Comparator.comparing(ConsumerGroupDescription::groupId);
-      case STATE:
-        ToIntFunction<ConsumerGroupDescription> statesPriorities = cg -> {
-          switch (cg.state()) {
-            case STABLE:
-              return 0;
-            case COMPLETING_REBALANCE:
-              return 1;
-            case PREPARING_REBALANCE:
-              return 2;
-            case EMPTY:
-              return 3;
-            case DEAD:
-              return 4;
-            case UNKNOWN:
-              return 5;
-            default:
-              return 100;
-          }
-        };
-        return Comparator.comparingInt(statesPriorities);
-      case MEMBERS:
-        return Comparator.comparingInt(cg -> cg.members().size());
-      default:
-        throw new IllegalStateException("Unsupported order by: " + orderBy);
-    }
+  private Mono<List<ConsumerGroupDescription>> loadSortedDescriptions(ReactiveAdminClient ac,
+                                                                      List<ConsumerGroupListing> groups,
+                                                                      int pageNum,
+                                                                      int perPage,
+                                                                      ConsumerGroupOrderingDTO orderBy,
+                                                                      SortOrderDTO sortOrderDto) {
+    return switch (orderBy) {
+      case NAME -> {
+        Comparator<ConsumerGroupListing> comparator = Comparator.comparing(ConsumerGroupListing::groupId);
+        yield loadDescriptionsByListings(ac, groups, comparator, pageNum, perPage, sortOrderDto);
+      }
+      case STATE -> {
+        ToIntFunction<ConsumerGroupListing> statesPriorities =
+            cg -> switch (cg.state().orElse(ConsumerGroupState.UNKNOWN)) {
+              case STABLE -> 0;
+              case COMPLETING_REBALANCE -> 1;
+              case PREPARING_REBALANCE -> 2;
+              case EMPTY -> 3;
+              case DEAD -> 4;
+              case UNKNOWN -> 5;
+            };
+        var comparator = Comparator.comparingInt(statesPriorities);
+        yield loadDescriptionsByListings(ac, groups, comparator, pageNum, perPage, sortOrderDto);
+      }
+      case MEMBERS -> {
+        var comparator = Comparator.<ConsumerGroupDescription>comparingInt(cg -> cg.members().size());
+        var groupNames = groups.stream().map(ConsumerGroupListing::groupId).toList();
+        yield ac.describeConsumerGroups(groupNames)
+            .map(descriptions ->
+                descriptions.values()
+                    .stream()
+                    .sorted(sortOrderDto == SortOrderDTO.ASC ? comparator : comparator.reversed())
+                    .skip((long) (pageNum - 1) * perPage)
+                    .limit(perPage)
+                    .toList()
+            );
+      }
+    };
   }
 
-  private Mono<List<ConsumerGroupDescription>> describeConsumerGroups(ReactiveAdminClient ac,
-                                                                      @Nullable String search) {
-    return ac.listConsumerGroups()
-        .map(groupIds -> groupIds
-            .stream()
-            .filter(groupId -> search == null || StringUtils.containsIgnoreCase(groupId, search))
-            .collect(Collectors.toList()))
+  private Mono<List<ConsumerGroupDescription>> loadDescriptionsByListings(ReactiveAdminClient ac,
+                                                                          List<ConsumerGroupListing> listings,
+                                                                          Comparator<ConsumerGroupListing> comparator,
+                                                                          int pageNum,
+                                                                          int perPage,
+                                                                          SortOrderDTO sortOrderDto) {
+    List<String> sortedGroups = listings.stream()
+        .sorted(sortOrderDto == SortOrderDTO.ASC ? comparator : comparator.reversed())
+        .map(ConsumerGroupListing::groupId)
+        .skip((long) (pageNum - 1) * perPage)
+        .limit(perPage)
+        .toList();
+    return ac.describeConsumerGroups(sortedGroups)
+        .map(descrMap -> sortedGroups.stream().map(descrMap::get).toList());
+  }
+
+  private Mono<List<ConsumerGroupDescription>> describeConsumerGroups(ReactiveAdminClient ac) {
+    return ac.listConsumerGroupNames()
         .flatMap(ac::describeConsumerGroups)
         .map(cgs -> new ArrayList<>(cgs.values()));
   }
