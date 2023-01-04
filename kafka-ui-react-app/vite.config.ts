@@ -4,7 +4,7 @@ import {
   UserConfigExport,
   splitVendorChunkPlugin,
 } from 'vite';
-import react from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ mode }) => {
@@ -18,6 +18,26 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'build',
     },
+    experimental: {
+      renderBuiltUrl(
+        filename: string,
+        {
+          hostType,
+        }: {
+          hostId: string;
+          hostType: 'js' | 'css' | 'html';
+          type: 'asset' | 'public';
+        }
+      ) {
+        if (hostType === 'js') {
+          return {
+            runtime: `window.__assetsPathBuilder(${JSON.stringify(filename)})`,
+          };
+        }
+
+        return filename;
+      },
+    },
     define: {
       'process.env.NODE_ENV': `"${mode}"`,
       'process.env.VITE_TAG': `"${process.env.VITE_TAG}"`,
@@ -25,7 +45,6 @@ export default defineConfig(({ mode }) => {
     },
   };
   const proxy = process.env.VITE_DEV_PROXY;
-
   if (mode === 'development' && proxy) {
     return {
       ...defaultConfig,

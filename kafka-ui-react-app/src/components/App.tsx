@@ -14,7 +14,7 @@ import { theme, darkTheme } from 'theme/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { showServerError } from 'lib/errorHandling';
 import { Toaster } from 'react-hot-toast';
-import GlobalCSS from 'components/global.css';
+import GlobalCSS from 'components/globalCss';
 import * as S from 'components/App.styled';
 
 import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
