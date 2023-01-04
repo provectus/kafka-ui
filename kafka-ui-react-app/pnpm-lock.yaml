@@ -130,7 +130,6 @@ dependencies:
   styled-components: 5.3.1_uuaz5p7xzfmtjacf6iqf7idnby
   use-debounce: 8.0.1_react@18.1.0
   vite: 4.0.0_binvsr2w2vzqveeue6ibz2djda
-  vite-plugin-ejs: 1.6.4
   vite-tsconfig-paths: 4.0.2_eqmiqdrctagsk5ranq2vs4ssty
   whatwg-fetch: 3.6.2
   yup: 0.32.11
@@ -183,6 +182,7 @@ devDependencies:
   ts-node: 10.8.1_seagpw47opwyivxvtfydnuwcuy
   ts-prune: 0.10.3
   typescript: 4.7.4
+  vite-plugin-ejs: 1.6.4
 
 packages:
 
@@ -4270,7 +4270,7 @@ packages:
 
   /async/3.2.4:
     resolution: {integrity: sha512-iAB+JbDEGXhyIUavoDl9WP/Jj106Kz9DEn1DPgYw5ruDn0e3Wgi3sKFm55sASdGBNOQB8F59d9qQ7deqrHA8wQ==}
-    dev: false
+    dev: true
 
   /asynckit/0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
@@ -4524,7 +4524,7 @@ packages:
     resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
     dependencies:
       balanced-match: 1.0.2
-    dev: false
+    dev: true
 
   /braces/3.0.2:
     resolution: {integrity: sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==}
@@ -5058,7 +5058,7 @@ packages:
     hasBin: true
     dependencies:
       jake: 10.8.5
-    dev: false
+    dev: true
 
   /electron-to-chromium/1.4.151:
     resolution: {integrity: sha512-XaG2LpZi9fdiWYOqJh0dJy4SlVywCvpgYXhzOlZTp4JqSKqxn5URqOjbm9OMYB3aInA2GuHQiem1QUOc1yT0Pw==}
@@ -5764,7 +5764,7 @@ packages:
     resolution: {integrity: sha512-w1cEuf3S+DrLCQL7ET6kz+gmlJdbq9J7yXCSjK/OZCPA+qEN1WyF4ZAf0YYJa4/shHJra2t/d/r8SV4Ji+x+8Q==}
     dependencies:
       minimatch: 5.1.2
-    dev: false
+    dev: true
 
   /fill-range/7.0.1:
     resolution: {integrity: sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==}
@@ -6375,7 +6375,7 @@ packages:
       chalk: 4.1.2
       filelist: 1.0.4
       minimatch: 3.1.2
-    dev: false
+    dev: true
 
   /jest-changed-files/29.0.0:
     resolution: {integrity: sha512-28/iDMDrUpGoCitTURuDqUzWQoWmOmOKOFST1mi2lwh62X4BFf6khgH3uSuo1e49X/UDjuApAj3w0wLOex4VPQ==}
@@ -7218,7 +7218,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
-    dev: false
+    dev: true
 
   /minimist/1.2.6:
     resolution: {integrity: sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==}
@@ -8723,7 +8723,7 @@ packages:
     resolution: {integrity: sha512-23p1RS4PiA0veXY5/gHZ60pl3pPvd8NEqdBsDgxNK8nM1rjFFDcVb0paNmuipzCgNP/Y0f/Id22M7Il4kvZ2jA==}
     dependencies:
       ejs: 3.1.8
-    dev: false
+    dev: true
 
   /vite-tsconfig-paths/4.0.2_eqmiqdrctagsk5ranq2vs4ssty:
     resolution: {integrity: sha512-UzU8zwbCQrdUkj/Z0tnh293n4ScRcjJLoS8nPme2iB2FHoU5q8rhilb7AbhLlUC1uv4t6jSzVWnENjPnyGseeQ==}
