@@ -10,6 +10,7 @@ import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.Permission;
 import com.provectus.kafka.ui.model.rbac.Resource;
 import com.provectus.kafka.ui.model.rbac.Role;
+import com.provectus.kafka.ui.model.rbac.Subject;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
 import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
@@ -65,12 +66,15 @@ public class AccessControlService {
         .stream()
         .map(role -> role.getSubjects()
             .stream()
-            .map(provider -> switch (provider.getProvider()) {
+            .map(Subject::getProvider)
+            .distinct()
+            .map(provider -> switch (provider) {
               case OAUTH_COGNITO -> new CognitoAuthorityExtractor();
               case OAUTH_GOOGLE -> new GoogleAuthorityExtractor();
               case OAUTH_GITHUB -> new GithubAuthorityExtractor();
-              case LDAP, LDAP_AD -> new LdapAuthorityExtractor();
-            }).collect(Collectors.toSet()))
+              case LDAP, LDAP_AD -> new LdapAuthorityExtractor(ldapTemplate); // TODO do we need a separate one for AD?
+            })
+            .collect(Collectors.toSet()))
         .flatMap(Set::stream)
         .collect(Collectors.toSet());
 
