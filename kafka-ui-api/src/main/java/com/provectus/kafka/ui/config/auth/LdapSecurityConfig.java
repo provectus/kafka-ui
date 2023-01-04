@@ -91,16 +91,22 @@ public class LdapSecurityConfig extends AbstractAuthSecurityConfig {
       log.info("Active Directory support for LDAP has been enabled.");
     }
 
-    http
+    return http
         .authorizeExchange()
         .pathMatchers(AUTH_WHITELIST)
         .permitAll()
         .anyExchange()
         .authenticated()
-        .and()
-        .httpBasic();
 
-    return http.csrf().disable().build();
+        .and()
+        .formLogin()
+
+        .and()
+        .logout()
+
+        .and()
+        .csrf().disable()
+        .build();
   }
 
 }
