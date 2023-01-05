@@ -2,8 +2,8 @@ package com.provectus.kafka.ui.suite.topics;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
-import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
+import static com.provectus.kafka.ui.utilities.TimeUtils.waitUntilNewMinuteStarted;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
 import com.provectus.kafka.ui.base.BaseTest;
@@ -17,7 +17,11 @@ import io.qase.api.annotation.CaseId;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -33,7 +37,7 @@ public class TopicMessagesTests extends BaseTest {
       .setName("topic-with-clean-message-attribute-" + randomAlphabetic(5))
       .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
       .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
-  private static final Topic TOPIC_FOR_CHECKING_MESSAGES = new Topic()
+  private static final Topic TOPIC_FOR_CHECKING_FILTERS = new Topic()
       .setName("topic_for_checking_filters" + randomAlphabetic(5))
       .setMessageKey(randomAlphabetic(3))
       .setMessageContent(randomAlphabetic(3));
@@ -41,11 +45,11 @@ public class TopicMessagesTests extends BaseTest {
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_MESSAGES));
-    TOPIC_LIST.forEach(topic -> {apiService.createTopic(CLUSTER_NAME, topic.getName());
-      apiService.sendMessage(CLUSTER_NAME, TOPIC_FOR_CHECKING_MESSAGES);});
-//    ;
-//    IntStream.range(0,3).forEach(i -> apiHelper.sendMessage(CLUSTER_NAME, TOPIC_FOR_CHECKING_MESSAGES));}
+    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS));
+    TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
+    IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
+    waitUntilNewMinuteStarted();
+    IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
   }
 
   @DisplayName("produce message")
@@ -125,19 +129,23 @@ public class TopicMessagesTests extends BaseTest {
   @CaseId(15)
   @Test
   void checkingMessageFilteringByOffset() {
-    navigateToTopicsAndOpenDetails("_schemas");
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
     topicDetails
         .openDetailsTab(MESSAGES)
         .waitUntilScreenReady();
-    int listMessageSize = (topicDetails.getAllMessages().size() - 1);
+    int firstOffset = topicDetails.getMessageByOffset(0).getOffset();
+    List<TopicDetails.MessageGridItem> nextMessages = topicDetails.getAllMessages().stream()
+        .filter(messages -> messages.getOffset() != firstOffset)
+        .collect(Collectors.toList());
+    int nextOffset = Objects.requireNonNull(nextMessages.stream().findFirst().orElse(null)).getOffset();
     topicDetails
         .selectSeekTypeDdlMessagesTab("Offset")
-        .setSeekTypeValueFldMessagesTab(listMessageSize)
+        .setSeekTypeValueFldMessagesTab(nextOffset)
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
-    topicDetails.getAllMessages()
-        .forEach(messages -> softly.assertThat(messages.getOffset() == listMessageSize)
-        .as("getAllMessages()").isTrue());
+    topicDetails.getAllMessages().forEach(message ->
+        softly.assertThat(message.getOffset() == nextOffset || message.getOffset() > nextOffset)
+            .as(String.format("getOffset() = %s", message.getOffset())).isTrue());
     softly.assertAll();
   }
 
@@ -147,23 +155,31 @@ public class TopicMessagesTests extends BaseTest {
   @CaseId(16)
   @Test
   void checkingMessageFilteringByTimestamp() {
-    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_MESSAGES.getName());
-    Assertions.assertTrue(topicDetails.getAllMessages().size() > 2);
-    int listSizeMessages = (topicDetails.getAllMessages().size() -1);
-    LocalDateTime dateOfTimestamp = topicDetails.getMessage(listSizeMessages).getTimestamp();
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
+    topicDetails
+        .openDetailsTab(MESSAGES)
+        .waitUntilScreenReady();
+    LocalDateTime firstTimestamp = topicDetails.getMessageByOffset(0).getTimestamp();
+    List<TopicDetails.MessageGridItem> nextMessages = topicDetails.getAllMessages().stream()
+        .filter(message -> message.getTimestamp().getMinute() != firstTimestamp.getMinute())
+        .collect(Collectors.toList());
+    LocalDateTime nextTimestamp = Objects.requireNonNull(nextMessages.stream()
+        .findFirst().orElse(null)).getTimestamp();
     topicDetails
         .selectSeekTypeDdlMessagesTab("Timestamp")
-        .openCalendarTimestamp()
-        .selectDateTimeByCalendar(dateOfTimestamp)
+        .openCalendarSeekType()
+        .selectDateAndTimeByCalendar(nextTimestamp)
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
-    topicDetails.getAllMessages()
-        .forEach(date -> softly.assertThat(date.getTimestamp().equals(dateOfTimestamp))
-        .as("getTimestamp()").isTrue());
+    topicDetails.getAllMessages().forEach(date ->
+        softly.assertThat(date.getTimestamp().equals(nextTimestamp)
+                || date.getTimestamp().isAfter(nextTimestamp))
+            .as(String.format("getTimestamp()=%s", date.getTimestamp())).isTrue());
+    softly.assertAll();
   }
 
-//  @AfterAll
-//  public void afterAll() {
-//    TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
-//  }
+  @AfterAll
+  public void afterAll() {
+    TOPIC_LIST.forEach(topic -> apiService.deleteTopic(topic.getName()));
+  }
 }
