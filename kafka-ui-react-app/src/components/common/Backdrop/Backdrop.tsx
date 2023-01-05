@@ -1,8 +1,6 @@
 import React, { MouseEventHandler, SyntheticEvent } from 'react';
 import styled from 'styled-components';
 
-import Styles from './backdrop.module.scss';
-
 interface BackdropProps {
   onClick?: (e: SyntheticEvent<HTMLElement>) => void;
   open?: boolean;
@@ -32,7 +30,7 @@ const Backdrop: React.FC<BackdropProps> = ({ open, onClick }) => {
 
   return open ? (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-    <BackdropStyled className={Styles.backdrop} onClick={handleClick} />
+    <BackdropStyled onClick={handleClick} />
   ) : null;
 };
 
