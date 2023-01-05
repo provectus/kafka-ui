@@ -78,7 +78,7 @@ public class ApiService extends BaseSource {
     }
 
     public void deleteTopic(String topicName){
-      deleteTopic(topicName);
+      deleteTopic(CLUSTER_NAME, topicName);
     }
 
     @SneakyThrows
