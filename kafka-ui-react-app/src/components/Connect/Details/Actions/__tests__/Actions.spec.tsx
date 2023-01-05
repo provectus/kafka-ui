@@ -35,8 +35,12 @@ const expectActionButtonsExists = () => {
 };
 const afterClickDropDownButton = async () => {
   const dropDownButton = screen.getAllByRole('button');
-  expect(dropDownButton.length).toEqual(1);
-  await userEvent.click(dropDownButton[0]);
+  expect(dropDownButton.length).toEqual(2);
+  await userEvent.click(dropDownButton[1]);
+};
+const afterClickRestartButton = async () => {
+  const dropDownButton = screen.getByText('Restart');
+  await userEvent.click(dropDownButton);
 };
 describe('Actions', () => {
   afterEach(() => {
@@ -66,8 +70,8 @@ describe('Actions', () => {
         data: set({ ...connector }, 'status.state', ConnectorState.PAUSED),
       }));
       renderComponent();
-      await afterClickDropDownButton();
-      expect(screen.getAllByRole('menuitem').length).toEqual(5);
+      await afterClickRestartButton();
+      expect(screen.getAllByRole('menuitem').length).toEqual(4);
       expect(screen.getByText('Resume')).toBeInTheDocument();
       expect(screen.queryByText('Pause')).not.toBeInTheDocument();
       expectActionButtonsExists();
@@ -78,8 +82,8 @@ describe('Actions', () => {
         data: set({ ...connector }, 'status.state', ConnectorState.FAILED),
       }));
       renderComponent();
-      await afterClickDropDownButton();
-      expect(screen.getAllByRole('menuitem').length).toEqual(4);
+      await afterClickRestartButton();
+      expect(screen.getAllByRole('menuitem').length).toEqual(3);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
       expect(screen.queryByText('Pause')).not.toBeInTheDocument();
       expectActionButtonsExists();
@@ -90,8 +94,8 @@ describe('Actions', () => {
         data: set({ ...connector }, 'status.state', ConnectorState.UNASSIGNED),
       }));
       renderComponent();
-      await afterClickDropDownButton();
-      expect(screen.getAllByRole('menuitem').length).toEqual(4);
+      await afterClickRestartButton();
+      expect(screen.getAllByRole('menuitem').length).toEqual(3);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
       expect(screen.queryByText('Pause')).not.toBeInTheDocument();
       expectActionButtonsExists();
@@ -102,8 +106,8 @@ describe('Actions', () => {
         data: set({ ...connector }, 'status.state', ConnectorState.RUNNING),
       }));
       renderComponent();
-      await afterClickDropDownButton();
-      expect(screen.getAllByRole('menuitem').length).toEqual(5);
+      await afterClickRestartButton();
+      expect(screen.getAllByRole('menuitem').length).toEqual(4);
       expect(screen.queryByText('Resume')).not.toBeInTheDocument();
       expect(screen.getByText('Pause')).toBeInTheDocument();
       expectActionButtonsExists();
@@ -131,7 +135,7 @@ describe('Actions', () => {
           mutateAsync: restartConnector,
         }));
         renderComponent();
-        await afterClickDropDownButton();
+        await afterClickRestartButton();
         await userEvent.click(
           screen.getByRole('menuitem', { name: 'Restart Connector' })
         );
@@ -144,7 +148,7 @@ describe('Actions', () => {
           mutateAsync: restartAllTasks,
         }));
         renderComponent();
-        await afterClickDropDownButton();
+        await afterClickRestartButton();
         await userEvent.click(
           screen.getByRole('menuitem', { name: 'Restart All Tasks' })
         );
@@ -159,7 +163,7 @@ describe('Actions', () => {
           mutateAsync: restartFailedTasks,
         }));
         renderComponent();
-        await afterClickDropDownButton();
+        await afterClickRestartButton();
         await userEvent.click(
           screen.getByRole('menuitem', { name: 'Restart Failed Tasks' })
         );
@@ -174,7 +178,7 @@ describe('Actions', () => {
           mutateAsync: pauseConnector,
         }));
         renderComponent();
-        await afterClickDropDownButton();
+        await afterClickRestartButton();
         await userEvent.click(screen.getByRole('menuitem', { name: 'Pause' }));
         expect(pauseConnector).toHaveBeenCalledWith(ConnectorAction.PAUSE);
       });
@@ -188,7 +192,7 @@ describe('Actions', () => {
           mutateAsync: resumeConnector,
         }));
         renderComponent();
-        await afterClickDropDownButton();
+        await afterClickRestartButton();
         await userEvent.click(screen.getByRole('menuitem', { name: 'Resume' }));
         expect(resumeConnector).toHaveBeenCalledWith(ConnectorAction.RESUME);
       });
