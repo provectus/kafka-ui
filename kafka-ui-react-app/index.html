@@ -3,7 +3,6 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <!-- Google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,14 +12,18 @@
     />
 
     <!-- Favicons -->
-    <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
-    <link rel="icon" href="/favicon/icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="<%= PUBLIC_PATH %>/favicon/favicon.ico" sizes="any" />
+    <link rel="icon" href="<%= PUBLIC_PATH %>/favicon/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="<%= PUBLIC_PATH %>/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="<%= PUBLIC_PATH %>/manifest.json" />
 
     <title>UI for Apache Kafka</title>
     <script type="text/javascript">
-      window.basePath = '';
+      window.basePath = '<%= PUBLIC_PATH %>';
+
+      window.__assetsPathBuilder = function (importer) {
+        return window.basePath+ "/" + importer;
+      };
     </script>
   </head>
 
