@@ -16,7 +16,7 @@ const BackdropStyled = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(#000000, 0.5);
+  background-color: rgba(23, 26, 28, 0.6);
 `;
 
 const Backdrop: React.FC<BackdropProps> = ({ open, onClick }) => {
