@@ -17,7 +17,7 @@ import Meta from './FiltersBar/Meta';
 import Form from './FiltersBar/Form';
 import handleNextPageClick from './utils/handleNextPageClick';
 import StatusBar from './StatusBar';
-import AdvancedFilter from './Advanced Filter/AdvancedFilter';
+import AdvancedFilter from './AdvancedFilter/AdvancedFilter';
 
 const Messages = () => {
   const routerProps = useAppParams<RouteParamsClusterTopic>();
