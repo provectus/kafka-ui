@@ -16,7 +16,7 @@ interface ModalProps extends OverlayProps {
   transparent?: boolean;
 }
 
-export const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
+const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
   children,
   open,
   portal = true,
@@ -39,3 +39,5 @@ export const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
     </Overlay>
   );
 };
+
+export default Modal;
