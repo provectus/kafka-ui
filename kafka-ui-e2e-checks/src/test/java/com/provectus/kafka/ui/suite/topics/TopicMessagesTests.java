@@ -172,7 +172,7 @@ public class TopicMessagesTests extends BaseTest {
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
     topicDetails.getAllMessages().forEach(date ->
-        softly.assertThat(date.getTimestamp().equals(nextTimestamp)
+        softly.assertThat(date.getTimestamp().isEqual(nextTimestamp)
                 || date.getTimestamp().isAfter(nextTimestamp))
             .as(String.format("getTimestamp()=%s", date.getTimestamp())).isTrue());
     softly.assertAll();
