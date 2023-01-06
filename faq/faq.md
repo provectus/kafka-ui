@@ -1,0 +1,71 @@
+# FAQ
+
+#### Basic (username password) authentication
+
+Add these env. properties:
+
+```
+      AUTH_TYPE: "LOGIN_FORM"
+      SPRING_SECURITY_USER_NAME: admin
+      SPRING_SECURITY_USER_PASSWORD: pass
+```
+
+#### Role based access control (authorization)
+
+[#753](https://github.com/provectus/kafka-ui/issues/753) (WIP)
+
+#### OAuth 2
+
+See [this](https://github.com/provectus/kafka-ui/wiki/Set-up-OAuth2---SSO) guide.
+
+#### LDAP
+
+See [this](https://github.com/provectus/kafka-ui/blob/master/documentation/compose/auth-ldap.yaml#L29) example.
+
+#### Active Directory (LDAP)
+
+See [this](https://github.com/provectus/kafka-ui/blob/master/documentation/compose/auth-ldap.yaml#L29) example.
+
+#### SAML
+
+Planned, see [#478](https://github.com/provectus/kafka-ui/issues/478)
+
+#### Required ACL/MSK permissions
+
+ACL: todo
+
+MSK:
+
+```
+      "kafka-cluster:Connect",
+      "kafka-cluster:Describe*",
+      "kafka-cluster:CreateTopic",
+      "kafka-cluster:AlterGroup",
+      "kafka-cluster:ReadData"
+```
+
+#### Smart filters syntax
+
+**Variables bound to groovy context**: partition, timestampMs, keyAsText, valueAsText, header, key (json if possible), value (json if possible).
+
+**JSON parsing logic**:
+
+Key and Value (if they can be parsed to JSON) they are bound as JSON objects, otherwise bound as nulls.
+
+**Sample filters**:
+
+1. `keyAsText != null && keyAsText ~"([Gg])roovy"` - regex for key as a string
+2. `value.name == "iS.ListItemax" && value.age > 30` - in case value is json
+3. `value == null && valueAsText != null` - search for values that are not nulls and are not json
+4. `headers.sentBy == "some system" && headers["sentAt"] == "2020-01-01"`
+5. multiline filters are also allowed:
+
+```
+def name = value.name
+def age = value.age
+name == "iliax" && age == 30
+```
+
+#### Can I use the app as API?
+
+Yes, you can. Swagger declaration is located [here](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-contract/src/main/resources/swagger/kafka-ui-api.yaml).
