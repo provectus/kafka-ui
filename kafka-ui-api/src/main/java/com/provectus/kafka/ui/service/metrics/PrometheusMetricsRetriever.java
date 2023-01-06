@@ -33,7 +33,7 @@ class PrometheusMetricsRetriever implements MetricsRetriever {
 
   @VisibleForTesting
   Flux<RawMetric> retrieve(String host, MetricsConfig metricsConfig) {
-    Integer port = Optional.ofNullable(metricsConfig.getPort()).orElse(DEFAULT_EXPORTER_PORT);
+    int port = Optional.ofNullable(metricsConfig.getPort()).orElse(DEFAULT_EXPORTER_PORT);
 
     var request = webClient.get()
         .uri(UriComponentsBuilder.newInstance()
@@ -42,7 +42,7 @@ class PrometheusMetricsRetriever implements MetricsRetriever {
             .port(port)
             .path(METRICS_ENDPOINT_PATH).build().toUri());
 
-    if (null != metricsConfig.getUsername() && null != metricsConfig.getPassword()) {
+    if (metricsConfig.getUsername() != null && metricsConfig.getPassword() != null) {
       request.headers(
           httpHeaders -> httpHeaders.setBasicAuth(metricsConfig.getUsername(), metricsConfig.getPassword()));
     }
