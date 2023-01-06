@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.suite.topics;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
+import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.OVERVIEW;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static com.provectus.kafka.ui.utilities.TimeUtils.waitUntilNewMinuteStarted;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
@@ -60,7 +61,7 @@ public class TopicMessagesTests extends BaseTest {
   void produceMessage() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
     topicDetails
-        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .openDetailsTab(MESSAGES)
         .clickProduceMessageBtn();
     produceMessagePanel
         .waitUntilScreenReady()
@@ -87,7 +88,7 @@ public class TopicMessagesTests extends BaseTest {
   void clearMessage() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
     topicDetails
-        .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
+        .openDetailsTab(OVERVIEW)
         .clickProduceMessageBtn();
     int messageAmount = topicDetails.getMessageCountAmount();
     produceMessagePanel
@@ -113,9 +114,9 @@ public class TopicMessagesTests extends BaseTest {
   @CaseId(21)
   @Test
   void copyMessageFromTopicProfile() {
-    navigateToTopicsAndOpenDetails("_schemas");
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
     topicDetails
-        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .openDetailsTab(MESSAGES)
         .getRandomMessage()
         .openDotMenu()
         .clickCopyToClipBoard();
@@ -131,8 +132,7 @@ public class TopicMessagesTests extends BaseTest {
   void checkingMessageFilteringByOffset() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
     topicDetails
-        .openDetailsTab(MESSAGES)
-        .waitUntilScreenReady();
+        .openDetailsTab(MESSAGES);
     int firstOffset = topicDetails.getMessageByOffset(0).getOffset();
     List<TopicDetails.MessageGridItem> nextMessages = topicDetails.getAllMessages().stream()
         .filter(messages -> messages.getOffset() != firstOffset)
@@ -157,8 +157,7 @@ public class TopicMessagesTests extends BaseTest {
   void checkingMessageFilteringByTimestamp() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
     topicDetails
-        .openDetailsTab(MESSAGES)
-        .waitUntilScreenReady();
+        .openDetailsTab(MESSAGES);
     LocalDateTime firstTimestamp = topicDetails.getMessageByOffset(0).getTimestamp();
     List<TopicDetails.MessageGridItem> nextMessages = topicDetails.getAllMessages().stream()
         .filter(message -> message.getTimestamp().getMinute() != firstTimestamp.getMinute())
