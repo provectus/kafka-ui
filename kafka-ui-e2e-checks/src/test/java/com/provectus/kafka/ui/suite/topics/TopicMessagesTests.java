@@ -171,10 +171,10 @@ public class TopicMessagesTests extends BaseTest {
         .selectDateAndTimeByCalendar(nextTimestamp)
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
-    topicDetails.getAllMessages().forEach(date ->
-        softly.assertThat(date.getTimestamp().isEqual(nextTimestamp)
-                || date.getTimestamp().isAfter(nextTimestamp))
-            .as(String.format("getTimestamp()=%s", date.getTimestamp())).isTrue());
+    topicDetails.getAllMessages().forEach(messages ->
+      softly.assertThat(messages.getTimestamp().isEqual(nextTimestamp)
+            || messages.getTimestamp().isAfter(nextTimestamp))
+          .as(String.format("Expected timestamp is: %s, but found: %s", nextTimestamp, messages.getTimestamp())).isTrue());
     softly.assertAll();
   }
 
