@@ -416,7 +416,7 @@ public class TopicDetails extends BasePage {
     @Step
     public LocalDateTime getTimestamp() {
       String timestampValue = element.$x("./td[4]/div").getText().trim();
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy, hh:mm:ss");
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy, HH:mm:ss");
       return LocalDateTime.parse(timestampValue, formatter);
     }
 
