@@ -7,6 +7,7 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -98,7 +100,8 @@ public class ConsumerGroupService {
     return hasActiveMembersForTopic || hasCommittedOffsets;
   }
 
-  public record ConsumerGroupsPage(List<InternalConsumerGroup> consumerGroups, int totalPages) {}
+  public record ConsumerGroupsPage(List<InternalConsumerGroup> consumerGroups, int totalPages) {
+  }
 
   public Mono<ConsumerGroupsPage> getConsumerGroupsPage(
       KafkaCluster cluster,
@@ -155,13 +158,7 @@ public class ConsumerGroupService {
         var groupNames = groups.stream().map(ConsumerGroupListing::groupId).toList();
         yield ac.describeConsumerGroups(groupNames)
             .map(descriptions ->
-                descriptions.values()
-                    .stream()
-                    .sorted(sortOrderDto == SortOrderDTO.ASC ? comparator : comparator.reversed())
-                    .skip((long) (pageNum - 1) * perPage)
-                    .limit(perPage)
-                    .toList()
-            );
+                sortAndPaginate(descriptions.values(), comparator, pageNum, perPage, sortOrderDto).toList());
       }
     };
   }
@@ -172,14 +169,22 @@ public class ConsumerGroupService {
                                                                           int pageNum,
                                                                           int perPage,
                                                                           SortOrderDTO sortOrderDto) {
-    List<String> sortedGroups = listings.stream()
-        .sorted(sortOrderDto == SortOrderDTO.ASC ? comparator : comparator.reversed())
+    List<String> sortedGroups = sortAndPaginate(listings, comparator, pageNum, perPage, sortOrderDto)
         .map(ConsumerGroupListing::groupId)
-        .skip((long) (pageNum - 1) * perPage)
-        .limit(perPage)
         .toList();
     return ac.describeConsumerGroups(sortedGroups)
         .map(descrMap -> sortedGroups.stream().map(descrMap::get).toList());
+  }
+
+  private <T> Stream<T> sortAndPaginate(Collection<T> collection,
+                                        Comparator<T> comparator,
+                                        int pageNum,
+                                        int perPage,
+                                        SortOrderDTO sortOrderDto) {
+    return collection.stream()
+        .sorted(sortOrderDto == SortOrderDTO.ASC ? comparator : comparator.reversed())
+        .skip((long) (pageNum - 1) * perPage)
+        .limit(perPage);
   }
 
   private Mono<List<ConsumerGroupDescription>> describeConsumerGroups(ReactiveAdminClient ac) {
