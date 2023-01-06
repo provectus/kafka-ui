@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.service.metrics;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.MetricsConfig;
 import java.util.Arrays;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -27,20 +28,26 @@ class PrometheusMetricsRetriever implements MetricsRetriever {
   @Override
   public Flux<RawMetric> retrieve(KafkaCluster c, Node node) {
     log.debug("Retrieving metrics from prometheus exporter: {}:{}", node.host(), c.getMetricsConfig().getPort());
-    var metricsConfig = c.getMetricsConfig();
-    Integer port = Optional.ofNullable(metricsConfig.getPort()).orElse(DEFAULT_EXPORTER_PORT);
-    return retrieve(node.host(), port, metricsConfig.isSsl());
+    return retrieve(node.host(), c.getMetricsConfig());
   }
 
   @VisibleForTesting
-  Flux<RawMetric> retrieve(String host, int port, boolean ssl) {
-    WebClient.ResponseSpec responseSpec = webClient.get()
+  Flux<RawMetric> retrieve(String host, MetricsConfig metricsConfig) {
+    Integer port = Optional.ofNullable(metricsConfig.getPort()).orElse(DEFAULT_EXPORTER_PORT);
+
+    var request = webClient.get()
         .uri(UriComponentsBuilder.newInstance()
-            .scheme(ssl ? "https" : "http")
+            .scheme(metricsConfig.isSsl() ? "https" : "http")
             .host(host)
             .port(port)
-            .path(METRICS_ENDPOINT_PATH).build().toUri())
-        .retrieve();
+            .path(METRICS_ENDPOINT_PATH).build().toUri());
+
+    if (null != metricsConfig.getUsername() && null != metricsConfig.getPassword()) {
+      request.headers(
+          httpHeaders -> httpHeaders.setBasicAuth(metricsConfig.getUsername(), metricsConfig.getPassword()));
+    }
+
+    WebClient.ResponseSpec responseSpec = request.retrieve();
 
     return responseSpec.bodyToMono(String.class)
         .doOnError(e -> log.error("Error while getting metrics from {}", host, e))
