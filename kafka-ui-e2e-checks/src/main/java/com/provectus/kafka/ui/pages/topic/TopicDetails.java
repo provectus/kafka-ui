@@ -68,7 +68,7 @@ public class TopicDetails extends BasePage {
   @Step
   public TopicDetails waitUntilScreenReady() {
     waitUntilSpinnerDisappear();
-    dotMenuBtn.shouldBe(Condition.visible);
+    overviewTab.shouldBe(Condition.visible);
     return this;
   }
 
