@@ -33,7 +33,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
   protected SelenideElement seekTypeDdl = $x("//ul[@id='selectSeekType']/li");
-  protected SelenideElement seekTypeField = $x("//label[text()='Seek Type']//..//input");
+  protected SelenideElement seekTypeField = $x("//input[@placeholder='Select timestamp']");
   protected SelenideElement addFiltersBtn = $x("//button[text()='Add Filters']");
   protected SelenideElement savedFiltersLink = $x("//div[text()='Saved Filters']");
   protected SelenideElement addFilterCodeModalTitle = $x("//label[text()='Filter code']");
@@ -333,7 +333,7 @@ public class TopicDetails extends BasePage {
 
   private void setTime(LocalDateTime dateTime) {
     timeCalendarField.shouldBe(Condition.visible)
-        .sendKeys(String.valueOf(dateTime.getHour()), String.valueOf(dateTime.getMinute()), String.valueOf(dateTime.getSecond()));
+        .sendKeys(String.valueOf(dateTime.getHour()), String.valueOf(dateTime.getMinute()));
   }
 
   @Step
@@ -416,7 +416,7 @@ public class TopicDetails extends BasePage {
     @Step
     public LocalDateTime getTimestamp() {
       String timestampValue = element.$x("./td[4]/div").getText().trim();
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy, HH:mm:ss", Locale.US);
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy, hh:mm:ss");
       return LocalDateTime.parse(timestampValue, formatter);
     }
 
