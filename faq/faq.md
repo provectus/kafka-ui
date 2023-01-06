@@ -1,6 +1,6 @@
 # FAQ
 
-#### Basic (username password) authentication
+### Basic (username password) authentication
 
 Add these env. properties:
 
@@ -10,27 +10,27 @@ Add these env. properties:
       SPRING_SECURITY_USER_PASSWORD: pass
 ```
 
-#### Role based access control (authorization)
+### Role based access control
 
-[#753](https://github.com/provectus/kafka-ui/issues/753) (WIP)
+[rbac-role-based-access-control.md](../configuration/rbac-role-based-access-control.md "mention")
 
-#### OAuth 2
+### OAuth 2
 
-See [this](https://github.com/provectus/kafka-ui/wiki/Set-up-OAuth2---SSO) guide.
+[oauth2.md](../configuration/authentication/oauth2.md "mention")
 
-#### LDAP
-
-See [this](https://github.com/provectus/kafka-ui/blob/master/documentation/compose/auth-ldap.yaml#L29) example.
-
-#### Active Directory (LDAP)
+### LDAP
 
 See [this](https://github.com/provectus/kafka-ui/blob/master/documentation/compose/auth-ldap.yaml#L29) example.
 
-#### SAML
+### Active Directory (LDAP)
+
+See [this](https://github.com/provectus/kafka-ui/blob/master/documentation/compose/auth-ldap.yaml#L29) example.
+
+### SAML
 
 Planned, see [#478](https://github.com/provectus/kafka-ui/issues/478)
 
-#### Required ACL/MSK permissions
+### Required ACL/MSK permissions
 
 ACL: todo
 
@@ -44,7 +44,7 @@ MSK:
       "kafka-cluster:ReadData"
 ```
 
-#### Smart filters syntax
+### Smart filters syntax
 
 **Variables bound to groovy context**: partition, timestampMs, keyAsText, valueAsText, header, key (json if possible), value (json if possible).
 
@@ -66,6 +66,6 @@ def age = value.age
 name == "iliax" && age == 30
 ```
 
-#### Can I use the app as API?
+### Can I use the app as API?
 
 Yes, you can. Swagger declaration is located [here](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-contract/src/main/resources/swagger/kafka-ui-api.yaml).
