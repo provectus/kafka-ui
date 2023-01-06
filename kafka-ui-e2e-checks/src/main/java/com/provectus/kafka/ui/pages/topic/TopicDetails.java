@@ -33,7 +33,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
   protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
   protected SelenideElement seekTypeDdl = $x("//ul[@id='selectSeekType']/li");
-  protected SelenideElement seekTypeField = $x("//input[@placeholder='Select timestamp']");
+  protected SelenideElement seekTypeField = $x("//label[text()='Seek Type']//..//div/input");
   protected SelenideElement addFiltersBtn = $x("//button[text()='Add Filters']");
   protected SelenideElement savedFiltersLink = $x("//div[text()='Saved Filters']");
   protected SelenideElement addFilterCodeModalTitle = $x("//label[text()='Filter code']");
