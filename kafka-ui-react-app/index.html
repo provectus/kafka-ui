@@ -12,14 +12,14 @@
     />
 
     <!-- Favicons -->
-    <link rel="icon" href="PUBLIC-PATH-VARIABLE/favicon/favicon.ico" sizes="any" />
-    <link rel="icon" href="PUBLIC-PATH-VARIABLE/favicon/icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="PUBLIC-PATH-VARIABLE/favicon/apple-touch-icon.png" />
-    <link rel="manifest" href="PUBLIC-PATH-VARIABLE/manifest.json" />
+    <link rel="icon" href="<%= PUBLIC_PATH %>/favicon/favicon.ico" sizes="any" />
+    <link rel="icon" href="<%= PUBLIC_PATH %>/favicon/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="<%= PUBLIC_PATH %>/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="<%= PUBLIC_PATH %>/manifest.json" />
 
     <title>UI for Apache Kafka</title>
     <script type="text/javascript">
-      window.basePath = 'PUBLIC-PATH-VARIABLE';
+      window.basePath = '<%= PUBLIC_PATH %>';
 
       window.__assetsPathBuilder = function (importer) {
         return window.basePath+ "/" + importer;
