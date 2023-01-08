@@ -106,6 +106,9 @@ public class ReactiveFailover<T> {
         });
   }
 
+  /**
+   * Returns list of active publishers, starting with latest active.
+   */
   private synchronized List<PublisherHolder<T>> getActivePublishers() {
     var result = new ArrayList<PublisherHolder<T>>();
     for (int i = 0, j = currentIndex; i < publishers.size(); i++) {
