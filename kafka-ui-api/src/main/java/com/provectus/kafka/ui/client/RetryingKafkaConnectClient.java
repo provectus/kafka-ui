@@ -1,12 +1,13 @@
 package com.provectus.kafka.ui.client;
 
+import static com.provectus.kafka.ui.config.ClustersProperties.ConnectCluster;
+
 import com.provectus.kafka.ui.connect.ApiClient;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
 import com.provectus.kafka.ui.connect.model.Connector;
 import com.provectus.kafka.ui.connect.model.NewConnector;
 import com.provectus.kafka.ui.exception.KafkaConnectConflictReponseException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.KafkaConnectCluster;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
 import java.time.Duration;
 import java.util.List;
@@ -30,7 +31,7 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   private static final int MAX_RETRIES = 5;
   private static final Duration RETRIES_DELAY = Duration.ofMillis(200);
 
-  public RetryingKafkaConnectClient(KafkaConnectCluster config, DataSize maxBuffSize) {
+  public RetryingKafkaConnectClient(ConnectCluster config, DataSize maxBuffSize) {
     super(new RetryingApiClient(config, maxBuffSize));
   }
 
@@ -76,14 +77,14 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
 
   private static class RetryingApiClient extends ApiClient {
 
-    public RetryingApiClient(KafkaConnectCluster config, DataSize maxBuffSize) {
+    public RetryingApiClient(ConnectCluster config, DataSize maxBuffSize) {
       super(buildWebClient(maxBuffSize, config), null, null);
       setBasePath(config.getAddress());
       setUsername(config.getUserName());
       setPassword(config.getPassword());
     }
 
-    public static WebClient buildWebClient(DataSize maxBuffSize, KafkaConnectCluster config) {
+    public static WebClient buildWebClient(DataSize maxBuffSize, ConnectCluster config) {
       return new WebClientConfigurator()
           .configureSsl(
               config.getKeystoreLocation(),

@@ -9,13 +9,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.service.ksql.response.ResponseParser;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -62,25 +63,34 @@ public class KsqlApiClient {
 
   //--------------------------------------------------------------------------------------------
 
-  private final KafkaCluster cluster;
-  private final DataSize maxBuffSize;
+  private final String baseUrl;
+  private final WebClient webClient;
 
-  public KsqlApiClient(KafkaCluster cluster, DataSize maxBuffSize) {
-    this.cluster = cluster;
-    this.maxBuffSize = maxBuffSize;
+  public KsqlApiClient(String baseUrl,
+                       @Nullable ClustersProperties.KsqldbServerAuth ksqldbServerAuth,
+                       @Nullable ClustersProperties.WebClientSsl ksqldbServerSsl,
+                       @Nullable DataSize maxBuffSize) {
+    this.baseUrl = baseUrl;
+    this.webClient = webClient(ksqldbServerAuth, ksqldbServerSsl, maxBuffSize);
   }
 
-  private WebClient webClient() {
+  private static WebClient webClient(@Nullable ClustersProperties.KsqldbServerAuth ksqldbServerAuth,
+                                     @Nullable ClustersProperties.WebClientSsl ksqldbServerSsl,
+                                     @Nullable DataSize maxBuffSize) {
+    ksqldbServerAuth = Optional.ofNullable(ksqldbServerAuth).orElse(new ClustersProperties.KsqldbServerAuth());
+    ksqldbServerSsl = Optional.ofNullable(ksqldbServerSsl).orElse(new ClustersProperties.WebClientSsl());
+    maxBuffSize = Optional.ofNullable(maxBuffSize).orElse(DataSize.ofMegabytes(20));
+
     return new WebClientConfigurator()
         .configureSsl(
-            cluster.getKsqldbServer().getKeystoreLocation(),
-            cluster.getKsqldbServer().getKeystorePassword(),
-            cluster.getKsqldbServer().getTruststoreLocation(),
-            cluster.getKsqldbServer().getTruststorePassword()
+            ksqldbServerSsl.getKeystoreLocation(),
+            ksqldbServerSsl.getKeystorePassword(),
+            ksqldbServerSsl.getTruststoreLocation(),
+            ksqldbServerSsl.getTruststorePassword()
         )
         .configureBasicAuth(
-            cluster.getKsqldbServer().getUsername(),
-            cluster.getKsqldbServer().getPassword()
+            ksqldbServerAuth.getUsername(),
+            ksqldbServerAuth.getPassword()
         )
         .configureBufferSize(maxBuffSize)
         .configureCodecs(codecs -> {
@@ -95,18 +105,14 @@ public class KsqlApiClient {
         .build();
   }
 
-  private String baseKsqlDbUri() {
-    return cluster.getKsqldbServer().getUrl();
-  }
-
   private KsqlRequest ksqlRequest(String ksql, Map<String, String> streamProperties) {
     return new KsqlRequest(ksql, streamProperties);
   }
 
   private Flux<KsqlResponseTable> executeSelect(String ksql, Map<String, String> streamProperties) {
-    return webClient()
+    return webClient
         .post()
-        .uri(baseKsqlDbUri() + "/query")
+        .uri(baseUrl + "/query")
         .accept(new MediaType(KQL_API_MIME_TYPE))
         .contentType(new MediaType(KQL_API_MIME_TYPE))
         .bodyValue(ksqlRequest(ksql, streamProperties))
@@ -134,9 +140,9 @@ public class KsqlApiClient {
 
   private Flux<KsqlResponseTable> executeStatement(String ksql,
                                                    Map<String, String> streamProperties) {
-    return webClient()
+    return webClient
         .post()
-        .uri(baseKsqlDbUri() + "/ksql")
+        .uri(baseUrl + "/ksql")
         .accept(new MediaType(KQL_API_MIME_TYPE))
         .contentType(APPLICATION_JSON)
         .bodyValue(ksqlRequest(ksql, streamProperties))
