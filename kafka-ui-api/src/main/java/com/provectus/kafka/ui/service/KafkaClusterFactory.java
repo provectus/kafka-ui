@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ public class KafkaClusterFactory {
     return builder.build();
   }
 
+  @Nullable
   private Map<String, ReactiveFailover<KafkaConnectClientApi>> connectClients(
       ClustersProperties.Cluster clusterProperties) {
     if (clusterProperties.getKafkaConnect() == null) {
@@ -71,6 +73,7 @@ public class KafkaClusterFactory {
     return connects;
   }
 
+  @Nullable
   private ReactiveFailover<KafkaSrClientApi> schemaRegistryClient(ClustersProperties.Cluster clusterProperties) {
     if (clusterProperties.getSchemaRegistry() == null) {
       return null;
@@ -90,6 +93,7 @@ public class KafkaClusterFactory {
     );
   }
 
+  @Nullable
   private ReactiveFailover<KsqlApiClient> ksqlClient(ClustersProperties.Cluster clusterProperties) {
     if (clusterProperties.getKsqldbServer() == null) {
       return null;
@@ -112,6 +116,7 @@ public class KafkaClusterFactory {
     return Stream.of(url.split(",")).map(String::trim).filter(s -> !s.isBlank()).toList();
   }
 
+  @Nullable
   private MetricsConfig metricsConfigDataToMetricsConfig(ClustersProperties.MetricsConfigData metricsConfigData) {
     if (metricsConfigData == null) {
       return null;
