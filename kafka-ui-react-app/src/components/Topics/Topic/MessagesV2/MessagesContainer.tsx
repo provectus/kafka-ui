@@ -5,6 +5,7 @@ import { RouteParamsClusterTopic } from 'lib/paths';
 import { useSearchParams } from 'react-router-dom';
 import { useTopicDetails } from 'lib/hooks/api/topics';
 import { MESSAGES_PER_PAGE } from 'lib/constants';
+import { useMessageFiltersStore } from 'lib/hooks/useMessageFiltersStore';
 import { SerdeUsage } from 'generated-sources';
 
 import { setSeekTo } from './FiltersBar/utils';
@@ -22,12 +23,17 @@ const MessagesContainer = () => {
   const { data: topic = { partitions: [] } } = useTopicDetails(routerProps);
   const partitions = topic.partitions || [];
 
+  const activeFilterValue = useMessageFiltersStore(
+    (state) => state.activeFilter?.value
+  );
+
   /**
    * Search params:
    * - `q` - search query
    * - `m` - way the consumer is going to consume the messages..
    * - `o` - offset
    * - `t` - timestamp
+   * - `q` - search query
    * - `perPage` - number of messages per page
    * - `seekTo` - offset or timestamp to seek to.
    *    Format: `0-101.1-987` - [partition 0, offset 101], [partition 1, offset 987]
@@ -49,8 +55,13 @@ const MessagesContainer = () => {
     if (!searchParams.get('valueSerde')) {
       searchParams.set('valueSerde', getDefaultSerdeName(serdes.value || []));
     }
+
+    if (activeFilterValue && searchParams.get('q') !== activeFilterValue) {
+      searchParams.set('q', activeFilterValue);
+    }
+
     setSearchParams(searchParams);
-  }, [topic, serdes]);
+  }, [topic, serdes, activeFilterValue]);
 
   return (
     <Suspense>

@@ -8,7 +8,7 @@ import { MESSAGES_PER_PAGE } from 'lib/constants';
 import Search from 'components/common/Search/Search';
 import { Button } from 'components/common/Button/Button';
 import PlusIcon from 'components/common/Icons/PlusIcon';
-import SlidingSidebar from 'components/common/SlidingSidebar';
+import Modal from 'components/common/Modal/Modal';
 import useBoolean from 'lib/hooks/useBoolean';
 
 import MessagesTable from './MessagesTable/MessagesTable';
@@ -23,11 +23,13 @@ const Messages = () => {
   const routerProps = useAppParams<RouteParamsClusterTopic>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
   const {
     value: isAdvancedFiltersSidebarVisible,
     setFalse: closeAdvancedFiltersSidebar,
     setTrue: openAdvancedFiltersSidebar,
   } = useBoolean();
+
   const { messages, meta, phase, isFetching } = useTopicMessages({
     ...routerProps,
     searchParams,
@@ -95,13 +97,13 @@ const Messages = () => {
           <MessagesTable messages={messages} isLive={isTailing} />
         </S.TableWrapper>
       </S.Wrapper>
-      <SlidingSidebar
-        title="Advanced filtering"
+      <Modal
         open={isAdvancedFiltersSidebarVisible}
         onClose={closeAdvancedFiltersSidebar}
+        header="Add new filter"
       >
         <AdvancedFilter onClose={closeAdvancedFiltersSidebar} />
-      </SlidingSidebar>
+      </Modal>
     </>
   );
 };
