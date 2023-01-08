@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import com.google.common.collect.Table;
 import com.provectus.kafka.ui.model.ConsumerGroupOrderingDTO;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.InternalTopicConsumerGroup;
@@ -29,10 +30,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
 
 @Service
 @RequiredArgsConstructor
@@ -44,21 +42,16 @@ public class ConsumerGroupService {
   private Mono<List<InternalConsumerGroup>> getConsumerGroups(
       ReactiveAdminClient ac,
       List<ConsumerGroupDescription> descriptions) {
-    return Flux.fromIterable(descriptions)
-        // 1. getting committed offsets for all groups
-        .flatMap(desc -> ac.listConsumerGroupOffsets(desc.groupId())
-            .map(offsets -> Tuples.of(desc, offsets)))
-        .collectMap(Tuple2::getT1, Tuple2::getT2)
-        .flatMap((Map<ConsumerGroupDescription, Map<TopicPartition, Long>> groupOffsetsMap) -> {
-          var tpsFromGroupOffsets = groupOffsetsMap.values().stream()
-              .flatMap(v -> v.keySet().stream())
-              .collect(Collectors.toSet());
+    var groupNames = descriptions.stream().map(ConsumerGroupDescription::groupId).toList();
+    // 1. getting committed offsets for all groups
+    return ac.listConsumerGroupOffsets(groupNames, null)
+        .flatMap((Table<String, TopicPartition, Long> committedOffsets) -> {
           // 2. getting end offsets for partitions with committed offsets
-          return ac.listOffsets(tpsFromGroupOffsets, OffsetSpec.latest(), false)
+          return ac.listOffsets(committedOffsets.columnKeySet(), OffsetSpec.latest(), false)
               .map(endOffsets ->
                   descriptions.stream()
                       .map(desc -> {
-                        var groupOffsets = groupOffsetsMap.get(desc);
+                        var groupOffsets = committedOffsets.row(desc.groupId());
                         var endOffsetsForGroup = new HashMap<>(endOffsets);
                         endOffsetsForGroup.keySet().retainAll(groupOffsets.keySet());
                         // 3. gathering description & offsets
@@ -77,26 +70,29 @@ public class ConsumerGroupService {
               var tps = new ArrayList<>(endOffsets.keySet());
               // 2. getting all consumer groups
               return describeConsumerGroups(ac)
-                  .flatMap((List<ConsumerGroupDescription> groups) ->
-                      Flux.fromIterable(groups)
-                          // 3. for each group trying to find committed offsets for topic
-                          .flatMap(g ->
-                              ac.listConsumerGroupOffsets(g.groupId(), tps)
-                                  // 4. keeping only groups that relates to topic
-                                  .filter(offsets -> isConsumerGroupRelatesToTopic(topic, g, offsets))
-                                  // 5. constructing results
-                                  .map(offsets -> InternalTopicConsumerGroup.create(topic, g, offsets, endOffsets))
-                          ).collectList());
+                  .flatMap((List<ConsumerGroupDescription> groups) -> {
+                        // 3. trying to find committed offsets for topic
+                        var groupNames = groups.stream().map(ConsumerGroupDescription::groupId).toList();
+                        return ac.listConsumerGroupOffsets(groupNames, tps).map(offsets ->
+                            groups.stream()
+                                // 4. keeping only groups that relates to topic
+                                .filter(g -> isConsumerGroupRelatesToTopic(topic, g, offsets.containsRow(g.groupId())))
+                                .map(g ->
+                                    // 5. constructing results
+                                    InternalTopicConsumerGroup.create(topic, g, offsets.row(g.groupId()), endOffsets))
+                                .toList()
+                        );
+                      }
+                  );
             }));
   }
 
   private boolean isConsumerGroupRelatesToTopic(String topic,
                                                 ConsumerGroupDescription description,
-                                                Map<TopicPartition, Long> committedGroupOffsetsForTopic) {
+                                                boolean hasCommittedOffsets) {
     boolean hasActiveMembersForTopic = description.members()
         .stream()
         .anyMatch(m -> m.assignment().topicPartitions().stream().anyMatch(tp -> tp.topic().equals(topic)));
-    boolean hasCommittedOffsets = !committedGroupOffsetsForTopic.isEmpty();
     return hasActiveMembersForTopic || hasCommittedOffsets;
   }
 
