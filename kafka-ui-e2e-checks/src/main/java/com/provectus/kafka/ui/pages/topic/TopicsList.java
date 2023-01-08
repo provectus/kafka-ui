@@ -70,6 +70,12 @@ public class TopicsList extends BasePage {
           .collect(Collectors.toList());
     }
 
+    @Step
+    public TopicsList clickCopySelectedTopicBtn(){
+      copySelectedTopicBtn.shouldBe(Condition.enabled).click();
+      return this;
+    }
+
     private List<SelenideElement> getVisibleColumnHeaders() {
       return Stream.of("Replication Factor","Number of messages","Topic Name", "Partitions", "Out of sync replicas", "Size")
           .map(name -> $x(String.format(columnHeaderLocator, name)))
@@ -134,8 +140,9 @@ public class TopicsList extends BasePage {
       }
 
       @Step
-      public void selectItem(boolean select) {
-        selectElement(element.$x("./td[1]/input"), select);
+      public TopicsList selectItem(boolean select) {
+         selectElement(element.$x("./td[1]/input"), select);
+         return new TopicsList();
       }
 
       @Step

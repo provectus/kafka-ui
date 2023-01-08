@@ -471,6 +471,38 @@ public class TopicsTests extends BaseTest {
         .as("isAlertWithMessageVisible()").isTrue();
   }
 
+  @DisplayName("TopicTests.copyTopic : Copy topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(8)
+  @Test
+  void checkCopyTopicPossibility(){
+    Topic topicToCopy = new Topic()
+        .setName("topic-to-copy-" + randomAlphabetic(5))
+        .setNumberOfPartitions(1);
+    navigateToTopics();
+    topicsList
+        .getTopicItem("_schemas")
+        .selectItem(true)
+        .clickCopySelectedTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady();
+    assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isFalse();
+    topicCreateEditForm
+        .setTopicName(topicToCopy.getName())
+        .setNumberOfPartitions(topicToCopy.getNumberOfPartitions())
+        .clickCreateTopicBtn();
+    topicDetails
+        .waitUntilScreenReady();
+    TOPIC_LIST.add(topicToCopy);
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS, "Topic successfully created."))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicDetails.isTopicHeaderVisible(topicToCopy.getName()))
+        .as("isTopicHeaderVisible()").isTrue();
+    softly.assertAll();
+  }
+
   @AfterAll
   public void afterAll() {
     TOPIC_LIST.forEach(topic -> apiService.deleteTopic(CLUSTER_NAME, topic.getName()));
