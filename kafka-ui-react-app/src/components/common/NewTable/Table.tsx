@@ -5,12 +5,14 @@ import {
   getExpandedRowModel,
   getSortedRowModel,
   useReactTable,
-  ColumnDef,
+  getPaginationRowModel,
+} from '@tanstack/react-table';
+import type {
   Row,
   SortingState,
   OnChangeFn,
   PaginationState,
-  getPaginationRowModel,
+  ColumnDef,
 } from '@tanstack/react-table';
 import { useSearchParams } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';

@@ -77,7 +77,6 @@ describe('Details component', () => {
     });
 
     it('renders search input', async () => {
-      await renderComponent();
       expect(
         screen.getByPlaceholderText('Search by Topic Name')
       ).toBeInTheDocument();
