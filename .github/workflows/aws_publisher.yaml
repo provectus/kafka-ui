@@ -14,6 +14,7 @@ on:
         description: 'If set to true, the request to update AWS Server product version will be raised'
         required: true
         default: false
+        type: boolean
 
 jobs:
   build-ami:
