@@ -1,19 +1,22 @@
 package com.provectus.kafka.ui.base;
 
-import static com.codeborne.selenide.Selenide.clearBrowserCookies;
-import static com.codeborne.selenide.Selenide.clearBrowserLocalStorage;
-import static com.codeborne.selenide.Selenide.refresh;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
-import static com.provectus.kafka.ui.settings.BaseSource.BASE_WEB_URL;
+import static com.provectus.kafka.ui.settings.BaseSource.BASE_CONTAINER_URL;
+import static com.provectus.kafka.ui.settings.BaseSource.BASE_LOCAL_URL;
+import static com.provectus.kafka.ui.settings.BaseSource.BROWSER;
+import static com.provectus.kafka.ui.settings.configs.Profiles.CONTAINER;
+import static com.provectus.kafka.ui.settings.configs.Profiles.LOCAL;
+import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.browserClear;
+import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.browserQuit;
+import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.loggerSetup;
+import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.openUrl;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
-import io.qameta.allure.Allure;
 import io.qase.api.annotation.Step;
-import java.io.ByteArrayInputStream;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.SoftAssertions;
@@ -23,8 +26,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testcontainers.Testcontainers;
@@ -46,53 +47,67 @@ public abstract class BaseTest extends Facade {
 
   @BeforeAll
   public static void start() {
-    DockerImageName image = isARM64()
-        ? DockerImageName.parse(SELENIARM_STANDALONE_CHROMIUM).asCompatibleSubstituteFor(SELENIUM_IMAGE_NAME)
-        : DockerImageName.parse(SELENIUM_IMAGE_NAME);
-    log.info("Using [{}] as image name for chrome", image.getUnversionedPart());
-    webDriverContainer = new BrowserWebDriverContainer<>(image)
-        .withEnv("JAVA_OPTS", "-Dwebdriver.chrome.whitelistedIps=")
-        .withCapabilities(new ChromeOptions()
-            .addArguments("--disable-dev-shm-usage")
-            .addArguments("--disable-gpu")
-            .addArguments("--no-sandbox")
-            .addArguments("--verbose")
-        )
-        .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: "));
-    try {
-      Testcontainers.exposeHostPorts(8080);
-      log.info("Starting browser container");
-      webDriverContainer.start();
-    } catch (Throwable e) {
-      log.error("Couldn't start a container", e);
+    switch (BROWSER) {
+      case (CONTAINER) -> {
+        DockerImageName image = isARM64()
+            ? DockerImageName.parse(SELENIARM_STANDALONE_CHROMIUM).asCompatibleSubstituteFor(SELENIUM_IMAGE_NAME)
+            : DockerImageName.parse(SELENIUM_IMAGE_NAME);
+        log.info("Using [{}] as image name for chrome", image.getUnversionedPart());
+        webDriverContainer = new BrowserWebDriverContainer<>(image)
+            .withEnv("JAVA_OPTS", "-Dwebdriver.chrome.whitelistedIps=")
+            .withCapabilities(new ChromeOptions()
+                .addArguments("--disable-dev-shm-usage")
+                .addArguments("--disable-gpu")
+                .addArguments("--no-sandbox")
+                .addArguments("--verbose")
+            )
+            .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: "));
+        try {
+          Testcontainers.exposeHostPorts(8080);
+          log.info("Starting browser container");
+          webDriverContainer.start();
+        } catch (Throwable e) {
+          log.error("Couldn't start a container", e);
+        }
+      }
+      case (LOCAL) -> loggerSetup();
+      default -> throw new IllegalStateException("Unexpected value: " + BROWSER);
     }
   }
 
   @AfterAll
   public static void tearDown() {
-    if (webDriverContainer.isRunning()) {
-      webDriverContainer.close();
-      webDriverContainer.stop();
+    switch (BROWSER) {
+      case (CONTAINER) -> {
+        if (webDriverContainer.isRunning()) {
+          webDriverContainer.close();
+          webDriverContainer.stop();
+        }
+      }
+      case (LOCAL) -> browserQuit();
+      default -> throw new IllegalStateException("Unexpected value: " + BROWSER);
     }
   }
 
   @BeforeEach
   public void beforeMethod() {
-    RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
-    WebDriverRunner.setWebDriver(remoteWebDriver);
-    remoteWebDriver.manage()
-        .window().setSize(new Dimension(1440, 1024));
-    Selenide.open(BASE_WEB_URL);
+    switch (BROWSER) {
+      case (CONTAINER) -> {
+        RemoteWebDriver remoteWebDriver = webDriverContainer.getWebDriver();
+        WebDriverRunner.setWebDriver(remoteWebDriver);
+        remoteWebDriver.manage()
+            .window().setSize(new Dimension(1440, 1024));
+        Selenide.open(BASE_CONTAINER_URL);
+      }
+      case (LOCAL) -> openUrl(BASE_LOCAL_URL);
+      default -> throw new IllegalStateException("Unexpected value: " + BROWSER);
+    }
     naviSideBar.waitUntilScreenReady();
   }
 
   @AfterEach
   public void afterMethod() {
-    Allure.addAttachment("Screenshot", new ByteArrayInputStream(((TakesScreenshot)
-        webDriverContainer.getWebDriver()).getScreenshotAs(OutputType.BYTES)));
-    clearBrowserLocalStorage();
-    clearBrowserCookies();
-    refresh();
+    browserClear();
   }
 
   @Step
