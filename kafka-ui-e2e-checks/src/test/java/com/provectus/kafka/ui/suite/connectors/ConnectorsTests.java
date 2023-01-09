@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.suite.connectors;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KAFKA_CONNECT;
-import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+import static com.provectus.kafka.ui.settings.BaseSource.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
@@ -52,11 +52,11 @@ public class ConnectorsTests extends BaseTest {
     public void beforeAll() {
         TOPIC_LIST.addAll(List.of(TOPIC_FOR_CREATE, TOPIC_FOR_DELETE, TOPIC_FOR_UPDATE));
         TOPIC_LIST.forEach(topic -> {
-            apiHelper.createTopic(CLUSTER_NAME, topic.getName());
-            apiHelper.sendMessage(CLUSTER_NAME, topic);
+            apiService.createTopic(CLUSTER_NAME, topic.getName());
+            apiService.sendMessage(CLUSTER_NAME, topic);
         });
         CONNECTOR_LIST.addAll(List.of(CONNECTOR_FOR_DELETE, CONNECTOR_FOR_UPDATE));
-        CONNECTOR_LIST.forEach(connector -> apiHelper
+        CONNECTOR_LIST.forEach(connector -> apiService
                 .createConnector(CLUSTER_NAME, CONNECT_NAME, connector));
     }
 
@@ -120,8 +120,8 @@ public class ConnectorsTests extends BaseTest {
     @AfterAll
     public void afterAll() {
         CONNECTOR_LIST.forEach(connector ->
-                apiHelper.deleteConnector(CLUSTER_NAME, CONNECT_NAME, connector.getName()));
-        TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
+                apiService.deleteConnector(CLUSTER_NAME, CONNECT_NAME, connector.getName()));
+        TOPIC_LIST.forEach(topic -> apiService.deleteTopic(CLUSTER_NAME, topic.getName()));
     }
 
     @Step

@@ -13,17 +13,17 @@ import {
 } from 'lib/hooks/api/topics';
 import TopicTable from 'components/Topics/List/TopicTable';
 import { clusterTopicsPath } from 'lib/paths';
+import { useAppDispatch } from 'lib/hooks/redux';
 
 const clusterName = 'test-cluster';
-const mockUnwrap = jest.fn();
-const useDispatchMock = () => jest.fn(() => ({ unwrap: mockUnwrap }));
-
-const getButtonByName = (name: string) => screen.getByRole('button', { name });
+const unwrapMock = jest.fn();
 
 jest.mock('lib/hooks/redux', () => ({
   ...jest.requireActual('lib/hooks/redux'),
-  useAppDispatch: useDispatchMock,
+  useAppDispatch: jest.fn(),
 }));
+
+const getButtonByName = (name: string) => screen.getByRole('button', { name });
 
 jest.mock('lib/hooks/api/topics', () => ({
   ...jest.requireActual('lib/hooks/api/topics'),
@@ -47,6 +47,9 @@ describe('TopicTable Components', () => {
     }));
     (useRecreateTopic as jest.Mock).mockImplementation(() => ({
       mutateAsync: recreateTopicMock,
+    }));
+    (useAppDispatch as jest.Mock).mockImplementation(() => () => ({
+      unwrap: unwrapMock,
     }));
   });
 
@@ -188,9 +191,9 @@ describe('TopicTable Components', () => {
             ).toBeInTheDocument();
             const confirmBtn = getButtonByName('Confirm');
             expect(confirmBtn).toBeInTheDocument();
-            expect(mockUnwrap).not.toHaveBeenCalled();
+            expect(unwrapMock).not.toHaveBeenCalled();
             await userEvent.click(confirmBtn);
-            expect(mockUnwrap).toHaveBeenCalledTimes(2);
+            expect(unwrapMock).toHaveBeenCalledTimes(2);
             expect(screen.getAllByRole('checkbox')[1]).not.toBeChecked();
             expect(screen.getAllByRole('checkbox')[2]).not.toBeChecked();
           });

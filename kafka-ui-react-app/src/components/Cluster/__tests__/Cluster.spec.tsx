@@ -1,7 +1,7 @@
 import React from 'react';
 import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
 import ClusterComponent from 'components/Cluster/Cluster';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { render, WithRoute } from 'lib/testHelpers';
 import {
   clusterBrokersPath,
@@ -59,6 +59,9 @@ describe('Cluster', () => {
       </WithRoute>,
       { initialEntries: [pathname] }
     );
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
   };
 
   it('renders Brokers', async () => {

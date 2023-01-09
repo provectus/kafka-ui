@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 public class TopicsList extends BasePage {
 
-    protected SelenideElement topicListHeader = $x("//*[text()='Topics']");
+    protected SelenideElement topicListHeader = $x("//h1[text()='Topics']");
     protected SelenideElement addTopicBtn = $x("//button[normalize-space(text()) ='Add a Topic']");
     protected SelenideElement searchField = $x("//input[@placeholder='Search by Topic Name']");
     protected SelenideElement showInternalRadioBtn = $x("//input[@name='ShowInternalTopics']");
@@ -68,6 +68,12 @@ public class TopicsList extends BasePage {
     public List<SelenideElement> getActionButtons() {
       return Stream.of(deleteSelectedTopicsBtn, copySelectedTopicBtn, purgeMessagesOfSelectedTopicsBtn)
           .collect(Collectors.toList());
+    }
+
+    @Step
+    public TopicsList clickCopySelectedTopicBtn(){
+      copySelectedTopicBtn.shouldBe(Condition.enabled).click();
+      return this;
     }
 
     private List<SelenideElement> getVisibleColumnHeaders() {
@@ -134,8 +140,9 @@ public class TopicsList extends BasePage {
       }
 
       @Step
-      public void selectItem(boolean select) {
-        selectElement(element.$x("./td[1]/input"), select);
+      public TopicsList selectItem(boolean select) {
+         selectElement(element.$x("./td[1]/input"), select);
+         return new TopicsList();
       }
 
       @Step

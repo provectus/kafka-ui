@@ -9,12 +9,11 @@ import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPR
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.NOT_SET;
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_1_GB;
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
-import static com.provectus.kafka.ui.settings.Source.CLUSTER_NAME;
+import static com.provectus.kafka.ui.settings.BaseSource.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.base.BaseTest;
@@ -70,7 +69,7 @@ public class TopicsTests extends BaseTest {
   @BeforeAll
   public void beforeAll() {
     TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE, TOPIC_FOR_DELETE));
-    TOPIC_LIST.forEach(topic -> apiHelper.createTopic(CLUSTER_NAME, topic.getName()));
+    TOPIC_LIST.forEach(topic -> apiService.createTopic(CLUSTER_NAME, topic.getName()));
   }
 
   @DisplayName("should create a topic")
@@ -472,8 +471,40 @@ public class TopicsTests extends BaseTest {
         .as("isAlertWithMessageVisible()").isTrue();
   }
 
+  @DisplayName("TopicTests.copyTopic : Copy topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(8)
+  @Test
+  void checkCopyTopicPossibility(){
+    Topic topicToCopy = new Topic()
+        .setName("topic-to-copy-" + randomAlphabetic(5))
+        .setNumberOfPartitions(1);
+    navigateToTopics();
+    topicsList
+        .getTopicItem("_schemas")
+        .selectItem(true)
+        .clickCopySelectedTopicBtn();
+    topicCreateEditForm
+        .waitUntilScreenReady();
+    assertThat(topicCreateEditForm.isCreateTopicButtonEnabled()).as("isCreateTopicButtonEnabled()").isFalse();
+    topicCreateEditForm
+        .setTopicName(topicToCopy.getName())
+        .setNumberOfPartitions(topicToCopy.getNumberOfPartitions())
+        .clickCreateTopicBtn();
+    topicDetails
+        .waitUntilScreenReady();
+    TOPIC_LIST.add(topicToCopy);
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS, "Topic successfully created."))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicDetails.isTopicHeaderVisible(topicToCopy.getName()))
+        .as("isTopicHeaderVisible()").isTrue();
+    softly.assertAll();
+  }
+
   @AfterAll
   public void afterAll() {
-    TOPIC_LIST.forEach(topic -> apiHelper.deleteTopic(CLUSTER_NAME, topic.getName()));
+    TOPIC_LIST.forEach(topic -> apiService.deleteTopic(CLUSTER_NAME, topic.getName()));
   }
 }
