@@ -58,7 +58,7 @@ jobs:
 
       # add fresh AMI to AWS Marketplace
       - name: Publish Artifact at Marketplace
-        if: ${{ github.event.inputs.PublishOnMarketplace == true }}
+        if: ${{ github.event.inputs.PublishOnMarketplace == 'true' }}
         env:
           PRODUCT_ID: ${{ secrets.AWS_SERVER_PRODUCT_ID }}
           RELEASE_VERSION: "${{ github.event.inputs.KafkaUIReleaseVersion }}"
