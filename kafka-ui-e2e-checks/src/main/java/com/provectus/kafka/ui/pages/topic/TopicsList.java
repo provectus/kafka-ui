@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 public class TopicsList extends BasePage {
 
-    protected SelenideElement topicListHeader = $x("//*[text()='Topics']");
+    protected SelenideElement topicListHeader = $x("//h1[text()='Topics']");
     protected SelenideElement addTopicBtn = $x("//button[normalize-space(text()) ='Add a Topic']");
     protected SelenideElement searchField = $x("//input[@placeholder='Search by Topic Name']");
     protected SelenideElement showInternalRadioBtn = $x("//input[@name='ShowInternalTopics']");
