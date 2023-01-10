@@ -8,6 +8,7 @@ import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
@@ -16,6 +17,7 @@ import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
 import java.util.ArrayList;
 import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -108,7 +110,7 @@ public class TopicMessagesTests extends BaseTest {
         .getRandomMessage()
         .openDotMenu()
         .clickCopyToClipBoard();
-    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Copied successfully!"),
+    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS,"Copied successfully!"),
         "isAlertWithMessageVisible()");
   }
 
@@ -132,6 +134,37 @@ public class TopicMessagesTests extends BaseTest {
         .forEach(messages -> softly.assertThat(messages.getOffset() == Integer.parseInt(offsetValue))
         .as("getAllMessages()").isTrue());
     softly.assertAll();
+  }
+
+  @Issue("https://github.com/provectus/kafka-ui/issues/3196")
+  @DisplayName("TopicTests.clearMessageOfTopic : Clear message of topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(239)
+  @Test
+  void checkClearTopicMessage() {
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
+    topicDetails
+        .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
+        .clickProduceMessageBtn();
+    produceMessagePanel
+        .waitUntilScreenReady()
+        .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
+        .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
+        .submitProduceMessage();
+    topicDetails
+        .waitUntilScreenReady();
+    navigateToTopics();
+    topicsList
+        .waitUntilScreenReady()
+        .openDotMenuByTopicName(TOPIC_FOR_MESSAGES.getName())
+        .clickClearMessageBtn()
+        .clickConfirmBtnMdl();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicsList.isAlertWithMessageVisible(SUCCESS,"messages messages have been successfully cleared!"))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicsList.getNumberOfMessage(TOPIC_FOR_MESSAGES.getName())).as("getNumberOfMessage()")
+        .isEqualTo(0);
   }
 
   @AfterAll

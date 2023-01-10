@@ -22,6 +22,7 @@ public class TopicsList extends BasePage {
     protected SelenideElement deleteSelectedTopicsBtn = $x("//button[text()='Delete selected topics']");
     protected SelenideElement copySelectedTopicBtn = $x("//button[text()='Copy selected topic']");
     protected SelenideElement purgeMessagesOfSelectedTopicsBtn = $x("//button[text()='Purge messages of selected topics']");
+    protected SelenideElement clearMessageBtn = $x("//ul[contains(@class ,'open')]//div[text()='Clear Messages']");
 
     @Step
     public TopicsList waitUntilScreenReady() {
@@ -60,6 +61,12 @@ public class TopicsList extends BasePage {
     }
 
     @Step
+    public TopicsList openDotMenuByTopicName(String topicName){
+      getTopicItem(topicName).openDotMenu();
+      return this;
+    }
+
+    @Step
     public boolean isCopySelectedTopicBtnEnabled(){
       return isEnabled(copySelectedTopicBtn);
     }
@@ -74,6 +81,28 @@ public class TopicsList extends BasePage {
     public TopicsList clickCopySelectedTopicBtn(){
       copySelectedTopicBtn.shouldBe(Condition.enabled).click();
       return this;
+    }
+
+    @Step
+    public int getNumberOfMessage(String topicName){
+      return getTopicItem(topicName).getNumberOfMessages();
+    }
+
+    @Step
+    public TopicsList clickClearMessageBtn(){
+      clickByJavaScript(clearMessageBtn);
+      return this;
+    }
+
+    @Step
+    public TopicsList clickConfirmBtnMdl() {
+    clickConfirmButton();
+    return this;
+    }
+
+    @Step
+    public boolean isAlertWithMessageVisible(AlertHeader header, String message) {
+      return isAlertVisible(header, message);
     }
 
     private List<SelenideElement> getVisibleColumnHeaders() {
