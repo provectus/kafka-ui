@@ -8,7 +8,7 @@ import {
 const fetchLatestVersion = async () => {
   const data = await fetch(GIT_REPO_LATEST_RELEASE_LINK)
     .then((res) => res.json())
-    .catch((error) => actuatorInfoPayload);
+    .catch(() => actuatorInfoPayload);
 
   return data;
 };
