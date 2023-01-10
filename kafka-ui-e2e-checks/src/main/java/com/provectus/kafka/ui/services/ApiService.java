@@ -68,6 +68,7 @@ public class ApiService extends BaseSource {
       return this;
     }
 
+    @SneakyThrows
     private void deleteTopic(String clusterName, String topicName) {
         try {
             topicApi().deleteTopic(clusterName, topicName).block();
