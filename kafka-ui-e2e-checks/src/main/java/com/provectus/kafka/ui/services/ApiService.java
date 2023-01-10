@@ -1,5 +1,8 @@
 package com.provectus.kafka.ui.services;
 
+import static com.codeborne.selenide.Selenide.sleep;
+import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.api.ApiClient;
 import com.provectus.kafka.ui.api.api.KafkaConnectApi;
@@ -13,6 +16,7 @@ import com.provectus.kafka.ui.api.model.TopicCreation;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.settings.BaseSource;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.SneakyThrows;
@@ -22,11 +26,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 @Slf4j
 public class ApiService extends BaseSource {
-
-    int partitions = 1;
-    int replicationFactor = 1;
-    String baseURL = BaseSource.BASE_API_URL;
-
 
     @SneakyThrows
     private TopicsApi topicApi() {
