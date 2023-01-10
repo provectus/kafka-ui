@@ -140,7 +140,7 @@ public class TopicMessagesTests extends BaseTest {
     int nextOffset = Objects.requireNonNull(nextMessages.stream().findFirst().orElse(null)).getOffset();
     topicDetails
         .selectSeekTypeDdlMessagesTab("Offset")
-        .setSeekTypeValueFldMessagesTab(nextOffset)
+        .setSeekTypeValueFldMessagesTab(String.valueOf(nextOffset))
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
     topicDetails.getAllMessages().forEach(message ->

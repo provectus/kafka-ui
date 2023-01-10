@@ -56,8 +56,8 @@ public class TopicDetails extends BasePage {
   protected SelenideElement actualCalendarDate = $x("//div[@class='react-datepicker__current-month']");
   protected SelenideElement previousMonthButton = $x("//button[@aria-label='Previous Month']");
   protected SelenideElement nextMonthButton = $x("//button[@aria-label='Next Month']");
-  protected SelenideElement timeCalendarField = $x("//input[@placeholder='Time']");
-  protected String cellDayLocator = "//div[@role='option'][contains(text(),'%d')]";
+  protected SelenideElement calendarTimeFld = $x("//input[@placeholder='Time']");
+  protected String dayCellLtr = "//div[@role='option'][contains(text(),'%d')]";
   protected String seekFilterDdlLocator = "//ul[@id='selectSeekType']/ul/li[text()='%s']";
   protected String savedFilterNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
   protected String consumerIdLocator = "//a[@title='%s']";
@@ -160,8 +160,8 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails setSeekTypeValueFldMessagesTab(int seekTypeValue){
-    seekTypeField.shouldBe(Condition.enabled).sendKeys(String.valueOf(seekTypeValue));
+  public TopicDetails setSeekTypeValueFldMessagesTab(String seekTypeValue){
+    seekTypeField.shouldBe(Condition.enabled).sendKeys(seekTypeValue);
     return this;
   }
 
@@ -326,13 +326,13 @@ public class TopicDetails extends BasePage {
   }
 
   private void selectDay(int expectedDay) {
-    Objects.requireNonNull($$x(String.format(cellDayLocator, expectedDay)).stream()
+    Objects.requireNonNull($$x(String.format(dayCellLtr, expectedDay)).stream()
         .filter(day -> !Objects.requireNonNull(day.getAttribute("class")).contains("outside-month"))
-        .findFirst().orElse(null)).shouldBe(Condition.visible).click();
+        .findFirst().orElse(null)).shouldBe(Condition.enabled).click();
   }
 
   private void setTime(LocalDateTime dateTime) {
-    timeCalendarField.shouldBe(Condition.visible)
+    calendarTimeFld.shouldBe(Condition.enabled)
         .sendKeys(String.valueOf(dateTime.getHour()), String.valueOf(dateTime.getMinute()));
   }
 
@@ -345,8 +345,7 @@ public class TopicDetails extends BasePage {
     return this;
   }
 
-  @Step
-  public LocalDate getActualCalendarDate() {
+  private LocalDate getActualCalendarDate() {
     String monthAndYearStr = actualCalendarDate.getText().trim();
     DateTimeFormatter formatter = new DateTimeFormatterBuilder()
         .parseCaseInsensitive()
@@ -358,7 +357,7 @@ public class TopicDetails extends BasePage {
 
   @Step
   public TopicDetails openCalendarSeekType(){
-    seekTypeField.shouldBe(Condition.visible).click();
+    seekTypeField.shouldBe(Condition.enabled).click();
     actualCalendarDate.shouldBe(Condition.visible);
     return this;
   }
