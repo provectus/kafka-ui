@@ -1,8 +1,5 @@
 package com.provectus.kafka.ui.services;
 
-import static com.codeborne.selenide.Selenide.sleep;
-import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.api.ApiClient;
 import com.provectus.kafka.ui.api.api.KafkaConnectApi;
@@ -16,7 +13,6 @@ import com.provectus.kafka.ui.api.model.TopicCreation;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.settings.BaseSource;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.SneakyThrows;
@@ -27,43 +23,43 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 @Slf4j
 public class ApiService extends BaseSource {
 
-  int partitions = 1;
-  int replicationFactor = 1;
-  String baseURL = BaseSource.BASE_API_URL;
+    int partitions = 1;
+    int replicationFactor = 1;
+    String baseURL = BaseSource.BASE_API_URL;
 
 
     @SneakyThrows
     private TopicsApi topicApi() {
-        return new TopicsApi(new ApiClient().setBasePath(baseURL));
+      return new TopicsApi(new ApiClient().setBasePath(BASE_LOCAL_URL));
     }
 
     @SneakyThrows
     private SchemasApi schemaApi() {
-        return new SchemasApi(new ApiClient().setBasePath(baseURL));
+      return new SchemasApi(new ApiClient().setBasePath(BASE_LOCAL_URL));
     }
 
     @SneakyThrows
     private KafkaConnectApi connectorApi() {
-        return new KafkaConnectApi(new ApiClient().setBasePath(baseURL));
+      return new KafkaConnectApi(new ApiClient().setBasePath(BASE_LOCAL_URL));
     }
 
     @SneakyThrows
     private MessagesApi messageApi() {
-        return new MessagesApi(new ApiClient().setBasePath(baseURL));
+      return new MessagesApi(new ApiClient().setBasePath(BASE_LOCAL_URL));
     }
 
     @SneakyThrows
     public void createTopic(String clusterName, String topicName) {
-        TopicCreation topic = new TopicCreation();
-        topic.setName(topicName);
-        topic.setPartitions(partitions);
-        topic.setReplicationFactor(replicationFactor);
-        try {
-            topicApi().createTopic(clusterName, topic).block();
-            sleep(2000);
-        } catch (WebClientResponseException ex) {
-            ex.printStackTrace();
-        }
+      TopicCreation topic = new TopicCreation();
+      topic.setName(topicName);
+      topic.setPartitions(1);
+      topic.setReplicationFactor(1);
+      try {
+        topicApi().createTopic(clusterName, topic).block();
+        sleep(2000);
+      } catch (WebClientResponseException ex) {
+        ex.printStackTrace();
+      }
     }
 
     public void createTopic(String topicName) {
