@@ -139,12 +139,12 @@ public class TopicsList extends BasePage {
       return gridItemList;
     }
 
-  @Step
-  public TopicGridItem getTopicItem(String name) {
-    return initGridItems().stream()
+    @Step
+    public TopicGridItem getTopicItem(String name) {
+      return initGridItems().stream()
         .filter(e -> e.getName().equals(name))
         .findFirst().orElse(null);
-  }
+    }
 
     @Step
     public List<TopicGridItem> getNonInternalTopics() {
