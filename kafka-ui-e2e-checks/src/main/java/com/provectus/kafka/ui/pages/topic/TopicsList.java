@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.pages.topic;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$x;
 
 import com.codeborne.selenide.CollectionCondition;
@@ -22,12 +23,12 @@ public class TopicsList extends BasePage {
     protected SelenideElement deleteSelectedTopicsBtn = $x("//button[text()='Delete selected topics']");
     protected SelenideElement copySelectedTopicBtn = $x("//button[text()='Copy selected topic']");
     protected SelenideElement purgeMessagesOfSelectedTopicsBtn = $x("//button[text()='Purge messages of selected topics']");
-    protected SelenideElement clearMessageBtn = $x("//ul[contains(@class ,'open')]//div[text()='Clear Messages']");
+    protected SelenideElement clearMessagesBtn = $x("//ul[contains(@class ,'open')]//div[text()='Clear Messages']");
 
     @Step
     public TopicsList waitUntilScreenReady() {
         waitUntilSpinnerDisappear();
-        topicListHeader.shouldBe(Condition.visible);
+        topicListHeader.shouldBe(visible);
         return this;
     }
 
@@ -39,7 +40,7 @@ public class TopicsList extends BasePage {
 
     @Step
     public boolean isTopicVisible(String topicName) {
-        tableGrid.shouldBe(Condition.visible);
+        tableGrid.shouldBe(visible);
         return isVisible(getTableElement(topicName));
     }
 
@@ -84,13 +85,8 @@ public class TopicsList extends BasePage {
     }
 
     @Step
-    public int getNumberOfMessage(String topicName){
-      return getTopicItem(topicName).getNumberOfMessages();
-    }
-
-    @Step
-    public TopicsList clickClearMessageBtn(){
-      clickByJavaScript(clearMessageBtn);
+    public TopicsList clickClearMessagesBtn(){
+      clickByJavaScript(clearMessagesBtn.shouldBe(visible));
       return this;
     }
 
@@ -178,7 +174,7 @@ public class TopicsList extends BasePage {
       public boolean isInternal() {
         boolean internal = false;
         try {
-          element.$x("./td[2]/a/span").shouldBe(Condition.visible);
+          element.$x("./td[2]/a/span").shouldBe(visible);
           internal = true;
         } catch (Throwable ignored) {
         }

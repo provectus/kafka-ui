@@ -30,7 +30,7 @@ import org.junit.jupiter.api.TestInstance;
 public class TopicMessagesTests extends BaseTest {
   private static final long SUITE_ID = 2;
   private static final String SUITE_TITLE = "Topics";
-  private static final Topic TOPIC_TO_MESSAGES = new Topic()
+  private static final Topic TOPIC_FOR_MESSAGES = new Topic()
       .setName("topic-with-clean-message-attribute-" + randomAlphabetic(5))
       .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
       .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
@@ -42,7 +42,7 @@ public class TopicMessagesTests extends BaseTest {
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_TO_MESSAGES, TOPIC_TO_CLEAR_MESSAGES));
+    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_TO_CLEAR_MESSAGES));
     TOPIC_LIST.forEach(topic -> apiService.createTopic(CLUSTER_NAME, topic.getName()));
   }
 
@@ -52,21 +52,21 @@ public class TopicMessagesTests extends BaseTest {
   @CaseId(222)
   @Test
   void produceMessage() {
-    navigateToTopicsAndOpenDetails(TOPIC_TO_MESSAGES.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
     topicDetails
         .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
         .clickProduceMessageBtn();
     produceMessagePanel
         .waitUntilScreenReady()
-        .setContentFiled(TOPIC_TO_MESSAGES.getMessageContent())
-        .setKeyField(TOPIC_TO_MESSAGES.getMessageKey())
+        .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
+        .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
         .submitProduceMessage();
     topicDetails
         .waitUntilScreenReady();
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicDetails.isKeyMessageVisible((TOPIC_TO_MESSAGES.getMessageKey())))
+    softly.assertThat(topicDetails.isKeyMessageVisible((TOPIC_FOR_MESSAGES.getMessageKey())))
         .withFailMessage("isKeyMessageVisible()").isTrue();
-    softly.assertThat(topicDetails.isContentMessageVisible((TOPIC_TO_MESSAGES.getMessageContent()).trim()))
+    softly.assertThat(topicDetails.isContentMessageVisible((TOPIC_FOR_MESSAGES.getMessageContent()).trim()))
         .withFailMessage("isContentMessageVisible()").isTrue();
     softly.assertAll();
   }
@@ -79,15 +79,15 @@ public class TopicMessagesTests extends BaseTest {
   @CaseId(19)
   @Test
   void clearMessage() {
-    navigateToTopicsAndOpenDetails(TOPIC_TO_MESSAGES.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
     topicDetails
         .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
         .clickProduceMessageBtn();
     int messageAmount = topicDetails.getMessageCountAmount();
     produceMessagePanel
         .waitUntilScreenReady()
-        .setContentFiled(TOPIC_TO_MESSAGES.getMessageContent())
-        .setKeyField(TOPIC_TO_MESSAGES.getMessageKey())
+        .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
+        .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
         .submitProduceMessage();
     topicDetails
         .waitUntilScreenReady();
@@ -139,7 +139,6 @@ public class TopicMessagesTests extends BaseTest {
     softly.assertAll();
   }
 
-  @Issue("https://github.com/provectus/kafka-ui/issues/3196")
   @DisplayName("TopicTests.clearMessageOfTopic : Clear message of topic")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
@@ -160,17 +159,19 @@ public class TopicMessagesTests extends BaseTest {
     navigateToTopics();
     topicsList
         .waitUntilScreenReady();
-    assertThat(topicsList.getNumberOfMessage(TOPIC_TO_CLEAR_MESSAGES.getName())).as("getNumberOfMessage()")
-        .isEqualTo(1);
+    assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(1);
     topicsList
         .openDotMenuByTopicName(TOPIC_TO_CLEAR_MESSAGES.getName())
-        .clickClearMessageBtn()
+        .clickClearMessagesBtn()
         .clickConfirmBtnMdl();
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicsList.isAlertWithMessageVisible(SUCCESS,"messages messages have been successfully cleared!"))
+    softly.assertThat(topicsList.isAlertWithMessageVisible(SUCCESS,
+        String.format("%s messages have been successfully cleared!",TOPIC_TO_CLEAR_MESSAGES.getName())))
         .as("isAlertWithMessageVisible()").isTrue();
-    softly.assertThat(topicsList.getNumberOfMessage(TOPIC_TO_CLEAR_MESSAGES.getName())).as("getNumberOfMessage()")
-        .isEqualTo(0);
+    softly.assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(0);
+    softly.assertAll();
   }
 
   @AfterAll
