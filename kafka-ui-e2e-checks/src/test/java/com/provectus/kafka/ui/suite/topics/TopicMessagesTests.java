@@ -5,7 +5,9 @@ import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.OVERVIEW;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static com.provectus.kafka.ui.utilities.TimeUtils.waitUntilNewMinuteStarted;
+import static com.provectus.kafka.ui.utilities.TimeUtils.waitUntilNewMinuteStarted;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
@@ -18,6 +20,7 @@ import io.qase.api.annotation.CaseId;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -38,6 +41,10 @@ public class TopicMessagesTests extends BaseTest {
       .setName("topic-with-clean-message-attribute-" + randomAlphabetic(5))
       .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
       .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+  private static final Topic TOPIC_TO_CLEAR_MESSAGES = new Topic()
+      .setName("topic-to-clear-message-attribute-" + randomAlphabetic(5))
+      .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
+      .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
   private static final Topic TOPIC_FOR_CHECKING_FILTERS = new Topic()
       .setName("topic_for_checking_filters" + randomAlphabetic(5))
       .setMessageKey(randomAlphabetic(3))
@@ -46,7 +53,7 @@ public class TopicMessagesTests extends BaseTest {
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS));
+    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS, TOPIC_TO_CLEAR_MESSAGES));
     TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
     IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
     waitUntilNewMinuteStarted();
@@ -174,6 +181,41 @@ public class TopicMessagesTests extends BaseTest {
       softly.assertThat(messages.getTimestamp().isEqual(nextTimestamp)
             || messages.getTimestamp().isAfter(nextTimestamp))
           .as(String.format("Expected timestamp is: %s, but found: %s", nextTimestamp, messages.getTimestamp())).isTrue());
+    softly.assertAll();
+  }
+
+  @DisplayName("TopicTests.clearMessageOfTopic : Clear message of topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(239)
+  @Test
+  void checkClearTopicMessage() {
+    navigateToTopicsAndOpenDetails(TOPIC_TO_CLEAR_MESSAGES.getName());
+    topicDetails
+        .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
+        .clickProduceMessageBtn();
+    produceMessagePanel
+        .waitUntilScreenReady()
+        .setContentFiled(TOPIC_TO_CLEAR_MESSAGES.getMessageContent())
+        .setKeyField(TOPIC_TO_CLEAR_MESSAGES.getMessageKey())
+        .submitProduceMessage();
+    topicDetails
+        .waitUntilScreenReady();
+    navigateToTopics();
+    topicsList
+        .waitUntilScreenReady();
+    assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(1);
+    topicsList
+        .openDotMenuByTopicName(TOPIC_TO_CLEAR_MESSAGES.getName())
+        .clickClearMessagesBtn()
+        .clickConfirmBtnMdl();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicsList.isAlertWithMessageVisible(SUCCESS,
+        String.format("%s messages have been successfully cleared!",TOPIC_TO_CLEAR_MESSAGES.getName())))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(0);
     softly.assertAll();
   }
 

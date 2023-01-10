@@ -18,6 +18,7 @@ public abstract class BasePage extends WebUtils {
   protected SelenideElement dotMenuBtn = $x("//button[@aria-label='Dropdown Toggle']");
   protected SelenideElement alertHeader = $x("//div[@role='alert']//div[@role='heading']");
   protected SelenideElement alertMessage = $x("//div[@role='alert']//div[@role='contentinfo']");
+  protected SelenideElement confirmBtn = $x("//button[contains(text(),'Confirm')]");
   protected ElementsCollection allGridItems = $$x("//tr[@class]");
   protected String summaryCellLocator = "//div[contains(text(),'%s')]";
   protected String tableElementNameLocator = "//tbody//a[contains(text(),'%s')]";
@@ -63,6 +64,11 @@ public abstract class BasePage extends WebUtils {
     boolean result = isAlertVisible(header) && getAlertMessage().equals(message);
     log.debug("-> {}", result);
     return result;
+  }
+
+  protected void clickConfirmButton() {
+    confirmBtn.shouldBe(Condition.enabled).click();
+    confirmBtn.shouldBe(Condition.disappear);
   }
 
   public enum AlertHeader {

@@ -45,7 +45,6 @@ public class TopicDetails extends BasePage {
   protected SelenideElement selectFilterBtnAddFilterMdl = $x("//button[text()='Select filter']");
   protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
   protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
-  protected SelenideElement confirmBtn = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
   protected SelenideElement produceMessageBtn = $x("//div//button[text()='Produce Message']");
   protected SelenideElement contentMessageTab = $x("//html//div[@id='root']/div/main//table//p");
   protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
@@ -91,7 +90,7 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public boolean isAlertWithMessageVisible(AlertHeader header, String message) {
+  public boolean isAlertWithMessageVisible(AlertHeader header, String message){
     return isAlertVisible(header, message);
   }
 
@@ -141,8 +140,7 @@ public class TopicDetails extends BasePage {
 
   @Step
   public TopicDetails clickConfirmBtnMdl() {
-    confirmBtn.shouldBe(Condition.enabled).click();
-    confirmBtn.shouldBe(Condition.disappear);
+    clickConfirmButton();
     return this;
   }
 
