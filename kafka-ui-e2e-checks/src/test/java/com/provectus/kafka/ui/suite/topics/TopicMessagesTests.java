@@ -156,7 +156,10 @@ public class TopicMessagesTests extends BaseTest {
         .waitUntilScreenReady();
     navigateToTopics();
     topicsList
-        .waitUntilScreenReady()
+        .waitUntilScreenReady();
+    assertThat(topicsList.getNumberOfMessage(TOPIC_FOR_MESSAGES.getName())).as("getNumberOfMessage()")
+        .isEqualTo(1);
+    topicsList
         .openDotMenuByTopicName(TOPIC_FOR_MESSAGES.getName())
         .clickClearMessageBtn()
         .clickConfirmBtnMdl();
