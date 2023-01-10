@@ -3,8 +3,6 @@ package com.provectus.kafka.ui.suite.topics;
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.OVERVIEW;
-import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
-import static com.provectus.kafka.ui.utilities.TimeUtils.waitUntilNewMinuteStarted;
 import static com.provectus.kafka.ui.utilities.TimeUtils.waitUntilNewMinuteStarted;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +18,6 @@ import io.qase.api.annotation.CaseId;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -39,16 +36,16 @@ public class TopicMessagesTests extends BaseTest {
   private static final String SUITE_TITLE = "Topics";
   private static final Topic TOPIC_FOR_MESSAGES = new Topic()
       .setName("topic-with-clean-message-attribute-" + randomAlphabetic(5))
-      .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
-      .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+      .setMessageKey(randomAlphabetic(5))
+      .setMessageContent(randomAlphabetic(10));
   private static final Topic TOPIC_TO_CLEAR_MESSAGES = new Topic()
       .setName("topic-to-clear-message-attribute-" + randomAlphabetic(5))
-      .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
-      .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+      .setMessageKey(randomAlphabetic(5))
+      .setMessageContent(randomAlphabetic(10));
   private static final Topic TOPIC_FOR_CHECKING_FILTERS = new Topic()
       .setName("topic_for_checking_filters" + randomAlphabetic(5))
-      .setMessageKey(randomAlphabetic(3))
-      .setMessageContent(randomAlphabetic(3));
+      .setMessageKey(randomAlphabetic(5))
+      .setMessageContent(randomAlphabetic(10));
   private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
   @BeforeAll
