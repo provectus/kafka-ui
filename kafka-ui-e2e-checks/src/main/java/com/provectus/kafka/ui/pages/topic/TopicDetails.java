@@ -42,6 +42,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement displayNameInputAddFilterMdl = $x("//input[@placeholder='Enter Name']");
   protected SelenideElement cancelBtnAddFilterMdl = $x("//button[text()='Cancel']");
   protected SelenideElement addFilterBtnAddFilterMdl = $x("//button[text()='Add filter']");
+  protected SelenideElement addFiltersBtnMessages = $x("//button[text()='Add Filters']");
   protected SelenideElement selectFilterBtnAddFilterMdl = $x("//button[text()='Select filter']");
   protected SelenideElement editSettingsMenu = $x("//li[@role][contains(text(),'Edit settings')]");
   protected SelenideElement removeTopicBtn = $x("//ul[@role='menu']//div[contains(text(),'Remove Topic')]");
@@ -166,7 +167,7 @@ public class TopicDetails extends BasePage {
   @Step
   public TopicDetails clickSubmitFiltersBtnMessagesTab(){
     clickByJavaScript(submitBtn);
-    waitUntilSpinnerDisappear();
+    addFiltersBtnMessages.shouldBe(Condition.visible);
     return this;
   }
 
@@ -356,7 +357,7 @@ public class TopicDetails extends BasePage {
   @Step
   public TopicDetails openCalendarSeekType(){
     seekTypeField.shouldBe(Condition.enabled).click();
-    actualCalendarDate.shouldBe(Condition.visible);
+    getAllMessages().forEach(offset -> offset.getOffsetElm().shouldBe(Condition.visible));
     return this;
   }
 
