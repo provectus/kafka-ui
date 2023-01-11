@@ -24,6 +24,7 @@ public class TopicsList extends BasePage {
     protected SelenideElement copySelectedTopicBtn = $x("//button[text()='Copy selected topic']");
     protected SelenideElement purgeMessagesOfSelectedTopicsBtn = $x("//button[text()='Purge messages of selected topics']");
     protected SelenideElement clearMessagesBtn = $x("//ul[contains(@class ,'open')]//div[text()='Clear Messages']");
+    protected SelenideElement recreateTopicBtn = $x("//ul[contains(@class ,'open')]//div[text()='Recreate Topic']");
 
     @Step
     public TopicsList waitUntilScreenReady() {
@@ -87,6 +88,12 @@ public class TopicsList extends BasePage {
     @Step
     public TopicsList clickClearMessagesBtn(){
       clickByJavaScript(clearMessagesBtn.shouldBe(visible));
+      return this;
+    }
+
+    @Step
+    public TopicsList clickRecreateTopicBtn(){
+      clickByJavaScript(recreateTopicBtn.shouldBe(visible));
       return this;
     }
 
