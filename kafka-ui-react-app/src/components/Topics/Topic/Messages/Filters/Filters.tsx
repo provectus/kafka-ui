@@ -539,11 +539,11 @@ const Filters: React.FC<FiltersProps> = ({
         />
       )}
       <S.FiltersMetrics>
-        <p style={{ fontSize: 14 }}>
+        <S.Message>
           {seekDirection !== SeekDirection.TAILING &&
             isFetching &&
             phaseMessage}
-        </p>
+        </S.Message>
         <S.MessageLoading isLive={isTailing}>
           <S.MessageLoadingSpinner isFetching={isFetching} />
           Loading messages.

@@ -89,7 +89,10 @@ export const FiltersMetrics = styled.div`
   padding-top: 16px;
   padding-bottom: 16px;
 `;
-
+export const Message = styled.div`
+  font-size: 14px;
+  color: ${({ theme }) => theme.metrics.filters.color.normal};
+`;
 export const Metric = styled.div`
   color: ${({ theme }) => theme.metrics.filters.color.normal};
   font-size: 12px;
