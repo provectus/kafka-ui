@@ -158,12 +158,39 @@ const baseTheme = {
       color: Colors.neutral[50],
     },
   },
-  version: {
-    currentVersion: {
-      color: Colors.neutral[50],
+  icons: {
+    autoIcon: Colors.neutral[95],
+    fileIcon: Colors.neutral[90],
+    clockIcon: Colors.neutral[90],
+    arrowDownIcon: Colors.neutral[90],
+    moonIcon: Colors.neutral[95],
+    sunIcon: Colors.neutral[95],
+    infoIcon: 'none',
+    closeIcon: Colors.neutral[30],
+    deleteIcon: Colors.red[20],
+    warningIcon: Colors.yellow[20],
+    messageToggleIcon: {
+      normal: Colors.brand[50],
+      hover: Colors.brand[20],
+      active: Colors.brand[60],
     },
-    symbolWrapper: {
-      color: Colors.neutral[50],
+    verticalElipsisIcon: Colors.neutral[50],
+    liveIcon: {
+      circleBig: Colors.red[10],
+      circleSmall: Colors.red[50],
+    },
+    newFilterIcon: Colors.brand[50],
+    closeModalIcon: Colors.neutral[25],
+    savedIcon: Colors.brand[30],
+    dropdownArrowIcon: Colors.neutral[30],
+    git: {
+      hover: Colors.neutral[90],
+      active: Colors.neutral[70],
+    },
+    discord: {
+      normal: Colors.neutral[20],
+      hover: Colors.blue[45],
+      active: Colors.brand[15],
     },
   },
   textArea: {
@@ -253,7 +280,14 @@ const baseTheme = {
 
 export const theme = {
   ...baseTheme,
-
+  version: {
+    currentVersion: {
+      color: Colors.neutral[30],
+    },
+    commitLink: {
+      color: Colors.brand[50],
+    },
+  },
   default: {
     color: {
       normal: Colors.neutral[90],
@@ -613,41 +647,7 @@ export const theme = {
       color: Colors.green[60],
     },
   },
-  icons: {
-    autoIcon: Colors.neutral[95],
-    fileIcon: Colors.neutral[90],
-    clockIcon: Colors.neutral[90],
-    arrowDownIcon: Colors.neutral[90],
-    moonIcon: Colors.neutral[95],
-    sunIcon: Colors.neutral[95],
-    infoIcon: 'none',
-    closeIcon: Colors.neutral[30],
-    deleteIcon: Colors.red[20],
-    warningIcon: Colors.yellow[20],
-    messageToggleIcon: {
-      normal: Colors.brand[50],
-      hover: Colors.brand[20],
-      active: Colors.brand[60],
-    },
-    verticalElipsisIcon: Colors.neutral[50],
-    liveIcon: {
-      circleBig: Colors.red[10],
-      circleSmall: Colors.red[50],
-    },
-    newFilterIcon: Colors.brand[50],
-    closeModalIcon: Colors.neutral[25],
-    savedIcon: Colors.brand[30],
-    dropdownArrowIcon: Colors.neutral[30],
-    git: {
-      hover: Colors.neutral[90],
-      active: Colors.neutral[70],
-    },
-    discord: {
-      normal: Colors.neutral[20],
-      hover: Colors.blue[45],
-      active: Colors.brand[15],
-    },
-  },
+
   viewer: {
     wrapper: {
       backgroundColor: Colors.neutral[3],
@@ -668,6 +668,15 @@ export type ThemeType = typeof theme;
 
 export const darkTheme: ThemeType = {
   ...baseTheme,
+  version: {
+    currentVersion: {
+      color: Colors.neutral[50],
+    },
+    commitLink: {
+      color: Colors.brand[30],
+    },
+  },
+
   heading: {
     ...baseTheme.heading,
     h4: Colors.neutral[0],
@@ -1046,6 +1055,7 @@ export const darkTheme: ThemeType = {
     },
   },
   icons: {
+    ...baseTheme.icons,
     autoIcon: Colors.neutral[0],
     fileIcon: Colors.neutral[0],
     clockIcon: Colors.neutral[0],
@@ -1053,31 +1063,16 @@ export const darkTheme: ThemeType = {
     moonIcon: Colors.neutral[0],
     sunIcon: Colors.neutral[0],
     infoIcon: Colors.neutral[0],
-    closeIcon: Colors.neutral[30],
-    deleteIcon: Colors.red[20],
-    warningIcon: Colors.yellow[20],
-    messageToggleIcon: {
-      normal: Colors.brand[50],
-      hover: Colors.brand[20],
-      active: Colors.brand[60],
-    },
-    verticalElipsisIcon: Colors.neutral[50],
-    liveIcon: {
-      circleBig: Colors.red[10],
-      circleSmall: Colors.red[50],
-    },
-    newFilterIcon: Colors.brand[50],
-    closeModalIcon: Colors.neutral[25],
+
     savedIcon: Colors.brand[50],
-    dropdownArrowIcon: Colors.neutral[30],
     git: {
+      ...baseTheme.icons.git,
       hover: Colors.neutral[70],
       active: Colors.neutral[90],
     },
     discord: {
+      ...baseTheme.icons.discord,
       normal: Colors.neutral[30],
-      hover: Colors.blue[45],
-      active: Colors.brand[15],
     },
   },
   viewer: {

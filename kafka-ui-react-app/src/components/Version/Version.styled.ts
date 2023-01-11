@@ -17,7 +17,7 @@ export const CurrentVersion = styled.span(
   ({ theme }) => css`
     ${textStyle};
     color: ${theme.version.currentVersion.color};
-    margin-right: 0.25rem;
+    margin-left: 0.25rem;
   `
 );
 
@@ -25,19 +25,13 @@ export const OutdatedWarning = styled.span`
   ${textStyle}
 `;
 
-export const SymbolWrapper = styled.span(
-  ({ theme }) => css`
-    ${textStyle};
-    color: ${theme.version.symbolWrapper.color};
-  `
-);
-
 export const CurrentCommitLink = styled.a(
   ({ theme }) => css`
     ${textStyle};
-    color: ${theme.version.currentVersion.color};
+    color: ${theme.version.commitLink.color};
+    margin-left: 0.25rem;
     &:hover {
-      color: ${theme.version.currentVersion.color};
+      color: ${theme.version.commitLink.color};
     }
   `
 );

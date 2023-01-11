@@ -32,8 +32,6 @@ const Version: React.FC = () => {
 
   return (
     <S.Wrapper>
-      <S.CurrentVersion>{currentVersion}</S.CurrentVersion>
-
       {!!outdated && (
         <S.OutdatedWarning
           title={`Your app version is outdated. Current latest version is ${latestTag}`}
@@ -43,8 +41,7 @@ const Version: React.FC = () => {
       )}
 
       {commit && (
-        <>
-          <S.SymbolWrapper>&#40;</S.SymbolWrapper>
+        <div>
           <S.CurrentCommitLink
             title="Current commit"
             target="__blank"
@@ -52,9 +49,9 @@ const Version: React.FC = () => {
           >
             {commit}
           </S.CurrentCommitLink>
-          <S.SymbolWrapper>&#41;</S.SymbolWrapper>
-        </>
+        </div>
       )}
+      <S.CurrentVersion>{currentVersion}</S.CurrentVersion>
     </S.Wrapper>
   );
 };
