@@ -167,7 +167,7 @@ public class TopicDetails extends BasePage {
   @Step
   public TopicDetails clickSubmitFiltersBtnMessagesTab(){
     clickByJavaScript(submitBtn);
-    addFiltersBtnMessages.shouldBe(Condition.visible);
+    getAllMessages().forEach(offset -> offset.getOffsetElm().shouldBe(Condition.visible));;
     return this;
   }
 
@@ -357,7 +357,7 @@ public class TopicDetails extends BasePage {
   @Step
   public TopicDetails openCalendarSeekType(){
     seekTypeField.shouldBe(Condition.enabled).click();
-    getAllMessages().forEach(offset -> offset.getOffsetElm().shouldBe(Condition.visible));
+    actualCalendarDate.shouldBe(Condition.visible);
     return this;
   }
 
