@@ -15,6 +15,8 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
+import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.pages.topic.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
 import io.qase.api.annotation.Step;
 import java.util.List;
@@ -125,6 +127,20 @@ public abstract class BaseTest extends Facade {
     topicsList
         .waitUntilScreenReady()
         .openTopic(topicName);
+    topicDetails
+        .waitUntilScreenReady();
+  }
+
+  @Step
+  protected void produceMessage(Topic topic){
+    topicDetails
+        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .clickProduceMessageBtn();
+    produceMessagePanel
+        .waitUntilScreenReady()
+        .setKeyField(topic.getMessageKey())
+        .setContentFiled(topic.getMessageContent())
+        .submitProduceMessage();
     topicDetails
         .waitUntilScreenReady();
   }
