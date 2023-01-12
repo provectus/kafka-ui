@@ -5,6 +5,7 @@ import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES
 import static com.provectus.kafka.ui.settings.BaseSource.CLUSTER_NAME;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
@@ -33,11 +34,19 @@ public class TopicMessagesTests extends BaseTest {
       .setName("topic-with-clean-message-attribute-" + randomAlphabetic(5))
       .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
       .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+  private static final Topic TOPIC_TO_CLEAR_MESSAGES = new Topic()
+      .setName("topic-to-clear-message-attribute-" + randomAlphabetic(5))
+      .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
+      .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+  private static final Topic TOPIC_TO_RECREATE = new Topic()
+      .setName("topic-to-recreate-attribute-" + randomAlphabetic(5))
+      .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
+      .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
   private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES));
+    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_TO_CLEAR_MESSAGES, TOPIC_TO_RECREATE));
     TOPIC_LIST.forEach(topic -> apiService.createTopic(CLUSTER_NAME, topic.getName()));
   }
 
@@ -108,7 +117,7 @@ public class TopicMessagesTests extends BaseTest {
         .getRandomMessage()
         .openDotMenu()
         .clickCopyToClipBoard();
-    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Copied successfully!"),
+    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS,"Copied successfully!"),
         "isAlertWithMessageVisible()");
   }
 
@@ -131,6 +140,76 @@ public class TopicMessagesTests extends BaseTest {
     topicDetails.getAllMessages()
         .forEach(messages -> softly.assertThat(messages.getOffset() == Integer.parseInt(offsetValue))
         .as("getAllMessages()").isTrue());
+    softly.assertAll();
+  }
+
+  @DisplayName("TopicTests.clearMessageOfTopic : Clear message of topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(239)
+  @Test
+  void checkClearTopicMessage() {
+    navigateToTopicsAndOpenDetails(TOPIC_TO_CLEAR_MESSAGES.getName());
+    topicDetails
+        .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
+        .clickProduceMessageBtn();
+    produceMessagePanel
+        .waitUntilScreenReady()
+        .setContentFiled(TOPIC_TO_CLEAR_MESSAGES.getMessageContent())
+        .setKeyField(TOPIC_TO_CLEAR_MESSAGES.getMessageKey())
+        .submitProduceMessage();
+    topicDetails
+        .waitUntilScreenReady();
+    navigateToTopics();
+    topicsList
+        .waitUntilScreenReady();
+    assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(1);
+    topicsList
+        .openDotMenuByTopicName(TOPIC_TO_CLEAR_MESSAGES.getName())
+        .clickClearMessagesBtn()
+        .clickConfirmBtnMdl();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicsList.isAlertWithMessageVisible(SUCCESS,
+        String.format("%s messages have been successfully cleared!",TOPIC_TO_CLEAR_MESSAGES.getName())))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(0);
+    softly.assertAll();
+  }
+
+  @DisplayName("TopicTests.recreateTopic : Recreate topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(240)
+  @Test
+  void checkRecreateTopic(){
+    navigateToTopicsAndOpenDetails(TOPIC_TO_RECREATE.getName());
+    topicDetails
+        .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
+        .clickProduceMessageBtn();
+    produceMessagePanel
+        .waitUntilScreenReady()
+        .setContentFiled(TOPIC_TO_RECREATE.getMessageContent())
+        .setKeyField(TOPIC_TO_RECREATE.getMessageKey())
+        .submitProduceMessage();
+    topicDetails
+        .waitUntilScreenReady();
+    navigateToTopics();
+    topicsList
+        .waitUntilScreenReady();
+    assertThat(topicsList.getTopicItem(TOPIC_TO_RECREATE.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(1);
+    topicsList
+        .openDotMenuByTopicName(TOPIC_TO_RECREATE.getName())
+        .clickRecreateTopicBtn()
+        .clickConfirmBtnMdl();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS,
+            String.format("Topic %s successfully recreated!", TOPIC_TO_RECREATE.getName())))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicsList.getTopicItem(TOPIC_TO_RECREATE.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(0);
     softly.assertAll();
   }
 
