@@ -17,7 +17,7 @@ const CancelIcon: React.FC = () => {
         data-name="layer1"
         d="M53.122 48.88L36.243 32l16.878-16.878a3 3 0 0 0-4.242-4.242L32 27.758l-16.878-16.88a3 3 0 0 0-4.243 4.243l16.878 16.88-16.88 16.88a3 3 0 0 0 4.243 4.241L32 36.243l16.878 16.88a3 3 0 0 0 4.244-4.243z"
         fill="none"
-        stroke="#202020"
+        stroke="#FFFFFF"
         strokeMiterlimit="10"
         strokeWidth="2"
         strokeLinejoin="round"

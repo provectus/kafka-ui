@@ -165,7 +165,7 @@ const baseTheme = {
     arrowDownIcon: Colors.neutral[90],
     moonIcon: Colors.neutral[95],
     sunIcon: Colors.neutral[95],
-    infoIcon: 'none',
+    infoIcon: Colors.neutral[90],
     closeIcon: Colors.neutral[30],
     deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],

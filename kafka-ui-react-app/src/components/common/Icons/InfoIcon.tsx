@@ -19,8 +19,8 @@ const InfoIcon: React.FC = () => {
         cx="32"
         cy="32"
         r="30"
-        fill={theme.icons.infoIcon}
-        stroke="#202020"
+        fill="transparent"
+        stroke={theme.icons.infoIcon}
         strokeMiterlimit="10"
         strokeWidth="2"
         strokeLinejoin="round"
@@ -29,7 +29,7 @@ const InfoIcon: React.FC = () => {
       <path
         data-name="layer1"
         fill="none"
-        stroke="#202020"
+        stroke={theme.icons.infoIcon}
         strokeMiterlimit="10"
         strokeWidth="2"
         d="M28 26h4v22m-4 .008h8"
@@ -42,7 +42,7 @@ const InfoIcon: React.FC = () => {
         cy="19"
         r="2"
         fill="none"
-        stroke="#202020"
+        stroke={theme.icons.infoIcon}
         strokeMiterlimit="10"
         strokeWidth="2"
         strokeLinejoin="round"
