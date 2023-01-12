@@ -51,6 +51,13 @@ export const StreamPropertiesInputWrapper = styled.div`
     width: 100%;
     height: 40px;
     border: 1px solid grey;
+    &:focus {
+      outline: none;
+      border-color: ${({ theme }) => theme.input.borderColor.focus};
+      &::placeholder {
+        color: transparent;
+      }
+    }
     border-radius: 4px;
     font-size: 16px;
     padding-left: 15px;
