@@ -13,30 +13,28 @@ const MultiSelect = styled(ReactMultiSelect)<{ minWidth?: string }>`
   .select-item {
     color: ${({ theme }) => theme.select.color.normal};
     background-color: ${({ theme }) =>
-      theme.select.backgroundColor.normal}; !important;
+      theme.select.backgroundColor.normal} !important;
 
-    &:hover {
-      background-color: ${({ theme }) =>
-        theme.select.backgroundColor.hover}; !important;
-    }
     &:active {
       background-color: ${({ theme }) =>
-        theme.select.backgroundColor.active}; !important;
+        theme.select.backgroundColor.active} !important;
     }
   }
 
-  .select-item.selected{
+  .select-item.selected {
     background-color: ${({ theme }) =>
-      theme.select.backgroundColor.active}; !important;
+      theme.select.backgroundColor.active} !important;
   }
-  .options li{
-    background-color: ${({ theme }) => theme.select.backgroundColor.normal};
+  .options li {
+    background-color: ${({ theme }) =>
+      theme.select.backgroundColor.normal} !important;
   }
   & > .dropdown-container {
-    background-color: ${({ theme }) => theme.input.backgroundColor.normal};
-    border-color: ${({ theme }) => theme.select.borderColor.normal};
-    &:hover{
-      border-color: ${({ theme }) => theme.select.borderColor.hover};
+    background-color: ${({ theme }) =>
+      theme.input.backgroundColor.normal} !important;
+    border-color: ${({ theme }) => theme.select.borderColor.normal} !important;
+    &:hover {
+      border-color: ${({ theme }) => theme.select.borderColor.hover} !important;
     }
     height: 32px;
     * {
@@ -46,7 +44,9 @@ const MultiSelect = styled(ReactMultiSelect)<{ minWidth?: string }>`
     & > .dropdown-heading {
       height: 32px;
       color: ${({ disabled, theme }) =>
-        disabled ? theme.select.color.disabled : theme.select.color.active};
+        disabled
+          ? theme.select.color.disabled
+          : theme.select.color.active} !important;
       & > .clear-selected-button {
         display: none;
       }
