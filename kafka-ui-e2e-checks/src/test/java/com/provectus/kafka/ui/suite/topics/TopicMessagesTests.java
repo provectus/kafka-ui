@@ -46,11 +46,15 @@ public class TopicMessagesTests extends BaseTest {
       .setName("topic_for_checking_filters" + randomAlphabetic(5))
       .setMessageKey(randomAlphabetic(5))
       .setMessageContent(randomAlphabetic(10));
+  private static final Topic TOPIC_TO_RECREATE = new Topic()
+      .setName("topic-to-recreate-attribute-" + randomAlphabetic(5))
+      .setMessageKey(randomAlphabetic(5))
+      .setMessageContent(randomAlphabetic(10));
   private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS, TOPIC_TO_CLEAR_MESSAGES));
+    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS, TOPIC_TO_CLEAR_MESSAGES, TOPIC_TO_RECREATE));
     TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
     IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
     waitUntilNewMinuteStarted();
@@ -128,6 +132,8 @@ public class TopicMessagesTests extends BaseTest {
         "isAlertWithMessageVisible()");
   }
 
+  @Disabled
+  @Issue("https://github.com/provectus/kafka-ui/issues/2856")
   @DisplayName("Checking messages filtering by Offset within Topic/Messages")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
@@ -212,6 +218,41 @@ public class TopicMessagesTests extends BaseTest {
         String.format("%s messages have been successfully cleared!",TOPIC_TO_CLEAR_MESSAGES.getName())))
         .as("isAlertWithMessageVisible()").isTrue();
     softly.assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(0);
+    softly.assertAll();
+  }
+
+  @DisplayName("TopicTests.recreateTopic : Recreate topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(240)
+  @Test
+  void checkRecreateTopic(){
+    navigateToTopicsAndOpenDetails(TOPIC_TO_RECREATE.getName());
+    topicDetails
+        .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
+        .clickProduceMessageBtn();
+    produceMessagePanel
+        .waitUntilScreenReady()
+        .setContentFiled(TOPIC_TO_RECREATE.getMessageContent())
+        .setKeyField(TOPIC_TO_RECREATE.getMessageKey())
+        .submitProduceMessage();
+    topicDetails
+        .waitUntilScreenReady();
+    navigateToTopics();
+    topicsList
+        .waitUntilScreenReady();
+    assertThat(topicsList.getTopicItem(TOPIC_TO_RECREATE.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(1);
+    topicsList
+        .openDotMenuByTopicName(TOPIC_TO_RECREATE.getName())
+        .clickRecreateTopicBtn()
+        .clickConfirmBtnMdl();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS,
+            String.format("Topic %s successfully recreated!", TOPIC_TO_RECREATE.getName())))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicsList.getTopicItem(TOPIC_TO_RECREATE.getName()).getNumberOfMessages())
         .as("getNumberOfMessages()").isEqualTo(0);
     softly.assertAll();
   }
