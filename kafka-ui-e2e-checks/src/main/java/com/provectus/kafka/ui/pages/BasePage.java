@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class BasePage extends WebUtils {
 
-  protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+  protected SelenideElement loadingSpinner = $x("//div[@role='progressbar']");
   protected SelenideElement submitBtn = $x("//button[@type='submit']");
   protected SelenideElement tableGrid = $x("//table");
   protected SelenideElement dotMenuBtn = $x("//button[@aria-label='Dropdown Toggle']");
