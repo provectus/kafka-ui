@@ -8,6 +8,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -181,7 +182,7 @@ public class TopicsList extends BasePage {
       public boolean isInternal() {
         boolean internal = false;
         try {
-          element.$x("./td[2]/a/span").shouldBe(visible);
+          element.$x("./td[2]/a/span").shouldBe(visible, Duration.ofMillis(500));
           internal = true;
         } catch (Throwable ignored) {
         }
