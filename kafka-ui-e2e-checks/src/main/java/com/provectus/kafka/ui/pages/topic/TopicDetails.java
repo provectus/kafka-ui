@@ -280,30 +280,6 @@ public class TopicDetails extends BasePage {
     return contentMessage.matches(contentMessageTab.getText().trim());
   }
 
-  @Step
-  public int getMessageCountAmount() {
-    return Integer.parseInt(messageAmountCell.getText().trim());
-  }
-
-  private List<TopicDetails.MessageGridItem> initItems() {
-    List<TopicDetails.MessageGridItem> gridItemList = new ArrayList<>();
-    allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
-        .forEach(item -> gridItemList.add(new TopicDetails.MessageGridItem(item)));
-    return gridItemList;
-  }
-
-  @Step
-  public TopicDetails.MessageGridItem getMessageByOffset(int offset) {
-    return initItems().stream()
-        .filter(e -> e.getOffset() == offset)
-        .findFirst().orElse(null);
-  }
-
-  @Step
-  public List<MessageGridItem> getAllMessages(){
-    return initItems();
-  }
-
   private void selectYear(int expectedYear) {
     while (getActualCalendarDate().getYear() > expectedYear) {
       clickByJavaScript(previousMonthButton);
@@ -359,6 +335,30 @@ public class TopicDetails extends BasePage {
     seekTypeField.shouldBe(Condition.enabled).click();
     actualCalendarDate.shouldBe(Condition.visible);
     return this;
+  }
+
+  @Step
+  public int getMessageCountAmount() {
+    return Integer.parseInt(messageAmountCell.getText().trim());
+  }
+
+  private List<TopicDetails.MessageGridItem> initItems() {
+    List<TopicDetails.MessageGridItem> gridItemList = new ArrayList<>();
+    allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+        .forEach(item -> gridItemList.add(new TopicDetails.MessageGridItem(item)));
+    return gridItemList;
+  }
+
+  @Step
+  public TopicDetails.MessageGridItem getMessageByOffset(int offset) {
+    return initItems().stream()
+        .filter(e -> e.getOffset() == offset)
+        .findFirst().orElse(null);
+  }
+
+  @Step
+  public List<MessageGridItem> getAllMessages(){
+    return initItems();
   }
 
   @Step
