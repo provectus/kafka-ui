@@ -17,6 +17,7 @@ import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.DisplayNameGenerator;
 import io.qase.api.annotation.Step;
+import java.time.Duration;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.SoftAssertions;
@@ -55,6 +56,7 @@ public abstract class BaseTest extends Facade {
         log.info("Using [{}] as image name for chrome", image.getUnversionedPart());
         webDriverContainer = new BrowserWebDriverContainer<>(image)
             .withEnv("JAVA_OPTS", "-Dwebdriver.chrome.whitelistedIps=")
+            .withStartupTimeout(Duration.ofSeconds(180))
             .withCapabilities(new ChromeOptions()
                 .addArguments("--disable-dev-shm-usage")
                 .addArguments("--disable-gpu")
