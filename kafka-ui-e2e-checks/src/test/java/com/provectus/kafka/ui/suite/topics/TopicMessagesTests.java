@@ -177,8 +177,7 @@ public class TopicMessagesTests extends BaseTest {
         .findFirst().orElse(null)).getTimestamp();
     topicDetails
         .selectSeekTypeDdlMessagesTab("Timestamp")
-        .openCalendarSeekType();
-    topicDetails
+        .openCalendarSeekType()
         .selectDateAndTimeByCalendar(nextTimestamp)
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
