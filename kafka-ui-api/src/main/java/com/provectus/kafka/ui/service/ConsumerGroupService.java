@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import com.provectus.kafka.ui.config.KafkaSslConfig;
 import com.provectus.kafka.ui.model.ConsumerGroupOrderingDTO;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.InternalTopicConsumerGroup;
@@ -18,13 +19,17 @@ import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.config.SslConfigs;
+import org.apache.kafka.common.security.auth.SecurityProtocol;
 import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,6 +42,9 @@ public class ConsumerGroupService {
 
   private final AdminClientService adminClientService;
   private final AccessControlService accessControlService;
+
+  @Autowired
+  private final KafkaSslConfig kafkaSslConfig;
 
   private Mono<List<InternalConsumerGroup>> getConsumerGroups(
       ReactiveAdminClient ac,
@@ -210,6 +218,11 @@ public class ConsumerGroupService {
     props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
     props.put(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG, "false");
     props.putAll(properties);
+    props.putAll(this.kafkaSslConfig.getConfigsClientCertificate());
+    props.putAll(this.kafkaSslConfig.getConfigsTrustStore());
+    props.put(SslConfigs.SSL_PROTOCOL_CONFIG, SecurityProtocol.SSL.name);
+    props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name);
+    props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
 
     return new KafkaConsumer<>(props);
   }

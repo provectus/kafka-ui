@@ -18,9 +18,9 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class StaticController {
 
-  @Value("classpath:static/index.html")
+  @Value("classpath:static-new/index.html")
   private Resource indexFile;
-  @Value("classpath:static/manifest.json")
+  @Value("classpath:static-new/manifest.json")
   private Resource manifestFile;
 
   private final AtomicReference<String> renderedIndexFile = new AtomicReference<>();
