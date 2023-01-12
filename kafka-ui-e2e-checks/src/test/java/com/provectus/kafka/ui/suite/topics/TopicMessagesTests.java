@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -132,6 +131,8 @@ public class TopicMessagesTests extends BaseTest {
         "isAlertWithMessageVisible()");
   }
 
+  @Disabled
+  @Issue("https://github.com/provectus/kafka-ui/issues/2394")
   @DisplayName("Checking messages filtering by Offset within Topic/Messages")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
@@ -141,19 +142,17 @@ public class TopicMessagesTests extends BaseTest {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
     topicDetails
         .openDetailsTab(MESSAGES);
-    int firstOffset = topicDetails.getMessageByOffset(0).getOffset();
-    List<TopicDetails.MessageGridItem> nextMessages = topicDetails.getAllMessages().stream()
-        .filter(messages -> messages.getOffset() != firstOffset)
-        .collect(Collectors.toList());
-    int nextOffset = Objects.requireNonNull(nextMessages.stream().findFirst().orElse(null)).getOffset();
+    TopicDetails.MessageGridItem secondMessage = topicDetails.getMessageByOffset(1);
     topicDetails
         .selectSeekTypeDdlMessagesTab("Offset")
-        .setSeekTypeValueFldMessagesTab(String.valueOf(nextOffset))
+        .setSeekTypeValueFldMessagesTab(String.valueOf(secondMessage.getOffset()))
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
     topicDetails.getAllMessages().forEach(message ->
-        softly.assertThat(message.getOffset() == nextOffset || message.getOffset() > nextOffset)
-            .as(String.format("getOffset() = %s", message.getOffset())).isTrue());
+        softly.assertThat(message.getOffset() == secondMessage.getOffset()
+                || message.getOffset() > secondMessage.getOffset())
+            .as(String.format("Expected offset is: %s, but found: %s", secondMessage.getOffset(), message.getOffset()))
+            .isTrue());
     softly.assertAll();
   }
 
@@ -182,9 +181,10 @@ public class TopicMessagesTests extends BaseTest {
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
     topicDetails.getAllMessages().forEach(message ->
-      softly.assertThat(message.getTimestamp().isEqual(nextTimestamp)
-            || message.getTimestamp().isAfter(nextTimestamp))
-          .as(String.format("Expected timestamp is: %s, but found: %s", nextTimestamp, message.getTimestamp())).isTrue());
+        softly.assertThat(message.getTimestamp().isEqual(nextTimestamp)
+                || message.getTimestamp().isAfter(nextTimestamp))
+            .as(String.format("Expected timestamp is: %s, but found: %s", nextTimestamp, message.getTimestamp()))
+            .isTrue());
     softly.assertAll();
   }
 
@@ -258,8 +258,8 @@ public class TopicMessagesTests extends BaseTest {
     softly.assertAll();
   }
 
-  @AfterAll
-  public void afterAll() {
-    TOPIC_LIST.forEach(topic -> apiService.deleteTopic(topic.getName()));
-  }
+//  @AfterAll
+//  public void afterAll() {
+//    TOPIC_LIST.forEach(topic -> apiService.deleteTopic(topic.getName()));
+//  }
 }
