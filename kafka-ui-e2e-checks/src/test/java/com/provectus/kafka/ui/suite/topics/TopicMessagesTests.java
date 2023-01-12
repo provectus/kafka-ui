@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -258,8 +259,8 @@ public class TopicMessagesTests extends BaseTest {
     softly.assertAll();
   }
 
-//  @AfterAll
-//  public void afterAll() {
-//    TOPIC_LIST.forEach(topic -> apiService.deleteTopic(topic.getName()));
-//  }
+  @AfterAll
+  public void afterAll() {
+    TOPIC_LIST.forEach(topic -> apiService.deleteTopic(topic.getName()));
+  }
 }
