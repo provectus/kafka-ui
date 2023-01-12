@@ -47,7 +47,6 @@ export const SeekTypeSelectorWrapper = styled.div`
 
 export const OffsetSelector = styled(Input)`
   border-radius: 0 4px 4px 0 !important;
-  border-left: none;
   &::placeholder {
     color: ${({ theme }) => theme.input.color.normal};
   }
@@ -197,6 +196,9 @@ export const CreatedFilter = styled.p`
   color: ${({ theme }) => theme.savedFilter.color};
 `;
 
+export const NoSavedFilter = styled.p`
+  color: ${({ theme }) => theme.savedFilter.color};
+`;
 export const SavedFiltersContainer = styled.div`
   overflow-y: auto;
   height: 195px;
