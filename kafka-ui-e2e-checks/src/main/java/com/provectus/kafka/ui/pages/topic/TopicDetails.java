@@ -167,7 +167,7 @@ public class TopicDetails extends BasePage {
   @Step
   public TopicDetails clickSubmitFiltersBtnMessagesTab(){
     clickByJavaScript(submitBtn);
-    getAllMessages().forEach(offset -> offset.getOffsetElm().shouldBe(Condition.visible));;
+    waitUntilSpinnerDisappear();
     return this;
   }
 
