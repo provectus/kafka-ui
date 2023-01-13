@@ -62,11 +62,13 @@ public class TopicsTests extends BaseTest {
       .setMaxMessageBytes("1000012")
       .setMaxSizeOnDisk(NOT_SET);
   private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete-" + randomAlphabetic(5));
+  private static final Topic TOPIC_FOR_DELETE_FROM_TOPIC_LIST =
+      new Topic().setName("topic_for_delete_from_topic_list_" + randomAlphabetic(5));
   private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE, TOPIC_FOR_DELETE));
+    TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE, TOPIC_FOR_DELETE, TOPIC_FOR_DELETE_FROM_TOPIC_LIST));
     TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
   }
 
@@ -157,12 +159,30 @@ public class TopicsTests extends BaseTest {
     softly.assertAll();
   }
 
+  @DisplayName("TopicTests.removeTopicFromAllTopics : Remove topic from 'all topics'/'TopicList'")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(242)
+  @Test
+  @Order(4)
+  public void removeTopicFromTopicList() {
+    navigateToTopics();
+    topicsList
+        .openDotMenuByTopicName(TOPIC_FOR_DELETE_FROM_TOPIC_LIST.getName())
+        .clickRemoveTopicBtn()
+        .clickConfirmBtnMdl();
+    Assertions.assertTrue(topicsList.isAlertWithMessageVisible(SUCCESS,
+            String.format("Topic %s successfully deleted!", TOPIC_FOR_DELETE_FROM_TOPIC_LIST.getName())),
+        "isAlertWithMessageVisible()");
+    TOPIC_LIST.remove(TOPIC_FOR_DELETE_FROM_TOPIC_LIST);
+  }
+
   @DisplayName("should delete topic")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(207)
   @Test
-  @Order(4)
+  @Order(5)
   public void deleteTopic() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_DELETE.getName());
     topicDetails
@@ -179,7 +199,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(20)
   @Test
-  @Order(5)
+  @Order(6)
   void redirectToConsumerFromTopic() {
     String topicName = "source-activities";
     String consumerGroupId = "connect-sink_postgres_activities";
@@ -200,7 +220,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(4)
   @Test
-  @Order(6)
+  @Order(7)
   void checkTopicCreatePossibility() {
     navigateToTopics();
     topicsList
@@ -225,7 +245,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(266)
   @Test
-  @Order(7)
+  @Order(8)
   void checkTimeToRetainDataCustomValueWithEditingTopic() {
     Topic topicToRetainData = new Topic()
         .setName("topic-to-retain-data-" + randomAlphabetic(5))
@@ -260,7 +280,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(6)
   @Test
-  @Order(8)
+  @Order(9)
   void checkCustomParametersWithinCreateNewTopic() {
     navigateToTopics();
     topicsList
@@ -283,7 +303,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(2)
   @Test
-  @Order(9)
+  @Order(10)
   void checkTopicListElements() {
     navigateToTopics();
     verifyElementsCondition(topicsList.getAllVisibleElements(), Condition.visible);
@@ -295,7 +315,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(12)
   @Test
-  @Order(10)
+  @Order(11)
   void addingNewFilterWithinTopic() {
     String filterName = randomAlphabetic(5);
     navigateToTopicsAndOpenDetails("_schemas");
@@ -322,7 +342,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(13)
   @Test
-  @Order(11)
+  @Order(12)
   void checkFilterSavingWithinSavedFilters() {
     String displayName = randomAlphabetic(5);
     navigateToTopicsAndOpenDetails("my_ksql_1ksql_processing_log");
@@ -347,7 +367,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(14)
   @Test
-  @Order(12)
+  @Order(13)
   void checkingApplyingSavedFilterWithinTopicMessages() {
     String displayName = randomAlphabetic(5);
     navigateToTopicsAndOpenDetails("my_ksql_1ksql_processing_log");
@@ -371,7 +391,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(11)
   @Test
-  @Order(13)
+  @Order(14)
   void checkShowInternalTopicsButtonFunctionality(){
     navigateToTopics();
     SoftAssertions softly = new SoftAssertions();
@@ -391,6 +411,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(56)
   @Test
+  @Order(15)
   void checkRetentionBytesAccordingToMaxSizeOnDisk(){
     navigateToTopics();
     topicsList
@@ -442,6 +463,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(247)
   @Test
+  @Order(16)
   void recreateTopicFromTopicProfile(){
     Topic topicToRecreate = new Topic()
         .setName("topic-to-recreate-" + randomAlphabetic(5))
@@ -473,6 +495,7 @@ public class TopicsTests extends BaseTest {
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(8)
   @Test
+  @Order(17)
   void checkCopyTopicPossibility(){
     Topic topicToCopy = new Topic()
         .setName("topic-to-copy-" + randomAlphabetic(5))
