@@ -62,6 +62,7 @@ public abstract class BaseTest extends Facade {
                 .addArguments("--disable-gpu")
                 .addArguments("--no-sandbox")
                 .addArguments("--verbose")
+                .addArguments("--lang=es")
             )
             .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[CHROME]: "));
         try {
