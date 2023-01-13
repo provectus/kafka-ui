@@ -69,17 +69,7 @@ public class TopicMessagesTests extends BaseTest {
   @Test
   void produceMessage() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
-    produceMessage(TOPIC_FOR_MESSAGES);
-//    topicDetails
-//        .openDetailsTab(MESSAGES)
-//        .clickProduceMessageBtn();
-//    produceMessagePanel
-//        .waitUntilScreenReady()
-//        .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
-//        .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
-//        .submitProduceMessage();
-//    topicDetails
-//        .waitUntilScreenReady();
+    produceMessage(MESSAGES, TOPIC_FOR_MESSAGES);
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(topicDetails.isKeyMessageVisible((TOPIC_FOR_MESSAGES.getMessageKey())))
         .withFailMessage("isKeyMessageVisible()").isTrue();
@@ -98,17 +88,7 @@ public class TopicMessagesTests extends BaseTest {
   void clearMessage() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
     int messageAmount = topicDetails.getMessageCountAmount();
-    produceMessage(TOPIC_FOR_MESSAGES);
-//    topicDetails
-//        .openDetailsTab(OVERVIEW)
-//        .clickProduceMessageBtn();
-//    produceMessagePanel
-//        .waitUntilScreenReady()
-//        .setContentFiled(TOPIC_FOR_MESSAGES.getMessageContent())
-//        .setKeyField(TOPIC_FOR_MESSAGES.getMessageKey())
-//        .submitProduceMessage();
-//    topicDetails
-//        .waitUntilScreenReady();
+    produceMessage(OVERVIEW, TOPIC_FOR_MESSAGES);
     Assertions.assertEquals(messageAmount + 1, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
     topicDetails
         .openDotMenu()
@@ -199,17 +179,7 @@ public class TopicMessagesTests extends BaseTest {
   @Test
   void checkClearTopicMessage() {
     navigateToTopicsAndOpenDetails(TOPIC_TO_CLEAR_MESSAGES.getName());
-    produceMessage(TOPIC_TO_CLEAR_MESSAGES);
-//    topicDetails
-//        .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
-//        .clickProduceMessageBtn();
-//    produceMessagePanel
-//        .waitUntilScreenReady()
-//        .setContentFiled(TOPIC_TO_CLEAR_MESSAGES.getMessageContent())
-//        .setKeyField(TOPIC_TO_CLEAR_MESSAGES.getMessageKey())
-//        .submitProduceMessage();
-//    topicDetails
-//        .waitUntilScreenReady();
+    produceMessage(OVERVIEW, TOPIC_TO_CLEAR_MESSAGES);
     navigateToTopics();
     assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
         .as("getNumberOfMessages()").isEqualTo(1);
@@ -233,17 +203,7 @@ public class TopicMessagesTests extends BaseTest {
   @Test
   void checkRecreateTopic(){
     navigateToTopicsAndOpenDetails(TOPIC_TO_RECREATE.getName());
-    produceMessage(TOPIC_TO_RECREATE);
-//    topicDetails
-//        .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
-//        .clickProduceMessageBtn();
-//    produceMessagePanel
-//        .waitUntilScreenReady()
-//        .setContentFiled(TOPIC_TO_RECREATE.getMessageContent())
-//        .setKeyField(TOPIC_TO_RECREATE.getMessageKey())
-//        .submitProduceMessage();
-//    topicDetails
-//        .waitUntilScreenReady();
+    produceMessage(OVERVIEW, TOPIC_TO_RECREATE);
     navigateToTopics();
     assertThat(topicsList.getTopicItem(TOPIC_TO_RECREATE.getName()).getNumberOfMessages())
         .as("getNumberOfMessages()").isEqualTo(1);
@@ -261,9 +221,9 @@ public class TopicMessagesTests extends BaseTest {
   }
 
   @Step
-  protected void produceMessage(Topic topic){
+  protected void produceMessage(TopicDetails.TopicMenu menu, Topic topic){
     topicDetails
-        .openDetailsTab(MESSAGES)
+        .openDetailsTab(menu)
         .clickProduceMessageBtn();
     produceMessagePanel
         .waitUntilScreenReady()
