@@ -7,12 +7,13 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.utilities.WebUtils;
+import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class BasePage extends WebUtils {
 
-  protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+  protected SelenideElement loadingSpinner = $x("//div[@role='progressbar']");
   protected SelenideElement submitBtn = $x("//button[@type='submit']");
   protected SelenideElement tableGrid = $x("//table");
   protected SelenideElement dotMenuBtn = $x("//button[@aria-label='Dropdown Toggle']");
@@ -26,7 +27,9 @@ public abstract class BasePage extends WebUtils {
 
   protected void waitUntilSpinnerDisappear() {
     log.debug("\nwaitUntilSpinnerDisappear");
-    loadingSpinner.shouldBe(Condition.disappear);
+    if(isVisible(loadingSpinner)){
+      loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(30));
+    }
   }
 
   protected void clickSubmitBtn() {

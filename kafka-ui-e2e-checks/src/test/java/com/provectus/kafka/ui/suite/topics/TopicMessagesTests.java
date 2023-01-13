@@ -2,8 +2,8 @@ package com.provectus.kafka.ui.suite.topics;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
 import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
-import static com.provectus.kafka.ui.settings.BaseSource.CLUSTER_NAME;
-import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
+import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.OVERVIEW;
+import static com.provectus.kafka.ui.utilities.TimeUtils.waitUntilNewMinuteStarted;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,8 +15,12 @@ import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -32,22 +36,29 @@ public class TopicMessagesTests extends BaseTest {
   private static final String SUITE_TITLE = "Topics";
   private static final Topic TOPIC_FOR_MESSAGES = new Topic()
       .setName("topic-with-clean-message-attribute-" + randomAlphabetic(5))
-      .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
-      .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+      .setMessageKey(randomAlphabetic(5))
+      .setMessageContent(randomAlphabetic(10));
   private static final Topic TOPIC_TO_CLEAR_MESSAGES = new Topic()
       .setName("topic-to-clear-message-attribute-" + randomAlphabetic(5))
-      .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
-      .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+      .setMessageKey(randomAlphabetic(5))
+      .setMessageContent(randomAlphabetic(10));
+  private static final Topic TOPIC_FOR_CHECKING_FILTERS = new Topic()
+      .setName("topic_for_checking_filters" + randomAlphabetic(5))
+      .setMessageKey(randomAlphabetic(5))
+      .setMessageContent(randomAlphabetic(10));
   private static final Topic TOPIC_TO_RECREATE = new Topic()
       .setName("topic-to-recreate-attribute-" + randomAlphabetic(5))
-      .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
-      .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+      .setMessageKey(randomAlphabetic(5))
+      .setMessageContent(randomAlphabetic(10));
   private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_TO_CLEAR_MESSAGES, TOPIC_TO_RECREATE));
-    TOPIC_LIST.forEach(topic -> apiService.createTopic(CLUSTER_NAME, topic.getName()));
+    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS, TOPIC_TO_CLEAR_MESSAGES, TOPIC_TO_RECREATE));
+    TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
+    IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
+    waitUntilNewMinuteStarted();
+    IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
   }
 
   @DisplayName("produce message")
@@ -58,7 +69,7 @@ public class TopicMessagesTests extends BaseTest {
   void produceMessage() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
     topicDetails
-        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .openDetailsTab(MESSAGES)
         .clickProduceMessageBtn();
     produceMessagePanel
         .waitUntilScreenReady()
@@ -85,7 +96,7 @@ public class TopicMessagesTests extends BaseTest {
   void clearMessage() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
     topicDetails
-        .openDetailsTab(TopicDetails.TopicMenu.OVERVIEW)
+        .openDetailsTab(OVERVIEW)
         .clickProduceMessageBtn();
     int messageAmount = topicDetails.getMessageCountAmount();
     produceMessagePanel
@@ -111,35 +122,70 @@ public class TopicMessagesTests extends BaseTest {
   @CaseId(21)
   @Test
   void copyMessageFromTopicProfile() {
-    navigateToTopicsAndOpenDetails("_schemas");
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
     topicDetails
-        .openDetailsTab(TopicDetails.TopicMenu.MESSAGES)
+        .openDetailsTab(MESSAGES)
         .getRandomMessage()
         .openDotMenu()
         .clickCopyToClipBoard();
-    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS,"Copied successfully!"),
+    Assertions.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Copied successfully!"),
         "isAlertWithMessageVisible()");
   }
 
   @Disabled
-  @Issue("https://github.com/provectus/kafka-ui/issues/2856")
+  @Issue("https://github.com/provectus/kafka-ui/issues/2394")
   @DisplayName("Checking messages filtering by Offset within Topic/Messages")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(15)
   @Test
   void checkingMessageFilteringByOffset() {
-    String offsetValue = "2";
-    navigateToTopicsAndOpenDetails("_schemas");
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
     topicDetails
-        .openDetailsTab(MESSAGES)
+        .openDetailsTab(MESSAGES);
+    TopicDetails.MessageGridItem secondMessage = topicDetails.getMessageByOffset(1);
+    topicDetails
         .selectSeekTypeDdlMessagesTab("Offset")
-        .setSeekTypeValueFldMessagesTab(offsetValue)
+        .setSeekTypeValueFldMessagesTab(String.valueOf(secondMessage.getOffset()))
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssertions softly = new SoftAssertions();
-    topicDetails.getAllMessages()
-        .forEach(messages -> softly.assertThat(messages.getOffset() == Integer.parseInt(offsetValue))
-        .as("getAllMessages()").isTrue());
+    topicDetails.getAllMessages().forEach(message ->
+        softly.assertThat(message.getOffset() == secondMessage.getOffset()
+                || message.getOffset() > secondMessage.getOffset())
+            .as(String.format("Expected offset is: %s, but found: %s", secondMessage.getOffset(), message.getOffset()))
+            .isTrue());
+    softly.assertAll();
+  }
+
+  @Disabled
+  @Issue("https://github.com/provectus/kafka-ui/issues/3215")
+  @Issue("https://github.com/provectus/kafka-ui/issues/2345")
+  @DisplayName("Checking messages filtering by Timestamp within Messages/Topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(16)
+  @Test
+  void checkingMessageFilteringByTimestamp() {
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
+    topicDetails
+        .openDetailsTab(MESSAGES);
+    LocalDateTime firstTimestamp = topicDetails.getMessageByOffset(0).getTimestamp();
+    List<TopicDetails.MessageGridItem> nextMessages = topicDetails.getAllMessages().stream()
+        .filter(message -> message.getTimestamp().getMinute() != firstTimestamp.getMinute())
+        .collect(Collectors.toList());
+    LocalDateTime nextTimestamp = Objects.requireNonNull(nextMessages.stream()
+        .findFirst().orElse(null)).getTimestamp();
+    topicDetails
+        .selectSeekTypeDdlMessagesTab("Timestamp")
+        .openCalendarSeekType()
+        .selectDateAndTimeByCalendar(nextTimestamp)
+        .clickSubmitFiltersBtnMessagesTab();
+    SoftAssertions softly = new SoftAssertions();
+    topicDetails.getAllMessages().forEach(message ->
+        softly.assertThat(message.getTimestamp().isEqual(nextTimestamp)
+                || message.getTimestamp().isAfter(nextTimestamp))
+            .as(String.format("Expected timestamp is: %s, but found: %s", nextTimestamp, message.getTimestamp()))
+            .isTrue());
     softly.assertAll();
   }
 
@@ -215,6 +261,6 @@ public class TopicMessagesTests extends BaseTest {
 
   @AfterAll
   public void afterAll() {
-    TOPIC_LIST.forEach(topic -> apiService.deleteTopic(CLUSTER_NAME, topic.getName()));
+    TOPIC_LIST.forEach(topic -> apiService.deleteTopic(topic.getName()));
   }
 }

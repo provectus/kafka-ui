@@ -9,11 +9,9 @@ import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPR
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.NOT_SET;
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_1_GB;
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
-import static com.provectus.kafka.ui.settings.BaseSource.CLUSTER_NAME;
-import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.base.BaseTest;
@@ -56,8 +54,8 @@ public class TopicsTests extends BaseTest {
       .setTimeToRetainData("604800001")
       .setMaxSizeOnDisk(SIZE_20_GB)
       .setMaxMessageBytes("1000020")
-      .setMessageKey(fileToString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
-      .setMessageContent(fileToString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"));
+      .setMessageKey(randomAlphabetic(5))
+      .setMessageContent(randomAlphabetic(10));
   private static final Topic TOPIC_TO_CHECK_SETTINGS = new Topic()
       .setName("new-topic-" + randomAlphabetic(5))
       .setNumberOfPartitions(1)
@@ -69,7 +67,7 @@ public class TopicsTests extends BaseTest {
   @BeforeAll
   public void beforeAll() {
     TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE, TOPIC_FOR_DELETE));
-    TOPIC_LIST.forEach(topic -> apiService.createTopic(CLUSTER_NAME, topic.getName()));
+    TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
   }
 
   @DisplayName("should create a topic")
@@ -505,6 +503,6 @@ public class TopicsTests extends BaseTest {
 
   @AfterAll
   public void afterAll() {
-    TOPIC_LIST.forEach(topic -> apiService.deleteTopic(CLUSTER_NAME, topic.getName()));
+    TOPIC_LIST.forEach(topic -> apiService.deleteTopic(topic.getName()));
   }
 }

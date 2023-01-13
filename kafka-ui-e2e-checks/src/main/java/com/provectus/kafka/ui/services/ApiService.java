@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.services;
 
 import static com.codeborne.selenide.Selenide.sleep;
-import static com.provectus.kafka.ui.settings.BaseSource.BASE_LOCAL_URL;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +16,8 @@ import com.provectus.kafka.ui.api.model.TopicCreation;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.settings.BaseSource;
+import io.qameta.allure.Step;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.SneakyThrows;
@@ -25,7 +26,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 
 @Slf4j
-public class ApiService {
+public class ApiService extends BaseSource {
 
     @SneakyThrows
     private TopicsApi topicApi() {
@@ -48,7 +49,7 @@ public class ApiService {
     }
 
     @SneakyThrows
-    public void createTopic(String clusterName, String topicName) {
+    private void createTopic(String clusterName, String topicName) {
       TopicCreation topic = new TopicCreation();
       topic.setName(topicName);
       topic.setPartitions(1);
@@ -61,15 +62,28 @@ public class ApiService {
       }
     }
 
-    public void deleteTopic(String clusterName, String topicName) {
+    @Step
+    public ApiService createTopic(String topicName) {
+      createTopic(CLUSTER_NAME, topicName);
+      return this;
+    }
+
+    @SneakyThrows
+    private void deleteTopic(String clusterName, String topicName) {
         try {
             topicApi().deleteTopic(clusterName, topicName).block();
         } catch (WebClientResponseException ignore) {
         }
     }
 
+    @Step
+    public ApiService deleteTopic(String topicName){
+      deleteTopic(CLUSTER_NAME, topicName);
+      return this;
+    }
+
     @SneakyThrows
-    public void createSchema(String clusterName, Schema schema) {
+    private void createSchema(String clusterName, Schema schema) {
         NewSchemaSubject schemaSubject = new NewSchemaSubject();
         schemaSubject.setSubject(schema.getName());
         schemaSubject.setSchema(fileToString(schema.getValuePath()));
@@ -81,24 +95,42 @@ public class ApiService {
         }
     }
 
+    @Step
+    public ApiService createSchema(Schema schema){
+      createSchema(CLUSTER_NAME, schema);
+      return this;
+    }
+
     @SneakyThrows
-    public void deleteSchema(String clusterName, String schemaName) {
+    private void deleteSchema(String clusterName, String schemaName) {
         try {
             schemaApi().deleteSchema(clusterName, schemaName).block();
         } catch (WebClientResponseException ignore) {
         }
     }
 
+    @Step
+    public ApiService deleteSchema(String schemaName){
+      deleteSchema(CLUSTER_NAME, schemaName);
+      return this;
+    }
+
     @SneakyThrows
-    public void deleteConnector(String clusterName, String connectName, String connectorName) {
+    private void deleteConnector(String clusterName, String connectName, String connectorName) {
         try {
             connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
         } catch (WebClientResponseException ignore) {
         }
     }
 
+    @Step
+    public ApiService deleteConnector(String connectName, String connectorName){
+      deleteConnector(CLUSTER_NAME, connectName, connectorName);
+      return this;
+    }
+
     @SneakyThrows
-    public void createConnector(String clusterName, String connectName, Connector connector) {
+    private void createConnector(String clusterName, String connectName, Connector connector) {
         NewConnector connectorProperties = new NewConnector();
         connectorProperties.setName(connector.getName());
         Map<String, Object> configMap = new ObjectMapper().readValue(connector.getConfig(), HashMap.class);
@@ -110,20 +142,35 @@ public class ApiService {
         connectorApi().createConnector(clusterName, connectName, connectorProperties).block();
     }
 
+    @Step
+    public ApiService createConnector(String connectName, Connector connector){
+      createConnector(CLUSTER_NAME, connectName, connector);
+      return this;
+    }
+
+    @Step
     public String getFirstConnectName(String clusterName) {
         return connectorApi().getConnects(clusterName).blockFirst().getName();
     }
 
     @SneakyThrows
-    public void sendMessage(String clusterName, Topic topic) {
-        CreateTopicMessage createMessage = new CreateTopicMessage();
-        createMessage.partition(0);
-        createMessage.setContent(topic.getMessageContent());
-        createMessage.setKey(topic.getMessageKey());
-        try {
-            messageApi().sendTopicMessages(clusterName, topic.getName(), createMessage).block();
-        } catch (WebClientResponseException ex) {
-            ex.getRawStatusCode();
-        }
+    private void sendMessage(String clusterName, Topic topic) {
+      CreateTopicMessage createMessage = new CreateTopicMessage();
+      createMessage.setPartition(0);
+      createMessage.setKeySerde("String");
+      createMessage.setValueSerde("String");
+      createMessage.setKey(topic.getMessageKey());
+      createMessage.setContent(topic.getMessageContent());
+      try {
+        messageApi().sendTopicMessages(clusterName, topic.getName(), createMessage).block();
+      } catch (WebClientResponseException ex) {
+        ex.getRawStatusCode();
+      }
+    }
+
+    @Step
+    public ApiService sendMessage(Topic topic) {
+      sendMessage(CLUSTER_NAME, topic);
+      return this;
     }
 }
