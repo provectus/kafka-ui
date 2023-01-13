@@ -1012,6 +1012,15 @@ export const darkTheme: ThemeType = {
       color: Colors.neutral[30],
     },
   },
+  textArea: {
+    ...baseTheme.textArea,
+    borderColor: {
+      ...baseTheme.textArea.borderColor,
+      normal: Colors.neutral[70],
+      hover: Colors.neutral[30],
+      focus: Colors.neutral[0],
+    },
+  },
   metrics: {
     backgroundColor: Colors.neutral[95],
     sectionTitle: Colors.neutral[0],
