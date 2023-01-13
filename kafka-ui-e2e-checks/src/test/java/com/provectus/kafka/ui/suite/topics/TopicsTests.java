@@ -47,8 +47,8 @@ public class TopicsTests extends BaseTest {
       .setCustomParameterType(COMPRESSION_TYPE)
       .setCustomParameterValue("producer")
       .setCleanupPolicyValue(DELETE);
-  private static final Topic TOPIC_TO_UPDATE = new Topic()
-      .setName("topic-to-update-" + randomAlphabetic(5))
+  private static final Topic TOPIC_TO_UPDATE_AND_DELETE = new Topic()
+      .setName("topic-to-update-and-delete-" + randomAlphabetic(5))
       .setNumberOfPartitions(1)
       .setCleanupPolicyValue(COMPACT)
       .setTimeToRetainData("604800001")
@@ -62,13 +62,11 @@ public class TopicsTests extends BaseTest {
       .setMaxMessageBytes("1000012")
       .setMaxSizeOnDisk(NOT_SET);
   private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete-" + randomAlphabetic(5));
-  private static final Topic TOPIC_FOR_DELETE_FROM_TOPIC_LIST =
-      new Topic().setName("topic_for_delete_from_topic_list_" + randomAlphabetic(5));
   private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE, TOPIC_FOR_DELETE, TOPIC_FOR_DELETE_FROM_TOPIC_LIST));
+    TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE_AND_DELETE, TOPIC_FOR_DELETE));
     TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
   }
 
@@ -129,33 +127,33 @@ public class TopicsTests extends BaseTest {
   @Test
   @Order(3)
   public void updateTopic() {
-    navigateToTopicsAndOpenDetails(TOPIC_TO_UPDATE.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_TO_UPDATE_AND_DELETE.getName());
     topicDetails
         .openDotMenu()
         .clickEditSettingsMenu();
     topicCreateEditForm
         .waitUntilScreenReady()
-        .selectCleanupPolicy((TOPIC_TO_UPDATE.getCleanupPolicyValue()))
+        .selectCleanupPolicy((TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue()))
         .setMinInsyncReplicas(10)
-        .setTimeToRetainDataInMs(TOPIC_TO_UPDATE.getTimeToRetainData())
-        .setMaxSizeOnDiskInGB(TOPIC_TO_UPDATE.getMaxSizeOnDisk())
-        .setMaxMessageBytes(TOPIC_TO_UPDATE.getMaxMessageBytes())
+        .setTimeToRetainDataInMs(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetainData())
+        .setMaxSizeOnDiskInGB(TOPIC_TO_UPDATE_AND_DELETE.getMaxSizeOnDisk())
+        .setMaxMessageBytes(TOPIC_TO_UPDATE_AND_DELETE.getMaxMessageBytes())
         .clickCreateTopicBtn();
     topicDetails
         .waitUntilScreenReady();
-    navigateToTopicsAndOpenDetails(TOPIC_TO_UPDATE.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_TO_UPDATE_AND_DELETE.getName());
     topicDetails
         .openDotMenu()
         .clickEditSettingsMenu();
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
-        .isEqualTo(TOPIC_TO_UPDATE.getCleanupPolicyValue().getVisibleText());
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue().getVisibleText());
     softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
-        .isEqualTo(TOPIC_TO_UPDATE.getTimeToRetainData());
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetainData());
     softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()")
-        .isEqualTo(TOPIC_TO_UPDATE.getMaxSizeOnDisk().getVisibleText());
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getMaxSizeOnDisk().getVisibleText());
     softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("getMaxMessageBytes()")
-        .isEqualTo(TOPIC_TO_UPDATE.getMaxMessageBytes());
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getMaxMessageBytes());
     softly.assertAll();
   }
 
@@ -168,13 +166,13 @@ public class TopicsTests extends BaseTest {
   public void removeTopicFromTopicList() {
     navigateToTopics();
     topicsList
-        .openDotMenuByTopicName(TOPIC_FOR_DELETE_FROM_TOPIC_LIST.getName())
+        .openDotMenuByTopicName(TOPIC_TO_UPDATE_AND_DELETE.getName())
         .clickRemoveTopicBtn()
         .clickConfirmBtnMdl();
     Assertions.assertTrue(topicsList.isAlertWithMessageVisible(SUCCESS,
-            String.format("Topic %s successfully deleted!", TOPIC_FOR_DELETE_FROM_TOPIC_LIST.getName())),
+            String.format("Topic %s successfully deleted!", TOPIC_TO_UPDATE_AND_DELETE.getName())),
         "isAlertWithMessageVisible()");
-    TOPIC_LIST.remove(TOPIC_FOR_DELETE_FROM_TOPIC_LIST);
+    TOPIC_LIST.remove(TOPIC_TO_UPDATE_AND_DELETE);
   }
 
   @DisplayName("should delete topic")
