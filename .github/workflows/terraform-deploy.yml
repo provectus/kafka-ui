@@ -1,4 +1,4 @@
-name: terraform_deploy
+name: terraform deploy
 on:
   workflow_dispatch:
     inputs:
