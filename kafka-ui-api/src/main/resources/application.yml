@@ -1,3 +1,12 @@
+kafka:
+  clusters:
+    - name: local
+      bootstrapServers: localhost:9092
+      properties:
+        client.id: "testId123"
+        reset.offset: "earliest"
+        connections.max.idle.ms: 312345
+
 auth:
   type: DISABLED
 
@@ -7,10 +16,12 @@ management:
       enabled: true
     health:
       enabled: true
+    configprops:
+      enabled: true
   endpoints:
     web:
       exposure:
-        include: "info,health"
+        include: "info,health,configprops"
 
 logging:
   level:

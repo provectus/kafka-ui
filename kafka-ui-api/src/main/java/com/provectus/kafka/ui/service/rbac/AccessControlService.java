@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service.rbac;
 
+import static com.provectus.kafka.ui.model.rbac.Resource.APPLICATIONCONFIG;
+
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
 import com.provectus.kafka.ui.config.auth.RbacUser;
 import com.provectus.kafka.ui.config.auth.RoleBasedAccessControlProperties;
@@ -88,7 +90,8 @@ public class AccessControlService {
     return getUser()
         .doOnNext(user -> {
           boolean accessGranted =
-              isClusterAccessible(context, user)
+              isApplicationConfigAccessible(context, user)
+                  && isClusterAccessible(context, user)
                   && isClusterConfigAccessible(context, user)
                   && isTopicAccessible(context, user)
                   && isConsumerGroupAccessible(context, user)
@@ -123,6 +126,23 @@ public class AccessControlService {
         .stream()
         .filter(filterRole(user))
         .anyMatch(filterCluster(context.getCluster()));
+  }
+
+  public boolean isApplicationConfigAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
+    if (CollectionUtils.isEmpty(context.getApplicationConfigActions())) {
+      return true;
+    }
+
+    Set<String> requiredActions = context.getApplicationConfigActions()
+        .stream()
+        .map(a -> a.toString().toUpperCase())
+        .collect(Collectors.toSet());
+
+    return isAccessible(APPLICATIONCONFIG, null, user, context, requiredActions);
   }
 
   public Mono<Boolean> isClusterAccessible(ClusterDTO cluster) {
@@ -348,12 +368,12 @@ public class AccessControlService {
     return Collections.unmodifiableList(properties.getRoles());
   }
 
-  private boolean isAccessible(Resource resource, String resourceValue,
+  private boolean isAccessible(Resource resource, @Nullable String resourceValue,
                                AuthenticatedUser user, AccessContext context, Set<String> requiredActions) {
     Set<String> grantedActions = properties.getRoles()
         .stream()
         .filter(filterRole(user))
-        .filter(filterCluster(context.getCluster()))
+        .filter(filterCluster(resource, context.getCluster()))
         .flatMap(grantedRole -> grantedRole.getPermissions().stream())
         .filter(filterResource(resource))
         .filter(filterResourceValue(resourceValue))
@@ -374,11 +394,18 @@ public class AccessControlService {
         .anyMatch(cluster::equalsIgnoreCase);
   }
 
+  private Predicate<Role> filterCluster(Resource resource, String cluster) {
+    if (resource == APPLICATIONCONFIG) {
+      return role -> true;
+    }
+    return filterCluster(cluster);
+  }
+
   private Predicate<Permission> filterResource(Resource resource) {
     return grantedPermission -> resource == grantedPermission.getResource();
   }
 
-  private Predicate<Permission> filterResourceValue(String resourceValue) {
+  private Predicate<Permission> filterResourceValue(@Nullable String resourceValue) {
 
     if (resourceValue == null) {
       return grantedPermission -> true;

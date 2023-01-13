@@ -1744,6 +1744,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationInfo'
 
+  /api/config:
+    get:
+      tags:
+        - ApplicationConfig
+      summary: Gets current application configuration
+      operationId: getCurrentConfig
+      parameters:
+        - name: format
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/ApplicationConfigFormat'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationConfig'
+    post:
+      tags:
+        - ApplicationConfig
+      summary: Restarts application with specified configuration
+      operationId: restartWithConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestartRequest'
+      responses:
+        200:
+          description: OK
+
 components:
   schemas:
     TopicSerdeSuggestion:
@@ -3211,3 +3244,25 @@ components:
         - SCHEMA
         - CONNECT
         - KSQL
+
+    ApplicationConfigFormat:
+      type: string
+      enum:
+        - JSON
+        - YAML
+
+    RestartRequest:
+      type: object
+      properties:
+        config:
+          type: string
+        configFormat:
+          $ref: '#/components/schemas/ApplicationConfigFormat'
+
+    ApplicationConfig:
+      type: object
+      properties:
+        config:
+          type: string
+        configFormat:
+          $ref: '#/components/schemas/ApplicationConfigFormat'
