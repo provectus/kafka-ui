@@ -23,7 +23,9 @@
 
 ## 👷♂ Configuration
 
-* [Configuration](configuration/configuration.md)
+* [Configuration](configuration/configuration/README.md)
+  * [Complex configuration examples](configuration/configuration/complex-configuration-examples/README.md)
+    * [Kraft mode + multiple brokers](configuration/configuration/complex-configuration-examples/kraft-mode-+-multiple-brokers.md)
 * [SSL](configuration/ssl.md)
 * [Authentication](configuration/authentication/README.md)
   * [OAuth2](configuration/authentication/oauth2.md)
