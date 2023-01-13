@@ -98,7 +98,7 @@ public class OffsetsResetService {
         .flatMap(ac ->
             // we need to call listConsumerGroups() to check group existence, because
             // describeConsumerGroups() will return consumer group even if it doesn't exist
-            ac.listConsumerGroups()
+            ac.listConsumerGroupNames()
                 .filter(cgs -> cgs.stream().anyMatch(g -> g.equals(groupId)))
                 .flatMap(cgs -> ac.describeConsumerGroups(List.of(groupId)))
                 .filter(cgs -> cgs.containsKey(groupId))
