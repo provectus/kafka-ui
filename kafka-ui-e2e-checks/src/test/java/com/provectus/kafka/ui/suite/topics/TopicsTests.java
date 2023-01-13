@@ -264,7 +264,6 @@ public class TopicsTests extends BaseTest {
   void checkCustomParametersWithinCreateNewTopic() {
     navigateToTopics();
     topicsList
-        .waitUntilScreenReady()
         .clickAddTopicBtn();
     topicCreateEditForm
         .waitUntilScreenReady()
