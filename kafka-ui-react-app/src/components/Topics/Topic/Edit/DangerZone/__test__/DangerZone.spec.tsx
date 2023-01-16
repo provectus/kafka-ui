@@ -2,7 +2,7 @@ import React from 'react';
 import DangerZone, {
   DangerZoneProps,
 } from 'components/Topics/Topic/Edit/DangerZone/DangerZone';
-import { act, screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
 import {
@@ -52,7 +52,7 @@ const checkDialogThenPressCancel = async () => {
 };
 
 describe('DangerZone', () => {
-  it('renders the component', async () => {
+  it('renders the component', () => {
     renderComponent();
 
     const numberOfPartitionsEditForm = screen.getByRole('form', {
@@ -98,8 +98,8 @@ describe('DangerZone', () => {
     await userEvent.click(
       within(numberOfPartitionsEditForm).getByRole('button')
     );
-    await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
-    await waitFor(() => clickOnDialogSubmitButton());
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    await clickOnDialogSubmitButton();
     expect(mockIncreaseTopicPartitionsCount).toHaveBeenCalledTimes(1);
   });
 
@@ -129,12 +129,10 @@ describe('DangerZone', () => {
       within(replicationFactorEditForm).getByRole('button')
     );
 
-    await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
-    await waitFor(() => clickOnDialogSubmitButton());
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    await clickOnDialogSubmitButton();
 
-    await waitFor(() => {
-      expect(mockUpdateTopicReplicationFactor).toHaveBeenCalledTimes(1);
-    });
+    expect(mockUpdateTopicReplicationFactor).toHaveBeenCalledTimes(1);
   });
 
   it('should view the validation error when partition value is lower than the default passed or empty', async () => {
@@ -143,22 +141,20 @@ describe('DangerZone', () => {
     const partitionInputSubmitBtn = screen.getAllByText(/submit/i)[0];
     const value = (defaultPartitions - 4).toString();
     expect(partitionInputSubmitBtn).toBeDisabled();
-    await act(async () => {
-      await userEvent.clear(partitionInput);
-      await userEvent.type(partitionInput, value);
-    });
+
+    await userEvent.clear(partitionInput);
+    await userEvent.type(partitionInput, value);
+
     expect(partitionInput).toHaveValue(+value);
     expect(partitionInputSubmitBtn).toBeEnabled();
-    await act(async () => {
-      await userEvent.click(partitionInputSubmitBtn);
-    });
+
+    await userEvent.click(partitionInputSubmitBtn);
+
     expect(
       screen.getByText(/You can only increase the number of partitions!/i)
     ).toBeInTheDocument();
     await userEvent.clear(partitionInput);
-    await waitFor(() =>
-      expect(screen.getByText(/are required/i)).toBeInTheDocument()
-    );
+    expect(screen.getByText(/are required/i)).toBeInTheDocument();
   });
 
   it('should view the validation error when Replication Facto value is lower than the default passed or empty', async () => {
@@ -167,17 +163,13 @@ describe('DangerZone', () => {
       screen.getByPlaceholderText('Replication Factor');
     const replicatorFactorInputSubmitBtn = screen.getAllByText(/submit/i)[1];
 
-    await waitFor(() => userEvent.clear(replicatorFactorInput));
+    await userEvent.clear(replicatorFactorInput);
 
     expect(replicatorFactorInputSubmitBtn).toBeEnabled();
     await userEvent.click(replicatorFactorInputSubmitBtn);
-    await waitFor(() =>
-      expect(screen.getByText(/are required/i)).toBeInTheDocument()
-    );
+    expect(screen.getByText(/are required/i)).toBeInTheDocument();
     await userEvent.type(replicatorFactorInput, '1');
-    await waitFor(() =>
-      expect(screen.queryByText(/are required/i)).not.toBeInTheDocument()
-    );
+    expect(screen.queryByText(/are required/i)).not.toBeInTheDocument();
   });
 
   it('should close the partitions dialog if he cancel button is pressed', async () => {
@@ -186,10 +178,8 @@ describe('DangerZone', () => {
     const partitionInput = screen.getByPlaceholderText('Number of partitions');
     const partitionInputSubmitBtn = screen.getAllByText(/submit/i)[0];
 
-    await act(async () => {
-      await userEvent.type(partitionInput, '5');
-      await userEvent.click(partitionInputSubmitBtn);
-    });
+    await userEvent.type(partitionInput, '5');
+    await userEvent.click(partitionInputSubmitBtn);
 
     await checkDialogThenPressCancel();
   });
@@ -200,10 +190,8 @@ describe('DangerZone', () => {
       screen.getByPlaceholderText('Replication Factor');
     const replicatorFactorInputSubmitBtn = screen.getAllByText(/submit/i)[1];
 
-    await act(async () => {
-      await userEvent.type(replicatorFactorInput, '5');
-      await userEvent.click(replicatorFactorInputSubmitBtn);
-    });
+    await userEvent.type(replicatorFactorInput, '5');
+    await userEvent.click(replicatorFactorInputSubmitBtn);
 
     await checkDialogThenPressCancel();
   });

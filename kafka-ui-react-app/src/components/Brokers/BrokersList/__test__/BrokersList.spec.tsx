@@ -134,12 +134,36 @@ describe('BrokersList Component', () => {
         }));
       });
 
-      it('renders empty table', async () => {
+      describe('when it has no brokers', () => {
+        beforeEach(() => {
+          (useBrokers as jest.Mock).mockImplementation(() => ({
+            data: [],
+          }));
+        });
+
+        it('renders empty table', async () => {
+          renderComponent();
+          expect(screen.getByRole('table')).toBeInTheDocument();
+          expect(
+            screen.getByRole('row', { name: 'Disk usage data not available' })
+          ).toBeInTheDocument();
+        });
+      });
+
+      it('renders list of all brokers', async () => {
         renderComponent();
         expect(screen.getByRole('table')).toBeInTheDocument();
-        expect(
-          screen.getByRole('row', { name: 'Disk usage data not available' })
-        ).toBeInTheDocument();
+        expect(screen.getAllByRole('row').length).toEqual(3);
+      });
+      it('opens broker when row clicked', async () => {
+        renderComponent();
+        await userEvent.click(screen.getByRole('cell', { name: '1' }));
+
+        await waitFor(() =>
+          expect(mockedUsedNavigate).toBeCalledWith(
+            clusterBrokerPath(clusterName, '1')
+          )
+        );
       });
     });
   });

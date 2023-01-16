@@ -4,7 +4,7 @@ import StyledButton, {
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-interface Props
+export interface Props
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     ButtonProps {
   to?: string | object;

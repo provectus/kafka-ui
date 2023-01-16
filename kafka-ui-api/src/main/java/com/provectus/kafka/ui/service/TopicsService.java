@@ -51,7 +51,6 @@ import reactor.util.retry.Retry;
 public class TopicsService {
 
   private final AdminClientService adminClientService;
-  private final DeserializationService deserializationService;
   private final StatisticsCache statisticsCache;
   @Value("${topic.recreate.maxRetries:15}")
   private int recreateMaxRetries;
@@ -461,8 +460,12 @@ public class TopicsService {
   }
 
   private Mono<List<String>> filterExisting(KafkaCluster cluster, Collection<String> topics) {
-    return adminClientService.get(cluster).flatMap(ac -> ac.listTopics(true))
-        .map(existing -> existing.stream().filter(topics::contains).collect(toList()));
+    return adminClientService.get(cluster)
+        .flatMap(ac -> ac.listTopics(true))
+        .map(existing -> existing
+            .stream()
+            .filter(topics::contains)
+            .collect(toList()));
   }
 
 }

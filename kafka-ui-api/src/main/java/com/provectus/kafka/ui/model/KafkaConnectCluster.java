@@ -13,4 +13,9 @@ public class KafkaConnectCluster {
   private final String address;
   private final String userName;
   private final String password;
+
+  private final String keystoreLocation;
+  private final String truststoreLocation;
+  private final String keystorePassword;
+  private final String truststorePassword;
 }

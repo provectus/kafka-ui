@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event';
 import { clusterTopicPath } from 'lib/paths';
 import { Replica } from 'components/Topics/Topic/Overview/Overview.styled';
 import { useTopicDetails } from 'lib/hooks/api/topics';
+import { useAppDispatch } from 'lib/hooks/redux';
 import {
   externalTopicPayload,
   internalTopicPayload,
@@ -27,12 +28,11 @@ jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
 }));
 
-const uwrapMock = jest.fn();
-const useDispatchMock = () => jest.fn(() => ({ unwrap: uwrapMock }));
+const unwrapMock = jest.fn();
 
 jest.mock('lib/hooks/redux', () => ({
   ...jest.requireActual('lib/hooks/redux'),
-  useAppDispatch: useDispatchMock,
+  useAppDispatch: jest.fn(),
 }));
 
 describe('Overview', () => {
@@ -53,6 +53,12 @@ describe('Overview', () => {
       { initialEntries: [path] }
     );
   };
+
+  beforeEach(() => {
+    (useAppDispatch as jest.Mock).mockImplementation(() => () => ({
+      unwrap: unwrapMock,
+    }));
+  });
 
   it('at least one replica was rendered', () => {
     renderComponent();
@@ -117,7 +123,7 @@ describe('Overview', () => {
 
       const clearMessagesButton = screen.getByText('Clear Messages');
       await userEvent.click(clearMessagesButton);
-      expect(uwrapMock).toHaveBeenCalledTimes(1);
+      expect(unwrapMock).toHaveBeenCalledTimes(1);
     });
   });
 

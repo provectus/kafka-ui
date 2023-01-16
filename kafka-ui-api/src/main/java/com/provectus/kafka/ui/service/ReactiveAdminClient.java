@@ -1,37 +1,37 @@
 package com.provectus.kafka.ui.service;
 
-import static com.google.common.util.concurrent.Uninterruptibles.getUninterruptibly;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.kafka.clients.admin.ListOffsetsResult.ListOffsetsResultInfo;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterators;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Table;
 import com.provectus.kafka.ui.exception.IllegalEntityStateException;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.util.MapUtil;
 import com.provectus.kafka.ui.util.NumberUtil;
-import com.provectus.kafka.ui.util.annotations.KafkaClientInternalsDependant;
+import com.provectus.kafka.ui.util.annotation.KafkaClientInternalsDependant;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +41,11 @@ import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
+import org.apache.kafka.clients.admin.DescribeClusterOptions;
+import org.apache.kafka.clients.admin.DescribeClusterResult;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
-import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsOptions;
+import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsSpec;
+import org.apache.kafka.clients.admin.ListOffsetsResult;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
@@ -64,6 +67,7 @@ import org.apache.kafka.common.errors.GroupNotEmptyException;
 import org.apache.kafka.common.errors.InvalidRequestException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.util.function.Tuple2;
@@ -76,7 +80,8 @@ public class ReactiveAdminClient implements Closeable {
 
   private enum SupportedFeature {
     INCREMENTAL_ALTER_CONFIGS(2.3f),
-    CONFIG_DOCUMENTATION_RETRIEVAL(2.6f);
+    CONFIG_DOCUMENTATION_RETRIEVAL(2.6f),
+    DESCRIBE_CLUSTER_INCLUDE_AUTHORIZED_OPERATIONS(2.3f);
 
     private final float sinceVersion;
 
@@ -122,7 +127,8 @@ public class ReactiveAdminClient implements Closeable {
     }
   }
 
-  //TODO: discuss - maybe we should map kafka-library's exceptions to our exceptions here
+  // NOTE: if KafkaFuture returns null, that Mono will be empty(!), since Reactor does not support nullable results
+  // (see MonoSink.success(..) javadoc for details)
   private static <T> Mono<T> toMono(KafkaFuture<T> future) {
     return Mono.<T>create(sink -> future.whenComplete((res, ex) -> {
       if (ex != null) {
@@ -147,6 +153,7 @@ public class ReactiveAdminClient implements Closeable {
 
   //---------------------------------------------------------------------------------
 
+  @Getter(AccessLevel.PACKAGE) // visible for testing
   private final AdminClient client;
   private final String version;
   private final Set<SupportedFeature> features;
@@ -167,6 +174,7 @@ public class ReactiveAdminClient implements Closeable {
     return listTopics(true).flatMap(topics -> getTopicsConfig(topics, false));
   }
 
+  //NOTE: skips not-found topics (for which UnknownTopicOrPartitionException was thrown by AdminClient)
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames, boolean includeDoc) {
     var includeDocFixed = features.contains(SupportedFeature.CONFIG_DOCUMENTATION_RETRIEVAL) && includeDoc;
     // we need to partition calls, because it can lead to AdminClient timeouts in case of large topics count
@@ -174,7 +182,7 @@ public class ReactiveAdminClient implements Closeable {
         topicNames,
         200,
         part -> getTopicsConfigImpl(part, includeDocFixed),
-        (m1, m2) -> ImmutableMap.<String, List<ConfigEntry>>builder().putAll(m1).putAll(m2).build()
+        mapMerger()
     );
   }
 
@@ -227,7 +235,7 @@ public class ReactiveAdminClient implements Closeable {
         topics,
         200,
         this::describeTopicsImpl,
-        (m1, m2) -> ImmutableMap.<String, TopicDescription>builder().putAll(m1).putAll(m2).build()
+        mapMerger()
     );
   }
 
@@ -253,37 +261,32 @@ public class ReactiveAdminClient implements Closeable {
    * such topics in resulting map.
    * <p/>
    * This method converts input map into Mono[Map] ignoring keys for which KafkaFutures
-   * finished with <code>clazz</code> exception.
+   * finished with <code>clazz</code> exception and empty Monos.
    */
-  private <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
-                                                           Class<? extends KafkaException> clazz) {
+  static <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
+                                                          Class<? extends KafkaException> clazz) {
     if (values.isEmpty()) {
       return Mono.just(Map.of());
     }
 
-    List<Mono<Tuple2<K, V>>> monos = values.entrySet().stream()
-        .map(e -> toMono(e.getValue()).map(r -> Tuples.of(e.getKey(), r)))
-        .collect(toList());
+    List<Mono<Tuple2<K, Optional<V>>>> monos = values.entrySet().stream()
+        .map(e ->
+            toMono(e.getValue())
+                .map(r -> Tuples.of(e.getKey(), Optional.of(r)))
+                .defaultIfEmpty(Tuples.of(e.getKey(), Optional.empty())) //tracking empty Monos
+                .onErrorResume(
+                    // tracking Monos with suppressible error
+                    th -> th.getClass().isAssignableFrom(clazz),
+                    th -> Mono.just(Tuples.of(e.getKey(), Optional.empty()))))
+        .toList();
 
-    return Mono.create(sink -> {
-      var finishedCnt = new AtomicInteger();
-      var results = new ConcurrentHashMap<K, V>();
-      monos.forEach(mono -> mono.subscribe(
-          r -> {
-            results.put(r.getT1(), r.getT2());
-            if (finishedCnt.incrementAndGet() == monos.size()) {
-              sink.success(results);
-            }
-          },
-          th -> {
-            if (!th.getClass().isAssignableFrom(clazz)) {
-              sink.error(th);
-            } else if (finishedCnt.incrementAndGet() == monos.size()) {
-              sink.success(results);
-            }
-          }
-      ));
-    });
+    return Mono.zip(
+        monos,
+        resultsArr -> Stream.of(resultsArr)
+            .map(obj -> (Tuple2<K, Optional<V>>) obj)
+            .filter(t -> t.getT2().isPresent()) //skipping empty & suppressible-errors
+            .collect(Collectors.toMap(Tuple2::getT1, t -> t.getT2().get()))
+    );
   }
 
   public Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> describeLogDirs() {
@@ -298,38 +301,43 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<ClusterDescription> describeCluster() {
-    var r = client.describeCluster();
-    var all = KafkaFuture.allOf(r.nodes(), r.clusterId(), r.controller(), r.authorizedOperations());
-    return Mono.create(sink -> all.whenComplete((res, ex) -> {
-      if (ex != null) {
-        sink.error(ex);
-      } else {
-        try {
-          sink.success(
-              new ClusterDescription(
-                  getUninterruptibly(r.controller()),
-                  getUninterruptibly(r.clusterId()),
-                  getUninterruptibly(r.nodes()),
-                  getUninterruptibly(r.authorizedOperations())
-              )
-          );
-        } catch (ExecutionException e) {
-          // can't be here, because all futures already completed
-        }
-      }
-    }));
+    return describeClusterImpl(client, features);
+  }
+
+  private static Mono<ClusterDescription> describeClusterImpl(AdminClient client, Set<SupportedFeature> features) {
+    boolean includeAuthorizedOperations =
+        features.contains(SupportedFeature.DESCRIBE_CLUSTER_INCLUDE_AUTHORIZED_OPERATIONS);
+    DescribeClusterResult result = client.describeCluster(
+        new DescribeClusterOptions().includeAuthorizedOperations(includeAuthorizedOperations));
+    var allOfFuture = KafkaFuture.allOf(
+        result.controller(), result.clusterId(), result.nodes(), result.authorizedOperations());
+    return toMono(allOfFuture).then(
+        Mono.fromCallable(() ->
+          new ClusterDescription(
+            result.controller().get(),
+            result.clusterId().get(),
+            result.nodes().get(),
+            result.authorizedOperations().get()
+          )
+        )
+    );
   }
 
   private static Mono<String> getClusterVersion(AdminClient client) {
-    return toMono(client.describeCluster().controller())
-        .flatMap(controller -> loadBrokersConfig(client, List.of(controller.id())))
-        .map(configs -> configs.values().stream()
+    return describeClusterImpl(client, Set.of())
+        // choosing node from which we will get configs (starting with controller)
+        .flatMap(descr -> descr.controller != null
+            ? Mono.just(descr.controller)
+            : Mono.justOrEmpty(descr.nodes.stream().findFirst())
+        )
+        .flatMap(node -> loadBrokersConfig(client, List.of(node.id())))
+        .flatMap(configs -> configs.values().stream()
             .flatMap(Collection::stream)
             .filter(entry -> entry.name().contains("inter.broker.protocol.version"))
             .findFirst()
-            .map(ConfigEntry::value)
-            .orElse("1.0-UNKNOWN")
-        );
+            .map(configEntry -> Mono.just(configEntry.value()))
+            .orElse(Mono.empty()))
+        .switchIfEmpty(Mono.just("1.0-UNKNOWN"));
   }
 
   public Mono<Void> deleteConsumerGroups(Collection<String> groupIds) {
@@ -361,40 +369,70 @@ public class ReactiveAdminClient implements Closeable {
     return toMono(client.createPartitions(newPartitionsMap).all());
   }
 
+
+  // NOTE: places whole current topic config with new one. Entries that were present in old config,
+  // but missed in new will be set to default
   public Mono<Void> updateTopicConfig(String topicName, Map<String, String> configs) {
     if (features.contains(SupportedFeature.INCREMENTAL_ALTER_CONFIGS)) {
-      return incrementalAlterConfig(topicName, configs);
+      return getTopicsConfigImpl(List.of(topicName), false)
+          .map(conf -> conf.getOrDefault(topicName, List.of()))
+          .flatMap(currentConfigs -> incrementalAlterConfig(topicName, currentConfigs, configs));
     } else {
       return alterConfig(topicName, configs);
     }
   }
 
-  public Mono<List<String>> listConsumerGroups() {
-    return toMono(client.listConsumerGroups().all())
-        .map(lst -> lst.stream().map(ConsumerGroupListing::groupId).collect(toList()));
+  public Mono<List<String>> listConsumerGroupNames() {
+    return listConsumerGroups().map(lst -> lst.stream().map(ConsumerGroupListing::groupId).toList());
+  }
+
+  public Mono<Collection<ConsumerGroupListing>> listConsumerGroups() {
+    return toMono(client.listConsumerGroups().all());
   }
 
   public Mono<Map<String, ConsumerGroupDescription>> describeConsumerGroups(Collection<String> groupIds) {
-    return toMono(client.describeConsumerGroups(groupIds).all());
+    return partitionCalls(
+        groupIds,
+        25,
+        4,
+        ids -> toMono(client.describeConsumerGroups(ids).all()),
+        mapMerger()
+    );
   }
 
-  public Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(String groupId) {
-    return listConsumerGroupOffsets(groupId, new ListConsumerGroupOffsetsOptions());
-  }
+  // group -> partition -> offset
+  // NOTE: partitions with no committed offsets will be skipped
+  public Mono<Table<String, TopicPartition, Long>> listConsumerGroupOffsets(List<String> consumerGroups,
+                                                                            // all partitions if null passed
+                                                                            @Nullable List<TopicPartition> partitions) {
+    Function<Collection<String>, Mono<Map<String, Map<TopicPartition, OffsetAndMetadata>>>> call =
+        groups -> toMono(
+            client.listConsumerGroupOffsets(
+                groups.stream()
+                    .collect(Collectors.toMap(
+                        g -> g,
+                        g -> new ListConsumerGroupOffsetsSpec().topicPartitions(partitions)
+                    ))).all()
+        );
 
-  public Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(
-      String groupId, List<TopicPartition> partitions) {
-    return listConsumerGroupOffsets(groupId,
-        new ListConsumerGroupOffsetsOptions().topicPartitions(partitions));
-  }
+    Mono<Map<String, Map<TopicPartition, OffsetAndMetadata>>> merged = partitionCalls(
+        consumerGroups,
+        25,
+        4,
+        call,
+        mapMerger()
+    );
 
-  private Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(
-      String groupId, ListConsumerGroupOffsetsOptions options) {
-    return toMono(client.listConsumerGroupOffsets(groupId, options).partitionsToOffsetAndMetadata())
-        .map(MapUtil::removeNullValues)
-        .map(m -> m.entrySet().stream()
-            .map(e -> Tuples.of(e.getKey(), e.getValue().offset()))
-            .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2)));
+    return merged.map(map -> {
+      var table = ImmutableTable.<String, TopicPartition, Long>builder();
+      map.forEach((g, tpOffsets) -> tpOffsets.forEach((tp, offset) -> {
+        if (offset != null) {
+          // offset will be null for partitions that don't have committed offset for this group
+          table.put(g, tp, offset.offset());
+        }
+      }));
+      return table.build();
+    });
   }
 
   public Mono<Void> alterConsumerGroupOffsets(String groupId, Map<TopicPartition, Long> offsets) {
@@ -407,6 +445,7 @@ public class ReactiveAdminClient implements Closeable {
 
   /**
    * List offset for the topic's partitions and OffsetSpec.
+   *
    * @param failOnUnknownLeader true - throw exception in case of no-leader partitions,
    *                            false - skip partitions with no leader
    */
@@ -420,6 +459,7 @@ public class ReactiveAdminClient implements Closeable {
 
   /**
    * List offset for the specified partitions and OffsetSpec.
+   *
    * @param failOnUnknownLeader true - throw exception in case of no-leader partitions,
    *                            false - skip partitions with no leader
    */
@@ -460,25 +500,32 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   // 1. NOTE(!): should only apply for partitions with existing leader,
-  // otherwise AdminClient will try to fetch topic metadata, fail and retry infinitely (until timeout)
-  // 2. TODO: check if it is a bug that AdminClient never throws LeaderNotAvailableException and just retrying instead
+  //    otherwise AdminClient will try to fetch topic metadata, fail and retry infinitely (until timeout)
+  // 2. NOTE(!): Skips partitions that were not initialized yet
+  //    (UnknownTopicOrPartitionException thrown, ex. after topic creation)
+  // 3. TODO: check if it is a bug that AdminClient never throws LeaderNotAvailableException and just retrying instead
   @KafkaClientInternalsDependant
   public Mono<Map<TopicPartition, Long>> listOffsetsUnsafe(Collection<TopicPartition> partitions,
                                                            OffsetSpec offsetSpec) {
 
     Function<Collection<TopicPartition>, Mono<Map<TopicPartition, Long>>> call =
-        parts -> toMono(
-            client.listOffsets(parts.stream().collect(toMap(tp -> tp, tp -> offsetSpec))).all())
-            .map(offsets -> offsets.entrySet().stream()
-                // filtering partitions for which offsets were not found
-                .filter(e -> e.getValue().offset() >= 0)
-                .collect(toMap(Map.Entry::getKey, e -> e.getValue().offset())));
+        parts -> {
+          ListOffsetsResult r = client.listOffsets(parts.stream().collect(toMap(tp -> tp, tp -> offsetSpec)));
+          Map<TopicPartition, KafkaFuture<ListOffsetsResultInfo>> perPartitionResults = new HashMap<>();
+          parts.forEach(p -> perPartitionResults.put(p, r.partitionResult(p)));
+
+          return toMonoWithExceptionFilter(perPartitionResults, UnknownTopicOrPartitionException.class)
+              .map(offsets -> offsets.entrySet().stream()
+                  // filtering partitions for which offsets were not found
+                  .filter(e -> e.getValue().offset() >= 0)
+                  .collect(toMap(Map.Entry::getKey, e -> e.getValue().offset())));
+        };
 
     return partitionCalls(
         partitions,
         200,
         call,
-        (m1, m2) -> ImmutableMap.<TopicPartition, Long>builder().putAll(m1).putAll(m2).build()
+        mapMerger()
     );
   }
 
@@ -499,17 +546,22 @@ public class ReactiveAdminClient implements Closeable {
     return toMono(client.alterReplicaLogDirs(replicaAssignment).all());
   }
 
-  private Mono<Void> incrementalAlterConfig(String topicName, Map<String, String> configs) {
-    var config = configs.entrySet().stream()
-        .flatMap(cfg -> Stream.of(
-            new AlterConfigOp(
-                new ConfigEntry(
-                    cfg.getKey(),
-                    cfg.getValue()),
-                AlterConfigOp.OpType.SET)))
-        .collect(toList());
-    var topicResource = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
-    return toMono(client.incrementalAlterConfigs(Map.of(topicResource, config)).all());
+  private Mono<Void> incrementalAlterConfig(String topicName,
+                                            List<ConfigEntry> currentConfigs,
+                                            Map<String, String> newConfigs) {
+    var configsToDelete = currentConfigs.stream()
+        .filter(e -> e.source() == ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG) //manually set configs only
+        .filter(e -> !newConfigs.containsKey(e.name()))
+        .map(e -> new AlterConfigOp(e, AlterConfigOp.OpType.DELETE));
+
+    var configsToSet = newConfigs.entrySet().stream()
+        .map(e -> new AlterConfigOp(new ConfigEntry(e.getKey(), e.getValue()), AlterConfigOp.OpType.SET));
+
+    return toMono(client.incrementalAlterConfigs(
+        Map.of(
+            new ConfigResource(ConfigResource.Type.TOPIC, topicName),
+            Stream.concat(configsToDelete, configsToSet).toList()
+        )).all());
   }
 
   @SuppressWarnings("deprecation")
@@ -523,7 +575,7 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   /**
-   * Splits input collection into batches, applies each batch sequentially to function
+   * Splits input collection into batches, converts each batch into Mono, sequentially subscribes to them
    * and merges output Monos into one Mono.
    */
   private static <R, I> Mono<R> partitionCalls(Collection<I> items,
@@ -533,14 +585,37 @@ public class ReactiveAdminClient implements Closeable {
     if (items.isEmpty()) {
       return call.apply(items);
     }
-    Iterator<List<I>> parts = Iterators.partition(items.iterator(), partitionSize);
-    Mono<R> mono = call.apply(parts.next());
-    while (parts.hasNext()) {
-      var nextPart = parts.next();
-      // calls will be executed sequentially
-      mono = mono.flatMap(res1 -> call.apply(nextPart).map(res2 -> merger.apply(res1, res2)));
+    Iterable<List<I>> parts = Iterables.partition(items, partitionSize);
+    return Flux.fromIterable(parts)
+        .concatMap(call)
+        .reduce(merger);
+  }
+
+  /**
+   * Splits input collection into batches, converts each batch into Mono, subscribes to them (concurrently,
+   * with specified concurrency level) and merges output Monos into one Mono.
+   */
+  private static <R, I> Mono<R> partitionCalls(Collection<I> items,
+                                               int partitionSize,
+                                               int concurrency,
+                                               Function<Collection<I>, Mono<R>> call,
+                                               BiFunction<R, R, R> merger) {
+    if (items.isEmpty()) {
+      return call.apply(items);
     }
-    return mono;
+    Iterable<List<I>> parts = Iterables.partition(items, partitionSize);
+    return Flux.fromIterable(parts)
+        .flatMap(call, concurrency)
+        .reduce(merger);
+  }
+
+  private static <K, V> BiFunction<Map<K, V>, Map<K, V>, Map<K, V>> mapMerger() {
+    return (m1, m2) -> {
+      var merged = new HashMap<K, V>();
+      merged.putAll(m1);
+      merged.putAll(m2);
+      return merged;
+    };
   }
 
   @Override

@@ -17,26 +17,20 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
 
-      - name: Cache local Maven repository
-        uses: actions/cache@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Set up JDK 1.13
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.13
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'maven'
 
       - name: Build with Maven
         id: build
         run: |
-          mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
-          mvn clean package -Pprod -DskipTests
-          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
-          echo ::set-output name=version::${VERSION}
+          ./mvnw -B -ntp versions:set -DnewVersion=${{ github.event.release.tag_name }}
+          ./mvnw -B -V -ntp clean package -Pprod -DskipTests
+          export VERSION=$(./mvnw -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Upload files to a GitHub release
         uses: svenstaro/upload-release-action@2.3.0
@@ -93,32 +87,14 @@ jobs:
 
   charts:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     needs: release
     steps:
-      - uses: actions/checkout@v3
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
         with:
-          fetch-depth: 1
-
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-
-      - uses: azure/setup-helm@v1
-
-      - name: update chart version
-        run: |
-          export version=${{needs.release.outputs.version}}
-          sed -i "s/version:.*/version: ${version}/" charts/kafka-ui/Chart.yaml
-          sed -i "s/appVersion:.*/appVersion: ${version}/" charts/kafka-ui/Chart.yaml
-
-      - name: add chart
-        run: |
-          export VERSION=${{needs.release.outputs.version}}
-          MSG=$(helm package --app-version ${VERSION} charts/kafka-ui)
-          git fetch origin
-          git stash
-          git checkout -b gh-pages origin/gh-pages
-          helm repo index .
-          git add -f ${MSG##*/} index.yaml
-          git commit -m "release ${VERSION}"
-          git push
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: provectus/kafka-ui
+          event-type: prepare-helm-release
+          client-payload: '{"appversion": "${{ needs.release.outputs.version }}"}'

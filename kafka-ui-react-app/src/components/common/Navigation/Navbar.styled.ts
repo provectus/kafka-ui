@@ -22,7 +22,12 @@ const Navbar = styled.nav`
         solid;
       color: ${(props) => props.theme.primaryTab.color.active};
     }
-    &:hover:not(.is-active) {
+    &.is-disabled {
+      color: ${(props) => props.theme.primaryTab.color.disabled};
+      border-bottom: 1px ${(props) => props.theme.primaryTab.borderColor.normal};
+      cursor: not-allowed;
+    }
+    &:hover:not(.is-active, .is-disabled) {
       border-bottom: 1px ${(props) => props.theme.primaryTab.borderColor.hover}
         solid;
       color: ${(props) => props.theme.primaryTab.color.hover};
