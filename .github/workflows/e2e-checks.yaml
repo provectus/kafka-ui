@@ -52,6 +52,7 @@ jobs:
           gh_pages: allure-results
           allure_report: allure-report
           subfolder: allure-results
+          report_url: "http://kafkaui-allure-reports.s3-website.eu-central-1.amazonaws.com"
       - uses: jakejarvis/s3-sync-action@master
         if: always()
         env:

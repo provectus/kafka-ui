@@ -7,17 +7,19 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.utilities.WebUtils;
+import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class BasePage extends WebUtils {
 
-  protected SelenideElement loadingSpinner = $x("//*[contains(text(),'Loading')]");
+  protected SelenideElement loadingSpinner = $x("//div[@role='progressbar']");
   protected SelenideElement submitBtn = $x("//button[@type='submit']");
   protected SelenideElement tableGrid = $x("//table");
   protected SelenideElement dotMenuBtn = $x("//button[@aria-label='Dropdown Toggle']");
   protected SelenideElement alertHeader = $x("//div[@role='alert']//div[@role='heading']");
   protected SelenideElement alertMessage = $x("//div[@role='alert']//div[@role='contentinfo']");
+  protected SelenideElement confirmBtn = $x("//button[contains(text(),'Confirm')]");
   protected ElementsCollection allGridItems = $$x("//tr[@class]");
   protected String summaryCellLocator = "//div[contains(text(),'%s')]";
   protected String tableElementNameLocator = "//tbody//a[contains(text(),'%s')]";
@@ -25,7 +27,9 @@ public abstract class BasePage extends WebUtils {
 
   protected void waitUntilSpinnerDisappear() {
     log.debug("\nwaitUntilSpinnerDisappear");
-    loadingSpinner.shouldBe(Condition.disappear);
+    if(isVisible(loadingSpinner)){
+      loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(30));
+    }
   }
 
   protected void clickSubmitBtn() {
@@ -63,6 +67,11 @@ public abstract class BasePage extends WebUtils {
     boolean result = isAlertVisible(header) && getAlertMessage().equals(message);
     log.debug("-> {}", result);
     return result;
+  }
+
+  protected void clickConfirmButton() {
+    confirmBtn.shouldBe(Condition.enabled).click();
+    confirmBtn.shouldBe(Condition.disappear);
   }
 
   public enum AlertHeader {

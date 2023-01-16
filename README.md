@@ -6,7 +6,6 @@
 ![UI for Apache Kafka Price Free](documentation/images/free-open-source.svg)
 [![Release version](https://img.shields.io/github/v/release/provectus/kafka-ui)](https://github.com/provectus/kafka-ui/releases)
 [![Chat with us](https://img.shields.io/discord/897805035122077716)](https://discord.gg/4DWzD7pGE5)
-[![Product hunt](https://i.imgur.com/FTbs5O0.png)](https://www.producthunt.com/posts/ui-for-apache-kafka-2)
 
 ### DISCLAIMER
 <em>UI for Apache Kafka is a free tool built and supported by the open-source community. Curated by Provectus, it will remain free and open-source, without any paid features or subscription plans to be added in the future.

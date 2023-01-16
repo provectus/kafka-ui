@@ -2,14 +2,18 @@ package com.provectus.kafka.ui.service;
 
 import static com.provectus.kafka.ui.service.ReactiveAdminClient.toMonoWithExceptionFilter;
 import static java.util.Objects.requireNonNull;
+import static org.apache.kafka.clients.admin.ListOffsetsResult.ListOffsetsResultInfo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -18,12 +22,16 @@ import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.OffsetSpec;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.internals.KafkaFutureImpl;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.function.ThrowingRunnable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -96,6 +104,14 @@ class ReactiveAdminClientTest extends AbstractIntegrationTest {
     clearings.add(() -> adminClient.deleteTopics(Stream.of(topics).map(NewTopic::name).toList()).all().get());
   }
 
+  void fillTopic(String topic, int msgsCnt) {
+    try (var producer = KafkaTestProducer.forKafka(kafka)) {
+      for (int i = 0; i < msgsCnt; i++) {
+        producer.send(topic, UUID.randomUUID().toString());
+      }
+    }
+  }
+
   @Test
   void testToMonoWithExceptionFilter() {
     var failedFuture = new KafkaFutureImpl<String>();
@@ -150,6 +166,81 @@ class ReactiveAdminClientTest extends AbstractIntegrationTest {
               .containsEntry(new TopicPartition(topic, 1), 2L);
         })
         .verifyComplete();
+  }
+
+
+  @Test
+  void testListConsumerGroupOffsets() throws Exception {
+    String topic = UUID.randomUUID().toString();
+    String anotherTopic = UUID.randomUUID().toString();
+    createTopics(new NewTopic(topic, 2, (short) 1), new NewTopic(anotherTopic, 1, (short) 1));
+    fillTopic(topic, 10);
+
+    Function<String, KafkaConsumer<String, String>> consumerSupplier = groupName -> {
+      Properties p = new Properties();
+      p.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers());
+      p.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupName);
+      p.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+      p.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+      p.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+      p.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+      return new KafkaConsumer<String, String>(p);
+    };
+
+    String fullyPolledConsumer = UUID.randomUUID().toString();
+    try (KafkaConsumer<String, String> c = consumerSupplier.apply(fullyPolledConsumer)) {
+      c.subscribe(List.of(topic));
+      int polled = 0;
+      while (polled < 10) {
+        polled += c.poll(Duration.ofMillis(50)).count();
+      }
+      c.commitSync();
+    }
+
+    String polled1MsgConsumer = UUID.randomUUID().toString();
+    try (KafkaConsumer<String, String> c = consumerSupplier.apply(polled1MsgConsumer)) {
+      c.subscribe(List.of(topic));
+      c.poll(Duration.ofMillis(100));
+      c.commitSync(Map.of(tp(topic, 0), new OffsetAndMetadata(1)));
+    }
+
+    String noCommitConsumer = UUID.randomUUID().toString();
+    try (KafkaConsumer<String, String> c = consumerSupplier.apply(noCommitConsumer)) {
+      c.subscribe(List.of(topic));
+      c.poll(Duration.ofMillis(100));
+    }
+
+    Map<TopicPartition, ListOffsetsResultInfo> endOffsets = adminClient.listOffsets(Map.of(
+        tp(topic, 0), OffsetSpec.latest(),
+        tp(topic, 1), OffsetSpec.latest())).all().get();
+
+    StepVerifier.create(
+            reactiveAdminClient.listConsumerGroupOffsets(
+                List.of(fullyPolledConsumer, polled1MsgConsumer, noCommitConsumer),
+                List.of(
+                    tp(topic, 0),
+                    tp(topic, 1),
+                    tp(anotherTopic, 0))
+            )
+        ).assertNext(table -> {
+
+          assertThat(table.row(polled1MsgConsumer))
+              .containsEntry(tp(topic, 0), 1L)
+              .hasSize(1);
+
+          assertThat(table.row(noCommitConsumer))
+              .isEmpty();
+
+          assertThat(table.row(fullyPolledConsumer))
+              .containsEntry(tp(topic, 0), endOffsets.get(tp(topic, 0)).offset())
+              .containsEntry(tp(topic, 1), endOffsets.get(tp(topic, 1)).offset())
+              .hasSize(2);
+        })
+        .verifyComplete();
+  }
+
+  private static TopicPartition tp(String topic, int partition) {
+    return new TopicPartition(topic, partition);
   }
 
 }
