@@ -154,7 +154,7 @@ class ReactiveFailoverTest {
     );
 
     // resetting retry: all publishers became alive: 0.ok, 1.ok, 2.ok
-    Thread.sleep(RETRY_PERIOD.toMillis());
+    Thread.sleep(RETRY_PERIOD.toMillis() + 1);
 
     // starting with last errored publisher:
     // 2 -> fail, 0 -> fail, 1 -> ok : ok
