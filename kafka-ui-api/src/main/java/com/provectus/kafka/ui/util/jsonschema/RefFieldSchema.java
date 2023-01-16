@@ -15,4 +15,8 @@ public class RefFieldSchema implements FieldSchema {
   public JsonNode toJsonNode(ObjectMapper mapper) {
     return mapper.createObjectNode().set("$ref", new TextNode(ref));
   }
+
+  public String getRef() {
+    return ref;
+  }
 }
