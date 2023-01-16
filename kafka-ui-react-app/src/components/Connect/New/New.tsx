@@ -147,7 +147,7 @@ const New: React.FC = () => {
             control={control}
             name="config"
             render={({ field }) => (
-              <Editor {...field} readOnly={isSubmitting} />
+              <Editor {...field} readOnly={isSubmitting} ref={null} />
             )}
           />
           <FormError>
