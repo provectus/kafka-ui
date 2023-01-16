@@ -234,9 +234,9 @@ public class KafkaConnectController extends AbstractController implements KafkaC
         .build());
 
     return validateAccess.then(
-        kafkaConnectService
-            .getConnectorPlugins(getCluster(clusterName), connectName)
-            .map(ResponseEntity::ok)
+        Mono.just(
+            ResponseEntity.ok(
+                kafkaConnectService.getConnectorPlugins(getCluster(clusterName), connectName)))
     );
   }
 
