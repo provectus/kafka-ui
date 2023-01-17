@@ -1,15 +1,13 @@
 package com.provectus.kafka.ui.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+@UtilityClass
 @Slf4j
-public class NumberUtil {
+public class KafkaVersion {
 
-  private NumberUtil() {
-  }
-
-
-  public static float parserClusterVersion(String version) throws NumberFormatException {
+  public static float parse(String version) throws NumberFormatException {
     log.trace("Parsing cluster version [{}]", version);
     try {
       final String[] parts = version.split("\\.");

@@ -37,7 +37,7 @@ public class KafkaClusterFactory {
 
     builder.name(clusterProperties.getName());
     builder.bootstrapServers(clusterProperties.getBootstrapServers());
-    builder.properties(Optional.ofNullable(clusterProperties.getProperties()).orElse(new Properties()));
+    builder.properties(convertProperties(clusterProperties.getProperties()));
     builder.readOnly(clusterProperties.isReadOnly());
     builder.disableLogDirsCollection(clusterProperties.isDisableLogDirsCollection());
     builder.masking(DataMasking.create(clusterProperties.getMasking()));
@@ -51,6 +51,14 @@ public class KafkaClusterFactory {
     builder.originalProperties(clusterProperties);
 
     return builder.build();
+  }
+
+  private Properties convertProperties(@Nullable Map<String, Object> propertiesMap) {
+    Properties properties = new Properties();
+    if (propertiesMap != null) {
+      properties.putAll(propertiesMap);
+    }
+    return properties;
   }
 
   @Nullable

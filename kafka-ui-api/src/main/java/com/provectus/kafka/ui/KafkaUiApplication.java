@@ -1,8 +1,9 @@
 package com.provectus.kafka.ui;
 
-import org.springframework.boot.SpringApplication;
+import com.provectus.kafka.ui.util.DynamicConfigOperations;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -17,6 +18,9 @@ public class KafkaUiApplication {
   }
 
   public static ConfigurableApplicationContext startApplication(String[] args) {
-    return SpringApplication.run(KafkaUiApplication.class, args);
+    return new SpringApplicationBuilder(KafkaUiApplication.class)
+        .initializers(DynamicConfigOperations.dynamicConfigPropertiesInitializer())
+        .build()
+        .run(args);
   }
 }

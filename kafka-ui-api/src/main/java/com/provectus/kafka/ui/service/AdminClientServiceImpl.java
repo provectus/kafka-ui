@@ -40,7 +40,7 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
       properties.putIfAbsent(AdminClientConfig.CLIENT_ID_CONFIG, "kafka-ui-admin-client-" + System.currentTimeMillis());
       return AdminClient.create(properties);
     })
-        .flatMap(ReactiveAdminClient::create)
+        .flatMap(ac -> ReactiveAdminClient.create(ac).doOnError(th -> ac.close()))
         .onErrorMap(th -> new IllegalStateException(
             "Error while creating AdminClient for Cluster " + cluster.getName(), th));
   }

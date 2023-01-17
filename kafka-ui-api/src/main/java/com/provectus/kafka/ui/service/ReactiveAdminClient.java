@@ -10,7 +10,7 @@ import com.google.common.collect.Table;
 import com.provectus.kafka.ui.exception.IllegalEntityStateException;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.util.NumberUtil;
+import com.provectus.kafka.ui.util.KafkaVersion;
 import com.provectus.kafka.ui.util.annotation.KafkaClientInternalsDependant;
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -120,7 +120,7 @@ public class ReactiveAdminClient implements Closeable {
 
   private static Set<SupportedFeature> getSupportedUpdateFeaturesForVersion(String versionStr) {
     try {
-      float version = NumberUtil.parserClusterVersion(versionStr);
+      float version = KafkaVersion.parse(versionStr);
       return SupportedFeature.forVersion(version);
     } catch (NumberFormatException e) {
       return SupportedFeature.defaultFeatures();

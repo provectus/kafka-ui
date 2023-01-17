@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.model.rbac;
 import static com.provectus.kafka.ui.model.rbac.Resource.CLUSTERCONFIG;
 import static com.provectus.kafka.ui.model.rbac.Resource.KSQL;
 
+import com.provectus.kafka.ui.model.rbac.permission.ApplicationConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
@@ -60,6 +61,7 @@ public class Permission {
 
   private List<String> getActionValues() {
     return switch (this.resource) {
+      case APPLICATIONCONFIG -> Arrays.stream(ApplicationConfigAction.values()).map(Enum::toString).toList();
       case CLUSTERCONFIG -> Arrays.stream(ClusterConfigAction.values()).map(Enum::toString).toList();
       case TOPIC -> Arrays.stream(TopicAction.values()).map(Enum::toString).toList();
       case CONSUMER -> Arrays.stream(ConsumerGroupAction.values()).map(Enum::toString).toList();

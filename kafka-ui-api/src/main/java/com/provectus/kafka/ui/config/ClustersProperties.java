@@ -1,12 +1,9 @@
 package com.provectus.kafka.ui.config;
 
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
@@ -37,14 +34,14 @@ public class ClustersProperties {
     WebClientSsl ksqldbServerSsl;
     List<ConnectCluster> kafkaConnect;
     MetricsConfigData metrics;
-    Properties properties;
+    Map<String, Object> properties;
     boolean readOnly = false;
     boolean disableLogDirsCollection = false;
-    List<SerdeConfig> serde = new ArrayList<>();
+    List<SerdeConfig> serde;
     String defaultKeySerde;
     String defaultValueSerde;
-    List<Masking> masking = new ArrayList<>();
-    long pollingThrottleRate = 0;
+    List<Masking> masking;
+    Long pollingThrottleRate;
   }
 
   @Data
@@ -90,7 +87,7 @@ public class ClustersProperties {
     String name;
     String className;
     String filePath;
-    Map<String, Object> properties = new HashMap<>();
+    Map<String, Object> properties;
     String topicKeysPattern;
     String topicValuesPattern;
   }
@@ -105,9 +102,9 @@ public class ClustersProperties {
   @Data
   public static class Masking {
     Type type;
-    List<String> fields = List.of(); //if empty - policy will be applied to all fields
-    List<String> pattern = List.of("X", "x", "n", "-"); //used when type=MASK
-    String replacement = "***DATA_MASKED***"; //used when type=REPLACE
+    List<String> fields; //if null or empty list - policy will be applied to all fields
+    List<String> pattern; //used when type=MASK
+    String replacement; //used when type=REPLACE
     String topicKeysPattern;
     String topicValuesPattern;
 

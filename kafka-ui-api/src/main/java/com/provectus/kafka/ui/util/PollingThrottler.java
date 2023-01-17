@@ -14,8 +14,8 @@ import org.apache.kafka.common.utils.Bytes;
 public class PollingThrottler {
 
   public static Supplier<PollingThrottler> throttlerSupplier(ClustersProperties.Cluster cluster) {
-    long rate = cluster.getPollingThrottleRate();
-    if (rate <= 0) {
+    Long rate = cluster.getPollingThrottleRate();
+    if (rate == null || rate <= 0) {
       return PollingThrottler::noop;
     }
     // RateLimiter instance should be shared across all created throttlers

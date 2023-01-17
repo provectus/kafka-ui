@@ -665,7 +665,7 @@ paths:
         - name: filterQueryType
           in: query
           schema:
-            $ref:  "#/components/schemas/MessageFilterType"
+            $ref: "#/components/schemas/MessageFilterType"
         - name: seekDirection
           in: query
           schema:
@@ -1750,12 +1750,6 @@ paths:
         - ApplicationConfig
       summary: Gets current application configuration
       operationId: getCurrentConfig
-      parameters:
-        - name: format
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/ApplicationConfigFormat'
       responses:
         200:
           description: OK
@@ -3238,6 +3232,7 @@ components:
     ResourceType:
       type: string
       enum:
+        - APPLICATIONCONFIG
         - CLUSTERCONFIG
         - TOPIC
         - CONSUMER
@@ -3245,24 +3240,164 @@ components:
         - CONNECT
         - KSQL
 
-    ApplicationConfigFormat:
-      type: string
-      enum:
-        - JSON
-        - YAML
-
     RestartRequest:
       type: object
       properties:
         config:
-          type: string
-        configFormat:
-          $ref: '#/components/schemas/ApplicationConfigFormat'
+          $ref: '#/components/schemas/ApplicationConfig'
 
     ApplicationConfig:
       type: object
       properties:
-        config:
-          type: string
-        configFormat:
-          $ref: '#/components/schemas/ApplicationConfigFormat'
+        properties:
+          type: object
+          properties:
+            kafka:
+              type: object
+              properties:
+                clusters:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      bootstrapServers:
+                        type: string
+                      schemaRegistry:
+                        type: string
+                      schemaRegistryAuth:
+                        type: object
+                        properties:
+                          username:
+                            type: string
+                          password:
+                            type: string
+                      schemaRegistrySsl:
+                        type: object
+                        properties:
+                          keystoreLocation:
+                            type: string
+                          keystorePassword:
+                            type: string
+                          truststoreLocation:
+                            type: string
+                          truststorePassword:
+                            type: string
+                      ksqldbServer:
+                        type: string
+                      ksqldbServerAuth:
+                        type: object
+                        properties:
+                          username:
+                            type: string
+                          password:
+                            type: string
+                      ksqldbServerSsl:
+                        type: object
+                        properties:
+                          keystoreLocation:
+                            type: string
+                          keystorePassword:
+                            type: string
+                          truststoreLocation:
+                            type: string
+                          truststorePassword:
+                            type: string
+                      kafkaConnect:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            address:
+                              type: string
+                            userName:
+                              type: string
+                            password:
+                              type: string
+                            keystoreLocation:
+                              type: string
+                            keystorePassword:
+                              type: string
+                            truststoreLocation:
+                              type: string
+                            truststorePassword:
+                              type: string
+                      metrics:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          port:
+                            type: integer
+                            format: int32
+                          ssl:
+                            type: boolean
+                          username:
+                            type: string
+                          password:
+                            type: string
+                      properties:
+                        type: object
+                        additionalProperties: true
+                      readOnly:
+                        type: boolean
+                      disableLogDirsCollection:
+                        type: boolean
+                      serde:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            className:
+                              type: string
+                            filePath:
+                              type: string
+                            properties:
+                              type: object
+                              additionalProperties: true
+                            topicKeysPattern:
+                              type: string
+                            topicValuesPattern:
+                              type: string
+                      defaultKeySerde:
+                        type: string
+                      defaultValueSerde:
+                        type: string
+                      masking:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                                - REMOVE
+                                - MASK
+                                - REPLACE
+                            fields:
+                              type: array
+                              items:
+                                type: string
+                            pattern:
+                              type: array
+                              items:
+                                type: string
+                            replacement:
+                              type: string
+                            topicKeysPattern:
+                              type: string
+                            topicValuesPattern:
+                              type: string
+                      pollingThrottleRate:
+                        type: integer
+                        format: int64
+
+
+
+
+

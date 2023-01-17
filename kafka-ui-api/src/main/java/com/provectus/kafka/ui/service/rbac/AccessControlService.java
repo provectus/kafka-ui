@@ -57,7 +57,7 @@ public class AccessControlService {
 
   @PostConstruct
   public void init() {
-    if (properties.getRoles().isEmpty()) {
+    if (CollectionUtils.isEmpty(properties.getRoles())) {
       log.trace("No roles provided, disabling RBAC");
       return;
     }
@@ -115,19 +115,6 @@ public class AccessControlService {
         .map(user -> new AuthenticatedUser(user.name(), user.groups()));
   }
 
-  private boolean isClusterAccessible(AccessContext context, AuthenticatedUser user) {
-    if (!rbacEnabled) {
-      return true;
-    }
-
-    Assert.isTrue(StringUtils.isNotEmpty(context.getCluster()), "cluster value is empty");
-
-    return properties.getRoles()
-        .stream()
-        .filter(filterRole(user))
-        .anyMatch(filterCluster(context.getCluster()));
-  }
-
   public boolean isApplicationConfigAccessible(AccessContext context, AuthenticatedUser user) {
     if (!rbacEnabled) {
       return true;
@@ -143,6 +130,19 @@ public class AccessControlService {
         .collect(Collectors.toSet());
 
     return isAccessible(APPLICATIONCONFIG, null, user, context, requiredActions);
+  }
+
+  private boolean isClusterAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
+    Assert.isTrue(StringUtils.isNotEmpty(context.getCluster()), "cluster value is empty");
+
+    return properties.getRoles()
+        .stream()
+        .filter(filterRole(user))
+        .anyMatch(filterCluster(context.getCluster()));
   }
 
   public Mono<Boolean> isClusterAccessible(ClusterDTO cluster) {
