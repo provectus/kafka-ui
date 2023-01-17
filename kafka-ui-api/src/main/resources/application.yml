@@ -7,8 +7,6 @@ management:
       enabled: true
     health:
       enabled: true
-    configprops:
-      enabled: true
   endpoints:
     web:
       exposure:

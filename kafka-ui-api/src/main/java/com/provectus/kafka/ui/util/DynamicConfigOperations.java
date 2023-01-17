@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.util;
 
 
 import com.provectus.kafka.ui.config.ClustersProperties;
-import com.provectus.kafka.ui.config.auth.OAuthProperties;
 import com.provectus.kafka.ui.exception.ValidationException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -66,6 +65,7 @@ public class DynamicConfigOperations {
       new YamlPropertySourceLoader()
           .load("dynamicProperties", new FileSystemResource(dynamicConfigFilePath()))
           .forEach(propertySource::addPropertySource);
+      log.info("Dynamic config loaded from {}", dynamicConfigFilePath());
       return Optional.of(propertySource);
     }
     return Optional.empty();

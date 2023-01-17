@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.service.masking.policies;
 
 import com.fasterxml.jackson.databind.node.ContainerNode;
-import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

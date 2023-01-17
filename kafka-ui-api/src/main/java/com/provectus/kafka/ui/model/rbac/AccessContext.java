@@ -132,7 +132,8 @@ public class AccessContext {
     }
 
     public AccessContext build() {
-      return new AccessContext(applicationConfigActions,
+      return new AccessContext(
+          applicationConfigActions,
           cluster, clusterConfigActions,
           topic, topicActions,
           consumerGroup, consumerGroupActions,

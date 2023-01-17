@@ -119,16 +119,13 @@ public class AccessControlService {
     if (!rbacEnabled) {
       return true;
     }
-
     if (CollectionUtils.isEmpty(context.getApplicationConfigActions())) {
       return true;
     }
-
     Set<String> requiredActions = context.getApplicationConfigActions()
         .stream()
         .map(a -> a.toString().toUpperCase())
         .collect(Collectors.toSet());
-
     return isAccessible(APPLICATIONCONFIG, null, user, context, requiredActions);
   }
 

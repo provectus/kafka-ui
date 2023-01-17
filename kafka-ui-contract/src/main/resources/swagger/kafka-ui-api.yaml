@@ -665,7 +665,7 @@ paths:
         - name: filterQueryType
           in: query
           schema:
-            $ref: "#/components/schemas/MessageFilterType"
+            $ref:  "#/components/schemas/MessageFilterType"
         - name: seekDirection
           in: query
           schema:
@@ -3396,8 +3396,3 @@ components:
                       pollingThrottleRate:
                         type: integer
                         format: int64
-
-
-
-
-
