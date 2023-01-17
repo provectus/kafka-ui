@@ -15,19 +15,20 @@ import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qameta.allure.Issue;
 import io.qase.api.annotation.CaseId;
+import io.qase.api.annotation.Step;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import io.qase.api.annotation.Step;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -66,6 +67,7 @@ public class TopicMessagesTests extends BaseTest {
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(222)
+  @Order(1)
   @Test
   void produceMessage() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
@@ -86,6 +88,7 @@ public class TopicMessagesTests extends BaseTest {
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(19)
+  @Order(2)
   @Test
   void clearMessage() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
@@ -101,12 +104,40 @@ public class TopicMessagesTests extends BaseTest {
     Assertions.assertEquals(0, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
   }
 
+  @DisplayName("TopicTests.clearMessageOfTopic : Clear message of topic")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(239)
+  @Order(3)
+  @Test
+  void checkClearTopicMessage() {
+    navigateToTopicsAndOpenDetails(TOPIC_TO_CLEAR_MESSAGES.getName());
+    topicDetails
+        .openDetailsTab(OVERVIEW);
+    produceMessage(TOPIC_TO_CLEAR_MESSAGES);
+    navigateToTopics();
+    assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(1);
+    topicsList
+        .openDotMenuByTopicName(TOPIC_TO_CLEAR_MESSAGES.getName())
+        .clickClearMessagesBtn()
+        .clickConfirmBtnMdl();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicsList.isAlertWithMessageVisible(SUCCESS,
+            String.format("%s messages have been successfully cleared!", TOPIC_TO_CLEAR_MESSAGES.getName())))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(0);
+    softly.assertAll();
+  }
+
   @Disabled
   @Issue("https://github.com/provectus/kafka-ui/issues/2819")
   @DisplayName("Message copy from topic profile")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(21)
+  @Order(4)
   @Test
   void copyMessageFromTopicProfile() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
@@ -125,6 +156,7 @@ public class TopicMessagesTests extends BaseTest {
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(15)
+  @Order(5)
   @Test
   void checkingMessageFilteringByOffset() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
@@ -151,6 +183,7 @@ public class TopicMessagesTests extends BaseTest {
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(16)
+  @Order(6)
   @Test
   void checkingMessageFilteringByTimestamp() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
@@ -176,29 +209,27 @@ public class TopicMessagesTests extends BaseTest {
     softly.assertAll();
   }
 
-  @DisplayName("TopicTests.clearMessageOfTopic : Clear message of topic")
+  @Disabled
+  @Issue("https://github.com/provectus/kafka-ui/issues/2778")
+  @DisplayName("Clear message of topic from topic profile")
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
-  @CaseId(239)
+  @CaseId(246)
+  @Order(7)
   @Test
-  void checkClearTopicMessage() {
-    navigateToTopicsAndOpenDetails(TOPIC_TO_CLEAR_MESSAGES.getName());
+  void checkClearTopicMessageFromOverviewTab() {
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
     topicDetails
-        .openDetailsTab(OVERVIEW);
-  produceMessage(TOPIC_TO_CLEAR_MESSAGES);
-    navigateToTopics();
-    assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
-        .as("getNumberOfMessages()").isEqualTo(1);
-    topicsList
-        .openDotMenuByTopicName(TOPIC_TO_CLEAR_MESSAGES.getName())
-        .clickClearMessagesBtn()
+        .openDetailsTab(OVERVIEW)
+        .openDotMenu()
+        .clickClearMessagesMenu()
         .clickConfirmBtnMdl();
     SoftAssertions softly = new SoftAssertions();
-    softly.assertThat(topicsList.isAlertWithMessageVisible(SUCCESS,
-        String.format("%s messages have been successfully cleared!",TOPIC_TO_CLEAR_MESSAGES.getName())))
+    softly.assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS,
+            String.format("%s messages have been successfully cleared!", TOPIC_FOR_CHECKING_FILTERS.getName())))
         .as("isAlertWithMessageVisible()").isTrue();
-    softly.assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
-        .as("getNumberOfMessages()").isEqualTo(0);
+    softly.assertThat(topicDetails.getMessageCountAmount())
+        .as("getMessageCountAmount()= " + topicDetails.getMessageCountAmount()).isEqualTo(0);
     softly.assertAll();
   }
 
@@ -206,6 +237,7 @@ public class TopicMessagesTests extends BaseTest {
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(240)
+  @Order(8)
   @Test
   void checkRecreateTopic(){
     navigateToTopicsAndOpenDetails(TOPIC_TO_RECREATE.getName());
