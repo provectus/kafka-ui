@@ -23,6 +23,7 @@ import { GlobalSettingsProvider } from './contexts/GlobalSettingsContext';
 import ErrorPage from './ErrorPage/ErrorPage';
 import { UserInfoRolesAccessProvider } from './contexts/UserInfoRolesAccessContext';
 import PageContainer from './PageContainer/PageContainer';
+import AddNewClusters from './Wizard/AddNewClusters';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,7 +37,7 @@ const queryClient = new QueryClient({
     },
   },
 });
-
+const clusters = false;
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -53,7 +54,9 @@ const App: React.FC = () => {
                         <Route
                           key="Home" // optional: avoid full re-renders on route changes
                           path={path}
-                          element={<Dashboard />}
+                          element={
+                            clusters ? <AddNewClusters /> : <Dashboard />
+                          }
                         />
                       ))}
                       <Route
