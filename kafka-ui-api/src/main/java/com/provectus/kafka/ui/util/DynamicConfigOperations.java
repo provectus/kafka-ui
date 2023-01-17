@@ -35,8 +35,8 @@ import org.yaml.snakeyaml.representer.Representer;
 @Component
 public class DynamicConfigOperations {
 
-  private static final String DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY = "DYNAMIC_CONFIG_ENABLED";
-  private static final String DYNAMIC_CONFIG_PATH_ENV_PROPERTY = "DYNAMIC_CONFIG_PATH";
+  static final String DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY = "DYNAMIC_CONFIG_ENABLED";
+  static final String DYNAMIC_CONFIG_PATH_ENV_PROPERTY = "DYNAMIC_CONFIG_PATH";
 
   public static ApplicationContextInitializer<ConfigurableApplicationContext> dynamicConfigPropertiesInitializer() {
     return appCtx ->
@@ -47,10 +47,10 @@ public class DynamicConfigOperations {
 
   private final ConfigurableApplicationContext ctx;
 
-  private boolean dynamicConfigEnabled() {
+  public boolean dynamicConfigEnabled() {
     var env = ctx.getEnvironment().getSystemEnvironment();
     return "true".equalsIgnoreCase((String) env.get(DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY))
-        && env.containsKey(DYNAMIC_CONFIG_PATH_ENV_PROPERTY);
+        && env.get(DYNAMIC_CONFIG_PATH_ENV_PROPERTY) != null;
   }
 
   private Path dynamicConfigFilePath() {
@@ -60,12 +60,17 @@ public class DynamicConfigOperations {
 
   @SneakyThrows
   public Optional<PropertySource<?>> loadDynamicPropertySource() {
-    if (dynamicConfigEnabled() && Files.exists(dynamicConfigFilePath())) {
+    if (dynamicConfigEnabled()) {
+      Path configPath = dynamicConfigFilePath();
+      if (!Files.exists(configPath) || !Files.isReadable(configPath)) {
+        log.warn("Dynamic config file {} doesnt exist or not readable", configPath);
+        return Optional.empty();
+      }
       var propertySource = new CompositePropertySource("dynamicProperties");
       new YamlPropertySourceLoader()
-          .load("dynamicProperties", new FileSystemResource(dynamicConfigFilePath()))
+          .load("dynamicProperties", new FileSystemResource(configPath))
           .forEach(propertySource::addPropertySource);
-      log.info("Dynamic config loaded from {}", dynamicConfigFilePath());
+      log.info("Dynamic config loaded from {}", configPath);
       return Optional.of(propertySource);
     }
     return Optional.empty();

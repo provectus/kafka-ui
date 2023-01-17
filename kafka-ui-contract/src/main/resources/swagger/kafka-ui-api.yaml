@@ -1885,6 +1885,7 @@ components:
               - KAFKA_CONNECT
               - KSQL_DB
               - TOPIC_DELETION
+              - DYNAMIC_CONFIG
       required:
         - id
         - name
