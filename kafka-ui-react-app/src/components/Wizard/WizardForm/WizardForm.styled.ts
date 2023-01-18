@@ -104,6 +104,13 @@ export const DeleteButtonWrapper = styled.div`
   justify-self: flex-start;
   margin-top: 10px;
 `;
+
+export const SharedConfluentCloudCluster = styled.div`
+  display: flex;
+  & label {
+    margin-left: 0.7rem;
+  }
+`;
 //-------------------------------
 // Authentication
 export const CheckboxWrapper = styled.div`

@@ -11,7 +11,7 @@ const formSchema = object({
   bootstrapServers: array()
     .of(
       object({
-        host: string().required(),
+        host: string().required('host is a required field'),
         port: number().positive().required(),
       })
     )

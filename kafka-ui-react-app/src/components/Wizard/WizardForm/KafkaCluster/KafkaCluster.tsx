@@ -41,13 +41,10 @@ const KafkaCluster: React.FC<PropType> = ({
           <Input id="clusterName" type="text" name="clusterName" />
           <FormError>
             <ErrorMessage
-              errors={methods.formState.errors.clusterName?.message}
+              errors={methods.formState.errors}
               name="clusterName"
             />
           </FormError>
-          <S.P style={{ color: 'red' }}>
-            {methods.formState.errors.clusterName?.message}
-          </S.P>
         </S.ActionItem>
         <S.ActionItem>
           <S.ReadOnly>
@@ -62,6 +59,12 @@ const KafkaCluster: React.FC<PropType> = ({
                 allows you to run an application in read-only mode for a
                 specific cluster
               </p>
+              <FormError>
+                <ErrorMessage
+                  errors={methods.formState.errors}
+                  name="readOnly"
+                />
+              </FormError>
             </div>
           </S.ReadOnly>
         </S.ActionItem>
@@ -136,27 +139,24 @@ const KafkaCluster: React.FC<PropType> = ({
               Add Bootstrap Server
             </Button>
           </S.BootstrapServersContainer>
-          <S.P style={{ color: 'red' }}>required</S.P>
         </S.ActionItem>
         <S.ActionItem>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'sharedConfluentCloudCluster',
-            }}
-          >
+          <S.SharedConfluentCloudCluster>
             <input
               {...methods.register('sharedConfluentCloudCluster')}
               name="sharedConfluentCloudCluster"
               type="checkbox"
             />
-            <label
-              style={{ paddingLeft: '.7rem' }}
-              htmlFor="sharedConfluentCloudCluster"
-            >
+            <label htmlFor="sharedConfluentCloudCluster">
               Shared confluent cloud cluster
             </label>
-          </div>
+            <FormError>
+              <ErrorMessage
+                errors={methods.formState.errors}
+                name="sharedConfluentCloudCluster"
+              />
+            </FormError>
+          </S.SharedConfluentCloudCluster>
         </S.ActionItem>
       </S.Action>
     </S.Section>
