@@ -3,21 +3,21 @@ import { object, string, number, array, boolean } from 'yup';
 type AuthenticationType = 'None' | 'SASL_SSL' | 'SASL_PLAINTEXT';
 
 const formSchema = object({
-  kafkaCluster: object({
-    clusterName: string()
-      .required()
-      .min(3, 'Cluster name must be at least 3 characters'),
-    readOnly: boolean().required(),
-    bootstrapServers: array()
-      .of(
-        object({
-          host: string().required(),
-          port: number().positive().required(),
-        })
-      )
-      .min(1),
-    sharedConfluentCloudCluster: boolean().required(),
-  }).required(),
+  // kafkaCluster: object({
+  clusterName: string()
+    .required()
+    .min(3, 'Cluster name must be at least 3 characters'),
+  readOnly: boolean().required(),
+  bootstrapServers: array()
+    .of(
+      object({
+        host: string().required(),
+        port: number().positive().required(),
+      })
+    )
+    .min(1),
+  sharedConfluentCloudCluster: boolean().required(),
+  // }).required(),
   authentication: object({
     type: string().required().oneOf(['None', 'SASL_SSL', 'SASL_PLAINTEXT']),
     securedWithSSL: boolean().when('type', {
