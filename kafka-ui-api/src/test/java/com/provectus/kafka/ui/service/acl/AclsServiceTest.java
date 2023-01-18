@@ -1,7 +1,8 @@
 package com.provectus.kafka.ui.service.acl;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.AdminClientService;
