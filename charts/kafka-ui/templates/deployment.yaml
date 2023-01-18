@@ -4,6 +4,10 @@ metadata:
   name: {{ include "kafka-ui.fullname" . }}
   labels:
     {{- include "kafka-ui.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -49,7 +53,7 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
             {{- if or .Values.yamlApplicationConfig .Values.yamlApplicationConfigConfigMap}}
-            - name: SPRING_CONFIG_LOCATION
+            - name: SPRING_CONFIG_ADDITIONAL-LOCATION
               {{- if .Values.yamlApplicationConfig }}
               value: /kafka-ui/config.yml
               {{- else if .Values.yamlApplicationConfigConfigMap }}
@@ -83,6 +87,9 @@ spec:
               {{- $contextPath := .Values.envs.config.SERVER_SERVLET_CONTEXT_PATH | default "" | printf "%s/actuator/health" | urlParse }}
               path: {{ get $contextPath "path" }}
               port: http
+              {{- if .Values.probes.useHttpsScheme }}
+              scheme: HTTPS
+              {{- end }}
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 10
@@ -91,6 +98,9 @@ spec:
               {{- $contextPath := .Values.envs.config.SERVER_SERVLET_CONTEXT_PATH | default "" | printf "%s/actuator/health" | urlParse }}
               path: {{ get $contextPath "path" }}
               port: http
+              {{- if .Values.probes.useHttpsScheme }}
+              scheme: HTTPS
+              {{- end }}
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 10

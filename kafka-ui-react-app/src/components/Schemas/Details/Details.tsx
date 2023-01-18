@@ -20,14 +20,20 @@ import {
   SCHEMA_LATEST_FETCH_ACTION,
   selectAllSchemaVersions,
   getSchemaLatest,
+  getAreSchemaLatestRejected,
 } from 'redux/reducers/schemas/schemasSlice';
 import { showServerError } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
 import useAppParams from 'lib/hooks/useAppParams';
 import { schemasApiClient } from 'lib/api';
-import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { Dropdown } from 'components/common/Dropdown';
 import Table from 'components/common/NewTable';
+import { Action, ResourceType } from 'generated-sources';
+import {
+  ActionButton,
+  ActionDropdownItem,
+} from 'components/common/ActionComponent';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
@@ -55,6 +61,7 @@ const Details: React.FC = () => {
   const versions = useAppSelector((state) => selectAllSchemaVersions(state));
   const schema = useAppSelector(getSchemaLatest);
   const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
+  const isRejected = useAppSelector(getAreSchemaLatestRejected);
   const areVersionsFetched = useAppSelector(getAreSchemaVersionsFulfilled);
 
   const columns = React.useMemo(
@@ -78,6 +85,10 @@ const Details: React.FC = () => {
     }
   };
 
+  if (isRejected) {
+    navigate('/404');
+  }
+
   if (!isFetched || !schema) {
     return <PageLoader />;
   }
@@ -100,15 +111,20 @@ const Details: React.FC = () => {
             >
               Compare Versions
             </Button>
-            <Button
+            <ActionButton
               buttonSize="M"
               buttonType="primary"
               to={clusterSchemaEditPageRelativePath}
+              permission={{
+                resource: ResourceType.SCHEMA,
+                action: Action.EDIT,
+                value: subject,
+              }}
             >
               Edit Schema
-            </Button>
+            </ActionButton>
             <Dropdown>
-              <DropdownItem
+              <ActionDropdownItem
                 confirm={
                   <>
                     Are you sure want to remove <b>{subject}</b> schema?
@@ -116,9 +132,14 @@ const Details: React.FC = () => {
                 }
                 onClick={deleteHandler}
                 danger
+                permission={{
+                  resource: ResourceType.SCHEMA,
+                  action: Action.DELETE,
+                  value: subject,
+                }}
               >
                 Remove schema
-              </DropdownItem>
+              </ActionDropdownItem>
             </Dropdown>
           </>
         )}

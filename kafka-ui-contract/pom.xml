@@ -21,12 +21,10 @@
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-webflux</artifactId>
-                    <version>${spring-boot.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-validation</artifactId>
-                    <version>${spring-boot.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>io.swagger</groupId>
@@ -129,6 +127,32 @@
                                     </configOptions>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>generate-sr-client</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${project.basedir}/src/main/resources/swagger/kafka-sr-api.yaml
+                                    </inputSpec>
+                                    <output>${project.build.directory}/generated-sources/kafka-sr-client</output>
+                                    <generatorName>java</generatorName>
+                                    <generateApiTests>false</generateApiTests>
+                                    <generateModelTests>false</generateModelTests>
+
+                                    <configOptions>
+                                        <modelPackage>com.provectus.kafka.ui.sr.model</modelPackage>
+                                        <apiPackage>com.provectus.kafka.ui.sr.api</apiPackage>
+                                        <sourceFolder>kafka-sr-client</sourceFolder>
+
+                                        <asyncNative>true</asyncNative>
+                                        <library>webclient</library>
+
+                                        <useBeanValidation>true</useBeanValidation>
+                                        <dateLibrary>java8</dateLibrary>
+                                    </configOptions>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
@@ -175,7 +199,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-clean-plugin</artifactId>
-                        <version>${maven-clean-plugin.version}</version>
                         <configuration>
                             <filesets>
                                 <fileset>
@@ -187,7 +210,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>${maven-resources-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-resource-one</id>

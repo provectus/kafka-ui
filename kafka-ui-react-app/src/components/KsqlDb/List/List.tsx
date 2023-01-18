@@ -4,18 +4,19 @@ import * as Metrics from 'components/common/Metrics';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
 import {
   clusterKsqlDbQueryRelativePath,
-  ClusterNameRoute,
   clusterKsqlDbStreamsPath,
-  clusterKsqlDbTablesPath,
   clusterKsqlDbStreamsRelativePath,
+  clusterKsqlDbTablesPath,
   clusterKsqlDbTablesRelativePath,
+  ClusterNameRoute,
 } from 'lib/paths';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { Button } from 'components/common/Button/Button';
+import { ActionButton } from 'components/common/ActionComponent';
 import Navbar from 'components/common/Navigation/Navbar.styled';
-import { NavLink, Route, Routes, Navigate } from 'react-router-dom';
+import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { fetchKsqlDbTables } from 'redux/reducers/ksqlDb/ksqlDbSlice';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import { Action, ResourceType } from 'generated-sources';
 
 import KsqlDbItem, { KsqlDbItemType } from './KsqlDbItem/KsqlDbItem';
 
@@ -33,13 +34,17 @@ const List: FC = () => {
   return (
     <>
       <PageHeading text="KSQL DB">
-        <Button
+        <ActionButton
           to={clusterKsqlDbQueryRelativePath}
           buttonType="primary"
           buttonSize="M"
+          permission={{
+            resource: ResourceType.KSQL,
+            action: Action.EXECUTE,
+          }}
         >
           Execute KSQL Request
-        </Button>
+        </ActionButton>
       </PageHeading>
       <Metrics.Wrapper>
         <Metrics.Section>

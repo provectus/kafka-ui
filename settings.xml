@@ -1,0 +1,17 @@
+<settings>
+  <servers>
+    <server>
+     <id>ossrh</id>
+     <username>${server.username}</username>
+     <password>${server.password}</password>
+    </server>
+  </servers>
+  <profiles>
+    <profile>
+      <id>ossrh</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+  </profiles>
+</settings>

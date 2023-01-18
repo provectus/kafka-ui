@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactElement } from 'react';
+import React, { PropsWithChildren, ReactElement, useMemo } from 'react';
 import {
   MemoryRouter,
   MemoryRouterProps,
@@ -26,15 +26,19 @@ import {
 } from '@tanstack/react-query';
 import { ConfirmContextProvider } from 'components/contexts/ConfirmContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import {
-  defaultGlobalSettingsValue,
-  GlobalSettingsContext,
-} from 'components/contexts/GlobalSettingsContext';
+import { GlobalSettingsContext } from 'components/contexts/GlobalSettingsContext';
+import { UserInfoRolesAccessContext } from 'components/contexts/UserInfoRolesAccessContext';
+
+import { RolesType, modifyRolesData } from './permissions';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
   store?: Store<Partial<RootState>, AnyAction>;
   initialEntries?: MemoryRouterProps['initialEntries'];
+  userInfo?: {
+    roles?: RolesType;
+    rbacFlag: boolean;
+  };
 }
 
 interface WithRouteProps {
@@ -71,6 +75,32 @@ export const TestQueryClientProvider: React.FC<PropsWithChildren<unknown>> = ({
   );
 };
 
+/**
+ * @description it will create a UserInfo Provider that will actually
+ * disable the rbacFlag , to user if you can pass it as an argument
+ * */
+export const TestUserInfoProvider: React.FC<
+  PropsWithChildren<{ data?: { roles?: RolesType; rbacFlag: boolean } }>
+> = ({ children, data }) => {
+  const contextValue = useMemo(() => {
+    const roles = modifyRolesData(data?.roles);
+
+    return {
+      username: 'test',
+      rbacFlag: !!(typeof data?.rbacFlag === 'undefined'
+        ? false
+        : data?.rbacFlag),
+      roles,
+    };
+  }, [data]);
+
+  return (
+    <UserInfoRolesAccessContext.Provider value={contextValue}>
+      {children}
+    </UserInfoRolesAccessContext.Provider>
+  );
+};
+
 const customRender = (
   ui: ReactElement,
   {
@@ -80,6 +110,7 @@ const customRender = (
       preloadedState,
     }),
     initialEntries,
+    userInfo,
     ...renderOptions
   }: CustomRenderOptions = {}
 ) => {
@@ -88,18 +119,20 @@ const customRender = (
     children,
   }) => (
     <TestQueryClientProvider>
-      <GlobalSettingsContext.Provider value={defaultGlobalSettingsValue}>
+      <GlobalSettingsContext.Provider value={false}>
         <ThemeProvider theme={theme}>
-          <ConfirmContextProvider>
-            <Provider store={store}>
-              <MemoryRouter initialEntries={initialEntries}>
-                <div>
-                  {children}
-                  <ConfirmationModal />
-                </div>
-              </MemoryRouter>
-            </Provider>
-          </ConfirmContextProvider>
+          <TestUserInfoProvider data={userInfo}>
+            <ConfirmContextProvider>
+              <Provider store={store}>
+                <MemoryRouter initialEntries={initialEntries}>
+                  <div>
+                    {children}
+                    <ConfirmationModal />
+                  </div>
+                </MemoryRouter>
+              </Provider>
+            </ConfirmContextProvider>
+          </TestUserInfoProvider>
         </ThemeProvider>
       </GlobalSettingsContext.Provider>
     </TestQueryClientProvider>

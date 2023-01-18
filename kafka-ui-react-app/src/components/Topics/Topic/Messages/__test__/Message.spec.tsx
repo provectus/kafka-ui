@@ -7,7 +7,6 @@ import userEvent from '@testing-library/user-event';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 const messageContentText = 'messageContentText';
-const format = 'DD.MM.YYYY HH:mm:ss';
 
 jest.mock(
   'components/Topics/Topic/Messages/MessageContent/MessageContent',
@@ -34,22 +33,25 @@ describe('Message component', () => {
     props: Partial<Props> = {
       message: mockMessage,
     }
-  ) => {
-    return render(
+  ) =>
+    render(
       <table>
         <tbody>
-          <Message message={props.message || mockMessage} />
+          <Message
+            message={props.message || mockMessage}
+            keyFilters={[]}
+            contentFilters={[]}
+          />
         </tbody>
       </table>
     );
-  };
 
   it('shows the data in the table row', () => {
     renderComponent();
     expect(screen.getByText(mockMessage.content as string)).toBeInTheDocument();
     expect(screen.getByText(mockMessage.key as string)).toBeInTheDocument();
     expect(
-      screen.getByText(formatTimestamp(mockMessage.timestamp, format))
+      screen.getByText(formatTimestamp(mockMessage.timestamp))
     ).toBeInTheDocument();
     expect(screen.getByText(mockMessage.offset.toString())).toBeInTheDocument();
     expect(

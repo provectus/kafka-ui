@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.service.ReactiveAdminClient.SupportedFeature;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
@@ -28,17 +29,17 @@ public class FeatureService {
   public Mono<List<Feature>> getAvailableFeatures(KafkaCluster cluster, @Nullable Node controller) {
     List<Mono<Feature>> features = new ArrayList<>();
 
-    if (Optional.ofNullable(cluster.getKafkaConnect())
-        .filter(Predicate.not(List::isEmpty))
+    if (Optional.ofNullable(cluster.getConnectsClients())
+        .filter(Predicate.not(Map::isEmpty))
         .isPresent()) {
       features.add(Mono.just(Feature.KAFKA_CONNECT));
     }
 
-    if (cluster.getKsqldbServer() != null) {
+    if (cluster.getKsqlClient() != null) {
       features.add(Mono.just(Feature.KSQL_DB));
     }
 
-    if (cluster.getSchemaRegistry() != null) {
+    if (cluster.getSchemaRegistryClient() != null) {
       features.add(Mono.just(Feature.SCHEMA_REGISTRY));
     }
 

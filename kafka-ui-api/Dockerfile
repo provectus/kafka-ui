@@ -1,7 +1,7 @@
-FROM alpine:3.16.2
+FROM azul/zulu-openjdk-alpine:17
 
-RUN apk add --no-cache openjdk13-jre libc6-compat gcompat \
-&& addgroup -S kafkaui && adduser -S kafkaui -G kafkaui
+RUN apk add --no-cache gcompat # need to make snappy codec work
+RUN addgroup -S kafkaui && adduser -S kafkaui -G kafkaui
 
 USER kafkaui
 

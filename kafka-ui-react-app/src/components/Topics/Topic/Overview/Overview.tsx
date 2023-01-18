@@ -1,5 +1,5 @@
 import React from 'react';
-import { Partition, Replica } from 'generated-sources';
+import type { Partition, Replica } from 'generated-sources';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import Table from 'components/common/NewTable';
 import * as Metrics from 'components/common/Metrics';

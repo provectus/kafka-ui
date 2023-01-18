@@ -6,15 +6,16 @@ import { screen } from '@testing-library/dom';
 import { act } from '@testing-library/react';
 
 describe('KsqlDb List', () => {
-  afterEach(() => fetchMock.reset());
-  it('renders List component with Tables and Streams tabs', async () => {
+  const renderComponent = async () => {
     await act(() => {
       render(<List />);
     });
-
+  };
+  afterEach(() => fetchMock.reset());
+  it('renders List component with Tables and Streams tabs', async () => {
+    await renderComponent();
     const Tables = screen.getByTitle('Tables');
     const Streams = screen.getByTitle('Streams');
-
     expect(Tables).toBeInTheDocument();
     expect(Streams).toBeInTheDocument();
   });

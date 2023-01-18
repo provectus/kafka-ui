@@ -46,15 +46,40 @@ public class SchemaRegistrySerde implements BuiltInSerde {
   private List<String> schemaRegistryUrls;
   private String valueSchemaNameTemplate;
   private String keySchemaNameTemplate;
+  private boolean checkSchemaExistenceForDeserialize;
 
   private Map<SchemaType, MessageFormatter> schemaRegistryFormatters;
 
   @Override
-  public boolean initOnStartup(PropertyResolver kafkaClusterProperties,
-                               PropertyResolver globalProperties) {
+  public boolean canBeAutoConfigured(PropertyResolver kafkaClusterProperties,
+                                     PropertyResolver globalProperties) {
     return kafkaClusterProperties.getListProperty("schemaRegistry", String.class)
         .filter(lst -> !lst.isEmpty())
         .isPresent();
+  }
+
+  @Override
+  public void autoConfigure(PropertyResolver kafkaClusterProperties,
+                            PropertyResolver globalProperties) {
+    var urls = kafkaClusterProperties.getListProperty("schemaRegistry", String.class)
+        .filter(lst -> !lst.isEmpty())
+        .orElseThrow(() -> new ValidationException("No urls provided for schema registry"));
+    configure(
+        urls,
+        createSchemaRegistryClient(
+            urls,
+            kafkaClusterProperties.getProperty("schemaRegistryAuth.username", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("schemaRegistryAuth.password", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("schemaRegistrySSL.keystoreLocation", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("schemaRegistrySSL.keystorePassword", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("schemaRegistrySSL.truststoreLocation", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("schemaRegistrySSL.truststorePassword", String.class).orElse(null)
+        ),
+        kafkaClusterProperties.getProperty("schemaRegistryKeySchemaNameTemplate", String.class).orElse("%s-key"),
+        kafkaClusterProperties.getProperty("schemaRegistrySchemaNameTemplate", String.class).orElse("%s-value"),
+        kafkaClusterProperties.getProperty("schemaRegistryCheckSchemaExistenceForDeserialize", Boolean.class)
+            .orElse(false)
+    );
   }
 
   @Override
@@ -69,32 +94,17 @@ public class SchemaRegistrySerde implements BuiltInSerde {
         urls,
         createSchemaRegistryClient(
             urls,
-            serdeProperties.getProperty("username", String.class)
-                .or(() -> kafkaClusterProperties.getProperty("schemaRegistryAuth.username", String.class))
-                .orElse(null),
-            serdeProperties.getProperty("password", String.class)
-                .or(() -> kafkaClusterProperties.getProperty("schemaRegistryAuth.password", String.class))
-                .orElse(null),
-
-            serdeProperties.getProperty("keystoreLocation", String.class)
-                    .or(() -> kafkaClusterProperties.getProperty("schemaRegistrySSL.keystoreLocation", String.class))
-                    .orElse(null),
-            serdeProperties.getProperty("keystorePassword", String.class)
-                    .or(() -> kafkaClusterProperties.getProperty("schemaRegistrySSL.keystorePassword", String.class))
-                    .orElse(null),
-            serdeProperties.getProperty("truststoreLocation", String.class)
-                    .or(() -> kafkaClusterProperties.getProperty("schemaRegistrySSL.truststoreLocation", String.class))
-                    .orElse(null),
-            serdeProperties.getProperty("truststorePassword", String.class)
-                    .or(() -> kafkaClusterProperties.getProperty("schemaRegistrySSL.truststorePassword", String.class))
-                    .orElse(null)
+            serdeProperties.getProperty("username", String.class).orElse(null),
+            serdeProperties.getProperty("password", String.class).orElse(null),
+            serdeProperties.getProperty("keystoreLocation", String.class).orElse(null),
+            serdeProperties.getProperty("keystorePassword", String.class).orElse(null),
+            serdeProperties.getProperty("truststoreLocation", String.class).orElse(null),
+            serdeProperties.getProperty("truststorePassword", String.class).orElse(null)
         ),
-        serdeProperties.getProperty("keySchemaNameTemplate", String.class)
-            .or(() -> kafkaClusterProperties.getProperty("keySchemaNameTemplate", String.class))
-            .orElse("%s-key"),
-        serdeProperties.getProperty("schemaNameTemplate", String.class)
-            .or(() -> kafkaClusterProperties.getProperty("schemaNameTemplate", String.class))
-            .orElse("%s-value")
+        serdeProperties.getProperty("keySchemaNameTemplate", String.class).orElse("%s-key"),
+        serdeProperties.getProperty("schemaNameTemplate", String.class).orElse("%s-value"),
+        kafkaClusterProperties.getProperty("checkSchemaExistenceForDeserialize", Boolean.class)
+            .orElse(false)
     );
   }
 
@@ -103,12 +113,14 @@ public class SchemaRegistrySerde implements BuiltInSerde {
       List<String> schemaRegistryUrls,
       SchemaRegistryClient schemaRegistryClient,
       String keySchemaNameTemplate,
-      String valueSchemaNameTemplate) {
+      String valueSchemaNameTemplate,
+      boolean checkTopicSchemaExistenceForDeserialize) {
     this.schemaRegistryUrls = schemaRegistryUrls;
     this.schemaRegistryClient = schemaRegistryClient;
     this.keySchemaNameTemplate = keySchemaNameTemplate;
     this.valueSchemaNameTemplate = valueSchemaNameTemplate;
     this.schemaRegistryFormatters = MessageFormatter.createMap(schemaRegistryClient);
+    this.checkSchemaExistenceForDeserialize = checkTopicSchemaExistenceForDeserialize;
   }
 
   private static SchemaRegistryClient createSchemaRegistryClient(List<String> urls,
@@ -117,8 +129,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
                                                                  @Nullable String keyStoreLocation,
                                                                  @Nullable String keyStorePassword,
                                                                  @Nullable String trustStoreLocation,
-                                                                 @Nullable String trustStorePassword
-                                                                 ) {
+                                                                 @Nullable String trustStorePassword) {
     Map<String, String> configs = new HashMap<>();
     if (username != null && password != null) {
       configs.put(BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO");
@@ -163,7 +174,9 @@ public class SchemaRegistrySerde implements BuiltInSerde {
 
   @Override
   public boolean canDeserialize(String topic, Target type) {
-    return true;
+    String subject = schemaSubject(topic, type);
+    return !checkSchemaExistenceForDeserialize
+        || getSchemaBySubject(subject).isPresent();
   }
 
   @Override

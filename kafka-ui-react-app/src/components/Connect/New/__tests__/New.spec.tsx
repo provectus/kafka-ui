@@ -23,6 +23,7 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockHistoryPush,
 }));
+
 jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useConnects: jest.fn(),
   useCreateConnector: jest.fn(),
@@ -67,7 +68,7 @@ describe('New', () => {
       return Promise.resolve(connector);
     });
     (useCreateConnector as jest.Mock).mockImplementation(() => ({
-      mutateAsync: createConnectorMock,
+      createResource: createConnectorMock,
     }));
     renderComponent();
     await simulateFormSubmit();

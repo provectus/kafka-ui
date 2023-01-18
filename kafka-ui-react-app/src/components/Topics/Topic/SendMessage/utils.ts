@@ -6,6 +6,7 @@ import {
 import jsf from 'json-schema-faker';
 import { compact } from 'lodash';
 import Ajv, { DefinedError } from 'ajv/dist/2020';
+import addFormats from 'ajv-formats';
 import upperFirst from 'lodash/upperFirst';
 
 jsf.option('fillProperties', false);
@@ -80,7 +81,9 @@ export const validateBySchema = (
     return [`Error in parsing the "${type}" field value`];
   }
   try {
-    const validate = new Ajv().compile(parcedSchema);
+    const ajv = new Ajv();
+    addFormats(ajv);
+    const validate = ajv.compile(parcedSchema);
     validate(parsedValue);
     if (validate.errors) {
       errors = validate.errors.map(

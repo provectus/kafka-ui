@@ -15,8 +15,8 @@ describe('SavedFilter Component', () => {
     { name: 'One More Filter', code: 'code1' },
   ];
 
-  const setUpComponent = (props: Partial<Props> = {}) => {
-    return render(
+  const setUpComponent = (props: Partial<Props> = {}) =>
+    render(
       <SavedFilters
         filters={props.filters || mockFilters}
         onEdit={props.onEdit || jest.fn()}
@@ -26,7 +26,6 @@ describe('SavedFilter Component', () => {
         deleteFilter={props.deleteFilter || jest.fn()}
       />
     );
-  };
 
   const getSavedFilters = () => screen.getAllByRole('savedFilter');
 
@@ -51,6 +50,9 @@ describe('SavedFilter Component', () => {
     it('should check the rendering of the empty filter', () => {
       expect(screen.getByText(/no saved filter/i)).toBeInTheDocument();
       expect(screen.queryByRole('savedFilter')).not.toBeInTheDocument();
+
+      const selectFilterButton = screen.getByText(/Select filter/i);
+      expect(selectFilterButton).toBeDisabled();
     });
   });
 
@@ -117,7 +119,6 @@ describe('SavedFilter Component', () => {
     });
 
     it('Open Confirmation for the deletion modal', async () => {
-      setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
       const deleteIcons = screen.getAllByText('mock-DeleteIcon');
       await userEvent.hover(savedFilters[0]);
@@ -130,7 +131,6 @@ describe('SavedFilter Component', () => {
     });
 
     it('Close Confirmations deletion modal with button', async () => {
-      setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
       const deleteIcons = screen.getAllByText('mock-DeleteIcon');
 
@@ -147,7 +147,6 @@ describe('SavedFilter Component', () => {
     });
 
     it('Delete the saved filter', async () => {
-      setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = getSavedFilters();
       const deleteIcons = screen.getAllByText('mock-DeleteIcon');
 
@@ -158,6 +157,9 @@ describe('SavedFilter Component', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
       expect(deleteMock).toHaveBeenCalledTimes(1);
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+      const selectFilterButton = screen.getByText(/Select filter/i);
+      expect(selectFilterButton).toBeDisabled();
     });
   });
 });

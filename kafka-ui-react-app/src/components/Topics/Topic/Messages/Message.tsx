@@ -1,11 +1,12 @@
+import get from 'lodash/get';
 import React from 'react';
 import styled from 'styled-components';
 import useDataSaver from 'lib/hooks/useDataSaver';
 import { TopicMessage } from 'generated-sources';
-import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 import MessageContent from './MessageContent/MessageContent';
 import * as S from './MessageContent/MessageContent.styled';
@@ -22,7 +23,14 @@ const ClickableRow = styled.tr`
   cursor: pointer;
 `;
 
+export interface PreviewFilter {
+  field: string;
+  path: string;
+}
+
 export interface Props {
+  keyFilters: PreviewFilter[];
+  contentFilters: PreviewFilter[];
   message: TopicMessage;
 }
 
@@ -38,6 +46,8 @@ const Message: React.FC<Props> = ({
     keyFormat,
     headers,
   },
+  keyFilters,
+  contentFilters,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const savedMessageJson = {
@@ -48,7 +58,6 @@ const Message: React.FC<Props> = ({
     Headers: headers,
     Timestamp: timestamp,
   };
-  const formatTimestamp = useTimeFormat();
 
   const savedMessage = JSON.stringify(savedMessageJson, null, '\t');
   const { copyToClipboard, saveFile } = useDataSaver(
@@ -59,6 +68,33 @@ const Message: React.FC<Props> = ({
   const toggleIsOpen = () => setIsOpen(!isOpen);
 
   const [vEllipsisOpen, setVEllipsisOpen] = React.useState(false);
+
+  const getParsedJson = (jsonValue: string) => {
+    try {
+      return JSON.parse(jsonValue);
+    } catch (e) {
+      return {};
+    }
+  };
+
+  const renderFilteredJson = (
+    jsonValue?: string,
+    filters?: PreviewFilter[]
+  ) => {
+    if (!filters?.length || !jsonValue) return jsonValue;
+
+    const parsedJson = getParsedJson(jsonValue);
+
+    return (
+      <>
+        {filters.map((item) => (
+          <div>
+            {item.field}: {get(parsedJson, item.path)}
+          </div>
+        ))}
+      </>
+    );
+  };
 
   return (
     <>
@@ -77,10 +113,14 @@ const Message: React.FC<Props> = ({
         <td>
           <div>{formatTimestamp(timestamp)}</div>
         </td>
-        <StyledDataCell title={key}>{key}</StyledDataCell>
+        <StyledDataCell title={key}>
+          {renderFilteredJson(key, keyFilters)}
+        </StyledDataCell>
         <StyledDataCell>
           <S.Metadata>
-            <S.MetadataValue>{content}</S.MetadataValue>
+            <S.MetadataValue>
+              {renderFilteredJson(content, contentFilters)}
+            </S.MetadataValue>
           </S.Metadata>
         </StyledDataCell>
         <td style={{ width: '5%' }}>
