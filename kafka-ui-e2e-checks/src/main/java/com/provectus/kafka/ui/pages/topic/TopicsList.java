@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.pages.topic;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.refresh;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
@@ -88,6 +89,12 @@ public class TopicsList extends BasePage {
     }
 
     @Step
+    public TopicsList clickPurgeMessagesOfSelectedTopicsBtn(){
+    purgeMessagesOfSelectedTopicsBtn.shouldBe(Condition.enabled).click();
+    return this;
+    }
+
+    @Step
     public TopicsList clickClearMessagesBtn(){
       clickByJavaScript(clearMessagesBtn.shouldBe(visible));
       return this;
@@ -109,6 +116,17 @@ public class TopicsList extends BasePage {
     public TopicsList clickConfirmBtnMdl() {
     clickConfirmButton();
     return this;
+    }
+
+    @Step
+    public TopicsList clickCancelBtnMdl(){
+      clickCancelButton();
+      return this;
+    }
+
+    @Step
+    public boolean isConfirmationMdlVisible(){
+      return isConfirmationVisible();
     }
 
     @Step

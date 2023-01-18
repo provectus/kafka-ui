@@ -52,11 +52,16 @@ public class TopicMessagesTests extends BaseTest {
       .setName("topic-to-recreate-attribute-" + randomAlphabetic(5))
       .setMessageKey(randomAlphabetic(5))
       .setMessageContent(randomAlphabetic(10));
+  private static final Topic TOPIC_TO_PURGE_MESSAGE = new Topic()
+      .setName("topic-to-purge-attribute-" + randomAlphabetic(5))
+      .setMessageKey(randomAlphabetic(5))
+      .setMessageContent(randomAlphabetic(10));
   private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS, TOPIC_TO_CLEAR_MESSAGES, TOPIC_TO_RECREATE));
+    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS, TOPIC_TO_CLEAR_MESSAGES
+        , TOPIC_TO_RECREATE, TOPIC_TO_PURGE_MESSAGE));
     TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
     IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
     waitUntilNewMinuteStarted();
@@ -256,6 +261,37 @@ public class TopicMessagesTests extends BaseTest {
             String.format("Topic %s successfully recreated!", TOPIC_TO_RECREATE.getName())))
         .as("isAlertWithMessageVisible()").isTrue();
     softly.assertThat(topicsList.getTopicItem(TOPIC_TO_RECREATE.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(0);
+    softly.assertAll();
+  }
+
+  @DisplayName("TopicTests.purgeMessagesOfTopics : Purge messages of topics")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(10)
+  @Test
+  void checkPurgeMessagePossibility(){
+    navigateToTopicsAndOpenDetails(TOPIC_TO_PURGE_MESSAGE.getName());
+    topicDetails
+        .openDetailsTab(OVERVIEW);
+    produceMessage(TOPIC_TO_PURGE_MESSAGE);
+    navigateToTopics();
+    assertThat(topicsList.getTopicItem(TOPIC_TO_PURGE_MESSAGE.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(1);
+    topicsList
+        .getTopicItem(TOPIC_TO_PURGE_MESSAGE.getName())
+        .selectItem(true)
+        .clickPurgeMessagesOfSelectedTopicsBtn();
+    assertThat(topicsList.isConfirmationMdlVisible()).as("isConfirmationMdlVisible()").isTrue();
+    topicsList
+        .clickCancelBtnMdl()
+        .clickPurgeMessagesOfSelectedTopicsBtn()
+        .clickConfirmBtnMdl();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicsList.isAlertWithMessageVisible(SUCCESS,
+        String.format("%s messages have been successfully cleared!",TOPIC_TO_PURGE_MESSAGE.getName())))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicsList.getTopicItem(TOPIC_TO_PURGE_MESSAGE.getName()).getNumberOfMessages())
         .as("getNumberOfMessages()").isEqualTo(0);
     softly.assertAll();
   }
