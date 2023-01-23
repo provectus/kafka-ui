@@ -102,7 +102,7 @@ public class TopicDetails extends BasePage {
 
   @Step
   public boolean isConfirmationMdlVisible(){
-    return isConfirmationVisible();
+    return isConfirmationModalVisible();
   }
 
   @Step

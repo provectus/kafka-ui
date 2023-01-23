@@ -81,7 +81,7 @@ public abstract class BasePage extends WebUtils {
     cancelBtn.shouldBe(Condition.disappear);
   }
 
-  protected boolean isConfirmationVisible() {
+  protected boolean isConfirmationModalVisible() {
     return isVisible(confirmationMdl);
   }
 

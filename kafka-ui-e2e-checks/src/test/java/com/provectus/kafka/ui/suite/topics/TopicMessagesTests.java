@@ -56,8 +56,8 @@ public class TopicMessagesTests extends BaseTest {
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS, TOPIC_TO_CLEAR_AND_PURGE_MESSAGES
-        , TOPIC_TO_RECREATE));
+    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS, TOPIC_TO_CLEAR_AND_PURGE_MESSAGES,
+        TOPIC_TO_RECREATE));
     TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
     IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
     waitUntilNewMinuteStarted();
@@ -153,7 +153,7 @@ public class TopicMessagesTests extends BaseTest {
         .getTopicItem(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName())
         .selectItem(true)
         .clickPurgeMessagesOfSelectedTopicsBtn();
-    assertThat(topicsList.isConfirmationModalVisible()).as("isConfirmationMdlVisible()").isTrue();
+    assertThat(topicsList.isConfirmationMdlVisible()).as("isConfirmationMdlVisible()").isTrue();
     topicsList
         .clickCancelBtnMdl()
         .clickPurgeMessagesOfSelectedTopicsBtn()

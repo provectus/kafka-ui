@@ -124,8 +124,8 @@ public class TopicsList extends BasePage {
     }
 
     @Step
-    public boolean isConfirmationModalVisible(){
-      return isConfirmationVisible();
+    public boolean isConfirmationMdlVisible(){
+      return isConfirmationModalVisible();
     }
 
     @Step
