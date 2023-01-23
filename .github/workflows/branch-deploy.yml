@@ -1,4 +1,4 @@
-name: DeployFromBranch
+name: Feature testing init
 on:
   workflow_dispatch:
 
