@@ -19,7 +19,9 @@ public abstract class BasePage extends WebUtils {
   protected SelenideElement dotMenuBtn = $x("//button[@aria-label='Dropdown Toggle']");
   protected SelenideElement alertHeader = $x("//div[@role='alert']//div[@role='heading']");
   protected SelenideElement alertMessage = $x("//div[@role='alert']//div[@role='contentinfo']");
+  protected SelenideElement confirmationMdl = $x("//div[text()= 'Confirm the action']/..");
   protected SelenideElement confirmBtn = $x("//button[contains(text(),'Confirm')]");
+  protected SelenideElement cancelBtn = $x("//button[contains(text(),'Cancel')]");
   protected ElementsCollection allGridItems = $$x("//tr[@class]");
   protected String summaryCellLocator = "//div[contains(text(),'%s')]";
   protected String tableElementNameLocator = "//tbody//a[contains(text(),'%s')]";
@@ -72,6 +74,15 @@ public abstract class BasePage extends WebUtils {
   protected void clickConfirmButton() {
     confirmBtn.shouldBe(Condition.enabled).click();
     confirmBtn.shouldBe(Condition.disappear);
+  }
+
+  protected void clickCancelButton() {
+    cancelBtn.shouldBe(Condition.enabled).click();
+    cancelBtn.shouldBe(Condition.disappear);
+  }
+
+  protected boolean isConfirmationModalVisible() {
+    return isVisible(confirmationMdl);
   }
 
   public enum AlertHeader {

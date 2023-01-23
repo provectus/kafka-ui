@@ -88,6 +88,12 @@ public class TopicsList extends BasePage {
     }
 
     @Step
+    public TopicsList clickPurgeMessagesOfSelectedTopicsBtn(){
+    purgeMessagesOfSelectedTopicsBtn.shouldBe(Condition.enabled).click();
+    return this;
+    }
+
+    @Step
     public TopicsList clickClearMessagesBtn(){
       clickByJavaScript(clearMessagesBtn.shouldBe(visible));
       return this;
@@ -109,6 +115,17 @@ public class TopicsList extends BasePage {
     public TopicsList clickConfirmBtnMdl() {
     clickConfirmButton();
     return this;
+    }
+
+    @Step
+    public TopicsList clickCancelBtnMdl(){
+      clickCancelButton();
+      return this;
+    }
+
+    @Step
+    public boolean isConfirmationMdlVisible(){
+      return isConfirmationModalVisible();
     }
 
     @Step
