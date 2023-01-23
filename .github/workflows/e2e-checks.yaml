@@ -1,4 +1,4 @@
-name: e2e checks
+name: E2E tests
 on:
   pull_request_target:
     types: ["opened", "edited", "reopened", "synchronize"]
