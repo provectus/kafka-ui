@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.pages.topic;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$x;
-import static com.codeborne.selenide.Selenide.refresh;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
@@ -125,7 +124,7 @@ public class TopicsList extends BasePage {
     }
 
     @Step
-    public boolean isConfirmationMdlVisible(){
+    public boolean isConfirmationModalVisible(){
       return isConfirmationVisible();
     }
 
