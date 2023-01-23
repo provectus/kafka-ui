@@ -28,7 +28,9 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.introspector.Property;
+import org.yaml.snakeyaml.introspector.PropertyUtils;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
@@ -180,6 +182,9 @@ public class DynamicConfigOperations {
         }
       }
     };
+    var propertyUtils = new PropertyUtils();
+    propertyUtils.setBeanAccess(BeanAccess.FIELD);
+    representer.setPropertyUtils(propertyUtils);
     representer.addClassTag(PropertiesStructure.class, Tag.MAP); //to avoid adding class tag
     representer.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); //use indent instead of {}
     return new Yaml(representer).dump(props);

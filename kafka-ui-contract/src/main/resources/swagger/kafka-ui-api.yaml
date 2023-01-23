@@ -3352,13 +3352,13 @@ components:
                           type: object
                           properties:
                             resource:
-                              type: string
+                              $ref: '#/components/schemas/ResourceType'
                             value:
                               type: string
                             actions:
                               type: array
                               items:
-                                type: string
+                                $ref: '#/components/schemas/Action'
             kafka:
               type: object
               properties:

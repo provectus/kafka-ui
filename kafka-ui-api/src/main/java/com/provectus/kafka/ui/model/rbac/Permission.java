@@ -31,7 +31,7 @@ public class Permission {
   @Nullable
   String value;
   @Nullable
-  Pattern compiledValuePattern;
+  transient Pattern compiledValuePattern;
 
   @SuppressWarnings("unused")
   public void setResource(String resource) {
@@ -45,6 +45,9 @@ public class Permission {
 
   @SuppressWarnings("unused")
   public void setActions(List<String> actions) {
+    if (actions != null) {
+      actions = actions.stream().map(String::toUpperCase).toList();
+    }
     this.actions = actions;
   }
 
@@ -56,17 +59,15 @@ public class Permission {
   }
 
   public void transform() {
-    if (CollectionUtils.isEmpty(actions) || this.actions.stream().noneMatch("ALL"::equalsIgnoreCase)) {
-      return;
-    }
-    this.actions = getActionValues();
-
     if (value != null) {
       this.compiledValuePattern = Pattern.compile(value);
     }
+    if (CollectionUtils.isNotEmpty(actions) && actions.stream().anyMatch("ALL"::equalsIgnoreCase)) {
+      this.actions = getAllActionValues();
+    }
   }
 
-  private List<String> getActionValues() {
+  private List<String> getAllActionValues() {
     return switch (this.resource) {
       case APPLICATIONCONFIG -> Arrays.stream(ApplicationConfigAction.values()).map(Enum::toString).toList();
       case CLUSTERCONFIG -> Arrays.stream(ClusterConfigAction.values()).map(Enum::toString).toList();
