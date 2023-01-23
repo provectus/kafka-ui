@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.util;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.config.auth.OAuthProperties;
+import com.provectus.kafka.ui.config.auth.RoleBasedAccessControlProperties;
 import com.provectus.kafka.ui.exception.ValidationException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -88,6 +89,7 @@ public class DynamicConfigOperations {
   public PropertiesStructure getCurrentProperties() {
     return PropertiesStructure.builder()
         .kafka(getNullableBean(ClustersProperties.class))
+        .rbac(getNullableBean(RoleBasedAccessControlProperties.class))
         .auth(
             PropertiesStructure.Auth.builder()
                 .type(ctx.getEnvironment().getProperty("auth.type"))
@@ -191,6 +193,7 @@ public class DynamicConfigOperations {
   public static class PropertiesStructure {
 
     private ClustersProperties kafka;
+    private RoleBasedAccessControlProperties rbac;
     private Auth auth;
 
     @Data
@@ -203,6 +206,9 @@ public class DynamicConfigOperations {
     void initAndValidate() {
       Optional.ofNullable(kafka)
           .ifPresent(ClustersProperties::validateAndSetDefaults);
+
+      Optional.ofNullable(rbac)
+          .ifPresent(RoleBasedAccessControlProperties::init);
 
       Optional.ofNullable(auth)
           .flatMap(a -> Optional.ofNullable(a.oauth2))

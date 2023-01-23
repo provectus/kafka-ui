@@ -3321,6 +3321,44 @@ components:
                             type: object
                             additionalProperties:
                               type: string
+            rbac:
+              type: object
+              properties:
+                roles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      clusters:
+                        type: array
+                        items:
+                          type: string
+                      subjects:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            provider:
+                              type: string
+                            type:
+                              type: string
+                            value:
+                              type: string
+                      permissions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            resource:
+                              type: string
+                            value:
+                              type: string
+                            actions:
+                              type: array
+                              items:
+                                type: string
             kafka:
               type: object
               properties:

@@ -408,11 +408,11 @@ public class AccessControlService {
       return grantedPermission -> true;
     }
     return grantedPermission -> {
-      Pattern value = grantedPermission.getValue();
-      if (value == null) {
+      Pattern valuePattern = grantedPermission.getCompiledValuePattern();
+      if (valuePattern == null) {
         return true;
       }
-      return value.matcher(resourceValue).matches();
+      return valuePattern.matcher(resourceValue).matches();
     };
   }
 

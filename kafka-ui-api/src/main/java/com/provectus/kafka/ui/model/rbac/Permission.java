@@ -13,11 +13,11 @@ import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.collections.CollectionUtils;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 
 @Getter
@@ -26,18 +26,21 @@ import org.springframework.util.Assert;
 public class Permission {
 
   Resource resource;
+  List<String> actions;
 
   @Nullable
-  Pattern value;
-  List<String> actions;
+  String value;
+  @Nullable
+  Pattern compiledValuePattern;
 
   @SuppressWarnings("unused")
   public void setResource(String resource) {
     this.resource = Resource.fromString(resource.toUpperCase());
   }
 
-  public void setValue(String value) {
-    this.value = Pattern.compile(value);
+  @SuppressWarnings("unused")
+  public void setValue(@Nullable String value) {
+    this.value = value;
   }
 
   @SuppressWarnings("unused")
@@ -57,6 +60,10 @@ public class Permission {
       return;
     }
     this.actions = getActionValues();
+
+    if (value != null) {
+      this.compiledValuePattern = Pattern.compile(value);
+    }
   }
 
   private List<String> getActionValues() {
