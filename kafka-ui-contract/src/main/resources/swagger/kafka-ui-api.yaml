@@ -1757,7 +1757,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApplicationConfig'
-    post:
+    put:
       tags:
         - ApplicationConfig
       summary: Restarts application with specified configuration
@@ -3253,6 +3253,51 @@ components:
         properties:
           type: object
           properties:
+            auth:
+              type: object
+              properties:
+                type:
+                  type: string
+                oauth2:
+                  type: object
+                  properties:
+                    client:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        properties:
+                          provider:
+                            type: string
+                          clientId:
+                            type: string
+                          clientSecret:
+                            type: string
+                          clientName:
+                            type: string
+                          redirectUri:
+                            type: string
+                          authorizationGrantType:
+                            type: string
+                          issuerUri:
+                            type: string
+                          authorizationUri:
+                            type: string
+                          tokenUri:
+                            type: string
+                          userInfoUri:
+                            type: string
+                          jwkSetUri:
+                            type: string
+                          userNameAttribute:
+                            type: string
+                          scope:
+                            type: array
+                            items:
+                              type: string
+                          customParams:
+                            type: object
+                            additionalProperties:
+                              type: string
             kafka:
               type: object
               properties:
