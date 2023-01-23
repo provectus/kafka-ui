@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.models;
 import com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue;
 import com.provectus.kafka.ui.pages.topic.enums.CustomParameterType;
 import com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk;
+import com.provectus.kafka.ui.pages.topic.enums.TimeToRetainDataButtons;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -14,4 +15,5 @@ public class Topic {
     private CustomParameterType customParameterType;
     private CleanupPolicyValue cleanupPolicyValue;
     private MaxSizeOnDisk maxSizeOnDisk;
+    private TimeToRetainDataButtons timeToRetainDataButtons;
 }
