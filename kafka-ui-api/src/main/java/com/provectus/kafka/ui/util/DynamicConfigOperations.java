@@ -23,6 +23,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -30,6 +31,7 @@ import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,6 +40,10 @@ public class DynamicConfigOperations {
 
   static final String DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY = "DYNAMIC_CONFIG_ENABLED";
   static final String DYNAMIC_CONFIG_PATH_ENV_PROPERTY = "DYNAMIC_CONFIG_PATH";
+  static final String DYNAMIC_CONFIG_PATH_ENV_PROPERTY_DEFAULT = "/etc/kafkaui/dynamic_config.yaml";
+
+  static final String CONFIG_RELATED_UPLOADS_DIR_PROPERTY = "CONFIG_RELATED_UPLOADS_DIR";
+  static final String CONFIG_RELATED_UPLOADS_DIR_DEFAULT = "/etc/kafkaui/uploads";
 
   public static ApplicationContextInitializer<ConfigurableApplicationContext> dynamicConfigPropertiesInitializer() {
     return appCtx ->
@@ -50,13 +56,15 @@ public class DynamicConfigOperations {
 
   public boolean dynamicConfigEnabled() {
     var env = ctx.getEnvironment().getSystemEnvironment();
-    return "true".equalsIgnoreCase((String) env.get(DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY))
-        && env.get(DYNAMIC_CONFIG_PATH_ENV_PROPERTY) != null;
+    return "true".equalsIgnoreCase((String) env.get(DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY));
   }
 
   private Path dynamicConfigFilePath() {
     var env = ctx.getEnvironment().getSystemEnvironment();
-    return Paths.get((String) env.get(DYNAMIC_CONFIG_PATH_ENV_PROPERTY));
+    return Paths.get(
+        Optional.ofNullable((String) env.get(DYNAMIC_CONFIG_PATH_ENV_PROPERTY))
+            .orElse(DYNAMIC_CONFIG_PATH_ENV_PROPERTY_DEFAULT)
+    );
   }
 
   @SneakyThrows
@@ -101,7 +109,7 @@ public class DynamicConfigOperations {
     if (!dynamicConfigEnabled()) {
       throw new ValidationException(
           "Dynamic config change is not allowed. "
-              + "Set DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY, DYNAMIC_CONFIG_PATH environment variables to enabled it.");
+              + "Set DYNAMIC_CONFIG_ENABLED=true environment variable to enabled it.");
     }
     properties.initAndValidate();
 
@@ -109,9 +117,35 @@ public class DynamicConfigOperations {
     writeYamlToFile(yaml, dynamicConfigFilePath());
   }
 
+  public Mono<Path> uploadConfigRelatedFile(FilePart file) {
+    String targetDirStr = (String) ctx.getEnvironment().getSystemEnvironment()
+        .getOrDefault(CONFIG_RELATED_UPLOADS_DIR_PROPERTY, CONFIG_RELATED_UPLOADS_DIR_DEFAULT);
+
+    Path targetDir = Path.of(targetDirStr);
+    if (!Files.exists(targetDir)) {
+      try {
+        Files.createDirectories(targetDir);
+      } catch (IOException e) {
+        throw new RuntimeException("Error creating directory for uploads %s".formatted(targetDir), e);
+      }
+    }
+
+    Path targetFilePath = targetDir.resolve(file.filename());
+    if (Files.exists(targetFilePath)) {
+      throw new ValidationException("File %s already exists".formatted(targetDir));
+    }
+
+    return file.transferTo(targetFilePath)
+        .thenReturn(targetFilePath);
+  }
+
+  @SneakyThrows
   private void writeYamlToFile(String yaml, Path path) {
     if (Files.isDirectory(path)) {
       throw new ValidationException("Dynamic file path is a directory, but should be a file path");
+    }
+    if (!Files.exists(path.getParent())) {
+      Files.createDirectories(path.getParent());
     }
     if (Files.exists(path) && !Files.isWritable(path)) {
       throw new ValidationException("File already exists and is not writable");

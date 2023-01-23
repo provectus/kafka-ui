@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -69,5 +70,17 @@ public class ApplicationConfigController implements ApplicationConfigApi {
           restarter.requestRestart();
           return ResponseEntity.ok().build();
         });
+  }
+
+  @Override
+  public Mono<ResponseEntity<String>> uploadConfigRelatedFile(FilePart file, ServerWebExchange exchange) {
+    return accessControlService
+        .validateAccess(
+            AccessContext.builder()
+                .applicationConfigActions(EDIT)
+                .build()
+        )
+        .then(dynamicConfigOperations.uploadConfigRelatedFile(file))
+        .map(savedPath -> ResponseEntity.ok(savedPath.toString()));
   }
 }
