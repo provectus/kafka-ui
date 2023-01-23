@@ -10,7 +10,7 @@ Good resource for what properties are needed here: https://gist.github.com/rmoff
 
 ## Cluster authorization failed
 
-Check [required permissions](https://github.com/provectus/kafka-ui/wiki/FAQ#required-aclmsk-permissions).
+Check the [required permissions](../configuration/configuration/required-acls.md).
 
 ## Confluent cloud errors
 

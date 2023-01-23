@@ -24,6 +24,7 @@
 ## 👷♂ Configuration
 
 * [Configuration](configuration/configuration/README.md)
+  * [Required ACLs](configuration/configuration/required-acls.md)
   * [Complex configuration examples](configuration/configuration/complex-configuration-examples/README.md)
     * [Kraft mode + multiple brokers](configuration/configuration/complex-configuration-examples/kraft-mode-+-multiple-brokers.md)
 * [SSL](configuration/ssl.md)

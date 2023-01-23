@@ -30,20 +30,6 @@ See [this](https://github.com/provectus/kafka-ui/blob/master/documentation/compo
 
 Planned, see [#478](https://github.com/provectus/kafka-ui/issues/478)
 
-### Required ACL/MSK permissions
-
-ACL: todo
-
-MSK:
-
-```
-      "kafka-cluster:Connect",
-      "kafka-cluster:Describe*",
-      "kafka-cluster:CreateTopic",
-      "kafka-cluster:AlterGroup",
-      "kafka-cluster:ReadData"
-```
-
 ### Smart filters syntax
 
 **Variables bound to groovy context**: partition, timestampMs, keyAsText, valueAsText, header, key (json if possible), value (json if possible).
