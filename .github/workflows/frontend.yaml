@@ -1,4 +1,4 @@
-name: frontend
+name: Frontend build and test
 on:
   push:
     branches:
