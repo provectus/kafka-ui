@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.config.auth;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
@@ -22,7 +21,6 @@ public class OAuthProperties {
   private void validateProvider(final OAuth2Provider provider) {
     Assert.hasText(provider.getClientId(), "Client id must not be empty.");
     Assert.hasText(provider.getProvider(), "Provider name must not be empty");
-    Assert.hasText(provider.getAuthorizationGrantType(), "Authorization grant type must not be empty");
   }
 
   @Data
