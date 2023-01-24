@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.service;
 
-import static com.provectus.kafka.ui.service.ReactiveAdminClient.*;
+import static com.provectus.kafka.ui.service.ReactiveAdminClient.ClusterDescription;
 
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalLogDirStats;
@@ -40,7 +40,7 @@ public class StatisticsService {
                 Mono.zip(
                     List.of(
                         metricsCollector.getBrokerMetrics(cluster, description.getNodes()),
-                        getLogDirInfo(description , ac),
+                        getLogDirInfo(description, ac),
                         featureService.getAvailableFeatures(cluster, description.getController()),
                         loadTopicConfigs(cluster),
                         describeTopics(cluster)),
