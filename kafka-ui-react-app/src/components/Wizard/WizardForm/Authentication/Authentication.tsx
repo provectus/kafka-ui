@@ -1,116 +1,173 @@
 import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
-import React, { useState } from 'react';
+import React from 'react';
 import Select from 'components/common/Select/Select';
-import { InputLabel } from 'components/common/Input/InputLabel.styled';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, Controller } from 'react-hook-form';
+import { IOption } from 'components/Wizard/WizardForm/WizardForm';
+import { ErrorMessage } from '@hookform/error-message';
+import { FormError } from 'components/common/Input/Input.styled';
+import Input from 'components/common/Input/Input';
 
-const options = [
-  {
-    value: 'none',
-    label: 'None',
-  },
-  {
-    value: 'SASL_SSL',
-    label: 'SASL_SSL',
-  },
-  {
-    value: 'SASL_PLAINTEXT',
-    label: 'SASL_PLAINTEXT',
-  },
-];
-const Authentication = () => {
-  const [value, setValue] = useState<string | number>('');
+import SaslType from './SaslType/SaslType';
 
-  // const methods = useForm<AddMessageFilters>({
-  //   mode: 'onChange',
-  //   defaultValues: {
-  //     securedWithSSL: false,
-  //     saslType: 'none',
-  //   },
-  //   resolver: yupResolver(validationSchema),
-  // });
-  // const {
-  //   handleSubmit,
-  //   control,
-  //   formState: { isDirty, isSubmitting, isValid, errors },
-  //   reset,
-  // } = methods;
-  // const { fields, append, remove } = useFieldArray<
-  //   FormValues,
-  //   'saslType'
-  //   >({
-  //   name: 'saslType',
-  // });
+type PropType = {
+  getValue: (value: string, optionsType: IOption[]) => string | undefined;
+  options: IOption[];
+  securityProtocolOptions: IOption[];
+};
+const Authentication: React.FC<PropType> = ({
+  getValue,
+  options,
+  securityProtocolOptions,
+}) => {
   const methods = useFormContext();
-  const onChange = (e: string | number) => {
-    setValue(e);
-    methods.register('saslType');
-  };
-  const isSecuredWithSSL = methods.watch('securedWithSSL');
+  const securityProtocol = methods.watch('securityProtocol');
   return (
     <S.Section>
-      <S.SectionName className="text-lg font-medium leading-6 text-gray-900">
-        Authentication
-      </S.SectionName>
-      <div className="md:mt-0 md:col-span-3">
-        <div className="sm:overflow-hidden h-full">
-          <div className="px-4 py-5">
-            <div className="grid grid-cols-6 gap-6">
-              <div className="col-span-3">
-                {isSecuredWithSSL && (
-                  <Select
-                    name="saslType"
-                    placeholder="Select"
-                    minWidth="270px"
-                    onChange={(e) => onChange(e)}
-                    value={value}
-                    options={options}
+      <S.SectionName>Authentication</S.SectionName>
+      <div>
+        <S.PartStyled>
+          <S.ItemLabelRequired>
+            <label htmlFor="securityProtocol">Security Protocol</label>{' '}
+          </S.ItemLabelRequired>
+          <Controller
+            defaultValue={securityProtocolOptions[0].value}
+            control={methods.control}
+            name="securityProtocol"
+            render={({ field: { name, onChange, value } }) => {
+              return (
+                <Select
+                  name={name}
+                  placeholder="Select"
+                  minWidth="270px"
+                  onChange={onChange}
+                  value={getValue(value, securityProtocolOptions)}
+                  options={securityProtocolOptions}
+                />
+              );
+            }}
+          />
+          <FormError>
+            <ErrorMessage errors={methods.formState.errors} name="password" />
+          </FormError>
+          {securityProtocol === 'sasl_ssl' && (
+            <>
+              <S.PartStyled>
+                <S.CheckboxWrapper>
+                  <input
+                    {...methods.register('selfSigned')}
+                    name="selfSigned"
+                    type="checkbox"
                   />
-                )}
-              </div>
-              <div className="col-span-6">
-                <div className="flex items-start">
-                  <S.CheckboxWrapper>
-                    <input
-                      {...methods.register('securedWithSSL')}
-                      name="securedWithSSL"
-                      type="checkbox"
+                  <label htmlFor="selfSigned">Self Signed</label>
+                  <FormError>
+                    <ErrorMessage
+                      errors={methods.formState.errors}
+                      name="selfSigned"
                     />
-                    <InputLabel>Secured With SSL</InputLabel>
-                  </S.CheckboxWrapper>
-                  <div className="ml-3">
-                    <label
-                      className="block text-sm font-medium text-gray-700 whitespace-nowrap mr-2 svelte-55p6jf"
-                      htmlFor="securedWithSSL"
-                    >
-                      Secured with SSL
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div className="col-span-6">
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <input
-                      id="securedWithSSL"
-                      name="securedWithSSL"
-                      type="checkbox"
-                      className="checkbox"
+                  </FormError>
+                </S.CheckboxWrapper>
+              </S.PartStyled>
+              <S.PartStyled>
+                <S.FileWrapper>
+                  <label htmlFor="truststoreFile">Truststore File</label>
+                  <input
+                    {...methods.register('truststoreFile')}
+                    name="truststoreFile"
+                    type="file"
+                  />
+
+                  <FormError>
+                    <ErrorMessage
+                      errors={methods.formState.errors}
+                      name="truststoreFile"
                     />
-                  </div>
-                  <div className="ml-3">
-                    <label
-                      className="block text-sm font-medium text-gray-700 whitespace-nowrap mr-2 svelte-55p6jf"
-                      htmlFor="securedWithSSL"
-                    >
-                      Secured with SSL
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                  </FormError>
+                </S.FileWrapper>
+              </S.PartStyled>
+              <S.PartStyled>
+                <label htmlFor="location">Location</label>{' '}
+                <Input type="text" name="location" />
+                <FormError>
+                  <ErrorMessage
+                    errors={methods.formState.errors}
+                    name="location"
+                  />
+                </FormError>
+              </S.PartStyled>
+              <S.PartStyled>
+                <label htmlFor="saslPassword">Password</label>{' '}
+                <Input type="password" name="saslPassword" />
+                <FormError>
+                  <ErrorMessage
+                    errors={methods.formState.errors}
+                    name="saslPassword"
+                  />
+                </FormError>
+              </S.PartStyled>
+            </>
+          )}
+        </S.PartStyled>
+
+        <S.PartStyled>
+          <S.ItemLabelRequired>
+            <label htmlFor="saslType">SASL Type</label>{' '}
+          </S.ItemLabelRequired>
+          <Controller
+            defaultValue={options[0].value}
+            control={methods.control}
+            name="saslType"
+            render={({ field: { name, onChange, value } }) => {
+              return (
+                <Select
+                  name={name}
+                  placeholder="Select"
+                  minWidth="270px"
+                  onChange={onChange}
+                  value={getValue(value, options)}
+                  options={options}
+                />
+              );
+            }}
+          />
+          <FormError>
+            <ErrorMessage errors={methods.formState.errors} name="saslType" />
+          </FormError>
+        </S.PartStyled>
+        <S.PartStyled>
+          <SaslType />
+        </S.PartStyled>
+        {/* <S.CheckboxWrapper> */}
+        {/*  <input */}
+        {/*    {...methods.register('securedWithSSL')} */}
+        {/*    name="securedWithSSL" */}
+        {/*    type="checkbox" */}
+        {/*  /> */}
+        {/*  <label htmlFor="securedWithSSL">Secured with SSL</label> */}
+        {/*  <FormError> */}
+        {/*    <ErrorMessage */}
+        {/*      errors={methods.formState.errors} */}
+        {/*      name="securedWithSSL" */}
+        {/*    /> */}
+        {/*  </FormError> */}
+        {/* </S.CheckboxWrapper> */}
+        {/* {isSecuredWithSSL && ( */}
+        {/*  <S.CheckboxWrapper> */}
+        {/*    <input */}
+        {/*      {...methods.register('selfSignedCertificate')} */}
+        {/*      name="selfSignedCertificate" */}
+        {/*      type="checkbox" */}
+        {/*    /> */}
+        {/*    <label htmlFor="selfSignedCertificate"> */}
+        {/*      Self-signed certificate */}
+        {/*    </label> */}
+        {/*    <FormError> */}
+        {/*      <ErrorMessage */}
+        {/*        errors={methods.formState.errors} */}
+        {/*        name="selfSignedCertificate" */}
+        {/*      /> */}
+        {/*    </FormError> */}
+        {/*  </S.CheckboxWrapper> */}
+        {/* )} */}
       </div>
     </S.Section>
   );

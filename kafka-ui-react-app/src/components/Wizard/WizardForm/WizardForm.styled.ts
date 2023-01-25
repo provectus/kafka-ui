@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Section = styled.div`
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1.5fr 2.5fr 2fr;
   display: grid;
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
@@ -25,7 +25,7 @@ export const Action = styled.div`
 export const ActionItem = styled.div`
   grid-column: span 6 / span 6;
 `;
-export const ItemStyled = styled.div`
+export const ItemLabelRequired = styled.div`
   align-items: baseline;
   display: flex;
   margin-bottom: 0.5rem;
@@ -40,6 +40,13 @@ export const ItemStyled = styled.div`
     &::after {
       content: ' *';
       color: red;
+    }
+  }
+`;
+export const ItemLabel = styled(ItemLabelRequired)`
+  & label {
+    &::after {
+      content: none;
     }
   }
 `;
@@ -67,6 +74,19 @@ export const ReadOnly = styled.div`
     }
   }
 `;
+export const CheckboxWrapper = styled.div`
+  display: flex;
+  & label {
+    margin-left: 0.7rem;
+  }
+`;
+export const FileWrapper = styled.div`
+  display: flex;
+  & label {
+    margin-right: 0.7rem;
+  }
+`;
+
 //----------------------------------
 // KafkaCluster
 export const BootstrapServersContainer = styled.label`
@@ -105,16 +125,8 @@ export const DeleteButtonWrapper = styled.div`
   margin-top: 10px;
 `;
 
-export const SharedConfluentCloudCluster = styled.div`
-  display: flex;
-  & label {
-    margin-left: 0.7rem;
-  }
-`;
 //-------------------------------
 // Authentication
-export const CheckboxWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 5px;
+export const PartStyled = styled.div`
+  padding-top: 1.2rem;
 `;
