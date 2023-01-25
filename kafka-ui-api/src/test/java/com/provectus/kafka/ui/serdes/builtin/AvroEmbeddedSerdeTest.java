@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.PropertyResolverImpl;
-import com.provectus.kafka.ui.serdes.RecordHeadersImpl;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,16 +49,16 @@ class AvroEmbeddedSerdeTest {
 
   @Test
   void deserializerParsesAvroDataWithEmbeddedSchema() throws Exception {
-    Schema schema = new Schema.Parser().parse(
+    Schema schema = new Schema.Parser().parse("""
+        {
+          "type": "record",
+          "name": "TestAvroRecord",
+          "fields": [
+            { "name": "field1", "type": "string" },
+            { "name": "field2", "type": "int" }
+          ]
+        }
         """
-            {
-              "type": "record",
-              "name": "TestAvroRecord",
-              "fields": [
-                { "name": "field1", "type": "string" },
-                { "name": "field2", "type": "int" }
-              ]
-            }"""
     );
     GenericRecord record = new GenericData.Record(schema);
     record.put("field1", "this is test msg");
@@ -72,10 +71,10 @@ class AvroEmbeddedSerdeTest {
     DeserializeResult result = deserializer.deserialize(null, serializedRecordBytes);
     assertThat(result.getType()).isEqualTo(DeserializeResult.Type.JSON);
     assertThat(result.getAdditionalProperties()).isEmpty();
-    asserJsonEquals(jsonRecord, result.getResult());
+    assertJsonEquals(jsonRecord, result.getResult());
   }
 
-  private void asserJsonEquals(String expected, String actual) throws IOException {
+  private void assertJsonEquals(String expected, String actual) throws IOException {
     var mapper = new JsonMapper();
     assertThat(mapper.readTree(actual)).isEqualTo(mapper.readTree(expected));
   }
