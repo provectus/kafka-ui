@@ -1,62 +1,122 @@
-import { object, string, number, array, boolean } from 'yup';
+import { object, string, number, array, boolean, mixed } from 'yup';
 
 type AuthenticationType = 'None' | 'SASL_SSL' | 'SASL_PLAINTEXT';
 
 const formSchema = object({
-  // kafkaCluster: object({
-  clusterName: string()
-    .required()
-    .min(3, 'Cluster name must be at least 3 characters'),
-  readOnly: boolean().required(),
-  bootstrapServers: array()
-    .of(
-      object({
-        host: string().required('host is a required field'),
-        port: number().positive().required(),
-      })
-    )
-    .min(1),
-  sharedConfluentCloudCluster: boolean().required(),
-  // }).required(),
+  kafkaCluster: object({
+    clusterName: string()
+      .required()
+      .min(3, 'Cluster name must be at least 3 characters'),
+    readOnly: boolean().required(),
+    bootstrapServers: array()
+      .of(
+        object({
+          host: string().required('host is a required field'),
+          port: number().positive().required(),
+        })
+      )
+      .min(1),
+    sharedConfluentCloudCluster: boolean().required(),
+  }).required(),
   authentication: object({
-    type: string().required().oneOf(['None', 'SASL_SSL', 'SASL_PLAINTEXT']),
-    securedWithSSL: boolean().when('type', {
-      is: 'None',
+    type: string()
+      .required()
+      .oneOf([
+        'None',
+        'SASL/JAAS',
+        'SASL/GSSAPI',
+        'SASL/OAUTHBEARER',
+        'SASL/PLAIN',
+        'SASL/SCRAM-256',
+        'SASL/SCRAM-512',
+        'Delegation tokens',
+        'SASL/LDAP',
+        'SASL/AWS IAM',
+        'mTLS',
+      ]),
+    // SASL/JAAS
+    'sasl.jaas.config': string().when('type', {
+      is: 'SASL/JAAS',
       then: (schema) => schema.required(),
     }),
-    selfSignedCertificate: boolean().when(['securedWithSSL', 'type'], {
-      is: (securedWithSSL: boolean, type: AuthenticationType) =>
-        securedWithSSL || type === 'SASL_SSL',
+    'sasl.enabled.mechanisms': string().when('type', {
+      is: 'SASL/JAAS',
       then: (schema) => schema.required(),
     }),
-    truststoreLocation: string().when('selfSignedCertificate', {
-      is: true,
+    // SASL/GSSAPI
+    'sasl.kerberos.service.name': string().when('type', {
+      is: 'SASL/GSSAPI',
       then: (schema) => schema.required(),
     }),
-    truststorePassword: string().when('selfSignedCertificate', {
-      is: true,
+    useKeyTab: boolean().when('type', {
+      is: 'SASL/GSSAPI',
       then: (schema) => schema.required(),
     }),
-    keystoreLocation: string(),
-    keystorePassword: string(),
-    keystoreKeyPassword: string(),
-    SASLMechanism: string()
-      .oneOf(['AWS_MSK_IAM', 'SCRAM_SHA_256', 'SCRAM_SHA_512', 'GSSAPI'])
-      .when('type', { is: 'SASL_SSL', then: (schema) => schema.required() }),
-    specificProfile: boolean().when('SASLMechanism', {
-      is: 'AWS_MSK_IAM',
+    storeKey: boolean().when('type', {
+      is: 'SASL/GSSAPI',
       then: (schema) => schema.required(),
     }),
-    profileName: string().when('specificProfile', {
-      is: true,
+    keyTab: mixed().when('type', {
+      is: 'SASL/GSSAPI',
       then: (schema) => schema.required(),
     }),
-    saslJaasConfig: string().when('SASLMechanism', {
-      is: 'SCRAM_SHA_256' || 'SCRAM_SHA_512' || 'GSSAPI',
+    principal: string().when('type', {
+      is: 'SASL/GSSAPI',
       then: (schema) => schema.required(),
     }),
-    kerberosServiceName: string().when('SASLMechanism', {
-      is: 'GSSAPI',
+    // SASL/OAUTHBEARER
+    unsecuredLoginStringClaim_sub: string().when('type', {
+      is: 'SASL/OAUTHBEARER',
+      then: (schema) => schema.required(),
+    }),
+    // SASL/PLAIN, SASL/SCRAM-256, SASL/SCRAM-512, Delegation tokens, SASL/LDAP
+    username: string().when('type', {
+      is:
+        'SASL/PLAIN' ||
+        'SASL/SCRAM-256' ||
+        'SASL/SCRAM-512' ||
+        'Delegation tokens' ||
+        'SASL/LDAP',
+      then: (schema) => schema.required(),
+    }),
+    password: string().when('type', {
+      is:
+        'SASL/PLAIN' ||
+        'SASL/SCRAM-256' ||
+        'SASL/SCRAM-512' ||
+        'Delegation tokens' ||
+        'SASL/LDAP',
+      then: (schema) => schema.required(),
+    }),
+    // SASL/AWS IAM
+    awsProfileName: string().when('type', {
+      is: 'SASL/AWS IAM',
+      then: (schema) => schema.required(),
+    }),
+    // mTLS
+    selfSignedCertificate: boolean().when('type', {
+      is: 'mTLS',
+      then: (schema) => schema.required(),
+    }),
+    'ssl.truststore.location': mixed().when(['type', 'selfSignedCertificate'], {
+      is: (type: string, selfSignedCertificate: boolean) =>
+        type === 'mTLS' && selfSignedCertificate,
+      then: (schema) => schema.required(),
+    }),
+    'ssl.truststore.password': string().when('type', {
+      is: 'mTLS',
+      then: (schema) => schema.required(),
+    }),
+    'ssl.keystore.location': mixed().when('type', {
+      is: 'mTLS',
+      then: (schema) => schema.required(),
+    }),
+    'ssl.keystore.password': string().when('type', {
+      is: 'mTLS',
+      then: (schema) => schema.required(),
+    }),
+    'ssl.key.password': string().when('type', {
+      is: 'mTLS',
       then: (schema) => schema.required(),
     }),
   }).required(),
