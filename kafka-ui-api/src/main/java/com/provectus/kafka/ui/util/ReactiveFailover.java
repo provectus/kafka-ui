@@ -68,7 +68,8 @@ public class ReactiveFailover<T> {
 
   private <V> Mono<V> mono(Function<T, Mono<V>> f, List<PublisherHolder<T>> candidates) {
     var publisher = candidates.get(0);
-    return f.apply(publisher.get())
+    return publisher.get()
+        .flatMap(f)
         .onErrorResume(failoverExceptionsPredicate, th -> {
           publisher.markFailed();
           if (candidates.size() == 1) {
@@ -92,7 +93,8 @@ public class ReactiveFailover<T> {
 
   private <V> Flux<V> flux(Function<T, Flux<V>> f, List<PublisherHolder<T>> candidates) {
     var publisher = candidates.get(0);
-    return f.apply(publisher.get())
+    return publisher.get()
+        .flatMapMany(f)
         .onErrorResume(failoverExceptionsPredicate, th -> {
           publisher.markFailed();
           if (candidates.size() == 1) {
@@ -135,11 +137,15 @@ public class ReactiveFailover<T> {
       this.retryGracePeriodMs = retryGracePeriodMs;
     }
 
-    synchronized T get() {
+    synchronized Mono<T> get() {
       if (publisherInstance == null) {
-        publisherInstance = supplier.get();
+        try {
+          publisherInstance = supplier.get();
+        } catch (Throwable th) {
+          return Mono.error(th);
+        }
       }
-      return publisherInstance;
+      return Mono.just(publisherInstance);
     }
 
     void markFailed() {

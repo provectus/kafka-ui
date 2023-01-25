@@ -129,7 +129,7 @@ public class ReactiveAdminClient implements Closeable {
 
   // NOTE: if KafkaFuture returns null, that Mono will be empty(!), since Reactor does not support nullable results
   // (see MonoSink.success(..) javadoc for details)
-  private static <T> Mono<T> toMono(KafkaFuture<T> future) {
+  public static <T> Mono<T> toMono(KafkaFuture<T> future) {
     return Mono.<T>create(sink -> future.whenComplete((res, ex) -> {
       if (ex != null) {
         // KafkaFuture doc is unclear about what exception wrapper will be used
