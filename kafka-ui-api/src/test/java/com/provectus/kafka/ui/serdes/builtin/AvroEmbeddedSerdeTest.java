@@ -56,14 +56,8 @@ class AvroEmbeddedSerdeTest {
               "type": "record",
               "name": "TestAvroRecord",
               "fields": [
-                {
-                  "name": "field1",
-                  "type": "string"
-                },
-                {
-                  "name": "field2",
-                  "type": "int"
-                }
+                { "name": "field1", "type": "string" },
+                { "name": "field2", "type": "int" }
               ]
             }"""
     );
@@ -75,7 +69,7 @@ class AvroEmbeddedSerdeTest {
     byte[] serializedRecordBytes = serializeAvroWithEmbeddedSchema(record);
 
     var deserializer = avroEmbeddedSerde.deserializer("anyTopic", Serde.Target.KEY);
-    DeserializeResult result = deserializer.deserialize(new RecordHeadersImpl(), serializedRecordBytes);
+    DeserializeResult result = deserializer.deserialize(null, serializedRecordBytes);
     assertThat(result.getType()).isEqualTo(DeserializeResult.Type.JSON);
     assertThat(result.getAdditionalProperties()).isEmpty();
     asserJsonEquals(jsonRecord, result.getResult());
