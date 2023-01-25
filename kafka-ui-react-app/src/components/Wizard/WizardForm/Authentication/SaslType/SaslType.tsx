@@ -23,15 +23,12 @@ const SaslType = () => {
       case 'sasl_oauthbearer':
         return <SaslOauthbearer />;
       case 'sasl_plain':
-        return <UsernamePassword />;
       case 'sasl_scram-256':
-        return <UsernamePassword />;
       case 'sasl_scram-512':
+      case 'sasl_ldap':
         return <UsernamePassword />;
       case 'Delegation_token':
         return <DelegationTokens />;
-      case 'sasl_ldap':
-        return <UsernamePassword />;
       case 'sasl_aws_iam':
         return <SaslAwsIam />;
       case 'mtls':
