@@ -1,6 +1,6 @@
 import { object, string, number, array, boolean, mixed } from 'yup';
 
-type AuthenticationType = 'None' | 'SASL_SSL' | 'SASL_PLAINTEXT';
+// type AuthenticationType = 'None' | 'SASL_SSL' | 'SASL_PLAINTEXT';
 
 const formSchema = object({
   // kafkaCluster: object({
