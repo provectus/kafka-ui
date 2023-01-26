@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { Button } from 'components/common/Button/Button';
 import { useFieldArray, useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -118,12 +118,13 @@ const Wizard: React.FC = () => {
     return val?.toString();
   };
   const onSubmit = (data: unknown) => {
-    console.log('SubmitData', data);
+    // console.log('SubmitData', data);
+    return data;
   };
-  useEffect(() => {
-    const subscription = methods.watch((data) => console.log(data));
-    return subscription.unsubscribe;
-  }, [methods.watch]);
+  // useEffect(() => {
+  //   const subscription = methods.watch((data) => console.log(data));
+  //   return subscription.unsubscribe;
+  // }, [methods.watch]);
   return (
     <div style={{ padding: '15px' }}>
       <Button
