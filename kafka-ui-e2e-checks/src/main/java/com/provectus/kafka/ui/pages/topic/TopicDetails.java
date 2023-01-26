@@ -51,7 +51,6 @@ public class TopicDetails extends BasePage {
   protected SelenideElement cleanUpPolicyField = $x("//div[contains(text(),'Clean Up Policy')]/../span/*");
   protected SelenideElement partitionsField = $x("//div[contains(text(),'Partitions')]/../span");
   protected SelenideElement backToCreateFiltersLink = $x("//div[text()='Back To create filters']");
-  protected SelenideElement confirmationMdl = $x("//div[text()= 'Confirm the action']/..");
   protected ElementsCollection messageGridItems = $$x("//tbody//tr");
   protected SelenideElement actualCalendarDate = $x("//div[@class='react-datepicker__current-month']");
   protected SelenideElement previousMonthButton = $x("//button[@aria-label='Previous Month']");
@@ -103,7 +102,7 @@ public class TopicDetails extends BasePage {
 
   @Step
   public boolean isConfirmationMdlVisible(){
-    return isVisible(confirmationMdl);
+    return isConfirmationModalVisible();
   }
 
   @Step
