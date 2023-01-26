@@ -26,7 +26,6 @@ public class KafkaCluster {
   private final String bootstrapServers;
   private final Properties properties;
   private final boolean readOnly;
-  private final boolean disableLogDirsCollection;
   private final MetricsConfig metricsConfig;
   private final DataMasking masking;
   private final Supplier<PollingThrottler> throttler;
