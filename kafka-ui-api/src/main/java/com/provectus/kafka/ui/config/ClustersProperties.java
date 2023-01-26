@@ -38,7 +38,6 @@ public class ClustersProperties {
     MetricsConfigData metrics;
     Properties properties;
     boolean readOnly = false;
-    boolean disableLogDirsCollection = false;
     List<SerdeConfig> serde = new ArrayList<>();
     String defaultKeySerde;
     String defaultValueSerde;
