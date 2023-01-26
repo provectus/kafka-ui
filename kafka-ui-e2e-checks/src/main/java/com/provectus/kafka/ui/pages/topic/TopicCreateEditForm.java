@@ -48,6 +48,10 @@ public class TopicCreateEditForm extends BasePage {
     return isEnabled(deleteCustomParameterBtn);
   }
 
+  public boolean isNameFieldEnabled(){
+    return isEnabled(nameField);
+  }
+
   @Step
   public TopicCreateEditForm setTopicName(String topicName) {
     nameField.shouldBe(Condition.enabled).clear();
@@ -131,12 +135,6 @@ public class TopicCreateEditForm extends BasePage {
 //        .click();
 //    return this;
   }
-
-//  @Step
-//  public TopicCreateEditForm clickTimeToRetainBtn(TimeToRetainDataButtons timeToRetainDataButtons){
-//    $x(String.format(btnTimeToRetainLocator, timeToRetainDataButtons.getValue())).shouldBe(Condition.visible).click();
-//    return this;
-//  }
 
   @Step
   public TopicCreateEditForm selectCleanupPolicy(CleanupPolicyValue cleanupPolicyOptionValue) {

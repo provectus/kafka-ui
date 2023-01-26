@@ -8,9 +8,9 @@ import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE
 import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPRESSION_TYPE;
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.NOT_SET;
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_1_GB;
-import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_50_GB;
 import static com.provectus.kafka.ui.pages.topic.enums.TimeToRetainDataButtons.BTN_2_DAYS;
+import static com.provectus.kafka.ui.pages.topic.enums.TimeToRetainDataButtons.BTN_7_DAYS;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +19,6 @@ import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
 import com.provectus.kafka.ui.pages.topic.TopicDetails;
-import com.provectus.kafka.ui.pages.topic.enums.TimeToRetainDataButtons;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
@@ -53,12 +52,11 @@ public class TopicsTests extends BaseTest {
   private static final Topic TOPIC_TO_UPDATE_AND_DELETE = new Topic()
       .setName("topic-to-update-and-delete-" + randomAlphabetic(5))
       .setNumberOfPartitions(1)
-      .setCleanupPolicyValue(COMPACT)
+      .setCleanupPolicyValue(DELETE)
       .setTimeToRetainData("604800001")
-      .setTimeToRetainDataButtons((BTN_2_DAYS))
-      .setTimeToRetainDataButtons(BTN_2_DAYS)
-      .setMaxSizeOnDisk(SIZE_50_GB)
-      .setMaxMessageBytes("1048589")
+      .setTimeToRetainDataButtons(BTN_7_DAYS)
+      .setMaxSizeOnDisk(NOT_SET)
+      .setMaxMessageBytes("1048588")
       .setMessageKey(randomAlphabetic(5))
       .setMessageContent(randomAlphabetic(10));
   private static final Topic TOPIC_TO_CHECK_SETTINGS = new Topic()
@@ -136,22 +134,39 @@ public class TopicsTests extends BaseTest {
     topicDetails
         .openDotMenu()
         .clickEditSettingsMenu();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue().getVisibleText());
+    softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
+        .isEqualTo("604800000");
+    softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()")
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getMaxSizeOnDisk().getVisibleText());
+    softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("getMaxMessageBytes()")
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getMaxMessageBytes());
+    softly.assertAll();
+    TOPIC_TO_UPDATE_AND_DELETE
+        .setCleanupPolicyValue(COMPACT)
+        .setTimeToRetainDataButtons(BTN_2_DAYS)
+        .setMaxSizeOnDisk(SIZE_50_GB).setMaxMessageBytes("1048589");
     topicCreateEditForm
         .waitUntilScreenReady()
         .selectCleanupPolicy((TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue()))
         .setTimeToRetainDataInMsUsingButtons(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetainDataButtons())
         .setMaxSizeOnDiskInGB(TOPIC_TO_UPDATE_AND_DELETE.getMaxSizeOnDisk())
-//        .setTimeToRetainDataInMsUsingButtons("2 days")
-//        .setTimeToRetainDataInMs(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetainData())
         .setMaxMessageBytes(TOPIC_TO_UPDATE_AND_DELETE.getMaxMessageBytes())
         .clickCreateTopicBtn();
+    softly.assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS, "Topic successfully updated."))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicDetails.isTopicHeaderVisible(TOPIC_TO_UPDATE_AND_DELETE.getName()))
+        .as("isTopicHeaderVisible()").isTrue();
+    softly.assertAll();
     topicDetails
         .waitUntilScreenReady();
     navigateToTopicsAndOpenDetails(TOPIC_TO_UPDATE_AND_DELETE.getName());
     topicDetails
         .openDotMenu()
         .clickEditSettingsMenu();
-    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicCreateEditForm.isNameFieldEnabled()).as("isNameFieldEnabled()").isFalse();
     softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
         .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue().getVisibleText());
     softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
