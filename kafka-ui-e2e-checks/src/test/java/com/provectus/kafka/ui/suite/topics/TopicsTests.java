@@ -151,7 +151,7 @@ public class TopicsTests extends BaseTest {
     topicCreateEditForm
         .waitUntilScreenReady()
         .selectCleanupPolicy((TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue()))
-        .setTimeToRetainDataInMsUsingButtons(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetainDataButtons())
+        .setTimeToRetainDataInMsByButtons(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetainDataButtons())
         .setMaxSizeOnDiskInGB(TOPIC_TO_UPDATE_AND_DELETE.getMaxSizeOnDisk())
         .setMaxMessageBytes(TOPIC_TO_UPDATE_AND_DELETE.getMaxMessageBytes())
         .clickCreateTopicBtn();

@@ -124,16 +124,9 @@ public class TopicCreateEditForm extends BasePage {
   }
 
   @Step
-  public TopicCreateEditForm setTimeToRetainDataInMsUsingButtons(TimeToRetainDataButtons timeToRetainDataButtons) {
+  public TopicCreateEditForm setTimeToRetainDataInMsByButtons(TimeToRetainDataButtons timeToRetainDataButtons) {
     $x(String.format(btnTimeToRetainLocator, timeToRetainDataButtons.getValue())).shouldBe(Condition.visible).click();
     return this;
-//    timeToRetainField
-//        .parent()
-//        .parent()
-//        .$$("button")
-//        .find(Condition.exactText(value))
-//        .click();
-//    return this;
   }
 
   @Step
