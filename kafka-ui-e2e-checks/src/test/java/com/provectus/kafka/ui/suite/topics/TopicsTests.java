@@ -134,6 +134,8 @@ public class TopicsTests extends BaseTest {
     topicDetails
         .openDotMenu()
         .clickEditSettingsMenu();
+    topicCreateEditForm
+        .waitUntilScreenReady();
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
         .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue().getVisibleText());
