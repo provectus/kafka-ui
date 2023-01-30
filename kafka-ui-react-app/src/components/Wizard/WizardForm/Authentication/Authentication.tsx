@@ -7,20 +7,19 @@ import { ErrorMessage } from '@hookform/error-message';
 import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
 
-import SaslType from './SaslType/SaslType';
+import AuthenticationMethods from './AuthenticationMethods/AuthenticationMethods';
 
 type PropType = {
-  getValue: (value: string, optionsType: IOption[]) => string | undefined;
   options: IOption[];
   securityProtocolOptions: IOption[];
 };
 const Authentication: React.FC<PropType> = ({
-  getValue,
   options,
   securityProtocolOptions,
 }) => {
   const methods = useFormContext();
-  const securityProtocol = methods.watch('securityProtocol');
+  const securityProtocol = methods.getValues('securityProtocol');
+
   return (
     <S.Section>
       <S.SectionName>Authentication</S.SectionName>
@@ -40,7 +39,7 @@ const Authentication: React.FC<PropType> = ({
                   placeholder="Select"
                   minWidth="270px"
                   onChange={onChange}
-                  value={getValue(value, securityProtocolOptions)}
+                  value={value}
                   options={securityProtocolOptions}
                 />
               );
@@ -55,6 +54,7 @@ const Authentication: React.FC<PropType> = ({
                 <S.CheckboxWrapper>
                   <input
                     {...methods.register('selfSigned')}
+                    id="selfSigned"
                     name="selfSigned"
                     type="checkbox"
                   />
@@ -69,7 +69,9 @@ const Authentication: React.FC<PropType> = ({
               </S.PartStyled>
               <S.PartStyled>
                 <S.FileWrapper>
-                  <label htmlFor="truststoreFile">Truststore File</label>
+                  <label htmlFor="truststoreFile">
+                    Truststore File Location
+                  </label>
                   <input
                     {...methods.register('truststoreFile')}
                     name="truststoreFile"
@@ -83,16 +85,6 @@ const Authentication: React.FC<PropType> = ({
                     />
                   </FormError>
                 </S.FileWrapper>
-              </S.PartStyled>
-              <S.PartStyled>
-                <label htmlFor="location">Location</label>{' '}
-                <Input type="text" name="location" />
-                <FormError>
-                  <ErrorMessage
-                    errors={methods.formState.errors}
-                    name="location"
-                  />
-                </FormError>
               </S.PartStyled>
               <S.PartStyled>
                 <label htmlFor="saslPassword">Password</label>{' '}
@@ -110,64 +102,40 @@ const Authentication: React.FC<PropType> = ({
 
         <S.PartStyled>
           <S.ItemLabelRequired>
-            <label htmlFor="saslType">SASL Type</label>{' '}
+            <label htmlFor="authentication.type">Authentication Method</label>{' '}
           </S.ItemLabelRequired>
           <Controller
             defaultValue={options[0].value}
             control={methods.control}
-            name="saslType"
+            name="authentication.type"
             render={({ field: { name, onChange, value } }) => {
               return (
                 <Select
                   name={name}
                   placeholder="Select"
                   minWidth="270px"
-                  onChange={onChange}
-                  value={getValue(value, options)}
+                  onChange={(authenticationValue) => {
+                    if (authenticationValue === 'mTLS') {
+                      methods.setValue('securityProtocol', 'sasl_ssl');
+                    }
+                    onChange(authenticationValue);
+                  }}
+                  value={value}
                   options={options}
                 />
               );
             }}
           />
           <FormError>
-            <ErrorMessage errors={methods.formState.errors} name="saslType" />
+            <ErrorMessage
+              errors={methods.formState.errors}
+              name="authentication.type"
+            />
           </FormError>
         </S.PartStyled>
         <S.PartStyled>
-          <SaslType />
+          <AuthenticationMethods />
         </S.PartStyled>
-        {/* <S.CheckboxWrapper> */}
-        {/*  <input */}
-        {/*    {...methods.register('securedWithSSL')} */}
-        {/*    name="securedWithSSL" */}
-        {/*    type="checkbox" */}
-        {/*  /> */}
-        {/*  <label htmlFor="securedWithSSL">Secured with SSL</label> */}
-        {/*  <FormError> */}
-        {/*    <ErrorMessage */}
-        {/*      errors={methods.formState.errors} */}
-        {/*      name="securedWithSSL" */}
-        {/*    /> */}
-        {/*  </FormError> */}
-        {/* </S.CheckboxWrapper> */}
-        {/* {isSecuredWithSSL && ( */}
-        {/*  <S.CheckboxWrapper> */}
-        {/*    <input */}
-        {/*      {...methods.register('selfSignedCertificate')} */}
-        {/*      name="selfSignedCertificate" */}
-        {/*      type="checkbox" */}
-        {/*    /> */}
-        {/*    <label htmlFor="selfSignedCertificate"> */}
-        {/*      Self-signed certificate */}
-        {/*    </label> */}
-        {/*    <FormError> */}
-        {/*      <ErrorMessage */}
-        {/*        errors={methods.formState.errors} */}
-        {/*        name="selfSignedCertificate" */}
-        {/*      /> */}
-        {/*    </FormError> */}
-        {/*  </S.CheckboxWrapper> */}
-        {/* )} */}
       </div>
     </S.Section>
   );

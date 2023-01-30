@@ -9,35 +9,35 @@ import SaslAwsIam from './SaslAwsIam';
 import UsernamePassword from './UsernamePassword';
 import MTLS from './MTLS';
 
-const SaslType = () => {
+const AuthenticationMethods = () => {
   const methods = useFormContext();
   const { watch } = methods;
-  const saslValues = watch('saslType');
+  const saslMethods = watch('authentication.type');
 
   const Component = useCallback((): JSX.Element | null => {
-    switch (saslValues) {
-      case 'sasl_jaas':
+    switch (saslMethods) {
+      case 'SASL/JAAS':
         return <SaslJaas />;
-      case 'sasl_gssapi':
+      case 'SASL/GSSAPI':
         return <SaslGssapi />;
-      case 'sasl_oauthbearer':
+      case 'SASL/OAUTHBEARER':
         return <SaslOauthbearer />;
-      case 'sasl_plain':
-      case 'sasl_scram-256':
-      case 'sasl_scram-512':
-      case 'sasl_ldap':
+      case 'SASL/PLAIN':
+      case 'SASL/SCRAM-256':
+      case 'SASL/SCRAM-512':
+      case 'SASL/LDAP':
         return <UsernamePassword />;
-      case 'Delegation_token':
+      case 'Delegation tokens':
         return <DelegationTokens />;
-      case 'sasl_aws_iam':
+      case 'SASL/AWS IAM':
         return <SaslAwsIam />;
-      case 'mtls':
+      case 'mTLS':
         return <MTLS />;
       default:
         return null;
     }
-  }, [saslValues]);
+  }, [saslMethods]);
   return <Component />;
 };
 
-export default SaslType;
+export default AuthenticationMethods;

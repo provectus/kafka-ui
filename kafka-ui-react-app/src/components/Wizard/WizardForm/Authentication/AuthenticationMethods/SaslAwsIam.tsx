@@ -10,11 +10,18 @@ const SaslAwsIam: React.FC = (): JSX.Element => {
   return (
     <S.PartStyled>
       <S.ItemLabel>
-        <label htmlFor="awsProfileName">AWS Profile Name</label>{' '}
+        <label htmlFor="authentication.awsProfileName">AWS Profile Name</label>{' '}
       </S.ItemLabel>
-      <Input type="text" name="awsProfileName" />
+      <Input
+        id="authentication.awsProfileName"
+        type="text"
+        name="authentication.awsProfileName"
+      />
       <FormError>
-        <ErrorMessage errors={methods.formState.errors} name="awsProfileName" />
+        <ErrorMessage
+          errors={methods.formState.errors}
+          name="authentication.awsProfileName"
+        />
       </FormError>
     </S.PartStyled>
   );

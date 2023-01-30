@@ -11,20 +11,34 @@ const UsernamePassword: React.FC = (): JSX.Element => {
     <>
       <S.PartStyled>
         <S.ItemLabelRequired>
-          <label htmlFor="username">Username</label>{' '}
+          <label htmlFor="authentication.username">Username</label>{' '}
         </S.ItemLabelRequired>
-        <Input type="text" name="username" />
+        <Input
+          id="authentication.username"
+          type="text"
+          name="authentication.username"
+        />
         <FormError>
-          <ErrorMessage errors={methods.formState.errors} name="username" />
+          <ErrorMessage
+            errors={methods.formState.errors}
+            name="authentication.username"
+          />
         </FormError>
       </S.PartStyled>
       <S.PartStyled>
         <S.ItemLabelRequired>
-          <label htmlFor="password">Password</label>{' '}
+          <label htmlFor="authentication.password">Password</label>{' '}
         </S.ItemLabelRequired>
-        <Input type="password" name="password" />
+        <Input
+          id="authentication.username"
+          type="authentication.password"
+          name="authentication.password"
+        />
         <FormError>
-          <ErrorMessage errors={methods.formState.errors} name="password" />
+          <ErrorMessage
+            errors={methods.formState.errors}
+            name="authentication.password"
+          />
         </FormError>
       </S.PartStyled>
     </>

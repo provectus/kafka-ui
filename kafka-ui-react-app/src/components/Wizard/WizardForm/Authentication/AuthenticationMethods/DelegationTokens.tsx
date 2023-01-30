@@ -11,20 +11,34 @@ const DelegationTokens: React.FC = (): JSX.Element => {
     <>
       <S.PartStyled>
         <S.ItemLabelRequired>
-          <label htmlFor="token_id">Token Id</label>{' '}
+          <label htmlFor="authentication.tokenId">Token Id</label>{' '}
         </S.ItemLabelRequired>
-        <Input type="text" name="token_id" />
+        <Input
+          id="authentication.tokenId"
+          type="text"
+          name="authentication.tokenId"
+        />
         <FormError>
-          <ErrorMessage errors={methods.formState.errors} name="token_id" />
+          <ErrorMessage
+            errors={methods.formState.errors}
+            name="authentication.tokenId"
+          />
         </FormError>
       </S.PartStyled>
       <S.PartStyled>
         <S.ItemLabelRequired>
-          <label htmlFor="token_value">Token Value</label>{' '}
+          <label htmlFor="authentication.tokenValue">Token Value</label>{' '}
         </S.ItemLabelRequired>
-        <Input type="text" name="token_value" />
+        <Input
+          id="authentication.tokenValue"
+          type="text"
+          name="authentication.tokenValue"
+        />
         <FormError>
-          <ErrorMessage errors={methods.formState.errors} name="token_value" />
+          <ErrorMessage
+            errors={methods.formState.errors}
+            name="authentication.tokenValue"
+          />
         </FormError>
       </S.PartStyled>
     </>

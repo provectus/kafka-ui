@@ -78,6 +78,7 @@ export const CheckboxWrapper = styled.div`
   display: flex;
   & label {
     margin-left: 0.7rem;
+    cursor: pointer;
   }
 `;
 export const FileWrapper = styled.div`

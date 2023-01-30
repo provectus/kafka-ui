@@ -28,43 +28,43 @@ const options = [
     label: 'None',
   },
   {
-    value: 'sasl_jaas',
-    label: 'SASL_JAAS',
+    value: 'SASL/JAAS',
+    label: 'SASL/JAAS',
   },
   {
-    value: 'sasl_gssapi',
-    label: 'SASL_GSSAPI',
+    value: 'SASL/GSSAPI',
+    label: 'SASL/GSSAPI',
   },
   {
-    value: 'sasl_oauthbearer',
-    label: 'SASL_OAUTHBEARER',
+    value: 'SASL/OAUTHBEARER',
+    label: 'SASL/OAUTHBEARER',
   },
   {
-    value: 'sasl_plain',
-    label: 'SASL_PLAIN',
+    value: 'SASL/PLAIN',
+    label: 'SASL/PLAIN',
   },
   {
-    value: 'sasl_scram-256',
-    label: 'SASL_SCRAM-256',
+    value: 'SASL/SCRAM-256',
+    label: 'SASL/SCRAM-256',
   },
   {
-    value: 'sasl_scram-512',
-    label: 'SASL_SCRAM-512',
+    value: 'SASL/SCRAM-512',
+    label: 'SASL/SCRAM-512',
   },
   {
-    value: 'Delegation_token',
-    label: 'Delegation_token',
+    value: 'Delegation tokens',
+    label: 'Delegation tokens',
   },
   {
-    value: 'sasl_ldap',
-    label: 'SASL_LDAP',
+    value: 'SASL/LDAP',
+    label: 'SASL/LDAP',
   },
   {
-    value: 'sasl_aws_iam',
-    label: 'SASL_AWS_IAM',
+    value: 'SASL/AWS IAM',
+    label: 'SASL/AWS IAM',
   },
   {
-    value: 'mtls',
+    value: 'mTLS',
     label: 'mTLS',
   },
 ];
@@ -81,6 +81,7 @@ export type FormValues = {
   readOnly: boolean;
   bootstrapServers: BootstrapServersType[];
   saslType: string;
+  securityProtocol: string;
 };
 const Wizard: React.FC = () => {
   const methods = useForm<FormValues>({
@@ -101,7 +102,6 @@ const Wizard: React.FC = () => {
     control,
     name: 'bootstrapServers',
   });
-
   const handleAddNewProperty = useCallback(() => {
     if (
       methods.getValues().bootstrapServers.every((prop) => {
@@ -111,12 +111,6 @@ const Wizard: React.FC = () => {
       append({ host: '', port: '' });
     }
   }, []);
-  const getValue = (value: string, optionsType: IOption[]) => {
-    const val = value
-      ? optionsType.find((option) => option.value === value)
-      : '';
-    return val?.toString();
-  };
   const onSubmit = (data: unknown) => {
     // console.log('SubmitData', data);
     return data;
@@ -143,7 +137,6 @@ const Wizard: React.FC = () => {
             remove={remove}
           />
           <Authentication
-            getValue={getValue}
             options={options}
             securityProtocolOptions={securityProtocolOptions}
           />

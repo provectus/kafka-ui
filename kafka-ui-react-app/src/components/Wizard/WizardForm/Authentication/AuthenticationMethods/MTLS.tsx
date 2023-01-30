@@ -13,19 +13,19 @@ const MTLS: React.FC = (): JSX.Element => {
       {selfSigned && (
         <S.PartStyled>
           <S.FileWrapper>
-            <label htmlFor="sslTruststoreLocation">
+            <label htmlFor="authentication.sslTruststoreLocation">
               ssl.truststore.location
             </label>
             <input
-              {...methods.register('sslTruststoreLocation')}
-              name="sslTruststoreLocation"
+              {...methods.register('authentication.sslTruststoreLocation')}
+              name="authentication.sslTruststoreLocation"
               type="file"
             />
 
             <FormError>
               <ErrorMessage
                 errors={methods.formState.errors}
-                name="sslTruststoreLocation"
+                name="authentication.sslTruststoreLocation"
               />
             </FormError>
           </S.FileWrapper>
@@ -33,54 +33,74 @@ const MTLS: React.FC = (): JSX.Element => {
       )}
       <S.PartStyled>
         <S.ItemLabelRequired>
-          <label htmlFor="sslTruststorePassword">ssl.truststore.password</label>{' '}
+          <label htmlFor="authentication.sslTruststorePassword">
+            ssl.truststore.password
+          </label>{' '}
         </S.ItemLabelRequired>
-        <Input type="password" name="sslTruststorePassword" />
+        <Input
+          id="authentication.sslTruststorePassword"
+          type="password"
+          name="authentication.sslTruststorePassword"
+        />
         <FormError>
           <ErrorMessage
             errors={methods.formState.errors}
-            name="sslTruststorePassword"
+            name="authentication.sslTruststorePassword"
           />
         </FormError>
       </S.PartStyled>
       <S.PartStyled>
         <S.FileWrapper>
-          <label htmlFor="sslKeystoreLocation">ssl.keystore.location</label>
+          <label htmlFor="authentication.sslKeystoreLocation">
+            ssl.keystore.location
+          </label>
           <input
-            {...methods.register('sslKeystoreLocation')}
-            name="sslKeystoreLocation"
+            {...methods.register('authentication.sslKeystoreLocation')}
+            name="authentication.sslKeystoreLocation"
             type="file"
           />
 
           <FormError>
             <ErrorMessage
               errors={methods.formState.errors}
-              name="sslKeystoreLocation"
+              name="authentication.sslKeystoreLocation"
             />
           </FormError>
         </S.FileWrapper>
       </S.PartStyled>
       <S.PartStyled>
         <S.ItemLabelRequired>
-          <label htmlFor="sslKeystorePassword">ssl.keystore.password</label>{' '}
+          <label htmlFor="authentication.sslKeystorePassword">
+            ssl.keystore.password
+          </label>{' '}
         </S.ItemLabelRequired>
-        <Input type="password" name="sslKeystorePassword" />
+        <Input
+          id="authentication.sslKeystorePassword"
+          type="password"
+          name="authentication.sslKeystorePassword"
+        />
         <FormError>
           <ErrorMessage
             errors={methods.formState.errors}
-            name="sslKeystorePassword"
+            name="authentication.sslKeystorePassword"
           />
         </FormError>
       </S.PartStyled>
       <S.PartStyled>
         <S.ItemLabelRequired>
-          <label htmlFor="sslKeyPassword">ssl.key.password</label>{' '}
+          <label htmlFor="authentication.sslKeyPassword">
+            ssl.key.password
+          </label>{' '}
         </S.ItemLabelRequired>
-        <Input type="password" name="sslKeyPassword" />
+        <Input
+          id="authentication.sslKeyPassword"
+          type="password"
+          name="authentication.sslKeyPassword"
+        />
         <FormError>
           <ErrorMessage
             errors={methods.formState.errors}
-            name="sslKeyPassword"
+            name="authentication.sslKeyPassword"
           />
         </FormError>
       </S.PartStyled>

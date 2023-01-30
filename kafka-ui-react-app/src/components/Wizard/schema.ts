@@ -35,16 +35,12 @@ const formSchema = object({
         'mTLS',
       ]),
     // SASL/JAAS
-    'sasl.jaas.config': string().when('type', {
-      is: 'SASL/JAAS',
-      then: (schema) => schema.required(),
-    }),
-    'sasl.enabled.mechanisms': string().when('type', {
+    saslJaasConfig: string().when('type', {
       is: 'SASL/JAAS',
       then: (schema) => schema.required(),
     }),
     // SASL/GSSAPI
-    'sasl.kerberos.service.name': string().when('type', {
+    saslKerberosServiceName: string().when('type', {
       is: 'SASL/GSSAPI',
       then: (schema) => schema.required(),
     }),
@@ -98,24 +94,24 @@ const formSchema = object({
       is: 'mTLS',
       then: (schema) => schema.required(),
     }),
-    'ssl.truststore.location': mixed().when(['type', 'selfSignedCertificate'], {
+    sslTruststoreLocation: mixed().when(['type', 'selfSignedCertificate'], {
       is: (type: string, selfSignedCertificate: boolean) =>
         type === 'mTLS' && selfSignedCertificate,
       then: (schema) => schema.required(),
     }),
-    'ssl.truststore.password': string().when('type', {
+    sslTruststorePassword: string().when('type', {
       is: 'mTLS',
       then: (schema) => schema.required(),
     }),
-    'ssl.keystore.location': mixed().when('type', {
+    sslKeystoreLocation: mixed().when('type', {
       is: 'mTLS',
       then: (schema) => schema.required(),
     }),
-    'ssl.keystore.password': string().when('type', {
+    sslKeystorePassword: string().when('type', {
       is: 'mTLS',
       then: (schema) => schema.required(),
     }),
-    'ssl.key.password': string().when('type', {
+    sslKeyPassword: string().when('type', {
       is: 'mTLS',
       then: (schema) => schema.required(),
     }),

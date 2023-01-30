@@ -10,15 +10,19 @@ const SaslOauthbearer: React.FC = (): JSX.Element => {
   return (
     <S.PartStyled>
       <S.ItemLabelRequired>
-        <label htmlFor="unsecuredLoginStringClaim_sub">
+        <label htmlFor="authentication.unsecuredLoginStringClaim_sub">
           Unsecured Login String Claim_sub
         </label>{' '}
       </S.ItemLabelRequired>
-      <Input type="text" name="unsecuredLoginStringClaim_sub" />
+      <Input
+        id="authentication.unsecuredLoginStringClaim_sub"
+        type="text"
+        name="authentication.unsecuredLoginStringClaim_sub"
+      />
       <FormError>
         <ErrorMessage
           errors={methods.formState.errors}
-          name="unsecuredLoginStringClaim_sub"
+          name="authentication.unsecuredLoginStringClaim_sub"
         />
       </FormError>
     </S.PartStyled>
