@@ -9,8 +9,8 @@ import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPR
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.NOT_SET;
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_1_GB;
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_50_GB;
-import static com.provectus.kafka.ui.pages.topic.enums.TimeToRetainDataButtons.BTN_2_DAYS;
-import static com.provectus.kafka.ui.pages.topic.enums.TimeToRetainDataButtons.BTN_7_DAYS;
+import static com.provectus.kafka.ui.pages.topic.enums.TimeToRetain.BTN_2_DAYS;
+import static com.provectus.kafka.ui.pages.topic.enums.TimeToRetain.BTN_7_DAYS;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,8 +53,7 @@ public class TopicsTests extends BaseTest {
       .setName("topic-to-update-and-delete-" + randomAlphabetic(5))
       .setNumberOfPartitions(1)
       .setCleanupPolicyValue(DELETE)
-      .setTimeToRetainData("604800001")
-      .setTimeToRetainDataButtons(BTN_7_DAYS)
+      .setTimeToRetain(BTN_7_DAYS)
       .setMaxSizeOnDisk(NOT_SET)
       .setMaxMessageBytes("1048588")
       .setMessageKey(randomAlphabetic(5))
@@ -140,7 +139,7 @@ public class TopicsTests extends BaseTest {
     softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
         .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue().getVisibleText());
     softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
-        .isEqualTo("604800000");
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetain().getValue());
     softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()")
         .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getMaxSizeOnDisk().getVisibleText());
     softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("getMaxMessageBytes()")
@@ -148,12 +147,11 @@ public class TopicsTests extends BaseTest {
     softly.assertAll();
     TOPIC_TO_UPDATE_AND_DELETE
         .setCleanupPolicyValue(COMPACT)
-        .setTimeToRetainDataButtons(BTN_2_DAYS)
+        .setTimeToRetain(BTN_2_DAYS)
         .setMaxSizeOnDisk(SIZE_50_GB).setMaxMessageBytes("1048589");
     topicCreateEditForm
-        .waitUntilScreenReady()
         .selectCleanupPolicy((TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue()))
-        .setTimeToRetainDataInMsByButtons(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetainDataButtons())
+        .setTimeToRetainDataByButtons(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetain())
         .setMaxSizeOnDiskInGB(TOPIC_TO_UPDATE_AND_DELETE.getMaxSizeOnDisk())
         .setMaxMessageBytes(TOPIC_TO_UPDATE_AND_DELETE.getMaxMessageBytes())
         .clickCreateTopicBtn();
@@ -172,7 +170,7 @@ public class TopicsTests extends BaseTest {
     softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
         .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue().getVisibleText());
     softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
-        .isEqualTo("172800000");
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetain().getValue());
     softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()")
         .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getMaxSizeOnDisk().getVisibleText());
     softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("getMaxMessageBytes()")
