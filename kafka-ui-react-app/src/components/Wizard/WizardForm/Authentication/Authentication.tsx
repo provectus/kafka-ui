@@ -18,7 +18,7 @@ const Authentication: React.FC<PropType> = ({
   securityProtocolOptions,
 }) => {
   const methods = useFormContext();
-  const securityProtocol = methods.getValues('securityProtocol');
+  const securityProtocol = methods.watch('securityProtocol');
 
   return (
     <S.Section>
