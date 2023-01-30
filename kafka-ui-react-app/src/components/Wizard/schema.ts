@@ -65,14 +65,13 @@ const formSchema = object({
       is: 'SASL/OAUTHBEARER',
       then: (schema) => schema.required(),
     }),
-    // SASL/PLAIN, SASL/SCRAM-256, SASL/SCRAM-512, Delegation tokens, SASL/LDAP
+    // SASL/PLAIN, SASL/SCRAM-256, SASL/SCRAM-512, SASL/LDAP
     username: string().when('type', {
       is: (value: string) => {
         return [
           'SASL/PLAIN',
           'SASL/SCRAM-256',
           'SASL/SCRAM-512',
-          'Delegation tokens',
           'SASL/LDAP',
         ].includes(value);
       },
@@ -84,10 +83,18 @@ const formSchema = object({
           'SASL/PLAIN',
           'SASL/SCRAM-256',
           'SASL/SCRAM-512',
-          'Delegation tokens',
           'SASL/LDAP',
         ].includes(value);
       },
+      then: (schema) => schema.required(),
+    }),
+    // Delegation tokens,
+    tokenId: string().when('type', {
+      is: 'Delegation tokens',
+      then: (schema) => schema.required(),
+    }),
+    tokenValue: string().when('type', {
+      is: 'Delegation tokens',
       then: (schema) => schema.required(),
     }),
     // SASL/AWS IAM
