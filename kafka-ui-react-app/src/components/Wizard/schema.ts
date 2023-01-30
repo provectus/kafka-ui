@@ -67,21 +67,27 @@ const formSchema = object({
     }),
     // SASL/PLAIN, SASL/SCRAM-256, SASL/SCRAM-512, Delegation tokens, SASL/LDAP
     username: string().when('type', {
-      is:
-        'SASL/PLAIN' ||
-        'SASL/SCRAM-256' ||
-        'SASL/SCRAM-512' ||
-        'Delegation tokens' ||
-        'SASL/LDAP',
+      is: (value: string) => {
+        return [
+          'SASL/PLAIN',
+          'SASL/SCRAM-256',
+          'SASL/SCRAM-512',
+          'Delegation tokens',
+          'SASL/LDAP',
+        ].includes(value);
+      },
       then: (schema) => schema.required(),
     }),
     password: string().when('type', {
-      is:
-        'SASL/PLAIN' ||
-        'SASL/SCRAM-256' ||
-        'SASL/SCRAM-512' ||
-        'Delegation tokens' ||
-        'SASL/LDAP',
+      is: (value: string) => {
+        return [
+          'SASL/PLAIN',
+          'SASL/SCRAM-256',
+          'SASL/SCRAM-512',
+          'Delegation tokens',
+          'SASL/LDAP',
+        ].includes(value);
+      },
       then: (schema) => schema.required(),
     }),
     // SASL/AWS IAM
