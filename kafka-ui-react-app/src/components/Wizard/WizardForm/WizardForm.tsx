@@ -77,39 +77,31 @@ type BootstrapServersType = {
   port: string;
 };
 export type FormValues = {
-  clusterName: string;
-  readOnly: boolean;
-  bootstrapServers: BootstrapServersType[];
-  saslType: string;
-  securityProtocol: string;
+  kafkaCluster: {
+    bootstrapServers: BootstrapServersType[];
+  };
 };
 const Wizard: React.FC = () => {
   const methods = useForm<FormValues>({
     mode: 'all',
     resolver: yupResolver(formSchema),
     defaultValues: {
-      clusterName: '',
-      readOnly: false,
-      bootstrapServers: [{ host: '', port: '' }],
+      kafkaCluster: {
+        bootstrapServers: [{ host: '', port: '' }],
+      },
     },
   });
 
   const { control } = methods;
   const { fields, append, remove } = useFieldArray<
     FormValues,
-    'bootstrapServers'
+    'kafkaCluster.bootstrapServers'
   >({
     control,
-    name: 'bootstrapServers',
+    name: 'kafkaCluster.bootstrapServers',
   });
   const handleAddNewProperty = useCallback(() => {
-    // if (
-    //   methods.getValues().bootstrapServers.every((prop) => {
-    //     return prop.host && prop.port;
-    //   })
-    // ) {
     append({ host: '', port: '' });
-    // }
   }, []);
   const onSubmit = (data: unknown) => {
     // console.log('SubmitData', data);
