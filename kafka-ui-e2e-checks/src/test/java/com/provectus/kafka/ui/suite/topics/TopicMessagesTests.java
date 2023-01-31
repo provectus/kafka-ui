@@ -40,8 +40,8 @@ public class TopicMessagesTests extends BaseTest {
       .setName("topic-with-clean-message-attribute-" + randomAlphabetic(5))
       .setMessageKey(randomAlphabetic(5))
       .setMessageContent(randomAlphabetic(10));
-  private static final Topic TOPIC_TO_CLEAR_MESSAGES = new Topic()
-      .setName("topic-to-clear-message-attribute-" + randomAlphabetic(5))
+  private static final Topic TOPIC_TO_CLEAR_AND_PURGE_MESSAGES = new Topic()
+      .setName("topic-to-clear-and-purge-messages-attribute-" + randomAlphabetic(5))
       .setMessageKey(randomAlphabetic(5))
       .setMessageContent(randomAlphabetic(10));
   private static final Topic TOPIC_FOR_CHECKING_FILTERS = new Topic()
@@ -56,7 +56,8 @@ public class TopicMessagesTests extends BaseTest {
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS, TOPIC_TO_CLEAR_MESSAGES, TOPIC_TO_RECREATE));
+    TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS, TOPIC_TO_CLEAR_AND_PURGE_MESSAGES,
+        TOPIC_TO_RECREATE));
     TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
     IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
     waitUntilNewMinuteStarted();
@@ -111,22 +112,57 @@ public class TopicMessagesTests extends BaseTest {
   @Order(3)
   @Test
   void checkClearTopicMessage() {
-    navigateToTopicsAndOpenDetails(TOPIC_TO_CLEAR_MESSAGES.getName());
+    navigateToTopicsAndOpenDetails(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName());
     topicDetails
         .openDetailsTab(OVERVIEW);
-    produceMessage(TOPIC_TO_CLEAR_MESSAGES);
+    produceMessage(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES);
     navigateToTopics();
-    assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
+    assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName()).getNumberOfMessages())
         .as("getNumberOfMessages()").isEqualTo(1);
     topicsList
-        .openDotMenuByTopicName(TOPIC_TO_CLEAR_MESSAGES.getName())
+        .openDotMenuByTopicName(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName())
         .clickClearMessagesBtn()
         .clickConfirmBtnMdl();
     SoftAssertions softly = new SoftAssertions();
     softly.assertThat(topicsList.isAlertWithMessageVisible(SUCCESS,
-            String.format("%s messages have been successfully cleared!", TOPIC_TO_CLEAR_MESSAGES.getName())))
+            String.format("%s messages have been successfully cleared!", TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName())))
         .as("isAlertWithMessageVisible()").isTrue();
-    softly.assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_MESSAGES.getName()).getNumberOfMessages())
+    softly.assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(0);
+    softly.assertAll();
+  }
+
+  @DisplayName("TopicTests.purgeMessagesOfTopics : Purge messages of topics")
+  @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+  @AutomationStatus(status = Status.AUTOMATED)
+  @CaseId(10)
+  @Order(4)
+  @Test
+  void checkPurgeMessagePossibility(){
+    navigateToTopics();
+    int messageAmount = topicsList.getTopicItem(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName()).getNumberOfMessages();
+    topicsList
+        .openTopic(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName());
+    topicDetails
+        .openDetailsTab(OVERVIEW);
+    produceMessage(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES);
+    navigateToTopics();
+    assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName()).getNumberOfMessages())
+        .as("getNumberOfMessages()").isEqualTo(messageAmount +1);
+    topicsList
+        .getTopicItem(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName())
+        .selectItem(true)
+        .clickPurgeMessagesOfSelectedTopicsBtn();
+    assertThat(topicsList.isConfirmationMdlVisible()).as("isConfirmationMdlVisible()").isTrue();
+    topicsList
+        .clickCancelBtnMdl()
+        .clickPurgeMessagesOfSelectedTopicsBtn()
+        .clickConfirmBtnMdl();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicsList.isAlertWithMessageVisible(SUCCESS,
+            String.format("%s messages have been successfully cleared!",TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName())))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicsList.getTopicItem(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName()).getNumberOfMessages())
         .as("getNumberOfMessages()").isEqualTo(0);
     softly.assertAll();
   }
@@ -137,7 +173,7 @@ public class TopicMessagesTests extends BaseTest {
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(21)
-  @Order(4)
+  @Order(5)
   @Test
   void copyMessageFromTopicProfile() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
@@ -156,7 +192,7 @@ public class TopicMessagesTests extends BaseTest {
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(15)
-  @Order(5)
+  @Order(6)
   @Test
   void checkingMessageFilteringByOffset() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
@@ -183,7 +219,7 @@ public class TopicMessagesTests extends BaseTest {
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(16)
-  @Order(6)
+  @Order(7)
   @Test
   void checkingMessageFilteringByTimestamp() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
@@ -215,7 +251,7 @@ public class TopicMessagesTests extends BaseTest {
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(246)
-  @Order(7)
+  @Order(8)
   @Test
   void checkClearTopicMessageFromOverviewTab() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
@@ -237,7 +273,7 @@ public class TopicMessagesTests extends BaseTest {
   @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(240)
-  @Order(8)
+  @Order(9)
   @Test
   void checkRecreateTopic(){
     navigateToTopicsAndOpenDetails(TOPIC_TO_RECREATE.getName());

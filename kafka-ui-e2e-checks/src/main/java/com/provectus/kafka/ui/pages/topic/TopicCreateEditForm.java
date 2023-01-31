@@ -13,6 +13,7 @@ import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue;
 import com.provectus.kafka.ui.pages.topic.enums.CustomParameterType;
 import com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk;
+import com.provectus.kafka.ui.pages.topic.enums.TimeToRetain;
 import io.qameta.allure.Step;
 
 public class TopicCreateEditForm extends BasePage {
@@ -30,6 +31,8 @@ public class TopicCreateEditForm extends BasePage {
   protected SelenideElement customParameterValueField = $x("//input[@placeholder='Value']");
   protected SelenideElement validationCustomParameterValueMsg = $x("//p[contains(text(),'Value is required')]");
   protected String ddlElementLocator = "//li[@value='%s']";
+  protected String btnTimeToRetainLocator = "//button[@class][text()='%s']";
+
 
   @Step
   public TopicCreateEditForm waitUntilScreenReady() {
@@ -44,6 +47,10 @@ public class TopicCreateEditForm extends BasePage {
 
   public boolean isDeleteCustomParameterButtonEnabled() {
     return isEnabled(deleteCustomParameterBtn);
+  }
+
+  public boolean isNameFieldEnabled(){
+    return isEnabled(nameField);
   }
 
   @Step
@@ -118,13 +125,8 @@ public class TopicCreateEditForm extends BasePage {
   }
 
   @Step
-  public TopicCreateEditForm setTimeToRetainDataInMsUsingButtons(String value) {
-    timeToRetainField
-        .parent()
-        .parent()
-        .$$("button")
-        .find(Condition.exactText(value))
-        .click();
+  public TopicCreateEditForm setTimeToRetainDataByButtons(TimeToRetain timeToRetain) {
+    $x(String.format(btnTimeToRetainLocator, timeToRetain.getButton())).shouldBe(Condition.enabled).click();
     return this;
   }
 
