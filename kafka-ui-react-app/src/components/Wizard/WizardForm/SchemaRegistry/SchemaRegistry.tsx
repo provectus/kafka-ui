@@ -9,7 +9,8 @@ import { useFormContext } from 'react-hook-form';
 const SchemaRegistry = () => {
   const [newSchemaRegistry, setNewSchemaRegistry] = useState(false);
   const methods = useFormContext();
-  const registry = () => {
+  const registry: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
     setNewSchemaRegistry(!newSchemaRegistry);
     if (!newSchemaRegistry) {
       methods.reset({ url: '' });
@@ -20,7 +21,11 @@ const SchemaRegistry = () => {
     <S.Section>
       <S.SectionName>Schema Registry</S.SectionName>
       <div>
-        <Button buttonSize="M" buttonType="primary" onClick={registry}>
+        <Button
+          buttonSize="M"
+          buttonType="primary"
+          onClick={(e) => registry(e)}
+        >
           {!newSchemaRegistry ? 'Add Schema Registry' : 'Remove from config'}
         </Button>
         {newSchemaRegistry && (
