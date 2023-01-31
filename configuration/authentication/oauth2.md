@@ -57,6 +57,10 @@ auth:
 
 ### Github:
 
+Example of callback URL for github OAuth app settings:
+
+`https://www.kafka-ui.provectus.io/login/oauth2/code/github`
+
 ```
 kafka:
   clusters:
