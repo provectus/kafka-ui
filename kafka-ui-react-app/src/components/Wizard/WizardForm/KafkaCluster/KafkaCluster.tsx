@@ -25,19 +25,18 @@ const KafkaCluster: React.FC<PropType> = ({
   fields,
 }) => {
   const methods = useFormContext();
-  methods.watch(['readOnly', 'sharedConfluentCloudCluster']);
   return (
     <S.Section>
       <S.SectionName>Kafka Cluster</S.SectionName>
       <S.Action>
         <S.ActionItem>
-          <div>
+          <S.ItemLabelRequired>
             <label htmlFor="clusterName">Cluster Name</label>{' '}
             <S.P>
               this name will help you recognize the cluster in the application
               interface
             </S.P>
-          </div>
+          </S.ItemLabelRequired>
           <Input id="clusterName" type="text" name="clusterName" />
           <FormError>
             <ErrorMessage
@@ -69,7 +68,7 @@ const KafkaCluster: React.FC<PropType> = ({
           </S.ReadOnly>
         </S.ActionItem>
         <S.ActionItem>
-          <div>
+          <S.ItemLabelRequired>
             <label
               className="block text-sm font-medium text-gray-700 whitespace-nowrap mr-2 svelte-55p6jf required"
               htmlFor="bootstrapServers"
@@ -77,7 +76,7 @@ const KafkaCluster: React.FC<PropType> = ({
               Bootstrap Servers
             </label>{' '}
             <S.P>the list of Kafka brokers that you want to connect to</S.P>
-          </div>
+          </S.ItemLabelRequired>
           <S.BootstrapServersContainer>
             {fields.map((item, index) => (
               <S.InputsContainer key={item.id}>
@@ -141,7 +140,7 @@ const KafkaCluster: React.FC<PropType> = ({
           </S.BootstrapServersContainer>
         </S.ActionItem>
         <S.ActionItem>
-          <div>
+          <S.CheckboxWrapper>
             <input
               {...methods.register('sharedConfluentCloudCluster')}
               name="sharedConfluentCloudCluster"
@@ -156,7 +155,7 @@ const KafkaCluster: React.FC<PropType> = ({
                 name="sharedConfluentCloudCluster"
               />
             </FormError>
-          </div>
+          </S.CheckboxWrapper>
         </S.ActionItem>
       </S.Action>
     </S.Section>

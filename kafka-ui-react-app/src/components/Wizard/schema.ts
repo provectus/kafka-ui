@@ -3,21 +3,21 @@ import { object, string, number, array, boolean, mixed } from 'yup';
 // type AuthenticationType = 'None' | 'SASL_SSL' | 'SASL_PLAINTEXT';
 
 const formSchema = object({
-  kafkaCluster: object({
-    clusterName: string()
-      .required()
-      .min(3, 'Cluster name must be at least 3 characters'),
-    readOnly: boolean().required(),
-    bootstrapServers: array()
-      .of(
-        object({
-          host: string().required('host is a required field'),
-          port: number().positive().required(),
-        })
-      )
-      .min(1),
-    sharedConfluentCloudCluster: boolean().required(),
-  }).required(),
+  // kafkaCluster: object({
+  clusterName: string()
+    .required()
+    .min(3, 'Cluster name must be at least 3 characters'),
+  readOnly: boolean().required(),
+  bootstrapServers: array()
+    .of(
+      object({
+        host: string().required('host is a required field'),
+        port: number().positive().required(),
+      })
+    )
+    .min(1),
+  sharedConfluentCloudCluster: boolean().required(),
+  // }).required(),
   authentication: object({
     type: string()
       .required()
@@ -35,16 +35,12 @@ const formSchema = object({
         'mTLS',
       ]),
     // SASL/JAAS
-    'sasl.jaas.config': string().when('type', {
-      is: 'SASL/JAAS',
-      then: (schema) => schema.required(),
-    }),
-    'sasl.enabled.mechanisms': string().when('type', {
+    saslJaasConfig: string().when('type', {
       is: 'SASL/JAAS',
       then: (schema) => schema.required(),
     }),
     // SASL/GSSAPI
-    'sasl.kerberos.service.name': string().when('type', {
+    saslKerberosServiceName: string().when('type', {
       is: 'SASL/GSSAPI',
       then: (schema) => schema.required(),
     }),
@@ -69,53 +65,66 @@ const formSchema = object({
       is: 'SASL/OAUTHBEARER',
       then: (schema) => schema.required(),
     }),
-    // SASL/PLAIN, SASL/SCRAM-256, SASL/SCRAM-512, Delegation tokens, SASL/LDAP
+    // SASL/PLAIN, SASL/SCRAM-256, SASL/SCRAM-512, SASL/LDAP
     username: string().when('type', {
-      is:
-        'SASL/PLAIN' ||
-        'SASL/SCRAM-256' ||
-        'SASL/SCRAM-512' ||
-        'Delegation tokens' ||
-        'SASL/LDAP',
+      is: (value: string) => {
+        return [
+          'SASL/PLAIN',
+          'SASL/SCRAM-256',
+          'SASL/SCRAM-512',
+          'SASL/LDAP',
+        ].includes(value);
+      },
       then: (schema) => schema.required(),
     }),
     password: string().when('type', {
-      is:
-        'SASL/PLAIN' ||
-        'SASL/SCRAM-256' ||
-        'SASL/SCRAM-512' ||
-        'Delegation tokens' ||
-        'SASL/LDAP',
+      is: (value: string) => {
+        return [
+          'SASL/PLAIN',
+          'SASL/SCRAM-256',
+          'SASL/SCRAM-512',
+          'SASL/LDAP',
+        ].includes(value);
+      },
+      then: (schema) => schema.required(),
+    }),
+    // Delegation tokens,
+    tokenId: string().when('type', {
+      is: 'Delegation tokens',
+      then: (schema) => schema.required(),
+    }),
+    tokenValue: string().when('type', {
+      is: 'Delegation tokens',
       then: (schema) => schema.required(),
     }),
     // SASL/AWS IAM
     awsProfileName: string().when('type', {
       is: 'SASL/AWS IAM',
-      then: (schema) => schema.required(),
+      then: (schema) => schema.optional(),
     }),
     // mTLS
     selfSignedCertificate: boolean().when('type', {
       is: 'mTLS',
       then: (schema) => schema.required(),
     }),
-    'ssl.truststore.location': mixed().when(['type', 'selfSignedCertificate'], {
+    sslTruststoreLocation: mixed().when(['type', 'selfSignedCertificate'], {
       is: (type: string, selfSignedCertificate: boolean) =>
         type === 'mTLS' && selfSignedCertificate,
       then: (schema) => schema.required(),
     }),
-    'ssl.truststore.password': string().when('type', {
+    sslTruststorePassword: string().when('type', {
       is: 'mTLS',
       then: (schema) => schema.required(),
     }),
-    'ssl.keystore.location': mixed().when('type', {
+    sslKeystoreLocation: mixed().when('type', {
       is: 'mTLS',
       then: (schema) => schema.required(),
     }),
-    'ssl.keystore.password': string().when('type', {
+    sslKeystorePassword: string().when('type', {
       is: 'mTLS',
       then: (schema) => schema.required(),
     }),
-    'ssl.key.password': string().when('type', {
+    sslKeyPassword: string().when('type', {
       is: 'mTLS',
       then: (schema) => schema.required(),
     }),
