@@ -100,7 +100,7 @@ const formSchema = object({
     // SASL/AWS IAM
     awsProfileName: string().when('type', {
       is: 'SASL/AWS IAM',
-      then: (schema) => schema.required(),
+      then: (schema) => schema.optional(),
     }),
     // mTLS
     selfSignedCertificate: boolean().when('type', {

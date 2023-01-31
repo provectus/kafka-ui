@@ -7,7 +7,7 @@ import { FormError } from 'components/common/Input/Input.styled';
 
 const SaslGssapi: React.FC = (): JSX.Element => {
   const methods = useFormContext();
-  const useKeyTab = methods.watch('useKeyTab');
+  const useKeyTab = methods.watch('authentication.useKeyTab');
   return (
     <>
       <S.PartStyled>

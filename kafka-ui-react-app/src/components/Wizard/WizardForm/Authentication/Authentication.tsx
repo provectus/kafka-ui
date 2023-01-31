@@ -25,9 +25,9 @@ const Authentication: React.FC<PropType> = ({
       <S.SectionName>Authentication</S.SectionName>
       <div>
         <S.PartStyled>
-          <S.ItemLabelRequired>
+          <S.ItemLabel>
             <label htmlFor="securityProtocol">Security Protocol</label>{' '}
-          </S.ItemLabelRequired>
+          </S.ItemLabel>
           <Controller
             defaultValue={securityProtocolOptions[0].value}
             control={methods.control}
@@ -50,23 +50,6 @@ const Authentication: React.FC<PropType> = ({
           </FormError>
           {securityProtocol === 'sasl_ssl' && (
             <>
-              <S.PartStyled>
-                <S.CheckboxWrapper>
-                  <input
-                    {...methods.register('selfSigned')}
-                    id="selfSigned"
-                    name="selfSigned"
-                    type="checkbox"
-                  />
-                  <label htmlFor="selfSigned">Self Signed</label>
-                  <FormError>
-                    <ErrorMessage
-                      errors={methods.formState.errors}
-                      name="selfSigned"
-                    />
-                  </FormError>
-                </S.CheckboxWrapper>
-              </S.PartStyled>
               <S.PartStyled>
                 <S.FileWrapper>
                   <label htmlFor="truststoreFile">

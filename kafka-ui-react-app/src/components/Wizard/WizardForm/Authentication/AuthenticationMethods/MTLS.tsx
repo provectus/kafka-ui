@@ -7,10 +7,27 @@ import { FormError } from 'components/common/Input/Input.styled';
 
 const MTLS: React.FC = (): JSX.Element => {
   const methods = useFormContext();
-  const selfSigned = methods.watch('selfSigned');
+  const selfSignedCertificate = methods.watch('selfSignedCertificate');
   return (
     <>
-      {selfSigned && (
+      <S.PartStyled>
+        <S.CheckboxWrapper>
+          <input
+            {...methods.register('selfSignedCertificate')}
+            id="selfSignedCertificate"
+            name="selfSignedCertificate"
+            type="checkbox"
+          />
+          <label htmlFor="selfSignedCertificate">Self Signed Certificate</label>
+          <FormError>
+            <ErrorMessage
+              errors={methods.formState.errors}
+              name="selfSignedCertificate"
+            />
+          </FormError>
+        </S.CheckboxWrapper>
+      </S.PartStyled>
+      {selfSignedCertificate && (
         <S.PartStyled>
           <S.FileWrapper>
             <label htmlFor="authentication.sslTruststoreLocation">
