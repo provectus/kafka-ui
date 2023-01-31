@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.integrations.odd;
+package com.provectus.kafka.ui.service.integration.odd;
 
 import com.provectus.kafka.ui.model.ConnectorTypeDTO;
 import java.util.ArrayList;
@@ -48,13 +48,12 @@ record ConnectorInfo(Map<String, Object> metadata,
                                                ConnectorTypeDTO type,
                                                Map<String, Object> config,
                                                Function<String, String> topicOddrnBuilder) {
-    String connectionUrl = (String) config.get("connection.url");
-
     String tableNameFormat = (String) config.getOrDefault("table.name.format", "${topic}");
     List<String> targetTables = extractTopicNames(config)
         .map(topic -> tableNameFormat.replace("${kafka}", topic))
         .toList();
 
+    String connectionUrl = (String) config.get("connection.url");
     List<String> outputs = new ArrayList<>();
     @Nullable var knownJdbcPath = new JdbcUrlParser().parse(connectionUrl);
     if (knownJdbcPath instanceof PostgreSqlPath p) {
@@ -97,7 +96,7 @@ record ConnectorInfo(Map<String, Object> metadata,
         buildMetadata(className, type, config, "database.hostname", "database.port", "snapshot.mode",
             "table.include.list", "table.exclude.list", "schema.include.list", "schema.exclude.list"),
         inputs,
-        //TODO: there is no topic list in debezium, sometimes it can be inferred from topics.include
+        //TODO[discuss]: there is no topic list in debezium, sometimes it can be inferred from topics.include
         // but still not clear what schema to set for such topics
         List.of()
     );

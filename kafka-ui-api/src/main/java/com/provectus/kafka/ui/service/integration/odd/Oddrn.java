@@ -1,18 +1,13 @@
-package com.provectus.kafka.ui.service.integrations.odd;
+package com.provectus.kafka.ui.service.integration.odd;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import java.sql.Driver;
-import java.sql.DriverManager;
+import java.net.URI;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.Builder;
 import lombok.SneakyThrows;
-import lombok.Value;
 import lombok.experimental.UtilityClass;
 import org.opendatadiscovery.oddrn.Generator;
-import org.opendatadiscovery.oddrn.JdbcUrlParser;
-import org.opendatadiscovery.oddrn.annotation.PathField;
 import org.opendatadiscovery.oddrn.model.AwsS3Path;
 import org.opendatadiscovery.oddrn.model.KafkaConnectorPath;
 import org.opendatadiscovery.oddrn.model.KafkaPath;
@@ -45,7 +40,8 @@ class Oddrn {
   }
 
   String awsS3Oddrn(String bucket, String key) {
-    return generateOddrn(AwsS3Path.builder()
+    return generateOddrn(
+        AwsS3Path.builder()
             .bucket(bucket)
             .key(key)
             .build(),
@@ -64,6 +60,13 @@ class Oddrn {
     String connectorHost = Stream.of(connectUrlsStr.split(","))
         .map(String::trim)
         .sorted()
+        //TODO[discuss]: leaving host and [port] in oddrn
+        .map(url -> {
+          var uri = URI.create(url);
+          String host = uri.getHost();
+          String portSuffix = (uri.getPort() > 0 ? (":" + uri.getPort()) : "");
+          return host + portSuffix;
+        })
         .collect(Collectors.joining(","));
 
     return generateOddrn(
@@ -73,10 +76,6 @@ class Oddrn {
             .build(),
         "connector"
     );
-  }
-
-  String jdbcOddrn(String connectionUrl) {
-    return generateOddrn(new JdbcUrlParser().parse(connectionUrl), "host");
   }
 
   @SneakyThrows

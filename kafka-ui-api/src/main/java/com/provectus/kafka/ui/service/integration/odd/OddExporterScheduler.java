@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.integrations.odd;
+package com.provectus.kafka.ui.service.integration.odd;
 
 import com.provectus.kafka.ui.service.ClustersStorage;
 import lombok.RequiredArgsConstructor;

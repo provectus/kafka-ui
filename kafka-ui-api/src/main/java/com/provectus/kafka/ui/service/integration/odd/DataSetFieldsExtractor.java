@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.integrations.odd;
+package com.provectus.kafka.ui.service.integration.odd;
 
 import com.google.protobuf.Descriptors;
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
@@ -41,12 +41,12 @@ class DataSetFieldsExtractor {
 
     List<DataSetField> result = new ArrayList<>();
     for (Schema.Field field : schema.getFields()) {
-      extractAvro(field, topicOddrn, result);
+      extractAvroField(field, topicOddrn, result);
     }
     return result;
   }
 
-  private static void extractAvro(Schema.Field avroField, KafkaPath parentOddr, List<DataSetField> sink) {
+  private static void extractAvroField(Schema.Field avroField, KafkaPath parentOddr, List<DataSetField> sink) {
     var fieldSchema = avroField.schema();
     KafkaPath fieldOddrn = childPath(parentOddr, avroField.name());
 
@@ -76,14 +76,6 @@ class DataSetFieldsExtractor {
                 ));
 
     sink.add(field);
-
-//    if (fieldSchema.getType() == Schema.Type.RECORD) {
-//      fieldSchema.getFields().forEach(f -> extractAvro(f, fieldOddrn, sink));
-//    } else if (fieldSchema.getType() == Schema.Type.UNION) {
-//      fieldSchema.getTypes().forEach(unionType -> {
-//        //TODO ???
-//      });
-//    }
   }
 
   private static List<DataSetField> extractProto(SchemaSubject subject, KafkaPath topicOddrn) {
@@ -132,18 +124,10 @@ class DataSetFieldsExtractor {
         );
 
     sink.add(field);
-
-    if (protoField.getType() == Descriptors.FieldDescriptor.Type.MESSAGE) {
-      protoField.getMessageType().getFields().forEach(f -> extractProtoField(f, fieldOddrn, sink));
-    }
   }
 
   private static List<DataSetField> extractJson(SchemaSubject subject, KafkaPath topicOddrn) {
-    var schema = new JsonSchema(subject.getSchema()).rawSchema();
-//    List<DataSetField> result = new ArrayList<>();
-//    for (Descriptors.FieldDescriptor field : schema) {
-//      extractProtoField(field, topicOddrn, result);
-//    }
+    //TODO
     return List.of();
   }
 

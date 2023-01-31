@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.integrations.odd;
+package com.provectus.kafka.ui.service.integration.odd;
 
 import com.provectus.kafka.ui.service.ClustersStorage;
 import com.provectus.kafka.ui.service.KafkaConnectService;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnProperty(value = "odd.platformUrl")
+@ConditionalOnProperty(value = "integration.odd.url")
 class OddIntegrationConfig {
 
   @Bean

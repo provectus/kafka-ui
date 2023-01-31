@@ -1,11 +1,10 @@
-package com.provectus.kafka.ui.service.integrations.odd;
+package com.provectus.kafka.ui.service.integration.odd;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Statistics;
 import com.provectus.kafka.ui.service.StatisticsCache;
-import com.provectus.kafka.ui.sr.model.SchemaSubject;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -41,22 +40,22 @@ class TopicsExporter {
   @SneakyThrows
   private Mono<DataEntity> createTopicDataEntity(KafkaCluster cluster, String topic, Statistics stats) {
     KafkaPath topicOddrnPath = Oddrn.topicOddrnPath(cluster, topic);
-
-    String topicOddrnStr = Oddrn.topicOddrn(cluster, topic);
     return Mono.zip(
         getTopicSchema(cluster, topic, topicOddrnPath, true),
         getTopicSchema(cluster, topic, topicOddrnPath, false)
-    ).flatMap(keyValueSchemas -> {
+    ).flatMap(keyValueFields -> {
 
       DataSet dataSet = new DataSet();
-      //TODO: what should be oddrn for key / value?
-      Iterables.concat(keyValueSchemas.getT1(), keyValueSchemas.getT2())
-          .forEach(dataSet::addFieldListItem);
+      //TODO[discuss]: what should be oddrns for key / value fields?
+      Iterables.concat(
+          keyValueFields.getT1(),
+          keyValueFields.getT2()
+      ).forEach(dataSet::addFieldListItem);
 
       DataEntity topicDE = new DataEntity()
-          .name("Topic \"%s\"".formatted(topic))
+          .name("Topic \"%s\"".formatted(topic)) //TODO[discuss]: discuss naming
           .dataset(dataSet)
-          .oddrn(topicOddrnStr)
+          .oddrn(Oddrn.topicOddrn(cluster, topic))
           .type(DataEntityType.KAFKA_TOPIC)
           .addMetadataItem(
               new MetadataExtension()
@@ -87,9 +86,9 @@ class TopicsExporter {
   }
 
   private Mono<List<DataSetField>> getTopicSchema(KafkaCluster cluster,
-                                                         String topic,
-                                                         KafkaPath topicOddrn,
-                                                         boolean isKey) {
+                                                  String topic,
+                                                  KafkaPath topicOddrn,
+                                                  boolean isKey) {
     if (cluster.getSchemaRegistryClient() == null) {
       return Mono.just(List.of());
     }

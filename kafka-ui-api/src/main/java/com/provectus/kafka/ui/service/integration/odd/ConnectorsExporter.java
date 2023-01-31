@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.service.integrations.odd;
+package com.provectus.kafka.ui.service.integration.odd;
 
 import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.ConnectorDTO;
@@ -36,13 +36,14 @@ class ConnectorsExporter {
 
     return new DataEntity()
         .oddrn(Oddrn.connectorOddrn(connector.getConnect(), connector.getName(), cluster))
-        //TODO: discuss name generation (maybe include connect/cluster name)
-        .name("Kafka Connector \"%s\"".formatted(connector.getName()))
+        //TODO[discuss]: name generation (maybe include connect/cluster name)
+        .name("Kafka Connector \"%s\" (%s)".formatted(connector.getName(), connector.getType()))
         .type(DataEntityType.JOB)
         .dataTransformer(transformer)
-        .metadata(List.of(new MetadataExtension()
-            .schemaUrl(URI.create("wontbeused.oops"))
-            .metadata(info.metadata())));
+        .metadata(List.of(
+            new MetadataExtension()
+                .schemaUrl(URI.create("wontbeused.oops"))
+                .metadata(info.metadata())));
   }
 
   private static ConnectorInfo extractConnectorInfo(KafkaCluster cluster, ConnectorDTO connector) {

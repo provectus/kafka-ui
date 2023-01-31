@@ -1,14 +1,14 @@
-package com.provectus.kafka.ui.service.integrations.odd;
+package com.provectus.kafka.ui.service.integration.odd;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 
 @Data
-@ConfigurationProperties("odd")
+@ConfigurationProperties("integration.odd")
 public class OddIntegrationProperties {
 
-  String platformUrl;
+  String url;
   String token;
   String topicsRegex;
 
