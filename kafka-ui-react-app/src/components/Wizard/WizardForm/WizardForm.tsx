@@ -103,13 +103,13 @@ const Wizard: React.FC = () => {
     name: 'bootstrapServers',
   });
   const handleAddNewProperty = useCallback(() => {
-    if (
-      methods.getValues().bootstrapServers.every((prop) => {
-        return prop.host;
-      })
-    ) {
-      append({ host: '', port: '' });
-    }
+    // if (
+    //   methods.getValues().bootstrapServers.every((prop) => {
+    //     return prop.host && prop.port;
+    //   })
+    // ) {
+    append({ host: '', port: '' });
+    // }
   }, []);
   const onSubmit = (data: unknown) => {
     // console.log('SubmitData', data);

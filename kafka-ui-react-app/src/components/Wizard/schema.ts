@@ -12,7 +12,10 @@ const formSchema = object({
     .of(
       object({
         host: string().required('host is a required field'),
-        port: number().positive().required(),
+        port: number()
+          .positive('Port must be a positive number')
+          .typeError('Port must be a number')
+          .required('Port is a required field'),
       })
     )
     .min(1),

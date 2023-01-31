@@ -49,6 +49,7 @@ const KafkaCluster: React.FC<PropType> = ({
           <S.ReadOnly>
             <input
               {...methods.register('readOnly')}
+              id="readOnly"
               name="readOnly"
               type="checkbox"
             />
@@ -143,6 +144,7 @@ const KafkaCluster: React.FC<PropType> = ({
           <S.CheckboxWrapper>
             <input
               {...methods.register('sharedConfluentCloudCluster')}
+              id="sharedConfluentCloudCluster"
               name="sharedConfluentCloudCluster"
               type="checkbox"
             />
