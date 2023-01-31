@@ -20,6 +20,8 @@ import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KsqlTests extends BaseTest {
+  private static final long SUITE_ID = 8;
+  private static final String SUITE_TITLE = "KSQL_DB";
   private static final Stream STREAM_FOR_CHECKING_TABLES = new Stream()
       .setName("STREAM_FOR_CHECKING_TABLES_" + randomAlphabetic(4).toUpperCase())
       .setTopicName("TOPIC_FOR_STREAM_" + randomAlphabetic(4).toUpperCase());
@@ -38,7 +40,7 @@ public class KsqlTests extends BaseTest {
   }
 
   @DisplayName("check KSQL request execution")
-  @Suite(suiteId = 8,title = "Checking KSQL")
+  @Suite(suiteId = SUITE_ID,title = SUITE_TITLE)
   @AutomationStatus(status = Status.AUTOMATED)
   @CaseId(41)
   @Test
