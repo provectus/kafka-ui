@@ -1,6 +1,6 @@
 import React from 'react';
 import Input from 'components/common/Input/Input';
-import { Controller, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { FormError } from 'components/common/Input/Input.styled';
 import { ErrorMessage } from '@hookform/error-message';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
@@ -31,29 +31,34 @@ const KafkaCluster: React.FC<PropType> = ({
       <S.Action>
         <S.ActionItem>
           <S.ItemLabelRequired>
-            <label htmlFor="clusterName">Cluster Name</label>{' '}
+            <label htmlFor="kafkaCluster.clusterName">Cluster Name</label>{' '}
             <S.P>
               this name will help you recognize the cluster in the application
               interface
             </S.P>
           </S.ItemLabelRequired>
-          <Input id="clusterName" type="text" name="clusterName" />
+          <Input
+            id="kafkaCluster.clusterName"
+            type="text"
+            name="kafkaCluster.clusterName"
+          />
           <FormError>
             <ErrorMessage
               errors={methods.formState.errors}
-              name="clusterName"
+              name="kafkaCluster.clusterName"
             />
           </FormError>
         </S.ActionItem>
         <S.ActionItem>
           <S.ReadOnly>
             <input
-              {...methods.register('readOnly')}
-              name="readOnly"
+              {...methods.register('kafkaCluster.readOnly')}
+              id="kafkaCluster.readOnly"
+              name="kafkaCluster.readOnly"
               type="checkbox"
             />
             <div>
-              <label htmlFor="readOnly">Read-only mode</label>{' '}
+              <label htmlFor="kafkaCluster.readOnly">Read-only mode</label>{' '}
               <p>
                 allows you to run an application in read-only mode for a
                 specific cluster
@@ -61,7 +66,7 @@ const KafkaCluster: React.FC<PropType> = ({
               <FormError>
                 <ErrorMessage
                   errors={methods.formState.errors}
-                  name="readOnly"
+                  name="kafkaCluster.readOnly"
                 />
               </FormError>
             </div>
@@ -71,7 +76,7 @@ const KafkaCluster: React.FC<PropType> = ({
           <S.ItemLabelRequired>
             <label
               className="block text-sm font-medium text-gray-700 whitespace-nowrap mr-2 svelte-55p6jf required"
-              htmlFor="bootstrapServers"
+              htmlFor="kafkaCluster.bootstrapServers"
             >
               Bootstrap Servers
             </label>{' '}
@@ -81,42 +86,30 @@ const KafkaCluster: React.FC<PropType> = ({
             {fields.map((item, index) => (
               <S.InputsContainer key={item.id}>
                 <S.BootstrapServersWrapper>
-                  <Controller
-                    control={methods.control}
-                    name={`bootstrapServers.${index}.host`}
-                    render={({ field }) => (
-                      <input
-                        {...field}
-                        placeholder="Host"
-                        aria-label="host"
-                        type="text"
-                      />
-                    )}
+                  <Input
+                    name={`kafkaCluster.bootstrapServers.${index}.host`}
+                    placeholder="Host"
+                    aria-label="host"
+                    type="text"
                   />
                   <FormError>
                     <ErrorMessage
                       errors={methods.formState.errors}
-                      name={`bootstrapServers.${index}.host`}
+                      name={`kafkaCluster.bootstrapServers.${index}.host`}
                     />
                   </FormError>
                 </S.BootstrapServersWrapper>
                 <S.BootstrapServersWrapper>
-                  <Controller
-                    control={methods.control}
-                    name={`bootstrapServers.${index}.port`}
-                    render={({ field }) => (
-                      <input
-                        {...field}
-                        placeholder="Port"
-                        aria-label="port"
-                        type="number"
-                      />
-                    )}
+                  <Input
+                    name={`kafkaCluster.bootstrapServers.${index}.port`}
+                    placeholder="Port"
+                    aria-label="port"
+                    type="text"
                   />
                   <FormError>
                     <ErrorMessage
                       errors={methods.formState.errors}
-                      name={`bootstrapServers.${index}.port`}
+                      name={`kafkaCluster.bootstrapServers.${index}.port`}
                     />
                   </FormError>
                 </S.BootstrapServersWrapper>
@@ -142,17 +135,18 @@ const KafkaCluster: React.FC<PropType> = ({
         <S.ActionItem>
           <S.CheckboxWrapper>
             <input
-              {...methods.register('sharedConfluentCloudCluster')}
-              name="sharedConfluentCloudCluster"
+              {...methods.register('kafkaCluster.sharedConfluentCloudCluster')}
+              id="kafkaCluster.sharedConfluentCloudCluster"
+              name="kafkaCluster.sharedConfluentCloudCluster"
               type="checkbox"
             />
-            <label htmlFor="sharedConfluentCloudCluster">
+            <label htmlFor="kafkaCluster.sharedConfluentCloudCluster">
               Shared confluent cloud cluster
             </label>
             <FormError>
               <ErrorMessage
                 errors={methods.formState.errors}
-                name="sharedConfluentCloudCluster"
+                name="kafkaCluster.sharedConfluentCloudCluster"
               />
             </FormError>
           </S.CheckboxWrapper>
