@@ -7,6 +7,7 @@ import formSchema from 'components/Wizard/schema';
 import * as S from './WizardForm.styled';
 import KafkaCluster from './KafkaCluster/KafkaCluster';
 import Authentication from './Authentication/Authentication';
+import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
 
 const securityProtocolOptions = [
   {
@@ -132,24 +133,7 @@ const Wizard: React.FC = () => {
             options={options}
             securityProtocolOptions={securityProtocolOptions}
           />
-          <S.Section>
-            <S.SectionName className="text-lg font-medium leading-6 text-gray-900">
-              Schema Registry
-            </S.SectionName>
-            <div className="md:mt-0 md:col-span-3">
-              <div className="sm:overflow-hidden h-full">
-                <div className="px-4 py-5">
-                  <div className="grid grid-cols-6 gap-6">
-                    <div className="col-span-5">
-                      <Button buttonSize="M" buttonType="primary">
-                        Add Schema Registry
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </S.Section>
+          <SchemaRegistry />
           <S.Section>
             <S.SectionName className="text-lg font-medium leading-6 text-gray-900">
               Kafka Connect
