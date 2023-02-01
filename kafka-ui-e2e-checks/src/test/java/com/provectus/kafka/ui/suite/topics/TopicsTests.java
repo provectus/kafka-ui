@@ -8,7 +8,9 @@ import static com.provectus.kafka.ui.pages.topic.enums.CleanupPolicyValue.DELETE
 import static com.provectus.kafka.ui.pages.topic.enums.CustomParameterType.COMPRESSION_TYPE;
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.NOT_SET;
 import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_1_GB;
-import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_20_GB;
+import static com.provectus.kafka.ui.pages.topic.enums.MaxSizeOnDisk.SIZE_50_GB;
+import static com.provectus.kafka.ui.pages.topic.enums.TimeToRetain.BTN_2_DAYS;
+import static com.provectus.kafka.ui.pages.topic.enums.TimeToRetain.BTN_7_DAYS;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,10 +52,10 @@ public class TopicsTests extends BaseTest {
   private static final Topic TOPIC_TO_UPDATE_AND_DELETE = new Topic()
       .setName("topic-to-update-and-delete-" + randomAlphabetic(5))
       .setNumberOfPartitions(1)
-      .setCleanupPolicyValue(COMPACT)
-      .setTimeToRetainData("604800001")
-      .setMaxSizeOnDisk(SIZE_20_GB)
-      .setMaxMessageBytes("1000020")
+      .setCleanupPolicyValue(DELETE)
+      .setTimeToRetain(BTN_7_DAYS)
+      .setMaxSizeOnDisk(NOT_SET)
+      .setMaxMessageBytes("1048588")
       .setMessageKey(randomAlphabetic(5))
       .setMessageContent(randomAlphabetic(10));
   private static final Topic TOPIC_TO_CHECK_SETTINGS = new Topic()
@@ -61,12 +63,14 @@ public class TopicsTests extends BaseTest {
       .setNumberOfPartitions(1)
       .setMaxMessageBytes("1000012")
       .setMaxSizeOnDisk(NOT_SET);
+  private static final Topic TOPIC_FOR_CHECK_FILTERS = new Topic()
+      .setName("topic-for-check-filters-" + randomAlphabetic(5));
   private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete-" + randomAlphabetic(5));
   private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE_AND_DELETE, TOPIC_FOR_DELETE));
+    TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE_AND_DELETE, TOPIC_FOR_DELETE, TOPIC_FOR_CHECK_FILTERS));
     TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
   }
 
@@ -132,24 +136,43 @@ public class TopicsTests extends BaseTest {
         .openDotMenu()
         .clickEditSettingsMenu();
     topicCreateEditForm
-        .waitUntilScreenReady()
+        .waitUntilScreenReady();
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue().getVisibleText());
+    softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetain().getValue());
+    softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()")
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getMaxSizeOnDisk().getVisibleText());
+    softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("getMaxMessageBytes()")
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getMaxMessageBytes());
+    softly.assertAll();
+    TOPIC_TO_UPDATE_AND_DELETE
+        .setCleanupPolicyValue(COMPACT)
+        .setTimeToRetain(BTN_2_DAYS)
+        .setMaxSizeOnDisk(SIZE_50_GB).setMaxMessageBytes("1048589");
+    topicCreateEditForm
         .selectCleanupPolicy((TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue()))
-        .setMinInsyncReplicas(10)
-        .setTimeToRetainDataInMs(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetainData())
+        .setTimeToRetainDataByButtons(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetain())
         .setMaxSizeOnDiskInGB(TOPIC_TO_UPDATE_AND_DELETE.getMaxSizeOnDisk())
         .setMaxMessageBytes(TOPIC_TO_UPDATE_AND_DELETE.getMaxMessageBytes())
         .clickCreateTopicBtn();
+    softly.assertThat(topicDetails.isAlertWithMessageVisible(SUCCESS, "Topic successfully updated."))
+        .as("isAlertWithMessageVisible()").isTrue();
+    softly.assertThat(topicDetails.isTopicHeaderVisible(TOPIC_TO_UPDATE_AND_DELETE.getName()))
+        .as("isTopicHeaderVisible()").isTrue();
+    softly.assertAll();
     topicDetails
         .waitUntilScreenReady();
     navigateToTopicsAndOpenDetails(TOPIC_TO_UPDATE_AND_DELETE.getName());
     topicDetails
         .openDotMenu()
         .clickEditSettingsMenu();
-    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(topicCreateEditForm.isNameFieldEnabled()).as("isNameFieldEnabled()").isFalse();
     softly.assertThat(topicCreateEditForm.getCleanupPolicy()).as("getCleanupPolicy()")
         .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getCleanupPolicyValue().getVisibleText());
     softly.assertThat(topicCreateEditForm.getTimeToRetain()).as("getTimeToRetain()")
-        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetainData());
+        .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetain().getValue());
     softly.assertThat(topicCreateEditForm.getMaxSizeOnDisk()).as("getMaxSizeOnDisk()")
         .isEqualTo(TOPIC_TO_UPDATE_AND_DELETE.getMaxSizeOnDisk().getVisibleText());
     softly.assertThat(topicCreateEditForm.getMaxMessageBytes()).as("getMaxMessageBytes()")
@@ -316,7 +339,7 @@ public class TopicsTests extends BaseTest {
   @Order(11)
   void addingNewFilterWithinTopic() {
     String filterName = randomAlphabetic(5);
-    navigateToTopicsAndOpenDetails("_schemas");
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
     topicDetails
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
@@ -343,7 +366,7 @@ public class TopicsTests extends BaseTest {
   @Order(12)
   void checkFilterSavingWithinSavedFilters() {
     String displayName = randomAlphabetic(5);
-    navigateToTopicsAndOpenDetails("my_ksql_1ksql_processing_log");
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
     topicDetails
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
@@ -368,7 +391,7 @@ public class TopicsTests extends BaseTest {
   @Order(13)
   void checkingApplyingSavedFilterWithinTopicMessages() {
     String displayName = randomAlphabetic(5);
-    navigateToTopicsAndOpenDetails("my_ksql_1ksql_processing_log");
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
     topicDetails
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
