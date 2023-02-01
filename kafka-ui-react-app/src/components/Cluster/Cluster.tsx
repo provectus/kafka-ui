@@ -11,7 +11,7 @@ import {
   ClusterNameRoute,
   clusterSchemasRelativePath,
   clusterTopicsRelativePath,
-  clusterWizardRelativePath,
+  clusterConfigRelativePath,
   getNonExactPath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
@@ -23,7 +23,9 @@ const Topics = React.lazy(() => import('components/Topics/Topics'));
 const Schemas = React.lazy(() => import('components/Schemas/Schemas'));
 const Connect = React.lazy(() => import('components/Connect/Connect'));
 const KsqlDb = React.lazy(() => import('components/KsqlDb/KsqlDb'));
-const Wizard = React.lazy(() => import('components/Wizard/Wizard'));
+const ClusterConfig = React.lazy(
+  () => import('components/Wizard/ClusterConfig')
+);
 const ConsumerGroups = React.lazy(
   () => import('components/ConsumerGroups/ConsumerGroups')
 );
@@ -34,7 +36,6 @@ const Cluster: React.FC = () => {
   const contextValue = React.useMemo(() => {
     const cluster = data?.find(({ name }) => name === clusterName);
     const features = cluster?.features || [];
-    // const features = 'wizard';
     return {
       isReadOnly: cluster?.readOnly || false,
       hasKafkaConnectConfigured: features.includes(
@@ -47,7 +48,6 @@ const Cluster: React.FC = () => {
         ClusterFeaturesEnum.TOPIC_DELETION
       ),
       hasKsqlDbConfigured: features.includes(ClusterFeaturesEnum.KSQL_DB),
-      // hasWizardConfigured: features.includes('wizard'),
     };
   }, [clusterName, data]);
 
@@ -93,8 +93,8 @@ const Cluster: React.FC = () => {
               />
             )}
             <Route
-              path={getNonExactPath(clusterWizardRelativePath)}
-              element={<Wizard />}
+              path={getNonExactPath(clusterConfigRelativePath)}
+              element={<ClusterConfig />}
             />
             <Route
               path="/"

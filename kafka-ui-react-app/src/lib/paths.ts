@@ -281,10 +281,11 @@ export const clusterKsqlDbStreamsPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterKsqlDbPath(clusterName)}/${clusterKsqlDbStreamsRelativePath}`;
 
-// Wizard
-
-export const clusterWizardRelativePath = 'wizard';
-
-export const clusterWizardPath = (
+// Cluster Config
+export const clusterConfigRelativePath = 'config';
+export const clusterConfigPath = (
   clusterName: ClusterName = RouteParams.clusterName
-) => `${clusterPath(clusterName)}/${clusterWizardRelativePath}`;
+) => `${clusterPath(clusterName)}/${clusterConfigRelativePath}`;
+
+export const clusterNewConfigRelativePath = 'create-new-cluster';
+export const clusterNewConfigPath = `/ui/clusters/${clusterNewConfigRelativePath}`;

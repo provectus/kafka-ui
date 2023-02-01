@@ -1,14 +1,16 @@
-import React, { PropsWithChildren, Suspense, useCallback } from 'react';
+import React, { PropsWithChildren } from 'react';
 import { useLocation } from 'react-router-dom';
 import NavBar from 'components/NavBar/NavBar';
 import * as S from 'components/PageContainer/PageContainer.styled';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 import Nav from 'components/Nav/Nav';
+import useBoolean from 'lib/hooks/useBoolean';
 
 const PageContainer: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
-  const [isSidebarVisible, setIsSidebarVisible] = React.useState(false);
-  const onBurgerClick = () => setIsSidebarVisible(!isSidebarVisible);
-  const closeSidebar = useCallback(() => setIsSidebarVisible(false), []);
+  const {
+    value: isSidebarVisible,
+    toggle,
+    setFalse: closeSidebar,
+  } = useBoolean(false);
   const location = useLocation();
 
   React.useEffect(() => {
@@ -17,12 +19,10 @@ const PageContainer: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
 
   return (
     <>
-      <NavBar onBurgerClick={onBurgerClick} />
+      <NavBar onBurgerClick={toggle} />
       <S.Container>
         <S.Sidebar aria-label="Sidebar" $visible={isSidebarVisible}>
-          <Suspense fallback={<PageLoader />}>
-            <Nav />
-          </Suspense>
+          <Nav />
         </S.Sidebar>
         <S.Overlay
           $visible={isSidebarVisible}

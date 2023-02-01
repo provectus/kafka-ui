@@ -3,10 +3,10 @@ import { Route, Routes } from 'react-router-dom';
 
 import WizardForm from './WizardForm/WizardForm';
 
-const Wizard: React.FC = () => (
+const ClusterConfig: React.FC = () => (
   <Routes>
     <Route index element={<WizardForm />} />
   </Routes>
 );
 
-export default Wizard;
+export default ClusterConfig;
