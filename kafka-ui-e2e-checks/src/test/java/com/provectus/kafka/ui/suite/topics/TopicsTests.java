@@ -63,12 +63,14 @@ public class TopicsTests extends BaseTest {
       .setNumberOfPartitions(1)
       .setMaxMessageBytes("1000012")
       .setMaxSizeOnDisk(NOT_SET);
+  private static final Topic TOPIC_FOR_CHECK_FILTERS = new Topic()
+      .setName("topic-for-check-filters-" + randomAlphabetic(5));
   private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete-" + randomAlphabetic(5));
   private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
   @BeforeAll
   public void beforeAll() {
-    TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE_AND_DELETE, TOPIC_FOR_DELETE));
+    TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE_AND_DELETE, TOPIC_FOR_DELETE, TOPIC_FOR_CHECK_FILTERS));
     TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
   }
 
@@ -337,7 +339,7 @@ public class TopicsTests extends BaseTest {
   @Order(11)
   void addingNewFilterWithinTopic() {
     String filterName = randomAlphabetic(5);
-    navigateToTopicsAndOpenDetails("_schemas");
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
     topicDetails
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
@@ -364,7 +366,7 @@ public class TopicsTests extends BaseTest {
   @Order(12)
   void checkFilterSavingWithinSavedFilters() {
     String displayName = randomAlphabetic(5);
-    navigateToTopicsAndOpenDetails("my_ksql_1ksql_processing_log");
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
     topicDetails
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
@@ -389,7 +391,7 @@ public class TopicsTests extends BaseTest {
   @Order(13)
   void checkingApplyingSavedFilterWithinTopicMessages() {
     String displayName = randomAlphabetic(5);
-    navigateToTopicsAndOpenDetails("my_ksql_1ksql_processing_log");
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
     topicDetails
         .openDetailsTab(MESSAGES)
         .clickMessagesAddFiltersBtn()
