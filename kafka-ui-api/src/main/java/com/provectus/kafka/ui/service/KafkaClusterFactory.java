@@ -39,7 +39,6 @@ public class KafkaClusterFactory {
     builder.bootstrapServers(clusterProperties.getBootstrapServers());
     builder.properties(Optional.ofNullable(clusterProperties.getProperties()).orElse(new Properties()));
     builder.readOnly(clusterProperties.isReadOnly());
-    builder.disableLogDirsCollection(clusterProperties.isDisableLogDirsCollection());
     builder.masking(DataMasking.create(clusterProperties.getMasking()));
     builder.metricsConfig(metricsConfigDataToMetricsConfig(clusterProperties.getMetrics()));
     builder.throttler(PollingThrottler.throttlerSupplier(clusterProperties));
