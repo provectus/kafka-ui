@@ -208,7 +208,7 @@ public class DynamicConfigOperations {
       OAuthProperties oauth2;
     }
 
-    void initAndValidate() {
+    public void initAndValidate() {
       Optional.ofNullable(kafka)
           .ifPresent(ClustersProperties::validateAndSetDefaults);
 

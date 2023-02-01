@@ -1771,6 +1771,26 @@ paths:
         200:
           description: OK
 
+  /api/config/validated:
+    put:
+      tags:
+        - ApplicationConfig
+      summary: Restarts application with specified configuration
+      operationId: validateConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationConfig'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationConfigValidation'
+
+
   /api/config/relatedfiles:
     post:
       tags:
@@ -3269,6 +3289,39 @@ components:
       properties:
         config:
           $ref: '#/components/schemas/ApplicationConfig'
+
+    ApplicationConfigValidation:
+      type: object
+      properties:
+        clusters:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ClusterConfigValidation'
+
+    ApplicationPropertyValidation:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: boolean
+        errorMessage:
+          type: string
+          description: Contains error message if error = true
+
+    ClusterConfigValidation:
+      type: object
+      required: [kafka]
+      properties:
+        kafka:
+          $ref: '#/components/schemas/ApplicationPropertyValidation'
+        schemaRegistry:
+          $ref: '#/components/schemas/ApplicationPropertyValidation'
+        kafkaConnects:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ApplicationPropertyValidation'
+        ksqldb:
+          $ref: '#/components/schemas/ApplicationPropertyValidation'
 
     ApplicationConfig:
       type: object
