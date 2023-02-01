@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.pages.ksqldb.enums;
 
-public class KsqlQueryConfig {
-  public enum KsqlRequests {
+public enum KsqlQueryConfig {
     SHOW_TABLES("show tables;"),
     SHOW_STREAMS("show streams;"),
     SELECT_ALL_FROM("SELECT * FROM %s\n" +
@@ -9,12 +8,11 @@ public class KsqlQueryConfig {
 
     private final String query;
 
-    KsqlRequests(String query) {
+    KsqlQueryConfig(String query) {
       this.query = query;
     }
 
     public String getQuery(){
       return query;
     }
-  }
 }

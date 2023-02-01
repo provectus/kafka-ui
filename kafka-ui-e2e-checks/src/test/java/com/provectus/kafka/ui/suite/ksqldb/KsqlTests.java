@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.suite.ksqldb;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KSQL_DB;
-import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlQueryConfig.KsqlRequests.SHOW_TABLES;
+import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlQueryConfig.SHOW_TABLES;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
 import com.provectus.kafka.ui.base.BaseTest;

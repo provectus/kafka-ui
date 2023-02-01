@@ -33,7 +33,7 @@ public class KsqlDbList extends BasePage {
   }
 
   @Step
-  public KsqlDbList openDetailsTab(KsqlMenuTabs.KsqlMenu menu) {
+  public KsqlDbList openDetailsTab(KsqlMenuTabs menu) {
     $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
     waitUntilSpinnerDisappear();
     return this;
@@ -61,13 +61,9 @@ public class KsqlDbList extends BasePage {
       this.element = element;
     }
 
-    private SelenideElement getTableElm() {
-      return element.$x("./td[1]");
-    }
-
     @Step
     public String getTableName() {
-      return getTableElm().getText().trim();
+      return element.$x("./td[1]").getText().trim();
     }
 
     @Step
@@ -89,8 +85,6 @@ public class KsqlDbList extends BasePage {
     public String getIsWindowed() {
       return element.$x("./td[5]").getText().trim();
     }
-
-
   }
 
   private List<KsqlDbList.KsqlStreamsGridItem> initStreamsItems() {
@@ -109,20 +103,15 @@ public class KsqlDbList extends BasePage {
 
   public static class KsqlStreamsGridItem extends BasePage {
 
-
     private final SelenideElement element;
 
     public KsqlStreamsGridItem(SelenideElement element) {
       this.element = element;
     }
 
-    private SelenideElement getStreamElm() {
-      return element.$x("./td[1]");
-    }
-
     @Step
     public String getStreamName() {
-      return getStreamElm().getText().trim();
+      return element.$x("./td[1]").getText().trim();
     }
 
     @Step
