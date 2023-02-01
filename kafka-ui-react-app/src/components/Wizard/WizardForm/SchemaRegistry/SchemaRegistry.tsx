@@ -13,7 +13,15 @@ const SchemaRegistry = () => {
     e.preventDefault();
     setNewSchemaRegistry(!newSchemaRegistry);
     if (!newSchemaRegistry) {
-      methods.reset({ url: '' });
+      methods.reset({
+        ...methods.getValues(),
+        schemaRegistry: {
+          url: '',
+          isAuth: false,
+          username: '',
+          password: '',
+        },
+      });
     }
   };
   const isAuth = methods.watch('schemaRegistry.isAuth');

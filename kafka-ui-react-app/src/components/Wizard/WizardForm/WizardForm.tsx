@@ -8,6 +8,7 @@ import * as S from './WizardForm.styled';
 import KafkaCluster from './KafkaCluster/KafkaCluster';
 import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
+import KafkaConnect from './KafkaConnect/KafkaConnect';
 
 const securityProtocolOptions = [
   {
@@ -79,8 +80,24 @@ type BootstrapServersType = {
 };
 export type FormValues = {
   kafkaCluster: {
+    clusterName: string;
+    readOnly: boolean;
     bootstrapServers: BootstrapServersType[];
+    sharedConfluentCloudCluster: boolean;
   };
+  schemaRegistry: {
+    url: string;
+    isAuth: boolean;
+    username: string;
+    password: string;
+  };
+  kafkaConnect: {
+    name: string;
+    url: string;
+    isAuth: boolean;
+    username: string;
+    password: string;
+  }[];
 };
 const Wizard: React.FC = () => {
   const methods = useForm<FormValues>({
@@ -88,22 +105,63 @@ const Wizard: React.FC = () => {
     resolver: yupResolver(formSchema),
     defaultValues: {
       kafkaCluster: {
+        clusterName: '',
+        readOnly: false,
         bootstrapServers: [{ host: '', port: '' }],
+        sharedConfluentCloudCluster: false,
       },
+      schemaRegistry: {
+        url: '',
+        isAuth: false,
+        username: '',
+        password: '',
+      },
+      kafkaConnect: [
+        {
+          name: '',
+          url: '',
+          isAuth: false,
+          username: '',
+          password: '',
+        },
+      ],
     },
   });
 
   const { control } = methods;
-  const { fields, append, remove } = useFieldArray<
-    FormValues,
-    'kafkaCluster.bootstrapServers'
-  >({
+  const {
+    fields: bootstrapFields,
+    append: bootstrapAppend,
+    remove: bootstrapRemove,
+  } = useFieldArray<FormValues, 'kafkaCluster.bootstrapServers'>({
     control,
     name: 'kafkaCluster.bootstrapServers',
   });
   const handleAddNewProperty = useCallback(() => {
-    append({ host: '', port: '' });
+    bootstrapAppend({ host: '', port: '' });
   }, []);
+
+  const {
+    fields: connectFields,
+    append: connectAppend,
+    remove: connectRemove,
+  } = useFieldArray<FormValues, 'kafkaConnect'>({
+    control,
+    name: 'kafkaConnect',
+  });
+
+  const handleAddKafkaConnect: React.MouseEventHandler<HTMLButtonElement> = (
+    e
+  ) => {
+    e.stopPropagation();
+    connectAppend({
+      name: '',
+      url: '',
+      isAuth: false,
+      username: '',
+      password: '',
+    });
+  };
   const onSubmit = (data: unknown) => {
     // console.log('SubmitData', data);
     return data;
@@ -126,32 +184,19 @@ const Wizard: React.FC = () => {
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <KafkaCluster
             handleAddNewProperty={handleAddNewProperty}
-            fields={fields}
-            remove={remove}
+            fields={bootstrapFields}
+            remove={bootstrapRemove}
           />
           <Authentication
             options={options}
             securityProtocolOptions={securityProtocolOptions}
           />
           <SchemaRegistry />
-          <S.Section>
-            <S.SectionName className="text-lg font-medium leading-6 text-gray-900">
-              Kafka Connect
-            </S.SectionName>
-            <div className="md:mt-0 md:col-span-3">
-              <div className="sm:overflow-hidden h-full">
-                <div className="px-4 py-5">
-                  <div className="grid grid-cols-6 gap-6">
-                    <div className="col-span-5">
-                      <Button buttonSize="M" buttonType="primary">
-                        Add Kafka Connect
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </S.Section>
+          <KafkaConnect
+            handleAddKafkaConnect={handleAddKafkaConnect}
+            fields={connectFields}
+            remove={connectRemove}
+          />
           <S.Section>
             <S.SectionName className="text-lg font-medium leading-6 text-gray-900">
               JMX Metrics

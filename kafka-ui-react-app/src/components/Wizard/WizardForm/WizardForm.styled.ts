@@ -131,3 +131,15 @@ export const DeleteButtonWrapper = styled.div`
 export const PartStyled = styled.div`
   padding-top: 1.2rem;
 `;
+
+export const KafkaConnect = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const Hr = styled.div`
+  border-bottom: 1px solid #e7ebe5;
+  width: 100%;
+  margin: 10px 0;
+`;
