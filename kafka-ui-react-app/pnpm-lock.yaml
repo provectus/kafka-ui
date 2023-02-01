@@ -63,6 +63,7 @@ specifiers:
   jest-styled-components: ^7.0.8
   jest-watch-typeahead: ^2.0.0
   json-schema-faker: ^0.5.0-rcv.44
+  jsonpath-plus: ^7.2.0
   lint-staged: ^13.0.2
   lodash: ^4.17.21
   prettier: ^2.3.1
@@ -116,6 +117,7 @@ dependencies:
   jest: 29.0.3_yqiaopbgmqcuvx27p5xxvum6wm
   jest-watch-typeahead: 2.0.0_jest@29.0.3
   json-schema-faker: 0.5.0-rcv.44
+  jsonpath-plus: 7.2.0
   lodash: 4.17.21
   pretty-ms: 7.0.1
   react: 18.1.0
@@ -7056,6 +7058,11 @@ packages:
   /jsonpath-plus/5.1.0:
     resolution: {integrity: sha512-890w2Pjtj0iswAxalRlt2kHthi6HKrXEfZcn+ZNZptv7F3rUGIeDuZo+C+h4vXBHLEsVjJrHeCm35nYeZLzSBQ==}
     engines: {node: '>=10.0.0'}
+    dev: false
+
+  /jsonpath-plus/7.2.0:
+    resolution: {integrity: sha512-zBfiUPM5nD0YZSBT/o/fbCUlCcepMIdP0CJZxM1+KgA4f2T206f6VAg9e7mX35+KlMaIc5qXW34f3BnwJ3w+RA==}
+    engines: {node: '>=12.0.0'}
     dev: false
 
   /jsx-ast-utils/3.3.0:
