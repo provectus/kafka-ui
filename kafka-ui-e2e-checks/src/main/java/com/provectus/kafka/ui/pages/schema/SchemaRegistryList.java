@@ -1,18 +1,18 @@
 package com.provectus.kafka.ui.pages.schema;
 
-import static com.codeborne.selenide.Selenide.$x;
-
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
+
+import static com.codeborne.selenide.Selenide.$x;
 
 public class SchemaRegistryList extends BasePage {
 
     protected SelenideElement createSchemaBtn = $x("//button[contains(text(),'Create Schema')]");
 
     @Step
-    public SchemaRegistryList waitUntilScreenReady(){
+    public SchemaRegistryList waitUntilScreenReady() {
         waitUntilSpinnerDisappear();
         createSchemaBtn.shouldBe(Condition.visible);
         return this;

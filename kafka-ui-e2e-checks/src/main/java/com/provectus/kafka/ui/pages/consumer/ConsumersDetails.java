@@ -1,10 +1,10 @@
 package com.provectus.kafka.ui.pages.consumer;
 
-import static com.codeborne.selenide.Selenide.$x;
-
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
+
+import static com.codeborne.selenide.Selenide.$x;
 
 public class ConsumersDetails extends BasePage {
 

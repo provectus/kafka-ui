@@ -1,28 +1,28 @@
 package com.provectus.kafka.ui.pages.connector;
 
-import static com.codeborne.selenide.Selenide.$x;
-
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 
+import static com.codeborne.selenide.Selenide.$x;
+
 public class ConnectorDetails extends BasePage {
 
-  protected SelenideElement deleteBtn = $x("//li/div[contains(text(),'Delete')]");
-  protected SelenideElement confirmBtnMdl = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
-  protected SelenideElement contentTextArea = $x("//textarea[@class='ace_text-input']");
-  protected SelenideElement taskTab = $x("//a[contains(text(),'Tasks')]");
-  protected SelenideElement configTab = $x("//a[contains(text(),'Config')]");
-  protected SelenideElement configField = $x("//div[@id='config']");
-  protected String connectorHeaderLocator = "//h1[contains(text(),'%s')]";
+    protected SelenideElement deleteBtn = $x("//li/div[contains(text(),'Delete')]");
+    protected SelenideElement confirmBtnMdl = $x("//div[@role='dialog']//button[contains(text(),'Confirm')]");
+    protected SelenideElement contentTextArea = $x("//textarea[@class='ace_text-input']");
+    protected SelenideElement taskTab = $x("//a[contains(text(),'Tasks')]");
+    protected SelenideElement configTab = $x("//a[contains(text(),'Config')]");
+    protected SelenideElement configField = $x("//div[@id='config']");
+    protected String connectorHeaderLocator = "//h1[contains(text(),'%s')]";
 
-  @Step
-  public ConnectorDetails waitUntilScreenReady() {
-    waitUntilSpinnerDisappear();
-    dotMenuBtn.shouldBe(Condition.visible);
-    return this;
-  }
+    @Step
+    public ConnectorDetails waitUntilScreenReady() {
+        waitUntilSpinnerDisappear();
+        dotMenuBtn.shouldBe(Condition.visible);
+        return this;
+    }
 
     @Step
     public ConnectorDetails openConfigTab() {
@@ -41,8 +41,8 @@ public class ConnectorDetails extends BasePage {
 
     @Step
     public ConnectorDetails clickSubmitButton() {
-      clickSubmitBtn();
-      return this;
+        clickSubmitBtn();
+        return this;
     }
 
     @Step
@@ -74,11 +74,11 @@ public class ConnectorDetails extends BasePage {
 
     @Step
     public boolean isConnectorHeaderVisible(String connectorName) {
-        return isVisible($x(String.format(connectorHeaderLocator,connectorName)));
+        return isVisible($x(String.format(connectorHeaderLocator, connectorName)));
     }
 
     @Step
-    public boolean isAlertWithMessageVisible(AlertHeader header, String message){
-      return isAlertVisible(header, message);
+    public boolean isAlertWithMessageVisible(AlertHeader header, String message) {
+        return isAlertVisible(header, message);
     }
 }

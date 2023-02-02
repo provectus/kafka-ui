@@ -1,19 +1,20 @@
 package com.provectus.kafka.ui.pages.topic;
 
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.$x;
-
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.$x;
 
 public class TopicsList extends BasePage {
 
@@ -49,13 +50,13 @@ public class TopicsList extends BasePage {
 
     @Step
     public boolean isShowInternalRadioBtnSelected() {
-      return isSelected(showInternalRadioBtn);
+        return isSelected(showInternalRadioBtn);
     }
 
     @Step
     public TopicsList setShowInternalRadioButton(boolean select) {
-      selectElement(showInternalRadioBtn, select);
-      return this;
+        selectElement(showInternalRadioBtn, select);
+        return this;
     }
 
     @Step
@@ -65,196 +66,196 @@ public class TopicsList extends BasePage {
     }
 
     @Step
-    public TopicsList openDotMenuByTopicName(String topicName){
-      getTopicItem(topicName).openDotMenu();
-      return this;
+    public TopicsList openDotMenuByTopicName(String topicName) {
+        getTopicItem(topicName).openDotMenu();
+        return this;
     }
 
     @Step
-    public boolean isCopySelectedTopicBtnEnabled(){
-      return isEnabled(copySelectedTopicBtn);
+    public boolean isCopySelectedTopicBtnEnabled() {
+        return isEnabled(copySelectedTopicBtn);
     }
 
     @Step
     public List<SelenideElement> getActionButtons() {
-      return Stream.of(deleteSelectedTopicsBtn, copySelectedTopicBtn, purgeMessagesOfSelectedTopicsBtn)
-          .collect(Collectors.toList());
+        return Stream.of(deleteSelectedTopicsBtn, copySelectedTopicBtn, purgeMessagesOfSelectedTopicsBtn)
+                .collect(Collectors.toList());
     }
 
     @Step
-    public TopicsList clickCopySelectedTopicBtn(){
-      copySelectedTopicBtn.shouldBe(Condition.enabled).click();
-      return this;
+    public TopicsList clickCopySelectedTopicBtn() {
+        copySelectedTopicBtn.shouldBe(Condition.enabled).click();
+        return this;
     }
 
     @Step
-    public TopicsList clickPurgeMessagesOfSelectedTopicsBtn(){
-    purgeMessagesOfSelectedTopicsBtn.shouldBe(Condition.enabled).click();
-    return this;
+    public TopicsList clickPurgeMessagesOfSelectedTopicsBtn() {
+        purgeMessagesOfSelectedTopicsBtn.shouldBe(Condition.enabled).click();
+        return this;
     }
 
     @Step
-    public TopicsList clickClearMessagesBtn(){
-      clickByJavaScript(clearMessagesBtn.shouldBe(visible));
-      return this;
+    public TopicsList clickClearMessagesBtn() {
+        clickByJavaScript(clearMessagesBtn.shouldBe(visible));
+        return this;
     }
 
     @Step
-    public TopicsList clickRecreateTopicBtn(){
-      clickByJavaScript(recreateTopicBtn.shouldBe(visible));
-      return this;
+    public TopicsList clickRecreateTopicBtn() {
+        clickByJavaScript(recreateTopicBtn.shouldBe(visible));
+        return this;
     }
 
     @Step
-    public TopicsList clickRemoveTopicBtn(){
-      clickByJavaScript(removeTopicBtn.shouldBe(visible));
-      return this;
+    public TopicsList clickRemoveTopicBtn() {
+        clickByJavaScript(removeTopicBtn.shouldBe(visible));
+        return this;
     }
 
     @Step
     public TopicsList clickConfirmBtnMdl() {
-    clickConfirmButton();
-    return this;
+        clickConfirmButton();
+        return this;
     }
 
     @Step
-    public TopicsList clickCancelBtnMdl(){
-      clickCancelButton();
-      return this;
+    public TopicsList clickCancelBtnMdl() {
+        clickCancelButton();
+        return this;
     }
 
     @Step
-    public boolean isConfirmationMdlVisible(){
-      return isConfirmationModalVisible();
+    public boolean isConfirmationMdlVisible() {
+        return isConfirmationModalVisible();
     }
 
     @Step
     public boolean isAlertWithMessageVisible(AlertHeader header, String message) {
-      return isAlertVisible(header, message);
+        return isAlertVisible(header, message);
     }
 
     private List<SelenideElement> getVisibleColumnHeaders() {
-      return Stream.of("Replication Factor","Number of messages","Topic Name", "Partitions", "Out of sync replicas", "Size")
-          .map(name -> $x(String.format(columnHeaderLocator, name)))
-        .collect(Collectors.toList());
+        return Stream.of("Replication Factor", "Number of messages", "Topic Name", "Partitions", "Out of sync replicas", "Size")
+                .map(name -> $x(String.format(columnHeaderLocator, name)))
+                .collect(Collectors.toList());
     }
 
-    private List<SelenideElement> getEnabledColumnHeaders(){
-      return Stream.of("Topic Name", "Partitions", "Out of sync replicas", "Size")
-          .map(name -> $x(String.format(columnHeaderLocator, name)))
-          .collect(Collectors.toList());
+    private List<SelenideElement> getEnabledColumnHeaders() {
+        return Stream.of("Topic Name", "Partitions", "Out of sync replicas", "Size")
+                .map(name -> $x(String.format(columnHeaderLocator, name)))
+                .collect(Collectors.toList());
     }
 
     @Step
     public List<SelenideElement> getAllVisibleElements() {
-      List<SelenideElement> visibleElements = new ArrayList<>(getVisibleColumnHeaders());
-      visibleElements.addAll(Arrays.asList(searchField, addTopicBtn, tableGrid));
-      visibleElements.addAll(getActionButtons());
-      return visibleElements;
+        List<SelenideElement> visibleElements = new ArrayList<>(getVisibleColumnHeaders());
+        visibleElements.addAll(Arrays.asList(searchField, addTopicBtn, tableGrid));
+        visibleElements.addAll(getActionButtons());
+        return visibleElements;
     }
 
     @Step
     public List<SelenideElement> getAllEnabledElements() {
-      List<SelenideElement> enabledElements = new ArrayList<>(getEnabledColumnHeaders());
-      enabledElements.addAll(Arrays.asList(searchField, showInternalRadioBtn,addTopicBtn));
-      return enabledElements;
+        List<SelenideElement> enabledElements = new ArrayList<>(getEnabledColumnHeaders());
+        enabledElements.addAll(Arrays.asList(searchField, showInternalRadioBtn, addTopicBtn));
+        return enabledElements;
     }
 
     private List<TopicGridItem> initGridItems() {
-      List<TopicGridItem> gridItemList = new ArrayList<>();
-      allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
-          .forEach(item -> gridItemList.add(new TopicGridItem(item)));
-      return gridItemList;
+        List<TopicGridItem> gridItemList = new ArrayList<>();
+        allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+                .forEach(item -> gridItemList.add(new TopicGridItem(item)));
+        return gridItemList;
     }
 
     @Step
     public TopicGridItem getTopicItem(String name) {
-      return initGridItems().stream()
-        .filter(e -> e.getName().equals(name))
-        .findFirst().orElse(null);
+        return initGridItems().stream()
+                .filter(e -> e.getName().equals(name))
+                .findFirst().orElseThrow();
     }
 
     @Step
     public List<TopicGridItem> getNonInternalTopics() {
-      return initGridItems().stream()
-          .filter(e -> !e.isInternal())
-          .collect(Collectors.toList());
+        return initGridItems().stream()
+                .filter(e -> !e.isInternal())
+                .collect(Collectors.toList());
     }
 
     @Step
     public List<TopicGridItem> getInternalTopics() {
-      return initGridItems().stream()
-          .filter(TopicGridItem::isInternal)
-          .collect(Collectors.toList());
+        return initGridItems().stream()
+                .filter(TopicGridItem::isInternal)
+                .collect(Collectors.toList());
     }
 
     public static class TopicGridItem extends BasePage {
 
-      private final SelenideElement element;
+        private final SelenideElement element;
 
-      public TopicGridItem(SelenideElement element) {
-        this.element = element;
-      }
-
-      @Step
-      public TopicsList selectItem(boolean select) {
-         selectElement(element.$x("./td[1]/input"), select);
-         return new TopicsList();
-      }
-
-      @Step
-      public boolean isInternal() {
-        boolean internal = false;
-        try {
-          element.$x("./td[2]/a/span").shouldBe(visible, Duration.ofMillis(500));
-          internal = true;
-        } catch (Throwable ignored) {
+        public TopicGridItem(SelenideElement element) {
+            this.element = element;
         }
-        return internal;
-      }
 
-      private SelenideElement getNameElm() {
-        return element.$x("./td[2]");
-      }
+        @Step
+        public TopicsList selectItem(boolean select) {
+            selectElement(element.$x("./td[1]/input"), select);
+            return new TopicsList();
+        }
 
-      @Step
-      public String getName() {
-        return getNameElm().getText().trim();
-      }
+        @Step
+        public boolean isInternal() {
+            boolean internal = false;
+            try {
+                element.$x("./td[2]/a/span").shouldBe(visible, Duration.ofMillis(500));
+                internal = true;
+            } catch (Throwable ignored) {
+            }
+            return internal;
+        }
 
-      @Step
-      public void openItem() {
-        getNameElm().click();
-      }
+        private SelenideElement getNameElm() {
+            return element.$x("./td[2]");
+        }
 
-      @Step
-      public int getPartition() {
-        return Integer.parseInt(element.$x("./td[3]").getText().trim());
-      }
+        @Step
+        public String getName() {
+            return getNameElm().getText().trim();
+        }
 
-      @Step
-      public int getOutOfSyncReplicas() {
-        return Integer.parseInt(element.$x("./td[4]").getText().trim());
-      }
+        @Step
+        public void openItem() {
+            getNameElm().click();
+        }
 
-      @Step
-      public int getReplicationFactor() {
-        return Integer.parseInt(element.$x("./td[5]").getText().trim());
-      }
+        @Step
+        public int getPartition() {
+            return Integer.parseInt(element.$x("./td[3]").getText().trim());
+        }
 
-      @Step
-      public int getNumberOfMessages() {
-        return Integer.parseInt(element.$x("./td[6]").getText().trim());
-      }
+        @Step
+        public int getOutOfSyncReplicas() {
+            return Integer.parseInt(element.$x("./td[4]").getText().trim());
+        }
 
-      @Step
-      public int getSize() {
-        return Integer.parseInt(element.$x("./td[7]").getText().trim());
-      }
+        @Step
+        public int getReplicationFactor() {
+            return Integer.parseInt(element.$x("./td[5]").getText().trim());
+        }
 
-      @Step
-      public void openDotMenu(){
-        element.$x("./td[8]//button").click();
-      }
+        @Step
+        public int getNumberOfMessages() {
+            return Integer.parseInt(element.$x("./td[6]").getText().trim());
+        }
+
+        @Step
+        public int getSize() {
+            return Integer.parseInt(element.$x("./td[7]").getText().trim());
+        }
+
+        @Step
+        public void openDotMenu() {
+            element.$x("./td[8]//button").click();
+        }
     }
 }

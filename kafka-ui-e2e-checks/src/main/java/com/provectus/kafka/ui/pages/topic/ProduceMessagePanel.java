@@ -1,13 +1,14 @@
 package com.provectus.kafka.ui.pages.topic;
 
-import static com.codeborne.selenide.Selenide.$x;
-import static com.codeborne.selenide.Selenide.refresh;
-
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
+
 import java.util.Arrays;
+
+import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.refresh;
 
 public class ProduceMessagePanel extends BasePage {
 
@@ -20,7 +21,7 @@ public class ProduceMessagePanel extends BasePage {
     protected SelenideElement contentSerdeDdl = $x("//ul[@name='valueSerde']");
 
     @Step
-    public ProduceMessagePanel waitUntilScreenReady(){
+    public ProduceMessagePanel waitUntilScreenReady() {
         waitUntilSpinnerDisappear();
         Arrays.asList(partitionDdl, keySerdeDdl, contentSerdeDdl).forEach(element -> element.shouldBe(Condition.visible));
         return this;

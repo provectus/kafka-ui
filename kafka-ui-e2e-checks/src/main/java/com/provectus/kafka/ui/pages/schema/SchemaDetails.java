@@ -1,11 +1,11 @@
 package com.provectus.kafka.ui.pages.schema;
 
-import static com.codeborne.selenide.Selenide.$x;
-
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
+
+import static com.codeborne.selenide.Selenide.$x;
 
 public class SchemaDetails extends BasePage {
 
@@ -33,12 +33,12 @@ public class SchemaDetails extends BasePage {
 
     @Step
     public boolean isSchemaHeaderVisible(String schemaName) {
-        return isVisible($x(String.format(schemaHeaderLocator,schemaName)));
+        return isVisible($x(String.format(schemaHeaderLocator, schemaName)));
     }
 
     @Step
-    public int getLatestVersion(){
-      return Integer.parseInt(latestVersionField.getText());
+    public int getLatestVersion() {
+        return Integer.parseInt(latestVersionField.getText());
     }
 
     @Step
@@ -47,15 +47,15 @@ public class SchemaDetails extends BasePage {
     }
 
     @Step
-    public SchemaDetails openEditSchema(){
+    public SchemaDetails openEditSchema() {
         editSchemaBtn.shouldBe(Condition.visible).click();
         return this;
     }
 
     @Step
-    public SchemaDetails openCompareVersionMenu(){
-      compareVersionBtn.shouldBe(Condition.enabled).click();
-      return this;
+    public SchemaDetails openCompareVersionMenu() {
+        compareVersionBtn.shouldBe(Condition.enabled).click();
+        return this;
     }
 
     @Step

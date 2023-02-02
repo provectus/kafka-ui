@@ -1,11 +1,11 @@
 package com.provectus.kafka.ui.pages.connector;
 
-import static com.codeborne.selenide.Selenide.$x;
-
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
+
+import static com.codeborne.selenide.Selenide.$x;
 
 public class ConnectorCreateForm extends BasePage {
 
@@ -31,8 +31,8 @@ public class ConnectorCreateForm extends BasePage {
 
     @Step
     public ConnectorCreateForm clickSubmitButton() {
-      clickSubmitBtn();
-      waitUntilSpinnerDisappear();
-      return this;
+        clickSubmitBtn();
+        waitUntilSpinnerDisappear();
+        return this;
     }
 }
