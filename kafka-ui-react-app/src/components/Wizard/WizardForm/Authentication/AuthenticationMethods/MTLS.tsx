@@ -5,7 +5,7 @@ import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
 
-const MTLS: React.FC = (): JSX.Element => {
+const MTLS: React.FC = () => {
   const methods = useFormContext();
   const selfSignedCertificate = methods.watch('selfSignedCertificate');
   return (

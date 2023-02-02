@@ -5,7 +5,7 @@ import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
 
-const SaslAwsIam: React.FC = (): JSX.Element => {
+const SaslAwsIam: React.FC = () => {
   const methods = useFormContext();
   return (
     <S.PartStyled>

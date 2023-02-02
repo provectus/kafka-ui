@@ -5,7 +5,7 @@ import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
 
-const SaslGssapi: React.FC = (): JSX.Element => {
+const SaslGssapi: React.FC = () => {
   const methods = useFormContext();
   const useKeyTab = methods.watch('authentication.useKeyTab');
   return (
