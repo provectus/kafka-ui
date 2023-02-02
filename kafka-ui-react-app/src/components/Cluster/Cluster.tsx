@@ -11,6 +11,7 @@ import {
   ClusterNameRoute,
   clusterSchemasRelativePath,
   clusterTopicsRelativePath,
+  clusterConfigRelativePath,
   getNonExactPath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
@@ -22,6 +23,9 @@ const Topics = React.lazy(() => import('components/Topics/Topics'));
 const Schemas = React.lazy(() => import('components/Schemas/Schemas'));
 const Connect = React.lazy(() => import('components/Connect/Connect'));
 const KsqlDb = React.lazy(() => import('components/KsqlDb/KsqlDb'));
+const ClusterConfig = React.lazy(
+  () => import('components/Wizard/ClusterConfig')
+);
 const ConsumerGroups = React.lazy(
   () => import('components/ConsumerGroups/ConsumerGroups')
 );
@@ -32,7 +36,6 @@ const Cluster: React.FC = () => {
   const contextValue = React.useMemo(() => {
     const cluster = data?.find(({ name }) => name === clusterName);
     const features = cluster?.features || [];
-
     return {
       isReadOnly: cluster?.readOnly || false,
       hasKafkaConnectConfigured: features.includes(
@@ -89,6 +92,10 @@ const Cluster: React.FC = () => {
                 element={<KsqlDb />}
               />
             )}
+            <Route
+              path={getNonExactPath(clusterConfigRelativePath)}
+              element={<ClusterConfig />}
+            />
             <Route
               path="/"
               element={<Navigate to={clusterBrokerRelativePath} replace />}

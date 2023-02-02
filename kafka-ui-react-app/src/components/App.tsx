@@ -5,6 +5,7 @@ import {
   clusterPath,
   errorPage,
   getNonExactPath,
+  clusterNewConfigPath,
 } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
@@ -23,6 +24,7 @@ import { GlobalSettingsProvider } from './contexts/GlobalSettingsContext';
 import ErrorPage from './ErrorPage/ErrorPage';
 import { UserInfoRolesAccessProvider } from './contexts/UserInfoRolesAccessContext';
 import PageContainer from './PageContainer/PageContainer';
+import ClusterConfig from './Wizard/ClusterConfig';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,7 +38,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -56,6 +57,10 @@ const App: React.FC = () => {
                           element={<Dashboard />}
                         />
                       ))}
+                      <Route
+                        path={getNonExactPath(clusterNewConfigPath)}
+                        element={<ClusterConfig />}
+                      />
                       <Route
                         path={getNonExactPath(clusterPath())}
                         element={<ClusterPage />}
