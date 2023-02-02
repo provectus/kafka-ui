@@ -133,4 +133,3 @@ public abstract class BaseTest extends Facade {
         softly.assertAll();
     }
 }
-
