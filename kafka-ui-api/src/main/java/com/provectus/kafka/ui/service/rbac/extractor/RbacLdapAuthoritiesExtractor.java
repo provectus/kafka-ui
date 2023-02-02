@@ -25,7 +25,7 @@ public class RbacLdapAuthoritiesExtractor extends DefaultLdapAuthoritiesPopulato
 
   private final Function<Map<String, List<String>>, GrantedAuthority> authorityMapper = (record) -> {
     String role = record.get(getGroupRoleAttribute()).get(0);
-    return new SimpleGrantedAuthority(getRolePrefix() + role);
+    return new SimpleGrantedAuthority(role);
   };
 
   public RbacLdapAuthoritiesExtractor(ApplicationContext context) {
