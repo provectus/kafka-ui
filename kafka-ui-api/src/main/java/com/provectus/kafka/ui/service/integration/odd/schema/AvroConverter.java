@@ -249,8 +249,15 @@ class AvroConverter {
 
   private static DataSetFieldType mapType(Schema schema, Boolean nullable) {
     return new DataSetFieldType()
-        .logicalType(schema.getType().toString())
+        .logicalType(logicalType(schema))
         .isNullable(nullable)
         .type(mapType(schema.getType()));
   }
+
+  private static String logicalType(Schema schema) {
+    return schema.getType() == Schema.Type.RECORD
+        ? schema.getFullName()
+        : schema.getType().toString();
+  }
+
 }

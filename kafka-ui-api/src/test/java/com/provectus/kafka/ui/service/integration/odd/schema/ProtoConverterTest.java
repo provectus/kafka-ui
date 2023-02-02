@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.service.integration.odd.schema;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddrn.model.KafkaPath;
@@ -68,8 +66,6 @@ class ProtoConverterTest {
             .topic("someTopic")
             .build()
     );
-
-
     System.out.println(list);
   }
 

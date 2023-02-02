@@ -10,7 +10,6 @@ import com.google.protobuf.Duration;
 import com.google.protobuf.FloatValue;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.Int64Value;
-import com.google.protobuf.ListValue;
 import com.google.protobuf.StringValue;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.UInt32Value;
@@ -48,15 +47,18 @@ class ProtoConverter {
 
     String rootOddrn = Oddrn.generateOddrn(topicOddrn, "topic") + "/columns";
     List<DataSetField> result = new ArrayList<>();
-    schema.getFields().forEach(f -> {
-      extract(f,
-          rootOddrn,
-          rootOddrn + "/" + f.getName(),
-          f.getName(),
-          !f.isRequired(),
-          f.isRepeated(),
-          ImmutableSet.of(), result);
-    });
+
+    var registeredRecords = ImmutableSet.of(schema.getFullName());
+    schema.getFields().forEach(f ->
+        extract(f,
+            rootOddrn,
+            rootOddrn + "/" + f.getName(),
+            f.getName(),
+            !f.isRequired(),
+            f.isRepeated(),
+            registeredRecords,
+            result
+        ));
     return result;
   }
 
@@ -67,8 +69,7 @@ class ProtoConverter {
                               boolean nullable,
                               boolean repeated,
                               ImmutableSet<String> registeredRecords,
-                              List<DataSetField> sink
-  ) {
+                              List<DataSetField> sink) {
     if (repeated) {
       extractRepeated(field, parentOddr, oddrn, name, nullable, registeredRecords, sink);
     } else if (field.getType() == Descriptors.FieldDescriptor.Type.MESSAGE) {
@@ -119,11 +120,16 @@ class ProtoConverter {
                                       ImmutableSet<String> registeredRecords,
                                       List<DataSetField> sink) {
     sink.add(createDataSetField(name, parentOddr, oddrn, TypeEnum.LIST, "repeated", nullable));
+
+    String itemName = field.getType() == Descriptors.FieldDescriptor.Type.MESSAGE
+        ? field.getMessageType().getName()
+        : field.getType().name().toLowerCase();
+
     extract(
         field,
         oddrn,
-        oddrn + "/items/" + getLogicalTypeName(field),
-        getLogicalTypeName(field),
+        oddrn + "/items/" + itemName,
+        itemName,
         nullable,
         false,
         registeredRecords,
@@ -141,15 +147,16 @@ class ProtoConverter {
     if (extractProtoWellKnownType(field, parentOddr, oddrn, name, nullable, sink)) {
       return;
     }
+    sink.add(createDataSetField(name, parentOddr, oddrn, TypeEnum.STRUCT, getLogicalTypeName(field), nullable));
 
-    sink.add(createDataSetField(name, parentOddr, oddrn, TypeEnum.STRUCT, "message", nullable));
-    if (registeredRecords.contains(field.getFullName())) {
+    String msgTypeName = field.getMessageType().getFullName();
+    if (registeredRecords.contains(msgTypeName)) {
       // avoiding recursion by checking if record already registered in parsing chain
       return;
     }
     var newRegisteredRecords = ImmutableSet.<String>builder()
         .addAll(registeredRecords)
-        .add(field.getFullName())
+        .add(msgTypeName)
         .build();
 
     field.getMessageType()
@@ -185,11 +192,10 @@ class ProtoConverter {
     );
   }
 
-
   private static String getLogicalTypeName(Descriptors.FieldDescriptor f) {
     return f.getType() == Descriptors.FieldDescriptor.Type.MESSAGE
         ? f.getMessageType().getFullName()
-        : f.getType().toProto().name().toLowerCase();
+        : f.getType().name().toLowerCase();
   }
 
   private static DataSetField createDataSetField(String name,
