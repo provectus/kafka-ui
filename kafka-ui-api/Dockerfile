@@ -3,6 +3,10 @@ FROM azul/zulu-openjdk-alpine:17
 RUN apk add --no-cache gcompat # need to make snappy codec work
 RUN addgroup -S kafkaui && adduser -S kafkaui -G kafkaui
 
+# creating folder for dynamic config usage (certificates uploads, etc)
+RUN mkdir /etc/kafkaui/
+RUN chown kafkaui /etc/kafkaui
+
 USER kafkaui
 
 ARG JAR_FILE

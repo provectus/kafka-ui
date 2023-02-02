@@ -43,12 +43,13 @@ public class KsqlApiClient {
       UndefineVariableContext.class
   );
 
-  @Builder
+  @Builder(toBuilder = true)
   @Value
   public static class KsqlResponseTable {
     String header;
     List<String> columnNames;
     List<List<JsonNode>> values;
+    boolean error;
 
     public Optional<JsonNode> getColumnValue(List<JsonNode> row, String column) {
       return Optional.ofNullable(row.get(columnNames.indexOf(column)));

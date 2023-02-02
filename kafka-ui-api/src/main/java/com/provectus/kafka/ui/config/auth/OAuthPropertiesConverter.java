@@ -4,6 +4,8 @@ import static com.provectus.kafka.ui.config.auth.OAuthProperties.OAuth2Provider;
 import static org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties.Provider;
 import static org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties.Registration;
 
+import java.util.Optional;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +26,7 @@ public final class OAuthPropertiesConverter {
       registration.setClientId(provider.getClientId());
       registration.setClientSecret(provider.getClientSecret());
       registration.setClientName(provider.getClientName());
-      registration.setScope(provider.getScope());
+      registration.setScope(Optional.ofNullable(provider.getScope()).orElse(Set.of()));
       registration.setRedirectUri(provider.getRedirectUri());
       registration.setAuthorizationGrantType(provider.getAuthorizationGrantType());
 
@@ -71,7 +73,8 @@ public final class OAuthPropertiesConverter {
   }
 
   private static boolean isGoogle(OAuth2Provider provider) {
-    return GOOGLE.equalsIgnoreCase(provider.getCustomParams().get(TYPE));
+    return provider.getCustomParams() != null
+        && GOOGLE.equalsIgnoreCase(provider.getCustomParams().get(TYPE));
   }
 }
 
