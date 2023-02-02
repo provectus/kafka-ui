@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.pages.topic.enums;
+package com.provectus.kafka.ui.pages.topics.enums;
 
 public enum CustomParameterType {
 

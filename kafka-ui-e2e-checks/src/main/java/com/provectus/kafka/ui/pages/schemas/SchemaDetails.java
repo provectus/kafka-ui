@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.pages.schema;
+package com.provectus.kafka.ui.pages.schemas;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;

@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.smokeSuite.topics;
 
 import com.provectus.kafka.ui.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.pages.topic.TopicDetails;
+import com.provectus.kafka.ui.pages.topics.TopicDetails;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
@@ -20,12 +20,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
-import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.MESSAGES;
-import static com.provectus.kafka.ui.pages.topic.TopicDetails.TopicMenu.OVERVIEW;
+import static com.provectus.kafka.ui.pages.topics.TopicDetails.TopicMenu.MESSAGES;
+import static com.provectus.kafka.ui.pages.topics.TopicDetails.TopicMenu.OVERVIEW;
 import static com.provectus.kafka.ui.utilities.TimeUtils.waitUntilNewMinuteStarted;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 

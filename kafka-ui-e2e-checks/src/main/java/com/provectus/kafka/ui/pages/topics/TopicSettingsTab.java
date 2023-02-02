@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.pages.topic;
+package com.provectus.kafka.ui.pages.topics;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;

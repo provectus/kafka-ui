@@ -2,20 +2,20 @@ package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.pages.NaviSideBar;
 import com.provectus.kafka.ui.pages.TopPanel;
-import com.provectus.kafka.ui.pages.broker.BrokersConfigTab;
-import com.provectus.kafka.ui.pages.broker.BrokersDetails;
-import com.provectus.kafka.ui.pages.broker.BrokersList;
-import com.provectus.kafka.ui.pages.connector.ConnectorCreateForm;
-import com.provectus.kafka.ui.pages.connector.ConnectorDetails;
-import com.provectus.kafka.ui.pages.connector.KafkaConnectList;
-import com.provectus.kafka.ui.pages.consumer.ConsumersDetails;
-import com.provectus.kafka.ui.pages.consumer.ConsumersList;
+import com.provectus.kafka.ui.pages.brokers.BrokersConfigTab;
+import com.provectus.kafka.ui.pages.brokers.BrokersDetails;
+import com.provectus.kafka.ui.pages.brokers.BrokersList;
+import com.provectus.kafka.ui.pages.connectors.ConnectorCreateForm;
+import com.provectus.kafka.ui.pages.connectors.ConnectorDetails;
+import com.provectus.kafka.ui.pages.connectors.KafkaConnectList;
+import com.provectus.kafka.ui.pages.consumers.ConsumersDetails;
+import com.provectus.kafka.ui.pages.consumers.ConsumersList;
 import com.provectus.kafka.ui.pages.ksqlDb.KsqlDbList;
 import com.provectus.kafka.ui.pages.ksqlDb.KsqlQueryForm;
-import com.provectus.kafka.ui.pages.schema.SchemaCreateForm;
-import com.provectus.kafka.ui.pages.schema.SchemaDetails;
-import com.provectus.kafka.ui.pages.schema.SchemaRegistryList;
-import com.provectus.kafka.ui.pages.topic.*;
+import com.provectus.kafka.ui.pages.schemas.SchemaCreateForm;
+import com.provectus.kafka.ui.pages.schemas.SchemaDetails;
+import com.provectus.kafka.ui.pages.schemas.SchemaRegistryList;
+import com.provectus.kafka.ui.pages.topics.*;
 import com.provectus.kafka.ui.services.ApiService;
 
 public abstract class Facade {

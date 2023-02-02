@@ -11,7 +11,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.BROKERS;
-import static com.provectus.kafka.ui.pages.broker.BrokersDetails.DetailsTab.CONFIGS;
+import static com.provectus.kafka.ui.pages.brokers.BrokersDetails.DetailsTab.CONFIGS;
 
 public class BrokersTest extends BaseTest {
 

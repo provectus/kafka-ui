@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.pages.consumer;
+package com.provectus.kafka.ui.pages.consumers;
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.pages.BasePage;

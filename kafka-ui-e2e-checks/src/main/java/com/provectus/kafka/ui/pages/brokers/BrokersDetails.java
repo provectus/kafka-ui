@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.pages.broker;
+package com.provectus.kafka.ui.pages.brokers;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
