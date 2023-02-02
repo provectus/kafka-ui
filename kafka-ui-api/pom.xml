@@ -221,7 +221,7 @@
                     <artifactId>reactor-netty</artifactId>
                 </exclusion>
             </exclusions>
-            <version>0.1.19</version>
+            <version>${odd-oddrn-client.version}</version>
         </dependency>
 
         <dependency>
@@ -294,9 +294,6 @@
                             <version>${spring-boot.version}</version>
                         </path>
                     </annotationProcessorPaths>
-                    <source>17</source>
-                    <target>17</target>
-                    <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
             <plugin>

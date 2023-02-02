@@ -14,7 +14,7 @@ import org.opendatadiscovery.oddrn.model.KafkaPath;
 import org.opendatadiscovery.oddrn.model.OddrnPath;
 
 @UtilityClass
-class Oddrn {
+public class Oddrn {
 
   private static final Generator GENERATOR = new Generator();
 
@@ -49,7 +49,6 @@ class Oddrn {
     );
   }
 
-  @SneakyThrows
   String connectorOddrn(String connectName, String connectorName, KafkaCluster cluster) {
     String connectUrlsStr = cluster.getOriginalProperties().getKafkaConnect().stream()
         .filter(c -> c.getName().equals(connectName))
@@ -79,7 +78,7 @@ class Oddrn {
   }
 
   @SneakyThrows
-  String generateOddrn(OddrnPath path, String field) {
+  public String generateOddrn(OddrnPath path, String field) {
     return GENERATOR.generate(path, field);
   }
 

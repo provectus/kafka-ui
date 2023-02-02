@@ -1,10 +1,10 @@
 package com.provectus.kafka.ui.service.integration.odd;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Statistics;
 import com.provectus.kafka.ui.service.StatisticsCache;
+import com.provectus.kafka.ui.service.integration.odd.schema.DataSetFieldsExtractors;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.opendatadiscovery.client.model.DataEntity;
@@ -20,9 +21,11 @@ import org.opendatadiscovery.client.model.DataSet;
 import org.opendatadiscovery.client.model.DataSetField;
 import org.opendatadiscovery.client.model.MetadataExtension;
 import org.opendatadiscovery.oddrn.model.KafkaPath;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @RequiredArgsConstructor
 class TopicsExporter {
 
@@ -40,30 +43,20 @@ class TopicsExporter {
   @SneakyThrows
   private Mono<DataEntity> createTopicDataEntity(KafkaCluster cluster, String topic, Statistics stats) {
     KafkaPath topicOddrnPath = Oddrn.topicOddrnPath(cluster, topic);
-    return Mono.zip(
-        getTopicSchema(cluster, topic, topicOddrnPath, true),
-        getTopicSchema(cluster, topic, topicOddrnPath, false)
-    ).flatMap(keyValueFields -> {
-
-      DataSet dataSet = new DataSet();
-      //TODO[discuss]: what should be oddrns for key / value fields?
-      Iterables.concat(
-          keyValueFields.getT1(),
-          keyValueFields.getT2()
-      ).forEach(dataSet::addFieldListItem);
-
-      DataEntity topicDE = new DataEntity()
-          .name("Topic \"%s\"".formatted(topic)) //TODO[discuss]: discuss naming
-          .dataset(dataSet)
-          .oddrn(Oddrn.topicOddrn(cluster, topic))
-          .type(DataEntityType.KAFKA_TOPIC)
-          .addMetadataItem(
-              new MetadataExtension()
-                  .schemaUrl(URI.create("wontbeused.oops"))
-                  .metadata(getTopicMetadata(topic, stats)));
-
-      return Mono.just(topicDE);
-    });
+    return getTopicSchema(cluster, topic, topicOddrnPath, false)
+        .map(valueFields ->
+            new DataEntity()
+                .name("Topic \"%s\"".formatted(topic)) //TODO[discuss]: discuss naming
+                .oddrn(Oddrn.topicOddrn(cluster, topic))
+                .type(DataEntityType.KAFKA_TOPIC)
+                .dataset(
+                    new DataSet()
+                        .fieldList(valueFields))
+                .addMetadataItem(
+                    new MetadataExtension()
+                        .schemaUrl(URI.create("wontbeused.oops"))
+                        .metadata(getTopicMetadata(topic, stats)))
+        );
   }
 
   private Map<String, Object> getNonDefaultConfigs(String topic, Statistics stats) {
@@ -88,6 +81,7 @@ class TopicsExporter {
   private Mono<List<DataSetField>> getTopicSchema(KafkaCluster cluster,
                                                   String topic,
                                                   KafkaPath topicOddrn,
+                                                  //currently we only retrieve value schema
                                                   boolean isKey) {
     if (cluster.getSchemaRegistryClient() == null) {
       return Mono.just(List.of());
@@ -95,8 +89,12 @@ class TopicsExporter {
     String subject = topic + (isKey ? "-key" : "-value");
     return cluster.getSchemaRegistryClient()
         .mono(client -> client.getSubjectVersion(subject, "latest"))
-        .map(subj -> DataSetFieldsExtractor.extract(subj, topicOddrn))
-        .onErrorResume(th -> true, th -> Mono.just(List.of()));
+        .map(subj -> DataSetFieldsExtractors.extract(subj, topicOddrn))
+        .onErrorResume(WebClientResponseException.NotFound.class, th -> Mono.just(List.of()))
+        .onErrorResume(th -> true, th -> {
+          log.warn("Error retrieving subject {} for cluster {}", subject, cluster.getName(), th);
+          return Mono.just(List.of());
+        });
   }
 
 }

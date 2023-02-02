@@ -113,7 +113,7 @@ public class KafkaConnectService {
         fullConnectorInfo.getType().getValue());
   }
 
-  public Mono<ConnectorTopics> getConnectorTopics(KafkaCluster cluster, String connectClusterName,
+  private Mono<ConnectorTopics> getConnectorTopics(KafkaCluster cluster, String connectClusterName,
                                                   String connectorName) {
     return api(cluster, connectClusterName)
         .mono(c -> c.getConnectorTopics(connectorName))
@@ -128,12 +128,12 @@ public class KafkaConnectService {
         .flux(client -> client.getConnectors(null))
         // for some reason `getConnectors` method returns the response as a single string
         .collectList().map(e -> e.get(0))
-        .map(this::parseConnectorsNamesArrayToList)
+        .map(this::parseConnectorsNamesStringToList)
         .flatMapMany(Flux::fromIterable);
   }
 
   @SneakyThrows
-  private List<String> parseConnectorsNamesArrayToList(String json) {
+  private List<String> parseConnectorsNamesStringToList(String json) {
     return objectMapper.readValue(json, new TypeReference<>() {
     });
   }

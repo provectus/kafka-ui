@@ -12,7 +12,7 @@ class OddExporterScheduler {
   private final ClustersStorage clustersStorage;
   private final OddExporter oddExporter;
 
-  @Scheduled(fixedRateString = "${kafka.send-stats-to-odd-millis:30000}")
+  @Scheduled(fixedRateString = "${kafka.send-stats-to-odd-millis:10000}")
   public void sendMetricsToOdd() {
     Flux.fromIterable(clustersStorage.getKafkaClusters())
         .parallel()
