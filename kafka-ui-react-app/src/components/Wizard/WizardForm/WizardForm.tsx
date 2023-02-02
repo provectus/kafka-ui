@@ -18,7 +18,12 @@ export type FormValues = {
     bootstrapServers: BootstrapServersType[];
   };
 };
-const Wizard: React.FC = () => {
+
+interface WizardFormProps {
+  initaialValues?: FormValues;
+}
+
+const Wizard: React.FC<WizardFormProps> = () => {
   const methods = useForm<FormValues>({
     mode: 'all',
     resolver: yupResolver(formSchema),
