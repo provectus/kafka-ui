@@ -10,11 +10,11 @@ import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 
 type PropType = {
-  handleAddKafkaConnect: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  remove: (index: number) => void;
-  fields: TField[];
+  addConnect: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  removeConnect: (index: number) => void;
+  kafkaConnects: KafkaConnectFormProps[];
 };
-type TField = {
+type KafkaConnectFormProps = {
   id: string;
   name: string;
   url: string;
@@ -23,19 +23,19 @@ type TField = {
   password: string;
 };
 const KafkaConnect: React.FC<PropType> = ({
-  handleAddKafkaConnect,
-  remove,
-  fields,
+  addConnect,
+  removeConnect,
+  kafkaConnects,
 }) => {
   const [newKafkaConnect, setNewKafkaConnect] = useState(false);
   const methods = useFormContext();
-  const connect = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const showConnects = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     setNewKafkaConnect(!newKafkaConnect);
   };
-  const kafka = methods.getValues('kafkaConnect');
+  const connects = methods.getValues('kafkaConnect');
   useEffect(() => {
-    if (kafka.length < 1) {
+    if (connects.length < 1) {
       setNewKafkaConnect(false);
       methods.reset({
         ...methods.getValues(),
@@ -50,14 +50,14 @@ const KafkaConnect: React.FC<PropType> = ({
         ],
       });
     }
-  }, [kafka]);
+  }, [connects]);
   return (
     <S.Section>
       <S.SectionName>Kafka Connect</S.SectionName>
       <div>
         {newKafkaConnect ? (
           <S.KafkaConnect>
-            {fields.map((item, index) => (
+            {kafkaConnects.map((item, index) => (
               <div key={item.id}>
                 <S.InputsContainer>
                   <div>
@@ -161,7 +161,7 @@ const KafkaConnect: React.FC<PropType> = ({
                       </>
                     )}
                   </div>
-                  <S.DeleteButtonWrapper onClick={() => remove(index)}>
+                  <S.DeleteButtonWrapper onClick={() => removeConnect(index)}>
                     <IconButtonWrapper aria-label="deleteProperty">
                       <CloseIcon aria-hidden />
                     </IconButtonWrapper>
@@ -174,7 +174,7 @@ const KafkaConnect: React.FC<PropType> = ({
               type="button"
               buttonSize="M"
               buttonType="secondary"
-              onClick={handleAddKafkaConnect}
+              onClick={addConnect}
             >
               <PlusIcon />
               Add Bootstrap Server
@@ -184,7 +184,7 @@ const KafkaConnect: React.FC<PropType> = ({
           <Button
             buttonSize="M"
             buttonType="primary"
-            onClick={(e) => connect(e)}
+            onClick={(e) => showConnects(e)}
           >
             ADD Kafka Connect
           </Button>

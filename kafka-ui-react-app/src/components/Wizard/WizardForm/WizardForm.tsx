@@ -66,31 +66,29 @@ const Wizard: React.FC = () => {
 
   const { control } = methods;
   const {
-    fields: bootstrapFields,
-    append: bootstrapAppend,
-    remove: bootstrapRemove,
+    fields: fieldsBootstrap,
+    append: appendBootstrap,
+    remove: removeBootstrap,
   } = useFieldArray<FormValues, 'kafkaCluster.bootstrapServers'>({
     control,
     name: 'kafkaCluster.bootstrapServers',
   });
   const handleAddNewProperty = useCallback(() => {
-    bootstrapAppend({ host: '', port: '' });
+    appendBootstrap({ host: '', port: '' });
   }, []);
 
   const {
-    fields: connectFields,
-    append: connectAppend,
-    remove: connectRemove,
+    fields: fieldsConnect,
+    append: appendConnect,
+    remove: removeConnect,
   } = useFieldArray<FormValues, 'kafkaConnect'>({
     control,
     name: 'kafkaConnect',
   });
 
-  const handleAddKafkaConnect: React.MouseEventHandler<HTMLButtonElement> = (
-    e
-  ) => {
+  const addConnect: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
-    connectAppend({
+    appendConnect({
       name: '',
       url: '',
       isAuth: false,
@@ -110,15 +108,15 @@ const Wizard: React.FC = () => {
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <KafkaCluster
             handleAddNewProperty={handleAddNewProperty}
-            fields={bootstrapFields}
-            remove={bootstrapRemove}
+            fields={fieldsBootstrap}
+            remove={removeBootstrap}
           />
           <Authentication />
           <SchemaRegistry />
           <KafkaConnect
-            handleAddKafkaConnect={handleAddKafkaConnect}
-            fields={connectFields}
-            remove={connectRemove}
+            addConnect={addConnect}
+            kafkaConnects={fieldsConnect}
+            removeConnect={removeConnect}
           />
           <S.Section>
             <S.SectionName>JMX Metrics</S.SectionName>
