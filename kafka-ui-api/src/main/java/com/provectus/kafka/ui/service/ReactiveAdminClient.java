@@ -66,6 +66,7 @@ import org.apache.kafka.common.errors.GroupIdNotFoundException;
 import org.apache.kafka.common.errors.GroupNotEmptyException;
 import org.apache.kafka.common.errors.InvalidRequestException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
+import org.apache.kafka.common.errors.UnsupportedVersionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -297,7 +298,12 @@ public class ReactiveAdminClient implements Closeable {
 
   public Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> describeLogDirs(
       Collection<Integer> brokerIds) {
-    return toMono(client.describeLogDirs(brokerIds).all());
+    return toMono(client.describeLogDirs(brokerIds).all())
+        .onErrorResume(UnsupportedVersionException.class, th -> Mono.just(Map.of()))
+        .onErrorResume(th -> true, th -> {
+          log.warn("Error while calling describeLogDirs", th);
+          return Mono.just(Map.of());
+        });
   }
 
   public Mono<ClusterDescription> describeCluster() {
