@@ -1,33 +1,27 @@
 package com.provectus.kafka.ui.service.integration.odd.schema;
 
-import static java.util.Objects.requireNonNull;
-
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.ImmutableSet;
-import com.google.protobuf.Any;
+import com.google.protobuf.BoolValue;
+import com.google.protobuf.BytesValue;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Descriptors.Descriptor;
+import com.google.protobuf.DoubleValue;
 import com.google.protobuf.Duration;
-import com.google.protobuf.FieldMask;
+import com.google.protobuf.FloatValue;
+import com.google.protobuf.Int32Value;
+import com.google.protobuf.Int64Value;
 import com.google.protobuf.ListValue;
-import com.google.protobuf.Struct;
+import com.google.protobuf.StringValue;
 import com.google.protobuf.Timestamp;
+import com.google.protobuf.UInt32Value;
+import com.google.protobuf.UInt64Value;
 import com.google.protobuf.Value;
 import com.provectus.kafka.ui.service.integration.odd.Oddrn;
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
-import com.provectus.kafka.ui.util.jsonschema.AnyFieldSchema;
-import com.provectus.kafka.ui.util.jsonschema.ArrayFieldSchema;
-import com.provectus.kafka.ui.util.jsonschema.FieldSchema;
-import com.provectus.kafka.ui.util.jsonschema.JsonType;
-import com.provectus.kafka.ui.util.jsonschema.ObjectFieldSchema;
-import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
-import com.provectus.kafka.ui.util.jsonschema.SimpleFieldSchema;
-import com.provectus.kafka.ui.util.jsonschema.SimpleJsonType;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 import lombok.experimental.UtilityClass;
 import org.opendatadiscovery.client.model.DataSetField;
 import org.opendatadiscovery.client.model.DataSetFieldType;
@@ -36,6 +30,18 @@ import org.opendatadiscovery.oddrn.model.KafkaPath;
 
 @UtilityClass
 class ProtoConverter {
+
+  private final static Set<String> PRIMITIVES_WRAPPER_TYPE_NAMES = Set.of(
+      BoolValue.getDescriptor().getFullName(),
+      Int32Value.getDescriptor().getFullName(),
+      UInt32Value.getDescriptor().getFullName(),
+      Int64Value.getDescriptor().getFullName(),
+      UInt64Value.getDescriptor().getFullName(),
+      StringValue.getDescriptor().getFullName(),
+      BytesValue.getDescriptor().getFullName(),
+      FloatValue.getDescriptor().getFullName(),
+      DoubleValue.getDescriptor().getFullName()
+  );
 
   static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn) {
     Descriptor schema = new ProtobufSchema(subject.getSchema()).toDescriptor();
@@ -72,49 +78,38 @@ class ProtoConverter {
     }
   }
 
-  // converts Protobuf Well-known type (from google.protobuf.* packages) to Json-schema types
+  // converts some(!) Protobuf Well-known type (from google.protobuf.* packages)
   // see JsonFormat::buildWellKnownTypePrinters for impl details
-//  private boolean convertProtoWellKnownTypes(Descriptors.FieldDescriptor field,
-//                                             String parentOddr,
-//                                             String oddrn, //null for root
-//                                             String name,
-//                                             boolean nullable,
-//                                             boolean repeated,
-//                                             ImmutableSet<String> registeredRecords,
-//                                             List<DataSetField> sink) {
-//    // all well-known types are messages
-//    if (field.getType() != Descriptors.FieldDescriptor.Type.MESSAGE) {
-//      return false;
-//    }
-//    String typeName = field.getMessageType().getFullName();
-//    if (typeName.equals(Timestamp.getDescriptor().getFullName())) {
-//      sink.add(
-//          createDataSetField(name, parentOddr, oddrn, TypeEnum.STRING, "well-known-proto-timestamp", nullable));
-//      return true;
-//    }
-//    if (typeName.equals(Duration.getDescriptor().getFullName())) {
-//      sink.add(
-//          createDataSetField(name, parentOddr, oddrn, TypeEnum.STRING, "well-known-proto-duration", nullable));
-//      return true;
-//    }
-//    if (typeName.equals(FieldMask.getDescriptor().getFullName())) {
-//      return Optional.of(new SimpleFieldSchema(new SimpleJsonType(JsonType.Type.STRING)));
-//    }
-//    if (typeName.equals(Any.getDescriptor().getFullName()) || typeName.equals(Struct.getDescriptor().getFullName())) {
-//      return Optional.of(ObjectFieldSchema.EMPTY);
-//    }
-//    if (typeName.equals(Value.getDescriptor().getFullName())) {
-//      return Optional.of(AnyFieldSchema.get());
-//    }
-//    if (typeName.equals(ListValue.getDescriptor().getFullName())) {
-//      return Optional.of(new ArrayFieldSchema(AnyFieldSchema.get()));
-//    }
-//    if (ProtobufSchemaConverter.SIMPLE_TYPES_WRAPPER_NAMES.contains(typeName)) {
-//      return Optional.of(new SimpleFieldSchema(
-//          convertType(requireNonNull(field.getMessageType().findFieldByName("value")))));
-//    }
-//    return Optional.empty();
-//  }
+  private boolean extractProtoWellKnownType(Descriptors.FieldDescriptor field,
+                                            String parentOddr,
+                                            String oddrn, //null for root
+                                            String name,
+                                            boolean nullable,
+                                            List<DataSetField> sink) {
+    // all well-known types are messages
+    if (field.getType() != Descriptors.FieldDescriptor.Type.MESSAGE) {
+      return false;
+    }
+    String typeName = field.getMessageType().getFullName();
+    if (typeName.equals(Timestamp.getDescriptor().getFullName())) {
+      sink.add(createDataSetField(name, parentOddr, oddrn, TypeEnum.DATETIME, typeName, nullable));
+      return true;
+    }
+    if (typeName.equals(Duration.getDescriptor().getFullName())) {
+      sink.add(createDataSetField(name, parentOddr, oddrn, TypeEnum.DURATION, typeName, nullable));
+      return true;
+    }
+    if (typeName.equals(Value.getDescriptor().getFullName())) {
+      //TODO[discuss] : mapping Value to UNION type (maybe its better to you UNKNOWN?)
+      sink.add(createDataSetField(name, parentOddr, oddrn, TypeEnum.UNION, typeName, nullable));
+      return true;
+    }
+    if (PRIMITIVES_WRAPPER_TYPE_NAMES.contains(typeName)) {
+      sink.add(createDataSetField(name, parentOddr, oddrn, mapType(field.getType()), typeName, true));
+      return true;
+    }
+    return false;
+  }
 
   private static void extractRepeated(Descriptors.FieldDescriptor field,
                                       String parentOddr,
@@ -127,8 +122,8 @@ class ProtoConverter {
     extract(
         field,
         oddrn,
-        oddrn + "/items/" + typeName(field),
-        typeName(field),
+        oddrn + "/items/" + getLogicalTypeName(field),
+        getLogicalTypeName(field),
         nullable,
         false,
         registeredRecords,
@@ -143,6 +138,10 @@ class ProtoConverter {
                                      boolean nullable,
                                      ImmutableSet<String> registeredRecords,
                                      List<DataSetField> sink) {
+    if (extractProtoWellKnownType(field, parentOddr, oddrn, name, nullable, sink)) {
+      return;
+    }
+
     sink.add(createDataSetField(name, parentOddr, oddrn, TypeEnum.STRUCT, "message", nullable));
     if (registeredRecords.contains(field.getFullName())) {
       // avoiding recursion by checking if record already registered in parsing chain
@@ -172,23 +171,24 @@ class ProtoConverter {
                                        String parentOddr,
                                        String oddrn,
                                        String name,
-                                       boolean nullable, List<DataSetField> sink) {
+                                       boolean nullable,
+                                       List<DataSetField> sink) {
     sink.add(
         createDataSetField(
             name,
             parentOddr,
             oddrn,
             mapType(field.getType()),
-            typeName(field),
+            getLogicalTypeName(field),
             nullable
         )
     );
   }
 
 
-  private static String typeName(Descriptors.FieldDescriptor f) {
+  private static String getLogicalTypeName(Descriptors.FieldDescriptor f) {
     return f.getType() == Descriptors.FieldDescriptor.Type.MESSAGE
-        ? f.getMessageType().getName()
+        ? f.getMessageType().getFullName()
         : f.getType().toProto().name().toLowerCase();
   }
 
