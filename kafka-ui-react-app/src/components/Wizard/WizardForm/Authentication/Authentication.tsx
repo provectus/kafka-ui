@@ -2,21 +2,14 @@ import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 import React from 'react';
 import Select from 'components/common/Select/Select';
 import { useFormContext, Controller } from 'react-hook-form';
-import { IOption } from 'components/Wizard/WizardForm/WizardForm';
 import { ErrorMessage } from '@hookform/error-message';
 import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
+import { AUTH_OPTIONS, SECURITY_PROTOCOL_OPTIONS } from 'lib/constants';
 
 import AuthenticationMethods from './AuthenticationMethods/AuthenticationMethods';
 
-type PropType = {
-  options: IOption[];
-  securityProtocolOptions: IOption[];
-};
-const Authentication: React.FC<PropType> = ({
-  options,
-  securityProtocolOptions,
-}) => {
+const Authentication: React.FC = () => {
   const methods = useFormContext();
   const securityProtocol = methods.watch('securityProtocol');
 
@@ -29,7 +22,7 @@ const Authentication: React.FC<PropType> = ({
             <label htmlFor="securityProtocol">Security Protocol</label>{' '}
           </S.ItemLabel>
           <Controller
-            defaultValue={securityProtocolOptions[0].value}
+            defaultValue={SECURITY_PROTOCOL_OPTIONS[0].value}
             control={methods.control}
             name="securityProtocol"
             render={({ field: { name, onChange, value } }) => {
@@ -40,7 +33,7 @@ const Authentication: React.FC<PropType> = ({
                   minWidth="270px"
                   onChange={onChange}
                   value={value}
-                  options={securityProtocolOptions}
+                  options={SECURITY_PROTOCOL_OPTIONS}
                 />
               );
             }}
@@ -88,7 +81,7 @@ const Authentication: React.FC<PropType> = ({
             <label htmlFor="authentication.type">Authentication Method</label>{' '}
           </S.ItemLabelRequired>
           <Controller
-            defaultValue={options[0].value}
+            defaultValue={AUTH_OPTIONS[0].value}
             control={methods.control}
             name="authentication.type"
             render={({ field: { name, onChange, value } }) => {
@@ -104,7 +97,7 @@ const Authentication: React.FC<PropType> = ({
                     onChange(authenticationValue);
                   }}
                   value={value}
-                  options={options}
+                  options={AUTH_OPTIONS}
                 />
               );
             }}

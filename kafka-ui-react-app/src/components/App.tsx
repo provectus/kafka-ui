@@ -58,7 +58,7 @@ const App: React.FC = () => {
                         />
                       ))}
                       <Route
-                        path={clusterNewConfigPath}
+                        path={getNonExactPath(clusterNewConfigPath)}
                         element={<ClusterConfig />}
                       />
                       <Route

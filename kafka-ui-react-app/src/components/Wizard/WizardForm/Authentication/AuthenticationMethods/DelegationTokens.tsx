@@ -5,7 +5,7 @@ import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
 
-const DelegationTokens: React.FC = (): JSX.Element => {
+const DelegationTokens: React.FC = () => {
   const methods = useFormContext();
   return (
     <>

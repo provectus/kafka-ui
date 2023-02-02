@@ -5,7 +5,7 @@ import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
 
-const UsernamePassword: React.FC = (): JSX.Element => {
+const UsernamePassword: React.FC = () => {
   const methods = useFormContext();
   return (
     <>
@@ -31,7 +31,7 @@ const UsernamePassword: React.FC = (): JSX.Element => {
         </S.ItemLabelRequired>
         <Input
           id="authentication.username"
-          type="authentication.password"
+          type="password"
           name="authentication.password"
         />
         <FormError>

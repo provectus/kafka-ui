@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.util.DynamicConfigOperations;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +25,7 @@ public class FeatureService {
   private static final String DELETE_TOPIC_ENABLED_SERVER_PROPERTY = "delete.topic.enable";
 
   private final AdminClientService adminClientService;
+  private final DynamicConfigOperations dynamicConfigOperations;
 
   public Mono<List<Feature>> getAvailableFeatures(KafkaCluster cluster, @Nullable Node controller) {
     List<Mono<Feature>> features = new ArrayList<>();
@@ -47,6 +49,10 @@ public class FeatureService {
           isTopicDeletionEnabled(cluster, controller)
               .flatMap(r -> Boolean.TRUE.equals(r) ? Mono.just(Feature.TOPIC_DELETION) : Mono.empty())
       );
+    }
+
+    if (dynamicConfigOperations.dynamicConfigEnabled()) {
+      features.add(Mono.just(Feature.DYNAMIC_CONFIG));
     }
 
     return Flux.fromIterable(features).flatMap(m -> m).collectList();
