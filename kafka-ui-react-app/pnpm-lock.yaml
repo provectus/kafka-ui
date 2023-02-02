@@ -73,7 +73,7 @@ specifiers:
   react-datepicker: ^4.8.0
   react-dom: ^18.1.0
   react-error-boundary: ^3.1.4
-  react-hook-form: 7.6.9
+  react-hook-form: 7.10.0
   react-hot-toast: ^2.3.0
   react-is: ^18.2.0
   react-multi-select-component: ^4.3.3
@@ -99,8 +99,8 @@ dependencies:
   '@babel/plugin-syntax-flow': 7.18.6_@babel+core@7.18.2
   '@babel/plugin-transform-react-jsx': 7.18.6_@babel+core@7.18.2
   '@floating-ui/react-dom-interactions': 0.10.3_ohobp6rpsmerwlq5ipwfh5yigy
-  '@hookform/error-message': 2.0.0_l2dcsysovzdujulgxvsen7vbsm
-  '@hookform/resolvers': 2.8.9_react-hook-form@7.6.9
+  '@hookform/error-message': 2.0.0_xf7bwk4rqq5dcziznyuy7fx4ni
+  '@hookform/resolvers': 2.8.9_react-hook-form@7.10.0
   '@microsoft/fetch-event-source': 2.0.1
   '@reduxjs/toolkit': 1.8.3_ctm756ikdwcjcvyfxxwskzbr6q
   '@szhsin/react-menu': 3.1.1_ef5jwxihqo6n7gxfmzogljlgcm
@@ -110,7 +110,7 @@ dependencies:
   '@types/testing-library__jest-dom': 5.14.5
   ace-builds: 1.7.1
   ajv: 8.8.2
-  ajv-formats: 2.1.1_ajv@8.8.2
+  ajv-formats: 2.1.1
   babel-jest: 29.0.3_@babel+core@7.18.2
   classnames: 2.3.1
   fetch-mock: 9.11.0
@@ -125,7 +125,7 @@ dependencies:
   react-datepicker: 4.8.0_ef5jwxihqo6n7gxfmzogljlgcm
   react-dom: 18.1.0_react@18.1.0
   react-error-boundary: 3.1.4_react@18.1.0
-  react-hook-form: 7.6.9_react@18.1.0
+  react-hook-form: 7.10.0_react@18.1.0
   react-hot-toast: 2.3.0_ef5jwxihqo6n7gxfmzogljlgcm
   react-is: 18.2.0
   react-multi-select-component: 4.3.3_ef5jwxihqo6n7gxfmzogljlgcm
@@ -2921,7 +2921,7 @@ packages:
       react-dom: 18.1.0_react@18.1.0
     dev: false
 
-  /@hookform/error-message/2.0.0_l2dcsysovzdujulgxvsen7vbsm:
+  /@hookform/error-message/2.0.0_xf7bwk4rqq5dcziznyuy7fx4ni:
     resolution: {integrity: sha512-Y90nHzjgL2MP7GFy75kscdvxrCTjtyxGmOLLxX14nd08OXRIh9lMH/y9Kpdo0p1IPowJBiZMHyueg7p+yrqynQ==}
     peerDependencies:
       react: '>=16.8.0'
@@ -2930,15 +2930,15 @@ packages:
     dependencies:
       react: 18.1.0
       react-dom: 18.1.0_react@18.1.0
-      react-hook-form: 7.6.9_react@18.1.0
+      react-hook-form: 7.10.0_react@18.1.0
     dev: false
 
-  /@hookform/resolvers/2.8.9_react-hook-form@7.6.9:
+  /@hookform/resolvers/2.8.9_react-hook-form@7.10.0:
     resolution: {integrity: sha512-IXwGpjewxScF4N2kuyYDip6ABqH4lCg9n1f1mp0vbmKik+u+nestpbtdEs6U1WQZxwaoK/2APv1+MEr4czX7XA==}
     peerDependencies:
       react-hook-form: ^7.0.0
     dependencies:
-      react-hook-form: 7.6.9_react@18.1.0
+      react-hook-form: 7.10.0_react@18.1.0
     dev: false
 
   /@humanwhocodes/config-array/0.9.5:
@@ -4131,10 +4131,8 @@ packages:
       indent-string: 4.0.0
     dev: true
 
-  /ajv-formats/2.1.1_ajv@8.8.2:
+  /ajv-formats/2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependencies:
-      ajv: ^8.0.0
     peerDependenciesMeta:
       ajv:
         optional: true
@@ -7810,8 +7808,8 @@ packages:
   /react-fast-compare/3.2.0:
     resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==}
 
-  /react-hook-form/7.6.9_react@18.1.0:
-    resolution: {integrity: sha512-nz+btC4WFIm3zPBjw22K3t9nnJtlMMwj8slcbPYoTKlkSVA5l+q3Ai+VF0YzeRi7vbyyeGQvpyibov1xd/TV7A==}
+  /react-hook-form/7.10.0_react@18.1.0:
+    resolution: {integrity: sha512-J6jJDw61TDNG0cEyLlYKUTPTwJH1Gfp8S8+m5Dt3mLY5vEy7UwKr60rl11ESofKmliFH8DconTVFnZgblhGvyg==}
     peerDependencies:
       react: ^16.8.0 || ^17
     dependencies:

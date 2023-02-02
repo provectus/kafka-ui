@@ -1,6 +1,6 @@
 import React from 'react';
 import Input from 'components/common/Input/Input';
-import { useFormContext } from 'react-hook-form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { FormError } from 'components/common/Input/Input.styled';
 import { ErrorMessage } from '@hookform/error-message';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
@@ -9,107 +9,82 @@ import { Button } from 'components/common/Button/Button';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 
-type PropType = {
-  handleAddNewProperty: () => void;
-  remove: (index: number) => void;
-  fields: Tfield[];
-};
-type Tfield = {
-  id: string;
-  host: string;
-  port: string;
-};
-const KafkaCluster: React.FC<PropType> = ({
-  handleAddNewProperty,
-  remove,
-  fields,
-}) => {
-  const methods = useFormContext();
+const KafkaCluster: React.FC = () => {
+  const {
+    control,
+    register,
+    formState: { errors },
+  } = useFormContext();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'bootstrapServers',
+  });
+
   return (
     <S.Section>
       <S.SectionName>Kafka Cluster</S.SectionName>
       <S.Action>
         <S.ActionItem>
           <S.ItemLabelRequired>
-            <label htmlFor="kafkaCluster.clusterName">Cluster Name</label>{' '}
+            <label htmlFor="name">Cluster Name</label>{' '}
             <S.P>
               this name will help you recognize the cluster in the application
               interface
             </S.P>
           </S.ItemLabelRequired>
-          <Input
-            id="kafkaCluster.clusterName"
-            type="text"
-            name="kafkaCluster.clusterName"
-          />
+          <Input id="name" type="text" name="name" />
           <FormError>
-            <ErrorMessage
-              errors={methods.formState.errors}
-              name="kafkaCluster.clusterName"
-            />
+            <ErrorMessage errors={errors} name="name" />
           </FormError>
         </S.ActionItem>
         <S.ActionItem>
           <S.ReadOnly>
-            <input
-              {...methods.register('kafkaCluster.readOnly')}
-              id="kafkaCluster.readOnly"
-              name="kafkaCluster.readOnly"
-              type="checkbox"
-            />
+            <input {...register('readOnly')} type="checkbox" />
             <div>
-              <label htmlFor="kafkaCluster.readOnly">Read-only mode</label>{' '}
+              <label htmlFor="readOnly">Read-only mode</label>{' '}
               <p>
                 allows you to run an application in read-only mode for a
                 specific cluster
               </p>
               <FormError>
-                <ErrorMessage
-                  errors={methods.formState.errors}
-                  name="kafkaCluster.readOnly"
-                />
+                <ErrorMessage errors={errors} name="readOnly" />
               </FormError>
             </div>
           </S.ReadOnly>
         </S.ActionItem>
         <S.ActionItem>
           <S.ItemLabelRequired>
-            <label
-              className="block text-sm font-medium text-gray-700 whitespace-nowrap mr-2 svelte-55p6jf required"
-              htmlFor="kafkaCluster.bootstrapServers"
-            >
-              Bootstrap Servers
-            </label>{' '}
+            <label htmlFor="bootstrapServers">Bootstrap Servers</label>
             <S.P>the list of Kafka brokers that you want to connect to</S.P>
           </S.ItemLabelRequired>
           <S.BootstrapServersContainer>
-            {fields.map((item, index) => (
-              <S.InputsContainer key={item.id}>
+            {fields.map((field, index) => (
+              <S.InputsContainer key={field.id}>
                 <S.BootstrapServersWrapper>
                   <Input
-                    name={`kafkaCluster.bootstrapServers.${index}.host`}
+                    name={`bootstrapServers.${index}.host`}
                     placeholder="Host"
-                    aria-label="host"
                     type="text"
                   />
                   <FormError>
                     <ErrorMessage
-                      errors={methods.formState.errors}
-                      name={`kafkaCluster.bootstrapServers.${index}.host`}
+                      errors={errors}
+                      name={`bootstrapServers.${index}.host`}
                     />
                   </FormError>
                 </S.BootstrapServersWrapper>
                 <S.BootstrapServersWrapper>
                   <Input
-                    name={`kafkaCluster.bootstrapServers.${index}.port`}
+                    name={`bootstrapServers.${index}.port`}
                     placeholder="Port"
-                    aria-label="port"
-                    type="text"
+                    type="number"
+                    positiveOnly
                   />
                   <FormError>
                     <ErrorMessage
-                      errors={methods.formState.errors}
-                      name={`kafkaCluster.bootstrapServers.${index}.port`}
+                      errors={errors}
+                      name={`bootstrapServers.${index}.port`}
                     />
                   </FormError>
                 </S.BootstrapServersWrapper>
@@ -125,7 +100,7 @@ const KafkaCluster: React.FC<PropType> = ({
               type="button"
               buttonSize="M"
               buttonType="secondary"
-              onClick={handleAddNewProperty}
+              onClick={() => append({ host: '', port: '' })}
             >
               <PlusIcon />
               Add Bootstrap Server
@@ -134,20 +109,12 @@ const KafkaCluster: React.FC<PropType> = ({
         </S.ActionItem>
         <S.ActionItem>
           <S.CheckboxWrapper>
-            <input
-              {...methods.register('kafkaCluster.sharedConfluentCloudCluster')}
-              id="kafkaCluster.sharedConfluentCloudCluster"
-              name="kafkaCluster.sharedConfluentCloudCluster"
-              type="checkbox"
-            />
-            <label htmlFor="kafkaCluster.sharedConfluentCloudCluster">
+            <input {...register('sharedConfluentCloud')} type="checkbox" />
+            <label htmlFor="sharedConfluentCloud">
               Shared confluent cloud cluster
             </label>
             <FormError>
-              <ErrorMessage
-                errors={methods.formState.errors}
-                name="kafkaCluster.sharedConfluentCloudCluster"
-              />
+              <ErrorMessage errors={errors} name="sharedConfluentCloud" />
             </FormError>
           </S.CheckboxWrapper>
         </S.ActionItem>

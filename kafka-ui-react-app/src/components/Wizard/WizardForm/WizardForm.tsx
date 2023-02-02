@@ -9,14 +9,14 @@ import KafkaCluster from './KafkaCluster/KafkaCluster';
 import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
 
-type BootstrapServersType = {
+type BootstrapServer = {
   host: string;
   port: string;
 };
 export type FormValues = {
-  kafkaCluster: {
-    bootstrapServers: BootstrapServersType[];
-  };
+  name: string;
+  readOnly: boolean;
+  bootstrapServers: BootstrapServer[];
 };
 
 interface WizardFormProps {
@@ -28,23 +28,15 @@ const Wizard: React.FC<WizardFormProps> = () => {
     mode: 'all',
     resolver: yupResolver(formSchema),
     defaultValues: {
-      kafkaCluster: {
-        bootstrapServers: [{ host: '', port: '' }],
-      },
+      name: 'My test cluster',
+      readOnly: true,
+      bootstrapServers: [
+        { host: 'loc1', port: '3001' },
+        { host: 'loc', port: '3002' },
+      ],
     },
   });
 
-  const { control } = methods;
-  const { fields, append, remove } = useFieldArray<
-    FormValues,
-    'kafkaCluster.bootstrapServers'
-  >({
-    control,
-    name: 'kafkaCluster.bootstrapServers',
-  });
-  const handleAddNewProperty = useCallback(() => {
-    append({ host: '', port: '' });
-  }, []);
   const onSubmit = (data: unknown) => {
     // eslint-disable-next-line no-console
     console.log('SubmitData', data);
@@ -55,11 +47,7 @@ const Wizard: React.FC<WizardFormProps> = () => {
     <div style={{ padding: '15px' }}>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <KafkaCluster
-            handleAddNewProperty={handleAddNewProperty}
-            fields={fields}
-            remove={remove}
-          />
+          <KafkaCluster />
           <Authentication />
           <SchemaRegistry />
           <S.Section>
