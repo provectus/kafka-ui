@@ -8,6 +8,7 @@ import * as S from './WizardForm.styled';
 import KafkaCluster from './KafkaCluster/KafkaCluster';
 import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
+import JMXMetrics from './JMXMetrics/JMXMetrics';
 
 type BootstrapServersType = {
   host: string;
@@ -70,14 +71,7 @@ const Wizard: React.FC<WizardFormProps> = () => {
               </Button>
             </div>
           </S.Section>
-          <S.Section>
-            <S.SectionName>JMX Metrics</S.SectionName>
-            <div>
-              <Button buttonSize="M" buttonType="primary">
-                Configure JMX Metrics
-              </Button>
-            </div>
-          </S.Section>
+          <JMXMetrics />
           <div style={{ paddingTop: '10px' }}>
             <div
               style={{

@@ -85,7 +85,7 @@ const KafkaCluster: React.FC<PropType> = ({
           <S.BootstrapServersContainer>
             {fields.map((item, index) => (
               <S.InputsContainer key={item.id}>
-                <S.BootstrapServersWrapper>
+                <S.InputWrapper>
                   <Input
                     name={`kafkaCluster.bootstrapServers.${index}.host`}
                     placeholder="Host"
@@ -98,8 +98,8 @@ const KafkaCluster: React.FC<PropType> = ({
                       name={`kafkaCluster.bootstrapServers.${index}.host`}
                     />
                   </FormError>
-                </S.BootstrapServersWrapper>
-                <S.BootstrapServersWrapper>
+                </S.InputWrapper>
+                <S.InputWrapper>
                   <Input
                     name={`kafkaCluster.bootstrapServers.${index}.port`}
                     placeholder="Port"
@@ -112,7 +112,7 @@ const KafkaCluster: React.FC<PropType> = ({
                       name={`kafkaCluster.bootstrapServers.${index}.port`}
                     />
                   </FormError>
-                </S.BootstrapServersWrapper>
+                </S.InputWrapper>
 
                 <S.DeleteButtonWrapper onClick={() => remove(index)}>
                   <IconButtonWrapper aria-label="deleteProperty">

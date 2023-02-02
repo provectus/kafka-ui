@@ -101,10 +101,10 @@ export const InputsContainer = styled.div`
   overflow: hidden;
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: start;
   gap: 10px;
 `;
-export const BootstrapServersWrapper = styled.div`
+export const InputWrapper = styled.div`
   & {
     width: 100%;
   }
