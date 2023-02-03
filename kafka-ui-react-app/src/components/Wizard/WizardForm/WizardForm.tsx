@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Button } from 'components/common/Button/Button';
-import { useFieldArray, useForm, FormProvider } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import formSchema from 'components/Wizard/schema';
+import { StyledForm } from 'components/common/Form/Form.styled';
 
 import * as S from './WizardForm.styled';
 import KafkaCluster from './KafkaCluster/KafkaCluster';
@@ -10,48 +11,39 @@ import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
 import KafkaConnect from './KafkaConnect/KafkaConnect';
 
-type BootstrapServersType = {
+type BootstrapServer = {
   host: string;
   port: string;
 };
+type KafkaConnectType = {
+  name: string;
+  url: string;
+  isAuth: boolean;
+  username: string;
+  password: string;
+}
 export type FormValues = {
-  kafkaCluster: {
-    clusterName: string;
-    readOnly: boolean;
-    bootstrapServers: BootstrapServersType[];
-    sharedConfluentCloudCluster: boolean;
-  };
-  schemaRegistry: {
-    url: string;
-    isAuth: boolean;
-    username: string;
-    password: string;
-  };
-  kafkaConnect: {
-    name: string;
-    url: string;
-    isAuth: boolean;
-    username: string;
-    password: string;
-  }[];
+  name: string;
+  readOnly: boolean;
+  bootstrapServers: BootstrapServer[];
+  kafkaConnect: KafkaConnectType[];
 };
-const Wizard: React.FC = () => {
+
+interface WizardFormProps {
+  initaialValues?: FormValues;
+}
+
+const Wizard: React.FC<WizardFormProps> = () => {
   const methods = useForm<FormValues>({
     mode: 'all',
     resolver: yupResolver(formSchema),
     defaultValues: {
-      kafkaCluster: {
-        clusterName: '',
-        readOnly: false,
-        bootstrapServers: [{ host: '', port: '' }],
-        sharedConfluentCloudCluster: false,
-      },
-      schemaRegistry: {
-        url: '',
-        isAuth: false,
-        username: '',
-        password: '',
-      },
+      name: 'My test cluster',
+      readOnly: true,
+      bootstrapServers: [
+        { host: 'loc1', port: '3001' },
+        { host: 'loc', port: '3002' },
+      ],
       kafkaConnect: [
         {
           name: '',
@@ -64,91 +56,47 @@ const Wizard: React.FC = () => {
     },
   });
 
-  const { control } = methods;
-  const {
-    fields: fieldsBootstrap,
-    append: appendBootstrap,
-    remove: removeBootstrap,
-  } = useFieldArray<FormValues, 'kafkaCluster.bootstrapServers'>({
-    control,
-    name: 'kafkaCluster.bootstrapServers',
-  });
-  const handleAddNewProperty = useCallback(() => {
-    appendBootstrap({ host: '', port: '' });
-  }, []);
-
-  const {
-    fields: fieldsConnect,
-    append: appendConnect,
-    remove: removeConnect,
-  } = useFieldArray<FormValues, 'kafkaConnect'>({
-    control,
-    name: 'kafkaConnect',
-  });
-
-  const addConnect: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.stopPropagation();
-    appendConnect({
-      name: '',
-      url: '',
-      isAuth: false,
-      username: '',
-      password: '',
-    });
-  };
-  const onSubmit = (data: unknown) => {
+  const onSubmit = (data: FormValues) => {
     // eslint-disable-next-line no-console
     console.log('SubmitData', data);
     return data;
   };
 
   return (
-    <div style={{ padding: '15px' }}>
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <KafkaCluster
-            handleAddNewProperty={handleAddNewProperty}
-            fields={fieldsBootstrap}
-            remove={removeBootstrap}
-          />
-          <Authentication />
-          <SchemaRegistry />
-          <KafkaConnect
-            addConnect={addConnect}
-            kafkaConnects={fieldsConnect}
-            removeConnect={removeConnect}
-          />
-          <S.Section>
-            <S.SectionName>JMX Metrics</S.SectionName>
-            <div>
-              <Button buttonSize="M" buttonType="primary">
-                Configure JMX Metrics
-              </Button>
-            </div>
-          </S.Section>
-          <div style={{ paddingTop: '10px' }}>
-            <div
-              style={{
-                justifyContent: 'center',
-                display: 'flex',
-              }}
-            >
-              <Button buttonSize="M" buttonType="primary">
-                Cancel
-              </Button>
-              <Button
-                style={{ marginLeft: '15px' }}
-                type="submit"
-                buttonSize="M"
-                buttonType="primary"
-              >
-                Save
-              </Button>
-            </div>
+    <FormProvider {...methods}>
+      <StyledForm onSubmit={methods.handleSubmit(onSubmit)}>
+        <KafkaCluster />
+        <hr />
+        <Authentication />
+        <SchemaRegistry />
+        <KafkaConnect />
+        <hr />
+        <S.Section>
+          <S.SectionName>JMX Metrics</S.SectionName>
+          <div>
+            <Button buttonSize="M" buttonType="primary">
+              Configure JMX Metrics
+            </Button>
           </div>
-        </form>
-      </FormProvider>
-    </div>
+        </S.Section>
+        <div style={{ paddingTop: '10px' }}>
+          <div
+            style={{
+              justifyContent: 'center',
+              display: 'flex',
+              gap: '10px',
+            }}
+          >
+            <Button buttonSize="M" buttonType="primary">
+              Cancel
+            </Button>
+            <Button type="submit" buttonSize="M" buttonType="primary">
+              Save
+            </Button>
+          </div>
+        </div>
+      </StyledForm>
+    </FormProvider>
   );
 };
 

@@ -2,25 +2,20 @@ import { object, string, number, array, boolean, mixed } from 'yup';
 
 // type AuthenticationType = 'None' | 'SASL_SSL' | 'SASL_PLAINTEXT';
 
+const bootstrapServerSchema = object({
+  host: string().required('host is a required field'),
+  port: number()
+    .positive('Port must be a positive number')
+    .typeError('Port must be a number')
+    .required('Port is a required field'),
+});
+
 const formSchema = object({
-  kafkaCluster: object({
-    clusterName: string()
-      .required()
-      .min(3, 'Cluster name must be at least 3 characters'),
-    readOnly: boolean().required(),
-    bootstrapServers: array()
-      .of(
-        object({
-          host: string().required('host is a required field'),
-          port: number()
-            .positive('Port must be a positive number')
-            .typeError('Port must be a number')
-            .required('Port is a required field'),
-        })
-      )
-      .min(1),
-    sharedConfluentCloudCluster: boolean().required(),
-  }).required(),
+  name: string()
+    .required()
+    .min(3, 'Cluster name must be at least 3 characters'),
+  readOnly: boolean().required(),
+  bootstrapServers: array().of(bootstrapServerSchema).min(1),
   authentication: object({
     type: string()
       .required()

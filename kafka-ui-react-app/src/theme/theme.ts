@@ -79,6 +79,9 @@ const theme = {
       color: Colors.neutral[30],
     },
   },
+  text: {
+    secondary: Colors.neutral[60],
+  },
   progressBar: {
     backgroundColor: Colors.neutral[3],
     compleatedColor: Colors.green[40],
