@@ -1,4 +1,3 @@
-import get from 'lodash/get';
 import React from 'react';
 import styled from 'styled-components';
 import useDataSaver from 'lib/hooks/useDataSaver';
@@ -7,6 +6,7 @@ import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
+import { JSONPath } from 'jsonpath-plus';
 
 import MessageContent from './MessageContent/MessageContent';
 import * as S from './MessageContent/MessageContent.styled';
@@ -88,9 +88,12 @@ const Message: React.FC<Props> = ({
     return (
       <>
         {filters.map((item) => (
-          <div>
-            {item.field}: {get(parsedJson, item.path)}
-          </div>
+          <span key={`${item.path}--${item.field}`}>
+            {item.field}:{' '}
+            {JSON.stringify(
+              JSONPath({ path: item.path, json: parsedJson, wrap: false })
+            )}
+          </span>
         ))}
       </>
     );
@@ -116,7 +119,7 @@ const Message: React.FC<Props> = ({
         <StyledDataCell title={key}>
           {renderFilteredJson(key, keyFilters)}
         </StyledDataCell>
-        <StyledDataCell>
+        <StyledDataCell title={content}>
           <S.Metadata>
             <S.MetadataValue>
               {renderFilteredJson(content, contentFilters)}

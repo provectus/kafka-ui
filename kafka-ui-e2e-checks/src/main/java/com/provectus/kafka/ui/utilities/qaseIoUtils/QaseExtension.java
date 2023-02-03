@@ -9,7 +9,6 @@ import io.qase.client.model.ResultCreate;
 import io.qase.client.model.ResultCreate.StatusEnum;
 import io.qase.client.model.ResultCreateSteps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.support.descriptor.MethodSource;
@@ -26,19 +25,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import static io.qase.api.QaseClient.getConfig;
 import static io.qase.api.utils.IntegrationUtils.getCaseId;
 import static io.qase.api.utils.IntegrationUtils.getStacktrace;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.junit.platform.engine.TestExecutionResult.Status.SUCCESSFUL;
 
 @Slf4j
 public class QaseExtension implements TestExecutionListener {
 
-    private final ApiClient apiClient = QaseClient.getApiClient();
-    private final ResultsApi resultsApi = new ResultsApi(apiClient);
-    private final Map<TestIdentifier, Long> testStartTimes = new ConcurrentHashMap<>();
     private static final String QASE_PROJECT = "KAFKAUI";
 
     static {
         String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
-        if (StringUtils.isEmpty(qaseApiToken)) {
+        if (isEmpty(qaseApiToken)) {
             log.warn("QASEIO_API_TOKEN system property is not set. Support for Qase will be disabled.");
             System.setProperty("QASE_ENABLE", "false");
         } else {
@@ -47,11 +44,15 @@ public class QaseExtension implements TestExecutionListener {
             System.setProperty("QASE_API_TOKEN", qaseApiToken);
             System.setProperty("QASE_USE_BULK", "false");
             if ("true".equalsIgnoreCase(System.getProperty("QASEIO_CREATE_TESTRUN"))) {
-              System.setProperty("QASE_RUN_NAME", "Automation run " +
-                   new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+                System.setProperty("QASE_RUN_NAME", "Automation run " +
+                        new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
             }
         }
     }
+
+    private final ApiClient apiClient = QaseClient.getApiClient();
+    private final ResultsApi resultsApi = new ResultsApi(apiClient);
+    private final Map<TestIdentifier, Long> testStartTimes = new ConcurrentHashMap<>();
 
     @Override
     public void executionStarted(TestIdentifier testIdentifier) {
