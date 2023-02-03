@@ -8,11 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 import org.everit.json.schema.BooleanSchema;
+import org.everit.json.schema.FalseSchema;
 import org.everit.json.schema.NumberSchema;
 import org.everit.json.schema.Schema;
+import org.everit.json.schema.StringSchema;
+import org.everit.json.schema.TrueSchema;
 import org.opendatadiscovery.client.model.DataSetField;
 import org.opendatadiscovery.client.model.DataSetFieldType;
 import org.opendatadiscovery.oddrn.model.KafkaPath;
+import org.springframework.boot.context.properties.bind.Binder;
 
 @UtilityClass
 class JsonSchemaConverter {
@@ -44,16 +48,18 @@ class JsonSchemaConverter {
     boolean isRoot = oddrn == null;
     if (schema instanceof BooleanSchema
         || schema instanceof NumberSchema
-        || schema instanceof Schema
+        || schema instanceof StringSchema
+        || schema instanceof TrueSchema
+        || schema instanceof FalseSchema
     ) {
       String primOddrn = isRoot ? (parentOddr + "/" + typeName(schema)) : oddrn;
       sink.add(
           createDataSetField(
-              "Root primitive",
+              isRoot ? "Root JSON primitive" : name,
               doc,
               parentOddr,
               primOddrn,
-              schema,
+              mapType(schema),
               nullable
           )
       );
@@ -65,31 +71,37 @@ class JsonSchemaConverter {
   }
 
   private static DataSetField createDataSetField(String name,
-                                                 String doc,
                                                  String parentOddrn,
+                                                 String doc,
                                                  String oddrn,
-                                                 Schema schema,
+                                                 DataSetFieldType.TypeEnum type,
+                                                 String logicalType,
                                                  Boolean nullable) {
+
+    Binder.get(null).bind("", Class.forName("")).
     return new DataSetField()
         .name(name)
-        .description(doc)
         .parentFieldOddrn(parentOddrn)
         .oddrn(oddrn)
-        .description(doc)
-        .type(mapType(schema, nullable));
+        .type(
+            new DataSetFieldType()
+                .isNullable(nullable)
+                .logicalType(logicalType)
+                .type(type)
+        );
   }
 
   private static DataSetFieldType.TypeEnum mapType(Schema type) {
-    if (type instanceof BooleanSchema) {
+    if (type instanceof NumberSchema) {
+      return DataSetFieldType.TypeEnum.NUMBER;
+    }
+    if (type instanceof StringSchema) {
+      return DataSetFieldType.TypeEnum.STRING;
+    }
+    if (type instanceof TrueSchema || type instanceof FalseSchema || type instanceof BooleanSchema) {
       return DataSetFieldType.TypeEnum.BOOLEAN;
     }
     return DataSetFieldType.TypeEnum.UNKNOWN;
-  }
-
-  private static DataSetFieldType mapType(Schema schema, Boolean nullable) {
-    return new DataSetFieldType()
-        .isNullable(nullable)
-        .type(mapType(schema));
   }
 
 }

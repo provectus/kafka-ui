@@ -101,7 +101,7 @@ class ProtoConverter {
       return true;
     }
     if (typeName.equals(Value.getDescriptor().getFullName())) {
-      //TODO[discuss] : mapping Value to UNION type (maybe its better to you UNKNOWN?)
+      //TODO[discuss] : mapping Value to UNION type (maybe its better to use UNKNOWN?)
       sink.add(createDataSetField(name, parentOddr, oddrn, TypeEnum.UNION, typeName, nullable));
       return true;
     }
