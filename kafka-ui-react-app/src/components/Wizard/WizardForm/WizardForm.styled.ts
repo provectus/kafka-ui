@@ -51,6 +51,20 @@ export const ItemLabel = styled(ItemLabelRequired)`
     }
   }
 `;
+export const ItemLabelFlex = styled.div`
+  align-items: baseline;
+  display: flex;
+  margin-bottom: 0.5rem;
+  & label {
+    --tw-text-opacity: 1;
+    color: rgb(55 65 81 / var(--tw-text-opacity));
+    font-weight: 500;
+    line-height: 1.25rem;
+    white-space: nowrap;
+    display: block;
+    margin-right: 0.5rem;
+  }
+`;
 export const P = styled.p`
   font-size: 0.85rem;
   margin-top: 0.25rem;
@@ -58,7 +72,6 @@ export const P = styled.p`
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
 `;
-
 export const ReadOnly = styled.div`
   display: flex;
   & div {
@@ -89,39 +102,41 @@ export const FileWrapper = styled.div`
   }
 `;
 
-//----------------------------------
-// KafkaCluster
-export const BootstrapServersContainer = styled.label`
+export const Container = styled.label`
   display: flex;
   flex-direction: column;
   gap: 8px;
 `;
 
-export const BootstrapServer = styled.div`
+export const InputContainer = styled.div`
   display: grid;
-  grid-template-columns: 3fr 1fr 30px;
+  grid-template-columns: 1fr 1fr 30px;
   gap: 8px;
-  align-items: top;
+  align-items: stretch;
   max-width: 500px;
 `;
-export const BootstrapServerActions = styled(IconButtonWrapper)`
+//----------------------------------
+// KafkaCluster
+
+export const BootstrapServer = styled(InputContainer)`
+  grid-template-columns: 3fr 1fr 30px;
+`;
+export const RemoveButton = styled(IconButtonWrapper)`
   align-self: center;
 `;
 
-//-------------------------------
 // Authentication
 export const PartStyled = styled.div`
   padding-top: 1.2rem;
+  & > div {
+    padding-top: 1rem;
+  }
 `;
-
-export const KafkaConnect = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-export const Hr = styled.div`
-  border-bottom: 1px solid #e7ebe5;
-  width: 100%;
-  margin: 10px 0;
+// Kafka Connect
+export const ConnectInputWrapper = styled(InputContainer)`
+  grid-template-columns: 1fr 30px;
+  max-width: 100%;
+  & > div > div {
+    padding-top: 1rem;
+  }
 `;

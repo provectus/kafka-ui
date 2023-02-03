@@ -141,16 +141,16 @@ const formSchema = object({
   }),
   kafkaConnect: array().of(
     object({
-      name: string().required(),
-      url: string().required(),
+      name: string().required('Name is a required field'),
+      url: string().required('URL is a required field'),
       isAuth: boolean().required(),
       username: string().when('isAuth', {
         is: true,
-        then: (schema) => schema.required(),
+        then: (schema) => schema.required('Username is a required field'),
       }),
       password: string().when('isAuth', {
         is: true,
-        then: (schema) => schema.required(),
+        then: (schema) => schema.required('Password is a required field'),
       }),
     })
   ),

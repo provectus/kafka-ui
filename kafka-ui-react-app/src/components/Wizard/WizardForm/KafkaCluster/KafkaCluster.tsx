@@ -54,7 +54,7 @@ const KafkaCluster: React.FC = () => {
         <InputHint>
           the list of Kafka brokers that you want to connect to
         </InputHint>
-        <S.BootstrapServersContainer>
+        <S.Container>
           {fields.map((field, index) => (
             <S.BootstrapServer key={field.id}>
               <div>
@@ -85,12 +85,12 @@ const KafkaCluster: React.FC = () => {
                   />
                 </FormError>
               </div>
-              <S.BootstrapServerActions
+              <S.RemoveButton
                 aria-label="deleteProperty"
                 onClick={() => remove(index)}
               >
                 <CloseIcon aria-hidden />
-              </S.BootstrapServerActions>
+              </S.RemoveButton>
             </S.BootstrapServer>
           ))}
           <div>
@@ -104,7 +104,7 @@ const KafkaCluster: React.FC = () => {
               Add Bootstrap Server
             </Button>
           </div>
-        </S.BootstrapServersContainer>
+        </S.Container>
 
         <FormError>
           <ErrorMessage errors={errors} name="bootstrapServers" />

@@ -21,7 +21,7 @@ type KafkaConnectType = {
   isAuth: boolean;
   username: string;
   password: string;
-}
+};
 export type FormValues = {
   name: string;
   readOnly: boolean;
@@ -46,11 +46,11 @@ const Wizard: React.FC<WizardFormProps> = () => {
       ],
       kafkaConnect: [
         {
-          name: '',
-          url: '',
-          isAuth: false,
-          username: '',
-          password: '',
+          name: 'Test Name',
+          url: 'http://localhost:8080',
+          isAuth: true,
+          username: 'Test username',
+          password: 'pass',
         },
       ],
     },
