@@ -3,7 +3,6 @@ import Input from 'components/common/Input/Input';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { FormError, InputHint } from 'components/common/Input/Input.styled';
 import { ErrorMessage } from '@hookform/error-message';
-import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 import { Button } from 'components/common/Button/Button';
 import PlusIcon from 'components/common/Icons/PlusIcon';
@@ -86,7 +85,10 @@ const KafkaCluster: React.FC = () => {
                   />
                 </FormError>
               </div>
-              <S.BootstrapServerActions aria-label="deleteProperty">
+              <S.BootstrapServerActions
+                aria-label="deleteProperty"
+                onClick={() => remove(index)}
+              >
                 <CloseIcon aria-hidden />
               </S.BootstrapServerActions>
             </S.BootstrapServer>

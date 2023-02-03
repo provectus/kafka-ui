@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react';
 import { render } from 'lib/testHelpers';
-import { fireEvent, screen } from '@testing-library/dom';
+import { screen } from '@testing-library/dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import TopicForm, { Props } from 'components/Topics/shared/Form/TopicForm';
 import userEvent from '@testing-library/user-event';
