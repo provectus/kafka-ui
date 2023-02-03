@@ -30,8 +30,10 @@ const expectByRoleAndNameToBeInDocument = (
 };
 
 describe('TopicForm', () => {
-  it('renders', () => {
-    renderComponent();
+  it('renders', async () => {
+    await act(async () => {
+      renderComponent();
+    });
 
     expectByRoleAndNameToBeInDocument('textbox', 'Topic Name *');
 
@@ -62,22 +64,19 @@ describe('TopicForm', () => {
   });
 
   it('submits', async () => {
-    renderComponent({
-      isSubmitting,
-      onSubmit: onSubmit.mockImplementation((e) => e.preventDefault()),
-    });
-
     await act(async () => {
-      await userEvent.type(
-        screen.getByPlaceholderText('Topic Name'),
-        'topicName'
-      );
-    });
-    await act(() => {
-      fireEvent.submit(screen.getByLabelText('topic form'));
+      renderComponent({
+        isSubmitting,
+        onSubmit: onSubmit.mockImplementation((e) => e.preventDefault()),
+      });
     });
 
+    await userEvent.type(
+      screen.getByPlaceholderText('Topic Name'),
+      'topicName'
+    );
     await userEvent.click(screen.getByRole('button', { name: 'Create topic' }));
+
     expect(onSubmit).toBeCalledTimes(1);
   });
 });
