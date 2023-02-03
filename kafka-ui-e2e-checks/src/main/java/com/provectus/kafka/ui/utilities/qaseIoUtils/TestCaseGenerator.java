@@ -23,9 +23,9 @@ import static io.qase.api.QaseClient.getConfig;
 @Slf4j
 public class TestCaseGenerator {
 
-    public static boolean FAILED = false;
     private static final ApiClient apiClient = QaseClient.getApiClient();
     private static final CasesApi casesApi = new CasesApi(apiClient);
+    public static boolean FAILED = false;
 
     @SneakyThrows
     public static void createTestCaseIfNotExists(Method testMethod) {

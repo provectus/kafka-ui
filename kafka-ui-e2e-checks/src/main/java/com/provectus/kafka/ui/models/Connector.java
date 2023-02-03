@@ -8,5 +8,4 @@ import lombok.experimental.Accessors;
 public class Connector {
 
     private String name, config;
-
 }
