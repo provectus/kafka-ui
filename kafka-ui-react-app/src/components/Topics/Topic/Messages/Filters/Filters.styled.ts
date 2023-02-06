@@ -267,12 +267,6 @@ export const SavedFilter = styled.div.attrs({
     props.selected ? props.theme.layout.stuffColor : props.theme.panelColor};
 `;
 
-export const CheckboxWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 5px;
-`;
-
 export const ActiveSmartFilter = styled.div`
   border-radius: 4px;
   min-width: 115px;

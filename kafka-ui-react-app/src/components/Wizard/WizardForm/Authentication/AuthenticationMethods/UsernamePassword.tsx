@@ -30,7 +30,7 @@ const UsernamePassword: React.FC = () => {
           <label htmlFor="authentication.password">Password</label>{' '}
         </S.ItemLabelRequired>
         <Input
-          id="authentication.username"
+          id="authentication.password"
           type="password"
           name="authentication.password"
         />

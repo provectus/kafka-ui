@@ -1,3 +1,4 @@
+import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import styled from 'styled-components';
 
 export const Section = styled.div`
@@ -57,7 +58,6 @@ export const P = styled.p`
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
 `;
-
 export const ReadOnly = styled.div`
   display: flex;
   & div {
@@ -88,46 +88,30 @@ export const FileWrapper = styled.div`
   }
 `;
 
+
+export const ArrayFieldWrapper = styled.label`
+display: flex;
+flex-direction: column;
+gap: 8px;
+`;
+export const InputContainer = styled.div`
+display: grid;
+grid-template-columns: 1fr 1fr 30px;
+gap: 8px;
+align-items: stretch;
+max-width: 500px;
+`;
 //----------------------------------
 // KafkaCluster
-export const BootstrapServersContainer = styled.label`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-`;
 
-export const InputsContainer = styled.div`
-  overflow: hidden;
-  width: 100%;
-  display: flex;
-  justify-content: start;
-  gap: 10px;
+export const BootstrapServer = styled(InputContainer)`
+grid-template-columns: 3fr 1fr 30px;
 `;
-export const InputWrapper = styled.div`
-  & {
-    width: 100%;
-  }
-  & > input {
-    width: 100%;
-    height: 40px;
-    border: 1px solid grey;
-    border-radius: 4px;
-    font-size: 16px;
-    padding-left: 15px;
-  }
+export const BootstrapServerActions = styled(IconButtonWrapper)`
+align-self: center;
 `;
-export const DeleteButtonWrapper = styled.div`
-  min-height: 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-self: flex-start;
-  margin-top: 10px;
-`;
-
 //-------------------------------
 // Authentication
 export const PartStyled = styled.div`
-  padding-top: 1.2rem;
+padding-top: 1.2rem;
 `;
