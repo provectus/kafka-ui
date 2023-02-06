@@ -27,7 +27,7 @@ import static com.provectus.kafka.ui.settings.BaseSource.*;
 import static com.provectus.kafka.ui.settings.configs.Profiles.CONTAINER;
 import static com.provectus.kafka.ui.settings.configs.Profiles.LOCAL;
 import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.*;
-import static com.provectus.kafka.ui.utilities.qaseIoUtils.QaseUtils.setupQaseExtension;
+import static com.provectus.kafka.ui.utilities.qaseUtils.QaseExtension.setupQaseExtension;
 
 @Slf4j
 @Listeners({AllureListener.class, LoggerListener.class, QaseListener.class})

@@ -12,6 +12,6 @@ public interface Profiles extends Config {
     String browser();
 
     @Key("suite")
-    @DefaultValue("smoke")
+    @DefaultValue("custom")
     String suite();
 }
