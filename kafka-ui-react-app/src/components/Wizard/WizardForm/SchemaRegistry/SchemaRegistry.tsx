@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
@@ -9,31 +9,34 @@ import Heading from 'components/common/heading/Heading.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 
 const SchemaRegistry = () => {
-  const [isShowRegistryForm, setIsShowRegistryForm] = useState(true);
   const {
-    getValues,
-    reset,
+    setValue,
     register,
+    reset,
+    getValues,
     watch,
     formState: { errors },
   } = useFormContext();
-
+  const schemaRegistry = watch('schemaRegistry');
   const showRegistryFrom: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    setIsShowRegistryForm(!isShowRegistryForm);
-    if (!isShowRegistryForm) {
-      reset({
-        ...getValues(),
-        schemaRegistry: {
-          url: '',
-          isAuth: false,
-          username: '',
-          password: '',
+    if (schemaRegistry) {
+      setValue('schemaRegistry', undefined);
+    } else {
+      reset(
+        {
+          ...getValues(),
+          schemaRegistry: {
+            url: '',
+            isAuth: false,
+            username: '',
+            password: '',
+          },
         },
-      });
+        { keepDefaultValues: true }
+      );
     }
   };
-  const isAuth = watch('schemaRegistry.isAuth');
   return (
     <>
       <Heading level={3}>Schema Registry</Heading>
@@ -43,11 +46,11 @@ const SchemaRegistry = () => {
           buttonType="primary"
           onClick={(e) => showRegistryFrom(e)}
         >
-          {!isShowRegistryForm ? 'Add Schema Registry' : 'Remove from config'}
+          {!schemaRegistry ? 'Add Schema Registry' : 'Remove from config'}
         </Button>
       </div>
-      <S.Container>
-        {isShowRegistryForm && (
+      <S.ArrayFieldWrapper>
+        {schemaRegistry && (
           <>
             <div>
               <InputLabel htmlFor="schemaRegistry.url">URL</InputLabel>
@@ -62,21 +65,19 @@ const SchemaRegistry = () => {
               </FormError>
             </div>
             <div>
-              <S.CheckboxWrapper>
+              <InputLabel htmlFor="schemaRegistry.isAuth">
                 <input
                   {...register('schemaRegistry.isAuth')}
                   id="schemaRegistry.isAuth"
                   type="checkbox"
                 />
-                <InputLabel htmlFor="schemaRegistry.isAuth">
-                  Schema registry is secured with auth?
-                </InputLabel>
-                <FormError>
-                  <ErrorMessage errors={errors} name="schemaRegistry.isAuth" />
-                </FormError>
-              </S.CheckboxWrapper>
+                Schema registry is secured with auth?
+              </InputLabel>
+              <FormError>
+                <ErrorMessage errors={errors} name="schemaRegistry.isAuth" />
+              </FormError>
             </div>
-            {isAuth && (
+            {schemaRegistry.isAuth && (
               <S.InputContainer>
                 <div>
                   <InputLabel htmlFor="schemaRegistry.username">
@@ -114,7 +115,7 @@ const SchemaRegistry = () => {
             )}
           </>
         )}
-      </S.Container>
+      </S.ArrayFieldWrapper>
     </>
   );
 };

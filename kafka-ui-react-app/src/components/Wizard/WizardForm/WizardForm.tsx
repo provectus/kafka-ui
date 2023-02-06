@@ -24,7 +24,7 @@ export type FormValues = {
   name: string;
   readOnly: boolean;
   bootstrapServers: BootstrapServer[];
-  schemaRegistry: SchemaRegistryType;
+  schemaRegistry?: SchemaRegistryType;
 };
 
 interface WizardFormProps {
@@ -43,10 +43,10 @@ const Wizard: React.FC<WizardFormProps> = () => {
         { host: 'loc', port: '3002' },
       ],
       schemaRegistry: {
-        url: 'test URL',
-        isAuth: true,
-        username: 'reg',
-        password: 'reg',
+        url: '',
+        isAuth: false,
+        username: '',
+        password: '',
       },
     },
   });

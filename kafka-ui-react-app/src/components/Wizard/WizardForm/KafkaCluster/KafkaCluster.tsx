@@ -54,7 +54,7 @@ const KafkaCluster: React.FC = () => {
         <InputHint>
           the list of Kafka brokers that you want to connect to
         </InputHint>
-        <S.Container>
+        <S.ArrayFieldWrapper>
           {fields.map((field, index) => (
             <S.BootstrapServer key={field.id}>
               <div>
@@ -104,7 +104,7 @@ const KafkaCluster: React.FC = () => {
               Add Bootstrap Server
             </Button>
           </div>
-        </S.Container>
+        </S.ArrayFieldWrapper>
 
         <FormError>
           <ErrorMessage errors={errors} name="bootstrapServers" />

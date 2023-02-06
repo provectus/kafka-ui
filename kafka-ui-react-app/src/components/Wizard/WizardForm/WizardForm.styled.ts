@@ -89,7 +89,7 @@ export const FileWrapper = styled.div`
   }
 `;
 
-export const Container = styled.label`
+export const ArrayFieldWrapper = styled.label`
   display: flex;
   flex-direction: column;
   gap: 8px;
