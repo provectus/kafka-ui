@@ -12,7 +12,7 @@ import org.opendatadiscovery.client.model.DataSetFieldType;
 import org.opendatadiscovery.oddrn.model.KafkaPath;
 
 @UtilityClass
-class AvroConverter {
+class AvroExtractor {
 
   static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn) {
     var schema = new Schema.Parser().parse(subject.getSchema());
@@ -21,7 +21,7 @@ class AvroConverter {
         schema,
         Oddrn.generateOddrn(topicOddrn, "topic") + "/columns",
         null,
-        "",
+        null,
         "",
         false,
         ImmutableSet.of(),
@@ -60,7 +60,7 @@ class AvroConverter {
         .parentFieldOddrn(parentOddrn)
         .oddrn(oddrn)
         .description(doc)
-        .type(mapType(schema, nullable));
+        .type(mapSchema(schema, nullable));
   }
 
   private static void extractRecord(Schema schema,
@@ -128,26 +128,26 @@ class AvroConverter {
       );
       return;
     }
-    String unionOddrn = isRoot ? parentOddr + "/union" : oddrn;
+    oddrn = isRoot ? parentOddr + "/union" : oddrn;
     if (isRoot) {
-      sink.add(createDataSetField("Avro root union", doc, parentOddr, unionOddrn, schema, containsNull));
+      sink.add(createDataSetField("Avro root union", doc, parentOddr, oddrn, schema, containsNull));
     } else {
-      sink.add(createDataSetField(name, doc, parentOddr, unionOddrn, schema, containsNull));
+      sink.add(createDataSetField(name, doc, parentOddr, oddrn, schema, containsNull));
     }
-    schema.getTypes()
-        .stream()
-        .filter(t -> t.getType() != Schema.Type.NULL)
-        .forEach(typeSchema ->
-            extract(
-                typeSchema,
-                unionOddrn,
-                unionOddrn + "/values/" + typeSchema.getName(),
-                typeSchema.getName(),
-                typeSchema.getDoc(),
-                containsNull, //TODO[discuss]: should be propagate nullability to union's values?
-                registeredRecords,
-                sink
-            ));
+    for (Schema t : schema.getTypes()) {
+      if (t.getType() != Schema.Type.NULL) {
+        extract(
+            t,
+            oddrn,
+            oddrn + "/values/" + t.getName(),
+            t.getName(),
+            t.getDoc(),
+            containsNull,
+            registeredRecords,
+            sink
+        );
+      }
+    }
   }
 
   private static void extractArray(Schema schema,
@@ -159,16 +159,16 @@ class AvroConverter {
                                    ImmutableSet<String> registeredRecords,
                                    List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
-    String arrayOddrn = isRoot ? parentOddr + "/array" : oddrn;
+    oddrn = isRoot ? parentOddr + "/array" : oddrn;
     if (isRoot) {
-      sink.add(createDataSetField("Avro root Array", doc, parentOddr, arrayOddrn, schema, nullable));
+      sink.add(createDataSetField("Avro root Array", doc, parentOddr, oddrn, schema, nullable));
     } else {
-      sink.add(createDataSetField(name, doc, parentOddr, arrayOddrn, schema, nullable));
+      sink.add(createDataSetField(name, doc, parentOddr, oddrn, schema, nullable));
     }
     extract(
         schema.getElementType(),
-        arrayOddrn,
-        arrayOddrn + "/items/" + schema.getElementType().getName(),
+        oddrn,
+        oddrn + "/items/" + schema.getElementType().getName(),
         schema.getElementType().getName(),
         schema.getElementType().getDoc(),
         false,
@@ -186,16 +186,16 @@ class AvroConverter {
                                  ImmutableSet<String> registeredRecords,
                                  List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
-    String mapOddrn = isRoot ? parentOddr + "/map" : oddrn;
+    oddrn = isRoot ? parentOddr + "/map" : oddrn;
     if (isRoot) {
-      sink.add(createDataSetField("Avro root map", doc, parentOddr, mapOddrn, schema, nullable));
+      sink.add(createDataSetField("Avro root map", doc, parentOddr, oddrn, schema, nullable));
     } else {
-      sink.add(createDataSetField(name, doc, parentOddr, mapOddrn, schema, nullable));
+      sink.add(createDataSetField(name, doc, parentOddr, oddrn, schema, nullable));
     }
     extract(
         new Schema.Parser().parse("\"string\""),
-        mapOddrn,
-        mapOddrn + "/key",
+        oddrn,
+        oddrn + "/key",
         "key",
         null,
         nullable,
@@ -204,8 +204,8 @@ class AvroConverter {
     );
     extract(
         schema.getValueType(),
-        mapOddrn,
-        mapOddrn + "/value",
+        oddrn,
+        oddrn + "/value",
         "value",
         null,
         nullable,
@@ -225,7 +225,7 @@ class AvroConverter {
     boolean isRoot = oddrn == null;
     String primOddrn = isRoot ? (parentOddr + "/" + schema.getType()) : oddrn;
     if (isRoot) {
-      sink.add(createDataSetField("Root avro" + schema.getType(),
+      sink.add(createDataSetField("Root avro " + schema.getType(),
           doc, parentOddr, primOddrn, schema, nullable));
     } else {
       sink.add(createDataSetField(name, doc, parentOddr, primOddrn, schema, nullable));
@@ -247,7 +247,7 @@ class AvroConverter {
     };
   }
 
-  private static DataSetFieldType mapType(Schema schema, Boolean nullable) {
+  private static DataSetFieldType mapSchema(Schema schema, Boolean nullable) {
     return new DataSetFieldType()
         .logicalType(logicalType(schema))
         .isNullable(nullable)
@@ -257,7 +257,7 @@ class AvroConverter {
   private static String logicalType(Schema schema) {
     return schema.getType() == Schema.Type.RECORD
         ? schema.getFullName()
-        : schema.getType().toString();
+        : schema.getType().toString().toLowerCase();
   }
 
 }

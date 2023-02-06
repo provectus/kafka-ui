@@ -14,9 +14,9 @@ public class DataSetFieldsExtractors {
   public static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn) {
     SchemaType schemaType = Optional.ofNullable(subject.getSchemaType()).orElse(SchemaType.AVRO);
     return switch (schemaType) {
-      case AVRO -> AvroConverter.extract(subject, topicOddrn);
-      case JSON -> JsonSchemaConverter.extract(subject, topicOddrn);
-      case PROTOBUF -> ProtoConverter.extract(subject, topicOddrn);
+      case AVRO -> AvroExtractor.extract(subject, topicOddrn);
+      case JSON -> JsonSchemaExtractor.extract(subject, topicOddrn);
+      case PROTOBUF -> ProtoExtractor.extract(subject, topicOddrn);
     };
   }
 

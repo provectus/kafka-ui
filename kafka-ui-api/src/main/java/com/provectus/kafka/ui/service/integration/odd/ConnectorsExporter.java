@@ -20,13 +20,13 @@ class ConnectorsExporter {
 
   Flux<DataEntity> export(KafkaCluster cluster) {
     return kafkaConnectService.getConnects(cluster)
-        .map(ConnectDTO::getName)
-        .flatMap(connect -> kafkaConnectService.getConnectorNames(cluster, connect)
-            .flatMap(connector -> kafkaConnectService.getConnector(cluster, connect, connector))
-            .map(connectorDTO -> createConnectorDataEntity(cluster, connectorDTO)));
+        .flatMap(connect -> kafkaConnectService.getConnectorNames(cluster, connect.getName())
+            .flatMap(connector -> kafkaConnectService.getConnector(cluster, connect.getName(), connector))
+            .map(connectorDTO -> createConnectorDataEntity(cluster, connect, connectorDTO)));
   }
 
   private static DataEntity createConnectorDataEntity(KafkaCluster cluster,
+                                                      ConnectDTO connect,
                                                       ConnectorDTO connector) {
     var info = extractConnectorInfo(cluster, connector);
 
@@ -35,7 +35,7 @@ class ConnectorsExporter {
     transformer.setOutputs(info.outputs());
 
     return new DataEntity()
-        .oddrn(Oddrn.connectorOddrn(connector.getConnect(), connector.getName(), cluster))
+        .oddrn(Oddrn.connectorOddrn(connect.getAddress(), connector.getName()))
         //TODO[discuss]: name generation (maybe include connect/cluster name)
         .name("Kafka Connector \"%s\" (%s)".formatted(connector.getName(), connector.getType()))
         .type(DataEntityType.JOB)

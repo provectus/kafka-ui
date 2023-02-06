@@ -28,9 +28,9 @@ import org.opendatadiscovery.client.model.DataSetFieldType.TypeEnum;
 import org.opendatadiscovery.oddrn.model.KafkaPath;
 
 @UtilityClass
-class ProtoConverter {
+class ProtoExtractor {
 
-  private final static Set<String> PRIMITIVES_WRAPPER_TYPE_NAMES = Set.of(
+  private static final Set<String> PRIMITIVES_WRAPPER_TYPE_NAMES = Set.of(
       BoolValue.getDescriptor().getFullName(),
       Int32Value.getDescriptor().getFullName(),
       UInt32Value.getDescriptor().getFullName(),
@@ -106,7 +106,8 @@ class ProtoConverter {
       return true;
     }
     if (PRIMITIVES_WRAPPER_TYPE_NAMES.contains(typeName)) {
-      sink.add(createDataSetField(name, parentOddr, oddrn, mapType(field.getType()), typeName, true));
+      var wrapped = field.getMessageType().findFieldByName("value");
+      sink.add(createDataSetField(name, parentOddr, oddrn, mapType(wrapped.getType()), typeName, true));
       return true;
     }
     return false;

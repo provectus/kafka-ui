@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.service.integration.odd;
 
-import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.net.URI;
 import java.util.stream.Collectors;
@@ -49,14 +48,8 @@ public class Oddrn {
     );
   }
 
-  String connectorOddrn(String connectName, String connectorName, KafkaCluster cluster) {
-    String connectUrlsStr = cluster.getOriginalProperties().getKafkaConnect().stream()
-        .filter(c -> c.getName().equals(connectName))
-        .map(ClustersProperties.ConnectCluster::getAddress)
-        .findAny()
-        .orElseThrow(IllegalStateException::new);
-
-    String connectorHost = Stream.of(connectUrlsStr.split(","))
+  String connectorOddrn(String connectUrl, String connectorName) {
+    String connectorHost = Stream.of(connectUrl.split(","))
         .map(String::trim)
         .sorted()
         //TODO[discuss]: leaving host and [port] in oddrn

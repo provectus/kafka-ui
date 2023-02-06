@@ -22,26 +22,33 @@ record ConnectorInfo(Map<String, Object> metadata,
   static ConnectorInfo extract(String className,
                                ConnectorTypeDTO type,
                                Map<String, Object> config,
-                               Function<String, String> topicOrrdnBuilder) {
+                               Function<String, String> topicOddrnBuilder) {
     return switch (className) {
       case "org.apache.kafka.connect.file.FileStreamSinkConnector",
           "org.apache.kafka.connect.file.FileStreamSourceConnector",
           "FileStreamSource",
-          "FileStreamSink" -> new ConnectorInfo(
-          buildMetadata(className, type, config, "file"),
-          extractInputs(type, config, topicOrrdnBuilder),
-          extractOutputs(type, config, topicOrrdnBuilder)
-      );
-      case "io.confluent.connect.s3.S3SinkConnector" -> extractS3Sink(className, type, config, topicOrrdnBuilder);
-      case "io.confluent.connect.jdbc.JdbcSinkConnector" -> extractJdbcSink(className, type, config, topicOrrdnBuilder);
+          "FileStreamSink" -> extractFileIoConnector(className, type, config, topicOddrnBuilder);
+      case "io.confluent.connect.s3.S3SinkConnector" -> extractS3Sink(className, type, config, topicOddrnBuilder);
+      case "io.confluent.connect.jdbc.JdbcSinkConnector" -> extractJdbcSink(className, type, config, topicOddrnBuilder);
       case "io.debezium.connector.postgresql.PostgresConnector" -> extractDebeziumPg(className, type, config);
       case "io.debezium.connector.mysql.MySqlConnector" -> extractDebeziumMysql(className, type, config);
       default -> new ConnectorInfo(
           buildMetadata(className, type, config),
-          extractInputs(type, config, topicOrrdnBuilder),
-          extractOutputs(type, config, topicOrrdnBuilder)
+          extractInputs(type, config, topicOddrnBuilder),
+          extractOutputs(type, config, topicOddrnBuilder)
       );
     };
+  }
+
+  private static ConnectorInfo extractFileIoConnector(String className,
+                                                      ConnectorTypeDTO type,
+                                                      Map<String, Object> config,
+                                                      Function<String, String> topicOddrnBuilder) {
+    return new ConnectorInfo(
+        buildMetadata(className, type, config, "file"),
+        extractInputs(type, config, topicOddrnBuilder),
+        extractOutputs(type, config, topicOddrnBuilder)
+    );
   }
 
   private static ConnectorInfo extractJdbcSink(String className,
@@ -153,7 +160,7 @@ record ConnectorInfo(Map<String, Object> metadata,
       String... propertyNames
   ) {
     var meta = new HashMap<String, Object>();
-    meta.put("type", type);
+    meta.put("type", type.name());
     meta.put("class", className);
     for (String propertyName : propertyNames) {
       if (config.containsKey(propertyName)) {
