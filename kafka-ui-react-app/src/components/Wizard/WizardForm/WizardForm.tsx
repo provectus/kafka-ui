@@ -61,6 +61,7 @@ const Wizard: React.FC<WizardFormProps> = () => {
           </div>
         </S.Section>
         <JMXMetrics />
+        <hr />
         <div style={{ paddingTop: '10px' }}>
           <div
             style={{

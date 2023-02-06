@@ -88,30 +88,33 @@ export const FileWrapper = styled.div`
   }
 `;
 
-
 export const ArrayFieldWrapper = styled.label`
-display: flex;
-flex-direction: column;
-gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 export const InputContainer = styled.div`
-display: grid;
-grid-template-columns: 1fr 1fr 30px;
-gap: 8px;
-align-items: stretch;
-max-width: 500px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 30px;
+  gap: 8px;
+  align-items: stretch;
+  max-width: 500px;
 `;
 //----------------------------------
 // KafkaCluster
 
 export const BootstrapServer = styled(InputContainer)`
-grid-template-columns: 3fr 1fr 30px;
+  grid-template-columns: 3fr 1fr 30px;
 `;
 export const BootstrapServerActions = styled(IconButtonWrapper)`
-align-self: center;
+  align-self: center;
 `;
 //-------------------------------
 // Authentication
 export const PartStyled = styled.div`
-padding-top: 1.2rem;
+  padding-top: 1.2rem;
+`;
+// JMXMetrics
+export const KeystoreInputs = styled(InputContainer)`
+  grid-template-columns: 1fr 1fr 1fr;
 `;

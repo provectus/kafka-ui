@@ -22,36 +22,36 @@ const KafkaCluster: React.FC = () => {
   });
   return (
     <>
-    <Heading level={3}>Kafka Cluster</Heading>
-    <div>
-      <InputLabel htmlFor="name">Cluster Name *</InputLabel>
-      <Input id="name" type="text" name="name" />
-      <FormError>
-        <ErrorMessage errors={errors} name="name" />
-      </FormError>
-      <InputHint>
-        this name will help you recognize the cluster in the application
-        interface
-      </InputHint>
-    </div>
-    <div>
-      <InputLabel>
-        <input {...register('readOnly')} type="checkbox" />
-        Read-only mode
-      </InputLabel>
-      <InputHint>
-        allows you to run an application in read-only mode for a specific
-        cluster
-      </InputHint>
-      <FormError>
-        <ErrorMessage errors={errors} name="readOnly" />
-      </FormError>
-    </div>
-    <div>
-      <InputLabel htmlFor="bootstrapServers">Bootstrap Servers *</InputLabel>
-      <InputHint>
-        the list of Kafka brokers that you want to connect to
-      </InputHint>
+      <Heading level={3}>Kafka Cluster</Heading>
+      <div>
+        <InputLabel htmlFor="name">Cluster Name *</InputLabel>
+        <Input id="name" type="text" name="name" />
+        <FormError>
+          <ErrorMessage errors={errors} name="name" />
+        </FormError>
+        <InputHint>
+          this name will help you recognize the cluster in the application
+          interface
+        </InputHint>
+      </div>
+      <div>
+        <InputLabel>
+          <input {...register('readOnly')} type="checkbox" />
+          Read-only mode
+        </InputLabel>
+        <InputHint>
+          allows you to run an application in read-only mode for a specific
+          cluster
+        </InputHint>
+        <FormError>
+          <ErrorMessage errors={errors} name="readOnly" />
+        </FormError>
+      </div>
+      <div>
+        <InputLabel htmlFor="bootstrapServers">Bootstrap Servers *</InputLabel>
+        <InputHint>
+          the list of Kafka brokers that you want to connect to
+        </InputHint>
         <S.ArrayFieldWrapper>
           {fields.map((field, index) => (
             <S.BootstrapServer key={field.id}>
@@ -102,13 +102,13 @@ const KafkaCluster: React.FC = () => {
               Add Bootstrap Server
             </Button>
           </div>
-    </S.ArrayFieldWrapper>
+        </S.ArrayFieldWrapper>
 
-    <FormError>
-      <ErrorMessage errors={errors} name="bootstrapServers" />
-    </FormError>
-    </div>
-</>
-);
+        <FormError>
+          <ErrorMessage errors={errors} name="bootstrapServers" />
+        </FormError>
+      </div>
+    </>
+  );
 };
 export default KafkaCluster;
