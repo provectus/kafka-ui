@@ -8,13 +8,14 @@ import java.util.Date;
 import static com.provectus.kafka.ui.settings.BaseSource.SUITE;
 import static org.apache.commons.lang3.BooleanUtils.FALSE;
 import static org.apache.commons.lang3.BooleanUtils.TRUE;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Slf4j
 public class QaseExtension {
 
     public static void setupQaseExtension() {
         String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
-        if (qaseApiToken.isEmpty()) {
+        if (isEmpty(qaseApiToken)) {
             log.warn("QASEIO_API_TOKEN system property wasn't set. Support for Qase will be disabled.");
             System.setProperty("QASE_ENABLE", FALSE);
         } else {
