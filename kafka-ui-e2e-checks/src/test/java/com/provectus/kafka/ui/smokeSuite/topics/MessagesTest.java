@@ -7,8 +7,8 @@ import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus
 import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
 import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
 import io.qameta.allure.Issue;
+import io.qameta.allure.Step;
 import io.qase.api.annotation.CaseId;
-import io.qase.api.annotation.Step;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

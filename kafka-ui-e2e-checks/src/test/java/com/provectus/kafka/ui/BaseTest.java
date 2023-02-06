@@ -6,7 +6,8 @@ import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.settings.listeners.AllureListener;
 import com.provectus.kafka.ui.settings.listeners.LoggerListener;
-import io.qase.api.annotation.Step;
+import io.qameta.allure.Step;
+import io.qase.testng.QaseListener;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -26,9 +27,10 @@ import static com.provectus.kafka.ui.settings.BaseSource.*;
 import static com.provectus.kafka.ui.settings.configs.Profiles.CONTAINER;
 import static com.provectus.kafka.ui.settings.configs.Profiles.LOCAL;
 import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.*;
+import static com.provectus.kafka.ui.utilities.qaseIoUtils.QaseUtils.setupQaseExtension;
 
 @Slf4j
-@Listeners({AllureListener.class, LoggerListener.class})
+@Listeners({AllureListener.class, LoggerListener.class, QaseListener.class})
 public abstract class BaseTest extends Facade {
 
     private static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
@@ -41,6 +43,7 @@ public abstract class BaseTest extends Facade {
 
     @BeforeSuite(alwaysRun = true)
     public void beforeSuite() {
+        setupQaseExtension();
         switch (BROWSER) {
             case (CONTAINER) -> {
                 DockerImageName image = isARM64()

@@ -41,13 +41,13 @@ docker-compose -f documentation/compose/e2e-tests.yaml up -d
 2. Run Smoke test suite using your QaseIO API token as environment variable (put instead %s into command below)
 
 ```
-./mvnw -DQASEIO_API_TOKEN='%s' test -f 'kafka-ui-e2e-checks' -Dsurefire.suiteXmlFiles='src/test/resources/smoke.xml' -Pprod
+./mvnw -DQASEIO_API_TOKEN='%s' test -f 'kafka-ui-e2e-checks' -Dsurefire.suiteXmlFiles='src/test/resources/smoke.xml' -Dsuite=smoke -Pprod
 ```
 
 3. Run Regression test suite using your QaseIO API token as environment variable (put instead %s into command below)
 
 ```
-./mvnw -DQASEIO_API_TOKEN='%s' test -f 'kafka-ui-e2e-checks' -Dsurefire.suiteXmlFiles='src/test/resources/regression.xml' -Pprod
+./mvnw -DQASEIO_API_TOKEN='%s' test -f 'kafka-ui-e2e-checks' -Dsurefire.suiteXmlFiles='src/test/resources/regression.xml' -Dsuite=regression -Pprod
 ```
 
 4. To run tests on your local Chrome browser just add next VM option to the Run Configuration
