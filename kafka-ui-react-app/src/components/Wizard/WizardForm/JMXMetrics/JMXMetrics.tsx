@@ -21,21 +21,24 @@ const JMXMetrics = () => {
     e.preventDefault();
     setNewJMXMetrics(!newJMXMetrics);
     if (!newJMXMetrics) {
-      reset({
-        ...getValues(),
-        JMXMetrics: {
-          port: '',
-          isSSL: '',
-          truststoreLocation: '',
-          truststorePassword: '',
-          keystoreLocation: '',
-          keystorePassword: '',
-          keystoreKeyPassword: '',
-          isAuth: '',
-          username: '',
-          password: '',
+      reset(
+        {
+          ...getValues(),
+          JMXMetrics: {
+            port: '',
+            isSSL: '',
+            truststoreLocation: '',
+            truststorePassword: '',
+            keystoreLocation: '',
+            keystorePassword: '',
+            keystoreKeyPassword: '',
+            isAuth: '',
+            username: '',
+            password: '',
+          },
         },
-      });
+        { keepDefaultValues: true }
+      );
     }
   };
   const isSSLisAuth = watch(['JMXMetrics.isSSL', 'JMXMetrics.isAuth']);
@@ -54,14 +57,14 @@ const JMXMetrics = () => {
       {newJMXMetrics && (
         <>
           <div style={{ width: '20%' }}>
-            <label htmlFor="JMXMetrics.port">Port</label>
+            <InputLabel htmlFor="JMXMetrics.port">Port</InputLabel>
             <Input id="JMXMetrics.port" name="JMXMetrics.port" type="number" />
             <FormError>
               <ErrorMessage errors={errors} name="JMXMetrics.port" />
             </FormError>
           </div>
           <div>
-            <InputLabel>
+            <InputLabel htmlFor="JMXMetrics.isSSL" type="checkbox">
               <input
                 {...register('JMXMetrics.isSSL')}
                 id="JMXMetrics.isSSL"
@@ -109,62 +112,60 @@ const JMXMetrics = () => {
                   </FormError>
                 </div>
               </S.InputContainer>
-              <div>
-                <S.KeystoreInputs>
-                  <div>
-                    <InputLabel htmlFor="JMXMetrics.keystoreLocation">
-                      Keystore location
-                    </InputLabel>
-                    <Input
-                      id="JMXMetrics.keystoreLocation"
+              <S.KeystoreInputs>
+                <div>
+                  <InputLabel htmlFor="JMXMetrics.keystoreLocation">
+                    Keystore location
+                  </InputLabel>
+                  <Input
+                    id="JMXMetrics.keystoreLocation"
+                    name="JMXMetrics.keystoreLocation"
+                    type="text"
+                  />
+                  <FormError>
+                    <ErrorMessage
+                      errors={errors}
                       name="JMXMetrics.keystoreLocation"
-                      type="text"
                     />
-                    <FormError>
-                      <ErrorMessage
-                        errors={errors}
-                        name="JMXMetrics.keystoreLocation"
-                      />
-                    </FormError>
-                  </div>
-                  <div>
-                    <InputLabel htmlFor="JMXMetrics.keystorePassword">
-                      Keystore Password
-                    </InputLabel>
-                    <Input
-                      id="JMXMetrics.keystorePassword"
+                  </FormError>
+                </div>
+                <div>
+                  <InputLabel htmlFor="JMXMetrics.keystorePassword">
+                    Keystore Password
+                  </InputLabel>
+                  <Input
+                    id="JMXMetrics.keystorePassword"
+                    name="JMXMetrics.keystorePassword"
+                    type="password"
+                  />
+                  <FormError>
+                    <ErrorMessage
+                      errors={errors}
                       name="JMXMetrics.keystorePassword"
-                      type="password"
                     />
-                    <FormError>
-                      <ErrorMessage
-                        errors={errors}
-                        name="JMXMetrics.keystorePassword"
-                      />
-                    </FormError>
-                  </div>
-                  <div>
-                    <InputLabel htmlFor="JMXMetrics.keystoreKeyPassword">
-                      Keystore key password
-                    </InputLabel>
-                    <Input
-                      id="JMXMetrics.keystoreKeyPassword"
+                  </FormError>
+                </div>
+                <div>
+                  <InputLabel htmlFor="JMXMetrics.keystoreKeyPassword">
+                    Keystore key password
+                  </InputLabel>
+                  <Input
+                    id="JMXMetrics.keystoreKeyPassword"
+                    name="JMXMetrics.keystoreKeyPassword"
+                    type="text"
+                  />
+                  <FormError>
+                    <ErrorMessage
+                      errors={errors}
                       name="JMXMetrics.keystoreKeyPassword"
-                      type="text"
                     />
-                    <FormError>
-                      <ErrorMessage
-                        errors={errors}
-                        name="JMXMetrics.keystoreKeyPassword"
-                      />
-                    </FormError>
-                  </div>
-                </S.KeystoreInputs>
-              </div>
+                  </FormError>
+                </div>
+              </S.KeystoreInputs>
             </>
           )}
           <div>
-            <InputLabel>
+            <InputLabel htmlFor="JMXMetrics.isAuth" type="checkbox">
               <input
                 {...register('JMXMetrics.isAuth')}
                 id="JMXMetrics.isAuth"

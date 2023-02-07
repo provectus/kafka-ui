@@ -62,22 +62,14 @@ const Wizard: React.FC<WizardFormProps> = () => {
         </S.Section>
         <JMXMetrics />
         <hr />
-        <div style={{ paddingTop: '10px' }}>
-          <div
-            style={{
-              justifyContent: 'center',
-              display: 'flex',
-              gap: '10px',
-            }}
-          >
-            <Button buttonSize="M" buttonType="primary">
-              Cancel
-            </Button>
-            <Button type="submit" buttonSize="M" buttonType="primary">
-              Save
-            </Button>
-          </div>
-        </div>
+        <S.ButtonWrapper>
+          <Button buttonSize="L" buttonType="primary">
+            Cancel
+          </Button>
+          <Button type="submit" buttonSize="L" buttonType="primary">
+            Save
+          </Button>
+        </S.ButtonWrapper>
       </StyledForm>
     </FormProvider>
   );

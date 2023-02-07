@@ -100,6 +100,11 @@ export const InputContainer = styled.div`
   align-items: stretch;
   max-width: 500px;
 `;
+
+export const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+`;
 //----------------------------------
 // KafkaCluster
 
