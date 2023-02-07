@@ -14,7 +14,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Slf4j
 public class QaseExtension {
 
-    public static void setupTestRun() {
+    public static void testRunSetup() {
         String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
         if (isEmpty(qaseApiToken)) {
             log.warn("QASEIO_API_TOKEN system property wasn't set. Support for Qase will be disabled.");
