@@ -27,7 +27,7 @@ import static com.provectus.kafka.ui.settings.BaseSource.*;
 import static com.provectus.kafka.ui.settings.configs.Profiles.CONTAINER;
 import static com.provectus.kafka.ui.settings.configs.Profiles.LOCAL;
 import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.*;
-import static com.provectus.kafka.ui.utilities.qaseUtils.QaseExtension.setupQaseExtension;
+import static com.provectus.kafka.ui.utilities.qaseUtils.QaseExtension.setupTestRun;
 
 @Slf4j
 @Listeners({AllureListener.class, LoggerListener.class, QaseListener.class})
@@ -43,7 +43,7 @@ public abstract class BaseTest extends Facade {
 
     @BeforeSuite(alwaysRun = true)
     public void beforeSuite() {
-        setupQaseExtension();
+        setupTestRun();
         switch (BROWSER) {
             case (CONTAINER) -> {
                 DockerImageName image = isARM64()
