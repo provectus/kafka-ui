@@ -59,8 +59,6 @@ class JsonSchemaExtractor {
     } else if (schema instanceof CombinedSchema cs) {
       extractCombined(cs, parentOddr, oddrn, name, nullable, registeredRecords, sink);
     } else if (schema instanceof BooleanSchema
-        || schema instanceof TrueSchema
-        || schema instanceof FalseSchema
         || schema instanceof NumberSchema
         || schema instanceof StringSchema
         || schema instanceof NullSchema
@@ -101,7 +99,7 @@ class JsonSchemaExtractor {
     sink.add(
         createDataSetField(
             schema,
-            isRoot ? "Root unknown type" : name,
+            isRoot ? "Root type " + logicalTypeName(schema) : name,
             parentOddr,
             isRoot ? (parentOddr + "/" + logicalTypeName(schema)) : oddrn,
             DataSetFieldType.TypeEnum.UNKNOWN,
@@ -225,12 +223,13 @@ class JsonSchemaExtractor {
     }
 
     boolean isRoot = oddrn == null;
+    oddrn = isRoot ? (parentOddr + "/" + combineType) : (oddrn + "/" + combineType);
     sink.add(
         createDataSetField(
             schema,
             isRoot ? "Root %s".formatted(combineType) : "%s (%s)".formatted(name, combineType),
             parentOddr,
-            isRoot ? (parentOddr + "/" + combineType) : (oddrn + "/" + combineType),
+            oddrn,
             DataSetFieldType.TypeEnum.UNION,
             combineType,
             nullable

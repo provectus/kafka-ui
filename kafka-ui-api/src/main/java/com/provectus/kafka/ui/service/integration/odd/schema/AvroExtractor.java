@@ -22,7 +22,7 @@ class AvroExtractor {
         Oddrn.generateOddrn(topicOddrn, "topic") + "/columns",
         null,
         null,
-        "",
+        null,
         false,
         ImmutableSet.of(),
         result
