@@ -41,7 +41,6 @@ class JsonSchemaExtractorTest {
             .topic("some-topic")
             .build()
     );
-    System.out.println(fields);
 
     assertThat(fields).contains(
         new DataSetField()
