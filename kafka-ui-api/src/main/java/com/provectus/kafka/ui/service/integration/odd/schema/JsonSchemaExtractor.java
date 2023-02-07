@@ -196,7 +196,7 @@ class JsonSchemaExtractor {
           itemsSchema,
           oddrn,
           oddrn + "/items/" + logicalTypeName(itemsSchema),
-          logicalTypeName(schema),
+          logicalTypeName(itemsSchema),
           false,
           registeredRecords,
           sink
