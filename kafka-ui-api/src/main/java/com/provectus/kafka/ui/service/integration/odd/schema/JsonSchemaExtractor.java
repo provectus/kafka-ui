@@ -50,54 +50,60 @@ class JsonSchemaExtractor {
                               ImmutableSet<String> registeredRecords,
                               List<DataSetField> sink) {
     if (schema instanceof ReferenceSchema s) {
-      var refSchema = s.getReferredSchema();
-      if (refSchema != null) {
-        extract(refSchema, parentOddr, oddrn, name, nullable, registeredRecords, sink);
-      }
-    }
-
-    if (schema instanceof ObjectSchema s) {
+      Optional.ofNullable(s.getReferredSchema())
+          .ifPresent(refSchema -> extract(refSchema, parentOddr, oddrn, name, nullable, registeredRecords, sink));
+    } else if (schema instanceof ObjectSchema s) {
       extractObject(s, parentOddr, oddrn, name, nullable, registeredRecords, sink);
-    }
-
-    if (schema instanceof ArraySchema s) {
+    } else if (schema instanceof ArraySchema s) {
       extractArray(s, parentOddr, oddrn, name, nullable, registeredRecords, sink);
-    }
-
-    if (schema instanceof CombinedSchema cs) {
+    } else if (schema instanceof CombinedSchema cs) {
       extractCombined(cs, parentOddr, oddrn, name, nullable, registeredRecords, sink);
-    }
-
-    boolean isRoot = oddrn == null;
-    if (schema instanceof BooleanSchema
+    } else if (schema instanceof BooleanSchema
         || schema instanceof TrueSchema
         || schema instanceof FalseSchema
         || schema instanceof NumberSchema
         || schema instanceof StringSchema
         || schema instanceof NullSchema
     ) {
-      oddrn = isRoot ? (parentOddr + "/" + logicalTypeName(schema)) : oddrn;
-      sink.add(
-          createDataSetField(
-              schema,
-              isRoot ? "Root JSON primitive" : name,
-              parentOddr,
-              oddrn,
-              mapType(schema),
-              logicalTypeName(schema),
-              nullable
-          )
-      );
+      extractPrimitive(schema, parentOddr, oddrn, name, nullable, sink);
+    } else {
+      extractUnknown(schema, parentOddr, oddrn, name, nullable, sink);
     }
+  }
 
-    // unknown types
-    oddrn = isRoot ? (parentOddr + "/" + logicalTypeName(schema)) : oddrn;
+  private static void extractPrimitive(Schema schema,
+                                       String parentOddr,
+                                       String oddrn, //null for root
+                                       String name,
+                                       Boolean nullable,
+                                       List<DataSetField> sink) {
+    boolean isRoot = oddrn == null;
+    sink.add(
+        createDataSetField(
+            schema,
+            isRoot ? "Root JSON primitive" : name,
+            parentOddr,
+            isRoot ? (parentOddr + "/" + logicalTypeName(schema)) : oddrn,
+            mapType(schema),
+            logicalTypeName(schema),
+            nullable
+        )
+    );
+  }
+
+  private static void extractUnknown(Schema schema,
+                                     String parentOddr,
+                                     String oddrn, //null for root
+                                     String name,
+                                     Boolean nullable,
+                                     List<DataSetField> sink) {
+    boolean isRoot = oddrn == null;
     sink.add(
         createDataSetField(
             schema,
             isRoot ? "Root unknown type" : name,
             parentOddr,
-            oddrn,
+            isRoot ? (parentOddr + "/" + logicalTypeName(schema)) : oddrn,
             DataSetFieldType.TypeEnum.UNKNOWN,
             logicalTypeName(schema),
             nullable
@@ -125,7 +131,7 @@ class JsonSchemaExtractor {
           logicalTypeName(schema),
           nullable
       ));
-      if (registeredRecords.contains(schemaLocation)) {
+      if (schemaLocation != null && registeredRecords.contains(schemaLocation)) {
         // avoiding recursion by checking if record already registered in parsing chain
         return;
       }
@@ -219,13 +225,12 @@ class JsonSchemaExtractor {
     }
 
     boolean isRoot = oddrn == null;
-    oddrn = isRoot ? (parentOddr + "/" + combineType) : (oddrn + "/" + combineType);
     sink.add(
         createDataSetField(
             schema,
             isRoot ? "Root %s".formatted(combineType) : "%s (%s)".formatted(name, combineType),
             parentOddr,
-            oddrn,
+            isRoot ? (parentOddr + "/" + combineType) : (oddrn + "/" + combineType),
             DataSetFieldType.TypeEnum.UNION,
             combineType,
             nullable
