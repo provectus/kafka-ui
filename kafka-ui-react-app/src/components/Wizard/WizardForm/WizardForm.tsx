@@ -14,6 +14,12 @@ type BootstrapServer = {
   host: string;
   port: string;
 };
+type SchemaRegistryType = {
+  url: string;
+  isAuth: boolean;
+  username: string;
+  password: string;
+};
 export type FormValues = {
   name: string;
   readOnly: boolean;
@@ -22,6 +28,7 @@ export type FormValues = {
   authentication: {
     method: 'none' | 'sasl';
   };
+  schemaRegistry?: SchemaRegistryType;
 };
 
 interface WizardFormProps {
@@ -43,6 +50,12 @@ const Wizard: React.FC<WizardFormProps> = () => {
       authentication: {
         method: 'none',
       },
+      schemaRegistry: {
+        url: '',
+        isAuth: false,
+        username: '',
+        password: '',
+      },
     },
   });
 
@@ -60,6 +73,7 @@ const Wizard: React.FC<WizardFormProps> = () => {
         <Authentication />
         <hr />
         <SchemaRegistry />
+        <hr />
         <S.Section>
           <S.SectionName>Kafka Connect</S.SectionName>
           <div>
