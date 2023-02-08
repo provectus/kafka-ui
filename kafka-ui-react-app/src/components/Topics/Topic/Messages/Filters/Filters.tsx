@@ -231,18 +231,21 @@ const Filters: React.FC<FiltersProps> = ({
         props.seekType = SeekType.TIMESTAMP;
       }
 
-      props.seekTo = selectedPartitions.map(({ value }) => {
-        const offsetProperty =
-          seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
-        const offsetBasedSeekTo =
-          currentOffset || partitionMap[value][offsetProperty];
-        const seekToOffset =
-          currentSeekType === SeekType.OFFSET
-            ? offsetBasedSeekTo
-            : timestamp?.getTime();
+      if (selectedPartitions.length !== partitions.length) {
+        // not everything in the partition is selected
+        props.seekTo = selectedPartitions.map(({ value }) => {
+          const offsetProperty =
+            seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
+          const offsetBasedSeekTo =
+            currentOffset || partitionMap[value][offsetProperty];
+          const seekToOffset =
+            currentSeekType === SeekType.OFFSET
+              ? offsetBasedSeekTo
+              : timestamp?.getTime();
 
-        return `${value}::${seekToOffset || '0'}`;
-      });
+          return `${value}::${seekToOffset || '0'}`;
+        });
+      }
     }
 
     const newProps = omitBy(props, (v) => v === undefined || v === '');
