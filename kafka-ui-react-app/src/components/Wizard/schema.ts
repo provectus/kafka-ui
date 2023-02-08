@@ -16,7 +16,7 @@ const formSchema = object({
   bootstrapServers: array().of(bootstrapServerSchema).min(1),
   securityProtocol: string().oneOf(['SASL_SSL', 'SASL_PLAINTEXT', 'none']),
   authentication: object({
-    type: string()
+    method: string()
       .required()
       .oneOf([
         'none',

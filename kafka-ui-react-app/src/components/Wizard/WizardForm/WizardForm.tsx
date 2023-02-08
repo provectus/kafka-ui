@@ -10,6 +10,8 @@ import KafkaCluster from './KafkaCluster/KafkaCluster';
 import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
 
+type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT' | 'none';
+
 type BootstrapServer = {
   host: string;
   port: string;
@@ -24,7 +26,7 @@ export type FormValues = {
   name: string;
   readOnly: boolean;
   bootstrapServers: BootstrapServer[];
-  securityProtocol: 'SASL_SSL' | 'SASL_PLAINTEXT' | 'none';
+  securityProtocol: SecurityProtocol;
   authentication: {
     method: 'none' | 'sasl';
   };
