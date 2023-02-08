@@ -33,6 +33,7 @@ class JsonSchemaExtractor {
   static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn, boolean isKey) {
     Schema schema = new JsonSchema(subject.getSchema()).rawSchema();
     List<DataSetField> result = new ArrayList<>();
+    result.add(DataSetFieldsExtractors.rootField(topicOddrn, isKey));
     extract(
         schema,
         Oddrn.generateOddrn(topicOddrn, "topic") + "/columns/" + (isKey ? "key" : "value"),
@@ -46,12 +47,12 @@ class JsonSchemaExtractor {
   }
 
   private void extract(Schema schema,
-                              String parentOddr,
-                              String oddrn, //null for root
-                              String name,
-                              Boolean nullable,
-                              ImmutableSet<String> registeredRecords,
-                              List<DataSetField> sink) {
+                       String parentOddr,
+                       String oddrn, //null for root
+                       String name,
+                       Boolean nullable,
+                       ImmutableSet<String> registeredRecords,
+                       List<DataSetField> sink) {
     if (schema instanceof ReferenceSchema s) {
       Optional.ofNullable(s.getReferredSchema())
           .ifPresent(refSchema -> extract(refSchema, parentOddr, oddrn, name, nullable, registeredRecords, sink));
@@ -73,11 +74,11 @@ class JsonSchemaExtractor {
   }
 
   private void extractPrimitive(Schema schema,
-                                       String parentOddr,
-                                       String oddrn, //null for root
-                                       String name,
-                                       Boolean nullable,
-                                       List<DataSetField> sink) {
+                                String parentOddr,
+                                String oddrn, //null for root
+                                String name,
+                                Boolean nullable,
+                                List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     sink.add(
         createDataSetField(
@@ -93,11 +94,11 @@ class JsonSchemaExtractor {
   }
 
   private void extractUnknown(Schema schema,
-                                     String parentOddr,
-                                     String oddrn, //null for root
-                                     String name,
-                                     Boolean nullable,
-                                     List<DataSetField> sink) {
+                              String parentOddr,
+                              String oddrn, //null for root
+                              String name,
+                              Boolean nullable,
+                              List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     sink.add(
         createDataSetField(
@@ -113,12 +114,12 @@ class JsonSchemaExtractor {
   }
 
   private void extractObject(ObjectSchema schema,
-                                    String parentOddr,
-                                    String oddrn, //null for root
-                                    String name,
-                                    Boolean nullable,
-                                    ImmutableSet<String> registeredRecords,
-                                    List<DataSetField> sink) {
+                             String parentOddr,
+                             String oddrn, //null for root
+                             String name,
+                             Boolean nullable,
+                             ImmutableSet<String> registeredRecords,
+                             List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     // schemaLocation can be null for empty object schemas (like if it used in anyOf)
     @Nullable var schemaLocation = schema.getSchemaLocation();
@@ -162,12 +163,12 @@ class JsonSchemaExtractor {
   }
 
   private void extractArray(ArraySchema schema,
-                                   String parentOddr,
-                                   String oddrn, //null for root
-                                   String name,
-                                   Boolean nullable,
-                                   ImmutableSet<String> registeredRecords,
-                                   List<DataSetField> sink) {
+                            String parentOddr,
+                            String oddrn, //null for root
+                            String name,
+                            Boolean nullable,
+                            ImmutableSet<String> registeredRecords,
+                            List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     oddrn = isRoot ? parentOddr + "/array" : oddrn;
     if (isRoot) {
@@ -208,12 +209,12 @@ class JsonSchemaExtractor {
   }
 
   private void extractCombined(CombinedSchema schema,
-                                      String parentOddr,
-                                      String oddrn, //null for root
-                                      String name,
-                                      Boolean nullable,
-                                      ImmutableSet<String> registeredRecords,
-                                      List<DataSetField> sink) {
+                               String parentOddr,
+                               String oddrn, //null for root
+                               String name,
+                               Boolean nullable,
+                               ImmutableSet<String> registeredRecords,
+                               List<DataSetField> sink) {
     String combineType = "unknown";
     if (schema.getCriterion() == CombinedSchema.ALL_CRITERION) {
       combineType = "allOf";
@@ -230,7 +231,7 @@ class JsonSchemaExtractor {
     sink.add(
         createDataSetField(
             schema,
-            isRoot ? "Root %s".formatted(combineType) : name,
+            isRoot ? "Root %s" .formatted(combineType) : name,
             parentOddr,
             oddrn,
             DataSetFieldType.TypeEnum.UNION,
@@ -266,12 +267,12 @@ class JsonSchemaExtractor {
   }
 
   private DataSetField createDataSetField(Schema schema,
-                                                 String name,
-                                                 String parentOddrn,
-                                                 String oddrn,
-                                                 DataSetFieldType.TypeEnum type,
-                                                 String logicalType,
-                                                 Boolean nullable) {
+                                          String name,
+                                          String parentOddrn,
+                                          String oddrn,
+                                          DataSetFieldType.TypeEnum type,
+                                          String logicalType,
+                                          Boolean nullable) {
     return new DataSetField()
         .name(name)
         .parentFieldOddrn(parentOddrn)

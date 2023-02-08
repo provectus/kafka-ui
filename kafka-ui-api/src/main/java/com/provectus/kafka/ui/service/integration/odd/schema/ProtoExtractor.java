@@ -44,11 +44,9 @@ class ProtoExtractor {
 
   List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn, boolean isKey) {
     Descriptor schema = new ProtobufSchema(subject.getSchema()).toDescriptor();
-
-    String rootOddrn = Oddrn.generateOddrn(topicOddrn, "topic") + "/columns/" + (isKey ? "key" : "value");
     List<DataSetField> result = new ArrayList<>();
-
-    var registeredRecords = ImmutableSet.of(schema.getFullName());
+    result.add(DataSetFieldsExtractors.rootField(topicOddrn, isKey));
+    var rootOddrn = Oddrn.generateOddrn(topicOddrn, "topic") + "/columns/" + (isKey ? "key" : "value");
     schema.getFields().forEach(f ->
         extract(f,
             rootOddrn,
@@ -56,20 +54,20 @@ class ProtoExtractor {
             f.getName(),
             !f.isRequired(),
             f.isRepeated(),
-            registeredRecords,
+            ImmutableSet.of(schema.getFullName()),
             result
         ));
     return result;
   }
 
   private void extract(Descriptors.FieldDescriptor field,
-                              String parentOddr,
-                              String oddrn, //null for root
-                              String name,
-                              boolean nullable,
-                              boolean repeated,
-                              ImmutableSet<String> registeredRecords,
-                              List<DataSetField> sink) {
+                       String parentOddr,
+                       String oddrn, //null for root
+                       String name,
+                       boolean nullable,
+                       boolean repeated,
+                       ImmutableSet<String> registeredRecords,
+                       List<DataSetField> sink) {
     if (repeated) {
       extractRepeated(field, parentOddr, oddrn, name, nullable, registeredRecords, sink);
     } else if (field.getType() == Descriptors.FieldDescriptor.Type.MESSAGE) {
@@ -114,12 +112,12 @@ class ProtoExtractor {
   }
 
   private void extractRepeated(Descriptors.FieldDescriptor field,
-                                      String parentOddr,
-                                      String oddrn, //null for root
-                                      String name,
-                                      boolean nullable,
-                                      ImmutableSet<String> registeredRecords,
-                                      List<DataSetField> sink) {
+                               String parentOddr,
+                               String oddrn, //null for root
+                               String name,
+                               boolean nullable,
+                               ImmutableSet<String> registeredRecords,
+                               List<DataSetField> sink) {
     sink.add(createDataSetField(name, parentOddr, oddrn, TypeEnum.LIST, "repeated", nullable));
 
     String itemName = field.getType() == Descriptors.FieldDescriptor.Type.MESSAGE
@@ -139,12 +137,12 @@ class ProtoExtractor {
   }
 
   private void extractMessage(Descriptors.FieldDescriptor field,
-                                     String parentOddr,
-                                     String oddrn, //null for root
-                                     String name,
-                                     boolean nullable,
-                                     ImmutableSet<String> registeredRecords,
-                                     List<DataSetField> sink) {
+                              String parentOddr,
+                              String oddrn, //null for root
+                              String name,
+                              boolean nullable,
+                              ImmutableSet<String> registeredRecords,
+                              List<DataSetField> sink) {
     if (extractProtoWellKnownType(field, parentOddr, oddrn, name, nullable, sink)) {
       return;
     }
@@ -176,11 +174,11 @@ class ProtoExtractor {
   }
 
   private void extractPrimitive(Descriptors.FieldDescriptor field,
-                                       String parentOddr,
-                                       String oddrn,
-                                       String name,
-                                       boolean nullable,
-                                       List<DataSetField> sink) {
+                                String parentOddr,
+                                String oddrn,
+                                String name,
+                                boolean nullable,
+                                List<DataSetField> sink) {
     sink.add(
         createDataSetField(
             name,
@@ -200,11 +198,11 @@ class ProtoExtractor {
   }
 
   private DataSetField createDataSetField(String name,
-                                                 String parentOddrn,
-                                                 String oddrn,
-                                                 TypeEnum type,
-                                                 String logicalType,
-                                                 Boolean nullable) {
+                                          String parentOddrn,
+                                          String oddrn,
+                                          TypeEnum type,
+                                          String logicalType,
+                                          Boolean nullable) {
     return new DataSetField()
         .name(name)
         .parentFieldOddrn(parentOddrn)

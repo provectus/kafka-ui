@@ -17,6 +17,7 @@ class AvroExtractor {
   static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn, boolean isKey) {
     var schema = new Schema.Parser().parse(subject.getSchema());
     List<DataSetField> result = new ArrayList<>();
+    result.add(DataSetFieldsExtractors.rootField(topicOddrn, isKey));
     extract(
         schema,
         Oddrn.generateOddrn(topicOddrn, "topic") + "/columns/" + (isKey ? "key" : "value"),
@@ -31,13 +32,13 @@ class AvroExtractor {
   }
 
   private void extract(Schema schema,
-                              String parentOddr,
-                              String oddrn, //null for root
-                              String name,
-                              String doc,
-                              Boolean nullable,
-                              ImmutableSet<String> registeredRecords,
-                              List<DataSetField> sink
+                       String parentOddr,
+                       String oddrn, //null for root
+                       String name,
+                       String doc,
+                       Boolean nullable,
+                       ImmutableSet<String> registeredRecords,
+                       List<DataSetField> sink
   ) {
     switch (schema.getType()) {
       case RECORD -> extractRecord(schema, parentOddr, oddrn, name, doc, nullable, registeredRecords, sink);
@@ -49,28 +50,27 @@ class AvroExtractor {
   }
 
   private DataSetField createDataSetField(String name,
-                                                 String doc,
-                                                 String parentOddrn,
-                                                 String oddrn,
-                                                 Schema schema,
-                                                 Boolean nullable) {
+                                          String doc,
+                                          String parentOddrn,
+                                          String oddrn,
+                                          Schema schema,
+                                          Boolean nullable) {
     return new DataSetField()
         .name(name)
         .description(doc)
         .parentFieldOddrn(parentOddrn)
         .oddrn(oddrn)
-        .description(doc)
         .type(mapSchema(schema, nullable));
   }
 
   private void extractRecord(Schema schema,
-                                    String parentOddr,
-                                    String oddrn, //null for root
-                                    String name,
-                                    String doc,
-                                    Boolean nullable,
-                                    ImmutableSet<String> registeredRecords,
-                                    List<DataSetField> sink) {
+                             String parentOddr,
+                             String oddrn, //null for root
+                             String name,
+                             String doc,
+                             Boolean nullable,
+                             ImmutableSet<String> registeredRecords,
+                             List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     if (!isRoot) {
       sink.add(createDataSetField(name, doc, parentOddr, oddrn, schema, nullable));
@@ -100,12 +100,12 @@ class AvroExtractor {
   }
 
   private void extractUnion(Schema schema,
-                                   String parentOddr,
-                                   String oddrn, //null for root
-                                   String name,
-                                   String doc,
-                                   ImmutableSet<String> registeredRecords,
-                                   List<DataSetField> sink) {
+                            String parentOddr,
+                            String oddrn, //null for root
+                            String name,
+                            String doc,
+                            ImmutableSet<String> registeredRecords,
+                            List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     boolean containsNull = schema.getTypes().stream().map(Schema::getType).anyMatch(t -> t == Schema.Type.NULL);
     // if it is not root and there is only 2 values for union (null and smth else)
@@ -150,13 +150,13 @@ class AvroExtractor {
   }
 
   private void extractArray(Schema schema,
-                                   String parentOddr,
-                                   String oddrn, //null for root
-                                   String name,
-                                   String doc,
-                                   Boolean nullable,
-                                   ImmutableSet<String> registeredRecords,
-                                   List<DataSetField> sink) {
+                            String parentOddr,
+                            String oddrn, //null for root
+                            String name,
+                            String doc,
+                            Boolean nullable,
+                            ImmutableSet<String> registeredRecords,
+                            List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     oddrn = isRoot ? parentOddr + "/array" : oddrn;
     if (isRoot) {
@@ -177,13 +177,13 @@ class AvroExtractor {
   }
 
   private void extractMap(Schema schema,
-                                 String parentOddr,
-                                 String oddrn, //null for root
-                                 String name,
-                                 String doc,
-                                 Boolean nullable,
-                                 ImmutableSet<String> registeredRecords,
-                                 List<DataSetField> sink) {
+                          String parentOddr,
+                          String oddrn, //null for root
+                          String name,
+                          String doc,
+                          Boolean nullable,
+                          ImmutableSet<String> registeredRecords,
+                          List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     oddrn = isRoot ? parentOddr + "/map" : oddrn;
     if (isRoot) {
@@ -215,12 +215,12 @@ class AvroExtractor {
 
 
   private void extractPrimitive(Schema schema,
-                                       String parentOddr,
-                                       String oddrn, //null for root
-                                       String name,
-                                       String doc,
-                                       Boolean nullable,
-                                       List<DataSetField> sink) {
+                                String parentOddr,
+                                String oddrn, //null for root
+                                String name,
+                                String doc,
+                                Boolean nullable,
+                                List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     String primOddrn = isRoot ? (parentOddr + "/" + schema.getType()) : oddrn;
     if (isRoot) {
