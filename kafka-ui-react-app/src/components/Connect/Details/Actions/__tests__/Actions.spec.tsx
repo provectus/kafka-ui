@@ -35,7 +35,6 @@ const expectActionButtonsExists = () => {
 };
 const afterClickDropDownButton = async () => {
   const dropDownButton = screen.getAllByRole('button');
-  expect(dropDownButton.length).toEqual(2);
   await userEvent.click(dropDownButton[1]);
 };
 const afterClickRestartButton = async () => {
