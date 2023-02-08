@@ -26,7 +26,7 @@ const UserInfo = () => {
       }
     >
       <DropdownItem>
-        <S.LogoutLink href="/logout">Log out</S.LogoutLink>
+        <S.LogoutLink href={`${window.basePath}/logout`}>Log out</S.LogoutLink>
       </DropdownItem>
     </Dropdown>
   ) : null;

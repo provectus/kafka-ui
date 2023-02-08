@@ -11,7 +11,6 @@ import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.mapper.ClusterMapperImpl;
 import com.provectus.kafka.ui.model.InternalLogDirStats;
 import com.provectus.kafka.ui.model.InternalPartitionsOffsets;
-import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Metrics;
@@ -87,7 +86,6 @@ class TopicsServicePaginationTest {
   private KafkaCluster buildKafkaCluster(String clusterName) {
     return KafkaCluster.builder()
         .name(clusterName)
-        .schemaRegistry(InternalSchemaRegistry.builder().build())
         .build();
   }
 

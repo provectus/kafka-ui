@@ -1,4 +1,4 @@
-name: prepare-helm-release
+name: Prepare helm release
 on:
   repository_dispatch:
     types: [prepare-helm-release]
