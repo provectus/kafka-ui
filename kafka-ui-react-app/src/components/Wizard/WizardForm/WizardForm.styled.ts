@@ -58,6 +58,7 @@ export const P = styled.p`
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
 `;
+
 export const ReadOnly = styled.div`
   display: flex;
   & div {
@@ -105,7 +106,7 @@ export const ButtonWrapper = styled.div`
   display: flex;
   gap: 10px;
 `;
-//----------------------------------
+
 // KafkaCluster
 
 export const BootstrapServer = styled(InputContainer)`
@@ -114,7 +115,7 @@ export const BootstrapServer = styled(InputContainer)`
 export const BootstrapServerActions = styled(IconButtonWrapper)`
   align-self: center;
 `;
-//-------------------------------
+
 // Authentication
 export const PartStyled = styled.div`
   padding-top: 1.2rem;
