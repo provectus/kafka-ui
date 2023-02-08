@@ -4,8 +4,10 @@ import com.google.common.collect.ImmutableSet;
 import com.provectus.kafka.ui.service.integration.odd.Oddrn;
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
 import io.confluent.kafka.schemaregistry.json.JsonSchema;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nullable;
 import lombok.experimental.UtilityClass;
@@ -22,17 +24,18 @@ import org.everit.json.schema.StringSchema;
 import org.everit.json.schema.TrueSchema;
 import org.opendatadiscovery.client.model.DataSetField;
 import org.opendatadiscovery.client.model.DataSetFieldType;
+import org.opendatadiscovery.client.model.MetadataExtension;
 import org.opendatadiscovery.oddrn.model.KafkaPath;
 
 @UtilityClass
 class JsonSchemaExtractor {
 
-  static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn) {
+  static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn, boolean isKey) {
     Schema schema = new JsonSchema(subject.getSchema()).rawSchema();
     List<DataSetField> result = new ArrayList<>();
     extract(
         schema,
-        Oddrn.generateOddrn(topicOddrn, "topic") + "/columns",
+        Oddrn.generateOddrn(topicOddrn, "topic") + "/columns/" + (isKey ? "key" : "value"),
         null,
         null,
         null,
@@ -42,7 +45,7 @@ class JsonSchemaExtractor {
     return result;
   }
 
-  private static void extract(Schema schema,
+  private void extract(Schema schema,
                               String parentOddr,
                               String oddrn, //null for root
                               String name,
@@ -69,7 +72,7 @@ class JsonSchemaExtractor {
     }
   }
 
-  private static void extractPrimitive(Schema schema,
+  private void extractPrimitive(Schema schema,
                                        String parentOddr,
                                        String oddrn, //null for root
                                        String name,
@@ -89,7 +92,7 @@ class JsonSchemaExtractor {
     );
   }
 
-  private static void extractUnknown(Schema schema,
+  private void extractUnknown(Schema schema,
                                      String parentOddr,
                                      String oddrn, //null for root
                                      String name,
@@ -109,7 +112,7 @@ class JsonSchemaExtractor {
     );
   }
 
-  private static void extractObject(ObjectSchema schema,
+  private void extractObject(ObjectSchema schema,
                                     String parentOddr,
                                     String oddrn, //null for root
                                     String name,
@@ -158,7 +161,7 @@ class JsonSchemaExtractor {
     });
   }
 
-  private static void extractArray(ArraySchema schema,
+  private void extractArray(ArraySchema schema,
                                    String parentOddr,
                                    String oddrn, //null for root
                                    String name,
@@ -204,7 +207,7 @@ class JsonSchemaExtractor {
     }
   }
 
-  private static void extractCombined(CombinedSchema schema,
+  private void extractCombined(CombinedSchema schema,
                                       String parentOddr,
                                       String oddrn, //null for root
                                       String name,
@@ -227,13 +230,15 @@ class JsonSchemaExtractor {
     sink.add(
         createDataSetField(
             schema,
-            isRoot ? "Root %s".formatted(combineType) : "%s (%s)".formatted(name, combineType),
+            isRoot ? "Root %s".formatted(combineType) : name,
             parentOddr,
             oddrn,
             DataSetFieldType.TypeEnum.UNION,
             combineType,
             nullable
-        )
+        ).addMetadataItem(new MetadataExtension()
+            .schemaUrl(URI.create("wontbeused.oops"))
+            .metadata(Map.of("criterion", combineType)))
     );
 
     for (Schema subschema : schema.getSubschemas()) {
@@ -249,18 +254,18 @@ class JsonSchemaExtractor {
     }
   }
 
-  private static String getDescription(Schema schema) {
+  private String getDescription(Schema schema) {
     return Optional.ofNullable(schema.getTitle())
         .orElse(schema.getDescription());
   }
 
-  private static String logicalTypeName(Schema schema) {
+  private String logicalTypeName(Schema schema) {
     return schema.getClass()
         .getSimpleName()
         .replace("Schema", "");
   }
 
-  private static DataSetField createDataSetField(Schema schema,
+  private DataSetField createDataSetField(Schema schema,
                                                  String name,
                                                  String parentOddrn,
                                                  String oddrn,
@@ -280,7 +285,7 @@ class JsonSchemaExtractor {
         );
   }
 
-  private static DataSetFieldType.TypeEnum mapType(Schema type) {
+  private DataSetFieldType.TypeEnum mapType(Schema type) {
     if (type instanceof NumberSchema) {
       return DataSetFieldType.TypeEnum.NUMBER;
     }
@@ -297,7 +302,6 @@ class JsonSchemaExtractor {
       return mapType(s.getReferredSchema());
     }
     if (type instanceof CombinedSchema) {
-      //TODO[discuss] , see extractCombined() for details
       return DataSetFieldType.TypeEnum.UNION;
     }
     return DataSetFieldType.TypeEnum.UNKNOWN;

@@ -17,24 +17,24 @@ public class Oddrn {
 
   private static final Generator GENERATOR = new Generator();
 
-  static KafkaPath clusterOddrnPath(KafkaCluster cluster) {
+  KafkaPath clusterOddrnPath(KafkaCluster cluster) {
     return KafkaPath.builder()
-        .host(bootstrapServersForOddrn(cluster.getBootstrapServers()))
+        .cluster(bootstrapServersForOddrn(cluster.getBootstrapServers()))
         .build();
   }
 
-  static String clusterOddrn(KafkaCluster cluster) {
-    return generateOddrn(clusterOddrnPath(cluster), "host");
+  String clusterOddrn(KafkaCluster cluster) {
+    return generateOddrn(clusterOddrnPath(cluster), "cluster");
   }
 
-  static KafkaPath topicOddrnPath(KafkaCluster cluster, String topic) {
+  KafkaPath topicOddrnPath(KafkaCluster cluster, String topic) {
     return KafkaPath.builder()
-        .host(bootstrapServersForOddrn(cluster.getBootstrapServers()))
+        .cluster(bootstrapServersForOddrn(cluster.getBootstrapServers()))
         .topic(topic)
         .build();
   }
 
-  static String topicOddrn(KafkaCluster cluster, String topic) {
+  String topicOddrn(KafkaCluster cluster, String topic) {
     return generateOddrn(topicOddrnPath(cluster, topic), "topic");
   }
 
@@ -48,11 +48,19 @@ public class Oddrn {
     );
   }
 
-  String connectorOddrn(String connectUrl, String connectorName) {
-    String connectorHost = Stream.of(connectUrl.split(","))
+  String connectDataSourceOddrn(String connectUrl) {
+    return generateOddrn(
+        KafkaConnectorPath.builder()
+            .host(normalizedConnectHosts(connectUrl))
+            .build(),
+        "host"
+    );
+  }
+
+  private String normalizedConnectHosts(String connectUrlStr) {
+    return Stream.of(connectUrlStr.split(","))
         .map(String::trim)
         .sorted()
-        //TODO[discuss]: leaving host and [port] in oddrn
         .map(url -> {
           var uri = URI.create(url);
           String host = uri.getHost();
@@ -60,10 +68,12 @@ public class Oddrn {
           return host + portSuffix;
         })
         .collect(Collectors.joining(","));
+  }
 
+  String connectorOddrn(String connectUrl, String connectorName) {
     return generateOddrn(
         KafkaConnectorPath.builder()
-            .host(connectorHost)
+            .host(normalizedConnectHosts(connectUrl))
             .connector(connectorName)
             .build(),
         "connector"
@@ -75,7 +85,7 @@ public class Oddrn {
     return GENERATOR.generate(path, field);
   }
 
-  private static String bootstrapServersForOddrn(String bootstrapServers) {
+  private String bootstrapServersForOddrn(String bootstrapServers) {
     return Stream.of(bootstrapServers.split(","))
         .map(String::trim)
         .sorted()

@@ -11,12 +11,12 @@ import org.opendatadiscovery.oddrn.model.KafkaPath;
 @UtilityClass
 public class DataSetFieldsExtractors {
 
-  public static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn) {
+  public static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn, boolean isKey) {
     SchemaType schemaType = Optional.ofNullable(subject.getSchemaType()).orElse(SchemaType.AVRO);
     return switch (schemaType) {
-      case AVRO -> AvroExtractor.extract(subject, topicOddrn);
-      case JSON -> JsonSchemaExtractor.extract(subject, topicOddrn);
-      case PROTOBUF -> ProtoExtractor.extract(subject, topicOddrn);
+      case AVRO -> AvroExtractor.extract(subject, topicOddrn, isKey);
+      case JSON -> JsonSchemaExtractor.extract(subject, topicOddrn, isKey);
+      case PROTOBUF -> ProtoExtractor.extract(subject, topicOddrn, isKey);
     };
   }
 

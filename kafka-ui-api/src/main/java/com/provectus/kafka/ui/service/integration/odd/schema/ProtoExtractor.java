@@ -42,10 +42,10 @@ class ProtoExtractor {
       DoubleValue.getDescriptor().getFullName()
   );
 
-  static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn) {
+  List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn, boolean isKey) {
     Descriptor schema = new ProtobufSchema(subject.getSchema()).toDescriptor();
 
-    String rootOddrn = Oddrn.generateOddrn(topicOddrn, "topic") + "/columns";
+    String rootOddrn = Oddrn.generateOddrn(topicOddrn, "topic") + "/columns/" + (isKey ? "key" : "value");
     List<DataSetField> result = new ArrayList<>();
 
     var registeredRecords = ImmutableSet.of(schema.getFullName());
@@ -62,7 +62,7 @@ class ProtoExtractor {
     return result;
   }
 
-  private static void extract(Descriptors.FieldDescriptor field,
+  private void extract(Descriptors.FieldDescriptor field,
                               String parentOddr,
                               String oddrn, //null for root
                               String name,
@@ -101,8 +101,8 @@ class ProtoExtractor {
       return true;
     }
     if (typeName.equals(Value.getDescriptor().getFullName())) {
-      //TODO[discuss] : mapping Value to UNION type (maybe its better to use UNKNOWN?)
-      sink.add(createDataSetField(name, parentOddr, oddrn, TypeEnum.UNION, typeName, nullable));
+      //TODO: use ANY type when it will appear in ODD
+      sink.add(createDataSetField(name, parentOddr, oddrn, TypeEnum.UNKNOWN, typeName, nullable));
       return true;
     }
     if (PRIMITIVES_WRAPPER_TYPE_NAMES.contains(typeName)) {
@@ -113,7 +113,7 @@ class ProtoExtractor {
     return false;
   }
 
-  private static void extractRepeated(Descriptors.FieldDescriptor field,
+  private void extractRepeated(Descriptors.FieldDescriptor field,
                                       String parentOddr,
                                       String oddrn, //null for root
                                       String name,
@@ -138,7 +138,7 @@ class ProtoExtractor {
     );
   }
 
-  private static void extractMessage(Descriptors.FieldDescriptor field,
+  private void extractMessage(Descriptors.FieldDescriptor field,
                                      String parentOddr,
                                      String oddrn, //null for root
                                      String name,
@@ -175,7 +175,7 @@ class ProtoExtractor {
         });
   }
 
-  private static void extractPrimitive(Descriptors.FieldDescriptor field,
+  private void extractPrimitive(Descriptors.FieldDescriptor field,
                                        String parentOddr,
                                        String oddrn,
                                        String name,
@@ -193,13 +193,13 @@ class ProtoExtractor {
     );
   }
 
-  private static String getLogicalTypeName(Descriptors.FieldDescriptor f) {
+  private String getLogicalTypeName(Descriptors.FieldDescriptor f) {
     return f.getType() == Descriptors.FieldDescriptor.Type.MESSAGE
         ? f.getMessageType().getFullName()
         : f.getType().name().toLowerCase();
   }
 
-  private static DataSetField createDataSetField(String name,
+  private DataSetField createDataSetField(String name,
                                                  String parentOddrn,
                                                  String oddrn,
                                                  TypeEnum type,
@@ -218,7 +218,7 @@ class ProtoExtractor {
   }
 
 
-  private static TypeEnum mapType(Descriptors.FieldDescriptor.Type type) {
+  private TypeEnum mapType(Descriptors.FieldDescriptor.Type type) {
     return switch (type) {
       case INT32, INT64, SINT32, SFIXED32, SINT64, UINT32, UINT64, FIXED32, FIXED64, SFIXED64 -> TypeEnum.INTEGER;
       case FLOAT, DOUBLE -> TypeEnum.NUMBER;

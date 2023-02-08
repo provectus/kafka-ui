@@ -3,15 +3,21 @@ package com.provectus.kafka.ui.service.integration.odd.schema;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
-import org.junit.jupiter.api.Test;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.opendatadiscovery.client.model.DataSetField;
 import org.opendatadiscovery.client.model.DataSetFieldType;
+import org.opendatadiscovery.client.model.MetadataExtension;
 import org.opendatadiscovery.oddrn.model.KafkaPath;
 
 class JsonSchemaExtractorTest {
 
-  @Test
-  void test() {
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void test(boolean isKey) {
     String jsonSchema = """
         {
             "$id": "http://example.com/test.TestMsg",
@@ -33,20 +39,22 @@ class JsonSchemaExtractorTest {
             }
         }
         """;
-
     var fields = JsonSchemaExtractor.extract(
         new SchemaSubject().schema(jsonSchema),
         KafkaPath.builder()
-            .host("localhost:9092")
+            .cluster("localhost:9092")
             .topic("some-topic")
-            .build()
+            .build(),
+        isKey
     );
+
+    String baseOddrn = "//kafka/cluster/localhost:9092/topics/some-topic/columns/" + (isKey ? "key" : "value");
 
     assertThat(fields).contains(
         new DataSetField()
             .name("int32_field")
-            .parentFieldOddrn("//kafka/host/localhost:9092/topics/some-topic/columns")
-            .oddrn("//kafka/host/localhost:9092/topics/some-topic/columns/int32_field")
+            .parentFieldOddrn(baseOddrn)
+            .oddrn(baseOddrn + "/int32_field")
             .description("field title")
             .type(new DataSetFieldType()
                 .type(DataSetFieldType.TypeEnum.NUMBER)
@@ -54,8 +62,8 @@ class JsonSchemaExtractorTest {
                 .isNullable(false)),
         new DataSetField()
             .name("lst_s_field")
-            .parentFieldOddrn("//kafka/host/localhost:9092/topics/some-topic/columns")
-            .oddrn("//kafka/host/localhost:9092/topics/some-topic/columns/lst_s_field")
+            .parentFieldOddrn(baseOddrn)
+            .oddrn(baseOddrn + "/lst_s_field")
             .description("field descr")
             .type(new DataSetFieldType()
                 .type(DataSetFieldType.TypeEnum.LIST)
@@ -63,64 +71,67 @@ class JsonSchemaExtractorTest {
                 .isNullable(true)),
         new DataSetField()
             .name("String")
-            .parentFieldOddrn("//kafka/host/localhost:9092/topics/some-topic/columns/lst_s_field")
-            .oddrn("//kafka/host/localhost:9092/topics/some-topic/columns/lst_s_field/items/String")
+            .parentFieldOddrn(baseOddrn + "/lst_s_field")
+            .oddrn(baseOddrn + "/lst_s_field/items/String")
             .type(new DataSetFieldType()
                 .type(DataSetFieldType.TypeEnum.STRING)
                 .logicalType("String")
                 .isNullable(false)),
         new DataSetField()
             .name("untyped_struct_field")
-            .parentFieldOddrn("//kafka/host/localhost:9092/topics/some-topic/columns")
-            .oddrn("//kafka/host/localhost:9092/topics/some-topic/columns/untyped_struct_field")
+            .parentFieldOddrn(baseOddrn)
+            .oddrn(baseOddrn + "/untyped_struct_field")
             .type(new DataSetFieldType()
                 .type(DataSetFieldType.TypeEnum.STRUCT)
                 .logicalType("Object")
                 .isNullable(true)),
         new DataSetField()
-            .name("union_field (anyOf)")
-            .parentFieldOddrn("//kafka/host/localhost:9092/topics/some-topic/columns")
-            .oddrn("//kafka/host/localhost:9092/topics/some-topic/columns/union_field/anyOf")
+            .name("union_field")
+            .parentFieldOddrn(baseOddrn)
+            .oddrn(baseOddrn + "/union_field/anyOf")
+            .metadata(List.of(new MetadataExtension()
+                .schemaUrl(URI.create("wontbeused.oops"))
+                .metadata(Map.of("criterion", "anyOf"))))
             .type(new DataSetFieldType()
                 .type(DataSetFieldType.TypeEnum.UNION)
                 .logicalType("anyOf")
                 .isNullable(true)),
         new DataSetField()
             .name("Number")
-            .parentFieldOddrn("//kafka/host/localhost:9092/topics/some-topic/columns/union_field/anyOf")
-            .oddrn("//kafka/host/localhost:9092/topics/some-topic/columns/union_field/anyOf/values/Number")
+            .parentFieldOddrn(baseOddrn + "/union_field/anyOf")
+            .oddrn(baseOddrn + "/union_field/anyOf/values/Number")
             .type(new DataSetFieldType()
                 .type(DataSetFieldType.TypeEnum.NUMBER)
                 .logicalType("Number")
                 .isNullable(true)),
         new DataSetField()
             .name("Object")
-            .parentFieldOddrn("//kafka/host/localhost:9092/topics/some-topic/columns/union_field/anyOf")
-            .oddrn("//kafka/host/localhost:9092/topics/some-topic/columns/union_field/anyOf/values/Object")
+            .parentFieldOddrn(baseOddrn + "/union_field/anyOf")
+            .oddrn(baseOddrn + "/union_field/anyOf/values/Object")
             .type(new DataSetFieldType()
                 .type(DataSetFieldType.TypeEnum.STRUCT)
                 .logicalType("Object")
                 .isNullable(true)),
         new DataSetField()
             .name("Null")
-            .parentFieldOddrn("//kafka/host/localhost:9092/topics/some-topic/columns/union_field/anyOf")
-            .oddrn("//kafka/host/localhost:9092/topics/some-topic/columns/union_field/anyOf/values/Null")
+            .parentFieldOddrn(baseOddrn + "/union_field/anyOf")
+            .oddrn(baseOddrn + "/union_field/anyOf/values/Null")
             .type(new DataSetFieldType()
                 .type(DataSetFieldType.TypeEnum.UNKNOWN)
                 .logicalType("Null")
                 .isNullable(true)),
         new DataSetField()
             .name("struct_field")
-            .parentFieldOddrn("//kafka/host/localhost:9092/topics/some-topic/columns")
-            .oddrn("//kafka/host/localhost:9092/topics/some-topic/columns/struct_field")
+            .parentFieldOddrn(baseOddrn)
+            .oddrn(baseOddrn + "/struct_field")
             .type(new DataSetFieldType()
                 .type(DataSetFieldType.TypeEnum.STRUCT)
                 .logicalType("Object")
                 .isNullable(true)),
         new DataSetField()
             .name("bool_field")
-            .parentFieldOddrn("//kafka/host/localhost:9092/topics/some-topic/columns/struct_field")
-            .oddrn("//kafka/host/localhost:9092/topics/some-topic/columns/struct_field/fields/bool_field")
+            .parentFieldOddrn(baseOddrn + "/struct_field")
+            .oddrn(baseOddrn + "/struct_field/fields/bool_field")
             .type(new DataSetFieldType()
                 .type(DataSetFieldType.TypeEnum.BOOLEAN)
                 .logicalType("Boolean")

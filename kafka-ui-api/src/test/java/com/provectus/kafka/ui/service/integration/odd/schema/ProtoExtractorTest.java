@@ -3,15 +3,17 @@ package com.provectus.kafka.ui.service.integration.odd.schema;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.opendatadiscovery.client.model.DataSetField;
 import org.opendatadiscovery.client.model.DataSetFieldType;
 import org.opendatadiscovery.oddrn.model.KafkaPath;
 
 class ProtoExtractorTest {
 
-  @Test
-  void test() {
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void test(boolean isKey) {
     String protoSchema = """
         syntax = "proto3";
         package test;
@@ -55,17 +57,20 @@ class ProtoExtractorTest {
         new SchemaSubject()
             .schema(protoSchema),
         KafkaPath.builder()
-            .host("localhost:9092")
+            .cluster("localhost:9092")
             .topic("someTopic")
-            .build()
+            .build(),
+        isKey
     );
+
+    String baseOddrn = "//kafka/cluster/localhost:9092/topics/someTopic/columns/" + (isKey ? "key" : "value");
 
     assertThat(list)
         .contains(
             new DataSetField()
                 .name("mapField")
-                .parentFieldOddrn("//kafka/host/localhost:9092/topics/someTopic/columns")
-                .oddrn("//kafka/host/localhost:9092/topics/someTopic/columns/mapField")
+                .parentFieldOddrn(baseOddrn)
+                .oddrn(baseOddrn + "/mapField")
                 .type(
                     new DataSetFieldType()
                         .type(DataSetFieldType.TypeEnum.LIST)
@@ -74,8 +79,8 @@ class ProtoExtractorTest {
                 ),
             new DataSetField()
                 .name("int32_field")
-                .parentFieldOddrn("//kafka/host/localhost:9092/topics/someTopic/columns")
-                .oddrn("//kafka/host/localhost:9092/topics/someTopic/columns/int32_field")
+                .parentFieldOddrn(baseOddrn)
+                .oddrn(baseOddrn + "/int32_field")
                 .type(
                     new DataSetFieldType()
                         .type(DataSetFieldType.TypeEnum.INTEGER)
@@ -84,8 +89,8 @@ class ProtoExtractorTest {
                 ),
             new DataSetField()
                 .name("enum_field")
-                .parentFieldOddrn("//kafka/host/localhost:9092/topics/someTopic/columns")
-                .oddrn("//kafka/host/localhost:9092/topics/someTopic/columns/enum_field")
+                .parentFieldOddrn(baseOddrn)
+                .oddrn(baseOddrn + "/enum_field")
                 .type(
                     new DataSetFieldType()
                         .type(DataSetFieldType.TypeEnum.STRING)
@@ -94,8 +99,8 @@ class ProtoExtractorTest {
                 ),
             new DataSetField()
                 .name("ts_field")
-                .parentFieldOddrn("//kafka/host/localhost:9092/topics/someTopic/columns")
-                .oddrn("//kafka/host/localhost:9092/topics/someTopic/columns/ts_field")
+                .parentFieldOddrn(baseOddrn)
+                .oddrn(baseOddrn + "/ts_field")
                 .type(
                     new DataSetFieldType()
                         .type(DataSetFieldType.TypeEnum.DATETIME)
@@ -104,8 +109,8 @@ class ProtoExtractorTest {
                 ),
             new DataSetField()
                 .name("duration_field")
-                .parentFieldOddrn("//kafka/host/localhost:9092/topics/someTopic/columns")
-                .oddrn("//kafka/host/localhost:9092/topics/someTopic/columns/duration_field")
+                .parentFieldOddrn(baseOddrn)
+                .oddrn(baseOddrn + "/duration_field")
                 .type(
                     new DataSetFieldType()
                         .type(DataSetFieldType.TypeEnum.DURATION)
@@ -114,28 +119,28 @@ class ProtoExtractorTest {
                 ),
             new DataSetField()
                 .name("one_of_v1")
-                .parentFieldOddrn("//kafka/host/localhost:9092/topics/someTopic/columns")
-                .oddrn("//kafka/host/localhost:9092/topics/someTopic/columns/one_of_v1")
+                .parentFieldOddrn(baseOddrn)
+                .oddrn(baseOddrn + "/one_of_v1")
                 .type(
                     new DataSetFieldType()
-                        .type(DataSetFieldType.TypeEnum.UNION)
+                        .type(DataSetFieldType.TypeEnum.UNKNOWN)
                         .logicalType("google.protobuf.Value")
                         .isNullable(true)
                 ),
             new DataSetField()
                 .name("one_of_v2")
-                .parentFieldOddrn("//kafka/host/localhost:9092/topics/someTopic/columns")
-                .oddrn("//kafka/host/localhost:9092/topics/someTopic/columns/one_of_v2")
+                .parentFieldOddrn(baseOddrn)
+                .oddrn(baseOddrn + "/one_of_v2")
                 .type(
                     new DataSetFieldType()
-                        .type(DataSetFieldType.TypeEnum.UNION)
+                        .type(DataSetFieldType.TypeEnum.UNKNOWN)
                         .logicalType("google.protobuf.Value")
                         .isNullable(true)
                 ),
             new DataSetField()
                 .name("int64_w_field")
-                .parentFieldOddrn("//kafka/host/localhost:9092/topics/someTopic/columns")
-                .oddrn("//kafka/host/localhost:9092/topics/someTopic/columns/int64_w_field")
+                .parentFieldOddrn(baseOddrn)
+                .oddrn(baseOddrn + "/int64_w_field")
                 .type(
                     new DataSetFieldType()
                         .type(DataSetFieldType.TypeEnum.INTEGER)
@@ -144,8 +149,8 @@ class ProtoExtractorTest {
                 ),
             new DataSetField()
                 .name("emb")
-                .parentFieldOddrn("//kafka/host/localhost:9092/topics/someTopic/columns")
-                .oddrn("//kafka/host/localhost:9092/topics/someTopic/columns/emb")
+                .parentFieldOddrn(baseOddrn)
+                .oddrn(baseOddrn + "/emb")
                 .type(
                     new DataSetFieldType()
                         .type(DataSetFieldType.TypeEnum.STRUCT)
@@ -154,8 +159,8 @@ class ProtoExtractorTest {
                 ),
             new DataSetField()
                 .name("emb_f1")
-                .parentFieldOddrn("//kafka/host/localhost:9092/topics/someTopic/columns/emb")
-                .oddrn("//kafka/host/localhost:9092/topics/someTopic/columns/emb/fields/emb_f1")
+                .parentFieldOddrn(baseOddrn + "/emb")
+                .oddrn(baseOddrn + "/emb/fields/emb_f1")
                 .type(
                     new DataSetFieldType()
                         .type(DataSetFieldType.TypeEnum.INTEGER)
@@ -164,8 +169,8 @@ class ProtoExtractorTest {
                 ),
             new DataSetField()
                 .name("outer_ref")
-                .parentFieldOddrn("//kafka/host/localhost:9092/topics/someTopic/columns/emb")
-                .oddrn("//kafka/host/localhost:9092/topics/someTopic/columns/emb/fields/outer_ref")
+                .parentFieldOddrn(baseOddrn + "/emb")
+                .oddrn(baseOddrn + "/emb/fields/outer_ref")
                 .type(
                     new DataSetFieldType()
                         .type(DataSetFieldType.TypeEnum.STRUCT)

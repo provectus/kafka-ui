@@ -14,12 +14,12 @@ import org.opendatadiscovery.oddrn.model.KafkaPath;
 @UtilityClass
 class AvroExtractor {
 
-  static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn) {
+  static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn, boolean isKey) {
     var schema = new Schema.Parser().parse(subject.getSchema());
     List<DataSetField> result = new ArrayList<>();
     extract(
         schema,
-        Oddrn.generateOddrn(topicOddrn, "topic") + "/columns",
+        Oddrn.generateOddrn(topicOddrn, "topic") + "/columns/" + (isKey ? "key" : "value"),
         null,
         null,
         null,
@@ -30,7 +30,7 @@ class AvroExtractor {
     return result;
   }
 
-  private static void extract(Schema schema,
+  private void extract(Schema schema,
                               String parentOddr,
                               String oddrn, //null for root
                               String name,
@@ -48,7 +48,7 @@ class AvroExtractor {
     }
   }
 
-  private static DataSetField createDataSetField(String name,
+  private DataSetField createDataSetField(String name,
                                                  String doc,
                                                  String parentOddrn,
                                                  String oddrn,
@@ -63,7 +63,7 @@ class AvroExtractor {
         .type(mapSchema(schema, nullable));
   }
 
-  private static void extractRecord(Schema schema,
+  private void extractRecord(Schema schema,
                                     String parentOddr,
                                     String oddrn, //null for root
                                     String name,
@@ -99,7 +99,7 @@ class AvroExtractor {
         ));
   }
 
-  private static void extractUnion(Schema schema,
+  private void extractUnion(Schema schema,
                                    String parentOddr,
                                    String oddrn, //null for root
                                    String name,
@@ -108,7 +108,6 @@ class AvroExtractor {
                                    List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     boolean containsNull = schema.getTypes().stream().map(Schema::getType).anyMatch(t -> t == Schema.Type.NULL);
-    //TODO[discuss]: how this approach will work with backw-compat check? ->
     // if it is not root and there is only 2 values for union (null and smth else)
     // we registering this field as optional without mentioning union
     if (!isRoot && containsNull && schema.getTypes().size() == 2) {
@@ -150,7 +149,7 @@ class AvroExtractor {
     }
   }
 
-  private static void extractArray(Schema schema,
+  private void extractArray(Schema schema,
                                    String parentOddr,
                                    String oddrn, //null for root
                                    String name,
@@ -177,7 +176,7 @@ class AvroExtractor {
     );
   }
 
-  private static void extractMap(Schema schema,
+  private void extractMap(Schema schema,
                                  String parentOddr,
                                  String oddrn, //null for root
                                  String name,
@@ -215,7 +214,7 @@ class AvroExtractor {
   }
 
 
-  private static void extractPrimitive(Schema schema,
+  private void extractPrimitive(Schema schema,
                                        String parentOddr,
                                        String oddrn, //null for root
                                        String name,
@@ -232,7 +231,7 @@ class AvroExtractor {
     }
   }
 
-  private static DataSetFieldType.TypeEnum mapType(Schema.Type type) {
+  private DataSetFieldType.TypeEnum mapType(Schema.Type type) {
     return switch (type) {
       case INT, LONG -> DataSetFieldType.TypeEnum.INTEGER;
       case FLOAT, DOUBLE, FIXED -> DataSetFieldType.TypeEnum.NUMBER;
@@ -247,14 +246,14 @@ class AvroExtractor {
     };
   }
 
-  private static DataSetFieldType mapSchema(Schema schema, Boolean nullable) {
+  private DataSetFieldType mapSchema(Schema schema, Boolean nullable) {
     return new DataSetFieldType()
         .logicalType(logicalType(schema))
         .isNullable(nullable)
         .type(mapType(schema.getType()));
   }
 
-  private static String logicalType(Schema schema) {
+  private String logicalType(Schema schema) {
     return schema.getType() == Schema.Type.RECORD
         ? schema.getFullName()
         : schema.getType().toString().toLowerCase();

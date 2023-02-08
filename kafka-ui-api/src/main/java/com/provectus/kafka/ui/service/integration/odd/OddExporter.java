@@ -16,7 +16,6 @@ import org.opendatadiscovery.client.model.DataEntityList;
 import org.opendatadiscovery.client.model.DataSource;
 import org.opendatadiscovery.client.model.DataSourceList;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 class OddExporter {
@@ -61,54 +60,47 @@ class OddExporter {
     return new OpenDataDiscoveryIngestionApi(apiClient);
   }
 
-  @SneakyThrows
   public Mono<Void> export(KafkaCluster cluster) {
     return exportTopics(cluster)
-        .then(exportKafkaConnects(cluster))
-        .then();
+        .then(exportKafkaConnects(cluster));
   }
 
   private Mono<Void> exportTopics(KafkaCluster c) {
-    String clusterOddrn = Oddrn.clusterOddrn(c);
-    return createClusterDatasourceIfNeeded(c)
+    return createKafkaDataSource(c)
         .thenMany(topicsExporter.export(c))
-        .buffer(100)
-        .concatMap(entities -> sentDataEntities(clusterOddrn, entities))
+        .concatMap(this::sentDataEntities)
         .then();
   }
 
   private Mono<Void> exportKafkaConnects(KafkaCluster cluster) {
-    String clusterOddrn = Oddrn.clusterOddrn(cluster);
-    return connectorsExporter.export(cluster)
-        .buffer(100)
-        .concatMap(entities -> sentDataEntities(clusterOddrn, entities))
+    return createConnectDataSources(cluster)
+        .thenMany(connectorsExporter.export(cluster))
+        .concatMap(this::sentDataEntities)
         .then();
   }
 
-  private Mono<Void> createClusterDatasourceIfNeeded(KafkaCluster cluster) {
-    String clusterOddrn = Oddrn.clusterOddrn(cluster);
-    return oddApi.getDataEntitiesByDEGOddrn(clusterOddrn)
-        .map(r -> !r.getItems().isEmpty())
-        .onErrorResume(WebClientResponseException.NotFound.class, throwable -> Mono.just(false))
-        .filter(created -> !created)
-        .flatMap(notFound ->
-            oddApi.createDataSource(
-                new DataSourceList()
-                    .addItemsItem(
-                        new DataSource()
-                            .oddrn(clusterOddrn)
-                            .name("Kafka cluster \"%s\"".formatted(cluster.getName()))
-                            .description("Kafka cluster, exported from kafka-ui")
-                    )
-            ));
+  private Mono<Void> createConnectDataSources(KafkaCluster cluster) {
+    return connectorsExporter.getConnectDataSources(cluster)
+        .buffer(100)
+        .concatMap(dataSources -> oddApi.createDataSource(new DataSourceList().items(dataSources)))
+        .then();
   }
 
-  private Mono<Void> sentDataEntities(String datasourceOddrn, List<DataEntity> entities) {
-    return oddApi.postDataEntityList(
-        new DataEntityList()
-            .dataSourceOddrn(datasourceOddrn)
-            .items(entities)
+  private Mono<Void> createKafkaDataSource(KafkaCluster cluster) {
+    String clusterOddrn = Oddrn.clusterOddrn(cluster);
+    return oddApi.createDataSource(
+        new DataSourceList()
+            .addItemsItem(
+                new DataSource()
+                    .oddrn(clusterOddrn)
+                    .name(cluster.getName())
+                    .description("Kafka cluster")
+            )
     );
+  }
+
+  private Mono<Void> sentDataEntities(DataEntityList dataEntityList) {
+    return oddApi.postDataEntityList(dataEntityList);
   }
 
 }

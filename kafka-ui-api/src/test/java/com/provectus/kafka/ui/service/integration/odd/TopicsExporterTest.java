@@ -20,6 +20,7 @@ import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartitionInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.opendatadiscovery.client.model.DataEntity;
 import org.opendatadiscovery.client.model.DataEntityType;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -40,12 +41,12 @@ class TopicsExporterTest {
 
   @BeforeEach
   void init() {
-    var statisticsCache = mock(StatisticsCache.class);
-    when(statisticsCache.get(cluster)).thenAnswer(invocationOnMock -> stats);
+    var statisticsCacheMock = mock(StatisticsCache.class);
+    when(statisticsCacheMock.get(cluster)).thenAnswer(invocationOnMock -> stats);
 
     topicsExporter = new TopicsExporter(
         topic -> !topic.startsWith("_"),
-        statisticsCache
+        statisticsCacheMock
     );
   }
 
@@ -69,16 +70,30 @@ class TopicsExporterTest {
         .build();
 
     StepVerifier.create(topicsExporter.export(cluster))
-        .expectNextMatches(entity -> entity.getOddrn().contains("visible"))
+        .assertNext(entityList -> {
+          assertThat(entityList.getDataSourceOddrn())
+              .isNotEmpty();
+
+          assertThat(entityList.getItems())
+              .hasSize(1)
+              .allSatisfy(e -> e.getOddrn().contains("visible"));
+        })
         .verifyComplete();
   }
 
   @Test
   void doesExportTopicData() {
-    when(schemaRegistryClientMock.getSubjectVersion(anyString(), anyString()))
+    when(schemaRegistryClientMock.getSubjectVersion("testTopic-value", "latest"))
         .thenReturn(Mono.just(
             new SchemaSubject()
                 .schema("\"string\"")
+                .schemaType(SchemaType.AVRO)
+        ));
+
+    when(schemaRegistryClientMock.getSubjectVersion("testTopic-key", "latest"))
+        .thenReturn(Mono.just(
+            new SchemaSubject()
+                .schema("\"int\"")
                 .schemaType(SchemaType.AVRO)
         ));
 
@@ -121,20 +136,29 @@ class TopicsExporterTest {
         .build();
 
     StepVerifier.create(topicsExporter.export(cluster))
-        .assertNext(entity -> {
-          assertThat(entity.getName()).isNotEmpty();
-          assertThat(entity.getOddrn()).isEqualTo("//kafka/host/localhost:19092,localhost:9092/topics/testTopic");
-          assertThat(entity.getType()).isEqualTo(DataEntityType.KAFKA_TOPIC);
-          assertThat(entity.getMetadata().get(0).getMetadata())
-              .containsExactlyInAnyOrderEntriesOf(
-                  Map.of(
-                      "partitions", 1,
-                      "replication_factor", 2,
-                      "custom.config", "100500"
-                  )
-              );
-          assertThat(entity.getDataset()).isNotNull();
-          assertThat(entity.getDataset().getFieldList()).hasSize(1);
+        .assertNext(entityList -> {
+          assertThat(entityList.getItems())
+              .hasSize(1);
+
+          DataEntity topicEntity = entityList.getItems().get(0);
+          assertThat(topicEntity.getName()).isNotEmpty();
+          assertThat(topicEntity.getOddrn())
+              .isEqualTo("//kafka/cluster/localhost:19092,localhost:9092/topics/testTopic");
+          assertThat(topicEntity.getType()).isEqualTo(DataEntityType.KAFKA_TOPIC);
+          assertThat(topicEntity.getMetadata())
+              .hasSize(1)
+              .singleElement()
+              .satisfies(e ->
+                  assertThat(e.getMetadata())
+                      .containsExactlyInAnyOrderEntriesOf(
+                          Map.of(
+                              "partitions", 1,
+                              "replication_factor", 2,
+                              "custom.config", "100500")));
+
+          assertThat(topicEntity.getDataset()).isNotNull();
+          assertThat(topicEntity.getDataset().getFieldList())
+              .hasSize(2); //1 field for key, 1 for value
         })
         .verifyComplete();
   }

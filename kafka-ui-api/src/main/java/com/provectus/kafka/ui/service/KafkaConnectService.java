@@ -113,12 +113,12 @@ public class KafkaConnectService {
         fullConnectorInfo.getType().getValue());
   }
 
-  private Mono<ConnectorTopics> getConnectorTopics(KafkaCluster cluster, String connectClusterName,
+  public Mono<ConnectorTopics> getConnectorTopics(KafkaCluster cluster, String connectClusterName,
                                                   String connectorName) {
     return api(cluster, connectClusterName)
         .mono(c -> c.getConnectorTopics(connectorName))
         .map(result -> result.get(connectorName))
-        // old connectors don't have this api, setting empty list for
+        // old Connect API versions don't have this endpoint, setting empty list for
         // backward-compatibility
         .onErrorResume(Exception.class, e -> Mono.just(new ConnectorTopics().topics(List.of())));
   }
