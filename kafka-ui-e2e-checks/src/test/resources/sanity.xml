@@ -1,8 +1,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="RegressionSuite">
-    <test name="Regression" enabled="true" parallel="classes" thread-count="1">
+<suite name="SanitySuite">
+    <test name="Sanity" enabled="true" parallel="classes" thread-count="1">
         <packages>
-            <package name="com.provectus.kafka.ui.sanitySuite.*"/>
             <package name="com.provectus.kafka.ui.smokeSuite.*"/>
         </packages>
     </test>
