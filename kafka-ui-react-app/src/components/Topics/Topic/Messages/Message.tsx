@@ -19,7 +19,15 @@ const StyledDataCell = styled.td`
   max-width: 350px;
   min-width: 350px;
 `;
-
+const StyledIsLongText = styled.div`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 340px;
+`;
+const StyledDataCellFlex = styled.div`
+  display: flex;
+`;
 const ClickableRow = styled.tr`
   cursor: pointer;
 `;
@@ -120,14 +128,24 @@ const Message: React.FC<Props> = ({
           <div>{formatTimestamp(timestamp)}</div>
         </td>
         <StyledDataCell title={key}>
-          {renderFilteredJson(key, keyFilters)}
-          <S.Icon>{keySerde === 'Fallback' && <WarningRedIcon />}</S.Icon>
+          <StyledDataCellFlex>
+            <StyledIsLongText>
+              {renderFilteredJson(key, keyFilters)}
+            </StyledIsLongText>
+            <S.Icon>{keySerde === 'Fallback' && <WarningRedIcon />}</S.Icon>
+          </StyledDataCellFlex>
         </StyledDataCell>
         <StyledDataCell title={content}>
           <S.Metadata>
             <S.MetadataValue>
-              {renderFilteredJson(content, contentFilters)}
-              <S.Icon>{valueSerde === 'Fallback' && <WarningRedIcon />}</S.Icon>
+              <StyledDataCellFlex>
+                <StyledIsLongText>
+                  {renderFilteredJson(content, contentFilters)}
+                </StyledIsLongText>
+                <S.Icon>
+                  {valueSerde === 'Fallback' && <WarningRedIcon />}
+                </S.Icon>
+              </StyledDataCellFlex>
             </S.MetadataValue>
           </S.Metadata>
         </StyledDataCell>
