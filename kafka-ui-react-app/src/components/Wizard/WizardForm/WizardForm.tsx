@@ -18,6 +18,10 @@ export type FormValues = {
   name: string;
   readOnly: boolean;
   bootstrapServers: BootstrapServer[];
+  securityProtocol: 'SASL_SSL' | 'SASL_PLAINTEXT' | 'none';
+  authentication: {
+    method: 'none' | 'sasl';
+  };
 };
 
 interface WizardFormProps {
@@ -35,6 +39,10 @@ const Wizard: React.FC<WizardFormProps> = () => {
         { host: 'loc1', port: '3001' },
         { host: 'loc', port: '3002' },
       ],
+      securityProtocol: 'none',
+      authentication: {
+        method: 'none',
+      },
     },
   });
 
@@ -50,6 +58,7 @@ const Wizard: React.FC<WizardFormProps> = () => {
         <KafkaCluster />
         <hr />
         <Authentication />
+        <hr />
         <SchemaRegistry />
         <S.Section>
           <S.SectionName>Kafka Connect</S.SectionName>

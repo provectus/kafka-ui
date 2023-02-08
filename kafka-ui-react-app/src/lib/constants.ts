@@ -91,6 +91,6 @@ export const AUTH_OPTIONS: SelectOption[] = [
 
 export const SECURITY_PROTOCOL_OPTIONS: SelectOption[] = [
   { value: 'none', label: 'None' },
-  { value: 'sasl_ssl', label: 'SASL_SSL' },
-  { value: 'sasl_plaintext', label: 'SASL_PLAINTEXT' },
+  { value: 'SASL_SSL', label: 'SASL_SSL' },
+  { value: 'SASL_PLAINTEXT', label: 'SASL_PLAINTEXT' },
 ];

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
 
 import SaslJaas from './SaslJaas';
 import SaslGssapi from './SaslGssapi';
@@ -9,12 +8,8 @@ import SaslAwsIam from './SaslAwsIam';
 import UsernamePassword from './UsernamePassword';
 import MTLS from './MTLS';
 
-const AuthenticationMethods = () => {
-  const methods = useFormContext();
-  const { watch } = methods;
-  const saslMethods = watch('authentication.type');
-
-  switch (saslMethods) {
+const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
+  switch (method) {
     case 'SASL/JAAS':
       return <SaslJaas />;
     case 'SASL/GSSAPI':

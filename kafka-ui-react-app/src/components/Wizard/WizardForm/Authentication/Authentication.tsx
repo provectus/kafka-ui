@@ -1,4 +1,3 @@
-import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 import React from 'react';
 import Select from 'components/common/Select/Select';
 import { useFormContext, Controller } from 'react-hook-form';
@@ -6,114 +5,106 @@ import { ErrorMessage } from '@hookform/error-message';
 import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
 import { AUTH_OPTIONS, SECURITY_PROTOCOL_OPTIONS } from 'lib/constants';
+import Heading from 'components/common/heading/Heading.styled';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
 
 import AuthenticationMethods from './AuthenticationMethods/AuthenticationMethods';
 
 const Authentication: React.FC = () => {
-  const methods = useFormContext();
-  const securityProtocol = methods.watch('securityProtocol');
+  const {
+    watch,
+    control,
+    formState: { errors },
+    register,
+    setValue,
+  } = useFormContext();
+
+  const securityProtocol = watch('securityProtocol');
+  const authMethod = watch('authentication.method');
+
+  const isSecurityProtocolDisabled = authMethod === 'mTLS';
 
   return (
-    <S.Section>
-      <S.SectionName>Authentication</S.SectionName>
+    <>
+      <Heading level={3}>Authentication</Heading>
       <div>
-        <S.PartStyled>
-          <S.ItemLabel>
-            <label htmlFor="securityProtocol">Security Protocol</label>{' '}
-          </S.ItemLabel>
-          <Controller
-            defaultValue={SECURITY_PROTOCOL_OPTIONS[0].value}
-            control={methods.control}
-            name="securityProtocol"
-            render={({ field: { name, onChange, value } }) => {
-              return (
-                <Select
-                  name={name}
-                  placeholder="Select"
-                  minWidth="270px"
-                  onChange={onChange}
-                  value={value}
-                  options={SECURITY_PROTOCOL_OPTIONS}
-                />
-              );
-            }}
-          />
-          <FormError>
-            <ErrorMessage errors={methods.formState.errors} name="password" />
-          </FormError>
-          {securityProtocol === 'sasl_ssl' && (
-            <>
-              <S.PartStyled>
-                <S.FileWrapper>
-                  <label htmlFor="truststoreFile">
-                    Truststore File Location
-                  </label>
-                  <input
-                    {...methods.register('truststoreFile')}
-                    name="truststoreFile"
-                    type="file"
-                  />
-
-                  <FormError>
-                    <ErrorMessage
-                      errors={methods.formState.errors}
-                      name="truststoreFile"
-                    />
-                  </FormError>
-                </S.FileWrapper>
-              </S.PartStyled>
-              <S.PartStyled>
-                <label htmlFor="saslPassword">Password</label>{' '}
-                <Input type="password" name="saslPassword" />
-                <FormError>
-                  <ErrorMessage
-                    errors={methods.formState.errors}
-                    name="saslPassword"
-                  />
-                </FormError>
-              </S.PartStyled>
-            </>
-          )}
-        </S.PartStyled>
-
-        <S.PartStyled>
-          <S.ItemLabelRequired>
-            <label htmlFor="authentication.type">Authentication Method</label>{' '}
-          </S.ItemLabelRequired>
-          <Controller
-            defaultValue={AUTH_OPTIONS[0].value}
-            control={methods.control}
-            name="authentication.type"
-            render={({ field: { name, onChange, value } }) => {
-              return (
-                <Select
-                  name={name}
-                  placeholder="Select"
-                  minWidth="270px"
-                  onChange={(authenticationValue) => {
-                    if (authenticationValue === 'mTLS') {
-                      methods.setValue('securityProtocol', 'sasl_ssl');
-                    }
-                    onChange(authenticationValue);
-                  }}
-                  value={value}
-                  options={AUTH_OPTIONS}
-                />
-              );
-            }}
-          />
-          <FormError>
-            <ErrorMessage
-              errors={methods.formState.errors}
-              name="authentication.type"
-            />
-          </FormError>
-        </S.PartStyled>
-        <S.PartStyled>
-          <AuthenticationMethods />
-        </S.PartStyled>
+        <InputLabel htmlFor="securityProtocol">Security Protocol</InputLabel>
+        <Controller
+          control={control}
+          name="securityProtocol"
+          render={({ field: { name, onChange } }) => {
+            return (
+              <Select
+                disabled={isSecurityProtocolDisabled}
+                name={name}
+                minWidth="270px"
+                onChange={onChange}
+                value={securityProtocol}
+                options={SECURITY_PROTOCOL_OPTIONS}
+              />
+            );
+          }}
+        />
+        <FormError>
+          <ErrorMessage errors={errors} name="securityProtocol" />
+        </FormError>
       </div>
-    </S.Section>
+      {securityProtocol === 'SASL_SSL' && (
+        <>
+          <div>
+            <InputLabel htmlFor="authentication.truststoreFile">
+              Truststore File Location
+            </InputLabel>
+            <p>
+              <input
+                {...register('authentication.sslTruststoreFile')}
+                type="file"
+              />
+            </p>
+            <FormError>
+              <ErrorMessage
+                errors={errors}
+                name="authentication.sslTruststoreFile"
+              />
+            </FormError>
+          </div>
+          <div>
+            <InputLabel htmlFor="saslPassword">Truststore Password</InputLabel>
+            <Input type="password" name="saslPassword" />
+            <FormError>
+              <ErrorMessage errors={errors} name="saslPassword" />
+            </FormError>
+          </div>
+        </>
+      )}
+      <div>
+        <InputLabel htmlFor="authentication.method">
+          Authentication Method *
+        </InputLabel>
+        <Controller
+          control={control}
+          name="authentication.method"
+          render={({ field: { name, value } }) => {
+            return (
+              <Select
+                name={name}
+                minWidth="270px"
+                onChange={(val) => {
+                  setValue('securityProtocol', 'SASL_SSL');
+                  setValue('authentication.method', val);
+                }}
+                value={value}
+                options={AUTH_OPTIONS}
+              />
+            );
+          }}
+        />
+        <FormError>
+          <ErrorMessage errors={errors} name="authentication.method" />
+        </FormError>
+      </div>
+      <AuthenticationMethods method={authMethod} />
+    </>
   );
 };
 

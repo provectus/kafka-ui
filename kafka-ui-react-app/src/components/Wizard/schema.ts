@@ -1,7 +1,5 @@
 import { object, string, number, array, boolean, mixed } from 'yup';
 
-// type AuthenticationType = 'None' | 'SASL_SSL' | 'SASL_PLAINTEXT';
-
 const bootstrapServerSchema = object({
   host: string().required('host is a required field'),
   port: number()
@@ -16,11 +14,12 @@ const formSchema = object({
     .min(3, 'Cluster name must be at least 3 characters'),
   readOnly: boolean().required(),
   bootstrapServers: array().of(bootstrapServerSchema).min(1),
+  securityProtocol: string().oneOf(['SASL_SSL', 'SASL_PLAINTEXT', 'none']),
   authentication: object({
     type: string()
       .required()
       .oneOf([
-        'None',
+        'none',
         'SASL/JAAS',
         'SASL/GSSAPI',
         'SASL/OAUTHBEARER',
