@@ -62,6 +62,7 @@ import org.apache.kafka.common.TopicPartitionInfo;
 import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.ClusterAuthorizationException;
 import org.apache.kafka.common.errors.GroupIdNotFoundException;
 import org.apache.kafka.common.errors.GroupNotEmptyException;
 import org.apache.kafka.common.errors.InvalidRequestException;
@@ -208,11 +209,12 @@ public class ReactiveAdminClient implements Closeable {
         .map(brokerId -> new ConfigResource(ConfigResource.Type.BROKER, Integer.toString(brokerId)))
         .collect(toList());
     return toMono(client.describeConfigs(resources).all())
-        .doOnError(InvalidRequestException.class,
+        .doOnError(th -> th instanceof InvalidRequestException || th instanceof ClusterAuthorizationException,
             th -> log.trace("Error while getting broker {} configs", brokerIds, th))
         // some kafka backends (like MSK serverless) do not support broker's configs retrieval,
-        // in that case InvalidRequestException will be thrown
-        .onErrorResume(InvalidRequestException.class, th -> Mono.just(Map.of()))
+        // in that case InvalidRequestException or ClusterAuthorizationException will be thrown
+        .onErrorResume(th -> th instanceof InvalidRequestException || th instanceof ClusterAuthorizationException,
+            th -> Mono.just(Map.of()))
         .map(config -> config.entrySet().stream()
             .collect(toMap(
                 c -> Integer.valueOf(c.getKey().name()),
