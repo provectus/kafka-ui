@@ -89,27 +89,29 @@ export const FileWrapper = styled.div`
   }
 `;
 
-//----------------------------------
-// KafkaCluster
-export const BootstrapServersContainer = styled.label`
+export const ArrayFieldWrapper = styled.label`
   display: flex;
   flex-direction: column;
   gap: 8px;
 `;
-
-export const BootstrapServer = styled.div`
+export const InputContainer = styled.div`
   display: grid;
-  grid-template-columns: 3fr 1fr 30px;
+  grid-template-columns: 1fr 1fr 30px;
   gap: 8px;
-  align-items: top;
+  align-items: stretch;
   max-width: 500px;
+`;
+//----------------------------------
+// KafkaCluster
+
+export const BootstrapServer = styled(InputContainer)`
+  grid-template-columns: 3fr 1fr 30px;
 `;
 export const BootstrapServerActions = styled(IconButtonWrapper)`
   align-self: center;
 `;
-
-//-------------------------------
+export //-------------------------------
 // Authentication
-export const PartStyled = styled.div`
+const PartStyled = styled.div`
   padding-top: 1.2rem;
 `;

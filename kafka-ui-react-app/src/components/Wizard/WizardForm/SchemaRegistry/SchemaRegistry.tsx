@@ -1,37 +1,59 @@
-import React, { useState } from 'react';
+import React from 'react';
 import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
 import { ErrorMessage } from '@hookform/error-message';
 import { useFormContext } from 'react-hook-form';
+import Heading from 'components/common/heading/Heading.styled';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
 
 const SchemaRegistry = () => {
-  const [newSchemaRegistry, setNewSchemaRegistry] = useState(false);
-  const methods = useFormContext();
-  const registry: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+  const {
+    setValue,
+    register,
+    reset,
+    getValues,
+    watch,
+    formState: { errors },
+  } = useFormContext();
+  const schemaRegistry = watch('schemaRegistry');
+  const showRegistryFrom: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    setNewSchemaRegistry(!newSchemaRegistry);
-    if (!newSchemaRegistry) {
-      methods.reset({ url: '' });
+    if (schemaRegistry) {
+      setValue('schemaRegistry', undefined);
+    } else {
+      reset(
+        {
+          ...getValues(),
+          schemaRegistry: {
+            url: '',
+            isAuth: false,
+            username: '',
+            password: '',
+          },
+        },
+        { keepDefaultValues: true }
+      );
     }
   };
-  const isAuth = methods.watch('schemaRegistry.isAuth');
   return (
-    <S.Section>
-      <S.SectionName>Schema Registry</S.SectionName>
+    <>
+      <Heading level={3}>Schema Registry</Heading>
       <div>
         <Button
           buttonSize="M"
           buttonType="primary"
-          onClick={(e) => registry(e)}
+          onClick={(e) => showRegistryFrom(e)}
         >
-          {!newSchemaRegistry ? 'Add Schema Registry' : 'Remove from config'}
+          {!schemaRegistry ? 'Add Schema Registry' : 'Remove from config'}
         </Button>
-        {newSchemaRegistry && (
+      </div>
+      <S.ArrayFieldWrapper>
+        {schemaRegistry && (
           <>
-            <S.PartStyled>
-              <label htmlFor="schemaRegistry.url">URL</label>{' '}
+            <div>
+              <InputLabel htmlFor="schemaRegistry.url">URL</InputLabel>
               <Input
                 id="schemaRegistry.url"
                 name="schemaRegistry.url"
@@ -39,36 +61,28 @@ const SchemaRegistry = () => {
                 placeholder="http://localhost:8081"
               />
               <FormError>
-                <ErrorMessage
-                  errors={methods.formState.errors}
-                  name="schemaRegistry.url"
-                />
+                <ErrorMessage errors={errors} name="schemaRegistry.url" />
               </FormError>
-            </S.PartStyled>
-            <S.PartStyled>
-              <S.CheckboxWrapper>
+            </div>
+            <div>
+              <InputLabel htmlFor="schemaRegistry.isAuth">
                 <input
-                  {...methods.register('schemaRegistry.isAuth')}
+                  {...register('schemaRegistry.isAuth')}
                   id="schemaRegistry.isAuth"
                   type="checkbox"
                 />
-                <label htmlFor="schemaRegistry.isAuth">
-                  Schema registry is secured with auth?
-                </label>
-                <FormError>
-                  <ErrorMessage
-                    errors={methods.formState.errors}
-                    name="schemaRegistry.isAuth"
-                  />
-                </FormError>
-              </S.CheckboxWrapper>
-            </S.PartStyled>
-            {isAuth && (
-              <>
-                <S.PartStyled>
-                  <S.ItemLabelRequired>
-                    <label htmlFor="schemaRegistry.username">Username</label>{' '}
-                  </S.ItemLabelRequired>
+                Schema registry is secured with auth?
+              </InputLabel>
+              <FormError>
+                <ErrorMessage errors={errors} name="schemaRegistry.isAuth" />
+              </FormError>
+            </div>
+            {schemaRegistry.isAuth && (
+              <S.InputContainer>
+                <div>
+                  <InputLabel htmlFor="schemaRegistry.username">
+                    Username *
+                  </InputLabel>
                   <Input
                     id="schemaRegistry.username"
                     type="text"
@@ -76,15 +90,15 @@ const SchemaRegistry = () => {
                   />
                   <FormError>
                     <ErrorMessage
-                      errors={methods.formState.errors}
+                      errors={errors}
                       name="schemaRegistry.username"
                     />
                   </FormError>
-                </S.PartStyled>
-                <S.PartStyled>
-                  <S.ItemLabelRequired>
-                    <label htmlFor="schemaRegistry.password">Password</label>{' '}
-                  </S.ItemLabelRequired>
+                </div>
+                <div>
+                  <InputLabel htmlFor="schemaRegistry.password">
+                    Password *
+                  </InputLabel>
                   <Input
                     id="schemaRegistry.password"
                     type="password"
@@ -92,17 +106,17 @@ const SchemaRegistry = () => {
                   />
                   <FormError>
                     <ErrorMessage
-                      errors={methods.formState.errors}
+                      errors={errors}
                       name="schemaRegistry.password"
                     />
                   </FormError>
-                </S.PartStyled>
-              </>
+                </div>
+              </S.InputContainer>
             )}
           </>
         )}
-      </div>
-    </S.Section>
+      </S.ArrayFieldWrapper>
+    </>
   );
 };
 export default SchemaRegistry;
