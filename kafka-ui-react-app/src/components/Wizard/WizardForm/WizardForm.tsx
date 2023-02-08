@@ -15,6 +15,12 @@ type BootstrapServer = {
   host: string;
   port: string;
 };
+type SchemaRegistryType = {
+  url: string;
+  isAuth: boolean;
+  username: string;
+  password: string;
+};
 type KafkaConnectType = {
   name: string;
   url: string;
@@ -22,11 +28,13 @@ type KafkaConnectType = {
   username: string;
   password: string;
 };
+
 export type FormValues = {
   name: string;
   readOnly: boolean;
   bootstrapServers: BootstrapServer[];
-  kafkaConnect: KafkaConnectType[];
+  schemaRegistry?: SchemaRegistryType;
+  kafkaConnect?: KafkaConnectType[];
 };
 
 interface WizardFormProps {
@@ -44,6 +52,12 @@ const Wizard: React.FC<WizardFormProps> = () => {
         { host: 'loc1', port: '3001' },
         { host: 'loc', port: '3002' },
       ],
+      schemaRegistry: {
+        url: '',
+        isAuth: false,
+        username: '',
+        password: '',
+      },
       kafkaConnect: [
         {
           name: 'Test Name',

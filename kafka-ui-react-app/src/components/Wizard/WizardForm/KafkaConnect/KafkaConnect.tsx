@@ -44,7 +44,7 @@ const KafkaConnect = () => {
     <>
       <Heading level={3}>Kafka Connect</Heading>
       {newKafkaConnect ? (
-        <S.Container>
+        <S.ArrayFieldWrapper>
           {fields.map((item, index) => (
             <div key={item.id}>
               <S.ConnectInputWrapper>
@@ -120,11 +120,9 @@ const KafkaConnect = () => {
               {watch(`kafkaConnect.${index}.isAuth`) && (
                 <S.InputContainer>
                   <div>
-                    <S.ItemLabelFlex>
-                      <label htmlFor={`kafkaConnect.${index}.username`}>
-                        Username
-                      </label>{' '}
-                    </S.ItemLabelFlex>
+                    <InputLabel htmlFor={`kafkaConnect.${index}.username`}>
+                      Username
+                    </InputLabel>
                     <Input
                       id={`kafkaConnect.${index}.username`}
                       type="text"
@@ -138,11 +136,9 @@ const KafkaConnect = () => {
                     </FormError>
                   </div>
                   <div>
-                    <S.ItemLabelFlex>
-                      <label htmlFor={`kafkaConnect.${index}.password`}>
-                        Password
-                      </label>{' '}
-                    </S.ItemLabelFlex>
+                    <InputLabel htmlFor={`kafkaConnect.${index}.password`}>
+                      Password
+                    </InputLabel>
                     <Input
                       id={`kafkaConnect.${index}.password`}
                       type="password"
@@ -178,7 +174,7 @@ const KafkaConnect = () => {
               Add Bootstrap Server
             </Button>
           </div>
-        </S.Container>
+        </S.ArrayFieldWrapper>
       ) : (
         <div>
           <Button
