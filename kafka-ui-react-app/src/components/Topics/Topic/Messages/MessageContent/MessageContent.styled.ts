@@ -64,7 +64,7 @@ export const MetadataValue = styled.p`
 `;
 
 export const Icon = styled.span`
-  padding-right: 5px;
+  padding-left: 0.3rem;
   vertical-align: top;
 `;
 

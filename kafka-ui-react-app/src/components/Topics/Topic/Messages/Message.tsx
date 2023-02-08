@@ -120,14 +120,14 @@ const Message: React.FC<Props> = ({
           <div>{formatTimestamp(timestamp)}</div>
         </td>
         <StyledDataCell title={key}>
-          <S.Icon>{keySerde === 'Fallback' && <WarningRedIcon />}</S.Icon>
           {renderFilteredJson(key, keyFilters)}
+          <S.Icon>{keySerde === 'Fallback' && <WarningRedIcon />}</S.Icon>
         </StyledDataCell>
         <StyledDataCell title={content}>
           <S.Metadata>
             <S.MetadataValue>
-              <S.Icon>{valueSerde === 'Fallback' && <WarningRedIcon />}</S.Icon>
               {renderFilteredJson(content, contentFilters)}
+              <S.Icon>{valueSerde === 'Fallback' && <WarningRedIcon />}</S.Icon>
             </S.MetadataValue>
           </S.Metadata>
         </StyledDataCell>
