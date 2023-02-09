@@ -51,48 +51,15 @@ export const ItemLabel = styled(ItemLabelRequired)`
     }
   }
 `;
-export const P = styled.p`
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
-  line-height: 1rem;
-  --tw-text-opacity: 1;
-  color: rgb(107 114 128 / var(--tw-text-opacity));
-`;
-
-export const ReadOnly = styled.div`
-  display: flex;
-  & div {
-    padding-left: 0.75rem;
-    & label {
-      font-weight: 500;
-      --tw-text-opacity: 1;
-      color: rgb(55 65 81 / var(--tw-text-opacity));
-      line-height: 1.25rem;
-    }
-    & p {
-      --tw-text-opacity: 1;
-      color: rgb(107 114 128 / var(--tw-text-opacity));
-    }
-  }
-`;
-export const CheckboxWrapper = styled.div`
-  display: flex;
-  & label {
-    margin-left: 0.7rem;
-    cursor: pointer;
-  }
-`;
-export const FileWrapper = styled.div`
-  display: flex;
-  & label {
-    margin-right: 0.7rem;
-  }
-`;
 
 export const ArrayFieldWrapper = styled.label`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  background-color: #fcfcfc;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 15%);
 `;
 export const InputContainer = styled.div`
   display: grid;
@@ -118,9 +85,14 @@ export const BootstrapServerActions = styled(IconButtonWrapper)`
   margin-left: 8px;
 `;
 
-// Authentication
-export const PartStyled = styled.div`
-  padding-top: 1.2rem;
+export const FlexRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-start;
+`;
+export const FlexGrow1 = styled.div`
+  flex-grow: 1;
 `;
 // Metrics
 export const KeystoreInputs = styled(InputContainer)`

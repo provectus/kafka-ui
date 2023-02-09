@@ -11,13 +11,17 @@ import Heading from 'components/common/heading/Heading.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Checkbox from 'components/common/Checkbox/Checkbox';
 
+import TruststoreFileupload from './TruststoreFileupload';
+
 const KafkaCluster: React.FC = () => {
-  const { control } = useFormContext();
+  const { control, watch } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'bootstrapServers',
   });
+
+  const useTruststore = watch('useTruststore');
 
   return (
     <>
@@ -85,6 +89,18 @@ const KafkaCluster: React.FC = () => {
           </div>
         </S.ArrayFieldWrapper>
       </div>
+      <Checkbox name="useTruststore" label="Self Signed Certificate" />
+      {useTruststore && (
+        <>
+          <TruststoreFileupload />
+          <Input
+            label="Truststore Password"
+            type="password"
+            name="truststore.password"
+            withError
+          />
+        </>
+      )}
     </>
   );
 };

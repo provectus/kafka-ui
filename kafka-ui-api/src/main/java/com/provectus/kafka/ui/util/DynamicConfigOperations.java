@@ -4,6 +4,7 @@ package com.provectus.kafka.ui.util;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.config.auth.OAuthProperties;
 import com.provectus.kafka.ui.config.auth.RoleBasedAccessControlProperties;
+import com.provectus.kafka.ui.exception.FileUploadException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -130,17 +131,21 @@ public class DynamicConfigOperations {
       try {
         Files.createDirectories(targetDir);
       } catch (IOException e) {
-        throw new RuntimeException("Error creating directory for uploads %s".formatted(targetDir), e);
+        return Mono.error(
+            new FileUploadException("Error creating directory for uploads %s".formatted(targetDir), e));
       }
     }
 
     Path targetFilePath = targetDir.resolve(file.filename());
+    log.info("Uploading config-related file {}", targetFilePath);
     if (Files.exists(targetFilePath)) {
-      throw new ValidationException("File %s already exists".formatted(targetDir));
+      log.info("File {} already exists, it will be overwritten", targetFilePath);
     }
 
     return file.transferTo(targetFilePath)
-        .thenReturn(targetFilePath);
+        .thenReturn(targetFilePath)
+        .doOnError(th -> log.error("Error uploading file {}", targetFilePath, th))
+        .onErrorMap(th -> new FileUploadException(targetFilePath, th));
   }
 
   @SneakyThrows

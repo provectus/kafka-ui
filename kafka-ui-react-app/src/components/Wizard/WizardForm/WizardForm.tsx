@@ -11,7 +11,7 @@ import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
 import Metrics from './Metrics/Metrics';
 
-type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT' | 'none';
+type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT';
 
 type BootstrapServer = {
   host: string;
@@ -27,11 +27,18 @@ export type FormValues = {
   name: string;
   readOnly: boolean;
   bootstrapServers: BootstrapServer[];
-  securityProtocol: SecurityProtocol;
+  useTruststore: boolean;
+  truststore?: {
+    location: string;
+    password: string;
+  };
+
+  securityProtocol?: SecurityProtocol;
   authentication: {
     method: 'none' | 'sasl';
   };
   schemaRegistry?: SchemaRegistryType;
+  properties?: Record<string, string>;
 };
 
 interface WizardFormProps {
@@ -49,15 +56,10 @@ const Wizard: React.FC<WizardFormProps> = () => {
         { host: 'loc1', port: '3001' },
         { host: 'loc', port: '3002' },
       ],
-      securityProtocol: 'none',
+      useTruststore: false,
+      securityProtocol: 'SASL_PLAINTEXT',
       authentication: {
         method: 'none',
-      },
-      schemaRegistry: {
-        url: '',
-        isAuth: false,
-        username: '',
-        password: '',
       },
     },
   });

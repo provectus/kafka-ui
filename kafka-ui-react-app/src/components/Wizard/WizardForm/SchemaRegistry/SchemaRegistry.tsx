@@ -4,6 +4,10 @@ import Input from 'components/common/Input/Input';
 import { useFormContext } from 'react-hook-form';
 import Heading from 'components/common/heading/Heading.styled';
 import Checkbox from 'components/common/Checkbox/Checkbox';
+import {
+  FlexGrow1,
+  FlexRow,
+} from 'components/Wizard/WizardForm/WizardForm.styled';
 
 const SchemaRegistry = () => {
   const { setValue, watch } = useFormContext();
@@ -47,20 +51,24 @@ const SchemaRegistry = () => {
             label="Is schema registry  secured with auth?"
           />
           {schemaRegistry.isAuth && (
-            <>
-              <Input
-                label="Username *"
-                type="text"
-                name="schemaRegistry.username"
-                withError
-              />
-              <Input
-                label="Password *"
-                type="password"
-                name="schemaRegistry.password"
-                withError
-              />
-            </>
+            <FlexRow>
+              <FlexGrow1>
+                <Input
+                  label="Username *"
+                  type="text"
+                  name="schemaRegistry.username"
+                  withError
+                />
+              </FlexGrow1>
+              <FlexGrow1>
+                <Input
+                  label="Password *"
+                  type="password"
+                  name="schemaRegistry.password"
+                  withError
+                />
+              </FlexGrow1>
+            </FlexRow>
           )}
         </>
       )}
