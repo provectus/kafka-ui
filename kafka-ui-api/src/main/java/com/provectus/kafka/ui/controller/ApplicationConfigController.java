@@ -10,6 +10,7 @@ import com.provectus.kafka.ui.model.ApplicationConfigPropertiesDTO;
 import com.provectus.kafka.ui.model.ApplicationConfigValidationDTO;
 import com.provectus.kafka.ui.model.ClusterConfigValidationDTO;
 import com.provectus.kafka.ui.model.RestartRequestDTO;
+import com.provectus.kafka.ui.model.UploadedFileInfoDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.service.KafkaClusterFactory;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
@@ -84,7 +85,7 @@ public class ApplicationConfigController implements ApplicationConfigApi {
   }
 
   @Override
-  public Mono<ResponseEntity<String>> uploadConfigRelatedFile(FilePart file, ServerWebExchange exchange) {
+  public Mono<ResponseEntity<UploadedFileInfoDTO>> uploadConfigRelatedFile(FilePart file, ServerWebExchange exchange) {
     return accessControlService
         .validateAccess(
             AccessContext.builder()
@@ -92,7 +93,8 @@ public class ApplicationConfigController implements ApplicationConfigApi {
                 .build()
         )
         .then(dynamicConfigOperations.uploadConfigRelatedFile(file))
-        .map(savedPath -> ResponseEntity.ok(savedPath.toString()));
+        .map(path -> new UploadedFileInfoDTO().location(path.toString()))
+        .map(ResponseEntity::ok);
   }
 
   @Override
