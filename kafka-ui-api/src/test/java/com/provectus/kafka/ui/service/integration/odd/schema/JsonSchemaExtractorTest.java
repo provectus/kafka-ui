@@ -43,14 +43,18 @@ class JsonSchemaExtractorTest {
         new SchemaSubject().schema(jsonSchema),
         KafkaPath.builder()
             .cluster("localhost:9092")
-            .topic("some-topic")
+            .topic("someTopic")
             .build(),
         isKey
     );
 
-    String baseOddrn = "//kafka/cluster/localhost:9092/topics/some-topic/columns/" + (isKey ? "key" : "value");
+    String baseOddrn = "//kafka/cluster/localhost:9092/topics/someTopic/columns/" + (isKey ? "key" : "value");
 
     assertThat(fields).contains(
+        DataSetFieldsExtractors.rootField(
+            KafkaPath.builder().cluster("localhost:9092").topic("someTopic").build(),
+            isKey
+        ),
         new DataSetField()
             .name("int32_field")
             .parentFieldOddrn(baseOddrn)

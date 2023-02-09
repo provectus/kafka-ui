@@ -158,7 +158,7 @@ class TopicsExporterTest {
 
           assertThat(topicEntity.getDataset()).isNotNull();
           assertThat(topicEntity.getDataset().getFieldList())
-              .hasSize(2); //1 field for key, 1 for value
+              .hasSize(4); // 2 field for key, 2 for value
         })
         .verifyComplete();
   }

@@ -46,7 +46,7 @@ class ProtoExtractor {
     Descriptor schema = new ProtobufSchema(subject.getSchema()).toDescriptor();
     List<DataSetField> result = new ArrayList<>();
     result.add(DataSetFieldsExtractors.rootField(topicOddrn, isKey));
-    var rootOddrn = Oddrn.generateOddrn(topicOddrn, "topic") + "/columns/" + (isKey ? "key" : "value");
+    var rootOddrn = topicOddrn.oddrn() + "/columns/" + (isKey ? "key" : "value");
     schema.getFields().forEach(f ->
         extract(f,
             rootOddrn,

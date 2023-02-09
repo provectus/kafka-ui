@@ -63,16 +63,16 @@ record ConnectorInfo(List<String> inputs,
     List<String> outputs = new ArrayList<>();
     @Nullable var knownJdbcPath = new JdbcUrlParser().parse(connectionUrl);
     if (knownJdbcPath instanceof PostgreSqlPath p) {
-      targetTables.forEach(t -> outputs.add(Oddrn.generateOddrn(p.toBuilder().table(t).build(), "table")));
+      targetTables.forEach(t -> outputs.add(p.toBuilder().table(t).build().oddrn()));
     }
     if (knownJdbcPath instanceof MysqlPath p) {
-      targetTables.forEach(t -> outputs.add(Oddrn.generateOddrn(p.toBuilder().table(t).build(), "table")));
+      targetTables.forEach(t -> outputs.add(p.toBuilder().table(t).build().oddrn()));
     }
     if (knownJdbcPath instanceof HivePath p) {
-      targetTables.forEach(t -> outputs.add(Oddrn.generateOddrn(p.toBuilder().table(t).build(), "table")));
+      targetTables.forEach(t -> outputs.add(p.toBuilder().table(t).build().oddrn()));
     }
     if (knownJdbcPath instanceof SnowflakePath p) {
-      targetTables.forEach(t -> outputs.add(Oddrn.generateOddrn(p.toBuilder().table(t).build(), "table")));
+      targetTables.forEach(t -> outputs.add(p.toBuilder().table(t).build().oddrn()));
     }
     return new ConnectorInfo(
         extractInputs(type, topics, config, topicOddrnBuilder),
@@ -84,13 +84,10 @@ record ConnectorInfo(List<String> inputs,
     String host = (String) config.get("database.hostname");
     String dbName = (String) config.get("database.dbname");
     var inputs = List.of(
-        Oddrn.generateOddrn(
-            PostgreSqlPath.builder()
-                .host(host)
-                .database(dbName)
-                .build(),
-            "database"
-        )
+        PostgreSqlPath.builder()
+            .host(host)
+            .database(dbName)
+            .build().oddrn()
     );
     return new ConnectorInfo(inputs, List.of());
   }
@@ -98,12 +95,10 @@ record ConnectorInfo(List<String> inputs,
   private static ConnectorInfo extractDebeziumMysql(Map<String, Object> config) {
     String host = (String) config.get("database.hostname");
     var inputs = List.of(
-        Oddrn.generateOddrn(
-            MysqlPath.builder()
-                .host(host)
-                .build(),
-            "database"
-        )
+        MysqlPath.builder()
+            .host(host)
+            .build()
+            .oddrn()
     );
     return new ConnectorInfo(inputs, List.of());
   }

@@ -67,6 +67,10 @@ class ProtoExtractorTest {
 
     assertThat(list)
         .contains(
+            DataSetFieldsExtractors.rootField(
+                KafkaPath.builder().cluster("localhost:9092").topic("someTopic").build(),
+                isKey
+            ),
             new DataSetField()
                 .name("mapField")
                 .parentFieldOddrn(baseOddrn)

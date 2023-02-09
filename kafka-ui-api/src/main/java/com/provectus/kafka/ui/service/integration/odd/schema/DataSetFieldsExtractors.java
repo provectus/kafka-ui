@@ -24,14 +24,14 @@ public class DataSetFieldsExtractors {
 
 
   DataSetField rootField(KafkaPath topicOddrn, boolean isKey) {
-    var rootOddrn = Oddrn.generateOddrn(topicOddrn, "topic") + "/columns/" + (isKey ? "key" : "value");
+    var rootOddrn = topicOddrn.oddrn() + "/columns/" + (isKey ? "key" : "value");
     return new DataSetField()
         .name(isKey ? "key" : "value")
         .description("Topic's " + (isKey ? "key" : "value") + " schema")
-        .parentFieldOddrn(Oddrn.generateOddrn(topicOddrn, "topic"))
+        .parentFieldOddrn(topicOddrn.oddrn())
         .oddrn(rootOddrn)
         .type(new DataSetFieldType()
-            .type(DataSetFieldType.TypeEnum.LIST)
+            .type(DataSetFieldType.TypeEnum.STRUCT)
             .isNullable(true));
   }
 

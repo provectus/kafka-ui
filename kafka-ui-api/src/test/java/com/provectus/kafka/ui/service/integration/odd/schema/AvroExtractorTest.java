@@ -111,6 +111,10 @@ class AvroExtractorTest {
     String baseOddrn = "//kafka/cluster/localhost:9092/topics/someTopic/columns/" + (isKey ? "key" : "value");
 
     assertThat(list).contains(
+        DataSetFieldsExtractors.rootField(
+            KafkaPath.builder().cluster("localhost:9092").topic("someTopic").build(),
+            isKey
+        ),
         new DataSetField()
             .name("f1")
             .parentFieldOddrn(baseOddrn)

@@ -36,7 +36,7 @@ class JsonSchemaExtractor {
     result.add(DataSetFieldsExtractors.rootField(topicOddrn, isKey));
     extract(
         schema,
-        Oddrn.generateOddrn(topicOddrn, "topic") + "/columns/" + (isKey ? "key" : "value"),
+        topicOddrn.oddrn() + "/columns/" + (isKey ? "key" : "value"),
         null,
         null,
         null,
