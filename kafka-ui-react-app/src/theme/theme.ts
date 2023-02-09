@@ -1062,6 +1062,9 @@ export const darkTheme: ThemeType = {
     liderReplica: {
       color: Colors.green[60],
     },
+    outOfSync: {
+      color: Colors.red[50],
+    },
   },
   icons: {
     ...baseTheme.icons,

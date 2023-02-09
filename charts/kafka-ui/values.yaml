@@ -111,6 +111,9 @@ ingress:
   # The path for the Ingress
   path: "/"
 
+  # The path type for the Ingress
+  pathType: "Prefix"  
+
   # The hostname for the Ingress
   host: ""
 
