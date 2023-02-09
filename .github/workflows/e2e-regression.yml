@@ -1,13 +1,11 @@
 name: E2E Regression suite
 on:
-  pull_request_target:
-    types: ["opened", "edited", "reopened", "synchronize"]
-    paths:
-      - "kafka-ui-api/**"
-      - "kafka-ui-contract/**"
-      - "kafka-ui-react-app/**"
-      - "kafka-ui-e2e-checks/**"
-      - "pom.xml"
+  workflow_dispatch:
+    inputs:
+      qase_enabled:
+        description: 'Enable Qase integration'
+        default: true
+        required: false
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
