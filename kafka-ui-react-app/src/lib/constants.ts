@@ -94,3 +94,8 @@ export const SECURITY_PROTOCOL_OPTIONS: SelectOption[] = [
   { value: 'SASL_SSL', label: 'SASL_SSL' },
   { value: 'SASL_PLAINTEXT', label: 'SASL_PLAINTEXT' },
 ];
+export const METRICS_OPTIONS: SelectOption[] = [
+  { value: 'none', label: 'None' },
+  { value: 'JMX', label: 'JMX' },
+  { value: 'PROMETHEUS', label: 'PROMETHEUS' },
+];

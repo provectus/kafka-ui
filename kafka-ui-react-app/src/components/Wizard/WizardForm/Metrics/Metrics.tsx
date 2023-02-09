@@ -8,17 +8,17 @@ import ControlledSelect from 'components/common/Select/ControlledSelect';
 import { METRICS_OPTIONS } from 'lib/constants';
 import Checkbox from 'components/common/Checkbox/Checkbox';
 
-const JMXMetrics = () => {
-  const [newJMXMetrics, setNewJMXMetrics] = useState(false);
+const Metrics = () => {
+  const [newMetrics, setNewMetrics] = useState(false);
   const { reset, getValues, watch } = useFormContext();
-  const showJMXMetrics: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+  const showMetrics: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    setNewJMXMetrics(!newJMXMetrics);
-    if (!newJMXMetrics) {
+    setNewMetrics(!newMetrics);
+    if (!newMetrics) {
       reset(
         {
           ...getValues(),
-          JMXMetrics: {
+          Metrics: {
             port: '',
             isSSL: '',
             truststoreLocation: '',
@@ -43,12 +43,12 @@ const JMXMetrics = () => {
         <Button
           buttonSize="M"
           buttonType="primary"
-          onClick={(e) => showJMXMetrics(e)}
+          onClick={(e) => showMetrics(e)}
         >
-          {!newJMXMetrics ? 'Configure JMX Metrics' : 'Remove from config'}
+          {!newMetrics ? 'Configure Metrics' : 'Remove from config'}
         </Button>
       </div>
-      {newJMXMetrics && (
+      {newMetrics && (
         <>
           <ControlledSelect
             name="Metrics.type"
@@ -129,4 +129,4 @@ const JMXMetrics = () => {
     </>
   );
 };
-export default JMXMetrics;
+export default Metrics;

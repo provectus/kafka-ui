@@ -9,7 +9,7 @@ import * as S from './WizardForm.styled';
 import KafkaCluster from './KafkaCluster/KafkaCluster';
 import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
-import JMXMetrics from './JMXMetrics/JMXMetrics';
+import Metrics from './Metrics/Metrics';
 
 type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT' | 'none';
 
@@ -85,7 +85,7 @@ const Wizard: React.FC<WizardFormProps> = () => {
             </Button>
           </div>
         </S.Section>
-        <JMXMetrics />
+        <Metrics />
         <hr />
         <S.ButtonWrapper>
           <Button buttonSize="L" buttonType="primary">

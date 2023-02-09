@@ -113,7 +113,7 @@ export const BootstrapServer = styled(InputContainer)`
   grid-template-columns: 3fr 1fr 30px;
 `;
 export const BootstrapServerActions = styled(IconButtonWrapper)`
-  align-self: top;
+  align-self: stretch;
   margin-top: 12px;
   margin-left: 8px;
 `;
@@ -122,7 +122,7 @@ export const BootstrapServerActions = styled(IconButtonWrapper)`
 export const PartStyled = styled.div`
   padding-top: 1.2rem;
 `;
-// JMXMetrics
+// Metrics
 export const KeystoreInputs = styled(InputContainer)`
   grid-template-columns: 1fr 1fr 1fr;
 `;
