@@ -43,7 +43,7 @@ public class KsqlQueryForm extends BasePage {
 
     @Step
     public KsqlQueryForm clickExecuteBtn() {
-        clickByJavaScript(executeBtn);
+        clickByActions(executeBtn);
         if (queryAreaValue.getText().contains("EMIT CHANGES;")) {
             loadingSpinner.shouldBe(Condition.visible);
         } else {
@@ -54,14 +54,14 @@ public class KsqlQueryForm extends BasePage {
 
     @Step
     public KsqlQueryForm clickStopQueryBtn() {
-        clickByJavaScript(stopQueryBtn);
+        clickByActions(stopQueryBtn);
         waitUntilSpinnerDisappear();
         return this;
     }
 
     @Step
     public KsqlQueryForm clickClearResultsBtn() {
-        clickByJavaScript(clearResultsBtn);
+        clickByActions(clearResultsBtn);
         waitUntilSpinnerDisappear();
         return this;
     }
