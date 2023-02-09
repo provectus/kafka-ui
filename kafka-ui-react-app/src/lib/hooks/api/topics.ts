@@ -241,12 +241,15 @@ export function useClearTopicMessages(
 ) {
   const client = useQueryClient();
   return useMutation(
-    (topicName: Topic['name']) =>
-      messagesApiClient.deleteTopicMessages({
+    async (topicName: Topic['name']) => {
+      await messagesApiClient.deleteTopicMessages({
         clusterName,
         topicName,
         partitions,
-      }),
+      });
+      return topicName;
+    },
+
     {
       onSuccess: (topicName) => {
         showSuccessAlert({
