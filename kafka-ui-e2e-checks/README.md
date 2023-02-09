@@ -41,16 +41,22 @@ docker-compose -f documentation/compose/e2e-tests.yaml up -d
 2. Run Smoke test suite using your QaseIO API token as environment variable (put instead %s into command below)
 
 ```
-./mvnw -DQASEIO_API_TOKEN='%s' test -f 'kafka-ui-e2e-checks' -Dsurefire.suiteXmlFiles='src/test/resources/smoke.xml' -Dsuite=smoke -Pprod
+./mvnw -DQASEIO_API_TOKEN='%s' -Dsurefire.suiteXmlFiles='src/test/resources/smoke.xml' -Dsuite=smoke -f 'kafka-ui-e2e-checks' test -Pprod
 ```
 
-3. Run Regression test suite using your QaseIO API token as environment variable (put instead %s into command below)
+3. Run Sanity test suite using your QaseIO API token as environment variable (put instead %s into command below)
 
 ```
-./mvnw -DQASEIO_API_TOKEN='%s' test -f 'kafka-ui-e2e-checks' -Dsurefire.suiteXmlFiles='src/test/resources/regression.xml' -Dsuite=regression -Pprod
+./mvnw -DQASEIO_API_TOKEN='%s' -Dsurefire.suiteXmlFiles='src/test/resources/sanity.xml' -Dsuite=sanity -f 'kafka-ui-e2e-checks' test -Pprod
 ```
 
-4. To run tests on your local Chrome browser just add next VM option to the Run Configuration
+4. Run Regression test suite using your QaseIO API token as environment variable (put instead %s into command below)
+
+```
+./mvnw -DQASEIO_API_TOKEN='%s' -Dsurefire.suiteXmlFiles='src/test/resources/regression.xml' -Dsuite=regression -f 'kafka-ui-e2e-checks' test -Pprod
+```
+
+5. To run tests on your local Chrome browser just add next VM option to the Run Configuration
 
 ```
 -Dbrowser=local

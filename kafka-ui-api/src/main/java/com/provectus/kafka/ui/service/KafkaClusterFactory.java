@@ -82,6 +82,7 @@ public class KafkaClusterFactory {
     WebClient webClient = new WebClientConfigurator()
         .configureSsl(clusterProperties.getSchemaRegistrySsl())
         .configureBasicAuth(auth.getUsername(), auth.getPassword())
+        .configureBufferSize(maxBuffSize)
         .build();
     return ReactiveFailover.create(
         parseUrlList(clusterProperties.getSchemaRegistry()),
