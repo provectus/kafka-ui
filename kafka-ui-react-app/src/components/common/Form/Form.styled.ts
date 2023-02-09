@@ -6,4 +6,8 @@ export const StyledForm = styled.form`
   display: flex;
   gap: 16px;
   flex-direction: column;
+
+  h3 {
+    margin-bottom: 0;
+  }
 `;

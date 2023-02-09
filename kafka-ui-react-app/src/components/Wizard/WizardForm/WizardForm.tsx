@@ -11,6 +11,8 @@ import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
 import KafkaConnect from './KafkaConnect/KafkaConnect';
 
+type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT' | 'none';
+
 type BootstrapServer = {
   host: string;
   port: string;
@@ -33,6 +35,10 @@ export type FormValues = {
   name: string;
   readOnly: boolean;
   bootstrapServers: BootstrapServer[];
+  securityProtocol: SecurityProtocol;
+  authentication: {
+    method: 'none' | 'sasl';
+  };
   schemaRegistry?: SchemaRegistryType;
   kafkaConnect?: KafkaConnectType[];
 };
@@ -52,6 +58,10 @@ const Wizard: React.FC<WizardFormProps> = () => {
         { host: 'loc1', port: '3001' },
         { host: 'loc', port: '3002' },
       ],
+      securityProtocol: 'none',
+      authentication: {
+        method: 'none',
+      },
       schemaRegistry: {
         url: '',
         isAuth: false,
@@ -82,6 +92,7 @@ const Wizard: React.FC<WizardFormProps> = () => {
         <KafkaCluster />
         <hr />
         <Authentication />
+        <hr />
         <SchemaRegistry />
         <KafkaConnect />
         <hr />

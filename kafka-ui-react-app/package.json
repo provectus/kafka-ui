@@ -34,7 +34,7 @@
     "react-datepicker": "^4.8.0",
     "react-dom": "^18.1.0",
     "react-error-boundary": "^3.1.4",
-    "react-hook-form": "7.10.0",
+    "react-hook-form": "7.43.1",
     "react-hot-toast": "^2.3.0",
     "react-is": "^18.2.0",
     "react-multi-select-component": "^4.3.3",
