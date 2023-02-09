@@ -2,7 +2,8 @@
 <suite name="RegressionSuite">
     <test name="Regression" enabled="true" parallel="classes" thread-count="1">
         <packages>
-            <package name="com.provectus.kafka.ui.regressionSuite.*"/>
+            <package name="com.provectus.kafka.ui.smokeSuite.*"/>
+            <package name="com.provectus.kafka.ui.sanitySuite.*"/>
         </packages>
     </test>
 </suite>
