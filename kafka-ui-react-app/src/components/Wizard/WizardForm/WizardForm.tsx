@@ -94,6 +94,7 @@ const Wizard: React.FC<WizardFormProps> = () => {
         <Authentication />
         <hr />
         <SchemaRegistry />
+        <hr />
         <KafkaConnect />
         <hr />
         <S.Section>

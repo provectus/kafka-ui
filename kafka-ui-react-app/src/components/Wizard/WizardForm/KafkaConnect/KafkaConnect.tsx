@@ -171,7 +171,7 @@ const KafkaConnect = () => {
               }
             >
               <PlusIcon />
-              Add Bootstrap Server
+              Add Kafka Connect
             </Button>
           </div>
         </S.ArrayFieldWrapper>
@@ -182,7 +182,7 @@ const KafkaConnect = () => {
             buttonType="primary"
             onClick={(e) => showConnects(e)}
           >
-            ADD Kafka Connect
+            Add Kafka Connect
           </Button>
         </div>
       )}
