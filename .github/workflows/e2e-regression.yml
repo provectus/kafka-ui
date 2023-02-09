@@ -4,7 +4,7 @@ on:
     inputs:
       qase_enabled:
         description: 'Enable Qase integration'
-        default: true
+        default: 'true'
         required: false
 jobs:
   build-and-test:
