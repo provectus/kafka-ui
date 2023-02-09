@@ -80,7 +80,7 @@
     "@babel/preset-react": "^7.17.12",
     "@babel/preset-typescript": "^7.17.12",
     "@jest/types": "^29.0.3",
-    "@openapitools/openapi-generator-cli": "^2.5.1",
+    "@openapitools/openapi-generator-cli": "^2.5.2",
     "@swc/core": "^1.3.22",
     "@swc/jest": "^0.2.24",
     "@testing-library/dom": "^8.11.1",
