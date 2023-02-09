@@ -67,6 +67,19 @@ describe('Overview', () => {
     );
   });
 
+  describe('when replicas out of sync', () => {
+    it('should be the appropriate color', () => {
+      render(<Replica outOfSync />);
+      const element = screen.getByLabelText('replica-info');
+      expect(element).toBeInTheDocument();
+      expect(element).toHaveStyleRule(
+        'color',
+        theme.topicMetaData.outOfSync.color
+      );
+      expect(element).toHaveStyleRule('font-weight', '500');
+    });
+  });
+
   describe('when it has internal flag', () => {
     it('renders the Action button for Topic', () => {
       renderComponent({
