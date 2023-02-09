@@ -9,44 +9,32 @@ import PlusIcon from 'components/common/Icons/PlusIcon';
 import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 import Heading from 'components/common/heading/Heading.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
+import Checkbox from 'components/common/Checkbox/Checkbox';
 
 const KafkaCluster: React.FC = () => {
-  const {
-    control,
-    register,
-    formState: { errors },
-  } = useFormContext();
+  const { control } = useFormContext();
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'bootstrapServers',
   });
+
   return (
     <>
       <Heading level={3}>Kafka Cluster</Heading>
-      <div>
-        <InputLabel htmlFor="name">Cluster Name *</InputLabel>
-        <Input id="name" type="text" name="name" />
-        <FormError>
-          <ErrorMessage errors={errors} name="name" />
-        </FormError>
-        <InputHint>
-          this name will help you recognize the cluster in the application
-          interface
-        </InputHint>
-      </div>
-      <div>
-        <InputLabel>
-          <input {...register('readOnly')} type="checkbox" />
-          Read-only mode
-        </InputLabel>
-        <InputHint>
-          allows you to run an application in read-only mode for a specific
-          cluster
-        </InputHint>
-        <FormError>
-          <ErrorMessage errors={errors} name="readOnly" />
-        </FormError>
-      </div>
+      <Input
+        label="Cluster name *"
+        type="text"
+        name="name"
+        withError
+        hint="this name will help you recognize the cluster in the application interface"
+      />
+      <Checkbox
+        name="readOnly"
+        label="Read-only mode"
+        hint="allows you to run an application in read-only mode for a specific cluster"
+      />
+
       <div>
         <InputLabel htmlFor="bootstrapServers">Bootstrap Servers *</InputLabel>
         <InputHint>
@@ -61,13 +49,8 @@ const KafkaCluster: React.FC = () => {
                   placeholder="Host"
                   type="text"
                   inputSize="L"
+                  withError
                 />
-                <FormError>
-                  <ErrorMessage
-                    errors={errors}
-                    name={`bootstrapServers.${index}.host`}
-                  />
-                </FormError>
               </div>
               <div>
                 <Input
@@ -75,13 +58,8 @@ const KafkaCluster: React.FC = () => {
                   placeholder="Port"
                   type="number"
                   positiveOnly
+                  withError
                 />
-                <FormError>
-                  <ErrorMessage
-                    errors={errors}
-                    name={`bootstrapServers.${index}.port`}
-                  />
-                </FormError>
               </div>
               <S.BootstrapServerActions
                 aria-label="deleteProperty"
@@ -91,6 +69,9 @@ const KafkaCluster: React.FC = () => {
               </S.BootstrapServerActions>
             </S.BootstrapServer>
           ))}
+          <FormError>
+            <ErrorMessage name="bootstrapServers" />
+          </FormError>
           <div>
             <Button
               type="button"
@@ -103,10 +84,6 @@ const KafkaCluster: React.FC = () => {
             </Button>
           </div>
         </S.ArrayFieldWrapper>
-
-        <FormError>
-          <ErrorMessage errors={errors} name="bootstrapServers" />
-        </FormError>
       </div>
     </>
   );
