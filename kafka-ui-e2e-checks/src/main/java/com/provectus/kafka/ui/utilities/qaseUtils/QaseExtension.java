@@ -19,6 +19,7 @@ public class QaseExtension {
         return switch (SUITE) {
             case CUSTOM, SMOKE -> false;
             case REGRESSION, SANITY -> true;
+            default -> throw new IllegalStateException("Unexpected value: " + SUITE);
         };
     }
 
