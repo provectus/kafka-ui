@@ -24,10 +24,10 @@ import java.util.List;
 
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.settings.BaseSource.*;
-import static com.provectus.kafka.ui.settings.configs.Profiles.CONTAINER;
-import static com.provectus.kafka.ui.settings.configs.Profiles.LOCAL;
 import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.*;
 import static com.provectus.kafka.ui.utilities.qaseUtils.QaseExtension.testRunSetup;
+import static com.provectus.kafka.ui.variables.Browser.CONTAINER;
+import static com.provectus.kafka.ui.variables.Browser.LOCAL;
 
 @Slf4j
 @Listeners({AllureListener.class, LoggerListener.class, QaseListener.class})
