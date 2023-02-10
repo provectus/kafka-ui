@@ -1,5 +1,9 @@
 import React from 'react';
 import Input from 'components/common/Input/Input';
+import {
+  FlexRow,
+  FlexGrow1,
+} from 'components/Wizard/WizardForm/WizardForm.styled';
 
 import SaslGssapi from './SaslGssapi';
 import MTLS from './MTLS';
@@ -31,20 +35,24 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
     case 'SASL/SCRAM-512':
     case 'SASL/LDAP':
       return (
-        <>
-          <Input
-            label="Username"
-            type="text"
-            name="authentication.username"
-            withError
-          />
-          <Input
-            label="Password"
-            type="password"
-            name="authentication.password"
-            withError
-          />
-        </>
+        <FlexRow>
+          <FlexGrow1>
+            <Input
+              label="Username"
+              type="text"
+              name="authentication.username"
+              withError
+            />
+          </FlexGrow1>
+          <FlexGrow1>
+            <Input
+              label="Password"
+              type="password"
+              name="authentication.password"
+              withError
+            />
+          </FlexGrow1>
+        </FlexRow>
       );
     case 'Delegation tokens':
       return (
