@@ -44,8 +44,7 @@ export type ClusterConfigFormValues = {
   authMethod?: string;
   schemaRegistry?: SchemaRegistryType;
   properties?: Record<string, string>;
-  kafkaConnect?: KafkaConnectType[];
-
+  kafkaConnect: KafkaConnectType[];
 };
 
 interface WizardFormProps {
@@ -56,6 +55,15 @@ interface WizardFormProps {
 const CLUSTER_CONFIG_FORM_DEFAULT_VALUES: Partial<ClusterConfigFormValues> = {
   bootstrapServers: [{ host: '', port: '' }],
   useTruststore: false,
+  kafkaConnect: [
+    {
+      name: '',
+      url: '',
+      isAuth: false,
+      username: '',
+      password: '',
+    },
+  ],
 };
 
 const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {

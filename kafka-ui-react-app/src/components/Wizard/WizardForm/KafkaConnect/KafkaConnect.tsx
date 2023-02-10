@@ -8,6 +8,10 @@ import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 import Heading from 'components/common/heading/Heading.styled';
 import Checkbox from 'components/common/Checkbox/Checkbox';
+import {
+  FlexGrow1,
+  FlexRow,
+} from 'components/Wizard/WizardForm/WizardForm.styled';
 
 const KafkaConnect = () => {
   const [newKafkaConnect, setNewKafkaConnect] = useState(false);
@@ -22,7 +26,7 @@ const KafkaConnect = () => {
   });
   const connects = getValues('kafkaConnect');
   useEffect(() => {
-    if (connects.length < 1) {
+    if (connects?.length < 1) {
       setNewKafkaConnect(false);
       setValue('kafkaConnect', []);
     }
@@ -36,10 +40,24 @@ const KafkaConnect = () => {
       password: ',',
     });
   };
+
   return (
     <>
-      <Heading level={3}>Kafka Connect</Heading>
-      {newKafkaConnect ? (
+      <FlexRow>
+        <FlexGrow1>
+          <Heading level={3}>Kafka Connect</Heading>
+        </FlexGrow1>
+        {!newKafkaConnect && (
+          <Button
+            buttonSize="M"
+            buttonType="primary"
+            onClick={(e) => showConnects(e)}
+          >
+            Add Kafka Connect
+          </Button>
+        )}
+      </FlexRow>
+      {newKafkaConnect && (
         <S.ArrayFieldWrapper>
           {fields.map((item, index) => (
             <div key={item.id}>
@@ -73,20 +91,24 @@ const KafkaConnect = () => {
                 </S.RemoveButton>
               </S.ConnectInputWrapper>
               {watch(`kafkaConnect.${index}.isAuth`) && (
-                <S.InputContainer>
-                  <Input
-                    label="Username"
-                    name={`kafkaConnect.${index}.username`}
-                    type="text"
-                    withError
-                  />
-                  <Input
-                    label="Password"
-                    name={`kafkaConnect.${index}.password`}
-                    type="password"
-                    withError
-                  />
-                </S.InputContainer>
+                <FlexRow>
+                  <FlexGrow1>
+                    <Input
+                      label="Username"
+                      name={`kafkaConnect.${index}.username`}
+                      type="text"
+                      withError
+                    />
+                  </FlexGrow1>
+                  <FlexGrow1>
+                    <Input
+                      label="Password"
+                      name={`kafkaConnect.${index}.password`}
+                      type="password"
+                      withError
+                    />
+                  </FlexGrow1>
+                </FlexRow>
               )}
             </div>
           ))}
@@ -102,16 +124,6 @@ const KafkaConnect = () => {
             </Button>
           </div>
         </S.ArrayFieldWrapper>
-      ) : (
-        <div>
-          <Button
-            buttonSize="M"
-            buttonType="primary"
-            onClick={(e) => showConnects(e)}
-          >
-            Add Kafka Connect
-          </Button>
-        </div>
       )}
     </>
   );
