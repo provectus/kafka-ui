@@ -10,7 +10,6 @@ public abstract class BaseSource {
     public static final String CLUSTER_NAME = "local";
     private static Config config;
     public static final String BROWSER = config().browser();
-    public static final String SUITE = config().suite();
 
     private static Config config() {
         if (config == null) {
