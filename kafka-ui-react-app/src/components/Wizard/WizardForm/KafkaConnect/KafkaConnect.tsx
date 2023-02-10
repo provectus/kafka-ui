@@ -11,7 +11,7 @@ import Checkbox from 'components/common/Checkbox/Checkbox';
 
 const KafkaConnect = () => {
   const [newKafkaConnect, setNewKafkaConnect] = useState(false);
-  const { control, getValues, reset, watch } = useFormContext();
+  const { control, getValues, setValue, watch } = useFormContext();
   const showConnects = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     setNewKafkaConnect(!newKafkaConnect);
@@ -24,13 +24,18 @@ const KafkaConnect = () => {
   useEffect(() => {
     if (connects.length < 1) {
       setNewKafkaConnect(false);
-      reset({
-        ...getValues(),
-        kafkaConnect: [],
-      });
+      setValue('kafkaConnect', []);
     }
   }, [connects]);
-
+  const handleAddConnectForm = () => {
+    append({
+      name: '',
+      url: '',
+      isAuth: false,
+      username: '',
+      password: ',',
+    });
+  };
   return (
     <>
       <Heading level={3}>Kafka Connect</Heading>
@@ -59,7 +64,6 @@ const KafkaConnect = () => {
                   <Checkbox
                     name={`kafkaConnect.${index}.isAuth`}
                     label="Kafka Connect is secured with auth?"
-                    cursor="pointer"
                   />
                 </div>
                 <S.RemoveButton onClick={() => remove(index)}>
@@ -91,15 +95,7 @@ const KafkaConnect = () => {
               type="button"
               buttonSize="M"
               buttonType="secondary"
-              onClick={() =>
-                append({
-                  name: '',
-                  url: '',
-                  isAuth: false,
-                  username: '',
-                  password: ',',
-                })
-              }
+              onClick={handleAddConnectForm}
             >
               <PlusIcon />
               Add Kafka Connect
