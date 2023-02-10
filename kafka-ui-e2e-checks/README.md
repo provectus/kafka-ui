@@ -38,7 +38,7 @@ cd kafka-ui
 docker-compose -f documentation/compose/e2e-tests.yaml up -d
 ```
 
-2. To run test suite define its name (options: regression, sanity, smoke) and put it instead %s into command below
+2. To run test suite select its name (options: regression, sanity, smoke) and put it instead %s into command below
 
 ```
 ./mvnw -Dsurefire.suiteXmlFiles='src/test/resources/%s.xml' -f 'kafka-ui-e2e-checks' test -Pprod
