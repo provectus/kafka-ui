@@ -11,12 +11,14 @@ import {
 } from 'components/Wizard/WizardForm/WizardForm.styled';
 import { useAppConfigFilesUpload } from 'lib/hooks/api/appConfig';
 
-const TruststoreFileupload: React.FC = () => {
+const Fileupload: React.FC<{ name: string; label: string }> = ({
+  name,
+  label,
+}) => {
   const upload = useAppConfigFilesUpload();
 
   const id = React.useId();
   const { watch, setValue } = useFormContext();
-  const name = 'truststore.location';
   const loc = watch(name);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,8 +36,9 @@ const TruststoreFileupload: React.FC = () => {
 
   return (
     <div>
-      <InputLabel htmlFor={id}>Truststore Location</InputLabel>
-      {loc ? (
+      <InputLabel htmlFor={id}>{label}</InputLabel>
+      {upload.isLoading && <p>Uploading...</p>}
+      {upload.isSuccess && loc && (
         <FlexRow>
           <FlexGrow1>
             <Input name={name} disabled />
@@ -44,7 +47,8 @@ const TruststoreFileupload: React.FC = () => {
             Reset
           </Button>
         </FlexRow>
-      ) : (
+      )}
+      {upload.isIdle && !loc && (
         <p>
           <input type="file" onChange={handleFileChange} />
         </p>
@@ -56,4 +60,4 @@ const TruststoreFileupload: React.FC = () => {
   );
 };
 
-export default TruststoreFileupload;
+export default Fileupload;

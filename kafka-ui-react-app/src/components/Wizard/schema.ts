@@ -1,7 +1,9 @@
 import { object, string, number, array, boolean, mixed, lazy } from 'yup';
 
+const requiredString = string().required('required field');
+
 const bootstrapServerSchema = object({
-  host: string().required('host is a required field'),
+  host: requiredString,
   port: number()
     .positive('positive only')
     .typeError('numbers only')
@@ -11,190 +13,154 @@ const bootstrapServerSchema = object({
 const schemaRegistrySchema = lazy((value) => {
   if (typeof value === 'object') {
     return object({
-      url: string().required('URL is a required field'),
+      url: requiredString,
       isAuth: boolean(),
       username: string().when('isAuth', {
         is: true,
-        then: (schema) => schema.required('Username is a required field'),
+        then: (schema) => schema.required('required field'),
       }),
       password: string().when('isAuth', {
         is: true,
-        then: (schema) => schema.required('Password is a required field'),
+        then: (schema) => schema.required('required field'),
       }),
     });
   }
   return mixed().optional();
 });
 
-const truststoreSchema = lazy((value, { parent }) => {
+const truststoreSchema = lazy((_, { parent }) => {
   if (parent.useTruststore) {
     return object({
-      location: string().required('Truststore Location is a required field'),
-      password: string().required('Truststore Password is a required field'),
+      location: requiredString,
+      password: requiredString,
     });
   }
   return mixed().optional();
+});
+
+const authSchema = lazy((_, { parent }) => {
+  switch (parent.authMethod) {
+    case 'SASL/JAAS':
+      return object({
+        saslJaasConfig: requiredString,
+        saslEnabledMechanism: requiredString,
+      });
+    case 'SASL/GSSAPI':
+      return object({
+        saslKerberosServiceName: requiredString,
+        keyTabFile: string(),
+        storeKey: boolean().required('required field'),
+        principal: requiredString,
+      });
+    case 'SASL/OAUTHBEARER':
+      return object({
+        unsecuredLoginStringClaim_sub: requiredString,
+      });
+    case 'SASL/PLAIN':
+    case 'SASL/SCRAM-256':
+    case 'SASL/SCRAM-512':
+    case 'SASL/LDAP':
+      return object({
+        username: requiredString,
+        password: requiredString,
+      });
+    case 'Delegation tokens':
+      return object({
+        tokenId: requiredString,
+        tokenValue: requiredString,
+      });
+    case 'SASL/AWS IAM':
+      return object({
+        awsProfileName: string(),
+      });
+    case 'mTLS':
+      return object({
+        sslKeystoreLocation: requiredString,
+        sslKeystorePassword: requiredString,
+        sslKeyPassword: requiredString,
+      });
+    default:
+      return mixed().optional();
+  }
 });
 
 const formSchema = object({
   name: string()
-    .required()
+    .required('required field')
     .min(3, 'Cluster name must be at least 3 characters'),
-  readOnly: boolean().required(),
+  readOnly: boolean().required('required field'),
   bootstrapServers: array().of(bootstrapServerSchema).min(1),
   useTruststore: boolean(),
   truststore: truststoreSchema,
-  authentication: object({
-    method: string()
-      .required()
-      .oneOf([
-        'none',
-        'SASL/JAAS',
-        'SASL/GSSAPI',
-        'SASL/OAUTHBEARER',
-        'SASL/PLAIN',
-        'SASL/SCRAM-256',
-        'SASL/SCRAM-512',
-        'Delegation tokens',
-        'SASL/LDAP',
-        'SASL/AWS IAM',
-        'mTLS',
-      ]),
-  }),
+  authMethod: string()
+    .required('required field')
+    .oneOf([
+      'none',
+      'SASL/JAAS',
+      'SASL/GSSAPI',
+      'SASL/OAUTHBEARER',
+      'SASL/PLAIN',
+      'SASL/SCRAM-256',
+      'SASL/SCRAM-512',
+      'Delegation tokens',
+      'SASL/LDAP',
+      'SASL/AWS IAM',
+      'mTLS',
+    ]),
+  securityProtocol: string()
+    .oneOf(['SASL_SSL', 'SASL_PLAINTEXT'])
+    .when('method', {
+      is: (value: string) => {
+        return [
+          'SASL/JAAS',
+          'SASL/GSSAPI',
+          'SASL/OAUTHBEARER',
+          'SASL/PLAIN',
+          'SASL/SCRAM-256',
+          'SASL/SCRAM-512',
+          'SASL/LDAP',
+          'SASL/AWS IAM',
+        ].includes(value);
+      },
+      then: (schema) => schema.required('required field'),
+    }),
+  authentication: authSchema,
   schemaRegistry: schemaRegistrySchema,
 
-  // securityProtocol: string().oneOf(['SASL_SSL', 'SASL_PLAINTEXT', 'none']),
-  //
-  //   // SASL/JAAS
-  //   saslJaasConfig: string().when('type', {
-  //     is: 'SASL/JAAS',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   // SASL/GSSAPI
-  //   saslKerberosServiceName: string().when('type', {
-  //     is: 'SASL/GSSAPI',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   useKeyTab: boolean().when('type', {
-  //     is: 'SASL/GSSAPI',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   storeKey: boolean().when('type', {
-  //     is: 'SASL/GSSAPI',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   keyTab: mixed().when('type', {
-  //     is: 'SASL/GSSAPI',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   principal: string().when('type', {
-  //     is: 'SASL/GSSAPI',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   // SASL/OAUTHBEARER
-  //   unsecuredLoginStringClaim_sub: string().when('type', {
-  //     is: 'SASL/OAUTHBEARER',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   // SASL/PLAIN, SASL/SCRAM-256, SASL/SCRAM-512, SASL/LDAP
-  //   username: string().when('type', {
-  //     is: (value: string) => {
-  //       return [
-  //         'SASL/PLAIN',
-  //         'SASL/SCRAM-256',
-  //         'SASL/SCRAM-512',
-  //         'SASL/LDAP',
-  //       ].includes(value);
-  //     },
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   password: string().when('type', {
-  //     is: (value: string) => {
-  //       return [
-  //         'SASL/PLAIN',
-  //         'SASL/SCRAM-256',
-  //         'SASL/SCRAM-512',
-  //         'SASL/LDAP',
-  //       ].includes(value);
-  //     },
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   // Delegation tokens,
-  //   tokenId: string().when('type', {
-  //     is: 'Delegation tokens',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   tokenValue: string().when('type', {
-  //     is: 'Delegation tokens',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   // SASL/AWS IAM
-  //   awsProfileName: string().when('type', {
-  //     is: 'SASL/AWS IAM',
-  //     then: (schema) => schema.optional(),
-  //   }),
-  //   // mTLS
-  //   selfSignedCertificate: boolean().when('type', {
-  //     is: 'mTLS',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   sslTruststoreLocation: mixed().when(['type', 'selfSignedCertificate'], {
-  //     is: (type: string, selfSignedCertificate: boolean) =>
-  //       type === 'mTLS' && selfSignedCertificate,
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   sslTruststorePassword: string().when('type', {
-  //     is: 'mTLS',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   sslKeystoreLocation: mixed().when('type', {
-  //     is: 'mTLS',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   sslKeystorePassword: string().when('type', {
-  //     is: 'mTLS',
-  //     then: (schema) => schema.required(),
-  //   }),
-  //   sslKeyPassword: string().when('type', {
-  //     is: 'mTLS',
-  //     then: (schema) => schema.required(),
-  //   }),
-  // }).required(),
-  //
   // kafkaConnect: array().of(
   //   object({
-  //     name: string().required(),
-  //     url: string().required(),
-  //     isAuth: boolean().required(),
+  //     name: requiredString,
+  //     url: requiredString,
+  //     isAuth: boolean().required('required field'),
   //     username: string().when('isAuth', {
   //       is: true,
-  //       then: (schema) => schema.required(),
+  //       then: (schema) => schema.required('required field'),
   //     }),
   //     password: string().when('isAuth', {
   //       is: true,
-  //       then: (schema) => schema.required(),
+  //       then: (schema) => schema.required('required field'),
   //     }),
   //   })
   // ),
   // JMXMetrics: object({
-  //   port: number().positive().required(),
-  //   isAuth: boolean().required(),
+  //   port: number().positive().required('required field'),
+  //   isAuth: boolean().required('required field'),
   //   username: string().when('isAuth', {
   //     is: true,
-  //     then: (schema) => schema.required(),
+  //     then: (schema) => schema.required('required field'),
   //   }),
   //   password: string().when('isAuth', {
   //     is: true,
-  //     then: (schema) => schema.required(),
+  //     then: (schema) => schema.required('required field'),
   //   }),
-  //   isSSL: boolean().required(),
+  //   isSSL: boolean().required('required field'),
   //   truststoreLocation: string().when('isSSL', {
   //     is: true,
-  //     then: (schema) => schema.required(),
+  //     then: (schema) => schema.required('required field'),
   //   }),
   //   truststorePassword: string().when('isSSL', {
   //     is: true,
-  //     then: (schema) => schema.required(),
+  //     then: (schema) => schema.required('required field'),
   //   }),
   //   keystoreLocation: string(),
   //   keystorePassword: string(),

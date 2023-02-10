@@ -1,12 +1,9 @@
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
 import Input from 'components/common/Input/Input';
 import Checkbox from 'components/common/Checkbox/Checkbox';
-import FileField from 'components/common/FileField/FileField';
+import Fileupload from 'components/Wizard/WizardForm/Fileupload';
 
 const SaslGssapi: React.FC = () => {
-  const methods = useFormContext();
-  const useKeyTab = methods.watch('authentication.useKeyTab');
   return (
     <>
       <Input
@@ -15,13 +12,8 @@ const SaslGssapi: React.FC = () => {
         name="authentication.saslKerberosServiceName"
         withError
       />
-
-      <Checkbox name="authentication.useKeyTab" label="Use Key Tab" />
-
       <Checkbox name="authentication.storeKey" label="Store Key" />
-
-      {useKeyTab && <FileField name="authentication.keyTab" label="Key Tab" />}
-
+      <Fileupload name="authentication.keyTabFile" label="Key Tab" />
       <Input
         type="text"
         name="authentication.principal"

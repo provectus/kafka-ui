@@ -22,7 +22,6 @@ const ClusterConfig: React.FC = () => {
       );
 
       if (current) {
-        console.log(current);
         const properties = current.properties || {};
 
         const initialValues: Partial<ClusterConfigFormValues> = {
@@ -56,7 +55,7 @@ const ClusterConfig: React.FC = () => {
     return null;
   }
 
-  return <WizardForm initialValues={currentClusterConfig} />;
+  return <WizardForm initialValues={currentClusterConfig} existing />;
 };
 
 export default ClusterConfig;

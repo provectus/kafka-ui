@@ -9,7 +9,7 @@ import AuthenticationMethods from './AuthenticationMethods/AuthenticationMethods
 const Authentication: React.FC = () => {
   const { watch } = useFormContext();
 
-  const authMethod = watch('authentication.method');
+  const authMethod = watch('authMethod');
 
   const hasSecurityProtocolField = ![
     'none',
@@ -21,14 +21,15 @@ const Authentication: React.FC = () => {
     <>
       <Heading level={3}>Authentication</Heading>
       <ControlledSelect
-        name="authentication.method"
+        name="authMethod"
         label="Authentication Method"
         options={AUTH_OPTIONS}
       />
       {hasSecurityProtocolField && (
         <ControlledSelect
-          name="securityProtocol"
+          name="authentication.securityProtocol"
           label="Security Protocol"
+          placeholder="Select security protocol"
           options={SECURITY_PROTOCOL_OPTIONS}
         />
       )}

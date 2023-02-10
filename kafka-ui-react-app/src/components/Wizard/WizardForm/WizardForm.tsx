@@ -33,23 +33,19 @@ export type ClusterConfigFormValues = {
   };
 
   securityProtocol?: SecurityProtocol;
-  authentication: {
-    method: 'none' | 'sasl';
-  };
+  authMethod?: string;
   schemaRegistry?: SchemaRegistryType;
   properties?: Record<string, string>;
 };
 
 interface WizardFormProps {
+  existing?: boolean;
   initialValues?: Partial<ClusterConfigFormValues>;
 }
 
 const CLUSTER_CONFIG_FORM_DEFAULT_VALUES: Partial<ClusterConfigFormValues> = {
   bootstrapServers: [{ host: '', port: '' }],
   useTruststore: false,
-  authentication: {
-    method: 'none',
-  },
 };
 
 const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
@@ -71,7 +67,7 @@ const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
   const onReset = () => {
     methods.reset();
   };
-
+  // eslint-disable-next-line no-console
   console.log('Errors:', methods.formState.errors);
 
   return (
