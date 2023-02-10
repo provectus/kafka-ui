@@ -12,17 +12,17 @@ import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
 
 type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT';
 
-type BootstrapServer = {
+export type BootstrapServer = {
   host: string;
   port: string;
 };
-type SchemaRegistryType = {
-  url: string;
+export type SchemaRegistryType = {
+  url?: string;
   isAuth: boolean;
-  username: string;
-  password: string;
+  username?: string;
+  password?: string;
 };
-export type FormValues = {
+export type ClusterConfigFormValues = {
   name: string;
   readOnly: boolean;
   bootstrapServers: BootstrapServer[];
@@ -41,33 +41,38 @@ export type FormValues = {
 };
 
 interface WizardFormProps {
-  initaialValues?: FormValues;
+  initialValues?: Partial<ClusterConfigFormValues>;
 }
 
-const Wizard: React.FC<WizardFormProps> = () => {
-  const methods = useForm<FormValues>({
+const CLUSTER_CONFIG_FORM_DEFAULT_VALUES: Partial<ClusterConfigFormValues> = {
+  bootstrapServers: [{ host: '', port: '' }],
+  useTruststore: false,
+  authentication: {
+    method: 'none',
+  },
+};
+
+const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
+  const methods = useForm<ClusterConfigFormValues>({
     mode: 'all',
     resolver: yupResolver(formSchema),
     defaultValues: {
-      name: 'My test cluster',
-      readOnly: true,
-      bootstrapServers: [
-        { host: 'loc1', port: '3001' },
-        { host: 'loc', port: '3002' },
-      ],
-      useTruststore: false,
-      securityProtocol: 'SASL_PLAINTEXT',
-      authentication: {
-        method: 'none',
-      },
+      ...CLUSTER_CONFIG_FORM_DEFAULT_VALUES,
+      ...initialValues,
     },
   });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: ClusterConfigFormValues) => {
     // eslint-disable-next-line no-console
     console.log('SubmitData', data);
     return data;
   };
+
+  const onReset = () => {
+    methods.reset();
+  };
+
+  console.log('Errors:', methods.formState.errors);
 
   return (
     <FormProvider {...methods}>
@@ -102,8 +107,8 @@ const Wizard: React.FC<WizardFormProps> = () => {
               gap: '10px',
             }}
           >
-            <Button buttonSize="M" buttonType="primary">
-              Cancel
+            <Button buttonSize="M" buttonType="primary" onClick={onReset}>
+              Reset
             </Button>
             <Button type="submit" buttonSize="M" buttonType="primary">
               Save

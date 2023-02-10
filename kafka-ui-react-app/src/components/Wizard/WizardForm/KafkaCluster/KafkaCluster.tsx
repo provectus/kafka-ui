@@ -38,7 +38,6 @@ const KafkaCluster: React.FC = () => {
         label="Read-only mode"
         hint="allows you to run an application in read-only mode for a specific cluster"
       />
-
       <div>
         <InputLabel htmlFor="bootstrapServers">Bootstrap Servers *</InputLabel>
         <InputHint>

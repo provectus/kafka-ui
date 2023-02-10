@@ -9,5 +9,6 @@ export const StyledForm = styled.form`
 
   h3 {
     margin-bottom: 0;
+    line-height: 32px;
   }
 `;
