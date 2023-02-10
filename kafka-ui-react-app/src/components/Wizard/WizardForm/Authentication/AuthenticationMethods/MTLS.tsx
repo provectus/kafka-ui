@@ -1,10 +1,10 @@
 import React from 'react';
 import Input from 'components/common/Input/Input';
-import FileField from 'components/common/FileField/FileField';
+import Fileupload from 'components/Wizard/WizardForm/Fileupload';
 
 const MTLS: React.FC = () => (
   <>
-    <FileField
+    <Fileupload
       name="authentication.sslKeystoreLocation"
       label="ssl.keystore.location"
     />

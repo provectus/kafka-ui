@@ -17,18 +17,15 @@ const SchemaRegistry = () => {
     if (schemaRegistry) {
       setValue('schemaRegistry', undefined);
     } else {
-      setValue('schemaRegistry', {
-        url: '',
-        isAuth: false,
-        username: '',
-        password: '',
-      });
+      setValue('schemaRegistry', {});
     }
   };
   return (
     <>
-      <Heading level={3}>Schema Registry</Heading>
-      <div>
+      <FlexRow>
+        <FlexGrow1>
+          <Heading level={3}>Schema Registry</Heading>
+        </FlexGrow1>
         <Button
           buttonSize="M"
           buttonType="primary"
@@ -36,7 +33,7 @@ const SchemaRegistry = () => {
         >
           {!schemaRegistry ? 'Add Schema Registry' : 'Remove from config'}
         </Button>
-      </div>
+      </FlexRow>
       {schemaRegistry && (
         <>
           <Input

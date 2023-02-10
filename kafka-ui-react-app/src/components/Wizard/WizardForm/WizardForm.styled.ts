@@ -80,7 +80,6 @@ export const BootstrapServerActions = styled(IconButtonWrapper)`
   margin-top: 12px;
   margin-left: 8px;
 `;
-
 export const FlexRow = styled.div`
   display: flex;
   flex-direction: row;
