@@ -8,14 +8,15 @@ interface CheckboxProps {
   name: string;
   label: React.ReactNode;
   hint?: string;
+  cursor?: string;
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({ name, label, hint }) => {
+const Checkbox: React.FC<CheckboxProps> = ({ name, label, hint, cursor }) => {
   const { register } = useFormContext();
 
   return (
     <div>
-      <InputLabel>
+      <InputLabel cursor={cursor}>
         <input {...register(name)} type="checkbox" />
         {label}
       </InputLabel>
