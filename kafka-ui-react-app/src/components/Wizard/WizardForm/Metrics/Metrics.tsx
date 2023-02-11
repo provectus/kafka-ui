@@ -7,39 +7,41 @@ import Heading from 'components/common/heading/Heading.styled';
 import ControlledSelect from 'components/common/Select/ControlledSelect';
 import { METRICS_OPTIONS } from 'lib/constants';
 import Checkbox from 'components/common/Checkbox/Checkbox';
+import {
+  FlexGrow1,
+  FlexRow,
+} from 'components/Wizard/WizardForm/WizardForm.styled';
 
 const Metrics = () => {
   const [newMetrics, setNewMetrics] = useState(false);
-  const { reset, getValues, watch } = useFormContext();
+  const { setValue, watch } = useFormContext();
   const showMetrics: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     setNewMetrics(!newMetrics);
     if (!newMetrics) {
-      reset(
-        {
-          ...getValues(),
-          Metrics: {
-            port: '',
-            isSSL: '',
-            truststoreLocation: '',
-            truststorePassword: '',
-            keystoreLocation: '',
-            keystorePassword: '',
-            keystoreKeyPassword: '',
-            isAuth: '',
-            username: '',
-            password: '',
-          },
-        },
-        { keepDefaultValues: true }
-      );
+      setValue('metrics', {
+        type: '',
+        port: '',
+        isSSL: '',
+        truststoreLocation: '',
+        truststorePassword: '',
+        keystoreLocation: '',
+        keystorePassword: '',
+        keystoreKeyPassword: '',
+        isAuth: '',
+        username: '',
+        password: '',
+      });
     }
   };
-  const isSSLisAuth = watch(['Metrics.isSSL', 'Metrics.isAuth']);
+  const isSSLisAuth = watch(['metrics.isSSL', 'metrics.isAuth']);
   return (
     <>
-      <Heading level={3}>Metrics</Heading>
-      <div>
+      <FlexRow>
+        <FlexGrow1>
+          <Heading level={3}>Metrics</Heading>
+        </FlexGrow1>
+
         <Button
           buttonSize="M"
           buttonType="primary"
@@ -47,82 +49,92 @@ const Metrics = () => {
         >
           {!newMetrics ? 'Configure Metrics' : 'Remove from config'}
         </Button>
-      </div>
+      </FlexRow>
       {newMetrics && (
         <>
           <ControlledSelect
-            name="Metrics.type"
+            name="metrics.type"
             label="Metrics Type"
             options={METRICS_OPTIONS}
           />
-          <div style={{ width: '20%' }}>
+          <S.StyledPort>
             <Input
               label="Port *"
-              name="Metrics.port"
+              name="metrics.port"
               type="number"
               positiveOnly
               withError
             />
-          </div>
-          <Checkbox name="Metrics.isSSL" label="SSL" cursor="pointer" />
+          </S.StyledPort>
+          <Checkbox name="metrics.isSSL" label="SSL" />
           {isSSLisAuth[0] && (
             <>
-              <S.InputContainer>
-                <Input
-                  label="Truststore location *"
-                  name="Metrics.truststoreLocation"
-                  type="text"
-                  withError
-                />
-                <Input
-                  label="Truststore Password *"
-                  name="Metrics.truststorePassword"
-                  type="password"
-                  withError
-                />
-              </S.InputContainer>
-              <S.KeystoreInputs>
-                <Input
-                  label="Keystore location"
-                  name="Metrics.keystoreLocation"
-                  type="text"
-                  withError
-                />
-                <Input
-                  label="Keystore Password"
-                  name="Metrics.keystorePassword"
-                  type="password"
-                  withError
-                />
-                <Input
-                  label="Keystore key password"
-                  name="Metrics.keystoreKeyPassword"
-                  type="password"
-                  withError
-                />
-              </S.KeystoreInputs>
+              <FlexRow>
+                <FlexGrow1>
+                  <Input
+                    label="Truststore location *"
+                    name="metrics.truststoreLocation"
+                    type="text"
+                    withError
+                  />
+                </FlexGrow1>
+                <FlexGrow1>
+                  <Input
+                    label="Truststore Password *"
+                    name="metrics.truststorePassword"
+                    type="password"
+                    withError
+                  />
+                </FlexGrow1>
+              </FlexRow>
+              <FlexRow>
+                <FlexGrow1>
+                  <Input
+                    label="Keystore location"
+                    name="metrics.keystoreLocation"
+                    type="text"
+                    withError
+                  />
+                </FlexGrow1>
+                <FlexGrow1>
+                  <Input
+                    label="Keystore Password"
+                    name="metrics.keystorePassword"
+                    type="password"
+                    withError
+                  />
+                </FlexGrow1>
+                <FlexGrow1>
+                  <Input
+                    label="Keystore key password"
+                    name="metrics.keystoreKeyPassword"
+                    type="password"
+                    withError
+                  />
+                </FlexGrow1>
+              </FlexRow>
             </>
           )}
-          <Checkbox
-            name="Metrics.isAuth"
-            label="Authentication"
-            cursor="pointer"
-          />
+          <Checkbox name="metrics.isAuth" label="Authentication" />
           {isSSLisAuth[1] && (
-            <S.InputContainer>
-              <Input
-                label="Username *"
-                name="Metrics.username"
-                type="text"
-                withError
-              />
-              <Input
-                label="Password *"
-                name="Metrics.password"
-                type="password"
-                withError
-              />
-            </S.InputContainer>
+            <FlexRow>
+              <FlexGrow1>
+                <Input
+                  label="Username *"
+                  name="metrics.username"
+                  type="text"
+                  withError
+                />
+              </FlexGrow1>
+              <FlexGrow1>
+                <Input
+                  label="Password *"
+                  name="metrics.password"
+                  type="password"
+                  withError
+                />
+              </FlexGrow1>
+            </FlexRow>
           )}
         </>
       )}

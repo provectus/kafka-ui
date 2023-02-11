@@ -1,14 +1,9 @@
 import styled from 'styled-components';
 
-interface PropsType {
-  cursor?: string;
-  htmlFor?: string;
-}
-export const InputLabel = styled.label<PropsType>`
+export const InputLabel = styled.label`
   font-weight: 500;
   font-size: 12px;
   line-height: 20px;
-  cursor: ${(props) => props?.cursor};
   color: ${({ theme }) => theme.input.label.color};
 
   input[type='checkbox'] {

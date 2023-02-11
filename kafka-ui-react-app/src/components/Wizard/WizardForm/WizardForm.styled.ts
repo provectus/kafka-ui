@@ -23,34 +23,6 @@ export const Action = styled.div`
   display: grid;
   gap: 1.5rem;
 `;
-export const ActionItem = styled.div`
-  grid-column: span 6 / span 6;
-`;
-export const ItemLabelRequired = styled.div`
-  align-items: baseline;
-  display: flex;
-  margin-bottom: 0.5rem;
-  & label {
-    --tw-text-opacity: 1;
-    color: rgb(55 65 81 / var(--tw-text-opacity));
-    font-weight: 500;
-    line-height: 1.25rem;
-    white-space: nowrap;
-    display: block;
-    margin-right: 0.5rem;
-    &::after {
-      content: ' *';
-      color: red;
-    }
-  }
-`;
-export const ItemLabel = styled(ItemLabelRequired)`
-  & label {
-    &::after {
-      content: none;
-    }
-  }
-`;
 
 export const ArrayFieldWrapper = styled.label`
   display: flex;
@@ -68,10 +40,18 @@ export const InputContainer = styled.div`
   align-items: stretch;
   max-width: 500px;
 `;
-
 export const ButtonWrapper = styled.div`
   display: flex;
   gap: 10px;
+`;
+export const FlexRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-start;
+`;
+export const FlexGrow1 = styled.div`
+  flex-grow: 1;
 `;
 
 // KafkaCluster
@@ -84,16 +64,9 @@ export const BootstrapServerActions = styled(IconButtonWrapper)`
   margin-top: 12px;
   margin-left: 8px;
 `;
-export const FlexRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  align-items: flex-start;
-`;
-export const FlexGrow1 = styled.div`
-  flex-grow: 1;
-`;
+
 // Metrics
-export const KeystoreInputs = styled(InputContainer)`
-  grid-template-columns: 1fr 1fr 1fr;
+
+export const StyledPort = styled.div`
+  width: 35%;
 `;

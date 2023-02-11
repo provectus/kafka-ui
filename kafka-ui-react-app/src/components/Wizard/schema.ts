@@ -142,7 +142,7 @@ const formSchema = object({
   //     }),
   //   })
   // ),
-  Metrics: object({
+  metrics: object({
     type: string().oneOf(['none', 'JMX', 'PROMETHEUS']),
     port: number()
       .positive('Port must be a positive number')
