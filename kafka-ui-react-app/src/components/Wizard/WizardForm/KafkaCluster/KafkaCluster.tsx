@@ -10,8 +10,7 @@ import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 import Heading from 'components/common/heading/Heading.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Checkbox from 'components/common/Checkbox/Checkbox';
-
-import TruststoreFileupload from './TruststoreFileupload';
+import Fileupload from 'components/Wizard/WizardForm/Fileupload';
 
 const KafkaCluster: React.FC = () => {
   const { control, watch } = useFormContext();
@@ -38,7 +37,6 @@ const KafkaCluster: React.FC = () => {
         label="Read-only mode"
         hint="allows you to run an application in read-only mode for a specific cluster"
       />
-
       <div>
         <InputLabel htmlFor="bootstrapServers">Bootstrap Servers *</InputLabel>
         <InputHint>
@@ -92,7 +90,7 @@ const KafkaCluster: React.FC = () => {
       <Checkbox name="useTruststore" label="Self Signed Certificate" />
       {useTruststore && (
         <>
-          <TruststoreFileupload />
+          <Fileupload name="truststore.location" label="Truststore Location" />
           <Input
             label="Truststore Password"
             type="password"

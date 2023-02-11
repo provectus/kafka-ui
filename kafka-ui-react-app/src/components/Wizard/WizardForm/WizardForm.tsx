@@ -13,17 +13,17 @@ import Metrics from './Metrics/Metrics';
 
 type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT';
 
-type BootstrapServer = {
+export type BootstrapServer = {
   host: string;
   port: string;
 };
-type SchemaRegistryType = {
-  url: string;
+export type SchemaRegistryType = {
+  url?: string;
   isAuth: boolean;
-  username: string;
-  password: string;
+  username?: string;
+  password?: string;
 };
-export type FormValues = {
+export type ClusterConfigFormValues = {
   name: string;
   readOnly: boolean;
   bootstrapServers: BootstrapServer[];
@@ -34,41 +34,42 @@ export type FormValues = {
   };
 
   securityProtocol?: SecurityProtocol;
-  authentication: {
-    method: 'none' | 'sasl';
-  };
+  authMethod?: string;
   schemaRegistry?: SchemaRegistryType;
   properties?: Record<string, string>;
 };
 
 interface WizardFormProps {
-  initaialValues?: FormValues;
+  existing?: boolean;
+  initialValues?: Partial<ClusterConfigFormValues>;
 }
 
-const Wizard: React.FC<WizardFormProps> = () => {
-  const methods = useForm<FormValues>({
+const CLUSTER_CONFIG_FORM_DEFAULT_VALUES: Partial<ClusterConfigFormValues> = {
+  bootstrapServers: [{ host: '', port: '' }],
+  useTruststore: false,
+};
+
+const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
+  const methods = useForm<ClusterConfigFormValues>({
     mode: 'all',
     resolver: yupResolver(formSchema),
     defaultValues: {
-      name: 'My test cluster',
-      readOnly: true,
-      bootstrapServers: [
-        { host: 'loc1', port: '3001' },
-        { host: 'loc', port: '3002' },
-      ],
-      useTruststore: false,
-      securityProtocol: 'SASL_PLAINTEXT',
-      authentication: {
-        method: 'none',
-      },
+      ...CLUSTER_CONFIG_FORM_DEFAULT_VALUES,
+      ...initialValues,
     },
   });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: ClusterConfigFormValues) => {
     // eslint-disable-next-line no-console
     console.log('SubmitData', data);
     return data;
   };
+
+  const onReset = () => {
+    methods.reset();
+  };
+  // eslint-disable-next-line no-console
+  console.log('Errors:', methods.formState.errors);
 
   return (
     <FormProvider {...methods}>
@@ -91,7 +92,7 @@ const Wizard: React.FC<WizardFormProps> = () => {
         <hr />
         <S.ButtonWrapper>
           <Button buttonSize="L" buttonType="primary">
-            Cancel
+            Reset
           </Button>
           <Button type="submit" buttonSize="L" buttonType="primary">
             Save

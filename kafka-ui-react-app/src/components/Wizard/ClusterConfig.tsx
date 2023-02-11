@@ -3,7 +3,13 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { ClusterNameRoute } from 'lib/paths';
 import React from 'react';
 
-import WizardForm from './WizardForm/WizardForm';
+import WizardForm, { ClusterConfigFormValues } from './WizardForm/WizardForm';
+
+const parseBootstrapServers = (bootstrapServers?: string) =>
+  bootstrapServers?.split(',').map((url) => {
+    const [host, port] = url.split(':');
+    return { host, port };
+  });
 
 const ClusterConfig: React.FC = () => {
   const config = useAppConfig();
@@ -11,9 +17,35 @@ const ClusterConfig: React.FC = () => {
 
   const currentClusterConfig = React.useMemo(() => {
     if (config.isSuccess && !!config.data.properties?.kafka?.clusters) {
-      return config.data.properties?.kafka?.clusters?.find(
+      const current = config.data.properties?.kafka?.clusters?.find(
         ({ name }) => name === clusterName
       );
+
+      if (current) {
+        const properties = current.properties || {};
+
+        const initialValues: Partial<ClusterConfigFormValues> = {
+          name: current.name,
+          readOnly: current.readOnly,
+          bootstrapServers: parseBootstrapServers(current.bootstrapServers),
+          useTruststore: !!properties['ssl.truststore.location'],
+          schemaRegistry: {
+            url: current.schemaRegistry,
+            isAuth: !!current.schemaRegistryAuth,
+            username: current.schemaRegistryAuth?.username,
+            password: current.schemaRegistryAuth?.password,
+          },
+        };
+
+        if (initialValues.useTruststore) {
+          initialValues.truststore = {
+            location: properties['ssl.truststore.location'],
+            password: properties['ssl.truststore.password'],
+          };
+        }
+
+        return initialValues;
+      }
     }
 
     return undefined;
@@ -23,7 +55,7 @@ const ClusterConfig: React.FC = () => {
     return null;
   }
 
-  return <WizardForm />;
+  return <WizardForm initialValues={currentClusterConfig} existing />;
 };
 
 export default ClusterConfig;

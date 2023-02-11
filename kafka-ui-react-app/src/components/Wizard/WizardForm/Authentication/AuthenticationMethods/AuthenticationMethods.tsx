@@ -12,12 +12,20 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
   switch (method) {
     case 'SASL/JAAS':
       return (
-        <Input
-          type="text"
-          name="authentication.saslJaasConfig"
-          label="sasl.jaas.config"
-          withError
-        />
+        <>
+          <Input
+            type="text"
+            name="authentication.saslJaasConfig"
+            label="sasl.jaas.config"
+            withError
+          />
+          <Input
+            type="text"
+            name="authentication.saslEnabledMechanism"
+            label="sasl.enabled.mechanism"
+            withError
+          />
+        </>
       );
     case 'SASL/GSSAPI':
       return <SaslGssapi />;

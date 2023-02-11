@@ -13,6 +13,7 @@ interface ControlledSelectProps {
   options: SelectOption[];
   onChange?: (val: string | number) => void;
   disabled?: boolean;
+  placeholder?: string;
 }
 
 const ControlledSelect: React.FC<ControlledSelectProps> = ({
@@ -21,6 +22,7 @@ const ControlledSelect: React.FC<ControlledSelectProps> = ({
   onChange,
   options,
   disabled = false,
+  placeholder,
 }) => {
   const id = React.useId();
 
@@ -41,6 +43,7 @@ const ControlledSelect: React.FC<ControlledSelectProps> = ({
               }}
               value={field.value}
               options={options}
+              placeholder={placeholder}
               disabled={disabled}
             />
           );
