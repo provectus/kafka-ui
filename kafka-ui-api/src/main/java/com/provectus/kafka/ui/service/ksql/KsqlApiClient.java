@@ -69,26 +69,20 @@ public class KsqlApiClient {
 
   public KsqlApiClient(String baseUrl,
                        @Nullable ClustersProperties.KsqldbServerAuth ksqldbServerAuth,
-                       @Nullable ClustersProperties.WebClientSsl ksqldbServerSsl,
+                       @Nullable ClustersProperties.Ssl ksqldbServerSsl,
                        @Nullable DataSize maxBuffSize) {
     this.baseUrl = baseUrl;
     this.webClient = webClient(ksqldbServerAuth, ksqldbServerSsl, maxBuffSize);
   }
 
   private static WebClient webClient(@Nullable ClustersProperties.KsqldbServerAuth ksqldbServerAuth,
-                                     @Nullable ClustersProperties.WebClientSsl ksqldbServerSsl,
+                                     @Nullable ClustersProperties.Ssl ksqldbServerSsl,
                                      @Nullable DataSize maxBuffSize) {
     ksqldbServerAuth = Optional.ofNullable(ksqldbServerAuth).orElse(new ClustersProperties.KsqldbServerAuth());
-    ksqldbServerSsl = Optional.ofNullable(ksqldbServerSsl).orElse(new ClustersProperties.WebClientSsl());
     maxBuffSize = Optional.ofNullable(maxBuffSize).orElse(DataSize.ofMegabytes(20));
 
     return new WebClientConfigurator()
-        .configureSsl(
-            ksqldbServerSsl.getKeystoreLocation(),
-            ksqldbServerSsl.getKeystorePassword(),
-            ksqldbServerSsl.getTruststoreLocation(),
-            ksqldbServerSsl.getTruststorePassword()
-        )
+        .configureSsl(ksqldbServerSsl)
         .configureBasicAuth(
             ksqldbServerAuth.getUsername(),
             ksqldbServerAuth.getPassword()

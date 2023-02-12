@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.client;
 
 import static com.provectus.kafka.ui.config.ClustersProperties.ConnectCluster;
 
+import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.connect.ApiClient;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
 import com.provectus.kafka.ui.connect.model.Connector;
@@ -12,6 +13,7 @@ import com.provectus.kafka.ui.util.WebClientConfigurator;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -31,8 +33,8 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   private static final int MAX_RETRIES = 5;
   private static final Duration RETRIES_DELAY = Duration.ofMillis(200);
 
-  public RetryingKafkaConnectClient(ConnectCluster config, DataSize maxBuffSize) {
-    super(new RetryingApiClient(config, maxBuffSize));
+  public RetryingKafkaConnectClient(ConnectCluster config, @Nullable ClustersProperties.Ssl ssl, DataSize maxBuffSize) {
+    super(new RetryingApiClient(config, ssl, maxBuffSize));
   }
 
   private static Retry conflictCodeRetry() {
@@ -77,21 +79,16 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
 
   private static class RetryingApiClient extends ApiClient {
 
-    public RetryingApiClient(ConnectCluster config, DataSize maxBuffSize) {
-      super(buildWebClient(maxBuffSize, config), null, null);
+    public RetryingApiClient(ConnectCluster config, ClustersProperties.Ssl ssl, DataSize maxBuffSize) {
+      super(buildWebClient(maxBuffSize, config, ssl), null, null);
       setBasePath(config.getAddress());
       setUsername(config.getUserName());
       setPassword(config.getPassword());
     }
 
-    public static WebClient buildWebClient(DataSize maxBuffSize, ConnectCluster config) {
+    public static WebClient buildWebClient(DataSize maxBuffSize, ConnectCluster config, ClustersProperties.Ssl ssl) {
       return new WebClientConfigurator()
-          .configureSsl(
-              config.getKeystoreLocation(),
-              config.getKeystorePassword(),
-              config.getTruststoreLocation(),
-              config.getTruststorePassword()
-          )
+          .configureSsl(ssl)
           .configureBasicAuth(
               config.getUserName(),
               config.getPassword()

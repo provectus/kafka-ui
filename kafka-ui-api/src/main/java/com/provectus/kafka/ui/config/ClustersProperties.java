@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,16 +24,16 @@ public class ClustersProperties {
 
   List<Cluster> clusters = new ArrayList<>();
 
+  Ssl ssl;
+
   @Data
   public static class Cluster {
     String name;
     String bootstrapServers;
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
-    WebClientSsl schemaRegistrySsl;
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
-    WebClientSsl ksqldbServerSsl;
     List<ConnectCluster> kafkaConnect;
     MetricsConfigData metrics;
     Map<String, Object> properties;
@@ -41,9 +43,11 @@ public class ClustersProperties {
     String defaultValueSerde;
     List<Masking> masking;
     Long pollingThrottleRate;
+    Ssl ssl;
   }
 
   @Data
+  @ToString(exclude = "password")
   public static class MetricsConfigData {
     String type;
     Integer port;
@@ -61,10 +65,6 @@ public class ClustersProperties {
     String address;
     String userName;
     String password;
-    String keystoreLocation;
-    String keystorePassword;
-    String truststoreLocation;
-    String truststorePassword;
   }
 
   @Data
@@ -74,7 +74,9 @@ public class ClustersProperties {
   }
 
   @Data
-  public static class WebClientSsl {
+  @ToString(exclude = {"keystorePassword", "truststorePassword"})
+  public static class Ssl {
+    boolean trustAll = false;
     String keystoreLocation;
     String keystorePassword;
     String truststoreLocation;
@@ -115,6 +117,7 @@ public class ClustersProperties {
   @PostConstruct
   public void validateAndSetDefaults() {
     validateClusterNames();
+    mergeSslProperties();
   }
 
   private void validateClusterNames() {
@@ -134,6 +137,36 @@ public class ClustersProperties {
       if (!clusterNames.add(clusterProperties.getName())) {
         throw new IllegalStateException(
             "Application config isn't valid. Two clusters can't have the same name");
+      }
+    }
+  }
+
+  private void mergeSslProperties() {
+    BiFunction<Ssl, Ssl, Ssl> merger = (main, override) -> {
+      Ssl merged = new Ssl();
+      if (override.isTrustAll()) {
+        merged.setTrustAll(true);
+      } else if (!StringUtils.hasText(override.getTruststoreLocation())) {
+        merged.setTrustAll(main.isTrustAll());
+      }
+      merged.setTruststoreLocation(
+          Optional.ofNullable(override.getTruststoreLocation()).orElse(main.getTruststoreLocation()));
+      merged.setTruststorePassword(
+          Optional.ofNullable(override.getTruststorePassword()).orElse(main.getTruststorePassword()));
+      merged.setKeystoreLocation(
+          Optional.ofNullable(override.getKeystoreLocation()).orElse(main.getKeystoreLocation()));
+      merged.setKeystorePassword(
+          Optional.ofNullable(override.getKeystorePassword()).orElse(main.getKeystorePassword()));
+      return merged;
+    };
+
+    if (clusters != null && ssl != null) {
+      for (Cluster cluster : clusters) {
+        if (cluster.getSsl() != null) {
+          cluster.setSsl(merger.apply(ssl, cluster.getSsl()));
+        } else {
+          cluster.setSsl(ssl);
+        }
       }
     }
   }
