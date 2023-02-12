@@ -3422,6 +3422,19 @@ components:
             kafka:
               type: object
               properties:
+                ssl:
+                  type: object
+                  properties:
+                    trustAll:
+                      type: boolean
+                    keystoreLocation:
+                      type: string
+                    keystorePassword:
+                      type: string
+                    truststoreLocation:
+                      type: string
+                    truststorePassword:
+                      type: string
                 clusters:
                   type: array
                   items:
@@ -3431,6 +3444,19 @@ components:
                         type: string
                       bootstrapServers:
                         type: string
+                      ssl:
+                        type: object
+                        properties:
+                          trustAll:
+                            type: boolean
+                          keystoreLocation:
+                            type: string
+                          keystorePassword:
+                            type: string
+                          truststoreLocation:
+                            type: string
+                          truststorePassword:
+                            type: string
                       schemaRegistry:
                         type: string
                       schemaRegistryAuth:
@@ -3440,17 +3466,6 @@ components:
                             type: string
                           password:
                             type: string
-                      schemaRegistrySsl:
-                        type: object
-                        properties:
-                          keystoreLocation:
-                            type: string
-                          keystorePassword:
-                            type: string
-                          truststoreLocation:
-                            type: string
-                          truststorePassword:
-                            type: string
                       ksqldbServer:
                         type: string
                       ksqldbServerAuth:
@@ -3459,17 +3474,6 @@ components:
                           username:
                             type: string
                           password:
-                            type: string
-                      ksqldbServerSsl:
-                        type: object
-                        properties:
-                          keystoreLocation:
-                            type: string
-                          keystorePassword:
-                            type: string
-                          truststoreLocation:
-                            type: string
-                          truststorePassword:
                             type: string
                       kafkaConnect:
                         type: array
@@ -3483,14 +3487,6 @@ components:
                             userName:
                               type: string
                             password:
-                              type: string
-                            keystoreLocation:
-                              type: string
-                            keystorePassword:
-                              type: string
-                            truststoreLocation:
-                              type: string
-                            truststorePassword:
                               type: string
                       metrics:
                         type: object
