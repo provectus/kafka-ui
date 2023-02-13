@@ -108,11 +108,32 @@ public class TopicsTest extends BaseTest {
     }
 
     @Ignore
-    @Issue("https://github.com/provectus/kafka-ui/issues/2625")
+    @Issue("https://github.com/provectus/kafka-ui/issues/3071")
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(268)
+    @Test(priority = 3)
+    public void checkCustomParametersWithinEditExistingTopic() {
+        navigateToTopicsAndOpenDetails(TOPIC_TO_UPDATE_AND_DELETE.getName());
+        topicDetails
+                .openDotMenu()
+                .clickEditSettingsMenu();
+        SoftAssert softly = new SoftAssert();
+        topicCreateEditForm
+                .waitUntilScreenReady()
+                .clickAddCustomParameterTypeButton()
+                .openCustomParameterTypeDdl()
+                .getAllDdlOptions()
+                .forEach(option ->
+                        softly.assertTrue(!option.is(Condition.attribute("disabled")),
+                                option.getText() + " is enabled:"));
+        softly.assertAll();
+    }
+
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(197)
-    @Test(priority = 3)
+    @Test(priority = 4)
     public void updateTopic() {
         navigateToTopicsAndOpenDetails(TOPIC_TO_UPDATE_AND_DELETE.getName());
         topicDetails
@@ -166,7 +187,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(242)
-    @Test(priority = 4)
+    @Test(priority = 5)
     public void removeTopicFromTopicList() {
         navigateToTopics();
         topicsList
@@ -182,7 +203,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(207)
-    @Test(priority = 5)
+    @Test(priority = 6)
     public void deleteTopic() {
         navigateToTopicsAndOpenDetails(TOPIC_FOR_DELETE.getName());
         topicDetails
@@ -197,7 +218,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(20)
-    @Test(priority = 6)
+    @Test(priority = 7)
     public void redirectToConsumerFromTopic() {
         String topicName = "source-activities";
         String consumerGroupId = "connect-sink_postgres_activities";
@@ -218,7 +239,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(4)
-    @Test(priority = 7)
+    @Test(priority = 8)
     public void checkTopicCreatePossibility() {
         navigateToTopics();
         topicsList
@@ -241,7 +262,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(266)
-    @Test(priority = 8)
+    @Test(priority = 9)
     public void checkTimeToRetainDataCustomValueWithEditingTopic() {
         Topic topicToRetainData = new Topic()
                 .setName("topic-to-retain-data-" + randomAlphabetic(5))
@@ -274,7 +295,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(6)
-    @Test(priority = 9)
+    @Test(priority = 10)
     public void checkCustomParametersWithinCreateNewTopic() {
         navigateToTopics();
         topicsList
@@ -295,7 +316,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(2)
-    @Test(priority = 10)
+    @Test(priority = 11)
     public void checkTopicListElements() {
         navigateToTopics();
         verifyElementsCondition(topicsList.getAllVisibleElements(), Condition.visible);
@@ -305,7 +326,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(12)
-    @Test(priority = 11)
+    @Test(priority = 12)
     public void addingNewFilterWithinTopic() {
         String filterName = randomAlphabetic(5);
         navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
@@ -327,7 +348,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(13)
-    @Test(priority = 12)
+    @Test(priority = 13)
     public void checkFilterSavingWithinSavedFilters() {
         String displayName = randomAlphabetic(5);
         navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
@@ -350,7 +371,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(14)
-    @Test(priority = 13)
+    @Test(priority = 14)
     public void checkApplyingSavedFilterWithinTopicMessages() {
         String displayName = randomAlphabetic(5);
         navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
@@ -371,7 +392,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(11)
-    @Test(priority = 14)
+    @Test(priority = 15)
     public void checkShowInternalTopicsButtonFunctionality() {
         navigateToTopics();
         SoftAssert softly = new SoftAssert();
@@ -389,7 +410,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(56)
-    @Test(priority = 15)
+    @Test(priority = 16)
     public void checkRetentionBytesAccordingToMaxSizeOnDisk() {
         navigateToTopics();
         topicsList
@@ -439,7 +460,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(247)
-    @Test(priority = 16)
+    @Test(priority = 17)
     public void recreateTopicFromTopicProfile() {
         Topic topicToRecreate = new Topic()
                 .setName("topic-to-recreate-" + randomAlphabetic(5))
@@ -469,7 +490,7 @@ public class TopicsTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(8)
-    @Test(priority = 17)
+    @Test(priority = 18)
     public void checkCopyTopicPossibility() {
         Topic topicToCopy = new Topic()
                 .setName("topic-to-copy-" + randomAlphabetic(5))
