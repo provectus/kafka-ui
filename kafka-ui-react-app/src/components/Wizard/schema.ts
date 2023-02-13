@@ -1,3 +1,4 @@
+import { isArray } from 'lodash';
 import { object, string, number, array, boolean, mixed, lazy } from 'yup';
 
 const requiredString = string().required('required field');
@@ -23,6 +24,60 @@ const schemaRegistrySchema = lazy((value) => {
         is: true,
         then: (schema) => schema.required('required field'),
       }),
+    });
+  }
+  return mixed().optional();
+});
+
+const kafkaConnectSchema = object({
+  name: requiredString,
+  url: requiredString,
+  isAuth: boolean(),
+  username: string().when('isAuth', {
+    is: true,
+    then: (schema) => schema.required('required field'),
+  }),
+  password: string().when('isAuth', {
+    is: true,
+    then: (schema) => schema.required('required field'),
+  }),
+});
+
+const kafkaConnectsSchema = lazy((value) => {
+  if (isArray(value)) {
+    return array().of(kafkaConnectSchema);
+  }
+  return mixed().optional();
+});
+
+const metricsSchema = lazy((value) => {
+  if (typeof value === 'object') {
+    object({
+      type: string().oneOf(['none', 'JMX', 'PROMETHEUS']),
+      port: number()
+        .positive('Port must be a positive number')
+        .typeError('Port must be a number'),
+      isAuth: boolean(),
+      username: string().when('isAuth', {
+        is: true,
+        then: (schema) => schema.required('required field'),
+      }),
+      password: string().when('isAuth', {
+        is: true,
+        then: (schema) => schema.required('required field'),
+      }),
+      isSSL: boolean(),
+      truststoreLocation: string().when('isSSL', {
+        is: true,
+        then: (schema) => schema.required('required field'),
+      }),
+      truststorePassword: string().when('isSSL', {
+        is: true,
+        then: (schema) => schema.required('required field'),
+      }),
+      keystoreLocation: string(),
+      keystorePassword: string(),
+      keystoreKeyPassword: string(),
     });
   }
   return mixed().optional();
@@ -126,46 +181,8 @@ const formSchema = object({
     }),
   authentication: authSchema,
   schemaRegistry: schemaRegistrySchema,
-
-  // kafkaConnect: array().of(
-  //   object({
-  //     name: requiredString,
-  //     url: requiredString,
-  //     isAuth: boolean().required('required field'),
-  //     username: string().when('isAuth', {
-  //       is: true,
-  //       then: (schema) => schema.required('required field'),
-  //     }),
-  //     password: string().when('isAuth', {
-  //       is: true,
-  //       then: (schema) => schema.required('required field'),
-  //     }),
-  //   })
-  // ),
-  // JMXMetrics: object({
-  //   port: number().positive().required('required field'),
-  //   isAuth: boolean().required('required field'),
-  //   username: string().when('isAuth', {
-  //     is: true,
-  //     then: (schema) => schema.required('required field'),
-  //   }),
-  //   password: string().when('isAuth', {
-  //     is: true,
-  //     then: (schema) => schema.required('required field'),
-  //   }),
-  //   isSSL: boolean().required('required field'),
-  //   truststoreLocation: string().when('isSSL', {
-  //     is: true,
-  //     then: (schema) => schema.required('required field'),
-  //   }),
-  //   truststorePassword: string().when('isSSL', {
-  //     is: true,
-  //     then: (schema) => schema.required('required field'),
-  //   }),
-  //   keystoreLocation: string(),
-  //   keystorePassword: string(),
-  //   keystoreKeyPassword: string(),
-  // }),
+  kafkaConnect: kafkaConnectsSchema,
+  metrics: metricsSchema,
 });
 
 export default formSchema;

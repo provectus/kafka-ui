@@ -4,11 +4,15 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import formSchema from 'components/Wizard/schema';
 import { StyledForm } from 'components/common/Form/Form.styled';
+import { useValidateAppConfig } from 'lib/hooks/api/appConfig';
+import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
 
 import * as S from './WizardForm.styled';
 import KafkaCluster from './KafkaCluster/KafkaCluster';
 import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
+import KafkaConnect from './KafkaConnect/KafkaConnect';
+import Metrics from './Metrics/Metrics';
 
 type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT';
 
@@ -21,6 +25,13 @@ export type SchemaRegistryType = {
   isAuth: boolean;
   username?: string;
   password?: string;
+};
+type KafkaConnectType = {
+  name: string;
+  url: string;
+  isAuth: boolean;
+  username: string;
+  password: string;
 };
 export type ClusterConfigFormValues = {
   name: string;
@@ -36,6 +47,7 @@ export type ClusterConfigFormValues = {
   authMethod?: string;
   schemaRegistry?: SchemaRegistryType;
   properties?: Record<string, string>;
+  kafkaConnect: KafkaConnectType[];
 };
 
 interface WizardFormProps {
@@ -58,9 +70,24 @@ const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
     },
   });
 
-  const onSubmit = (data: ClusterConfigFormValues) => {
+  const validate = useValidateAppConfig();
+
+  const onSubmit = async (data: ClusterConfigFormValues) => {
     // eslint-disable-next-line no-console
     console.log('SubmitData', data);
+
+    const config: ApplicationConfigPropertiesKafkaClustersInner = {
+      name: data.name,
+      bootstrapServers: data.bootstrapServers
+        .map(({ host, port }) => `${host}:${port}`)
+        .join(','),
+      readOnly: data.readOnly,
+    };
+
+    const resp = await validate.mutateAsync(config);
+    // eslint-disable-next-line no-console
+    console.log('resp', resp);
+
     return data;
   };
 
@@ -79,38 +106,18 @@ const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
         <hr />
         <SchemaRegistry />
         <hr />
-        <S.Section>
-          <S.SectionName>Kafka Connect</S.SectionName>
-          <div>
-            <Button buttonSize="M" buttonType="primary">
-              Add Kafka Connect
-            </Button>
-          </div>
-        </S.Section>
-        <S.Section>
-          <S.SectionName>JMX Metrics</S.SectionName>
-          <div>
-            <Button buttonSize="M" buttonType="primary">
-              Configure JMX Metrics
-            </Button>
-          </div>
-        </S.Section>
-        <div style={{ paddingTop: '10px' }}>
-          <div
-            style={{
-              justifyContent: 'center',
-              display: 'flex',
-              gap: '10px',
-            }}
-          >
-            <Button buttonSize="M" buttonType="primary" onClick={onReset}>
-              Reset
-            </Button>
-            <Button type="submit" buttonSize="M" buttonType="primary">
-              Save
-            </Button>
-          </div>
-        </div>
+        <KafkaConnect />
+        <hr />
+        <Metrics />
+        <hr />
+        <S.ButtonWrapper>
+          <Button buttonSize="L" buttonType="primary" onClick={onReset}>
+            Reset
+          </Button>
+          <Button type="submit" buttonSize="L" buttonType="primary">
+            Save
+          </Button>
+        </S.ButtonWrapper>
       </StyledForm>
     </FormProvider>
   );
