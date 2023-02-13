@@ -9,6 +9,7 @@ import * as S from './WizardForm.styled';
 import KafkaCluster from './KafkaCluster/KafkaCluster';
 import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
+import { useValidateAppConfig } from 'lib/hooks/api/appConfig';
 
 type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT';
 
@@ -58,9 +59,16 @@ const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
     },
   });
 
-  const onSubmit = (data: ClusterConfigFormValues) => {
+  const validate = useValidateAppConfig();
+
+  const onSubmit = async (data: ClusterConfigFormValues) => {
     // eslint-disable-next-line no-console
     console.log('SubmitData', data);
+
+    const resp = await validate.mutateAsync(data);
+    // eslint-disable-next-line no-console
+    console.log('resp', resp);
+
     return data;
   };
 
