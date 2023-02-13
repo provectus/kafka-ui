@@ -24,7 +24,7 @@ public class TopicSettingsTab extends BasePage {
 
     private List<SettingsGridItem> initGridItems() {
         List<SettingsGridItem> gridItemList = new ArrayList<>();
-        allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+        gridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
                 .forEach(item -> gridItemList.add(new SettingsGridItem(item)));
         return gridItemList;
     }
