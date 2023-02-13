@@ -24,8 +24,6 @@ public class ClustersProperties {
 
   List<Cluster> clusters = new ArrayList<>();
 
-  Ssl ssl;
-
   @Data
   public static class Cluster {
     String name;
@@ -60,6 +58,7 @@ public class ClustersProperties {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder(toBuilder = true)
+  @ToString(exclude = "password")
   public static class ConnectCluster {
     String name;
     String address;
@@ -76,7 +75,6 @@ public class ClustersProperties {
   @Data
   @ToString(exclude = {"keystorePassword", "truststorePassword"})
   public static class Ssl {
-    boolean trustAll = false;
     String keystoreLocation;
     String keystorePassword;
     String truststoreLocation;
@@ -117,7 +115,6 @@ public class ClustersProperties {
   @PostConstruct
   public void validateAndSetDefaults() {
     validateClusterNames();
-    mergeSslProperties();
   }
 
   private void validateClusterNames() {
@@ -137,36 +134,6 @@ public class ClustersProperties {
       if (!clusterNames.add(clusterProperties.getName())) {
         throw new IllegalStateException(
             "Application config isn't valid. Two clusters can't have the same name");
-      }
-    }
-  }
-
-  private void mergeSslProperties() {
-    BiFunction<Ssl, Ssl, Ssl> merger = (main, override) -> {
-      Ssl merged = new Ssl();
-      if (override.isTrustAll()) {
-        merged.setTrustAll(true);
-      } else if (!StringUtils.hasText(override.getTruststoreLocation())) {
-        merged.setTrustAll(main.isTrustAll());
-      }
-      merged.setTruststoreLocation(
-          Optional.ofNullable(override.getTruststoreLocation()).orElse(main.getTruststoreLocation()));
-      merged.setTruststorePassword(
-          Optional.ofNullable(override.getTruststorePassword()).orElse(main.getTruststorePassword()));
-      merged.setKeystoreLocation(
-          Optional.ofNullable(override.getKeystoreLocation()).orElse(main.getKeystoreLocation()));
-      merged.setKeystorePassword(
-          Optional.ofNullable(override.getKeystorePassword()).orElse(main.getKeystorePassword()));
-      return merged;
-    };
-
-    if (clusters != null && ssl != null) {
-      for (Cluster cluster : clusters) {
-        if (cluster.getSsl() != null) {
-          cluster.setSsl(merger.apply(ssl, cluster.getSsl()));
-        } else {
-          cluster.setSsl(ssl);
-        }
       }
     }
   }

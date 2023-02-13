@@ -3422,19 +3422,6 @@ components:
             kafka:
               type: object
               properties:
-                ssl:
-                  type: object
-                  properties:
-                    trustAll:
-                      type: boolean
-                    keystoreLocation:
-                      type: string
-                    keystorePassword:
-                      type: string
-                    truststoreLocation:
-                      type: string
-                    truststorePassword:
-                      type: string
                 clusters:
                   type: array
                   items:
@@ -3447,8 +3434,6 @@ components:
                       ssl:
                         type: object
                         properties:
-                          trustAll:
-                            type: boolean
                           keystoreLocation:
                             type: string
                           keystorePassword:

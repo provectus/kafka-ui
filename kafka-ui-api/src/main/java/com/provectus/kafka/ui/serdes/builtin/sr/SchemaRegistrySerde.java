@@ -70,10 +70,10 @@ public class SchemaRegistrySerde implements BuiltInSerde {
             urls,
             kafkaClusterProperties.getProperty("schemaRegistryAuth.username", String.class).orElse(null),
             kafkaClusterProperties.getProperty("schemaRegistryAuth.password", String.class).orElse(null),
-            kafkaClusterProperties.getProperty("schemaRegistrySSL.keystoreLocation", String.class).orElse(null),
-            kafkaClusterProperties.getProperty("schemaRegistrySSL.keystorePassword", String.class).orElse(null),
-            kafkaClusterProperties.getProperty("schemaRegistrySSL.truststoreLocation", String.class).orElse(null),
-            kafkaClusterProperties.getProperty("schemaRegistrySSL.truststorePassword", String.class).orElse(null)
+            kafkaClusterProperties.getProperty("ssl.keystoreLocation", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("ssl.keystorePassword", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("ssl.truststoreLocation", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("ssl.truststorePassword", String.class).orElse(null)
         ),
         kafkaClusterProperties.getProperty("schemaRegistryKeySchemaNameTemplate", String.class).orElse("%s-key"),
         kafkaClusterProperties.getProperty("schemaRegistrySchemaNameTemplate", String.class).orElse("%s-value"),

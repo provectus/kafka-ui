@@ -199,15 +199,9 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_METRICS_USERNAME` |Username for Metrics authentication
 |`KAFKA_CLUSTERS_0_METRICS_PASSWORD` |Password for Metrics authentication
 |`KAFKA_CLUSTERS_0_POLLING_THROTTLE_RATE` |Max traffic rate (bytes/sec) that kafka-ui allowed to reach when polling messages from the cluster. Default: 0 (not limited)
-|`KAFKA_CLUSTERS_0_SSL_TRUSTSTORELOCATION`| Path to the JKS truststore to communicate to Kafka Connect, SchemaRegistry, KSQL (overrides KAFKA_SSL_TRUSTSTORELOCATION)
-|`KAFKA_CLUSTERS_0_SSL_TRUSTSTOREPASSWORD`| Password of the JKS truststore for Kafka Connect, SchemaRegistry, KSQL (overrides KAFKA_SSL_TRUSTSTOREPASSWORD)
-|`KAFKA_CLUSTERS_0_SSL_KEYSTORELOCATION`| Path to the JKS keystore to communicate to Kafka Connect, SchemaRegistry, KSQL (overrides KAFKA_SSL_KEYSTORELOCATION)
-|`KAFKA_CLUSTERS_0_SSL_KEYSTOREPASSWORD`| Password of the JKS keystore for Kafka Connect, SchemaRegistry, KSQL (overrides KAFKA_SSL_KEYSTOREPASSWORD)
-|`KAFKA_CLUSTERS_0_SSL_TRUSTALL`| Disables SSL certificates checks (overrides KAFKA_SSL_TRUSTALL). Default: false
-|`KAFKA_SSL_TRUSTSTORELOCATION`| Path to the JKS truststore to communicate to Kafka Connect, SchemaRegistry, KSQL
-|`KAFKA_SSL_TRUSTSTOREPASSWORD`| Password of the JKS truststore for Kafka Connect, SchemaRegistry, KSQL
-|`KAFKA_SSL_KEYSTORELOCATION`| Path to the JKS keystore to communicate to Kafka Connect, SchemaRegistry, KSQL
-|`KAFKA_SSL_KEYSTOREPASSWORD`| Password of the JKS keystore for Kafka Connect, SchemaRegistry, KSQL
-|`KAFKA_SSL_TRUSTALL`| Disables SSL certificates checks. Default: false
+|`KAFKA_CLUSTERS_0_SSL_TRUSTSTORELOCATION`| Path to the JKS truststore to communicate to Kafka Connect, SchemaRegistry, KSQL 
+|`KAFKA_CLUSTERS_0_SSL_TRUSTSTOREPASSWORD`| Password of the JKS truststore for Kafka Connect, SchemaRegistry, KSQL 
+|`KAFKA_CLUSTERS_0_SSL_KEYSTORELOCATION`| Path to the JKS keystore to communicate to Kafka Connect, SchemaRegistry, KSQL
+|`KAFKA_CLUSTERS_0_SSL_KEYSTOREPASSWORD`| Password of the JKS keystore for Kafka Connect, SchemaRegistry, KSQL
 |`TOPIC_RECREATE_DELAY_SECONDS` |Time delay between topic deletion and topic creation attempts for topic recreate functionality. Default: 1
 |`TOPIC_RECREATE_MAXRETRIES`  |Number of attempts of topic creation after topic deletion for topic recreate functionality. Default: 15

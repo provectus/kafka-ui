@@ -12,9 +12,7 @@ import java.security.KeyStore;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
 import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 import lombok.SneakyThrows;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.http.MediaType;
@@ -46,7 +44,6 @@ public class WebClientConfigurator {
   public WebClientConfigurator configureSsl(@Nullable ClustersProperties.Ssl ssl) {
     if (ssl != null) {
       return configureSsl(
-          ssl.isTrustAll(),
           ssl.getKeystoreLocation(),
           ssl.getKeystorePassword(),
           ssl.getTruststoreLocation(),
@@ -58,16 +55,16 @@ public class WebClientConfigurator {
 
   @SneakyThrows
   private WebClientConfigurator configureSsl(
-      boolean trustAll,
       @Nullable String keystoreLocation,
       @Nullable String keystorePassword,
       @Nullable String truststoreLocation,
       @Nullable String truststorePassword) {
-    SslContextBuilder contextBuilder = SslContextBuilder.forClient();
+    if (truststoreLocation == null && keystoreLocation == null) {
+      return this;
+    }
 
-    if (trustAll) {
-      contextBuilder.trustManager(allowAllTrustManager());
-    } else if (truststoreLocation != null && truststorePassword != null) {
+    SslContextBuilder contextBuilder = SslContextBuilder.forClient();
+    if (truststoreLocation != null && truststorePassword != null) {
       KeyStore trustStore = KeyStore.getInstance("JKS");
       trustStore.load(
           new FileInputStream((ResourceUtils.getFile(truststoreLocation))),
@@ -98,22 +95,6 @@ public class WebClientConfigurator {
 
     builder.clientConnector(new ReactorClientHttpConnector(HttpClient.create().secure(t -> t.sslContext(context))));
     return this;
-  }
-
-  private TrustManager allowAllTrustManager() {
-    return new X509TrustManager() {
-      public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-        return null;
-      }
-
-      public void checkClientTrusted(
-          java.security.cert.X509Certificate[] certs, String authType) {
-      }
-
-      public void checkServerTrusted(
-          java.security.cert.X509Certificate[] certs, String authType) {
-      }
-    };
   }
 
   public WebClientConfigurator configureBasicAuth(@Nullable String username, @Nullable String password) {
