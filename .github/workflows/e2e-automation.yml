@@ -11,9 +11,10 @@ on:
           - regression
           - sanity
           - smoke
+          - qase
       qase_enabled:
         description: 'Enable Qase integration'
-        default: false
+        default: true
         required: true
         type: boolean
 

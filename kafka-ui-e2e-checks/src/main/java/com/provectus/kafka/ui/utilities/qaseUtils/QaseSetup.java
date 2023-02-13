@@ -13,7 +13,7 @@ import static org.apache.commons.lang3.BooleanUtils.TRUE;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Slf4j
-public class QaseExtension {
+public class QaseSetup {
 
     public static void testRunSetup() {
         String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
