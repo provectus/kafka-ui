@@ -11,44 +11,11 @@ export const Section = styled.div`
   --tw-border-opacity: 1;
   border-bottom-color: rgb(229 231 235 / var(--tw-border-opacity));
 `;
-export const SectionName = styled.h3`
-  --tw-text-opacity: 1;
-  color: rgb(17 24 39 / var(--tw-text-opacity));
-  line-height: 1.5rem;
-  font-weight: 500;
-  font-size: 1.125rem;
-`;
 export const Action = styled.div`
   grid-template-columns: repeat(6, minmax(0, 1fr));
   display: grid;
   gap: 1.5rem;
 `;
-export const ItemLabelRequired = styled.div`
-  align-items: baseline;
-  display: flex;
-  margin-bottom: 0.5rem;
-  & label {
-    --tw-text-opacity: 1;
-    color: rgb(55 65 81 / var(--tw-text-opacity));
-    font-weight: 500;
-    line-height: 1.25rem;
-    white-space: nowrap;
-    display: block;
-    margin-right: 0.5rem;
-    &::after {
-      content: ' *';
-      color: red;
-    }
-  }
-`;
-export const ItemLabel = styled(ItemLabelRequired)`
-  & label {
-    &::after {
-      content: none;
-    }
-  }
-`;
-
 export const ArrayFieldWrapper = styled.label`
   display: flex;
   flex-direction: column;
@@ -65,20 +32,12 @@ export const InputContainer = styled.div`
   align-items: stretch;
   max-width: 500px;
 `;
-
+export const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+`;
 export const RemoveButton = styled(IconButtonWrapper)`
   align-self: center;
-`;
-
-// KafkaCluster
-
-export const BootstrapServer = styled(InputContainer)`
-  grid-template-columns: 3fr 1fr 30px;
-`;
-export const BootstrapServerActions = styled(IconButtonWrapper)`
-  align-self: top;
-  margin-top: 12px;
-  margin-left: 8px;
 `;
 export const FlexRow = styled.div`
   display: flex;
@@ -89,6 +48,15 @@ export const FlexRow = styled.div`
 export const FlexGrow1 = styled.div`
   flex-grow: 1;
 `;
+// KafkaCluster
+export const BootstrapServer = styled(InputContainer)`
+  grid-template-columns: 3fr 1fr 30px;
+`;
+export const BootstrapServerActions = styled(IconButtonWrapper)`
+  align-self: stretch;
+  margin-top: 12px;
+  margin-left: 8px;
+`;
 // Kafka Connect
 export const ConnectInputWrapper = styled(InputContainer)`
   grid-template-columns: 1fr 30px;
@@ -96,4 +64,8 @@ export const ConnectInputWrapper = styled(InputContainer)`
   & > div > div {
     padding-top: 1rem;
   }
+`;
+// Metrics
+export const StyledPort = styled.div`
+  width: 35%;
 `;

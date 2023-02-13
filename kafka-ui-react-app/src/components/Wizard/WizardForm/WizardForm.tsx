@@ -10,6 +10,7 @@ import KafkaCluster from './KafkaCluster/KafkaCluster';
 import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
 import KafkaConnect from './KafkaConnect/KafkaConnect';
+import Metrics from './Metrics/Metrics';
 
 type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT';
 
@@ -99,30 +100,16 @@ const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
         <hr />
         <KafkaConnect />
         <hr />
-        <S.Section>
-          <S.SectionName>JMX Metrics</S.SectionName>
-          <div>
-            <Button buttonSize="M" buttonType="primary">
-              Configure JMX Metrics
-            </Button>
-          </div>
-        </S.Section>
-        <div style={{ paddingTop: '10px' }}>
-          <div
-            style={{
-              justifyContent: 'center',
-              display: 'flex',
-              gap: '10px',
-            }}
-          >
-            <Button buttonSize="M" buttonType="primary" onClick={onReset}>
-              Reset
-            </Button>
-            <Button type="submit" buttonSize="M" buttonType="primary">
-              Save
-            </Button>
-          </div>
-        </div>
+        <Metrics />
+        <hr />
+        <S.ButtonWrapper>
+          <Button buttonSize="L" buttonType="primary">
+            Reset
+          </Button>
+          <Button type="submit" buttonSize="L" buttonType="primary">
+            Save
+          </Button>
+        </S.ButtonWrapper>
       </StyledForm>
     </FormProvider>
   );
