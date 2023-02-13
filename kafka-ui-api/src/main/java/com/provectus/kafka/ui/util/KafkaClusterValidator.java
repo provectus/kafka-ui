@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import reactor.core.publisher.Flux;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
+@Slf4j
 @UtilityClass
 public class KafkaClusterValidator {
 
@@ -58,7 +60,13 @@ public class KafkaClusterValidator {
     properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 5_000);
     properties.put(AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, 5_000);
     properties.put(AdminClientConfig.CLIENT_ID_CONFIG, "kui-admin-client-validation-" + System.currentTimeMillis());
-    var adminClient = AdminClient.create(properties);
+    AdminClient adminClient = null;
+    try {
+      adminClient = AdminClient.create(properties);
+    } catch (Exception e) {
+      log.error("Error creating admin client during validation ", e);
+      return invalid("Error while creating AdminClient, check bootstrapServers availability" + e.getMessage());
+    }
     return Mono.just(adminClient)
         .then(ReactiveAdminClient.toMono(adminClient.listTopics().names()))
         .then(valid())
