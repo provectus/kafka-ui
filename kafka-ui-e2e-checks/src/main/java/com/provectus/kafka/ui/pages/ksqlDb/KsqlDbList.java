@@ -41,7 +41,7 @@ public class KsqlDbList extends BasePage {
 
   private List<KsqlDbList.KsqlTablesGridItem> initTablesItems() {
     List<KsqlDbList.KsqlTablesGridItem> gridItemList = new ArrayList<>();
-    allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+    gridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
         .forEach(item -> gridItemList.add(new KsqlDbList.KsqlTablesGridItem(item)));
     return gridItemList;
   }
@@ -89,7 +89,7 @@ public class KsqlDbList extends BasePage {
 
   private List<KsqlDbList.KsqlStreamsGridItem> initStreamsItems() {
     List<KsqlDbList.KsqlStreamsGridItem> gridItemList = new ArrayList<>();
-    allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+    gridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
         .forEach(item -> gridItemList.add(new KsqlDbList.KsqlStreamsGridItem(item)));
     return gridItemList;
   }

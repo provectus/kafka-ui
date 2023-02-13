@@ -11,19 +11,11 @@ export const Section = styled.div`
   --tw-border-opacity: 1;
   border-bottom-color: rgb(229 231 235 / var(--tw-border-opacity));
 `;
-export const SectionName = styled.h3`
-  --tw-text-opacity: 1;
-  color: rgb(17 24 39 / var(--tw-text-opacity));
-  line-height: 1.5rem;
-  font-weight: 500;
-  font-size: 1.125rem;
-`;
 export const Action = styled.div`
   grid-template-columns: repeat(6, minmax(0, 1fr));
   display: grid;
   gap: 1.5rem;
 `;
-
 export const ArrayFieldWrapper = styled.label`
   display: flex;
   flex-direction: column;
@@ -44,6 +36,9 @@ export const ButtonWrapper = styled.div`
   display: flex;
   gap: 10px;
 `;
+export const RemoveButton = styled(IconButtonWrapper)`
+  align-self: center;
+`;
 export const FlexRow = styled.div`
   display: flex;
   flex-direction: row;
@@ -53,9 +48,7 @@ export const FlexRow = styled.div`
 export const FlexGrow1 = styled.div`
   flex-grow: 1;
 `;
-
 // KafkaCluster
-
 export const BootstrapServer = styled(InputContainer)`
   grid-template-columns: 3fr 1fr 30px;
 `;
@@ -64,9 +57,15 @@ export const BootstrapServerActions = styled(IconButtonWrapper)`
   margin-top: 12px;
   margin-left: 8px;
 `;
-
+// Kafka Connect
+export const ConnectInputWrapper = styled(InputContainer)`
+  grid-template-columns: 1fr 30px;
+  max-width: 100%;
+  & > div > div {
+    padding-top: 1rem;
+  }
+`;
 // Metrics
-
 export const StyledPort = styled.div`
   width: 35%;
 `;
