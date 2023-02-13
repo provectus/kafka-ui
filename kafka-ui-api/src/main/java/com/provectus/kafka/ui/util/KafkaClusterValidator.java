@@ -65,7 +65,7 @@ public class KafkaClusterValidator {
       adminClient = AdminClient.create(properties);
     } catch (Exception e) {
       log.error("Error creating admin client during validation ", e);
-      return invalid("Error while creating AdminClient, check bootstrapServers availability" + e.getMessage());
+      return invalid("Error while creating AdminClient, check bootstrapServers availability");
     }
     return Mono.just(adminClient)
         .then(ReactiveAdminClient.toMono(adminClient.listTopics().names()))
