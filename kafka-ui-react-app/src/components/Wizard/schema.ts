@@ -142,30 +142,34 @@ const formSchema = object({
       }),
     })
   ),
-  // JMXMetrics: object({
-  //   port: number().positive().required('required field'),
-  //   isAuth: boolean().required('required field'),
-  //   username: string().when('isAuth', {
-  //     is: true,
-  //     then: (schema) => schema.required('required field'),
-  //   }),
-  //   password: string().when('isAuth', {
-  //     is: true,
-  //     then: (schema) => schema.required('required field'),
-  //   }),
-  //   isSSL: boolean().required('required field'),
-  //   truststoreLocation: string().when('isSSL', {
-  //     is: true,
-  //     then: (schema) => schema.required('required field'),
-  //   }),
-  //   truststorePassword: string().when('isSSL', {
-  //     is: true,
-  //     then: (schema) => schema.required('required field'),
-  //   }),
-  //   keystoreLocation: string(),
-  //   keystorePassword: string(),
-  //   keystoreKeyPassword: string(),
-  // }),
+  metrics: object({
+    type: string().oneOf(['none', 'JMX', 'PROMETHEUS']),
+    port: number()
+      .positive('Port must be a positive number')
+      .typeError('Port must be a number')
+      .required('Port is a required field'),
+    isAuth: boolean().required(),
+    username: string().when('isAuth', {
+      is: true,
+      then: (schema) => schema.required('Field is a required'),
+    }),
+    password: string().when('isAuth', {
+      is: true,
+      then: (schema) => schema.required('Field is a required'),
+    }),
+    isSSL: boolean().required(),
+    truststoreLocation: string().when('isSSL', {
+      is: true,
+      then: (schema) => schema.required('Field is a required'),
+    }),
+    truststorePassword: string().when('isSSL', {
+      is: true,
+      then: (schema) => schema.required('Field is a required'),
+    }),
+    keystoreLocation: string(),
+    keystorePassword: string(),
+    keystoreKeyPassword: string(),
+  }),
 });
 
 export default formSchema;
