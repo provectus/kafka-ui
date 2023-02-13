@@ -4,12 +4,13 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import formSchema from 'components/Wizard/schema';
 import { StyledForm } from 'components/common/Form/Form.styled';
+import { useValidateAppConfig } from 'lib/hooks/api/appConfig';
 
 import * as S from './WizardForm.styled';
 import KafkaCluster from './KafkaCluster/KafkaCluster';
 import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
-import { useValidateAppConfig } from 'lib/hooks/api/appConfig';
+import Metrics from './Metrics/Metrics';
 
 type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT';
 
@@ -95,30 +96,16 @@ const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
             </Button>
           </div>
         </S.Section>
-        <S.Section>
-          <S.SectionName>JMX Metrics</S.SectionName>
-          <div>
-            <Button buttonSize="M" buttonType="primary">
-              Configure JMX Metrics
-            </Button>
-          </div>
-        </S.Section>
-        <div style={{ paddingTop: '10px' }}>
-          <div
-            style={{
-              justifyContent: 'center',
-              display: 'flex',
-              gap: '10px',
-            }}
-          >
-            <Button buttonSize="M" buttonType="primary" onClick={onReset}>
-              Reset
-            </Button>
-            <Button type="submit" buttonSize="M" buttonType="primary">
-              Save
-            </Button>
-          </div>
-        </div>
+        <Metrics />
+        <hr />
+        <S.ButtonWrapper>
+          <Button buttonSize="L" buttonType="primary" onClick={onReset}>
+            Reset
+          </Button>
+          <Button type="submit" buttonSize="L" buttonType="primary">
+            Save
+          </Button>
+        </S.ButtonWrapper>
       </StyledForm>
     </FormProvider>
   );
