@@ -9,6 +9,7 @@ import * as S from './WizardForm.styled';
 import KafkaCluster from './KafkaCluster/KafkaCluster';
 import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
+import KafkaConnect from './KafkaConnect/KafkaConnect';
 import Metrics from './Metrics/Metrics';
 
 type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT';
@@ -22,6 +23,13 @@ export type SchemaRegistryType = {
   isAuth: boolean;
   username?: string;
   password?: string;
+};
+type KafkaConnectType = {
+  name: string;
+  url: string;
+  isAuth: boolean;
+  username: string;
+  password: string;
 };
 export type ClusterConfigFormValues = {
   name: string;
@@ -37,6 +45,7 @@ export type ClusterConfigFormValues = {
   authMethod?: string;
   schemaRegistry?: SchemaRegistryType;
   properties?: Record<string, string>;
+  kafkaConnect: KafkaConnectType[];
 };
 
 interface WizardFormProps {
@@ -47,6 +56,15 @@ interface WizardFormProps {
 const CLUSTER_CONFIG_FORM_DEFAULT_VALUES: Partial<ClusterConfigFormValues> = {
   bootstrapServers: [{ host: '', port: '' }],
   useTruststore: false,
+  kafkaConnect: [
+    {
+      name: '',
+      url: '',
+      isAuth: false,
+      username: '',
+      password: '',
+    },
+  ],
 };
 
 const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
@@ -80,14 +98,8 @@ const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
         <hr />
         <SchemaRegistry />
         <hr />
-        <S.Section>
-          <S.SectionName>Kafka Connect</S.SectionName>
-          <div>
-            <Button buttonSize="M" buttonType="primary">
-              Add Kafka Connect
-            </Button>
-          </div>
-        </S.Section>
+        <KafkaConnect />
+        <hr />
         <Metrics />
         <hr />
         <S.ButtonWrapper>
