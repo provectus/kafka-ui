@@ -1,6 +1,6 @@
 import { appConfigApiClient as api } from 'lib/api';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ValidateConfigRequest } from 'generated-sources';
+import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
 
 export function useAppConfig() {
   return useQuery(['appConfig'], () => api.getCurrentConfig());
@@ -16,7 +16,9 @@ export function useAppConfigFilesUpload() {
 }
 
 export function useValidateAppConfig() {
-  return useMutation((config: ValidateConfigRequest) =>
-    api.validateConfig(config)
+  return useMutation((config: ApplicationConfigPropertiesKafkaClustersInner) =>
+    api.validateConfig({
+      applicationConfig: { properties: { kafka: { clusters: [config] } } },
+    })
   );
 }

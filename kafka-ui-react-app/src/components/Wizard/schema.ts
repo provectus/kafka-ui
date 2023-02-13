@@ -146,25 +146,24 @@ const formSchema = object({
     type: string().oneOf(['none', 'JMX', 'PROMETHEUS']),
     port: number()
       .positive('Port must be a positive number')
-      .typeError('Port must be a number')
-      .required('Port is a required field'),
-    isAuth: boolean().required(),
+      .typeError('Port must be a number'),
+    isAuth: boolean(),
     username: string().when('isAuth', {
       is: true,
-      then: (schema) => schema.required('Field is a required'),
+      then: (schema) => schema.required('required field'),
     }),
     password: string().when('isAuth', {
       is: true,
-      then: (schema) => schema.required('Field is a required'),
+      then: (schema) => schema.required('required field'),
     }),
-    isSSL: boolean().required(),
+    isSSL: boolean(),
     truststoreLocation: string().when('isSSL', {
       is: true,
-      then: (schema) => schema.required('Field is a required'),
+      then: (schema) => schema.required('required field'),
     }),
     truststorePassword: string().when('isSSL', {
       is: true,
-      then: (schema) => schema.required('Field is a required'),
+      then: (schema) => schema.required('required field'),
     }),
     keystoreLocation: string(),
     keystorePassword: string(),

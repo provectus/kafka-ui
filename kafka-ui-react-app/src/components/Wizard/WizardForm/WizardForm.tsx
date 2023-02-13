@@ -5,6 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import formSchema from 'components/Wizard/schema';
 import { StyledForm } from 'components/common/Form/Form.styled';
 import { useValidateAppConfig } from 'lib/hooks/api/appConfig';
+import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
 
 import * as S from './WizardForm.styled';
 import KafkaCluster from './KafkaCluster/KafkaCluster';
@@ -66,7 +67,15 @@ const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
     // eslint-disable-next-line no-console
     console.log('SubmitData', data);
 
-    const resp = await validate.mutateAsync(data);
+    const config: ApplicationConfigPropertiesKafkaClustersInner = {
+      name: data.name,
+      bootstrapServers: data.bootstrapServers
+        .map(({ host, port }) => `${host}:${port}`)
+        .join(','),
+      readOnly: data.readOnly,
+    };
+
+    const resp = await validate.mutateAsync(config);
     // eslint-disable-next-line no-console
     console.log('resp', resp);
 
