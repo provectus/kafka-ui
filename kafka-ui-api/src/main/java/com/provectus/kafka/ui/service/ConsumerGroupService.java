@@ -7,6 +7,7 @@ import com.provectus.kafka.ui.model.InternalTopicConsumerGroup;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
+import com.provectus.kafka.ui.util.SslPropertiesUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -27,7 +28,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.ConsumerGroupState;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
 import org.springframework.stereotype.Service;
@@ -215,13 +215,7 @@ public class ConsumerGroupService {
   public KafkaConsumer<Bytes, Bytes> createConsumer(KafkaCluster cluster,
                                                     Map<String, Object> properties) {
     Properties props = new Properties();
-    var ssl = cluster.getOriginalProperties().getSsl();
-    if (ssl != null) {
-      props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, ssl.getTruststoreLocation());
-      props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, ssl.getTruststorePassword());
-      props.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, ssl.getKeystoreLocation());
-      props.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, ssl.getKeystorePassword());
-    }
+    SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), props);
     props.putAll(cluster.getProperties());
     props.put(ConsumerConfig.CLIENT_ID_CONFIG, "kafka-ui-consumer-" + System.currentTimeMillis());
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
