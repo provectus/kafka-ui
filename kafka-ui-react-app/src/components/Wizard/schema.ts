@@ -127,21 +127,21 @@ const formSchema = object({
   authentication: authSchema,
   schemaRegistry: schemaRegistrySchema,
 
-  // kafkaConnect: array().of(
-  //   object({
-  //     name: requiredString,
-  //     url: requiredString,
-  //     isAuth: boolean().required('required field'),
-  //     username: string().when('isAuth', {
-  //       is: true,
-  //       then: (schema) => schema.required('required field'),
-  //     }),
-  //     password: string().when('isAuth', {
-  //       is: true,
-  //       then: (schema) => schema.required('required field'),
-  //     }),
-  //   })
-  // ),
+  kafkaConnect: array().of(
+    object({
+      name: requiredString,
+      url: requiredString,
+      isAuth: boolean().required('required field'),
+      username: string().when('isAuth', {
+        is: true,
+        then: (schema) => schema.required('required field'),
+      }),
+      password: string().when('isAuth', {
+        is: true,
+        then: (schema) => schema.required('required field'),
+      }),
+    })
+  ),
   metrics: object({
     type: string().oneOf(['none', 'JMX', 'PROMETHEUS']),
     port: number()
