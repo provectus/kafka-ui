@@ -26,7 +26,8 @@ const Fileupload: React.FC<{ name: string; label: string }> = ({
       const formData = new FormData();
       const file = e.target.files[0];
       formData.append('file', file);
-      await upload.mutateAsync(formData);
+      const resp = await upload.mutateAsync(formData);
+      setValue(name, resp.location);
     }
   };
 
@@ -37,8 +38,8 @@ const Fileupload: React.FC<{ name: string; label: string }> = ({
   return (
     <div>
       <InputLabel htmlFor={id}>{label}</InputLabel>
-      {upload.isLoading && <p>Uploading...</p>}
-      {upload.isSuccess && loc && (
+
+      {loc ? (
         <FlexRow>
           <FlexGrow1>
             <Input name={name} disabled />
@@ -47,11 +48,14 @@ const Fileupload: React.FC<{ name: string; label: string }> = ({
             Reset
           </Button>
         </FlexRow>
-      )}
-      {upload.isIdle && !loc && (
-        <p>
-          <input type="file" onChange={handleFileChange} />
-        </p>
+      ) : (
+        <div>
+          {upload.isLoading ? (
+            <p>Uploading...</p>
+          ) : (
+            <input type="file" onChange={handleFileChange} />
+          )}
+        </div>
       )}
       <FormError>
         <ErrorMessage name={name} />
