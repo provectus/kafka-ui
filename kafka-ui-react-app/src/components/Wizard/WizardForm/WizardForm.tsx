@@ -58,15 +58,6 @@ interface WizardFormProps {
 const CLUSTER_CONFIG_FORM_DEFAULT_VALUES: Partial<ClusterConfigFormValues> = {
   bootstrapServers: [{ host: '', port: '' }],
   useTruststore: false,
-  kafkaConnect: [
-    {
-      name: '',
-      url: '',
-      isAuth: false,
-      username: '',
-      password: '',
-    },
-  ],
 };
 
 const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {

@@ -24,6 +24,10 @@ export const ArrayFieldWrapper = styled.label`
   padding: 8px;
   border-radius: 4px;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 15%);
+
+  hr {
+    margin: 10px 0 5px;
+  }
 `;
 export const InputContainer = styled.div`
   display: grid;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
 import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
@@ -14,32 +14,13 @@ import {
 } from 'components/Wizard/WizardForm/WizardForm.styled';
 
 const KafkaConnect = () => {
-  const [newKafkaConnect, setNewKafkaConnect] = useState(false);
-  const { control, getValues, setValue, watch } = useFormContext();
-  const showConnects = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-    setNewKafkaConnect(!newKafkaConnect);
-  };
+  const { control, watch, setValue } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'kafkaConnect',
   });
-  const connects = getValues('kafkaConnect');
-  useEffect(() => {
-    if (connects?.length < 1) {
-      setNewKafkaConnect(false);
-      setValue('kafkaConnect', []);
-    }
-  }, [connects]);
-  const handleAddConnectForm = () => {
-    append({
-      name: '',
-      url: '',
-      isAuth: false,
-      username: '',
-      password: ',',
-    });
-  };
+  const handleAppend = () => append({});
+  const clearConfig = () => setValue('kafkaConnect', []);
 
   return (
     <>
@@ -47,22 +28,22 @@ const KafkaConnect = () => {
         <FlexGrow1>
           <Heading level={3}>Kafka Connect</Heading>
         </FlexGrow1>
-        {!newKafkaConnect && (
-          <Button
-            buttonSize="M"
-            buttonType="primary"
-            onClick={(e) => showConnects(e)}
-          >
+        {fields.length === 0 ? (
+          <Button buttonSize="M" buttonType="primary" onClick={handleAppend}>
             Add Kafka Connect
+          </Button>
+        ) : (
+          <Button buttonSize="M" buttonType="primary" onClick={clearConfig}>
+            Remove From Config
           </Button>
         )}
       </FlexRow>
-      {newKafkaConnect && (
+      {fields.length > 0 && (
         <S.ArrayFieldWrapper>
           {fields.map((item, index) => (
             <div key={item.id}>
-              <S.ConnectInputWrapper>
-                <div>
+              <FlexRow>
+                <FlexGrow1>
                   <Input
                     label="Kafka Connect name *"
                     name={`kafkaConnect.${index}.name`}
@@ -83,13 +64,13 @@ const KafkaConnect = () => {
                     name={`kafkaConnect.${index}.isAuth`}
                     label="Kafka Connect is secured with auth?"
                   />
-                </div>
+                </FlexGrow1>
                 <S.RemoveButton onClick={() => remove(index)}>
                   <IconButtonWrapper aria-label="deleteProperty">
                     <CloseIcon aria-hidden />
                   </IconButtonWrapper>
                 </S.RemoveButton>
-              </S.ConnectInputWrapper>
+              </FlexRow>
               {watch(`kafkaConnect.${index}.isAuth`) && (
                 <FlexRow>
                   <FlexGrow1>
@@ -110,19 +91,18 @@ const KafkaConnect = () => {
                   </FlexGrow1>
                 </FlexRow>
               )}
+              <hr />
             </div>
           ))}
-          <div>
-            <Button
-              type="button"
-              buttonSize="M"
-              buttonType="secondary"
-              onClick={handleAddConnectForm}
-            >
-              <PlusIcon />
-              Add Kafka Connect
-            </Button>
-          </div>
+          <Button
+            type="button"
+            buttonSize="M"
+            buttonType="secondary"
+            onClick={handleAppend}
+          >
+            <PlusIcon />
+            Add Kafka Connect
+          </Button>
         </S.ArrayFieldWrapper>
       )}
     </>
