@@ -3,12 +3,14 @@ import { object, string, number, array, boolean, mixed, lazy } from 'yup';
 
 const requiredString = string().required('required field');
 
+const portSchema = number()
+  .positive('positive only')
+  .typeError('numbers only')
+  .required('required');
+
 const bootstrapServerSchema = object({
   host: requiredString,
-  port: number()
-    .positive('positive only')
-    .typeError('numbers only')
-    .required('required'),
+  port: portSchema,
 });
 
 const schemaRegistrySchema = lazy((value) => {
@@ -54,24 +56,13 @@ const metricsSchema = lazy((value) => {
   if (typeof value === 'object') {
     object({
       type: string().oneOf(['none', 'JMX', 'PROMETHEUS']),
-      port: number()
-        .positive('Port must be a positive number')
-        .typeError('Port must be a number'),
+      port: portSchema,
       isAuth: boolean(),
       username: string().when('isAuth', {
         is: true,
         then: (schema) => schema.required('required field'),
       }),
       password: string().when('isAuth', {
-        is: true,
-        then: (schema) => schema.required('required field'),
-      }),
-      isSSL: boolean(),
-      truststoreLocation: string().when('isSSL', {
-        is: true,
-        then: (schema) => schema.required('required field'),
-      }),
-      truststorePassword: string().when('isSSL', {
         is: true,
         then: (schema) => schema.required('required field'),
       }),

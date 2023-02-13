@@ -356,9 +356,3 @@ export const SeekTypeSelect = styled(Select)`
   border-bottom-right-radius: 0;
   user-select: none;
 `;
-
-export const Serdes = styled.div`
-  display: flex;
-  gap: 24px;
-  padding 8px 0;
-`;
