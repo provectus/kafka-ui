@@ -113,7 +113,7 @@ public class TopicsTest extends BaseTest {
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(268)
     @Test(priority = 3)
-    public void checkCustomParametersAvailability() {
+    public void checkCustomParametersWithinEditExistingTopic() {
         navigateToTopicsAndOpenDetails(TOPIC_TO_UPDATE_AND_DELETE.getName());
         topicDetails
                 .openDotMenu()
