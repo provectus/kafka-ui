@@ -1,9 +1,6 @@
 package com.provectus.kafka.ui.pages.topics;
 
-import com.codeborne.selenide.ClickOptions;
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.*;
 import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.pages.topics.enums.CleanupPolicyValue;
 import com.provectus.kafka.ui.pages.topics.enums.CustomParameterType;
@@ -91,8 +88,20 @@ public class TopicCreateEditForm extends BasePage {
     }
 
     @Step
-    public TopicCreateEditForm setCustomParameterType(CustomParameterType customParameterType) {
+    public TopicCreateEditForm openCustomParameterTypeDdl() {
         customParameterDdl.shouldBe(Condition.visible).click();
+        ddlOptions.shouldHave(CollectionCondition.sizeGreaterThan(0));
+        return this;
+    }
+
+    @Step
+    public ElementsCollection getAllDdlOptions() {
+        return getDdlOptions();
+    }
+
+    @Step
+    public TopicCreateEditForm setCustomParameterType(CustomParameterType customParameterType) {
+        openCustomParameterTypeDdl();
         $x(String.format(ddlElementLocator, customParameterType.getOptionValue())).shouldBe(Condition.visible).click();
         return this;
     }
