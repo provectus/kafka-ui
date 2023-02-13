@@ -16,11 +16,11 @@ import Metrics from './Metrics/Metrics';
 
 type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT';
 
-export type BootstrapServer = {
+type BootstrapServer = {
   host: string;
   port: string;
 };
-export type SchemaRegistryType = {
+type SchemaRegistryType = {
   url?: string;
   isAuth: boolean;
   username?: string;
