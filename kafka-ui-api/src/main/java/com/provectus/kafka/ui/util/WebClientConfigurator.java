@@ -41,7 +41,7 @@ public class WebClientConfigurator {
   }
 
 
-  public WebClientConfigurator configureSsl(@Nullable ClustersProperties.WebClientSsl ssl) {
+  public WebClientConfigurator configureSsl(@Nullable ClustersProperties.Ssl ssl) {
     if (ssl != null) {
       return configureSsl(
           ssl.getKeystoreLocation(),
@@ -54,30 +54,28 @@ public class WebClientConfigurator {
   }
 
   @SneakyThrows
-  public WebClientConfigurator configureSsl(
+  private WebClientConfigurator configureSsl(
       @Nullable String keystoreLocation,
       @Nullable String keystorePassword,
       @Nullable String truststoreLocation,
       @Nullable String truststorePassword) {
-    // If we want to customize our TLS configuration, we need at least a truststore
-    if (truststoreLocation == null || truststorePassword == null) {
+    if (truststoreLocation == null && keystoreLocation == null) {
       return this;
     }
 
     SslContextBuilder contextBuilder = SslContextBuilder.forClient();
-
-    // Prepare truststore
-    KeyStore trustStore = KeyStore.getInstance("JKS");
-    trustStore.load(
-        new FileInputStream((ResourceUtils.getFile(truststoreLocation))),
-        truststorePassword.toCharArray()
-    );
-
-    TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
-        TrustManagerFactory.getDefaultAlgorithm()
-    );
-    trustManagerFactory.init(trustStore);
-    contextBuilder.trustManager(trustManagerFactory);
+    if (truststoreLocation != null && truststorePassword != null) {
+      KeyStore trustStore = KeyStore.getInstance("JKS");
+      trustStore.load(
+          new FileInputStream((ResourceUtils.getFile(truststoreLocation))),
+          truststorePassword.toCharArray()
+      );
+      TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+          TrustManagerFactory.getDefaultAlgorithm()
+      );
+      trustManagerFactory.init(trustStore);
+      contextBuilder.trustManager(trustManagerFactory);
+    }
 
     // Prepare keystore only if we got a keystore
     if (keystoreLocation != null && keystorePassword != null) {

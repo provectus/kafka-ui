@@ -54,6 +54,7 @@ public class KafkaClusterValidator {
   private static Mono<ApplicationPropertyValidationDTO> validateCluster(KafkaCluster cluster) {
     // editing properties to make validation faster
     Properties properties = new Properties();
+    SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
     properties.putAll(cluster.getProperties());
     properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
     properties.put(AdminClientConfig.RETRIES_CONFIG, 1);

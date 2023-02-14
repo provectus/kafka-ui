@@ -20,6 +20,7 @@ import java.util.Properties;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.unit.DataSize;
@@ -27,6 +28,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class KafkaClusterFactory {
 
   @Value("${webclient.max-in-memory-buffer-size:20MB}")
@@ -37,7 +39,7 @@ public class KafkaClusterFactory {
 
     builder.name(clusterProperties.getName());
     builder.bootstrapServers(clusterProperties.getBootstrapServers());
-    builder.properties(convertProperties(clusterProperties.getProperties()));
+    builder.properties(convertProperties(null, clusterProperties.getProperties()));
     builder.readOnly(clusterProperties.isReadOnly());
     builder.masking(DataMasking.create(clusterProperties.getMasking()));
     builder.metricsConfig(metricsConfigDataToMetricsConfig(clusterProperties.getMetrics()));
@@ -52,10 +54,19 @@ public class KafkaClusterFactory {
     return builder.build();
   }
 
-  private Properties convertProperties(@Nullable Map<String, Object> propertiesMap) {
+  private Properties convertProperties(@Nullable String prefix,
+                                       @Nullable Map<String, Object> propertiesMap) {
     Properties properties = new Properties();
     if (propertiesMap != null) {
-      properties.putAll(propertiesMap);
+      propertiesMap.forEach((k, v) -> {
+        String key = prefix == null ? k : prefix + "." + k;
+        //flattening key names
+        if (v instanceof Map<?, ?>) {
+          properties.putAll(convertProperties(key, (Map<String, Object>) v));
+        } else {
+          properties.put(key, v);
+        }
+      });
     }
     return properties;
   }
@@ -70,7 +81,11 @@ public class KafkaClusterFactory {
     clusterProperties.getKafkaConnect().forEach(c -> {
       ReactiveFailover<KafkaConnectClientApi> failover = ReactiveFailover.create(
           parseUrlList(c.getAddress()),
-          url -> new RetryingKafkaConnectClient(c.toBuilder().address(url).build(), maxBuffSize),
+          url -> new RetryingKafkaConnectClient(
+              c.toBuilder().address(url).build(),
+              clusterProperties.getSsl(),
+              maxBuffSize
+          ),
           ReactiveFailover.CONNECTION_REFUSED_EXCEPTION_FILTER,
           "No alive connect instances available",
           ReactiveFailover.DEFAULT_RETRY_GRACE_PERIOD_MS
@@ -88,7 +103,7 @@ public class KafkaClusterFactory {
     var auth = Optional.ofNullable(clusterProperties.getSchemaRegistryAuth())
         .orElse(new ClustersProperties.SchemaRegistryAuth());
     WebClient webClient = new WebClientConfigurator()
-        .configureSsl(clusterProperties.getSchemaRegistrySsl())
+        .configureSsl(clusterProperties.getSsl())
         .configureBasicAuth(auth.getUsername(), auth.getPassword())
         .configureBufferSize(maxBuffSize)
         .build();
@@ -111,7 +126,7 @@ public class KafkaClusterFactory {
         url -> new KsqlApiClient(
             url,
             clusterProperties.getKsqldbServerAuth(),
-            clusterProperties.getKsqldbServerSsl(),
+            clusterProperties.getSsl(),
             maxBuffSize
         ),
         ReactiveFailover.CONNECTION_REFUSED_EXCEPTION_FILTER,

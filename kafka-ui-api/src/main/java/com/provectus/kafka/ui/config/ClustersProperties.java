@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,10 +30,8 @@ public class ClustersProperties {
     String bootstrapServers;
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
-    WebClientSsl schemaRegistrySsl;
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
-    WebClientSsl ksqldbServerSsl;
     List<ConnectCluster> kafkaConnect;
     MetricsConfigData metrics;
     Map<String, Object> properties;
@@ -41,9 +41,11 @@ public class ClustersProperties {
     String defaultValueSerde;
     List<Masking> masking;
     Long pollingThrottleRate;
+    Ssl ssl;
   }
 
   @Data
+  @ToString(exclude = "password")
   public static class MetricsConfigData {
     String type;
     Integer port;
@@ -56,15 +58,12 @@ public class ClustersProperties {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder(toBuilder = true)
+  @ToString(exclude = "password")
   public static class ConnectCluster {
     String name;
     String address;
     String userName;
     String password;
-    String keystoreLocation;
-    String keystorePassword;
-    String truststoreLocation;
-    String truststorePassword;
   }
 
   @Data
@@ -74,7 +73,8 @@ public class ClustersProperties {
   }
 
   @Data
-  public static class WebClientSsl {
+  @ToString(exclude = {"keystorePassword", "truststorePassword"})
+  public static class Ssl {
     String keystoreLocation;
     String keystorePassword;
     String truststoreLocation;
