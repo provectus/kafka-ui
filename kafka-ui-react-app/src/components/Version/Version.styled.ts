@@ -9,8 +9,8 @@ const textStyle = css`
   font-family: Inter, sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 20px;
 `;
 
 export const CurrentVersion = styled.span(

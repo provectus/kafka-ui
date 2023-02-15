@@ -646,6 +646,9 @@ export const theme = {
     liderReplica: {
       color: Colors.green[60],
     },
+    outOfSync: {
+      color: Colors.red[50],
+    },
   },
 
   viewer: {
