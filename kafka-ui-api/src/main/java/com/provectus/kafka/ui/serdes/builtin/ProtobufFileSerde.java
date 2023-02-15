@@ -189,6 +189,11 @@ public class ProtobufFileSerde implements BuiltInSerde {
     );
   }
 
+  @SneakyThrows
+  private static String readFileAsString(Path path) {
+    return Files.readString(path);
+  }
+
   //----------------------------------------------------------------------------------------------------------------
 
   @VisibleForTesting
@@ -285,7 +290,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
                                        Optional<List<String>> protobufFiles,
                                        Optional<String> protobufFilesDir) {
       if (protobufFilesDir.isPresent()) {
-        if (protobufFile.isPresent() && protobufFiles.isPresent()) {
+        if (protobufFile.isPresent() || protobufFiles.isPresent()) {
           log.warn("protobufFile and protobufFiles properties will be ignored, since protobufFilesDir provided");
         }
         return new ProtoSchemaLoader(protobufFilesDir.get()).load();
@@ -300,11 +305,6 @@ public class ProtobufFileSerde implements BuiltInSerde {
           .map(filePath -> new ProtobufSchema(readFileAsString(filePath)).rawSchema())
           .map(ProtoFile.Companion::get)
           .toList();
-    }
-
-    @SneakyThrows
-    private static String readFileAsString(Path path) {
-      return Files.readString(path);
     }
 
     private static void addProtobufSchema(Map<Descriptor, Path> descriptorPaths,

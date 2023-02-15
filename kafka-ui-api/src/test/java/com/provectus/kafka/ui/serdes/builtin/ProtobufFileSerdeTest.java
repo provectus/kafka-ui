@@ -54,9 +54,9 @@ class ProtobufFileSerdeTest {
     var schemas = new ProtobufFileSerde.ProtoSchemaLoader(
         ResourceUtils.getFile("classpath:protobuf-serde/").getPath()).load();
 
-    Map<String, ProtoFileElement> files = ProtobufFileSerde.protoFileElementsByName(schemas);
+    Map<String, ProtoFileElement> files = ProtobufFileSerde.Configuration.protoFileElementsByName(schemas);
 
-    var  addressBookSchema = new ProtobufSchema(files.get("address-book.proto"), List.of(), files);
+    var addressBookSchema = new ProtobufSchema(files.get("address-book.proto"), List.of(), files);
     var builder = addressBookSchema.newMessageBuilder("test.Person");
     JsonFormat.parser().merge(samplePersonMsgJson, builder);
     personMessageBytes = builder.build().toByteArray();
@@ -91,11 +91,13 @@ class ProtobufFileSerdeTest {
 
     var serde = new ProtobufFileSerde();
     serde.configure(
-        null,
-        null,
-        descriptorPaths,
-        messageNameMap,
-        keyMessageNameMap
+        new ProtobufFileSerde.Configuration(
+            null,
+            null,
+            descriptorPaths,
+            messageNameMap,
+            keyMessageNameMap
+        )
     );
 
     var deserializedPerson = serde.deserializer("persons", Serde.Target.VALUE)
@@ -118,11 +120,13 @@ class ProtobufFileSerdeTest {
         "books", addressBookDescriptor);
     var serde = new ProtobufFileSerde();
     serde.configure(
-        null,
-        null,
-        descriptorPaths,
-        messageNameMap,
-        keyMessageNameMap
+        new ProtobufFileSerde.Configuration(
+            null,
+            null,
+            descriptorPaths,
+            messageNameMap,
+            keyMessageNameMap
+        )
     );
 
     var deserializedPerson = serde.deserializer("persons", Serde.Target.VALUE)
@@ -142,11 +146,13 @@ class ProtobufFileSerdeTest {
   void testDefaultMessageName() {
     var serde = new ProtobufFileSerde();
     serde.configure(
-        personDescriptor,
-        addressBookDescriptor,
-        descriptorPaths,
-        Map.of(),
-        Map.of()
+        new ProtobufFileSerde.Configuration(
+            personDescriptor,
+            addressBookDescriptor,
+            descriptorPaths,
+            Map.of(),
+            Map.of()
+        )
     );
 
     var deserializedPerson = serde.deserializer("persons", Serde.Target.VALUE)
@@ -169,11 +175,13 @@ class ProtobufFileSerdeTest {
 
     var serde = new ProtobufFileSerde();
     serde.configure(
-        null,
-        null,
-        descriptorPaths,
-        messageNameMap,
-        keyMessageNameMap
+        new ProtobufFileSerde.Configuration(
+            null,
+            null,
+            descriptorPaths,
+            messageNameMap,
+            keyMessageNameMap
+        )
     );
 
     var personBytes = serde.serializer("persons", Serde.Target.VALUE)
@@ -198,11 +206,13 @@ class ProtobufFileSerdeTest {
 
     var serde = new ProtobufFileSerde();
     serde.configure(
-        null,
-        null,
-        descriptorPaths,
-        messageNameMap,
-        keyMessageNameMap
+        new ProtobufFileSerde.Configuration(
+            null,
+            null,
+            descriptorPaths,
+            messageNameMap,
+            keyMessageNameMap
+        )
     );
 
     var personBytes = serde.serializer("persons", Serde.Target.VALUE)
@@ -224,11 +234,13 @@ class ProtobufFileSerdeTest {
   void testSerializeDefaults() {
     var serde = new ProtobufFileSerde();
     serde.configure(
-        personDescriptor,
-        addressBookDescriptor,
-        descriptorPaths,
-        Map.of(),
-        Map.of()
+        new ProtobufFileSerde.Configuration(
+            personDescriptor,
+            addressBookDescriptor,
+            descriptorPaths,
+            Map.of(),
+            Map.of()
+        )
     );
 
     var personBytes = serde.serializer("persons", Serde.Target.VALUE)
