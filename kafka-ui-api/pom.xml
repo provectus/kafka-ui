@@ -88,11 +88,11 @@
             <version>${confluent.version}</version>
         </dependency>
         <!-- Required for com.squareup.wire.schema.SchemaLoader -->
-        <dependency>
-            <groupId>com.squareup.wire</groupId>
-            <artifactId>wire-compiler</artifactId>
-            <version>${wire.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.squareup.wire</groupId>-->
+<!--            <artifactId>wire-compiler</artifactId>-->
+<!--            <version>${wire.version}</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>software.amazon.msk</groupId>

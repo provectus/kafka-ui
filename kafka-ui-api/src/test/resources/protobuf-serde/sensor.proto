@@ -1,7 +1,5 @@
 syntax = "proto3";
-package iot;
-
-import "language/language.proto";
+package test;
 
 message Sensor {
     string name = 1;
@@ -13,6 +11,4 @@ message Sensor {
         OPEN = 1;
     }
     SwitchLevel door = 5;
-
-    optional iot.language.Language lang = 6;
 }

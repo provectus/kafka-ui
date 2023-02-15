@@ -1,5 +1,5 @@
 syntax = "proto3";
-package iot.language;
+package test.lang;
 
 enum Language {
     DE = 0;
