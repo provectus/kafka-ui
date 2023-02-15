@@ -62,7 +62,7 @@ public class BrokersList extends BasePage {
 
     private List<BrokersList.BrokerGridItem> initGridItems() {
         List<BrokersList.BrokerGridItem> gridItemList = new ArrayList<>();
-        allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+        gridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
                 .forEach(item -> gridItemList.add(new BrokersList.BrokerGridItem(item)));
         return gridItemList;
     }
