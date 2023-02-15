@@ -23,14 +23,14 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
     React.useContext(ClusterContext);
   const { clusterName } = useAppParams<ClusterNameRoute>();
 
-  const clearMessage = useClearTopicMessages(clusterName);
+  const clearMessages = useClearTopicMessages(clusterName);
   const deleteTopic = useDeleteTopic(clusterName);
   const recreateTopic = useRecreateTopic({ clusterName, topicName: name });
 
   const disabled = internal || isReadOnly;
 
   const clearTopicMessagesHandler = async () => {
-    await clearMessage.mutateAsync(name);
+    await clearMessages.mutateAsync(name);
   };
 
   const isCleanupDisabled = cleanUpPolicy !== CleanUpPolicy.DELETE;

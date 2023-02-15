@@ -14,10 +14,10 @@ const ActionsCell: React.FC<CellContext<Partition, unknown>> = ({ row }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { partition } = row.original;
 
-  const clearMessage = useClearTopicMessages(clusterName, [partition]);
+  const clearMessages = useClearTopicMessages(clusterName, [partition]);
 
   const clearTopicMessagesHandler = async () => {
-    await clearMessage.mutateAsync(topicName);
+    await clearMessages.mutateAsync(topicName);
   };
   const disabled =
     data?.internal || isReadOnly || data?.cleanUpPolicy !== 'DELETE';
