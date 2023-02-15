@@ -1,7 +1,7 @@
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import styled from 'styled-components';
 
-export const ArrayFieldWrapper = styled.label`
+export const ArrayFieldWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -36,6 +36,9 @@ export const FlexRow = styled.div`
 `;
 export const FlexGrow1 = styled.div`
   flex-grow: 1;
+  row-gap: 8px;
+  flex-direction: column;
+  display: flex;
 `;
 // KafkaCluster
 export const BootstrapServer = styled(InputContainer)`

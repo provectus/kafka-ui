@@ -76,7 +76,6 @@ export const QUERY_REFETCH_OFF_OPTIONS = {
 
 // Cluster Form Constants
 export const AUTH_OPTIONS: SelectOption[] = [
-  { value: 'none', label: 'None' },
   { value: 'SASL/JAAS', label: 'SASL/JAAS' },
   { value: 'SASL/GSSAPI', label: 'SASL/GSSAPI' },
   { value: 'SASL/OAUTHBEARER', label: 'SASL/OAUTHBEARER' },
@@ -94,7 +93,6 @@ export const SECURITY_PROTOCOL_OPTIONS: SelectOption[] = [
   { value: 'SASL_PLAINTEXT', label: 'SASL_PLAINTEXT' },
 ];
 export const METRICS_OPTIONS: SelectOption[] = [
-  { value: 'none', label: 'None' },
   { value: 'JMX', label: 'JMX' },
   { value: 'PROMETHEUS', label: 'PROMETHEUS' },
 ];

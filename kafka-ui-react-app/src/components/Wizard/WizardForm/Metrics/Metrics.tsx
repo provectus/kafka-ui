@@ -33,6 +33,7 @@ const Metrics = () => {
           <ControlledSelect
             name="metrics.type"
             label="Metrics Type"
+            placeholder="Choose metrics type"
             options={METRICS_OPTIONS}
           />
           <Input
@@ -42,32 +43,6 @@ const Metrics = () => {
             positiveOnly
             withError
           />
-          <FlexRow>
-            <FlexGrow1>
-              <Input
-                label="Keystore location"
-                name="metrics.keystoreLocation"
-                type="text"
-                withError
-              />
-            </FlexGrow1>
-            <FlexGrow1>
-              <Input
-                label="Keystore Password"
-                name="metrics.keystorePassword"
-                type="password"
-                withError
-              />
-            </FlexGrow1>
-            <FlexGrow1>
-              <Input
-                label="Keystore key password"
-                name="metrics.keystoreKeyPassword"
-                type="password"
-                withError
-              />
-            </FlexGrow1>
-          </FlexRow>
           <Checkbox name="metrics.isAuth" label="Secured with auth?" />
           {isAuth && (
             <FlexRow>

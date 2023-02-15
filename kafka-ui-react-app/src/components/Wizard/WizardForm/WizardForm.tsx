@@ -5,7 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import formSchema from 'components/Wizard/schema';
 import { StyledForm } from 'components/common/Form/Form.styled';
 import { useValidateAppConfig } from 'lib/hooks/api/appConfig';
-import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
+import { ClusterConfigFormValues } from 'components/Wizard/types';
+import { transformFormDataToPayload } from 'components/Wizard/utils/transformFormDataToPayload';
 
 import * as S from './WizardForm.styled';
 import KafkaCluster from './KafkaCluster/KafkaCluster';
@@ -14,42 +15,6 @@ import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
 import KafkaConnect from './KafkaConnect/KafkaConnect';
 import Metrics from './Metrics/Metrics';
 
-type SecurityProtocol = 'SASL_SSL' | 'SASL_PLAINTEXT';
-
-type BootstrapServer = {
-  host: string;
-  port: string;
-};
-type SchemaRegistryType = {
-  url?: string;
-  isAuth: boolean;
-  username?: string;
-  password?: string;
-};
-type KafkaConnectType = {
-  name: string;
-  url: string;
-  isAuth: boolean;
-  username: string;
-  password: string;
-};
-export type ClusterConfigFormValues = {
-  name: string;
-  readOnly: boolean;
-  bootstrapServers: BootstrapServer[];
-  useTruststore: boolean;
-  truststore?: {
-    location: string;
-    password: string;
-  };
-
-  securityProtocol?: SecurityProtocol;
-  authMethod?: string;
-  schemaRegistry?: SchemaRegistryType;
-  properties?: Record<string, string>;
-  kafkaConnect: KafkaConnectType[];
-};
-
 interface WizardFormProps {
   existing?: boolean;
   initialValues?: Partial<ClusterConfigFormValues>;
@@ -57,10 +22,12 @@ interface WizardFormProps {
 
 const CLUSTER_CONFIG_FORM_DEFAULT_VALUES: Partial<ClusterConfigFormValues> = {
   bootstrapServers: [{ host: '', port: '' }],
-  useTruststore: false,
 };
 
-const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
+const Wizard: React.FC<WizardFormProps> = ({
+  initialValues = {},
+  existing,
+}) => {
   const methods = useForm<ClusterConfigFormValues>({
     mode: 'all',
     resolver: yupResolver(formSchema),
@@ -76,15 +43,9 @@ const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
     // eslint-disable-next-line no-console
     console.log('SubmitData', data);
 
-    const config: ApplicationConfigPropertiesKafkaClustersInner = {
-      name: data.name,
-      bootstrapServers: data.bootstrapServers
-        .map(({ host, port }) => `${host}:${port}`)
-        .join(','),
-      readOnly: data.readOnly,
-    };
-
+    const config = transformFormDataToPayload(data);
     const resp = await validate.mutateAsync(config);
+
     // eslint-disable-next-line no-console
     console.log('resp', resp);
 
@@ -102,8 +63,12 @@ const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
       <StyledForm onSubmit={methods.handleSubmit(onSubmit)}>
         <KafkaCluster />
         <hr />
-        <Authentication />
-        <hr />
+        {!existing && (
+          <>
+            <Authentication />
+            <hr />
+          </>
+        )}
         <SchemaRegistry />
         <hr />
         <KafkaConnect />
@@ -115,7 +80,7 @@ const Wizard: React.FC<WizardFormProps> = ({ initialValues }) => {
             Reset
           </Button>
           <Button type="submit" buttonSize="L" buttonType="primary">
-            Save
+            Validate
           </Button>
         </S.ButtonWrapper>
       </StyledForm>

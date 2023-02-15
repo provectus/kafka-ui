@@ -54,7 +54,7 @@ const KafkaConnect = () => {
                   />
                   <Input
                     label="Kafka Connect URL *"
-                    name={`kafkaConnect.${index}.url`}
+                    name={`kafkaConnect.${index}.address`}
                     placeholder="URl"
                     type="text"
                     hint="Address of the Kafka Connect service endpoint"

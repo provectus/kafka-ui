@@ -24,7 +24,7 @@ import { GlobalSettingsProvider } from './contexts/GlobalSettingsContext';
 import ErrorPage from './ErrorPage/ErrorPage';
 import { UserInfoRolesAccessProvider } from './contexts/UserInfoRolesAccessContext';
 import PageContainer from './PageContainer/PageContainer';
-import NewClusterConfig from './Wizard/NewClusterConfig';
+import Wizard from './Wizard/WizardForm/WizardForm';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -59,7 +59,7 @@ const App: React.FC = () => {
                       ))}
                       <Route
                         path={getNonExactPath(clusterNewConfigPath)}
-                        element={<NewClusterConfig />}
+                        element={<Wizard />}
                       />
                       <Route
                         path={getNonExactPath(clusterPath())}

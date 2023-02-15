@@ -33,7 +33,7 @@ const schemaRegistrySchema = lazy((value) => {
 
 const kafkaConnectSchema = object({
   name: requiredString,
-  url: requiredString,
+  address: requiredString,
   isAuth: boolean(),
   username: string().when('isAuth', {
     is: true,
@@ -54,8 +54,8 @@ const kafkaConnectsSchema = lazy((value) => {
 
 const metricsSchema = lazy((value) => {
   if (typeof value === 'object') {
-    object({
-      type: string().oneOf(['none', 'JMX', 'PROMETHEUS']),
+    return object({
+      type: string().oneOf(['JMX', 'PROMETHEUS']).required('required field'),
       port: portSchema,
       isAuth: boolean(),
       username: string().when('isAuth', {
@@ -66,16 +66,13 @@ const metricsSchema = lazy((value) => {
         is: true,
         then: (schema) => schema.required('required field'),
       }),
-      keystoreLocation: string(),
-      keystorePassword: string(),
-      keystoreKeyPassword: string(),
     });
   }
   return mixed().optional();
 });
 
-const truststoreSchema = lazy((_, { parent }) => {
-  if (parent.useTruststore) {
+const sslSchema = lazy((value) => {
+  if (typeof value === 'object') {
     return object({
       location: requiredString,
       password: requiredString,
@@ -84,8 +81,8 @@ const truststoreSchema = lazy((_, { parent }) => {
   return mixed().optional();
 });
 
-const authSchema = lazy((_, { parent }) => {
-  switch (parent.authMethod) {
+const authPropsSchema = lazy((_, { parent }) => {
+  switch (parent.method) {
     case 'SASL/JAAS':
       return object({
         saslJaasConfig: requiredString,
@@ -95,7 +92,7 @@ const authSchema = lazy((_, { parent }) => {
       return object({
         saslKerberosServiceName: requiredString,
         keyTabFile: string(),
-        storeKey: boolean().required('required field'),
+        storeKey: boolean(),
         principal: requiredString,
       });
     case 'SASL/OAUTHBEARER':
@@ -120,14 +117,49 @@ const authSchema = lazy((_, { parent }) => {
         awsProfileName: string(),
       });
     case 'mTLS':
-      return object({
-        sslKeystoreLocation: requiredString,
-        sslKeystorePassword: requiredString,
-        sslKeyPassword: requiredString,
-      });
     default:
       return mixed().optional();
   }
+});
+
+const authSchema = lazy((value) => {
+  if (typeof value === 'object') {
+    return object({
+      method: string()
+        .required('required field')
+        .oneOf([
+          'SASL/JAAS',
+          'SASL/GSSAPI',
+          'SASL/OAUTHBEARER',
+          'SASL/PLAIN',
+          'SASL/SCRAM-256',
+          'SASL/SCRAM-512',
+          'Delegation tokens',
+          'SASL/LDAP',
+          'SASL/AWS IAM',
+          'mTLS',
+        ]),
+      securityProtocol: string()
+        .oneOf(['SASL_SSL', 'SASL_PLAINTEXT'])
+        .when('method', {
+          is: (v: string) => {
+            return [
+              'SASL/JAAS',
+              'SASL/GSSAPI',
+              'SASL/OAUTHBEARER',
+              'SASL/PLAIN',
+              'SASL/SCRAM-256',
+              'SASL/SCRAM-512',
+              'SASL/LDAP',
+              'SASL/AWS IAM',
+            ].includes(v);
+          },
+          then: (schema) => schema.required('required field'),
+        }),
+      props: authPropsSchema,
+    });
+  }
+  return mixed().optional();
 });
 
 const formSchema = object({
@@ -136,41 +168,9 @@ const formSchema = object({
     .min(3, 'Cluster name must be at least 3 characters'),
   readOnly: boolean().required('required field'),
   bootstrapServers: array().of(bootstrapServerSchema).min(1),
-  useTruststore: boolean(),
-  truststore: truststoreSchema,
-  authMethod: string()
-    .required('required field')
-    .oneOf([
-      'none',
-      'SASL/JAAS',
-      'SASL/GSSAPI',
-      'SASL/OAUTHBEARER',
-      'SASL/PLAIN',
-      'SASL/SCRAM-256',
-      'SASL/SCRAM-512',
-      'Delegation tokens',
-      'SASL/LDAP',
-      'SASL/AWS IAM',
-      'mTLS',
-    ]),
-  securityProtocol: string()
-    .oneOf(['SASL_SSL', 'SASL_PLAINTEXT'])
-    .when('method', {
-      is: (value: string) => {
-        return [
-          'SASL/JAAS',
-          'SASL/GSSAPI',
-          'SASL/OAUTHBEARER',
-          'SASL/PLAIN',
-          'SASL/SCRAM-256',
-          'SASL/SCRAM-512',
-          'SASL/LDAP',
-          'SASL/AWS IAM',
-        ].includes(value);
-      },
-      then: (schema) => schema.required('required field'),
-    }),
-  authentication: authSchema,
+  truststore: sslSchema,
+  keystore: sslSchema,
+  auth: authSchema,
   schemaRegistry: schemaRegistrySchema,
   kafkaConnect: kafkaConnectsSchema,
   metrics: metricsSchema,

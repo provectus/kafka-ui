@@ -9,14 +9,14 @@ const SaslGssapi: React.FC = () => {
       <Input
         label="Kerberos service name"
         type="text"
-        name="authentication.saslKerberosServiceName"
+        name="auth.props.saslKerberosServiceName"
         withError
       />
-      <Checkbox name="authentication.storeKey" label="Store Key" />
-      <Fileupload name="authentication.keyTabFile" label="Key Tab" />
+      <Checkbox name="auth.props.storeKey" label="Store Key" />
+      <Fileupload name="auth.props.keyTabFile" label="Key Tab (optional)" />
       <Input
         type="text"
-        name="authentication.principal"
+        name="auth.props.principal"
         label="Principal *"
         withError
       />

@@ -6,7 +6,6 @@ import {
 } from 'components/Wizard/WizardForm/WizardForm.styled';
 
 import SaslGssapi from './SaslGssapi';
-import MTLS from './MTLS';
 
 const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
   switch (method) {
@@ -15,13 +14,13 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
         <>
           <Input
             type="text"
-            name="authentication.saslJaasConfig"
+            name="auth.props.saslJaasConfig"
             label="sasl.jaas.config"
             withError
           />
           <Input
             type="text"
-            name="authentication.saslEnabledMechanism"
+            name="auth.props.saslEnabledMechanism"
             label="sasl.enabled.mechanism"
             withError
           />
@@ -34,7 +33,7 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
         <Input
           label="Unsecured Login String Claim_sub *"
           type="text"
-          name="authentication.unsecuredLoginStringClaim_sub"
+          name="auth.props.unsecuredLoginStringClaim_sub"
           withError
         />
       );
@@ -48,7 +47,7 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
             <Input
               label="Username"
               type="text"
-              name="authentication.username"
+              name="auth.props.username"
               withError
             />
           </FlexGrow1>
@@ -56,7 +55,7 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
             <Input
               label="Password"
               type="password"
-              name="authentication.password"
+              name="auth.props.password"
               withError
             />
           </FlexGrow1>
@@ -68,13 +67,13 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
           <Input
             label="Token Id"
             type="text"
-            name="authentication.tokenId"
+            name="auth.props.tokenId"
             withError
           />
           <Input
             label="Token Value *"
             type="text"
-            name="authentication.tokenValue"
+            name="auth.props.tokenValue"
             withError
           />
         </>
@@ -84,12 +83,11 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
         <Input
           label="AWS Profile Name"
           type="text"
-          name="authentication.awsProfileName"
+          name="auth.props.awsProfileName"
           withError
         />
       );
     case 'mTLS':
-      return <MTLS />;
     default:
       return null;
   }

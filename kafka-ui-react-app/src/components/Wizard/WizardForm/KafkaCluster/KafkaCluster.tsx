@@ -13,14 +13,18 @@ import Checkbox from 'components/common/Checkbox/Checkbox';
 import Fileupload from 'components/Wizard/WizardForm/Fileupload';
 
 const KafkaCluster: React.FC = () => {
-  const { control, watch } = useFormContext();
+  const { control, watch, setValue } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'bootstrapServers',
   });
 
-  const useTruststore = watch('useTruststore');
+  const hasTrustStore = !!watch('truststore');
+  const hasKeyStore = !!watch('keystore');
+
+  const toggleSection = (section: string) => () =>
+    setValue(section, watch(section) ? undefined : {});
 
   return (
     <>
@@ -87,14 +91,51 @@ const KafkaCluster: React.FC = () => {
           </div>
         </S.ArrayFieldWrapper>
       </div>
-      <Checkbox name="useTruststore" label="Self Signed Certificate" />
-      {useTruststore && (
+      <hr />
+      <S.FlexRow>
+        <S.FlexGrow1>
+          <Heading level={3}>Truststore</Heading>
+        </S.FlexGrow1>
+        <Button
+          buttonSize="M"
+          buttonType="primary"
+          onClick={toggleSection('truststore')}
+        >
+          {hasTrustStore ? 'Remove from config' : 'Add Truststore'}
+        </Button>
+      </S.FlexRow>
+      {hasTrustStore && (
         <>
           <Fileupload name="truststore.location" label="Truststore Location" />
           <Input
             label="Truststore Password"
             type="password"
             name="truststore.password"
+            withError
+          />
+        </>
+      )}
+      <hr />
+
+      <S.FlexRow>
+        <S.FlexGrow1>
+          <Heading level={3}>Keystore</Heading>
+        </S.FlexGrow1>
+        <Button
+          buttonSize="M"
+          buttonType="primary"
+          onClick={toggleSection('keystore')}
+        >
+          {hasKeyStore ? 'Remove from config' : 'Add Keystore'}
+        </Button>
+      </S.FlexRow>
+      {hasKeyStore && (
+        <>
+          <Fileupload name="keystore.location" label="Keystore Location" />
+          <Input
+            label="Keystore Password"
+            type="password"
+            name="keystore.password"
             withError
           />
         </>
