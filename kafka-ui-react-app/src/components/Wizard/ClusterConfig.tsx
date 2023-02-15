@@ -26,7 +26,16 @@ const ClusterConfig: React.FC = () => {
     return null;
   }
 
-  return <WizardForm initialValues={currentClusterConfig} existing />;
+  const hasCustomConfig = Object.values(currentClusterConfig.customAuth).some(
+    (v) => !!v
+  );
+
+  return (
+    <WizardForm
+      initialValues={currentClusterConfig}
+      hasCustomConfig={hasCustomConfig}
+    />
+  );
 };
 
 export default ClusterConfig;

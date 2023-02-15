@@ -70,8 +70,18 @@ export const getInitialFormData = (
     };
   }
 
-  // Authentification
-  // const properties = payload.properties || {};
+  const properties = payload.properties || {};
 
-  return initialValues;
+  // Authentification
+  initialValues.customAuth = {
+    securityProtocol: properties['security.protocol'],
+    saslMechanism: properties['sasl.mechanism'],
+    saslEnabledMechanisms: properties['sasl.enabled.mechanisms'],
+    saslJaasConfig: properties['sasl.jaas.config'],
+    saslKerberosServiceName: properties['sasl.kerberos.service.name'],
+    saslClientCallbackHandlerClass:
+      properties['sasl.client.callback.handler.class'],
+  };
+
+  return initialValues as ClusterConfigFormValues;
 };

@@ -45,4 +45,5 @@ export type ClusterConfigFormValues = {
   properties?: Record<string, string>;
   kafkaConnect?: KafkaConnect[];
   metrics?: Metrics;
+  customAuth: Record<string, string>;
 };

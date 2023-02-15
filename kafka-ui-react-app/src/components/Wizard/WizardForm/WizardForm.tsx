@@ -14,9 +14,10 @@ import Authentication from './Authentication/Authentication';
 import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
 import KafkaConnect from './KafkaConnect/KafkaConnect';
 import Metrics from './Metrics/Metrics';
+import CustomAuthentication from './Authentication/CustomAuthentication';
 
 interface WizardFormProps {
-  existing?: boolean;
+  hasCustomConfig?: boolean;
   initialValues?: Partial<ClusterConfigFormValues>;
 }
 
@@ -26,7 +27,7 @@ const CLUSTER_CONFIG_FORM_DEFAULT_VALUES: Partial<ClusterConfigFormValues> = {
 
 const Wizard: React.FC<WizardFormProps> = ({
   initialValues = {},
-  existing,
+  hasCustomConfig,
 }) => {
   const methods = useForm<ClusterConfigFormValues>({
     mode: 'all',
@@ -63,12 +64,9 @@ const Wizard: React.FC<WizardFormProps> = ({
       <StyledForm onSubmit={methods.handleSubmit(onSubmit)}>
         <KafkaCluster />
         <hr />
-        {!existing && (
-          <>
-            <Authentication />
-            <hr />
-          </>
-        )}
+        {!hasCustomConfig ? <Authentication /> : <CustomAuthentication />}
+        <hr />
+
         <SchemaRegistry />
         <hr />
         <KafkaConnect />
