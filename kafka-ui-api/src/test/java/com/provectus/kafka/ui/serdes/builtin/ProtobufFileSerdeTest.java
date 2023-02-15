@@ -51,12 +51,13 @@ class ProtobufFileSerdeTest {
     addressBookSchemaPath = ResourceUtils.getFile("classpath:protobuf-serde/address-book.proto").toPath();
     sensorSchemaPath = ResourceUtils.getFile("classpath:protobuf-serde/sensor.proto").toPath();
 
-    var schemas = new ProtobufFileSerde.ProtoSchemaLoader(
-        ResourceUtils.getFile("classpath:protobuf-serde/").getPath()).load();
+    Map<Path, ProtobufSchema> files = ProtobufFileSerde.Configuration.loadSchemas(
+        Optional.empty(),
+        Optional.empty(),
+        Optional.of(ResourceUtils.getFile("classpath:protobuf-serde/").getPath())
+    );
 
-    Map<String, ProtoFileElement> files = ProtobufFileSerde.Configuration.protoFileElementsByName(schemas);
-
-    var addressBookSchema = new ProtobufSchema(files.get("address-book.proto"), List.of(), files);
+    var addressBookSchema = files.get(addressBookSchemaPath);
     var builder = addressBookSchema.newMessageBuilder("test.Person");
     JsonFormat.parser().merge(samplePersonMsgJson, builder);
     personMessageBytes = builder.build().toByteArray();
@@ -67,7 +68,7 @@ class ProtobufFileSerdeTest {
     personDescriptor = addressBookSchema.toDescriptor("test.Person");
     addressBookDescriptor = addressBookSchema.toDescriptor("test.AddressBook");
 
-    var sensorSchema = new ProtobufSchema(files.get("sensor.proto"), List.of(), files);
+    var sensorSchema = files.get(sensorSchemaPath);
     builder = sensorSchema.newMessageBuilder("test.Sensor");
     JsonFormat.parser().merge(sampleSensorMsgJson, builder);
     sensorMessageBytes = builder.build().toByteArray();
@@ -338,9 +339,9 @@ class ProtobufFileSerdeTest {
     when(resolver.getListProperty("protobufFiles", String.class))
         .thenReturn(Optional.of(List.of(sensorSchemaPath.toString(), addressBookSchemaPath.toString())));
     when(resolver.getProperty("protobufMessageName", String.class))
-        .thenReturn(Optional.of("iot.Sensor"));
+        .thenReturn(Optional.of("test.Sensor"));
 
-    Map<String, String> protobufMessageNameByTopic = Map.of("sensors", "iot.Sensor");
+    Map<String, String> protobufMessageNameByTopic = Map.of("sensors", "test.Sensor");
 
     when(resolver.getMapProperty("protobufMessageNameByTopic", String.class, String.class))
         .thenReturn(Optional.of(protobufMessageNameByTopic));

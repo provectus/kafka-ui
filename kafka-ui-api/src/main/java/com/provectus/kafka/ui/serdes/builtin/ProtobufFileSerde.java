@@ -103,8 +103,8 @@ public class ProtobufFileSerde implements BuiltInSerde {
     configure(Configuration.create(serdeProperties));
   }
 
-
-  private void configure(Configuration configuration) {
+  @VisibleForTesting
+  void configure(Configuration configuration) {
     if (configuration.defaultMessageDescriptor() == null
         && configuration.defaultKeyMessageDescriptor() == null
         && configuration.messageDescriptorMap().isEmpty()
@@ -213,19 +213,11 @@ public class ProtobufFileSerde implements BuiltInSerde {
     }
 
     static Configuration create(PropertyResolver properties) {
-      var schemas = loadSchemas(
+      var protobufSchemas = loadSchemas(
           properties.getProperty("protobufFile", String.class),
           properties.getListProperty("protobufFiles", String.class),
           properties.getProperty("protobufFilesDir", String.class)
       );
-
-      Map<Path, ProtobufSchema> protobufSchemas = schemas.stream()
-          .map(protoFile -> {
-            Location location = protoFile.getLocation();
-            ProtobufSchema protobufSchema =
-                new ProtobufSchema(protoFile.toElement(), List.of(), protoFileElementsByName(schemas));
-            return Map.entry(Paths.get(location.getBase(), location.getPath()), protobufSchema);
-          }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
       // Load all referenced message schemas and store their source proto file with the descriptors
       Map<Descriptor, Path> descriptorPaths = new HashMap<>();
@@ -280,31 +272,29 @@ public class ProtobufFileSerde implements BuiltInSerde {
     }
 
     @VisibleForTesting
-    static Map<String, ProtoFileElement> protoFileElementsByName(List<ProtoFile> files) {
-      return files.stream()
-          .collect(Collectors.toMap(f -> f.getLocation().getPath(), ProtoFile::toElement));
-    }
-
-    @VisibleForTesting
-    static List<ProtoFile> loadSchemas(Optional<String> protobufFile,
-                                       Optional<List<String>> protobufFiles,
-                                       Optional<String> protobufFilesDir) {
+    static Map<Path, ProtobufSchema> loadSchemas(Optional<String> protobufFile,
+                                                 Optional<List<String>> protobufFiles,
+                                                 Optional<String> protobufFilesDir) {
       if (protobufFilesDir.isPresent()) {
         if (protobufFile.isPresent() || protobufFiles.isPresent()) {
           log.warn("protobufFile and protobufFiles properties will be ignored, since protobufFilesDir provided");
         }
-        return new ProtoSchemaLoader(protobufFilesDir.get()).load();
+        List<ProtoFile> loadedFiles = new ProtoSchemaLoader(protobufFilesDir.get()).load();
+        Map<String, ProtoFileElement> deps = loadedFiles.stream()
+            .collect(Collectors.toMap(f -> f.getLocation().getPath(), ProtoFile::toElement));
+        return loadedFiles.stream()
+            .collect(Collectors.toMap(
+                f -> Path.of(f.getLocation().getBase(), f.getLocation().getPath()),
+                f -> new ProtobufSchema(f.toElement(), List.of(), deps)));
       }
-      //Supporting for backward-compatibility. In general, protobufFilesDir setting should be used
+      //Supporting for backward-compatibility. Normally, protobufFilesDir setting should be used
       return Stream.concat(
               protobufFile.stream(),
               protobufFiles.stream().flatMap(Collection::stream)
           )
           .distinct()
           .map(Path::of)
-          .map(filePath -> new ProtobufSchema(readFileAsString(filePath)).rawSchema())
-          .map(ProtoFile.Companion::get)
-          .toList();
+          .collect(Collectors.toMap(path -> path, path -> new ProtobufSchema(readFileAsString(path))));
     }
 
     private static void addProtobufSchema(Map<Descriptor, Path> descriptorPaths,
