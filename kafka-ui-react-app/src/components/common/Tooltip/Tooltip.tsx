@@ -10,37 +10,34 @@ import * as S from './Tooltip.styled';
 
 export interface PropsTypes {
   value: string | JSX.Element;
-  content: string;
   placement?: Placement;
 }
 
-const Tooltip: React.FC<PropsTypes> = ({ value, content, placement }) => {
+const Tooltip: React.FC<PropsTypes> = ({ value, placement }) => {
   const [open, setOpen] = useState(false);
-  const { x, y, reference, floating, strategy, context } = useFloating({
+  const { reference, context } = useFloating({
     open,
     onOpenChange: setOpen,
     placement,
   });
 
-  // useInteractions([useHover(context)]);
-  const hover = useHover(context, { move: false });
-  const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
+  useInteractions([useHover(context)]);
   return (
     <>
-      <div ref={reference} {...getReferenceProps()}>
+      <div ref={reference}>
         <S.Wrapper>{value}</S.Wrapper>
       </div>
-      <S.MessageTooltip
-        ref={floating}
-        style={{
-          position: strategy,
-          top: y ?? 0,
-          left: x ?? 0,
-          width: 'max-content',
-        }}
-        {...getFloatingProps()}
-      >
-        {content}
+      <S.MessageTooltip>
+        `DYNAMIC_TOPIC_CONFIG = dynamic topic config that is configured for a
+        specific topic DYNAMIC_BROKER_LOGGER_CONFIG = dynamic broker logger
+        config that is configured for a specific broker DYNAMIC_BROKER_CONFIG =
+        dynamic broker config that is configured for a specific broker
+        DYNAMIC_DEFAULT_BROKER_CONFIG = dynamic broker config that is configured
+        as default for all brokers in the cluster STATIC_BROKER_CONFIG = static
+        broker config provided as broker properties at start up (e.g.
+        server.properties file) DEFAULT_CONFIG = built-in default configuration
+        for configs that have a default value UNKNOWN = source unknown e.g. in
+        the ConfigEntry used for alter requests where source is not set`;
       </S.MessageTooltip>
     </>
   );
