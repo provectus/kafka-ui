@@ -3,6 +3,7 @@ import {
   useFloating,
   useHover,
   useInteractions,
+  autoUpdate,
   Placement,
 } from '@floating-ui/react-dom-interactions';
 
@@ -16,17 +17,11 @@ export interface PropsTypes {
 
 const Tooltip: React.FC<PropsTypes> = ({ value, content, placement }) => {
   const [open, setOpen] = useState(false);
-  const {
-    x,
-    y,
-    reference,
-    floating: current,
-    strategy,
-    context,
-  } = useFloating({
+  const { x, y, reference, floating, strategy, context } = useFloating({
     open,
     onOpenChange: setOpen,
     placement,
+    whileElementsMounted: autoUpdate,
   });
 
   useInteractions([useHover(context)]);
@@ -37,7 +32,7 @@ const Tooltip: React.FC<PropsTypes> = ({ value, content, placement }) => {
       </div>
       {open && (
         <S.MessageTooltip
-          ref={current}
+          ref={floating}
           style={{
             position: strategy,
             top: y ?? 0,
