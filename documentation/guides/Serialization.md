@@ -46,10 +46,8 @@ kafka:
       serdes:
         - name: ProtobufFile
           properties:
-            # path to the protobuf schema files
-            protobufFiles:
-              - path/to/my.proto
-              - path/to/another.proto
+            # path to the protobuf schema files directory
+            protobufFilesDir: "path/to/protofiles"
             # default protobuf type that is used for KEY serialization/deserialization
             # optional
             protobufMessageNameForKey: my.Type1

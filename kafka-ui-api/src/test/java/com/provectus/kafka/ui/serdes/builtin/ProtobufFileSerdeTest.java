@@ -31,9 +31,6 @@ class ProtobufFileSerdeTest {
   private static final String sampleBookMsgJson = "{\"version\": 1, \"people\": ["
       + "{ \"name\": \"My Name\",\"id\": 102, \"email\": \"addrBook@example.com\", \"phones\":[]}]}";
 
-  private static final String sampleSensorMsgJson = "{ \"name\": \"My Sensor\", "
-      + "\"temperature\": 20.5, \"humidity\": 50, \"door\": \"OPEN\" }";
-
   private static final String sampleLangDescriptionMsgJson = "{ \"lang\": \"EN\", "
       + "\"descr\": \"Some description here\" }";
 
@@ -41,11 +38,9 @@ class ProtobufFileSerdeTest {
   private byte[] personMessageBytes;
   // Sample message of type `test.AddressBook`
   private byte[] addressBookMessageBytes;
-  private byte[] sensorMessageBytes;
   private byte[] langDescriptionMessageBytes;
   private Descriptors.Descriptor personDescriptor;
   private Descriptors.Descriptor addressBookDescriptor;
-  private Descriptors.Descriptor sensorDescriptor;
   private Descriptors.Descriptor langDescriptionDescriptor;
   private Map<Descriptors.Descriptor, Path> descriptorPaths;
 
@@ -54,7 +49,7 @@ class ProtobufFileSerdeTest {
     Map<Path, ProtobufSchema> files = ProtobufFileSerde.Configuration.loadSchemas(
         Optional.empty(),
         Optional.empty(),
-        Optional.of(ResourceUtils.getFile("classpath:protobuf-serde/").getPath())
+        Optional.of(protoFilesDir())
     );
 
     Path addressBookSchemaPath = ResourceUtils.getFile("classpath:protobuf-serde/address-book.proto").toPath();
@@ -69,13 +64,6 @@ class ProtobufFileSerdeTest {
     personDescriptor = addressBookSchema.toDescriptor("test.Person");
     addressBookDescriptor = addressBookSchema.toDescriptor("test.AddressBook");
 
-    Path sensorSchemaPath = ResourceUtils.getFile("classpath:protobuf-serde/sensor.proto").toPath();
-    var sensorSchema = files.get(sensorSchemaPath);
-    builder = sensorSchema.newMessageBuilder("test.Sensor");
-    JsonFormat.parser().merge(sampleSensorMsgJson, builder);
-    sensorMessageBytes = builder.build().toByteArray();
-    sensorDescriptor = sensorSchema.toDescriptor("test.Sensor");
-
     Path languageDescriptionPath = ResourceUtils.getFile("classpath:protobuf-serde/lang-description.proto").toPath();
     var languageDescriptionSchema = files.get(languageDescriptionPath);
     builder = languageDescriptionSchema.newMessageBuilder("test.LanguageDescription");
@@ -85,8 +73,7 @@ class ProtobufFileSerdeTest {
 
     descriptorPaths = Map.of(
         personDescriptor, addressBookSchemaPath,
-        addressBookDescriptor, addressBookSchemaPath,
-        sensorDescriptor, sensorSchemaPath
+        addressBookDescriptor, addressBookSchemaPath
     );
   }
 
@@ -107,7 +94,7 @@ class ProtobufFileSerdeTest {
 
   @SneakyThrows
   private String protoFilesDir() {
-    return ResourceUtils.getFile("classpath:protobuf-serde/sensor.proto").getPath();
+    return ResourceUtils.getFile("classpath:protobuf-serde/").getPath();
   }
 
   @Nested
@@ -253,11 +240,9 @@ class ProtobufFileSerdeTest {
 
     @Test
     void createConfigureFillsDescriptorMappingsWhenProtoFileDirProvided() throws Exception {
-      var protoDir = ResourceUtils.getFile("classpath:protobuf-serde/").getPath();
-
       PropertyResolver resolver = mock(PropertyResolver.class);
       when(resolver.getProperty("protobufFilesDir", String.class))
-          .thenReturn(Optional.of(protoDir));
+          .thenReturn(Optional.of(protoFilesDir()));
 
       when(resolver.getProperty("protobufMessageName", String.class))
           .thenReturn(Optional.of("test.Sensor"));
