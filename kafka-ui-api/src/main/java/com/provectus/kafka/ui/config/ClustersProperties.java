@@ -1,12 +1,12 @@
 package com.provectus.kafka.ui.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -114,7 +114,32 @@ public class ClustersProperties {
 
   @PostConstruct
   public void validateAndSetDefaults() {
-    validateClusterNames();
+    if (clusters != null) {
+      validateClusterNames();
+      flattenClusterProperties();
+    }
+  }
+
+  private void flattenClusterProperties() {
+    for (Cluster cluster : clusters) {
+      cluster.setProperties(flattenClusterProperties(null, cluster.getProperties()));
+    }
+  }
+
+  private Map<String, Object> flattenClusterProperties(@Nullable String prefix,
+                                                       @Nullable Map<String, Object> propertiesMap) {
+    Map<String, Object> flattened = new HashMap<>();
+    if (propertiesMap != null) {
+      propertiesMap.forEach((k, v) -> {
+        String key = prefix == null ? k : prefix + "." + k;
+        if (v instanceof Map<?, ?>) {
+          flattened.putAll(flattenClusterProperties(key, (Map<String, Object>) v));
+        } else {
+          flattened.put(key, v);
+        }
+      });
+    }
+    return flattened;
   }
 
   private void validateClusterNames() {
