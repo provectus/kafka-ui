@@ -407,7 +407,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
     private Map<String, ProtoFile> loadFilesWithLocations() {
       Map<String, ProtoFile> filesByLocations = new HashMap<>();
       try (var files = Files.walk(baseLocation)) {
-        files.filter(p -> p.toString().endsWith(".proto"))
+        files.filter(p -> !Files.isDirectory(p) && p.toString().endsWith(".proto"))
             .forEach(path -> {
               // relative path will be used as "import" statement
               String relativePath = baseLocation.relativize(path).toString();
