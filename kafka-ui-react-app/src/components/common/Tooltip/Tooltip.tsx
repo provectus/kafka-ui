@@ -30,20 +30,18 @@ const Tooltip: React.FC<PropsTypes> = ({ value, content, placement }) => {
       <div ref={reference} {...getReferenceProps()}>
         <S.Wrapper>{value}</S.Wrapper>
       </div>
-      {open && (
-        <S.MessageTooltip
-          ref={floating}
-          style={{
-            position: strategy,
-            top: y ?? 0,
-            left: x ?? 0,
-            width: 'max-content',
-          }}
-          {...getFloatingProps()}
-        >
-          {content}
-        </S.MessageTooltip>
-      )}
+      <S.MessageTooltip
+        ref={floating}
+        style={{
+          position: strategy,
+          top: y ?? 0,
+          left: x ?? 0,
+          width: 'max-content',
+        }}
+        {...getFloatingProps()}
+      >
+        {content}
+      </S.MessageTooltip>
     </>
   );
 };
