@@ -27,6 +27,7 @@ const Tooltip: React.FC<PropsTypes> = ({ value, content, placement }) => {
   return (
     <>
       <S.Wrapper ref={reference}>{value}</S.Wrapper>
+
       {open && (
         <S.MessageTooltip
           ref={floating}
