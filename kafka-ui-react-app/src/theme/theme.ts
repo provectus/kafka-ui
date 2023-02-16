@@ -362,6 +362,7 @@ const theme = {
       normal: Colors.neutral[50],
       hover: Colors.neutral[90],
       active: Colors.neutral[90],
+      disabled: Colors.neutral[30],
     },
     borderColor: {
       normal: 'transparent',
@@ -515,6 +516,9 @@ const theme = {
     },
     liderReplica: {
       color: Colors.green[60],
+    },
+    outOfSync: {
+      color: Colors.red[50],
     },
   },
   dangerZone: {

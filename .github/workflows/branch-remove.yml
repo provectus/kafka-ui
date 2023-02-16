@@ -1,4 +1,4 @@
-name: RemoveCustomDeployment
+name: Feature testing destroy
 on:
   workflow_dispatch:
   pull_request:

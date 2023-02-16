@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Metrics from 'components/common/Metrics';
-import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 import { TopicAnalysisStats } from 'generated-sources';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 const Total: React.FC<TopicAnalysisStats> = ({
   totalMsgs,
@@ -14,8 +14,6 @@ const Total: React.FC<TopicAnalysisStats> = ({
   approxUniqKeys,
   approxUniqValues,
 }) => {
-  const formatTimestamp = useTimeFormat();
-
   return (
     <Metrics.Section title="Messages">
       <Metrics.Indicator label="Total number">{totalMsgs}</Metrics.Indicator>

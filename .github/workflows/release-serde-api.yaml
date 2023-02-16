@@ -1,4 +1,4 @@
-name: Release-serde-api
+name: Release serde api
 on: workflow_dispatch
 
 jobs:
@@ -27,7 +27,4 @@ jobs:
 
       - name: Publish to Maven Central
         run: |
-          MVN_VERSION=$(curl -s https://search.maven.org/solrsearch/select?q=g:"com.provectus"+AND+a:"kafka-ui-serde-api" | grep -o '"latestVersion": *"[^"]*"' | grep -o '"[^"]*"$' | sed 's/"//g')
-          MVN_VERSION=$(echo "$MVN_VERSION" | awk 'BEGIN{FS=OFS="."} {$2+=1} 1')
-          mvn -B -ntp versions:set -DnewVersion=$MVN_VERSION -pl kafka-ui-serde-api
           mvn source:jar  javadoc:jar  package  gpg:sign -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} -Dserver.username=${{ secrets.NEXUS_USERNAME }} -Dserver.password=${{ secrets.NEXUS_PASSWORD }} nexus-staging:deploy   -pl kafka-ui-serde-api  -s settings.xml
