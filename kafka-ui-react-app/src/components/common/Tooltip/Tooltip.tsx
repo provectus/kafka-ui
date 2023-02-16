@@ -3,9 +3,8 @@ import {
   useFloating,
   useHover,
   useInteractions,
-  autoUpdate,
   Placement,
-} from '@floating-ui/react-dom-interactions';
+} from '@floating-ui/react';
 
 import * as S from './Tooltip.styled';
 
@@ -17,28 +16,28 @@ export interface PropsTypes {
 
 const Tooltip: React.FC<PropsTypes> = ({ value, content, placement }) => {
   const [open, setOpen] = useState(false);
-  const { x, y, reference, floating, strategy, context } = useFloating({
+  const { x, y, refs, strategy, context } = useFloating({
     open,
     onOpenChange: setOpen,
     placement,
-    whileElementsMounted: autoUpdate,
   });
-
-  useInteractions([useHover(context)]);
+  const hover = useHover(context);
+  const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
   return (
     <>
-      <div ref={reference}>
+      <div ref={refs.setReference} {...getReferenceProps()}>
         <S.Wrapper>{value}</S.Wrapper>
       </div>
       {open && (
         <S.MessageTooltip
-          ref={floating}
+          ref={refs.setFloating}
           style={{
             position: strategy,
             top: y ?? 0,
             left: x ?? 0,
             width: 'max-content',
           }}
+          {...getFloatingProps()}
         >
           {content}
         </S.MessageTooltip>
