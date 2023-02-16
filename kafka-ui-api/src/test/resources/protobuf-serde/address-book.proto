@@ -31,6 +31,11 @@ message Person {
 
 }
 
+message AnotherPerson {
+    string name = 1;
+    string surname = 2;
+}
+
 // Our address book file is just one of these.
 message AddressBook {
   int32 version = 1;

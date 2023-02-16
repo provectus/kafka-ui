@@ -7,5 +7,5 @@ import "google/protobuf/wrappers.proto";
 
 message LanguageDescription {
     test.lang.Language lang = 1;
-    google.protobuf.StringValue  descr = 2;
+    google.protobuf.StringValue descr = 2;
 }

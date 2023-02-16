@@ -280,12 +280,12 @@ public class ProtobufFileSerde implements BuiltInSerde {
           log.warn("protobufFile and protobufFiles properties will be ignored, since protobufFilesDir provided");
         }
         List<ProtoFile> loadedFiles = new ProtoSchemaLoader(protobufFilesDir.get()).load();
-        Map<String, ProtoFileElement> deps = loadedFiles.stream()
+        Map<String, ProtoFileElement> allPaths = loadedFiles.stream()
             .collect(Collectors.toMap(f -> f.getLocation().getPath(), ProtoFile::toElement));
         return loadedFiles.stream()
             .collect(Collectors.toMap(
                 f -> Path.of(f.getLocation().getBase(), f.getLocation().getPath()),
-                f -> new ProtobufSchema(f.toElement(), List.of(), deps)));
+                f -> new ProtobufSchema(f.toElement(), List.of(), allPaths)));
       }
       //Supporting for backward-compatibility. Normally, protobufFilesDir setting should be used
       return Stream.concat(
@@ -341,7 +341,7 @@ public class ProtobufFileSerde implements BuiltInSerde {
       linker.getErrors().throwIfNonEmpty();
       return schema.getProtoFiles()
           .stream()
-          .filter(p -> !knownTypes.containsKey(p.getLocation().getPath())) //filtering built-in types
+          .filter(p -> !knownTypes.containsKey(p.getLocation().getPath())) //filtering known types
           .toList();
     }
 
