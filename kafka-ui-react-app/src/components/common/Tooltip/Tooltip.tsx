@@ -22,10 +22,12 @@ const Tooltip: React.FC<PropsTypes> = ({ value, content, placement }) => {
     placement,
   });
 
-  useInteractions([useHover(context)]);
+  // useInteractions([useHover(context)]);
+  const hover = useHover(context, { move: false });
+  const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
   return (
     <>
-      <div ref={reference}>
+      <div ref={reference} {...getReferenceProps()}>
         <S.Wrapper>{value}</S.Wrapper>
       </div>
       {open && (
@@ -37,6 +39,7 @@ const Tooltip: React.FC<PropsTypes> = ({ value, content, placement }) => {
             left: x ?? 0,
             width: 'max-content',
           }}
+          {...getFloatingProps()}
         >
           {content}
         </S.MessageTooltip>
