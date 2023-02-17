@@ -5,7 +5,7 @@ on:
       test_suite:
         description: 'Select test suite to run'
         default: 'regression'
-        required: false
+        required: true
         type: choice
         options:
           - regression
@@ -15,8 +15,10 @@ on:
       qase_enabled:
         description: 'Enable Qase integration'
         default: true
-        required: false
+        required: true
         type: boolean
+  schedule:
+    - cron: '0 0 * * 1'
 
 jobs:
   build-and-test:
