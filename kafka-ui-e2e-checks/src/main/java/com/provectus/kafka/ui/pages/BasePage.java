@@ -23,7 +23,8 @@ public abstract class BasePage extends WebUtils {
     protected SelenideElement confirmationMdl = $x("//div[text()= 'Confirm the action']/..");
     protected SelenideElement confirmBtn = $x("//button[contains(text(),'Confirm')]");
     protected SelenideElement cancelBtn = $x("//button[contains(text(),'Cancel')]");
-    protected ElementsCollection allGridItems = $$x("//tr[@class]");
+    protected ElementsCollection ddlOptions = $$x("//li[@value]");
+    protected ElementsCollection gridItems = $$x("//tr[@class]");
     protected String summaryCellLocator = "//div[contains(text(),'%s')]";
     protected String tableElementNameLocator = "//tbody//a[contains(text(),'%s')]";
     protected String columnHeaderLocator = "//table//tr/th//div[text()='%s']";
@@ -42,6 +43,10 @@ public abstract class BasePage extends WebUtils {
     protected SelenideElement getTableElement(String elementName) {
         log.debug("\ngetTableElement: {}", elementName);
         return $x(String.format(tableElementNameLocator, elementName));
+    }
+
+    protected ElementsCollection getDdlOptions() {
+        return ddlOptions;
     }
 
     protected String getAlertHeader() {

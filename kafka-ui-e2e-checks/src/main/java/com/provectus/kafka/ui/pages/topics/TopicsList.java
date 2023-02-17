@@ -163,7 +163,7 @@ public class TopicsList extends BasePage {
 
     private List<TopicGridItem> initGridItems() {
         List<TopicGridItem> gridItemList = new ArrayList<>();
-        allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+        gridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
                 .forEach(item -> gridItemList.add(new TopicGridItem(item)));
         return gridItemList;
     }

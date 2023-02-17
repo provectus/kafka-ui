@@ -57,6 +57,7 @@ class ProtobufSchemaConverterTest {
             message EmbeddedMsg {
                 int32 emb_f1 = 1;
                 TestMsg outer_ref = 2;
+                EmbeddedMsg self_ref = 3;
             }
         }""";
 
@@ -116,7 +117,8 @@ class ProtobufSchemaConverterTest {
                     "properties":
                     {
                         "emb_f1": { "type": "integer", "maximum": 2147483647, "minimum": -2147483648 },
-                        "outer_ref": { "$ref": "#/definitions/test.TestMsg" }
+                        "outer_ref": { "$ref": "#/definitions/test.TestMsg" },
+                        "self_ref": { "$ref": "#/definitions/test.TestMsg.EmbeddedMsg" }
                     }
                 }
             },
