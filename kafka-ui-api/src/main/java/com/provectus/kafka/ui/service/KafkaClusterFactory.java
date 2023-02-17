@@ -39,7 +39,7 @@ public class KafkaClusterFactory {
 
     builder.name(clusterProperties.getName());
     builder.bootstrapServers(clusterProperties.getBootstrapServers());
-    builder.properties(convertProperties(null, clusterProperties.getProperties()));
+    builder.properties(convertProperties(clusterProperties.getProperties()));
     builder.readOnly(clusterProperties.isReadOnly());
     builder.masking(DataMasking.create(clusterProperties.getMasking()));
     builder.metricsConfig(metricsConfigDataToMetricsConfig(clusterProperties.getMetrics()));
@@ -54,19 +54,10 @@ public class KafkaClusterFactory {
     return builder.build();
   }
 
-  private Properties convertProperties(@Nullable String prefix,
-                                       @Nullable Map<String, Object> propertiesMap) {
+  private Properties convertProperties(Map<String, Object> propertiesMap) {
     Properties properties = new Properties();
     if (propertiesMap != null) {
-      propertiesMap.forEach((k, v) -> {
-        String key = prefix == null ? k : prefix + "." + k;
-        //flattening key names
-        if (v instanceof Map<?, ?>) {
-          properties.putAll(convertProperties(key, (Map<String, Object>) v));
-        } else {
-          properties.put(key, v);
-        }
-      });
+      properties.putAll(propertiesMap);
     }
     return properties;
   }
