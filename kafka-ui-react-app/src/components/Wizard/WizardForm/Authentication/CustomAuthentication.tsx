@@ -10,8 +10,9 @@ import Input from 'components/common/Input/Input';
 
 const CustomAuthentication: React.FC = () => {
   const { watch, setValue } = useFormContext();
-
-  const hasCustomConfig = Object.values(watch('customAuth')).some((v) => !!v);
+  const customConf = watch('customAuth');
+  const hasCustomConfig =
+    customConf && Object.values(customConf).some((v) => !!v);
 
   const toggle = () => setValue('customAuth', hasCustomConfig ? undefined : {});
 

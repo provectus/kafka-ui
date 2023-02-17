@@ -56,6 +56,9 @@ const Wizard: React.FC<WizardFormProps> = ({
   const onReset = () => {
     methods.reset();
   };
+
+  const showCustomConfig = methods.watch('customAuth') && hasCustomConfig;
+
   // eslint-disable-next-line no-console
   console.log('Errors:', methods.formState.errors);
 
@@ -64,7 +67,7 @@ const Wizard: React.FC<WizardFormProps> = ({
       <StyledForm onSubmit={methods.handleSubmit(onSubmit)}>
         <KafkaCluster />
         <hr />
-        {!hasCustomConfig ? <Authentication /> : <CustomAuthentication />}
+        {!showCustomConfig ? <Authentication /> : <CustomAuthentication />}
         <hr />
 
         <SchemaRegistry />
