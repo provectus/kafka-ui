@@ -165,7 +165,7 @@ const baseTheme = {
     arrowDownIcon: Colors.neutral[90],
     moonIcon: Colors.neutral[95],
     sunIcon: Colors.neutral[95],
-    infoIcon: Colors.neutral[90],
+    infoIcon: Colors.neutral[30],
     closeIcon: Colors.neutral[30],
     deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],
@@ -253,7 +253,7 @@ const baseTheme = {
     color: Colors.neutral[30],
   },
   tooltip: {
-    bg: Colors.neutral[70],
+    bg: Colors.neutral[80],
     text: Colors.neutral[0],
   },
   topicsList: {
@@ -1077,7 +1077,7 @@ export const darkTheme: ThemeType = {
     arrowDownIcon: Colors.neutral[0],
     moonIcon: Colors.neutral[0],
     sunIcon: Colors.neutral[0],
-    infoIcon: Colors.neutral[0],
+    infoIcon: Colors.neutral[70],
 
     savedIcon: Colors.brand[50],
     git: {
