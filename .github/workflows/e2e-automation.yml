@@ -8,10 +8,11 @@ on:
         required: true
         type: choice
         options:
+          - manual
+          - qase
           - regression
           - sanity
           - smoke
-          - qase
       qase_enabled:
         description: 'Enable Qase integration'
         default: true

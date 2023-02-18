@@ -4,6 +4,7 @@
         <packages>
             <package name="com.provectus.kafka.ui.smokeSuite.*"/>
             <package name="com.provectus.kafka.ui.sanitySuite.*"/>
+            <package name="com.provectus.kafka.ui.manualSuite.*"/>
         </packages>
     </test>
 </suite>
