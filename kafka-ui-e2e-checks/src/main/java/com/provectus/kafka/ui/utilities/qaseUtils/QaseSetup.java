@@ -22,12 +22,13 @@ public class QaseSetup {
             System.setProperty("QASE_ENABLE", FALSE);
         } else {
             log.warn("Integration with Qase is enabled. Find this run at https://app.qase.io/run/KAFKAUI.");
+            String automation = SUITE_NAME.equalsIgnoreCase("manual") ? "Automation " : "";
             System.setProperty("QASE_ENABLE", TRUE);
             System.setProperty("QASE_PROJECT_CODE", "KAFKAUI");
             System.setProperty("QASE_API_TOKEN", qaseApiToken);
             System.setProperty("QASE_USE_BULK", TRUE);
             System.setProperty("QASE_RUN_NAME", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
-                    .format(OffsetDateTime.now(ZoneOffset.UTC)) + ": " + "Automation " + SUITE_NAME.toUpperCase() + " suite");
+                    .format(OffsetDateTime.now(ZoneOffset.UTC)) + ": " + automation + SUITE_NAME.toUpperCase() + " suite");
         }
     }
 }
