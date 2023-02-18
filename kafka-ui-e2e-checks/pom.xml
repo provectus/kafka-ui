@@ -16,15 +16,15 @@
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
         <testcontainers.version>1.17.6</testcontainers.version>
         <junit.platform.version>1.9.2</junit.platform.version>
-        <selenide.version>6.6.3</selenide.version>
-        <testng.version>7.6.1</testng.version>
+        <selenide.version>6.11.2</selenide.version>
+        <testng.version>7.7.0</testng.version>
         <allure.version>2.20.1</allure.version>
         <aspectj.version>1.9.9.1</aspectj.version>
         <assertj.version>3.23.1</assertj.version>
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.36</slf4j.version>
         <dotenv.version>2.3.1</dotenv.version>
-        <kafka.version>3.3.1</kafka.version>
+        <kafka.version>3.4.0</kafka.version>
         <qase.io.version>2.1.3</qase.io.version>
     </properties>
 
