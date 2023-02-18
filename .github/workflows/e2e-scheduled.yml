@@ -1,22 +1,7 @@
 name: E2E Automation suite
 on:
-  workflow_dispatch:
-    inputs:
-      test_suite:
-        description: 'Select test suite to run'
-        default: 'regression'
-        required: true
-        type: choice
-        options:
-          - regression
-          - sanity
-          - smoke
-          - qase
-      qase_enabled:
-        description: 'Enable Qase integration'
-        default: true
-        required: true
-        type: boolean
+  schedule:
+    - cron: '0 0 * * 1'
 
 jobs:
   build-and-test:
@@ -52,7 +37,7 @@ jobs:
       - name: Run test suite
         run: |
           ./mvnw -B -ntp versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
-          ./mvnw -B -V -ntp -DQASEIO_API_TOKEN=${{ secrets.QASEIO_API_TOKEN }} -Dsurefire.suiteXmlFiles='src/test/resources/${{ github.event.inputs.test_suite }}.xml' -Dsuite=${{ github.event.inputs.test_suite }} -Dqase=${{ github.event.inputs.qase_enabled }} -f 'kafka-ui-e2e-checks' test -Pprod
+          ./mvnw -B -V -ntp -DQASEIO_API_TOKEN=${{ secrets.QASEIO_API_TOKEN }} -Dsurefire.suiteXmlFiles='src/test/resources/regression.xml' -Dsuite=regression -Dqase=true -f 'kafka-ui-e2e-checks' test -Pprod
       - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
         if: always()
