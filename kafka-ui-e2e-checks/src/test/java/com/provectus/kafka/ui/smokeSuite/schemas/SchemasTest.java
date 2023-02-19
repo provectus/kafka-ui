@@ -1,8 +1,8 @@
 package com.provectus.kafka.ui.smokeSuite.schemas;
 
 import com.codeborne.selenide.Condition;
-import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.BaseTest;
+import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.utilities.qaseUtils.annotations.AutomationStatus;
 import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Suite;
@@ -68,7 +68,7 @@ public class SchemasTest extends BaseTest {
     @CaseId(186)
     @Test(priority = 2)
     public void updateSchemaAvro() {
-        AVRO_API.setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schema_avro_for_update.json");
+        AVRO_API.setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schemas/schema_avro_for_update.json");
         navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
         schemaDetails
                 .openEditSchema();
@@ -85,7 +85,7 @@ public class SchemasTest extends BaseTest {
                 .clickSubmitButton();
         schemaDetails
                 .waitUntilScreenReady();
-        Assert.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), schemaDetails.getCompatibility(), "getCompatibility()");
+        Assert.assertEquals(schemaDetails.getCompatibility(), CompatibilityLevel.CompatibilityEnum.NONE.toString(), "getCompatibility()");
     }
 
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
@@ -103,10 +103,10 @@ public class SchemasTest extends BaseTest {
                 .waitUntilScreenReady()
                 .openSchemaVersionDdl()
                 .getVersionsNumberFromList();
-        Assert.assertEquals(latestVersion, versionsNumberFromDdl, "Versions number is not matched");
+        Assert.assertEquals(versionsNumberFromDdl, latestVersion, "Versions number is not matched");
         schemaCreateForm
                 .selectVersionFromDropDown(1);
-        Assert.assertEquals(53, schemaCreateForm.getMarkedLinesNumber(), "getAllMarkedLines()");
+        Assert.assertEquals(schemaCreateForm.getMarkedLinesNumber(), 42, "getAllMarkedLines()");
     }
 
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)

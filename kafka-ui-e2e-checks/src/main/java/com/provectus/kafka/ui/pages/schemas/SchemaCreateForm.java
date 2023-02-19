@@ -2,10 +2,13 @@ package com.provectus.kafka.ui.pages.schemas;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.api.model.SchemaType;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.interactions.Actions;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -92,8 +95,15 @@ public class SchemaCreateForm extends BasePage {
     @Step
     public SchemaCreateForm setNewSchemaValue(String configJson) {
         newSchemaTextArea.shouldBe(Condition.visible).click();
-        clearByKeyboard(newSchemaInput);
-        newSchemaInput.setValue(configJson);
+        newSchemaInput.shouldBe(Condition.enabled);
+        new Actions(WebDriverRunner.getWebDriver())
+                .sendKeys(Keys.PAGE_UP)
+                .keyDown(Keys.SHIFT)
+                .sendKeys(Keys.PAGE_DOWN)
+                .keyUp(Keys.SHIFT)
+                .sendKeys(Keys.DELETE)
+                .perform();
+        setJsonInputValue(newSchemaInput, configJson);
         return this;
     }
 
