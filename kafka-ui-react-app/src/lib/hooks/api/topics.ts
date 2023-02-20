@@ -244,8 +244,8 @@ export function useClearTopicMessages(
     async (topicName: Topic['name']) => {
       await messagesApiClient.deleteTopicMessages({
         clusterName,
-        topicName,
         partitions,
+        topicName,
       });
       return topicName;
     },

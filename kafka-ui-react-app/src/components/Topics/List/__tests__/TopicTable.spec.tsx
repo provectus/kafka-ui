@@ -13,10 +13,8 @@ import {
 } from 'lib/hooks/api/topics';
 import TopicTable from 'components/Topics/List/TopicTable';
 import { clusterTopicsPath } from 'lib/paths';
-import { useAppDispatch } from 'lib/hooks/redux';
 
 const clusterName = 'test-cluster';
-const unwrapMock = jest.fn();
 
 jest.mock('lib/hooks/redux', () => ({
   ...jest.requireActual('lib/hooks/redux'),
@@ -35,7 +33,7 @@ jest.mock('lib/hooks/api/topics', () => ({
 
 const deleteTopicMock = jest.fn();
 const recreateTopicMock = jest.fn();
-const clearTopicMessage = jest.fn();
+const clearTopicMessages = jest.fn();
 
 describe('TopicTable Components', () => {
   beforeEach(() => {
@@ -43,13 +41,10 @@ describe('TopicTable Components', () => {
       mutateAsync: deleteTopicMock,
     }));
     (useClearTopicMessages as jest.Mock).mockImplementation(() => ({
-      mutateAsync: clearTopicMessage,
+      mutateAsync: clearTopicMessages,
     }));
     (useRecreateTopic as jest.Mock).mockImplementation(() => ({
       mutateAsync: recreateTopicMock,
-    }));
-    (useAppDispatch as jest.Mock).mockImplementation(() => () => ({
-      unwrap: unwrapMock,
     }));
   });
 
@@ -191,9 +186,9 @@ describe('TopicTable Components', () => {
             ).toBeInTheDocument();
             const confirmBtn = getButtonByName('Confirm');
             expect(confirmBtn).toBeInTheDocument();
-            expect(unwrapMock).not.toHaveBeenCalled();
+            expect(clearTopicMessages).not.toHaveBeenCalled();
             await userEvent.click(confirmBtn);
-            expect(unwrapMock).toHaveBeenCalledTimes(2);
+            expect(clearTopicMessages).toHaveBeenCalledTimes(2);
             expect(screen.getAllByRole('checkbox')[1]).not.toBeChecked();
             expect(screen.getAllByRole('checkbox')[2]).not.toBeChecked();
           });
@@ -288,7 +283,7 @@ describe('TopicTable Components', () => {
           await userEvent.click(
             screen.getByRole('button', { name: 'Confirm' })
           );
-          expect(clearTopicMessage).toHaveBeenCalled();
+          expect(clearTopicMessages).toHaveBeenCalled();
         });
       });
 
