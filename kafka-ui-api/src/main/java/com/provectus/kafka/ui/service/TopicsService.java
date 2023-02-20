@@ -164,7 +164,7 @@ public class TopicsService {
   public Mono<List<ConfigEntry>> getTopicConfigs(KafkaCluster cluster, String topicName) {
     return adminClientService.get(cluster)
         .flatMap(ac -> ac.getTopicsConfig(List.of(topicName), true))
-        .map(m -> m.values().stream().findFirst().orElseThrow(TopicNotFoundException::new));
+        .map(m -> m.values().stream().findFirst().orElse(List.of()));
   }
 
   private Mono<InternalTopic> createTopic(KafkaCluster c, ReactiveAdminClient adminClient,

@@ -62,9 +62,11 @@ import org.apache.kafka.common.TopicPartitionInfo;
 import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.ClusterAuthorizationException;
 import org.apache.kafka.common.errors.GroupIdNotFoundException;
 import org.apache.kafka.common.errors.GroupNotEmptyException;
 import org.apache.kafka.common.errors.InvalidRequestException;
+import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.errors.UnsupportedVersionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
@@ -196,7 +198,8 @@ public class ReactiveAdminClient implements Closeable {
         client.describeConfigs(
             resources,
             new DescribeConfigsOptions().includeSynonyms(true).includeDocumentation(includeDoc)).values(),
-        UnknownTopicOrPartitionException.class
+        UnknownTopicOrPartitionException.class,
+        TopicAuthorizationException.class
     ).map(config -> config.entrySet().stream()
         .collect(toMap(
             c -> c.getKey().name(),
@@ -208,11 +211,17 @@ public class ReactiveAdminClient implements Closeable {
         .map(brokerId -> new ConfigResource(ConfigResource.Type.BROKER, Integer.toString(brokerId)))
         .collect(toList());
     return toMono(client.describeConfigs(resources).all())
-        .doOnError(InvalidRequestException.class,
-            th -> log.trace("Error while getting broker {} configs", brokerIds, th))
         // some kafka backends (like MSK serverless) do not support broker's configs retrieval,
         // in that case InvalidRequestException will be thrown
-        .onErrorResume(InvalidRequestException.class, th -> Mono.just(Map.of()))
+        .onErrorResume(InvalidRequestException.class, th -> {
+          log.trace("Error while getting broker {} configs", brokerIds, th);
+          return Mono.just(Map.of());
+        })
+        // there is situations when kafka-ui user has no DESCRIBE_CONFIGS permission on cluster
+        .onErrorResume(ClusterAuthorizationException.class, th -> {
+          log.trace("AuthorizationException while getting configs for brokers {}", brokerIds, th);
+          return Mono.just(Map.of());
+        })
         .map(config -> config.entrySet().stream()
             .collect(toMap(
                 c -> Integer.valueOf(c.getKey().name()),
@@ -242,13 +251,16 @@ public class ReactiveAdminClient implements Closeable {
 
   private Mono<Map<String, TopicDescription>> describeTopicsImpl(Collection<String> topics) {
     return toMonoWithExceptionFilter(
-        client.describeTopics(topics).values(),
-        UnknownTopicOrPartitionException.class
+        client.describeTopics(topics).topicNameValues(),
+        UnknownTopicOrPartitionException.class,
+        // we only describe topics that we see from listTopics() API, so we should have permission to do it,
+        // but also adding this exception here for rare case when access restricted after we called listTopics()
+        TopicAuthorizationException.class
     );
   }
 
   /**
-   * Returns TopicDescription mono, or Empty Mono if topic not found.
+   * Returns TopicDescription mono, or Empty Mono if topic not visible.
    */
   public Mono<TopicDescription> describeTopic(String topic) {
     return describeTopics(List.of(topic)).flatMap(m -> Mono.justOrEmpty(m.get(topic)));
@@ -262,10 +274,11 @@ public class ReactiveAdminClient implements Closeable {
    * such topics in resulting map.
    * <p/>
    * This method converts input map into Mono[Map] ignoring keys for which KafkaFutures
-   * finished with <code>clazz</code> exception and empty Monos.
+   * finished with <code>classes</code> exceptions and empty Monos.
    */
+  @SafeVarargs
   static <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
-                                                          Class<? extends KafkaException> clazz) {
+                                                          Class<? extends KafkaException>... classes) {
     if (values.isEmpty()) {
       return Mono.just(Map.of());
     }
@@ -277,7 +290,7 @@ public class ReactiveAdminClient implements Closeable {
                 .defaultIfEmpty(Tuples.of(e.getKey(), Optional.empty())) //tracking empty Monos
                 .onErrorResume(
                     // tracking Monos with suppressible error
-                    th -> th.getClass().isAssignableFrom(clazz),
+                    th -> Stream.of(classes).anyMatch(clazz -> th.getClass().isAssignableFrom(clazz)),
                     th -> Mono.just(Tuples.of(e.getKey(), Optional.empty()))))
         .toList();
 
