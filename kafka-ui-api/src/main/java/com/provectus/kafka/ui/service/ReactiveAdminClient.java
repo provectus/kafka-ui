@@ -475,8 +475,7 @@ public class ReactiveAdminClient implements Closeable {
                                                           boolean failOnUnknownLeader) {
     return describeTopic(topic)
         .map(td -> filterPartitionsWithLeaderCheck(List.of(td), p -> true, failOnUnknownLeader))
-        .flatMap(partitions -> listOffsetsUnsafe(partitions, offsetSpec))
-        .switchIfEmpty(Mono.just(Map.of()));
+        .flatMap(partitions -> listOffsetsUnsafe(partitions, offsetSpec));
   }
 
   /**
