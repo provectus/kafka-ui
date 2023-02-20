@@ -217,7 +217,7 @@ public class ReactiveAdminClient implements Closeable {
           log.trace("Error while getting broker {} configs", brokerIds, th);
           return Mono.just(Map.of());
         })
-        // there is situations when kafka-ui user has no DESCRIBE_CONFIGS permission on cluster
+        // there are situations when kafka-ui user has no DESCRIBE_CONFIGS permission on cluster
         .onErrorResume(ClusterAuthorizationException.class, th -> {
           log.trace("AuthorizationException while getting configs for brokers {}", brokerIds, th);
           return Mono.just(Map.of());
@@ -474,7 +474,8 @@ public class ReactiveAdminClient implements Closeable {
                                                           boolean failOnUnknownLeader) {
     return describeTopic(topic)
         .map(td -> filterPartitionsWithLeaderCheck(List.of(td), p -> true, failOnUnknownLeader))
-        .flatMap(partitions -> listOffsetsUnsafe(partitions, offsetSpec));
+        .flatMap(partitions -> listOffsetsUnsafe(partitions, offsetSpec))
+        .switchIfEmpty(Mono.just(Map.of()));
   }
 
   /**
