@@ -1,7 +1,7 @@
 name: E2E tests
 on:
   pull_request_target:
-    types: ["opened", "edited", "reopened", "synchronize"]
+    types: [ "opened", "edited", "reopened", "synchronize" ]
     paths:
       - "kafka-ui-api/**"
       - "kafka-ui-contract/**"
@@ -42,7 +42,7 @@ jobs:
       - name: e2e run
         run: |
           ./mvnw -B -ntp versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
-          ./mvnw -B -V -ntp -DQASEIO_API_TOKEN=${{ secrets.QASEIO_API_TOKEN }} -Dsurefire.suiteXmlFiles='src/test/resources/smoke.xml' -f 'kafka-ui-e2e-checks' test -Pprod
+          ./mvnw -B -V -ntp -Dsurefire.suiteXmlFiles='src/test/resources/smoke.xml' -f 'kafka-ui-e2e-checks' test -Pprod
       - name: Generate allure report
         uses: simple-elf/allure-report-action@master
         if: always()

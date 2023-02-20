@@ -11,7 +11,6 @@ public abstract class BaseSource {
     private static Config config;
     public static final String BROWSER = config().browser();
     public static final String SUITE_NAME = config().suite();
-    public static final String QASE_ENABLED = config().qase();
 
     private static Config config() {
         if (config == null) {

@@ -1,4 +1,4 @@
-name: E2E Automation suite
+name: E2E Weekly suite
 on:
   schedule:
     - cron: '0 1 * * 1'
@@ -37,7 +37,7 @@ jobs:
       - name: Run test suite
         run: |
           ./mvnw -B -ntp versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
-          ./mvnw -B -V -ntp -DQASEIO_API_TOKEN=${{ secrets.QASEIO_API_TOKEN }} -Dsurefire.suiteXmlFiles='src/test/resources/sanity.xml' -Dsuite=weekly -Dqase=true -f 'kafka-ui-e2e-checks' test -Pprod
+          ./mvnw -B -V -ntp -DQASEIO_API_TOKEN=${{ secrets.QASEIO_API_TOKEN }} -Dsurefire.suiteXmlFiles='src/test/resources/sanity.xml' -Dsuite=weekly -f 'kafka-ui-e2e-checks' test -Pprod
       - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
         if: always()

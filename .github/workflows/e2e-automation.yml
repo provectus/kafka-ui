@@ -13,11 +13,9 @@ on:
           - regression
           - sanity
           - smoke
-      qase_enabled:
-        description: 'Enable Qase integration'
-        default: true
-        required: true
-        type: boolean
+      qase_token:
+        description: 'Set Qase token to enable integration'
+        required: false
 
 jobs:
   build-and-test:
@@ -53,7 +51,7 @@ jobs:
       - name: Run test suite
         run: |
           ./mvnw -B -ntp versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
-          ./mvnw -B -V -ntp -DQASEIO_API_TOKEN=${{ secrets.QASEIO_API_TOKEN }} -Dsurefire.suiteXmlFiles='src/test/resources/${{ github.event.inputs.test_suite }}.xml' -Dsuite=${{ github.event.inputs.test_suite }} -Dqase=${{ github.event.inputs.qase_enabled }} -f 'kafka-ui-e2e-checks' test -Pprod
+          ./mvnw -B -V -ntp -DQASEIO_API_TOKEN=${{ github.event.inputs.qase_token }} -Dsurefire.suiteXmlFiles='src/test/resources/${{ github.event.inputs.test_suite }}.xml' -Dsuite=${{ github.event.inputs.test_suite }} -f 'kafka-ui-e2e-checks' test -Pprod
       - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
         if: always()
