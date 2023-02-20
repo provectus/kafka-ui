@@ -313,6 +313,7 @@ public class ReactiveAdminClient implements Closeable {
       Collection<Integer> brokerIds) {
     return toMono(client.describeLogDirs(brokerIds).all())
         .onErrorResume(UnsupportedVersionException.class, th -> Mono.just(Map.of()))
+        .onErrorResume(ClusterAuthorizationException.class, th -> Mono.just(Map.of()))
         .onErrorResume(th -> true, th -> {
           log.warn("Error while calling describeLogDirs", th);
           return Mono.just(Map.of());
