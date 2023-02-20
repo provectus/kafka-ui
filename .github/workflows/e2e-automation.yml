@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.sha }}
       - name: Set up environment
         id: set_env_values
         run: |
@@ -41,7 +41,7 @@ jobs:
       - name: Build with Maven
         id: build_app
         run: |
-          ./mvnw -B -ntp versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
+          ./mvnw -B -ntp versions:set -DnewVersion=${{ github.sha }}
           ./mvnw -B -V -ntp clean install -Pprod -Dmaven.test.skip=true ${{ github.event.inputs.extraMavenOptions }}
       - name: Compose with Docker
         id: compose_app
@@ -50,7 +50,7 @@ jobs:
           docker-compose -f ./documentation/compose/e2e-tests.yaml up -d
       - name: Run test suite
         run: |
-          ./mvnw -B -ntp versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
+          ./mvnw -B -ntp versions:set -DnewVersion=${{ github.sha }}
           ./mvnw -B -V -ntp -DQASEIO_API_TOKEN=${{ github.event.inputs.qase_token }} -Dsurefire.suiteXmlFiles='src/test/resources/${{ github.event.inputs.test_suite }}.xml' -Dsuite=${{ github.event.inputs.test_suite }} -f 'kafka-ui-e2e-checks' test -Pprod
       - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
@@ -77,7 +77,7 @@ jobs:
           authToken: ${{secrets.GITHUB_TOKEN}}
           context: "Test report"
           state: "success"
-          sha: ${{ github.event.pull_request.head.sha  || github.sha }}
+          sha: ${{ github.sha }}
           target_url: http://kafkaui-allure-reports.s3-website.eu-central-1.amazonaws.com/${{ github.run_number }}
       - name: Dump Docker logs on failure
         if: failure()

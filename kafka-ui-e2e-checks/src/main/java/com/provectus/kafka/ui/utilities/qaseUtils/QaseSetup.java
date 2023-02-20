@@ -22,7 +22,7 @@ public class QaseSetup {
             System.setProperty("QASE_ENABLE", FALSE);
         } else {
             log.warn("Integration with Qase is enabled. Find this run at https://app.qase.io/run/KAFKAUI.");
-            String automation = SUITE_NAME.equalsIgnoreCase(MANUAL) ? "" : "Automation";
+            String automation = SUITE_NAME.equalsIgnoreCase(MANUAL) ? "" : "Automation ";
             System.setProperty("QASE_ENABLE", TRUE);
             System.setProperty("QASE_PROJECT_CODE", "KAFKAUI");
             System.setProperty("QASE_API_TOKEN", qaseApiToken);
