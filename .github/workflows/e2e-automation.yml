@@ -75,7 +75,7 @@ jobs:
         uses: Sibz/github-status-action@v1.1.6
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
-          context: "Click Details button to open Allure report"
+          context: "Test report"
           state: "success"
           sha: ${{ github.event.pull_request.head.sha  || github.sha }}
           target_url: http://kafkaui-allure-reports.s3-website.eu-central-1.amazonaws.com/${{ github.run_number }}
