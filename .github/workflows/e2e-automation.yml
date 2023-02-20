@@ -16,6 +16,7 @@ on:
       qase_token:
         description: 'Set Qase token to enable integration'
         required: false
+        type: string
 
 jobs:
   build-and-test:
