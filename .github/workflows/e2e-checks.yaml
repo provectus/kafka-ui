@@ -1,4 +1,4 @@
-name: E2E Health check
+name: E2E PR check
 on:
   pull_request_target:
     types: [ "opened", "edited", "reopened", "synchronize" ]
