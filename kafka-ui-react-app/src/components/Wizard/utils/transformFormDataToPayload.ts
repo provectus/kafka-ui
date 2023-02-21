@@ -1,5 +1,6 @@
 import { ClusterConfigFormValues } from 'components/Wizard/types';
 import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
+import { isEmpty, omitBy } from 'lodash';
 
 import { getJaasConfig } from './getJaasConfig';
 
@@ -62,15 +63,18 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
   }
 
   if (data.customAuth) {
-    config.properties = {
-      'security.protocol': data.customAuth.securityProtocol,
-      'sasl.mechanism': data.customAuth.saslMechanism,
-      'sasl.enabled.mechanisms': data.customAuth.saslEnabledMechanisms,
-      'sasl.kerberos.service.name': data.customAuth.saslKerberosServiceName,
-      'sasl.jaas.config': data.customAuth.saslJaasConfig,
-      'sasl.client.callback.handler.class':
-        data.customAuth.saslClientCallbackHandlerClass,
-    };
+    config.properties = omitBy(
+      {
+        'security.protocol': data.customAuth.securityProtocol,
+        'sasl.mechanism': data.customAuth.saslMechanism,
+        'sasl.enabled.mechanisms': data.customAuth.saslEnabledMechanisms,
+        'sasl.kerberos.service.name': data.customAuth.saslKerberosServiceName,
+        'sasl.jaas.config': data.customAuth.saslJaasConfig,
+        'sasl.client.callback.handler.class':
+          data.customAuth.saslClientCallbackHandlerClass,
+      },
+      isEmpty
+    );
   }
 
   // Authentication

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from 'components/common/Button/Button';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,6 +7,8 @@ import { StyledForm } from 'components/common/Form/Form.styled';
 import { useValidateAppConfig } from 'lib/hooks/api/appConfig';
 import { ClusterConfigFormValues } from 'components/Wizard/types';
 import { transformFormDataToPayload } from 'components/Wizard/utils/transformFormDataToPayload';
+import { showSuccessAlert } from 'lib/errorHandling';
+import { getIsValidConfig } from 'components/Wizard/utils/getIsValidConfig';
 
 import * as S from './WizardForm.styled';
 import KafkaCluster from './KafkaCluster/KafkaCluster';
@@ -41,26 +43,29 @@ const Wizard: React.FC<WizardFormProps> = ({
   const validate = useValidateAppConfig();
 
   const onSubmit = async (data: ClusterConfigFormValues) => {
-    // eslint-disable-next-line no-console
-    console.log('SubmitData', data);
-
     const config = transformFormDataToPayload(data);
-    const resp = await validate.mutateAsync(config);
-
-    // eslint-disable-next-line no-console
-    console.log('resp', resp);
-
-    return data;
+    console.log(config);
   };
 
-  const onReset = () => {
+  const onReset = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     methods.reset();
   };
 
-  const showCustomConfig = methods.watch('customAuth') && hasCustomConfig;
+  const onValidate = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const data = methods.getValues();
+    const config = transformFormDataToPayload(data);
+    const response = await validate.mutateAsync(config);
+    const isValid = getIsValidConfig(response, data.name);
+    if (isValid) {
+      showSuccessAlert({
+        message: 'Configuration is valid',
+      });
+    }
+  };
 
-  // eslint-disable-next-line no-console
-  console.log('Errors:', methods.formState.errors);
+  const showCustomConfig = methods.watch('customAuth') && hasCustomConfig;
 
   return (
     <FormProvider {...methods}>
@@ -77,11 +82,14 @@ const Wizard: React.FC<WizardFormProps> = ({
         <Metrics />
         <hr />
         <S.ButtonWrapper>
-          <Button buttonSize="L" buttonType="primary" onClick={onReset}>
+          <Button buttonSize="L" buttonType="secondary" onClick={onReset}>
             Reset
           </Button>
-          <Button type="submit" buttonSize="L" buttonType="primary">
+          <Button buttonSize="L" buttonType="secondary" onClick={onValidate}>
             Validate
+          </Button>
+          <Button type="submit" buttonSize="L" buttonType="primary">
+            Submit
           </Button>
         </S.ButtonWrapper>
       </StyledForm>
