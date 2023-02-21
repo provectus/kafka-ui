@@ -1,7 +1,7 @@
-name: E2E tests
+name: E2E PR health check
 on:
   pull_request_target:
-    types: ["opened", "edited", "reopened", "synchronize"]
+    types: [ "opened", "edited", "reopened", "synchronize" ]
     paths:
       - "kafka-ui-api/**"
       - "kafka-ui-contract/**"
@@ -42,7 +42,7 @@ jobs:
       - name: e2e run
         run: |
           ./mvnw -B -ntp versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
-          ./mvnw -B -V -ntp -DQASEIO_API_TOKEN=${{ secrets.QASEIO_API_TOKEN }} -Dsurefire.suiteXmlFiles='src/test/resources/smoke.xml' -f 'kafka-ui-e2e-checks' test -Pprod
+          ./mvnw -B -V -ntp -Dsurefire.suiteXmlFiles='src/test/resources/smoke.xml' -f 'kafka-ui-e2e-checks' test -Pprod
       - name: Generate allure report
         uses: simple-elf/allure-report-action@master
         if: always()
@@ -66,7 +66,7 @@ jobs:
         uses: Sibz/github-status-action@v1.1.6
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
-          context: "Test report"
+          context: "Click Details button to open Allure report"
           state: "success"
           sha: ${{ github.event.pull_request.head.sha  || github.sha }}
           target_url: http://kafkaui-allure-reports.s3-website.eu-central-1.amazonaws.com/${{ github.run_number }}
