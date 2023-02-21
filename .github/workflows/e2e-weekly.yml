@@ -1,25 +1,20 @@
-name: E2E PR health check
+name: E2E Weekly suite
 on:
-  pull_request_target:
-    types: [ "opened", "edited", "reopened", "synchronize" ]
-    paths:
-      - "kafka-ui-api/**"
-      - "kafka-ui-contract/**"
-      - "kafka-ui-react-app/**"
-      - "kafka-ui-e2e-checks/**"
-      - "pom.xml"
+  schedule:
+    - cron: '0 1 * * 1'
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - name: Set the values
+          ref: ${{ github.sha }}
+      - name: Set up environment
         id: set_env_values
         run: |
           cat "./kafka-ui-e2e-checks/.env.ci" >> "./kafka-ui-e2e-checks/.env"
-      - name: pull docker
+      - name: Pull with Docker
         id: pull_chrome
         run: |
           docker pull selenium/standalone-chrome:103.0
@@ -32,18 +27,18 @@ jobs:
       - name: Build with Maven
         id: build_app
         run: |
-          ./mvnw -B -ntp versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
+          ./mvnw -B -ntp versions:set -DnewVersion=${{ github.sha }}
           ./mvnw -B -V -ntp clean install -Pprod -Dmaven.test.skip=true ${{ github.event.inputs.extraMavenOptions }}
-      - name: compose app
+      - name: Compose with Docker
         id: compose_app
         # use the following command until #819 will be fixed
         run: |
           docker-compose -f ./documentation/compose/e2e-tests.yaml up -d
-      - name: e2e run
+      - name: Run test suite
         run: |
-          ./mvnw -B -ntp versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
-          ./mvnw -B -V -ntp -Dsurefire.suiteXmlFiles='src/test/resources/smoke.xml' -f 'kafka-ui-e2e-checks' test -Pprod
-      - name: Generate allure report
+          ./mvnw -B -ntp versions:set -DnewVersion=${{ github.sha }}
+          ./mvnw -B -V -ntp -DQASEIO_API_TOKEN=${{ secrets.QASEIO_API_TOKEN }} -Dsurefire.suiteXmlFiles='src/test/resources/sanity.xml' -Dsuite=weekly -f 'kafka-ui-e2e-checks' test -Pprod
+      - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
         if: always()
         id: allure-report
@@ -61,15 +56,15 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: 'eu-central-1'
           SOURCE_DIR: 'allure-history/allure-results'
-      - name: Post the link to allure report
+      - name: Deploy report to Amazon S3
         if: always()
         uses: Sibz/github-status-action@v1.1.6
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
-          context: "Click Details button to open Allure report"
+          context: "Test report"
           state: "success"
-          sha: ${{ github.event.pull_request.head.sha  || github.sha }}
+          sha: ${{ github.sha }}
           target_url: http://kafkaui-allure-reports.s3-website.eu-central-1.amazonaws.com/${{ github.run_number }}
-      - name: Dump docker logs on failure
+      - name: Dump Docker logs on failure
         if: failure()
         uses: jwalton/gh-docker-logs@v2.2.1
