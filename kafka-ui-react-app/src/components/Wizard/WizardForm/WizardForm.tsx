@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from 'components/common/Button/Button';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import formSchema from 'components/Wizard/schema';
 import { StyledForm } from 'components/common/Form/Form.styled';
-import { useValidateAppConfig } from 'lib/hooks/api/appConfig';
+import {
+  useUpdateAppConfig,
+  useValidateAppConfig,
+} from 'lib/hooks/api/appConfig';
 import { ClusterConfigFormValues } from 'components/Wizard/types';
 import { transformFormDataToPayload } from 'components/Wizard/utils/transformFormDataToPayload';
 import { showSuccessAlert } from 'lib/errorHandling';
@@ -41,10 +44,11 @@ const Wizard: React.FC<WizardFormProps> = ({
   });
 
   const validate = useValidateAppConfig();
+  const update = useUpdateAppConfig();
 
   const onSubmit = async (data: ClusterConfigFormValues) => {
     const config = transformFormDataToPayload(data);
-    console.log(config);
+    await update.mutateAsync(config);
   };
 
   const onReset = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -67,6 +71,9 @@ const Wizard: React.FC<WizardFormProps> = ({
 
   const showCustomConfig = methods.watch('customAuth') && hasCustomConfig;
 
+  const { isSubmitting } = methods.formState;
+  const isSubmitDisabled = isSubmitting;
+
   return (
     <FormProvider {...methods}>
       <StyledForm onSubmit={methods.handleSubmit(onSubmit)}>
@@ -82,13 +89,28 @@ const Wizard: React.FC<WizardFormProps> = ({
         <Metrics />
         <hr />
         <S.ButtonWrapper>
-          <Button buttonSize="L" buttonType="secondary" onClick={onReset}>
+          <Button
+            buttonSize="L"
+            buttonType="secondary"
+            onClick={onReset}
+            disabled={isSubmitting}
+          >
             Reset
           </Button>
-          <Button buttonSize="L" buttonType="secondary" onClick={onValidate}>
+          <Button
+            buttonSize="L"
+            buttonType="secondary"
+            onClick={onValidate}
+            disabled={isSubmitting}
+          >
             Validate
           </Button>
-          <Button type="submit" buttonSize="L" buttonType="primary">
+          <Button
+            type="submit"
+            buttonSize="L"
+            buttonType="primary"
+            disabled={isSubmitDisabled}
+          >
             Submit
           </Button>
         </S.ButtonWrapper>
