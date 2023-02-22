@@ -13,6 +13,7 @@ import { transformFormDataToPayload } from 'widgets/ClusterConfigForm/utils/tran
 import { showSuccessAlert } from 'lib/errorHandling';
 import { getIsValidConfig } from 'widgets/ClusterConfigForm/utils/getIsValidConfig';
 import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
+import { useNavigate } from 'react-router-dom';
 
 import KafkaCluster from './KafkaCluster';
 import SchemaRegistry from './SchemaRegistry';
@@ -42,6 +43,7 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
       ...initialValues,
     },
   });
+  const navigate = useNavigate();
 
   const validate = useValidateAppConfig();
   const update = useUpdateAppConfig({ initialName: initialValues.name });
@@ -49,6 +51,7 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
   const onSubmit = async (data: ClusterConfigFormValues) => {
     const config = transformFormDataToPayload(data);
     await update.mutateAsync(config);
+    navigate('/');
   };
 
   const onReset = () => methods.reset();
@@ -75,9 +78,8 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
       <StyledForm onSubmit={methods.handleSubmit(onSubmit)}>
         <KafkaCluster />
         <hr />
-        {!showCustomConfig ? <Authentication /> : <CustomAuthentication />}
+        {showCustomConfig ? <CustomAuthentication /> : <Authentication />}
         <hr />
-
         <SchemaRegistry />
         <hr />
         <KafkaConnect />

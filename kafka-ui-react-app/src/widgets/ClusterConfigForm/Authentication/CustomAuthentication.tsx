@@ -14,20 +14,7 @@ const CustomAuthentication: React.FC = () => {
   const hasCustomConfig =
     customConf && Object.values(customConf).some((v) => !!v);
 
-  const toggle = () =>
-    setValue(
-      'customAuth',
-      hasCustomConfig
-        ? undefined
-        : {
-            securityProtocol: '',
-            saslMechanism: '',
-            saslEnabledMechanisms: '',
-            saslJaasConfig: '',
-            saslKerberosServiceName: '',
-            saslClientCallbackHandlerClass: '',
-          }
-    );
+  const remove = () => setValue('customAuth', undefined);
 
   return (
     <>
@@ -35,48 +22,52 @@ const CustomAuthentication: React.FC = () => {
         <FlexGrow1>
           <Heading level={3}>Authentication</Heading>
         </FlexGrow1>
-        <Button buttonSize="M" buttonType="primary" onClick={toggle}>
-          {hasCustomConfig ? 'Remove from config' : 'Configure Authentication'}
+        <Button buttonSize="M" buttonType="primary" onClick={remove}>
+          Remove from config
         </Button>
       </FlexRow>
       {hasCustomConfig && (
         <>
-          <Input
-            type="text"
-            name="customAuth.securityProtocol"
-            label="security.protocol"
-            withError
-          />
-          <Input
-            type="text"
-            name="customAuth.saslMechanism"
-            label="sasl.mechanism"
-            withError
-          />
-          <Input
-            type="text"
-            name="customAuth.saslEnabledMechanisms"
-            label="sasl.enabled.mechanisms"
-            withError
-          />
-          <Input
-            type="text"
-            name="customAuth.saslJaasConfig"
-            label="sasl.jaas.config"
-            withError
-          />
-          <Input
-            type="text"
-            name="customAuth.saslKerberosServiceName"
-            label="sasl.kerberos.service.name"
-            withError
-          />
-          <Input
-            type="text"
-            name="customAuth.saslClientCallbackHandlerClass"
-            label="sasl.client.callback.handler.class"
-            withError
-          />
+          {customConf['security.protocol'] && (
+            <Input
+              type="text"
+              name="customAuth.securityProtocol"
+              label="security.protocol"
+              withError
+            />
+          )}
+          {customConf['sasl.mechanism'] && (
+            <Input
+              type="text"
+              name="customAuth.saslMechanism"
+              label="sasl.mechanism"
+              withError
+            />
+          )}
+          {customConf['sasl.jaas.config'] && (
+            <Input
+              type="text"
+              name="customAuth.saslJaasConfig"
+              label="sasl.jaas.config"
+              withError
+            />
+          )}
+          {customConf['sasl.kerberos.service.name'] && (
+            <Input
+              type="text"
+              name="customAuth.saslKerberosServiceName"
+              label="sasl.kerberos.service.name"
+              withError
+            />
+          )}
+          {customConf['sasl.client.callback.handler.class'] && (
+            <Input
+              type="text"
+              name="customAuth.saslClientCallbackHandlerClass"
+              label="sasl.client.callback.handler.class"
+              withError
+            />
+          )}
         </>
       )}
     </>

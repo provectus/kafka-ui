@@ -76,7 +76,6 @@ export const getInitialFormData = (
   initialValues.customAuth = {
     securityProtocol: properties['security.protocol'],
     saslMechanism: properties['sasl.mechanism'],
-    saslEnabledMechanisms: properties['sasl.enabled.mechanisms'],
     saslJaasConfig: properties['sasl.jaas.config'],
     saslKerberosServiceName: properties['sasl.kerberos.service.name'],
     saslClientCallbackHandlerClass:

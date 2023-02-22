@@ -20,8 +20,8 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
           />
           <Input
             type="text"
-            name="auth.props.saslEnabledMechanism"
-            label="sasl.enabled.mechanism"
+            name="auth.props.saslMechanism"
+            label="sasl.mechanism"
             withError
           />
         </>

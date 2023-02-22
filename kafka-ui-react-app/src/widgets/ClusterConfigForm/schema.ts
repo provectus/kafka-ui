@@ -86,7 +86,7 @@ const authPropsSchema = lazy((_, { parent }) => {
     case 'SASL/JAAS':
       return object({
         saslJaasConfig: requiredString,
-        saslEnabledMechanism: requiredString,
+        saslMechanism: requiredString,
       });
     case 'SASL/GSSAPI':
       return object({
