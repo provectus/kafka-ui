@@ -3,12 +3,9 @@ package com.provectus.kafka.ui.smokeSuite.topics;
 import com.provectus.kafka.ui.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
 import com.provectus.kafka.ui.pages.topics.TopicDetails;
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.AutomationStatus;
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Suite;
-import com.provectus.kafka.ui.utilities.qaseUtils.enums.Status;
 import io.qameta.allure.Issue;
 import io.qameta.allure.Step;
-import io.qase.api.annotation.CaseId;
+import io.qase.api.annotation.QaseId;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -30,8 +27,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class MessagesTest extends BaseTest {
 
-    private static final long SUITE_ID = 2;
-    private static final String SUITE_TITLE = "Topics";
     private static final Topic TOPIC_FOR_MESSAGES = new Topic()
             .setName("topic-with-clean-message-attribute-" + randomAlphabetic(5))
             .setMessageKey(randomAlphabetic(5))
@@ -60,9 +55,7 @@ public class MessagesTest extends BaseTest {
         IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(222)
+    @QaseId(222)
     @Test(priority = 1)
     public void produceMessage() {
         navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
@@ -79,9 +72,7 @@ public class MessagesTest extends BaseTest {
 
     @Ignore
     @Issue("https://github.com/provectus/kafka-ui/issues/2778")
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(19)
+    @QaseId(19)
     @Test(priority = 2)
     public void clearMessage() {
         navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
@@ -97,9 +88,7 @@ public class MessagesTest extends BaseTest {
         Assert.assertEquals(0, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(239)
+    @QaseId(239)
     @Test(priority = 3)
     public void checkClearTopicMessage() {
         navigateToTopicsAndOpenDetails(TOPIC_TO_CLEAR_AND_PURGE_MESSAGES.getName());
@@ -122,9 +111,7 @@ public class MessagesTest extends BaseTest {
         softly.assertAll();
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(10)
+    @QaseId(10)
     @Test(priority = 4)
     public void checkPurgeMessagePossibility() {
         navigateToTopics();
@@ -157,9 +144,7 @@ public class MessagesTest extends BaseTest {
 
     @Ignore
     @Issue("https://github.com/provectus/kafka-ui/issues/2819")
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(21)
+    @QaseId(21)
     @Test(priority = 5)
     public void copyMessageFromTopicProfile() {
         navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
@@ -174,9 +159,7 @@ public class MessagesTest extends BaseTest {
 
     @Ignore
     @Issue("https://github.com/provectus/kafka-ui/issues/2394")
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(15)
+    @QaseId(15)
     @Test(priority = 6)
     public void checkingMessageFilteringByOffset() {
         navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
@@ -198,9 +181,7 @@ public class MessagesTest extends BaseTest {
     @Ignore
     @Issue("https://github.com/provectus/kafka-ui/issues/3215")
     @Issue("https://github.com/provectus/kafka-ui/issues/2345")
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(16)
+    @QaseId(16)
     @Test(priority = 7)
     public void checkingMessageFilteringByTimestamp() {
         navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
@@ -227,9 +208,7 @@ public class MessagesTest extends BaseTest {
 
     @Ignore
     @Issue("https://github.com/provectus/kafka-ui/issues/2778")
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(246)
+    @QaseId(246)
     @Test(priority = 8)
     public void checkClearTopicMessageFromOverviewTab() {
         navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
@@ -247,9 +226,7 @@ public class MessagesTest extends BaseTest {
         softly.assertAll();
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(240)
+    @QaseId(240)
     @Test(priority = 9)
     public void checkRecreateTopic() {
         navigateToTopicsAndOpenDetails(TOPIC_TO_RECREATE.getName());

@@ -3,10 +3,7 @@ package com.provectus.kafka.ui.smokeSuite.ksqlDb;
 import com.provectus.kafka.ui.BaseTest;
 import com.provectus.kafka.ui.pages.ksqlDb.models.Stream;
 import com.provectus.kafka.ui.pages.ksqlDb.models.Table;
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.AutomationStatus;
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Suite;
-import com.provectus.kafka.ui.utilities.qaseUtils.enums.Status;
-import io.qase.api.annotation.CaseId;
+import io.qase.api.annotation.QaseId;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
@@ -17,8 +14,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class KsqlDbTest extends BaseTest {
 
-    private static final long SUITE_ID = 8;
-    private static final String SUITE_TITLE = "KSQL_DB";
     private static final Stream STREAM_FOR_CHECKING_TABLES = new Stream()
             .setName("STREAM_FOR_CHECKING_TABLES_" + randomAlphabetic(4).toUpperCase())
             .setTopicName("TOPIC_FOR_STREAM_" + randomAlphabetic(4).toUpperCase());
@@ -36,9 +31,7 @@ public class KsqlDbTest extends BaseTest {
                 .createTables(FIRST_TABLE, SECOND_TABLE);
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(41)
+    @QaseId(41)
     @Test(priority = 1)
     public void checkShowTablesRequestExecution() {
         naviSideBar
@@ -57,9 +50,7 @@ public class KsqlDbTest extends BaseTest {
         softly.assertAll();
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(86)
+    @QaseId(86)
     @Test(priority = 2)
     public void clearResultsForExecutedRequest() {
         naviSideBar
