@@ -159,6 +159,8 @@ const baseTheme = {
     },
   },
   icons: {
+    editIcon: Colors.neutral[30],
+    cancelIcon: Colors.neutral[30],
     autoIcon: Colors.neutral[95],
     fileIcon: Colors.neutral[90],
     clockIcon: Colors.neutral[90],
@@ -1071,6 +1073,8 @@ export const darkTheme: ThemeType = {
   },
   icons: {
     ...baseTheme.icons,
+    editIcon: Colors.neutral[0],
+    cancelIcon: Colors.neutral[0],
     autoIcon: Colors.neutral[0],
     fileIcon: Colors.neutral[0],
     clockIcon: Colors.neutral[0],
@@ -1078,7 +1082,6 @@ export const darkTheme: ThemeType = {
     moonIcon: Colors.neutral[0],
     sunIcon: Colors.neutral[0],
     infoIcon: Colors.neutral[70],
-
     savedIcon: Colors.brand[50],
     git: {
       ...baseTheme.icons.git,

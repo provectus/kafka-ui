@@ -4,7 +4,7 @@ import {
   useHover,
   useInteractions,
   Placement,
-} from '@floating-ui/react-dom-interactions';
+} from '@floating-ui/react';
 
 import * as S from './Tooltip.styled';
 

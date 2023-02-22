@@ -33,4 +33,5 @@ export const Field = styled.div`
   white-space: nowrap;
   overflow: hidden;
   margin-right: 5px;
+  color: ${({ theme }) => theme.modal.color}; ;
 `;
