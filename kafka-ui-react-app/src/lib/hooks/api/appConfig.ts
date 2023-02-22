@@ -7,22 +7,32 @@ export function useAppConfig() {
   return useQuery(['appConfig'], () => api.getCurrentConfig());
 }
 
-export function useUpdateAppConfig() {
+export function useUpdateAppConfig({ initialName }: { initialName?: string }) {
   const client = useQueryClient();
   return useMutation(
     async (cluster: ApplicationConfigPropertiesKafkaClustersInner) => {
-      const { name } = cluster;
       const existingConfig = await api.getCurrentConfig();
+      const existingClusters = existingConfig.properties?.kafka?.clusters || [];
+
+      let clusters: ApplicationConfigPropertiesKafkaClustersInner[] = [];
+
+      if (existingClusters.length > 0) {
+        if (!initialName) {
+          clusters = [...existingClusters, cluster];
+        } else {
+          clusters = existingClusters.map((c) =>
+            c.name === initialName ? cluster : c
+          );
+        }
+      } else {
+        clusters = [cluster];
+      }
 
       const config = {
         ...existingConfig,
         properties: {
           ...existingConfig.properties,
-          kafka: {
-            clusters: existingConfig.properties?.kafka?.clusters?.map((c) =>
-              c.name === name ? cluster : c
-            ),
-          },
+          kafka: { clusters },
         },
       };
       return api.restartWithConfig({ restartRequest: { config } });

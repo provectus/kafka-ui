@@ -14,13 +14,13 @@ import {
 } from 'components/Wizard/WizardForm/WizardForm.styled';
 
 const KafkaConnect = () => {
-  const { control, watch, setValue } = useFormContext();
+  const { control, watch } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'kafkaConnect',
   });
-  const handleAppend = () => append({});
-  const clearConfig = () => setValue('kafkaConnect', []);
+  const handleAppend = () => append({ name: '', address: '' });
+  const toggleConfig = () => (fields.length === 0 ? handleAppend() : remove());
 
   return (
     <>
@@ -28,15 +28,9 @@ const KafkaConnect = () => {
         <FlexGrow1>
           <Heading level={3}>Kafka Connect</Heading>
         </FlexGrow1>
-        {fields.length === 0 ? (
-          <Button buttonSize="M" buttonType="primary" onClick={handleAppend}>
-            Add Kafka Connect
-          </Button>
-        ) : (
-          <Button buttonSize="M" buttonType="primary" onClick={clearConfig}>
-            Remove From Config
-          </Button>
-        )}
+        <Button buttonSize="M" buttonType="primary" onClick={toggleConfig}>
+          {fields.length === 0 ? 'Add Kafka Connect' : 'Remove From Config'}
+        </Button>
       </FlexRow>
       {fields.length > 0 && (
         <S.ArrayFieldWrapper>

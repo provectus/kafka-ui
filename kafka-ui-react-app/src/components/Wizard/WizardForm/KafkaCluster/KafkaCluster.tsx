@@ -24,7 +24,15 @@ const KafkaCluster: React.FC = () => {
   const hasKeyStore = !!watch('keystore');
 
   const toggleSection = (section: string) => () =>
-    setValue(section, watch(section) ? undefined : {});
+    setValue(
+      section,
+      watch(section)
+        ? undefined
+        : {
+            location: '',
+            password: '',
+          }
+    );
 
   return (
     <>

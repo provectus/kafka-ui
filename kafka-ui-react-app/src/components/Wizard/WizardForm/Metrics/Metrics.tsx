@@ -15,7 +15,16 @@ const Metrics = () => {
   const { setValue, watch } = useFormContext();
   const visibleMetrics = !!watch('metrics');
   const toggleMetrics = () =>
-    setValue('metrics', visibleMetrics ? undefined : {});
+    setValue(
+      'metrics',
+      visibleMetrics
+        ? undefined
+        : {
+            type: '',
+            port: 0,
+            isAuth: false,
+          }
+    );
 
   const isAuth = watch('metrics.isAuth');
   return (

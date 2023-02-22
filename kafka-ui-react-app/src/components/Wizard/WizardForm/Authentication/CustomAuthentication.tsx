@@ -14,7 +14,20 @@ const CustomAuthentication: React.FC = () => {
   const hasCustomConfig =
     customConf && Object.values(customConf).some((v) => !!v);
 
-  const toggle = () => setValue('customAuth', hasCustomConfig ? undefined : {});
+  const toggle = () =>
+    setValue(
+      'customAuth',
+      hasCustomConfig
+        ? undefined
+        : {
+            securityProtocol: '',
+            saslMechanism: '',
+            saslEnabledMechanisms: '',
+            saslJaasConfig: '',
+            saslKerberosServiceName: '',
+            saslClientCallbackHandlerClass: '',
+          }
+    );
 
   return (
     <>

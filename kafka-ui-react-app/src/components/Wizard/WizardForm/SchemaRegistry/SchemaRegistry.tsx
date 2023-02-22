@@ -12,13 +12,11 @@ import {
 const SchemaRegistry = () => {
   const { setValue, watch } = useFormContext();
   const schemaRegistry = watch('schemaRegistry');
-  const showRegistryFrom: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault();
-    if (schemaRegistry) {
-      setValue('schemaRegistry', undefined);
-    } else {
-      setValue('schemaRegistry', {});
-    }
+  const showRegistryFrom = () => {
+    setValue(
+      'schemaRegistry',
+      schemaRegistry ? undefined : { url: '', isAuth: false }
+    );
   };
   return (
     <>
@@ -26,11 +24,7 @@ const SchemaRegistry = () => {
         <FlexGrow1>
           <Heading level={3}>Schema Registry</Heading>
         </FlexGrow1>
-        <Button
-          buttonSize="M"
-          buttonType="primary"
-          onClick={(e) => showRegistryFrom(e)}
-        >
+        <Button buttonSize="M" buttonType="primary" onClick={showRegistryFrom}>
           {!schemaRegistry ? 'Add Schema Registry' : 'Remove from config'}
         </Button>
       </FlexRow>

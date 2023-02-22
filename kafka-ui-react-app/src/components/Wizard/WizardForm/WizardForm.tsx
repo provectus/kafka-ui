@@ -44,20 +44,16 @@ const Wizard: React.FC<WizardFormProps> = ({
   });
 
   const validate = useValidateAppConfig();
-  const update = useUpdateAppConfig();
+  const update = useUpdateAppConfig({ initialName: initialValues.name });
 
   const onSubmit = async (data: ClusterConfigFormValues) => {
     const config = transformFormDataToPayload(data);
     await update.mutateAsync(config);
   };
 
-  const onReset = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    methods.reset();
-  };
+  const onReset = () => methods.reset();
 
-  const onValidate = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const onValidate = async () => {
     const data = methods.getValues();
     const config = transformFormDataToPayload(data);
     const response = await validate.mutateAsync(config);
