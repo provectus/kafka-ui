@@ -2,16 +2,16 @@ package com.provectus.kafka.ui.settings.configs;
 
 import org.aeonbits.owner.Config;
 
-public interface Profiles extends Config {
+import static com.provectus.kafka.ui.variables.Browser.CONTAINER;
+import static com.provectus.kafka.ui.variables.Suite.CUSTOM;
 
-    String CONTAINER = "container";
-    String LOCAL = "local";
+public interface Profiles extends Config {
 
     @Key("browser")
     @DefaultValue(CONTAINER)
     String browser();
 
     @Key("suite")
-    @DefaultValue("custom")
+    @DefaultValue(CUSTOM)
     String suite();
 }
