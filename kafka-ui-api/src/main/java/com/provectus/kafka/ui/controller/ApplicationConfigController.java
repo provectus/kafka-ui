@@ -8,7 +8,7 @@ import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.ApplicationConfigDTO;
 import com.provectus.kafka.ui.model.ApplicationConfigPropertiesDTO;
 import com.provectus.kafka.ui.model.ApplicationConfigValidationDTO;
-import com.provectus.kafka.ui.model.ApplicationFeaturesDTO;
+import com.provectus.kafka.ui.model.ApplicationInfoDTO;
 import com.provectus.kafka.ui.model.ClusterConfigValidationDTO;
 import com.provectus.kafka.ui.model.RestartRequestDTO;
 import com.provectus.kafka.ui.model.UploadedFileInfoDTO;
@@ -55,14 +55,16 @@ public class ApplicationConfigController implements ApplicationConfigApi {
   private final ApplicationRestarter restarter;
   private final KafkaClusterFactory kafkaClusterFactory;
 
+
   @Override
-  public Mono<ResponseEntity<ApplicationFeaturesDTO>> getApplicationFeatures(ServerWebExchange exchange) {
+  public Mono<ResponseEntity<ApplicationInfoDTO>> getApplicationInfo(ServerWebExchange exchange) {
     return Mono.just(
-        new ApplicationFeaturesDTO()
+        new ApplicationInfoDTO()
             .enabledFeatures(
                 dynamicConfigOperations.dynamicConfigEnabled()
-                    ? List.of(ApplicationFeaturesDTO.EnabledFeaturesEnum.DYNAMIC_CONFIG)
-                    : List.of())
+                    ? List.of(ApplicationInfoDTO.EnabledFeaturesEnum.DYNAMIC_CONFIG)
+                    : List.of()
+            )
     ).map(ResponseEntity::ok);
   }
 

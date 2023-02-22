@@ -1744,19 +1744,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationInfo'
 
-  /api/features:
+  /api/info:
     get:
       tags:
         - ApplicationConfig
-      summary: Gets application features
-      operationId: getApplicationFeatures
+      summary: Gets application info
+      operationId: getApplicationInfo
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApplicationFeatures'
+                $ref: '#/components/schemas/ApplicationInfo'
 
   /api/config:
     get:
@@ -1908,7 +1908,7 @@ components:
         stackTrace:
           type: string
 
-    ApplicationFeatures:
+    ApplicationInfo:
       type: object
       properties:
         enabledFeatures:
