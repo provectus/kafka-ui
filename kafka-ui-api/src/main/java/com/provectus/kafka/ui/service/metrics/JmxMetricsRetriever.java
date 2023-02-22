@@ -99,6 +99,27 @@ class JmxMetricsRetriever implements MetricsRetriever {
       env.put("com.sun.jndi.rmi.factory.socket", new OverriddenSslSocketFactory(c.getOriginalProperties().getSsl()));
     }
 
+//    RMIServerImpl_Stub stub = (RMIServerImpl_Stub) new InitialContext(EnvHelp.mapToHashtable(env)).lookup("rmi://kafka0:9997/jmxrmi");
+//    var liveRef = ((UnicastRef2) stub.getRef()).getLiveRef();
+//// option1: set liveRef.ep.csf to OverridenSSlfactory
+//
+//
+//// option2: (doenst work??)
+//    var newRmiServer =  sun.rmi.server.Util.createProxy(
+//        RMIServerImpl.class,
+//        new UnicastRef2(
+//            new LiveRef(
+//                liveRef.getObjID(),
+//                new TCPEndpoint("kafka0", liveRef.getPort(), new OverriddenSslSocketFactory(c.getOriginalProperties().getSsl()), null),
+//                false
+//            )
+//        ),
+//        false
+//    );
+//
+//    var newConn = new RMIConnector(newRmiServer, null, env);
+//    newConn.connect();
+
     return JMXConnectorFactory.connect(new JMXServiceURL(jmxUrl), env);
   }
 
