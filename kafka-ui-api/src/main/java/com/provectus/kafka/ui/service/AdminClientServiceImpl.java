@@ -38,18 +38,17 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
 
   private Mono<ReactiveAdminClient> createAdminClient(KafkaCluster cluster) {
     return Mono.fromSupplier(() -> {
-          Properties properties = new Properties();
-          SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
-          properties.putAll(cluster.getProperties());
-          properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
-          properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
-          properties.putIfAbsent(
-              AdminClientConfig.CLIENT_ID_CONFIG,
-              "kafka-ui-client-" + Instant.now().getEpochSecond() + "-" + CLIENT_ID.incrementAndGet()
-          );
-          return AdminClient.create(properties);
-        })
-        .flatMap(ac -> ReactiveAdminClient.create(ac).doOnError(th -> ac.close()))
+      Properties properties = new Properties();
+      SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
+      properties.putAll(cluster.getProperties());
+      properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
+      properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
+      properties.putIfAbsent(
+          AdminClientConfig.CLIENT_ID_CONFIG,
+          "kafka-ui-admin-" + Instant.now().getEpochSecond() + "-" + CLIENT_ID.incrementAndGet()
+      );
+      return AdminClient.create(properties);
+    }).flatMap(ac -> ReactiveAdminClient.create(ac).doOnError(th -> ac.close()))
         .onErrorMap(th -> new IllegalStateException(
             "Error while creating AdminClient for Cluster " + cluster.getName(), th));
   }
