@@ -1,8 +1,7 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.ClusterFeature;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.util.DynamicConfigOperations;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,34 +24,29 @@ public class FeatureService {
   private static final String DELETE_TOPIC_ENABLED_SERVER_PROPERTY = "delete.topic.enable";
 
   private final AdminClientService adminClientService;
-  private final DynamicConfigOperations dynamicConfigOperations;
 
-  public Mono<List<Feature>> getAvailableFeatures(KafkaCluster cluster, @Nullable Node controller) {
-    List<Mono<Feature>> features = new ArrayList<>();
+  public Mono<List<ClusterFeature>> getAvailableFeatures(KafkaCluster cluster, @Nullable Node controller) {
+    List<Mono<ClusterFeature>> features = new ArrayList<>();
 
     if (Optional.ofNullable(cluster.getConnectsClients())
         .filter(Predicate.not(Map::isEmpty))
         .isPresent()) {
-      features.add(Mono.just(Feature.KAFKA_CONNECT));
+      features.add(Mono.just(ClusterFeature.KAFKA_CONNECT));
     }
 
     if (cluster.getKsqlClient() != null) {
-      features.add(Mono.just(Feature.KSQL_DB));
+      features.add(Mono.just(ClusterFeature.KSQL_DB));
     }
 
     if (cluster.getSchemaRegistryClient() != null) {
-      features.add(Mono.just(Feature.SCHEMA_REGISTRY));
+      features.add(Mono.just(ClusterFeature.SCHEMA_REGISTRY));
     }
 
     if (controller != null) {
       features.add(
           isTopicDeletionEnabled(cluster, controller)
-              .flatMap(r -> Boolean.TRUE.equals(r) ? Mono.just(Feature.TOPIC_DELETION) : Mono.empty())
+              .flatMap(r -> Boolean.TRUE.equals(r) ? Mono.just(ClusterFeature.TOPIC_DELETION) : Mono.empty())
       );
-    }
-
-    if (dynamicConfigOperations.dynamicConfigEnabled()) {
-      features.add(Mono.just(Feature.DYNAMIC_CONFIG));
     }
 
     return Flux.fromIterable(features).flatMap(m -> m).collectList();
