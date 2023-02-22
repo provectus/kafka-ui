@@ -34,9 +34,9 @@ export const getIsValidConfig = (
     });
   }
   if (clusterErrors?.kafkaConnects) {
-    isValid = false;
     Object.entries(clusterErrors.kafkaConnects).forEach(([key, val]) => {
       if (val?.error) {
+        isValid = false;
         showAlert('error', {
           id: `${prefix}-kafkaConnects-${key}`,
           title: `Kafka Connect. ${key}`,
@@ -45,6 +45,5 @@ export const getIsValidConfig = (
       }
     });
   }
-
   return isValid;
 };

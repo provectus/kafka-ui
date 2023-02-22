@@ -23,14 +23,14 @@ const Topics = React.lazy(() => import('components/Topics/Topics'));
 const Schemas = React.lazy(() => import('components/Schemas/Schemas'));
 const Connect = React.lazy(() => import('components/Connect/Connect'));
 const KsqlDb = React.lazy(() => import('components/KsqlDb/KsqlDb'));
-const ClusterConfig = React.lazy(
-  () => import('components/Wizard/ClusterConfig')
+const ClusterConfigPage = React.lazy(
+  () => import('components/ClusterPage/ClusterConfigPage')
 );
 const ConsumerGroups = React.lazy(
   () => import('components/ConsumerGroups/ConsumerGroups')
 );
 
-const Cluster: React.FC = () => {
+const ClusterPage: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const { data } = useClusters();
   const contextValue = React.useMemo(() => {
@@ -94,7 +94,7 @@ const Cluster: React.FC = () => {
             )}
             <Route
               path={getNonExactPath(clusterConfigRelativePath)}
-              element={<ClusterConfig />}
+              element={<ClusterConfigPage />}
             />
             <Route
               path="/"
@@ -108,4 +108,4 @@ const Cluster: React.FC = () => {
   );
 };
 
-export default Cluster;
+export default ClusterPage;

@@ -8,7 +8,7 @@ import { Button } from 'components/common/Button/Button';
 import {
   FlexGrow1,
   FlexRow,
-} from 'components/Wizard/WizardForm/WizardForm.styled';
+} from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import { useAppConfigFilesUpload } from 'lib/hooks/api/appConfig';
 
 const Fileupload: React.FC<{ name: string; label: string }> = ({

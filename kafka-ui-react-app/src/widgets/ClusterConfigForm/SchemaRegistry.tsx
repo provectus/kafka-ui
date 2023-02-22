@@ -7,7 +7,7 @@ import Checkbox from 'components/common/Checkbox/Checkbox';
 import {
   FlexGrow1,
   FlexRow,
-} from 'components/Wizard/WizardForm/WizardForm.styled';
+} from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 
 const SchemaRegistry = () => {
   const { setValue, watch } = useFormContext();

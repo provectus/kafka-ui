@@ -5,7 +5,7 @@ import { Button } from 'components/common/Button/Button';
 import {
   FlexGrow1,
   FlexRow,
-} from 'components/Wizard/WizardForm/WizardForm.styled';
+} from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import Input from 'components/common/Input/Input';
 
 const CustomAuthentication: React.FC = () => {

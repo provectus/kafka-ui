@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
+import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
 import { useFieldArray, useFormContext } from 'react-hook-form';
@@ -11,7 +11,7 @@ import Checkbox from 'components/common/Checkbox/Checkbox';
 import {
   FlexGrow1,
   FlexRow,
-} from 'components/Wizard/WizardForm/WizardForm.styled';
+} from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 
 const KafkaConnect = () => {
   const { control, watch } = useFormContext();

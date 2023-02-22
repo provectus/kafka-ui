@@ -1,5 +1,5 @@
 import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
-import { ClusterConfigFormValues } from 'components/Wizard/types';
+import { ClusterConfigFormValues } from 'widgets/ClusterConfigForm/types';
 
 const parseBootstrapServers = (bootstrapServers?: string) =>
   bootstrapServers?.split(',').map((url) => {

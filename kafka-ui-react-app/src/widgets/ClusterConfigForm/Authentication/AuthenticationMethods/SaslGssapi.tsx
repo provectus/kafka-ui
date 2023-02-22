@@ -1,7 +1,7 @@
 import React from 'react';
 import Input from 'components/common/Input/Input';
 import Checkbox from 'components/common/Checkbox/Checkbox';
-import Fileupload from 'components/Wizard/WizardForm/Fileupload';
+import Fileupload from 'widgets/ClusterConfigForm/Fileupload';
 
 const SaslGssapi: React.FC = () => {
   return (

@@ -1,4 +1,4 @@
-import { ClusterConfigFormValues } from 'components/Wizard/types';
+import { ClusterConfigFormValues } from 'widgets/ClusterConfigForm/types';
 import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
 import { isEmpty, omitBy } from 'lodash';
 

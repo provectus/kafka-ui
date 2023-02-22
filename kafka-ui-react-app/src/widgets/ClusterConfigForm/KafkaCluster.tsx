@@ -6,11 +6,11 @@ import { ErrorMessage } from '@hookform/error-message';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 import { Button } from 'components/common/Button/Button';
 import PlusIcon from 'components/common/Icons/PlusIcon';
-import * as S from 'components/Wizard/WizardForm/WizardForm.styled';
+import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import Heading from 'components/common/heading/Heading.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Checkbox from 'components/common/Checkbox/Checkbox';
-import Fileupload from 'components/Wizard/WizardForm/Fileupload';
+import Fileupload from 'widgets/ClusterConfigForm/Fileupload';
 
 const KafkaCluster: React.FC = () => {
   const { control, watch, setValue } = useFormContext();

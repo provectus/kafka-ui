@@ -3,7 +3,7 @@ import Input from 'components/common/Input/Input';
 import {
   FlexRow,
   FlexGrow1,
-} from 'components/Wizard/WizardForm/WizardForm.styled';
+} from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 
 import SaslGssapi from './SaslGssapi';
 

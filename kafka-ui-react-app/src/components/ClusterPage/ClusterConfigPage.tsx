@@ -2,11 +2,10 @@ import React from 'react';
 import { useAppConfig } from 'lib/hooks/api/appConfig';
 import useAppParams from 'lib/hooks/useAppParams';
 import { ClusterNameRoute } from 'lib/paths';
+import ClusterConfigForm from 'widgets/ClusterConfigForm';
+import { getInitialFormData } from 'widgets/ClusterConfigForm/utils/getInitialFormData';
 
-import { getInitialFormData } from './utils/getInitialFormData';
-import WizardForm from './WizardForm/WizardForm';
-
-const ClusterConfig: React.FC = () => {
+const ClusterConfigPage: React.FC = () => {
   const config = useAppConfig();
   const { clusterName } = useAppParams<ClusterNameRoute>();
 
@@ -31,11 +30,11 @@ const ClusterConfig: React.FC = () => {
   );
 
   return (
-    <WizardForm
+    <ClusterConfigForm
       initialValues={currentClusterConfig}
       hasCustomConfig={hasCustomConfig}
     />
   );
 };
 
-export default ClusterConfig;
+export default ClusterConfigPage;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
-import ClusterComponent from 'components/Cluster/Cluster';
+import ClusterPageComponent from 'components/ClusterPage/ClusterPage';
 import { screen, waitFor } from '@testing-library/react';
 import { render, WithRoute } from 'lib/testHelpers';
 import {
@@ -48,14 +48,14 @@ jest.mock('lib/hooks/api/clusters', () => ({
   useClusters: jest.fn(),
 }));
 
-describe('Cluster', () => {
+describe('ClusterPage', () => {
   const renderComponent = async (pathname: string, payload: Cluster[] = []) => {
     (useClusters as jest.Mock).mockImplementation(() => ({
       data: payload,
     }));
     await render(
       <WithRoute path={`${clusterPath()}/*`}>
-        <ClusterComponent />
+        <ClusterPageComponent />
       </WithRoute>,
       { initialEntries: [pathname] }
     );

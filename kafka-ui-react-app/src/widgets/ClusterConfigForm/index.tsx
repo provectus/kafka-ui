@@ -2,26 +2,26 @@ import React from 'react';
 import { Button } from 'components/common/Button/Button';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import formSchema from 'components/Wizard/schema';
+import formSchema from 'widgets/ClusterConfigForm/schema';
 import { StyledForm } from 'components/common/Form/Form.styled';
 import {
   useUpdateAppConfig,
   useValidateAppConfig,
 } from 'lib/hooks/api/appConfig';
-import { ClusterConfigFormValues } from 'components/Wizard/types';
-import { transformFormDataToPayload } from 'components/Wizard/utils/transformFormDataToPayload';
+import { ClusterConfigFormValues } from 'widgets/ClusterConfigForm/types';
+import { transformFormDataToPayload } from 'widgets/ClusterConfigForm/utils/transformFormDataToPayload';
 import { showSuccessAlert } from 'lib/errorHandling';
-import { getIsValidConfig } from 'components/Wizard/utils/getIsValidConfig';
+import { getIsValidConfig } from 'widgets/ClusterConfigForm/utils/getIsValidConfig';
+import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 
-import * as S from './WizardForm.styled';
-import KafkaCluster from './KafkaCluster/KafkaCluster';
-import Authentication from './Authentication/Authentication';
-import SchemaRegistry from './SchemaRegistry/SchemaRegistry';
-import KafkaConnect from './KafkaConnect/KafkaConnect';
-import Metrics from './Metrics/Metrics';
+import KafkaCluster from './KafkaCluster';
+import SchemaRegistry from './SchemaRegistry';
+import KafkaConnect from './KafkaConnect';
+import Metrics from './Metrics';
 import CustomAuthentication from './Authentication/CustomAuthentication';
+import Authentication from './Authentication/Authentication';
 
-interface WizardFormProps {
+interface ClusterConfigFormProps {
   hasCustomConfig?: boolean;
   initialValues?: Partial<ClusterConfigFormValues>;
 }
@@ -30,7 +30,7 @@ const CLUSTER_CONFIG_FORM_DEFAULT_VALUES: Partial<ClusterConfigFormValues> = {
   bootstrapServers: [{ host: '', port: '' }],
 };
 
-const Wizard: React.FC<WizardFormProps> = ({
+const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
   initialValues = {},
   hasCustomConfig,
 }) => {
@@ -115,4 +115,4 @@ const Wizard: React.FC<WizardFormProps> = ({
   );
 };
 
-export default Wizard;
+export default ClusterConfigForm;
