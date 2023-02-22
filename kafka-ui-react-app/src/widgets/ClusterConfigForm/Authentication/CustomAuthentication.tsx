@@ -7,6 +7,7 @@ import {
   FlexRow,
 } from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import Input from 'components/common/Input/Input';
+import { convertFormKeyToPropsKey } from 'widgets/ClusterConfigForm/utils/convertFormKeyToPropsKey';
 
 const CustomAuthentication: React.FC = () => {
   const { watch, setValue } = useFormContext();
@@ -15,7 +16,6 @@ const CustomAuthentication: React.FC = () => {
     customConf && Object.values(customConf).some((v) => !!v);
 
   const remove = () => setValue('customAuth', undefined);
-
   return (
     <>
       <FlexRow>
@@ -33,7 +33,7 @@ const CustomAuthentication: React.FC = () => {
               key={key}
               type="text"
               name={`customAuth.${key}`}
-              label={key}
+              label={convertFormKeyToPropsKey(key)}
               withError
             />
           ))}

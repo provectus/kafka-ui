@@ -1,6 +1,8 @@
 import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
 import { ClusterConfigFormValues } from 'widgets/ClusterConfigForm/types';
 
+import { convertPropsKeyToFormKey } from './convertPropsKeyToFormKey';
+
 const parseBootstrapServers = (bootstrapServers?: string) =>
   bootstrapServers?.split(',').map((url) => {
     const [host, port] = url.split(':');
@@ -79,7 +81,7 @@ export const getInitialFormData = (
     if (key.startsWith('security.') || key.startsWith('sasl.')) {
       initialValues.customAuth = {
         ...initialValues.customAuth,
-        [key]: val,
+        [convertPropsKeyToFormKey(key)]: val,
       };
     }
   });

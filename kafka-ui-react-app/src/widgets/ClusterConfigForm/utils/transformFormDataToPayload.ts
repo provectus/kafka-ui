@@ -2,6 +2,7 @@ import { ClusterConfigFormValues } from 'widgets/ClusterConfigForm/types';
 import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
 
 import { getJaasConfig } from './getJaasConfig';
+import { convertFormKeyToPropsKey } from './convertFormKeyToPropsKey';
 
 export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
   const config: ApplicationConfigPropertiesKafkaClustersInner = {
@@ -68,7 +69,7 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
       if (data.customAuth[key]) {
         config.properties = {
           ...config.properties,
-          [key]: val,
+          [convertFormKeyToPropsKey(key)]: val,
         };
       }
     });
