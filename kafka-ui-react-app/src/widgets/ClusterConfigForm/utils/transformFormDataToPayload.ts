@@ -62,18 +62,17 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
     }
   }
 
+  config.properties = {};
+
   if (data.customAuth) {
-    config.properties = omitBy(
-      {
-        'security.protocol': data.customAuth.securityProtocol,
-        'sasl.mechanism': data.customAuth.saslMechanism,
-        'sasl.kerberos.service.name': data.customAuth.saslKerberosServiceName,
-        'sasl.jaas.config': data.customAuth.saslJaasConfig,
-        'sasl.client.callback.handler.class':
-          data.customAuth.saslClientCallbackHandlerClass,
-      },
-      isEmpty
-    );
+    Object.entries(data.customAuth).forEach(([key, val]) => {
+      if (!isEmpty(data.customAuth[key])) {
+        config.properties = {
+          ...config.properties,
+          [key]: val,
+        };
+      }
+    });
   }
 
   // Authentication

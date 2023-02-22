@@ -73,14 +73,16 @@ export const getInitialFormData = (
   const properties = payload.properties || {};
 
   // Authentification
-  initialValues.customAuth = {
-    securityProtocol: properties['security.protocol'],
-    saslMechanism: properties['sasl.mechanism'],
-    saslJaasConfig: properties['sasl.jaas.config'],
-    saslKerberosServiceName: properties['sasl.kerberos.service.name'],
-    saslClientCallbackHandlerClass:
-      properties['sasl.client.callback.handler.class'],
-  };
+  initialValues.customAuth = {};
+
+  Object.entries(properties).forEach(([key, val]) => {
+    if (key.startsWith('security.') || key.startsWith('sasl.')) {
+      initialValues.customAuth = {
+        ...initialValues.customAuth,
+        [key]: val,
+      };
+    }
+  });
 
   return initialValues as ClusterConfigFormValues;
 };

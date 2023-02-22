@@ -28,46 +28,15 @@ const CustomAuthentication: React.FC = () => {
       </FlexRow>
       {hasCustomConfig && (
         <>
-          {customConf.securityProtocol && (
+          {Object.keys(customConf).map((key) => (
             <Input
+              key={key}
               type="text"
-              name="customAuth.securityProtocol"
-              label="security.protocol"
+              name={`customAuth.${key}`}
+              label={key}
               withError
             />
-          )}
-          {customConf.saslMechanism && (
-            <Input
-              type="text"
-              name="customAuth.saslMechanism"
-              label="sasl.mechanism"
-              withError
-            />
-          )}
-          {customConf.saslJaasConfig && (
-            <Input
-              type="text"
-              name="customAuth.saslJaasConfig"
-              label="sasl.jaas.config"
-              withError
-            />
-          )}
-          {customConf.saslKerberosServiceName && (
-            <Input
-              type="text"
-              name="customAuth.saslKerberosServiceName"
-              label="sasl.kerberos.service.name"
-              withError
-            />
-          )}
-          {customConf.saslClientCallbackHandlerClass && (
-            <Input
-              type="text"
-              name="customAuth.saslClientCallbackHandlerClass"
-              label="sasl.client.callback.handler.class"
-              withError
-            />
-          )}
+          ))}
         </>
       )}
     </>
