@@ -1,6 +1,5 @@
 import { ClusterConfigFormValues } from 'widgets/ClusterConfigForm/types';
 import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
-import { isEmpty, omitBy } from 'lodash';
 
 import { getJaasConfig } from './getJaasConfig';
 
@@ -66,7 +65,7 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
 
   if (data.customAuth) {
     Object.entries(data.customAuth).forEach(([key, val]) => {
-      if (!isEmpty(data.customAuth[key])) {
+      if (data.customAuth[key]) {
         config.properties = {
           ...config.properties,
           [key]: val,
@@ -89,7 +88,7 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
       case 'SASL/GSSAPI':
         config.properties = {
           'security.protocol': securityProtocol,
-          'sasl.mechanisms': 'GSSAPI',
+          'sasl.mechanism': 'GSSAPI',
           'sasl.kerberos.service.name': props.saslKerberosServiceName,
           'sasl.jaas.config': getJaasConfig('SASL/GSSAPI', {
             useKeytab: props.keyTabFile ? 'true' : 'false',
@@ -102,7 +101,7 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
       case 'SASL/OAUTHBEARER':
         config.properties = {
           'security.protocol': securityProtocol,
-          'sasl.mechanisms': 'OAUTHBEARER',
+          'sasl.mechanism': 'OAUTHBEARER',
           'sasl.jaas.config': getJaasConfig('SASL/OAUTHBEARER', {
             unsecuredLoginStringClaim_sub: props.unsecuredLoginStringClaim_sub,
           }),
@@ -111,7 +110,7 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
       case 'SASL/PLAIN':
         config.properties = {
           'security.protocol': securityProtocol,
-          'sasl.mechanisms': 'PLAIN',
+          'sasl.mechanism': 'PLAIN',
           'sasl.jaas.config': getJaasConfig('SASL/PLAIN', {
             username: props.username,
             password: props.password,
@@ -121,7 +120,7 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
       case 'SASL/SCRAM-256':
         config.properties = {
           'security.protocol': securityProtocol,
-          'sasl.mechanisms': 'SCRAM-SHA-256',
+          'sasl.mechanism': 'SCRAM-SHA-256',
           'sasl.jaas.config': getJaasConfig('SASL/SCRAM-256', {
             username: props.username,
             password: props.password,
@@ -131,7 +130,7 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
       case 'SASL/SCRAM-512':
         config.properties = {
           'security.protocol': securityProtocol,
-          'sasl.mechanisms': 'SCRAM-SHA-512',
+          'sasl.mechanism': 'SCRAM-SHA-512',
           'sasl.jaas.config': getJaasConfig('SASL/SCRAM-512', {
             username: props.username,
             password: props.password,
