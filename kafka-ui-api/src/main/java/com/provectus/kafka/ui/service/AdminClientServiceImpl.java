@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class AdminClientServiceImpl implements AdminClientService, Closeable {
 
-  private static final AtomicLong CLIENT_ID = new AtomicLong();
+  private static final AtomicLong CLIENT_ID_SEQ = new AtomicLong();
 
   private final Map<String, ReactiveAdminClient> adminClientCache = new ConcurrentHashMap<>();
   @Setter // used in tests
@@ -45,7 +45,7 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
       properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
       properties.putIfAbsent(
           AdminClientConfig.CLIENT_ID_CONFIG,
-          "kafka-ui-admin-" + Instant.now().getEpochSecond() + "-" + CLIENT_ID.incrementAndGet()
+          "kafka-ui-admin-" + Instant.now().getEpochSecond() + "-" + CLIENT_ID_SEQ.incrementAndGet()
       );
       return AdminClient.create(properties);
     }).flatMap(ac -> ReactiveAdminClient.create(ac).doOnError(th -> ac.close()))
