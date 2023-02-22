@@ -28,7 +28,7 @@ const CustomAuthentication: React.FC = () => {
       </FlexRow>
       {hasCustomConfig && (
         <>
-          {customConf['security.protocol'] && (
+          {customConf.securityProtocol && (
             <Input
               type="text"
               name="customAuth.securityProtocol"
@@ -36,7 +36,7 @@ const CustomAuthentication: React.FC = () => {
               withError
             />
           )}
-          {customConf['sasl.mechanism'] && (
+          {customConf.saslMechanism && (
             <Input
               type="text"
               name="customAuth.saslMechanism"
@@ -44,7 +44,7 @@ const CustomAuthentication: React.FC = () => {
               withError
             />
           )}
-          {customConf['sasl.jaas.config'] && (
+          {customConf.saslJaasConfig && (
             <Input
               type="text"
               name="customAuth.saslJaasConfig"
@@ -52,7 +52,7 @@ const CustomAuthentication: React.FC = () => {
               withError
             />
           )}
-          {customConf['sasl.kerberos.service.name'] && (
+          {customConf.saslKerberosServiceName && (
             <Input
               type="text"
               name="customAuth.saslKerberosServiceName"
@@ -60,7 +60,7 @@ const CustomAuthentication: React.FC = () => {
               withError
             />
           )}
-          {customConf['sasl.client.callback.handler.class'] && (
+          {customConf.saslClientCallbackHandlerClass && (
             <Input
               type="text"
               name="customAuth.saslClientCallbackHandlerClass"
