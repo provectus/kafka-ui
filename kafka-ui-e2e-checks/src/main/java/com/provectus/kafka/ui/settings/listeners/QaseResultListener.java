@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.settings.listeners;
 
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Automation;
 import io.qase.api.StepStorage;
 import io.qase.api.config.QaseConfig;
 import io.qase.api.services.QaseTestCaseListener;
@@ -37,12 +36,6 @@ public class QaseResultListener extends TestListenerAdapter implements ITestList
 
     private static QaseTestCaseListener createQaseListener() {
         return TestNgModule.getInjector().getInstance(QaseTestCaseListener.class);
-    }
-
-    private static int getAutomation(Method method) {
-        if (method.isAnnotationPresent(Automation.class))
-            return method.getAnnotation(Automation.class).state().getValue();
-        return 2;
     }
 
     @Override

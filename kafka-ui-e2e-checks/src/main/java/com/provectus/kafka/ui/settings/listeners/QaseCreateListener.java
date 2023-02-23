@@ -6,7 +6,6 @@ import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Suite;
 import io.qase.api.QaseClient;
 import io.qase.api.StepStorage;
 import io.qase.api.annotation.QaseId;
-import io.qase.api.annotation.QaseTitle;
 import io.qase.client.ApiClient;
 import io.qase.client.api.CasesApi;
 import io.qase.client.model.*;
@@ -20,6 +19,8 @@ import org.testng.TestListenerAdapter;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import static io.qase.api.utils.IntegrationUtils.getCaseTitle;
+
 @Slf4j
 public class QaseCreateListener extends TestListenerAdapter implements ITestListener {
 
@@ -31,19 +32,15 @@ public class QaseCreateListener extends TestListenerAdapter implements ITestList
         return new CasesApi(apiClient);
     }
 
-    private static String getQaseTitle(Method method) {
-        return Objects.requireNonNull(method.getAnnotation(QaseTitle.class).value());
-    }
-
     private static int getStatus(Method method) {
         if (method.isAnnotationPresent(Status.class))
-            return method.getAnnotation(Status.class).status().getValue();
+            return method.getDeclaredAnnotation(Status.class).status().getValue();
         return 0;
     }
 
     private static int getAutomation(Method method) {
         if (method.isAnnotationPresent(Automation.class))
-            return method.getAnnotation(Automation.class).state().getValue();
+            return method.getDeclaredAnnotation(Automation.class).state().getValue();
         return 0;
     }
 
@@ -73,12 +70,12 @@ public class QaseCreateListener extends TestListenerAdapter implements ITestList
 
     private static boolean isCaseWithTitleExistInQase(Method method) {
         HashMap<Long, String> cases = getCaseTitlesAndIdsFromQase();
-        String title = getQaseTitle(method);
+        String title = getCaseTitle(method);
         if (cases.containsValue(title)) {
             for (Map.Entry<Long, String> map : cases.entrySet()) {
                 if (map.getValue().matches(title)) {
                     long id = map.getKey();
-                    log.warn(String.format("Test case with @QaseTitle='%s' already exists in Qase.io with @QaseId=%d. " +
+                    log.warn(String.format("Test case with @QaseTitle='%s' already exists with @QaseId=%d. " +
                             "Please verify @QaseTitle annotation", title, id));
                     return true;
                 }
@@ -93,31 +90,34 @@ public class QaseCreateListener extends TestListenerAdapter implements ITestList
         Method method = testResult.getMethod()
                 .getConstructorOrMethod()
                 .getMethod();
-        String title = getQaseTitle(method);
+        String title = getCaseTitle(method);
         if (!method.isAnnotationPresent(QaseId.class)) {
-            if (!isCaseWithTitleExistInQase(method)) {
-                LinkedList<ResultCreateStepsInner> resultSteps = StepStorage.stopSteps();
-                LinkedList<TestCaseCreateStepsInner> createSteps = new LinkedList<>();
-                resultSteps.forEach(step -> {
-                    TestCaseCreateStepsInner caseStep = new TestCaseCreateStepsInner();
-                    caseStep.setAction(step.getAction());
-                    caseStep.setExpectedResult(step.getExpectedResult());
-                    createSteps.add(caseStep);
-                });
-                TestCaseCreate newCase = new TestCaseCreate();
-                newCase.setTitle(title);
-                newCase.setStatus(getStatus(method));
-                newCase.setAutomation(getAutomation(method));
-                newCase.setSteps(createSteps);
-                if (method.isAnnotationPresent(Suite.class)) {
-                    long suiteId = method.getAnnotation(Suite.class).id();
-                    newCase.suiteId(suiteId);
+            if (title != null) {
+                if (!isCaseWithTitleExistInQase(method)) {
+                    LinkedList<ResultCreateStepsInner> resultSteps = StepStorage.stopSteps();
+                    LinkedList<TestCaseCreateStepsInner> createSteps = new LinkedList<>();
+                    resultSteps.forEach(step -> {
+                        TestCaseCreateStepsInner caseStep = new TestCaseCreateStepsInner();
+                        caseStep.setAction(step.getAction());
+                        caseStep.setExpectedResult(step.getExpectedResult());
+                        createSteps.add(caseStep);
+                    });
+                    TestCaseCreate newCase = new TestCaseCreate();
+                    newCase.setTitle(title);
+                    newCase.setStatus(getStatus(method));
+                    newCase.setAutomation(getAutomation(method));
+                    newCase.setSteps(createSteps);
+                    if (method.isAnnotationPresent(Suite.class)) {
+                        long suiteId = method.getDeclaredAnnotation(Suite.class).id();
+                        newCase.suiteId(suiteId);
+                    }
+                    Long id = Objects.requireNonNull(QASE_API.createCase(System.getProperty("QASE_PROJECT_CODE"),
+                            newCase).getResult()).getId();
+                    log.info(String.format("New test case '%s' was created with @QaseId=%d", title, id));
                 }
-                Long id = Objects.requireNonNull(QASE_API.createCase(System.getProperty("QASE_PROJECT_CODE"),
-                        newCase).getResult()).getId();
-                log.info(String.format("New test case '%s' was created with @QaseId=%d", title, id));
-            }
+            } else
+                log.warn("To create new test case in Qase.io please add @QaseTitle annotation");
         } else
-            log.warn("To create new test case in Qase.io please annotate method with @QaseTitle and remove @QaseId");
+            log.warn("To create new test case in Qase.io please remove @QaseId annotation");
     }
 }
