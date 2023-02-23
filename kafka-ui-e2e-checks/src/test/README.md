@@ -23,7 +23,7 @@ To set up integration locally add next VM option `-DQASEIO_API_TOKEN='%s'`
 All new test cases can be added into TMS by default if they have no QaseId and QaseTitle matching already existing
 cases.
 But to handle `@Suite` and `@Automation` we added custom QaseCreateListener. To create new test case for next sync with
-Qase:
+Qase (see example `kafka-ui-e2e-checks/src/test/java/com/provectus/kafka/ui/qaseSuite/Template.java`):
 
 1. Create new class in `kafka-ui-e2e-checks/src/test/java/com/provectus/kafka/ui/qaseSuite/suit`
 2. Inherit it from `kafka-ui-e2e-checks/src/test/java/com/provectus/kafka/ui/qaseSuite/BaseQase.java`
