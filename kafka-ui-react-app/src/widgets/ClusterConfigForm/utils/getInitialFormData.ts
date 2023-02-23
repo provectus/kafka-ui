@@ -12,8 +12,15 @@ const parseBootstrapServers = (bootstrapServers?: string) =>
 export const getInitialFormData = (
   payload: ApplicationConfigPropertiesKafkaClustersInner
 ) => {
-  const { ssl, schemaRegistry, schemaRegistryAuth, kafkaConnect, metrics } =
-    payload;
+  const {
+    ssl,
+    schemaRegistry,
+    schemaRegistryAuth,
+    kafkaConnect,
+    metrics,
+    ksqldbServer,
+    ksqldbServerAuth,
+  } = payload;
 
   const initialValues: Partial<ClusterConfigFormValues> = {
     name: payload.name as string,
@@ -47,6 +54,14 @@ export const getInitialFormData = (
       isAuth: !!schemaRegistryAuth,
       username: schemaRegistryAuth?.username,
       password: schemaRegistryAuth?.password,
+    };
+  }
+  if (ksqldbServer) {
+    initialValues.ksql = {
+      url: ksqldbServer,
+      isAuth: !!ksqldbServerAuth,
+      username: ksqldbServerAuth?.username,
+      password: ksqldbServerAuth?.password,
     };
   }
 

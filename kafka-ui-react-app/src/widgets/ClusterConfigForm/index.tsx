@@ -21,6 +21,7 @@ import KafkaConnect from 'widgets/ClusterConfigForm/Sections/KafkaConnect';
 import Metrics from 'widgets/ClusterConfigForm/Sections/Metrics';
 import CustomAuthentication from 'widgets/ClusterConfigForm/Sections/CustomAuthentication';
 import Authentication from 'widgets/ClusterConfigForm/Sections/Authentication/Authentication';
+import KSQL from 'widgets/ClusterConfigForm/Sections/KSQL';
 
 interface ClusterConfigFormProps {
   hasCustomConfig?: boolean;
@@ -99,6 +100,8 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
           <SchemaRegistry />
           <hr />
           <KafkaConnect />
+          <hr />
+          <KSQL />
           <hr />
           <Metrics />
           <hr />

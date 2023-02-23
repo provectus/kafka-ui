@@ -32,6 +32,16 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
       };
     }
   }
+  // KSQL
+  if (data.ksql) {
+    config.ksqldbServer = data.ksql.url;
+    if (data.ksql.isAuth) {
+      config.ksqldbServerAuth = {
+        username: data.ksql.username,
+        password: data.ksql.password,
+      };
+    }
+  }
 
   // Kafka Connect
   if (data.kafkaConnect && data.kafkaConnect.length > 0) {

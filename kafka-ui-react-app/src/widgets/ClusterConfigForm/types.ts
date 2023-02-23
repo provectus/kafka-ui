@@ -3,7 +3,7 @@ type BootstrapServer = {
   host: string;
   port: string;
 };
-type SchemaRegistry = {
+type URLWithAuth = {
   url?: string;
   isAuth: boolean;
   username?: string;
@@ -41,7 +41,8 @@ export type ClusterConfigFormValues = {
     securityProtocol: SecurityProtocol;
     props: Record<string, string>;
   };
-  schemaRegistry?: SchemaRegistry;
+  schemaRegistry?: URLWithAuth;
+  ksql?: URLWithAuth;
   properties?: Record<string, string>;
   kafkaConnect?: KafkaConnect[];
   metrics?: Metrics;

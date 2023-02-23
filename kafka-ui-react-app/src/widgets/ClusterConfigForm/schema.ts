@@ -13,7 +13,7 @@ const bootstrapServerSchema = object({
   port: portSchema,
 });
 
-const schemaRegistrySchema = lazy((value) => {
+const urlWithAuthSchema = lazy((value) => {
   if (typeof value === 'object') {
     return object({
       url: requiredString,
@@ -171,7 +171,8 @@ const formSchema = object({
   truststore: sslSchema,
   keystore: sslSchema,
   auth: authSchema,
-  schemaRegistry: schemaRegistrySchema,
+  schemaRegistry: urlWithAuthSchema,
+  ksql: urlWithAuthSchema,
   kafkaConnect: kafkaConnectsSchema,
   metrics: metricsSchema,
 });
