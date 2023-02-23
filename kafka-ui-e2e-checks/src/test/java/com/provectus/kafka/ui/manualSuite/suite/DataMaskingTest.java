@@ -7,47 +7,23 @@ import org.testng.annotations.Test;
 
 import static com.provectus.kafka.ui.utilities.qaseUtils.enums.State.NOT_AUTOMATED;
 
-public class RbacTests extends BaseManual {
+public class DataMaskingTest extends BaseManual {
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(249)
+    @QaseId(262)
     @Test
     public void testCaseA() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(251)
+    @QaseId(264)
     @Test
     public void testCaseB() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(257)
+    @QaseId(265)
     @Test
     public void testCaseC() {
-    }
-
-    @Automation(state = NOT_AUTOMATED)
-    @QaseId(258)
-    @Test
-    public void testCaseD() {
-    }
-
-    @Automation(state = NOT_AUTOMATED)
-    @QaseId(259)
-    @Test
-    public void testCaseE() {
-    }
-
-    @Automation(state = NOT_AUTOMATED)
-    @QaseId(260)
-    @Test
-    public void testCaseF() {
-    }
-
-    @Automation(state = NOT_AUTOMATED)
-    @QaseId(261)
-    @Test
-    public void testCaseG() {
     }
 }

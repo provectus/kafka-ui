@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 
 import static com.provectus.kafka.ui.utilities.qaseUtils.enums.State.NOT_AUTOMATED;
 
-public class TopicsTests extends BaseManual {
+public class TopicsTest extends BaseManual {
 
     @Automation(state = NOT_AUTOMATED)
     @QaseId(272)
