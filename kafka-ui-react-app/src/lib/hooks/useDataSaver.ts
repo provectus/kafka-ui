@@ -19,7 +19,7 @@ const useDataSaver = (
         id: subject,
         title: '',
         message:
-          'Copying to clipboard is unavailable due to unsecured (non-HTTPS) connection!',
+          'Copying to clipboard is unavailable due to unsecured (non-HTTPS) connection',
       });
     }
   };
