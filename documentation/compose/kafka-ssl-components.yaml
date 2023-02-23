@@ -24,6 +24,7 @@ services:
       KAFKA_CLUSTERS_0_SSL_KEYSTOREPASSWORD: "secret"
       KAFKA_CLUSTERS_0_SSL_TRUSTSTORELOCATION: /kafka.truststore.jks
       KAFKA_CLUSTERS_0_SSL_TRUSTSTOREPASSWORD: "secret"
+      DYNAMIC_CONFIG_ENABLED: true # not necessary for ssl, added for tests
     volumes:
       - ./ssl/kafka.truststore.jks:/kafka.truststore.jks
       - ./ssl/kafka.keystore.jks:/kafka.keystore.jks

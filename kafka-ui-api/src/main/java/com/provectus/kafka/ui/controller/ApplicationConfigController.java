@@ -18,7 +18,6 @@ import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import com.provectus.kafka.ui.util.ApplicationRestarter;
 import com.provectus.kafka.ui.util.DynamicConfigOperations;
 import com.provectus.kafka.ui.util.DynamicConfigOperations.PropertiesStructure;
-import com.provectus.kafka.ui.util.KafkaClusterValidator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -130,9 +129,9 @@ public class ApplicationConfigController implements ApplicationConfigApi {
     if (properties == null || properties.getClusters() == null) {
       return Mono.just(Map.of());
     }
+    properties.validateAndSetDefaults();
     return Flux.fromIterable(properties.getClusters())
-        .map(kafkaClusterFactory::create)
-        .flatMap(c -> KafkaClusterValidator.validate(c).map(v -> Tuples.of(c.getName(), v)))
+        .flatMap(c -> kafkaClusterFactory.validate(c).map(v -> Tuples.of(c.getName(), v)))
         .collectMap(Tuple2::getT1, Tuple2::getT2);
   }
 }

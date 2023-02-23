@@ -3,12 +3,15 @@ package com.provectus.kafka.ui.service;
 import com.provectus.kafka.ui.client.RetryingKafkaConnectClient;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
+import com.provectus.kafka.ui.model.ApplicationPropertyValidationDTO;
+import com.provectus.kafka.ui.model.ClusterConfigValidationDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MetricsConfig;
 import com.provectus.kafka.ui.service.ksql.KsqlApiClient;
 import com.provectus.kafka.ui.service.masking.DataMasking;
 import com.provectus.kafka.ui.sr.ApiClient;
 import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
+import com.provectus.kafka.ui.util.KafkaServicesValidation;
 import com.provectus.kafka.ui.util.PollingThrottler;
 import com.provectus.kafka.ui.util.ReactiveFailover;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
@@ -25,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +56,48 @@ public class KafkaClusterFactory {
     builder.originalProperties(clusterProperties);
 
     return builder.build();
+  }
+
+  public Mono<ClusterConfigValidationDTO> validate(ClustersProperties.Cluster clusterProperties) {
+    if (clusterProperties.getSsl() != null) {
+      Optional<String> errMsg = KafkaServicesValidation.validateTruststore(clusterProperties.getSsl());
+      if (errMsg.isPresent()) {
+        return Mono.just(new ClusterConfigValidationDTO()
+            .kafka(new ApplicationPropertyValidationDTO()
+                .error(true)
+                .errorMessage("Truststore not valid: " + errMsg.get())));
+      }
+      errMsg = KafkaServicesValidation.validateKeystore(clusterProperties.getSsl());
+      if (errMsg.isPresent()) {
+        return Mono.just(new ClusterConfigValidationDTO()
+            .kafka(new ApplicationPropertyValidationDTO()
+                .error(true)
+                .errorMessage("Keystore not valid: " + errMsg.get())));
+      }
+    }
+    return Mono.zip(
+        KafkaServicesValidation.validateClusterConnection(
+            clusterProperties.getBootstrapServers(),
+            convertProperties(clusterProperties.getProperties()),
+            clusterProperties.getSsl()
+        ),
+        Optional.ofNullable(schemaRegistryClient(clusterProperties))
+            .map(KafkaServicesValidation::validateSchemaRegistry)
+            .orElse(Mono.just(Optional.empty())),
+        Optional.ofNullable(connectClients(clusterProperties))
+            .map(KafkaServicesValidation::validateConnect)
+            .orElse(Mono.just(Optional.empty())),
+        Optional.ofNullable(ksqlClient(clusterProperties))
+            .map(KafkaServicesValidation::validateKsql)
+            .orElse(Mono.just(Optional.empty()))
+    ).map(tuple -> {
+      var validation = new ClusterConfigValidationDTO();
+      validation.kafka(tuple.getT1());
+      tuple.getT2().ifPresent(validation::schemaRegistry);
+      tuple.getT3().ifPresent(validation::kafkaConnects);
+      tuple.getT4().ifPresent(validation::ksqldb);
+      return validation;
+    });
   }
 
   private Properties convertProperties(Map<String, Object> propertiesMap) {
