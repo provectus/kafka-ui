@@ -1,4 +1,4 @@
-### E2E integration with Qase.io TMS (for inner users)
+### E2E integration with Qase.io TMS (for internal users)
 
 ### Table of Contents
 
