@@ -222,10 +222,6 @@ export const ActiveSmartFilterWrapper = styled.div`
   gap: 10px;
   align-items: center;
   justify-content: flex-start;
-
-  & div:first-child {
-    width: 25%;
-  }
 `;
 
 export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
