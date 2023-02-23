@@ -119,7 +119,7 @@ const customRender = (
     children,
   }) => (
     <TestQueryClientProvider>
-      <GlobalSettingsContext.Provider value={false}>
+      <GlobalSettingsContext.Provider value={{ hasDynamicConfig: false }}>
         <ThemeProvider theme={theme}>
           <TestUserInfoProvider data={userInfo}>
             <ConfirmContextProvider>

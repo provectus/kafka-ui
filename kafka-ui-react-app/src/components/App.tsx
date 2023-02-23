@@ -21,7 +21,10 @@ import ClusterConfigForm from 'widgets/ClusterConfigForm';
 
 import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
 import { ConfirmContextProvider } from './contexts/ConfirmContext';
-import { GlobalSettingsProvider } from './contexts/GlobalSettingsContext';
+import {
+  GlobalSettingsContext,
+  GlobalSettingsProvider,
+} from './contexts/GlobalSettingsContext';
 import ErrorPage from './ErrorPage/ErrorPage';
 import { UserInfoRolesAccessProvider } from './contexts/UserInfoRolesAccessContext';
 import PageContainer from './PageContainer/PageContainer';
@@ -39,11 +42,12 @@ const queryClient = new QueryClient({
   },
 });
 const App: React.FC = () => {
+  const appInfo = React.useContext(GlobalSettingsContext);
   return (
     <QueryClientProvider client={queryClient}>
-      <GlobalSettingsProvider>
-        <ThemeProvider theme={theme}>
-          <Suspense fallback={<PageLoader />}>
+      <ThemeProvider theme={theme}>
+        <Suspense fallback={<PageLoader />}>
+          <GlobalSettingsProvider>
             <UserInfoRolesAccessProvider>
               <ConfirmContextProvider>
                 <GlobalCSS />
@@ -57,10 +61,12 @@ const App: React.FC = () => {
                           element={<Dashboard />}
                         />
                       ))}
-                      <Route
-                        path={getNonExactPath(clusterNewConfigPath)}
-                        element={<ClusterConfigForm />}
-                      />
+                      {appInfo.hasDynamicConfig && (
+                        <Route
+                          path={getNonExactPath(clusterNewConfigPath)}
+                          element={<ClusterConfigForm />}
+                        />
+                      )}
                       <Route
                         path={getNonExactPath(clusterPath())}
                         element={<ClusterPage />}
@@ -83,9 +89,9 @@ const App: React.FC = () => {
                 <ConfirmationModal />
               </ConfirmContextProvider>
             </UserInfoRolesAccessProvider>
-          </Suspense>
-        </ThemeProvider>
-      </GlobalSettingsProvider>
+          </GlobalSettingsProvider>
+        </Suspense>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };

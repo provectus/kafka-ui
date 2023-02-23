@@ -2,9 +2,18 @@ import { appConfigApiClient as api } from 'lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
 import { showAlert } from 'lib/errorHandling';
+import { QUERY_REFETCH_OFF_OPTIONS } from 'lib/constants';
+
+export function useAppInfo() {
+  return useQuery(
+    ['app', 'info'],
+    () => api.getApplicationInfo(),
+    QUERY_REFETCH_OFF_OPTIONS
+  );
+}
 
 export function useAppConfig() {
-  return useQuery(['appConfig'], () => api.getCurrentConfig());
+  return useQuery(['app', 'config'], () => api.getCurrentConfig());
 }
 
 export function useUpdateAppConfig({ initialName }: { initialName?: string }) {
@@ -38,7 +47,7 @@ export function useUpdateAppConfig({ initialName }: { initialName?: string }) {
       return api.restartWithConfig({ restartRequest: { config } });
     },
     {
-      onSuccess: () => client.invalidateQueries(['appConfig']),
+      onSuccess: () => client.invalidateQueries(['app', 'config']),
       onError() {
         showAlert('error', {
           id: 'app-config-update-error',

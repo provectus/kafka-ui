@@ -17,6 +17,7 @@ import {
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { useClusters } from 'lib/hooks/api/clusters';
+import { GlobalSettingsContext } from 'components/contexts/GlobalSettingsContext';
 
 const Brokers = React.lazy(() => import('components/Brokers/Brokers'));
 const Topics = React.lazy(() => import('components/Topics/Topics'));
@@ -32,6 +33,8 @@ const ConsumerGroups = React.lazy(
 
 const ClusterPage: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
+  const appInfo = React.useContext(GlobalSettingsContext);
+
   const { data } = useClusters();
   const contextValue = React.useMemo(() => {
     const cluster = data?.find(({ name }) => name === clusterName);
@@ -92,10 +95,12 @@ const ClusterPage: React.FC = () => {
                 element={<KsqlDb />}
               />
             )}
-            <Route
-              path={getNonExactPath(clusterConfigRelativePath)}
-              element={<ClusterConfigPage />}
-            />
+            {appInfo.hasDynamicConfig && (
+              <Route
+                path={getNonExactPath(clusterConfigRelativePath)}
+                element={<ClusterConfigPage />}
+              />
+            )}
             <Route
               path="/"
               element={<Navigate to={clusterBrokerRelativePath} replace />}
