@@ -72,7 +72,10 @@ public class KafkaClusterValidator {
         .then(ReactiveAdminClient.toMono(adminClient.listTopics().names()))
         .then(valid())
         .doOnTerminate(adminClient::close)
-        .onErrorResume(KafkaClusterValidator::invalid);
+        .onErrorResume(th -> {
+          log.error("Error connecting to cluster", th);
+          return KafkaClusterValidator.invalid("Error connecting to cluster. See logs for details.");
+        });
   }
 
   private static Mono<Optional<ApplicationPropertyValidationDTO>> validateSchemaRegistry(KafkaCluster cluster) {
