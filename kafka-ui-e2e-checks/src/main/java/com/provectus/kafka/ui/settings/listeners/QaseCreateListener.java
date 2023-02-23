@@ -35,7 +35,7 @@ public class QaseCreateListener extends TestListenerAdapter implements ITestList
     private static int getStatus(Method method) {
         if (method.isAnnotationPresent(Status.class))
             return method.getDeclaredAnnotation(Status.class).status().getValue();
-        return 0;
+        return 1;
     }
 
     private static int getAutomation(Method method) {
