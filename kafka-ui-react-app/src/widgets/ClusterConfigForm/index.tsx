@@ -3,7 +3,7 @@ import { Button } from 'components/common/Button/Button';
 import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import formSchema from 'widgets/ClusterConfigForm/schema';
-import { StyledForm } from 'components/common/Form/Form.styled';
+import { FlexFieldset, StyledForm } from 'components/common/Form/Form.styled';
 import {
   useUpdateAppConfig,
   useValidateAppConfig,
@@ -14,6 +14,7 @@ import { showSuccessAlert } from 'lib/errorHandling';
 import { getIsValidConfig } from 'widgets/ClusterConfigForm/utils/getIsValidConfig';
 import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import { useNavigate } from 'react-router-dom';
+import useBoolean from 'lib/hooks/useBoolean';
 
 import KafkaCluster from './KafkaCluster';
 import SchemaRegistry from './SchemaRegistry';
@@ -35,6 +36,7 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
   initialValues = {},
   hasCustomConfig,
 }) => {
+  const navigate = useNavigate();
   const methods = useForm<ClusterConfigFormValues>({
     mode: 'all',
     resolver: yupResolver(formSchema),
@@ -43,10 +45,18 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
       ...initialValues,
     },
   });
-  const navigate = useNavigate();
+  const {
+    formState: { isSubmitting, isDirty },
+    trigger,
+  } = methods;
 
   const validate = useValidateAppConfig();
   const update = useUpdateAppConfig({ initialName: initialValues.name });
+  const {
+    value: isFormDisabled,
+    setTrue: diableForm,
+    setFalse: enableForm,
+  } = useBoolean();
 
   const onSubmit = async (data: ClusterConfigFormValues) => {
     const config = transformFormDataToPayload(data);
@@ -57,11 +67,17 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
   const onReset = () => methods.reset();
 
   const onValidate = async () => {
+    await trigger();
+    if (!methods.formState.isValid) return;
+    diableForm();
     const data = methods.getValues();
     const config = transformFormDataToPayload(data);
     const response = await validate.mutateAsync(config);
-    const isValid = getIsValidConfig(response, data.name);
-    if (isValid) {
+    const isConfigValid = getIsValidConfig(response, data.name);
+
+    enableForm();
+
+    if (isConfigValid) {
       showSuccessAlert({
         message: 'Configuration is valid',
       });
@@ -70,48 +86,50 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
 
   const showCustomConfig = methods.watch('customAuth') && hasCustomConfig;
 
-  const { isSubmitting } = methods.formState;
-  const isSubmitDisabled = isSubmitting;
+  const isValidateDisabled = isSubmitting;
+  const isSubmitDisabled = isSubmitting || !isDirty;
 
   return (
     <FormProvider {...methods}>
       <StyledForm onSubmit={methods.handleSubmit(onSubmit)}>
-        <KafkaCluster />
-        <hr />
-        {showCustomConfig ? <CustomAuthentication /> : <Authentication />}
-        <hr />
-        <SchemaRegistry />
-        <hr />
-        <KafkaConnect />
-        <hr />
-        <Metrics />
-        <hr />
-        <S.ButtonWrapper>
-          <Button
-            buttonSize="L"
-            buttonType="secondary"
-            onClick={onReset}
-            disabled={isSubmitting}
-          >
-            Reset
-          </Button>
-          <Button
-            buttonSize="L"
-            buttonType="secondary"
-            onClick={onValidate}
-            disabled={isSubmitting}
-          >
-            Validate
-          </Button>
-          <Button
-            type="submit"
-            buttonSize="L"
-            buttonType="primary"
-            disabled={isSubmitDisabled}
-          >
-            Submit
-          </Button>
-        </S.ButtonWrapper>
+        <FlexFieldset disabled={isFormDisabled || isSubmitting}>
+          <KafkaCluster />
+          <hr />
+          {showCustomConfig ? <CustomAuthentication /> : <Authentication />}
+          <hr />
+          <SchemaRegistry />
+          <hr />
+          <KafkaConnect />
+          <hr />
+          <Metrics />
+          <hr />
+          <S.ButtonWrapper>
+            <Button
+              buttonSize="L"
+              buttonType="secondary"
+              onClick={onReset}
+              disabled={isSubmitting}
+            >
+              Reset
+            </Button>
+            <Button
+              buttonSize="L"
+              buttonType="secondary"
+              onClick={onValidate}
+              disabled={isValidateDisabled}
+            >
+              Validate
+            </Button>
+            <Button
+              type="submit"
+              buttonSize="L"
+              buttonType="primary"
+              disabled={isSubmitDisabled}
+            >
+              Submit
+            </Button>
+          </S.ButtonWrapper>
+        </FlexFieldset>
       </StyledForm>
     </FormProvider>
   );

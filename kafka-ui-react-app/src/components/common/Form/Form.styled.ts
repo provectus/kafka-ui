@@ -12,3 +12,9 @@ export const StyledForm = styled.form`
     line-height: 32px;
   }
 `;
+
+export const FlexFieldset = styled.fieldset`
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+`;
