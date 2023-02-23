@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.ApplicationConfigDTO;
 import com.provectus.kafka.ui.model.ApplicationConfigPropertiesDTO;
 import com.provectus.kafka.ui.model.ApplicationConfigValidationDTO;
+import com.provectus.kafka.ui.model.ApplicationInfoDTO;
 import com.provectus.kafka.ui.model.ClusterConfigValidationDTO;
 import com.provectus.kafka.ui.model.RestartRequestDTO;
 import com.provectus.kafka.ui.model.UploadedFileInfoDTO;
@@ -18,6 +19,7 @@ import com.provectus.kafka.ui.util.ApplicationRestarter;
 import com.provectus.kafka.ui.util.DynamicConfigOperations;
 import com.provectus.kafka.ui.util.DynamicConfigOperations.PropertiesStructure;
 import com.provectus.kafka.ui.util.KafkaClusterValidator;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +54,19 @@ public class ApplicationConfigController implements ApplicationConfigApi {
   private final DynamicConfigOperations dynamicConfigOperations;
   private final ApplicationRestarter restarter;
   private final KafkaClusterFactory kafkaClusterFactory;
+
+
+  @Override
+  public Mono<ResponseEntity<ApplicationInfoDTO>> getApplicationInfo(ServerWebExchange exchange) {
+    return Mono.just(
+        new ApplicationInfoDTO()
+            .enabledFeatures(
+                dynamicConfigOperations.dynamicConfigEnabled()
+                    ? List.of(ApplicationInfoDTO.EnabledFeaturesEnum.DYNAMIC_CONFIG)
+                    : List.of()
+            )
+    ).map(ResponseEntity::ok);
+  }
 
   @Override
   public Mono<ResponseEntity<ApplicationConfigDTO>> getCurrentConfig(ServerWebExchange exchange) {

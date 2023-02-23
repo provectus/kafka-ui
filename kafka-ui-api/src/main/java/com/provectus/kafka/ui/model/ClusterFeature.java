@@ -1,9 +1,8 @@
 package com.provectus.kafka.ui.model;
 
-public enum Feature {
+public enum ClusterFeature {
   KAFKA_CONNECT,
   KSQL_DB,
   SCHEMA_REGISTRY,
-  TOPIC_DELETION,
-  DYNAMIC_CONFIG
+  TOPIC_DELETION
 }
