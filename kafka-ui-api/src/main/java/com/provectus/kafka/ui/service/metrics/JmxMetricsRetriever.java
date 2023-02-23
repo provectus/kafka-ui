@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.rmi.registry.LocateRegistry;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -25,7 +26,11 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+import javax.management.remote.rmi.RMIConnector;
 import javax.management.remote.rmi.RMIJRMPServerImpl;
+import javax.management.remote.rmi.RMIServer;
+import javax.management.remote.rmi.RMIServerImpl;
+import javax.management.remote.rmi.RMIServerImpl_Stub;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -95,9 +100,14 @@ class JmxMetricsRetriever implements MetricsRetriever {
 
     if (config.isSsl()) {
       env.put("com.sun.management.jmxremote.registry.ssl", "true");
-     // env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
+      // env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
       env.put("com.sun.jndi.rmi.factory.socket", new OverriddenSslSocketFactory(c.getOriginalProperties().getSsl()));
     }
+
+    RMIServer server =
+        (RMIServer) LocateRegistry.getRegistry("kakfa0", 9997,
+                new OverriddenSslSocketFactory(c.getOriginalProperties().getSsl()))
+            .lookup("jmxrmi");
 
 //    RMIServerImpl_Stub stub = (RMIServerImpl_Stub) new InitialContext(EnvHelp.mapToHashtable(env)).lookup("rmi://kafka0:9997/jmxrmi");
 //    var liveRef = ((UnicastRef2) stub.getRef()).getLiveRef();
@@ -120,7 +130,9 @@ class JmxMetricsRetriever implements MetricsRetriever {
 //    var newConn = new RMIConnector(newRmiServer, null, env);
 //    newConn.connect();
 
-    return JMXConnectorFactory.connect(new JMXServiceURL(jmxUrl), env);
+    var connector = new RMIConnector(server, env);
+    connector.connect();
+    return connector;
   }
 
   @SneakyThrows
@@ -141,7 +153,8 @@ class JmxMetricsRetriever implements MetricsRetriever {
 
     @SneakyThrows
     public OverriddenSslSocketFactory(ClustersProperties.Ssl ssl) {
-      TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+      TrustManagerFactory trustManagerFactory =
+          TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 
       if (ssl.getTruststoreLocation() != null && ssl.getTruststorePassword() != null) {
         KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
