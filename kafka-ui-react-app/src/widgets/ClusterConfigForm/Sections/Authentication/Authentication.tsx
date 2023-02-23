@@ -1,15 +1,10 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { AUTH_OPTIONS, SECURITY_PROTOCOL_OPTIONS } from 'lib/constants';
-import Heading from 'components/common/heading/Heading.styled';
 import ControlledSelect from 'components/common/Select/ControlledSelect';
-import { Button } from 'components/common/Button/Button';
-import {
-  FlexGrow1,
-  FlexRow,
-} from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
+import SectionHeader from 'widgets/ClusterConfigForm/SectionHeader';
 
-import AuthenticationMethods from './AuthenticationMethods/AuthenticationMethods';
+import AuthenticationMethods from './AuthenticationMethods';
 
 const Authentication: React.FC = () => {
   const { watch, setValue } = useFormContext();
@@ -22,14 +17,12 @@ const Authentication: React.FC = () => {
 
   return (
     <>
-      <FlexRow>
-        <FlexGrow1>
-          <Heading level={3}>Authentication</Heading>
-        </FlexGrow1>
-        <Button buttonSize="M" buttonType="primary" onClick={toggle}>
-          {hasAuth ? 'Remove from config' : 'Configure Authentication'}
-        </Button>
-      </FlexRow>
+      <SectionHeader
+        title="Authentication"
+        adding={!hasAuth}
+        addButtonText="Configure Authentication"
+        onClick={toggle}
+      />
       {hasAuth && (
         <>
           <ControlledSelect

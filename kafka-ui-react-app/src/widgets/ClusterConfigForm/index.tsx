@@ -15,13 +15,12 @@ import { getIsValidConfig } from 'widgets/ClusterConfigForm/utils/getIsValidConf
 import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import { useNavigate } from 'react-router-dom';
 import useBoolean from 'lib/hooks/useBoolean';
-
-import KafkaCluster from './KafkaCluster';
-import SchemaRegistry from './SchemaRegistry';
-import KafkaConnect from './KafkaConnect';
-import Metrics from './Metrics';
-import CustomAuthentication from './Authentication/CustomAuthentication';
-import Authentication from './Authentication/Authentication';
+import KafkaCluster from 'widgets/ClusterConfigForm/Sections/KafkaCluster';
+import SchemaRegistry from 'widgets/ClusterConfigForm/Sections/SchemaRegistry';
+import KafkaConnect from 'widgets/ClusterConfigForm/Sections/KafkaConnect';
+import Metrics from 'widgets/ClusterConfigForm/Sections/Metrics';
+import CustomAuthentication from 'widgets/ClusterConfigForm/Sections/CustomAuthentication';
+import Authentication from 'widgets/ClusterConfigForm/Sections/Authentication/Authentication';
 
 interface ClusterConfigFormProps {
   hasCustomConfig?: boolean;

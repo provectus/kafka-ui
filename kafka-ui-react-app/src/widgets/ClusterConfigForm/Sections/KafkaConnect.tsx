@@ -6,12 +6,12 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
-import Heading from 'components/common/heading/Heading.styled';
 import Checkbox from 'components/common/Checkbox/Checkbox';
 import {
   FlexGrow1,
   FlexRow,
 } from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
+import SectionHeader from 'widgets/ClusterConfigForm/SectionHeader';
 
 const KafkaConnect = () => {
   const { control, watch } = useFormContext();
@@ -22,17 +22,17 @@ const KafkaConnect = () => {
   const handleAppend = () => append({ name: '', address: '' });
   const toggleConfig = () => (fields.length === 0 ? handleAppend() : remove());
 
+  const hasFields = fields.length > 0;
+
   return (
     <>
-      <FlexRow>
-        <FlexGrow1>
-          <Heading level={3}>Kafka Connect</Heading>
-        </FlexGrow1>
-        <Button buttonSize="M" buttonType="primary" onClick={toggleConfig}>
-          {fields.length === 0 ? 'Add Kafka Connect' : 'Remove From Config'}
-        </Button>
-      </FlexRow>
-      {fields.length > 0 && (
+      <SectionHeader
+        title="Kafka Connect"
+        addButtonText="Configure Kafka Connect"
+        adding={!hasFields}
+        onClick={toggleConfig}
+      />
+      {hasFields && (
         <S.ArrayFieldWrapper>
           {fields.map((item, index) => (
             <div key={item.id}>

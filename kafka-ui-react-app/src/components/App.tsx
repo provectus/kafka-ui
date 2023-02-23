@@ -21,10 +21,7 @@ import ClusterConfigForm from 'widgets/ClusterConfigForm';
 
 import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
 import { ConfirmContextProvider } from './contexts/ConfirmContext';
-import {
-  GlobalSettingsContext,
-  GlobalSettingsProvider,
-} from './contexts/GlobalSettingsContext';
+import { GlobalSettingsProvider } from './contexts/GlobalSettingsContext';
 import ErrorPage from './ErrorPage/ErrorPage';
 import { UserInfoRolesAccessProvider } from './contexts/UserInfoRolesAccessContext';
 import PageContainer from './PageContainer/PageContainer';
@@ -42,7 +39,6 @@ const queryClient = new QueryClient({
   },
 });
 const App: React.FC = () => {
-  const appInfo = React.useContext(GlobalSettingsContext);
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
@@ -61,12 +57,10 @@ const App: React.FC = () => {
                           element={<Dashboard />}
                         />
                       ))}
-                      {appInfo.hasDynamicConfig && (
-                        <Route
-                          path={getNonExactPath(clusterNewConfigPath)}
-                          element={<ClusterConfigForm />}
-                        />
-                      )}
+                      <Route
+                        path={getNonExactPath(clusterNewConfigPath)}
+                        element={<ClusterConfigForm />}
+                      />
                       <Route
                         path={getNonExactPath(clusterPath())}
                         element={<ClusterPage />}

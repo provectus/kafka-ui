@@ -1,13 +1,8 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import Heading from 'components/common/heading/Heading.styled';
-import { Button } from 'components/common/Button/Button';
-import {
-  FlexGrow1,
-  FlexRow,
-} from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import Input from 'components/common/Input/Input';
 import { convertFormKeyToPropsKey } from 'widgets/ClusterConfigForm/utils/convertFormKeyToPropsKey';
+import SectionHeader from 'widgets/ClusterConfigForm/SectionHeader';
 
 const CustomAuthentication: React.FC = () => {
   const { watch, setValue } = useFormContext();
@@ -18,14 +13,11 @@ const CustomAuthentication: React.FC = () => {
   const remove = () => setValue('customAuth', undefined);
   return (
     <>
-      <FlexRow>
-        <FlexGrow1>
-          <Heading level={3}>Authentication</Heading>
-        </FlexGrow1>
-        <Button buttonSize="M" buttonType="primary" onClick={remove}>
-          Remove from config
-        </Button>
-      </FlexRow>
+      <SectionHeader
+        title="Authentication"
+        addButtonText="Configure Authentication"
+        onClick={remove}
+      />
       {hasCustomConfig && (
         <>
           {Object.keys(customConf).map((key) => (

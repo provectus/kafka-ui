@@ -4,8 +4,8 @@ import {
   FlexRow,
   FlexGrow1,
 } from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
-
-import SaslGssapi from './SaslGssapi';
+import Checkbox from 'components/common/Checkbox/Checkbox';
+import Fileupload from 'widgets/ClusterConfigForm/Fileupload';
 
 const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
   switch (method) {
@@ -27,7 +27,24 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
         </>
       );
     case 'SASL/GSSAPI':
-      return <SaslGssapi />;
+      return (
+        <>
+          <Input
+            label="Kerberos service name"
+            type="text"
+            name="auth.props.saslKerberosServiceName"
+            withError
+          />
+          <Checkbox name="auth.props.storeKey" label="Store Key" />
+          <Fileupload name="auth.props.keyTabFile" label="Key Tab (optional)" />
+          <Input
+            type="text"
+            name="auth.props.principal"
+            label="Principal *"
+            withError
+          />
+        </>
+      );
     case 'SASL/OAUTHBEARER':
       return (
         <Input

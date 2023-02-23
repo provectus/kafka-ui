@@ -11,6 +11,7 @@ import Heading from 'components/common/heading/Heading.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Checkbox from 'components/common/Checkbox/Checkbox';
 import Fileupload from 'widgets/ClusterConfigForm/Fileupload';
+import SectionHeader from 'widgets/ClusterConfigForm/SectionHeader';
 
 const KafkaCluster: React.FC = () => {
   const { control, watch, setValue } = useFormContext();
@@ -100,18 +101,12 @@ const KafkaCluster: React.FC = () => {
         </S.ArrayFieldWrapper>
       </div>
       <hr />
-      <S.FlexRow>
-        <S.FlexGrow1>
-          <Heading level={3}>Truststore</Heading>
-        </S.FlexGrow1>
-        <Button
-          buttonSize="M"
-          buttonType="primary"
-          onClick={toggleSection('truststore')}
-        >
-          {hasTrustStore ? 'Remove from config' : 'Add Truststore'}
-        </Button>
-      </S.FlexRow>
+      <SectionHeader
+        title="Truststore"
+        addButtonText="Configure Truststore"
+        adding={!hasTrustStore}
+        onClick={toggleSection('truststore')}
+      />
       {hasTrustStore && (
         <>
           <Fileupload name="truststore.location" label="Truststore Location" />
@@ -124,19 +119,12 @@ const KafkaCluster: React.FC = () => {
         </>
       )}
       <hr />
-
-      <S.FlexRow>
-        <S.FlexGrow1>
-          <Heading level={3}>Keystore</Heading>
-        </S.FlexGrow1>
-        <Button
-          buttonSize="M"
-          buttonType="primary"
-          onClick={toggleSection('keystore')}
-        >
-          {hasKeyStore ? 'Remove from config' : 'Add Keystore'}
-        </Button>
-      </S.FlexRow>
+      <SectionHeader
+        title="Keystore"
+        adding={!hasKeyStore}
+        addButtonText="Configure Keystore"
+        onClick={toggleSection('keystore')}
+      />
       {hasKeyStore && (
         <>
           <Fileupload name="keystore.location" label="Keystore Location" />

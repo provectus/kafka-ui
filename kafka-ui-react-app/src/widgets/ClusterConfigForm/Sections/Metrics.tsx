@@ -1,8 +1,6 @@
 import React from 'react';
-import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
 import { useFormContext } from 'react-hook-form';
-import Heading from 'components/common/heading/Heading.styled';
 import ControlledSelect from 'components/common/Select/ControlledSelect';
 import { METRICS_OPTIONS } from 'lib/constants';
 import Checkbox from 'components/common/Checkbox/Checkbox';
@@ -10,6 +8,7 @@ import {
   FlexGrow1,
   FlexRow,
 } from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
+import SectionHeader from 'widgets/ClusterConfigForm/SectionHeader';
 
 const Metrics = () => {
   const { setValue, watch } = useFormContext();
@@ -29,14 +28,12 @@ const Metrics = () => {
   const isAuth = watch('metrics.isAuth');
   return (
     <>
-      <FlexRow>
-        <FlexGrow1>
-          <Heading level={3}>Metrics</Heading>
-        </FlexGrow1>
-        <Button buttonSize="M" buttonType="primary" onClick={toggleMetrics}>
-          {visibleMetrics ? 'Remove from config' : 'Configure Metrics'}
-        </Button>
-      </FlexRow>
+      <SectionHeader
+        title="Metrics"
+        adding={!visibleMetrics}
+        addButtonText="Configure Metrics"
+        onClick={toggleMetrics}
+      />
       {visibleMetrics && (
         <>
           <ControlledSelect

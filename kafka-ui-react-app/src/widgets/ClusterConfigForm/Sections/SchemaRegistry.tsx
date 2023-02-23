@@ -1,18 +1,17 @@
 import React from 'react';
-import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
 import { useFormContext } from 'react-hook-form';
-import Heading from 'components/common/heading/Heading.styled';
 import Checkbox from 'components/common/Checkbox/Checkbox';
 import {
   FlexGrow1,
   FlexRow,
 } from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
+import SectionHeader from 'widgets/ClusterConfigForm/SectionHeader';
 
 const SchemaRegistry = () => {
   const { setValue, watch } = useFormContext();
   const schemaRegistry = watch('schemaRegistry');
-  const showRegistryFrom = () => {
+  const toggleConfig = () => {
     setValue(
       'schemaRegistry',
       schemaRegistry ? undefined : { url: '', isAuth: false }
@@ -20,14 +19,12 @@ const SchemaRegistry = () => {
   };
   return (
     <>
-      <FlexRow>
-        <FlexGrow1>
-          <Heading level={3}>Schema Registry</Heading>
-        </FlexGrow1>
-        <Button buttonSize="M" buttonType="primary" onClick={showRegistryFrom}>
-          {!schemaRegistry ? 'Add Schema Registry' : 'Remove from config'}
-        </Button>
-      </FlexRow>
+      <SectionHeader
+        title="Schema Registry"
+        adding={!schemaRegistry}
+        addButtonText="Configure Schema Registry"
+        onClick={toggleConfig}
+      />
       {schemaRegistry && (
         <>
           <Input
