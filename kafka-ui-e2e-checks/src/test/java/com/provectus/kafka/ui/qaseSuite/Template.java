@@ -21,7 +21,7 @@ public class Template extends BaseQase {
     @QaseTitle("testCaseA title")
     @Status(status = DRAFT)
     @Suite(id = 0)
-//    @Test
+//    @org.testng.annotations.Test
     public void testCaseA() {
         stepA();
         stepB();
