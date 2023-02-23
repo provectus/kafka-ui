@@ -1,4 +1,4 @@
-import { showSuccessAlert } from 'lib/errorHandling';
+import { showAlert, showSuccessAlert } from 'lib/errorHandling';
 
 const useDataSaver = (
   subject: string,
@@ -13,6 +13,13 @@ const useDataSaver = (
         id: subject,
         title: '',
         message: 'Copied successfully!',
+      });
+    } else {
+      showAlert('custom', {
+        id: subject,
+        title: '',
+        message:
+          'Copying to clipboard is unavailable due to unsecured (non-HTTPS) connection!',
       });
     }
   };
