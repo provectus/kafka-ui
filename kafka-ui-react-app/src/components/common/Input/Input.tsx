@@ -28,9 +28,12 @@ const Input: React.FC<InputProps> = ({
   ) => {
     const { key, code } = event;
     if (type === 'number') {
-      // Manualy prevent input of 'e' character for all number inputs
+      // Manually prevent input of non-digit and non-minus for all number inputs
       // and prevent input of negative numbers for positiveOnly inputs
-      if (key === 'e' || (positiveOnly && (key === '-' || code === 'Minus'))) {
+      if (
+        !((key >= '0' && key <= '9') || key === '-' || code === 'Minus') ||
+        (positiveOnly && (key === '-' || code === 'Minus'))
+      ) {
         event.preventDefault();
       }
     }
