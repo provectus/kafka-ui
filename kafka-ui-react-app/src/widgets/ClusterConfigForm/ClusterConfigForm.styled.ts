@@ -42,10 +42,13 @@ export const FlexGrow1 = styled.div`
 `;
 // KafkaCluster
 export const BootstrapServer = styled(InputContainer)`
-  grid-template-columns: 3fr 1fr 30px;
+  grid-template-columns: 3fr 110px 30px;
 `;
 export const BootstrapServerActions = styled(IconButtonWrapper)`
   align-self: stretch;
   margin-top: 12px;
   margin-left: 8px;
+`;
+export const Port = styled.div`
+  width: 110px;
 `;

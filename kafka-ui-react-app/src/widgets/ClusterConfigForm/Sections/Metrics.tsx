@@ -4,10 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import ControlledSelect from 'components/common/Select/ControlledSelect';
 import { METRICS_OPTIONS } from 'lib/constants';
 import Checkbox from 'components/common/Checkbox/Checkbox';
-import {
-  FlexGrow1,
-  FlexRow,
-} from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
+import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import SectionHeader from 'widgets/ClusterConfigForm/SectionHeader';
 
 const Metrics = () => {
@@ -43,33 +40,35 @@ const Metrics = () => {
             placeholder="Choose metrics type"
             options={METRICS_OPTIONS}
           />
-          <Input
-            label="Port *"
-            name="metrics.port"
-            type="number"
-            positiveOnly
-            withError
-          />
+          <S.Port>
+            <Input
+              label="Port *"
+              name="metrics.port"
+              type="number"
+              positiveOnly
+              withError
+            />
+          </S.Port>
           <Checkbox name="metrics.isAuth" label="Secured with auth?" />
           {isAuth && (
-            <FlexRow>
-              <FlexGrow1>
+            <S.FlexRow>
+              <S.FlexGrow1>
                 <Input
                   label="Username *"
                   name="metrics.username"
                   type="text"
                   withError
                 />
-              </FlexGrow1>
-              <FlexGrow1>
+              </S.FlexGrow1>
+              <S.FlexGrow1>
                 <Input
                   label="Password *"
                   name="metrics.password"
                   type="password"
                   withError
                 />
-              </FlexGrow1>
-            </FlexRow>
+              </S.FlexGrow1>
+            </S.FlexRow>
           )}
         </>
       )}
