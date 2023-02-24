@@ -80,7 +80,7 @@ export const SeekTypeOptions = [
 
 const Filters: React.FC<FiltersProps> = ({
   phaseMessage,
-  meta: { elapsedMs, bytesConsumed, messagesConsumed },
+  meta: { elapsedMs, bytesConsumed, messagesConsumed, filterApplyErrors },
   isFetching,
   addMessage,
   resetMessages,
@@ -92,7 +92,6 @@ const Filters: React.FC<FiltersProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
   const page = searchParams.get('page');
 
   const { data: topic } = useTopicDetails({ clusterName, topicName });
@@ -577,6 +576,13 @@ const Filters: React.FC<FiltersProps> = ({
           </S.MetricsIcon>
           <span>{messagesConsumed} messages consumed</span>
         </S.Metric>
+        {filterApplyErrors ? (
+          <S.Metric title="Errors">
+            <span>{filterApplyErrors} errors</span>
+          </S.Metric>
+        ) : (
+          ''
+        )}
       </S.FiltersMetrics>
     </S.FiltersWrapper>
   );
