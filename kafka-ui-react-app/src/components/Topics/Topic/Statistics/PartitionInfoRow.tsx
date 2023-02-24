@@ -6,16 +6,14 @@ import {
   List,
   Label,
 } from 'components/common/PropertiesList/PropertiesList.styled';
-import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 import { TopicAnalysisStats } from 'generated-sources';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 import * as S from './Statistics.styles';
 
 const PartitionInfoRow: React.FC<{ row: Row<TopicAnalysisStats> }> = ({
   row,
 }) => {
-  const formatTimestamp = useTimeFormat();
-
   const {
     totalMsgs,
     minTimestamp,

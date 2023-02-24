@@ -42,7 +42,7 @@ const New: React.FC = () => {
   const mutation = useCreateConnector(clusterName);
 
   const methods = useForm<FormValues>({
-    mode: 'onTouched',
+    mode: 'all',
     resolver: yupResolver(validationSchema),
     defaultValues: {
       connectName: get(connects, '0.name', ''),
@@ -65,7 +65,7 @@ const New: React.FC = () => {
   }, [connects, getValues, setValue]);
 
   const onSubmit = async (values: FormValues) => {
-    const connector = await mutation.mutateAsync({
+    const connector = await mutation.createResource({
       connectName: values.connectName,
       newConnector: {
         name: values.name,
@@ -148,7 +148,7 @@ const New: React.FC = () => {
             control={control}
             name="config"
             render={({ field }) => (
-              <Editor {...field} readOnly={isSubmitting} />
+              <Editor {...field} readOnly={isSubmitting} ref={null} />
             )}
           />
           <FormError>

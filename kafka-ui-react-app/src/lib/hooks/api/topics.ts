@@ -82,22 +82,36 @@ const formatTopicCreation = (form: TopicFormData): TopicCreation => {
     customParams,
   } = form;
 
-  return {
+  const configs = {
+    'cleanup.policy': cleanupPolicy,
+    'retention.ms': retentionMs.toString(),
+    'retention.bytes': retentionBytes.toString(),
+    'max.message.bytes': maxMessageBytes.toString(),
+    'min.insync.replicas': minInSyncReplicas.toString(),
+    ...Object.values(customParams || {}).reduce(topicReducer, {}),
+  };
+
+  const cleanConfigs = () => {
+    return Object.fromEntries(
+      Object.entries(configs).filter(([, val]) => val !== '')
+    );
+  };
+
+  const topicsvalue = {
     name,
     partitions,
-    replicationFactor,
-    configs: {
-      'cleanup.policy': cleanupPolicy,
-      'retention.ms': retentionMs.toString(),
-      'retention.bytes': retentionBytes.toString(),
-      'max.message.bytes': maxMessageBytes.toString(),
-      'min.insync.replicas': minInSyncReplicas.toString(),
-      ...Object.values(customParams || {}).reduce(topicReducer, {}),
-    },
+    configs: cleanConfigs(),
   };
+
+  return replicationFactor.toString() !== ''
+    ? {
+        ...topicsvalue,
+        replicationFactor,
+      }
+    : topicsvalue;
 };
 
-export function useCreateTopic(clusterName: ClusterName) {
+export function useCreateTopicMutation(clusterName: ClusterName) {
   const client = useQueryClient();
   return useMutation(
     (data: TopicFormData) =>
@@ -114,6 +128,18 @@ export function useCreateTopic(clusterName: ClusterName) {
       },
     }
   );
+}
+
+// this will change later when we validate the request before
+export function useCreateTopic(clusterName: ClusterName) {
+  const mutate = useCreateTopicMutation(clusterName);
+
+  return {
+    createResource: async (param: TopicFormData) => {
+      return mutate.mutateAsync(param);
+    },
+    ...mutate,
+  };
 }
 
 const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
@@ -141,8 +167,12 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
 export function useUpdateTopic(props: GetTopicDetailsRequest) {
   const client = useQueryClient();
   return useMutation(
-    (data: TopicFormDataRaw) =>
-      api.updateTopic({ ...props, topicUpdate: formatTopicUpdate(data) }),
+    (data: TopicFormDataRaw) => {
+      return api.updateTopic({
+        ...props,
+        topicUpdate: formatTopicUpdate(data),
+      });
+    },
     {
       onSuccess: () => {
         showSuccessAlert({

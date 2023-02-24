@@ -93,6 +93,8 @@ const Filters: React.FC<FiltersProps> = ({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  const page = searchParams.get('page');
+
   const { data: topic } = useTopicDetails({ clusterName, topicName });
 
   const partitions = topic?.partitions || [];
@@ -202,6 +204,7 @@ const Filters: React.FC<FiltersProps> = ({
       filterQueryType: queryType,
       attempt: nextAttempt,
       limit: PER_PAGE,
+      page: page || 0,
       seekDirection,
       keySerde: keySerde || (searchParams.get('keySerde') as string),
       valueSerde: valueSerde || (searchParams.get('valueSerde') as string),
@@ -219,18 +222,30 @@ const Filters: React.FC<FiltersProps> = ({
         default:
           props.seekType = currentSeekType;
       }
-      props.seekTo = selectedPartitions.map(({ value }) => {
-        const offsetProperty =
-          seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
-        const offsetBasedSeekTo =
-          currentOffset || partitionMap[value][offsetProperty];
-        const seekToOffset =
-          currentSeekType === SeekType.OFFSET
-            ? offsetBasedSeekTo
-            : timestamp?.getTime();
 
-        return `${value}::${seekToOffset || '0'}`;
-      });
+      if (offset && currentSeekType === SeekType.OFFSET) {
+        props.seekType = SeekType.OFFSET;
+      }
+
+      if (timestamp && currentSeekType === SeekType.TIMESTAMP) {
+        props.seekType = SeekType.TIMESTAMP;
+      }
+
+      if (selectedPartitions.length !== partitions.length) {
+        // not everything in the partition is selected
+        props.seekTo = selectedPartitions.map(({ value }) => {
+          const offsetProperty =
+            seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
+          const offsetBasedSeekTo =
+            currentOffset || partitionMap[value][offsetProperty];
+          const seekToOffset =
+            currentSeekType === SeekType.OFFSET
+              ? offsetBasedSeekTo
+              : timestamp?.getTime();
+
+          return `${value}::${seekToOffset || '0'}`;
+        });
+      }
     }
 
     const newProps = omitBy(props, (v) => v === undefined || v === '');
@@ -383,6 +398,7 @@ const Filters: React.FC<FiltersProps> = ({
     timestamp,
     query,
     seekDirection,
+    page,
   ]);
 
   React.useEffect(() => {
@@ -428,7 +444,7 @@ const Filters: React.FC<FiltersProps> = ({
                   onChange={(date: Date | null) => setTimestamp(date)}
                   showTimeInput
                   timeInputLabel="Time:"
-                  dateFormat="MMMM d, yyyy HH:mm"
+                  dateFormat="MMM d, yyyy HH:mm"
                   placeholderText="Select timestamp"
                   disabled={isTailing}
                 />

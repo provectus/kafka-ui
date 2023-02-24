@@ -51,7 +51,6 @@ import reactor.util.retry.Retry;
 public class TopicsService {
 
   private final AdminClientService adminClientService;
-  private final DeserializationService deserializationService;
   private final StatisticsCache statisticsCache;
   @Value("${topic.recreate.maxRetries:15}")
   private int recreateMaxRetries;
@@ -163,9 +162,14 @@ public class TopicsService {
   }
 
   public Mono<List<ConfigEntry>> getTopicConfigs(KafkaCluster cluster, String topicName) {
+    // there 2 case that we cover here:
+    // 1. topic not found/visible - describeTopic() will be empty and we will throw TopicNotFoundException
+    // 2. topic is visible, but we don't have DESCRIBE_CONFIG permission - we should return empty list
     return adminClientService.get(cluster)
-        .flatMap(ac -> ac.getTopicsConfig(List.of(topicName), true))
-        .map(m -> m.values().stream().findFirst().orElseThrow(TopicNotFoundException::new));
+        .flatMap(ac -> ac.describeTopic(topicName)
+            .switchIfEmpty(Mono.error(new TopicNotFoundException()))
+            .then(ac.getTopicsConfig(List.of(topicName), true))
+            .map(m -> m.values().stream().findFirst().orElse(List.of())));
   }
 
   private Mono<InternalTopic> createTopic(KafkaCluster c, ReactiveAdminClient adminClient,
@@ -461,8 +465,12 @@ public class TopicsService {
   }
 
   private Mono<List<String>> filterExisting(KafkaCluster cluster, Collection<String> topics) {
-    return adminClientService.get(cluster).flatMap(ac -> ac.listTopics(true))
-        .map(existing -> existing.stream().filter(topics::contains).collect(toList()));
+    return adminClientService.get(cluster)
+        .flatMap(ac -> ac.listTopics(true))
+        .map(existing -> existing
+            .stream()
+            .filter(topics::contains)
+            .collect(toList()));
   }
 
 }

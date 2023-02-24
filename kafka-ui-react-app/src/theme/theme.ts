@@ -362,6 +362,7 @@ const theme = {
       normal: Colors.neutral[50],
       hover: Colors.neutral[90],
       active: Colors.neutral[90],
+      disabled: Colors.neutral[30],
     },
     borderColor: {
       normal: 'transparent',
@@ -516,6 +517,9 @@ const theme = {
     liderReplica: {
       color: Colors.green[60],
     },
+    outOfSync: {
+      color: Colors.red[50],
+    },
   },
   dangerZone: {
     borderColor: Colors.neutral[10],
@@ -543,6 +547,7 @@ const theme = {
     },
   },
   icons: {
+    chevronDownIcon: Colors.neutral[90],
     closeIcon: Colors.neutral[30],
     deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],
@@ -580,6 +585,9 @@ const theme = {
   },
   statictics: {
     createdAtColor: Colors.neutral[50],
+  },
+  errorPage: {
+    text: Colors.blue[45],
   },
 };
 

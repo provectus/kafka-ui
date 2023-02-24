@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import javax.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -30,15 +33,16 @@ public class ClustersProperties {
     WebClientSsl schemaRegistrySsl;
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
+    WebClientSsl ksqldbServerSsl;
     List<ConnectCluster> kafkaConnect;
     MetricsConfigData metrics;
     Properties properties;
     boolean readOnly = false;
-    boolean disableLogDirsCollection = false;
     List<SerdeConfig> serde = new ArrayList<>();
     String defaultKeySerde;
     String defaultValueSerde;
     List<Masking> masking = new ArrayList<>();
+    long pollingThrottleRate = 0;
   }
 
   @Data
@@ -51,6 +55,9 @@ public class ClustersProperties {
   }
 
   @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder(toBuilder = true)
   public static class ConnectCluster {
     String name;
     String address;

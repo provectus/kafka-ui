@@ -15,16 +15,15 @@ public class StringSerde implements BuiltInSerde {
     return "String";
   }
 
-  private Charset encoding;
+  private Charset encoding = StandardCharsets.UTF_8;
 
   @Override
   public void configure(PropertyResolver serdeProperties,
                         PropertyResolver kafkaClusterProperties,
                         PropertyResolver globalProperties) {
-    encoding = Charset.forName(
-        serdeProperties.getProperty("encoding", String.class)
-            .orElse(StandardCharsets.UTF_8.name())
-    );
+    serdeProperties.getProperty("encoding", String.class)
+        .map(Charset::forName)
+        .ifPresent(e -> StringSerde.this.encoding = e);
   }
 
   @Override

@@ -19,7 +19,7 @@ export default {
   ],
   testEnvironment: 'jsdom',
   transform: {
-    '\\.[jt]sx?$': 'babel-jest',
+    '\\.[jt]sx?$': '@swc/jest',
     '^.+\\.css$': '<rootDir>/.jest/cssTransform.js',
   },
   transformIgnorePatterns: [

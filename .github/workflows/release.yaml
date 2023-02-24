@@ -33,7 +33,7 @@ jobs:
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Upload files to a GitHub release
-        uses: svenstaro/upload-release-action@2.3.0
+        uses: svenstaro/upload-release-action@2.4.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: kafka-ui-api/target/kafka-ui-api-${{ steps.build.outputs.version }}.jar
@@ -87,32 +87,14 @@ jobs:
 
   charts:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     needs: release
     steps:
-      - uses: actions/checkout@v3
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
         with:
-          fetch-depth: 1
-
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-
-      - uses: azure/setup-helm@v1
-
-      - name: update chart version
-        run: |
-          export version=${{needs.release.outputs.version}}
-          sed -i "s/version:.*/version: ${version}/" charts/kafka-ui/Chart.yaml
-          sed -i "s/appVersion:.*/appVersion: ${version}/" charts/kafka-ui/Chart.yaml
-
-      - name: add chart
-        run: |
-          export VERSION=${{needs.release.outputs.version}}
-          MSG=$(helm package --app-version ${VERSION} charts/kafka-ui)
-          git fetch origin
-          git stash
-          git checkout -b gh-pages origin/gh-pages
-          helm repo index .
-          git add -f ${MSG##*/} index.yaml
-          git commit -m "release ${VERSION}"
-          git push
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: provectus/kafka-ui
+          event-type: prepare-helm-release
+          client-payload: '{"appversion": "${{ needs.release.outputs.version }}"}'
