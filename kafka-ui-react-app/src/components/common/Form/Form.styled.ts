@@ -17,4 +17,12 @@ export const FlexFieldset = styled.fieldset`
   display: flex;
   gap: 16px;
   flex-direction: column;
+
+  &:disabled {
+    ul {
+      opacity: 0.5;
+      background-color: #f5f5f5;
+      pointer-events: none;
+    }
+  }
 `;

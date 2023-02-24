@@ -54,7 +54,7 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
   const update = useUpdateAppConfig({ initialName: initialValues.name });
   const {
     value: isFormDisabled,
-    setTrue: diableForm,
+    setTrue: disableForm,
     setFalse: enableForm,
   } = useBoolean();
 
@@ -77,19 +77,26 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
   const onValidate = async () => {
     await trigger();
     if (!methods.formState.isValid) return;
-    diableForm();
+    disableForm();
     const data = methods.getValues();
     const config = transformFormDataToPayload(data);
-    const response = await validate.mutateAsync(config);
-    const isConfigValid = getIsValidConfig(response, data.name);
 
-    enableForm();
-
-    if (isConfigValid) {
-      showSuccessAlert({
-        message: 'Configuration is valid',
+    try {
+      const response = await validate.mutateAsync(config);
+      const isConfigValid = getIsValidConfig(response, data.name);
+      if (isConfigValid) {
+        showSuccessAlert({
+          message: 'Configuration is valid',
+        });
+      }
+    } catch (e) {
+      showAlert('error', {
+        id: 'app-config-validate-error',
+        title: 'Error validating application config',
+        message: 'There was an error validating the application config',
       });
     }
+    enableForm();
   };
 
   const showCustomConfig = methods.watch('customAuth') && hasCustomConfig;
