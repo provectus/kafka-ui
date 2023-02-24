@@ -1,7 +1,6 @@
 import { appConfigApiClient as api } from 'lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
-import { showAlert } from 'lib/errorHandling';
 import { QUERY_REFETCH_OFF_OPTIONS } from 'lib/constants';
 
 export function useAppInfo() {
