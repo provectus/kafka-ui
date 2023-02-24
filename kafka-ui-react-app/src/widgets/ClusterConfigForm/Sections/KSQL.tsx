@@ -12,7 +12,11 @@ const KSQL = () => {
   const { setValue, watch } = useFormContext();
   const ksql = watch('ksql');
   const toggleConfig = () => {
-    setValue('ksql', ksql ? undefined : { url: '', isAuth: false });
+    setValue('ksql', ksql ? undefined : { url: '', isAuth: false }, {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
   };
   return (
     <>

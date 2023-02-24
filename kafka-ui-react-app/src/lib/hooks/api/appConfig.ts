@@ -48,13 +48,6 @@ export function useUpdateAppConfig({ initialName }: { initialName?: string }) {
     },
     {
       onSuccess: () => client.invalidateQueries(['app', 'config']),
-      onError() {
-        showAlert('error', {
-          id: 'app-config-update-error',
-          title: 'Error updating application config',
-          message: 'There was an error updating the application config',
-        });
-      },
     }
   );
 }

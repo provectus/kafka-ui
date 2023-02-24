@@ -22,7 +22,8 @@ const Metrics = () => {
             type: '',
             port: 0,
             isAuth: false,
-          }
+          },
+      { shouldValidate: true, shouldDirty: true, shouldTouch: true }
     );
 
   const isAuth = watch('metrics.isAuth');

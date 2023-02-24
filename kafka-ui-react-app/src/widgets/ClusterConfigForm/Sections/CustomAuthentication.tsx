@@ -10,7 +10,12 @@ const CustomAuthentication: React.FC = () => {
   const hasCustomConfig =
     customConf && Object.values(customConf).some((v) => !!v);
 
-  const remove = () => setValue('customAuth', undefined);
+  const remove = () =>
+    setValue('customAuth', undefined, {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
   return (
     <>
       <SectionHeader

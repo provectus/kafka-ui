@@ -13,7 +13,12 @@ const Authentication: React.FC = () => {
   const hasSecurityProtocolField =
     authMethod && !['Delegation tokens', 'mTLS'].includes(authMethod);
 
-  const toggle = () => setValue('auth', hasAuth ? undefined : {});
+  const toggle = () =>
+    setValue('auth', hasAuth ? undefined : {}, {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
 
   return (
     <>

@@ -32,7 +32,8 @@ const KafkaCluster: React.FC = () => {
         : {
             location: '',
             password: '',
-          }
+          },
+      { shouldValidate: true, shouldDirty: true, shouldTouch: true }
     );
 
   return (

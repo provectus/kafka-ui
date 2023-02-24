@@ -14,7 +14,8 @@ const SchemaRegistry = () => {
   const toggleConfig = () => {
     setValue(
       'schemaRegistry',
-      schemaRegistry ? undefined : { url: '', isAuth: false }
+      schemaRegistry ? undefined : { url: '', isAuth: false },
+      { shouldValidate: true, shouldDirty: true, shouldTouch: true }
     );
   };
   return (

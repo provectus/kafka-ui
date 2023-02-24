@@ -10,7 +10,7 @@ import {
 } from 'lib/hooks/api/appConfig';
 import { ClusterConfigFormValues } from 'widgets/ClusterConfigForm/types';
 import { transformFormDataToPayload } from 'widgets/ClusterConfigForm/utils/transformFormDataToPayload';
-import { showSuccessAlert } from 'lib/errorHandling';
+import { showAlert, showSuccessAlert } from 'lib/errorHandling';
 import { getIsValidConfig } from 'widgets/ClusterConfigForm/utils/getIsValidConfig';
 import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import { useNavigate } from 'react-router-dom';
@@ -60,8 +60,16 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
 
   const onSubmit = async (data: ClusterConfigFormValues) => {
     const config = transformFormDataToPayload(data);
-    await update.mutateAsync(config);
-    navigate('/');
+    try {
+      await update.mutateAsync(config);
+      navigate('/');
+    } catch (e) {
+      showAlert('error', {
+        id: 'app-config-update-error',
+        title: 'Error updating application config',
+        message: 'There was an error updating the application config',
+      });
+    }
   };
 
   const onReset = () => methods.reset();
