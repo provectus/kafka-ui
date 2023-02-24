@@ -38,5 +38,12 @@ describe('Custom Input', () => {
       await userEvent.type(input, '-2');
       expect(input).toHaveValue(-2);
     });
+
+    it('allow positive values only', async () => {
+      render(setupWrapper({ type: 'number', positiveOnly: true }));
+      const input = getInput();
+      await userEvent.type(input, '-2');
+      expect(input).toHaveValue(2);
+    });
   });
 });

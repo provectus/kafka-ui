@@ -23,6 +23,20 @@ const Input: React.FC<InputProps> = ({
   ...rest
 }) => {
   const methods = useFormContext();
+
+  const inputNumberCheck = (key: string, code: string) => {
+    let isValid: boolean;
+    if (!((key >= '0' && key <= '9') || key === '-' || code === 'Minus')) {
+      // If not a valid digit.
+      isValid = false;
+    } else if (positiveOnly) {
+      isValid = !(key === '-' || code === 'Minus');
+    } else {
+      isValid = true;
+    }
+    return isValid;
+  };
+
   const keyPressEventHandler = (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
@@ -30,10 +44,7 @@ const Input: React.FC<InputProps> = ({
     if (type === 'number') {
       // Manually prevent input of non-digit and non-minus for all number inputs
       // and prevent input of negative numbers for positiveOnly inputs
-      if (
-        !((key >= '0' && key <= '9') || key === '-' || code === 'Minus') ||
-        (positiveOnly && (key === '-' || code === 'Minus'))
-      ) {
+      if (!inputNumberCheck(key, code)) {
         event.preventDefault();
       }
     }
