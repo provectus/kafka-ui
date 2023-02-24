@@ -31,27 +31,27 @@ public class Template extends BaseQase {
         stepF();
     }
 
-    @Step("stepA description")
+    @Step("stepA action")
     private void stepA() {
     }
 
-    @Step("stepB description")
+    @Step("stepB action")
     private void stepB() {
     }
 
-    @Step("stepC description")
+    @Step("stepC action")
     private void stepC() {
     }
 
-    @Step("stepD description")
+    @Step("stepD action")
     private void stepD() {
     }
 
-    @Step("stepE description")
+    @Step("stepE action")
     private void stepE() {
     }
 
-    @Step("stepF description")
+    @Step("stepF action")
     private void stepF() {
     }
 }
