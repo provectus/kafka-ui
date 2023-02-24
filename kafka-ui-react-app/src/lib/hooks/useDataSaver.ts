@@ -17,7 +17,7 @@ const useDataSaver = (
     } else {
       showAlert('warning', {
         id: subject,
-        title: '',
+        title: 'Warning',
         message:
           'Copying to clipboard is unavailable due to unsecured (non-HTTPS) connection',
       });
