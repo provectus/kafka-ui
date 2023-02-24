@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.config.ClustersProperties.SerdeConfig;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.Serde;
+import com.provectus.kafka.ui.serdes.builtin.AvroEmbeddedSerde;
 import com.provectus.kafka.ui.serdes.builtin.Base64Serde;
 import com.provectus.kafka.ui.serdes.builtin.Int32Serde;
 import com.provectus.kafka.ui.serdes.builtin.Int64Serde;
@@ -43,6 +44,7 @@ public class SerdesInitializer {
             .put(Int64Serde.name(), Int64Serde.class)
             .put(UInt32Serde.name(), UInt32Serde.class)
             .put(UInt64Serde.name(), UInt64Serde.class)
+            .put(AvroEmbeddedSerde.name(), AvroEmbeddedSerde.class)
             .put(Base64Serde.name(), Base64Serde.class)
             .put(UuidBinarySerde.name(), UuidBinarySerde.class)
             .build(),
@@ -171,7 +173,7 @@ public class SerdesInitializer {
     var clazz = builtInSerdeClasses.get(name);
     BuiltInSerde serde = createSerdeInstance(clazz);
     if (serdeConfig.getProperties().isEmpty()) {
-      if (!autoConfigureSerde(serde, serdeProps, globalProps)) {
+      if (!autoConfigureSerde(serde, clusterProps, globalProps)) {
         // no properties provided and serde does not support auto-configuration
         throw new ValidationException(name + " serde is not configured");
       }

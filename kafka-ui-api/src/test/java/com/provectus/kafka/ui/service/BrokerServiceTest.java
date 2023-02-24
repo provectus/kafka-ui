@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.AbstractIntegrationTest;
-import com.provectus.kafka.ui.model.BrokerDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
@@ -16,14 +15,11 @@ class BrokerServiceTest extends AbstractIntegrationTest {
 
   @Test
   void getBrokersReturnsFilledBrokerDto() {
-    BrokerDTO expectedBroker = new BrokerDTO();
-    expectedBroker.setId(1);
-    expectedBroker.setHost(kafka.getHost());
-    expectedBroker.setPort(kafka.getFirstMappedPort());
-
     var localCluster = clustersStorage.getClusterByName(LOCAL).get();
     StepVerifier.create(brokerService.getBrokers(localCluster))
-        .expectNext(expectedBroker)
+        .expectNextMatches(b -> b.getId().equals(1)
+            && b.getHost().equals(kafka.getHost())
+            && b.getPort().equals(kafka.getFirstMappedPort()))
         .verifyComplete();
   }
 

@@ -1,4 +1,4 @@
-name: terraform_deploy
+name: Terraform deploy
 on:
   workflow_dispatch:
     inputs:
@@ -34,10 +34,6 @@ jobs:
 
       - name: Terraform Install
         uses: hashicorp/setup-terraform@v2
-
-      - name: Terraform format
-        id: fmt
-        run: cd $TF_DIR && terraform fmt -check
 
       - name: Terraform init
         id: init

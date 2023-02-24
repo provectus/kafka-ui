@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
+import com.provectus.kafka.ui.util.PollingThrottler;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
@@ -34,8 +36,9 @@ public class BackwardRecordEmitter
       Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
       ConsumerPosition consumerPosition,
       int messagesPerPage,
-      ConsumerRecordDeserializer recordDeserializer) {
-    super(recordDeserializer);
+      ConsumerRecordDeserializer recordDeserializer,
+      PollingThrottler throttler) {
+    super(recordDeserializer, throttler);
     this.consumerPosition = consumerPosition;
     this.messagesPerPage = messagesPerPage;
     this.consumerSupplier = consumerSupplier;
@@ -43,6 +46,7 @@ public class BackwardRecordEmitter
 
   @Override
   public void accept(FluxSink<TopicMessageEventDTO> sink) {
+    log.debug("Starting backward polling for {}", consumerPosition);
     try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
       sendPhase(sink, "Created consumer");
 
@@ -82,6 +86,9 @@ public class BackwardRecordEmitter
       }
       sendFinishStatsAndCompleteSink(sink);
       log.debug("Polling finished");
+    } catch (InterruptException kafkaInterruptException) {
+      log.debug("Polling finished due to thread interruption");
+      sink.complete();
     } catch (Exception e) {
       log.error("Error occurred while consuming records", e);
       sink.error(e);

@@ -11,7 +11,6 @@ import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.mapper.ClusterMapperImpl;
 import com.provectus.kafka.ui.model.InternalLogDirStats;
 import com.provectus.kafka.ui.model.InternalPartitionsOffsets;
-import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Metrics;
@@ -19,6 +18,8 @@ import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.service.analyze.TopicAnalysisService;
+import com.provectus.kafka.ui.service.rbac.AccessControlService;
+import com.provectus.kafka.ui.util.AccessControlServiceMock;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.stream.IntStream;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.TopicPartitionInfo;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 import reactor.core.publisher.Mono;
 
 class TopicsServicePaginationTest {
@@ -41,9 +43,10 @@ class TopicsServicePaginationTest {
   private final TopicsService topicsService = mock(TopicsService.class);
   private final ClustersStorage clustersStorage = mock(ClustersStorage.class);
   private final ClusterMapper clusterMapper = new ClusterMapperImpl();
+  private final AccessControlService accessControlService = new AccessControlServiceMock().getMock();
 
   private final TopicsController topicsController = new TopicsController(
-      topicsService, mock(TopicAnalysisService.class), clusterMapper);
+      topicsService, mock(TopicAnalysisService.class), clusterMapper, accessControlService);
 
   private void init(Map<String, InternalTopic> topicsInCache) {
 
@@ -56,7 +59,7 @@ class TopicsServicePaginationTest {
           List<String> lst = a.getArgument(1);
           return Mono.just(lst.stream().map(topicsInCache::get).collect(Collectors.toList()));
         });
-    this.topicsController.setClustersStorage(clustersStorage);
+    ReflectionTestUtils.setField(topicsController, "clustersStorage", clustersStorage);
   }
 
   @Test
@@ -83,7 +86,6 @@ class TopicsServicePaginationTest {
   private KafkaCluster buildKafkaCluster(String clusterName) {
     return KafkaCluster.builder()
         .name(clusterName)
-        .schemaRegistry(InternalSchemaRegistry.builder().build())
         .build();
   }
 
