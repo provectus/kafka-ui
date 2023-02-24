@@ -35,8 +35,8 @@ public class MessagesTest extends BaseTest {
             .setName("topic-to-clear-and-purge-messages-attribute-" + randomAlphabetic(5))
             .setMessageKey(randomAlphabetic(5))
             .setMessageContent(randomAlphabetic(10));
-    private static final Topic TOPIC_FOR_CHECKING_FILTERS = new Topic()
-            .setName("topic-for-checking-filters-" + randomAlphabetic(5))
+    private static final Topic TOPIC_FOR_CHECK_FILTERS = new Topic()
+            .setName("topic-for-check-filters-" + randomAlphabetic(5))
             .setMessageKey(randomAlphabetic(5))
             .setMessageContent(randomAlphabetic(10));
     private static final Topic TOPIC_TO_RECREATE = new Topic()
@@ -47,12 +47,12 @@ public class MessagesTest extends BaseTest {
 
     @BeforeClass(alwaysRun = true)
     public void beforeClass() {
-        TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS, TOPIC_TO_CLEAR_AND_PURGE_MESSAGES,
+        TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECK_FILTERS, TOPIC_TO_CLEAR_AND_PURGE_MESSAGES,
                 TOPIC_TO_RECREATE));
         TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
-        IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
+        IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECK_FILTERS));
         waitUntilNewMinuteStarted();
-        IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
+        IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECK_FILTERS));
     }
 
     @QaseId(222)
@@ -147,7 +147,7 @@ public class MessagesTest extends BaseTest {
     @QaseId(21)
     @Test(priority = 5)
     public void copyMessageFromTopicProfile() {
-        navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
+        navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
         topicDetails
                 .openDetailsTab(MESSAGES)
                 .getRandomMessage()
@@ -161,8 +161,8 @@ public class MessagesTest extends BaseTest {
     @Issue("https://github.com/provectus/kafka-ui/issues/2394")
     @QaseId(15)
     @Test(priority = 6)
-    public void checkingMessageFilteringByOffset() {
-        navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
+    public void checkMessageFilteringByOffset() {
+        navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
         topicDetails
                 .openDetailsTab(MESSAGES);
         TopicDetails.MessageGridItem secondMessage = topicDetails.getMessageByOffset(1);
@@ -183,8 +183,8 @@ public class MessagesTest extends BaseTest {
     @Issue("https://github.com/provectus/kafka-ui/issues/2345")
     @QaseId(16)
     @Test(priority = 7)
-    public void checkingMessageFilteringByTimestamp() {
-        navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
+    public void checkMessageFilteringByTimestamp() {
+        navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
         topicDetails
                 .openDetailsTab(MESSAGES);
         LocalDateTime firstTimestamp = topicDetails.getMessageByOffset(0).getTimestamp();
@@ -211,7 +211,7 @@ public class MessagesTest extends BaseTest {
     @QaseId(246)
     @Test(priority = 8)
     public void checkClearTopicMessageFromOverviewTab() {
-        navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECKING_FILTERS.getName());
+        navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
         topicDetails
                 .openDetailsTab(OVERVIEW)
                 .openDotMenu()
@@ -219,7 +219,7 @@ public class MessagesTest extends BaseTest {
                 .clickConfirmBtnMdl();
         SoftAssert softly = new SoftAssert();
         softly.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS,
-                        String.format("%s messages have been successfully cleared!", TOPIC_FOR_CHECKING_FILTERS.getName())),
+                        String.format("%s messages have been successfully cleared!", TOPIC_FOR_CHECK_FILTERS.getName())),
                 "isAlertWithMessageVisible()");
         softly.assertEquals(topicDetails.getMessageCountAmount(), 0,
                 "getMessageCountAmount()= " + topicDetails.getMessageCountAmount());

@@ -14,20 +14,20 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class KsqlDbTest extends BaseTest {
 
-    private static final Stream STREAM_FOR_CHECKING_TABLES = new Stream()
-            .setName("STREAM_FOR_CHECKING_TABLES_" + randomAlphabetic(4).toUpperCase())
+    private static final Stream STREAM_FOR_CHECK_TABLES = new Stream()
+            .setName("STREAM_FOR_CHECK_TABLES_" + randomAlphabetic(4).toUpperCase())
             .setTopicName("TOPIC_FOR_STREAM_" + randomAlphabetic(4).toUpperCase());
     private static final Table FIRST_TABLE = new Table()
             .setName("FIRST_TABLE" + randomAlphabetic(4).toUpperCase())
-            .setStreamName(STREAM_FOR_CHECKING_TABLES.getName());
+            .setStreamName(STREAM_FOR_CHECK_TABLES.getName());
     private static final Table SECOND_TABLE = new Table()
             .setName("SECOND_TABLE" + randomAlphabetic(4).toUpperCase())
-            .setStreamName(STREAM_FOR_CHECKING_TABLES.getName());
+            .setStreamName(STREAM_FOR_CHECK_TABLES.getName());
 
     @BeforeClass(alwaysRun = true)
     public void beforeClass() {
         apiService
-                .createStream(STREAM_FOR_CHECKING_TABLES)
+                .createStream(STREAM_FOR_CHECK_TABLES)
                 .createTables(FIRST_TABLE, SECOND_TABLE);
     }
 

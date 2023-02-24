@@ -298,7 +298,7 @@ public class TopicsTest extends BaseTest {
 
     @QaseId(12)
     @Test(priority = 12)
-    public void addingNewFilterWithinTopic() {
+    public void addNewFilterWithinTopic() {
         String filterName = randomAlphabetic(5);
         navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
         topicDetails
