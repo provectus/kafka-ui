@@ -32,14 +32,14 @@ describe('Custom Input', () => {
       expect(input).toHaveValue(131);
     });
 
-    it('allows negative values', async () => {
+    it('allows user to type negative values', async () => {
       render(setupWrapper({ type: 'number' }));
       const input = getInput();
       await userEvent.type(input, '-2');
       expect(input).toHaveValue(-2);
     });
 
-    it('allow positive values only', async () => {
+    it('allows user to type positive values only', async () => {
       render(setupWrapper({ type: 'number', positiveOnly: true }));
       const input = getInput();
       await userEvent.type(input, '-2');
