@@ -159,6 +159,7 @@ const baseTheme = {
     },
   },
   icons: {
+    chevronDownIcon: Colors.neutral[90],
     editIcon: Colors.neutral[30],
     cancelIcon: Colors.neutral[30],
     autoIcon: Colors.neutral[95],

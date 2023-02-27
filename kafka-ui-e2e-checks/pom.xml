@@ -15,8 +15,8 @@
         <maven.surefire-plugin.version>3.0.0-M8</maven.surefire-plugin.version>
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
         <testcontainers.version>1.17.6</testcontainers.version>
-        <selenide.version>6.6.3</selenide.version>
-        <testng.version>7.6.1</testng.version>
+        <selenide.version>6.11.2</selenide.version>
+        <testng.version>7.7.0</testng.version>
         <allure.version>2.20.1</allure.version>
         <qase.io.version>3.0.2</qase.io.version>
         <aspectj.version>1.9.9.1</aspectj.version>
