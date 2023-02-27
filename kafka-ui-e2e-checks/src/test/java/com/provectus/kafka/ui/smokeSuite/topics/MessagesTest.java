@@ -285,7 +285,7 @@ public class MessagesTest extends BaseTest {
         topicDetails
             .openDetailsTab(MESSAGES);
         SoftAssert softly = new SoftAssert();
-        softly.assertTrue(topicDetails.getAllMessages().size() == 100, "getAllMessages()");
+        softly.assertEquals(topicDetails.getAllMessages().size(), 100, "getAllMessages()");
         softly.assertFalse(topicDetails.isBackButtonEnabled(),
           "isBackButtonEnabled()");
         softly.assertTrue(topicDetails.isNextButtonEnabled(),
@@ -312,8 +312,8 @@ public class MessagesTest extends BaseTest {
                 .waitUntilScreenReady();
     }
 
-//    @AfterClass(alwaysRun = true)
-//    public void afterClass() {
-//        TOPIC_LIST.forEach(topic -> apiService.deleteTopic(topic.getName()));
-//    }
+    @AfterClass(alwaysRun = true)
+    public void afterClass() {
+        TOPIC_LIST.forEach(topic -> apiService.deleteTopic(topic.getName()));
+    }
 }
