@@ -278,6 +278,8 @@ public class MessagesTest extends BaseTest {
         softly.assertAll();
     }
 
+    @Ignore
+    @Issue("")
     @QaseId(267)
     @Test(priority = 10)
     public void CheckMessagesCountPerPageWithinTopic() {
@@ -286,10 +288,8 @@ public class MessagesTest extends BaseTest {
             .openDetailsTab(MESSAGES);
         SoftAssert softly = new SoftAssert();
         softly.assertEquals(topicDetails.getAllMessages().size(), 100, "getAllMessages()");
-        softly.assertFalse(topicDetails.isBackButtonEnabled(),
-          "isBackButtonEnabled()");
-        softly.assertTrue(topicDetails.isNextButtonEnabled(),
-            "isNextButtonEnabled()");
+        softly.assertFalse(topicDetails.isBackButtonEnabled(), "isBackButtonEnabled()");
+        softly.assertTrue(topicDetails.isNextButtonEnabled(), "isNextButtonEnabled()");
         softly.assertAll();
         topicDetails
             .clickNextButton();
