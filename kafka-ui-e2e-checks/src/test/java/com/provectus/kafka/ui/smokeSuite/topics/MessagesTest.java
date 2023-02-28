@@ -285,15 +285,19 @@ public class MessagesTest extends BaseTest {
     public void CheckMessagesCountPerPageWithinTopic() {
         navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_MESSAGES_COUNT.getName());
         topicDetails
-            .openDetailsTab(MESSAGES);
+                .openDetailsTab(MESSAGES);
+        int messagesPerPage = topicDetails.getAllMessages().size();
         SoftAssert softly = new SoftAssert();
-        softly.assertEquals(topicDetails.getAllMessages().size(), 100, "getAllMessages()");
+        softly.assertEquals(messagesPerPage, 100, "getAllMessages()");
         softly.assertFalse(topicDetails.isBackButtonEnabled(), "isBackButtonEnabled()");
         softly.assertTrue(topicDetails.isNextButtonEnabled(), "isNextButtonEnabled()");
         softly.assertAll();
+        int lastOffsetOnPage = topicDetails.getAllMessages()
+                        .get(messagesPerPage).getOffset();
         topicDetails
-            .clickNextButton();
-        softly.assertTrue(topicDetails.getAllMessages().size() > 0, "getAllMessages()");
+                .clickNextButton();
+        softly.assertNotEquals(topicDetails.getAllMessages().stream().findFirst().orElseThrow().getOffset(),
+                lastOffsetOnPage + 1, "findFirst().getOffset()");
         softly.assertTrue(topicDetails.isBackButtonEnabled(), "isBackButtonEnabled()");
         softly.assertFalse(topicDetails.isNextButtonEnabled(), "isNextButtonEnabled()");
         softly.assertAll();

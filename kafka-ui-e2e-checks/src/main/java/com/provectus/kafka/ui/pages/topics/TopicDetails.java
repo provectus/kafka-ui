@@ -22,8 +22,6 @@ import static org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils.nex
 public class TopicDetails extends BasePage {
 
     protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
-    protected SelenideElement backBtn = $x("//button[text()='← Back']");
-    protected SelenideElement nextBtn = $x("//button[text()='Next →']");
     protected SelenideElement recreateTopicBtn = $x("//div[text()='Recreate Topic']");
     protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
     protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
@@ -175,6 +173,7 @@ public class TopicDetails extends BasePage {
     @Step
     public TopicDetails clickNextButton() {
       nextBtn.shouldBe(Condition.enabled).click();
+      waitUntilSpinnerDisappear();
       return this;
     }
 
