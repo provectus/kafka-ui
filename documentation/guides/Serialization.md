@@ -20,7 +20,7 @@ kafka:
   clusters:
     - name: Cluster1
       # Other Cluster configuration omitted ... 
-      serdes:
+      serde:
           # registering String serde with custom config
         - name: AsciiString
           className: com.provectus.kafka.ui.serdes.builtin.StringSerde
@@ -43,7 +43,7 @@ kafka:
   clusters:
     - name: Cluster1
       # Other Cluster configuration omitted ... 
-      serdes:
+      serde:
         - name: ProtobufFile
           properties:
             # path to the protobuf schema files
@@ -84,7 +84,7 @@ kafka:
     - name: Cluster1
       # this url will be used by "SchemaRegistry" by default
       schemaRegistry: http://main-schema-registry:8081
-      serdes:
+      serde:
         - name: AnotherSchemaRegistry
           className: com.provectus.kafka.ui.serdes.builtin.sr.SchemaRegistrySerde
           properties:
@@ -109,7 +109,7 @@ Sample configuration:
 kafka:
   clusters:
     - name: Cluster1
-      serdes:
+      serde:
         - name: String
           topicKeysPattern: click-events|imp-events
         
@@ -131,7 +131,7 @@ kafka:
     - name: Cluster1
       defaultKeySerde: Int32
       defaultValueSerde: String
-      serdes:
+      serde:
         - name: Int32
           topicKeysPattern: click-events|imp-events
 ```
@@ -156,7 +156,7 @@ Sample configuration:
 kafka:
   clusters:
     - name: Cluster1
-      serdes:
+      serde:
         - name: MyCustomSerde
           className: my.lovely.org.KafkaUiSerde
           filePath: /var/lib/kui-serde/my-kui-serde.jar

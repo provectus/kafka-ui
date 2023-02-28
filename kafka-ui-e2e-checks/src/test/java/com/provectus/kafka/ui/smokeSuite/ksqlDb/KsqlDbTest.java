@@ -3,9 +3,9 @@ package com.provectus.kafka.ui.smokeSuite.ksqlDb;
 import com.provectus.kafka.ui.BaseTest;
 import com.provectus.kafka.ui.pages.ksqlDb.models.Stream;
 import com.provectus.kafka.ui.pages.ksqlDb.models.Table;
-import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
-import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
-import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import com.provectus.kafka.ui.utilities.qaseUtils.annotations.AutomationStatus;
+import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Suite;
+import com.provectus.kafka.ui.utilities.qaseUtils.enums.Status;
 import io.qase.api.annotation.CaseId;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -39,7 +39,7 @@ public class KsqlDbTest extends BaseTest {
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
     @AutomationStatus(status = Status.AUTOMATED)
     @CaseId(41)
-    @Test
+    @Test(priority = 1)
     public void checkShowTablesRequestExecution() {
         naviSideBar
                 .openSideMenu(KSQL_DB);
@@ -51,8 +51,32 @@ public class KsqlDbTest extends BaseTest {
                 .setQuery(SHOW_TABLES.getQuery())
                 .clickExecuteBtn();
         SoftAssert softly = new SoftAssert();
+        softly.assertTrue(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
         softly.assertTrue(ksqlQueryForm.getTableByName(FIRST_TABLE.getName()).isVisible(), "getTableName()");
         softly.assertTrue(ksqlQueryForm.getTableByName(SECOND_TABLE.getName()).isVisible(), "getTableName()");
+        softly.assertAll();
+    }
+
+    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
+    @AutomationStatus(status = Status.AUTOMATED)
+    @CaseId(86)
+    @Test(priority = 2)
+    public void clearResultsForExecutedRequest() {
+        naviSideBar
+                .openSideMenu(KSQL_DB);
+        ksqlDbList
+                .waitUntilScreenReady()
+                .clickExecuteKsqlRequestBtn();
+        ksqlQueryForm
+                .waitUntilScreenReady()
+                .setQuery(SHOW_TABLES.getQuery())
+                .clickExecuteBtn();
+        SoftAssert softly = new SoftAssert();
+        softly.assertTrue(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
+        softly.assertAll();
+        ksqlQueryForm
+                .clickClearResultsBtn();
+        softly.assertFalse(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
         softly.assertAll();
     }
 }
