@@ -231,7 +231,7 @@ class JsonSchemaExtractor {
     sink.add(
         createDataSetField(
             schema,
-            isRoot ? "Root %s" .formatted(combineType) : name,
+            isRoot ? "Root %s".formatted(combineType) : name,
             parentOddr,
             oddrn,
             DataSetFieldType.TypeEnum.UNION,
