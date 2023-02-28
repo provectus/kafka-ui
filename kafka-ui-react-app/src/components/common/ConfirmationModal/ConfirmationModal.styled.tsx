@@ -26,14 +26,14 @@ export const Overlay = styled.div(
 );
 
 export const Modal = styled.div(
-  ({ theme: { modal } }) => css`
+  ({ theme: { modal, confirmModal } }) => css`
     position: absolute;
     display: flex;
     flex-direction: column;
     width: 560px;
     border-radius: 8px;
 
-    background-color: ${modal.backgroundColor};
+    background-color: ${confirmModal.backgroundColor};
     filter: drop-shadow(0px 4px 16px ${modal.shadow});
   `
 );

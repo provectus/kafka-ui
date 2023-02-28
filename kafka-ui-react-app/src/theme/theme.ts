@@ -39,6 +39,7 @@ const Colors = {
     '15': '#B8BEF9',
     '20': '#A3A3F5',
     '30': '#7E7EF1',
+    '40': '#6666FF',
     '50': '#4C4CFF',
     '60': '#1717CF',
     '70': '#1414B8',
@@ -159,7 +160,7 @@ const baseTheme = {
     },
   },
   icons: {
-    chevronDownIcon: Colors.neutral[90],
+    chevronDownIcon: Colors.neutral[0],
     editIcon: Colors.neutral[30],
     cancelIcon: Colors.neutral[30],
     autoIcon: Colors.neutral[95],
@@ -173,9 +174,9 @@ const baseTheme = {
     deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],
     messageToggleIcon: {
-      normal: Colors.brand[50],
-      hover: Colors.brand[20],
-      active: Colors.brand[60],
+      normal: Colors.brand[30],
+      hover: Colors.brand[40],
+      active: Colors.brand[50],
     },
     verticalElipsisIcon: Colors.neutral[50],
     liveIcon: {
@@ -230,7 +231,7 @@ const baseTheme = {
     color: Colors.neutral[90],
   },
   switch: {
-    unchecked: Colors.brand[20],
+    unchecked: Colors.brand[50],
     checked: Colors.brand[50],
     circle: Colors.neutral[0],
     disabled: Colors.neutral[10],
@@ -246,7 +247,7 @@ const baseTheme = {
     color: Colors.neutral[50],
   },
   dangerZone: {
-    borderColor: Colors.neutral[10],
+    borderColor: Colors.red[60],
     color: {
       title: Colors.red[50],
       warningMessage: Colors.neutral[50],
@@ -270,7 +271,6 @@ const baseTheme = {
       active: Colors.neutral[10],
     },
   },
-
   statictics: {
     createdAtColor: Colors.neutral[50],
   },
@@ -478,6 +478,9 @@ export const theme = {
     shadow: Colors.transparency[20],
     contentColor: Colors.neutral[70],
   },
+  confirmModal: {
+    backgroundColor: Colors.neutral[0],
+  },
   table: {
     actionBar: {
       backgroundColor: Colors.neutral[0],
@@ -516,8 +519,9 @@ export const theme = {
       },
     },
     expander: {
-      normal: Colors.brand[50],
-      hover: Colors.brand[20],
+      normal: Colors.brand[30],
+      hover: Colors.brand[40],
+      active: Colors.brand[50],
       disabled: Colors.neutral[10],
     },
     pagination: {
@@ -653,7 +657,6 @@ export const theme = {
       color: Colors.red[50],
     },
   },
-
   viewer: {
     wrapper: {
       backgroundColor: Colors.neutral[3],
@@ -665,8 +668,9 @@ export const theme = {
     color: Colors.neutral[30],
     backgroundColor: Colors.neutral[5],
   },
-  editFilterText: {
-    color: Colors.brand[50],
+  editFilter: {
+    textColor: Colors.brand[50],
+    deleteIconColor: Colors.brand[50],
   },
 };
 
@@ -682,19 +686,6 @@ export const darkTheme: ThemeType = {
       color: Colors.brand[30],
     },
   },
-
-  heading: {
-    ...baseTheme.heading,
-    h4: Colors.neutral[0],
-    base: {
-      ...baseTheme.heading.base,
-      color: Colors.neutral[0],
-    },
-  },
-  code: {
-    ...baseTheme.code,
-    backgroundColor: Colors.neutral[95],
-  },
   default: {
     color: {
       normal: Colors.neutral[0],
@@ -708,12 +699,6 @@ export const darkTheme: ThemeType = {
   },
   hr: {
     backgroundColor: Colors.neutral[80],
-  },
-  layout: {
-    ...baseTheme.layout,
-    stuffColor: Colors.neutral[75],
-    stuffBorderColor: Colors.neutral[75],
-    socialLink: Colors.neutral[30],
   },
   pageHeading: {
     height: '64px',
@@ -888,6 +873,9 @@ export const darkTheme: ThemeType = {
     shadow: Colors.transparency[20],
     contentColor: Colors.neutral[30],
   },
+  confirmModal: {
+    backgroundColor: Colors.neutral[80],
+  },
   table: {
     actionBar: {
       backgroundColor: Colors.neutral[90],
@@ -926,8 +914,9 @@ export const darkTheme: ThemeType = {
       },
     },
     expander: {
-      normal: Colors.brand[50],
-      hover: Colors.brand[20],
+      normal: Colors.brand[30],
+      hover: Colors.brand[40],
+      active: Colors.brand[50],
       disabled: Colors.neutral[10],
     },
     pagination: {
@@ -1018,15 +1007,6 @@ export const darkTheme: ThemeType = {
       color: Colors.neutral[30],
     },
   },
-  textArea: {
-    ...baseTheme.textArea,
-    borderColor: {
-      ...baseTheme.textArea.borderColor,
-      normal: Colors.neutral[70],
-      hover: Colors.neutral[30],
-      focus: Colors.neutral[0],
-    },
-  },
   metrics: {
     backgroundColor: Colors.neutral[95],
     sectionTitle: Colors.neutral[0],
@@ -1072,6 +1052,39 @@ export const darkTheme: ThemeType = {
       color: Colors.red[50],
     },
   },
+  viewer: {
+    wrapper: {
+      backgroundColor: Colors.neutral[85],
+      color: Colors.neutral[0],
+    },
+  },
+  savedFilter: {
+    filterName: Colors.neutral[0],
+    color: Colors.neutral[70],
+    backgroundColor: Colors.neutral[80],
+  },
+  editFilter: {
+    textColor: Colors.brand[30],
+    deleteIconColor: Colors.brand[30],
+  },
+  heading: {
+    ...baseTheme.heading,
+    h4: Colors.neutral[0],
+    base: {
+      ...baseTheme.heading.base,
+      color: Colors.neutral[0],
+    },
+  },
+  code: {
+    ...baseTheme.code,
+    backgroundColor: Colors.neutral[95],
+  },
+  layout: {
+    ...baseTheme.layout,
+    stuffColor: Colors.neutral[75],
+    stuffBorderColor: Colors.neutral[75],
+    socialLink: Colors.neutral[30],
+  },
   icons: {
     ...baseTheme.icons,
     editIcon: Colors.neutral[0],
@@ -1094,18 +1107,18 @@ export const darkTheme: ThemeType = {
       normal: Colors.neutral[30],
     },
   },
-  viewer: {
-    wrapper: {
-      backgroundColor: Colors.neutral[85],
-      color: Colors.neutral[0],
+  textArea: {
+    ...baseTheme.textArea,
+    borderColor: {
+      ...baseTheme.textArea.borderColor,
+      normal: Colors.neutral[70],
+      hover: Colors.neutral[30],
+      focus: Colors.neutral[0],
     },
   },
-  savedFilter: {
-    filterName: Colors.neutral[0],
-    color: Colors.neutral[70],
-    backgroundColor: Colors.neutral[80],
-  },
-  editFilterText: {
-    color: Colors.brand[30],
+  switch: {
+    ...baseTheme.switch,
+    unchecked: Colors.brand[30],
+    checked: Colors.brand[30],
   },
 };

@@ -1,13 +1,20 @@
 import styled, { css } from 'styled-components';
 
-export const ExpaderButton = styled.svg<{ $disabled: boolean }>(
-  ({ theme: { table }, $disabled }) => css`
+export const ExpaderButton = styled.svg<{
+  $disabled: boolean;
+  getIsExpanded: boolean;
+}>(
+  ({ theme: { table }, $disabled, getIsExpanded }) => css`
     & > path {
-      fill: ${table.expander[$disabled ? 'disabled' : 'normal']};
+      fill: ${table.expander[
+        ($disabled && 'disabled') || (getIsExpanded && 'active') || 'normal'
+      ]};
     }
-
     &:hover > path {
       fill: ${table.expander[$disabled ? 'disabled' : 'hover']};
+    }
+    &:active > path {
+      fill: ${table.expander[$disabled ? 'disabled' : 'active']};
     }
   `
 );

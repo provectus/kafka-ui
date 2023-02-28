@@ -259,7 +259,7 @@ export const FilterOptions = styled.div`
   display: none;
   width: 50px;
   justify-content: space-between;
-  color: ${({ theme }) => theme.editFilterText.color};
+  color: ${({ theme }) => theme.editFilter.textColor};
 `;
 
 export const SavedFilter = styled.div.attrs({
@@ -358,7 +358,7 @@ export const SavedFiltersTextContainer = styled.div.attrs({
 
 const textStyle = css`
   font-size: 14px;
-  color: ${({ theme }) => theme.editFilterText.color};
+  color: ${({ theme }) => theme.editFilter.textColor};
   font-weight: 500;
 `;
 
