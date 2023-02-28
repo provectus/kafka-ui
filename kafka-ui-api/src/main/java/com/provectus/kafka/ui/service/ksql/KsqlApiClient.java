@@ -69,20 +69,22 @@ public class KsqlApiClient {
 
   public KsqlApiClient(String baseUrl,
                        @Nullable ClustersProperties.KsqldbServerAuth ksqldbServerAuth,
-                       @Nullable ClustersProperties.Ssl ksqldbServerSsl,
+                       @Nullable ClustersProperties.TruststoreConfig ksqldbServerSsl,
+                       @Nullable ClustersProperties.KeystoreConfig keystoreConfig,
                        @Nullable DataSize maxBuffSize) {
     this.baseUrl = baseUrl;
-    this.webClient = webClient(ksqldbServerAuth, ksqldbServerSsl, maxBuffSize);
+    this.webClient = webClient(ksqldbServerAuth, ksqldbServerSsl, keystoreConfig, maxBuffSize);
   }
 
   private static WebClient webClient(@Nullable ClustersProperties.KsqldbServerAuth ksqldbServerAuth,
-                                     @Nullable ClustersProperties.Ssl ksqldbServerSsl,
+                                     @Nullable ClustersProperties.TruststoreConfig truststoreConfig,
+                                     @Nullable ClustersProperties.KeystoreConfig keystoreConfig,
                                      @Nullable DataSize maxBuffSize) {
     ksqldbServerAuth = Optional.ofNullable(ksqldbServerAuth).orElse(new ClustersProperties.KsqldbServerAuth());
     maxBuffSize = Optional.ofNullable(maxBuffSize).orElse(DataSize.ofMegabytes(20));
 
     return new WebClientConfigurator()
-        .configureSsl(ksqldbServerSsl)
+        .configureSsl(truststoreConfig, keystoreConfig)
         .configureBasicAuth(
             ksqldbServerAuth.getUsername(),
             ksqldbServerAuth.getPassword()

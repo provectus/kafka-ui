@@ -33,8 +33,11 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   private static final int MAX_RETRIES = 5;
   private static final Duration RETRIES_DELAY = Duration.ofMillis(200);
 
-  public RetryingKafkaConnectClient(ConnectCluster config, @Nullable ClustersProperties.Ssl ssl, DataSize maxBuffSize) {
-    super(new RetryingApiClient(config, ssl, maxBuffSize));
+  public RetryingKafkaConnectClient(ConnectCluster config,
+                                    @Nullable ClustersProperties.TruststoreConfig truststoreConfig,
+                                    @Nullable ClustersProperties.KeystoreConfig keystoreConfig,
+                                    DataSize maxBuffSize) {
+    super(new RetryingApiClient(config, truststoreConfig, keystoreConfig, maxBuffSize));
   }
 
   private static Retry conflictCodeRetry() {
@@ -79,16 +82,23 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
 
   private static class RetryingApiClient extends ApiClient {
 
-    public RetryingApiClient(ConnectCluster config, ClustersProperties.Ssl ssl, DataSize maxBuffSize) {
-      super(buildWebClient(maxBuffSize, config, ssl), null, null);
+    public RetryingApiClient(ConnectCluster config,
+                             ClustersProperties.TruststoreConfig truststoreConfig,
+                             ClustersProperties.KeystoreConfig keystoreConfig,
+                             DataSize maxBuffSize) {
+      super(buildWebClient(maxBuffSize, config, truststoreConfig, keystoreConfig), null, null);
       setBasePath(config.getAddress());
       setUsername(config.getUserName());
       setPassword(config.getPassword());
     }
 
-    public static WebClient buildWebClient(DataSize maxBuffSize, ConnectCluster config, ClustersProperties.Ssl ssl) {
+    public static WebClient buildWebClient(DataSize maxBuffSize,
+                                           ConnectCluster config,
+                                           ClustersProperties.TruststoreConfig truststoreConfig,
+                                           ClustersProperties.KeystoreConfig keystoreConfig
+                                           ) {
       return new WebClientConfigurator()
-          .configureSsl(ssl)
+          .configureSsl(truststoreConfig, keystoreConfig)
           .configureBasicAuth(
               config.getUserName(),
               config.getPassword()

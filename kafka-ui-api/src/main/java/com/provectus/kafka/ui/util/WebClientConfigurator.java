@@ -40,17 +40,14 @@ public class WebClientConfigurator {
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
-
-  public WebClientConfigurator configureSsl(@Nullable ClustersProperties.Ssl ssl) {
-    if (ssl != null) {
-      return configureSsl(
-          ssl.getKeystoreLocation(),
-          ssl.getKeystorePassword(),
-          ssl.getTruststoreLocation(),
-          ssl.getTruststorePassword()
-      );
-    }
-    return this;
+  public WebClientConfigurator configureSsl(@Nullable ClustersProperties.TruststoreConfig truststoreConfig,
+                                            @Nullable ClustersProperties.KeystoreConfig keystoreConfig) {
+    return configureSsl(
+        truststoreConfig != null ? truststoreConfig.getTruststoreLocation() : null,
+        truststoreConfig != null ? truststoreConfig.getTruststorePassword() : null,
+        keystoreConfig != null ? keystoreConfig.getKeystoreLocation() : null,
+        keystoreConfig != null ? keystoreConfig.getKeystorePassword() : null
+    );
   }
 
   @SneakyThrows
@@ -65,7 +62,7 @@ public class WebClientConfigurator {
 
     SslContextBuilder contextBuilder = SslContextBuilder.forClient();
     if (truststoreLocation != null && truststorePassword != null) {
-      KeyStore trustStore = KeyStore.getInstance("JKS");
+      KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
       trustStore.load(
           new FileInputStream((ResourceUtils.getFile(truststoreLocation))),
           truststorePassword.toCharArray()
@@ -79,7 +76,7 @@ public class WebClientConfigurator {
 
     // Prepare keystore only if we got a keystore
     if (keystoreLocation != null && keystorePassword != null) {
-      KeyStore keyStore = KeyStore.getInstance("JKS");
+      KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
       keyStore.load(
           new FileInputStream(ResourceUtils.getFile(keystoreLocation)),
           keystorePassword.toCharArray()

@@ -11,6 +11,7 @@ import java.security.KeyStore;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -43,13 +44,13 @@ public class KafkaServicesValidation {
   /**
    * Returns error msg, if any.
    */
-  public Optional<String> validateTruststore(ClustersProperties.Ssl ssl) {
-    if (ssl.getTruststoreLocation() != null && ssl.getTruststorePassword() != null) {
+  public Optional<String> validateTruststore(ClustersProperties.TruststoreConfig truststoreConfig) {
+    if (truststoreConfig.getTruststoreLocation() != null && truststoreConfig.getTruststorePassword() != null) {
       try {
-        KeyStore trustStore = KeyStore.getInstance("JKS");
+        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
         trustStore.load(
-            new FileInputStream((ResourceUtils.getFile(ssl.getTruststoreLocation()))),
-            ssl.getTruststorePassword().toCharArray()
+            new FileInputStream((ResourceUtils.getFile(truststoreConfig.getTruststoreLocation()))),
+            truststoreConfig.getTruststorePassword().toCharArray()
         );
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
             TrustManagerFactory.getDefaultAlgorithm()
@@ -62,29 +63,10 @@ public class KafkaServicesValidation {
     return Optional.empty();
   }
 
-  /**
-   * Returns error msg, if any.
-   */
-  public Optional<String> validateKeystore(ClustersProperties.Ssl ssl) {
-    if (ssl.getKeystoreLocation() != null && ssl.getKeystorePassword() != null) {
-      try {
-        KeyStore keyStore = KeyStore.getInstance("JKS");
-        keyStore.load(
-            new FileInputStream(ResourceUtils.getFile(ssl.getKeystoreLocation())),
-            ssl.getKeystorePassword().toCharArray()
-        );
-        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        keyManagerFactory.init(keyStore, ssl.getKeystorePassword().toCharArray());
-      } catch (Exception e) {
-        return Optional.of(e.getMessage());
-      }
-    }
-    return Optional.empty();
-  }
-
   public Mono<ApplicationPropertyValidationDTO> validateClusterConnection(String bootstrapServers,
                                                                           Properties clusterProps,
-                                                                          @Nullable ClustersProperties.Ssl ssl) {
+                                                                          @Nullable
+                                                                          ClustersProperties.TruststoreConfig ssl) {
     Properties properties = new Properties();
     SslPropertiesUtil.addKafkaSslProperties(ssl, properties);
     properties.putAll(clusterProps);
@@ -111,33 +93,45 @@ public class KafkaServicesValidation {
         });
   }
 
-  public Mono<Optional<ApplicationPropertyValidationDTO>> validateSchemaRegistry(
-      ReactiveFailover<KafkaSrClientApi> client) {
+  public Mono<ApplicationPropertyValidationDTO> validateSchemaRegistry(
+      Supplier<ReactiveFailover<KafkaSrClientApi>> clientSupplier) {
+    ReactiveFailover<KafkaSrClientApi> client;
+    try {
+      client = clientSupplier.get();
+    } catch (Exception e) {
+      log.error("Error creating Schema Registry client", e);
+      return invalid("Error creating Schema Registry client: " + e.getMessage());
+    }
     return client
         .mono(KafkaSrClientApi::getGlobalCompatibilityLevel)
         .then(valid())
-        .onErrorResume(KafkaServicesValidation::invalid)
-        .map(Optional::of);
+        .onErrorResume(KafkaServicesValidation::invalid);
   }
 
-  public Mono<Optional<Map<String, ApplicationPropertyValidationDTO>>> validateConnect(
-      Map<String, ReactiveFailover<KafkaConnectClientApi>> connects) {
-    return Flux.fromIterable(connects.entrySet())
-        .flatMap(e -> {
-          var connectName = e.getKey();
-          var client = e.getValue();
-          var validationResultMono = client.flux(KafkaConnectClientApi::getConnectorPlugins)
-              .collectList()
-              .then(valid())
-              .onErrorResume(KafkaServicesValidation::invalid);
-          return validationResultMono.map(validationResult -> Tuples.of(connectName, validationResult));
-        })
-        .collectMap(Tuple2::getT1, Tuple2::getT2)
-        .map(Optional::of);
+  public Mono<ApplicationPropertyValidationDTO> validateConnect(
+      Supplier<ReactiveFailover<KafkaConnectClientApi>> clientSupplier) {
+    ReactiveFailover<KafkaConnectClientApi> client;
+    try {
+      client = clientSupplier.get();
+    } catch (Exception e) {
+      log.error("Error creating Connect client", e);
+      return invalid("Error creating Connect client: " + e.getMessage());
+    }
+    return client.flux(KafkaConnectClientApi::getConnectorPlugins)
+        .collectList()
+        .then(valid())
+        .onErrorResume(KafkaServicesValidation::invalid);
   }
 
-  public Mono<Optional<ApplicationPropertyValidationDTO>> validateKsql(ReactiveFailover<KsqlApiClient> ksql) {
-    return ksql.flux(c -> c.execute("SHOW VARIABLES;", Map.of()))
+  public Mono<ApplicationPropertyValidationDTO> validateKsql(Supplier<ReactiveFailover<KsqlApiClient>> clientSupplier) {
+    ReactiveFailover<KsqlApiClient> client;
+    try {
+      client = clientSupplier.get();
+    } catch (Exception e) {
+      log.error("Error creating Ksql client", e);
+      return invalid("Error creating Ksql client: " + e.getMessage());
+    }
+    return client.flux(c -> c.execute("SHOW VARIABLES;", Map.of()))
         .collectList()
         .flatMap(ksqlResults ->
             Flux.fromIterable(ksqlResults)
@@ -146,8 +140,8 @@ public class KafkaServicesValidation {
                 .next()
                 .switchIfEmpty(valid())
         )
-        .onErrorResume(KafkaServicesValidation::invalid)
-        .map(Optional::of);
+        .onErrorResume(KafkaServicesValidation::invalid);
   }
+
 
 }
