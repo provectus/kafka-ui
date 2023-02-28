@@ -137,12 +137,11 @@ const Details: React.FC = () => {
       <Table isFullwidth>
         <thead>
           <tr>
-            <S.TableHeaderConsumerCell title="Topic">
+            <S.TableHeaderConsumerCell size="small" title="Topic">
               Topic
             </S.TableHeaderConsumerCell>
             <S.TableHeaderConsumerCell> </S.TableHeaderConsumerCell>
-
-            <S.TableHeaderConsumerCell title="Messages behind">
+            <S.TableHeaderConsumerCell size="large" title="Messages behind">
               Messages behind
             </S.TableHeaderConsumerCell>
           </tr>

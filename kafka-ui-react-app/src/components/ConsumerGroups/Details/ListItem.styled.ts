@@ -1,12 +1,15 @@
 import styled, { css } from 'styled-components';
 
+type PropsType = {
+  size?: 'small' | 'large';
+};
 export const ToggleButton = styled.td`
   padding: 8px 8px 8px 16px !important;
   width: 30px;
 `;
 
-export const TableHeaderConsumerCell = styled.th(
-  ({ title, theme: { table } }) => css`
+export const TableHeaderConsumerCell = styled.th<PropsType>(
+  ({ size, theme: { table } }) => css`
     font-family: Inter, sans-serif;
     font-size: 12px;
     font-style: normal;
@@ -19,10 +22,7 @@ export const TableHeaderConsumerCell = styled.th(
     background: ${table.th.backgroundColor.normal};
     cursor: default;
     color: ${table.th.color.normal};
-    padding: 4px 0 4px
-      ${(!title && 0) ||
-      (title === 'Topic' && '16px') ||
-      (title === 'Messages behind' && '24px')};
+    padding: 4px 0 4px ${size && table.th.title.padding.size[size]};
     border-bottom-width: 1px;
     vertical-align: middle;
     text-align: left;
