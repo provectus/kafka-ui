@@ -293,10 +293,10 @@ public class MessagesTest extends BaseTest {
         softly.assertTrue(topicDetails.isNextButtonEnabled(), "isNextButtonEnabled()");
         softly.assertAll();
         int lastOffsetOnPage = topicDetails.getAllMessages()
-                        .get(messagesPerPage).getOffset();
+                        .get(messagesPerPage -1).getOffset();
         topicDetails
                 .clickNextButton();
-        softly.assertNotEquals(topicDetails.getAllMessages().stream().findFirst().orElseThrow().getOffset(),
+        softly.assertEquals(topicDetails.getAllMessages().stream().findFirst().orElseThrow().getOffset(),
                 lastOffsetOnPage + 1, "findFirst().getOffset()");
         softly.assertTrue(topicDetails.isBackButtonEnabled(), "isBackButtonEnabled()");
         softly.assertFalse(topicDetails.isNextButtonEnabled(), "isNextButtonEnabled()");
