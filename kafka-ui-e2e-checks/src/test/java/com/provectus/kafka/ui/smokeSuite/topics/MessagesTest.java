@@ -44,9 +44,9 @@ public class MessagesTest extends BaseTest {
             .setMessageKey(randomAlphabetic(5))
             .setMessageContent(randomAlphabetic(10));
     private static final Topic TOPIC_FOR_CHECK_MESSAGES_COUNT = new Topic()
-             .setName("topic-for-check-messages-count" + randomAlphabetic(5))
-             .setMessageKey(randomAlphabetic(5))
-             .setMessageContent(randomAlphabetic(10));
+            .setName("topic-for-check-messages-count" + randomAlphabetic(5))
+            .setMessageKey(randomAlphabetic(5))
+            .setMessageContent(randomAlphabetic(10));
     private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
     @BeforeClass(alwaysRun = true)
@@ -269,7 +269,7 @@ public class MessagesTest extends BaseTest {
         softly.assertTrue(topicDetails.isNextButtonEnabled(), "isNextButtonEnabled()");
         softly.assertAll();
         int lastOffsetOnPage = topicDetails.getAllMessages()
-                        .get(messagesPerPage -1).getOffset();
+                .get(messagesPerPage - 1).getOffset();
         topicDetails
                 .clickNextButton();
         softly.assertEquals(topicDetails.getAllMessages().stream().findFirst().orElseThrow().getOffset(),
