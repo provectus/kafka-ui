@@ -279,7 +279,7 @@ public class MessagesTest extends BaseTest {
     }
 
     @Ignore
-    @Issue("//github.com/provectus/kafka-ui/issues/3129")
+    @Issue("https://github.com/provectus/kafka-ui/issues/3129")
     @QaseId(267)
     @Test(priority = 10)
     public void CheckMessagesCountPerPageWithinTopic() {
