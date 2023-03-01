@@ -49,6 +49,7 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
     handleSubmit,
     formState: { isSubmitting },
     control,
+    setValue,
   } = useForm<FormType>({
     mode: 'onChange',
     defaultValues: {
@@ -105,7 +106,6 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
       });
       return;
     }
-
     await sendMessage.mutateAsync({
       key: key || null,
       content: content || null,
@@ -115,6 +115,8 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
       valueSerde,
     });
     if (!keepContents) {
+      setValue('key', '');
+      setValue('content', '');
       onSubmit();
     }
   };
