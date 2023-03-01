@@ -43,10 +43,10 @@ public class WebClientConfigurator {
   public WebClientConfigurator configureSsl(@Nullable ClustersProperties.TruststoreConfig truststoreConfig,
                                             @Nullable ClustersProperties.KeystoreConfig keystoreConfig) {
     return configureSsl(
-        truststoreConfig != null ? truststoreConfig.getTruststoreLocation() : null,
-        truststoreConfig != null ? truststoreConfig.getTruststorePassword() : null,
         keystoreConfig != null ? keystoreConfig.getKeystoreLocation() : null,
-        keystoreConfig != null ? keystoreConfig.getKeystorePassword() : null
+        keystoreConfig != null ? keystoreConfig.getKeystorePassword() : null,
+        truststoreConfig != null ? truststoreConfig.getTruststoreLocation() : null,
+        truststoreConfig != null ? truststoreConfig.getTruststorePassword() : null
     );
   }
 

@@ -35,9 +35,8 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
 
   public RetryingKafkaConnectClient(ConnectCluster config,
                                     @Nullable ClustersProperties.TruststoreConfig truststoreConfig,
-                                    @Nullable ClustersProperties.KeystoreConfig keystoreConfig,
                                     DataSize maxBuffSize) {
-    super(new RetryingApiClient(config, truststoreConfig, keystoreConfig, maxBuffSize));
+    super(new RetryingApiClient(config, truststoreConfig, maxBuffSize));
   }
 
   private static Retry conflictCodeRetry() {
@@ -84,9 +83,8 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
 
     public RetryingApiClient(ConnectCluster config,
                              ClustersProperties.TruststoreConfig truststoreConfig,
-                             ClustersProperties.KeystoreConfig keystoreConfig,
                              DataSize maxBuffSize) {
-      super(buildWebClient(maxBuffSize, config, truststoreConfig, keystoreConfig), null, null);
+      super(buildWebClient(maxBuffSize, config, truststoreConfig), null, null);
       setBasePath(config.getAddress());
       setUsername(config.getUserName());
       setPassword(config.getPassword());
@@ -94,11 +92,15 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
 
     public static WebClient buildWebClient(DataSize maxBuffSize,
                                            ConnectCluster config,
-                                           ClustersProperties.TruststoreConfig truststoreConfig,
-                                           ClustersProperties.KeystoreConfig keystoreConfig
-                                           ) {
+                                           ClustersProperties.TruststoreConfig truststoreConfig) {
       return new WebClientConfigurator()
-          .configureSsl(truststoreConfig, keystoreConfig)
+          .configureSsl(
+              truststoreConfig,
+              new ClustersProperties.KeystoreConfig(
+                  config.getKeystoreLocation(),
+                  config.getKeystorePassword()
+              )
+          )
           .configureBasicAuth(
               config.getUserName(),
               config.getPassword()

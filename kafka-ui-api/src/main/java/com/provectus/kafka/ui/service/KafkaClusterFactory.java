@@ -1,11 +1,5 @@
 package com.provectus.kafka.ui.service;
 
-import static com.provectus.kafka.ui.util.KafkaServicesValidation.validateClusterConnection;
-import static com.provectus.kafka.ui.util.KafkaServicesValidation.validateConnect;
-import static com.provectus.kafka.ui.util.KafkaServicesValidation.validateKsql;
-import static com.provectus.kafka.ui.util.KafkaServicesValidation.validateSchemaRegistry;
-import static com.provectus.kafka.ui.util.KafkaServicesValidation.validateTruststore;
-
 import com.provectus.kafka.ui.client.RetryingKafkaConnectClient;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
@@ -17,6 +11,7 @@ import com.provectus.kafka.ui.service.ksql.KsqlApiClient;
 import com.provectus.kafka.ui.service.masking.DataMasking;
 import com.provectus.kafka.ui.sr.ApiClient;
 import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
+import com.provectus.kafka.ui.util.KafkaServicesValidation;
 import com.provectus.kafka.ui.util.PollingThrottler;
 import com.provectus.kafka.ui.util.ReactiveFailover;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
@@ -74,7 +69,7 @@ public class KafkaClusterFactory {
 
   public Mono<ClusterConfigValidationDTO> validate(ClustersProperties.Cluster clusterProperties) {
     if (clusterProperties.getSsl() != null) {
-      Optional<String> errMsg = validateTruststore(clusterProperties.getSsl());
+      Optional<String> errMsg = KafkaServicesValidation.validateTruststore(clusterProperties.getSsl());
       if (errMsg.isPresent()) {
         return Mono.just(new ClusterConfigValidationDTO()
             .kafka(new ApplicationPropertyValidationDTO()
@@ -84,24 +79,25 @@ public class KafkaClusterFactory {
     }
 
     return Mono.zip(
-        validateClusterConnection(
+        KafkaServicesValidation.validateClusterConnection(
             clusterProperties.getBootstrapServers(),
             convertProperties(clusterProperties.getProperties()),
             clusterProperties.getSsl()
         ),
         schemaRegistryConfigured(clusterProperties)
-            ? validateSchemaRegistry(() -> schemaRegistryClient(clusterProperties)).map(Optional::of)
+            ? KafkaServicesValidation.validateSchemaRegistry(
+                () -> schemaRegistryClient(clusterProperties)).map(Optional::of)
             : Mono.<Optional<ApplicationPropertyValidationDTO>>just(Optional.empty()),
 
         ksqlConfigured(clusterProperties)
-            ? validateKsql(() -> ksqlClient(clusterProperties)).map(Optional::of)
+            ? KafkaServicesValidation.validateKsql(() -> ksqlClient(clusterProperties)).map(Optional::of)
             : Mono.<Optional<ApplicationPropertyValidationDTO>>just(Optional.empty()),
 
         connectClientsConfigured(clusterProperties)
             ?
             Flux.fromIterable(clusterProperties.getKafkaConnect())
                 .flatMap(c ->
-                    validateConnect(() -> connectClient(clusterProperties, c))
+                    KafkaServicesValidation.validateConnect(() -> connectClient(clusterProperties, c))
                         .map(r -> Tuples.of(c.getName(), r)))
                 .collectMap(Tuple2::getT1, Tuple2::getT2)
                 .map(Optional::of)
@@ -143,7 +139,6 @@ public class KafkaClusterFactory {
         url -> new RetryingKafkaConnectClient(
             connectCluster.toBuilder().address(url).build(),
             cluster.getSsl(),
-            connectCluster.getSsl(),
             maxBuffSize
         ),
         ReactiveFailover.CONNECTION_REFUSED_EXCEPTION_FILTER,
@@ -212,6 +207,8 @@ public class KafkaClusterFactory {
     builder.ssl(metricsConfigData.isSsl());
     builder.username(metricsConfigData.getUsername());
     builder.password(metricsConfigData.getPassword());
+    builder.keystoreLocation(metricsConfigData.getKeystoreLocation());
+    builder.keystorePassword(metricsConfigData.getKeystorePassword());
     return builder.build();
   }
 

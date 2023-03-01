@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.Instant;
 import java.util.Optional;
 import javax.annotation.Nullable;
 import lombok.Builder;
@@ -136,7 +137,7 @@ public class DynamicConfigOperations {
       }
     }
 
-    Path targetFilePath = targetDir.resolve(file.filename());
+    Path targetFilePath = targetDir.resolve(file.filename() + "-" + Instant.now().getEpochSecond());
     log.info("Uploading config-related file {}", targetFilePath);
     if (Files.exists(targetFilePath)) {
       log.info("File {} already exists, it will be overwritten", targetFilePath);

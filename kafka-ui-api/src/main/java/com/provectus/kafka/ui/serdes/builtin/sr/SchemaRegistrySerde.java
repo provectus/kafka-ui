@@ -70,8 +70,8 @@ public class SchemaRegistrySerde implements BuiltInSerde {
             urls,
             kafkaClusterProperties.getProperty("schemaRegistryAuth.username", String.class).orElse(null),
             kafkaClusterProperties.getProperty("schemaRegistryAuth.password", String.class).orElse(null),
-            kafkaClusterProperties.getProperty("ssl.keystoreLocation", String.class).orElse(null),
-            kafkaClusterProperties.getProperty("ssl.keystorePassword", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("schemaRegistrySsl.keystoreLocation", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("schemaRegistrySsl.keystorePassword", String.class).orElse(null),
             kafkaClusterProperties.getProperty("ssl.truststoreLocation", String.class).orElse(null),
             kafkaClusterProperties.getProperty("ssl.truststorePassword", String.class).orElse(null)
         ),
@@ -98,12 +98,12 @@ public class SchemaRegistrySerde implements BuiltInSerde {
             serdeProperties.getProperty("password", String.class).orElse(null),
             serdeProperties.getProperty("keystoreLocation", String.class).orElse(null),
             serdeProperties.getProperty("keystorePassword", String.class).orElse(null),
-            serdeProperties.getProperty("truststoreLocation", String.class).orElse(null),
-            serdeProperties.getProperty("truststorePassword", String.class).orElse(null)
+            kafkaClusterProperties.getProperty("ssl.truststoreLocation", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("ssl.truststorePassword", String.class).orElse(null)
         ),
         serdeProperties.getProperty("keySchemaNameTemplate", String.class).orElse("%s-key"),
         serdeProperties.getProperty("schemaNameTemplate", String.class).orElse("%s-value"),
-        kafkaClusterProperties.getProperty("checkSchemaExistenceForDeserialize", Boolean.class)
+        serdeProperties.getProperty("checkSchemaExistenceForDeserialize", Boolean.class)
             .orElse(false)
     );
   }
@@ -148,15 +148,15 @@ public class SchemaRegistrySerde implements BuiltInSerde {
           trustStoreLocation);
       configs.put(SchemaRegistryClientConfig.CLIENT_NAMESPACE + SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG,
           trustStorePassword);
+    }
 
-      if (keyStoreLocation != null) {
-        configs.put(SchemaRegistryClientConfig.CLIENT_NAMESPACE + SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG,
-            keyStoreLocation);
-        configs.put(SchemaRegistryClientConfig.CLIENT_NAMESPACE + SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG,
-            keyStorePassword);
-        configs.put(SchemaRegistryClientConfig.CLIENT_NAMESPACE + SslConfigs.SSL_KEY_PASSWORD_CONFIG,
-            keyStorePassword);
-      }
+    if (keyStoreLocation != null && keyStorePassword != null) {
+      configs.put(SchemaRegistryClientConfig.CLIENT_NAMESPACE + SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG,
+          keyStoreLocation);
+      configs.put(SchemaRegistryClientConfig.CLIENT_NAMESPACE + SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG,
+          keyStorePassword);
+      configs.put(SchemaRegistryClientConfig.CLIENT_NAMESPACE + SslConfigs.SSL_KEY_PASSWORD_CONFIG,
+          keyStorePassword);
     }
 
     return new CachedSchemaRegistryClient(

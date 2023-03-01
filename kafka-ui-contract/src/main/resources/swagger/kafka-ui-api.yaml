@@ -3527,6 +3527,10 @@ components:
                             type: string
                           password:
                             type: string
+                          keystoreLocation:
+                            type: string
+                          keystorePassword:
+                            type: string
                       properties:
                         type: object
                         additionalProperties: true

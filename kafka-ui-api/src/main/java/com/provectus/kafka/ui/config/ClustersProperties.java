@@ -55,22 +55,26 @@ public class ClustersProperties {
     boolean ssl;
     String username;
     String password;
+    String keystoreLocation;
+    String keystorePassword;
   }
 
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder(toBuilder = true)
-  @ToString(exclude = "password")
+  @ToString(exclude = {"password", "keystorePassword"})
   public static class ConnectCluster {
     String name;
     String address;
     String userName;
     String password;
-    KeystoreConfig ssl;
+    String keystoreLocation;
+    String keystorePassword;
   }
 
   @Data
+  @ToString(exclude = {"password"})
   public static class SchemaRegistryAuth {
     String username;
     String password;
@@ -101,7 +105,9 @@ public class ClustersProperties {
   }
 
   @Data
-  @ToString(exclude = {"keystoreLocation"})
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @ToString(exclude = {"keystorePassword"})
   public static class KeystoreConfig {
     String keystoreLocation;
     String keystorePassword;
