@@ -31,8 +31,10 @@ public class ClustersProperties {
     String bootstrapServers;
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
+    KeystoreConfig schemaRegistrySsl;
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
+    KeystoreConfig ksqldbServerSsl;
     List<ConnectCluster> kafkaConnect;
     MetricsConfigData metrics;
     Map<String, Object> properties;
@@ -42,7 +44,7 @@ public class ClustersProperties {
     String defaultValueSerde;
     List<Masking> masking;
     Long pollingThrottleRate;
-    Ssl ssl;
+    TruststoreConfig ssl;
   }
 
   @Data
@@ -53,31 +55,34 @@ public class ClustersProperties {
     boolean ssl;
     String username;
     String password;
+    String keystoreLocation;
+    String keystorePassword;
   }
 
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder(toBuilder = true)
-  @ToString(exclude = "password")
+  @ToString(exclude = {"password", "keystorePassword"})
   public static class ConnectCluster {
     String name;
     String address;
     String userName;
     String password;
+    String keystoreLocation;
+    String keystorePassword;
   }
 
   @Data
+  @ToString(exclude = {"password"})
   public static class SchemaRegistryAuth {
     String username;
     String password;
   }
 
   @Data
-  @ToString(exclude = {"keystorePassword", "truststorePassword"})
-  public static class Ssl {
-    String keystoreLocation;
-    String keystorePassword;
+  @ToString(exclude = {"truststorePassword"})
+  public static class TruststoreConfig {
     String truststoreLocation;
     String truststorePassword;
   }
@@ -97,6 +102,15 @@ public class ClustersProperties {
   public static class KsqldbServerAuth {
     String username;
     String password;
+  }
+
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @ToString(exclude = {"keystorePassword"})
+  public static class KeystoreConfig {
+    String keystoreLocation;
+    String keystorePassword;
   }
 
   @Data

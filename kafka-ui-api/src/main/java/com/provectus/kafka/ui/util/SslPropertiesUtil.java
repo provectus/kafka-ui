@@ -9,19 +9,14 @@ import org.apache.kafka.common.config.SslConfigs;
 @UtilityClass
 public class SslPropertiesUtil {
 
-  public void addKafkaSslProperties(@Nullable ClustersProperties.Ssl ssl, Properties properties) {
-    if (ssl != null) {
-      if (ssl.getTruststoreLocation() != null) {
-        properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, ssl.getTruststoreLocation());
+  public void addKafkaSslProperties(@Nullable ClustersProperties.TruststoreConfig truststoreConfig,
+                                    Properties properties) {
+    if (truststoreConfig != null) {
+      if (truststoreConfig.getTruststoreLocation() != null) {
+        properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreConfig.getTruststoreLocation());
       }
-      if (ssl.getTruststorePassword() != null) {
-        properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, ssl.getTruststorePassword());
-      }
-      if (ssl.getKeystoreLocation() != null) {
-        properties.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, ssl.getKeystoreLocation());
-      }
-      if (ssl.getKeystorePassword() != null) {
-        properties.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, ssl.getKeystorePassword());
+      if (truststoreConfig.getTruststorePassword() != null) {
+        properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, truststoreConfig.getTruststorePassword());
       }
     }
   }

@@ -28,7 +28,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 @Service
 @RequiredArgsConstructor
@@ -46,15 +49,21 @@ public class KafkaClusterFactory {
     builder.properties(convertProperties(clusterProperties.getProperties()));
     builder.readOnly(clusterProperties.isReadOnly());
     builder.masking(DataMasking.create(clusterProperties.getMasking()));
-    builder.metricsConfig(metricsConfigDataToMetricsConfig(clusterProperties.getMetrics()));
     builder.throttler(PollingThrottler.throttlerSupplier(clusterProperties));
 
-    builder.schemaRegistryClient(schemaRegistryClient(clusterProperties));
-    builder.connectsClients(connectClients(clusterProperties));
-    builder.ksqlClient(ksqlClient(clusterProperties));
-
+    if (schemaRegistryConfigured(clusterProperties)) {
+      builder.schemaRegistryClient(schemaRegistryClient(clusterProperties));
+    }
+    if (connectClientsConfigured(clusterProperties)) {
+      builder.connectsClients(connectClients(clusterProperties));
+    }
+    if (ksqlConfigured(clusterProperties)) {
+      builder.ksqlClient(ksqlClient(clusterProperties));
+    }
+    if (metricsConfigured(clusterProperties)) {
+      builder.metricsConfig(metricsConfigDataToMetricsConfig(clusterProperties.getMetrics()));
+    }
     builder.originalProperties(clusterProperties);
-
     return builder.build();
   }
 
@@ -67,35 +76,39 @@ public class KafkaClusterFactory {
                 .error(true)
                 .errorMessage("Truststore not valid: " + errMsg.get())));
       }
-      errMsg = KafkaServicesValidation.validateKeystore(clusterProperties.getSsl());
-      if (errMsg.isPresent()) {
-        return Mono.just(new ClusterConfigValidationDTO()
-            .kafka(new ApplicationPropertyValidationDTO()
-                .error(true)
-                .errorMessage("Keystore not valid: " + errMsg.get())));
-      }
     }
+
     return Mono.zip(
         KafkaServicesValidation.validateClusterConnection(
             clusterProperties.getBootstrapServers(),
             convertProperties(clusterProperties.getProperties()),
             clusterProperties.getSsl()
         ),
-        Optional.ofNullable(schemaRegistryClient(clusterProperties))
-            .map(KafkaServicesValidation::validateSchemaRegistry)
-            .orElse(Mono.just(Optional.empty())),
-        Optional.ofNullable(connectClients(clusterProperties))
-            .map(KafkaServicesValidation::validateConnect)
-            .orElse(Mono.just(Optional.empty())),
-        Optional.ofNullable(ksqlClient(clusterProperties))
-            .map(KafkaServicesValidation::validateKsql)
-            .orElse(Mono.just(Optional.empty()))
+        schemaRegistryConfigured(clusterProperties)
+            ? KafkaServicesValidation.validateSchemaRegistry(
+                () -> schemaRegistryClient(clusterProperties)).map(Optional::of)
+            : Mono.<Optional<ApplicationPropertyValidationDTO>>just(Optional.empty()),
+
+        ksqlConfigured(clusterProperties)
+            ? KafkaServicesValidation.validateKsql(() -> ksqlClient(clusterProperties)).map(Optional::of)
+            : Mono.<Optional<ApplicationPropertyValidationDTO>>just(Optional.empty()),
+
+        connectClientsConfigured(clusterProperties)
+            ?
+            Flux.fromIterable(clusterProperties.getKafkaConnect())
+                .flatMap(c ->
+                    KafkaServicesValidation.validateConnect(() -> connectClient(clusterProperties, c))
+                        .map(r -> Tuples.of(c.getName(), r)))
+                .collectMap(Tuple2::getT1, Tuple2::getT2)
+                .map(Optional::of)
+            :
+            Mono.<Optional<Map<String, ApplicationPropertyValidationDTO>>>just(Optional.empty())
     ).map(tuple -> {
       var validation = new ClusterConfigValidationDTO();
       validation.kafka(tuple.getT1());
       tuple.getT2().ifPresent(validation::schemaRegistry);
-      tuple.getT3().ifPresent(validation::kafkaConnects);
-      tuple.getT4().ifPresent(validation::ksqldb);
+      tuple.getT3().ifPresent(validation::ksqldb);
+      tuple.getT4().ifPresent(validation::kafkaConnects);
       return validation;
     });
   }
@@ -108,39 +121,41 @@ public class KafkaClusterFactory {
     return properties;
   }
 
-  @Nullable
+  private boolean connectClientsConfigured(ClustersProperties.Cluster clusterProperties) {
+    return clusterProperties.getKafkaConnect() != null;
+  }
+
   private Map<String, ReactiveFailover<KafkaConnectClientApi>> connectClients(
       ClustersProperties.Cluster clusterProperties) {
-    if (clusterProperties.getKafkaConnect() == null) {
-      return null;
-    }
     Map<String, ReactiveFailover<KafkaConnectClientApi>> connects = new HashMap<>();
-    clusterProperties.getKafkaConnect().forEach(c -> {
-      ReactiveFailover<KafkaConnectClientApi> failover = ReactiveFailover.create(
-          parseUrlList(c.getAddress()),
-          url -> new RetryingKafkaConnectClient(
-              c.toBuilder().address(url).build(),
-              clusterProperties.getSsl(),
-              maxBuffSize
-          ),
-          ReactiveFailover.CONNECTION_REFUSED_EXCEPTION_FILTER,
-          "No alive connect instances available",
-          ReactiveFailover.DEFAULT_RETRY_GRACE_PERIOD_MS
-      );
-      connects.put(c.getName(), failover);
-    });
+    clusterProperties.getKafkaConnect().forEach(c -> connects.put(c.getName(), connectClient(clusterProperties, c)));
     return connects;
   }
 
-  @Nullable
+  private ReactiveFailover<KafkaConnectClientApi> connectClient(ClustersProperties.Cluster cluster,
+                                                                ClustersProperties.ConnectCluster connectCluster) {
+    return ReactiveFailover.create(
+        parseUrlList(connectCluster.getAddress()),
+        url -> new RetryingKafkaConnectClient(
+            connectCluster.toBuilder().address(url).build(),
+            cluster.getSsl(),
+            maxBuffSize
+        ),
+        ReactiveFailover.CONNECTION_REFUSED_EXCEPTION_FILTER,
+        "No alive connect instances available",
+        ReactiveFailover.DEFAULT_RETRY_GRACE_PERIOD_MS
+    );
+  }
+
+  private boolean schemaRegistryConfigured(ClustersProperties.Cluster clusterProperties) {
+    return clusterProperties.getSchemaRegistry() != null;
+  }
+
   private ReactiveFailover<KafkaSrClientApi> schemaRegistryClient(ClustersProperties.Cluster clusterProperties) {
-    if (clusterProperties.getSchemaRegistry() == null) {
-      return null;
-    }
     var auth = Optional.ofNullable(clusterProperties.getSchemaRegistryAuth())
         .orElse(new ClustersProperties.SchemaRegistryAuth());
     WebClient webClient = new WebClientConfigurator()
-        .configureSsl(clusterProperties.getSsl())
+        .configureSsl(clusterProperties.getSsl(), clusterProperties.getSchemaRegistrySsl())
         .configureBasicAuth(auth.getUsername(), auth.getPassword())
         .configureBufferSize(maxBuffSize)
         .build();
@@ -153,17 +168,18 @@ public class KafkaClusterFactory {
     );
   }
 
-  @Nullable
+  private boolean ksqlConfigured(ClustersProperties.Cluster clusterProperties) {
+    return clusterProperties.getKsqldbServer() != null;
+  }
+
   private ReactiveFailover<KsqlApiClient> ksqlClient(ClustersProperties.Cluster clusterProperties) {
-    if (clusterProperties.getKsqldbServer() == null) {
-      return null;
-    }
     return ReactiveFailover.create(
         parseUrlList(clusterProperties.getKsqldbServer()),
         url -> new KsqlApiClient(
             url,
             clusterProperties.getKsqldbServerAuth(),
             clusterProperties.getSsl(),
+            clusterProperties.getKsqldbServerSsl(),
             maxBuffSize
         ),
         ReactiveFailover.CONNECTION_REFUSED_EXCEPTION_FILTER,
@@ -174,6 +190,10 @@ public class KafkaClusterFactory {
 
   private List<String> parseUrlList(String url) {
     return Stream.of(url.split(",")).map(String::trim).filter(s -> !s.isBlank()).toList();
+  }
+
+  private boolean metricsConfigured(ClustersProperties.Cluster clusterProperties) {
+    return clusterProperties.getKsqldbServer() != null;
   }
 
   @Nullable
@@ -187,6 +207,8 @@ public class KafkaClusterFactory {
     builder.ssl(metricsConfigData.isSsl());
     builder.username(metricsConfigData.getUsername());
     builder.password(metricsConfigData.getPassword());
+    builder.keystoreLocation(metricsConfigData.getKeystoreLocation());
+    builder.keystorePassword(metricsConfigData.getKeystorePassword());
     return builder.build();
   }
 

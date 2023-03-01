@@ -3457,10 +3457,6 @@ components:
                       ssl:
                         type: object
                         properties:
-                          keystoreLocation:
-                            type: string
-                          keystorePassword:
-                            type: string
                           truststoreLocation:
                             type: string
                           truststorePassword:
@@ -3474,8 +3470,22 @@ components:
                             type: string
                           password:
                             type: string
+                      schemaRegistrySsl:
+                        type: object
+                        properties:
+                          keystoreLocation:
+                            type: string
+                          keystorePassword:
+                            type: string
                       ksqldbServer:
                         type: string
+                      ksqldbServerSsl:
+                        type: object
+                        properties:
+                          keystoreLocation:
+                            type: string
+                          keystorePassword:
+                              type: string
                       ksqldbServerAuth:
                         type: object
                         properties:
@@ -3496,6 +3506,11 @@ components:
                               type: string
                             password:
                               type: string
+                            keystoreLocation:
+                              type: string
+                            keystorePassword:
+                              type: string
+
                       metrics:
                         type: object
                         properties:
@@ -3509,6 +3524,10 @@ components:
                           username:
                             type: string
                           password:
+                            type: string
+                          keystoreLocation:
+                            type: string
+                          keystorePassword:
                             type: string
                       properties:
                         type: object

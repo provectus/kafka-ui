@@ -6,6 +6,7 @@ services:
     image: provectuslabs/kafka-ui:latest
     ports:
       - 8080:8080
+      - 5005:5005
     depends_on:
       - kafka0
       - schemaregistry0
@@ -16,15 +17,24 @@ services:
       KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SSL
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka0:29092 # SSL LISTENER!
       KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: '' # DISABLE COMMON NAME VERIFICATION
+
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: https://schemaregistry0:8085
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_KEYSTORELOCATION: /kafka.keystore.jks
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRYSSL_KEYSTOREPASSWORD: "secret"
+
       KAFKA_CLUSTERS_0_KSQLDBSERVER: https://ksqldb0:8088
+      KAFKA_CLUSTERS_0_KSQLDBSERVERSSL_KEYSTORELOCATION: /kafka.keystore.jks
+      KAFKA_CLUSTERS_0_KSQLDBSERVERSSL_KEYSTOREPASSWORD: "secret"
+
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: local
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: https://kafka-connect0:8083
-      KAFKA_CLUSTERS_0_SSL_KEYSTORELOCATION: /kafka.keystore.jks
-      KAFKA_CLUSTERS_0_SSL_KEYSTOREPASSWORD: "secret"
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_KEYSTORELOCATION: /kafka.keystore.jks
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_KEYSTOREPASSWORD: "secret"
+
       KAFKA_CLUSTERS_0_SSL_TRUSTSTORELOCATION: /kafka.truststore.jks
       KAFKA_CLUSTERS_0_SSL_TRUSTSTOREPASSWORD: "secret"
-      DYNAMIC_CONFIG_ENABLED: true # not necessary for ssl, added for tests
+      DYNAMIC_CONFIG_ENABLED: 'true'  # not necessary for ssl, added for tests
+
     volumes:
       - ./ssl/kafka.truststore.jks:/kafka.truststore.jks
       - ./ssl/kafka.keystore.jks:/kafka.keystore.jks
