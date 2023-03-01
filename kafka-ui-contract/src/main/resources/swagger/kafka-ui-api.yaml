@@ -3506,13 +3506,11 @@ components:
                               type: string
                             password:
                               type: string
-                            ssl:
-                              type: object
-                              properties:
-                                keystoreLocation:
-                                  type: string
-                                keystorePassword:
-                                  type: string
+                            keystoreLocation:
+                              type: string
+                            keystorePassword:
+                              type: string
+
                       metrics:
                         type: object
                         properties:
