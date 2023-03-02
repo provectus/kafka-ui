@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -24,6 +23,16 @@ public class ReactiveFailover<T> {
 
   private final Predicate<Throwable> failoverExceptionsPredicate;
   private final String noAvailablePublishersMsg;
+
+  // creates single-publisher failover (basically for tests usage)
+  public static <T> ReactiveFailover<T> createNoop(T publisher) {
+    return create(
+        List.of(publisher),
+        th -> true,
+        "publisher is not available",
+        DEFAULT_RETRY_GRACE_PERIOD_MS
+    );
+  }
 
   public static <T> ReactiveFailover<T> create(List<T> publishers,
                                                Predicate<Throwable> failoverExeptionsPredicate,
