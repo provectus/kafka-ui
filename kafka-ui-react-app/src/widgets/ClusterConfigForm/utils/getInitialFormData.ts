@@ -85,7 +85,7 @@ export const getInitialFormData = (
     initialValues.kafkaConnect = kafkaConnect.map((c) => ({
       name: c.name as string,
       address: c.address as string,
-      ...parseCredentials(c.userName, c.password),
+      ...parseCredentials(c.username, c.password),
       ...parseKeystore(c),
     }));
   }

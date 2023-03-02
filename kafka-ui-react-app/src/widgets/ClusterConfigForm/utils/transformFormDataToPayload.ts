@@ -1,8 +1,5 @@
 import { ClusterConfigFormValues } from 'widgets/ClusterConfigForm/types';
-import {
-  ApplicationConfigPropertiesKafkaClustersInner,
-  ApplicationConfigPropertiesKafkaClustersInnerKafkaConnectInner,
-} from 'generated-sources';
+import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
 
 import { getJaasConfig } from './getJaasConfig';
 import { convertFormKeyToPropsKey } from './convertFormKeyToPropsKey';
@@ -21,6 +18,17 @@ const transformToKeystore = (keystore?: {
 const transformToCredentials = (username?: string, password?: string) => {
   if (!username || !password) return undefined;
   return { username, password };
+};
+
+const transformCustomProps = (props: Record<string, string>) => {
+  const config: Record<string, string> = {};
+  if (!props) return config;
+
+  Object.entries(props).forEach(([key, val]) => {
+    if (props[key]) config[convertFormKeyToPropsKey(key)] = val;
+  });
+
+  return config;
 };
 
 export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
@@ -64,15 +72,12 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
   // Kafka Connect
   if (data.kafkaConnect && data.kafkaConnect.length > 0) {
     config.kafkaConnect = data.kafkaConnect.map(
-      ({ name, address, username, password, keystore }) => {
-        const connect: Partial<ApplicationConfigPropertiesKafkaClustersInnerKafkaConnectInner> =
-          { name, address, ...transformToKeystore(keystore) };
-        if (username && password) {
-          connect.userName = username;
-          connect.password = password;
-        }
-        return connect;
-      }
+      ({ name, address, username, password, keystore }) => ({
+        name,
+        address,
+        ...transformToKeystore(keystore),
+        ...transformToCredentials(username, password),
+      })
     );
   }
 
@@ -86,18 +91,9 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
     };
   }
 
-  config.properties = {};
-
-  if (data.customAuth) {
-    Object.entries(data.customAuth).forEach(([key, val]) => {
-      if (data.customAuth[key]) {
-        config.properties = {
-          ...config.properties,
-          [convertFormKeyToPropsKey(key)]: val,
-        };
-      }
-    });
-  }
+  config.properties = {
+    ...transformCustomProps(data.customAuth),
+  };
 
   // Authentication
   if (data.auth) {
