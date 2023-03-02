@@ -1,9 +1,5 @@
 import React from 'react';
 import Input from 'components/common/Input/Input';
-import {
-  FlexRow,
-  FlexGrow1,
-} from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import Checkbox from 'components/common/Checkbox/Checkbox';
 import Fileupload from 'widgets/ClusterConfigForm/common/Fileupload';
 import SSLForm from 'widgets/ClusterConfigForm/common/SSLForm';

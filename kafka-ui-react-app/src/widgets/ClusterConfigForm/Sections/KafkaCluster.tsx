@@ -10,7 +10,6 @@ import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import Heading from 'components/common/heading/Heading.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Checkbox from 'components/common/Checkbox/Checkbox';
-import Fileupload from 'widgets/ClusterConfigForm/common/Fileupload';
 import SectionHeader from 'widgets/ClusterConfigForm/common/SectionHeader';
 import SSLForm from 'widgets/ClusterConfigForm/common/SSLForm';
 
