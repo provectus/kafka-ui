@@ -86,7 +86,7 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
                              DataSize maxBuffSize) {
       super(buildWebClient(maxBuffSize, config, truststoreConfig), null, null);
       setBasePath(config.getAddress());
-      setUsername(config.getUserName());
+      setUsername(config.getUsername());
       setPassword(config.getPassword());
     }
 
@@ -102,7 +102,7 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
               )
           )
           .configureBasicAuth(
-              config.getUserName(),
+              config.getUsername(),
               config.getPassword()
           )
           .configureBufferSize(maxBuffSize)

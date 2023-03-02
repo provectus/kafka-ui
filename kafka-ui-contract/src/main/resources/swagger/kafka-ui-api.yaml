@@ -3502,7 +3502,7 @@ components:
                               type: string
                             address:
                               type: string
-                            userName:
+                            username:
                               type: string
                             password:
                               type: string
