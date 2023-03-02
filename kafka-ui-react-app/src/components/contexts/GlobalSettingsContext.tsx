@@ -18,7 +18,7 @@ export const GlobalSettingsProvider: React.FC<
   const value = React.useMemo(() => {
     const features = info.data?.enabledFeatures || [];
     return {
-      hasDynamicConfig: features.includes(
+      hasDynamicConfig: !features.includes(
         ApplicationInfoEnabledFeaturesEnum.DYNAMIC_CONFIG
       ),
     };

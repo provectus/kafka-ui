@@ -11,7 +11,7 @@ const transformToKeystore = (keystore?: {
   location: string;
   password: string;
 }) => {
-  if (!keystore || keystore.location) return undefined;
+  if (!keystore || !keystore.location) return undefined;
   return {
     keystoreLocation: keystore.location,
     keystorePassword: keystore.password,
@@ -46,6 +46,8 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
       data.schemaRegistry.username,
       data.schemaRegistry.password
     );
+
+    console.log(data.schemaRegistry.keystore);
     config.schemaRegistrySsl = transformToKeystore(
       data.schemaRegistry.keystore
     );
