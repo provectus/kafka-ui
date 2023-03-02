@@ -82,24 +82,19 @@ export const getInitialFormData = (
   }
 
   if (kafkaConnect && kafkaConnect.length > 0) {
-    initialValues.kafkaConnect = kafkaConnect.map(
-      ({ name, address, userName, password }) => ({
-        name: name as string,
-        address: address as string,
-        ...parseCredentials(userName, password),
-        ...parseKeystore(ksqldbServerSsl),
-      })
-    );
+    initialValues.kafkaConnect = kafkaConnect.map((c) => ({
+      name: c.name as string,
+      address: c.address as string,
+      ...parseCredentials(c.userName, c.password),
+      ...parseKeystore(c),
+    }));
   }
 
   if (metrics) {
     initialValues.metrics = {
       type: metrics.type as string,
       ...parseCredentials(metrics.username, metrics.password),
-      ...parseKeystore({
-        keystoreLocation: metrics.keystoreLocation,
-        keystorePassword: metrics.keystorePassword,
-      }),
+      ...parseKeystore(metrics),
       port: `${metrics.port}`,
     };
   }

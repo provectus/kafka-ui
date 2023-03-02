@@ -46,8 +46,6 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
       data.schemaRegistry.username,
       data.schemaRegistry.password
     );
-
-    console.log(data.schemaRegistry.keystore);
     config.schemaRegistrySsl = transformToKeystore(
       data.schemaRegistry.keystore
     );
@@ -66,15 +64,13 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
   // Kafka Connect
   if (data.kafkaConnect && data.kafkaConnect.length > 0) {
     config.kafkaConnect = data.kafkaConnect.map(
-      ({ name, address, isAuth, username, password, keystore }) => {
+      ({ name, address, username, password, keystore }) => {
         const connect: Partial<ApplicationConfigPropertiesKafkaClustersInnerKafkaConnectInner> =
           { name, address, ...transformToKeystore(keystore) };
-
-        if (isAuth) {
+        if (username && password) {
           connect.userName = username;
           connect.password = password;
         }
-
         return connect;
       }
     );
