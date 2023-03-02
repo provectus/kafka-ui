@@ -30,7 +30,9 @@ interface FormType {
   keepContents: boolean;
 }
 
-const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
+const SendMessage: React.FC<{ closeSidebar: () => void }> = ({
+  closeSidebar,
+}) => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const { data: topic } = useTopicDetails({ clusterName, topicName });
   const { data: serdes = {} } = useSerdes({
@@ -117,7 +119,7 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
     if (!keepContents) {
       setValue('key', '');
       setValue('content', '');
-      onSubmit();
+      closeSidebar();
     }
   };
 
@@ -185,9 +187,7 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
               control={control}
               name="keepContents"
               render={({ field: { name, onChange, value } }) => (
-                <div>
-                  <Switch name={name} onChange={onChange} checked={value} />
-                </div>
+                <Switch name={name} onChange={onChange} checked={value} />
               )}
             />
           </S.Column>
