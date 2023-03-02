@@ -331,14 +331,6 @@ const theme = {
       previewColor: {
         normal: Colors.brand[50],
       },
-      title: {
-        padding: {
-          size: {
-            small: '16px',
-            large: '24px',
-          },
-        },
-      },
     },
     td: {
       color: {

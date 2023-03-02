@@ -22,7 +22,7 @@ export const TableHeaderConsumerCell = styled.th<PropsType>(
     background: ${table.th.backgroundColor.normal};
     cursor: default;
     color: ${table.th.color.normal};
-    padding: 4px 0 4px ${size && table.th.title.padding.size[size]};
+    padding: 4px 0 4px ${size === 'small' ? '16px' : '24px'};
     border-bottom-width: 1px;
     vertical-align: middle;
     text-align: left;
