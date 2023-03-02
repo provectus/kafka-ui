@@ -43,11 +43,11 @@ import reactor.core.publisher.Mono;
 @Component
 public class DynamicConfigOperations {
 
-  static final String DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY = "DYNAMIC_CONFIG_ENABLED";
-  static final String DYNAMIC_CONFIG_PATH_ENV_PROPERTY = "DYNAMIC_CONFIG_PATH";
+  static final String DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY = "dynamic.config.enabled";
+  static final String DYNAMIC_CONFIG_PATH_ENV_PROPERTY = "dynamic.config.path";
   static final String DYNAMIC_CONFIG_PATH_ENV_PROPERTY_DEFAULT = "/etc/kafkaui/dynamic_config.yaml";
 
-  static final String CONFIG_RELATED_UPLOADS_DIR_PROPERTY = "CONFIG_RELATED_UPLOADS_DIR";
+  static final String CONFIG_RELATED_UPLOADS_DIR_PROPERTY = "config.related.uploads.dir";
   static final String CONFIG_RELATED_UPLOADS_DIR_DEFAULT = "/etc/kafkaui/uploads";
 
   public static ApplicationContextInitializer<ConfigurableApplicationContext> dynamicConfigPropertiesInitializer() {
@@ -60,14 +60,12 @@ public class DynamicConfigOperations {
   private final ConfigurableApplicationContext ctx;
 
   public boolean dynamicConfigEnabled() {
-    var env = ctx.getEnvironment().getSystemEnvironment();
-    return "true".equalsIgnoreCase((String) env.get(DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY));
+    return "true".equalsIgnoreCase(ctx.getEnvironment().getProperty(DYNAMIC_CONFIG_ENABLED_ENV_PROPERTY));
   }
 
   private Path dynamicConfigFilePath() {
-    var env = ctx.getEnvironment().getSystemEnvironment();
     return Paths.get(
-        Optional.ofNullable((String) env.get(DYNAMIC_CONFIG_PATH_ENV_PROPERTY))
+        Optional.ofNullable(ctx.getEnvironment().getProperty(DYNAMIC_CONFIG_PATH_ENV_PROPERTY))
             .orElse(DYNAMIC_CONFIG_PATH_ENV_PROPERTY_DEFAULT)
     );
   }
@@ -115,7 +113,7 @@ public class DynamicConfigOperations {
     if (!dynamicConfigEnabled()) {
       throw new ValidationException(
           "Dynamic config change is not allowed. "
-              + "Set DYNAMIC_CONFIG_ENABLED=true environment variable to enabled it.");
+              + "Set dynamic.config.enabled property to 'true' to enabled it.");
     }
     properties.initAndValidate();
 
