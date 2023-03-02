@@ -2,7 +2,7 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { AUTH_OPTIONS, SECURITY_PROTOCOL_OPTIONS } from 'lib/constants';
 import ControlledSelect from 'components/common/Select/ControlledSelect';
-import SectionHeader from 'widgets/ClusterConfigForm/SectionHeader';
+import SectionHeader from 'widgets/ClusterConfigForm/common/SectionHeader';
 
 import AuthenticationMethods from './AuthenticationMethods';
 

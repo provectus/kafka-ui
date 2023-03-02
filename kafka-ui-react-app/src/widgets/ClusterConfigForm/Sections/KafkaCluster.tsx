@@ -10,8 +10,9 @@ import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import Heading from 'components/common/heading/Heading.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Checkbox from 'components/common/Checkbox/Checkbox';
-import Fileupload from 'widgets/ClusterConfigForm/Fileupload';
-import SectionHeader from 'widgets/ClusterConfigForm/SectionHeader';
+import Fileupload from 'widgets/ClusterConfigForm/common/Fileupload';
+import SectionHeader from 'widgets/ClusterConfigForm/common/SectionHeader';
+import SSLForm from 'widgets/ClusterConfigForm/common/SSLForm';
 
 const KafkaCluster: React.FC = () => {
   const { control, watch, setValue } = useFormContext();
@@ -22,7 +23,6 @@ const KafkaCluster: React.FC = () => {
   });
 
   const hasTrustStore = !!watch('truststore');
-  const hasKeyStore = !!watch('keystore');
 
   const toggleSection = (section: string) => () =>
     setValue(
@@ -56,7 +56,7 @@ const KafkaCluster: React.FC = () => {
         <InputHint>
           the list of Kafka brokers that you want to connect to
         </InputHint>
-        <S.ArrayFieldWrapper>
+        <S.GroupFieldWrapper>
           {fields.map((field, index) => (
             <S.BootstrapServer key={field.id}>
               <div>
@@ -99,7 +99,7 @@ const KafkaCluster: React.FC = () => {
               Add Bootstrap Server
             </Button>
           </div>
-        </S.ArrayFieldWrapper>
+        </S.GroupFieldWrapper>
       </div>
       <hr />
       <SectionHeader
@@ -108,35 +108,7 @@ const KafkaCluster: React.FC = () => {
         adding={!hasTrustStore}
         onClick={toggleSection('truststore')}
       />
-      {hasTrustStore && (
-        <>
-          <Fileupload name="truststore.location" label="Truststore Location" />
-          <Input
-            label="Truststore Password"
-            type="password"
-            name="truststore.password"
-            withError
-          />
-        </>
-      )}
-      <hr />
-      <SectionHeader
-        title="Keystore"
-        adding={!hasKeyStore}
-        addButtonText="Configure Keystore"
-        onClick={toggleSection('keystore')}
-      />
-      {hasKeyStore && (
-        <>
-          <Fileupload name="keystore.location" label="Keystore Location" />
-          <Input
-            label="Keystore Password"
-            type="password"
-            name="keystore.password"
-            withError
-          />
-        </>
-      )}
+      {hasTrustStore && <SSLForm prefix="truststore" title="Truststore" />}
     </>
   );
 };

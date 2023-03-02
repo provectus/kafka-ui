@@ -1,8 +1,27 @@
 import { ClusterConfigFormValues } from 'widgets/ClusterConfigForm/types';
-import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
+import {
+  ApplicationConfigPropertiesKafkaClustersInner,
+  ApplicationConfigPropertiesKafkaClustersInnerKafkaConnectInner,
+} from 'generated-sources';
 
 import { getJaasConfig } from './getJaasConfig';
 import { convertFormKeyToPropsKey } from './convertFormKeyToPropsKey';
+
+const transformToKeystore = (keystore?: {
+  location: string;
+  password: string;
+}) => {
+  if (!keystore || keystore.location) return undefined;
+  return {
+    keystoreLocation: keystore.location,
+    keystorePassword: keystore.password,
+  };
+};
+
+const transformToCredentials = (username?: string, password?: string) => {
+  if (!username || !password) return undefined;
+  return { username, password };
+};
 
 export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
   const config: ApplicationConfigPropertiesKafkaClustersInner = {
@@ -13,48 +32,47 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
     readOnly: data.readOnly,
   };
 
-  if (data.truststore || data.keystore) {
+  if (data.truststore) {
     config.ssl = {
       truststoreLocation: data.truststore?.location,
       truststorePassword: data.truststore?.password,
-      keystoreLocation: data.keystore?.location,
-      keystorePassword: data.keystore?.password,
     };
   }
 
   // Schema Registry
   if (data.schemaRegistry) {
     config.schemaRegistry = data.schemaRegistry.url;
-    if (data.schemaRegistry.isAuth) {
-      config.schemaRegistryAuth = {
-        username: data.schemaRegistry.username,
-        password: data.schemaRegistry.password,
-      };
-    }
+    config.schemaRegistryAuth = transformToCredentials(
+      data.schemaRegistry.username,
+      data.schemaRegistry.password
+    );
+    config.schemaRegistrySsl = transformToKeystore(
+      data.schemaRegistry.keystore
+    );
   }
+
   // KSQL
   if (data.ksql) {
     config.ksqldbServer = data.ksql.url;
-    if (data.ksql.isAuth) {
-      config.ksqldbServerAuth = {
-        username: data.ksql.username,
-        password: data.ksql.password,
-      };
-    }
+    config.ksqldbServerAuth = transformToCredentials(
+      data.ksql.username,
+      data.ksql.password
+    );
+    config.ksqldbServerSsl = transformToKeystore(data.ksql.keystore);
   }
 
   // Kafka Connect
   if (data.kafkaConnect && data.kafkaConnect.length > 0) {
     config.kafkaConnect = data.kafkaConnect.map(
-      ({ name, address, isAuth, username, password }) => {
-        const connect = { name, address };
+      ({ name, address, isAuth, username, password, keystore }) => {
+        const connect: Partial<ApplicationConfigPropertiesKafkaClustersInnerKafkaConnectInner> =
+          { name, address, ...transformToKeystore(keystore) };
+
         if (isAuth) {
-          return {
-            ...connect,
-            userName: username,
-            password,
-          };
+          connect.userName = username;
+          connect.password = password;
         }
+
         return connect;
       }
     );
@@ -65,11 +83,9 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
     config.metrics = {
       type: data.metrics.type,
       port: Number(data.metrics.port),
+      ...transformToKeystore(data.metrics.keystore),
+      ...transformToCredentials(data.metrics.username, data.metrics.password),
     };
-    if (data.metrics.isAuth) {
-      config.metrics.username = data.metrics.username;
-      config.metrics.password = data.metrics.password;
-    }
   }
 
   config.properties = {};
@@ -87,7 +103,7 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
 
   // Authentication
   if (data.auth) {
-    const { method, props, securityProtocol } = data.auth;
+    const { method, props, securityProtocol, keystore } = data.auth;
     switch (method) {
       case 'SASL/JAAS':
         config.properties = {
@@ -180,7 +196,11 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
         };
         break;
       case 'mTLS':
-        config.properties = { 'security.protocol': 'SSL' };
+        config.properties = {
+          'security.protocol': 'SSL',
+          'ssl.keystore.location': keystore?.location,
+          'ssl.keystore.password': keystore?.password,
+        };
         break;
       default:
       // do nothing

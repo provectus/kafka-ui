@@ -3,9 +3,10 @@ import Input from 'components/common/Input/Input';
 import { useFormContext } from 'react-hook-form';
 import ControlledSelect from 'components/common/Select/ControlledSelect';
 import { METRICS_OPTIONS } from 'lib/constants';
-import Checkbox from 'components/common/Checkbox/Checkbox';
 import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
-import SectionHeader from 'widgets/ClusterConfigForm/SectionHeader';
+import SectionHeader from 'widgets/ClusterConfigForm/common/SectionHeader';
+import SSLForm from 'widgets/ClusterConfigForm/common/SSLForm';
+import Credentials from 'widgets/ClusterConfigForm/common/Credentials';
 
 const Metrics = () => {
   const { setValue, watch } = useFormContext();
@@ -23,7 +24,6 @@ const Metrics = () => {
       { shouldValidate: true, shouldDirty: true, shouldTouch: true }
     );
 
-  const isAuth = watch('metrics.isAuth');
   return (
     <>
       <SectionHeader
@@ -49,27 +49,8 @@ const Metrics = () => {
               withError
             />
           </S.Port>
-          <Checkbox name="metrics.isAuth" label="Secured with auth?" />
-          {isAuth && (
-            <S.FlexRow>
-              <S.FlexGrow1>
-                <Input
-                  label="Username *"
-                  name="metrics.username"
-                  type="text"
-                  withError
-                />
-              </S.FlexGrow1>
-              <S.FlexGrow1>
-                <Input
-                  label="Password *"
-                  name="metrics.password"
-                  type="password"
-                  withError
-                />
-              </S.FlexGrow1>
-            </S.FlexRow>
-          )}
+          <Credentials prefix="metrics" />
+          <SSLForm prefix="metrics.keystore" title="Metrics Keystore" />
         </>
       )}
     </>

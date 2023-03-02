@@ -5,10 +5,7 @@ import { ErrorMessage } from '@hookform/error-message';
 import { useFormContext } from 'react-hook-form';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
-import {
-  FlexGrow1,
-  FlexRow,
-} from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
+import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import { useAppConfigFilesUpload } from 'lib/hooks/api/appConfig';
 
 const Fileupload: React.FC<{ name: string; label: string }> = ({
@@ -40,22 +37,22 @@ const Fileupload: React.FC<{ name: string; label: string }> = ({
       <InputLabel htmlFor={id}>{label}</InputLabel>
 
       {loc ? (
-        <FlexRow>
-          <FlexGrow1>
+        <S.FlexRow>
+          <S.FlexGrow1>
             <Input name={name} disabled />
-          </FlexGrow1>
+          </S.FlexGrow1>
           <Button buttonType="secondary" buttonSize="L" onClick={onReset}>
             Reset
           </Button>
-        </FlexRow>
+        </S.FlexRow>
       ) : (
-        <div>
+        <S.FileUploadInputWrapper>
           {upload.isLoading ? (
             <p>Uploading...</p>
           ) : (
             <input type="file" onChange={handleFileChange} />
           )}
-        </div>
+        </S.FileUploadInputWrapper>
       )}
       <FormError>
         <ErrorMessage name={name} />

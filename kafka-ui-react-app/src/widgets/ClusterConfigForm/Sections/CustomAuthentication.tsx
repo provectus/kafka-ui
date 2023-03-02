@@ -2,7 +2,7 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import Input from 'components/common/Input/Input';
 import { convertFormKeyToPropsKey } from 'widgets/ClusterConfigForm/utils/convertFormKeyToPropsKey';
-import SectionHeader from 'widgets/ClusterConfigForm/SectionHeader';
+import SectionHeader from 'widgets/ClusterConfigForm/common/SectionHeader';
 
 const CustomAuthentication: React.FC = () => {
   const { watch, setValue } = useFormContext();

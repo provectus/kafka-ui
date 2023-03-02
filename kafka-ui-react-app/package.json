@@ -54,6 +54,7 @@
   },
   "scripts": {
     "start": "vite",
+    "dev": "vite",
     "gen:sources": "rimraf src/generated-sources && openapi-generator-cli generate",
     "build": "vite build",
     "preview": "vite preview",

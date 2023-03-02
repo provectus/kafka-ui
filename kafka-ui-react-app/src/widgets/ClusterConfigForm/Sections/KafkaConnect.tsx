@@ -6,15 +6,16 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
-import Checkbox from 'components/common/Checkbox/Checkbox';
 import {
   FlexGrow1,
   FlexRow,
 } from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
-import SectionHeader from 'widgets/ClusterConfigForm/SectionHeader';
+import SectionHeader from 'widgets/ClusterConfigForm/common/SectionHeader';
+import Credentials from 'widgets/ClusterConfigForm/common/Credentials';
+import SSLForm from 'widgets/ClusterConfigForm/common/SSLForm';
 
 const KafkaConnect = () => {
-  const { control, watch } = useFormContext();
+  const { control } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'kafkaConnect',
@@ -33,7 +34,7 @@ const KafkaConnect = () => {
         onClick={toggleConfig}
       />
       {hasFields && (
-        <S.ArrayFieldWrapper>
+        <S.GroupFieldWrapper>
           {fields.map((item, index) => (
             <div key={item.id}>
               <FlexRow>
@@ -54,9 +55,13 @@ const KafkaConnect = () => {
                     hint="Address of the Kafka Connect service endpoint"
                     withError
                   />
-                  <Checkbox
-                    name={`kafkaConnect.${index}.isAuth`}
-                    label="Kafka Connect is secured with auth?"
+                  <Credentials
+                    prefix={`kafkaConnect.${index}`}
+                    title="Is connect secured with auth?"
+                  />
+                  <SSLForm
+                    prefix={`kafkaConnect.${index}.keystore`}
+                    title="Keystore"
                   />
                 </FlexGrow1>
                 <S.RemoveButton onClick={() => remove(index)}>
@@ -65,26 +70,7 @@ const KafkaConnect = () => {
                   </IconButtonWrapper>
                 </S.RemoveButton>
               </FlexRow>
-              {watch(`kafkaConnect.${index}.isAuth`) && (
-                <FlexRow>
-                  <FlexGrow1>
-                    <Input
-                      label="Username"
-                      name={`kafkaConnect.${index}.username`}
-                      type="text"
-                      withError
-                    />
-                  </FlexGrow1>
-                  <FlexGrow1>
-                    <Input
-                      label="Password"
-                      name={`kafkaConnect.${index}.password`}
-                      type="password"
-                      withError
-                    />
-                  </FlexGrow1>
-                </FlexRow>
-              )}
+
               <hr />
             </div>
           ))}
@@ -97,7 +83,7 @@ const KafkaConnect = () => {
             <PlusIcon />
             Add Kafka Connect
           </Button>
-        </S.ArrayFieldWrapper>
+        </S.GroupFieldWrapper>
       )}
     </>
   );

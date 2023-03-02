@@ -5,7 +5,9 @@ import {
   FlexGrow1,
 } from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import Checkbox from 'components/common/Checkbox/Checkbox';
-import Fileupload from 'widgets/ClusterConfigForm/Fileupload';
+import Fileupload from 'widgets/ClusterConfigForm/common/Fileupload';
+import SSLForm from 'widgets/ClusterConfigForm/common/SSLForm';
+import Credentials from 'widgets/ClusterConfigForm/common/Credentials';
 
 const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
   switch (method) {
@@ -58,26 +60,7 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
     case 'SASL/SCRAM-256':
     case 'SASL/SCRAM-512':
     case 'SASL/LDAP':
-      return (
-        <FlexRow>
-          <FlexGrow1>
-            <Input
-              label="Username"
-              type="text"
-              name="auth.props.username"
-              withError
-            />
-          </FlexGrow1>
-          <FlexGrow1>
-            <Input
-              label="Password"
-              type="password"
-              name="auth.props.password"
-              withError
-            />
-          </FlexGrow1>
-        </FlexRow>
-      );
+      return <Credentials prefix="auth.props" />;
     case 'Delegation tokens':
       return (
         <>
@@ -105,6 +88,7 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
         />
       );
     case 'mTLS':
+      return <SSLForm prefix="auth.keystore" title="Keystore" />;
     default:
       return null;
   }

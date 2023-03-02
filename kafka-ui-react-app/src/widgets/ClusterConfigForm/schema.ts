@@ -13,6 +13,16 @@ const bootstrapServerSchema = object({
   port: portSchema,
 });
 
+const sslSchema = lazy((value) => {
+  if (typeof value === 'object') {
+    return object({
+      location: string(),
+      password: string(),
+    });
+  }
+  return mixed().optional();
+});
+
 const urlWithAuthSchema = lazy((value) => {
   if (typeof value === 'object') {
     return object({
@@ -26,6 +36,7 @@ const urlWithAuthSchema = lazy((value) => {
         is: true,
         then: (schema) => schema.required('required field'),
       }),
+      keystore: sslSchema,
     });
   }
   return mixed().optional();
@@ -43,6 +54,7 @@ const kafkaConnectSchema = object({
     is: true,
     then: (schema) => schema.required('required field'),
   }),
+  keystore: sslSchema,
 });
 
 const kafkaConnectsSchema = lazy((value) => {
@@ -66,16 +78,7 @@ const metricsSchema = lazy((value) => {
         is: true,
         then: (schema) => schema.required('required field'),
       }),
-    });
-  }
-  return mixed().optional();
-});
-
-const sslSchema = lazy((value) => {
-  if (typeof value === 'object') {
-    return object({
-      location: requiredString,
-      password: requiredString,
+      keystore: sslSchema,
     });
   }
   return mixed().optional();
@@ -118,7 +121,9 @@ const authPropsSchema = lazy((_, { parent }) => {
       });
     case 'mTLS':
     default:
-      return mixed().optional();
+      return object({
+        keystore: sslSchema,
+      });
   }
 });
 
@@ -169,7 +174,6 @@ const formSchema = object({
   readOnly: boolean().required('required field'),
   bootstrapServers: array().of(bootstrapServerSchema).min(1),
   truststore: sslSchema,
-  keystore: sslSchema,
   auth: authSchema,
   schemaRegistry: urlWithAuthSchema,
   ksql: urlWithAuthSchema,

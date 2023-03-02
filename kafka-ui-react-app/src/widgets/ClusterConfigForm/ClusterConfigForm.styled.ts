@@ -1,11 +1,11 @@
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import styled from 'styled-components';
 
-export const ArrayFieldWrapper = styled.div`
+export const GroupFieldWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background-color: #fcfcfc;
+  background-color: #fefefe;
   padding: 8px;
   border-radius: 4px;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 15%);
@@ -51,4 +51,10 @@ export const BootstrapServerActions = styled(IconButtonWrapper)`
 `;
 export const Port = styled.div`
   width: 110px;
+`;
+
+export const FileUploadInputWrapper = styled.div`
+  display: flex;
+  height: 40px;
+  align-items: center;
 `;

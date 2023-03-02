@@ -1,4 +1,7 @@
-import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
+import {
+  ApplicationConfigPropertiesKafkaClustersInner,
+  ApplicationConfigPropertiesKafkaClustersInnerSchemaRegistrySsl,
+} from 'generated-sources';
 import { ClusterConfigFormValues } from 'widgets/ClusterConfigForm/types';
 
 import { convertPropsKeyToFormKey } from './convertPropsKeyToFormKey';
@@ -9,6 +12,24 @@ const parseBootstrapServers = (bootstrapServers?: string) =>
     return { host, port };
   });
 
+const parseKeystore = (
+  keystore?: ApplicationConfigPropertiesKafkaClustersInnerSchemaRegistrySsl
+) => {
+  if (!keystore) return undefined;
+  const { keystoreLocation, keystorePassword } = keystore;
+  return {
+    keystore: {
+      location: keystoreLocation as string,
+      password: keystorePassword as string,
+    },
+  };
+};
+
+const parseCredentials = (username?: string, password?: string) => {
+  if (!username || !password) return { isAuth: false };
+  return { isAuth: true, username, password };
+};
+
 export const getInitialFormData = (
   payload: ApplicationConfigPropertiesKafkaClustersInner
 ) => {
@@ -16,10 +37,12 @@ export const getInitialFormData = (
     ssl,
     schemaRegistry,
     schemaRegistryAuth,
+    schemaRegistrySsl,
     kafkaConnect,
     metrics,
     ksqldbServer,
     ksqldbServerAuth,
+    ksqldbServerSsl,
   } = payload;
 
   const initialValues: Partial<ClusterConfigFormValues> = {
@@ -28,12 +51,7 @@ export const getInitialFormData = (
     bootstrapServers: parseBootstrapServers(payload.bootstrapServers),
   };
 
-  const {
-    truststoreLocation,
-    truststorePassword,
-    keystoreLocation,
-    keystorePassword,
-  } = ssl || {};
+  const { truststoreLocation, truststorePassword } = ssl || {};
 
   if (truststoreLocation && truststorePassword) {
     initialValues.truststore = {
@@ -41,27 +59,25 @@ export const getInitialFormData = (
       password: truststorePassword,
     };
   }
-  if (keystoreLocation && keystorePassword) {
-    initialValues.keystore = {
-      location: keystoreLocation,
-      password: keystorePassword,
-    };
-  }
 
   if (schemaRegistry) {
     initialValues.schemaRegistry = {
       url: schemaRegistry,
-      isAuth: !!schemaRegistryAuth,
-      username: schemaRegistryAuth?.username,
-      password: schemaRegistryAuth?.password,
+      ...parseCredentials(
+        schemaRegistryAuth?.username,
+        schemaRegistryAuth?.password
+      ),
+      ...parseKeystore(schemaRegistrySsl),
     };
   }
   if (ksqldbServer) {
     initialValues.ksql = {
       url: ksqldbServer,
-      isAuth: !!ksqldbServerAuth,
-      username: ksqldbServerAuth?.username,
-      password: ksqldbServerAuth?.password,
+      ...parseCredentials(
+        ksqldbServerAuth?.username,
+        ksqldbServerAuth?.password
+      ),
+      ...parseKeystore(ksqldbServerSsl),
     };
   }
 
@@ -70,9 +86,8 @@ export const getInitialFormData = (
       ({ name, address, userName, password }) => ({
         name: name as string,
         address: address as string,
-        isAuth: !!userName && !!password,
-        username: userName,
-        password,
+        ...parseCredentials(userName, password),
+        ...parseKeystore(ksqldbServerSsl),
       })
     );
   }
@@ -80,9 +95,11 @@ export const getInitialFormData = (
   if (metrics) {
     initialValues.metrics = {
       type: metrics.type as string,
-      isAuth: !!metrics.username && !!metrics.password,
-      username: metrics.username,
-      password: metrics.password,
+      ...parseCredentials(metrics.username, metrics.password),
+      ...parseKeystore({
+        keystoreLocation: metrics.keystoreLocation,
+        keystorePassword: metrics.keystorePassword,
+      }),
       port: `${metrics.port}`,
     };
   }
@@ -93,7 +110,11 @@ export const getInitialFormData = (
   initialValues.customAuth = {};
 
   Object.entries(properties).forEach(([key, val]) => {
-    if (key.startsWith('security.') || key.startsWith('sasl.')) {
+    if (
+      key.startsWith('security.') ||
+      key.startsWith('sasl.') ||
+      key.startsWith('ssl.')
+    ) {
       initialValues.customAuth = {
         ...initialValues.customAuth,
         [convertPropsKeyToFormKey(key)]: val,

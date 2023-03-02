@@ -3,26 +3,36 @@ type BootstrapServer = {
   host: string;
   port: string;
 };
-type URLWithAuth = {
-  url?: string;
+
+type WithKeystore = {
+  keystore?: {
+    location: string;
+    password: string;
+  };
+};
+
+type WithAuth = {
   isAuth: boolean;
   username?: string;
   password?: string;
 };
-type KafkaConnect = {
-  name: string;
-  address: string;
-  isAuth: boolean;
-  username?: string;
-  password?: string;
-};
-type Metrics = {
-  type: string;
-  port: string;
-  isAuth: boolean;
-  username?: string;
-  password?: string;
-};
+
+type URLWithAuth = WithAuth &
+  WithKeystore & {
+    url?: string;
+  };
+
+type KafkaConnect = WithAuth &
+  WithKeystore & {
+    name: string;
+    address: string;
+  };
+
+type Metrics = WithAuth &
+  WithKeystore & {
+    type: string;
+    port: string;
+  };
 
 export type ClusterConfigFormValues = {
   name: string;
@@ -32,11 +42,7 @@ export type ClusterConfigFormValues = {
     location: string;
     password: string;
   };
-  keystore?: {
-    location: string;
-    password: string;
-  };
-  auth?: {
+  auth?: WithKeystore & {
     method: string;
     securityProtocol: SecurityProtocol;
     props: Record<string, string>;
