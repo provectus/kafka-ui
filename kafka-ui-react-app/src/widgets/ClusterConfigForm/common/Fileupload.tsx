@@ -24,12 +24,15 @@ const Fileupload: React.FC<{ name: string; label: string }> = ({
       const file = e.target.files[0];
       formData.append('file', file);
       const resp = await upload.mutateAsync(formData);
-      setValue(name, resp.location);
+      setValue(name, resp.location, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
     }
   };
 
   const onReset = () => {
-    setValue(name, '');
+    setValue(name, '', { shouldValidate: true, shouldDirty: true });
   };
 
   return (
