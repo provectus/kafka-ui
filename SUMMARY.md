@@ -14,12 +14,12 @@
 ## 🛠 Development
 
 * [Contributing](development/contributing.md)
+* [Setting up git](development/setting-up-git.md)
 * [Building](development/building/README.md)
   * [Prerequisites](development/building/prerequisites.md)
-  * [WIP: Setting up git](development/building/wip-setting-up-git.md)
   * [With Docker](development/building/with-docker.md)
   * [Without Docker](development/building/without-docker.md)
-  * [WIP: Testing](development/building/wip-testing.md)
+* [WIP: Testing](development/wip-testing.md)
 
 ## 👷♂ Configuration
 
