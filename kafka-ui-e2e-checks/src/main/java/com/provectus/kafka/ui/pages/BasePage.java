@@ -23,6 +23,8 @@ public abstract class BasePage extends WebUtils {
     protected SelenideElement confirmationMdl = $x("//div[text()= 'Confirm the action']/..");
     protected SelenideElement confirmBtn = $x("//button[contains(text(),'Confirm')]");
     protected SelenideElement cancelBtn = $x("//button[contains(text(),'Cancel')]");
+    protected SelenideElement backBtn = $x("//button[contains(text(),'Back')]");
+    protected SelenideElement nextBtn = $x("//button[contains(text(),'Next')]");
     protected ElementsCollection ddlOptions = $$x("//li[@value]");
     protected ElementsCollection gridItems = $$x("//tr[@class]");
     protected String summaryCellLocator = "//div[contains(text(),'%s')]";

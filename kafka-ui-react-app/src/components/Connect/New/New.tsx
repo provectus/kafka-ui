@@ -133,6 +133,7 @@ const New: React.FC = () => {
             inputSize="M"
             placeholder="Connector Name"
             name="name"
+            autoFocus
             autoComplete="off"
             disabled={isSubmitting}
           />

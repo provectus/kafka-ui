@@ -2,8 +2,8 @@ package com.provectus.kafka.ui.smokeSuite;
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.BaseTest;
-import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
-import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import com.provectus.kafka.ui.utilities.qaseUtils.annotations.AutomationStatus;
+import com.provectus.kafka.ui.utilities.qaseUtils.enums.Status;
 import io.qase.api.annotation.CaseId;
 import org.testng.annotations.Test;
 
