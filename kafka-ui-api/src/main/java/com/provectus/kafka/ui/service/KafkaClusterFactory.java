@@ -193,7 +193,7 @@ public class KafkaClusterFactory {
   }
 
   private boolean metricsConfigured(ClustersProperties.Cluster clusterProperties) {
-    return clusterProperties.getKsqldbServer() != null;
+    return clusterProperties.getMetrics() != null;
   }
 
   @Nullable
