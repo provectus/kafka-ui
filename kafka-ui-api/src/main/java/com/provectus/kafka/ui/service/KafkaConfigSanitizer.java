@@ -17,7 +17,8 @@ import org.springframework.stereotype.Component;
 class KafkaConfigSanitizer extends Sanitizer {
   private static final List<String> DEFAULT_PATTERNS_TO_SANITIZE = Arrays.asList(
       "basic.auth.user.info",  /* For Schema Registry credentials */
-      "password", "secret", "token", "key", ".*credentials.*"  /* General credential patterns */
+      "password", "secret", "token", "key", ".*credentials.*",   /* General credential patterns */
+      "aws.access.*", "aws.secret.*", "aws.session.*"   /* AWS-related credential patterns */
   );
 
   KafkaConfigSanitizer(
