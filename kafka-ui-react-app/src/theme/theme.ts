@@ -547,6 +547,7 @@ const theme = {
     },
   },
   icons: {
+    chevronDownIcon: Colors.neutral[90],
     closeIcon: Colors.neutral[30],
     deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],
