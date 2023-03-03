@@ -16,7 +16,10 @@ const bootstrapServerSchema = object({
 const sslSchema = lazy((value) => {
   if (typeof value === 'object') {
     return object({
-      location: string(),
+      location: string().when('password', {
+        is: (v: string) => !!v,
+        then: (schema) => schema.required('required field'),
+      }),
       password: string(),
     });
   }
@@ -121,9 +124,7 @@ const authPropsSchema = lazy((_, { parent }) => {
       });
     case 'mTLS':
     default:
-      return object({
-        keystore: sslSchema,
-      });
+      return mixed().optional();
   }
 });
 
@@ -161,6 +162,15 @@ const authSchema = lazy((value) => {
           },
           then: (schema) => schema.required('required field'),
         }),
+      keystore: lazy((_, { parent }) => {
+        if (parent.method === 'mTLS') {
+          return object({
+            location: requiredString,
+            password: string(),
+          });
+        }
+        return mixed().optional();
+      }),
       props: authPropsSchema,
     });
   }

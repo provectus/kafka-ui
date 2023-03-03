@@ -15,8 +15,12 @@ const transformToKeystore = (keystore?: {
   };
 };
 
-const transformToCredentials = (username?: string, password?: string) => {
-  if (!username || !password) return undefined;
+const transformToCredentials = (
+  isAuth: boolean,
+  username?: string,
+  password?: string
+) => {
+  if (!isAuth || !username || !password) return undefined;
   return { username, password };
 };
 
@@ -51,6 +55,7 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
   if (data.schemaRegistry) {
     config.schemaRegistry = data.schemaRegistry.url;
     config.schemaRegistryAuth = transformToCredentials(
+      data.schemaRegistry.isAuth,
       data.schemaRegistry.username,
       data.schemaRegistry.password
     );
@@ -63,6 +68,7 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
   if (data.ksql) {
     config.ksqldbServer = data.ksql.url;
     config.ksqldbServerAuth = transformToCredentials(
+      data.ksql.isAuth,
       data.ksql.username,
       data.ksql.password
     );
@@ -72,11 +78,11 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
   // Kafka Connect
   if (data.kafkaConnect && data.kafkaConnect.length > 0) {
     config.kafkaConnect = data.kafkaConnect.map(
-      ({ name, address, username, password, keystore }) => ({
+      ({ name, address, isAuth, username, password, keystore }) => ({
         name,
         address,
         ...transformToKeystore(keystore),
-        ...transformToCredentials(username, password),
+        ...transformToCredentials(isAuth, username, password),
       })
     );
   }
@@ -87,7 +93,11 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
       type: data.metrics.type,
       port: Number(data.metrics.port),
       ...transformToKeystore(data.metrics.keystore),
-      ...transformToCredentials(data.metrics.username, data.metrics.password),
+      ...transformToCredentials(
+        data.metrics.isAuth,
+        data.metrics.username,
+        data.metrics.password
+      ),
     };
   }
 
@@ -132,30 +142,42 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
         config.properties = {
           'security.protocol': securityProtocol,
           'sasl.mechanism': 'PLAIN',
-          'sasl.jaas.config': getJaasConfig('SASL/PLAIN', {
-            username: props.username,
-            password: props.password,
-          }),
+          'sasl.jaas.config': getJaasConfig(
+            'SASL/PLAIN',
+            transformToCredentials(
+              Boolean(props.isAuth),
+              props.username,
+              props.password
+            ) || {}
+          ),
         };
         break;
       case 'SASL/SCRAM-256':
         config.properties = {
           'security.protocol': securityProtocol,
           'sasl.mechanism': 'SCRAM-SHA-256',
-          'sasl.jaas.config': getJaasConfig('SASL/SCRAM-256', {
-            username: props.username,
-            password: props.password,
-          }),
+          'sasl.jaas.config': getJaasConfig(
+            'SASL/SCRAM-256',
+            transformToCredentials(
+              Boolean(props.isAuth),
+              props.username,
+              props.password
+            ) || {}
+          ),
         };
         break;
       case 'SASL/SCRAM-512':
         config.properties = {
           'security.protocol': securityProtocol,
           'sasl.mechanism': 'SCRAM-SHA-512',
-          'sasl.jaas.config': getJaasConfig('SASL/SCRAM-512', {
-            username: props.username,
-            password: props.password,
-          }),
+          'sasl.jaas.config': getJaasConfig(
+            'SASL/SCRAM-512',
+            transformToCredentials(
+              Boolean(props.isAuth),
+              props.username,
+              props.password
+            ) || {}
+          ),
         };
         break;
       case 'Delegation tokens':
@@ -172,10 +194,14 @@ export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
         config.properties = {
           'security.protocol': securityProtocol,
           'sasl.mechanism': 'PLAIN',
-          'sasl.jaas.config': getJaasConfig('SASL/LDAP', {
-            username: props.username,
-            password: props.password,
-          }),
+          'sasl.jaas.config': getJaasConfig(
+            'SASL/LDAP',
+            transformToCredentials(
+              Boolean(props.isAuth),
+              props.username,
+              props.password
+            ) || {}
+          ),
         };
         break;
       case 'SASL/AWS IAM':
