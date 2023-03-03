@@ -50,7 +50,7 @@ const KsqlDbItem: React.FC<KsqlDbItemProps> = ({ type, fetching, rows }) => {
       data={preparedRows}
       columns={columns}
       emptyMessage="No tables or streams found"
-      enableSorting={false}
+      enableSorting
     />
   );
 };
