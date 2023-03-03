@@ -185,7 +185,7 @@ const baseTheme = {
     },
     newFilterIcon: Colors.brand[50],
     closeModalIcon: Colors.neutral[25],
-    savedIcon: Colors.brand[30],
+    savedIcon: Colors.brand[50],
     dropdownArrowIcon: Colors.neutral[30],
     git: {
       hover: Colors.neutral[90],
@@ -231,7 +231,7 @@ const baseTheme = {
     color: Colors.neutral[90],
   },
   switch: {
-    unchecked: Colors.brand[50],
+    unchecked: Colors.brand[30],
     checked: Colors.brand[50],
     circle: Colors.neutral[0],
     disabled: Colors.neutral[10],
@@ -1096,7 +1096,7 @@ export const darkTheme: ThemeType = {
     moonIcon: Colors.neutral[0],
     sunIcon: Colors.neutral[0],
     infoIcon: Colors.neutral[70],
-    savedIcon: Colors.brand[50],
+    savedIcon: Colors.brand[30],
     git: {
       ...baseTheme.icons.git,
       hover: Colors.neutral[70],
@@ -1115,10 +1115,5 @@ export const darkTheme: ThemeType = {
       hover: Colors.neutral[30],
       focus: Colors.neutral[0],
     },
-  },
-  switch: {
-    ...baseTheme.switch,
-    unchecked: Colors.brand[30],
-    checked: Colors.brand[30],
   },
 };
