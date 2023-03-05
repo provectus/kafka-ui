@@ -103,6 +103,7 @@ const New: React.FC = () => {
           <Input
             inputSize="M"
             placeholder="Schema Name"
+            autoFocus
             name="subject"
             autoComplete="off"
             disabled={isSubmitting}

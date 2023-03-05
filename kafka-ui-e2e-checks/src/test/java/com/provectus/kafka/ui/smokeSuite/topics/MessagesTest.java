@@ -3,12 +3,13 @@ package com.provectus.kafka.ui.smokeSuite.topics;
 import com.provectus.kafka.ui.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
 import com.provectus.kafka.ui.pages.topics.TopicDetails;
-import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.AutomationStatus;
-import com.provectus.kafka.ui.utilities.qaseIoUtils.annotations.Suite;
-import com.provectus.kafka.ui.utilities.qaseIoUtils.enums.Status;
+import com.provectus.kafka.ui.utilities.qaseUtils.annotations.AutomationStatus;
+import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Suite;
+import com.provectus.kafka.ui.utilities.qaseUtils.enums.Status;
 import io.qameta.allure.Issue;
+import io.qameta.allure.Step;
 import io.qase.api.annotation.CaseId;
-import io.qase.api.annotation.Step;
+import io.qase.api.annotation.QaseId;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -48,16 +49,21 @@ public class MessagesTest extends BaseTest {
             .setName("topic-to-recreate-attribute-" + randomAlphabetic(5))
             .setMessageKey(randomAlphabetic(5))
             .setMessageContent(randomAlphabetic(10));
+    private static final Topic TOPIC_FOR_CHECK_MESSAGES_COUNT = new Topic()
+             .setName("topic-for-check-messages-count" + randomAlphabetic(5))
+             .setMessageKey(randomAlphabetic(5))
+             .setMessageContent(randomAlphabetic(10));
     private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
     @BeforeClass(alwaysRun = true)
     public void beforeClass() {
         TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECKING_FILTERS, TOPIC_TO_CLEAR_AND_PURGE_MESSAGES,
-                TOPIC_TO_RECREATE));
+                TOPIC_TO_RECREATE, TOPIC_FOR_CHECK_MESSAGES_COUNT));
         TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
         IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
         waitUntilNewMinuteStarted();
         IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECKING_FILTERS));
+        IntStream.range(1, 110).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECK_MESSAGES_COUNT));
     }
 
     @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
@@ -269,6 +275,31 @@ public class MessagesTest extends BaseTest {
                 "isAlertWithMessageVisible()");
         softly.assertEquals(topicsList.getTopicItem(TOPIC_TO_RECREATE.getName()).getNumberOfMessages(), 0,
                 "getNumberOfMessages()");
+        softly.assertAll();
+    }
+
+    @Ignore
+    @Issue("https://github.com/provectus/kafka-ui/issues/3129")
+    @QaseId(267)
+    @Test(priority = 10)
+    public void CheckMessagesCountPerPageWithinTopic() {
+        navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_MESSAGES_COUNT.getName());
+        topicDetails
+                .openDetailsTab(MESSAGES);
+        int messagesPerPage = topicDetails.getAllMessages().size();
+        SoftAssert softly = new SoftAssert();
+        softly.assertEquals(messagesPerPage, 100, "getAllMessages()");
+        softly.assertFalse(topicDetails.isBackButtonEnabled(), "isBackButtonEnabled()");
+        softly.assertTrue(topicDetails.isNextButtonEnabled(), "isNextButtonEnabled()");
+        softly.assertAll();
+        int lastOffsetOnPage = topicDetails.getAllMessages()
+                        .get(messagesPerPage -1).getOffset();
+        topicDetails
+                .clickNextButton();
+        softly.assertEquals(topicDetails.getAllMessages().stream().findFirst().orElseThrow().getOffset(),
+                lastOffsetOnPage + 1, "findFirst().getOffset()");
+        softly.assertTrue(topicDetails.isBackButtonEnabled(), "isBackButtonEnabled()");
+        softly.assertFalse(topicDetails.isNextButtonEnabled(), "isNextButtonEnabled()");
         softly.assertAll();
     }
 

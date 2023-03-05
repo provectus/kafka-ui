@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.config;
 
+import com.provectus.kafka.ui.model.MetricsConfig;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,8 +31,10 @@ public class ClustersProperties {
     String bootstrapServers;
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
+    KeystoreConfig schemaRegistrySsl;
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
+    KeystoreConfig ksqldbServerSsl;
     List<ConnectCluster> kafkaConnect;
     MetricsConfigData metrics;
     Map<String, Object> properties;
@@ -41,7 +44,7 @@ public class ClustersProperties {
     String defaultValueSerde;
     List<Masking> masking;
     Long pollingThrottleRate;
-    Ssl ssl;
+    TruststoreConfig ssl;
   }
 
   @Data
@@ -52,31 +55,34 @@ public class ClustersProperties {
     boolean ssl;
     String username;
     String password;
+    String keystoreLocation;
+    String keystorePassword;
   }
 
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder(toBuilder = true)
-  @ToString(exclude = "password")
+  @ToString(exclude = {"password", "keystorePassword"})
   public static class ConnectCluster {
     String name;
     String address;
-    String userName;
+    String username;
     String password;
+    String keystoreLocation;
+    String keystorePassword;
   }
 
   @Data
+  @ToString(exclude = {"password"})
   public static class SchemaRegistryAuth {
     String username;
     String password;
   }
 
   @Data
-  @ToString(exclude = {"keystorePassword", "truststorePassword"})
-  public static class Ssl {
-    String keystoreLocation;
-    String keystorePassword;
+  @ToString(exclude = {"truststorePassword"})
+  public static class TruststoreConfig {
     String truststoreLocation;
     String truststorePassword;
   }
@@ -99,6 +105,15 @@ public class ClustersProperties {
   }
 
   @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @ToString(exclude = {"keystorePassword"})
+  public static class KeystoreConfig {
+    String keystoreLocation;
+    String keystorePassword;
+  }
+
+  @Data
   public static class Masking {
     Type type;
     List<String> fields; //if null or empty list - policy will be applied to all fields
@@ -117,6 +132,15 @@ public class ClustersProperties {
     if (clusters != null) {
       validateClusterNames();
       flattenClusterProperties();
+      setMetricsDefaults();
+    }
+  }
+
+  private void setMetricsDefaults() {
+    for (Cluster cluster : clusters) {
+      if (cluster.getMetrics() != null && !StringUtils.hasText(cluster.getMetrics().getType())) {
+        cluster.getMetrics().setType(MetricsConfig.JMX_METRICS_TYPE);
+      }
     }
   }
 

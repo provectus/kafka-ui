@@ -20,7 +20,13 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockedUsedNavigate,
 }));
 
-type Datum = typeof data[0];
+type Datum = {
+  timestamp: number;
+  text: string;
+  selectable: boolean;
+  size: number;
+  tag: string;
+};
 
 const data = [
   {

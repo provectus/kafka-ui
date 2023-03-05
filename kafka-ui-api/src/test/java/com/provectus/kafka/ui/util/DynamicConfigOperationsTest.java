@@ -122,7 +122,7 @@ class DynamicConfigOperationsTest {
   }
 
   private void mockEnvWithVars(Map<String, Object> envVars) {
-    when(envMock.getSystemEnvironment()).thenReturn(envVars);
+    envVars.forEach((k, v) -> when(envMock.getProperty(k)).thenReturn((String) v));
   }
 
 }

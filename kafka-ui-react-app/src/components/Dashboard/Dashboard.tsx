@@ -10,6 +10,7 @@ import Table, { SizeCell } from 'components/common/NewTable';
 import useBoolean from 'lib/hooks/useBoolean';
 import { Button } from 'components/common/Button/Button';
 import { clusterNewConfigPath } from 'lib/paths';
+import { GlobalSettingsContext } from 'components/contexts/GlobalSettingsContext';
 
 import * as S from './Dashboard.styled';
 import ClusterName from './ClusterName';
@@ -18,6 +19,7 @@ import ClusterTableActionsCell from './ClusterTableActionsCell';
 const Dashboard: React.FC = () => {
   const clusters = useClusters();
   const { value: showOfflineOnly, toggle } = useBoolean(false);
+  const appInfo = React.useContext(GlobalSettingsContext);
 
   const config = React.useMemo(() => {
     const clusterList = clusters.data || [];
@@ -31,8 +33,8 @@ const Dashboard: React.FC = () => {
     };
   }, [clusters, showOfflineOnly]);
 
-  const columns = React.useMemo<ColumnDef<Cluster>[]>(
-    () => [
+  const columns = React.useMemo<ColumnDef<Cluster>[]>(() => {
+    const initialColumns: ColumnDef<Cluster>[] = [
       { header: 'Cluster name', accessorKey: 'name', cell: ClusterName },
       { header: 'Version', accessorKey: 'version' },
       { header: 'Brokers count', accessorKey: 'brokerCount' },
@@ -40,10 +42,18 @@ const Dashboard: React.FC = () => {
       { header: 'Topics', accessorKey: 'topicCount' },
       { header: 'Production', accessorKey: 'bytesInPerSec', cell: SizeCell },
       { header: 'Consumption', accessorKey: 'bytesOutPerSec', cell: SizeCell },
-      { header: '', id: 'actions', cell: ClusterTableActionsCell },
-    ],
-    []
-  );
+    ];
+
+    if (appInfo.hasDynamicConfig) {
+      initialColumns.push({
+        header: '',
+        id: 'actions',
+        cell: ClusterTableActionsCell,
+      });
+    }
+
+    return initialColumns;
+  }, []);
 
   return (
     <>
@@ -69,9 +79,11 @@ const Dashboard: React.FC = () => {
           />
           <label>Only offline clusters</label>
         </div>
-        <Button buttonType="primary" buttonSize="M" to={clusterNewConfigPath}>
-          Configure new cluster
-        </Button>
+        {appInfo.hasDynamicConfig && (
+          <Button buttonType="primary" buttonSize="M" to={clusterNewConfigPath}>
+            Configure new cluster
+          </Button>
+        )}
       </S.Toolbar>
       <Table
         columns={columns}

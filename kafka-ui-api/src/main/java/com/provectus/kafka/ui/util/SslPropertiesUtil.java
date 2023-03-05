@@ -20,19 +20,12 @@ import reactor.netty.http.client.HttpClient;
 @UtilityClass
 public class SslPropertiesUtil {
 
-  public void addKafkaSslProperties(@Nullable ClustersProperties.Ssl ssl, Properties properties) {
-    if (ssl != null) {
-      if (ssl.getTruststoreLocation() != null) {
-        properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, ssl.getTruststoreLocation());
-      }
-      if (ssl.getTruststorePassword() != null) {
-        properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, ssl.getTruststorePassword());
-      }
-      if (ssl.getKeystoreLocation() != null) {
-        properties.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, ssl.getKeystoreLocation());
-      }
-      if (ssl.getKeystorePassword() != null) {
-        properties.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, ssl.getKeystorePassword());
+  public void addKafkaSslProperties(@Nullable ClustersProperties.TruststoreConfig truststoreConfig,
+                                    Properties sink) {
+    if (truststoreConfig != null && truststoreConfig.getTruststoreLocation() != null) {
+      sink.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreConfig.getTruststoreLocation());
+      if (truststoreConfig.getTruststorePassword() != null) {
+        sink.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, truststoreConfig.getTruststorePassword());
       }
     }
   }
