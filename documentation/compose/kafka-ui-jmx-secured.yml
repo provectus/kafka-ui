@@ -13,21 +13,20 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka0:29092
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schemaregistry0:8085
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
       KAFKA_CLUSTERS_0_METRICS_PORT: 9997
       KAFKA_CLUSTERS_0_METRICS_SSL: 'true'
       KAFKA_CLUSTERS_0_METRICS_USERNAME: root
       KAFKA_CLUSTERS_0_METRICS_PASSWORD: password
-      KAFKA_CLUSTERS_0_SSL_KEYSTORELOCATION: /jmx/clientkeystore
-      KAFKA_CLUSTERS_0_SSL_KEYSTOREPASSWORD: 12345678
-      KAFKA_CLUSTERS_0_SSL_TRUSTSTORELOCATION: /jmx/clienttruststore
-      KAFKA_CLUSTERS_0_SSL_TRUSTSTOREPASSWORD: 12345678
+      KAFKA_CLUSTERS_0_METRICS_KEYSTORE_LOCATION: /jmx/clientkeystore
+      KAFKA_CLUSTERS_0_METRICS_KEYSTORE_PASSWORD: '12345678'
+      KAFKA_CLUSTERS_0_SSL_TRUSTSTORE_LOCATION: /jmx/clienttruststore
+      KAFKA_CLUSTERS_0_SSL_TRUSTSTORE_PASSWORD: '12345678'
       JAVA_OPTS: >-
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
         -Djavax.net.debug=SSL
-#        -Djavax.net.ssl.trustStore=/jmx/clienttruststore
-#        -Djavax.net.ssl.trustStorePassword=12345678
-#        -Djavax.net.ssl.keyStore=/jmx/clientkeystore
-#        -Djavax.net.ssl.keyStorePassword=12345678
     volumes:
       - ./jmx/clienttruststore:/jmx/clienttruststore
       - ./jmx/clientkeystore:/jmx/clientkeystore
