@@ -2,12 +2,14 @@ package com.provectus.kafka.ui.service.metrics;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.util.SocketFactory;
 import io.netty.handler.ssl.JdkSslContext;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -52,6 +54,16 @@ import reactor.core.scheduler.Schedulers;
 @Slf4j
 class JmxMetricsRetriever implements MetricsRetriever {
 
+  static {
+    try {
+      Field f = SslRMIClientSocketFactory.class.getDeclaredField("defaultSocketFactory");
+      f.setAccessible(true);
+      f.set(null, new SocketFactory());
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      e.printStackTrace();
+    }
+  }
+
   private static final String JMX_URL = "service:jmx:rmi:///jndi/rmi://";
   private static final String JMX_SERVICE_TYPE = "jmxrmi";
   private static final String CANONICAL_NAME_PATTERN = "kafka.server*:*";
@@ -93,46 +105,6 @@ class JmxMetricsRetriever implements MetricsRetriever {
   private JMXConnector createJmxConnector(String jmxUrl, KafkaCluster c) throws Exception {
     var config = c.getMetricsConfig();
 
-    Map<String, Object> env = new HashMap<>();
-    if (StringUtils.isNotEmpty(config.getUsername()) && StringUtils.isNotEmpty(config.getPassword())) {
-      env.put("jmx.remote.credentials", new String[] {config.getUsername(), config.getPassword()});
-    }
-
-    if (config.isSsl()) {
-      env.put("com.sun.management.jmxremote.registry.ssl", "true");
-      // env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
-      env.put("com.sun.jndi.rmi.factory.socket", new OverriddenSslSocketFactory(c.getOriginalProperties().getSsl()));
-    }
-
-    RMIServer server =
-        (RMIServer) LocateRegistry.getRegistry("kakfa0", 9997,
-                new OverriddenSslSocketFactory(c.getOriginalProperties().getSsl()))
-            .lookup("jmxrmi");
-
-//    RMIServerImpl_Stub stub = (RMIServerImpl_Stub) new InitialContext(EnvHelp.mapToHashtable(env)).lookup("rmi://kafka0:9997/jmxrmi");
-//    var liveRef = ((UnicastRef2) stub.getRef()).getLiveRef();
-//// option1: set liveRef.ep.csf to OverridenSSlfactory
-//
-//
-//// option2: (doenst work??)
-//    var newRmiServer =  sun.rmi.server.Util.createProxy(
-//        RMIServerImpl.class,
-//        new UnicastRef2(
-//            new LiveRef(
-//                liveRef.getObjID(),
-//                new TCPEndpoint("kafka0", liveRef.getPort(), new OverriddenSslSocketFactory(c.getOriginalProperties().getSsl()), null),
-//                false
-//            )
-//        ),
-//        false
-//    );
-//
-//    var newConn = new RMIConnector(newRmiServer, null, env);
-//    newConn.connect();
-
-    var connector = new RMIConnector(server, env);
-    connector.connect();
-    return connector;
   }
 
   @SneakyThrows

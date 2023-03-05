@@ -16,4 +16,4 @@ ENV JAVA_OPTS=
 
 EXPOSE 8080
 
-CMD java $JAVA_OPTS -jar kafka-ui-api.jar
+CMD java --add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED  $JAVA_OPTS -jar kafka-ui-api.jar
