@@ -207,7 +207,7 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_KEYSTORELOCATION`| Path to the JKS keystore to communicate to Kafka Connect
 |`KAFKA_CLUSTERS_0_KAFKACONNECT_0_KEYSTOREPASSWORD`| Password of the JKS keystore for Kafka Connect
 |`KAFKA_CLUSTERS_0_POLLING_THROTTLE_RATE` |Max traffic rate (bytes/sec) that kafka-ui allowed to reach when polling messages from the cluster. Default: 0 (not limited)
-|`KAFKA_CLUSTERS_0_SSL_TRUSTSTORELOCATION`| Path to the JKS truststore to communicate to Kafka Connect, SchemaRegistry, KSQL 
-|`KAFKA_CLUSTERS_0_SSL_TRUSTSTOREPASSWORD`| Password of the JKS truststore for Kafka Connect, SchemaRegistry, KSQL 
+|`KAFKA_CLUSTERS_0_SSL_TRUSTSTORELOCATION`| Path to the JKS truststore to communicate to Kafka Connect, SchemaRegistry, KSQL, Metrics
+|`KAFKA_CLUSTERS_0_SSL_TRUSTSTOREPASSWORD`| Password of the JKS truststore for Kafka Connect, SchemaRegistry, KSQL, Metrics
 |`TOPIC_RECREATE_DELAY_SECONDS` |Time delay between topic deletion and topic creation attempts for topic recreate functionality. Default: 1
 |`TOPIC_RECREATE_MAXRETRIES`  |Number of attempts of topic creation after topic deletion for topic recreate functionality. Default: 15

@@ -31,7 +31,7 @@ class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
       defaultSocketFactoryField.setAccessible(true);
       defaultSocketFactoryField.set(null, new JmxSslSocketFactory());
       sslJmxSupported = true;
-    } catch (NoSuchFieldException | IllegalAccessException e) {
+    } catch (Exception e) {
       log.error("----------------------------------");
       log.error("SSL can't be enabled for JMX retrieval", e);
       log.error("----------------------------------");
