@@ -36,6 +36,7 @@ const Select: React.FC<SelectProps> = ({
   isLive,
   disabled = false,
   onChange,
+  isThemeMode,
   ...props
 }) => {
   const [selectedOption, setSelectedOption] = useState(value);
@@ -74,10 +75,11 @@ const Select: React.FC<SelectProps> = ({
         disabled={disabled}
         onClick={showOptionsHandler}
         onKeyDown={showOptionsHandler}
+        isThemeMode={isThemeMode}
         {...props}
       >
         {isLive && <LiveIcon />}
-        <S.SelectedOption role="option" tabIndex={0}>
+        <S.SelectedOption role="option" tabIndex={0} isThemeMode={isThemeMode}>
           {options.find(
             (option) => option.value === (defaultValue || selectedOption)
           )?.label || placeholder}
@@ -99,7 +101,10 @@ const Select: React.FC<SelectProps> = ({
             ))}
           </S.OptionList>
         )}
-        <DropdownArrowIcon isOpen={showOptions} />
+        <DropdownArrowIcon
+          style={isThemeMode ? {} : undefined}
+          isOpen={showOptions}
+        />
       </S.Select>
     </div>
   );

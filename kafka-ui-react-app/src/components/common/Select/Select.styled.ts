@@ -115,8 +115,8 @@ export const Option = styled.li<OptionProps>`
   }
 `;
 
-export const SelectedOption = styled.li`
-  padding-right: 16px;
+export const SelectedOption = styled.li<{ isThemeMode?: boolean }>`
+  padding-right: ${({ isThemeMode }) => (isThemeMode ? '' : '16px')};
   list-style-position: inside;
   white-space: nowrap;
   overflow: hidden;

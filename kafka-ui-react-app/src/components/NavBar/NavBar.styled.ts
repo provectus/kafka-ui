@@ -15,7 +15,7 @@ export const Navbar = styled.nav(
     right: 0;
     z-index: 30;
     background-color: ${theme.menu.backgroundColor.normal};
-    min-height: 3.25rem;
+    min-height: 2.563rem;
   `
 );
 
