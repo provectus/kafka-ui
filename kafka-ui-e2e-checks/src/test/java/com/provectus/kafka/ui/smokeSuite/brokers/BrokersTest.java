@@ -40,12 +40,4 @@ public class BrokersTest extends BaseTest {
         verifyElementsCondition(brokersConfigTab.getEditButtons(), Condition.enabled);
         Assert.assertTrue(brokersConfigTab.isSearchByKeyVisible(), "isSearchByKeyVisible()");
     }
-
-    @Step
-    private void navigateToBrokers() {
-        naviSideBar
-                .openSideMenu(BROKERS);
-        brokersList
-                .waitUntilScreenReady();
-    }
 }

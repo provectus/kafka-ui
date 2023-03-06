@@ -20,4 +20,11 @@ public class SmokeTest extends BaseTest {
                 Stream.concat(topPanel.getAllEnabledElements().stream(), naviSideBar.getAllMenuButtons().stream())
                         .collect(Collectors.toList()), Condition.enabled);
     }
+    
+    @QaseId(45)
+    @Test
+    public void checkCurrentUrl() {
+        navigateToBrokers();
+        navigateToTopics();
+    }
 }

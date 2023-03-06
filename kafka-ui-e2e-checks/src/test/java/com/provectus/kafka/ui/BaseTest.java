@@ -22,6 +22,7 @@ import org.testng.asserts.SoftAssert;
 import java.time.Duration;
 import java.util.List;
 
+import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.BROKERS;
 import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
 import static com.provectus.kafka.ui.settings.BaseSource.*;
 import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.*;
@@ -107,6 +108,14 @@ public abstract class BaseTest extends Facade {
     @AfterMethod(alwaysRun = true)
     public void afterMethod() {
         browserClear();
+    }
+    
+    @Step
+    protected void navigateToBrokers() {
+        naviSideBar
+                .openSideMenu(BROKERS);
+        brokersList
+                .waitUntilScreenReady();
     }
 
     @Step
