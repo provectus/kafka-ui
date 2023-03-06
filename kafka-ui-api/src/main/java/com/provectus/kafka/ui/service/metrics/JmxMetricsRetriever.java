@@ -1,11 +1,8 @@
 package com.provectus.kafka.ui.service.metrics;
 
-import com.provectus.kafka.ui.config.ClustersProperties.KeystoreConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.util.JmxOverrideSslSocketFactory;
+import com.provectus.kafka.ui.util.JmxSslSocketFactory;
 import java.io.Closeable;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +19,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.Node;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,18 +26,13 @@ import reactor.core.scheduler.Schedulers;
 
 
 @Service
-@Lazy //TODO: rm
 @Slf4j
 class JmxMetricsRetriever implements MetricsRetriever, Closeable {
 
+  private static final boolean SSL_JMX_SUPPORTED;
+
   static {
-    try {
-      Field f = SslRMIClientSocketFactory.class.getDeclaredField("defaultSocketFactory");
-      f.setAccessible(true);
-      f.set(null, new JmxOverrideSslSocketFactory());
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      e.printStackTrace();
-    }
+    SSL_JMX_SUPPORTED = JmxSslSocketFactory.initialized();
   }
 
   private static final String JMX_URL = "service:jmx:rmi:///jndi/rmi://";
@@ -49,16 +40,23 @@ class JmxMetricsRetriever implements MetricsRetriever, Closeable {
   private static final String CANONICAL_NAME_PATTERN = "kafka.server*:*";
 
   @Override
-  public void close() throws IOException {
-    //TODO: add comments
-    JmxOverrideSslSocketFactory.clearFactoriesCache();
+  public void close() {
+    JmxSslSocketFactory.clearFactoriesCache();
   }
 
   @Override
   public Flux<RawMetric> retrieve(KafkaCluster c, Node node) {
+    if (isSslJmxEndpoint(c) && !SSL_JMX_SUPPORTED) {
+      log.warn("Cluster {} has jmx ssl configured, but it is not supported", c.getName());
+      return Flux.empty();
+    }
     return Mono.fromSupplier(() -> retrieveSync(c, node))
         .subscribeOn(Schedulers.boundedElastic())
         .flatMapMany(Flux::fromIterable);
+  }
+
+  private boolean isSslJmxEndpoint(KafkaCluster cluster) {
+    return cluster.getMetricsConfig().getKeystoreLocation() != null;
   }
 
   @SneakyThrows
@@ -71,16 +69,6 @@ class JmxMetricsRetriever implements MetricsRetriever, Closeable {
     return result;
   }
 
-  @SneakyThrows
-  private void getMetricsFromJmx(JMXConnector jmxConnector, List<RawMetric> sink) {
-    MBeanServerConnection msc = jmxConnector.getMBeanServerConnection();
-    var jmxMetrics = msc.queryNames(new ObjectName(CANONICAL_NAME_PATTERN), null);
-    for (ObjectName jmxMetric : jmxMetrics) {
-      sink.addAll(extractObjectMetrics(jmxMetric, msc));
-    }
-  }
-
-  //TODO: wrap with closeable / consumer passing
   private void withJmxConnector(String jmxUrl,
                                 KafkaCluster c,
                                 Consumer<JMXConnector> consumer) {
@@ -88,7 +76,8 @@ class JmxMetricsRetriever implements MetricsRetriever, Closeable {
     try {
       JMXConnector connector = null;
       try {
-        connector = JMXConnectorFactory.connect(new JMXServiceURL(jmxUrl), env);
+        connector = JMXConnectorFactory.newJMXConnector(new JMXServiceURL(jmxUrl), env);
+        connector.connect(env);
       } catch (Exception exception) {
         log.error("Error connecting to {}", jmxUrl, exception);
         return;
@@ -98,18 +87,20 @@ class JmxMetricsRetriever implements MetricsRetriever, Closeable {
     } catch (Exception e) {
       log.error("Error getting jmx metrics from {}", jmxUrl, e);
     } finally {
-      JmxOverrideSslSocketFactory.clearThreadLocalContext();
+      JmxSslSocketFactory.clearThreadLocalContext();
     }
   }
 
-  private Map<String, Object> prepareJmxEnvAndSetThreadLocal(KafkaCluster c) {
-    var metricsConfig = c.getMetricsConfig();
+  private Map<String, Object> prepareJmxEnvAndSetThreadLocal(KafkaCluster cluster) {
+    var metricsConfig = cluster.getMetricsConfig();
     Map<String, Object> env = new HashMap<>();
-    if (metricsConfig.getKeystoreLocation() != null) {
-      //TODO nulls check
-      JmxOverrideSslSocketFactory.setSslContextThreadLocal(
-          c.getOriginalProperties().getSsl(),
-          new KeystoreConfig(metricsConfig.getKeystoreLocation(), metricsConfig.getKeystorePassword())
+    if (isSslJmxEndpoint(cluster)) {
+      var clusterSsl = cluster.getOriginalProperties().getSsl();
+      JmxSslSocketFactory.setSslContextThreadLocal(
+          clusterSsl != null ? clusterSsl.getTruststoreLocation() : null,
+          clusterSsl != null ? clusterSsl.getTruststorePassword() : null,
+          metricsConfig.getKeystoreLocation(),
+          metricsConfig.getKeystorePassword()
       );
       env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
     }
@@ -117,11 +108,20 @@ class JmxMetricsRetriever implements MetricsRetriever, Closeable {
     if (StringUtils.isNotEmpty(metricsConfig.getUsername())
         && StringUtils.isNotEmpty(metricsConfig.getPassword())) {
       env.put(
-          "jmx.remote.credentials",
+          JMXConnector.CREDENTIALS,
           new String[] {metricsConfig.getUsername(), metricsConfig.getPassword()}
       );
     }
     return env;
+  }
+
+  @SneakyThrows
+  private void getMetricsFromJmx(JMXConnector jmxConnector, List<RawMetric> sink) {
+    MBeanServerConnection msc = jmxConnector.getMBeanServerConnection();
+    var jmxMetrics = msc.queryNames(new ObjectName(CANONICAL_NAME_PATTERN), null);
+    for (ObjectName jmxMetric : jmxMetrics) {
+      sink.addAll(extractObjectMetrics(jmxMetric, msc));
+    }
   }
 
   @SneakyThrows

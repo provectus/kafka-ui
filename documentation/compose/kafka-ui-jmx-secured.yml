@@ -17,16 +17,15 @@ services:
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
       KAFKA_CLUSTERS_0_METRICS_PORT: 9997
-      KAFKA_CLUSTERS_0_METRICS_SSL: 'true'
       KAFKA_CLUSTERS_0_METRICS_USERNAME: root
       KAFKA_CLUSTERS_0_METRICS_PASSWORD: password
       KAFKA_CLUSTERS_0_METRICS_KEYSTORE_LOCATION: /jmx/clientkeystore
       KAFKA_CLUSTERS_0_METRICS_KEYSTORE_PASSWORD: '12345678'
       KAFKA_CLUSTERS_0_SSL_TRUSTSTORE_LOCATION: /jmx/clienttruststore
       KAFKA_CLUSTERS_0_SSL_TRUSTSTORE_PASSWORD: '12345678'
-      JAVA_OPTS: >-
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-        -Djavax.net.debug=SSL
+#      JAVA_OPTS: >-
+#        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+#        -Djavax.net.debug=SSL
     volumes:
       - ./jmx/clienttruststore:/jmx/clienttruststore
       - ./jmx/clientkeystore:/jmx/clientkeystore
@@ -69,8 +68,6 @@ services:
         -Dcom.sun.management.jmxremote.access.file=/jmx/jmxremote.access
         -Dcom.sun.management.jmxremote.rmi.port=9997
         -Djava.rmi.server.hostname=kafka0
-        -Djava.rmi.server.logCalls=true
-#        -Djavax.net.debug=ssl:handshake
     volumes:
       - ./jmx/serverkeystore:/jmx/serverkeystore
       - ./jmx/servertruststore:/jmx/servertruststore
