@@ -1,14 +1,14 @@
 package com.provectus.kafka.ui.utilities.qaseUtils.enums;
 
-public enum Status {
+public enum State {
 
-    ACTUAL(0),
-    DRAFT(1),
-    DEPRECATED(2);
+    NOT_AUTOMATED(0),
+    TO_BE_AUTOMATED(1),
+    AUTOMATED(2);
 
     private final int value;
 
-    Status(int value) {
+    State(int value) {
         this.value = value;
     }
 

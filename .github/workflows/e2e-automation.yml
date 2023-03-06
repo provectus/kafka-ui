@@ -8,8 +8,6 @@ on:
         required: true
         type: choice
         options:
-          - manual
-          - qase
           - regression
           - sanity
           - smoke
