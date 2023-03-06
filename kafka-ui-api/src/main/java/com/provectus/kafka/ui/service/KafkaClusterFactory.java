@@ -204,7 +204,7 @@ public class KafkaClusterFactory {
     MetricsConfig.MetricsConfigBuilder builder = MetricsConfig.builder();
     builder.type(metricsConfigData.getType());
     builder.port(metricsConfigData.getPort());
-    builder.ssl(metricsConfigData.isSsl());
+    builder.ssl(Optional.ofNullable(metricsConfigData.getSsl()).orElse(false));
     builder.username(metricsConfigData.getUsername());
     builder.password(metricsConfigData.getPassword());
     builder.keystoreLocation(metricsConfigData.getKeystoreLocation());
