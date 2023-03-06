@@ -26,8 +26,8 @@ import { Dropdown } from 'components/common/Dropdown';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import { Action, ResourceType } from 'generated-sources';
 import { ActionDropdownItem } from 'components/common/ActionComponent';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 
-import * as S from './ListItem.styled';
 import ListItem from './ListItem';
 
 const Details: React.FC = () => {
@@ -137,13 +137,8 @@ const Details: React.FC = () => {
       <Table isFullwidth>
         <thead>
           <tr>
-            <S.TableHeaderConsumerCell size="small">
-              Topic
-            </S.TableHeaderConsumerCell>
-            <S.TableHeaderConsumerCell> </S.TableHeaderConsumerCell>
-            <S.TableHeaderConsumerCell size="large">
-              Messages behind
-            </S.TableHeaderConsumerCell>
+            <TableHeaderCell title="Topic" />
+            <TableHeaderCell title="Messages behind" />
           </tr>
         </thead>
         <tbody>

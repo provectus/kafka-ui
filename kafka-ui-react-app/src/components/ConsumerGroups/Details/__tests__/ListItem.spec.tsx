@@ -40,7 +40,7 @@ describe('ListItem', () => {
   });
 
   it('should renders list item with topic content open', async () => {
-    await userEvent.click(screen.getAllByRole('cell')[0].children[0]);
+    await userEvent.click(screen.getByTestId('consumer-group-IconButton'));
     expect(screen.getByText('Consumer ID')).toBeInTheDocument();
   });
 });
