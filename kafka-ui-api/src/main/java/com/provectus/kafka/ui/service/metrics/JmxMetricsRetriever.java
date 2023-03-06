@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.service.metrics;
 
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.util.JmxSslSocketFactory;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import javax.rmi.ssl.SslRMIClientSocketFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +30,7 @@ class JmxMetricsRetriever implements MetricsRetriever, Closeable {
   private static final boolean SSL_JMX_SUPPORTED;
 
   static {
+    // see JmxSslSocketFactory doc for details
     SSL_JMX_SUPPORTED = JmxSslSocketFactory.initialized();
   }
 
@@ -102,7 +101,7 @@ class JmxMetricsRetriever implements MetricsRetriever, Closeable {
           metricsConfig.getKeystoreLocation(),
           metricsConfig.getKeystorePassword()
       );
-      env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
+      JmxSslSocketFactory.editJmxConnectorEnv(env);
     }
 
     if (StringUtils.isNotEmpty(metricsConfig.getUsername())

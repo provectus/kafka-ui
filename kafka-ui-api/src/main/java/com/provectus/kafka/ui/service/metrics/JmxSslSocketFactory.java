@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.util;
+package com.provectus.kafka.ui.service.metrics;
 
 import com.google.common.base.Preconditions;
 import java.io.FileInputStream;
@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ResourceUtils;
 
 @Slf4j
-public class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
+class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
 
   private static final boolean SSL_JMX_SUPPORTED;
 
@@ -43,9 +43,9 @@ public class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
     return SSL_JMX_SUPPORTED;
   }
 
-  private final static ThreadLocal<Ssl> SSL_CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
+  private static final ThreadLocal<Ssl> SSL_CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
 
-  private final static Map<HostAndPort, javax.net.ssl.SSLSocketFactory> CACHED_FACTORIES = new ConcurrentHashMap<>();
+  private static final Map<HostAndPort, javax.net.ssl.SSLSocketFactory> CACHED_FACTORIES = new ConcurrentHashMap<>();
 
   private record HostAndPort(String host, int port) {
   }
@@ -70,6 +70,10 @@ public class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
 
   public static void clearThreadLocalContext() {
     SSL_CONTEXT_THREAD_LOCAL.set(null);
+  }
+
+  public static void editJmxConnectorEnv(Map<String, Object> env) {
+    env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
   }
 
   //-----------------------------------------------------------------------------------------------
@@ -114,6 +118,10 @@ public class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
     return ctx.getSocketFactory();
   }
 
+  private boolean threadLocalContextSet() {
+    return SSL_CONTEXT_THREAD_LOCAL.get() != null;
+  }
+
   @Override
   public Socket createSocket(String host, int port) throws IOException {
     var hostAndPort = new HostAndPort(host, port);
@@ -127,27 +135,7 @@ public class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
     return defaultSocketFactory.createSocket(host, port);
   }
 
-  ///------------------------------------------------------------------
-
-  private boolean threadLocalContextSet() {
-    return SSL_CONTEXT_THREAD_LOCAL.get() != null;
-  }
-
-  @Override
-  public String[] getDefaultCipherSuites() {
-    if (threadLocalContextSet()) {
-      return createFactoryFromThreadLocalCtx().getDefaultCipherSuites();
-    }
-    return defaultSocketFactory.getDefaultCipherSuites();
-  }
-
-  @Override
-  public String[] getSupportedCipherSuites() {
-    if (threadLocalContextSet()) {
-      return createFactoryFromThreadLocalCtx().getSupportedCipherSuites();
-    }
-    return defaultSocketFactory.getSupportedCipherSuites();
-  }
+  /// FOLLOWING METHODS WON'T BE USED DURING JMX INTERACTION, IMPLEMENTING THEM JUST FOR CONSISTENCY ->>>>>
 
   @Override
   public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
@@ -181,5 +169,21 @@ public class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
       return createFactoryFromThreadLocalCtx().createSocket(address, port, localAddress, localPort);
     }
     return defaultSocketFactory.createSocket(address, port, localAddress, localPort);
+  }
+
+  @Override
+  public String[] getDefaultCipherSuites() {
+    if (threadLocalContextSet()) {
+      return createFactoryFromThreadLocalCtx().getDefaultCipherSuites();
+    }
+    return defaultSocketFactory.getDefaultCipherSuites();
+  }
+
+  @Override
+  public String[] getSupportedCipherSuites() {
+    if (threadLocalContextSet()) {
+      return createFactoryFromThreadLocalCtx().getSupportedCipherSuites();
+    }
+    return defaultSocketFactory.getSupportedCipherSuites();
   }
 }
