@@ -1,5 +1,18 @@
 package com.provectus.kafka.ui.utilities.qaseUtils.enums;
 
 public enum Status {
-    AUTOMATED, TO_BE_AUTOMATED, MANUAL
+
+    ACTUAL(0),
+    DRAFT(1),
+    DEPRECATED(2);
+
+    private final int value;
+
+    Status(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
 }

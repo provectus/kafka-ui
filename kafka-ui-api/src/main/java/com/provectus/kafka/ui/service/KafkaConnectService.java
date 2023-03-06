@@ -28,10 +28,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 @Service
@@ -52,18 +51,18 @@ public class KafkaConnectService {
   private final ObjectMapper objectMapper;
   private final KafkaConfigSanitizer kafkaConfigSanitizer;
 
-  public List<ConnectDTO> getConnects(KafkaCluster cluster) {
-    return Optional.ofNullable(cluster.getOriginalProperties().getKafkaConnect())
-        .map(lst -> lst.stream().map(clusterMapper::toKafkaConnect).toList())
-        .orElse(List.of());
+  public Flux<ConnectDTO> getConnects(KafkaCluster cluster) {
+    return Flux.fromIterable(
+        Optional.ofNullable(cluster.getOriginalProperties().getKafkaConnect())
+            .map(lst -> lst.stream().map(clusterMapper::toKafkaConnect).toList())
+            .orElse(List.of())
+    );
   }
 
   public Flux<FullConnectorInfoDTO> getAllConnectors(final KafkaCluster cluster,
-                                                     final String search) {
-    Mono<Flux<ConnectDTO>> clusters = Mono.just(Flux.fromIterable(getConnects(cluster))); // TODO get rid
-    return clusters
-        .flatMapMany(Function.identity())
-        .flatMap(connect -> getConnectorNames(cluster, connect.getName()))
+                                                     @Nullable final String search) {
+    return getConnects(cluster)
+        .flatMap(connect -> getConnectorNames(cluster, connect.getName()).map(cn -> Tuples.of(connect.getName(), cn)))
         .flatMap(pair -> getConnector(cluster, pair.getT1(), pair.getT2()))
         .flatMap(connector ->
             getConnectorConfig(cluster, connector.getConnect(), connector.getName())
@@ -99,54 +98,44 @@ public class KafkaConnectService {
         .filter(matchesSearchTerm(search));
   }
 
-  private Predicate<FullConnectorInfoDTO> matchesSearchTerm(final String search) {
-    return connector -> getSearchValues(connector)
-        .anyMatch(value -> value.contains(
-            StringUtils.defaultString(
-                    search,
-                    StringUtils.EMPTY)
-                .toUpperCase()));
+  private Predicate<FullConnectorInfoDTO> matchesSearchTerm(@Nullable final String search) {
+    if (search == null) {
+      return c -> true;
+    }
+    return connector -> getStringsForSearch(connector)
+        .anyMatch(string -> StringUtils.containsIgnoreCase(string, search));
   }
 
-  private Stream<String> getSearchValues(FullConnectorInfoDTO fullConnectorInfo) {
+  private Stream<String> getStringsForSearch(FullConnectorInfoDTO fullConnectorInfo) {
     return Stream.of(
-            fullConnectorInfo.getName(),
-            fullConnectorInfo.getStatus().getState().getValue(),
-            fullConnectorInfo.getType().getValue())
-        .map(String::toUpperCase);
+        fullConnectorInfo.getName(),
+        fullConnectorInfo.getStatus().getState().getValue(),
+        fullConnectorInfo.getType().getValue());
   }
 
-  private Mono<ConnectorTopics> getConnectorTopics(KafkaCluster cluster, String connectClusterName,
-                                                   String connectorName) {
+  public Mono<ConnectorTopics> getConnectorTopics(KafkaCluster cluster, String connectClusterName,
+                                                  String connectorName) {
     return api(cluster, connectClusterName)
         .mono(c -> c.getConnectorTopics(connectorName))
         .map(result -> result.get(connectorName))
-        // old connectors don't have this api, setting empty list for
+        // old Connect API versions don't have this endpoint, setting empty list for
         // backward-compatibility
         .onErrorResume(Exception.class, e -> Mono.just(new ConnectorTopics().topics(List.of())));
   }
 
-  private Flux<Tuple2<String, String>> getConnectorNames(KafkaCluster cluster, String connectName) {
-    return getConnectors(cluster, connectName)
-        .collectList().map(e -> e.get(0))
+  public Flux<String> getConnectorNames(KafkaCluster cluster, String connectName) {
+    return api(cluster, connectName)
+        .flux(client -> client.getConnectors(null))
         // for some reason `getConnectors` method returns the response as a single string
-        .map(this::parseToList)
-        .flatMapMany(Flux::fromIterable)
-        .map(connector -> Tuples.of(connectName, connector));
+        .collectList().map(e -> e.get(0))
+        .map(this::parseConnectorsNamesStringToList)
+        .flatMapMany(Flux::fromIterable);
   }
 
   @SneakyThrows
-  private List<String> parseToList(String json) {
+  private List<String> parseConnectorsNamesStringToList(String json) {
     return objectMapper.readValue(json, new TypeReference<>() {
     });
-  }
-
-  public Flux<String> getConnectors(KafkaCluster cluster, String connectName) {
-    return api(cluster, connectName)
-        .flux(client ->
-            client.getConnectors(null)
-                .doOnError(e -> log.error("Unexpected error upon getting connectors", e))
-        );
   }
 
   public Mono<ConnectorDTO> createConnector(KafkaCluster cluster, String connectName,
@@ -171,9 +160,7 @@ public class KafkaConnectService {
   private Mono<Boolean> connectorExists(KafkaCluster cluster, String connectName,
                                         String connectorName) {
     return getConnectorNames(cluster, connectName)
-        .map(Tuple2::getT2)
-        .collectList()
-        .map(connectorNames -> connectorNames.contains(connectorName));
+        .any(name -> name.equals(connectorName));
   }
 
   public Mono<ConnectorDTO> getConnector(KafkaCluster cluster, String connectName,
