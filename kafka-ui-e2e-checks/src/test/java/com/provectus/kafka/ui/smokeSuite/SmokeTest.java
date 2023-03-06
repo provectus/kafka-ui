@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import static com.provectus.kafka.ui.settings.BaseSource.BROWSER;
 import static com.provectus.kafka.ui.variables.Browser.LOCAL;
+import static com.provectus.kafka.ui.variables.Url.*;
 
 public class SmokeTest extends BaseTest {
 
@@ -31,11 +32,17 @@ public class SmokeTest extends BaseTest {
     @Test
     public void checkCurrentUrl() {
         navigateToBrokers();
+        verifyCurrentUrl(BROKERS_LIST_URL);
         navigateToTopics();
+        verifyCurrentUrl(TOPICS_LIST_URL);
         navigateToConsumers();
+        verifyCurrentUrl(CONSUMERS_LIST_URL);
         navigateToSchemaRegistry();
+        verifyCurrentUrl(SCHEMA_REGISTRY_LIST_URL);
         navigateToConnectors();
+        verifyCurrentUrl(KAFKA_CONNECT_LIST_URL);
         navigateToKsqlDb();
+        verifyCurrentUrl(KSQL_DB_LIST_URL);
     }
     
     @Step
