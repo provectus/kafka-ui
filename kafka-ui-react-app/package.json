@@ -43,7 +43,7 @@
     "redux": "^4.2.0",
     "sass": "^1.52.3",
     "styled-components": "^5.3.1",
-    "use-debounce": "^8.0.1",
+    "use-debounce": "^9.0.3",
     "vite": "^4.0.0",
     "vite-tsconfig-paths": "^4.0.2",
     "whatwg-fetch": "^3.6.2",
