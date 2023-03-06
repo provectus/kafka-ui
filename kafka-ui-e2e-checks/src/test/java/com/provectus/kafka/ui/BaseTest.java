@@ -22,8 +22,7 @@ import org.testng.asserts.SoftAssert;
 import java.time.Duration;
 import java.util.List;
 
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.BROKERS;
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
+import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.*;
 import static com.provectus.kafka.ui.settings.BaseSource.*;
 import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.*;
 import static com.provectus.kafka.ui.utilities.qaseUtils.QaseSetup.qaseIntegrationSetup;
@@ -136,7 +135,57 @@ public abstract class BaseTest extends Facade {
         topicDetails
                 .waitUntilScreenReady();
     }
-
+    
+    @Step
+    protected void navigateToConsumers() {
+        naviSideBar
+                .openSideMenu(CONSUMERS);
+        consumersList
+                .waitUntilScreenReady();
+    }
+    
+    @Step
+    protected void navigateToSchemaRegistry() {
+        naviSideBar
+                .openSideMenu(SCHEMA_REGISTRY);
+        schemaRegistryList
+                .waitUntilScreenReady();
+    }
+    
+    @Step
+    protected void navigateToSchemaRegistryAndOpenDetails(String schemaName) {
+        navigateToSchemaRegistry();
+        schemaRegistryList
+                .openSchema(schemaName);
+        schemaDetails
+                .waitUntilScreenReady();
+    }
+    
+    @Step
+    protected void navigateToConnectors() {
+        naviSideBar
+                .openSideMenu(KAFKA_CONNECT);
+        kafkaConnectList
+                .waitUntilScreenReady();
+    }
+    
+    @Step
+    protected void navigateToConnectorsAndOpenDetails(String connectorName) {
+        navigateToConnectors();
+        kafkaConnectList
+                .openConnector(connectorName);
+        connectorDetails
+                .waitUntilScreenReady();
+    }
+    
+    @Step
+    protected void navigateToKsqlDb() {
+        naviSideBar
+                .openSideMenu(KSQL_DB);
+        ksqlDbList
+                .waitUntilScreenReady();
+    }
+    
     @Step
     protected void verifyElementsCondition(List<SelenideElement> elementList, Condition expectedCondition) {
         SoftAssert softly = new SoftAssert();
