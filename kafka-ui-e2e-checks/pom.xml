@@ -15,6 +15,8 @@
         <maven.surefire-plugin.version>3.0.0-M8</maven.surefire-plugin.version>
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
         <testcontainers.version>1.17.6</testcontainers.version>
+        <httpcomponents.version>5.2.1</httpcomponents.version>
+        <selenium.version>4.8.1</selenium.version>
         <selenide.version>6.11.2</selenide.version>
         <testng.version>7.7.0</testng.version>
         <allure.version>2.21.0</allure.version>
@@ -119,6 +121,21 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>selenium</artifactId>
             <version>${testcontainers.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5</artifactId>
+            <version>${httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-http</artifactId>
+            <version>${selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codeborne</groupId>
