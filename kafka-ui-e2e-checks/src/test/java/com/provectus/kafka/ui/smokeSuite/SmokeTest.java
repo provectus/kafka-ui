@@ -5,7 +5,7 @@ import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.BaseTest;
 import io.qameta.allure.Step;
 import io.qase.api.annotation.QaseId;
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.stream.Collectors;
@@ -47,8 +47,8 @@ public class SmokeTest extends BaseTest {
     
     @Step
     protected void verifyCurrentUrl(String expectedUrl) {
-        if (BROWSER.equals(LOCAL))
-            expectedUrl = expectedUrl.replace("http://host.testcontainers.internal","localhost");
-        Assert.assertEquals(WebDriverRunner.getWebDriver().getCurrentUrl(),expectedUrl, "");
+        String host = BROWSER.equals(LOCAL)?"localhost" : "host.testcontainers.internal";
+        Assert.assertEquals(WebDriverRunner.getWebDriver().getCurrentUrl(),
+                String.format(expectedUrl, host), "getCurrentUrl()");
     }
 }
