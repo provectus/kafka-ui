@@ -19,6 +19,33 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ResourceUtils;
 
+/*
+ * Purpose of this class to provide an ability to connect to different JMX endpoints using different keystores.
+ *
+ * Usually, when you want to establish SSL JMX connection you set "com.sun.jndi.rmi.factory.socket" env
+ * property to SslRMIClientSocketFactory instance. SslRMIClientSocketFactory itself uses SSLSocketFactory.getDefault()
+ * as a socket factory implementation. Problem here is that when ones SslRMIClientSocketFactory instance is created,
+ * the same cached SSLSocketFactory instance will be used to establish connection with *all* JMX endpoints.
+ * Moreover, even if we submit custom SslRMIClientSocketFactory implementation which takes specific ssl context
+ * into account, SslRMIClientSocketFactory is
+ * internally created during RMI calls.
+ *
+ * So, the only way we found to deal with it is to change internal field ('defaultSocketFactory') of
+ * SslRMIClientSocketFactory to our custom impl, and left all internal RMI code work as is.
+ * Since RMI code is synchronous, we can pass parameters (which are truststore/keystore) to our custom factory
+ * that we want to use when creating ssl socket via ThreadLocal variables.
+ *
+ * NOTE 1: Theoretically we could avoid using reflection to set internal field set by
+ * setting "ssl.SocketFactory.provider" security property (see code in SSLSocketFactory.getDefault()),
+ * but that code uses systemClassloader which is not working right when we're creating executable spring boot jar
+ * (https://docs.spring.io/spring-boot/docs/current/reference/html/executable-jar.html#appendix.executable-jar.restrictions).
+ * We can use this if we swith to other jar-packing solutions in the future.
+ *
+ * NOTE 2: There are two paths from which socket factory is called - when jmx connection if established (we manage this
+ * by passing ThreadLocal vars) and from DGCClient in background thread - we deal with that we cache created factories
+ * for specific host+port.
+ *
+ */
 @Slf4j
 class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
 
@@ -33,7 +60,8 @@ class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
       sslJmxSupported = true;
     } catch (Exception e) {
       log.error("----------------------------------");
-      log.error("SSL can't be enabled for JMX retrieval", e);
+      log.error("SSL can't be enabled for JMX retrieval. "
+          + "Make sure your java app run with '--add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED' arg.", e);
       log.error("----------------------------------");
     }
     SSL_JMX_SUPPORTED = sslJmxSupported;
@@ -64,6 +92,7 @@ class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
         new Ssl(truststoreLocation, truststorePassword, keystoreLocation, keystorePassword));
   }
 
+  // should be called when (host:port) -> factory cache should be invalidated (ex. on app config reload)
   public static void clearFactoriesCache() {
     CACHED_FACTORIES.clear();
   }
@@ -130,7 +159,7 @@ class JmxSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
     } else if (threadLocalContextSet()) {
       var factory = createFactoryFromThreadLocalCtx();
       CACHED_FACTORIES.put(hostAndPort, factory);
-      return factory.createSocket();
+      return factory.createSocket(host, port);
     }
     return defaultSocketFactory.createSocket(host, port);
   }
