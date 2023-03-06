@@ -7,7 +7,7 @@ import org.testng.annotations.Listeners;
 import static com.provectus.kafka.ui.utilities.qaseUtils.QaseSetup.qaseIntegrationSetup;
 
 @Listeners(QaseCreateListener.class)
-public abstract class BaseQase {
+public abstract class BaseQaseTest {
 
     @BeforeSuite
     public void beforeSuite() {

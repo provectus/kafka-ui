@@ -13,7 +13,7 @@ import static com.provectus.kafka.ui.utilities.qaseUtils.QaseSetup.qaseIntegrati
 import static com.provectus.kafka.ui.utilities.qaseUtils.enums.State.NOT_AUTOMATED;
 
 @Listeners(QaseResultListener.class)
-public abstract class BaseManual {
+public abstract class BaseManualTest {
 
     @BeforeSuite
     public void beforeSuite() {

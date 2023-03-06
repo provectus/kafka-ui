@@ -2,10 +2,10 @@
 
 ### Table of Contents
 
-- [Intro](#Intro)
-- [Set up Qase.io integration](#Set up Qase.io integration)
-- [Test case creation](#Test case creation)
-- [Test run reporting](#Test run reporting)
+- [Intro](#intro)
+- [Set up Qase.io integration](#set-up-qase-integration)
+- [Test case creation](#test-case-creation)
+- [Test run reporting](#test-run-reporting)
 
 ### Intro
 
@@ -13,7 +13,7 @@ We're using [Qase.io](https://help.qase.io/en/) as TMS to keep test cases and ac
 Integration is set up through API using [qase-api](https://mvnrepository.com/artifact/io.qase/qase-api)
 and [qase-testng](https://mvnrepository.com/artifact/io.qase/qase-testng) libraries.
 
-### Set up Qase.io integration
+### Set up Qase integration
 
 To set up integration locally add next VM option `-DQASEIO_API_TOKEN='%s'`
 (add your [Qase token](https://app.qase.io/user/api/token) instead of '%s') into your run configuration
@@ -26,7 +26,7 @@ But to handle `@Suite` and `@Automation` we added custom QaseCreateListener. To 
 Qase (see example `kafka-ui-e2e-checks/src/test/java/com/provectus/kafka/ui/qaseSuite/Template.java`):
 
 1. Create new class in `kafka-ui-e2e-checks/src/test/java/com/provectus/kafka/ui/qaseSuite/suit`
-2. Inherit it from `kafka-ui-e2e-checks/src/test/java/com/provectus/kafka/ui/qaseSuite/BaseQase.java`
+2. Inherit it from `kafka-ui-e2e-checks/src/test/java/com/provectus/kafka/ui/qaseSuite/BaseQaseTest.java`
 3. Create new test method with some name inside the class and annotate it with:
 
 - `@Automation` (optional - Not automated by default) - to set one of automation states: NOT_AUTOMATED, TO_BE_AUTOMATED,

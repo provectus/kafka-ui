@@ -1,13 +1,13 @@
 package com.provectus.kafka.ui.manualSuite.suite;
 
-import com.provectus.kafka.ui.manualSuite.BaseManual;
+import com.provectus.kafka.ui.manualSuite.BaseManualTest;
 import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Automation;
 import io.qase.api.annotation.QaseId;
 import org.testng.annotations.Test;
 
 import static com.provectus.kafka.ui.utilities.qaseUtils.enums.State.NOT_AUTOMATED;
 
-public class RbacTest extends BaseManual {
+public class RbacTest extends BaseManualTest {
 
     @Automation(state = NOT_AUTOMATED)
     @QaseId(249)

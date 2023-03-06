@@ -9,12 +9,13 @@ import io.qase.api.annotation.Step;
 import static com.provectus.kafka.ui.utilities.qaseUtils.enums.State.NOT_AUTOMATED;
 import static com.provectus.kafka.ui.utilities.qaseUtils.enums.Status.DRAFT;
 
-public class Template extends BaseQase {
+public class Template extends BaseQaseTest {
 
     /**
      * this class is a kind of placeholder or example, use is as template to create new one
      * copy class into kafka-ui-e2e-checks/src/test/java/com/provectus/kafka/ui/qaseSuite/suite
-     * uncomment @Test and set all annotations according to kafka-ui-e2e-checks/src/test/README.md
+     * place it into regarding folder and rename according to test case summary from Qase.io
+     * uncomment @Test and set all annotations according to kafka-ui-e2e-checks/QASE.md
      */
 
     @Automation(state = NOT_AUTOMATED)
