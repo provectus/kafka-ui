@@ -10,15 +10,21 @@ import static com.provectus.kafka.ui.utilities.qaseUtils.enums.State.NOT_AUTOMAT
 public class TopicsTest extends BaseManual {
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(272)
+    @QaseId(17)
     @Test
-    public void testCaseA() {
+    public void testCaseO() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(45)
+    @QaseId(18)
     @Test
-    public void testCaseB() {
+    public void testCaseP() {
+    }
+
+    @Automation(state = NOT_AUTOMATED)
+    @QaseId(22)
+    @Test
+    public void testCaseJ() {
     }
 
     @Automation(state = NOT_AUTOMATED)
@@ -58,27 +64,9 @@ public class TopicsTest extends BaseManual {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(271)
-    @Test
-    public void testCaseI() {
-    }
-
-    @Automation(state = NOT_AUTOMATED)
-    @QaseId(22)
-    @Test
-    public void testCaseJ() {
-    }
-
-    @Automation(state = NOT_AUTOMATED)
     @QaseId(58)
     @Test
     public void testCaseK() {
-    }
-
-    @Automation(state = NOT_AUTOMATED)
-    @QaseId(267)
-    @Test
-    public void testCaseL() {
     }
 
     @Automation(state = NOT_AUTOMATED)
@@ -94,14 +82,14 @@ public class TopicsTest extends BaseManual {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(17)
+    @QaseId(271)
     @Test
-    public void testCaseO() {
+    public void testCaseI() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(18)
+    @QaseId(272)
     @Test
-    public void testCaseP() {
+    public void testCaseA() {
     }
 }
