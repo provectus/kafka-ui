@@ -20,6 +20,17 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockedUsedNavigate,
 }));
 
+// This is needed by ESLint.
+jest.mock('react-hook-form', () => ({
+  useFormContext: () => ({
+    register: jest.fn(),
+
+    // Mock methods.getValues and methods.setValue
+    getValues: jest.fn(),
+    setValue: jest.fn(),
+  }),
+}));
+
 type Datum = typeof data[0];
 
 const data = [
