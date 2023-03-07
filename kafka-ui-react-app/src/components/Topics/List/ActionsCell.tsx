@@ -70,6 +70,11 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
           </>
         }
         danger
+        permission={{
+          resource: ResourceType.TOPIC,
+          action: [Action.MESSAGES_READ, Action.CREATE, Action.DELETE],
+          value: name,
+        }}
       >
         Recreate Topic
       </DropdownItem>
