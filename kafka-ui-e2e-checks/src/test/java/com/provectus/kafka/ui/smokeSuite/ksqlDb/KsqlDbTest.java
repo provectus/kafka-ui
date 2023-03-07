@@ -8,7 +8,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KSQL_DB;
 import static com.provectus.kafka.ui.pages.ksqlDb.enums.KsqlQueryConfig.SHOW_TABLES;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
@@ -34,10 +33,8 @@ public class KsqlDbTest extends BaseTest {
     @QaseId(41)
     @Test(priority = 1)
     public void checkShowTablesRequestExecution() {
-        naviSideBar
-                .openSideMenu(KSQL_DB);
+        navigateToKsqlDb();
         ksqlDbList
-                .waitUntilScreenReady()
                 .clickExecuteKsqlRequestBtn();
         ksqlQueryForm
                 .waitUntilScreenReady()
@@ -53,10 +50,8 @@ public class KsqlDbTest extends BaseTest {
     @QaseId(86)
     @Test(priority = 2)
     public void clearResultsForExecutedRequest() {
-        naviSideBar
-                .openSideMenu(KSQL_DB);
+        navigateToKsqlDb();
         ksqlDbList
-                .waitUntilScreenReady()
                 .clickExecuteKsqlRequestBtn();
         ksqlQueryForm
                 .waitUntilScreenReady()
