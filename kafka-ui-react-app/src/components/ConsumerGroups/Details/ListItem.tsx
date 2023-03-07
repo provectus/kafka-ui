@@ -32,11 +32,7 @@ const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
       <tr>
         <td>
           <FlexWrapper>
-            <IconButtonWrapper
-              data-testid="consumer-group-IconButton"
-              onClick={() => setIsOpen(!isOpen)}
-              aria-hidden
-            >
+            <IconButtonWrapper onClick={() => setIsOpen(!isOpen)} aria-hidden>
               <MessageToggleIcon isOpen={isOpen} />
             </IconButtonWrapper>
             <TableKeyLink>
