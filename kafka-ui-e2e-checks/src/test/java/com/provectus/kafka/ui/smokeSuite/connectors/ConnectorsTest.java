@@ -3,11 +3,8 @@ package com.provectus.kafka.ui.smokeSuite.connectors;
 import com.provectus.kafka.ui.BaseTest;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.AutomationStatus;
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Suite;
-import com.provectus.kafka.ui.utilities.qaseUtils.enums.Status;
 import io.qameta.allure.Step;
-import io.qase.api.annotation.CaseId;
+import io.qase.api.annotation.QaseId;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -23,8 +20,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class ConnectorsTest extends BaseTest {
 
-    private static final long SUITE_ID = 10;
-    private static final String SUITE_TITLE = "Kafka Connect";
     private static final String CONNECT_NAME = "first";
     private static final List<Topic> TOPIC_LIST = new ArrayList<>();
     private static final List<Connector> CONNECTOR_LIST = new ArrayList<>();
@@ -58,9 +53,7 @@ public class ConnectorsTest extends BaseTest {
                 .createConnector(CONNECT_NAME, connector));
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(42)
+    @QaseId(42)
     @Test
     public void createConnector() {
         Connector connectorForCreate = new Connector()
@@ -82,9 +75,7 @@ public class ConnectorsTest extends BaseTest {
         CONNECTOR_LIST.add(connectorForCreate);
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(196)
+    @QaseId(196)
     @Test
     public void updateConnector() {
         navigateToConnectorsAndOpenDetails(CONNECTOR_FOR_UPDATE.getName());
@@ -97,9 +88,7 @@ public class ConnectorsTest extends BaseTest {
         Assert.assertTrue(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_UPDATE.getName()), "isConnectorVisible()");
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(195)
+    @QaseId(195)
     @Test
     public void deleteConnector() {
         navigateToConnectorsAndOpenDetails(CONNECTOR_FOR_DELETE.getName());
