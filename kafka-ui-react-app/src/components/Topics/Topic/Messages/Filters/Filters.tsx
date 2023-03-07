@@ -53,11 +53,13 @@ export interface FiltersProps {
   phaseMessage?: string;
   meta: TopicMessageConsuming;
   isFetching: boolean;
+  messageEventType?: string;
   addMessage(content: { message: TopicMessage; prepend: boolean }): void;
   resetMessages(): void;
   updatePhase(phase: string): void;
   updateMeta(meta: TopicMessageConsuming): void;
   setIsFetching(status: boolean): void;
+  setMessageType(messageType: string): void;
 }
 
 export interface MessageFilters {
@@ -87,6 +89,8 @@ const Filters: React.FC<FiltersProps> = ({
   updatePhase,
   updateMeta,
   setIsFetching,
+  setMessageType,
+  messageEventType,
 }) => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const location = useLocation();
@@ -349,6 +353,12 @@ const Filters: React.FC<FiltersProps> = ({
           case TopicMessageEventTypeEnum.CONSUMING:
             if (consuming) updateMeta(consuming);
             break;
+          case TopicMessageEventTypeEnum.DONE:
+            if (consuming && type) {
+              setMessageType(type);
+              updateMeta(consuming);
+            }
+            break;
           default:
         }
       };
@@ -545,6 +555,7 @@ const Filters: React.FC<FiltersProps> = ({
           {seekDirection !== SeekDirection.TAILING &&
             isFetching &&
             phaseMessage}
+          {!isFetching && messageEventType}
         </p>
         <S.MessageLoading isLive={isTailing}>
           <S.MessageLoadingSpinner isFetching={isFetching} />
@@ -576,12 +587,10 @@ const Filters: React.FC<FiltersProps> = ({
           </S.MetricsIcon>
           <span>{messagesConsumed} messages consumed</span>
         </S.Metric>
-        {filterApplyErrors ? (
+        {!!filterApplyErrors && (
           <S.Metric title="Errors">
             <span>{filterApplyErrors} errors</span>
           </S.Metric>
-        ) : (
-          ''
         )}
       </S.FiltersMetrics>
     </S.FiltersWrapper>
