@@ -551,6 +551,10 @@ const theme = {
     closeIcon: Colors.neutral[30],
     deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],
+    warningRedIcon: {
+      rectFill: Colors.red[10],
+      pathFill: '#E61A1A',
+    },
     messageToggleIcon: {
       normal: Colors.brand[50],
       hover: Colors.brand[20],
