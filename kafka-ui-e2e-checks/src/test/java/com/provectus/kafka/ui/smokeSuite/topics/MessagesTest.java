@@ -147,8 +147,6 @@ public class MessagesTest extends BaseTest {
         softly.assertAll();
     }
 
-    @Ignore
-    @Issue("https://github.com/provectus/kafka-ui/issues/2819")
     @QaseId(21)
     @Test(priority = 5)
     public void copyMessageFromTopicProfile() {

@@ -27,7 +27,7 @@ public class SmokeTest extends BaseTest {
                 Stream.concat(topPanel.getAllEnabledElements().stream(), naviSideBar.getAllMenuButtons().stream())
                         .collect(Collectors.toList()), Condition.enabled);
     }
-    
+
     @QaseId(45)
     @Test
     public void checkCurrentUrl() {
@@ -44,10 +44,10 @@ public class SmokeTest extends BaseTest {
         navigateToKsqlDb();
         verifyCurrentUrl(KSQL_DB_LIST_URL);
     }
-    
+
     @Step
     protected void verifyCurrentUrl(String expectedUrl) {
-        String host = BROWSER.equals(LOCAL)?"localhost" : "host.testcontainers.internal";
+        String host = BROWSER.equals(LOCAL) ? "localhost" : "host.testcontainers.internal";
         Assert.assertEquals(WebDriverRunner.getWebDriver().getCurrentUrl(),
                 String.format(expectedUrl, host), "getCurrentUrl()");
     }
