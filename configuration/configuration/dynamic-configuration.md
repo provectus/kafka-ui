@@ -1,4 +1,4 @@
-# Application configuration wizard.
+# Dynamic application configuration
 
 By default, kafka-ui does not allow to change its configuration in runtime. When application is started it reads
 configuration
