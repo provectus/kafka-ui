@@ -6,7 +6,6 @@ services:
     image: provectuslabs/kafka-ui:latest
     ports:
       - 8080:8080
-      - 5005:5005
     depends_on:
       - kafka0
       - schemaregistry0

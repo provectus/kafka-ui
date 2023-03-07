@@ -45,9 +45,6 @@ public class Permission {
 
   @SuppressWarnings("unused")
   public void setActions(List<String> actions) {
-    if (actions != null) {
-      actions = actions.stream().map(String::toUpperCase).toList();
-    }
     this.actions = actions;
   }
 

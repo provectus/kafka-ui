@@ -7,7 +7,6 @@ services:
     image: provectuslabs/kafka-ui:latest
     ports:
       - 8080:8080
-      - 5005:5005
     depends_on:
       - kafka0
     environment:
@@ -23,9 +22,6 @@ services:
       KAFKA_CLUSTERS_0_METRICS_KEYSTORE_PASSWORD: '12345678'
       KAFKA_CLUSTERS_0_SSL_TRUSTSTORE_LOCATION: /jmx/clienttruststore
       KAFKA_CLUSTERS_0_SSL_TRUSTSTORE_PASSWORD: '12345678'
-#      JAVA_OPTS: >-
-#        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-#        -Djavax.net.debug=SSL
     volumes:
       - ./jmx/clienttruststore:/jmx/clienttruststore
       - ./jmx/clientkeystore:/jmx/clientkeystore
