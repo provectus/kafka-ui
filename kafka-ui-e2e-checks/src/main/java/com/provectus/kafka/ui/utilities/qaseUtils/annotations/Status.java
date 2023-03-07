@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Suite {
+public @interface Status {
 
-    long id();
+    com.provectus.kafka.ui.utilities.qaseUtils.enums.Status status();
 }
