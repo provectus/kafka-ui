@@ -2,11 +2,11 @@
 
 By default, kafka-ui does not allow to change its configuration in runtime. When application is started it reads
 configuration
-from system env, config files (ex. application.yaml) and jvm arguments (set by -D). Once configuration was read
+from system env, config files (ex. application.yaml) and jvm arguments (set by `-D`). Once configuration was read
 it treated as immutable and won't be refreshed even if config sourse (ex. file) was changed.
 
-But since version 0.6 we added an ability to change cluster configs in runtime. This option is disabled by default
-and should be implicitly be enabled. To enable it, you should set `DYNAMIC_CONFIG_ENABLED` env property to `true` or add
+Since version 0.6 we added an ability to change cluster configs in runtime. This option is disabled by default
+and should be implicitly enabled. To enable it, you should set `DYNAMIC_CONFIG_ENABLED` env property to `true` or add
 `dynamic.config.enabled: true` property to your yaml config file.
 
 Sample docker compose configuration:
@@ -32,7 +32,7 @@ You can even omit all vars other than `DYNAMIC_CONFIG_ENABLED` to start applicat
 after startup.
 
 When dynamic config feature is enabled you will see additional buttons that will take you to "Wizard" for editing
-existing cluster configuration and adding new clusters:
+existing cluster configuration or adding new clusters:
 
 <img src="/configuration/configuration/dynamic-configuration-main-page.png" alt="Dynamic config main page" style="height: 300px; width:681px;"/>
 
@@ -41,7 +41,7 @@ existing cluster configuration and adding new clusters:
 
 ### Dynamic config files
 
-Kafka-ui is stateless application by its nature, so, when you edit configuration during runtime, it will be store configuration additions on
+Kafka-ui is stateless application by its nature, so, when you edit configuration during runtime, it will store configuration additions on
 container's filesystem (in `dynamic_config.yaml` file). Dynamic config file will be overridden on each configuration submit.
 
 During configuration process you can also upload configuration-related files (like truststore and keystores). They will be stored 
@@ -59,3 +59,8 @@ Properties, specified where dynamic config files will be persisted:
 |-----------------------------------|------------------------------|------------------------------------|------------------------------------------|
 | `DYNAMIC_CONFIG_PATH`             | `dynamic.config.path`        | `/etc/kafkaui/dynamic_config.yaml` | Path to dynamic config file              |
 | `CONFIG_RELATED_UPLOADS_DIR`      | `config.related.uploads.dir` | `/etc/kafkaui/uploads`             | Path where uploaded files will be placed |
+
+
+### Implementation notes:
+
+Currently, new configuration submit leads to full application restart. So, if your kafka-ui app is starting slow (not a usual case, but may happen when you have slow connection to kafka clusters) you may notice UI inaccessibility during restart time.
