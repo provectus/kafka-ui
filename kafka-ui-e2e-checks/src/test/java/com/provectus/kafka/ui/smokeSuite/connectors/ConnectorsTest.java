@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.smokeSuite.connectors;
 import com.provectus.kafka.ui.BaseTest;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Topic;
-import io.qameta.allure.Step;
 import io.qase.api.annotation.QaseId;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.KAFKA_CONNECT;
 import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
@@ -106,22 +104,5 @@ public class ConnectorsTest extends BaseTest {
         CONNECTOR_LIST.forEach(connector ->
                 apiService.deleteConnector(CONNECT_NAME, connector.getName()));
         TOPIC_LIST.forEach(topic -> apiService.deleteTopic(topic.getName()));
-    }
-
-    @Step
-    private void navigateToConnectors() {
-        naviSideBar
-                .openSideMenu(KAFKA_CONNECT);
-        kafkaConnectList
-                .waitUntilScreenReady();
-    }
-
-    @Step
-    private void navigateToConnectorsAndOpenDetails(String connectorName) {
-        navigateToConnectors();
-        kafkaConnectList
-                .openConnector(connectorName);
-        connectorDetails
-                .waitUntilScreenReady();
     }
 }
