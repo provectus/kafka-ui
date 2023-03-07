@@ -30,7 +30,7 @@ public class SmokeTest extends BaseTest {
 
     @QaseId(45)
     @Test
-    public void checkCurrentUrl() {
+    public void checkUrlWhileNavigating() {
         navigateToBrokers();
         verifyCurrentUrl(BROKERS_LIST_URL);
         navigateToTopics();
@@ -46,7 +46,7 @@ public class SmokeTest extends BaseTest {
     }
 
     @Step
-    protected void verifyCurrentUrl(String expectedUrl) {
+    private void verifyCurrentUrl(String expectedUrl) {
         String host = BROWSER.equals(LOCAL) ? "localhost" : "host.testcontainers.internal";
         Assert.assertEquals(WebDriverRunner.getWebDriver().getCurrentUrl(),
                 String.format(expectedUrl, host), "getCurrentUrl()");
