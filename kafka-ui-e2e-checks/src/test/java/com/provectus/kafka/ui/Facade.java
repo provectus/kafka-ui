@@ -19,6 +19,7 @@ import com.provectus.kafka.ui.pages.topics.*;
 import com.provectus.kafka.ui.services.ApiService;
 
 public abstract class Facade {
+
     protected ApiService apiService = new ApiService();
     protected ConnectorCreateForm connectorCreateForm = new ConnectorCreateForm();
     protected KafkaConnectList kafkaConnectList = new KafkaConnectList();

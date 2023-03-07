@@ -11,6 +11,87 @@ export interface InputProps
   hookFormOptions?: RegisterOptions;
   search?: boolean;
   positiveOnly?: boolean;
+
+  // Some may only accept integer, like `Number of Partitions`
+  // some may accept decimal
+  integerOnly?: boolean;
+}
+
+function inputNumberCheck(
+  key: string,
+  positiveOnly: boolean,
+  integerOnly: boolean,
+  getValues: (name: string) => string,
+  componentName: string
+) {
+  let isValid = true;
+  if (!((key >= '0' && key <= '9') || key === '-' || key === '.')) {
+    // If not a valid digit char.
+    isValid = false;
+  } else {
+    // If there is any restriction.
+    if (positiveOnly) {
+      isValid = !(key === '-');
+    }
+    if (isValid && integerOnly) {
+      isValid = !(key === '.');
+    }
+
+    // Check invalid format
+    const value = getValues(componentName);
+
+    if (isValid && (key === '-' || key === '.')) {
+      if (!positiveOnly) {
+        if (key === '-') {
+          if (value !== '') {
+            // '-' should not appear anywhere except the start of the string
+            isValid = false;
+          }
+        }
+      }
+      if (!integerOnly) {
+        if (key === '.') {
+          if (value === '' || value.indexOf('.') !== -1) {
+            // '.' should not appear at the start of the string or appear twice
+            isValid = false;
+          }
+        }
+      }
+    }
+  }
+  return isValid;
+}
+
+function pasteNumberCheck(
+  text: string,
+  positiveOnly: boolean,
+  integerOnly: boolean
+) {
+  let value: string;
+  value = text;
+  let sign = '';
+  if (!positiveOnly) {
+    if (value.charAt(0) === '-') {
+      sign = '-';
+    }
+  }
+  if (integerOnly) {
+    value = value.replace(/\D/g, '');
+  } else {
+    value = value.replace(/[^\d.]/g, '');
+    if (value.indexOf('.') !== value.lastIndexOf('.')) {
+      const strs = value.split('.');
+      value = '';
+      for (let i = 0; i < strs.length; i += 1) {
+        value += strs[i];
+        if (i === 0) {
+          value += '.';
+        }
+      }
+    }
+  }
+  value = sign + value;
+  return value;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -20,17 +101,27 @@ const Input: React.FC<InputProps> = ({
   inputSize = 'L',
   type,
   positiveOnly,
+  integerOnly,
   ...rest
 }) => {
   const methods = useFormContext();
+
   const keyPressEventHandler = (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
-    const { key, code } = event;
+    const { key } = event;
     if (type === 'number') {
-      // Manualy prevent input of 'e' character for all number inputs
+      // Manually prevent input of non-digit and non-minus for all number inputs
       // and prevent input of negative numbers for positiveOnly inputs
-      if (key === 'e' || (positiveOnly && (key === '-' || code === 'Minus'))) {
+      if (
+        !inputNumberCheck(
+          key,
+          typeof positiveOnly === 'boolean' ? positiveOnly : false,
+          typeof integerOnly === 'boolean' ? integerOnly : false,
+          methods.getValues,
+          typeof name === 'string' ? name : ''
+        )
+      ) {
         event.preventDefault();
       }
     }
@@ -38,17 +129,14 @@ const Input: React.FC<InputProps> = ({
   const pasteEventHandler = (event: React.ClipboardEvent<HTMLInputElement>) => {
     if (type === 'number') {
       const { clipboardData } = event;
-      const text = clipboardData.getData('Text');
-      // replace all non-digit characters with empty string
-      let value = text.replace(/[^\d.]/g, '');
-      if (positiveOnly) {
-        // check if value is negative
-        const parsedData = parseFloat(value);
-        if (parsedData < 0) {
-          // remove minus sign
-          value = String(Math.abs(parsedData));
-        }
-      }
+      // The 'clipboardData' does not have key 'Text', but has key 'text' instead.
+      const text = clipboardData.getData('text');
+      // Check the format of pasted text.
+      const value = pasteNumberCheck(
+        text,
+        typeof positiveOnly === 'boolean' ? positiveOnly : false,
+        typeof integerOnly === 'boolean' ? integerOnly : false
+      );
       // if paste value contains non-numeric characters or
       // negative for positiveOnly fields then prevent paste
       if (value !== text) {
