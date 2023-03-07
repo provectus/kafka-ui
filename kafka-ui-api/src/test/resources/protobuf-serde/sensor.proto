@@ -1,5 +1,5 @@
 syntax = "proto3";
-package iot;
+package test;
 
 message Sensor {
     string name = 1;

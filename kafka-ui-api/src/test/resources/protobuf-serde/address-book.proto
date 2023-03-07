@@ -1,16 +1,10 @@
-// [START declaration]
 syntax = "proto3";
 package test;
 
-// [END declaration]
-
-// [START java_declaration]
 option java_multiple_files = true;
 option java_package = "com.example.tutorial.protos";
 option java_outer_classname = "AddressBookProtos";
-// [END java_declaration]
 
-// [START messages]
 message Person {
   string name = 1;
   int32 id = 2;  // Unique ID number for this person.
@@ -31,9 +25,13 @@ message Person {
 
 }
 
+message AnotherPerson {
+    string name = 1;
+    string surname = 2;
+}
+
 // Our address book file is just one of these.
 message AddressBook {
   int32 version = 1;
   repeated Person people = 2;
 }
-// [END messages]
