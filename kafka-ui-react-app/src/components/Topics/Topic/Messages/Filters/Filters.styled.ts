@@ -33,6 +33,7 @@ export const FilterInputs = styled.div`
   gap: 8px;
   align-items: flex-end;
   width: 90%;
+  flex-wrap: wrap;
 `;
 
 export const SeekTypeSelectorWrapper = styled.div`
