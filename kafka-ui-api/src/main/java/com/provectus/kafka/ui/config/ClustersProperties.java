@@ -52,7 +52,7 @@ public class ClustersProperties {
   public static class MetricsConfigData {
     String type;
     Integer port;
-    boolean ssl;
+    Boolean ssl;
     String username;
     String password;
     String keystoreLocation;
