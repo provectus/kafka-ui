@@ -553,7 +553,7 @@ const theme = {
     warningIcon: Colors.yellow[20],
     warningRedIcon: {
       rectFill: Colors.red[10],
-      pathFill: '#E61A1A',
+      pathFill: Colors.red[50],
     },
     messageToggleIcon: {
       normal: Colors.brand[50],

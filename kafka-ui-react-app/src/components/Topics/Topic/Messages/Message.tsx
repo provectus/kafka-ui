@@ -7,6 +7,7 @@ import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
 import { JSONPath } from 'jsonpath-plus';
 import Ellipsis from 'components/common/Ellipsis/Ellipsis';
+import WarningRedIcon from 'components/common/Icons/WarningRedIcon';
 
 import MessageContent from './MessageContent/MessageContent';
 import * as S from './MessageContent/MessageContent.styled';
@@ -106,20 +107,20 @@ const Message: React.FC<Props> = ({
         <td>
           <div>{formatTimestamp(timestamp)}</div>
         </td>
-        <S.StyledDataCell title={key}>
-          <Ellipsis serde={keySerde}>
-            {renderFilteredJson(key, keyFilters)}
+        <S.DataCell title={key}>
+          <Ellipsis text={renderFilteredJson(key, keyFilters)}>
+            {keySerde === 'Fallback' && <WarningRedIcon />}
           </Ellipsis>
-        </S.StyledDataCell>
-        <S.StyledDataCell title={content}>
+        </S.DataCell>
+        <S.DataCell title={content}>
           <S.Metadata>
             <S.MetadataValue>
-              <Ellipsis serde={valueSerde}>
-                {renderFilteredJson(content, contentFilters)}
+              <Ellipsis text={renderFilteredJson(content, contentFilters)}>
+                {valueSerde === 'Fallback' && <WarningRedIcon />}
               </Ellipsis>
             </S.MetadataValue>
           </S.Metadata>
-        </S.StyledDataCell>
+        </S.DataCell>
         <td style={{ width: '5%' }}>
           {vEllipsisOpen && (
             <Dropdown>

@@ -1,19 +1,20 @@
-import React, { ReactElement } from 'react';
-import WarningRedIcon from 'components/common/Icons/WarningRedIcon';
+import React, { PropsWithChildren } from 'react';
 
 import * as S from './Ellipsis.styled';
 
-type PropsType = {
-  serde?: string;
-  children?: ReactElement | string | undefined;
+type EllipsisProps = {
+  text: React.ReactNode;
 };
 
-const Ellipsis: React.FC<PropsType> = ({ serde, children }) => {
+const Ellipsis: React.FC<PropsWithChildren<EllipsisProps>> = ({
+  text,
+  children,
+}) => {
   return (
-    <S.StyledDataCellFlex>
-      <S.StyledIsLongText>{children}</S.StyledIsLongText>
-      <S.Icon>{serde === 'Fallback' && <WarningRedIcon />}</S.Icon>
-    </S.StyledDataCellFlex>
+    <S.Wrapper>
+      <S.Text>{text}</S.Text>
+      {children}
+    </S.Wrapper>
   );
 };
 export default Ellipsis;
