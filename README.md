@@ -211,3 +211,4 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_SSL_TRUSTSTOREPASSWORD`| Password of the JKS truststore for Kafka Connect, SchemaRegistry, KSQL, Metrics
 |`TOPIC_RECREATE_DELAY_SECONDS` |Time delay between topic deletion and topic creation attempts for topic recreate functionality. Default: 1
 |`TOPIC_RECREATE_MAXRETRIES`  |Number of attempts of topic creation after topic deletion for topic recreate functionality. Default: 15
+|`DYNAMIC_CONFIG_ENABLED`|Allow to change application config in runtime. Default: false.
