@@ -77,7 +77,7 @@ public class SchemasTest extends BaseTest {
         Assert.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), schemaDetails.getCompatibility(), "getCompatibility()");
     }
 
-    @QaseId(186)
+    @QaseId(44)
     @Test(priority = 3)
     public void compareVersionsOperation() {
         navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
