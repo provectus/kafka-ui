@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.serdes.builtin;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.UnsignedInteger;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
-import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serdes.BuiltInSerde;
 import java.util.Map;
@@ -13,12 +12,6 @@ public class UInt32Serde implements BuiltInSerde {
 
   public static String name() {
     return "UInt32";
-  }
-
-  @Override
-  public void configure(PropertyResolver serdeProperties,
-                        PropertyResolver kafkaClusterProperties,
-                        PropertyResolver globalProperties) {
   }
 
   @Override

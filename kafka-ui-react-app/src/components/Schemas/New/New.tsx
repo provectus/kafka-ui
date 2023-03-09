@@ -1,6 +1,6 @@
 import React from 'react';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
-import { FormProvider, useForm, Controller } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import {
   ClusterNameRoute,
@@ -22,6 +22,8 @@ import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import { showServerError } from 'lib/errorHandling';
 import { schemasApiClient } from 'lib/api';
+import yup from 'lib/yupExtended';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import * as S from './New.styled';
 
@@ -30,6 +32,28 @@ const SchemaTypeOptions: Array<SelectOption> = [
   { value: SchemaType.JSON, label: 'JSON' },
   { value: SchemaType.PROTOBUF, label: 'PROTOBUF' },
 ];
+
+const schemaCreate = async (
+  { subject, schema, schemaType }: NewSchemaSubjectRaw,
+  clusterName: string
+) => {
+  return schemasApiClient.createNewSchema({
+    clusterName,
+    newSchemaSubject: { subject, schema, schemaType },
+  });
+};
+
+const validationSchema = yup.object().shape({
+  subject: yup
+    .string()
+    .required('Subject is required.')
+    .matches(
+      SCHEMA_NAME_VALIDATION_PATTERN,
+      'Only alphanumeric, _, -, and . allowed'
+    ),
+  schema: yup.string().required('Schema is required.'),
+  schemaType: yup.string().required('Schema Type is required.'),
+});
 
 const New: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
@@ -40,6 +64,7 @@ const New: React.FC = () => {
     defaultValues: {
       schemaType: SchemaType.AVRO,
     },
+    resolver: yupResolver(validationSchema),
   });
   const {
     register,
@@ -54,10 +79,10 @@ const New: React.FC = () => {
     schemaType,
   }: NewSchemaSubjectRaw) => {
     try {
-      const resp = await schemasApiClient.createNewSchema({
-        clusterName,
-        newSchemaSubject: { subject, schema, schemaType },
-      });
+      const resp = await schemaCreate(
+        { subject, schema, schemaType } as NewSchemaSubjectRaw,
+        clusterName
+      );
       dispatch(schemaAdded(resp));
       navigate(clusterSchemaPath(clusterName, subject));
     } catch (e) {
@@ -78,14 +103,8 @@ const New: React.FC = () => {
           <Input
             inputSize="M"
             placeholder="Schema Name"
+            autoFocus
             name="subject"
-            hookFormOptions={{
-              required: 'Schema Name is required.',
-              pattern: {
-                value: SCHEMA_NAME_VALIDATION_PATTERN,
-                message: 'Only alphanumeric, _, -, and . allowed',
-              },
-            }}
             autoComplete="off"
             disabled={isSubmitting}
           />
@@ -111,7 +130,6 @@ const New: React.FC = () => {
           <InputLabel>Schema Type *</InputLabel>
           <Controller
             control={control}
-            rules={{ required: 'Schema Type is required.' }}
             name="schemaType"
             defaultValue={SchemaTypeOptions[0].value as SchemaType}
             render={({ field: { name, onChange, value } }) => (

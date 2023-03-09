@@ -1,47 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>kafka-ui</artifactId>
         <groupId>com.provectus</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
+    <modelVersion>4.0.0</modelVersion>
     <artifactId>kafka-ui-e2e-checks</artifactId>
+
     <properties>
+        <maven.surefire-plugin.version>3.0.0-M8</maven.surefire-plugin.version>
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
-        <junit.version>5.8.2</junit.version>
-        <aspectj.version>1.9.8</aspectj.version>
-        <allure.version>2.18.1</allure.version>
-        <json-smart.version>2.4.8</json-smart.version>
-        <testcontainers.version>1.17.2</testcontainers.version>
-        <selenide.version>6.6.3</selenide.version>
-        <assertj.version>3.23.1</assertj.version>
-        <google.auto-service.version>1.0.1</google.auto-service.version>
+        <testcontainers.version>1.17.6</testcontainers.version>
+        <httpcomponents.version>5.2.1</httpcomponents.version>
+        <selenium.version>4.8.1</selenium.version>
+        <selenide.version>6.11.2</selenide.version>
+        <testng.version>7.7.0</testng.version>
+        <allure.version>2.21.0</allure.version>
+        <qase.io.version>3.0.3</qase.io.version>
+        <aspectj.version>1.9.9.1</aspectj.version>
+        <assertj.version>3.24.2</assertj.version>
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <testcontainers.junit-jupiter.version>1.17.2</testcontainers.junit-jupiter.version>
-        <allure.java-commons.version>2.18.1</allure.java-commons.version>
-        <dotenv.version>2.2.4</dotenv.version>
-        <junit.platform-launcher.version>1.8.2</junit.platform-launcher.version>
-        <allure.maven-plugin.version>2.6</allure.maven-plugin.version>
-        <ashot.version>1.5.4</ashot.version>
-        <allure.screendiff-plugin.version>2.18.1</allure.screendiff-plugin.version>
-        <maven.surefire-plugin.version>2.22.2</maven.surefire-plugin.version>
-        <allure-maven.version>2.10.0</allure-maven.version>
-        <kafka.version>3.0.0</kafka.version>
-        <netty.version>4.1.77.Final</netty.version>
-        <qase.io.version>2.1.3</qase.io.version>
+        <dotenv.version>2.3.1</dotenv.version>
+        <kafka.version>3.3.1</kafka.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>net.minidev</groupId>
-            <artifactId>json-smart</artifactId>
-            <version>${json-smart.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.13</artifactId>
@@ -89,47 +77,38 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-buffer</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-common</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-resolver</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport-native-epoll</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport-native-unix-common</artifactId>
-            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-resolver-dns-native-macos</artifactId>
-            <version>${netty.version}</version>
             <classifier>osx-aarch_64</classifier>
         </dependency>
 
@@ -138,11 +117,25 @@
             <artifactId>testcontainers</artifactId>
             <version>${testcontainers.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-junit5</artifactId>
-            <version>${allure.version}</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>selenium</artifactId>
+            <version>${testcontainers.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5</artifactId>
+            <version>${httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-http</artifactId>
+            <version>${selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codeborne</groupId>
@@ -150,9 +143,29 @@
             <version>${selenide.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-selenide</artifactId>
             <version>${allure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qase</groupId>
+            <artifactId>qase-testng</artifactId>
+            <version>${qase.io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qase</groupId>
+            <artifactId>qase-api</artifactId>
+            <version>${qase.io.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -165,20 +178,9 @@
             <version>${assertj.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.google.auto.service</groupId>
-            <artifactId>auto-service</artifactId>
-            <version>${google.auto-service.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -191,67 +193,14 @@
             <version>${org.projectlombok.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>${aspectj.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${testcontainers.junit-jupiter.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-java-commons</artifactId>
-            <version>${allure.java-commons.version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.github.cdimascio</groupId>
             <artifactId>dotenv-java</artifactId>
             <version>${dotenv.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-launcher</artifactId>
-            <version>${junit.platform-launcher.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ru.yandex.qatools.allure</groupId>
-            <artifactId>allure-maven-plugin</artifactId>
-            <version>${allure.maven-plugin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ru.yandex.qatools.ashot</groupId>
-            <artifactId>ashot</artifactId>
-            <version>${ashot.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.seleniumhq.selenium</groupId>
-                    <artifactId>selenium-remote-driver</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure.plugins</groupId>
-            <artifactId>screen-diff-plugin</artifactId>
-            <version>${allure.screendiff-plugin.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.provectus</groupId>
             <artifactId>kafka-ui-contract</artifactId>
             <version>${kafka-ui-contract}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>selenium</artifactId>
-            <version>${testcontainers.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.qase</groupId>
-            <artifactId>qase-api</artifactId>
-            <version>${qase.io.version}</version>
         </dependency>
     </dependencies>
 
@@ -267,18 +216,20 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven.surefire-plugin.version}</version>
                         <configuration>
                             <skipTests>true</skipTests>
                         </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.maven.surefire</groupId>
+                                <artifactId>surefire-testng</artifactId>
+                                <version>${maven.surefire-plugin.version}</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <source>${maven.compiler.source}</source>
-                            <target>${maven.compiler.target}</target>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -292,18 +243,16 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>${maven.surefire-plugin.version}</version>
                         <configuration>
-                            <testFailureIgnore>false</testFailureIgnore>
-                            <systemProperties>
-                                <property>
-                                    <name>junit.jupiter.extensions.autodetection.enabled</name>
-                                    <value>true</value>
-                                </property>
-                            </systemProperties>
                             <argLine>
                                 -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                             </argLine>
                         </configuration>
                         <dependencies>
+                            <dependency>
+                                <groupId>org.apache.maven.surefire</groupId>
+                                <artifactId>surefire-testng</artifactId>
+                                <version>${maven.surefire-plugin.version}</version>
+                            </dependency>
                             <dependency>
                                 <groupId>org.aspectj</groupId>
                                 <artifactId>aspectjweaver</artifactId>
@@ -314,15 +263,7 @@
                     <plugin>
                         <groupId>io.qameta.allure</groupId>
                         <artifactId>allure-maven</artifactId>
-                        <version>${allure-maven.version}</version>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <source>${maven.compiler.source}</source>
-                            <target>${maven.compiler.target}</target>
-                        </configuration>
+                        <version>2.10.0</version>
                     </plugin>
                 </plugins>
             </build>

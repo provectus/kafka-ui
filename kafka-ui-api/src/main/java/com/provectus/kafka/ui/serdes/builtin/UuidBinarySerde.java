@@ -10,7 +10,6 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import org.apache.kafka.common.header.Headers;
 
 
 public class UuidBinarySerde implements BuiltInSerde {
@@ -19,14 +18,14 @@ public class UuidBinarySerde implements BuiltInSerde {
     return "UUIDBinary";
   }
 
-  private boolean mostSignificantBitsFirst;
+  private boolean mostSignificantBitsFirst = true;
 
   @Override
   public void configure(PropertyResolver serdeProperties,
                         PropertyResolver kafkaClusterProperties,
                         PropertyResolver globalProperties) {
-    mostSignificantBitsFirst = serdeProperties.getProperty("mostSignificantBitsFirst", Boolean.class)
-        .orElse(true);
+    serdeProperties.getProperty("mostSignificantBitsFirst", Boolean.class)
+        .ifPresent(msb -> UuidBinarySerde.this.mostSignificantBitsFirst = msb);
   }
 
   @Override

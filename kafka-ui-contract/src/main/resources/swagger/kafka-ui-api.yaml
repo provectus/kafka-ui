@@ -7,7 +7,7 @@ info:
   contact: { }
   license:
     name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
 tags:
   - name: /api/clusters
   - name: /api/clusters/connects
@@ -862,28 +862,6 @@ paths:
         200:
           description: OK
 
-  /api/clusters/{clusterName}/consumer-groups:
-    get:
-      tags:
-        - Consumer Groups
-      summary: get all ConsumerGroups
-      operationId: getConsumerGroups
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ConsumerGroup'
-
   /api/clusters/{clusterName}/consumer-groups/{id}/offsets:
     post:
       tags:
@@ -1561,31 +1539,6 @@ paths:
         200:
           description: OK
 
-  /api/clusters/{clusterName}/ksql:
-    description: Deprecated - use ksql/v2 instead!
-    post:
-      tags:
-        - Ksql
-      summary: executeKsqlCommand
-      operationId: executeKsqlCommand
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/KsqlCommand'
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/KsqlCommandResponse'
 
   /api/clusters/{clusterName}/ksql/v2:
     post:
@@ -1776,19 +1729,105 @@ paths:
                 $ref: '#/components/schemas/PartitionsIncreaseResponse'
         404:
           description: Not found
-  /api/info/timestampformat:
+
+  /api/authorization:
     get:
       tags:
-        - TimeStampFormat
-      summary: getTimeStampFormat
-      operationId: getTimeStampFormat
+        - Authorization
+      summary: Get user authentication related info
+      operationId: getUserAuthInfo
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TimeStampFormat'
+                $ref: '#/components/schemas/AuthenticationInfo'
+
+  /api/info:
+    get:
+      tags:
+        - ApplicationConfig
+      summary: Gets application info
+      operationId: getApplicationInfo
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationInfo'
+
+  /api/config:
+    get:
+      tags:
+        - ApplicationConfig
+      summary: Gets current application configuration
+      operationId: getCurrentConfig
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationConfig'
+    put:
+      tags:
+        - ApplicationConfig
+      summary: Restarts application with specified configuration
+      operationId: restartWithConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestartRequest'
+      responses:
+        200:
+          description: OK
+
+  /api/config/validated:
+    put:
+      tags:
+        - ApplicationConfig
+      summary: Restarts application with specified configuration
+      operationId: validateConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationConfig'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationConfigValidation'
+
+
+  /api/config/relatedfiles:
+    post:
+      tags:
+        - ApplicationConfig
+      summary: Restarts application with specified configuration
+      operationId: uploadConfigRelatedFile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: filepart
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadedFileInfo'
+
 components:
   schemas:
     TopicSerdeSuggestion:
@@ -1869,6 +1908,16 @@ components:
         stackTrace:
           type: string
 
+    ApplicationInfo:
+      type: object
+      properties:
+        enabledFeatures:
+          type: array
+          items:
+            type: string
+            enum:
+              - DYNAMIC_CONFIG
+
     Cluster:
       type: object
       properties:
@@ -1933,6 +1982,7 @@ components:
           deprecated: true
         activeControllers:
           type: integer
+          description: Id of broker which is cluster's controller. null, if controller not known yet.
         onlinePartitionCount:
           type: integer
         offlinePartitionCount:
@@ -2260,6 +2310,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ConfigSynonym"
+        doc:
+          type: string
       required:
         - name
 
@@ -2299,6 +2351,10 @@ components:
           type: string
         port:
           type: integer
+        bytesInPerSec:
+          type: number
+        bytesOutPerSec:
+          type: number
       required:
         - id
 
@@ -2437,6 +2493,8 @@ components:
         isCancelled:
           type: boolean
         messagesConsumed:
+          type: integer
+        filterApplyErrors:
           type: integer
 
 
@@ -2669,7 +2727,7 @@ components:
           type: string
         schemaType:
           $ref: '#/components/schemas/SchemaType'
-          description: upon updating a schema, the type of an existing schema can't be changed
+          # upon updating a schema, the type of existing schema can't be changed
       required:
         - subject
         - schema
@@ -2986,18 +3044,6 @@ components:
           items:
             $ref: '#/components/schemas/ConnectorPluginConfig'
 
-    KsqlCommand:
-      type: object
-      properties:
-        ksql:
-          type: string
-        streamsProperties:
-          type: object
-          additionalProperties:
-            type: string
-      required:
-        - ksql
-
     KsqlCommandV2:
       type: object
       properties:
@@ -3043,31 +3089,6 @@ components:
           type: string
         valueFormat:
           type: string
-
-    KsqlCommandResponse:
-      type: object
-      properties:
-        data:
-          $ref: '#/components/schemas/Table'
-        message:
-          type: string
-
-    Table:
-      type: object
-      properties:
-        headers:
-          type: array
-          items:
-            type: string
-        rows:
-          type: array
-          items:
-            type: array
-            items:
-              type: string
-      required:
-        - headers
-        - rows
 
     KsqlResponse:
       type: object
@@ -3214,3 +3235,354 @@ components:
         - COMPACT
         - COMPACT_DELETE
         - UNKNOWN
+
+    AuthenticationInfo:
+      type: object
+      properties:
+        rbacEnabled:
+          type: boolean
+          description: true if role based access control is enabled and granular permission access is required
+        userInfo:
+          $ref: '#/components/schemas/UserInfo'
+      required:
+        - rbacEnabled
+
+    UserInfo:
+      type: object
+      properties:
+        username:
+          type: string
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserPermission'
+      required:
+        - username
+        - permissions
+
+    UserPermission:
+      type: object
+      properties:
+        clusters:
+          type: array
+          items:
+            type: string
+        resource:
+          $ref: '#/components/schemas/ResourceType'
+        value:
+          type: string
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Action'
+      required:
+        - clusters
+        - resource
+        - actions
+
+    Action:
+      type: string
+      enum:
+        - VIEW
+        - EDIT
+        - CREATE
+        - DELETE
+        - RESET_OFFSETS
+        - EXECUTE
+        - MODIFY_GLOBAL_COMPATIBILITY
+        - ANALYSIS_VIEW
+        - ANALYSIS_RUN
+        - MESSAGES_READ
+        - MESSAGES_PRODUCE
+        - MESSAGES_DELETE
+
+    ResourceType:
+      type: string
+      enum:
+        - APPLICATIONCONFIG
+        - CLUSTERCONFIG
+        - TOPIC
+        - CONSUMER
+        - SCHEMA
+        - CONNECT
+        - KSQL
+
+    RestartRequest:
+      type: object
+      properties:
+        config:
+          $ref: '#/components/schemas/ApplicationConfig'
+
+    UploadedFileInfo:
+      type: object
+      required: [location]
+      properties:
+        location:
+          type: string
+
+    ApplicationConfigValidation:
+      type: object
+      properties:
+        clusters:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ClusterConfigValidation'
+
+    ApplicationPropertyValidation:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: boolean
+        errorMessage:
+          type: string
+          description: Contains error message if error = true
+
+    ClusterConfigValidation:
+      type: object
+      required: [kafka]
+      properties:
+        kafka:
+          $ref: '#/components/schemas/ApplicationPropertyValidation'
+        schemaRegistry:
+          $ref: '#/components/schemas/ApplicationPropertyValidation'
+        kafkaConnects:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ApplicationPropertyValidation'
+        ksqldb:
+          $ref: '#/components/schemas/ApplicationPropertyValidation'
+
+    ApplicationConfig:
+      type: object
+      properties:
+        properties:
+          type: object
+          properties:
+            auth:
+              type: object
+              properties:
+                type:
+                  type: string
+                oauth2:
+                  type: object
+                  properties:
+                    client:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        properties:
+                          provider:
+                            type: string
+                          clientId:
+                            type: string
+                          clientSecret:
+                            type: string
+                          clientName:
+                            type: string
+                          redirectUri:
+                            type: string
+                          authorizationGrantType:
+                            type: string
+                          issuerUri:
+                            type: string
+                          authorizationUri:
+                            type: string
+                          tokenUri:
+                            type: string
+                          userInfoUri:
+                            type: string
+                          jwkSetUri:
+                            type: string
+                          userNameAttribute:
+                            type: string
+                          scope:
+                            type: array
+                            items:
+                              type: string
+                          customParams:
+                            type: object
+                            additionalProperties:
+                              type: string
+            rbac:
+              type: object
+              properties:
+                roles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      clusters:
+                        type: array
+                        items:
+                          type: string
+                      subjects:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            provider:
+                              type: string
+                            type:
+                              type: string
+                            value:
+                              type: string
+                      permissions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            resource:
+                              $ref: '#/components/schemas/ResourceType'
+                            value:
+                              type: string
+                            actions:
+                              type: array
+                              items:
+                                $ref: '#/components/schemas/Action'
+            kafka:
+              type: object
+              properties:
+                clusters:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      bootstrapServers:
+                        type: string
+                      ssl:
+                        type: object
+                        properties:
+                          truststoreLocation:
+                            type: string
+                          truststorePassword:
+                            type: string
+                      schemaRegistry:
+                        type: string
+                      schemaRegistryAuth:
+                        type: object
+                        properties:
+                          username:
+                            type: string
+                          password:
+                            type: string
+                      schemaRegistrySsl:
+                        type: object
+                        properties:
+                          keystoreLocation:
+                            type: string
+                          keystorePassword:
+                            type: string
+                      ksqldbServer:
+                        type: string
+                      ksqldbServerSsl:
+                        type: object
+                        properties:
+                          keystoreLocation:
+                            type: string
+                          keystorePassword:
+                              type: string
+                      ksqldbServerAuth:
+                        type: object
+                        properties:
+                          username:
+                            type: string
+                          password:
+                            type: string
+                      kafkaConnect:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            address:
+                              type: string
+                            username:
+                              type: string
+                            password:
+                              type: string
+                            keystoreLocation:
+                              type: string
+                            keystorePassword:
+                              type: string
+
+                      metrics:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          port:
+                            type: integer
+                            format: int32
+                          ssl:
+                            type: boolean
+                          username:
+                            type: string
+                          password:
+                            type: string
+                          keystoreLocation:
+                            type: string
+                          keystorePassword:
+                            type: string
+                      properties:
+                        type: object
+                        additionalProperties: true
+                      readOnly:
+                        type: boolean
+                      disableLogDirsCollection:
+                        type: boolean
+                      serde:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            className:
+                              type: string
+                            filePath:
+                              type: string
+                            properties:
+                              type: object
+                              additionalProperties: true
+                            topicKeysPattern:
+                              type: string
+                            topicValuesPattern:
+                              type: string
+                      defaultKeySerde:
+                        type: string
+                      defaultValueSerde:
+                        type: string
+                      masking:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                                - REMOVE
+                                - MASK
+                                - REPLACE
+                            fields:
+                              type: array
+                              items:
+                                type: string
+                            pattern:
+                              type: array
+                              items:
+                                type: string
+                            replacement:
+                              type: string
+                            topicKeysPattern:
+                              type: string
+                            topicValuesPattern:
+                              type: string
+                      pollingThrottleRate:
+                        type: integer
+                        format: int64

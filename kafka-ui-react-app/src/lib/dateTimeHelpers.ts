@@ -1,14 +1,22 @@
-import dayjs from 'dayjs';
-
 export const formatTimestamp = (
-  timestamp: number | string | Date | undefined,
-  format?: string
+  timestamp?: number | string | Date,
+  format: Intl.DateTimeFormatOptions = { hour12: false }
 ): string => {
   if (!timestamp) {
     return '';
   }
 
-  return dayjs(timestamp).format(format);
+  // empty array gets the default one from the browser
+  const date = new Date(timestamp);
+
+  // invalid date
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  // browser support
+  const language = navigator.language || navigator.languages[0];
+  return date.toLocaleString(language || [], format);
 };
 
 export const formatMilliseconds = (input = 0) => {
@@ -31,4 +39,16 @@ export const formatMilliseconds = (input = 0) => {
   }
 
   return `${milliseconds}ms`;
+};
+
+export const passedTime = (value: number) => (value < 10 ? `0${value}` : value);
+
+export const calculateTimer = (startedAt: number) => {
+  const nowDate = new Date();
+  const now = nowDate.getTime();
+  const newDate = now - startedAt;
+  const minutes = nowDate.getMinutes();
+  const second = nowDate.getSeconds();
+
+  return newDate > 0 ? `${passedTime(minutes)}:${passedTime(second)}` : '00:00';
 };

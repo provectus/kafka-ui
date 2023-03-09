@@ -22,6 +22,7 @@ import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -35,7 +36,7 @@ class SchemaRegistrySerdeTest {
   @BeforeEach
   void init() {
     serde = new SchemaRegistrySerde();
-    serde.configure(List.of("wontbeused"), registryClient, "%s-key", "%s-value");
+    serde.configure(List.of("wontbeused"), registryClient, "%s-key", "%s-value", true);
   }
 
   @ParameterizedTest
@@ -129,11 +130,63 @@ class SchemaRegistrySerdeTest {
         .contains(Map.entry("schemaId", schemaId));
   }
 
+  @Nested
+  class SerdeWithDisabledSubjectExistenceCheck {
+
+    @BeforeEach
+    void init() {
+      serde.configure(List.of("wontbeused"), registryClient, "%s-key", "%s-value", false);
+    }
+
+    @Test
+    void canDeserializeAlwaysReturnsTrue() {
+      String topic = RandomString.make(10);
+      assertThat(serde.canDeserialize(topic, Serde.Target.KEY)).isTrue();
+      assertThat(serde.canDeserialize(topic, Serde.Target.VALUE)).isTrue();
+    }
+  }
+
+  @Nested
+  class SerdeWithEnabledSubjectExistenceCheck {
+
+    @BeforeEach
+    void init() {
+      serde.configure(List.of("wontbeused"), registryClient, "%s-key", "%s-value", true);
+    }
+
+    @Test
+    void canDeserializeReturnsTrueIfSubjectExists() throws Exception {
+      String topic = RandomString.make(10);
+      registryClient.register(topic + "-key", new AvroSchema("\"int\""));
+      registryClient.register(topic + "-value", new AvroSchema("\"int\""));
+
+      assertThat(serde.canDeserialize(topic, Serde.Target.KEY)).isTrue();
+      assertThat(serde.canDeserialize(topic, Serde.Target.VALUE)).isTrue();
+    }
+
+    @Test
+    void canDeserializeReturnsFalseIfSubjectDoesNotExist() {
+      String topic = RandomString.make(10);
+      assertThat(serde.canDeserialize(topic, Serde.Target.KEY)).isFalse();
+      assertThat(serde.canDeserialize(topic, Serde.Target.VALUE)).isFalse();
+    }
+  }
+
   @Test
-  void canDeserializeReturnsTrueAlways() {
+  void canDeserializeAndCanSerializeReturnsTrueIfSubjectExists() throws Exception {
     String topic = RandomString.make(10);
-    assertThat(serde.canDeserialize(topic, Serde.Target.KEY)).isTrue();
-    assertThat(serde.canDeserialize(topic, Serde.Target.VALUE)).isTrue();
+    registryClient.register(topic + "-key", new AvroSchema("\"int\""));
+    registryClient.register(topic + "-value", new AvroSchema("\"int\""));
+
+    assertThat(serde.canSerialize(topic, Serde.Target.KEY)).isTrue();
+    assertThat(serde.canSerialize(topic, Serde.Target.VALUE)).isTrue();
+  }
+
+  @Test
+  void canSerializeReturnsFalseIfSubjectDoesNotExist() {
+    String topic = RandomString.make(10);
+    assertThat(serde.canSerialize(topic, Serde.Target.KEY)).isFalse();
+    assertThat(serde.canSerialize(topic, Serde.Target.VALUE)).isFalse();
   }
 
   private void assertJsonsEqual(String expected, String actual) throws JsonProcessingException {

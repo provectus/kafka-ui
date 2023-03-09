@@ -4,6 +4,7 @@ import {
   TOPIC_CUSTOM_PARAMS_PREFIX,
 } from 'lib/constants';
 import { TOPIC_EDIT_FORM_DEFAULT_PROPS } from 'components/Topics/Topic/Edit/Edit';
+import { getCleanUpPolicyValue } from 'components/Topics/shared/Form/TopicForm';
 import { Topic, TopicConfig } from 'generated-sources';
 
 export const getValue = (
@@ -20,7 +21,7 @@ const topicParamsTransformer = (topic?: Topic, config?: TopicConfig[]) => {
 
   const customParams = config.reduce((acc, { name, value, defaultValue }) => {
     if (value === defaultValue) return acc;
-    if (!Object.keys(TOPIC_CUSTOM_PARAMS).includes(name)) return acc;
+    if (!TOPIC_CUSTOM_PARAMS[name]) return acc;
     return [...acc, { name, value }];
   }, [] as { name: string; value?: string }[]);
 
@@ -30,6 +31,9 @@ const topicParamsTransformer = (topic?: Topic, config?: TopicConfig[]) => {
     replicationFactor: topic.replicationFactor,
     partitions:
       topic.partitionCount || TOPIC_EDIT_FORM_DEFAULT_PROPS.partitions,
+    cleanupPolicy:
+      getCleanUpPolicyValue(topic.cleanUpPolicy) ||
+      TOPIC_EDIT_FORM_DEFAULT_PROPS.cleanupPolicy,
     maxMessageBytes: getValue(config, 'max.message.bytes', 1000012),
     minInSyncReplicas: getValue(config, 'min.insync.replicas', 1),
     retentionBytes: getValue(config, 'retention.bytes', -1),

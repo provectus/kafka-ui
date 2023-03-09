@@ -18,6 +18,7 @@ import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.kafka.schemaregistry.json.JsonSchemaProvider;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
@@ -32,6 +33,7 @@ import java.util.concurrent.Callable;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.kafka.common.config.SslConfigs;
 
 
 public class SchemaRegistrySerde implements BuiltInSerde {
@@ -44,15 +46,40 @@ public class SchemaRegistrySerde implements BuiltInSerde {
   private List<String> schemaRegistryUrls;
   private String valueSchemaNameTemplate;
   private String keySchemaNameTemplate;
+  private boolean checkSchemaExistenceForDeserialize;
 
   private Map<SchemaType, MessageFormatter> schemaRegistryFormatters;
 
   @Override
-  public boolean initOnStartup(PropertyResolver kafkaClusterProperties,
-                               PropertyResolver globalProperties) {
+  public boolean canBeAutoConfigured(PropertyResolver kafkaClusterProperties,
+                                     PropertyResolver globalProperties) {
     return kafkaClusterProperties.getListProperty("schemaRegistry", String.class)
         .filter(lst -> !lst.isEmpty())
         .isPresent();
+  }
+
+  @Override
+  public void autoConfigure(PropertyResolver kafkaClusterProperties,
+                            PropertyResolver globalProperties) {
+    var urls = kafkaClusterProperties.getListProperty("schemaRegistry", String.class)
+        .filter(lst -> !lst.isEmpty())
+        .orElseThrow(() -> new ValidationException("No urls provided for schema registry"));
+    configure(
+        urls,
+        createSchemaRegistryClient(
+            urls,
+            kafkaClusterProperties.getProperty("schemaRegistryAuth.username", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("schemaRegistryAuth.password", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("schemaRegistrySsl.keystoreLocation", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("schemaRegistrySsl.keystorePassword", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("ssl.truststoreLocation", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("ssl.truststorePassword", String.class).orElse(null)
+        ),
+        kafkaClusterProperties.getProperty("schemaRegistryKeySchemaNameTemplate", String.class).orElse("%s-key"),
+        kafkaClusterProperties.getProperty("schemaRegistrySchemaNameTemplate", String.class).orElse("%s-value"),
+        kafkaClusterProperties.getProperty("schemaRegistryCheckSchemaExistenceForDeserialize", Boolean.class)
+            .orElse(false)
+    );
   }
 
   @Override
@@ -67,19 +94,17 @@ public class SchemaRegistrySerde implements BuiltInSerde {
         urls,
         createSchemaRegistryClient(
             urls,
-            serdeProperties.getProperty("username", String.class)
-                .or(() -> kafkaClusterProperties.getProperty("schemaRegistryAuth.username", String.class))
-                .orElse(null),
-            serdeProperties.getProperty("password", String.class)
-                .or(() -> kafkaClusterProperties.getProperty("schemaRegistryAuth.password", String.class))
-                .orElse(null)
+            serdeProperties.getProperty("username", String.class).orElse(null),
+            serdeProperties.getProperty("password", String.class).orElse(null),
+            serdeProperties.getProperty("keystoreLocation", String.class).orElse(null),
+            serdeProperties.getProperty("keystorePassword", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("ssl.truststoreLocation", String.class).orElse(null),
+            kafkaClusterProperties.getProperty("ssl.truststorePassword", String.class).orElse(null)
         ),
-        serdeProperties.getProperty("keySchemaNameTemplate", String.class)
-            .or(() -> kafkaClusterProperties.getProperty("keySchemaNameTemplate", String.class))
-            .orElse("%s-key"),
-        serdeProperties.getProperty("schemaNameTemplate", String.class)
-            .or(() -> kafkaClusterProperties.getProperty("schemaNameTemplate", String.class))
-            .orElse("%s-value")
+        serdeProperties.getProperty("keySchemaNameTemplate", String.class).orElse("%s-key"),
+        serdeProperties.getProperty("schemaNameTemplate", String.class).orElse("%s-value"),
+        serdeProperties.getProperty("checkSchemaExistenceForDeserialize", Boolean.class)
+            .orElse(false)
     );
   }
 
@@ -88,17 +113,23 @@ public class SchemaRegistrySerde implements BuiltInSerde {
       List<String> schemaRegistryUrls,
       SchemaRegistryClient schemaRegistryClient,
       String keySchemaNameTemplate,
-      String valueSchemaNameTemplate) {
+      String valueSchemaNameTemplate,
+      boolean checkTopicSchemaExistenceForDeserialize) {
     this.schemaRegistryUrls = schemaRegistryUrls;
     this.schemaRegistryClient = schemaRegistryClient;
     this.keySchemaNameTemplate = keySchemaNameTemplate;
     this.valueSchemaNameTemplate = valueSchemaNameTemplate;
     this.schemaRegistryFormatters = MessageFormatter.createMap(schemaRegistryClient);
+    this.checkSchemaExistenceForDeserialize = checkTopicSchemaExistenceForDeserialize;
   }
 
   private static SchemaRegistryClient createSchemaRegistryClient(List<String> urls,
                                                                  @Nullable String username,
-                                                                 @Nullable String password) {
+                                                                 @Nullable String password,
+                                                                 @Nullable String keyStoreLocation,
+                                                                 @Nullable String keyStorePassword,
+                                                                 @Nullable String trustStoreLocation,
+                                                                 @Nullable String trustStorePassword) {
     Map<String, String> configs = new HashMap<>();
     if (username != null && password != null) {
       configs.put(BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO");
@@ -110,6 +141,24 @@ public class SchemaRegistrySerde implements BuiltInSerde {
       throw new ValidationException(
           "You specified password but do not specified username");
     }
+
+    // We require at least a truststore. The logic is done similar to SchemaRegistryService.securedWebClientOnTLS
+    if (trustStoreLocation != null && trustStorePassword != null) {
+      configs.put(SchemaRegistryClientConfig.CLIENT_NAMESPACE + SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG,
+          trustStoreLocation);
+      configs.put(SchemaRegistryClientConfig.CLIENT_NAMESPACE + SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG,
+          trustStorePassword);
+    }
+
+    if (keyStoreLocation != null && keyStorePassword != null) {
+      configs.put(SchemaRegistryClientConfig.CLIENT_NAMESPACE + SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG,
+          keyStoreLocation);
+      configs.put(SchemaRegistryClientConfig.CLIENT_NAMESPACE + SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG,
+          keyStorePassword);
+      configs.put(SchemaRegistryClientConfig.CLIENT_NAMESPACE + SslConfigs.SSL_KEY_PASSWORD_CONFIG,
+          keyStorePassword);
+    }
+
     return new CachedSchemaRegistryClient(
         urls,
         1_000,
@@ -125,7 +174,9 @@ public class SchemaRegistrySerde implements BuiltInSerde {
 
   @Override
   public boolean canDeserialize(String topic, Target type) {
-    return true;
+    String subject = schemaSubject(topic, type);
+    return !checkSchemaExistenceForDeserialize
+        || getSchemaBySubject(subject).isPresent();
   }
 
   @Override

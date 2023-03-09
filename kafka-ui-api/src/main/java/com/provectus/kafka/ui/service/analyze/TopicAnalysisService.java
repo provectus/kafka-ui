@@ -2,12 +2,13 @@ package com.provectus.kafka.ui.service.analyze;
 
 import static com.provectus.kafka.ui.emitter.AbstractEmitter.NO_MORE_DATA_EMPTY_POLLS_COUNT;
 
+import com.provectus.kafka.ui.emitter.OffsetsInfo;
 import com.provectus.kafka.ui.exception.TopicAnalysisException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.TopicAnalysisDTO;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
 import com.provectus.kafka.ui.service.TopicsService;
-import com.provectus.kafka.ui.util.OffsetsSeek.WaitingOffsets;
+import com.provectus.kafka.ui.util.PollingThrottler;
 import java.io.Closeable;
 import java.time.Duration;
 import java.time.Instant;
@@ -62,7 +63,7 @@ public class TopicAnalysisService {
     if (analysisTasksStore.isAnalysisInProgress(topicId)) {
       throw new TopicAnalysisException("Topic is already analyzing");
     }
-    var task = new AnalysisTask(cluster, topicId, partitionsCnt, approxNumberOfMsgs);
+    var task = new AnalysisTask(cluster, topicId, partitionsCnt, approxNumberOfMsgs, cluster.getThrottler().get());
     analysisTasksStore.registerNewTask(topicId, task);
     Schedulers.boundedElastic().schedule(task);
   }
@@ -82,13 +83,15 @@ public class TopicAnalysisService {
     private final TopicIdentity topicId;
     private final int partitionsCnt;
     private final long approxNumberOfMsgs;
+    private final PollingThrottler throttler;
 
     private final TopicAnalysisStats totalStats = new TopicAnalysisStats();
     private final Map<Integer, TopicAnalysisStats> partitionStats = new HashMap<>();
 
     private final KafkaConsumer<Bytes, Bytes> consumer;
 
-    AnalysisTask(KafkaCluster cluster, TopicIdentity topicId, int partitionsCnt, long approxNumberOfMsgs) {
+    AnalysisTask(KafkaCluster cluster, TopicIdentity topicId, int partitionsCnt,
+                 long approxNumberOfMsgs, PollingThrottler throttler) {
       this.topicId = topicId;
       this.approxNumberOfMsgs = approxNumberOfMsgs;
       this.partitionsCnt = partitionsCnt;
@@ -100,6 +103,7 @@ public class TopicAnalysisService {
               ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "100000"
           )
       );
+      this.throttler = throttler;
     }
 
     @Override
@@ -119,14 +123,15 @@ public class TopicAnalysisService {
         consumer.assign(topicPartitions);
         consumer.seekToBeginning(topicPartitions);
 
-        var waitingOffsets = new WaitingOffsets(topicId.topicName, consumer, topicPartitions);
-        for (int emptyPolls = 0; !waitingOffsets.endReached() && emptyPolls < NO_MORE_DATA_EMPTY_POLLS_COUNT;) {
+        var offsetsInfo = new OffsetsInfo(consumer, topicId.topicName);
+        for (int emptyPolls = 0; !offsetsInfo.assignedPartitionsFullyPolled()
+            && emptyPolls < NO_MORE_DATA_EMPTY_POLLS_COUNT;) {
           var polled = consumer.poll(Duration.ofSeconds(3));
+          throttler.throttleAfterPoll(polled);
           emptyPolls = polled.isEmpty() ? emptyPolls + 1 : 0;
           polled.forEach(r -> {
             totalStats.apply(r);
             partitionStats.get(r.partition()).apply(r);
-            waitingOffsets.markPolled(r);
           });
           updateProgress();
         }

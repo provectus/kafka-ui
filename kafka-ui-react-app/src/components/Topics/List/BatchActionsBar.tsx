@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Row } from '@tanstack/react-table';
-import { Topic } from 'generated-sources';
+import { Action, Topic, ResourceType } from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
 import { ClusterName } from 'redux/interfaces';
 import { topicKeys, useDeleteTopic } from 'lib/hooks/api/topics';
@@ -10,6 +10,9 @@ import { useAppDispatch } from 'lib/hooks/redux';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { clusterTopicCopyRelativePath } from 'lib/paths';
 import { useQueryClient } from '@tanstack/react-query';
+import { ActionCanButton } from 'components/common/ActionComponent';
+import { isPermitted } from 'lib/permissions';
+import { useUserInfo } from 'lib/hooks/useUserInfo';
 
 interface BatchActionsbarProps {
   rows: Row<Topic>[];
@@ -63,6 +66,12 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
   type Tuple = [string, string];
 
   const getCopyTopicPath = () => {
+    if (!rows.length) {
+      return {
+        pathname: '',
+        search: '',
+      };
+    }
     const topic = rows[0].original;
 
     const search = Object.keys(topic).reduce((acc: Tuple[], key) => {
@@ -79,31 +88,62 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
       search: new URLSearchParams(search).toString(),
     };
   };
+  const { roles, rbacFlag } = useUserInfo();
+
+  const canDeleteSelectedTopics = useMemo(() => {
+    return selectedTopics.every((value) =>
+      isPermitted({
+        roles,
+        resource: ResourceType.TOPIC,
+        action: Action.DELETE,
+        value,
+        clusterName,
+        rbacFlag,
+      })
+    );
+  }, [selectedTopics, clusterName, roles]);
+
+  const canPurgeSelectedTopics = useMemo(() => {
+    return selectedTopics.every((value) =>
+      isPermitted({
+        roles,
+        resource: ResourceType.TOPIC,
+        action: Action.MESSAGES_DELETE,
+        value,
+        clusterName,
+        rbacFlag,
+      })
+    );
+  }, [selectedTopics, clusterName, roles]);
 
   return (
     <>
-      <Button
+      <ActionCanButton
         buttonSize="M"
         buttonType="secondary"
         onClick={deleteTopicsHandler}
+        disabled={!selectedTopics.length}
+        canDoAction={canDeleteSelectedTopics}
       >
         Delete selected topics
-      </Button>
+      </ActionCanButton>
       <Button
         buttonSize="M"
         buttonType="secondary"
-        disabled={selectedTopics.length > 1}
+        disabled={selectedTopics.length !== 1}
         to={getCopyTopicPath()}
       >
         Copy selected topic
       </Button>
-      <Button
+      <ActionCanButton
         buttonSize="M"
         buttonType="secondary"
         onClick={purgeTopicsHandler}
+        disabled={!selectedTopics.length}
+        canDoAction={canPurgeSelectedTopics}
       >
         Purge messages of selected topics
-      </Button>
+      </ActionCanButton>
     </>
   );
 };

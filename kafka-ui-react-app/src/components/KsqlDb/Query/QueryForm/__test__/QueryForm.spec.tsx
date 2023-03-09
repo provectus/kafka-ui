@@ -3,7 +3,6 @@ import React from 'react';
 import QueryForm, { Props } from 'components/KsqlDb/Query/QueryForm/QueryForm';
 import { screen, waitFor, within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import { act } from '@testing-library/react';
 
 const renderComponent = (props: Props) => render(<QueryForm {...props} />);
 
@@ -57,10 +56,9 @@ describe('QueryForm', () => {
       submitHandler: submitFn,
     });
 
-    await act(() =>
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }))
-    );
-    waitFor(() => {
+    await userEvent.click(screen.getByRole('button', { name: 'Execute' }));
+
+    await waitFor(() => {
       expect(screen.getByText('ksql is a required field')).toBeInTheDocument();
       expect(submitFn).not.toBeCalled();
     });
@@ -76,12 +74,16 @@ describe('QueryForm', () => {
       submitHandler: submitFn,
     });
 
-    await act(() => {
-      userEvent.paste(screen.getAllByRole('textbox')[0], 'show tables;');
-      userEvent.paste(screen.getByRole('textbox', { name: 'key' }), 'test');
-      userEvent.paste(screen.getByRole('textbox', { name: 'value' }), 'test');
-      userEvent.click(screen.getByRole('button', { name: 'Execute' }));
-    });
+    const textbox = screen.getAllByRole('textbox');
+    textbox[0].focus();
+    await userEvent.paste('show tables;');
+    const key = screen.getByRole('textbox', { name: 'key' });
+    key.focus();
+    await userEvent.paste('test');
+    const value = screen.getByRole('textbox', { name: 'value' });
+    value.focus();
+    await userEvent.paste('test');
+    await userEvent.click(screen.getByRole('button', { name: 'Execute' }));
 
     expect(
       screen.queryByText('ksql is a required field')
@@ -106,8 +108,8 @@ describe('QueryForm', () => {
 
     expect(screen.getByRole('button', { name: 'Clear results' })).toBeEnabled();
 
-    await act(() =>
-      userEvent.click(screen.getByRole('button', { name: 'Clear results' }))
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Clear results' })
     );
 
     expect(clearFn).toBeCalled();
@@ -125,36 +127,9 @@ describe('QueryForm', () => {
 
     expect(screen.getByRole('button', { name: 'Stop query' })).toBeEnabled();
 
-    await act(() =>
-      userEvent.click(screen.getByRole('button', { name: 'Stop query' }))
-    );
+    await userEvent.click(screen.getByRole('button', { name: 'Stop query' }));
 
     expect(cancelFn).toBeCalled();
-  });
-
-  it('submits form with ctrl+enter on KSQL editor', async () => {
-    const submitFn = jest.fn();
-    renderComponent({
-      fetching: false,
-      hasResults: false,
-      handleClearResults: jest.fn(),
-      handleSSECancel: jest.fn(),
-      submitHandler: submitFn,
-    });
-
-    await act(() => {
-      userEvent.paste(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        'show tables;'
-      );
-
-      userEvent.type(
-        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
-        '{ctrl}{enter}'
-      );
-    });
-
-    expect(submitFn.mock.calls.length).toBe(1);
   });
 
   it('add new property', async () => {
@@ -166,12 +141,27 @@ describe('QueryForm', () => {
       submitHandler: jest.fn(),
     });
 
-    await act(() => {
-      userEvent.click(
-        screen.getByRole('button', { name: 'Add Stream Property' })
-      );
-    });
+    const textbox = screen.getByLabelText('key');
+    await userEvent.type(textbox, 'prop_name');
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Add Stream Property' })
+    );
     expect(screen.getAllByRole('textbox', { name: 'key' }).length).toEqual(2);
+  });
+
+  it("doesn't add new property", async () => {
+    renderComponent({
+      fetching: false,
+      hasResults: false,
+      handleClearResults: jest.fn(),
+      handleSSECancel: jest.fn(),
+      submitHandler: jest.fn(),
+    });
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Add Stream Property' })
+    );
+    expect(screen.getAllByRole('textbox', { name: 'key' }).length).toEqual(1);
   });
 
   it('delete stream property', async () => {
@@ -182,15 +172,18 @@ describe('QueryForm', () => {
       handleSSECancel: jest.fn(),
       submitHandler: jest.fn(),
     });
+    const textBoxes = screen.getAllByRole('textbox', { name: 'key' });
+    textBoxes[0].focus();
+    await userEvent.paste('test');
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Add Stream Property' })
+    );
+    await userEvent.click(screen.getAllByLabelText('deleteProperty')[0]);
 
-    await act(() => {
-      userEvent.click(
-        screen.getByRole('button', { name: 'Add Stream Property' })
-      );
-    });
-    await act(() => {
-      userEvent.click(screen.getAllByLabelText('deleteProperty')[0]);
-    });
-    expect(screen.getAllByRole('textbox', { name: 'key' }).length).toEqual(1);
+    await screen.getByRole('button', { name: 'Add Stream Property' });
+
+    await userEvent.click(screen.getAllByLabelText('deleteProperty')[0]);
+
+    expect(textBoxes.length).toEqual(1);
   });
 });

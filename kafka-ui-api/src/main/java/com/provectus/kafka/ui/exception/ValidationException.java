@@ -6,6 +6,10 @@ public class ValidationException extends CustomBaseException {
     super(message);
   }
 
+  public ValidationException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
   @Override
   public ErrorCode getErrorCode() {
     return ErrorCode.VALIDATION_FAIL;

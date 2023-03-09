@@ -1,3 +1,4 @@
+import { SelectOption } from 'components/common/Select/Select';
 import { ConfigurationParameters } from 'generated-sources';
 
 declare global {
@@ -72,3 +73,26 @@ export const QUERY_REFETCH_OFF_OPTIONS = {
   refetchOnWindowFocus: false,
   refetchIntervalInBackground: false,
 };
+
+// Cluster Form Constants
+export const AUTH_OPTIONS: SelectOption[] = [
+  { value: 'SASL/JAAS', label: 'SASL/JAAS' },
+  { value: 'SASL/GSSAPI', label: 'SASL/GSSAPI' },
+  { value: 'SASL/OAUTHBEARER', label: 'SASL/OAUTHBEARER' },
+  { value: 'SASL/PLAIN', label: 'SASL/PLAIN' },
+  { value: 'SASL/SCRAM-256', label: 'SASL/SCRAM-256' },
+  { value: 'SASL/SCRAM-512', label: 'SASL/SCRAM-512' },
+  { value: 'Delegation tokens', label: 'Delegation tokens' },
+  { value: 'SASL/LDAP', label: 'SASL/LDAP' },
+  { value: 'SASL/AWS IAM', label: 'SASL/AWS IAM' },
+  { value: 'mTLS', label: 'mTLS' },
+];
+
+export const SECURITY_PROTOCOL_OPTIONS: SelectOption[] = [
+  { value: 'SASL_SSL', label: 'SASL_SSL' },
+  { value: 'SASL_PLAINTEXT', label: 'SASL_PLAINTEXT' },
+];
+export const METRICS_OPTIONS: SelectOption[] = [
+  { value: 'JMX', label: 'JMX' },
+  { value: 'PROMETHEUS', label: 'PROMETHEUS' },
+];
