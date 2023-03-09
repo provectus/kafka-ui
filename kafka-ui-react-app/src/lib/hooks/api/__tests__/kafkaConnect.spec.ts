@@ -91,7 +91,16 @@ describe('kafkaConnect hooks', () => {
           () => hooks.useUpdateConnectorState(connectorProps),
           { wrapper: TestQueryClientProvider }
         );
-        await act(() => result.current.mutateAsync(action));
+        await act(() => {
+          result.current.mutateAsync(
+            {
+              clusterName: clusterName,
+              connectName: connectName,
+              connectorName: connectorName,
+              action: action
+            },
+          )
+        });
         await waitFor(() => expect(result.current.isSuccess).toBeTruthy());
         expect(mock.calls()).toHaveLength(1);
       });

@@ -1,9 +1,4 @@
-import {
-  Connect,
-  Connector,
-  ConnectorAction,
-  NewConnector,
-} from 'generated-sources';
+import {Connect, Connector, NewConnector, UpdateConnectorStateRequest} from 'generated-sources';
 import { kafkaConnectApiClient as api } from 'lib/api';
 import sortBy from 'lodash/sortBy';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -74,7 +69,7 @@ export function useConnectorTasks(props: UseConnectorProps) {
 export function useUpdateConnectorState(props: UseConnectorProps) {
   const client = useQueryClient();
   return useMutation(
-    (action: ConnectorAction) => api.updateConnectorState({ ...props, action }),
+    (message: UpdateConnectorStateRequest) => api.updateConnectorState(message),
     {
       onSuccess: () => client.invalidateQueries(connectorKey(props)),
     }

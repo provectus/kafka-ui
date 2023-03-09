@@ -1,18 +1,19 @@
 import React from 'react';
 import useAppParams from 'lib/hooks/useAppParams';
-import { clusterConnectConnectorPath, ClusterNameRoute } from 'lib/paths';
-import Table, { TagCell } from 'components/common/NewTable';
-import { FullConnectorInfo } from 'generated-sources';
+import { ClusterNameRoute } from 'lib/paths';
+import Table, { TagCell, LinkCell } from 'components/common/NewTable';
+import {FullConnectorInfo} from 'generated-sources';
 import { useConnectors } from 'lib/hooks/api/kafkaConnect';
 import { ColumnDef } from '@tanstack/react-table';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 import ActionsCell from './ActionsCell';
 import TopicsCell from './TopicsCell';
+import ConnectorCell from './ConnectorCell';
 import RunningTasksCell from './RunningTasksCell';
+import BatchActionsBar from './BatchActionsBar';
 
 const List: React.FC = () => {
-  const navigate = useNavigate();
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const [searchParams] = useSearchParams();
   const { data: connectors } = useConnectors(
@@ -22,7 +23,7 @@ const List: React.FC = () => {
 
   const columns = React.useMemo<ColumnDef<FullConnectorInfo>[]>(
     () => [
-      { header: 'Name', accessorKey: 'name' },
+      { header: 'Name', accessorKey: 'name', cell: ConnectorCell },
       { header: 'Connect', accessorKey: 'connect' },
       { header: 'Type', accessorKey: 'type' },
       { header: 'Plugin', accessorKey: 'connectorClass' },
@@ -39,9 +40,8 @@ const List: React.FC = () => {
       data={connectors || []}
       columns={columns}
       enableSorting
-      onRowClick={({ original: { connect, name } }) =>
-        navigate(clusterConnectConnectorPath(clusterName, connect, name))
-      }
+      batchActionsBar={BatchActionsBar}
+      enableRowSelection={true}
       emptyMessage="No connectors found"
     />
   );

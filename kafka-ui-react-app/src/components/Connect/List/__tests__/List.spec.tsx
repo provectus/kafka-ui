@@ -10,6 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorPath, clusterConnectorsPath } from 'lib/paths';
 import { useConnectors, useDeleteConnector } from 'lib/hooks/api/kafkaConnect';
+import { BrowserRouter } from "react-router-dom";
 
 const mockedUsedNavigate = jest.fn();
 const mockDelete = jest.fn();
@@ -22,6 +23,7 @@ jest.mock('react-router-dom', () => ({
 jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useConnectors: jest.fn(),
   useDeleteConnector: jest.fn(),
+  useUpdateConnectorState: jest.fn(),
 }));
 
 const clusterName = 'local';
@@ -52,11 +54,8 @@ describe('Connectors List', () => {
 
     it('opens broker when row clicked', async () => {
       renderComponent();
-      await userEvent.click(
-        screen.getByRole('row', {
-          name: 'hdfs-source-connector first SOURCE FileStreamSource a b c RUNNING 2 of 2',
-        })
-      );
+
+      await userEvent.click(screen.getByRole('link', { name: 'hdfs-source-connector' }));
       await waitFor(() =>
         expect(mockedUsedNavigate).toBeCalledWith(
           clusterConnectConnectorPath(

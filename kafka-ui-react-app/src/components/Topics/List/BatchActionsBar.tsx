@@ -14,12 +14,12 @@ import { ActionCanButton } from 'components/common/ActionComponent';
 import { isPermitted } from 'lib/permissions';
 import { useUserInfo } from 'lib/hooks/useUserInfo';
 
-interface BatchActionsbarProps {
+interface BatchActionsBarProps {
   rows: Row<Topic>[];
   resetRowSelection(): void;
 }
 
-const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
+const BatchActionsBar: React.FC<BatchActionsBarProps> = ({
   rows,
   resetRowSelection,
 }) => {
@@ -148,4 +148,4 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
   );
 };
 
-export default BatchActionsbar;
+export default BatchActionsBar;
