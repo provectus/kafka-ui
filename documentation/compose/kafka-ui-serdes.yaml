@@ -28,8 +28,7 @@ services:
             kafka.clusters.0.serde.0.name: ProtobufFile
             kafka.clusters.0.serde.0.topicKeysPattern: "topic1"
             kafka.clusters.0.serde.0.topicValuesPattern: "topic1"
-            kafka.clusters.0.serde.0.properties.protobufFiles.0: /protofiles/key-types.proto
-            kafka.clusters.0.serde.0.properties.protobufFiles.1: /protofiles/values.proto
+            kafka.clusters.0.serde.0.properties.protobufFilesDir: /protofiles/
             kafka.clusters.0.serde.0.properties.protobufMessageNameForKey: test.MyKey # default type for keys
             kafka.clusters.0.serde.0.properties.protobufMessageName: test.MyValue # default type for values
             kafka.clusters.0.serde.0.properties.protobufMessageNameForKeyByTopic.topic1: test.MySpecificTopicKey # keys type for topic "topic1"

@@ -9,6 +9,7 @@ interface ServerResponse {
   url?: string;
   message?: ErrorResponse['message'];
 }
+export type ToastTypes = ToastType | 'warning';
 
 export const getResponse = async (
   response: Response
@@ -34,7 +35,7 @@ interface AlertOptions {
 }
 
 export const showAlert = (
-  type: ToastType,
+  type: ToastTypes,
   { title, message, id }: AlertOptions
 ) => {
   toast.custom(

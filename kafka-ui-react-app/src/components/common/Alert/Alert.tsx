@@ -1,13 +1,13 @@
 import React from 'react';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
-import { ToastType } from 'react-hot-toast';
+import { ToastTypes } from 'lib/errorHandling';
 
 import * as S from './Alert.styled';
 
 export interface AlertProps {
   title: string;
-  type: ToastType;
+  type: ToastTypes;
   message: React.ReactNode;
   onDissmiss(): void;
 }
