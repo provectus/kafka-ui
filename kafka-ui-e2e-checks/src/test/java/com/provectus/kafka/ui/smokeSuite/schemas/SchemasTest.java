@@ -4,7 +4,6 @@ import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.BaseTest;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.models.Schema;
-import io.qameta.allure.Step;
 import io.qase.api.annotation.QaseId;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -15,7 +14,6 @@ import org.testng.asserts.SoftAssert;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.SCHEMA_REGISTRY;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
 public class SchemasTest extends BaseTest {
@@ -79,7 +77,7 @@ public class SchemasTest extends BaseTest {
         Assert.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), schemaDetails.getCompatibility(), "getCompatibility()");
     }
 
-    @QaseId(186)
+    @QaseId(44)
     @Test(priority = 3)
     public void compareVersionsOperation() {
         navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
@@ -187,22 +185,5 @@ public class SchemasTest extends BaseTest {
     @AfterClass(alwaysRun = true)
     public void afterClass() {
         SCHEMA_LIST.forEach(schema -> apiService.deleteSchema(schema.getName()));
-    }
-
-    @Step
-    private void navigateToSchemaRegistry() {
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
-        schemaRegistryList
-                .waitUntilScreenReady();
-    }
-
-    @Step
-    private void navigateToSchemaRegistryAndOpenDetails(String schemaName) {
-        navigateToSchemaRegistry();
-        schemaRegistryList
-                .openSchema(schemaName);
-        schemaDetails
-                .waitUntilScreenReady();
     }
 }

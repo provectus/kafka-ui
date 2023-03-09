@@ -114,7 +114,7 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
   }
 
   private static KsqlApiClient ksqlClient() {
-    return new KsqlApiClient(KSQL_DB.url(), null, null, null);
+    return new KsqlApiClient(KSQL_DB.url(), null, null, null, null);
   }
 
 }

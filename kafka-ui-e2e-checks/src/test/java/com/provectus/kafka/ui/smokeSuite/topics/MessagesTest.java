@@ -148,21 +148,6 @@ public class MessagesTest extends BaseTest {
     }
 
     @Ignore
-    @Issue("https://github.com/provectus/kafka-ui/issues/2819")
-    @QaseId(21)
-    @Test(priority = 5)
-    public void copyMessageFromTopicProfile() {
-        navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
-        topicDetails
-                .openDetailsTab(MESSAGES)
-                .getRandomMessage()
-                .openDotMenu()
-                .clickCopyToClipBoard();
-        Assert.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Copied successfully!"),
-                "isAlertWithMessageVisible()");
-    }
-
-    @Ignore
     @Issue("https://github.com/provectus/kafka-ui/issues/2394")
     @QaseId(15)
     @Test(priority = 6)
