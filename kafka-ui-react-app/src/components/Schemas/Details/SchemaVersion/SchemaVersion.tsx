@@ -3,7 +3,7 @@ import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 import { SchemaSubject } from 'generated-sources';
 import { Row } from '@tanstack/react-table';
 
-export interface Props {
+interface Props {
   row: Row<SchemaSubject>;
 }
 

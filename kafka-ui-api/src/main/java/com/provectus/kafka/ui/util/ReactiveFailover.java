@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -24,6 +23,16 @@ public class ReactiveFailover<T> {
 
   private final Predicate<Throwable> failoverExceptionsPredicate;
   private final String noAvailablePublishersMsg;
+
+  // creates single-publisher failover (basically for tests usage)
+  public static <T> ReactiveFailover<T> createNoop(T publisher) {
+    return create(
+        List.of(publisher),
+        th -> true,
+        "publisher is not available",
+        DEFAULT_RETRY_GRACE_PERIOD_MS
+    );
+  }
 
   public static <T> ReactiveFailover<T> create(List<T> publishers,
                                                Predicate<Throwable> failoverExeptionsPredicate,
@@ -68,7 +77,8 @@ public class ReactiveFailover<T> {
 
   private <V> Mono<V> mono(Function<T, Mono<V>> f, List<PublisherHolder<T>> candidates) {
     var publisher = candidates.get(0);
-    return f.apply(publisher.get())
+    return publisher.get()
+        .flatMap(f)
         .onErrorResume(failoverExceptionsPredicate, th -> {
           publisher.markFailed();
           if (candidates.size() == 1) {
@@ -92,7 +102,8 @@ public class ReactiveFailover<T> {
 
   private <V> Flux<V> flux(Function<T, Flux<V>> f, List<PublisherHolder<T>> candidates) {
     var publisher = candidates.get(0);
-    return f.apply(publisher.get())
+    return publisher.get()
+        .flatMapMany(f)
         .onErrorResume(failoverExceptionsPredicate, th -> {
           publisher.markFailed();
           if (candidates.size() == 1) {
@@ -135,11 +146,15 @@ public class ReactiveFailover<T> {
       this.retryGracePeriodMs = retryGracePeriodMs;
     }
 
-    synchronized T get() {
+    synchronized Mono<T> get() {
       if (publisherInstance == null) {
-        publisherInstance = supplier.get();
+        try {
+          publisherInstance = supplier.get();
+        } catch (Throwable th) {
+          return Mono.error(th);
+        }
       }
-      return publisherInstance;
+      return Mono.just(publisherInstance);
     }
 
     void markFailed() {
