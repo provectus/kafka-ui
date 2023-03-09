@@ -24,28 +24,34 @@
             "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": [
-                "kafka-cluster:DescribeTopicDynamicConfiguration",
-                "kafka-cluster:AlterTopicDynamicConfiguration",
-                "kafka-cluster:AlterTopic",
-                "kafka-cluster:DescribeClusterDynamicConfiguration",
-                "kafka-cluster:Connect",
-                "kafka-cluster:DeleteTopic"
+                "kafka-cluster:DescribeCluster",
+                "kafka-cluster:AlterCluster",
+                "kafka-cluster:Connect"
             ],
-            "Resource": [
-                "MSK_ARN",
-                "MSK_ARN/*"
-            ]
+            "Resource": "arn:aws:kafka:eu-central-1:297478128798:cluster/test-wizard/7b39802a-21ac-48fe-b6e8-a7baf2ae2533-s2"
         },
         {
             "Sid": "VisualEditor1",
             "Effect": "Allow",
             "Action": [
-                "kafka-cluster:CreateTopic",
+                "kafka-cluster:DeleteGroup",
+                "kafka-cluster:DescribeCluster",
                 "kafka-cluster:ReadData",
+                "kafka-cluster:DescribeTopicDynamicConfiguration",
+                "kafka-cluster:AlterTopicDynamicConfiguration",
+                "kafka-cluster:AlterGroup",
+                "kafka-cluster:AlterClusterDynamicConfiguration",
+                "kafka-cluster:AlterTopic",
+                "kafka-cluster:CreateTopic",
                 "kafka-cluster:DescribeTopic",
+                "kafka-cluster:AlterCluster",
+                "kafka-cluster:DescribeGroup",
+                "kafka-cluster:DescribeClusterDynamicConfiguration",
+                "kafka-cluster:Connect",
+                "kafka-cluster:DeleteTopic",
                 "kafka-cluster:WriteData"
             ],
-            "Resource": "MSK_ARN/*"
+            "Resource": "arn:aws:kafka:eu-central-1:297478128798:topic/test-wizard/7b39802a-21ac-48fe-b6e8-a7baf2ae2533-s2/*"
         },
         {
             "Sid": "VisualEditor2",
@@ -54,7 +60,7 @@
                 "kafka-cluster:AlterGroup",
                 "kafka-cluster:DescribeGroup"
             ],
-            "Resource": "MSK_ARN/*"
+            "Resource": "arn:aws:kafka:eu-central-1:297478128798:group/test-wizard/7b39802a-21ac-48fe-b6e8-a7baf2ae2533-s2/*"
         }
     ]
 }
@@ -62,5 +68,22 @@
 
 ### Attach policy to user to provide access.
 
-##
-Run the app with `KAFKA_CLUSTERS_0_DISABLELOGDIRSCOLLECTION`
+## Create role for ec2.
+
+###
+
+1. Go to IAM
+2. Click create role
+3. Choose AWS Services and EC2
+4. On next page find policy which has created on previus step.
+
+
+## Attach role to ec2
+
+###
+
+1. Go to ec2.
+2. choose your ec2 with Kafka-ui IAM.
+3. Click Actions, Secutiry, Modify IAM role.
+4. Choose IAM role from previuse step.
+5. Click Update IAM role
