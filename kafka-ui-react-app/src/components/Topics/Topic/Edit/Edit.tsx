@@ -67,9 +67,12 @@ const Edit: React.FC = () => {
     );
 
     const newData = Object.fromEntries(filteredDirtyDefaultEntries);
-
-    await updateTopic.mutateAsync(newData);
-    navigate('../');
+    try {
+      await updateTopic.mutateAsync(newData);
+      navigate('../');
+    } catch (e) {
+      // do nothing
+    }
   };
 
   return (

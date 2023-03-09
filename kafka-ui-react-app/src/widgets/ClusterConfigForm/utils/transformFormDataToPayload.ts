@@ -1,5 +1,5 @@
 import { ClusterConfigFormValues } from 'widgets/ClusterConfigForm/types';
-import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
+import { ApplicationConfigPropertiesKafkaClusters } from 'generated-sources';
 
 import { getJaasConfig } from './getJaasConfig';
 import { convertFormKeyToPropsKey } from './convertFormKeyToPropsKey';
@@ -36,7 +36,7 @@ const transformCustomProps = (props: Record<string, string>) => {
 };
 
 export const transformFormDataToPayload = (data: ClusterConfigFormValues) => {
-  const config: ApplicationConfigPropertiesKafkaClustersInner = {
+  const config: ApplicationConfigPropertiesKafkaClusters = {
     name: data.name,
     bootstrapServers: data.bootstrapServers
       .map(({ host, port }) => `${host}:${port}`)

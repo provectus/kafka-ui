@@ -1,6 +1,6 @@
 import { appConfigApiClient as api } from 'lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ApplicationConfigPropertiesKafkaClustersInner } from 'generated-sources';
+import { ApplicationConfigPropertiesKafkaClusters } from 'generated-sources';
 import { QUERY_REFETCH_OFF_OPTIONS } from 'lib/constants';
 
 export function useAppInfo() {
@@ -18,11 +18,11 @@ export function useAppConfig() {
 export function useUpdateAppConfig({ initialName }: { initialName?: string }) {
   const client = useQueryClient();
   return useMutation(
-    async (cluster: ApplicationConfigPropertiesKafkaClustersInner) => {
+    async (cluster: ApplicationConfigPropertiesKafkaClusters) => {
       const existingConfig = await api.getCurrentConfig();
       const existingClusters = existingConfig.properties?.kafka?.clusters || [];
 
-      let clusters: ApplicationConfigPropertiesKafkaClustersInner[] = [];
+      let clusters: ApplicationConfigPropertiesKafkaClusters[] = [];
 
       if (existingClusters.length > 0) {
         if (!initialName) {
@@ -61,7 +61,7 @@ export function useAppConfigFilesUpload() {
 }
 
 export function useValidateAppConfig() {
-  return useMutation((config: ApplicationConfigPropertiesKafkaClustersInner) =>
+  return useMutation((config: ApplicationConfigPropertiesKafkaClusters) =>
     api.validateConfig({
       applicationConfig: { properties: { kafka: { clusters: [config] } } },
     })

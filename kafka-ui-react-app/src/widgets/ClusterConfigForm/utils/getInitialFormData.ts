@@ -1,6 +1,6 @@
 import {
-  ApplicationConfigPropertiesKafkaClustersInner,
-  ApplicationConfigPropertiesKafkaClustersInnerSchemaRegistrySsl,
+  ApplicationConfigPropertiesKafkaClusters,
+  ApplicationConfigPropertiesKafkaSchemaRegistrySsl,
 } from 'generated-sources';
 import { ClusterConfigFormValues } from 'widgets/ClusterConfigForm/types';
 
@@ -13,7 +13,7 @@ const parseBootstrapServers = (bootstrapServers?: string) =>
   });
 
 const parseKeystore = (
-  keystore?: ApplicationConfigPropertiesKafkaClustersInnerSchemaRegistrySsl
+  keystore?: ApplicationConfigPropertiesKafkaSchemaRegistrySsl
 ) => {
   if (!keystore) return undefined;
   const { keystoreLocation, keystorePassword } = keystore;
@@ -31,7 +31,7 @@ const parseCredentials = (username?: string, password?: string) => {
 };
 
 export const getInitialFormData = (
-  payload: ApplicationConfigPropertiesKafkaClustersInner
+  payload: ApplicationConfigPropertiesKafkaClusters
 ) => {
   const {
     ssl,

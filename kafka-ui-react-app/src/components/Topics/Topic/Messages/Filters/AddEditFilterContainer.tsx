@@ -51,8 +51,12 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
 
   const onSubmit = React.useCallback(
     (values: AddMessageFilters) => {
-      submitCallback?.(values);
-      reset({ name: '', code: '', saveFilter: false });
+      try {
+        submitCallback?.(values);
+        reset({ name: '', code: '', saveFilter: false });
+      } catch (e) {
+        // do nothing
+      }
     },
     [isAdd, reset, submitCallback]
   );
