@@ -99,6 +99,9 @@
 
                                         <dateLibrary>java8</dateLibrary>
                                     </configOptions>
+                                    <typeMappings>
+                                        <mapping>filepart=org.springframework.http.codec.multipart.FilePart</mapping>
+                                    </typeMappings>
                                 </configuration>
                             </execution>
                             <execution>
@@ -118,6 +121,32 @@
                                         <modelPackage>com.provectus.kafka.ui.connect.model</modelPackage>
                                         <apiPackage>com.provectus.kafka.ui.connect.api</apiPackage>
                                         <sourceFolder>kafka-connect-client</sourceFolder>
+
+                                        <asyncNative>true</asyncNative>
+                                        <library>webclient</library>
+
+                                        <useBeanValidation>true</useBeanValidation>
+                                        <dateLibrary>java8</dateLibrary>
+                                    </configOptions>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>generate-sr-client</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${project.basedir}/src/main/resources/swagger/kafka-sr-api.yaml
+                                    </inputSpec>
+                                    <output>${project.build.directory}/generated-sources/kafka-sr-client</output>
+                                    <generatorName>java</generatorName>
+                                    <generateApiTests>false</generateApiTests>
+                                    <generateModelTests>false</generateModelTests>
+
+                                    <configOptions>
+                                        <modelPackage>com.provectus.kafka.ui.sr.model</modelPackage>
+                                        <apiPackage>com.provectus.kafka.ui.sr.api</apiPackage>
+                                        <sourceFolder>kafka-sr-client</sourceFolder>
 
                                         <asyncNative>true</asyncNative>
                                         <library>webclient</library>

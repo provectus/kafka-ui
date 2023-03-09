@@ -65,22 +65,26 @@ const New: React.FC = () => {
   }, [connects, getValues, setValue]);
 
   const onSubmit = async (values: FormValues) => {
-    const connector = await mutation.createResource({
-      connectName: values.connectName,
-      newConnector: {
-        name: values.name,
-        config: JSON.parse(values.config.trim()),
-      },
-    });
+    try {
+      const connector = await mutation.createResource({
+        connectName: values.connectName,
+        newConnector: {
+          name: values.name,
+          config: JSON.parse(values.config.trim()),
+        },
+      });
 
-    if (connector) {
-      navigate(
-        clusterConnectConnectorPath(
-          clusterName,
-          connector.connect,
-          connector.name
-        )
-      );
+      if (connector) {
+        navigate(
+          clusterConnectConnectorPath(
+            clusterName,
+            connector.connect,
+            connector.name
+          )
+        );
+      }
+    } catch (e) {
+      // do nothing
     }
   };
 
@@ -133,6 +137,7 @@ const New: React.FC = () => {
             inputSize="M"
             placeholder="Connector Name"
             name="name"
+            autoFocus
             autoComplete="off"
             disabled={isSubmitting}
           />

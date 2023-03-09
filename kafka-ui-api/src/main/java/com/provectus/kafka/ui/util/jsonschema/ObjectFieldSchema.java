@@ -10,6 +10,9 @@ import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 public class ObjectFieldSchema implements FieldSchema {
+
+  public static final ObjectFieldSchema EMPTY = new ObjectFieldSchema(Map.of(), List.of());
+
   private final Map<String, FieldSchema> properties;
   private final List<String> required;
 

@@ -17,4 +17,6 @@ public class MetricsConfig {
   private final boolean ssl;
   private final String username;
   private final String password;
+  private final String keystoreLocation;
+  private final String keystorePassword;
 }
