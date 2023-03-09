@@ -66,7 +66,7 @@ const ClustersWidget: React.FC = () => {
         columns={columns}
         data={config?.list}
         enableSorting
-        emptyMessage="Only offline clusters"
+        emptyMessage="No clusters are online"
       />
     </>
   );
