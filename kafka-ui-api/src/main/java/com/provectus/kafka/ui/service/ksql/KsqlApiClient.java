@@ -43,12 +43,13 @@ public class KsqlApiClient {
       UndefineVariableContext.class
   );
 
-  @Builder
+  @Builder(toBuilder = true)
   @Value
   public static class KsqlResponseTable {
     String header;
     List<String> columnNames;
     List<List<JsonNode>> values;
+    boolean error;
 
     public Optional<JsonNode> getColumnValue(List<JsonNode> row, String column) {
       return Optional.ofNullable(row.get(columnNames.indexOf(column)));
@@ -68,26 +69,22 @@ public class KsqlApiClient {
 
   public KsqlApiClient(String baseUrl,
                        @Nullable ClustersProperties.KsqldbServerAuth ksqldbServerAuth,
-                       @Nullable ClustersProperties.WebClientSsl ksqldbServerSsl,
+                       @Nullable ClustersProperties.TruststoreConfig ksqldbServerSsl,
+                       @Nullable ClustersProperties.KeystoreConfig keystoreConfig,
                        @Nullable DataSize maxBuffSize) {
     this.baseUrl = baseUrl;
-    this.webClient = webClient(ksqldbServerAuth, ksqldbServerSsl, maxBuffSize);
+    this.webClient = webClient(ksqldbServerAuth, ksqldbServerSsl, keystoreConfig, maxBuffSize);
   }
 
   private static WebClient webClient(@Nullable ClustersProperties.KsqldbServerAuth ksqldbServerAuth,
-                                     @Nullable ClustersProperties.WebClientSsl ksqldbServerSsl,
+                                     @Nullable ClustersProperties.TruststoreConfig truststoreConfig,
+                                     @Nullable ClustersProperties.KeystoreConfig keystoreConfig,
                                      @Nullable DataSize maxBuffSize) {
     ksqldbServerAuth = Optional.ofNullable(ksqldbServerAuth).orElse(new ClustersProperties.KsqldbServerAuth());
-    ksqldbServerSsl = Optional.ofNullable(ksqldbServerSsl).orElse(new ClustersProperties.WebClientSsl());
     maxBuffSize = Optional.ofNullable(maxBuffSize).orElse(DataSize.ofMegabytes(20));
 
     return new WebClientConfigurator()
-        .configureSsl(
-            ksqldbServerSsl.getKeystoreLocation(),
-            ksqldbServerSsl.getKeystorePassword(),
-            ksqldbServerSsl.getTruststoreLocation(),
-            ksqldbServerSsl.getTruststorePassword()
-        )
+        .configureSsl(truststoreConfig, keystoreConfig)
         .configureBasicAuth(
             ksqldbServerAuth.getUsername(),
             ksqldbServerAuth.getPassword()

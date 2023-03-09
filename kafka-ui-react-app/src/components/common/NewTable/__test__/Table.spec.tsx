@@ -31,7 +31,7 @@ jest.mock('react-hook-form', () => ({
   }),
 }));
 
-type Datum = typeof data[0];
+type Datum = (typeof data)[0];
 
 const data = [
   {
