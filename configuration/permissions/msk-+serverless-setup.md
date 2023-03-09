@@ -2,7 +2,16 @@
 
 This guide has been written for MSK Serverless but is applicable for MSK in general as well.
 
-## Creating an instance
+### Authentication options for Kafka-UI:
+
+```
+KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL=SASL_SSL
+KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM=AWS_MSK_IAM
+KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG='software.amazon.msk.auth.iam.IAMLoginModule required;'
+KAFKA_CLUSTERS_0_PROPERTIES_SASL_CLIENT_CALLBACK_HANDLER_CLASS='software.amazon.msk.auth.iam.IAMClientCallbackHandler'
+```
+
+### Creating an instance
 
 1. Go to the MSK page
 2. Click "create cluster"
