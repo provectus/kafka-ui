@@ -2,9 +2,9 @@
 description: ACLs required to run the app
 ---
 
-# Required ACLs
+# Required Kafka ACLs
 
-## Standalone kafka
+## ACLs for standalone kafka
 
 This list is enough to run the app in r/o mode
 
@@ -18,12 +18,5 @@ This list is enough to run the app in r/o mode
  ALLOW      | DESCRIBE_CONFIGS | CLUSTER      | kafka-cluster | LITERAL
 ```
 
-## MSK
 
-```
-      "kafka-cluster:Connect",
-      "kafka-cluster:Describe*",
-      "kafka-cluster:CreateTopic",
-      "kafka-cluster:AlterGroup",
-      "kafka-cluster:ReadData"
-```
+

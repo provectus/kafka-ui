@@ -23,10 +23,11 @@
 
 ## 👷♂ Configuration
 
-* [Configuration](configuration/configuration/README.md)
-  * [Required ACLs](configuration/configuration/required-acls.md)
-  * [Complex configuration examples](configuration/configuration/complex-configuration-examples/README.md)
-    * [Kraft mode + multiple brokers](configuration/configuration/complex-configuration-examples/kraft-mode-+-multiple-brokers.md)
+* [Permissions](configuration/permissions/README.md)
+  * [Required Kafka ACLs](configuration/permissions/required-kafka-acls.md)
+  * [MSK (+Serverless) Setup](configuration/permissions/msk-+serverless-setup.md)
+* [Complex configuration examples](configuration/complex-configuration-examples/README.md)
+  * [Kraft mode + multiple brokers](configuration/complex-configuration-examples/kraft-mode-+-multiple-brokers.md)
 * [SSL](configuration/ssl.md)
 * [Authentication](configuration/authentication/README.md)
   * [OAuth2](configuration/authentication/oauth2.md)
