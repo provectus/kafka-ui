@@ -16,6 +16,7 @@ import Navbar from 'components/common/Navigation/Navbar.styled';
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { Action, ResourceType } from 'generated-sources';
 import { useKsqlkDbStreams, useKsqlkDbTables } from 'lib/hooks/api/ksqlDb';
+import 'ace-builds/src-noconflict/ace';
 
 import TableView from './TableView';
 
