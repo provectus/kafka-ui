@@ -18,7 +18,7 @@ import Input from 'components/common/Input/Input';
 
 import * as S from './QueryForm.styled';
 
-export interface Props {
+interface QueryFormProps {
   fetching: boolean;
   hasResults: boolean;
   resetResults: () => void;
@@ -42,7 +42,7 @@ const validationSchema = yup.object({
   streamsProperties: yup.array().of(streamsPropertiesSchema),
 });
 
-const QueryForm: React.FC<Props> = ({
+const QueryForm: React.FC<QueryFormProps> = ({
   fetching,
   submitHandler,
   resetResults,
@@ -61,7 +61,6 @@ const QueryForm: React.FC<Props> = ({
     setValue,
     control,
     formState: { errors, isDirty },
-    reset,
   } = methods;
 
   const { fields, append, remove } = useFieldArray<
@@ -90,7 +89,6 @@ const QueryForm: React.FC<Props> = ({
   };
 
   const handleClear = () => {
-    reset();
     handleFocus();
     resetResults();
   };

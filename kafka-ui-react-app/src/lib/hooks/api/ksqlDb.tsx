@@ -33,7 +33,7 @@ export function useExecuteKsqlkDbQueryMutation() {
   return useMutation((props: ExecuteKsqlRequest) => api.executeKsql(props));
 }
 
-export const getFormattedErrorFromTableData = (
+const getFormattedErrorFromTableData = (
   responseValues: KsqlTableResponse['values']
 ): { title: string; message: string } => {
   // We expect someting like that

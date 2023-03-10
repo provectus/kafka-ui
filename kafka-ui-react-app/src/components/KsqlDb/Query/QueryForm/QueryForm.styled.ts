@@ -9,6 +9,10 @@ export const KSQLInputsWrapper = styled.div`
   display: flex;
   gap: 24px;
   padding-bottom: 16px;
+
+  @media screen and (max-width: 769px) {
+    flex-direction: column;
+  }
 `;
 
 export const KSQLInputHeader = styled.div`

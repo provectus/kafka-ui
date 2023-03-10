@@ -3,7 +3,7 @@ import { KsqlStreamDescription, KsqlTableDescription } from 'generated-sources';
 import Table from 'components/common/NewTable';
 import { ColumnDef } from '@tanstack/react-table';
 
-export interface TableViewProps {
+interface TableViewProps {
   fetching: boolean;
   rows: KsqlTableDescription[] | KsqlStreamDescription[];
 }
