@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.enums.MenuItem.KAFKA_CONNECT;
 
 
 public class KafkaConnectList extends BasePage {
@@ -19,7 +20,7 @@ public class KafkaConnectList extends BasePage {
     @Step
     public KafkaConnectList waitUntilScreenReady() {
         waitUntilSpinnerDisappear();
-        createConnectorBtn.shouldBe(Condition.visible);
+        getPageTitleFromHeader(KAFKA_CONNECT).shouldBe(Condition.visible);
         return this;
     }
 

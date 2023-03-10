@@ -15,10 +15,10 @@ import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.enums.MenuItem.TOPICS;
 
 public class TopicsList extends BasePage {
-
-    protected SelenideElement topicListHeader = $x("//h1[text()='Topics']");
+    
     protected SelenideElement addTopicBtn = $x("//button[normalize-space(text()) ='Add a Topic']");
     protected SelenideElement searchField = $x("//input[@placeholder='Search by Topic Name']");
     protected SelenideElement showInternalRadioBtn = $x("//input[@name='ShowInternalTopics']");
@@ -32,7 +32,7 @@ public class TopicsList extends BasePage {
     @Step
     public TopicsList waitUntilScreenReady() {
         waitUntilSpinnerDisappear();
-        topicListHeader.shouldBe(visible);
+        getPageTitleFromHeader(TOPICS).shouldBe(visible);
         return this;
     }
 

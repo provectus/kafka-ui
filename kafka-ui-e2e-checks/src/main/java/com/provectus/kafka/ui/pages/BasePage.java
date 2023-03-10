@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.enums.MenuItem;
 import com.provectus.kafka.ui.utilities.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,12 +31,22 @@ public abstract class BasePage extends WebUtils {
     protected String summaryCellLocator = "//div[contains(text(),'%s')]";
     protected String tableElementNameLocator = "//tbody//a[contains(text(),'%s')]";
     protected String columnHeaderLocator = "//table//tr/th//div[text()='%s']";
+    protected String pageTitleFromHeader = "//h1[text()='%s']";
+    protected String pagePathFromHeader = "//a[text()='%s']/../h1";
 
     protected void waitUntilSpinnerDisappear() {
         log.debug("\nwaitUntilSpinnerDisappear");
         if (isVisible(loadingSpinner)) {
             loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(30));
         }
+    }
+    
+    protected SelenideElement getPageTitleFromHeader(MenuItem menuItem) {
+        return $x(String.format(pageTitleFromHeader, menuItem.getPageTitle()));
+    }
+    
+    protected SelenideElement getPagePathFromHeader(MenuItem menuItem) {
+        return $x(String.format(pagePathFromHeader, menuItem.getPageTitle()));
     }
 
     protected void clickSubmitBtn() {

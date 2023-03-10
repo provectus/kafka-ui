@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.pages;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.enums.MenuItem;
 import io.qameta.allure.Step;
 
 import java.time.Duration;
@@ -32,40 +33,24 @@ public class NaviSideBar extends BasePage {
         dashboardMenuItem.shouldBe(Condition.visible, Duration.ofSeconds(30));
         return this;
     }
-
+    
     @Step
-    public NaviSideBar openSideMenu(String clusterName, SideMenuOption option) {
+    public NaviSideBar openSideMenu(String clusterName, MenuItem menuItem) {
         clickByActions(expandCluster(clusterName).parent()
-                .$x(String.format(sideMenuOptionElementLocator, option.value)));
+                .$x(String.format(sideMenuOptionElementLocator, menuItem.getNaviTitle())));
         return this;
     }
-
+    
     @Step
-    public NaviSideBar openSideMenu(SideMenuOption option) {
-        openSideMenu(CLUSTER_NAME, option);
+    public NaviSideBar openSideMenu(MenuItem menuItem) {
+        openSideMenu(CLUSTER_NAME, menuItem);
         return this;
     }
-
+    
     public List<SelenideElement> getAllMenuButtons() {
         expandCluster(CLUSTER_NAME);
-        return Stream.of(SideMenuOption.values())
-                .map(option -> $x(String.format(sideMenuOptionElementLocator, option.value)))
+        return Stream.of(MenuItem.values())
+                .map(menuItem -> $x(String.format(sideMenuOptionElementLocator, menuItem.getNaviTitle())))
                 .collect(Collectors.toList());
-    }
-
-    public enum SideMenuOption {
-        DASHBOARD("Dashboard"),
-        BROKERS("Brokers"),
-        TOPICS("Topics"),
-        CONSUMERS("Consumers"),
-        SCHEMA_REGISTRY("Schema Registry"),
-        KAFKA_CONNECT("Kafka Connect"),
-        KSQL_DB("KSQL DB");
-
-        final String value;
-
-        SideMenuOption(String value) {
-            this.value = value;
-        }
     }
 }

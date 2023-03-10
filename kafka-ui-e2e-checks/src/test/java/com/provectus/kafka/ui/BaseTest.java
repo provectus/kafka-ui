@@ -4,6 +4,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
+import com.provectus.kafka.ui.enums.MenuItem;
 import com.provectus.kafka.ui.settings.listeners.AllureListener;
 import com.provectus.kafka.ui.settings.listeners.LoggerListener;
 import com.provectus.kafka.ui.settings.listeners.QaseResultListener;
@@ -22,7 +23,7 @@ import org.testng.asserts.SoftAssert;
 import java.time.Duration;
 import java.util.List;
 
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.*;
+import static com.provectus.kafka.ui.enums.MenuItem.*;
 import static com.provectus.kafka.ui.settings.BaseSource.*;
 import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.*;
 import static com.provectus.kafka.ui.utilities.qaseUtils.QaseSetup.qaseIntegrationSetup;
@@ -36,6 +37,7 @@ public abstract class BaseTest extends Facade {
     private static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
     private static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium:103.0";
     protected static BrowserWebDriverContainer<?> webDriverContainer = null;
+    protected static final String CONNECT_NAME = "first";
 
     private static boolean isARM64() {
         return System.getProperty("os.arch").equals("aarch64");
@@ -112,11 +114,22 @@ public abstract class BaseTest extends Facade {
     @Step
     protected void navigateToBrokers() {
         naviSideBar
-                .openSideMenu(BROKERS);
+                .openSideMenu(MenuItem.BROKERS);
         brokersList
                 .waitUntilScreenReady();
     }
-
+    
+    @Step
+    protected void navigateToBrokersAndOpenBroker() {
+        naviSideBar
+                .openSideMenu(BROKERS);
+        brokersList
+                .waitUntilScreenReady()
+                .openBroker(1);
+        brokersDetails
+                .waitUntilScreenReady();
+    }
+    
     @Step
     protected void navigateToTopics() {
         naviSideBar
@@ -124,7 +137,7 @@ public abstract class BaseTest extends Facade {
         topicsList
                 .waitUntilScreenReady();
     }
-
+    
     @Step
     protected void navigateToTopicsAndOpenDetails(String topicName) {
         naviSideBar

@@ -12,15 +12,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.enums.MenuItem.BROKERS;
 
 public class BrokersList extends BasePage {
-
-    protected SelenideElement brokersListHeader = $x("//h1[text()='Brokers']");
 
     @Step
     public BrokersList waitUntilScreenReady() {
         waitUntilSpinnerDisappear();
-        brokersListHeader.shouldBe(Condition.visible);
+        getPageTitleFromHeader(BROKERS).shouldBe(Condition.visible);
         return this;
     }
 

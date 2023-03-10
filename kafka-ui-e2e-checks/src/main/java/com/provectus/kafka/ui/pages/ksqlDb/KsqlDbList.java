@@ -1,28 +1,28 @@
 package com.provectus.kafka.ui.pages.ksqlDb;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$x;
-
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.pages.ksqlDb.enums.KsqlMenuTabs;
 import io.qameta.allure.Step;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.openqa.selenium.By;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.enums.MenuItem.KSQL_DB;
 
 public class KsqlDbList extends BasePage {
   protected SelenideElement executeKsqlBtn = $x("//button[text()='Execute KSQL Request']");
   protected SelenideElement tablesTab = $x("//nav[@role='navigation']/a[text()='Tables']");
-  protected SelenideElement streamsTab = $x("//nav[@role='navigation']/a[text()='Streams']");
 
   @Step
   public KsqlDbList waitUntilScreenReady() {
     waitUntilSpinnerDisappear();
-    Arrays.asList(tablesTab, streamsTab).forEach(tab -> tab.shouldBe(Condition.visible));
+    getPageTitleFromHeader(KSQL_DB).shouldBe(Condition.visible);
     return this;
   }
 

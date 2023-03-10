@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.enums.MenuItem.SCHEMA_REGISTRY;
 
 public class SchemaRegistryList extends BasePage {
 
@@ -14,7 +15,7 @@ public class SchemaRegistryList extends BasePage {
     @Step
     public SchemaRegistryList waitUntilScreenReady() {
         waitUntilSpinnerDisappear();
-        createSchemaBtn.shouldBe(Condition.visible);
+        getPageTitleFromHeader(SCHEMA_REGISTRY).shouldBe(Condition.visible);
         return this;
     }
 

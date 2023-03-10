@@ -17,8 +17,7 @@ import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class ConnectorsTest extends BaseTest {
-
-    private static final String CONNECT_NAME = "first";
+    
     private static final List<Topic> TOPIC_LIST = new ArrayList<>();
     private static final List<Connector> CONNECTOR_LIST = new ArrayList<>();
     private static final String MESSAGE_CONTENT = "message_content_create_topic.json";
@@ -98,7 +97,7 @@ public class ConnectorsTest extends BaseTest {
         Assert.assertFalse(kafkaConnectList.isConnectorVisible(CONNECTOR_FOR_DELETE.getName()), "isConnectorVisible()");
         CONNECTOR_LIST.remove(CONNECTOR_FOR_DELETE);
     }
-
+    
     @AfterClass(alwaysRun = true)
     public void afterClass() {
         CONNECTOR_LIST.forEach(connector ->
