@@ -11,6 +11,8 @@ import java.util.function.UnaryOperator;
 
 class Mask extends MaskingPolicy {
 
+  static final List<String> DEFAULT_PATTERN = List.of("X", "x", "n", "-");
+
   private final UnaryOperator<String> masker;
 
   Mask(List<String> fieldNames, List<String> maskingChars) {

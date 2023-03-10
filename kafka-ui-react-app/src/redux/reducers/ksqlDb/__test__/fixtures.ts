@@ -1,3 +1,5 @@
+type Dictionary<T> = Record<string, T>;
+
 export const fetchKsqlDbTablesPayload: {
   tables: Dictionary<string>[];
   streams: Dictionary<string>[];
