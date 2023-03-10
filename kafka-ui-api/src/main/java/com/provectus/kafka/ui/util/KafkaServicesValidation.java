@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.util;
 
-import com.provectus.kafka.ui.config.ClustersProperties;
+import static com.provectus.kafka.ui.config.ClustersProperties.TruststoreConfig;
+
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
 import com.provectus.kafka.ui.model.ApplicationPropertyValidationDTO;
 import com.provectus.kafka.ui.service.ReactiveAdminClient;
@@ -42,7 +43,7 @@ public final class KafkaServicesValidation {
   /**
    * Returns error msg, if any.
    */
-  public static Optional<String> validateTruststore(ClustersProperties.TruststoreConfig truststoreConfig) {
+  public static Optional<String> validateTruststore(TruststoreConfig truststoreConfig) {
     if (truststoreConfig.getTruststoreLocation() != null && truststoreConfig.getTruststorePassword() != null) {
       try {
         KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -64,7 +65,7 @@ public final class KafkaServicesValidation {
   public static Mono<ApplicationPropertyValidationDTO> validateClusterConnection(String bootstrapServers,
                                                                                  Properties clusterProps,
                                                                                  @Nullable
-                                                                                 ClustersProperties.TruststoreConfig ssl) {
+                                                                                 TruststoreConfig ssl) {
     Properties properties = new Properties();
     SslPropertiesUtil.addKafkaSslProperties(ssl, properties);
     properties.putAll(clusterProps);
