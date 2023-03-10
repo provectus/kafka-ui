@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  TopicFormDataRaw,
-  TopicConfigByName,
-  TopicFormData,
-} from 'redux/interfaces';
+import { TopicConfigByName, TopicFormData } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { RouteParamsClusterTopic } from 'lib/paths';
@@ -55,7 +51,7 @@ const Edit: React.FC = () => {
   topicConfig?.forEach((param) => {
     config.byName[param.name] = param;
   });
-  const onSubmit = async (data: TopicFormDataRaw) => {
+  const onSubmit = async (data: TopicFormData) => {
     const filteredDirtyDefaultEntries = Object.entries(data).filter(
       ([key, val]) => {
         const isDirty =
@@ -71,9 +67,12 @@ const Edit: React.FC = () => {
     );
 
     const newData = Object.fromEntries(filteredDirtyDefaultEntries);
-
-    await updateTopic.mutateAsync(newData);
-    navigate('../');
+    try {
+      await updateTopic.mutateAsync(newData);
+      navigate('../');
+    } catch (e) {
+      // do nothing
+    }
   };
 
   return (

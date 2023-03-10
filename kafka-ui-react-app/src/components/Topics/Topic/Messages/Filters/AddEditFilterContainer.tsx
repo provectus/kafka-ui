@@ -51,8 +51,12 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
 
   const onSubmit = React.useCallback(
     (values: AddMessageFilters) => {
-      submitCallback?.(values);
-      reset({ name: '', code: '', saveFilter: false });
+      try {
+        submitCallback?.(values);
+        reset({ name: '', code: '', saveFilter: false });
+      } catch (e) {
+        // do nothing
+      }
     },
     [isAdd, reset, submitCallback]
   );
@@ -85,14 +89,10 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
           </FormError>
         </div>
         {isAdd && (
-          <S.CheckboxWrapper>
-            <input
-              {...methods.register('saveFilter')}
-              name="saveFilter"
-              type="checkbox"
-            />
-            <InputLabel>Save this filter</InputLabel>
-          </S.CheckboxWrapper>
+          <InputLabel>
+            <input {...methods.register('saveFilter')} type="checkbox" />
+            Save this filter
+          </InputLabel>
         )}
         <div>
           <InputLabel>Display name</InputLabel>
