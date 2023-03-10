@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import static com.provectus.kafka.ui.service.ReactiveAdminClient.ClusterDescription;
 
-import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.ClusterFeature;
 import com.provectus.kafka.ui.model.InternalLogDirStats;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Metrics;
@@ -51,7 +51,7 @@ public class StatisticsService {
                             .version(ac.getVersion())
                             .metrics((Metrics) results[0])
                             .logDirInfo((InternalLogDirStats) results[1])
-                            .features((List<Feature>) results[2])
+                            .features((List<ClusterFeature>) results[2])
                             .topicConfigs((Map<String, List<ConfigEntry>>) results[3])
                             .topicDescriptions((Map<String, TopicDescription>) results[4])
                             .build()

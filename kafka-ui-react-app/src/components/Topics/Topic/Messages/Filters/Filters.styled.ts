@@ -223,10 +223,6 @@ export const ActiveSmartFilterWrapper = styled.div`
   gap: 10px;
   align-items: center;
   justify-content: flex-start;
-
-  & div:first-child {
-    width: 25%;
-  }
 `;
 
 export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
@@ -266,12 +262,6 @@ export const SavedFilter = styled.div.attrs({
   }
   background: ${(props) =>
     props.selected ? props.theme.layout.stuffColor : props.theme.panelColor};
-`;
-
-export const CheckboxWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 5px;
 `;
 
 export const ActiveSmartFilter = styled.div`
@@ -362,10 +352,4 @@ export const SeekTypeSelect = styled(Select)`
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   user-select: none;
-`;
-
-export const Serdes = styled.div`
-  display: flex;
-  gap: 24px;
-  padding 8px 0;
 `;

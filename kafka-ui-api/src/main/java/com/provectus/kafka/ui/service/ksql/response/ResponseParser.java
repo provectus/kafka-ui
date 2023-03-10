@@ -74,13 +74,17 @@ public class ResponseParser {
         .header("Execution error")
         .columnNames(List.of("message"))
         .values(List.of(List.of(new TextNode(errorText))))
+        .error(true)
         .build();
   }
 
   public static KsqlApiClient.KsqlResponseTable parseErrorResponse(WebClientResponseException e) {
     try {
       var errBody = new JsonMapper().readTree(e.getResponseBodyAsString());
-      return DynamicParser.parseObject("Execution error", errBody);
+      return DynamicParser.parseObject("Execution error", errBody)
+          .toBuilder()
+          .error(true)
+          .build();
     } catch (Exception ex) {
       return errorTableWithTextMsg(
           String.format(
