@@ -46,12 +46,6 @@
     "yup": "^1.0.0",
     "zustand": "^4.1.1"
   },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "pnpm test -- --bail --findRelatedTests --watchAll=false --passWithNoTests"
-    ]
-  },
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -65,7 +59,6 @@
     "test:coverage": "jest --watchAll --coverage",
     "test:CI": "CI=true pnpm test:coverage --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
     "tsc": "tsc --pretty --noEmit",
-    "pre-commit": "pnpm tsc && lint-staged",
     "deadcode": "ts-prune -i src/generated-sources"
   },
   "devDependencies": {
@@ -103,7 +96,6 @@
     "jest-environment-jsdom": "^29.4.3",
     "jest-sonar-reporter": "^2.0.0",
     "jest-styled-components": "^7.1.1",
-    "lint-staged": "^13.0.2",
     "prettier": "^2.8.4",
     "rimraf": "^4.1.2",
     "ts-node": "^10.9.1",
