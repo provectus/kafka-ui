@@ -58,7 +58,11 @@ const Dashboard: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!clusters && appInfo.hasDynamicConfig) {
+    if (
+      appInfo.hasDynamicConfig &&
+      clusters.isSuccess &&
+      clusters.data.length === 0
+    ) {
       navigate(getNonExactPath(clusterNewConfigPath));
     }
   }, [clusters, appInfo.hasDynamicConfig]);
