@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import AceEditor, { IAceEditorProps } from 'react-ace';
+import 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-sql';
 import 'ace-builds/src-noconflict/theme-textmate';
 import React from 'react';
