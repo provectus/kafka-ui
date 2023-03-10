@@ -13,7 +13,7 @@ import CloseIcon from 'components/common/Icons/CloseIcon';
 import { yupResolver } from '@hookform/resolvers/yup';
 import yup from 'lib/yupExtended';
 import PlusIcon from 'components/common/Icons/PlusIcon';
-import ReactAce from 'react-ace/lib/ace';
+import ReactAce from 'react-ace';
 import Input from 'components/common/Input/Input';
 
 import * as S from './QueryForm.styled';
