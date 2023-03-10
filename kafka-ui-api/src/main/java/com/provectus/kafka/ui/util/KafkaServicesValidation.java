@@ -13,38 +13,36 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.springframework.util.ResourceUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
 
 @Slf4j
-@UtilityClass
-public class KafkaServicesValidation {
+public final class KafkaServicesValidation {
 
-  private Mono<ApplicationPropertyValidationDTO> valid() {
+  private KafkaServicesValidation() {
+  }
+
+  private static Mono<ApplicationPropertyValidationDTO> valid() {
     return Mono.just(new ApplicationPropertyValidationDTO().error(false));
   }
 
-  private Mono<ApplicationPropertyValidationDTO> invalid(String errorMsg) {
+  private static Mono<ApplicationPropertyValidationDTO> invalid(String errorMsg) {
     return Mono.just(new ApplicationPropertyValidationDTO().error(true).errorMessage(errorMsg));
   }
 
-  private Mono<ApplicationPropertyValidationDTO> invalid(Throwable th) {
+  private static Mono<ApplicationPropertyValidationDTO> invalid(Throwable th) {
     return Mono.just(new ApplicationPropertyValidationDTO().error(true).errorMessage(th.getMessage()));
   }
 
   /**
    * Returns error msg, if any.
    */
-  public Optional<String> validateTruststore(ClustersProperties.TruststoreConfig truststoreConfig) {
+  public static Optional<String> validateTruststore(ClustersProperties.TruststoreConfig truststoreConfig) {
     if (truststoreConfig.getTruststoreLocation() != null && truststoreConfig.getTruststorePassword() != null) {
       try {
         KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -63,10 +61,10 @@ public class KafkaServicesValidation {
     return Optional.empty();
   }
 
-  public Mono<ApplicationPropertyValidationDTO> validateClusterConnection(String bootstrapServers,
-                                                                          Properties clusterProps,
-                                                                          @Nullable
-                                                                          ClustersProperties.TruststoreConfig ssl) {
+  public static Mono<ApplicationPropertyValidationDTO> validateClusterConnection(String bootstrapServers,
+                                                                                 Properties clusterProps,
+                                                                                 @Nullable
+                                                                                 ClustersProperties.TruststoreConfig ssl) {
     Properties properties = new Properties();
     SslPropertiesUtil.addKafkaSslProperties(ssl, properties);
     properties.putAll(clusterProps);
@@ -93,7 +91,7 @@ public class KafkaServicesValidation {
         });
   }
 
-  public Mono<ApplicationPropertyValidationDTO> validateSchemaRegistry(
+  public static Mono<ApplicationPropertyValidationDTO> validateSchemaRegistry(
       Supplier<ReactiveFailover<KafkaSrClientApi>> clientSupplier) {
     ReactiveFailover<KafkaSrClientApi> client;
     try {
@@ -108,7 +106,7 @@ public class KafkaServicesValidation {
         .onErrorResume(KafkaServicesValidation::invalid);
   }
 
-  public Mono<ApplicationPropertyValidationDTO> validateConnect(
+  public static Mono<ApplicationPropertyValidationDTO> validateConnect(
       Supplier<ReactiveFailover<KafkaConnectClientApi>> clientSupplier) {
     ReactiveFailover<KafkaConnectClientApi> client;
     try {
@@ -123,7 +121,8 @@ public class KafkaServicesValidation {
         .onErrorResume(KafkaServicesValidation::invalid);
   }
 
-  public Mono<ApplicationPropertyValidationDTO> validateKsql(Supplier<ReactiveFailover<KsqlApiClient>> clientSupplier) {
+  public static Mono<ApplicationPropertyValidationDTO> validateKsql(
+      Supplier<ReactiveFailover<KsqlApiClient>> clientSupplier) {
     ReactiveFailover<KsqlApiClient> client;
     try {
       client = clientSupplier.get();
