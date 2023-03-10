@@ -1,7 +1,12 @@
-import React, { useCallback, useRef } from 'react';
+import React from 'react';
 import { FormError } from 'components/common/Input/Input.styled';
 import { ErrorMessage } from '@hookform/error-message';
-import { useForm, Controller, useFieldArray } from 'react-hook-form';
+import {
+  useForm,
+  Controller,
+  useFieldArray,
+  FormProvider,
+} from 'react-hook-form';
 import { Button } from 'components/common/Button/Button';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
@@ -9,14 +14,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import yup from 'lib/yupExtended';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import ReactAce from 'react-ace/lib/ace';
+import Input from 'components/common/Input/Input';
 
 import * as S from './QueryForm.styled';
 
 export interface Props {
   fetching: boolean;
   hasResults: boolean;
-  handleClearResults: () => void;
-  handleSSECancel: () => void;
+  resetResults: () => void;
   submitHandler: (values: FormValues) => void;
 }
 type StreamsPropertiesType = {
@@ -39,18 +44,10 @@ const validationSchema = yup.object({
 
 const QueryForm: React.FC<Props> = ({
   fetching,
-  hasResults,
-  handleClearResults,
-  handleSSECancel,
   submitHandler,
+  resetResults,
 }) => {
-  const {
-    handleSubmit,
-    setValue,
-    getValues,
-    control,
-    formState: { errors },
-  } = useForm<FormValues>({
+  const methods = useForm<FormValues>({
     mode: 'onTouched',
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -58,6 +55,15 @@ const QueryForm: React.FC<Props> = ({
       streamsProperties: [{ key: '', value: '' }],
     },
   });
+
+  const {
+    handleSubmit,
+    setValue,
+    control,
+    formState: { errors, isDirty },
+    reset,
+  } = methods;
+
   const { fields, append, remove } = useFieldArray<
     FormValues,
     'streamsProperties'
@@ -66,17 +72,13 @@ const QueryForm: React.FC<Props> = ({
     name: 'streamsProperties',
   });
 
-  const handleAddNewProperty = useCallback(() => {
-    if (
-      getValues().streamsProperties.every((prop) => {
-        return prop.key;
-      })
-    ) {
+  const handleAddNewProperty = () => {
+    if (fields.every(({ key }) => key)) {
       append({ key: '', value: '' });
     }
-  }, []);
+  };
 
-  const inputRef = useRef<ReactAce>(null);
+  const inputRef = React.useRef<ReactAce>(null);
 
   const handleFocus = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -87,143 +89,116 @@ const QueryForm: React.FC<Props> = ({
     }
   };
 
+  const handleClear = () => {
+    reset();
+    handleFocus();
+    resetResults();
+  };
+
   return (
-    <S.QueryWrapper>
-      <form onSubmit={handleSubmit(submitHandler)}>
-        <S.KSQLInputsWrapper>
-          <S.Fieldset aria-labelledby="ksqlLabel">
-            <S.KSQLInputHeader>
-              <label id="ksqlLabel">KSQL</label>
-              <Button
-                onClick={() => setValue('ksql', '')}
-                buttonType="primary"
-                buttonSize="S"
-                isInverted
-              >
-                Clear
-              </Button>
-            </S.KSQLInputHeader>
-            <Controller
-              control={control}
-              name="ksql"
-              render={({ field }) => (
-                <S.SQLEditor
-                  {...field}
-                  commands={[
-                    {
-                      // commands is array of key bindings.
-                      // name for the key binding.
-                      name: 'commandName',
-                      // key combination used for the command.
-                      bindKey: { win: 'Ctrl-Enter', mac: 'Command-Enter' },
-                      // function to execute when keys are pressed.
-                      exec: () => {
-                        handleSubmit(submitHandler)();
+    <FormProvider {...methods}>
+      <S.QueryWrapper>
+        <form onSubmit={handleSubmit(submitHandler)}>
+          <S.KSQLInputsWrapper>
+            <S.Fieldset>
+              <S.KSQLInputHeader>
+                <label id="ksqlLabel">KSQL</label>
+                <Button
+                  onClick={() => setValue('ksql', '')}
+                  buttonType="primary"
+                  buttonSize="S"
+                  isInverted
+                >
+                  Clear
+                </Button>
+              </S.KSQLInputHeader>
+              <Controller
+                control={control}
+                name="ksql"
+                render={({ field }) => (
+                  <S.SQLEditor
+                    {...field}
+                    commands={[
+                      {
+                        // commands is array of key bindings.
+                        // name for the key binding.
+                        name: 'commandName',
+                        // key combination used for the command.
+                        bindKey: { win: 'Ctrl-Enter', mac: 'Command-Enter' },
+                        // function to execute when keys are pressed.
+                        exec: () => {
+                          handleSubmit(submitHandler)();
+                        },
                       },
-                    },
-                  ]}
-                  readOnly={fetching}
-                  ref={inputRef}
-                />
-              )}
-            />
-            <FormError>
-              <ErrorMessage errors={errors} name="ksql" />
-            </FormError>
-          </S.Fieldset>
+                    ]}
+                    readOnly={fetching}
+                    ref={inputRef}
+                  />
+                )}
+              />
+              <FormError>
+                <ErrorMessage errors={errors} name="ksql" />
+              </FormError>
+            </S.Fieldset>
 
-          <S.StreamPropertiesContainer>
-            Stream properties:
-            {fields.map((item, index) => (
-              <S.InputsContainer key={item.id}>
-                <S.StreamPropertiesInputWrapper>
-                  <Controller
-                    control={control}
+            <S.Fieldset>
+              Stream properties:
+              {fields.map((item, index) => (
+                <S.InputsContainer key={item.id}>
+                  <Input
                     name={`streamsProperties.${index}.key`}
-                    render={({ field }) => (
-                      <input
-                        {...field}
-                        placeholder="Key"
-                        aria-label="key"
-                        type="text"
-                      />
-                    )}
+                    placeholder="Key"
+                    type="text"
+                    withError
                   />
-                  <FormError>
-                    <ErrorMessage
-                      errors={errors}
-                      name={`streamsProperties.${index}.key`}
-                    />
-                  </FormError>
-                </S.StreamPropertiesInputWrapper>
-                <S.StreamPropertiesInputWrapper>
-                  <Controller
-                    control={control}
+                  <Input
                     name={`streamsProperties.${index}.value`}
-                    render={({ field }) => (
-                      <input
-                        {...field}
-                        placeholder="Value"
-                        aria-label="value"
-                        type="text"
-                      />
-                    )}
+                    placeholder="Value"
+                    type="text"
+                    withError
                   />
-                  <FormError>
-                    <ErrorMessage
-                      errors={errors}
-                      name={`streamsProperties.${index}.value`}
-                    />
-                  </FormError>
-                </S.StreamPropertiesInputWrapper>
-
-                <S.DeleteButtonWrapper onClick={() => remove(index)}>
-                  <IconButtonWrapper aria-label="deleteProperty">
+                  <IconButtonWrapper
+                    aria-label="deleteProperty"
+                    onClick={() => remove(index)}
+                  >
                     <CloseIcon aria-hidden />
                   </IconButtonWrapper>
-                </S.DeleteButtonWrapper>
-              </S.InputsContainer>
-            ))}
+                </S.InputsContainer>
+              ))}
+              <Button
+                type="button"
+                buttonSize="M"
+                buttonType="secondary"
+                onClick={handleAddNewProperty}
+              >
+                <PlusIcon />
+                Add Stream Property
+              </Button>
+            </S.Fieldset>
+          </S.KSQLInputsWrapper>
+          <S.ButtonsContainer>
             <Button
-              type="button"
-              buttonSize="M"
               buttonType="secondary"
-              onClick={handleAddNewProperty}
+              buttonSize="M"
+              type="submit"
+              disabled={fetching || !isDirty}
+              onClick={handleClear}
             >
-              <PlusIcon />
-              Add Stream Property
+              Clear results
             </Button>
-          </S.StreamPropertiesContainer>
-        </S.KSQLInputsWrapper>
-        <S.KSQLButtons>
-          <Button
-            buttonType="primary"
-            buttonSize="M"
-            type="submit"
-            disabled={fetching}
-            onClick={handleFocus}
-          >
-            Execute
-          </Button>
-          <Button
-            buttonType="secondary"
-            buttonSize="M"
-            disabled={!fetching}
-            onClick={handleSSECancel}
-          >
-            Stop query
-          </Button>
-          <Button
-            buttonType="secondary"
-            buttonSize="M"
-            disabled={fetching || !hasResults}
-            onClick={handleClearResults}
-          >
-            Clear results
-          </Button>
-        </S.KSQLButtons>
-      </form>
-    </S.QueryWrapper>
+            <Button
+              buttonType="primary"
+              buttonSize="M"
+              type="submit"
+              disabled={fetching}
+              onClick={handleFocus}
+            >
+              Execute
+            </Button>
+          </S.ButtonsContainer>
+        </form>
+      </S.QueryWrapper>
+    </FormProvider>
   );
 };
 
