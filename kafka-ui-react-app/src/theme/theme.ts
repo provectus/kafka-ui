@@ -79,6 +79,9 @@ const theme = {
       color: Colors.neutral[30],
     },
   },
+  text: {
+    secondary: Colors.neutral[60],
+  },
   progressBar: {
     backgroundColor: Colors.neutral[3],
     compleatedColor: Colors.green[40],
@@ -88,7 +91,7 @@ const theme = {
     backgroundColor: Colors.neutral[0],
     minWidth: '1200px',
     navBarWidth: '201px',
-    navBarHeight: '53px',
+    navBarHeight: '51px',
     rightSidebarWidth: '70vw',
     filtersSidebarWidth: '300px',
 
@@ -547,6 +550,7 @@ const theme = {
     },
   },
   icons: {
+    chevronDownIcon: Colors.neutral[90],
     closeIcon: Colors.neutral[30],
     deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],

@@ -1,7 +1,12 @@
 import React, { useEffect } from 'react';
 import useDataSaver from 'lib/hooks/useDataSaver';
 import { render } from '@testing-library/react';
+import { showAlert } from 'lib/errorHandling';
 
+jest.mock('lib/errorHandling', () => ({
+  ...jest.requireActual('lib/errorHandling'),
+  showAlert: jest.fn(),
+}));
 describe('useDataSaver hook', () => {
   const content = {
     title: 'title',
@@ -38,7 +43,6 @@ describe('useDataSaver hook', () => {
       mockCreate.mockRestore();
     });
   });
-
   describe('copies the data to the clipboard', () => {
     Object.assign(navigator, {
       clipboard: {
@@ -72,6 +76,31 @@ describe('useDataSaver hook', () => {
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
         String('{ title: "title", }')
       );
+    });
+  });
+  describe('navigator clipboard is undefined', () => {
+    it('calls showAlert with the correct parameters when clipboard API is unavailable', () => {
+      Object.assign(navigator, {
+        clipboard: undefined,
+      });
+
+      const HookWrapper: React.FC = () => {
+        const { copyToClipboard } = useDataSaver('topic', content);
+        useEffect(() => {
+          copyToClipboard();
+        }, [copyToClipboard]);
+        return null;
+      };
+
+      render(<HookWrapper />);
+
+      expect(showAlert).toHaveBeenCalledTimes(1);
+      expect(showAlert).toHaveBeenCalledWith('warning', {
+        id: 'topic',
+        title: 'Warning',
+        message:
+          'Copying to clipboard is unavailable due to unsecured (non-HTTPS) connection',
+      });
     });
   });
 });

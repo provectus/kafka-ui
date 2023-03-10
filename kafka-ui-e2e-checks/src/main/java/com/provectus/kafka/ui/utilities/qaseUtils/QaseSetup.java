@@ -15,7 +15,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Slf4j
 public class QaseSetup {
 
-    public static void testRunSetup() {
+    public static void qaseIntegrationSetup() {
         String qaseApiToken = System.getProperty("QASEIO_API_TOKEN");
         if (isEmpty(qaseApiToken)) {
             log.warn("Integration with Qase is disabled due to run config or token wasn't defined.");

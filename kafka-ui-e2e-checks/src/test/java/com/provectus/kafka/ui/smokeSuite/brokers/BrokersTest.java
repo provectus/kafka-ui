@@ -2,25 +2,15 @@ package com.provectus.kafka.ui.smokeSuite.brokers;
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.BaseTest;
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.AutomationStatus;
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Suite;
-import com.provectus.kafka.ui.utilities.qaseUtils.enums.Status;
-import io.qameta.allure.Step;
-import io.qase.api.annotation.CaseId;
+import io.qase.api.annotation.QaseId;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.BROKERS;
 import static com.provectus.kafka.ui.pages.brokers.BrokersDetails.DetailsTab.CONFIGS;
 
 public class BrokersTest extends BaseTest {
 
-    private static final String SUITE_TITLE = "Brokers";
-    private static final long SUITE_ID = 1;
-
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(1)
+    @QaseId(1)
     @Test
     public void checkBrokersOverview() {
         navigateToBrokers();
@@ -29,9 +19,7 @@ public class BrokersTest extends BaseTest {
         verifyElementsCondition(brokersList.getAllEnabledElements(), Condition.enabled);
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(85)
+    @QaseId(85)
     @Test
     public void checkExistingBrokersInCluster() {
         navigateToBrokers();
@@ -49,13 +37,5 @@ public class BrokersTest extends BaseTest {
         verifyElementsCondition(brokersConfigTab.getColumnHeaders(), Condition.visible);
         verifyElementsCondition(brokersConfigTab.getEditButtons(), Condition.enabled);
         Assert.assertTrue(brokersConfigTab.isSearchByKeyVisible(), "isSearchByKeyVisible()");
-    }
-
-    @Step
-    private void navigateToBrokers() {
-        naviSideBar
-                .openSideMenu(BROKERS);
-        brokersList
-                .waitUntilScreenReady();
     }
 }

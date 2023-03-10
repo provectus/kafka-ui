@@ -7,7 +7,7 @@ import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.TopicRecreationException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.ClusterFeature;
 import com.provectus.kafka.ui.model.InternalLogDirStats;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalPartitionsOffsets;
@@ -162,9 +162,14 @@ public class TopicsService {
   }
 
   public Mono<List<ConfigEntry>> getTopicConfigs(KafkaCluster cluster, String topicName) {
+    // there 2 case that we cover here:
+    // 1. topic not found/visible - describeTopic() will be empty and we will throw TopicNotFoundException
+    // 2. topic is visible, but we don't have DESCRIBE_CONFIG permission - we should return empty list
     return adminClientService.get(cluster)
-        .flatMap(ac -> ac.getTopicsConfig(List.of(topicName), true))
-        .map(m -> m.values().stream().findFirst().orElseThrow(TopicNotFoundException::new));
+        .flatMap(ac -> ac.describeTopic(topicName)
+            .switchIfEmpty(Mono.error(new TopicNotFoundException()))
+            .then(ac.getTopicsConfig(List.of(topicName), true))
+            .map(m -> m.values().stream().findFirst().orElse(List.of())));
   }
 
   private Mono<InternalTopic> createTopic(KafkaCluster c, ReactiveAdminClient adminClient,
@@ -417,7 +422,7 @@ public class TopicsService {
   }
 
   public Mono<Void> deleteTopic(KafkaCluster cluster, String topicName) {
-    if (statisticsCache.get(cluster).getFeatures().contains(Feature.TOPIC_DELETION)) {
+    if (statisticsCache.get(cluster).getFeatures().contains(ClusterFeature.TOPIC_DELETION)) {
       return adminClientService.get(cluster).flatMap(c -> c.deleteTopic(topicName))
           .doOnSuccess(t -> statisticsCache.onTopicDelete(cluster, topicName));
     } else {

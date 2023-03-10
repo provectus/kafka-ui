@@ -15,12 +15,14 @@
         <maven.surefire-plugin.version>3.0.0-M8</maven.surefire-plugin.version>
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
         <testcontainers.version>1.17.6</testcontainers.version>
-        <selenide.version>6.6.3</selenide.version>
-        <testng.version>7.6.1</testng.version>
-        <allure.version>2.20.1</allure.version>
-        <qase.io.version>3.0.2</qase.io.version>
+        <httpcomponents.version>5.2.1</httpcomponents.version>
+        <selenium.version>4.8.1</selenium.version>
+        <selenide.version>6.11.2</selenide.version>
+        <testng.version>7.7.0</testng.version>
+        <allure.version>2.21.0</allure.version>
+        <qase.io.version>3.0.3</qase.io.version>
         <aspectj.version>1.9.9.1</aspectj.version>
-        <assertj.version>3.23.1</assertj.version>
+        <assertj.version>3.24.2</assertj.version>
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.36</slf4j.version>
         <dotenv.version>2.3.1</dotenv.version>
@@ -119,6 +121,21 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>selenium</artifactId>
             <version>${testcontainers.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5</artifactId>
+            <version>${httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-http</artifactId>
+            <version>${selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codeborne</groupId>
