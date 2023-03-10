@@ -60,10 +60,11 @@ const QueryForm: React.FC<QueryFormProps> = ({
     handleSubmit,
     setValue,
     control,
+    watch,
     formState: { errors, isDirty },
   } = methods;
 
-  const { fields, append, remove } = useFieldArray<
+  const { fields, append, remove, update } = useFieldArray<
     FormValues,
     'streamsProperties'
   >({
@@ -71,11 +72,22 @@ const QueryForm: React.FC<QueryFormProps> = ({
     name: 'streamsProperties',
   });
 
-  const handleAddNewProperty = () => {
-    if (fields.every(({ key }) => key)) {
-      append({ key: '', value: '' });
-    }
+  const watchStreamProps = watch('streamsProperties');
+
+  const appendProperty = () => {
+    append({ key: '', value: '' });
   };
+  const removeProperty = (index: number) => () => {
+    if (fields.length === 1) {
+      update(index, { key: '', value: '' });
+      return;
+    }
+
+    remove(index);
+  };
+
+  const isAppendDisabled =
+    fetching || !!watchStreamProps.find((field) => !field.key);
 
   const inputRef = React.useRef<ReactAce>(null);
 
@@ -141,8 +153,8 @@ const QueryForm: React.FC<QueryFormProps> = ({
 
             <S.Fieldset>
               Stream properties:
-              {fields.map((item, index) => (
-                <S.InputsContainer key={item.id}>
+              {fields.map((field, index) => (
+                <S.InputsContainer key={field.id}>
                   <Input
                     name={`streamsProperties.${index}.key`}
                     placeholder="Key"
@@ -157,7 +169,7 @@ const QueryForm: React.FC<QueryFormProps> = ({
                   />
                   <IconButtonWrapper
                     aria-label="deleteProperty"
-                    onClick={() => remove(index)}
+                    onClick={removeProperty(index)}
                   >
                     <CloseIcon aria-hidden />
                   </IconButtonWrapper>
@@ -167,7 +179,8 @@ const QueryForm: React.FC<QueryFormProps> = ({
                 type="button"
                 buttonSize="M"
                 buttonType="secondary"
-                onClick={handleAddNewProperty}
+                disabled={isAppendDisabled}
+                onClick={appendProperty}
               >
                 <PlusIcon />
                 Add Stream Property
