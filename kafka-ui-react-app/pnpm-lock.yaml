@@ -47,7 +47,6 @@ specifiers:
   eslint-plugin-react: ^7.30.1
   eslint-plugin-react-hooks: ^4.5.0
   fetch-mock: ^9.11.0
-  husky: ^8.0.1
   jest: ^29.4.3
   jest-environment-jsdom: ^29.4.3
   jest-sonar-reporter: ^2.0.0
@@ -160,7 +159,6 @@ devDependencies:
   eslint-plugin-prettier: 4.0.0_cu7djixscogveocpaizwew7lgy
   eslint-plugin-react: 7.30.1_eslint@8.16.0
   eslint-plugin-react-hooks: 4.5.0_eslint@8.16.0
-  husky: 8.0.1
   jest-environment-jsdom: 29.5.0
   jest-sonar-reporter: 2.0.0
   jest-styled-components: 7.1.1_styled-components@5.3.1
@@ -3863,12 +3861,6 @@ packages:
   /human-signals/3.0.1:
     resolution: {integrity: sha512-rQLskxnM/5OCldHo+wNXbpVgDn5A17CUoKX+7Sokwaknlq7CdSnphy0W39GU8dw59XiCXmFXDg4fRuckQRKewQ==}
     engines: {node: '>=12.20.0'}
-    dev: true
-
-  /husky/8.0.1:
-    resolution: {integrity: sha512-xs7/chUH/CKdOCs7Zy0Aev9e/dKOMZf3K1Az1nar3tzlv0jfqnYtu235bstsWTmXOR0EfINrPa97yy4Lz6RiKw==}
-    engines: {node: '>=14'}
-    hasBin: true
     dev: true
 
   /iconv-lite/0.4.24:
