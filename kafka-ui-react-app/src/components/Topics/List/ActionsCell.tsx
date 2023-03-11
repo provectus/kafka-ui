@@ -62,7 +62,8 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
           with DELETE policy
         </DropdownItemHint>
       </ActionDropdownItem>
-      <DropdownItem
+      <ActionDropdownItem
+        disabled={!isTopicDeletionAllowed}
         onClick={recreateTopic.mutateAsync}
         confirm={
           <>
@@ -77,7 +78,7 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
         }}
       >
         Recreate Topic
-      </DropdownItem>
+      </ActionDropdownItem>
       <ActionDropdownItem
         disabled={!isTopicDeletionAllowed}
         onClick={() => deleteTopic.mutateAsync(name)}
