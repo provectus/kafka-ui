@@ -6,11 +6,7 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import { ClusterNameRoute } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownItemHint,
-} from 'components/common/Dropdown';
+import { Dropdown, DropdownItemHint } from 'components/common/Dropdown';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   topicKeys,
