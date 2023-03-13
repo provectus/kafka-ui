@@ -53,7 +53,7 @@ jobs:
 
       - name: Build and push
         id: docker_build_and_push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: kafka-ui-api
