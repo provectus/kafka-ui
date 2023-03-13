@@ -149,7 +149,7 @@ export const useKsqlkDbSSE = ({ clusterName, pipeId }: UseKsqlkDbSSEProps) => {
 
     const abortFetchData = () => {
       setIsFetching(false);
-      abortController.abort();
+      if (pipeId) abortController.abort();
     };
     if (pipeId) {
       toast.promise(

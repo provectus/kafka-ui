@@ -191,7 +191,6 @@ const QueryForm: React.FC<QueryFormProps> = ({
             <Button
               buttonType="secondary"
               buttonSize="M"
-              type="submit"
               disabled={fetching || !isDirty}
               onClick={handleClear}
             >
