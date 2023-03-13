@@ -9,11 +9,6 @@ import { formatTimestamp } from 'lib/dateTimeHelpers';
 import * as S from './Version.styled';
 import compareVersions from './compareVersions';
 
-export interface VesionProps {
-  tag: string;
-  commit?: string;
-}
-
 const Version: React.FC = () => {
   const { data: actuatorInfo = {} } = useActuatorInfo();
   const { data: latestVersionInfo = {} } = useLatestVersion();

@@ -238,10 +238,6 @@ export const ActiveSmartFilterWrapper = styled.div`
   gap: 10px;
   align-items: center;
   justify-content: flex-start;
-
-  & div:first-child {
-    width: 25%;
-  }
 `;
 
 export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
@@ -281,12 +277,6 @@ export const SavedFilter = styled.div.attrs({
   }
   background: ${({ selected, theme }) =>
     selected ? theme.layout.stuffColor : theme.modal.backgroundColor};
-`;
-
-export const CheckboxWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 5px;
 `;
 
 export const ActiveSmartFilter = styled.div`

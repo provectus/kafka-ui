@@ -21,6 +21,7 @@
     ]
   },
   "plugins": [
+    "react",
     "@typescript-eslint",
     "prettier",
     "react-hooks"
@@ -31,6 +32,8 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:jest-dom/recommended",
     "plugin:prettier/recommended",
+    "eslint:recommended",
+    "plugin:react/recommended",
     "prettier"
   ],
   "rules": {
@@ -83,7 +86,8 @@
         "unnamedComponents": "arrow-function"
       }
     ],
-    "react/jsx-no-constructed-context-values": "off"
+    "react/jsx-no-constructed-context-values": "off",
+    "react/display-name": "off"
   },
   "overrides": [
     {

@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.config.auth;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
@@ -32,13 +31,13 @@ public class OAuthProperties {
     private String clientName;
     private String redirectUri;
     private String authorizationGrantType;
-    private Set<String> scope = new HashSet<>();
+    private Set<String> scope;
     private String issuerUri;
     private String authorizationUri;
     private String tokenUri;
     private String userInfoUri;
     private String jwkSetUri;
     private String userNameAttribute;
-    private Map<String, String> customParams = new HashMap<>();
+    private Map<String, String> customParams;
   }
 }
