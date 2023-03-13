@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 
 import static com.provectus.kafka.ui.utilities.qaseUtils.enums.State.TO_BE_AUTOMATED;
 
-public class SanityTest extends BaseManualTest {
+public class SanityBacklog extends BaseManualTest {
 
     @Automation(state = TO_BE_AUTOMATED)
     @Suite(id = 19)
