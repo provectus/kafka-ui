@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.model.rbac;
 import static com.provectus.kafka.ui.model.rbac.Resource.CLUSTERCONFIG;
 import static com.provectus.kafka.ui.model.rbac.Resource.KSQL;
 
+import com.provectus.kafka.ui.model.rbac.permission.ApplicationConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
@@ -12,11 +13,11 @@ import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.collections.CollectionUtils;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 
 @Getter
@@ -25,18 +26,21 @@ import org.springframework.util.Assert;
 public class Permission {
 
   Resource resource;
+  List<String> actions;
 
   @Nullable
-  Pattern value;
-  List<String> actions;
+  String value;
+  @Nullable
+  transient Pattern compiledValuePattern;
 
   @SuppressWarnings("unused")
   public void setResource(String resource) {
     this.resource = Resource.fromString(resource.toUpperCase());
   }
 
-  public void setValue(String value) {
-    this.value = Pattern.compile(value);
+  @SuppressWarnings("unused")
+  public void setValue(@Nullable String value) {
+    this.value = value;
   }
 
   @SuppressWarnings("unused")
@@ -52,14 +56,17 @@ public class Permission {
   }
 
   public void transform() {
-    if (CollectionUtils.isEmpty(actions) || this.actions.stream().noneMatch("ALL"::equalsIgnoreCase)) {
-      return;
+    if (value != null) {
+      this.compiledValuePattern = Pattern.compile(value);
     }
-    this.actions = getActionValues();
+    if (CollectionUtils.isNotEmpty(actions) && actions.stream().anyMatch("ALL"::equalsIgnoreCase)) {
+      this.actions = getAllActionValues();
+    }
   }
 
-  private List<String> getActionValues() {
+  private List<String> getAllActionValues() {
     return switch (this.resource) {
+      case APPLICATIONCONFIG -> Arrays.stream(ApplicationConfigAction.values()).map(Enum::toString).toList();
       case CLUSTERCONFIG -> Arrays.stream(ClusterConfigAction.values()).map(Enum::toString).toList();
       case TOPIC -> Arrays.stream(TopicAction.values()).map(Enum::toString).toList();
       case CONSUMER -> Arrays.stream(ConsumerGroupAction.values()).map(Enum::toString).toList();

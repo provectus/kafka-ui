@@ -75,5 +75,12 @@ export const showServerError = async (
       message: body?.message || 'An error occurred',
       ...options,
     });
+  } else {
+    showAlert('error', {
+      id: 'server-error',
+      title: `Something went wrong`,
+      message: 'An error occurred',
+      ...options,
+    });
   }
 };

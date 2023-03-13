@@ -9,7 +9,7 @@ import {
 import * as S from './Tooltip.styled';
 
 export interface PropsTypes {
-  value: string | JSX.Element;
+  value: React.ReactNode;
   content: string;
   placement?: Placement;
 }
