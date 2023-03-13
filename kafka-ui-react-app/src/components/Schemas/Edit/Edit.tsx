@@ -1,7 +1,5 @@
 import React from 'react';
-import { ClusterSubjectParam } from 'lib/paths';
 import yup from 'lib/yupExtended';
-import { useNavigate } from 'react-router-dom';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
   CompatibilityLevelCompatibilityEnum,
@@ -25,6 +23,8 @@ import {
   getSchemaLatest,
   SCHEMA_LATEST_FETCH_ACTION,
   getAreSchemaLatestFulfilled,
+  schemaUpdated,
+  schemaAdded,
 } from 'redux/reducers/schemas/schemasSlice';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { FormError } from 'components/common/Input/Input.styled';
@@ -33,15 +33,15 @@ import { ErrorMessage } from '@hookform/error-message';
 import { showServerError } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { schemasApiClient } from 'lib/api';
-
-import Form from './Form';
+import { useNavigate } from 'react-router-dom';
+import * as S from 'components/Schemas/Edit/Edit.styled';
 
 const Edit: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const schema = useAppSelector((state) => getSchemaLatest(state));
   const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
-
+  const navigate = useNavigate();
   const validationSchema = () =>
     yup.object().shape({
       newSchema:

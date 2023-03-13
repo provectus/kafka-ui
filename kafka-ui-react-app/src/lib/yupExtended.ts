@@ -9,7 +9,7 @@ declare module 'yup' {
     TDefault = undefined,
     TFlags extends yup.Flags = ''
   > extends yup.Schema<TType, TContext, TDefault, TFlags> {
-    isJsonObject(): StringSchema<TType, TContext>;
+    isJsonObject(message?: string): StringSchema<TType, TContext>;
   }
 }
 
