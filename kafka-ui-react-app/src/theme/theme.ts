@@ -279,6 +279,17 @@ const baseTheme = {
     compleatedColor: Colors.green[40],
     borderColor: Colors.neutral[10],
   },
+  clusterConfigForm: {
+    inputHintText: {
+      secondary: Colors.neutral[60],
+    },
+    groupField: {
+      backgroundColor: Colors.neutral[3],
+    },
+    fileInput: {
+      color: Colors.neutral[85],
+    },
+  },
 };
 
 export const theme = {
@@ -1114,6 +1125,15 @@ export const darkTheme: ThemeType = {
       normal: Colors.neutral[70],
       hover: Colors.neutral[30],
       focus: Colors.neutral[0],
+    },
+  },
+  clusterConfigForm: {
+    ...baseTheme.clusterConfigForm,
+    groupField: {
+      backgroundColor: Colors.neutral[85],
+    },
+    fileInput: {
+      color: Colors.neutral[0],
     },
   },
 };

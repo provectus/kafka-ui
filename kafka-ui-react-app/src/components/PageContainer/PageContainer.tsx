@@ -13,7 +13,7 @@ const PageContainer: React.FC<
     toggle,
     setFalse: closeSidebar,
   } = useBoolean(false);
-  const location = useLocation()
+  const location = useLocation();
 
   React.useEffect(() => {
     closeSidebar();

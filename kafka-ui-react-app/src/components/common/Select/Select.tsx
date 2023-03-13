@@ -21,7 +21,7 @@ export interface SelectProps {
 }
 
 export interface SelectOption {
-  label: string | number | JSX.Element;
+  label: string | number | React.ReactElement;
   value: string | number;
   disabled?: boolean;
   isLive?: boolean;
