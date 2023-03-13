@@ -1,4 +1,5 @@
 import React from 'react';
+import { ClusterSubjectParam } from 'lib/paths';
 import yup from 'lib/yupExtended';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
@@ -20,12 +21,10 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import {
-  schemaAdded,
   fetchLatestSchema,
   getSchemaLatest,
   SCHEMA_LATEST_FETCH_ACTION,
   getAreSchemaLatestFulfilled,
-  schemaUpdated,
 } from 'redux/reducers/schemas/schemasSlice';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { FormError } from 'components/common/Input/Input.styled';
@@ -35,10 +34,9 @@ import { showServerError } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { schemasApiClient } from 'lib/api';
 
-import * as S from './Edit.styled';
+import Form from './Form';
 
 const Edit: React.FC = () => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const schema = useAppSelector((state) => getSchemaLatest(state));

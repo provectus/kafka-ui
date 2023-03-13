@@ -1,7 +1,4 @@
-import {
-  Label,
-  List,
-} from 'components/common/PropertiesList/PropertiesList.styled';
+import { List } from 'components/common/PropertiesList/PropertiesList.styled';
 import styled from 'styled-components';
 
 export const ProgressContainer = styled.div`
@@ -16,10 +13,6 @@ export const ProgressContainer = styled.div`
 
   ${List} {
     opacity: 0.5;
-
-    ${Label} {
-      text-align: right;
-    }
   }
 `;
 
@@ -41,4 +34,11 @@ export const PartitionInfo = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   column-gap: 24px;
+`;
+
+export const ProgressBarWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 280px;
 `;

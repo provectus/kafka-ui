@@ -23,6 +23,7 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockHistoryPush,
 }));
+
 jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useConnects: jest.fn(),
   useCreateConnector: jest.fn(),
@@ -31,16 +32,14 @@ jest.mock('lib/hooks/api/kafkaConnect', () => ({
 describe('New', () => {
   const clusterName = 'my-cluster';
   const simulateFormSubmit = async () => {
-    await act(() => {
-      userEvent.type(
-        screen.getByPlaceholderText('Connector Name'),
-        'my-connector'
-      );
-      userEvent.type(
-        screen.getByPlaceholderText('json'),
-        '{"class":"MyClass"}'.replace(/[{[]/g, '$&$&')
-      );
-    });
+    await userEvent.type(
+      screen.getByPlaceholderText('Connector Name'),
+      'my-connector'
+    );
+    await userEvent.type(
+      screen.getByPlaceholderText('json'),
+      '{"class":"MyClass"}'.replace(/[{[]/g, '$&$&')
+    );
 
     expect(screen.getByPlaceholderText('json')).toHaveValue(
       '{"class":"MyClass"}'
@@ -69,7 +68,7 @@ describe('New', () => {
       return Promise.resolve(connector);
     });
     (useCreateConnector as jest.Mock).mockImplementation(() => ({
-      mutateAsync: createConnectorMock,
+      createResource: createConnectorMock,
     }));
     renderComponent();
     await simulateFormSubmit();
@@ -85,7 +84,7 @@ describe('New', () => {
       return Promise.resolve();
     });
     (useCreateConnector as jest.Mock).mockImplementation(() => ({
-      mutateAsync: createConnectorMock,
+      createResource: createConnectorMock,
     }));
     renderComponent();
     await simulateFormSubmit();

@@ -11,8 +11,8 @@ const clusterName = 'test-cluster';
 jest.mock('components/Topics/List/TopicTable', () => () => <>TopicTableMock</>);
 
 describe('ListPage Component', () => {
-  const renderComponent = () => {
-    return render(
+  const renderComponent = () =>
+    render(
       <ClusterContext.Provider
         value={{
           isReadOnly: false,
@@ -27,24 +27,24 @@ describe('ListPage Component', () => {
       </ClusterContext.Provider>,
       { initialEntries: [clusterTopicsPath(clusterName)] }
     );
-  };
 
-  beforeEach(() => {
-    renderComponent();
-  });
+  describe('Component Render', () => {
+    beforeEach(() => {
+      renderComponent();
+    });
+    it('handles switch of Internal Topics visibility', async () => {
+      const switchInput = screen.getByLabelText('Show Internal Topics');
+      expect(switchInput).toBeInTheDocument();
 
-  it('handles switch of Internal Topics visibility', () => {
-    const switchInput = screen.getByLabelText('Show Internal Topics');
-    expect(switchInput).toBeInTheDocument();
+      expect(global.localStorage.getItem('hideInternalTopics')).toBeNull();
+      await userEvent.click(switchInput);
+      expect(global.localStorage.getItem('hideInternalTopics')).toBeTruthy();
+      await userEvent.click(switchInput);
+      expect(global.localStorage.getItem('hideInternalTopics')).toBeNull();
+    });
 
-    expect(global.localStorage.getItem('hideInternalTopics')).toBeNull();
-    userEvent.click(switchInput);
-    expect(global.localStorage.getItem('hideInternalTopics')).toBeTruthy();
-    userEvent.click(switchInput);
-    expect(global.localStorage.getItem('hideInternalTopics')).toBeNull();
-  });
-
-  it('renders the TopicsTable', () => {
-    expect(screen.getByText('TopicTableMock')).toBeInTheDocument();
+    it('renders the TopicsTable', () => {
+      expect(screen.getByText('TopicTableMock')).toBeInTheDocument();
+    });
   });
 });

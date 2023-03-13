@@ -69,6 +69,15 @@ networkPolicy:
 podAnnotations: {}
 podLabels: {}
 
+## Annotations to be added to kafka-ui Deployment
+##
+annotations: {}
+
+## Set field schema as HTTPS for readines and liveness probe
+##
+probes:
+  useHttpsScheme: false
+
 podSecurityContext:
   {}
   # fsGroup: 2000
@@ -100,7 +109,10 @@ ingress:
   ingressClassName: ""
 
   # The path for the Ingress
-  path: ""
+  path: "/"
+
+  # The path type for the Ingress
+  pathType: "Prefix"  
 
   # The hostname for the Ingress
   host: ""

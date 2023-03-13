@@ -42,9 +42,7 @@ public class InternalTopic {
                                    Metrics metrics,
                                    InternalLogDirStats logDirInfo) {
     var topic = InternalTopic.builder();
-    topic.internal(
-        topicDescription.isInternal() || topicDescription.name().startsWith("_")
-    );
+    topic.internal(topicDescription.isInternal());
     topic.name(topicDescription.name());
 
     List<InternalPartition> partitions = topicDescription.partitions().stream()
@@ -104,8 +102,8 @@ public class InternalTopic {
       topic.segmentSize(segmentStats.getSegmentSize());
     }
 
-    topic.bytesInPerSec(metrics.getBytesInPerSec().get(topicDescription.name()));
-    topic.bytesOutPerSec(metrics.getBytesOutPerSec().get(topicDescription.name()));
+    topic.bytesInPerSec(metrics.getTopicBytesInPerSec().get(topicDescription.name()));
+    topic.bytesOutPerSec(metrics.getTopicBytesOutPerSec().get(topicDescription.name()));
 
     topic.topicConfigs(
         configs.stream().map(InternalTopicConfig::from).collect(Collectors.toList()));

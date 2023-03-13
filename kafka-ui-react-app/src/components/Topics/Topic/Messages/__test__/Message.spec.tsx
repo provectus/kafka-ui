@@ -7,7 +7,6 @@ import userEvent from '@testing-library/user-event';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 const messageContentText = 'messageContentText';
-const format = 'DD.MM.YYYY HH:mm:ss';
 
 jest.mock(
   'components/Topics/Topic/Messages/MessageContent/MessageContent',
@@ -34,22 +33,25 @@ describe('Message component', () => {
     props: Partial<Props> = {
       message: mockMessage,
     }
-  ) => {
-    return render(
+  ) =>
+    render(
       <table>
         <tbody>
-          <Message message={props.message || mockMessage} />
+          <Message
+            message={props.message || mockMessage}
+            keyFilters={[]}
+            contentFilters={[]}
+          />
         </tbody>
       </table>
     );
-  };
 
   it('shows the data in the table row', () => {
     renderComponent();
     expect(screen.getByText(mockMessage.content as string)).toBeInTheDocument();
     expect(screen.getByText(mockMessage.key as string)).toBeInTheDocument();
     expect(
-      screen.getByText(formatTimestamp(mockMessage.timestamp, format))
+      screen.getByText(formatTimestamp(mockMessage.timestamp))
     ).toBeInTheDocument();
     expect(screen.getByText(mockMessage.offset.toString())).toBeInTheDocument();
     expect(
@@ -66,24 +68,24 @@ describe('Message component', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should check the dropdown being visible during hover', () => {
+  it('should check the dropdown being visible during hover', async () => {
     renderComponent();
     const text = 'Save as a file';
     const trElement = screen.getByRole('row');
     expect(screen.queryByText(text)).not.toBeInTheDocument();
 
-    userEvent.hover(trElement);
+    await userEvent.hover(trElement);
     expect(screen.getByText(text)).toBeInTheDocument();
 
-    userEvent.unhover(trElement);
+    await userEvent.unhover(trElement);
     expect(screen.queryByText(text)).not.toBeInTheDocument();
   });
 
-  it('should check open Message Content functionality', () => {
+  it('should check open Message Content functionality', async () => {
     renderComponent();
     const messageToggleIcon = screen.getByRole('button', { hidden: true });
     expect(screen.queryByText(messageContentText)).not.toBeInTheDocument();
-    userEvent.click(messageToggleIcon);
+    await userEvent.click(messageToggleIcon);
     expect(screen.getByText(messageContentText)).toBeInTheDocument();
   });
 });

@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicMessagePhaseDTO;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
+import com.provectus.kafka.ui.util.PollingThrottler;
 import java.time.Duration;
 import java.time.Instant;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -24,9 +25,11 @@ public abstract class AbstractEmitter {
 
   private final ConsumerRecordDeserializer recordDeserializer;
   private final ConsumingStats consumingStats = new ConsumingStats();
+  private final PollingThrottler throttler;
 
-  protected AbstractEmitter(ConsumerRecordDeserializer recordDeserializer) {
+  protected AbstractEmitter(ConsumerRecordDeserializer recordDeserializer, PollingThrottler throttler) {
     this.recordDeserializer = recordDeserializer;
+    this.throttler = throttler;
   }
 
   protected ConsumerRecords<Bytes, Bytes> poll(
@@ -39,7 +42,8 @@ public abstract class AbstractEmitter {
     Instant start = Instant.now();
     ConsumerRecords<Bytes, Bytes> records = consumer.poll(timeout);
     Instant finish = Instant.now();
-    sendConsuming(sink, records, Duration.between(start, finish).toMillis());
+    int polledBytes = sendConsuming(sink, records, Duration.between(start, finish).toMillis());
+    throttler.throttleAfterPoll(polledBytes);
     return records;
   }
 
@@ -61,9 +65,21 @@ public abstract class AbstractEmitter {
     );
   }
 
-  protected void sendConsuming(FluxSink<TopicMessageEventDTO> sink,
+  protected int sendConsuming(FluxSink<TopicMessageEventDTO> sink,
                                ConsumerRecords<Bytes, Bytes> records,
                                long elapsed) {
-    consumingStats.sendConsumingEvt(sink, records, elapsed);
+    return consumingStats.sendConsumingEvt(sink, records, elapsed, getFilterApplyErrors(sink));
+  }
+
+  protected void sendFinishStatsAndCompleteSink(FluxSink<TopicMessageEventDTO> sink) {
+    consumingStats.sendFinishEvent(sink, getFilterApplyErrors(sink));
+    sink.complete();
+  }
+
+  protected Number getFilterApplyErrors(FluxSink<?> sink) {
+    return sink.contextView()
+        .<MessageFilterStats>getOrEmpty(MessageFilterStats.class)
+        .<Number>map(MessageFilterStats::getFilterApplyErrors)
+        .orElse(0);
   }
 }

@@ -9,6 +9,7 @@ interface ServerResponse {
   url?: string;
   message?: ErrorResponse['message'];
 }
+export type ToastTypes = ToastType | 'warning';
 
 export const getResponse = async (
   response: Response
@@ -34,7 +35,7 @@ interface AlertOptions {
 }
 
 export const showAlert = (
-  type: ToastType,
+  type: ToastTypes,
   { title, message, id }: AlertOptions
 ) => {
   toast.custom(
@@ -50,7 +51,7 @@ export const showAlert = (
   );
 };
 
-export const showSuccessAlert = async (options: AlertOptions) => {
+export const showSuccessAlert = (options: AlertOptions) => {
   showAlert('success', {
     ...options,
     title: options.title || 'Success',
@@ -72,6 +73,13 @@ export const showServerError = async (
       id: response.url,
       title: `${response.status} ${response.statusText}`,
       message: body?.message || 'An error occurred',
+      ...options,
+    });
+  } else {
+    showAlert('error', {
+      id: 'server-error',
+      title: `Something went wrong`,
+      message: 'An error occurred',
       ...options,
     });
   }

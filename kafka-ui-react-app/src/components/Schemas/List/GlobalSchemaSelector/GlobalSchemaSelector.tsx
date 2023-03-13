@@ -1,6 +1,9 @@
 import React from 'react';
-import Select from 'components/common/Select/Select';
-import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
+import {
+  Action,
+  CompatibilityLevelCompatibilityEnum,
+  ResourceType,
+} from 'generated-sources';
 import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import { fetchSchemas } from 'redux/reducers/schemas/schemasSlice';
@@ -10,6 +13,7 @@ import { showServerError } from 'lib/errorHandling';
 import { useConfirm } from 'lib/hooks/useConfirm';
 import { useSearchParams } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
+import { ActionSelect } from 'components/common/ActionComponent';
 
 import * as S from './GlobalSchemaSelector.styled';
 
@@ -79,7 +83,7 @@ const GlobalSchemaSelector: React.FC = () => {
   return (
     <S.Wrapper>
       <div>Global Compatibility Level: </div>
-      <Select
+      <ActionSelect
         selectSize="M"
         defaultValue={currentCompatibilityLevel}
         minWidth="200px"
@@ -88,6 +92,10 @@ const GlobalSchemaSelector: React.FC = () => {
         options={Object.keys(CompatibilityLevelCompatibilityEnum).map(
           (level) => ({ value: level, label: level })
         )}
+        permission={{
+          resource: ResourceType.SCHEMA,
+          action: Action.MODIFY_GLOBAL_COMPATIBILITY,
+        }}
       />
     </S.Wrapper>
   );

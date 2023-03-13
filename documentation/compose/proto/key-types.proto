@@ -1,0 +1,15 @@
+syntax = "proto3";
+package test;
+
+import "google/protobuf/wrappers.proto";
+
+message MyKey {
+    string myKeyF1 = 1;
+    google.protobuf.UInt64Value uint_64_wrapper = 2;
+}
+
+message MySpecificTopicKey {
+    string special_field1 = 1;
+    string special_field2 = 2;
+    google.protobuf.FloatValue float_wrapper = 3;
+}

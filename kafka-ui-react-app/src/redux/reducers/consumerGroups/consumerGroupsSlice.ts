@@ -195,11 +195,6 @@ export const getAreConsumerGroupsPagedFulfilled = createSelector(
   (status) => status === AsyncRequestStatus.fulfilled
 );
 
-export const getIsConsumerGroupDeleted = createSelector(
-  createFetchingSelector('consumerGroups/deleteConsumerGroup'),
-  (status) => status === AsyncRequestStatus.fulfilled
-);
-
 export const getAreConsumerGroupDetailsFulfilled = createSelector(
   createFetchingSelector('consumerGroups/fetchConsumerGroupDetails'),
   (status) => status === AsyncRequestStatus.fulfilled

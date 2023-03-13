@@ -66,7 +66,7 @@ describe('Broker Component', () => {
     expect(
       screen.getByText(brokerDiskUsage?.segmentCount || '')
     ).toBeInTheDocument();
-    expect(screen.getByText('12MB')).toBeInTheDocument();
+    expect(screen.getByText('12 MB')).toBeInTheDocument();
 
     expect(screen.getByText('Segment Count')).toBeInTheDocument();
     expect(

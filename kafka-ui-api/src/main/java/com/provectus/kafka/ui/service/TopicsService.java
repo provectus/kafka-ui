@@ -7,7 +7,7 @@ import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.TopicRecreationException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.ClusterFeature;
 import com.provectus.kafka.ui.model.InternalLogDirStats;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalPartitionsOffsets;
@@ -51,7 +51,6 @@ import reactor.util.retry.Retry;
 public class TopicsService {
 
   private final AdminClientService adminClientService;
-  private final DeserializationService deserializationService;
   private final StatisticsCache statisticsCache;
   @Value("${topic.recreate.maxRetries:15}")
   private int recreateMaxRetries;
@@ -68,7 +67,7 @@ public class TopicsService {
     }
     return adminClientService.get(c)
         .flatMap(ac ->
-            ac.describeTopics(topics).zipWith(ac.getTopicsConfig(topics),
+            ac.describeTopics(topics).zipWith(ac.getTopicsConfig(topics, false),
                 (descriptions, configs) -> {
                   statisticsCache.update(c, descriptions, configs);
                   return getPartitionOffsets(descriptions, ac).map(offsets -> {
@@ -138,11 +137,15 @@ public class TopicsService {
                                                               ReactiveAdminClient ac) {
     var topicPartitions = descriptions.values().stream()
         .flatMap(desc ->
-            desc.partitions().stream().map(p -> new TopicPartition(desc.name(), p.partition())))
+            desc.partitions().stream()
+                // list offsets should only be applied to partitions with existing leader
+                // (see ReactiveAdminClient.listOffsetsUnsafe(..) docs)
+                .filter(tp -> tp.leader() != null)
+                .map(p -> new TopicPartition(desc.name(), p.partition())))
         .collect(toList());
 
-    return ac.listOffsets(topicPartitions, OffsetSpec.earliest())
-        .zipWith(ac.listOffsets(topicPartitions, OffsetSpec.latest()),
+    return ac.listOffsetsUnsafe(topicPartitions, OffsetSpec.earliest())
+        .zipWith(ac.listOffsetsUnsafe(topicPartitions, OffsetSpec.latest()),
             (earliest, latest) ->
                 topicPartitions.stream()
                     .filter(tp -> earliest.containsKey(tp) && latest.containsKey(tp))
@@ -159,9 +162,14 @@ public class TopicsService {
   }
 
   public Mono<List<ConfigEntry>> getTopicConfigs(KafkaCluster cluster, String topicName) {
+    // there 2 case that we cover here:
+    // 1. topic not found/visible - describeTopic() will be empty and we will throw TopicNotFoundException
+    // 2. topic is visible, but we don't have DESCRIBE_CONFIG permission - we should return empty list
     return adminClientService.get(cluster)
-        .flatMap(ac -> ac.getTopicsConfig(List.of(topicName)))
-        .map(m -> m.values().stream().findFirst().orElseThrow(TopicNotFoundException::new));
+        .flatMap(ac -> ac.describeTopic(topicName)
+            .switchIfEmpty(Mono.error(new TopicNotFoundException()))
+            .then(ac.getTopicsConfig(List.of(topicName), true))
+            .map(m -> m.values().stream().findFirst().orElse(List.of())));
   }
 
   private Mono<InternalTopic> createTopic(KafkaCluster c, ReactiveAdminClient adminClient,
@@ -414,7 +422,7 @@ public class TopicsService {
   }
 
   public Mono<Void> deleteTopic(KafkaCluster cluster, String topicName) {
-    if (statisticsCache.get(cluster).getFeatures().contains(Feature.TOPIC_DELETION)) {
+    if (statisticsCache.get(cluster).getFeatures().contains(ClusterFeature.TOPIC_DELETION)) {
       return adminClientService.get(cluster).flatMap(c -> c.deleteTopic(topicName))
           .doOnSuccess(t -> statisticsCache.onTopicDelete(cluster, topicName));
     } else {
@@ -457,8 +465,12 @@ public class TopicsService {
   }
 
   private Mono<List<String>> filterExisting(KafkaCluster cluster, Collection<String> topics) {
-    return adminClientService.get(cluster).flatMap(ac -> ac.listTopics(true))
-        .map(existing -> existing.stream().filter(topics::contains).collect(toList()));
+    return adminClientService.get(cluster)
+        .flatMap(ac -> ac.listTopics(true))
+        .map(existing -> existing
+            .stream()
+            .filter(topics::contains)
+            .collect(toList()));
   }
 
 }

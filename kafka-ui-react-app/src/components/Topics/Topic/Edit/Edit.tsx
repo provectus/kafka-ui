@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  TopicFormDataRaw,
-  TopicConfigByName,
-  TopicFormData,
-} from 'redux/interfaces';
+import { TopicConfigByName, TopicFormData } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { RouteParamsClusterTopic } from 'lib/paths';
@@ -19,6 +15,7 @@ import {
   useUpdateTopic,
 } from 'lib/hooks/api/topics';
 import DangerZone from 'components/Topics/Topic/Edit/DangerZone/DangerZone';
+import { ConfigSource } from 'generated-sources';
 
 export const TOPIC_EDIT_FORM_DEFAULT_PROPS = {
   partitions: 1,
@@ -54,16 +51,35 @@ const Edit: React.FC = () => {
   topicConfig?.forEach((param) => {
     config.byName[param.name] = param;
   });
+  const onSubmit = async (data: TopicFormData) => {
+    const filteredDirtyDefaultEntries = Object.entries(data).filter(
+      ([key, val]) => {
+        const isDirty =
+          String(val) !==
+          String(defaultValues[key as keyof typeof defaultValues]);
 
-  const onSubmit = async (data: TopicFormDataRaw) => {
-    await updateTopic.mutateAsync(data);
-    navigate('../');
+        const isDefaultConfig =
+          config.byName[key]?.source === ConfigSource.DEFAULT_CONFIG;
+
+        // if it is changed should be sent or if it was Dynamic
+        return isDirty || !isDefaultConfig;
+      }
+    );
+
+    const newData = Object.fromEntries(filteredDirtyDefaultEntries);
+    try {
+      await updateTopic.mutateAsync(newData);
+      navigate('../');
+    } catch (e) {
+      // do nothing
+    }
   };
 
   return (
     <>
       <FormProvider {...methods}>
         <TopicForm
+          config={config.byName}
           topicName={topicName}
           retentionBytes={defaultValues.retentionBytes}
           inSyncReplicas={Number(defaultValues.minInSyncReplicas)}

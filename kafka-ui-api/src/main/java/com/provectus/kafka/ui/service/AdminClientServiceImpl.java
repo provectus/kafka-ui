@@ -1,10 +1,13 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.util.SslPropertiesUtil;
 import java.io.Closeable;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +21,9 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class AdminClientServiceImpl implements AdminClientService, Closeable {
+
+  private static final AtomicLong CLIENT_ID_SEQ = new AtomicLong();
+
   private final Map<String, ReactiveAdminClient> adminClientCache = new ConcurrentHashMap<>();
   @Setter // used in tests
   @Value("${kafka.admin-client-timeout:30000}")
@@ -33,13 +39,16 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
   private Mono<ReactiveAdminClient> createAdminClient(KafkaCluster cluster) {
     return Mono.fromSupplier(() -> {
       Properties properties = new Properties();
+      SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
       properties.putAll(cluster.getProperties());
-      properties
-          .put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
+      properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
       properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
+      properties.putIfAbsent(
+          AdminClientConfig.CLIENT_ID_CONFIG,
+          "kafka-ui-admin-" + Instant.now().getEpochSecond() + "-" + CLIENT_ID_SEQ.incrementAndGet()
+      );
       return AdminClient.create(properties);
-    })
-        .flatMap(ReactiveAdminClient::create)
+    }).flatMap(ac -> ReactiveAdminClient.create(ac).doOnError(th -> ac.close()))
         .onErrorMap(th -> new IllegalStateException(
             "Error while creating AdminClient for Cluster " + cluster.getName(), th));
   }

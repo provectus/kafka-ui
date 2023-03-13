@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
 
+  FORBIDDEN(403, HttpStatus.FORBIDDEN),
+
   UNEXPECTED(5000, HttpStatus.INTERNAL_SERVER_ERROR),
   KSQL_API_ERROR(5001, HttpStatus.INTERNAL_SERVER_ERROR),
   BINDING_FAIL(4001, HttpStatus.BAD_REQUEST),
@@ -27,7 +29,9 @@ public enum ErrorCode {
   RECREATE_TOPIC_TIMEOUT(4015, HttpStatus.REQUEST_TIMEOUT),
   INVALID_ENTITY_STATE(4016, HttpStatus.BAD_REQUEST),
   SCHEMA_NOT_DELETED(4017, HttpStatus.INTERNAL_SERVER_ERROR),
-  TOPIC_ANALYSIS_ERROR(4018, HttpStatus.BAD_REQUEST);
+  TOPIC_ANALYSIS_ERROR(4018, HttpStatus.BAD_REQUEST),
+  FILE_UPLOAD_EXCEPTION(4019, HttpStatus.INTERNAL_SERVER_ERROR),
+  ;
 
   static {
     // codes uniqueness check

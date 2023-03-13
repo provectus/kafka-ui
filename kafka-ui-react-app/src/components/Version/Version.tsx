@@ -1,21 +1,15 @@
 import React from 'react';
 import WarningIcon from 'components/common/Icons/WarningIcon';
 import { gitCommitPath } from 'lib/paths';
-import { useTimeFormat } from 'lib/hooks/useTimeFormat';
 import { useActuatorInfo } from 'lib/hooks/api/actuatorInfo';
 import { BUILD_VERSION_PATTERN } from 'lib/constants';
 import { useLatestVersion } from 'lib/hooks/api/latestVersion';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 import * as S from './Version.styled';
 import compareVersions from './compareVersions';
 
-export interface VesionProps {
-  tag: string;
-  commit?: string;
-}
-
 const Version: React.FC = () => {
-  const formatTimestamp = useTimeFormat();
   const { data: actuatorInfo = {} } = useActuatorInfo();
   const { data: latestVersionInfo = {} } = useLatestVersion();
 

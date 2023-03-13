@@ -5,12 +5,14 @@ import {
   getExpandedRowModel,
   getSortedRowModel,
   useReactTable,
-  ColumnDef,
+  getPaginationRowModel,
+} from '@tanstack/react-table';
+import type {
   Row,
   SortingState,
   OnChangeFn,
   PaginationState,
-  getPaginationRowModel,
+  ColumnDef,
 } from '@tanstack/react-table';
 import { useSearchParams } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
@@ -44,7 +46,7 @@ export interface TableProps<TData> {
   enableSorting?: boolean; // Enables sorting for table.
 
   // Placeholder for empty table
-  emptyMessage?: string;
+  emptyMessage?: React.ReactNode;
 
   // Handles row click. Can not be combined with `enableRowSelection` && expandable rows.
   onRowClick?: (row: Row<TData>) => void;
@@ -101,7 +103,7 @@ const getSortingFromSearchParams = (searchParams: URLSearchParams) => {
  *    - use `enableRowSelection` prop to enable row selection. This prop can be a boolean or
  *      a function that returns true if the particular row can be selected.
  *    - use `batchActionsBar` prop to provide a component that will be rendered at the top of the table
- *      when row selection is enabled and there are selected rows.
+ *      when row selection is enabled.
  *
  * 5. Server side processing:
  *    - set `serverSideProcessing` to true
@@ -190,7 +192,7 @@ const Table: React.FC<TableProps<any>> = ({
 
   return (
     <>
-      {table.getSelectedRowModel().flatRows.length > 0 && BatchActionsBar && (
+      {BatchActionsBar && (
         <S.TableActionsBar>
           <BatchActionsBar
             rows={table.getSelectedRowModel().flatRows}

@@ -79,6 +79,9 @@ const theme = {
       color: Colors.neutral[30],
     },
   },
+  text: {
+    secondary: Colors.neutral[60],
+  },
   progressBar: {
     backgroundColor: Colors.neutral[3],
     compleatedColor: Colors.green[40],
@@ -88,7 +91,7 @@ const theme = {
     backgroundColor: Colors.neutral[0],
     minWidth: '1200px',
     navBarWidth: '201px',
-    navBarHeight: '53px',
+    navBarHeight: '51px',
     rightSidebarWidth: '70vw',
     filtersSidebarWidth: '300px',
 
@@ -362,6 +365,7 @@ const theme = {
       normal: Colors.neutral[50],
       hover: Colors.neutral[90],
       active: Colors.neutral[90],
+      disabled: Colors.neutral[30],
     },
     borderColor: {
       normal: 'transparent',
@@ -516,6 +520,9 @@ const theme = {
     liderReplica: {
       color: Colors.green[60],
     },
+    outOfSync: {
+      color: Colors.red[50],
+    },
   },
   dangerZone: {
     borderColor: Colors.neutral[10],
@@ -526,6 +533,10 @@ const theme = {
   },
   configList: {
     color: Colors.neutral[30],
+  },
+  tooltip: {
+    bg: Colors.neutral[70],
+    text: Colors.neutral[0],
   },
   topicsList: {
     color: {
@@ -539,6 +550,7 @@ const theme = {
     },
   },
   icons: {
+    chevronDownIcon: Colors.neutral[90],
     closeIcon: Colors.neutral[30],
     deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],
@@ -576,6 +588,9 @@ const theme = {
   },
   statictics: {
     createdAtColor: Colors.neutral[50],
+  },
+  errorPage: {
+    text: Colors.blue[45],
   },
 };
 

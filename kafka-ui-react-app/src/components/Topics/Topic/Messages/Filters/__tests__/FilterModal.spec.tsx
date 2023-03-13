@@ -21,20 +21,20 @@ const renderComponent = (props?: Partial<FilterModalProps>) =>
       {...props}
     />
   );
+
 describe('FilterModal component', () => {
-  beforeEach(async () => {
+  it('renders component with add filter modal', async () => {
     await act(() => {
       renderComponent();
     });
-  });
-  it('renders component with add filter modal', () => {
     expect(
       screen.getByRole('heading', { name: /add filter/i, level: 3 })
     ).toBeInTheDocument();
   });
-  it('renders component with edit filter modal', () => {
-    userEvent.click(screen.getByRole('savedFilterText'));
-    userEvent.click(screen.getByText('Edit'));
+  it('renders component with edit filter modal', async () => {
+    renderComponent();
+    await userEvent.click(screen.getByRole('savedFilterText'));
+    await userEvent.click(screen.getByText('Edit'));
     expect(
       screen.getByRole('heading', { name: /edit saved filter/i, level: 3 })
     ).toBeInTheDocument();

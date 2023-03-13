@@ -25,14 +25,11 @@ public class ProducerRecordCreator {
         partition,
         key == null ? null : keySerializer.serialize(key),
         value == null ? null : valuesSerializer.serialize(value),
-        createHeaders(headers)
+        headers == null ? null : createHeaders(headers)
     );
   }
 
-  private Iterable<Header> createHeaders(@Nullable Map<String, String> clientHeaders) {
-    if (clientHeaders == null) {
-      return new RecordHeaders();
-    }
+  private Iterable<Header> createHeaders(Map<String, String> clientHeaders) {
     RecordHeaders headers = new RecordHeaders();
     clientHeaders.forEach((k, v) -> headers.add(new RecordHeader(k, v.getBytes())));
     return headers;
