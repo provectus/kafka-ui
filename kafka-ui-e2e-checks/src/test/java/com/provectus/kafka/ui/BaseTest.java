@@ -4,7 +4,6 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
-import com.provectus.kafka.ui.enums.MenuItem;
 import com.provectus.kafka.ui.settings.listeners.AllureListener;
 import com.provectus.kafka.ui.settings.listeners.LoggerListener;
 import com.provectus.kafka.ui.settings.listeners.QaseResultListener;
@@ -37,7 +36,6 @@ public abstract class BaseTest extends Facade {
     private static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
     private static final String SELENIARM_STANDALONE_CHROMIUM = "seleniarm/standalone-chromium:103.0";
     protected static BrowserWebDriverContainer<?> webDriverContainer = null;
-    protected static final String CONNECT_NAME = "first";
 
     private static boolean isARM64() {
         return System.getProperty("os.arch").equals("aarch64");
@@ -110,26 +108,26 @@ public abstract class BaseTest extends Facade {
     public void afterMethod() {
         browserClear();
     }
-    
+
     @Step
     protected void navigateToBrokers() {
         naviSideBar
-                .openSideMenu(MenuItem.BROKERS);
+                .openSideMenu(BROKERS);
         brokersList
                 .waitUntilScreenReady();
     }
-    
+
     @Step
-    protected void navigateToBrokersAndOpenBroker() {
+    protected void navigateToBrokersAndOpenDetails(int brokerId) {
         naviSideBar
                 .openSideMenu(BROKERS);
         brokersList
                 .waitUntilScreenReady()
-                .openBroker(1);
+                .openBroker(brokerId);
         brokersDetails
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToTopics() {
         naviSideBar
@@ -137,7 +135,7 @@ public abstract class BaseTest extends Facade {
         topicsList
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToTopicsAndOpenDetails(String topicName) {
         naviSideBar
@@ -148,7 +146,7 @@ public abstract class BaseTest extends Facade {
         topicDetails
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToConsumers() {
         naviSideBar
@@ -156,7 +154,7 @@ public abstract class BaseTest extends Facade {
         consumersList
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToSchemaRegistry() {
         naviSideBar
@@ -164,7 +162,7 @@ public abstract class BaseTest extends Facade {
         schemaRegistryList
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToSchemaRegistryAndOpenDetails(String schemaName) {
         navigateToSchemaRegistry();
@@ -173,7 +171,7 @@ public abstract class BaseTest extends Facade {
         schemaDetails
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToConnectors() {
         naviSideBar
@@ -181,7 +179,7 @@ public abstract class BaseTest extends Facade {
         kafkaConnectList
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToConnectorsAndOpenDetails(String connectorName) {
         navigateToConnectors();
@@ -190,7 +188,7 @@ public abstract class BaseTest extends Facade {
         connectorDetails
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToKsqlDb() {
         naviSideBar
@@ -198,7 +196,7 @@ public abstract class BaseTest extends Facade {
         ksqlDbList
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void verifyElementsCondition(List<SelenideElement> elementList, Condition expectedCondition) {
         SoftAssert softly = new SoftAssert();

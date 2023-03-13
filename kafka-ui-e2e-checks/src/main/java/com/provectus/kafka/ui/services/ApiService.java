@@ -67,8 +67,8 @@ public class ApiService extends BaseSource {
     }
 
     @Step
-    public ApiService createTopic(String topicName) {
-        createTopic(CLUSTER_NAME, topicName);
+    public ApiService createTopic(Topic topic) {
+        createTopic(CLUSTER_NAME, topic.getName());
         return this;
     }
 
@@ -133,6 +133,12 @@ public class ApiService extends BaseSource {
         return this;
     }
 
+    @Step
+    public ApiService deleteConnector(String connectorName) {
+        deleteConnector(CLUSTER_NAME, CONNECT_NAME, connectorName);
+        return this;
+    }
+
     @SneakyThrows
     private void createConnector(String clusterName, String connectName, Connector connector) {
         NewConnector connectorProperties = new NewConnector();
@@ -153,8 +159,14 @@ public class ApiService extends BaseSource {
     }
 
     @Step
+    public ApiService createConnector(Connector connector) {
+        createConnector(CLUSTER_NAME, CONNECT_NAME, connector);
+        return this;
+    }
+
+    @Step
     public String getFirstConnectName(String clusterName) {
-        return connectorApi().getConnects(clusterName).blockFirst().getName();
+        return Objects.requireNonNull(connectorApi().getConnects(clusterName).blockFirst()).getName();
     }
 
     @SneakyThrows

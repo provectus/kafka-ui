@@ -16,122 +16,124 @@ import static com.codeborne.selenide.Selenide.$x;
 import static com.provectus.kafka.ui.enums.MenuItem.KSQL_DB;
 
 public class KsqlDbList extends BasePage {
-  protected SelenideElement executeKsqlBtn = $x("//button[text()='Execute KSQL Request']");
-  protected SelenideElement tablesTab = $x("//nav[@role='navigation']/a[text()='Tables']");
 
-  @Step
-  public KsqlDbList waitUntilScreenReady() {
-    waitUntilSpinnerDisappear();
-    getPageTitleFromHeader(KSQL_DB).shouldBe(Condition.visible);
-    return this;
-  }
+    protected SelenideElement executeKsqlBtn = $x("//button[text()='Execute KSQL Request']");
+    protected SelenideElement tablesTab = $x("//nav[@role='navigation']/a[text()='Tables']");
+    protected SelenideElement streamsTab = $x("//nav[@role='navigation']/a[text()='Streams']");
 
-  @Step
-  public KsqlDbList clickExecuteKsqlRequestBtn() {
-    clickByJavaScript(executeKsqlBtn);
-    return this;
-  }
-
-  @Step
-  public KsqlDbList openDetailsTab(KsqlMenuTabs menu) {
-    $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
-    waitUntilSpinnerDisappear();
-    return this;
-  }
-
-  private List<KsqlDbList.KsqlTablesGridItem> initTablesItems() {
-    List<KsqlDbList.KsqlTablesGridItem> gridItemList = new ArrayList<>();
-    gridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
-        .forEach(item -> gridItemList.add(new KsqlDbList.KsqlTablesGridItem(item)));
-    return gridItemList;
-  }
-
-  @Step
-  public KsqlDbList.KsqlTablesGridItem getTableByName(String tableName) {
-    return initTablesItems().stream()
-        .filter(e -> e.getTableName().equals(tableName))
-        .findFirst().orElseThrow();
-  }
-
-  public static class KsqlTablesGridItem extends BasePage {
-
-    private final SelenideElement element;
-
-    public KsqlTablesGridItem(SelenideElement element) {
-      this.element = element;
+    @Step
+    public KsqlDbList waitUntilScreenReady() {
+        waitUntilSpinnerDisappear();
+        getPageTitleFromHeader(KSQL_DB).shouldBe(Condition.visible);
+        return this;
     }
 
     @Step
-    public String getTableName() {
-      return element.$x("./td[1]").getText().trim();
+    public KsqlDbList clickExecuteKsqlRequestBtn() {
+        clickByJavaScript(executeKsqlBtn);
+        return this;
     }
 
     @Step
-    public String getTopicName() {
-      return element.$x("./td[2]").getText().trim();
+    public KsqlDbList openDetailsTab(KsqlMenuTabs menu) {
+        $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
+        waitUntilSpinnerDisappear();
+        return this;
+    }
+
+    private List<KsqlDbList.KsqlTablesGridItem> initTablesItems() {
+        List<KsqlDbList.KsqlTablesGridItem> gridItemList = new ArrayList<>();
+        gridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+                .forEach(item -> gridItemList.add(new KsqlDbList.KsqlTablesGridItem(item)));
+        return gridItemList;
     }
 
     @Step
-    public String getKeyFormat() {
-      return element.$x("./td[3]").getText().trim();
+    public KsqlDbList.KsqlTablesGridItem getTableByName(String tableName) {
+        return initTablesItems().stream()
+                .filter(e -> e.getTableName().equals(tableName))
+                .findFirst().orElseThrow();
+    }
+
+    private List<KsqlDbList.KsqlStreamsGridItem> initStreamsItems() {
+        List<KsqlDbList.KsqlStreamsGridItem> gridItemList = new ArrayList<>();
+        gridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+                .forEach(item -> gridItemList.add(new KsqlDbList.KsqlStreamsGridItem(item)));
+        return gridItemList;
     }
 
     @Step
-    public String getValueFormat() {
-      return element.$x("./td[4]").getText().trim();
+    public KsqlDbList.KsqlStreamsGridItem getStreamByName(String streamName) {
+        return initStreamsItems().stream()
+                .filter(e -> e.getStreamName().equals(streamName))
+                .findFirst().orElseThrow();
     }
 
-    @Step
-    public String getIsWindowed() {
-      return element.$x("./td[5]").getText().trim();
-    }
-  }
+    public static class KsqlTablesGridItem extends BasePage {
 
-  private List<KsqlDbList.KsqlStreamsGridItem> initStreamsItems() {
-    List<KsqlDbList.KsqlStreamsGridItem> gridItemList = new ArrayList<>();
-    gridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
-        .forEach(item -> gridItemList.add(new KsqlDbList.KsqlStreamsGridItem(item)));
-    return gridItemList;
-  }
+        private final SelenideElement element;
 
-  @Step
-  public KsqlDbList.KsqlStreamsGridItem getStreamByName(String streamName) {
-    return initStreamsItems().stream()
-        .filter(e -> e.getStreamName().equals(streamName))
-        .findFirst().orElseThrow();
-  }
+        public KsqlTablesGridItem(SelenideElement element) {
+            this.element = element;
+        }
 
-  public static class KsqlStreamsGridItem extends BasePage {
+        @Step
+        public String getTableName() {
+            return element.$x("./td[1]").getText().trim();
+        }
 
-    private final SelenideElement element;
+        @Step
+        public String getTopicName() {
+            return element.$x("./td[2]").getText().trim();
+        }
 
-    public KsqlStreamsGridItem(SelenideElement element) {
-      this.element = element;
-    }
+        @Step
+        public String getKeyFormat() {
+            return element.$x("./td[3]").getText().trim();
+        }
 
-    @Step
-    public String getStreamName() {
-      return element.$x("./td[1]").getText().trim();
-    }
+        @Step
+        public String getValueFormat() {
+            return element.$x("./td[4]").getText().trim();
+        }
 
-    @Step
-    public String getTopicName() {
-      return element.$x("./td[2]").getText().trim();
+        @Step
+        public String getIsWindowed() {
+            return element.$x("./td[5]").getText().trim();
+        }
     }
 
-    @Step
-    public String getKeyFormat() {
-      return element.$x("./td[3]").getText().trim();
-    }
+    public static class KsqlStreamsGridItem extends BasePage {
 
-    @Step
-    public String getValueFormat() {
-      return element.$x("./td[4]").getText().trim();
-    }
+        private final SelenideElement element;
 
-    @Step
-    public String getIsWindowed() {
-      return element.$x("./td[5]").getText().trim();
+        public KsqlStreamsGridItem(SelenideElement element) {
+            this.element = element;
+        }
+
+        @Step
+        public String getStreamName() {
+            return element.$x("./td[1]").getText().trim();
+        }
+
+        @Step
+        public String getTopicName() {
+            return element.$x("./td[2]").getText().trim();
+        }
+
+        @Step
+        public String getKeyFormat() {
+            return element.$x("./td[3]").getText().trim();
+        }
+
+        @Step
+        public String getValueFormat() {
+            return element.$x("./td[4]").getText().trim();
+        }
+
+        @Step
+        public String getIsWindowed() {
+            return element.$x("./td[5]").getText().trim();
+        }
     }
-  }
 }

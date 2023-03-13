@@ -53,7 +53,7 @@ public class MessagesTest extends BaseTest {
     public void beforeClass() {
         TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECK_FILTERS, TOPIC_TO_CLEAR_AND_PURGE_MESSAGES,
                 TOPIC_TO_RECREATE, TOPIC_FOR_CHECK_MESSAGES_COUNT));
-        TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
+        TOPIC_LIST.forEach(topic -> apiService.createTopic(topic));
         IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECK_FILTERS));
         waitUntilNewMinuteStarted();
         IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECK_FILTERS));

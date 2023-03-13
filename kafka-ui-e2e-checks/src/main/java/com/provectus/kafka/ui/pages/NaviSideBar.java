@@ -33,20 +33,27 @@ public class NaviSideBar extends BasePage {
         dashboardMenuItem.shouldBe(Condition.visible, Duration.ofSeconds(30));
         return this;
     }
-    
+
+    @Step
+    public String getPagePath(MenuItem menuItem) {
+        return getPagePathFromHeader(menuItem)
+                .shouldBe(Condition.visible)
+                .getText().trim();
+    }
+
     @Step
     public NaviSideBar openSideMenu(String clusterName, MenuItem menuItem) {
         clickByActions(expandCluster(clusterName).parent()
                 .$x(String.format(sideMenuOptionElementLocator, menuItem.getNaviTitle())));
         return this;
     }
-    
+
     @Step
     public NaviSideBar openSideMenu(MenuItem menuItem) {
         openSideMenu(CLUSTER_NAME, menuItem);
         return this;
     }
-    
+
     public List<SelenideElement> getAllMenuButtons() {
         expandCluster(CLUSTER_NAME);
         return Stream.of(MenuItem.values())

@@ -7,7 +7,7 @@ import io.qameta.allure.Step;
 import static com.provectus.kafka.ui.enums.MenuItem.CONSUMERS;
 
 public class ConsumersList extends BasePage {
-    
+
     @Step
     public ConsumersList waitUntilScreenReady() {
         waitUntilSpinnerDisappear();
