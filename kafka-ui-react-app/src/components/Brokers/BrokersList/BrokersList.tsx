@@ -193,7 +193,7 @@ const BrokersList: React.FC = () => {
         onRowClick={({ original: { brokerId } }) =>
           navigate(clusterBrokerPath(clusterName, brokerId))
         }
-        emptyMessage="Disk usage data not available"
+        emptyMessage="No clusters are online"
       />
     </>
   );

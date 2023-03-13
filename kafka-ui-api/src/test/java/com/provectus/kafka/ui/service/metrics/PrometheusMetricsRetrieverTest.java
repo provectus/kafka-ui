@@ -15,7 +15,7 @@ import reactor.test.StepVerifier;
 
 class PrometheusMetricsRetrieverTest {
 
-  private final PrometheusMetricsRetriever retriever = new PrometheusMetricsRetriever(WebClient.create());
+  private final PrometheusMetricsRetriever retriever = new PrometheusMetricsRetriever();
 
   private final MockWebServer mockWebServer = new MockWebServer();
 
@@ -36,7 +36,7 @@ class PrometheusMetricsRetrieverTest {
 
     MetricsConfig metricsConfig = prepareMetricsConfig(url.port(), null, null);
 
-    StepVerifier.create(retriever.retrieve(url.host(), metricsConfig))
+    StepVerifier.create(retriever.retrieve(WebClient.create(), url.host(), metricsConfig))
         .expectNextSequence(expectedRawMetrics())
         // third metric should not be present, since it has "NaN" value
         .verifyComplete();
@@ -50,7 +50,7 @@ class PrometheusMetricsRetrieverTest {
 
     MetricsConfig metricsConfig = prepareMetricsConfig(url.port(), "username", "password");
 
-    StepVerifier.create(retriever.retrieve(url.host(), metricsConfig))
+    StepVerifier.create(retriever.retrieve(WebClient.create(), url.host(), metricsConfig))
         .expectNextSequence(expectedRawMetrics())
         // third metric should not be present, since it has "NaN" value
         .verifyComplete();

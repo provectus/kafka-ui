@@ -1,8 +1,7 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.ClusterFeature;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.service.ReactiveAdminClient.SupportedFeature;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,25 +25,28 @@ public class FeatureService {
 
   private final AdminClientService adminClientService;
 
-  public Mono<List<Feature>> getAvailableFeatures(KafkaCluster cluster, @Nullable Node controller) {
-    List<Mono<Feature>> features = new ArrayList<>();
+  public Mono<List<ClusterFeature>> getAvailableFeatures(KafkaCluster cluster, @Nullable Node controller) {
+    List<Mono<ClusterFeature>> features = new ArrayList<>();
 
     if (Optional.ofNullable(cluster.getConnectsClients())
         .filter(Predicate.not(Map::isEmpty))
         .isPresent()) {
-      features.add(Mono.just(Feature.KAFKA_CONNECT));
+      features.add(Mono.just(ClusterFeature.KAFKA_CONNECT));
     }
 
     if (cluster.getKsqlClient() != null) {
-      features.add(Mono.just(Feature.KSQL_DB));
+      features.add(Mono.just(ClusterFeature.KSQL_DB));
     }
 
     if (cluster.getSchemaRegistryClient() != null) {
-      features.add(Mono.just(Feature.SCHEMA_REGISTRY));
+      features.add(Mono.just(ClusterFeature.SCHEMA_REGISTRY));
     }
 
     if (controller != null) {
-      features.add(topicDeletion(cluster, controller));
+      features.add(
+          isTopicDeletionEnabled(cluster, controller)
+              .flatMap(r -> Boolean.TRUE.equals(r) ? Mono.just(ClusterFeature.TOPIC_DELETION) : Mono.empty())
+      );
     }
 
     features.add(acl(cluster));
@@ -52,7 +54,7 @@ public class FeatureService {
     return Flux.fromIterable(features).flatMap(m -> m).collectList();
   }
 
-  private Mono<Feature> topicDeletion(KafkaCluster cluster, Node controller) {
+  private Mono<Boolean> isTopicDeletionEnabled(KafkaCluster cluster, Node controller) {
     return adminClientService.get(cluster)
         .flatMap(ac -> ac.loadBrokersConfig(List.of(controller.id())))
         .map(config ->
@@ -61,14 +63,13 @@ public class FeatureService {
                 .filter(e -> e.name().equals(DELETE_TOPIC_ENABLED_SERVER_PROPERTY))
                 .map(e -> Boolean.parseBoolean(e.value()))
                 .findFirst()
-                .orElse(true))
-        .flatMap(enabled -> enabled ? Mono.just(Feature.TOPIC_DELETION) : Mono.empty());
+                .orElse(true));
   }
 
-  private Mono<Feature> acl(KafkaCluster cluster) {
+  private Mono<ClusterFeature> acl(KafkaCluster cluster) {
     return adminClientService.get(cluster).flatMap(
         ac -> ac.getClusterFeatures().contains(SupportedFeature.AUTHORIZED_SECURITY_ENABLED)
-            ? Mono.just(Feature.KAFKA_ACL)
+            ? Mono.just(ClusterFeature.KAFKA_ACL)
             : Mono.empty()
     );
   }

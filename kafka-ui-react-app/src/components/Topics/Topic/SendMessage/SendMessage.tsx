@@ -101,16 +101,19 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
       });
       return;
     }
-
-    await sendMessage.mutateAsync({
-      key: key || null,
-      content: content || null,
-      headers: parsedHeaders,
-      partition: partition || 0,
-      keySerde,
-      valueSerde,
-    });
-    onSubmit();
+    try {
+      await sendMessage.mutateAsync({
+        key: key || null,
+        content: content || null,
+        headers: parsedHeaders,
+        partition: partition || 0,
+        keySerde,
+        valueSerde,
+      });
+      onSubmit();
+    } catch (e) {
+      // do nothing
+    }
   };
 
   return (

@@ -6,12 +6,12 @@ import com.provectus.kafka.ui.model.BrokerDTO;
 import com.provectus.kafka.ui.model.BrokerDiskUsageDTO;
 import com.provectus.kafka.ui.model.BrokerMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterDTO;
+import com.provectus.kafka.ui.model.ClusterFeature;
 import com.provectus.kafka.ui.model.ClusterMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterStatsDTO;
 import com.provectus.kafka.ui.model.ConfigSourceDTO;
 import com.provectus.kafka.ui.model.ConfigSynonymDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
-import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalBroker;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
@@ -103,7 +103,7 @@ public interface ClusterMapper {
 
   ConnectDTO toKafkaConnect(ClustersProperties.ConnectCluster connect);
 
-  List<ClusterDTO.FeaturesEnum> toFeaturesEnum(List<Feature> features);
+  List<ClusterDTO.FeaturesEnum> toFeaturesEnum(List<ClusterFeature> features);
 
   default List<PartitionDTO> map(Map<Integer, InternalPartition> map) {
     return map.values().stream().map(this::toPartition).collect(Collectors.toList());

@@ -58,8 +58,10 @@ const StyledButton = styled.button<ButtonProps>`
     color: ${(props) => props.theme.button.primary.color};
   }
 
-  & svg {
-    margin-right: 7px;
+  & :first-of-type {
+    svg {
+      margin-right: 7px;
+    }
   }
 `;
 
