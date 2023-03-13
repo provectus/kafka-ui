@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.model.rbac;
 import static com.provectus.kafka.ui.model.rbac.Resource.CLUSTERCONFIG;
 import static com.provectus.kafka.ui.model.rbac.Resource.KSQL;
 
+import com.provectus.kafka.ui.model.rbac.permission.AclAction;
 import com.provectus.kafka.ui.model.rbac.permission.ApplicationConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
@@ -73,6 +74,7 @@ public class Permission {
       case SCHEMA -> Arrays.stream(SchemaAction.values()).map(Enum::toString).toList();
       case CONNECT -> Arrays.stream(ConnectAction.values()).map(Enum::toString).toList();
       case KSQL -> Arrays.stream(KsqlAction.values()).map(Enum::toString).toList();
+      case ACL -> Arrays.stream(AclAction.values()).map(Enum::toString).toList();
     };
   }
 

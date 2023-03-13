@@ -68,7 +68,7 @@ public class FeatureService {
 
   private Mono<ClusterFeature> acl(KafkaCluster cluster) {
     return adminClientService.get(cluster).flatMap(
-        ac -> ac.getClusterFeatures().contains(SupportedFeature.AUTHORIZED_SECURITY_ENABLED)
+        ac -> ac.getClusterFeatures().contains(ReactiveAdminClient.SupportedFeature.AUTHORIZED_SECURITY_ENABLED)
             ? Mono.just(ClusterFeature.KAFKA_ACL)
             : Mono.empty()
     );

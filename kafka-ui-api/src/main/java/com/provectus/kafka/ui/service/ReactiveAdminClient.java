@@ -107,10 +107,6 @@ public class ReactiveAdminClient implements Closeable {
           .map(Tuple2::getT1)
           .collect(Collectors.toSet());
     }
-
-    static Set<SupportedFeature> defaultFeatures() {
-      return Set.of();
-    }
   }
 
   @Value
@@ -131,13 +127,7 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   private static Mono<Set<SupportedFeature>> getSupportedUpdateFeaturesForVersion(AdminClient ac, String versionStr) {
-    Float kafkaVersion = null;
-    try {
-      float version = KafkaVersion.parse(versionStr);
-      return SupportedFeature.forVersion(version);
-    } catch (NumberFormatException e) {
-      return SupportedFeature.defaultFeatures();
-    }
+    @Nullable Float kafkaVersion = KafkaVersion.parse(versionStr).orElse(null);
     return SupportedFeature.forVersion(ac, kafkaVersion);
   }
 

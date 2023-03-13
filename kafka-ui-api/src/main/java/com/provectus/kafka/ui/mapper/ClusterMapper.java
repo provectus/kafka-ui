@@ -117,8 +117,35 @@ public interface ClusterMapper {
     return brokerDiskUsage;
   }
 
-  default DataMasking map(List<ClustersProperties.Masking> maskingProperties) {
-    return DataMasking.create(maskingProperties);
+  static KafkaAclDTO.OperationEnum mapAclOperation(AclOperation operation) {
+    return switch (operation) {
+      case ALL -> KafkaAclDTO.OperationEnum.ALL;
+      case READ -> KafkaAclDTO.OperationEnum.READ;
+      case WRITE -> KafkaAclDTO.OperationEnum.WRITE;
+      case CREATE -> KafkaAclDTO.OperationEnum.CREATE;
+      case DELETE -> KafkaAclDTO.OperationEnum.DELETE;
+      case ALTER -> KafkaAclDTO.OperationEnum.ALTER;
+      case DESCRIBE -> KafkaAclDTO.OperationEnum.DESCRIBE;
+      case CLUSTER_ACTION -> KafkaAclDTO.OperationEnum.CLUSTER_ACTION;
+      case DESCRIBE_CONFIGS -> KafkaAclDTO.OperationEnum.DESCRIBE_CONFIGS;
+      case ALTER_CONFIGS -> KafkaAclDTO.OperationEnum.ALTER_CONFIGS;
+      case IDEMPOTENT_WRITE -> KafkaAclDTO.OperationEnum.IDEMPOTENT_WRITE;
+      case CREATE_TOKENS -> KafkaAclDTO.OperationEnum.CREATE_TOKENS;
+      case DESCRIBE_TOKENS -> KafkaAclDTO.OperationEnum.DESCRIBE_TOKENS;
+      case ANY, UNKNOWN -> KafkaAclDTO.OperationEnum.UNKNOWN;
+    };
+  }
+
+  static KafkaAclDTO.ResourceTypeEnum mapAclResourceType(ResourceType resourceType) {
+    return switch (resourceType) {
+      case CLUSTER -> KafkaAclDTO.ResourceTypeEnum.CLUSTER;
+      case TOPIC -> KafkaAclDTO.ResourceTypeEnum.TOPIC;
+      case GROUP -> KafkaAclDTO.ResourceTypeEnum.GROUP;
+      case DELEGATION_TOKEN -> KafkaAclDTO.ResourceTypeEnum.DELEGATION_TOKEN;
+      case TRANSACTIONAL_ID -> KafkaAclDTO.ResourceTypeEnum.TRANSACTIONAL_ID;
+      case USER -> KafkaAclDTO.ResourceTypeEnum.USER;
+      case ANY, UNKNOWN -> KafkaAclDTO.ResourceTypeEnum.UNKNOWN;
+    };
   }
 
   static AclBinding toAclBinding(KafkaAclDTO dto) {
@@ -141,12 +168,12 @@ public interface ClusterMapper {
     var pattern = binding.pattern();
     var filter = binding.toFilter().entryFilter();
     return new KafkaAclDTO()
-        .resourceType(KafkaAclDTO.ResourceTypeEnum.fromValue(pattern.resourceType().name()))
+        .resourceType(mapAclResourceType(pattern.resourceType()))
         .resourceName(pattern.name())
         .namePatternType(KafkaAclDTO.NamePatternTypeEnum.fromValue(pattern.patternType().name()))
         .principal(filter.principal())
         .host(filter.host())
-        .operation(KafkaAclDTO.OperationEnum.fromValue(filter.operation().name()))
+        .operation(mapAclOperation(filter.operation()))
         .permission(KafkaAclDTO.PermissionEnum.fromValue(filter.permissionType().name()));
   }
 

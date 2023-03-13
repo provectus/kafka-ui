@@ -3420,11 +3420,13 @@ components:
         resourceType:
           type: string
           enum:
+            - UNKNOWN # Unknown operation, need to update mapping code on BE
             - TOPIC
             - GROUP
             - CLUSTER
             - TRANSACTIONAL_ID
-            - DELEGATION_TOPIC
+            - DELEGATION_TOKEN
+            - USER
         resourceName:
           type: string # "*" if acl can be applied to any resource of given type
         namePatternType:
@@ -3439,6 +3441,7 @@ components:
         operation:
           type: string
           enum:
+            - UNKNOWN # Unknown operation, need to update mapping code on BE
             - ALL # Cluster, Topic, Group
             - READ  # Topic, Group
             - WRITE # Topic, TransactionalId
@@ -3449,7 +3452,9 @@ components:
             - CLUSTER_ACTION # Cluster
             - DESCRIBE_CONFIGS # Cluster, Topic
             - ALTER_CONFIGS   # Cluster, Topic
-            - IDEMPOTENT_WRITE # -
+            - IDEMPOTENT_WRITE # Cluster
+            - CREATE_TOKENS
+            - DESCRIBE_TOKENS
         permission:
           type: string
           enum:
