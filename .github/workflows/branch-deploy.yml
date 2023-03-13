@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       uses: ./.github/workflows/build-template.yaml
-        with:
-          APP_VERSION: $GITHUB_SHA
+      with:
+        APP_VERSION: $GITHUB_SHA
       - name: get branch name
         id: extract_branch
         run: |
