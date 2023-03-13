@@ -1,0 +1,32 @@
+name: Build Docker image and push template
+on:
+  workflow_call:
+   inputs:
+    APP_VERSION:
+     required: true
+     type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{steps.build.outputs.version}}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'maven'
+      - name: Build
+        id: build
+        run: |
+          ./mvnw -B -ntp versions:set -DnewVersion=${{ inputs.APP_VERSION }}
+          ./mvnw -B -V -ntp clean package -Pprod -DskipTests
+          export VERSION=$(./mvnw -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
