@@ -6,8 +6,8 @@ export interface SwitchProps {
   onChange(): void;
   checked: boolean;
   name: string;
-  checkedIcon?: JSX.Element;
-  unCheckedIcon?: JSX.Element;
+  checkedIcon?: React.ReactNode;
+  unCheckedIcon?: React.ReactNode;
   bgCustomColor?: string;
 }
 const Switch: React.FC<SwitchProps> = ({
