@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Selenide.*;
+import static org.openqa.selenium.By.id;
 
 public class SchemaCreateForm extends BasePage {
 
@@ -26,7 +27,8 @@ public class SchemaCreateForm extends BasePage {
     protected SelenideElement compatibilityLevelList = $x("//ul[@name='compatibilityLevel']");
     protected SelenideElement newSchemaTextArea = $x("//div[@id='newSchema']");
     protected SelenideElement latestSchemaTextArea = $x("//div[@id='latestSchema']");
-    protected SelenideElement schemaVersionDdl = $$x("//ul[@role='listbox']/li[text()='Version 2']").first();
+    protected SelenideElement leftVersionDdl = $(id("left-select"));
+    protected SelenideElement rightVersionDdl = $(id("right-select"));
     protected List<SelenideElement> visibleMarkers = $$x("//div[@class='ace_scroller']//div[contains(@class,'codeMarker')]");
     protected List<SelenideElement> elementsCompareVersionDdl = $$x("//ul[@role='listbox']/ul/li");
     protected String ddlElementLocator = "//li[@value='%s']";
@@ -71,8 +73,14 @@ public class SchemaCreateForm extends BasePage {
     }
 
     @Step
-    public SchemaCreateForm openSchemaVersionDdl() {
-        schemaVersionDdl.shouldBe(Condition.enabled).click();
+    public SchemaCreateForm openLeftVersionDdl() {
+        leftVersionDdl.shouldBe(Condition.enabled).click();
+        return this;
+    }
+
+    @Step
+    public SchemaCreateForm openRightVersionDdl() {
+        rightVersionDdl.shouldBe(Condition.enabled).click();
         return this;
     }
 
