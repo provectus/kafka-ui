@@ -3,8 +3,11 @@ package com.provectus.kafka.ui.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.utilities.WebUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.interactions.Actions;
 
 import java.time.Duration;
 
@@ -40,6 +43,16 @@ public abstract class BasePage extends WebUtils {
 
     protected void clickSubmitBtn() {
         clickByJavaScript(submitBtn);
+    }
+
+    protected void setJsonInputValue(SelenideElement jsonInput, String jsonConfig) {
+        sendKeysByActions(jsonInput, jsonConfig.replace("  ", ""));
+        new Actions(WebDriverRunner.getWebDriver())
+                .keyDown(Keys.SHIFT)
+                .sendKeys(Keys.PAGE_DOWN)
+                .keyUp(Keys.SHIFT)
+                .sendKeys(Keys.DELETE)
+                .perform();
     }
 
     protected SelenideElement getTableElement(String elementName) {

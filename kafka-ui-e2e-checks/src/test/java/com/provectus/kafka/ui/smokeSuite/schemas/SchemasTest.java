@@ -57,7 +57,7 @@ public class SchemasTest extends BaseTest {
     @QaseId(186)
     @Test(priority = 2)
     public void updateSchemaAvro() {
-        AVRO_API.setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schema_avro_for_update.json");
+        AVRO_API.setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schemas/schema_avro_for_update.json");
         navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
         schemaDetails
                 .openEditSchema();
@@ -74,7 +74,7 @@ public class SchemasTest extends BaseTest {
                 .clickSubmitButton();
         schemaDetails
                 .waitUntilScreenReady();
-        Assert.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), schemaDetails.getCompatibility(), "getCompatibility()");
+        Assert.assertEquals(schemaDetails.getCompatibility(), CompatibilityLevel.CompatibilityEnum.NONE.toString(), "getCompatibility()");
     }
 
     @QaseId(44)
@@ -90,10 +90,10 @@ public class SchemasTest extends BaseTest {
                 .waitUntilScreenReady()
                 .openSchemaVersionDdl()
                 .getVersionsNumberFromList();
-        Assert.assertEquals(latestVersion, versionsNumberFromDdl, "Versions number is not matched");
+        Assert.assertEquals(versionsNumberFromDdl, latestVersion, "Versions number is not matched");
         schemaCreateForm
                 .selectVersionFromDropDown(1);
-        Assert.assertEquals(53, schemaCreateForm.getMarkedLinesNumber(), "getAllMarkedLines()");
+        Assert.assertEquals(schemaCreateForm.getMarkedLinesNumber(), 42, "getAllMarkedLines()");
     }
 
     @QaseId(187)
