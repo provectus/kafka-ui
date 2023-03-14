@@ -1,5 +1,5 @@
 import { ksqlDbApiClient as api } from 'lib/api';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQueries } from '@tanstack/react-query';
 import { ClusterName } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import React from 'react';
@@ -17,20 +17,21 @@ import {
 import { StopLoading } from 'components/Topics/Topic/Messages/Messages.styled';
 import toast from 'react-hot-toast';
 
-export function useKsqlkDbTables(clusterName: ClusterName) {
-  return useQuery(
-    ['clusters', clusterName, 'ksqlDb', 'tables'],
-    () => api.listTables({ clusterName }),
-    { suspense: false }
-  );
-}
-
-export function useKsqlkDbStreams(clusterName: ClusterName) {
-  return useQuery(
-    ['clusters', clusterName, 'ksqlDb', 'streams'],
-    () => api.listStreams({ clusterName }),
-    { suspense: false }
-  );
+export function useKsqlkDb(clusterName: ClusterName) {
+  return useQueries({
+    queries: [
+      {
+        queryKey: ['clusters', clusterName, 'ksqlDb', 'tables'],
+        queryFn: () => api.listTables({ clusterName }),
+        suspense: false,
+      },
+      {
+        queryKey: ['clusters', clusterName, 'ksqlDb', 'streams'],
+        queryFn: () => api.listStreams({ clusterName }),
+        suspense: false,
+      },
+    ],
+  });
 }
 
 export function useExecuteKsqlkDbQueryMutation() {
