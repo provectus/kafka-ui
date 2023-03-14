@@ -97,6 +97,7 @@ export const OptionList = styled.ul`
 
 export const Option = styled.li<OptionProps>`
   display: flex;
+  align-items: center;
   list-style: none;
   padding: 10px 12px;
   transition: all 0.2s ease-in-out;
@@ -116,6 +117,7 @@ export const Option = styled.li<OptionProps>`
 `;
 
 export const SelectedOption = styled.li<{ isThemeMode?: boolean }>`
+  display: flex;
   padding-right: ${({ isThemeMode }) => (isThemeMode ? '' : '16px')};
   list-style-position: inside;
   white-space: nowrap;
