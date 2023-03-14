@@ -115,6 +115,7 @@ public class ReactiveAdminClient implements Closeable {
     Node controller;
     String clusterId;
     Collection<Node> nodes;
+    @Nullable // null, if ACL is disabled
     Set<AclOperation> authorizedOperations;
   }
 
