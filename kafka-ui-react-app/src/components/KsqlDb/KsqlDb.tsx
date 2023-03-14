@@ -15,7 +15,7 @@ import { ActionButton } from 'components/common/ActionComponent';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { Action, ResourceType } from 'generated-sources';
-import { useKsqlkDbStreams, useKsqlkDbTables } from 'lib/hooks/api/ksqlDb';
+import { useKsqlkDb } from 'lib/hooks/api/ksqlDb';
 import 'ace-builds/src-noconflict/ace';
 
 import TableView from './TableView';
@@ -23,8 +23,7 @@ import TableView from './TableView';
 const KsqlDb: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
 
-  const tables = useKsqlkDbTables(clusterName);
-  const streams = useKsqlkDbStreams(clusterName);
+  const [tables, streams] = useKsqlkDb(clusterName);
 
   const isFetching = tables.isFetching || streams.isFetching;
 

@@ -18,6 +18,6 @@ const tableLinkMixin = css(
 `
 );
 
-export const TableKeyLink = styled.td`
+export const TableKeyLink = styled.div`
   ${tableLinkMixin}
 `;
