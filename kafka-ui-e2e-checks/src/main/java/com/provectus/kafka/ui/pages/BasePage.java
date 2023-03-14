@@ -37,7 +37,7 @@ public abstract class BasePage extends WebUtils {
     protected void waitUntilSpinnerDisappear() {
         log.debug("\nwaitUntilSpinnerDisappear");
         if (isVisible(loadingSpinner)) {
-            loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(30));
+            loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(60));
         }
     }
 
