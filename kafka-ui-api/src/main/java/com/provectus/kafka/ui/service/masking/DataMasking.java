@@ -41,9 +41,9 @@ public class DataMasking {
 
   private final List<Mask> masks;
 
-  public static DataMasking create(List<ClustersProperties.Masking> config) {
+  public static DataMasking create(@Nullable List<ClustersProperties.Masking> config) {
     return new DataMasking(
-        config.stream().map(property -> {
+        Optional.ofNullable(config).orElse(List.of()).stream().map(property -> {
           Preconditions.checkNotNull(property.getType(), "masking type not specifed");
           Preconditions.checkArgument(
               StringUtils.isNotEmpty(property.getTopicKeysPattern())
