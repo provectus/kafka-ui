@@ -23,7 +23,7 @@ public class InternalClusterState {
   private Integer underReplicatedPartitionCount;
   private List<BrokerDiskUsageDTO> diskUsage;
   private String version;
-  private List<Feature> features;
+  private List<ClusterFeature> features;
   private BigDecimal bytesInPerSec;
   private BigDecimal bytesOutPerSec;
   private Boolean readOnly;

@@ -171,6 +171,13 @@ public class TopicDetails extends BasePage {
     }
 
     @Step
+    public TopicDetails clickNextButton() {
+      nextBtn.shouldBe(Condition.enabled).click();
+      waitUntilSpinnerDisappear();
+      return this;
+    }
+
+    @Step
     public TopicDetails openSavedFiltersListMdl() {
         savedFiltersLink.shouldBe(Condition.enabled).click();
         backToCreateFiltersLink.shouldBe(Condition.visible);
@@ -238,6 +245,16 @@ public class TopicDetails extends BasePage {
     @Step
     public boolean isAddFilterBtnAddFilterMdlEnabled() {
         return isEnabled(addFilterBtnAddFilterMdl);
+    }
+
+    @Step
+    public boolean isBackButtonEnabled() {
+        return isEnabled(backBtn);
+    }
+
+    @Step
+    public boolean isNextButtonEnabled() {
+      return isEnabled(nextBtn);
     }
 
     @Step

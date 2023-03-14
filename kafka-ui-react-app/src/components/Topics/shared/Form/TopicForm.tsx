@@ -116,6 +116,8 @@ const TopicForm: React.FC<Props> = ({
                   placeholder="Number of partitions"
                   min="1"
                   name="partitions"
+                  positiveOnly
+                  integerOnly
                 />
                 <FormError>
                   <ErrorMessage errors={errors} name="partitions" />
@@ -161,6 +163,8 @@ const TopicForm: React.FC<Props> = ({
               placeholder="Min In Sync Replicas"
               min="1"
               name="minInSyncReplicas"
+              positiveOnly
+              integerOnly
             />
             <FormError>
               <ErrorMessage errors={errors} name="minInSyncReplicas" />
@@ -177,6 +181,8 @@ const TopicForm: React.FC<Props> = ({
                 placeholder="Replication Factor"
                 min="1"
                 name="replicationFactor"
+                positiveOnly
+                integerOnly
               />
               <FormError>
                 <ErrorMessage errors={errors} name="replicationFactor" />
@@ -227,6 +233,8 @@ const TopicForm: React.FC<Props> = ({
               placeholder="Maximum message size"
               min="1"
               name="maxMessageBytes"
+              positiveOnly
+              integerOnly
             />
             <FormError>
               <ErrorMessage errors={errors} name="maxMessageBytes" />

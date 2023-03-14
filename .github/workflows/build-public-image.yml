@@ -42,7 +42,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
       - name: Configure AWS credentials for Kafka-UI account
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -54,7 +54,7 @@ jobs:
           registry-type: 'public'
       - name: Build and push
         id: docker_build_and_push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: kafka-ui-api
