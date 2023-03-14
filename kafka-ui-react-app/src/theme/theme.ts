@@ -122,7 +122,7 @@ const baseTheme = {
   layout: {
     minWidth: '1200px',
     navBarWidth: '201px',
-    navBarHeight: '53px',
+    navBarHeight: '51px',
     rightSidebarWidth: '70vw',
     filtersSidebarWidth: '300px',
 
@@ -186,7 +186,7 @@ const baseTheme = {
     newFilterIcon: Colors.brand[50],
     closeModalIcon: Colors.neutral[25],
     savedIcon: Colors.brand[50],
-    dropdownArrowIcon: Colors.neutral[30],
+    dropdownArrowIcon: Colors.neutral[50],
     git: {
       hover: Colors.neutral[90],
       active: Colors.neutral[70],

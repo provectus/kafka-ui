@@ -775,7 +775,7 @@ paths:
     get:
       tags:
         - Consumer Groups
-      summary: Get consumer croups with paging support
+      summary: Get consumer groups with paging support
       operationId: getConsumerGroupsPage
       parameters:
         - name: clusterName
