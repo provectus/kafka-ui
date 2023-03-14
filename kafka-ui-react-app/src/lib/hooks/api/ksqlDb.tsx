@@ -18,14 +18,18 @@ import { StopLoading } from 'components/Topics/Topic/Messages/Messages.styled';
 import toast from 'react-hot-toast';
 
 export function useKsqlkDbTables(clusterName: ClusterName) {
-  return useQuery(['clusters', clusterName, 'ksqlDb', 'tables'], () =>
-    api.listTables({ clusterName })
+  return useQuery(
+    ['clusters', clusterName, 'ksqlDb', 'tables'],
+    () => api.listTables({ clusterName }),
+    { suspense: false }
   );
 }
 
 export function useKsqlkDbStreams(clusterName: ClusterName) {
-  return useQuery(['clusters', clusterName, 'ksqlDb', 'streams'], () =>
-    api.listStreams({ clusterName })
+  return useQuery(
+    ['clusters', clusterName, 'ksqlDb', 'streams'],
+    () => api.listStreams({ clusterName }),
+    { suspense: false }
   );
 }
 
