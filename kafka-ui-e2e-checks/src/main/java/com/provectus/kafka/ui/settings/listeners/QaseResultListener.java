@@ -39,9 +39,9 @@ public class QaseResultListener extends TestListenerAdapter implements ITestList
     }
 
     @Override
-    public void onTestStart(ITestResult result) {
+    public void onTestStart(ITestResult tr) {
         getQaseTestCaseListener().onTestCaseStarted();
-        super.onTestStart(result);
+        super.onTestStart(tr);
     }
 
     @Override

@@ -20,7 +20,7 @@ public class ConnectorsTest extends BaseTest {
 
     private static final List<Topic> TOPIC_LIST = new ArrayList<>();
     private static final List<Connector> CONNECTOR_LIST = new ArrayList<>();
-    private static final String MESSAGE_CONTENT = "message_content_create_topic.json";
+    private static final String MESSAGE_CONTENT = "testData/topics/message_content_create_topic.json";
     private static final String MESSAGE_KEY = " ";
     private static final Topic TOPIC_FOR_CREATE = new Topic()
             .setName("topic-for-create-connector-" + randomAlphabetic(5))
@@ -33,10 +33,10 @@ public class ConnectorsTest extends BaseTest {
             .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
     private static final Connector CONNECTOR_FOR_DELETE = new Connector()
             .setName("connector-for-delete-" + randomAlphabetic(5))
-            .setConfig(getResourceAsString("delete_connector_config.json"));
+            .setConfig(getResourceAsString("testData/connectors/delete_connector_config.json"));
     private static final Connector CONNECTOR_FOR_UPDATE = new Connector()
             .setName("connector-for-update-and-delete-" + randomAlphabetic(5))
-            .setConfig(getResourceAsString("config_for_create_connector_via_api.json"));
+            .setConfig(getResourceAsString("testData/connectors/config_for_create_connector_via_api.json"));
 
     @BeforeClass(alwaysRun = true)
     public void beforeClass() {

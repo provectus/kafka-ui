@@ -7,7 +7,7 @@ export default createGlobalStyle(
       font-size: 14px;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      background-color: ${theme.layout.backgroundColor};
+      background-color: ${theme.default.backgroundColor};
       overflow-x: hidden;
       overflow-y: scroll;
       text-rendering: optimizeLegibility;
@@ -61,13 +61,13 @@ export default createGlobalStyle(
 
     pre {
       overflow-x: auto;
-      white-space: pre
-      word-wrap: normal
+      white-space: pre;
+      word-wrap: normal;
 
       code {
         background-color: transparent;
-        color: currentColor
-        padding: 0
+        color: currentColor;
+        padding: 0;
       }
     }
 
@@ -101,7 +101,6 @@ export default createGlobalStyle(
     fieldset {
       border: none;
     }
-
 
     @keyframes fadein {
       from {

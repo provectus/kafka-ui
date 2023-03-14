@@ -32,7 +32,7 @@ public class MessagesTest extends BaseTest {
             .setMessageKey(randomAlphabetic(5))
             .setMessageContent(randomAlphabetic(10));
     private static final Topic TOPIC_TO_CLEAR_AND_PURGE_MESSAGES = new Topic()
-            .setName("topic-to-clear-and-purge-messages-attribute-" + randomAlphabetic(5))
+            .setName("topic-to-clear-and-purge-messages-" + randomAlphabetic(5))
             .setMessageKey(randomAlphabetic(5))
             .setMessageContent(randomAlphabetic(10));
     private static final Topic TOPIC_FOR_CHECK_FILTERS = new Topic()

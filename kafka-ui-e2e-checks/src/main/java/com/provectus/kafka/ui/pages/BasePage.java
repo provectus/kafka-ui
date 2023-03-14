@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.enums.MenuItem;
 import com.provectus.kafka.ui.utilities.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,20 +36,30 @@ public abstract class BasePage extends WebUtils {
     protected void waitUntilSpinnerDisappear() {
         log.debug("\nwaitUntilSpinnerDisappear");
         if (isVisible(loadingSpinner)) {
-            loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(30));
+            loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(60));
         }
     }
-    
+
     protected SelenideElement getPageTitleFromHeader(MenuItem menuItem) {
         return $x(String.format(pageTitleFromHeader, menuItem.getPageTitle()));
     }
-    
+
     protected SelenideElement getPagePathFromHeader(MenuItem menuItem) {
         return $x(String.format(pagePathFromHeader, menuItem.getPageTitle()));
     }
 
     protected void clickSubmitBtn() {
         clickByJavaScript(submitBtn);
+    }
+
+    protected void setJsonInputValue(SelenideElement jsonInput, String jsonConfig) {
+        sendKeysByActions(jsonInput, jsonConfig.replace("  ", ""));
+        new Actions(WebDriverRunner.getWebDriver())
+                .keyDown(Keys.SHIFT)
+                .sendKeys(Keys.PAGE_DOWN)
+                .keyUp(Keys.SHIFT)
+                .sendKeys(Keys.DELETE)
+                .perform();
     }
 
     protected SelenideElement getTableElement(String elementName) {
