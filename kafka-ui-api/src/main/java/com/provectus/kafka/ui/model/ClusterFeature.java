@@ -5,5 +5,6 @@ public enum ClusterFeature {
   KSQL_DB,
   SCHEMA_REGISTRY,
   TOPIC_DELETION,
-  KAFKA_ACL
+  KAFKA_ACL_VIEW,
+  KAFKA_ACL_EDIT
 }

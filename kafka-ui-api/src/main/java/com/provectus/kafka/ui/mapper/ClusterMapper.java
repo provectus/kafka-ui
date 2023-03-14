@@ -28,7 +28,6 @@ import com.provectus.kafka.ui.model.ReplicaDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
-import com.provectus.kafka.ui.service.masking.DataMasking;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +131,8 @@ public interface ClusterMapper {
       case IDEMPOTENT_WRITE -> KafkaAclDTO.OperationEnum.IDEMPOTENT_WRITE;
       case CREATE_TOKENS -> KafkaAclDTO.OperationEnum.CREATE_TOKENS;
       case DESCRIBE_TOKENS -> KafkaAclDTO.OperationEnum.DESCRIBE_TOKENS;
-      case ANY, UNKNOWN -> KafkaAclDTO.OperationEnum.UNKNOWN;
+      case ANY -> throw new IllegalArgumentException("ANY operation can be only part of filter");
+      case UNKNOWN -> KafkaAclDTO.OperationEnum.UNKNOWN;
     };
   }
 
@@ -144,7 +144,8 @@ public interface ClusterMapper {
       case DELEGATION_TOKEN -> KafkaAclDTO.ResourceTypeEnum.DELEGATION_TOKEN;
       case TRANSACTIONAL_ID -> KafkaAclDTO.ResourceTypeEnum.TRANSACTIONAL_ID;
       case USER -> KafkaAclDTO.ResourceTypeEnum.USER;
-      case ANY, UNKNOWN -> KafkaAclDTO.ResourceTypeEnum.UNKNOWN;
+      case ANY -> throw new IllegalArgumentException("ANY type can be only part of filter");
+      case UNKNOWN -> KafkaAclDTO.ResourceTypeEnum.UNKNOWN;
     };
   }
 

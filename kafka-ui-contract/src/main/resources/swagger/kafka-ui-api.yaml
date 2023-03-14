@@ -2056,7 +2056,8 @@ components:
               - KAFKA_CONNECT
               - KSQL_DB
               - TOPIC_DELETION
-              - KAFKA_ACL
+              - KAFKA_ACL_VIEW # get ACLs listing
+              - KAFKA_ACL_EDIT # create & delete ACLs
       required:
         - id
         - name
