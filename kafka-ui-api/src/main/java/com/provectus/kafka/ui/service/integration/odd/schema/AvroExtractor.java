@@ -1,18 +1,18 @@
 package com.provectus.kafka.ui.service.integration.odd.schema;
 
 import com.google.common.collect.ImmutableSet;
-import com.provectus.kafka.ui.service.integration.odd.Oddrn;
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.experimental.UtilityClass;
 import org.apache.avro.Schema;
 import org.opendatadiscovery.client.model.DataSetField;
 import org.opendatadiscovery.client.model.DataSetFieldType;
 import org.opendatadiscovery.oddrn.model.KafkaPath;
 
-@UtilityClass
-class AvroExtractor {
+final class AvroExtractor {
+
+  private AvroExtractor() {
+  }
 
   static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn, boolean isKey) {
     var schema = new Schema.Parser().parse(subject.getSchema());
@@ -31,14 +31,14 @@ class AvroExtractor {
     return result;
   }
 
-  private void extract(Schema schema,
-                       String parentOddr,
-                       String oddrn, //null for root
-                       String name,
-                       String doc,
-                       Boolean nullable,
-                       ImmutableSet<String> registeredRecords,
-                       List<DataSetField> sink
+  private static void extract(Schema schema,
+                              String parentOddr,
+                              String oddrn, //null for root
+                              String name,
+                              String doc,
+                              Boolean nullable,
+                              ImmutableSet<String> registeredRecords,
+                              List<DataSetField> sink
   ) {
     switch (schema.getType()) {
       case RECORD -> extractRecord(schema, parentOddr, oddrn, name, doc, nullable, registeredRecords, sink);
@@ -49,12 +49,12 @@ class AvroExtractor {
     }
   }
 
-  private DataSetField createDataSetField(String name,
-                                          String doc,
-                                          String parentOddrn,
-                                          String oddrn,
-                                          Schema schema,
-                                          Boolean nullable) {
+  private static DataSetField createDataSetField(String name,
+                                                 String doc,
+                                                 String parentOddrn,
+                                                 String oddrn,
+                                                 Schema schema,
+                                                 Boolean nullable) {
     return new DataSetField()
         .name(name)
         .description(doc)
@@ -63,14 +63,14 @@ class AvroExtractor {
         .type(mapSchema(schema, nullable));
   }
 
-  private void extractRecord(Schema schema,
-                             String parentOddr,
-                             String oddrn, //null for root
-                             String name,
-                             String doc,
-                             Boolean nullable,
-                             ImmutableSet<String> registeredRecords,
-                             List<DataSetField> sink) {
+  private static void extractRecord(Schema schema,
+                                    String parentOddr,
+                                    String oddrn, //null for root
+                                    String name,
+                                    String doc,
+                                    Boolean nullable,
+                                    ImmutableSet<String> registeredRecords,
+                                    List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     if (!isRoot) {
       sink.add(createDataSetField(name, doc, parentOddr, oddrn, schema, nullable));
@@ -99,13 +99,13 @@ class AvroExtractor {
         ));
   }
 
-  private void extractUnion(Schema schema,
-                            String parentOddr,
-                            String oddrn, //null for root
-                            String name,
-                            String doc,
-                            ImmutableSet<String> registeredRecords,
-                            List<DataSetField> sink) {
+  private static void extractUnion(Schema schema,
+                                   String parentOddr,
+                                   String oddrn, //null for root
+                                   String name,
+                                   String doc,
+                                   ImmutableSet<String> registeredRecords,
+                                   List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     boolean containsNull = schema.getTypes().stream().map(Schema::getType).anyMatch(t -> t == Schema.Type.NULL);
     // if it is not root and there is only 2 values for union (null and smth else)
@@ -149,14 +149,14 @@ class AvroExtractor {
     }
   }
 
-  private void extractArray(Schema schema,
-                            String parentOddr,
-                            String oddrn, //null for root
-                            String name,
-                            String doc,
-                            Boolean nullable,
-                            ImmutableSet<String> registeredRecords,
-                            List<DataSetField> sink) {
+  private static void extractArray(Schema schema,
+                                   String parentOddr,
+                                   String oddrn, //null for root
+                                   String name,
+                                   String doc,
+                                   Boolean nullable,
+                                   ImmutableSet<String> registeredRecords,
+                                   List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     oddrn = isRoot ? parentOddr + "/array" : oddrn;
     if (isRoot) {
@@ -176,14 +176,14 @@ class AvroExtractor {
     );
   }
 
-  private void extractMap(Schema schema,
-                          String parentOddr,
-                          String oddrn, //null for root
-                          String name,
-                          String doc,
-                          Boolean nullable,
-                          ImmutableSet<String> registeredRecords,
-                          List<DataSetField> sink) {
+  private static void extractMap(Schema schema,
+                                 String parentOddr,
+                                 String oddrn, //null for root
+                                 String name,
+                                 String doc,
+                                 Boolean nullable,
+                                 ImmutableSet<String> registeredRecords,
+                                 List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     oddrn = isRoot ? parentOddr + "/map" : oddrn;
     if (isRoot) {
@@ -214,13 +214,13 @@ class AvroExtractor {
   }
 
 
-  private void extractPrimitive(Schema schema,
-                                String parentOddr,
-                                String oddrn, //null for root
-                                String name,
-                                String doc,
-                                Boolean nullable,
-                                List<DataSetField> sink) {
+  private static void extractPrimitive(Schema schema,
+                                       String parentOddr,
+                                       String oddrn, //null for root
+                                       String name,
+                                       String doc,
+                                       Boolean nullable,
+                                       List<DataSetField> sink) {
     boolean isRoot = oddrn == null;
     String primOddrn = isRoot ? (parentOddr + "/" + schema.getType()) : oddrn;
     if (isRoot) {
@@ -231,7 +231,7 @@ class AvroExtractor {
     }
   }
 
-  private DataSetFieldType.TypeEnum mapType(Schema.Type type) {
+  private static DataSetFieldType.TypeEnum mapType(Schema.Type type) {
     return switch (type) {
       case INT, LONG -> DataSetFieldType.TypeEnum.INTEGER;
       case FLOAT, DOUBLE, FIXED -> DataSetFieldType.TypeEnum.NUMBER;
@@ -246,14 +246,14 @@ class AvroExtractor {
     };
   }
 
-  private DataSetFieldType mapSchema(Schema schema, Boolean nullable) {
+  private static DataSetFieldType mapSchema(Schema schema, Boolean nullable) {
     return new DataSetFieldType()
         .logicalType(logicalType(schema))
         .isNullable(nullable)
         .type(mapType(schema.getType()));
   }
 
-  private String logicalType(Schema schema) {
+  private static String logicalType(Schema schema) {
     return schema.getType() == Schema.Type.RECORD
         ? schema.getFullName()
         : schema.getType().toString().toLowerCase();
