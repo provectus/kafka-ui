@@ -54,7 +54,7 @@ public class ConnectorsTest extends BaseTest {
     public void createConnector() {
         Connector connectorForCreate = new Connector()
                 .setName("connector-for-create-" + randomAlphabetic(5))
-                .setConfig(getResourceAsString("config_for_create_connector.json"));
+                .setConfig(getResourceAsString("testData/connectors/config_for_create_connector.json"));
         navigateToConnectors();
         kafkaConnectList
                 .clickCreateConnectorBtn();

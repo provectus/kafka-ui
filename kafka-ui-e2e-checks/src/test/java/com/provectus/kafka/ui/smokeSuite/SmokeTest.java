@@ -33,7 +33,7 @@ public class SmokeTest extends BaseTest {
             .setNumberOfPartitions(1);
     private static final Connector TEST_CONNECTOR = new Connector()
             .setName("new-connector-" + randomAlphabetic(5))
-            .setConfig(getResourceAsString("config_for_create_connector_via_api.json"));
+            .setConfig(getResourceAsString("testData/connectors/config_for_create_connector_via_api.json"));
 
     @BeforeClass(alwaysRun = true)
     public void beforeClass() {
