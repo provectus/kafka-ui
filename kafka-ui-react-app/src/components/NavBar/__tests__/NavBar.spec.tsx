@@ -12,7 +12,15 @@ jest.mock('components/NavBar/UserInfo/UserInfo', () => () => (
 
 describe('NavBar', () => {
   beforeEach(() => {
-    render(<NavBar onBurgerClick={jest.fn()} />);
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: jest.fn().mockImplementation(() => ({
+        matches: false,
+        addListener: jest.fn(),
+      })),
+    });
+
+    render(<NavBar onBurgerClick={jest.fn()} setDarkMode={jest.fn()} />);
   });
 
   it('correctly renders header', () => {
