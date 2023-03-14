@@ -16,8 +16,9 @@ export const Select = styled.ul<Props>`
   position: relative;
   list-style: none;
   display: flex;
-  gap: ${(props) => (props.isLive ? '5px' : '0')};
+  gap: 6px;
   align-items: center;
+  justify-content: space-between;
   height: ${(props) => (props.selectSize === 'M' ? '32px' : '40px')};
   border: 1px
     ${({ theme, disabled, isThemeMode }) => {
@@ -35,7 +36,7 @@ export const Select = styled.ul<Props>`
   font-size: 14px;
   width: fit-content;
   padding-left: 16px;
-  padding-right: 16px;
+  padding-right: 12px;
   color: ${({ theme, disabled }) =>
     disabled ? theme.select.color.disabled : theme.select.color.normal};
   min-width: ${({ minWidth }) => minWidth || 'auto'};
@@ -57,6 +58,14 @@ export const Select = styled.ul<Props>`
     color: ${({ theme }) => theme.select.color.disabled};
     border-color: ${({ theme }) => theme.select.borderColor.disabled};
   }
+`;
+
+export const SelectedOptionWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const OptionList = styled.ul`
@@ -121,8 +130,6 @@ export const SelectedOption = styled.li<{ isThemeMode?: boolean }>`
   padding-right: ${({ isThemeMode }) => (isThemeMode ? '' : '16px')};
   list-style-position: inside;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   & svg {
     path {
       fill: ${({ theme }) => theme.defaultIconColor};

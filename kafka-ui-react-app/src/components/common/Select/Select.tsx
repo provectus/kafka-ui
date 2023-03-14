@@ -78,12 +78,18 @@ const Select: React.FC<SelectProps> = ({
         isThemeMode={isThemeMode}
         {...props}
       >
-        {isLive && <LiveIcon />}
-        <S.SelectedOption role="option" tabIndex={0} isThemeMode={isThemeMode}>
-          {options.find(
-            (option) => option.value === (defaultValue || selectedOption)
-          )?.label || placeholder}
-        </S.SelectedOption>
+        <S.SelectedOptionWrapper>
+          {isLive && <LiveIcon />}
+          <S.SelectedOption
+            role="option"
+            tabIndex={0}
+            isThemeMode={isThemeMode}
+          >
+            {options.find(
+              (option) => option.value === (defaultValue || selectedOption)
+            )?.label || placeholder}
+          </S.SelectedOption>
+        </S.SelectedOptionWrapper>
         {showOptions && (
           <S.OptionList>
             {options?.map((option) => (
@@ -101,10 +107,7 @@ const Select: React.FC<SelectProps> = ({
             ))}
           </S.OptionList>
         )}
-        <DropdownArrowIcon
-          style={isThemeMode ? {} : undefined}
-          isOpen={showOptions}
-        />
+        <DropdownArrowIcon isOpen={showOptions} />
       </S.Select>
     </div>
   );
