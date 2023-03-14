@@ -15,20 +15,17 @@ import com.google.protobuf.Timestamp;
 import com.google.protobuf.UInt32Value;
 import com.google.protobuf.UInt64Value;
 import com.google.protobuf.Value;
-import com.provectus.kafka.ui.service.integration.odd.Oddrn;
 import com.provectus.kafka.ui.sr.model.SchemaSubject;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import lombok.experimental.UtilityClass;
 import org.opendatadiscovery.client.model.DataSetField;
 import org.opendatadiscovery.client.model.DataSetFieldType;
 import org.opendatadiscovery.client.model.DataSetFieldType.TypeEnum;
 import org.opendatadiscovery.oddrn.model.KafkaPath;
 
-@UtilityClass
-class ProtoExtractor {
+final class ProtoExtractor {
 
   private static final Set<String> PRIMITIVES_WRAPPER_TYPE_NAMES = Set.of(
       BoolValue.getDescriptor().getFullName(),
@@ -42,7 +39,10 @@ class ProtoExtractor {
       DoubleValue.getDescriptor().getFullName()
   );
 
-  List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn, boolean isKey) {
+  private ProtoExtractor() {
+  }
+
+  static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn, boolean isKey) {
     Descriptor schema = new ProtobufSchema(subject.getSchema()).toDescriptor();
     List<DataSetField> result = new ArrayList<>();
     result.add(DataSetFieldsExtractors.rootField(topicOddrn, isKey));
@@ -60,14 +60,14 @@ class ProtoExtractor {
     return result;
   }
 
-  private void extract(Descriptors.FieldDescriptor field,
-                       String parentOddr,
-                       String oddrn, //null for root
-                       String name,
-                       boolean nullable,
-                       boolean repeated,
-                       ImmutableSet<String> registeredRecords,
-                       List<DataSetField> sink) {
+  private static void extract(Descriptors.FieldDescriptor field,
+                              String parentOddr,
+                              String oddrn, //null for root
+                              String name,
+                              boolean nullable,
+                              boolean repeated,
+                              ImmutableSet<String> registeredRecords,
+                              List<DataSetField> sink) {
     if (repeated) {
       extractRepeated(field, parentOddr, oddrn, name, nullable, registeredRecords, sink);
     } else if (field.getType() == Descriptors.FieldDescriptor.Type.MESSAGE) {
@@ -79,12 +79,12 @@ class ProtoExtractor {
 
   // converts some(!) Protobuf Well-known type (from google.protobuf.* packages)
   // see JsonFormat::buildWellKnownTypePrinters for impl details
-  private boolean extractProtoWellKnownType(Descriptors.FieldDescriptor field,
-                                            String parentOddr,
-                                            String oddrn, //null for root
-                                            String name,
-                                            boolean nullable,
-                                            List<DataSetField> sink) {
+  private static boolean extractProtoWellKnownType(Descriptors.FieldDescriptor field,
+                                                   String parentOddr,
+                                                   String oddrn, //null for root
+                                                   String name,
+                                                   boolean nullable,
+                                                   List<DataSetField> sink) {
     // all well-known types are messages
     if (field.getType() != Descriptors.FieldDescriptor.Type.MESSAGE) {
       return false;
@@ -111,13 +111,13 @@ class ProtoExtractor {
     return false;
   }
 
-  private void extractRepeated(Descriptors.FieldDescriptor field,
-                               String parentOddr,
-                               String oddrn, //null for root
-                               String name,
-                               boolean nullable,
-                               ImmutableSet<String> registeredRecords,
-                               List<DataSetField> sink) {
+  private static void extractRepeated(Descriptors.FieldDescriptor field,
+                                      String parentOddr,
+                                      String oddrn, //null for root
+                                      String name,
+                                      boolean nullable,
+                                      ImmutableSet<String> registeredRecords,
+                                      List<DataSetField> sink) {
     sink.add(createDataSetField(name, parentOddr, oddrn, TypeEnum.LIST, "repeated", nullable));
 
     String itemName = field.getType() == Descriptors.FieldDescriptor.Type.MESSAGE
@@ -136,13 +136,13 @@ class ProtoExtractor {
     );
   }
 
-  private void extractMessage(Descriptors.FieldDescriptor field,
-                              String parentOddr,
-                              String oddrn, //null for root
-                              String name,
-                              boolean nullable,
-                              ImmutableSet<String> registeredRecords,
-                              List<DataSetField> sink) {
+  private static void extractMessage(Descriptors.FieldDescriptor field,
+                                     String parentOddr,
+                                     String oddrn, //null for root
+                                     String name,
+                                     boolean nullable,
+                                     ImmutableSet<String> registeredRecords,
+                                     List<DataSetField> sink) {
     if (extractProtoWellKnownType(field, parentOddr, oddrn, name, nullable, sink)) {
       return;
     }
@@ -173,12 +173,12 @@ class ProtoExtractor {
         });
   }
 
-  private void extractPrimitive(Descriptors.FieldDescriptor field,
-                                String parentOddr,
-                                String oddrn,
-                                String name,
-                                boolean nullable,
-                                List<DataSetField> sink) {
+  private static void extractPrimitive(Descriptors.FieldDescriptor field,
+                                       String parentOddr,
+                                       String oddrn,
+                                       String name,
+                                       boolean nullable,
+                                       List<DataSetField> sink) {
     sink.add(
         createDataSetField(
             name,
@@ -191,18 +191,18 @@ class ProtoExtractor {
     );
   }
 
-  private String getLogicalTypeName(Descriptors.FieldDescriptor f) {
+  private static String getLogicalTypeName(Descriptors.FieldDescriptor f) {
     return f.getType() == Descriptors.FieldDescriptor.Type.MESSAGE
         ? f.getMessageType().getFullName()
         : f.getType().name().toLowerCase();
   }
 
-  private DataSetField createDataSetField(String name,
-                                          String parentOddrn,
-                                          String oddrn,
-                                          TypeEnum type,
-                                          String logicalType,
-                                          Boolean nullable) {
+  private static DataSetField createDataSetField(String name,
+                                                 String parentOddrn,
+                                                 String oddrn,
+                                                 TypeEnum type,
+                                                 String logicalType,
+                                                 Boolean nullable) {
     return new DataSetField()
         .name(name)
         .parentFieldOddrn(parentOddrn)
@@ -216,7 +216,7 @@ class ProtoExtractor {
   }
 
 
-  private TypeEnum mapType(Descriptors.FieldDescriptor.Type type) {
+  private static TypeEnum mapType(Descriptors.FieldDescriptor.Type type) {
     return switch (type) {
       case INT32, INT64, SINT32, SFIXED32, SINT64, UINT32, UINT64, FIXED32, FIXED64, SFIXED64 -> TypeEnum.INTEGER;
       case FLOAT, DOUBLE -> TypeEnum.NUMBER;
