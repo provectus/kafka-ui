@@ -15,7 +15,7 @@ export const Navbar = styled.nav(
     right: 0;
     z-index: 30;
     background-color: ${theme.menu.backgroundColor.normal};
-    min-height: 2.563rem;
+    min-height: 3.25rem;
   `
 );
 
@@ -60,7 +60,7 @@ export const NavbarSocial = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 10px;
+  margin: 5px 10px 5px;
 `;
 
 export const NavbarItem = styled.div`
