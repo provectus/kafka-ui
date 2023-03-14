@@ -1,12 +1,8 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { GlobalSettingsContext } from 'components/contexts/GlobalSettingsContext';
 import { useClusters } from 'lib/hooks/api/clusters';
 import Dashboard from 'components/Dashboard/Dashboard';
 import { Cluster, ServerStatus } from 'generated-sources';
-import theme from 'theme/theme';
-import { ThemeProvider } from 'styled-components';
-import { BrowserRouter } from 'react-router-dom';
+import { render } from 'lib/testHelpers';
 
 interface DataType {
   data: Cluster[];
@@ -22,15 +18,9 @@ describe('Dashboard component', () => {
   const renderComponent = (hasDynamicConfig: boolean, data: DataType) => {
     const useClustersMock = useClusters as jest.Mock;
     useClustersMock.mockReturnValue(data);
-    render(
-      <GlobalSettingsContext.Provider value={{ hasDynamicConfig }}>
-        <ThemeProvider theme={theme}>
-          <BrowserRouter>
-            <Dashboard />
-          </BrowserRouter>
-        </ThemeProvider>
-      </GlobalSettingsContext.Provider>
-    );
+    render(<Dashboard />, {
+      globalSettings: { hasDynamicConfig },
+    });
   };
   it('redirects to new cluster configuration page if there are no clusters and dynamic config is enabled', async () => {
     await renderComponent(true, { data: [], isSuccess: true });

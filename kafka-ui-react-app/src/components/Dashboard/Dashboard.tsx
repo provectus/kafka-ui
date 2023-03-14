@@ -9,7 +9,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import Table, { SizeCell } from 'components/common/NewTable';
 import useBoolean from 'lib/hooks/useBoolean';
 import { Button } from 'components/common/Button/Button';
-import { clusterNewConfigPath, getNonExactPath } from 'lib/paths';
+import { clusterNewConfigPath } from 'lib/paths';
 import { GlobalSettingsContext } from 'components/contexts/GlobalSettingsContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -63,7 +63,7 @@ const Dashboard: React.FC = () => {
       clusters.isSuccess &&
       clusters.data.length === 0
     ) {
-      navigate(getNonExactPath(clusterNewConfigPath));
+      navigate(clusterNewConfigPath);
     }
   }, [clusters, appInfo.hasDynamicConfig]);
 
