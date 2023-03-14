@@ -194,7 +194,7 @@ export const CreatedFilter = styled.p`
   margin: 25px 0 10px;
   font-size: 14px;
   line-height: 20px;
-  color: ${({ theme }) => theme.savedFilter.color};
+  color: ${({ theme }) => theme.list.meta.color};
 `;
 
 export const NoSavedFilter = styled.p`
