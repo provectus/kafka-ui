@@ -28,7 +28,8 @@ public abstract class LocalWebDriver {
       Configuration.savePageSource = true;
       Configuration.pageLoadTimeout = 120000;
       Configuration.browserCapabilities = new ChromeOptions()
-          .addArguments("--lang=en_US");
+              .addArguments("--remote-allow-origins=*")
+              .addArguments("--lang=en_US");
       open();
       return WebDriverRunner.getWebDriver();
     }
