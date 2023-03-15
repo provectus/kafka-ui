@@ -9,10 +9,10 @@ interface DataType {
   isSuccess: boolean;
 }
 jest.mock('lib/hooks/api/clusters');
-const mockedUsedNavigate = jest.fn();
+const mockedNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockedUsedNavigate,
+  useNavigate: () => mockedNavigate,
 }));
 describe('Dashboard component', () => {
   const renderComponent = (hasDynamicConfig: boolean, data: DataType) => {
@@ -25,7 +25,7 @@ describe('Dashboard component', () => {
   it('redirects to new cluster configuration page if there are no clusters and dynamic config is enabled', async () => {
     await renderComponent(true, { data: [], isSuccess: true });
 
-    expect(mockedUsedNavigate).toHaveBeenCalled();
+    expect(mockedNavigate).toHaveBeenCalled();
   });
 
   it('should not navigate to new cluster config page when there are clusters', async () => {
@@ -34,7 +34,7 @@ describe('Dashboard component', () => {
       isSuccess: true,
     });
 
-    expect(mockedUsedNavigate).not.toHaveBeenCalled();
+    expect(mockedNavigate).not.toHaveBeenCalled();
   });
 
   it('should not navigate to new cluster config page when there are no clusters and hasDynamicConfig is false', async () => {
@@ -43,6 +43,6 @@ describe('Dashboard component', () => {
       isSuccess: true,
     });
 
-    expect(mockedUsedNavigate).not.toHaveBeenCalled();
+    expect(mockedNavigate).not.toHaveBeenCalled();
   });
 });
