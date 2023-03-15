@@ -27,7 +27,7 @@ const TopicsCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
   return (
     <S.TagsWrapper>
       {topics?.map((t) => (
-        <Tag key={t} color="gray">
+        <Tag key={t} color="green">
           <span
             role="link"
             onClick={(e) => navigateToTopic(e, t)}

@@ -12,22 +12,26 @@ To configure Kafkaui to deserialize protobuf messages using a supplied protobuf 
 ```yaml
 kafka:
   clusters:
-    - # Cluster configuration omitted.
-      # protobufFile is the path to the protobuf schema. (deprecated: please use "protobufFiles")
+    - # Cluster configuration omitted...
+      # protobufFilesDir specifies root location for proto files (will be scanned recursively)
+      # NOTE: if 'protobufFilesDir' specified, then 'protobufFile' and 'protobufFiles' settings will be ignored
+      protobufFilesDir: "/path/to/my-protobufs"
+      # (DEPRECATED) protobufFile is the path to the protobuf schema. (deprecated: please use "protobufFiles")
       protobufFile: path/to/my.proto
-      # protobufFiles is the path to one or more protobuf schemas.
-      protobufFiles: 
-        - /path/to/my.proto
-        - /path/to/another.proto
-      # protobufMessageName is the default protobuf type that is used to deserilize
-      # the message's value if the topic is not found in protobufMessageNameByTopic.
+      # (DEPRECATED) protobufFiles is the location of one or more protobuf schemas
+      protobufFiles:
+        - /path/to/my-protobufs/my.proto
+        - /path/to/my-protobufs/another.proto
+        - /path/to/my-protobufs:test/test.proto
+      # protobufMessageName is the default protobuf type that is used to deserialize
+      # the message's value if the topic is not found in protobufMessageNameByTopic.    
       protobufMessageName: my.DefaultValType
       # protobufMessageNameByTopic is a mapping of topic names to protobuf types.
       # This mapping is required and is used to deserialize the Kafka message's value.
       protobufMessageNameByTopic:
         topic1: my.Type1
         topic2: my.Type2
-      # protobufMessageNameForKey is the default protobuf type that is used to deserilize
+      # protobufMessageNameForKey is the default protobuf type that is used to deserialize
       # the message's key if the topic is not found in protobufMessageNameForKeyByTopic.
       protobufMessageNameForKey: my.DefaultKeyType
       # protobufMessageNameForKeyByTopic is a mapping of topic names to protobuf types.

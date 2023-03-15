@@ -8,7 +8,7 @@ import {
 import fetchMock from 'fetch-mock';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 import {
   render,
   renderHook,
@@ -79,7 +79,7 @@ export const TestQueryClientProvider: React.FC<PropsWithChildren<unknown>> = ({
  * @description it will create a UserInfo Provider that will actually
  * disable the rbacFlag , to user if you can pass it as an argument
  * */
-export const TestUserInfoProvider: React.FC<
+const TestUserInfoProvider: React.FC<
   PropsWithChildren<{ data?: { roles?: RolesType; rbacFlag: boolean } }>
 > = ({ children, data }) => {
   const contextValue = useMemo(() => {
@@ -119,7 +119,7 @@ const customRender = (
     children,
   }) => (
     <TestQueryClientProvider>
-      <GlobalSettingsContext.Provider value={false}>
+      <GlobalSettingsContext.Provider value={{ hasDynamicConfig: false }}>
         <ThemeProvider theme={theme}>
           <TestUserInfoProvider data={userInfo}>
             <ConfirmContextProvider>

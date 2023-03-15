@@ -7,6 +7,7 @@ This repository is for E2E UI automation.
 - [Prerequisites](#prerequisites)
 - [How to install](#how-to-install)
 - [How to run checks](#how-to-run-checks)
+- [Qase.io integration (for internal users)](#qase-integration)
 - [Reporting](#reporting)
 - [Environments setup](#environments-setup)
 - [Test Data](#test-data)
@@ -49,6 +50,10 @@ docker-compose -f documentation/compose/e2e-tests.yaml up -d
 ```
 -Dbrowser=local
 ```
+
+### Qase integration
+
+Found instruction for Qase.io integration (for internal use only) at `kafka-ui-e2e-checks/QASE.md`
 
 ### Reporting
 

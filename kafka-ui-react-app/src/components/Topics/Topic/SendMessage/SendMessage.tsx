@@ -108,18 +108,22 @@ const SendMessage: React.FC<{ closeSidebar: () => void }> = ({
       });
       return;
     }
-    await sendMessage.mutateAsync({
-      key: key || null,
-      content: content || null,
-      headers: parsedHeaders,
-      partition: partition || 0,
-      keySerde,
-      valueSerde,
-    });
-    if (!keepContents) {
-      setValue('key', '');
-      setValue('content', '');
-      closeSidebar();
+    try {
+      await sendMessage.mutateAsync({
+        key: key || null,
+        content: content || null,
+        headers: parsedHeaders,
+        partition: partition || 0,
+        keySerde,
+        valueSerde,
+      });
+      if (!keepContents) {
+        setValue('key', '');
+        setValue('content', '');
+        closeSidebar();
+      }
+    } catch (e) {
+      // do nothing
     }
   };
 

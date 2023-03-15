@@ -23,7 +23,7 @@ interface UseTopicMessagesProps {
   searchParams: URLSearchParams;
 }
 
-export type ConsumingMode =
+type ConsumingMode =
   | 'live'
   | 'oldest'
   | 'newest'

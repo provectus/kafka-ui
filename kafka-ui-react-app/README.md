@@ -46,7 +46,7 @@ VITE_DEV_PROXY= https://api.server # your API server
 
 Run the application
 ```sh
-pnpm start
+pnpm dev
 ```
 
 ### Docker way
@@ -62,7 +62,7 @@ Make sure that none of the `.env*` files contain `DEV_PROXY` variable
 
 Run the application
 ```sh
-pnpm start
+pnpm dev
 ```
 ## Links
 

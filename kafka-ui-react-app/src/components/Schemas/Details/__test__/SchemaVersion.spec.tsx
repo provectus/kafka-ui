@@ -6,10 +6,6 @@ import { Row } from '@tanstack/react-table';
 
 import { jsonSchema } from './fixtures';
 
-export interface Props {
-  row: Row<SchemaSubject>;
-}
-
 const renderComponent = () => {
   const row = {
     original: jsonSchema,

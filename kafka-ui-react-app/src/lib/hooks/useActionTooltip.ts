@@ -6,7 +6,7 @@ import {
   useFloating,
   useHover,
   useInteractions,
-} from '@floating-ui/react-dom-interactions';
+} from '@floating-ui/react';
 
 export function useActionTooltip(isDisabled?: boolean, placement?: Placement) {
   const [open, setOpen] = useState(false);

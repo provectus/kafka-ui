@@ -16,7 +16,5 @@ logging:
   level:
     root: INFO
     com.provectus: DEBUG
-    #org.springframework.http.codec.json.Jackson2JsonEncoder: DEBUG
-    #org.springframework.http.codec.json.Jackson2JsonDecoder: DEBUG
     reactor.netty.http.server.AccessLog: INFO
 
