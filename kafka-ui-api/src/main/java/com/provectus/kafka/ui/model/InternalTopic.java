@@ -42,7 +42,9 @@ public class InternalTopic {
                                    Metrics metrics,
                                    InternalLogDirStats logDirInfo) {
     var topic = InternalTopic.builder();
-    topic.internal(topicDescription.isInternal());
+    topic.internal(
+        topicDescription.isInternal() || topicDescription.name().startsWith("_")
+    );
     topic.name(topicDescription.name());
 
     List<InternalPartition> partitions = topicDescription.partitions().stream()
