@@ -22,7 +22,7 @@ export const Section = styled.div`
 `;
 
 export const ContentBox = styled.div`
-  background-color: white;
+  background-color: ${({ theme }) => theme.topicMetaData.backgroundColor};
   padding: 24px;
   border-radius: 8px 0 0 8px;
   flex-grow: 3;
@@ -46,7 +46,7 @@ export const ClickableRow = styled.tr`
   cursor: pointer;
 `;
 export const MetadataWrapper = styled.div`
-  background-color: white;
+  background-color: ${({ theme }) => theme.topicMetaData.backgroundColor};
   padding: 24px;
   border-radius: 0 8px 8px 0;
   flex-grow: 1;
