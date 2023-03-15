@@ -46,7 +46,7 @@ export interface TableProps<TData> {
   enableSorting?: boolean; // Enables sorting for table.
 
   // Placeholder for empty table
-  emptyMessage?: string;
+  emptyMessage?: React.ReactNode;
 
   // Handles row click. Can not be combined with `enableRowSelection` && expandable rows.
   onRowClick?: (row: Row<TData>) => void;

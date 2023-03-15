@@ -7,6 +7,8 @@ export const Textarea = styled.textarea(
     width: 100%;
     padding: 12px;
     padding-top: 6px;
+    color: ${({ theme }) => theme.default.color.normal};
+    background-color: ${({ theme }) => theme.schema.backgroundColor.textarea};
     &::placeholder {
       color: ${textArea.color.placeholder.normal};
       font-size: 14px;

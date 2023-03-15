@@ -3,7 +3,7 @@ import { Indicator } from 'components/common/Metrics';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import { Props } from 'components/common/Metrics/Indicator';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 
 const title = 'Test Title';
 const label = 'Test Label';

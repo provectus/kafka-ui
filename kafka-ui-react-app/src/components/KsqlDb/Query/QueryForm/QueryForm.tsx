@@ -146,6 +146,7 @@ const QueryForm: React.FC<Props> = ({
                         placeholder="Key"
                         aria-label="key"
                         type="text"
+                        autoComplete="off"
                       />
                     )}
                   />
@@ -166,6 +167,7 @@ const QueryForm: React.FC<Props> = ({
                         placeholder="Value"
                         aria-label="value"
                         type="text"
+                        autoComplete="off"
                       />
                     )}
                   />

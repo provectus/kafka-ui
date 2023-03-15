@@ -99,6 +99,9 @@
 
                                         <dateLibrary>java8</dateLibrary>
                                     </configOptions>
+                                    <typeMappings>
+                                        <mapping>filepart=org.springframework.http.codec.multipart.FilePart</mapping>
+                                    </typeMappings>
                                 </configuration>
                             </execution>
                             <execution>

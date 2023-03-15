@@ -2,16 +2,20 @@ package com.provectus.kafka.ui.pages.schemas;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.api.model.SchemaType;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.interactions.Actions;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Selenide.*;
+import static org.openqa.selenium.By.id;
 
 public class SchemaCreateForm extends BasePage {
 
@@ -23,7 +27,8 @@ public class SchemaCreateForm extends BasePage {
     protected SelenideElement compatibilityLevelList = $x("//ul[@name='compatibilityLevel']");
     protected SelenideElement newSchemaTextArea = $x("//div[@id='newSchema']");
     protected SelenideElement latestSchemaTextArea = $x("//div[@id='latestSchema']");
-    protected SelenideElement schemaVersionDdl = $$x("//ul[@role='listbox']/li[text()='Version 2']").first();
+    protected SelenideElement leftVersionDdl = $(id("left-select"));
+    protected SelenideElement rightVersionDdl = $(id("right-select"));
     protected List<SelenideElement> visibleMarkers = $$x("//div[@class='ace_scroller']//div[contains(@class,'codeMarker')]");
     protected List<SelenideElement> elementsCompareVersionDdl = $$x("//ul[@role='listbox']/ul/li");
     protected String ddlElementLocator = "//li[@value='%s']";
@@ -68,8 +73,14 @@ public class SchemaCreateForm extends BasePage {
     }
 
     @Step
-    public SchemaCreateForm openSchemaVersionDdl() {
-        schemaVersionDdl.shouldBe(Condition.enabled).click();
+    public SchemaCreateForm openLeftVersionDdl() {
+        leftVersionDdl.shouldBe(Condition.enabled).click();
+        return this;
+    }
+
+    @Step
+    public SchemaCreateForm openRightVersionDdl() {
+        rightVersionDdl.shouldBe(Condition.enabled).click();
         return this;
     }
 
@@ -92,8 +103,15 @@ public class SchemaCreateForm extends BasePage {
     @Step
     public SchemaCreateForm setNewSchemaValue(String configJson) {
         newSchemaTextArea.shouldBe(Condition.visible).click();
-        clearByKeyboard(newSchemaInput);
-        newSchemaInput.setValue(configJson);
+        newSchemaInput.shouldBe(Condition.enabled);
+        new Actions(WebDriverRunner.getWebDriver())
+                .sendKeys(Keys.PAGE_UP)
+                .keyDown(Keys.SHIFT)
+                .sendKeys(Keys.PAGE_DOWN)
+                .keyUp(Keys.SHIFT)
+                .sendKeys(Keys.DELETE)
+                .perform();
+        setJsonInputValue(newSchemaInput, configJson);
         return this;
     }
 
