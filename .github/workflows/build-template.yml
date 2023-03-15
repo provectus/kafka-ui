@@ -1,4 +1,4 @@
-name: Build Docker image and push template
+name: Maven build template
 on:
   workflow_call:
    inputs:
