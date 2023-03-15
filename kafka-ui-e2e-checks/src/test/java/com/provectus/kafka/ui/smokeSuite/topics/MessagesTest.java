@@ -75,8 +75,6 @@ public class MessagesTest extends BaseTest {
         softly.assertAll();
     }
 
-    @Ignore
-    @Issue("https://github.com/provectus/kafka-ui/issues/2778")
     @QaseId(19)
     @Test(priority = 2)
     public void clearMessage() {
@@ -85,12 +83,13 @@ public class MessagesTest extends BaseTest {
                 .openDetailsTab(OVERVIEW);
         int messageAmount = topicDetails.getMessageCountAmount();
         produceMessage(TOPIC_FOR_MESSAGES);
-        Assert.assertEquals(messageAmount + 1, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
+        Assert.assertEquals(topicDetails.getMessageCountAmount(), messageAmount + 1, "getMessageCountAmount()");
         topicDetails
                 .openDotMenu()
                 .clickClearMessagesMenu()
+                .clickConfirmBtnMdl()
                 .waitUntilScreenReady();
-        Assert.assertEquals(0, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
+        Assert.assertEquals(topicDetails.getMessageCountAmount(), 0, "getMessageCountAmount()");
     }
 
     @QaseId(239)
