@@ -159,12 +159,14 @@ const QueryForm: React.FC<QueryFormProps> = ({
                     name={`streamsProperties.${index}.key`}
                     placeholder="Key"
                     type="text"
+                    autoComplete="off"
                     withError
                   />
                   <Input
                     name={`streamsProperties.${index}.value`}
                     placeholder="Value"
                     type="text"
+                    autoComplete="off"
                     withError
                   />
                   <IconButtonWrapper

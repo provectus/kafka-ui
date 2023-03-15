@@ -5,6 +5,7 @@ interface Props {
   isLive?: boolean;
   minWidth?: string;
   disabled?: boolean;
+  isThemeMode?: boolean;
 }
 
 interface OptionProps {
@@ -15,37 +16,56 @@ export const Select = styled.ul<Props>`
   position: relative;
   list-style: none;
   display: flex;
-  gap: ${(props) => (props.isLive ? '5px' : '0')};
+  gap: 6px;
   align-items: center;
+  justify-content: space-between;
   height: ${(props) => (props.selectSize === 'M' ? '32px' : '40px')};
   border: 1px
-    ${({ theme, disabled }) =>
-      disabled
-        ? theme.select.borderColor.disabled
-        : theme.select.borderColor.normal}
+    ${({ theme, disabled, isThemeMode }) => {
+      if (isThemeMode) {
+        return 'none';
+      }
+      if (disabled) {
+        return theme.select.borderColor.disabled;
+      }
+
+      return theme.select.borderColor.normal;
+    }}
     solid;
   border-radius: 4px;
   font-size: 14px;
   width: fit-content;
   padding-left: 16px;
-  padding-right: 16px;
+  padding-right: 12px;
   color: ${({ theme, disabled }) =>
     disabled ? theme.select.color.disabled : theme.select.color.normal};
   min-width: ${({ minWidth }) => minWidth || 'auto'};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  &:hover:enabled {
-    color: ${(props) => props.theme.select.color.hover};
-    border-color: ${(props) => props.theme.select.borderColor.hover};
+  &:hover {
+    color: ${({ theme, disabled }) =>
+      disabled ? theme.select.color.disabled : theme.select.color.hover};
+    border-color: ${({ theme, disabled }) =>
+      disabled
+        ? theme.select.borderColor.disabled
+        : theme.select.borderColor.hover};
   }
   &:focus {
     outline: none;
-    color: ${(props) => props.theme.select.color.active};
-    border-color: ${(props) => props.theme.select.borderColor.active};
+    color: ${({ theme }) => theme.select.color.active};
+    border-color: ${({ theme }) => theme.select.borderColor.active};
   }
   &:disabled {
-    color: ${(props) => props.theme.select.color.disabled};
-    border-color: ${(props) => props.theme.select.borderColor.disabled};
+    color: ${({ theme }) => theme.select.color.disabled};
+    border-color: ${({ theme }) => theme.select.borderColor.disabled};
   }
+`;
+
+export const SelectedOptionWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const OptionList = styled.ul`
@@ -54,16 +74,20 @@ export const OptionList = styled.ul`
   left: 0;
   max-height: 228px;
   margin-top: 4px;
-  background-color: ${(props) => props.theme.select.backgroundColor.normal};
-  border: 1px ${(props) => props.theme.select.borderColor.normal} solid;
+  background-color: ${({ theme }) => theme.select.backgroundColor.normal};
+  border: 1px ${({ theme }) => theme.select.borderColor.normal} solid;
   border-radius: 4px;
   font-size: 14px;
   line-height: 18px;
-  color: ${(props) => props.theme.select.color.normal};
+  color: ${({ theme }) => theme.select.color.normal};
   overflow-y: auto;
   z-index: 10;
   max-width: 300px;
   min-width: 100%;
+  align-items: center;
+  & div {
+    white-space: nowrap;
+  }
   &::-webkit-scrollbar {
     -webkit-appearance: none;
     width: 7px;
@@ -71,8 +95,8 @@ export const OptionList = styled.ul`
 
   &::-webkit-scrollbar-thumb {
     border-radius: 4px;
-    background-color: ${(props) =>
-      props.theme.select.optionList.scrollbar.backgroundColor};
+    background-color: ${({ theme }) =>
+      theme.select.optionList.scrollbar.backgroundColor};
   }
 
   &::-webkit-scrollbar:horizontal {
@@ -82,28 +106,36 @@ export const OptionList = styled.ul`
 
 export const Option = styled.li<OptionProps>`
   display: flex;
+  align-items: center;
   list-style: none;
   padding: 10px 12px;
   transition: all 0.2s ease-in-out;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   gap: 5px;
-  color: ${(props) =>
-    props.theme.select.color[props.disabled ? 'disabled' : 'normal']};
+  color: ${({ theme, disabled }) =>
+    theme.select.color[disabled ? 'disabled' : 'normal']};
 
   &:hover {
-    background-color: ${(props) =>
-      props.theme.select.backgroundColor[props.disabled ? 'normal' : 'hover']};
+    background-color: ${({ theme, disabled }) =>
+      theme.select.backgroundColor[disabled ? 'normal' : 'hover']};
   }
 
   &:active {
-    background-color: ${(props) => props.theme.select.backgroundColor.active};
+    background-color: ${({ theme }) => theme.select.backgroundColor.active};
   }
 `;
 
-export const SelectedOption = styled.li`
-  padding-right: 16px;
+export const SelectedOption = styled.li<{ isThemeMode?: boolean }>`
+  display: flex;
+  padding-right: ${({ isThemeMode }) => (isThemeMode ? '' : '16px')};
   list-style-position: inside;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  & svg {
+    path {
+      fill: ${({ theme }) => theme.defaultIconColor};
+    }
+  }
+  & div {
+    display: none;
+  }
 `;
