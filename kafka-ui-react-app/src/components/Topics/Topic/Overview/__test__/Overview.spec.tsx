@@ -2,7 +2,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { render, WithRoute } from 'lib/testHelpers';
 import Overview from 'components/Topics/Topic/Overview/Overview';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 import { CleanUpPolicy, Topic } from 'generated-sources';
 import ClusterContext from 'components/contexts/ClusterContext';
 import userEvent from '@testing-library/user-event';

@@ -8,7 +8,7 @@ import {
 import fetchMock from 'fetch-mock';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 import {
   render,
   renderHook,

@@ -21,11 +21,22 @@ public class ConnectorCreateForm extends BasePage {
     }
 
     @Step
-    public ConnectorCreateForm setConnectorDetails(String connectName, String configJson) {
+    public ConnectorCreateForm setName(String connectName) {
         nameField.shouldBe(Condition.enabled).setValue(connectName);
+        return this;
+    }
+
+    @Step
+    public ConnectorCreateForm setConfig(String configJson) {
         configField.shouldBe(Condition.enabled).click();
-        contentTextArea.setValue(configJson);
-        nameField.shouldBe(Condition.enabled).click();
+        setJsonInputValue(contentTextArea, configJson);
+        return this;
+    }
+
+    @Step
+    public ConnectorCreateForm setConnectorDetails(String connectName, String configJson) {
+        setName(connectName);
+        setConfig(configJson);
         return this;
     }
 
