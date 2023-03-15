@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.model;
 
+import com.provectus.kafka.ui.config.ClustersProperties;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ import org.apache.kafka.common.TopicPartition;
 @Data
 @Builder(toBuilder = true)
 public class InternalTopic {
+
+  ClustersProperties clustersProperties;
 
   // from TopicDescription
   private final String name;
@@ -40,10 +43,16 @@ public class InternalTopic {
                                    List<ConfigEntry> configs,
                                    InternalPartitionsOffsets partitionsOffsets,
                                    Metrics metrics,
-                                   InternalLogDirStats logDirInfo) {
+                                   InternalLogDirStats logDirInfo,
+                                   String internalTopicPrefix) {
     var topic = InternalTopic.builder();
+
+    internalTopicPrefix = internalTopicPrefix == null || internalTopicPrefix.isEmpty()
+        ? "_"
+        : internalTopicPrefix;
+
     topic.internal(
-        topicDescription.isInternal() || topicDescription.name().startsWith("_")
+        topicDescription.isInternal() || topicDescription.name().startsWith(internalTopicPrefix)
     );
     topic.name(topicDescription.name());
 
@@ -81,7 +90,7 @@ public class InternalTopic {
 
           return partitionDto.build();
         })
-        .collect(Collectors.toList());
+        .toList();
 
     topic.partitions(partitions.stream().collect(
         Collectors.toMap(InternalPartition::getPartition, t -> t)));
