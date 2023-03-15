@@ -1,12 +1,8 @@
 import { Broker, Connect, Connector } from 'generated-sources';
-import {
-  ClusterName,
-  ConsumerGroupID,
-  SchemaName,
-  TopicName,
-} from 'redux/interfaces';
+import { ClusterName, SchemaName, TopicName } from 'redux/interfaces';
 
 import { GIT_REPO_LINK } from './constants';
+import { ConsumerGroupID } from './hooks/api/consumers';
 
 export const gitCommitPath = (commit: string) =>
   `${GIT_REPO_LINK}/commit/${commit}`;

@@ -8,7 +8,6 @@ import {
 import {
   ConsumerGroupDetails,
   ConsumerGroupOrdering,
-  ConsumerGroupsPageResponse,
   SortOrder,
 } from 'generated-sources';
 import { AsyncRequestStatus } from 'lib/constants';
@@ -19,45 +18,13 @@ import {
 } from 'lib/errorHandling';
 import {
   ClusterName,
-  ConsumerGroupID,
   ConsumerGroupResetOffsetRequestParams,
   RootState,
 } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 import { EntityState } from '@reduxjs/toolkit/src/entities/models';
 import { consumerGroupsApiClient } from 'lib/api';
-
-export const fetchConsumerGroupsPaged = createAsyncThunk<
-  ConsumerGroupsPageResponse,
-  {
-    clusterName: ClusterName;
-    orderBy?: ConsumerGroupOrdering;
-    sortOrder?: SortOrder;
-    page?: number;
-    perPage?: number;
-    search: string;
-  }
->(
-  'consumerGroups/fetchConsumerGroupsPaged',
-  async (
-    { clusterName, orderBy, sortOrder, page, perPage, search },
-    { rejectWithValue }
-  ) => {
-    try {
-      return await consumerGroupsApiClient.getConsumerGroupsPage({
-        clusterName,
-        orderBy,
-        sortOrder,
-        page,
-        perPage,
-        search,
-      });
-    } catch (error) {
-      showServerError(error as Response);
-      return rejectWithValue(await getResponse(error as Response));
-    }
-  }
-);
+import { ConsumerGroupID } from 'lib/hooks/api/consumers';
 
 export const fetchConsumerGroupDetails = createAsyncThunk<
   ConsumerGroupDetails,
@@ -70,28 +37,6 @@ export const fetchConsumerGroupDetails = createAsyncThunk<
         clusterName,
         id: consumerGroupID,
       });
-    } catch (error) {
-      showServerError(error as Response);
-      return rejectWithValue(await getResponse(error as Response));
-    }
-  }
-);
-
-export const deleteConsumerGroup = createAsyncThunk<
-  ConsumerGroupID,
-  { clusterName: ClusterName; consumerGroupID: ConsumerGroupID }
->(
-  'consumerGroups/deleteConsumerGroup',
-  async ({ clusterName, consumerGroupID }, { rejectWithValue }) => {
-    try {
-      await consumerGroupsApiClient.deleteConsumerGroup({
-        clusterName,
-        id: consumerGroupID,
-      });
-      showSuccessAlert({
-        message: `Consumer ${consumerGroupID} group deleted`,
-      });
-      return consumerGroupID;
     } catch (error) {
       showServerError(error as Response);
       return rejectWithValue(await getResponse(error as Response));
@@ -165,18 +110,8 @@ const consumerGroupsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(
-      fetchConsumerGroupsPaged.fulfilled,
-      (state, { payload }) => {
-        state.totalPages = payload.pageCount || SCHEMAS_PAGE_COUNT;
-        consumerGroupsAdapter.setAll(state, payload.consumerGroups || []);
-      }
-    );
     builder.addCase(fetchConsumerGroupDetails.fulfilled, (state, { payload }) =>
       consumerGroupsAdapter.upsertOne(state, payload)
-    );
-    builder.addCase(deleteConsumerGroup.fulfilled, (state, { payload }) =>
-      consumerGroupsAdapter.removeOne(state, payload)
     );
   },
 });
@@ -190,11 +125,6 @@ const consumerGroupsState = ({
 export const { selectAll, selectById } =
   consumerGroupsAdapter.getSelectors<RootState>(consumerGroupsState);
 
-export const getAreConsumerGroupsPagedFulfilled = createSelector(
-  createFetchingSelector('consumerGroups/fetchConsumerGroupsPaged'),
-  (status) => status === AsyncRequestStatus.fulfilled
-);
-
 export const getAreConsumerGroupDetailsFulfilled = createSelector(
   createFetchingSelector('consumerGroups/fetchConsumerGroupDetails'),
   (status) => status === AsyncRequestStatus.fulfilled
@@ -203,21 +133,6 @@ export const getAreConsumerGroupDetailsFulfilled = createSelector(
 export const getIsOffsetReseted = createSelector(
   createFetchingSelector('consumerGroups/resetConsumerGroupOffsets'),
   (status) => status === AsyncRequestStatus.fulfilled
-);
-
-export const getConsumerGroupsOrderBy = createSelector(
-  consumerGroupsState,
-  (state) => state.orderBy
-);
-
-export const getConsumerGroupsSortOrder = createSelector(
-  consumerGroupsState,
-  (state) => state.sortOrder
-);
-
-export const getConsumerGroupsTotalPages = createSelector(
-  consumerGroupsState,
-  (state) => state.totalPages
 );
 
 export default consumerGroupsSlice.reducer;
