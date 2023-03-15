@@ -1,10 +1,11 @@
 package com.provectus.kafka.ui.util;
 
 import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
-public class KafkaVersion {
+public final class KafkaVersion {
+
+  private KafkaVersion() {
+  }
 
   public static Optional<Float> parse(String version) throws NumberFormatException {
     try {

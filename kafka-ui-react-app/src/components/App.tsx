@@ -11,7 +11,7 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/ClusterPage/ClusterPage';
 import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { theme, darkTheme } from 'theme/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { showServerError } from 'lib/errorHandling';
 import { Toaster } from 'react-hot-toast';
@@ -39,16 +39,18 @@ const queryClient = new QueryClient({
   },
 });
 const App: React.FC = () => {
+  const [isDarkMode, setDarkMode] = React.useState<boolean>(false);
+
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <Suspense fallback={<PageLoader />}>
-          <GlobalSettingsProvider>
+      <GlobalSettingsProvider>
+        <ThemeProvider theme={isDarkMode ? darkTheme : theme}>
+          <Suspense fallback={<PageLoader />}>
             <UserInfoRolesAccessProvider>
               <ConfirmContextProvider>
                 <GlobalCSS />
                 <S.Layout>
-                  <PageContainer>
+                  <PageContainer setDarkMode={setDarkMode}>
                     <Routes>
                       {['/', '/ui', '/ui/clusters'].map((path) => (
                         <Route
@@ -83,9 +85,9 @@ const App: React.FC = () => {
                 <ConfirmationModal />
               </ConfirmContextProvider>
             </UserInfoRolesAccessProvider>
-          </GlobalSettingsProvider>
-        </Suspense>
-      </ThemeProvider>
+          </Suspense>
+        </ThemeProvider>
+      </GlobalSettingsProvider>
     </QueryClientProvider>
   );
 };
