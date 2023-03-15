@@ -9,7 +9,7 @@ jobs:
     if: ${{ github.event.label.name == 'status/feature_testing' || github.event.label.name == 'status/feature_testing_public' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/build-template.yaml 
+      - uses: ./.github/workflows/build-template.yaml
         with:
           APP_VERSION: $GITHUB_SHA
       - name: get branch name
@@ -18,7 +18,7 @@ jobs:
           tag='pr${{ github.event.pull_request.number }}'
           echo "tag=${tag}" >> $GITHUB_OUTPUT
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
