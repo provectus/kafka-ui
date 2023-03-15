@@ -2,6 +2,7 @@ import {
   topicsApiClient as api,
   messagesApiClient as messagesApi,
   consumerGroupsApiClient,
+  messagesApiClient,
 } from 'lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -233,6 +234,34 @@ export function useDeleteTopic(clusterName: ClusterName) {
     }
   );
 }
+
+export function useClearTopicMessages(
+  clusterName: ClusterName,
+  partitions?: number[]
+) {
+  const client = useQueryClient();
+  return useMutation(
+    async (topicName: Topic['name']) => {
+      await messagesApiClient.deleteTopicMessages({
+        clusterName,
+        partitions,
+        topicName,
+      });
+      return topicName;
+    },
+
+    {
+      onSuccess: (topicName) => {
+        showSuccessAlert({
+          id: `message-${topicName}-${clusterName}-${partitions}`,
+          message: `${topicName} messages have been successfully cleared!`,
+        });
+        client.invalidateQueries(topicKeys.all(clusterName));
+      },
+    }
+  );
+}
+
 export function useRecreateTopic(props: GetTopicDetailsRequest) {
   const client = useQueryClient();
   return useMutation(() => api.recreateTopic(props), {
