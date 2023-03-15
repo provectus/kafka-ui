@@ -21,6 +21,15 @@ public class WebUtils {
                 .perform();
     }
 
+    public static void sendKeysByActions(SelenideElement element, String keys) {
+        log.debug("\nsendKeysByActions: {} \nsend keys '{}'", element.getSearchCriteria(), keys);
+        element.shouldBe(Condition.enabled);
+        new Actions(WebDriverRunner.getWebDriver())
+                .moveToElement(element)
+                .sendKeys(element, keys)
+                .perform();
+    }
+
     public static void clickByJavaScript(SelenideElement element) {
         log.debug("\nclickByJavaScript: {}", element.getSearchCriteria());
         element.shouldBe(Condition.enabled);
