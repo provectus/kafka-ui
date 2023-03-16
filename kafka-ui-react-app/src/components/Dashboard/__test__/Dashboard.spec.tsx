@@ -5,8 +5,7 @@ import { Cluster, ServerStatus } from 'generated-sources';
 import { render } from 'lib/testHelpers';
 
 interface DataType {
-  data: Cluster[];
-  isSuccess: boolean;
+  data: Cluster[] | undefined;
 }
 jest.mock('lib/hooks/api/clusters');
 const mockedNavigate = jest.fn();
@@ -23,7 +22,7 @@ describe('Dashboard component', () => {
     });
   };
   it('redirects to new cluster configuration page if there are no clusters and dynamic config is enabled', async () => {
-    await renderComponent(true, { data: [], isSuccess: true });
+    await renderComponent(true, { data: undefined });
 
     expect(mockedNavigate).toHaveBeenCalled();
   });
@@ -31,7 +30,6 @@ describe('Dashboard component', () => {
   it('should not navigate to new cluster config page when there are clusters', async () => {
     await renderComponent(true, {
       data: [{ name: 'Cluster 1', status: ServerStatus.ONLINE }],
-      isSuccess: true,
     });
 
     expect(mockedNavigate).not.toHaveBeenCalled();
@@ -40,7 +38,6 @@ describe('Dashboard component', () => {
   it('should not navigate to new cluster config page when there are no clusters and hasDynamicConfig is false', async () => {
     await renderComponent(false, {
       data: [],
-      isSuccess: true,
     });
 
     expect(mockedNavigate).not.toHaveBeenCalled();

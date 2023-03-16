@@ -22,7 +22,6 @@ const Dashboard: React.FC = () => {
   const { value: showOfflineOnly, toggle } = useBoolean(false);
   const appInfo = React.useContext(GlobalSettingsContext);
   const navigate = useNavigate();
-
   const config = React.useMemo(() => {
     const clusterList = clusters.data || [];
     const offlineClusters = clusterList.filter(
@@ -58,11 +57,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      appInfo.hasDynamicConfig &&
-      clusters.isSuccess &&
-      clusters.data.length === 0
-    ) {
+    if (appInfo.hasDynamicConfig && !clusters.data) {
       navigate(clusterNewConfigPath);
     }
   }, [clusters, appInfo.hasDynamicConfig]);
