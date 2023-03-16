@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -44,7 +45,7 @@ public class InternalTopic {
                                    InternalPartitionsOffsets partitionsOffsets,
                                    Metrics metrics,
                                    InternalLogDirStats logDirInfo,
-                                   String internalTopicPrefix) {
+                                   @Nullable String internalTopicPrefix) {
     var topic = InternalTopic.builder();
 
     internalTopicPrefix = internalTopicPrefix == null || internalTopicPrefix.isEmpty()
@@ -67,10 +68,10 @@ public class InternalTopic {
           List<InternalReplica> replicas = partition.replicas().stream()
               .map(r ->
                   InternalReplica.builder()
-                    .broker(r.id())
-                    .inSync(partition.isr().contains(r))
-                    .leader(partition.leader() != null && partition.leader().id() == r.id())
-                    .build())
+                      .broker(r.id())
+                      .inSync(partition.isr().contains(r))
+                      .leader(partition.leader() != null && partition.leader().id() == r.id())
+                      .build())
               .collect(Collectors.toList());
           partitionDto.replicas(replicas);
 
