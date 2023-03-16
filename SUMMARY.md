@@ -23,6 +23,7 @@
 
 ## 👷♂ Configuration
 
+* [Configuration wizard](configuration/configuration-wizard.md)
 * [Permissions](configuration/permissions/README.md)
   * [Required Kafka ACLs](configuration/configuration/required-acls.md)
   * [MSK (+Serverless) Setup](configuration/permissions/msk-+serverless-setup.md)
@@ -36,8 +37,9 @@
   * [SASL\_SCRAM](configuration/authentication/sasl\_scram.md)
 * [RBAC (Role based access control)](configuration/rbac-role-based-access-control.md)
 * [Data masking](configuration/data-masking.md)
-* [Serialization / SerDe](configuration/serialization-serde.md)
-* [Protobuf setup](configuration/protobuf-setup.md)
+* [Serialization / SerDe](configuration/serialization-serde/README.md)
+  * [Protobuf setup](configuration/serialization-serde/protobuf-setup.md)
+* [OpenDataDiscovery Integration](configuration/opendatadiscovery-integration.md)
 
 ## ❓ FAQ
 
