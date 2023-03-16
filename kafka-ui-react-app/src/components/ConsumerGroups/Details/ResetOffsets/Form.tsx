@@ -13,7 +13,6 @@ import {
   useForm,
 } from 'react-hook-form';
 import { MultiSelect, Option } from 'react-multi-select-component';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ErrorMessage } from '@hookform/error-message';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
@@ -24,7 +23,6 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { useResetConsumerGroupOffsetsMutation } from 'lib/hooks/api/consumers';
 import { FlexFieldset, StyledForm } from 'components/common/Form/Form.styled';
 import ControlledSelect from 'components/common/Select/ControlledSelect';
-import Heading from 'components/common/heading/Heading.styled';
 
 import * as S from './ResetOffsets.styled';
 
