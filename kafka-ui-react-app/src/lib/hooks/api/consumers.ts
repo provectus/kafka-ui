@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ClusterName } from 'redux/interfaces';
 import {
   ConsumerGroup,
+  ConsumerGroupOffsetsReset,
   ConsumerGroupOrdering,
   SortOrder,
 } from 'generated-sources';
@@ -37,8 +38,7 @@ export function useConsumerGroupDetails(props: UseConsumerGroupDetailsProps) {
   const { clusterName, consumerGroupID } = props;
   return useQuery(
     ['clusters', clusterName, 'consumerGroups', consumerGroupID],
-    () => api.getConsumerGroup({ clusterName, id: consumerGroupID }),
-    { suspense: false }
+    () => api.getConsumerGroup({ clusterName, id: consumerGroupID })
   );
 }
 
@@ -53,6 +53,33 @@ export const useDeleteConsumerGroupMutation = ({
       onSuccess: () => {
         showSuccessAlert({
           message: `Consumer ${consumerGroupID} group deleted`,
+        });
+        queryClient.invalidateQueries([
+          'clusters',
+          clusterName,
+          'consumerGroups',
+        ]);
+      },
+    }
+  );
+};
+
+export const useResetConsumerGroupOffsetsMutation = ({
+  clusterName,
+  consumerGroupID,
+}: UseConsumerGroupDetailsProps) => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    (props: ConsumerGroupOffsetsReset) =>
+      api.resetConsumerGroupOffsets({
+        clusterName,
+        id: consumerGroupID,
+        consumerGroupOffsetsReset: props,
+      }),
+    {
+      onSuccess: () => {
+        showSuccessAlert({
+          message: `Consumer ${consumerGroupID} group offsets reset`,
         });
         queryClient.invalidateQueries([
           'clusters',
