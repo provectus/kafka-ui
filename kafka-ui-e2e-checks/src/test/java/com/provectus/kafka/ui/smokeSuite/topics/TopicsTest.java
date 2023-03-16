@@ -93,7 +93,7 @@ public class TopicsTest extends BaseTest {
                 .selectItem(true);
         verifyElementsCondition(topicsList.getActionButtons(), Condition.enabled);
         topicsList
-                .getTopicItem("_confluent-ksql-my_ksql_1_command_topic")
+                .getTopicItem(TOPIC_TO_CREATE.getName())
                 .selectItem(true);
         Assert.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(), "isCopySelectedTopicBtnEnabled()");
     }
@@ -456,7 +456,7 @@ public class TopicsTest extends BaseTest {
                 .setNumberOfPartitions(1);
         navigateToTopics();
         topicsList
-                .getTopicItem("_schemas")
+                .getFirstNonInternalTopic()
                 .selectItem(true)
                 .clickCopySelectedTopicBtn();
         topicCreateEditForm
@@ -474,6 +474,19 @@ public class TopicsTest extends BaseTest {
                 "isAlertWithMessageVisible()");
         softly.assertTrue(topicDetails.isTopicHeaderVisible(topicToCopy.getName()), "isTopicHeaderVisible()");
         softly.assertAll();
+    }
+
+//    @QaseId(8)
+    @Test(priority = 19)
+    public void checkInternalTopicVisibility() {
+      String INTERNAL_TOPIC_NAME = "_schemas"; // "_" is a default prefix for internal topics
+
+      navigateToTopics();
+      topicsList.setShowInternalRadioButton(false);
+      Assert.assertFalse(topicsList.isTopicVisible(INTERNAL_TOPIC_NAME), "isTopicVisible()");
+
+      topicsList.setShowInternalRadioButton(true);
+      Assert.assertTrue(topicsList.isTopicVisible(INTERNAL_TOPIC_NAME), "isTopicVisible()");
     }
 
     @AfterClass(alwaysRun = true)

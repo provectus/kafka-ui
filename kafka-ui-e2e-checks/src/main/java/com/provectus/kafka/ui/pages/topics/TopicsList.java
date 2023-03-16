@@ -176,6 +176,13 @@ public class TopicsList extends BasePage {
     }
 
     @Step
+    public TopicGridItem getFirstNonInternalTopic() {
+      return initGridItems().stream()
+          .filter(e -> !e.isInternal())
+          .findFirst().orElseThrow();
+    }
+
+    @Step
     public List<TopicGridItem> getNonInternalTopics() {
         return initGridItems().stream()
                 .filter(e -> !e.isInternal())
