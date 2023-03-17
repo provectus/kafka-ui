@@ -107,7 +107,7 @@ public class BackwardRecordEmitter
     EmptyPollsCounter emptyPolls  = pollingSettings.createEmptyPollsCounter();
     while (!sink.isCancelled()
         && recordsToSend.size() < desiredMsgsToPoll
-        && !emptyPolls.noDataEmptyCountsReached()) {
+        && !emptyPolls.noDataEmptyPollsReached()) {
       var polledRecords = poll(sink, consumer, pollingSettings.getPartitionPollTimeout());
       emptyPolls.count(polledRecords);
 

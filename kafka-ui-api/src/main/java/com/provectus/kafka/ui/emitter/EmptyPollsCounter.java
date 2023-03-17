@@ -21,7 +21,7 @@ public class EmptyPollsCounter {
     emptyPolls = polled.isEmpty() ? emptyPolls + 1 : 0;
   }
 
-  public boolean noDataEmptyCountsReached() {
+  public boolean noDataEmptyPollsReached() {
     return emptyPolls >= maxEmptyPolls;
   }
 

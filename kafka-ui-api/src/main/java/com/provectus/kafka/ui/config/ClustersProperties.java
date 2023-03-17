@@ -52,7 +52,6 @@ public class ClustersProperties {
   @Data
   public static class PollingProperties {
     Integer pollTimeoutMs;
-    Integer topicPollTimeoutMs;
     Integer partitionPollTimeout;
     Integer noDataEmptyPolls;
   }

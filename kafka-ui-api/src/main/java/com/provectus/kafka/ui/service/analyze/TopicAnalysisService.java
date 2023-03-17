@@ -126,7 +126,7 @@ public class TopicAnalysisService {
         consumer.seekToBeginning(topicPartitions);
 
         var offsetsInfo = new OffsetsInfo(consumer, topicId.topicName);
-        while (!offsetsInfo.assignedPartitionsFullyPolled() && !emptyPollsCounter.noDataEmptyCountsReached()) {
+        while (!offsetsInfo.assignedPartitionsFullyPolled() && !emptyPollsCounter.noDataEmptyPollsReached()) {
           var polled = consumer.poll(Duration.ofSeconds(3));
           throttler.throttleAfterPoll(polled);
           emptyPollsCounter.count(polled);

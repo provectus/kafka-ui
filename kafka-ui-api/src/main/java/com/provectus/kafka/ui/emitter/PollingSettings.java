@@ -30,14 +30,14 @@ public class PollingSettings {
         ? Duration.ofMillis(pollingProps.getPartitionPollTimeout())
         : Duration.ofMillis(pollTimeout.toMillis() / 5);
 
-    int notDataEmptyPolls = pollingProps.getNoDataEmptyPolls() != null
+    int noDataEmptyPolls = pollingProps.getNoDataEmptyPolls() != null
         ? pollingProps.getNoDataEmptyPolls()
         : DEFAULT_NO_DATA_EMPTY_POLLS;
 
     return new PollingSettings(
         pollTimeout,
         partitionPollTimeout,
-        notDataEmptyPolls,
+        noDataEmptyPolls,
         PollingThrottler.throttlerSupplier(cluster)
     );
   }

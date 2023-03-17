@@ -41,7 +41,7 @@ public class ForwardRecordEmitter
       EmptyPollsCounter emptyPolls = pollingSettings.createEmptyPollsCounter();
       while (!sink.isCancelled()
           && !seekOperations.assignedPartitionsFullyPolled()
-          && !emptyPolls.noDataEmptyCountsReached()) {
+          && !emptyPolls.noDataEmptyPollsReached()) {
 
         sendPhase(sink, "Polling");
         ConsumerRecords<Bytes, Bytes> records = poll(sink, consumer);
