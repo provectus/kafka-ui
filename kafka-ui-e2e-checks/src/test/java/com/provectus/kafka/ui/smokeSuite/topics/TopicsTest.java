@@ -359,7 +359,7 @@ public class TopicsTest extends BaseTest {
 
     @QaseId(11)
     @Test(priority = 15)
-    public void checkShowInternalTopicsButtonFunctionality() {
+    public void checkShowInternalTopicsButton() {
         navigateToTopics();
         SoftAssert softly = new SoftAssert();
         softly.assertTrue(topicsList.isShowInternalRadioBtnSelected(), "isInternalRadioBtnSelected()");
@@ -373,8 +373,21 @@ public class TopicsTest extends BaseTest {
         softly.assertAll();
     }
 
-    @QaseId(56)
+    @QaseId(334)
     @Test(priority = 16)
+    public void checkInternalTopicsNaming() {
+        navigateToTopics();
+        SoftAssert softly = new SoftAssert();
+        topicsList
+                .setShowInternalRadioButton(true)
+                .getInternalTopics()
+                .forEach(topic -> softly.assertTrue(topic.getName().startsWith("_"),
+                        String.format("'%s' starts with '_'", topic.getName())));
+        softly.assertAll();
+    }
+
+    @QaseId(56)
+    @Test(priority = 17)
     public void checkRetentionBytesAccordingToMaxSizeOnDisk() {
         navigateToTopics();
         topicsList
@@ -422,7 +435,7 @@ public class TopicsTest extends BaseTest {
     }
 
     @QaseId(247)
-    @Test(priority = 17)
+    @Test(priority = 18)
     public void recreateTopicFromTopicProfile() {
         Topic topicToRecreate = new Topic()
                 .setName("topic-to-recreate-" + randomAlphabetic(5))
@@ -450,7 +463,7 @@ public class TopicsTest extends BaseTest {
     }
 
     @QaseId(8)
-    @Test(priority = 18)
+    @Test(priority = 19)
     public void checkCopyTopicPossibility() {
         Topic topicToCopy = new Topic()
                 .setName("topic-to-copy-" + randomAlphabetic(5))
