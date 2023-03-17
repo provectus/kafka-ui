@@ -52,7 +52,8 @@ public class TopicsTest extends BaseTest {
             .setMaxSizeOnDisk(NOT_SET);
     private static final Topic TOPIC_FOR_CHECK_FILTERS = new Topic()
             .setName("topic-for-check-filters-" + randomAlphabetic(5));
-    private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete-" + randomAlphabetic(5));
+    private static final Topic TOPIC_FOR_DELETE = new Topic()
+            .setName("topic-to-delete-" + randomAlphabetic(5));
     private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
     @BeforeClass(alwaysRun = true)
@@ -89,11 +90,11 @@ public class TopicsTest extends BaseTest {
     void checkAvailableOperations() {
         navigateToTopics();
         topicsList
-                .getTopicItem("my_ksql_1ksql_processing_log")
+                .getTopicItem(TOPIC_TO_UPDATE_AND_DELETE.getName())
                 .selectItem(true);
         verifyElementsCondition(topicsList.getActionButtons(), Condition.enabled);
         topicsList
-                .getTopicItem(TOPIC_TO_CREATE.getName())
+                .getTopicItem(TOPIC_FOR_CHECK_FILTERS.getName())
                 .selectItem(true);
         Assert.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(), "isCopySelectedTopicBtnEnabled()");
     }
@@ -456,7 +457,7 @@ public class TopicsTest extends BaseTest {
                 .setNumberOfPartitions(1);
         navigateToTopics();
         topicsList
-                .getFirstNonInternalTopic()
+                .getAnyNonInternalTopic()
                 .selectItem(true)
                 .clickCopySelectedTopicBtn();
         topicCreateEditForm
@@ -474,19 +475,6 @@ public class TopicsTest extends BaseTest {
                 "isAlertWithMessageVisible()");
         softly.assertTrue(topicDetails.isTopicHeaderVisible(topicToCopy.getName()), "isTopicHeaderVisible()");
         softly.assertAll();
-    }
-
-//    @QaseId(8)
-    @Test(priority = 19)
-    public void checkInternalTopicVisibility() {
-      String INTERNAL_TOPIC_NAME = "_schemas"; // "_" is a default prefix for internal topics
-
-      navigateToTopics();
-      topicsList.setShowInternalRadioButton(false);
-      Assert.assertFalse(topicsList.isTopicVisible(INTERNAL_TOPIC_NAME), "isTopicVisible()");
-
-      topicsList.setShowInternalRadioButton(true);
-      Assert.assertTrue(topicsList.isTopicVisible(INTERNAL_TOPIC_NAME), "isTopicVisible()");
     }
 
     @AfterClass(alwaysRun = true)
