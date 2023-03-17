@@ -13,7 +13,7 @@ import java.util.List;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.enums.MenuItem.KSQL_DB;
+import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.KSQL_DB;
 
 public class KsqlDbList extends BasePage {
 

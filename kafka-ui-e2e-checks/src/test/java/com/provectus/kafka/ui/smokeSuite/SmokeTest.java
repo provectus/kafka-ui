@@ -3,7 +3,7 @@ package com.provectus.kafka.ui.smokeSuite;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.BaseTest;
-import com.provectus.kafka.ui.enums.MenuItem;
+import com.provectus.kafka.ui.pages.panels.enums.MenuItem;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.models.Topic;
@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.provectus.kafka.ui.enums.MenuItem.*;
+import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.*;
 import static com.provectus.kafka.ui.settings.BaseSource.BROWSER;
 import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
 import static com.provectus.kafka.ui.variables.Browser.LOCAL;

@@ -6,7 +6,7 @@ import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.enums.MenuItem.SCHEMA_REGISTRY;
+import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.SCHEMA_REGISTRY;
 
 public class SchemaRegistryList extends BasePage {
 

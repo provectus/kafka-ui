@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.enums;
+package com.provectus.kafka.ui.pages.panels.enums;
 
 public enum MenuItem {
     

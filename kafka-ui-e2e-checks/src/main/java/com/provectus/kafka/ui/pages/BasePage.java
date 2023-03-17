@@ -4,7 +4,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
-import com.provectus.kafka.ui.enums.MenuItem;
+import com.provectus.kafka.ui.pages.panels.enums.MenuItem;
 import com.provectus.kafka.ui.utilities.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Keys;

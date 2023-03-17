@@ -6,7 +6,7 @@ import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.enums.MenuItem.KAFKA_CONNECT;
+import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.KAFKA_CONNECT;
 
 
 public class KafkaConnectList extends BasePage {

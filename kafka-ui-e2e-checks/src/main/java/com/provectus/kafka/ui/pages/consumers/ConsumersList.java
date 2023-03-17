@@ -4,7 +4,7 @@ import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 
-import static com.provectus.kafka.ui.enums.MenuItem.CONSUMERS;
+import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.CONSUMERS;
 
 public class ConsumersList extends BasePage {
 

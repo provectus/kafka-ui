@@ -22,7 +22,7 @@ import org.testng.asserts.SoftAssert;
 import java.time.Duration;
 import java.util.List;
 
-import static com.provectus.kafka.ui.enums.MenuItem.*;
+import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.*;
 import static com.provectus.kafka.ui.settings.BaseSource.*;
 import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.*;
 import static com.provectus.kafka.ui.utilities.qaseUtils.QaseSetup.qaseIntegrationSetup;

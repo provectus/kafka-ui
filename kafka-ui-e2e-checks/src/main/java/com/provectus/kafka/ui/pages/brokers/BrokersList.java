@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.enums.MenuItem.BROKERS;
+import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.BROKERS;
 
 public class BrokersList extends BasePage {
 

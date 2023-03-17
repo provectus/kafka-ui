@@ -1,8 +1,9 @@
-package com.provectus.kafka.ui.pages;
+package com.provectus.kafka.ui.pages.panels;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import com.provectus.kafka.ui.enums.MenuItem;
+import com.provectus.kafka.ui.pages.panels.enums.MenuItem;
+import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 
 import java.time.Duration;

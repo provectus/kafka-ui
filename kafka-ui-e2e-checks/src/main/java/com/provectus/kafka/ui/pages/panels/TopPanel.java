@@ -1,6 +1,7 @@
-package com.provectus.kafka.ui.pages;
+package com.provectus.kafka.ui.pages.panels;
 
 import com.codeborne.selenide.SelenideElement;
+import com.provectus.kafka.ui.pages.BasePage;
 
 import java.util.Arrays;
 import java.util.List;
