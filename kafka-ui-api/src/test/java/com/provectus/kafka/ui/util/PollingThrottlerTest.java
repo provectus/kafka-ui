@@ -5,6 +5,7 @@ import static org.assertj.core.data.Percentage.withPercentage;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.util.concurrent.RateLimiter;
+import com.provectus.kafka.ui.emitter.PollingThrottler;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;

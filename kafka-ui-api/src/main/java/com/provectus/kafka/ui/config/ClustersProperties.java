@@ -25,6 +25,8 @@ public class ClustersProperties {
 
   List<Cluster> clusters = new ArrayList<>();
 
+  PollingProperties polling = new PollingProperties();
+
   @Data
   public static class Cluster {
     String name;
@@ -45,6 +47,14 @@ public class ClustersProperties {
     List<Masking> masking;
     Long pollingThrottleRate;
     TruststoreConfig ssl;
+  }
+
+  @Data
+  public static class PollingProperties {
+    Integer pollTimeoutMs;
+    Integer topicPollTimeoutMs;
+    Integer partitionPollTimeout;
+    Integer noDataEmptyPolls;
   }
 
   @Data
