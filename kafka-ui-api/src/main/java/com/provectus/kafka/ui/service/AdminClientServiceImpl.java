@@ -20,13 +20,16 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class AdminClientServiceImpl implements AdminClientService, Closeable {
 
+  private final static int DEFAULT_CLIENT_TIMEOUT_MS = 30_000;
+
   private static final AtomicLong CLIENT_ID_SEQ = new AtomicLong();
 
   private final Map<String, ReactiveAdminClient> adminClientCache = new ConcurrentHashMap<>();
   private final int clientTimeout;
 
   public AdminClientServiceImpl(ClustersProperties clustersProperties) {
-    this.clientTimeout = Optional.ofNullable(clustersProperties.getAdminClientTimeout()).orElse(30_000);
+    this.clientTimeout = Optional.ofNullable(clustersProperties.getAdminClientTimeout())
+        .orElse(DEFAULT_CLIENT_TIMEOUT_MS);
   }
 
   @Override
@@ -42,7 +45,7 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
       SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
       properties.putAll(cluster.getProperties());
       properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
-      properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
+      properties.putIfAbsent(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
       properties.putIfAbsent(
           AdminClientConfig.CLIENT_ID_CONFIG,
           "kafka-ui-admin-" + Instant.now().getEpochSecond() + "-" + CLIENT_ID_SEQ.incrementAndGet()

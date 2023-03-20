@@ -98,6 +98,7 @@ public class DynamicConfigOperations {
                 .type(ctx.getEnvironment().getProperty("auth.type"))
                 .oauth2(getNullableBean(OAuthProperties.class))
                 .build())
+        .webclient(getNullableBean(WebclientProperties.class))
         .build();
   }
 

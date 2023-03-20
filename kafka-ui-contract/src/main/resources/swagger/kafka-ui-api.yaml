@@ -3451,6 +3451,8 @@ components:
             kafka:
               type: object
               properties:
+                adminClientTimeout:
+                  type: integer
                 clusters:
                   type: array
                   items:
