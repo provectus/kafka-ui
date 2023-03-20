@@ -2,6 +2,8 @@ lockfileVersion: 5.4
 
 specifiers:
   '@floating-ui/react': ^0.19.2
+  '@fontsource/inter': ^4.5.15
+  '@fontsource/roboto-mono': ^4.5.10
   '@hookform/error-message': ^2.0.0
   '@hookform/resolvers': ^2.7.1
   '@jest/types': ^29.4.3
@@ -47,7 +49,7 @@ specifiers:
   eslint-plugin-react: ^7.30.1
   eslint-plugin-react-hooks: ^4.5.0
   fetch-mock: ^9.11.0
-  jest: ^29.4.3
+  jest: 29.4.3
   jest-environment-jsdom: ^29.4.3
   jest-sonar-reporter: ^2.0.0
   jest-styled-components: ^7.1.1
@@ -68,6 +70,7 @@ specifiers:
   react-multi-select-component: ^4.3.3
   react-redux: ^8.0.2
   react-router-dom: ^6.3.0
+  react@14.0.0: link:testing-library/react@14.0.0
   redux: ^4.2.0
   rimraf: ^4.1.2
   sass: ^1.52.3
@@ -85,6 +88,8 @@ specifiers:
 
 dependencies:
   '@floating-ui/react': 0.19.2_ohobp6rpsmerwlq5ipwfh5yigy
+  '@fontsource/inter': 4.5.15
+  '@fontsource/roboto-mono': 4.5.10
   '@hookform/error-message': 2.0.0_ie7afrsxjmqsdnv6azc5osehhy
   '@hookform/resolvers': 2.8.9_react-hook-form@7.43.1
   '@microsoft/fetch-event-source': 2.0.1
@@ -96,11 +101,11 @@ dependencies:
   '@types/testing-library__jest-dom': 5.14.5
   ace-builds: 1.7.1
   ajv: 8.8.2
-  ajv-formats: 2.1.1
+  ajv-formats: 2.1.1_ajv@8.8.2
   classnames: 2.3.1
   fetch-mock: 9.11.0
-  jest: 29.5.0_6m7kcbkkzjz4ln6z66tlzx44we
-  jest-watch-typeahead: 2.2.2_jest@29.5.0
+  jest: 29.4.3_6m7kcbkkzjz4ln6z66tlzx44we
+  jest-watch-typeahead: 2.2.2_jest@29.4.3
   json-schema-faker: 0.5.0-rcv.44
   jsonpath-plus: 7.2.0
   lodash: 4.17.21
@@ -116,6 +121,7 @@ dependencies:
   react-multi-select-component: 4.3.3_ef5jwxihqo6n7gxfmzogljlgcm
   react-redux: 8.0.2_nfqigfgwurfoimtkde74cji6ga
   react-router-dom: 6.3.0_ef5jwxihqo6n7gxfmzogljlgcm
+  react@14.0.0: link:testing-library/react@14.0.0
   redux: 4.2.0
   sass: 1.52.3
   styled-components: 5.3.1_uuaz5p7xzfmtjacf6iqf7idnby
@@ -907,6 +913,14 @@ packages:
       tabbable: 6.1.1
     transitivePeerDependencies:
       - '@types/react'
+    dev: false
+
+  /@fontsource/inter/4.5.15:
+    resolution: {integrity: sha512-FzleM9AxZQK2nqsTDtBiY0PMEVWvnKnuu2i09+p6DHvrHsuucoV2j0tmw+kAT3L4hvsLdAIDv6MdGehsPIdT+Q==}
+    dev: false
+
+  /@fontsource/roboto-mono/4.5.10:
+    resolution: {integrity: sha512-KrJdmkqz6DszT2wV/bbhXef4r0hV3B0vw2mAqei8A2kRnvq+gcJLmmIeQ94vu9VEXrUQzos5M9lH1TAAXpRphw==}
     dev: false
 
   /@hookform/error-message/2.0.0_ie7afrsxjmqsdnv6azc5osehhy:
@@ -2050,8 +2064,10 @@ packages:
       - supports-color
     dev: true
 
-  /ajv-formats/2.1.1:
+  /ajv-formats/2.1.1_ajv@8.8.2:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependencies:
+      ajv: ^8.0.0
     peerDependenciesMeta:
       ajv:
         optional: true
@@ -4542,7 +4558,7 @@ packages:
       pretty-format: 29.5.0
     dev: false
 
-  /jest-watch-typeahead/2.2.2_jest@29.5.0:
+  /jest-watch-typeahead/2.2.2_jest@29.4.3:
     resolution: {integrity: sha512-+QgOFW4o5Xlgd6jGS5X37i08tuuXNW8X0CV9WNFi+3n8ExCIP+E1melYhvYLjv5fE6D0yyzk74vsSO8I6GqtvQ==}
     engines: {node: ^14.17.0 || ^16.10.0 || >=18.0.0}
     peerDependencies:
@@ -4550,7 +4566,7 @@ packages:
     dependencies:
       ansi-escapes: 6.0.0
       chalk: 5.2.0
-      jest: 29.5.0_6m7kcbkkzjz4ln6z66tlzx44we
+      jest: 29.4.3_6m7kcbkkzjz4ln6z66tlzx44we
       jest-regex-util: 29.0.0
       jest-watcher: 29.0.3
       slash: 5.0.0
@@ -4596,8 +4612,8 @@ packages:
       supports-color: 8.1.1
     dev: false
 
-  /jest/29.5.0_6m7kcbkkzjz4ln6z66tlzx44we:
-    resolution: {integrity: sha512-juMg3he2uru1QoXX078zTa7pO85QyB9xajZc6bU+d9yEGwrKX6+vGmJQ3UdVZsvTEUARIdObzH68QItim6OSSQ==}
+  /jest/29.4.3_6m7kcbkkzjz4ln6z66tlzx44we:
+    resolution: {integrity: sha512-XvK65feuEFGZT8OO0fB/QAQS+LGHvQpaadkH5p47/j3Ocqq3xf2pK9R+G0GzgfuhXVxEv76qCOOcMb5efLk6PA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     hasBin: true
     peerDependencies:
