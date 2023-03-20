@@ -8,8 +8,7 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import userEvent from '@testing-library/user-event';
 import { clusterTopicPath } from 'lib/paths';
 import { Replica } from 'components/Topics/Topic/Overview/Overview.styled';
-import { useTopicDetails } from 'lib/hooks/api/topics';
-import { useAppDispatch } from 'lib/hooks/redux';
+import { useClearTopicMessages, useTopicDetails } from 'lib/hooks/api/topics';
 import {
   externalTopicPayload,
   internalTopicPayload,
@@ -26,14 +25,10 @@ const defaultContextValues = {
 
 jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
+  useClearTopicMessages: jest.fn(),
 }));
 
-const unwrapMock = jest.fn();
-
-jest.mock('lib/hooks/redux', () => ({
-  ...jest.requireActual('lib/hooks/redux'),
-  useAppDispatch: jest.fn(),
-}));
+const clearTopicMessage = jest.fn();
 
 describe('Overview', () => {
   const renderComponent = (
@@ -42,6 +37,9 @@ describe('Overview', () => {
   ) => {
     (useTopicDetails as jest.Mock).mockImplementation(() => ({
       data: topic,
+    }));
+    (useClearTopicMessages as jest.Mock).mockImplementation(() => ({
+      mutateAsync: clearTopicMessage,
     }));
     const path = clusterTopicPath(clusterName, topicName);
     return render(
@@ -53,12 +51,6 @@ describe('Overview', () => {
       { initialEntries: [path] }
     );
   };
-
-  beforeEach(() => {
-    (useAppDispatch as jest.Mock).mockImplementation(() => () => ({
-      unwrap: unwrapMock,
-    }));
-  });
 
   it('at least one replica was rendered', () => {
     renderComponent();
@@ -136,7 +128,7 @@ describe('Overview', () => {
 
       const clearMessagesButton = screen.getByText('Clear Messages');
       await userEvent.click(clearMessagesButton);
-      expect(unwrapMock).toHaveBeenCalledTimes(1);
+      expect(clearTopicMessage).toHaveBeenCalledTimes(1);
     });
   });
 
