@@ -59,7 +59,7 @@ public class TopicsTest extends BaseTest {
     @BeforeClass(alwaysRun = true)
     public void beforeClass() {
         TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE_AND_DELETE, TOPIC_FOR_DELETE, TOPIC_FOR_CHECK_FILTERS));
-        TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
+        TOPIC_LIST.forEach(topic -> apiService.createTopic(topic));
     }
 
     @QaseId(199)
