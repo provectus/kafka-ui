@@ -16,10 +16,12 @@ import {
 import { CleanUpPolicy, Topic } from 'generated-sources';
 import { externalTopicPayload } from 'lib/fixtures/topics';
 import {
+  useClearTopicMessages,
   useDeleteTopic,
   useRecreateTopic,
   useTopicDetails,
 } from 'lib/hooks/api/topics';
+import { useAppDispatch } from 'lib/hooks/redux';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -30,14 +32,15 @@ jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
   useDeleteTopic: jest.fn(),
   useRecreateTopic: jest.fn(),
+  useClearTopicMessages: jest.fn(),
 }));
 
-const mockUnwrap = jest.fn();
-const useDispatchMock = () => jest.fn(() => ({ unwrap: mockUnwrap }));
+const unwrapMock = jest.fn();
+const clearTopicMessages = jest.fn();
 
 jest.mock('lib/hooks/redux', () => ({
   ...jest.requireActual('lib/hooks/redux'),
-  useAppDispatch: useDispatchMock,
+  useAppDispatch: jest.fn(),
 }));
 
 jest.mock('components/Topics/Topic/Overview/Overview', () => () => (
@@ -98,6 +101,12 @@ describe('Details', () => {
     (useRecreateTopic as jest.Mock).mockImplementation(() => ({
       mutateAsync: mockRecreate,
     }));
+    (useClearTopicMessages as jest.Mock).mockImplementation(() => ({
+      mutateAsync: clearTopicMessages,
+    }));
+    (useAppDispatch as jest.Mock).mockImplementation(() => () => ({
+      unwrap: unwrapMock,
+    }));
   });
   describe('Action Bar', () => {
     describe('when it has readonly flag', () => {
@@ -142,7 +151,7 @@ describe('Details', () => {
           name: 'Confirm',
         })[0];
         await waitFor(() => userEvent.click(submitButton));
-        expect(mockUnwrap).toHaveBeenCalledTimes(1);
+        expect(clearTopicMessages).toHaveBeenCalledTimes(1);
       });
 
       it('closes the modal when cancel button is clicked', async () => {

@@ -19,9 +19,16 @@ describe('Page Container', () => {
     (useClusters as jest.Mock).mockImplementation(() => ({
       isSuccess: false,
     }));
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: jest.fn().mockImplementation(() => ({
+        matches: false,
+        addListener: jest.fn(),
+      })),
+    });
 
     render(
-      <PageContainer>
+      <PageContainer setDarkMode={jest.fn()}>
         <div>child</div>
       </PageContainer>
     );

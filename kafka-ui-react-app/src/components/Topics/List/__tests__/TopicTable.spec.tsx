@@ -6,6 +6,7 @@ import { externalTopicPayload, topicsPayload } from 'lib/fixtures/topics';
 import ClusterContext from 'components/contexts/ClusterContext';
 import userEvent from '@testing-library/user-event';
 import {
+  useClearTopicMessages,
   useDeleteTopic,
   useRecreateTopic,
   useTopics,
@@ -14,30 +15,33 @@ import TopicTable from 'components/Topics/List/TopicTable';
 import { clusterTopicsPath } from 'lib/paths';
 
 const clusterName = 'test-cluster';
-const mockUnwrap = jest.fn();
-const useDispatchMock = () => jest.fn(() => ({ unwrap: mockUnwrap }));
-
-const getButtonByName = (name: string) => screen.getByRole('button', { name });
 
 jest.mock('lib/hooks/redux', () => ({
   ...jest.requireActual('lib/hooks/redux'),
-  useAppDispatch: useDispatchMock,
+  useAppDispatch: jest.fn(),
 }));
+
+const getButtonByName = (name: string) => screen.getByRole('button', { name });
 
 jest.mock('lib/hooks/api/topics', () => ({
   ...jest.requireActual('lib/hooks/api/topics'),
   useDeleteTopic: jest.fn(),
   useRecreateTopic: jest.fn(),
   useTopics: jest.fn(),
+  useClearTopicMessages: jest.fn(),
 }));
 
 const deleteTopicMock = jest.fn();
 const recreateTopicMock = jest.fn();
+const clearTopicMessages = jest.fn();
 
 describe('TopicTable Components', () => {
   beforeEach(() => {
     (useDeleteTopic as jest.Mock).mockImplementation(() => ({
       mutateAsync: deleteTopicMock,
+    }));
+    (useClearTopicMessages as jest.Mock).mockImplementation(() => ({
+      mutateAsync: clearTopicMessages,
     }));
     (useRecreateTopic as jest.Mock).mockImplementation(() => ({
       mutateAsync: recreateTopicMock,
@@ -182,9 +186,9 @@ describe('TopicTable Components', () => {
             ).toBeInTheDocument();
             const confirmBtn = getButtonByName('Confirm');
             expect(confirmBtn).toBeInTheDocument();
-            expect(mockUnwrap).not.toHaveBeenCalled();
+            expect(clearTopicMessages).not.toHaveBeenCalled();
             await userEvent.click(confirmBtn);
-            expect(mockUnwrap).toHaveBeenCalledTimes(2);
+            expect(clearTopicMessages).toHaveBeenCalledTimes(2);
             expect(screen.getAllByRole('checkbox')[1]).not.toBeChecked();
             expect(screen.getAllByRole('checkbox')[2]).not.toBeChecked();
           });
@@ -279,7 +283,7 @@ describe('TopicTable Components', () => {
           await userEvent.click(
             screen.getByRole('button', { name: 'Confirm' })
           );
-          expect(mockUnwrap).toHaveBeenCalled();
+          expect(clearTopicMessages).toHaveBeenCalled();
         });
       });
 

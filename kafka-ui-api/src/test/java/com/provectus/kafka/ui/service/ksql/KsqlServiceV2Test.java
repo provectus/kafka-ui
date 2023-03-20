@@ -4,10 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.container.KsqlDbContainer;
-import com.provectus.kafka.ui.model.InternalKsqlServer;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KsqlStreamDescriptionDTO;
 import com.provectus.kafka.ui.model.KsqlTableDescriptionDTO;
+import com.provectus.kafka.ui.util.ReactiveFailover;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -35,29 +36,25 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
 
   @AfterAll
   static void cleanup() {
-    var client = new KsqlApiClient(KafkaCluster.builder().ksqldbServer(
-        InternalKsqlServer.builder().url(KSQL_DB.url()).build()).build(), maxBuffSize);
-
     TABLES_TO_DELETE.forEach(t ->
-        client.execute(String.format("DROP TABLE IF EXISTS %s DELETE TOPIC;", t), Map.of())
+        ksqlClient().execute(String.format("DROP TABLE IF EXISTS %s DELETE TOPIC;", t), Map.of())
             .blockLast());
 
     STREAMS_TO_DELETE.forEach(s ->
-        client.execute(String.format("DROP STREAM IF EXISTS %s DELETE TOPIC;", s), Map.of())
+        ksqlClient().execute(String.format("DROP STREAM IF EXISTS %s DELETE TOPIC;", s), Map.of())
             .blockLast());
 
     KSQL_DB.stop();
   }
 
-  private final KsqlServiceV2 ksqlService = new KsqlServiceV2(maxBuffSize);
+  private final KsqlServiceV2 ksqlService = new KsqlServiceV2();
 
   @Test
   void listStreamsReturnsAllKsqlStreams() {
-    var cluster = KafkaCluster.builder().ksqldbServer(InternalKsqlServer.builder().url(KSQL_DB.url()).build()).build();
     var streamName = "stream_" + System.currentTimeMillis();
     STREAMS_TO_DELETE.add(streamName);
 
-    new KsqlApiClient(cluster, maxBuffSize)
+    ksqlClient()
         .execute(
             String.format("CREATE STREAM %s ( "
                 + "  c1 BIGINT KEY, "
@@ -70,7 +67,7 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
             Map.of())
         .blockLast();
 
-    var streams = ksqlService.listStreams(cluster).collectList().block();
+    var streams = ksqlService.listStreams(cluster()).collectList().block();
     assertThat(streams).contains(
         new KsqlStreamDescriptionDTO()
             .name(streamName.toUpperCase())
@@ -82,11 +79,10 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
 
   @Test
   void listTablesReturnsAllKsqlTables() {
-    var cluster = KafkaCluster.builder().ksqldbServer(InternalKsqlServer.builder().url(KSQL_DB.url()).build()).build();
     var tableName = "table_" + System.currentTimeMillis();
     TABLES_TO_DELETE.add(tableName);
 
-    new KsqlApiClient(cluster, maxBuffSize)
+    ksqlClient()
         .execute(
             String.format("CREATE TABLE %s ( "
                 + "   c1 BIGINT PRIMARY KEY, "
@@ -99,7 +95,7 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
             Map.of())
         .blockLast();
 
-    var tables = ksqlService.listTables(cluster).collectList().block();
+    var tables = ksqlService.listTables(cluster()).collectList().block();
     assertThat(tables).contains(
         new KsqlTableDescriptionDTO()
             .name(tableName.toUpperCase())
@@ -108,6 +104,17 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
             .valueFormat("JSON")
             .isWindowed(false)
     );
+  }
+
+  private static KafkaCluster cluster() {
+    return KafkaCluster.builder()
+        .ksqlClient(ReactiveFailover.create(
+            List.of(ksqlClient()), th -> true, "", ReactiveFailover.DEFAULT_RETRY_GRACE_PERIOD_MS))
+        .build();
+  }
+
+  private static KsqlApiClient ksqlClient() {
+    return new KsqlApiClient(KSQL_DB.url(), null, null, null, null);
   }
 
 }

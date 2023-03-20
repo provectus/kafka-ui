@@ -1,4 +1,4 @@
-name: DeployFromBranch
+name: Feature testing init
 on:
   workflow_dispatch:
 
@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: get branch name
         id: extract_branch
         run: |
@@ -43,7 +45,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
       - name: Configure AWS credentials for Kafka-UI account
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -53,7 +55,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
       - name: Build and push
         id: docker_build_and_push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: kafka-ui-api

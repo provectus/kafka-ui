@@ -1,10 +1,11 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.ClusterFeature;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
@@ -24,27 +25,27 @@ public class FeatureService {
 
   private final AdminClientService adminClientService;
 
-  public Mono<List<Feature>> getAvailableFeatures(KafkaCluster cluster, @Nullable Node controller) {
-    List<Mono<Feature>> features = new ArrayList<>();
+  public Mono<List<ClusterFeature>> getAvailableFeatures(KafkaCluster cluster, @Nullable Node controller) {
+    List<Mono<ClusterFeature>> features = new ArrayList<>();
 
-    if (Optional.ofNullable(cluster.getKafkaConnect())
-        .filter(Predicate.not(List::isEmpty))
+    if (Optional.ofNullable(cluster.getConnectsClients())
+        .filter(Predicate.not(Map::isEmpty))
         .isPresent()) {
-      features.add(Mono.just(Feature.KAFKA_CONNECT));
+      features.add(Mono.just(ClusterFeature.KAFKA_CONNECT));
     }
 
-    if (cluster.getKsqldbServer() != null) {
-      features.add(Mono.just(Feature.KSQL_DB));
+    if (cluster.getKsqlClient() != null) {
+      features.add(Mono.just(ClusterFeature.KSQL_DB));
     }
 
-    if (cluster.getSchemaRegistry() != null) {
-      features.add(Mono.just(Feature.SCHEMA_REGISTRY));
+    if (cluster.getSchemaRegistryClient() != null) {
+      features.add(Mono.just(ClusterFeature.SCHEMA_REGISTRY));
     }
 
     if (controller != null) {
       features.add(
           isTopicDeletionEnabled(cluster, controller)
-              .flatMap(r -> Boolean.TRUE.equals(r) ? Mono.just(Feature.TOPIC_DELETION) : Mono.empty())
+              .flatMap(r -> Boolean.TRUE.equals(r) ? Mono.just(ClusterFeature.TOPIC_DELETION) : Mono.empty())
       );
     }
 

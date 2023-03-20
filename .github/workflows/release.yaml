@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - run: |
           git config user.name github-actions
@@ -33,7 +34,7 @@ jobs:
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Upload files to a GitHub release
-        uses: svenstaro/upload-release-action@2.3.0
+        uses: svenstaro/upload-release-action@2.5.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: kafka-ui-api/target/kafka-ui-api-${{ steps.build.outputs.version }}.jar
@@ -71,7 +72,7 @@ jobs:
 
       - name: Build and push
         id: docker_build_and_push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: kafka-ui-api

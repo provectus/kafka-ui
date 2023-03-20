@@ -125,10 +125,10 @@ const Filters: React.FC<FiltersProps> = ({
     getTimestampFromSeekToParam(searchParams)
   );
   const [keySerde, setKeySerde] = React.useState<string>(
-    searchParams.get('keySerde') as string
+    searchParams.get('keySerde') || ''
   );
   const [valueSerde, setValueSerde] = React.useState<string>(
-    searchParams.get('valueSerde') as string
+    searchParams.get('valueSerde') || ''
   );
 
   const [savedFilters, setSavedFilters] = React.useState<MessageFilters[]>(
@@ -206,8 +206,8 @@ const Filters: React.FC<FiltersProps> = ({
       limit: PER_PAGE,
       page: page || 0,
       seekDirection,
-      keySerde: keySerde || (searchParams.get('keySerde') as string),
-      valueSerde: valueSerde || (searchParams.get('valueSerde') as string),
+      keySerde: keySerde || searchParams.get('keySerde') || '',
+      valueSerde: valueSerde || searchParams.get('valueSerde') || '',
     };
 
     if (isSeekTypeControlVisible) {
@@ -231,18 +231,21 @@ const Filters: React.FC<FiltersProps> = ({
         props.seekType = SeekType.TIMESTAMP;
       }
 
-      props.seekTo = selectedPartitions.map(({ value }) => {
-        const offsetProperty =
-          seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
-        const offsetBasedSeekTo =
-          currentOffset || partitionMap[value][offsetProperty];
-        const seekToOffset =
-          currentSeekType === SeekType.OFFSET
-            ? offsetBasedSeekTo
-            : timestamp?.getTime();
+      if (selectedPartitions.length !== partitions.length) {
+        // not everything in the partition is selected
+        props.seekTo = selectedPartitions.map(({ value }) => {
+          const offsetProperty =
+            seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
+          const offsetBasedSeekTo =
+            currentOffset || partitionMap[value][offsetProperty];
+          const seekToOffset =
+            currentSeekType === SeekType.OFFSET
+              ? offsetBasedSeekTo
+              : timestamp?.getTime();
 
-        return `${value}::${seekToOffset || '0'}`;
-      });
+          return `${value}::${seekToOffset || '0'}`;
+        });
+      }
     }
 
     const newProps = omitBy(props, (v) => v === undefined || v === '');
@@ -514,7 +517,7 @@ const Filters: React.FC<FiltersProps> = ({
       <S.ActiveSmartFilterWrapper>
         <Search placeholder="Search" disabled={isTailing} />
 
-        <Button buttonType="primary" buttonSize="M" onClick={toggle}>
+        <Button buttonType="secondary" buttonSize="M" onClick={toggle}>
           <PlusIcon />
           Add Filters
         </Button>
@@ -539,11 +542,11 @@ const Filters: React.FC<FiltersProps> = ({
         />
       )}
       <S.FiltersMetrics>
-        <p style={{ fontSize: 14 }}>
+        <S.Message>
           {seekDirection !== SeekDirection.TAILING &&
             isFetching &&
             phaseMessage}
-        </p>
+        </S.Message>
         <S.MessageLoading isLive={isTailing}>
           <S.MessageLoadingSpinner isFetching={isFetching} />
           Loading messages.

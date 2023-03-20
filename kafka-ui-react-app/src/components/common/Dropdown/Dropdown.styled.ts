@@ -70,7 +70,7 @@ export const DropdownButton = styled.button`
 `;
 
 export const DangerItem = styled.div`
-  color: ${({ theme: { dropdown } }) => dropdown.item.color.danger};
+  color: ${({ theme: { dropdown } }) => dropdown.item.color.normal};
 `;
 
 export const DropdownItemHint = styled.div`
@@ -84,4 +84,5 @@ export const Wrapper = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: end;
+  color: ${({ theme: { dropdown } }) => dropdown.item.color.normal};
 `;

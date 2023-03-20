@@ -64,7 +64,7 @@ describe('Details component', () => {
       expect(screen.getByText(groupId)).toBeInTheDocument();
 
       expect(screen.getByRole('table')).toBeInTheDocument();
-      expect(screen.getAllByRole('columnheader').length).toEqual(3);
+      expect(screen.getAllByRole('columnheader').length).toEqual(2);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
@@ -77,7 +77,6 @@ describe('Details component', () => {
     });
 
     it('renders search input', async () => {
-      await renderComponent();
       expect(
         screen.getByPlaceholderText('Search by Topic Name')
       ).toBeInTheDocument();

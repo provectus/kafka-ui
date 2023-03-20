@@ -19,6 +19,7 @@ export const KSQLInputsWrapper = styled.div`
 export const KSQLInputHeader = styled.div`
   display: flex;
   justify-content: space-between;
+  color: ${({ theme }) => theme.default.color.normal};
 `;
 
 export const KSQLButtons = styled.div`
@@ -31,6 +32,7 @@ export const StreamPropertiesContainer = styled.label`
   flex-direction: column;
   gap: 10px;
   width: 50%;
+  color: ${({ theme }) => theme.default.color.normal};
 `;
 
 export const InputsContainer = styled.div`
@@ -49,9 +51,18 @@ export const StreamPropertiesInputWrapper = styled.div`
     width: 100%;
     height: 40px;
     border: 1px solid grey;
+    &:focus {
+      outline: none;
+      border-color: ${({ theme }) => theme.input.borderColor.focus};
+      &::placeholder {
+        color: transparent;
+      }
+    }
     border-radius: 4px;
     font-size: 16px;
     padding-left: 15px;
+    background-color: ${({ theme }) => theme.input.backgroundColor.normal};
+    color: ${({ theme }) => theme.input.color.normal};
   }
 `;
 
@@ -73,8 +84,28 @@ export const SQLEditor = styled(BaseSQLEditor)(
     css`
       background: ${readOnly && theme.ksqlDb.query.editor.readonly.background};
       .ace-cursor {
-        ${readOnly && theme.ksqlDb.query.editor.readonly.cursor}
+        ${readOnly && `background: ${theme.default.transparentColor} `}
       }
+
+      .ace_content {
+        background-color: ${theme.default.backgroundColor};
+        color: ${theme.default.color.normal};
+      }
+      .ace_line {
+        background-color: ${theme.ksqlDb.query.editor.activeLine
+          .backgroundColor};
+      }
+      .ace_gutter-cell {
+        background-color: ${theme.ksqlDb.query.editor.cell.backgroundColor};
+      }
+      .ace_gutter-layer {
+        background-color: ${theme.ksqlDb.query.editor.layer.backgroundColor};
+        color: ${theme.default.color.normal};
+      }
+      .ace_cursor {
+        color: ${theme.ksqlDb.query.editor.cursor};
+      }
+
       .ace_print-margin {
         display: none;
       }

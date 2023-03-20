@@ -10,9 +10,15 @@ import userEvent from '@testing-library/user-event';
 import { clusterTopicMessagesPath } from 'lib/paths';
 import { useSerdes } from 'lib/hooks/api/topicMessages';
 import { serdesPayload } from 'lib/fixtures/topicMessages';
+import { useTopicDetails } from 'lib/hooks/api/topics';
+import { externalTopicPayload } from 'lib/fixtures/topics';
 
 jest.mock('lib/hooks/api/topicMessages', () => ({
   useSerdes: jest.fn(),
+}));
+
+jest.mock('lib/hooks/api/topics', () => ({
+  useTopicDetails: jest.fn(),
 }));
 
 describe('Messages', () => {
@@ -36,6 +42,9 @@ describe('Messages', () => {
     });
     (useSerdes as jest.Mock).mockImplementation(() => ({
       data: serdesPayload,
+    }));
+    (useTopicDetails as jest.Mock).mockImplementation(() => ({
+      data: externalTopicPayload,
     }));
   });
   describe('component rendering default behavior with the search params', () => {
@@ -69,11 +78,13 @@ describe('Messages', () => {
       const liveOptionConf = SeekDirectionOptions[2];
       const labelValue2 = liveOptionConf.label;
       await userEvent.click(seekDirectionSelect);
-      const liveModeLi = screen.getByRole(
-        (role, element) =>
-          role === 'option' &&
-          element?.getAttribute('value') === liveOptionConf.value
+
+      const options = screen.getAllByRole('option');
+      const liveModeLi = options.find(
+        (option) => option.getAttribute('value') === liveOptionConf.value
       );
+      expect(liveModeLi).toBeInTheDocument();
+      if (!liveModeLi) return; // to make TS happy
       await userEvent.selectOptions(seekDirectionSelect, [liveModeLi]);
       expect(seekDirectionOption).toHaveTextContent(labelValue2);
 

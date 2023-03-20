@@ -5,12 +5,14 @@ import {
   getExpandedRowModel,
   getSortedRowModel,
   useReactTable,
-  ColumnDef,
+  getPaginationRowModel,
+} from '@tanstack/react-table';
+import type {
   Row,
   SortingState,
   OnChangeFn,
   PaginationState,
-  getPaginationRowModel,
+  ColumnDef,
 } from '@tanstack/react-table';
 import { useSearchParams } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
@@ -44,7 +46,7 @@ export interface TableProps<TData> {
   enableSorting?: boolean; // Enables sorting for table.
 
   // Placeholder for empty table
-  emptyMessage?: string;
+  emptyMessage?: React.ReactNode;
 
   // Handles row click. Can not be combined with `enableRowSelection` && expandable rows.
   onRowClick?: (row: Row<TData>) => void;
