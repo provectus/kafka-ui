@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.util;
 
 
 import com.provectus.kafka.ui.config.ClustersProperties;
+import com.provectus.kafka.ui.config.WebclientProperties;
 import com.provectus.kafka.ui.config.auth.OAuthProperties;
 import com.provectus.kafka.ui.config.auth.RoleBasedAccessControlProperties;
 import com.provectus.kafka.ui.exception.FileUploadException;
@@ -204,6 +205,7 @@ public class DynamicConfigOperations {
     private ClustersProperties kafka;
     private RoleBasedAccessControlProperties rbac;
     private Auth auth;
+    private WebclientProperties webclient;
 
     @Data
     @Builder
@@ -222,6 +224,9 @@ public class DynamicConfigOperations {
       Optional.ofNullable(auth)
           .flatMap(a -> Optional.ofNullable(a.oauth2))
           .ifPresent(OAuthProperties::validate);
+
+      Optional.ofNullable(webclient)
+          .ifPresent(WebclientProperties::validate);
     }
   }
 

@@ -52,10 +52,10 @@ public class Config {
   }
 
   @Bean
-  public WebClient webClient(
-      @Value("${webclient.max-in-memory-buffer-size:20MB}") DataSize maxBuffSize) {
+  public WebClient webClient(WebclientProperties webclientProperties) {
     return WebClient.builder()
-        .codecs(c -> c.defaultCodecs().maxInMemorySize((int) maxBuffSize.toBytes()))
+        .codecs(c -> c.defaultCodecs()
+            .maxInMemorySize((int) webclientProperties.getMaxInMemoryBufferSizeAsDataSize().toBytes()))
         .build();
   }
 

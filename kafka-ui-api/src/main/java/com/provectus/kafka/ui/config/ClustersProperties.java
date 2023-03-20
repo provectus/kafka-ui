@@ -27,6 +27,8 @@ public class ClustersProperties {
 
   String internalTopicPrefix;
 
+  Integer adminClientTimeout;
+
   @Data
   public static class Cluster {
     String name;

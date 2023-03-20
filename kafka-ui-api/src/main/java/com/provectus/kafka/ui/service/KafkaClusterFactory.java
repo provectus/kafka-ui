@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.client.RetryingKafkaConnectClient;
 import com.provectus.kafka.ui.config.ClustersProperties;
+import com.provectus.kafka.ui.config.WebclientProperties;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
 import com.provectus.kafka.ui.model.ApplicationPropertyValidationDTO;
 import com.provectus.kafka.ui.model.ClusterConfigValidationDTO;
@@ -22,9 +23,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -34,12 +33,14 @@ import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class KafkaClusterFactory {
 
-  @Value("${webclient.max-in-memory-buffer-size:20MB}")
-  private DataSize maxBuffSize;
+  private final DataSize maxBuffSize;
+
+  public KafkaClusterFactory(WebclientProperties webclientProperties) {
+    this.maxBuffSize = webclientProperties.getMaxInMemoryBufferSizeAsDataSize();
+  }
 
   public KafkaCluster create(ClustersProperties.Cluster clusterProperties) {
     KafkaCluster.KafkaClusterBuilder builder = KafkaCluster.builder();
