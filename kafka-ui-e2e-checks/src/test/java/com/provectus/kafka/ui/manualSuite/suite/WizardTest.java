@@ -5,12 +5,12 @@ import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Automation;
 import io.qase.api.annotation.QaseId;
 import org.testng.annotations.Test;
 
-import static com.provectus.kafka.ui.utilities.qaseUtils.enums.State.TO_BE_AUTOMATED;
+import static com.provectus.kafka.ui.utilities.qaseUtils.enums.State.NOT_AUTOMATED;
 
-public class BrokersTest extends BaseManualTest {
+public class WizardTest extends BaseManualTest {
 
-    @Automation(state = TO_BE_AUTOMATED)
-    @QaseId(330)
+    @Automation(state = NOT_AUTOMATED)
+    @QaseId(333)
     @Test
     public void testCaseA() {
     }
