@@ -129,10 +129,10 @@ const Filters: React.FC<FiltersProps> = ({
     getTimestampFromSeekToParam(searchParams)
   );
   const [keySerde, setKeySerde] = React.useState<string>(
-    searchParams.get('keySerde') as string
+    searchParams.get('keySerde') || ''
   );
   const [valueSerde, setValueSerde] = React.useState<string>(
-    searchParams.get('valueSerde') as string
+    searchParams.get('valueSerde') || ''
   );
 
   const [savedFilters, setSavedFilters] = React.useState<MessageFilters[]>(
@@ -210,8 +210,8 @@ const Filters: React.FC<FiltersProps> = ({
       limit: PER_PAGE,
       page: page || 0,
       seekDirection,
-      keySerde: keySerde || (searchParams.get('keySerde') as string),
-      valueSerde: valueSerde || (searchParams.get('valueSerde') as string),
+      keySerde: keySerde || searchParams.get('keySerde') || '',
+      valueSerde: valueSerde || searchParams.get('valueSerde') || '',
     };
 
     if (isSeekTypeControlVisible) {
