@@ -36,10 +36,14 @@ import reactor.util.function.Tuples;
 @Slf4j
 public class KafkaClusterFactory {
 
-  private final DataSize maxBuffSize;
+  private static final DataSize DEFAULT_WEBCLIENT_BUFFER = DataSize.parse("20MB");
+
+  private final DataSize webClientMaxBuffSize;
 
   public KafkaClusterFactory(WebclientProperties webclientProperties) {
-    this.maxBuffSize = webclientProperties.getMaxInMemoryBufferSizeAsDataSize();
+    this.webClientMaxBuffSize = Optional.ofNullable(webclientProperties.getMaxInMemoryBufferSize())
+        .map(DataSize::parse)
+        .orElse(DEFAULT_WEBCLIENT_BUFFER);
   }
 
   public KafkaCluster create(ClustersProperties.Cluster clusterProperties) {
@@ -140,7 +144,7 @@ public class KafkaClusterFactory {
         url -> new RetryingKafkaConnectClient(
             connectCluster.toBuilder().address(url).build(),
             cluster.getSsl(),
-            maxBuffSize
+            webClientMaxBuffSize
         ),
         ReactiveFailover.CONNECTION_REFUSED_EXCEPTION_FILTER,
         "No alive connect instances available",
@@ -158,7 +162,7 @@ public class KafkaClusterFactory {
     WebClient webClient = new WebClientConfigurator()
         .configureSsl(clusterProperties.getSsl(), clusterProperties.getSchemaRegistrySsl())
         .configureBasicAuth(auth.getUsername(), auth.getPassword())
-        .configureBufferSize(maxBuffSize)
+        .configureBufferSize(webClientMaxBuffSize)
         .build();
     return ReactiveFailover.create(
         parseUrlList(clusterProperties.getSchemaRegistry()),
@@ -181,7 +185,7 @@ public class KafkaClusterFactory {
             clusterProperties.getKsqldbServerAuth(),
             clusterProperties.getSsl(),
             clusterProperties.getKsqldbServerSsl(),
-            maxBuffSize
+            webClientMaxBuffSize
         ),
         ReactiveFailover.CONNECTION_REFUSED_EXCEPTION_FILTER,
         "No live ksqldb instances available",

@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class AdminClientServiceImpl implements AdminClientService, Closeable {
 
-  private final static int DEFAULT_CLIENT_TIMEOUT_MS = 30_000;
+  private static final int DEFAULT_CLIENT_TIMEOUT_MS = 30_000;
 
   private static final AtomicLong CLIENT_ID_SEQ = new AtomicLong();
 

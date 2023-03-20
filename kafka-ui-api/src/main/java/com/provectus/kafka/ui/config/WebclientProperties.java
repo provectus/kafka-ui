@@ -27,13 +27,7 @@ public class WebclientProperties {
       } catch (Exception e) {
         throw new ValidationException("Invalid format for webclient.maxInMemoryBufferSize");
       }
-    } else {
-      maxInMemoryBufferSize = "20MB";
     }
   }
 
-  @Transient
-  public DataSize getMaxInMemoryBufferSizeAsDataSize() {
-    return DataSize.parse(maxInMemoryBufferSize);
-  }
 }

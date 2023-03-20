@@ -3,9 +3,7 @@ package com.provectus.kafka.ui.config;
 import java.util.Collections;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxProperties;
 import org.springframework.context.ApplicationContext;
@@ -15,8 +13,6 @@ import org.springframework.http.server.reactive.ContextPathCompositeHandler;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.util.StringUtils;
-import org.springframework.util.unit.DataSize;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 
 @Configuration
@@ -49,18 +45,5 @@ public class Config {
     exporter.setAutodetect(true);
     exporter.setExcludedBeans("pool");
     return exporter;
-  }
-
-  @Bean
-  public WebClient webClient(WebclientProperties webclientProperties) {
-    return WebClient.builder()
-        .codecs(c -> c.defaultCodecs()
-            .maxInMemorySize((int) webclientProperties.getMaxInMemoryBufferSizeAsDataSize().toBytes()))
-        .build();
-  }
-
-  @Bean
-  public JsonNullableModule jsonNullableModule() {
-    return new JsonNullableModule();
   }
 }
