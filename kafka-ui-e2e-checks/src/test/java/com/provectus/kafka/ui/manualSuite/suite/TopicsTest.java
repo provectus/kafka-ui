@@ -34,68 +34,62 @@ public class TopicsTest extends BaseManualTest {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(46)
+    @QaseId(47)
     @Test
     public void testCaseE() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(47)
+    @QaseId(48)
     @Test
     public void testCaseF() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(48)
+    @QaseId(49)
     @Test
     public void testCaseG() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(49)
+    @QaseId(50)
     @Test
     public void testCaseH() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(50)
+    @QaseId(57)
     @Test
     public void testCaseI() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(57)
+    @QaseId(58)
     @Test
     public void testCaseJ() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(58)
+    @QaseId(269)
     @Test
     public void testCaseK() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(269)
+    @QaseId(270)
     @Test
     public void testCaseL() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(270)
+    @QaseId(271)
     @Test
     public void testCaseM() {
     }
 
     @Automation(state = NOT_AUTOMATED)
-    @QaseId(271)
-    @Test
-    public void testCaseN() {
-    }
-
-    @Automation(state = NOT_AUTOMATED)
     @QaseId(272)
     @Test
-    public void testCaseO() {
+    public void testCaseN() {
     }
 }

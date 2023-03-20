@@ -1,13 +1,20 @@
 import styled, { css } from 'styled-components';
 
-export const ExpaderButton = styled.svg<{ $disabled: boolean }>(
-  ({ theme: { table }, $disabled }) => css`
+export const ExpaderButton = styled.svg<{
+  $disabled: boolean;
+  getIsExpanded: boolean;
+}>(
+  ({ theme: { table }, $disabled, getIsExpanded }) => css`
     & > path {
-      fill: ${table.expander[$disabled ? 'disabled' : 'normal']};
+      fill: ${table.expander[
+        ($disabled && 'disabled') || (getIsExpanded && 'active') || 'normal'
+      ]};
     }
-
     &:hover > path {
       fill: ${table.expander[$disabled ? 'disabled' : 'hover']};
+    }
+    &:active > path {
+      fill: ${table.expander[$disabled ? 'disabled' : 'active']};
     }
   `
 );
@@ -138,7 +145,7 @@ export const Table = styled.table(
   width: 100%;
 
   td {
-    border-top: 1px #f1f2f3 solid;
+    border-top: 1px ${table.td.borderTop} solid;
     font-size: 14px;
     font-weight: 400;
     padding: 8px 8px 8px 24px;
@@ -147,7 +154,7 @@ export const Table = styled.table(
     word-wrap: break-word;
 
     & a {
-      color: ${table.link.color.normal};
+      color: ${table.td.color.normal};
       font-weight: 500;
       max-width: 450px;
       white-space: nowrap;
@@ -162,6 +169,10 @@ export const Table = styled.table(
       &:active {
         color: ${table.link.color.active};
       }
+      &:button {
+      color: ${table.link.color.active};
+      }
+
     }
   }
 `
@@ -192,6 +203,7 @@ export const GoToPage = styled.label`
   flex-wrap: nowrap;
   gap: 8px;
   margin-left: 8px;
+  color: ${({ theme }) => theme.table.pagination.info};
 `;
 
 export const PageInfo = styled.div`
@@ -202,6 +214,7 @@ export const PageInfo = styled.div`
   flex-wrap: nowrap;
   white-space: nowrap;
   margin-left: 16px;
+  color: ${({ theme }) => theme.table.pagination.info};
 `;
 
 export const Ellipsis = styled.div`

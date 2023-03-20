@@ -32,7 +32,7 @@ public class MessagesTest extends BaseTest {
             .setMessageKey(randomAlphabetic(5))
             .setMessageContent(randomAlphabetic(10));
     private static final Topic TOPIC_TO_CLEAR_AND_PURGE_MESSAGES = new Topic()
-            .setName("topic-to-clear-and-purge-messages-attribute-" + randomAlphabetic(5))
+            .setName("topic-to-clear-and-purge-messages-" + randomAlphabetic(5))
             .setMessageKey(randomAlphabetic(5))
             .setMessageContent(randomAlphabetic(10));
     private static final Topic TOPIC_FOR_CHECK_FILTERS = new Topic()
@@ -53,7 +53,7 @@ public class MessagesTest extends BaseTest {
     public void beforeClass() {
         TOPIC_LIST.addAll(List.of(TOPIC_FOR_MESSAGES, TOPIC_FOR_CHECK_FILTERS, TOPIC_TO_CLEAR_AND_PURGE_MESSAGES,
                 TOPIC_TO_RECREATE, TOPIC_FOR_CHECK_MESSAGES_COUNT));
-        TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
+        TOPIC_LIST.forEach(topic -> apiService.createTopic(topic));
         IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECK_FILTERS));
         waitUntilNewMinuteStarted();
         IntStream.range(1, 3).forEach(i -> apiService.sendMessage(TOPIC_FOR_CHECK_FILTERS));
@@ -75,8 +75,6 @@ public class MessagesTest extends BaseTest {
         softly.assertAll();
     }
 
-    @Ignore
-    @Issue("https://github.com/provectus/kafka-ui/issues/2778")
     @QaseId(19)
     @Test(priority = 2)
     public void clearMessage() {
@@ -85,12 +83,13 @@ public class MessagesTest extends BaseTest {
                 .openDetailsTab(OVERVIEW);
         int messageAmount = topicDetails.getMessageCountAmount();
         produceMessage(TOPIC_FOR_MESSAGES);
-        Assert.assertEquals(messageAmount + 1, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
+        Assert.assertEquals(topicDetails.getMessageCountAmount(), messageAmount + 1, "getMessageCountAmount()");
         topicDetails
                 .openDotMenu()
                 .clickClearMessagesMenu()
+                .clickConfirmBtnMdl()
                 .waitUntilScreenReady();
-        Assert.assertEquals(0, topicDetails.getMessageCountAmount(), "getMessageCountAmount()");
+        Assert.assertEquals(topicDetails.getMessageCountAmount(), 0, "getMessageCountAmount()");
     }
 
     @QaseId(239)

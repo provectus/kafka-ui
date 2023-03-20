@@ -11,7 +11,7 @@ export const Wrapper = styled.div`
 
 export const Number = styled.div`
   font-size: 100px;
-  color: ${({ theme }) => theme.errorPage.text};
+  color: ${({ theme }) => theme.default.color.normal};
   line-height: initial;
 `;
 

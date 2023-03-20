@@ -40,7 +40,9 @@ describe('ListItem', () => {
   });
 
   it('should renders list item with topic content open', async () => {
-    await userEvent.click(screen.getAllByRole('cell')[0].children[0]);
+    await userEvent.click(
+      screen.getByRole('cell', { name: 'cluster1' }).children[0].children[0]
+    );
     expect(screen.getByText('Consumer ID')).toBeInTheDocument();
   });
 });

@@ -17,10 +17,11 @@ export interface SelectProps {
   placeholder?: string;
   disabled?: boolean;
   onChange?: (option: string | number) => void;
+  isThemeMode?: boolean;
 }
 
 export interface SelectOption {
-  label: string | number;
+  label: string | number | React.ReactElement;
   value: string | number;
   disabled?: boolean;
   isLive?: boolean;
@@ -35,6 +36,7 @@ const Select: React.FC<SelectProps> = ({
   isLive,
   disabled = false,
   onChange,
+  isThemeMode,
   ...props
 }) => {
   const [selectedOption, setSelectedOption] = useState(value);
@@ -73,14 +75,21 @@ const Select: React.FC<SelectProps> = ({
         disabled={disabled}
         onClick={showOptionsHandler}
         onKeyDown={showOptionsHandler}
+        isThemeMode={isThemeMode}
         {...props}
       >
-        {isLive && <LiveIcon />}
-        <S.SelectedOption role="option" tabIndex={0}>
-          {options.find(
-            (option) => option.value === (defaultValue || selectedOption)
-          )?.label || placeholder}
-        </S.SelectedOption>
+        <S.SelectedOptionWrapper>
+          {isLive && <LiveIcon />}
+          <S.SelectedOption
+            role="option"
+            tabIndex={0}
+            isThemeMode={isThemeMode}
+          >
+            {options.find(
+              (option) => option.value === (defaultValue || selectedOption)
+            )?.label || placeholder}
+          </S.SelectedOption>
+        </S.SelectedOptionWrapper>
         {showOptions && (
           <S.OptionList>
             {options?.map((option) => (

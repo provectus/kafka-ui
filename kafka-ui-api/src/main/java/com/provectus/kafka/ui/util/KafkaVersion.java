@@ -1,11 +1,12 @@
 package com.provectus.kafka.ui.util;
 
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
-@UtilityClass
 @Slf4j
-public class KafkaVersion {
+public final class KafkaVersion {
+
+  private KafkaVersion() {
+  }
 
   public static float parse(String version) throws NumberFormatException {
     log.trace("Parsing cluster version [{}]", version);

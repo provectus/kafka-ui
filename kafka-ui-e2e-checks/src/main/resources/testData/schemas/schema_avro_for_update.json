@@ -5,19 +5,12 @@
   "fields": [
     {
       "name": "text",
-      "type": [
-        "null",
-        "string"
-      ],
+      "type": "string",
       "default": null
     },
     {
       "name": "value",
-      "type": [
-        "null",
-        "string",
-        "long"
-      ],
+      "type": "string",
       "default": null
     }
   ]
