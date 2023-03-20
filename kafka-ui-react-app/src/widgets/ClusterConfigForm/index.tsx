@@ -46,8 +46,9 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
     },
   });
   const {
-    formState: { isSubmitting, isDirty },
+    formState: { isSubmitting, isDirty, errors },
     trigger,
+    setFocus,
   } = methods;
 
   const validate = useValidateAppConfig();
@@ -74,9 +75,44 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
 
   const onReset = () => methods.reset();
 
+  const focusOnValidation = () => {
+    if (!errors) {
+      return;
+    }
+
+    const firstError = Object.keys(errors)[0] as keyof ClusterConfigFormValues;
+    const entry = {
+      key: firstError,
+      value: errors[firstError],
+    };
+
+    if (entry.value) {
+      const { key, value } = entry;
+      if (Array.isArray(value)) {
+        const indexKey = Number(Object.keys(value));
+        const [entryValueErrorKey] = Object.keys(value[indexKey]);
+        const keyToFocus =
+          `${key}.${indexKey}.${entryValueErrorKey}` as keyof ClusterConfigFormValues;
+        setFocus(keyToFocus);
+      } else {
+        const entryValueErrorKey = Object.keys(value)[0];
+        if (entryValueErrorKey === 'message') {
+          setFocus(key);
+        } else {
+          const keyToFocus =
+            `${key}.${entryValueErrorKey}` as keyof ClusterConfigFormValues;
+          setFocus(keyToFocus);
+        }
+      }
+    }
+  };
+
   const onValidate = async () => {
     await trigger();
-    if (!methods.formState.isValid) return;
+    if (!methods.formState.isValid) {
+      focusOnValidation();
+      return;
+    }
     disableForm();
     const data = methods.getValues();
     const config = transformFormDataToPayload(data);
