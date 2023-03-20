@@ -3453,6 +3453,8 @@ components:
               properties:
                 adminClientTimeout:
                   type: integer
+                internalTopicPrefix:
+                  type: string
                 clusters:
                   type: array
                   items:
