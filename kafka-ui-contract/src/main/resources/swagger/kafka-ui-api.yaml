@@ -3451,6 +3451,15 @@ components:
             kafka:
               type: object
               properties:
+                polling:
+                  type: object
+                  properties:
+                    pollTimeoutMs:
+                      type: integer
+                    partitionPollTimeout:
+                      type: integer
+                    noDataEmptyPolls:
+                      type: integer
                 adminClientTimeout:
                   type: integer
                 internalTopicPrefix:

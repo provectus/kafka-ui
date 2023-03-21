@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.client.RetryingKafkaConnectClient;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.config.WebclientProperties;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
+import com.provectus.kafka.ui.emitter.PollingSettings;
 import com.provectus.kafka.ui.model.ApplicationPropertyValidationDTO;
 import com.provectus.kafka.ui.model.ClusterConfigValidationDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -13,7 +14,6 @@ import com.provectus.kafka.ui.service.masking.DataMasking;
 import com.provectus.kafka.ui.sr.ApiClient;
 import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
 import com.provectus.kafka.ui.util.KafkaServicesValidation;
-import com.provectus.kafka.ui.util.PollingThrottler;
 import com.provectus.kafka.ui.util.ReactiveFailover;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
 import java.util.HashMap;
@@ -46,7 +46,8 @@ public class KafkaClusterFactory {
         .orElse(DEFAULT_WEBCLIENT_BUFFER);
   }
 
-  public KafkaCluster create(ClustersProperties.Cluster clusterProperties) {
+  public KafkaCluster create(ClustersProperties properties,
+                             ClustersProperties.Cluster clusterProperties) {
     KafkaCluster.KafkaClusterBuilder builder = KafkaCluster.builder();
 
     builder.name(clusterProperties.getName());
@@ -54,7 +55,7 @@ public class KafkaClusterFactory {
     builder.properties(convertProperties(clusterProperties.getProperties()));
     builder.readOnly(clusterProperties.isReadOnly());
     builder.masking(DataMasking.create(clusterProperties.getMasking()));
-    builder.throttler(PollingThrottler.throttlerSupplier(clusterProperties));
+    builder.pollingSettings(PollingSettings.create(clusterProperties, properties));
 
     if (schemaRegistryConfigured(clusterProperties)) {
       builder.schemaRegistryClient(schemaRegistryClient(clusterProperties));

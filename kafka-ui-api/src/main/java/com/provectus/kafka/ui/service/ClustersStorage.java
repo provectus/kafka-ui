@@ -14,7 +14,7 @@ public class ClustersStorage {
 
   public ClustersStorage(ClustersProperties properties, KafkaClusterFactory factory) {
     var builder = ImmutableMap.<String, KafkaCluster>builder();
-    properties.getClusters().forEach(c -> builder.put(c.getName(), factory.create(c)));
+    properties.getClusters().forEach(c -> builder.put(c.getName(), factory.create(properties, c)));
     this.kafkaClusters = builder.build();
   }
 

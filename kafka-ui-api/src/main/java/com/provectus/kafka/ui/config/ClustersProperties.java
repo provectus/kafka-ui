@@ -29,6 +29,8 @@ public class ClustersProperties {
 
   Integer adminClientTimeout;
 
+  PollingProperties polling = new PollingProperties();
+
   @Data
   public static class Cluster {
     String name;
@@ -49,6 +51,13 @@ public class ClustersProperties {
     List<Masking> masking;
     Long pollingThrottleRate;
     TruststoreConfig ssl;
+  }
+
+  @Data
+  public static class PollingProperties {
+    Integer pollTimeoutMs;
+    Integer partitionPollTimeout;
+    Integer noDataEmptyPolls;
   }
 
   @Data
