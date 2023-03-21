@@ -20,7 +20,7 @@ const sslSchema = lazy((value) => {
         is: (v: string) => !!v,
         then: (schema) => schema.required('required field'),
       }),
-      password: string().required('required field'),
+      password: string(),
     });
   }
   return mixed().optional();
