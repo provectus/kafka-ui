@@ -744,6 +744,121 @@ paths:
         404:
           description: Not found
 
+  /api/clusters/{clusterName}/topics/{topicName}/smartfilters:
+    post:
+      tags:
+        - Messages
+      summary: registerFilter
+      operationId: registerFilter
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageFilterRegistration'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageFilterId'
+
+
+  /api/clusters/{clusterName}/topics/{topicName}/messages/v2:
+    get:
+      tags:
+        - Messages
+      summary: getTopicMessagesV2
+      operationId: getTopicMessagesV2
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: m
+          in: query
+          description: Messages polling mode
+          schema:
+            $ref: "#/components/schemas/PollingMode"
+        - name: p
+          in: query
+          schema:
+            type: array
+            description: List of target partitions( all partitions if not provided)
+            items:
+              type: integer
+        - name: lim
+          in: query
+          description: Max number of messages can be returned
+          schema:
+            type: integer
+        - name: q
+          in: query
+          description: query string to contains string filtration
+          schema:
+            type: string
+        - name: fid
+          in: query
+          description: filter id, that was registered beforehand
+          schema:
+            type: string
+        - name: off
+          in: query
+          description: offset to read from / to
+          schema:
+            type: integer
+            format: int64
+        - name: offs
+          in: query
+          description: partition offsets to read from / to. Format is "p1:off1,p2:off2,..."
+          schema:
+            type: integer
+            format: int64
+        - name: ts
+          in: query
+          description: timestamp (in ms) to read from / to
+          schema:
+            type: integer
+            format: int64
+        - name: ks
+          in: query
+          description: "Serde that should be used for deserialization. Will be chosen automatically if not set."
+          schema:
+            type: string
+        - name: vs
+          in: query
+          description: "Serde that should be used for deserialization. Will be chosen automatically if not set."
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/event-stream:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicMessageEvent'
+
   /api/clusters/{clusterName}/topics/{topicName}/consumer-groups:
     get:
       tags:
@@ -2568,6 +2683,29 @@ components:
         - OFFSET
         - TIMESTAMP
         - LATEST
+
+    MessageFilterRegistration:
+      type: object
+      properties:
+        filterCode:
+          type: string
+
+    MessageFilterId:
+      type: object
+      properties:
+        id:
+          type: string
+
+    PollingMode:
+      type: string
+      enum:
+        - FROM_OFFSET
+        - TO_OFFSET
+        - FROM_TIMESTAMP
+        - TO_TIMESTAMP
+        - LATEST
+        - FIRST
+        - TAILING
 
     MessageFilterType:
       type: string
