@@ -3587,6 +3587,15 @@ components:
             kafka:
               type: object
               properties:
+                polling:
+                  type: object
+                  properties:
+                    pollTimeoutMs:
+                      type: integer
+                    partitionPollTimeout:
+                      type: integer
+                    noDataEmptyPolls:
+                      type: integer
                 clusters:
                   type: array
                   items:

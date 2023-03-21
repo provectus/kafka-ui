@@ -5,6 +5,7 @@ import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.MessageFilterStats;
 import com.provectus.kafka.ui.emitter.MessageFilters;
+import com.provectus.kafka.ui.emitter.ResultSizeLimiter;
 import com.provectus.kafka.ui.emitter.TailingEmitter;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
@@ -18,7 +19,6 @@ import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
-import com.provectus.kafka.ui.util.ResultSizeLimiter;
 import com.provectus.kafka.ui.util.SslPropertiesUtil;
 import java.util.List;
 import java.util.Map;
@@ -170,7 +170,7 @@ public class MessagesService {
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
           recordDeserializer,
-          cluster.getThrottler().get()
+          cluster.getPollingSettings()
       );
     } else if (seekDirection.equals(SeekDirectionDTO.BACKWARD)) {
       emitter = new BackwardRecordEmitter(
@@ -178,14 +178,14 @@ public class MessagesService {
           consumerPosition,
           limit,
           recordDeserializer,
-          cluster.getThrottler().get()
+          cluster.getPollingSettings()
       );
     } else {
       emitter = new TailingEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
           recordDeserializer,
-          cluster.getThrottler().get()
+          cluster.getPollingSettings()
       );
     }
     MessageFilterStats filterStats = new MessageFilterStats();
