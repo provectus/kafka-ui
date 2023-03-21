@@ -22,7 +22,7 @@ import org.testng.asserts.SoftAssert;
 import java.time.Duration;
 import java.util.List;
 
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.*;
+import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.*;
 import static com.provectus.kafka.ui.settings.BaseSource.*;
 import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.*;
 import static com.provectus.kafka.ui.utilities.qaseUtils.QaseSetup.qaseIntegrationSetup;
@@ -108,12 +108,23 @@ public abstract class BaseTest extends Facade {
     public void afterMethod() {
         browserClear();
     }
-    
+
     @Step
     protected void navigateToBrokers() {
         naviSideBar
                 .openSideMenu(BROKERS);
         brokersList
+                .waitUntilScreenReady();
+    }
+
+    @Step
+    protected void navigateToBrokersAndOpenDetails(int brokerId) {
+        naviSideBar
+                .openSideMenu(BROKERS);
+        brokersList
+                .waitUntilScreenReady()
+                .openBroker(brokerId);
+        brokersDetails
                 .waitUntilScreenReady();
     }
 
@@ -135,7 +146,7 @@ public abstract class BaseTest extends Facade {
         topicDetails
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToConsumers() {
         naviSideBar
@@ -143,7 +154,7 @@ public abstract class BaseTest extends Facade {
         consumersList
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToSchemaRegistry() {
         naviSideBar
@@ -151,7 +162,7 @@ public abstract class BaseTest extends Facade {
         schemaRegistryList
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToSchemaRegistryAndOpenDetails(String schemaName) {
         navigateToSchemaRegistry();
@@ -160,7 +171,7 @@ public abstract class BaseTest extends Facade {
         schemaDetails
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToConnectors() {
         naviSideBar
@@ -168,7 +179,7 @@ public abstract class BaseTest extends Facade {
         kafkaConnectList
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToConnectorsAndOpenDetails(String connectorName) {
         navigateToConnectors();
@@ -177,7 +188,7 @@ public abstract class BaseTest extends Facade {
         connectorDetails
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void navigateToKsqlDb() {
         naviSideBar
@@ -185,7 +196,7 @@ public abstract class BaseTest extends Facade {
         ksqlDbList
                 .waitUntilScreenReady();
     }
-    
+
     @Step
     protected void verifyElementsCondition(List<SelenideElement> elementList, Condition expectedCondition) {
         SoftAssert softly = new SoftAssert();

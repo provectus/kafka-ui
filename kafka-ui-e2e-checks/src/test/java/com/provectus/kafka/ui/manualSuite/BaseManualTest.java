@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 
 import static com.provectus.kafka.ui.utilities.qaseUtils.QaseSetup.qaseIntegrationSetup;
 import static com.provectus.kafka.ui.utilities.qaseUtils.enums.State.NOT_AUTOMATED;
+import static com.provectus.kafka.ui.utilities.qaseUtils.enums.State.TO_BE_AUTOMATED;
 
 @Listeners(QaseResultListener.class)
 public abstract class BaseManualTest {
@@ -22,7 +23,8 @@ public abstract class BaseManualTest {
 
     @BeforeMethod
     public void beforeMethod(Method method) {
-        if (method.getAnnotation(Automation.class).state().equals(NOT_AUTOMATED))
+        if (method.getAnnotation(Automation.class).state().equals(NOT_AUTOMATED)
+                || method.getAnnotation(Automation.class).state().equals(TO_BE_AUTOMATED))
             throw new SkipException("Skip test exception");
     }
 }

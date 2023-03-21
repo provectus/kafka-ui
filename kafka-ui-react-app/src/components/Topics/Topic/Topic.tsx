@@ -21,14 +21,12 @@ import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import { Dropdown, DropdownItemHint } from 'components/common/Dropdown';
 import {
+  useClearTopicMessages,
   useDeleteTopic,
   useRecreateTopic,
   useTopicDetails,
 } from 'lib/hooks/api/topics';
-import {
-  clearTopicMessages,
-  resetTopicMessages,
-} from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { resetTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { Action, CleanUpPolicy, ResourceType } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import SlidingSidebar from 'components/common/SlidingSidebar';
@@ -69,9 +67,11 @@ const Topic: React.FC = () => {
       dispatch(resetTopicMessages());
     };
   }, []);
-
+  const clearMessages = useClearTopicMessages(clusterName);
+  const clearTopicMessagesHandler = async () => {
+    await clearMessages.mutateAsync(topicName);
+  };
   const canCleanup = data?.cleanUpPolicy === CleanUpPolicy.DELETE;
-
   return (
     <>
       <PageHeading
@@ -110,9 +110,7 @@ const Topic: React.FC = () => {
           </ActionDropdownItem>
 
           <ActionDropdownItem
-            onClick={() =>
-              dispatch(clearTopicMessages({ clusterName, topicName })).unwrap()
-            }
+            onClick={clearTopicMessagesHandler}
             confirm="Are you sure want to clear topic messages?"
             disabled={!canCleanup}
             danger
