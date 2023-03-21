@@ -131,7 +131,7 @@ const SendMessage: React.FC<{ closeSidebar: () => void }> = ({
     <S.Wrapper>
       <form onSubmit={handleSubmit(submit)}>
         <S.Columns>
-          <S.Column>
+          <S.FlexItem>
             <InputLabel>Partition</InputLabel>
             <Controller
               control={control}
@@ -148,45 +148,46 @@ const SendMessage: React.FC<{ closeSidebar: () => void }> = ({
                 />
               )}
             />
-          </S.Column>
-          <S.Column>
-            <InputLabel>Key Serde</InputLabel>
-            <Controller
-              control={control}
-              name="keySerde"
-              render={({ field: { name, onChange, value } }) => (
-                <Select
-                  id="selectKeySerdeOptions"
-                  aria-labelledby="selectKeySerdeOptions"
-                  name={name}
-                  onChange={onChange}
-                  minWidth="100%"
-                  options={getSerdeOptions(serdes.key || [])}
-                  value={value}
-                />
-              )}
-            />
-          </S.Column>
-          <S.Column>
-            <InputLabel>Value Serde</InputLabel>
-            <Controller
-              control={control}
-              name="valueSerde"
-              render={({ field: { name, onChange, value } }) => (
-                <Select
-                  id="selectValueSerdeOptions"
-                  aria-labelledby="selectValueSerdeOptions"
-                  name={name}
-                  onChange={onChange}
-                  minWidth="100%"
-                  options={getSerdeOptions(serdes.value || [])}
-                  value={value}
-                />
-              )}
-            />
-          </S.Column>
-          <S.Column>
-            <InputLabel>Keep the contents</InputLabel>
+          </S.FlexItem>
+          <S.Flex>
+            <S.FlexItem>
+              <InputLabel>Key Serde</InputLabel>
+              <Controller
+                control={control}
+                name="keySerde"
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    id="selectKeySerdeOptions"
+                    aria-labelledby="selectKeySerdeOptions"
+                    name={name}
+                    onChange={onChange}
+                    minWidth="100%"
+                    options={getSerdeOptions(serdes.key || [])}
+                    value={value}
+                  />
+                )}
+              />
+            </S.FlexItem>
+            <S.FlexItem>
+              <InputLabel>Value Serde</InputLabel>
+              <Controller
+                control={control}
+                name="valueSerde"
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    id="selectValueSerdeOptions"
+                    aria-labelledby="selectValueSerdeOptions"
+                    name={name}
+                    onChange={onChange}
+                    minWidth="100%"
+                    options={getSerdeOptions(serdes.value || [])}
+                    value={value}
+                  />
+                )}
+              />
+            </S.FlexItem>
+          </S.Flex>
+          <div>
             <Controller
               control={control}
               name="keepContents"
@@ -194,11 +195,11 @@ const SendMessage: React.FC<{ closeSidebar: () => void }> = ({
                 <Switch name={name} onChange={onChange} checked={value} />
               )}
             />
-          </S.Column>
+            <InputLabel>Keep contents</InputLabel>
+          </div>
         </S.Columns>
-
         <S.Columns>
-          <S.Column>
+          <div>
             <InputLabel>Key</InputLabel>
             <Controller
               control={control}
@@ -212,8 +213,8 @@ const SendMessage: React.FC<{ closeSidebar: () => void }> = ({
                 />
               )}
             />
-          </S.Column>
-          <S.Column>
+          </div>
+          <div>
             <InputLabel>Value</InputLabel>
             <Controller
               control={control}
@@ -227,10 +228,10 @@ const SendMessage: React.FC<{ closeSidebar: () => void }> = ({
                 />
               )}
             />
-          </S.Column>
+          </div>
         </S.Columns>
         <S.Columns>
-          <S.Column>
+          <div>
             <InputLabel>Headers</InputLabel>
             <Controller
               control={control}
@@ -245,7 +246,7 @@ const SendMessage: React.FC<{ closeSidebar: () => void }> = ({
                 />
               )}
             />
-          </S.Column>
+          </div>
         </S.Columns>
         <Button
           buttonSize="M"
