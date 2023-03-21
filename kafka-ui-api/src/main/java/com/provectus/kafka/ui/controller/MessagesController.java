@@ -11,7 +11,10 @@ import com.provectus.kafka.ui.api.MessagesApi;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
+import com.provectus.kafka.ui.model.MessageFilterIdDTO;
+import com.provectus.kafka.ui.model.MessageFilterRegistrationDTO;
 import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
+import com.provectus.kafka.ui.model.PollingModeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.SerdeUsageDTO;
@@ -70,6 +73,7 @@ public class MessagesController extends AbstractController implements MessagesAp
     );
   }
 
+  @Deprecated
   @Override
   public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> getTopicMessages(String clusterName,
                                                                            String topicName,
@@ -181,5 +185,51 @@ public class MessagesController extends AbstractController implements MessagesAp
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok)
     );
+  }
+
+
+  @Override
+  public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> getTopicMessagesV2(String clusterName, String topicName,
+                                                                             PollingModeDTO mode,
+                                                                             @Nullable List<Integer> partitions,
+                                                                             @Nullable Integer limit,
+                                                                             @Nullable String query,
+                                                                             @Nullable String filterId,
+                                                                             @Nullable String offsetString,
+                                                                             @Nullable Long ts,
+                                                                             @Nullable String ks,
+                                                                             @Nullable String vs,
+                                                                             ServerWebExchange exchange) {
+    final Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+        .cluster(clusterName)
+        .topic(topicName)
+        .topicActions(MESSAGES_READ)
+        .build());
+
+    int recordsLimit =
+        Optional.ofNullable(limit).map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT)).orElse(DEFAULT_LOAD_RECORD_LIMIT);
+
+    return validateAccess.then(
+        Mono.just(
+            ResponseEntity.ok(
+                messagesService.loadMessagesV2(
+                    getCluster(clusterName), topicName, positions, q, filterQueryType,
+                    recordsLimit, seekDirection, keySerde, valueSerde)
+            )
+        )
+    );
+  }
+
+   interface PollingMode {
+    static PollingMode create(PollingModeDTO mode, @Nullable String offsetString, @Nullable Long timestamp) {
+      return null;
+    }
+  }
+
+  @Override
+  public Mono<ResponseEntity<Flux<MessageFilterIdDTO>>> registerFilter(String clusterName, String topicName,
+                                                                       Mono<MessageFilterRegistrationDTO> messageFilterRegistrationDTO,
+                                                                       ServerWebExchange exchange) {
+    return null;
   }
 }

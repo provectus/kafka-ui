@@ -12,6 +12,7 @@ import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
+import com.provectus.kafka.ui.model.PollingModeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.api.Serde;
@@ -160,6 +161,66 @@ public class MessagesService {
                                                       SeekDirectionDTO seekDirection,
                                                       @Nullable String keySerde,
                                                       @Nullable String valueSerde) {
+
+    java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
+    ConsumerRecordDeserializer recordDeserializer =
+        deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde);
+    if (seekDirection.equals(SeekDirectionDTO.FORWARD)) {
+      emitter = new ForwardRecordEmitter(
+          () -> consumerGroupService.createConsumer(cluster),
+          consumerPosition,
+          recordDeserializer,
+          cluster.getThrottler().get()
+      );
+    } else if (seekDirection.equals(SeekDirectionDTO.BACKWARD)) {
+      emitter = new BackwardRecordEmitter(
+          () -> consumerGroupService.createConsumer(cluster),
+          consumerPosition,
+          limit,
+          recordDeserializer,
+          cluster.getThrottler().get()
+      );
+    } else {
+      emitter = new TailingEmitter(
+          () -> consumerGroupService.createConsumer(cluster),
+          consumerPosition,
+          recordDeserializer,
+          cluster.getThrottler().get()
+      );
+    }
+    MessageFilterStats filterStats = new MessageFilterStats();
+    return Flux.create(emitter)
+        .contextWrite(ctx -> ctx.put(MessageFilterStats.class, filterStats))
+        .filter(getMsgFilter(query, filterQueryType, filterStats))
+        .map(getDataMasker(cluster, topic))
+        .takeWhile(createTakeWhilePredicate(seekDirection, limit))
+        .map(throttleUiPublish(seekDirection));
+  }
+
+  public Flux<TopicMessageEventDTO> loadMessagesV2(KafkaCluster cluster,
+                                                   String topic,
+                                                   PollingModeDTO pollingMode,
+                                                   @Nullable String query,
+                                                   @Nullable String filterId,
+                                                   int limit,
+                                                   @Nullable String keySerde,
+                                                   @Nullable String valueSerde) {
+    return withExistingTopic(cluster, topic)
+        .flux()
+        .publishOn(Schedulers.boundedElastic())
+        .flatMap(td -> loadMessagesImplV2(cluster, topic, consumerPosition, query,
+            filterQueryType, limit, seekDirection, keySerde, valueSerde));
+  }
+
+  private Flux<TopicMessageEventDTO> loadMessagesImplV2(KafkaCluster cluster,
+                                                        String topic,
+                                                        ConsumerPosition consumerPosition,
+                                                        @Nullable String query,
+                                                        MessageFilterTypeDTO filterQueryType,
+                                                        int limit,
+                                                        SeekDirectionDTO seekDirection,
+                                                        @Nullable String keySerde,
+                                                        @Nullable String valueSerde) {
 
     java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
     ConsumerRecordDeserializer recordDeserializer =
