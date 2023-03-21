@@ -15,11 +15,13 @@ import org.apache.kafka.common.TopicPartition;
 @Data
 @Builder(toBuilder = true)
 public class InternalConsumerGroup {
+  private final ConsumerGroupDescription description;
   private final String groupId;
   private final boolean simple;
   private final Collection<InternalMember> members;
   private final Map<TopicPartition, Long> offsets;
   private final Map<TopicPartition, Long> endOffsets;
+  private final Long messagesBehind;
   private final String partitionAssignor;
   private final ConsumerGroupState state;
   private final Node coordinator;
@@ -39,6 +41,7 @@ public class InternalConsumerGroup {
       Map<TopicPartition, Long> groupOffsets,
       Map<TopicPartition, Long> topicEndOffsets) {
     var builder = InternalConsumerGroup.builder();
+    builder.description(description);
     builder.groupId(description.groupId());
     builder.simple(description.isSimpleConsumerGroup());
     builder.state(description.state());
@@ -58,7 +61,25 @@ public class InternalConsumerGroup {
     );
     builder.offsets(groupOffsets);
     builder.endOffsets(topicEndOffsets);
+    builder.messagesBehind(setMessagesBehind(groupOffsets, topicEndOffsets));
     Optional.ofNullable(description.coordinator()).ifPresent(builder::coordinator);
     return builder.build();
   }
+
+  private static Long setMessagesBehind(Map<TopicPartition, Long> offsets, Map<TopicPartition, Long> endOffsets) {
+    Long messagesBehind = null;
+    // messagesBehind should be undefined if no committed offsets found for topic
+    if (!offsets.isEmpty()) {
+      messagesBehind = offsets.entrySet().stream()
+          .mapToLong(e ->
+              Optional.ofNullable(endOffsets)
+                  .map(o -> o.get(e.getKey()))
+                  .map(o -> o - e.getValue())
+                  .orElse(0L)
+          ).sum();
+    }
+
+    return messagesBehind;
+  }
+
 }

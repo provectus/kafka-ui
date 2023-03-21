@@ -68,9 +68,9 @@ const List: React.FC<Props> = ({ consumerGroups, totalPages }) => {
         enableSorting: false,
       },
       {
+        id: ConsumerGroupOrdering.BEHIND,
         header: 'Messages Behind',
         accessorKey: 'messagesBehind',
-        enableSorting: false,
       },
       {
         header: 'Coordinator',

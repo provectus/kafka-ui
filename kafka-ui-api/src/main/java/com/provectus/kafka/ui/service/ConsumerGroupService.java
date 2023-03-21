@@ -157,6 +157,19 @@ public class ConsumerGroupService {
             .map(descriptions ->
                 sortAndPaginate(descriptions.values(), comparator, pageNum, perPage, sortOrderDto).toList());
       }
+      case BEHIND -> {
+        Comparator<InternalConsumerGroup> comparator = Comparator.comparingLong(icg ->
+            icg.getMessagesBehind() == null ? 0L : icg.getMessagesBehind());
+        var groupNames = groups.stream().map(ConsumerGroupListing::groupId).toList();
+        yield ac.describeConsumerGroups(groupNames)
+              .flatMap(descriptionsMap ->
+                  getConsumerGroups(ac, descriptionsMap.values().stream().toList())
+                    .map(internalGroups ->
+                      sortAndPaginate(internalGroups, comparator, pageNum, perPage, sortOrderDto).toList())
+                    .map(internalGroups ->
+                      internalGroups.stream().map(InternalConsumerGroup::getDescription).toList())
+              );
+      }
     };
   }
 
