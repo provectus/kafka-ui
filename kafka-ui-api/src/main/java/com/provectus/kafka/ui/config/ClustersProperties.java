@@ -25,6 +25,8 @@ public class ClustersProperties {
 
   List<Cluster> clusters = new ArrayList<>();
 
+  String internalTopicPrefix;
+
   @Data
   public static class Cluster {
     String name;
