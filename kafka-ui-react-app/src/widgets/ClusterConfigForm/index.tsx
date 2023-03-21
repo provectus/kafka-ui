@@ -76,9 +76,7 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
 
   const onValidate = async () => {
     await trigger(undefined, { shouldFocus: true });
-    if (!methods.formState.isValid) {
-      return;
-    }
+    if (!methods.formState.isValid) return;
     disableForm();
     const data = methods.getValues();
     const config = transformFormDataToPayload(data);
