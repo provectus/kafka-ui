@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
-import com.provectus.kafka.ui.util.PollingThrottler;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -25,8 +24,8 @@ public class ForwardRecordEmitter
       Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
       ConsumerPosition position,
       ConsumerRecordDeserializer recordDeserializer,
-      PollingThrottler throttler) {
-    super(recordDeserializer, throttler);
+      PollingSettings pollingSettings) {
+    super(recordDeserializer, pollingSettings);
     this.position = position;
     this.consumerSupplier = consumerSupplier;
   }
@@ -39,16 +38,16 @@ public class ForwardRecordEmitter
       var seekOperations = SeekOperations.create(consumer, position);
       seekOperations.assignAndSeekNonEmptyPartitions();
 
-      // we use empty polls counting to verify that topic was fully read
-      int emptyPolls = 0;
+      EmptyPollsCounter emptyPolls = pollingSettings.createEmptyPollsCounter();
       while (!sink.isCancelled()
           && !seekOperations.assignedPartitionsFullyPolled()
-          && emptyPolls < NO_MORE_DATA_EMPTY_POLLS_COUNT) {
+          && !emptyPolls.noDataEmptyPollsReached()) {
 
         sendPhase(sink, "Polling");
         ConsumerRecords<Bytes, Bytes> records = poll(sink, consumer);
+        emptyPolls.count(records);
+
         log.debug("{} records polled", records.count());
-        emptyPolls = records.isEmpty() ? emptyPolls + 1 : 0;
 
         for (ConsumerRecord<Bytes, Bytes> msg : records) {
           if (!sink.isCancelled()) {
