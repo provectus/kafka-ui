@@ -797,6 +797,7 @@ paths:
         - name: m
           in: query
           description: Messages polling mode
+          required: true
           schema:
             $ref: "#/components/schemas/PollingMode"
         - name: p
@@ -821,18 +822,11 @@ paths:
           description: filter id, that was registered beforehand
           schema:
             type: string
-        - name: off
-          in: query
-          description: offset to read from / to
-          schema:
-            type: integer
-            format: int64
         - name: offs
           in: query
           description: partition offsets to read from / to. Format is "p1:off1,p2:off2,..."
           schema:
-            type: integer
-            format: int64
+            type: string
         - name: ts
           in: query
           description: timestamp (in ms) to read from / to
@@ -2576,6 +2570,7 @@ components:
             - MESSAGE
             - CONSUMING
             - DONE
+            - CURSOR
             - EMIT_THROTTLING
         message:
           $ref: "#/components/schemas/TopicMessage"
@@ -2583,6 +2578,8 @@ components:
           $ref: "#/components/schemas/TopicMessagePhase"
         consuming:
           $ref: "#/components/schemas/TopicMessageConsuming"
+        cursor:
+          $ref: "#/components/schemas/TopicMessageNextPageCursor"
 
     TopicMessagePhase:
       type: object
@@ -2612,6 +2609,13 @@ components:
         filterApplyErrors:
           type: integer
 
+    TopicMessageNextPageCursor:
+      type: object
+      properties:
+        offsetsString:
+          type: string
+        pollingMode:
+          $ref: "#/components/schemas/PollingMode"
 
     TopicMessage:
       type: object
