@@ -22,7 +22,6 @@ import com.provectus.kafka.ui.util.SslPropertiesUtil;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -227,7 +226,7 @@ public class MessagesService {
   private Predicate<TopicMessageEventDTO> getMsgFilter(@Nullable String containsStrFilter,
                                                        @Nullable String filterId,
                                                        MessageFilterStats filterStats) {
-    Predicate<TopicMessageDTO> messageFilter = e -> true;
+    Predicate<TopicMessageDTO> messageFilter = MessageFilters.noop();
     if (containsStrFilter != null) {
       messageFilter = MessageFilters.containsStringFilter(containsStrFilter);
     }

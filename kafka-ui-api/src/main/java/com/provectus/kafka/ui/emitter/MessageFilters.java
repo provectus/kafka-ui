@@ -21,6 +21,10 @@ public class MessageFilters {
   private MessageFilters() {
   }
 
+  public static Predicate<TopicMessageDTO> noop() {
+    return e -> true;
+  }
+
   public static Predicate<TopicMessageDTO> containsStringFilter(String string) {
     return msg -> StringUtils.contains(msg.getKey(), string)
         || StringUtils.contains(msg.getContent(), string);
