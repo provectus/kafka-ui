@@ -31,7 +31,7 @@
         <groovy.version>3.0.13</groovy.version>
         <jackson.version>2.14.0</jackson.version>
         <jackson-databind-nullable.version>0.2.4</jackson-databind-nullable.version>
-        <kafka-clients.version>3.3.1</kafka-clients.version>
+        <kafka-clients.version>7.3.2-ce</kafka-clients.version>
         <netty.version>4.1.85.Final</netty.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.24</org.projectlombok.version>
