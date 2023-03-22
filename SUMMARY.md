@@ -32,6 +32,7 @@
   * [Kraft mode + multiple brokers](configuration/configuration/complex-configuration-examples/kraft-mode-+-multiple-brokers.md)
 * [SSL](configuration/ssl.md)
 * [Authentication](configuration/authentication/README.md)
+  * [Basic Authentication](configuration/authentication/basic-authentication.md)
   * [OAuth2](configuration/authentication/oauth2.md)
   * [AWS IAM](configuration/authentication/aws-iam.md)
   * [SSO Guide](configuration/authentication/sso-guide.md)
