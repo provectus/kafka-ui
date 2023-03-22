@@ -27,6 +27,7 @@
 * [Permissions](configuration/permissions/README.md)
   * [Required Kafka ACLs](configuration/configuration/required-acls.md)
   * [MSK (+Serverless) Setup](configuration/permissions/msk-+serverless-setup.md)
+* [Misc configuration properties](configuration/misc-configuration-properties.md)
 * [Complex configuration examples](configuration/configuration/complex-configuration-examples/README.md)
   * [Kraft mode + multiple brokers](configuration/configuration/complex-configuration-examples/kraft-mode-+-multiple-brokers.md)
 * [SSL](configuration/ssl.md)
