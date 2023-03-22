@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -54,6 +55,10 @@ public class OffsetsInfo {
       }
     }
     return true;
+  }
+
+  public Set<TopicPartition> allTargetPartitions() {
+    return Sets.union(nonEmptyPartitions, emptyPartitions);
   }
 
 }

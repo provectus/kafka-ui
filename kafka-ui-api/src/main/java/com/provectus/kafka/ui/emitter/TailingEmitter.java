@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
-import java.util.HashMap;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -30,7 +29,8 @@ public class TailingEmitter extends AbstractEmitter {
   public void accept(FluxSink<TopicMessageEventDTO> sink) {
     log.debug("Starting tailing polling for {}", consumerPosition);
     try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
-      assignAndSeek(consumer);
+      SeekOperations.create(consumer, consumerPosition)
+          .assignAndSeek();
       while (!sink.isCancelled()) {
         sendPhase(sink, "Polling");
         var polled = poll(sink, consumer);
@@ -45,14 +45,6 @@ public class TailingEmitter extends AbstractEmitter {
       log.error("Error consuming {}", consumerPosition, e);
       sink.error(e);
     }
-  }
-
-  private void assignAndSeek(KafkaConsumer<Bytes, Bytes> consumer) {
-    var seekOperations = SeekOperations.create(consumer, consumerPosition);
-    var seekOffsets = new HashMap<>(seekOperations.getEndOffsets()); // defaulting offsets to topic end
-    seekOffsets.putAll(seekOperations.getOffsetsForSeek()); // this will only set non-empty partitions
-    consumer.assign(seekOffsets.keySet());
-    seekOffsets.forEach(consumer::seek);
   }
 
 }
