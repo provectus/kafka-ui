@@ -1,44 +1,78 @@
 package com.provectus.kafka.ui.emitter;
 
+import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
+import com.provectus.kafka.ui.model.TopicMessagePhaseDTO;
+import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
+import java.time.Duration;
+import java.time.Instant;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
-abstract class AbstractEmitter implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
+public abstract class AbstractEmitter implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
 
-  private final MessagesProcessing messagesProcessing;
-  private final PollingSettings pollingSettings;
+  private final ConsumerRecordDeserializer recordDeserializer;
+  private final ConsumingStats consumingStats = new ConsumingStats();
+  private final PollingThrottler throttler;
+  protected final PollingSettings pollingSettings;
 
-  protected AbstractEmitter(MessagesProcessing messagesProcessing, PollingSettings pollingSettings) {
-    this.messagesProcessing = messagesProcessing;
+  protected AbstractEmitter(ConsumerRecordDeserializer recordDeserializer, PollingSettings pollingSettings) {
+    this.recordDeserializer = recordDeserializer;
     this.pollingSettings = pollingSettings;
+    this.throttler = pollingSettings.getPollingThrottler();
   }
 
-  protected PolledRecords poll(FluxSink<TopicMessageEventDTO> sink, EnhancedConsumer consumer) {
-    var records = consumer.pollEnhanced(pollingSettings.getPollTimeout());
-    sendConsuming(sink, records);
+  protected ConsumerRecords<Bytes, Bytes> poll(
+      FluxSink<TopicMessageEventDTO> sink, Consumer<Bytes, Bytes> consumer) {
+    return poll(sink, consumer, pollingSettings.getPollTimeout());
+  }
+
+  protected ConsumerRecords<Bytes, Bytes> poll(
+      FluxSink<TopicMessageEventDTO> sink, Consumer<Bytes, Bytes> consumer, Duration timeout) {
+    Instant start = Instant.now();
+    ConsumerRecords<Bytes, Bytes> records = consumer.poll(timeout);
+    Instant finish = Instant.now();
+    int polledBytes = sendConsuming(sink, records, Duration.between(start, finish).toMillis());
+    throttler.throttleAfterPoll(polledBytes);
     return records;
   }
 
-  protected boolean sendLimitReached() {
-    return messagesProcessing.limitReached();
-  }
-
-  protected void send(FluxSink<TopicMessageEventDTO> sink, Iterable<ConsumerRecord<Bytes, Bytes>> records) {
-    messagesProcessing.send(sink, records);
+  protected void sendMessage(FluxSink<TopicMessageEventDTO> sink,
+                                                       ConsumerRecord<Bytes, Bytes> msg) {
+    final TopicMessageDTO topicMessage = recordDeserializer.deserialize(msg);
+    sink.next(
+        new TopicMessageEventDTO()
+            .type(TopicMessageEventDTO.TypeEnum.MESSAGE)
+            .message(topicMessage)
+    );
   }
 
   protected void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {
-    messagesProcessing.sendPhase(sink, name);
+    sink.next(
+        new TopicMessageEventDTO()
+            .type(TopicMessageEventDTO.TypeEnum.PHASE)
+            .phase(new TopicMessagePhaseDTO().name(name))
+    );
   }
 
-  protected void sendConsuming(FluxSink<TopicMessageEventDTO> sink, PolledRecords records) {
-    messagesProcessing.sentConsumingInfo(sink, records);
+  protected int sendConsuming(FluxSink<TopicMessageEventDTO> sink,
+                               ConsumerRecords<Bytes, Bytes> records,
+                               long elapsed) {
+    return consumingStats.sendConsumingEvt(sink, records, elapsed, getFilterApplyErrors(sink));
   }
 
   protected void sendFinishStatsAndCompleteSink(FluxSink<TopicMessageEventDTO> sink) {
-    messagesProcessing.sendFinishEvent(sink);
+    consumingStats.sendFinishEvent(sink, getFilterApplyErrors(sink));
     sink.complete();
+  }
+
+  protected Number getFilterApplyErrors(FluxSink<?> sink) {
+    return sink.contextView()
+        .<MessageFilterStats>getOrEmpty(MessageFilterStats.class)
+        .<Number>map(MessageFilterStats::getFilterApplyErrors)
+        .orElse(0);
   }
 }

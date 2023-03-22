@@ -772,9 +772,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/MessageFilterId'
+                $ref: '#/components/schemas/MessageFilterId'
 
 
   /api/clusters/{clusterName}/topics/{topicName}/messages/v2:
@@ -804,7 +802,7 @@ paths:
           in: query
           schema:
             type: array
-            description: List of target partitions( all partitions if not provided)
+            description: List of target partitions (all partitions if not provided)
             items:
               type: integer
         - name: lim
@@ -824,7 +822,7 @@ paths:
             type: string
         - name: offs
           in: query
-          description: partition offsets to read from / to. Format is "p1:off1,p2:off2,..."
+          description: partition offsets to read from / to. Format is "p1:offset1,p2:offset2,...".
           schema:
             type: string
         - name: ts
@@ -2571,7 +2569,6 @@ components:
             - CONSUMING
             - DONE
             - CURSOR
-            - EMIT_THROTTLING
         message:
           $ref: "#/components/schemas/TopicMessage"
         phase:
@@ -2708,7 +2705,7 @@ components:
         - FROM_TIMESTAMP
         - TO_TIMESTAMP
         - LATEST
-        - FIRST
+        - EARLIEST
         - TAILING
 
     MessageFilterType:

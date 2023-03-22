@@ -2,7 +2,9 @@ package com.provectus.kafka.ui.emitter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.provectus.kafka.ui.model.SeekTypeDTO;
+import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.PollingModeDTO;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,6 +16,8 @@ import org.apache.kafka.common.utils.Bytes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class SeekOperationsTest {
 
@@ -45,8 +49,7 @@ class SeekOperationsTest {
       var offsets = SeekOperations.getOffsetsForSeek(
           consumer,
           new OffsetsInfo(consumer, topic),
-          SeekTypeDTO.LATEST,
-          null
+          new ConsumerPosition(PollingModeDTO.LATEST, topic, null, null, null)
       );
       assertThat(offsets).containsExactlyInAnyOrderEntriesOf(Map.of(tp2, 20L, tp3, 30L));
     }
@@ -56,30 +59,35 @@ class SeekOperationsTest {
       var offsets = SeekOperations.getOffsetsForSeek(
           consumer,
           new OffsetsInfo(consumer, topic),
-          SeekTypeDTO.BEGINNING,
-          null
+          new ConsumerPosition(PollingModeDTO.EARLIEST, topic, null, null, null)
       );
       assertThat(offsets).containsExactlyInAnyOrderEntriesOf(Map.of(tp2, 0L, tp3, 25L));
     }
 
-    @Test
-    void offsets() {
+    @ParameterizedTest
+    @CsvSource({"TO_OFFSET", "FROM_OFFSET"})
+    void offsets(PollingModeDTO mode) {
       var offsets = SeekOperations.getOffsetsForSeek(
           consumer,
           new OffsetsInfo(consumer, topic),
-          SeekTypeDTO.OFFSET,
-          Map.of(tp1, 10L, tp2, 10L, tp3, 26L)
+          new ConsumerPosition(
+              mode, topic, List.of(tp1, tp2, tp3), null,
+              new ConsumerPosition.Offsets(null, Map.of(tp1, 10L, tp2, 10L, tp3, 26L))
+          )
       );
       assertThat(offsets).containsExactlyInAnyOrderEntriesOf(Map.of(tp2, 10L, tp3, 26L));
     }
 
-    @Test
-    void offsetsWithBoundsFixing() {
+    @ParameterizedTest
+    @CsvSource({"TO_OFFSET", "FROM_OFFSET"})
+    void offsetsWithBoundsFixing(PollingModeDTO mode) {
       var offsets = SeekOperations.getOffsetsForSeek(
           consumer,
           new OffsetsInfo(consumer, topic),
-          SeekTypeDTO.OFFSET,
-          Map.of(tp1, 10L, tp2, 21L, tp3, 24L)
+          new ConsumerPosition(
+              mode, topic, List.of(tp1, tp2, tp3), null,
+              new ConsumerPosition.Offsets(null, Map.of(tp1, 10L, tp2, 21L, tp3, 24L))
+          )
       );
       assertThat(offsets).containsExactlyInAnyOrderEntriesOf(Map.of(tp2, 20L, tp3, 25L));
     }

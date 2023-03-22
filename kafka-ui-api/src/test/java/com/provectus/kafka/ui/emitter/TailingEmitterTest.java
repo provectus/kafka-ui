@@ -4,10 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.model.ConsumerPosition;
-import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
-import com.provectus.kafka.ui.model.SeekDirectionDTO;
-import com.provectus.kafka.ui.model.SeekTypeDTO;
+import com.provectus.kafka.ui.model.PollingModeDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
+import com.provectus.kafka.ui.serdes.builtin.StringSerde;
 import com.provectus.kafka.ui.service.ClustersStorage;
 import com.provectus.kafka.ui.service.MessagesService;
 import java.time.Duration;
@@ -110,14 +109,13 @@ class TailingEmitterTest extends AbstractIntegrationTest {
         .get();
 
     return applicationContext.getBean(MessagesService.class)
-        .loadMessages(cluster, topicName,
-            new ConsumerPosition(SeekTypeDTO.LATEST, topic, null),
+        .loadMessagesV2(cluster, topicName,
+            new ConsumerPosition(PollingModeDTO.TAILING, topic, List.of(), null, null),
             query,
-            MessageFilterTypeDTO.STRING_CONTAINS,
+            null,
             0,
-            SeekDirectionDTO.TAILING,
-            "String",
-            "String");
+            StringSerde.name(),
+            StringSerde.name());
   }
 
   private List<TopicMessageEventDTO> startTailing(String filterQuery) {
