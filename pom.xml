@@ -39,7 +39,7 @@
         <reactor-netty.version>1.1.0</reactor-netty.version>
         <scala-lang.library.version>2.13.9</scala-lang.library.version>
         <snakeyaml.version>1.33</snakeyaml.version>
-        <spring-boot.version>2.7.5</spring-boot.version>
+        <spring-boot.version>3.0.4</spring-boot.version>
         <spring-security.version>5.7.5</spring-security.version>
         <kafka-ui-serde-api.version>1.0.0</kafka-ui-serde-api.version>
         <odd-oddrn-generator.version>0.1.15</odd-oddrn-generator.version>
