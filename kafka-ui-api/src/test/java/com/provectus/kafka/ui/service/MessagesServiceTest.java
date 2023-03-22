@@ -5,8 +5,7 @@ import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.SeekDirectionDTO;
-import com.provectus.kafka.ui.model.SeekTypeDTO;
+import com.provectus.kafka.ui.model.PollingModeDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
@@ -55,7 +54,9 @@ class MessagesServiceTest extends AbstractIntegrationTest {
   @Test
   void loadMessagesReturnsExceptionWhenTopicNotFound() {
     StepVerifier.create(messagesService
-            .loadMessages(cluster, NON_EXISTING_TOPIC, null, null, null, 1, null, "String", "String"))
+            .loadMessagesV2(cluster, NON_EXISTING_TOPIC,
+                new ConsumerPosition(PollingModeDTO.TAILING, NON_EXISTING_TOPIC, List.of(), null, null),
+                null, null, 1, "String", "String"))
         .expectError(TopicNotFoundException.class)
         .verify();
   }
@@ -68,14 +69,13 @@ class MessagesServiceTest extends AbstractIntegrationTest {
       producer.send(testTopic, "message1");
       producer.send(testTopic, "message2").get();
 
-      Flux<TopicMessageDTO> msgsFlux = messagesService.loadMessages(
+      Flux<TopicMessageDTO> msgsFlux = messagesService.loadMessagesV2(
           cluster,
           testTopic,
-          new ConsumerPosition(SeekTypeDTO.BEGINNING, testTopic, null),
+          new ConsumerPosition(PollingModeDTO.EARLIEST, testTopic, List.of(), null, null),
           null,
           null,
           100,
-          SeekDirectionDTO.FORWARD,
           StringSerde.name(),
           StringSerde.name()
       ).filter(evt -> evt.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE)

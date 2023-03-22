@@ -14,8 +14,7 @@ import reactor.core.publisher.FluxSink;
 
 @Slf4j
 public class ForwardRecordEmitter
-    extends AbstractEmitter
-    implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
+    extends AbstractEmitter {
 
   private final Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier;
   private final ConsumerPosition position;

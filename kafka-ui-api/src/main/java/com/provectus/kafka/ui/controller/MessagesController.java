@@ -5,10 +5,8 @@ import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.MESSAGES_
 import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.MESSAGES_READ;
 import static com.provectus.kafka.ui.serde.api.Serde.Target.KEY;
 import static com.provectus.kafka.ui.serde.api.Serde.Target.VALUE;
-import static java.util.stream.Collectors.toMap;
 
 import com.provectus.kafka.ui.api.MessagesApi;
-import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.MessageFilterIdDTO;
@@ -26,14 +24,11 @@ import com.provectus.kafka.ui.service.DeserializationService;
 import com.provectus.kafka.ui.service.MessagesService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.kafka.common.TopicPartition;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -86,32 +81,7 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                            String keySerde,
                                                                            String valueSerde,
                                                                            ServerWebExchange exchange) {
-    final Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
-        .cluster(clusterName)
-        .topic(topicName)
-        .topicActions(MESSAGES_READ)
-        .build());
-
-    seekType = seekType != null ? seekType : SeekTypeDTO.BEGINNING;
-    seekDirection = seekDirection != null ? seekDirection : SeekDirectionDTO.FORWARD;
-    filterQueryType = filterQueryType != null ? filterQueryType : MessageFilterTypeDTO.STRING_CONTAINS;
-    int recordsLimit =
-        Optional.ofNullable(limit).map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT)).orElse(DEFAULT_LOAD_RECORD_LIMIT);
-
-    var positions = new ConsumerPosition(
-        seekType,
-        topicName,
-        parseSeekTo(topicName, seekType, seekTo)
-    );
-    Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> job = Mono.just(
-        ResponseEntity.ok(
-            messagesService.loadMessages(
-                getCluster(clusterName), topicName, positions, q, filterQueryType,
-                recordsLimit, seekDirection, keySerde, valueSerde)
-        )
-    );
-
-    return validateAccess.then(job);
+    throw new IllegalStateException();
   }
 
   @Override
@@ -130,34 +100,6 @@ public class MessagesController extends AbstractController implements MessagesAp
             messagesService.sendMessage(getCluster(clusterName), topicName, msg).then()
         ).map(ResponseEntity::ok)
     );
-  }
-
-  /**
-   * The format is [partition]::[offset] for specifying offsets
-   * or [partition]::[timestamp in millis] for specifying timestamps.
-   */
-  @Nullable
-  private Map<TopicPartition, Long> parseSeekTo(String topic, SeekTypeDTO seekType, List<String> seekTo) {
-    if (seekTo == null || seekTo.isEmpty()) {
-      if (seekType == SeekTypeDTO.LATEST || seekType == SeekTypeDTO.BEGINNING) {
-        return null;
-      }
-      throw new ValidationException("seekTo should be set if seekType is " + seekType);
-    }
-    return seekTo.stream()
-        .map(p -> {
-          String[] split = p.split("::");
-          if (split.length != 2) {
-            throw new IllegalArgumentException(
-                "Wrong seekTo argument format. See API docs for details");
-          }
-
-          return Pair.of(
-              new TopicPartition(topic, Integer.parseInt(split[0])),
-              Long.parseLong(split[1])
-          );
-        })
-        .collect(toMap(Pair::getKey, Pair::getValue));
   }
 
   @Override
@@ -197,14 +139,16 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                              @Nullable String filterId,
                                                                              @Nullable String offsetString,
                                                                              @Nullable Long ts,
-                                                                             @Nullable String ks,
-                                                                             @Nullable String vs,
+                                                                             @Nullable String keySerde,
+                                                                             @Nullable String valueSerde,
                                                                              ServerWebExchange exchange) {
     final Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
         .build());
+
+    ConsumerPosition consumerPosition = ConsumerPosition.create(mode, topicName, partitions, ts, offsetString);
 
     int recordsLimit =
         Optional.ofNullable(limit).map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT)).orElse(DEFAULT_LOAD_RECORD_LIMIT);
@@ -213,23 +157,25 @@ public class MessagesController extends AbstractController implements MessagesAp
         Mono.just(
             ResponseEntity.ok(
                 messagesService.loadMessagesV2(
-                    getCluster(clusterName), topicName, positions, q, filterQueryType,
-                    recordsLimit, seekDirection, keySerde, valueSerde)
-            )
-        )
-    );
+                    getCluster(clusterName), topicName, consumerPosition,
+                    query, filterId, recordsLimit, keySerde, valueSerde))));
   }
 
-   interface PollingMode {
-    static PollingMode create(PollingModeDTO mode, @Nullable String offsetString, @Nullable Long timestamp) {
-      return null;
-    }
-  }
 
   @Override
-  public Mono<ResponseEntity<Flux<MessageFilterIdDTO>>> registerFilter(String clusterName, String topicName,
-                                                                       Mono<MessageFilterRegistrationDTO> messageFilterRegistrationDTO,
-                                                                       ServerWebExchange exchange) {
-    return null;
+  public Mono<ResponseEntity<MessageFilterIdDTO>> registerFilter(String clusterName,
+                                                                 String topicName,
+                                                                 Mono<MessageFilterRegistrationDTO> registration,
+                                                                 ServerWebExchange exchange) {
+
+    final Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+        .cluster(clusterName)
+        .topic(topicName)
+        .topicActions(MESSAGES_READ)
+        .build());
+
+    return validateAccess.then(registration)
+        .map(reg -> messagesService.registerMessageFilter(reg.getFilterCode()))
+        .map(id -> ResponseEntity.ok(new MessageFilterIdDTO().id(id)));
   }
 }

@@ -56,7 +56,7 @@ public class KafkaConsumerTests extends AbstractIntegrationTest {
     }
 
     long count = webTestClient.get()
-        .uri("/api/clusters/{clusterName}/topics/{topicName}/messages", LOCAL, topicName)
+        .uri("/api/clusters/{clusterName}/topics/{topicName}/messages/v2?m=EARLIEST", LOCAL, topicName)
         .accept(TEXT_EVENT_STREAM)
         .exchange()
         .expectStatus()

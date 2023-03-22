@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import groovy.json.JsonSlurper;
 import java.util.function.Predicate;
@@ -22,23 +21,12 @@ public class MessageFilters {
   private MessageFilters() {
   }
 
-  public static Predicate<TopicMessageDTO> createMsgFilter(String query, MessageFilterTypeDTO type) {
-    switch (type) {
-      case STRING_CONTAINS:
-        return containsStringFilter(query);
-      case GROOVY_SCRIPT:
-        return groovyScriptFilter(query);
-      default:
-        throw new IllegalStateException("Unknown query type: " + type);
-    }
-  }
-
-  static Predicate<TopicMessageDTO> containsStringFilter(String string) {
+  public static Predicate<TopicMessageDTO> containsStringFilter(String string) {
     return msg -> StringUtils.contains(msg.getKey(), string)
         || StringUtils.contains(msg.getContent(), string);
   }
 
-  static Predicate<TopicMessageDTO> groovyScriptFilter(String script) {
+  public static Predicate<TopicMessageDTO> groovyScriptFilter(String script) {
     var compiledScript = compileScript(script);
     var jsonSlurper = new JsonSlurper();
     return new Predicate<TopicMessageDTO>() {
