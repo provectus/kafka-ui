@@ -21,30 +21,20 @@ class SeekOperations {
   private final Map<TopicPartition, Long> offsetsForSeek; //only contains non-empty partitions!
 
   static SeekOperations create(Consumer<?, ?> consumer, ConsumerPosition consumerPosition) {
-    OffsetsInfo offsetsInfo;
-    if (consumerPosition.partitions().isEmpty()) {
-      offsetsInfo = new OffsetsInfo(consumer, consumerPosition.topic());
-    } else {
-      offsetsInfo = new OffsetsInfo(consumer, consumerPosition.partitions());
-    }
-    return new SeekOperations(
-        consumer,
-        offsetsInfo,
-        getOffsetsForSeek(consumer, offsetsInfo, consumerPosition)
-    );
+    OffsetsInfo offsetsInfo = consumerPosition.partitions().isEmpty()
+        ? new OffsetsInfo(consumer, consumerPosition.topic())
+        : new OffsetsInfo(consumer, consumerPosition.partitions());
+    var offsetsToSeek = getOffsetsForSeek(consumer, offsetsInfo, consumerPosition);
+    return new SeekOperations(consumer, offsetsInfo, offsetsToSeek);
   }
 
-  void assignAndSeekNonEmptyPartitions() {
+  void assignAndSeek() {
     consumer.assign(offsetsForSeek.keySet());
     offsetsForSeek.forEach(consumer::seek);
   }
 
   Map<TopicPartition, Long> getBeginOffsets() {
     return offsetsInfo.getBeginOffsets();
-  }
-
-  Map<TopicPartition, Long> getEndOffsets() {
-    return offsetsInfo.getEndOffsets();
   }
 
   boolean assignedPartitionsFullyPolled() {
@@ -64,7 +54,9 @@ class SeekOperations {
                                                      OffsetsInfo offsetsInfo,
                                                      ConsumerPosition position) {
     switch (position.pollingMode()) {
-      case LATEST, TAILING:
+      case TAILING:
+        return consumer.endOffsets(offsetsInfo.allTargetPartitions());
+      case LATEST:
         return consumer.endOffsets(offsetsInfo.getNonEmptyPartitions());
       case EARLIEST:
         return consumer.beginningOffsets(offsetsInfo.getNonEmptyPartitions());

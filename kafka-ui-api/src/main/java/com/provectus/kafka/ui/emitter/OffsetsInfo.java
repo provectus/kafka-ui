@@ -1,19 +1,20 @@
 package com.provectus.kafka.ui.emitter;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 
 @Slf4j
 @Getter
-class OffsetsInfo {
+public class OffsetsInfo {
 
   private final Consumer<?, ?> consumer;
 
@@ -23,15 +24,16 @@ class OffsetsInfo {
   private final Set<TopicPartition> nonEmptyPartitions = new HashSet<>();
   private final Set<TopicPartition> emptyPartitions = new HashSet<>();
 
-  OffsetsInfo(Consumer<?, ?> consumer, String topic) {
+  public OffsetsInfo(Consumer<?, ?> consumer, String topic) {
     this(consumer,
         consumer.partitionsFor(topic).stream()
             .map(pi -> new TopicPartition(topic, pi.partition()))
-            .toList()
+            .collect(Collectors.toList())
     );
   }
 
-  OffsetsInfo(Consumer<?, ?> consumer, Collection<TopicPartition> targetPartitions) {
+  public OffsetsInfo(Consumer<?, ?> consumer,
+                     Collection<TopicPartition> targetPartitions) {
     this.consumer = consumer;
     this.beginOffsets = consumer.beginningOffsets(targetPartitions);
     this.endOffsets = consumer.endOffsets(targetPartitions);
@@ -45,8 +47,8 @@ class OffsetsInfo {
     });
   }
 
-  boolean assignedPartitionsFullyPolled() {
-    for (var tp : consumer.assignment()) {
+  public boolean assignedPartitionsFullyPolled() {
+    for (var tp: consumer.assignment()) {
       Preconditions.checkArgument(endOffsets.containsKey(tp));
       if (endOffsets.get(tp) > consumer.position(tp)) {
         return false;
@@ -55,10 +57,8 @@ class OffsetsInfo {
     return true;
   }
 
-  long summaryOffsetsRange() {
-    MutableLong cnt = new MutableLong();
-    nonEmptyPartitions.forEach(tp -> cnt.add(endOffsets.get(tp) - beginOffsets.get(tp)));
-    return cnt.getValue();
+  public Set<TopicPartition> allTargetPartitions() {
+    return Sets.union(nonEmptyPartitions, emptyPartitions);
   }
 
 }

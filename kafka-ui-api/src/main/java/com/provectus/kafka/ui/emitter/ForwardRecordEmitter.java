@@ -35,7 +35,7 @@ public class ForwardRecordEmitter
     try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
       sendPhase(sink, "Assigning partitions");
       var seekOperations = SeekOperations.create(consumer, position);
-      seekOperations.assignAndSeekNonEmptyPartitions();
+      seekOperations.assignAndSeek();
 
       EmptyPollsCounter emptyPolls = pollingSettings.createEmptyPollsCounter();
       while (!sink.isCancelled()

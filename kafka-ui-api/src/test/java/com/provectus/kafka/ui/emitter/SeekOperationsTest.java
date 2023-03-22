@@ -1,5 +1,8 @@
 package com.provectus.kafka.ui.emitter;
 
+import static com.provectus.kafka.ui.model.PollingModeDTO.EARLIEST;
+import static com.provectus.kafka.ui.model.PollingModeDTO.LATEST;
+import static com.provectus.kafka.ui.model.PollingModeDTO.TAILING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.model.ConsumerPosition;
@@ -45,11 +48,21 @@ class SeekOperationsTest {
   class GetOffsetsForSeek {
 
     @Test
+    void tailing() {
+      var offsets = SeekOperations.getOffsetsForSeek(
+          consumer,
+          new OffsetsInfo(consumer, topic),
+          new ConsumerPosition(TAILING, topic, List.of(), null, null)
+      );
+      assertThat(offsets).containsExactlyInAnyOrderEntriesOf(Map.of(tp0, 0L, tp1, 10L, tp2, 20L, tp3, 30L));
+    }
+
+    @Test
     void latest() {
       var offsets = SeekOperations.getOffsetsForSeek(
           consumer,
           new OffsetsInfo(consumer, topic),
-          new ConsumerPosition(PollingModeDTO.LATEST, topic, null, null, null)
+          new ConsumerPosition(LATEST, topic, List.of(), null, null)
       );
       assertThat(offsets).containsExactlyInAnyOrderEntriesOf(Map.of(tp2, 20L, tp3, 30L));
     }
@@ -59,7 +72,7 @@ class SeekOperationsTest {
       var offsets = SeekOperations.getOffsetsForSeek(
           consumer,
           new OffsetsInfo(consumer, topic),
-          new ConsumerPosition(PollingModeDTO.EARLIEST, topic, null, null, null)
+          new ConsumerPosition(EARLIEST, topic, List.of(), null, null)
       );
       assertThat(offsets).containsExactlyInAnyOrderEntriesOf(Map.of(tp2, 0L, tp3, 25L));
     }
