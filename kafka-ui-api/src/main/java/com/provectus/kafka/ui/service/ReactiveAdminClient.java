@@ -134,18 +134,18 @@ public class ReactiveAdminClient implements Closeable {
   // (see MonoSink.success(..) javadoc for details)
   public static <T> Mono<T> toMono(KafkaFuture<T> future) {
     return Mono.<T>create(sink -> future.whenComplete((res, ex) -> {
-          if (ex != null) {
-            // KafkaFuture doc is unclear about what exception wrapper will be used
-            // (from docs it should be ExecutionException, be we actually see CompletionException, so checking both
-            if (ex instanceof CompletionException || ex instanceof ExecutionException) {
-              sink.error(ex.getCause()); //unwrapping exception
-            } else {
-              sink.error(ex);
-            }
-          } else {
-            sink.success(res);
-          }
-        })).doOnCancel(() -> future.cancel(true))
+      if (ex != null) {
+        // KafkaFuture doc is unclear about what exception wrapper will be used
+        // (from docs it should be ExecutionException, be we actually see CompletionException, so checking both
+        if (ex instanceof CompletionException || ex instanceof ExecutionException) {
+          sink.error(ex.getCause()); //unwrapping exception
+        } else {
+          sink.error(ex);
+        }
+      } else {
+        sink.success(res);
+      }
+    })).doOnCancel(() -> future.cancel(true))
         // AdminClient is using single thread for kafka communication
         // and by default all downstream operations (like map(..)) on created Mono will be executed on this thread.
         // If some of downstream operation are blocking (by mistake) this can lead to
@@ -341,12 +341,12 @@ public class ReactiveAdminClient implements Closeable {
         result.controller(), result.clusterId(), result.nodes(), result.authorizedOperations());
     return toMono(allOfFuture).then(
         Mono.fromCallable(() ->
-            new ClusterDescription(
-                result.controller().get(),
-                result.clusterId().get(),
-                result.nodes().get(),
-                result.authorizedOperations().get()
-            )
+          new ClusterDescription(
+            result.controller().get(),
+            result.clusterId().get(),
+            result.nodes().get(),
+            result.authorizedOperations().get()
+          )
         )
     );
   }
