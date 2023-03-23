@@ -24,8 +24,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
   private static final String USERNAME_ATTRIBUTE_NAME = "login";
   private static final String ORGANIZATION_NAME = "login";
   private static final String GITHUB_ACCEPT_HEADER = "application/vnd.github+json";
-
-  private final WebClient webClient = WebClient.create("https://api.github.com");
+  private static final String DEFAULT_INFO_ENDPOINT = "https://api.github.com/user";
 
   @Override
   public boolean isApplicable(String provider) {
@@ -63,6 +62,13 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
       log.debug("Github organization param is not present");
       return Mono.just(groupsByUsername);
     }
+
+    OAuth2UserRequest req = (OAuth2UserRequest) additionalParams.get("request");
+    String infoEndpoint = req.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
+
+    infoEndpoint = infoEndpoint != null ? infoEndpoint : DEFAULT_INFO_ENDPOINT;
+
+    WebClient webClient = WebClient.create(infoEndpoint);
 
     final Mono<List<Map<String, Object>>> userOrganizations = webClient
         .get()
