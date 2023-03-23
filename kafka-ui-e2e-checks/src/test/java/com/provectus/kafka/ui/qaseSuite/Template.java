@@ -13,7 +13,7 @@ public class Template extends BaseQaseTest {
 
     /**
      * this class is a kind of placeholder or example, use is as template to create new one
-     * copy class into kafka-ui-e2e-checks/src/test/java/com/provectus/kafka/ui/qaseSuite/suite
+     * copy Template into kafka-ui-e2e-checks/src/test/java/com/provectus/kafka/ui/qaseSuite/
      * place it into regarding folder and rename according to test case summary from Qase.io
      * uncomment @Test and set all annotations according to kafka-ui-e2e-checks/QASE.md
      */
