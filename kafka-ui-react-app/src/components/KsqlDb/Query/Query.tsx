@@ -44,7 +44,7 @@ const Query = () => {
     <>
       <QueryForm
         fetching={isFetching}
-        hasResults={!!sse.data}
+        hasResults={!!sse.data && !!pipeId}
         resetResults={() => setPipeId(false)}
         submitHandler={submitHandler}
       />

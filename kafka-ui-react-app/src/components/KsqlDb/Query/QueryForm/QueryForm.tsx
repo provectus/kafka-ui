@@ -44,6 +44,7 @@ const validationSchema = yup.object({
 
 const QueryForm: React.FC<QueryFormProps> = ({
   fetching,
+  hasResults,
   submitHandler,
   resetResults,
 }) => {
@@ -193,7 +194,7 @@ const QueryForm: React.FC<QueryFormProps> = ({
             <Button
               buttonType="secondary"
               buttonSize="M"
-              disabled={fetching || !isDirty}
+              disabled={fetching || !isDirty || !hasResults}
               onClick={handleClear}
             >
               Clear results
