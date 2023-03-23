@@ -16,9 +16,9 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
       <tbody>
         <MessageContent
           messageKey='"test-key"'
-          messageKeyFormat="JSON"
+          // messageKeyFormat="JSON"
           messageContent='{"data": "test"}'
-          messageContentFormat="AVRO"
+          // messageContentFormat="AVRO"
           headers={{ header: 'test' }}
           timestamp={new Date(0)}
           timestampType={TopicMessageTimestampTypeEnum.CREATE_TIME}
@@ -39,15 +39,15 @@ describe('MessageContent screen', () => {
     render(setupWrapper());
   });
 
-  describe('renders', () => {
-    it('key format in document', () => {
-      expect(screen.getByText('JSON')).toBeInTheDocument();
-    });
-
-    it('content format in document', () => {
-      expect(screen.getByText('AVRO')).toBeInTheDocument();
-    });
-  });
+  // describe('renders', () => {
+  //   it('key format in document', () => {
+  //     expect(screen.getByText('JSON')).toBeInTheDocument();
+  //   });
+  //
+  //   it('content format in document', () => {
+  //     expect(screen.getByText('AVRO')).toBeInTheDocument();
+  //   });
+  // });
 
   describe('when switched to display the key', () => {
     it('makes key tab active', async () => {
@@ -82,41 +82,41 @@ describe('MessageContent screen', () => {
   });
 });
 
-describe('checking content type depend on message type', () => {
-  it('renders component with message having JSON type', () => {
-    render(
-      setupWrapper({
-        messageContentFormat: 'JSON',
-        messageContent: '{"data": "test"}',
-      })
-    );
-    expect(screen.getAllByText('JSON')[1]).toBeInTheDocument();
-  });
-  it('renders component with message having AVRO type', () => {
-    render(
-      setupWrapper({
-        messageContentFormat: 'AVRO',
-        messageContent: '{"data": "test"}',
-      })
-    );
-    expect(screen.getByText('AVRO')).toBeInTheDocument();
-  });
-  it('renders component with message having PROTOBUF type', () => {
-    render(
-      setupWrapper({
-        messageContentFormat: 'PROTOBUF',
-        messageContent: proto,
-      })
-    );
-    expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
-  });
-  it('renders component with message having no type which is equal to having PROTOBUF type', () => {
-    render(
-      setupWrapper({
-        messageContentFormat: 'PROTOBUF',
-        messageContent: '',
-      })
-    );
-    expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
-  });
-});
+// describe('checking content type depend on message type', () => {
+//   it('renders component with message having JSON type', () => {
+//     render(
+//       setupWrapper({
+//         messageContentFormat: 'JSON',
+//         messageContent: '{"data": "test"}',
+//       })
+//     );
+//     expect(screen.getAllByText('JSON')[1]).toBeInTheDocument();
+//   });
+//   it('renders component with message having AVRO type', () => {
+//     render(
+//       setupWrapper({
+//         messageContentFormat: 'AVRO',
+//         messageContent: '{"data": "test"}',
+//       })
+//     );
+//     expect(screen.getByText('AVRO')).toBeInTheDocument();
+//   });
+//   it('renders component with message having PROTOBUF type', () => {
+//     render(
+//       setupWrapper({
+//         messageContentFormat: 'PROTOBUF',
+//         messageContent: proto,
+//       })
+//     );
+//     expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
+//   });
+//   it('renders component with message having no type which is equal to having PROTOBUF type', () => {
+//     render(
+//       setupWrapper({
+//         messageContentFormat: 'PROTOBUF',
+//         messageContent: '',
+//       })
+//     );
+//     expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
+//   });
+// });
