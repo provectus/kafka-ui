@@ -2,14 +2,13 @@ package com.provectus.kafka.ui.model;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
+import com.provectus.kafka.ui.emitter.PollingSettings;
 import com.provectus.kafka.ui.service.ksql.KsqlApiClient;
 import com.provectus.kafka.ui.service.masking.DataMasking;
 import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
-import com.provectus.kafka.ui.util.PollingThrottler;
 import com.provectus.kafka.ui.util.ReactiveFailover;
 import java.util.Map;
 import java.util.Properties;
-import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +27,7 @@ public class KafkaCluster {
   private final boolean readOnly;
   private final MetricsConfig metricsConfig;
   private final DataMasking masking;
-  private final Supplier<PollingThrottler> throttler;
+  private final PollingSettings pollingSettings;
   private final ReactiveFailover<KafkaSrClientApi> schemaRegistryClient;
   private final Map<String, ReactiveFailover<KafkaConnectClientApi>> connectsClients;
   private final ReactiveFailover<KsqlApiClient> ksqlClient;

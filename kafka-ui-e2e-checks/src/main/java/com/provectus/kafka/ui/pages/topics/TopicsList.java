@@ -6,7 +6,6 @@ import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,10 +14,10 @@ import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.TOPICS;
 
 public class TopicsList extends BasePage {
 
-    protected SelenideElement topicListHeader = $x("//h1[text()='Topics']");
     protected SelenideElement addTopicBtn = $x("//button[normalize-space(text()) ='Add a Topic']");
     protected SelenideElement searchField = $x("//input[@placeholder='Search by Topic Name']");
     protected SelenideElement showInternalRadioBtn = $x("//input[@name='ShowInternalTopics']");
@@ -32,7 +31,7 @@ public class TopicsList extends BasePage {
     @Step
     public TopicsList waitUntilScreenReady() {
         waitUntilSpinnerDisappear();
-        topicListHeader.shouldBe(visible);
+        getPageTitleFromHeader(TOPICS).shouldBe(visible);
         return this;
     }
 
@@ -176,6 +175,12 @@ public class TopicsList extends BasePage {
     }
 
     @Step
+    public TopicGridItem getAnyNonInternalTopic() {
+        return getNonInternalTopics().stream()
+                .findAny().orElseThrow();
+    }
+
+    @Step
     public List<TopicGridItem> getNonInternalTopics() {
         return initGridItems().stream()
                 .filter(e -> !e.isInternal())
@@ -207,8 +212,7 @@ public class TopicsList extends BasePage {
         public boolean isInternal() {
             boolean internal = false;
             try {
-                element.$x("./td[2]/a/span").shouldBe(visible, Duration.ofMillis(500));
-                internal = true;
+                internal = element.$x("./td[2]/a/span").isDisplayed();
             } catch (Throwable ignored) {
             }
             return internal;

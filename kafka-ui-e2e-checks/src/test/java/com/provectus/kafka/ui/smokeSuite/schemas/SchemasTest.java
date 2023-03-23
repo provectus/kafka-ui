@@ -74,7 +74,8 @@ public class SchemasTest extends BaseTest {
                 .clickSubmitButton();
         schemaDetails
                 .waitUntilScreenReady();
-        Assert.assertEquals(schemaDetails.getCompatibility(), CompatibilityLevel.CompatibilityEnum.NONE.toString(), "getCompatibility()");
+        Assert.assertEquals(schemaDetails.getCompatibility(), CompatibilityLevel.CompatibilityEnum.NONE.toString(),
+                "getCompatibility()");
     }
 
     @QaseId(44)
@@ -88,7 +89,7 @@ public class SchemasTest extends BaseTest {
                 .openCompareVersionMenu();
         int versionsNumberFromDdl = schemaCreateForm
                 .waitUntilScreenReady()
-                .openSchemaVersionDdl()
+                .openLeftVersionDdl()
                 .getVersionsNumberFromList();
         Assert.assertEquals(versionsNumberFromDdl, latestVersion, "Versions number is not matched");
         schemaCreateForm

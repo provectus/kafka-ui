@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.util;
+package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.util.concurrent.atomic.AtomicInteger;

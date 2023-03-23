@@ -5,7 +5,8 @@ export const GroupFieldWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background-color: #fefefe;
+  background-color: ${({ theme }) =>
+    theme.clusterConfigForm.groupField.backgroundColor};
   padding: 8px;
   border-radius: 4px;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 15%);
@@ -57,4 +58,5 @@ export const FileUploadInputWrapper = styled.div`
   display: flex;
   height: 40px;
   align-items: center;
+  color: ${({ theme }) => theme.clusterConfigForm.fileInput.color}};
 `;
