@@ -134,18 +134,18 @@ public class ReactiveAdminClient implements Closeable {
   // (see MonoSink.success(..) javadoc for details)
   public static <T> Mono<T> toMono(KafkaFuture<T> future) {
     return Mono.<T>create(sink -> future.whenComplete((res, ex) -> {
-      if (ex != null) {
-        // KafkaFuture doc is unclear about what exception wrapper will be used
-        // (from docs it should be ExecutionException, be we actually see CompletionException, so checking both
-        if (ex instanceof CompletionException || ex instanceof ExecutionException) {
-          sink.error(ex.getCause()); //unwrapping exception
-        } else {
-          sink.error(ex);
-        }
-      } else {
-        sink.success(res);
-      }
-    })).doOnCancel(() -> future.cancel(true))
+          if (ex != null) {
+            // KafkaFuture doc is unclear about what exception wrapper will be used
+            // (from docs it should be ExecutionException, be we actually see CompletionException, so checking both
+            if (ex instanceof CompletionException || ex instanceof ExecutionException) {
+              sink.error(ex.getCause()); //unwrapping exception
+            } else {
+              sink.error(ex);
+            }
+          } else {
+            sink.success(res);
+          }
+        })).doOnCancel(() -> future.cancel(true))
         // AdminClient is using single thread for kafka communication
         // and by default all downstream operations (like map(..)) on created Mono will be executed on this thread.
         // If some of downstream operation are blocking (by mistake) this can lead to
@@ -212,15 +212,22 @@ public class ReactiveAdminClient implements Closeable {
         .map(brokerId -> new ConfigResource(ConfigResource.Type.BROKER, Integer.toString(brokerId)))
         .collect(toList());
     return toMono(client.describeConfigs(resources).all())
-        // some kafka backends (like MSK serverless) do not support broker's configs retrieval,
-        // in that case InvalidRequestException will be thrown
-        .onErrorResume(InvalidRequestException.class, th -> {
-          log.trace("Error while getting broker {} configs", brokerIds, th);
-          return Mono.just(Map.of());
-        })
+        // some kafka backends don't support broker's configs retrieval,
+        // and throw various exceptions on describeConfigs() call
+        .onErrorResume(th -> th instanceof InvalidRequestException // MSK Serverless
+                || th instanceof UnknownTopicOrPartitionException, // Azure event hub
+            th -> {
+              log.trace("Error while getting configs for brokers {}", brokerIds, th);
+              return Mono.just(Map.of());
+            })
         // there are situations when kafka-ui user has no DESCRIBE_CONFIGS permission on cluster
         .onErrorResume(ClusterAuthorizationException.class, th -> {
           log.trace("AuthorizationException while getting configs for brokers {}", brokerIds, th);
+          return Mono.just(Map.of());
+        })
+        // catching all remaining exceptions, but logging on WARN level
+        .onErrorResume(th -> true, th -> {
+          log.warn("Unexpected error while getting configs for brokers {}", brokerIds, th);
           return Mono.just(Map.of());
         })
         .map(config -> config.entrySet().stream()
@@ -334,12 +341,12 @@ public class ReactiveAdminClient implements Closeable {
         result.controller(), result.clusterId(), result.nodes(), result.authorizedOperations());
     return toMono(allOfFuture).then(
         Mono.fromCallable(() ->
-          new ClusterDescription(
-            result.controller().get(),
-            result.clusterId().get(),
-            result.nodes().get(),
-            result.authorizedOperations().get()
-          )
+            new ClusterDescription(
+                result.controller().get(),
+                result.clusterId().get(),
+                result.nodes().get(),
+                result.authorizedOperations().get()
+            )
         )
     );
   }
