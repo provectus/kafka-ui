@@ -2568,7 +2568,6 @@ components:
             - MESSAGE
             - CONSUMING
             - DONE
-            - CURSOR
         message:
           $ref: "#/components/schemas/TopicMessage"
         phase:
