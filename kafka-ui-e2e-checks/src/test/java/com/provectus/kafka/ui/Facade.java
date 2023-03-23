@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui;
 
-import com.provectus.kafka.ui.pages.NaviSideBar;
-import com.provectus.kafka.ui.pages.TopPanel;
+import com.provectus.kafka.ui.pages.panels.NaviSideBar;
+import com.provectus.kafka.ui.pages.panels.TopPanel;
 import com.provectus.kafka.ui.pages.brokers.BrokersConfigTab;
 import com.provectus.kafka.ui.pages.brokers.BrokersDetails;
 import com.provectus.kafka.ui.pages.brokers.BrokersList;
