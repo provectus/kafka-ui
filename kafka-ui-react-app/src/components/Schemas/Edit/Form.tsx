@@ -55,7 +55,7 @@ const Form: React.FC = () => {
     yup.object().shape({
       newSchema:
         schema?.schemaType === SchemaType.PROTOBUF
-          ? yup.string().required()
+          ? yup.string().required().isEnum('Schema syntax is not valid')
           : yup.string().required().isJsonObject('Schema syntax is not valid'),
     });
   const methods = useForm<NewSchemaSubjectRaw>({
