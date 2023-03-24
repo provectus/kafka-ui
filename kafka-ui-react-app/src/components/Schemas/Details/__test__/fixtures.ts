@@ -12,12 +12,6 @@ export const versionPayload = [
 ];
 export const versionEmptyPayload = [];
 
-export const versions = [
-  schemaVersion1,
-  schemaVersion2,
-  schemaVersionWithNonAsciiChars,
-];
-
 export const jsonSchema: SchemaSubject = {
   subject: 'test',
   version: '15',

@@ -1,37 +1,5 @@
 import styled from 'styled-components';
-
-export const Wrapper = styled.div`
-  padding: 16px;
-  padding-top: 0;
-
-  & > form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    & > button:last-child {
-      align-self: flex-start;
-    }
-  }
-
-  & .multi-select {
-    height: 32px;
-    & > .dropdown-container {
-      height: 32px;
-      & > .dropdown-heading {
-        height: 32px;
-      }
-    }
-  }
-`;
-
-export const MainSelectors = styled.div`
-  display: flex;
-  gap: 16px;
-  & > * {
-    flex-grow: 1;
-  }
-`;
+import DatePicker from 'react-datepicker';
 
 export const OffsetsWrapper = styled.div`
   display: flex;
@@ -40,7 +8,26 @@ export const OffsetsWrapper = styled.div`
   gap: 16px;
 `;
 
-export const OffsetsTitle = styled.h1`
-  font-size: 18px;
-  font-weight: 500;
+export const DatePickerInput = styled(DatePicker).attrs({
+  showTimeInput: true,
+  timeInputLabel: 'Time:',
+  dateFormat: 'MMMM d, yyyy h:mm aa',
+})`
+  height: 40px;
+  border: 1px ${({ theme }) => theme.select.borderColor.normal} solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 270px;
+  padding-left: 12px;
+  background-color: ${({ theme }) => theme.input.backgroundColor.normal};
+  color: ${({ theme }) => theme.input.color.normal};
+  &::placeholder {
+    color: ${({ theme }) => theme.input.color.normal};
+  }
+  &:hover {
+    cursor: pointer;
+  }
+  &:focus {
+    outline: none;
+  }
 `;
