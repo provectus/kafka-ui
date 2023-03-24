@@ -49,7 +49,7 @@ public class ProduceMessagePanel extends BasePage {
 
     @Step
     public ProduceMessagePanel submitProduceMessage() {
-        submitBtn.shouldBe(Condition.enabled).click();
+        clickByActions(submitBtn);
         submitBtn.shouldBe(Condition.disappear);
         refresh();
         return this;

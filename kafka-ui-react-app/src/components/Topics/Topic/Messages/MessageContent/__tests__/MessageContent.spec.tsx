@@ -8,7 +8,7 @@ import MessageContent, {
 import { TopicMessageTimestampTypeEnum } from 'generated-sources';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 
 const setupWrapper = (props?: Partial<MessageContentProps>) => {
   return (

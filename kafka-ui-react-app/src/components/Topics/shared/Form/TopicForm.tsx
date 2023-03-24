@@ -97,6 +97,7 @@ const TopicForm: React.FC<Props> = ({
                 name="name"
                 placeholder="Topic Name"
                 defaultValue={topicName}
+                autoComplete="off"
               />
               <FormError>
                 <ErrorMessage errors={errors} name="name" />
@@ -251,7 +252,7 @@ const TopicForm: React.FC<Props> = ({
         <S.ButtonWrapper>
           <Button
             type="button"
-            buttonType="primary"
+            buttonType="secondary"
             buttonSize="L"
             onClick={onCancel}
           >

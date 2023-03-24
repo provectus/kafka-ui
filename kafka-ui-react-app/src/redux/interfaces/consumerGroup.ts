@@ -5,10 +5,9 @@ import {
 
 import { ClusterName } from './cluster';
 
-export type ConsumerGroupID = ConsumerGroup['groupId'];
 export interface ConsumerGroupResetOffsetRequestParams {
   clusterName: ClusterName;
-  consumerGroupID: ConsumerGroupID;
+  consumerGroupID: ConsumerGroup['groupId'];
   requestBody: {
     topic: string;
     resetType: ConsumerGroupOffsetsResetType;

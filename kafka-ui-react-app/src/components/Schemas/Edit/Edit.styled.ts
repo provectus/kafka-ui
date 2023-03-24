@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 export const EditWrapper = styled.div`
   padding: 16px;
-  padding-top: 0px;
+  padding-top: 0;
   & > form {
     display: flex;
     flex-direction: column;
@@ -44,6 +44,7 @@ export const EditorContainer = styled.div(
       font-size: 16px;
       line-height: 24px;
       padding-bottom: 16px;
+      color: ${theme.heading.h4};
     }
   `
 );

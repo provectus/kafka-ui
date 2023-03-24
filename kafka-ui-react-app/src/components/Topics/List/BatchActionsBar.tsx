@@ -3,7 +3,11 @@ import { Row } from '@tanstack/react-table';
 import { Action, Topic, ResourceType } from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
 import { ClusterName } from 'redux/interfaces';
-import { topicKeys, useDeleteTopic } from 'lib/hooks/api/topics';
+import {
+  topicKeys,
+  useClearTopicMessages,
+  useDeleteTopic,
+} from 'lib/hooks/api/topics';
 import { useConfirm } from 'lib/hooks/useConfirm';
 import { useAppDispatch } from 'lib/hooks/redux';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
@@ -24,11 +28,14 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
 }) => {
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
   const confirm = useConfirm();
-  const dispatch = useAppDispatch();
   const deleteTopic = useDeleteTopic(clusterName);
   const selectedTopics = rows.map(({ original }) => original.name);
   const client = useQueryClient();
 
+  const clearMessages = useClearTopicMessages(clusterName);
+  const clearTopicMessagesHandler = async (topicName: Topic['name']) => {
+    await clearMessages.mutateAsync(topicName);
+  };
   const deleteTopicsHandler = () => {
     confirm('Are you sure you want to remove selected topics?', async () => {
       try {
@@ -49,7 +56,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
         try {
           await Promise.all(
             selectedTopics.map((topicName) =>
-              dispatch(clearTopicMessages({ clusterName, topicName })).unwrap()
+              clearTopicMessagesHandler(topicName)
             )
           );
           resetRowSelection();

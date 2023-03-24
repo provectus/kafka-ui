@@ -52,13 +52,14 @@ public class TopicsTest extends BaseTest {
             .setMaxSizeOnDisk(NOT_SET);
     private static final Topic TOPIC_FOR_CHECK_FILTERS = new Topic()
             .setName("topic-for-check-filters-" + randomAlphabetic(5));
-    private static final Topic TOPIC_FOR_DELETE = new Topic().setName("topic-to-delete-" + randomAlphabetic(5));
+    private static final Topic TOPIC_FOR_DELETE = new Topic()
+            .setName("topic-to-delete-" + randomAlphabetic(5));
     private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
     @BeforeClass(alwaysRun = true)
     public void beforeClass() {
         TOPIC_LIST.addAll(List.of(TOPIC_TO_UPDATE_AND_DELETE, TOPIC_FOR_DELETE, TOPIC_FOR_CHECK_FILTERS));
-        TOPIC_LIST.forEach(topic -> apiService.createTopic(topic.getName()));
+        TOPIC_LIST.forEach(topic -> apiService.createTopic(topic));
     }
 
     @QaseId(199)
@@ -89,11 +90,11 @@ public class TopicsTest extends BaseTest {
     void checkAvailableOperations() {
         navigateToTopics();
         topicsList
-                .getTopicItem("my_ksql_1ksql_processing_log")
+                .getTopicItem(TOPIC_TO_UPDATE_AND_DELETE.getName())
                 .selectItem(true);
         verifyElementsCondition(topicsList.getActionButtons(), Condition.enabled);
         topicsList
-                .getTopicItem("_confluent-ksql-my_ksql_1_command_topic")
+                .getTopicItem(TOPIC_FOR_CHECK_FILTERS.getName())
                 .selectItem(true);
         Assert.assertFalse(topicsList.isCopySelectedTopicBtnEnabled(), "isCopySelectedTopicBtnEnabled()");
     }
@@ -456,7 +457,7 @@ public class TopicsTest extends BaseTest {
                 .setNumberOfPartitions(1);
         navigateToTopics();
         topicsList
-                .getTopicItem("_schemas")
+                .getAnyNonInternalTopic()
                 .selectItem(true)
                 .clickCopySelectedTopicBtn();
         topicCreateEditForm

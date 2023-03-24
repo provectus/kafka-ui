@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.service;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.TopicRecreationException;
@@ -52,6 +53,7 @@ public class TopicsService {
 
   private final AdminClientService adminClientService;
   private final StatisticsCache statisticsCache;
+  private final ClustersProperties clustersProperties;
   @Value("${topic.recreate.maxRetries:15}")
   private int recreateMaxRetries;
   @Value("${topic.recreate.delay.seconds:1}")
@@ -127,7 +129,8 @@ public class TopicsService {
             configs.getOrDefault(t, List.of()),
             partitionsOffsets,
             metrics,
-            logDirInfo
+            logDirInfo,
+            clustersProperties.getInternalTopicPrefix()
         ))
         .collect(toList());
   }
@@ -459,7 +462,9 @@ public class TopicsService {
                     stats.getTopicConfigs().getOrDefault(topicName, List.of()),
                     InternalPartitionsOffsets.empty(),
                     stats.getMetrics(),
-                    stats.getLogDirInfo()))
+                    stats.getLogDirInfo(),
+                    clustersProperties.getInternalTopicPrefix()
+                    ))
             .collect(toList())
         );
   }

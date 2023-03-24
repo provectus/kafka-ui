@@ -13,7 +13,11 @@ const INPUT_SIZES = {
 
 export const Wrapper = styled.div`
   position: relative;
-
+  &:hover {
+    svg:first-child {
+      fill: ${({ theme }) => theme.input.icon.hover};
+    }
+  }
   svg:first-child {
     position: absolute;
     top: 8px;
@@ -29,8 +33,10 @@ export const Wrapper = styled.div`
 
 export const Input = styled.input<InputProps>(
   ({ theme: { input }, inputSize, search }) => css`
+    background-color: ${input.backgroundColor.normal};
     border: 1px ${input.borderColor.normal} solid;
     border-radius: 4px;
+    color: ${input.color.normal};
     height: ${inputSize && INPUT_SIZES[inputSize]
       ? INPUT_SIZES[inputSize]
       : '40px'};
@@ -55,6 +61,7 @@ export const Input = styled.input<InputProps>(
     &:disabled {
       color: ${input.color.disabled};
       border-color: ${input.borderColor.disabled};
+      background-color: ${input.backgroundColor.disabled};
       cursor: not-allowed;
     }
     &:read-only {
@@ -79,5 +86,5 @@ export const FormError = styled.p`
 export const InputHint = styled.p`
   font-size: 0.85rem;
   margin-top: 0.25rem;
-  color: ${({ theme }) => theme.text.secondary};
+  color: ${({ theme }) => theme.clusterConfigForm.inputHintText.secondary};
 `;
