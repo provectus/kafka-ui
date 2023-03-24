@@ -105,7 +105,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
             </S.Metadata>
 
             <S.Metadata>
-              <S.MetadataLabel>Value</S.MetadataLabel>
+              <S.MetadataLabel>Value Serde</S.MetadataLabel>
               <span>
                 <S.MetadataValue>{valueFormat}</S.MetadataValue>
                 <S.MetadataMeta>
@@ -115,7 +115,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
             </S.Metadata>
 
             <S.Metadata>
-              <S.MetadataLabel>Key</S.MetadataLabel>
+              <S.MetadataLabel>Key Serde</S.MetadataLabel>
               <span>
                 <S.MetadataValue>{keyFormat}</S.MetadataValue>
                 <S.MetadataMeta>
