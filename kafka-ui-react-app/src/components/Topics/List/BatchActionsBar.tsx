@@ -9,8 +9,6 @@ import {
   useDeleteTopic,
 } from 'lib/hooks/api/topics';
 import { useConfirm } from 'lib/hooks/useConfirm';
-import { useAppDispatch } from 'lib/hooks/redux';
-import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { clusterTopicCopyRelativePath } from 'lib/paths';
 import { useQueryClient } from '@tanstack/react-query';
 import { ActionCanButton } from 'components/common/ActionComponent';
