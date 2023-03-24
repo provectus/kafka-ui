@@ -33,5 +33,9 @@ https://aws.amazon.com/marketplace/pp/prodview-ogtt5hfhzkq6a
 
 ## Step 7: Access the Kafka UI
  After the instance is launched, you can check its status on the EC2 dashboard. Once it's running, you can access the Kafka UI by copying the public DNS name or IP address provided by AWS. The default UI port is 8080.
+ 
+## Step 8: Configure Kafka UI to Communicate with Brokers
+ If your broker deployed in aws then allow incoming from Kafka-ui ec2 by adding ingress rule in security group which is used for broker.
+ If your broker not in aws then be sure that your broker can handle requests from Kafka-ui ec2 ip address. 
 
 ## That's it! You've successfully deployed the Kafka UI from AWS Marketplace.
