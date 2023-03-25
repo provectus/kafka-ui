@@ -1,12 +1,13 @@
 package com.provectus.kafka.ui.config;
 
+import com.provectus.kafka.ui.model.MetricsConfig;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,61 +25,75 @@ public class ClustersProperties {
 
   List<Cluster> clusters = new ArrayList<>();
 
+  String internalTopicPrefix;
+
+  PollingProperties polling = new PollingProperties();
+
   @Data
   public static class Cluster {
     String name;
     String bootstrapServers;
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
-    WebClientSsl schemaRegistrySsl;
+    KeystoreConfig schemaRegistrySsl;
     String ksqldbServer;
     KsqldbServerAuth ksqldbServerAuth;
-    WebClientSsl ksqldbServerSsl;
+    KeystoreConfig ksqldbServerSsl;
     List<ConnectCluster> kafkaConnect;
     MetricsConfigData metrics;
-    Properties properties;
+    Map<String, Object> properties;
     boolean readOnly = false;
-    List<SerdeConfig> serde = new ArrayList<>();
+    List<SerdeConfig> serde;
     String defaultKeySerde;
     String defaultValueSerde;
-    List<Masking> masking = new ArrayList<>();
-    long pollingThrottleRate = 0;
+    List<Masking> masking;
+    Long pollingThrottleRate;
+    TruststoreConfig ssl;
   }
 
   @Data
+  public static class PollingProperties {
+    Integer pollTimeoutMs;
+    Integer partitionPollTimeout;
+    Integer noDataEmptyPolls;
+  }
+
+  @Data
+  @ToString(exclude = "password")
   public static class MetricsConfigData {
     String type;
     Integer port;
-    boolean ssl;
+    Boolean ssl;
     String username;
     String password;
+    String keystoreLocation;
+    String keystorePassword;
   }
 
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder(toBuilder = true)
+  @ToString(exclude = {"password", "keystorePassword"})
   public static class ConnectCluster {
     String name;
     String address;
-    String userName;
+    String username;
     String password;
     String keystoreLocation;
     String keystorePassword;
-    String truststoreLocation;
-    String truststorePassword;
   }
 
   @Data
+  @ToString(exclude = {"password"})
   public static class SchemaRegistryAuth {
     String username;
     String password;
   }
 
   @Data
-  public static class WebClientSsl {
-    String keystoreLocation;
-    String keystorePassword;
+  @ToString(exclude = {"truststorePassword"})
+  public static class TruststoreConfig {
     String truststoreLocation;
     String truststorePassword;
   }
@@ -88,7 +103,7 @@ public class ClustersProperties {
     String name;
     String className;
     String filePath;
-    Map<String, Object> properties = new HashMap<>();
+    Map<String, Object> properties;
     String topicKeysPattern;
     String topicValuesPattern;
   }
@@ -101,11 +116,20 @@ public class ClustersProperties {
   }
 
   @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @ToString(exclude = {"keystorePassword"})
+  public static class KeystoreConfig {
+    String keystoreLocation;
+    String keystorePassword;
+  }
+
+  @Data
   public static class Masking {
     Type type;
-    List<String> fields = List.of(); //if empty - policy will be applied to all fields
-    List<String> pattern = List.of("X", "x", "n", "-"); //used when type=MASK
-    String replacement = "***DATA_MASKED***"; //used when type=REPLACE
+    List<String> fields; //if null or empty list - policy will be applied to all fields
+    List<String> pattern; //used when type=MASK
+    String replacement; //used when type=REPLACE
     String topicKeysPattern;
     String topicValuesPattern;
 
@@ -116,7 +140,41 @@ public class ClustersProperties {
 
   @PostConstruct
   public void validateAndSetDefaults() {
-    validateClusterNames();
+    if (clusters != null) {
+      validateClusterNames();
+      flattenClusterProperties();
+      setMetricsDefaults();
+    }
+  }
+
+  private void setMetricsDefaults() {
+    for (Cluster cluster : clusters) {
+      if (cluster.getMetrics() != null && !StringUtils.hasText(cluster.getMetrics().getType())) {
+        cluster.getMetrics().setType(MetricsConfig.JMX_METRICS_TYPE);
+      }
+    }
+  }
+
+  private void flattenClusterProperties() {
+    for (Cluster cluster : clusters) {
+      cluster.setProperties(flattenClusterProperties(null, cluster.getProperties()));
+    }
+  }
+
+  private Map<String, Object> flattenClusterProperties(@Nullable String prefix,
+                                                       @Nullable Map<String, Object> propertiesMap) {
+    Map<String, Object> flattened = new HashMap<>();
+    if (propertiesMap != null) {
+      propertiesMap.forEach((k, v) -> {
+        String key = prefix == null ? k : prefix + "." + k;
+        if (v instanceof Map<?, ?>) {
+          flattened.putAll(flattenClusterProperties(key, (Map<String, Object>) v));
+        } else {
+          flattened.put(key, v);
+        }
+      });
+    }
+    return flattened;
   }
 
   private void validateClusterNames() {

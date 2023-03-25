@@ -39,8 +39,12 @@ const New: React.FC = () => {
   const cleanUpPolicy = params.get(Filters.CLEANUP_POLICY) || 'Delete';
 
   const onSubmit = async (data: TopicFormData) => {
-    await createTopic.createResource(data);
-    navigate(`../${data.name}`);
+    try {
+      await createTopic.createResource(data);
+      navigate(`../${data.name}`);
+    } catch (e) {
+      // do nothing
+    }
   };
 
   return (

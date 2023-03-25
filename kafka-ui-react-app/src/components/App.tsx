@@ -5,17 +5,19 @@ import {
   clusterPath,
   errorPage,
   getNonExactPath,
+  clusterNewConfigPath,
 } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Dashboard from 'components/Dashboard/Dashboard';
-import ClusterPage from 'components/Cluster/Cluster';
+import ClusterPage from 'components/ClusterPage/ClusterPage';
 import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { theme, darkTheme } from 'theme/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { showServerError } from 'lib/errorHandling';
 import { Toaster } from 'react-hot-toast';
 import GlobalCSS from 'components/globalCss';
 import * as S from 'components/App.styled';
+import ClusterConfigForm from 'widgets/ClusterConfigForm';
 
 import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
 import { ConfirmContextProvider } from './contexts/ConfirmContext';
@@ -28,6 +30,9 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       suspense: true,
+      onError(error) {
+        showServerError(error as Response);
+      },
     },
     mutations: {
       onError(error) {
@@ -36,18 +41,19 @@ const queryClient = new QueryClient({
     },
   },
 });
-
 const App: React.FC = () => {
+  const [isDarkMode, setDarkMode] = React.useState<boolean>(false);
+
   return (
     <QueryClientProvider client={queryClient}>
       <GlobalSettingsProvider>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={isDarkMode ? darkTheme : theme}>
           <Suspense fallback={<PageLoader />}>
             <UserInfoRolesAccessProvider>
               <ConfirmContextProvider>
                 <GlobalCSS />
                 <S.Layout>
-                  <PageContainer>
+                  <PageContainer setDarkMode={setDarkMode}>
                     <Routes>
                       {['/', '/ui', '/ui/clusters'].map((path) => (
                         <Route
@@ -56,6 +62,10 @@ const App: React.FC = () => {
                           element={<Dashboard />}
                         />
                       ))}
+                      <Route
+                        path={getNonExactPath(clusterNewConfigPath)}
+                        element={<ClusterConfigForm />}
+                      />
                       <Route
                         path={getNonExactPath(clusterPath())}
                         element={<ClusterPage />}

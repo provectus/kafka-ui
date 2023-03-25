@@ -3,6 +3,10 @@ FROM azul/zulu-openjdk-alpine:17-jre
 RUN apk add --no-cache gcompat # need to make snappy codec work
 RUN addgroup -S kafkaui && adduser -S kafkaui -G kafkaui
 
+# creating folder for dynamic config usage (certificates uploads, etc)
+RUN mkdir /etc/kafkaui/
+RUN chown kafkaui /etc/kafkaui
+
 USER kafkaui
 
 ARG JAR_FILE
@@ -12,4 +16,5 @@ ENV JAVA_OPTS=
 
 EXPOSE 8080
 
-CMD java $JAVA_OPTS -jar kafka-ui-api.jar
+# see JmxSslSocketFactory docs to understand why add-opens is needed
+CMD java --add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED  $JAVA_OPTS -jar kafka-ui-api.jar

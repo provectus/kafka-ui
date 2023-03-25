@@ -15,9 +15,12 @@ const tableLinkMixin = css(
       color: ${theme.table.link.color.active};
     }
   }
+   tr {
+  background-color: red;
+  }
 `
 );
 
-export const TableKeyLink = styled.td`
+export const TableKeyLink = styled.div`
   ${tableLinkMixin}
 `;

@@ -3,8 +3,12 @@ package com.provectus.kafka.ui.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
+import com.provectus.kafka.ui.pages.panels.enums.MenuItem;
 import com.provectus.kafka.ui.utilities.WebUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.interactions.Actions;
 
 import java.time.Duration;
 
@@ -23,21 +27,43 @@ public abstract class BasePage extends WebUtils {
     protected SelenideElement confirmationMdl = $x("//div[text()= 'Confirm the action']/..");
     protected SelenideElement confirmBtn = $x("//button[contains(text(),'Confirm')]");
     protected SelenideElement cancelBtn = $x("//button[contains(text(),'Cancel')]");
+    protected SelenideElement backBtn = $x("//button[contains(text(),'Back')]");
+    protected SelenideElement nextBtn = $x("//button[contains(text(),'Next')]");
     protected ElementsCollection ddlOptions = $$x("//li[@value]");
     protected ElementsCollection gridItems = $$x("//tr[@class]");
     protected String summaryCellLocator = "//div[contains(text(),'%s')]";
     protected String tableElementNameLocator = "//tbody//a[contains(text(),'%s')]";
     protected String columnHeaderLocator = "//table//tr/th//div[text()='%s']";
+    protected String pageTitleFromHeader = "//h1[text()='%s']";
+    protected String pagePathFromHeader = "//a[text()='%s']/../h1";
 
     protected void waitUntilSpinnerDisappear() {
         log.debug("\nwaitUntilSpinnerDisappear");
         if (isVisible(loadingSpinner)) {
-            loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(30));
+            loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(60));
         }
+    }
+
+    protected SelenideElement getPageTitleFromHeader(MenuItem menuItem) {
+        return $x(String.format(pageTitleFromHeader, menuItem.getPageTitle()));
+    }
+
+    protected SelenideElement getPagePathFromHeader(MenuItem menuItem) {
+        return $x(String.format(pagePathFromHeader, menuItem.getPageTitle()));
     }
 
     protected void clickSubmitBtn() {
         clickByJavaScript(submitBtn);
+    }
+
+    protected void setJsonInputValue(SelenideElement jsonInput, String jsonConfig) {
+        sendKeysByActions(jsonInput, jsonConfig.replace("  ", ""));
+        new Actions(WebDriverRunner.getWebDriver())
+                .keyDown(Keys.SHIFT)
+                .sendKeys(Keys.PAGE_DOWN)
+                .keyUp(Keys.SHIFT)
+                .sendKeys(Keys.DELETE)
+                .perform();
     }
 
     protected SelenideElement getTableElement(String elementName) {
