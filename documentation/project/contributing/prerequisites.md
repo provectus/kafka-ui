@@ -2,6 +2,12 @@
 
 This page explains how to get the software you need to use on Linux or macOS for local development.
 
+* `java 17` package or newer 
+* `git` installed
+* `docker` installed
+
+> Note: For contribution, you must have `github` account.
+
 ### For Linux
 
 1. Install `OpenJDK 17` package or newer: 
@@ -11,11 +17,7 @@ sudo apt update
 sudo apt install openjdk-17-jdk
 ```
 
-* Check `java` version:
-
-```
-java -version
-```
+* Check java version using command `java -version`.
 
 ```
 openjdk version "17.0.5" 2022-10-18
@@ -23,11 +25,7 @@ OpenJDK Runtime Environment (build 17.0.5+8-Ubuntu-2ubuntu120.04)
 OpenJDK 64-Bit Server VM (build 17.0.5+8-Ubuntu-2ubuntu120.04, mixed mode, sharing)
 ```
 
-Note : In case OpenJDK 17 is not set as your default Java, run the following command to list all installed Java versions:
-
-```
-sudo update-alternatives --config java
-```
+Note : In case OpenJDK 17 is not set as your default Java, run `sudo update-alternatives --config java` command to list all installed Java versions.
 
 ```
 Selection    Path                                            Priority   Status
@@ -41,6 +39,31 @@ Press <enter> to keep the current choice[*], or type selection number:
 ```
 
 you can set it as the default by entering the selection number for it in the list and pressing Enter. For example, to set Java 17 as the default, you would enter "3" and press **Enter**.
+
+2. Install `git`:
+
+```
+sudo apt install git
+```
+
+3. Install `docker`:
+
+```
+sudo apt update
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+apt-cache policy docker-ce
+sudo apt -y install docker-ce
+```
+
+To execute the `docker` Command without `sudo`:
+
+```
+sudo usermod -aG docker ${USER}
+su - ${USER}
+sudo chmod 666 /var/run/docker.sock
+```
 
 ### For macOS
 
@@ -69,15 +92,13 @@ export JAVA_HOME="$(/usr/libexec/java_home -v 17)"
 Consider allocating not less than 4GB of memory for your docker.
 Otherwise, some apps within a stack (e.g. `kafka-ui.yaml`) might crash.
 
-To check how much memory is allocated to Docker:
-
-```
-docker info
-```
+To check how much memory is allocated to docker, use `docker info`.
 
 You will find the total memory and used memory in the output. if you won't find used memory thats mean memory limits are not set for containers.
 
-#### To allocate 4GB of memory for Docker on Ubuntu
+#### To allocate 4GB of memory for Docker:
+
+#### For Ubuntu
 
 1. Open the Docker configuration file in a text editor using the following command:
 
@@ -107,8 +128,8 @@ docker info | grep -i memory
 
 Note that the warning messages are expected as they relate to the kernel not supporting cgroup memory limits.
 
-Now any containers you run in Docker will be limited to this amount of memory. You can also increase the memory limit as your preference.
+Now any containers you run in docker will be limited to this amount of memory. You can also increase the memory limit as your preference.
 
 ## Where to go next
 
-In the next section, you'll [learn how to Build and Run kafka-ui](building.md).
+In the next section, you'll learn [how to Build and Run kafka-ui](building.md).
