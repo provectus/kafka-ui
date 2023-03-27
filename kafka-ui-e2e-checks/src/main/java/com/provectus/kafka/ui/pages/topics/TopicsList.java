@@ -208,23 +208,23 @@ public class TopicsList extends BasePage {
             return new TopicsList();
         }
 
-        @Step
-        public boolean isInternal() {
-            boolean internal = false;
-            try {
-                internal = element.$x("./td[2]/a/span").isDisplayed();
-            } catch (Throwable ignored) {
-            }
-            return internal;
-        }
-
         private SelenideElement getNameElm() {
             return element.$x("./td[2]");
         }
 
         @Step
+        public boolean isInternal() {
+            boolean internal = false;
+            try {
+                internal = getNameElm().$x("./a/span").isDisplayed();
+            } catch (Throwable ignored) {
+            }
+            return internal;
+        }
+
+        @Step
         public String getName() {
-            return getNameElm().getText().trim();
+            return getNameElm().$x("./a").getAttribute("title");
         }
 
         @Step
