@@ -23,7 +23,11 @@ export const Button: React.FC<Props> = ({ to, ...props }) => {
     );
   }
   return (
-    <StyledButton type="button" {...props}>
+    <StyledButton
+      type="button"
+      disabled={props.disabled || props.inProgress}
+      {...props}
+    >
       {props.children}{' '}
       {props.inProgress ? (
         <Spinner size={16} borderWidth={2} marginLeft={2} emptyBorderColor />
