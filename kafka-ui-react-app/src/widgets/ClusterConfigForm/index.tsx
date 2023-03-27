@@ -142,6 +142,7 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
               buttonSize="L"
               buttonType="primary"
               disabled={isSubmitDisabled}
+              inProgress={isSubmitting}
             >
               Submit
             </Button>
