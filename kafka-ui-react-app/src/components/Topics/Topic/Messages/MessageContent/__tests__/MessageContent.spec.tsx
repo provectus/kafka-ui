@@ -37,11 +37,13 @@ const searchParamsContentAVRO = new URLSearchParams({
   valueSerde: 'AVRO',
   limit: '100',
 });
+
 const searchParamsContentJSON = new URLSearchParams({
   keySerde: 'SchemaRegistry',
   valueSerde: 'JSON',
   limit: '100',
 });
+
 const searchParamsContentPROTOBUF = new URLSearchParams({
   keySerde: 'SchemaRegistry',
   valueSerde: 'PROTOBUF',

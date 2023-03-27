@@ -28,6 +28,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
   const [searchParams] = useSearchParams();
   const keyFormat = searchParams.get('keySerde') || '';
   const valueFormat = searchParams.get('valueSerde') || '';
+
   const activeTabContent = () => {
     switch (activeTab) {
       case 'content':
