@@ -10,6 +10,7 @@ import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
 import com.provectus.kafka.ui.model.InternalBroker;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.PartitionDistributionStats;
 import com.provectus.kafka.ui.service.metrics.RawMetric;
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,11 +65,13 @@ public class BrokerService {
   }
 
   public Flux<InternalBroker> getBrokers(KafkaCluster cluster) {
+    var stats = statisticsCache.get(cluster);
+    var partitionsDistribution = PartitionDistributionStats.create(stats);
     return adminClientService
         .get(cluster)
         .flatMap(ReactiveAdminClient::describeCluster)
         .map(description -> description.getNodes().stream()
-            .map(node -> new InternalBroker(node, statisticsCache.get(cluster)))
+            .map(node -> new InternalBroker(node, partitionsDistribution, stats))
             .collect(Collectors.toList()))
         .flatMapMany(Flux::fromIterable);
   }
