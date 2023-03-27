@@ -142,8 +142,9 @@ const ClusterConfigForm: React.FC<ClusterConfigFormProps> = ({
               buttonSize="L"
               buttonType="primary"
               disabled={isSubmitDisabled}
+              inProgress={isSubmitting}
             >
-              Submit {isSubmitting ? <S.Spinner /> : null}
+              Submit
             </Button>
           </S.ButtonWrapper>
         </FlexFieldset>

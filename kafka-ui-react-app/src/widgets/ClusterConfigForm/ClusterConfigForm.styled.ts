@@ -1,5 +1,5 @@
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 export const GroupFieldWrapper = styled.div`
   display: flex;
@@ -60,24 +60,3 @@ export const FileUploadInputWrapper = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.clusterConfigForm.fileInput.color}};
 `;
-
-export const Spinner = styled.div(
-  ({ theme }) => css`
-    border: 2px solid ${theme.pageLoader.borderColor};
-    border-bottom: 2px solid transparent;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    margin-left: 2px;
-    animation: spin 1.3s linear infinite;
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-  `
-);
