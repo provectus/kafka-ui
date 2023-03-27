@@ -5,7 +5,6 @@ interface SpinnerProps {
   height: number;
   borderWidth: number;
   emptyBorderColor: boolean;
-  borderTheme?: string;
   marginLeft?: number;
 }
 export const Spinner = styled.div<SpinnerProps>`
