@@ -3,7 +3,7 @@ import StyledButton, {
 } from 'components/common/Button/Button.styled';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import * as S from 'components/common/Spinner/Spinner.styled';
+import Spinner from 'components/common/Spinner/Spinner';
 
 export interface Props
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -26,14 +26,7 @@ export const Button: React.FC<Props> = ({ to, ...props }) => {
     <StyledButton type="button" {...props}>
       {props.children}{' '}
       {props.inProgress ? (
-        <S.Spinner
-          role="progressbar"
-          height={16}
-          width={16}
-          borderWidth={2}
-          marginLeft={2}
-          emptyBorderColor
-        />
+        <Spinner size={16} borderWidth={2} marginLeft={2} emptyBorderColor />
       ) : null}
     </StyledButton>
   );

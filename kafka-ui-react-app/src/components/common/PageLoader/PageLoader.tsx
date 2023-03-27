@@ -1,17 +1,11 @@
 import React from 'react';
-import * as SP from 'components/common/Spinner/Spinner.styled';
+import Spinner from 'components/common/Spinner/Spinner';
 
 import * as S from './PageLoader.styled';
 
 const PageLoader: React.FC = () => (
   <S.Wrapper>
-    <SP.Spinner
-      role="progressbar"
-      width={80}
-      height={80}
-      borderWidth={10}
-      emptyBorderColor={false}
-    />
+    <Spinner />
   </S.Wrapper>
 );
 
