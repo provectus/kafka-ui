@@ -13,12 +13,12 @@ import com.provectus.kafka.ui.model.ClusterConfigValidationDTO;
 import com.provectus.kafka.ui.model.RestartRequestDTO;
 import com.provectus.kafka.ui.model.UploadedFileInfoDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
+import com.provectus.kafka.ui.service.ApplicationInfoService;
 import com.provectus.kafka.ui.service.KafkaClusterFactory;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import com.provectus.kafka.ui.util.ApplicationRestarter;
 import com.provectus.kafka.ui.util.DynamicConfigOperations;
 import com.provectus.kafka.ui.util.DynamicConfigOperations.PropertiesStructure;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -53,18 +53,11 @@ public class ApplicationConfigController implements ApplicationConfigApi {
   private final DynamicConfigOperations dynamicConfigOperations;
   private final ApplicationRestarter restarter;
   private final KafkaClusterFactory kafkaClusterFactory;
-
+  private final ApplicationInfoService applicationInfoService;
 
   @Override
   public Mono<ResponseEntity<ApplicationInfoDTO>> getApplicationInfo(ServerWebExchange exchange) {
-    return Mono.just(
-        new ApplicationInfoDTO()
-            .enabledFeatures(
-                dynamicConfigOperations.dynamicConfigEnabled()
-                    ? List.of(ApplicationInfoDTO.EnabledFeaturesEnum.DYNAMIC_CONFIG)
-                    : List.of()
-            )
-    ).map(ResponseEntity::ok);
+    return applicationInfoService.getApplicationInfo().map(ResponseEntity::ok);
   }
 
   @Override
