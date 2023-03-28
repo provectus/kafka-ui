@@ -61,7 +61,7 @@ Example of callback URL for github OAuth app settings:
 
 `https://www.kafka-ui.provectus.io/login/oauth2/code/github`
 
-#### Common platform (AKA github.com)
+For the self-hosted installation find the properties a little bit below.
 
 ```yaml
 kafka:
@@ -85,9 +85,8 @@ auth:
           type: github
 ```
 
-#### Self-hosted platform (GitHub Enterprise Server)
+#### Self-hosted/Cloud (GitHub Enterprise Server)
 
-Feature added in v0.7.
 ```yaml
 kafka:
   clusters:
