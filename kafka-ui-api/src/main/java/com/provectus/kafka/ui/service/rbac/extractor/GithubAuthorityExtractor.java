@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,6 +26,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
   private static final String ORGANIZATION_NAME = "login";
   private static final String GITHUB_ACCEPT_HEADER = "application/vnd.github+json";
   private static final String DEFAULT_INFO_ENDPOINT = "https://api.github.com/user";
+  private static final String DUMMY = "dummy";
 
   @Override
   public boolean isApplicable(String provider) {
@@ -66,7 +68,15 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
     OAuth2UserRequest req = (OAuth2UserRequest) additionalParams.get("request");
     String infoEndpoint = req.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
 
-    infoEndpoint = infoEndpoint != null ? infoEndpoint : DEFAULT_INFO_ENDPOINT;
+    if (infoEndpoint == null) {
+      infoEndpoint = CommonOAuth2Provider.GITHUB
+          .getBuilder(DUMMY)
+          .clientId(DUMMY)
+          .build()
+          .getProviderDetails()
+          .getUserInfoEndpoint()
+          .getUri();
+    }
 
     WebClient webClient = WebClient.create(infoEndpoint);
 
