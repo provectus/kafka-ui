@@ -53,7 +53,7 @@ public class ApplicationInfoService {
 
   private ApplicationInfoBuildDTO getBuildInfo() {
     return new ApplicationInfoBuildDTO()
-        .commitId(gitProperties.getCommitId())
+        .commitId(gitProperties.getShortCommitId())
         .version(buildProperties.getVersion())
         .buildTime(buildProperties.getTime() != null
             ? DateTimeFormatter.ISO_INSTANT.format(buildProperties.getTime()) : null);
