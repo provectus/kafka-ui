@@ -21,6 +21,8 @@ import reactor.core.publisher.Mono;
 @Service
 public class ApplicationInfoService {
 
+  private final GithubReleaseInfo githubReleaseInfo = new GithubReleaseInfo();
+
   private final DynamicConfigOperations dynamicConfigOperations;
   private final BuildProperties buildProperties;
   private final GitProperties gitProperties;
@@ -34,7 +36,7 @@ public class ApplicationInfoService {
   }
 
   public Mono<ApplicationInfoDTO> getApplicationInfo() {
-    return GithubReleaseInfo.get()
+    return githubReleaseInfo.get()
         .map(releaseInfo ->
             new ApplicationInfoDTO()
                 .build(getBuildInfo())

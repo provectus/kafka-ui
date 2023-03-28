@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.util;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.time.Duration;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterEach;
@@ -36,8 +37,8 @@ class GithubReleaseInfoTest {
               "some_unused_prop": "ololo"
             }
             """));
-    var url = mockWebServer.url("repos/provectus/kafka-ui/releases/latest");
-    var mono = GithubReleaseInfo.createCachedMono(url.toString());
+    var url = mockWebServer.url("repos/provectus/kafka-ui/releases/latest").toString();
+    var mono = new GithubReleaseInfo(url, Duration.ZERO).get();
     StepVerifier.create(mono)
         .assertNext(r -> {
           assertThat(r.html_url())

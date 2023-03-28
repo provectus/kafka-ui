@@ -14,29 +14,31 @@ public class GithubReleaseInfo {
 
   private static final Duration GITHUB_API_MAX_WAIT_TIME = Duration.ofSeconds(2);
 
+  private static final Duration CACHE_DURATION = Duration.ofMinutes(5);
+
   public record GithubReleaseDto(String html_url, String tag_name, String published_at) {
   }
 
-  private static final Mono<GithubReleaseDto> CACHED_MONO =
-      createCachedMono(GITHUB_LATEST_RELEASE_RETRIEVAL_URL);
+  private final Mono<GithubReleaseDto> cachedMono;
 
-  public static Mono<GithubReleaseDto> get() {
-    return CACHED_MONO;
+  public GithubReleaseInfo() {
+    this(GITHUB_LATEST_RELEASE_RETRIEVAL_URL, CACHE_DURATION);
   }
 
   @VisibleForTesting
-  static Mono<GithubReleaseDto> createCachedMono(String url) {
-    return WebClient.create()
+  GithubReleaseInfo(String url, Duration cacheDuration) {
+    this.cachedMono = WebClient.create()
         .get()
         .uri(url)
         .exchangeToMono(resp -> resp.bodyToMono(GithubReleaseDto.class))
         .timeout(GITHUB_API_MAX_WAIT_TIME)
         .doOnError(th -> log.trace("Error getting latest github release info", th))
         .onErrorResume(th -> true, th -> Mono.just(new GithubReleaseDto(null, null, null)))
-        .cache(Duration.ofMinutes(5));
+        .cache(cacheDuration);
   }
 
-  private GithubReleaseInfo() {
+  public Mono<GithubReleaseDto> get() {
+    return cachedMono;
   }
 
 }
