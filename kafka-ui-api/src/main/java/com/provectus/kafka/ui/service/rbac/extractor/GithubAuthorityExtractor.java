@@ -25,7 +25,6 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
   private static final String USERNAME_ATTRIBUTE_NAME = "login";
   private static final String ORGANIZATION_NAME = "login";
   private static final String GITHUB_ACCEPT_HEADER = "application/vnd.github+json";
-  private static final String DEFAULT_INFO_ENDPOINT = "https://api.github.com/user";
   private static final String DUMMY = "dummy";
 
   @Override
