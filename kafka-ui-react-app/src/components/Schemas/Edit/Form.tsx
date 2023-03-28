@@ -110,7 +110,7 @@ const Form: React.FC = () => {
   return (
     <FormProvider {...methods}>
       <PageHeading
-        text="Edit"
+        text={`${subject} Edit`}
         backText="Schema Registry"
         backTo={clusterSchemasPath(clusterName)}
       />
