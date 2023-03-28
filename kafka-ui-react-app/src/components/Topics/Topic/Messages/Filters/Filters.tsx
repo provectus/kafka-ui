@@ -231,7 +231,10 @@ const Filters: React.FC<FiltersProps> = ({
         props.seekType = SeekType.TIMESTAMP;
       }
 
-      if (selectedPartitions.length !== partitions.length) {
+      if (
+        selectedPartitions.length !== partitions.length ||
+        currentSeekType === SeekType.TIMESTAMP
+      ) {
         // not everything in the partition is selected
         props.seekTo = selectedPartitions.map(({ value }) => {
           const offsetProperty =
