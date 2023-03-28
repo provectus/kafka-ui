@@ -142,14 +142,11 @@ const Table: React.FC<TableProps<any>> = ({
     (updater: UpdaterFn<PaginationState>) => {
       const newState = updatePaginationState(updater, searchParams);
       setSearchParams(searchParams);
+      setRowSelection({});
       return newState;
     },
     [searchParams]
   );
-
-  React.useEffect(() => {
-    setRowSelection({});
-  }, [searchParams]);
 
   const table = useReactTable({
     data,
