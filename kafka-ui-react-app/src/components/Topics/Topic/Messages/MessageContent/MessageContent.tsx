@@ -105,21 +105,21 @@ const MessageContent: React.FC<MessageContentProps> = ({
             </S.Metadata>
 
             <S.Metadata>
-              <S.MetadataLabel>Value Serde</S.MetadataLabel>
-              <span>
-                <S.MetadataValue>{valueFormat}</S.MetadataValue>
-                <S.MetadataMeta>
-                  Size: <BytesFormatted value={contentSize} />
-                </S.MetadataMeta>
-              </span>
-            </S.Metadata>
-
-            <S.Metadata>
               <S.MetadataLabel>Key Serde</S.MetadataLabel>
               <span>
                 <S.MetadataValue>{keyFormat}</S.MetadataValue>
                 <S.MetadataMeta>
                   Size: <BytesFormatted value={keySize} />
+                </S.MetadataMeta>
+              </span>
+            </S.Metadata>
+
+            <S.Metadata>
+              <S.MetadataLabel>Value Serde</S.MetadataLabel>
+              <span>
+                <S.MetadataValue>{valueFormat}</S.MetadataValue>
+                <S.MetadataMeta>
+                  Size: <BytesFormatted value={contentSize} />
                 </S.MetadataMeta>
               </span>
             </S.Metadata>
