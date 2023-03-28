@@ -4,7 +4,7 @@
 
 ### Cognito
 
-```
+```yaml
 kafka:
   clusters:
     - name: local
@@ -33,7 +33,7 @@ auth:
 
 ### Google
 
-```
+```yaml
 kafka:
   clusters:
     - name: local
@@ -55,13 +55,15 @@ auth:
 
 ```
 
-### Github:
+### GitHub
 
 Example of callback URL for github OAuth app settings:
 
 `https://www.kafka-ui.provectus.io/login/oauth2/code/github`
 
-```
+#### Common platform (AKA github.com)
+
+```yaml
 kafka:
   clusters:
     - name: local
@@ -82,3 +84,32 @@ auth:
         custom-params:
           type: github
 ```
+
+#### Self-hosted platform (GitHub Enterprise Server)
+
+Feature added in v0.7.
+```yaml
+kafka:
+  clusters:
+    - name: local
+      bootstrapServers: localhost:9092
+    # ...
+
+auth:
+  type: OAUTH2
+  oauth2:
+    client:
+      github:
+        provider: github
+        clientId: xxx
+        clientSecret: yyy
+        scope:
+          - read:org
+        user-name-attribute: login
+        custom-params:
+          type: github
+        authorization-uri: http(s)://HOSTNAME/login/oauth/authorize
+        token-uri: http(s)://HOSTNAME/login/oauth/access_token
+        user-info-uri: http(s)://HOSTNAME/api/v3/user
+```
+Replace `HOSTNAME` by your self-hosted platform FQDN.
