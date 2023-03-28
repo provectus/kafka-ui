@@ -41,12 +41,12 @@ const isJsonObject = (message?: string) => {
   );
 };
 
-const isValidEnum = (value?: string) => {
+export const isValidEnum = (value?: string) => {
   try {
     if (!value) return false;
     const trimmedValue = value.trim();
     if (
-      trimmedValue.indexOf('e') === 0 &&
+      trimmedValue.indexOf('enum') === 0 &&
       trimmedValue.lastIndexOf('}') === trimmedValue.length - 1
     ) {
       return true;
