@@ -39,7 +39,7 @@ public class ApplicationInfoService {
     return githubReleaseInfo.get()
         .map(releaseInfo ->
             new ApplicationInfoDTO()
-                .build(getBuildInfo())
+                .build(getBuildInfo(releaseInfo))
                 .enabledFeatures(getEnabledFeatures())
                 .latestRelease(convert(releaseInfo)));
   }
@@ -51,8 +51,9 @@ public class ApplicationInfoService {
         .versionTag(releaseInfo.tag_name());
   }
 
-  private ApplicationInfoBuildDTO getBuildInfo() {
+  private ApplicationInfoBuildDTO getBuildInfo(GithubReleaseInfo.GithubReleaseDto release) {
     return new ApplicationInfoBuildDTO()
+        .isLatestRelease(release.tag_name() != null && release.tag_name().equals(buildProperties.getVersion()))
         .commitId(gitProperties.getShortCommitId())
         .version(buildProperties.getVersion())
         .buildTime(buildProperties.getTime() != null

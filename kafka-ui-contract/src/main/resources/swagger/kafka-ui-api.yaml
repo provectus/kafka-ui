@@ -1926,6 +1926,8 @@ components:
               type: string
             buildTime:
               type: string
+            isLatestRelease:
+              type: boolean
         latestRelease:
           type: object
           properties:
