@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -24,8 +25,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
   private static final String USERNAME_ATTRIBUTE_NAME = "login";
   private static final String ORGANIZATION_NAME = "login";
   private static final String GITHUB_ACCEPT_HEADER = "application/vnd.github+json";
-
-  private final WebClient webClient = WebClient.create("https://api.github.com");
+  private static final String DUMMY = "dummy";
 
   @Override
   public boolean isApplicable(String provider) {
@@ -64,9 +64,24 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
       return Mono.just(groupsByUsername);
     }
 
+    OAuth2UserRequest req = (OAuth2UserRequest) additionalParams.get("request");
+    String infoEndpoint = req.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
+
+    if (infoEndpoint == null) {
+      infoEndpoint = CommonOAuth2Provider.GITHUB
+          .getBuilder(DUMMY)
+          .clientId(DUMMY)
+          .build()
+          .getProviderDetails()
+          .getUserInfoEndpoint()
+          .getUri();
+    }
+
+    WebClient webClient = WebClient.create(infoEndpoint);
+
     final Mono<List<Map<String, Object>>> userOrganizations = webClient
         .get()
-        .uri("/user/orgs")
+        .uri("/orgs")
         .headers(headers -> {
           headers.set(HttpHeaders.ACCEPT, GITHUB_ACCEPT_HEADER);
           OAuth2UserRequest request = (OAuth2UserRequest) additionalParams.get("request");
