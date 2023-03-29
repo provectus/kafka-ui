@@ -120,14 +120,15 @@ export function useCreateTopicMutation(clusterName: ClusterName) {
         clusterName,
         topicCreation: formatTopicCreation(data),
       }),
-    {
-      onSuccess: () => {
-        showSuccessAlert({
-          message: `Topic successfully created.`,
-        });
-        client.invalidateQueries(topicKeys.all(clusterName));
-      },
-    }
+    // Comment the following code for disabling the success message popup -> issue #3417
+    // {
+    //   onSuccess: () => {
+    //     showSuccessAlert({
+    //       message: `Topic successfully created.`,
+    //     });
+    //     client.invalidateQueries(topicKeys.all(clusterName));
+    //   },
+    // }
   );
 }
 
