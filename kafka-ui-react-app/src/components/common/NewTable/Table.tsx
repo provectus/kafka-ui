@@ -157,6 +157,9 @@ const Table: React.FC<TableProps<any>> = ({
       pagination: getPaginationFromSearchParams(searchParams),
       rowSelection,
     },
+    getRowId: (originalRow, index) => {
+      return originalRow.name ? `${originalRow.name}` : `${index}`;
+    },
     onSortingChange: onSortingChange as OnChangeFn<SortingState>,
     onPaginationChange: onPaginationChange as OnChangeFn<PaginationState>,
     onRowSelectionChange: setRowSelection,
