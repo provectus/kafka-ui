@@ -23,6 +23,7 @@
 
 ## 👷♂ Configuration
 
+* [Quick Start](configuration/quick-start.md)
 * [Configuration wizard](configuration/configuration-wizard.md)
 * [Permissions](configuration/permissions/README.md)
   * [Required Kafka ACLs](configuration/configuration/required-acls.md)
