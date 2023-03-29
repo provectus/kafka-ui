@@ -4,6 +4,20 @@ description: Configuration properties for all the things
 
 # Misc configuration properties
 
+A reminder: any of these properties can be converted into yaml config properties, an example:
+
+`KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS`
+
+becomes
+
+```
+kafka:
+  clusters:
+    - bootstrapServers: xxx
+```
+
+
+
 | Name                                                  | Description                                                                                                                                                      |
 | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `SERVER_SERVLET_CONTEXT_PATH`                         | URI basePath                                                                                                                                                     |
