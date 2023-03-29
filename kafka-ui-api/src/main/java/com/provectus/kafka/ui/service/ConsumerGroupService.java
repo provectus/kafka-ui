@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import com.google.common.collect.Streams;
 import com.google.common.collect.Table;
 import com.provectus.kafka.ui.model.ConsumerGroupOrderingDTO;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
@@ -158,17 +159,22 @@ public class ConsumerGroupService {
                 sortAndPaginate(descriptions.values(), comparator, pageNum, perPage, sortOrderDto).toList());
       }
       case MESSAGES_BEHIND -> {
-        Comparator<InternalConsumerGroup> comparator = Comparator.comparingLong(icg ->
-            icg.getMessagesBehind() == null ? 0L : icg.getMessagesBehind());
+        record GroupWithDescr(InternalConsumerGroup icg, ConsumerGroupDescription cgd) { }
+
+        Comparator<GroupWithDescr> comparator = Comparator.comparingLong(gwd ->
+            gwd.icg.getMessagesBehind() == null ? 0L : gwd.icg.getMessagesBehind());
+
         var groupNames = groups.stream().map(ConsumerGroupListing::groupId).toList();
+
         yield ac.describeConsumerGroups(groupNames)
-              .flatMap(descriptionsMap ->
-                  getConsumerGroups(ac, descriptionsMap.values().stream().toList())
-                    .map(internalGroups ->
-                      sortAndPaginate(internalGroups, comparator, pageNum, perPage, sortOrderDto).toList())
-                    .map(internalGroups ->
-                      internalGroups.stream().map(InternalConsumerGroup::getDescription).toList())
-              );
+            .flatMap(descriptionsMap -> {
+                  List<ConsumerGroupDescription> descriptions = descriptionsMap.values().stream().toList();
+                  return getConsumerGroups(ac, descriptions)
+                      .map(icg -> Streams.zip(icg.stream(), descriptions.stream(), GroupWithDescr::new).toList())
+                      .map(gwd -> sortAndPaginate(gwd, comparator, pageNum, perPage, sortOrderDto)
+                            .map(GroupWithDescr::cgd).toList());
+                }
+            );
       }
     };
   }

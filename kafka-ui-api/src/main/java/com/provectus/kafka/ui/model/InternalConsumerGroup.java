@@ -15,7 +15,6 @@ import org.apache.kafka.common.TopicPartition;
 @Data
 @Builder(toBuilder = true)
 public class InternalConsumerGroup {
-  private final ConsumerGroupDescription description;
   private final String groupId;
   private final boolean simple;
   private final Collection<InternalMember> members;
@@ -41,7 +40,6 @@ public class InternalConsumerGroup {
       Map<TopicPartition, Long> groupOffsets,
       Map<TopicPartition, Long> topicEndOffsets) {
     var builder = InternalConsumerGroup.builder();
-    builder.description(description);
     builder.groupId(description.groupId());
     builder.simple(description.isSimpleConsumerGroup());
     builder.state(description.state());
@@ -61,12 +59,12 @@ public class InternalConsumerGroup {
     );
     builder.offsets(groupOffsets);
     builder.endOffsets(topicEndOffsets);
-    builder.messagesBehind(setMessagesBehind(groupOffsets, topicEndOffsets));
+    builder.messagesBehind(calculateMessagesBehind(groupOffsets, topicEndOffsets));
     Optional.ofNullable(description.coordinator()).ifPresent(builder::coordinator);
     return builder.build();
   }
 
-  private static Long setMessagesBehind(Map<TopicPartition, Long> offsets, Map<TopicPartition, Long> endOffsets) {
+  private static Long calculateMessagesBehind(Map<TopicPartition, Long> offsets, Map<TopicPartition, Long> endOffsets) {
     Long messagesBehind = null;
     // messagesBehind should be undefined if no committed offsets found for topic
     if (!offsets.isEmpty()) {
