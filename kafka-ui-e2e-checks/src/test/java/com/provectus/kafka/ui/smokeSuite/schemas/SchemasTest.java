@@ -1,14 +1,10 @@
 package com.provectus.kafka.ui.smokeSuite.schemas;
 
 import com.codeborne.selenide.Condition;
-import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.BaseTest;
+import com.provectus.kafka.ui.api.model.CompatibilityLevel;
 import com.provectus.kafka.ui.models.Schema;
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.AutomationStatus;
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Suite;
-import com.provectus.kafka.ui.utilities.qaseUtils.enums.Status;
-import io.qameta.allure.Step;
-import io.qase.api.annotation.CaseId;
+import io.qase.api.annotation.QaseId;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -18,13 +14,10 @@ import org.testng.asserts.SoftAssert;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.SCHEMA_REGISTRY;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
 public class SchemasTest extends BaseTest {
 
-    private static final long SUITE_ID = 11;
-    private static final String SUITE_TITLE = "Schema Registry";
     private static final List<Schema> SCHEMA_LIST = new ArrayList<>();
     private static final Schema AVRO_API = Schema.createSchemaAvro();
     private static final Schema JSON_API = Schema.createSchemaJson();
@@ -36,9 +29,7 @@ public class SchemasTest extends BaseTest {
         SCHEMA_LIST.forEach(schema -> apiService.createSchema(schema));
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(43)
+    @QaseId(43)
     @Test(priority = 1)
     public void createSchemaAvro() {
         Schema schemaAvro = Schema.createSchemaAvro();
@@ -63,12 +54,10 @@ public class SchemasTest extends BaseTest {
         SCHEMA_LIST.add(schemaAvro);
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(186)
+    @QaseId(186)
     @Test(priority = 2)
     public void updateSchemaAvro() {
-        AVRO_API.setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schema_avro_for_update.json");
+        AVRO_API.setValuePath(System.getProperty("user.dir") + "/src/main/resources/testData/schemas/schema_avro_for_update.json");
         navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
         schemaDetails
                 .openEditSchema();
@@ -85,12 +74,11 @@ public class SchemasTest extends BaseTest {
                 .clickSubmitButton();
         schemaDetails
                 .waitUntilScreenReady();
-        Assert.assertEquals(CompatibilityLevel.CompatibilityEnum.NONE.toString(), schemaDetails.getCompatibility(), "getCompatibility()");
+        Assert.assertEquals(schemaDetails.getCompatibility(), CompatibilityLevel.CompatibilityEnum.NONE.toString(),
+                "getCompatibility()");
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(186)
+    @QaseId(44)
     @Test(priority = 3)
     public void compareVersionsOperation() {
         navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
@@ -101,17 +89,15 @@ public class SchemasTest extends BaseTest {
                 .openCompareVersionMenu();
         int versionsNumberFromDdl = schemaCreateForm
                 .waitUntilScreenReady()
-                .openSchemaVersionDdl()
+                .openLeftVersionDdl()
                 .getVersionsNumberFromList();
-        Assert.assertEquals(latestVersion, versionsNumberFromDdl, "Versions number is not matched");
+        Assert.assertEquals(versionsNumberFromDdl, latestVersion, "Versions number is not matched");
         schemaCreateForm
                 .selectVersionFromDropDown(1);
-        Assert.assertEquals(53, schemaCreateForm.getMarkedLinesNumber(), "getAllMarkedLines()");
+        Assert.assertEquals(schemaCreateForm.getMarkedLinesNumber(), 42, "getAllMarkedLines()");
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(187)
+    @QaseId(187)
     @Test(priority = 4)
     public void deleteSchemaAvro() {
         navigateToSchemaRegistryAndOpenDetails(AVRO_API.getName());
@@ -123,9 +109,7 @@ public class SchemasTest extends BaseTest {
         SCHEMA_LIST.remove(AVRO_API);
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(89)
+    @QaseId(89)
     @Test(priority = 5)
     public void createSchemaJson() {
         Schema schemaJson = Schema.createSchemaJson();
@@ -150,9 +134,7 @@ public class SchemasTest extends BaseTest {
         SCHEMA_LIST.add(schemaJson);
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(189)
+    @QaseId(189)
     @Test(priority = 6)
     public void deleteSchemaJson() {
         navigateToSchemaRegistryAndOpenDetails(JSON_API.getName());
@@ -164,9 +146,7 @@ public class SchemasTest extends BaseTest {
         SCHEMA_LIST.remove(JSON_API);
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(91)
+    @QaseId(91)
     @Test(priority = 7)
     public void createSchemaProtobuf() {
         Schema schemaProtobuf = Schema.createSchemaProtobuf();
@@ -191,9 +171,7 @@ public class SchemasTest extends BaseTest {
         SCHEMA_LIST.add(schemaProtobuf);
     }
 
-    @Suite(suiteId = SUITE_ID, title = SUITE_TITLE)
-    @AutomationStatus(status = Status.AUTOMATED)
-    @CaseId(223)
+    @QaseId(223)
     @Test(priority = 8)
     public void deleteSchemaProtobuf() {
         navigateToSchemaRegistryAndOpenDetails(PROTOBUF_API.getName());
@@ -208,22 +186,5 @@ public class SchemasTest extends BaseTest {
     @AfterClass(alwaysRun = true)
     public void afterClass() {
         SCHEMA_LIST.forEach(schema -> apiService.deleteSchema(schema.getName()));
-    }
-
-    @Step
-    private void navigateToSchemaRegistry() {
-        naviSideBar
-                .openSideMenu(SCHEMA_REGISTRY);
-        schemaRegistryList
-                .waitUntilScreenReady();
-    }
-
-    @Step
-    private void navigateToSchemaRegistryAndOpenDetails(String schemaName) {
-        navigateToSchemaRegistry();
-        schemaRegistryList
-                .openSchema(schemaName);
-        schemaDetails
-                .waitUntilScreenReady();
     }
 }

@@ -6,66 +6,38 @@ export const QueryWrapper = styled.div`
 `;
 
 export const KSQLInputsWrapper = styled.div`
-  width: 100%;
   display: flex;
   gap: 24px;
-
   padding-bottom: 16px;
-  & > div {
-    flex-grow: 1;
+
+  @media screen and (max-width: 769px) {
+    flex-direction: column;
   }
 `;
 
 export const KSQLInputHeader = styled.div`
   display: flex;
   justify-content: space-between;
-`;
-
-export const KSQLButtons = styled.div`
-  display: flex;
-  gap: 16px;
-`;
-
-export const StreamPropertiesContainer = styled.label`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 50%;
+  color: ${({ theme }) => theme.default.color.normal};
 `;
 
 export const InputsContainer = styled.div`
-  overflow: hidden;
-  width: 100%;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr 30px;
+  align-items: center;
   gap: 10px;
 `;
 
-export const StreamPropertiesInputWrapper = styled.div`
-  & {
-    width: 100%;
-  }
-  & > input {
-    width: 100%;
-    height: 40px;
-    border: 1px solid grey;
-    border-radius: 4px;
-    font-size: 16px;
-    padding-left: 15px;
-  }
-`;
-
-export const DeleteButtonWrapper = styled.div`
-  min-height: 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-self: flex-start;
-  margin-top: 10px;
-`;
-
 export const Fieldset = styled.fieldset`
-  width: 50%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+export const ButtonsContainer = styled.div`
+  display: flex;
+  gap: 8px;
 `;
 
 export const SQLEditor = styled(BaseSQLEditor)(
@@ -73,8 +45,28 @@ export const SQLEditor = styled(BaseSQLEditor)(
     css`
       background: ${readOnly && theme.ksqlDb.query.editor.readonly.background};
       .ace-cursor {
-        ${readOnly && theme.ksqlDb.query.editor.readonly.cursor}
+        ${readOnly && `background: ${theme.default.transparentColor} `}
       }
+
+      .ace_content {
+        background-color: ${theme.default.backgroundColor};
+        color: ${theme.default.color.normal};
+      }
+      .ace_line {
+        background-color: ${theme.ksqlDb.query.editor.activeLine
+          .backgroundColor};
+      }
+      .ace_gutter-cell {
+        background-color: ${theme.ksqlDb.query.editor.cell.backgroundColor};
+      }
+      .ace_gutter-layer {
+        background-color: ${theme.ksqlDb.query.editor.layer.backgroundColor};
+        color: ${theme.default.color.normal};
+      }
+      .ace_cursor {
+        color: ${theme.ksqlDb.query.editor.cursor};
+      }
+
       .ace_print-margin {
         display: none;
       }

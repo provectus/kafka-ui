@@ -3,11 +3,12 @@ import { Row } from '@tanstack/react-table';
 import { Action, Topic, ResourceType } from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
 import { ClusterName } from 'redux/interfaces';
-import { topicKeys, useDeleteTopic } from 'lib/hooks/api/topics';
+import {
+  topicKeys,
+  useClearTopicMessages,
+  useDeleteTopic,
+} from 'lib/hooks/api/topics';
 import { useConfirm } from 'lib/hooks/useConfirm';
-import { Button } from 'components/common/Button/Button';
-import { useAppDispatch } from 'lib/hooks/redux';
-import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { clusterTopicCopyRelativePath } from 'lib/paths';
 import { useQueryClient } from '@tanstack/react-query';
 import { ActionCanButton } from 'components/common/ActionComponent';
@@ -25,11 +26,14 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
 }) => {
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
   const confirm = useConfirm();
-  const dispatch = useAppDispatch();
   const deleteTopic = useDeleteTopic(clusterName);
   const selectedTopics = rows.map(({ original }) => original.name);
   const client = useQueryClient();
 
+  const clearMessages = useClearTopicMessages(clusterName);
+  const clearTopicMessagesHandler = async (topicName: Topic['name']) => {
+    await clearMessages.mutateAsync(topicName);
+  };
   const deleteTopicsHandler = () => {
     confirm('Are you sure you want to remove selected topics?', async () => {
       try {
@@ -50,7 +54,7 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
         try {
           await Promise.all(
             selectedTopics.map((topicName) =>
-              dispatch(clearTopicMessages({ clusterName, topicName })).unwrap()
+              clearTopicMessagesHandler(topicName)
             )
           );
           resetRowSelection();
@@ -103,6 +107,19 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
     );
   }, [selectedTopics, clusterName, roles]);
 
+  const canCopySelectedTopic = useMemo(() => {
+    return selectedTopics.every((value) =>
+      isPermitted({
+        roles,
+        resource: ResourceType.TOPIC,
+        action: Action.CREATE,
+        value,
+        clusterName,
+        rbacFlag,
+      })
+    );
+  }, [selectedTopics, clusterName, roles]);
+
   const canPurgeSelectedTopics = useMemo(() => {
     return selectedTopics.every((value) =>
       isPermitted({
@@ -127,14 +144,15 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
       >
         Delete selected topics
       </ActionCanButton>
-      <Button
+      <ActionCanButton
         buttonSize="M"
         buttonType="secondary"
         disabled={selectedTopics.length !== 1}
+        canDoAction={canCopySelectedTopic}
         to={getCopyTopicPath()}
       >
         Copy selected topic
-      </Button>
+      </ActionCanButton>
       <ActionCanButton
         buttonSize="M"
         buttonType="secondary"

@@ -6,8 +6,8 @@ import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.settings.listeners.AllureListener;
 import com.provectus.kafka.ui.settings.listeners.LoggerListener;
+import com.provectus.kafka.ui.settings.listeners.QaseResultListener;
 import io.qameta.allure.Step;
-import io.qase.testng.QaseListener;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -22,15 +22,15 @@ import org.testng.asserts.SoftAssert;
 import java.time.Duration;
 import java.util.List;
 
-import static com.provectus.kafka.ui.pages.NaviSideBar.SideMenuOption.TOPICS;
+import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.*;
 import static com.provectus.kafka.ui.settings.BaseSource.*;
 import static com.provectus.kafka.ui.settings.drivers.LocalWebDriver.*;
-import static com.provectus.kafka.ui.utilities.qaseUtils.QaseSetup.testRunSetup;
+import static com.provectus.kafka.ui.utilities.qaseUtils.QaseSetup.qaseIntegrationSetup;
 import static com.provectus.kafka.ui.variables.Browser.CONTAINER;
 import static com.provectus.kafka.ui.variables.Browser.LOCAL;
 
 @Slf4j
-@Listeners({AllureListener.class, LoggerListener.class, QaseListener.class})
+@Listeners({AllureListener.class, LoggerListener.class, QaseResultListener.class})
 public abstract class BaseTest extends Facade {
 
     private static final String SELENIUM_IMAGE_NAME = "selenium/standalone-chrome:103.0";
@@ -43,7 +43,7 @@ public abstract class BaseTest extends Facade {
 
     @BeforeSuite(alwaysRun = true)
     public void beforeSuite() {
-        testRunSetup();
+        qaseIntegrationSetup();
         switch (BROWSER) {
             case (CONTAINER) -> {
                 DockerImageName image = isARM64()
@@ -110,6 +110,25 @@ public abstract class BaseTest extends Facade {
     }
 
     @Step
+    protected void navigateToBrokers() {
+        naviSideBar
+                .openSideMenu(BROKERS);
+        brokersList
+                .waitUntilScreenReady();
+    }
+
+    @Step
+    protected void navigateToBrokersAndOpenDetails(int brokerId) {
+        naviSideBar
+                .openSideMenu(BROKERS);
+        brokersList
+                .waitUntilScreenReady()
+                .openBroker(brokerId);
+        brokersDetails
+                .waitUntilScreenReady();
+    }
+
+    @Step
     protected void navigateToTopics() {
         naviSideBar
                 .openSideMenu(TOPICS);
@@ -125,6 +144,56 @@ public abstract class BaseTest extends Facade {
                 .waitUntilScreenReady()
                 .openTopic(topicName);
         topicDetails
+                .waitUntilScreenReady();
+    }
+
+    @Step
+    protected void navigateToConsumers() {
+        naviSideBar
+                .openSideMenu(CONSUMERS);
+        consumersList
+                .waitUntilScreenReady();
+    }
+
+    @Step
+    protected void navigateToSchemaRegistry() {
+        naviSideBar
+                .openSideMenu(SCHEMA_REGISTRY);
+        schemaRegistryList
+                .waitUntilScreenReady();
+    }
+
+    @Step
+    protected void navigateToSchemaRegistryAndOpenDetails(String schemaName) {
+        navigateToSchemaRegistry();
+        schemaRegistryList
+                .openSchema(schemaName);
+        schemaDetails
+                .waitUntilScreenReady();
+    }
+
+    @Step
+    protected void navigateToConnectors() {
+        naviSideBar
+                .openSideMenu(KAFKA_CONNECT);
+        kafkaConnectList
+                .waitUntilScreenReady();
+    }
+
+    @Step
+    protected void navigateToConnectorsAndOpenDetails(String connectorName) {
+        navigateToConnectors();
+        kafkaConnectList
+                .openConnector(connectorName);
+        connectorDetails
+                .waitUntilScreenReady();
+    }
+
+    @Step
+    protected void navigateToKsqlDb() {
+        naviSideBar
+                .openSideMenu(KSQL_DB);
+        ksqlDbList
                 .waitUntilScreenReady();
     }
 

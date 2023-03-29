@@ -1,11 +1,9 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import AceEditor, { IAceEditorProps } from 'react-ace';
 import 'ace-builds/src-noconflict/mode-json5';
 import 'ace-builds/src-noconflict/mode-protobuf';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 import { SchemaType } from 'generated-sources';
 import React from 'react';
-import ReactAce from 'react-ace/lib/ace';
 import styled from 'styled-components';
 
 interface EditorProps extends IAceEditorProps {
@@ -13,7 +11,7 @@ interface EditorProps extends IAceEditorProps {
   schemaType?: string;
 }
 
-const Editor = React.forwardRef<ReactAce | null, EditorProps>((props, ref) => {
+const Editor = React.forwardRef<AceEditor | null, EditorProps>((props, ref) => {
   const { isFixedHeight, schemaType, ...rest } = props;
   return (
     <AceEditor
@@ -43,5 +41,37 @@ Editor.displayName = 'Editor';
 export default styled(Editor)`
   &.ace-tomorrow {
     background: transparent;
+    .ace_gutter {
+      background-color: ${({ theme }) =>
+        theme.ksqlDb.query.editor.layer.backgroundColor};
+    }
+    .ace_gutter-active-line {
+      background-color: ${({ theme }) =>
+        theme.ksqlDb.query.editor.cell.backgroundColor};
+      color: ${({ theme }) => theme.default.color.normal};
+    }
+    .ace_line {
+      background-color: ${({ theme }) => theme.default.backgroundColor};
+      color: ${({ theme }) => theme.default.color.normal};
+    }
+    .ace_cursor {
+      color: ${({ theme }) => theme.ksqlDb.query.editor.cursor};
+    }
+    .ace_active-line {
+      background-color: ${({ theme }) =>
+        theme.ksqlDb.query.editor.cell.backgroundColor};
+    }
+    .ace_gutter-cell {
+      color: ${({ theme }) => theme.default.color.normal};
+    }
+    .ace_variable {
+      color: ${({ theme }) => theme.ksqlDb.query.editor.variable};
+    }
+    .ace_string {
+      color: ${({ theme }) => theme.ksqlDb.query.editor.aceString};
+    }
+    .ace_print-margin {
+      display: none;
+    }
   }
 `;

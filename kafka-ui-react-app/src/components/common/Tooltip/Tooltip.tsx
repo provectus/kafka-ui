@@ -8,13 +8,13 @@ import {
 
 import * as S from './Tooltip.styled';
 
-export interface PropsTypes {
-  value: string | JSX.Element;
+interface TooltipProps {
+  value: React.ReactNode;
   content: string;
   placement?: Placement;
 }
 
-const Tooltip: React.FC<PropsTypes> = ({ value, content, placement }) => {
+const Tooltip: React.FC<TooltipProps> = ({ value, content, placement }) => {
   const [open, setOpen] = useState(false);
   const { x, y, refs, strategy, context } = useFloating({
     open,

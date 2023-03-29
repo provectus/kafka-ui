@@ -16,7 +16,7 @@ const CheckmarkIcon: FC = () => {
       <path
         data-name="layer1"
         fill="none"
-        stroke="#202020"
+        stroke="#FFFFFF"
         strokeMiterlimit="10"
         strokeWidth="2"
         d="M2 30l21 22 39-40"

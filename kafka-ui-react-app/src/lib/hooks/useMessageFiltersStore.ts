@@ -2,7 +2,7 @@ import { LOCAL_STORAGE_KEY_PREFIX } from 'lib/constants';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export interface AdvancedFilter {
+interface AdvancedFilter {
   name: string;
   value: string;
 }

@@ -74,7 +74,7 @@ export const Title = styled.span<TitleProps>(
     font-style: normal;
     font-weight: 400;
     line-height: 16px;
-    letter-spacing: 0em;
+    letter-spacing: 0;
     text-align: left;
     display: inline-block;
     justify-content: start;
@@ -97,11 +97,11 @@ export const Preview = styled.span`
   font-style: normal;
   font-weight: 400;
   line-height: 16px;
-  letter-spacing: 0em;
+  letter-spacing: 0;
   text-align: left;
-  background: ${(props) => props.theme.table.th.backgroundColor.normal};
+  background: ${({ theme }) => theme.table.th.backgroundColor.normal};
   font-size: 14px;
-  color: ${(props) => props.theme.table.th.previewColor.normal};
+  color: ${({ theme }) => theme.table.th.previewColor.normal};
   cursor: pointer;
 `;
 

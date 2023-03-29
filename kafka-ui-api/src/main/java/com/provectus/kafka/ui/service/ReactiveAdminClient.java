@@ -10,7 +10,7 @@ import com.google.common.collect.Table;
 import com.provectus.kafka.ui.exception.IllegalEntityStateException;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.util.NumberUtil;
+import com.provectus.kafka.ui.util.KafkaVersion;
 import com.provectus.kafka.ui.util.annotation.KafkaClientInternalsDependant;
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -123,7 +123,7 @@ public class ReactiveAdminClient implements Closeable {
 
   private static Set<SupportedFeature> getSupportedUpdateFeaturesForVersion(String versionStr) {
     try {
-      float version = NumberUtil.parserClusterVersion(versionStr);
+      float version = KafkaVersion.parse(versionStr);
       return SupportedFeature.forVersion(version);
     } catch (NumberFormatException e) {
       return SupportedFeature.defaultFeatures();
@@ -132,7 +132,7 @@ public class ReactiveAdminClient implements Closeable {
 
   // NOTE: if KafkaFuture returns null, that Mono will be empty(!), since Reactor does not support nullable results
   // (see MonoSink.success(..) javadoc for details)
-  private static <T> Mono<T> toMono(KafkaFuture<T> future) {
+  public static <T> Mono<T> toMono(KafkaFuture<T> future) {
     return Mono.<T>create(sink -> future.whenComplete((res, ex) -> {
       if (ex != null) {
         // KafkaFuture doc is unclear about what exception wrapper will be used
@@ -212,15 +212,22 @@ public class ReactiveAdminClient implements Closeable {
         .map(brokerId -> new ConfigResource(ConfigResource.Type.BROKER, Integer.toString(brokerId)))
         .collect(toList());
     return toMono(client.describeConfigs(resources).all())
-        // some kafka backends (like MSK serverless) do not support broker's configs retrieval,
-        // in that case InvalidRequestException will be thrown
-        .onErrorResume(InvalidRequestException.class, th -> {
-          log.trace("Error while getting broker {} configs", brokerIds, th);
-          return Mono.just(Map.of());
-        })
+        // some kafka backends don't support broker's configs retrieval,
+        // and throw various exceptions on describeConfigs() call
+        .onErrorResume(th -> th instanceof InvalidRequestException // MSK Serverless
+                || th instanceof UnknownTopicOrPartitionException, // Azure event hub
+            th -> {
+              log.trace("Error while getting configs for brokers {}", brokerIds, th);
+              return Mono.just(Map.of());
+            })
         // there are situations when kafka-ui user has no DESCRIBE_CONFIGS permission on cluster
         .onErrorResume(ClusterAuthorizationException.class, th -> {
           log.trace("AuthorizationException while getting configs for brokers {}", brokerIds, th);
+          return Mono.just(Map.of());
+        })
+        // catching all remaining exceptions, but logging on WARN level
+        .onErrorResume(th -> true, th -> {
+          log.warn("Unexpected error while getting configs for brokers {}", brokerIds, th);
           return Mono.just(Map.of());
         })
         .map(config -> config.entrySet().stream()

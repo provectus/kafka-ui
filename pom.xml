@@ -21,7 +21,7 @@
         <git.revision>latest</git.revision>
 
         <!-- Dependency versions -->
-        <antlr4-maven-plugin.version>4.7.1</antlr4-maven-plugin.version>
+        <antlr4-maven-plugin.version>4.12.0</antlr4-maven-plugin.version>
         <apache.commons.version>2.11.1</apache.commons.version>
         <assertj.version>3.19.0</assertj.version>
         <avro.version>1.11.1</avro.version>
@@ -43,11 +43,11 @@
         <spring-security.version>5.7.5</spring-security.version>
         <kafka-ui-serde-api.version>1.0.0</kafka-ui-serde-api.version>
         <odd-oddrn-generator.version>0.1.15</odd-oddrn-generator.version>
-        <odd-oddrn-client.version>0.1.19</odd-oddrn-client.version>
+        <odd-oddrn-client.version>0.1.23</odd-oddrn-client.version>
 
         <!-- Test dependency versions -->
         <junit.version>5.9.1</junit.version>
-        <mockito.version>4.9.0</mockito.version>
+        <mockito.version>5.1.1</mockito.version>
         <okhttp3.mockwebserver.version>4.10.0</okhttp3.mockwebserver.version>
         <testcontainers.version>1.17.5</testcontainers.version>
 
@@ -56,7 +56,7 @@
         <pnpm.version>v7.4.0</pnpm.version>
 
         <!-- Plugin versions -->
-        <fabric8-maven-plugin.version>0.40.2</fabric8-maven-plugin.version>
+        <fabric8-maven-plugin.version>0.42.0</fabric8-maven-plugin.version>
         <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
         <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>

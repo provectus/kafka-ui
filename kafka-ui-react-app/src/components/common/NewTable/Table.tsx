@@ -46,7 +46,9 @@ export interface TableProps<TData> {
   enableSorting?: boolean; // Enables sorting for table.
 
   // Placeholder for empty table
-  emptyMessage?: string;
+  emptyMessage?: React.ReactNode;
+
+  disabled?: boolean;
 
   // Handles row click. Can not be combined with `enableRowSelection` && expandable rows.
   onRowClick?: (row: Row<TData>) => void;
@@ -123,6 +125,7 @@ const Table: React.FC<TableProps<any>> = ({
   enableRowSelection = false,
   batchActionsBar: BatchActionsBar,
   emptyMessage,
+  disabled,
   onRowClick,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -200,7 +203,7 @@ const Table: React.FC<TableProps<any>> = ({
           />
         </S.TableActionsBar>
       )}
-      <S.TableWrapper>
+      <S.TableWrapper $disabled={!!disabled}>
         <S.Table>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (

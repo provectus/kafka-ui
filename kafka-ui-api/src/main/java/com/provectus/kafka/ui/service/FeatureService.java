@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.ClusterFeature;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,34 +25,33 @@ public class FeatureService {
 
   private final AdminClientService adminClientService;
 
-  public Mono<List<Feature>> getAvailableFeatures(KafkaCluster cluster, @Nullable Node controller) {
-    List<Mono<Feature>> features = new ArrayList<>();
+  public Mono<List<ClusterFeature>> getAvailableFeatures(KafkaCluster cluster,
+                                                         ReactiveAdminClient.ClusterDescription clusterDescription) {
+    List<Mono<ClusterFeature>> features = new ArrayList<>();
 
     if (Optional.ofNullable(cluster.getConnectsClients())
         .filter(Predicate.not(Map::isEmpty))
         .isPresent()) {
-      features.add(Mono.just(Feature.KAFKA_CONNECT));
+      features.add(Mono.just(ClusterFeature.KAFKA_CONNECT));
     }
 
     if (cluster.getKsqlClient() != null) {
-      features.add(Mono.just(Feature.KSQL_DB));
+      features.add(Mono.just(ClusterFeature.KSQL_DB));
     }
 
     if (cluster.getSchemaRegistryClient() != null) {
-      features.add(Mono.just(Feature.SCHEMA_REGISTRY));
+      features.add(Mono.just(ClusterFeature.SCHEMA_REGISTRY));
     }
 
-    if (controller != null) {
-      features.add(
-          isTopicDeletionEnabled(cluster, controller)
-              .flatMap(r -> Boolean.TRUE.equals(r) ? Mono.just(Feature.TOPIC_DELETION) : Mono.empty())
-      );
-    }
+    features.add(topicDeletionEnabled(cluster, clusterDescription.getController()));
 
     return Flux.fromIterable(features).flatMap(m -> m).collectList();
   }
 
-  private Mono<Boolean> isTopicDeletionEnabled(KafkaCluster cluster, Node controller) {
+  private Mono<ClusterFeature> topicDeletionEnabled(KafkaCluster cluster, @Nullable Node controller) {
+    if (controller == null) {
+      return Mono.just(ClusterFeature.TOPIC_DELETION); // assuming it is enabled by default
+    }
     return adminClientService.get(cluster)
         .flatMap(ac -> ac.loadBrokersConfig(List.of(controller.id())))
         .map(config ->
@@ -61,6 +60,9 @@ public class FeatureService {
                 .filter(e -> e.name().equals(DELETE_TOPIC_ENABLED_SERVER_PROPERTY))
                 .map(e -> Boolean.parseBoolean(e.value()))
                 .findFirst()
-                .orElse(true));
+                .orElse(true))
+        .flatMap(enabled -> enabled
+            ? Mono.just(ClusterFeature.TOPIC_DELETION)
+            : Mono.empty());
   }
 }
