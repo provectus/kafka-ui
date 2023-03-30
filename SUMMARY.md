@@ -27,6 +27,8 @@
 * [Configuration wizard](configuration/configuration-wizard.md)
 * [Configuration file](configuration/configuration-file.md)
 * [Compose examples](configuration/compose-examples.md)
+* [Helm charts](configuration/helm-charts/README.md)
+  * [Configuration](configuration/helm-charts/configuration.md)
 * [Misc configuration properties](configuration/misc-configuration-properties.md)
 * [Permissions](configuration/permissions/README.md)
   * [Required Kafka ACLs](configuration/configuration/required-acls.md)
