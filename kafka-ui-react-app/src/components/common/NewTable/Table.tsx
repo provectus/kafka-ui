@@ -158,7 +158,7 @@ const Table: React.FC<TableProps<any>> = ({
       rowSelection,
     },
     getRowId: (originalRow, index) => {
-      return originalRow.name ? `${originalRow.name}` : `${index}`;
+      return originalRow.name ? originalRow.name : `${index}`;
     },
     onSortingChange: onSortingChange as OnChangeFn<SortingState>,
     onPaginationChange: onPaginationChange as OnChangeFn<PaginationState>,
