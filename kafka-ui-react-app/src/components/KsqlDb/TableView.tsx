@@ -31,7 +31,7 @@ const TableView: React.FC<TableViewProps> = ({ fetching, rows }) => {
       data={rows || []}
       columns={columns}
       emptyMessage={fetching ? 'Loading...' : 'No rows found'}
-      enableSorting={false}
+      enableSorting={true}
     />
   );
 };
