@@ -12,6 +12,12 @@ import static com.codeborne.selenide.Selenide.executeJavaScript;
 @Slf4j
 public class WebUtils {
 
+    public static void sendKeysAfterClear(SelenideElement element, String keys) {
+        log.debug("\nsendKeysAfterClear: {} \nsend keys '{}'", element.getSearchCriteria(), keys);
+        element.shouldBe(Condition.enabled).clear();
+        if (keys != null) element.sendKeys(keys);
+    }
+
     public static void clickByActions(SelenideElement element) {
         log.debug("\nclickByActions: {}", element.getSearchCriteria());
         element.shouldBe(Condition.enabled);
