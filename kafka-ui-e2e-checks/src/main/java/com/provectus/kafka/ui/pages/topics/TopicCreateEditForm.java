@@ -143,7 +143,7 @@ public class TopicCreateEditForm extends BasePage {
     }
 
     @Step
-    public TopicCreateEditForm clickCreateTopicBtn() {
+    public TopicCreateEditForm clickSaveTopicBtn() {
         clickSubmitBtn();
         return this;
     }

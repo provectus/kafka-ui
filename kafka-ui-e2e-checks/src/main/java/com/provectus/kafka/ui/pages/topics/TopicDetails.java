@@ -26,7 +26,7 @@ public class TopicDetails extends BasePage {
     protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
     protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
     protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
-    protected SelenideElement seekTypeDdl = $x("//ul[@id='selectSeekType']/li");
+    protected SelenideElement seekTypeDdl = $x("//ul[@id='selectSeekType']//li");
     protected SelenideElement seekTypeField = $x("//label[text()='Seek Type']//..//div/input");
     protected SelenideElement addFiltersBtn = $x("//button[text()='Add Filters']");
     protected SelenideElement savedFiltersLink = $x("//div[text()='Saved Filters']");
@@ -106,6 +106,13 @@ public class TopicDetails extends BasePage {
     }
 
     @Step
+    public boolean isClearMessagesMenuEnabled() {
+        return !Objects.requireNonNull(clearMessagesBtn.shouldBe(Condition.visible)
+                        .$x("./..").getAttribute("class"))
+                .contains("disabled");
+    }
+
+    @Step
     public TopicDetails clickRecreateTopicMenu() {
         recreateTopicBtn.shouldBe(Condition.visible).click();
         return this;
@@ -172,9 +179,9 @@ public class TopicDetails extends BasePage {
 
     @Step
     public TopicDetails clickNextButton() {
-      nextBtn.shouldBe(Condition.enabled).click();
-      waitUntilSpinnerDisappear();
-      return this;
+        nextBtn.shouldBe(Condition.enabled).click();
+        waitUntilSpinnerDisappear();
+        return this;
     }
 
     @Step
@@ -254,7 +261,7 @@ public class TopicDetails extends BasePage {
 
     @Step
     public boolean isNextButtonEnabled() {
-      return isEnabled(nextBtn);
+        return isEnabled(nextBtn);
     }
 
     @Step

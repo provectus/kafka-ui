@@ -73,7 +73,7 @@ public class TopicsTest extends BaseTest {
                 .setTopicName(TOPIC_TO_CREATE.getName())
                 .setNumberOfPartitions(TOPIC_TO_CREATE.getNumberOfPartitions())
                 .selectCleanupPolicy(TOPIC_TO_CREATE.getCleanupPolicyValue())
-                .clickCreateTopicBtn();
+                .clickSaveTopicBtn();
         navigateToTopicsAndOpenDetails(TOPIC_TO_CREATE.getName());
         SoftAssert softly = new SoftAssert();
         softly.assertTrue(topicDetails.isTopicHeaderVisible(TOPIC_TO_CREATE.getName()), "isTopicHeaderVisible()");
@@ -148,7 +148,7 @@ public class TopicsTest extends BaseTest {
                 .setTimeToRetainDataByButtons(TOPIC_TO_UPDATE_AND_DELETE.getTimeToRetain())
                 .setMaxSizeOnDiskInGB(TOPIC_TO_UPDATE_AND_DELETE.getMaxSizeOnDisk())
                 .setMaxMessageBytes(TOPIC_TO_UPDATE_AND_DELETE.getMaxMessageBytes())
-                .clickCreateTopicBtn();
+                .clickSaveTopicBtn();
         softly.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Topic successfully updated."),
                 "isAlertWithMessageVisible()");
         softly.assertTrue(topicDetails.isTopicHeaderVisible(TOPIC_TO_UPDATE_AND_DELETE.getName()),
@@ -256,7 +256,7 @@ public class TopicsTest extends BaseTest {
         Assert.assertEquals(topicCreateEditForm.getTimeToRetain(), "604800000", "getTimeToRetain()");
         topicCreateEditForm
                 .setTimeToRetainDataInMs(topicToRetainData.getTimeToRetainData())
-                .clickCreateTopicBtn();
+                .clickSaveTopicBtn();
         topicDetails
                 .waitUntilScreenReady()
                 .openDotMenu()
@@ -397,7 +397,7 @@ public class TopicsTest extends BaseTest {
                 .setTopicName(TOPIC_TO_CHECK_SETTINGS.getName())
                 .setNumberOfPartitions(TOPIC_TO_CHECK_SETTINGS.getNumberOfPartitions())
                 .setMaxMessageBytes(TOPIC_TO_CHECK_SETTINGS.getMaxMessageBytes())
-                .clickCreateTopicBtn();
+                .clickSaveTopicBtn();
         topicDetails
                 .waitUntilScreenReady();
         TOPIC_LIST.add(TOPIC_TO_CHECK_SETTINGS);
@@ -421,7 +421,7 @@ public class TopicsTest extends BaseTest {
                 .waitUntilScreenReady()
                 .setMaxSizeOnDiskInGB(TOPIC_TO_CHECK_SETTINGS.getMaxSizeOnDisk())
                 .setMaxMessageBytes(TOPIC_TO_CHECK_SETTINGS.getMaxMessageBytes())
-                .clickCreateTopicBtn();
+                .clickSaveTopicBtn();
         topicDetails
                 .waitUntilScreenReady()
                 .openDetailsTab(SETTINGS);
@@ -447,7 +447,7 @@ public class TopicsTest extends BaseTest {
                 .waitUntilScreenReady()
                 .setTopicName(topicToRecreate.getName())
                 .setNumberOfPartitions(topicToRecreate.getNumberOfPartitions())
-                .clickCreateTopicBtn();
+                .clickSaveTopicBtn();
         topicDetails
                 .waitUntilScreenReady();
         TOPIC_LIST.add(topicToRecreate);
@@ -479,7 +479,7 @@ public class TopicsTest extends BaseTest {
         topicCreateEditForm
                 .setTopicName(topicToCopy.getName())
                 .setNumberOfPartitions(topicToCopy.getNumberOfPartitions())
-                .clickCreateTopicBtn();
+                .clickSaveTopicBtn();
         topicDetails
                 .waitUntilScreenReady();
         TOPIC_LIST.add(topicToCopy);

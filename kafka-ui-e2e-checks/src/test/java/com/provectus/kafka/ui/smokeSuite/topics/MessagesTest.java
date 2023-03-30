@@ -16,7 +16,6 @@ import org.testng.asserts.SoftAssert;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
@@ -180,8 +179,8 @@ public class MessagesTest extends BaseTest {
         List<TopicDetails.MessageGridItem> nextMessages = topicDetails.getAllMessages().stream()
                 .filter(message -> message.getTimestamp().getMinute() != firstTimestamp.getMinute())
                 .toList();
-        LocalDateTime nextTimestamp = Objects.requireNonNull(nextMessages.stream()
-                .findFirst().orElseThrow()).getTimestamp();
+        LocalDateTime nextTimestamp = nextMessages.stream()
+                .findFirst().orElseThrow().getTimestamp();
         topicDetails
                 .selectSeekTypeDdlMessagesTab("Timestamp")
                 .openCalendarSeekType()
@@ -191,12 +190,10 @@ public class MessagesTest extends BaseTest {
         topicDetails.getAllMessages().forEach(message ->
                 softly.assertTrue(message.getTimestamp().isEqual(nextTimestamp)
                                 || message.getTimestamp().isAfter(nextTimestamp),
-                        String.format("Expected timestamp is: %s, but found: %s", nextTimestamp, message.getTimestamp())));
+                        String.format("Expected that %s is not before %s.", message.getTimestamp(), nextTimestamp)));
         softly.assertAll();
     }
 
-    @Ignore
-    @Issue("https://github.com/provectus/kafka-ui/issues/2778")
     @QaseId(246)
     @Test(priority = 8)
     public void checkClearTopicMessageFromOverviewTab() {
