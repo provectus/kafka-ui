@@ -142,14 +142,11 @@ const Table: React.FC<TableProps<any>> = ({
     (updater: UpdaterFn<PaginationState>) => {
       const newState = updatePaginationState(updater, searchParams);
       setSearchParams(searchParams);
+      setRowSelection({});
       return newState;
     },
     [searchParams]
   );
-
-  React.useEffect(() => {
-    setRowSelection({});
-  }, [searchParams]);
 
   const table = useReactTable({
     data,
@@ -159,6 +156,9 @@ const Table: React.FC<TableProps<any>> = ({
       sorting: getSortingFromSearchParams(searchParams),
       pagination: getPaginationFromSearchParams(searchParams),
       rowSelection,
+    },
+    getRowId: (originalRow, index) => {
+      return originalRow.name ? originalRow.name : `${index}`;
     },
     onSortingChange: onSortingChange as OnChangeFn<SortingState>,
     onPaginationChange: onPaginationChange as OnChangeFn<PaginationState>,
