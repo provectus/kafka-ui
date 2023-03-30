@@ -1,93 +1,61 @@
 # Getting started
 
-We have plenty of [docker-compose files](https://github.com/provectus/kafka-ui/blob/master/documentation/compose/DOCKER\_COMPOSE.md) as examples. They're built for various configuration stacks.
+To run UI for Apache Kafka, you can use either a pre-built Docker image or build it (or a jar file) yourself.
 
-## Guides
-
-* [SSO configuration](https://github.com/provectus/kafka-ui/blob/master/documentation/guides/SSO.md)
-* [AWS IAM configuration](https://github.com/provectus/kafka-ui/blob/master/documentation/guides/AWS\_IAM.md)
-* [Docker-compose files](https://github.com/provectus/kafka-ui/blob/master/documentation/compose/DOCKER\_COMPOSE.md)
-* [Connection to a secure broker](https://github.com/provectus/kafka-ui/blob/master/documentation/guides/SECURE\_BROKER.md)
-* [Configure seriliazation/deserialization plugins or code your own](https://github.com/provectus/kafka-ui/blob/master/documentation/guides/Serialization.md)
-
-#### Configuration File
-
-Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
+### Quick start (Demo run)
 
 ```
-kafka:
-  clusters:
-    -
-      name: local
-      bootstrapServers: localhost:29091
-      schemaRegistry: http://localhost:8085
-      schemaRegistryAuth:
-        username: username
-        password: password
-#     schemaNameTemplate: "%s-value"
-      metrics:
-        port: 9997
-        type: JMX
-    -
+docker run -it -p 8080:8080 -e DYNAMIC_CONFIG_ENABLED=true provectuslabs/kafka-ui
 ```
 
-* `name`: cluster name
-* `bootstrapServers`: where to connect
-* `schemaRegistry`: schemaRegistry's address
-* `schemaRegistryAuth.username`: schemaRegistry's basic authentication username
-* `schemaRegistryAuth.password`: schemaRegistry's basic authentication password
-* `schemaNameTemplate`: how keys are saved to schemaRegistry
-* `metrics.port`: open JMX port of a broker
-* `metrics.type`: Type of metrics, either JMX or PROMETHEUS. Defaulted to JMX.
-* `readOnly`: enable read only mode
+Then access the web UI at [http://localhost:8080](http://localhost:8080)
 
-Configure as many clusters as you need by adding their configs below separated with `-`.
+The command is sufficient to try things out. When you're done trying things out, you can proceed with a [persistent installation](https://docs.kafka-ui.provectus.io/configuration/quick-start#persistent-start)
 
-### Running a Docker Image
-
-The official Docker image for UI for Apache Kafka is hosted here: [hub.docker.com/r/provectuslabs/kafka-ui](https://hub.docker.com/r/provectuslabs/kafka-ui).
-
-Launch Docker container in the background:
+### Persistent installation
 
 ```
-docker run -p 8080:8080 \
-	-e KAFKA_CLUSTERS_0_NAME=local \
-	-e KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092 \
-	-d provectuslabs/kafka-ui:latest
+services:
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8080:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+    volumes:
+      - ~/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
 ```
 
-Then access the web UI at [http://localhost:8080](http://localhost:8080/). Further configuration with environment variables - [see environment variables](https://github.com/provectus/kafka-ui#env\_variables)
+Please refer to our [configuration](https://docs.kafka-ui.provectus.io/configuration/quick-start) page to proceed with further app configuration.
 
-#### Docker Compose
+### Some useful configuration-related links
 
-If you prefer to use `docker-compose` please refer to the [documentation](https://github.com/provectus/kafka-ui/blob/master/docker-compose.md).
+[Web UI Cluster Configuration Wizard](https://docs.kafka-ui.provectus.io/configuration/configuration-wizard)
 
-#### Helm chart
+[Configuration file explanation](https://docs.kafka-ui.provectus.io/configuration/configuration-file)
 
-Helm chart could be found under [charts/kafka-ui](https://github.com/provectus/kafka-ui/tree/master/charts/kafka-ui) directory
+[Docker Compose examples](https://docs.kafka-ui.provectus.io/configuration/compose-examples)
 
-Quick-start instruction [here](https://github.com/provectus/kafka-ui/blob/master/helm\_chart.md)
+[Misc configuration properties](https://docs.kafka-ui.provectus.io/configuration/misc-configuration-properties)
 
-### Building With Docker
+### Helm charts
 
-#### Prerequisites
+[Quick start](https://docs.kafka-ui.provectus.io/configuration/helm-charts/quick-start)
 
-Check [prerequisites.md](https://github.com/provectus/kafka-ui/blob/master/documentation/project/contributing/prerequisites.md)
+### Building from sources
 
-#### Building and Running
+[Quick start](https://docs.kafka-ui.provectus.io/development/building/prerequisites) with building
 
-Check [building.md](https://github.com/provectus/kafka-ui/blob/master/documentation/project/contributing/building.md)
+### Liveliness and readiness probes
 
-### Building Without Docker
+Liveliness and readiness endpoint is at `/actuator/health`.\
+Info endpoint (build info) is located at `/actuator/info`.
 
-#### Prerequisites
+## Configuration options
 
-[Prerequisites](https://github.com/provectus/kafka-ui/blob/master/documentation/project/contributing/prerequisites.md) will mostly remain the same with the exception of docker.
+All of the environment variables/config properties could be found [here](https://docs.kafka-ui.provectus.io/configuration/misc-configuration-properties).
 
-#### Running without Building
+## Contributing
 
-[How to run quickly without building](https://github.com/provectus/kafka-ui/blob/master/documentation/project/contributing/building-and-running-without-docker.md#run\_without\_docker\_quickly)
-
-#### Building and Running
-
-[How to build and run](https://github.com/provectus/kafka-ui/blob/master/documentation/project/contributing/building-and-running-without-docker.md#build\_and\_run\_without\_docker)
+Please refer to [contributing guide](https://docs.kafka-ui.provectus.io/development/contributing), we'll guide you from there.
