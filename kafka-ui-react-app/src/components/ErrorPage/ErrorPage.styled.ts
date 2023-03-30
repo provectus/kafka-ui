@@ -17,4 +17,5 @@ export const Number = styled.div`
 
 export const Text = styled.div`
   font-size: 20px;
+  color: ${({ theme }) => theme.default.color.normal};
 `;
