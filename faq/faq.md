@@ -2,15 +2,9 @@
 
 ### Basic (username password) authentication
 
-Add these env. properties:
+[basic-authentication.md](../configuration/authentication/basic-authentication.md "mention")
 
-```
-      AUTH_TYPE: "LOGIN_FORM"
-      SPRING_SECURITY_USER_NAME: admin
-      SPRING_SECURITY_USER_PASSWORD: pass
-```
-
-### Role based access control
+### Role-based access control
 
 [rbac-role-based-access-control.md](../configuration/rbac-role-based-access-control.md "mention")
 
