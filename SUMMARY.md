@@ -25,6 +25,7 @@
 
 * [Quick Start](configuration/quick-start.md)
 * [Configuration wizard](configuration/configuration-wizard.md)
+* [Configuration file](configuration/configuration-file.md)
 * [Compose examples](configuration/compose-examples.md)
 * [Misc configuration properties](configuration/misc-configuration-properties.md)
 * [Permissions](configuration/permissions/README.md)
