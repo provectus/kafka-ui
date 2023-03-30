@@ -28,6 +28,7 @@
 * [Configuration file](configuration/configuration-file.md)
 * [Compose examples](configuration/compose-examples.md)
 * [Helm charts](configuration/helm-charts/README.md)
+  * [Quick start](configuration/helm-charts/quick-start.md)
   * [Configuration](configuration/helm-charts/configuration.md)
 * [Misc configuration properties](configuration/misc-configuration-properties.md)
 * [Permissions](configuration/permissions/README.md)

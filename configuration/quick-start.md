@@ -31,5 +31,12 @@ services:
       - ~/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
 ```
 
-```
-```
+## AWS Marketplace
+
+To start the app quickly on AWS, please refer to **this page.**
+
+The app in AWS Marketplace could be found by [this link](https://aws.amazon.com/marketplace/pp/prodview-ogtt5hfhzkq6a).
+
+## Helm way
+
+To install the app via Helm please refer to [this page](helm-charts/quick-start.md).
