@@ -15,7 +15,7 @@
     <a href="https://discord.gg/4DWzD7pGE5">COMMUNITY DISCORD</a>
     <br/>
     <a href="https://aws.amazon.com/marketplace/pp/prodview-ogtt5hfhzkq6a">AWS Marketplace</a>  •
-    <a href="https://discord.gg/4DWzD7pGE5">ProductHunt</a>
+    <a href="https://www.producthunt.com/products/ui-for-apache-kafka/reviews/new">ProductHunt</a>
 </p>
 
 #### UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters.
