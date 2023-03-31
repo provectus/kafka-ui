@@ -56,9 +56,9 @@ const List = () => {
         enableSorting: false,
       },
       {
+        id: ConsumerGroupOrdering.MESSAGES_BEHIND,
         header: 'Messages Behind',
         accessorKey: 'messagesBehind',
-        enableSorting: false,
       },
       {
         header: 'Coordinator',
