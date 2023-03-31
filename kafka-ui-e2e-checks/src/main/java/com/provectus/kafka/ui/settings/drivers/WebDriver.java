@@ -32,9 +32,7 @@ public abstract class WebDriver {
                 .addArguments("--remote-allow-origins=*")
                 .addArguments("--lang=en_US");
         switch (BROWSER) {
-            case (LOCAL) -> {
-                Configuration.browserCapabilities = options;
-            }
+            case (LOCAL) -> Configuration.browserCapabilities = options;
             case (CONTAINER) -> {
                 Configuration.remote = REMOTE_URL;
                 Configuration.remoteConnectionTimeout = 180000;
