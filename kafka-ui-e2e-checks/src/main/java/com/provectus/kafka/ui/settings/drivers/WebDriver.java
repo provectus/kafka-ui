@@ -17,12 +17,6 @@ import static com.provectus.kafka.ui.variables.Browser.LOCAL;
 
 public abstract class WebDriver {
 
-    private static ChromeOptions getChromeOptions() {
-        return new ChromeOptions()
-                .addArguments("--remote-allow-origins=*")
-                .addArguments("--lang=en_US");
-    }
-
     @Step
     public static void browserSetup() {
         Configuration.headless = false;
@@ -32,11 +26,14 @@ public abstract class WebDriver {
          * optionally can be set as 'false' to not duplicate Allure report
          */
         Configuration.screenshots = true;
-        Configuration.savePageSource = true;
-        Configuration.pageLoadTimeout = 180000;
+        Configuration.savePageSource = false;
+        Configuration.pageLoadTimeout = 120000;
+        ChromeOptions options = new ChromeOptions()
+                .addArguments("--remote-allow-origins=*")
+                .addArguments("--lang=en_US");
         switch (BROWSER) {
             case (LOCAL) -> {
-                Configuration.browserCapabilities = getChromeOptions();
+                Configuration.browserCapabilities = options;
             }
             case (CONTAINER) -> {
                 Configuration.remote = REMOTE_URL;
@@ -44,7 +41,7 @@ public abstract class WebDriver {
                 DesiredCapabilities capabilities = new DesiredCapabilities();
                 capabilities.setCapability("enableVNC", true);
                 capabilities.setCapability("enableVideo", false);
-                Configuration.browserCapabilities = capabilities.merge(getChromeOptions());
+                Configuration.browserCapabilities = capabilities.merge(options);
             }
             default -> throw new IllegalStateException("Unexpected value: " + BROWSER);
         }

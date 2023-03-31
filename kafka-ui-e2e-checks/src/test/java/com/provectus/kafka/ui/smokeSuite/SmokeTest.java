@@ -72,7 +72,7 @@ public class SmokeTest extends BaseTest {
 
     @QaseId(46)
     @Test
-    public void checkComponentsPathWhileNavigating() {
+    public void checkPathWhileNavigating() {
         navigateToBrokersAndOpenDetails(BROKER_ID);
         verifyComponentsPath(BROKERS, String.format("Broker %d", BROKER_ID));
         navigateToTopicsAndOpenDetails(TEST_TOPIC.getName());
@@ -85,8 +85,10 @@ public class SmokeTest extends BaseTest {
 
     @Step
     private void verifyCurrentUrl(String expectedUrl) {
-        Assert.assertEquals(WebDriverRunner.getWebDriver().getCurrentUrl(),
-                String.format(expectedUrl, BASE_HOST), "getCurrentUrl()");
+        String urlWithoutParameters = WebDriverRunner.getWebDriver().getCurrentUrl();
+        if (urlWithoutParameters.contains("?"))
+            urlWithoutParameters = urlWithoutParameters.substring(0, urlWithoutParameters.indexOf("?"));
+        Assert.assertEquals(urlWithoutParameters, String.format(expectedUrl, BASE_HOST), "getCurrentUrl()");
     }
 
     @Step

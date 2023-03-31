@@ -36,6 +36,7 @@ docker pull selenoid/vnc:chrome_86.0
 
 ```
 cd kafka-ui
+docker-compose -f kafka-ui-e2e-checks/docker/selenoid.yaml up -d
 docker-compose -f documentation/compose/e2e-tests.yaml up -d
 ```
 

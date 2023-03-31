@@ -26,8 +26,8 @@ services:
       - "8081:8080"
     command: [ "--selenoid-uri", "http://selenoid:4444" ]
 
-#  selenoid-chrome:
-#    network_mode: bridge
-#    image: selenoid/vnc_chrome:103.0
-#    extra_hosts:
-#      - "host.docker.internal:host-gateway"
+  selenoid-chrome:
+    network_mode: bridge
+    image: selenoid/vnc_chrome:103.0
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

@@ -69,15 +69,14 @@ public abstract class BaseTest extends Facade {
         naviSideBar
                 .openSideMenu(TOPICS);
         topicsList
-                .waitUntilScreenReady();
+                .waitUntilScreenReady()
+                .setShowInternalRadioButton(false);
     }
 
     @Step
     protected void navigateToTopicsAndOpenDetails(String topicName) {
-        naviSideBar
-                .openSideMenu(TOPICS);
+        navigateToTopics();
         topicsList
-                .waitUntilScreenReady()
                 .openTopic(topicName);
         topicDetails
                 .waitUntilScreenReady();

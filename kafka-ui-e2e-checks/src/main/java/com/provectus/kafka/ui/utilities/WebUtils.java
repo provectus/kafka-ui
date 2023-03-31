@@ -7,10 +7,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
 
+import java.time.Duration;
+
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 
 @Slf4j
 public class WebUtils {
+
+    public static int getTimeout(int... timeoutInSeconds) {
+        return (timeoutInSeconds != null && timeoutInSeconds.length > 0) ? timeoutInSeconds[0] : 4;
+    }
 
     public static void sendKeysAfterClear(SelenideElement element, String keys) {
         log.debug("\nsendKeysAfterClear: {} \nsend keys '{}'", element.getSearchCriteria(), keys);
@@ -49,11 +55,12 @@ public class WebUtils {
         field.sendKeys(Keys.chord(Keys.CONTROL + "a"), Keys.DELETE);
     }
 
-    public static boolean isVisible(SelenideElement element) {
+    public static boolean isVisible(SelenideElement element, int... timeoutInSeconds) {
         log.debug("\nisVisible: {}", element.getSearchCriteria());
         boolean isVisible = false;
         try {
-            element.shouldBe(Condition.visible);
+            element.shouldBe(Condition.visible,
+                    Duration.ofSeconds(getTimeout(timeoutInSeconds)));
             isVisible = true;
         } catch (Throwable e) {
             log.debug("{} is not visible", element.getSearchCriteria());
@@ -61,11 +68,12 @@ public class WebUtils {
         return isVisible;
     }
 
-    public static boolean isEnabled(SelenideElement element) {
+    public static boolean isEnabled(SelenideElement element, int... timeoutInSeconds) {
         log.debug("\nisEnabled: {}", element.getSearchCriteria());
         boolean isEnabled = false;
         try {
-            element.shouldBe(Condition.enabled);
+            element.shouldBe(Condition.enabled,
+                    Duration.ofSeconds(getTimeout(timeoutInSeconds)));
             isEnabled = true;
         } catch (Throwable e) {
             log.debug("{} is not enabled", element.getSearchCriteria());
@@ -73,11 +81,12 @@ public class WebUtils {
         return isEnabled;
     }
 
-    public static boolean isSelected(SelenideElement element) {
+    public static boolean isSelected(SelenideElement element, int... timeoutInSeconds) {
         log.debug("\nisSelected: {}", element.getSearchCriteria());
         boolean isSelected = false;
         try {
-            element.shouldBe(Condition.selected);
+            element.shouldBe(Condition.selected,
+                    Duration.ofSeconds(getTimeout(timeoutInSeconds)));
             isSelected = true;
         } catch (Throwable e) {
             log.debug("{} is not selected", element.getSearchCriteria());
