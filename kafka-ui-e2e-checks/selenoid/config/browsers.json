@@ -5,7 +5,7 @@
       "103.0": {
         "image": "selenoid/vnc_chrome:103.0",
         "port": "4444",
-        "path": "/"
+        "path": "/wd/hub"
       }
     }
   }
