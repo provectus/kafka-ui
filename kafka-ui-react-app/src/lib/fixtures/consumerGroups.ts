@@ -1,30 +1,5 @@
 import { ConsumerGroupState } from 'generated-sources';
 
-export const consumerGroups = [
-  {
-    groupId: 'groupId1',
-    members: 0,
-    topics: 1,
-    simple: false,
-    partitionAssignor: '',
-    coordinator: {
-      id: 1,
-      host: 'host',
-    },
-  },
-  {
-    groupId: 'groupId2',
-    members: 0,
-    topics: 1,
-    simple: false,
-    partitionAssignor: '',
-    coordinator: {
-      id: 1,
-      host: 'host',
-    },
-  },
-];
-
 export const consumerGroupPayload = {
   groupId: 'amazon.msk.canary.group.broker-1',
   members: 0,

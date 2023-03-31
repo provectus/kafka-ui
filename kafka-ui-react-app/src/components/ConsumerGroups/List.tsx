@@ -7,41 +7,29 @@ import {
   ConsumerGroupOrdering,
   SortOrder,
 } from 'generated-sources';
-import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
 import { clusterConsumerGroupDetailsPath, ClusterNameRoute } from 'lib/paths';
-import { fetchConsumerGroupsPaged } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import { ColumnDef } from '@tanstack/react-table';
 import Table, { TagCell, LinkCell } from 'components/common/NewTable';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
+import { useConsumerGroups } from 'lib/hooks/api/consumers';
 
-export interface Props {
-  consumerGroups: ConsumerGroupDetails[];
-  totalPages: number;
-}
-
-const List: React.FC<Props> = ({ consumerGroups, totalPages }) => {
-  const dispatch = useAppDispatch();
+const List = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  React.useEffect(() => {
-    dispatch(
-      fetchConsumerGroupsPaged({
-        clusterName,
-        orderBy:
-          (searchParams.get('sortBy') as ConsumerGroupOrdering) || undefined,
-        sortOrder:
-          (searchParams.get('sortDirection')?.toUpperCase() as SortOrder) ||
-          undefined,
-        page: Number(searchParams.get('page') || 1),
-        perPage: Number(searchParams.get('perPage') || PER_PAGE),
-        search: searchParams.get('q') || '',
-      })
-    );
-  }, [clusterName, dispatch, searchParams]);
+  const consumerGroups = useConsumerGroups({
+    clusterName,
+    orderBy: (searchParams.get('sortBy') as ConsumerGroupOrdering) || undefined,
+    sortOrder:
+      (searchParams.get('sortDirection')?.toUpperCase() as SortOrder) ||
+      undefined,
+    page: Number(searchParams.get('page') || 1),
+    perPage: Number(searchParams.get('perPage') || PER_PAGE),
+    search: searchParams.get('q') || '',
+  });
 
   const columns = React.useMemo<ColumnDef<ConsumerGroupDetails>[]>(
     () => [
@@ -68,9 +56,9 @@ const List: React.FC<Props> = ({ consumerGroups, totalPages }) => {
         enableSorting: false,
       },
       {
+        id: ConsumerGroupOrdering.MESSAGES_BEHIND,
         header: 'Messages Behind',
         accessorKey: 'messagesBehind',
-        enableSorting: false,
       },
       {
         header: 'Coordinator',
@@ -95,9 +83,13 @@ const List: React.FC<Props> = ({ consumerGroups, totalPages }) => {
       </ControlPanelWrapper>
       <Table
         columns={columns}
-        pageCount={totalPages}
-        data={consumerGroups}
-        emptyMessage="No active consumer groups found"
+        pageCount={consumerGroups.data?.pageCount || 0}
+        data={consumerGroups.data?.consumerGroups || []}
+        emptyMessage={
+          consumerGroups.isSuccess
+            ? 'No active consumer groups found'
+            : 'Loading...'
+        }
         serverSideProcessing
         enableSorting
         onRowClick={({ original }) =>
@@ -105,6 +97,7 @@ const List: React.FC<Props> = ({ consumerGroups, totalPages }) => {
             clusterConsumerGroupDetailsPath(clusterName, original.groupId)
           )
         }
+        disabled={consumerGroups.isFetching}
       />
     </>
   );

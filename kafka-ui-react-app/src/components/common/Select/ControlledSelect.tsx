@@ -45,6 +45,7 @@ const ControlledSelect: React.FC<ControlledSelectProps> = ({
               options={options}
               placeholder={placeholder}
               disabled={disabled}
+              ref={field.ref}
             />
           );
         }}
