@@ -89,19 +89,7 @@ public class ConsumerGroupMapper {
             .flatMap(m -> m.getAssignment().stream().map(TopicPartition::topic))
     ).collect(Collectors.toSet()).size();
 
-    Long messagesBehind = null;
-    // messagesBehind should be undefined if no committed offsets found for topic
-    if (!c.getOffsets().isEmpty()) {
-      messagesBehind = c.getOffsets().entrySet().stream()
-          .mapToLong(e ->
-              Optional.ofNullable(c.getEndOffsets())
-                  .map(o -> o.get(e.getKey()))
-                  .map(o -> o - e.getValue())
-                  .orElse(0L)
-          ).sum();
-    }
-
-    consumerGroup.setMessagesBehind(messagesBehind);
+    consumerGroup.setMessagesBehind(c.getMessagesBehind());
     consumerGroup.setTopics(numTopics);
     consumerGroup.setSimple(c.isSimple());
 

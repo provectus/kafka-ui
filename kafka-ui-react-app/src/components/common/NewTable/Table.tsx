@@ -48,6 +48,8 @@ export interface TableProps<TData> {
   // Placeholder for empty table
   emptyMessage?: React.ReactNode;
 
+  disabled?: boolean;
+
   // Handles row click. Can not be combined with `enableRowSelection` && expandable rows.
   onRowClick?: (row: Row<TData>) => void;
 }
@@ -123,6 +125,7 @@ const Table: React.FC<TableProps<any>> = ({
   enableRowSelection = false,
   batchActionsBar: BatchActionsBar,
   emptyMessage,
+  disabled,
   onRowClick,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -139,14 +142,11 @@ const Table: React.FC<TableProps<any>> = ({
     (updater: UpdaterFn<PaginationState>) => {
       const newState = updatePaginationState(updater, searchParams);
       setSearchParams(searchParams);
+      setRowSelection({});
       return newState;
     },
     [searchParams]
   );
-
-  React.useEffect(() => {
-    setRowSelection({});
-  }, [searchParams]);
 
   const table = useReactTable({
     data,
@@ -156,6 +156,9 @@ const Table: React.FC<TableProps<any>> = ({
       sorting: getSortingFromSearchParams(searchParams),
       pagination: getPaginationFromSearchParams(searchParams),
       rowSelection,
+    },
+    getRowId: (originalRow, index) => {
+      return originalRow.name ? originalRow.name : `${index}`;
     },
     onSortingChange: onSortingChange as OnChangeFn<SortingState>,
     onPaginationChange: onPaginationChange as OnChangeFn<PaginationState>,
@@ -200,7 +203,7 @@ const Table: React.FC<TableProps<any>> = ({
           />
         </S.TableActionsBar>
       )}
-      <S.TableWrapper>
+      <S.TableWrapper $disabled={!!disabled}>
         <S.Table>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
