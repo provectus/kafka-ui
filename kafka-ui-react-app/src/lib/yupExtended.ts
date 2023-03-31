@@ -41,7 +41,8 @@ const isJsonObject = () => {
 };
 
 /**
- * due to yup rerunning all the object validiation during any render, it makes sense to cache the async results
+ * due to yup rerunning all the object validiation during any render,
+ * it makes sense to cache the async results
  * */
 export function cacheTest(
   asyncValidate: (val?: string, ctx?: yup.AnyObject) => Promise<boolean>

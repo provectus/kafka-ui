@@ -16,7 +16,6 @@ import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 
 public class KsqlQueryForm extends BasePage {
-    protected SelenideElement pageTitle = $x("//h1[text()='Query']");
     protected SelenideElement clearBtn = $x("//div/button[text()='Clear']");
     protected SelenideElement executeBtn = $x("//div/button[text()='Execute']");
     protected SelenideElement stopQueryBtn = $x("//div/button[text()='Stop query']");
@@ -31,7 +30,7 @@ public class KsqlQueryForm extends BasePage {
     @Step
     public KsqlQueryForm waitUntilScreenReady() {
         waitUntilSpinnerDisappear();
-        pageTitle.shouldBe(Condition.visible);
+        executeBtn.shouldBe(Condition.visible);
         return this;
     }
 
