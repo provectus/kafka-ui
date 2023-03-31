@@ -27,7 +27,7 @@ This repository is for E2E UI automation.
 ```
 git clone https://github.com/provectus/kafka-ui.git
 cd  kafka-ui-e2e-checks
-docker pull selenoid/vnc:chrome_86.0  
+docker pull selenoid/vnc_chrome:103.0 
 ```
 
 ### How to run checks
