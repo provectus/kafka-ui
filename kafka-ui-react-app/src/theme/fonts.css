@@ -1,0 +1,23 @@
+@font-face {
+  font-family: 'Inter';
+  src: url("../src/assets/fonts/Inter-Medium.ttf") format('truetype');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url("../src/assets/fonts/Inter-Regular.ttf") format('truetype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  src: url("../src/assets/fonts/RobotoMono-Medium.ttf") format('truetype');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  src: url("../src/assets/fonts/RobotoMono-Regular.ttf") format('truetype');
+  font-weight: 400;
+}
