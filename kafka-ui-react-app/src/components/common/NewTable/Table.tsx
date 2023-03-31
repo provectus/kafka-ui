@@ -14,7 +14,7 @@ import type {
   PaginationState,
   ColumnDef,
 } from '@tanstack/react-table';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import {  useSearchParams, useLocation } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
