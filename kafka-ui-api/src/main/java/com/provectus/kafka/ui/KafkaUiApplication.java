@@ -8,7 +8,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(exclude = LdapAutoConfiguration.class)
+@SpringBootApplication(exclude = LdapAutoConfiguration.class) // comment for push testing
 @EnableScheduling
 @EnableAsync
 public class KafkaUiApplication {
