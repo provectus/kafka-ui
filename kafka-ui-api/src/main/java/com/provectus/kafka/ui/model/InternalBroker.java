@@ -14,7 +14,7 @@ public class InternalBroker {
   private final @Nullable BigDecimal bytesInPerSec;
   private final @Nullable BigDecimal bytesOutPerSec;
   private final @Nullable Integer partitionsLeader;
-  private final @Nullable Integer partitionsHost;
+  private final @Nullable Integer partitions;
   private final @Nullable Integer inSyncPartitions;
   private final @Nullable BigDecimal leadersSkew;
   private final @Nullable BigDecimal partitionsSkew;
@@ -28,7 +28,7 @@ public class InternalBroker {
     this.bytesInPerSec = statistics.getMetrics().getBrokerBytesInPerSec().get(node.id());
     this.bytesOutPerSec = statistics.getMetrics().getBrokerBytesOutPerSec().get(node.id());
     this.partitionsLeader = partitionDistribution.getPartitionLeaders().get(node);
-    this.partitionsHost = partitionDistribution.getPartitionsCount().get(node);
+    this.partitions = partitionDistribution.getPartitionsCount().get(node);
     this.inSyncPartitions = partitionDistribution.getInSyncPartitions().get(node);
     this.leadersSkew = partitionDistribution.leadersSkew(node);
     this.partitionsSkew = partitionDistribution.partitionsSkew(node);

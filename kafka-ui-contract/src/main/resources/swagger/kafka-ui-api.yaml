@@ -2357,7 +2357,7 @@ components:
           type: number
         partitionsLeader:
           type: integer
-        partitionsHost:
+        partitions:
           type: integer
         inSyncPartitions:
           type: integer
