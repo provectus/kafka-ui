@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.service;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
@@ -136,22 +137,14 @@ public class TopicsService {
   }
 
   private Mono<InternalPartitionsOffsets> getPartitionOffsets(Map<String, TopicDescription>
-                                                                  descriptions,
+                                                                  descriptionsMap,
                                                               ReactiveAdminClient ac) {
-    var topicPartitions = descriptions.values().stream()
-        .flatMap(desc ->
-            desc.partitions().stream()
-                // list offsets should only be applied to partitions with existing leader
-                // (see ReactiveAdminClient.listOffsetsUnsafe(..) docs)
-                .filter(tp -> tp.leader() != null)
-                .map(p -> new TopicPartition(desc.name(), p.partition())))
-        .collect(toList());
-
-    return ac.listOffsetsUnsafe(topicPartitions, OffsetSpec.earliest())
-        .zipWith(ac.listOffsetsUnsafe(topicPartitions, OffsetSpec.latest()),
+    var descriptions = descriptionsMap.values();
+    return ac.listOffsets(descriptions, OffsetSpec.earliest())
+        .zipWith(ac.listOffsets(descriptions, OffsetSpec.latest()),
             (earliest, latest) ->
-                topicPartitions.stream()
-                    .filter(tp -> earliest.containsKey(tp) && latest.containsKey(tp))
+                Sets.intersection(earliest.keySet(), latest.keySet())
+                    .stream()
                     .map(tp ->
                         Map.entry(tp,
                             new InternalPartitionsOffsets.Offsets(
