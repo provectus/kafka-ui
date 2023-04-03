@@ -29,7 +29,7 @@ https://aws.amazon.com/marketplace/pp/prodview-ogtt5hfhzkq6a
  Finally, click "Launch" to deploy your instance. AWS will create the instance and install the Kafka UI software for you.
  
 ## Step 6: Check EC2 Status
- To ckeack EC2 state please click on "EC2 console".
+ To check EC2 state please click on "EC2 console".
 
 ## Step 7: Access the Kafka UI
  After the instance is launched, you can check its status on the EC2 dashboard. Once it's running, you can access the Kafka UI by copying the public DNS name or IP address provided by AWS and add after IP address or DNS name port 8080.
