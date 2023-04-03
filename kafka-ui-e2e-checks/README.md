@@ -52,6 +52,14 @@ docker-compose -f documentation/compose/e2e-tests.yaml up -d
 -Dbrowser=local
 ```
 
+Expected Location of Chrome
+```
+Linux:	                    /usr/bin/google-chrome1
+Mac:	                    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome
+Windows XP:                 %HOMEPATH%\Local Settings\Application Data\Google\Chrome\Application\chrome.exe
+Windows Vista and newer:    C:\Users%USERNAME%\AppData\Local\Google\Chrome\Application\chrome.exe
+```
+
 ### Qase integration
 
 Found instruction for Qase.io integration (for internal use only) at `kafka-ui-e2e-checks/QASE.md`
