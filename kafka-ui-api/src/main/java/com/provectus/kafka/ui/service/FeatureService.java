@@ -28,7 +28,8 @@ public class FeatureService {
 
   private final AdminClientService adminClientService;
 
-  public Mono<List<ClusterFeature>> getAvailableFeatures(KafkaCluster cluster, ClusterDescription clusterDescription) {
+  public Mono<List<ClusterFeature>> getAvailableFeatures(KafkaCluster cluster,
+                                                         ClusterDescription clusterDescription) {
     List<Mono<ClusterFeature>> features = new ArrayList<>();
 
     if (Optional.ofNullable(cluster.getConnectsClients())

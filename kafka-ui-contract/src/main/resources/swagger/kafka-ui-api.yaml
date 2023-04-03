@@ -2522,6 +2522,7 @@ components:
         - NAME
         - MEMBERS
         - STATE
+        - MESSAGES_BEHIND
 
     ConsumerGroupsPageResponse:
       type: object

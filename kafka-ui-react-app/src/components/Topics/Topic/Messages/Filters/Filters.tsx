@@ -231,7 +231,10 @@ const Filters: React.FC<FiltersProps> = ({
         props.seekType = SeekType.TIMESTAMP;
       }
 
-      if (selectedPartitions.length !== partitions.length) {
+      if (
+        selectedPartitions.length !== partitions.length ||
+        currentSeekType === SeekType.TIMESTAMP
+      ) {
         // not everything in the partition is selected
         props.seekTo = selectedPartitions.map(({ value }) => {
           const offsetProperty =
@@ -320,7 +323,9 @@ const Filters: React.FC<FiltersProps> = ({
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
     if (location.search?.length !== 0) {
-      const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/topics/${topicName}/messages${location.search}`;
+      const url = `${BASE_PARAMS.basePath}/api/clusters/${encodeURIComponent(
+        clusterName
+      )}/topics/${topicName}/messages${location.search}`;
       const sse = new EventSource(url);
 
       source.current = sse;
