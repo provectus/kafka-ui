@@ -29,7 +29,11 @@ public abstract class WebDriver {
         Configuration.savePageSource = false;
         Configuration.pageLoadTimeout = 120000;
         ChromeOptions options = new ChromeOptions()
+                .addArguments("--no-sandbox")
+                .addArguments("--verbose")
                 .addArguments("--remote-allow-origins=*")
+                .addArguments("--disable-dev-shm-usage")
+                .addArguments("--disable-gpu")
                 .addArguments("--lang=en_US");
         switch (BROWSER) {
             case (LOCAL) -> Configuration.browserCapabilities = options;
