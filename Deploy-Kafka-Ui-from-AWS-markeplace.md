@@ -29,10 +29,12 @@ https://aws.amazon.com/marketplace/pp/prodview-ogtt5hfhzkq6a
  Finally, click "Launch" to deploy your instance. AWS will create the instance and install the Kafka UI software for you.
  
 ## Step 6: Check EC2 Status
- Go to the EC2 list to check the state of your instance.
+ To ckeack EC2 state please click on "EC2 console".
 
 ## Step 7: Access the Kafka UI
- After the instance is launched, you can check its status on the EC2 dashboard. Once it's running, you can access the Kafka UI by copying the public DNS name or IP address provided by AWS. The default UI port is 8080.
+ After the instance is launched, you can check its status on the EC2 dashboard. Once it's running, you can access the Kafka UI by copying the public DNS name or IP address provided by AWS and add after IP address or DNS name port 8080.
+ Example.
+`ec2-xx-xxx-x-xx.us-west-2.compute.amazonaws.com:8080`
  
 ## Step 8: Configure Kafka UI to Communicate with Brokers
  If your broker deployed in aws then allow incoming from Kafka-ui ec2 by adding ingress rule in security group which is used for broker.
