@@ -65,7 +65,7 @@ public class AclCsv {
   public static Collection<AclBinding> parseCsv(String csvString) {
     String[] lines = csvString.split(LINE_SEPARATOR);
     if (lines.length == 0) {
-      throw new ValidationException("Error parsing ACL csv file: ");
+      throw new ValidationException("Error parsing ACL csv file: no lines in file");
     }
     boolean firstLineIsHeader = HEADER.equalsIgnoreCase(lines[0].trim().replace(" ", ""));
     Set<AclBinding> result = new HashSet<>();

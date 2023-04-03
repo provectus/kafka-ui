@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.service.acl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.provectus.kafka.ui.exception.ValidationException;
 import java.util.Collection;
 import java.util.List;
 import org.apache.kafka.common.acl.AccessControlEntry;
@@ -55,7 +56,8 @@ class AclCsvTest {
       "User:test1,TOPIC,LITERAL,*,READ,ILLEGAL,*"
   })
   void throwsExceptionForInvalidInputCsv(String csvString) {
-    assertThatThrownBy(() -> AclCsv.parseCsv(csvString)).isNotNull();
+    assertThatThrownBy(() -> AclCsv.parseCsv(csvString))
+        .isInstanceOf(ValidationException.class);
   }
 
   @Test
