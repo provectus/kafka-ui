@@ -33,9 +33,6 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    assetsInclude: [
-      '**/*.ttf',
-    ],
     experimental: {
       renderBuiltUrl(
         filename: string,
