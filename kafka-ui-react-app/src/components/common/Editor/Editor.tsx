@@ -50,8 +50,10 @@ export default styled(Editor)`
         theme.ksqlDb.query.editor.cell.backgroundColor};
       color: ${({ theme }) => theme.default.color.normal};
     }
-    .ace_line {
+    .ace_scroller {
       background-color: ${({ theme }) => theme.default.backgroundColor};
+    }
+    .ace_line {
       color: ${({ theme }) => theme.default.color.normal};
     }
     .ace_cursor {

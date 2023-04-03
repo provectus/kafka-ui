@@ -49,7 +49,7 @@ const Message: React.FC<Props> = ({
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const savedMessageJson = {
-    Content: content,
+    Value: content,
     Offset: offset,
     Key: key,
     Partition: partition,
