@@ -13,7 +13,7 @@ Once you installed the prerequisites and cloned the repository, run the followin
 **Execute the jar**
 
 ```
-java -Dspring.config.additional-location=<path-to-application-local.yml> -jar <path-to-kafka-ui-jar>
+java -Dspring.config.additional-location=<path-to-application-local.yml> --add-opens java.rmi/javax.rmi.ssl=ALL-UNNAMED -jar <path-to-kafka-ui-jar>
 ```
 
 * Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file.
