@@ -16,7 +16,7 @@ const ErrorPage: React.FC<Props> = ({
 }) => {
   return (
     <S.Wrapper>
-      <S.Number>{status}</S.Number>
+      <S.Status>{status}</S.Status>
       <S.Text>{text}</S.Text>
       <Button buttonType="primary" buttonSize="M" to="/">
         {btnText}
