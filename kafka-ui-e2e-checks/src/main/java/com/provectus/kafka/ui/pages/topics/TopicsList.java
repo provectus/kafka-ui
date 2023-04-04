@@ -54,7 +54,17 @@ public class TopicsList extends BasePage {
 
     @Step
     public TopicsList setShowInternalRadioButton(boolean select) {
-        selectElement(showInternalRadioBtn, select);
+        if (select) {
+            if (!showInternalRadioBtn.isSelected()) {
+                clickByJavaScript(showInternalRadioBtn);
+                waitUntilSpinnerDisappear(1);
+            }
+        } else {
+            if (showInternalRadioBtn.isSelected()) {
+                clickByJavaScript(showInternalRadioBtn);
+                waitUntilSpinnerDisappear(1);
+            }
+        }
         return this;
     }
 
@@ -169,9 +179,16 @@ public class TopicsList extends BasePage {
 
     @Step
     public TopicGridItem getTopicItem(String name) {
-        return initGridItems().stream()
+        TopicGridItem topicGridItem = initGridItems().stream()
                 .filter(e -> e.getName().equals(name))
-                .findFirst().orElseThrow();
+                .findFirst().orElse(null);
+        if (topicGridItem == null) {
+            searchItem(name);
+            topicGridItem = initGridItems().stream()
+                    .filter(e -> e.getName().equals(name))
+                    .findFirst().orElseThrow();
+        }
+        return topicGridItem;
     }
 
     @Step

@@ -5,14 +5,27 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { useTopicConsumerGroups } from 'lib/hooks/api/topics';
 import { ColumnDef } from '@tanstack/react-table';
 import Table, { LinkCell, TagCell } from 'components/common/NewTable';
+import Search from 'components/common/Search/Search';
+
+import * as S from './TopicConsumerGroups.styled';
 
 const TopicConsumerGroups: React.FC = () => {
+  const [keyword, setKeyword] = React.useState('');
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
 
-  const { data: consumerGroups = [] } = useTopicConsumerGroups({
+  const { data = [] } = useTopicConsumerGroups({
     clusterName,
     topicName,
   });
+
+  const consumerGroups = React.useMemo(
+    () =>
+      data.filter(
+        (item) => item.groupId.toLocaleLowerCase().indexOf(keyword) > -1
+      ),
+    [data, keyword]
+  );
+
   const columns = React.useMemo<ColumnDef<ConsumerGroup>[]>(
     () => [
       {
@@ -61,12 +74,21 @@ const TopicConsumerGroups: React.FC = () => {
     []
   );
   return (
-    <Table
-      columns={columns}
-      data={consumerGroups}
-      enableSorting
-      emptyMessage="No active consumer groups"
-    />
+    <>
+      <S.SearchWrapper>
+        <Search
+          onChange={setKeyword}
+          placeholder="Search by Consumer Name"
+          value={keyword}
+        />
+      </S.SearchWrapper>
+      <Table
+        columns={columns}
+        data={consumerGroups}
+        enableSorting
+        emptyMessage="No active consumer groups"
+      />
+    </>
   );
 };
 
