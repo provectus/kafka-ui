@@ -4,9 +4,13 @@ import com.provectus.kafka.ui.BaseTest;
 import com.provectus.kafka.ui.pages.ksqlDb.models.Stream;
 import com.provectus.kafka.ui.pages.ksqlDb.models.Table;
 import io.qase.api.annotation.QaseId;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.provectus.kafka.ui.pages.ksqlDb.enums.KsqlQueryConfig.SHOW_TABLES;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -22,12 +26,15 @@ public class KsqlDbTest extends BaseTest {
     private static final Table SECOND_TABLE = new Table()
             .setName("SECOND_TABLE" + randomAlphabetic(4).toUpperCase())
             .setStreamName(STREAM_FOR_CHECK_TABLES.getName());
+    private static final List<String> TOPIC_NAMES_LIST = new ArrayList<>();
 
     @BeforeClass(alwaysRun = true)
     public void beforeClass() {
         apiService
                 .createStream(STREAM_FOR_CHECK_TABLES)
                 .createTables(FIRST_TABLE, SECOND_TABLE);
+        TOPIC_NAMES_LIST.addAll(List.of(STREAM_FOR_CHECK_TABLES.getTopicName(),
+                FIRST_TABLE.getName(), SECOND_TABLE.getName()));
     }
 
     @QaseId(41)
@@ -64,5 +71,10 @@ public class KsqlDbTest extends BaseTest {
                 .clickClearResultsBtn();
         softly.assertFalse(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
         softly.assertAll();
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void afterClass() {
+        TOPIC_NAMES_LIST.forEach(topicName -> apiService.deleteTopic(topicName));
     }
 }
