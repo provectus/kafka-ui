@@ -21,6 +21,7 @@ public abstract class BasePage extends WebUtils {
     protected SelenideElement loadingSpinner = $x("//div[@role='progressbar']");
     protected SelenideElement submitBtn = $x("//button[@type='submit']");
     protected SelenideElement tableGrid = $x("//table");
+    protected SelenideElement searchFld = $x("//input[@type='text'][contains(@id, ':r')]");
     protected SelenideElement dotMenuBtn = $x("//button[@aria-label='Dropdown Toggle']");
     protected SelenideElement alertHeader = $x("//div[@role='alert']//div[@role='heading']");
     protected SelenideElement alertMessage = $x("//div[@role='alert']//div[@role='contentinfo']");
@@ -37,11 +38,18 @@ public abstract class BasePage extends WebUtils {
     protected String pageTitleFromHeader = "//h1[text()='%s']";
     protected String pagePathFromHeader = "//a[text()='%s']/../h1";
 
-    protected void waitUntilSpinnerDisappear() {
+    protected void waitUntilSpinnerDisappear(int... timeoutInSeconds) {
         log.debug("\nwaitUntilSpinnerDisappear");
-        if (isVisible(loadingSpinner)) {
+        if (isVisible(loadingSpinner, timeoutInSeconds)) {
             loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(60));
         }
+    }
+
+    protected void searchItem(String tag) {
+        log.debug("\nsearchItem: {}", tag);
+        sendKeysAfterClear(searchFld, tag);
+        searchFld.pressEnter().shouldHave(Condition.value(tag));
+        waitUntilSpinnerDisappear(1);
     }
 
     protected SelenideElement getPageTitleFromHeader(MenuItem menuItem) {
