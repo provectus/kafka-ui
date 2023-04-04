@@ -9,12 +9,13 @@ import com.provectus.kafka.ui.pages.topics.enums.TimeToRetain;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.*;
+import static org.openqa.selenium.By.id;
 
 public class TopicCreateEditForm extends BasePage {
 
     protected SelenideElement timeToRetainField = $x("//input[@id='timeToRetain']");
     protected SelenideElement partitionsField = $x("//input[@name='partitions']");
-    protected SelenideElement nameField = $x("//input[@name='name']");
+    protected SelenideElement nameField = $(id("topicFormName"));
     protected SelenideElement maxMessageBytesField = $x("//input[@name='maxMessageBytes']");
     protected SelenideElement minInSyncReplicasField = $x("//input[@name='minInSyncReplicas']");
     protected SelenideElement cleanUpPolicyDdl = $x("//ul[@id='topicFormCleanupPolicy']");
@@ -49,10 +50,7 @@ public class TopicCreateEditForm extends BasePage {
 
     @Step
     public TopicCreateEditForm setTopicName(String topicName) {
-        nameField.shouldBe(Condition.enabled).clear();
-        if (topicName != null) {
-            nameField.sendKeys(topicName);
-        }
+        sendKeysAfterClear(nameField, topicName);
         return this;
     }
 
