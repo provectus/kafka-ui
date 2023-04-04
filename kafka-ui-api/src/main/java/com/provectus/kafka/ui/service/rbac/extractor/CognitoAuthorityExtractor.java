@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.service.rbac.extractor;
 
-import com.nimbusds.jose.shaded.json.JSONArray;
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
@@ -9,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import reactor.core.publisher.Mono;
 
@@ -44,6 +44,7 @@ public class CognitoAuthorityExtractor implements ProviderAuthorityExtractor {
         .map(Role::getName)
         .collect(Collectors.toSet());
 
+    //TODO: check returned type!
     JSONArray groups = principal.getAttribute(COGNITO_GROUPS_ATTRIBUTE_NAME);
     if (groups == null) {
       log.debug("Cognito groups param is not present");
@@ -56,9 +57,8 @@ public class CognitoAuthorityExtractor implements ProviderAuthorityExtractor {
             .stream()
             .filter(s -> s.getProvider().equals(Provider.OAUTH_COGNITO))
             .filter(s -> s.getType().equals("group"))
-            .anyMatch(subject -> Stream.of(groups.toArray())
+            .anyMatch(subject -> Stream.of(groups)
                 .map(Object::toString)
-                .distinct()
                 .anyMatch(cognitoGroup -> cognitoGroup.equals(subject.getValue()))
             ))
         .map(Role::getName)

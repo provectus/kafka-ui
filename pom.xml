@@ -32,15 +32,13 @@
         <jackson.version>2.14.0</jackson.version>
         <jackson-databind-nullable.version>0.2.4</jackson-databind-nullable.version>
         <kafka-clients.version>3.3.1</kafka-clients.version>
-        <netty.version>4.1.85.Final</netty.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.24</org.projectlombok.version>
         <protobuf-java.version>3.21.9</protobuf-java.version>
-        <reactor-netty.version>1.1.0</reactor-netty.version>
         <scala-lang.library.version>2.13.9</scala-lang.library.version>
-        <snakeyaml.version>1.33</snakeyaml.version>
-        <spring-boot.version>2.7.5</spring-boot.version>
-        <spring-security.version>5.7.5</spring-security.version>
+        <snakeyaml.version>2.0</snakeyaml.version>
+        <spring-boot.version>3.0.5</spring-boot.version>
+        <spring-security.version>6.0.2</spring-security.version>
         <kafka-ui-serde-api.version>1.0.0</kafka-ui-serde-api.version>
         <odd-oddrn-generator.version>0.1.15</odd-oddrn-generator.version>
         <odd-oddrn-client.version>0.1.23</odd-oddrn-client.version>
@@ -119,13 +117,6 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-bom</artifactId>
-                <version>${netty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
                 <version>${jackson.version}</version>
@@ -146,11 +137,6 @@
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
                 <version>${protobuf-java.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.projectreactor.netty</groupId>
-                <artifactId>reactor-netty-http</artifactId>
-                <version>${reactor-netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit</groupId>
