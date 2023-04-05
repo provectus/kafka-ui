@@ -3,10 +3,10 @@ package com.provectus.kafka.ui.smokeSuite;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.WebDriverRunner;
 import com.provectus.kafka.ui.BaseTest;
-import com.provectus.kafka.ui.pages.panels.enums.MenuItem;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.models.Topic;
+import com.provectus.kafka.ui.pages.panels.enums.MenuItem;
 import io.qameta.allure.Step;
 import io.qase.api.annotation.QaseId;
 import org.testng.Assert;
@@ -18,9 +18,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.*;
-import static com.provectus.kafka.ui.settings.BaseSource.BROWSER;
+import static com.provectus.kafka.ui.settings.BaseSource.BASE_HOST;
 import static com.provectus.kafka.ui.utilities.FileUtils.getResourceAsString;
-import static com.provectus.kafka.ui.variables.Browser.LOCAL;
 import static com.provectus.kafka.ui.variables.Url.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
@@ -73,7 +72,7 @@ public class SmokeTest extends BaseTest {
 
     @QaseId(46)
     @Test
-    public void checkComponentsPathWhileNavigating() {
+    public void checkPathWhileNavigating() {
         navigateToBrokersAndOpenDetails(BROKER_ID);
         verifyComponentsPath(BROKERS, String.format("Broker %d", BROKER_ID));
         navigateToTopicsAndOpenDetails(TEST_TOPIC.getName());
@@ -86,9 +85,10 @@ public class SmokeTest extends BaseTest {
 
     @Step
     private void verifyCurrentUrl(String expectedUrl) {
-        String host = BROWSER.equals(LOCAL) ? "localhost" : "host.testcontainers.internal";
-        Assert.assertEquals(WebDriverRunner.getWebDriver().getCurrentUrl(),
-                String.format(expectedUrl, host), "getCurrentUrl()");
+        String urlWithoutParameters = WebDriverRunner.getWebDriver().getCurrentUrl();
+        if (urlWithoutParameters.contains("?"))
+            urlWithoutParameters = urlWithoutParameters.substring(0, urlWithoutParameters.indexOf("?"));
+        Assert.assertEquals(urlWithoutParameters, String.format(expectedUrl, BASE_HOST), "getCurrentUrl()");
     }
 
     @Step

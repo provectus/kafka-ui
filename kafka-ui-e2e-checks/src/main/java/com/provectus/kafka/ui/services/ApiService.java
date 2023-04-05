@@ -29,27 +29,27 @@ public class ApiService extends BaseSource {
 
     @SneakyThrows
     private TopicsApi topicApi() {
-        return new TopicsApi(new ApiClient().setBasePath(BASE_LOCAL_URL));
+        return new TopicsApi(new ApiClient().setBasePath(BASE_API_URL));
     }
 
     @SneakyThrows
     private SchemasApi schemaApi() {
-        return new SchemasApi(new ApiClient().setBasePath(BASE_LOCAL_URL));
+        return new SchemasApi(new ApiClient().setBasePath(BASE_API_URL));
     }
 
     @SneakyThrows
     private KafkaConnectApi connectorApi() {
-        return new KafkaConnectApi(new ApiClient().setBasePath(BASE_LOCAL_URL));
+        return new KafkaConnectApi(new ApiClient().setBasePath(BASE_API_URL));
     }
 
     @SneakyThrows
     private MessagesApi messageApi() {
-        return new MessagesApi(new ApiClient().setBasePath(BASE_LOCAL_URL));
+        return new MessagesApi(new ApiClient().setBasePath(BASE_API_URL));
     }
 
     @SneakyThrows
     private KsqlApi ksqlApi() {
-        return new KsqlApi(new ApiClient().setBasePath(BASE_LOCAL_URL));
+        return new KsqlApi(new ApiClient().setBasePath(BASE_API_URL));
     }
 
     @SneakyThrows

@@ -11,14 +11,14 @@ services:
       test: wget --no-verbose --tries=1 --spider  http://localhost:8080/actuator/health
       interval: 30s
       timeout: 10s
-      retries: 10  
+      retries: 10
     depends_on:
-        kafka0:
-          condition: service_healthy
-        schemaregistry0:
-          condition: service_healthy
-        kafka-connect0:
-          condition: service_healthy
+      kafka0:
+        condition: service_healthy
+      schemaregistry0:
+        condition: service_healthy
+      kafka-connect0:
+        condition: service_healthy
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka0:29092
@@ -33,10 +33,10 @@ services:
     hostname: kafka0
     container_name: kafka0
     healthcheck:
-     test: unset JMX_PORT && KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka0 -Dcom.sun.management.jmxremote.rmi.port=9999" && kafka-broker-api-versions --bootstrap-server=localhost:9092
-     interval: 30s
-     timeout: 10s
-     retries: 10
+      test: unset JMX_PORT && KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka0 -Dcom.sun.management.jmxremote.rmi.port=9999" && kafka-broker-api-versions --bootstrap-server=localhost:9092
+      interval: 30s
+      timeout: 10s
+      retries: 10
     ports:
       - "9092:9092"
       - "9997:9997"
@@ -68,12 +68,12 @@ services:
       - 8085:8085
     depends_on:
       kafka0:
-          condition: service_healthy
+        condition: service_healthy
     healthcheck:
-     test: ["CMD", "timeout", "1", "curl", "--silent", "--fail", "http://schemaregistry0:8085/subjects"]
-     interval: 30s
-     timeout: 10s
-     retries: 10
+      test: [ "CMD", "timeout", "1", "curl", "--silent", "--fail", "http://schemaregistry0:8085/subjects" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     environment:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka0:29092
       SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
@@ -93,11 +93,11 @@ services:
       - 8083:8083
     depends_on:
       kafka0:
-          condition: service_healthy
+        condition: service_healthy
       schemaregistry0:
-          condition: service_healthy
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "nc", "127.0.0.1", "8083"]
+      test: [ "CMD", "nc", "127.0.0.1", "8083" ]
       interval: 30s
       timeout: 10s
       retries: 10
@@ -118,8 +118,8 @@ services:
       CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect0
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
-#      AWS_ACCESS_KEY_ID: ""
-#      AWS_SECRET_ACCESS_KEY: ""
+  #      AWS_ACCESS_KEY_ID: ""
+  #      AWS_SECRET_ACCESS_KEY: ""
 
   kafka-init-topics:
     image: confluentinc/cp-kafka:7.2.1
@@ -127,7 +127,7 @@ services:
       - ./message.json:/data/message.json
     depends_on:
       kafka0:
-          condition: service_healthy
+        condition: service_healthy
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
                cub kafka-ready -b kafka0:29092 1 30 && \
                kafka-topics --create --topic users --partitions 3 --replication-factor 1 --if-not-exists --bootstrap-server kafka0:29092 && \
@@ -142,10 +142,10 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dev_user"]
+      test: [ "CMD-SHELL", "pg_isready -U dev_user" ]
       interval: 10s
       timeout: 5s
-      retries: 5  
+      retries: 5
     environment:
       POSTGRES_USER: 'dev_user'
       POSTGRES_PASSWORD: '12345'
@@ -154,7 +154,7 @@ services:
     image: ellerbrock/alpine-bash-curl-ssl
     depends_on:
       postgres-db:
-          condition: service_healthy
+        condition: service_healthy
       kafka-connect0:
         condition: service_healthy
     volumes:
@@ -164,7 +164,7 @@ services:
   ksqldb:
     image: confluentinc/ksqldb-server:0.18.0
     healthcheck:
-      test: ["CMD", "timeout", "1", "curl", "--silent", "--fail", "http://localhost:8088/info"]
+      test: [ "CMD", "timeout", "1", "curl", "--silent", "--fail", "http://localhost:8088/info" ]
       interval: 30s
       timeout: 10s
       retries: 10
@@ -174,7 +174,7 @@ services:
       kafka-connect0:
         condition: service_healthy
       schemaregistry0:
-         condition: service_healthy
+        condition: service_healthy
     ports:
       - 8088:8088
     environment:

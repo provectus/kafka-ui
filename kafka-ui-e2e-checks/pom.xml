@@ -17,15 +17,14 @@
         <testcontainers.version>1.17.6</testcontainers.version>
         <httpcomponents.version>5.2.1</httpcomponents.version>
         <selenium.version>4.8.1</selenium.version>
-        <selenide.version>6.11.2</selenide.version>
+        <selenide.version>6.12.3</selenide.version>
         <testng.version>7.7.0</testng.version>
         <allure.version>2.21.0</allure.version>
-        <qase.io.version>3.0.3</qase.io.version>
+        <qase.io.version>3.0.4</qase.io.version>
         <aspectj.version>1.9.9.1</aspectj.version>
         <assertj.version>3.24.2</assertj.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <slf4j.version>1.7.36</slf4j.version>
-        <dotenv.version>2.3.1</dotenv.version>
+        <slf4j.version>2.0.5</slf4j.version>
         <kafka.version>3.3.1</kafka.version>
     </properties>
 
@@ -123,6 +122,11 @@
             <version>${testcontainers.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${org.projectlombok.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.httpcomponents.core5</groupId>
             <artifactId>httpcore5</artifactId>
             <version>${httpcomponents.version}</version>
@@ -131,6 +135,11 @@
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
             <version>${httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-http-jdk-client</artifactId>
+            <version>${selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
@@ -186,16 +195,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${org.projectlombok.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.cdimascio</groupId>
-            <artifactId>dotenv-java</artifactId>
-            <version>${dotenv.version}</version>
         </dependency>
         <dependency>
             <groupId>com.provectus</groupId>
