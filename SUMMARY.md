@@ -43,6 +43,7 @@
   * [AWS IAM](configuration/authentication/aws-iam.md)
   * [SSO Guide](configuration/authentication/sso-guide.md)
   * [SASL\_SCRAM](configuration/authentication/sasl\_scram.md)
+  * [LDAP / Active Directory](configuration/authentication/ldap-active-directory.md)
 * [RBAC (Role based access control)](configuration/rbac-role-based-access-control.md)
 * [Data masking](configuration/data-masking.md)
 * [Serialization / SerDe](configuration/serialization-serde/README.md)
