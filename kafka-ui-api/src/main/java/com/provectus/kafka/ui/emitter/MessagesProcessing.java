@@ -31,7 +31,7 @@ public class MessagesProcessing {
     this.limit = limit;
   }
 
-  public boolean limitReached() {
+  boolean limitReached() {
     return limit != null && sentMessages >= limit;
   }
 
@@ -69,7 +69,7 @@ public class MessagesProcessing {
     }
   }
 
-  protected void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {
+  void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {
     if (!sink.isCancelled()) {
       sink.next(
           new TopicMessageEventDTO()
