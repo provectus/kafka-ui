@@ -529,6 +529,12 @@ export const theme = {
         active: Colors.neutral[90],
       },
     },
+    colored: {
+      color: {
+        attention: Colors.red[50],
+        warning: Colors.yellow[20],
+      },
+    },
     expander: {
       normal: Colors.brand[30],
       hover: Colors.brand[40],
@@ -922,6 +928,12 @@ export const darkTheme: ThemeType = {
         normal: Colors.neutral[0],
         hover: Colors.neutral[0],
         active: Colors.neutral[0],
+      },
+    },
+    colored: {
+      color: {
+        attention: Colors.red[50],
+        warning: Colors.yellow[20],
       },
     },
     expander: {
