@@ -27,7 +27,8 @@
 				"EditorConfig.EditorConfig",
 				"ms-azuretools.vscode-docker",
 				"antfu.vite",
-				"ms-kubernetes-tools.vscode-kubernetes-tools"
+				"ms-kubernetes-tools.vscode-kubernetes-tools",
+                "github.vscode-pull-request-github"
 			]
 		}
 	}
