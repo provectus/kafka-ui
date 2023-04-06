@@ -28,9 +28,9 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       # other properties, omitted
-      spring.config.additional-location: /roles.yml
+      spring.config.additional-location: /config.yml
     volumes:
-      - /tmp/roles.yml:/roles.yml
+      - /tmp/config.yml:/config.yml
 ```
 
 **Jar**: `java -Dspring.config.additional-location=<path-to-application-local.yml> -jar <path-to-jar>.jar`
@@ -38,7 +38,6 @@ services:
 #### Basic config structure
 
 ```yaml
-sh
 kafka:
   clusters:
     -
