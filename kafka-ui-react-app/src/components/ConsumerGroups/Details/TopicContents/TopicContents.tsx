@@ -24,7 +24,7 @@ const TABLE_HEADERS_MAP: Headers[] = [
   { title: 'End offset', orderBy: 'endOffset' },
 ];
 
-const ipV4ToNum = (ip: string | undefined): number => {
+const ipV4ToNum = (ip?: string) => {
   if (typeof ip === 'string' && ip.length !== 0) {
     const withoutSlash = ip.indexOf('/') !== -1 ? ip.slice(1) : ip;
     return Number(
