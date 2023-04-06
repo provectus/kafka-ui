@@ -10,6 +10,7 @@ export const initialState: TopicMessagesState = {
     messagesConsumed: 0,
     isCancelled: false,
   },
+  messageEventType: '',
   isFetching: false,
 };
 
@@ -37,6 +38,10 @@ const topicMessagesSlice = createSlice({
     setTopicMessagesFetchingStatus: (state, action) => {
       state.isFetching = action.payload;
     },
+
+    setMessageEventType: (state, action) => {
+      state.messageEventType = action.payload;
+    },
   },
 });
 
@@ -46,6 +51,7 @@ export const {
   updateTopicMessagesPhase,
   updateTopicMessagesMeta,
   setTopicMessagesFetchingStatus,
+  setMessageEventType,
 } = topicMessagesSlice.actions;
 
 export default topicMessagesSlice.reducer;
