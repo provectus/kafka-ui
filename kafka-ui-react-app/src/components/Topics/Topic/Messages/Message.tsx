@@ -42,8 +42,6 @@ const Message: React.FC<Props> = ({
     key,
     partition,
     content,
-    valueFormat,
-    keyFormat,
     headers,
   },
   keyFilters,
@@ -51,7 +49,7 @@ const Message: React.FC<Props> = ({
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const savedMessageJson = {
-    Content: content,
+    Value: content,
     Offset: offset,
     Key: key,
     Partition: partition,
@@ -140,9 +138,7 @@ const Message: React.FC<Props> = ({
       {isOpen && (
         <MessageContent
           messageKey={key}
-          messageKeyFormat={keyFormat}
           messageContent={content}
-          messageContentFormat={valueFormat}
           headers={headers}
           timestamp={timestamp}
           timestampType={timestampType}

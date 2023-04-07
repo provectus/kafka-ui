@@ -6,7 +6,6 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +16,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 
 import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.pages.topics.TopicDetails.TopicMenu.OVERVIEW;
 import static org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils.nextInt;
 
 public class TopicDetails extends BasePage {
@@ -24,8 +24,6 @@ public class TopicDetails extends BasePage {
     protected SelenideElement clearMessagesBtn = $x(("//div[contains(text(), 'Clear messages')]"));
     protected SelenideElement recreateTopicBtn = $x("//div[text()='Recreate Topic']");
     protected SelenideElement messageAmountCell = $x("//tbody/tr/td[5]");
-    protected SelenideElement overviewTab = $x("//a[contains(text(),'Overview')]");
-    protected SelenideElement messagesTab = $x("//a[contains(text(),'Messages')]");
     protected SelenideElement seekTypeDdl = $x("//ul[@id='selectSeekType']/li");
     protected SelenideElement seekTypeField = $x("//label[text()='Seek Type']//..//div/input");
     protected SelenideElement addFiltersBtn = $x("//button[text()='Add Filters']");
@@ -50,6 +48,7 @@ public class TopicDetails extends BasePage {
     protected SelenideElement previousMonthButton = $x("//button[@aria-label='Previous Month']");
     protected SelenideElement nextMonthButton = $x("//button[@aria-label='Next Month']");
     protected SelenideElement calendarTimeFld = $x("//input[@placeholder='Time']");
+    protected String detailsTabLtr = "//nav//a[contains(text(),'%s')]";
     protected String dayCellLtr = "//div[@role='option'][contains(text(),'%d')]";
     protected String seekFilterDdlLocator = "//ul[@id='selectSeekType']/ul/li[text()='%s']";
     protected String savedFilterNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
@@ -61,13 +60,13 @@ public class TopicDetails extends BasePage {
     @Step
     public TopicDetails waitUntilScreenReady() {
         waitUntilSpinnerDisappear();
-        overviewTab.shouldBe(Condition.visible);
+        $x(String.format(detailsTabLtr, OVERVIEW)).shouldBe(Condition.visible);
         return this;
     }
 
     @Step
     public TopicDetails openDetailsTab(TopicMenu menu) {
-        $(By.linkText(menu.toString())).shouldBe(Condition.visible).click();
+        $x(String.format(detailsTabLtr, menu.toString())).shouldBe(Condition.enabled).click();
         waitUntilSpinnerDisappear();
         return this;
     }
@@ -172,9 +171,9 @@ public class TopicDetails extends BasePage {
 
     @Step
     public TopicDetails clickNextButton() {
-      nextBtn.shouldBe(Condition.enabled).click();
-      waitUntilSpinnerDisappear();
-      return this;
+        nextBtn.shouldBe(Condition.enabled).click();
+        waitUntilSpinnerDisappear();
+        return this;
     }
 
     @Step
@@ -254,7 +253,7 @@ public class TopicDetails extends BasePage {
 
     @Step
     public boolean isNextButtonEnabled() {
-      return isEnabled(nextBtn);
+        return isEnabled(nextBtn);
     }
 
     @Step
