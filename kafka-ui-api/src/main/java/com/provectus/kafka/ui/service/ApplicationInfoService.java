@@ -68,7 +68,7 @@ public class ApplicationInfoService {
   }
 
   // updating on startup and every hour
-  @Scheduled(fixedRateString = "${kafka.github-release-info-update-rate:3600000}")
+  @Scheduled(fixedRateString = "${github-release-info-update-rate:3600000}")
   public void updateGithubReleaseInfo() {
     githubReleaseInfo.refresh().block();
   }
