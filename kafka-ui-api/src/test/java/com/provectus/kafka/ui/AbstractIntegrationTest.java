@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.utility.DockerImageName;
@@ -61,7 +61,7 @@ public abstract class AbstractIntegrationTest {
       System.setProperty("kafka.clusters.0.bootstrapServers", kafka.getBootstrapServers());
       // List unavailable hosts to verify failover
       System.setProperty("kafka.clusters.0.schemaRegistry", String.format("http://localhost:%1$s,http://localhost:%1$s,%2$s",
-              SocketUtils.findAvailableTcpPort(), schemaRegistry.getUrl()));
+              TestSocketUtils.findAvailableTcpPort(), schemaRegistry.getUrl()));
       System.setProperty("kafka.clusters.0.kafkaConnect.0.name", "kafka-connect");
       System.setProperty("kafka.clusters.0.kafkaConnect.0.userName", "kafka-connect");
       System.setProperty("kafka.clusters.0.kafkaConnect.0.password", "kafka-connect");
