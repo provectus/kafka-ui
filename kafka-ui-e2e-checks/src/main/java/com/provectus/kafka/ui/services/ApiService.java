@@ -20,8 +20,8 @@ import com.provectus.kafka.ui.api.model.TopicCreation;
 import com.provectus.kafka.ui.models.Connector;
 import com.provectus.kafka.ui.models.Schema;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.pages.ksqlDb.models.Stream;
-import com.provectus.kafka.ui.pages.ksqlDb.models.Table;
+import com.provectus.kafka.ui.pages.ksqldb.models.Stream;
+import com.provectus.kafka.ui.pages.ksqldb.models.Table;
 import com.provectus.kafka.ui.settings.BaseSource;
 import io.qameta.allure.Step;
 import java.util.HashMap;
@@ -258,18 +258,18 @@ public class ApiService extends BaseSource {
     String streamName = stream.getName();
     KsqlCommandV2Response pipeIdInsert = ksqlApi()
         .executeKsql(CLUSTER_NAME, new KsqlCommandV2()
-            .ksql("INSERT INTO " + streamName +
-                " (profileId, latitude, longitude) VALUES ('c2309eec', 37.7877, -122.4205);"
-                + "INSERT INTO " + streamName +
-                " (profileId, latitude, longitude) VALUES ('18f4ea86', 37.3903, -122.0643); "
-                + "INSERT INTO " + streamName +
-                " (profileId, latitude, longitude) VALUES ('4ab5cbad', 37.3952, -122.0813); "
-                + "INSERT INTO " + streamName +
-                " (profileId, latitude, longitude) VALUES ('8b6eae59', 37.3944, -122.0813); "
-                + "INSERT INTO " + streamName +
-                " (profileId, latitude, longitude) VALUES ('4a7c7b41', 37.4049, -122.0822); "
-                + "INSERT INTO " + streamName +
-                " (profileId, latitude, longitude) VALUES ('4ddad000', 37.7857, -122.4011);"))
+            .ksql("INSERT INTO " + streamName
+                + " (profileId, latitude, longitude) VALUES ('c2309eec', 37.7877, -122.4205);"
+                + "INSERT INTO " + streamName
+                + " (profileId, latitude, longitude) VALUES ('18f4ea86', 37.3903, -122.0643); "
+                + "INSERT INTO " + streamName
+                + " (profileId, latitude, longitude) VALUES ('4ab5cbad', 37.3952, -122.0813); "
+                + "INSERT INTO " + streamName
+                + " (profileId, latitude, longitude) VALUES ('8b6eae59', 37.3944, -122.0813); "
+                + "INSERT INTO " + streamName
+                + " (profileId, latitude, longitude) VALUES ('4a7c7b41', 37.4049, -122.0822); "
+                + "INSERT INTO " + streamName
+                + " (profileId, latitude, longitude) VALUES ('4ddad000', 37.7857, -122.4011);"))
         .block();
     assert pipeIdInsert != null;
     List<KsqlResponse> responseListInsert = ksqlApi()

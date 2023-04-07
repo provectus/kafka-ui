@@ -11,7 +11,7 @@ import static com.provectus.kafka.ui.settings.drivers.WebDriver.browserClear;
 import static com.provectus.kafka.ui.settings.drivers.WebDriver.browserQuit;
 import static com.provectus.kafka.ui.settings.drivers.WebDriver.browserSetup;
 import static com.provectus.kafka.ui.settings.drivers.WebDriver.loggerSetup;
-import static com.provectus.kafka.ui.utilities.qaseUtils.QaseSetup.qaseIntegrationSetup;
+import static com.provectus.kafka.ui.utilities.qase.QaseSetup.qaseIntegrationSetup;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;

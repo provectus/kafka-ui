@@ -2,9 +2,9 @@ package com.provectus.kafka.ui.settings.listeners;
 
 import static io.qase.api.utils.IntegrationUtils.getCaseTitle;
 
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Automation;
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Status;
-import com.provectus.kafka.ui.utilities.qaseUtils.annotations.Suite;
+import com.provectus.kafka.ui.utilities.qase.annotations.Automation;
+import com.provectus.kafka.ui.utilities.qase.annotations.Status;
+import com.provectus.kafka.ui.utilities.qase.annotations.Suite;
 import io.qase.api.QaseClient;
 import io.qase.api.StepStorage;
 import io.qase.api.annotation.QaseId;
@@ -86,8 +86,8 @@ public class QaseCreateListener extends TestListenerAdapter implements ITestList
       for (Map.Entry<Long, String> map : cases.entrySet()) {
         if (map.getValue().matches(title)) {
           long id = map.getKey();
-          log.warn(String.format("Test case with @QaseTitle='%s' already exists with @QaseId=%d. " +
-              "Please verify @QaseTitle annotation", title, id));
+          log.warn(String.format("Test case with @QaseTitle='%s' already exists with @QaseId=%d. "
+              + "Please verify @QaseTitle annotation", title, id));
           return true;
         }
       }

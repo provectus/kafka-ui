@@ -79,9 +79,9 @@ public class TopicCreateEditForm extends BasePage {
   }
 
   @Step
-  public TopicCreateEditForm setMaxSizeOnDiskInGB(MaxSizeOnDisk MaxSizeOnDisk) {
+  public TopicCreateEditForm setMaxSizeOnDiskInGB(MaxSizeOnDisk maxSizeOnDisk) {
     maxSizeOnDiscDdl.shouldBe(Condition.visible).click();
-    $x(String.format(ddlElementLocator, MaxSizeOnDisk.getOptionValue())).shouldBe(Condition.visible).click();
+    $x(String.format(ddlElementLocator, maxSizeOnDisk.getOptionValue())).shouldBe(Condition.visible).click();
     return this;
   }
 
@@ -157,20 +157,20 @@ public class TopicCreateEditForm extends BasePage {
                                                 String customParameterValue) {
     ElementsCollection customParametersElements =
         $$("ul[role=listbox][name^=customParams][name$=name]");
-    KafkaUISelectElement kafkaUISelectElement = null;
+    KafkaUiSelectElement kafkaUiSelectElement = null;
     if (customParametersElements.size() == 1) {
       if ("Select".equals(customParametersElements.first().getText())) {
-        kafkaUISelectElement = new KafkaUISelectElement(customParametersElements.first());
+        kafkaUiSelectElement = new KafkaUiSelectElement(customParametersElements.first());
       }
     } else {
       $$("button")
           .find(Condition.exactText("Add Custom Parameter"))
           .click();
       customParametersElements = $$("ul[role=listbox][name^=customParams][name$=name]");
-      kafkaUISelectElement = new KafkaUISelectElement(customParametersElements.last());
+      kafkaUiSelectElement = new KafkaUiSelectElement(customParametersElements.last());
     }
-    if (kafkaUISelectElement != null) {
-      kafkaUISelectElement.selectByVisibleText(customParameterName);
+    if (kafkaUiSelectElement != null) {
+      kafkaUiSelectElement.selectByVisibleText(customParameterName);
     }
     $(String.format("input[name=\"customParams.%d.value\"]", customParametersElements.size() - 1))
         .setValue(customParameterValue);
@@ -192,7 +192,7 @@ public class TopicCreateEditForm extends BasePage {
 
   @Step
   public String getCleanupPolicy() {
-    return new KafkaUISelectElement("cleanupPolicy").getCurrentValue();
+    return new KafkaUiSelectElement("cleanupPolicy").getCurrentValue();
   }
 
   @Step
@@ -202,7 +202,7 @@ public class TopicCreateEditForm extends BasePage {
 
   @Step
   public String getMaxSizeOnDisk() {
-    return new KafkaUISelectElement("retentionBytes").getCurrentValue();
+    return new KafkaUiSelectElement("retentionBytes").getCurrentValue();
   }
 
   @Step
@@ -233,27 +233,27 @@ public class TopicCreateEditForm extends BasePage {
 
   private TopicCreateEditForm selectFromDropDownByOptionValue(String dropDownElementName,
                                                               String optionValue) {
-    KafkaUISelectElement select = new KafkaUISelectElement(dropDownElementName);
+    KafkaUiSelectElement select = new KafkaUiSelectElement(dropDownElementName);
     select.selectByOptionValue(optionValue);
     return this;
   }
 
   private TopicCreateEditForm selectFromDropDownByVisibleText(String dropDownElementName,
                                                               String visibleText) {
-    KafkaUISelectElement select = new KafkaUISelectElement(dropDownElementName);
+    KafkaUiSelectElement select = new KafkaUiSelectElement(dropDownElementName);
     select.selectByVisibleText(visibleText);
     return this;
   }
 
-  private static class KafkaUISelectElement {
+  private static class KafkaUiSelectElement {
 
     private final SelenideElement selectElement;
 
-    public KafkaUISelectElement(String selectElementName) {
+    public KafkaUiSelectElement(String selectElementName) {
       this.selectElement = $("ul[role=listbox][name=" + selectElementName + "]");
     }
 
-    public KafkaUISelectElement(SelenideElement selectElement) {
+    public KafkaUiSelectElement(SelenideElement selectElement) {
       this.selectElement = selectElement;
     }
 

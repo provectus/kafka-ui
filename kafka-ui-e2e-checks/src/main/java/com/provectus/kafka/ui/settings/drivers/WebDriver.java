@@ -14,9 +14,11 @@ import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.Step;
 import io.qameta.allure.selenide.AllureSelenide;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+@Slf4j
 public abstract class WebDriver {
 
   @Step
@@ -24,9 +26,6 @@ public abstract class WebDriver {
     Configuration.headless = false;
     Configuration.browser = "chrome";
     Configuration.browserSize = "1920x1080";
-    /**screenshots and savePageSource config is needed for local debug
-     * optionally can be set as 'false' to not duplicate Allure report
-     */
     Configuration.screenshots = true;
     Configuration.savePageSource = false;
     Configuration.pageLoadTimeout = 120000;
