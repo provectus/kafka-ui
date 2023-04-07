@@ -41,4 +41,24 @@ describe('Search', () => {
     render(<Search />);
     expect(screen.queryByPlaceholderText('Search')).toBeInTheDocument();
   });
+
+  it('Clear button is visible', () => {
+    render(<Search placeholder={placeholder} />);
+
+    const clearButton = screen.getByRole('button');
+    expect(clearButton).toBeInTheDocument();
+  });
+
+  it('Clear button should clear text from input', async () => {
+    render(<Search placeholder={placeholder} />);
+
+    const searchField = screen.getAllByRole('textbox')[0];
+    await userEvent.type(searchField, 'some text');
+    expect(searchField).toHaveValue('some text');
+
+    const clearButton = screen.getByRole('button');
+    await userEvent.click(clearButton);
+
+    expect(searchField).toHaveValue('');
+  });
 });

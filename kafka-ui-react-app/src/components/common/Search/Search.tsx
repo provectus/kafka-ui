@@ -53,7 +53,12 @@ const Search: React.FC<SearchProps> = ({
       ref={ref}
       search
     >
-      <div aria-hidden role="button" onClick={clearSearchValue}>
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={clearSearchValue}
+        onKeyDown={() => {}}
+      >
         <CloseIcon />
       </div>
     </Input>
