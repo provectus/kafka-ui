@@ -101,6 +101,9 @@ public class ConsumerGroupService {
   public record ConsumerGroupsPage(List<InternalConsumerGroup> consumerGroups, int totalPages) {
   }
 
+  private record GroupWithDescr(InternalConsumerGroup icg, ConsumerGroupDescription cgd) {
+  }
+
   public Mono<ConsumerGroupsPage> getConsumerGroupsPage(
       KafkaCluster cluster,
       int pageNum,
@@ -159,22 +162,19 @@ public class ConsumerGroupService {
                 sortAndPaginate(descriptions.values(), comparator, pageNum, perPage, sortOrderDto).toList());
       }
       case MESSAGES_BEHIND -> {
-        record GroupWithDescr(InternalConsumerGroup icg, ConsumerGroupDescription cgd) { }
 
         Comparator<GroupWithDescr> comparator = Comparator.comparingLong(gwd ->
             gwd.icg.getMessagesBehind() == null ? 0L : gwd.icg.getMessagesBehind());
 
-        var groupNames = groups.stream().map(ConsumerGroupListing::groupId).toList();
+        yield loadDescriptionsByInternalConsumerGroups(ac, groups, comparator, pageNum, perPage, sortOrderDto);
+      }
 
-        yield ac.describeConsumerGroups(groupNames)
-            .flatMap(descriptionsMap -> {
-                  List<ConsumerGroupDescription> descriptions = descriptionsMap.values().stream().toList();
-                  return getConsumerGroups(ac, descriptions)
-                      .map(icg -> Streams.zip(icg.stream(), descriptions.stream(), GroupWithDescr::new).toList())
-                      .map(gwd -> sortAndPaginate(gwd, comparator, pageNum, perPage, sortOrderDto)
-                            .map(GroupWithDescr::cgd).toList());
-                }
-            );
+      case TOPIC_NUM -> {
+
+        Comparator<GroupWithDescr> comparator = Comparator.comparingInt(gwd -> gwd.icg.getTopicNum());
+
+        yield loadDescriptionsByInternalConsumerGroups(ac, groups, comparator, pageNum, perPage, sortOrderDto);
+
       }
     };
   }
@@ -207,6 +207,27 @@ public class ConsumerGroupService {
     return ac.listConsumerGroupNames()
         .flatMap(ac::describeConsumerGroups)
         .map(cgs -> new ArrayList<>(cgs.values()));
+  }
+
+
+  private Mono<List<ConsumerGroupDescription>> loadDescriptionsByInternalConsumerGroups(ReactiveAdminClient ac,
+                                                                                  List<ConsumerGroupListing> groups,
+                                                                                  Comparator<GroupWithDescr> comparator,
+                                                                                  int pageNum,
+                                                                                  int perPage,
+                                                                                  SortOrderDTO sortOrderDto) {
+    var groupNames = groups.stream().map(ConsumerGroupListing::groupId).toList();
+
+    return ac.describeConsumerGroups(groupNames)
+    .flatMap(descriptionsMap -> {
+          List<ConsumerGroupDescription> descriptions = descriptionsMap.values().stream().toList();
+          return getConsumerGroups(ac, descriptions)
+              .map(icg -> Streams.zip(icg.stream(), descriptions.stream(), GroupWithDescr::new).toList())
+              .map(gwd -> sortAndPaginate(gwd, comparator, pageNum, perPage, sortOrderDto)
+                    .map(GroupWithDescr::cgd).toList());
+    }
+    );
+
   }
 
   public Mono<InternalConsumerGroup> getConsumerGroupDetail(KafkaCluster cluster,

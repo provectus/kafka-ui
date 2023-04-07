@@ -2417,6 +2417,7 @@ components:
         - MEMBERS
         - STATE
         - MESSAGES_BEHIND
+        - TOPIC_NUM
 
     ConsumerGroupsPageResponse:
       type: object

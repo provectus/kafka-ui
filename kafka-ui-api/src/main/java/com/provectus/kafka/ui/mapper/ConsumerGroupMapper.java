@@ -82,15 +82,8 @@ public class ConsumerGroupMapper {
       InternalConsumerGroup c, T consumerGroup) {
     consumerGroup.setGroupId(c.getGroupId());
     consumerGroup.setMembers(c.getMembers().size());
-
-    int numTopics = Stream.concat(
-        c.getOffsets().keySet().stream().map(TopicPartition::topic),
-        c.getMembers().stream()
-            .flatMap(m -> m.getAssignment().stream().map(TopicPartition::topic))
-    ).collect(Collectors.toSet()).size();
-
     consumerGroup.setMessagesBehind(c.getMessagesBehind());
-    consumerGroup.setTopics(numTopics);
+    consumerGroup.setTopics(c.getTopicNum());
     consumerGroup.setSimple(c.isSimple());
 
     Optional.ofNullable(c.getState())

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
@@ -21,6 +22,7 @@ public class InternalConsumerGroup {
   private final Map<TopicPartition, Long> offsets;
   private final Map<TopicPartition, Long> endOffsets;
   private final Long messagesBehind;
+  private final Integer topicNum;
   private final String partitionAssignor;
   private final ConsumerGroupState state;
   private final Node coordinator;
@@ -44,22 +46,12 @@ public class InternalConsumerGroup {
     builder.simple(description.isSimpleConsumerGroup());
     builder.state(description.state());
     builder.partitionAssignor(description.partitionAssignor());
-    builder.members(
-        description.members().stream()
-            .map(m ->
-                InternalConsumerGroup.InternalMember.builder()
-                    .assignment(m.assignment().topicPartitions())
-                    .clientId(m.clientId())
-                    .groupInstanceId(m.groupInstanceId().orElse(""))
-                    .consumerId(m.consumerId())
-                    .clientId(m.clientId())
-                    .host(m.host())
-                    .build()
-            ).collect(Collectors.toList())
-    );
+    Collection<InternalMember> internalMembers = initInternalMembers(description);
+    builder.members(internalMembers);
     builder.offsets(groupOffsets);
     builder.endOffsets(topicEndOffsets);
     builder.messagesBehind(calculateMessagesBehind(groupOffsets, topicEndOffsets));
+    builder.topicNum(calculateTopicNum(groupOffsets, internalMembers));
     Optional.ofNullable(description.coordinator()).ifPresent(builder::coordinator);
     return builder.build();
   }
@@ -79,5 +71,30 @@ public class InternalConsumerGroup {
 
     return messagesBehind;
   }
+
+  private static Integer calculateTopicNum(Map<TopicPartition, Long> offsets, Collection<InternalMember> members) {
+
+    return Stream.concat(
+        offsets.keySet().stream().map(TopicPartition::topic),
+        members.stream()
+            .flatMap(m -> m.getAssignment().stream().map(TopicPartition::topic))
+    ).collect(Collectors.toSet()).size();
+
+  }
+
+  private static Collection<InternalMember> initInternalMembers(ConsumerGroupDescription description) {
+    return description.members().stream()
+    .map(m ->
+        InternalConsumerGroup.InternalMember.builder()
+            .assignment(m.assignment().topicPartitions())
+            .clientId(m.clientId())
+            .groupInstanceId(m.groupInstanceId().orElse(""))
+            .consumerId(m.consumerId())
+            .clientId(m.clientId())
+            .host(m.host())
+            .build()
+    ).collect(Collectors.toList());
+  }
+
 
 }
