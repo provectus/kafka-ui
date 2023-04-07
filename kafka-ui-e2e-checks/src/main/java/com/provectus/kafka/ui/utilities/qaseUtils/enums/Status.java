@@ -2,17 +2,17 @@ package com.provectus.kafka.ui.utilities.qaseUtils.enums;
 
 public enum Status {
 
-    ACTUAL(0),
-    DRAFT(1),
-    DEPRECATED(2);
+  ACTUAL(0),
+  DRAFT(1),
+  DEPRECATED(2);
 
-    private final int value;
+  private final int value;
 
-    Status(int value) {
-        this.value = value;
-    }
+  Status(int value) {
+    this.value = value;
+  }
 
-    public int getValue() {
-        return value;
-    }
+  public int getValue() {
+    return value;
+  }
 }

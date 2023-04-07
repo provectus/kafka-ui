@@ -7,5 +7,5 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Stream {
 
-    private String name, topicName, valueFormat, partitions;
+  private String name, topicName, valueFormat, partitions;
 }

@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Status {
 
-    com.provectus.kafka.ui.utilities.qaseUtils.enums.Status status();
+  com.provectus.kafka.ui.utilities.qaseUtils.enums.Status status();
 }

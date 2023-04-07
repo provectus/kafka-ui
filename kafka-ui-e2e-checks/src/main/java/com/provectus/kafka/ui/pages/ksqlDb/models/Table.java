@@ -7,5 +7,5 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Table {
 
-    private String name, streamName;
+  private String name, streamName;
 }
