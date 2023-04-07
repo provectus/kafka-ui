@@ -3,6 +3,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import Input from 'components/common/Input/Input';
 import { useSearchParams } from 'react-router-dom';
 import CloseIcon from 'components/common/Icons/CloseIcon';
+import styled from 'styled-components';
 
 interface SearchProps {
   placeholder?: string;
@@ -11,6 +12,16 @@ interface SearchProps {
   value?: string;
 }
 
+const IconButtonWrapper = styled.span.attrs(() => ({
+  role: 'button',
+  tabIndex: '0',
+}))`
+  height: 16px !important;
+  display: inline-block;
+  &:hover {
+    cursor: pointer;
+  }
+`;
 const Search: React.FC<SearchProps> = ({
   placeholder = 'Search',
   disabled = false,
@@ -53,14 +64,9 @@ const Search: React.FC<SearchProps> = ({
       ref={ref}
       search
     >
-      <div
-        role="button"
-        tabIndex={0}
-        onClick={clearSearchValue}
-        onKeyDown={() => {}}
-      >
+      <IconButtonWrapper onClick={clearSearchValue}>
         <CloseIcon />
-      </div>
+      </IconButtonWrapper>
     </Input>
   );
 };

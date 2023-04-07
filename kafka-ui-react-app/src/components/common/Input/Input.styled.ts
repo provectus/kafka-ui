@@ -38,7 +38,6 @@ export const Wrapper = styled.div`
     right: 12px;
     height: 16px;
     width: 16px;
-    cursor: pointer;
   }
 `;
 
