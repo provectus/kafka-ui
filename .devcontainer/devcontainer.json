@@ -1,0 +1,36 @@
+{
+	"name": "Java",
+
+	"image": "mcr.microsoft.com/devcontainers/java:0-17",
+
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "none",
+			"installMaven": "true",
+			"installGradle": "false"
+		},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "java -version",
+
+	"customizations": {
+		"vscode": {
+			"extensions" : [
+				"vscjava.vscode-java-pack",
+				"vscjava.vscode-maven",
+				"vscjava.vscode-java-debug",
+				"EditorConfig.EditorConfig",
+				"ms-azuretools.vscode-docker",
+				"antfu.vite",
+				"ms-kubernetes-tools.vscode-kubernetes-tools",
+                "github.vscode-pull-request-github"
+			]
+		}
+	}
+
+}
