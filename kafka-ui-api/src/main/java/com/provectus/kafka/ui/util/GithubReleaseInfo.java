@@ -14,31 +14,40 @@ public class GithubReleaseInfo {
 
   private static final Duration GITHUB_API_MAX_WAIT_TIME = Duration.ofSeconds(2);
 
-  private static final Duration CACHE_DURATION = Duration.ofMinutes(5);
-
   public record GithubReleaseDto(String html_url, String tag_name, String published_at) {
+
+    static GithubReleaseDto empty() {
+      return new GithubReleaseDto(null, null, null);
+    }
   }
 
-  private final Mono<GithubReleaseDto> cachedMono;
+  private volatile GithubReleaseDto release = GithubReleaseDto.empty();
+
+  private final Mono<Void> refreshMono;
 
   public GithubReleaseInfo() {
-    this(GITHUB_LATEST_RELEASE_RETRIEVAL_URL, CACHE_DURATION);
+    this(GITHUB_LATEST_RELEASE_RETRIEVAL_URL);
   }
 
   @VisibleForTesting
-  GithubReleaseInfo(String url, Duration cacheDuration) {
-    this.cachedMono = WebClient.create()
+  GithubReleaseInfo(String url) {
+    this.refreshMono = WebClient.create()
         .get()
         .uri(url)
         .exchangeToMono(resp -> resp.bodyToMono(GithubReleaseDto.class))
         .timeout(GITHUB_API_MAX_WAIT_TIME)
         .doOnError(th -> log.trace("Error getting latest github release info", th))
-        .onErrorResume(th -> true, th -> Mono.just(new GithubReleaseDto(null, null, null)))
-        .cache(cacheDuration);
+        .onErrorResume(th -> true, th -> Mono.just(GithubReleaseDto.empty()))
+        .doOnNext(release -> this.release = release)
+        .then();
   }
 
-  public Mono<GithubReleaseDto> get() {
-    return cachedMono;
+  public GithubReleaseDto get() {
+    return release;
+  }
+
+  public Mono<Void> refresh() {
+    return refreshMono;
   }
 
 }

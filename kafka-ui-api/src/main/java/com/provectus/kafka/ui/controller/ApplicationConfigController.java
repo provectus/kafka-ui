@@ -57,7 +57,7 @@ public class ApplicationConfigController implements ApplicationConfigApi {
 
   @Override
   public Mono<ResponseEntity<ApplicationInfoDTO>> getApplicationInfo(ServerWebExchange exchange) {
-    return applicationInfoService.getApplicationInfo().map(ResponseEntity::ok);
+    return Mono.just(applicationInfoService.getApplicationInfo()).map(ResponseEntity::ok);
   }
 
   @Override

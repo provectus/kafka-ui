@@ -38,17 +38,17 @@ class GithubReleaseInfoTest {
             }
             """));
     var url = mockWebServer.url("repos/provectus/kafka-ui/releases/latest").toString();
-    var mono = new GithubReleaseInfo(url, Duration.ZERO).get();
-    StepVerifier.create(mono)
-        .assertNext(r -> {
-          assertThat(r.html_url())
-              .isEqualTo("https://github.com/provectus/kafka-ui/releases/tag/v0.6.0");
-          assertThat(r.published_at())
-              .isEqualTo("2023-03-09T16:11:31Z");
-          assertThat(r.tag_name())
-              .isEqualTo("v0.6.0");
-        })
-        .verifyComplete();
+
+    var infoHolder = new GithubReleaseInfo(url);
+    infoHolder.refresh().block();
+
+    var i = infoHolder.get();
+    assertThat(i.html_url())
+        .isEqualTo("https://github.com/provectus/kafka-ui/releases/tag/v0.6.0");
+    assertThat(i.published_at())
+        .isEqualTo("2023-03-09T16:11:31Z");
+    assertThat(i.tag_name())
+        .isEqualTo("v0.6.0");
   }
 
 }

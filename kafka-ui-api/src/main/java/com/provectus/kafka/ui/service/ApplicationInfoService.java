@@ -15,8 +15,8 @@ import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.info.GitProperties;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 @Service
 public class ApplicationInfoService {
@@ -35,13 +35,12 @@ public class ApplicationInfoService {
     this.gitProperties = Optional.ofNullable(gitProperties).orElse(new GitProperties(new Properties()));
   }
 
-  public Mono<ApplicationInfoDTO> getApplicationInfo() {
-    return githubReleaseInfo.get()
-        .map(releaseInfo ->
-            new ApplicationInfoDTO()
-                .build(getBuildInfo(releaseInfo))
-                .enabledFeatures(getEnabledFeatures())
-                .latestRelease(convert(releaseInfo)));
+  public ApplicationInfoDTO getApplicationInfo() {
+    var releaseInfo = githubReleaseInfo.get();
+    return new ApplicationInfoDTO()
+        .build(getBuildInfo(releaseInfo))
+        .enabledFeatures(getEnabledFeatures())
+        .latestRelease(convert(releaseInfo));
   }
 
   private ApplicationInfoLatestReleaseDTO convert(GithubReleaseInfo.GithubReleaseDto releaseInfo) {
@@ -66,6 +65,12 @@ public class ApplicationInfoService {
       enabledFeatures.add(EnabledFeaturesEnum.DYNAMIC_CONFIG);
     }
     return enabledFeatures;
+  }
+
+  // updating on startup and every hour
+  @Scheduled(fixedRateString = "${kafka.github-release-info-update-rate:3600000}")
+  public void updateGithubReleaseInfo() {
+    githubReleaseInfo.refresh().block();
   }
 
 }
