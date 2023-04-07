@@ -2407,6 +2407,10 @@ components:
         - UNKNOWN
 
     ConsumerGroup:
+      discriminator:
+        propertyName: inherit
+        mapping:
+          details: "#/components/schemas/ConsumerGroupDetails"
       type: object
       properties:
         groupId:
