@@ -16,6 +16,7 @@ export interface InputProps
   withError?: boolean;
   label?: React.ReactNode;
   hint?: React.ReactNode;
+  children?: React.ReactNode;
 
   // Some may only accept integer, like `Number of Partitions`
   // some may accept decimal
@@ -99,19 +100,22 @@ function pasteNumberCheck(
   return value;
 }
 
-const Input: React.FC<InputProps> = ({
-  name,
-  hookFormOptions,
-  search,
-  inputSize = 'L',
-  type,
-  positiveOnly,
-  integerOnly,
-  withError = false,
-  label,
-  hint,
-  ...rest
-}) => {
+const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+  const {
+    name,
+    hookFormOptions,
+    search,
+    inputSize = 'L',
+    type,
+    positiveOnly,
+    integerOnly,
+    withError = false,
+    label,
+    hint,
+    children,
+    ...rest
+  } = props;
+
   const methods = useFormContext();
 
   const fieldId = React.useId();
@@ -168,7 +172,6 @@ const Input: React.FC<InputProps> = ({
     // if the field is a part of react-hook-form form
     inputOptions = { ...rest, ...methods.register(name, hookFormOptions) };
   }
-
   return (
     <div>
       {label && <InputLabel htmlFor={rest.id || fieldId}>{label}</InputLabel>}
@@ -181,8 +184,11 @@ const Input: React.FC<InputProps> = ({
           type={type}
           onKeyPress={keyPressEventHandler}
           onPaste={pasteEventHandler}
+          ref={ref}
           {...inputOptions}
         />
+        {search && children}
+
         {withError && isHookFormField && (
           <S.FormError>
             <ErrorMessage name={name} />
@@ -192,6 +198,6 @@ const Input: React.FC<InputProps> = ({
       </S.Wrapper>
     </div>
   );
-};
+});
 
 export default Input;

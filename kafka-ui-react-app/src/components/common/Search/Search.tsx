@@ -2,6 +2,7 @@ import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import Input from 'components/common/Input/Input';
 import { useSearchParams } from 'react-router-dom';
+import CloseIcon from 'components/common/Icons/CloseIcon';
 
 interface SearchProps {
   placeholder?: string;
@@ -17,7 +18,11 @@ const Search: React.FC<SearchProps> = ({
   onChange,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const ref = React.createRef<HTMLInputElement>();
   const handleChange = useDebouncedCallback((e) => {
+    if (ref.current != null) {
+      ref.current.value = e.target.value;
+    }
     if (onChange) {
       onChange(e.target.value);
     } else {
@@ -28,7 +33,15 @@ const Search: React.FC<SearchProps> = ({
       setSearchParams(searchParams);
     }
   }, 500);
-
+  const clearSearchValue = () => {
+    if (searchParams.get('q')) {
+      searchParams.set('q', '');
+      setSearchParams(searchParams);
+    }
+    if (ref.current != null) {
+      ref.current.value = '';
+    }
+  };
   return (
     <Input
       type="text"
@@ -37,8 +50,13 @@ const Search: React.FC<SearchProps> = ({
       defaultValue={value || searchParams.get('q') || ''}
       inputSize="M"
       disabled={disabled}
+      ref={ref}
       search
-    />
+    >
+      <div aria-hidden role="button" onClick={clearSearchValue}>
+        <CloseIcon />
+      </div>
+    </Input>
   );
 };
 
