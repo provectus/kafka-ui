@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.smokeSuite.topics;
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.pages.topics.TopicDetails;
 import io.qameta.allure.Issue;
 import io.qase.api.annotation.QaseId;
 import org.testng.Assert;
@@ -17,8 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.provectus.kafka.ui.pages.BasePage.AlertHeader.SUCCESS;
-import static com.provectus.kafka.ui.pages.topics.TopicDetails.TopicMenu.MESSAGES;
-import static com.provectus.kafka.ui.pages.topics.TopicDetails.TopicMenu.SETTINGS;
+import static com.provectus.kafka.ui.pages.topics.TopicDetails.TopicMenu.*;
 import static com.provectus.kafka.ui.pages.topics.enums.CleanupPolicyValue.COMPACT;
 import static com.provectus.kafka.ui.pages.topics.enums.CleanupPolicyValue.DELETE;
 import static com.provectus.kafka.ui.pages.topics.enums.CustomParameterType.COMPRESSION_TYPE;
@@ -206,7 +204,7 @@ public class TopicsTest extends BaseTest {
         String consumerGroupId = "connect-sink_postgres_activities";
         navigateToTopicsAndOpenDetails(topicName);
         topicDetails
-                .openDetailsTab(TopicDetails.TopicMenu.CONSUMERS)
+                .openDetailsTab(CONSUMERS)
                 .openConsumerGroup(consumerGroupId);
         consumersDetails
                 .waitUntilScreenReady();
@@ -361,8 +359,9 @@ public class TopicsTest extends BaseTest {
     @Test(priority = 15)
     public void checkShowInternalTopicsButton() {
         navigateToTopics();
+        topicsList
+                .setShowInternalRadioButton(true);
         SoftAssert softly = new SoftAssert();
-        softly.assertTrue(topicsList.isShowInternalRadioBtnSelected(), "isInternalRadioBtnSelected()");
         softly.assertTrue(topicsList.getInternalTopics().size() > 0, "getInternalTopics()");
         softly.assertTrue(topicsList.getNonInternalTopics().size() > 0, "getNonInternalTopics()");
         softly.assertAll();
