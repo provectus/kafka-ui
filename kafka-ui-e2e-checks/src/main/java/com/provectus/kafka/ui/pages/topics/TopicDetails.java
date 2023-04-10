@@ -187,7 +187,7 @@ public class TopicDetails extends BasePage {
 
   @Step
   public TopicDetails clickNextButton() {
-    nextBtn.shouldBe(Condition.enabled).click();
+    clickNextBtn();
     waitUntilSpinnerDisappear();
     return this;
   }

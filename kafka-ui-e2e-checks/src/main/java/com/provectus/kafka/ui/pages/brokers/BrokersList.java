@@ -24,7 +24,7 @@ public class BrokersList extends BasePage {
 
   @Step
   public BrokersList openBroker(int brokerId) {
-    getBrokerItem(brokerId).openItem();
+    getBroker(brokerId).openItem();
     return this;
   }
 
@@ -58,30 +58,30 @@ public class BrokersList extends BasePage {
     return getEnabledColumnHeaders();
   }
 
-  private List<BrokersList.BrokerGridItem> initGridItems() {
-    List<BrokersList.BrokerGridItem> gridItemList = new ArrayList<>();
+  private List<BrokersGridItem> initGridItems() {
+    List<BrokersGridItem> gridItemList = new ArrayList<>();
     gridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
-        .forEach(item -> gridItemList.add(new BrokersList.BrokerGridItem(item)));
+        .forEach(item -> gridItemList.add(new BrokersGridItem(item)));
     return gridItemList;
   }
 
   @Step
-  public BrokerGridItem getBrokerItem(int id) {
+  public BrokersGridItem getBroker(int id) {
     return initGridItems().stream()
         .filter(e -> e.getId() == id)
         .findFirst().orElseThrow();
   }
 
   @Step
-  public List<BrokerGridItem> getAllBrokers() {
+  public List<BrokersGridItem> getAllBrokers() {
     return initGridItems();
   }
 
-  public static class BrokerGridItem extends BasePage {
+  public static class BrokersGridItem extends BasePage {
 
     private final SelenideElement element;
 
-    public BrokerGridItem(SelenideElement element) {
+    public BrokersGridItem(SelenideElement element) {
       this.element = element;
     }
 
