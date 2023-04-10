@@ -74,11 +74,13 @@ public class InternalConsumerGroup {
 
   private static Integer calculateTopicNum(Map<TopicPartition, Long> offsets, Collection<InternalMember> members) {
 
-    return Stream.concat(
+    long topicNum = Stream.concat(
         offsets.keySet().stream().map(TopicPartition::topic),
         members.stream()
             .flatMap(m -> m.getAssignment().stream().map(TopicPartition::topic))
-    ).collect(Collectors.toSet()).size();
+    ).distinct().count();
+
+    return Integer.valueOf((int) topicNum);
 
   }
 
