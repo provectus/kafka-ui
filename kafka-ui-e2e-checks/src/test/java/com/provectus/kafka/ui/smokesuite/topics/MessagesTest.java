@@ -60,7 +60,7 @@ public class MessagesTest extends BaseTest {
 
   @QaseId(222)
   @Test(priority = 1)
-  public void produceMessage() {
+  public void produceMessageCheck() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
     topicDetails
         .openDetailsTab(MESSAGES);
@@ -75,7 +75,7 @@ public class MessagesTest extends BaseTest {
 
   @QaseId(19)
   @Test(priority = 2)
-  public void clearMessage() {
+  public void clearMessageCheck() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_MESSAGES.getName());
     topicDetails
         .openDetailsTab(OVERVIEW);
@@ -260,7 +260,7 @@ public class MessagesTest extends BaseTest {
   }
 
   @Step
-  protected void produceMessage(Topic topic) {
+  private void produceMessage(Topic topic) {
     topicDetails
         .clickProduceMessageBtn();
     produceMessagePanel

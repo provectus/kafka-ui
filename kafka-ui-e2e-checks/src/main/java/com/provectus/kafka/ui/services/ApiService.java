@@ -85,7 +85,7 @@ public class ApiService extends BaseSource {
   private void deleteTopic(String clusterName, String topicName) {
     try {
       topicApi().deleteTopic(clusterName, topicName).block();
-    } catch (WebClientResponseException ignore) {
+    } catch (WebClientResponseException ignored) {
     }
   }
 
@@ -118,7 +118,7 @@ public class ApiService extends BaseSource {
   private void deleteSchema(String clusterName, String schemaName) {
     try {
       schemaApi().deleteSchema(clusterName, schemaName).block();
-    } catch (WebClientResponseException ignore) {
+    } catch (WebClientResponseException ignored) {
     }
   }
 
@@ -132,7 +132,7 @@ public class ApiService extends BaseSource {
   private void deleteConnector(String clusterName, String connectName, String connectorName) {
     try {
       connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
-    } catch (WebClientResponseException ignore) {
+    } catch (WebClientResponseException ignored) {
     }
   }
 
