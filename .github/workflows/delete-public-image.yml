@@ -33,7 +33,7 @@ jobs:
                 --image-ids imageTag=${{ steps.extract_branch.outputs.tag }} \
                 --region us-east-1
       - name: make comment with private deployment link
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@v3
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
