@@ -31,6 +31,7 @@
 * [Helm charts](configuration/helm-charts/README.md)
   * [Quick start](configuration/helm-charts/quick-start.md)
   * [Configuration](configuration/helm-charts/configuration.md)
+  * [Resource limits](configuration/helm-charts/resource-limits.md)
 * [Misc configuration properties](configuration/misc-configuration-properties.md)
 * [Permissions](configuration/permissions/README.md)
   * [Required Kafka ACLs](configuration/configuration/required-acls.md)
