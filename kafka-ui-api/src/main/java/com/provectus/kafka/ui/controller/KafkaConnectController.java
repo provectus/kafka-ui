@@ -149,10 +149,9 @@ public class KafkaConnectController extends AbstractController implements KafkaC
   }
 
   @Override
-  public Mono<ResponseEntity<ConnectorDTO>> setConnectorConfig(String clusterName,
-                                                               String connectName,
+  public Mono<ResponseEntity<ConnectorDTO>> setConnectorConfig(String clusterName, String connectName,
                                                                String connectorName,
-                                                               @Valid Mono<Object> requestBody,
+                                                               Mono<Map<String, Object>> requestBody,
                                                                ServerWebExchange exchange) {
 
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
@@ -164,8 +163,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
     return validateAccess.then(
         kafkaConnectService
             .setConnectorConfig(getCluster(clusterName), connectName, connectorName, requestBody)
-            .map(ResponseEntity::ok)
-    );
+            .map(ResponseEntity::ok));
   }
 
   @Override
@@ -242,7 +240,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
   @Override
   public Mono<ResponseEntity<ConnectorPluginConfigValidationResponseDTO>> validateConnectorPluginConfig(
-      String clusterName, String connectName, String pluginName, @Valid Mono<Object> requestBody,
+      String clusterName, String connectName, String pluginName, @Valid Mono<Map<String, Object>> requestBody,
       ServerWebExchange exchange) {
     return kafkaConnectService
         .validateConnectorPluginConfig(
