@@ -2,24 +2,24 @@ package com.provectus.kafka.ui.pages.topics.enums;
 
 public enum CleanupPolicyValue {
 
-    DELETE("delete", "Delete"),
-    COMPACT("compact", "Compact"),
-    COMPACT_DELETE("compact,delete", "Compact,Delete");
+  DELETE("delete", "Delete"),
+  COMPACT("compact", "Compact"),
+  COMPACT_DELETE("compact,delete", "Compact,Delete");
 
-    private final String optionValue;
-    private final String visibleText;
+  private final String optionValue;
+  private final String visibleText;
 
-    CleanupPolicyValue(String optionValue, String visibleText) {
-        this.optionValue = optionValue;
-        this.visibleText = visibleText;
-    }
+  CleanupPolicyValue(String optionValue, String visibleText) {
+    this.optionValue = optionValue;
+    this.visibleText = visibleText;
+  }
 
-    public String getOptionValue() {
-        return optionValue;
-    }
+  public String getOptionValue() {
+    return optionValue;
+  }
 
-    public String getVisibleText() {
-        return visibleText;
-    }
+  public String getVisibleText() {
+    return visibleText;
+  }
 }
 

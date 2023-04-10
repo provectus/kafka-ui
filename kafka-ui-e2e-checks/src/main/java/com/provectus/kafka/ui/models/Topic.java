@@ -11,10 +11,10 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Topic {
 
-    private String name, timeToRetainData, maxMessageBytes, messageKey, messageContent, customParameterValue;
-    private int numberOfPartitions;
-    private CustomParameterType customParameterType;
-    private CleanupPolicyValue cleanupPolicyValue;
-    private MaxSizeOnDisk maxSizeOnDisk;
-    private TimeToRetain timeToRetain;
+  private String name, timeToRetainData, maxMessageBytes, messageKey, messageContent, customParameterValue;
+  private int numberOfPartitions;
+  private CustomParameterType customParameterType;
+  private CleanupPolicyValue cleanupPolicyValue;
+  private MaxSizeOnDisk maxSizeOnDisk;
+  private TimeToRetain timeToRetain;
 }
