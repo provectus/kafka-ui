@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.pages.topics;
 
-import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 import static com.codeborne.selenide.Selenide.sleep;
@@ -296,16 +295,6 @@ public class TopicDetails extends BasePage {
     return this;
   }
 
-  @Step
-  public boolean isKeyMessageVisible(String keyMessage) {
-    return keyMessage.equals($("td[title]").getText());
-  }
-
-  @Step
-  public boolean isContentMessageVisible(String contentMessage) {
-    return contentMessage.matches(contentMessageTab.getText().trim());
-  }
-
   private void selectYear(int expectedYear) {
     while (getActualCalendarDate().getYear() > expectedYear) {
       clickByJavaScript(previousMonthButton);
@@ -383,6 +372,13 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
+  public TopicDetails.MessageGridItem getMessageByKey(String key) {
+    return initItems().stream()
+        .filter(e -> e.getKey().equals(key))
+        .findFirst().orElseThrow();
+  }
+
+  @Step
   public List<MessageGridItem> getAllMessages() {
     return initItems();
   }
@@ -451,7 +447,7 @@ public class TopicDetails extends BasePage {
 
     @Step
     public String getValue() {
-      return element.$x("./td[6]/span/p").getText().trim();
+      return element.$x("./td[6]").getAttribute("title");
     }
 
     @Step

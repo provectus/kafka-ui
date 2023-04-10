@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class ProduceMessagePanel extends BasePage {
 
   protected SelenideElement keyTextArea = $x("//div[@id='key']/textarea");
-  protected SelenideElement contentTextArea = $x("//div[@id='content']/textarea");
+  protected SelenideElement valueTextArea = $x("//div[@id='content']/textarea");
   protected SelenideElement headersTextArea = $x("//div[@id='headers']/textarea");
   protected SelenideElement submitBtn = headersTextArea.$x("../../../..//button[@type='submit']");
   protected SelenideElement partitionDdl = $x("//ul[@name='partition']");
@@ -34,14 +34,14 @@ public class ProduceMessagePanel extends BasePage {
   }
 
   @Step
-  public ProduceMessagePanel setContentFiled(String value) {
-    clearByKeyboard(contentTextArea);
-    contentTextArea.setValue(value);
+  public ProduceMessagePanel setValueFiled(String value) {
+    clearByKeyboard(valueTextArea);
+    valueTextArea.setValue(value);
     return this;
   }
 
   @Step
-  public ProduceMessagePanel setHeaderFiled(String value) {
+  public ProduceMessagePanel setHeadersFld(String value) {
     headersTextArea.setValue(value);
     return this;
   }
