@@ -235,9 +235,13 @@ const Filters: React.FC<FiltersProps> = ({
         props.seekType = SeekType.TIMESTAMP;
       }
 
+      const isSeekTypeWithSeekTo =
+        props.seekType === SeekType.TIMESTAMP ||
+        props.seekType === SeekType.OFFSET;
+
       if (
         selectedPartitions.length !== partitions.length ||
-        currentSeekType === SeekType.TIMESTAMP
+        isSeekTypeWithSeekTo
       ) {
         // not everything in the partition is selected
         props.seekTo = selectedPartitions.map(({ value }) => {
