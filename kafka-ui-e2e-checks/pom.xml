@@ -287,7 +287,7 @@
                                     <failOnViolation>true</failOnViolation>
                                     <failsOnError>true</failsOnError>
                                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                                    <configLocation>file:${basedir}/../etc/checkstyle/checkstyle.xml</configLocation>
+                                    <configLocation>file:${basedir}/../etc/checkstyle/checkstyle-e2e.xml</configLocation>
                                     <headerLocation>file:${basedir}/../etc/checkstyle/apache-header.txt</headerLocation>
                                 </configuration>
                             </execution>
