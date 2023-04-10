@@ -39,4 +39,4 @@ The app in AWS Marketplace could be found by [this link](https://aws.amazon.com/
 
 ## Helm way
 
-To install the app via Helm please refer to [this page](helm-charts/quick-start.md).
+To install the app via Helm please refer to [this page](../helm-charts/quick-start.md).

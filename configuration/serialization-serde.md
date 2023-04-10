@@ -40,7 +40,7 @@ kafka:
             encoding: "UTF-16"
 ```
 
-#### Protobuf
+#### ProtobufFile
 
 Class name: `com.provectus.kafka.ui.serdes.builtin.ProtobufFileSerde`
 
@@ -54,10 +54,18 @@ kafka:
       serde:
         - name: ProtobufFile
           properties:
-            # path to the protobuf schema files
+            # protobufFilesDir specifies root location for proto files (will be scanned recursively)
+            # NOTE: if 'protobufFilesDir' specified, then 'protobufFile' and 'protobufFiles' settings will be ignored
+            protobufFilesDir: "/path/to/my-protobufs"
+            # (DEPRECATED) protobufFile is the path to the protobuf schema. (deprecated: please use "protobufFiles")
+            protobufFile: path/to/my.proto
+            # (DEPRECATED) protobufFiles is the location of one or more protobuf schemas
             protobufFiles:
-              - path/to/my.proto
-              - path/to/another.proto
+              - /path/to/my-protobufs/my.proto
+              - /path/to/my-protobufs/another.proto
+            # protobufMessageName is the default protobuf type that is used to deserialize
+            # the message's value if the topic is not found in protobufMessageNameByTopic.    
+            protobufMessageName: my.DefaultValType
             # default protobuf type that is used for KEY serialization/deserialization
             # optional
             protobufMessageNameForKey: my.Type1
@@ -76,9 +84,7 @@ kafka:
               "topic.2": my.Type2
 ```
 
-Docker-compose sample for Protobuf serialization is here.
 
-Legacy configuration for protobuf is here.
 
 #### SchemaRegistry
 
@@ -160,7 +166,7 @@ You can implement your own serde and register it in kafka-ui application. To do 
 2. Implement `com.provectus.kafka.ui.serde.api.Serde` interface. See javadoc for implementation requirements.
 3. Pack your serde into uber jar, or provide directory with no-dependency jar and it's dependencies jars
 
-Example pluggable serdes : https://github.com/provectus/kafkaui-smile-serde https://github.com/provectus/kafkaui-glue-sr-serde
+Example pluggable serdes : [kafka-smile-serde](https://github.com/provectus/kafkaui-smile-serde), [kafka-glue-sr-serde](https://github.com/provectus/kafkaui-glue-sr-serde)
 
 Sample configuration:
 

@@ -4,7 +4,7 @@
 
 **Versatile, fast and lightweight web UI for managing Apache Kafka® clusters. Built by developers, for developers.**
 
-****
+
 
 **UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters.**
 

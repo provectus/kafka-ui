@@ -23,7 +23,8 @@
 
 ## 👷♂ Configuration
 
-* [Quick Start](configuration/quick-start.md)
+* [Quick Start](configuration/quick-start/README.md)
+  * [via AWS Marketplace](configuration/quick-start/via-aws-marketplace.md)
 * [Configuration wizard](configuration/configuration-wizard.md)
 * [Configuration file](configuration/configuration-file.md)
 * [Compose examples](configuration/compose-examples.md)
@@ -46,8 +47,7 @@
   * [LDAP / Active Directory](configuration/authentication/ldap-active-directory.md)
 * [RBAC (Role based access control)](configuration/rbac-role-based-access-control.md)
 * [Data masking](configuration/data-masking.md)
-* [Serialization / SerDe](configuration/serialization-serde/README.md)
-  * [Protobuf setup](configuration/serialization-serde/protobuf-setup.md)
+* [Serialization / SerDe](configuration/serialization-serde.md)
 * [OpenDataDiscovery Integration](configuration/opendatadiscovery-integration.md)
 
 ## ❓ FAQ
