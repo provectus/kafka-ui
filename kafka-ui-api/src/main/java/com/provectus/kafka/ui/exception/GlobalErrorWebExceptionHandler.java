@@ -134,7 +134,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
         .timestamp(currentTimestamp())
         .stackTrace(Throwables.getStackTraceAsString(exception));
     return ServerResponse
-        .status(exception.getStatus())
+        .status(exception.getStatusCode())
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(response);
   }
