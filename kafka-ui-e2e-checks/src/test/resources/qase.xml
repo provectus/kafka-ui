@@ -2,7 +2,7 @@
 <suite name="QaseSuite">
     <test name="QaseTest" enabled="true" parallel="classes" thread-count="1">
         <packages>
-            <package name="com.provectus.kafka.ui.qaseSuite.*"/>
+            <package name="com.provectus.kafka.ui.qasesuite.*"/>
         </packages>
     </test>
 </suite>
