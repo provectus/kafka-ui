@@ -95,7 +95,7 @@ public class WebUtils {
     return isSelected;
   }
 
-  public static boolean selectElement(SelenideElement element, boolean select) {
+  public static void selectElement(SelenideElement element, boolean select) {
     if (select) {
       if (!element.isSelected()) {
         clickByJavaScript(element);
@@ -105,6 +105,5 @@ public class WebUtils {
         clickByJavaScript(element);
       }
     }
-    return true;
   }
 }

@@ -1,8 +1,8 @@
 package com.provectus.kafka.ui.pages.ksqldb;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
-import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.KSQL_DB;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
@@ -10,12 +10,13 @@ import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.pages.BasePage;
 import com.provectus.kafka.ui.pages.ksqldb.enums.KsqlMenuTabs;
 import io.qameta.allure.Step;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.openqa.selenium.By;
 
 public class KsqlDbList extends BasePage {
-
   protected SelenideElement executeKsqlBtn = $x("//button[text()='Execute KSQL Request']");
   protected SelenideElement tablesTab = $x("//nav[@role='navigation']/a[text()='Tables']");
   protected SelenideElement streamsTab = $x("//nav[@role='navigation']/a[text()='Streams']");
@@ -23,7 +24,7 @@ public class KsqlDbList extends BasePage {
   @Step
   public KsqlDbList waitUntilScreenReady() {
     waitUntilSpinnerDisappear();
-    getPageTitleFromHeader(KSQL_DB).shouldBe(Condition.visible);
+    Arrays.asList(tablesTab, streamsTab).forEach(tab -> tab.shouldBe(Condition.visible));
     return this;
   }
 
@@ -76,9 +77,24 @@ public class KsqlDbList extends BasePage {
       this.element = element;
     }
 
+    private SelenideElement getNameElm() {
+      return element.$x("./td[1]");
+    }
+
     @Step
     public String getTableName() {
-      return element.$x("./td[1]").getText().trim();
+      return getNameElm().getText().trim();
+    }
+
+    @Step
+    public boolean isVisible() {
+      boolean isVisible = false;
+      try {
+        getNameElm().shouldBe(visible, Duration.ofMillis(500));
+        isVisible = true;
+      } catch (Throwable ignored) {
+      }
+      return isVisible;
     }
 
     @Step
@@ -110,9 +126,24 @@ public class KsqlDbList extends BasePage {
       this.element = element;
     }
 
+    private SelenideElement getNameElm() {
+      return element.$x("./td[1]");
+    }
+
     @Step
     public String getStreamName() {
-      return element.$x("./td[1]").getText().trim();
+      return getNameElm().getText().trim();
+    }
+
+    @Step
+    public boolean isVisible() {
+      boolean isVisible = false;
+      try {
+        getNameElm().shouldBe(visible, Duration.ofMillis(500));
+        isVisible = true;
+      } catch (Throwable ignored) {
+      }
+      return isVisible;
     }
 
     @Step
