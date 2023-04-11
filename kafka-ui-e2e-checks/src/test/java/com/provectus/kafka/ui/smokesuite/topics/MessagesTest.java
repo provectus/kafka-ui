@@ -28,23 +28,23 @@ public class MessagesTest extends BaseTest {
   private static final Topic TOPIC_FOR_MESSAGES = new Topic()
       .setName("topic-with-clean-message-attribute-" + randomAlphabetic(5))
       .setMessageKey(randomAlphabetic(5))
-      .setMessageContent(randomAlphabetic(10));
+      .setMessageValue(randomAlphabetic(10));
   private static final Topic TOPIC_TO_CLEAR_AND_PURGE_MESSAGES = new Topic()
       .setName("topic-to-clear-and-purge-messages-" + randomAlphabetic(5))
       .setMessageKey(randomAlphabetic(5))
-      .setMessageContent(randomAlphabetic(10));
+      .setMessageValue(randomAlphabetic(10));
   private static final Topic TOPIC_FOR_CHECK_FILTERS = new Topic()
       .setName("topic-for-check-filters-" + randomAlphabetic(5))
       .setMessageKey(randomAlphabetic(5))
-      .setMessageContent(randomAlphabetic(10));
+      .setMessageValue(randomAlphabetic(10));
   private static final Topic TOPIC_TO_RECREATE = new Topic()
       .setName("topic-to-recreate-attribute-" + randomAlphabetic(5))
       .setMessageKey(randomAlphabetic(5))
-      .setMessageContent(randomAlphabetic(10));
+      .setMessageValue(randomAlphabetic(10));
   private static final Topic TOPIC_FOR_CHECK_MESSAGES_COUNT = new Topic()
       .setName("topic-for-check-messages-count" + randomAlphabetic(5))
       .setMessageKey(randomAlphabetic(5))
-      .setMessageContent(randomAlphabetic(10));
+      .setMessageValue(randomAlphabetic(10));
   private static final List<Topic> TOPIC_LIST = new ArrayList<>();
 
   @BeforeClass(alwaysRun = true)
@@ -65,12 +65,8 @@ public class MessagesTest extends BaseTest {
     topicDetails
         .openDetailsTab(MESSAGES);
     produceMessage(TOPIC_FOR_MESSAGES);
-    SoftAssert softly = new SoftAssert();
-    softly.assertTrue(topicDetails.isKeyMessageVisible((TOPIC_FOR_MESSAGES.getMessageKey())),
-        "isKeyMessageVisible()");
-    softly.assertTrue(topicDetails.isContentMessageVisible((TOPIC_FOR_MESSAGES.getMessageContent()).trim()),
-        "isContentMessageVisible()");
-    softly.assertAll();
+    Assert.assertEquals(topicDetails.getMessageByKey(TOPIC_FOR_MESSAGES.getMessageKey()).getValue(),
+        TOPIC_FOR_MESSAGES.getMessageValue(), "message.getValue()");
   }
 
   @QaseId(19)
@@ -266,7 +262,7 @@ public class MessagesTest extends BaseTest {
     produceMessagePanel
         .waitUntilScreenReady()
         .setKeyField(topic.getMessageKey())
-        .setContentFiled(topic.getMessageContent())
+        .setValueFiled(topic.getMessageValue())
         .submitProduceMessage();
     topicDetails
         .waitUntilScreenReady();
