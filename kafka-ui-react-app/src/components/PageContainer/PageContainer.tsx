@@ -1,9 +1,12 @@
-import React, { PropsWithChildren } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { PropsWithChildren, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import NavBar from 'components/NavBar/NavBar';
 import * as S from 'components/PageContainer/PageContainer.styled';
 import Nav from 'components/Nav/Nav';
 import useBoolean from 'lib/hooks/useBoolean';
+import { clusterNewConfigPath } from 'lib/paths';
+import { GlobalSettingsContext } from 'components/contexts/GlobalSettingsContext';
+import { useClusters } from 'lib/hooks/api/clusters';
 
 const PageContainer: React.FC<
   PropsWithChildren<{ setDarkMode: (value: boolean) => void }>
@@ -13,12 +16,20 @@ const PageContainer: React.FC<
     toggle,
     setFalse: closeSidebar,
   } = useBoolean(false);
+  const clusters = useClusters();
+  const appInfo = React.useContext(GlobalSettingsContext);
   const location = useLocation();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     closeSidebar();
   }, [location, closeSidebar]);
 
+  useEffect(() => {
+    if (appInfo.hasDynamicConfig && !clusters.data?.length) {
+      navigate(clusterNewConfigPath);
+    }
+  }, [clusters.data, appInfo.hasDynamicConfig]);
   return (
     <>
       <NavBar onBurgerClick={toggle} setDarkMode={setDarkMode} />
