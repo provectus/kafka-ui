@@ -53,6 +53,7 @@ const Search: React.FC<SearchProps> = ({
       ref.current.value = '';
     }
   };
+
   return (
     <Input
       type="text"
@@ -63,11 +64,12 @@ const Search: React.FC<SearchProps> = ({
       disabled={disabled}
       ref={ref}
       search
-    >
-      <IconButtonWrapper onClick={clearSearchValue}>
-        <CloseIcon />
-      </IconButtonWrapper>
-    </Input>
+      icon={
+        <IconButtonWrapper onClick={clearSearchValue}>
+          <CloseIcon />
+        </IconButtonWrapper>
+      }
+    />
   );
 };
 

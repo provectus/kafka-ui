@@ -16,7 +16,7 @@ export interface InputProps
   withError?: boolean;
   label?: React.ReactNode;
   hint?: React.ReactNode;
-  children?: React.ReactNode;
+  icon?: React.ReactNode;
 
   // Some may only accept integer, like `Number of Partitions`
   // some may accept decimal
@@ -112,7 +112,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     withError = false,
     label,
     hint,
-    children,
+    icon,
     ...rest
   } = props;
 
@@ -187,7 +187,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           ref={ref}
           {...inputOptions}
         />
-        {search && children}
+        {search && icon}
 
         {withError && isHookFormField && (
           <S.FormError>
