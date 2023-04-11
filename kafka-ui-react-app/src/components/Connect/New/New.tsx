@@ -13,7 +13,7 @@ import yup from 'lib/yupExtended';
 import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
 import { FormError } from 'components/common/Input/Input.styled';
-import Input from 'components/common/Input/Input';
+import ControlledInput from 'components/common/Input/ControlledInput';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import Heading from 'components/common/heading/Heading.styled';
@@ -133,7 +133,7 @@ const New: React.FC = () => {
 
         <div>
           <Heading level={3}>Name</Heading>
-          <Input
+          <ControlledInput
             inputSize="M"
             placeholder="Connector Name"
             name="name"

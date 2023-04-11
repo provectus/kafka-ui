@@ -1,6 +1,6 @@
 import React from 'react';
-import Input from 'components/common/Input/Input';
-import Checkbox from 'components/common/Checkbox/Checkbox';
+import ControlledInput from 'components/common/Input/ControlledInput';
+import ControlledCheckbox from 'components/common/Checkbox/ControlledCheckbox';
 import Fileupload from 'widgets/ClusterConfigForm/common/Fileupload';
 import SSLForm from 'widgets/ClusterConfigForm/common/SSLForm';
 import Credentials from 'widgets/ClusterConfigForm/common/Credentials';
@@ -10,13 +10,13 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
     case 'SASL/JAAS':
       return (
         <>
-          <Input
+          <ControlledInput
             type="text"
             name="auth.props.saslJaasConfig"
             label="sasl.jaas.config"
             withError
           />
-          <Input
+          <ControlledInput
             type="text"
             name="auth.props.saslMechanism"
             label="sasl.mechanism"
@@ -27,15 +27,15 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
     case 'SASL/GSSAPI':
       return (
         <>
-          <Input
+          <ControlledInput
             label="Kerberos service name"
             type="text"
             name="auth.props.saslKerberosServiceName"
             withError
           />
-          <Checkbox name="auth.props.storeKey" label="Store Key" />
+          <ControlledCheckbox name="auth.props.storeKey" label="Store Key" />
           <Fileupload name="auth.props.keyTabFile" label="Key Tab (optional)" />
-          <Input
+          <ControlledInput
             type="text"
             name="auth.props.principal"
             label="Principal *"
@@ -45,7 +45,7 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
       );
     case 'SASL/OAUTHBEARER':
       return (
-        <Input
+        <ControlledInput
           label="Unsecured Login String Claim_sub *"
           type="text"
           name="auth.props.unsecuredLoginStringClaim_sub"
@@ -60,13 +60,13 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
     case 'Delegation tokens':
       return (
         <>
-          <Input
+          <ControlledInput
             label="Token Id"
             type="text"
             name="auth.props.tokenId"
             withError
           />
-          <Input
+          <ControlledInput
             label="Token Value *"
             type="text"
             name="auth.props.tokenValue"
@@ -76,7 +76,7 @@ const AuthenticationMethods: React.FC<{ method: string }> = ({ method }) => {
       );
     case 'SASL/AWS IAM':
       return (
-        <Input
+        <ControlledInput
           label="AWS Profile Name"
           type="text"
           name="auth.props.awsProfileName"

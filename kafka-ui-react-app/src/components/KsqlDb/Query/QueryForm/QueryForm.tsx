@@ -14,7 +14,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import yup from 'lib/yupExtended';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import ReactAce from 'react-ace';
-import Input from 'components/common/Input/Input';
+import ControlledInput from 'components/common/Input/ControlledInput';
 
 import * as S from './QueryForm.styled';
 
@@ -156,14 +156,16 @@ const QueryForm: React.FC<QueryFormProps> = ({
               Stream properties:
               {fields.map((field, index) => (
                 <S.InputsContainer key={field.id}>
-                  <Input
+                  <ControlledInput
+                    control={control}
                     name={`streamsProperties.${index}.key`}
                     placeholder="Key"
                     type="text"
                     autoComplete="off"
                     withError
                   />
-                  <Input
+                  <ControlledInput
+                    control={control}
                     name={`streamsProperties.${index}.value`}
                     placeholder="Value"
                     type="text"

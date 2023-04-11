@@ -17,7 +17,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ErrorMessage } from '@hookform/error-message';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { Button } from 'components/common/Button/Button';
-import Input from 'components/common/Input/Input';
+import ControlledInput from 'components/common/Input/ControlledInput';
 import { FormError } from 'components/common/Input/Input.styled';
 import useAppParams from 'lib/hooks/useAppParams';
 import { useResetConsumerGroupOffsetsMutation } from 'lib/hooks/api/consumers';
@@ -160,7 +160,7 @@ const Form: React.FC<FormProps> = ({ defaultValues, partitions, topics }) => {
             partitionsValue.length > 0 && (
               <S.OffsetsWrapper>
                 {fields.map((field, index) => (
-                  <Input
+                  <ControlledInput
                     key={field.id}
                     label={`Partition #${field.partition} Offset`}
                     type="number"

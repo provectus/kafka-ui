@@ -6,7 +6,7 @@ import { TopicConfigParams, TopicFormData } from 'redux/interfaces';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import Select from 'components/common/Select/Select';
-import Input from 'components/common/Input/Input';
+import ControlledInput from 'components/common/Input/ControlledInput';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 import * as C from 'components/Topics/shared/Form/TopicForm.styled';
@@ -99,7 +99,7 @@ const CustomParamField: React.FC<Props> = ({
       </div>
       <div>
         <InputLabel>Value *</InputLabel>
-        <Input
+        <ControlledInput
           name={`customParams.${index}.value` as const}
           hookFormOptions={{
             required: 'Value is required.',

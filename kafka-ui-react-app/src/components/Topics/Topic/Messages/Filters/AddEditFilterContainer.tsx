@@ -1,7 +1,7 @@
 import React from 'react';
 import * as S from 'components/Topics/Topic/Messages/Filters/Filters.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
-import Input from 'components/common/Input/Input';
+import ControlledInput from 'components/common/Input/ControlledInput';
 import { FormProvider, Controller, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { Button } from 'components/common/Button/Button';
@@ -96,7 +96,7 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
         )}
         <div>
           <InputLabel>Display name</InputLabel>
-          <Input
+          <ControlledInput
             inputSize="M"
             placeholder="Enter Name"
             autoComplete="off"

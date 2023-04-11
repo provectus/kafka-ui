@@ -1,5 +1,5 @@
 import React from 'react';
-import Input from 'components/common/Input/Input';
+import ControlledInput from 'components/common/Input/ControlledInput';
 import { useFormContext } from 'react-hook-form';
 import ControlledSelect from 'components/common/Select/ControlledSelect';
 import { METRICS_OPTIONS } from 'lib/constants';
@@ -41,7 +41,7 @@ const Metrics = () => {
             options={METRICS_OPTIONS}
           />
           <S.Port>
-            <Input
+            <ControlledInput
               label="Port *"
               name="metrics.port"
               type="number"
