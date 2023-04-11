@@ -15,6 +15,8 @@ import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.SerdeUsageDTO;
+import com.provectus.kafka.ui.model.SmartFilterTestExecutionDTO;
+import com.provectus.kafka.ui.model.SmartFilterTestExecutionResultDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicSerdeSuggestionDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
@@ -68,6 +70,14 @@ public class MessagesController extends AbstractController implements MessagesAp
             Optional.ofNullable(partitions).orElse(List.of())
         ).thenReturn(ResponseEntity.ok().build())
     );
+  }
+
+  @Override
+  public Mono<ResponseEntity<SmartFilterTestExecutionResultDTO>> executeSmartFilterTest(
+      Mono<SmartFilterTestExecutionDTO> smartFilterTestExecutionDto, ServerWebExchange exchange) {
+    return smartFilterTestExecutionDto
+        .map(MessagesService::execSmartFilterTest)
+        .map(ResponseEntity::ok);
   }
 
   @Override
@@ -182,4 +192,8 @@ public class MessagesController extends AbstractController implements MessagesAp
             .map(ResponseEntity::ok)
     );
   }
+
+
+
+
 }

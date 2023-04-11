@@ -625,6 +625,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/TopicSerdeSuggestion'
 
+  /api/smartfilters/testexecutions:
+    put:
+      tags:
+        - Messages
+      summary: executeSmartFilterTest
+      operationId: executeSmartFilterTest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SmartFilterTestExecution'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SmartFilterTestExecutionResult'
+
 
   /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
@@ -2451,6 +2470,37 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConsumerGroup'
+
+    SmartFilterTestExecution:
+      type: object
+      required: [filterCode]
+      properties:
+        filterCode:
+          type: string
+        key:
+          type: string
+        value:
+          type: string
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        partition:
+          type: integer
+        offset:
+          type: integer
+          format: int64
+        timestampMs:
+          type: integer
+          format: int64
+
+    SmartFilterTestExecutionResult:
+      type: object
+      properties:
+        result:
+          type: boolean
+        error:
+          type: string
 
     CreateTopicMessage:
       type: object

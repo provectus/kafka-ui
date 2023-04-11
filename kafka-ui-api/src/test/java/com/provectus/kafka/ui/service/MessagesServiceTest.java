@@ -1,5 +1,8 @@
 package com.provectus.kafka.ui.service;
 
+import static com.provectus.kafka.ui.service.MessagesService.execSmartFilterTest;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
@@ -7,11 +10,13 @@ import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
+import com.provectus.kafka.ui.model.SmartFilterTestExecutionDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import com.provectus.kafka.ui.serdes.builtin.StringSerde;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,6 +94,42 @@ class MessagesServiceTest extends AbstractIntegrationTest {
     } finally {
       deleteTopic(testTopic);
     }
+  }
+
+  @Test
+  void execSmartFilterTestReturnsExecutionResult() {
+    var executionParams = new SmartFilterTestExecutionDTO()
+        .filterCode("key != null && val != null && headers != null && timestampMs != null && offset != null")
+        .key("key")
+        .value("val")
+        .headers(Map.of("h1", "hv1"))
+        .offset(12345L)
+        .timestampMs(System.currentTimeMillis())
+        .partition(1);
+    assertThat(execSmartFilterTest(executionParams).getResult()).isTrue();
+
+    executionParams.setFilterCode("return false");
+    assertThat(execSmartFilterTest(executionParams).getResult()).isFalse();
+  }
+
+  @Test
+  void execSmartFilterTestReturnsErrorOnFilterApplyError() {
+    var result = execSmartFilterTest(
+        new SmartFilterTestExecutionDTO()
+            .filterCode("return 1/0")
+    );
+    assertThat(result.getResult()).isNull();
+    assertThat(result.getError()).containsIgnoringCase("execution error");
+  }
+
+  @Test
+  void execSmartFilterTestReturnsErrorOnFilterCompilationError() {
+    var result = execSmartFilterTest(
+        new SmartFilterTestExecutionDTO()
+            .filterCode("this is invalid groovy syntax = 1")
+    );
+    assertThat(result.getResult()).isNull();
+    assertThat(result.getError()).containsIgnoringCase("Compilation error");
   }
 
 }
