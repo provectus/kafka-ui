@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 
 public class BrokersConfigTab extends BasePage {
 
+  protected SelenideElement sourceInfoIcon = $x("//div[text()='Source']/..//div/div[@class]");
+  protected SelenideElement sourceInfoTooltip = $x("//div[text()='Source']/..//div/div[@style]");
   protected ElementsCollection editBtns = $$x("//button[@aria-label='editAction']");
 
   @Step
@@ -23,6 +25,17 @@ public class BrokersConfigTab extends BasePage {
     waitUntilSpinnerDisappear();
     searchFld.shouldBe(Condition.visible);
     return this;
+  }
+
+  @Step
+  public BrokersConfigTab hoverOnSourceInfoIcon() {
+    sourceInfoIcon.shouldBe(Condition.visible).hover();
+    return this;
+  }
+
+  @Step
+  public String getSourceInfoTooltipText() {
+    return sourceInfoTooltip.shouldBe(Condition.visible).getText().trim();
   }
 
   @Step
