@@ -4,8 +4,11 @@ import static com.provectus.kafka.ui.service.ReactiveAdminClient.toMonoWithExcep
 import static java.util.Objects.requireNonNull;
 import static org.apache.kafka.clients.admin.ListOffsetsResult.ListOffsetsResultInfo;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 
 import com.provectus.kafka.ui.AbstractIntegrationTest;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -22,16 +25,20 @@ import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.OffsetSpec;
+import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.TopicPartitionInfo;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.internals.KafkaFutureImpl;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.function.ThrowingRunnable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -131,6 +138,56 @@ class ReactiveAdminClientTest extends AbstractIntegrationTest {
     StepVerifier.create(toMonoWithExceptionFilter(arg, UnknownTopicOrPartitionException.class))
         .assertNext(result -> assertThat(result).hasSize(1).containsEntry("ok", "done"))
         .verifyComplete();
+  }
+
+  @Test
+  void filterPartitionsWithLeaderCheckSkipsPartitionsFromTopicWhereSomePartitionsHaveNoLeader() {
+    var filteredPartitions = ReactiveAdminClient.filterPartitionsWithLeaderCheck(
+        List.of(
+            // contains partitions with no leader
+            new TopicDescription("noLeaderTopic", false,
+                List.of(
+                    new TopicPartitionInfo(0, new Node(1, "n1", 9092), List.of(), List.of()),
+                    new TopicPartitionInfo(1, null, List.of(), List.of()))),
+            // should be skipped by predicate
+            new TopicDescription("skippingByPredicate", false,
+                List.of(
+                    new TopicPartitionInfo(0, new Node(1, "n1", 9092), List.of(), List.of()))),
+            // good topic
+            new TopicDescription("good", false,
+                List.of(
+                    new TopicPartitionInfo(0, new Node(1, "n1", 9092), List.of(), List.of()),
+                    new TopicPartitionInfo(1, new Node(2, "n2", 9092), List.of(), List.of()))
+            )),
+        p -> !p.topic().equals("skippingByPredicate"),
+        false
+    );
+
+    assertThat(filteredPartitions)
+        .containsExactlyInAnyOrder(
+            new TopicPartition("good", 0),
+            new TopicPartition("good", 1)
+        );
+  }
+
+  @Test
+  void filterPartitionsWithLeaderCheckThrowExceptionIfThereIsSomePartitionsWithoutLeaderAndFlagSet() {
+    ThrowingCallable call = () -> ReactiveAdminClient.filterPartitionsWithLeaderCheck(
+        List.of(
+            // contains partitions with no leader
+            new TopicDescription("t1", false,
+                List.of(
+                    new TopicPartitionInfo(0, new Node(1, "n1", 9092), List.of(), List.of()),
+                    new TopicPartitionInfo(1, null, List.of(), List.of()))),
+            new TopicDescription("t2", false,
+                List.of(
+                    new TopicPartitionInfo(0, new Node(1, "n1", 9092), List.of(), List.of()))
+            )),
+        p -> true,
+        // setting failOnNoLeader flag
+        true
+    );
+    assertThatThrownBy(call).isInstanceOf(ValidationException.class);
   }
 
   @Test

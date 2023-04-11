@@ -2,9 +2,9 @@
 <suite name="RegressionSuite">
     <test name="RegressionTest" enabled="true" parallel="classes" thread-count="3">
         <packages>
-            <package name="com.provectus.kafka.ui.smokeSuite.*"/>
-            <package name="com.provectus.kafka.ui.sanitySuite.*"/>
-            <package name="com.provectus.kafka.ui.manualSuite.*"/>
+            <package name="com.provectus.kafka.ui.smokesuite.*"/>
+            <package name="com.provectus.kafka.ui.sanitysuite.*"/>
+            <package name="com.provectus.kafka.ui.manualsuite.*"/>
         </packages>
     </test>
 </suite>
