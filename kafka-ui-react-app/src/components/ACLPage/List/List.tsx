@@ -52,7 +52,7 @@ const ACList: React.FC = () => {
   return (
     <>
       <PageHeading text="Acsess Control List">
-        <Button buttonSize="M" buttonType="primary" onClick={toggle}>
+        <Button buttonSize="M" buttonType="primary" onClick={toggle} disabled>
           <PlusIcon /> Create ACL
         </Button>
       </PageHeading>
