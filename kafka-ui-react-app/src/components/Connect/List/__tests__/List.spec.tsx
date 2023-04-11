@@ -9,7 +9,11 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorPath, clusterConnectorsPath } from 'lib/paths';
-import { useConnectors, useDeleteConnector, useUpdateConnectorState } from 'lib/hooks/api/kafkaConnect';
+import {
+  useConnectors,
+  useDeleteConnector,
+  useUpdateConnectorState,
+} from 'lib/hooks/api/kafkaConnect';
 
 const mockedUsedNavigate = jest.fn();
 const mockDelete = jest.fn();
@@ -55,7 +59,9 @@ describe('Connectors List', () => {
     it('opens broker when row clicked', async () => {
       renderComponent();
 
-      const link = await screen.findByRole('cell', {name: 'hdfs-source-connector'});
+      const link = await screen.findByRole('cell', {
+        name: 'hdfs-source-connector',
+      });
 
       await userEvent.click(link);
       await waitFor(() => {
@@ -77,7 +83,8 @@ describe('Connectors List', () => {
     });
 
     describe('Batch actions bar', () => {
-      const getButtonByName = (name: string) => screen.getByRole('button', { name });
+      const getButtonByName = (name: string) =>
+        screen.getByRole('button', { name });
 
       beforeEach(async () => {
         (useDeleteConnector as jest.Mock).mockImplementation(() => ({

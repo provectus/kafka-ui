@@ -60,9 +60,7 @@ const Actions: React.FC = () => {
     };
   };
   const restartConnectorHandler = () =>
-    stateMutation.mutateAsync(
-      mutationParams(ConnectorAction.RESTART)
-    );
+    stateMutation.mutateAsync(mutationParams(ConnectorAction.RESTART));
   const restartAllTasksHandler = () =>
     stateMutation.mutateAsync(
       mutationParams(ConnectorAction.RESTART_ALL_TASKS)
@@ -72,13 +70,9 @@ const Actions: React.FC = () => {
       mutationParams(ConnectorAction.RESTART_FAILED_TASKS)
     );
   const pauseConnectorHandler = () =>
-    stateMutation.mutateAsync(
-      mutationParams(ConnectorAction.PAUSE)
-    );
+    stateMutation.mutateAsync(mutationParams(ConnectorAction.PAUSE));
   const resumeConnectorHandler = () =>
-    stateMutation.mutateAsync(
-      mutationParams(ConnectorAction.RESUME)
-    );
+    stateMutation.mutateAsync(mutationParams(ConnectorAction.RESUME));
 
   return (
     <S.ConnectorActionsWrapperStyled>
