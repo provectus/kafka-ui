@@ -4,11 +4,16 @@ import static com.provectus.kafka.ui.pages.brokers.BrokersDetails.DetailsTab.CON
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.BaseTest;
+import com.provectus.kafka.ui.pages.brokers.BrokersConfigTab;
+import io.qameta.allure.Issue;
 import io.qase.api.annotation.QaseId;
 import org.testng.Assert;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 public class BrokersTest extends BaseTest {
+
+  public static final int DEFAULT_BROKER_ID = 1;
 
   @QaseId(1)
   @Test
@@ -25,7 +30,7 @@ public class BrokersTest extends BaseTest {
     navigateToBrokers();
     Assert.assertTrue(brokersList.getAllBrokers().size() > 0, "getAllBrokers()");
     brokersList
-        .openBroker(1);
+        .openBroker(DEFAULT_BROKER_ID);
     brokersDetails
         .waitUntilScreenReady();
     verifyElementsCondition(brokersDetails.getAllVisibleElements(), Condition.visible);
@@ -37,5 +42,31 @@ public class BrokersTest extends BaseTest {
     verifyElementsCondition(brokersConfigTab.getColumnHeaders(), Condition.visible);
     verifyElementsCondition(brokersConfigTab.getEditButtons(), Condition.enabled);
     Assert.assertTrue(brokersConfigTab.isSearchByKeyVisible(), "isSearchByKeyVisible()");
+  }
+
+  @Ignore
+  @Issue("https://github.com/provectus/kafka-ui/issues/3347")
+  @QaseId(330)
+  @Test
+  public void brokersConfigSearchCheck() {
+    navigateToBrokersAndOpenDetails(DEFAULT_BROKER_ID);
+    brokersDetails
+        .openDetailsTab(CONFIGS);
+    String anyConfigKey = brokersConfigTab
+        .getAllConfigs().stream()
+        .findAny().orElseThrow()
+        .getKey();
+    brokersConfigTab
+        .clickNextButton();
+    Assert.assertFalse(brokersConfigTab.getAllConfigs().stream()
+            .map(BrokersConfigTab.BrokersConfigItem::getKey)
+            .toList().contains(anyConfigKey),
+        String.format("getAllConfigs().contains(%s)", anyConfigKey));
+    brokersConfigTab
+        .searchConfig(anyConfigKey);
+    Assert.assertTrue(brokersConfigTab.getAllConfigs().stream()
+            .map(BrokersConfigTab.BrokersConfigItem::getKey)
+            .toList().contains(anyConfigKey),
+        String.format("getAllConfigs().contains(%s)", anyConfigKey));
   }
 }

@@ -63,6 +63,14 @@ public abstract class BasePage extends WebUtils {
     clickByJavaScript(submitBtn);
   }
 
+  protected void clickNextBtn() {
+    clickByJavaScript(nextBtn);
+  }
+
+  protected void clickBackBtn() {
+    clickByJavaScript(backBtn);
+  }
+
   protected void setJsonInputValue(SelenideElement jsonInput, String jsonConfig) {
     sendKeysByActions(jsonInput, jsonConfig.replace("  ", ""));
     new Actions(WebDriverRunner.getWebDriver())
