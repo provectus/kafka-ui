@@ -13,6 +13,7 @@ import {
   clusterTopicsRelativePath,
   clusterConfigRelativePath,
   getNonExactPath,
+  clusterAclRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -30,6 +31,7 @@ const ClusterConfigPage = React.lazy(
 const ConsumerGroups = React.lazy(
   () => import('components/ConsumerGroups/ConsumerGroups')
 );
+const AclPage = React.lazy(() => import('components/ACLPage/ACLPage'));
 
 const ClusterPage: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
@@ -51,6 +53,9 @@ const ClusterPage: React.FC = () => {
         ClusterFeaturesEnum.TOPIC_DELETION
       ),
       hasKsqlDbConfigured: features.includes(ClusterFeaturesEnum.KSQL_DB),
+      hasAclViewConfigured:
+        features.includes(ClusterFeaturesEnum.KAFKA_ACL_VIEW) ||
+        features.includes(ClusterFeaturesEnum.KAFKA_ACL_EDIT),
     };
   }, [clusterName, data]);
 
@@ -93,6 +98,12 @@ const ClusterPage: React.FC = () => {
               <Route
                 path={getNonExactPath(clusterKsqlDbRelativePath)}
                 element={<KsqlDb />}
+              />
+            )}
+            {contextValue.hasAclViewConfigured && (
+              <Route
+                path={getNonExactPath(clusterAclRelativePath)}
+                element={<AclPage />}
               />
             )}
             {appInfo.hasDynamicConfig && (
