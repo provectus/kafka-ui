@@ -94,10 +94,10 @@ describe('kafkaConnect hooks', () => {
         await act(() => {
           result.current.mutateAsync(
             {
-              clusterName: clusterName,
-              connectName: connectName,
-              connectorName: connectorName,
-              action: action
+              clusterName,
+              connectName,
+              connectorName,
+              action,
             },
           )
         });

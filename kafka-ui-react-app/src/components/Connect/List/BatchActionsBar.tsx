@@ -1,14 +1,14 @@
 import React from 'react';
-import {Action, ResourceType, ConnectorAction, Connector} from 'generated-sources';
+import { Action, ResourceType, ConnectorAction, Connector } from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
 import { useConfirm } from 'lib/hooks/useConfirm';
 import { RouterParamsClusterConnectConnector } from 'lib/paths';
-import {useIsMutating} from '@tanstack/react-query';
-import {ActionCanButton} from 'components/common/ActionComponent';
+import { useIsMutating, useQueryClient } from '@tanstack/react-query';
+import { ActionCanButton } from 'components/common/ActionComponent';
 import { usePermission } from 'lib/hooks/usePermission';
-import {useDeleteConnector, useUpdateConnectorState} from 'lib/hooks/api/kafkaConnect';
-import {Row} from '@tanstack/react-table';
-import { useQueryClient } from '@tanstack/react-query';
+import { useDeleteConnector, useUpdateConnectorState } from 'lib/hooks/api/kafkaConnect';
+import { Row } from '@tanstack/react-table';
+
 
 interface BatchActionsBarProps {
   rows: Row<Connector>[];

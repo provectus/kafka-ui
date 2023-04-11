@@ -56,19 +56,29 @@ const Actions: React.FC = () => {
       clusterName: routerProps.clusterName,
       connectName: routerProps.connectName,
       connectorName: routerProps.connectorName,
-      action: action
-    }
-  }
+      action,
+    };
+  };
   const restartConnectorHandler = () =>
-    stateMutation.mutateAsync(mutationParams(ConnectorAction.RESTART));
+    stateMutation.mutateAsync(
+      mutationParams(ConnectorAction.RESTART)
+    );
   const restartAllTasksHandler = () =>
-    stateMutation.mutateAsync(mutationParams(ConnectorAction.RESTART_ALL_TASKS));
+    stateMutation.mutateAsync(
+      mutationParams(ConnectorAction.RESTART_ALL_TASKS)
+    );
   const restartFailedTasksHandler = () =>
-    stateMutation.mutateAsync(mutationParams(ConnectorAction.RESTART_FAILED_TASKS));
+    stateMutation.mutateAsync(
+      mutationParams(ConnectorAction.RESTART_FAILED_TASKS)
+    );
   const pauseConnectorHandler = () =>
-    stateMutation.mutateAsync(mutationParams(ConnectorAction.PAUSE));
+    stateMutation.mutateAsync(
+      mutationParams(ConnectorAction.PAUSE)
+    );
   const resumeConnectorHandler = () =>
-    stateMutation.mutateAsync(mutationParams(ConnectorAction.RESUME));
+    stateMutation.mutateAsync(
+      mutationParams(ConnectorAction.RESUME)
+    );
 
   return (
     <S.ConnectorActionsWrapperStyled>

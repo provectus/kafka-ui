@@ -16,7 +16,7 @@ const mockDelete = jest.fn();
 const mockUpdate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom') as any,
+  ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockedUsedNavigate,
 }));
 
@@ -80,7 +80,6 @@ describe('Connectors List', () => {
       const getButtonByName = (name: string) => screen.getByRole('button', { name });
 
       beforeEach(async () => {
-        useDeleteConnector.mockClear();
         (useDeleteConnector as jest.Mock).mockImplementation(() => ({
           mutateAsync: mockDelete,
         }));

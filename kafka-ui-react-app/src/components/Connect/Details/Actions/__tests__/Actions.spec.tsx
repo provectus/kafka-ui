@@ -139,10 +139,10 @@ describe('Actions', () => {
           screen.getByRole('menuitem', { name: 'Restart Connector' })
         );
         expect(restartConnector).toHaveBeenCalledWith({
-          'action': ConnectorAction.RESTART,
-          'clusterName': 'myCluster',
-          'connectName': 'myConnect',
-          "connectorName": 'myConnector'
+          action: ConnectorAction.RESTART,
+          clusterName: 'myCluster',
+          connectName: 'myConnect',
+          connectorName: 'myConnector'
         });
       });
 
@@ -156,14 +156,12 @@ describe('Actions', () => {
         await userEvent.click(
           screen.getByRole('menuitem', { name: 'Restart All Tasks' })
         );
-        expect(restartAllTasks).toHaveBeenCalledWith(
-          {
-            'action': ConnectorAction.RESTART_ALL_TASKS,
-            'clusterName': 'myCluster',
-            'connectName': 'myConnect',
-            "connectorName": 'myConnector'
-          }
-        );
+        expect(restartAllTasks).toHaveBeenCalledWith({
+          action: ConnectorAction.RESTART_ALL_TASKS,
+          clusterName: 'myCluster',
+          connectName: 'myConnect',
+          connectorName: 'myConnector'
+        });
       });
 
       it('calls restartFailedTasks', async () => {
@@ -176,14 +174,12 @@ describe('Actions', () => {
         await userEvent.click(
           screen.getByRole('menuitem', { name: 'Restart Failed Tasks' })
         );
-        expect(restartFailedTasks).toHaveBeenCalledWith(
-          {
-            'action': ConnectorAction.RESTART_FAILED_TASKS,
-            'clusterName': 'myCluster',
-            'connectName': 'myConnect',
-            "connectorName": 'myConnector'
-          }
-        );
+        expect(restartFailedTasks).toHaveBeenCalledWith({
+          'action': ConnectorAction.RESTART_FAILED_TASKS,
+          'clusterName': 'myCluster',
+          'connectName': 'myConnect',
+          "connectorName": 'myConnector'
+        });
       });
 
       it('calls pauseConnector when pause button clicked', async () => {

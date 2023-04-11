@@ -41,7 +41,7 @@ const List: React.FC = () => {
       columns={columns}
       enableSorting
       batchActionsBar={BatchActionsBar}
-      enableRowSelection={true}
+      enableRowSelection
       emptyMessage="No connectors found"
     />
   );
