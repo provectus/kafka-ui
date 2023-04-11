@@ -98,18 +98,18 @@ class MessagesServiceTest extends AbstractIntegrationTest {
 
   @Test
   void execSmartFilterTestReturnsExecutionResult() {
-    var executionParams = new SmartFilterTestExecutionDTO()
-        .filterCode("key != null && val != null && headers != null && timestampMs != null && offset != null")
-        .key("key")
-        .value("val")
+    var params = new SmartFilterTestExecutionDTO()
+        .filterCode("key != null && value != null && headers != null && timestampMs != null && offset != null")
+        .key("1234")
+        .value("{ \"some\" : \"value\" } ")
         .headers(Map.of("h1", "hv1"))
         .offset(12345L)
         .timestampMs(System.currentTimeMillis())
         .partition(1);
-    assertThat(execSmartFilterTest(executionParams).getResult()).isTrue();
+    assertThat(execSmartFilterTest(params).getResult()).isTrue();
 
-    executionParams.setFilterCode("return false");
-    assertThat(execSmartFilterTest(executionParams).getResult()).isFalse();
+    params.setFilterCode("return false");
+    assertThat(execSmartFilterTest(params).getResult()).isFalse();
   }
 
   @Test

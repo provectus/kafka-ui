@@ -86,6 +86,7 @@ public class MessagesService {
               .content(execData.getValue())
               .headers(execData.getHeaders())
               .offset(execData.getOffset())
+              .partition(execData.getPartition())
               .timestamp(
                   Optional.ofNullable(execData.getTimestampMs())
                       .map(ts -> OffsetDateTime.ofInstant(Instant.ofEpochMilli(ts), ZoneOffset.UTC))
