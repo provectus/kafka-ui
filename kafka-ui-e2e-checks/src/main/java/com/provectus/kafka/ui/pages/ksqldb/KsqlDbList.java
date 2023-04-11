@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.pages.ksqldb;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.KSQL_DB;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
@@ -12,7 +13,6 @@ import com.provectus.kafka.ui.pages.ksqldb.enums.KsqlMenuTabs;
 import io.qameta.allure.Step;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.openqa.selenium.By;
 
@@ -24,7 +24,7 @@ public class KsqlDbList extends BasePage {
   @Step
   public KsqlDbList waitUntilScreenReady() {
     waitUntilSpinnerDisappear();
-    Arrays.asList(tablesTab, streamsTab).forEach(tab -> tab.shouldBe(Condition.visible));
+    getPageTitleFromHeader(KSQL_DB).shouldBe(Condition.visible);
     return this;
   }
 

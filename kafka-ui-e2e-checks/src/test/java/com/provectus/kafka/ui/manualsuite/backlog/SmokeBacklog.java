@@ -42,37 +42,30 @@ public class SmokeBacklog extends BaseManualTest {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
-  @Suite(id = KSQL_DB_SUITE_ID)
-  @QaseId(284)
+  @Suite(id = BROKERS_SUITE_ID)
+  @QaseId(331)
   @Test
   public void testCaseE() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = BROKERS_SUITE_ID)
-  @QaseId(331)
-  @Test
-  public void testCaseF() {
-  }
-
-  @Automation(state = TO_BE_AUTOMATED)
-  @Suite(id = BROKERS_SUITE_ID)
   @QaseId(332)
   @Test
-  public void testCaseG() {
+  public void testCaseF() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(335)
   @Test
-  public void testCaseH() {
+  public void testCaseG() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(336)
   @Test
-  public void testCaseI() {
+  public void testCaseH() {
   }
 }
