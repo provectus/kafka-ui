@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.smokesuite.ksqlDb;
+package com.provectus.kafka.ui.smokesuite.ksqldb;
 
 import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlMenuTabs.STREAMS;
 import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlQueryConfig.SHOW_TABLES;
