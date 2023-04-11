@@ -1,9 +1,12 @@
 import styled from 'styled-components';
 import { MultiSelect as ReactMultiSelect } from 'react-multi-select-component';
 
-const MultiSelect = styled(ReactMultiSelect)<{ minWidth?: string }>`
+const MultiSelect = styled(ReactMultiSelect)<{
+  minWidth?: string;
+  height?: string;
+}>`
   min-width: ${({ minWidth }) => minWidth || '200px;'};
-  height: 32px;
+  height: ${({ height }) => height ?? '32px'};
   font-size: 14px;
   .search input {
     color: ${({ theme }) => theme.input.color.normal};
@@ -36,13 +39,14 @@ const MultiSelect = styled(ReactMultiSelect)<{ minWidth?: string }>`
     &:hover {
       border-color: ${({ theme }) => theme.select.borderColor.hover} !important;
     }
-    height: 32px;
+
+    height: ${({ height }) => height ?? '32px'};
     * {
       cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
     }
 
     & > .dropdown-heading {
-      height: 32px;
+      height: ${({ height }) => height ?? '32px'};
       color: ${({ disabled, theme }) =>
         disabled
           ? theme.select.color.disabled
