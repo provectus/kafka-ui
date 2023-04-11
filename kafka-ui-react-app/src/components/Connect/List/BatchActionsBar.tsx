@@ -2,12 +2,11 @@ import React from 'react';
 import {Action, ResourceType, ConnectorAction, Connector} from 'generated-sources';
 import useAppParams from 'lib/hooks/useAppParams';
 import { useConfirm } from 'lib/hooks/useConfirm';
-import {clusterConnectorsPath, RouterParamsClusterConnectConnector} from 'lib/paths';
+import { RouterParamsClusterConnectConnector } from 'lib/paths';
 import {useIsMutating} from '@tanstack/react-query';
 import {ActionCanButton} from 'components/common/ActionComponent';
 import { usePermission } from 'lib/hooks/usePermission';
 import {useDeleteConnector, useUpdateConnectorState} from 'lib/hooks/api/kafkaConnect';
-import {useNavigate} from 'react-router-dom';
 import {Row} from '@tanstack/react-table';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -22,7 +21,6 @@ const BatchActionsBar: React.FC<BatchActionsBarProps> = ({
 }) => {
 
   const confirm = useConfirm();
-  const navigate = useNavigate();
 
   const selectedConnectors = rows.map(({ original }) => original);
 
@@ -45,16 +43,15 @@ const BatchActionsBar: React.FC<BatchActionsBarProps> = ({
   );
 
   const deleteConnectorMutation = useDeleteConnector(routerProps);
-  const deleteConnectorHandler = () =>
+  const deleteConnectorsHandler = () =>
     confirm(
       <>
-        Are you sure you want to remove <b>{routerProps.connectorName}</b>{' '}
-        connector?
+        Are you sure you want to remove selected connectors?
       </>,
       async () => {
         try {
           await deleteConnectorMutation.mutateAsync();
-          navigate(clusterConnectorsPath(clusterName));
+          resetRowSelection();
         } catch {
           // do not redirect
         }
@@ -145,7 +142,7 @@ const BatchActionsBar: React.FC<BatchActionsBarProps> = ({
       <ActionCanButton
         buttonSize="M"
         buttonType="secondary"
-        onClick={deleteConnectorHandler}
+        onClick={deleteConnectorsHandler}
         disabled={isMutating}
         canDoAction={canDelete}
       >

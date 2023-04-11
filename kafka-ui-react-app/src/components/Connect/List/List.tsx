@@ -1,7 +1,7 @@
 import React from 'react';
 import useAppParams from 'lib/hooks/useAppParams';
 import { ClusterNameRoute } from 'lib/paths';
-import Table, { TagCell, LinkCell } from 'components/common/NewTable';
+import Table, { TagCell } from 'components/common/NewTable';
 import {FullConnectorInfo} from 'generated-sources';
 import { useConnectors } from 'lib/hooks/api/kafkaConnect';
 import { ColumnDef } from '@tanstack/react-table';
