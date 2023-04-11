@@ -11,6 +11,7 @@ import io.qase.api.annotation.QaseId;
 import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 public class BrokersTest extends BaseTest {
 
@@ -81,5 +82,43 @@ public class BrokersTest extends BaseTest {
         .hoverOnSourceInfoIcon()
         .getSourceInfoTooltipText();
     Assert.assertEquals(sourceInfoTooltip, brokerSourceInfoTooltip, "brokerSourceInfoTooltip");
+  }
+
+  @QaseId(332)
+  @Test
+  public void brokersConfigEditCheck() {
+    navigateToBrokersAndOpenDetails(DEFAULT_BROKER_ID);
+    brokersDetails
+        .openDetailsTab(CONFIGS);
+    String configKey = "log.cleaner.min.compaction.lag.ms";
+    BrokersConfigTab.BrokersConfigItem configItem = brokersConfigTab
+        .searchConfig(configKey)
+        .getConfig(configKey);
+    int defaultValue = Integer.parseInt(configItem.getValue());
+    configItem
+        .clickEditBtn();
+    SoftAssert softly = new SoftAssert();
+    softly.assertTrue(configItem.getSaveBtn().isDisplayed(), "getSaveBtn().isDisplayed()");
+    softly.assertTrue(configItem.getCancelBtn().isDisplayed(), "getCancelBtn().isDisplayed()");
+    softly.assertTrue(configItem.getValueFld().isEnabled(), "getValueFld().isEnabled()");
+    softly.assertAll();
+    int newValue = defaultValue + 1;
+    configItem
+        .setValue(String.valueOf(newValue))
+        .clickCancelBtn();
+    Assert.assertEquals(Integer.parseInt(configItem.getValue()), defaultValue, "getValue()");
+    configItem
+        .clickEditBtn()
+        .setValue(String.valueOf(newValue))
+        .clickSaveBtn()
+        .clickConfirm();
+    configItem = brokersConfigTab
+        .searchConfig(configKey)
+        .getConfig(configKey);
+    softly.assertFalse(configItem.getSaveBtn().isDisplayed(), "getSaveBtn().isDisplayed()");
+    softly.assertFalse(configItem.getCancelBtn().isDisplayed(), "getCancelBtn().isDisplayed()");
+    softly.assertTrue(configItem.getEditBtn().isDisplayed(), "getEditBtn().isDisplayed()");
+    softly.assertEquals(Integer.parseInt(configItem.getValue()), newValue, "getValue()");
+    softly.assertAll();
   }
 }

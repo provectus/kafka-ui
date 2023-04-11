@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.manualsuite.backlog;
 
-import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.BROKERS_SUITE_ID;
 import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.KSQL_DB_SUITE_ID;
 import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.TOPICS_PROFILE_SUITE_ID;
 import static com.provectus.kafka.ui.utilities.qase.enums.State.TO_BE_AUTOMATED;
@@ -42,23 +41,16 @@ public class SmokeBacklog extends BaseManualTest {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
-  @Suite(id = BROKERS_SUITE_ID)
-  @QaseId(332)
-  @Test
-  public void testCaseF() {
-  }
-
-  @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(335)
   @Test
-  public void testCaseG() {
+  public void testCaseE() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(336)
   @Test
-  public void testCaseH() {
+  public void testCaseF() {
   }
 }
