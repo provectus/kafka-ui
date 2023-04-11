@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.kafka.clients.admin.ListOffsetsResult.ListOffsetsResultInfo;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Iterables;
@@ -514,6 +515,14 @@ public class ReactiveAdminClient implements Closeable {
         .flatMap(parts -> listOffsetsUnsafe(parts, offsetSpec));
   }
 
+  /**
+   * List offset for the specified topics, skipping no-leader partitions.
+   */
+  public Mono<Map<TopicPartition, Long>> listOffsets(Collection<TopicDescription> topicDescriptions,
+                                                     OffsetSpec offsetSpec) {
+    return listOffsetsUnsafe(filterPartitionsWithLeaderCheck(topicDescriptions, p -> true, false), offsetSpec);
+  }
+
   private Mono<Collection<TopicPartition>> filterPartitionsWithLeaderCheck(Collection<TopicPartition> partitions,
                                                                            boolean failOnUnknownLeader) {
     var targetTopics = partitions.stream().map(TopicPartition::topic).collect(Collectors.toSet());
@@ -523,34 +532,44 @@ public class ReactiveAdminClient implements Closeable {
                 descriptions.values(), partitions::contains, failOnUnknownLeader));
   }
 
-  private Set<TopicPartition> filterPartitionsWithLeaderCheck(Collection<TopicDescription> topicDescriptions,
+  @VisibleForTesting
+  static Set<TopicPartition> filterPartitionsWithLeaderCheck(Collection<TopicDescription> topicDescriptions,
                                                               Predicate<TopicPartition> partitionPredicate,
                                                               boolean failOnUnknownLeader) {
     var goodPartitions = new HashSet<TopicPartition>();
     for (TopicDescription description : topicDescriptions) {
+      var goodTopicPartitions = new ArrayList<TopicPartition>();
       for (TopicPartitionInfo partitionInfo : description.partitions()) {
         TopicPartition topicPartition = new TopicPartition(description.name(), partitionInfo.partition());
-        if (!partitionPredicate.test(topicPartition)) {
-          continue;
+        if (partitionInfo.leader() == null) {
+          if (failOnUnknownLeader) {
+            throw new ValidationException(String.format("Topic partition %s has no leader", topicPartition));
+          } else {
+            // if ANY of topic partitions has no leader - we have to skip all topic partitions
+            goodTopicPartitions.clear();
+            break;
+          }
         }
-        if (partitionInfo.leader() != null) {
-          goodPartitions.add(topicPartition);
-        } else if (failOnUnknownLeader) {
-          throw new ValidationException(String.format("Topic partition %s has no leader", topicPartition));
+        if (partitionPredicate.test(topicPartition)) {
+          goodTopicPartitions.add(topicPartition);
         }
       }
+      goodPartitions.addAll(goodTopicPartitions);
     }
     return goodPartitions;
   }
 
-  // 1. NOTE(!): should only apply for partitions with existing leader,
+  // 1. NOTE(!): should only apply for partitions from topics where all partitions have leaders,
   //    otherwise AdminClient will try to fetch topic metadata, fail and retry infinitely (until timeout)
   // 2. NOTE(!): Skips partitions that were not initialized yet
   //    (UnknownTopicOrPartitionException thrown, ex. after topic creation)
   // 3. TODO: check if it is a bug that AdminClient never throws LeaderNotAvailableException and just retrying instead
   @KafkaClientInternalsDependant
-  public Mono<Map<TopicPartition, Long>> listOffsetsUnsafe(Collection<TopicPartition> partitions,
-                                                           OffsetSpec offsetSpec) {
+  @VisibleForTesting
+  Mono<Map<TopicPartition, Long>> listOffsetsUnsafe(Collection<TopicPartition> partitions, OffsetSpec offsetSpec) {
+    if (partitions.isEmpty()) {
+      return Mono.just(Map.of());
+    }
 
     Function<Collection<TopicPartition>, Mono<Map<TopicPartition, Long>>> call =
         parts -> {

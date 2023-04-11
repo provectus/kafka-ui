@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.model.rbac;
 
+import static com.provectus.kafka.ui.model.rbac.Resource.APPLICATIONCONFIG;
 import static com.provectus.kafka.ui.model.rbac.Resource.CLUSTERCONFIG;
 import static com.provectus.kafka.ui.model.rbac.Resource.KSQL;
 
@@ -26,6 +27,8 @@ import org.springframework.util.Assert;
 @EqualsAndHashCode
 public class Permission {
 
+  private static final List<Resource> RBAC_ACTION_EXEMPT_LIST = List.of(KSQL, CLUSTERCONFIG, APPLICATIONCONFIG);
+
   Resource resource;
   List<String> actions;
 
@@ -51,7 +54,7 @@ public class Permission {
 
   public void validate() {
     Assert.notNull(resource, "resource cannot be null");
-    if (!List.of(KSQL, CLUSTERCONFIG).contains(this.resource)) {
+    if (!RBAC_ACTION_EXEMPT_LIST.contains(this.resource)) {
       Assert.notNull(value, "permission value can't be empty for resource " + resource);
     }
   }
