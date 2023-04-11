@@ -9,7 +9,8 @@ declare module 'yup' {
     TDefault = undefined,
     TFlags extends yup.Flags = ''
   > extends yup.Schema<TType, TContext, TDefault, TFlags> {
-    isJsonObject(): StringSchema<TType, TContext>;
+    isJsonObject(message?: string): StringSchema<TType, TContext>;
+    isEnum(message?: string): StringSchema<TType, TContext>;
   }
 }
 
@@ -31,17 +32,43 @@ export const isValidJsonObject = (value?: string) => {
   return false;
 };
 
-const isJsonObject = () => {
+const isJsonObject = (message?: string) => {
   return yup.string().test(
     'isJsonObject',
     // eslint-disable-next-line no-template-curly-in-string
-    '${path} is not JSON object',
+    message || '${path} is not JSON object',
     isValidJsonObject
   );
 };
 
+export const isValidEnum = (value?: string) => {
+  try {
+    if (!value) return false;
+    const trimmedValue = value.trim();
+    if (
+      trimmedValue.indexOf('enum') === 0 &&
+      trimmedValue.lastIndexOf('}') === trimmedValue.length - 1
+    ) {
+      return true;
+    }
+  } catch {
+    // do nothing
+  }
+  return false;
+};
+
+const isEnum = (message?: string) => {
+  return yup.string().test(
+    'isEnum',
+    // eslint-disable-next-line no-template-curly-in-string
+    message || '${path} is not Enum object',
+    isValidEnum
+  );
+};
+
 /**
- * due to yup rerunning all the object validiation during any render, it makes sense to cache the async results
+ * due to yup rerunning all the object validiation during any render,
+ * it makes sense to cache the async results
  * */
 export function cacheTest(
   asyncValidate: (val?: string, ctx?: yup.AnyObject) => Promise<boolean>
@@ -61,6 +88,7 @@ export function cacheTest(
 }
 
 yup.addMethod(yup.StringSchema, 'isJsonObject', isJsonObject);
+yup.addMethod(yup.StringSchema, 'isEnum', isEnum);
 
 export const topicFormValidationSchema = yup.object().shape({
   name: yup

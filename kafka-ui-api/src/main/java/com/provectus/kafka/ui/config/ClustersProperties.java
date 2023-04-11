@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.config;
 
 import com.provectus.kafka.ui.model.MetricsConfig;
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +24,10 @@ import org.springframework.util.StringUtils;
 public class ClustersProperties {
 
   List<Cluster> clusters = new ArrayList<>();
+
+  String internalTopicPrefix;
+
+  PollingProperties polling = new PollingProperties();
 
   @Data
   public static class Cluster {
@@ -45,6 +49,13 @@ public class ClustersProperties {
     List<Masking> masking;
     Long pollingThrottleRate;
     TruststoreConfig ssl;
+  }
+
+  @Data
+  public static class PollingProperties {
+    Integer pollTimeoutMs;
+    Integer partitionPollTimeout;
+    Integer noDataEmptyPolls;
   }
 
   @Data

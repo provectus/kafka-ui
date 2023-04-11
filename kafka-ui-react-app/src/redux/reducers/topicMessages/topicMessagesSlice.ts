@@ -1,36 +1,6 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { TopicMessagesState, ClusterName, TopicName } from 'redux/interfaces';
+import { createSlice } from '@reduxjs/toolkit';
+import { TopicMessagesState } from 'redux/interfaces';
 import { TopicMessage } from 'generated-sources';
-import {
-  getResponse,
-  showServerError,
-  showSuccessAlert,
-} from 'lib/errorHandling';
-import { messagesApiClient } from 'lib/api';
-
-export const clearTopicMessages = createAsyncThunk<
-  undefined,
-  { clusterName: ClusterName; topicName: TopicName; partitions?: number[] }
->(
-  'topicMessages/clearTopicMessages',
-  async ({ clusterName, topicName, partitions }, { rejectWithValue }) => {
-    try {
-      await messagesApiClient.deleteTopicMessages({
-        clusterName,
-        topicName,
-        partitions,
-      });
-      showSuccessAlert({
-        id: `message-${topicName}-${clusterName}-${partitions}`,
-        message: `${topicName} messages have been successfully cleared!`,
-      });
-      return undefined;
-    } catch (err) {
-      showServerError(err as Response);
-      return rejectWithValue(await getResponse(err as Response));
-    }
-  }
-);
 
 export const initialState: TopicMessagesState = {
   messages: [],
@@ -40,6 +10,7 @@ export const initialState: TopicMessagesState = {
     messagesConsumed: 0,
     isCancelled: false,
   },
+  messageEventType: '',
   isFetching: false,
 };
 
@@ -67,11 +38,10 @@ const topicMessagesSlice = createSlice({
     setTopicMessagesFetchingStatus: (state, action) => {
       state.isFetching = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(clearTopicMessages.fulfilled, (state) => {
-      state.messages = [];
-    });
+
+    setMessageEventType: (state, action) => {
+      state.messageEventType = action.payload;
+    },
   },
 });
 
@@ -81,6 +51,7 @@ export const {
   updateTopicMessagesPhase,
   updateTopicMessagesMeta,
   setTopicMessagesFetchingStatus,
+  setMessageEventType,
 } = topicMessagesSlice.actions;
 
 export default topicMessagesSlice.reducer;

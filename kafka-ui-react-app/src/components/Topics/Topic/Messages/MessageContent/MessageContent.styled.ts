@@ -22,7 +22,7 @@ export const Section = styled.div`
 `;
 
 export const ContentBox = styled.div`
-  background-color: white;
+  background-color: ${({ theme }) => theme.topicMetaData.backgroundColor};
   padding: 24px;
   border-radius: 8px 0 0 8px;
   flex-grow: 3;
@@ -37,7 +37,7 @@ export const ContentBox = styled.div`
 `;
 
 export const MetadataWrapper = styled.div`
-  background-color: white;
+  background-color: ${({ theme }) => theme.topicMetaData.backgroundColor};
   padding: 24px;
   border-radius: 0 8px 8px 0;
   flex-grow: 1;
@@ -58,7 +58,7 @@ export const MetadataLabel = styled.p`
   width: 80px;
 `;
 
-export const MetadataValue = styled.p`
+export const MetadataValue = styled.div`
   color: ${({ theme }) => theme.topicMetaData.color.value};
   font-size: 14px;
 `;
@@ -89,7 +89,7 @@ export const Tab = styled.button<{ $active?: boolean }>(
       border-radius: 0 4px 4px 0;
     }
     &:not(:last-child) {
-      border-right: 0px;
+      border-right: 0;
     }
   `
 );

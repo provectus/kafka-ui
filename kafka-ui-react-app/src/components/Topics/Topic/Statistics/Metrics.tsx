@@ -53,7 +53,7 @@ const Metrics: React.FC = () => {
             await cancelTopicAnalysis.mutateAsync();
             setIsAnalyzing(true);
           }}
-          buttonType="primary"
+          buttonType="secondary"
           buttonSize="M"
           permission={{
             resource: ResourceType.TOPIC,

@@ -15,8 +15,8 @@ export const RestartButton = styled.div`
   border-radius: 4px;
   display: flex;
   -webkit-align-items: center;
-  background: #e8e8fc;
-  color: #171a1c;
+  background: ${({ theme }) => theme.button.primary.backgroundColor.normal};
+  color: ${({ theme }) => theme.button.primary.color.normal};
   font-size: 14px;
   font-weight: 500;
   height: 32px;

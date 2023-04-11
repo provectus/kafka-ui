@@ -14,7 +14,7 @@ export const invalidPermission = {
   action: Action.DELETE,
 };
 
-export const roles = [
+const roles = [
   {
     ...validPermission,
     actions: [validPermission.action],
