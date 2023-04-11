@@ -65,7 +65,7 @@ const ACList: React.FC = () => {
         emptyMessage="No ACL items found"
       />
       <SlidingSidebar title="Create ACL" open={isOpen} onClose={toggle}>
-        <Create />
+        <Create onCancel={toggle} />
       </SlidingSidebar>
     </>
   );

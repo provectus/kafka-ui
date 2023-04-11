@@ -1,4 +1,5 @@
 import React from 'react';
+import { Controller } from 'react-hook-form';
 import Select from 'components/common/Select/Select';
 import {
   KafkaAclResourceTypeEnum,
@@ -25,7 +26,7 @@ const resourceTypeOptions = Object.keys(KafkaAclResourceTypeEnum).map(
       value:
         KafkaAclResourceTypeEnum[
           option as keyof typeof KafkaAclResourceTypeEnum
-        ].toLowerCase(),
+        ],
     };
   }
 );
@@ -35,9 +36,7 @@ const operationTypeOptions = Object.keys(KafkaAclOperationEnum).map(
     return {
       label: enumValueToReadable(option),
       value:
-        KafkaAclOperationEnum[
-          option as keyof typeof KafkaAclOperationEnum
-        ].toLowerCase(),
+        KafkaAclOperationEnum[option as keyof typeof KafkaAclOperationEnum],
     };
   }
 );
@@ -47,12 +46,20 @@ const CustomACL: React.FC = () => {
     <>
       <S.CreateLabel id="resource">
         Resource type
-        <Select
-          id="resource"
-          minWidth="320px"
-          selectSize="L"
-          placeholder="Select"
-          options={resourceTypeOptions}
+        <Controller
+          name="resource"
+          render={({ field }) => {
+            return (
+              <Select
+                id="resource"
+                minWidth="320px"
+                selectSize="L"
+                placeholder="Select"
+                options={resourceTypeOptions}
+                {...field}
+              />
+            );
+          }}
         />
       </S.CreateLabel>
       <S.CreateLabel id="operations">
@@ -74,12 +81,20 @@ const CustomACL: React.FC = () => {
               Deny
             </S.CreateButton>
           </S.CreateButtonGroup>
-          <Select
-            id="operations"
-            minWidth="320px"
-            selectSize="L"
-            placeholder="Select"
-            options={operationTypeOptions}
+          <Controller
+            name="operation"
+            render={({ field }) => {
+              return (
+                <Select
+                  id="operation"
+                  minWidth="320px"
+                  selectSize="L"
+                  placeholder="Select"
+                  options={operationTypeOptions}
+                  {...field}
+                />
+              );
+            }}
           />
         </div>
       </S.CreateLabel>
@@ -102,7 +117,19 @@ const CustomACL: React.FC = () => {
               Prefixed
             </S.CreateButton>
           </S.CreateButtonGroup>
-          <S.CreateInput id="pattern" placeholder="Placeholder" />
+          <Controller
+            name="pattern"
+            render={({ field }) => {
+              return (
+                <S.CreateInput
+                  name={field.name}
+                  id="pattern"
+                  placeholder="Placeholder"
+                  onChange={field.onChange}
+                />
+              );
+            }}
+          />
         </div>
       </S.CreateLabel>
     </>
