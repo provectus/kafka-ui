@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.smokesuite.ksqldb;
 
 import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlMenuTabs.STREAMS;
+import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlQueryConfig.SELECT_ALL_FROM;
 import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlQueryConfig.SHOW_STREAMS;
 import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlQueryConfig.SHOW_TABLES;
 import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.KSQL_DB;
@@ -84,6 +85,29 @@ public class KsqlDbTest extends BaseTest {
     softly.assertTrue(ksqlQueryForm.getItemByName(DEFAULT_STREAM.getName()).isVisible(),
         String.format("getItemByName(%s)", FIRST_TABLE.getName()));
     softly.assertAll();
+  }
+
+  @QaseId(86)
+  @Test(priority = 5)
+  public void clearResultsForExecutedRequest() {
+    navigateToKsqlDbAndExecuteRequest(SHOW_TABLES.getQuery());
+    SoftAssert softly = new SoftAssert();
+    softly.assertTrue(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
+    softly.assertAll();
+    ksqlQueryForm
+        .clickClearResultsBtn();
+    softly.assertFalse(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
+    softly.assertAll();
+  }
+
+  @QaseId(277)
+  @Test(priority = 6)
+  public void stopQueryFunctionalCheck() {
+    navigateToKsqlDbAndExecuteRequest(String.format(SELECT_ALL_FROM.getQuery(), FIRST_TABLE.getName()));
+    Assert.assertTrue(ksqlQueryForm.isAbortBtnVisible(), "iskAbortBtnVisible()");
+    ksqlQueryForm
+        .clickAbortBtn();
+    Assert.assertTrue(ksqlQueryForm.isCancelledAlertVisible(), "isCancelledAlertVisible()");
   }
 
   @Step
