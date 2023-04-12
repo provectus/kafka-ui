@@ -165,9 +165,9 @@ public class MessagesTest extends BaseTest {
   @Test(priority = 7)
   public void checkMessageFilteringByTimestamp() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
-    topicDetails
-        .openDetailsTab(MESSAGES);
-    LocalDateTime firstTimestamp = topicDetails.getMessageByOffset(0).getTimestamp();
+    LocalDateTime firstTimestamp = topicDetails
+        .openDetailsTab(MESSAGES)
+        .getMessageByOffset(0).getTimestamp();
     LocalDateTime nextTimestamp = topicDetails.getAllMessages().stream()
         .filter(message -> message.getTimestamp().getMinute() != firstTimestamp.getMinute())
         .findFirst().orElseThrow().getTimestamp();
