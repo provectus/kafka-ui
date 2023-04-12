@@ -1,26 +1,42 @@
-import React from 'react';
-import { FullConnectorInfo } from 'generated-sources';
+import React, { useMemo } from 'react';
+import {
+  Action,
+  ConnectorAction,
+  FullConnectorInfo,
+  ResourceType,
+} from 'generated-sources';
 import { CellContext } from '@tanstack/react-table';
 import { ClusterNameRoute } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
-import { useDeleteConnector } from 'lib/hooks/api/kafkaConnect';
+import {
+  useDeleteConnector,
+  useUpdateConnectorState,
+} from 'lib/hooks/api/kafkaConnect';
 import { useConfirm } from 'lib/hooks/useConfirm';
+import { useIsMutating } from '@tanstack/react-query';
+import { ActionDropdownItem } from 'components/common/ActionComponent';
 
 const ActionsCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
   row,
 }) => {
   const { connect, name } = row.original;
-
   const { clusterName } = useAppParams<ClusterNameRoute>();
-
+  const mutationsNumber = useIsMutating();
+  const isMutating = mutationsNumber > 0;
   const confirm = useConfirm();
   const deleteMutation = useDeleteConnector({
     clusterName,
     connectName: connect,
     connectorName: name,
   });
-
+  const routerProps = useMemo(() => {
+    return {
+      clusterName,
+      connectName: connect,
+      connectorName: name,
+    };
+  }, [clusterName, connect]);
   const handleDelete = () => {
     confirm(
       <>
@@ -31,8 +47,51 @@ const ActionsCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
       }
     );
   };
+  const stateMutation = useUpdateConnectorState(routerProps);
+  const restartConnectorHandler = () =>
+    stateMutation.mutateAsync(ConnectorAction.RESTART);
+
+  const restartAllTasksHandler = () =>
+    stateMutation.mutateAsync(ConnectorAction.RESTART_ALL_TASKS);
+
+  const restartFailedTasksHandler = () =>
+    stateMutation.mutateAsync(ConnectorAction.RESTART_FAILED_TASKS);
+
   return (
     <Dropdown>
+      <ActionDropdownItem
+        onClick={restartConnectorHandler}
+        disabled={isMutating}
+        permission={{
+          resource: ResourceType.CONNECT,
+          action: Action.EDIT,
+          value: name,
+        }}
+      >
+        Restart Connector
+      </ActionDropdownItem>
+      <ActionDropdownItem
+        onClick={restartAllTasksHandler}
+        disabled={isMutating}
+        permission={{
+          resource: ResourceType.CONNECT,
+          action: Action.EDIT,
+          value: name,
+        }}
+      >
+        Restart All Tasks
+      </ActionDropdownItem>
+      <ActionDropdownItem
+        onClick={restartFailedTasksHandler}
+        disabled={isMutating}
+        permission={{
+          resource: ResourceType.CONNECT,
+          action: Action.EDIT,
+          value: name,
+        }}
+      >
+        Restart Failed Tasks
+      </ActionDropdownItem>
       <DropdownItem onClick={handleDelete} danger>
         Remove Connector
       </DropdownItem>
