@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service.analyze;
 
 import com.provectus.kafka.ui.model.TopicAnalysisSizeStatsDTO;
 import com.provectus.kafka.ui.model.TopicAnalysisStatsDTO;
-import com.provectus.kafka.ui.model.TopicAnalysisStatsHourlyMsgCountsDTO;
+import com.provectus.kafka.ui.model.TopicAnalysisStatsHourlyMsgCountsInnerDTO;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Comparator;
@@ -78,10 +78,10 @@ class TopicAnalysisStats {
       }
     }
 
-    List<TopicAnalysisStatsHourlyMsgCountsDTO> toDto() {
+    List<TopicAnalysisStatsHourlyMsgCountsInnerDTO> toDto() {
       return hourlyStats.entrySet().stream()
           .sorted(Comparator.comparingLong(Map.Entry::getKey))
-          .map(e -> new TopicAnalysisStatsHourlyMsgCountsDTO()
+          .map(e -> new TopicAnalysisStatsHourlyMsgCountsInnerDTO()
               .hourStart(e.getKey())
               .count(e.getValue()))
           .collect(Collectors.toList());
