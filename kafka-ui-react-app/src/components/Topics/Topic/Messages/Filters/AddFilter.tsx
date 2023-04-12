@@ -52,7 +52,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
         showAlert('error', {
           id: '',
           title: 'Validation Error',
-          message: 'Filter with the current name already exists',
+          message: 'Filter with the same name already exists',
         });
         return;
       }
