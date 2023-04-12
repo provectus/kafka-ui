@@ -86,6 +86,19 @@ public class KsqlDbTest extends BaseTest {
     softly.assertAll();
   }
 
+  @QaseId(86)
+  @Test(priority = 5)
+  public void clearResultsForExecutedRequest() {
+    navigateToKsqlDbAndExecuteRequest(SHOW_TABLES.getQuery());
+    SoftAssert softly = new SoftAssert();
+    softly.assertTrue(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
+    softly.assertAll();
+    ksqlQueryForm
+        .clickClearResultsBtn();
+    softly.assertFalse(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
+    softly.assertAll();
+  }
+
   @Step
   private void navigateToKsqlDbAndExecuteRequest(String query) {
     naviSideBar
