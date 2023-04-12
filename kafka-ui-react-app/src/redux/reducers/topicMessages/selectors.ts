@@ -23,3 +23,8 @@ export const getIsTopicMessagesFetching = createSelector(
   topicMessagesState,
   ({ isFetching }) => isFetching
 );
+
+export const getIsTopicMessagesType = createSelector(
+  topicMessagesState,
+  ({ messageEventType }) => messageEventType
+);

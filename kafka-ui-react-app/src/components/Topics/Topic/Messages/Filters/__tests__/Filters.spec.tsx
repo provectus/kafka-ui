@@ -44,13 +44,17 @@ const renderComponent = (
     <WithRoute path={clusterTopicPath()}>
       <TopicMessagesContext.Provider value={ctx}>
         <Filters
-          meta={{}}
+          meta={{
+            filterApplyErrors: 10,
+          }}
           isFetching={false}
           addMessage={jest.fn()}
           resetMessages={jest.fn()}
           updatePhase={jest.fn()}
           updateMeta={jest.fn()}
           setIsFetching={jest.fn()}
+          setMessageType={jest.fn}
+          messageEventType="Done"
           {...props}
         />
       </TopicMessagesContext.Provider>
@@ -226,6 +230,19 @@ describe('Filters component', () => {
       const anotherSmartFilterElement =
         screen.queryByTestId('activeSmartFilter');
       expect(anotherSmartFilterElement).not.toBeInTheDocument();
+    });
+  });
+
+  describe('show errors when get an filterApplyErrors and message event type', () => {
+    it('show errors', () => {
+      renderComponent();
+      const errors = screen.getByText('10 errors');
+      expect(errors).toBeInTheDocument();
+    });
+    it('message event type when fetching is false ', () => {
+      renderComponent();
+      const messageType = screen.getByText('Done');
+      expect(messageType).toBeInTheDocument();
     });
   });
 });
