@@ -1,4 +1,3 @@
-import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import styled from 'styled-components';
@@ -33,14 +32,100 @@ export const CreateButtonGroup = styled.div`
   margin-bottom: 8px;
 `;
 
-export const CreateButton = styled(Button)<{
+export const CreateCheckboxLabeled = styled(CreateLabel)<{
   isPermissions?: 'allow' | 'deny';
   isPattern?: 'exact' | 'prefix';
+  active?: boolean;
 }>`
+  // display: flex;
+  margin: 0;
   font-weight: 400;
   border-radius: 4px;
   border-radius: 0;
-  border: 1px solid transparent;
+  border: 1px solid;
+  padding: 6px 16px;
+  cursor: pointer;
+  background-color: ${({ active, isPermissions, isPattern, theme }) => {
+    if (isPermissions) {
+      return active
+        ? theme.acl.create.radioButtons.green.active.background
+        : theme.acl.create.radioButtons.green.normal.background;
+    }
+
+    if (isPattern) {
+      return active
+        ? theme.acl.create.radioButtons.gray.active.background
+        : theme.acl.create.radioButtons.gray.normal.background;
+    }
+
+    return 'transparent';
+  }};
+  border-color: ${({ active, isPermissions, isPattern, theme }) => {
+    if (isPermissions) {
+      return active
+        ? theme.acl.create.radioButtons.green.active.background
+        : '#E3E6E8';
+    }
+
+    if (isPattern) {
+      return active
+        ? theme.acl.create.radioButtons.gray.active.background
+        : '#E3E6E8';
+    }
+
+    return 'transparent';
+  }};
+  color: ${({ active, isPermissions, isPattern, theme }) => {
+    if (isPermissions) {
+      return active
+        ? theme.acl.create.radioButtons.green.active.text
+        : theme.acl.create.radioButtons.green.normal.text;
+    }
+
+    if (isPattern) {
+      return active
+        ? theme.acl.create.radioButtons.gray.active.text
+        : theme.acl.create.radioButtons.gray.normal.text;
+    }
+
+    return 'transparent';
+  }};
+
+  &:hover {
+    background-color: ${({ isPermissions, isPattern, theme }) => {
+      if (isPermissions) {
+        return theme.acl.create.radioButtons.green.hover.background;
+      }
+
+      if (isPattern) {
+        return theme.acl.create.radioButtons.gray.hover.background;
+      }
+
+      return 'transparent';
+    }};
+    border-color: ${({ isPermissions, isPattern, theme }) => {
+      if (isPermissions) {
+        return theme.acl.create.radioButtons.green.hover.background;
+      }
+
+      if (isPattern) {
+        return theme.acl.create.radioButtons.gray.hover.background;
+      }
+
+      return 'transparent';
+    }};
+    color: ${({ isPermissions, isPattern, theme }) => {
+      if (isPermissions) {
+        return theme.acl.create.radioButtons.green.hover.text;
+      }
+
+      if (isPattern) {
+        return theme.acl.create.radioButtons.gray.hover.text;
+      }
+
+      return 'transparent';
+    }};
+  }
 
   &:first-child {
     border-top-left-radius: 4px;
@@ -51,6 +136,10 @@ export const CreateButton = styled(Button)<{
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
   }
+`;
+
+export const CreateButton = styled.input`
+  appearance: none;
 `;
 
 export const CreateFooter = styled.div`

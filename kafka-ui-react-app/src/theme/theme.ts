@@ -31,6 +31,7 @@ const Colors = {
     '15': '#C2F0D1',
     '30': '#85E0A3',
     '40': '#5CD685',
+    '50': '#33CC66',
     '60': '#29A352',
   },
   brand: {
@@ -692,6 +693,39 @@ export const theme = {
       },
       deleteIcon: Colors.neutral[50],
     },
+    create: {
+      radioButtons: {
+        green: {
+          normal: {
+            background: Colors.neutral[0],
+            text: Colors.neutral[50],
+          },
+          active: {
+            background: Colors.green[50],
+            text: Colors.neutral[0],
+          },
+          hover: {
+            background: Colors.green[10],
+            text: Colors.neutral[90],
+          },
+        },
+        gray: {
+          normal: {
+            background: Colors.neutral[0],
+            text: Colors.neutral[50],
+          },
+          active: {
+            background: Colors.neutral[10],
+            text: Colors.neutral[90],
+          },
+          hover: {
+            background: Colors.neutral[5],
+            text: Colors.neutral[90],
+          },
+        },
+        red: {},
+      },
+    },
   },
 };
 
@@ -1154,6 +1188,39 @@ export const darkTheme: ThemeType = {
         red: Colors.red[10],
       },
       deleteIcon: Colors.neutral[50],
+    },
+    create: {
+      radioButtons: {
+        green: {
+          normal: {
+            background: Colors.neutral[0],
+            text: Colors.neutral[50],
+          },
+          active: {
+            background: Colors.green[50],
+            text: Colors.neutral[0],
+          },
+          hover: {
+            background: Colors.green[10],
+            text: Colors.neutral[0],
+          },
+        },
+        gray: {
+          normal: {
+            background: Colors.neutral[0],
+            text: Colors.neutral[50],
+          },
+          active: {
+            background: Colors.neutral[10],
+            text: Colors.neutral[90],
+          },
+          hover: {
+            background: Colors.neutral[5],
+            text: Colors.neutral[90],
+          },
+        },
+        red: {},
+      },
     },
   },
 };

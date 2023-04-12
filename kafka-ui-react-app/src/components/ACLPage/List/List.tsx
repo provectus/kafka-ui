@@ -132,12 +132,12 @@ const ACList: React.FC = () => {
   return (
     <>
       <PageHeading text="Acsess Control List">
-        <Button buttonSize="M" buttonType="primary" onClick={toggle} disabled>
+        <Button buttonSize="M" buttonType="primary" onClick={toggle}>
           <PlusIcon /> Create ACL
         </Button>
       </PageHeading>
       <ControlPanelWrapper hasInput>
-        <Search placeholder="Search" />
+        <Search placeholder="Search" disabled />
       </ControlPanelWrapper>
       <Table
         columns={columns}
@@ -145,7 +145,7 @@ const ACList: React.FC = () => {
         emptyMessage="No ACL items found"
       />
       <SlidingSidebar title="Create ACL" open={isOpen} onClose={toggle}>
-        <Create onCancel={toggle} />
+        <Create onCancel={toggle} clusterName={clusterName} />
       </SlidingSidebar>
     </>
   );

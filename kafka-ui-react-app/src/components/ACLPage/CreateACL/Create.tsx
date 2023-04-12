@@ -6,12 +6,20 @@ import CustomACL from 'components/ACLPage/CreateACL/Custom';
 import ConsumersACL from 'components/ACLPage/CreateACL/Consumers';
 import Producers from 'components/ACLPage/CreateACL/Producers';
 import KafkaStream from 'components/ACLPage/CreateACL/KafkaStream';
-import { KafkaAcl } from 'generated-sources';
+import { useCreateAcl } from 'lib/hooks/api/acl';
+import { ClusterName } from 'redux/interfaces';
+import {
+  KafkaAcl,
+  KafkaAclNamePatternTypeEnum,
+  KafkaAclPermissionEnum,
+  KafkaAclResourceTypeEnum,
+} from 'generated-sources';
 
 import * as S from './Create.styled';
 
 interface CreateACLProps {
   onCancel: () => void;
+  clusterName: ClusterName;
 }
 
 const ACTypeOption: SelectOption[] = [
@@ -33,12 +41,25 @@ const ACTypeOption: SelectOption[] = [
   },
 ];
 
-const Create: React.FC<CreateACLProps> = ({ onCancel }) => {
+const Create: React.FC<CreateACLProps> = ({ onCancel, clusterName }) => {
   const [selected, setSelected] = React.useState(ACTypeOption[0].value);
-  const methods = useForm<KafkaAcl>();
+  const methods = useForm<KafkaAcl>({
+    defaultValues: {
+      namePatternType: KafkaAclNamePatternTypeEnum.LITERAL,
+      resourceName: '',
+      permission: KafkaAclPermissionEnum.ALLOW,
+    },
+  });
+  const { createResource } = useCreateAcl(clusterName);
 
-  const onSubmit = (args: KafkaAcl) => {
-    console.log(args);
+  const onSubmit = (acl: KafkaAcl) => {
+    const payload = {
+      ...acl,
+      resourceType: KafkaAclResourceTypeEnum[acl.resourceType],
+    };
+    console.log(payload, acl);
+
+    createResource(acl);
   };
 
   return (

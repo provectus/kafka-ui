@@ -1,9 +1,11 @@
 import React from 'react';
-import { Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import Select from 'components/common/Select/Select';
 import {
   KafkaAclResourceTypeEnum,
   KafkaAclOperationEnum,
+  KafkaAclPermissionEnum,
+  KafkaAclNamePatternTypeEnum,
 } from 'generated-sources';
 
 import * as S from './Create.styled';
@@ -42,16 +44,17 @@ const operationTypeOptions = Object.keys(KafkaAclOperationEnum).map(
 );
 
 const CustomACL: React.FC = () => {
+  const { watch } = useFormContext();
   return (
     <>
       <S.CreateLabel id="resource">
         Resource type
         <Controller
-          name="resource"
+          name="resourceType"
           render={({ field }) => {
             return (
               <Select
-                id="resource"
+                id="resourceType"
                 minWidth="320px"
                 selectSize="L"
                 placeholder="Select"
@@ -66,20 +69,44 @@ const CustomACL: React.FC = () => {
         Operations
         <div>
           <S.CreateButtonGroup>
-            <S.CreateButton
-              buttonType="primary"
-              buttonSize="M"
+            <S.CreateCheckboxLabeled
               isPermissions="allow"
+              active={watch('permission') === KafkaAclPermissionEnum.ALLOW}
             >
+              <Controller
+                name="permission"
+                render={({ field: { onChange } }) => (
+                  <S.CreateButton
+                    type="radio"
+                    value={KafkaAclPermissionEnum.ALLOW}
+                    checked={
+                      watch('permission') === KafkaAclPermissionEnum.ALLOW
+                    }
+                    onChange={onChange}
+                  />
+                )}
+              />
               Allow
-            </S.CreateButton>
-            <S.CreateButton
-              buttonType="secondary"
-              buttonSize="M"
+            </S.CreateCheckboxLabeled>
+            <S.CreateCheckboxLabeled
               isPermissions="deny"
+              active={watch('permission') === KafkaAclPermissionEnum.DENY}
             >
+              <Controller
+                name="permission"
+                render={({ field: { onChange } }) => (
+                  <S.CreateButton
+                    type="radio"
+                    value={KafkaAclPermissionEnum.DENY}
+                    checked={
+                      watch('permission') === KafkaAclPermissionEnum.DENY
+                    }
+                    onChange={onChange}
+                  />
+                )}
+              />
               Deny
-            </S.CreateButton>
+            </S.CreateCheckboxLabeled>
           </S.CreateButtonGroup>
           <Controller
             name="operation"
@@ -102,20 +129,51 @@ const CustomACL: React.FC = () => {
         Matching pattern
         <div>
           <S.CreateButtonGroup role="group">
-            <S.CreateButton
-              buttonType="primary"
-              buttonSize="M"
+            <S.CreateCheckboxLabeled
               isPattern="exact"
+              active={
+                watch('namePatternType') === KafkaAclNamePatternTypeEnum.LITERAL
+              }
             >
+              <Controller
+                name="namePatternType"
+                render={({ field: { onChange } }) => (
+                  <S.CreateButton
+                    type="radio"
+                    value={KafkaAclNamePatternTypeEnum.LITERAL}
+                    checked={
+                      watch('namePatternType') ===
+                      KafkaAclNamePatternTypeEnum.LITERAL
+                    }
+                    onChange={onChange}
+                  />
+                )}
+              />
               Exact
-            </S.CreateButton>
-            <S.CreateButton
-              buttonType="secondary"
-              buttonSize="M"
+            </S.CreateCheckboxLabeled>
+            <S.CreateCheckboxLabeled
               isPattern="prefix"
+              active={
+                watch('namePatternType') ===
+                KafkaAclNamePatternTypeEnum.PREFIXED
+              }
             >
+              <Controller
+                name="namePatternType"
+                render={({ field: { onChange } }) => (
+                  <S.CreateButton
+                    type="radio"
+                    value={KafkaAclNamePatternTypeEnum.PREFIXED}
+                    checked={
+                      watch('namePatternType') ===
+                      KafkaAclNamePatternTypeEnum.PREFIXED
+                    }
+                    onChange={onChange}
+                  />
+                )}
+              />
               Prefixed
-            </S.CreateButton>
+            </S.CreateCheckboxLabeled>
           </S.CreateButtonGroup>
           <Controller
             name="pattern"

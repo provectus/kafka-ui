@@ -1,4 +1,6 @@
 import React from 'react';
+import { KafkaAclNamePatternTypeEnum } from 'generated-sources';
+import { Controller, useFormContext } from 'react-hook-form';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import Select from 'components/common/Select/Select';
 
@@ -6,28 +8,60 @@ import * as S from './Create.styled';
 import { topicOptions } from './util';
 
 const ConsumersACL: React.FC = () => {
+  const { watch } = useFormContext();
   const [selectedTopics, setSelectedTopics] = React.useState([]);
   return (
     <>
       <S.CreateLabel id="pattern">
         From topic(s)
         <div>
-          {/* <S.CreateButtonGroup>
-            <S.CreateButton
-              buttonType="primary"
-              buttonSize="M"
+          <S.CreateButtonGroup role="group">
+            <S.CreateCheckboxLabeled
               isPattern="exact"
+              active={
+                watch('namePatternType') === KafkaAclNamePatternTypeEnum.LITERAL
+              }
             >
+              <Controller
+                name="namePatternType"
+                render={({ field: { onChange } }) => (
+                  <S.CreateButton
+                    type="radio"
+                    value={KafkaAclNamePatternTypeEnum.LITERAL}
+                    checked={
+                      watch('namePatternType') ===
+                      KafkaAclNamePatternTypeEnum.LITERAL
+                    }
+                    onChange={onChange}
+                  />
+                )}
+              />
               Exact
-            </S.CreateButton>
-            <S.CreateButton
-              buttonType="secondary"
-              buttonSize="M"
+            </S.CreateCheckboxLabeled>
+            <S.CreateCheckboxLabeled
               isPattern="prefix"
+              active={
+                watch('namePatternType') ===
+                KafkaAclNamePatternTypeEnum.PREFIXED
+              }
             >
+              <Controller
+                name="namePatternType"
+                render={({ field: { onChange } }) => (
+                  <S.CreateButton
+                    type="radio"
+                    value={KafkaAclNamePatternTypeEnum.PREFIXED}
+                    checked={
+                      watch('namePatternType') ===
+                      KafkaAclNamePatternTypeEnum.PREFIXED
+                    }
+                    onChange={onChange}
+                  />
+                )}
+              />
               Prefixed
-            </S.CreateButton>
-          </S.CreateButtonGroup> */}
+            </S.CreateCheckboxLabeled>
+          </S.CreateButtonGroup>
           <MultiSelect
             minWidth="320px"
             height="40px"
@@ -43,21 +77,52 @@ const ConsumersACL: React.FC = () => {
       <S.CreateLabel id="pattern">
         Consumer Group(s)
         <div>
-          <S.CreateButtonGroup>
-            <S.CreateButton
-              buttonType="primary"
-              buttonSize="M"
+          <S.CreateButtonGroup role="group">
+            <S.CreateCheckboxLabeled
               isPattern="exact"
+              active={
+                watch('namePatternType') === KafkaAclNamePatternTypeEnum.LITERAL
+              }
             >
+              <Controller
+                name="namePatternType"
+                render={({ field: { onChange } }) => (
+                  <S.CreateButton
+                    type="radio"
+                    value={KafkaAclNamePatternTypeEnum.LITERAL}
+                    checked={
+                      watch('namePatternType') ===
+                      KafkaAclNamePatternTypeEnum.LITERAL
+                    }
+                    onChange={onChange}
+                  />
+                )}
+              />
               Exact
-            </S.CreateButton>
-            <S.CreateButton
-              buttonType="secondary"
-              buttonSize="M"
+            </S.CreateCheckboxLabeled>
+            <S.CreateCheckboxLabeled
               isPattern="prefix"
+              active={
+                watch('namePatternType') ===
+                KafkaAclNamePatternTypeEnum.PREFIXED
+              }
             >
+              <Controller
+                name="namePatternType"
+                render={({ field: { onChange } }) => (
+                  <S.CreateButton
+                    type="radio"
+                    value={KafkaAclNamePatternTypeEnum.PREFIXED}
+                    checked={
+                      watch('namePatternType') ===
+                      KafkaAclNamePatternTypeEnum.PREFIXED
+                    }
+                    onChange={onChange}
+                  />
+                )}
+              />
               Prefixed
-            </S.CreateButton>
+            </S.CreateCheckboxLabeled>
           </S.CreateButtonGroup>
           <Select id="topics" minWidth="320px" selectSize="L" />
         </div>
