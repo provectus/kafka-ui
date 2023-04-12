@@ -140,24 +140,21 @@ public class MessagesTest extends BaseTest {
     softly.assertAll();
   }
 
-  @Ignore
-  @Issue("https://github.com/provectus/kafka-ui/issues/2394")
   @QaseId(15)
   @Test(priority = 6)
   public void checkMessageFilteringByOffset() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
     topicDetails
         .openDetailsTab(MESSAGES);
-    TopicDetails.MessageGridItem secondMessage = topicDetails.getMessageByOffset(1);
+    int nextOffset = 1;
     topicDetails
         .selectSeekTypeDdlMessagesTab("Offset")
-        .setSeekTypeValueFldMessagesTab(String.valueOf(secondMessage.getOffset()))
+        .setSeekTypeValueFldMessagesTab(String.valueOf(nextOffset))
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssert softly = new SoftAssert();
     topicDetails.getAllMessages().forEach(message ->
-        softly.assertTrue(message.getOffset() == secondMessage.getOffset()
-                || message.getOffset() > secondMessage.getOffset(),
-            String.format("Expected offset is: %s, but found: %s", secondMessage.getOffset(), message.getOffset())));
+        softly.assertTrue(message.getOffset() == nextOffset || message.getOffset() > nextOffset,
+            String.format("Expected offset is: %s, but found: %s", nextOffset, message.getOffset())));
     softly.assertAll();
   }
 
