@@ -174,7 +174,7 @@ public class TopicDetails extends BasePage {
   @Step
   public TopicDetails clickSubmitFiltersBtnMessagesTab() {
     clickByJavaScript(submitBtn);
-    waitUntilSpinnerDisappear(2);
+    waitUntilSpinnerDisappear();
     return this;
   }
 
