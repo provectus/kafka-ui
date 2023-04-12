@@ -144,9 +144,10 @@ public class MessagesTest extends BaseTest {
   @Test(priority = 6)
   public void checkMessageFilteringByOffset() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
-    topicDetails
-        .openDetailsTab(MESSAGES);
-    int nextOffset = 1;
+    int nextOffset = topicDetails
+        .openDetailsTab(MESSAGES)
+        .getAllMessages().stream()
+        .findFirst().orElseThrow().getOffset() + 1;
     topicDetails
         .selectSeekTypeDdlMessagesTab("Offset")
         .setSeekTypeValueFldMessagesTab(String.valueOf(nextOffset))
