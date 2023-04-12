@@ -45,12 +45,13 @@ const ACList: React.FC = () => {
   const { value: isOpen, toggle } = useBoolean(false);
   const modal = useConfirm();
 
-  const onDeleteClick = (acl: KafkaAcl) => {
-    console.log(acl);
-    modal(
-      'Are you sure want to delete this ACL? This action cannot be undone.',
-      () => deleteResource(acl)
-    );
+  const onDeleteClick = (acl: KafkaAcl | null) => {
+    if (acl) {
+      modal(
+        'Are you sure want to delete this ACL? This action cannot be undone.',
+        () => deleteResource(acl)
+      );
+    }
   };
 
   const columns = React.useMemo<ColumnDef<KafkaAcl>[]>(
@@ -116,8 +117,7 @@ const ACList: React.FC = () => {
       {
         id: 'delete',
         // eslint-disable-next-line react/no-unstable-nested-components
-        cell: (row) => {
-          console.log(row);
+        cell: ({ row }) => {
           return (
             <S.DeleteCell onClick={() => onDeleteClick(row.original)}>
               <DeleteIcon fill={theme.acl.table.deleteIcon} />
