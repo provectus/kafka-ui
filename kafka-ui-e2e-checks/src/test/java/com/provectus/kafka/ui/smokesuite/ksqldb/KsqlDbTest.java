@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.smokesuite.ksqldb;
 
-import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlMenuTabs.STREAMS;
 import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlQueryConfig.SHOW_TABLES;
 import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.KSQL_DB;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -34,21 +33,17 @@ public class KsqlDbTest extends BaseTest {
         .createTables(FIRST_TABLE, SECOND_TABLE);
   }
 
-  @QaseId(284)
+  @QaseId(86)
   @Test(priority = 1)
-  public void streamsAndTablesVisibilityCheck() {
-    naviSideBar
-        .openSideMenu(KSQL_DB);
-    ksqlDbList
-        .waitUntilScreenReady();
+  public void clearResultsForExecutedRequest() {
+    navigateToKsqlDbAndExecuteRequest(SHOW_TABLES.getQuery());
     SoftAssert softly = new SoftAssert();
-    softly.assertTrue(ksqlDbList.getTableByName(FIRST_TABLE.getName()).isVisible(), "getTableByName()");
-    softly.assertTrue(ksqlDbList.getTableByName(SECOND_TABLE.getName()).isVisible(), "getTableByName()");
+    softly.assertTrue(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
     softly.assertAll();
-    ksqlDbList
-        .openDetailsTab(STREAMS)
-        .waitUntilScreenReady();
-    Assert.assertTrue(ksqlDbList.getStreamByName(DEFAULT_STREAM.getName()).isVisible(), "getStreamByName()");
+    ksqlQueryForm
+        .clickClearResultsBtn();
+    softly.assertFalse(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
+    softly.assertAll();
   }
 
   @QaseId(276)
