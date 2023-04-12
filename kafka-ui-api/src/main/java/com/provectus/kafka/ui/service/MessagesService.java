@@ -3,9 +3,8 @@ package com.provectus.kafka.ui.service;
 import com.google.common.util.concurrent.RateLimiter;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
-import com.provectus.kafka.ui.emitter.MessageFilterStats;
 import com.provectus.kafka.ui.emitter.MessageFilters;
-import com.provectus.kafka.ui.emitter.ResultSizeLimiter;
+import com.provectus.kafka.ui.emitter.MessagesProcessing;
 import com.provectus.kafka.ui.emitter.TailingEmitter;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
@@ -14,9 +13,9 @@ import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
+import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.api.Serde;
-import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import com.provectus.kafka.ui.serdes.ProducerRecordCreator;
 import com.provectus.kafka.ui.util.SslPropertiesUtil;
 import java.util.List;
@@ -162,13 +161,18 @@ public class MessagesService {
                                                       @Nullable String valueSerde) {
 
     java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
-    ConsumerRecordDeserializer recordDeserializer =
-        deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde);
+
+    var processing = new MessagesProcessing(
+        deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde),
+        getMsgFilter(query, filterQueryType),
+        seekDirection == SeekDirectionDTO.TAILING ? null : limit
+    );
+
     if (seekDirection.equals(SeekDirectionDTO.FORWARD)) {
       emitter = new ForwardRecordEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
-          recordDeserializer,
+          processing,
           cluster.getPollingSettings()
       );
     } else if (seekDirection.equals(SeekDirectionDTO.BACKWARD)) {
@@ -176,31 +180,20 @@ public class MessagesService {
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
           limit,
-          recordDeserializer,
+          processing,
           cluster.getPollingSettings()
       );
     } else {
       emitter = new TailingEmitter(
           () -> consumerGroupService.createConsumer(cluster),
           consumerPosition,
-          recordDeserializer,
+          processing,
           cluster.getPollingSettings()
       );
     }
-    MessageFilterStats filterStats = new MessageFilterStats();
     return Flux.create(emitter)
-        .contextWrite(ctx -> ctx.put(MessageFilterStats.class, filterStats))
-        .filter(getMsgFilter(query, filterQueryType, filterStats))
         .map(getDataMasker(cluster, topic))
-        .takeWhile(createTakeWhilePredicate(seekDirection, limit))
         .map(throttleUiPublish(seekDirection));
-  }
-
-  private Predicate<TopicMessageEventDTO> createTakeWhilePredicate(
-      SeekDirectionDTO seekDirection, int limit) {
-    return seekDirection == SeekDirectionDTO.TAILING
-        ? evt -> true // no limit for tailing
-        : new ResultSizeLimiter(limit);
   }
 
   private UnaryOperator<TopicMessageEventDTO> getDataMasker(KafkaCluster cluster, String topicName) {
@@ -211,32 +204,18 @@ public class MessagesService {
         return evt;
       }
       return evt.message(
-        evt.getMessage()
-            .key(keyMasker.apply(evt.getMessage().getKey()))
-            .content(valMasker.apply(evt.getMessage().getContent())));
+          evt.getMessage()
+              .key(keyMasker.apply(evt.getMessage().getKey()))
+              .content(valMasker.apply(evt.getMessage().getContent())));
     };
   }
 
-  private Predicate<TopicMessageEventDTO> getMsgFilter(String query,
-                                                       MessageFilterTypeDTO filterQueryType,
-                                                       MessageFilterStats filterStats) {
+  private Predicate<TopicMessageDTO> getMsgFilter(String query,
+                                                  MessageFilterTypeDTO filterQueryType) {
     if (StringUtils.isEmpty(query)) {
       return evt -> true;
     }
-    var messageFilter = MessageFilters.createMsgFilter(query, filterQueryType);
-    return evt -> {
-      // we only apply filter for message events
-      if (evt.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE) {
-        try {
-          return messageFilter.test(evt.getMessage());
-        } catch (Exception e) {
-          filterStats.incrementApplyErrors();
-          log.trace("Error applying filter '{}' for message {}", query, evt.getMessage());
-          return false;
-        }
-      }
-      return true;
-    };
+    return MessageFilters.createMsgFilter(query, filterQueryType);
   }
 
   private <T> UnaryOperator<T> throttleUiPublish(SeekDirectionDTO seekDirection) {
