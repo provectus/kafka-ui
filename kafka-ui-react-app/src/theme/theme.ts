@@ -683,6 +683,16 @@ export const theme = {
     textColor: Colors.brand[50],
     deleteIconColor: Colors.brand[50],
   },
+  acl: {
+    table: {
+      chipColors: {
+        gray: Colors.neutral[10],
+        green: Colors.green[10],
+        red: Colors.red[10],
+      },
+      deleteIcon: Colors.neutral[50],
+    },
+  },
 };
 
 export type ThemeType = typeof theme;
@@ -1134,6 +1144,16 @@ export const darkTheme: ThemeType = {
     },
     fileInput: {
       color: Colors.neutral[0],
+    },
+  },
+  acl: {
+    table: {
+      chipColors: {
+        gray: Colors.neutral[10],
+        green: Colors.green[10],
+        red: Colors.red[10],
+      },
+      deleteIcon: Colors.neutral[50],
     },
   },
 };

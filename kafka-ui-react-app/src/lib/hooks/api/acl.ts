@@ -1,5 +1,5 @@
 import { aclApiClient as api } from 'lib/api';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ClusterName } from 'redux/interfaces';
 import { showSuccessAlert } from 'lib/errorHandling';
 import { KafkaAcl } from 'generated-sources';
@@ -37,6 +37,30 @@ export function useCreateAcl(clusterName: ClusterName) {
 
   return {
     createResource: async (param: KafkaAcl) => {
+      return mutate.mutateAsync(param);
+    },
+    ...mutate,
+  };
+}
+
+export function useDeleteAclMutation(clusterName: ClusterName) {
+  const queryClient = useQueryClient();
+  return useMutation(
+    (acl: KafkaAcl) => api.deleteAcl({ clusterName, kafkaAcl: acl }),
+    {
+      onSuccess: () => {
+        showSuccessAlert({ message: 'ACL deleted' });
+        queryClient.invalidateQueries(['clusters', clusterName, 'acls']);
+      },
+    }
+  );
+}
+
+export function useDeleteAcl(clusterName: ClusterName) {
+  const mutate = useDeleteAclMutation(clusterName);
+
+  return {
+    deleteResource: async (param: KafkaAcl) => {
       return mutate.mutateAsync(param);
     },
     ...mutate,

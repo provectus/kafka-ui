@@ -57,7 +57,7 @@ const Create: React.FC<CreateACLProps> = ({ onCancel }) => {
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <S.CreateLabel id="principal">
-            Principal{' '}
+            Principal
             <S.CreateInput
               id="principal"
               placeholder="Placeholder"
