@@ -53,7 +53,8 @@ export interface TableProps<TData> {
   // Handles row click. Can not be combined with `enableRowSelection` && expandable rows.
   onRowClick?: (row: Row<TData>) => void;
 
-  onRowHover?: (event: React.MouseEvent<HTMLTableRowElement>) => void;
+  onRowHover?: (row: Row<TData>) => void;
+  onMouseLeave?: () => void;
 }
 
 type UpdaterFn<T> = (previousState: T) => T;
@@ -130,6 +131,7 @@ const Table: React.FC<TableProps<any>> = ({
   disabled,
   onRowClick,
   onRowHover,
+  onMouseLeave,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [rowSelection, setRowSelection] = React.useState({});
@@ -196,6 +198,21 @@ const Table: React.FC<TableProps<any>> = ({
     return undefined;
   };
 
+  const handleRowHover = (row: Row<typeof data>) => (e: React.MouseEvent) => {
+    if (onRowHover) {
+      e.stopPropagation();
+      return onRowHover(row);
+    }
+
+    return undefined;
+  };
+
+  const handleMouseLeave = () => {
+    if (onMouseLeave) {
+      onMouseLeave();
+    }
+  };
+
   return (
     <>
       {BatchActionsBar && (
@@ -253,7 +270,8 @@ const Table: React.FC<TableProps<any>> = ({
                 <S.Row
                   expanded={row.getIsExpanded()}
                   onClick={handleRowClick(row)}
-                  onMouseOver={onRowHover}
+                  onMouseOver={handleRowHover(row)}
+                  onMouseLeave={handleMouseLeave}
                   clickable={
                     !enableRowSelection &&
                     (row.getCanExpand() || onRowClick !== undefined)

@@ -18,24 +18,10 @@ import { ClusterName } from 'redux/interfaces';
 import {
   KafkaAcl,
   KafkaAclNamePatternTypeEnum,
-  KafkaAclOperationEnum,
   KafkaAclPermissionEnum,
-  KafkaAclResourceTypeEnum,
 } from 'generated-sources';
 
 import * as S from './List.styled';
-
-const rowsMock: KafkaAcl[] = [
-  {
-    principal: 'User 1',
-    resourceType: KafkaAclResourceTypeEnum.TOPIC,
-    resourceName: 'topic',
-    namePatternType: KafkaAclNamePatternTypeEnum.PREFIXED,
-    host: 'host_',
-    operation: KafkaAclOperationEnum.CREATE,
-    permission: KafkaAclPermissionEnum.ALLOW,
-  },
-];
 
 const ACList: React.FC = () => {
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
@@ -44,6 +30,8 @@ const ACList: React.FC = () => {
   const { deleteResource } = useDeleteAcl(clusterName);
   const { value: isOpen, toggle } = useBoolean(false);
   const modal = useConfirm(true);
+
+  const [rowId, setRowId] = React.useState<string>('');
 
   const onDeleteClick = (acl: KafkaAcl | null) => {
     if (acl) {
@@ -126,15 +114,25 @@ const ACList: React.FC = () => {
         cell: ({ row }) => {
           return (
             <S.DeleteCell onClick={() => onDeleteClick(row.original)}>
-              <DeleteIcon fill={theme.acl.table.deleteIcon} />
+              <DeleteIcon
+                fill={
+                  rowId === row.id ? theme.acl.table.deleteIcon : 'transparent'
+                }
+              />
             </S.DeleteCell>
           );
         },
         size: 76,
       },
     ],
-    []
+    [rowId]
   );
+
+  const onRowHover = (value: unknown) => {
+    if (value && typeof value === 'object' && 'id' in value) {
+      setRowId(value.id as string);
+    }
+  };
 
   return (
     <>
@@ -148,8 +146,10 @@ const ACList: React.FC = () => {
       </ControlPanelWrapper> */}
       <Table
         columns={columns}
-        data={rowsMock ?? aclList ?? []}
+        data={aclList ?? []}
         emptyMessage="No ACL items found"
+        onRowHover={onRowHover}
+        onMouseLeave={() => setRowId('')}
       />
       <SlidingSidebar title="Create ACL" open={isOpen} onClose={toggle}>
         <Create onCancel={toggle} clusterName={clusterName} />
