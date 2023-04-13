@@ -71,19 +71,20 @@ const Message: React.FC<Props> = ({
     filters?: PreviewFilter[]
   ) => {
     if (!filters?.length || !jsonValue) return jsonValue;
-
     const parsedJson = getParsedJson(jsonValue);
 
     return (
       <>
-        {filters.map((item) => (
-          <span key={`${item.path}--${item.field}`}>
-            {item.field}:{' '}
-            {JSON.stringify(
-              JSONPath({ path: item.path, json: parsedJson, wrap: false })
-            )}
-          </span>
-        ))}
+        {filters.map((item) => {
+          return (
+            <div key={`${item.path}--${item.field}`}>
+              {item.field}:{' '}
+              {JSON.stringify(
+                JSONPath({ path: item.path, json: parsedJson, wrap: false })
+              )}
+            </div>
+          );
+        })}
       </>
     );
   };
