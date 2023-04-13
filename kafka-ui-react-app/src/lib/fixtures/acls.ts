@@ -16,4 +16,22 @@ export const aclPayload: KafkaAcl[] = [
     permission: KafkaAclPermissionEnum.ALLOW,
     operation: KafkaAclOperationEnum.READ,
   },
+  {
+    principal: 'User 2',
+    resourceName: 'Topic',
+    resourceType: KafkaAclResourceTypeEnum.TOPIC,
+    host: '_host1',
+    namePatternType: KafkaAclNamePatternTypeEnum.PREFIXED,
+    permission: KafkaAclPermissionEnum.ALLOW,
+    operation: KafkaAclOperationEnum.READ,
+  },
+  {
+    principal: 'User 3',
+    resourceName: 'Topic',
+    resourceType: KafkaAclResourceTypeEnum.TOPIC,
+    host: '_host1',
+    namePatternType: KafkaAclNamePatternTypeEnum.LITERAL,
+    permission: KafkaAclPermissionEnum.DENY,
+    operation: KafkaAclOperationEnum.READ,
+  },
 ];

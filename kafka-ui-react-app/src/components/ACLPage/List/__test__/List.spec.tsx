@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 import { clusterACLPath } from 'lib/paths';
 import ACList from 'components/ACLPage/List/List';
 import { useAcls, useDeleteAcl } from 'lib/hooks/api/acl';
@@ -37,7 +38,17 @@ describe('ACLList Component', () => {
       it('renders', async () => {
         renderComponent();
         expect(screen.getByRole('table')).toBeInTheDocument();
-        expect(screen.getAllByRole('row').length).toEqual(2);
+        expect(screen.getAllByRole('row').length).toEqual(4);
+      });
+
+      it('shows delete icon on hover', async () => {
+        const { container } = renderComponent();
+        const [trElement] = screen.getAllByRole('row');
+        await userEvent.hover(trElement);
+        const deleteElement = container.querySelector('svg');
+        expect(deleteElement).not.toHaveStyle({
+          fill: 'transparent',
+        });
       });
     });
 
