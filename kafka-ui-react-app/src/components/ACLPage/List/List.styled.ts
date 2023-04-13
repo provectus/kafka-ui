@@ -17,14 +17,15 @@ export const Chip = styled.div<{ chipType?: 'default' | 'success' | 'danger' }>`
   font-size: 12px;
   line-height: 16px;
   border-radius: 16px;
+  color: ${({ theme }) => theme.tag.color};
   background-color: ${({ theme, chipType }) => {
     switch (chipType) {
       case 'success':
-        return theme.acl.table.chipColors.green;
+        return theme.tag.backgroundColor.green;
       case 'danger':
-        return theme.acl.table.chipColors.red;
+        return theme.tag.backgroundColor.red;
       default:
-        return theme.acl.table.chipColors.gray;
+        return theme.tag.backgroundColor.gray;
     }
   }};
 `;
