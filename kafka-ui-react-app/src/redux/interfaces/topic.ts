@@ -56,5 +56,6 @@ export interface TopicMessagesState {
   messages: TopicMessage[];
   phase?: string;
   meta: TopicMessageConsuming;
+  messageEventType?: string;
   isFetching: boolean;
 }
