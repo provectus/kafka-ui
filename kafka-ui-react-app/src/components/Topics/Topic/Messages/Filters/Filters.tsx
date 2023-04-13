@@ -53,11 +53,13 @@ export interface FiltersProps {
   phaseMessage?: string;
   meta: TopicMessageConsuming;
   isFetching: boolean;
+  messageEventType?: string;
   addMessage(content: { message: TopicMessage; prepend: boolean }): void;
   resetMessages(): void;
   updatePhase(phase: string): void;
   updateMeta(meta: TopicMessageConsuming): void;
   setIsFetching(status: boolean): void;
+  setMessageType(messageType: string): void;
 }
 
 export interface MessageFilters {
@@ -80,13 +82,15 @@ export const SeekTypeOptions = [
 
 const Filters: React.FC<FiltersProps> = ({
   phaseMessage,
-  meta: { elapsedMs, bytesConsumed, messagesConsumed },
+  meta: { elapsedMs, bytesConsumed, messagesConsumed, filterApplyErrors },
   isFetching,
   addMessage,
   resetMessages,
   updatePhase,
   updateMeta,
   setIsFetching,
+  setMessageType,
+  messageEventType,
 }) => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const location = useLocation();
@@ -231,9 +235,13 @@ const Filters: React.FC<FiltersProps> = ({
         props.seekType = SeekType.TIMESTAMP;
       }
 
+      const isSeekTypeWithSeekTo =
+        props.seekType === SeekType.TIMESTAMP ||
+        props.seekType === SeekType.OFFSET;
+
       if (
         selectedPartitions.length !== partitions.length ||
-        currentSeekType === SeekType.TIMESTAMP
+        isSeekTypeWithSeekTo
       ) {
         // not everything in the partition is selected
         props.seekTo = selectedPartitions.map(({ value }) => {
@@ -323,7 +331,9 @@ const Filters: React.FC<FiltersProps> = ({
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
     if (location.search?.length !== 0) {
-      const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/topics/${topicName}/messages${location.search}`;
+      const url = `${BASE_PARAMS.basePath}/api/clusters/${encodeURIComponent(
+        clusterName
+      )}/topics/${topicName}/messages${location.search}`;
       const sse = new EventSource(url);
 
       source.current = sse;
@@ -352,6 +362,12 @@ const Filters: React.FC<FiltersProps> = ({
             break;
           case TopicMessageEventTypeEnum.CONSUMING:
             if (consuming) updateMeta(consuming);
+            break;
+          case TopicMessageEventTypeEnum.DONE:
+            if (consuming && type) {
+              setMessageType(type);
+              updateMeta(consuming);
+            }
             break;
           default:
         }
@@ -549,6 +565,7 @@ const Filters: React.FC<FiltersProps> = ({
           {seekDirection !== SeekDirection.TAILING &&
             isFetching &&
             phaseMessage}
+          {!isFetching && messageEventType}
         </S.Message>
         <S.MessageLoading isLive={isTailing}>
           <S.MessageLoadingSpinner isFetching={isFetching} />
@@ -580,6 +597,11 @@ const Filters: React.FC<FiltersProps> = ({
           </S.MetricsIcon>
           <span>{messagesConsumed} messages consumed</span>
         </S.Metric>
+        {!!filterApplyErrors && (
+          <S.Metric title="Errors">
+            <span>{filterApplyErrors} errors</span>
+          </S.Metric>
+        )}
       </S.FiltersMetrics>
     </S.FiltersWrapper>
   );
