@@ -1917,6 +1917,26 @@ components:
             type: string
             enum:
               - DYNAMIC_CONFIG
+        build:
+          type: object
+          properties:
+            commitId:
+              type: string
+            version:
+              type: string
+            buildTime:
+              type: string
+            isLatestRelease:
+              type: boolean
+        latestRelease:
+          type: object
+          properties:
+            versionTag:
+              type: string
+            publishedAt:
+              type: string
+            htmlUrl:
+              type: string
 
     Cluster:
       type: object
@@ -2397,6 +2417,10 @@ components:
         - UNKNOWN
 
     ConsumerGroup:
+      discriminator:
+        propertyName: inherit
+        mapping:
+          details: "#/components/schemas/ConsumerGroupDetails"
       type: object
       properties:
         groupId:
@@ -2426,6 +2450,7 @@ components:
         - NAME
         - MEMBERS
         - STATE
+        - MESSAGES_BEHIND
 
     ConsumerGroupsPageResponse:
       type: object
