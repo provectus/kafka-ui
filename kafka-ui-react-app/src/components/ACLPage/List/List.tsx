@@ -1,16 +1,9 @@
 import React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useTheme } from 'styled-components';
-// import { Button } from 'components/common/Button/Button';
-// import PlusIcon from 'components/common/Icons/PlusIcon';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-// import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
-// import Search from 'components/common/Search/Search';
 import Table from 'components/common/NewTable';
-import SlidingSidebar from 'components/common/SlidingSidebar';
-import Create from 'components/ACLPage/CreateACL/Create';
 import DeleteIcon from 'components/common/Icons/DeleteIcon';
-import useBoolean from 'lib/hooks/useBoolean';
 import { useConfirm } from 'lib/hooks/useConfirm';
 import useAppParams from 'lib/hooks/useAppParams';
 import { useAcls, useDeleteAcl } from 'lib/hooks/api/acl';
@@ -28,7 +21,6 @@ const ACList: React.FC = () => {
   const theme = useTheme();
   const { data: aclList } = useAcls(clusterName);
   const { deleteResource } = useDeleteAcl(clusterName);
-  const { value: isOpen, toggle } = useBoolean(false);
   const modal = useConfirm(true);
 
   const [rowId, setRowId] = React.useState<string>('');
@@ -136,14 +128,7 @@ const ACList: React.FC = () => {
 
   return (
     <>
-      <PageHeading text="Acsess Control List">
-        {/* <Button buttonSize="M" buttonType="primary" onClick={toggle}>
-          <PlusIcon /> Create ACL
-        </Button> */}
-      </PageHeading>
-      {/* <ControlPanelWrapper hasInput>
-        <Search placeholder="Search" />
-      </ControlPanelWrapper> */}
+      <PageHeading text="Acsess Control List" />
       <Table
         columns={columns}
         data={aclList ?? []}
@@ -151,9 +136,6 @@ const ACList: React.FC = () => {
         onRowHover={onRowHover}
         onMouseLeave={() => setRowId('')}
       />
-      <SlidingSidebar title="Create ACL" open={isOpen} onClose={toggle}>
-        <Create onCancel={toggle} clusterName={clusterName} />
-      </SlidingSidebar>
     </>
   );
 };

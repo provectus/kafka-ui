@@ -15,7 +15,6 @@ export function useAcls(clusterName: ClusterName) {
 }
 
 export function useCreateAclMutation(clusterName: ClusterName) {
-  // const client = useQueryClient();
   return useMutation(
     (data: KafkaAcl) =>
       api.createAcl({
