@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, Controller } from 'react-hook-form';
 import Select, { SelectOption } from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 import CustomACL from 'components/ACLPage/CreateACL/Custom';
@@ -57,9 +57,7 @@ const Create: React.FC<CreateACLProps> = ({ onCancel, clusterName }) => {
       ...acl,
       resourceType: KafkaAclResourceTypeEnum[acl.resourceType],
     };
-    console.log(payload, acl);
-
-    createResource(acl);
+    createResource(payload);
   };
 
   return (
@@ -79,18 +77,34 @@ const Create: React.FC<CreateACLProps> = ({ onCancel, clusterName }) => {
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <S.CreateLabel id="principal">
             Principal
-            <S.CreateInput
-              id="principal"
-              placeholder="Placeholder"
-              {...methods.register('principal')}
+            <Controller
+              name="principal"
+              render={({ field }) => {
+                return (
+                  <S.CreateInput
+                    id="principal"
+                    name={field.name}
+                    onChange={field.onChange}
+                    placeholder="Placeholder"
+                  />
+                );
+              }}
             />
           </S.CreateLabel>
           <S.CreateLabel id="host">
             Host Restrictions
-            <S.CreateInput
-              id="host"
-              placeholder="Placeholder"
-              {...methods.register('host')}
+            <Controller
+              name="host"
+              render={({ field }) => {
+                return (
+                  <S.CreateInput
+                    name={field.name}
+                    id="host"
+                    onChange={field.onChange}
+                    placeholder="Placeholder"
+                  />
+                );
+              }}
             />
           </S.CreateLabel>
           <S.Divider />
