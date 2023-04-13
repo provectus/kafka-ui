@@ -1,22 +1,26 @@
 package com.provectus.kafka.ui.model;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartitionInfo;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
+@Slf4j
 public class PartitionDistributionStats {
 
   // avg skew will show unuseful results on low number of partitions
   private static final int MIN_PARTITIONS_FOR_SKEW_CALCULATION = 50;
+
+  private static final MathContext ROUNDING_MATH_CTX = new MathContext(3);
 
   private final Map<Node, Integer> partitionLeaders;
   private final Map<Node, Integer> partitionsCount;
@@ -26,6 +30,22 @@ public class PartitionDistributionStats {
 
   public static PartitionDistributionStats create(Statistics stats) {
     return create(stats, MIN_PARTITIONS_FOR_SKEW_CALCULATION);
+  }
+
+  public PartitionDistributionStats(Map<Node, Integer> partitionLeaders, Map<Node, Integer> partitionsCount,
+                                    Map<Node, Integer> inSyncPartitions, double avgPartitionsPerBroker,
+                                    boolean skewCanBeCalculated) {
+    this.partitionLeaders = partitionLeaders;
+    this.partitionsCount = partitionsCount;
+    this.inSyncPartitions = inSyncPartitions;
+    this.avgPartitionsPerBroker = avgPartitionsPerBroker;
+    this.skewCanBeCalculated = skewCanBeCalculated;
+
+    log.info("partitionLeaders : " + partitionLeaders);
+    log.info("partitionsCount : " + partitionsCount);
+    log.info("inSyncPartitions : " + inSyncPartitions);
+    log.info("avgPartitionsPerBroker : " + avgPartitionsPerBroker);
+    log.info("----");
   }
 
   static PartitionDistributionStats create(Statistics stats, int minPartitionsForSkewCalculation) {
@@ -45,6 +65,8 @@ public class PartitionDistributionStats {
     }
     int nodesCount = stats.getClusterDescription().getNodes().size();
     double avgPartitionsPerBroker = nodesCount == 0 ? 0 : ((double) partitionsCnt) / nodesCount;
+    log.info("nodes count : " + nodesCount);
+    log.info("partitions count : " + partitionsCnt);
     return new PartitionDistributionStats(
         partitionLeaders,
         partitionsReplicated,
@@ -75,6 +97,6 @@ public class PartitionDistributionStats {
       return null;
     }
     value = value == null ? 0 : value;
-    return new BigDecimal((value - avgValue) / avgValue * 100.0);
+    return new BigDecimal((value - avgValue) / avgValue * 100.0).round(ROUNDING_MATH_CTX);
   }
 }
