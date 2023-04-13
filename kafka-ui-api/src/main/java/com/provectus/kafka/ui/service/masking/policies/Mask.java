@@ -15,8 +15,8 @@ class Mask extends MaskingPolicy {
 
   private final UnaryOperator<String> masker;
 
-  Mask(List<String> fieldNames, List<String> maskingChars) {
-    super(fieldNames);
+  Mask(FieldsSelector fieldsSelector, List<String> maskingChars) {
+    super(fieldsSelector);
     this.masker = createMasker(maskingChars);
   }
 
@@ -38,22 +38,13 @@ class Mask extends MaskingPolicy {
       for (int i = 0; i < input.length(); i++) {
         int cp = input.codePointAt(i);
         switch (Character.getType(cp)) {
-          case Character.SPACE_SEPARATOR:
-          case Character.LINE_SEPARATOR:
-          case Character.PARAGRAPH_SEPARATOR:
-            sb.appendCodePoint(cp); // keeping separators as-is
-            break;
-          case Character.UPPERCASE_LETTER:
-            sb.append(maskingChars.get(0));
-            break;
-          case Character.LOWERCASE_LETTER:
-            sb.append(maskingChars.get(1));
-            break;
-          case Character.DECIMAL_DIGIT_NUMBER:
-            sb.append(maskingChars.get(2));
-            break;
-          default:
-            sb.append(maskingChars.get(3));
+          case Character.SPACE_SEPARATOR,
+              Character.LINE_SEPARATOR,
+              Character.PARAGRAPH_SEPARATOR -> sb.appendCodePoint(cp); // keeping separators as-is
+          case Character.UPPERCASE_LETTER -> sb.append(maskingChars.get(0));
+          case Character.LOWERCASE_LETTER -> sb.append(maskingChars.get(1));
+          case Character.DECIMAL_DIGIT_NUMBER -> sb.append(maskingChars.get(2));
+          default -> sb.append(maskingChars.get(3));
         }
       }
       return sb.toString();

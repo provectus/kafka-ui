@@ -15,35 +15,35 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class MaskTest {
 
-  private static final List<String> TARGET_FIELDS = List.of("id", "name");
+  private static final FieldsSelector FIELDS_SELECTOR = fieldName -> List.of("id", "name").contains(fieldName);
   private static final List<String> PATTERN = List.of("X", "x", "n", "-");
 
   @ParameterizedTest
   @MethodSource
-  void testApplyToJsonContainer(List<String> fields, ContainerNode<?> original, ContainerNode<?> expected) {
-    Mask policy = new Mask(fields, PATTERN);
+  void testApplyToJsonContainer(FieldsSelector selector, ContainerNode<?> original, ContainerNode<?> expected) {
+    Mask policy = new Mask(selector, PATTERN);
     assertThat(policy.applyToJsonContainer(original)).isEqualTo(expected);
   }
 
   private static Stream<Arguments> testApplyToJsonContainer() {
     return Stream.of(
         Arguments.of(
-            TARGET_FIELDS,
+            FIELDS_SELECTOR,
             parse("{ \"id\": 123, \"name\": { \"first\": \"James\", \"surname\": \"Bond777!\"}}"),
             parse("{ \"id\": \"nnn\", \"name\": { \"first\": \"Xxxxx\", \"surname\": \"Xxxxnnn-\"}}")
         ),
         Arguments.of(
-            TARGET_FIELDS,
+            FIELDS_SELECTOR,
             parse("[{ \"id\": 123, \"f2\": 234}, { \"name\": \"1.2\", \"f2\": 345} ]"),
             parse("[{ \"id\": \"nnn\", \"f2\": 234}, { \"name\": \"n-n\", \"f2\": 345} ]")
         ),
         Arguments.of(
-            TARGET_FIELDS,
+            FIELDS_SELECTOR,
             parse("{ \"outer\": { \"f1\": \"James\", \"name\": \"Bond777!\"}}"),
             parse("{ \"outer\": { \"f1\": \"James\", \"name\": \"Xxxxnnn-\"}}")
         ),
         Arguments.of(
-            List.of(),
+            (FieldsSelector) (fieldName -> true),
             parse("{ \"outer\": { \"f1\": \"James\", \"name\": \"Bond777!\"}}"),
             parse("{ \"outer\": { \"f1\": \"Xxxxx\", \"name\": \"Xxxxnnn-\"}}")
         )
@@ -57,7 +57,7 @@ class MaskTest {
       "null, xxxx"
   })
   void testApplyToString(String original, String expected) {
-    Mask policy = new Mask(List.of(), PATTERN);
+    Mask policy = new Mask(fieldName -> true, PATTERN);
     assertThat(policy.applyToString(original)).isEqualTo(expected);
   }
 

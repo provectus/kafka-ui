@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ContainerNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Preconditions;
-import java.util.List;
 
 class Replace extends MaskingPolicy {
 
@@ -14,8 +13,8 @@ class Replace extends MaskingPolicy {
 
   private final String replacement;
 
-  Replace(List<String> fieldNames, String replacementString) {
-    super(fieldNames);
+  Replace(FieldsSelector fieldsSelector, String replacementString) {
+    super(fieldsSelector);
     this.replacement = Preconditions.checkNotNull(replacementString);
   }
 
