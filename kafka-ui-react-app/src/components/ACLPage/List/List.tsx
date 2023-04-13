@@ -43,7 +43,7 @@ const ACList: React.FC = () => {
   const { data: aclList } = useAcls(clusterName);
   const { deleteResource } = useDeleteAcl(clusterName);
   const { value: isOpen, toggle } = useBoolean(false);
-  const modal = useConfirm();
+  const modal = useConfirm(true);
 
   const onDeleteClick = (acl: KafkaAcl | null) => {
     if (acl) {

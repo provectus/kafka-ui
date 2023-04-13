@@ -6,6 +6,8 @@ interface ConfirmContextType {
   setContent: React.Dispatch<React.SetStateAction<React.ReactNode>>;
   setConfirm: React.Dispatch<React.SetStateAction<(() => void) | undefined>>;
   cancel: () => void;
+  dangerButton: boolean;
+  setDangerButton: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ConfirmContext = React.createContext<ConfirmContextType | null>(
@@ -17,6 +19,7 @@ export const ConfirmContextProvider: React.FC<
 > = ({ children }) => {
   const [content, setContent] = useState<React.ReactNode>(null);
   const [confirm, setConfirm] = useState<(() => void) | undefined>(undefined);
+  const [dangerButton, setDangerButton] = useState<boolean>(false);
 
   const cancel = () => {
     setContent(null);
@@ -31,6 +34,8 @@ export const ConfirmContextProvider: React.FC<
         confirm,
         setConfirm,
         cancel,
+        dangerButton,
+        setDangerButton,
       }}
     >
       {children}

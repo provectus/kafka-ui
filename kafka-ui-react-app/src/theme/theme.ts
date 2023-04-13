@@ -411,8 +411,8 @@ export const theme = {
         disabled: Colors.red[20],
       },
       color: {
-        normal: Colors.neutral[90],
-        disabled: Colors.neutral[30],
+        normal: Colors.neutral[0],
+        disabled: Colors.neutral[0],
       },
       invertedColors: {
         normal: Colors.brand[50],
@@ -849,8 +849,8 @@ export const darkTheme: ThemeType = {
         disabled: Colors.red[20],
       },
       color: {
-        normal: Colors.neutral[90],
-        disabled: Colors.neutral[30],
+        normal: Colors.neutral[0],
+        disabled: Colors.neutral[0],
       },
       invertedColors: {
         normal: Colors.brand[50],

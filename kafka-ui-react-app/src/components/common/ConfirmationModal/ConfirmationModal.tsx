@@ -26,7 +26,7 @@ const ConfirmationModal: React.FC = () => {
             Cancel
           </Button>
           <Button
-            buttonType="primary"
+            buttonType={context.dangerButton ? 'danger' : 'primary'}
             buttonSize="M"
             onClick={context.confirm}
             type="button"

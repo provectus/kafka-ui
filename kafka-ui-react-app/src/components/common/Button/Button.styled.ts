@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export interface ButtonProps {
-  buttonType: 'primary' | 'secondary';
+  buttonType: 'primary' | 'secondary' | 'danger';
   buttonSize: 'S' | 'M' | 'L';
   isInverted?: boolean;
 }
