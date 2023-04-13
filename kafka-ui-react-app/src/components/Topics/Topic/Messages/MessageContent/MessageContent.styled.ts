@@ -58,7 +58,7 @@ export const MetadataLabel = styled.p`
   width: 80px;
 `;
 
-export const MetadataValue = styled.p`
+export const MetadataValue = styled.div`
   color: ${({ theme }) => theme.topicMetaData.color.value};
   font-size: 14px;
 `;

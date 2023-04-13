@@ -2,7 +2,7 @@
 <suite name="SmokeSuite">
     <test name="SmokeTest" enabled="true" parallel="classes" thread-count="3">
         <packages>
-            <package name="com.provectus.kafka.ui.smokeSuite.*"/>
+            <package name="com.provectus.kafka.ui.smokesuite.*"/>
         </packages>
     </test>
 </suite>

@@ -2,7 +2,7 @@
 <suite name="ManualSuite">
     <test name="ManualTest" enabled="true" parallel="classes" thread-count="1">
         <packages>
-            <package name="com.provectus.kafka.ui.manualSuite.*"/>
+            <package name="com.provectus.kafka.ui.manualsuite.*"/>
         </packages>
     </test>
 </suite>
