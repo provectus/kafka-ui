@@ -51,11 +51,13 @@ export function useConnects(clusterName: ClusterName) {
   );
 }
 export function useConnectors(clusterName: ClusterName, search?: string) {
+  const client = useQueryClient();
   return useQuery(
     connectorsKey(clusterName, search),
     () => api.getAllConnectors({ clusterName, search }),
     {
       select: (data) => sortBy(data, 'name'),
+      onSuccess: () => client.invalidateQueries(),
     }
   );
 }
