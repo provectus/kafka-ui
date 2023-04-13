@@ -34,3 +34,7 @@ At this stage, the AWS side should have sufficient permission to allow KAFKA-UI 
 ## DataBufferLimitException: Exceeded limit on max bytes to buffer
 
 Increase `webclient.max-in-memory-buffer-size` property value. Default value is `20MB`.
+
+## URLs are invalid/contain ports when behind a reverse proxy
+
+Add the following property `server.forward-headers-strategy=FRAMEWORK`
