@@ -1,11 +1,11 @@
 import React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useTheme } from 'styled-components';
-import { Button } from 'components/common/Button/Button';
-import PlusIcon from 'components/common/Icons/PlusIcon';
+// import { Button } from 'components/common/Button/Button';
+// import PlusIcon from 'components/common/Icons/PlusIcon';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
-import Search from 'components/common/Search/Search';
+// import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
+// import Search from 'components/common/Search/Search';
 import Table from 'components/common/NewTable';
 import SlidingSidebar from 'components/common/SlidingSidebar';
 import Create from 'components/ACLPage/CreateACL/Create';
@@ -59,6 +59,7 @@ const ACList: React.FC = () => {
       {
         header: 'Principal',
         accessorKey: 'principal',
+        size: 257,
       },
       {
         header: 'Resource',
@@ -67,6 +68,7 @@ const ACList: React.FC = () => {
         cell: ({ getValue }) => (
           <S.EnumCell>{getValue<string>().toLowerCase()}</S.EnumCell>
         ),
+        size: 145,
       },
       {
         header: 'Pattern',
@@ -85,10 +87,12 @@ const ACList: React.FC = () => {
             </S.PatternCell>
           );
         },
+        size: 257,
       },
       {
         header: 'Host',
         accessorKey: 'host',
+        size: 257,
       },
       {
         header: 'Operation',
@@ -97,6 +101,7 @@ const ACList: React.FC = () => {
         cell: ({ getValue }) => (
           <S.EnumCell>{getValue<string>().toLowerCase()}</S.EnumCell>
         ),
+        size: 121,
       },
       {
         header: 'Permission',
@@ -113,6 +118,7 @@ const ACList: React.FC = () => {
             {getValue<string>().toLowerCase()}
           </S.Chip>
         ),
+        size: 111,
       },
       {
         id: 'delete',
@@ -124,6 +130,7 @@ const ACList: React.FC = () => {
             </S.DeleteCell>
           );
         },
+        size: 76,
       },
     ],
     []
@@ -132,13 +139,13 @@ const ACList: React.FC = () => {
   return (
     <>
       <PageHeading text="Acsess Control List">
-        <Button buttonSize="M" buttonType="primary" onClick={toggle}>
+        {/* <Button buttonSize="M" buttonType="primary" onClick={toggle}>
           <PlusIcon /> Create ACL
-        </Button>
+        </Button> */}
       </PageHeading>
-      <ControlPanelWrapper hasInput>
-        <Search placeholder="Search" disabled />
-      </ControlPanelWrapper>
+      {/* <ControlPanelWrapper hasInput>
+        <Search placeholder="Search" />
+      </ControlPanelWrapper> */}
       <Table
         columns={columns}
         data={rowsMock ?? aclList ?? []}

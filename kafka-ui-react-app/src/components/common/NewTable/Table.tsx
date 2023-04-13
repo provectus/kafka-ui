@@ -52,6 +52,8 @@ export interface TableProps<TData> {
 
   // Handles row click. Can not be combined with `enableRowSelection` && expandable rows.
   onRowClick?: (row: Row<TData>) => void;
+
+  onRowHover?: (event: React.MouseEvent<HTMLTableRowElement>) => void;
 }
 
 type UpdaterFn<T> = (previousState: T) => T;
@@ -127,6 +129,7 @@ const Table: React.FC<TableProps<any>> = ({
   emptyMessage,
   disabled,
   onRowClick,
+  onRowHover,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [rowSelection, setRowSelection] = React.useState({});
@@ -226,6 +229,12 @@ const Table: React.FC<TableProps<any>> = ({
                     sortable={header.column.getCanSort()}
                     sortOrder={header.column.getIsSorted()}
                     onClick={header.column.getToggleSortingHandler()}
+                    style={{
+                      width:
+                        header.column.getSize() !== 150
+                          ? header.column.getSize()
+                          : undefined,
+                    }}
                   >
                     <div>
                       {flexRender(
@@ -244,6 +253,7 @@ const Table: React.FC<TableProps<any>> = ({
                 <S.Row
                   expanded={row.getIsExpanded()}
                   onClick={handleRowClick(row)}
+                  onMouseOver={onRowHover}
                   clickable={
                     !enableRowSelection &&
                     (row.getCanExpand() || onRowClick !== undefined)
@@ -268,7 +278,13 @@ const Table: React.FC<TableProps<any>> = ({
                   {row
                     .getVisibleCells()
                     .map(({ id, getContext, column: { columnDef } }) => (
-                      <td key={id} style={columnDef.meta}>
+                      <td
+                        key={id}
+                        style={{
+                          width:
+                            columnDef.size !== 150 ? columnDef.size : undefined,
+                        }}
+                      >
                         {flexRender(columnDef.cell, getContext())}
                       </td>
                     ))}
