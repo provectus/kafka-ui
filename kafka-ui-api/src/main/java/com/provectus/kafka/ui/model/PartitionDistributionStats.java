@@ -52,10 +52,8 @@ public class PartitionDistributionStats {
     var partitionLeaders = new HashMap<Node, Integer>();
     var partitionsReplicated = new HashMap<Node, Integer>();
     var isr = new HashMap<Node, Integer>();
-    int partitionsCnt = 0;
     for (TopicDescription td : stats.getTopicDescriptions().values()) {
       for (TopicPartitionInfo tp : td.partitions()) {
-        partitionsCnt++;
         tp.replicas().forEach(r -> incr(partitionsReplicated, r));
         tp.isr().forEach(r -> incr(isr, r));
         if (tp.leader() != null) {
@@ -63,10 +61,11 @@ public class PartitionDistributionStats {
         }
       }
     }
-    int nodesCount = stats.getClusterDescription().getNodes().size();
+    int nodesCount = partitionsReplicated.keySet().size();
+    int partitionsCnt = partitionsReplicated.values().stream().mapToInt(i -> i).sum();
     double avgPartitionsPerBroker = nodesCount == 0 ? 0 : ((double) partitionsCnt) / nodesCount;
-    log.info("nodes count : " + nodesCount);
-    log.info("partitions count : " + partitionsCnt);
+    log.info("Fixed nodes count : " + nodesCount);
+    log.info("Fixed partitions count : " + partitionsCnt);
     return new PartitionDistributionStats(
         partitionLeaders,
         partitionsReplicated,
