@@ -23,13 +23,13 @@ public class ConnectorsTest extends BaseTest {
   private static final String MESSAGE_KEY = " ";
   private static final Topic TOPIC_FOR_CREATE = new Topic()
       .setName("topic-for-create-connector-" + randomAlphabetic(5))
-      .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
+      .setMessageValue(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
   private static final Topic TOPIC_FOR_DELETE = new Topic()
       .setName("topic-for-delete-connector-" + randomAlphabetic(5))
-      .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
+      .setMessageValue(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
   private static final Topic TOPIC_FOR_UPDATE = new Topic()
       .setName("topic-for-update-connector-" + randomAlphabetic(5))
-      .setMessageContent(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
+      .setMessageValue(MESSAGE_CONTENT).setMessageKey(MESSAGE_KEY);
   private static final Connector CONNECTOR_FOR_DELETE = new Connector()
       .setName("connector-for-delete-" + randomAlphabetic(5))
       .setConfig(getResourceAsString("testData/connectors/delete_connector_config.json"));

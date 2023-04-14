@@ -185,7 +185,7 @@ public class ApiService extends BaseSource {
     createMessage.setKeySerde("String");
     createMessage.setValueSerde("String");
     createMessage.setKey(topic.getMessageKey());
-    createMessage.setContent(topic.getMessageContent());
+    createMessage.setContent(topic.getMessageValue());
     try {
       messageApi().sendTopicMessages(clusterName, topic.getName(), createMessage).block();
     } catch (WebClientResponseException ex) {

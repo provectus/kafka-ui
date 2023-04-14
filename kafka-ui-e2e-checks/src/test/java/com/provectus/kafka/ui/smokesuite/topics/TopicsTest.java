@@ -45,7 +45,7 @@ public class TopicsTest extends BaseTest {
       .setMaxSizeOnDisk(NOT_SET)
       .setMaxMessageBytes("1048588")
       .setMessageKey(randomAlphabetic(5))
-      .setMessageContent(randomAlphabetic(10));
+      .setMessageValue(randomAlphabetic(10));
   private static final Topic TOPIC_TO_CHECK_SETTINGS = new Topic()
       .setName("new-topic-" + randomAlphabetic(5))
       .setNumberOfPartitions(1)
