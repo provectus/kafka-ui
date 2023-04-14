@@ -38,8 +38,10 @@ public class PartitionDistributionStats {
     var partitionLeaders = new HashMap<Node, Integer>();
     var partitionsReplicated = new HashMap<Node, Integer>();
     var isr = new HashMap<Node, Integer>();
+    int partitionsCnt = 0;
     for (TopicDescription td : stats.getTopicDescriptions().values()) {
       for (TopicPartitionInfo tp : td.partitions()) {
+        partitionsCnt++;
         tp.replicas().forEach(r -> incr(partitionsReplicated, r));
         tp.isr().forEach(r -> incr(isr, r));
         if (tp.leader() != null) {
@@ -61,7 +63,7 @@ public class PartitionDistributionStats {
         isr,
         avgLeadersCntPerBroker,
         avgPartitionsPerBroker,
-        partitionReplications >= minPartitionsForSkewCalculation
+        partitionsCnt >= minPartitionsForSkewCalculation
     );
   }
 
