@@ -37,9 +37,13 @@ public abstract class BasePage extends WebUtils {
   protected String pageTitleFromHeader = "//h1[text()='%s']";
   protected String pagePathFromHeader = "//a[text()='%s']/../h1";
 
+  protected boolean isSpinnerVisible(int... timeoutInSeconds) {
+    return isVisible(loadingSpinner, timeoutInSeconds);
+  }
+
   protected void waitUntilSpinnerDisappear(int... timeoutInSeconds) {
     log.debug("\nwaitUntilSpinnerDisappear");
-    if (isVisible(loadingSpinner, timeoutInSeconds)) {
+    if (isSpinnerVisible(timeoutInSeconds)) {
       loadingSpinner.shouldBe(Condition.disappear, Duration.ofSeconds(60));
     }
   }
