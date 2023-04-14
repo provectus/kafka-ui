@@ -13,6 +13,7 @@ import {
   KafkaAclNamePatternTypeEnum,
   KafkaAclPermissionEnum,
 } from 'generated-sources';
+import { aclPayload } from 'lib/fixtures/acls';
 
 import * as S from './List.styled';
 
@@ -23,7 +24,7 @@ const ACList: React.FC = () => {
   const { deleteResource } = useDeleteAcl(clusterName);
   const modal = useConfirm(true);
 
-  const [rowId, setRowId] = React.useState<string>('');
+  const [rowId, setRowId] = React.useState('');
 
   const onDeleteClick = (acl: KafkaAcl | null) => {
     if (acl) {
@@ -131,7 +132,7 @@ const ACList: React.FC = () => {
       <PageHeading text="Acsess Control List" />
       <Table
         columns={columns}
-        data={aclList ?? []}
+        data={aclPayload ?? aclList ?? []}
         emptyMessage="No ACL items found"
         onRowHover={onRowHover}
         onMouseLeave={() => setRowId('')}

@@ -19,7 +19,7 @@ export const ConfirmContextProvider: React.FC<
 > = ({ children }) => {
   const [content, setContent] = useState<React.ReactNode>(null);
   const [confirm, setConfirm] = useState<(() => void) | undefined>(undefined);
-  const [dangerButton, setDangerButton] = useState<boolean>(false);
+  const [dangerButton, setDangerButton] = useState(false);
 
   const cancel = () => {
     setContent(null);
