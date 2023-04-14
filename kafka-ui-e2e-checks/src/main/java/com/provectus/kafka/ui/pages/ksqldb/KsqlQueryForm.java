@@ -40,9 +40,14 @@ public class KsqlQueryForm extends BasePage {
   }
 
   @Step
-  public KsqlQueryForm clickExecuteBtn() {
+  public String getEnteredQuery() {
+    return queryAreaValue.getText().trim();
+  }
+
+  @Step
+  public KsqlQueryForm clickExecuteBtn(String query) {
     clickByActions(executeBtn);
-    if (queryAreaValue.getText().contains("EMIT CHANGES;")) {
+    if (query.contains("EMIT CHANGES")) {
       loadingSpinner.shouldBe(Condition.visible);
     } else {
       waitUntilSpinnerDisappear();
@@ -66,19 +71,19 @@ public class KsqlQueryForm extends BasePage {
 
   @Step
   public KsqlQueryForm clickAddStreamProperty() {
-    clickByJavaScript(addStreamPropertyBtn);
+    clickByActions(addStreamPropertyBtn);
     return this;
   }
 
   @Step
   public KsqlQueryForm setQuery(String query) {
     queryAreaValue.shouldBe(Condition.visible).click();
-    queryArea.setValue(query);
+    sendKeysByActions(queryArea, query);
     return this;
   }
 
   @Step
-  public KsqlQueryForm.KsqlResponseGridItem getTableByName(String name) {
+  public KsqlQueryForm.KsqlResponseGridItem getItemByName(String name) {
     return initItems().stream()
         .filter(e -> e.getName().equalsIgnoreCase(name))
         .findFirst().orElseThrow();
@@ -114,16 +119,20 @@ public class KsqlQueryForm extends BasePage {
       return element.$x("./td[1]").getText().trim();
     }
 
+    private SelenideElement getNameElm() {
+      return element.$x("./td[2]");
+    }
+
     @Step
     public String getName() {
-      return element.$x("./td[2]").scrollTo().getText().trim();
+      return getNameElm().scrollTo().getText().trim();
     }
 
     @Step
     public boolean isVisible() {
       boolean isVisible = false;
       try {
-        element.$x("./td[2]").shouldBe(visible, Duration.ofMillis(500));
+        getNameElm().shouldBe(visible, Duration.ofMillis(500));
         isVisible = true;
       } catch (Throwable ignored) {
       }
