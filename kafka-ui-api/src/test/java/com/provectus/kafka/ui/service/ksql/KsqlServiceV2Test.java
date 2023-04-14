@@ -15,7 +15,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.unit.DataSize;
 import org.testcontainers.utility.DockerImageName;
 
 class KsqlServiceV2Test extends AbstractIntegrationTest {
@@ -26,8 +25,6 @@ class KsqlServiceV2Test extends AbstractIntegrationTest {
 
   private static final Set<String> STREAMS_TO_DELETE = new CopyOnWriteArraySet<>();
   private static final Set<String> TABLES_TO_DELETE = new CopyOnWriteArraySet<>();
-
-  private static final DataSize maxBuffSize = DataSize.ofMegabytes(20);
 
   @BeforeAll
   static void init() {
