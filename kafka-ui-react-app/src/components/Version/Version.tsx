@@ -8,11 +8,11 @@ import * as S from './Version.styled';
 const Version: React.FC = () => {
   const { data: latestVersionInfo = {} } = useLatestVersion();
   const { buildTime, commitId, isLatestRelease } = latestVersionInfo.build;
-  const { versionTag } = latestVersionInfo.latestRelease;
+  const { versionTag } = latestVersionInfo?.latestRelease || '';
 
   return (
     <S.Wrapper>
-      {isLatestRelease && (
+      {!isLatestRelease && (
         <S.OutdatedWarning
           title={`Your app version is outdated. Current latest version is ${versionTag}`}
         >
