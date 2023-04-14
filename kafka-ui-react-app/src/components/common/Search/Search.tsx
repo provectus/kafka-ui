@@ -64,7 +64,7 @@ const Search: React.FC<SearchProps> = ({
       disabled={disabled}
       ref={ref}
       search
-      icon={
+      clearIcon={
         <IconButtonWrapper onClick={clearSearchValue}>
           <CloseIcon />
         </IconButtonWrapper>
