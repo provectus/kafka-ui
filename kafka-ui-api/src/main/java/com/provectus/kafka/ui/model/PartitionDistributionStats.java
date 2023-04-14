@@ -5,7 +5,6 @@ import java.math.MathContext;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +12,7 @@ import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartitionInfo;
 
+@RequiredArgsConstructor
 @Getter
 @Slf4j
 public class PartitionDistributionStats {
@@ -20,32 +20,17 @@ public class PartitionDistributionStats {
   // avg skew will show unuseful results on low number of partitions
   private static final int MIN_PARTITIONS_FOR_SKEW_CALCULATION = 50;
 
-  private static final MathContext ROUNDING_MATH_CTX = new MathContext(3);
+  private static final MathContext ROUNDING_MATH_CTX = new MathContext(4);
 
   private final Map<Node, Integer> partitionLeaders;
   private final Map<Node, Integer> partitionsCount;
   private final Map<Node, Integer> inSyncPartitions;
   private final double avgPartitionsPerBroker;
+  private final double avgLeadersCntPerBroker;
   private final boolean skewCanBeCalculated;
 
   public static PartitionDistributionStats create(Statistics stats) {
     return create(stats, MIN_PARTITIONS_FOR_SKEW_CALCULATION);
-  }
-
-  public PartitionDistributionStats(Map<Node, Integer> partitionLeaders, Map<Node, Integer> partitionsCount,
-                                    Map<Node, Integer> inSyncPartitions, double avgPartitionsPerBroker,
-                                    boolean skewCanBeCalculated) {
-    this.partitionLeaders = partitionLeaders;
-    this.partitionsCount = partitionsCount;
-    this.inSyncPartitions = inSyncPartitions;
-    this.avgPartitionsPerBroker = avgPartitionsPerBroker;
-    this.skewCanBeCalculated = skewCanBeCalculated;
-
-    log.info("partitionLeaders : " + partitionLeaders);
-    log.info("partitionsCount : " + partitionsCount);
-    log.info("inSyncPartitions : " + inSyncPartitions);
-    log.info("avgPartitionsPerBroker : " + avgPartitionsPerBroker);
-    log.info("----");
   }
 
   static PartitionDistributionStats create(Statistics stats, int minPartitionsForSkewCalculation) {
@@ -61,17 +46,21 @@ public class PartitionDistributionStats {
         }
       }
     }
-    int nodesCount = partitionsReplicated.keySet().size();
-    int partitionsCnt = partitionsReplicated.values().stream().mapToInt(i -> i).sum();
-    double avgPartitionsPerBroker = nodesCount == 0 ? 0 : ((double) partitionsCnt) / nodesCount;
-    log.info("Fixed nodes count : " + nodesCount);
-    log.info("Fixed partitions count : " + partitionsCnt);
+    int nodesCount = stats.getClusterDescription().getNodes().size();
+
+    int partitionReplications = partitionsReplicated.values().stream().mapToInt(i -> i).sum();
+    double avgPartitionsPerBroker = nodesCount == 0 ? 0 : ((double) partitionReplications) / nodesCount;
+
+    int leadersCnt = partitionLeaders.values().stream().mapToInt(i -> i).sum();
+    double avgLeadersCntPerBroker = nodesCount == 0 ? 0 : ((double) leadersCnt) / nodesCount;
+
     return new PartitionDistributionStats(
         partitionLeaders,
         partitionsReplicated,
         isr,
         avgPartitionsPerBroker,
-        partitionsCnt >= minPartitionsForSkewCalculation
+        avgLeadersCntPerBroker,
+        partitionReplications >= minPartitionsForSkewCalculation
     );
   }
 
@@ -86,7 +75,7 @@ public class PartitionDistributionStats {
 
   @Nullable
   public BigDecimal leadersSkew(Node node) {
-    return calculateAvgSkew(partitionLeaders.get(node), avgPartitionsPerBroker);
+    return calculateAvgSkew(partitionLeaders.get(node), avgLeadersCntPerBroker);
   }
 
   // Returns difference (in percents) from average value, null if it can't be calculated
