@@ -2,7 +2,9 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.client.RetryingKafkaConnectClient;
 import com.provectus.kafka.ui.config.ClustersProperties;
+import com.provectus.kafka.ui.config.WebclientProperties;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
+import com.provectus.kafka.ui.emitter.PollingSettings;
 import com.provectus.kafka.ui.model.ApplicationPropertyValidationDTO;
 import com.provectus.kafka.ui.model.ClusterConfigValidationDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -12,7 +14,6 @@ import com.provectus.kafka.ui.service.masking.DataMasking;
 import com.provectus.kafka.ui.sr.ApiClient;
 import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
 import com.provectus.kafka.ui.util.KafkaServicesValidation;
-import com.provectus.kafka.ui.util.PollingThrottler;
 import com.provectus.kafka.ui.util.ReactiveFailover;
 import com.provectus.kafka.ui.util.WebClientConfigurator;
 import java.util.HashMap;
@@ -22,9 +23,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -34,14 +33,21 @@ import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class KafkaClusterFactory {
 
-  @Value("${webclient.max-in-memory-buffer-size:20MB}")
-  private DataSize maxBuffSize;
+  private static final DataSize DEFAULT_WEBCLIENT_BUFFER = DataSize.parse("20MB");
 
-  public KafkaCluster create(ClustersProperties.Cluster clusterProperties) {
+  private final DataSize webClientMaxBuffSize;
+
+  public KafkaClusterFactory(WebclientProperties webclientProperties) {
+    this.webClientMaxBuffSize = Optional.ofNullable(webclientProperties.getMaxInMemoryBufferSize())
+        .map(DataSize::parse)
+        .orElse(DEFAULT_WEBCLIENT_BUFFER);
+  }
+
+  public KafkaCluster create(ClustersProperties properties,
+                             ClustersProperties.Cluster clusterProperties) {
     KafkaCluster.KafkaClusterBuilder builder = KafkaCluster.builder();
 
     builder.name(clusterProperties.getName());
@@ -49,7 +55,7 @@ public class KafkaClusterFactory {
     builder.properties(convertProperties(clusterProperties.getProperties()));
     builder.readOnly(clusterProperties.isReadOnly());
     builder.masking(DataMasking.create(clusterProperties.getMasking()));
-    builder.throttler(PollingThrottler.throttlerSupplier(clusterProperties));
+    builder.pollingSettings(PollingSettings.create(clusterProperties, properties));
 
     if (schemaRegistryConfigured(clusterProperties)) {
       builder.schemaRegistryClient(schemaRegistryClient(clusterProperties));
@@ -139,7 +145,7 @@ public class KafkaClusterFactory {
         url -> new RetryingKafkaConnectClient(
             connectCluster.toBuilder().address(url).build(),
             cluster.getSsl(),
-            maxBuffSize
+            webClientMaxBuffSize
         ),
         ReactiveFailover.CONNECTION_REFUSED_EXCEPTION_FILTER,
         "No alive connect instances available",
@@ -157,7 +163,7 @@ public class KafkaClusterFactory {
     WebClient webClient = new WebClientConfigurator()
         .configureSsl(clusterProperties.getSsl(), clusterProperties.getSchemaRegistrySsl())
         .configureBasicAuth(auth.getUsername(), auth.getPassword())
-        .configureBufferSize(maxBuffSize)
+        .configureBufferSize(webClientMaxBuffSize)
         .build();
     return ReactiveFailover.create(
         parseUrlList(clusterProperties.getSchemaRegistry()),
@@ -180,7 +186,7 @@ public class KafkaClusterFactory {
             clusterProperties.getKsqldbServerAuth(),
             clusterProperties.getSsl(),
             clusterProperties.getKsqldbServerSsl(),
-            maxBuffSize
+            webClientMaxBuffSize
         ),
         ReactiveFailover.CONNECTION_REFUSED_EXCEPTION_FILTER,
         "No live ksqldb instances available",

@@ -35,7 +35,16 @@ export const ContentBox = styled.div`
     flex-grow: 1;
   }
 `;
-
+export const DataCell = styled.td`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 350px;
+  min-width: 350px;
+`;
+export const ClickableRow = styled.tr`
+  cursor: pointer;
+`;
 export const MetadataWrapper = styled.div`
   background-color: ${({ theme }) => theme.topicMetaData.backgroundColor};
   padding: 24px;
@@ -58,7 +67,7 @@ export const MetadataLabel = styled.p`
   width: 80px;
 `;
 
-export const MetadataValue = styled.p`
+export const MetadataValue = styled.div`
   color: ${({ theme }) => theme.topicMetaData.color.value};
   font-size: 14px;
 `;

@@ -3,6 +3,7 @@ import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { SchemaType, TopicMessageTimestampTypeEnum } from 'generated-sources';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
+import { useSearchParams } from 'react-router-dom';
 
 import * as S from './MessageContent.styled';
 
@@ -10,9 +11,7 @@ type Tab = 'key' | 'content' | 'headers';
 
 export interface MessageContentProps {
   messageKey?: string;
-  messageKeyFormat?: string;
   messageContent?: string;
-  messageContentFormat?: string;
   headers?: { [key: string]: string | undefined };
   timestamp?: Date;
   timestampType?: TopicMessageTimestampTypeEnum;
@@ -20,14 +19,15 @@ export interface MessageContentProps {
 
 const MessageContent: React.FC<MessageContentProps> = ({
   messageKey,
-  messageKeyFormat,
   messageContent,
-  messageContentFormat,
   headers,
   timestamp,
   timestampType,
 }) => {
   const [activeTab, setActiveTab] = React.useState<Tab>('content');
+  const [searchParams] = useSearchParams();
+  const keyFormat = searchParams.get('keySerde') || '';
+  const valueFormat = searchParams.get('valueSerde') || '';
 
   const activeTabContent = () => {
     switch (activeTab) {
@@ -54,7 +54,6 @@ const MessageContent: React.FC<MessageContentProps> = ({
     e.preventDefault();
     setActiveTab('headers');
   };
-
   const keySize = new TextEncoder().encode(messageKey).length;
   const contentSize = new TextEncoder().encode(messageContent).length;
   const contentType =
@@ -106,21 +105,21 @@ const MessageContent: React.FC<MessageContentProps> = ({
             </S.Metadata>
 
             <S.Metadata>
-              <S.MetadataLabel>Value</S.MetadataLabel>
+              <S.MetadataLabel>Key Serde</S.MetadataLabel>
               <span>
-                <S.MetadataValue>{messageContentFormat}</S.MetadataValue>
+                <S.MetadataValue>{keyFormat}</S.MetadataValue>
                 <S.MetadataMeta>
-                  Size: <BytesFormatted value={contentSize} />
+                  Size: <BytesFormatted value={keySize} />
                 </S.MetadataMeta>
               </span>
             </S.Metadata>
 
             <S.Metadata>
-              <S.MetadataLabel>Key</S.MetadataLabel>
+              <S.MetadataLabel>Value Serde</S.MetadataLabel>
               <span>
-                <S.MetadataValue>{messageKeyFormat}</S.MetadataValue>
+                <S.MetadataValue>{valueFormat}</S.MetadataValue>
                 <S.MetadataMeta>
-                  Size: <BytesFormatted value={keySize} />
+                  Size: <BytesFormatted value={contentSize} />
                 </S.MetadataMeta>
               </span>
             </S.Metadata>

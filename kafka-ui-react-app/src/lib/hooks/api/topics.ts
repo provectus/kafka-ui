@@ -314,9 +314,6 @@ export function useAnalyzeTopic(props: GetTopicDetailsRequest) {
   const client = useQueryClient();
   return useMutation(() => api.analyzeTopic(props), {
     onSuccess: () => {
-      showSuccessAlert({
-        message: `Topic analysis successfully started`,
-      });
       client.invalidateQueries(topicKeys.statistics(props));
     },
   });

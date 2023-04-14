@@ -2,16 +2,12 @@ package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
-import com.provectus.kafka.ui.util.PollingThrottler;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -26,8 +22,6 @@ public class BackwardRecordEmitter
     extends AbstractEmitter
     implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
 
-  private static final Duration POLL_TIMEOUT = Duration.ofMillis(200);
-
   private final Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier;
   private final ConsumerPosition consumerPosition;
   private final int messagesPerPage;
@@ -36,9 +30,9 @@ public class BackwardRecordEmitter
       Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
       ConsumerPosition consumerPosition,
       int messagesPerPage,
-      ConsumerRecordDeserializer recordDeserializer,
-      PollingThrottler throttler) {
-    super(recordDeserializer, throttler);
+      MessagesProcessing messagesProcessing,
+      PollingSettings pollingSettings) {
+    super(messagesProcessing, pollingSettings);
     this.consumerPosition = consumerPosition;
     this.messagesPerPage = messagesPerPage;
     this.consumerSupplier = consumerSupplier;
@@ -57,7 +51,7 @@ public class BackwardRecordEmitter
       int msgsToPollPerPartition = (int) Math.ceil((double) messagesPerPage / readUntilOffsets.size());
       log.debug("'Until' offsets for polling: {}", readUntilOffsets);
 
-      while (!sink.isCancelled() && !readUntilOffsets.isEmpty()) {
+      while (!sink.isCancelled() && !readUntilOffsets.isEmpty() && !sendLimitReached()) {
         new TreeMap<>(readUntilOffsets).forEach((tp, readToOffset) -> {
           if (sink.isCancelled()) {
             return; //fast return in case of sink cancellation
@@ -66,8 +60,6 @@ public class BackwardRecordEmitter
           long readFromOffset = Math.max(beginOffset, readToOffset - msgsToPollPerPartition);
 
           partitionPollIteration(tp, readFromOffset, readToOffset, consumer, sink)
-              .stream()
-              .filter(r -> !sink.isCancelled())
               .forEach(r -> sendMessage(sink, r));
 
           if (beginOffset == readFromOffset) {
@@ -109,17 +101,19 @@ public class BackwardRecordEmitter
 
     var recordsToSend = new ArrayList<ConsumerRecord<Bytes, Bytes>>();
 
-    // we use empty polls counting to verify that partition was fully read
-    for (int emptyPolls = 0; recordsToSend.size() < desiredMsgsToPoll && emptyPolls < NO_MORE_DATA_EMPTY_POLLS_COUNT;) {
-      var polledRecords = poll(sink, consumer, POLL_TIMEOUT);
-      log.debug("{} records polled from {}", polledRecords.count(), tp);
+    EmptyPollsCounter emptyPolls  = pollingSettings.createEmptyPollsCounter();
+    while (!sink.isCancelled()
+        && !sendLimitReached()
+        && recordsToSend.size() < desiredMsgsToPoll
+        && !emptyPolls.noDataEmptyPollsReached()) {
+      var polledRecords = poll(sink, consumer, pollingSettings.getPartitionPollTimeout());
+      emptyPolls.count(polledRecords);
 
-      // counting sequential empty polls
-      emptyPolls = polledRecords.isEmpty() ? emptyPolls + 1 : 0;
+      log.debug("{} records polled from {}", polledRecords.count(), tp);
 
       var filteredRecords = polledRecords.records(tp).stream()
           .filter(r -> r.offset() < toOffset)
-          .collect(Collectors.toList());
+          .toList();
 
       if (!polledRecords.isEmpty() && filteredRecords.isEmpty()) {
         // we already read all messages in target offsets interval
