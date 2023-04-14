@@ -8,7 +8,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 import com.provectus.kafka.ui.BaseTest;
 import com.provectus.kafka.ui.models.Topic;
-import com.provectus.kafka.ui.pages.topics.TopicDetails;
 import io.qameta.allure.Issue;
 import io.qameta.allure.Step;
 import io.qase.api.annotation.QaseId;
@@ -140,24 +139,22 @@ public class MessagesTest extends BaseTest {
     softly.assertAll();
   }
 
-  @Ignore
-  @Issue("https://github.com/provectus/kafka-ui/issues/2394")
   @QaseId(15)
   @Test(priority = 6)
   public void checkMessageFilteringByOffset() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
-    topicDetails
-        .openDetailsTab(MESSAGES);
-    TopicDetails.MessageGridItem secondMessage = topicDetails.getMessageByOffset(1);
+    int nextOffset = topicDetails
+        .openDetailsTab(MESSAGES)
+        .getAllMessages().stream()
+        .findFirst().orElseThrow().getOffset() + 1;
     topicDetails
         .selectSeekTypeDdlMessagesTab("Offset")
-        .setSeekTypeValueFldMessagesTab(String.valueOf(secondMessage.getOffset()))
+        .setSeekTypeValueFldMessagesTab(String.valueOf(nextOffset))
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssert softly = new SoftAssert();
     topicDetails.getAllMessages().forEach(message ->
-        softly.assertTrue(message.getOffset() == secondMessage.getOffset()
-                || message.getOffset() > secondMessage.getOffset(),
-            String.format("Expected offset is: %s, but found: %s", secondMessage.getOffset(), message.getOffset())));
+        softly.assertTrue(message.getOffset() >= nextOffset,
+            String.format("Expected offset not less: %s, but found: %s", nextOffset, message.getOffset())));
     softly.assertAll();
   }
 
@@ -168,13 +165,11 @@ public class MessagesTest extends BaseTest {
   @Test(priority = 7)
   public void checkMessageFilteringByTimestamp() {
     navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
-    topicDetails
-        .openDetailsTab(MESSAGES);
-    LocalDateTime firstTimestamp = topicDetails.getMessageByOffset(0).getTimestamp();
-    List<TopicDetails.MessageGridItem> nextMessages = topicDetails.getAllMessages().stream()
+    LocalDateTime firstTimestamp = topicDetails
+        .openDetailsTab(MESSAGES)
+        .getMessageByOffset(0).getTimestamp();
+    LocalDateTime nextTimestamp = topicDetails.getAllMessages().stream()
         .filter(message -> message.getTimestamp().getMinute() != firstTimestamp.getMinute())
-        .toList();
-    LocalDateTime nextTimestamp = nextMessages.stream()
         .findFirst().orElseThrow().getTimestamp();
     topicDetails
         .selectSeekTypeDdlMessagesTab("Timestamp")
@@ -183,8 +178,7 @@ public class MessagesTest extends BaseTest {
         .clickSubmitFiltersBtnMessagesTab();
     SoftAssert softly = new SoftAssert();
     topicDetails.getAllMessages().forEach(message ->
-        softly.assertTrue(message.getTimestamp().isEqual(nextTimestamp)
-                || message.getTimestamp().isAfter(nextTimestamp),
+        softly.assertFalse(message.getTimestamp().isBefore(nextTimestamp),
             String.format("Expected that %s is not before %s.", message.getTimestamp(), nextTimestamp)));
     softly.assertAll();
   }
