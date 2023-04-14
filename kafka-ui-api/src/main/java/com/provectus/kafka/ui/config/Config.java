@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.config;
 import java.util.Collections;
 import java.util.Map;
 import lombok.AllArgsConstructor;
+import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxProperties;
@@ -45,5 +46,11 @@ public class Config {
     exporter.setAutodetect(true);
     exporter.setExcludedBeans("pool");
     return exporter;
+  }
+
+  @Bean
+  // will be used by webflux json mapping
+  public JsonNullableModule jsonNullableModule() {
+    return new JsonNullableModule();
   }
 }
