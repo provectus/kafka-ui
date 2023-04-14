@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.smokesuite.ksqldb;
 
 import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlMenuTabs.STREAMS;
+import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlQueryConfig.SHOW_STREAMS;
 import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlQueryConfig.SHOW_TABLES;
 import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.KSQL_DB;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -80,8 +81,18 @@ public class KsqlDbTest extends BaseTest {
     softly.assertAll();
   }
 
-  @QaseId(86)
+  @QaseId(278)
   @Test(priority = 4)
+  public void checkShowStreamsRequestExecution() {
+    navigateToKsqlDbAndExecuteRequest(SHOW_STREAMS.getQuery());
+    SoftAssert softly = new SoftAssert();
+    softly.assertTrue(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
+    softly.assertTrue(ksqlQueryForm.getItemByName(DEFAULT_STREAM.getName()).isVisible(), "getItemByName()");
+    softly.assertAll();
+  }
+
+  @QaseId(86)
+  @Test(priority = 5)
   public void clearResultsForExecutedRequest() {
     navigateToKsqlDbAndExecuteRequest(SHOW_TABLES.getQuery());
     SoftAssert softly = new SoftAssert();
@@ -96,19 +107,6 @@ public class KsqlDbTest extends BaseTest {
   @AfterClass(alwaysRun = true)
   public void afterClass() {
     TOPIC_NAMES_LIST.forEach(topicName -> apiService.deleteTopic(topicName));
-  }
-
-  @QaseId(86)
-  @Test(priority = 5)
-  public void clearResultsForExecutedRequest() {
-    navigateToKsqlDbAndExecuteRequest(SHOW_TABLES.getQuery());
-    SoftAssert softly = new SoftAssert();
-    softly.assertTrue(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
-    softly.assertAll();
-    ksqlQueryForm
-        .clickClearResultsBtn();
-    softly.assertFalse(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
-    softly.assertAll();
   }
 
   @Step
