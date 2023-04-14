@@ -1,33 +1,36 @@
 package com.provectus.kafka.ui.service;
 
+import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.util.SslPropertiesUtil;
 import java.io.Closeable;
 import java.time.Instant;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class AdminClientServiceImpl implements AdminClientService, Closeable {
+
+  private static final int DEFAULT_CLIENT_TIMEOUT_MS = 30_000;
 
   private static final AtomicLong CLIENT_ID_SEQ = new AtomicLong();
 
   private final Map<String, ReactiveAdminClient> adminClientCache = new ConcurrentHashMap<>();
-  @Setter // used in tests
-  @Value("${kafka.admin-client-timeout:30000}")
-  private int clientTimeout;
+  private final int clientTimeout;
+
+  public AdminClientServiceImpl(ClustersProperties clustersProperties) {
+    this.clientTimeout = Optional.ofNullable(clustersProperties.getAdminClientTimeout())
+        .orElse(DEFAULT_CLIENT_TIMEOUT_MS);
+  }
 
   @Override
   public Mono<ReactiveAdminClient> get(KafkaCluster cluster) {
@@ -42,7 +45,7 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
       SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
       properties.putAll(cluster.getProperties());
       properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
-      properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
+      properties.putIfAbsent(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
       properties.putIfAbsent(
           AdminClientConfig.CLIENT_ID_CONFIG,
           "kafka-ui-admin-" + Instant.now().getEpochSecond() + "-" + CLIENT_ID_SEQ.incrementAndGet()
