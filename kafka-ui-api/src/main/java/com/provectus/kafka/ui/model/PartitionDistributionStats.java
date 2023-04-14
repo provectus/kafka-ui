@@ -46,13 +46,13 @@ public class PartitionDistributionStats {
         }
       }
     }
-    int nodesCount = stats.getClusterDescription().getNodes().size();
-
+    int nodesWithPartitions = partitionsReplicated.size();
     int partitionReplications = partitionsReplicated.values().stream().mapToInt(i -> i).sum();
-    double avgPartitionsPerBroker = nodesCount == 0 ? 0 : ((double) partitionReplications) / nodesCount;
+    double avgPartitionsPerBroker = nodesWithPartitions == 0 ? 0 : ((double) partitionReplications) / nodesWithPartitions;
 
+    int nodesWithLeaders = partitionLeaders.size();
     int leadersCnt = partitionLeaders.values().stream().mapToInt(i -> i).sum();
-    double avgLeadersCntPerBroker = nodesCount == 0 ? 0 : ((double) leadersCnt) / nodesCount;
+    double avgLeadersCntPerBroker = nodesWithLeaders == 0 ? 0 : ((double) leadersCnt) / nodesWithLeaders;
 
     return new PartitionDistributionStats(
         partitionLeaders,
