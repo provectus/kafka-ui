@@ -110,7 +110,7 @@ public class KsqlDbTest extends BaseTest {
   @Test(priority = 6)
   public void stopQueryFunctionalCheck() {
     navigateToKsqlDbAndExecuteRequest(String.format(SELECT_ALL_FROM.getQuery(), FIRST_TABLE.getName()));
-    Assert.assertTrue(ksqlQueryForm.isAbortBtnVisible(), "iskAbortBtnVisible()");
+    Assert.assertTrue(ksqlQueryForm.isAbortBtnVisible(), "isAbortBtnVisible()");
     ksqlQueryForm
         .clickAbortBtn();
     Assert.assertTrue(ksqlQueryForm.isCancelledAlertVisible(), "isCancelledAlertVisible()");
