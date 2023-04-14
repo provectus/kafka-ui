@@ -12,7 +12,10 @@ import com.provectus.kafka.ui.pages.ksqldb.models.Stream;
 import com.provectus.kafka.ui.pages.ksqldb.models.Table;
 import io.qameta.allure.Step;
 import io.qase.api.annotation.QaseId;
+import java.util.ArrayList;
+import java.util.List;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
@@ -28,12 +31,15 @@ public class KsqlDbTest extends BaseTest {
   private static final Table SECOND_TABLE = new Table()
       .setName("SECOND_TABLE_" + randomAlphabetic(4).toUpperCase())
       .setStreamName(DEFAULT_STREAM.getName());
+  private static final List<String> TOPIC_NAMES_LIST = new ArrayList<>();
 
   @BeforeClass(alwaysRun = true)
   public void beforeClass() {
     apiService
         .createStream(DEFAULT_STREAM)
         .createTables(FIRST_TABLE, SECOND_TABLE);
+    TOPIC_NAMES_LIST.addAll(List.of(DEFAULT_STREAM.getTopicName(),
+        FIRST_TABLE.getName(), SECOND_TABLE.getName()));
   }
 
   @QaseId(284)
@@ -108,6 +114,11 @@ public class KsqlDbTest extends BaseTest {
     ksqlQueryForm
         .clickAbortBtn();
     Assert.assertTrue(ksqlQueryForm.isCancelledAlertVisible(), "isCancelledAlertVisible()");
+  }
+
+  @AfterClass(alwaysRun = true)
+  public void afterClass() {
+    TOPIC_NAMES_LIST.forEach(topicName -> apiService.deleteTopic(topicName));
   }
 
   @Step
