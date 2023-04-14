@@ -20,6 +20,7 @@ class PartitionDistributionStatsTest {
     Node n1 = new Node(1, "n1", 9092);
     Node n2 = new Node(2, "n2", 9092);
     Node n3 = new Node(3, "n3", 9092);
+    Node n4 = new Node(4, "n4", 9092);
 
     var stats = PartitionDistributionStats.create(
         Statistics.builder()
@@ -53,24 +54,29 @@ class PartitionDistributionStatsTest {
     assertThat(stats.getInSyncPartitions())
         .containsExactlyInAnyOrderEntriesOf(Map.of(n1, 3, n2, 3, n3, 1));
 
-    // 4 partitions, 3 brokers = avg partition cnt per broker is 1.333.
+    // Node(partitions): n1(3), n2(4), n3(1), n4(0)
+    // average partitions cnt = (3+4+1) / 3 = 2.666 (counting only nodes with partitions!)
     assertThat(stats.getAvgPartitionsPerBroker())
-        .isCloseTo(1.333, Percentage.withPercentage(1));
+        .isCloseTo(2.666, Percentage.withPercentage(1));
 
-    // Node(partitions): n1(3), n2(4), n3(1)
     assertThat(stats.partitionsSkew(n1))
-        .isCloseTo(BigDecimal.valueOf(125), Percentage.withPercentage(1));
+        .isCloseTo(BigDecimal.valueOf(12.5), Percentage.withPercentage(1));
     assertThat(stats.partitionsSkew(n2))
-        .isCloseTo(BigDecimal.valueOf(200), Percentage.withPercentage(1));
-    assertThat(stats.partitionsSkew(n3))
-        .isCloseTo(BigDecimal.valueOf(-25), Percentage.withPercentage(1));
-
-    //  Node(leaders): n1(2), n2(1), n3(0)
-    assertThat(stats.leadersSkew(n1))
         .isCloseTo(BigDecimal.valueOf(50), Percentage.withPercentage(1));
+    assertThat(stats.partitionsSkew(n3))
+        .isCloseTo(BigDecimal.valueOf(-62.5), Percentage.withPercentage(1));
+    assertThat(stats.partitionsSkew(n4))
+        .isCloseTo(BigDecimal.valueOf(-100), Percentage.withPercentage(1));
+
+    //  Node(leaders): n1(2), n2(1), n3(0), n4(0)
+    //  average leaders cnt = (2+1) / 2 = 1.5 (counting only nodes with leaders!)
+    assertThat(stats.leadersSkew(n1))
+        .isCloseTo(BigDecimal.valueOf(33.33), Percentage.withPercentage(1));
     assertThat(stats.leadersSkew(n2))
-        .isCloseTo(BigDecimal.valueOf(-25), Percentage.withPercentage(1));
+        .isCloseTo(BigDecimal.valueOf(-33.33), Percentage.withPercentage(1));
     assertThat(stats.leadersSkew(n3))
+        .isCloseTo(BigDecimal.valueOf(-100), Percentage.withPercentage(1));
+    assertThat(stats.leadersSkew(n4))
         .isCloseTo(BigDecimal.valueOf(-100), Percentage.withPercentage(1));
   }
 
