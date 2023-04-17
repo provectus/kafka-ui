@@ -34,7 +34,7 @@ const BatchActionsBar: React.FC<BatchActionsBarProps> = ({
   const isMutating = mutationsNumber > 0;
 
   const routerProps = useAppParams<RouterParamsClusterConnectConnector>();
-  const clusterName = routerProps.clusterName;
+  const { clusterName } = routerProps;
   const client = useQueryClient();
 
   const canEdit = usePermission(
@@ -49,18 +49,29 @@ const BatchActionsBar: React.FC<BatchActionsBarProps> = ({
   );
 
   const deleteConnectorMutation = useDeleteConnector(routerProps);
-  const deleteConnectorsHandler = () =>
+  const deleteConnectorsHandler = () => {
     confirm(
-      <>Are you sure you want to remove selected connectors?</>,
+      'Are you sure you want to remove selected connectors?',
       async () => {
         try {
-          await deleteConnectorMutation.mutateAsync();
+          await Promise.all(
+            selectedConnectors.map((connector) => {
+              deleteConnectorMutation.mutateAsync({
+                clusterName,
+                connectName: connector.connect,
+                connectorName: connector.name,
+              });
+            })
+          );
           resetRowSelection();
-        } catch {
-          // do not redirect
+        } catch (e) {
+          // do nothing;
+        } finally {
+          client.invalidateQueries(['clusters', clusterName, 'connectors']);
         }
       }
     );
+  };
 
   const stateMutation = useUpdateConnectorState(routerProps);
   const updateConnector = (action: ConnectorAction, message: string) => {

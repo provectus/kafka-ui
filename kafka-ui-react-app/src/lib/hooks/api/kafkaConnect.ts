@@ -135,7 +135,10 @@ export function useCreateConnector(clusterName: ClusterName) {
 export function useDeleteConnector(props: UseConnectorProps) {
   const client = useQueryClient();
 
-  return useMutation(() => api.deleteConnector(props), {
-    onSuccess: () => client.invalidateQueries(connectorsKey(props.clusterName)),
-  });
+  return useMutation(
+    (message: UseConnectorProps) => api.deleteConnector(message),
+    {
+      onSuccess: () => client.invalidateQueries(connectorKey(props)),
+    }
+  );
 }
