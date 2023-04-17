@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import {
   Action,
   ConnectorAction,
@@ -31,13 +31,11 @@ const ActionsCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
     connectName: connect,
     connectorName: name,
   });
-  const routerProps = useMemo(() => {
-    return {
-      clusterName,
-      connectName: connect,
-      connectorName: name,
-    };
-  }, [clusterName, connect]);
+  const stateMutation = useUpdateConnectorState({
+    clusterName,
+    connectName: connect,
+    connectorName: name,
+  });
   const handleDelete = () => {
     confirm(
       <>
@@ -48,7 +46,7 @@ const ActionsCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
       }
     );
   };
-  const stateMutation = useUpdateConnectorState(routerProps);
+  // const stateMutation = useUpdateConnectorState(routerProps);
   const resumeConnectorHandler = () =>
     stateMutation.mutateAsync(ConnectorAction.RESUME);
   const restartConnectorHandler = () =>
