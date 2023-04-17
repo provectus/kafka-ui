@@ -4,11 +4,7 @@ import { CellContext } from '@tanstack/react-table';
 import ClusterContext from 'components/contexts/ClusterContext';
 import { ClusterNameRoute } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownItemHint,
-} from 'components/common/Dropdown';
+import { Dropdown, DropdownItemHint } from 'components/common/Dropdown';
 import {
   useDeleteTopic,
   useClearTopicMessages,
@@ -55,7 +51,8 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
           with DELETE policy
         </DropdownItemHint>
       </ActionDropdownItem>
-      <DropdownItem
+      <ActionDropdownItem
+        disabled={!isTopicDeletionAllowed}
         onClick={recreateTopic.mutateAsync}
         confirm={
           <>
@@ -63,9 +60,14 @@ const ActionsCell: React.FC<CellContext<Topic, unknown>> = ({ row }) => {
           </>
         }
         danger
+        permission={{
+          resource: ResourceType.TOPIC,
+          action: [Action.VIEW, Action.CREATE, Action.DELETE],
+          value: name,
+        }}
       >
         Recreate Topic
-      </DropdownItem>
+      </ActionDropdownItem>
       <ActionDropdownItem
         disabled={!isTopicDeletionAllowed}
         onClick={() => deleteTopic.mutateAsync(name)}
