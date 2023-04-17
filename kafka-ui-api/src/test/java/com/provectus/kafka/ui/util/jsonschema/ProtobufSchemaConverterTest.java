@@ -59,8 +59,10 @@ class ProtobufSchemaConverterTest {
                 TestMsg outer_ref = 2;
                 EmbeddedMsg self_ref = 3;
             }
-        }""";
 
+            map<int32, string> intToStringMap = 21;
+            map<string, EmbeddedMsg> strToObjMap  = 22;
+        }""";
 
     String expectedJsonSchema = """
         {
@@ -109,7 +111,9 @@ class ProtobufSchemaConverterTest {
                         "v2": { "type": [ "number", "string", "object", "array", "boolean", "null" ] },
                         "uint32_w_field": { "type": "integer", "maximum": 4294967295, "minimum": 0 },
                         "bool_w_field": { "type": "boolean" },
-                        "uint64_w_field": { "type": "integer", "maximum": 18446744073709551615, "minimum": 0 }
+                        "uint64_w_field": { "type": "integer", "maximum": 18446744073709551615, "minimum": 0 },
+                        "strToObjMap": { "type": "object", "additionalProperties": true },
+                        "intToStringMap": { "type": "object", "additionalProperties": true }
                     }
                 },
                 "test.TestMsg.EmbeddedMsg": {

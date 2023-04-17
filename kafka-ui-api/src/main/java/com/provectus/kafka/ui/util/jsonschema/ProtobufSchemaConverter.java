@@ -94,6 +94,9 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
     if (wellKnownTypeSchema.isPresent()) {
       return wellKnownTypeSchema.get();
     }
+    if (field.isMapField()) {
+      return new MapFieldSchema();
+    }
     final JsonType jsonType = convertType(field);
     FieldSchema fieldSchema;
     if (jsonType.getType().equals(JsonType.Type.OBJECT)) {
@@ -149,67 +152,47 @@ public class ProtobufSchemaConverter implements JsonSchemaConverter<Descriptors.
   }
 
   private JsonType convertType(Descriptors.FieldDescriptor field) {
-    switch (field.getType()) {
-      case INT32:
-      case FIXED32:
-      case SFIXED32:
-      case SINT32:
-        return new SimpleJsonType(
-            JsonType.Type.INTEGER,
-            Map.of(
-                "maximum", IntNode.valueOf(Integer.MAX_VALUE),
-                "minimum", IntNode.valueOf(Integer.MIN_VALUE)
-            )
-        );
-      case UINT32:
-        return new SimpleJsonType(
-            JsonType.Type.INTEGER,
-            Map.of(
-                "maximum", LongNode.valueOf(UnsignedInteger.MAX_VALUE.longValue()),
-                "minimum", IntNode.valueOf(0)
-            )
-        );
+    return switch (field.getType()) {
+      case INT32, FIXED32, SFIXED32, SINT32 -> new SimpleJsonType(
+          JsonType.Type.INTEGER,
+          Map.of(
+              "maximum", IntNode.valueOf(Integer.MAX_VALUE),
+              "minimum", IntNode.valueOf(Integer.MIN_VALUE)
+          )
+      );
+      case UINT32 -> new SimpleJsonType(
+          JsonType.Type.INTEGER,
+          Map.of(
+              "maximum", LongNode.valueOf(UnsignedInteger.MAX_VALUE.longValue()),
+              "minimum", IntNode.valueOf(0)
+          )
+      );
       //TODO: actually all *64 types will be printed with quotes (as strings),
       // see JsonFormat::printSingleFieldValue for impl. This can cause problems when you copy-paste from messages
       // table to `Produce` area - need to think if it is critical or not.
-      case INT64:
-      case FIXED64:
-      case SFIXED64:
-      case SINT64:
-        return new SimpleJsonType(
-            JsonType.Type.INTEGER,
-            Map.of(
-                "maximum", LongNode.valueOf(Long.MAX_VALUE),
-                "minimum", LongNode.valueOf(Long.MIN_VALUE)
-            )
-        );
-      case UINT64:
-        return new SimpleJsonType(
-            JsonType.Type.INTEGER,
-            Map.of(
-                "maximum", new BigIntegerNode(UnsignedLong.MAX_VALUE.bigIntegerValue()),
-                "minimum", LongNode.valueOf(0)
-            )
-        );
-      case MESSAGE:
-      case GROUP:
-        return new SimpleJsonType(JsonType.Type.OBJECT);
-      case ENUM:
-        return new EnumJsonType(
-            field.getEnumType().getValues().stream()
-                .map(Descriptors.EnumValueDescriptor::getName)
-                .collect(Collectors.toList())
-        );
-      case BYTES:
-      case STRING:
-        return new SimpleJsonType(JsonType.Type.STRING);
-      case FLOAT:
-      case DOUBLE:
-        return new SimpleJsonType(JsonType.Type.NUMBER);
-      case BOOL:
-        return new SimpleJsonType(JsonType.Type.BOOLEAN);
-      default:
-        return new SimpleJsonType(JsonType.Type.STRING);
-    }
+      case INT64, FIXED64, SFIXED64, SINT64 -> new SimpleJsonType(
+          JsonType.Type.INTEGER,
+          Map.of(
+              "maximum", LongNode.valueOf(Long.MAX_VALUE),
+              "minimum", LongNode.valueOf(Long.MIN_VALUE)
+          )
+      );
+      case UINT64 -> new SimpleJsonType(
+          JsonType.Type.INTEGER,
+          Map.of(
+              "maximum", new BigIntegerNode(UnsignedLong.MAX_VALUE.bigIntegerValue()),
+              "minimum", LongNode.valueOf(0)
+          )
+      );
+      case MESSAGE, GROUP -> new SimpleJsonType(JsonType.Type.OBJECT);
+      case ENUM -> new EnumJsonType(
+          field.getEnumType().getValues().stream()
+              .map(Descriptors.EnumValueDescriptor::getName)
+              .collect(Collectors.toList())
+      );
+      case BYTES, STRING -> new SimpleJsonType(JsonType.Type.STRING);
+      case FLOAT, DOUBLE -> new SimpleJsonType(JsonType.Type.NUMBER);
+      case BOOL -> new SimpleJsonType(JsonType.Type.BOOLEAN);
+    };
   }
 }
