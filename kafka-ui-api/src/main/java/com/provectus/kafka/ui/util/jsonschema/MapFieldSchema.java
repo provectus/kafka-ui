@@ -7,14 +7,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import javax.annotation.Nullable;
 
-public class MapFieldSchema implements FieldSchema {
+class MapFieldSchema implements FieldSchema {
   private final @Nullable FieldSchema itemSchema;
 
-  public MapFieldSchema(@Nullable FieldSchema itemSchema) {
+  MapFieldSchema(@Nullable FieldSchema itemSchema) {
     this.itemSchema = itemSchema;
   }
 
-  public MapFieldSchema() {
+  MapFieldSchema() {
     this(null);
   }
 

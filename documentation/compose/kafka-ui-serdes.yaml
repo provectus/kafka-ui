@@ -35,7 +35,7 @@ services:
             kafka.clusters.0.serde.0.properties.protobufMessageNameForKey: test.MyKey # default type for keys
             kafka.clusters.0.serde.0.properties.protobufMessageName: test.MyValue # default type for values
             kafka.clusters.0.serde.0.properties.protobufMessageNameForKeyByTopic.topic1: test.MySpecificTopicKey # keys type for topic "topic1"
-            kafka.clusters.0.serde.0.properties.protobufMessageNameByTopic.topic1: test.MySpecificTopicValue # values type for topic "topic1"
+            kafka.clusters.0.serde.0.properties.protobufMessageNameByTopic.topic1: test.MyValue # values type for topic "topic1"
 
             kafka.clusters.0.serde.1.name: String
             #kafka.clusters.0.serde.1.properties.encoding: "UTF-16" #optional, default is UTF-8

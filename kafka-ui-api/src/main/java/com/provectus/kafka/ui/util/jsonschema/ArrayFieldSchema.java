@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class ArrayFieldSchema implements FieldSchema {
+class ArrayFieldSchema implements FieldSchema {
   private final FieldSchema itemsSchema;
 
-  public ArrayFieldSchema(FieldSchema itemsSchema) {
+  ArrayFieldSchema(FieldSchema itemsSchema) {
     this.itemsSchema = itemsSchema;
   }
 
