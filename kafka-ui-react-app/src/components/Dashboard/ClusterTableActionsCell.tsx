@@ -1,17 +1,33 @@
-import React from 'react';
-import { Cluster } from 'generated-sources';
+import React, { useMemo } from 'react';
+import { Cluster, ResourceType } from 'generated-sources';
 import { CellContext } from '@tanstack/react-table';
-import { Button } from 'components/common/Button/Button';
 import { clusterConfigPath } from 'lib/paths';
+import { useGetUserInfo } from 'lib/hooks/api/roles';
+import { ActionCanButton } from 'components/common/ActionComponent';
 
 type Props = CellContext<Cluster, unknown>;
 
 const ClusterTableActionsCell: React.FC<Props> = ({ row }) => {
   const { name } = row.original;
+  const { data } = useGetUserInfo();
+
+  const isApplicationConfig = useMemo(() => {
+    return (
+      data?.userInfo?.permissions.some(
+        (permission) => permission.resource === ResourceType.APPLICATIONCONFIG
+      ) || false
+    );
+  }, [data]);
+
   return (
-    <Button buttonType="secondary" buttonSize="S" to={clusterConfigPath(name)}>
+    <ActionCanButton
+      buttonType="secondary"
+      buttonSize="S"
+      to={clusterConfigPath(name)}
+      canDoAction={isApplicationConfig}
+    >
       Configure
-    </Button>
+    </ActionCanButton>
   );
 };
 
