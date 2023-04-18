@@ -10,12 +10,13 @@ import { useConfirm } from 'lib/hooks/useConfirm';
 import { RouterParamsClusterConnectConnector } from 'lib/paths';
 import { useIsMutating, useQueryClient } from '@tanstack/react-query';
 import { ActionCanButton } from 'components/common/ActionComponent';
-import { usePermission } from 'lib/hooks/usePermission';
 import {
   useDeleteConnector,
   useUpdateConnectorState,
 } from 'lib/hooks/api/kafkaConnect';
 import { Row } from '@tanstack/react-table';
+import { isPermitted } from 'lib/permissions';
+import { useUserInfo } from 'lib/hooks/useUserInfo';
 
 interface BatchActionsBarProps {
   rows: Row<Connector>[];
@@ -36,17 +37,23 @@ const BatchActionsBar: React.FC<BatchActionsBarProps> = ({
   const routerProps = useAppParams<RouterParamsClusterConnectConnector>();
   const { clusterName } = routerProps;
   const client = useQueryClient();
+  const { roles, rbacFlag } = useUserInfo();
 
-  const canEdit = usePermission(
-    ResourceType.CONNECT,
-    Action.EDIT,
-    routerProps.connectorName
-  );
-  const canDelete = usePermission(
-    ResourceType.CONNECT,
-    Action.DELETE,
-    routerProps.connectorName
-  );
+  const canPerformActionOnSelected = (action: Action) => {
+    return selectedConnectors.every((connector) =>
+      isPermitted({
+        roles,
+        resource: ResourceType.CONNECT,
+        action,
+        value: connector.name,
+        clusterName,
+        rbacFlag,
+      })
+    );
+  };
+
+  const canEdit = canPerformActionOnSelected(Action.EDIT);
+  const canDelete = canPerformActionOnSelected(Action.DELETE);
 
   const deleteConnectorMutation = useDeleteConnector(routerProps);
   const deleteConnectorsHandler = () => {
