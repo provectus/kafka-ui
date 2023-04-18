@@ -270,8 +270,8 @@ const Table: React.FC<TableProps<any>> = ({
                 <S.Row
                   expanded={row.getIsExpanded()}
                   onClick={handleRowClick(row)}
-                  onMouseOver={handleRowHover(row)}
-                  onMouseLeave={handleMouseLeave}
+                  onMouseOver={onRowHover ? handleRowHover(row) : undefined}
+                  onMouseLeave={onMouseLeave ? handleMouseLeave : undefined}
                   clickable={
                     !enableRowSelection &&
                     (row.getCanExpand() || onRowClick !== undefined)
