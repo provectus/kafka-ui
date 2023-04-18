@@ -51,13 +51,11 @@ export function useConnects(clusterName: ClusterName) {
   );
 }
 export function useConnectors(clusterName: ClusterName, search?: string) {
-  const client = useQueryClient();
   return useQuery(
     connectorsKey(clusterName, search),
     () => api.getAllConnectors({ clusterName, search }),
     {
       select: (data) => sortBy(data, 'name'),
-      onSuccess: () => client.invalidateQueries(),
     }
   );
 }
@@ -78,7 +76,8 @@ export function useUpdateConnectorState(props: UseConnectorProps) {
   return useMutation(
     (action: ConnectorAction) => api.updateConnectorState({ ...props, action }),
     {
-      onSuccess: () => client.invalidateQueries(connectorKey(props)),
+      onSuccess: () =>
+        client.invalidateQueries(['clusters', props.clusterName, 'connectors']),
     }
   );
 }
