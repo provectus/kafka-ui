@@ -132,7 +132,7 @@ const ACList: React.FC = () => {
       <PageHeading text="Acsess Control List" />
       <Table
         columns={columns}
-        data={aclPayload ?? aclList ?? []}
+        data={aclList ?? []}
         emptyMessage="No ACL items found"
         onRowHover={onRowHover}
         onMouseLeave={() => setRowId('')}
