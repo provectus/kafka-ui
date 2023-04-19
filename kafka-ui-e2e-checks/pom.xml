@@ -264,6 +264,37 @@
                         <artifactId>allure-maven</artifactId>
                         <version>2.10.0</version>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.puppycrawl.tools</groupId>
+                                <artifactId>checkstyle</artifactId>
+                                <version>10.3.1</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>checkstyle</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <violationSeverity>warning</violationSeverity>
+                                    <failOnViolation>true</failOnViolation>
+                                    <failsOnError>true</failsOnError>
+                                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                                    <configLocation>file:${basedir}/../etc/checkstyle/checkstyle-e2e.xml</configLocation>
+                                    <headerLocation>file:${basedir}/../etc/checkstyle/apache-header.txt</headerLocation>
+                                </configuration>
+                            </execution>
+                        </executions>
+
+                    </plugin>
+
                 </plugins>
             </build>
         </profile>

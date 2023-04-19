@@ -1,6 +1,9 @@
 import React from 'react';
 import { TopicMessage, TopicMessageTimestampTypeEnum } from 'generated-sources';
-import Message, { Props } from 'components/Topics/Topic/Messages/Message';
+import Message, {
+  PreviewFilter,
+  Props,
+} from 'components/Topics/Topic/Messages/Message';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
@@ -8,6 +11,9 @@ import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 const messageContentText = 'messageContentText';
 
+const keyTest = '{"payload":{"subreddit":"learnprogramming"}}';
+const contentTest =
+  '{"payload":{"author":"DwaywelayTOP","archived":false,"name":"t3_11jshwd","id":"11jshwd"}}';
 jest.mock(
   'components/Topics/Topic/Messages/MessageContent/MessageContent',
   () => () =>
@@ -28,10 +34,19 @@ describe('Message component', () => {
     content: '{"data": "test"}',
     headers: { header: 'test' },
   };
-
+  const mockKeyFilters: PreviewFilter = {
+    field: 'sub',
+    path: '$.payload.subreddit',
+  };
+  const mockContentFilters: PreviewFilter = {
+    field: 'author',
+    path: '$.payload.author',
+  };
   const renderComponent = (
     props: Partial<Props> = {
       message: mockMessage,
+      keyFilters: [],
+      contentFilters: [],
     }
   ) =>
     render(
@@ -39,8 +54,8 @@ describe('Message component', () => {
         <tbody>
           <Message
             message={props.message || mockMessage}
-            keyFilters={[]}
-            contentFilters={[]}
+            keyFilters={props.keyFilters || []}
+            contentFilters={props.contentFilters || []}
           />
         </tbody>
       </table>
@@ -87,5 +102,25 @@ describe('Message component', () => {
     expect(screen.queryByText(messageContentText)).not.toBeInTheDocument();
     await userEvent.click(messageToggleIcon);
     expect(screen.getByText(messageContentText)).toBeInTheDocument();
+  });
+
+  it('should check if Preview filter showing for key', () => {
+    const props = {
+      message: { ...mockMessage, key: keyTest as string },
+      keyFilters: [mockKeyFilters],
+    };
+    renderComponent(props);
+    const keyFiltered = screen.getByText('sub: "learnprogramming"');
+    expect(keyFiltered).toBeInTheDocument();
+  });
+
+  it('should check if Preview filter showing for Value', () => {
+    const props = {
+      message: { ...mockMessage, content: contentTest as string },
+      contentFilters: [mockContentFilters],
+    };
+    renderComponent(props);
+    const keyFiltered = screen.getByText('author: "DwaywelayTOP"');
+    expect(keyFiltered).toBeInTheDocument();
   });
 });

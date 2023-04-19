@@ -173,6 +173,10 @@ const baseTheme = {
     closeIcon: Colors.neutral[30],
     deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],
+    warningRedIcon: {
+      rectFill: Colors.red[10],
+      pathFill: Colors.red[50],
+    },
     messageToggleIcon: {
       normal: Colors.brand[30],
       hover: Colors.brand[40],
