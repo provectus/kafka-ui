@@ -25,7 +25,7 @@ auth:
         authorization-grant-type: authorization_code
         issuer-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_xxx
         jwk-set-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_xxx/.well-known/jwks.json
-        user-name-attribute: username
+        user-name-attribute: cognito:username
         custom-params:
           type: cognito
           logoutUrl: https://<XXX>>.eu-central-1.amazoncognito.com/logout
@@ -111,4 +111,5 @@ auth:
         token-uri: http(s)://HOSTNAME/login/oauth/access_token
         user-info-uri: http(s)://HOSTNAME/api/v3/user
 ```
+
 Replace `HOSTNAME` by your self-hosted platform FQDN.
