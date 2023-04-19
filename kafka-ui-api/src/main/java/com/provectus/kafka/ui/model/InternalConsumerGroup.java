@@ -86,16 +86,16 @@ public class InternalConsumerGroup {
 
   private static Collection<InternalMember> initInternalMembers(ConsumerGroupDescription description) {
     return description.members().stream()
-    .map(m ->
-        InternalConsumerGroup.InternalMember.builder()
-            .assignment(m.assignment().topicPartitions())
-            .clientId(m.clientId())
-            .groupInstanceId(m.groupInstanceId().orElse(""))
-            .consumerId(m.consumerId())
-            .clientId(m.clientId())
-            .host(m.host())
-            .build()
-    ).collect(Collectors.toList());
+        .map(m ->
+            InternalConsumerGroup.InternalMember.builder()
+                .assignment(m.assignment().topicPartitions())
+                .clientId(m.clientId())
+                .groupInstanceId(m.groupInstanceId().orElse(""))
+                .consumerId(m.consumerId())
+                .clientId(m.clientId())
+                .host(m.host())
+                .build()
+        ).collect(Collectors.toList());
   }
 
 

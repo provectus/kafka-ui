@@ -219,14 +219,14 @@ public class ConsumerGroupService {
     var groupNames = groups.stream().map(ConsumerGroupListing::groupId).toList();
 
     return ac.describeConsumerGroups(groupNames)
-    .flatMap(descriptionsMap -> {
-          List<ConsumerGroupDescription> descriptions = descriptionsMap.values().stream().toList();
-          return getConsumerGroups(ac, descriptions)
-              .map(icg -> Streams.zip(icg.stream(), descriptions.stream(), GroupWithDescr::new).toList())
-              .map(gwd -> sortAndPaginate(gwd, comparator, pageNum, perPage, sortOrderDto)
-                    .map(GroupWithDescr::cgd).toList());
-    }
-    );
+        .flatMap(descriptionsMap -> {
+              List<ConsumerGroupDescription> descriptions = descriptionsMap.values().stream().toList();
+              return getConsumerGroups(ac, descriptions)
+                  .map(icg -> Streams.zip(icg.stream(), descriptions.stream(), GroupWithDescr::new).toList())
+                  .map(gwd -> sortAndPaginate(gwd, comparator, pageNum, perPage, sortOrderDto)
+                      .map(GroupWithDescr::cgd).toList());
+            }
+        );
 
   }
 
