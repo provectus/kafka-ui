@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
@@ -11,6 +11,7 @@ import useBoolean from 'lib/hooks/useBoolean';
 import { Button } from 'components/common/Button/Button';
 import { clusterNewConfigPath } from 'lib/paths';
 import { GlobalSettingsContext } from 'components/contexts/GlobalSettingsContext';
+import { useNavigate } from 'react-router-dom';
 
 import * as S from './Dashboard.styled';
 import ClusterName from './ClusterName';
@@ -20,7 +21,7 @@ const Dashboard: React.FC = () => {
   const clusters = useClusters();
   const { value: showOfflineOnly, toggle } = useBoolean(false);
   const appInfo = React.useContext(GlobalSettingsContext);
-
+  const navigate = useNavigate();
   const config = React.useMemo(() => {
     const clusterList = clusters.data || [];
     const offlineClusters = clusterList.filter(
@@ -54,6 +55,12 @@ const Dashboard: React.FC = () => {
 
     return initialColumns;
   }, []);
+
+  useEffect(() => {
+    if (appInfo.hasDynamicConfig && !clusters.data) {
+      navigate(clusterNewConfigPath);
+    }
+  }, [clusters, appInfo.hasDynamicConfig]);
 
   return (
     <>

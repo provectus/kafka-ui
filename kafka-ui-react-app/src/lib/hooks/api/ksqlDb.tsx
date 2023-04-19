@@ -90,7 +90,9 @@ export const useKsqlkDbSSE = ({ clusterName, pipeId }: UseKsqlkDbSSEProps) => {
 
   React.useEffect(() => {
     const fetchData = async () => {
-      const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/ksql/response`;
+      const url = `${BASE_PARAMS.basePath}/api/clusters/${encodeURIComponent(
+        clusterName
+      )}/ksql/response`;
       await fetchEventSource(
         `${url}?${new URLSearchParams({ pipeId: pipeId || '' }).toString()}`,
         {

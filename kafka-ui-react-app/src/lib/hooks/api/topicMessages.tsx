@@ -51,7 +51,9 @@ export const useTopicMessages = ({
   React.useEffect(() => {
     const fetchData = async () => {
       setIsFetching(true);
-      const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/topics/${topicName}/messages`;
+      const url = `${BASE_PARAMS.basePath}/api/clusters/${encodeURIComponent(
+        clusterName
+      )}/topics/${topicName}/messages`;
       const requestParams = new URLSearchParams({
         limit,
         seekTo: seekTo.replaceAll('-', '::').replaceAll('.', ','),

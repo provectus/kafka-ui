@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -23,9 +22,9 @@ public class ForwardRecordEmitter
   public ForwardRecordEmitter(
       Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
       ConsumerPosition position,
-      ConsumerRecordDeserializer recordDeserializer,
+      MessagesProcessing messagesProcessing,
       PollingSettings pollingSettings) {
-    super(recordDeserializer, pollingSettings);
+    super(messagesProcessing, pollingSettings);
     this.position = position;
     this.consumerSupplier = consumerSupplier;
   }
@@ -40,6 +39,7 @@ public class ForwardRecordEmitter
 
       EmptyPollsCounter emptyPolls = pollingSettings.createEmptyPollsCounter();
       while (!sink.isCancelled()
+          && !sendLimitReached()
           && !seekOperations.assignedPartitionsFullyPolled()
           && !emptyPolls.noDataEmptyPollsReached()) {
 
@@ -50,11 +50,7 @@ public class ForwardRecordEmitter
         log.debug("{} records polled", records.count());
 
         for (ConsumerRecord<Bytes, Bytes> msg : records) {
-          if (!sink.isCancelled()) {
-            sendMessage(sink, msg);
-          } else {
-            break;
-          }
+          sendMessage(sink, msg);
         }
       }
       sendFinishStatsAndCompleteSink(sink);

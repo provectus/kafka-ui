@@ -1,9 +1,9 @@
 package com.provectus.kafka.ui.service.rbac.extractor;
 
-import com.nimbusds.jose.shaded.json.JSONArray;
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,7 +44,7 @@ public class CognitoAuthorityExtractor implements ProviderAuthorityExtractor {
         .map(Role::getName)
         .collect(Collectors.toSet());
 
-    JSONArray groups = principal.getAttribute(COGNITO_GROUPS_ATTRIBUTE_NAME);
+    List<String> groups = principal.getAttribute(COGNITO_GROUPS_ATTRIBUTE_NAME);
     if (groups == null) {
       log.debug("Cognito groups param is not present");
       return Mono.just(groupsByUsername);
@@ -56,9 +56,8 @@ public class CognitoAuthorityExtractor implements ProviderAuthorityExtractor {
             .stream()
             .filter(s -> s.getProvider().equals(Provider.OAUTH_COGNITO))
             .filter(s -> s.getType().equals("group"))
-            .anyMatch(subject -> Stream.of(groups.toArray())
+            .anyMatch(subject -> Stream.of(groups)
                 .map(Object::toString)
-                .distinct()
                 .anyMatch(cognitoGroup -> cognitoGroup.equals(subject.getValue()))
             ))
         .map(Role::getName)

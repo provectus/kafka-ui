@@ -36,7 +36,7 @@ jobs:
       - name: Pull with Docker
         id: pull_chrome
         run: |
-          docker pull selenium/standalone-chrome:103.0
+          docker pull selenoid/vnc_chrome:103.0
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -52,6 +52,7 @@ jobs:
         id: compose_app
         # use the following command until #819 will be fixed
         run: |
+          docker-compose -f kafka-ui-e2e-checks/docker/selenoid-git.yaml up -d
           docker-compose -f ./documentation/compose/e2e-tests.yaml up -d
       - name: Run test suite
         run: |
@@ -78,7 +79,7 @@ jobs:
         uses: Sibz/github-status-action@v1.1.6
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
-          context: "Test report"
+          context: "Click Details button to open Allure report"
           state: "success"
           sha: ${{ github.sha }}
           target_url: http://kafkaui-allure-reports.s3-website.eu-central-1.amazonaws.com/${{ github.run_number }}

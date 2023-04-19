@@ -52,7 +52,10 @@ public class KsqlApiClient {
     boolean error;
 
     public Optional<JsonNode> getColumnValue(List<JsonNode> row, String column) {
-      return Optional.ofNullable(row.get(columnNames.indexOf(column)));
+      int colIdx = columnNames.indexOf(column);
+      return colIdx >= 0
+          ? Optional.ofNullable(row.get(colIdx))
+          : Optional.empty();
     }
   }
 

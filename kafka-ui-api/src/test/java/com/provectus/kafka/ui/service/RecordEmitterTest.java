@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
+import com.provectus.kafka.ui.emitter.MessagesProcessing;
 import com.provectus.kafka.ui.emitter.PollingSettings;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
@@ -106,12 +107,16 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     );
   }
 
+  private MessagesProcessing createMessagesProcessing() {
+    return new MessagesProcessing(RECORD_DESERIALIZER, msg -> true, null);
+  }
+
   @Test
   void pollNothingOnEmptyTopic() {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(BEGINNING, EMPTY_TOPIC, null),
-        RECORD_DESERIALIZER,
+        createMessagesProcessing(),
         PollingSettings.createDefault()
     );
 
@@ -119,7 +124,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(BEGINNING, EMPTY_TOPIC, null),
         100,
-        RECORD_DESERIALIZER,
+        createMessagesProcessing(),
         PollingSettings.createDefault()
     );
 
@@ -141,7 +146,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(BEGINNING, TOPIC, null),
-        RECORD_DESERIALIZER,
+        createMessagesProcessing(),
         PollingSettings.createDefault()
     );
 
@@ -149,7 +154,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(LATEST, TOPIC, null),
         PARTITIONS * MSGS_PER_PARTITION,
-        RECORD_DESERIALIZER,
+        createMessagesProcessing(),
         PollingSettings.createDefault()
     );
 
@@ -170,7 +175,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
-        RECORD_DESERIALIZER,
+        createMessagesProcessing(),
         PollingSettings.createDefault()
     );
 
@@ -178,7 +183,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
         PARTITIONS * MSGS_PER_PARTITION,
-        RECORD_DESERIALIZER,
+        createMessagesProcessing(),
         PollingSettings.createDefault()
     );
 
@@ -215,7 +220,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(TIMESTAMP, TOPIC, targetTimestamps),
-        RECORD_DESERIALIZER,
+        createMessagesProcessing(),
         PollingSettings.createDefault()
     );
 
@@ -223,7 +228,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(TIMESTAMP, TOPIC, targetTimestamps),
         PARTITIONS * MSGS_PER_PARTITION,
-        RECORD_DESERIALIZER,
+        createMessagesProcessing(),
         PollingSettings.createDefault()
     );
 
@@ -254,7 +259,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, targetOffsets),
         numMessages,
-        RECORD_DESERIALIZER,
+        createMessagesProcessing(),
         PollingSettings.createDefault()
     );
 
@@ -280,7 +285,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(OFFSET, TOPIC, offsets),
         100,
-        RECORD_DESERIALIZER,
+        createMessagesProcessing(),
         PollingSettings.createDefault()
     );
 
