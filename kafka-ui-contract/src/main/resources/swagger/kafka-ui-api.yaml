@@ -3467,6 +3467,12 @@ components:
                               type: array
                               items:
                                 $ref: '#/components/schemas/Action'
+            webclient:
+              type: object
+              properties:
+                maxInMemoryBufferSize:
+                  type: string
+                  description: "examples: 20, 12KB, 5MB"
             kafka:
               type: object
               properties:
@@ -3479,6 +3485,10 @@ components:
                       type: integer
                     noDataEmptyPolls:
                       type: integer
+                adminClientTimeout:
+                  type: integer
+                internalTopicPrefix:
+                  type: string
                 clusters:
                   type: array
                   items:
