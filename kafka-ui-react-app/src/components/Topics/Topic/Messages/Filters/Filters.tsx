@@ -204,7 +204,7 @@ const Filters: React.FC<FiltersProps> = ({
       q:
         queryType === MessageFilterType.GROOVY_SCRIPT
           ? activeFilter.code
-          : query,
+          : searchParams.get('q') || '',
       filterQueryType: queryType,
       attempt: nextAttempt,
       limit: PER_PAGE,
