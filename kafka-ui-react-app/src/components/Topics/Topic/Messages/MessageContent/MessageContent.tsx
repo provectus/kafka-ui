@@ -15,6 +15,8 @@ export interface MessageContentProps {
   headers?: { [key: string]: string | undefined };
   timestamp?: Date;
   timestampType?: TopicMessageTimestampTypeEnum;
+  keySize?: number;
+  contentSize?: number;
 }
 
 const MessageContent: React.FC<MessageContentProps> = ({
@@ -23,6 +25,8 @@ const MessageContent: React.FC<MessageContentProps> = ({
   headers,
   timestamp,
   timestampType,
+  keySize,
+  contentSize,
 }) => {
   const [activeTab, setActiveTab] = React.useState<Tab>('content');
   const [searchParams] = useSearchParams();
@@ -54,8 +58,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
     e.preventDefault();
     setActiveTab('headers');
   };
-  const keySize = new TextEncoder().encode(messageKey).length;
-  const contentSize = new TextEncoder().encode(messageContent).length;
+
   const contentType =
     messageContent && messageContent.trim().startsWith('{')
       ? SchemaType.JSON
