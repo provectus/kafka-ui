@@ -29,8 +29,10 @@ const Message: React.FC<Props> = ({
     timestampType,
     offset,
     key,
+    keySize,
     partition,
     content,
+    valueSize,
     headers,
     valueSerde,
     keySerde,
@@ -138,6 +140,8 @@ const Message: React.FC<Props> = ({
           headers={headers}
           timestamp={timestamp}
           timestampType={timestampType}
+          keySize={keySize}
+          contentSize={valueSize}
         />
       )}
     </>
