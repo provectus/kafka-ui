@@ -2,6 +2,7 @@ import React from 'react';
 import WarningIcon from 'components/common/Icons/WarningIcon';
 import { gitCommitPath } from 'lib/paths';
 import { useLatestVersion } from 'lib/hooks/api/latestVersion';
+import { formatTimestamp } from 'lib/dateTimeHelpers';
 
 import * as S from './Version.styled';
 
@@ -31,7 +32,7 @@ const Version: React.FC = () => {
           </S.CurrentCommitLink>
         </div>
       )}
-      <S.CurrentVersion>{buildTime}</S.CurrentVersion>
+      <S.CurrentVersion>{formatTimestamp(buildTime)}</S.CurrentVersion>
     </S.Wrapper>
   );
 };
