@@ -61,4 +61,39 @@ public class SmokeBacklog extends BaseManualTest {
   @Test
   public void testCaseG() {
   }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = TOPICS_PROFILE_SUITE_ID)
+  @QaseId(343)
+  @Test
+  public void testCaseH() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = TOPICS_PROFILE_SUITE_ID)
+  @QaseId(344)
+  @Test
+  public void testCaseI() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = TOPICS_PROFILE_SUITE_ID)
+  @QaseId(345)
+  @Test
+  public void testCaseJ() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = TOPICS_PROFILE_SUITE_ID)
+  @QaseId(346)
+  @Test
+  public void testCaseK() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = TOPICS_PROFILE_SUITE_ID)
+  @QaseId(347)
+  @Test
+  public void testCaseL() {
+  }
 }
