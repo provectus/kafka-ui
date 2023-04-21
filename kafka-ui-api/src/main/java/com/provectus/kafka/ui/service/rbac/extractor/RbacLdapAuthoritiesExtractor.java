@@ -17,6 +17,7 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.support.BaseLdapPathContextSource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.ldap.SpringSecurityLdapTemplate;
 import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 
@@ -59,7 +60,10 @@ public class RbacLdapAuthoritiesExtractor extends DefaultLdapAuthoritiesPopulato
         "Searching for roles for user [{}] with DN [{}], groupRoleAttribute [{}] and filter [{}] in search base [{}]",
         username, userDn, props.getGroupRoleAttribute(), getGroupSearchFilter(), groupSearchBase);
 
-    Set<Map<String, List<String>>> userRoles = getLdapTemplate().searchForMultipleAttributeValues(
+    var ldapTemplate = getLdapTemplate();
+    ldapTemplate.setIgnoreNameNotFoundException(true);
+
+    Set<Map<String, List<String>>> userRoles = ldapTemplate.searchForMultipleAttributeValues(
         groupSearchBase, getGroupSearchFilter(), new String[] {userDn, username},
         new String[] {props.getGroupRoleAttribute()});
 
