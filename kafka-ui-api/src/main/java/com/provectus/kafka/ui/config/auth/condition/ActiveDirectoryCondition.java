@@ -5,17 +5,17 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 public class ActiveDirectoryCondition extends AllNestedConditions {
 
-  public ActiveDirectoryCondition(ConfigurationPhase configurationPhase) {
-    super(configurationPhase);
+  public ActiveDirectoryCondition() {
+    super(ConfigurationPhase.PARSE_CONFIGURATION);
   }
 
   @ConditionalOnProperty(value = "auth.type", havingValue = "LDAP")
-  static class onAuthType {
+  public static class OnAuthType {
 
   }
 
-  @ConditionalOnProperty(value = "oauth2.ldap.activeDirectory", havingValue = "true")
-  static class onActiveDirectory {
+  @ConditionalOnProperty(value = "${oauth2.ldap.activeDirectory}:false", havingValue = "true", matchIfMissing = false)
+  public static class OnActiveDirectory {
 
   }
 }
