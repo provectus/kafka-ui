@@ -28,7 +28,6 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.OffsetSpec;
@@ -46,7 +45,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class MessagesService {
 
