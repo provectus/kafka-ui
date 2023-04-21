@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 public enum Resource {
 
+  APPLICATIONCONFIG,
   CLUSTERCONFIG,
   TOPIC,
   CONSUMER,

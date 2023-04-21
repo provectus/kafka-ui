@@ -6,24 +6,21 @@ import ClusterMenuItem from './ClusterMenuItem';
 import * as S from './Nav.styled';
 
 const Nav: React.FC = () => {
-  const query = useClusters();
-
-  if (!query.isSuccess) {
-    return null;
-  }
+  const clusters = useClusters();
 
   return (
     <aside aria-label="Sidebar Menu">
       <S.List>
         <ClusterMenuItem to="/" title="Dashboard" isTopLevel />
       </S.List>
-      {query.data.map((cluster) => (
-        <ClusterMenu
-          cluster={cluster}
-          key={cluster.name}
-          singleMode={query.data.length === 1}
-        />
-      ))}
+      {clusters.isSuccess &&
+        clusters.data.map((cluster) => (
+          <ClusterMenu
+            cluster={cluster}
+            key={cluster.name}
+            singleMode={clusters.data.length === 1}
+          />
+        ))}
     </aside>
   );
 };

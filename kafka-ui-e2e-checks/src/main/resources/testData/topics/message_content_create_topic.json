@@ -1,0 +1,24 @@
+{
+  "schema":
+  {
+    "type":"struct",
+    "fields": [
+      {
+        "type":"string",
+        "optional":false,
+        "field":"id"
+      },{
+        "type":"string",
+        "optional":false,
+        "field":"value"
+      }
+    ],
+    "optional":false,
+    "name":"test"
+  },
+  "payload":
+  {
+    "id":"1",
+    "value":"kafka"
+  }
+}

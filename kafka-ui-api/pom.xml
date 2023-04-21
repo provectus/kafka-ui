@@ -200,6 +200,31 @@
         </dependency>
 
         <dependency>
+            <groupId>org.opendatadiscovery</groupId>
+            <artifactId>oddrn-generator-java</artifactId>
+            <version>${odd-oddrn-generator.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opendatadiscovery</groupId>
+            <artifactId>ingestion-contract-client</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-webflux</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.projectreactor</groupId>
+                    <artifactId>reactor-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.projectreactor.ipc</groupId>
+                    <artifactId>reactor-netty</artifactId>
+                </exclusion>
+            </exclusions>
+            <version>${odd-oddrn-client.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-ldap</artifactId>
         </dependency>

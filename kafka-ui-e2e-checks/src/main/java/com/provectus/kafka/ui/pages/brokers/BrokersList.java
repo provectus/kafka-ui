@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.pages.brokers;
 
 import static com.codeborne.selenide.Selenide.$x;
+import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.BROKERS;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
@@ -14,12 +15,10 @@ import java.util.stream.Stream;
 
 public class BrokersList extends BasePage {
 
-  protected SelenideElement brokersListHeader = $x("//h1[text()='Brokers']");
-
   @Step
   public BrokersList waitUntilScreenReady() {
     waitUntilSpinnerDisappear();
-    brokersListHeader.shouldBe(Condition.visible);
+    getPageTitleFromHeader(BROKERS).shouldBe(Condition.visible);
     return this;
   }
 
@@ -61,20 +60,20 @@ public class BrokersList extends BasePage {
 
   private List<BrokersList.BrokerGridItem> initGridItems() {
     List<BrokersList.BrokerGridItem> gridItemList = new ArrayList<>();
-    allGridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
+    gridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
         .forEach(item -> gridItemList.add(new BrokersList.BrokerGridItem(item)));
     return gridItemList;
   }
 
   @Step
-  public BrokerGridItem getBrokerItem(int id){
+  public BrokerGridItem getBrokerItem(int id) {
     return initGridItems().stream()
-        .filter(e ->e.getId() == id)
-        .findFirst().orElse(null);
+        .filter(e -> e.getId() == id)
+        .findFirst().orElseThrow();
   }
 
   @Step
-  public List<BrokerGridItem> getAllBrokers(){
+  public List<BrokerGridItem> getAllBrokers() {
     return initGridItems();
   }
 
@@ -101,22 +100,22 @@ public class BrokersList extends BasePage {
     }
 
     @Step
-    public int getSegmentSize(){
+    public int getSegmentSize() {
       return Integer.parseInt(element.$x("./td[2]").getText().trim());
     }
 
     @Step
-    public int getSegmentCount(){
+    public int getSegmentCount() {
       return Integer.parseInt(element.$x("./td[3]").getText().trim());
     }
 
     @Step
-    public int getPort(){
+    public int getPort() {
       return Integer.parseInt(element.$x("./td[4]").getText().trim());
     }
 
     @Step
-    public String getHost(){
+    public String getHost() {
       return element.$x("./td[5]").getText().trim();
     }
   }

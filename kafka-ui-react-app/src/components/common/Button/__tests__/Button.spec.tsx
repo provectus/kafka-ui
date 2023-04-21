@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'components/common/Button/Button';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 
 describe('Button', () => {
   it('renders small primary Button', () => {
@@ -10,7 +10,7 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toBeInTheDocument();
     expect(screen.getByRole('button')).toHaveStyleRule(
       'color',
-      theme.button.primary.color
+      theme.button.primary.color.normal
     );
     expect(screen.getByRole('button')).toHaveStyleRule(
       'font-size',
@@ -23,7 +23,7 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toBeInTheDocument();
     expect(screen.getByRole('button')).toHaveStyleRule(
       'color',
-      theme.button.secondary.color
+      theme.button.secondary.color.normal
     );
     expect(screen.getByRole('button')).toHaveStyleRule(
       'font-size',
@@ -36,7 +36,7 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toBeInTheDocument();
     expect(screen.getByRole('button')).toHaveStyleRule(
       'color',
-      theme.button.secondary.color
+      theme.button.secondary.color.normal
     );
   });
 
@@ -57,5 +57,11 @@ describe('Button', () => {
       'color',
       theme.button.primary.invertedColors.normal
     );
+  });
+  it('renders disabled button and spinner when inProgress truthy', () => {
+    render(<Button buttonType="primary" buttonSize="M" inProgress />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(screen.getByRole('button')).toBeDisabled();
   });
 });

@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.springframework.web.server.WebSession;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -45,6 +46,10 @@ public class CognitoLogoutSuccessHandler implements LogoutSuccessHandler {
         .fragment(null)
         .build();
 
+    Assert.isTrue(
+        provider.getCustomParams() != null && provider.getCustomParams().containsKey("logoutUrl"),
+        "Custom params should contain 'logoutUrl'"
+    );
     final var uri = UriComponentsBuilder
         .fromUri(URI.create(provider.getCustomParams().get("logoutUrl")))
         .queryParam("client_id", provider.getClientId())

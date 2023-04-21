@@ -4,10 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.model.BrokerConfigDTO;
+import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.ServerStatusDTO;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,6 +21,18 @@ public class ConfigTest extends AbstractIntegrationTest {
 
   @Autowired
   private WebTestClient webTestClient;
+
+  @BeforeEach
+  void waitUntilStatsInitialized() {
+    Awaitility.await()
+        .atMost(Duration.ofSeconds(10))
+        .pollInSameThread()
+        .until(() -> {
+          var stats = applicationContext.getBean(StatisticsCache.class)
+              .get(KafkaCluster.builder().name(LOCAL).build());
+          return stats.getStatus() == ServerStatusDTO.ONLINE;
+        });
+  }
 
   @Test
   public void testAlterConfig() {

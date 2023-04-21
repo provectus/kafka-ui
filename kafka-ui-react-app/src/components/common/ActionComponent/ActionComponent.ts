@@ -1,4 +1,4 @@
-import { Placement } from '@floating-ui/react-dom-interactions';
+import { Placement } from '@floating-ui/react';
 import { Action, ResourceType } from 'generated-sources';
 
 export interface ActionComponentProps {

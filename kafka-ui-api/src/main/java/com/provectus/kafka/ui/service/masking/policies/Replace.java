@@ -10,6 +10,8 @@ import java.util.List;
 
 class Replace extends MaskingPolicy {
 
+  static final String DEFAULT_REPLACEMENT = "***DATA_MASKED***";
+
   private final String replacement;
 
   Replace(List<String> fieldNames, String replacementString) {

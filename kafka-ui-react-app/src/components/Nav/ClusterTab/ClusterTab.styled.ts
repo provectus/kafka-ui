@@ -36,6 +36,7 @@ export const Title = styled.div`
   max-width: 110px;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: ${({ theme }) => theme.menu.titleColor};
 `;
 
 export const StatusIconWrapper = styled.svg.attrs({

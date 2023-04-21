@@ -175,7 +175,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
           List<InternalTopic> filtered = existingTopics.stream()
               .filter(topic -> !topic.isInternal()
                   || showInternal != null && showInternal)
-              .filter(topic -> search == null || StringUtils.contains(topic.getName(), search))
+              .filter(topic -> search == null || StringUtils.containsIgnoreCase(topic.getName(), search))
               .sorted(comparator)
               .toList();
           var totalPages = (filtered.size() / pageSize)

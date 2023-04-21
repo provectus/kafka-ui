@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Wrapper = styled.div<{ $open?: boolean }>(
   ({ theme, $open }) => `
-  background-color: ${theme.layout.backgroundColor};
+  background-color: ${theme.default.backgroundColor};
   position: fixed;
   top: ${theme.layout.navBarHeight};
   bottom: 0;
@@ -24,7 +24,7 @@ export const Wrapper = styled.div<{ $open?: boolean }>(
 
 export const Content = styled.div<{ $open?: boolean }>(
   ({ theme }) => `
-  background-color: ${theme.layout.backgroundColor};
+  background-color: ${theme.default.backgroundColor};
   overflow-y: auto;
   position: absolute;
   top: 65px;

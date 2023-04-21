@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const Wrapper = styled.div`
   margin-top: 16px;
   padding: 16px;
-  border-top: 1px solid ${({ theme }) => theme.dangerZone.borderColor};
+  border: 1px solid ${({ theme }) => theme.dangerZone.borderColor};
   box-sizing: border-box;
   width: 768px;
 

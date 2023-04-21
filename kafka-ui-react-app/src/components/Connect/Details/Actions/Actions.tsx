@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useIsMutating } from '@tanstack/react-query';
 import {
@@ -21,13 +20,9 @@ import {
 import { useConfirm } from 'lib/hooks/useConfirm';
 import { Dropdown } from 'components/common/Dropdown';
 import { ActionDropdownItem } from 'components/common/ActionComponent';
+import ChevronDownIcon from 'components/common/Icons/ChevronDownIcon';
 
-const ConnectorActionsWrapperStyled = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-`;
+import * as S from './Action.styled';
 
 const Actions: React.FC = () => {
   const navigate = useNavigate();
@@ -66,10 +61,16 @@ const Actions: React.FC = () => {
     stateMutation.mutateAsync(ConnectorAction.PAUSE);
   const resumeConnectorHandler = () =>
     stateMutation.mutateAsync(ConnectorAction.RESUME);
-
   return (
-    <ConnectorActionsWrapperStyled>
-      <Dropdown>
+    <S.ConnectorActionsWrapperStyled>
+      <Dropdown
+        label={
+          <S.RestartButton>
+            <S.ButtonLabel>Restart</S.ButtonLabel>
+            <ChevronDownIcon />
+          </S.RestartButton>
+        }
+      >
         {connector?.status.state === ConnectorState.RUNNING && (
           <ActionDropdownItem
             onClick={pauseConnectorHandler}
@@ -129,6 +130,8 @@ const Actions: React.FC = () => {
         >
           Restart Failed Tasks
         </ActionDropdownItem>
+      </Dropdown>
+      <Dropdown>
         <ActionDropdownItem
           onClick={deleteConnectorHandler}
           disabled={isMutating}
@@ -142,7 +145,7 @@ const Actions: React.FC = () => {
           Delete
         </ActionDropdownItem>
       </Dropdown>
-    </ConnectorActionsWrapperStyled>
+    </S.ConnectorActionsWrapperStyled>
   );
 };
 

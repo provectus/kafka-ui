@@ -1,0 +1,15 @@
+{
+  "chrome": {
+    "default": "103.0",
+    "versions": {
+      "103.0": {
+        "image": "selenoid/vnc_chrome:103.0",
+        "hosts": [
+          "host.docker.internal:172.17.0.1"
+        ],
+        "port": "4444",
+        "path": "/"
+      }
+    }
+  }
+}

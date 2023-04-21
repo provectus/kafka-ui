@@ -17,7 +17,7 @@ public class BrokersConfigTab extends BasePage {
   protected SelenideElement searchByKeyField = $x("//input[@placeholder='Search by Key']");
 
   @Step
-  public BrokersConfigTab waitUntilScreenReady(){
+  public BrokersConfigTab waitUntilScreenReady() {
     waitUntilSpinnerDisappear();
     searchByKeyField.shouldBe(Condition.visible);
     return this;
@@ -25,7 +25,7 @@ public class BrokersConfigTab extends BasePage {
 
   @Step
   public boolean isSearchByKeyVisible() {
-   return isVisible(searchByKeyField);
+    return isVisible(searchByKeyField);
   }
 
   public List<SelenideElement> getColumnHeaders() {

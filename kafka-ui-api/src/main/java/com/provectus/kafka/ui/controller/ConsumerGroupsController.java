@@ -189,8 +189,8 @@ public class ConsumerGroupsController extends AbstractController implements Cons
   private ConsumerGroupsPageResponseDTO convertPage(ConsumerGroupService.ConsumerGroupsPage
                                                         consumerGroupConsumerGroupsPage) {
     return new ConsumerGroupsPageResponseDTO()
-        .pageCount(consumerGroupConsumerGroupsPage.getTotalPages())
-        .consumerGroups(consumerGroupConsumerGroupsPage.getConsumerGroups()
+        .pageCount(consumerGroupConsumerGroupsPage.totalPages())
+        .consumerGroups(consumerGroupConsumerGroupsPage.consumerGroups()
             .stream()
             .map(ConsumerGroupMapper::toDto)
             .collect(Collectors.toList()));

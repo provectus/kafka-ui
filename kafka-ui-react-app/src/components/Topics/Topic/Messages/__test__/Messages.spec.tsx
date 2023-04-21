@@ -78,11 +78,13 @@ describe('Messages', () => {
       const liveOptionConf = SeekDirectionOptions[2];
       const labelValue2 = liveOptionConf.label;
       await userEvent.click(seekDirectionSelect);
-      const liveModeLi = screen.getByRole(
-        (role, element) =>
-          role === 'option' &&
-          element?.getAttribute('value') === liveOptionConf.value
+
+      const options = screen.getAllByRole('option');
+      const liveModeLi = options.find(
+        (option) => option.getAttribute('value') === liveOptionConf.value
       );
+      expect(liveModeLi).toBeInTheDocument();
+      if (!liveModeLi) return; // to make TS happy
       await userEvent.selectOptions(seekDirectionSelect, [liveModeLi]);
       expect(seekDirectionOption).toHaveTextContent(labelValue2);
 

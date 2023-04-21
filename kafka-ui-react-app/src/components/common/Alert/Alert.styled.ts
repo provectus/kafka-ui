@@ -1,7 +1,7 @@
-import { ToastType } from 'react-hot-toast';
 import styled from 'styled-components';
+import { ToastTypes } from 'lib/errorHandling';
 
-export const Alert = styled.div<{ $type: ToastType }>`
+export const Alert = styled.div<{ $type: ToastTypes }>`
   background-color: ${({ $type, theme }) => theme.alert.color[$type]};
   width: 500px;
   min-height: 64px;

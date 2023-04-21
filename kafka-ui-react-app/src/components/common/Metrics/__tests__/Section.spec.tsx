@@ -1,6 +1,7 @@
 import React from 'react';
 import { Section } from 'components/common/Metrics';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 const child = 'Child';
 const title = 'Test Title';

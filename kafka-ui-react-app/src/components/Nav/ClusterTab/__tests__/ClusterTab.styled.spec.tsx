@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'lib/testHelpers';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 import { screen } from '@testing-library/react';
 import * as S from 'components/Nav/ClusterTab/ClusterTab.styled';
 import { ServerStatus } from 'generated-sources';

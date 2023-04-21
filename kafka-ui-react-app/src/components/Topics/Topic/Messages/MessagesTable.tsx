@@ -52,7 +52,18 @@ const MessagesTable: React.FC = () => {
   };
 
   return (
-    <>
+    <div style={{ position: 'relative' }}>
+      {previewFor !== null && (
+        <PreviewModal
+          values={previewFor === 'key' ? keyFilters : contentFilters}
+          toggleIsOpen={() => setPreviewFor(null)}
+          setFilters={(payload: PreviewFilter[]) =>
+            previewFor === 'key'
+              ? setKeyFilters(payload)
+              : setContentFilters(payload)
+          }
+        />
+      )}
       <Table isFullwidth>
         <thead>
           <tr>
@@ -77,18 +88,6 @@ const MessagesTable: React.FC = () => {
               onPreview={() => setPreviewFor('content')}
             />
             <TableHeaderCell> </TableHeaderCell>
-
-            {previewFor !== null && (
-              <PreviewModal
-                values={previewFor === 'key' ? keyFilters : contentFilters}
-                toggleIsOpen={() => setPreviewFor(null)}
-                setFilters={(payload: PreviewFilter[]) =>
-                  previewFor === 'key'
-                    ? setKeyFilters(payload)
-                    : setContentFilters(payload)
-                }
-              />
-            )}
           </tr>
         </thead>
         <tbody>
@@ -139,7 +138,7 @@ const MessagesTable: React.FC = () => {
           </Button>
         </S.Pages>
       </S.Pagination>
-    </>
+    </div>
   );
 };
 

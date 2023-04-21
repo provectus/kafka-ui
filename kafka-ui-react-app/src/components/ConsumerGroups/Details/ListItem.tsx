@@ -8,7 +8,7 @@ import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 
 import TopicContents from './TopicContents/TopicContents';
-import { ToggleButton } from './ListItem.styled';
+import { FlexWrapper } from './ListItem.styled';
 
 interface Props {
   clusterName: ClusterName;
@@ -30,14 +30,16 @@ const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
   return (
     <>
       <tr>
-        <ToggleButton>
-          <IconButtonWrapper onClick={() => setIsOpen(!isOpen)} aria-hidden>
-            <MessageToggleIcon isOpen={isOpen} />
-          </IconButtonWrapper>
-        </ToggleButton>
-        <TableKeyLink>
-          <Link to={clusterTopicPath(clusterName, name)}>{name}</Link>
-        </TableKeyLink>
+        <td>
+          <FlexWrapper>
+            <IconButtonWrapper onClick={() => setIsOpen(!isOpen)} aria-hidden>
+              <MessageToggleIcon isOpen={isOpen} />
+            </IconButtonWrapper>
+            <TableKeyLink>
+              <Link to={clusterTopicPath(clusterName, name)}>{name}</Link>
+            </TableKeyLink>
+          </FlexWrapper>
+        </td>
         <td>{getTotalMessagesBehind()}</td>
       </tr>
       {isOpen && <TopicContents consumers={consumers} />}

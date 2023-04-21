@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service.rbac;
 
+import static com.provectus.kafka.ui.model.rbac.Resource.APPLICATIONCONFIG;
+
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
 import com.provectus.kafka.ui.config.auth.RbacUser;
 import com.provectus.kafka.ui.config.auth.RoleBasedAccessControlProperties;
@@ -19,6 +21,7 @@ import com.provectus.kafka.ui.service.rbac.extractor.CognitoAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GithubAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GoogleAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.ProviderAuthorityExtractor;
+import jakarta.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +30,6 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -58,7 +60,7 @@ public class AccessControlService {
 
   @PostConstruct
   public void init() {
-    if (properties.getRoles().isEmpty()) {
+    if (CollectionUtils.isEmpty(properties.getRoles())) {
       log.trace("No roles provided, disabling RBAC");
       return;
     }
@@ -96,7 +98,8 @@ public class AccessControlService {
     return getUser()
         .doOnNext(user -> {
           boolean accessGranted =
-              isClusterAccessible(context, user)
+              isApplicationConfigAccessible(context, user)
+                  && isClusterAccessible(context, user)
                   && isClusterConfigAccessible(context, user)
                   && isTopicAccessible(context, user)
                   && isConsumerGroupAccessible(context, user)
@@ -118,6 +121,20 @@ public class AccessControlService {
         .filter(authentication -> authentication.getPrincipal() instanceof RbacUser)
         .map(authentication -> ((RbacUser) authentication.getPrincipal()))
         .map(user -> new AuthenticatedUser(user.name(), user.groups()));
+  }
+
+  public boolean isApplicationConfigAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+    if (CollectionUtils.isEmpty(context.getApplicationConfigActions())) {
+      return true;
+    }
+    Set<String> requiredActions = context.getApplicationConfigActions()
+        .stream()
+        .map(a -> a.toString().toUpperCase())
+        .collect(Collectors.toSet());
+    return isAccessible(APPLICATIONCONFIG, null, user, context, requiredActions);
   }
 
   private boolean isClusterAccessible(AccessContext context, AuthenticatedUser user) {
@@ -356,12 +373,12 @@ public class AccessControlService {
     return Collections.unmodifiableList(properties.getRoles());
   }
 
-  private boolean isAccessible(Resource resource, String resourceValue,
+  private boolean isAccessible(Resource resource, @Nullable String resourceValue,
                                AuthenticatedUser user, AccessContext context, Set<String> requiredActions) {
     Set<String> grantedActions = properties.getRoles()
         .stream()
         .filter(filterRole(user))
-        .filter(filterCluster(context.getCluster()))
+        .filter(filterCluster(resource, context.getCluster()))
         .flatMap(grantedRole -> grantedRole.getPermissions().stream())
         .filter(filterResource(resource))
         .filter(filterResourceValue(resourceValue))
@@ -382,21 +399,28 @@ public class AccessControlService {
         .anyMatch(cluster::equalsIgnoreCase);
   }
 
+  private Predicate<Role> filterCluster(Resource resource, String cluster) {
+    if (resource == APPLICATIONCONFIG) {
+      return role -> true;
+    }
+    return filterCluster(cluster);
+  }
+
   private Predicate<Permission> filterResource(Resource resource) {
     return grantedPermission -> resource == grantedPermission.getResource();
   }
 
-  private Predicate<Permission> filterResourceValue(String resourceValue) {
+  private Predicate<Permission> filterResourceValue(@Nullable String resourceValue) {
 
     if (resourceValue == null) {
       return grantedPermission -> true;
     }
     return grantedPermission -> {
-      Pattern value = grantedPermission.getValue();
-      if (value == null) {
+      Pattern valuePattern = grantedPermission.getCompiledValuePattern();
+      if (valuePattern == null) {
         return true;
       }
-      return value.matcher(resourceValue).matches();
+      return valuePattern.matcher(resourceValue).matches();
     };
   }
 

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
-export const ToggleButton = styled.td`
-  padding: 8px 8px 8px 16px !important;
-  width: 30px;
+export const FlexWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;

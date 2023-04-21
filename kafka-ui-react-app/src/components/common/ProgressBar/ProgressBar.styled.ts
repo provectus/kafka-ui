@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 export const Wrapper = styled.div`
   height: 10px;
-  width: '100%';
+  width: 100%;
   min-width: 200px;
   background-color: ${({ theme }) => theme.progressBar.backgroundColor};
   border-radius: 5px;
@@ -16,7 +16,7 @@ export const Filler = styled.div<{ completed: number }>(
     width: ${completed}%;
     background-color: ${progressBar.compleatedColor};
     border-radius: 5px;
-    text-align: 'right';
+    text-align: right;
     transition: width 1.2s linear;
   `
 );

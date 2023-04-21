@@ -1,0 +1,11 @@
+syntax = "proto3";
+package test.lang;
+
+enum Language {
+    DE = 0;
+    EN = 1;
+    ES = 2;
+    FR = 3;
+    PL = 4;
+    RU = 5;
+}

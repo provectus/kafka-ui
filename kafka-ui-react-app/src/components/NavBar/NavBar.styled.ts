@@ -28,11 +28,11 @@ export const NavbarBrand = styled.div`
 `;
 
 export const SocialLink = styled.a(
-  ({ theme: { layout, icons } }) => css`
+  ({ theme: { icons } }) => css`
     display: block;
     margin-top: 5px;
     cursor: pointer;
-    fill: ${layout.socialLink.color};
+    fill: ${icons.discord.normal};
 
     &:hover {
       ${DiscordIcon} {
@@ -60,7 +60,7 @@ export const NavbarSocial = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 10px;
+  margin: 5px 10px 5px;
 `;
 
 export const NavbarItem = styled.div`
@@ -138,7 +138,10 @@ export const Hyperlink = styled(Link)(
     font-weight: bold;
     font-size: 12px;
     line-height: 16px;
-    color: ${theme.menu.color.active};
+    color: ${theme.default.color.normal};
+    &:hover {
+      color: ${theme.default.color.normal};
+    }
     text-decoration: none;
     word-break: break-word;
     cursor: pointer;

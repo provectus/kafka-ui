@@ -8,7 +8,7 @@ export const Table = styled.table<Props>`
   width: ${(props) => (props.isFullwidth ? '100%' : 'auto')};
 
   & td {
-    border-top: 1px #f1f2f3 solid;
+    border-top: 1px ${({ theme }) => theme.table.td.borderTop} solid;
     font-size: 14px;
     font-weight: 400;
     padding: 8px 8px 8px 24px;

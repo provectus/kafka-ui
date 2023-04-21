@@ -22,6 +22,10 @@ describe('UserInfo', () => {
 
   it('should render the userInfo during click opens the dropdown', async () => {
     const username = 'someName';
+    Object.defineProperty(window, 'basePath', {
+      value: '',
+      writable: true,
+    });
     (useUserInfo as jest.Mock).mockImplementation(() => ({ username }));
 
     renderComponent();
@@ -31,6 +35,22 @@ describe('UserInfo', () => {
     const logout = screen.getByText('Log out');
     expect(logout).toBeInTheDocument();
     expect(logout).toHaveAttribute('href', '/logout');
+  });
+
+  it('should render correct url during basePath initialization', async () => {
+    const username = 'someName';
+    const baseUrl = '/path';
+    Object.defineProperty(window, 'basePath', {
+      value: baseUrl,
+      writable: true,
+    });
+    (useUserInfo as jest.Mock).mockImplementation(() => ({ username }));
+
+    renderComponent();
+
+    const logout = screen.getByText('Log out');
+    expect(logout).toBeInTheDocument();
+    expect(logout).toHaveAttribute('href', `${baseUrl}/logout`);
   });
 
   it('should not render anything if the username does not exists', () => {

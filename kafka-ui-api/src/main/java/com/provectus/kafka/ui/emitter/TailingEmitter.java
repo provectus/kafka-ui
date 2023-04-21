@@ -2,8 +2,6 @@ package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
-import com.provectus.kafka.ui.util.PollingThrottler;
 import java.util.HashMap;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +19,9 @@ public class TailingEmitter extends AbstractEmitter
 
   public TailingEmitter(Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
                         ConsumerPosition consumerPosition,
-                        ConsumerRecordDeserializer recordDeserializer,
-                        PollingThrottler throttler) {
-    super(recordDeserializer, throttler);
+                        MessagesProcessing messagesProcessing,
+                        PollingSettings pollingSettings) {
+    super(messagesProcessing, pollingSettings);
     this.consumerSupplier = consumerSupplier;
     this.consumerPosition = consumerPosition;
   }

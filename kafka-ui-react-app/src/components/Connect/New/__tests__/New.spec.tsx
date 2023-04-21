@@ -84,7 +84,7 @@ describe('New', () => {
       return Promise.resolve();
     });
     (useCreateConnector as jest.Mock).mockImplementation(() => ({
-      mutateAsync: createConnectorMock,
+      createResource: createConnectorMock,
     }));
     renderComponent();
     await simulateFormSubmit();

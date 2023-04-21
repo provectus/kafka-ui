@@ -42,7 +42,6 @@ const ClusterMenu: React.FC<Props> = ({
             to={clusterConsumerGroupsPath(name)}
             title="Consumers"
           />
-
           {hasFeatureConfigured(ClusterFeaturesEnum.SCHEMA_REGISTRY) && (
             <ClusterMenuItem
               to={clusterSchemasPath(name)}

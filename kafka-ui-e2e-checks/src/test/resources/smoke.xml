@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="SmokeSuite">
+    <test name="SmokeTest" enabled="true" parallel="classes" thread-count="2">
+        <packages>
+            <package name="com.provectus.kafka.ui.smokesuite.*"/>
+        </packages>
+    </test>
+</suite>

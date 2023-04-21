@@ -68,6 +68,11 @@ This allows us to check if the registry of the image is specified or not.
 */}}
 {{- define "kafka-ui.imageName" -}}
 {{- $registryName := .Values.image.registry -}}
+{{- if .Values.global }}
+    {{- if .Values.global.imageRegistry }}
+     {{- $registryName = .Values.global.imageRegistry -}}
+    {{- end -}}
+{{- end -}}
 {{- $repository := .Values.image.repository -}}
 {{- $tag := .Values.image.tag | default .Chart.AppVersion -}}
 {{- if $registryName }}

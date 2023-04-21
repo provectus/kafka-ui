@@ -6,17 +6,32 @@ import {
 } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { ViteEjsPlugin } from 'vite-plugin-ejs';
 
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
   const defaultConfig: UserConfigExport = {
-    plugins: [react(), tsconfigPaths(), splitVendorChunkPlugin()],
+    plugins: [
+      react(),
+      tsconfigPaths(),
+      splitVendorChunkPlugin(),
+      ViteEjsPlugin({
+        PUBLIC_PATH: mode !== 'development' ? 'PUBLIC-PATH-VARIABLE' : '',
+      }),
+    ],
     server: {
       port: 3000,
     },
     build: {
       outDir: 'build',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            ace: ['ace-builds', 'react-ace'],
+          },
+        },
+      },
     },
     experimental: {
       renderBuiltUrl(

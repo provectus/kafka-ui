@@ -6,13 +6,11 @@ import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled
 
 import * as S from './TableRenderer.styled';
 
-export interface Props {
+interface TableRendererProps {
   table: KsqlTableResponse;
 }
 
-export function hasJsonStructure(
-  str: string | Record<string, unknown>
-): boolean {
+function hasJsonStructure(str: string | Record<string, unknown>): boolean {
   if (typeof str === 'object') {
     return true;
   }
@@ -30,13 +28,7 @@ export function hasJsonStructure(
   return false;
 }
 
-const TableRenderer: React.FC<Props> = ({ table }) => {
-  const heading = React.useMemo(() => {
-    return table.header || '';
-  }, [table.header]);
-  const ths = React.useMemo(() => {
-    return table.columnNames || [];
-  }, [table.columnNames]);
+const TableRenderer: React.FC<TableRendererProps> = ({ table }) => {
   const rows = React.useMemo(() => {
     return (table.values || []).map((row) => {
       return {
@@ -53,9 +45,11 @@ const TableRenderer: React.FC<Props> = ({ table }) => {
     });
   }, [table.values]);
 
+  const ths = table.columnNames || [];
+
   return (
     <S.Wrapper>
-      <TableTitle>{heading}</TableTitle>
+      <TableTitle>{table.header}</TableTitle>
       <S.ScrollableTable>
         <thead>
           <tr>

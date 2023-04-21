@@ -3,11 +3,13 @@ package com.provectus.kafka.ui.service;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+import com.google.common.collect.Sets;
+import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.TopicRecreationException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.ClusterFeature;
 import com.provectus.kafka.ui.model.InternalLogDirStats;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalPartitionsOffsets;
@@ -52,6 +54,7 @@ public class TopicsService {
 
   private final AdminClientService adminClientService;
   private final StatisticsCache statisticsCache;
+  private final ClustersProperties clustersProperties;
   @Value("${topic.recreate.maxRetries:15}")
   private int recreateMaxRetries;
   @Value("${topic.recreate.delay.seconds:1}")
@@ -127,28 +130,21 @@ public class TopicsService {
             configs.getOrDefault(t, List.of()),
             partitionsOffsets,
             metrics,
-            logDirInfo
+            logDirInfo,
+            clustersProperties.getInternalTopicPrefix()
         ))
         .collect(toList());
   }
 
   private Mono<InternalPartitionsOffsets> getPartitionOffsets(Map<String, TopicDescription>
-                                                                  descriptions,
+                                                                  descriptionsMap,
                                                               ReactiveAdminClient ac) {
-    var topicPartitions = descriptions.values().stream()
-        .flatMap(desc ->
-            desc.partitions().stream()
-                // list offsets should only be applied to partitions with existing leader
-                // (see ReactiveAdminClient.listOffsetsUnsafe(..) docs)
-                .filter(tp -> tp.leader() != null)
-                .map(p -> new TopicPartition(desc.name(), p.partition())))
-        .collect(toList());
-
-    return ac.listOffsetsUnsafe(topicPartitions, OffsetSpec.earliest())
-        .zipWith(ac.listOffsetsUnsafe(topicPartitions, OffsetSpec.latest()),
+    var descriptions = descriptionsMap.values();
+    return ac.listOffsets(descriptions, OffsetSpec.earliest())
+        .zipWith(ac.listOffsets(descriptions, OffsetSpec.latest()),
             (earliest, latest) ->
-                topicPartitions.stream()
-                    .filter(tp -> earliest.containsKey(tp) && latest.containsKey(tp))
+                Sets.intersection(earliest.keySet(), latest.keySet())
+                    .stream()
                     .map(tp ->
                         Map.entry(tp,
                             new InternalPartitionsOffsets.Offsets(
@@ -162,9 +158,14 @@ public class TopicsService {
   }
 
   public Mono<List<ConfigEntry>> getTopicConfigs(KafkaCluster cluster, String topicName) {
+    // there 2 case that we cover here:
+    // 1. topic not found/visible - describeTopic() will be empty and we will throw TopicNotFoundException
+    // 2. topic is visible, but we don't have DESCRIBE_CONFIG permission - we should return empty list
     return adminClientService.get(cluster)
-        .flatMap(ac -> ac.getTopicsConfig(List.of(topicName), true))
-        .map(m -> m.values().stream().findFirst().orElseThrow(TopicNotFoundException::new));
+        .flatMap(ac -> ac.describeTopic(topicName)
+            .switchIfEmpty(Mono.error(new TopicNotFoundException()))
+            .then(ac.getTopicsConfig(List.of(topicName), true))
+            .map(m -> m.values().stream().findFirst().orElse(List.of())));
   }
 
   private Mono<InternalTopic> createTopic(KafkaCluster c, ReactiveAdminClient adminClient,
@@ -417,7 +418,7 @@ public class TopicsService {
   }
 
   public Mono<Void> deleteTopic(KafkaCluster cluster, String topicName) {
-    if (statisticsCache.get(cluster).getFeatures().contains(Feature.TOPIC_DELETION)) {
+    if (statisticsCache.get(cluster).getFeatures().contains(ClusterFeature.TOPIC_DELETION)) {
       return adminClientService.get(cluster).flatMap(c -> c.deleteTopic(topicName))
           .doOnSuccess(t -> statisticsCache.onTopicDelete(cluster, topicName));
     } else {
@@ -454,7 +455,9 @@ public class TopicsService {
                     stats.getTopicConfigs().getOrDefault(topicName, List.of()),
                     InternalPartitionsOffsets.empty(),
                     stats.getMetrics(),
-                    stats.getLogDirInfo()))
+                    stats.getLogDirInfo(),
+                    clustersProperties.getInternalTopicPrefix()
+                    ))
             .collect(toList())
         );
   }

@@ -7,7 +7,7 @@ jobs:
   task-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: kentaro-m/task-completed-checker-action@v0.1.0
+      - uses: kentaro-m/task-completed-checker-action@v0.1.1
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
       - uses: dekinderfiets/pr-description-enforcer@0.0.1

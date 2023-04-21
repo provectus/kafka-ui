@@ -1,4 +1,4 @@
-name: Release-serde-api
+name: Release serde api
 on: workflow_dispatch
 
 jobs:

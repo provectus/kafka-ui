@@ -66,7 +66,7 @@ public class AccessController implements AuthorizationApi {
           UserPermissionDTO dto = new UserPermissionDTO();
           dto.setClusters(clusters);
           dto.setResource(ResourceTypeDTO.fromValue(permission.getResource().toString().toUpperCase()));
-          dto.setValue(permission.getValue() != null ? permission.getValue().toString() : null);
+          dto.setValue(permission.getValue());
           dto.setActions(permission.getActions()
               .stream()
               .map(String::toUpperCase)

@@ -1,0 +1,37 @@
+syntax = "proto3";
+package test;
+
+option java_multiple_files = true;
+option java_package = "com.example.tutorial.protos";
+option java_outer_classname = "AddressBookProtos";
+
+message Person {
+  string name = 1;
+  int32 id = 2;  // Unique ID number for this person.
+  string email = 3;
+
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+
+  message PhoneNumber {
+    string number = 1;
+    PhoneType type = 2;
+  }
+
+  repeated PhoneNumber phones = 4;
+
+}
+
+message AnotherPerson {
+    string name = 1;
+    string surname = 2;
+}
+
+// Our address book file is just one of these.
+message AddressBook {
+  int32 version = 1;
+  repeated Person people = 2;
+}

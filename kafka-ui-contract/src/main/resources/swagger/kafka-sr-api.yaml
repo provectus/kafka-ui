@@ -1,0 +1,404 @@
+openapi: 3.0.0
+info:
+    description: Api Documentation
+    version: 0.1.0
+    title: Api Documentation
+    termsOfService: urn:tos
+    contact: {}
+    license:
+        name: Apache 2.0
+        url: http://www.apache.org/licenses/LICENSE-2.0
+tags:
+    - name: /schemaregistry
+servers:
+    - url: /localhost
+
+paths:
+    /subjects:
+        get:
+            tags:
+              - KafkaSrClient
+            summary: get all connectors from Kafka Connect service
+            operationId: getAllSubjectNames
+            parameters:
+              - name: subjectPrefix
+                in: query
+                required: false
+                schema:
+                  type: string
+              - name: deleted
+                in: query
+                schema:
+                  type: boolean
+            responses:
+                200:
+                  description: OK
+                  content:
+                      application/json:
+                          schema:
+                            #workaround for https://github.com/spring-projects/spring-framework/issues/24734
+                            type: string
+
+    /subjects/{subject}:
+        delete:
+            tags:
+                - KafkaSrClient
+            operationId: deleteAllSubjectVersions
+            parameters:
+                - name: subject
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: permanent
+                  in: query
+                  schema:
+                    type: boolean
+                  required: false
+            responses:
+                200:
+                    description: OK
+                404:
+                    description: Not found
+
+    /subjects/{subject}/versions/{version}:
+        get:
+            tags:
+              - KafkaSrClient
+            operationId: getSubjectVersion
+            parameters:
+              - name: subject
+                in: path
+                required: true
+                schema:
+                  type: string
+              - name: version
+                in: path
+                required: true
+                schema:
+                  type: string
+            responses:
+                200:
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SchemaSubject'
+                404:
+                    description: Not found
+                422:
+                    description: Invalid version
+        delete:
+            tags:
+                - KafkaSrClient
+            operationId: deleteSubjectVersion
+            parameters:
+                - name: subject
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: permanent
+                  in: query
+                  required: false
+                  schema:
+                    type: boolean
+                    default: false
+                - name: version
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                200:
+                    description: OK
+                404:
+                    description: Not found
+
+    /subjects/{subject}/versions:
+        get:
+            tags:
+                - KafkaSrClient
+            operationId: getSubjectVersions
+            parameters:
+                - name: subject
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: integer
+                                    format: int32
+                404:
+                    description: Not found
+        post:
+            tags:
+                - KafkaSrClient
+            operationId: registerNewSchema
+            parameters:
+                - name: subject
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/NewSubject'
+            responses:
+                200:
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SubjectId'
+
+    /config/:
+        get:
+            tags:
+                - KafkaSrClient
+            operationId: getGlobalCompatibilityLevel
+            responses:
+                200:
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CompatibilityConfig'
+                404:
+                    description: Not found
+        put:
+            tags:
+                - KafkaSrClient
+            operationId: updateGlobalCompatibilityLevel
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CompatibilityLevelChange'
+            responses:
+                200:
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CompatibilityLevelChange'
+                404:
+                    description: Not found
+
+    /config/{subject}:
+        get:
+            tags:
+                - KafkaSrClient
+            operationId: getSubjectCompatibilityLevel
+            parameters:
+                - name: subject
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: defaultToGlobal
+                  in: query
+                  required: true
+                  schema:
+                      type: boolean
+            responses:
+                200:
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CompatibilityConfig'
+                404:
+                    description: Not found
+        put:
+            tags:
+                - KafkaSrClient
+            operationId: updateSubjectCompatibilityLevel
+            parameters:
+                - name: subject
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CompatibilityLevelChange'
+            responses:
+                200:
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CompatibilityLevelChange'
+                404:
+                    description: Not found
+        delete:
+            tags:
+                - KafkaSrClient
+            operationId: deleteSubjectCompatibilityLevel
+            parameters:
+                - name: subject
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: OK
+                404:
+                    description: Not found
+
+    /compatibility/subjects/{subject}/versions/{version}:
+        post:
+            tags:
+                - KafkaSrClient
+            operationId: checkSchemaCompatibility
+            parameters:
+                - name: subject
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: version
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: verbose
+                  in: query
+                  description: Show reason a schema fails the compatibility test
+                  schema:
+                      type: boolean
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/NewSubject'
+            responses:
+                200:
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CompatibilityCheckResponse'
+                404:
+                    description: Not found
+
+security:
+    - basicAuth: []
+
+components:
+    securitySchemes:
+        basicAuth:
+            type: http
+            scheme: basic
+    schemas:
+        SchemaSubject:
+            type: object
+            properties:
+              subject:
+                type: string
+              version:
+                type: string
+              id:
+                type: integer
+              schema:
+                type: string
+              schemaType:
+                  $ref: '#/components/schemas/SchemaType'
+            required:
+              - id
+              - subject
+              - version
+              - schema
+              - schemaType
+
+        SchemaType:
+          type: string
+          description: upon updating a schema, the type of an existing schema can't be changed
+          enum:
+            - AVRO
+            - JSON
+            - PROTOBUF
+
+        SchemaReference:
+            type: object
+            properties:
+                name:
+                    type: string
+                subject:
+                    type: string
+                version:
+                    type: integer
+            required:
+                - name
+                - subject
+                - version
+
+        SubjectId:
+            type: object
+            properties:
+                id:
+                    type: integer
+
+        NewSubject:
+            type: object
+            description: should be set for creating/updating schema subject
+            properties:
+                schema:
+                    type: string
+                schemaType:
+                    $ref: '#/components/schemas/SchemaType'
+                references:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SchemaReference'
+            required:
+                - schema
+                - schemaType
+
+        CompatibilityConfig:
+            type: object
+            properties:
+                compatibilityLevel:
+                    $ref: '#/components/schemas/Compatibility'
+            required:
+                - compatibilityLevel
+
+        CompatibilityLevelChange:
+            type: object
+            properties:
+                compatibility:
+                    $ref: '#/components/schemas/Compatibility'
+            required:
+                - compatibility
+
+
+        Compatibility:
+            type: string
+            enum:
+                - BACKWARD
+                - BACKWARD_TRANSITIVE
+                - FORWARD
+                - FORWARD_TRANSITIVE
+                - FULL
+                - FULL_TRANSITIVE
+                - NONE
+
+
+        CompatibilityCheckResponse:
+            type: object
+            properties:
+                is_compatible:
+                    type: boolean

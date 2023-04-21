@@ -4,13 +4,14 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.kafka.clients.admin.ListOffsetsResult.ListOffsetsResultInfo;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterators;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Table;
 import com.provectus.kafka.ui.exception.IllegalEntityStateException;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.util.MapUtil;
-import com.provectus.kafka.ui.util.NumberUtil;
+import com.provectus.kafka.ui.util.KafkaVersion;
 import com.provectus.kafka.ui.util.annotation.KafkaClientInternalsDependant;
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,7 +45,7 @@ import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.DescribeClusterOptions;
 import org.apache.kafka.clients.admin.DescribeClusterResult;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
-import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsOptions;
+import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsSpec;
 import org.apache.kafka.clients.admin.ListOffsetsResult;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
@@ -54,7 +54,6 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.admin.TopicDescription;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.KafkaFuture;
@@ -64,11 +63,15 @@ import org.apache.kafka.common.TopicPartitionInfo;
 import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.ClusterAuthorizationException;
 import org.apache.kafka.common.errors.GroupIdNotFoundException;
 import org.apache.kafka.common.errors.GroupNotEmptyException;
 import org.apache.kafka.common.errors.InvalidRequestException;
+import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
+import org.apache.kafka.common.errors.UnsupportedVersionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.util.function.Tuple2;
@@ -121,7 +124,7 @@ public class ReactiveAdminClient implements Closeable {
 
   private static Set<SupportedFeature> getSupportedUpdateFeaturesForVersion(String versionStr) {
     try {
-      float version = NumberUtil.parserClusterVersion(versionStr);
+      float version = KafkaVersion.parse(versionStr);
       return SupportedFeature.forVersion(version);
     } catch (NumberFormatException e) {
       return SupportedFeature.defaultFeatures();
@@ -130,7 +133,7 @@ public class ReactiveAdminClient implements Closeable {
 
   // NOTE: if KafkaFuture returns null, that Mono will be empty(!), since Reactor does not support nullable results
   // (see MonoSink.success(..) javadoc for details)
-  private static <T> Mono<T> toMono(KafkaFuture<T> future) {
+  public static <T> Mono<T> toMono(KafkaFuture<T> future) {
     return Mono.<T>create(sink -> future.whenComplete((res, ex) -> {
       if (ex != null) {
         // KafkaFuture doc is unclear about what exception wrapper will be used
@@ -176,6 +179,7 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   //NOTE: skips not-found topics (for which UnknownTopicOrPartitionException was thrown by AdminClient)
+  //and topics for which DESCRIBE_CONFIGS permission is not set (TopicAuthorizationException was thrown)
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames, boolean includeDoc) {
     var includeDocFixed = features.contains(SupportedFeature.CONFIG_DOCUMENTATION_RETRIEVAL) && includeDoc;
     // we need to partition calls, because it can lead to AdminClient timeouts in case of large topics count
@@ -183,7 +187,7 @@ public class ReactiveAdminClient implements Closeable {
         topicNames,
         200,
         part -> getTopicsConfigImpl(part, includeDocFixed),
-        (m1, m2) -> ImmutableMap.<String, List<ConfigEntry>>builder().putAll(m1).putAll(m2).build()
+        mapMerger()
     );
   }
 
@@ -196,7 +200,8 @@ public class ReactiveAdminClient implements Closeable {
         client.describeConfigs(
             resources,
             new DescribeConfigsOptions().includeSynonyms(true).includeDocumentation(includeDoc)).values(),
-        UnknownTopicOrPartitionException.class
+        UnknownTopicOrPartitionException.class,
+        TopicAuthorizationException.class
     ).map(config -> config.entrySet().stream()
         .collect(toMap(
             c -> c.getKey().name(),
@@ -208,11 +213,24 @@ public class ReactiveAdminClient implements Closeable {
         .map(brokerId -> new ConfigResource(ConfigResource.Type.BROKER, Integer.toString(brokerId)))
         .collect(toList());
     return toMono(client.describeConfigs(resources).all())
-        .doOnError(InvalidRequestException.class,
-            th -> log.trace("Error while getting broker {} configs", brokerIds, th))
-        // some kafka backends (like MSK serverless) do not support broker's configs retrieval,
-        // in that case InvalidRequestException will be thrown
-        .onErrorResume(InvalidRequestException.class, th -> Mono.just(Map.of()))
+        // some kafka backends don't support broker's configs retrieval,
+        // and throw various exceptions on describeConfigs() call
+        .onErrorResume(th -> th instanceof InvalidRequestException // MSK Serverless
+                || th instanceof UnknownTopicOrPartitionException, // Azure event hub
+            th -> {
+              log.trace("Error while getting configs for brokers {}", brokerIds, th);
+              return Mono.just(Map.of());
+            })
+        // there are situations when kafka-ui user has no DESCRIBE_CONFIGS permission on cluster
+        .onErrorResume(ClusterAuthorizationException.class, th -> {
+          log.trace("AuthorizationException while getting configs for brokers {}", brokerIds, th);
+          return Mono.just(Map.of());
+        })
+        // catching all remaining exceptions, but logging on WARN level
+        .onErrorResume(th -> true, th -> {
+          log.warn("Unexpected error while getting configs for brokers {}", brokerIds, th);
+          return Mono.just(Map.of());
+        })
         .map(config -> config.entrySet().stream()
             .collect(toMap(
                 c -> Integer.valueOf(c.getKey().name()),
@@ -236,19 +254,22 @@ public class ReactiveAdminClient implements Closeable {
         topics,
         200,
         this::describeTopicsImpl,
-        (m1, m2) -> ImmutableMap.<String, TopicDescription>builder().putAll(m1).putAll(m2).build()
+        mapMerger()
     );
   }
 
   private Mono<Map<String, TopicDescription>> describeTopicsImpl(Collection<String> topics) {
     return toMonoWithExceptionFilter(
-        client.describeTopics(topics).values(),
-        UnknownTopicOrPartitionException.class
+        client.describeTopics(topics).topicNameValues(),
+        UnknownTopicOrPartitionException.class,
+        // we only describe topics that we see from listTopics() API, so we should have permission to do it,
+        // but also adding this exception here for rare case when access restricted after we called listTopics()
+        TopicAuthorizationException.class
     );
   }
 
   /**
-   * Returns TopicDescription mono, or Empty Mono if topic not found.
+   * Returns TopicDescription mono, or Empty Mono if topic not visible.
    */
   public Mono<TopicDescription> describeTopic(String topic) {
     return describeTopics(List.of(topic)).flatMap(m -> Mono.justOrEmpty(m.get(topic)));
@@ -262,10 +283,11 @@ public class ReactiveAdminClient implements Closeable {
    * such topics in resulting map.
    * <p/>
    * This method converts input map into Mono[Map] ignoring keys for which KafkaFutures
-   * finished with <code>clazz</code> exception and empty Monos.
+   * finished with <code>classes</code> exceptions and empty Monos.
    */
+  @SafeVarargs
   static <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
-                                                          Class<? extends KafkaException> clazz) {
+                                                          Class<? extends KafkaException>... classes) {
     if (values.isEmpty()) {
       return Mono.just(Map.of());
     }
@@ -277,7 +299,7 @@ public class ReactiveAdminClient implements Closeable {
                 .defaultIfEmpty(Tuples.of(e.getKey(), Optional.empty())) //tracking empty Monos
                 .onErrorResume(
                     // tracking Monos with suppressible error
-                    th -> th.getClass().isAssignableFrom(clazz),
+                    th -> Stream.of(classes).anyMatch(clazz -> th.getClass().isAssignableFrom(clazz)),
                     th -> Mono.just(Tuples.of(e.getKey(), Optional.empty()))))
         .toList();
 
@@ -298,7 +320,13 @@ public class ReactiveAdminClient implements Closeable {
 
   public Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> describeLogDirs(
       Collection<Integer> brokerIds) {
-    return toMono(client.describeLogDirs(brokerIds).all());
+    return toMono(client.describeLogDirs(brokerIds).all())
+        .onErrorResume(UnsupportedVersionException.class, th -> Mono.just(Map.of()))
+        .onErrorResume(ClusterAuthorizationException.class, th -> Mono.just(Map.of()))
+        .onErrorResume(th -> true, th -> {
+          log.warn("Error while calling describeLogDirs", th);
+          return Mono.just(Map.of());
+        });
   }
 
   public Mono<ClusterDescription> describeCluster() {
@@ -383,32 +411,57 @@ public class ReactiveAdminClient implements Closeable {
     }
   }
 
-  public Mono<List<String>> listConsumerGroups() {
-    return toMono(client.listConsumerGroups().all())
-        .map(lst -> lst.stream().map(ConsumerGroupListing::groupId).collect(toList()));
+  public Mono<List<String>> listConsumerGroupNames() {
+    return listConsumerGroups().map(lst -> lst.stream().map(ConsumerGroupListing::groupId).toList());
+  }
+
+  public Mono<Collection<ConsumerGroupListing>> listConsumerGroups() {
+    return toMono(client.listConsumerGroups().all());
   }
 
   public Mono<Map<String, ConsumerGroupDescription>> describeConsumerGroups(Collection<String> groupIds) {
-    return toMono(client.describeConsumerGroups(groupIds).all());
+    return partitionCalls(
+        groupIds,
+        25,
+        4,
+        ids -> toMono(client.describeConsumerGroups(ids).all()),
+        mapMerger()
+    );
   }
 
-  public Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(String groupId) {
-    return listConsumerGroupOffsets(groupId, new ListConsumerGroupOffsetsOptions());
-  }
+  // group -> partition -> offset
+  // NOTE: partitions with no committed offsets will be skipped
+  public Mono<Table<String, TopicPartition, Long>> listConsumerGroupOffsets(List<String> consumerGroups,
+                                                                            // all partitions if null passed
+                                                                            @Nullable List<TopicPartition> partitions) {
+    Function<Collection<String>, Mono<Map<String, Map<TopicPartition, OffsetAndMetadata>>>> call =
+        groups -> toMono(
+            client.listConsumerGroupOffsets(
+                groups.stream()
+                    .collect(Collectors.toMap(
+                        g -> g,
+                        g -> new ListConsumerGroupOffsetsSpec().topicPartitions(partitions)
+                    ))).all()
+        );
 
-  public Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(
-      String groupId, List<TopicPartition> partitions) {
-    return listConsumerGroupOffsets(groupId,
-        new ListConsumerGroupOffsetsOptions().topicPartitions(partitions));
-  }
+    Mono<Map<String, Map<TopicPartition, OffsetAndMetadata>>> merged = partitionCalls(
+        consumerGroups,
+        25,
+        4,
+        call,
+        mapMerger()
+    );
 
-  private Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(
-      String groupId, ListConsumerGroupOffsetsOptions options) {
-    return toMono(client.listConsumerGroupOffsets(groupId, options).partitionsToOffsetAndMetadata())
-        .map(MapUtil::removeNullValues)
-        .map(m -> m.entrySet().stream()
-            .map(e -> Tuples.of(e.getKey(), e.getValue().offset()))
-            .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2)));
+    return merged.map(map -> {
+      var table = ImmutableTable.<String, TopicPartition, Long>builder();
+      map.forEach((g, tpOffsets) -> tpOffsets.forEach((tp, offset) -> {
+        if (offset != null) {
+          // offset will be null for partitions that don't have committed offset for this group
+          table.put(g, tp, offset.offset());
+        }
+      }));
+      return table.build();
+    });
   }
 
   public Mono<Void> alterConsumerGroupOffsets(String groupId, Map<TopicPartition, Long> offsets) {
@@ -446,6 +499,14 @@ public class ReactiveAdminClient implements Closeable {
         .flatMap(parts -> listOffsetsUnsafe(parts, offsetSpec));
   }
 
+  /**
+   * List offset for the specified topics, skipping no-leader partitions.
+   */
+  public Mono<Map<TopicPartition, Long>> listOffsets(Collection<TopicDescription> topicDescriptions,
+                                                     OffsetSpec offsetSpec) {
+    return listOffsetsUnsafe(filterPartitionsWithLeaderCheck(topicDescriptions, p -> true, false), offsetSpec);
+  }
+
   private Mono<Collection<TopicPartition>> filterPartitionsWithLeaderCheck(Collection<TopicPartition> partitions,
                                                                            boolean failOnUnknownLeader) {
     var targetTopics = partitions.stream().map(TopicPartition::topic).collect(Collectors.toSet());
@@ -455,34 +516,44 @@ public class ReactiveAdminClient implements Closeable {
                 descriptions.values(), partitions::contains, failOnUnknownLeader));
   }
 
-  private Set<TopicPartition> filterPartitionsWithLeaderCheck(Collection<TopicDescription> topicDescriptions,
+  @VisibleForTesting
+  static Set<TopicPartition> filterPartitionsWithLeaderCheck(Collection<TopicDescription> topicDescriptions,
                                                               Predicate<TopicPartition> partitionPredicate,
                                                               boolean failOnUnknownLeader) {
     var goodPartitions = new HashSet<TopicPartition>();
     for (TopicDescription description : topicDescriptions) {
+      var goodTopicPartitions = new ArrayList<TopicPartition>();
       for (TopicPartitionInfo partitionInfo : description.partitions()) {
         TopicPartition topicPartition = new TopicPartition(description.name(), partitionInfo.partition());
-        if (!partitionPredicate.test(topicPartition)) {
-          continue;
+        if (partitionInfo.leader() == null) {
+          if (failOnUnknownLeader) {
+            throw new ValidationException(String.format("Topic partition %s has no leader", topicPartition));
+          } else {
+            // if ANY of topic partitions has no leader - we have to skip all topic partitions
+            goodTopicPartitions.clear();
+            break;
+          }
         }
-        if (partitionInfo.leader() != null) {
-          goodPartitions.add(topicPartition);
-        } else if (failOnUnknownLeader) {
-          throw new ValidationException(String.format("Topic partition %s has no leader", topicPartition));
+        if (partitionPredicate.test(topicPartition)) {
+          goodTopicPartitions.add(topicPartition);
         }
       }
+      goodPartitions.addAll(goodTopicPartitions);
     }
     return goodPartitions;
   }
 
-  // 1. NOTE(!): should only apply for partitions with existing leader,
+  // 1. NOTE(!): should only apply for partitions from topics where all partitions have leaders,
   //    otherwise AdminClient will try to fetch topic metadata, fail and retry infinitely (until timeout)
   // 2. NOTE(!): Skips partitions that were not initialized yet
   //    (UnknownTopicOrPartitionException thrown, ex. after topic creation)
   // 3. TODO: check if it is a bug that AdminClient never throws LeaderNotAvailableException and just retrying instead
   @KafkaClientInternalsDependant
-  public Mono<Map<TopicPartition, Long>> listOffsetsUnsafe(Collection<TopicPartition> partitions,
-                                                           OffsetSpec offsetSpec) {
+  @VisibleForTesting
+  Mono<Map<TopicPartition, Long>> listOffsetsUnsafe(Collection<TopicPartition> partitions, OffsetSpec offsetSpec) {
+    if (partitions.isEmpty()) {
+      return Mono.just(Map.of());
+    }
 
     Function<Collection<TopicPartition>, Mono<Map<TopicPartition, Long>>> call =
         parts -> {
@@ -501,7 +572,7 @@ public class ReactiveAdminClient implements Closeable {
         partitions,
         200,
         call,
-        (m1, m2) -> ImmutableMap.<TopicPartition, Long>builder().putAll(m1).putAll(m2).build()
+        mapMerger()
     );
   }
 
@@ -551,7 +622,7 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   /**
-   * Splits input collection into batches, applies each batch sequentially to function
+   * Splits input collection into batches, converts each batch into Mono, sequentially subscribes to them
    * and merges output Monos into one Mono.
    */
   private static <R, I> Mono<R> partitionCalls(Collection<I> items,
@@ -561,14 +632,37 @@ public class ReactiveAdminClient implements Closeable {
     if (items.isEmpty()) {
       return call.apply(items);
     }
-    Iterator<List<I>> parts = Iterators.partition(items.iterator(), partitionSize);
-    Mono<R> mono = call.apply(parts.next());
-    while (parts.hasNext()) {
-      var nextPart = parts.next();
-      // calls will be executed sequentially
-      mono = mono.flatMap(res1 -> call.apply(nextPart).map(res2 -> merger.apply(res1, res2)));
+    Iterable<List<I>> parts = Iterables.partition(items, partitionSize);
+    return Flux.fromIterable(parts)
+        .concatMap(call)
+        .reduce(merger);
+  }
+
+  /**
+   * Splits input collection into batches, converts each batch into Mono, subscribes to them (concurrently,
+   * with specified concurrency level) and merges output Monos into one Mono.
+   */
+  private static <R, I> Mono<R> partitionCalls(Collection<I> items,
+                                               int partitionSize,
+                                               int concurrency,
+                                               Function<Collection<I>, Mono<R>> call,
+                                               BiFunction<R, R, R> merger) {
+    if (items.isEmpty()) {
+      return call.apply(items);
     }
-    return mono;
+    Iterable<List<I>> parts = Iterables.partition(items, partitionSize);
+    return Flux.fromIterable(parts)
+        .flatMap(call, concurrency)
+        .reduce(merger);
+  }
+
+  private static <K, V> BiFunction<Map<K, V>, Map<K, V>, Map<K, V>> mapMerger() {
+    return (m1, m2) -> {
+      var merged = new HashMap<K, V>();
+      merged.putAll(m1);
+      merged.putAll(m2);
+      return merged;
+    };
   }
 
   @Override

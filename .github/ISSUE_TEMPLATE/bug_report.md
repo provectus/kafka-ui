@@ -9,6 +9,8 @@ assignees: ''
 
 <!--
 
+We will close the issue without further explanation if you don't follow this template and don't provide the information requested within this template.
+
 Don't forget to check for existing issues/discussions regarding your proposal. We might already have it.
 https://github.com/provectus/kafka-ui/issues
 https://github.com/provectus/kafka-ui/discussions
