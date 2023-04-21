@@ -51,9 +51,9 @@ const List = () => {
         accessorKey: 'members',
       },
       {
+        id: ConsumerGroupOrdering.TOPIC_NUM,
         header: 'Num Of Topics',
         accessorKey: 'topics',
-        enableSorting: false,
       },
       {
         id: ConsumerGroupOrdering.MESSAGES_BEHIND,
