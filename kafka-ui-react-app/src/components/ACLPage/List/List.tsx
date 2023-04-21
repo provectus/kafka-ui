@@ -13,7 +13,6 @@ import {
   KafkaAclNamePatternTypeEnum,
   KafkaAclPermissionEnum,
 } from 'generated-sources';
-import { aclPayload } from 'lib/fixtures/acls';
 
 import * as S from './List.styled';
 
