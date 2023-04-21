@@ -102,7 +102,7 @@ public class LdapSecurityConfig {
       log.info("Active Directory support for LDAP has been enabled.");
     }
 
-//    http.authenticationManager(authenticationManager())
+    //http.authenticationManager(authenticationManager())
 
     return http
         .authorizeExchange()
