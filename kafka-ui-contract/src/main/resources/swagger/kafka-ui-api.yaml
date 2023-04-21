@@ -3486,6 +3486,10 @@ components:
                       type: integer
                     noDataEmptyPolls:
                       type: integer
+                    maxPageSize:
+                      type: integer
+                    defaultPageSize:
+                      type: integer
                 adminClientTimeout:
                   type: integer
                 internalTopicPrefix:
