@@ -1742,6 +1742,21 @@ paths:
           required: true
           schema:
             type: string
+        - name: resourceType
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/KafkaAclResourceType'
+        - name: resourceName
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: namePatternType
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/KafkaAclNamePatternType'
       responses:
         200:
           description: OK
@@ -3444,22 +3459,11 @@ components:
       required: [resourceType, resourceName, namePatternType, principal, host, operation, permission]
       properties:
         resourceType:
-          type: string
-          enum:
-            - UNKNOWN # Unknown operation, need to update mapping code on BE
-            - TOPIC
-            - GROUP
-            - CLUSTER
-            - TRANSACTIONAL_ID
-            - DELEGATION_TOKEN
-            - USER
+          $ref: '#/components/schemas/KafkaAclResourceType'
         resourceName:
           type: string # "*" if acl can be applied to any resource of given type
         namePatternType:
-          type: string
-          enum:
-            - LITERAL
-            - PREFIXED
+          $ref: '#/components/schemas/KafkaAclNamePatternType'
         principal:
           type: string
         host:
@@ -3486,6 +3490,24 @@ components:
           enum:
             - ALLOW
             - DENY
+
+    KafkaAclResourceType:
+      type: string
+      enum:
+        - UNKNOWN # Unknown operation, need to update mapping code on BE
+        - TOPIC
+        - GROUP
+        - CLUSTER
+        - TRANSACTIONAL_ID
+        - DELEGATION_TOKEN
+        - USER
+
+    KafkaAclNamePatternType:
+      type: string
+      enum:
+        - MATCH
+        - LITERAL
+        - PREFIXED
 
     RestartRequest:
       type: object
