@@ -27,6 +27,8 @@ public class ClustersProperties {
 
   String internalTopicPrefix;
 
+  Integer adminClientTimeout;
+
   PollingProperties polling = new PollingProperties();
 
   @Data
