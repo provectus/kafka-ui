@@ -130,6 +130,40 @@ class SchemaRegistrySerdeTest {
         .contains(Map.entry("schemaId", schemaId));
   }
 
+  @Test
+  void deserializeReturnsJsonAvroWithLogicalTypesMsgJsonRepresentation() throws RestClientException, IOException {
+    AvroSchema schema = new AvroSchema(
+        "{"
+            + "  \"type\": \"record\","
+            + "  \"name\": \"TestAvroRecord1\","
+            + "  \"fields\": ["
+            + "    {"
+            + "      \"name\": \"field1\","
+            + "      \"type\": {\"type\": \"int\", \"logicalType\": \"date\"}"
+            + "    },"
+            + "    {"
+            + "      \"name\": \"field2\","
+            + "      \"type\": {\"type\": \"bytes\", \"logicalType\": \"decimal\", \"precision\": 22, \"scale\":10}"
+            + "    }"
+            + "  ]"
+            + "}"
+    );
+    String jsonValueIn = "{ \"field1\": 7895, \"field2\": \"u001aÇØo\\u0080\" }";
+    String jsonValueOut = "{\"field1\":\"1991-08-14\",\"field2\":2.1617413862327545E11}";
+
+    String topic = "test";
+    int schemaId = registryClient.register(topic + "-value", schema);
+
+    byte[] data = toBytesWithMagicByteAndSchemaId(schemaId, jsonValueIn, schema);
+    var result = serde.deserializer(topic, Serde.Target.VALUE).deserialize(null, data);
+
+    assertJsonsEqual(jsonValueOut, result.getResult());
+    assertThat(result.getType()).isEqualTo(DeserializeResult.Type.JSON);
+    assertThat(result.getAdditionalProperties())
+        .contains(Map.entry("type", "AVRO"))
+        .contains(Map.entry("schemaId", schemaId));
+  }
+
   @Nested
   class SerdeWithDisabledSubjectExistenceCheck {
 
