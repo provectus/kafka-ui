@@ -2441,6 +2441,7 @@ components:
         - MEMBERS
         - STATE
         - MESSAGES_BEHIND
+        - TOPIC_NUM
 
     ConsumerGroupsPageResponse:
       type: object
@@ -3484,6 +3485,10 @@ components:
                     partitionPollTimeout:
                       type: integer
                     noDataEmptyPolls:
+                      type: integer
+                    maxPageSize:
+                      type: integer
+                    defaultPageSize:
                       type: integer
                 adminClientTimeout:
                   type: integer
