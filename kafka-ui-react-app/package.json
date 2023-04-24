@@ -4,7 +4,7 @@
   "homepage": "./",
   "private": true,
   "dependencies": {
-    "@floating-ui/react": "^0.19.2",
+    "@floating-ui/react": "^0.23.1",
     "@hookform/error-message": "^2.0.0",
     "@hookform/resolvers": "^2.7.1",
     "@microsoft/fetch-event-source": "^2.0.1",
