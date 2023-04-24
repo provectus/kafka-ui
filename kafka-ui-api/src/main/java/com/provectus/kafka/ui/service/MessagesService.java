@@ -56,6 +56,7 @@ public class MessagesService {
 
   private static final int DEFAULT_MAX_PAGE_SIZE = 500;
   private static final int DEFAULT_PAGE_SIZE = 100;
+
   // limiting UI messages rate to 20/sec in tailing mode
   private static final int TAILING_UI_MESSAGE_THROTTLE_RATE = 20;
 
