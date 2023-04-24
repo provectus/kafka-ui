@@ -10,8 +10,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 public class PollingCursorsStorage {
 
+  public static final int MAX_SIZE = 10_000;
+
   private final Cache<String, Cursor> cursorsCache = CacheBuilder.newBuilder()
-      .maximumSize(10_000)
+      .maximumSize(MAX_SIZE)
       .build();
 
   public Optional<Cursor> getCursor(String id) {
