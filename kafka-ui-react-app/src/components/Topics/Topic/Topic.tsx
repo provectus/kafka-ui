@@ -59,7 +59,7 @@ const Topic: React.FC = () => {
 
   const deleteTopicHandler = async () => {
     await deleteTopic.mutateAsync(topicName);
-    navigate('../..');
+    navigate(clusterTopicsPath(clusterName));
   };
 
   React.useEffect(() => {
