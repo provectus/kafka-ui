@@ -29,72 +29,65 @@ public class SmokeBacklog extends BaseManualTest {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
-  @Suite(id = KSQL_DB_SUITE_ID)
-  @QaseId(278)
+  @Suite(id = BROKERS_SUITE_ID)
+  @QaseId(331)
   @Test
   public void testCaseC() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = BROKERS_SUITE_ID)
-  @QaseId(331)
-  @Test
-  public void testCaseD() {
-  }
-
-  @Automation(state = TO_BE_AUTOMATED)
-  @Suite(id = BROKERS_SUITE_ID)
   @QaseId(332)
   @Test
-  public void testCaseE() {
+  public void testCaseD() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(335)
   @Test
-  public void testCaseF() {
+  public void testCaseE() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(336)
   @Test
-  public void testCaseG() {
+  public void testCaseF() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(343)
   @Test
-  public void testCaseH() {
+  public void testCaseG() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = KSQL_DB_SUITE_ID)
   @QaseId(344)
   @Test
-  public void testCaseI() {
+  public void testCaseH() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = SCHEMAS_SUITE_ID)
   @QaseId(345)
   @Test
-  public void testCaseJ() {
+  public void testCaseI() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = SCHEMAS_SUITE_ID)
   @QaseId(346)
   @Test
-  public void testCaseK() {
+  public void testCaseJ() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(347)
   @Test
-  public void testCaseL() {
+  public void testCaseK() {
   }
 }
