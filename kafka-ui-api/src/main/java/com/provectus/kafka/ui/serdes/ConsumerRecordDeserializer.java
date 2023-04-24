@@ -51,16 +51,11 @@ public class ConsumerRecordDeserializer {
   }
 
   private static TopicMessageDTO.TimestampTypeEnum mapToTimestampType(TimestampType timestampType) {
-    switch (timestampType) {
-      case CREATE_TIME:
-        return TopicMessageDTO.TimestampTypeEnum.CREATE_TIME;
-      case LOG_APPEND_TIME:
-        return TopicMessageDTO.TimestampTypeEnum.LOG_APPEND_TIME;
-      case NO_TIMESTAMP_TYPE:
-        return TopicMessageDTO.TimestampTypeEnum.NO_TIMESTAMP_TYPE;
-      default:
-        throw new IllegalArgumentException("Unknown timestampType: " + timestampType);
-    }
+    return switch (timestampType) {
+      case CREATE_TIME -> TopicMessageDTO.TimestampTypeEnum.CREATE_TIME;
+      case LOG_APPEND_TIME -> TopicMessageDTO.TimestampTypeEnum.LOG_APPEND_TIME;
+      case NO_TIMESTAMP_TYPE -> TopicMessageDTO.TimestampTypeEnum.NO_TIMESTAMP_TYPE;
+    };
   }
 
   private void fillHeaders(TopicMessageDTO message, ConsumerRecord<Bytes, Bytes> rec) {

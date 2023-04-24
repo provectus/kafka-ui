@@ -2,7 +2,9 @@ package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.TopicMessageConsumingDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
+import com.provectus.kafka.ui.model.TopicMessageNextPageCursorDTO;
 import com.provectus.kafka.ui.util.ConsumerRecordsUtil;
+import javax.annotation.Nullable;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
@@ -17,9 +19,9 @@ class ConsumingStats {
    * returns bytes polled.
    */
   int sendConsumingEvt(FluxSink<TopicMessageEventDTO> sink,
-                        ConsumerRecords<Bytes, Bytes> polledRecords,
-                        long elapsed,
-                        int filterApplyErrors) {
+                       ConsumerRecords<Bytes, Bytes> polledRecords,
+                       long elapsed,
+                       int filterApplyErrors) {
     int polledBytes = ConsumerRecordsUtil.calculatePolledSize(polledRecords);
     bytes += polledBytes;
     this.records += polledRecords.count();
@@ -32,10 +34,15 @@ class ConsumingStats {
     return polledBytes;
   }
 
-  void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink, int filterApplyErrors) {
+  void sendFinishEvent(FluxSink<TopicMessageEventDTO> sink, int filterApplyErrors, @Nullable Cursor.Tracking cursor) {
     sink.next(
         new TopicMessageEventDTO()
             .type(TopicMessageEventDTO.TypeEnum.DONE)
+            .cursor(
+                cursor != null
+                    ? new TopicMessageNextPageCursorDTO().id(cursor.registerCursor())
+                    : null
+            )
             .consuming(createConsumingStats(sink, filterApplyErrors))
     );
   }

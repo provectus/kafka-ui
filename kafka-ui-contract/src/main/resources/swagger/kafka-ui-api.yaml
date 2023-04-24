@@ -792,53 +792,59 @@ paths:
           required: true
           schema:
             type: string
-        - name: m
+        - name: mode
           in: query
           description: Messages polling mode
           required: true
           schema:
             $ref: "#/components/schemas/PollingMode"
-        - name: p
+        - name: partitions
           in: query
           schema:
             type: array
             description: List of target partitions (all partitions if not provided)
             items:
               type: integer
-        - name: lim
+        - name: limit
           in: query
           description: Max number of messages can be returned
           schema:
             type: integer
-        - name: q
+        - name: stringFilter
           in: query
           description: query string to contains string filtration
           schema:
             type: string
-        - name: fid
+        - name: smartFilterId
           in: query
           description: filter id, that was registered beforehand
           schema:
             type: string
-        - name: offs
+        - name: offset
           in: query
-          description: partition offsets to read from / to. Format is "p1:offset1,p2:offset2,...".
+          description: message offset to read from / to
           schema:
-            type: string
-        - name: ts
+            type: integer
+            format: int64
+        - name: timestamp
           in: query
           description: timestamp (in ms) to read from / to
           schema:
             type: integer
             format: int64
-        - name: ks
+        - name: keySerde
           in: query
           description: "Serde that should be used for deserialization. Will be chosen automatically if not set."
           schema:
             type: string
-        - name: vs
+        - name: valueSerde
           in: query
           description: "Serde that should be used for deserialization. Will be chosen automatically if not set."
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          description: "id of the cursor for pagination"
           schema:
             type: string
       responses:
@@ -2644,10 +2650,8 @@ components:
     TopicMessageNextPageCursor:
       type: object
       properties:
-        offsetsString:
+        id:
           type: string
-        pollingMode:
-          $ref: "#/components/schemas/PollingMode"
 
     TopicMessage:
       type: object

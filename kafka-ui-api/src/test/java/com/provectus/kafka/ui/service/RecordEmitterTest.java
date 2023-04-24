@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
+import com.provectus.kafka.ui.emitter.Cursor;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.MessagesProcessing;
 import com.provectus.kafka.ui.emitter.PollingSettings;
@@ -45,6 +46,7 @@ import org.apache.kafka.common.utils.Bytes;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.test.StepVerifier;
@@ -59,6 +61,7 @@ class RecordEmitterTest extends AbstractIntegrationTest {
   static final String EMPTY_TOPIC = TOPIC + "_empty";
   static final List<Record> SENT_RECORDS = new ArrayList<>();
   static final ConsumerRecordDeserializer RECORD_DESERIALIZER = createRecordsDeserializer();
+  static final Cursor.Tracking CURSOR_MOCK = Mockito.mock(Cursor.Tracking.class);
 
   @BeforeAll
   static void generateMsgs() throws Exception {
@@ -121,7 +124,8 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(EARLIEST, EMPTY_TOPIC, List.of(), null, null),
         createMessagesProcessing(),
-        PollingSettings.createDefault()
+        PollingSettings.createDefault(),
+        CURSOR_MOCK
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
@@ -129,7 +133,8 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new ConsumerPosition(EARLIEST, EMPTY_TOPIC, List.of(), null, null),
         100,
         createMessagesProcessing(),
-        PollingSettings.createDefault()
+        PollingSettings.createDefault(),
+        CURSOR_MOCK
     );
 
     StepVerifier.create(Flux.create(forwardEmitter))
@@ -150,8 +155,9 @@ class RecordEmitterTest extends AbstractIntegrationTest {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new ConsumerPosition(EARLIEST, TOPIC, List.of(), null, null),
-        RECORD_DESERIALIZER,
-        PollingSettings.createDefault()
+        createMessagesProcessing(),
+        PollingSettings.createDefault(),
+        CURSOR_MOCK
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
@@ -159,7 +165,8 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new ConsumerPosition(LATEST, TOPIC, List.of(), null, null),
         PARTITIONS * MSGS_PER_PARTITION,
         createMessagesProcessing(),
-        PollingSettings.createDefault()
+        PollingSettings.createDefault(),
+        CURSOR_MOCK
     );
 
     List<String> expectedValues = SENT_RECORDS.stream().map(Record::getValue).collect(Collectors.toList());
@@ -181,7 +188,8 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new ConsumerPosition(FROM_OFFSET, TOPIC, List.copyOf(targetOffsets.keySet()), null,
             new Offsets(null, targetOffsets)),
         createMessagesProcessing(),
-        PollingSettings.createDefault()
+        PollingSettings.createDefault(),
+        CURSOR_MOCK
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
@@ -190,7 +198,8 @@ class RecordEmitterTest extends AbstractIntegrationTest {
             new Offsets(null, targetOffsets)),
         PARTITIONS * MSGS_PER_PARTITION,
         createMessagesProcessing(),
-        PollingSettings.createDefault()
+        PollingSettings.createDefault(),
+        CURSOR_MOCK
     );
 
     var expectedValues = SENT_RECORDS.stream()
@@ -218,7 +227,8 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         this::createConsumer,
         new ConsumerPosition(FROM_TIMESTAMP, TOPIC, List.of(), targetTimestamp, null),
         createMessagesProcessing(),
-        PollingSettings.createDefault()
+        PollingSettings.createDefault(),
+        CURSOR_MOCK
     );
 
     expectEmitter(
@@ -234,7 +244,8 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new ConsumerPosition(TO_TIMESTAMP, TOPIC, List.of(), targetTimestamp, null),
         PARTITIONS * MSGS_PER_PARTITION,
         createMessagesProcessing(),
-        PollingSettings.createDefault()
+        PollingSettings.createDefault(),
+        CURSOR_MOCK
     );
 
     expectEmitter(
@@ -260,7 +271,8 @@ class RecordEmitterTest extends AbstractIntegrationTest {
             new Offsets(null, targetOffsets)),
         numMessages,
         createMessagesProcessing(),
-        PollingSettings.createDefault()
+        PollingSettings.createDefault(),
+        CURSOR_MOCK
     );
 
     var expectedValues = SENT_RECORDS.stream()
@@ -286,7 +298,8 @@ class RecordEmitterTest extends AbstractIntegrationTest {
         new ConsumerPosition(TO_OFFSET, TOPIC, List.copyOf(offsets.keySet()), null, new Offsets(null, offsets)),
         100,
         createMessagesProcessing(),
-        PollingSettings.createDefault()
+        PollingSettings.createDefault(),
+        CURSOR_MOCK
     );
 
     expectEmitter(backwardEmitter,

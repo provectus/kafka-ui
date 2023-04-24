@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.time.Duration;
 import java.time.Instant;
+import javax.annotation.Nullable;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -36,7 +37,7 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
     return records;
   }
 
-  protected boolean sendLimitReached() {
+  protected boolean isSendLimitReached() {
     return messagesProcessing.limitReached();
   }
 
@@ -55,8 +56,9 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
     return messagesProcessing.sentConsumingInfo(sink, records, elapsed);
   }
 
-  protected void sendFinishStatsAndCompleteSink(FluxSink<TopicMessageEventDTO> sink) {
-    messagesProcessing.sendFinishEvent(sink);
+  // cursor is null if target partitions were fully polled (no, need to do paging)
+  protected void sendFinishStatsAndCompleteSink(FluxSink<TopicMessageEventDTO> sink, @Nullable Cursor.Tracking cursor) {
+    messagesProcessing.sendFinishEvents(sink, cursor);
     sink.complete();
   }
 }

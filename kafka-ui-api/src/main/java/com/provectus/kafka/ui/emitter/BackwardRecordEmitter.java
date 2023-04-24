@@ -23,17 +23,20 @@ public class BackwardRecordEmitter extends AbstractEmitter {
   private final Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier;
   private final ConsumerPosition consumerPosition;
   private final int messagesPerPage;
+  private final Cursor.Tracking cursor;
 
   public BackwardRecordEmitter(
       Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
       ConsumerPosition consumerPosition,
       int messagesPerPage,
       MessagesProcessing messagesProcessing,
-      PollingSettings pollingSettings) {
+      PollingSettings pollingSettings,
+      Cursor.Tracking cursor) {
     super(messagesProcessing, pollingSettings);
     this.consumerPosition = consumerPosition;
     this.messagesPerPage = messagesPerPage;
     this.consumerSupplier = consumerSupplier;
+    this.cursor = cursor;
   }
 
   @Override
@@ -45,11 +48,12 @@ public class BackwardRecordEmitter extends AbstractEmitter {
       var seekOperations = SeekOperations.create(consumer, consumerPosition);
       var readUntilOffsets = new TreeMap<TopicPartition, Long>(Comparator.comparingInt(TopicPartition::partition));
       readUntilOffsets.putAll(seekOperations.getOffsetsForSeek());
+      cursor.trackOffsets(readUntilOffsets);
 
       int msgsToPollPerPartition = (int) Math.ceil((double) messagesPerPage / readUntilOffsets.size());
       log.debug("'Until' offsets for polling: {}", readUntilOffsets);
 
-      while (!sink.isCancelled() && !readUntilOffsets.isEmpty() && !sendLimitReached()) {
+      while (!sink.isCancelled() && !readUntilOffsets.isEmpty() && !isSendLimitReached()) {
         new TreeMap<>(readUntilOffsets).forEach((tp, readToOffset) -> {
           if (sink.isCancelled()) {
             return; //fast return in case of sink cancellation
@@ -74,7 +78,12 @@ public class BackwardRecordEmitter extends AbstractEmitter {
           log.debug("sink is cancelled after partitions poll iteration");
         }
       }
-      sendFinishStatsAndCompleteSink(sink);
+      sendFinishStatsAndCompleteSink(
+          sink,
+          readUntilOffsets.isEmpty()
+              ? null
+              : cursor
+      );
       log.debug("Polling finished");
     } catch (InterruptException kafkaInterruptException) {
       log.debug("Polling finished due to thread interruption");
@@ -94,6 +103,7 @@ public class BackwardRecordEmitter extends AbstractEmitter {
   ) {
     consumer.assign(Collections.singleton(tp));
     consumer.seek(tp, fromOffset);
+    cursor.trackOffset(tp, fromOffset);
     sendPhase(sink, String.format("Polling partition: %s from offset %s", tp, fromOffset));
     int desiredMsgsToPoll = (int) (toOffset - fromOffset);
 
@@ -101,7 +111,7 @@ public class BackwardRecordEmitter extends AbstractEmitter {
 
     EmptyPollsCounter emptyPolls  = pollingSettings.createEmptyPollsCounter();
     while (!sink.isCancelled()
-        && !sendLimitReached()
+        && !isSendLimitReached()
         && recordsToSend.size() < desiredMsgsToPoll
         && !emptyPolls.noDataEmptyPollsReached()) {
       var polledRecords = poll(sink, consumer, pollingSettings.getPartitionPollTimeout());

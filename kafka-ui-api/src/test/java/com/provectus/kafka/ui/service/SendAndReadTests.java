@@ -497,7 +497,7 @@ public class SendAndReadTests extends AbstractIntegrationTest {
       String topic = createTopicAndCreateSchemas();
       try {
         messagesService.sendMessage(targetCluster, topic, msgToSend).block();
-        TopicMessageDTO polled = messagesService.loadMessagesV2(
+        TopicMessageDTO polled = messagesService.loadMessages(
                 targetCluster,
                 topic,
                 new ConsumerPosition(PollingModeDTO.EARLIEST, topic, List.of(), null, null),
