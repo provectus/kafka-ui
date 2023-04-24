@@ -71,7 +71,7 @@ public class LdapSecurityConfig {
           : new LdapAuthenticationProvider(ba);
     } else {
       authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(props.getActiveDirectoryDomain(),
-          props.getUrls()); // TODO authority extractor
+          props.getUrls()); // TODO verify authorities get extracted properly
       authenticationProvider.setUseAuthenticationRequestCredentials(true);
     }
 
@@ -101,8 +101,6 @@ public class LdapSecurityConfig {
     if (props.isActiveDirectory()) {
       log.info("Active Directory support for LDAP has been enabled.");
     }
-
-    //http.authenticationManager(authenticationManager())
 
     return http
         .authorizeExchange()

@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class LdapProperties {
 
   private String urls;
-  private String base; // TODO was dnPattern
+  private String base;
   private String adminUser;
   private String adminPassword;
   private String userFilterSearchBase;
@@ -17,7 +17,7 @@ public class LdapProperties {
 
   @Value("${oauth2.ldap.activeDirectory:false}")
   private boolean isActiveDirectory;
-  @Value("${oauth2.ldap.aсtiveDirectory.domain:null}") // TODO null is a string here for some reason
+  @Value("${oauth2.ldap.aсtiveDirectory.domain:@null}")
   private String activeDirectoryDomain;
 
   @Value("${oauth2.ldap.groupRoleAttribute:cn}")
