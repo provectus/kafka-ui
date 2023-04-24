@@ -27,6 +27,8 @@ public class ClustersProperties {
 
   String internalTopicPrefix;
 
+  Integer adminClientTimeout;
+
   PollingProperties polling = new PollingProperties();
 
   @Data
@@ -56,6 +58,8 @@ public class ClustersProperties {
     Integer pollTimeoutMs;
     Integer partitionPollTimeout;
     Integer noDataEmptyPolls;
+    Integer maxPageSize;
+    Integer defaultPageSize;
   }
 
   @Data

@@ -21,6 +21,8 @@ import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaAclDTO;
+import com.provectus.kafka.ui.model.KafkaAclNamePatternTypeDTO;
+import com.provectus.kafka.ui.model.KafkaAclResourceTypeDTO;
 import com.provectus.kafka.ui.model.MetricDTO;
 import com.provectus.kafka.ui.model.Metrics;
 import com.provectus.kafka.ui.model.PartitionDTO;
@@ -136,25 +138,33 @@ public interface ClusterMapper {
     };
   }
 
-  static KafkaAclDTO.ResourceTypeEnum mapAclResourceType(ResourceType resourceType) {
+  static KafkaAclResourceTypeDTO mapAclResourceType(ResourceType resourceType) {
     return switch (resourceType) {
-      case CLUSTER -> KafkaAclDTO.ResourceTypeEnum.CLUSTER;
-      case TOPIC -> KafkaAclDTO.ResourceTypeEnum.TOPIC;
-      case GROUP -> KafkaAclDTO.ResourceTypeEnum.GROUP;
-      case DELEGATION_TOKEN -> KafkaAclDTO.ResourceTypeEnum.DELEGATION_TOKEN;
-      case TRANSACTIONAL_ID -> KafkaAclDTO.ResourceTypeEnum.TRANSACTIONAL_ID;
-      case USER -> KafkaAclDTO.ResourceTypeEnum.USER;
+      case CLUSTER -> KafkaAclResourceTypeDTO.CLUSTER;
+      case TOPIC -> KafkaAclResourceTypeDTO.TOPIC;
+      case GROUP -> KafkaAclResourceTypeDTO.GROUP;
+      case DELEGATION_TOKEN -> KafkaAclResourceTypeDTO.DELEGATION_TOKEN;
+      case TRANSACTIONAL_ID -> KafkaAclResourceTypeDTO.TRANSACTIONAL_ID;
+      case USER -> KafkaAclResourceTypeDTO.USER;
       case ANY -> throw new IllegalArgumentException("ANY type can be only part of filter");
-      case UNKNOWN -> KafkaAclDTO.ResourceTypeEnum.UNKNOWN;
+      case UNKNOWN -> KafkaAclResourceTypeDTO.UNKNOWN;
     };
+  }
+
+  static ResourceType mapAclResourceTypeDto(KafkaAclResourceTypeDTO dto) {
+    return ResourceType.valueOf(dto.name());
+  }
+
+  static PatternType mapPatternTypeDto(KafkaAclNamePatternTypeDTO dto) {
+    return PatternType.valueOf(dto.name());
   }
 
   static AclBinding toAclBinding(KafkaAclDTO dto) {
     return new AclBinding(
         new ResourcePattern(
-            ResourceType.valueOf(dto.getResourceType().name()),
+            mapAclResourceTypeDto(dto.getResourceType()),
             dto.getResourceName(),
-            PatternType.valueOf(dto.getNamePatternType().name())
+            mapPatternTypeDto(dto.getNamePatternType())
         ),
         new AccessControlEntry(
             dto.getPrincipal(),
@@ -171,7 +181,7 @@ public interface ClusterMapper {
     return new KafkaAclDTO()
         .resourceType(mapAclResourceType(pattern.resourceType()))
         .resourceName(pattern.name())
-        .namePatternType(KafkaAclDTO.NamePatternTypeEnum.fromValue(pattern.patternType().name()))
+        .namePatternType(KafkaAclNamePatternTypeDTO.fromValue(pattern.patternType().name()))
         .principal(filter.principal())
         .host(filter.host())
         .operation(mapAclOperation(filter.operation()))

@@ -9,4 +9,6 @@ message MySpecificTopicValue {
 message MyValue {
   int32 version = 1;
   string payload = 2;
+  map<int32, string> intToStringMap = 3;
+  map<string, MyValue> strToObjMap  = 4;
 }

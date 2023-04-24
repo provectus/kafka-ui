@@ -3,12 +3,12 @@ package com.provectus.kafka.ui.service.acl;
 import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.AdminClientService;
-import com.provectus.kafka.ui.service.ReactiveAdminClient;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.acl.AclBinding;
+import org.apache.kafka.common.resource.ResourcePatternFilter;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -36,21 +36,21 @@ public class AclsService {
         .doOnSuccess(v -> log.info("ACL DELETED: [{}]", aclString));
   }
 
-  public Flux<AclBinding> listAcls(KafkaCluster cluster) {
+  public Flux<AclBinding> listAcls(KafkaCluster cluster, ResourcePatternFilter filter) {
     return adminClientService.get(cluster)
-        .flatMap(ReactiveAdminClient::listAcls)
+        .flatMap(c -> c.listAcls(filter))
         .flatMapIterable(acls -> acls);
   }
 
   public Mono<String> getAclAsCsvString(KafkaCluster cluster) {
     return adminClientService.get(cluster)
-        .flatMap(ReactiveAdminClient::listAcls)
+        .flatMap(c -> c.listAcls(ResourcePatternFilter.ANY))
         .map(AclCsv::transformToCsvString);
   }
 
   public Mono<Void> syncAclWithAclCsv(KafkaCluster cluster, String csv) {
     return adminClientService.get(cluster)
-        .flatMap(ac -> ac.listAcls().flatMap(existingAclList -> {
+        .flatMap(ac -> ac.listAcls(ResourcePatternFilter.ANY).flatMap(existingAclList -> {
           var existingSet = Set.copyOf(existingAclList);
           var newAcls = Set.copyOf(AclCsv.parseCsv(csv));
           var toDelete = Sets.difference(existingSet, newAcls);

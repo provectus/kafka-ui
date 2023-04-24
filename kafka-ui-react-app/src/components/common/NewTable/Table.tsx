@@ -14,7 +14,7 @@ import type {
   PaginationState,
   ColumnDef,
 } from '@tanstack/react-table';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
@@ -134,6 +134,7 @@ const Table: React.FC<TableProps<any>> = ({
   onMouseLeave,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const [rowSelection, setRowSelection] = React.useState({});
   const onSortingChange = React.useCallback(
     (updater: UpdaterFn<SortingState>) => {
@@ -141,7 +142,7 @@ const Table: React.FC<TableProps<any>> = ({
       setSearchParams(searchParams);
       return newState;
     },
-    [searchParams]
+    [searchParams, location]
   );
   const onPaginationChange = React.useCallback(
     (updater: UpdaterFn<PaginationState>) => {
@@ -150,7 +151,7 @@ const Table: React.FC<TableProps<any>> = ({
       setRowSelection({});
       return newState;
     },
-    [searchParams]
+    [searchParams, location]
   );
 
   const table = useReactTable({

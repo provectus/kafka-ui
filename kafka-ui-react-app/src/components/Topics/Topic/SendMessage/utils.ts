@@ -11,6 +11,7 @@ import upperFirst from 'lodash/upperFirst';
 
 jsf.option('fillProperties', false);
 jsf.option('alwaysFakeOptionals', true);
+jsf.option('failOnInvalidFormat', false);
 
 const generateValueFromSchema = (preffered?: SerdeDescription) => {
   if (!preffered?.schema) {
