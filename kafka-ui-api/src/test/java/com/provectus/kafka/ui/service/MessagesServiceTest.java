@@ -54,7 +54,7 @@ class MessagesServiceTest extends AbstractIntegrationTest {
   @Test
   void loadMessagesReturnsExceptionWhenTopicNotFound() {
     StepVerifier.create(messagesService
-            .loadMessagesV2(cluster, NON_EXISTING_TOPIC,
+            .loadMessages(cluster, NON_EXISTING_TOPIC,
                 new ConsumerPosition(PollingModeDTO.TAILING, NON_EXISTING_TOPIC, List.of(), null, null),
                 null, null, 1, "String", "String"))
         .expectError(TopicNotFoundException.class)
@@ -69,7 +69,7 @@ class MessagesServiceTest extends AbstractIntegrationTest {
       producer.send(testTopic, "message1");
       producer.send(testTopic, "message2").get();
 
-      Flux<TopicMessageDTO> msgsFlux = messagesService.loadMessagesV2(
+      Flux<TopicMessageDTO> msgsFlux = messagesService.loadMessages(
           cluster,
           testTopic,
           new ConsumerPosition(PollingModeDTO.EARLIEST, testTopic, List.of(), null, null),

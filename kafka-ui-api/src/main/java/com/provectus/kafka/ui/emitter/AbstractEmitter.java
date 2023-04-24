@@ -1,11 +1,9 @@
 package com.provectus.kafka.ui.emitter;
 
-import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.model.TopicMessagePhaseDTO;
-import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import java.time.Duration;
 import java.time.Instant;
+import javax.annotation.Nullable;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -14,13 +12,12 @@ import reactor.core.publisher.FluxSink;
 
 public abstract class AbstractEmitter implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
 
-  private final ConsumerRecordDeserializer recordDeserializer;
-  private final ConsumingStats consumingStats = new ConsumingStats();
+  private final MessagesProcessing messagesProcessing;
   private final PollingThrottler throttler;
   protected final PollingSettings pollingSettings;
 
-  protected AbstractEmitter(ConsumerRecordDeserializer recordDeserializer, PollingSettings pollingSettings) {
-    this.recordDeserializer = recordDeserializer;
+  protected AbstractEmitter(MessagesProcessing messagesProcessing, PollingSettings pollingSettings) {
+    this.messagesProcessing = messagesProcessing;
     this.pollingSettings = pollingSettings;
     this.throttler = pollingSettings.getPollingThrottler();
   }
@@ -40,39 +37,28 @@ public abstract class AbstractEmitter implements java.util.function.Consumer<Flu
     return records;
   }
 
+  protected boolean isSendLimitReached() {
+    return messagesProcessing.limitReached();
+  }
+
   protected void sendMessage(FluxSink<TopicMessageEventDTO> sink,
-                                                       ConsumerRecord<Bytes, Bytes> msg) {
-    final TopicMessageDTO topicMessage = recordDeserializer.deserialize(msg);
-    sink.next(
-        new TopicMessageEventDTO()
-            .type(TopicMessageEventDTO.TypeEnum.MESSAGE)
-            .message(topicMessage)
-    );
+                             ConsumerRecord<Bytes, Bytes> msg) {
+    messagesProcessing.sendMsg(sink, msg);
   }
 
   protected void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {
-    sink.next(
-        new TopicMessageEventDTO()
-            .type(TopicMessageEventDTO.TypeEnum.PHASE)
-            .phase(new TopicMessagePhaseDTO().name(name))
-    );
+    messagesProcessing.sendPhase(sink, name);
   }
 
   protected int sendConsuming(FluxSink<TopicMessageEventDTO> sink,
-                               ConsumerRecords<Bytes, Bytes> records,
-                               long elapsed) {
-    return consumingStats.sendConsumingEvt(sink, records, elapsed, getFilterApplyErrors(sink));
+                              ConsumerRecords<Bytes, Bytes> records,
+                              long elapsed) {
+    return messagesProcessing.sentConsumingInfo(sink, records, elapsed);
   }
 
-  protected void sendFinishStatsAndCompleteSink(FluxSink<TopicMessageEventDTO> sink) {
-    consumingStats.sendFinishEvent(sink, getFilterApplyErrors(sink));
+  // cursor is null if target partitions were fully polled (no, need to do paging)
+  protected void sendFinishStatsAndCompleteSink(FluxSink<TopicMessageEventDTO> sink, @Nullable Cursor.Tracking cursor) {
+    messagesProcessing.sendFinishEvents(sink, cursor);
     sink.complete();
-  }
-
-  protected Number getFilterApplyErrors(FluxSink<?> sink) {
-    return sink.contextView()
-        .<MessageFilterStats>getOrEmpty(MessageFilterStats.class)
-        .<Number>map(MessageFilterStats::getFilterApplyErrors)
-        .orElse(0);
   }
 }

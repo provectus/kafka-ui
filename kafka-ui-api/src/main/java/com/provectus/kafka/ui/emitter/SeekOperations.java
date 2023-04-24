@@ -1,9 +1,9 @@
 package com.provectus.kafka.ui.emitter;
 
 import static com.provectus.kafka.ui.model.PollingModeDTO.TO_TIMESTAMP;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.PollingModeDTO;
 import java.util.HashMap;
@@ -53,22 +53,14 @@ class SeekOperations {
   static Map<TopicPartition, Long> getOffsetsForSeek(Consumer<?, ?> consumer,
                                                      OffsetsInfo offsetsInfo,
                                                      ConsumerPosition position) {
-    switch (position.pollingMode()) {
-      case TAILING:
-        return consumer.endOffsets(offsetsInfo.allTargetPartitions());
-      case LATEST:
-        return consumer.endOffsets(offsetsInfo.getNonEmptyPartitions());
-      case EARLIEST:
-        return consumer.beginningOffsets(offsetsInfo.getNonEmptyPartitions());
-      case FROM_OFFSET, TO_OFFSET:
-        Preconditions.checkNotNull(position.offsets());
-        return fixOffsets(offsetsInfo, position.offsets());
-      case FROM_TIMESTAMP, TO_TIMESTAMP:
-        Preconditions.checkNotNull(position.timestamp());
-        return offsetsForTimestamp(consumer, position.pollingMode(), offsetsInfo, position.timestamp());
-      default:
-        throw new IllegalStateException();
-    }
+    return switch (position.pollingMode()) {
+      case TAILING -> consumer.endOffsets(offsetsInfo.allTargetPartitions());
+      case LATEST -> consumer.endOffsets(offsetsInfo.getNonEmptyPartitions());
+      case EARLIEST -> consumer.beginningOffsets(offsetsInfo.getNonEmptyPartitions());
+      case FROM_OFFSET, TO_OFFSET -> fixOffsets(offsetsInfo, requireNonNull(position.offsets()));
+      case FROM_TIMESTAMP, TO_TIMESTAMP ->
+          offsetsForTimestamp(consumer, position.pollingMode(), offsetsInfo, requireNonNull(position.timestamp()));
+    };
   }
 
   private static Map<TopicPartition, Long> fixOffsets(OffsetsInfo offsetsInfo,
@@ -77,7 +69,7 @@ class SeekOperations {
     if (positionOffset.offset() != null) {
       offsetsInfo.getNonEmptyPartitions().forEach(tp -> offsets.put(tp, positionOffset.offset()));
     } else {
-      Preconditions.checkNotNull(positionOffset.tpOffsets());
+      requireNonNull(positionOffset.tpOffsets());
       offsets.putAll(positionOffset.tpOffsets());
       offsets.keySet().retainAll(offsetsInfo.getNonEmptyPartitions());
     }

@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serdes.ConsumerRecordDeserializer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,17 +23,20 @@ public class BackwardRecordEmitter extends AbstractEmitter {
   private final Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier;
   private final ConsumerPosition consumerPosition;
   private final int messagesPerPage;
+  private final Cursor.Tracking cursor;
 
   public BackwardRecordEmitter(
       Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
       ConsumerPosition consumerPosition,
       int messagesPerPage,
-      ConsumerRecordDeserializer recordDeserializer,
-      PollingSettings pollingSettings) {
-    super(recordDeserializer, pollingSettings);
+      MessagesProcessing messagesProcessing,
+      PollingSettings pollingSettings,
+      Cursor.Tracking cursor) {
+    super(messagesProcessing, pollingSettings);
     this.consumerPosition = consumerPosition;
     this.messagesPerPage = messagesPerPage;
     this.consumerSupplier = consumerSupplier;
+    this.cursor = cursor;
   }
 
   @Override
@@ -46,11 +48,12 @@ public class BackwardRecordEmitter extends AbstractEmitter {
       var seekOperations = SeekOperations.create(consumer, consumerPosition);
       var readUntilOffsets = new TreeMap<TopicPartition, Long>(Comparator.comparingInt(TopicPartition::partition));
       readUntilOffsets.putAll(seekOperations.getOffsetsForSeek());
+      cursor.trackOffsets(readUntilOffsets);
 
       int msgsToPollPerPartition = (int) Math.ceil((double) messagesPerPage / readUntilOffsets.size());
       log.debug("'Until' offsets for polling: {}", readUntilOffsets);
 
-      while (!sink.isCancelled() && !readUntilOffsets.isEmpty()) {
+      while (!sink.isCancelled() && !readUntilOffsets.isEmpty() && !isSendLimitReached()) {
         new TreeMap<>(readUntilOffsets).forEach((tp, readToOffset) -> {
           if (sink.isCancelled()) {
             return; //fast return in case of sink cancellation
@@ -59,8 +62,6 @@ public class BackwardRecordEmitter extends AbstractEmitter {
           long readFromOffset = Math.max(beginOffset, readToOffset - msgsToPollPerPartition);
 
           partitionPollIteration(tp, readFromOffset, readToOffset, consumer, sink)
-              .stream()
-              .filter(r -> !sink.isCancelled())
               .forEach(r -> sendMessage(sink, r));
 
           if (beginOffset == readFromOffset) {
@@ -77,7 +78,12 @@ public class BackwardRecordEmitter extends AbstractEmitter {
           log.debug("sink is cancelled after partitions poll iteration");
         }
       }
-      sendFinishStatsAndCompleteSink(sink);
+      sendFinishStatsAndCompleteSink(
+          sink,
+          readUntilOffsets.isEmpty()
+              ? null
+              : cursor
+      );
       log.debug("Polling finished");
     } catch (InterruptException kafkaInterruptException) {
       log.debug("Polling finished due to thread interruption");
@@ -97,6 +103,7 @@ public class BackwardRecordEmitter extends AbstractEmitter {
   ) {
     consumer.assign(Collections.singleton(tp));
     consumer.seek(tp, fromOffset);
+    cursor.trackOffset(tp, fromOffset);
     sendPhase(sink, String.format("Polling partition: %s from offset %s", tp, fromOffset));
     int desiredMsgsToPoll = (int) (toOffset - fromOffset);
 
@@ -104,6 +111,7 @@ public class BackwardRecordEmitter extends AbstractEmitter {
 
     EmptyPollsCounter emptyPolls  = pollingSettings.createEmptyPollsCounter();
     while (!sink.isCancelled()
+        && !isSendLimitReached()
         && recordsToSend.size() < desiredMsgsToPoll
         && !emptyPolls.noDataEmptyPollsReached()) {
       var polledRecords = poll(sink, consumer, pollingSettings.getPartitionPollTimeout());

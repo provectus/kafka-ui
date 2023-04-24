@@ -1,18 +1,12 @@
 package com.provectus.kafka.ui.model;
 
-import static java.util.stream.Collectors.toMap;
-
 import com.provectus.kafka.ui.exception.ValidationException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.annotation.Nullable;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.common.TopicPartition;
-import org.springframework.util.StringUtils;
-
 
 public record ConsumerPosition(PollingModeDTO pollingMode,
                                String topic,
@@ -29,8 +23,8 @@ public record ConsumerPosition(PollingModeDTO pollingMode,
                                         String topic,
                                         @Nullable List<Integer> partitions,
                                         @Nullable Long timestamp,
-                                        @Nullable String offsetsStr) {
-    @Nullable var offsets = parseAndValidateOffsets(pollingMode, topic, offsetsStr);
+                                        @Nullable Long offset) {
+    @Nullable var offsets = parseAndValidateOffsets(pollingMode, offset);
 
     var topicPartitions = Optional.ofNullable(partitions).orElse(List.of())
         .stream()
@@ -61,33 +55,14 @@ public record ConsumerPosition(PollingModeDTO pollingMode,
   }
 
   private static Offsets parseAndValidateOffsets(PollingModeDTO pollingMode,
-                                                 String topic,
-                                                 @Nullable String offsetsStr) {
-    Offsets offsets = null;
+                                                 @Nullable Long offset) {
     if (pollingMode == PollingModeDTO.FROM_OFFSET || pollingMode == PollingModeDTO.TO_OFFSET) {
-      if (!StringUtils.hasText(offsetsStr)) {
+      if (offset == null) {
         throw new ValidationException("offsets not provided for " + pollingMode);
       }
-      if (!offsetsStr.contains(":")) {
-        offsets = new Offsets(Long.parseLong(offsetsStr), null);
-      } else {
-        Map<TopicPartition, Long> tpOffsets = Stream.of(offsetsStr.split(","))
-            .map(p -> {
-              String[] split = p.split(":");
-              if (split.length != 2) {
-                throw new IllegalArgumentException(
-                    "Wrong seekTo argument format. See API docs for details");
-              }
-              return Pair.of(
-                  new TopicPartition(topic, Integer.parseInt(split[0])),
-                  Long.parseLong(split[1])
-              );
-            })
-            .collect(toMap(Pair::getKey, Pair::getValue));
-        offsets = new Offsets(null, tpOffsets);
-      }
+      return new Offsets(offset, null);
     }
-    return offsets;
+    return null;
   }
 
 }
