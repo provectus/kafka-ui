@@ -27,7 +27,7 @@ export interface AddEditFilterContainerProps {
   inputDisplayNameDefaultValue?: string;
   inputCodeDefaultValue?: string;
   isAdd?: boolean;
-  submitCallback?: (values: AddMessageFilters) => Promise<void>;
+  submitCallback?: (values: AddMessageFilters) => void;
 }
 
 const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
