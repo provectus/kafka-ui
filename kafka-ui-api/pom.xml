@@ -115,6 +115,7 @@
             <groupId>io.projectreactor.addons</groupId>
             <artifactId>reactor-extra</artifactId>
         </dependency>
+<!-- https://github.com/provectus/kafka-ui/pull/3693 -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
