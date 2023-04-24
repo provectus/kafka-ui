@@ -2,7 +2,7 @@ import { useAppInfo } from 'lib/hooks/api/appConfig';
 import React from 'react';
 import { ApplicationInfoEnabledFeaturesEnum } from 'generated-sources';
 
-interface GlobalSettingsContextProps {
+export interface GlobalSettingsContextProps {
   hasDynamicConfig: boolean;
 }
 

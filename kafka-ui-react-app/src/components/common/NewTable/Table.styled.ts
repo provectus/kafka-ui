@@ -225,6 +225,13 @@ export const Ellipsis = styled.div`
   display: block;
 `;
 
-export const TableWrapper = styled.div`
-  overflow-x: auto;
-`;
+export const TableWrapper = styled.div<{ $disabled: boolean }>(
+  ({ $disabled }) => css`
+    overflow-x: auto;
+    ${$disabled &&
+    css`
+      pointer-events: none;
+      opacity: 0.5;
+    `}
+  `
+);

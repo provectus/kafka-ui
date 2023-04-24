@@ -16,9 +16,7 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
       <tbody>
         <MessageContent
           messageKey='"test-key"'
-          messageKeyFormat="JSON"
           messageContent='{"data": "test"}'
-          messageContentFormat="AVRO"
           headers={{ header: 'test' }}
           timestamp={new Date(0)}
           timestampType={TopicMessageTimestampTypeEnum.CREATE_TIME}
@@ -34,14 +32,33 @@ const proto =
 
 global.TextEncoder = TextEncoder;
 
+const searchParamsContentAVRO = new URLSearchParams({
+  keySerde: 'SchemaRegistry',
+  valueSerde: 'AVRO',
+  limit: '100',
+});
+
+const searchParamsContentJSON = new URLSearchParams({
+  keySerde: 'SchemaRegistry',
+  valueSerde: 'JSON',
+  limit: '100',
+});
+
+const searchParamsContentPROTOBUF = new URLSearchParams({
+  keySerde: 'SchemaRegistry',
+  valueSerde: 'PROTOBUF',
+  limit: '100',
+});
 describe('MessageContent screen', () => {
   beforeEach(() => {
-    render(setupWrapper());
+    render(setupWrapper(), {
+      initialEntries: [`/messages?${searchParamsContentAVRO}`],
+    });
   });
 
   describe('renders', () => {
     it('key format in document', () => {
-      expect(screen.getByText('JSON')).toBeInTheDocument();
+      expect(screen.getByText('SchemaRegistry')).toBeInTheDocument();
     });
 
     it('content format in document', () => {
@@ -86,36 +103,36 @@ describe('checking content type depend on message type', () => {
   it('renders component with message having JSON type', () => {
     render(
       setupWrapper({
-        messageContentFormat: 'JSON',
         messageContent: '{"data": "test"}',
-      })
+      }),
+      { initialEntries: [`/messages?${searchParamsContentJSON}`] }
     );
-    expect(screen.getAllByText('JSON')[1]).toBeInTheDocument();
+    expect(screen.getByText('JSON')).toBeInTheDocument();
   });
   it('renders component with message having AVRO type', () => {
     render(
       setupWrapper({
-        messageContentFormat: 'AVRO',
         messageContent: '{"data": "test"}',
-      })
+      }),
+      { initialEntries: [`/messages?${searchParamsContentAVRO}`] }
     );
     expect(screen.getByText('AVRO')).toBeInTheDocument();
   });
   it('renders component with message having PROTOBUF type', () => {
     render(
       setupWrapper({
-        messageContentFormat: 'PROTOBUF',
         messageContent: proto,
-      })
+      }),
+      { initialEntries: [`/messages?${searchParamsContentPROTOBUF}`] }
     );
     expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
   });
   it('renders component with message having no type which is equal to having PROTOBUF type', () => {
     render(
       setupWrapper({
-        messageContentFormat: 'PROTOBUF',
         messageContent: '',
-      })
+      }),
+      { initialEntries: [`/messages?${searchParamsContentPROTOBUF}`] }
     );
     expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
   });

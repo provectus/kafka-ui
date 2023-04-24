@@ -10,6 +10,7 @@ import {
   clusterSchemasPath,
   ClusterSubjectParam,
 } from 'lib/paths';
+import yup from 'lib/yupExtended';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
 import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
@@ -28,6 +29,9 @@ import {
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { schemasApiClient } from 'lib/api';
 import { showServerError } from 'lib/errorHandling';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { FormError } from 'components/common/Input/Input.styled';
+import { ErrorMessage } from '@hookform/error-message';
 
 import * as S from './Edit.styled';
 
@@ -47,8 +51,16 @@ const Form: React.FC = () => {
       : JSON.stringify(JSON.parse(schema?.schema || '{}'), null, '\t');
   }, [schema]);
 
+  const validationSchema = () =>
+    yup.object().shape({
+      newSchema:
+        schema?.schemaType === SchemaType.PROTOBUF
+          ? yup.string().required().isEnum('Schema syntax is not valid')
+          : yup.string().required().isJsonObject('Schema syntax is not valid'),
+    });
   const methods = useForm<NewSchemaSubjectRaw>({
     mode: 'onChange',
+    resolver: yupResolver(validationSchema()),
     defaultValues: {
       schemaType: schema?.schemaType,
       compatibilityLevel:
@@ -58,11 +70,10 @@ const Form: React.FC = () => {
   });
 
   const {
-    formState: { isDirty, isSubmitting, dirtyFields },
+    formState: { isDirty, isSubmitting, dirtyFields, errors },
     control,
     handleSubmit,
   } = methods;
-
   const onSubmit = async (props: NewSchemaSubjectRaw) => {
     if (!schema) return;
 
@@ -110,7 +121,7 @@ const Form: React.FC = () => {
   return (
     <FormProvider {...methods}>
       <PageHeading
-        text="Edit"
+        text={`${subject} Edit`}
         backText="Schema Registry"
         backTo={clusterSchemasPath(clusterName)}
       />
@@ -191,11 +202,14 @@ const Form: React.FC = () => {
                   )}
                 />
               </S.EditorContainer>
+              <FormError>
+                <ErrorMessage errors={errors} name="newSchema" />
+              </FormError>
               <Button
                 buttonType="primary"
                 buttonSize="M"
                 type="submit"
-                disabled={!isDirty || isSubmitting}
+                disabled={!isDirty || isSubmitting || !!errors.newSchema}
               >
                 Submit
               </Button>

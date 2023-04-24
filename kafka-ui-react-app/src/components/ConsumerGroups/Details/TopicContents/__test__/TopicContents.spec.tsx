@@ -2,9 +2,9 @@ import React from 'react';
 import { clusterConsumerGroupDetailsPath } from 'lib/paths';
 import { screen } from '@testing-library/react';
 import TopicContents from 'components/ConsumerGroups/Details/TopicContents/TopicContents';
-import { consumerGroupPayload } from 'redux/reducers/consumerGroups/__test__/fixtures';
 import { render, WithRoute } from 'lib/testHelpers';
 import { ConsumerGroupTopicPartition } from 'generated-sources';
+import { consumerGroupPayload } from 'lib/fixtures/consumerGroups';
 
 const clusterName = 'cluster1';
 

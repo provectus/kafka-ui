@@ -30,6 +30,9 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       suspense: true,
+      onError(error) {
+        showServerError(error as Response);
+      },
     },
     mutations: {
       onError(error) {

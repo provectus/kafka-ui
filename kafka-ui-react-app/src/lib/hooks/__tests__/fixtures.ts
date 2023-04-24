@@ -4,7 +4,7 @@ import { modifyRolesData } from 'lib/permissions';
 export const clusterName1 = 'local';
 export const clusterName2 = 'dev';
 
-export const userPermissionsMock = [
+const userPermissionsMock = [
   {
     clusters: [clusterName1],
     resource: ResourceType.TOPIC,

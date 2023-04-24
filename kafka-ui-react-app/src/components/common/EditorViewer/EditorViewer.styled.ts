@@ -5,7 +5,7 @@ export const Wrapper = styled.div`
   padding: 8px 16px;
   .ace_active-line {
     background-color: ${({ theme }) =>
-      theme.viewer.wrapper.backgroundColor} !important;
+      theme.default.backgroundColor} !important;
   }
   .ace_line {
     color: ${({ theme }) => theme.viewer.wrapper.color} !important;

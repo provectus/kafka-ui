@@ -9,7 +9,6 @@ import {
   useDeleteTopic,
 } from 'lib/hooks/api/topics';
 import { useConfirm } from 'lib/hooks/useConfirm';
-import { Button } from 'components/common/Button/Button';
 import { clusterTopicCopyRelativePath } from 'lib/paths';
 import { useQueryClient } from '@tanstack/react-query';
 import { ActionCanButton } from 'components/common/ActionComponent';
@@ -108,6 +107,19 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
     );
   }, [selectedTopics, clusterName, roles]);
 
+  const canCopySelectedTopic = useMemo(() => {
+    return selectedTopics.every((value) =>
+      isPermitted({
+        roles,
+        resource: ResourceType.TOPIC,
+        action: Action.CREATE,
+        value,
+        clusterName,
+        rbacFlag,
+      })
+    );
+  }, [selectedTopics, clusterName, roles]);
+
   const canPurgeSelectedTopics = useMemo(() => {
     return selectedTopics.every((value) =>
       isPermitted({
@@ -132,14 +144,15 @@ const BatchActionsbar: React.FC<BatchActionsbarProps> = ({
       >
         Delete selected topics
       </ActionCanButton>
-      <Button
+      <ActionCanButton
         buttonSize="M"
         buttonType="secondary"
         disabled={selectedTopics.length !== 1}
+        canDoAction={canCopySelectedTopic}
         to={getCopyTopicPath()}
       >
         Copy selected topic
-      </Button>
+      </ActionCanButton>
       <ActionCanButton
         buttonSize="M"
         buttonType="secondary"

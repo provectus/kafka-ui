@@ -25,6 +25,13 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'build',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            ace: ['ace-builds', 'react-ace'],
+          },
+        },
+      },
     },
     experimental: {
       renderBuiltUrl(

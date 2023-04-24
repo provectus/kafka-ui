@@ -26,7 +26,10 @@ import {
 } from '@tanstack/react-query';
 import { ConfirmContextProvider } from 'components/contexts/ConfirmContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { GlobalSettingsContext } from 'components/contexts/GlobalSettingsContext';
+import {
+  GlobalSettingsContext,
+  GlobalSettingsContextProps,
+} from 'components/contexts/GlobalSettingsContext';
 import { UserInfoRolesAccessContext } from 'components/contexts/UserInfoRolesAccessContext';
 
 import { RolesType, modifyRolesData } from './permissions';
@@ -35,6 +38,7 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
   store?: Store<Partial<RootState>, AnyAction>;
   initialEntries?: MemoryRouterProps['initialEntries'];
+  globalSettings?: GlobalSettingsContextProps;
   userInfo?: {
     roles?: RolesType;
     rbacFlag: boolean;
@@ -110,6 +114,7 @@ const customRender = (
       preloadedState,
     }),
     initialEntries,
+    globalSettings = { hasDynamicConfig: false },
     userInfo,
     ...renderOptions
   }: CustomRenderOptions = {}
@@ -119,7 +124,7 @@ const customRender = (
     children,
   }) => (
     <TestQueryClientProvider>
-      <GlobalSettingsContext.Provider value={{ hasDynamicConfig: false }}>
+      <GlobalSettingsContext.Provider value={globalSettings}>
         <ThemeProvider theme={theme}>
           <TestUserInfoProvider data={userInfo}>
             <ConfirmContextProvider>

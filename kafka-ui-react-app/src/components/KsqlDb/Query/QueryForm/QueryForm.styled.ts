@@ -6,13 +6,12 @@ export const QueryWrapper = styled.div`
 `;
 
 export const KSQLInputsWrapper = styled.div`
-  width: 100%;
   display: flex;
   gap: 24px;
-
   padding-bottom: 16px;
-  & > div {
-    flex-grow: 1;
+
+  @media screen and (max-width: 769px) {
+    flex-direction: column;
   }
 `;
 
@@ -22,61 +21,23 @@ export const KSQLInputHeader = styled.div`
   color: ${({ theme }) => theme.default.color.normal};
 `;
 
-export const KSQLButtons = styled.div`
-  display: flex;
-  gap: 16px;
-`;
-
-export const StreamPropertiesContainer = styled.label`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 50%;
-  color: ${({ theme }) => theme.default.color.normal};
-`;
-
 export const InputsContainer = styled.div`
-  overflow: hidden;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-`;
-
-export const StreamPropertiesInputWrapper = styled.div`
-  & {
-    width: 100%;
-  }
-  & > input {
-    width: 100%;
-    height: 40px;
-    border: 1px solid grey;
-    &:focus {
-      outline: none;
-      border-color: ${({ theme }) => theme.input.borderColor.focus};
-      &::placeholder {
-        color: transparent;
-      }
-    }
-    border-radius: 4px;
-    font-size: 16px;
-    padding-left: 15px;
-    background-color: ${({ theme }) => theme.input.backgroundColor.normal};
-    color: ${({ theme }) => theme.input.color.normal};
-  }
-`;
-
-export const DeleteButtonWrapper = styled.div`
-  min-height: 32px;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr 30px;
   align-items: center;
-  justify-self: flex-start;
-  margin-top: 10px;
+  gap: 10px;
 `;
 
 export const Fieldset = styled.fieldset`
-  width: 50%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+export const ButtonsContainer = styled.div`
+  display: flex;
+  gap: 8px;
 `;
 
 export const SQLEditor = styled(BaseSQLEditor)(

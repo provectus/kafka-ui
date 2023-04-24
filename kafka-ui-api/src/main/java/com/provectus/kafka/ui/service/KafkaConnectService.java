@@ -225,11 +225,11 @@ public class KafkaConnectService {
   }
 
   public Mono<ConnectorDTO> setConnectorConfig(KafkaCluster cluster, String connectName,
-                                               String connectorName, Mono<Object> requestBody) {
+                                               String connectorName, Mono<Map<String, Object>> requestBody) {
     return api(cluster, connectName)
         .mono(c ->
             requestBody
-                .flatMap(body -> c.setConnectorConfig(connectorName, (Map<String, Object>) body))
+                .flatMap(body -> c.setConnectorConfig(connectorName, body))
                 .map(kafkaConnectMapper::fromClient));
   }
 
@@ -298,12 +298,12 @@ public class KafkaConnectService {
   }
 
   public Mono<ConnectorPluginConfigValidationResponseDTO> validateConnectorPluginConfig(
-      KafkaCluster cluster, String connectName, String pluginName, Mono<Object> requestBody) {
+      KafkaCluster cluster, String connectName, String pluginName, Mono<Map<String, Object>> requestBody) {
     return api(cluster, connectName)
         .mono(client ->
             requestBody
                 .flatMap(body ->
-                    client.validateConnectorPluginConfig(pluginName, (Map<String, Object>) body))
+                    client.validateConnectorPluginConfig(pluginName, body))
                 .map(kafkaConnectMapper::fromClient)
         );
   }

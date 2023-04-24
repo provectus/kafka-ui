@@ -41,7 +41,7 @@ public class StatisticsService {
                     List.of(
                         metricsCollector.getBrokerMetrics(cluster, description.getNodes()),
                         getLogDirInfo(description, ac),
-                        featureService.getAvailableFeatures(cluster, description.getController()),
+                        featureService.getAvailableFeatures(cluster, description),
                         loadTopicConfigs(cluster),
                         describeTopics(cluster)),
                     results ->

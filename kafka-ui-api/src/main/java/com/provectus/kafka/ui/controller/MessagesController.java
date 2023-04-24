@@ -41,9 +41,6 @@ import reactor.core.scheduler.Schedulers;
 @Slf4j
 public class MessagesController extends AbstractController implements MessagesApi {
 
-  private static final int MAX_LOAD_RECORD_LIMIT = 100;
-  private static final int DEFAULT_LOAD_RECORD_LIMIT = 20;
-
   private final MessagesService messagesService;
   private final DeserializationService deserializationService;
   private final AccessControlService accessControlService;
@@ -81,7 +78,30 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                            String keySerde,
                                                                            String valueSerde,
                                                                            ServerWebExchange exchange) {
-    throw new IllegalStateException();
+    final Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+        .cluster(clusterName)
+        .topic(topicName)
+        .topicActions(MESSAGES_READ)
+        .build());
+
+    seekType = seekType != null ? seekType : SeekTypeDTO.BEGINNING;
+    seekDirection = seekDirection != null ? seekDirection : SeekDirectionDTO.FORWARD;
+    filterQueryType = filterQueryType != null ? filterQueryType : MessageFilterTypeDTO.STRING_CONTAINS;
+
+    var positions = new ConsumerPosition(
+        seekType,
+        topicName,
+        parseSeekTo(topicName, seekType, seekTo)
+    );
+    Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> job = Mono.just(
+        ResponseEntity.ok(
+            messagesService.loadMessages(
+                getCluster(clusterName), topicName, positions, q, filterQueryType,
+                limit, seekDirection, keySerde, valueSerde)
+        )
+    );
+
+    return validateAccess.then(job);
   }
 
   @Override

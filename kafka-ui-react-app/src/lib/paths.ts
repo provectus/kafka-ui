@@ -1,12 +1,8 @@
 import { Broker, Connect, Connector } from 'generated-sources';
-import {
-  ClusterName,
-  ConsumerGroupID,
-  SchemaName,
-  TopicName,
-} from 'redux/interfaces';
+import { ClusterName, SchemaName, TopicName } from 'redux/interfaces';
 
 import { GIT_REPO_LINK } from './constants';
+import { ConsumerGroupID } from './hooks/api/consumers';
 
 export const gitCommitPath = (commit: string) =>
   `${GIT_REPO_LINK}/commit/${commit}`;
@@ -204,7 +200,7 @@ export const clusterConnectorsRelativePath = 'connectors';
 export const clusterConnectorNewRelativePath = 'create-new';
 export const clusterConnectConnectorsRelativePath = `${RouteParams.connectName}/connectors`;
 export const clusterConnectConnectorRelativePath = `${clusterConnectConnectorsRelativePath}/${RouteParams.connectorName}`;
-export const clusterConnectConnectorTasksRelativePath = 'tasks';
+const clusterConnectConnectorTasksRelativePath = 'tasks';
 export const clusterConnectConnectorConfigRelativePath = 'config';
 
 export const clusterConnectsPath = (
@@ -287,5 +283,5 @@ export const clusterConfigPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterConfigRelativePath}`;
 
-export const clusterNewConfigRelativePath = 'create-new-cluster';
+const clusterNewConfigRelativePath = 'create-new-cluster';
 export const clusterNewConfigPath = `/ui/clusters/${clusterNewConfigRelativePath}`;

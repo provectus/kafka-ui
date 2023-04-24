@@ -18,9 +18,9 @@ public class TailingEmitter extends AbstractEmitter {
 
   public TailingEmitter(Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
                         ConsumerPosition consumerPosition,
-                        ConsumerRecordDeserializer recordDeserializer,
+                        MessagesProcessing messagesProcessing,
                         PollingSettings pollingSettings) {
-    super(recordDeserializer, pollingSettings);
+    super(messagesProcessing, pollingSettings);
     this.consumerSupplier = consumerSupplier;
     this.consumerPosition = consumerPosition;
   }

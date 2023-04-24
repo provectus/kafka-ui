@@ -2024,6 +2024,26 @@ components:
             type: string
             enum:
               - DYNAMIC_CONFIG
+        build:
+          type: object
+          properties:
+            commitId:
+              type: string
+            version:
+              type: string
+            buildTime:
+              type: string
+            isLatestRelease:
+              type: boolean
+        latestRelease:
+          type: object
+          properties:
+            versionTag:
+              type: string
+            publishedAt:
+              type: string
+            htmlUrl:
+              type: string
 
     Cluster:
       type: object
@@ -2462,6 +2482,16 @@ components:
           type: number
         bytesOutPerSec:
           type: number
+        partitionsLeader:
+          type: integer
+        partitions:
+          type: integer
+        inSyncPartitions:
+          type: integer
+        partitionsSkew:
+          type: number
+        leadersSkew:
+          type: number
       required:
         - id
 
@@ -2494,6 +2524,10 @@ components:
         - UNKNOWN
 
     ConsumerGroup:
+      discriminator:
+        propertyName: inherit
+        mapping:
+          details: "#/components/schemas/ConsumerGroupDetails"
       type: object
       properties:
         groupId:
@@ -2523,6 +2557,8 @@ components:
         - NAME
         - MEMBERS
         - STATE
+        - MESSAGES_BEHIND
+        - TOPIC_NUM
 
     ConsumerGroupsPageResponse:
       type: object
@@ -3580,6 +3616,12 @@ components:
                               type: array
                               items:
                                 $ref: '#/components/schemas/Action'
+            webclient:
+              type: object
+              properties:
+                maxInMemoryBufferSize:
+                  type: string
+                  description: "examples: 20, 12KB, 5MB"
             kafka:
               type: object
               properties:
@@ -3592,6 +3634,14 @@ components:
                       type: integer
                     noDataEmptyPolls:
                       type: integer
+                    maxPageSize:
+                      type: integer
+                    defaultPageSize:
+                      type: integer
+                adminClientTimeout:
+                  type: integer
+                internalTopicPrefix:
+                  type: string
                 clusters:
                   type: array
                   items:

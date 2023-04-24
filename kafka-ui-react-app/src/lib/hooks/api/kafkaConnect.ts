@@ -109,7 +109,7 @@ export function useUpdateConnectorConfig(props: UseConnectorProps) {
     }
   );
 }
-export function useCreateConnectorMutation(clusterName: ClusterName) {
+function useCreateConnectorMutation(clusterName: ClusterName) {
   const client = useQueryClient();
   return useMutation(
     (props: CreateConnectorProps) =>

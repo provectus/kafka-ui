@@ -11,9 +11,7 @@ import { render, WithRoute } from 'lib/testHelpers';
 
 const clusterName = 'cluster1';
 
-jest.mock('components/ConsumerGroups/List/ListContainer', () => () => (
-  <div>ListContainerMock</div>
-));
+jest.mock('components/ConsumerGroups/List', () => () => <div>ListPage</div>);
 jest.mock('components/ConsumerGroups/Details/Details', () => () => (
   <div>DetailsMock</div>
 ));
@@ -35,7 +33,7 @@ const renderComponent = (path?: string) =>
 describe('ConsumerGroups', () => {
   it('renders ListContainer', async () => {
     renderComponent();
-    expect(screen.getByText('ListContainerMock')).toBeInTheDocument();
+    expect(screen.getByText('ListPage')).toBeInTheDocument();
   });
   it('renders ResetOffsets', async () => {
     renderComponent(

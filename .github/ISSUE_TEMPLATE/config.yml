@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Official documentation
+    url: https://docs.kafka-ui.provectus.io/
+    about: Before reaching out for support, please refer to our documentation. Read "FAQ" and "Common problems", also try using search there.
+  - name: Community Discord
+    url: https://discord.gg/4DWzD7pGE5
+    about: Chat with other users, get some support or ask questions.
+  - name: GitHub Discussions
+    url: https://github.com/provectus/kafka-ui/discussions
+    about: An alternative place to ask questions or to get some support.

@@ -89,7 +89,14 @@ public class KsqlServiceV2 {
                       .name(resp.getColumnValue(row, "name").map(JsonNode::asText).orElse(null))
                       .topic(resp.getColumnValue(row, "topic").map(JsonNode::asText).orElse(null))
                       .keyFormat(resp.getColumnValue(row, "keyFormat").map(JsonNode::asText).orElse(null))
-                      .valueFormat(resp.getColumnValue(row, "valueFormat").map(JsonNode::asText).orElse(null)))
+                      .valueFormat(
+                          // for old versions (<0.13) "format" column is filled,
+                          // for new version "keyFormat" & "valueFormat" columns should be filled
+                          resp.getColumnValue(row, "valueFormat")
+                              .or(() -> resp.getColumnValue(row, "format"))
+                              .map(JsonNode::asText)
+                              .orElse(null))
+              )
               .collect(Collectors.toList()));
         });
   }

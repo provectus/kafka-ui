@@ -6,6 +6,9 @@ logging:
     #org.springframework.http.codec.json.Jackson2JsonDecoder: DEBUG
     reactor.netty.http.server.AccessLog: INFO
 
+#server:
+#  port: 8080 #- Port in which kafka-ui will run.
+
 kafka:
   clusters:
     - name: local
@@ -42,27 +45,40 @@ kafka:
 spring:
   jmx:
     enabled: true
-  security:
-    oauth2:
-      client:
-        registration:
-          cognito:
-            clientId: xx
-            clientSecret: yy
-            scope: openid
-            client-name: cognito
-            provider: cognito
-            redirect-uri: http://localhost:8080/login/oauth2/code/cognito
-            authorization-grant-type: authorization_code
-        provider:
-          cognito:
-            issuer-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_M7cIUn1nj
-            jwk-set-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_M7cIUn1nj/.well-known/jwks.json
-            user-name-attribute: username
+
 auth:
   type: DISABLED
-
-roles.file: /tmp/roles.yml
-
-#server:
-#  port: 8080 #- Port in which kafka-ui will run.
+#  type: OAUTH2
+#  oauth2:
+#    client:
+#      cognito:
+#        clientId:
+#        clientSecret:
+#        scope: openid
+#        client-name: cognito
+#        provider: cognito
+#        redirect-uri: http://localhost:8080/login/oauth2/code/cognito
+#        authorization-grant-type: authorization_code
+#        issuer-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_M7cIUn1nj
+#        jwk-set-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_M7cIUn1nj/.well-known/jwks.json
+#        user-name-attribute: username
+#        custom-params:
+#          type: cognito
+#          logoutUrl: https://kafka-ui.auth.eu-central-1.amazoncognito.com/logout
+#      google:
+#        provider: google
+#        clientId:
+#        clientSecret:
+#        user-name-attribute: email
+#        custom-params:
+#          type: google
+#          allowedDomain: provectus.com
+#      github:
+#        provider: github
+#        clientId:
+#        clientSecret:
+#        scope:
+#          - read:org
+#        user-name-attribute: login
+#        custom-params:
+#          type: github
