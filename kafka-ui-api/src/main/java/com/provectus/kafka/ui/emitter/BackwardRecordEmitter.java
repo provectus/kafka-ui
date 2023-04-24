@@ -78,12 +78,7 @@ public class BackwardRecordEmitter extends AbstractEmitter {
           log.debug("sink is cancelled after partitions poll iteration");
         }
       }
-      sendFinishStatsAndCompleteSink(
-          sink,
-          readUntilOffsets.isEmpty()
-              ? null
-              : cursor
-      );
+      sendFinishStatsAndCompleteSink(sink, readUntilOffsets.isEmpty() ? null : cursor);
       log.debug("Polling finished");
     } catch (InterruptException kafkaInterruptException) {
       log.debug("Polling finished due to thread interruption");

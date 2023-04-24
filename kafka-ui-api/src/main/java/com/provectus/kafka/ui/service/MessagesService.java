@@ -67,7 +67,7 @@ public class MessagesService {
   private final int defaultPageSize;
 
   private final Cache<String, Predicate<TopicMessageDTO>> registeredFilters = CacheBuilder.newBuilder()
-      .maximumSize(5_000)
+      .maximumSize(PollingCursorsStorage.MAX_SIZE)
       .build();
 
   private final PollingCursorsStorage cursorsStorage = new PollingCursorsStorage();
