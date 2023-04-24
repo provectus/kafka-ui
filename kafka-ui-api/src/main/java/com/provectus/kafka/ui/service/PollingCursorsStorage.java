@@ -1,8 +1,10 @@
 package com.provectus.kafka.ui.service;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.provectus.kafka.ui.emitter.Cursor;
+import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -22,4 +24,8 @@ public class PollingCursorsStorage {
     return id;
   }
 
+  @VisibleForTesting
+  public Map<String, Cursor> asMap() {
+    return cursorsCache.asMap();
+  }
 }

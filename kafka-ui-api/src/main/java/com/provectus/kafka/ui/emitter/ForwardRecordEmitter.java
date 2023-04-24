@@ -4,10 +4,10 @@ import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
@@ -49,15 +49,21 @@ public class ForwardRecordEmitter extends AbstractEmitter {
         sendPhase(sink, "Polling");
         ConsumerRecords<Bytes, Bytes> records = poll(sink, consumer);
         emptyPolls.count(records);
-        trackOffsetsAfterPoll(consumer);
-
         log.debug("{} records polled", records.count());
 
-        for (ConsumerRecord<Bytes, Bytes> msg : records) {
-          sendMessage(sink, msg);
+        for (TopicPartition tp : records.partitions()) {
+          for (ConsumerRecord<Bytes, Bytes> record : records.records(tp)) {
+            // checking if send limit reached - if so, we will skip some
+            // of already polled records (and we don't need to track their offsets) - they
+            // should be present on next page, polled by cursor
+            if (!isSendLimitReached()) {
+              sendMessage(sink, record);
+              cursor.trackOffset(tp, record.offset() + 1);
+            }
+          }
         }
       }
-      sendFinishStatsAndCompleteSink(sink, seekOperations.assignedPartitionsFullyPolled() ? null : cursor);
+      sendFinishStatsAndCompleteSink(sink, !isSendLimitReached() ? null : cursor);
       log.debug("Polling finished");
     } catch (InterruptException kafkaInterruptException) {
       log.debug("Polling finished due to thread interruption");
@@ -66,10 +72,6 @@ public class ForwardRecordEmitter extends AbstractEmitter {
       log.error("Error occurred while consuming records", e);
       sink.error(e);
     }
-  }
-
-  private void trackOffsetsAfterPoll(Consumer<Bytes, Bytes> consumer) {
-    consumer.assignment().forEach(tp -> cursor.trackOffset(tp, consumer.position(tp)));
   }
 
 }
