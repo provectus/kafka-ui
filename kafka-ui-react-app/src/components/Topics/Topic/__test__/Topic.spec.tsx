@@ -10,6 +10,7 @@ import {
   clusterTopicMessagesPath,
   clusterTopicPath,
   clusterTopicSettingsPath,
+  clusterTopicsPath,
   clusterTopicStatisticsPath,
   getNonExactPath,
 } from 'lib/paths';
@@ -179,7 +180,9 @@ describe('Details', () => {
         name: 'Confirm',
       });
       await userEvent.click(submitDeleteButton);
-      expect(mockNavigate).toHaveBeenCalledWith('../..');
+      expect(mockNavigate).toHaveBeenCalledWith(
+        clusterTopicsPath(mockClusterName)
+      );
     });
 
     it('shows a confirmation popup on deleting topic messages', async () => {

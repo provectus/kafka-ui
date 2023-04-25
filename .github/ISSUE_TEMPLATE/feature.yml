@@ -1,0 +1,66 @@
+name: "\U0001F680 Feature request"
+description: Propose a new feature
+labels: ["status/triage", "type/feature"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Hi, thanks for raising the issue(-s), all contributions really matter!
+        Please, note that we'll close the issue without further explanation if you don't follow
+        this template and don't provide the information requested within this template.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Issue submitter TODO list
+      description: By you checking these checkboxes we can be sure you've done the essential things.
+      options:
+        - label: I've searched for an already existing issues [here](https://github.com/provectus/kafka-ui/issues)
+          required: true
+        - label: I'm running a supported version of the application which is listed [here](https://github.com/provectus/kafka-ui/blob/master/SECURITY.md) and the feature is not present there
+          required: true
+
+  - type: textarea
+    attributes:
+      label: Is your proposal related to a problem?
+      description: |
+        Provide a clear and concise description of what the problem is.
+        For example, "I'm always frustrated when..."
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Describe the feature you're interested in
+      description: |
+        Provide a clear and concise description of what you want to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Describe alternatives you've considered
+      description: |
+        Let us know about other solutions you've tried or researched.
+    validations:
+      required: false
+
+  - type: input
+    attributes:
+      label: Version you're running
+      description: |
+        Please provide the app version you're currently running:
+        1. App version (commit hash in the top left corner of the UI)
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: |
+        Is there anything else you can add about the proposal?
+        You might want to link to related issues here, if you haven't already.
+    validations:
+      required: false
