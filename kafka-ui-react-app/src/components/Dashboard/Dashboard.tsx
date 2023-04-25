@@ -65,10 +65,8 @@ const Dashboard: React.FC = () => {
   }, [clusters, appInfo.hasDynamicConfig]);
 
   const isApplicationConfig = useMemo(() => {
-    return (
-      data?.userInfo?.permissions.some(
-        (permission) => permission.resource === ResourceType.APPLICATIONCONFIG
-      ) || false
+    return !!data?.userInfo?.permissions.some(
+      (permission) => permission.resource === ResourceType.APPLICATIONCONFIG
     );
   }, [data]);
   return (

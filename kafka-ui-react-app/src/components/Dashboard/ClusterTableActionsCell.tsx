@@ -12,10 +12,8 @@ const ClusterTableActionsCell: React.FC<Props> = ({ row }) => {
   const { data } = useGetUserInfo();
 
   const isApplicationConfig = useMemo(() => {
-    return (
-      data?.userInfo?.permissions.some(
-        (permission) => permission.resource === ResourceType.APPLICATIONCONFIG
-      ) || false
+    return !!data?.userInfo?.permissions.some(
+      (permission) => permission.resource === ResourceType.APPLICATIONCONFIG
     );
   }, [data]);
 
