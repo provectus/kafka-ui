@@ -14,4 +14,16 @@ public class WizardTest extends BaseManualTest {
   @Test
   public void testCaseA() {
   }
+
+  @Automation(state = NOT_AUTOMATED)
+  @QaseId(338)
+  @Test
+  public void testCaseB() {
+  }
+
+  @Automation(state = NOT_AUTOMATED)
+  @QaseId(340)
+  @Test
+  public void testCaseC() {
+  }
 }

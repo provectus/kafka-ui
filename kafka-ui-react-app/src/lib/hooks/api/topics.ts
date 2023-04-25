@@ -122,9 +122,6 @@ export function useCreateTopicMutation(clusterName: ClusterName) {
       }),
     {
       onSuccess: () => {
-        showSuccessAlert({
-          message: `Topic successfully created.`,
-        });
         client.invalidateQueries(topicKeys.all(clusterName));
       },
     }
