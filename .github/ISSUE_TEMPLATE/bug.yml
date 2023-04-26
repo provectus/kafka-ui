@@ -1,0 +1,92 @@
+name: "\U0001F41E  Bug report"
+description: File a bug report
+labels: ["status/triage", "type/bug"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Hi, thanks for raising the issue(-s), all contributions really matter!
+        Please, note that we'll close the issue without further explanation if you don't follow
+        this template and don't provide the information requested within this template.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Issue submitter TODO list
+      description: By you checking these checkboxes we can be sure you've done the essential things.
+      options:
+        - label: I've looked up my issue in [FAQ](https://docs.kafka-ui.provectus.io/faq/common-problems)
+          required: true
+        - label: I've searched for an already existing issues [here](https://github.com/provectus/kafka-ui/issues)
+          required: true
+        - label: I've tried running `master`-labeled docker image and the issue still persists there
+          required: true
+        - label: I'm running a supported version of the application which is listed [here](https://github.com/provectus/kafka-ui/blob/master/SECURITY.md)
+          required: true
+
+  - type: textarea
+    attributes:
+      label: Describe the bug (actual behavior)
+      description: A clear and concise description of what the bug is. Use a list, if there is more than one problem
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Your installation details
+      description: |
+        How do you run the app? Please provide as much info as possible:
+        1. App version (commit hash in the top left corner of the UI)
+        2. Helm chart version, if you use one
+        3. Your application config. Please remove the sensitive info like passwords or API keys.
+        4. Any IAAC configs
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: |
+        Please write down the order of the actions required to reproduce the issue.
+        For the advanced setups/complicated issue, we might need you to provide
+        a minimal [reproducible example](https://stackoverflow.com/help/minimal-reproducible-example).
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Screenshots
+      description: |
+        If applicable, add screenshots to help explain your problem
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Logs
+      description: |
+        If applicable, *upload* screenshots to help explain your problem
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: |
+        Add any other context about the problem here. E.G.:
+        1. Are there any alternative scenarios (different data/methods/configuration/setup) you have tried?
+          Were they successful or the same issue occurred? Please provide steps as well.
+        2. Related issues (if there are any).
+        3. Logs (if available)
+        4. Is there any serious impact or behaviour on the end-user because of this issue, that can be overlooked?
+    validations:
+      required: false

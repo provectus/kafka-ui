@@ -109,6 +109,7 @@ public class KafkaConnectService {
   private Stream<String> getStringsForSearch(FullConnectorInfoDTO fullConnectorInfo) {
     return Stream.of(
         fullConnectorInfo.getName(),
+        fullConnectorInfo.getConnect(),
         fullConnectorInfo.getStatus().getState().getValue(),
         fullConnectorInfo.getType().getValue());
   }

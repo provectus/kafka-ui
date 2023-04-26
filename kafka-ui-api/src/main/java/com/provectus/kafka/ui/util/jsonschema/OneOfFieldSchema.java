@@ -5,11 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OneOfFieldSchema implements FieldSchema {
+class OneOfFieldSchema implements FieldSchema {
   private final List<FieldSchema> schemaList;
 
-  public OneOfFieldSchema(
-      List<FieldSchema> schemaList) {
+  OneOfFieldSchema(List<FieldSchema> schemaList) {
     this.schemaList = schemaList;
   }
 

@@ -48,6 +48,10 @@ describe('Connectors List', () => {
       (useConnectors as jest.Mock).mockImplementation(() => ({
         data: connectors,
       }));
+      const restartConnector = jest.fn();
+      (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
+        mutateAsync: restartConnector,
+      }));
     });
 
     it('renders', async () => {
