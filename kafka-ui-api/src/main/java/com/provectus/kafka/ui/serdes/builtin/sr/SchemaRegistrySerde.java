@@ -20,6 +20,7 @@ import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+import io.confluent.kafka.schemaregistry.json.JsonSchema;
 import io.confluent.kafka.schemaregistry.json.JsonSchemaProvider;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
@@ -218,7 +219,8 @@ public class SchemaRegistrySerde implements BuiltInSerde {
             .convert(basePath, ((AvroSchema) schemaById).rawSchema())
             .toJson();
       case JSON:
-        return schema.getSchema();
+        //need to create confluent JsonSchema object to resolve references
+        return ((JsonSchema) schemaById).rawSchema().toString();
       default:
         throw new IllegalStateException();
     }

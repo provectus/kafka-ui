@@ -317,6 +317,10 @@ components:
                 type: string
               schemaType:
                   $ref: '#/components/schemas/SchemaType'
+              references:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SchemaReference'
             required:
               - id
               - subject
