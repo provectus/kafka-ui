@@ -113,37 +113,46 @@ const BrokersList: React.FC = () => {
         header: () => <SkewHeader />,
         accessorKey: 'partitionsSkew',
         // eslint-disable-next-line react/no-unstable-nested-components
-        cell: ({ getValue }) => (
-          <ColoredCell
-            value={getValue<number>() !== null ? `${getValue<number>()}%` : '-'}
-            warn={getValue<number>() >= 10 && getValue<number>() < 20}
-            attention={getValue<number>() >= 20}
-          />
-        ),
+        cell: ({ getValue }) => {
+          const value = getValue<number>();
+          return (
+            <ColoredCell
+              value={value ? `${value.toFixed(2)}%` : '-'}
+              warn={value >= 10 && value < 20}
+              attention={value >= 20}
+            />
+          );
+        },
       },
       { header: 'Leaders', accessorKey: 'partitionsLeader' },
       {
         header: 'Leader skew',
         accessorKey: 'leadersSkew',
         // eslint-disable-next-line react/no-unstable-nested-components
-        cell: ({ getValue }) => (
-          <ColoredCell
-            value={getValue<number>() !== null ? `${getValue<number>()}%` : '-'}
-            warn={getValue<number>() >= 10 && getValue<number>() < 20}
-            attention={getValue<number>() >= 20}
-          />
-        ),
+        cell: ({ getValue }) => {
+          const value = getValue<number>();
+          return (
+            <ColoredCell
+              value={value ? `${value.toFixed(2)}%` : '-'}
+              warn={value >= 10 && value < 20}
+              attention={value >= 20}
+            />
+          );
+        },
       },
       {
         header: 'Online partitions',
         accessorKey: 'inSyncPartitions',
         // eslint-disable-next-line react/no-unstable-nested-components
-        cell: ({ getValue, row }) => (
-          <ColoredCell
-            value={getValue<number>()}
-            attention={getValue<number>() !== row.original.count}
-          />
-        ),
+        cell: ({ getValue, row }) => {
+          const value = getValue<number>();
+          return (
+            <ColoredCell
+              value={value}
+              attention={value !== row.original.count}
+            />
+          );
+        },
       },
       { header: 'Port', accessorKey: 'port' },
       {
