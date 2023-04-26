@@ -14,7 +14,16 @@ const ConnectorCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
   const path = clusterConnectConnectorPath(clusterName, connect, name);
   const handleOnClick = () => navigate(path);
 
-  return <div onClick={handleOnClick}> {name} </div>;
+  return (
+    <div
+      role="link"
+      tabIndex={0}
+      onClick={handleOnClick}
+      onKeyDown={handleOnClick}
+    >
+      {name}
+    </div>
+  );
 };
 
 export default ConnectorCell;

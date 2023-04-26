@@ -62,13 +62,13 @@ const BatchActionsBar: React.FC<BatchActionsBarProps> = ({
       async () => {
         try {
           await Promise.all(
-            selectedConnectors.map((connector) => {
+            selectedConnectors.map((connector) =>
               deleteConnectorMutation.mutateAsync({
                 clusterName,
                 connectName: connector.connect,
                 connectorName: connector.name,
-              });
-            })
+              })
+            )
           );
           resetRowSelection();
         } catch (e) {
