@@ -57,7 +57,7 @@ public class LdapSecurityConfig {
     if (props.getBase() != null) {
       ba.setUserDnPatterns(new String[] {props.getBase()});
     }
-    if (props.getUserFilterSearchBase() != null) {
+    if (props.getUserFilterSearchFilter() != null) {
       LdapUserSearch userSearch =
           new FilterBasedLdapUserSearch(props.getUserFilterSearchBase(), props.getUserFilterSearchFilter(),
               contextSource);
