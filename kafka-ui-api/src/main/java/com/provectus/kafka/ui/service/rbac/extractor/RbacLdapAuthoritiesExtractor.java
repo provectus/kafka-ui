@@ -4,25 +4,22 @@ import com.provectus.kafka.ui.config.auth.LdapProperties;
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.support.BaseLdapPathContextSource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.ldap.SpringSecurityLdapTemplate;
 import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
-import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
+import org.springframework.util.Assert;
 
 @Slf4j
-public class RbacLdapAuthoritiesExtractor extends DefaultLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator {
+public class RbacLdapAuthoritiesExtractor extends DefaultLdapAuthoritiesPopulator {
 
   private final AccessControlService acs;
   private final LdapProperties props;
@@ -51,10 +48,7 @@ public class RbacLdapAuthoritiesExtractor extends DefaultLdapAuthoritiesPopulato
   }
 
   private Set<GrantedAuthority> getRoles(String groupSearchBase, String userDn, String username) {
-    if (StringUtils.isEmpty(groupSearchBase)) {
-      log.debug("groupSearchBase empty, skipping roles lookup");
-      return new HashSet<>();
-    }
+    Assert.notNull(groupSearchBase, "groupSearchBase is empty");
 
     log.trace(
         "Searching for roles for user [{}] with DN [{}], groupRoleAttribute [{}] and filter [{}] in search base [{}]",
