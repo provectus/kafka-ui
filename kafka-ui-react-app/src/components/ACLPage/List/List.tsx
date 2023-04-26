@@ -10,7 +10,7 @@ import { useAcls, useDeleteAcl } from 'lib/hooks/api/acl';
 import { ClusterName } from 'redux/interfaces';
 import {
   KafkaAcl,
-  KafkaAclNamePatternTypeEnum,
+  KafkaAclNamePatternType,
   KafkaAclPermissionEnum,
 } from 'generated-sources';
 
@@ -59,7 +59,7 @@ const ACList: React.FC = () => {
             <S.PatternCell>
               {getValue<string>()}
               {row.original.namePatternType ===
-                KafkaAclNamePatternTypeEnum.PREFIXED && (
+                KafkaAclNamePatternType.PREFIXED && (
                 <S.Chip chipType="default">
                   {row.original.namePatternType.toLowerCase()}
                 </S.Chip>
