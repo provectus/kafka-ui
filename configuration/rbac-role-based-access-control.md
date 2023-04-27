@@ -26,7 +26,7 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       # other properties, omitted
-      spring.config.additional-location: /roles.yml
+      SPRING_CONFIG_ADDITIONAL-LOCATION: /roles.yml
     volumes:
       - /tmp/roles.yml:/roles.yml
 ```

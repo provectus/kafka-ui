@@ -33,7 +33,7 @@
   * [Configuration](configuration/helm-charts/configuration.md)
   * [Resource limits](configuration/helm-charts/resource-limits.md)
 * [Misc configuration properties](configuration/misc-configuration-properties.md)
-* [Permissions](configuration/permissions/README.md)
+* [Required Kafka Permissions](configuration/permissions/README.md)
   * [Required Kafka ACLs](configuration/configuration/required-acls.md)
   * [MSK (+Serverless) Setup](configuration/permissions/msk-+serverless-setup.md)
 * [Complex configuration examples](configuration/configuration/complex-configuration-examples/README.md)

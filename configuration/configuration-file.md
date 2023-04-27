@@ -28,7 +28,7 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       # other properties, omitted
-      spring.config.additional-location: /config.yml
+      SPRING_CONFIG_ADDITIONAL-LOCATION: /config.yml
     volumes:
       - /tmp/config.yml:/config.yml
 ```
