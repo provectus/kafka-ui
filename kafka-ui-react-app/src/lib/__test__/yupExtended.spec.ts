@@ -1,4 +1,4 @@
-import { isValidEnum, isValidJsonObject } from 'lib/yupExtended';
+import { isValidSchema, isValidJsonObject } from 'lib/yupExtended';
 
 const invalidEnum = `
 ennum SchemType {
@@ -12,6 +12,26 @@ enum SchemType {
   AVRO = 0;
   JSON = 1;
   PROTOBUF = 3;
+}
+`;
+const invalidSchema = `
+ssssyntax = "proto3";
+package com.provectus;
+
+message TestProtoRecord {
+  string f1 = 1;
+  int32 f2 = 2;
+  int32 f6 = 3;
+}
+`;
+const validSchema = `
+syntax = "proto3";
+package com.provectus;
+
+message TestProtoRecord {
+  string f1 = 1;
+  int32 f2 = 2;
+  int32 f6 = 3;
 }
 `;
 describe('yup extended', () => {
@@ -36,20 +56,26 @@ describe('yup extended', () => {
     });
   });
 
-  describe('isValidEnum', () => {
+  describe('isValidSchema', () => {
     it('returns false for invalid enum', () => {
-      expect(isValidEnum(invalidEnum)).toBeFalsy();
+      expect(isValidSchema(invalidEnum)).toBeFalsy();
+    });
+    it('returns false for invalid schema', () => {
+      expect(isValidSchema(invalidSchema)).toBeFalsy();
     });
     it('returns false for no value', () => {
-      expect(isValidEnum()).toBeFalsy();
+      expect(isValidSchema()).toBeFalsy();
     });
     it('returns true should trim value', () => {
       expect(
-        isValidEnum(`  enum SchemType {AVRO = 0; PROTOBUF = 3;}   `)
+        isValidSchema(`  enum SchemType {AVRO = 0; PROTOBUF = 3;}   `)
       ).toBeTruthy();
     });
     it('returns true for valid enum', () => {
-      expect(isValidEnum(validEnum)).toBeTruthy();
+      expect(isValidSchema(validEnum)).toBeTruthy();
+    });
+    it('returns true for valid schema', () => {
+      expect(isValidSchema(validSchema)).toBeTruthy();
     });
   });
 });
