@@ -71,7 +71,7 @@ public class LdapSecurityConfig {
           : new LdapAuthenticationProvider(ba);
     } else {
       authenticationProvider = new ActiveDirectoryLdapAuthenticationProvider(props.getActiveDirectoryDomain(),
-          props.getUrls()); // TODO verify authorities get extracted properly
+          props.getUrls()); // TODO Issue #3741
       authenticationProvider.setUseAuthenticationRequestCredentials(true);
     }
 
