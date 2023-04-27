@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service.integration.odd;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -52,7 +53,7 @@ class TopicsExporterTest {
 
   @Test
   void doesNotExportTopicsWhichDontFitFiltrationRule() {
-    when(schemaRegistryClientMock.getSubjectVersion(anyString(), anyString()))
+    when(schemaRegistryClientMock.getSubjectVersion(anyString(), anyString(), anyBoolean()))
         .thenReturn(Mono.error(new RuntimeException("Not found")));
 
     stats = Statistics.empty()
@@ -83,14 +84,14 @@ class TopicsExporterTest {
 
   @Test
   void doesExportTopicData() {
-    when(schemaRegistryClientMock.getSubjectVersion("testTopic-value", "latest"))
+    when(schemaRegistryClientMock.getSubjectVersion("testTopic-value", "latest", false))
         .thenReturn(Mono.just(
             new SchemaSubject()
                 .schema("\"string\"")
                 .schemaType(SchemaType.AVRO)
         ));
 
-    when(schemaRegistryClientMock.getSubjectVersion("testTopic-key", "latest"))
+    when(schemaRegistryClientMock.getSubjectVersion("testTopic-key", "latest", false))
         .thenReturn(Mono.just(
             new SchemaSubject()
                 .schema("\"int\"")

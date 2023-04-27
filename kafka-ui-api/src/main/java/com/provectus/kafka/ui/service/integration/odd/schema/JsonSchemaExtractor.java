@@ -30,8 +30,8 @@ final class JsonSchemaExtractor {
   private JsonSchemaExtractor() {
   }
 
-  static List<DataSetField> extract(SchemaSubject subject, KafkaPath topicOddrn, boolean isKey) {
-    Schema schema = new JsonSchema(subject.getSchema()).rawSchema();
+  static List<DataSetField> extract(JsonSchema jsonSchema, KafkaPath topicOddrn, boolean isKey) {
+    Schema schema = jsonSchema.rawSchema();
     List<DataSetField> result = new ArrayList<>();
     result.add(DataSetFieldsExtractors.rootField(topicOddrn, isKey));
     extract(

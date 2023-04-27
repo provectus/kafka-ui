@@ -91,7 +91,7 @@ public class SchemaRegistryService {
   private Mono<SubjectWithCompatibilityLevel> getSchemaSubject(KafkaCluster cluster, String schemaName,
                                                                String version) {
     return api(cluster)
-        .mono(c -> c.getSubjectVersion(schemaName, version))
+        .mono(c -> c.getSubjectVersion(schemaName, version, false))
         .zipWith(getSchemaCompatibilityInfoOrGlobal(cluster, schemaName))
         .map(t -> new SubjectWithCompatibilityLevel(t.getT1(), t.getT2()))
         .onErrorResume(WebClientResponseException.NotFound.class, th -> Mono.error(new SchemaNotFoundException()));
