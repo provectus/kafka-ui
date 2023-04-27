@@ -10,7 +10,7 @@ declare module 'yup' {
     TFlags extends yup.Flags = ''
   > extends yup.Schema<TType, TContext, TDefault, TFlags> {
     isJsonObject(message?: string): StringSchema<TType, TContext>;
-    isEnum(message?: string): StringSchema<TType, TContext>;
+    isSchema(message?: string): StringSchema<TType, TContext>;
   }
 }
 
@@ -41,12 +41,13 @@ const isJsonObject = (message?: string) => {
   );
 };
 
-export const isValidEnum = (value?: string) => {
+export const isValidSchema = (value?: string) => {
   try {
     if (!value) return false;
     const trimmedValue = value.trim();
     if (
-      trimmedValue.indexOf('enum') === 0 &&
+      (trimmedValue.indexOf('syntax') === 0 ||
+        trimmedValue.indexOf('enum') === 0) &&
       trimmedValue.lastIndexOf('}') === trimmedValue.length - 1
     ) {
       return true;
@@ -57,12 +58,12 @@ export const isValidEnum = (value?: string) => {
   return false;
 };
 
-const isEnum = (message?: string) => {
+const isSchema = (message?: string) => {
   return yup.string().test(
-    'isEnum',
+    'isSchema',
     // eslint-disable-next-line no-template-curly-in-string
-    message || '${path} is not Enum object',
-    isValidEnum
+    message || '${path} is not valid schema',
+    isValidSchema
   );
 };
 
@@ -88,7 +89,7 @@ export function cacheTest(
 }
 
 yup.addMethod(yup.StringSchema, 'isJsonObject', isJsonObject);
-yup.addMethod(yup.StringSchema, 'isEnum', isEnum);
+yup.addMethod(yup.StringSchema, 'isSchema', isSchema);
 
 export const topicFormValidationSchema = yup.object().shape({
   name: yup
