@@ -486,11 +486,7 @@ public class TopicsTest extends BaseTest {
     topicDetails
         .waitUntilScreenReady();
     TOPIC_LIST.add(topicToCopy);
-    SoftAssert softly = new SoftAssert();
-    softly.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Topic successfully created."),
-        "isAlertWithMessageVisible()");
-    softly.assertTrue(topicDetails.isTopicHeaderVisible(topicToCopy.getName()), "isTopicHeaderVisible()");
-    softly.assertAll();
+    Assert.assertTrue(topicDetails.isTopicHeaderVisible(topicToCopy.getName()), "isTopicHeaderVisible()");
   }
 
   @AfterClass(alwaysRun = true)

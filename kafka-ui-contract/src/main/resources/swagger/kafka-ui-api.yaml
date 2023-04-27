@@ -2375,6 +2375,16 @@ components:
           type: number
         bytesOutPerSec:
           type: number
+        partitionsLeader:
+          type: integer
+        partitions:
+          type: integer
+        inSyncPartitions:
+          type: integer
+        partitionsSkew:
+          type: number
+        leadersSkew:
+          type: number
       required:
         - id
 

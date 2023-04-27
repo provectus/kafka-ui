@@ -49,7 +49,7 @@ const renderComponent = async () => {
   const path = clusterTopicPath(clusterName, topicName);
   await render(
     <WithRoute path={clusterTopicPath()}>
-      <SendMessage onSubmit={mockOnSubmit} />
+      <SendMessage closeSidebar={mockOnSubmit} />
     </WithRoute>,
     { initialEntries: [path] }
   );

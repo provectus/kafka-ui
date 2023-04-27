@@ -122,8 +122,6 @@ public class SerdesInitializer {
         registeredSerdes,
         Optional.ofNullable(clusterProperties.getDefaultKeySerde())
             .map(name -> Preconditions.checkNotNull(registeredSerdes.get(name), "Default key serde not found"))
-            .or(() -> Optional.ofNullable(registeredSerdes.get(SchemaRegistrySerde.name())))
-            .or(() -> Optional.ofNullable(registeredSerdes.get(ProtobufFileSerde.name())))
             .orElse(null),
         Optional.ofNullable(clusterProperties.getDefaultValueSerde())
             .map(name -> Preconditions.checkNotNull(registeredSerdes.get(name), "Default value serde not found"))
