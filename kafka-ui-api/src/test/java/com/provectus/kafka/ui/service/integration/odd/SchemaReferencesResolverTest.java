@@ -11,6 +11,7 @@ import com.provectus.kafka.ui.sr.model.SchemaSubject;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 class SchemaReferencesResolverTest {
 
@@ -19,7 +20,7 @@ class SchemaReferencesResolverTest {
   private final SchemaReferencesResolver schemaReferencesResolver = new SchemaReferencesResolver(srClientMock);
 
   @Test
-  void test() {
+  void resolvesRefsUsingSrClient() {
     mockSrCall("sub1", 1,
         new SchemaSubject()
             .schema("schema1"));
@@ -46,26 +47,36 @@ class SchemaReferencesResolverTest {
         new SchemaSubject()
             .schema("schema2_1_1"));
 
-    var result = schemaReferencesResolver.resolve(
+    var resolvedRefsMono = schemaReferencesResolver.resolve(
         List.of(
             new SchemaReference().name("ref1").subject("sub1").version(1),
-            new SchemaReference().name("ref2").subject("sub2").version(1)
-        )
-    );
+            new SchemaReference().name("ref2").subject("sub2").version(1)));
 
-    assertThat(result.block())
-        .containsExactlyEntriesOf(
-            // checking map should be ordered
-            ImmutableMap.<String, String>builder()
-                .put("ref1", "schema1")
-                .put("ref2_1_1", "schema2_1_1")
-                .put("ref2_1", "schema2_1")
-                .put("ref2_2", "schema1")
-                .put("ref2", "schema2")
-                .build()
-        );
+    StepVerifier.create(resolvedRefsMono)
+        .assertNext(refs ->
+            assertThat(refs)
+                .containsExactlyEntriesOf(
+                    // checking map should be ordered
+                    ImmutableMap.<String, String>builder()
+                        .put("ref1", "schema1")
+                        .put("ref2_1_1", "schema2_1_1")
+                        .put("ref2_1", "schema2_1")
+                        .put("ref2_2", "schema1")
+                        .put("ref2", "schema2")
+                        .build()))
+        .verifyComplete();
   }
 
+  @Test
+  void returnsEmptyMapOnEmptyInputs() {
+    StepVerifier.create(schemaReferencesResolver.resolve(null))
+        .assertNext(map -> assertThat(map).isEmpty())
+        .verifyComplete();
+
+    StepVerifier.create(schemaReferencesResolver.resolve(List.of()))
+        .assertNext(map -> assertThat(map).isEmpty())
+        .verifyComplete();
+  }
 
   private void mockSrCall(String subject, int version, SchemaSubject subjectToReturn) {
     when(srClientMock.getSubjectVersion(subject, version + "", true))

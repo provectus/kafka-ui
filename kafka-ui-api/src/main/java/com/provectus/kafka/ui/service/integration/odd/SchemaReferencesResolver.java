@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableSet;
 import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
 import com.provectus.kafka.ui.sr.model.SchemaReference;
 import java.util.List;
+import java.util.Optional;
+import javax.annotation.Nullable;
 import reactor.core.publisher.Mono;
 
 // logic copied from AbstractSchemaProvider:resolveReferences
@@ -18,11 +20,8 @@ class SchemaReferencesResolver {
   }
 
   Mono<ImmutableMap<String, String>> resolve(List<SchemaReference> refs) {
-    return resolveReferences(
-        refs == null ? List.of() : refs,
-        new Resolving(ImmutableMap.of(), ImmutableSet.of())).map(
-        Resolving::resolved
-    );
+    return resolveReferences(refs, new Resolving(ImmutableMap.of(), ImmutableSet.of()))
+        .map(Resolving::resolved);
   }
 
   private record Resolving(ImmutableMap<String, String> resolved, ImmutableSet<String> visited) {
@@ -36,9 +35,9 @@ class SchemaReferencesResolver {
     }
   }
 
-  private Mono<Resolving> resolveReferences(List<SchemaReference> references, Resolving initState) {
+  private Mono<Resolving> resolveReferences(@Nullable List<SchemaReference> refs, Resolving initState) {
     Mono<Resolving> result = Mono.just(initState);
-    for (SchemaReference reference : references) {
+    for (SchemaReference reference : Optional.ofNullable(refs).orElse(List.of())) {
       result = result.flatMap(state -> {
         if (state.visited().contains(reference.getName())) {
           return Mono.just(state);
@@ -47,8 +46,7 @@ class SchemaReferencesResolver {
           return client.getSubjectVersion(reference.getSubject(), String.valueOf(reference.getVersion()), true)
               .flatMap(subj ->
                   resolveReferences(subj.getReferences(), newState)
-                      .map(withNewRefs -> withNewRefs.resolve(reference.getName(), subj.getSchema()))
-              );
+                      .map(withNewRefs -> withNewRefs.resolve(reference.getName(), subj.getSchema())));
         }
       });
     }
