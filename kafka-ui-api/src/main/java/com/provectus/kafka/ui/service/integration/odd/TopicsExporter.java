@@ -111,7 +111,7 @@ class TopicsExporter {
   }
 
   private Mono<Tuple2<SchemaSubject, Map<String, String>>> getSubjWithResolvedRefs(KafkaCluster cluster,
-                                                                                            String subjectName) {
+                                                                                   String subjectName) {
     return cluster.getSchemaRegistryClient()
         .mono(client ->
             client.getSubjectVersion(subjectName, "latest", false)

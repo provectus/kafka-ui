@@ -219,7 +219,7 @@ public class SchemaRegistrySerde implements BuiltInSerde {
             .convert(basePath, ((AvroSchema) schemaById).rawSchema())
             .toJson();
       case JSON:
-        //need to create confluent JsonSchema object to resolve references
+        //need to use confluent JsonSchema object to resolve references
         return ((JsonSchema) schemaById).rawSchema().toString();
       default:
         throw new IllegalStateException();
