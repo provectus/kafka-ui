@@ -110,7 +110,7 @@ class TopicsExporter {
         });
   }
 
-  private Mono<Tuple2<SchemaSubject, ImmutableMap<String, String>>> getSubjWithResolvedRefs(KafkaCluster cluster,
+  private Mono<Tuple2<SchemaSubject, Map<String, String>>> getSubjWithResolvedRefs(KafkaCluster cluster,
                                                                                             String subjectName) {
     return cluster.getSchemaRegistryClient()
         .mono(client ->
