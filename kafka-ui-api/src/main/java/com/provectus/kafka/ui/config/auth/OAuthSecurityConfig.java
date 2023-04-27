@@ -114,17 +114,17 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
 
   @Nullable
   private ProviderAuthorityExtractor getExtractor(final String providerId, AccessControlService acs) {
-    final String provider = getProviderByProviderId(providerId);
+    final var provider = getProviderByProviderId(providerId);
     Optional<ProviderAuthorityExtractor> extractor = acs.getExtractors()
         .stream()
-        .filter(e -> e.isApplicable(provider))
+        .filter(e -> e.isApplicable(provider.getProvider(), provider.getCustomParams()))
         .findFirst();
 
     return extractor.orElse(null);
   }
 
-  private String getProviderByProviderId(final String providerId) {
-    return properties.getClient().get(providerId).getProvider();
+  private OAuthProperties.OAuth2Provider getProviderByProviderId(final String providerId) {
+    return properties.getClient().get(providerId);
   }
 
 }

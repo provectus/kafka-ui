@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 public class LdapAuthorityExtractor implements ProviderAuthorityExtractor {
 
   @Override
-  public boolean isApplicable(String provider) {
+  public boolean isApplicable(String provider, Map<String, String> params) {
     return false; // TODO #2752
   }
 

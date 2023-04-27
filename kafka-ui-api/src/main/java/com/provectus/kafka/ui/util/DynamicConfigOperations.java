@@ -224,7 +224,7 @@ public class DynamicConfigOperations {
 
       Optional.ofNullable(auth)
           .flatMap(a -> Optional.ofNullable(a.oauth2))
-          .ifPresent(OAuthProperties::validate);
+          .ifPresent(OAuthProperties::init);
 
       Optional.ofNullable(webclient)
           .ifPresent(WebclientProperties::validate);

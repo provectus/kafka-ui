@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service.rbac.extractor;
 
+import static com.provectus.kafka.ui.model.rbac.provider.Provider.Name.GOOGLE;
+
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
@@ -19,8 +21,8 @@ public class GoogleAuthorityExtractor implements ProviderAuthorityExtractor {
   public static final String EMAIL_ATTRIBUTE_NAME = "email";
 
   @Override
-  public boolean isApplicable(String provider) {
-    return Provider.Name.GOOGLE.equalsIgnoreCase(provider);
+  public boolean isApplicable(String provider, Map<String, String> customParams) {
+    return GOOGLE.equalsIgnoreCase(provider) || GOOGLE.equalsIgnoreCase(customParams.get(TYPE));
   }
 
   @Override

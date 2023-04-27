@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service.rbac.extractor;
 
+import static com.provectus.kafka.ui.model.rbac.provider.Provider.Name.COGNITO;
+
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
@@ -18,8 +20,8 @@ public class CognitoAuthorityExtractor implements ProviderAuthorityExtractor {
   private static final String COGNITO_GROUPS_ATTRIBUTE_NAME = "cognito:groups";
 
   @Override
-  public boolean isApplicable(String provider) {
-    return Provider.Name.COGNITO.equalsIgnoreCase(provider);
+  public boolean isApplicable(String provider, Map<String, String> customParams) {
+    return COGNITO.equalsIgnoreCase(provider) || COGNITO.equalsIgnoreCase(customParams.get(TYPE));
   }
 
   @Override
