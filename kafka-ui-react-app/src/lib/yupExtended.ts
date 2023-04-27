@@ -10,7 +10,6 @@ declare module 'yup' {
     TFlags extends yup.Flags = ''
   > extends yup.Schema<TType, TContext, TDefault, TFlags> {
     isJsonObject(message?: string): StringSchema<TType, TContext>;
-    isSchema(message?: string): StringSchema<TType, TContext>;
   }
 }
 
@@ -40,33 +39,6 @@ const isJsonObject = (message?: string) => {
     isValidJsonObject
   );
 };
-
-export const isValidSchema = (value?: string) => {
-  try {
-    if (!value) return false;
-    const trimmedValue = value.trim();
-    if (
-      (trimmedValue.indexOf('syntax') === 0 ||
-        trimmedValue.indexOf('enum') === 0) &&
-      trimmedValue.lastIndexOf('}') === trimmedValue.length - 1
-    ) {
-      return true;
-    }
-  } catch {
-    // do nothing
-  }
-  return false;
-};
-
-const isSchema = (message?: string) => {
-  return yup.string().test(
-    'isSchema',
-    // eslint-disable-next-line no-template-curly-in-string
-    message || '${path} is not valid schema',
-    isValidSchema
-  );
-};
-
 /**
  * due to yup rerunning all the object validiation during any render,
  * it makes sense to cache the async results
@@ -89,7 +61,6 @@ export function cacheTest(
 }
 
 yup.addMethod(yup.StringSchema, 'isJsonObject', isJsonObject);
-yup.addMethod(yup.StringSchema, 'isSchema', isSchema);
 
 export const topicFormValidationSchema = yup.object().shape({
   name: yup
