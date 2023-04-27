@@ -161,7 +161,18 @@ const baseTheme = {
   },
   icons: {
     chevronDownIcon: Colors.neutral[0],
-    editIcon: Colors.neutral[30],
+    editIcon: {
+      normal: Colors.neutral[30],
+      hover: Colors.neutral[90],
+      active: Colors.neutral[100],
+      border: Colors.neutral[10]
+    },
+    closeIcon: {
+      normal: Colors.neutral[30],
+      hover: Colors.neutral[90],
+      active: Colors.neutral[100],
+      border: Colors.neutral[10]
+    },
     cancelIcon: Colors.neutral[30],
     autoIcon: Colors.neutral[95],
     fileIcon: Colors.neutral[90],
@@ -170,7 +181,7 @@ const baseTheme = {
     moonIcon: Colors.neutral[95],
     sunIcon: Colors.neutral[95],
     infoIcon: Colors.neutral[30],
-    closeIcon: Colors.neutral[30],
+    closeCircleIcon: Colors.neutral[30],
     deleteIcon: Colors.red[20],
     warningIcon: Colors.yellow[20],
     warningRedIcon: {
@@ -678,10 +689,13 @@ export const theme = {
       color: Colors.neutral[80],
     },
   },
+  activeFilter: {
+    color: Colors.neutral[70],
+    backgroundColor: Colors.neutral[5],
+  },
   savedFilter: {
     filterName: Colors.neutral[90],
     color: Colors.neutral[30],
-    backgroundColor: Colors.neutral[5],
   },
   editFilter: {
     textColor: Colors.brand[50],
@@ -1073,10 +1087,13 @@ export const darkTheme: ThemeType = {
       color: Colors.neutral[0],
     },
   },
+  activeFilter: {
+    color: Colors.neutral[0],
+    backgroundColor: Colors.neutral[80],
+  },
   savedFilter: {
     filterName: Colors.neutral[0],
     color: Colors.neutral[70],
-    backgroundColor: Colors.neutral[80],
   },
   editFilter: {
     textColor: Colors.brand[30],
@@ -1102,7 +1119,18 @@ export const darkTheme: ThemeType = {
   },
   icons: {
     ...baseTheme.icons,
-    editIcon: Colors.neutral[0],
+    editIcon: {
+      normal: Colors.neutral[50],
+      hover: Colors.neutral[30],
+      active: Colors.neutral[40],
+      border: Colors.neutral[70]
+    },
+    closeIcon: {
+      normal: Colors.neutral[50],
+      hover: Colors.neutral[30],
+      active: Colors.neutral[40],
+      border: Colors.neutral[70]
+    },
     cancelIcon: Colors.neutral[0],
     autoIcon: Colors.neutral[0],
     fileIcon: Colors.neutral[0],

@@ -30,6 +30,7 @@ import useBoolean from 'lib/hooks/useBoolean';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
 import PlusIcon from 'components/common/Icons/PlusIcon';
+import EditIcon from 'components/common/Icons/EditIcon';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 import ClockIcon from 'components/common/Icons/ClockIcon';
 import ArrowDownIcon from 'components/common/Icons/ArrowDownIcon';
@@ -67,7 +68,7 @@ export interface MessageFilters {
   code: string;
 }
 
-interface ActiveMessageFilter {
+export interface ActiveMessageFilter {
   index: number;
   name: string;
   code: string;
@@ -107,6 +108,8 @@ const Filters: React.FC<FiltersProps> = ({
     useContext(TopicMessagesContext);
 
   const { value: isOpen, toggle } = useBoolean();
+
+  const { value: isQuickEditOpen, toggle: toggleQuickEdit } = useBoolean();
 
   const source = React.useRef<EventSource | null>(null);
 
@@ -307,26 +310,36 @@ const Filters: React.FC<FiltersProps> = ({
     setActiveFilter({ index, ...newActiveFilter });
     setQueryType(MessageFilterType.GROOVY_SCRIPT);
   };
+
+  const composeMessageFilter = (filter: FilterEdit) : ActiveMessageFilter => ({
+    index: filter.index,
+    name: filter.filter.name,
+    code: filter.filter.code,
+  });
+
+  const storeAsActiveFilter = (filter: FilterEdit) => {
+    const messageFilter = JSON.stringify(composeMessageFilter(filter));
+    localStorage.setItem('activeFilter', messageFilter);
+  }
+
   const editSavedFilter = (filter: FilterEdit) => {
     const filters = [...savedFilters];
     filters[filter.index] = filter.filter;
     if (activeFilter.name && activeFilter.index === filter.index) {
-      setActiveFilter({
-        index: filter.index,
-        name: filter.filter.name,
-        code: filter.filter.code,
-      });
-      localStorage.setItem(
-        'activeFilter',
-        JSON.stringify({
-          index: filter.index,
-          name: filter.filter.name,
-          code: filter.filter.code,
-        })
-      );
+      setActiveFilter(composeMessageFilter(filter));
+      storeAsActiveFilter(filter);
     }
     localStorage.setItem('savedFilters', JSON.stringify(filters));
     setSavedFilters(filters);
+  };
+
+  const editCurrentFilter = (filter: FilterEdit) => {
+    if (filter.index < 0) {
+      setActiveFilter(composeMessageFilter(filter));
+      storeAsActiveFilter(filter);
+    } else {
+      editSavedFilter(filter);
+    }
   };
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
@@ -542,13 +555,27 @@ const Filters: React.FC<FiltersProps> = ({
         </Button>
         {activeFilter.name && (
           <S.ActiveSmartFilter data-testid="activeSmartFilter">
-            {activeFilter.name}
-            <S.DeleteSavedFilterIcon onClick={deleteActiveFilter}>
+            <S.SmartFilterName>
+              {activeFilter.name}
+            </S.SmartFilterName>
+            <S.EditSmartFilterIcon onClick={toggleQuickEdit}>
+              <EditIcon />
+            </S.EditSmartFilterIcon>
+            <S.DeleteSmartFilterIcon onClick={deleteActiveFilter}>
               <CloseIcon />
-            </S.DeleteSavedFilterIcon>
+            </S.DeleteSmartFilterIcon>
           </S.ActiveSmartFilter>
         )}
       </S.ActiveSmartFilterWrapper>
+      {isQuickEditOpen &&
+        <FilterModal
+          quickEditMode
+          activeFilter={activeFilter}
+          toggleIsOpen={toggleQuickEdit}
+          editSavedFilter={editCurrentFilter}
+        />
+      }
+
       {isOpen && (
         <FilterModal
           toggleIsOpen={toggle}

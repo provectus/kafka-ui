@@ -1,17 +1,18 @@
 import React from 'react';
 import * as S from 'components/Topics/Topic/Messages/Filters/Filters.styled';
-import { MessageFilters } from 'components/Topics/Topic/Messages/Filters/Filters';
+import { ActiveMessageFilter, MessageFilters } from 'components/Topics/Topic/Messages/Filters/Filters';
 import AddFilter from 'components/Topics/Topic/Messages/Filters/AddFilter';
 import EditFilter from 'components/Topics/Topic/Messages/Filters/EditFilter';
 
 export interface FilterModalProps {
   toggleIsOpen(): void;
-  filters: MessageFilters[];
-  addFilter(values: MessageFilters): void;
-  deleteFilter(index: number): void;
-  activeFilterHandler(activeFilter: MessageFilters, index: number): void;
+  filters?: MessageFilters[];
+  addFilter?(values: MessageFilters): void;
+  deleteFilter?(index: number): void;
+  activeFilterHandler?(activeFilter: MessageFilters, index: number): void;
   editSavedFilter(filter: FilterEdit): void;
-  activeFilter?: MessageFilters;
+  activeFilter?: ActiveMessageFilter;
+  quickEditMode?: boolean
 }
 
 export interface FilterEdit {
@@ -27,44 +28,47 @@ const FilterModal: React.FC<FilterModalProps> = ({
   activeFilterHandler,
   editSavedFilter,
   activeFilter,
-}) => {
-  const [addFilterModal, setAddFilterModal] = React.useState<boolean>(true);
+  quickEditMode = false,
+  }) => {
+  const [isInEditMode, setIsInEditMode] = React.useState<boolean>(quickEditMode);
   const [isSavedFiltersOpen, setIsSavedFiltersOpen] =
     React.useState<boolean>(false);
 
   const toggleEditModal = () => {
-    setAddFilterModal(!addFilterModal);
+    setIsInEditMode(!isInEditMode);
   };
 
-  const [editFilter, setEditFilter] = React.useState<FilterEdit>({
-    index: -1,
-    filter: { name: '', code: '' },
+  const [editFilter, setEditFilter] = React.useState<FilterEdit>( () => {
+    const {index, name, code} = activeFilter!;
+    return quickEditMode ? { index, filter: { name, code } } : { index: -1, filter: { name: "", code: "" } };
   });
   const editFilterHandler = (value: FilterEdit) => {
     setEditFilter(value);
-    setAddFilterModal(!addFilterModal);
+    setIsInEditMode(!isInEditMode);
   };
+
+  const toggleEditModalHandler = quickEditMode ? toggleIsOpen : toggleEditModal;
 
   return (
     <S.MessageFilterModal data-testid="messageFilterModal">
-      {addFilterModal ? (
+      {isInEditMode ? (
+          <EditFilter
+            editFilter={editFilter}
+            toggleEditModal={toggleEditModalHandler}
+            editSavedFilter={editSavedFilter}
+          />
+      ) : (
         <AddFilter
           toggleIsOpen={toggleIsOpen}
-          filters={filters}
-          addFilter={addFilter}
-          deleteFilter={deleteFilter}
-          activeFilterHandler={activeFilterHandler}
+          filters={filters!}
+          addFilter={addFilter!}
+          deleteFilter={deleteFilter!}
+          activeFilterHandler={activeFilterHandler!}
           toggleEditModal={toggleEditModal}
           editFilter={editFilterHandler}
           isSavedFiltersOpen={isSavedFiltersOpen}
           onClickSavedFilters={() => setIsSavedFiltersOpen(!isSavedFiltersOpen)}
           activeFilter={activeFilter}
-        />
-      ) : (
-        <EditFilter
-          editFilter={editFilter}
-          toggleEditModal={toggleEditModal}
-          editSavedFilter={editSavedFilter}
         />
       )}
     </S.MessageFilterModal>
