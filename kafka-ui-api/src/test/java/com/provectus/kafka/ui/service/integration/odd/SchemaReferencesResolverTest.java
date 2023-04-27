@@ -55,6 +55,7 @@ class SchemaReferencesResolverTest {
 
     assertThat(result.block())
         .containsExactlyEntriesOf(
+            // checking map should be ordered
             ImmutableMap.<String, String>builder()
                 .put("ref1", "schema1")
                 .put("ref2_1_1", "schema2_1_1")

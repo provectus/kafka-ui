@@ -1,15 +1,10 @@
 package com.provectus.kafka.ui.service.integration.odd;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.sr.api.KafkaSrClientApi;
 import com.provectus.kafka.ui.sr.model.SchemaReference;
 import java.util.List;
-import java.util.Optional;
 import reactor.core.publisher.Mono;
 
 // logic copied from AbstractSchemaProvider:resolveReferences
@@ -22,41 +17,41 @@ class SchemaReferencesResolver {
     this.client = client;
   }
 
-  Mono<ImmutableMap<String, String>> resolve(List<SchemaReference> references) {
-    return resolveReferences(references, new State(ImmutableMap.of(), ImmutableSet.of()))
-        .map(State::resolved);
+  Mono<ImmutableMap<String, String>> resolve(List<SchemaReference> refs) {
+    return resolveReferences(
+        refs == null ? List.of() : refs,
+        new Resolving(ImmutableMap.of(), ImmutableSet.of())).map(
+        Resolving::resolved
+    );
   }
 
-  private record State(ImmutableMap<String, String> resolved, ImmutableSet<String> visited) {
+  private record Resolving(ImmutableMap<String, String> resolved, ImmutableSet<String> visited) {
 
-    State visit(String name) {
-      return new State(resolved, ImmutableSet.<String>builder().addAll(visited).add(name).build());
+    Resolving visit(String name) {
+      return new Resolving(resolved, ImmutableSet.<String>builder().addAll(visited).add(name).build());
     }
 
-    State resolve(String ref, String schema) {
-      return new State(ImmutableMap.<String, String>builder().putAll(resolved).put(ref, schema).build(), visited);
+    Resolving resolve(String ref, String schema) {
+      return new Resolving(ImmutableMap.<String, String>builder().putAll(resolved).put(ref, schema).build(), visited);
     }
   }
 
-  private Mono<State> resolveReferences(List<SchemaReference> references,
-                                        State initState) {
-    Mono<State> result = Mono.just(initState);
-    for (var reference : Optional.ofNullable(references).orElse(List.of())) {
+  private Mono<Resolving> resolveReferences(List<SchemaReference> references, Resolving initState) {
+    Mono<Resolving> result = Mono.just(initState);
+    for (SchemaReference reference : references) {
       result = result.flatMap(state -> {
-            if (state.visited().contains(reference.getName())) {
-              return Mono.just(state);
-            } else {
-              final var newState = state.visit(reference.getName());
-              return client.getSubjectVersion(reference.getSubject(), String.valueOf(reference.getVersion()), true)
-                  .flatMap(subj ->
-                      resolveReferences(subj.getReferences(), newState)
-                          .map(withNewRefs -> withNewRefs.resolve(reference.getName(), subj.getSchema()))
-                  );
-            }
-          }
-      );
+        if (state.visited().contains(reference.getName())) {
+          return Mono.just(state);
+        } else {
+          final var newState = state.visit(reference.getName());
+          return client.getSubjectVersion(reference.getSubject(), String.valueOf(reference.getVersion()), true)
+              .flatMap(subj ->
+                  resolveReferences(subj.getReferences(), newState)
+                      .map(withNewRefs -> withNewRefs.resolve(reference.getName(), subj.getSchema()))
+              );
+        }
+      });
     }
     return result;
   }
-
 }
