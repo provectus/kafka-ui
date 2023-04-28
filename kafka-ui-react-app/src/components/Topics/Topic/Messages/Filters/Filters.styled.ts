@@ -291,13 +291,11 @@ export const ActiveSmartFilter = styled.div`
   border-radius: 4px;
   font-size: 14px;
   line-height: 20px;
-
 `;
-
 
 export const EditSmartFilterIcon = styled.div(
   ({ theme: { icons } }) => css`
-    color: ${({ theme }) => theme.icons.editIcon.normal};
+    color: ${icons.editIcon.normal};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -320,35 +318,35 @@ export const EditSmartFilterIcon = styled.div(
   `
 );
 
-export const SmartFilterName = styled.div(
-  ({ theme: { icons } }) => css`
-    padding: 0 8px;
-    min-width: 32px;
-  `);
+export const SmartFilterName = styled.div`
+  padding: 0 8px;
+  min-width: 32px;
+`;
 
 export const DeleteSmartFilterIcon = styled.div(
   ({ theme: { icons } }) => css`
-  color: ${({ theme }) => theme.icons.closeIcon.normal};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 32px;
-  width: 32px;
-  cursor: pointer;
-  border-left: 1px solid ${icons.closeIcon.border};
+    color: ${icons.closeIcon.normal};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
+    cursor: pointer;
+    border-left: 1px solid ${icons.closeIcon.border};
 
-  &:hover {
-    ${closeIcon} {
-      fill: ${icons.closeIcon.hover};
+    &:hover {
+      ${closeIcon} {
+        fill: ${icons.closeIcon.hover};
+      }
     }
-  }
 
-  &:active {
-    ${closeIcon} {
-      fill: ${icons.closeIcon.active};
+    &:active {
+      ${closeIcon} {
+        fill: ${icons.closeIcon.active};
+      }
     }
-  }
-`);
+  `
+);
 
 export const MessageLoading = styled.div.attrs({
   role: 'contentLoader',

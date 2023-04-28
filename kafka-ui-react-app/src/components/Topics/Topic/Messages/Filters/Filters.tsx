@@ -311,7 +311,7 @@ const Filters: React.FC<FiltersProps> = ({
     setQueryType(MessageFilterType.GROOVY_SCRIPT);
   };
 
-  const composeMessageFilter = (filter: FilterEdit) : ActiveMessageFilter => ({
+  const composeMessageFilter = (filter: FilterEdit): ActiveMessageFilter => ({
     index: filter.index,
     name: filter.filter.name,
     code: filter.filter.code,
@@ -320,7 +320,7 @@ const Filters: React.FC<FiltersProps> = ({
   const storeAsActiveFilter = (filter: FilterEdit) => {
     const messageFilter = JSON.stringify(composeMessageFilter(filter));
     localStorage.setItem('activeFilter', messageFilter);
-  }
+  };
 
   const editSavedFilter = (filter: FilterEdit) => {
     const filters = [...savedFilters];
@@ -555,9 +555,7 @@ const Filters: React.FC<FiltersProps> = ({
         </Button>
         {activeFilter.name && (
           <S.ActiveSmartFilter data-testid="activeSmartFilter">
-            <S.SmartFilterName>
-              {activeFilter.name}
-            </S.SmartFilterName>
+            <S.SmartFilterName>{activeFilter.name}</S.SmartFilterName>
             <S.EditSmartFilterIcon onClick={toggleQuickEdit}>
               <EditIcon />
             </S.EditSmartFilterIcon>
@@ -567,14 +565,18 @@ const Filters: React.FC<FiltersProps> = ({
           </S.ActiveSmartFilter>
         )}
       </S.ActiveSmartFilterWrapper>
-      {isQuickEditOpen &&
+      {isQuickEditOpen && (
         <FilterModal
           quickEditMode
           activeFilter={activeFilter}
           toggleIsOpen={toggleQuickEdit}
           editSavedFilter={editCurrentFilter}
+          filters={[]}
+          addFilter={() => null}
+          deleteFilter={() => null}
+          activeFilterHandler={() => null}
         />
-      }
+      )}
 
       {isOpen && (
         <FilterModal

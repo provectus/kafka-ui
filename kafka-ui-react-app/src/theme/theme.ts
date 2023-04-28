@@ -165,13 +165,13 @@ const baseTheme = {
       normal: Colors.neutral[30],
       hover: Colors.neutral[90],
       active: Colors.neutral[100],
-      border: Colors.neutral[10]
+      border: Colors.neutral[10],
     },
     closeIcon: {
       normal: Colors.neutral[30],
       hover: Colors.neutral[90],
       active: Colors.neutral[100],
-      border: Colors.neutral[10]
+      border: Colors.neutral[10],
     },
     cancelIcon: Colors.neutral[30],
     autoIcon: Colors.neutral[95],
@@ -1123,13 +1123,13 @@ export const darkTheme: ThemeType = {
       normal: Colors.neutral[50],
       hover: Colors.neutral[30],
       active: Colors.neutral[40],
-      border: Colors.neutral[70]
+      border: Colors.neutral[70],
     },
     closeIcon: {
       normal: Colors.neutral[50],
       hover: Colors.neutral[30],
       active: Colors.neutral[40],
-      border: Colors.neutral[70]
+      border: Colors.neutral[70],
     },
     cancelIcon: Colors.neutral[0],
     autoIcon: Colors.neutral[0],
