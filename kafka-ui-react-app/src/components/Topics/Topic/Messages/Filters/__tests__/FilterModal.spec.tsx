@@ -36,7 +36,7 @@ describe('FilterModal component', () => {
     await userEvent.click(screen.getByRole('savedFilterText'));
     await userEvent.click(screen.getByText('Edit'));
     expect(
-      screen.getByRole('heading', { name: /edit saved filter/i, level: 3 })
+      screen.getByRole('heading', { name: /edit filter/i, level: 3 })
     ).toBeInTheDocument();
   });
 });
