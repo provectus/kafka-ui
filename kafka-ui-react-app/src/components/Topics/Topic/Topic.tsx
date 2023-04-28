@@ -236,7 +236,7 @@ const Topic: React.FC = () => {
         title="Produce Message"
       >
         <Suspense fallback={<PageLoader />}>
-          <SendMessage onSubmit={closeSidebar} />
+          <SendMessage closeSidebar={closeSidebar} />
         </Suspense>
       </SlidingSidebar>
     </>
