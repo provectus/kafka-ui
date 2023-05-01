@@ -12,6 +12,7 @@ import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.Permission;
 import com.provectus.kafka.ui.model.rbac.Resource;
 import com.provectus.kafka.ui.model.rbac.Role;
+import com.provectus.kafka.ui.model.rbac.Subject;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
 import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
@@ -19,12 +20,12 @@ import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.rbac.extractor.CognitoAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GithubAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GoogleAuthorityExtractor;
-import com.provectus.kafka.ui.service.rbac.extractor.LdapAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.OauthAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.ProviderAuthorityExtractor;
 import jakarta.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -35,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.core.env.Environment;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
@@ -51,10 +53,11 @@ public class AccessControlService {
 
   @Nullable
   private final InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
+  private final RoleBasedAccessControlProperties properties;
+  private final Environment environment;
 
   private boolean rbacEnabled = false;
-  private Set<ProviderAuthorityExtractor> extractors = Collections.emptySet();
-  private final RoleBasedAccessControlProperties properties;
+  private Set<ProviderAuthorityExtractor> oauthExtractors = Collections.emptySet();
 
   @PostConstruct
   public void init() {
@@ -64,22 +67,27 @@ public class AccessControlService {
     }
     rbacEnabled = true;
 
-    this.extractors = properties.getRoles()
+    this.oauthExtractors = properties.getRoles()
         .stream()
         .map(role -> role.getSubjects()
             .stream()
-            .map(provider -> switch (provider.getProvider()) {
+            .map(Subject::getProvider)
+            .distinct()
+            .map(provider -> switch (provider) {
               case OAUTH_COGNITO -> new CognitoAuthorityExtractor();
               case OAUTH_GOOGLE -> new GoogleAuthorityExtractor();
               case OAUTH_GITHUB -> new GithubAuthorityExtractor();
               case OAUTH -> new OauthAuthorityExtractor();
-              case LDAP, LDAP_AD -> new LdapAuthorityExtractor();
-            }).collect(Collectors.toSet()))
+              default -> null;
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet()))
         .flatMap(Set::stream)
         .collect(Collectors.toSet());
 
-    if ((clientRegistrationRepository == null || !clientRegistrationRepository.iterator().hasNext())
-        && !properties.getRoles().isEmpty()) {
+    if (!properties.getRoles().isEmpty()
+        && "oauth2".equalsIgnoreCase(environment.getProperty("auth.type"))
+        && (clientRegistrationRepository == null || !clientRegistrationRepository.iterator().hasNext())) {
       log.error("Roles are configured but no authentication methods are present. Authentication might fail.");
     }
   }
@@ -356,8 +364,8 @@ public class AccessControlService {
     return isAccessible(Resource.KSQL, null, user, context, requiredActions);
   }
 
-  public Set<ProviderAuthorityExtractor> getExtractors() {
-    return extractors;
+  public Set<ProviderAuthorityExtractor> getOauthExtractors() {
+    return oauthExtractors;
   }
 
   public List<Role> getRoles() {
