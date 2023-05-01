@@ -62,7 +62,7 @@ public class TopicDetails extends BasePage {
   protected String savedFilterNameLocator = "//div[@role='savedFilter']/div[contains(text(),'%s')]";
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
-  protected String activeFilterNameLocator = "//div[@data-testid='activeSmartFilter'][contains(text(),'%s')]";
+  protected String activeFilterNameLocator = "//div[@data-testid='activeSmartFilter']/div[1][contains(text(),'%s')]";
   protected String settingsGridValueLocator = "//tbody/tr/td/span[text()='%s']//ancestor::tr/td[2]/span";
 
   @Step
