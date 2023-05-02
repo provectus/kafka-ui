@@ -59,7 +59,7 @@ const Topic: React.FC = () => {
 
   const deleteTopicHandler = async () => {
     await deleteTopic.mutateAsync(topicName);
-    navigate('../..');
+    navigate(clusterTopicsPath(clusterName));
   };
 
   React.useEffect(() => {
@@ -236,7 +236,7 @@ const Topic: React.FC = () => {
         title="Produce Message"
       >
         <Suspense fallback={<PageLoader />}>
-          <SendMessage onSubmit={closeSidebar} />
+          <SendMessage closeSidebar={closeSidebar} />
         </Suspense>
       </SlidingSidebar>
     </>

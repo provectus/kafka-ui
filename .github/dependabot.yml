@@ -8,8 +8,6 @@ updates:
     timezone: Europe/Moscow
   reviewers:
     - "Haarolean"
-  assignees:
-    - "Haarolean"
   labels:
     - "scope/backend"
     - "type/dependencies"
@@ -98,8 +96,6 @@ updates:
     time: "10:00"
     timezone: Europe/Moscow
   reviewers:
-    - "Haarolean"
-  assignees:
     - "Haarolean"
   labels:
     - "scope/infrastructure"

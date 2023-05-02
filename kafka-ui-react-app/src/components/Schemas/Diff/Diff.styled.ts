@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Button } from 'components/common/Button/Button';
 
 export const DiffWrapper = styled.div`
   align-items: stretch;
@@ -80,4 +81,7 @@ export const DiffTile = styled.div`
 
 export const DiffVersionsSelect = styled.div`
   width: 0.625em;
+`;
+export const BackButton = styled(Button)`
+  margin: 10px 9px;
 `;
