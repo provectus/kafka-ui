@@ -3809,7 +3809,9 @@ components:
                               type: array
                               items:
                                 type: string
-                            pattern:
+                            fieldsNamePattern:
+                              type: string
+                            maskingCharsReplacement:
                               type: array
                               items:
                                 type: string
