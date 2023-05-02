@@ -2375,6 +2375,16 @@ components:
           type: number
         bytesOutPerSec:
           type: number
+        partitionsLeader:
+          type: integer
+        partitions:
+          type: integer
+        inSyncPartitions:
+          type: integer
+        partitionsSkew:
+          type: number
+        leadersSkew:
+          type: number
       required:
         - id
 
@@ -3622,7 +3632,9 @@ components:
                               type: array
                               items:
                                 type: string
-                            pattern:
+                            fieldsNamePattern:
+                              type: string
+                            maskingCharsReplacement:
                               type: array
                               items:
                                 type: string
