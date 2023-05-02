@@ -7,7 +7,12 @@ description: Quick Start with Helm Chart
 ## General
 
 1. Clone/Copy Chart to your working directory
-2. Execute command `helm install helm-release-name charts/kafka-ui`
+2. Execute command
+
+    ```
+    helm repo add kafka-ui https://provectus.github.io/kafka-ui
+    helm install helm-release-name kafka-ui/kafka-ui
+    ```
 
 #### Passing Kafka-UI configuration as Dict
 
