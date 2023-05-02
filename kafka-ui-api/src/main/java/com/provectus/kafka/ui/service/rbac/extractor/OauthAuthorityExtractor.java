@@ -66,11 +66,18 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
             .stream()
             .filter(s -> s.getProvider().equals(Provider.OAUTH))
             .filter(s -> s.getType().equals("role"))
-            .anyMatch(subject
-                -> {
-              var principalRoles = convertRoles(principal.getAttribute(rolesFieldName));
+            .anyMatch(subject -> {
               var roleName = subject.getValue();
-              return principalRoles.contains(roleName);
+              var principalRoles = convertRoles(principal.getAttribute(rolesFieldName));
+              var roleMatched = principalRoles.contains(roleName);
+
+              if (roleMatched) {
+                log.debug("Assigning role [{}] to user [{}]", roleName, principal.getName());
+              } else {
+                log.trace("Role [{}] not found in user [{}] roles", roleName, principal.getName());
+              }
+
+              return roleMatched;
             })
         )
         .map(Role::getName)
