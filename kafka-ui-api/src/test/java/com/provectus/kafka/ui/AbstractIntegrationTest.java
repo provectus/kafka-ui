@@ -2,6 +2,7 @@ package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.container.KafkaConnectContainer;
 import com.provectus.kafka.ui.container.SchemaRegistryContainer;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -9,6 +10,7 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.function.ThrowingConsumer;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,6 +49,9 @@ public abstract class AbstractIntegrationTest {
           .dependsOn(kafka)
           .dependsOn(schemaRegistry);
 
+  @TempDir
+  public static Path tmpDir;
+
   static {
     kafka.start();
     schemaRegistry.start();
@@ -76,6 +81,9 @@ public abstract class AbstractIntegrationTest {
       System.setProperty("kafka.clusters.1.schemaRegistry", schemaRegistry.getUrl());
       System.setProperty("kafka.clusters.1.kafkaConnect.0.name", "kafka-connect");
       System.setProperty("kafka.clusters.1.kafkaConnect.0.address", kafkaConnect.getTarget());
+
+      System.setProperty("dynamic.config.enabled", "true");
+      System.setProperty("config.related.uploads.dir", tmpDir.toString());
     }
   }
 
