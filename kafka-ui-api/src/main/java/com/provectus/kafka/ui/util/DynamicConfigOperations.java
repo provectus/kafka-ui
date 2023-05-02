@@ -147,7 +147,7 @@ public class DynamicConfigOperations {
         .onErrorMap(th -> new FileUploadException(targetFilePath, th));
   }
 
-  private void checkIfDynamicConfigEnabled(){
+  private void checkIfDynamicConfigEnabled() {
     if (!dynamicConfigEnabled()) {
       throw new ValidationException(
           "Dynamic config change is not allowed. "
