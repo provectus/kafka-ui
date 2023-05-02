@@ -11,6 +11,7 @@ import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.Serde;
 import com.provectus.kafka.ui.serdes.builtin.AvroEmbeddedSerde;
 import com.provectus.kafka.ui.serdes.builtin.Base64Serde;
+import com.provectus.kafka.ui.serdes.builtin.ConsumerOffsetsSerde;
 import com.provectus.kafka.ui.serdes.builtin.Int32Serde;
 import com.provectus.kafka.ui.serdes.builtin.Int64Serde;
 import com.provectus.kafka.ui.serdes.builtin.ProtobufFileSerde;
@@ -37,6 +38,7 @@ public class SerdesInitializer {
   public SerdesInitializer() {
     this(
         ImmutableMap.<String, Class<? extends BuiltInSerde>>builder()
+            .put(ConsumerOffsetsSerde.name(), ConsumerOffsetsSerde.class)
             .put(StringSerde.name(), StringSerde.class)
             .put(SchemaRegistrySerde.name(), SchemaRegistrySerde.class)
             .put(ProtobufFileSerde.name(), ProtobufFileSerde.class)
