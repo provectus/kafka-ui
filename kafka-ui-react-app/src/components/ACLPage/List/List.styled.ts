@@ -10,7 +10,9 @@ export const DeleteCell = styled.div`
   }
 `;
 
-export const Chip = styled.div<{ chipType?: 'default' | 'success' | 'danger' }>`
+export const Chip = styled.div<{
+  chipType?: 'default' | 'success' | 'danger' | 'secondary' | string;
+}>`
   width: fit-content;
   text-transform: capitalize;
   padding: 2px 8px;
@@ -24,6 +26,8 @@ export const Chip = styled.div<{ chipType?: 'default' | 'success' | 'danger' }>`
         return theme.tag.backgroundColor.green;
       case 'danger':
         return theme.tag.backgroundColor.red;
+      case 'secondary':
+        return theme.tag.backgroundColor.secondary;
       default:
         return theme.tag.backgroundColor.gray;
     }

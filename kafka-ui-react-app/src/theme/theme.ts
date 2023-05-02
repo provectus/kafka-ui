@@ -232,6 +232,7 @@ const baseTheme = {
       white: Colors.neutral[10],
       red: Colors.red[10],
       blue: Colors.blue[10],
+      secondary: Colors.neutral[15],
     },
     color: Colors.neutral[90],
   },
@@ -690,11 +691,6 @@ export const theme = {
   },
   acl: {
     table: {
-      chipColors: {
-        gray: Colors.neutral[10],
-        green: Colors.green[10],
-        red: Colors.red[10],
-      },
       deleteIcon: Colors.neutral[50],
     },
     create: {
@@ -1186,11 +1182,6 @@ export const darkTheme: ThemeType = {
   },
   acl: {
     table: {
-      chipColors: {
-        gray: Colors.neutral[10],
-        green: Colors.green[10],
-        red: Colors.red[10],
-      },
       deleteIcon: Colors.neutral[50],
     },
     create: {

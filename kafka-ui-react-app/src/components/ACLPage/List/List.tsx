@@ -27,9 +27,8 @@ const ACList: React.FC = () => {
 
   const onDeleteClick = (acl: KafkaAcl | null) => {
     if (acl) {
-      modal(
-        'Are you sure want to delete this ACL? This action cannot be undone.',
-        () => deleteResource(acl)
+      modal('Are you sure want to delete this ACL record?', () =>
+        deleteResource(acl)
       );
     }
   };
@@ -55,15 +54,26 @@ const ACList: React.FC = () => {
         accessorKey: 'resourceName',
         // eslint-disable-next-line react/no-unstable-nested-components
         cell: ({ getValue, row }) => {
+          let chipType;
+          if (
+            row.original.namePatternType === KafkaAclNamePatternType.PREFIXED
+          ) {
+            chipType = 'default';
+          }
+
+          if (
+            row.original.namePatternType === KafkaAclNamePatternType.LITERAL
+          ) {
+            chipType = 'secondary';
+          }
           return (
             <S.PatternCell>
               {getValue<string>()}
-              {row.original.namePatternType ===
-                KafkaAclNamePatternType.PREFIXED && (
-                <S.Chip chipType="default">
+              {chipType ? (
+                <S.Chip chipType={chipType}>
                   {row.original.namePatternType.toLowerCase()}
                 </S.Chip>
-              )}
+              ) : null}
             </S.PatternCell>
           );
         },
@@ -128,7 +138,7 @@ const ACList: React.FC = () => {
 
   return (
     <>
-      <PageHeading text="Acsess Control List" />
+      <PageHeading text="Access Control List" />
       <Table
         columns={columns}
         data={aclList ?? []}
