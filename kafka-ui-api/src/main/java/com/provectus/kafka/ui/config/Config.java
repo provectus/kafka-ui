@@ -5,7 +5,6 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxProperties;
 import org.springframework.context.ApplicationContext;
@@ -15,8 +14,6 @@ import org.springframework.http.server.reactive.ContextPathCompositeHandler;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.util.StringUtils;
-import org.springframework.util.unit.DataSize;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 
 @Configuration
@@ -52,14 +49,7 @@ public class Config {
   }
 
   @Bean
-  public WebClient webClient(
-      @Value("${webclient.max-in-memory-buffer-size:20MB}") DataSize maxBuffSize) {
-    return WebClient.builder()
-        .codecs(c -> c.defaultCodecs().maxInMemorySize((int) maxBuffSize.toBytes()))
-        .build();
-  }
-
-  @Bean
+  // will be used by webflux json mapping
   public JsonNullableModule jsonNullableModule() {
     return new JsonNullableModule();
   }

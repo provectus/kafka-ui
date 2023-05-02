@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 
-public class RefFieldSchema implements FieldSchema {
+class RefFieldSchema implements FieldSchema {
   private final String ref;
 
-  public RefFieldSchema(String ref) {
+  RefFieldSchema(String ref) {
     this.ref = ref;
   }
 
@@ -16,7 +16,7 @@ public class RefFieldSchema implements FieldSchema {
     return mapper.createObjectNode().set("$ref", new TextNode(ref));
   }
 
-  public String getRef() {
+  String getRef() {
     return ref;
   }
 }

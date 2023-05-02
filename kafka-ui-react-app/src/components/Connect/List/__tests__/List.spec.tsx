@@ -9,7 +9,11 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render, WithRoute } from 'lib/testHelpers';
 import { clusterConnectConnectorPath, clusterConnectorsPath } from 'lib/paths';
-import { useConnectors, useDeleteConnector } from 'lib/hooks/api/kafkaConnect';
+import {
+  useConnectors,
+  useDeleteConnector,
+  useUpdateConnectorState,
+} from 'lib/hooks/api/kafkaConnect';
 
 const mockedUsedNavigate = jest.fn();
 const mockDelete = jest.fn();
@@ -22,6 +26,7 @@ jest.mock('react-router-dom', () => ({
 jest.mock('lib/hooks/api/kafkaConnect', () => ({
   useConnectors: jest.fn(),
   useDeleteConnector: jest.fn(),
+  useUpdateConnectorState: jest.fn(),
 }));
 
 const clusterName = 'local';
@@ -41,6 +46,10 @@ describe('Connectors List', () => {
     beforeEach(() => {
       (useConnectors as jest.Mock).mockImplementation(() => ({
         data: connectors,
+      }));
+      const restartConnector = jest.fn();
+      (useUpdateConnectorState as jest.Mock).mockImplementation(() => ({
+        mutateAsync: restartConnector,
       }));
     });
 

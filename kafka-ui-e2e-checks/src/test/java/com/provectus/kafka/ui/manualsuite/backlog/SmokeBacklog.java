@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.manualsuite.backlog;
 
 import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.BROKERS_SUITE_ID;
+import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.KSQL_DB_SUITE_ID;
+import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.SCHEMAS_SUITE_ID;
 import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.TOPICS_PROFILE_SUITE_ID;
 import static com.provectus.kafka.ui.utilities.qase.enums.State.TO_BE_AUTOMATED;
 
@@ -20,30 +22,72 @@ public class SmokeBacklog extends BaseManualTest {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
-  @Suite(id = BROKERS_SUITE_ID)
-  @QaseId(331)
+  @Suite(id = KSQL_DB_SUITE_ID)
+  @QaseId(277)
   @Test
   public void testCaseB() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = BROKERS_SUITE_ID)
-  @QaseId(332)
+  @QaseId(331)
   @Test
   public void testCaseC() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
-  @Suite(id = TOPICS_PROFILE_SUITE_ID)
-  @QaseId(335)
+  @Suite(id = BROKERS_SUITE_ID)
+  @QaseId(332)
   @Test
   public void testCaseD() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
-  @QaseId(336)
+  @QaseId(335)
   @Test
   public void testCaseE() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = TOPICS_PROFILE_SUITE_ID)
+  @QaseId(336)
+  @Test
+  public void testCaseF() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = TOPICS_PROFILE_SUITE_ID)
+  @QaseId(343)
+  @Test
+  public void testCaseG() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = KSQL_DB_SUITE_ID)
+  @QaseId(344)
+  @Test
+  public void testCaseH() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = SCHEMAS_SUITE_ID)
+  @QaseId(345)
+  @Test
+  public void testCaseI() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = SCHEMAS_SUITE_ID)
+  @QaseId(346)
+  @Test
+  public void testCaseJ() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = TOPICS_PROFILE_SUITE_ID)
+  @QaseId(347)
+  @Test
+  public void testCaseK() {
   }
 }

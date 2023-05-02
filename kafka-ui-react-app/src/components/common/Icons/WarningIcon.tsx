@@ -13,6 +13,7 @@ const WarningIcon: React.FC = () => {
   return (
     <WarningIconContainer>
       <svg
+        role="img"
         width="14"
         height="13"
         viewBox="0 0 14 13"
