@@ -252,6 +252,9 @@ public class ConsumerOffsetsSerde implements BuiltInSerde {
       String result;
       var bb = ByteBuffer.wrap(data);
       short version = bb.getShort();
+      // ideally, we should distinguish if value is commit or metadata
+      // by checking record's key, but our current serde structure doesn't allow that.
+      // so, we trying to parse into metadata first and after into commit msg
       try {
         result = toJson(
             switch (version) {
