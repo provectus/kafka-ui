@@ -38,7 +38,6 @@ public class SerdesInitializer {
   public SerdesInitializer() {
     this(
         ImmutableMap.<String, Class<? extends BuiltInSerde>>builder()
-            .put(ConsumerOffsetsSerde.name(), ConsumerOffsetsSerde.class)
             .put(StringSerde.name(), StringSerde.class)
             .put(SchemaRegistrySerde.name(), SchemaRegistrySerde.class)
             .put(ProtobufFileSerde.name(), ProtobufFileSerde.class)
@@ -120,6 +119,8 @@ public class SerdesInitializer {
       }
     });
 
+    registerTopicRelatedSerde(registeredSerdes);
+
     return new ClusterSerdes(
         registeredSerdes,
         Optional.ofNullable(clusterProperties.getDefaultKeySerde())
@@ -131,6 +132,27 @@ public class SerdesInitializer {
             .or(() -> Optional.ofNullable(registeredSerdes.get(ProtobufFileSerde.name())))
             .orElse(null),
         createFallbackSerde()
+    );
+  }
+
+  /**
+   * Registers serdse that should only be used for specific (hard-coded) topics, like ConsumerOffsetsSerde.
+   */
+  private void registerTopicRelatedSerde(Map<String, SerdeInstance> serdes) {
+    registerConsumerOffsetsSerde(serdes);
+  }
+
+  private void registerConsumerOffsetsSerde(Map<String, SerdeInstance> serdes) {
+    var pattern = Pattern.compile(ConsumerOffsetsSerde.TOPIC);
+    serdes.put(
+        ConsumerOffsetsSerde.name(),
+        new SerdeInstance(
+            ConsumerOffsetsSerde.name(),
+            new ConsumerOffsetsSerde(),
+            pattern,
+            pattern,
+            null
+        )
     );
   }
 

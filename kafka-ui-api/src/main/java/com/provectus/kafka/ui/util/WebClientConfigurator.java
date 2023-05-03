@@ -5,24 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.exception.ValidationException;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.handler.ssl.JdkSslContext;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.SslProvider;
 import java.io.FileInputStream;
 import java.security.KeyStore;
-import java.time.Duration;
-import java.util.List;
-import java.util.Properties;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 import lombok.SneakyThrows;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -136,36 +127,5 @@ public class WebClientConfigurator {
 
   public WebClient build() {
     return builder.build();
-  }
-
-  @SneakyThrows
-  public static void main(String[] args) {
-    for (int i = 0; i < 2; i++) {
-      int finalI = i;
-      var t = new Thread(() -> {
-        Properties props = new Properties();
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "test_Members_3");
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-
-        try {
-          Thread.sleep(finalI * 10_000);
-        } catch (Exception e) {
-        }
-
-        var consumer = new KafkaConsumer<String, String>(props);
-        consumer.subscribe(List.of("test"));
-        while (true) {
-          consumer.poll(Duration.ofSeconds(5));
-          consumer.commitSync();
-        }
-      });
-      t.setDaemon(true);
-      t.start();
-    }
-
-    Thread.sleep(600_000);
   }
 }

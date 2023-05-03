@@ -1,29 +1,55 @@
 package com.provectus.kafka.ui.serdes.builtin;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.PropertyResolver;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serdes.BuiltInSerde;
+import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.SneakyThrows;
-import org.apache.kafka.common.protocol.ByteBufferAccessor;
 import org.apache.kafka.common.protocol.types.ArrayOf;
 import org.apache.kafka.common.protocol.types.BoundField;
+import org.apache.kafka.common.protocol.types.CompactArrayOf;
 import org.apache.kafka.common.protocol.types.Field;
 import org.apache.kafka.common.protocol.types.Schema;
 import org.apache.kafka.common.protocol.types.Struct;
 import org.apache.kafka.common.protocol.types.Type;
 
+// Deserialization logic and message's schemas can be found in
+// kafka.coordinator.group.GroupMetadataManager (readMessageKey, readOffsetMessageValue, readGroupMessageValue)
 public class ConsumerOffsetsSerde implements BuiltInSerde {
 
-  private static final String TOPIC = "__consumer_offsets";
+  private static final JsonMapper JSON_MAPPER = createMapper();
+
+  public static final String TOPIC = "__consumer_offsets";
 
   public static String name() {
     return "__consumer_offsets";
+  }
+
+  private static JsonMapper createMapper() {
+    var module = new SimpleModule();
+    module.addSerializer(Struct.class, new JsonSerializer<>() {
+      @Override
+      public void serialize(Struct value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        gen.writeStartObject();
+        for (BoundField field : value.schema().fields()) {
+          var fieldVal = value.get(field);
+          gen.writeObjectField(field.def.name, fieldVal);
+        }
+        gen.writeEndObject();
+      }
+    });
+    var mapper = new JsonMapper();
+    mapper.registerModule(module);
+    return mapper;
   }
 
   @Override
@@ -93,14 +119,14 @@ public class ConsumerOffsetsSerde implements BuiltInSerde {
   }
 
   private Deserializer valueDeserializer() {
-    final Schema valueSchemaV0 =
+    final Schema commitOffsetSchemaV0 =
         new Schema(
             new Field("offset", Type.INT64, ""),
             new Field("metadata", Type.STRING, ""),
             new Field("commit_timestamp", Type.INT64, "")
         );
 
-    final Schema valueSchemaV1 =
+    final Schema commitOffsetSchemaV1 =
         new Schema(
             new Field("offset", Type.INT64, ""),
             new Field("metadata", Type.STRING, ""),
@@ -108,20 +134,28 @@ public class ConsumerOffsetsSerde implements BuiltInSerde {
             new Field("expire_timestamp", Type.INT64, "")
         );
 
-    final Schema valueSchemaV2 =
+    final Schema commitOffsetSchemaV2 =
         new Schema(
             new Field("offset", Type.INT64, ""),
             new Field("metadata", Type.STRING, ""),
             new Field("commit_timestamp", Type.INT64, "")
         );
 
-    final Schema valueSchemaV3 =
+    final Schema commitOffsetSchemaV3 =
         new Schema(
             new Field("offset", Type.INT64, ""),
             new Field("leader_epoch", Type.INT32, ""),
             new Field("metadata", Type.STRING, ""),
             new Field("commit_timestamp", Type.INT64, "")
         );
+
+    final Schema commitOffsetSchemaV4Latest = new Schema(
+        new Field("offset", Type.INT64, ""),
+        new Field("leader_epoch", Type.INT32, ""),
+        new Field("metadata", Type.COMPACT_STRING, ""),
+        new Field("commit_timestamp", Type.INT64, ""),
+        Field.TaggedFieldsSection.of()
+    );
 
     final Schema metadataSchema0 =
         new Schema(
@@ -193,11 +227,31 @@ public class ConsumerOffsetsSerde implements BuiltInSerde {
             )), "")
         );
 
+    final Schema metadataSchema4Latest =
+        new Schema(
+            new Field("protocol_type", Type.COMPACT_STRING, ""),
+            new Field("generation", Type.INT32, ""),
+            new Field("protocol", Type.COMPACT_NULLABLE_STRING, ""),
+            new Field("leader", Type.COMPACT_NULLABLE_STRING, ""),
+            new Field("current_state_timestamp", Type.INT64, ""),
+            new Field("members", new CompactArrayOf(new Schema(
+                new Field("member_id", Type.COMPACT_STRING, ""),
+                new Field("group_instance_id", Type.COMPACT_NULLABLE_STRING, ""),
+                new Field("client_id", Type.COMPACT_STRING, ""),
+                new Field("client_host", Type.COMPACT_STRING, ""),
+                new Field("rebalance_timeout", Type.INT32, ""),
+                new Field("session_timeout", Type.INT32, ""),
+                new Field("subscription", Type.COMPACT_BYTES, ""),
+                new Field("assignment", Type.COMPACT_BYTES, ""),
+                Field.TaggedFieldsSection.of()
+            )), ""),
+            Field.TaggedFieldsSection.of()
+        );
+
     return (headers, data) -> {
+      String result;
       var bb = ByteBuffer.wrap(data);
       short version = bb.getShort();
-
-      String result = null;
       try {
         result = toJson(
             switch (version) {
@@ -205,26 +259,30 @@ public class ConsumerOffsetsSerde implements BuiltInSerde {
               case 1 -> metadataSchema1.read(bb);
               case 2 -> metadataSchema2.read(bb);
               case 3 -> metadataSchema3.read(bb);
-              default -> throw new IllegalStateException("Unknown offset message version: " + version);
+              default -> metadataSchema4Latest.read(bb);
             }
         );
       } catch (Throwable e) {
         bb = bb.rewind();
-        bb.getShort(); //skipping version
+        bb.getShort(); // skipping version
         result = toJson(
             switch (version) {
-              case 0 -> valueSchemaV0.read(bb);
-              case 1 -> valueSchemaV1.read(bb);
-              case 2 -> valueSchemaV2.read(bb);
-              case 3 -> valueSchemaV3.read(bb);
-              default -> throw new IllegalStateException("Unknown offset message version: " + version);
+              case 0 -> commitOffsetSchemaV0.read(bb);
+              case 1 -> commitOffsetSchemaV1.read(bb);
+              case 2 -> commitOffsetSchemaV2.read(bb);
+              case 3 -> commitOffsetSchemaV3.read(bb);
+              default -> commitOffsetSchemaV4Latest.read(bb);
             }
         );
       }
 
+      if (bb.remaining() != 0) {
+        throw new IllegalArgumentException(
+            "Message buffer is not read to the end, which is likely means message is unrecognized");
+      }
       return new DeserializeResult(
           result,
-          DeserializeResult.Type.STRING,
+          DeserializeResult.Type.JSON,
           Map.of()
       );
     };
@@ -232,10 +290,6 @@ public class ConsumerOffsetsSerde implements BuiltInSerde {
 
   @SneakyThrows
   private String toJson(Struct s) {
-    Map<String, Object> map = new LinkedHashMap<>();
-    for (BoundField field : s.schema().fields()) {
-      map.put(field.def.name, s.get(field));
-    }
-    return new JsonMapper().writeValueAsString(map);
+    return JSON_MAPPER.writeValueAsString(s);
   }
 }

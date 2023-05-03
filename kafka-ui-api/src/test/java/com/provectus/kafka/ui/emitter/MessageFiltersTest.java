@@ -62,15 +62,6 @@ class MessageFiltersTest {
   class GroovyScriptFilter {
 
     @Test
-    void  test(){
-      var test = groovyScriptFilter("value == null")
-          .test(new TopicMessageDTO()
-              .timestamp(OffsetDateTime.now())
-              .content("\u0000\u0003\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0015����\u0000\fAQAAAYBnhg6m\u0000\u0000\u0001�g�\u0016\u000B"));
-      assertThat(test).isTrue();
-    }
-
-    @Test
     void throwsExceptionOnInvalidGroovySyntax() {
       assertThrows(ValidationException.class,
           () -> groovyScriptFilter("this is invalid groovy syntax = 1"));
