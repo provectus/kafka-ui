@@ -149,7 +149,7 @@ public class ConsumerOffsetsSerde implements BuiltInSerde {
             new Field("commit_timestamp", Type.INT64, "")
         );
 
-    final Schema commitOffsetSchemaV4Latest = new Schema(
+    final Schema commitOffsetSchemaV4 = new Schema(
         new Field("offset", Type.INT64, ""),
         new Field("leader_epoch", Type.INT32, ""),
         new Field("metadata", Type.COMPACT_STRING, ""),
@@ -227,7 +227,7 @@ public class ConsumerOffsetsSerde implements BuiltInSerde {
             )), "")
         );
 
-    final Schema metadataSchema4Latest =
+    final Schema metadataSchema4 =
         new Schema(
             new Field("protocol_type", Type.COMPACT_STRING, ""),
             new Field("generation", Type.INT32, ""),
@@ -259,7 +259,8 @@ public class ConsumerOffsetsSerde implements BuiltInSerde {
               case 1 -> metadataSchema1.read(bb);
               case 2 -> metadataSchema2.read(bb);
               case 3 -> metadataSchema3.read(bb);
-              default -> metadataSchema4Latest.read(bb);
+              case 4 -> metadataSchema4.read(bb);
+              default -> throw new IllegalArgumentException("Unrecognized version: " + version);
             }
         );
       } catch (Throwable e) {
@@ -271,7 +272,8 @@ public class ConsumerOffsetsSerde implements BuiltInSerde {
               case 1 -> commitOffsetSchemaV1.read(bb);
               case 2 -> commitOffsetSchemaV2.read(bb);
               case 3 -> commitOffsetSchemaV3.read(bb);
-              default -> commitOffsetSchemaV4Latest.read(bb);
+              case 4 -> commitOffsetSchemaV4.read(bb);
+              default -> throw new IllegalArgumentException("Unrecognized version: " + version);
             }
         );
       }
