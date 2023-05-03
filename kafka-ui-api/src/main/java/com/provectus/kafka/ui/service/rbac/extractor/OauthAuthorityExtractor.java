@@ -22,6 +22,8 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
 
+  private static final ObjectMapper objectMapper = new ObjectMapper();
+
   public static final String ROLES_FIELD_PARAM_NAME = "roles-field";
 
   @Override
@@ -106,7 +108,7 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
 
       log.trace("Trying to deserialize the field");
       //@formatter:off
-      return new ObjectMapper().readValue((String) roles, new TypeReference<>() {});
+      return objectMapper.readValue((String) roles, new TypeReference<>() {});
       //@formatter:on
     } catch (Exception e) {
       log.error("Error deserializing field", e);
