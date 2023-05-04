@@ -130,6 +130,23 @@ ingress:
   # Http paths to add to the Ingress after the default path
   succeedingPaths: []
 
+# OpenShift Route configuration
+route:
+  # Enable OpenShift Route resource
+  enabled: false
+
+  # Annotations for OpenShift Route
+  annotations: {}
+
+  # configs for OpenShift Route TLS
+  tls:
+    # Enable TLS termination for the OpenShift Route
+    enabled: false
+    # TLS termination
+    termination: edge
+    # Insecure Edge Termination Policy
+    insecureEdgeTerminationPolicy: Redirect
+
 resources:
   {}
   # limits:

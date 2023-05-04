@@ -1,0 +1,26 @@
+{{- if .Values.route.enabled -}}
+{{- $fullName := include "kafka-ui.fullname" . -}}
+{{- $svcPort := (eq (int .Values.service.port) 80) | ternary "http" .Values.service.port -}}
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "kafka-ui.labels" . | nindent 4 }}
+  {{- with .Values.route.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  to:
+    kind: Service
+    name: {{ $fullName }}
+    weight: 100
+  port:
+    targetPort: {{ $svcPort | quote }}
+  {{- if .Values.route.tls.enabled }}    
+  tls:
+    termination: {{ .Values.route.tls.termination }}
+    insecureEdgeTerminationPolicy: {{ .Values.route.tls.insecureEdgeTerminationPolicy }}
+  {{- end }}
+{{- end }}
