@@ -15,35 +15,35 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class ReplaceTest {
 
-  private static final List<String> TARGET_FIELDS = List.of("id", "name");
+  private static final FieldsSelector FIELDS_SELECTOR = fieldName -> List.of("id", "name").contains(fieldName);
   private static final String REPLACEMENT_STRING = "***";
 
   @ParameterizedTest
   @MethodSource
-  void testApplyToJsonContainer(List<String> fields, ContainerNode<?> original, ContainerNode<?>  expected) {
-    var policy = new Replace(fields, REPLACEMENT_STRING);
+  void testApplyToJsonContainer(FieldsSelector fieldsSelector, ContainerNode<?> original, ContainerNode<?>  expected) {
+    var policy = new Replace(fieldsSelector, REPLACEMENT_STRING);
     assertThat(policy.applyToJsonContainer(original)).isEqualTo(expected);
   }
 
   private static Stream<Arguments> testApplyToJsonContainer() {
     return Stream.of(
         Arguments.of(
-            TARGET_FIELDS,
+            FIELDS_SELECTOR,
             parse("{ \"id\": 123, \"name\": { \"first\": \"James\", \"surname\": \"Bond777!\"}}"),
             parse("{ \"id\": \"***\", \"name\": { \"first\": \"***\", \"surname\": \"***\"}}")
         ),
         Arguments.of(
-            TARGET_FIELDS,
+            FIELDS_SELECTOR,
             parse("[{ \"id\": 123, \"f2\": 234}, { \"name\": \"1.2\", \"f2\": 345} ]"),
             parse("[{ \"id\": \"***\", \"f2\": 234}, { \"name\": \"***\", \"f2\": 345} ]")
         ),
         Arguments.of(
-            TARGET_FIELDS,
+            FIELDS_SELECTOR,
             parse("{ \"outer\": { \"f1\": \"James\", \"name\": \"Bond777!\"}}"),
             parse("{ \"outer\": { \"f1\": \"James\", \"name\": \"***\"}}")
         ),
         Arguments.of(
-            List.of(),
+            (FieldsSelector) (fieldName -> true),
             parse("{ \"outer\": { \"f1\": \"v1\", \"f2\": \"v2\", \"inner\" : {\"if1\": \"iv1\"}}}"),
             parse("{ \"outer\": { \"f1\": \"***\", \"f2\": \"***\", \"inner\" : {\"if1\": \"***\"}}}}")
         )
@@ -62,7 +62,7 @@ class ReplaceTest {
       "null, ***"
   })
   void testApplyToString(String original, String expected) {
-    var policy = new Replace(List.of(), REPLACEMENT_STRING);
+    var policy = new Replace(fieldName -> true, REPLACEMENT_STRING);
     assertThat(policy.applyToString(original)).isEqualTo(expected);
   }
 }

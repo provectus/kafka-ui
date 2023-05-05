@@ -142,6 +142,8 @@ const Message: React.FC<Props> = ({
           timestampType={timestampType}
           keySize={keySize}
           contentSize={valueSize}
+          keySerde={keySerde}
+          valueSerde={valueSerde}
         />
       )}
     </>

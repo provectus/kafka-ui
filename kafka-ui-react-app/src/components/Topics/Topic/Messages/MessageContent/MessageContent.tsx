@@ -3,7 +3,6 @@ import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { SchemaType, TopicMessageTimestampTypeEnum } from 'generated-sources';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
-import { useSearchParams } from 'react-router-dom';
 
 import * as S from './MessageContent.styled';
 
@@ -17,6 +16,8 @@ export interface MessageContentProps {
   timestampType?: TopicMessageTimestampTypeEnum;
   keySize?: number;
   contentSize?: number;
+  keySerde?: string;
+  valueSerde?: string;
 }
 
 const MessageContent: React.FC<MessageContentProps> = ({
@@ -27,12 +28,10 @@ const MessageContent: React.FC<MessageContentProps> = ({
   timestampType,
   keySize,
   contentSize,
+  keySerde,
+  valueSerde,
 }) => {
   const [activeTab, setActiveTab] = React.useState<Tab>('content');
-  const [searchParams] = useSearchParams();
-  const keyFormat = searchParams.get('keySerde') || '';
-  const valueFormat = searchParams.get('valueSerde') || '';
-
   const activeTabContent = () => {
     switch (activeTab) {
       case 'content':
@@ -110,7 +109,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
             <S.Metadata>
               <S.MetadataLabel>Key Serde</S.MetadataLabel>
               <span>
-                <S.MetadataValue>{keyFormat}</S.MetadataValue>
+                <S.MetadataValue>{keySerde}</S.MetadataValue>
                 <S.MetadataMeta>
                   Size: <BytesFormatted value={keySize} />
                 </S.MetadataMeta>
@@ -120,7 +119,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
             <S.Metadata>
               <S.MetadataLabel>Value Serde</S.MetadataLabel>
               <span>
-                <S.MetadataValue>{valueFormat}</S.MetadataValue>
+                <S.MetadataValue>{valueSerde}</S.MetadataValue>
                 <S.MetadataMeta>
                   Size: <BytesFormatted value={contentSize} />
                 </S.MetadataMeta>
