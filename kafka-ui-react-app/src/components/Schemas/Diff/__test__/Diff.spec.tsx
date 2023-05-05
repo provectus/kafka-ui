@@ -3,6 +3,7 @@ import Diff, { DiffProps } from 'components/Schemas/Diff/Diff';
 import { render, WithRoute } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 import { clusterSchemaComparePath } from 'lib/paths';
+import userEvent from '@testing-library/user-event';
 
 import { versions } from './fixtures';
 
@@ -140,6 +141,26 @@ describe('Diff', () => {
       const select = screen.getAllByRole('listbox')[1];
       expect(select).toBeInTheDocument();
       expect(select).toHaveTextContent(versions[0].version);
+    });
+  });
+
+  describe('Back button', () => {
+    beforeEach(() => {
+      setupComponent({
+        areVersionsFetched: true,
+        versions,
+      });
+    });
+
+    it('back button is appear', () => {
+      const backButton = screen.getAllByRole('button', { name: 'Back' });
+      expect(backButton[0]).toBeInTheDocument();
+    });
+
+    it('click on back button', () => {
+      const backButton = screen.getAllByRole('button', { name: 'Back' });
+      userEvent.click(backButton[0]);
+      expect(screen.queryByRole('Back')).not.toBeInTheDocument();
     });
   });
 });
