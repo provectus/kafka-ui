@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.model.rbac;
 
+import com.provectus.kafka.ui.model.rbac.permission.AclAction;
 import com.provectus.kafka.ui.model.rbac.permission.ApplicationConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ClusterConfigAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
@@ -37,6 +38,8 @@ public class AccessContext {
 
   Collection<KsqlAction> ksqlActions;
 
+  Collection<AclAction> aclActions;
+
   public static AccessContextBuilder builder() {
     return new AccessContextBuilder();
   }
@@ -55,6 +58,7 @@ public class AccessContext {
     private String schema;
     private Collection<SchemaAction> schemaActions = Collections.emptySet();
     private Collection<KsqlAction> ksqlActions = Collections.emptySet();
+    private Collection<AclAction> aclActions = Collections.emptySet();
 
     private AccessContextBuilder() {
     }
@@ -131,6 +135,12 @@ public class AccessContext {
       return this;
     }
 
+    public AccessContextBuilder aclActions(AclAction... actions) {
+      Assert.isTrue(actions.length > 0, "actions not present");
+      this.aclActions = List.of(actions);
+      return this;
+    }
+
     public AccessContext build() {
       return new AccessContext(
           applicationConfigActions,
@@ -140,7 +150,7 @@ public class AccessContext {
           connect, connectActions,
           connector,
           schema, schemaActions,
-          ksqlActions);
+          ksqlActions, aclActions);
     }
   }
 }
