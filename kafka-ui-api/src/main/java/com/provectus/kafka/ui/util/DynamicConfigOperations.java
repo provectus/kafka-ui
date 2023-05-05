@@ -90,6 +90,7 @@ public class DynamicConfigOperations {
   }
 
   public PropertiesStructure getCurrentProperties() {
+    checkIfDynamicConfigEnabled();
     return PropertiesStructure.builder()
         .kafka(getNullableBean(ClustersProperties.class))
         .rbac(getNullableBean(RoleBasedAccessControlProperties.class))
@@ -112,11 +113,7 @@ public class DynamicConfigOperations {
   }
 
   public void persist(PropertiesStructure properties) {
-    if (!dynamicConfigEnabled()) {
-      throw new ValidationException(
-          "Dynamic config change is not allowed. "
-              + "Set dynamic.config.enabled property to 'true' to enabled it.");
-    }
+    checkIfDynamicConfigEnabled();
     properties.initAndValidate();
 
     String yaml = serializeToYaml(properties);
@@ -124,8 +121,9 @@ public class DynamicConfigOperations {
   }
 
   public Mono<Path> uploadConfigRelatedFile(FilePart file) {
-    String targetDirStr = (String) ctx.getEnvironment().getSystemEnvironment()
-        .getOrDefault(CONFIG_RELATED_UPLOADS_DIR_PROPERTY, CONFIG_RELATED_UPLOADS_DIR_DEFAULT);
+    checkIfDynamicConfigEnabled();
+    String targetDirStr = ctx.getEnvironment()
+        .getProperty(CONFIG_RELATED_UPLOADS_DIR_PROPERTY, CONFIG_RELATED_UPLOADS_DIR_DEFAULT);
 
     Path targetDir = Path.of(targetDirStr);
     if (!Files.exists(targetDir)) {
@@ -147,6 +145,14 @@ public class DynamicConfigOperations {
         .thenReturn(targetFilePath)
         .doOnError(th -> log.error("Error uploading file {}", targetFilePath, th))
         .onErrorMap(th -> new FileUploadException(targetFilePath, th));
+  }
+
+  private void checkIfDynamicConfigEnabled() {
+    if (!dynamicConfigEnabled()) {
+      throw new ValidationException(
+          "Dynamic config change is not allowed. "
+              + "Set dynamic.config.enabled property to 'true' to enabled it.");
+    }
   }
 
   @SneakyThrows
