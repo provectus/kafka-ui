@@ -3,7 +3,7 @@ import { FormError } from 'components/common/Input/Input.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { ErrorMessage } from '@hookform/error-message';
 import { useFormContext } from 'react-hook-form';
-import Input from 'components/common/Input/Input';
+import ControlledInput from 'components/common/Input/ControlledInput';
 import { Button } from 'components/common/Button/Button';
 import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import { useAppConfigFilesUpload } from 'lib/hooks/api/appConfig';
@@ -42,7 +42,7 @@ const Fileupload: React.FC<{ name: string; label: string }> = ({
       {loc ? (
         <S.FlexRow>
           <S.FlexGrow1>
-            <Input name={name} disabled />
+            <ControlledInput name={name} disabled />
           </S.FlexGrow1>
           <Button buttonType="secondary" buttonSize="L" onClick={onReset}>
             Reset

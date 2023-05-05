@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import Input from 'components/common/Input/Input';
+import ControlledInput from 'components/common/Input/ControlledInput';
 import { convertFormKeyToPropsKey } from 'widgets/ClusterConfigForm/utils/convertFormKeyToPropsKey';
 import SectionHeader from 'widgets/ClusterConfigForm/common/SectionHeader';
 
@@ -26,7 +26,7 @@ const CustomAuthentication: React.FC = () => {
       {hasCustomConfig && (
         <>
           {Object.keys(customConf).map((key) => (
-            <Input
+            <ControlledInput
               key={key}
               type="text"
               name={`customAuth.${key}`}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import { Button } from 'components/common/Button/Button';
-import Input from 'components/common/Input/Input';
+import ControlledInput from 'components/common/Input/ControlledInput';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
@@ -39,7 +39,7 @@ const KafkaConnect = () => {
             <div key={item.id}>
               <FlexRow>
                 <FlexGrow1>
-                  <Input
+                  <ControlledInput
                     label="Kafka Connect name *"
                     name={`kafkaConnect.${index}.name`}
                     placeholder="Name"
@@ -47,7 +47,7 @@ const KafkaConnect = () => {
                     hint="Given name for the Kafka Connect cluster"
                     withError
                   />
-                  <Input
+                  <ControlledInput
                     label="Kafka Connect URL *"
                     name={`kafkaConnect.${index}.address`}
                     placeholder="URl"

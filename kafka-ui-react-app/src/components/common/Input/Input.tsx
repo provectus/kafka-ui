@@ -99,99 +99,107 @@ function pasteNumberCheck(
   return value;
 }
 
-const Input: React.FC<InputProps> = ({
-  name,
-  hookFormOptions,
-  search,
-  inputSize = 'L',
-  type,
-  positiveOnly,
-  integerOnly,
-  withError = false,
-  label,
-  hint,
-  ...rest
-}) => {
-  const methods = useFormContext();
-
-  const fieldId = React.useId();
-
-  const isHookFormField = !!name && !!methods.register;
-
-  const keyPressEventHandler = (
-    event: React.KeyboardEvent<HTMLInputElement>
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      name,
+      hookFormOptions,
+      search,
+      inputSize = 'L',
+      type,
+      positiveOnly,
+      integerOnly,
+      withError = false,
+      label,
+      hint,
+      ...rest
+    },
+    ref
   ) => {
-    const { key } = event;
-    if (type === 'number') {
-      // Manually prevent input of non-digit and non-minus for all number inputs
-      // and prevent input of negative numbers for positiveOnly inputs
-      if (
-        !inputNumberCheck(
-          key,
-          typeof positiveOnly === 'boolean' ? positiveOnly : false,
-          typeof integerOnly === 'boolean' ? integerOnly : false,
-          methods.getValues,
-          typeof name === 'string' ? name : ''
-        )
-      ) {
-        event.preventDefault();
-      }
-    }
-  };
-  const pasteEventHandler = (event: React.ClipboardEvent<HTMLInputElement>) => {
-    if (type === 'number') {
-      const { clipboardData } = event;
-      // The 'clipboardData' does not have key 'Text', but has key 'text' instead.
-      const text = clipboardData.getData('text');
-      // Check the format of pasted text.
-      const value = pasteNumberCheck(
-        text,
-        typeof positiveOnly === 'boolean' ? positiveOnly : false,
-        typeof integerOnly === 'boolean' ? integerOnly : false
-      );
-      // if paste value contains non-numeric characters or
-      // negative for positiveOnly fields then prevent paste
-      if (value !== text) {
-        event.preventDefault();
+    const methods = useFormContext();
 
-        // for react-hook-form fields only set transformed value
-        if (isHookFormField) {
-          methods.setValue(name, value);
+    const fieldId = React.useId();
+
+    const isHookFormField = !!name && !!methods.register;
+
+    const keyPressEventHandler = (
+      event: React.KeyboardEvent<HTMLInputElement>
+    ) => {
+      const { key } = event;
+      if (type === 'number') {
+        // Manually prevent input of non-digit and non-minus for all number inputs
+        // and prevent input of negative numbers for positiveOnly inputs
+        if (
+          !inputNumberCheck(
+            key,
+            typeof positiveOnly === 'boolean' ? positiveOnly : false,
+            typeof integerOnly === 'boolean' ? integerOnly : false,
+            methods.getValues,
+            typeof name === 'string' ? name : ''
+          )
+        ) {
+          event.preventDefault();
         }
       }
+    };
+    const pasteEventHandler = (
+      event: React.ClipboardEvent<HTMLInputElement>
+    ) => {
+      if (type === 'number') {
+        const { clipboardData } = event;
+        // The 'clipboardData' does not have key 'Text', but has key 'text' instead.
+        const text = clipboardData.getData('text');
+        // Check the format of pasted text.
+        const value = pasteNumberCheck(
+          text,
+          typeof positiveOnly === 'boolean' ? positiveOnly : false,
+          typeof integerOnly === 'boolean' ? integerOnly : false
+        );
+        // if paste value contains non-numeric characters or
+        // negative for positiveOnly fields then prevent paste
+        if (value !== text) {
+          event.preventDefault();
+
+          // for react-hook-form fields only set transformed value
+          if (isHookFormField) {
+            methods.setValue(name, value);
+          }
+        }
+      }
+    };
+
+    let inputOptions = { ...rest };
+    if (isHookFormField) {
+      // extend input options with react-hook-form options
+      // if the field is a part of react-hook-form form
+      inputOptions = { ...rest, ...methods.register(name, hookFormOptions) };
     }
-  };
 
-  let inputOptions = { ...rest };
-  if (isHookFormField) {
-    // extend input options with react-hook-form options
-    // if the field is a part of react-hook-form form
-    inputOptions = { ...rest, ...methods.register(name, hookFormOptions) };
+    return (
+      <div>
+        {label && <InputLabel htmlFor={rest.id || fieldId}>{label}</InputLabel>}
+        <S.Wrapper>
+          {search && <SearchIcon />}
+          <S.Input
+            id={fieldId}
+            inputSize={inputSize}
+            search={!!search}
+            type={type}
+            onKeyPress={keyPressEventHandler}
+            onPaste={pasteEventHandler}
+            ref={ref}
+            {...inputOptions}
+          />
+          {withError && isHookFormField && (
+            <S.FormError>
+              <ErrorMessage name={name} />
+            </S.FormError>
+          )}
+          {hint && <S.InputHint>{hint}</S.InputHint>}
+        </S.Wrapper>
+      </div>
+    );
   }
-
-  return (
-    <div>
-      {label && <InputLabel htmlFor={rest.id || fieldId}>{label}</InputLabel>}
-      <S.Wrapper>
-        {search && <SearchIcon />}
-        <S.Input
-          id={fieldId}
-          inputSize={inputSize}
-          search={!!search}
-          type={type}
-          onKeyPress={keyPressEventHandler}
-          onPaste={pasteEventHandler}
-          {...inputOptions}
-        />
-        {withError && isHookFormField && (
-          <S.FormError>
-            <ErrorMessage name={name} />
-          </S.FormError>
-        )}
-        {hint && <S.InputHint>{hint}</S.InputHint>}
-      </S.Wrapper>
-    </div>
-  );
-};
+);
 
 export default Input;

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Input from 'components/common/Input/Input';
 import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
-import Checkbox from 'components/common/Checkbox/Checkbox';
+import ControlledCheckbox from 'components/common/Checkbox/ControlledCheckbox';
+import ControlledInput from 'components/common/Input/ControlledInput';
 import { useFormContext } from 'react-hook-form';
 
 type CredentialsProps = {
@@ -17,11 +17,11 @@ const Credentials: React.FC<CredentialsProps> = ({
 
   return (
     <S.GroupFieldWrapper>
-      <Checkbox name={`${prefix}.isAuth`} label={title} />
+      <ControlledCheckbox name={`${prefix}.isAuth`} label={title} />
       {watch(`${prefix}.isAuth`) && (
         <S.FlexRow>
           <S.FlexGrow1>
-            <Input
+            <ControlledInput
               label="Username *"
               type="text"
               name={`${prefix}.username`}
@@ -29,7 +29,7 @@ const Credentials: React.FC<CredentialsProps> = ({
             />
           </S.FlexGrow1>
           <S.FlexGrow1>
-            <Input
+            <ControlledInput
               label="Password *"
               type="password"
               name={`${prefix}.password`}

@@ -1,6 +1,6 @@
 import { ErrorMessage } from '@hookform/error-message';
 import { Button } from 'components/common/Button/Button';
-import Input from 'components/common/Input/Input';
+import ControlledInput from 'components/common/Input/ControlledInput';
 import { FormError } from 'components/common/Input/Input.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import React from 'react';
@@ -99,7 +99,7 @@ const DangerZone: React.FC<DangerZoneProps> = ({
               <InputLabel htmlFor="partitions">
                 Number of partitions *
               </InputLabel>
-              <Input
+              <ControlledInput
                 inputSize="M"
                 type="number"
                 id="partitions"
@@ -139,7 +139,7 @@ const DangerZone: React.FC<DangerZoneProps> = ({
               <InputLabel htmlFor="replicationFactor">
                 Replication Factor *
               </InputLabel>
-              <Input
+              <ControlledInput
                 id="replicationFactor"
                 inputSize="M"
                 type="number"

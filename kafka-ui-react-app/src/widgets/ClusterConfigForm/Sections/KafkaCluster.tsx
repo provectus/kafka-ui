@@ -1,5 +1,4 @@
 import React from 'react';
-import Input from 'components/common/Input/Input';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { FormError, InputHint } from 'components/common/Input/Input.styled';
 import { ErrorMessage } from '@hookform/error-message';
@@ -9,9 +8,10 @@ import PlusIcon from 'components/common/Icons/PlusIcon';
 import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
 import Heading from 'components/common/heading/Heading.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
-import Checkbox from 'components/common/Checkbox/Checkbox';
+import ControlledCheckbox from 'components/common/Checkbox/ControlledCheckbox';
 import SectionHeader from 'widgets/ClusterConfigForm/common/SectionHeader';
 import SSLForm from 'widgets/ClusterConfigForm/common/SSLForm';
+import ControlledInput from 'components/common/Input/ControlledInput';
 
 const KafkaCluster: React.FC = () => {
   const { control, watch, setValue } = useFormContext();
@@ -38,14 +38,14 @@ const KafkaCluster: React.FC = () => {
   return (
     <>
       <Heading level={3}>Kafka Cluster</Heading>
-      <Input
+      <ControlledInput
         label="Cluster name *"
         type="text"
         name="name"
         withError
         hint="this name will help you recognize the cluster in the application interface"
       />
-      <Checkbox
+      <ControlledCheckbox
         name="readOnly"
         label="Read-only mode"
         hint="allows you to run an application in read-only mode for a specific cluster"
@@ -59,7 +59,7 @@ const KafkaCluster: React.FC = () => {
           {fields.map((field, index) => (
             <S.BootstrapServer key={field.id}>
               <div>
-                <Input
+                <ControlledInput
                   name={`bootstrapServers.${index}.host`}
                   placeholder="Host"
                   type="text"
@@ -68,7 +68,7 @@ const KafkaCluster: React.FC = () => {
                 />
               </div>
               <div>
-                <Input
+                <ControlledInput
                   name={`bootstrapServers.${index}.port`}
                   placeholder="Port"
                   type="number"

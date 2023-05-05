@@ -1,5 +1,5 @@
 import React from 'react';
-import Input from 'components/common/Input/Input';
+import ControlledInput from 'components/common/Input/ControlledInput';
 import { useFormContext } from 'react-hook-form';
 import SectionHeader from 'widgets/ClusterConfigForm/common/SectionHeader';
 import SSLForm from 'widgets/ClusterConfigForm/common/SSLForm';
@@ -25,7 +25,7 @@ const SchemaRegistry = () => {
       />
       {schemaRegistry && (
         <>
-          <Input
+          <ControlledInput
             label="URL *"
             name="schemaRegistry.url"
             type="text"
