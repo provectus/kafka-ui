@@ -2,6 +2,9 @@ package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.AclsApi;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
+import com.provectus.kafka.ui.model.CreateConsumerAclDTO;
+import com.provectus.kafka.ui.model.CreateProducerAclDTO;
+import com.provectus.kafka.ui.model.CreateStreamAppAclDTO;
 import com.provectus.kafka.ui.model.KafkaAclDTO;
 import com.provectus.kafka.ui.model.KafkaAclNamePatternTypeDTO;
 import com.provectus.kafka.ui.model.KafkaAclResourceTypeDTO;
@@ -110,6 +113,51 @@ public class AclsController extends AbstractController implements AclsApi {
     return accessControlService.validateAccess(context)
         .then(csvMono)
         .flatMap(csv -> aclsService.syncAclWithAclCsv(getCluster(clusterName), csv))
+        .thenReturn(ResponseEntity.ok().build());
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> createConsumerAcl(String clusterName,
+                                                      Mono<CreateConsumerAclDTO> createConsumerAclDto,
+                                                      ServerWebExchange exchange) {
+    AccessContext context = AccessContext.builder()
+        .cluster(clusterName)
+        .aclActions(AclAction.EDIT)
+        .build();
+
+    return accessControlService.validateAccess(context)
+        .then(createConsumerAclDto)
+        .flatMap(req -> aclsService.createConsumerAcl(getCluster(clusterName), req))
+        .thenReturn(ResponseEntity.ok().build());
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> createProducerAcl(String clusterName,
+                                                      Mono<CreateProducerAclDTO> createProducerAclDto,
+                                                      ServerWebExchange exchange) {
+    AccessContext context = AccessContext.builder()
+        .cluster(clusterName)
+        .aclActions(AclAction.EDIT)
+        .build();
+
+    return accessControlService.validateAccess(context)
+        .then(createProducerAclDto)
+        .flatMap(req -> aclsService.createProducerAcl(getCluster(clusterName), req))
+        .thenReturn(ResponseEntity.ok().build());
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> createStreamAppAcl(String clusterName,
+                                                       Mono<CreateStreamAppAclDTO> createStreamAppAclDto,
+                                                       ServerWebExchange exchange) {
+    AccessContext context = AccessContext.builder()
+        .cluster(clusterName)
+        .aclActions(AclAction.EDIT)
+        .build();
+
+    return accessControlService.validateAccess(context)
+        .then(createStreamAppAclDto)
+        .flatMap(req -> aclsService.createStreamAppAcl(getCluster(clusterName), req))
         .thenReturn(ResponseEntity.ok().build());
   }
 }

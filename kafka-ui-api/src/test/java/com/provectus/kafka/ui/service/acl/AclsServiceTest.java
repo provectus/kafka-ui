@@ -4,16 +4,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.provectus.kafka.ui.model.CreateConsumerAclDTO;
+import com.provectus.kafka.ui.model.CreateProducerAclDTO;
+import com.provectus.kafka.ui.model.CreateStreamAppAclDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.AdminClientService;
 import com.provectus.kafka.ui.service.ReactiveAdminClient;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import org.apache.kafka.common.acl.AccessControlEntry;
 import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.PatternType;
+import org.apache.kafka.common.resource.Resource;
 import org.apache.kafka.common.resource.ResourcePattern;
 import org.apache.kafka.common.resource.ResourcePatternFilter;
 import org.apache.kafka.common.resource.ResourceType;
@@ -79,4 +84,207 @@ class AclsServiceTest {
         .contains(existingBinding2);
   }
 
+
+  @Test
+  void createsConsumerDependantAcls() {
+    ArgumentCaptor<?> createdCaptor = ArgumentCaptor.forClass(Collection.class);
+    when(adminClientMock.createAcls((Collection<AclBinding>) createdCaptor.capture()))
+        .thenReturn(Mono.empty());
+
+    var principal = UUID.randomUUID().toString();
+    var host = UUID.randomUUID().toString();
+
+    aclsService.createConsumerAcl(
+        CLUSTER,
+        new CreateConsumerAclDTO()
+            .principal(principal)
+            .host(host)
+            .consumerGroups(List.of("cg1", "cg2"))
+            .topics(List.of("t1", "t2"))
+    ).block();
+
+    //Read, Describe on topics, Read on consumerGroups
+    Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
+    assertThat(createdBindings)
+        .hasSize(6)
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "t1", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.READ, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "t1", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.DESCRIBE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "t2", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.READ, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "t2", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.DESCRIBE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.GROUP, "cg1", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.READ, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.GROUP, "cg2", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.READ, AclPermissionType.ALLOW)));
+  }
+
+  @Test
+  void createsConsumerDependantAclsWhenTopicsAndGroupsSpecifiedByPrefix() {
+    ArgumentCaptor<?> createdCaptor = ArgumentCaptor.forClass(Collection.class);
+    when(adminClientMock.createAcls((Collection<AclBinding>) createdCaptor.capture()))
+        .thenReturn(Mono.empty());
+
+    var principal = UUID.randomUUID().toString();
+    var host = UUID.randomUUID().toString();
+
+    aclsService.createConsumerAcl(
+        CLUSTER,
+        new CreateConsumerAclDTO()
+            .principal(principal)
+            .host(host)
+            .consumerGroupsPrefix("cgPref")
+            .topicsPrefix("topicPref")
+    ).block();
+
+    //Read, Describe on topics, Read on consumerGroups
+    Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
+    assertThat(createdBindings)
+        .hasSize(3)
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "topicPref", PatternType.PREFIXED),
+            new AccessControlEntry(principal, host, AclOperation.READ, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "topicPref", PatternType.PREFIXED),
+            new AccessControlEntry(principal, host, AclOperation.DESCRIBE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.GROUP, "cgPref", PatternType.PREFIXED),
+            new AccessControlEntry(principal, host, AclOperation.READ, AclPermissionType.ALLOW)));
+  }
+
+  @Test
+  void createsProducerDependantAcls() {
+    ArgumentCaptor<?> createdCaptor = ArgumentCaptor.forClass(Collection.class);
+    when(adminClientMock.createAcls((Collection<AclBinding>) createdCaptor.capture()))
+        .thenReturn(Mono.empty());
+
+    var principal = UUID.randomUUID().toString();
+    var host = UUID.randomUUID().toString();
+
+    aclsService.createProducerAcl(
+        CLUSTER,
+        new CreateProducerAclDTO()
+            .principal(principal)
+            .host(host)
+            .topics(List.of("t1"))
+            .idempotent(true)
+            .transactionalId("txId1")
+    ).block();
+
+    //Write, Describe, Create permission on topics, Write, Describe on transactionalIds
+    //IDEMPOTENT_WRITE of cluster if idempotent is enabled (true)
+    Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
+    assertThat(createdBindings)
+        .hasSize(6)
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "t1", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.WRITE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "t1", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.DESCRIBE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "t1", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.CREATE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TRANSACTIONAL_ID, "txId1", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.WRITE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TRANSACTIONAL_ID, "txId1", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.DESCRIBE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.CLUSTER, Resource.CLUSTER_NAME, PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.IDEMPOTENT_WRITE, AclPermissionType.ALLOW)));
+  }
+
+
+  @Test
+  void createsProducerDependantAclsWhenTopicsAndTxIdSpecifiedByPrefix() {
+    ArgumentCaptor<?> createdCaptor = ArgumentCaptor.forClass(Collection.class);
+    when(adminClientMock.createAcls((Collection<AclBinding>) createdCaptor.capture()))
+        .thenReturn(Mono.empty());
+
+    var principal = UUID.randomUUID().toString();
+    var host = UUID.randomUUID().toString();
+
+    aclsService.createProducerAcl(
+        CLUSTER,
+        new CreateProducerAclDTO()
+            .principal(principal)
+            .host(host)
+            .topicsPrefix("topicPref")
+            .transactionsIdPrefix("txIdPref")
+            .idempotent(false)
+    ).block();
+
+    //Write, Describe, Create permission on topics, Write, Describe on transactionalIds
+    //IDEMPOTENT_WRITE of cluster if idempotent is enabled (false)
+    Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
+    assertThat(createdBindings)
+        .hasSize(5)
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "topicPref", PatternType.PREFIXED),
+            new AccessControlEntry(principal, host, AclOperation.WRITE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "topicPref", PatternType.PREFIXED),
+            new AccessControlEntry(principal, host, AclOperation.DESCRIBE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "topicPref", PatternType.PREFIXED),
+            new AccessControlEntry(principal, host, AclOperation.CREATE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TRANSACTIONAL_ID, "txIdPref", PatternType.PREFIXED),
+            new AccessControlEntry(principal, host, AclOperation.WRITE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TRANSACTIONAL_ID, "txIdPref", PatternType.PREFIXED),
+            new AccessControlEntry(principal, host, AclOperation.DESCRIBE, AclPermissionType.ALLOW)));
+  }
+
+
+  @Test
+  void createsStreamAppDependantAcls() {
+    ArgumentCaptor<?> createdCaptor = ArgumentCaptor.forClass(Collection.class);
+    when(adminClientMock.createAcls((Collection<AclBinding>) createdCaptor.capture()))
+        .thenReturn(Mono.empty());
+
+    var principal = UUID.randomUUID().toString();
+    var host = UUID.randomUUID().toString();
+
+    aclsService.createStreamAppAcl(
+        CLUSTER,
+        new CreateStreamAppAclDTO()
+            .principal(principal)
+            .host(host)
+            .inputTopics(List.of("t1"))
+            .outputTopics(List.of("t2", "t3"))
+            .applicationId("appId1")
+    ).block();
+
+    // Read on input topics, Write on output topics
+    // ALL on applicationId-prefixed Groups and Topics
+    Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
+    assertThat(createdBindings)
+        .hasSize(5)
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "t1", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.READ, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "t2", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.WRITE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "t3", PatternType.LITERAL),
+            new AccessControlEntry(principal, host, AclOperation.WRITE, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.GROUP, "appId1", PatternType.PREFIXED),
+            new AccessControlEntry(principal, host, AclOperation.ALL, AclPermissionType.ALLOW)))
+        .contains(new AclBinding(
+            new ResourcePattern(ResourceType.TOPIC, "appId1", PatternType.PREFIXED),
+            new AccessControlEntry(principal, host, AclOperation.ALL, AclPermissionType.ALLOW)));
+  }
 }
