@@ -52,8 +52,8 @@ public class MessageFilters {
         bindings.put("keyAsText", msg.getKey());
         bindings.put("valueAsText", msg.getContent());
         bindings.put("headers", msg.getHeaders());
-        bindings.put("key", parseToJsonOrReturnNull(jsonSlurper, msg.getKey()));
-        bindings.put("value", parseToJsonOrReturnNull(jsonSlurper, msg.getContent()));
+        bindings.put("key", parseToJsonOrReturnAsIs(jsonSlurper, msg.getKey()));
+        bindings.put("value", parseToJsonOrReturnAsIs(jsonSlurper, msg.getContent()));
         var result = compiledScript.eval(bindings);
         if (result instanceof Boolean) {
           return (Boolean) result;
@@ -66,14 +66,14 @@ public class MessageFilters {
   }
 
   @Nullable
-  private static Object parseToJsonOrReturnNull(JsonSlurper parser, @Nullable String str) {
+  private static Object parseToJsonOrReturnAsIs(JsonSlurper parser, @Nullable String str) {
     if (str == null) {
       return null;
     }
     try {
       return parser.parseText(str);
     } catch (Exception e) {
-      return null;
+      return str;
     }
   }
 
