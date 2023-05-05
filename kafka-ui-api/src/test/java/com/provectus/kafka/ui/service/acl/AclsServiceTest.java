@@ -58,12 +58,12 @@ class AclsServiceTest {
     when(adminClientMock.listAcls(ResourcePatternFilter.ANY))
         .thenReturn(Mono.just(List.of(existingBinding1, existingBinding2)));
 
-    ArgumentCaptor<?> createdCaptor = ArgumentCaptor.forClass(Collection.class);
-    when(adminClientMock.createAcls((Collection<AclBinding>) createdCaptor.capture()))
+    ArgumentCaptor<Collection<AclBinding>> createdCaptor = ArgumentCaptor.forClass(Collection.class);
+    when(adminClientMock.createAcls(createdCaptor.capture()))
         .thenReturn(Mono.empty());
 
-    ArgumentCaptor<?> deletedCaptor = ArgumentCaptor.forClass(Collection.class);
-    when(adminClientMock.deleteAcls((Collection<AclBinding>) deletedCaptor.capture()))
+    ArgumentCaptor<Collection<AclBinding>> deletedCaptor = ArgumentCaptor.forClass(Collection.class);
+    when(adminClientMock.deleteAcls(deletedCaptor.capture()))
         .thenReturn(Mono.empty());
 
     aclsService.syncAclWithAclCsv(
@@ -73,12 +73,12 @@ class AclsServiceTest {
             + "User:test3,GROUP,PREFIXED,groupNew,DESCRIBE,DENY,localhost"
     ).block();
 
-    Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
+    Collection<AclBinding> createdBindings = createdCaptor.getValue();
     assertThat(createdBindings)
         .hasSize(1)
         .contains(newBindingToBeAdded);
 
-    Collection<AclBinding> deletedBindings = (Collection<AclBinding>) deletedCaptor.getValue();
+    Collection<AclBinding> deletedBindings = deletedCaptor.getValue();
     assertThat(deletedBindings)
         .hasSize(1)
         .contains(existingBinding2);
@@ -87,8 +87,8 @@ class AclsServiceTest {
 
   @Test
   void createsConsumerDependantAcls() {
-    ArgumentCaptor<?> createdCaptor = ArgumentCaptor.forClass(Collection.class);
-    when(adminClientMock.createAcls((Collection<AclBinding>) createdCaptor.capture()))
+    ArgumentCaptor<Collection<AclBinding>> createdCaptor = ArgumentCaptor.forClass(Collection.class);
+    when(adminClientMock.createAcls(createdCaptor.capture()))
         .thenReturn(Mono.empty());
 
     var principal = UUID.randomUUID().toString();
@@ -104,7 +104,7 @@ class AclsServiceTest {
     ).block();
 
     //Read, Describe on topics, Read on consumerGroups
-    Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
+    Collection<AclBinding> createdBindings = createdCaptor.getValue();
     assertThat(createdBindings)
         .hasSize(6)
         .contains(new AclBinding(
@@ -129,8 +129,8 @@ class AclsServiceTest {
 
   @Test
   void createsConsumerDependantAclsWhenTopicsAndGroupsSpecifiedByPrefix() {
-    ArgumentCaptor<?> createdCaptor = ArgumentCaptor.forClass(Collection.class);
-    when(adminClientMock.createAcls((Collection<AclBinding>) createdCaptor.capture()))
+    ArgumentCaptor<Collection<AclBinding>> createdCaptor = ArgumentCaptor.forClass(Collection.class);
+    when(adminClientMock.createAcls(createdCaptor.capture()))
         .thenReturn(Mono.empty());
 
     var principal = UUID.randomUUID().toString();
@@ -146,7 +146,7 @@ class AclsServiceTest {
     ).block();
 
     //Read, Describe on topics, Read on consumerGroups
-    Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
+    Collection<AclBinding> createdBindings = createdCaptor.getValue();
     assertThat(createdBindings)
         .hasSize(3)
         .contains(new AclBinding(
@@ -162,8 +162,8 @@ class AclsServiceTest {
 
   @Test
   void createsProducerDependantAcls() {
-    ArgumentCaptor<?> createdCaptor = ArgumentCaptor.forClass(Collection.class);
-    when(adminClientMock.createAcls((Collection<AclBinding>) createdCaptor.capture()))
+    ArgumentCaptor<Collection<AclBinding>> createdCaptor = ArgumentCaptor.forClass(Collection.class);
+    when(adminClientMock.createAcls(createdCaptor.capture()))
         .thenReturn(Mono.empty());
 
     var principal = UUID.randomUUID().toString();
@@ -181,7 +181,7 @@ class AclsServiceTest {
 
     //Write, Describe, Create permission on topics, Write, Describe on transactionalIds
     //IDEMPOTENT_WRITE on cluster if idempotent is enabled (true)
-    Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
+    Collection<AclBinding> createdBindings = createdCaptor.getValue();
     assertThat(createdBindings)
         .hasSize(6)
         .contains(new AclBinding(
@@ -207,8 +207,8 @@ class AclsServiceTest {
 
   @Test
   void createsProducerDependantAclsWhenTopicsAndTxIdSpecifiedByPrefix() {
-    ArgumentCaptor<?> createdCaptor = ArgumentCaptor.forClass(Collection.class);
-    when(adminClientMock.createAcls((Collection<AclBinding>) createdCaptor.capture()))
+    ArgumentCaptor<Collection<AclBinding>> createdCaptor = ArgumentCaptor.forClass(Collection.class);
+    when(adminClientMock.createAcls(createdCaptor.capture()))
         .thenReturn(Mono.empty());
 
     var principal = UUID.randomUUID().toString();
@@ -226,7 +226,7 @@ class AclsServiceTest {
 
     //Write, Describe, Create permission on topics, Write, Describe on transactionalIds
     //IDEMPOTENT_WRITE on cluster if idempotent is enabled (false)
-    Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
+    Collection<AclBinding> createdBindings = createdCaptor.getValue();
     assertThat(createdBindings)
         .hasSize(5)
         .contains(new AclBinding(
@@ -249,8 +249,8 @@ class AclsServiceTest {
 
   @Test
   void createsStreamAppDependantAcls() {
-    ArgumentCaptor<?> createdCaptor = ArgumentCaptor.forClass(Collection.class);
-    when(adminClientMock.createAcls((Collection<AclBinding>) createdCaptor.capture()))
+    ArgumentCaptor<Collection<AclBinding>> createdCaptor = ArgumentCaptor.forClass(Collection.class);
+    when(adminClientMock.createAcls(createdCaptor.capture()))
         .thenReturn(Mono.empty());
 
     var principal = UUID.randomUUID().toString();
@@ -268,7 +268,7 @@ class AclsServiceTest {
 
     // Read on input topics, Write on output topics
     // ALL on applicationId-prefixed Groups and Topics
-    Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
+    Collection<AclBinding> createdBindings = createdCaptor.getValue();
     assertThat(createdBindings)
         .hasSize(5)
         .contains(new AclBinding(
