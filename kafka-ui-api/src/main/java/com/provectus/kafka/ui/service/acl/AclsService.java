@@ -185,7 +185,7 @@ public class AclsService {
   }
 
   //Write, Describe, Create permission on topics, Write, Describe on transactionalIds
-  //IDEMPOTENT_WRITE of cluster if idempotent is enabled
+  //IDEMPOTENT_WRITE on cluster if idempotent is enabled
   private List<AclBinding> createProducerBindings(CreateProducerAclDTO request) {
     List<AclBinding> bindings = new ArrayList<>();
     bindings.addAll(

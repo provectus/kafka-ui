@@ -180,7 +180,7 @@ class AclsServiceTest {
     ).block();
 
     //Write, Describe, Create permission on topics, Write, Describe on transactionalIds
-    //IDEMPOTENT_WRITE of cluster if idempotent is enabled (true)
+    //IDEMPOTENT_WRITE on cluster if idempotent is enabled (true)
     Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
     assertThat(createdBindings)
         .hasSize(6)
@@ -225,7 +225,7 @@ class AclsServiceTest {
     ).block();
 
     //Write, Describe, Create permission on topics, Write, Describe on transactionalIds
-    //IDEMPOTENT_WRITE of cluster if idempotent is enabled (false)
+    //IDEMPOTENT_WRITE on cluster if idempotent is enabled (false)
     Collection<AclBinding> createdBindings = (Collection<AclBinding>) createdCaptor.getValue();
     assertThat(createdBindings)
         .hasSize(5)
