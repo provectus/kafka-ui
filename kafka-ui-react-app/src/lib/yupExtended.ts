@@ -90,33 +90,68 @@ export function cacheTest(
 yup.addMethod(yup.StringSchema, 'isJsonObject', isJsonObject);
 yup.addMethod(yup.StringSchema, 'isEnum', isEnum);
 
-export const topicFormValidationSchema = yup.object().shape({
-  name: yup
-    .string()
-    .max(249)
-    .required()
-    .matches(
-      TOPIC_NAME_VALIDATION_PATTERN,
-      'Only alphanumeric, _, -, and . allowed'
+export const topicFormValidationSchema = yup.object().shape(
+  {
+    name: yup
+      .string()
+      .max(249)
+      .required()
+      .matches(
+        TOPIC_NAME_VALIDATION_PATTERN,
+        'Only alphanumeric, _, -, and . allowed'
+      ),
+    partitions: yup
+      .number()
+      .min(1)
+      .max(2147483647)
+      .required()
+      .typeError('Number of partitions is required and must be a number'),
+    replicationFactor: yup.lazy((value) => {
+      if (value && value !== '') {
+        return yup.number().when('minInSyncReplicas', {
+          is: (val) => val && val !== '',
+          then: () =>
+            yup
+              .number()
+              .min(
+                yup.ref('minInSyncReplicas'),
+                'Replication Factor must be greater than Min In Sync Replicas'
+              )
+              .required(),
+          otherwise: () => yup.number().min(0),
+        });
+      }
+      return yup.string();
+    }),
+    minInSyncReplicas: yup.lazy((value) => {
+      if (value && value !== '') {
+        return yup.number().when('replicationFactor', {
+          is: (val) => val && val !== '',
+          then: () =>
+            yup
+              .number()
+              .max(
+                yup.ref('replicationFactor'),
+                'Min In Sync Replicas must be less than or equal to Replication Factor'
+              )
+              .required(),
+          otherwise: () => yup.number().max(0),
+        });
+      }
+      return yup.string();
+    }),
+    cleanupPolicy: yup.string().required(),
+    retentionMs: yup.string(),
+    retentionBytes: yup.number(),
+    maxMessageBytes: yup.string(),
+    customParams: yup.array().of(
+      yup.object().shape({
+        name: yup.string().required('Custom parameter is required'),
+        value: yup.string().required('Value is required'),
+      })
     ),
-  partitions: yup
-    .number()
-    .min(1)
-    .max(2147483647)
-    .required()
-    .typeError('Number of partitions is required and must be a number'),
-  replicationFactor: yup.string(),
-  minInSyncReplicas: yup.string(),
-  cleanupPolicy: yup.string().required(),
-  retentionMs: yup.string(),
-  retentionBytes: yup.number(),
-  maxMessageBytes: yup.string(),
-  customParams: yup.array().of(
-    yup.object().shape({
-      name: yup.string().required('Custom parameter is required'),
-      value: yup.string().required('Value is required'),
-    })
-  ),
-});
+  },
+  ['minInSyncReplicas', 'replicationFactor']
+);
 
 export default yup;

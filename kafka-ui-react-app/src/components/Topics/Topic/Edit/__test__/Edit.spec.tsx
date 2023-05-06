@@ -8,6 +8,8 @@ import {
   useTopicConfig,
   useTopicDetails,
   useUpdateTopic,
+  useIncreaseTopicPartitionsCount,
+  useUpdateTopicReplicationFactor,
 } from 'lib/hooks/api/topics';
 import { internalTopicPayload, topicConfigPayload } from 'lib/fixtures/topics';
 
@@ -25,14 +27,12 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-jest.mock('components/Topics/Topic/Edit/DangerZone/DangerZone', () => () => (
-  <>DangerZone</>
-));
-
 jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
   useTopicConfig: jest.fn(),
   useUpdateTopic: jest.fn(),
+  useIncreaseTopicPartitionsCount: jest.fn(),
+  useUpdateTopicReplicationFactor: jest.fn(),
 }));
 
 const updateTopicMock = jest.fn();
@@ -59,20 +59,27 @@ describe('Edit Component', () => {
       isLoading: false,
       mutateAsync: updateTopicMock,
     }));
+    (useIncreaseTopicPartitionsCount as jest.Mock).mockImplementation(() => ({
+      isLoading: false,
+      mutateAsync: {},
+    }));
+    (useUpdateTopicReplicationFactor as jest.Mock).mockImplementation(() => ({
+      isLoading: false,
+      mutateAsync: {},
+    }));
     renderComponent();
   });
 
   it('renders DangerZone component', () => {
-    expect(screen.getByText(`DangerZone`)).toBeInTheDocument();
+    expect(screen.getByText(`Danger Zone`)).toBeInTheDocument();
   });
 
   it('submits form correctly', async () => {
-    renderComponent();
     const btn = screen.getAllByText(/Update topic/i)[0];
-    const field = screen.getByRole('spinbutton', {
-      name: 'Min In Sync Replicas Min In Sync Replicas',
+    const field = screen.getByRole('button', {
+      name: '1 day',
     });
-    await userEvent.type(field, '1');
+    await userEvent.click(field);
     await userEvent.click(btn);
     expect(updateTopicMock).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith('../');
