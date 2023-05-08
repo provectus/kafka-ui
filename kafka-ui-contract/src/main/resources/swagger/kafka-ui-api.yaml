@@ -1730,6 +1730,125 @@ paths:
         404:
           description: Not found
 
+  /api/clusters/{clusterName}/acls:
+    get:
+      tags:
+        - Acls
+      summary: listKafkaAcls
+      operationId: listAcls
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: resourceType
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/KafkaAclResourceType'
+        - name: resourceName
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: namePatternType
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/KafkaAclNamePatternType'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KafkaAcl'
+
+  /api/clusters/{clusterName}/acl/csv:
+    get:
+      tags:
+        - Acls
+      summary: getAclAsCsv
+      operationId: getAclAsCsv
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+    post:
+      tags:
+        - Acls
+      summary: syncAclsCsv
+      operationId: syncAclsCsv
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        200:
+          description: OK
+
+  /api/clusters/{clusterName}/acl:
+    post:
+      tags:
+        - Acls
+      summary: createAcl
+      operationId: createAcl
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KafkaAcl'
+      responses:
+        200:
+          description: OK
+
+    delete:
+      tags:
+        - Acls
+      summary: deleteAcl
+      operationId: deleteAcl
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KafkaAcl'
+      responses:
+        200:
+          description: OK
+        404:
+          description: Acl not found
+
   /api/authorization:
     get:
       tags:
@@ -1819,7 +1938,7 @@ paths:
               properties:
                 file:
                   type: string
-                  format: filepart
+                  format: binary
       responses:
         200:
           description: OK
@@ -1972,6 +2091,8 @@ components:
               - KAFKA_CONNECT
               - KSQL_DB
               - TOPIC_DELETION
+              - KAFKA_ACL_VIEW # get ACLs listing
+              - KAFKA_ACL_EDIT # create & delete ACLs
       required:
         - id
         - name
@@ -3342,6 +3463,62 @@ components:
         - SCHEMA
         - CONNECT
         - KSQL
+        - ACL
+
+    KafkaAcl:
+      type: object
+      required: [resourceType, resourceName, namePatternType, principal, host, operation, permission]
+      properties:
+        resourceType:
+          $ref: '#/components/schemas/KafkaAclResourceType'
+        resourceName:
+          type: string # "*" if acl can be applied to any resource of given type
+        namePatternType:
+          $ref: '#/components/schemas/KafkaAclNamePatternType'
+        principal:
+          type: string
+        host:
+          type: string  # "*" if acl can be applied to any resource of given type
+        operation:
+          type: string
+          enum:
+            - UNKNOWN # Unknown operation, need to update mapping code on BE
+            - ALL # Cluster, Topic, Group
+            - READ  # Topic, Group
+            - WRITE # Topic, TransactionalId
+            - CREATE # Cluster, Topic
+            - DELETE  # Topic, Group
+            - ALTER  # Cluster, Topic,
+            - DESCRIBE # Cluster, Topic, Group, TransactionalId, DelegationToken
+            - CLUSTER_ACTION # Cluster
+            - DESCRIBE_CONFIGS # Cluster, Topic
+            - ALTER_CONFIGS   # Cluster, Topic
+            - IDEMPOTENT_WRITE # Cluster
+            - CREATE_TOKENS
+            - DESCRIBE_TOKENS
+        permission:
+          type: string
+          enum:
+            - ALLOW
+            - DENY
+
+    KafkaAclResourceType:
+      type: string
+      enum:
+        - UNKNOWN # Unknown operation, need to update mapping code on BE
+        - TOPIC
+        - GROUP
+        - CLUSTER
+        - TRANSACTIONAL_ID
+        - DELEGATION_TOKEN
+        - USER
+
+    KafkaAclNamePatternType:
+      type: string
+      enum:
+        - MATCH
+        - LITERAL
+        - PREFIXED
 
     RestartRequest:
       type: object
@@ -3632,7 +3809,9 @@ components:
                               type: array
                               items:
                                 type: string
-                            pattern:
+                            fieldsNamePattern:
+                              type: string
+                            maskingCharsReplacement:
                               type: array
                               items:
                                 type: string

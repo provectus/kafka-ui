@@ -20,6 +20,7 @@ import useAppParams from 'lib/hooks/useAppParams';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 
 import * as S from './Diff.styled';
+import { BackButton } from './Diff.styled';
 
 export interface DiffProps {
   versions: SchemaSubject[];
@@ -77,6 +78,13 @@ const Diff: React.FC<DiffProps> = ({ versions, areVersionsFetched }) => {
         backText="Schema Registry"
         backTo={clusterSchemasPath(clusterName)}
       />
+      <BackButton
+        buttonType="secondary"
+        buttonSize="S"
+        onClick={() => navigate(-1)}
+      >
+        Back
+      </BackButton>
       <S.Section>
         {areVersionsFetched ? (
           <S.DiffBox>
