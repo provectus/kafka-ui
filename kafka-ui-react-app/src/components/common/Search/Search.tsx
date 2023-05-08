@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import Input from 'components/common/Input/Input';
 import { useSearchParams } from 'react-router-dom';
+import CloseIcon from 'components/common/Icons/CloseIcon';
+import styled from 'styled-components';
 
 interface SearchProps {
   placeholder?: string;
@@ -10,6 +12,16 @@ interface SearchProps {
   value?: string;
 }
 
+const IconButtonWrapper = styled.span.attrs(() => ({
+  role: 'button',
+  tabIndex: '0',
+}))`
+  height: 16px !important;
+  display: inline-block;
+  &:hover {
+    cursor: pointer;
+  }
+`;
 const Search: React.FC<SearchProps> = ({
   placeholder = 'Search',
   disabled = false,
@@ -17,7 +29,11 @@ const Search: React.FC<SearchProps> = ({
   onChange,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const ref = useRef<HTMLInputElement>(null);
   const handleChange = useDebouncedCallback((e) => {
+    if (ref.current != null) {
+      ref.current.value = e.target.value;
+    }
     if (onChange) {
       onChange(e.target.value);
     } else {
@@ -28,6 +44,15 @@ const Search: React.FC<SearchProps> = ({
       setSearchParams(searchParams);
     }
   }, 500);
+  const clearSearchValue = () => {
+    if (searchParams.get('q')) {
+      searchParams.set('q', '');
+      setSearchParams(searchParams);
+    }
+    if (ref.current != null) {
+      ref.current.value = '';
+    }
+  };
 
   return (
     <Input
@@ -37,7 +62,13 @@ const Search: React.FC<SearchProps> = ({
       defaultValue={value || searchParams.get('q') || ''}
       inputSize="M"
       disabled={disabled}
+      ref={ref}
       search
+      clearIcon={
+        <IconButtonWrapper onClick={clearSearchValue}>
+          <CloseIcon />
+        </IconButtonWrapper>
+      }
     />
   );
 };
