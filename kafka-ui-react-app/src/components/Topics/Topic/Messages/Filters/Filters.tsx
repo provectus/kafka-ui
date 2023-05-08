@@ -556,7 +556,10 @@ const Filters: React.FC<FiltersProps> = ({
         {activeFilter.name && (
           <S.ActiveSmartFilter data-testid="activeSmartFilter">
             <S.SmartFilterName>{activeFilter.name}</S.SmartFilterName>
-            <S.EditSmartFilterIcon onClick={toggleQuickEdit}>
+            <S.EditSmartFilterIcon
+              data-testid="editActiveSmartFilterBtn"
+              onClick={toggleQuickEdit}
+            >
               <EditIcon />
             </S.EditSmartFilterIcon>
             <S.DeleteSmartFilterIcon onClick={deleteActiveFilter}>

@@ -489,6 +489,40 @@ public class TopicsTest extends BaseTest {
     Assert.assertTrue(topicDetails.isTopicHeaderVisible(topicToCopy.getName()), "isTopicHeaderVisible()");
   }
 
+// todo: what does it mean? what's the optimal value?
+//  @QaseId(12)
+  @Test(priority = 20)
+  public void editFilter() {
+    String filterName = randomAlphabetic(5);
+    String filterCode = randomAlphabetic(5);
+
+    navigateToTopicsAndOpenDetails(TOPIC_FOR_CHECK_FILTERS.getName());
+    topicDetails
+        .openDetailsTab(MESSAGES)
+        .clickMessagesAddFiltersBtn()
+        .waitUntilAddFiltersMdlVisible()
+        .setFilterCodeFieldAddFilterMdl(filterCode)
+        .setDisplayNameFldAddFilterMdl(filterName)
+        .clickAddFilterBtnAndCloseMdl(true)
+        .clickEditActiveFiltersBtn()
+        .waitUntilAddFiltersMdlVisible();
+
+    Assert.assertTrue(topicDetails.doesFilterCodeFieldMatchValue(filterCode), "doesFilterCodeFieldValueMatchInput()");
+    Assert.assertTrue(topicDetails.doesFilterNameFieldMatchValue(filterName), "doesFilterNameFieldValueMatchInput()");
+
+    String newFilterName = randomAlphabetic(5);
+    String newFilterCode = randomAlphabetic(5);
+
+    topicDetails
+        .setDisplayNameFldAddFilterMdl(newFilterName)
+        .setFilterCodeFieldAddFilterMdl(newFilterCode)
+        .clickSaveFilterBtnAndCloseMdl(true);
+
+    Assert.assertTrue(topicDetails.isActiveFilterVisible(newFilterName), "isActiveFilterVisible()");
+    Assert.assertTrue(topicDetails.doesSearchFieldContainValue(newFilterCode), "isNewCodeVisible()");
+
+  }
+
   @AfterClass(alwaysRun = true)
   public void afterClass() {
     TOPIC_LIST.forEach(topic -> apiService.deleteTopic(topic.getName()));
