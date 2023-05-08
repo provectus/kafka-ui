@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.google.common.collect.Table;
 import com.provectus.kafka.ui.model.ConsumerGroupOrderingDTO;
+import com.provectus.kafka.ui.model.InternalClusterState;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.InternalTopicConsumerGroup;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -37,6 +38,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ConsumerGroupService {
 
+  public static final int CONSUMER_MAX_POLL_RECORDS = 100;
   private final AdminClientService adminClientService;
   private final AccessControlService accessControlService;
 
@@ -224,6 +226,7 @@ public class ConsumerGroupService {
     props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
     props.put(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG, "false");
+    props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, CONSUMER_MAX_POLL_RECORDS);
     props.putAll(properties);
 
     return new KafkaConsumer<>(props);
