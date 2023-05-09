@@ -1,8 +1,8 @@
 package com.provectus.kafka.ui.config.auth;
 
 import jakarta.annotation.PostConstruct;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import lombok.Data;
@@ -18,10 +18,10 @@ public class OAuthProperties {
   public void init() {
     getClient().values().forEach((provider) -> {
       if (provider.getCustomParams() == null) {
-        provider.setCustomParams(new HashMap<>());
+        provider.setCustomParams(Collections.emptyMap());
       }
       if (provider.getScope() == null) {
-        provider.setScope(new HashSet<>());
+        provider.setScope(Collections.emptySet());
       }
     });
 

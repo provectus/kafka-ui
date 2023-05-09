@@ -4,6 +4,7 @@ import static com.provectus.kafka.ui.model.rbac.provider.Provider.Name.OAUTH;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.config.auth.OAuthProperties;
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.provider.Provider;
@@ -14,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.util.Assert;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -39,7 +40,7 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
 
   @Override
   public Mono<Set<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams) {
-    log.debug("Extracting OAuth2 user authorities");
+    log.trace("Extracting OAuth2 user authorities");
 
     DefaultOAuth2User principal;
     try {
@@ -50,6 +51,7 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
     }
 
     var provider = (OAuthProperties.OAuth2Provider) additionalParams.get("provider");
+    Assert.notNull(provider, "provider is null");
     var rolesFieldName = provider.getCustomParams().get(ROLES_FIELD_PARAM_NAME);
 
     Set<String> rolesByUsername = acs.getRoles()
@@ -85,7 +87,7 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
         .map(Role::getName)
         .collect(Collectors.toSet());
 
-    return Mono.just(Stream.concat(rolesByUsername.stream(), rolesByRolesField.stream()).collect(Collectors.toSet()));
+    return Mono.just(Sets.union(rolesByUsername, rolesByRolesField));
   }
 
   @SuppressWarnings("unchecked")
