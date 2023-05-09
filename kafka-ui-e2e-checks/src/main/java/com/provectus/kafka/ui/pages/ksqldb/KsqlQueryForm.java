@@ -17,11 +17,12 @@ import java.util.List;
 public class KsqlQueryForm extends BasePage {
   protected SelenideElement clearBtn = $x("//div/button[text()='Clear']");
   protected SelenideElement executeBtn = $x("//div/button[text()='Execute']");
-  protected SelenideElement stopQueryBtn = $x("//div/button[text()='Stop query']");
   protected SelenideElement clearResultsBtn = $x("//div/button[text()='Clear results']");
   protected SelenideElement addStreamPropertyBtn = $x("//button[text()='Add Stream Property']");
   protected SelenideElement queryAreaValue = $x("//div[@class='ace_content']");
   protected SelenideElement queryArea = $x("//div[@id='ksql']/textarea[@class='ace_text-input']");
+  protected SelenideElement abortButton = $x("//div[@role='status']/div[text()='Abort']");
+  protected SelenideElement cancelledAlert = $x("//div[@role='status'][text()='Cancelled']");
   protected ElementsCollection ksqlGridItems = $$x("//tbody//tr");
   protected ElementsCollection keyField = $$x("//input[@aria-label='key']");
   protected ElementsCollection valueField = $$x("//input[@aria-label='value']");
@@ -48,7 +49,7 @@ public class KsqlQueryForm extends BasePage {
   public KsqlQueryForm clickExecuteBtn(String query) {
     clickByActions(executeBtn);
     if (query.contains("EMIT CHANGES")) {
-      loadingSpinner.shouldBe(Condition.visible);
+      abortButton.shouldBe(Condition.visible);
     } else {
       waitUntilSpinnerDisappear();
     }
@@ -56,10 +57,19 @@ public class KsqlQueryForm extends BasePage {
   }
 
   @Step
-  public KsqlQueryForm clickStopQueryBtn() {
-    clickByActions(stopQueryBtn);
-    waitUntilSpinnerDisappear();
+  public boolean isAbortBtnVisible() {
+    return isVisible(abortButton);
+  }
+
+  @Step
+  public KsqlQueryForm clickAbortBtn() {
+    clickByActions(abortButton);
     return this;
+  }
+
+  @Step
+  public boolean isCancelledAlertVisible() {
+    return isVisible(cancelledAlert);
   }
 
   @Step
