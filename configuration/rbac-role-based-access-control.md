@@ -6,8 +6,7 @@ In this article we'll guide how to setup Kafka-UI with role-based access control
 
 ### Authentication methods
 
-First of all, you'd need to setup authentication method(s). Refer to [this](https://github.com/provectus/kafka-ui/wiki/OAuth-Configuration) article for OAuth2 setup.\
-LDAP: TBD
+First of all, you'd need to setup authentication method(s). Refer to [this](https://github.com/provectus/kafka-ui/wiki/OAuth-Configuration) article for OAuth2 setup.
 
 ### Config placement
 
@@ -138,11 +137,11 @@ rbac:
           type: group
           value: "memelords"
 
-        # LDAP NOT IMPLEMENTED YET
         - provider: ldap
           type: group
-          value: "ou=devs,dc=planetexpress,dc=com"
-        - provider: ldap_ad
+          value: "admin_staff"
+
+        - provider: ldap_ad # NOT YET SUPPORTED, SEE ISSUE 3741
           type: user
           value: "cn=germanosin,dc=planetexpress,dc=com"
 
