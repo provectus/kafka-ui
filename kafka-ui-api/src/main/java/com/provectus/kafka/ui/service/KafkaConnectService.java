@@ -265,8 +265,9 @@ public class KafkaConnectService {
                                   String connectorName, Predicate<TaskDTO> taskFilter) {
     return getConnectorTasks(cluster, connectName, connectorName)
         .filter(taskFilter)
-        .flatMap(t ->
-            restartConnectorTask(cluster, connectName, connectorName, t.getId().getTask()))
+        .flatMap(t -> restartConnectorTask(cluster, connectName, connectorName, t.getId().getTask())
+            .onErrorResume(e -> Mono.error(new RuntimeException("Failed to restart task", e)))
+        )
         .then();
   }
 
