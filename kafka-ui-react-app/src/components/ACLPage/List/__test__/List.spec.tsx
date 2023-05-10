@@ -35,7 +35,7 @@ describe('ACLList Component', () => {
         }));
       });
 
-      it('renders', async () => {
+      it('renders ACLList with records', async () => {
         renderComponent();
         expect(screen.getByRole('table')).toBeInTheDocument();
         expect(screen.getAllByRole('row').length).toEqual(4);
@@ -62,7 +62,7 @@ describe('ACLList Component', () => {
         }));
       });
 
-      it('renders', async () => {
+      it('renders empty ACLList with message', async () => {
         renderComponent();
         expect(screen.getByRole('table')).toBeInTheDocument();
         expect(
