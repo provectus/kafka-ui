@@ -366,6 +366,7 @@ export const theme = {
         cursor: Colors.neutral[90],
         variable: Colors.red[50],
         aceString: Colors.green[60],
+        codeMarker: Colors.yellow[20],
       },
     },
   },
@@ -531,6 +532,12 @@ export const theme = {
         normal: Colors.neutral[90],
         hover: Colors.neutral[50],
         active: Colors.neutral[90],
+      },
+    },
+    colored: {
+      color: {
+        attention: Colors.red[50],
+        warning: Colors.yellow[20],
       },
     },
     expander: {
@@ -761,6 +768,7 @@ export const darkTheme: ThemeType = {
         cursor: Colors.neutral[0],
         variable: Colors.red[50],
         aceString: Colors.green[60],
+        codeMarker: Colors.yellow[20],
       },
     },
   },
@@ -926,6 +934,12 @@ export const darkTheme: ThemeType = {
         normal: Colors.neutral[0],
         hover: Colors.neutral[0],
         active: Colors.neutral[0],
+      },
+    },
+    colored: {
+      color: {
+        attention: Colors.red[50],
+        warning: Colors.yellow[20],
       },
     },
     expander: {
