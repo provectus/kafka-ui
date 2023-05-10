@@ -2,13 +2,12 @@ package com.provectus.kafka.ui.service.rbac.extractor;
 
 import static com.provectus.kafka.ui.model.rbac.provider.Provider.Name.OAUTH;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.config.auth.OAuthProperties;
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -22,8 +21,6 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
-
-  private static final ObjectMapper objectMapper = new ObjectMapper();
 
   public static final String ROLES_FIELD_PARAM_NAME = "roles-field";
 
@@ -97,25 +94,20 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
       return Collections.emptySet();
     }
 
-    try {
-      if ((roles instanceof List<?>) || (roles instanceof Set<?>)) {
-        log.trace("The field is either a set or a list, returning as is");
-        return (Collection<String>) roles;
-      }
+    if ((roles instanceof List<?>) || (roles instanceof Set<?>)) {
+      log.trace("The field is either a set or a list, returning as is");
+      return (Collection<String>) roles;
+    }
 
-      if (!(roles instanceof String)) {
-        log.debug("The field is not a string, skipping");
-        return Collections.emptySet();
-      }
-
-      log.trace("Trying to deserialize the field");
-      //@formatter:off
-      return objectMapper.readValue((String) roles, new TypeReference<>() {});
-      //@formatter:on
-    } catch (Exception e) {
-      log.error("Error deserializing field", e);
+    if (!(roles instanceof String)) {
+      log.debug("The field is not a string, skipping");
       return Collections.emptySet();
     }
+
+    log.trace("Trying to deserialize the field value [{}] as a string", roles);
+
+    return Arrays.stream(((String) roles).split(","))
+        .collect(Collectors.toSet());
   }
 
 }
