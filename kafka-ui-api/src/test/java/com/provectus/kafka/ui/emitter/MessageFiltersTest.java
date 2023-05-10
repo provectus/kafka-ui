@@ -118,10 +118,18 @@ class MessageFiltersTest {
     }
 
     @Test
-    void keySetToNullIfKeyCantBeParsedToJson() {
-      var f = groovyScriptFilter("key == null");
+    void keySetToKeyStringIfCantBeParsedToJson() {
+      var f = groovyScriptFilter("key == \"not json\"");
       assertTrue(f.test(msg().key("not json")));
-      assertFalse(f.test(msg().key("{ \"k\" : \"v\" }")));
+    }
+
+    @Test
+    void keyAndKeyAsTextSetToNullIfRecordsKeyIsNull() {
+      var f = groovyScriptFilter("key == null");
+      assertTrue(f.test(msg().key(null)));
+
+      f = groovyScriptFilter("keyAsText == null");
+      assertTrue(f.test(msg().key(null)));
     }
 
     @Test
@@ -132,10 +140,18 @@ class MessageFiltersTest {
     }
 
     @Test
-    void valueSetToNullIfKeyCantBeParsedToJson() {
-      var f = groovyScriptFilter("value == null");
+    void valueSetToContentStringIfCantBeParsedToJson() {
+      var f = groovyScriptFilter("value == \"not json\"");
       assertTrue(f.test(msg().content("not json")));
-      assertFalse(f.test(msg().content("{ \"k\" : \"v\" }")));
+    }
+
+    @Test
+    void valueAndValueAsTextSetToNullIfRecordsContentIsNull() {
+      var f = groovyScriptFilter("value == null");
+      assertTrue(f.test(msg().content(null)));
+
+      f = groovyScriptFilter("valueAsText == null");
+      assertTrue(f.test(msg().content(null)));
     }
 
     @Test
