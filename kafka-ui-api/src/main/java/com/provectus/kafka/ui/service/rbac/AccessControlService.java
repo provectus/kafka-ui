@@ -20,6 +20,7 @@ import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.rbac.extractor.CognitoAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GithubAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GoogleAuthorityExtractor;
+import com.provectus.kafka.ui.service.rbac.extractor.OauthAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.ProviderAuthorityExtractor;
 import jakarta.annotation.PostConstruct;
 import java.util.Collections;
@@ -76,6 +77,7 @@ public class AccessControlService {
               case OAUTH_COGNITO -> new CognitoAuthorityExtractor();
               case OAUTH_GOOGLE -> new GoogleAuthorityExtractor();
               case OAUTH_GITHUB -> new GithubAuthorityExtractor();
+              case OAUTH -> new OauthAuthorityExtractor();
               default -> null;
             })
             .filter(Objects::nonNull)

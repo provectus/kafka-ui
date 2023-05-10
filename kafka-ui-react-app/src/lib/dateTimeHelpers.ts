@@ -1,6 +1,6 @@
 export const formatTimestamp = (
   timestamp?: number | string | Date,
-  format: Intl.DateTimeFormatOptions = { hour12: false }
+  format: Intl.DateTimeFormatOptions = { hourCycle: 'h23' }
 ): string => {
   if (!timestamp) {
     return '';
@@ -8,7 +8,6 @@ export const formatTimestamp = (
 
   // empty array gets the default one from the browser
   const date = new Date(timestamp);
-
   // invalid date
   if (Number.isNaN(date.getTime())) {
     return '';
