@@ -84,15 +84,11 @@ class SchemaRegistrySerdeTest {
             + "    {"
             + "      \"name\": \"field2\","
             + "      \"type\": \"int\""
-            + "    },"
-            + "    {"
-            + "      \"name\": \"field3\","
-            + "      \"type\": {\"type\": \"bytes\", \"logicalType\": \"decimal\", \"precision\": 22, \"scale\":10}"
             + "    }"
             + "  ]"
             + "}"
     );
-    String jsonValue = "{ \"field1\":\"testStr\", \"field2\": 123, \"field3\": 2.1617413862327545E11 }";
+    String jsonValue = "{ \"field1\":\"testStr\", \"field2\": 123 }";
     String topic = "test";
 
     int schemaId = registryClient.register(topic + "-value", schema);
@@ -222,6 +218,84 @@ class SchemaRegistrySerdeTest {
   }
 
   @Test
+  void fieldsRepresentationIsConsistentForSerializationAndDeserialization() throws Exception {
+    AvroSchema schema = new AvroSchema(
+        """
+             {
+               "type": "record",
+               "name": "TestAvroRecord",
+               "fields": [
+                 {
+                   "name": "f_int",
+                   "type": "int"
+                 },
+                 {
+                   "name": "f_long",
+                   "type": "long"
+                 },
+                 {
+                   "name": "f_string",
+                   "type": "string"
+                 },
+                 {
+                   "name": "f_boolean",
+                   "type": "boolean"
+                 },
+                 {
+                   "name": "f_float",
+                   "type": "float"
+                 },
+                 {
+                   "name": "f_double",
+                   "type": "double"
+                 },
+                 {
+                   "name": "f_enum",
+                   "type" : {
+                    "type": "enum",
+                    "name": "Suit",
+                    "symbols" : ["SPADES", "HEARTS", "DIAMONDS", "CLUBS"]
+                   }
+                 },
+                 {
+                  "name": "f_map",
+                  "type": {
+                     "type": "map",
+                     "values" : "string",
+                     "default": {}
+                   }
+                 }
+               ]
+            }"""
+    );
+
+    String jsonPayload = """
+        {
+          "f_int": 123,
+          "f_long": 4294967294,
+          "f_string": "string here",
+          "f_boolean": true,
+          "f_float": 123.1,
+          "f_double": 123456.123456,
+          "f_enum": "SPADES",
+          "f_map": { "k1": "string value" }
+        }
+        """;
+
+    //TODO: currently "union"-typed values has different representations on read and write
+
+    registryClient.register("test-value", schema);
+
+    byte[] serializedBytes = serde.serializer("test", Serde.Target.VALUE).serialize(jsonPayload);
+
+    var deserializedJson = serde.deserializer("test", Serde.Target.VALUE)
+        .deserialize(null, serializedBytes)
+        .getResult();
+
+    assertJsonsEqual(jsonPayload, deserializedJson);
+  }
+
+  @Test
   void logicalTypesRepresentationIsConsistentForSerializationAndDeserialization() throws Exception {
     AvroSchema schema = new AvroSchema(
         """
@@ -285,10 +359,10 @@ class SchemaRegistrySerdeTest {
 
     registryClient.register("test-value", schema);
 
-    byte[] serialized = serde.serializer("test", Serde.Target.VALUE).serialize(jsonPayload);
+    byte[] serializedBytes = serde.serializer("test", Serde.Target.VALUE).serialize(jsonPayload);
 
     var deserializedJson = serde.deserializer("test", Serde.Target.VALUE)
-        .deserialize(null, serialized)
+        .deserialize(null, serializedBytes)
         .getResult();
 
     assertJsonsEqual(jsonPayload, deserializedJson);
