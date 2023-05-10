@@ -189,11 +189,8 @@ public class JsonAvroConversion {
         yield node;
       }
       case MAP -> {
-        var map = (Map<Utf8, Object>) obj;
         ObjectNode node = MAPPER.createObjectNode();
-        map.forEach((k, v) -> {
-          node.set(k.toString(), convertAvroToJson(v, avroSchema.getValueType()));
-        });
+        ((Map) obj).forEach((k, v) -> node.set(k.toString(), convertAvroToJson(v, avroSchema.getValueType())));
         yield node;
       }
       case ARRAY -> {
@@ -206,8 +203,6 @@ public class JsonAvroConversion {
         yield new TextNode(obj.toString());
       }
       case UNION -> {
-        //TODO: cover with tests
-        // non-null case
         ObjectNode node = MAPPER.createObjectNode();
         int unionIdx = AvroData.getGenericData().resolveUnion(avroSchema, obj);
         Schema unionType = avroSchema.getTypes().get(unionIdx);
@@ -232,25 +227,17 @@ public class JsonAvroConversion {
         }
         yield new IntNode((Integer) obj);
       }
-      case FLOAT -> {
-        yield new FloatNode((Float) obj);
-      }
-      case DOUBLE -> {
-        yield new DoubleNode((Double) obj);
-      }
-      case BOOLEAN -> {
-        yield BooleanNode.valueOf((Boolean) obj);
-      }
-      case NULL -> {
-        yield NullNode.getInstance();
-      }
+      case FLOAT -> new FloatNode((Float) obj);
+      case DOUBLE -> new DoubleNode((Double) obj);
+      case BOOLEAN -> BooleanNode.valueOf((Boolean) obj);
+      case NULL -> NullNode.getInstance();
       case BYTES -> {
         if (isLogicalType(avroSchema)) {
           yield processLogicalType(obj, avroSchema);
         }
         //TODO: check with tests
-        byte[] bytes = (byte[]) obj;
-        yield new TextNode(new String(bytes)); //TODO: encoding
+        ByteBuffer bytes = (ByteBuffer) obj;
+        yield new TextNode(new String(bytes.array()));
       }
       case FIXED -> {
         if (isLogicalType(avroSchema)) {
@@ -263,27 +250,26 @@ public class JsonAvroConversion {
   }
 
   private static Object processLogicalType(JsonNode node, Schema schema) {
-    String logicalTypeName = schema.getLogicalType().getName();
-    var conversion = Stream.of(LogicalTypeConversion.values())
-        .filter(t -> t.name.equalsIgnoreCase(logicalTypeName))
-        .findFirst();
-    return conversion
+    return findConversion(schema)
         .map(c -> c.jsonToAvroConversion.apply(node, schema))
         .orElseThrow(() ->
             new JsonToAvroConversionException("'%s' logical type is not supported"
-                .formatted(logicalTypeName)));
+                .formatted(schema.getLogicalType().getName())));
   }
 
   private static JsonNode processLogicalType(Object obj, Schema schema) {
-    String logicalTypeName = schema.getLogicalType().getName();
-    var conversion = Stream.of(LogicalTypeConversion.values())
-        .filter(t -> t.name.equalsIgnoreCase(logicalTypeName))
-        .findFirst();
-    return conversion
+    return findConversion(schema)
         .map(c -> c.avroToJsonConversion.apply(obj, schema))
         .orElseThrow(() ->
             new JsonToAvroConversionException("'%s' logical type is not supported"
-                .formatted(logicalTypeName)));
+                .formatted(schema.getLogicalType().getName())));
+  }
+
+  private static Optional<LogicalTypeConversion> findConversion(Schema schema) {
+    String logicalTypeName = schema.getLogicalType().getName();
+    return Stream.of(LogicalTypeConversion.values())
+        .filter(t -> t.name.equalsIgnoreCase(logicalTypeName))
+        .findFirst();
   }
 
   private static boolean isLogicalType(Schema schema) {

@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
 import com.provectus.kafka.ui.serde.api.Serde;
+import com.provectus.kafka.ui.util.jsonschema.JsonAvroConversion;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
-import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
 import io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import java.io.ByteArrayOutputStream;
@@ -212,13 +212,13 @@ class SchemaRegistrySerdeTest {
     GenericDatumWriter<Object> writer = new GenericDatumWriter<>(schema.rawSchema());
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     Encoder encoder = EncoderFactory.get().binaryEncoder(output, null);
-    writer.write(AvroSchemaUtils.toObject(json, schema), encoder);
+    writer.write(JsonAvroConversion.convertJsonToAvro(json, schema.rawSchema()), encoder);
     encoder.flush();
     return output.toByteArray();
   }
 
   @Test
-  void fieldsRepresentationIsConsistentForSerializationAndDeserialization() throws Exception {
+  void avroFieldsRepresentationIsConsistentForSerializationAndDeserialization() throws Exception {
     AvroSchema schema = new AvroSchema(
         """
              {
@@ -268,6 +268,10 @@ class SchemaRegistrySerdeTest {
                  {
                   "name": "f_union",
                   "type": ["null", "string", "int" ]
+                 },
+                 {
+                  "name": "f_optional_to_test_not_filled_case",
+                  "type": [ "null", "string"]
                  }
                ]
             }"""
@@ -288,18 +292,11 @@ class SchemaRegistrySerdeTest {
         """;
 
     registryClient.register("test-value", schema);
-
-    byte[] serializedBytes = serde.serializer("test", Serde.Target.VALUE).serialize(jsonPayload);
-
-    var deserializedJson = serde.deserializer("test", Serde.Target.VALUE)
-        .deserialize(null, serializedBytes)
-        .getResult();
-
-    assertJsonsEqual(jsonPayload, deserializedJson);
+    assertSerdeCycle("test", jsonPayload);
   }
 
   @Test
-  void logicalTypesRepresentationIsConsistentForSerializationAndDeserialization() throws Exception {
+  void avroLogicalTypesRepresentationIsConsistentForSerializationAndDeserialization() throws Exception {
     AvroSchema schema = new AvroSchema(
         """
              {
@@ -361,14 +358,18 @@ class SchemaRegistrySerdeTest {
         """;
 
     registryClient.register("test-value", schema);
+    assertSerdeCycle("test", jsonPayload);
+  }
 
-    byte[] serializedBytes = serde.serializer("test", Serde.Target.VALUE).serialize(jsonPayload);
-
-    var deserializedJson = serde.deserializer("test", Serde.Target.VALUE)
+  // 1. serialize input json to binary
+  // 2. deserialize from binary
+  // 3. check that deserialized version equal to input
+  void assertSerdeCycle(String topic, String jsonInput) {
+    byte[] serializedBytes = serde.serializer(topic, Serde.Target.VALUE).serialize(jsonInput);
+    var deserializedJson = serde.deserializer(topic, Serde.Target.VALUE)
         .deserialize(null, serializedBytes)
         .getResult();
-
-    assertJsonsEqual(jsonPayload, deserializedJson);
+    assertJsonsEqual(jsonInput, deserializedJson);
   }
 
 }
