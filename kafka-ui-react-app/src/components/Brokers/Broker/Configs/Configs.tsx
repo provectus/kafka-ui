@@ -34,13 +34,17 @@ const Configs: React.FC = () => {
 
   const getData = () => {
     return data
-      .filter((item) => item.name.toLocaleLowerCase().indexOf(keyword) > -1)
+      .filter((item) => {
+        const nameMatch = item.name.toLocaleLowerCase().includes(keyword);
+        const valueMatch = item.value && item.value.includes(keyword);
+        return nameMatch || valueMatch;
+      })
       .sort((a, b) => {
         if (a.source === b.source) return 0;
-
         return a.source === ConfigSource.DYNAMIC_BROKER_CONFIG ? -1 : 1;
       });
   };
+
 
   const dataSource = React.useMemo(() => getData(), [data, keyword]);
 
@@ -91,7 +95,7 @@ const Configs: React.FC = () => {
       <S.SearchWrapper>
         <Search
           onChange={setKeyword}
-          placeholder="Search by Key"
+          placeholder="Search by Key or Value"
           value={keyword}
         />
       </S.SearchWrapper>
