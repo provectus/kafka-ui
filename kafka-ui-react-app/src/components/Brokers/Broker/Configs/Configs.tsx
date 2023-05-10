@@ -45,7 +45,6 @@ const Configs: React.FC = () => {
       });
   };
 
-
   const dataSource = React.useMemo(() => getData(), [data, keyword]);
 
   const renderCell = (props: CellContext<BrokerConfig, unknown>) => (
