@@ -44,7 +44,7 @@ public class ApiService extends BaseSource {
   {
     var httpClient = HttpClient
         .create(ConnectionProvider.builder("custom")
-            .maxIdleTime(Duration.ofSeconds(5))
+            .maxIdleTime(Duration.ofMillis(1000))
             .build());
 
     var webClient = ApiClient
