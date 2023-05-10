@@ -1,13 +1,14 @@
 package com.provectus.kafka.ui.service.rbac.extractor;
 
+import static com.provectus.kafka.ui.model.rbac.provider.Provider.Name.GOOGLE;
+
+import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.model.rbac.Role;
 import com.provectus.kafka.ui.model.rbac.provider.Provider;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import reactor.core.publisher.Mono;
@@ -19,8 +20,8 @@ public class GoogleAuthorityExtractor implements ProviderAuthorityExtractor {
   public static final String EMAIL_ATTRIBUTE_NAME = "email";
 
   @Override
-  public boolean isApplicable(String provider) {
-    return Provider.Name.GOOGLE.equalsIgnoreCase(provider);
+  public boolean isApplicable(String provider, Map<String, String> customParams) {
+    return GOOGLE.equalsIgnoreCase(provider) || GOOGLE.equalsIgnoreCase(customParams.get(TYPE));
   }
 
   @Override
@@ -52,7 +53,7 @@ public class GoogleAuthorityExtractor implements ProviderAuthorityExtractor {
       return Mono.just(groupsByUsername);
     }
 
-    List<String> groupsByDomain = acs.getRoles()
+    Set<String> groupsByDomain = acs.getRoles()
         .stream()
         .filter(r -> r.getSubjects()
             .stream()
@@ -60,10 +61,9 @@ public class GoogleAuthorityExtractor implements ProviderAuthorityExtractor {
             .filter(s -> s.getType().equals("domain"))
             .anyMatch(s -> s.getValue().equals(domain)))
         .map(Role::getName)
-        .toList();
+        .collect(Collectors.toSet());
 
-    return Mono.just(Stream.concat(groupsByUsername.stream(), groupsByDomain.stream())
-        .collect(Collectors.toSet()));
+    return Mono.just(Sets.union(groupsByUsername, groupsByDomain));
   }
 
 }
