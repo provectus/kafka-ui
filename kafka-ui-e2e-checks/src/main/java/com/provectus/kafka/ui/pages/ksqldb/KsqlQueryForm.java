@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.pages.ksqldb;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
@@ -37,6 +38,7 @@ public class KsqlQueryForm extends BasePage {
   @Step
   public KsqlQueryForm clickClearBtn() {
     clickByJavaScript(clearBtn);
+    sleep(500);
     return this;
   }
 
