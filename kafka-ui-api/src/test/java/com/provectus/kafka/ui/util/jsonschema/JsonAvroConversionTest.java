@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.util.jsonschema;
 
-import static com.provectus.kafka.ui.util.jsonschema.JsonAvroConversion.convertJsonToAvro;
 import static com.provectus.kafka.ui.util.jsonschema.JsonAvroConversion.convertAvroToJson;
+import static com.provectus.kafka.ui.util.jsonschema.JsonAvroConversion.convertJsonToAvro;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.JsonNode;
