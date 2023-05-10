@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.util.jsonschema;
 
-import static com.provectus.kafka.ui.util.jsonschema.JsonAvroConversion.convert;
+import static com.provectus.kafka.ui.util.jsonschema.JsonAvroConversion.convertJsonToAvro;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
@@ -19,19 +19,19 @@ class JsonAvroConversionTest {
 
   @Test
   void primitiveRoot() {
-    assertThat(convert("\"str\"", createSchema("\"string\"")))
+    assertThat(convertJsonToAvro("\"str\"", createSchema("\"string\"")))
         .isEqualTo("str");
 
-    assertThat(convert("123", createSchema("\"int\"")))
+    assertThat(convertJsonToAvro("123", createSchema("\"int\"")))
         .isEqualTo(123);
 
-    assertThat(convert("123", createSchema("\"long\"")))
+    assertThat(convertJsonToAvro("123", createSchema("\"long\"")))
         .isEqualTo(123L);
 
-    assertThat(convert("123.123", createSchema("\"float\"")))
+    assertThat(convertJsonToAvro("123.123", createSchema("\"float\"")))
         .isEqualTo(123.123F);
 
-    assertThat(convert("12345.12345", createSchema("\"double\"")))
+    assertThat(convertJsonToAvro("12345.12345", createSchema("\"double\"")))
         .isEqualTo(12345.12345);
   }
 
@@ -91,7 +91,7 @@ class JsonAvroConversionTest {
         }
         """;
 
-    var converted = convert(jsonPayload, schema);
+    var converted = convertJsonToAvro(jsonPayload, schema);
     assertThat(converted).isInstanceOf(GenericData.Record.class);
 
     var record = (GenericData.Record) converted;
@@ -114,13 +114,13 @@ class JsonAvroConversionTest {
   void unionRoot() {
     var sc = createSchema("[ \"null\", \"string\", \"int\" ]");
 
-    var converted = convert("{\"string\":\"string here\"}", sc);
+    var converted = convertJsonToAvro("{\"string\":\"string here\"}", sc);
     assertThat(converted).isEqualTo("string here");
 
-    converted = convert("{\"int\": 123}", sc);
+    converted = convertJsonToAvro("{\"int\": 123}", sc);
     assertThat(converted).isEqualTo(123);
 
-    converted = convert("null", sc);
+    converted = convertJsonToAvro("null", sc);
     assertThat(converted).isEqualTo(null);
   }
 
@@ -142,7 +142,7 @@ class JsonAvroConversionTest {
 
     String jsonPayload = "{ \"f_union\": null }";
 
-    var converted = convert(jsonPayload, schema);
+    var converted = convertJsonToAvro(jsonPayload, schema);
     assertThat(converted).isInstanceOf(GenericData.Record.class);
 
     var record = (GenericData.Record) converted;
@@ -150,11 +150,11 @@ class JsonAvroConversionTest {
 
 
     jsonPayload = "{ \"f_union\": { \"int\": 123 } }";
-    record = (GenericData.Record) convert(jsonPayload, schema);
+    record = (GenericData.Record) convertJsonToAvro(jsonPayload, schema);
     assertThat(record.get("f_union")).isEqualTo(123);
 
     jsonPayload = "{ \"f_union\": { \"TestAvroRecord\": { \"f_union\": { \"int\": 123  } } } }";
-    record = (GenericData.Record) convert(jsonPayload, schema);
+    record = (GenericData.Record) convertJsonToAvro(jsonPayload, schema);
 
     assertThat(record.get("f_union")).isInstanceOf(GenericData.Record.class);
     var innerRec = (GenericData.Record) record.get("f_union");
@@ -216,7 +216,7 @@ class JsonAvroConversionTest {
         }
         """;
 
-    var converted = convert(jsonPayload, schema);
+    var converted = convertJsonToAvro(jsonPayload, schema);
     assertThat(converted).isInstanceOf(GenericData.Record.class);
 
     var record = (GenericData.Record) converted;
@@ -266,7 +266,7 @@ class JsonAvroConversionTest {
         }
         """;
 
-    var converted = convert(jsonPayload, schema);
+    var converted = convertJsonToAvro(jsonPayload, schema);
     assertThat(converted).isInstanceOf(GenericData.Record.class);
 
     var record = (GenericData.Record) converted;
@@ -335,7 +335,7 @@ class JsonAvroConversionTest {
         }
         """;
 
-    var converted = convert(jsonPayload, schema);
+    var converted = convertJsonToAvro(jsonPayload, schema);
     assertThat(converted).isInstanceOf(GenericData.Record.class);
 
     var record = (GenericData.Record) converted;

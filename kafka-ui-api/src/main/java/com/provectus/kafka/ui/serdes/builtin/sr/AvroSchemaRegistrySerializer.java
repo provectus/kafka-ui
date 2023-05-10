@@ -37,7 +37,7 @@ class AvroSchemaRegistrySerializer extends SchemaRegistrySerializer<Object> {
   @Override
   protected Object serialize(String value, ParsedSchema schema) {
     try {
-      return JsonAvroConversion.convert(value, ((AvroSchema) schema).rawSchema());
+      return JsonAvroConversion.convertJsonToAvro(value, ((AvroSchema) schema).rawSchema());
     } catch (Throwable e) {
       throw new RuntimeException("Failed to serialize record for topic " + topic, e);
     }

@@ -264,6 +264,10 @@ class SchemaRegistrySerdeTest {
                      "values" : "string",
                      "default": {}
                    }
+                 },
+                 {
+                  "name": "f_union",
+                  "type": ["null", "string", "int" ]
                  }
                ]
             }"""
@@ -278,11 +282,10 @@ class SchemaRegistrySerdeTest {
           "f_float": 123.1,
           "f_double": 123456.123456,
           "f_enum": "SPADES",
-          "f_map": { "k1": "string value" }
+          "f_map": { "k1": "string value" },
+          "f_union": { "int": 123 }
         }
         """;
-
-    //TODO: currently "union"-typed values has different representations on read and write
 
     registryClient.register("test-value", schema);
 

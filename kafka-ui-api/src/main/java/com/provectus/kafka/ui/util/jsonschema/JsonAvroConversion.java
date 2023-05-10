@@ -3,10 +3,20 @@ package com.provectus.kafka.ui.util.jsonschema;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.DecimalNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.node.FloatNode;
+import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.LongNode;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.Lists;
 import com.provectus.kafka.ui.exception.ValidationException;
+import io.confluent.kafka.serializers.AvroData;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +28,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +37,7 @@ import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
+import org.apache.avro.util.Utf8;
 
 // converts json into Object that is expected input for KafkaAvroSerializer
 // (with AVRO_USE_LOGICAL_TYPE_CONVERTERS flat enabled!)
@@ -34,7 +46,7 @@ public class JsonAvroConversion {
   private static final JsonMapper MAPPER = new JsonMapper();
 
   @SneakyThrows
-  public static Object convert(String jsonString, Schema avroSchema) {
+  public static Object convertJsonToAvro(String jsonString, Schema avroSchema) {
     JsonNode rootNode = MAPPER.readTree(jsonString);
     return convert(rootNode, avroSchema);
   }
@@ -160,13 +172,115 @@ public class JsonAvroConversion {
     };
   }
 
+  public static JsonNode convertAvroToJson(Object obj, Schema avroSchema) {
+    if (obj == null) {
+      return NullNode.getInstance();
+    }
+    return switch (avroSchema.getType()) {
+      case RECORD -> {
+        var rec = (GenericData.Record) obj;
+        ObjectNode node = MAPPER.createObjectNode();
+        for (Schema.Field field : avroSchema.getFields()) {
+          var fieldVal = rec.get(field.name());
+          if (fieldVal != null) {
+            node.set(field.name(), convertAvroToJson(fieldVal, field.schema()));
+          }
+        }
+        yield node;
+      }
+      case MAP -> {
+        var map = (Map<Utf8, Object>) obj;
+        ObjectNode node = MAPPER.createObjectNode();
+        map.forEach((k, v) -> {
+          node.set(k.toString(), convertAvroToJson(v, avroSchema.getValueType()));
+        });
+        yield node;
+      }
+      case ARRAY -> {
+        var list = (List<Object>) obj;
+        ArrayNode node = MAPPER.createArrayNode();
+        list.forEach(e -> node.add(convertAvroToJson(e, avroSchema.getElementType())));
+        yield node;
+      }
+      case ENUM -> {
+        yield new TextNode(obj.toString());
+      }
+      case UNION -> {
+        //TODO: cover with tests
+        // non-null case
+        ObjectNode node = MAPPER.createObjectNode();
+        int unionIdx = AvroData.getGenericData().resolveUnion(avroSchema, obj);
+        Schema unionType = avroSchema.getTypes().get(unionIdx);
+        node.set(unionType.getFullName(), convertAvroToJson(obj, unionType));
+        yield node;
+      }
+      case STRING -> {
+        if (isLogicalType(avroSchema)) {
+          yield processLogicalType(obj, avroSchema);
+        }
+        yield new TextNode(obj.toString());
+      }
+      case LONG -> {
+        if (isLogicalType(avroSchema)) {
+          yield processLogicalType(obj, avroSchema);
+        }
+        yield new LongNode((Long) obj);
+      }
+      case INT -> {
+        if (isLogicalType(avroSchema)) {
+          yield processLogicalType(obj, avroSchema);
+        }
+        yield new IntNode((Integer) obj);
+      }
+      case FLOAT -> {
+        yield new FloatNode((Float) obj);
+      }
+      case DOUBLE -> {
+        yield new DoubleNode((Double) obj);
+      }
+      case BOOLEAN -> {
+        yield BooleanNode.valueOf((Boolean) obj);
+      }
+      case NULL -> {
+        yield NullNode.getInstance();
+      }
+      case BYTES -> {
+        if (isLogicalType(avroSchema)) {
+          yield processLogicalType(obj, avroSchema);
+        }
+        //TODO: check with tests
+        byte[] bytes = (byte[]) obj;
+        yield new TextNode(new String(bytes)); //TODO: encoding
+      }
+      case FIXED -> {
+        if (isLogicalType(avroSchema)) {
+          yield processLogicalType(obj, avroSchema);
+        }
+        var fixed = (GenericData.Fixed) obj; //TODO: encoding
+        yield new TextNode(new String(fixed.bytes()));
+      }
+    };
+  }
+
   private static Object processLogicalType(JsonNode node, Schema schema) {
     String logicalTypeName = schema.getLogicalType().getName();
     var conversion = Stream.of(LogicalTypeConversion.values())
         .filter(t -> t.name.equalsIgnoreCase(logicalTypeName))
         .findFirst();
     return conversion
-        .map(c -> c.conversion.apply(node, schema))
+        .map(c -> c.jsonToAvroConversion.apply(node, schema))
+        .orElseThrow(() ->
+            new JsonToAvroConversionException("'%s' logical type is not supported"
+                .formatted(logicalTypeName)));
+  }
+
+  private static JsonNode processLogicalType(Object obj, Schema schema) {
+    String logicalTypeName = schema.getLogicalType().getName();
+    var conversion = Stream.of(LogicalTypeConversion.values())
+        .filter(t -> t.name.equalsIgnoreCase(logicalTypeName))
+        .findFirst();
+    return conversion
+        .map(c -> c.avroToJsonConversion.apply(obj, schema))
         .orElseThrow(() ->
             new JsonToAvroConversionException("'%s' logical type is not supported"
                 .formatted(logicalTypeName)));
@@ -205,6 +319,9 @@ public class JsonAvroConversion {
           assertJsonType(node, JsonNodeType.STRING);
           return java.util.UUID.fromString(node.asText());
         },
+        (obj, schema) -> {
+          return new TextNode(obj.toString());
+        },
         new SimpleFieldSchema(
             new SimpleJsonType(
                 JsonType.Type.STRING,
@@ -223,6 +340,9 @@ public class JsonAvroConversion {
               "node '%s' can't be converted to decimal logical type"
                   .formatted(node));
         },
+        (obj, schema) -> {
+          return new DecimalNode((BigDecimal) obj);
+        },
         new SimpleFieldSchema(new SimpleJsonType(JsonType.Type.NUMBER))
     ),
 
@@ -237,6 +357,9 @@ public class JsonAvroConversion {
                 "node '%s' can't be converted to date logical type"
                     .formatted(node));
           }
+        },
+        (obj, schema) -> {
+          return new TextNode(obj.toString());
         },
         new SimpleFieldSchema(
             new SimpleJsonType(
@@ -256,6 +379,9 @@ public class JsonAvroConversion {
                     .formatted(node));
           }
         },
+        (obj, schema) -> {
+          return new TextNode(obj.toString());
+        },
         new SimpleFieldSchema(
             new SimpleJsonType(
                 JsonType.Type.STRING,
@@ -274,6 +400,9 @@ public class JsonAvroConversion {
                     .formatted(node));
           }
         },
+        (obj, schema) -> {
+          return new TextNode(obj.toString());
+        },
         new SimpleFieldSchema(
             new SimpleJsonType(
                 JsonType.Type.STRING,
@@ -291,6 +420,9 @@ public class JsonAvroConversion {
                 "node '%s' can't be converted to timestamp-millis logical type"
                     .formatted(node));
           }
+        },
+        (obj, schema) -> {
+          return new TextNode(obj.toString());
         },
         new SimpleFieldSchema(
             new SimpleJsonType(
@@ -314,6 +446,9 @@ public class JsonAvroConversion {
                     .formatted(node));
           }
         },
+        (obj, schema) -> {
+          return new TextNode(obj.toString());
+        },
         new SimpleFieldSchema(
             new SimpleJsonType(
                 JsonType.Type.STRING,
@@ -326,8 +461,11 @@ public class JsonAvroConversion {
             return LocalDateTime.parse(node.asText());
           }
           // TimeConversions.TimestampMicrosConversion for impl
-          Instant instant = (Instant) TIMESTAMP_MILLIS.conversion.apply(node, schema);
+          Instant instant = (Instant) TIMESTAMP_MILLIS.jsonToAvroConversion.apply(node, schema);
           return LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+        },
+        (obj, schema) -> {
+          return new TextNode(obj.toString());
         },
         new SimpleFieldSchema(
             new SimpleJsonType(
@@ -340,8 +478,11 @@ public class JsonAvroConversion {
           if (node.isTextual()) {
             return LocalDateTime.parse(node.asText());
           }
-          Instant instant = (Instant) TIMESTAMP_MICROS.conversion.apply(node, schema);
+          Instant instant = (Instant) TIMESTAMP_MICROS.jsonToAvroConversion.apply(node, schema);
           return LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+        },
+        (obj, schema) -> {
+          return new TextNode(obj.toString());
         },
         new SimpleFieldSchema(
             new SimpleJsonType(
@@ -350,17 +491,17 @@ public class JsonAvroConversion {
     );
 
     private final String name;
-
-    //assume that we have AVRO_USE_LOGICAL_TYPE_CONVERTERS set to true in serializing
-    //so, we need to convert into types that it requires
-    private final BiFunction<JsonNode, Schema, Object> conversion;
-
-    //assume
+    private final BiFunction<JsonNode, Schema, Object> jsonToAvroConversion;
+    private final BiFunction<Object, Schema, JsonNode> avroToJsonConversion;
     private final FieldSchema jsonSchema;
 
-    LogicalTypeConversion(String name, BiFunction<JsonNode, Schema, Object> conversion, FieldSchema jsonSchema) {
+    LogicalTypeConversion(String name,
+                          BiFunction<JsonNode, Schema, Object> jsonToAvroConversion,
+                          BiFunction<Object, Schema, JsonNode> avroToJsonConversion,
+                          FieldSchema jsonSchema) {
       this.name = name;
-      this.conversion = conversion;
+      this.jsonToAvroConversion = jsonToAvroConversion;
+      this.avroToJsonConversion = avroToJsonConversion;
       this.jsonSchema = jsonSchema;
     }
 
