@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
@@ -10,7 +10,6 @@ import Table, { SizeCell } from 'components/common/NewTable';
 import useBoolean from 'lib/hooks/useBoolean';
 import { clusterNewConfigPath } from 'lib/paths';
 import { GlobalSettingsContext } from 'components/contexts/GlobalSettingsContext';
-import { useNavigate } from 'react-router-dom';
 import { ActionCanButton } from 'components/common/ActionComponent';
 import { useGetUserInfo } from 'lib/hooks/api/roles';
 
@@ -23,7 +22,7 @@ const Dashboard: React.FC = () => {
   const clusters = useClusters();
   const { value: showOfflineOnly, toggle } = useBoolean(false);
   const appInfo = React.useContext(GlobalSettingsContext);
-  const navigate = useNavigate();
+
   const config = React.useMemo(() => {
     const clusterList = clusters.data || [];
     const offlineClusters = clusterList.filter(
@@ -57,12 +56,6 @@ const Dashboard: React.FC = () => {
 
     return initialColumns;
   }, []);
-
-  useEffect(() => {
-    if (appInfo.hasDynamicConfig && !clusters.data) {
-      navigate(clusterNewConfigPath);
-    }
-  }, [clusters, appInfo.hasDynamicConfig]);
 
   const isApplicationConfig = useMemo(() => {
     return !!data?.userInfo?.permissions.some(
