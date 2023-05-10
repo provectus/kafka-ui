@@ -37,25 +37,26 @@ public class StatisticsService {
   private Mono<Statistics> getStatistics(KafkaCluster cluster) {
     return adminClientService.get(cluster).flatMap(ac ->
             ac.describeCluster().flatMap(description ->
-                Mono.zip(
-                    List.of(
-                        metricsCollector.getBrokerMetrics(cluster, description.getNodes()),
-                        getLogDirInfo(description, ac),
-                        featureService.getAvailableFeatures(cluster, description),
-                        loadTopicConfigs(cluster),
-                        describeTopics(cluster)),
-                    results ->
-                        Statistics.builder()
-                            .status(ServerStatusDTO.ONLINE)
-                            .clusterDescription(description)
-                            .version(ac.getVersion())
-                            .metrics((Metrics) results[0])
-                            .logDirInfo((InternalLogDirStats) results[1])
-                            .features((List<ClusterFeature>) results[2])
-                            .topicConfigs((Map<String, List<ConfigEntry>>) results[3])
-                            .topicDescriptions((Map<String, TopicDescription>) results[4])
-                            .build()
-                )))
+                ac.updateInternalStats(description.getController()).then(
+                    Mono.zip(
+                        List.of(
+                            metricsCollector.getBrokerMetrics(cluster, description.getNodes()),
+                            getLogDirInfo(description, ac),
+                            featureService.getAvailableFeatures(ac, cluster, description),
+                            loadTopicConfigs(cluster),
+                            describeTopics(cluster)),
+                        results ->
+                            Statistics.builder()
+                                .status(ServerStatusDTO.ONLINE)
+                                .clusterDescription(description)
+                                .version(ac.getVersion())
+                                .metrics((Metrics) results[0])
+                                .logDirInfo((InternalLogDirStats) results[1])
+                                .features((List<ClusterFeature>) results[2])
+                                .topicConfigs((Map<String, List<ConfigEntry>>) results[3])
+                                .topicDescriptions((Map<String, TopicDescription>) results[4])
+                                .build()
+                    ))))
         .doOnError(e ->
             log.error("Failed to collect cluster {} info", cluster.getName(), e))
         .onErrorResume(
