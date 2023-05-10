@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.serdes.builtin.sr;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.provectus.kafka.ui.serde.api.DeserializeResult;
 import com.provectus.kafka.ui.serde.api.SchemaDescription;
@@ -54,7 +53,8 @@ class SchemaRegistrySerdeTest {
 
     SchemaDescription schemaDescription = schemaOptional.get();
     assertThat(schemaDescription.getSchema())
-        .contains("{\"$id\":\"int\",\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"integer\"}");
+        .contains(
+            "{\"$id\":\"int\",\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"integer\"}");
     assertThat(schemaDescription.getAdditionalProperties())
         .containsOnlyKeys("subject", "schemaId", "latestVersion", "type")
         .containsEntry("subject", subject)
@@ -84,11 +84,15 @@ class SchemaRegistrySerdeTest {
             + "    {"
             + "      \"name\": \"field2\","
             + "      \"type\": \"int\""
+            + "    },"
+            + "    {"
+            + "      \"name\": \"field3\","
+            + "      \"type\": {\"type\": \"bytes\", \"logicalType\": \"decimal\", \"precision\": 22, \"scale\":10}"
             + "    }"
             + "  ]"
             + "}"
     );
-    String jsonValue = "{ \"field1\":\"testStr\", \"field2\": 123 }";
+    String jsonValue = "{ \"field1\":\"testStr\", \"field2\": 123, \"field3\": 2.1617413862327545E11 }";
     String topic = "test";
 
     int schemaId = registryClient.register(topic + "-value", schema);
@@ -189,7 +193,8 @@ class SchemaRegistrySerdeTest {
     assertThat(serde.canSerialize(topic, Serde.Target.VALUE)).isFalse();
   }
 
-  private void assertJsonsEqual(String expected, String actual) throws JsonProcessingException {
+  @SneakyThrows
+  private void assertJsonsEqual(String expected, String actual) {
     var mapper = new JsonMapper();
     assertThat(mapper.readTree(actual)).isEqualTo(mapper.readTree(expected));
   }
@@ -214,6 +219,79 @@ class SchemaRegistrySerdeTest {
     writer.write(AvroSchemaUtils.toObject(json, schema), encoder);
     encoder.flush();
     return output.toByteArray();
+  }
+
+  @Test
+  void logicalTypesRepresentationIsConsistentForSerializationAndDeserialization() throws Exception {
+    AvroSchema schema = new AvroSchema(
+        """
+             {
+               "type": "record",
+               "name": "TestAvroRecord",
+               "fields": [
+                 {
+                   "name": "lt_date",
+                   "type": { "type": "int", "logicalType": "date" }
+                 },
+                 {
+                   "name": "lt_uuid",
+                   "type": { "type": "string", "logicalType": "uuid" }
+                 },
+                 {
+                   "name": "lt_decimal",
+                   "type": { "type": "bytes", "logicalType": "decimal", "precision": 22, "scale":10 }
+                 },
+                 {
+                   "name": "lt_time_millis",
+                   "type": { "type": "int", "logicalType": "time-millis"}
+                 },
+                 {
+                   "name": "lt_time_micros",
+                   "type": { "type": "long", "logicalType": "time-micros"}
+                 },
+                 {
+                   "name": "lt_timestamp_millis",
+                   "type": { "type": "long", "logicalType": "timestamp-millis" }
+                 },
+                 {
+                   "name": "lt_timestamp_micros",
+                   "type": { "type": "long", "logicalType": "timestamp-micros" }
+                 },
+                 {
+                   "name": "lt_local_timestamp_millis",
+                   "type": { "type": "long", "logicalType": "local-timestamp-millis" }
+                 },
+                 {
+                   "name": "lt_local_timestamp_micros",
+                   "type": { "type": "long", "logicalType": "local-timestamp-micros" }
+                 }
+               ]
+            }"""
+    );
+
+    String jsonPayload = """
+        {
+          "lt_date":"1991-08-14",
+          "lt_decimal": 2.1617413862327545E11,
+          "lt_time_millis": "10:15:30.001",
+          "lt_time_micros": "10:15:30.123456",
+          "lt_uuid": "a37b75ca-097c-5d46-6119-f0637922e908",
+          "lt_timestamp_millis": "2007-12-03T10:15:30.123Z",
+          "lt_timestamp_micros": "2007-12-03T10:15:30.123456Z",
+          "lt_local_timestamp_millis": "2017-12-03T10:15:30.123",
+          "lt_local_timestamp_micros": "2017-12-03T10:15:30.123456"
+        }
+        """;
+
+    registryClient.register("test-value", schema);
+
+    byte[] serialized = serde.serializer("test", Serde.Target.VALUE).serialize(jsonPayload);
+
+    var deserializedJson = serde.deserializer("test", Serde.Target.VALUE)
+        .deserialize(null, serialized)
+        .getResult();
+
+    assertJsonsEqual(jsonPayload, deserializedJson);
   }
 
 }

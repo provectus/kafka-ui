@@ -3,13 +3,17 @@ package com.provectus.kafka.ui.serdes.builtin.sr;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.protobuf.Message;
 import com.google.protobuf.util.JsonFormat;
-import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer;
+import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.UUID;
 import lombok.SneakyThrows;
+import org.apache.avro.generic.GenericData;
 
 interface MessageFormatter {
 
@@ -28,16 +32,36 @@ interface MessageFormatter {
 
     AvroMessageFormatter(SchemaRegistryClient client) {
       this.avroDeserializer = new KafkaAvroDeserializer(client);
+      this.avroDeserializer.configure(
+          Map.of(
+              AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "wontbeused",
+              KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, false,
+              KafkaAvroDeserializerConfig.SCHEMA_REFLECTION_CONFIG, false,
+              KafkaAvroDeserializerConfig.AVRO_USE_LOGICAL_TYPE_CONVERTERS_CONFIG, true
+          ),
+          false
+      );
     }
 
     @Override
-    @SneakyThrows
     public String format(String topic, byte[] value) {
-      // deserialized will have type, that depends on schema type (record or primitive),
-      // AvroSchemaUtils.toJson(...) method will take it into account
       Object deserialized = avroDeserializer.deserialize(topic, value);
-      byte[] jsonBytes = AvroSchemaUtils.toJson(deserialized);
-      return new String(jsonBytes);
+      return GenericDataWithFixedUuidJsonConversion.INSTANCE.toString(deserialized);
+    }
+
+    //need to be explicitly overwritten before AVRO-3676 fix released
+    static class GenericDataWithFixedUuidJsonConversion extends GenericData {
+
+      static final GenericData INSTANCE = new GenericDataWithFixedUuidJsonConversion();
+
+      @Override
+      protected void toString(Object datum, StringBuilder buffer, IdentityHashMap<Object, Object> seenObjects) {
+        if (datum instanceof UUID uuid) {
+          super.toString(uuid.toString(), buffer, seenObjects);
+        } else {
+          super.toString(datum, buffer, seenObjects);
+        }
+      }
     }
   }
 
