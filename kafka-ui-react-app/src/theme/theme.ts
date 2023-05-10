@@ -235,12 +235,13 @@ const baseTheme = {
     color: Colors.neutral[90],
   },
   switch: {
-    unchecked: Colors.brand[30],
+    unchecked: Colors.neutral[20],
+    hover: Colors.neutral[40],
     checked: Colors.brand[50],
     circle: Colors.neutral[0],
     disabled: Colors.neutral[10],
     checkedIcon: {
-      backgroundColor: Colors.neutral[70],
+      backgroundColor: Colors.neutral[10],
     },
   },
   pageLoader: {
@@ -366,6 +367,7 @@ export const theme = {
         cursor: Colors.neutral[90],
         variable: Colors.red[50],
         aceString: Colors.green[60],
+        codeMarker: Colors.yellow[20],
       },
     },
   },
@@ -531,6 +533,12 @@ export const theme = {
         normal: Colors.neutral[90],
         hover: Colors.neutral[50],
         active: Colors.neutral[90],
+      },
+    },
+    colored: {
+      color: {
+        attention: Colors.red[50],
+        warning: Colors.yellow[20],
       },
     },
     expander: {
@@ -761,6 +769,7 @@ export const darkTheme: ThemeType = {
         cursor: Colors.neutral[0],
         variable: Colors.red[50],
         aceString: Colors.green[60],
+        codeMarker: Colors.yellow[20],
       },
     },
   },
@@ -926,6 +935,12 @@ export const darkTheme: ThemeType = {
         normal: Colors.neutral[0],
         hover: Colors.neutral[0],
         active: Colors.neutral[0],
+      },
+    },
+    colored: {
+      color: {
+        attention: Colors.red[50],
+        warning: Colors.yellow[20],
       },
     },
     expander: {
