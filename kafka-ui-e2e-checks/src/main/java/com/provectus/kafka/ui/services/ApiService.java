@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.services;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.provectus.kafka.ui.utilities.FileUtils.fileToString;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.api.ApiClient;
 import com.provectus.kafka.ui.api.api.KafkaConnectApi;
@@ -24,19 +25,36 @@ import com.provectus.kafka.ui.pages.ksqldb.models.Stream;
 import com.provectus.kafka.ui.pages.ksqldb.models.Table;
 import com.provectus.kafka.ui.settings.BaseSource;
 import io.qameta.allure.Step;
-import java.util.HashMap;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
 
 @Slf4j
 public class ApiService extends BaseSource {
 
-  private final ApiClient apiClient = new ApiClient().setBasePath(BASE_API_URL);
+  private final ApiClient apiClient;
+
+  {
+    var httpClient = HttpClient
+        .create(ConnectionProvider.builder("custom")
+            .maxIdleTime(Duration.ofSeconds(5))
+            .build());
+
+    var webClient = ApiClient
+        .buildWebClientBuilder()
+        .clientConnector(new ReactorClientHttpConnector(httpClient))
+        .build();
+
+    apiClient = new ApiClient(webClient)
+        .setBasePath(BASE_API_URL);
+  }
 
   @SneakyThrows
   private TopicsApi topicApi() {
@@ -154,7 +172,8 @@ public class ApiService extends BaseSource {
   private void createConnector(String clusterName, String connectName, Connector connector) {
     NewConnector connectorProperties = new NewConnector();
     connectorProperties.setName(connector.getName());
-    Map<String, Object> configMap = new ObjectMapper().readValue(connector.getConfig(), HashMap.class);
+    Map<String, Object> configMap = new ObjectMapper().readValue(connector.getConfig(), new TypeReference<>() {
+    });
     connectorProperties.setConfig(configMap);
     try {
       connectorApi().deleteConnector(clusterName, connectName, connector.getName()).block();
@@ -191,7 +210,7 @@ public class ApiService extends BaseSource {
     try {
       messageApi().sendTopicMessages(clusterName, topic.getName(), createMessage).block();
     } catch (WebClientResponseException ex) {
-      ex.getRawStatusCode();
+      log.error("Error!!1 [{}]", ex.getStatusCode());
     }
   }
 
