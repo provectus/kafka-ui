@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public class BrokersConfigTab extends BasePage {
 
   protected List<SelenideElement> editBtn = $$x("//button[@aria-label='editAction']");
-  protected SelenideElement searchByKeyField = $x("//input[@placeholder='Search by Key']");
+  protected SelenideElement searchByKeyField = $x("//input[@placeholder='Search by Key or Value']");
 
   @Step
   public BrokersConfigTab waitUntilScreenReady() {
