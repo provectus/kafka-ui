@@ -6,7 +6,7 @@
 
 ### Role-based access control
 
-[rbac-role-based-access-control.md](../configuration/rbac-role-based-access-control.md "mention")
+[rbac-role-based-access-control](../configuration/rbac-role-based-access-control/ "mention")
 
 ### OAuth 2
 
