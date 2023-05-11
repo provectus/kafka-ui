@@ -32,8 +32,6 @@ public class AccessController implements AuthorizationApi {
   private final AccessControlService accessControlService;
 
   public Mono<ResponseEntity<AuthenticationInfoDTO>> getUserAuthInfo(ServerWebExchange exchange) {
-    AuthenticationInfoDTO dto = new AuthenticationInfoDTO(accessControlService.isRbacEnabled());
-
     Mono<List<UserPermissionDTO>> permissions = accessControlService.getUser()
         .map(user -> accessControlService.getRoles()
             .stream()
@@ -51,10 +49,11 @@ public class AccessController implements AuthorizationApi {
     return userName
         .zipWith(permissions)
         .map(data -> {
+          var dto = new AuthenticationInfoDTO(accessControlService.isRbacEnabled());
           dto.setUserInfo(new UserInfoDTO(data.getT1(), data.getT2()));
           return dto;
         })
-        .switchIfEmpty(Mono.just(dto))
+        .switchIfEmpty(Mono.just(new AuthenticationInfoDTO(accessControlService.isRbacEnabled())))
         .map(ResponseEntity::ok);
   }
 
