@@ -73,8 +73,7 @@ public final class OAuthPropertiesConverter {
   }
 
   private static boolean isGoogle(OAuth2Provider provider) {
-    return provider.getCustomParams() != null
-        && GOOGLE.equalsIgnoreCase(provider.getCustomParams().get(TYPE));
+    return GOOGLE.equalsIgnoreCase(provider.getCustomParams().get(TYPE));
   }
 }
 

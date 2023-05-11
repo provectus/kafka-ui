@@ -8,6 +8,7 @@ import { formatTimestamp } from 'lib/dateTimeHelpers';
 import { JSONPath } from 'jsonpath-plus';
 import Ellipsis from 'components/common/Ellipsis/Ellipsis';
 import WarningRedIcon from 'components/common/Icons/WarningRedIcon';
+import Tooltip from 'components/common/Tooltip/Tooltip';
 
 import MessageContent from './MessageContent/MessageContent';
 import * as S from './MessageContent/MessageContent.styled';
@@ -29,8 +30,10 @@ const Message: React.FC<Props> = ({
     timestampType,
     offset,
     key,
+    keySize,
     partition,
     content,
+    valueSize,
     headers,
     valueSerde,
     keySerde,
@@ -108,14 +111,26 @@ const Message: React.FC<Props> = ({
         </td>
         <S.DataCell title={key}>
           <Ellipsis text={renderFilteredJson(key, keyFilters)}>
-            {keySerde === 'Fallback' && <WarningRedIcon />}
+            {keySerde === 'Fallback' && (
+              <Tooltip
+                value={<WarningRedIcon />}
+                content="Fallback serde was used"
+                placement="left"
+              />
+            )}
           </Ellipsis>
         </S.DataCell>
         <S.DataCell title={content}>
           <S.Metadata>
             <S.MetadataValue>
               <Ellipsis text={renderFilteredJson(content, contentFilters)}>
-                {valueSerde === 'Fallback' && <WarningRedIcon />}
+                {valueSerde === 'Fallback' && (
+                  <Tooltip
+                    value={<WarningRedIcon />}
+                    content="Fallback serde was used"
+                    placement="left"
+                  />
+                )}
               </Ellipsis>
             </S.MetadataValue>
           </S.Metadata>
@@ -138,6 +153,10 @@ const Message: React.FC<Props> = ({
           headers={headers}
           timestamp={timestamp}
           timestampType={timestampType}
+          keySize={keySize}
+          contentSize={valueSize}
+          keySerde={keySerde}
+          valueSerde={valueSerde}
         />
       )}
     </>

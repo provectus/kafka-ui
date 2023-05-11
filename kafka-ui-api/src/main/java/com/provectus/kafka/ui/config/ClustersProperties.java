@@ -58,6 +58,8 @@ public class ClustersProperties {
     Integer pollTimeoutMs;
     Integer partitionPollTimeout;
     Integer noDataEmptyPolls;
+    Integer maxPageSize;
+    Integer defaultPageSize;
   }
 
   @Data
@@ -129,8 +131,9 @@ public class ClustersProperties {
   @Data
   public static class Masking {
     Type type;
-    List<String> fields; //if null or empty list - policy will be applied to all fields
-    List<String> pattern; //used when type=MASK
+    List<String> fields;
+    String fieldsNamePattern;
+    List<String> maskingCharsReplacement; //used when type=MASK
     String replacement; //used when type=REPLACE
     String topicKeysPattern;
     String topicValuesPattern;

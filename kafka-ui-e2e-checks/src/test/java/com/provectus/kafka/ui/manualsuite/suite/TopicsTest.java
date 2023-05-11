@@ -92,4 +92,28 @@ public class TopicsTest extends BaseManualTest {
   @Test
   public void testCaseN() {
   }
+
+  @Automation(state = NOT_AUTOMATED)
+  @QaseId(337)
+  @Test
+  public void testCaseO() {
+  }
+
+  @Automation(state = NOT_AUTOMATED)
+  @QaseId(339)
+  @Test
+  public void testCaseP() {
+  }
+
+  @Automation(state = NOT_AUTOMATED)
+  @QaseId(341)
+  @Test
+  public void testCaseQ() {
+  }
+
+  @Automation(state = NOT_AUTOMATED)
+  @QaseId(342)
+  @Test
+  public void testCaseR() {
+  }
 }

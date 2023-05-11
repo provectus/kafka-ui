@@ -27,6 +27,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.http.codec.multipart.Part;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
@@ -92,16 +93,19 @@ public class ApplicationConfigController implements ApplicationConfigApi {
   }
 
   @Override
-  public Mono<ResponseEntity<UploadedFileInfoDTO>> uploadConfigRelatedFile(FilePart file, ServerWebExchange exchange) {
+  public Mono<ResponseEntity<UploadedFileInfoDTO>> uploadConfigRelatedFile(Flux<Part> fileFlux,
+                                                                           ServerWebExchange exchange) {
     return accessControlService
         .validateAccess(
             AccessContext.builder()
                 .applicationConfigActions(EDIT)
                 .build()
         )
-        .then(dynamicConfigOperations.uploadConfigRelatedFile(file))
-        .map(path -> new UploadedFileInfoDTO().location(path.toString()))
-        .map(ResponseEntity::ok);
+        .then(fileFlux.single())
+        .flatMap(file ->
+            dynamicConfigOperations.uploadConfigRelatedFile((FilePart) file)
+                .map(path -> new UploadedFileInfoDTO().location(path.toString()))
+                .map(ResponseEntity::ok));
   }
 
   @Override
