@@ -39,6 +39,10 @@ export const StyledSlider = styled.span<Props>`
   transition: 0.4s;
   border-radius: 20px;
 
+  :hover {
+    background-color: ${({ theme }) => theme.switch.hover};
+  }
+
   &::before {
     position: absolute;
     content: '';

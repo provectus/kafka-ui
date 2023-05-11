@@ -20,6 +20,8 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
           headers={{ header: 'test' }}
           timestamp={new Date(0)}
           timestampType={TopicMessageTimestampTypeEnum.CREATE_TIME}
+          keySerde="SchemaRegistry"
+          valueSerde="Avro"
           {...props}
         />
       </tbody>
@@ -27,42 +29,20 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
   );
 };
 
-const proto =
-  'syntax = "proto3";\npackage com.provectus;\n\nmessage TestProtoRecord {\n  string f1 = 1;\n  int32 f2 = 2;\n}\n';
-
 global.TextEncoder = TextEncoder;
 
-const searchParamsContentAVRO = new URLSearchParams({
-  keySerde: 'SchemaRegistry',
-  valueSerde: 'AVRO',
-  limit: '100',
-});
-
-const searchParamsContentJSON = new URLSearchParams({
-  keySerde: 'SchemaRegistry',
-  valueSerde: 'JSON',
-  limit: '100',
-});
-
-const searchParamsContentPROTOBUF = new URLSearchParams({
-  keySerde: 'SchemaRegistry',
-  valueSerde: 'PROTOBUF',
-  limit: '100',
-});
 describe('MessageContent screen', () => {
   beforeEach(() => {
-    render(setupWrapper(), {
-      initialEntries: [`/messages?${searchParamsContentAVRO}`],
-    });
+    render(setupWrapper());
   });
 
-  describe('renders', () => {
-    it('key format in document', () => {
+  describe('Checking keySerde and valueSerde', () => {
+    it('keySerde in document', () => {
       expect(screen.getByText('SchemaRegistry')).toBeInTheDocument();
     });
 
-    it('content format in document', () => {
-      expect(screen.getByText('AVRO')).toBeInTheDocument();
+    it('valueSerde in document', () => {
+      expect(screen.getByText('Avro')).toBeInTheDocument();
     });
   });
 
@@ -96,44 +76,5 @@ describe('MessageContent screen', () => {
         theme.secondaryTab.backgroundColor.active
       );
     });
-  });
-});
-
-describe('checking content type depend on message type', () => {
-  it('renders component with message having JSON type', () => {
-    render(
-      setupWrapper({
-        messageContent: '{"data": "test"}',
-      }),
-      { initialEntries: [`/messages?${searchParamsContentJSON}`] }
-    );
-    expect(screen.getByText('JSON')).toBeInTheDocument();
-  });
-  it('renders component with message having AVRO type', () => {
-    render(
-      setupWrapper({
-        messageContent: '{"data": "test"}',
-      }),
-      { initialEntries: [`/messages?${searchParamsContentAVRO}`] }
-    );
-    expect(screen.getByText('AVRO')).toBeInTheDocument();
-  });
-  it('renders component with message having PROTOBUF type', () => {
-    render(
-      setupWrapper({
-        messageContent: proto,
-      }),
-      { initialEntries: [`/messages?${searchParamsContentPROTOBUF}`] }
-    );
-    expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
-  });
-  it('renders component with message having no type which is equal to having PROTOBUF type', () => {
-    render(
-      setupWrapper({
-        messageContent: '',
-      }),
-      { initialEntries: [`/messages?${searchParamsContentPROTOBUF}`] }
-    );
-    expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
   });
 });

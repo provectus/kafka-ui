@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.model;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -20,8 +20,6 @@ public class PartitionDistributionStats {
 
   // avg skew will show unuseful results on low number of partitions
   private static final int MIN_PARTITIONS_FOR_SKEW_CALCULATION = 50;
-
-  private static final MathContext ROUNDING_MATH_CTX = new MathContext(3);
 
   private final Map<Node, Integer> partitionLeaders;
   private final Map<Node, Integer> partitionsCount;
@@ -88,6 +86,7 @@ public class PartitionDistributionStats {
       return null;
     }
     value = value == null ? 0 : value;
-    return new BigDecimal((value - avgValue) / avgValue * 100.0).round(ROUNDING_MATH_CTX);
+    return new BigDecimal((value - avgValue) / avgValue * 100.0)
+        .setScale(1, RoundingMode.HALF_UP);
   }
 }

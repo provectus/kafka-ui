@@ -4,6 +4,7 @@ import { RouteParamsClusterTopic } from 'lib/paths';
 import { Button } from 'components/common/Button/Button';
 import Editor from 'components/common/Editor/Editor';
 import Select, { SelectOption } from 'components/common/Select/Select';
+import Switch from 'components/common/Switch/Switch';
 import useAppParams from 'lib/hooks/useAppParams';
 import { showAlert } from 'lib/errorHandling';
 import { useSendMessage, useTopicDetails } from 'lib/hooks/api/topics';
@@ -26,9 +27,12 @@ interface FormType {
   partition: number;
   keySerde: string;
   valueSerde: string;
+  keepContents: boolean;
 }
 
-const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
+const SendMessage: React.FC<{ closeSidebar: () => void }> = ({
+  closeSidebar,
+}) => {
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
   const { data: topic } = useTopicDetails({ clusterName, topicName });
   const { data: serdes = {} } = useSerdes({
@@ -47,11 +51,13 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
     handleSubmit,
     formState: { isSubmitting },
     control,
+    setValue,
   } = useForm<FormType>({
     mode: 'onChange',
     defaultValues: {
       ...defaultValues,
       partition: Number(partitionOptions[0].value),
+      keepContents: false,
     },
   });
 
@@ -62,6 +68,7 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
     content,
     headers,
     partition,
+    keepContents,
   }: FormType) => {
     let errors: string[] = [];
 
@@ -110,7 +117,11 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
         keySerde,
         valueSerde,
       });
-      onSubmit();
+      if (!keepContents) {
+        setValue('key', '');
+        setValue('content', '');
+        closeSidebar();
+      }
     } catch (e) {
       // do nothing
     }
@@ -120,7 +131,7 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
     <S.Wrapper>
       <form onSubmit={handleSubmit(submit)}>
         <S.Columns>
-          <S.Column>
+          <S.FlexItem>
             <InputLabel>Partition</InputLabel>
             <Controller
               control={control}
@@ -137,47 +148,58 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
                 />
               )}
             />
-          </S.Column>
-          <S.Column>
-            <InputLabel>Key Serde</InputLabel>
+          </S.FlexItem>
+          <S.Flex>
+            <S.FlexItem>
+              <InputLabel>Key Serde</InputLabel>
+              <Controller
+                control={control}
+                name="keySerde"
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    id="selectKeySerdeOptions"
+                    aria-labelledby="selectKeySerdeOptions"
+                    name={name}
+                    onChange={onChange}
+                    minWidth="100%"
+                    options={getSerdeOptions(serdes.key || [])}
+                    value={value}
+                  />
+                )}
+              />
+            </S.FlexItem>
+            <S.FlexItem>
+              <InputLabel>Value Serde</InputLabel>
+              <Controller
+                control={control}
+                name="valueSerde"
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    id="selectValueSerdeOptions"
+                    aria-labelledby="selectValueSerdeOptions"
+                    name={name}
+                    onChange={onChange}
+                    minWidth="100%"
+                    options={getSerdeOptions(serdes.value || [])}
+                    value={value}
+                  />
+                )}
+              />
+            </S.FlexItem>
+          </S.Flex>
+          <div>
             <Controller
               control={control}
-              name="keySerde"
+              name="keepContents"
               render={({ field: { name, onChange, value } }) => (
-                <Select
-                  id="selectKeySerdeOptions"
-                  aria-labelledby="selectKeySerdeOptions"
-                  name={name}
-                  onChange={onChange}
-                  minWidth="100%"
-                  options={getSerdeOptions(serdes.key || [])}
-                  value={value}
-                />
+                <Switch name={name} onChange={onChange} checked={value} />
               )}
             />
-          </S.Column>
-          <S.Column>
-            <InputLabel>Value Serde</InputLabel>
-            <Controller
-              control={control}
-              name="valueSerde"
-              render={({ field: { name, onChange, value } }) => (
-                <Select
-                  id="selectValueSerdeOptions"
-                  aria-labelledby="selectValueSerdeOptions"
-                  name={name}
-                  onChange={onChange}
-                  minWidth="100%"
-                  options={getSerdeOptions(serdes.value || [])}
-                  value={value}
-                />
-              )}
-            />
-          </S.Column>
+            <InputLabel>Keep contents</InputLabel>
+          </div>
         </S.Columns>
-
         <S.Columns>
-          <S.Column>
+          <div>
             <InputLabel>Key</InputLabel>
             <Controller
               control={control}
@@ -188,11 +210,12 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
                   name={name}
                   onChange={onChange}
                   value={value}
+                  height="40px"
                 />
               )}
             />
-          </S.Column>
-          <S.Column>
+          </div>
+          <div>
             <InputLabel>Value</InputLabel>
             <Controller
               control={control}
@@ -203,13 +226,14 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
                   name={name}
                   onChange={onChange}
                   value={value}
+                  height="280px"
                 />
               )}
             />
-          </S.Column>
+          </div>
         </S.Columns>
         <S.Columns>
-          <S.Column>
+          <div>
             <InputLabel>Headers</InputLabel>
             <Controller
               control={control}
@@ -220,11 +244,11 @@ const SendMessage: React.FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
                   defaultValue="{}"
                   name={name}
                   onChange={onChange}
-                  height="200px"
+                  height="40px"
                 />
               )}
             />
-          </S.Column>
+          </div>
         </S.Columns>
         <Button
           buttonSize="M"
