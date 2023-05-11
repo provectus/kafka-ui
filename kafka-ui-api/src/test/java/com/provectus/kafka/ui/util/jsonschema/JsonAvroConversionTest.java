@@ -510,10 +510,10 @@ class JsonAvroConversionTest {
 
       GenericData.Record inputRecord = new GenericData.Record(schema);
       inputRecord.put("lt_date", LocalDate.of(1991, 8, 14));
-      inputRecord.put("lt_decimal", new BigDecimal("2.1617413862327545E11"));
+      inputRecord.put("lt_uuid", UUID.fromString("a37b75ca-097c-5d46-6119-f0637922e908"));
+      inputRecord.put("lt_decimal", new BigDecimal("2.16"));
       inputRecord.put("lt_time_millis", LocalTime.parse("10:15:30.001"));
       inputRecord.put("lt_time_micros", LocalTime.parse("10:15:30.123456"));
-      inputRecord.put("lt_uuid", UUID.fromString("a37b75ca-097c-5d46-6119-f0637922e908"));
       inputRecord.put("lt_timestamp_millis", Instant.parse("2007-12-03T10:15:30.123Z"));
       inputRecord.put("lt_timestamp_micros", Instant.parse("2007-12-13T10:15:30.123456Z"));
       inputRecord.put("lt_local_timestamp_millis", LocalDateTime.parse("2017-12-03T10:15:30.123"));
@@ -522,10 +522,10 @@ class JsonAvroConversionTest {
       String expectedJson = """
           {
             "lt_date":"1991-08-14",
-            "lt_decimal": 2.1617413862327545E11,
+            "lt_uuid": "a37b75ca-097c-5d46-6119-f0637922e908",
+            "lt_decimal": 2.16,
             "lt_time_millis": "10:15:30.001",
             "lt_time_micros": "10:15:30.123456",
-            "lt_uuid": "a37b75ca-097c-5d46-6119-f0637922e908",
             "lt_timestamp_millis": "2007-12-03T10:15:30.123Z",
             "lt_timestamp_micros": "2007-12-13T10:15:30.123456Z",
             "lt_local_timestamp_millis": "2017-12-03T10:15:30.123",
@@ -579,10 +579,10 @@ class JsonAvroConversionTest {
   }
 
   @SneakyThrows
-  private void assertJsonsEqual(String expected, JsonNode actual) {
+  private void assertJsonsEqual(String expectedJson, JsonNode actual) {
     var mapper = new JsonMapper();
     assertThat(actual.toPrettyString())
-        .isEqualTo(mapper.readTree(expected).toPrettyString());
+        .isEqualTo(mapper.readTree(expectedJson).toPrettyString());
   }
 
 }

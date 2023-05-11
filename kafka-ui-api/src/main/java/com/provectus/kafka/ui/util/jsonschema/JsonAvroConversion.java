@@ -154,7 +154,8 @@ public class JsonAvroConversion {
           yield processLogicalType(node, avroSchema);
         }
         assertJsonType(node, JsonNodeType.STRING);
-        yield ByteBuffer.wrap(node.textValue().getBytes(StandardCharsets.UTF_8));
+        // logic copied from JsonDecoder::readBytes
+        yield ByteBuffer.wrap(node.textValue().getBytes(StandardCharsets.ISO_8859_1));
       }
       case FIXED -> {
         if (isLogicalType(avroSchema)) {
@@ -237,14 +238,14 @@ public class JsonAvroConversion {
         }
         //TODO: check with tests
         ByteBuffer bytes = (ByteBuffer) obj;
-        yield new TextNode(new String(bytes.array()));
+        yield new TextNode(new String(bytes.array(), StandardCharsets.ISO_8859_1));
       }
       case FIXED -> {
         if (isLogicalType(avroSchema)) {
           yield processLogicalType(obj, avroSchema);
         }
-        var fixed = (GenericData.Fixed) obj; //TODO: encoding
-        yield new TextNode(new String(fixed.bytes()));
+        var fixed = (GenericData.Fixed) obj;
+        yield new TextNode(new String(fixed.bytes(), StandardCharsets.ISO_8859_1));
       }
     };
   }
