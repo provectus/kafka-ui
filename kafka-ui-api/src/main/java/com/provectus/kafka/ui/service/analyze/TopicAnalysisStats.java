@@ -43,8 +43,7 @@ class TopicAnalysisStats {
     Long max;
     final UpdateDoublesSketch sizeSketch = DoublesSketch.builder().build();
 
-    void apply(byte[] bytes) {
-      int len = bytes.length;
+    void apply(int len) {
       sum += len;
       min = minNullable(min, len);
       max = maxNullable(max, len);
@@ -98,7 +97,7 @@ class TopicAnalysisStats {
 
     if (rec.key() != null) {
       byte[] keyBytes = rec.key().get();
-      keysSize.apply(keyBytes);
+      keysSize.apply(rec.serializedKeySize());
       uniqKeys.update(keyBytes);
     } else {
       nullKeys++;
@@ -106,7 +105,7 @@ class TopicAnalysisStats {
 
     if (rec.value() != null) {
       byte[] valueBytes = rec.value().get();
-      valuesSize.apply(valueBytes);
+      valuesSize.apply(rec.serializedValueSize());
       uniqValues.update(valueBytes);
     } else {
       nullValues++;
