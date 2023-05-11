@@ -211,7 +211,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
         .connect(connectName)
-        .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
+        .connectActions(ConnectAction.VIEW, ConnectAction.RESTART)
         .build());
 
     return validateAccess.then(
