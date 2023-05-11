@@ -49,7 +49,7 @@ const CustomParamField: React.FC<Props> = ({
       label: option,
       disabled:
         (config &&
-          config[option].source !== ConfigSource.DYNAMIC_TOPIC_CONFIG) ||
+          config[option]?.source !== ConfigSource.DYNAMIC_TOPIC_CONFIG) ||
         existingFields.includes(option),
     }));
 
