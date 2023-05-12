@@ -75,4 +75,18 @@ public class SmokeBacklog extends BaseManualTest {
   @Test
   public void testCaseI() {
   }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = BROKERS_SUITE_ID)
+  @QaseId(348)
+  @Test
+  public void testCaseJ() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = BROKERS_SUITE_ID)
+  @QaseId(350)
+  @Test
+  public void testCaseK() {
+  }
 }
