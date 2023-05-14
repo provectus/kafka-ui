@@ -38,7 +38,7 @@ public class TopicDetails extends BasePage {
   protected SelenideElement savedFiltersLink = $x("//div[text()='Saved Filters']");
   protected SelenideElement addFilterCodeModalTitle = $x("//label[text()='Filter code']");
   protected SelenideElement addFilterCodeEditor = $x("//div[@id='ace-editor']");
-  protected SelenideElement addFilterCodeEditorTextarea = $x("//div[@id='ace-editor']//textarea");
+  protected SelenideElement addFilterCodeTextarea = $x("//div[@id='ace-editor']//textarea");
   protected SelenideElement saveThisFilterCheckBoxAddFilterMdl = $x("//input[@name='saveFilter']");
   protected SelenideElement displayNameInputAddFilterMdl = $x("//input[@placeholder='Enter Name']");
   protected SelenideElement cancelBtnAddFilterMdl = $x("//button[text()='Cancel']");
@@ -58,7 +58,6 @@ public class TopicDetails extends BasePage {
   protected SelenideElement previousMonthButton = $x("//button[@aria-label='Previous Month']");
   protected SelenideElement nextMonthButton = $x("//button[@aria-label='Next Month']");
   protected SelenideElement calendarTimeFld = $x("//input[@placeholder='Time']");
-  protected SelenideElement editActiveFilterBtn = $x("//div[@data-testid='editActiveSmartFilterBtn']");
   protected String detailsTabLtr = "//nav//a[contains(text(),'%s')]";
   protected String dayCellLtr = "//div[@role='option'][contains(text(),'%d')]";
   protected String seekFilterDdlLocator = "//ul[@id='selectSeekType']/ul/li[text()='%s']";
@@ -66,6 +65,7 @@ public class TopicDetails extends BasePage {
   protected String consumerIdLocator = "//a[@title='%s']";
   protected String topicHeaderLocator = "//h1[contains(text(),'%s')]";
   protected String activeFilterNameLocator = "//div[@data-testid='activeSmartFilter']/div[1][contains(text(),'%s')]";
+  protected String editActiveFilterBtnLocator = "//div[text()='%s']/../div[@data-testid='editActiveSmartFilterBtn']";
   protected String settingsGridValueLocator = "//tbody/tr/td/span[text()='%s']//ancestor::tr/td[2]/span";
 
   @Step
@@ -188,8 +188,9 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails clickEditActiveFiltersBtn() {
-    editActiveFilterBtn.shouldBe(Condition.enabled).click();
+  public TopicDetails clickEditActiveFilterBtn(String filterName) {
+    $x(String.format(editActiveFilterBtnLocator, filterName))
+        .shouldBe(Condition.enabled).click();
     return this;
   }
 
@@ -232,25 +233,25 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public TopicDetails setFilterCodeFieldAddFilterMdl(String filterCode) {
-    addFilterCodeEditorTextarea.shouldBe(Condition.enabled).setValue(filterCode);
+  public TopicDetails setFilterCodeFldAddFilterMdl(String filterCode) {
+    addFilterCodeTextarea.shouldBe(Condition.enabled).setValue(filterCode);
     return this;
   }
 
   @Step
-  public boolean doesFilterCodeFieldMatchValue(String value) {
-    // the code is not reflected in "addFilterCodeEditorTextarea" until "addFilterCodeEditor" is clicked
-    // otherwise "addFilterCodeEditorTextarea" is empty string even though the code is displayed in the editor
-    addFilterCodeEditor.click();
-    String codeValue = addFilterCodeEditorTextarea.getValue();
-    // the value retrieved from "addFilterCodeEditorTextarea" is appended with 2x new line characters e.g. "code\n\n"
-    String codeValueWithoutNewLines = codeValue.substring(0, codeValue.length() - 2);
-    return codeValueWithoutNewLines.equals(value);
+  public String getFilterCodeValue() {
+    addFilterCodeEditor.shouldBe(Condition.enabled).click();
+    String value = addFilterCodeTextarea.getValue();
+    if (value == null) {
+      return null;
+    } else {
+      return value.substring(0, value.length() - 2);
+    }
   }
 
   @Step
-  public boolean doesFilterNameFieldMatchValue(String value) {
-    return displayNameInputAddFilterMdl.shouldBe(Condition.enabled).getValue().equals(value);
+  public String getFilterNameValue() {
+    return displayNameInputAddFilterMdl.shouldBe(Condition.enabled).getValue();
   }
 
   @Step
@@ -308,13 +309,13 @@ public class TopicDetails extends BasePage {
   }
 
   @Step
-  public boolean isActiveFilterVisible(String activeFilterName) {
-    return isVisible($x(String.format(activeFilterNameLocator, activeFilterName)));
+  public boolean isActiveFilterVisible(String filterName) {
+    return isVisible($x(String.format(activeFilterNameLocator, filterName)));
   }
 
   @Step
-  public boolean doesSearchFieldContainValue(String value) {
-    return searchFld.shouldBe(Condition.visible).getValue().equals(value);
+  public String getSearchFieldValue() {
+    return searchFld.shouldBe(Condition.visible).getValue();
   }
 
   public List<SelenideElement> getAllAddFilterModalVisibleElements() {
