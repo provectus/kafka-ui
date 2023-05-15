@@ -17,6 +17,7 @@ import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.model.rbac.permission.ConsumerGroupAction;
 import com.provectus.kafka.ui.model.rbac.permission.SchemaAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
+import com.provectus.kafka.ui.service.audit.AuditService;
 import com.provectus.kafka.ui.service.rbac.extractor.CognitoAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GithubAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GoogleAuthorityExtractor;
@@ -44,12 +45,16 @@ import org.springframework.security.oauth2.client.registration.InMemoryReactiveC
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 @Service
 @RequiredArgsConstructor
 @EnableConfigurationProperties(RoleBasedAccessControlProperties.class)
 @Slf4j
 public class AccessControlService {
+
+  private final AuditService auditService;
 
   @Nullable
   private final InMemoryReactiveClientRegistrationRepository clientRegistrationRepository;
@@ -90,6 +95,59 @@ public class AccessControlService {
         && (clientRegistrationRepository == null || !clientRegistrationRepository.iterator().hasNext())) {
       log.error("Roles are configured but no authentication methods are present. Authentication might fail.");
     }
+  }
+
+  @RequiredArgsConstructor
+  public class OperationContext {
+
+    private final AccessContext accessContext;
+
+    public <T> Mono<T> then(Mono<T> mono) {
+      return validateAccessAndReturnUser(accessContext)
+          .flatMap(t -> {
+            if (t.getT2()) {
+              return mono
+                  .doOnSuccess(r -> auditService.sendAuditRecord(accessContext, t.getT1()))
+                  .doOnError(th -> true, th -> auditService.sendAuditRecord(accessContext, t.getT1(), th));
+            } else {
+              var ex = new AccessDeniedException("Access denied");
+              auditService.sendAuditRecord(accessContext, t.getT1(), ex);
+              return Mono.error(ex);
+            }
+          });
+    }
+
+    public <T> Mono<T> thenReturn(T objToReturn) {
+      return then(Mono.justOrEmpty(objToReturn));
+    }
+  }
+
+  public OperationContext withAccess(AccessContext context) {
+    return new OperationContext(context);
+  }
+
+  // [user, access granted flag]
+  private Mono<Tuple2<AuthenticatedUser, Boolean>> validateAccessAndReturnUser(AccessContext context) {
+    if (!rbacEnabled) {
+      return Mono.just(Tuples.of(new AuthenticatedUser("Unknown", Set.of()), true));
+    }
+
+    return getUser()
+        .map(user -> {
+          boolean accessGranted =
+              isApplicationConfigAccessible(context, user)
+                  && isClusterAccessible(context, user)
+                  && isClusterConfigAccessible(context, user)
+                  && isTopicAccessible(context, user)
+                  && isConsumerGroupAccessible(context, user)
+                  && isConnectAccessible(context, user)
+                  && isConnectorAccessible(context, user) // TODO connector selectors
+                  && isSchemaAccessible(context, user)
+                  && isKsqlAccessible(context, user)
+                  && isAclAccessible(context, user);
+
+          return Tuples.of(user, accessGranted);
+        });
   }
 
   public Mono<Void> validateAccess(AccessContext context) {

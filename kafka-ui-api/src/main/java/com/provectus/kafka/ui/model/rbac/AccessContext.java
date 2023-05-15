@@ -11,6 +11,7 @@ import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import lombok.Value;
 import org.springframework.util.Assert;
 
@@ -40,6 +41,9 @@ public class AccessContext {
 
   Collection<AclAction> aclActions;
 
+  String operationDescription;
+  Object operationParams;
+
   public static AccessContextBuilder builder() {
     return new AccessContextBuilder();
   }
@@ -59,6 +63,8 @@ public class AccessContext {
     private Collection<SchemaAction> schemaActions = Collections.emptySet();
     private Collection<KsqlAction> ksqlActions = Collections.emptySet();
     private Collection<AclAction> aclActions = Collections.emptySet();
+    String operationDescription;
+    Object operationParams;
 
     private AccessContextBuilder() {
     }
@@ -141,6 +147,21 @@ public class AccessContext {
       return this;
     }
 
+    public AccessContextBuilder operationDescription(String description) {
+      this.operationDescription = operationDescription;
+      return this;
+    }
+
+    public AccessContextBuilder operationParams(Object... operationParams) {
+      this.operationParams = operationParams;
+      return this;
+    }
+
+    public AccessContextBuilder operationParams(Map<String, Object> paramsMap) {
+      this.operationParams = paramsMap;
+      return this;
+    }
+
     public AccessContext build() {
       return new AccessContext(
           applicationConfigActions,
@@ -150,7 +171,8 @@ public class AccessContext {
           connect, connectActions,
           connector,
           schema, schemaActions,
-          ksqlActions, aclActions);
+          ksqlActions, aclActions,
+          operationDescription, operationParams);
     }
   }
 }

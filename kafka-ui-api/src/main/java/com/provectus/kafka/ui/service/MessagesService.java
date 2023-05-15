@@ -127,13 +127,7 @@ public class MessagesService {
             msg.getValueSerde().get()
         );
 
-    Properties properties = new Properties();
-    SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
-    properties.putAll(cluster.getProperties());
-    properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
-    properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
-    properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
-    try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
+    try (KafkaProducer<byte[], byte[]> producer = createProducer(cluster, Map.of())) {
       ProducerRecord<byte[], byte[]> producerRecord = producerRecordCreator.create(
           topicDescription.name(),
           msg.getPartition(),
@@ -153,6 +147,17 @@ public class MessagesService {
     } catch (Throwable e) {
       return Mono.error(e);
     }
+  }
+
+  public KafkaProducer<byte[], byte[]> createProducer(KafkaCluster cluster, Map<String, Object> additionalProps) {
+    Properties properties = new Properties();
+    SslPropertiesUtil.addKafkaSslProperties(cluster.getOriginalProperties().getSsl(), properties);
+    properties.putAll(cluster.getProperties());
+    properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
+    properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
+    properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
+    properties.putAll(additionalProps);
+    return new KafkaProducer<>(properties);
   }
 
   public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic,
