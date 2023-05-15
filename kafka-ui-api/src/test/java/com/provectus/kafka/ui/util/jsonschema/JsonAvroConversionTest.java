@@ -12,8 +12,11 @@ import com.fasterxml.jackson.databind.node.FloatNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.google.common.primitives.Longs;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -90,6 +93,14 @@ class JsonAvroConversionTest {
                       "name": "Suit",
                       "symbols" : ["SPADES", "HEARTS", "DIAMONDS", "CLUBS"]
                      }
+                   },
+                   {
+                     "name" : "f_fixed",
+                     "type" : { "type" : "fixed" ,"size" : 8, "name": "long_encoded" }
+                   },
+                   {
+                     "name" : "f_bytes",
+                     "type": "bytes"
                    }
                  ]
               }"""
@@ -103,7 +114,9 @@ class JsonAvroConversionTest {
             "f_boolean": true,
             "f_float": 123.1,
             "f_double": 123456.123456,
-            "f_enum": "SPADES"
+            "f_enum": "SPADES",
+            "f_fixed": "\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0004Ò",
+            "f_bytes": "\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\t)"
           }
           """;
 
@@ -124,6 +137,8 @@ class JsonAvroConversionTest {
                   "SPADES"
               )
           );
+      assertThat(((GenericData.Fixed) record.get("f_fixed")).bytes()).isEqualTo(Longs.toByteArray(1234L));
+      assertThat(((ByteBuffer) record.get("f_bytes")).array()).isEqualTo(Longs.toByteArray(2345L));
     }
 
     @Test
@@ -389,6 +404,9 @@ class JsonAvroConversionTest {
 
       assertThat(convertAvroToJson(true, createSchema("\"boolean\"")))
           .isEqualTo(BooleanNode.valueOf(true));
+
+      assertThat(convertAvroToJson(ByteBuffer.wrap(Longs.toByteArray(123L)), createSchema("\"bytes\"")))
+          .isEqualTo(new TextNode(new String(Longs.toByteArray(123L), StandardCharsets.ISO_8859_1)));
     }
 
     @SneakyThrows
@@ -431,10 +449,21 @@ class JsonAvroConversionTest {
                       "name": "Suit",
                       "symbols" : ["SPADES", "HEARTS", "DIAMONDS", "CLUBS"]
                      }
+                   },
+                   {
+                     "name" : "f_fixed",
+                     "type" : { "type" : "fixed" ,"size" : 8, "name": "long_encoded" }
+                   },
+                   {
+                     "name" : "f_bytes",
+                     "type": "bytes"
                    }
                  ]
               }"""
       );
+
+      byte[] fixedFieldValue = Longs.toByteArray(1234L);
+      byte[] bytesFieldValue = Longs.toByteArray(2345L);
 
       GenericData.Record inputRecord = new GenericData.Record(schema);
       inputRecord.put("f_int", 123);
@@ -444,6 +473,8 @@ class JsonAvroConversionTest {
       inputRecord.put("f_float", 123.1f);
       inputRecord.put("f_double", 123456.123456);
       inputRecord.put("f_enum", new GenericData.EnumSymbol(schema.getField("f_enum").schema(), "SPADES"));
+      inputRecord.put("f_fixed", new GenericData.Fixed(schema.getField("f_fixed").schema(), fixedFieldValue));
+      inputRecord.put("f_bytes", ByteBuffer.wrap(bytesFieldValue));
 
       String expectedJson = """
           {
@@ -453,7 +484,9 @@ class JsonAvroConversionTest {
             "f_boolean": true,
             "f_float": 123.1,
             "f_double": 123456.123456,
-            "f_enum": "SPADES"
+            "f_enum": "SPADES",
+            "f_fixed": "\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0004Ò",
+            "f_bytes": "\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\t)"
           }
           """;
 

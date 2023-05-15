@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.Lists;
-import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.exception.JsonToAvroConversionException;
 import io.confluent.kafka.serializers.AvroData;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -37,14 +37,14 @@ import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
-import org.apache.avro.util.Utf8;
 
-// converts json into Object that is expected input for KafkaAvroSerializer
-// (with AVRO_USE_LOGICAL_TYPE_CONVERTERS flat enabled!)
+// json <-> avro
 public class JsonAvroConversion {
 
   private static final JsonMapper MAPPER = new JsonMapper();
 
+  // converts json into Object that is expected input for KafkaAvroSerializer
+  // (with AVRO_USE_LOGICAL_TYPE_CONVERTERS flat enabled!)
   @SneakyThrows
   public static Object convertJsonToAvro(String jsonString, Schema avroSchema) {
     JsonNode rootNode = MAPPER.readTree(jsonString);
@@ -173,6 +173,8 @@ public class JsonAvroConversion {
     };
   }
 
+  // converts output of KafkaAvroDeserializer (with AVRO_USE_LOGICAL_TYPE_CONVERTERS flat enabled!) into json.
+  // Note: conversion should be compatible with AvroJsonSchemaConverter logic!
   public static JsonNode convertAvroToJson(Object obj, Schema avroSchema) {
     if (obj == null) {
       return NullNode.getInstance();
@@ -236,8 +238,8 @@ public class JsonAvroConversion {
         if (isLogicalType(avroSchema)) {
           yield processLogicalType(obj, avroSchema);
         }
-        //TODO: check with tests
         ByteBuffer bytes = (ByteBuffer) obj;
+        //see JsonEncoder::writeByteArray
         yield new TextNode(new String(bytes.array(), StandardCharsets.ISO_8859_1));
       }
       case FIXED -> {
@@ -275,12 +277,6 @@ public class JsonAvroConversion {
 
   private static boolean isLogicalType(Schema schema) {
     return schema.getLogicalType() != null;
-  }
-
-  public static class JsonToAvroConversionException extends ValidationException {
-    public JsonToAvroConversionException(String message) {
-      super(message);
-    }
   }
 
   private static void assertJsonType(JsonNode node, JsonNodeType... allowedTypes) {
