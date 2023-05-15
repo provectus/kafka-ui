@@ -46,10 +46,8 @@ public class CognitoLogoutSuccessHandler implements LogoutSuccessHandler {
         .fragment(null)
         .build();
 
-    Assert.isTrue(
-        provider.getCustomParams() != null && provider.getCustomParams().containsKey("logoutUrl"),
-        "Custom params should contain 'logoutUrl'"
-    );
+    Assert.isTrue(provider.getCustomParams().containsKey("logoutUrl"),
+        "Custom params should contain 'logoutUrl'");
     final var uri = UriComponentsBuilder
         .fromUri(URI.create(provider.getCustomParams().get("logoutUrl")))
         .queryParam("client_id", provider.getClientId())

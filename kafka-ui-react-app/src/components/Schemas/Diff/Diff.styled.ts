@@ -14,9 +14,6 @@ export const DiffWrapper = styled.div`
     background-color: ${({ theme }) => theme.default.backgroundColor};
     color: ${({ theme }) => theme.default.color.normal};
   }
-  .ace_line {
-    background-color: ${({ theme }) => theme.default.backgroundColor};
-  }
   .ace_gutter-cell {
     background-color: ${({ theme }) =>
       theme.ksqlDb.query.editor.cell.backgroundColor};
@@ -39,10 +36,10 @@ export const DiffWrapper = styled.div`
   .ace_string {
     color: ${({ theme }) => theme.ksqlDb.query.editor.aceString};
   }
-  > .codeMarker {
-    background: ${({ theme }) => theme.icons.warningIcon};
+  .codeMarker {
+    background-color: ${({ theme }) => theme.ksqlDb.query.editor.codeMarker};
     position: absolute;
-    z-index: 20;
+    z-index: 2000;
   }
 `;
 

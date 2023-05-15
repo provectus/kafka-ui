@@ -20,6 +20,7 @@ import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.rbac.extractor.CognitoAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GithubAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.GoogleAuthorityExtractor;
+import com.provectus.kafka.ui.service.rbac.extractor.OauthAuthorityExtractor;
 import com.provectus.kafka.ui.service.rbac.extractor.ProviderAuthorityExtractor;
 import jakarta.annotation.PostConstruct;
 import java.util.Collections;
@@ -76,6 +77,7 @@ public class AccessControlService {
               case OAUTH_COGNITO -> new CognitoAuthorityExtractor();
               case OAUTH_GOOGLE -> new GoogleAuthorityExtractor();
               case OAUTH_GITHUB -> new GithubAuthorityExtractor();
+              case OAUTH -> new OauthAuthorityExtractor();
               default -> null;
             })
             .filter(Objects::nonNull)
@@ -106,7 +108,8 @@ public class AccessControlService {
                   && isConnectAccessible(context, user)
                   && isConnectorAccessible(context, user) // TODO connector selectors
                   && isSchemaAccessible(context, user)
-                  && isKsqlAccessible(context, user);
+                  && isKsqlAccessible(context, user)
+                  && isAclAccessible(context, user);
 
           if (!accessGranted) {
             throw new AccessDeniedException("Access denied");
@@ -360,6 +363,23 @@ public class AccessControlService {
         .collect(Collectors.toSet());
 
     return isAccessible(Resource.KSQL, null, user, context, requiredActions);
+  }
+
+  private boolean isAclAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
+    if (context.getAclActions().isEmpty()) {
+      return true;
+    }
+
+    Set<String> requiredActions = context.getAclActions()
+        .stream()
+        .map(a -> a.toString().toUpperCase())
+        .collect(Collectors.toSet());
+
+    return isAccessible(Resource.ACL, null, user, context, requiredActions);
   }
 
   public Set<ProviderAuthorityExtractor> getOauthExtractors() {

@@ -14,13 +14,11 @@ public class LdapProperties {
   private String adminPassword;
   private String userFilterSearchBase;
   private String userFilterSearchFilter;
+  private String groupFilterSearchBase;
 
   @Value("${oauth2.ldap.activeDirectory:false}")
   private boolean isActiveDirectory;
   @Value("${oauth2.ldap.aсtiveDirectory.domain:@null}")
   private String activeDirectoryDomain;
-
-  @Value("${oauth2.ldap.groupRoleAttribute:cn}")
-  private String groupRoleAttribute;
 
 }

@@ -52,6 +52,9 @@ export interface TableProps<TData> {
 
   // Handles row click. Can not be combined with `enableRowSelection` && expandable rows.
   onRowClick?: (row: Row<TData>) => void;
+
+  onRowHover?: (row: Row<TData>) => void;
+  onMouseLeave?: () => void;
 }
 
 type UpdaterFn<T> = (previousState: T) => T;
@@ -127,6 +130,8 @@ const Table: React.FC<TableProps<any>> = ({
   emptyMessage,
   disabled,
   onRowClick,
+  onRowHover,
+  onMouseLeave,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
@@ -194,6 +199,21 @@ const Table: React.FC<TableProps<any>> = ({
     return undefined;
   };
 
+  const handleRowHover = (row: Row<typeof data>) => (e: React.MouseEvent) => {
+    if (onRowHover) {
+      e.stopPropagation();
+      return onRowHover(row);
+    }
+
+    return undefined;
+  };
+
+  const handleMouseLeave = () => {
+    if (onMouseLeave) {
+      onMouseLeave();
+    }
+  };
+
   return (
     <>
       {BatchActionsBar && (
@@ -227,6 +247,12 @@ const Table: React.FC<TableProps<any>> = ({
                     sortable={header.column.getCanSort()}
                     sortOrder={header.column.getIsSorted()}
                     onClick={header.column.getToggleSortingHandler()}
+                    style={{
+                      width:
+                        header.column.getSize() !== 150
+                          ? header.column.getSize()
+                          : undefined,
+                    }}
                   >
                     <div>
                       {flexRender(
@@ -245,6 +271,8 @@ const Table: React.FC<TableProps<any>> = ({
                 <S.Row
                   expanded={row.getIsExpanded()}
                   onClick={handleRowClick(row)}
+                  onMouseOver={onRowHover ? handleRowHover(row) : undefined}
+                  onMouseLeave={onMouseLeave ? handleMouseLeave : undefined}
                   clickable={
                     !enableRowSelection &&
                     (row.getCanExpand() || onRowClick !== undefined)
@@ -269,7 +297,13 @@ const Table: React.FC<TableProps<any>> = ({
                   {row
                     .getVisibleCells()
                     .map(({ id, getContext, column: { columnDef } }) => (
-                      <td key={id} style={columnDef.meta}>
+                      <td
+                        key={id}
+                        style={{
+                          width:
+                            columnDef.size !== 150 ? columnDef.size : undefined,
+                        }}
+                      >
                         {flexRender(columnDef.cell, getContext())}
                       </td>
                     ))}

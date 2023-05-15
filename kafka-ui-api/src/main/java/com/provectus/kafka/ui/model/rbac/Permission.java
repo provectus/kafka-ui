@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.model.rbac;
 
+import static com.provectus.kafka.ui.model.rbac.Resource.ACL;
 import static com.provectus.kafka.ui.model.rbac.Resource.APPLICATIONCONFIG;
 import static com.provectus.kafka.ui.model.rbac.Resource.CLUSTERCONFIG;
 import static com.provectus.kafka.ui.model.rbac.Resource.KSQL;
@@ -27,7 +28,7 @@ import org.springframework.util.Assert;
 @EqualsAndHashCode
 public class Permission {
 
-  private static final List<Resource> RBAC_ACTION_EXEMPT_LIST = List.of(KSQL, CLUSTERCONFIG, APPLICATIONCONFIG);
+  private static final List<Resource> RBAC_ACTION_EXEMPT_LIST = List.of(KSQL, CLUSTERCONFIG, APPLICATIONCONFIG, ACL);
 
   Resource resource;
   List<String> actions;
