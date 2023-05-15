@@ -5,9 +5,9 @@ const CloseIcon: React.FC<{ className?: string }> = ({ className }) => {
   const theme = useTheme();
   return (
     <svg
-      width="9"
-      height="9"
-      viewBox="0 0 9 9"
+      width="10"
+      height="10"
+      viewBox="0 0 10 10"
       className={className}
       fill={theme.icons.closeIcon.normal}
       xmlns="http://www.w3.org/2000/svg"
