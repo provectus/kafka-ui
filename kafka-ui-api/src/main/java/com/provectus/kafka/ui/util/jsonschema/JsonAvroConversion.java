@@ -316,7 +316,6 @@ public class JsonAvroConversion {
           if (node.isTextual()) {
             return new BigDecimal(node.asText());
           } else if (node.isNumber()) {
-            //TODO: ????
             return new BigDecimal(node.numberValue().toString());
           }
           throw new JsonToAvroConversionException(
