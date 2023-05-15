@@ -1,9 +1,10 @@
 package com.provectus.kafka.ui.manualsuite.backlog;
 
 import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.BROKERS_SUITE_ID;
-import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.KSQL_DB_SUITE_ID;
 import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.SCHEMAS_SUITE_ID;
 import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.TOPICS_PROFILE_SUITE_ID;
+import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.TOPICS_SUITE_ID;
+import static com.provectus.kafka.ui.utilities.qase.enums.State.NOT_AUTOMATED;
 import static com.provectus.kafka.ui.utilities.qase.enums.State.TO_BE_AUTOMATED;
 
 import com.provectus.kafka.ui.manualsuite.BaseManualTest;
@@ -57,30 +58,51 @@ public class SmokeBacklog extends BaseManualTest {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
-  @Suite(id = KSQL_DB_SUITE_ID)
-  @QaseId(344)
+  @Suite(id = SCHEMAS_SUITE_ID)
+  @QaseId(345)
   @Test
   public void testCaseG() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = SCHEMAS_SUITE_ID)
-  @QaseId(345)
-  @Test
-  public void testCaseH() {
-  }
-
-  @Automation(state = TO_BE_AUTOMATED)
-  @Suite(id = SCHEMAS_SUITE_ID)
   @QaseId(346)
   @Test
-  public void testCaseI() {
+  public void testCaseH() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(347)
   @Test
+  public void testCaseI() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = BROKERS_SUITE_ID)
+  @QaseId(348)
+  @Test
   public void testCaseJ() {
+  }
+
+  @Automation(state = TO_BE_AUTOMATED)
+  @Suite(id = BROKERS_SUITE_ID)
+  @QaseId(350)
+  @Test
+  public void testCaseK() {
+  }
+
+  @Automation(state = NOT_AUTOMATED)
+  @Suite(id = TOPICS_SUITE_ID)
+  @QaseId(50)
+  @Test
+  public void testCaseL() {
+  }
+
+  @Automation(state = NOT_AUTOMATED)
+  @Suite(id = SCHEMAS_SUITE_ID)
+  @QaseId(351)
+  @Test
+  public void testCaseM() {
   }
 }

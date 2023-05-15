@@ -75,6 +75,11 @@ public class KsqlQueryForm extends BasePage {
   }
 
   @Step
+  public boolean isClearResultsBtnEnabled() {
+    return isEnabled(clearResultsBtn);
+  }
+
+  @Step
   public KsqlQueryForm clickClearResultsBtn() {
     clickByActions(clearResultsBtn);
     waitUntilSpinnerDisappear();
