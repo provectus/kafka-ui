@@ -44,7 +44,7 @@ Create config map
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kafka-ui-existing-configmap-as-a-configfile
+  name: kafka-ui-configmap
 data:
   config.yml: |-
     kafka:
@@ -63,7 +63,7 @@ This ConfigMap will be mounted to the Pod
 
 Install by executing the command
 
-> helm install helm-release-name charts/kafka-ui --set yamlApplicationConfigConfigMap.name="kafka-ui-config",yamlApplicationConfigConfigMap.keyName="config.yml"
+> helm install helm-release-name charts/kafka-ui --set yamlApplicationConfigConfigMap.name="kafka-ui-configmap",yamlApplicationConfigConfigMap.keyName="config.yml"
 
 #### Passing environment variables as ConfigMap
 
