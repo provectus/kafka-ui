@@ -10,6 +10,8 @@ public enum Provider {
 
   OAUTH_COGNITO,
 
+  OAUTH,
+
   LDAP,
   LDAP_AD;
 
@@ -22,6 +24,8 @@ public enum Provider {
     public static String GOOGLE = "google";
     public static String GITHUB = "github";
     public static String COGNITO = "cognito";
+
+    public static String OAUTH = "oauth";
   }
 
 }

@@ -18,7 +18,7 @@
         <httpcomponents.version>5.2.1</httpcomponents.version>
         <selenium.version>4.8.1</selenium.version>
         <selenide.version>6.12.3</selenide.version>
-        <testng.version>7.7.0</testng.version>
+        <testng.version>7.7.1</testng.version>
         <allure.version>2.21.0</allure.version>
         <qase.io.version>3.0.4</qase.io.version>
         <aspectj.version>1.9.9.1</aspectj.version>

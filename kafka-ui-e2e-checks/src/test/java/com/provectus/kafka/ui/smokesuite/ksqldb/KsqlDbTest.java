@@ -1,9 +1,9 @@
 package com.provectus.kafka.ui.smokesuite.ksqldb;
 
 import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlMenuTabs.STREAMS;
+import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlQueryConfig.SELECT_ALL_FROM;
 import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlQueryConfig.SHOW_STREAMS;
 import static com.provectus.kafka.ui.pages.ksqldb.enums.KsqlQueryConfig.SHOW_TABLES;
-import static com.provectus.kafka.ui.pages.panels.enums.MenuItem.KSQL_DB;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 import com.provectus.kafka.ui.BaseTest;
@@ -44,10 +44,7 @@ public class KsqlDbTest extends BaseTest {
   @QaseId(284)
   @Test(priority = 1)
   public void streamsAndTablesVisibilityCheck() {
-    naviSideBar
-        .openSideMenu(KSQL_DB);
-    ksqlDbList
-        .waitUntilScreenReady();
+    navigateToKsqlDb();
     SoftAssert softly = new SoftAssert();
     softly.assertTrue(ksqlDbList.getTableByName(FIRST_TABLE.getName()).isVisible(), "getTableByName()");
     softly.assertTrue(ksqlDbList.getTableByName(SECOND_TABLE.getName()).isVisible(), "getTableByName()");
@@ -68,8 +65,24 @@ public class KsqlDbTest extends BaseTest {
     Assert.assertTrue(ksqlQueryForm.getEnteredQuery().isEmpty(), "getEnteredQuery()");
   }
 
-  @QaseId(41)
+  @QaseId(344)
   @Test(priority = 3)
+  public void clearResultsButtonCheck() {
+    String notValidQuery = "some not valid request";
+    navigateToKsqlDb();
+    ksqlDbList
+        .clickExecuteKsqlRequestBtn();
+    ksqlQueryForm
+        .waitUntilScreenReady()
+        .setQuery(notValidQuery);
+    Assert.assertFalse(ksqlQueryForm.isClearResultsBtnEnabled(), "isClearResultsBtnEnabled()");
+    ksqlQueryForm
+        .clickExecuteBtn(notValidQuery);
+    Assert.assertFalse(ksqlQueryForm.isClearResultsBtnEnabled(), "isClearResultsBtnEnabled()");
+  }
+
+  @QaseId(41)
+  @Test(priority = 4)
   public void checkShowTablesRequestExecution() {
     navigateToKsqlDbAndExecuteRequest(SHOW_TABLES.getQuery());
     SoftAssert softly = new SoftAssert();
@@ -82,17 +95,18 @@ public class KsqlDbTest extends BaseTest {
   }
 
   @QaseId(278)
-  @Test(priority = 4)
+  @Test(priority = 5)
   public void checkShowStreamsRequestExecution() {
     navigateToKsqlDbAndExecuteRequest(SHOW_STREAMS.getQuery());
     SoftAssert softly = new SoftAssert();
     softly.assertTrue(ksqlQueryForm.areResultsVisible(), "areResultsVisible()");
-    softly.assertTrue(ksqlQueryForm.getItemByName(DEFAULT_STREAM.getName()).isVisible(), "getItemByName()");
+    softly.assertTrue(ksqlQueryForm.getItemByName(DEFAULT_STREAM.getName()).isVisible(),
+        String.format("getItemByName(%s)", FIRST_TABLE.getName()));
     softly.assertAll();
   }
 
   @QaseId(86)
-  @Test(priority = 5)
+  @Test(priority = 6)
   public void clearResultsForExecutedRequest() {
     navigateToKsqlDbAndExecuteRequest(SHOW_TABLES.getQuery());
     SoftAssert softly = new SoftAssert();
@@ -104,6 +118,16 @@ public class KsqlDbTest extends BaseTest {
     softly.assertAll();
   }
 
+  @QaseId(277)
+  @Test(priority = 7)
+  public void stopQueryFunctionalCheck() {
+    navigateToKsqlDbAndExecuteRequest(String.format(SELECT_ALL_FROM.getQuery(), FIRST_TABLE.getName()));
+    Assert.assertTrue(ksqlQueryForm.isAbortBtnVisible(), "isAbortBtnVisible()");
+    ksqlQueryForm
+        .clickAbortBtn();
+    Assert.assertTrue(ksqlQueryForm.isCancelledAlertVisible(), "isCancelledAlertVisible()");
+  }
+
   @AfterClass(alwaysRun = true)
   public void afterClass() {
     TOPIC_NAMES_LIST.forEach(topicName -> apiService.deleteTopic(topicName));
@@ -111,10 +135,8 @@ public class KsqlDbTest extends BaseTest {
 
   @Step
   private void navigateToKsqlDbAndExecuteRequest(String query) {
-    naviSideBar
-        .openSideMenu(KSQL_DB);
+    navigateToKsqlDb();
     ksqlDbList
-        .waitUntilScreenReady()
         .clickExecuteKsqlRequestBtn();
     ksqlQueryForm
         .waitUntilScreenReady()
