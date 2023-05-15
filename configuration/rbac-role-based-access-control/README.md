@@ -1,21 +1,21 @@
 # RBAC (Role based access control)
 
-## Role based access control
+## Role-based access control
 
-In this article we'll guide how to setup Kafka-UI with role-based access control.
+In this article, we'll guide how to set up Kafka-UI with role-based access control.
 
 ### Authentication methods
 
-First of all, you'd need to setup authentication method(s). Refer to [this](https://github.com/provectus/kafka-ui/wiki/OAuth-Configuration) article for OAuth2 setup.
+First of all, you'd need to set up authentication method(s). Refer to [this](https://github.com/provectus/kafka-ui/wiki/OAuth-Configuration) article for OAuth2 setup.
 
 ### Config placement
 
-First of all you have to decide if either:
+First of all, you have to decide if either:
 
 1. You wish to store all roles in a separate config file
 2. Or within a main config file
 
-This is how you include one more file to start with: docker-compose example:
+This is how you include one more file to start with a docker-compose example:
 
 ```
 services:
@@ -51,7 +51,7 @@ rbac:
 
 #### Subjects
 
-A role also has a list of _subjects_ which are the entities we will use to assign roles to. They are provider-dependant, in general they can be users, groups or some other entities (github orgs, google domains, LDAP queries, etc.) In this example we define a role `memelords` which will contain all the users within google domain `memelord.lol` and, additionally, a github user `Haarolean`. You can combine as many subjects as you want within a role.
+A role also has a list of _subjects_ which are the entities we will use to assign roles to. They are provider-dependant, in general they can be users, groups or some other entities (github orgs, google domains, LDAP queries, etc.) In this example we define a role `memelords` which will contain all the users within Google domain `memelord.lol` and, additionally, a GitHub user `Haarolean`. You can combine as many subjects as you want within a role.
 
 ```
     - name: "memelords"
@@ -71,18 +71,18 @@ A list of supported providers and corresponding subject fetch mechanism:
 * oauth\_google: `user`, `domain`
 * oauth\_github: `user`, `organization`
 * oauth\_cognito: `user`, `group`
-* ldap: (unsupported yet, will do in 0.6 release)
-* ldap\_ad: (unsupported yet, will do in 0.6 release)
+* ldap: `group`
+* ldap\_ad: (unsupported yet, will do in 0.8 release)
 
 Find the more detailed examples in a full example file lower.
 
 #### Permissions
 
-Next thing which is present in your roles file is, surprisingly, permissions. They consist of:
+The next thing which is present in your roles file is, surprisingly, permissions. They consist of:
 
-1. Resource Can be one of: `CLUSTERCONFIG`, `TOPIC`, `CONSUMER`, `SCHEMA`, `CONNECT`, `KSQL`.
-2. Resource value Either a fixed string or a regular expression identifying resource. Value is not applicable for `clusterconfig` and `ksql` resources. Please do not fill it.
-3. Actions It's a list of actions (the possible values depend on the resource, see the lists below) which will be applied to the certain permission. Also note, there's a special action for any of the resources called "all", it will virtually grant all the actions within the corresponding resource. An example for enabling viewing and creating topics which name start with "derp":
+1. Resource Can be one of the: `CLUSTERCONFIG`, `TOPIC`, `CONSUMER`, `SCHEMA`, `CONNECT`, `KSQL`.
+2. The resource value is either a fixed string or a regular expression identifying a resource. Value is not applicable to `clusterconfig` and `ksql` resources. Please do not fill it out.
+3. Actions It's a list of actions (the possible values depend on the resource, see the lists below) that will be applied to the certain permission. Also, note, there's a special action for any of the resources called "all", it will virtually grant all the actions within the corresponding resource. An example for enabling viewing and creating topics whose name start with "derp":
 
 ```
       permissions:
