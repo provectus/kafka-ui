@@ -26,10 +26,10 @@ const PageContainer: React.FC<
   }, [location, closeSidebar]);
 
   useEffect(() => {
-    if (appInfo.hasDynamicConfig && !clusters.data?.length) {
+    if (appInfo.hasDynamicConfig && clusters?.data?.length === 0) {
       navigate(clusterNewConfigPath);
     }
-  }, [clusters.data, appInfo.hasDynamicConfig]);
+  }, [clusters?.data, appInfo.hasDynamicConfig]);
   return (
     <>
       <NavBar onBurgerClick={toggle} setDarkMode={setDarkMode} />
