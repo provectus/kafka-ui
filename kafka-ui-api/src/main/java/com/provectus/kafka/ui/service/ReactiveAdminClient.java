@@ -32,8 +32,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -75,7 +76,6 @@ import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.errors.UnsupportedVersionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
-import org.apache.kafka.common.resource.ResourcePattern;
 import org.apache.kafka.common.resource.ResourcePatternFilter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -85,7 +85,7 @@ import reactor.util.function.Tuples;
 
 
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ReactiveAdminClient implements Closeable {
 
   public enum SupportedFeature {
@@ -104,7 +104,8 @@ public class ReactiveAdminClient implements Closeable {
       this.predicate = (admin, ver) -> Mono.just(ver != null && ver >= fromVersion);
     }
 
-    static Mono<Set<SupportedFeature>> forVersion(AdminClient ac, @Nullable Float kafkaVersion) {
+    static Mono<Set<SupportedFeature>> forVersion(AdminClient ac, String kafkaVersionStr) {
+      @Nullable Float kafkaVersion = KafkaVersion.parse(kafkaVersionStr).orElse(null);
       return Flux.fromArray(SupportedFeature.values())
           .flatMap(f -> f.predicate.apply(ac, kafkaVersion).map(enabled -> Tuples.of(f, enabled)))
           .filter(Tuple2::getT2)
@@ -123,18 +124,45 @@ public class ReactiveAdminClient implements Closeable {
     Set<AclOperation> authorizedOperations;
   }
 
-  public static Mono<ReactiveAdminClient> create(AdminClient adminClient) {
-    return getClusterVersion(adminClient)
-        .flatMap(ver ->
-            getSupportedUpdateFeaturesForVersion(adminClient, ver)
-                .map(features ->
-                    new ReactiveAdminClient(adminClient, ver, features)));
+  @Builder
+  private record ConfigRelatedInfo(String version,
+                                   Set<SupportedFeature> features,
+                                   boolean topicDeletionIsAllowed) {
+
+    private static Mono<ConfigRelatedInfo> extract(AdminClient ac, int controllerId) {
+      return loadBrokersConfig(ac, List.of(controllerId))
+          .map(map -> map.isEmpty() ? List.<ConfigEntry>of() : map.get(controllerId))
+          .flatMap(configs -> {
+            String version = "1.0-UNKNOWN";
+            boolean topicDeletionEnabled = true;
+            for (ConfigEntry entry : configs) {
+              if (entry.name().contains("inter.broker.protocol.version")) {
+                version = entry.value();
+              }
+              if (entry.name().equals("delete.topic.enable")) {
+                topicDeletionEnabled = Boolean.parseBoolean(entry.value());
+              }
+            }
+            var builder = ConfigRelatedInfo.builder()
+                .version(version)
+                .topicDeletionIsAllowed(topicDeletionEnabled);
+            return SupportedFeature.forVersion(ac, version)
+                .map(features -> builder.features(features).build());
+          });
+    }
   }
 
-  private static Mono<Set<SupportedFeature>> getSupportedUpdateFeaturesForVersion(AdminClient ac, String versionStr) {
-    @Nullable Float kafkaVersion = KafkaVersion.parse(versionStr).orElse(null);
-    return SupportedFeature.forVersion(ac, kafkaVersion);
+  public static Mono<ReactiveAdminClient> create(AdminClient adminClient) {
+    return describeClusterImpl(adminClient, Set.of())
+        // choosing node from which we will get configs (starting with controller)
+        .flatMap(descr -> descr.controller != null
+            ? Mono.just(descr.controller)
+            : Mono.justOrEmpty(descr.nodes.stream().findFirst())
+        )
+        .flatMap(node -> ConfigRelatedInfo.extract(adminClient, node.id()))
+        .map(info -> new ReactiveAdminClient(adminClient, info));
   }
+
 
   private static Mono<Boolean> isAuthorizedSecurityEnabled(AdminClient ac, @Nullable Float kafkaVersion) {
     return toMono(ac.describeAcls(AclBindingFilter.ANY).values())
@@ -174,11 +202,10 @@ public class ReactiveAdminClient implements Closeable {
 
   @Getter(AccessLevel.PACKAGE) // visible for testing
   private final AdminClient client;
-  private final String version;
-  private final Set<SupportedFeature> features;
+  private volatile ConfigRelatedInfo configRelatedInfo;
 
   public Set<SupportedFeature> getClusterFeatures() {
-    return features;
+    return configRelatedInfo.features();
   }
 
   public Mono<Set<String>> listTopics(boolean listInternal) {
@@ -190,7 +217,20 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public String getVersion() {
-    return version;
+    return configRelatedInfo.version();
+  }
+
+  public boolean isTopicDeletionEnabled() {
+    return configRelatedInfo.topicDeletionIsAllowed();
+  }
+
+  public Mono<Void> updateInternalStats(@Nullable Node controller) {
+    if (controller == null) {
+      return Mono.empty();
+    }
+    return ConfigRelatedInfo.extract(client, controller.id())
+        .doOnNext(info -> this.configRelatedInfo = info)
+        .then();
   }
 
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig() {
@@ -200,7 +240,7 @@ public class ReactiveAdminClient implements Closeable {
   //NOTE: skips not-found topics (for which UnknownTopicOrPartitionException was thrown by AdminClient)
   //and topics for which DESCRIBE_CONFIGS permission is not set (TopicAuthorizationException was thrown)
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames, boolean includeDoc) {
-    var includeDocFixed = features.contains(SupportedFeature.CONFIG_DOCUMENTATION_RETRIEVAL) && includeDoc;
+    var includeDocFixed = includeDoc && getClusterFeatures().contains(SupportedFeature.CONFIG_DOCUMENTATION_RETRIEVAL);
     // we need to partition calls, because it can lead to AdminClient timeouts in case of large topics count
     return partitionCalls(
         topicNames,
@@ -349,7 +389,7 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<ClusterDescription> describeCluster() {
-    return describeClusterImpl(client, features);
+    return describeClusterImpl(client, getClusterFeatures());
   }
 
   private static Mono<ClusterDescription> describeClusterImpl(AdminClient client, Set<SupportedFeature> features) {
@@ -369,23 +409,6 @@ public class ReactiveAdminClient implements Closeable {
           )
         )
     );
-  }
-
-  private static Mono<String> getClusterVersion(AdminClient client) {
-    return describeClusterImpl(client, Set.of())
-        // choosing node from which we will get configs (starting with controller)
-        .flatMap(descr -> descr.controller != null
-            ? Mono.just(descr.controller)
-            : Mono.justOrEmpty(descr.nodes.stream().findFirst())
-        )
-        .flatMap(node -> loadBrokersConfig(client, List.of(node.id())))
-        .flatMap(configs -> configs.values().stream()
-            .flatMap(Collection::stream)
-            .filter(entry -> entry.name().contains("inter.broker.protocol.version"))
-            .findFirst()
-            .map(configEntry -> Mono.just(configEntry.value()))
-            .orElse(Mono.empty()))
-        .switchIfEmpty(Mono.just("1.0-UNKNOWN"));
   }
 
   public Mono<Void> deleteConsumerGroups(Collection<String> groupIds) {
@@ -421,7 +444,7 @@ public class ReactiveAdminClient implements Closeable {
   // NOTE: places whole current topic config with new one. Entries that were present in old config,
   // but missed in new will be set to default
   public Mono<Void> updateTopicConfig(String topicName, Map<String, String> configs) {
-    if (features.contains(SupportedFeature.INCREMENTAL_ALTER_CONFIGS)) {
+    if (getClusterFeatures().contains(SupportedFeature.INCREMENTAL_ALTER_CONFIGS)) {
       return getTopicsConfigImpl(List.of(topicName), false)
           .map(conf -> conf.getOrDefault(topicName, List.of()))
           .flatMap(currentConfigs -> incrementalAlterConfig(topicName, currentConfigs, configs));
@@ -596,17 +619,17 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<Collection<AclBinding>> listAcls(ResourcePatternFilter filter) {
-    Preconditions.checkArgument(features.contains(SupportedFeature.AUTHORIZED_SECURITY_ENABLED));
+    Preconditions.checkArgument(getClusterFeatures().contains(SupportedFeature.AUTHORIZED_SECURITY_ENABLED));
     return toMono(client.describeAcls(new AclBindingFilter(filter, AccessControlEntryFilter.ANY)).values());
   }
 
   public Mono<Void> createAcls(Collection<AclBinding> aclBindings) {
-    Preconditions.checkArgument(features.contains(SupportedFeature.AUTHORIZED_SECURITY_ENABLED));
+    Preconditions.checkArgument(getClusterFeatures().contains(SupportedFeature.AUTHORIZED_SECURITY_ENABLED));
     return toMono(client.createAcls(aclBindings).all());
   }
 
   public Mono<Void> deleteAcls(Collection<AclBinding> aclBindings) {
-    Preconditions.checkArgument(features.contains(SupportedFeature.AUTHORIZED_SECURITY_ENABLED));
+    Preconditions.checkArgument(getClusterFeatures().contains(SupportedFeature.AUTHORIZED_SECURITY_ENABLED));
     var filters = aclBindings.stream().map(AclBinding::toFilter).collect(Collectors.toSet());
     return toMono(client.deleteAcls(filters).all()).then();
   }

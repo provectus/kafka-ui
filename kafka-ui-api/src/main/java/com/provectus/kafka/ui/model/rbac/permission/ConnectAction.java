@@ -7,7 +7,8 @@ public enum ConnectAction implements PermissibleAction {
 
   VIEW,
   EDIT,
-  CREATE
+  CREATE,
+  RESTART
 
   ;
 
