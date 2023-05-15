@@ -36,29 +36,31 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 @Slf4j
 public class ApiService extends BaseSource {
 
+  private final ApiClient apiClient = new ApiClient().setBasePath(BASE_API_URL);
+
   @SneakyThrows
   private TopicsApi topicApi() {
-    return new TopicsApi(new ApiClient().setBasePath(BASE_API_URL));
+    return new TopicsApi(apiClient);
   }
 
   @SneakyThrows
   private SchemasApi schemaApi() {
-    return new SchemasApi(new ApiClient().setBasePath(BASE_API_URL));
+    return new SchemasApi(apiClient);
   }
 
   @SneakyThrows
   private KafkaConnectApi connectorApi() {
-    return new KafkaConnectApi(new ApiClient().setBasePath(BASE_API_URL));
+    return new KafkaConnectApi(apiClient);
   }
 
   @SneakyThrows
   private MessagesApi messageApi() {
-    return new MessagesApi(new ApiClient().setBasePath(BASE_API_URL));
+    return new MessagesApi(apiClient);
   }
 
   @SneakyThrows
   private KsqlApi ksqlApi() {
-    return new KsqlApi(new ApiClient().setBasePath(BASE_API_URL));
+    return new KsqlApi(apiClient);
   }
 
   @SneakyThrows
@@ -185,7 +187,7 @@ public class ApiService extends BaseSource {
     createMessage.setKeySerde("String");
     createMessage.setValueSerde("String");
     createMessage.setKey(topic.getMessageKey());
-    createMessage.setContent(topic.getMessageContent());
+    createMessage.setContent(topic.getMessageValue());
     try {
       messageApi().sendTopicMessages(clusterName, topic.getName(), createMessage).block();
     } catch (WebClientResponseException ex) {

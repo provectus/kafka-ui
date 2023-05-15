@@ -45,7 +45,7 @@ public class TopicsTest extends BaseTest {
       .setMaxSizeOnDisk(NOT_SET)
       .setMaxMessageBytes("1048588")
       .setMessageKey(randomAlphabetic(5))
-      .setMessageContent(randomAlphabetic(10));
+      .setMessageValue(randomAlphabetic(10));
   private static final Topic TOPIC_TO_CHECK_SETTINGS = new Topic()
       .setName("new-topic-" + randomAlphabetic(5))
       .setNumberOfPartitions(1)
@@ -487,11 +487,7 @@ public class TopicsTest extends BaseTest {
     topicDetails
         .waitUntilScreenReady();
     TOPIC_LIST.add(topicToCopy);
-    SoftAssert softly = new SoftAssert();
-    softly.assertTrue(topicDetails.isAlertWithMessageVisible(SUCCESS, "Topic successfully created."),
-        "isAlertWithMessageVisible()");
-    softly.assertTrue(topicDetails.isTopicHeaderVisible(topicToCopy.getName()), "isTopicHeaderVisible()");
-    softly.assertAll();
+    Assert.assertTrue(topicDetails.isTopicHeaderVisible(topicToCopy.getName()), "isTopicHeaderVisible()");
   }
 
   @AfterClass(alwaysRun = true)

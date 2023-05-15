@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Topic {
 
-  private String name, timeToRetainData, maxMessageBytes, messageKey, messageContent, customParameterValue;
+  private String name, timeToRetainData, maxMessageBytes, messageKey, messageValue, customParameterValue;
   private int numberOfPartitions;
   private CustomParameterType customParameterType;
   private CleanupPolicyValue cleanupPolicyValue;

@@ -6,6 +6,7 @@ import SavedFilters from 'components/Topics/Topic/Messages/Filters/SavedFilters'
 import SavedIcon from 'components/common/Icons/SavedIcon';
 import QuestionIcon from 'components/common/Icons/QuestionIcon';
 import useBoolean from 'lib/hooks/useBoolean';
+import { showAlert } from 'lib/errorHandling';
 
 import AddEditFilterContainer from './AddEditFilterContainer';
 import InfoModal from './InfoModal';
@@ -43,6 +44,19 @@ const AddFilter: React.FC<FilterModalProps> = ({
 
   const onSubmit = React.useCallback(
     async (values: AddMessageFilters) => {
+      const isFilterExists = filters.some(
+        (filter) => filter.name === values.name
+      );
+
+      if (isFilterExists) {
+        showAlert('error', {
+          id: '',
+          title: 'Validation Error',
+          message: 'Filter with the same name already exists',
+        });
+        return;
+      }
+
       const data = { ...values };
       if (data.saveFilter) {
         addFilter(data);

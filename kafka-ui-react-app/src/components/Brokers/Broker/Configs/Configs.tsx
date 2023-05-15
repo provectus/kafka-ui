@@ -34,7 +34,11 @@ const Configs: React.FC = () => {
 
   const getData = () => {
     return data
-      .filter((item) => item.name.toLocaleLowerCase().indexOf(keyword) > -1)
+      .filter(
+        (item) =>
+          item.name.toLocaleLowerCase().indexOf(keyword.toLocaleLowerCase()) >
+          -1
+      )
       .sort((a, b) => {
         if (a.source === b.source) return 0;
 
