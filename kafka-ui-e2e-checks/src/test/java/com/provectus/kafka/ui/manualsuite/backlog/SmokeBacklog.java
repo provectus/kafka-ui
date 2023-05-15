@@ -3,6 +3,8 @@ package com.provectus.kafka.ui.manualsuite.backlog;
 import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.BROKERS_SUITE_ID;
 import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.SCHEMAS_SUITE_ID;
 import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.TOPICS_PROFILE_SUITE_ID;
+import static com.provectus.kafka.ui.qasesuite.BaseQaseTest.TOPICS_SUITE_ID;
+import static com.provectus.kafka.ui.utilities.qase.enums.State.NOT_AUTOMATED;
 import static com.provectus.kafka.ui.utilities.qase.enums.State.TO_BE_AUTOMATED;
 
 import com.provectus.kafka.ui.manualsuite.BaseManualTest;
@@ -88,5 +90,19 @@ public class SmokeBacklog extends BaseManualTest {
   @QaseId(350)
   @Test
   public void testCaseK() {
+  }
+
+  @Automation(state = NOT_AUTOMATED)
+  @Suite(id = TOPICS_SUITE_ID)
+  @QaseId(50)
+  @Test
+  public void testCaseL() {
+  }
+
+  @Automation(state = NOT_AUTOMATED)
+  @Suite(id = SCHEMAS_SUITE_ID)
+  @QaseId(351)
+  @Test
+  public void testCaseM() {
   }
 }
