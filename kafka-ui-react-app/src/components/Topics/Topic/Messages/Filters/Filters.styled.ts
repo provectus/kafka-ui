@@ -334,6 +334,11 @@ export const DeleteSmartFilterIcon = styled.div(
     cursor: pointer;
     border-left: 1px solid ${icons.closeIcon.border};
 
+    svg{
+      height: 11px;
+      width: 11px;
+    }
+
     &:hover {
       ${closeIcon} {
         fill: ${icons.closeIcon.hover};
