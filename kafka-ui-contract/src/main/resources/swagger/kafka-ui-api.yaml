@@ -2558,7 +2558,7 @@ components:
           $ref: "#/components/schemas/ConsumerGroupState"
         coordinator:
           $ref: "#/components/schemas/Broker"
-        messagesBehind:
+        consumerLag:
           type: integer
           format: int64
           description: null if consumer group has no offsets committed
@@ -2776,7 +2776,7 @@ components:
         endOffset:
           type: integer
           format: int64
-        messagesBehind:
+        consumerLag:
           type: integer
           format: int64
           description: null if consumer group has no offsets committed
