@@ -61,7 +61,7 @@ describe('Page Container', () => {
 
   describe('Redirect to the Wizard page', () => {
     it('redirects to new cluster configuration page if there are no clusters and dynamic config is enabled', async () => {
-      await renderComponent(true, { data: undefined });
+      await renderComponent(true, { data: [] });
 
       expect(mockedNavigate).toHaveBeenCalled();
     });
