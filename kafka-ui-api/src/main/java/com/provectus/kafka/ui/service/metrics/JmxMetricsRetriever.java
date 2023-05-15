@@ -72,17 +72,14 @@ class JmxMetricsRetriever implements MetricsRetriever, Closeable {
                                 KafkaCluster c,
                                 Consumer<JMXConnector> consumer) {
     var env = prepareJmxEnvAndSetThreadLocal(c);
-    try {
-      JMXConnector connector = null;
+    try (JMXConnector connector = JMXConnectorFactory.newJMXConnector(new JMXServiceURL(jmxUrl), env)) {
       try {
-        connector = JMXConnectorFactory.newJMXConnector(new JMXServiceURL(jmxUrl), env);
         connector.connect(env);
       } catch (Exception exception) {
         log.error("Error connecting to {}", jmxUrl, exception);
         return;
       }
       consumer.accept(connector);
-      connector.close();
     } catch (Exception e) {
       log.error("Error getting jmx metrics from {}", jmxUrl, e);
     } finally {
