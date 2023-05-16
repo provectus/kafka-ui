@@ -12,8 +12,12 @@ import com.provectus.kafka.ui.service.AdminClientService;
 import com.provectus.kafka.ui.service.MessagesService;
 import com.provectus.kafka.ui.service.ReactiveAdminClient;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
 import org.springframework.security.access.AccessDeniedException;
 
 record AuditWriter(String targetTopic,
@@ -21,9 +25,24 @@ record AuditWriter(String targetTopic,
                    KafkaProducer<byte[], byte[]> producer,
                    boolean logToConsole) {
 
-  static AuditWriter createAndInit(KafkaCluster c,
-                                   ReactiveAdminClient ac,
-                                   MessagesService ms) {
+  static AuditWriter createAndInit(ReactiveAdminClient adminClient,
+                                   Supplier<KafkaProducer<byte[], byte[]>> producerSupplier,
+                                   boolean topicAudit,
+                                   boolean consoleAudit,
+                                   String auditTopicName,
+                                   int auditTopicPartis,
+                                   Map<String, String> topicCreationProps) {
+    KafkaProducer<byte[], byte[]> producer;
+    if (topicAudit) {
+      producer = producerSupplier.get();
+    }
+  }
+
+
+  private void createTopic(ReactiveAdminClient adminClient,
+                   String auditTopicName,
+                   int parts,
+                   Map<String, String> topicCreationProps) {
 
   }
 
@@ -37,7 +56,7 @@ record AuditWriter(String targetTopic,
 
 
   record AuditRecord(String timestamp,
-                     String userPrincipal, //TODO: discuss - rename to username?
+                     String userPrincipal,  //TODO: discuss - rename to username?
                      String clusterName,
                      AuditResource resources,
                      String operation,
@@ -56,29 +75,29 @@ record AuditWriter(String targetTopic,
   }
 
   record OperationResult(boolean success, OperationError error) {
-  }
 
-  static OperationResult successResult() {
-    return new OperationResult(true, null);
-  }
-
-  static OperationResult errorResult(Throwable th) {
-    OperationError err = OperationError.UNEXPECTED_ERROR;
-    if (th instanceof AccessDeniedException) {
-      err = OperationError.ACCESS_DENIED;
-    } else if (th instanceof ValidationException) {
-      err = OperationError.VALIDATION_ERROR;
-    } else if (th instanceof CustomBaseException) {
-      err = OperationError.EXECUTION_ERROR;
+    static OperationResult successResult() {
+      return new OperationResult(true, null);
     }
-    return new OperationResult(false, err);
-  }
 
-  enum OperationError {
-    ACCESS_DENIED,
-    VALIDATION_ERROR,
-    EXECUTION_ERROR,
-    UNEXPECTED_ERROR
+    static OperationResult errorResult(Throwable th) {
+      OperationError err = OperationError.UNEXPECTED_ERROR;
+      if (th instanceof AccessDeniedException) {
+        err = OperationError.ACCESS_DENIED;
+      } else if (th instanceof ValidationException) {
+        err = OperationError.VALIDATION_ERROR;
+      } else if (th instanceof CustomBaseException) {
+        err = OperationError.EXECUTION_ERROR;
+      }
+      return new OperationResult(false, err);
+    }
+
+    enum OperationError {
+      ACCESS_DENIED,
+      VALIDATION_ERROR,
+      EXECUTION_ERROR,
+      UNEXPECTED_ERROR
+    }
   }
 
 }

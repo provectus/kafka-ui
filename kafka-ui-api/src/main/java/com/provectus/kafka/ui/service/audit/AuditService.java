@@ -16,6 +16,7 @@ import com.provectus.kafka.ui.service.ReactiveAdminClient;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,9 +54,10 @@ public class AuditService implements Closeable {
     this.clustersStorage = clustersStorage;
     if (clustersProperties.getClusters() != null) {
       for (var clusterProps : clustersProperties.getClusters()) {
+        var c = clustersStorage.getClusterByName(clusterProps.getName()).orElseThrow();
         createTopicAndProducer(
-            adminClientService,
-            clustersStorage.getClusterByName(clusterProps.getName()).orElseThrow(),
+            c,
+            adminClientService.get(c).block(),
             messagesService
         );
       }
@@ -86,7 +88,16 @@ public class AuditService implements Closeable {
                                       ReactiveAdminClient ac,
                                       MessagesService ms) {
     var props = c.getOriginalProperties();
+
     if (props.getAudit() != null) {
+      var auditProps = props.getAudit();
+      boolean topicAudit = Optional.ofNullable(auditProps.getTopicAuditEnabled()).orElse(false);
+      boolean consoleAudit = Optional.ofNullable(auditProps.getConsoleAuditEnabled()).orElse(false);
+      String auditTopicName = Optional.ofNullable(auditProps.getTopic()).orElse(DEFAULT_AUDIT_TOPIC_NAME);
+      int auditTopicPartis = Optional.ofNullable(auditProps.getAuditTopicsPartitions()).orElse(DEFAULT_AUDIT_TOPIC_PARTITIONS);
+      Map<String, String> topicCreationProps = new HashMap<>(DEFAULT_AUDIT_TOPIC_PROPERTIES);
+      Optional.ofNullable(auditProps.getAuditTopicProperties())
+          .ifPresent(topicCreationProps::putAll);
 
     }
   }

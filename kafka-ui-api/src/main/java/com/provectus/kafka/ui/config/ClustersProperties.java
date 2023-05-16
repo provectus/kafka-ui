@@ -149,9 +149,9 @@ public class ClustersProperties {
   @AllArgsConstructor
   public static class AuditProperties {
     String topic;
-    Integer audiTopicsPartitions;
-    Boolean disable;
-    Boolean enableConsoleAudit;
+    Integer auditTopicsPartitions;
+    Boolean topicAuditEnabled;
+    Boolean consoleAuditEnabled;
     Map<String, String> auditTopicProperties;
   }
 
