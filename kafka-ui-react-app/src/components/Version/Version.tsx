@@ -8,9 +8,13 @@ import * as S from './Version.styled';
 
 const Version: React.FC = () => {
   const { data: latestVersionInfo = {} } = useLatestVersion();
-  const { buildTime, commitId, isLatestRelease } = latestVersionInfo.build;
+  const { buildTime, commitId, isLatestRelease, version } =
+    latestVersionInfo.build;
   const { versionTag } = latestVersionInfo?.latestRelease || '';
 
+  const currentVersion = version?.match(versionTag)
+    ? versionTag
+    : formatTimestamp(buildTime);
   return (
     <S.Wrapper>
       {!isLatestRelease && (
@@ -32,7 +36,7 @@ const Version: React.FC = () => {
           </S.CurrentCommitLink>
         </div>
       )}
-      <S.CurrentVersion>{formatTimestamp(buildTime)}</S.CurrentVersion>
+      <S.CurrentVersion>{currentVersion}</S.CurrentVersion>
     </S.Wrapper>
   );
 };
