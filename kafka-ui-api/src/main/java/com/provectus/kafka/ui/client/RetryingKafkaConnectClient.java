@@ -1,49 +1,33 @@
 package com.provectus.kafka.ui.client;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import static com.provectus.kafka.ui.config.ClustersProperties.ConnectCluster;
+
+import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.connect.ApiClient;
-import com.provectus.kafka.ui.connect.RFC3339DateFormat;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
 import com.provectus.kafka.ui.connect.model.Connector;
+import com.provectus.kafka.ui.connect.model.ConnectorPlugin;
+import com.provectus.kafka.ui.connect.model.ConnectorPluginConfigValidationResponse;
+import com.provectus.kafka.ui.connect.model.ConnectorStatus;
+import com.provectus.kafka.ui.connect.model.ConnectorTask;
+import com.provectus.kafka.ui.connect.model.ConnectorTopics;
 import com.provectus.kafka.ui.connect.model.NewConnector;
+import com.provectus.kafka.ui.connect.model.TaskStatus;
 import com.provectus.kafka.ui.exception.KafkaConnectConflictReponseException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.InternalSchemaRegistry;
-import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.KafkaConnectCluster;
-import com.provectus.kafka.ui.util.SecuredWebClient;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import java.io.FileInputStream;
-import java.security.KeyStore;
-import java.text.DateFormat;
+import com.provectus.kafka.ui.util.WebClientConfigurator;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManagerFactory;
+import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
-import org.openapitools.jackson.nullable.JsonNullableModule;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
-import org.springframework.http.codec.json.Jackson2JsonEncoder;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.ResourceUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClient;
 import reactor.util.retry.Retry;
 
 @Slf4j
@@ -51,8 +35,10 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   private static final int MAX_RETRIES = 5;
   private static final Duration RETRIES_DELAY = Duration.ofMillis(200);
 
-  public RetryingKafkaConnectClient(KafkaConnectCluster config, DataSize maxBuffSize) {
-    super(new RetryingApiClient(config, maxBuffSize));
+  public RetryingKafkaConnectClient(ConnectCluster config,
+                                    @Nullable ClustersProperties.TruststoreConfig truststoreConfig,
+                                    DataSize maxBuffSize) {
+    super(new RetryingApiClient(config, truststoreConfig, maxBuffSize));
   }
 
   private static Retry conflictCodeRetry() {
@@ -95,90 +81,204 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
     );
   }
 
+  @Override
+  public Mono<ResponseEntity<Connector>> createConnectorWithHttpInfo(NewConnector newConnector)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.createConnectorWithHttpInfo(newConnector));
+  }
+
+  @Override
+  public Mono<Void> deleteConnector(String connectorName) throws WebClientResponseException {
+    return withRetryOnConflict(super.deleteConnector(connectorName));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> deleteConnectorWithHttpInfo(String connectorName)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.deleteConnectorWithHttpInfo(connectorName));
+  }
+
+
+  @Override
+  public Mono<Connector> getConnector(String connectorName) throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnector(connectorName));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Connector>> getConnectorWithHttpInfo(String connectorName)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorWithHttpInfo(connectorName));
+  }
+
+  @Override
+  public Mono<Map<String, Object>> getConnectorConfig(String connectorName) throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorConfig(connectorName));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Map<String, Object>>> getConnectorConfigWithHttpInfo(String connectorName)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorConfigWithHttpInfo(connectorName));
+  }
+
+  @Override
+  public Flux<ConnectorPlugin> getConnectorPlugins() throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorPlugins());
+  }
+
+  @Override
+  public Mono<ResponseEntity<List<ConnectorPlugin>>> getConnectorPluginsWithHttpInfo()
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorPluginsWithHttpInfo());
+  }
+
+  @Override
+  public Mono<ConnectorStatus> getConnectorStatus(String connectorName) throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorStatus(connectorName));
+  }
+
+  @Override
+  public Mono<ResponseEntity<ConnectorStatus>> getConnectorStatusWithHttpInfo(String connectorName)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorStatusWithHttpInfo(connectorName));
+  }
+
+  @Override
+  public Mono<TaskStatus> getConnectorTaskStatus(String connectorName, Integer taskId)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorTaskStatus(connectorName, taskId));
+  }
+
+  @Override
+  public Mono<ResponseEntity<TaskStatus>> getConnectorTaskStatusWithHttpInfo(String connectorName, Integer taskId)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorTaskStatusWithHttpInfo(connectorName, taskId));
+  }
+
+  @Override
+  public Flux<ConnectorTask> getConnectorTasks(String connectorName) throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorTasks(connectorName));
+  }
+
+  @Override
+  public Mono<ResponseEntity<List<ConnectorTask>>> getConnectorTasksWithHttpInfo(String connectorName)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorTasksWithHttpInfo(connectorName));
+  }
+
+  @Override
+  public Mono<Map<String, ConnectorTopics>> getConnectorTopics(String connectorName) throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorTopics(connectorName));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Map<String, ConnectorTopics>>> getConnectorTopicsWithHttpInfo(String connectorName)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorTopicsWithHttpInfo(connectorName));
+  }
+
+  @Override
+  public Flux<String> getConnectors(String search) throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectors(search));
+  }
+
+  @Override
+  public Mono<ResponseEntity<List<String>>> getConnectorsWithHttpInfo(String search) throws WebClientResponseException {
+    return withRetryOnConflict(super.getConnectorsWithHttpInfo(search));
+  }
+
+  @Override
+  public Mono<Void> pauseConnector(String connectorName) throws WebClientResponseException {
+    return withRetryOnConflict(super.pauseConnector(connectorName));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> pauseConnectorWithHttpInfo(String connectorName) throws WebClientResponseException {
+    return withRetryOnConflict(super.pauseConnectorWithHttpInfo(connectorName));
+  }
+
+  @Override
+  public Mono<Void> restartConnector(String connectorName, Boolean includeTasks, Boolean onlyFailed)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.restartConnector(connectorName, includeTasks, onlyFailed));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> restartConnectorWithHttpInfo(String connectorName, Boolean includeTasks,
+                                                                 Boolean onlyFailed) throws WebClientResponseException {
+    return withRetryOnConflict(super.restartConnectorWithHttpInfo(connectorName, includeTasks, onlyFailed));
+  }
+
+  @Override
+  public Mono<Void> restartConnectorTask(String connectorName, Integer taskId) throws WebClientResponseException {
+    return withRetryOnConflict(super.restartConnectorTask(connectorName, taskId));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> restartConnectorTaskWithHttpInfo(String connectorName, Integer taskId)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.restartConnectorTaskWithHttpInfo(connectorName, taskId));
+  }
+
+  @Override
+  public Mono<Void> resumeConnector(String connectorName) throws WebClientResponseException {
+    return super.resumeConnector(connectorName);
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> resumeConnectorWithHttpInfo(String connectorName)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.resumeConnectorWithHttpInfo(connectorName));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Connector>> setConnectorConfigWithHttpInfo(String connectorName,
+                                                                        Map<String, Object> requestBody)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.setConnectorConfigWithHttpInfo(connectorName, requestBody));
+  }
+
+  @Override
+  public Mono<ConnectorPluginConfigValidationResponse> validateConnectorPluginConfig(String pluginName,
+                                                                                     Map<String, Object> requestBody)
+      throws WebClientResponseException {
+    return withRetryOnConflict(super.validateConnectorPluginConfig(pluginName, requestBody));
+  }
+
+  @Override
+  public Mono<ResponseEntity<ConnectorPluginConfigValidationResponse>> validateConnectorPluginConfigWithHttpInfo(
+      String pluginName, Map<String, Object> requestBody) throws WebClientResponseException {
+    return withRetryOnConflict(super.validateConnectorPluginConfigWithHttpInfo(pluginName, requestBody));
+  }
+
   private static class RetryingApiClient extends ApiClient {
 
-    private static final DateFormat dateFormat = getDefaultDateFormat();
-    private static final ObjectMapper mapper = buildObjectMapper(dateFormat);
-
-    public RetryingApiClient(KafkaConnectCluster config, DataSize maxBuffSize) {
-      super(buildWebClient(mapper, maxBuffSize, config), mapper, dateFormat);
+    public RetryingApiClient(ConnectCluster config,
+                             ClustersProperties.TruststoreConfig truststoreConfig,
+                             DataSize maxBuffSize) {
+      super(buildWebClient(maxBuffSize, config, truststoreConfig), null, null);
       setBasePath(config.getAddress());
-      setUsername(config.getUserName());
+      setUsername(config.getUsername());
       setPassword(config.getPassword());
     }
 
-    public static DateFormat getDefaultDateFormat() {
-      DateFormat dateFormat = new RFC3339DateFormat();
-      dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-      return dateFormat;
-    }
-
-    public static WebClient buildWebClient(ObjectMapper mapper, DataSize maxBuffSize, KafkaConnectCluster config) {
-      ExchangeStrategies strategies = ExchangeStrategies
-              .builder()
-              .codecs(clientDefaultCodecsConfigurer -> {
-                clientDefaultCodecsConfigurer.defaultCodecs()
-                        .jackson2JsonEncoder(new Jackson2JsonEncoder(mapper, MediaType.APPLICATION_JSON));
-                clientDefaultCodecsConfigurer.defaultCodecs()
-                        .jackson2JsonDecoder(new Jackson2JsonDecoder(mapper, MediaType.APPLICATION_JSON));
-                clientDefaultCodecsConfigurer.defaultCodecs()
-                        .maxInMemorySize((int) maxBuffSize.toBytes());
-              })
-              .build();
-
-      try {
-        WebClient.Builder webClient = SecuredWebClient.configure(
-            config.getKeystoreLocation(),
-            config.getKeystorePassword(),
-            config.getTruststoreLocation(),
-            config.getTruststorePassword()
-        );
-
-        return webClient.exchangeStrategies(strategies).build();
-      } catch (Exception e) {
-        throw new IllegalStateException(
-            "cannot create TLS configuration for kafka-connect cluster " + config.getName(), e);
-      }
-    }
-
-    public static ObjectMapper buildObjectMapper(DateFormat dateFormat) {
-      ObjectMapper mapper = new ObjectMapper();
-      mapper.setDateFormat(dateFormat);
-      mapper.registerModule(new JavaTimeModule());
-      mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-      JsonNullableModule jnm = new JsonNullableModule();
-      mapper.registerModule(jnm);
-      return mapper;
-    }
-
-    @Override
-    public <T> Mono<T> invokeAPI(String path, HttpMethod method, Map<String, Object> pathParams,
-                                 MultiValueMap<String, String> queryParams, Object body,
-                                 HttpHeaders headerParams,
-                                 MultiValueMap<String, String> cookieParams,
-                                 MultiValueMap<String, Object> formParams, List<MediaType> accept,
-                                 MediaType contentType, String[] authNames,
-                                 ParameterizedTypeReference<T> returnType)
-        throws RestClientException {
-      return withRetryOnConflict(
-          super.invokeAPI(path, method, pathParams, queryParams, body, headerParams, cookieParams,
-              formParams, accept, contentType, authNames, returnType)
-      );
-    }
-
-    @Override
-    public <T> Flux<T> invokeFluxAPI(String path, HttpMethod method, Map<String, Object> pathParams,
-                                     MultiValueMap<String, String> queryParams, Object body,
-                                     HttpHeaders headerParams,
-                                     MultiValueMap<String, String> cookieParams,
-                                     MultiValueMap<String, Object> formParams,
-                                     List<MediaType> accept, MediaType contentType,
-                                     String[] authNames, ParameterizedTypeReference<T> returnType)
-        throws RestClientException {
-      return withRetryOnConflict(
-          super.invokeFluxAPI(path, method, pathParams, queryParams, body, headerParams,
-              cookieParams, formParams, accept, contentType, authNames, returnType)
-      );
+    public static WebClient buildWebClient(DataSize maxBuffSize,
+                                           ConnectCluster config,
+                                           ClustersProperties.TruststoreConfig truststoreConfig) {
+      return new WebClientConfigurator()
+          .configureSsl(
+              truststoreConfig,
+              new ClustersProperties.KeystoreConfig(
+                  config.getKeystoreLocation(),
+                  config.getKeystorePassword()
+              )
+          )
+          .configureBasicAuth(
+              config.getUsername(),
+              config.getPassword()
+          )
+          .configureBufferSize(maxBuffSize)
+          .build();
     }
   }
 }

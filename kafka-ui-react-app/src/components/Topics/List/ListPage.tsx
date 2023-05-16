@@ -4,13 +4,14 @@ import { clusterTopicNewRelativePath } from 'lib/paths';
 import { PER_PAGE } from 'lib/constants';
 import ClusterContext from 'components/contexts/ClusterContext';
 import Search from 'components/common/Search/Search';
-import { Button } from 'components/common/Button/Button';
+import { ActionButton } from 'components/common/ActionComponent';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import Switch from 'components/common/Switch/Switch';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import TopicTable from 'components/Topics/List/TopicTable';
+import { Action, ResourceType } from 'generated-sources';
 
 const ListPage: React.FC = () => {
   const { isReadOnly } = React.useContext(ClusterContext);
@@ -47,13 +48,17 @@ const ListPage: React.FC = () => {
     <>
       <PageHeading text="Topics">
         {!isReadOnly && (
-          <Button
+          <ActionButton
             buttonType="primary"
             buttonSize="M"
             to={clusterTopicNewRelativePath}
+            permission={{
+              resource: ResourceType.TOPIC,
+              action: Action.CREATE,
+            }}
           >
             <PlusIcon /> Add a Topic
-          </Button>
+          </ActionButton>
         )}
       </PageHeading>
       <ControlPanelWrapper hasInput>

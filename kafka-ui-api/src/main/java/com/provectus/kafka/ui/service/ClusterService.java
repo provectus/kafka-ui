@@ -38,6 +38,7 @@ public class ClusterService {
   }
 
   public Mono<ClusterMetricsDTO> getClusterMetrics(KafkaCluster cluster) {
+
     return Mono.just(
         clusterMapper.toClusterMetrics(
             statisticsCache.get(cluster).getMetrics()));

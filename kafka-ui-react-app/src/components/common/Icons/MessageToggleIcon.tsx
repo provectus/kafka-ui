@@ -9,6 +9,7 @@ const MessageToggleIcon: React.FC<Props> = ({ isOpen }) => {
   if (isOpen) {
     return (
       <S.Svg
+        isOpen={isOpen}
         width="16"
         height="16"
         viewBox="0 0 16 16"

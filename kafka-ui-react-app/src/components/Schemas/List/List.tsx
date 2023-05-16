@@ -5,7 +5,7 @@ import {
   clusterSchemaPath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
-import { Button } from 'components/common/Button/Button';
+import { ActionButton } from 'components/common/ActionComponent';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
@@ -22,7 +22,7 @@ import Search from 'components/common/Search/Search';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import Table, { LinkCell } from 'components/common/NewTable';
 import { ColumnDef } from '@tanstack/react-table';
-import { SchemaSubject } from 'generated-sources';
+import { Action, SchemaSubject, ResourceType } from 'generated-sources';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
 
@@ -79,13 +79,17 @@ const List: React.FC = () => {
         {!isReadOnly && (
           <>
             <GlobalSchemaSelector />
-            <Button
+            <ActionButton
               buttonSize="M"
               buttonType="primary"
               to={clusterSchemaNewRelativePath}
+              permission={{
+                resource: ResourceType.SCHEMA,
+                action: Action.CREATE,
+              }}
             >
               <PlusIcon /> Create Schema
-            </Button>
+            </ActionButton>
           </>
         )}
       </PageHeading>

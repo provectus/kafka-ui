@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service.analyze;
 
 import com.provectus.kafka.ui.model.TopicAnalysisSizeStatsDTO;
 import com.provectus.kafka.ui.model.TopicAnalysisStatsDTO;
-import com.provectus.kafka.ui.model.TopicAnalysisStatsHourlyMsgCountsDTO;
+import com.provectus.kafka.ui.model.TopicAnalysisStatsHourlyMsgCountsInnerDTO;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Comparator;
@@ -43,8 +43,7 @@ class TopicAnalysisStats {
     Long max;
     final UpdateDoublesSketch sizeSketch = DoublesSketch.builder().build();
 
-    void apply(byte[] bytes) {
-      int len = bytes.length;
+    void apply(int len) {
       sum += len;
       min = minNullable(min, len);
       max = maxNullable(max, len);
@@ -78,10 +77,10 @@ class TopicAnalysisStats {
       }
     }
 
-    List<TopicAnalysisStatsHourlyMsgCountsDTO> toDto() {
+    List<TopicAnalysisStatsHourlyMsgCountsInnerDTO> toDto() {
       return hourlyStats.entrySet().stream()
           .sorted(Comparator.comparingLong(Map.Entry::getKey))
-          .map(e -> new TopicAnalysisStatsHourlyMsgCountsDTO()
+          .map(e -> new TopicAnalysisStatsHourlyMsgCountsInnerDTO()
               .hourStart(e.getKey())
               .count(e.getValue()))
           .collect(Collectors.toList());
@@ -98,7 +97,7 @@ class TopicAnalysisStats {
 
     if (rec.key() != null) {
       byte[] keyBytes = rec.key().get();
-      keysSize.apply(keyBytes);
+      keysSize.apply(rec.serializedKeySize());
       uniqKeys.update(keyBytes);
     } else {
       nullKeys++;
@@ -106,7 +105,7 @@ class TopicAnalysisStats {
 
     if (rec.value() != null) {
       byte[] valueBytes = rec.value().get();
-      valuesSize.apply(valueBytes);
+      valuesSize.apply(rec.serializedValueSize());
       uniqValues.update(valueBytes);
     } else {
       nullValues++;

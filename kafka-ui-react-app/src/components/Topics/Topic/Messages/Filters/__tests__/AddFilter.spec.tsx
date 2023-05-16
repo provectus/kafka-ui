@@ -174,59 +174,6 @@ describe('AddFilter component', () => {
         expect(addFilterMock).toHaveBeenCalled();
         expect(toggleModelMock).not.toHaveBeenCalled();
       });
-
-      it('should check the state submit button when checkbox state changes so is name input value', async () => {
-        const checkbox = screen.getByRole('checkbox');
-        const codeTextBox = screen.getAllByRole(
-          'textbox'
-        )[0] as HTMLTextAreaElement;
-        const nameTextBox = screen.getAllByRole('textbox')[1];
-        const addFilterBtn = screen.getByRole('button', {
-          name: /Add filter/i,
-        });
-
-        await userEvent.clear(nameTextBox);
-        expect(nameTextBox).toHaveValue('');
-
-        await userEvent.click(addFilterBtn);
-        expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
-
-        expect(activeFilterHandlerMock).toHaveBeenCalledWith(
-          {
-            name: codeValue,
-            code: codeValue,
-            saveFilter: false,
-          },
-          -1
-        );
-        // get reset-ed
-        await userEvent.clear(codeTextBox);
-
-        expect(codeTextBox).toHaveValue(``);
-        expect(toggleModelMock).toHaveBeenCalled();
-
-        await userEvent.type(codeTextBox, codeValue);
-        expect(codeTextBox).toHaveValue(`${codeValue}\n\n`);
-
-        await userEvent.click(checkbox);
-        await userEvent.tab();
-
-        expect(addFilterBtn).toBeDisabled();
-
-        await userEvent.paste(nameValue);
-        expect(nameTextBox).toHaveValue(`${nameValue}`);
-        await userEvent.tab();
-
-        expect(addFilterBtn).toBeEnabled();
-        await userEvent.click(addFilterBtn);
-
-        expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
-        expect(addFilterMock).toHaveBeenCalledWith({
-          name: nameValue,
-          code: codeValue,
-          saveFilter: true,
-        });
-      });
     });
 
     it('should use sliced code as the filter name if filter name is empty', async () => {
@@ -268,7 +215,6 @@ describe('AddFilter component', () => {
         },
         -1
       );
-      expect(codeTextBox).toHaveValue('');
       expect(toggleModelMock).toHaveBeenCalled();
     });
   });

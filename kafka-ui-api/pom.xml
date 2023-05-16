@@ -12,7 +12,7 @@
     <artifactId>kafka-ui-api</artifactId>
 
     <properties>
-        <jacoco.version>0.8.8</jacoco.version>
+        <jacoco.version>0.8.10</jacoco.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
@@ -21,6 +21,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <!--TODO: remove, when spring-boot fixed dependency to 6.0.8+ (6.0.7 has CVE) -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>6.0.8</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
@@ -108,6 +114,12 @@
         <dependency>
             <groupId>io.projectreactor.addons</groupId>
             <artifactId>reactor-extra</artifactId>
+        </dependency>
+<!-- https://github.com/provectus/kafka-ui/pull/3693 -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${org.json.version}</version>
         </dependency>
 
         <dependency>
@@ -197,6 +209,31 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
             <version>${antlr4-maven-plugin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendatadiscovery</groupId>
+            <artifactId>oddrn-generator-java</artifactId>
+            <version>${odd-oddrn-generator.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opendatadiscovery</groupId>
+            <artifactId>ingestion-contract-client</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-webflux</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.projectreactor</groupId>
+                    <artifactId>reactor-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.projectreactor.ipc</groupId>
+                    <artifactId>reactor-netty</artifactId>
+                </exclusion>
+            </exclusions>
+            <version>${odd-oddrn-client.version}</version>
         </dependency>
 
         <dependency>
@@ -306,6 +343,7 @@
                         </configuration>
                     </execution>
                 </executions>
+
             </plugin>
             <plugin>
                 <groupId>org.antlr</groupId>

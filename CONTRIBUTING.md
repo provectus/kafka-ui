@@ -1,3 +1,5 @@
+This guide is an exact copy of the same documented located [in our official docs](https://docs.kafka-ui.provectus.io/development/contributing). If there are any differences between the documents, the one located in our official docs should prevail.
+
 This guide aims to walk you through the process of working on issues and Pull Requests (PRs).
 
 Bear in mind that you will not be able to complete some steps on your own if you do not have a “write” permission. Feel free to reach out to the maintainers to help you unlock these activities.
@@ -20,7 +22,7 @@ You also need to consider labels. You can sort the issues by scope labels, such 
 ## Grabbing the issue
 
 There is a bunch of criteria that make an issue feasible for development. <br/>
-The implementation of any features and/or their enhancements should be reasonable, must be backed by justified requirements (demanded by the community, [roadmap](documentation/project/ROADMAP.md) plans, etc.). The final decision is left for the maintainers' discretion.
+The implementation of any features and/or their enhancements should be reasonable, must be backed by justified requirements (demanded by the community, [roadmap](https://docs.kafka-ui.provectus.io/project/roadmap) plans, etc.). The final decision is left for the maintainers' discretion.
 
 All bugs should be confirmed as such (i.e. the behavior is unintended).
 
@@ -39,7 +41,7 @@ To keep the status of the issue clear to everyone, please keep the card's status
 
 ## Setting up a local development environment
 
-Please refer to [this guide](documentation/project/contributing/README.md).
+Please refer to [this guide](https://docs.kafka-ui.provectus.io/development/contributing).
 
 # Pull Requests
 

@@ -110,7 +110,7 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
       return createRefField(definitionName);
     }
     // adding stub record, need to avoid infinite recursion
-    definitions.put(definitionName, new ObjectFieldSchema(Map.of(), List.of()));
+    definitions.put(definitionName, ObjectFieldSchema.EMPTY);
 
     final Map<String, FieldSchema> fields = schema.getFields().stream()
         .map(f -> Tuples.of(f.name(), convertField(f, definitions)))

@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'lib/testHelpers';
 import * as S from 'components/Topics/Topic/Messages/Filters/Filters.styled';
 import { screen } from '@testing-library/react';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 
 describe('Filters Styled components', () => {
   describe('MessageLoading component', () => {

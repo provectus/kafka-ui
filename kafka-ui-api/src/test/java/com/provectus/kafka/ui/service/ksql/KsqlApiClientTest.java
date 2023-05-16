@@ -9,15 +9,12 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.container.KsqlDbContainer;
-import com.provectus.kafka.ui.model.InternalKsqlServer;
-import com.provectus.kafka.ui.model.KafkaCluster;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.unit.DataSize;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 import org.testcontainers.utility.DockerImageName;
 import reactor.test.StepVerifier;
@@ -27,8 +24,6 @@ class KsqlApiClientTest extends AbstractIntegrationTest {
   private static final KsqlDbContainer KSQL_DB = new KsqlDbContainer(
       DockerImageName.parse("confluentinc/ksqldb-server").withTag("0.24.0"))
       .withKafka(kafka);
-
-  private static final DataSize maxBuffSize = DataSize.ofMegabytes(20);
 
   @BeforeAll
   static void startContainer() {
@@ -43,8 +38,7 @@ class KsqlApiClientTest extends AbstractIntegrationTest {
   // Tutorial is here: https://ksqldb.io/quickstart.html
   @Test
   void ksqTutorialQueriesWork() {
-    var client = new KsqlApiClient(KafkaCluster.builder().ksqldbServer(
-            InternalKsqlServer.builder().url(KSQL_DB.url()).build()).build(), maxBuffSize);
+    var client = ksqlClient();
     execCommandSync(client,
         "CREATE STREAM riderLocations (profileId VARCHAR, latitude DOUBLE, longitude DOUBLE) "
             + "WITH (kafka_topic='locations', value_format='json', partitions=1);",
@@ -128,6 +122,10 @@ class KsqlApiClientTest extends AbstractIntegrationTest {
     for (String ksql : ksqls) {
       client.execute(ksql, Map.of()).collectList().block();
     }
+  }
+
+  private KsqlApiClient ksqlClient() {
+    return new KsqlApiClient(KSQL_DB.url(), null, null, null, null);
   }
 
 

@@ -37,7 +37,7 @@ const Config: React.FC = () => {
     formState: { isDirty, isSubmitting, isValid, errors },
     setValue,
   } = useForm<FormValues>({
-    mode: 'onTouched',
+    mode: 'onChange',
     resolver: yupResolver(validationSchema),
     defaultValues: {
       config: JSON.stringify(config, null, '\t'),
@@ -51,9 +51,13 @@ const Config: React.FC = () => {
   }, [config, setValue]);
 
   const onSubmit = async (values: FormValues) => {
-    const requestBody = JSON.parse(values.config.trim());
-    await mutation.mutateAsync(requestBody);
-    reset(values);
+    try {
+      const requestBody = JSON.parse(values.config.trim());
+      await mutation.mutateAsync(requestBody);
+      reset(values);
+    } catch (e) {
+      // do nothing
+    }
   };
 
   const hasCredentials = JSON.stringify(config, null, '\t').includes(

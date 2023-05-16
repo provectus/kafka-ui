@@ -1,35 +1,33 @@
 import React, { Suspense } from 'react';
 import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import {
-  RouteParamsClusterTopic,
-  clusterTopicMessagesRelativePath,
-  clusterTopicSettingsRelativePath,
   clusterTopicConsumerGroupsRelativePath,
   clusterTopicEditRelativePath,
-  clusterTopicStatisticsRelativePath,
+  clusterTopicMessagesRelativePath,
+  clusterTopicSettingsRelativePath,
   clusterTopicsPath,
+  clusterTopicStatisticsRelativePath,
+  RouteParamsClusterTopic,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { Button } from 'components/common/Button/Button';
+import {
+  ActionButton,
+  ActionNavLink,
+  ActionDropdownItem,
+} from 'components/common/ActionComponent';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 import { useAppDispatch } from 'lib/hooks/redux';
 import useAppParams from 'lib/hooks/useAppParams';
+import { Dropdown, DropdownItemHint } from 'components/common/Dropdown';
 import {
-  Dropdown,
-  DropdownItem,
-  DropdownItemHint,
-} from 'components/common/Dropdown';
-import {
+  useClearTopicMessages,
   useDeleteTopic,
   useRecreateTopic,
   useTopicDetails,
 } from 'lib/hooks/api/topics';
-import {
-  clearTopicMessages,
-  resetTopicMessages,
-} from 'redux/reducers/topicMessages/topicMessagesSlice';
-import { CleanUpPolicy } from 'generated-sources';
+import { resetTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
+import { Action, CleanUpPolicy, ResourceType } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import SlidingSidebar from 'components/common/SlidingSidebar';
 import useBoolean from 'lib/hooks/useBoolean';
@@ -50,6 +48,7 @@ const Topic: React.FC = () => {
     setTrue: openSidebar,
   } = useBoolean(false);
   const { clusterName, topicName } = useAppParams<RouteParamsClusterTopic>();
+
   const navigate = useNavigate();
   const deleteTopic = useDeleteTopic(clusterName);
   const recreateTopic = useRecreateTopic({ clusterName, topicName });
@@ -60,7 +59,7 @@ const Topic: React.FC = () => {
 
   const deleteTopicHandler = async () => {
     await deleteTopic.mutateAsync(topicName);
-    navigate('../..');
+    navigate(clusterTopicsPath(clusterName));
   };
 
   React.useEffect(() => {
@@ -68,9 +67,11 @@ const Topic: React.FC = () => {
       dispatch(resetTopicMessages());
     };
   }, []);
-
+  const clearMessages = useClearTopicMessages(clusterName);
+  const clearTopicMessagesHandler = async () => {
+    await clearMessages.mutateAsync(topicName);
+  };
   const canCleanup = data?.cleanUpPolicy === CleanUpPolicy.DELETE;
-
   return (
     <>
       <PageHeading
@@ -78,31 +79,46 @@ const Topic: React.FC = () => {
         backText="Topics"
         backTo={clusterTopicsPath(clusterName)}
       >
-        <Button
+        <ActionButton
           buttonSize="M"
           buttonType="primary"
           onClick={openSidebar}
           disabled={isReadOnly}
+          permission={{
+            resource: ResourceType.TOPIC,
+            action: Action.MESSAGES_PRODUCE,
+            value: topicName,
+          }}
         >
           Produce Message
-        </Button>
+        </ActionButton>
         <Dropdown disabled={isReadOnly || data?.internal}>
-          <DropdownItem onClick={() => navigate(clusterTopicEditRelativePath)}>
+          <ActionDropdownItem
+            onClick={() => navigate(clusterTopicEditRelativePath)}
+            permission={{
+              resource: ResourceType.TOPIC,
+              action: Action.EDIT,
+              value: topicName,
+            }}
+          >
             Edit settings
             <DropdownItemHint>
               Pay attention! This operation has
               <br />
               especially important consequences.
             </DropdownItemHint>
-          </DropdownItem>
+          </ActionDropdownItem>
 
-          <DropdownItem
-            onClick={() =>
-              dispatch(clearTopicMessages({ clusterName, topicName })).unwrap()
-            }
+          <ActionDropdownItem
+            onClick={clearTopicMessagesHandler}
             confirm="Are you sure want to clear topic messages?"
             disabled={!canCleanup}
             danger
+            permission={{
+              resource: ResourceType.TOPIC,
+              action: Action.MESSAGES_DELETE,
+              value: topicName,
+            }}
           >
             Clear messages
             <DropdownItemHint>
@@ -110,9 +126,9 @@ const Topic: React.FC = () => {
               <br />
               with DELETE policy
             </DropdownItemHint>
-          </DropdownItem>
+          </ActionDropdownItem>
 
-          <DropdownItem
+          <ActionDropdownItem
             onClick={recreateTopic.mutateAsync}
             confirm={
               <>
@@ -120,10 +136,15 @@ const Topic: React.FC = () => {
               </>
             }
             danger
+            permission={{
+              resource: ResourceType.TOPIC,
+              action: [Action.MESSAGES_READ, Action.CREATE, Action.DELETE],
+              value: topicName,
+            }}
           >
             Recreate Topic
-          </DropdownItem>
-          <DropdownItem
+          </ActionDropdownItem>
+          <ActionDropdownItem
             onClick={deleteTopicHandler}
             confirm={
               <>
@@ -132,6 +153,11 @@ const Topic: React.FC = () => {
             }
             disabled={!isTopicDeletionAllowed}
             danger
+            permission={{
+              resource: ResourceType.TOPIC,
+              action: Action.DELETE,
+              value: topicName,
+            }}
           >
             Remove Topic
             {!isTopicDeletionAllowed && (
@@ -141,7 +167,7 @@ const Topic: React.FC = () => {
                 configuration level
               </DropdownItemHint>
             )}
-          </DropdownItem>
+          </ActionDropdownItem>
         </Dropdown>
       </PageHeading>
       <Navbar role="navigation">
@@ -152,12 +178,17 @@ const Topic: React.FC = () => {
         >
           Overview
         </NavLink>
-        <NavLink
+        <ActionNavLink
           to={clusterTopicMessagesRelativePath}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
+          permission={{
+            resource: ResourceType.TOPIC,
+            action: Action.MESSAGES_READ,
+            value: topicName,
+          }}
         >
           Messages
-        </NavLink>
+        </ActionNavLink>
         <NavLink
           to={clusterTopicConsumerGroupsRelativePath}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
@@ -205,7 +236,7 @@ const Topic: React.FC = () => {
         title="Produce Message"
       >
         <Suspense fallback={<PageLoader />}>
-          <SendMessage onSubmit={closeSidebar} />
+          <SendMessage closeSidebar={closeSidebar} />
         </Suspense>
       </SlidingSidebar>
     </>

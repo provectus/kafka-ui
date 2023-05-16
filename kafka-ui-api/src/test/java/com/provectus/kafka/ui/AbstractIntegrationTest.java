@@ -2,6 +2,7 @@ package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.container.KafkaConnectContainer;
 import com.provectus.kafka.ui.container.SchemaRegistryContainer;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -9,6 +10,7 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.function.ThrowingConsumer;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +18,7 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.utility.DockerImageName;
@@ -47,6 +49,9 @@ public abstract class AbstractIntegrationTest {
           .dependsOn(kafka)
           .dependsOn(schemaRegistry);
 
+  @TempDir
+  public static Path tmpDir;
+
   static {
     kafka.start();
     schemaRegistry.start();
@@ -61,7 +66,7 @@ public abstract class AbstractIntegrationTest {
       System.setProperty("kafka.clusters.0.bootstrapServers", kafka.getBootstrapServers());
       // List unavailable hosts to verify failover
       System.setProperty("kafka.clusters.0.schemaRegistry", String.format("http://localhost:%1$s,http://localhost:%1$s,%2$s",
-              SocketUtils.findAvailableTcpPort(), schemaRegistry.getUrl()));
+              TestSocketUtils.findAvailableTcpPort(), schemaRegistry.getUrl()));
       System.setProperty("kafka.clusters.0.kafkaConnect.0.name", "kafka-connect");
       System.setProperty("kafka.clusters.0.kafkaConnect.0.userName", "kafka-connect");
       System.setProperty("kafka.clusters.0.kafkaConnect.0.password", "kafka-connect");
@@ -76,6 +81,9 @@ public abstract class AbstractIntegrationTest {
       System.setProperty("kafka.clusters.1.schemaRegistry", schemaRegistry.getUrl());
       System.setProperty("kafka.clusters.1.kafkaConnect.0.name", "kafka-connect");
       System.setProperty("kafka.clusters.1.kafkaConnect.0.address", kafkaConnect.getTarget());
+
+      System.setProperty("dynamic.config.enabled", "true");
+      System.setProperty("config.related.uploads.dir", tmpDir.toString());
     }
   }
 

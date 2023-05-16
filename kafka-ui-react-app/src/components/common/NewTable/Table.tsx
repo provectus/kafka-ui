@@ -5,14 +5,16 @@ import {
   getExpandedRowModel,
   getSortedRowModel,
   useReactTable,
-  ColumnDef,
+  getPaginationRowModel,
+} from '@tanstack/react-table';
+import type {
   Row,
   SortingState,
   OnChangeFn,
   PaginationState,
-  getPaginationRowModel,
+  ColumnDef,
 } from '@tanstack/react-table';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { PER_PAGE } from 'lib/constants';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
@@ -44,10 +46,15 @@ export interface TableProps<TData> {
   enableSorting?: boolean; // Enables sorting for table.
 
   // Placeholder for empty table
-  emptyMessage?: string;
+  emptyMessage?: React.ReactNode;
+
+  disabled?: boolean;
 
   // Handles row click. Can not be combined with `enableRowSelection` && expandable rows.
   onRowClick?: (row: Row<TData>) => void;
+
+  onRowHover?: (row: Row<TData>) => void;
+  onMouseLeave?: () => void;
 }
 
 type UpdaterFn<T> = (previousState: T) => T;
@@ -121,9 +128,13 @@ const Table: React.FC<TableProps<any>> = ({
   enableRowSelection = false,
   batchActionsBar: BatchActionsBar,
   emptyMessage,
+  disabled,
   onRowClick,
+  onRowHover,
+  onMouseLeave,
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const [rowSelection, setRowSelection] = React.useState({});
   const onSortingChange = React.useCallback(
     (updater: UpdaterFn<SortingState>) => {
@@ -131,20 +142,17 @@ const Table: React.FC<TableProps<any>> = ({
       setSearchParams(searchParams);
       return newState;
     },
-    [searchParams]
+    [searchParams, location]
   );
   const onPaginationChange = React.useCallback(
     (updater: UpdaterFn<PaginationState>) => {
       const newState = updatePaginationState(updater, searchParams);
       setSearchParams(searchParams);
+      setRowSelection({});
       return newState;
     },
-    [searchParams]
+    [searchParams, location]
   );
-
-  React.useEffect(() => {
-    setRowSelection({});
-  }, [searchParams]);
 
   const table = useReactTable({
     data,
@@ -154,6 +162,9 @@ const Table: React.FC<TableProps<any>> = ({
       sorting: getSortingFromSearchParams(searchParams),
       pagination: getPaginationFromSearchParams(searchParams),
       rowSelection,
+    },
+    getRowId: (originalRow, index) => {
+      return originalRow.name ? originalRow.name : `${index}`;
     },
     onSortingChange: onSortingChange as OnChangeFn<SortingState>,
     onPaginationChange: onPaginationChange as OnChangeFn<PaginationState>,
@@ -188,6 +199,21 @@ const Table: React.FC<TableProps<any>> = ({
     return undefined;
   };
 
+  const handleRowHover = (row: Row<typeof data>) => (e: React.MouseEvent) => {
+    if (onRowHover) {
+      e.stopPropagation();
+      return onRowHover(row);
+    }
+
+    return undefined;
+  };
+
+  const handleMouseLeave = () => {
+    if (onMouseLeave) {
+      onMouseLeave();
+    }
+  };
+
   return (
     <>
       {BatchActionsBar && (
@@ -198,7 +224,7 @@ const Table: React.FC<TableProps<any>> = ({
           />
         </S.TableActionsBar>
       )}
-      <S.TableWrapper>
+      <S.TableWrapper $disabled={!!disabled}>
         <S.Table>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -221,6 +247,12 @@ const Table: React.FC<TableProps<any>> = ({
                     sortable={header.column.getCanSort()}
                     sortOrder={header.column.getIsSorted()}
                     onClick={header.column.getToggleSortingHandler()}
+                    style={{
+                      width:
+                        header.column.getSize() !== 150
+                          ? header.column.getSize()
+                          : undefined,
+                    }}
                   >
                     <div>
                       {flexRender(
@@ -239,6 +271,8 @@ const Table: React.FC<TableProps<any>> = ({
                 <S.Row
                   expanded={row.getIsExpanded()}
                   onClick={handleRowClick(row)}
+                  onMouseOver={onRowHover ? handleRowHover(row) : undefined}
+                  onMouseLeave={onMouseLeave ? handleMouseLeave : undefined}
                   clickable={
                     !enableRowSelection &&
                     (row.getCanExpand() || onRowClick !== undefined)
@@ -263,7 +297,13 @@ const Table: React.FC<TableProps<any>> = ({
                   {row
                     .getVisibleCells()
                     .map(({ id, getContext, column: { columnDef } }) => (
-                      <td key={id} style={columnDef.meta}>
+                      <td
+                        key={id}
+                        style={{
+                          width:
+                            columnDef.size !== 150 ? columnDef.size : undefined,
+                        }}
+                      >
                         {flexRender(columnDef.cell, getContext())}
                       </td>
                     ))}

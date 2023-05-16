@@ -74,8 +74,12 @@ const DangerZone: React.FC<DangerZoneProps> = ({
   };
 
   const validateReplicationFactor = (data: { replicationFactor: number }) => {
-    setReplicationFactor(data.replicationFactor);
-    confirmReplicationFactorChange();
+    try {
+      setReplicationFactor(data.replicationFactor);
+      confirmReplicationFactorChange();
+    } catch (e) {
+      // do nothing
+    }
   };
 
   return (

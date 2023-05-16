@@ -15,6 +15,7 @@ services:
       KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SASL_PLAINTEXT
       KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM: PLAIN
       KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";'
+      DYNAMIC_CONFIG_ENABLED: true # not necessary for sasl auth, added for tests
 
   kafka:
     image: confluentinc/cp-kafka:7.2.1

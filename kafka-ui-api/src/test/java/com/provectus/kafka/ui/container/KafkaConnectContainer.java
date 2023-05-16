@@ -39,7 +39,10 @@ public class KafkaConnectContainer extends GenericContainer<KafkaConnectContaine
     withEnv("CONNECT_INTERNAL_VALUE_CONVERTER", "org.apache.kafka.connect.json.JsonConverter");
     withEnv("CONNECT_REST_ADVERTISED_HOST_NAME", "kafka-connect");
     withEnv("CONNECT_REST_PORT", String.valueOf(CONNECT_PORT));
-    withEnv("CONNECT_PLUGIN_PATH", "/usr/share/java,/usr/share/confluent-hub-components");
+    withEnv("CONNECT_PLUGIN_PATH",
+        "/usr/share/java,/usr/share/confluent-hub-components,"
+            // adding additional paths to find FileStreamSinkConnector
+            + "/usr/local/share/kafka/plugins,/usr/share/filestream-connectors");
     return self();
   }
 

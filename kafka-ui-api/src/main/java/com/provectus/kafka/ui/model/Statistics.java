@@ -15,7 +15,7 @@ public class Statistics {
   ServerStatusDTO status;
   Throwable lastKafkaException;
   String version;
-  List<Feature> features;
+  List<ClusterFeature> features;
   ReactiveAdminClient.ClusterDescription clusterDescription;
   Metrics metrics;
   InternalLogDirStats logDirInfo;

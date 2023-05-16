@@ -1,29 +1,31 @@
+import { useAppInfo } from 'lib/hooks/api/appConfig';
 import React from 'react';
-import { useTimeFormat } from 'lib/hooks/api/timeFormat';
+import { ApplicationInfoEnabledFeaturesEnum } from 'generated-sources';
 
-interface GlobalSettingsContextValue {
-  timeStampFormat: string;
+interface GlobalSettingsContextProps {
+  hasDynamicConfig: boolean;
 }
 
-export const defaultGlobalSettingsValue = {
-  timeStampFormat: 'DD.MM.YYYY HH:mm:ss',
-};
-
 export const GlobalSettingsContext =
-  React.createContext<GlobalSettingsContextValue>(defaultGlobalSettingsValue);
+  React.createContext<GlobalSettingsContextProps>({
+    hasDynamicConfig: false,
+  });
 
 export const GlobalSettingsProvider: React.FC<
   React.PropsWithChildren<unknown>
 > = ({ children }) => {
-  const { data } = useTimeFormat();
+  const info = useAppInfo();
+  const value = React.useMemo(() => {
+    const features = info.data?.enabledFeatures || [];
+    return {
+      hasDynamicConfig: features.includes(
+        ApplicationInfoEnabledFeaturesEnum.DYNAMIC_CONFIG
+      ),
+    };
+  }, [info.data]);
 
   return (
-    <GlobalSettingsContext.Provider
-      value={{
-        timeStampFormat:
-          data?.timeStampFormat || defaultGlobalSettingsValue.timeStampFormat,
-      }}
-    >
+    <GlobalSettingsContext.Provider value={value}>
       {children}
     </GlobalSettingsContext.Provider>
   );

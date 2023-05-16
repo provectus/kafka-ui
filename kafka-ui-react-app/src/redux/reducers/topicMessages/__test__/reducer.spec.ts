@@ -1,6 +1,5 @@
 import reducer, {
   addTopicMessage,
-  clearTopicMessages,
   resetTopicMessages,
   updateTopicMessagesMeta,
   updateTopicMessagesPhase,
@@ -11,9 +10,6 @@ import {
   topicMessagePayloadV2,
   topicMessagesMetaPayload,
 } from './fixtures';
-
-const clusterName = 'local';
-const topicName = 'localTopic';
 
 describe('TopicMessages reducer', () => {
   it('Adds new message', () => {
@@ -65,24 +61,6 @@ describe('TopicMessages reducer', () => {
 
     const newState = reducer(state, resetTopicMessages());
     expect(newState.messages.length).toEqual(0);
-  });
-
-  it('clear messages', () => {
-    const state = reducer(
-      undefined,
-      addTopicMessage({ message: topicMessagePayload })
-    );
-    expect(state.messages.length).toEqual(1);
-
-    expect(
-      reducer(state, {
-        type: clearTopicMessages.fulfilled,
-        payload: { clusterName, topicName },
-      })
-    ).toEqual({
-      ...state,
-      messages: [],
-    });
   });
 
   it('Updates Topic Messages Phase', () => {

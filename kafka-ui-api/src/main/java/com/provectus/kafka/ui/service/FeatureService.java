@@ -1,65 +1,73 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.ClusterFeature;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.service.ReactiveAdminClient.ClusterDescription;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
-import javax.annotation.Nullable;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.Node;
+import org.apache.kafka.common.acl.AclOperation;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class FeatureService {
 
-  private static final String DELETE_TOPIC_ENABLED_SERVER_PROPERTY = "delete.topic.enable";
+  public Mono<List<ClusterFeature>> getAvailableFeatures(ReactiveAdminClient adminClient,
+                                                         KafkaCluster cluster,
+                                                         ClusterDescription clusterDescription) {
+    List<Mono<ClusterFeature>> features = new ArrayList<>();
 
-  private final AdminClientService adminClientService;
-
-  public Mono<List<Feature>> getAvailableFeatures(KafkaCluster cluster, @Nullable Node controller) {
-    List<Mono<Feature>> features = new ArrayList<>();
-
-    if (Optional.ofNullable(cluster.getKafkaConnect())
-        .filter(Predicate.not(List::isEmpty))
+    if (Optional.ofNullable(cluster.getConnectsClients())
+        .filter(Predicate.not(Map::isEmpty))
         .isPresent()) {
-      features.add(Mono.just(Feature.KAFKA_CONNECT));
+      features.add(Mono.just(ClusterFeature.KAFKA_CONNECT));
     }
 
-    if (cluster.getKsqldbServer() != null) {
-      features.add(Mono.just(Feature.KSQL_DB));
+    if (cluster.getKsqlClient() != null) {
+      features.add(Mono.just(ClusterFeature.KSQL_DB));
     }
 
-    if (cluster.getSchemaRegistry() != null) {
-      features.add(Mono.just(Feature.SCHEMA_REGISTRY));
+    if (cluster.getSchemaRegistryClient() != null) {
+      features.add(Mono.just(ClusterFeature.SCHEMA_REGISTRY));
     }
 
-    if (controller != null) {
-      features.add(
-          isTopicDeletionEnabled(cluster, controller)
-              .flatMap(r -> Boolean.TRUE.equals(r) ? Mono.just(Feature.TOPIC_DELETION) : Mono.empty())
-      );
-    }
+    features.add(topicDeletionEnabled(adminClient));
+    features.add(aclView(adminClient));
+    features.add(aclEdit(adminClient, clusterDescription));
 
     return Flux.fromIterable(features).flatMap(m -> m).collectList();
   }
 
-  private Mono<Boolean> isTopicDeletionEnabled(KafkaCluster cluster, Node controller) {
-    return adminClientService.get(cluster)
-        .flatMap(ac -> ac.loadBrokersConfig(List.of(controller.id())))
-        .map(config ->
-            config.values().stream()
-                .flatMap(Collection::stream)
-                .filter(e -> e.name().equals(DELETE_TOPIC_ENABLED_SERVER_PROPERTY))
-                .map(e -> Boolean.parseBoolean(e.value()))
-                .findFirst()
-                .orElse(true));
+  private Mono<ClusterFeature> topicDeletionEnabled(ReactiveAdminClient adminClient) {
+    return adminClient.isTopicDeletionEnabled()
+        ? Mono.just(ClusterFeature.TOPIC_DELETION)
+        : Mono.empty();
   }
+
+  private Mono<ClusterFeature> aclEdit(ReactiveAdminClient adminClient, ClusterDescription clusterDescription) {
+    var authorizedOps = Optional.ofNullable(clusterDescription.getAuthorizedOperations()).orElse(Set.of());
+    boolean canEdit = aclViewEnabled(adminClient)
+        && (authorizedOps.contains(AclOperation.ALL) || authorizedOps.contains(AclOperation.ALTER));
+    return canEdit
+        ? Mono.just(ClusterFeature.KAFKA_ACL_EDIT)
+        : Mono.empty();
+  }
+
+  private Mono<ClusterFeature> aclView(ReactiveAdminClient adminClient) {
+    return aclViewEnabled(adminClient)
+        ? Mono.just(ClusterFeature.KAFKA_ACL_VIEW)
+        : Mono.empty();
+  }
+
+  private boolean aclViewEnabled(ReactiveAdminClient adminClient) {
+    return adminClient.getClusterFeatures().contains(ReactiveAdminClient.SupportedFeature.AUTHORIZED_SECURITY_ENABLED);
+  }
+
 }

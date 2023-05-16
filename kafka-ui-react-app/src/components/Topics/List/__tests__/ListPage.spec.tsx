@@ -28,22 +28,23 @@ describe('ListPage Component', () => {
       { initialEntries: [clusterTopicsPath(clusterName)] }
     );
 
-  beforeEach(() => {
-    renderComponent();
-  });
+  describe('Component Render', () => {
+    beforeEach(() => {
+      renderComponent();
+    });
+    it('handles switch of Internal Topics visibility', async () => {
+      const switchInput = screen.getByLabelText('Show Internal Topics');
+      expect(switchInput).toBeInTheDocument();
 
-  it('handles switch of Internal Topics visibility', async () => {
-    const switchInput = screen.getByLabelText('Show Internal Topics');
-    expect(switchInput).toBeInTheDocument();
+      expect(global.localStorage.getItem('hideInternalTopics')).toBeNull();
+      await userEvent.click(switchInput);
+      expect(global.localStorage.getItem('hideInternalTopics')).toBeTruthy();
+      await userEvent.click(switchInput);
+      expect(global.localStorage.getItem('hideInternalTopics')).toBeNull();
+    });
 
-    expect(global.localStorage.getItem('hideInternalTopics')).toBeNull();
-    await userEvent.click(switchInput);
-    expect(global.localStorage.getItem('hideInternalTopics')).toBeTruthy();
-    await userEvent.click(switchInput);
-    expect(global.localStorage.getItem('hideInternalTopics')).toBeNull();
-  });
-
-  it('renders the TopicsTable', () => {
-    expect(screen.getByText('TopicTableMock')).toBeInTheDocument();
+    it('renders the TopicsTable', () => {
+      expect(screen.getByText('TopicTableMock')).toBeInTheDocument();
+    });
   });
 });

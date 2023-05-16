@@ -19,6 +19,7 @@ services:
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry0:8085
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
+      DYNAMIC_CONFIG_ENABLED: 'true'  # not necessary, added for tests
 
   kafka0:
     image: confluentinc/cp-kafka:7.2.1.arm64

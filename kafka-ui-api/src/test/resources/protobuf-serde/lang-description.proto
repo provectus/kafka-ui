@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package test;
+
+import "language/language.proto";
+import "google/protobuf/wrappers.proto";
+
+message LanguageDescription {
+    test.lang.Language lang = 1;
+    google.protobuf.StringValue descr = 2;
+}

@@ -5,10 +5,10 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import Search from 'components/common/Search/Search';
 import * as Metrics from 'components/common/Metrics';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { Button } from 'components/common/Button/Button';
+import { ActionButton } from 'components/common/ActionComponent';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import { ConnectorState } from 'generated-sources';
+import { Action, ConnectorState, ResourceType } from 'generated-sources';
 import { useConnectors } from 'lib/hooks/api/kafkaConnect';
 
 import List from './List';
@@ -33,13 +33,17 @@ const ListPage: React.FC = () => {
     <>
       <PageHeading text="Connectors">
         {!isReadOnly && (
-          <Button
+          <ActionButton
             buttonType="primary"
             buttonSize="M"
             to={clusterConnectorNewRelativePath}
+            permission={{
+              resource: ResourceType.CONNECT,
+              action: Action.CREATE,
+            }}
           >
             Create Connector
-          </Button>
+          </ActionButton>
         )}
       </PageHeading>
       <Metrics.Wrapper>

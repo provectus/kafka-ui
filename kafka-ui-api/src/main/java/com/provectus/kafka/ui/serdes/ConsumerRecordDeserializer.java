@@ -123,11 +123,11 @@ public class ConsumerRecordDeserializer {
   }
 
   private static Long getKeySize(ConsumerRecord<Bytes, Bytes> consumerRecord) {
-    return consumerRecord.key() != null ? (long) consumerRecord.key().get().length : null;
+    return consumerRecord.key() != null ? (long) consumerRecord.serializedKeySize() : null;
   }
 
   private static Long getValueSize(ConsumerRecord<Bytes, Bytes> consumerRecord) {
-    return consumerRecord.value() != null ? (long) consumerRecord.value().get().length : null;
+    return consumerRecord.value() != null ? (long) consumerRecord.serializedValueSize() : null;
   }
 
   private static int headerSize(Header header) {

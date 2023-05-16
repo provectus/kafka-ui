@@ -1,15 +1,15 @@
 import * as yup from 'yup';
-import { AnyObject, Maybe } from 'yup/lib/types';
 
 import { TOPIC_NAME_VALIDATION_PATTERN } from './constants';
 
 declare module 'yup' {
   interface StringSchema<
-    TType extends Maybe<string> = string | undefined,
-    TContext extends AnyObject = AnyObject,
-    TOut extends TType = TType
-  > extends yup.BaseSchema<TType, TContext, TOut> {
-    isJsonObject(): StringSchema<TType, TContext>;
+    TType extends yup.Maybe<string> = string | undefined,
+    TContext = yup.AnyObject,
+    TDefault = undefined,
+    TFlags extends yup.Flags = ''
+  > extends yup.Schema<TType, TContext, TDefault, TFlags> {
+    isJsonObject(message?: string): StringSchema<TType, TContext>;
   }
 }
 
@@ -31,18 +31,36 @@ export const isValidJsonObject = (value?: string) => {
   return false;
 };
 
-const isJsonObject = () => {
+const isJsonObject = (message?: string) => {
   return yup.string().test(
     'isJsonObject',
     // eslint-disable-next-line no-template-curly-in-string
-    '${path} is not JSON object',
+    message || '${path} is not JSON object',
     isValidJsonObject
   );
 };
+/**
+ * due to yup rerunning all the object validiation during any render,
+ * it makes sense to cache the async results
+ * */
+export function cacheTest(
+  asyncValidate: (val?: string, ctx?: yup.AnyObject) => Promise<boolean>
+) {
+  let valid = false;
+  let closureValue = '';
 
-yup.addMethod(yup.string, 'isJsonObject', isJsonObject);
+  return async (value?: string, ctx?: yup.AnyObject) => {
+    if (value !== closureValue) {
+      const response = await asyncValidate(value, ctx);
+      closureValue = value || '';
+      valid = response;
+      return response;
+    }
+    return valid;
+  };
+}
 
-export default yup;
+yup.addMethod(yup.StringSchema, 'isJsonObject', isJsonObject);
 
 export const topicFormValidationSchema = yup.object().shape({
   name: yup
@@ -72,3 +90,5 @@ export const topicFormValidationSchema = yup.object().shape({
     })
   ),
 });
+
+export default yup;

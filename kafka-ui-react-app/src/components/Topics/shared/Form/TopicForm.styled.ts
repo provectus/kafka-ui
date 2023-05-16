@@ -13,6 +13,7 @@ export const NameField = styled.div`
 
 export const CustomParamsHeading = styled.h4`
   font-weight: 500;
+  color: ${({ theme }) => theme.heading.h4};
 `;
 
 export const Label = styled.div`
@@ -29,12 +30,10 @@ export const Label = styled.div`
 export const Button = styled.button<{ isActive: boolean }>`
   background-color: ${({ theme, ...props }) =>
     props.isActive
-      ? theme.button.secondary.invertedColors.normal
-      : theme.button.secondary.backgroundColor.normal};
+      ? theme.chips.backgroundColor.active
+      : theme.chips.backgroundColor.normal};
   color: ${({ theme, ...props }) =>
-    props.isActive
-      ? theme.button.secondary.isActiveColor
-      : theme.button.primary.color};
+    props.isActive ? theme.chips.color.active : theme.chips.color.normal};
   height: 24px;
   padding: 0 5px;
   min-width: 51px;

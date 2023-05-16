@@ -5,7 +5,7 @@ import TableHeaderCell, {
   TableHeaderCellProps,
 } from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { SortOrder, TopicColumnsToSort } from 'generated-sources';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 import userEvent from '@testing-library/user-event';
 
 const SPACE_KEY = ' ';

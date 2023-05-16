@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="SanitySuite">
+    <test name="SanityTest" enabled="true" parallel="classes" thread-count="2">
+        <packages>
+            <package name="com.provectus.kafka.ui.sanitysuite.*"/>
+        </packages>
+    </test>
+</suite>

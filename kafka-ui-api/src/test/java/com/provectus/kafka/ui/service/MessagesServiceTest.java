@@ -61,12 +61,12 @@ class MessagesServiceTest extends AbstractIntegrationTest {
   }
 
   @Test
-  void maskingAppliedOnConfiguredClusters() {
+  void maskingAppliedOnConfiguredClusters() throws Exception {
     String testTopic = MASKED_TOPICS_PREFIX + UUID.randomUUID();
     try (var producer = KafkaTestProducer.forKafka(kafka)) {
       createTopic(new NewTopic(testTopic, 1, (short) 1));
       producer.send(testTopic, "message1");
-      producer.send(testTopic, "message2");
+      producer.send(testTopic, "message2").get();
 
       Flux<TopicMessageDTO> msgsFlux = messagesService.loadMessages(
           cluster,

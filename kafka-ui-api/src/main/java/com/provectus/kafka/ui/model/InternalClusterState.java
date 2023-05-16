@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.Data;
+import org.apache.kafka.common.Node;
 
 @Data
 public class InternalClusterState {
@@ -22,7 +23,7 @@ public class InternalClusterState {
   private Integer underReplicatedPartitionCount;
   private List<BrokerDiskUsageDTO> diskUsage;
   private String version;
-  private List<Feature> features;
+  private List<ClusterFeature> features;
   private BigDecimal bytesInPerSec;
   private BigDecimal bytesOutPerSec;
   private Boolean readOnly;
@@ -37,7 +38,9 @@ public class InternalClusterState {
         .orElse(null);
     topicCount = statistics.getTopicDescriptions().size();
     brokerCount = statistics.getClusterDescription().getNodes().size();
-    activeControllers = statistics.getClusterDescription().getController() != null ? 1 : 0;
+    activeControllers = Optional.ofNullable(statistics.getClusterDescription().getController())
+        .map(Node::id)
+        .orElse(null);
     version = statistics.getVersion();
 
     if (statistics.getLogDirInfo() != null) {
@@ -53,15 +56,17 @@ public class InternalClusterState {
 
     bytesInPerSec = statistics
         .getMetrics()
-        .getBytesInPerSec()
+        .getBrokerBytesInPerSec()
         .values().stream()
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
+        .reduce(BigDecimal::add)
+        .orElse(null);
 
     bytesOutPerSec = statistics
         .getMetrics()
-        .getBytesOutPerSec()
+        .getBrokerBytesOutPerSec()
         .values().stream()
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
+        .reduce(BigDecimal::add)
+        .orElse(null);
 
     var partitionsStats = new PartitionsStats(statistics.getTopicDescriptions().values());
     onlinePartitionCount = partitionsStats.getOnlinePartitionCount();

@@ -12,11 +12,6 @@ export const List = styled.div`
 export const Label = styled.div`
   font-size: 14px;
   font-weight: 500;
-  color: ${({ theme }) => theme.list.label.color};
+  color: ${({ theme }) => theme.default.color.normal};
   white-space: nowrap;
-`;
-
-export const SubText = styled.div`
-  color: ${({ theme }) => theme.list.meta.color};
-  font-size: 12px;
 `;

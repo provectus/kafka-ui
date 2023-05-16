@@ -1,5 +1,5 @@
 import React from 'react';
-import { Partition, Replica } from 'generated-sources';
+import type { Partition, Replica } from 'generated-sources';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import Table from 'components/common/NewTable';
 import * as Metrics from 'components/common/Metrics';
@@ -51,9 +51,10 @@ const Overview: React.FC = () => {
           if (replicas === undefined || replicas.length === 0) {
             return 0;
           }
-          return replicas?.map(({ broker, leader }: Replica) => (
+          return replicas?.map(({ broker, leader, inSync }: Replica) => (
             <S.Replica
               leader={leader}
+              outOfSync={!inSync}
               key={broker}
               title={leader ? 'Leader' : ''}
             >

@@ -5,7 +5,8 @@ import useAppParams from 'lib/hooks/useAppParams';
 import { RouteParamsClusterTopic } from 'lib/paths';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Button } from 'components/common/Button/Button';
+import { Action, ResourceType } from 'generated-sources';
+import { ActionButton } from 'components/common/ActionComponent';
 
 import * as S from './Statistics.styles';
 import Metrics from './Metrics';
@@ -21,16 +22,21 @@ const Statistics: React.FC = () => {
           onReset={reset}
           fallbackRender={({ resetErrorBoundary }) => (
             <S.ProgressContainer>
-              <Button
+              <ActionButton
                 onClick={async () => {
                   await analyzeTopic.mutateAsync();
                   resetErrorBoundary();
                 }}
                 buttonType="primary"
                 buttonSize="M"
+                permission={{
+                  resource: ResourceType.TOPIC,
+                  action: Action.MESSAGES_READ,
+                  value: params.topicName,
+                }}
               >
                 Start Analysis
-              </Button>
+              </ActionButton>
             </S.ProgressContainer>
           )}
         >

@@ -3,7 +3,7 @@ import { render } from 'lib/testHelpers';
 import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
 import { SortOrder } from 'generated-sources';
 import { screen } from '@testing-library/react';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 
 describe('TableHeaderCell.Styled', () => {
   describe('Title Component', () => {

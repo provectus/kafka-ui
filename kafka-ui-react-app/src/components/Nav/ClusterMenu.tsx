@@ -7,6 +7,7 @@ import {
   clusterSchemasPath,
   clusterConnectorsPath,
   clusterKsqlDbPath,
+  clusterACLPath,
 } from 'lib/paths';
 
 import ClusterMenuItem from './ClusterMenuItem';
@@ -42,7 +43,6 @@ const ClusterMenu: React.FC<Props> = ({
             to={clusterConsumerGroupsPath(name)}
             title="Consumers"
           />
-
           {hasFeatureConfigured(ClusterFeaturesEnum.SCHEMA_REGISTRY) && (
             <ClusterMenuItem
               to={clusterSchemasPath(name)}
@@ -57,6 +57,10 @@ const ClusterMenu: React.FC<Props> = ({
           )}
           {hasFeatureConfigured(ClusterFeaturesEnum.KSQL_DB) && (
             <ClusterMenuItem to={clusterKsqlDbPath(name)} title="KSQL DB" />
+          )}
+          {(hasFeatureConfigured(ClusterFeaturesEnum.KAFKA_ACL_VIEW) ||
+            hasFeatureConfigured(ClusterFeaturesEnum.KAFKA_ACL_EDIT)) && (
+            <ClusterMenuItem to={clusterACLPath(name)} title="ACL" />
           )}
         </S.List>
       )}

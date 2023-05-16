@@ -15,14 +15,19 @@ import lombok.Value;
 @Builder
 @Value
 public class Metrics {
-  Map<String, BigDecimal> bytesInPerSec;
-  Map<String, BigDecimal> bytesOutPerSec;
+
+  Map<Integer, BigDecimal> brokerBytesInPerSec;
+  Map<Integer, BigDecimal> brokerBytesOutPerSec;
+  Map<String, BigDecimal> topicBytesInPerSec;
+  Map<String, BigDecimal> topicBytesOutPerSec;
   Map<Integer, List<RawMetric>> perBrokerMetrics;
 
   public static Metrics empty() {
     return Metrics.builder()
-        .bytesInPerSec(Map.of())
-        .bytesOutPerSec(Map.of())
+        .brokerBytesInPerSec(Map.of())
+        .brokerBytesOutPerSec(Map.of())
+        .topicBytesInPerSec(Map.of())
+        .topicBytesOutPerSec(Map.of())
         .perBrokerMetrics(Map.of())
         .build();
   }

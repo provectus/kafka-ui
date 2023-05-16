@@ -2,13 +2,13 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { render, WithRoute } from 'lib/testHelpers';
 import Overview from 'components/Topics/Topic/Overview/Overview';
-import theme from 'theme/theme';
+import { theme } from 'theme/theme';
 import { CleanUpPolicy, Topic } from 'generated-sources';
 import ClusterContext from 'components/contexts/ClusterContext';
 import userEvent from '@testing-library/user-event';
 import { clusterTopicPath } from 'lib/paths';
 import { Replica } from 'components/Topics/Topic/Overview/Overview.styled';
-import { useTopicDetails } from 'lib/hooks/api/topics';
+import { useClearTopicMessages, useTopicDetails } from 'lib/hooks/api/topics';
 import {
   externalTopicPayload,
   internalTopicPayload,
@@ -25,15 +25,10 @@ const defaultContextValues = {
 
 jest.mock('lib/hooks/api/topics', () => ({
   useTopicDetails: jest.fn(),
+  useClearTopicMessages: jest.fn(),
 }));
 
-const uwrapMock = jest.fn();
-const useDispatchMock = () => jest.fn(() => ({ unwrap: uwrapMock }));
-
-jest.mock('lib/hooks/redux', () => ({
-  ...jest.requireActual('lib/hooks/redux'),
-  useAppDispatch: useDispatchMock,
-}));
+const clearTopicMessage = jest.fn();
 
 describe('Overview', () => {
   const renderComponent = (
@@ -42,6 +37,9 @@ describe('Overview', () => {
   ) => {
     (useTopicDetails as jest.Mock).mockImplementation(() => ({
       data: topic,
+    }));
+    (useClearTopicMessages as jest.Mock).mockImplementation(() => ({
+      mutateAsync: clearTopicMessage,
     }));
     const path = clusterTopicPath(clusterName, topicName);
     return render(
@@ -67,6 +65,19 @@ describe('Overview', () => {
       'color',
       theme.topicMetaData.liderReplica.color
     );
+  });
+
+  describe('when replicas out of sync', () => {
+    it('should be the appropriate color', () => {
+      render(<Replica outOfSync />);
+      const element = screen.getByLabelText('replica-info');
+      expect(element).toBeInTheDocument();
+      expect(element).toHaveStyleRule(
+        'color',
+        theme.topicMetaData.outOfSync.color
+      );
+      expect(element).toHaveStyleRule('font-weight', '500');
+    });
   });
 
   describe('when it has internal flag', () => {
@@ -117,7 +128,7 @@ describe('Overview', () => {
 
       const clearMessagesButton = screen.getByText('Clear Messages');
       await userEvent.click(clearMessagesButton);
-      expect(uwrapMock).toHaveBeenCalledTimes(1);
+      expect(clearTopicMessage).toHaveBeenCalledTimes(1);
     });
   });
 

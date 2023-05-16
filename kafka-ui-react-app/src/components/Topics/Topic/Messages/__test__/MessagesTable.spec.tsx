@@ -21,16 +21,21 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('MessagesTable', () => {
-  const seekToResult = '&seekTo=0::9';
-  const searchParamsValue = `?filterQueryType=STRING_CONTAINS&attempt=0&limit=100&seekDirection=${SeekDirection.FORWARD}&seekType=${SeekType.OFFSET}${seekToResult}`;
-  const searchParams = new URLSearchParams(searchParamsValue);
+  const searchParams = new URLSearchParams({
+    filterQueryType: 'STRING_CONTAINS',
+    attempt: '0',
+    limit: '100',
+    seekDirection: SeekDirection.FORWARD,
+    seekType: SeekType.OFFSET,
+    seekTo: '0::9',
+  });
   const contextValue: ContextProps = {
     isLive: false,
     seekDirection: SeekDirection.FORWARD,
     changeSeekDirection: jest.fn(),
   };
 
-  const setUpComponent = (
+  const renderComponent = (
     params: URLSearchParams = searchParams,
     ctx: ContextProps = contextValue,
     messages: TopicMessage[] = [],
@@ -43,7 +48,7 @@ describe('MessagesTable', () => {
         <MessagesTable />
       </TopicMessagesContext.Provider>,
       {
-        initialEntries: [customPath],
+        initialEntries: [`/messages?${customPath}`],
         preloadedState: {
           topicMessages: {
             messages,
@@ -59,7 +64,7 @@ describe('MessagesTable', () => {
 
   describe('Default props Setup for MessagesTable component', () => {
     beforeEach(() => {
-      setUpComponent();
+      renderComponent();
     });
 
     it('should check the render', () => {
@@ -85,20 +90,26 @@ describe('MessagesTable', () => {
   });
 
   describe('Custom Setup with different props value', () => {
-    it('should check if next click is gone during isLive Param', () => {
-      setUpComponent(searchParams, { ...contextValue, isLive: true });
-      expect(screen.queryByText(/next/i)).not.toBeInTheDocument();
+    it('should check if next button and previous is disabled isLive Param', () => {
+      renderComponent(searchParams, { ...contextValue, isLive: true });
+      expect(screen.queryByText(/next/i)).toBeDisabled();
+      expect(screen.queryByText(/back/i)).toBeDisabled();
     });
 
     it('should check the display of the loader element', () => {
-      setUpComponent(searchParams, { ...contextValue, isLive: true }, [], true);
+      renderComponent(
+        searchParams,
+        { ...contextValue, isLive: true },
+        [],
+        true
+      );
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
   });
 
   describe('should render Messages table with data', () => {
     beforeEach(() => {
-      setUpComponent(searchParams, { ...contextValue }, mockTopicsMessages);
+      renderComponent(searchParams, { ...contextValue }, mockTopicsMessages);
     });
 
     it('should check the rendering of the messages', () => {
