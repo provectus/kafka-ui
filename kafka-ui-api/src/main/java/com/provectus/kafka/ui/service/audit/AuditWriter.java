@@ -4,84 +4,118 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
 import com.provectus.kafka.ui.exception.CustomBaseException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.Resource;
 import com.provectus.kafka.ui.model.rbac.permission.PermissibleAction;
-import com.provectus.kafka.ui.service.AdminClientService;
-import com.provectus.kafka.ui.service.MessagesService;
-import com.provectus.kafka.ui.service.ReactiveAdminClient;
+import java.io.Closeable;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 
+@Slf4j
 record AuditWriter(String targetTopic,
-                   ReactiveAdminClient adminClient,
-                   KafkaProducer<byte[], byte[]> producer,
-                   boolean logToConsole) {
+                   @Nullable KafkaProducer<byte[], byte[]> producer,
+                   boolean logToConsole) implements Closeable {
 
-  static AuditWriter createAndInit(ReactiveAdminClient adminClient,
-                                   Supplier<KafkaProducer<byte[], byte[]>> producerSupplier,
-                                   boolean topicAudit,
-                                   boolean consoleAudit,
-                                   String auditTopicName,
-                                   int auditTopicPartis,
-                                   Map<String, String> topicCreationProps) {
-    KafkaProducer<byte[], byte[]> producer;
-    if (topicAudit) {
-      producer = producerSupplier.get();
+  //TODO: discuss AUDIT LOG FORMAT
+  private static final Logger AUDIT_LOGGER = LoggerFactory.getLogger("audit");
+
+  public void write(AccessContext ctx, AuthenticatedUser user, @Nullable Throwable th) {
+    write(
+        new AuditRecord(
+            DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
+            user.principal(),
+            ctx.getCluster(),
+            getAccessedResources(ctx),
+            ctx.getOperationDescription(),
+            th == null ? OperationResult.successful() : OperationResult.error(th),
+            ctx.getOperationParams()
+        )
+    );
+  }
+
+  private List<AuditResource> getAccessedResources(AccessContext ctx) {
+    List<AuditResource> resources = new ArrayList<>();
+    ctx.getClusterConfigActions()
+        .forEach(a -> resources.add(new AuditResource(a, Resource.CLUSTERCONFIG, null)));
+    ctx.getTopicActions()
+        .forEach(a -> resources.add(new AuditResource(a, Resource.TOPIC, nameId(ctx.getTopic()))));
+    ctx.getConsumerGroupActions()
+        .forEach(a -> resources.add(new AuditResource(a, Resource.CONSUMER, nameId(ctx.getConsumerGroup()))));
+    ctx.getConnectActions()
+        .forEach(a -> resources.add(new AuditResource(a, Resource.CONNECT, nameId(ctx.getConnect()))));
+    ctx.getSchemaActions()
+        .forEach(a -> resources.add(new AuditResource(a, Resource.SCHEMA, nameId(ctx.getSchema()))));
+    ctx.getKsqlActions()
+        .forEach(a -> resources.add(new AuditResource(a, Resource.KSQL, null)));
+    ctx.getAclActions()
+        .forEach(a -> resources.add(new AuditResource(a, Resource.ACL, null)));
+    return resources;
+  }
+
+  @Nullable
+  private Map<String, Object> nameId(@Nullable String name) {
+    return name != null ? Map.of("name", name) : null;
+  }
+
+  private void write(AuditRecord rec) {
+    String json = rec.toJson();
+    if (logToConsole) {
+      AUDIT_LOGGER.info(json);
+    }
+    if (producer != null) {
+      producer.send(
+          new ProducerRecord<>(targetTopic, null, json.getBytes(StandardCharsets.UTF_8)),
+          (metadata, ex) -> {
+            log.warn("Error writing Audit record", ex);
+          });
     }
   }
 
-
-  private void createTopic(ReactiveAdminClient adminClient,
-                   String auditTopicName,
-                   int parts,
-                   Map<String, String> topicCreationProps) {
-
+  @Override
+  public void close() {
+    Optional.ofNullable(producer).ifPresent(KafkaProducer::close);
   }
-
-  public void write(AccessContext ctx, AuthenticatedUser user) {
-
-  }
-
-  public void write(AccessContext ctx, AuthenticatedUser user, Throwable th) {
-
-  }
-
 
   record AuditRecord(String timestamp,
                      String userPrincipal,  //TODO: discuss - rename to username?
                      String clusterName,
-                     AuditResource resources,
+                     List<AuditResource> resources,
                      String operation,
                      OperationResult result,
-                     Object params
-  ) {
+                     @Nullable Object params) {
+
     static final JsonMapper MAPPER = new JsonMapper();
 
     @SneakyThrows
-    byte[] toJson() {
-      return MAPPER.writeValueAsString(this).getBytes(StandardCharsets.UTF_8);
+    String toJson() {
+      return MAPPER.writeValueAsString(this);
     }
   }
 
-  record AuditResource(PermissibleAction accessType, Resource type, Object id) {
+  record AuditResource(PermissibleAction accessType, Resource type, @Nullable Object id) {
   }
 
   record OperationResult(boolean success, OperationError error) {
 
-    static OperationResult successResult() {
+    static OperationResult successful() {
       return new OperationResult(true, null);
     }
 
-    static OperationResult errorResult(Throwable th) {
-      OperationError err = OperationError.UNEXPECTED_ERROR;
+    static OperationResult error(Throwable th) {
+      OperationError err = OperationError.UNRECOGNIZED_ERROR;
       if (th instanceof AccessDeniedException) {
         err = OperationError.ACCESS_DENIED;
       } else if (th instanceof ValidationException) {
@@ -96,7 +130,7 @@ record AuditWriter(String targetTopic,
       ACCESS_DENIED,
       VALIDATION_ERROR,
       EXECUTION_ERROR,
-      UNEXPECTED_ERROR
+      UNRECOGNIZED_ERROR
     }
   }
 
