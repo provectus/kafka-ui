@@ -97,6 +97,7 @@ record AuditWriter(String targetTopic,
                      OperationResult result,
                      @Nullable Object params) {
 
+    //TODO: do not render null
     static final JsonMapper MAPPER = new JsonMapper();
 
     @SneakyThrows
