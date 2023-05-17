@@ -29,7 +29,7 @@ record AuditWriter(String targetTopic,
                    @Nullable KafkaProducer<byte[], byte[]> producer,
                    boolean logToConsole) implements Closeable {
 
-  //TODO: discuss AUDIT LOG FORMAT
+  //TODO: discuss AUDIT LOG FORMAT and name
   private static final Logger AUDIT_LOGGER = LoggerFactory.getLogger("audit");
 
   public void write(AccessContext ctx, AuthenticatedUser user, @Nullable Throwable th) {
