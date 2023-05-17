@@ -21,7 +21,7 @@
   * [Without Docker](development/building/without-docker.md)
 * [WIP: Testing](development/wip-testing.md)
 
-## 👷♂ 👷♂ 👷♂ Configuration
+## 👷♂ Configuration
 
 * [Quick Start](configuration/quick-start/README.md)
   * [via AWS Marketplace](configuration/quick-start/via-aws-marketplace.md)

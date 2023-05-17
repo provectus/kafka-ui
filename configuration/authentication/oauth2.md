@@ -1,6 +1,32 @@
+---
+description: Examples of setups for different OAuth providers
+---
+
 # OAuth2
 
-## Examples to set up different oauth providers
+In general, the structure of the config looks like this:
+
+For specific providers (like github (non-enterprise) and google, see further) you don't have to specify URLs as they're [well-known](https://github.com/spring-projects/spring-security/blob/main/config/src/main/java/org/springframework/security/config/oauth2/client/CommonOAuth2Provider.java#L35).
+
+```
+auth:
+  type: OAUTH2
+  oauth2:
+    client:
+      <unique_name>:
+        clientId: xxx
+        clientSecret: yyy
+        scope: openid
+        client-name: cognito # will be displayed on the login page
+        provider: <provider>
+        redirect-uri: http://localhost:8080/login/oauth2/code/<provider>
+        authorization-grant-type: authorization_code
+        issuer-uri: https://xxx
+        jwk-set-uri: https://yyy/.well-known/jwks.json
+        user-name-attribute: <zzz>
+        custom-params:
+          type: <provider_type> # fill this if you're gonna use RBAC AND the type is one of the supported RBAC providers
+```
 
 ### Cognito
 
@@ -28,7 +54,7 @@ auth:
         user-name-attribute: cognito:username
         custom-params:
           type: cognito
-          logoutUrl: https://<XXX>>.eu-central-1.amazoncognito.com/logout
+          logoutUrl: https://<XXX>>.eu-central-1.amazoncognito.com/logout #required just for cognito
 ```
 
 ### Google
@@ -51,8 +77,7 @@ auth:
         user-name-attribute: email
         custom-params:
           type: google
-          allowedDomain: provectus.com
-
+          allowedDomain: provectus.com # for RBAC
 ```
 
 ### GitHub
@@ -78,14 +103,15 @@ auth:
         provider: github
         clientId: xxx
         clientSecret: yyy
-        scope:
-          - read:org
+        scope: read:org
         user-name-attribute: login
         custom-params:
           type: github
 ```
 
 #### Self-hosted/Cloud (GitHub Enterprise Server)
+
+Replace `HOSTNAME` by your self-hosted platform FQDN.
 
 ```yaml
 kafka:
@@ -102,14 +128,33 @@ auth:
         provider: github
         clientId: xxx
         clientSecret: yyy
-        scope:
-          - read:org
+        scope: read:org
         user-name-attribute: login
-        custom-params:
-          type: github
         authorization-uri: http(s)://HOSTNAME/login/oauth/authorize
         token-uri: http(s)://HOSTNAME/login/oauth/access_token
         user-info-uri: http(s)://HOSTNAME/api/v3/user
+        custom-params:
+          type: github      
 ```
 
-Replace `HOSTNAME` by your self-hosted platform FQDN.
+### Okta
+
+```yaml
+auth:
+  type: OAUTH2
+  oauth2:
+    client:
+      okta:
+        clientId: xxx
+        clientSecret: yyy
+        scope: [ 'openid', 'profile', 'email' ] # default for okta
+        client-name: Okta
+        provider: okta
+        redirect-uri: http://localhost:8080/login/oauth2/code/okta
+        authorization-grant-type: authorization_code
+        issuer-uri: https://xxx
+        jwk-set-uri: https://yyy/.well-known/jwks.json
+        user-name-attribute: sub # default for okta
+        custom-params:
+          type: <provider_type> # fill this if you're gonna use RBAC AND the type is one of the supported RBAC providers
+```

@@ -36,7 +36,7 @@ Alternatively, you can append the roles file contents to your main config file.
 
 #### Clusters
 
-In the roles file we define roles, duh. Every each role has an access to defined clusters:
+In the roles file we define roles, duh. Every each role has access to defined clusters:
 
 ```
 rbac:
@@ -51,7 +51,7 @@ rbac:
 
 #### Subjects
 
-A role also has a list of _subjects_ which are the entities we will use to assign roles to. They are provider-dependant, in general they can be users, groups or some other entities (github orgs, google domains, LDAP queries, etc.) In this example we define a role `memelords` which will contain all the users within Google domain `memelord.lol` and, additionally, a GitHub user `Haarolean`. You can combine as many subjects as you want within a role.
+A role also has a list of _subjects_ which are the entities we will use to assign roles to. They are provider-dependant, in general, they can be users, groups, or some other entities (github orgs, google domains, LDAP queries, etc.) In this example we define a role `memelords` that will contain all the users within the Google domain `memelord.lol` and, additionally, a GitHub user `Haarolean`. You can combine as many subjects as you want within a role.
 
 ```
     - name: "memelords"
@@ -80,7 +80,7 @@ Find the more detailed examples in a full example file lower.
 
 The next thing which is present in your roles file is, surprisingly, permissions. They consist of:
 
-1. Resource Can be one of the: `CLUSTERCONFIG`, `TOPIC`, `CONSUMER`, `SCHEMA`, `CONNECT`, `KSQL`.
+1. Resource Can be one of the: `CLUSTERCONFIG`, `TOPIC`, `CONSUMER`, `SCHEMA`, `CONNECT`, `KSQL`, `ACL`.
 2. The resource value is either a fixed string or a regular expression identifying a resource. Value is not applicable to `clusterconfig` and `ksql` resources. Please do not fill it out.
 3. Actions It's a list of actions (the possible values depend on the resource, see the lists below) that will be applied to the certain permission. Also, note, there's a special action for any of the resources called "all", it will virtually grant all the actions within the corresponding resource. An example for enabling viewing and creating topics whose name start with "derp":
 
@@ -95,12 +95,14 @@ The next thing which is present in your roles file is, surprisingly, permissions
 
 A list of all the actions for the corresponding resources (please note neither resource nor action names are case-sensitive):
 
+* `applicationconfig`: `view`, `edit`
 * `clusterconfig`: `view`, `edit`
 * `topic`: `view`, `create`, `edit`, `delete`, `messages_read`, `messages_produce`, `messages_delete`
 * `consumer`: `view`, `delete`, `reset_offsets`
 * `schema`: `view`, `create`, `delete`, `edit`, `modify_global_compatibility`
 * `connect`: `view`, `edit`, `create`
 * `ksql`: `execute`
+* `acl`: `view`, `edit`
 
 ## Example file
 
@@ -146,14 +148,18 @@ rbac:
           value: "cn=germanosin,dc=planetexpress,dc=com"
 
       permissions:
+        - resource: applicationconfig
+          # value not applicable for applicationconfig
+          actions: [ "view", "edit" ] # can be with or without quotes
+      
         - resource: clusterconfig
           # value not applicable for clusterconfig
-          actions: [ "view", "edit" ] # can be with or without quotes
+          actions: [ "view", "edit" ] 
 
         - resource: topic
           value: "ololo.*"
           actions: # can be a multiline list
-            - VIEW # can be upper or lower case
+            - VIEW # can be upper or lowercase
             - CREATE
             - EDIT
             - DELETE
@@ -181,6 +187,10 @@ rbac:
         - resource: ksql
           # value not applicable for ksql
           actions: [ execute ]
+
+        - resource: acl
+          # value not applicable for acl
+          actions: [ view, edit ]
 
 ```
 
@@ -216,6 +226,9 @@ rbac:
           value: ".*"
           actions: [ view ]
 
+        - resource: acl
+          actions: [ view ]
+
 ```
 
 **An admin-group setup example:**
@@ -229,6 +242,9 @@ rbac:
       subjects:
         # FILL THIS
       permissions:
+        - resource: applicationconfig
+          actions: all
+      
         - resource: clusterconfig
           actions: all
 
@@ -250,5 +266,8 @@ rbac:
 
         - resource: ksql
           actions: all
+          
+        - resource: acl
+          actions: [ view ]
 
 ```
