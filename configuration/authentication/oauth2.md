@@ -26,6 +26,7 @@ auth:
         user-name-attribute: <zzz>
         custom-params:
           type: <provider_type> # fill this if you're gonna use RBAC AND the type is one of the supported RBAC providers
+          roles-field: groups # required for RBAC, a field name in OAuth token which will contain user's roles/groups
 ```
 
 ### Cognito
@@ -147,14 +148,15 @@ auth:
       okta:
         clientId: xxx
         clientSecret: yyy
-        scope: [ 'openid', 'profile', 'email' ] # default for okta
+        scope: [ 'openid', 'profile', 'email', 'groups' ] # default for okta + groups for rbac
         client-name: Okta
         provider: okta
         redirect-uri: http://localhost:8080/login/oauth2/code/okta
         authorization-grant-type: authorization_code
-        issuer-uri: https://xxx
+        issuer-uri: https://<okta_domain>.okta.com
         jwk-set-uri: https://yyy/.well-known/jwks.json
-        user-name-attribute: sub # default for okta
+        user-name-attribute: sub # default for okta, "email" also available
         custom-params:
-          type: <provider_type> # fill this if you're gonna use RBAC AND the type is one of the supported RBAC providers
+          type: oauth
+          roles-field: groups # required for RBAC
 ```
