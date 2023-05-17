@@ -31,6 +31,7 @@ const Colors = {
     '15': '#C2F0D1',
     '30': '#85E0A3',
     '40': '#5CD685',
+    '50': '#33CC66',
     '60': '#29A352',
   },
   brand: {
@@ -231,16 +232,18 @@ const baseTheme = {
       white: Colors.neutral[10],
       red: Colors.red[10],
       blue: Colors.blue[10],
+      secondary: Colors.neutral[15],
     },
     color: Colors.neutral[90],
   },
   switch: {
-    unchecked: Colors.brand[30],
+    unchecked: Colors.neutral[20],
+    hover: Colors.neutral[40],
     checked: Colors.brand[50],
     circle: Colors.neutral[0],
     disabled: Colors.neutral[10],
     checkedIcon: {
-      backgroundColor: Colors.neutral[70],
+      backgroundColor: Colors.neutral[10],
     },
   },
   pageLoader: {
@@ -415,8 +418,8 @@ export const theme = {
         disabled: Colors.red[20],
       },
       color: {
-        normal: Colors.neutral[90],
-        disabled: Colors.neutral[30],
+        normal: Colors.neutral[0],
+        disabled: Colors.neutral[0],
       },
       invertedColors: {
         normal: Colors.brand[50],
@@ -694,6 +697,44 @@ export const theme = {
     textColor: Colors.brand[50],
     deleteIconColor: Colors.brand[50],
   },
+  acl: {
+    table: {
+      deleteIcon: Colors.neutral[50],
+    },
+    create: {
+      radioButtons: {
+        green: {
+          normal: {
+            background: Colors.neutral[0],
+            text: Colors.neutral[50],
+          },
+          active: {
+            background: Colors.green[50],
+            text: Colors.neutral[0],
+          },
+          hover: {
+            background: Colors.green[10],
+            text: Colors.neutral[90],
+          },
+        },
+        gray: {
+          normal: {
+            background: Colors.neutral[0],
+            text: Colors.neutral[50],
+          },
+          active: {
+            background: Colors.neutral[10],
+            text: Colors.neutral[90],
+          },
+          hover: {
+            background: Colors.neutral[5],
+            text: Colors.neutral[90],
+          },
+        },
+        red: {},
+      },
+    },
+  },
 };
 
 export type ThemeType = typeof theme;
@@ -817,8 +858,8 @@ export const darkTheme: ThemeType = {
         disabled: Colors.red[20],
       },
       color: {
-        normal: Colors.neutral[90],
-        disabled: Colors.neutral[30],
+        normal: Colors.neutral[0],
+        disabled: Colors.neutral[0],
       },
       invertedColors: {
         normal: Colors.brand[50],
@@ -1152,6 +1193,44 @@ export const darkTheme: ThemeType = {
     },
     fileInput: {
       color: Colors.neutral[0],
+    },
+  },
+  acl: {
+    table: {
+      deleteIcon: Colors.neutral[50],
+    },
+    create: {
+      radioButtons: {
+        green: {
+          normal: {
+            background: Colors.neutral[0],
+            text: Colors.neutral[50],
+          },
+          active: {
+            background: Colors.green[50],
+            text: Colors.neutral[0],
+          },
+          hover: {
+            background: Colors.green[10],
+            text: Colors.neutral[0],
+          },
+        },
+        gray: {
+          normal: {
+            background: Colors.neutral[0],
+            text: Colors.neutral[50],
+          },
+          active: {
+            background: Colors.neutral[10],
+            text: Colors.neutral[90],
+          },
+          hover: {
+            background: Colors.neutral[5],
+            text: Colors.neutral[90],
+          },
+        },
+        red: {},
+      },
     },
   },
 };

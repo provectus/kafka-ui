@@ -3452,6 +3452,7 @@ components:
         - MESSAGES_READ
         - MESSAGES_PRODUCE
         - MESSAGES_DELETE
+        - RESTART
 
     ResourceType:
       type: string
