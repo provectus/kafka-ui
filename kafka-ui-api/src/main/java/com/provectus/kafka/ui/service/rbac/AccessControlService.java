@@ -108,7 +108,8 @@ public class AccessControlService {
                   && isConnectAccessible(context, user)
                   && isConnectorAccessible(context, user) // TODO connector selectors
                   && isSchemaAccessible(context, user)
-                  && isKsqlAccessible(context, user);
+                  && isKsqlAccessible(context, user)
+                  && isAclAccessible(context, user);
 
           if (!accessGranted) {
             throw new AccessDeniedException("Access denied");
@@ -362,6 +363,23 @@ public class AccessControlService {
         .collect(Collectors.toSet());
 
     return isAccessible(Resource.KSQL, null, user, context, requiredActions);
+  }
+
+  private boolean isAclAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
+    if (context.getAclActions().isEmpty()) {
+      return true;
+    }
+
+    Set<String> requiredActions = context.getAclActions()
+        .stream()
+        .map(a -> a.toString().toUpperCase())
+        .collect(Collectors.toSet());
+
+    return isAccessible(Resource.ACL, null, user, context, requiredActions);
   }
 
   public Set<ProviderAuthorityExtractor> getOauthExtractors() {

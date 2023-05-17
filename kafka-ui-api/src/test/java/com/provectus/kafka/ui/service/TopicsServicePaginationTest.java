@@ -131,7 +131,7 @@ class TopicsServicePaginationTest {
 
     assertThat(topics.getBody().getPageCount()).isEqualTo(4);
     assertThat(topics.getBody().getTopics()).hasSize(1);
-    assertThat(topics.getBody().getTopics().get(0).getName().equals("99"));
+    assertThat(topics.getBody().getTopics().get(0).getName()).isEqualTo("99");
   }
 
   @Test
