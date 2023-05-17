@@ -2,40 +2,70 @@ import React from 'react';
 import { CellContext } from '@tanstack/react-table';
 import { Topic } from 'generated-sources';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import ArrowDownIcon from 'components/common/Icons/ArrowDownIcon';
-import ArrowUpIcon from 'components/common/Icons/ArrowUpIcon';
+import CircleArrowDownIcon from 'components/common/Icons/CircleArrowDownIcon';
+import CircleArrowUpIcon from 'components/common/Icons/CircleArrowUpIcon';
+import styled from 'styled-components';
 
+const Wrapper = styled.div`
+  display: flex;
+  span {
+    display: flex;
+    align-items: center;
+    &:first-child {
+      margin-right: 10px;
+    }
+    & > svg {
+      margin-right: 5px;
+    }
+  }
+`;
 export const ThroughputCell: React.FC<CellContext<Topic, unknown>> = ({
   row: { original },
 }) => {
   const production = original.bytesInPerSec;
   const consumption = original.bytesOutPerSec;
+
   if (production === undefined && consumption === undefined) {
     return (
-      <>
-        <ArrowDownIcon /> N/A <ArrowUpIcon /> N/A
-      </>
+      <Wrapper>
+        <span>
+          <CircleArrowDownIcon />
+          N/A
+        </span>
+        <span>
+          <CircleArrowUpIcon />
+          N/A
+        </span>
+      </Wrapper>
     );
   }
   if (production === undefined) {
     return (
-      <>
-        <ArrowUpIcon /> <BytesFormatted value={consumption} />
-      </>
+      <Wrapper>
+        <span>
+          <CircleArrowUpIcon /> <BytesFormatted value={consumption} />
+        </span>
+      </Wrapper>
     );
   }
   if (consumption === undefined) {
     return (
-      <>
-        <ArrowDownIcon /> <BytesFormatted value={production} />
-      </>
+      <Wrapper>
+        <span>
+          <CircleArrowDownIcon /> <BytesFormatted value={production} />
+        </span>
+      </Wrapper>
     );
   }
 
   return (
-    <>
-      <ArrowDownIcon /> <BytesFormatted value={production} /> <ArrowUpIcon />{' '}
-      <BytesFormatted value={consumption} />
-    </>
+    <Wrapper>
+      <span>
+        <CircleArrowDownIcon /> <BytesFormatted value={production} />
+      </span>
+      <span>
+        <CircleArrowUpIcon /> <BytesFormatted value={consumption} />
+      </span>
+    </Wrapper>
   );
 };
