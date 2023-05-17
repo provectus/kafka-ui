@@ -12,9 +12,11 @@ const Version: React.FC = () => {
     latestVersionInfo.build;
   const { versionTag } = latestVersionInfo?.latestRelease || '';
 
-  const currentVersion = version?.match(versionTag)
-    ? versionTag
-    : formatTimestamp(buildTime);
+  const currentVersion =
+    isLatestRelease && version?.match(versionTag)
+      ? versionTag
+      : formatTimestamp(buildTime);
+
   return (
     <S.Wrapper>
       {!isLatestRelease && (
