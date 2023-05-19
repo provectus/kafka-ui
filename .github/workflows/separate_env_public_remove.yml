@@ -13,8 +13,7 @@ jobs:
     steps:
       - name: clone
         run: |
-          git clone https://github.com/provectus/kafka-ui-infra.git
-          git checkout envs
+          git clone https://infra-tech:${{ secrets.INFRA_USER_ACCESS_TOKEN }}@github.com/provectus/kafka-ui-infra.git --branch envs
       - name: separate environment remove
         run: |
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
