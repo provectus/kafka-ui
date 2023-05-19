@@ -83,7 +83,7 @@ jobs:
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
           bash separate_env_create.sh ${{ github.event.inputs.ENV_NAME }} ${{ secrets.FEATURE_TESTING_UI_PASSWORD }} ${{ needs.build.outputs.tag }}
           git config --global user.email "infra-tech@provectus.com"
-          git config --global user.name "infra-tech@provectus.com"
+          git config --global user.name "infra-tech"
           git add -A
           git commit -m "separate env added: ${{ github.event.inputs.ENV_NAME }}" && git push || true
 

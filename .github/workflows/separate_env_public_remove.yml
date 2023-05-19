@@ -19,6 +19,6 @@ jobs:
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
           bash separate_env_remove.sh ${{ github.event.inputs.ENV_NAME }}
           git config --global user.email "infra-tech@provectus.com"
-          git config --global user.name "infra-tech@provectus.com"
+          git config --global user.name "infra-tech"
           git add -A
           git commit -m "separate env removed: ${{ github.event.inputs.ENV_NAME }}" && git push || true

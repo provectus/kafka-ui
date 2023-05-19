@@ -78,6 +78,6 @@ jobs:
           echo "Image digest is:${{ steps.docker_build_and_push.outputs.digest }}"
           ./kafka-ui-update-master-digest.sh ${{ steps.docker_build_and_push.outputs.digest }}
           git config --global user.email "infra-tech@provectus.com"
-          git config --global user.name "infra-tech@provectus.com"
+          git config --global user.name "infra-tech"
           git add ../kafka-ui/*
           git commit -m "updated master image digest: ${{ steps.docker_build_and_push.outputs.digest }}" && git push
