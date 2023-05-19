@@ -29,6 +29,16 @@ export const Wrapper = styled.div`
     width: 16px;
     fill: ${({ theme }) => theme.input.icon.color};
   }
+  svg:last-child {
+    position: absolute;
+    top: 8px;
+    line-height: 0;
+    z-index: 1;
+    left: unset;
+    right: 12px;
+    height: 16px;
+    width: 16px;
+  }
 `;
 
 export const Input = styled.input<InputProps>(
