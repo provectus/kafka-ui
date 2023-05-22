@@ -153,6 +153,7 @@ public class AccessContext {
     }
 
     public AccessContextBuilder auditActions(AuditAction... actions) {
+      Assert.isTrue(actions.length > 0, "actions not present");
       this.auditActions = List.of(actions);
       return this;
     }

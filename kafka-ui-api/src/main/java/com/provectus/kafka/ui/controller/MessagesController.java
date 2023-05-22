@@ -83,17 +83,17 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                            String keySerde,
                                                                            String valueSerde,
                                                                            ServerWebExchange exchange) {
-    var context = AccessContext.builder()
+    var contextBuilder = AccessContext.builder()
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
-        .auditActions(
-            auditService.isAuditTopic(getCluster(clusterName), topicName)
-                ? new AuditAction[] {AuditAction.VIEW}
-                : new AuditAction[] {}
-        )
-        .auditOperation("getTopicMessages")
-        .build();
+        .auditOperation("getTopicMessages");
+
+    if (auditService.isAuditTopic(getCluster(clusterName), topicName)) {
+      contextBuilder.auditActions(AuditAction.VIEW);
+    }
+
+    var context = contextBuilder.build();
 
     seekType = seekType != null ? seekType : SeekTypeDTO.BEGINNING;
     seekDirection = seekDirection != null ? seekDirection : SeekDirectionDTO.FORWARD;
