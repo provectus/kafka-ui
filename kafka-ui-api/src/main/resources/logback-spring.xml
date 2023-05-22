@@ -7,18 +7,8 @@
         </encoder>
     </appender>
 
-    <appender name="AUDIT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%black(%d{ISO8601}) %yellow(%c{1}): %msg%n%throwable</pattern>
-        </encoder>
-    </appender>
-
     <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
-
-    <audit level="info">
-        <appender-ref ref="AUDIT"/>
-    </audit>
 
 </configuration>
