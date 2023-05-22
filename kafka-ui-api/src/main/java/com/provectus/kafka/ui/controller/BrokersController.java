@@ -15,6 +15,7 @@ import com.provectus.kafka.ui.service.audit.AuditService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -67,12 +68,12 @@ public class BrokersController extends AbstractController implements BrokersApi 
 
   @Override
   public Mono<ResponseEntity<Flux<BrokersLogdirsDTO>>> getAllBrokersLogdirs(String clusterName,
-                                                                            List<Integer> brokers,
+                                                                            @Nullable List<Integer> brokers,
                                                                             ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
         .auditOperation("getAllBrokersLogdirs")
-        .operationParams(Map.of("brokerIds", brokers))
+        .operationParams(Map.of("brokerIds", brokers == null ? List.of() : brokers))
         .build();
     return accessControlService.validateAccess(context)
         .thenReturn(ResponseEntity.ok(

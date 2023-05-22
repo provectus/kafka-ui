@@ -14,18 +14,36 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Slf4j
 record AuditWriter(String clusterName,
                    String targetTopic,
                    @Nullable KafkaProducer<byte[], byte[]> producer,
-                   boolean logToConsole) implements Closeable {
+                   @Nullable Logger consoleLogger) implements Closeable {
 
-  //TODO: discuss AUDIT LOG FORMAT and name
-  private static final Logger AUDIT_LOGGER = LoggerFactory.getLogger("audit");
+  boolean isTopicWritingEnabled() {
+    return producer != null;
+  }
 
-  public void write(AccessContext ctx, AuthenticatedUser user, @Nullable Throwable th) {
+  // application-level (cluster-independent) operation
+  static void writeAppOperation(Logger consoleLogger,
+                                AccessContext ctx,
+                                AuthenticatedUser user,
+                                @Nullable Throwable th) {
+    consoleLogger.info(
+        new AuditRecord(
+            DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
+            user.principal(),
+            null,
+            AuditResource.getAccessedResources(ctx),
+            ctx.getOperationName(),
+            ctx.getOperationParams(),
+            th == null ? OperationResult.successful() : OperationResult.error(th)
+        ).toJson()
+    );
+  }
+
+  void write(AccessContext ctx, AuthenticatedUser user, @Nullable Throwable th) {
     write(
         new AuditRecord(
             DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
@@ -41,8 +59,8 @@ record AuditWriter(String clusterName,
 
   private void write(AuditRecord rec) {
     String json = rec.toJson();
-    if (logToConsole) {
-      AUDIT_LOGGER.info(json);
+    if (consoleLogger != null) {
+      consoleLogger.info(json);
     }
     if (producer != null) {
       producer.send(
@@ -54,6 +72,7 @@ record AuditWriter(String clusterName,
           });
     }
   }
+
 
   @Override
   public void close() {

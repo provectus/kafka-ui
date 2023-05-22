@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -110,7 +111,7 @@ public class BrokerService {
   }
 
   private Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> getClusterLogDirs(
-      KafkaCluster cluster, List<Integer> reqBrokers) {
+      KafkaCluster cluster, @Nullable List<Integer> reqBrokers) {
     return adminClientService.get(cluster)
         .flatMap(admin -> {
           List<Integer> brokers = statisticsCache.get(cluster).getClusterDescription().getNodes()
@@ -128,7 +129,7 @@ public class BrokerService {
         });
   }
 
-  public Flux<BrokersLogdirsDTO> getAllBrokersLogdirs(KafkaCluster cluster, List<Integer> brokers) {
+  public Flux<BrokersLogdirsDTO> getAllBrokersLogdirs(KafkaCluster cluster, @Nullable List<Integer> brokers) {
     return getClusterLogDirs(cluster, brokers)
         .map(describeLogDirsMapper::toBrokerLogDirsList)
         .flatMapMany(Flux::fromIterable);

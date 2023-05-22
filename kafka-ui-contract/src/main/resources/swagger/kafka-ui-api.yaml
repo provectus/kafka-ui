@@ -3465,6 +3465,7 @@ components:
         - CONNECT
         - KSQL
         - ACL
+        - AUDIT
 
     KafkaAcl:
       type: object

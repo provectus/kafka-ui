@@ -59,6 +59,8 @@ record AuditRecord(String timestamp,
           .forEach(a -> resources.add(new AuditResource(a, Resource.KSQL, null)));
       ctx.getAclActions()
           .forEach(a -> resources.add(new AuditResource(a, Resource.ACL, null)));
+      ctx.getAuditAction()
+          .forEach(a -> resources.add(new AuditResource(a, Resource.AUDIT, null)));
       return resources;
     }
 

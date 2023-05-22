@@ -44,8 +44,6 @@ import org.springframework.security.oauth2.client.registration.InMemoryReactiveC
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
 
 @Service
 @RequiredArgsConstructor
@@ -111,7 +109,8 @@ public class AccessControlService {
                   && isConnectorAccessible(context, user) // TODO connector selectors
                   && isSchemaAccessible(context, user)
                   && isKsqlAccessible(context, user)
-                  && isAclAccessible(context, user);
+                  && isAclAccessible(context, user)
+                  && isAuditAccessible(context, user);
 
           if (!accessGranted) {
             throw new AccessDeniedException("Access denied");
@@ -382,6 +381,23 @@ public class AccessControlService {
         .collect(Collectors.toSet());
 
     return isAccessible(Resource.ACL, null, user, context, requiredActions);
+  }
+
+  private boolean isAuditAccessible(AccessContext context, AuthenticatedUser user) {
+    if (!rbacEnabled) {
+      return true;
+    }
+
+    if (context.getAuditAction().isEmpty()) {
+      return true;
+    }
+
+    Set<String> requiredActions = context.getAuditAction()
+        .stream()
+        .map(a -> a.toString().toUpperCase())
+        .collect(Collectors.toSet());
+
+    return isAccessible(Resource.AUDIT, null, user, context, requiredActions);
   }
 
   public Set<ProviderAuthorityExtractor> getOauthExtractors() {

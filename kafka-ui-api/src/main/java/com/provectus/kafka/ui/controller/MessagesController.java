@@ -18,6 +18,7 @@ import com.provectus.kafka.ui.model.SerdeUsageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicSerdeSuggestionDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
+import com.provectus.kafka.ui.model.rbac.permission.AuditAction;
 import com.provectus.kafka.ui.model.rbac.permission.TopicAction;
 import com.provectus.kafka.ui.service.DeserializationService;
 import com.provectus.kafka.ui.service.MessagesService;
@@ -32,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.common.TopicPartition;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -85,6 +87,11 @@ public class MessagesController extends AbstractController implements MessagesAp
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
+        .auditActions(
+            auditService.isAuditTopic(getCluster(clusterName), topicName)
+                ? new AuditAction[] {AuditAction.VIEW}
+                : new AuditAction[] {}
+        )
         .auditOperation("getTopicMessages")
         .build();
 

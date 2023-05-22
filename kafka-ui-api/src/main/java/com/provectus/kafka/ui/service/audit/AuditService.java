@@ -1,5 +1,8 @@
 package com.provectus.kafka.ui.service.audit;
 
+import static com.provectus.kafka.ui.service.MessagesService.*;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
 import com.provectus.kafka.ui.config.auth.RbacUser;
@@ -7,25 +10,27 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.service.AdminClientService;
 import com.provectus.kafka.ui.service.ClustersStorage;
-import com.provectus.kafka.ui.service.MessagesService;
 import com.provectus.kafka.ui.service.ReactiveAdminClient;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Signal;
-import reactor.core.scheduler.Schedulers;
+
 
 @Slf4j
 @Service
@@ -43,13 +48,14 @@ public class AuditService implements Closeable {
       ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip"
   );
 
-  private final Map<String, AuditWriter> auditWriters = new HashMap<>();
+  private static final Logger AUDIT_LOGGER = LoggerFactory.getLogger("audit");
 
-  public AuditService(ClustersProperties clustersProperties,
-                      AdminClientService adminClientService,
-                      ClustersStorage clustersStorage) {
-    for (var clusterProps : Optional.ofNullable(clustersProperties.getClusters()).orElse(List.of())) {
-      var cluster = clustersStorage.getClusterByName(clusterProps.getName()).orElseThrow();
+  private final Map<String, AuditWriter> auditWriters;
+
+  @Autowired
+  public AuditService(AdminClientService adminClientService, ClustersStorage clustersStorage) {
+    Map<String, AuditWriter> auditWriters = new HashMap<>();
+    for (var cluster : clustersStorage.getKafkaClusters()) {
       ReactiveAdminClient adminClient;
       try {
         adminClient = adminClientService.get(cluster).block();
@@ -57,39 +63,56 @@ public class AuditService implements Closeable {
         printAuditInitError(cluster, "Error connect to cluster", e);
         continue;
       }
-      initialize(cluster, adminClient);
+      createAuditWriter(cluster, adminClient, () -> createProducer(cluster, AUDIT_PRODUCER_CONFIG))
+          .ifPresent(writer -> auditWriters.put(cluster.getName(), writer));
     }
+    this.auditWriters = auditWriters;
   }
 
-  private void initialize(KafkaCluster cluster, ReactiveAdminClient ac) {
+  @VisibleForTesting
+  AuditService(Map<String, AuditWriter> auditWriters) {
+    this.auditWriters = auditWriters;
+  }
+
+  @VisibleForTesting
+  static Optional<AuditWriter> createAuditWriter(KafkaCluster cluster,
+                                                 ReactiveAdminClient ac,
+                                                 Supplier<KafkaProducer<byte[], byte[]>> producerFactory) {
     var auditProps = cluster.getOriginalProperties().getAudit();
     if (auditProps == null) {
-      return;
+      return Optional.empty();
     }
     boolean topicAudit = Optional.ofNullable(auditProps.getTopicAuditEnabled()).orElse(false);
     boolean consoleAudit = Optional.ofNullable(auditProps.getConsoleAuditEnabled()).orElse(false);
     if (!topicAudit && !consoleAudit) {
-      return;
+      return Optional.empty();
     }
     String auditTopicName = Optional.ofNullable(auditProps.getTopic()).orElse(DEFAULT_AUDIT_TOPIC_NAME);
     @Nullable KafkaProducer<byte[], byte[]> producer = null;
     if (topicAudit && createTopicIfNeeded(cluster, ac, auditTopicName, auditProps)) {
-      producer = MessagesService.createProducer(cluster, AUDIT_PRODUCER_CONFIG);
+      producer = producerFactory.get();
     }
-    auditWriters.put(cluster.getName(), new AuditWriter(cluster.getName(), auditTopicName, producer, consoleAudit));
     log.info("Audit service initialized for cluster '{}'", cluster.getName());
+    return Optional.of(
+        new AuditWriter(
+            cluster.getName(),
+            auditTopicName,
+            producer,
+            consoleAudit ? AUDIT_LOGGER : null
+        )
+    );
   }
 
   /**
    * @return true if topic created/existing and producing can be enabled
    */
-  private boolean createTopicIfNeeded(KafkaCluster cluster,
-                                      ReactiveAdminClient ac,
-                                      String auditTopicName,
-                                      ClustersProperties.AuditProperties auditProps) {
+  private static boolean createTopicIfNeeded(KafkaCluster cluster,
+                                             ReactiveAdminClient ac,
+                                             String auditTopicName,
+                                             ClustersProperties.AuditProperties auditProps) {
     boolean topicExists;
     try {
-      topicExists = ac.listTopics(false).block().contains(auditTopicName);
+      topicExists = ac.listTopics(true).block().contains(auditTopicName);
     } catch (Exception e) {
       printAuditInitError(cluster, "Error checking audit topic existence", e);
       return false;
@@ -116,7 +139,7 @@ public class AuditService implements Closeable {
     }
   }
 
-  private void printAuditInitError(KafkaCluster cluster, String errorMsg, Exception cause) {
+  private static void printAuditInitError(KafkaCluster cluster, String errorMsg, Exception cause) {
     log.error("-----------------------------------------------------------------");
     log.error(
         "Error initializing Audit Service for cluster '{}'. Audit will be disabled. See error below: ",
@@ -124,6 +147,13 @@ public class AuditService implements Closeable {
     );
     log.error("{}", errorMsg, cause);
     log.error("-----------------------------------------------------------------");
+  }
+
+  public boolean isAuditTopic(KafkaCluster cluster, String topic) {
+    var writer = auditWriters.get(cluster.getName());
+    return writer != null
+        && topic.equals(writer.targetTopic())
+        && writer.isTopicWritingEnabled();
   }
 
   public void audit(AccessContext acxt, Signal<?> sig) {
@@ -148,7 +178,7 @@ public class AuditService implements Closeable {
           .map(user -> new AuthenticatedUser(user.name(), user.groups()))
           .switchIfEmpty(NO_AUTH_USER);
     } else {
-      return NO_AUTH_USER.publishOn(Schedulers.immediate());
+      return NO_AUTH_USER;
     }
   }
 
@@ -164,7 +194,8 @@ public class AuditService implements Closeable {
           writer.write(ctx, user, th);
         }
       } else {
-        //TODO: discuss app config changes - where to log?
+        // cluster-independent operation
+        AuditWriter.writeAppOperation(AUDIT_LOGGER, ctx, user, th);
       }
     } catch (Exception e) {
       log.warn("Error sending audit record", e);
