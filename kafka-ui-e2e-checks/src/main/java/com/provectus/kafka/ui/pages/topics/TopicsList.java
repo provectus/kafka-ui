@@ -70,9 +70,11 @@ public class TopicsList extends BasePage {
 
   @Step
   public TopicsList goToLastPage() {
-    while (nextBtn.isEnabled()) {
-      clickNextBtn();
-      waitUntilSpinnerDisappear(1);
+    if (nextBtn.exists()) {
+      while (nextBtn.isEnabled()) {
+        clickNextBtn();
+        waitUntilSpinnerDisappear(1);
+      }
     }
     return this;
   }
