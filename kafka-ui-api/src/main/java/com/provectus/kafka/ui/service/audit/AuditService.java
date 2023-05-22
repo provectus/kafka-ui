@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.service.audit;
 
-import static com.provectus.kafka.ui.service.MessagesService.*;
+import static com.provectus.kafka.ui.service.MessagesService.createProducer;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.provectus.kafka.ui.config.ClustersProperties;
@@ -104,7 +104,7 @@ public class AuditService implements Closeable {
   }
 
   /**
-   * @return true if topic created/existing and producing can be enabled
+   * return true if topic created/existing and producing can be enabled.
    */
   private static boolean createTopicIfNeeded(KafkaCluster cluster,
                                              ReactiveAdminClient ac,

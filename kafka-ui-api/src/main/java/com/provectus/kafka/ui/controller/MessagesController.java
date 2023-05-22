@@ -93,8 +93,6 @@ public class MessagesController extends AbstractController implements MessagesAp
       contextBuilder.auditActions(AuditAction.VIEW);
     }
 
-    var context = contextBuilder.build();
-
     seekType = seekType != null ? seekType : SeekTypeDTO.BEGINNING;
     seekDirection = seekDirection != null ? seekDirection : SeekDirectionDTO.FORWARD;
     filterQueryType = filterQueryType != null ? filterQueryType : MessageFilterTypeDTO.STRING_CONTAINS;
@@ -112,6 +110,7 @@ public class MessagesController extends AbstractController implements MessagesAp
         )
     );
 
+    var context = contextBuilder.build();
     return accessControlService.validateAccess(context)
         .then(job)
         .doOnEach(sig -> auditService.audit(context, sig));

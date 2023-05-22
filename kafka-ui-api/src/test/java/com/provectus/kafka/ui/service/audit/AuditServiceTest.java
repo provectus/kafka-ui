@@ -86,7 +86,7 @@ class AuditServiceTest {
     }
 
     @Test
-    void setsLoggerIfConsoleLoggingEnabled(){
+    void setsLoggerIfConsoleLoggingEnabled() {
       var auditProps = new ClustersProperties.AuditProperties();
       auditProps.setConsoleAuditEnabled(true);
       clustersProperties.setAudit(auditProps);
