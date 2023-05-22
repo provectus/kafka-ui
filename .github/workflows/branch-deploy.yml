@@ -73,20 +73,20 @@ jobs:
     steps:
       - name: clone
         run: |
-          git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git
+          git clone https://infra-tech:${{ secrets.INFRA_USER_ACCESS_TOKEN }}@github.com/provectus/kafka-ui-infra.git --branch envs
       - name: create deployment
         run: |
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
           echo "Branch:${{ needs.build.outputs.tag }}"
           ./kafka-ui-deployment-from-branch.sh ${{ needs.build.outputs.tag }} ${{ github.event.label.name }} ${{ secrets.FEATURE_TESTING_UI_PASSWORD }}
-          git config --global user.email "kafka-ui-infra@provectus.com"
-          git config --global user.name "kafka-ui-infra"
+          git config --global user.email "infra-tech@provectus.com"
+          git config --global user.name "infra-tech"
           git add ../kafka-ui-from-branch/
           git commit -m "added env:${{ needs.build.outputs.deploy }}" && git push || true
 
       - name: make comment with private deployment link
         if: ${{ github.event.label.name == 'status/feature_testing' }}
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@v3
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
@@ -94,7 +94,7 @@ jobs:
 
       - name: make comment with public deployment link
         if: ${{ github.event.label.name == 'status/feature_testing_public' }}
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@v3
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |

@@ -70,7 +70,7 @@ export const DropdownButton = styled.button`
 `;
 
 export const DangerItem = styled.div`
-  color: ${({ theme: { dropdown } }) => dropdown.item.color.normal};
+  color: ${({ theme: { dropdown } }) => dropdown.item.color.danger};
 `;
 
 export const DropdownItemHint = styled.div`

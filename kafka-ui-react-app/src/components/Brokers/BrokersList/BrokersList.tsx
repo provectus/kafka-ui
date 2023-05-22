@@ -11,7 +11,9 @@ import CheckMarkRoundIcon from 'components/common/Icons/CheckMarkRoundIcon';
 import { ColumnDef } from '@tanstack/react-table';
 import { clusterBrokerPath } from 'lib/paths';
 import Tooltip from 'components/common/Tooltip/Tooltip';
+import ColoredCell from 'components/common/NewTable/ColoredCell';
 
+import SkewHeader from './SkewHeader/SkewHeader';
 import * as S from './BrokersList.styled';
 
 const NA = 'N/A';
@@ -57,11 +59,15 @@ const BrokersList: React.FC = () => {
         count: segmentCount || NA,
         port: broker?.port,
         host: broker?.host,
+        partitionsLeader: broker?.partitionsLeader,
+        partitionsSkew: broker?.partitionsSkew,
+        leadersSkew: broker?.leadersSkew,
+        inSyncPartitions: broker?.inSyncPartitions,
       };
     });
   }, [diskUsage, brokers]);
 
-  const columns = React.useMemo<ColumnDef<typeof rows>[]>(
+  const columns = React.useMemo<ColumnDef<(typeof rows)[number]>[]>(
     () => [
       {
         header: 'Broker ID',
@@ -84,7 +90,7 @@ const BrokersList: React.FC = () => {
         ),
       },
       {
-        header: 'Segment Size',
+        header: 'Disk usage',
         accessorKey: 'size',
         // eslint-disable-next-line react/no-unstable-nested-components
         cell: ({ getValue, table, cell, column, renderValue, row }) =>
@@ -98,10 +104,56 @@ const BrokersList: React.FC = () => {
               cell={cell}
               getValue={getValue}
               renderValue={renderValue}
+              renderSegments
             />
           ),
       },
-      { header: 'Segment Count', accessorKey: 'count' },
+      {
+        // eslint-disable-next-line react/no-unstable-nested-components
+        header: () => <SkewHeader />,
+        accessorKey: 'partitionsSkew',
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ getValue }) => {
+          const value = getValue<number>();
+          return (
+            <ColoredCell
+              value={value ? `${value.toFixed(2)}%` : '-'}
+              warn={value >= 10 && value < 20}
+              attention={value >= 20}
+            />
+          );
+        },
+      },
+      { header: 'Leaders', accessorKey: 'partitionsLeader' },
+      {
+        header: 'Leader skew',
+        accessorKey: 'leadersSkew',
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ getValue }) => {
+          const value = getValue<number>();
+          return (
+            <ColoredCell
+              value={value ? `${value.toFixed(2)}%` : '-'}
+              warn={value >= 10 && value < 20}
+              attention={value >= 20}
+            />
+          );
+        },
+      },
+      {
+        header: 'Online partitions',
+        accessorKey: 'inSyncPartitions',
+        // eslint-disable-next-line react/no-unstable-nested-components
+        cell: ({ getValue, row }) => {
+          const value = getValue<number>();
+          return (
+            <ColoredCell
+              value={value}
+              attention={value !== row.original.count}
+            />
+          );
+        },
+      },
       { header: 'Port', accessorKey: 'port' },
       {
         header: 'Host',

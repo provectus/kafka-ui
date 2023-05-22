@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.pages.ksqldb;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
@@ -17,11 +18,12 @@ import java.util.List;
 public class KsqlQueryForm extends BasePage {
   protected SelenideElement clearBtn = $x("//div/button[text()='Clear']");
   protected SelenideElement executeBtn = $x("//div/button[text()='Execute']");
-  protected SelenideElement stopQueryBtn = $x("//div/button[text()='Stop query']");
   protected SelenideElement clearResultsBtn = $x("//div/button[text()='Clear results']");
   protected SelenideElement addStreamPropertyBtn = $x("//button[text()='Add Stream Property']");
   protected SelenideElement queryAreaValue = $x("//div[@class='ace_content']");
   protected SelenideElement queryArea = $x("//div[@id='ksql']/textarea[@class='ace_text-input']");
+  protected SelenideElement abortButton = $x("//div[@role='status']/div[text()='Abort']");
+  protected SelenideElement cancelledAlert = $x("//div[@role='status'][text()='Cancelled']");
   protected ElementsCollection ksqlGridItems = $$x("//tbody//tr");
   protected ElementsCollection keyField = $$x("//input[@aria-label='key']");
   protected ElementsCollection valueField = $$x("//input[@aria-label='value']");
@@ -36,14 +38,20 @@ public class KsqlQueryForm extends BasePage {
   @Step
   public KsqlQueryForm clickClearBtn() {
     clickByJavaScript(clearBtn);
+    sleep(500);
     return this;
   }
 
   @Step
-  public KsqlQueryForm clickExecuteBtn() {
+  public String getEnteredQuery() {
+    return queryAreaValue.getText().trim();
+  }
+
+  @Step
+  public KsqlQueryForm clickExecuteBtn(String query) {
     clickByActions(executeBtn);
-    if (queryAreaValue.getText().contains("EMIT CHANGES;")) {
-      loadingSpinner.shouldBe(Condition.visible);
+    if (query.contains("EMIT CHANGES")) {
+      abortButton.shouldBe(Condition.visible);
     } else {
       waitUntilSpinnerDisappear();
     }
@@ -51,10 +59,24 @@ public class KsqlQueryForm extends BasePage {
   }
 
   @Step
-  public KsqlQueryForm clickStopQueryBtn() {
-    clickByActions(stopQueryBtn);
-    waitUntilSpinnerDisappear();
+  public boolean isAbortBtnVisible() {
+    return isVisible(abortButton);
+  }
+
+  @Step
+  public KsqlQueryForm clickAbortBtn() {
+    clickByActions(abortButton);
     return this;
+  }
+
+  @Step
+  public boolean isCancelledAlertVisible() {
+    return isVisible(cancelledAlert);
+  }
+
+  @Step
+  public boolean isClearResultsBtnEnabled() {
+    return isEnabled(clearResultsBtn);
   }
 
   @Step
@@ -66,19 +88,19 @@ public class KsqlQueryForm extends BasePage {
 
   @Step
   public KsqlQueryForm clickAddStreamProperty() {
-    clickByJavaScript(addStreamPropertyBtn);
+    clickByActions(addStreamPropertyBtn);
     return this;
   }
 
   @Step
   public KsqlQueryForm setQuery(String query) {
     queryAreaValue.shouldBe(Condition.visible).click();
-    queryArea.setValue(query);
+    sendKeysByActions(queryArea, query);
     return this;
   }
 
   @Step
-  public KsqlQueryForm.KsqlResponseGridItem getTableByName(String name) {
+  public KsqlQueryForm.KsqlResponseGridItem getItemByName(String name) {
     return initItems().stream()
         .filter(e -> e.getName().equalsIgnoreCase(name))
         .findFirst().orElseThrow();
@@ -114,16 +136,20 @@ public class KsqlQueryForm extends BasePage {
       return element.$x("./td[1]").getText().trim();
     }
 
+    private SelenideElement getNameElm() {
+      return element.$x("./td[2]");
+    }
+
     @Step
     public String getName() {
-      return element.$x("./td[2]").scrollTo().getText().trim();
+      return getNameElm().scrollTo().getText().trim();
     }
 
     @Step
     public boolean isVisible() {
       boolean isVisible = false;
       try {
-        element.$x("./td[2]").shouldBe(visible, Duration.ofMillis(500));
+        getNameElm().shouldBe(visible, Duration.ofMillis(500));
         isVisible = true;
       } catch (Throwable ignored) {
       }

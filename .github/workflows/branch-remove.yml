@@ -11,17 +11,17 @@ jobs:
       - uses: actions/checkout@v3
       - name: clone
         run: |
-          git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git
+          git clone https://infra-tech:${{ secrets.INFRA_USER_ACCESS_TOKEN }}@github.com/provectus/kafka-ui-infra.git --branch envs
       - name: remove env
         run: |
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
           ./delete-env.sh pr${{ github.event.pull_request.number }} || true
-          git config --global user.email "kafka-ui-infra@provectus.com"
-          git config --global user.name "kafka-ui-infra"
+          git config --global user.email "infra-tech@provectus.com"
+          git config --global user.name "infra-tech"
           git add ../kafka-ui-from-branch/
           git commit -m "removed env:${{ needs.build.outputs.deploy }}" && git push || true
       - name: make comment with deployment link
-        uses: peter-evans/create-or-update-comment@v2
+        uses: peter-evans/create-or-update-comment@v3
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
