@@ -65,20 +65,22 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
   @Override
   public Mono<ResponseEntity<TopicDTO>> createTopic(
-      String clusterName, @Valid Mono<TopicCreationDTO> topicCreation, ServerWebExchange exchange) {
+      String clusterName, @Valid Mono<TopicCreationDTO> topicCreationMono, ServerWebExchange exchange) {
+    return topicCreationMono.flatMap(topicCreation -> {
+      var context = AccessContext.builder()
+          .cluster(clusterName)
+          .topicActions(CREATE)
+          .auditOperation("createTopic")
+          .operationParams(topicCreation)
+          .build();
 
-    var context = AccessContext.builder()
-        .cluster(clusterName)
-        .topicActions(CREATE)
-        .auditOperation("createTopic")
-        .build();
-
-    return accessControlService.validateAccess(context).then(
-        topicsService.createTopic(getCluster(clusterName), topicCreation)
-            .map(clusterMapper::toTopic)
-            .map(s -> new ResponseEntity<>(s, HttpStatus.OK))
-            .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()))
-    ).doOnEach(sig -> auditService.audit(context, sig));
+      return accessControlService.validateAccess(context)
+          .then(topicsService.createTopic(getCluster(clusterName), topicCreation))
+          .map(clusterMapper::toTopic)
+          .map(s -> new ResponseEntity<>(s, HttpStatus.OK))
+          .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()))
+          .doOnEach(sig -> auditService.audit(context, sig));
+    });
   }
 
   @Override
@@ -331,8 +333,8 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     return accessControlService.validateAccess(context)
         .thenReturn(topicAnalysisService.getTopicAnalysis(getCluster(clusterName), topicName)
-        .map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build()))
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build()))
         .doOnEach(sig -> auditService.audit(context, sig));
   }
 

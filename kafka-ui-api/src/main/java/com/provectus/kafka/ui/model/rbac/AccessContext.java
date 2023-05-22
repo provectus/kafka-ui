@@ -163,7 +163,7 @@ public class AccessContext {
       return this;
     }
 
-    public AccessContextBuilder operationParams(Object... operationParams) {
+    public AccessContextBuilder operationParams(Object operationParams) {
       this.operationParams = operationParams;
       return this;
     }

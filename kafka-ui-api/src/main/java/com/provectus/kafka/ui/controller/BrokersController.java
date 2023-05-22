@@ -89,7 +89,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .cluster(clusterName)
         .clusterConfigActions(ClusterConfigAction.VIEW)
         .auditOperation("getBrokerConfig")
-        .operationParams("brokerId", id)
+        .operationParams(Map.of("brokerId", id))
         .build();
 
     return accessControlService.validateAccess(context).thenReturn(
@@ -108,7 +108,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .cluster(clusterName)
         .clusterConfigActions(ClusterConfigAction.VIEW, ClusterConfigAction.EDIT)
         .auditOperation("updateBrokerTopicPartitionLogDir")
-        .operationParams("brokerId", id)
+        .operationParams(Map.of("brokerId", id))
         .build();
 
     return accessControlService.validateAccess(context).then(

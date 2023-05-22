@@ -34,16 +34,16 @@ record AuditRecord(String timestamp,
     return MAPPER.writeValueAsString(this);
   }
 
-  record AuditResource(PermissibleAction accessType, Resource type, @Nullable Object id) {
+  record AuditResource(String accessType, Resource type, @Nullable Object id) {
 
     static List<AuditResource> getAccessedResources(AccessContext ctx) {
       List<AuditResource> resources = new ArrayList<>();
       ctx.getClusterConfigActions()
-          .forEach(a -> resources.add(new AuditResource(a, Resource.CLUSTERCONFIG, null)));
+          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.CLUSTERCONFIG, null)));
       ctx.getTopicActions()
-          .forEach(a -> resources.add(new AuditResource(a, Resource.TOPIC, nameId(ctx.getTopic()))));
+          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.TOPIC, nameId(ctx.getTopic()))));
       ctx.getConsumerGroupActions()
-          .forEach(a -> resources.add(new AuditResource(a, Resource.CONSUMER, nameId(ctx.getConsumerGroup()))));
+          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.CONSUMER, nameId(ctx.getConsumerGroup()))));
       ctx.getConnectActions()
           .forEach(a -> {
             Map<String, String> resourceId = new LinkedHashMap<>();
@@ -51,16 +51,16 @@ record AuditRecord(String timestamp,
             if (ctx.getConnector() != null) {
               resourceId.put("connector", ctx.getConnector());
             }
-            resources.add(new AuditResource(a, Resource.CONNECT, resourceId));
+            resources.add(new AuditResource(a.name(), Resource.CONNECT, resourceId));
           });
       ctx.getSchemaActions()
-          .forEach(a -> resources.add(new AuditResource(a, Resource.SCHEMA, nameId(ctx.getSchema()))));
+          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.SCHEMA, nameId(ctx.getSchema()))));
       ctx.getKsqlActions()
-          .forEach(a -> resources.add(new AuditResource(a, Resource.KSQL, null)));
+          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.KSQL, null)));
       ctx.getAclActions()
-          .forEach(a -> resources.add(new AuditResource(a, Resource.ACL, null)));
+          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.ACL, null)));
       ctx.getAuditAction()
-          .forEach(a -> resources.add(new AuditResource(a, Resource.AUDIT, null)));
+          .forEach(a -> resources.add(new AuditResource(a.name(), Resource.AUDIT, null)));
       return resources;
     }
 
