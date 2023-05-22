@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.variables;
 
 public interface Expected {
 
-  String brokerSourceInfoTooltip =
+  String BROKER_SOURCE_INFO_TOOLTIP =
       "DYNAMIC_TOPIC_CONFIG = dynamic topic config that is configured for a specific topic\n"
           + "DYNAMIC_BROKER_LOGGER_CONFIG = dynamic broker logger config that is configured for a specific broker\n"
           + "DYNAMIC_BROKER_CONFIG = dynamic broker config that is configured for a specific broker\n"

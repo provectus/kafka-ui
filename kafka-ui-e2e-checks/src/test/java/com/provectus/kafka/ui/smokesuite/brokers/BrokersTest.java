@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.smokesuite.brokers;
 
 import static com.provectus.kafka.ui.pages.brokers.BrokersDetails.DetailsTab.CONFIGS;
-import static com.provectus.kafka.ui.variables.Expected.brokerSourceInfoTooltip;
+import static com.provectus.kafka.ui.variables.Expected.BROKER_SOURCE_INFO_TOOLTIP;
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.BaseTest;
@@ -80,6 +80,6 @@ public class BrokersTest extends BaseTest {
     String sourceInfoTooltip = brokersConfigTab
         .hoverOnSourceInfoIcon()
         .getSourceInfoTooltipText();
-    Assert.assertEquals(sourceInfoTooltip, brokerSourceInfoTooltip, "brokerSourceInfoTooltip");
+    Assert.assertEquals(sourceInfoTooltip, BROKER_SOURCE_INFO_TOOLTIP, "brokerSourceInfoTooltip");
   }
 }
