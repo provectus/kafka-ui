@@ -41,7 +41,7 @@ public class AccessContext {
 
   Collection<AclAction> aclActions;
 
-  String operationDescription;
+  String operationName;
   Object operationParams;
 
   public static AccessContextBuilder builder() {
@@ -63,7 +63,7 @@ public class AccessContext {
     private Collection<SchemaAction> schemaActions = Collections.emptySet();
     private Collection<KsqlAction> ksqlActions = Collections.emptySet();
     private Collection<AclAction> aclActions = Collections.emptySet();
-    String operationDescription;
+    String operationName;
     Object operationParams;
 
     private AccessContextBuilder() {
@@ -147,8 +147,8 @@ public class AccessContext {
       return this;
     }
 
-    public AccessContextBuilder operationDescription(String description) {
-      this.operationDescription = operationDescription;
+    public AccessContextBuilder auditOperation(String operationName) {
+      this.operationName = operationName;
       return this;
     }
 
@@ -172,7 +172,7 @@ public class AccessContext {
           connector,
           schema, schemaActions,
           ksqlActions, aclActions,
-          operationDescription, operationParams);
+          operationName, operationParams);
     }
   }
 }

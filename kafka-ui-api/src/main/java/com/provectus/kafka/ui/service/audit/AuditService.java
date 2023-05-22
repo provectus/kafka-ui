@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service.audit;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
+import com.provectus.kafka.ui.config.auth.RbacUser;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.service.AdminClientService;
@@ -14,16 +15,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Signal;
+import reactor.core.scheduler.Schedulers;
 
 @Slf4j
 @Service
 public class AuditService implements Closeable {
+
+  private static final Mono<AuthenticatedUser> NO_AUTH_USER = Mono.just(new AuthenticatedUser("Unknown", Set.of()));
 
   private static final String DEFAULT_AUDIT_TOPIC_NAME = "__kui-audit-log";
   private static final int DEFAULT_AUDIT_TOPIC_PARTITIONS = 1;
@@ -68,7 +76,7 @@ public class AuditService implements Closeable {
     if (topicAudit && createTopicIfNeeded(cluster, ac, auditTopicName, auditProps)) {
       producer = MessagesService.createProducer(cluster, AUDIT_PRODUCER_CONFIG);
     }
-    auditWriters.put(cluster.getName(), new AuditWriter(auditTopicName, producer, consoleAudit));
+    auditWriters.put(cluster.getName(), new AuditWriter(cluster.getName(), auditTopicName, producer, consoleAudit));
     log.info("Audit service initialized for cluster '{}'", cluster.getName());
   }
 
@@ -118,18 +126,48 @@ public class AuditService implements Closeable {
     log.error("-----------------------------------------------------------------");
   }
 
-  public void sendAuditRecord(AccessContext ctx, AuthenticatedUser user) {
+  public void audit(AccessContext acxt, Signal<?> sig) {
+    if (sig.isOnComplete()) {
+      extractUser(sig)
+          .doOnNext(u -> sendAuditRecord(acxt, u))
+          .subscribe();
+    } else if (sig.isOnError()) {
+      extractUser(sig)
+          .doOnNext(u -> sendAuditRecord(acxt, u, sig.getThrowable()))
+          .subscribe();
+    }
+  }
+
+  private Mono<AuthenticatedUser> extractUser(Signal<?> sig) {
+    //see ReactiveSecurityContextHolder for impl details
+    Object key = SecurityContext.class;
+    if (sig.getContextView().hasKey(key)) {
+      return sig.getContextView().<Mono<SecurityContext>>get(key)
+          .map(context -> context.getAuthentication().getPrincipal())
+          .cast(RbacUser.class)
+          .map(user -> new AuthenticatedUser(user.name(), user.groups()))
+          .switchIfEmpty(NO_AUTH_USER);
+    } else {
+      return NO_AUTH_USER.publishOn(Schedulers.immediate());
+    }
+  }
+
+  private void sendAuditRecord(AccessContext ctx, AuthenticatedUser user) {
     sendAuditRecord(ctx, user, null);
   }
 
-  public void sendAuditRecord(AccessContext ctx, AuthenticatedUser user, @Nullable Throwable th) {
-    if (ctx.getCluster() != null) {
-      var writer = auditWriters.get(ctx.getCluster());
-      if (writer != null) {
-        writer.write(ctx, user, th);
+  private void sendAuditRecord(AccessContext ctx, AuthenticatedUser user, @Nullable Throwable th) {
+    try {
+      if (ctx.getCluster() != null) {
+        var writer = auditWriters.get(ctx.getCluster());
+        if (writer != null) {
+          writer.write(ctx, user, th);
+        }
+      } else {
+        //TODO: discuss app config changes - where to log?
       }
-    } else {
-      //TODO: discuss app config - where to log?
+    } catch (Exception e) {
+      log.warn("Error sending audit record", e);
     }
   }
 

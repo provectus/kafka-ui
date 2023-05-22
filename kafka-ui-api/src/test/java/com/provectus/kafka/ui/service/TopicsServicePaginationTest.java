@@ -18,6 +18,7 @@ import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
 import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.service.analyze.TopicAnalysisService;
+import com.provectus.kafka.ui.service.audit.AuditService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import com.provectus.kafka.ui.util.AccessControlServiceMock;
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ class TopicsServicePaginationTest {
   private final AccessControlService accessControlService = new AccessControlServiceMock().getMock();
 
   private final TopicsController topicsController = new TopicsController(
-      topicsService, mock(TopicAnalysisService.class), clusterMapper, accessControlService);
+      topicsService, mock(TopicAnalysisService.class), clusterMapper, accessControlService, mock(AuditService.class));
 
   private void init(Map<String, InternalTopic> topicsInCache) {
 

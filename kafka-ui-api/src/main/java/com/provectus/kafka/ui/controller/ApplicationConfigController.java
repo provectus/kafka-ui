@@ -15,6 +15,7 @@ import com.provectus.kafka.ui.model.UploadedFileInfoDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.service.ApplicationInfoService;
 import com.provectus.kafka.ui.service.KafkaClusterFactory;
+import com.provectus.kafka.ui.service.audit.AuditService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import com.provectus.kafka.ui.util.ApplicationRestarter;
 import com.provectus.kafka.ui.util.DynamicConfigOperations;
@@ -55,6 +56,7 @@ public class ApplicationConfigController implements ApplicationConfigApi {
   private final ApplicationRestarter restarter;
   private final KafkaClusterFactory kafkaClusterFactory;
   private final ApplicationInfoService applicationInfoService;
+  private final AuditService auditService;
 
   @Override
   public Mono<ResponseEntity<ApplicationInfoDTO>> getApplicationInfo(ServerWebExchange exchange) {
@@ -63,62 +65,68 @@ public class ApplicationConfigController implements ApplicationConfigApi {
 
   @Override
   public Mono<ResponseEntity<ApplicationConfigDTO>> getCurrentConfig(ServerWebExchange exchange) {
-    return accessControlService
-        .validateAccess(
-            AccessContext.builder()
-                .applicationConfigActions(VIEW)
-                .build()
-        )
+    var context = AccessContext.builder()
+        .applicationConfigActions(VIEW)
+        .auditOperation("getCurrentConfig")
+        .build();
+    return accessControlService.validateAccess(context)
         .then(Mono.fromSupplier(() -> ResponseEntity.ok(
             new ApplicationConfigDTO()
                 .properties(MAPPER.toDto(dynamicConfigOperations.getCurrentProperties()))
-        )));
+        )))
+        .doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
   public Mono<ResponseEntity<Void>> restartWithConfig(Mono<RestartRequestDTO> restartRequestDto,
                                                       ServerWebExchange exchange) {
-    return accessControlService
-        .validateAccess(
-            AccessContext.builder()
-                .applicationConfigActions(EDIT)
-                .build()
-        )
+    var context =  AccessContext.builder()
+        .applicationConfigActions(EDIT)
+        .auditOperation("restartWithConfig")
+        .build();
+    return accessControlService.validateAccess(context)
         .then(restartRequestDto)
-        .map(dto -> {
+        .<ResponseEntity<Void>>map(dto -> {
           dynamicConfigOperations.persist(MAPPER.fromDto(dto.getConfig().getProperties()));
           restarter.requestRestart();
           return ResponseEntity.ok().build();
-        });
+        })
+        .doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
   public Mono<ResponseEntity<UploadedFileInfoDTO>> uploadConfigRelatedFile(Flux<Part> fileFlux,
                                                                            ServerWebExchange exchange) {
-    return accessControlService
-        .validateAccess(
-            AccessContext.builder()
-                .applicationConfigActions(EDIT)
-                .build()
-        )
+    var context = AccessContext.builder()
+        .applicationConfigActions(EDIT)
+        .auditOperation("uploadConfigRelatedFile")
+        .build();
+    return accessControlService.validateAccess(context)
         .then(fileFlux.single())
         .flatMap(file ->
             dynamicConfigOperations.uploadConfigRelatedFile((FilePart) file)
                 .map(path -> new UploadedFileInfoDTO().location(path.toString()))
-                .map(ResponseEntity::ok));
+                .map(ResponseEntity::ok))
+        .doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
   public Mono<ResponseEntity<ApplicationConfigValidationDTO>> validateConfig(Mono<ApplicationConfigDTO> configDto,
                                                                              ServerWebExchange exchange) {
-    return configDto
+    var context = AccessContext.builder()
+        .applicationConfigActions(EDIT)
+        .auditOperation("validateConfig")
+        .build();
+    return accessControlService.validateAccess(context)
+        .then(configDto)
         .flatMap(config -> {
           PropertiesStructure propertiesStructure = MAPPER.fromDto(config.getProperties());
           ClustersProperties clustersProperties = propertiesStructure.getKafka();
           return validateClustersConfig(clustersProperties)
               .map(validations -> new ApplicationConfigValidationDTO().clusters(validations));
         })
-        .map(ResponseEntity::ok);
+        .map(ResponseEntity::ok)
+        .doOnEach(sig -> auditService.audit(context, sig));
   }
 
   private Mono<Map<String, ClusterConfigValidationDTO>> validateClustersConfig(
