@@ -365,12 +365,13 @@ public class TopicsTest extends BaseTest {
     navigateToTopics();
     topicsList
         .setShowInternalRadioButton(true);
-    SoftAssert softly = new SoftAssert();
-    softly.assertTrue(topicsList.getInternalTopics().size() > 0, "getInternalTopics()");
-    softly.assertTrue(topicsList.getNonInternalTopics().size() > 0, "getNonInternalTopics()");
-    softly.assertAll();
+    Assert.assertTrue(topicsList.getInternalTopics().size() > 0, "getInternalTopics()");
+    topicsList
+        .goToLastPage();
+    Assert.assertTrue(topicsList.getNonInternalTopics().size() > 0, "getNonInternalTopics()");
     topicsList
         .setShowInternalRadioButton(false);
+    SoftAssert softly = new SoftAssert();
     softly.assertEquals(topicsList.getInternalTopics().size(), 0, "getInternalTopics()");
     softly.assertTrue(topicsList.getNonInternalTopics().size() > 0, "getNonInternalTopics()");
     softly.assertAll();
