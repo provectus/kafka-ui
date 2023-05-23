@@ -45,7 +45,7 @@ public class SerdeInstance implements Closeable {
     try {
       return wrapWithClassloader(() -> serde.getSchema(topic, type));
     } catch (Exception e) {
-      log.warn("Error getting schema for '{}'({}) with serde '{}'", topic, type, name);
+      log.warn("Error getting schema for '{}'({}) with serde '{}'", topic, type, name, e);
       return Optional.empty();
     }
   }
@@ -54,7 +54,7 @@ public class SerdeInstance implements Closeable {
     try {
       return wrapWithClassloader(serde::getDescription);
     } catch (Exception e) {
-      log.warn("Error getting description serde '{}'", name);
+      log.warn("Error getting description serde '{}'", name, e);
       return Optional.empty();
     }
   }
@@ -63,7 +63,7 @@ public class SerdeInstance implements Closeable {
     try {
       return wrapWithClassloader(() -> serde.canSerialize(topic, type));
     } catch (Exception e) {
-      log.warn("Error calling canSerialize for '{}'({}) with serde '{}'", topic, type, name);
+      log.warn("Error calling canSerialize for '{}'({}) with serde '{}'", topic, type, name, e);
       return false;
     }
   }
@@ -72,7 +72,7 @@ public class SerdeInstance implements Closeable {
     try {
       return wrapWithClassloader(() -> serde.canDeserialize(topic, type));
     } catch (Exception e) {
-      log.warn("Error calling canDeserialize for '{}'({}) with serde '{}'", topic, type, name);
+      log.warn("Error calling canDeserialize for '{}'({}) with serde '{}'", topic, type, name, e);
       return false;
     }
   }
