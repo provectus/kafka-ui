@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import Input from 'components/common/Input/Input';
 import { useSearchParams } from 'react-router-dom';
-import CloseIcon from 'components/common/Icons/CloseIcon';
+import CloseCircleIcon from 'components/common/Icons/CloseCircleIcon';
 import styled from 'styled-components';
 
 interface SearchProps {
@@ -66,7 +66,7 @@ const Search: React.FC<SearchProps> = ({
       search
       clearIcon={
         <IconButtonWrapper onClick={clearSearchValue}>
-          <CloseIcon />
+          <CloseCircleIcon />
         </IconButtonWrapper>
       }
     />

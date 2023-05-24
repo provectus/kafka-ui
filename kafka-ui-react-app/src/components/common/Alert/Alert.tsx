@@ -1,5 +1,5 @@
 import React from 'react';
-import CloseIcon from 'components/common/Icons/CloseIcon';
+import CloseCircleIcon from 'components/common/Icons/CloseCircleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import { ToastTypes } from 'lib/errorHandling';
 
@@ -19,7 +19,7 @@ const Alert: React.FC<AlertProps> = ({ title, type, message, onDissmiss }) => (
       <S.Message role="contentinfo">{message}</S.Message>
     </div>
     <IconButtonWrapper role="button" onClick={onDissmiss}>
-      <CloseIcon />
+      <CloseCircleIcon />
     </IconButtonWrapper>
   </S.Alert>
 );
