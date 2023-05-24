@@ -4,9 +4,11 @@ description: Examples of setups for different OAuth providers
 
 # OAuth2
 
-In general, the structure of the config looks like this:
+In general, the structure of the config looks as follows:
 
 For specific providers (like github (non-enterprise) and google, see further) you don't have to specify URLs as they're [well-known](https://github.com/spring-projects/spring-security/blob/main/config/src/main/java/org/springframework/security/config/oauth2/client/CommonOAuth2Provider.java#L35).
+
+Providers that support [OIDC Service Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery) allow Spring Boot to fetch URIs configuration from a `/.well-known/openid-configuration` endpoint. Depending on your setup, you may only have to set the `issuer-uri` of your provider.
 
 ```
 auth:
@@ -29,7 +31,7 @@ auth:
           roles-field: groups # required for RBAC, a field name in OAuth token which will contain user's roles/groups
 ```
 
-### Cognito
+## Cognito
 
 ```yaml
 kafka:
@@ -58,7 +60,7 @@ auth:
           logoutUrl: https://<XXX>>.eu-central-1.amazoncognito.com/logout #required just for cognito
 ```
 
-### Google
+## Google
 
 ```yaml
 kafka:
@@ -81,7 +83,7 @@ auth:
           allowedDomain: provectus.com # for RBAC
 ```
 
-### GitHub
+## GitHub
 
 Example of callback URL for github OAuth app settings:
 
@@ -110,7 +112,7 @@ auth:
           type: github
 ```
 
-#### Self-hosted/Cloud (GitHub Enterprise Server)
+### Self-hosted/Cloud (GitHub Enterprise Server)
 
 Replace `HOSTNAME` by your self-hosted platform FQDN.
 
@@ -138,7 +140,7 @@ auth:
           type: github      
 ```
 
-### Okta
+## Okta
 
 ```yaml
 auth:
@@ -159,4 +161,23 @@ auth:
         custom-params:
           type: oauth
           roles-field: groups # required for RBAC
+```
+
+## Keycloak
+
+```yaml
+auth:
+  type: OAUTH2
+  oauth2:
+    client:
+      keycloak:
+        clientId: xxx
+        clientSecret: yyy
+        scope: openid
+        issuer-uri: https://<keycloak_instance>/auth/realms/<realm>
+        user-name-attribute: preferred_username
+        client-name: keycloak
+        provider: keycloak
+        custom-params:
+          type: keycloak
 ```
