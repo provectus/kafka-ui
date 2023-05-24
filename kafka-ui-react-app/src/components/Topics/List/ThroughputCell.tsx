@@ -25,47 +25,31 @@ export const ThroughputCell: React.FC<CellContext<Topic, unknown>> = ({
   const production = original.bytesInPerSec;
   const consumption = original.bytesOutPerSec;
 
-  if (production === undefined && consumption === undefined) {
-    return (
-      <Wrapper>
-        <span>
-          <CircleArrowDownIcon />
-          N/A
-        </span>
-        <span>
-          <CircleArrowUpIcon />
-          N/A
-        </span>
-      </Wrapper>
-    );
-  }
-  if (production === undefined) {
-    return (
-      <Wrapper>
-        <span>
-          <CircleArrowUpIcon /> <BytesFormatted value={consumption} />
-        </span>
-      </Wrapper>
-    );
-  }
-  if (consumption === undefined) {
-    return (
-      <Wrapper>
-        <span>
-          <CircleArrowDownIcon /> <BytesFormatted value={production} />
-        </span>
-      </Wrapper>
-    );
-  }
+  const isUndefinedProductionConsumption =
+    production === undefined && consumption === undefined;
+
+  const circleArrowDownIcon = (isUndefinedProductionConsumption ||
+    production !== undefined) && (
+    <span>
+      <CircleArrowDownIcon />
+      {(isUndefinedProductionConsumption && 'N/A') || (
+        <BytesFormatted value={production} />
+      )}
+    </span>
+  );
+  const circleArrowUpIcon = (isUndefinedProductionConsumption ||
+    consumption !== undefined) && (
+    <span>
+      <CircleArrowUpIcon />
+      {(isUndefinedProductionConsumption && 'N/A') || (
+        <BytesFormatted value={consumption} />
+      )}
+    </span>
+  );
 
   return (
     <Wrapper>
-      <span>
-        <CircleArrowDownIcon /> <BytesFormatted value={production} />
-      </span>
-      <span>
-        <CircleArrowUpIcon /> <BytesFormatted value={consumption} />
-      </span>
+      {circleArrowDownIcon} {circleArrowUpIcon}
     </Wrapper>
   );
 };
