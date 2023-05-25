@@ -28,6 +28,8 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
   private static final String ORGANIZATION_NAME = "login";
   private static final String GITHUB_ACCEPT_HEADER = "application/vnd.github+json";
   private static final String DUMMY = "dummy";
+  // The number of results (max 100) per page of list organizations for authenticated user.
+  private static final Integer ORGANIZATIONS_PER_PAGE = 100;
 
   @Override
   public boolean isApplicable(String provider, Map<String, String> customParams) {
@@ -84,7 +86,7 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
     final Mono<List<Map<String, Object>>> userOrganizations = webClient
         .get()
         .uri(uriBuilder -> uriBuilder.path("/orgs")
-            .queryParam("per_page", 100)
+            .queryParam("per_page", ORGANIZATIONS_PER_PAGE)
             .build())
         .headers(headers -> {
           headers.set(HttpHeaders.ACCEPT, GITHUB_ACCEPT_HEADER);
