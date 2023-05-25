@@ -8,8 +8,6 @@ import static com.provectus.kafka.ui.model.rbac.permission.TopicAction.VIEW;
 import static java.util.stream.Collectors.toList;
 
 import com.provectus.kafka.ui.api.TopicsApi;
-import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
-import com.provectus.kafka.ui.config.auth.RbacUser;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
@@ -34,21 +32,16 @@ import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 @RestController
 @RequiredArgsConstructor
@@ -192,12 +185,13 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .build();
 
     return topicsService.getTopicsForPagination(getCluster(clusterName))
-        .flatMap(existingTopics -> {
+        .flatMap(topics -> accessControlService.filterViewableTopics(topics, clusterName))
+        .flatMap(topics -> {
           int pageSize = perPage != null && perPage > 0 ? perPage : DEFAULT_PAGE_SIZE;
           var topicsToSkip = ((page != null && page > 0 ? page : 1) - 1) * pageSize;
           var comparator = sortOrder == null || !sortOrder.equals(SortOrderDTO.DESC)
               ? getComparatorForTopic(orderBy) : getComparatorForTopic(orderBy).reversed();
-          List<InternalTopic> filtered = existingTopics.stream()
+          List<InternalTopic> filtered = topics.stream()
               .filter(topic -> !topic.isInternal()
                   || showInternal != null && showInternal)
               .filter(topic -> search == null || StringUtils.containsIgnoreCase(topic.getName(), search))
@@ -213,9 +207,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
               .collect(toList());
 
           return topicsService.loadTopics(getCluster(clusterName), topicsPage)
-              .flatMapMany(Flux::fromIterable)
-              .filterWhen(dto -> accessControlService.isTopicAccessible(dto, clusterName))
-              .collectList()
               .map(topicsToRender ->
                   new TopicsResponseDTO()
                       .topics(topicsToRender.stream().map(clusterMapper::toTopic).collect(toList()))

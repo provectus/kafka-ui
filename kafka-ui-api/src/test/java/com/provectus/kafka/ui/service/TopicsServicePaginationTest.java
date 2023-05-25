@@ -34,7 +34,6 @@ import java.util.stream.IntStream;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.TopicPartitionInfo;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 import reactor.core.publisher.Mono;
 
 class TopicsServicePaginationTest {
@@ -60,7 +59,7 @@ class TopicsServicePaginationTest {
           List<String> lst = a.getArgument(1);
           return Mono.just(lst.stream().map(topicsInCache::get).collect(Collectors.toList()));
         });
-    ReflectionTestUtils.setField(topicsController, "clustersStorage", clustersStorage);
+    topicsController.setClustersStorage(clustersStorage);
   }
 
   @Test
