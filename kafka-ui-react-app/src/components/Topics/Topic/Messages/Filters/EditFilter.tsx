@@ -22,7 +22,7 @@ const EditFilter: React.FC<EditFilterProps> = ({
   };
   return (
     <>
-      <S.FilterTitle>Edit saved filter</S.FilterTitle>
+      <S.FilterTitle>Edit filter</S.FilterTitle>
       <AddEditFilterContainer
         cancelBtnHandler={() => toggleEditModal()}
         submitBtnText="Save"
