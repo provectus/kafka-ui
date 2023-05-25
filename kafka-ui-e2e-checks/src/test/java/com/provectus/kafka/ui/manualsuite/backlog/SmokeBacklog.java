@@ -17,92 +17,85 @@ public class SmokeBacklog extends BaseManualTest {
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = BROKERS_SUITE_ID)
-  @QaseId(330)
+  @QaseId(331)
   @Test
   public void testCaseA() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = BROKERS_SUITE_ID)
-  @QaseId(331)
-  @Test
-  public void testCaseB() {
-  }
-
-  @Automation(state = TO_BE_AUTOMATED)
-  @Suite(id = BROKERS_SUITE_ID)
   @QaseId(332)
   @Test
-  public void testCaseC() {
+  public void testCaseB() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(335)
   @Test
-  public void testCaseD() {
+  public void testCaseC() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(336)
   @Test
-  public void testCaseE() {
+  public void testCaseD() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(343)
   @Test
-  public void testCaseF() {
+  public void testCaseE() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = SCHEMAS_SUITE_ID)
   @QaseId(345)
   @Test
-  public void testCaseG() {
+  public void testCaseF() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = SCHEMAS_SUITE_ID)
   @QaseId(346)
   @Test
-  public void testCaseH() {
+  public void testCaseG() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = TOPICS_PROFILE_SUITE_ID)
   @QaseId(347)
   @Test
-  public void testCaseI() {
+  public void testCaseH() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = BROKERS_SUITE_ID)
   @QaseId(348)
   @Test
-  public void testCaseJ() {
+  public void testCaseI() {
   }
 
   @Automation(state = TO_BE_AUTOMATED)
   @Suite(id = BROKERS_SUITE_ID)
   @QaseId(350)
   @Test
-  public void testCaseK() {
+  public void testCaseJ() {
   }
 
   @Automation(state = NOT_AUTOMATED)
   @Suite(id = TOPICS_SUITE_ID)
   @QaseId(50)
   @Test
-  public void testCaseL() {
+  public void testCaseK() {
   }
 
   @Automation(state = NOT_AUTOMATED)
   @Suite(id = SCHEMAS_SUITE_ID)
   @QaseId(351)
   @Test
-  public void testCaseM() {
+  public void testCaseL() {
   }
 }
