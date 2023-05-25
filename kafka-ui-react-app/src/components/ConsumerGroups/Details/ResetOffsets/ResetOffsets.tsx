@@ -15,6 +15,7 @@ import Form from './Form';
 const ResetOffsets: React.FC = () => {
   const routerParams = useAppParams<ClusterGroupParam>();
 
+  const { consumerGroupID } = routerParams;
   const consumerGroup = useConsumerGroupDetails(routerParams);
 
   if (consumerGroup.isLoading || !consumerGroup.isSuccess)
@@ -37,7 +38,7 @@ const ResetOffsets: React.FC = () => {
   return (
     <>
       <PageHeading
-        text="Reset offsets"
+        text={consumerGroupID}
         backTo={clusterConsumerGroupsPath(routerParams.clusterName)}
         backText="Consumers"
       />
