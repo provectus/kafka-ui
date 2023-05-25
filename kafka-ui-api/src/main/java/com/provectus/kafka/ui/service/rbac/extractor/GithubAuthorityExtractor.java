@@ -83,7 +83,9 @@ public class GithubAuthorityExtractor implements ProviderAuthorityExtractor {
 
     final Mono<List<Map<String, Object>>> userOrganizations = webClient
         .get()
-        .uri("/orgs")
+        .uri(uriBuilder -> uriBuilder.path("/orgs")
+            .queryParam("per_page", 100)
+            .build())
         .headers(headers -> {
           headers.set(HttpHeaders.ACCEPT, GITHUB_ACCEPT_HEADER);
           OAuth2UserRequest request = (OAuth2UserRequest) additionalParams.get("request");
