@@ -23,10 +23,10 @@ import {
   useConsumerGroupDetails,
   useDeleteConsumerGroupMutation,
 } from 'lib/hooks/api/consumers';
+import Tooltip from 'components/common/Tooltip/Tooltip';
+import { CONSUMER_GROUP_STATE_TOOLTIPS } from 'lib/constants';
 
 import ListItem from './ListItem';
-import Tooltip from '../../common/Tooltip/Tooltip';
-import { CONSUMER_GROUP_STATE_TOOLTIPS } from '../../../lib/constants';
 
 const Details: React.FC = () => {
   const navigate = useNavigate();
