@@ -69,6 +69,17 @@ public class TopicsList extends BasePage {
   }
 
   @Step
+  public TopicsList goToLastPage() {
+    if (nextBtn.exists()) {
+      while (nextBtn.isEnabled()) {
+        clickNextBtn();
+        waitUntilSpinnerDisappear(1);
+      }
+    }
+    return this;
+  }
+
+  @Step
   public TopicsList openTopic(String topicName) {
     getTopicItem(topicName).openItem();
     return this;
