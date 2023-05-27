@@ -25,6 +25,8 @@ import {
 } from 'lib/hooks/api/consumers';
 
 import ListItem from './ListItem';
+import Tooltip from '../../common/Tooltip/Tooltip';
+import { CONSUMER_GROUP_STATE_TOOLTIPS } from '../../../lib/constants';
 
 const Details: React.FC = () => {
   const navigate = useNavigate();
@@ -93,9 +95,15 @@ const Details: React.FC = () => {
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="State">
-            <Tag color={getTagColor(consumerGroup.data?.state)}>
-              {consumerGroup.data?.state}
-            </Tag>
+            <Tooltip
+              value={
+                <Tag color={getTagColor(consumerGroup.data?.state)}>
+                  {consumerGroup.data?.state}
+                </Tag>
+              }
+              content={CONSUMER_GROUP_STATE_TOOLTIPS[consumerGroup.data?.state]}
+              placement="bottom-start"
+            />
           </Metrics.Indicator>
           <Metrics.Indicator label="Members">
             {consumerGroup.data?.members}
