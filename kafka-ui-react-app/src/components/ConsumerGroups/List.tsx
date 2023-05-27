@@ -15,7 +15,7 @@ import Table, { LinkCell, TagCell } from 'components/common/NewTable';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CONSUMER_GROUP_STATE_TOOLTIPS, PER_PAGE } from 'lib/constants';
 import { useConsumerGroups } from 'lib/hooks/api/consumers';
-import Tooltip from '../common/Tooltip/Tooltip';
+import Tooltip from 'components/common/Tooltip/Tooltip';
 
 const List = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
@@ -71,6 +71,7 @@ const List = () => {
         id: ConsumerGroupOrdering.STATE,
         header: 'State',
         accessorKey: 'state',
+        // eslint-disable-next-line react/no-unstable-nested-components
         cell: (args) => {
           const value = args.getValue() as ConsumerGroupState;
           return (
