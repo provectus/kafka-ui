@@ -11,7 +11,8 @@ const ClusterTableActionsCell: React.FC<Props> = ({ row }) => {
   const { name } = row.original;
   const { data } = useGetUserInfo();
 
-  const isApplicationConfig = useMemo(() => {
+  const hasPermissions = useMemo(() => {
+    if (!data?.rbacEnabled) return true;
     return !!data?.userInfo?.permissions.some(
       (permission) => permission.resource === ResourceType.APPLICATIONCONFIG
     );
@@ -22,7 +23,7 @@ const ClusterTableActionsCell: React.FC<Props> = ({ row }) => {
       buttonType="secondary"
       buttonSize="S"
       to={clusterConfigPath(name)}
-      canDoAction={isApplicationConfig}
+      canDoAction={hasPermissions}
     >
       Configure
     </ActionCanButton>
