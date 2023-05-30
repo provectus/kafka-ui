@@ -37,7 +37,7 @@ const Config: React.FC = () => {
     formState: { isDirty, isSubmitting, isValid, errors },
     setValue,
   } = useForm<FormValues>({
-    mode: 'onTouched',
+    mode: 'onChange',
     resolver: yupResolver(validationSchema),
     defaultValues: {
       config: JSON.stringify(config, null, '\t'),

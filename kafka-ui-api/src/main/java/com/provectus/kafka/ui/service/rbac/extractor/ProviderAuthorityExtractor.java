@@ -7,7 +7,9 @@ import reactor.core.publisher.Mono;
 
 public interface ProviderAuthorityExtractor {
 
-  boolean isApplicable(String provider);
+  String TYPE = "type";
+
+  boolean isApplicable(String provider, Map<String, String> customParams);
 
   Mono<Set<String>> extract(AccessControlService acs, Object value, Map<String, Object> additionalParams);
 

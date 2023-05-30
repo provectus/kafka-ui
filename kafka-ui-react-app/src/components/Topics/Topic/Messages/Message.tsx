@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import useDataSaver from 'lib/hooks/useDataSaver';
 import { TopicMessage } from 'generated-sources';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
@@ -7,21 +6,12 @@ import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
 import { formatTimestamp } from 'lib/dateTimeHelpers';
 import { JSONPath } from 'jsonpath-plus';
+import Ellipsis from 'components/common/Ellipsis/Ellipsis';
+import WarningRedIcon from 'components/common/Icons/WarningRedIcon';
+import Tooltip from 'components/common/Tooltip/Tooltip';
 
 import MessageContent from './MessageContent/MessageContent';
 import * as S from './MessageContent/MessageContent.styled';
-
-const StyledDataCell = styled.td`
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  max-width: 350px;
-  min-width: 350px;
-`;
-
-const ClickableRow = styled.tr`
-  cursor: pointer;
-`;
 
 export interface PreviewFilter {
   field: string;
@@ -40,9 +30,13 @@ const Message: React.FC<Props> = ({
     timestampType,
     offset,
     key,
+    keySize,
     partition,
     content,
+    valueSize,
     headers,
+    valueSerde,
+    keySerde,
   },
   keyFilters,
   contentFilters,
@@ -100,7 +94,7 @@ const Message: React.FC<Props> = ({
 
   return (
     <>
-      <ClickableRow
+      <S.ClickableRow
         onMouseEnter={() => setVEllipsisOpen(true)}
         onMouseLeave={() => setVEllipsisOpen(false)}
         onClick={toggleIsOpen}
@@ -115,16 +109,32 @@ const Message: React.FC<Props> = ({
         <td>
           <div>{formatTimestamp(timestamp)}</div>
         </td>
-        <StyledDataCell title={key}>
-          {renderFilteredJson(key, keyFilters)}
-        </StyledDataCell>
-        <StyledDataCell title={content}>
+        <S.DataCell title={key}>
+          <Ellipsis text={renderFilteredJson(key, keyFilters)}>
+            {keySerde === 'Fallback' && (
+              <Tooltip
+                value={<WarningRedIcon />}
+                content="Fallback serde was used"
+                placement="left"
+              />
+            )}
+          </Ellipsis>
+        </S.DataCell>
+        <S.DataCell title={content}>
           <S.Metadata>
             <S.MetadataValue>
-              {renderFilteredJson(content, contentFilters)}
+              <Ellipsis text={renderFilteredJson(content, contentFilters)}>
+                {valueSerde === 'Fallback' && (
+                  <Tooltip
+                    value={<WarningRedIcon />}
+                    content="Fallback serde was used"
+                    placement="left"
+                  />
+                )}
+              </Ellipsis>
             </S.MetadataValue>
           </S.Metadata>
-        </StyledDataCell>
+        </S.DataCell>
         <td style={{ width: '5%' }}>
           {vEllipsisOpen && (
             <Dropdown>
@@ -135,7 +145,7 @@ const Message: React.FC<Props> = ({
             </Dropdown>
           )}
         </td>
-      </ClickableRow>
+      </S.ClickableRow>
       {isOpen && (
         <MessageContent
           messageKey={key}
@@ -143,6 +153,10 @@ const Message: React.FC<Props> = ({
           headers={headers}
           timestamp={timestamp}
           timestampType={timestampType}
+          keySize={keySize}
+          contentSize={valueSize}
+          keySerde={keySerde}
+          valueSerde={valueSerde}
         />
       )}
     </>

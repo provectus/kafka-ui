@@ -26,7 +26,7 @@
         <assertj.version>3.19.0</assertj.version>
         <avro.version>1.11.1</avro.version>
         <byte-buddy.version>1.12.19</byte-buddy.version>
-        <confluent.version>7.3.0</confluent.version>
+        <confluent.version>7.3.3</confluent.version>
         <datasketches-java.version>3.1.0</datasketches-java.version>
         <groovy.version>3.0.13</groovy.version>
         <jackson.version>2.14.0</jackson.version>
@@ -36,14 +36,15 @@
         <protobuf-java.version>3.21.9</protobuf-java.version>
         <scala-lang.library.version>2.13.9</scala-lang.library.version>
         <snakeyaml.version>2.0</snakeyaml.version>
-        <spring-boot.version>3.0.5</spring-boot.version>
+        <spring-boot.version>3.0.6</spring-boot.version>
         <kafka-ui-serde-api.version>1.0.0</kafka-ui-serde-api.version>
-        <odd-oddrn-generator.version>0.1.15</odd-oddrn-generator.version>
+        <odd-oddrn-generator.version>0.1.17</odd-oddrn-generator.version>
         <odd-oddrn-client.version>0.1.23</odd-oddrn-client.version>
+        <org.json.version>20230227</org.json.version>
 
         <!-- Test dependency versions -->
         <junit.version>5.9.1</junit.version>
-        <mockito.version>5.1.1</mockito.version>
+        <mockito.version>5.3.1</mockito.version>
         <okhttp3.mockwebserver.version>4.10.0</okhttp3.mockwebserver.version>
         <testcontainers.version>1.17.5</testcontainers.version>
 
@@ -52,7 +53,7 @@
         <pnpm.version>v7.4.0</pnpm.version>
 
         <!-- Plugin versions -->
-        <fabric8-maven-plugin.version>0.42.0</fabric8-maven-plugin.version>
+        <fabric8-maven-plugin.version>0.42.1</fabric8-maven-plugin.version>
         <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
         <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>

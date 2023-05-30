@@ -8,7 +8,7 @@ import { FormError } from 'components/common/Input/Input.styled';
 import Select from 'components/common/Select/Select';
 import Input from 'components/common/Input/Input';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
-import CloseIcon from 'components/common/Icons/CloseIcon';
+import CloseCircleIcon from 'components/common/Icons/CloseCircleIcon';
 import * as C from 'components/Topics/shared/Form/TopicForm.styled';
 import { ConfigSource } from 'generated-sources';
 
@@ -49,7 +49,7 @@ const CustomParamField: React.FC<Props> = ({
       label: option,
       disabled:
         (config &&
-          config[option].source !== ConfigSource.DYNAMIC_TOPIC_CONFIG) ||
+          config[option]?.source !== ConfigSource.DYNAMIC_TOPIC_CONFIG) ||
         existingFields.includes(option),
     }));
 
@@ -125,7 +125,7 @@ const CustomParamField: React.FC<Props> = ({
           }
           title={`Delete customParam field ${index}`}
         >
-          <CloseIcon aria-hidden />
+          <CloseCircleIcon aria-hidden />
         </IconButtonWrapper>
       </S.DeleteButtonWrapper>
     </C.Column>

@@ -33,6 +33,7 @@ export const Fieldset = styled.fieldset`
   flex: 1;
   flex-direction: column;
   gap: 8px;
+  color: ${({ theme }) => theme.default.color.normal};
 `;
 
 export const ButtonsContainer = styled.div`

@@ -3,10 +3,10 @@ package com.provectus.kafka.ui.util.jsonschema;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class SimpleFieldSchema implements FieldSchema {
+class SimpleFieldSchema implements FieldSchema {
   private final JsonType type;
 
-  public SimpleFieldSchema(JsonType type) {
+  SimpleFieldSchema(JsonType type) {
     this.type = type;
   }
 

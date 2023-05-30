@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Button } from 'components/common/Button/Button';
 
 export const DiffWrapper = styled.div`
   align-items: stretch;
@@ -12,9 +13,6 @@ export const DiffWrapper = styled.div`
   .ace_content {
     background-color: ${({ theme }) => theme.default.backgroundColor};
     color: ${({ theme }) => theme.default.color.normal};
-  }
-  .ace_line {
-    background-color: ${({ theme }) => theme.default.backgroundColor};
   }
   .ace_gutter-cell {
     background-color: ${({ theme }) =>
@@ -38,10 +36,10 @@ export const DiffWrapper = styled.div`
   .ace_string {
     color: ${({ theme }) => theme.ksqlDb.query.editor.aceString};
   }
-  > .codeMarker {
-    background: ${({ theme }) => theme.icons.warningIcon};
+  .codeMarker {
+    background-color: ${({ theme }) => theme.ksqlDb.query.editor.codeMarker};
     position: absolute;
-    z-index: 20;
+    z-index: 2000;
   }
 `;
 
@@ -80,4 +78,7 @@ export const DiffTile = styled.div`
 
 export const DiffVersionsSelect = styled.div`
   width: 0.625em;
+`;
+export const BackButton = styled(Button)`
+  margin: 10px 9px;
 `;
