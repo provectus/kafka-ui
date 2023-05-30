@@ -99,6 +99,7 @@ public class LdapSecurityConfig {
   @Primary
   public LdapAuthoritiesPopulator ldapAuthoritiesPopulator(BaseLdapPathContextSource contextSource) {
     var authoritiesPopulator = new DefaultLdapAuthoritiesPopulator(contextSource, props.getGroupFilterSearchBase());
+    authoritiesPopulator.setGroupSearchFilter(props.getGroupFilterSearchFilter());
     authoritiesPopulator.setRolePrefix("");
     authoritiesPopulator.setConvertToUpperCase(false);
     return authoritiesPopulator;
