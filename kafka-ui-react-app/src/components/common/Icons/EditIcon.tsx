@@ -1,42 +1,23 @@
-import React, { FC } from 'react';
-import { useTheme } from 'styled-components';
+import React from 'react';
+import styled, { useTheme } from 'styled-components';
 
-const EditIcon: FC = () => {
+const EditIcon: React.FC<{ className?: string }> = ({ className }) => {
   const theme = useTheme();
   return (
     <svg
-      viewBox="0 0 64 64"
-      width="12"
-      height="12"
+      width="13"
+      height="14"
+      viewBox="0 0 13 14"
+      className={className}
+      fill={theme.icons.editIcon.normal}
       xmlns="http://www.w3.org/2000/svg"
       aria-labelledby="title"
-      aria-describedby="desc"
-      role="img"
     >
       <title>Edit</title>
-      <desc>A line styled icon from Orion Icon Library.</desc>
-      <path
-        d="M54.368 17.674l6.275-6.267-8.026-8.025-6.274 6.267"
-        strokeWidth="2"
-        strokeMiterlimit="10"
-        stroke={theme.icons.editIcon}
-        fill="none"
-        data-name="layer2"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      />
-      <path
-        d="M17.766 54.236l36.602-36.562-8.025-8.025L9.74 46.211 3.357 60.618l14.409-6.382zM9.74 46.211l8.026 8.025"
-        strokeWidth="2"
-        strokeMiterlimit="10"
-        stroke={theme.icons.editIcon}
-        fill="none"
-        data-name="layer1"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      />
+      <path d="M9.53697 1.15916C10.0914 0.60473 10.9886 0.602975 11.5408 1.15524L12.5408 2.15518C13.093 2.70745 13.0913 3.60461 12.5368 4.15904L10.3564 6.33944L7.35657 3.33956L9.53697 1.15916Z" />
+      <path d="M6.64946 4.04667L9.53674e-07 10.6961L0 13.696L2.99988 13.696L9.64934 7.04655L6.64946 4.04667Z" />
     </svg>
   );
 };
 
-export default EditIcon;
+export default styled(EditIcon)``;
