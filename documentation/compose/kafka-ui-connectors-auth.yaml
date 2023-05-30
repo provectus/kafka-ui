@@ -69,7 +69,7 @@ services:
     build:
       context: ./kafka-connect
       args:
-        image: confluentinc/cp-kafka-connect:6.0.1
+        image: confluentinc/cp-kafka-connect:7.2.1
     ports:
       - 8083:8083
     depends_on:
@@ -104,7 +104,7 @@ services:
   kafka-init-topics:
     image: confluentinc/cp-kafka:7.2.1
     volumes:
-      - ./message.json:/data/message.json
+      - ./data/message.json:/data/message.json
     depends_on:
       - kafka0
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
