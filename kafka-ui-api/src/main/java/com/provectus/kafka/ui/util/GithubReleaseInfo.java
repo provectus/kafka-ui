@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.util;
 import com.google.common.annotations.VisibleForTesting;
 import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -31,7 +30,7 @@ public class GithubReleaseInfo {
 
   @VisibleForTesting
   GithubReleaseInfo(String url) {
-    this.refreshMono = WebClient.create()
+    this.refreshMono = new WebClientConfigurator().build()
         .get()
         .uri(url)
         .exchangeToMono(resp -> resp.bodyToMono(GithubReleaseDto.class))
