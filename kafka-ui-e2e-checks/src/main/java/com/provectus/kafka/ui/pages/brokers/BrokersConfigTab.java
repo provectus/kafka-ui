@@ -66,6 +66,13 @@ public class BrokersConfigTab extends BasePage {
     return this;
   }
 
+  @Step
+  public BrokersConfigTab clickPreviousButton() {
+    clickPreviousBtn();
+    waitUntilSpinnerDisappear(1);
+    return this;
+  }
+
   private List<BrokersConfigTab.BrokersConfigItem> initGridItems() {
     List<BrokersConfigTab.BrokersConfigItem> gridItemList = new ArrayList<>();
     gridItems.shouldHave(CollectionCondition.sizeGreaterThan(0))
