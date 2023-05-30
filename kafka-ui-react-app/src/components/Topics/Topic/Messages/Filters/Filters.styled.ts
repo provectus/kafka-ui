@@ -2,6 +2,8 @@ import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
 import styled, { css } from 'styled-components';
 import DatePicker from 'react-datepicker';
+import EditIcon from 'components/common/Icons/EditIcon';
+import closeIcon from 'components/common/Icons/CloseIcon';
 
 interface SavedFilterProps {
   selected: boolean;
@@ -280,28 +282,76 @@ export const SavedFilter = styled.div.attrs({
 `;
 
 export const ActiveSmartFilter = styled.div`
-  border-radius: 4px;
-  min-width: 115px;
-  height: 24px;
-  background: ${({ theme }) => theme.savedFilter.backgroundColor};
-  font-size: 14px;
-  line-height: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: ${({ theme }) => theme.savedFilter.color};
-  padding: 16px 8px;
+  height: 32px;
+  color: ${({ theme }) => theme.activeFilter.color};
+  background: ${({ theme }) => theme.activeFilter.backgroundColor};
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 20px;
 `;
 
-export const DeleteSavedFilterIcon = styled.div`
-  color: ${({ theme }) => theme.icons.closeIcon};
-  display: flex;
-  align-items: center;
-  padding-left: 6px;
-  height: 24px;
-  cursor: pointer;
-  margin-left: 4px;
+export const EditSmartFilterIcon = styled.div(
+  ({ theme: { icons } }) => css`
+    color: ${icons.editIcon.normal};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
+    cursor: pointer;
+    border-left: 1px solid ${icons.editIcon.border};
+
+    &:hover {
+      ${EditIcon} {
+        fill: ${icons.editIcon.hover};
+      }
+    }
+
+    &:active {
+      ${EditIcon} {
+        fill: ${icons.editIcon.active};
+      }
+    }
+  `
+);
+
+export const SmartFilterName = styled.div`
+  padding: 0 8px;
+  min-width: 32px;
 `;
+
+export const DeleteSmartFilterIcon = styled.div(
+  ({ theme: { icons } }) => css`
+    color: ${icons.closeIcon.normal};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
+    cursor: pointer;
+    border-left: 1px solid ${icons.closeIcon.border};
+
+    svg {
+      height: 14px;
+      width: 14px;
+    }
+
+    &:hover {
+      ${closeIcon} {
+        fill: ${icons.closeIcon.hover};
+      }
+    }
+
+    &:active {
+      ${closeIcon} {
+        fill: ${icons.closeIcon.active};
+      }
+    }
+  `
+);
 
 export const MessageLoading = styled.div.attrs({
   role: 'contentLoader',
