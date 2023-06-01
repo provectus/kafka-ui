@@ -39,11 +39,11 @@ public class AclsController extends AbstractController implements AclsApi {
         .build();
 
     return accessControlService.validateAccess(context)
-        .<ResponseEntity<Void>>then(
-            kafkaAclDto.map(ClusterMapper::toAclBinding)
-                .flatMap(binding -> aclsService.createAcl(getCluster(clusterName), binding))
-                .thenReturn(ResponseEntity.ok().build())
-        ).doOnEach(sig -> auditService.audit(context, sig));
+        .then(kafkaAclDto)
+        .map(ClusterMapper::toAclBinding)
+        .flatMap(binding -> aclsService.createAcl(getCluster(clusterName), binding))
+        .doOnEach(sig -> auditService.audit(context, sig))
+        .thenReturn(ResponseEntity.ok().build());
   }
 
   @Override
