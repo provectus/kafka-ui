@@ -102,6 +102,7 @@ public class LdapSecurityConfig {
     authoritiesPopulator.setGroupSearchFilter(props.getGroupFilterSearchFilter());
     authoritiesPopulator.setRolePrefix("");
     authoritiesPopulator.setConvertToUpperCase(false);
+    authoritiesPopulator.setSearchSubtree(true);
     return authoritiesPopulator;
   }
 
