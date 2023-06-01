@@ -1,5 +1,9 @@
 package com.provectus.kafka.ui.controller;
 
+import static com.provectus.kafka.ui.model.ConnectorActionDTO.RESTART;
+import static com.provectus.kafka.ui.model.ConnectorActionDTO.RESTART_ALL_TASKS;
+import static com.provectus.kafka.ui.model.ConnectorActionDTO.RESTART_FAILED_TASKS;
+
 import com.provectus.kafka.ui.api.KafkaConnectApi;
 import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.ConnectorActionDTO;
@@ -16,6 +20,7 @@ import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.service.KafkaConnectService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +35,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class KafkaConnectController extends AbstractController implements KafkaConnectApi {
+  private static final List<ConnectorActionDTO> RESTART_ACTIONS
+      = List.of(RESTART, RESTART_FAILED_TASKS, RESTART_ALL_TASKS);
   private final KafkaConnectService kafkaConnectService;
   private final AccessControlService accessControlService;
 
@@ -172,10 +179,17 @@ public class KafkaConnectController extends AbstractController implements KafkaC
                                                          ConnectorActionDTO action,
                                                          ServerWebExchange exchange) {
 
+    ConnectAction[] connectActions;
+    if (RESTART_ACTIONS.contains(action)) {
+      connectActions = new ConnectAction[] {ConnectAction.VIEW, ConnectAction.RESTART};
+    } else {
+      connectActions = new ConnectAction[] {ConnectAction.VIEW, ConnectAction.EDIT};
+    }
+
     Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
         .cluster(clusterName)
         .connect(connectName)
-        .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
+        .connectActions(connectActions)
         .build());
 
     return validateAccess.then(
@@ -253,16 +267,11 @@ public class KafkaConnectController extends AbstractController implements KafkaC
     if (orderBy == null) {
       return defaultComparator;
     }
-    switch (orderBy) {
-      case CONNECT:
-        return Comparator.comparing(FullConnectorInfoDTO::getConnect);
-      case TYPE:
-        return Comparator.comparing(FullConnectorInfoDTO::getType);
-      case STATUS:
-        return Comparator.comparing(fullConnectorInfoDTO -> fullConnectorInfoDTO.getStatus().getState());
-      case NAME:
-      default:
-        return defaultComparator;
-    }
+    return switch (orderBy) {
+      case CONNECT -> Comparator.comparing(FullConnectorInfoDTO::getConnect);
+      case TYPE -> Comparator.comparing(FullConnectorInfoDTO::getType);
+      case STATUS -> Comparator.comparing(fullConnectorInfoDTO -> fullConnectorInfoDTO.getStatus().getState());
+      default -> defaultComparator;
+    };
   }
 }
