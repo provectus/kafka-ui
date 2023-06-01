@@ -20,8 +20,8 @@ import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.service.KafkaConnectService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +35,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class KafkaConnectController extends AbstractController implements KafkaConnectApi {
-  private static final List<ConnectorActionDTO> RESTART_ACTIONS
-      = List.of(RESTART, RESTART_FAILED_TASKS, RESTART_ALL_TASKS);
+  private static final Set<ConnectorActionDTO> RESTART_ACTIONS
+      = Set.of(RESTART, RESTART_FAILED_TASKS, RESTART_ALL_TASKS);
   private final KafkaConnectService kafkaConnectService;
   private final AccessControlService accessControlService;
 
