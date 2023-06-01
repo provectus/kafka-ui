@@ -5,11 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.exception.ValidationException;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.handler.ssl.JdkSslContext;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.SslProvider;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.util.function.Consumer;
@@ -93,7 +90,12 @@ public class WebClientConfigurator {
     // Create webclient
     SslContext context = contextBuilder.build();
 
-    builder.clientConnector(new ReactorClientHttpConnector(HttpClient.create().secure(t -> t.sslContext(context))));
+    var httpClient = HttpClient
+        .create()
+        .secure(t -> t.sslContext(context))
+        .proxyWithSystemProperties();
+
+    builder.clientConnector(new ReactorClientHttpConnector(httpClient));
     return this;
   }
 
