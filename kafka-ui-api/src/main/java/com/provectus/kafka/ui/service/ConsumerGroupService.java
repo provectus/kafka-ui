@@ -164,7 +164,7 @@ public class ConsumerGroupService {
       case MESSAGES_BEHIND -> {
 
         Comparator<GroupWithDescr> comparator = Comparator.comparingLong(gwd ->
-            gwd.icg.getMessagesBehind() == null ? 0L : gwd.icg.getMessagesBehind());
+            gwd.icg.getConsumerLag() == null ? 0L : gwd.icg.getConsumerLag());
 
         yield loadDescriptionsByInternalConsumerGroups(ac, groups, comparator, pageNum, perPage, sortOrderDto);
       }

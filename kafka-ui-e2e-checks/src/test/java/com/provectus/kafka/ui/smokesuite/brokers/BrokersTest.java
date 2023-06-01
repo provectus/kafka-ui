@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.smokesuite.brokers;
 
 import static com.provectus.kafka.ui.pages.brokers.BrokersDetails.DetailsTab.CONFIGS;
+import static com.provectus.kafka.ui.variables.Expected.BROKER_SOURCE_INFO_TOOLTIP;
 
 import com.codeborne.selenide.Condition;
 import com.provectus.kafka.ui.BaseTest;
@@ -68,5 +69,17 @@ public class BrokersTest extends BaseTest {
             .map(BrokersConfigTab.BrokersConfigItem::getKey)
             .toList().contains(anyConfigKey),
         String.format("getAllConfigs().contains(%s)", anyConfigKey));
+  }
+
+  @QaseId(331)
+  @Test
+  public void brokersSourceInfoCheck() {
+    navigateToBrokersAndOpenDetails(DEFAULT_BROKER_ID);
+    brokersDetails
+        .openDetailsTab(CONFIGS);
+    String sourceInfoTooltip = brokersConfigTab
+        .hoverOnSourceInfoIcon()
+        .getSourceInfoTooltipText();
+    Assert.assertEquals(sourceInfoTooltip, BROKER_SOURCE_INFO_TOOLTIP, "brokerSourceInfoTooltip");
   }
 }
