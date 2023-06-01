@@ -84,7 +84,7 @@ jobs:
           git add ../kafka-ui-from-branch/
           git commit -m "added env:${{ needs.build.outputs.deploy }}" && git push || true
 
-      - name: make comment with private deployment link
+      - name: update status check for private deployment
         if: ${{ github.event.label.name == 'status/feature_testing' }}
         uses: Sibz/github-status-action@v1.1.6
         with:
@@ -94,7 +94,7 @@ jobs:
           sha: ${{ github.event.pull_request.head.sha  || github.sha }}
           target_url: "http://${{ needs.build.outputs.tag }}.internal.kafka-ui.provectus.io"
 
-      - name: update status check
+      - name: update status check for public deployment
         if: ${{ github.event.label.name == 'status/feature_testing_public' }}
         uses: Sibz/github-status-action@v1.1.6
         with:
