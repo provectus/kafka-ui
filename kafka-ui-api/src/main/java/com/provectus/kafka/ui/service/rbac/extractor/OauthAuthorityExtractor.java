@@ -72,9 +72,7 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
               var principalRoles = convertRoles(principal.getAttribute(rolesFieldName));
               var roleMatched = principalRoles.contains(roleName);
 
-              if (roleMatched) {
-                log.debug("Assigning role [{}] to user [{}]", roleName, principal.getName());
-              } else {
+              if (!roleMatched) {
                 log.trace("Role [{}] not found in user [{}] roles", roleName, principal.getName());
               }
 
@@ -82,6 +80,7 @@ public class OauthAuthorityExtractor implements ProviderAuthorityExtractor {
             })
         )
         .map(Role::getName)
+        .peek(role -> log.debug("Assigning role [{}] to user [{}]", role, principal.getName()))
         .collect(Collectors.toSet());
 
     return Mono.just(Sets.union(rolesByUsername, rolesByRolesField));
