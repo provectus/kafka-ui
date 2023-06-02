@@ -5,7 +5,9 @@ logging:
     #org.springframework.http.codec.json.Jackson2JsonEncoder: DEBUG
     #org.springframework.http.codec.json.Jackson2JsonDecoder: DEBUG
     reactor.netty.http.server.AccessLog: INFO
-    org.springframework.security: DEBUG
+#    org.springframework.security: DEBUG
+#    org.springframework.security.ldap.authentication: TRACE
+#    org.springframework.security.ldap.userdetails: TRACE
 
 #server:
 #  port: 8080 #- Port in which kafka-ui will run.
