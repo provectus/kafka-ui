@@ -17,8 +17,6 @@ const menuHide = keyframes`
 
 export const Dropdown = styled(ControlledMenu)(
   ({ theme: { dropdown } }) => css`
-    position: absolute !important;
-
     // container for the menu items
     ${menuSelector.name} {
       border: 1px solid ${dropdown.borderColor};
