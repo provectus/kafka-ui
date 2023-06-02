@@ -102,7 +102,7 @@ const Actions: React.FC = () => {
           disabled={isMutating}
           permission={{
             resource: ResourceType.CONNECT,
-            action: Action.EDIT,
+            action: Action.RESTART,
             value: routerProps.connectorName,
           }}
         >
@@ -113,7 +113,7 @@ const Actions: React.FC = () => {
           disabled={isMutating}
           permission={{
             resource: ResourceType.CONNECT,
-            action: Action.EDIT,
+            action: Action.RESTART,
             value: routerProps.connectorName,
           }}
         >
@@ -124,7 +124,7 @@ const Actions: React.FC = () => {
           disabled={isMutating}
           permission={{
             resource: ResourceType.CONNECT,
-            action: Action.EDIT,
+            action: Action.RESTART,
             value: routerProps.connectorName,
           }}
         >
