@@ -78,7 +78,7 @@ const ActionsCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
         disabled={isMutating}
         permission={{
           resource: ResourceType.CONNECT,
-          action: Action.EDIT,
+          action: Action.RESTART,
           value: name,
         }}
       >
@@ -89,7 +89,7 @@ const ActionsCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
         disabled={isMutating}
         permission={{
           resource: ResourceType.CONNECT,
-          action: Action.EDIT,
+          action: Action.RESTART,
           value: name,
         }}
       >
@@ -100,7 +100,7 @@ const ActionsCell: React.FC<CellContext<FullConnectorInfo, unknown>> = ({
         disabled={isMutating}
         permission={{
           resource: ResourceType.CONNECT,
-          action: Action.EDIT,
+          action: Action.RESTART,
           value: name,
         }}
       >
