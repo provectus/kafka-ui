@@ -3,7 +3,7 @@ import Input from 'components/common/Input/Input';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { FormError, InputHint } from 'components/common/Input/Input.styled';
 import { ErrorMessage } from '@hookform/error-message';
-import CloseIcon from 'components/common/Icons/CloseIcon';
+import CloseCircleIcon from 'components/common/Icons/CloseCircleIcon';
 import { Button } from 'components/common/Button/Button';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import * as S from 'widgets/ClusterConfigForm/ClusterConfigForm.styled';
@@ -80,7 +80,7 @@ const KafkaCluster: React.FC = () => {
                 aria-label="deleteProperty"
                 onClick={() => remove(index)}
               >
-                <CloseIcon aria-hidden />
+                <CloseCircleIcon aria-hidden />
               </S.BootstrapServerActions>
             </S.BootstrapServer>
           ))}

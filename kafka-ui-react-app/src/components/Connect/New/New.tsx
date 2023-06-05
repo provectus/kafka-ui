@@ -38,7 +38,7 @@ const New: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
   const navigate = useNavigate();
 
-  const { data: connects } = useConnects(clusterName);
+  const { data: connects = [] } = useConnects(clusterName);
   const mutation = useCreateConnector(clusterName);
 
   const methods = useForm<FormValues>({
@@ -88,10 +88,6 @@ const New: React.FC = () => {
     }
   };
 
-  if (!connects || connects.length === 0) {
-    return null;
-  }
-
   const connectOptions = connects.map(({ name: connectName }) => ({
     value: connectName,
     label: connectName,
@@ -108,10 +104,10 @@ const New: React.FC = () => {
         onSubmit={handleSubmit(onSubmit)}
         aria-label="Create connect form"
       >
-        <S.Filed $hidden={connects.length <= 1}>
+        <S.Filed $hidden={connects?.length <= 1}>
           <Heading level={3}>Connect *</Heading>
           <Controller
-            defaultValue={connectOptions[0].value}
+            defaultValue={connectOptions[0]?.value}
             control={control}
             name="connectName"
             render={({ field: { name, onChange } }) => (
@@ -120,7 +116,7 @@ const New: React.FC = () => {
                 name={name}
                 disabled={isSubmitting}
                 onChange={onChange}
-                value={connectOptions[0].value}
+                value={connectOptions[0]?.value}
                 minWidth="100%"
                 options={connectOptions}
               />

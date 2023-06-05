@@ -27,7 +27,7 @@ describe('EditFilter component', () => {
     await act(() => {
       renderComponent();
     });
-    expect(screen.getByText(/edit saved filter/i)).toBeInTheDocument();
+    expect(screen.getByText(/edit filter/i)).toBeInTheDocument();
   });
 
   it('closes editFilter modal', async () => {

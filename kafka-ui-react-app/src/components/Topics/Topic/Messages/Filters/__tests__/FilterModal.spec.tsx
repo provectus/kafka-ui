@@ -3,11 +3,16 @@ import FilterModal, {
   FilterModalProps,
 } from 'components/Topics/Topic/Messages/Filters/FilterModal';
 import { render } from 'lib/testHelpers';
-import { MessageFilters } from 'components/Topics/Topic/Messages/Filters/Filters';
+import {
+  ActiveMessageFilter,
+  MessageFilters,
+} from 'components/Topics/Topic/Messages/Filters/Filters';
 import { screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-const filters: MessageFilters[] = [{ name: 'name', code: 'code' }];
+const filter = { name: 'name', code: 'code' };
+const filters: MessageFilters[] = [filter];
+const activeFilter: ActiveMessageFilter = { index: -1, ...filter };
 
 const renderComponent = (props?: Partial<FilterModalProps>) =>
   render(
@@ -18,6 +23,7 @@ const renderComponent = (props?: Partial<FilterModalProps>) =>
       deleteFilter={jest.fn()}
       activeFilterHandler={jest.fn()}
       editSavedFilter={jest.fn()}
+      activeFilter={activeFilter}
       {...props}
     />
   );
@@ -36,7 +42,7 @@ describe('FilterModal component', () => {
     await userEvent.click(screen.getByRole('savedFilterText'));
     await userEvent.click(screen.getByText('Edit'));
     expect(
-      screen.getByRole('heading', { name: /edit saved filter/i, level: 3 })
+      screen.getByRole('heading', { name: /edit filter/i, level: 3 })
     ).toBeInTheDocument();
   });
 });

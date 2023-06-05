@@ -63,7 +63,7 @@ export const topicConsumerGroups: ConsumerGroup[] = [
     partitionAssignor: '',
     state: ConsumerGroupState.UNKNOWN,
     coordinator: { id: 1 },
-    messagesBehind: 9,
+    consumerLag: 9,
   },
   {
     groupId: 'amazon.msk.canary.group.broker-4',
@@ -73,7 +73,7 @@ export const topicConsumerGroups: ConsumerGroup[] = [
     partitionAssignor: '',
     state: ConsumerGroupState.COMPLETING_REBALANCE,
     coordinator: { id: 1 },
-    messagesBehind: 9,
+    consumerLag: 9,
   },
 ];
 

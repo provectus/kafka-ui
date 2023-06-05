@@ -8,14 +8,22 @@ import * as S from './Version.styled';
 
 const Version: React.FC = () => {
   const { data: latestVersionInfo = {} } = useLatestVersion();
-  const { buildTime, commitId, isLatestRelease } = latestVersionInfo.build;
+  const { buildTime, commitId, isLatestRelease, version } =
+    latestVersionInfo.build;
   const { versionTag } = latestVersionInfo?.latestRelease || '';
+
+  const currentVersion =
+    isLatestRelease && version?.match(versionTag)
+      ? versionTag
+      : formatTimestamp(buildTime);
 
   return (
     <S.Wrapper>
       {!isLatestRelease && (
         <S.OutdatedWarning
-          title={`Your app version is outdated. Current latest version is ${versionTag}`}
+          title={`Your app version is outdated. Latest version is ${
+            versionTag || 'UNKNOWN'
+          }`}
         >
           <WarningIcon />
         </S.OutdatedWarning>
@@ -32,7 +40,7 @@ const Version: React.FC = () => {
           </S.CurrentCommitLink>
         </div>
       )}
-      <S.CurrentVersion>{formatTimestamp(buildTime)}</S.CurrentVersion>
+      <S.CurrentVersion>{currentVersion}</S.CurrentVersion>
     </S.Wrapper>
   );
 };
