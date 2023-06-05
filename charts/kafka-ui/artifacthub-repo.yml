@@ -1,0 +1,15 @@
+# Artifact Hub repository metadata file
+#
+# Some settings like the verified publisher flag or the ignored packages won't
+# be applied until the next time the repository is processed. Please keep in
+# mind that the repository won't be processed if it has not changed since the
+# last time it was processed. Depending on the repository kind, this is checked
+# in a different way. For Helm http based repositories, we consider it has
+# changed if the `index.yaml` file changes. For git based repositories, it does
+# when the hash of the last commit in the branch you set up changes. This does
+# NOT apply to ownership claim operations, which are processed immediately.
+#
+repositoryID: 243d43a8-9c5f-42b8-8173-c23350ed1e7a
+owners:
+  - name: maintainers.kafka-ui
+    email: maintainers.kafka-ui@provectus.com
