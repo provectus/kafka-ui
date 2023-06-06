@@ -28,7 +28,7 @@ public class ConsumerGroupMapper {
     consumerGroup.setTopics(1); //for ui backward-compatibility, need to rm usage from ui
     consumerGroup.setGroupId(c.getGroupId());
     consumerGroup.setMembers(c.getMembers());
-    consumerGroup.setMessagesBehind(c.getMessagesBehind());
+    consumerGroup.setConsumerLag(c.getConsumerLag());
     consumerGroup.setSimple(c.isSimple());
     consumerGroup.setPartitionAssignor(c.getPartitionAssignor());
     consumerGroup.setState(mapConsumerGroupState(c.getState()));
@@ -54,7 +54,7 @@ public class ConsumerGroupMapper {
           .orElse(0L);
 
       partition.setEndOffset(endOffset.orElse(0L));
-      partition.setMessagesBehind(behind);
+      partition.setConsumerLag(behind);
 
       partitionMap.put(entry.getKey(), partition);
     }
@@ -80,7 +80,7 @@ public class ConsumerGroupMapper {
       InternalConsumerGroup c, T consumerGroup) {
     consumerGroup.setGroupId(c.getGroupId());
     consumerGroup.setMembers(c.getMembers().size());
-    consumerGroup.setMessagesBehind(c.getMessagesBehind());
+    consumerGroup.setConsumerLag(c.getConsumerLag());
     consumerGroup.setTopics(c.getTopicNum());
     consumerGroup.setSimple(c.isSimple());
 

@@ -19,7 +19,7 @@ const TABLE_HEADERS_MAP: Headers[] = [
   { title: 'Partition', orderBy: 'partition' },
   { title: 'Consumer ID', orderBy: 'consumerId' },
   { title: 'Host', orderBy: 'host' },
-  { title: 'Messages Behind', orderBy: 'messagesBehind' },
+  { title: 'Consumer Lag', orderBy: 'consumerLag' },
   { title: 'Current Offset', orderBy: 'currentOffset' },
   { title: 'End offset', orderBy: 'endOffset' },
 ];
@@ -108,7 +108,7 @@ const TopicContents: React.FC<Props> = ({ consumers }) => {
         orderBy === 'partition' ||
         orderBy === 'currentOffset' ||
         orderBy === 'endOffset' ||
-        orderBy === 'messagesBehind';
+        orderBy === 'consumerLag';
 
       let comparator: ComparatorFunction<ConsumerGroupTopicPartition>;
       if (isNumberProperty) {
@@ -153,7 +153,7 @@ const TopicContents: React.FC<Props> = ({ consumers }) => {
                   <td>{consumer.partition}</td>
                   <td>{consumer.consumerId}</td>
                   <td>{consumer.host}</td>
-                  <td>{consumer.messagesBehind}</td>
+                  <td>{consumer.consumerLag}</td>
                   <td>{consumer.currentOffset}</td>
                   <td>{consumer.endOffset}</td>
                 </tr>
