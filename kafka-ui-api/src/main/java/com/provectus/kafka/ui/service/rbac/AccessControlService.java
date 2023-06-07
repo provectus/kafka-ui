@@ -395,6 +395,8 @@ public class AccessControlService {
 
   private boolean isAccessible(Resource resource, @Nullable String resourceValue,
                                AuthenticatedUser user, AccessContext context, Set<String> requiredActions) {
+    log.trace("Validating access for resource [{}], value [{}]", resource, resourceValue);
+    log.trace("User [{}], context [{}], required actions [{}]", user, context, requiredActions);
     Set<String> grantedActions = properties.getRoles()
         .stream()
         .filter(filterRole(user))
@@ -406,7 +408,13 @@ public class AccessControlService {
         .map(String::toUpperCase)
         .collect(Collectors.toSet());
 
-    return grantedActions.containsAll(requiredActions);
+    log.trace("Granted actions: [{}]", String.join(",", grantedActions));
+
+    var accessGranted = grantedActions.containsAll(requiredActions);
+
+    log.trace("Access granted?: [{}]", accessGranted);
+
+    return accessGranted;
   }
 
   private Predicate<Role> filterRole(AuthenticatedUser user) {
