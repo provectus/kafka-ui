@@ -81,6 +81,21 @@ data:
   MANAGEMENT_HEALTH_LDAP_ENABLED: "FALSE" 
 ```
 
+#### Passing Basic Auth from helm values
+
+Add the below snippet in the helm values file which updates the ConfigMap to enable the basic auth
+
+```
+yamlApplicationConfig:
+  auth:
+    type: login_form
+  spring
+    security:
+      user:
+       name: admin
+       pass: pass
+```
+       
 Install by executing the command
 
 > helm install helm-release-name charts/kafka-ui --set existingConfigMap="kafka-ui-helm-values"
