@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.primitives.Longs;
-import com.provectus.kafka.ui.exception.JsonToAvroConversionException;
+import com.provectus.kafka.ui.exception.JsonAvroConversionException;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -29,7 +29,6 @@ import java.util.UUID;
 import lombok.SneakyThrows;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -193,7 +192,7 @@ class JsonAvroConversionTest {
 
       assertThatThrownBy(() ->
           convertJsonToAvro("{ \"f_union\": { \"NotExistingType\": 123 } }", schema)
-      ).isInstanceOf(JsonToAvroConversionException.class);
+      ).isInstanceOf(JsonAvroConversionException.class);
     }
 
     @Test
@@ -239,7 +238,7 @@ class JsonAvroConversionTest {
 
       assertThatThrownBy(() ->
           convertJsonToAvro("{ \"f_union\": { \"TestAvroRecord\": { \"inner_obj_field\":  234 } } }", schema)
-      ).isInstanceOf(JsonToAvroConversionException.class);
+      ).isInstanceOf(JsonAvroConversionException.class);
     }
 
     @Test

@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.Lists;
-import com.provectus.kafka.ui.exception.JsonToAvroConversionException;
+import com.provectus.kafka.ui.exception.JsonAvroConversionException;
 import io.confluent.kafka.serializers.AvroData;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -51,7 +51,7 @@ public class JsonAvroConversion {
     try {
       rootNode = MAPPER.readTree(jsonString);
     } catch (JsonProcessingException e) {
-      throw new JsonToAvroConversionException("String is not a valid json");
+      throw new JsonAvroConversionException("String is not a valid json");
     }
     return convert(rootNode, avroSchema);
   }
@@ -85,7 +85,7 @@ public class JsonAvroConversion {
         assertJsonType(node, JsonNodeType.STRING);
         String symbol = node.textValue();
         if (!avroSchema.getEnumSymbols().contains(symbol)) {
-          throw new JsonToAvroConversionException("%s is not a part of enum symbols [%s]"
+          throw new JsonAvroConversionException("%s is not a part of enum symbols [%s]"
               .formatted(symbol, avroSchema.getEnumSymbols()));
         }
         yield new GenericData.EnumSymbol(avroSchema, symbol);
@@ -100,7 +100,7 @@ public class JsonAvroConversion {
         assertJsonType(node, JsonNodeType.OBJECT);
         var elements = Lists.newArrayList(node.fields());
         if (elements.size() != 1) {
-          throw new JsonToAvroConversionException(
+          throw new JsonAvroConversionException(
               "UNION field value should be an object with single field == type name");
         }
         Map.Entry<String, JsonNode> typeNameToValue = elements.get(0);
@@ -117,11 +117,11 @@ public class JsonAvroConversion {
           yield convert(typeNameToValue.getValue(), candidates.get(0));
         }
         if (candidates.size() > 1) {
-          throw new JsonToAvroConversionException(
+          throw new JsonAvroConversionException(
               "Can't select type within union for value '%s'. Provide full type name.".formatted(node)
           );
         }
-        throw new JsonToAvroConversionException(
+        throw new JsonAvroConversionException(
             "json value '%s' is cannot be converted to any of union types [%s]"
                 .formatted(node, avroSchema.getTypes()));
       }
@@ -181,7 +181,7 @@ public class JsonAvroConversion {
         assertJsonType(node, JsonNodeType.STRING);
         byte[] bytes = node.textValue().getBytes(StandardCharsets.ISO_8859_1);
         if (bytes.length != avroSchema.getFixedSize()) {
-          throw new JsonToAvroConversionException(
+          throw new JsonAvroConversionException(
               "Fixed field has unexpected size %d (should be %d)"
                   .formatted(bytes.length, avroSchema.getFixedSize()));
         }
@@ -295,7 +295,7 @@ public class JsonAvroConversion {
     return findConversion(schema)
         .map(c -> c.jsonToAvroConversion.apply(node, schema))
         .orElseThrow(() ->
-            new JsonToAvroConversionException("'%s' logical type is not supported"
+            new JsonAvroConversionException("'%s' logical type is not supported"
                 .formatted(schema.getLogicalType().getName())));
   }
 
@@ -303,7 +303,7 @@ public class JsonAvroConversion {
     return findConversion(schema)
         .map(c -> c.avroToJsonConversion.apply(obj, schema))
         .orElseThrow(() ->
-            new JsonToAvroConversionException("'%s' logical type is not supported"
+            new JsonAvroConversionException("'%s' logical type is not supported"
                 .formatted(schema.getLogicalType().getName())));
   }
 
@@ -320,7 +320,7 @@ public class JsonAvroConversion {
 
   private static void assertJsonType(JsonNode node, JsonNodeType... allowedTypes) {
     if (Stream.of(allowedTypes).noneMatch(t -> node.getNodeType() == t)) {
-      throw new JsonToAvroConversionException(
+      throw new JsonAvroConversionException(
           "%s node has unexpected type, allowed types %s, actual type %s"
               .formatted(node, Arrays.toString(allowedTypes), node.getNodeType()));
     }
@@ -328,7 +328,7 @@ public class JsonAvroConversion {
 
   private static void assertJsonNumberType(JsonNode node, JsonParser.NumberType... allowedTypes) {
     if (Stream.of(allowedTypes).noneMatch(t -> node.numberType() == t)) {
-      throw new JsonToAvroConversionException(
+      throw new JsonAvroConversionException(
           "%s node has unexpected numeric type, allowed types %s, actual type %s"
               .formatted(node, Arrays.toString(allowedTypes), node.numberType()));
     }
@@ -357,7 +357,7 @@ public class JsonAvroConversion {
           } else if (node.isNumber()) {
             return new BigDecimal(node.numberValue().toString());
           }
-          throw new JsonToAvroConversionException(
+          throw new JsonAvroConversionException(
               "node '%s' can't be converted to decimal logical type"
                   .formatted(node));
         },
@@ -374,7 +374,7 @@ public class JsonAvroConversion {
           } else if (node.isTextual()) {
             return LocalDate.parse(node.asText());
           } else {
-            throw new JsonToAvroConversionException(
+            throw new JsonAvroConversionException(
                 "node '%s' can't be converted to date logical type"
                     .formatted(node));
           }
@@ -395,7 +395,7 @@ public class JsonAvroConversion {
           } else if (node.isTextual()) {
             return LocalTime.parse(node.asText());
           } else {
-            throw new JsonToAvroConversionException(
+            throw new JsonAvroConversionException(
                 "node '%s' can't be converted to time-millis logical type"
                     .formatted(node));
           }
@@ -416,7 +416,7 @@ public class JsonAvroConversion {
           } else if (node.isTextual()) {
             return LocalTime.parse(node.asText());
           } else {
-            throw new JsonToAvroConversionException(
+            throw new JsonAvroConversionException(
                 "node '%s' can't be converted to time-micros logical type"
                     .formatted(node));
           }
@@ -437,7 +437,7 @@ public class JsonAvroConversion {
           } else if (node.isTextual()) {
             return Instant.parse(node.asText());
           } else {
-            throw new JsonToAvroConversionException(
+            throw new JsonAvroConversionException(
                 "node '%s' can't be converted to timestamp-millis logical type"
                     .formatted(node));
           }
@@ -462,7 +462,7 @@ public class JsonAvroConversion {
           } else if (node.isTextual()) {
             return Instant.parse(node.asText());
           } else {
-            throw new JsonToAvroConversionException(
+            throw new JsonAvroConversionException(
                 "node '%s' can't be converted to timestamp-millis logical type"
                     .formatted(node));
           }
