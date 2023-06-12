@@ -5,15 +5,27 @@ logging:
     #org.springframework.http.codec.json.Jackson2JsonEncoder: DEBUG
     #org.springframework.http.codec.json.Jackson2JsonDecoder: DEBUG
     reactor.netty.http.server.AccessLog: INFO
+    org.springframework.security: DEBUG
 
 #server:
 #  port: 8080 #- Port in which kafka-ui will run.
+
+spring:
+  jmx:
+    enabled: true
+  ldap:
+    urls: ldap://localhost:10389
+    base: "cn={0},ou=people,dc=planetexpress,dc=com"
+    admin-user: "cn=admin,dc=planetexpress,dc=com"
+    admin-password: "GoodNewsEveryone"
+    user-filter-search-base: "dc=planetexpress,dc=com"
+    user-filter-search-filter: "(&(uid={0})(objectClass=inetOrgPerson))"
+    group-filter-search-base: "ou=people,dc=planetexpress,dc=com"
 
 kafka:
   clusters:
     - name: local
       bootstrapServers: localhost:9092
-      zookeeper: localhost:2181
       schemaRegistry: http://localhost:8085
       ksqldbServer: http://localhost:8088
       kafkaConnect:
@@ -22,63 +34,113 @@ kafka:
       metrics:
         port: 9997
         type: JMX
-  #    -
-  #      name: secondLocal
-  #      bootstrapServers: localhost:9093
-  #      zookeeper: localhost:2182
-  #      schemaRegistry: http://localhost:18085
-  #      kafkaConnect:
-  #        - name: first
-  #          address: http://localhost:8083
-  #      metrics:
-  #        port: 9998
-  #        type: JMX
-  #      read-only: true
-  #    -
-  #      name: localUsingProtobufFile
-  #      bootstrapServers: localhost:9092
-  #      protobufFile: messages.proto
-  #      protobufMessageName: GenericMessage
-  #      protobufMessageNameByTopic:
-  #        input-topic: InputMessage
-  #        output-topic: OutputMessage
-spring:
-  jmx:
-    enabled: true
+
+dynamic.config.enabled: true
+
+oauth2:
+  ldap:
+    activeDirectory: false
+    aсtiveDirectory.domain: domain.com
 
 auth:
   type: DISABLED
-#  type: OAUTH2
-#  oauth2:
-#    client:
-#      cognito:
-#        clientId:
-#        clientSecret:
-#        scope: openid
-#        client-name: cognito
-#        provider: cognito
-#        redirect-uri: http://localhost:8080/login/oauth2/code/cognito
-#        authorization-grant-type: authorization_code
-#        issuer-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_M7cIUn1nj
-#        jwk-set-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_M7cIUn1nj/.well-known/jwks.json
-#        user-name-attribute: username
-#        custom-params:
-#          type: cognito
-#          logoutUrl: https://kafka-ui.auth.eu-central-1.amazoncognito.com/logout
-#      google:
-#        provider: google
-#        clientId:
-#        clientSecret:
-#        user-name-attribute: email
-#        custom-params:
-#          type: google
-#          allowedDomain: provectus.com
-#      github:
-#        provider: github
-#        clientId:
-#        clientSecret:
-#        scope:
-#          - read:org
-#        user-name-attribute: login
-#        custom-params:
-#          type: github
+  #  type: OAUTH2
+  #  type: LDAP
+  oauth2:
+    client:
+      cognito:
+        clientId: # CLIENT ID
+        clientSecret: # CLIENT SECRET
+        scope: openid
+        client-name: cognito
+        provider: cognito
+        redirect-uri: http://localhost:8080/login/oauth2/code/cognito
+        authorization-grant-type: authorization_code
+        issuer-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_M7cIUn1nj
+        jwk-set-uri: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_M7cIUn1nj/.well-known/jwks.json
+        user-name-attribute: cognito:username
+        custom-params:
+          type: cognito
+          logoutUrl: https://kafka-ui.auth.eu-central-1.amazoncognito.com/logout
+      google:
+        provider: google
+        clientId: # CLIENT ID
+        clientSecret: # CLIENT SECRET
+        user-name-attribute: email
+        custom-params:
+          type: google
+          allowedDomain: provectus.com
+      github:
+        provider: github
+        clientId: # CLIENT ID
+        clientSecret: # CLIENT SECRET
+        scope:
+          - read:org
+        user-name-attribute: login
+        custom-params:
+          type: github
+
+rbac:
+  roles:
+    - name: "memelords"
+      clusters:
+        - local
+      subjects:
+        - provider: oauth_google
+          type: domain
+          value: "provectus.com"
+        - provider: oauth_google
+          type: user
+          value: "name@provectus.com"
+
+        - provider: oauth_github
+          type: organization
+          value: "provectus"
+        - provider: oauth_github
+          type: user
+          value: "memelord"
+
+        - provider: oauth_cognito
+          type: user
+          value: "username"
+        - provider: oauth_cognito
+          type: group
+          value: "memelords"
+
+        - provider: ldap
+          type: group
+          value: "admin_staff"
+
+        # NOT IMPLEMENTED YET
+      #        - provider: ldap_ad
+      #          type: group
+      #          value: "admin_staff"
+
+      permissions:
+        - resource: applicationconfig
+          actions: all
+
+        - resource: clusterconfig
+          actions: all
+
+        - resource: topic
+          value: ".*"
+          actions: all
+
+        - resource: consumer
+          value: ".*"
+          actions: all
+
+        - resource: schema
+          value: ".*"
+          actions: all
+
+        - resource: connect
+          value: "*"
+          actions: all
+
+        - resource: ksql
+          actions: all
+
+        - resource: acl
+          actions: all
