@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.util.jsonschema;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -34,7 +35,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
-import lombok.SneakyThrows;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 
@@ -42,12 +42,17 @@ import org.apache.avro.generic.GenericData;
 public class JsonAvroConversion {
 
   private static final JsonMapper MAPPER = new JsonMapper();
+  private static final Schema NULL_SCHEMA = Schema.create(Schema.Type.NULL);
 
   // converts json into Object that is expected input for KafkaAvroSerializer
   // (with AVRO_USE_LOGICAL_TYPE_CONVERTERS flat enabled!)
-  @SneakyThrows
   public static Object convertJsonToAvro(String jsonString, Schema avroSchema) {
-    JsonNode rootNode = MAPPER.readTree(jsonString);
+    JsonNode rootNode = null;
+    try {
+      rootNode = MAPPER.readTree(jsonString);
+    } catch (JsonProcessingException e) {
+      throw new JsonToAvroConversionException("String is not a valid json");
+    }
     return convert(rootNode, avroSchema);
   }
 
@@ -88,7 +93,7 @@ public class JsonAvroConversion {
       case UNION -> {
         // for types from enum (other than null) payload should be an object with single key == name of type
         // ex: schema = [ "null", "int", "string" ], possible payloads = null, { "string": "str" },  { "int": 123 }
-        if (node.isNull() && avroSchema.getTypes().contains(Schema.create(Schema.Type.NULL))) {
+        if (node.isNull() && avroSchema.getTypes().contains(NULL_SCHEMA)) {
           yield null;
         }
 
@@ -98,11 +103,23 @@ public class JsonAvroConversion {
           throw new JsonToAvroConversionException(
               "UNION field value should be an object with single field == type name");
         }
-        var typeNameToValue = elements.get(0);
+        Map.Entry<String, JsonNode> typeNameToValue = elements.get(0);
+        List<Schema> candidates = new ArrayList<>();
         for (Schema unionType : avroSchema.getTypes()) {
           if (typeNameToValue.getKey().equals(unionType.getFullName())) {
             yield convert(typeNameToValue.getValue(), unionType);
           }
+          if (typeNameToValue.getKey().equals(unionType.getName())) {
+            candidates.add(unionType);
+          }
+        }
+        if (candidates.size() == 1) {
+          yield convert(typeNameToValue.getValue(), candidates.get(0));
+        }
+        if (candidates.size() > 1) {
+          throw new JsonToAvroConversionException(
+              "Can't select type within union for value '%s'. Provide full type name.".formatted(node)
+          );
         }
         throw new JsonToAvroConversionException(
             "json value '%s' is cannot be converted to any of union types [%s]"
@@ -208,8 +225,11 @@ public class JsonAvroConversion {
       case UNION -> {
         ObjectNode node = MAPPER.createObjectNode();
         int unionIdx = AvroData.getGenericData().resolveUnion(avroSchema, obj);
-        Schema unionType = avroSchema.getTypes().get(unionIdx);
-        node.set(unionType.getFullName(), convertAvroToJson(obj, unionType));
+        Schema selectedType = avroSchema.getTypes().get(unionIdx);
+        node.set(
+            selectUnionTypeFieldName(avroSchema, selectedType, unionIdx),
+            convertAvroToJson(obj, selectedType)
+        );
         yield node;
       }
       case STRING -> {
@@ -250,6 +270,25 @@ public class JsonAvroConversion {
         yield new TextNode(new String(fixed.bytes(), StandardCharsets.ISO_8859_1));
       }
     };
+  }
+
+  // select name for a key field that represents type name of union.
+  // For records selects short name, if it is possible.
+  private static String selectUnionTypeFieldName(Schema unionSchema,
+                                                 Schema chosenType,
+                                                 int chosenTypeIdx) {
+    var types = unionSchema.getTypes();
+    if (types.size() == 2 && types.contains(NULL_SCHEMA)) {
+      return chosenType.getName();
+    }
+    for (int i = 0; i < unionSchema.getTypes().size(); i++) {
+      if (i != chosenTypeIdx && chosenType.getName().equals(types.get(i).getName())) {
+        // there is another type inside union with the same name
+        // so, we have to use fullname
+        return chosenType.getFullName();
+      }
+    }
+    return chosenType.getName();
   }
 
   private static Object processLogicalType(JsonNode node, Schema schema) {

@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.util.jsonschema;
 import static com.provectus.kafka.ui.util.jsonschema.JsonAvroConversion.convertAvroToJson;
 import static com.provectus.kafka.ui.util.jsonschema.JsonAvroConversion.convertJsonToAvro;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.primitives.Longs;
+import com.provectus.kafka.ui.exception.JsonToAvroConversionException;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -27,6 +29,7 @@ import java.util.UUID;
 import lombok.SneakyThrows;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -181,12 +184,62 @@ class JsonAvroConversionTest {
       record = (GenericData.Record) convertJsonToAvro(jsonPayload, schema);
       assertThat(record.get("f_union")).isEqualTo(123);
 
-      //inner-record's name should be fully-qualified!
-      jsonPayload = "{ \"f_union\": { \"com.test.TestAvroRecord\": { \"f_union\": { \"int\": 123  } } } }";
+      //short name can be used since there is no clash with other type names
+      jsonPayload = "{ \"f_union\": { \"TestAvroRecord\": { \"f_union\": { \"int\": 123  } } } }";
       record = (GenericData.Record) convertJsonToAvro(jsonPayload, schema);
       assertThat(record.get("f_union")).isInstanceOf(GenericData.Record.class);
       var innerRec = (GenericData.Record) record.get("f_union");
       assertThat(innerRec.get("f_union")).isEqualTo(123);
+
+      assertThatThrownBy(() ->
+          convertJsonToAvro("{ \"f_union\": { \"NotExistingType\": 123 } }", schema)
+      ).isInstanceOf(JsonToAvroConversionException.class);
+    }
+
+    @Test
+    void unionFieldWithTypeNamesClash() {
+      var schema = createSchema(
+          """
+               {
+                 "type": "record",
+                 "namespace": "com.test",
+                 "name": "TestAvroRecord",
+                 "fields": [
+                   {
+                     "name": "nestedClass",
+                     "type": {
+                       "type": "record",
+                       "namespace": "com.nested",
+                       "name": "TestAvroRecord",
+                       "fields": [
+                         {"name" : "inner_obj_field", "type": "int" }
+                       ]
+                     }
+                   },
+                   {
+                     "name": "f_union",
+                     "type": [ "null", "int", "com.test.TestAvroRecord", "com.nested.TestAvroRecord"]
+                   }
+                 ]
+              }"""
+      );
+      //short name can't can be used since there is a clash with other type names
+      var jsonPayload = "{ \"f_union\": { \"com.test.TestAvroRecord\": { \"f_union\": { \"int\": 123  } } } }";
+      var record = (GenericData.Record) convertJsonToAvro(jsonPayload, schema);
+      assertThat(record.get("f_union")).isInstanceOf(GenericData.Record.class);
+      var innerRec = (GenericData.Record) record.get("f_union");
+      assertThat(innerRec.get("f_union")).isEqualTo(123);
+
+      //short name can't can be used since there is a clash with other type names
+      jsonPayload = "{ \"f_union\": { \"com.nested.TestAvroRecord\": { \"inner_obj_field\":  234 } } }";
+      record = (GenericData.Record) convertJsonToAvro(jsonPayload, schema);
+      assertThat(record.get("f_union")).isInstanceOf(GenericData.Record.class);
+      innerRec = (GenericData.Record) record.get("f_union");
+      assertThat(innerRec.get("inner_obj_field")).isEqualTo(234);
+
+      assertThatThrownBy(() ->
+          convertJsonToAvro("{ \"f_union\": { \"TestAvroRecord\": { \"inner_obj_field\":  234 } } }", schema)
+      ).isInstanceOf(JsonToAvroConversionException.class);
     }
 
     @Test
@@ -599,6 +652,46 @@ class JsonAvroConversionTest {
       var innerRec = new GenericData.Record(schema);
       innerRec.put("f_union", 123);
       r.put("f_union", innerRec);
+      // short type name can be set since there is NO clash with other types name
+      assertJsonsEqual(
+          " { \"f_union\" : { \"TestAvroRecord\" : { \"f_union\" : { \"int\" : 123 } } } }",
+          convertAvroToJson(r, schema)
+      );
+    }
+
+    @Test
+    void unionFieldWithInnerTypesNamesClash() {
+      var schema = createSchema(
+          """
+               {
+                 "type": "record",
+                 "namespace": "com.test",
+                 "name": "TestAvroRecord",
+                 "fields": [
+                   {
+                     "name": "nestedClass",
+                     "type": {
+                       "type": "record",
+                       "namespace": "com.nested",
+                       "name": "TestAvroRecord",
+                       "fields": [
+                         {"name" : "inner_obj_field", "type": "int" }
+                       ]
+                     }
+                   },
+                   {
+                     "name": "f_union",
+                     "type": [ "null", "int", "com.test.TestAvroRecord", "com.nested.TestAvroRecord"]
+                   }
+                 ]
+              }"""
+      );
+
+      var r = new GenericData.Record(schema);
+      var innerRec = new GenericData.Record(schema);
+      innerRec.put("f_union", 123);
+      r.put("f_union", innerRec);
+      // full type name should be set since there is a clash with other type name
       assertJsonsEqual(
           " { \"f_union\" : { \"com.test.TestAvroRecord\" : { \"f_union\" : { \"int\" : 123 } } } }",
           convertAvroToJson(r, schema)
