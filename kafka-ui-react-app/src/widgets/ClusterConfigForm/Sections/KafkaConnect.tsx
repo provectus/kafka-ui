@@ -5,7 +5,7 @@ import Input from 'components/common/Input/Input';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import PlusIcon from 'components/common/Icons/PlusIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
-import CloseIcon from 'components/common/Icons/CloseIcon';
+import CloseCircleIcon from 'components/common/Icons/CloseCircleIcon';
 import {
   FlexGrow1,
   FlexRow,
@@ -66,7 +66,7 @@ const KafkaConnect = () => {
                 </FlexGrow1>
                 <S.RemoveButton onClick={() => remove(index)}>
                   <IconButtonWrapper aria-label="deleteProperty">
-                    <CloseIcon aria-hidden />
+                    <CloseCircleIcon aria-hidden />
                   </IconButtonWrapper>
                 </S.RemoveButton>
               </FlexRow>

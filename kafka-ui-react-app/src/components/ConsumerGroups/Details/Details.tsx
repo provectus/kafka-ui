@@ -110,7 +110,7 @@ const Details: React.FC = () => {
             {consumerGroup.data?.coordinator?.id}
           </Metrics.Indicator>
           <Metrics.Indicator label="Total lag">
-            {consumerGroup.data?.messagesBehind}
+            {consumerGroup.data?.consumerLag}
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
@@ -121,7 +121,7 @@ const Details: React.FC = () => {
         <thead>
           <tr>
             <TableHeaderCell title="Topic" />
-            <TableHeaderCell title="Messages behind" />
+            <TableHeaderCell title="Consumer Lag" />
           </tr>
         </thead>
         <tbody>

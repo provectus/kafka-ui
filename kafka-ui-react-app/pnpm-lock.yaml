@@ -19,6 +19,7 @@ specifiers:
   '@testing-library/user-event': ^14.4.3
   '@types/eventsource': ^1.1.8
   '@types/lodash': ^4.14.172
+  '@types/lossless-json': ^1.0.1
   '@types/node': ^16.4.13
   '@types/react': ^18.0.9
   '@types/react-datepicker': ^4.8.0
@@ -55,6 +56,7 @@ specifiers:
   json-schema-faker: ^0.5.0-rcv.44
   jsonpath-plus: ^7.2.0
   lodash: ^4.17.21
+  lossless-json: ^2.0.8
   prettier: ^2.8.4
   pretty-ms: 7.0.1
   react: ^18.1.0
@@ -96,7 +98,7 @@ dependencies:
   '@types/testing-library__jest-dom': 5.14.5
   ace-builds: 1.7.1
   ajv: 8.8.2
-  ajv-formats: 2.1.1
+  ajv-formats: 2.1.1_ajv@8.8.2
   classnames: 2.3.1
   fetch-mock: 9.11.0
   jest: 29.5.0_6m7kcbkkzjz4ln6z66tlzx44we
@@ -104,6 +106,7 @@ dependencies:
   json-schema-faker: 0.5.0-rcv.44
   jsonpath-plus: 7.2.0
   lodash: 4.17.21
+  lossless-json: 2.0.8
   pretty-ms: 7.0.1
   react: 18.1.0
   react-ace: 10.1.0_ef5jwxihqo6n7gxfmzogljlgcm
@@ -136,6 +139,7 @@ devDependencies:
   '@testing-library/user-event': 14.4.3_@testing-library+dom@9.0.0
   '@types/eventsource': 1.1.8
   '@types/lodash': 4.14.177
+  '@types/lossless-json': 1.0.1
   '@types/node': 16.11.7
   '@types/react': 18.0.9
   '@types/react-datepicker': 4.10.0_react@18.1.0
@@ -1770,6 +1774,10 @@ packages:
     resolution: {integrity: sha512-0fDwydE2clKe9MNfvXHBHF9WEahRuj+msTuQqOmAApNORFvhMYZKNGGJdCzuhheVjMps/ti0Ak/iJPACMaevvw==}
     dev: true
 
+  /@types/lossless-json/1.0.1:
+    resolution: {integrity: sha512-zPE8kmpeL5/6L5gtTQHSOkAW/OSYYNTDRt6/2oEgLO1Zd3Rj5WVDoMloTtLJxQJhZGLGbL4pktKSh3NbzdaWdw==}
+    dev: true
+
   /@types/node/16.11.7:
     resolution: {integrity: sha512-QB5D2sqfSjCmTuWcBWyJ+/44bcjO7VbjSbOE0ucoVbAsSNQc4Lt6QkgkVXkTDwkL4z/beecZNDvVX15D4P8Jbw==}
 
@@ -2050,8 +2058,10 @@ packages:
       - supports-color
     dev: true
 
-  /ajv-formats/2.1.1:
+  /ajv-formats/2.1.1_ajv@8.8.2:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependencies:
+      ajv: ^8.0.0
     peerDependenciesMeta:
       ajv:
         optional: true
@@ -2734,8 +2744,8 @@ packages:
       ms: 2.1.2
       supports-color: 5.5.0
 
-  /decimal.js/10.3.1:
-    resolution: {integrity: sha512-V0pfhfr8suzyPGOx3nmq4aHqabehUZn6Ch9kyFpV79TGDTWFmHqUqXdabR7QHqxzrYolF4+tVmJhUG4OURg5dQ==}
+  /decimal.js/10.4.3:
+    resolution: {integrity: sha512-VBBaLc1MgL5XpzgIP7ny5Z6Nx3UrRkIViUkPUdtl9aya5amy3De1gsUUSB1g3+3sExYNjCAsAznmukyxCb1GRA==}
     dev: true
 
   /dedent/0.7.0:
@@ -4649,7 +4659,7 @@ packages:
       cssom: 0.5.0
       cssstyle: 2.3.0
       data-urls: 3.0.2
-      decimal.js: 10.3.1
+      decimal.js: 10.4.3
       domexception: 4.0.0
       escodegen: 2.0.0
       form-data: 4.0.0
@@ -4840,6 +4850,10 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
+
+  /lossless-json/2.0.8:
+    resolution: {integrity: sha512-7/GaZldUc7H5oNZlSk6bF06cRbtA7oF8zWXwbfMZm8yrYC2debx0KvWTBbQIbj6fh08LsXTWg+YtHJshXgYKow==}
+    dev: false
 
   /lru-cache/6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}

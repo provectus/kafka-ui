@@ -1,9 +1,10 @@
 import React from 'react';
-import { Task } from 'generated-sources';
+import { Action, ResourceType, Task } from 'generated-sources';
 import { CellContext } from '@tanstack/react-table';
 import useAppParams from 'lib/hooks/useAppParams';
 import { useRestartConnectorTask } from 'lib/hooks/api/kafkaConnect';
-import { Dropdown, DropdownItem } from 'components/common/Dropdown';
+import { Dropdown } from 'components/common/Dropdown';
+import { ActionDropdownItem } from 'components/common/ActionComponent';
 import { RouterParamsClusterConnectConnector } from 'lib/paths';
 
 const ActionsCellTasks: React.FC<CellContext<Task, unknown>> = ({ row }) => {
@@ -18,13 +19,18 @@ const ActionsCellTasks: React.FC<CellContext<Task, unknown>> = ({ row }) => {
 
   return (
     <Dropdown>
-      <DropdownItem
+      <ActionDropdownItem
         onClick={() => restartTaskHandler(id?.task)}
         danger
         confirm="Are you sure you want to restart the task?"
+        permission={{
+          resource: ResourceType.CONNECT,
+          action: Action.RESTART,
+          value: routerProps.connectorName,
+        }}
       >
         <span>Restart task</span>
-      </DropdownItem>
+      </ActionDropdownItem>
     </Dropdown>
   );
 };
