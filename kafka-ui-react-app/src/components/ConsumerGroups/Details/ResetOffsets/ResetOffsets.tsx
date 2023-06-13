@@ -21,7 +21,7 @@ const ResetOffsets: React.FC = () => {
     return <PageLoader />;
 
   const partitions = consumerGroup.data.partitions || [];
-  const { topic } = partitions[0];
+  const { topic } = partitions[0] || '';
 
   const uniqTopics = Array.from(
     new Set(partitions.map((partition) => partition.topic))
