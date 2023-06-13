@@ -11,6 +11,7 @@ import io.qase.api.annotation.QaseId;
 import org.testng.Assert;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 public class BrokersTest extends BaseTest {
 
@@ -49,11 +50,11 @@ public class BrokersTest extends BaseTest {
   @Issue("https://github.com/provectus/kafka-ui/issues/3347")
   @QaseId(330)
   @Test
-  public void brokersConfigSearchCheck() {
+  public void brokersConfigFirstPageSearchCheck() {
     navigateToBrokersAndOpenDetails(DEFAULT_BROKER_ID);
     brokersDetails
         .openDetailsTab(CONFIGS);
-    String anyConfigKey = brokersConfigTab
+    String anyConfigKeyFirstPage = brokersConfigTab
         .getAllConfigs().stream()
         .findAny().orElseThrow()
         .getKey();
@@ -61,14 +62,42 @@ public class BrokersTest extends BaseTest {
         .clickNextButton();
     Assert.assertFalse(brokersConfigTab.getAllConfigs().stream()
             .map(BrokersConfigTab.BrokersConfigItem::getKey)
-            .toList().contains(anyConfigKey),
-        String.format("getAllConfigs().contains(%s)", anyConfigKey));
+            .toList().contains(anyConfigKeyFirstPage),
+        String.format("getAllConfigs().contains(%s)", anyConfigKeyFirstPage));
     brokersConfigTab
-        .searchConfig(anyConfigKey);
+        .searchConfig(anyConfigKeyFirstPage);
     Assert.assertTrue(brokersConfigTab.getAllConfigs().stream()
             .map(BrokersConfigTab.BrokersConfigItem::getKey)
-            .toList().contains(anyConfigKey),
-        String.format("getAllConfigs().contains(%s)", anyConfigKey));
+            .toList().contains(anyConfigKeyFirstPage),
+        String.format("getAllConfigs().contains(%s)", anyConfigKeyFirstPage));
+  }
+
+  @Ignore
+  @Issue("https://github.com/provectus/kafka-ui/issues/3347")
+  @QaseId(350)
+  @Test
+  public void brokersConfigSecondPageSearchCheck() {
+    navigateToBrokersAndOpenDetails(DEFAULT_BROKER_ID);
+    brokersDetails
+        .openDetailsTab(CONFIGS);
+    brokersConfigTab
+        .clickNextButton();
+    String anyConfigKeySecondPage = brokersConfigTab
+        .getAllConfigs().stream()
+        .findAny().orElseThrow()
+        .getKey();
+    brokersConfigTab
+        .clickPreviousButton();
+    Assert.assertFalse(brokersConfigTab.getAllConfigs().stream()
+            .map(BrokersConfigTab.BrokersConfigItem::getKey)
+            .toList().contains(anyConfigKeySecondPage),
+        String.format("getAllConfigs().contains(%s)", anyConfigKeySecondPage));
+    brokersConfigTab
+        .searchConfig(anyConfigKeySecondPage);
+    Assert.assertTrue(brokersConfigTab.getAllConfigs().stream()
+            .map(BrokersConfigTab.BrokersConfigItem::getKey)
+            .toList().contains(anyConfigKeySecondPage),
+        String.format("getAllConfigs().contains(%s)", anyConfigKeySecondPage));
   }
 
   @QaseId(331)
@@ -81,5 +110,43 @@ public class BrokersTest extends BaseTest {
         .hoverOnSourceInfoIcon()
         .getSourceInfoTooltipText();
     Assert.assertEquals(sourceInfoTooltip, BROKER_SOURCE_INFO_TOOLTIP, "brokerSourceInfoTooltip");
+  }
+
+  @QaseId(332)
+  @Test
+  public void brokersConfigEditCheck() {
+    navigateToBrokersAndOpenDetails(DEFAULT_BROKER_ID);
+    brokersDetails
+        .openDetailsTab(CONFIGS);
+    String configKey = "log.cleaner.min.compaction.lag.ms";
+    BrokersConfigTab.BrokersConfigItem configItem = brokersConfigTab
+        .searchConfig(configKey)
+        .getConfig(configKey);
+    int defaultValue = Integer.parseInt(configItem.getValue());
+    configItem
+        .clickEditBtn();
+    SoftAssert softly = new SoftAssert();
+    softly.assertTrue(configItem.getSaveBtn().isDisplayed(), "getSaveBtn().isDisplayed()");
+    softly.assertTrue(configItem.getCancelBtn().isDisplayed(), "getCancelBtn().isDisplayed()");
+    softly.assertTrue(configItem.getValueFld().isEnabled(), "getValueFld().isEnabled()");
+    softly.assertAll();
+    int newValue = defaultValue + 1;
+    configItem
+        .setValue(String.valueOf(newValue))
+        .clickCancelBtn();
+    Assert.assertEquals(Integer.parseInt(configItem.getValue()), defaultValue, "getValue()");
+    configItem
+        .clickEditBtn()
+        .setValue(String.valueOf(newValue))
+        .clickSaveBtn()
+        .clickConfirm();
+    configItem = brokersConfigTab
+        .searchConfig(configKey)
+        .getConfig(configKey);
+    softly.assertFalse(configItem.getSaveBtn().isDisplayed(), "getSaveBtn().isDisplayed()");
+    softly.assertFalse(configItem.getCancelBtn().isDisplayed(), "getCancelBtn().isDisplayed()");
+    softly.assertTrue(configItem.getEditBtn().isDisplayed(), "getEditBtn().isDisplayed()");
+    softly.assertEquals(Integer.parseInt(configItem.getValue()), newValue, "getValue()");
+    softly.assertAll();
   }
 }
