@@ -281,7 +281,7 @@ public class JsonAvroConversion {
     if (types.size() == 2 && types.contains(NULL_SCHEMA)) {
       return chosenType.getName();
     }
-    for (int i = 0; i < unionSchema.getTypes().size(); i++) {
+    for (int i = 0; i < types.size(); i++) {
       if (i != chosenTypeIdx && chosenType.getName().equals(types.get(i).getName())) {
         // there is another type inside union with the same name
         // so, we have to use fullname
