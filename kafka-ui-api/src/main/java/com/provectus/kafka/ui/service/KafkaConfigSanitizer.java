@@ -5,11 +5,13 @@ import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
@@ -17,7 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-class KafkaConfigSanitizer  {
+class KafkaConfigSanitizer {
 
   private static final String SANITIZED_VALUE = "******";
 
@@ -65,10 +67,8 @@ class KafkaConfigSanitizer  {
         .collect(Collectors.toSet());
   }
 
-  public Object sanitize(String key, Object value) {
-    if (value == null) {
-      return null;
-    }
+  @Nullable
+  public Object sanitize(String key, @Nullable Object value) {
     for (Pattern pattern : sanitizeKeysPatterns) {
       if (pattern.matcher(key).matches()) {
         return SANITIZED_VALUE;
@@ -77,5 +77,12 @@ class KafkaConfigSanitizer  {
     return value;
   }
 
+  public Map<String, Object> sanitizeConnectorConfig(@Nullable Map<String, Object> original) {
+    var result = new HashMap<String, Object>(); //null-values supporting map!
+    if (original != null) {
+      original.forEach((k, v) -> result.put(k, sanitize(k, v)));
+    }
+    return result;
+  }
 
 }
