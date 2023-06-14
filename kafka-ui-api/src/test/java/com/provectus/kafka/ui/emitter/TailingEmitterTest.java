@@ -115,6 +115,7 @@ class TailingEmitterTest extends AbstractIntegrationTest {
             query,
             MessageFilterTypeDTO.STRING_CONTAINS,
             0,
+            0,
             SeekDirectionDTO.TAILING,
             "String",
             "String");

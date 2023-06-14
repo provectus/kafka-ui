@@ -160,6 +160,7 @@ public class MessagesService {
                                                  @Nullable String query,
                                                  MessageFilterTypeDTO filterQueryType,
                                                  @Nullable Integer pageSize,
+                                                 Integer page,
                                                  SeekDirectionDTO seekDirection,
                                                  @Nullable String keySerde,
                                                  @Nullable String valueSerde) {
@@ -167,7 +168,8 @@ public class MessagesService {
         .flux()
         .publishOn(Schedulers.boundedElastic())
         .flatMap(td -> loadMessagesImpl(cluster, topic, consumerPosition, query,
-            filterQueryType, fixPageSize(pageSize), seekDirection, keySerde, valueSerde));
+            filterQueryType, fixPageSize(pageSize), page,
+            seekDirection, keySerde, valueSerde));
   }
 
   private int fixPageSize(@Nullable Integer pageSize) {
@@ -182,6 +184,7 @@ public class MessagesService {
                                                       @Nullable String query,
                                                       MessageFilterTypeDTO filterQueryType,
                                                       int limit,
+                                                      int page,
                                                       SeekDirectionDTO seekDirection,
                                                       @Nullable String keySerde,
                                                       @Nullable String valueSerde) {
@@ -191,7 +194,8 @@ public class MessagesService {
     var processing = new MessagesProcessing(
         deserializationService.deserializerFor(cluster, topic, keySerde, valueSerde),
         getMsgFilter(query, filterQueryType),
-        seekDirection == SeekDirectionDTO.TAILING ? null : limit
+        seekDirection == SeekDirectionDTO.TAILING ? null : limit,
+        page
     );
 
     if (seekDirection.equals(SeekDirectionDTO.FORWARD)) {

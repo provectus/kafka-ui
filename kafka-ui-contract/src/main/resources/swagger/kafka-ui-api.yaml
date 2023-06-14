@@ -658,6 +658,10 @@ paths:
           in: query
           schema:
             type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
         - name: q
           in: query
           schema:

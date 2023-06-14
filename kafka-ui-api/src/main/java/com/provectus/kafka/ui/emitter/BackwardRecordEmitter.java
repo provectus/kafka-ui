@@ -57,7 +57,9 @@ public class BackwardRecordEmitter
             return; //fast return in case of sink cancellation
           }
           long beginOffset = seekOperations.getBeginOffsets().get(tp);
-          long readFromOffset = Math.max(beginOffset, readToOffset - msgsToPollPerPartition);
+          long readFromOffset = Math.max(beginOffset, readToOffset - msgsToPollPerPartition - this.getPageOffset());
+          readToOffset = readToOffset - this.getPageOffset();
+
 
           partitionPollIteration(tp, readFromOffset, readToOffset, consumer, sink)
               .forEach(r -> sendMessage(sink, r));

@@ -59,4 +59,8 @@ public abstract class AbstractEmitter {
     messagesProcessing.sendFinishEvent(sink);
     sink.complete();
   }
+
+  protected Integer getPageOffset() {
+    return messagesProcessing.getPageOffset();
+  }
 }

@@ -23,16 +23,24 @@ public class MessagesProcessing {
   private final Predicate<TopicMessageDTO> filter;
   private final @Nullable Integer limit;
 
+  private final @Nullable Integer page;
+
   public MessagesProcessing(ConsumerRecordDeserializer deserializer,
                             Predicate<TopicMessageDTO> filter,
-                            @Nullable Integer limit) {
+                            @Nullable Integer limit,
+                            @Nullable Integer page) {
     this.deserializer = deserializer;
     this.filter = filter;
     this.limit = limit;
+    this.page = page;
   }
 
   boolean limitReached() {
     return limit != null && sentMessages >= limit;
+  }
+
+  Integer getPageOffset() {
+    return this.limit * this.page;
   }
 
   void sendMsg(FluxSink<TopicMessageEventDTO> sink, ConsumerRecord<Bytes, Bytes> rec) {

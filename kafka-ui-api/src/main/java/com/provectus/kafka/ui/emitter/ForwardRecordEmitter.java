@@ -37,6 +37,10 @@ public class ForwardRecordEmitter
       var seekOperations = SeekOperations.create(consumer, position);
       seekOperations.assignAndSeekNonEmptyPartitions();
 
+      seekOperations.getOffsetsForSeek().forEach((p, o) -> {
+        consumer.seek(p, o + getPageOffset());
+      });
+
       EmptyPollsCounter emptyPolls = pollingSettings.createEmptyPollsCounter();
       while (!sink.isCancelled()
           && !sendLimitReached()

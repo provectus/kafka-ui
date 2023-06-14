@@ -508,6 +508,7 @@ public class SendAndReadTests extends AbstractIntegrationTest {
                 null,
                 null,
                 1,
+                0,
                 SeekDirectionDTO.FORWARD,
                 msgToSend.getKeySerde().get(),
                 msgToSend.getValueSerde().get()
