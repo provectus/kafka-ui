@@ -3,6 +3,7 @@ import AceEditor, { IAceEditorProps } from 'react-ace';
 import 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-sql';
 import 'ace-builds/src-noconflict/theme-textmate';
+import 'ace-builds/src-noconflict/theme-dracula';
 import React, { useContext } from 'react';
 import { ThemeModeContext } from 'components/contexts/ThemeModeContext';
 
