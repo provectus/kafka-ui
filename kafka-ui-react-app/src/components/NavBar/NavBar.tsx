@@ -7,7 +7,7 @@ import DiscordIcon from 'components/common/Icons/DiscordIcon';
 import AutoIcon from 'components/common/Icons/AutoIcon';
 import SunIcon from 'components/common/Icons/SunIcon';
 import MoonIcon from 'components/common/Icons/MoonIcon';
-import { ThemeModeContext } from 'components/common/ThemeModeContext';
+import { ThemeModeContext } from 'components/contexts/ThemeModeContext';
 
 import UserInfo from './UserInfo/UserInfo';
 import * as S from './NavBar.styled';

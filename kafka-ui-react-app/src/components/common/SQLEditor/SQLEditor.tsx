@@ -4,7 +4,7 @@ import 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/mode-sql';
 import 'ace-builds/src-noconflict/theme-textmate';
 import React, { useContext } from 'react';
-import { ThemeModeContext } from 'components/common/ThemeModeContext';
+import { ThemeModeContext } from 'components/contexts/ThemeModeContext';
 
 interface SQLEditorProps extends IAceEditorProps {
   isFixedHeight?: boolean;

@@ -18,7 +18,7 @@ import { Toaster } from 'react-hot-toast';
 import GlobalCSS from 'components/globalCss';
 import * as S from 'components/App.styled';
 import ClusterConfigForm from 'widgets/ClusterConfigForm';
-import { ThemeModeContext } from 'components/common/ThemeModeContext';
+import { ThemeModeContext } from 'components/contexts/ThemeModeContext';
 
 import ConfirmationModal from './common/ConfirmationModal/ConfirmationModal';
 import { ConfirmContextProvider } from './contexts/ConfirmContext';
