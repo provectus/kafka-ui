@@ -24,19 +24,22 @@ export const ThemeModeProvider: FC<PropsWithChildren<unknown>> = ({
   React.useLayoutEffect(() => {
     const mode = localStorage.getItem('mode');
     setThemeModeState((mode as ThemeDropDownValue) ?? 'auto_theme');
-  }, []);
+  }, [setThemeModeState]);
 
   const isDarkMode = React.useMemo(() => {
     if (themeMode === 'auto_theme') {
       return matchDark.matches;
     }
     return themeMode === 'dark_theme';
-  }, []);
+  }, [themeMode]);
 
-  const setThemeMode = React.useCallback((value: string | number) => {
-    setThemeMode(value as ThemeDropDownValue);
-    localStorage.setItem('mode', value as string);
-  }, []);
+  const setThemeMode = React.useCallback(
+    (value: string | number) => {
+      setThemeModeState(value as ThemeDropDownValue);
+      localStorage.setItem('mode', value as string);
+    },
+    [setThemeModeState]
+  );
 
   return (
     <ThemeModeContext.Provider
