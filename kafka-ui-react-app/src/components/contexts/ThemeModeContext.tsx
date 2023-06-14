@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { FC, PropsWithChildren } from 'react';
 import type { ThemeDropDownValue } from 'components/NavBar/NavBar';
 
@@ -41,14 +41,17 @@ export const ThemeModeProvider: FC<PropsWithChildren<unknown>> = ({
     [setThemeModeState]
   );
 
+  const contextValue = useMemo(
+    () => ({
+      isDarkMode,
+      themeMode,
+      setThemeMode,
+    }),
+    [isDarkMode, themeMode, setThemeMode]
+  );
+
   return (
-    <ThemeModeContext.Provider
-      value={{
-        isDarkMode,
-        themeMode,
-        setThemeMode,
-      }}
-    >
+    <ThemeModeContext.Provider value={contextValue}>
       {children}
     </ThemeModeContext.Provider>
   );
