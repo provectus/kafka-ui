@@ -5,9 +5,7 @@ import * as S from 'components/PageContainer/PageContainer.styled';
 import Nav from 'components/Nav/Nav';
 import useBoolean from 'lib/hooks/useBoolean';
 
-const PageContainer: React.FC<
-  PropsWithChildren<{ setDarkMode: (value: boolean) => void }>
-> = ({ children, setDarkMode }) => {
+const PageContainer: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   const {
     value: isSidebarVisible,
     toggle,
@@ -21,7 +19,7 @@ const PageContainer: React.FC<
 
   return (
     <>
-      <NavBar onBurgerClick={toggle} setDarkMode={setDarkMode} />
+      <NavBar onBurgerClick={toggle} />
       <S.Container>
         <S.Sidebar aria-label="Sidebar" $visible={isSidebarVisible}>
           <Nav />

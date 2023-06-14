@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Select from 'components/common/Select/Select';
 import Logo from 'components/common/Logo/Logo';
 import Version from 'components/Version/Version';
@@ -7,16 +7,16 @@ import DiscordIcon from 'components/common/Icons/DiscordIcon';
 import AutoIcon from 'components/common/Icons/AutoIcon';
 import SunIcon from 'components/common/Icons/SunIcon';
 import MoonIcon from 'components/common/Icons/MoonIcon';
+import { ThemeModeContext } from 'components/common/ThemeModeContext';
 
 import UserInfo from './UserInfo/UserInfo';
 import * as S from './NavBar.styled';
 
 interface Props {
   onBurgerClick: () => void;
-  setDarkMode: (value: boolean) => void;
 }
 
-type ThemeDropDownValue = 'auto_theme' | 'light_theme' | 'dark_theme';
+export type ThemeDropDownValue = 'auto_theme' | 'light_theme' | 'dark_theme';
 
 const options = [
   {
@@ -48,44 +48,8 @@ const options = [
   },
 ];
 
-const NavBar: React.FC<Props> = ({ onBurgerClick, setDarkMode }) => {
-  const matchDark = window.matchMedia('(prefers-color-scheme: dark)');
-  const [themeMode, setThemeMode] = React.useState<ThemeDropDownValue>();
-
-  React.useLayoutEffect(() => {
-    const mode = localStorage.getItem('mode');
-    if (mode) {
-      setThemeMode(mode as ThemeDropDownValue);
-      if (mode === 'auto_theme') {
-        setDarkMode(matchDark.matches);
-      } else if (mode === 'light_theme') {
-        setDarkMode(false);
-      } else if (mode === 'dark_theme') {
-        setDarkMode(true);
-      }
-    } else {
-      setThemeMode('auto_theme');
-    }
-  }, []);
-
-  React.useEffect(() => {
-    if (themeMode === 'auto_theme') {
-      setDarkMode(matchDark.matches);
-      matchDark.addListener((e) => {
-        setDarkMode(e.matches);
-      });
-    }
-  }, [matchDark, themeMode]);
-
-  const onChangeThemeMode = (value: string | number) => {
-    setThemeMode(value as ThemeDropDownValue);
-    localStorage.setItem('mode', value as string);
-    if (value === 'light_theme') {
-      setDarkMode(false);
-    } else if (value === 'dark_theme') {
-      setDarkMode(true);
-    }
-  };
+const NavBar: React.FC<Props> = ({ onBurgerClick }) => {
+  const { themeMode, setThemeMode } = useContext(ThemeModeContext);
 
   return (
     <S.Navbar role="navigation" aria-label="Page Header">
@@ -117,7 +81,7 @@ const NavBar: React.FC<Props> = ({ onBurgerClick, setDarkMode }) => {
         <Select
           options={options}
           value={themeMode}
-          onChange={onChangeThemeMode}
+          onChange={setThemeMode}
           isThemeMode
         />
         <S.SocialLink
