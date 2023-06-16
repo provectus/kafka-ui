@@ -10,9 +10,7 @@ import { useClusters } from 'lib/hooks/api/clusters';
 import { ResourceType } from 'generated-sources';
 import { useGetUserInfo } from 'lib/hooks/api/roles';
 
-const PageContainer: React.FC<
-  PropsWithChildren<{ setDarkMode: (value: boolean) => void }>
-> = ({ children, setDarkMode }) => {
+const PageContainer: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   const {
     value: isSidebarVisible,
     toggle,
@@ -44,7 +42,7 @@ const PageContainer: React.FC<
 
   return (
     <>
-      <NavBar onBurgerClick={toggle} setDarkMode={setDarkMode} />
+      <NavBar onBurgerClick={toggle} />
       <S.Container>
         <S.Sidebar aria-label="Sidebar" $visible={isSidebarVisible}>
           <Nav />
