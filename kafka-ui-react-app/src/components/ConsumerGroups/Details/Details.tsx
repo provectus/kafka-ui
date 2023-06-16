@@ -54,9 +54,7 @@ const Details: React.FC = () => {
     ? filteredPartitionsByTopic
     : Object.keys(partitionsByTopic);
 
-  const hasAssignedTopics = React.useMemo(() => {
-    return consumerGroup?.data?.topics !== 0;
-  }, [consumerGroup.data]);
+  const hasAssignedTopics = consumerGroup?.data?.topics !== 0;
 
   return (
     <div>
