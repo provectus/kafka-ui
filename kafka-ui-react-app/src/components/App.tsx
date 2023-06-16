@@ -30,6 +30,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       suspense: true,
+      networkMode: 'offlineFirst',
       onError(error) {
         showServerError(error as Response);
       },
