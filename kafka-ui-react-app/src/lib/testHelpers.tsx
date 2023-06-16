@@ -39,6 +39,9 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
     roles?: RolesType;
     rbacFlag: boolean;
   };
+  globalSettings?: {
+    hasDynamicConfig: boolean;
+  };
 }
 
 interface WithRouteProps {
@@ -111,6 +114,7 @@ const customRender = (
     }),
     initialEntries,
     userInfo,
+    globalSettings,
     ...renderOptions
   }: CustomRenderOptions = {}
 ) => {
@@ -119,7 +123,9 @@ const customRender = (
     children,
   }) => (
     <TestQueryClientProvider>
-      <GlobalSettingsContext.Provider value={{ hasDynamicConfig: false }}>
+      <GlobalSettingsContext.Provider
+        value={globalSettings || { hasDynamicConfig: false }}
+      >
         <ThemeProvider theme={theme}>
           <TestUserInfoProvider data={userInfo}>
             <ConfirmContextProvider>
