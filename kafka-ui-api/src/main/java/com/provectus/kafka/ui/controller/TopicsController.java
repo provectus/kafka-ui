@@ -167,12 +167,13 @@ public class TopicsController extends AbstractController implements TopicsApi {
                                                            ServerWebExchange exchange) {
 
     return topicsService.getTopicsForPagination(getCluster(clusterName))
-        .flatMap(existingTopics -> {
+        .flatMap(topics -> accessControlService.filterViewableTopics(topics, clusterName))
+        .flatMap(topics -> {
           int pageSize = perPage != null && perPage > 0 ? perPage : DEFAULT_PAGE_SIZE;
           var topicsToSkip = ((page != null && page > 0 ? page : 1) - 1) * pageSize;
           var comparator = sortOrder == null || !sortOrder.equals(SortOrderDTO.DESC)
               ? getComparatorForTopic(orderBy) : getComparatorForTopic(orderBy).reversed();
-          List<InternalTopic> filtered = existingTopics.stream()
+          List<InternalTopic> filtered = topics.stream()
               .filter(topic -> !topic.isInternal()
                   || showInternal != null && showInternal)
               .filter(topic -> search == null || StringUtils.containsIgnoreCase(topic.getName(), search))
@@ -189,7 +190,6 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
           return topicsService.loadTopics(getCluster(clusterName), topicsPage)
               .flatMapMany(Flux::fromIterable)
-              .filterWhen(dto -> accessControlService.isTopicAccessible(dto, clusterName))
               .collectList()
               .map(topicsToRender ->
                   new TopicsResponseDTO()
