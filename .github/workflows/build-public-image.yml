@@ -71,7 +71,7 @@ jobs:
           context: "Image published at"
           state: "success"
           sha: ${{ github.event.pull_request.head.sha  || github.sha }}
-          target_url: "public.ecr.aws/provectus/kafka-ui-custom-build:${{ steps.extract_branch.outputs.tag }}"
+          target_url: "https://public.ecr.aws/provectus/kafka-ui-custom-build:${{ steps.extract_branch.outputs.tag }}"
 
     outputs:
       tag: ${{ steps.extract_branch.outputs.tag }}
