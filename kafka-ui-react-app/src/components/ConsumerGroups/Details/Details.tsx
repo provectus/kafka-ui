@@ -54,6 +54,8 @@ const Details: React.FC = () => {
     ? filteredPartitionsByTopic
     : Object.keys(partitionsByTopic);
 
+  const hasAssignedTopics = consumerGroup?.data?.topics !== 0;
+
   return (
     <div>
       <div>
@@ -71,6 +73,7 @@ const Details: React.FC = () => {
                   action: Action.RESET_OFFSETS,
                   value: consumerGroupID,
                 }}
+                disabled={!hasAssignedTopics}
               >
                 Reset offset
               </ActionDropdownItem>
