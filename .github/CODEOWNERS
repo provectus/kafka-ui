@@ -14,5 +14,5 @@
 # TESTS
 /kafka-ui-e2e-checks/       @provectus/kafka-qa
 
-# HELM CHARTS
-/charts/                    @provectus/kafka-devops
+# INFRA
+/.github/workflows/         @provectus/kafka-devops
