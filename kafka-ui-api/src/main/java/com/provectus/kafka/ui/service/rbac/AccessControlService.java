@@ -207,6 +207,7 @@ public class AccessControlService {
     if (!rbacEnabled) {
       return Mono.just(topics);
     }
+
     return getUser()
         .map(user -> topics.stream()
             .filter(topic -> {

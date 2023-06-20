@@ -34,7 +34,7 @@ jobs:
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Upload files to a GitHub release
-        uses: svenstaro/upload-release-action@2.5.0
+        uses: svenstaro/upload-release-action@2.6.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: kafka-ui-api/target/kafka-ui-api-${{ steps.build.outputs.version }}.jar
@@ -89,14 +89,12 @@ jobs:
 
   charts:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     needs: release
     steps:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: provectus/kafka-ui
+          token: ${{ secrets.CHARTS_ACTIONS_TOKEN }}
+          repository: provectus/kafka-ui-charts
           event-type: prepare-helm-release
           client-payload: '{"appversion": "${{ needs.release.outputs.version }}"}'
