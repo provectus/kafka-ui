@@ -32,9 +32,3 @@ jobs:
                 --repository-name kafka-ui-custom-build \
                 --image-ids imageTag=${{ steps.extract_branch.outputs.tag }} \
                 --region us-east-1
-      - name: make comment with private deployment link
-        uses: peter-evans/create-or-update-comment@v3
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            Image tag public.ecr.aws/provectus/kafka-ui-custom-build:${{ steps.extract_branch.outputs.tag }} has been removed
