@@ -6,7 +6,6 @@ import com.provectus.kafka.ui.exception.CustomBaseException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.Resource;
-import com.provectus.kafka.ui.model.rbac.permission.PermissibleAction;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,7 +15,7 @@ import lombok.SneakyThrows;
 import org.springframework.security.access.AccessDeniedException;
 
 record AuditRecord(String timestamp,
-                   String userPrincipal,  //TODO: discuss - rename to username?
+                   String username,
                    String clusterName,
                    List<AuditResource> resources,
                    String operation,

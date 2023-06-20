@@ -111,14 +111,14 @@ public class BrokerService {
   }
 
   private Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> getClusterLogDirs(
-      KafkaCluster cluster, @Nullable List<Integer> reqBrokers) {
+      KafkaCluster cluster, List<Integer> reqBrokers) {
     return adminClientService.get(cluster)
         .flatMap(admin -> {
           List<Integer> brokers = statisticsCache.get(cluster).getClusterDescription().getNodes()
               .stream()
               .map(Node::id)
               .collect(Collectors.toList());
-          if (reqBrokers != null && !reqBrokers.isEmpty()) {
+          if (!reqBrokers.isEmpty()) {
             brokers.retainAll(reqBrokers);
           }
           return admin.describeLogDirs(brokers);
@@ -129,7 +129,7 @@ public class BrokerService {
         });
   }
 
-  public Flux<BrokersLogdirsDTO> getAllBrokersLogdirs(KafkaCluster cluster, @Nullable List<Integer> brokers) {
+  public Flux<BrokersLogdirsDTO> getAllBrokersLogdirs(KafkaCluster cluster, List<Integer> brokers) {
     return getClusterLogDirs(cluster, brokers)
         .map(describeLogDirsMapper::toBrokerLogDirsList)
         .flatMapMany(Flux::fromIterable);

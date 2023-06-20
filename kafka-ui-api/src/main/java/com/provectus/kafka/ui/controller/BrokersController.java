@@ -77,7 +77,10 @@ public class BrokersController extends AbstractController implements BrokersApi 
         .build();
     return accessControlService.validateAccess(context)
         .thenReturn(ResponseEntity.ok(
-            brokerService.getAllBrokersLogdirs(getCluster(clusterName), brokers)))
+            brokerService.getAllBrokersLogdirs(
+                getCluster(clusterName),
+                brokers == null ? List.of() : brokers
+            )))
         .doOnEach(sig -> auditService.audit(context, sig));
   }
 

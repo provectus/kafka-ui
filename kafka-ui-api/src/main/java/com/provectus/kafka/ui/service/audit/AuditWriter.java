@@ -1,11 +1,12 @@
 package com.provectus.kafka.ui.service.audit;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.provectus.kafka.ui.config.auth.AuthenticatedUser;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.service.audit.AuditRecord.AuditResource;
 import com.provectus.kafka.ui.service.audit.AuditRecord.OperationResult;
 import java.io.Closeable;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -30,32 +31,27 @@ record AuditWriter(String clusterName,
                                 AccessContext ctx,
                                 AuthenticatedUser user,
                                 @Nullable Throwable th) {
-    consoleLogger.info(
-        new AuditRecord(
-            DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
-            user.principal(),
-            null,
-            AuditResource.getAccessedResources(ctx),
-            ctx.getOperationName(),
-            ctx.getOperationParams(),
-            th == null ? OperationResult.successful() : OperationResult.error(th)
-        ).toJson()
-    );
+    consoleLogger.info(createRecord(ctx, user, th).toJson());
   }
 
   void write(AccessContext ctx, AuthenticatedUser user, @Nullable Throwable th) {
-    write(
-        new AuditRecord(
-            DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
-            user.principal(),
-            clusterName,
-            AuditResource.getAccessedResources(ctx),
-            ctx.getOperationName(),
-            ctx.getOperationParams(),
-            th == null ? OperationResult.successful() : OperationResult.error(th)
-        )
+    write(createRecord(ctx, user, th));
+  }
+
+  private static AuditRecord createRecord(AccessContext ctx,
+                                          AuthenticatedUser user,
+                                          @Nullable Throwable th) {
+    return new AuditRecord(
+        DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
+        user.principal(),
+        null,
+        AuditResource.getAccessedResources(ctx),
+        ctx.getOperationName(),
+        ctx.getOperationParams(),
+        th == null ? OperationResult.successful() : OperationResult.error(th)
     );
   }
+
 
   private void write(AuditRecord rec) {
     String json = rec.toJson();
@@ -64,7 +60,7 @@ record AuditWriter(String clusterName,
     }
     if (producer != null) {
       producer.send(
-          new ProducerRecord<>(targetTopic, null, json.getBytes(StandardCharsets.UTF_8)),
+          new ProducerRecord<>(targetTopic, null, json.getBytes(UTF_8)),
           (metadata, ex) -> {
             if (ex != null) {
               log.warn("Error sending Audit record to kafka for cluster {}", clusterName, ex);
