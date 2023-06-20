@@ -27,29 +27,9 @@ public interface RawMetric {
     return new SimpleMetric(name, labels, value);
   }
 
-  @AllArgsConstructor
-  @EqualsAndHashCode
-  @ToString
-  class SimpleMetric implements RawMetric {
-
-    private final String name;
-    private final Map<String, String> labels;
-    private final BigDecimal value;
-
-    @Override
-    public String name() {
-      return name;
-    }
-
-    @Override
-    public Map<String, String> labels() {
-      return labels;
-    }
-
-    @Override
-    public BigDecimal value() {
-      return value;
-    }
+  record SimpleMetric(String name,
+                      Map<String, String> labels,
+                      BigDecimal value) implements RawMetric {
 
     @Override
     public RawMetric copyWithValue(BigDecimal newValue) {

@@ -234,6 +234,17 @@
             <artifactId>spring-security-ldap</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient</artifactId>
+            <version>0.16.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_common</artifactId>
+            <version>0.16.0</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.codehaus.groovy</groupId>

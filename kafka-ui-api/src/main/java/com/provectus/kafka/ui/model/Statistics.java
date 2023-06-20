@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.model;
 
 import com.provectus.kafka.ui.service.ReactiveAdminClient;
+import com.provectus.kafka.ui.service.metrics.v2.scrape.inferred.ScrapedClusterState;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +23,8 @@ public class Statistics {
   Map<String, TopicDescription> topicDescriptions;
   Map<String, List<ConfigEntry>> topicConfigs;
 
+  ScrapedClusterState clusterState;
+
   public static Statistics empty() {
     return builder()
         .status(ServerStatusDTO.OFFLINE)
@@ -33,6 +36,7 @@ public class Statistics {
         .logDirInfo(InternalLogDirStats.empty())
         .topicDescriptions(Map.of())
         .topicConfigs(Map.of())
+        .clusterState(ScrapedClusterState.empty())
         .build();
   }
 }

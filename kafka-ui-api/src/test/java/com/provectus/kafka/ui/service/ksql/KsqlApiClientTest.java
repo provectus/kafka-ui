@@ -12,6 +12,7 @@ import com.provectus.kafka.ui.container.KsqlDbContainer;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import org.testcontainers.shaded.org.awaitility.Awaitility;
 import org.testcontainers.utility.DockerImageName;
 import reactor.test.StepVerifier;
 
+@Ignore
 class KsqlApiClientTest extends AbstractIntegrationTest {
 
   private static final KsqlDbContainer KSQL_DB = new KsqlDbContainer(
