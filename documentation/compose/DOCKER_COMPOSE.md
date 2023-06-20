@@ -8,9 +8,9 @@
 6. [kafka-ui-auth-context.yaml](./kafka-ui-auth-context.yaml) - Basic (username/password) authentication with custom path (URL) (issue 861).
 7. [e2e-tests.yaml](./e2e-tests.yaml) - Configuration with different connectors (github-source, s3, sink-activities, source-activities) and Ksql functionality.
 8. [kafka-ui-jmx-secured.yml](./kafka-ui-jmx-secured.yml) - Kafka’s JMX with SSL and authentication.
-9. [kafka-ui-reverse-proxy.yaml](./kafka-ui-reverse-proxy.yaml) - An example for using the app behind a proxy (like nginx).
+9. [kafka-ui-reverse-proxy.yaml](./nginx-proxy.yaml) - An example for using the app behind a proxy (like nginx).
 10. [kafka-ui-sasl.yaml](./kafka-ui-sasl.yaml) - SASL auth for Kafka.
-11. [kafka-ui-traefik-proxy.yaml](./kafka-ui-traefik-proxy.yaml) - Traefik specific proxy configuration.
+11. [kafka-ui-traefik-proxy.yaml](./traefik-proxy.yaml) - Traefik specific proxy configuration.
 12. [oauth-cognito.yaml](./oauth-cognito.yaml) - OAuth2 with Cognito
 13. [kafka-ui-with-jmx-exporter.yaml](./kafka-ui-with-jmx-exporter.yaml) - A configuration with 2 kafka clusters with enabled prometheus jmx exporters instead of jmx.
 14. [kafka-with-zookeeper.yaml](./kafka-with-zookeeper.yaml) - An example for using kafka with zookeeper

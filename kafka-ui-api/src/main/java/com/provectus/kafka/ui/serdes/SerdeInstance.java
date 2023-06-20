@@ -42,19 +42,39 @@ public class SerdeInstance implements Closeable {
   }
 
   public Optional<SchemaDescription> getSchema(String topic, Serde.Target type) {
-    return wrapWithClassloader(() -> serde.getSchema(topic, type));
+    try {
+      return wrapWithClassloader(() -> serde.getSchema(topic, type));
+    } catch (Exception e) {
+      log.warn("Error getting schema for '{}'({}) with serde '{}'", topic, type, name, e);
+      return Optional.empty();
+    }
   }
 
   public Optional<String> description() {
-    return wrapWithClassloader(serde::getDescription);
+    try {
+      return wrapWithClassloader(serde::getDescription);
+    } catch (Exception e) {
+      log.warn("Error getting description serde '{}'", name, e);
+      return Optional.empty();
+    }
   }
 
   public boolean canSerialize(String topic, Serde.Target type) {
-    return wrapWithClassloader(() -> serde.canSerialize(topic, type));
+    try {
+      return wrapWithClassloader(() -> serde.canSerialize(topic, type));
+    } catch (Exception e) {
+      log.warn("Error calling canSerialize for '{}'({}) with serde '{}'", topic, type, name, e);
+      return false;
+    }
   }
 
   public boolean canDeserialize(String topic, Serde.Target type) {
-    return wrapWithClassloader(() -> serde.canDeserialize(topic, type));
+    try {
+      return wrapWithClassloader(() -> serde.canDeserialize(topic, type));
+    } catch (Exception e) {
+      log.warn("Error calling canDeserialize for '{}'({}) with serde '{}'", topic, type, name, e);
+      return false;
+    }
   }
 
   public Serde.Serializer serializer(String topic, Serde.Target type) {

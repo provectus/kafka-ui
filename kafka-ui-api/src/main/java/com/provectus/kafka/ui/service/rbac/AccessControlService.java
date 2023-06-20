@@ -202,19 +202,23 @@ public class AccessControlService {
     return isAccessible(Resource.TOPIC, context.getTopic(), user, context, requiredActions);
   }
 
-  public Mono<Boolean> isTopicAccessible(InternalTopic dto, String clusterName) {
+  public Mono<List<InternalTopic>> filterViewableTopics(List<InternalTopic> topics, String clusterName) {
     if (!rbacEnabled) {
-      return Mono.just(true);
+      return Mono.just(topics);
     }
 
-    AccessContext accessContext = AccessContext
-        .builder()
-        .cluster(clusterName)
-        .topic(dto.getName())
-        .topicActions(TopicAction.VIEW)
-        .build();
-
-    return getUser().map(u -> isTopicAccessible(accessContext, u));
+    return getUser()
+        .map(user -> topics.stream()
+            .filter(topic -> {
+                  var accessContext = AccessContext
+                      .builder()
+                      .cluster(clusterName)
+                      .topic(topic.getName())
+                      .topicActions(TopicAction.VIEW)
+                      .build();
+                  return isTopicAccessible(accessContext, user);
+                }
+            ).toList());
   }
 
   private boolean isConsumerGroupAccessible(AccessContext context, AuthenticatedUser user) {
