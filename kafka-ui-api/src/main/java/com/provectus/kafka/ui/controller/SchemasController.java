@@ -58,7 +58,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
         .cluster(clusterName)
         .schema(subject)
         .schemaActions(SchemaAction.VIEW)
-        .auditOperation("checkSchemaCompatibility")
+        .operationName("checkSchemaCompatibility")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -80,7 +80,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
     var context = AccessContext.builder()
         .cluster(clusterName)
         .schemaActions(SchemaAction.CREATE)
-        .auditOperation("createNewSchema")
+        .operationName("createNewSchema")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -102,7 +102,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
         .cluster(clusterName)
         .schema(subject)
         .schemaActions(SchemaAction.DELETE)
-        .auditOperation("deleteLatestSchema")
+        .operationName("deleteLatestSchema")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -119,7 +119,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
         .cluster(clusterName)
         .schema(subject)
         .schemaActions(SchemaAction.DELETE)
-        .auditOperation("deleteSchema")
+        .operationName("deleteSchema")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -136,7 +136,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
         .cluster(clusterName)
         .schema(subjectName)
         .schemaActions(SchemaAction.DELETE)
-        .auditOperation("deleteSchemaByVersion")
+        .operationName("deleteSchemaByVersion")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -153,7 +153,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
         .cluster(clusterName)
         .schema(subjectName)
         .schemaActions(SchemaAction.VIEW)
-        .auditOperation("getAllVersionsBySubject")
+        .operationName("getAllVersionsBySubject")
         .build();
 
     Flux<SchemaSubjectDTO> schemas =
@@ -182,7 +182,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
         .cluster(clusterName)
         .schema(subject)
         .schemaActions(SchemaAction.VIEW)
-        .auditOperation("getLatestSchema")
+        .operationName("getLatestSchema")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -199,7 +199,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
         .cluster(clusterName)
         .schema(subject)
         .schemaActions(SchemaAction.VIEW)
-        .auditOperation("getSchemaByVersion")
+        .operationName("getSchemaByVersion")
         .operationParams(Map.of("subject", subject, "version", version))
         .build();
 
@@ -219,7 +219,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
                                                                     ServerWebExchange serverWebExchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .auditOperation("getSchemas")
+        .operationName("getSchemas")
         .build();
 
     return schemaRegistryService
@@ -254,7 +254,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
     var context = AccessContext.builder()
         .cluster(clusterName)
         .schemaActions(SchemaAction.MODIFY_GLOBAL_COMPATIBILITY)
-        .auditOperation("updateGlobalSchemaCompatibilityLevel")
+        .operationName("updateGlobalSchemaCompatibilityLevel")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -276,7 +276,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
     var context = AccessContext.builder()
         .cluster(clusterName)
         .schemaActions(SchemaAction.EDIT)
-        .auditOperation("updateSchemaCompatibilityLevel")
+        .operationName("updateSchemaCompatibilityLevel")
         .operationParams(Map.of("subject", subject))
         .build();
 

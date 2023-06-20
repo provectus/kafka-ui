@@ -37,7 +37,7 @@ public class ClustersController extends AbstractController implements ClustersAp
                                                                    ServerWebExchange exchange) {
     AccessContext context = AccessContext.builder()
         .cluster(clusterName)
-        .auditOperation("getClusterMetrics")
+        .operationName("getClusterMetrics")
         .build();
 
     return accessControlService.validateAccess(context)
@@ -54,7 +54,7 @@ public class ClustersController extends AbstractController implements ClustersAp
                                                                ServerWebExchange exchange) {
     AccessContext context = AccessContext.builder()
         .cluster(clusterName)
-        .auditOperation("getClusterStats")
+        .operationName("getClusterStats")
         .build();
 
     return accessControlService.validateAccess(context)
@@ -72,7 +72,7 @@ public class ClustersController extends AbstractController implements ClustersAp
 
     AccessContext context = AccessContext.builder()
         .cluster(clusterName)
-        .auditOperation("updateClusterInfo")
+        .operationName("updateClusterInfo")
         .build();
 
     return accessControlService.validateAccess(context)

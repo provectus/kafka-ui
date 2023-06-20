@@ -67,7 +67,7 @@ public class ApplicationConfigController implements ApplicationConfigApi {
   public Mono<ResponseEntity<ApplicationConfigDTO>> getCurrentConfig(ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .applicationConfigActions(VIEW)
-        .auditOperation("getCurrentConfig")
+        .operationName("getCurrentConfig")
         .build();
     return accessControlService.validateAccess(context)
         .then(Mono.fromSupplier(() -> ResponseEntity.ok(
@@ -82,7 +82,7 @@ public class ApplicationConfigController implements ApplicationConfigApi {
                                                       ServerWebExchange exchange) {
     var context =  AccessContext.builder()
         .applicationConfigActions(EDIT)
-        .auditOperation("restartWithConfig")
+        .operationName("restartWithConfig")
         .build();
     return accessControlService.validateAccess(context)
         .then(restartRequestDto)
@@ -99,7 +99,7 @@ public class ApplicationConfigController implements ApplicationConfigApi {
                                                                            ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .applicationConfigActions(EDIT)
-        .auditOperation("uploadConfigRelatedFile")
+        .operationName("uploadConfigRelatedFile")
         .build();
     return accessControlService.validateAccess(context)
         .then(fileFlux.single())
@@ -115,7 +115,7 @@ public class ApplicationConfigController implements ApplicationConfigApi {
                                                                              ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .applicationConfigActions(EDIT)
-        .auditOperation("validateConfig")
+        .operationName("validateConfig")
         .build();
     return accessControlService.validateAccess(context)
         .then(configDto)

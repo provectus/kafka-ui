@@ -35,7 +35,7 @@ public class AclsController extends AbstractController implements AclsApi {
     AccessContext context = AccessContext.builder()
         .cluster(clusterName)
         .aclActions(AclAction.EDIT)
-        .auditOperation("createAcl")
+        .operationName("createAcl")
         .build();
 
     return accessControlService.validateAccess(context)
@@ -52,7 +52,7 @@ public class AclsController extends AbstractController implements AclsApi {
     AccessContext context = AccessContext.builder()
         .cluster(clusterName)
         .aclActions(AclAction.EDIT)
-        .auditOperation("deleteAcl")
+        .operationName("deleteAcl")
         .build();
 
     return accessControlService.validateAccess(context)
@@ -72,7 +72,7 @@ public class AclsController extends AbstractController implements AclsApi {
     AccessContext context = AccessContext.builder()
         .cluster(clusterName)
         .aclActions(AclAction.VIEW)
-        .auditOperation("listAcls")
+        .operationName("listAcls")
         .build();
 
     var resourceType = Optional.ofNullable(resourceTypeDto)
@@ -98,7 +98,7 @@ public class AclsController extends AbstractController implements AclsApi {
     AccessContext context = AccessContext.builder()
         .cluster(clusterName)
         .aclActions(AclAction.VIEW)
-        .auditOperation("getAclAsCsv")
+        .operationName("getAclAsCsv")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -114,7 +114,7 @@ public class AclsController extends AbstractController implements AclsApi {
     AccessContext context = AccessContext.builder()
         .cluster(clusterName)
         .aclActions(AclAction.EDIT)
-        .auditOperation("syncAclsCsv")
+        .operationName("syncAclsCsv")
         .build();
 
     return accessControlService.validateAccess(context)

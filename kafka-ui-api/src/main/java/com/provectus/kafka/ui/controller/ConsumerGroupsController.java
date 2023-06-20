@@ -56,7 +56,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
         .cluster(clusterName)
         .consumerGroup(id)
         .consumerGroupActions(DELETE)
-        .auditOperation("deleteConsumerGroup")
+        .operationName("deleteConsumerGroup")
         .build();
 
     return accessControlService.validateAccess(context)
@@ -73,7 +73,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
         .cluster(clusterName)
         .consumerGroup(consumerGroupId)
         .consumerGroupActions(VIEW)
-        .auditOperation("getConsumerGroup")
+        .operationName("getConsumerGroup")
         .build();
 
     return accessControlService.validateAccess(context)
@@ -91,7 +91,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(TopicAction.VIEW)
-        .auditOperation("getTopicConsumerGroups")
+        .operationName("getTopicConsumerGroups")
         .build();
 
     Mono<ResponseEntity<Flux<ConsumerGroupDTO>>> job =
@@ -122,7 +122,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
     var context = AccessContext.builder()
         .cluster(clusterName)
         // consumer group access validation is within the service
-        .auditOperation("getConsumerGroupsPage")
+        .operationName("getConsumerGroupsPage")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -150,7 +150,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
           .topic(reset.getTopic())
           .topicActions(TopicAction.VIEW)
           .consumerGroupActions(RESET_OFFSETS)
-          .auditOperation("resetConsumerGroupOffsets")
+          .operationName("resetConsumerGroupOffsets")
           .build();
 
       Supplier<Mono<Void>> mono = () -> {

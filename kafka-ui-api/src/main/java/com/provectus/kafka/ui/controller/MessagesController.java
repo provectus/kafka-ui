@@ -86,7 +86,7 @@ public class MessagesController extends AbstractController implements MessagesAp
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
-        .auditOperation("getTopicMessages");
+        .operationName("getTopicMessages");
 
     if (auditService.isAuditTopic(getCluster(clusterName), topicName)) {
       contextBuilder.auditActions(AuditAction.VIEW);
@@ -124,7 +124,7 @@ public class MessagesController extends AbstractController implements MessagesAp
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_PRODUCE)
-        .auditOperation("sendTopicMessages")
+        .operationName("sendTopicMessages")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -171,7 +171,7 @@ public class MessagesController extends AbstractController implements MessagesAp
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(TopicAction.VIEW)
-        .auditOperation("getSerdes")
+        .operationName("getSerdes")
         .build();
 
     TopicSerdeSuggestionDTO dto = new TopicSerdeSuggestionDTO()

@@ -158,7 +158,7 @@ public class AccessContext {
       return this;
     }
 
-    public AccessContextBuilder auditOperation(String operationName) {
+    public AccessContextBuilder operationName(String operationName) {
       this.operationName = operationName;
       return this;
     }

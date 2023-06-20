@@ -39,7 +39,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
                                                           ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .auditOperation("getBrokers")
+        .operationName("getBrokers")
         .build();
 
     var job = brokerService.getBrokers(getCluster(clusterName)).map(clusterMapper::toBrokerDto);
@@ -53,7 +53,8 @@ public class BrokersController extends AbstractController implements BrokersApi 
                                                                   ServerWebExchange exchange) {
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .auditOperation("getBrokersMetrics")
+        .operationName("getBrokersMetrics")
+        .operationParams(Map.of("id", id))
         .build();
 
     return accessControlService.validateAccess(context)
@@ -70,17 +71,18 @@ public class BrokersController extends AbstractController implements BrokersApi 
   public Mono<ResponseEntity<Flux<BrokersLogdirsDTO>>> getAllBrokersLogdirs(String clusterName,
                                                                             @Nullable List<Integer> brokers,
                                                                             ServerWebExchange exchange) {
+
+    List<Integer> brokerIds = brokers == null ? List.of() : brokers;
+
     var context = AccessContext.builder()
         .cluster(clusterName)
-        .auditOperation("getAllBrokersLogdirs")
-        .operationParams(Map.of("brokerIds", brokers == null ? List.of() : brokers))
+        .operationName("getAllBrokersLogdirs")
+        .operationParams(Map.of("brokerIds", brokerIds))
         .build();
+
     return accessControlService.validateAccess(context)
         .thenReturn(ResponseEntity.ok(
-            brokerService.getAllBrokersLogdirs(
-                getCluster(clusterName),
-                brokers == null ? List.of() : brokers
-            )))
+            brokerService.getAllBrokersLogdirs(getCluster(clusterName), brokerIds)))
         .doOnEach(sig -> auditService.audit(context, sig));
   }
 
@@ -91,7 +93,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
     var context = AccessContext.builder()
         .cluster(clusterName)
         .clusterConfigActions(ClusterConfigAction.VIEW)
-        .auditOperation("getBrokerConfig")
+        .operationName("getBrokerConfig")
         .operationParams(Map.of("brokerId", id))
         .build();
 
@@ -110,7 +112,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
     var context = AccessContext.builder()
         .cluster(clusterName)
         .clusterConfigActions(ClusterConfigAction.VIEW, ClusterConfigAction.EDIT)
-        .auditOperation("updateBrokerTopicPartitionLogDir")
+        .operationName("updateBrokerTopicPartitionLogDir")
         .operationParams(Map.of("brokerId", id))
         .build();
 
@@ -130,7 +132,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
     var context = AccessContext.builder()
         .cluster(clusterName)
         .clusterConfigActions(ClusterConfigAction.VIEW, ClusterConfigAction.EDIT)
-        .auditOperation("updateBrokerConfigByName")
+        .operationName("updateBrokerConfigByName")
         .operationParams(Map.of("brokerId", id))
         .build();
 

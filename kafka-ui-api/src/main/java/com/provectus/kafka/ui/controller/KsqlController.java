@@ -41,7 +41,7 @@ public class KsqlController extends AbstractController implements KsqlApi {
               var context = AccessContext.builder()
                   .cluster(clusterName)
                   .ksqlActions(KsqlAction.EXECUTE)
-                  .auditOperation("executeKsql")
+                  .operationName("executeKsql")
                   .operationParams(command)
                   .build();
               return accessControlService.validateAccess(context).thenReturn(
@@ -63,7 +63,7 @@ public class KsqlController extends AbstractController implements KsqlApi {
     var context = AccessContext.builder()
         .cluster(clusterName)
         .ksqlActions(KsqlAction.EXECUTE)
-        .auditOperation("openKsqlResponsePipe")
+        .operationName("openKsqlResponsePipe")
         .build();
 
     return accessControlService.validateAccess(context).thenReturn(
@@ -83,7 +83,7 @@ public class KsqlController extends AbstractController implements KsqlApi {
     var context = AccessContext.builder()
         .cluster(clusterName)
         .ksqlActions(KsqlAction.EXECUTE)
-        .auditOperation("listStreams")
+        .operationName("listStreams")
         .build();
 
     return accessControlService.validateAccess(context)
@@ -97,7 +97,7 @@ public class KsqlController extends AbstractController implements KsqlApi {
     var context = AccessContext.builder()
         .cluster(clusterName)
         .ksqlActions(KsqlAction.EXECUTE)
-        .auditOperation("listTables")
+        .operationName("listTables")
         .build();
 
     return accessControlService.validateAccess(context)

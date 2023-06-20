@@ -63,7 +63,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
       var context = AccessContext.builder()
           .cluster(clusterName)
           .topicActions(CREATE)
-          .auditOperation("createTopic")
+          .operationName("createTopic")
           .operationParams(topicCreation)
           .build();
 
@@ -83,7 +83,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(VIEW, CREATE, DELETE)
-        .auditOperation("recreateTopic")
+        .operationName("recreateTopic")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -101,7 +101,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(VIEW, CREATE)
-        .auditOperation("cloneTopic")
+        .operationName("cloneTopic")
         .operationParams(Map.of("newTopicName", newTopicName))
         .build();
 
@@ -120,7 +120,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(DELETE)
-        .auditOperation("deleteTopic")
+        .operationName("deleteTopic")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -137,7 +137,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(VIEW)
-        .auditOperation("getTopicConfigs")
+        .operationName("getTopicConfigs")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -159,7 +159,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(VIEW)
-        .auditOperation("getTopicDetails")
+        .operationName("getTopicDetails")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -181,7 +181,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
     AccessContext context = AccessContext.builder()
         .cluster(clusterName)
-        .auditOperation("getTopics")
+        .operationName("getTopics")
         .build();
 
     return topicsService.getTopicsForPagination(getCluster(clusterName))
@@ -225,7 +225,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(VIEW, EDIT)
-        .auditOperation("updateTopic")
+        .operationName("updateTopic")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -265,7 +265,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(VIEW, EDIT)
-        .auditOperation("changeReplicationFactor")
+        .operationName("changeReplicationFactor")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -283,7 +283,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
-        .auditOperation("analyzeTopic")
+        .operationName("analyzeTopic")
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -300,7 +300,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
-        .auditOperation("cancelTopicAnalysis")
+        .operationName("cancelTopicAnalysis")
         .build();
 
     return accessControlService.validateAccess(context)
@@ -319,7 +319,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
         .cluster(clusterName)
         .topic(topicName)
         .topicActions(MESSAGES_READ)
-        .auditOperation("getTopicAnalysis")
+        .operationName("getTopicAnalysis")
         .build();
 
     return accessControlService.validateAccess(context)
