@@ -38,21 +38,6 @@ record AuditWriter(String clusterName,
     write(createRecord(ctx, user, th));
   }
 
-  private static AuditRecord createRecord(AccessContext ctx,
-                                          AuthenticatedUser user,
-                                          @Nullable Throwable th) {
-    return new AuditRecord(
-        DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
-        user.principal(),
-        null,
-        AuditResource.getAccessedResources(ctx),
-        ctx.getOperationName(),
-        ctx.getOperationParams(),
-        th == null ? OperationResult.successful() : OperationResult.error(th)
-    );
-  }
-
-
   private void write(AuditRecord rec) {
     String json = rec.toJson();
     if (consoleLogger != null) {
@@ -69,6 +54,19 @@ record AuditWriter(String clusterName,
     }
   }
 
+  private static AuditRecord createRecord(AccessContext ctx,
+                                          AuthenticatedUser user,
+                                          @Nullable Throwable th) {
+    return new AuditRecord(
+        DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
+        user.principal(),
+        null,
+        AuditResource.getAccessedResources(ctx),
+        ctx.getOperationName(),
+        ctx.getOperationParams(),
+        th == null ? OperationResult.successful() : OperationResult.error(th)
+    );
+  }
 
   @Override
   public void close() {
