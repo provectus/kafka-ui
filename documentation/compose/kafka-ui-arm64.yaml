@@ -16,24 +16,12 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka0:29092
       KAFKA_CLUSTERS_0_METRICS_PORT: 9997
-      KAFKA_CLUSTERS_0_METRICS_TYPE: JMX
-      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry0:8085 #/contexts/.snowcones
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry0:8085
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
-      KAFKA_CLUSTERS_0_KAFKACONNECT_1_NAME: second
-      KAFKA_CLUSTERS_0_KAFKACONNECT_1_ADDRESS: http://kafka-connect0:8083
       DYNAMIC_CONFIG_ENABLED: 'true'  # not necessary, added for tests
       KAFKA_CLUSTERS_0_AUDIT_TOPICAUDITENABLED: 'true'
       KAFKA_CLUSTERS_0_AUDIT_CONSOLEAUDITENABLED: 'true'
-      JAVA_OPTS: "-Xms156m -Xmx156m"
-
-      kafka.clusters.0.serde.0.name: SchemaRegistry (ctx 1)
-      kafka.clusters.0.serde.0.className: com.provectus.kafka.ui.serdes.builtin.sr.SchemaRegistrySerde
-      kafka.clusters.0.serde.0.properties.url: http://schema-registry0:8085/contexts/.myctx1
-
-      kafka.clusters.0.serde.1.name: SchemaRegistry (cxt 2)
-      kafka.clusters.0.serde.1.className: com.provectus.kafka.ui.serdes.builtin.sr.SchemaRegistrySerde
-      kafka.clusters.0.serde.1.properties.url: http://schema-registry0:8085/contexts/.myctx2
 
   kafka0:
     image: confluentinc/cp-kafka:7.2.1.arm64
