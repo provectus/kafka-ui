@@ -185,6 +185,7 @@ const Filters: React.FC<FiltersProps> = ({
   const handleClearAllFilters = () => {
     setCurrentSeekType(SeekType.OFFSET);
     setOffset('');
+    setTimestamp(null);
     setQuery('');
     changeSeekDirection(SeekDirection.FORWARD);
     getSelectedPartitionsFromSeekToParam(searchParams, partitions);
