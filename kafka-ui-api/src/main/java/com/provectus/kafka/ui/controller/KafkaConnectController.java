@@ -116,7 +116,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
         .operationName("deleteConnector")
-        .operationParams(Map.of( "connectorName", connectName))
+        .operationParams(Map.of("connectorName", connectName))
         .build();
 
     return accessControlService.validateAccess(context).then(
@@ -188,9 +188,9 @@ public class KafkaConnectController extends AbstractController implements KafkaC
         .build();
 
     return accessControlService.validateAccess(context).then(
-        kafkaConnectService
-            .setConnectorConfig(getCluster(clusterName), connectName, connectorName, requestBody)
-            .map(ResponseEntity::ok))
+            kafkaConnectService
+                .setConnectorConfig(getCluster(clusterName), connectName, connectorName, requestBody)
+                .map(ResponseEntity::ok))
         .doOnEach(sig -> auditService.audit(context, sig));
   }
 
