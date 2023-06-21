@@ -18,6 +18,7 @@ import com.provectus.kafka.ui.model.TaskDTO;
 import com.provectus.kafka.ui.model.rbac.AccessContext;
 import com.provectus.kafka.ui.model.rbac.permission.ConnectAction;
 import com.provectus.kafka.ui.service.KafkaConnectService;
+import com.provectus.kafka.ui.service.audit.AuditService;
 import com.provectus.kafka.ui.service.rbac.AccessControlService;
 import java.util.Comparator;
 import java.util.Map;
@@ -37,8 +38,10 @@ import reactor.core.publisher.Mono;
 public class KafkaConnectController extends AbstractController implements KafkaConnectApi {
   private static final Set<ConnectorActionDTO> RESTART_ACTIONS
       = Set.of(RESTART, RESTART_FAILED_TASKS, RESTART_ALL_TASKS);
+
   private final KafkaConnectService kafkaConnectService;
   private final AccessControlService accessControlService;
+  private final AuditService auditService;
 
   @Override
   public Mono<ResponseEntity<Flux<ConnectDTO>>> getConnects(String clusterName,
@@ -54,15 +57,16 @@ public class KafkaConnectController extends AbstractController implements KafkaC
   public Mono<ResponseEntity<Flux<String>>> getConnectors(String clusterName, String connectName,
                                                           ServerWebExchange exchange) {
 
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
-        .build());
+        .operationName("getConnectors")
+        .build();
 
-    return validateAccess.thenReturn(
-        ResponseEntity.ok(kafkaConnectService.getConnectorNames(getCluster(clusterName), connectName))
-    );
+    return accessControlService.validateAccess(context)
+        .thenReturn(ResponseEntity.ok(kafkaConnectService.getConnectorNames(getCluster(clusterName), connectName)))
+        .doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
@@ -70,16 +74,17 @@ public class KafkaConnectController extends AbstractController implements KafkaC
                                                             @Valid Mono<NewConnectorDTO> connector,
                                                             ServerWebExchange exchange) {
 
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.CREATE)
-        .build());
+        .operationName("createConnector")
+        .build();
 
-    return validateAccess.then(
+    return accessControlService.validateAccess(context).then(
         kafkaConnectService.createConnector(getCluster(clusterName), connectName, connector)
             .map(ResponseEntity::ok)
-    );
+    ).doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
@@ -87,17 +92,18 @@ public class KafkaConnectController extends AbstractController implements KafkaC
                                                          String connectorName,
                                                          ServerWebExchange exchange) {
 
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
         .connector(connectorName)
-        .build());
+        .operationName("getConnector")
+        .build();
 
-    return validateAccess.then(
+    return accessControlService.validateAccess(context).then(
         kafkaConnectService.getConnector(getCluster(clusterName), connectName, connectorName)
             .map(ResponseEntity::ok)
-    );
+    ).doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
@@ -105,16 +111,18 @@ public class KafkaConnectController extends AbstractController implements KafkaC
                                                     String connectorName,
                                                     ServerWebExchange exchange) {
 
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
-        .build());
+        .operationName("deleteConnector")
+        .operationParams(Map.of("connectorName", connectName))
+        .build();
 
-    return validateAccess.then(
+    return accessControlService.validateAccess(context).then(
         kafkaConnectService.deleteConnector(getCluster(clusterName), connectName, connectorName)
             .map(ResponseEntity::ok)
-    );
+    ).doOnEach(sig -> auditService.audit(context, sig));
   }
 
 
@@ -126,14 +134,23 @@ public class KafkaConnectController extends AbstractController implements KafkaC
       SortOrderDTO sortOrder,
       ServerWebExchange exchange
   ) {
+    var context = AccessContext.builder()
+        .cluster(clusterName)
+        .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
+        .operationName("getAllConnectors")
+        .build();
+
     var comparator = sortOrder == null || sortOrder.equals(SortOrderDTO.ASC)
         ? getConnectorsComparator(orderBy)
         : getConnectorsComparator(orderBy).reversed();
+
     Flux<FullConnectorInfoDTO> job = kafkaConnectService.getAllConnectors(getCluster(clusterName), search)
         .filterWhen(dto -> accessControlService.isConnectAccessible(dto.getConnect(), clusterName))
-        .filterWhen(dto -> accessControlService.isConnectorAccessible(dto.getConnect(), dto.getName(), clusterName));
+        .filterWhen(dto -> accessControlService.isConnectorAccessible(dto.getConnect(), dto.getName(), clusterName))
+        .sort(comparator);
 
-    return Mono.just(ResponseEntity.ok(job.sort(comparator)));
+    return Mono.just(ResponseEntity.ok(job))
+        .doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
@@ -142,17 +159,18 @@ public class KafkaConnectController extends AbstractController implements KafkaC
                                                                       String connectorName,
                                                                       ServerWebExchange exchange) {
 
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
-        .build());
+        .operationName("getConnectorConfig")
+        .build();
 
-    return validateAccess.then(
+    return accessControlService.validateAccess(context).then(
         kafkaConnectService
             .getConnectorConfig(getCluster(clusterName), connectName, connectorName)
             .map(ResponseEntity::ok)
-    );
+    ).doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
@@ -161,16 +179,19 @@ public class KafkaConnectController extends AbstractController implements KafkaC
                                                                Mono<Map<String, Object>> requestBody,
                                                                ServerWebExchange exchange) {
 
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.EDIT)
-        .build());
+        .operationName("setConnectorConfig")
+        .operationParams(Map.of("connectorName", connectorName))
+        .build();
 
-    return validateAccess.then(
-        kafkaConnectService
-            .setConnectorConfig(getCluster(clusterName), connectName, connectorName, requestBody)
-            .map(ResponseEntity::ok));
+    return accessControlService.validateAccess(context).then(
+            kafkaConnectService
+                .setConnectorConfig(getCluster(clusterName), connectName, connectorName, requestBody)
+                .map(ResponseEntity::ok))
+        .doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
@@ -178,7 +199,6 @@ public class KafkaConnectController extends AbstractController implements KafkaC
                                                          String connectorName,
                                                          ConnectorActionDTO action,
                                                          ServerWebExchange exchange) {
-
     ConnectAction[] connectActions;
     if (RESTART_ACTIONS.contains(action)) {
       connectActions = new ConnectAction[] {ConnectAction.VIEW, ConnectAction.RESTART};
@@ -186,17 +206,19 @@ public class KafkaConnectController extends AbstractController implements KafkaC
       connectActions = new ConnectAction[] {ConnectAction.VIEW, ConnectAction.EDIT};
     }
 
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .connect(connectName)
         .connectActions(connectActions)
-        .build());
+        .operationName("updateConnectorState")
+        .operationParams(Map.of("connectorName", connectorName))
+        .build();
 
-    return validateAccess.then(
+    return accessControlService.validateAccess(context).then(
         kafkaConnectService
             .updateConnectorState(getCluster(clusterName), connectName, connectorName, action)
             .map(ResponseEntity::ok)
-    );
+    ).doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
@@ -204,17 +226,19 @@ public class KafkaConnectController extends AbstractController implements KafkaC
                                                                String connectName,
                                                                String connectorName,
                                                                ServerWebExchange exchange) {
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
-        .build());
+        .operationName("getConnectorTasks")
+        .operationParams(Map.of("connectorName", connectorName))
+        .build();
 
-    return validateAccess.thenReturn(
+    return accessControlService.validateAccess(context).thenReturn(
         ResponseEntity
             .ok(kafkaConnectService
                 .getConnectorTasks(getCluster(clusterName), connectName, connectorName))
-    );
+    ).doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
@@ -222,34 +246,37 @@ public class KafkaConnectController extends AbstractController implements KafkaC
                                                          String connectorName, Integer taskId,
                                                          ServerWebExchange exchange) {
 
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW, ConnectAction.RESTART)
-        .build());
+        .operationName("restartConnectorTask")
+        .operationParams(Map.of("connectorName", connectorName))
+        .build();
 
-    return validateAccess.then(
+    return accessControlService.validateAccess(context).then(
         kafkaConnectService
             .restartConnectorTask(getCluster(clusterName), connectName, connectorName, taskId)
             .map(ResponseEntity::ok)
-    );
+    ).doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
   public Mono<ResponseEntity<Flux<ConnectorPluginDTO>>> getConnectorPlugins(
       String clusterName, String connectName, ServerWebExchange exchange) {
 
-    Mono<Void> validateAccess = accessControlService.validateAccess(AccessContext.builder()
+    var context = AccessContext.builder()
         .cluster(clusterName)
         .connect(connectName)
         .connectActions(ConnectAction.VIEW)
-        .build());
+        .operationName("getConnectorPlugins")
+        .build();
 
-    return validateAccess.then(
+    return accessControlService.validateAccess(context).then(
         Mono.just(
             ResponseEntity.ok(
                 kafkaConnectService.getConnectorPlugins(getCluster(clusterName), connectName)))
-    );
+    ).doOnEach(sig -> auditService.audit(context, sig));
   }
 
   @Override
